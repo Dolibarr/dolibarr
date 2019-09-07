@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -90,7 +90,7 @@ if ($argv[2] != 'all')
 
 require_once DOL_DOCUMENT_ROOT."/../dev/translation/autotranslator.class.php";
 
-$langParser = new autoTranslator($argv[2],$argv[1],$dir,$file,$argv[3]);
+$langParser = new autoTranslator($argv[2], $argv[1], $dir, $file, $argv[3]);
 
 print "***** Finished *****\n";
 

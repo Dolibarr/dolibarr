@@ -6,8 +6,8 @@ OtherSupport=Ďalšia podpora
 ToSeeListOfAvailableRessources=Ak chcete kontaktovať / zobrazenie dostupných zdrojov:
 HelpCenter=Nápoveda centrum
 DolibarrHelpCenter=Dolibarr Help and Support Center
-ToGoBackToDolibarr=Inak kliknite <a href="%s">tu využiť Dolibarr</a>
-TypeOfSupport=Zdrojom podpory
+ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
+TypeOfSupport=Type of support
 TypeSupportCommunauty=Spoločenstva (zadarmo)
 TypeSupportCommercial=Obchodné
 TypeOfHelp=Typ
@@ -15,12 +15,9 @@ NeedHelpCenter=Need help or support?
 Efficiency=Účinnosť
 TypeHelpOnly=Nápoveda iba
 TypeHelpDev=Nápoveda + Development
-TypeHelpDevForm=Pomoc + + Development Formation
-ToGetHelpGoOnSparkAngels1=Niektoré spoločnosti môžu poskytnúť rýchly (niekedy okamžitej) a efektívnejšiu online podporu tým, že vezme kontrolu nad vašim počítačom. Tieto pomocníkmi možno nájsť na internetových stránkach <b>%s:</b>
-ToGetHelpGoOnSparkAngels3=Môžete tiež prejsť na zoznam všetkých dostupných vozidiel pre Dolibarr, pre túto kliknutím na
-ToGetHelpGoOnSparkAngels2=Niekedy nie je spoločnosť k dispozícii v okamihu, keď vykonáte vyhľadávanie, tak si pre zmenu filter sa pozrieť na &quot;všetky dostupnosť&quot;. Budete mať možnosť posielať viac požiadaviek.
-BackToHelpCenter=V opačnom prípade, choďte späť <a href="%s">vrátiť na pomoc strednej domovskú stránku</a> .
-LinkToGoldMember=Môžete zavolať jednu z predvolených trénera o Dolibarr pre požadovaný jazyk (%s) kliknutím na jeho widget (stav a maximálna cena automaticky aktualizované):
+TypeHelpDevForm=Help+Development+Training
+BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
+LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
 PossibleLanguages=Podporované jazyky
-SubscribeToFoundation=Nápoveda Dolibarr projekt, prihláste sa do základu
+SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
 SeeOfficalSupport=Oficiálna podpora Dolibarr vo Vašom jayzku: 

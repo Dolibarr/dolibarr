@@ -35,9 +35,9 @@
  *  @param	string		$addfieldentry	Array of the field entry to add array('key'=>,'type'=>,''label'=>,'visible'=>,'enabled'=>,'position'=>,'notnull'=>','index'=>,'searchall'=>,'comment'=>,'help'=>,'isameasure')
  *  @param	string		$delfieldentry	Id of field to remove
  * 	@return	int|object					<=0 if KO, Object if OK
- *  @see rebuildObjectSql
+ *  @see rebuildObjectSql()
  */
-function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='', $addfieldentry=array() ,$delfieldentry='')
+function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir = '', $addfieldentry = array(), $delfieldentry = '')
 {
     global $db, $langs;
 
@@ -63,11 +63,10 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
     		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Label")), null, 'errors');
     		return -2;
     	}
-
-    	if (! preg_match('/^(price|boolean|sellist|integer|date|timestamp|varchar|double|text|html)/', $addfieldentry['type']))
-
+    	if (! preg_match('/^(integer|price|sellist|date|varchar|double|text|html)/', $addfieldentry['type'])
+    		&& ! preg_match('/^(boolean|real|timestamp)$/', $addfieldentry['type']))
     	{
-    		setEventMessages($langs->trans('BadFormatForType', $objectname), null, 'errors');
+    		setEventMessages($langs->trans('BadValueForType', $objectname), null, 'errors');
     		return -2;
     	}
     }
@@ -208,9 +207,9 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
  *  @param	string      $readdir		Directory source (use $destdir when not defined)
  *  @param	Object		$object			If object was already loaded/known, it is pass to avaoid another include and new.
  * 	@return	int							<=0 if KO, >0 if OK
- *  @see rebuildObjectClass
+ *  @see rebuildObjectClass()
  */
-function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='', $object=null)
+function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '', $object = null)
 {
     global $db, $langs;
 
@@ -263,8 +262,8 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='',
             $type = preg_replace('/:.*$/', '', $type);		// For case type = 'integer:Societe:societe/class/societe.class.php'
 
             if ($type == 'html') $type = 'text';            // html modulebuilder type is a text type in database
-            else if ($type == 'price') $type = 'double';            // html modulebuilder type is a text type in database
-            else if ($type == 'link' || $type == 'sellist') $type = 'integer';
+            elseif ($type == 'price') $type = 'double';            // html modulebuilder type is a text type in database
+            elseif ($type == 'link' || $type == 'sellist') $type = 'integer';
             $texttoinsert.= "\t".$key." ".$type;
             if ($key == 'rowid')  $texttoinsert.= ' AUTO_INCREMENT PRIMARY KEY';
             if ($key == 'entity') $texttoinsert.= ' DEFAULT 1';
@@ -273,7 +272,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='',
             	if ($val['default'] != '')
             	{
             		if (preg_match('/^null$/i', $val['default'])) $texttoinsert.= " DEFAULT NULL";
-            		else if (preg_match('/varchar/', $type )) $texttoinsert.= " DEFAULT '".$db->escape($val['default'])."'";
+            		elseif (preg_match('/varchar/', $type)) $texttoinsert.= " DEFAULT '".$db->escape($val['default'])."'";
             		else $texttoinsert.= (($val['default'] > 0)?' DEFAULT '.$val['default']:'');
             	}
             }
@@ -316,7 +315,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='',
             }
             if (! empty($val['foreignkey']))
             {
-            	$tmp=explode('.',$val['foreignkey']);
+            	$tmp=explode('.', $val['foreignkey']);
             	if (! empty($tmp[0]) && ! empty($tmp[1]))
             	{
             		$texttoinsert.= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD CONSTRAINT llx_".strtolower($module).'_'.strtolower($objectname)."_".$key." FOREIGN KEY (".$key.") REFERENCES ".$tmp[0]."(".$tmp[1].");";

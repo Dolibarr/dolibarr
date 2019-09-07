@@ -1,7 +1,7 @@
 -- ===================================================================
 -- Copyright (C) 2001-2004	Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004		Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2012		Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2012		Regis Houssin        <regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ create table llx_paiement
   datep            datetime,							-- payment date
   amount           double(24,8) DEFAULT 0,				-- amount paid in Dolibarr currency
   multicurrency_amount double(24,8) DEFAULT 0,			-- amount paid in invoice currency	
-  fk_paiement      integer NOT NULL,
+  fk_paiement      integer NOT NULL,					-- type of payment in llx_c_paiement
   num_paiement     varchar(50),
   note             text,
   ext_payment_id   varchar(128),						-- external id of payment (for example Stripe charge id)

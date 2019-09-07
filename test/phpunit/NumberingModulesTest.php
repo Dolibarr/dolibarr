@@ -44,7 +44,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class NumberingModulesTest extends PHPUnit_Framework_TestCase
+class NumberingModulesTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -57,7 +57,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return NumberingModulesTest
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -74,7 +74,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 	}
 
 	// Static methods
-  	public static function setUpBeforeClass()
+    public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
 
@@ -113,7 +113,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+    protected function tearDown()
     {
     	print __METHOD__."\n";
     }
@@ -148,7 +148,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 		$result=$numbering->getNextValue($mysoc, $localobject);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('1915-0001', $result, 'Test for {yyyy}-{0000}, 1st invoice');				// counter must start to 1
-		$result2=$localobject->create($user,1);
+		$result2=$localobject->create($user, 1);
 		print __METHOD__." result2=".$result."\n";
 		$result3=$localobject->validate($user, $result);		// create invoice by forcing ref
 		print __METHOD__." result3=".$result."\n";
@@ -166,7 +166,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 		$result=$numbering->getNextValue($mysoc, $localobject2);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('1916-0002', $result);				// counter must be now 2 (not reseted)
-		$result2=$localobject2->create($user,1);
+		$result2=$localobject2->create($user, 1);
 		print __METHOD__." result2=".$result."\n";
 		$result3=$localobject2->validate($user, $result);		// create invoice by forcing ref
 		print __METHOD__." result3=".$result."\n";
@@ -187,7 +187,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1910);	// we use year 1910 to be sure to not have existing invoice for this year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
-		$result2=$localobject->create($user,1);
+		$result2=$localobject->create($user, 1);
 		$result3=$localobject->validate($user, $result);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('1910-0001', $result, 'Test for {yyyy}-{0000@1} 1st invoice');				// counter must start to 1
@@ -214,7 +214,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1920);	// we use year 1920 to be sure to not have existing invoice for this year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
-		$result2=$localobject->create($user,1);
+		$result2=$localobject->create($user, 1);
 		$result3=$localobject->validate($user, $result);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('192001-0001', $result, 'Test for {yyyy}{mm}-{0000@1} 1st invoice');			// counter must start to 1
@@ -226,7 +226,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 		$localobject2->date=dol_mktime(12, 0, 0, 1, 1, 1921);	// we use following year for second invoice (and there is a reset required)
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject2);
-		$result2=$localobject2->create($user,1);
+		$result2=$localobject2->create($user, 1);
 		$result3=$localobject2->validate($user, $result);
 		print __METHOD__." result=".$result."\n";
     	$this->assertEquals('192101-0001', $result);			// counter must be reseted to 1
@@ -245,7 +245,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1925);	// we use year 1925 to be sure to not have existing invoice for this year
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject);
-		$result2=$localobject->create($user,1);
+		$result2=$localobject->create($user, 1);
 		$result3=$localobject->validate($user, $result);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('0125-0001', $result, 'Test for {mm}{yy}-{0000@1} 1st invoice');				// counter must start to 1
@@ -257,7 +257,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
 		$localobject2->date=dol_mktime(12, 0, 0, 1, 1, 1925);	// we use same year 1925 for second invoice (and there is a reset required)
 		$numbering=new mod_facture_mercure();
 		$result=$numbering->getNextValue($mysoc, $localobject2);
-		$result2=$localobject2->create($user,1);
+		$result2=$localobject2->create($user, 1);
 		$result3=$localobject2->validate($user, $result);
 		print __METHOD__." result=".$result."\n";
     	$this->assertEquals('0125-0002', $result, 'Test for {mm}{yy}-{0000@1} 2st invoice');			// counter must be now 2
@@ -292,7 +292,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
     	print __METHOD__." result for last=".$result."\n";
     	$this->assertEquals('', $result);						// no existing ref into reset range
     	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user,1);
+    	$result2=$localobject->create($user, 1);
     	$result3=$localobject->validate($user, $result);
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals('193001-0001', $result);			// counter must start to 1
@@ -308,7 +308,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
     	print __METHOD__." result for last=".$result."\n";
     	$this->assertEquals('', $result);						// last ref into reset range should be ''
     	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user,1);
+    	$result2=$localobject->create($user, 1);
     	$result3=$localobject->validate($user, $result);
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals('193012-0001', $result);	// counter must be reset to 1
@@ -318,7 +318,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
     	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1931);	// we use same fiscal year but different year
     	$numbering=new mod_facture_mercure();
     	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user,1);
+    	$result2=$localobject->create($user, 1);
     	$result3=$localobject->validate($user, $result);
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals('193101-0002', $result);	// counter must be 2
@@ -342,7 +342,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
     	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1940);	// we use year 1940 to be sure to not have existing invoice for this year
     	$numbering=new mod_facture_mercure();
     	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user,1);
+    	$result2=$localobject->create($user, 1);
     	$result3=$localobject->validate($user, $result);
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals('194001-0001', $result);	// counter must start to 1
@@ -352,7 +352,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
     	$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1940);	// we use same year but fiscal month after
     	$numbering=new mod_facture_mercure();
     	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user,1);
+    	$result2=$localobject->create($user, 1);
     	$result3=$localobject->validate($user, $result);
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals('194012-0001', $result);	// counter must be reset to 1
@@ -362,7 +362,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
     	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1941);	// we use same fiscal year but different year
     	$numbering=new mod_facture_mercure();
     	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user,1);
+    	$result2=$localobject->create($user, 1);
     	$result3=$localobject->validate($user, $result);
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals('194101-0002', $result);	// counter must be 2
@@ -386,7 +386,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
     	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1950);	// we use year 1950 to be sure to not have existing invoice for this year
     	$numbering=new mod_facture_mercure();
     	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user,1);
+    	$result2=$localobject->create($user, 1);
     	$result3=$localobject->validate($user, $result);
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals('195001-0001', $result);	// counter must start to 1
@@ -396,7 +396,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
     	$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1950);	// we use same year but fiscal month after
     	$numbering=new mod_facture_mercure();
     	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user,1);
+    	$result2=$localobject->create($user, 1);
     	$result3=$localobject->validate($user, $result);
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals('195012-0001', $result);	// counter must be reset to 1
@@ -406,7 +406,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
     	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1951);	// we use same fiscal year but different year
     	$numbering=new mod_facture_mercure();
     	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user,1);
+    	$result2=$localobject->create($user, 1);
     	$result3=$localobject->validate($user, $result);
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals('195101-0002', $result);	// counter must be 2
@@ -430,7 +430,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
     	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1960);	// we use year 1960 to be sure to not have existing invoice for this year
     	$numbering=new mod_facture_mercure();
     	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user,1);
+    	$result2=$localobject->create($user, 1);
     	$result3=$localobject->validate($user, $result);
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals('195901-0001', $result);	// counter must start to 1
@@ -440,7 +440,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
     	$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1960);	// we use same year but fiscal month after
     	$numbering=new mod_facture_mercure();
     	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user,1);
+    	$result2=$localobject->create($user, 1);
     	$result3=$localobject->validate($user, $result);
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals('196012-0001', $result);	// counter must be reset to 1
@@ -450,7 +450,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
     	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1961);	// we use same fiscal year but different year
     	$numbering=new mod_facture_mercure();
     	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user,1);
+    	$result2=$localobject->create($user, 1);
     	$result3=$localobject->validate($user, $result);
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals('196001-0002', $result);	// counter must be 2
@@ -474,7 +474,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
     	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1970);	// we use year 1970 to be sure to not have existing invoice for this year
     	$numbering=new mod_facture_mercure();
     	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user,1);
+    	$result2=$localobject->create($user, 1);
     	$result3=$localobject->validate($user, $result);
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals('197001-0001', $result);	// counter must start to 1
@@ -484,7 +484,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
     	$localobject->date=dol_mktime(12, 0, 0, 12, 1, 1970);	// we use same year but fiscal month after
     	$numbering=new mod_facture_mercure();
     	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user,1);
+    	$result2=$localobject->create($user, 1);
     	$result3=$localobject->validate($user, $result);
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals('197112-0001', $result);	// counter must be reset to 1
@@ -494,7 +494,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
     	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1971);	// we use same fiscal year but different year
     	$numbering=new mod_facture_mercure();
     	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user,1);
+    	$result2=$localobject->create($user, 1);
     	$result3=$localobject->validate($user, $result);
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals('197101-0002', $result);	// counter must be 2
@@ -517,7 +517,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
     	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1980);	// we use year 1980 to be sure to not have existing invoice for this year
     	$numbering=new mod_facture_mercure();
     	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user,1);
+    	$result2=$localobject->create($user, 1);
     	$result3=$localobject->validate($user, $result);
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals('198001-0001', $result);	// counter must start to 1
@@ -527,7 +527,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
     	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1980);	// we use year 1980 to be sure to not have existing invoice for this year
     	$numbering=new mod_facture_mercure();
     	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user,1);
+    	$result2=$localobject->create($user, 1);
     	$result3=$localobject->validate($user, $result);
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals('198001-0002', $result);	// counter must start to 2
@@ -537,7 +537,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
     	$localobject->date=dol_mktime(12, 0, 0, 2, 1, 1980);	// we use year 1980 to be sure to not have existing invoice for this year
     	$numbering=new mod_facture_mercure();
     	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user,1);
+    	$result2=$localobject->create($user, 1);
     	$result3=$localobject->validate($user, $result);
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals('198002-0001', $result);	// counter must start to 1
@@ -547,7 +547,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
     	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1981);	// we use year 1981 to be sure to not have existing invoice for this year
     	$numbering=new mod_facture_mercure();
     	$result=$numbering->getNextValue($mysoc, $localobject);
-    	$result2=$localobject->create($user,1);
+    	$result2=$localobject->create($user, 1);
     	$result3=$localobject->validate($user, $result);
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals('198101-0001', $result);	// counter must start to 1
@@ -566,7 +566,7 @@ class NumberingModulesTest extends PHPUnit_Framework_TestCase
     	$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1982);	// we use year 1982 to be sure to not have existing invoice for this year
     	$numbering=new mod_facture_mercure();
     	$result=$numbering->getNextValue($tmpthirdparty, $localobject);
-    	$result2=$localobject->create($user,1);
+    	$result2=$localobject->create($user, 1);
     	$result3=$localobject->validate($user, $result);
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals('A198201-0001', $result);	// counter must start to 1

@@ -44,7 +44,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class UserGroupTest extends PHPUnit_Framework_TestCase
+class UserGroupTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -57,7 +57,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
      *
      * @return UserGroupTest
      */
-    function __construct()
+    public function __construct()
     {
     	parent::__construct();
 
@@ -203,7 +203,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $result=$localobject->addrights(1,'bookmarks');
+        $result=$localobject->addrights(1, 'bookmarks');
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
         $this->assertLessThan($result, 0);
@@ -226,7 +226,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $result=$localobject->delrights(1,'bookmarks');
+        $result=$localobject->delrights(1, 'bookmarks');
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
         $this->assertLessThan($result, 0);
@@ -279,7 +279,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
 
         $localobject=new UserGroup($this->savdb);
         $result=$localobject->fetch($id);
-        $result=$localobject->delete($id);
+        $result=$localobject->delete($user);
 
         print __METHOD__." id=".$id." result=".$result."\n";
         $this->assertLessThan($result, 0);

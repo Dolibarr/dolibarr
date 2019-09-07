@@ -1,0 +1,65 @@
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+Assets = Активи
+NewAsset = Нов актив
+AccountancyCodeAsset = Счетоводен код (актив)
+AccountancyCodeDepreciationAsset = Счетоводен код (сметка за амортизационни активи)
+AccountancyCodeDepreciationExpense = Счетоводен код (сметка за амортизационни разходи)
+NewAssetType=Нов вид актив
+AssetsTypeSetup=Настройка на вид активи
+AssetTypeModified=Видът на актива е променен
+AssetType=Вид актив
+AssetsLines=Активи
+DeleteType=Изтриване
+DeleteAnAssetType=Изтриване на вид актив
+ConfirmDeleteAssetType=Сигурни ли сте, че искате да изтриете този вид актив?
+ShowTypeCard=Показване на вид '%s'
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName = Активи
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc = Описание на активи
+
+#
+# Admin page
+#
+AssetsSetup = Настройка на активи
+Settings = Настройки
+AssetsSetupPage = Страница за настройка на активите
+ExtraFieldsAssetsType = Допълнителни атрибути (вид актив)
+AssetsType=Вид актив
+AssetsTypeId=Идентификатор на вида актива
+AssetsTypeLabel=Етикет на вида актив
+AssetsTypes=Видове активи
+
+#
+# Menu
+#
+MenuAssets = Активи
+MenuNewAsset = Нов актив
+MenuTypeAssets = Вид активи
+MenuListAssets = Списък
+MenuNewTypeAssets = Нов
+MenuListTypeAssets = Списък
+
+#
+# Module
+#
+NewAssetType=Нов вид актив
+NewAsset=Нов актив

@@ -16,11 +16,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
 
 require '../../main.inc.php';
 
@@ -33,7 +33,7 @@ top_httphead('text/html');  // TODO Use a json mime type
 
 global $user, $db, $langs, $conf;
 
-$time = (int) GETPOST('time','int');    // Use the time parameter that is always increased by time_update, even if call is late
+$time = (int) GETPOST('time', 'int');    // Use the time parameter that is always increased by time_update, even if call is late
 //$time=dol_now();
 
 
@@ -116,4 +116,3 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
 }
 
 print json_encode($eventfound);
-

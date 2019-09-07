@@ -22,7 +22,7 @@
  *       \brief      Page to define emailing targets
  */
 
-if (! defined('NOSTYLECHECK')) define('NOSTYLECHECK','1');
+if (! defined('NOSTYLECHECK')) define('NOSTYLECHECK', '1');
 
 require '../../main.inc.php';
 
@@ -45,10 +45,10 @@ if (! $user->rights->mailing->lire || $user->societe_id > 0)
 	accessforbidden();
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -60,14 +60,14 @@ if (! $sortfield)
 
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 $search_nom = GETPOST("search_nom");
 $search_prenom = GETPOST("search_prenom");
 $search_email = GETPOST("search_email");
 $template_id = GETPOST('template_id', 'int');
 
 // Do we click on purge search criteria ?
-if (GETPOST('button_removefilter_x','alpha')) {
+if (GETPOST('button_removefilter_x', 'alpha')) {
 	$search_nom = '';
 	$search_prenom = '';
 	$search_email = '';
@@ -121,7 +121,7 @@ if ($action == 'add') {
 
 	// Get extra fields
 
-	foreach ( $_POST as $key => $value ) {
+	foreach ($_POST as $key => $value) {
 		// print '$key='.$key.' $value='.$value.'<BR>';
 		if (preg_match("/^options_.*(?<!_cnct)$/", $key)) {
 			// Special case for start date come with 3 inputs day, month, year
@@ -177,7 +177,7 @@ if ($action == 'add') {
 					'contact_create_st_dt',
 					'contact_create_end_dt'
 			);
-			foreach ( $specials_date_key as $date_key ) {
+			foreach ($specials_date_key as $date_key) {
 				if ($key == $date_key) {
 					$dt = GETPOST($date_key);
 					if (! empty($dt)) {
@@ -239,7 +239,7 @@ if ($action == 'add') {
 		if (! empty($template_id)) {
 			$query_temlate_id = '&template_id=' . $template_id;
 		}
-		setEventMessages($langs->trans("XTargetsAdded",$result), null, 'mesgs');
+		setEventMessages($langs->trans("XTargetsAdded", $result), null, 'mesgs');
 		header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $id . $query_temlate_id);
 		exit();
 	}
@@ -267,7 +267,7 @@ if ($action == 'savefilter' || $action == 'createfilter') {
 	$error = 0;
 
 	if ($action == 'createfilter' && empty($template_name)) {
-		setEventMessages($langs->trans('ErrorFieldRequired', $langs->trans('AdvTgtOrCreateNewFilter')), null, 'errors');
+		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('AdvTgtOrCreateNewFilter')), null, 'errors');
 		$error ++;
 	}
 
@@ -276,7 +276,7 @@ if ($action == 'savefilter' || $action == 'createfilter') {
 		$array_query = array ();
 
 		// Get extra fields
-		foreach ( $_POST as $key => $value ) {
+		foreach ($_POST as $key => $value) {
 			if (preg_match("/^options_.*(?<!_cnct)$/", $key)) {
 				// Special case for start date come with 3 inputs day, month, year
 				if (preg_match("/st_dt/", $key)) {
@@ -334,7 +334,7 @@ if ($action == 'savefilter' || $action == 'createfilter') {
 						'contact_create_st_dt',
 						'contact_create_end_dt'
 				);
-				foreach ( $specials_date_key as $date_key ) {
+				foreach ($specials_date_key as $date_key) {
 					if ($key == $date_key) {
 						$dt = GETPOST($date_key);
 						if (! empty($dt)) {

@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - ecm
-ECMNbOfDocs=ディレクトリ内のドキュメントのNb
+ECMNbOfDocs=No. of documents in directory
 ECMSection=ディレクトリ
 ECMSectionManual=手動のディレクトリ
 ECMSectionAuto=自動ディレクトリ
@@ -34,6 +34,8 @@ ECMDocsByProjects=Documents linked to projects
 ECMDocsByUsers=Documents linked to users
 ECMDocsByInterventions=Documents linked to interventions
 ECMDocsByExpenseReports=Documents linked to expense reports
+ECMDocsByHolidays=Documents linked to holidays
+ECMDocsBySupplierProposals=Documents linked to supplier proposals
 ECMNoDirectoryYet=作成されたディレクトリなし
 ShowECMSection=ディレクトリを表示する
 DeleteSection=ディレクトリを削除します。
@@ -46,6 +48,5 @@ ECMSelectASection=Select a directory in the tree...
 DirNotSynchronizedSyncFirst=This directory seems to be created or modified outside ECM module. You must click on "Resync" button first to synchronize disk and database to get content of this directory.
 ReSyncListOfDir=Resync list of directories
 HashOfFileContent=Hash of file content
-FileNotYetIndexedInDatabase=File not yet indexed into database (try to re-upload it)
-FileSharedViaALink=File shared via a link
 NoDirectoriesFound=No directories found
+FileNotYetIndexedInDatabase=File not yet indexed into database (try to re-upload it)

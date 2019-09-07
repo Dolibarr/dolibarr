@@ -21,7 +21,7 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
+if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK", '1');
 
 require '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php';		// Include SOAP
@@ -42,7 +42,7 @@ if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
-	print $langs->trans("WarningModuleNotActive",'WebServices').'.<br><br>';
+	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
 	print $langs->trans("ToActivateModule");
 	exit;
 }
@@ -52,7 +52,7 @@ $server = new nusoap_server();
 $server->soap_defencoding='UTF-8';
 $server->decode_utf8=false;
 $ns='http://www.dolibarr.org/ns/';
-$server->configureWSDL('WebServicesDolibarrInvoice',$ns);
+$server->configureWSDL('WebServicesDolibarrInvoice', $ns);
 $server->wsdl->schemaTargetNamespace=$ns;
 
 
@@ -286,7 +286,7 @@ $server->register(
  * @param	string		$ref_ext			Ref_ext
  * @return	array							Array result
  */
-function getInvoice($authentication,$id='',$ref='',$ref_ext='')
+function getInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 {
 	global $db,$conf,$langs;
 
@@ -298,7 +298,7 @@ function getInvoice($authentication,$id='',$ref='',$ref_ext='')
     $objectresp=array();
     $errorcode='';$errorlabel='';
     $error=0;
-    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
     // Check parameters
 	if (! $error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
 	{
@@ -313,7 +313,7 @@ function getInvoice($authentication,$id='',$ref='',$ref_ext='')
 		if ($fuser->rights->facture->lire)
 		{
 			$invoice=new Facture($db);
-			$result=$invoice->fetch($id,$ref,$ref_ext);
+			$result=$invoice->fetch($id, $ref, $ref_ext);
 			if ($result > 0)
 			{
 				$linesresp=array();
@@ -331,8 +331,8 @@ function getInvoice($authentication,$id='',$ref='',$ref_ext='')
                                                 'vat_rate'=>$line->tva_tx,
                                                 'qty'=>$line->qty,
                                                 'unitprice'=> $line->subprice,
-                                                'date_start'=> $line->date_start?dol_print_date($line->date_start,'dayrfc'):'',
-                                                'date_end'=> $line->date_end?dol_print_date($line->date_end,'dayrfc'):'',
+                                                'date_start'=> $line->date_start?dol_print_date($line->date_start, 'dayrfc'):'',
+                                                'date_end'=> $line->date_end?dol_print_date($line->date_end, 'dayrfc'):'',
                                                 'product_id'=>$line->fk_product,
                                                 'product_ref'=>$line->product_ref,
                                                 'product_label'=>$line->product_label,
@@ -351,11 +351,11 @@ function getInvoice($authentication,$id='',$ref='',$ref_ext='')
 			        	'thirdparty_id' => $invoice->socid,
 			        	'fk_user_author' => $invoice->user_author?$invoice->user_author:'',
 			        	'fk_user_valid' => $invoice->user_valid?$invoice->user_valid:'',
-			        	'date' => $invoice->date?dol_print_date($invoice->date,'dayrfc'):'',
-			        	'date_due' => $invoice->date_lim_reglement?dol_print_date($invoice->date_lim_reglement,'dayrfc'):'',
-			        	'date_creation' => $invoice->date_creation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
-			        	'date_validation' => $invoice->date_validation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
-			        	'date_modification' => $invoice->datem?dol_print_date($invoice->datem,'dayhourrfc'):'',
+			        	'date' => $invoice->date?dol_print_date($invoice->date, 'dayrfc'):'',
+			        	'date_due' => $invoice->date_lim_reglement?dol_print_date($invoice->date_lim_reglement, 'dayrfc'):'',
+			        	'date_creation' => $invoice->date_creation?dol_print_date($invoice->date_creation, 'dayhourrfc'):'',
+			        	'date_validation' => $invoice->date_validation?dol_print_date($invoice->date_creation, 'dayhourrfc'):'',
+			        	'date_modification' => $invoice->datem?dol_print_date($invoice->datem, 'dayhourrfc'):'',
 			        	'type' => $invoice->type,
 			        	'total_net' => $invoice->total_ht,
 			        	'total_vat' => $invoice->total_tva,
@@ -399,7 +399,7 @@ function getInvoice($authentication,$id='',$ref='',$ref_ext='')
  * @param	int			$idthirdparty		Id thirdparty
  * @return	array							Array result
  */
-function getInvoicesForThirdParty($authentication,$idthirdparty)
+function getInvoicesForThirdParty($authentication, $idthirdparty)
 {
 	global $db,$conf,$langs;
 
@@ -411,7 +411,7 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
     $objectresp=array();
     $errorcode='';$errorlabel='';
     $error=0;
-    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
 
 	if ($fuser->socid) $socid=$fuser->socid;
 
@@ -426,9 +426,9 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
 	{
 		$linesinvoice=array();
 
-		$sql ='SELECT f.rowid as facid, facnumber as ref, ref_ext, type, fk_statut as status, total_ttc, total, tva';
+		$sql ='SELECT f.rowid as facid, ref as ref, ref_ext, type, fk_statut as status, total_ttc, total, tva';
 		$sql.=' FROM '.MAIN_DB_PREFIX.'facture as f';
-		$sql.=" WHERE f.entity = ".$conf->entity;
+		$sql.=" WHERE f.entity IN (".getEntity('invoice').")";
 		if ($idthirdparty != 'all' ) $sql.=" AND f.fk_soc = ".$db->escape($idthirdparty);
 
 		$resql=$db->query($sql);
@@ -466,8 +466,8 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
 			    			'vat_rate'=>$line->tva_tx,
 			    			'qty'=>$line->qty,
                                                 'unitprice'=> $line->subprice,
-                                                'date_start'=> $line->date_start?dol_print_date($line->date_start,'dayrfc'):'',
-                                                'date_end'=> $line->date_end?dol_print_date($line->date_end,'dayrfc'):'',
+                                                'date_start'=> $line->date_start?dol_print_date($line->date_start, 'dayrfc'):'',
+                                                'date_end'=> $line->date_end?dol_print_date($line->date_end, 'dayrfc'):'',
                                                 'product_id'=>$line->fk_product,
 			    			'product_ref'=>$line->product_ref,
 			    			'product_label'=>$line->product_label,
@@ -482,11 +482,11 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
 			    		'ref_ext' => $invoice->ref_ext?$invoice->ref_ext:'',   // If not defined, field is not added into soap
 			    		'fk_user_author' => $invoice->user_author?$invoice->user_author:'',
 			    		'fk_user_valid' => $invoice->user_valid?$invoice->user_valid:'',
-			    		'date' => $invoice->date?dol_print_date($invoice->date,'dayrfc'):'',
-			    		'date_due' => $invoice->date_lim_reglement?dol_print_date($invoice->date_lim_reglement,'dayrfc'):'',
-                                        'date_creation' => $invoice->date_creation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
-			    		'date_validation' => $invoice->date_validation?dol_print_date($invoice->date_creation,'dayhourrfc'):'',
-			    		'date_modification' => $invoice->datem?dol_print_date($invoice->datem,'dayhourrfc'):'',
+			    		'date' => $invoice->date?dol_print_date($invoice->date, 'dayrfc'):'',
+			    		'date_due' => $invoice->date_lim_reglement?dol_print_date($invoice->date_lim_reglement, 'dayrfc'):'',
+                                        'date_creation' => $invoice->date_creation?dol_print_date($invoice->date_creation, 'dayhourrfc'):'',
+			    		'date_validation' => $invoice->date_validation?dol_print_date($invoice->date_creation, 'dayhourrfc'):'',
+			    		'date_modification' => $invoice->datem?dol_print_date($invoice->datem, 'dayhourrfc'):'',
 			    		'type' => $invoice->type,
 			    		'total_net' => $invoice->total_ht,
 			    		'total_vat' => $invoice->total_tva,
@@ -534,7 +534,7 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
  * @param	Facture		$invoice			Invoice
  * @return	array							Array result
  */
-function createInvoice($authentication,$invoice)
+function createInvoice($authentication, $invoice)
 {
     global $db,$conf,$langs;
 
@@ -549,7 +549,7 @@ function createInvoice($authentication,$invoice)
     $objectresp=array();
     $errorcode='';$errorlabel='';
     $error=0;
-    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
 
     // Check parameters
     if (empty($invoice['id']) && empty($invoice['ref']) && empty($invoice['ref_ext']))	{
@@ -562,7 +562,7 @@ function createInvoice($authentication,$invoice)
         $new_invoice->socid=$invoice['thirdparty_id'];
         $new_invoice->type=$invoice['type'];
         $new_invoice->ref_ext=$invoice['ref_ext'];
-        $new_invoice->date=dol_stringtotime($invoice['date'],'dayrfc');
+        $new_invoice->date=dol_stringtotime($invoice['date'], 'dayrfc');
         $new_invoice->note_private=$invoice['note_private'];
         $new_invoice->note_public=$invoice['note_public'];
         $new_invoice->statut= Facture::STATUS_DRAFT;	// We start with status draft
@@ -606,7 +606,7 @@ function createInvoice($authentication,$invoice)
 
         $db->begin();
 
-        $result=$new_invoice->create($fuser,0,dol_stringtotime($invoice['date_due'],'dayrfc'));
+        $result=$new_invoice->create($fuser, 0, dol_stringtotime($invoice['date_due'], 'dayrfc'));
         if ($result < 0)
         {
             $error++;
@@ -654,13 +654,13 @@ function createInvoice($authentication,$invoice)
  * @param	string      $ref_ext_order		ref_ext of order to copy invoice from
  * @return	array							Array result
  */
-function createInvoiceFromOrder($authentication,$id_order='', $ref_order='', $ref_ext_order='')
+function createInvoiceFromOrder($authentication, $id_order = '', $ref_order = '', $ref_ext_order = '')
 {
 	global $db,$conf;
 
 	$now=dol_now();
 
-	dol_syslog("Function: createInvoiceFromOrder login=".$authentication['login']." id=".$id_order.
+dol_syslog("Function: createInvoiceFromOrder login=".$authentication['login']." id=".$id_order.
 			", ref=".$ref_order.", ref_ext=".$ref_ext_order);
 
 	if ($authentication['entity']) $conf->entity=$authentication['entity'];
@@ -669,7 +669,7 @@ function createInvoiceFromOrder($authentication,$id_order='', $ref_order='', $re
 	$objectresp=array();
 	$errorcode='';$errorlabel='';
 	$error=0;
-	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
     if ($fuser->socid) $socid=$fuser->socid;
 
 	// Check parameters
@@ -685,7 +685,7 @@ function createInvoiceFromOrder($authentication,$id_order='', $ref_order='', $re
 		if ($fuser->rights->commande->lire)
 		{
 			$order=new Commande($db);
-			$result=$order->fetch($id_order,$ref_order,$ref_ext_order);
+			$result=$order->fetch($id_order, $ref_order, $ref_ext_order);
 			if ($result > 0)
 			{
 				// Security for external user
@@ -740,11 +740,11 @@ function createInvoiceFromOrder($authentication,$id_order='', $ref_order='', $re
  * @param	Facture		$invoice			Invoice
  * @return	array							Array result
  */
-function updateInvoice($authentication,$invoice)
+function updateInvoice($authentication, $invoice)
 {
 	global $db,$conf,$langs;
 
-	dol_syslog("Function: updateInvoice login=".$authentication['login']." id=".$invoice['id'].
+dol_syslog("Function: updateInvoice login=".$authentication['login']." id=".$invoice['id'].
     		", ref=".$invoice['ref'].", ref_ext=".$invoice['ref_ext']);
 
 	if ($authentication['entity']) $conf->entity=$authentication['entity'];
@@ -753,7 +753,7 @@ function updateInvoice($authentication,$invoice)
 	$objectresp=array();
 	$errorcode='';$errorlabel='';
 	$error=0;
-	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
 
 	// Check parameters
 	if (empty($invoice['id']) && empty($invoice['ref']) && empty($invoice['ref_ext']))	{
@@ -765,7 +765,7 @@ function updateInvoice($authentication,$invoice)
 		$objectfound=false;
 
 		$object=new Facture($db);
-		$result=$object->fetch($invoice['id'],$invoice['ref'],$invoice['ref_ext'], '');
+		$result=$object->fetch($invoice['id'], $invoice['ref'], $invoice['ref_ext'], '');
 
 		if (!empty($object->id)) {
 
@@ -777,7 +777,7 @@ function updateInvoice($authentication,$invoice)
 			{
 				if ($invoice['status'] == Facture::STATUS_DRAFT)
 				{
-					$result = $object->set_draft($fuser);
+					$result = $object->setDraft($fuser);
 				}
 				if ($invoice['status'] == Facture::STATUS_VALIDATED)
 				{
@@ -792,10 +792,10 @@ function updateInvoice($authentication,$invoice)
 				}
 				if ($invoice['status'] == Facture::STATUS_CLOSED)
 				{
-					$result = $object->set_paid($fuser,$invoice->close_code,$invoice->close_note);
+					$result = $object->set_paid($fuser, $invoice->close_code, $invoice->close_note);
 				}
 				if ($invoice['status'] == Facture::STATUS_ABANDONED)
-					$result = $object->set_canceled($fuser,$invoice->close_code,$invoice->close_note);
+					$result = $object->set_canceled($fuser, $invoice->close_code, $invoice->close_note);
 			}
 		}
 

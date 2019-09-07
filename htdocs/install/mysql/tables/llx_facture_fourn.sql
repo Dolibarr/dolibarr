@@ -1,7 +1,7 @@
 -- ===========================================================================
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify

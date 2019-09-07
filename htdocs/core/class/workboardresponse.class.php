@@ -38,6 +38,18 @@ class WorkboardResponse
 	public $label;
 
 	/**
+	 * Short Label of the warning
+	 * @var string
+	 */
+	public $labelShort;
+
+	/**
+	 * infoKey of the warning
+	 * @var string
+	 */
+	public $infoKey = 'todo';
+
+	/**
 	 * URL to list to do items
 	 * @var string
 	 */

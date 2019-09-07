@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010-2012  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2011-2012  Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2011-2012  Regis Houssin       <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ class AllTests
     public static function suite()
     {
 
-        $suite = new PHPUnit_Framework_TestSuite('PHPUnit Framework');
+        $suite = new PHPUnit\Framework\TestSuite('PHPUnit Framework');
 
         //require_once dirname(__FILE__).'/CoreTest.php';
         //$suite->addTestSuite('CoreTest');
@@ -87,6 +87,8 @@ class AllTests
         $suite->addTestSuite('DateLibTest');
         require_once dirname(__FILE__).'/UtilsTest.php';
         $suite->addTestSuite('UtilsTest');
+        require_once dirname(__FILE__).'/LesscTest.php';
+        $suite->addTestSuite('LesscTest');
         //require_once dirname(__FILE__).'/DateLibTzFranceTest.php';
         //$suite->addTestSuite('DateLibTzFranceTest');
         require_once dirname(__FILE__).'/MarginsLibTest.php';
@@ -239,6 +241,8 @@ class AllTests
 
         require_once dirname(__FILE__).'/FormAdminTest.php';
         $suite->addTestSuite('FormAdminTest');
+        require_once dirname(__FILE__).'/FormTest.php';
+        $suite->addTestSuite('FormTest');
 
         require_once dirname(__FILE__).'/ModulesTest.php';  // At end because it's the longer
         $suite->addTestSuite('ModulesTest');

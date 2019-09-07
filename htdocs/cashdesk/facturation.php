@@ -35,7 +35,7 @@
 $form=new Form($db);
 
 // Get list of articles (in warehouse '$conf_fkentrepot' if defined and stock module enabled)
-if ( GETPOST('filtre','alpha') ) {
+if ( GETPOST('filtre', 'alpha') ) {
 
 	// Avec filtre
 	$ret=array(); $i=0;
@@ -51,7 +51,7 @@ if ( GETPOST('filtre','alpha') ) {
 	$sql.= "p.ref LIKE '%".$db->escape(GETPOST('filtre'))."%' OR p.label LIKE '%".$db->escape(GETPOST('filtre'))."%'";
 	if (! empty($conf->barcode->enabled))
 	{
-		$filtre = GETPOST('filtre','alpha');
+		$filtre = GETPOST('filtre', 'alpha');
 
 		//If the barcode looks like an EAN13 format and the last digit is included in it,
 		//then whe look for the 12-digit too
@@ -74,7 +74,7 @@ if ( GETPOST('filtre','alpha') ) {
 
 		while ($i < $conf_taille_listes && $tab = $db->fetch_array($resql) )
 		{
-			foreach ( $tab as $cle => $valeur )
+			foreach ($tab as $cle => $valeur)
 			{
 				$ret[$i][$cle] = $valeur;
 			}
@@ -110,7 +110,7 @@ if ( GETPOST('filtre','alpha') ) {
 
 		while ($i < $conf_taille_listes && $tab = $db->fetch_array($resql))
 		{
-			foreach ( $tab as $cle => $valeur )
+			foreach ($tab as $cle => $valeur)
 			{
 				$ret[$i][$cle] = $valeur;
 			}
@@ -138,7 +138,7 @@ if ( $nbr_enreg > 1 )
 		$top_liste_produits = '----- '.$nbr_enreg.' '.$langs->transnoentitiesnoconv("CashDeskProducts").' '.$langs->trans("CashDeskOn").' '.$nbr_enreg.' -----';
 	}
 }
-else if ( $nbr_enreg == 1 )
+elseif ( $nbr_enreg == 1 )
 {
 	$top_liste_produits = '----- 1 '.$langs->transnoentitiesnoconv("ProductFound"). ' -----';
 }

@@ -1,7 +1,7 @@
 -- ===========================================================================
 -- Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
 -- Copyright (C) 2012      Cédric Salvador      <csalvador@gpcsolutions.fr>
 -- Copyright (C) 2014      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
@@ -26,7 +26,7 @@ create table llx_facture
 (
   rowid					integer AUTO_INCREMENT PRIMARY KEY,
 
-  facnumber				varchar(30)        NOT NULL,			-- invoice reference number
+  ref				varchar(30)        NOT NULL,			-- invoice reference number
   entity				integer  DEFAULT 1 NOT NULL,			-- multi company id
 
   ref_ext				varchar(255),							-- reference into an external system (not used by dolibarr)
@@ -87,6 +87,10 @@ create table llx_facture
   situation_cycle_ref smallint,  -- situation cycle reference
   situation_counter   smallint,  -- situation counter
   situation_final     smallint,  -- is the situation final ?
+
+  retained_warranty							real DEFAULT NULL,  -- % of retained warranty
+  retained_warranty_date_limit				date DEFAULT NULL,
+  retained_warranty_fk_cond_reglement		integer  DEFAULT NULL,			-- payment condition of retained warranty
 
   import_key			varchar(14),
   extraparams			varchar(255),							-- for other parameters with json format

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 $langs->load("users");
 
 // Security check
-$id = GETPOST('id','int');
+$id = GETPOST('id', 'int');
 $object = new User($db);
 if ($id > 0 || ! empty($ref))
 {
@@ -43,10 +43,7 @@ if ($id > 0 || ! empty($ref))
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-if ($user->id == $id)	// A user can always read its own card
-{
-	$feature2='';
-}
+
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 // If user is not user that read and no permission to read other users, we stop

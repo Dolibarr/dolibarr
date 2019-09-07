@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016 Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -269,18 +269,15 @@ class BankCateg // extends CommonObject
 	/**
 	 * Load an object from its id and create a new one in database
 	 *
-	 * @param  int $fromid Id of object to clone
-	 * @return int New id of clone
+	 * @param	User	$user		User making the clone
+	 * @param   int     $fromid     Id of object to clone
+	 * @return  int                 New id of clone
 	 */
-	public function createFromClone($fromid)
+	public function createFromClone(User $user, $fromid)
 	{
-		global $user;
-
 		$error = 0;
 
 		$object = new BankCateg($this->db);
-
-		$object->context['createfromclone'] = 'createfromclone';
 
 		$this->db->begin();
 
@@ -290,6 +287,7 @@ class BankCateg // extends CommonObject
 		$object->statut = 0;
 
 		// Create clone
+		$object->context['createfromclone'] = 'createfromclone';
 		$result = $object->create($user);
 
 		// Other options

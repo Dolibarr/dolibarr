@@ -31,9 +31,9 @@ require_once dirname(__FILE__).'/../../htdocs/contrat/class/contrat.class.php';
 
 if (empty($user->id))
 {
-	print "Load permissions for admin user nb 1\n";
-	$user->fetch(1);
-	$user->getrights();
+    print "Load permissions for admin user nb 1\n";
+    $user->fetch(1);
+    $user->getrights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
@@ -45,76 +45,76 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class ContratTest extends PHPUnit_Framework_TestCase
+class ContratTest extends PHPUnit\Framework\TestCase
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
+    protected $savconf;
+    protected $savuser;
+    protected $savlangs;
+    protected $savdb;
 
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return ContratTest
-	 */
-	function __construct()
-	{
-		parent::__construct();
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	// Static methods
-  	public static function setUpBeforeClass()
+    /**
+     * Constructor
+     * We save global variables into local variables
+     *
+     * @return ContratTest
+     */
+    public function __construct()
     {
-    	global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+        parent::__construct();
 
-    	print __METHOD__."\n";
+        //$this->sharedFixture
+        global $conf,$user,$langs,$db;
+        $this->savconf=$conf;
+        $this->savuser=$user;
+        $this->savlangs=$langs;
+        $this->savdb=$db;
+
+        print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+        //print " - db ".$db->db;
+        print "\n";
+    }
+
+    // Static methods
+    public static function setUpBeforeClass()
+    {
+        global $conf,$user,$langs,$db;
+        $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+
+        print __METHOD__."\n";
     }
 
     // tear down after class
     public static function tearDownAfterClass()
     {
-    	global $conf,$user,$langs,$db;
-		$db->rollback();
+        global $conf,$user,$langs,$db;
+        $db->rollback();
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * Init phpunit tests
+     *
+     * @return	void
+     */
     protected function setUp()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		print __METHOD__."\n";
+        print __METHOD__."\n";
     }
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * End phpunit tests
+     *
+     * @return	void
+     */
     protected function tearDown()
     {
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
 
     /**
@@ -124,20 +124,20 @@ class ContratTest extends PHPUnit_Framework_TestCase
      */
     public function testContratCreate()
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$localobject=new Contrat($this->savdb);
-    	$localobject->initAsSpecimen();
-    	$result=$localobject->create($user);
+        $localobject=new Contrat($this->savdb);
+        $localobject->initAsSpecimen();
+        $result=$localobject->create($user);
 
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
+        print __METHOD__." result=".$result."\n";
+        $this->assertLessThan($result, 0);
 
-    	return $result;
+        return $result;
     }
 
     /**
@@ -151,19 +151,19 @@ class ContratTest extends PHPUnit_Framework_TestCase
      */
     public function testContratFetch($id)
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$localobject=new Contrat($this->savdb);
-    	$result=$localobject->fetch($id);
+        $localobject=new Contrat($this->savdb);
+        $result=$localobject->fetch($id);
 
-    	print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
+        print __METHOD__." id=".$id." result=".$result."\n";
+        $this->assertLessThan($result, 0);
 
-    	return $localobject;
+        return $localobject;
     }
 
    /**
@@ -206,18 +206,18 @@ class ContratTest extends PHPUnit_Framework_TestCase
      */
     public function testContratDelete($id)
     {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
 
-		$localobject=new Contrat($this->savdb);
-    	$result=$localobject->fetch($id);
-		$result=$localobject->delete($user);
+        $localobject=new Contrat($this->savdb);
+        $result=$localobject->fetch($id);
+        $result=$localobject->delete($user);
 
-		print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
-    	return $result;
+        print __METHOD__." id=".$id." result=".$result."\n";
+        $this->assertLessThan($result, 0);
+        return $result;
     }
 }

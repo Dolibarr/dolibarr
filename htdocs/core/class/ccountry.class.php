@@ -47,8 +47,8 @@ class Ccountry // extends CommonObject
 	 */
 	public $errors = array();
 
-	//var $element='ccountry';			//!< Id that identify managed objects
-	//var $table_element='ccountry';	//!< Name of table without prefix where object is stored
+	public $element='ccountry';			//!< Id that identify managed objects
+	public $table_element='c_country';	//!< Name of table without prefix where object is stored
 
     /**
 	 * @var int ID
@@ -65,7 +65,9 @@ class Ccountry // extends CommonObject
 
 	public $active;
 
-
+	public $fields=array(
+		'label' => array('type'=>'varchar(250)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>15, 'notnull'=>-1, 'showoncombobox'=>'1')
+	);
 
 
     /**
@@ -73,7 +75,7 @@ class Ccountry // extends CommonObject
      *
      *  @param      DoliDb		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -86,7 +88,7 @@ class Ccountry // extends CommonObject
      *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return     int      		   	 <0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger=0)
+    public function create($user, $notrigger = 0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -165,7 +167,7 @@ class Ccountry // extends CommonObject
      *  @param		string	$code	Code
      *  @return     int          	>0 if OK, 0 if not found, <0 if KO
      */
-    function fetch($id,$code='')
+    public function fetch($id, $code = '')
     {
     	global $langs;
         $sql = "SELECT";
@@ -214,7 +216,7 @@ class Ccountry // extends CommonObject
      *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return     int     		   	 <0 if KO, >0 if OK
      */
-    function update($user=null, $notrigger=0)
+    public function update($user = null, $notrigger = 0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -285,7 +287,7 @@ class Ccountry // extends CommonObject
      *  @param	int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;

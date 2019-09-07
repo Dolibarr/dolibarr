@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012   Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2012   Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010        Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,7 +32,7 @@ class mod_ticket_simple extends ModeleNumRefTicket
 {
     /**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 

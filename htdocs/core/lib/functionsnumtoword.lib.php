@@ -27,24 +27,24 @@
  * Function to return number in text.
  *
  *
- * @param	float 	$num			Number to convert
- * @param	Lang	$langs			Language
- * @param	boolean	$currency		0=number to translate | 1=currency to translate
- * @param	boolean	$centimes		0=no centimes | 1=centimes to translate
- * @return 	string  				Text of the number
+ * @param	float       $num			Number to convert
+ * @param	Translate   $langs			Language
+ * @param	boolean     $currency		0=number to translate | 1=currency to translate
+ * @param	boolean     $centimes		0=no centimes | 1=centimes to translate
+ * @return 	string|false			    Text of the number
  */
-function dol_convertToWord($num, $langs, $currency=false, $centimes=false)
+function dol_convertToWord($num, $langs, $currency = false, $centimes = false)
 {
 	global $conf;
 
     $num = str_replace(array(',', ' '), '', trim($num));
-    if(! $num) {
+    if (! $num) {
         return false;
     }
-	if($centimes && strlen($num) == 1) {
+	if ($centimes && strlen($num) == 1) {
 		$num = $num*10;
 	}
-	$TNum = explode('.',$num);
+	$TNum = explode('.', $num);
     $num = (int) $TNum[0];
     $words = array();
     $list1 = array(
@@ -139,19 +139,19 @@ function dol_convertToWord($num, $langs, $currency=false, $centimes=false)
  * Function to return number or amount in text.
  *
  * @deprecated
- * @param	float 	$numero			Number to convert
- * @param	Lang	$langs			Language
- * @param	string	$numorcurrency	'number' or 'amount'
- * @return 	string  				Text of the number or -1 in case TOO LONG (more than 1000000000000.99)
+ * @param	float 	    $numero			Number to convert
+ * @param	Translate	$langs			Language
+ * @param	string	    $numorcurrency	'number' or 'amount'
+ * @return 	string  	       			Text of the number or -1 in case TOO LONG (more than 1000000000000.99)
  */
-function dolNumberToWord($numero, $langs, $numorcurrency='number')
+function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 {
 	// If the number is negative convert to positive and return -1 if is too long
 	if ($numero < 0) $numero *= -1;
 	if ($numero >= 1000000000001)
 		return -1;
 	// Get 2 decimals to cents, another functions round or truncate
-	$strnumber = number_format ($numero,10);
+	$strnumber = number_format($numero, 10);
 	$len=strlen($strnumber);
 	for ($i=0; $i<$len; $i++)
 	{
@@ -187,7 +187,7 @@ function dolNumberToWord($numero, $langs, $numorcurrency='number')
 				$numero = $numero - $DdMMillon * 10000000000;
 				$UdMMillon = (int) ($numero / 1000000000);
 				$numero = $numero - $UdMMillon * 1000000000;
-				$entexto .= hundreds2text ($CdMMillon, $DdMMillon, $UdMMillon);
+				$entexto .= hundreds2text($CdMMillon, $DdMMillon, $UdMMillon);
 				$entexto .= " MIL ";
 			}
 			if ($number >= 1000000){
@@ -197,7 +197,7 @@ function dolNumberToWord($numero, $langs, $numorcurrency='number')
 				$numero = $numero - $DdMILLON * 10000000;
 				$udMILLON = (int) ($numero / 1000000);
 				$numero = $numero - $udMILLON * 1000000;
-				$entexto .= hundreds2text ($CdMILLON, $DdMILLON, $udMILLON);
+				$entexto .= hundreds2text($CdMILLON, $DdMILLON, $udMILLON);
 				if (!$CdMMillon && !$DdMMillon && !$UdMMillon && !$CdMILLON && !$DdMILLON && $udMILLON==1)
 					$entexto .= " MILL&OacuteN ";
 				else
@@ -210,7 +210,7 @@ function dolNumberToWord($numero, $langs, $numorcurrency='number')
 				$numero = $numero - $ddm * 10000;
 				$udm = (int) ($numero / 1000);
 				$numero = $numero - $udm * 1000;
-				$entexto .= hundreds2text ($cdm, $ddm, $udm);
+				$entexto .= hundreds2text($cdm, $ddm, $udm);
 				if ($cdm || $ddm || $udm)
 					$entexto .= " MIL ";
 			}
@@ -218,7 +218,7 @@ function dolNumberToWord($numero, $langs, $numorcurrency='number')
 			$numero = $numero - $c * 100;
 			$d = (int) ($numero / 10);
 			$u = (int) $numero - $d * 10;
-			$entexto .= hundreds2text ($c, $d, $u);
+			$entexto .= hundreds2text($c, $d, $u);
 			if (!$cdm && !$ddm && !$udm && !$c && !$d && !$u && $number>1000000)
 				$entexto .= " DE";
 			$entexto .= " PESOS ".$parte_decimal." / 100 M.N.";

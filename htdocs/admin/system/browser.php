@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ $form=new Form($db);
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("InfoBrowser"),'','title_setup');
+print load_fiche_titre($langs->trans("InfoBrowser"), '', 'title_setup');
 
 $tmp=getBrowserInfo($_SERVER["HTTP_USER_AGENT"]);
 

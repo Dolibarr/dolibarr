@@ -35,29 +35,29 @@ class PriceGlobalVariableUpdater
     public $db;
 
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+     * @var string Error code (or message)
+     */
+    public $error='';
 
     /**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
 
     public $types=array(0, 1);				//!< Updater types
     public $update_min = 5;				//!< Minimal update rate
 
     /**
-	 * @var int ID
-	 */
-	public $id;
+     * @var int ID
+     */
+    public $id;
 
     public $type;
 
     /**
-	 * @var string description
-	 */
-	public $description;
+     * @var string description
+     */
+    public $description;
 
     public $parameters;
 
@@ -71,16 +71,16 @@ class PriceGlobalVariableUpdater
     public $last_status;
 
     /**
-	 * @var string Name of table without prefix where object is stored
-	 */
-	public $table_element = "c_price_global_variable_updater";
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element = "c_price_global_variable_updater";
 
     /**
      *  Constructor
      *
      *  @param  DoliDb      $db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -93,7 +93,7 @@ class PriceGlobalVariableUpdater
      *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return int      		   	 <0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger=0)
+    public function create($user, $notrigger = 0)
     {
         $error=0;
 
@@ -159,7 +159,7 @@ class PriceGlobalVariableUpdater
      *  @param		int		$id    	Id object
      *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 if OK
      */
-    function fetch($id)
+    public function fetch($id)
     {
         $sql = "SELECT type, description, parameters, fk_variable, update_interval, next_update, last_status";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
@@ -202,7 +202,7 @@ class PriceGlobalVariableUpdater
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update($user=0, $notrigger=0)
+    public function update($user = 0, $notrigger = 0)
     {
         $error=0;
 
@@ -225,19 +225,19 @@ class PriceGlobalVariableUpdater
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-        if (! $error)
-        {
-            if (! $notrigger)
-            {
-                // Uncomment this and change MYOBJECT to your own tag if you
-                // want this action calls a trigger.
+        // if (! $error)
+        // {
+        //     if (! $notrigger)
+        //     {
+        //         // Uncomment this and change MYOBJECT to your own tag if you
+        //         // want this action calls a trigger.
 
-                //// Call triggers
-                //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-                //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-                //// End call triggers
-             }
-        }
+        //         //// Call triggers
+        //         //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+        //         //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+        //         //// End call triggers
+        //     }
+        // }
 
         // Commit or rollback
         if ($error)
@@ -265,16 +265,16 @@ class PriceGlobalVariableUpdater
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return	int					 <0 if KO, >0 if OK
      */
-    function delete($rowid, $user, $notrigger=0)
+    public function delete($rowid, $user, $notrigger = 0)
     {
         $error=0;
 
         $this->db->begin();
 
-        if (! $error)
-        {
-            if (! $notrigger)
-            {
+        //if (! $error)
+        //{
+        //    if (! $notrigger)
+        //    {
                 // Uncomment this and change MYOBJECT to your own tag if you
                 // want this action calls a trigger.
 
@@ -282,8 +282,8 @@ class PriceGlobalVariableUpdater
                 //$result=$this->call_trigger('MYOBJECT_DELETE',$user);
                 //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
                 //// End call triggers
-            }
-        }
+        //    }
+        //}
 
         if (! $error)
         {
@@ -319,7 +319,7 @@ class PriceGlobalVariableUpdater
      *
      *	@return	void
      */
-    function initAsSpecimen()
+    public function initAsSpecimen()
     {
         $this->id=0;
         $this->type=0;
@@ -332,11 +332,11 @@ class PriceGlobalVariableUpdater
     }
 
     /**
-     *	Returns the last updated time in string html format, returns "never" if its less than 1
+     *  Returns the last updated time in string html format, returns "never" if its less than 1
      *
-     *	@return	string
+     *  @return	string
      */
-    function getLastUpdated()
+    public function getLastUpdated()
     {
         global $langs;
         $last = $this->next_update - ($this->update_interval * 60);
@@ -352,7 +352,7 @@ class PriceGlobalVariableUpdater
      *
      *	@return	void
      */
-    function checkParameters()
+    public function checkParameters()
     {
         // Clean parameters
         if (isset($this->description)) $this->description=trim($this->description);
@@ -371,7 +371,7 @@ class PriceGlobalVariableUpdater
      *
      *  @return	array				Array of price global variable updaters
      */
-    function listUpdaters()
+    public function listUpdaters()
     {
         $sql = "SELECT rowid, type, description, parameters, fk_variable, update_interval, next_update, last_status";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
@@ -412,7 +412,7 @@ class PriceGlobalVariableUpdater
      *
      *  @return	array				Array of price global variable updaters
      */
-    function listPendingUpdaters()
+    public function listPendingUpdaters()
     {
         $sql = "SELECT rowid, type, description, parameters, fk_variable, update_interval, next_update, last_status";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
@@ -450,11 +450,11 @@ class PriceGlobalVariableUpdater
     }
 
     /**
-     *	Handles the processing of this updater
+     *  Handles the processing of this updater
      *
      *  @return	int					 <0 if KO, 0 if OK but no global variable found, >0 if OK
      */
-    function process()
+    public function process()
     {
         global $langs, $user;
         $langs->load("errors");
@@ -534,7 +534,7 @@ class PriceGlobalVariableUpdater
                 $soap_client = new nusoap_client($url);
                 $soap_client->soap_defencoding='UTF-8';
                 $soap_client->decodeUTF8(false);
-                $result = $soap_client->call($method, $data, $ns,'');
+                $result = $soap_client->call($method, $data, $ns, '');
 
                 //Check if result is a error
                 if ($result === false) {
@@ -560,7 +560,7 @@ class PriceGlobalVariableUpdater
         return 1;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Update next_update into database
      *
@@ -569,7 +569,7 @@ class PriceGlobalVariableUpdater
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update_next_update($next_update, $user=0, $notrigger=0)
+    public function update_next_update($next_update, $user = 0, $notrigger = 0)
     {
         // phpcs:enable
         $error=0;
@@ -606,7 +606,7 @@ class PriceGlobalVariableUpdater
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Update last_status into database
      *
@@ -615,7 +615,7 @@ class PriceGlobalVariableUpdater
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update_status($last_status, $user=0, $notrigger=0)
+    public function update_status($last_status, $user = 0, $notrigger = 0)
     {
         // phpcs:enable
         $error=0;

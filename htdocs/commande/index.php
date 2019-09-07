@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,11 +32,16 @@ require_once DOL_DOCUMENT_ROOT .'/commande/class/commande.class.php';
 
 if (!$user->rights->commande->lire) accessforbidden();
 
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('ordersindex'));
+
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'bills'));
 
 // Security check
-$socid=GETPOST('socid','int');
+$socid=GETPOST('socid', 'int');
 if ($user->societe_id > 0)
 {
 	$action = '';
@@ -54,7 +60,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
 
-llxHeader("",$langs->trans("Orders"),$help_url);
+llxHeader("", $langs->trans("Orders"), $help_url);
 
 print load_fiche_titre($langs->trans("OrdersArea"));
 
@@ -121,7 +127,7 @@ if ($resql)
     $listofstatus=array(0,1,2,3,-1);
     foreach ($listofstatus as $status)
     {
-    	$dataseries[]=array($commandestatic->LibStatut($status,$bool,1), (isset($vals[$status.$bool])?(int) $vals[$status.$bool]:0));
+    	$dataseries[]=array($commandestatic->LibStatut($status, $bool, 1), (isset($vals[$status.$bool])?(int) $vals[$status.$bool]:0));
     }
     if ($conf->use_javascript_ajax)
     {
@@ -144,16 +150,16 @@ if ($resql)
 	    foreach ($listofstatus as $status)
 	    {
         	print '<tr class="oddeven">';
-            print '<td>'.$commandestatic->LibStatut($status,$bool,0).'</td>';
-            print '<td align="right"><a href="list.php?viewstatut='.$status.'">'.(isset($vals[$status.$bool])?$vals[$status.$bool]:0).' ';
-            print $commandestatic->LibStatut($status,$bool,3);
+            print '<td>'.$commandestatic->LibStatut($status, $bool, 0).'</td>';
+            print '<td class="right"><a href="list.php?viewstatut='.$status.'">'.(isset($vals[$status.$bool])?$vals[$status.$bool]:0).' ';
+            print $commandestatic->LibStatut($status, $bool, 3);
             print '</a>';
             print '</td>';
             print "</tr>\n";
         }
     }
     //if ($totalinprocess != $total)
-    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.$total.'</td></tr>';
+    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
     print "</table><br>";
 }
 else
@@ -211,7 +217,7 @@ if (! empty($conf->commande->enabled))
 				print $commandestatic->getNomUrl(1);
                 print "</td>";
                 print '<td class="nowrap">';
-				print $companystatic->getNomUrl(1,'company',16);
+				print $companystatic->getNomUrl(1, 'company', 16);
                 print '</td></tr>';
 				$i++;
 			}
@@ -235,7 +241,7 @@ $max=5;
  * Last modified orders
  */
 
-$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, c.date_cloture as datec, c.tms as datem,";
+$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, c.facture, c.date_cloture as datec, c.tms as datem,";
 $sql.= " s.nom as name, s.rowid as socid";
 $sql.= ", s.client";
 $sql.= ", s.code_client";
@@ -256,7 +262,7 @@ if ($resql)
 {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="4">'.$langs->trans("LastModifiedOrders",$max).'</th></tr>';
+	print '<th colspan="4">'.$langs->trans("LastModifiedOrders", $max).'</th></tr>';
 
 	$num = $db->num_rows($resql);
 	if ($num)
@@ -289,9 +295,9 @@ if ($resql)
 			print '&nbsp;';
 			print '</td>';
 
-			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+			print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 			$filename=dol_sanitizeFileName($obj->ref);
-			$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+			$filedir=$conf->commande->multidir_output[$obj->entity] . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 			print $formfile->getDocumentsLink($commandestatic->element, $filename, $filedir);
 			print '</td></tr></table>';
@@ -299,10 +305,10 @@ if ($resql)
 			print '</td>';
 
 			print '<td class="nowrap">';
-            print $companystatic->getNomUrl(1,'company',16);
+            print $companystatic->getNomUrl(1, 'company', 16);
             print '</td>';
-			print '<td>'.dol_print_date($db->jdate($obj->datem),'day').'</td>';
-			print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
+			print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
+			print '<td class="right">'.$commandestatic->LibStatut($obj->fk_statut, $obj->facture, 5).'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -317,7 +323,7 @@ else dol_print_error($db);
  */
 if (! empty($conf->commande->enabled))
 {
-	$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom as name, s.rowid as socid";
+	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, c.facture, s.nom as name, s.rowid as socid";
     $sql.= ", s.client";
     $sql.= ", s.code_client";
     $sql.= ", s.canvas";
@@ -369,9 +375,9 @@ if (! empty($conf->commande->enabled))
 				print '&nbsp;';
 				print '</td>';
 
-				print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+				print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 				$filename=dol_sanitizeFileName($obj->ref);
-				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+				$filedir=$conf->commande->multidir_output[$obj->entity] . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 				print $formfile->getDocumentsLink($commandestatic->element, $filename, $filedir);
 				print '</td></tr></table>';
@@ -379,10 +385,10 @@ if (! empty($conf->commande->enabled))
 				print '</td>';
 
 				print '<td class="nowrap">';
-                print $companystatic->getNomUrl(1,'company',24);
+                print $companystatic->getNomUrl(1, 'company', 24);
                 print '</td>';
 
-				print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
+				print '<td class="right">'.$commandestatic->LibStatut($obj->fk_statut, $obj->facture, 5).'</td>';
 
 				print '</tr>';
 				$i++;
@@ -399,7 +405,7 @@ if (! empty($conf->commande->enabled))
  */
 if (! empty($conf->commande->enabled))
 {
-	$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom as name, s.rowid as socid";
+	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, c.facture, s.nom as name, s.rowid as socid";
     $sql.= ", s.client";
     $sql.= ", s.code_client";
     $sql.= ", s.canvas";
@@ -451,9 +457,9 @@ if (! empty($conf->commande->enabled))
 				print '&nbsp;';
 				print '</td>';
 
-				print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+				print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 				$filename=dol_sanitizeFileName($obj->ref);
-				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+				$filedir=$conf->commande->multidir_output[$obj->entity] . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 				print $formfile->getDocumentsLink($commandestatic->element, $filename, $filedir);
 				print '</td></tr></table>';
@@ -461,10 +467,10 @@ if (! empty($conf->commande->enabled))
 				print '</td>';
 
 				print '<td>';
-				print $companystatic->getNomUrl(1,'company');
+				print $companystatic->getNomUrl(1, 'company');
 				print '</td>';
 
-				print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
+				print '<td class="right">'.$commandestatic->LibStatut($obj->fk_statut, $obj->facture, 5).'</td>';
 
 				print '</tr>';
 				$i++;
@@ -478,6 +484,8 @@ if (! empty($conf->commande->enabled))
 
 print '</div></div></div>';
 
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardOrders', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

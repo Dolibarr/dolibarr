@@ -21,7 +21,7 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
+if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK", '1');
 
 require "../master.inc.php";
 require_once NUSOAP_PATH.'/nusoap.php';		// Include SOAP
@@ -36,7 +36,7 @@ if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
-	print $langs->trans("WarningModuleNotActive",'WebServices').'.<br><br>';
+	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
 	print $langs->trans("ToActivateModule");
 	exit;
 }
@@ -46,7 +46,7 @@ $server = new nusoap_server();
 $server->soap_defencoding='UTF-8';
 $server->decode_utf8=false;
 $ns='http://www.dolibarr.org/ns/';
-$server->configureWSDL('WebServicesDolibarrCategorie',$ns);
+$server->configureWSDL('WebServicesDolibarrCategorie', $ns);
 $server->wsdl->schemaTargetNamespace=$ns;
 
 
@@ -186,9 +186,11 @@ $server->register(
  * @param	int			$id					Id of object
  * @return	mixed
  */
-function getCategory($authentication,$id)
+function getCategory($authentication, $id)
 {
 	global $db,$conf,$langs;
+
+	$nbmax = 10;
 
 	dol_syslog("Function: getCategory login=".$authentication['login']." id=".$id);
 
@@ -197,7 +199,7 @@ function getCategory($authentication,$id)
 	$objectresp=array();
 	$errorcode='';$errorlabel='';
 	$error=0;
-	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
 
 	if (! $error && !$id)
 	{
@@ -209,6 +211,7 @@ function getCategory($authentication,$id)
 	{
 		$fuser->getrights();
 
+		$nbmax = 10;
 		if ($fuser->rights->categorie->lire)
 		{
 			$categorie=new Categorie($db);
@@ -216,7 +219,7 @@ function getCategory($authentication,$id)
 			if ($result > 0)
 			{
 					$dir = (!empty($conf->categorie->dir_output)?$conf->categorie->dir_output:$conf->service->dir_output);
-					$pdir = get_exdir($categorie->id,2,0,0,$categorie,'category') . $categorie->id ."/photos/";
+					$pdir = get_exdir($categorie->id, 2, 0, 0, $categorie, 'category') . $categorie->id ."/photos/";
 					$dir = $dir . '/'. $pdir;
 
 					$cat = array(
@@ -228,7 +231,7 @@ function getCategory($authentication,$id)
 						//'visible'=>$categorie->visible,
 						'type' => $categorie->type,
 						'dir' => $pdir,
-						'photos' => $categorie->liste_photos($dir,$nbmax=10)
+						'photos' => $categorie->liste_photos($dir, $nbmax)
 			    	);
 
 					$cats = $categorie->get_filles();
@@ -237,7 +240,7 @@ function getCategory($authentication,$id)
 					 	foreach($cats as $fille)
 						{
 							$dir = (!empty($conf->categorie->dir_output)?$conf->categorie->dir_output:$conf->service->dir_output);
-							$pdir = get_exdir($fille->id,2,0,0,$categorie,'category') . $fille->id ."/photos/";
+							$pdir = get_exdir($fille->id, 2, 0, 0, $categorie, 'category') . $fille->id ."/photos/";
 							$dir = $dir . '/'. $pdir;
 							$cat['filles'][] = array(
 								'id'=>$fille->id,
@@ -248,7 +251,7 @@ function getCategory($authentication,$id)
 								//'visible'=>$fille->visible,
 								'type'=>$fille->type,
 								'dir' => $pdir,
-								'photos' => $fille->liste_photos($dir,$nbmax=10)
+								'photos' => $fille->liste_photos($dir, $nbmax)
 							);
 						}
 					}

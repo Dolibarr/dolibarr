@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015-2018  Alexandre Spangaro	<aspangaro@zendsi.com>
+/* Copyright (C) 2015-2018  Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2016       Charlie Benke		<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,9 +35,8 @@ $endaccountingperiod = dol_print_date(dol_now(), '%Y%m%d');
 header('Content-Type: text/csv');
 
 
-if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == "11") // Specific filename for FEC model export
+if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == "11" && $type_export == "general_ledger") // Specific filename for FEC model export into the general ledger
 {
-
 	// FEC format is defined here: https://www.legifrance.gouv.fr/affichCodeArticle.do?idArticle=LEGIARTI000027804775&cidTexte=LEGITEXT000006069583&dateTexte=20130802&oldAction=rechCodeArticle
 	if (empty($search_date_end))
 	{

@@ -46,7 +46,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class FactureRecTest extends PHPUnit_Framework_TestCase
+class FactureRecTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -59,7 +59,7 @@ class FactureRecTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return FactureTest
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -75,10 +75,10 @@ class FactureRecTest extends PHPUnit_Framework_TestCase
 		print "\n";
 	}
 
-	// Static methods
-  	public static function setUpBeforeClass()
+    // Static methods
+    public static function setUpBeforeClass()
     {
-    	global $conf,$user,$langs,$db;
+        global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
     	print __METHOD__."\n";
@@ -114,7 +114,7 @@ class FactureRecTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+    protected function tearDown()
     {
     	print __METHOD__."\n";
     }
@@ -171,7 +171,7 @@ class FactureRecTest extends PHPUnit_Framework_TestCase
      * @param	array		$fieldstoignorearray	Array of fields to ignore in diff
 	 * @return	array								Array with differences
      */
-    public function objCompare($oA,$oB,$ignoretype=true,$fieldstoignorearray=array('id'))
+    public function objCompare($oA, $oB, $ignoretype = true, $fieldstoignorearray = array('id'))
     {
         $retAr=array();
 
@@ -186,7 +186,7 @@ class FactureRecTest extends PHPUnit_Framework_TestCase
             $aKeys=array_keys($oVarsA);
             foreach($aKeys as $sKey)
             {
-                if (in_array($sKey,$fieldstoignorearray)) continue;
+                if (in_array($sKey, $fieldstoignorearray)) continue;
                 if (! $ignoretype && $oVarsA[$sKey] !== $oVarsB[$sKey])
                 {
                     $retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey])?get_class($oVarsA[$sKey]):$oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey])?get_class($oVarsB[$sKey]):$oVarsB[$sKey]);

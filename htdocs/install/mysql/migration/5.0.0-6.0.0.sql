@@ -317,6 +317,7 @@ ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN multicurrency_amount double
 
 
 ALTER TABLE llx_paiementfourn ADD COLUMN model_pdf varchar(255);
+ALTER TABLE llx_paiementfourn ADD COLUMN fk_user_modif integer AFTER fk_user_author;
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_CREATE','Expense report created','Executed when an expense report is created','expensereport',201);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_REPORT_VALIDATE','Expense report validated','Executed when an expense report is validated','expensereport',202);

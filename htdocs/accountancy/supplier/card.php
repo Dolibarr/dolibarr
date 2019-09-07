@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004       Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2005       Simon TOSSER          <simon@kornog-computing.com>
- * Copyright (C) 2013-2017  Alexandre Spangaro    <aspangaro@zendsi.com>
+ * Copyright (C) 2013-2017  Alexandre Spangaro    <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2014  Olivier Geffroy       <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014  Florian Henry         <florian.henry@open-concept.pro>
  * Copyright (C) 2014       Juanjo Menent         <jmenent@2byte.es>
@@ -23,7 +23,7 @@
  */
 /**
  * \file 	htdocs/accountancy/supplier/card.php
- * \ingroup Advanced accountancy
+ * \ingroup Accountancy (Double entries)
  * \brief 	Card supplier ventilation
  */
 require '../../main.inc.php';
@@ -96,7 +96,7 @@ $facturefournisseur_static = new FactureFournisseur($db);
 $formaccounting = new FormAccounting($db);
 
 if (! empty($id)) {
-	$sql = "SELECT f.ref as facnumber, f.rowid as facid, l.fk_product, l.description, l.rowid, l.fk_code_ventilation, ";
+	$sql = "SELECT f.ref as ref, f.rowid as facid, l.fk_product, l.description, l.rowid, l.fk_code_ventilation, ";
 	$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label";
 	$sql .= ", aa.account_number, aa.label";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn_det as l";
@@ -129,7 +129,7 @@ if (! empty($id)) {
 
 			// ref invoice
 			print '<tr><td>' . $langs->trans("BillsSuppliers") . '</td>';
-			$facturefournisseur_static->ref = $objp->facnumber;
+			$facturefournisseur_static->ref = $objp->ref;
 			$facturefournisseur_static->id = $objp->facid;
 			print '<td>' . $facturefournisseur_static->getNomUrl(1) . '</td>';
 			print '</tr>';

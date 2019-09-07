@@ -102,7 +102,7 @@ class ExpenseReportIk extends CoreObject
 	 * @param	int		$mode	1=only active; 2=only inactive; other value return all
 	 * @return	array of category
 	 */
-	public static function getTaxCategories($mode=1)
+	public static function getTaxCategories($mode = 1)
 	{
 		global $db;
 
@@ -155,7 +155,7 @@ class ExpenseReportIk extends CoreObject
 	 * @param int	$active				active
 	 * @return array
 	 */
-	public static function getRangesByCategory($fk_c_exp_tax_cat, $active=1)
+	public static function getRangesByCategory($fk_c_exp_tax_cat, $active = 1)
 	{
 		global $db;
 
@@ -237,7 +237,7 @@ class ExpenseReportIk extends CoreObject
 	 * @param int $default_c_exp_tax_cat id
 	 * @return int
 	 */
-	public static function getMaxRangeNumber($default_c_exp_tax_cat=0)
+	public static function getMaxRangeNumber($default_c_exp_tax_cat = 0)
 	{
 		global $db,$conf;
 

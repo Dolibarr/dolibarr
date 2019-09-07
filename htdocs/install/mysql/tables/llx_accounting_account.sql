@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2004-2006  Laurent Destailleur <eldy@users.sourceforge.net>
 -- Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
--- Copyright (C) 2016       Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+-- Copyright (C) 2016       Alexandre Spangaro  <aspangaro@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 create table llx_accounting_account
 (
-  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  rowid                     bigint AUTO_INCREMENT PRIMARY KEY,
   entity                    integer DEFAULT 1 NOT NULL,
   datec                     datetime,
   tms                       timestamp,

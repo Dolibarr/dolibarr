@@ -40,7 +40,7 @@ class modReceiptPrinter extends DolibarrModules
      *
      *  @param      DoliDB      $db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db ;
         $this->numero = 67000;
@@ -49,7 +49,7 @@ class modReceiptPrinter extends DolibarrModules
         $this->family = "interface";
         $this->module_position = '53';
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
         // Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
         $this->description = "ReceiptPrinterDesc";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
@@ -130,15 +130,15 @@ class modReceiptPrinter extends DolibarrModules
      *      @param      string  $options    Options when enabling module ('', 'noboxes')
      *      @return     int                 1 if OK, 0 if KO
      */
-    function init($options='')
+    public function init($options = '')
     {
         global $conf;
         // Clean before activation
         $this->remove($options);
         $sql = array(
-            "CREATE TABLE IF NOT EXISTS llx_printer_receipt (rowid integer AUTO_INCREMENT PRIMARY KEY, name varchar(128), fk_type integer, fk_profile integer, parameter varchar(128), entity integer) ENGINE=innodb;",
-            "CREATE TABLE IF NOT EXISTS llx_printer_receipt_template (rowid integer AUTO_INCREMENT PRIMARY KEY, name varchar(128), template text, entity integer) ENGINE=innodb;",
+            "CREATE TABLE IF NOT EXISTS ".MAIN_DB_PREFIX."printer_receipt (rowid integer AUTO_INCREMENT PRIMARY KEY, name varchar(128), fk_type integer, fk_profile integer, parameter varchar(128), entity integer) ENGINE=innodb;",
+            "CREATE TABLE IF NOT EXISTS ".MAIN_DB_PREFIX."printer_receipt_template (rowid integer AUTO_INCREMENT PRIMARY KEY, name varchar(128), template text, entity integer) ENGINE=innodb;",
             );
-        return $this->_init($sql,$options);
+        return $this->_init($sql, $options);
     }
 }

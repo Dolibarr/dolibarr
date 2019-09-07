@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2009-2010 Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2009-2010 Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2013 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ print top_htmlhead('', $titleofpage);
 $colorbackhmenu1='60,70,100';      // topmenu
 if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1=$colorbackhmenu1;
 $colorbackhmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1)   :(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
-$colorbackhmenu1=join(',',colorStringToArray($colorbackhmenu1));    // Normalize value to 'x,y,z'
+$colorbackhmenu1=join(',', colorStringToArray($colorbackhmenu1));    // Normalize value to 'x,y,z'
 
 ?>
 <!-- BEGIN PHP TEMPLATE PASSWORDFORGOTTEN.TPL.PHP -->
@@ -101,7 +101,7 @@ if ($disablenofollow) echo '</a>';
 
 <!-- Login -->
 <div class="trinputlogin">
-<div class="tagtd nowrap center valignmiddle tdinputlogin">
+<div class="tagtd nowraponall center valignmiddle tdinputlogin">
 <!-- <span class="span-icon-user">-->
 <span class="fa fa-user">
 </span>
@@ -129,13 +129,13 @@ if (! empty($morelogincontent)) {
 
 <?php if ($captcha) {
 		// Add a variable param to force not using cache (jmobile)
-		$php_self = preg_replace('/[&\?]time=(\d+)/','',$php_self);	// Remove param time
-		if (preg_match('/\?/',$php_self)) $php_self.='&time='.dol_print_date(dol_now(),'dayhourlog');
-		else $php_self.='?time='.dol_print_date(dol_now(),'dayhourlog');
+		$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self);	// Remove param time
+		if (preg_match('/\?/', $php_self)) $php_self.='&time='.dol_print_date(dol_now(), 'dayhourlog');
+		else $php_self.='?time='.dol_print_date(dol_now(), 'dayhourlog');
 	?>
 	<!-- Captcha -->
 	<div class="trinputlogin">
-	<div class="tdinputlogin nowrap none center valignmiddle tdinputlogin">
+	<div class="tdinputlogin nowraponall none center valignmiddle tdinputlogin">
 
 	<table class="login_table_securitycode centpercent">
 	<tr class="valignmiddle">
@@ -165,13 +165,13 @@ if (! empty($morelogincontent)) {
 <br><input type="submit" <?php echo $disabled; ?> class="button" name="button_password" value="<?php echo $langs->trans('SendNewPassword'); ?>" tabindex="4" />
 
 <br>
-<div align="center" style="margin-top: 15px;">
+<div class="center" style="margin-top: 15px;">
 	<?php
 	$moreparam='';
-	if (! empty($conf->dol_hide_topmenu))   $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_hide_topmenu='.$conf->dol_hide_topmenu;
-	if (! empty($conf->dol_hide_leftmenu))  $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_hide_leftmenu='.$conf->dol_hide_leftmenu;
-	if (! empty($conf->dol_no_mouse_hover)) $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_no_mouse_hover='.$conf->dol_no_mouse_hover;
-	if (! empty($conf->dol_use_jmobile))    $moreparam.=(strpos($moreparam,'?')===false?'?':'&').'dol_use_jmobile='.$conf->dol_use_jmobile;
+	if (! empty($conf->dol_hide_topmenu))   $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_hide_topmenu='.$conf->dol_hide_topmenu;
+	if (! empty($conf->dol_hide_leftmenu))  $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_hide_leftmenu='.$conf->dol_hide_leftmenu;
+	if (! empty($conf->dol_no_mouse_hover)) $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_no_mouse_hover='.$conf->dol_no_mouse_hover;
+	if (! empty($conf->dol_use_jmobile))    $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_use_jmobile='.$conf->dol_use_jmobile;
 
 	print '<a class="alogin" href="'.$dol_url_root.'/index.php'.$moreparam.'">'.$langs->trans('BackToLoginPage').'</a>';
 	?>
@@ -201,7 +201,7 @@ if (! empty($morelogincontent)) {
 
 <?php if ($message) { ?>
 	<div class="center login_main_message">
-	<?php echo dol_htmloutput_mesg($message,'','',1); ?>
+	<?php echo dol_htmloutput_mesg($message, '', '', 1); ?>
 	</div>
 <?php } ?>
 
@@ -214,7 +214,7 @@ if (! empty($morelogincontent)) {
 		}
 	}
 }
-else if (! empty($moreloginextracontent)) {
+elseif (! empty($moreloginextracontent)) {
 	echo '<!-- Javascript by hook -->';
 	echo $moreloginextracontent;
 }

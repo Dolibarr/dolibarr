@@ -19,18 +19,18 @@
 /**
  *  \file       htdocs/core/modules/expensereport/mod_expensereport_jade.php
  *  \ingroup    expensereport
- *  \brief      File of class to manage customer order numbering rules Jade
+ *  \brief      File of class to manage expensereport numbering rules Jade
  */
 require_once DOL_DOCUMENT_ROOT .'/core/modules/expensereport/modules_expensereport.php';
 
 /**
- *	Class to manage customer order numbering rules Jade
+ *	Class to manage expensereport numbering rules Jade
  */
 class mod_expensereport_jade extends ModeleNumRefExpenseReport
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
@@ -44,7 +44,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Jade';
 
@@ -55,35 +55,35 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 
 
     /**
-     *  Return description of numbering module
+     *  Return description of numbering model
      *
      *  @return     string      Text with description
      */
-    function info()
+    public function info()
     {
-    	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
+        global $langs;
+        return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
     }
 
 
 	/**
-	 *  Renvoi un exemple de numerotation
+	 *  Returns an example of numbering
 	 *
 	 *  @return     string      Example
 	 */
-	function getExample()
+    public function getExample()
 	{
 		return $this->prefix."0501-0001";
 	}
 
 
 	/**
-	 *  Test si les numeros deje en vigueur dans la base ne provoquent pas de
-	 *  de conflits qui empechera cette numerotation de fonctionner.
+	 *  Test whether the numbers already in force in the base do not cause conflicts
+	 *  that would prevent this numbering from working.
 	 *
 	 *  @return     boolean     false si conflit, true si ok
 	 */
-	function canBeActivated()
+    public function canBeActivated()
 	{
 		global $conf,$langs,$db;
 
@@ -99,9 +99,9 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 		if ($resql)
 		{
 			$row = $db->fetch_row($resql);
-			if ($row) { $coyymm = substr($row[0],0,6); $max=$row[0]; }
+			if ($row) { $coyymm = substr($row[0], 0, 6); $max=$row[0]; }
 		}
-		if ($coyymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$coyymm))
+		if ($coyymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm))
 		{
 			$langs->load("errors");
 			$this->error=$langs->trans('ErrorNumRefModel', $max);
@@ -117,7 +117,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-	function getNextValue($object)
+    public function getNextValue($object)
 	{
 		global $db,$conf;
 
@@ -154,13 +154,12 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 			endif;
 
 			$ref_number_int = ($newref+1)-1;
-			$update_number_int = true;
 
 			$user_author_infos = dolGetFirstLastname($fuser->firstname, $fuser->lastname);
 
 			$prefix="ER";
 			if (! empty($conf->global->EXPENSE_REPORT_PREFIX)) $prefix=$conf->global->EXPENSE_REPORT_PREFIX;
-			$newref = str_replace(' ','_', $user_author_infos).$expld_car.$prefix.$newref.$expld_car.dol_print_date($object->date_debut,'%y%m%d');
+			$newref = str_replace(' ', '_', $user_author_infos).$expld_car.$prefix.$newref.$expld_car.dol_print_date($object->date_debut, '%y%m%d');
 
 			$sqlbis = 'UPDATE '.MAIN_DB_PREFIX.'expensereport SET ref_number_int = '.$ref_number_int.' WHERE rowid = '.$object->id;
 			$resqlbis = $db->query($sqlbis);
@@ -174,7 +173,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 			return $newref;
 		}
 
-		// D'abord on recupere la valeur max
+		// First we get the max value
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport";
@@ -201,10 +200,10 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 			return 0;
 		}
 
-		$yymm = strftime("%y%m",$date);
+		$yymm = strftime("%y%m", $date);
 
     	if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
-    	else $num = sprintf("%04s",$max+1);
+    	else $num = sprintf("%04s", $max+1);
 
 		dol_syslog("mod_expensereport_jade::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;

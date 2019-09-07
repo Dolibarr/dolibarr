@@ -36,14 +36,15 @@ class modDynamicPrices extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
         $this->numero = 2200;
 
         $this->family = "products";
+        $this->module_position = '85';
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
         $this->description = "Enable the usage of math expressions for prices";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
         $this->version = 'experimental';

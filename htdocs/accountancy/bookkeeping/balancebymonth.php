@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2013-2014 Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2014      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
@@ -21,7 +21,7 @@
 
 /**
  * \file		htdocs/accountancy/bookkeeping/balancebymonth.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief		Balance by month
  */
 require '../../main.inc.php';
@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 $langs->loadLangs(array("bills","compta","accountancy","other"));
 
 // Filter
-$year = GETPOST("year",'int');
+$year = GETPOST("year", 'int');
 if ($year == 0) {
 	$year_current = strftime("%Y", time());
 	$year_start = $year_current;
@@ -73,19 +73,11 @@ $y = $year_current;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width=150>' . $langs->trans("Label") . '</td>';
-print '<td align="center">' . $langs->trans("JanuaryMin") . '</td>';
-print '<td align="center">' . $langs->trans("FebruaryMin") . '</td>';
-print '<td align="center">' . $langs->trans("MarchMin") . '</td>';
-print '<td align="center">' . $langs->trans("AprilMin") . '</td>';
-print '<td align="center">' . $langs->trans("MayMin") . '</td>';
-print '<td align="center">' . $langs->trans("JuneMin") . '</td>';
-print '<td align="center">' . $langs->trans("JulyMin") . '</td>';
-print '<td align="center">' . $langs->trans("AugustMin") . '</td>';
-print '<td align="center">' . $langs->trans("SeptemberMin") . '</td>';
-print '<td align="center">' . $langs->trans("OctoberMin") . '</td>';
-print '<td align="center">' . $langs->trans("NovemberMin") . '</td>';
-print '<td align="center">' . $langs->trans("DecemberMin") . '</td>';
-print '<td align="center"><strong>Total</strong></td>';
+for($i = 1; $i <= 12; $i++)
+{
+	print '<td class="right">' . $langs->trans("MonthShort".sprintf("%02s", $i)) . '</td>';
+}
+print '<td class="center"><strong>'.$langs->trans("Total").'</strong></td>';
 print '</tr>';
 
 $sql = "SELECT bk.numero_compte AS 'compte',";
@@ -117,19 +109,19 @@ if ($resql) {
 		$row = $db->fetch_row($resql);
 
 		print '<tr class="oddeven"><td width="14%">' . length_accountg($row[0]) . '</td>';
-		print '<td align="right" width="6.5%">' . price($row[1]) . '</td>';
-		print '<td align="right" width="6.5%">' . price($row[2]) . '</td>';
-		print '<td align="right" width="6.5%">' . price($row[3]) . '</td>';
-		print '<td align="right" width="6.5%">' . price($row[4]) . '</td>';
-		print '<td align="right" width="6.5%">' . price($row[5]) . '</td>';
-		print '<td align="right" width="6.5%">' . price($row[6]) . '</td>';
-		print '<td align="right" width="6.5%">' . price($row[7]) . '</td>';
-		print '<td align="right" width="6.5%">' . price($row[8]) . '</td>';
-		print '<td align="right" width="6.5%">' . price($row[9]) . '</td>';
-		print '<td align="right" width="6.5%">' . price($row[10]) . '</td>';
-		print '<td align="right" width="6.5%">' . price($row[11]) . '</td>';
-		print '<td align="right" width="6.5%">' . price($row[12]) . '</td>';
-		print '<td align="right" width="8%"><strong>' . price($row[13]) . '</strong></td>';
+		print '<td class="right" width="6.5%">' . price($row[1]) . '</td>';
+		print '<td class="right" width="6.5%">' . price($row[2]) . '</td>';
+		print '<td class="right" width="6.5%">' . price($row[3]) . '</td>';
+		print '<td class="right" width="6.5%">' . price($row[4]) . '</td>';
+		print '<td class="right" width="6.5%">' . price($row[5]) . '</td>';
+		print '<td class="right" width="6.5%">' . price($row[6]) . '</td>';
+		print '<td class="right" width="6.5%">' . price($row[7]) . '</td>';
+		print '<td class="right" width="6.5%">' . price($row[8]) . '</td>';
+		print '<td class="right" width="6.5%">' . price($row[9]) . '</td>';
+		print '<td class="right" width="6.5%">' . price($row[10]) . '</td>';
+		print '<td class="right" width="6.5%">' . price($row[11]) . '</td>';
+		print '<td class="right" width="6.5%">' . price($row[12]) . '</td>';
+		print '<td class="right" width="8%"><strong>' . price($row[13]) . '</strong></td>';
 		print '</tr>';
 
 		$i ++;

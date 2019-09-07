@@ -58,7 +58,7 @@ class ActionCommReminder extends CommonObject
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only. Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'position' is the sort order of field.
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
@@ -178,20 +178,20 @@ class ActionCommReminder extends CommonObject
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status
 	 */
-	function getLibStatut($mode=0)
+	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->status,$mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return the status
 	 *
-	 *  @param	int		$status        	Id status
-	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return string 			       	Label of status
+	 *  @param  int     $status         Id status
+	 *  @param  int     $mode           0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string                  Label of status
 	 */
-	static function LibStatut($status,$mode=0)
+	public static function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -203,28 +203,28 @@ class ActionCommReminder extends CommonObject
 		}
 		elseif ($mode == 2)
 		{
-			if ($status == 1) return img_picto($langs->trans('Done'),'statut4').' '.$langs->trans('Done');
-			elseif ($status == 0) return img_picto($langs->trans('ToDo'),'statut5').' '.$langs->trans('ToDo');
+			if ($status == 1) return img_picto($langs->trans('Done'), 'statut4').' '.$langs->trans('Done');
+			elseif ($status == 0) return img_picto($langs->trans('ToDo'), 'statut5').' '.$langs->trans('ToDo');
 		}
 		elseif ($mode == 3)
 		{
-			if ($status == 1) return img_picto($langs->trans('Done'),'statut4');
-			elseif ($status == 0) return img_picto($langs->trans('ToDo'),'statut5');
+			if ($status == 1) return img_picto($langs->trans('Done'), 'statut4');
+			elseif ($status == 0) return img_picto($langs->trans('ToDo'), 'statut5');
 		}
 		elseif ($mode == 4)
 		{
-			if ($status == 1) return img_picto($langs->trans('Done'),'statut4').' '.$langs->trans('Done');
-			elseif ($status == 0) return img_picto($langs->trans('ToDo'),'statut5').' '.$langs->trans('ToDo');
+			if ($status == 1) return img_picto($langs->trans('Done'), 'statut4').' '.$langs->trans('Done');
+			elseif ($status == 0) return img_picto($langs->trans('ToDo'), 'statut5').' '.$langs->trans('ToDo');
 		}
 		elseif ($mode == 5)
 		{
-			if ($status == 1) return $langs->trans('Done').' '.img_picto($langs->trans('Done'),'statut4');
-			elseif ($status == 0) return $langs->trans('ToDo').' '.img_picto($langs->trans('ToDo'),'statut5');
+			if ($status == 1) return $langs->trans('Done').' '.img_picto($langs->trans('Done'), 'statut4');
+			elseif ($status == 0) return $langs->trans('ToDo').' '.img_picto($langs->trans('ToDo'), 'statut5');
 		}
 		elseif ($mode == 6)
 		{
-			if ($status == 1) return $langs->trans('Done').' '.img_picto($langs->trans('Done'),'statut4');
-			elseif ($status == 0) return $langs->trans('ToDo').' '.img_picto($langs->trans('ToDo'),'statut5');
+			if ($status == 1) return $langs->trans('Done').' '.img_picto($langs->trans('Done'), 'statut4');
+			elseif ($status == 0) return $langs->trans('ToDo').' '.img_picto($langs->trans('ToDo'), 'statut5');
 		}
 	}
 

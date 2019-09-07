@@ -27,9 +27,9 @@
 
 
 // Submit file/link
-if (GETPOST('sendit','alpha') && ! empty($conf->global->MAIN_UPLOAD_DOC))
+if (GETPOST('sendit', 'alpha') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-	if (! empty($_FILES))
+    if (! empty($_FILES))
 	{
 		if (is_array($_FILES['userfile']['tmp_name'])) $userfiles=$_FILES['userfile']['tmp_name'];
 		else $userfiles=array($_FILES['userfile']['tmp_name']);
@@ -65,7 +65,7 @@ if (GETPOST('sendit','alpha') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 		}
 	}
 }
-elseif (GETPOST('linkit','none') && ! empty($conf->global->MAIN_UPLOAD_DOC))
+elseif (GETPOST('linkit', 'none') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
     $link = GETPOST('link', 'alpha');
     if ($link)
@@ -103,15 +103,15 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
             if (! empty($fileold)) dol_delete_file($fileold, 0, 0, 0, (is_object($object)?$object:null));     // Delete file using old path
 
 	        // Si elle existe, on efface la vignette
-	        if (preg_match('/(\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff)$/i',$file,$regs))
+	        if (preg_match('/(\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff)$/i', $file, $regs))
 	        {
-		        $photo_vignette=basename(preg_replace('/'.$regs[0].'/i','',$file).'_small'.$regs[0]);
+		        $photo_vignette=basename(preg_replace('/'.$regs[0].'/i', '', $file).'_small'.$regs[0]);
 		        if (file_exists(dol_osencode($dirthumb.$photo_vignette)))
 		        {
 			        dol_delete_file($dirthumb.$photo_vignette);
 		        }
 
-		        $photo_vignette=basename(preg_replace('/'.$regs[0].'/i','',$file).'_mini'.$regs[0]);
+		        $photo_vignette=basename(preg_replace('/'.$regs[0].'/i', '', $file).'_mini'.$regs[0]);
 		        if (file_exists(dol_osencode($dirthumb.$photo_vignette)))
 		        {
 			        dol_delete_file($dirthumb.$photo_vignette);
@@ -125,8 +125,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
         {
             require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
             $link = new Link($db);
-            $link->id = $linkid;
-            $link->fetch();
+            $link->fetch($linkid);
             $res = $link->delete($user);
 
             $langs->load('link');
@@ -150,18 +149,17 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
         	}
         	else
         	{
-        		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(GETPOST('section_dir','alpha')?'&section_dir='.urlencode(GETPOST('section_dir','alpha')):'').(!empty($withproject)?'&withproject=1':''));
+        		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(GETPOST('section_dir', 'alpha')?'&section_dir='.urlencode(GETPOST('section_dir', 'alpha')):'').(!empty($withproject)?'&withproject=1':''));
         		exit;
         	}
         }
 }
-elseif ($action == 'confirm_updateline' && GETPOST('save','alpha') && GETPOST('link', 'alpha'))
+elseif ($action == 'confirm_updateline' && GETPOST('save', 'alpha') && GETPOST('link', 'alpha'))
 {
     require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
     $langs->load('link');
     $link = new Link($db);
-    $link->id = GETPOST('linkid', 'int');
-    $f = $link->fetch();
+    $f = $link->fetch(GETPOST('linkid', 'int'));
     if ($f)
     {
         $link->url = GETPOST('link', 'alpha');
@@ -169,7 +167,7 @@ elseif ($action == 'confirm_updateline' && GETPOST('save','alpha') && GETPOST('l
         {
             $link->url = 'http://' . $link->url;
         }
-        $link->label = GETPOST('label', 'alpha');
+        $link->label = GETPOST('label', 'alphanohtml');
         $res = $link->update($user);
         if (!$res)
         {
@@ -181,20 +179,20 @@ elseif ($action == 'confirm_updateline' && GETPOST('save','alpha') && GETPOST('l
         //error fetching
     }
 }
-elseif ($action == 'renamefile' && GETPOST('renamefilesave','alpha'))
+elseif ($action == 'renamefile' && GETPOST('renamefilesave', 'alpha'))
 {
 	// For documents pages, upload_dir contains already path to file from module dir, so we clean path into urlfile.
 	if (! empty($upload_dir))
 	{
-		$filenamefrom=dol_sanitizeFileName(GETPOST('renamefilefrom','alpha'), '_', 0);	// Do not remove accents
-		$filenameto=dol_sanitizeFileName(GETPOST('renamefileto','alpha'), '_', 0);		// Do not remove accents
+		$filenamefrom=dol_sanitizeFileName(GETPOST('renamefilefrom', 'alpha'), '_', 0);	// Do not remove accents
+		$filenameto=dol_sanitizeFileName(GETPOST('renamefileto', 'alpha'), '_', 0);		// Do not remove accents
 
         if ($filenamefrom != $filenameto)
         {
 	        // Security:
 	        // Disallow file with some extensions. We rename them.
 	        // Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.
-	        if (preg_match('/\.htm|\.html|\.php|\.pl|\.cgi$/i',$filenameto) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
+	        if (isAFileWithExecutableContent($filenameto) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
 	        {
 	            $filenameto.= '.noexe';
 	        }
@@ -217,11 +215,14 @@ elseif ($action == 'renamefile' && GETPOST('renamefilesave','alpha'))
 			            {
 			            	// Define if we have to generate thumbs or not
 			            	$generatethumbs = 1;
-			            	if (GETPOST('section_dir')) $generatethumbs=0;
+			            	// When we rename a file from the file manager in ecm, we must not regenerate thumbs (not a problem, we do pass here)
+			            	// When we rename a file from the website module, we must not regenerate thumbs (module = medias in such a case)
+			            	// but when we rename from a tab "Documents", we must regenerate thumbs
+			            	if (GETPOST('modulepart') == 'medias') $generatethumbs=0;
 
 			            	if ($generatethumbs)
 			            	{
-				            	if ($object->id)
+			            		if ($object->id)
 				            	{
 				                	$object->addThumbs($destpath);
 				            	}
