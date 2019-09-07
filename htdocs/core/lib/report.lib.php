@@ -61,7 +61,8 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 	{
 		 print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 	}
-	print '<table width="100%" class="border">';
+
+	print '<table class="border tableforfield centpercent">';
 
 	$variante = ($periodlink || $exportlink);
 

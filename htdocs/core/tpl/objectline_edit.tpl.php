@@ -40,7 +40,7 @@ if (empty($object) || ! is_object($object))
 
 
 $usemargins=0;
-if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element, array('facture','propal','commande'))) $usemargins=1;
+if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element, array('facture','facturerec','propal','commande'))) $usemargins=1;
 
 global $forceall, $senderissupplier, $inputalsopricewithtax;
 if (empty($dateSelector)) $dateSelector=0;
@@ -49,11 +49,10 @@ if (empty($senderissupplier)) $senderissupplier=0;
 if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 
 
-// Define colspan for button Add
+// Define colspan for the button 'Add'
 $colspan = 3;	// Col total ht + col edit + col delete
 if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
-if (in_array($object->element, array('propal','supplier_proposal','facture','invoice','commande','order','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
-if (empty($user->rights->margins->creer)) $colspan++;
+if (in_array($object->element, array('propal','supplier_proposal','facture','facturerec','invoice','commande','order','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
 if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) $colspan+=2;
 ?>
 
@@ -117,7 +116,6 @@ $coldisplay=0;
 		$toolbarname='dolibarr_details';
 		if (! empty($conf->global->FCKEDITOR_ENABLE_DETAILS_FULL)) $toolbarname='dolibarr_notes';
 		$doleditor=new DolEditor('product_desc', $line->description, '', (empty($conf->global->MAIN_DOLEDITOR_HEIGHT)?164:$conf->global->MAIN_DOLEDITOR_HEIGHT), $toolbarname, '', false, true, $enable, $nbrows, '98%');
-		$doleditor=new DolEditor('product_desc', $line->description, '', (empty($conf->global->MAIN_DOLEDITOR_HEIGHT)?164:$conf->global->MAIN_DOLEDITOR_HEIGHT), $toolbarname, '', false, true, $enable, $nbrows, '98%');
 		$doleditor->Create();
 	} else {
 		print '<textarea id="product_desc" class="flat" name="product_desc" readonly style="width: 200px; height:80px;">' . $line->description . '</textarea>';
@@ -142,7 +140,7 @@ $coldisplay=0;
 	{
 	    $coldisplay++;
 	?>
-		<td class="right"><input id="fourn_ref" name="fourn_ref" class="flat minwidth75" value="<?php echo ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
+		<td class="right"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth150" value="<?php echo ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
 	<?php
 	}
 
@@ -252,7 +250,7 @@ $coldisplay=0;
 	}
 ?>
 
-	<!-- colspan=4 for this td because it replace total_ht+3 td for buttons -->
+	<!-- colspan for this td because it replace total_ht+3 td for buttons+... -->
 	<td class="center valignmiddle" colspan="<?php echo $colspan; ?>"><?php $coldisplay+=$colspan; ?>
 		<input type="submit" class="button" id="savelinebutton" name="save" value="<?php echo $langs->trans("Save"); ?>"><br>
 		<input type="submit" class="button" id="cancellinebutton" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
@@ -263,7 +261,7 @@ $coldisplay=0;
 //Line extrafield
 if (!empty($extrafieldsline))
 {
-	print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var],'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+	print $line->showOptionals($extrafieldsline, 'edit', array('class'=>'tredited', 'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
 }
 ?>
 

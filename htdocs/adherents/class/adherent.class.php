@@ -11,6 +11,7 @@
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018-2019  Thibault FOUCART		<support@ptibogxiv.net>
+ * Copyright (C) 2019       Nicolas ZABOURI 		<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,14 +184,14 @@ class Adherent extends CommonObject
      * @var integer
      */
     public $datec;
-    
+
 	/**
      * Date modification record (tms)
      *
      * @var integer
      */
     public $datem;
-    
+
 	public $datevalid;
 
 	public $gender;
@@ -323,7 +324,7 @@ class Adherent extends CommonObject
 		$infos.= $langs->transnoentities("id").": ".$this->id."\n";
 		$infos.= $langs->transnoentities("Lastname").": ".$this->lastname."\n";
 		$infos.= $langs->transnoentities("Firstname").": ".$this->firstname."\n";
-		$infos.= $langs->transnoentities("Company").": ".$this->societe."\n";
+		$infos.= $langs->transnoentities("Company").": ".$this->company."\n";
 		$infos.= $langs->transnoentities("Address").": ".$this->address."\n";
 		$infos.= $langs->transnoentities("Zip").": ".$this->zip."\n";
 		$infos.= $langs->transnoentities("Town").": ".$this->town."\n";
@@ -349,7 +350,7 @@ class Adherent extends CommonObject
 			'__FIRSTNAME__'=>$msgishtml?dol_htmlentitiesbr($this->firstname):($this->firstname?$this->firstname:''),
 			'__LASTNAME__'=>$msgishtml?dol_htmlentitiesbr($this->lastname):($this->lastname?$this->lastname:''),
 			'__FULLNAME__'=>$msgishtml?dol_htmlentitiesbr($this->getFullName($langs)):$this->getFullName($langs),
-			'__COMPANY__'=>$msgishtml?dol_htmlentitiesbr($this->societe):($this->societe?$this->societe:''),
+			'__COMPANY__'=>$msgishtml?dol_htmlentitiesbr($this->company):($this->company?$this->company:''),
 			'__ADDRESS__'=>$msgishtml?dol_htmlentitiesbr($this->address):($this->address?$this->address:''),
 			'__ZIP__'=>$msgishtml?dol_htmlentitiesbr($this->zip):($this->zip?$this->zip:''),
 			'__TOWN__'=>$msgishtml?dol_htmlentitiesbr($this->town):($this->town?$this->town:''),
@@ -557,7 +558,7 @@ class Adherent extends CommonObject
 		$sql.= ", lastname = ".($this->lastname?"'".$this->db->escape($this->lastname)."'":"null");
 		$sql.= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null");	// 'man' or 'woman'
 		$sql.= ", login = ".($this->login?"'".$this->db->escape($this->login)."'":"null");
-		$sql.= ", societe = ".($this->societe?"'".$this->db->escape($this->societe)."'":"null");
+		$sql.= ", societe = ".($this->company?"'".$this->db->escape($this->company)."'":($this->societe?"'".$this->db->escape($this->societe)."'":"null"));
 		$sql.= ", fk_soc = ".($this->socid > 0?$this->db->escape($this->socid):"null");
 		$sql.= ", address = ".($this->address?"'".$this->db->escape($this->address)."'":"null");
 		$sql.= ", zip = ".($this->zip?"'".$this->db->escape($this->zip)."'":"null");
@@ -596,7 +597,7 @@ class Adherent extends CommonObject
 			{
 			    while ($obj=$this->db->fetch_object($resql2))
 			    {
-				$this->type=$obj->label;
+					$this->type=$obj->label;
 			    }
 			}
 		}
@@ -681,7 +682,7 @@ class Adherent extends CommonObject
 						$luser->lastname=$this->lastname;
 						$luser->gender=$this->gender;
 						$luser->pass=$this->pass;
-						$luser->societe_id=$this->societe;
+						//$luser->socid=$this->fk_soc;		// We do not enable this. This may transform a user into an external user.
 
 						$luser->birth=$this->birth;
 
@@ -1268,7 +1269,7 @@ class Adherent extends CommonObject
 				$this->ref				= $obj->rowid;
 				$this->id				= $obj->rowid;
 				$this->ref_ext			= $obj->ref_ext;
-        
+
 				$this->civility_id      = $obj->civility_code;  // Bad. Kept for backard compatibility
 				$this->civility_code    = $obj->civility_code;
 				$this->civility	        = $obj->civility_code?($langs->trans("Civility".$obj->civility_code) != ("Civility".$obj->civility_code) ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code):'';
@@ -1607,13 +1608,13 @@ class Adherent extends CommonObject
 
 						if ($this->morphy == 'mor')
 						{
-							$companyname=$this->societe;
+							$companyname=$this->company;
 							if (! empty($fullname)) $companyalias=$fullname;
 						}
 						else
 						{
 							$companyname=$fullname;
-							if (! empty($this->societe)) $companyalias=$this->societe;
+							if (! empty($this->company)) $companyalias=$this->company;
 						}
 
 						$result=$customer->create_from_member($this, $companyname, $companyalias);
@@ -2062,9 +2063,10 @@ class Adherent extends CommonObject
 	 *  @param  string  $mode           			''=Show firstname+lastname as label (using default order), 'firstname'=Show only firstname, 'login'=Show login, 'ref'=Show ref
 	 *  @param  string  $morecss        			Add more css on link
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param	int		$notooltip					1=Disable tooltip
 	 *	@return	string								Chaine avec URL
 	 */
-	public function getNomUrl($withpictoimg = 0, $maxlen = 0, $option = 'card', $mode = '', $morecss = '', $save_lastsearch_value = -1)
+	public function getNomUrl($withpictoimg = 0, $maxlen = 0, $option = 'card', $mode = '', $morecss = '', $save_lastsearch_value = -1, $notooltip = 0)
 	{
 		global $conf, $langs;
 
@@ -2123,28 +2125,28 @@ class Adherent extends CommonObject
 		$link.=$linkclose.'>';
 		$linkend='</a>';
 
-		//if ($withpictoimg == -1) $result.='<div class="nowrap">';
 		$result.=$link;
+		if ($withpictoimg) $result.='<div class="inline-block nopadding valignmiddle">';
 		if ($withpictoimg)
 		{
 			$paddafterimage='';
 			if (abs($withpictoimg) == 1) $paddafterimage='style="margin-right: 3px;"';
 			// Only picto
-			if ($withpictoimg > 0) $picto='<div class="inline-block nopadding valignmiddle'.($morecss?' userimg'.$morecss:'').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).'</div>';
+			if ($withpictoimg > 0) $picto='<span class="nopadding'.($morecss?' userimg'.$morecss:'').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).'</span>';
 			// Picto must be a photo
-			else $picto='<div class="inline-block nopadding valignmiddle'.($morecss?' userimg'.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>'.Form::showphoto('memberphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg==-3?'small':''), 'mini', 0, 1).'</div>';
+			else $picto='<span class="nopadding'.($morecss?' userimg'.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>'.Form::showphoto('memberphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg==-3?'small':''), 'mini', 0, 1).'</span>';
 			$result.=$picto;
 		}
 		if ($withpictoimg > -2 && $withpictoimg != 2)
 		{
-			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='<div class="inline-block nopadding valignmiddle'.((! isset($this->statut) || $this->statut)?'':' strikefordisabled').($morecss?' usertext'.$morecss:'').'">';
+			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='<span class="nopadding valignmiddle'.((! isset($this->statut) || $this->statut)?'':' strikefordisabled').($morecss?' usertext'.$morecss:'').'">';
 			if ($mode == 'login') $result.=dol_trunc($this->login, $maxlen);
 			elseif ($mode == 'ref') $result.=$this->id;
 			else $result.=$this->getFullName($langs, '', ($mode == 'firstname' ? 2 : -1), $maxlen);
-			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='</div>';
+			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='</span>';
 		}
+		if ($withpictoimg) $result.='</div>';
 		$result.=$linkend;
-		//if ($withpictoimg == -1) $result.='</div>';
 
 		return $result;
 	}
@@ -2296,7 +2298,7 @@ class Adherent extends CommonObject
         // phpcs:enable
 		global $conf, $langs;
 
-		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
+		if ($user->socid) return -1;   // protection pour eviter appel par utilisateur externe
 
 		$now=dol_now();
 
@@ -2314,6 +2316,7 @@ class Adherent extends CommonObject
 			$response = new WorkboardResponse();
 			$response->warning_delay=$conf->adherent->subscription->warning_delay/60/60/24;
 			$response->label=$langs->trans("MembersWithSubscriptionToReceive");
+			$response->labelShort=$langs->trans("MembersWithSubscriptionToReceiveShort");
 			$response->url=DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut=1&amp;filter=outofdate';
 			$response->img=img_object('', "user");
 
@@ -2396,14 +2399,14 @@ class Adherent extends CommonObject
 		$this->gender='man';
 		$this->login='dolibspec';
 		$this->pass='dolibspec';
-		$this->societe = 'Societe ABC';
+		$this->company = 'Societe ABC';
 		$this->address = '61 jump street';
 		$this->zip = '75000';
 		$this->town = 'Paris';
 		$this->country_id = 1;
 		$this->country_code = 'FR';
 		$this->country = 'France';
-		$this->morphy = 1;
+		$this->morphy = 'mor';
 		$this->email = 'specimen@specimen.com';
 		$this->skype = 'skypepseudo';
 		$this->twitter = 'twitterpseudo';
@@ -2438,6 +2441,7 @@ class Adherent extends CommonObject
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -2447,7 +2451,7 @@ class Adherent extends CommonObject
 	 *								2=Return key only (uid=qqq)
 	 *	@return	string				DN
 	 */
-	private function _load_ldap_dn($info, $mode = 0)
+	public function _load_ldap_dn($info, $mode = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -2460,12 +2464,13 @@ class Adherent extends CommonObject
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+   /**
 	 *	Initialise tableau info (tableau des attributs LDAP)
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
-	private function _load_ldap_info()
+	public function _load_ldap_info()
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -2479,9 +2484,9 @@ class Adherent extends CommonObject
 		$this->fullname=$this->getFullName($langs);
 
 		// For avoid ldap error when firstname and lastname are empty
-		if ($this->morphy == 'mor' && (empty($this->fullname) || $this->fullname == $this->societe)) {
-			$this->fullname = $this->societe;
-			$this->lastname = $this->societe;
+		if ($this->morphy == 'mor' && (empty($this->fullname) || $this->fullname == $this->company)) {
+			$this->fullname = $this->company;
+			$this->lastname = $this->company;
 		}
 
 		// Possible LDAP KEY (constname => varname)
@@ -2509,7 +2514,7 @@ class Adherent extends CommonObject
 		}
 		if ($this->firstname && ! empty($conf->global->LDAP_MEMBER_FIELD_FIRSTNAME))			$info[$conf->global->LDAP_MEMBER_FIELD_FIRSTNAME] = $this->firstname;
 		if ($this->poste && ! empty($conf->global->LDAP_MEMBER_FIELD_TITLE))					$info[$conf->global->LDAP_MEMBER_FIELD_TITLE] = $this->poste;
-		if ($this->societe && ! empty($conf->global->LDAP_MEMBER_FIELD_COMPANY))				$info[$conf->global->LDAP_MEMBER_FIELD_COMPANY] = $this->societe;
+		if ($this->company && ! empty($conf->global->LDAP_MEMBER_FIELD_COMPANY))				$info[$conf->global->LDAP_MEMBER_FIELD_COMPANY] = $this->company;
 		if ($this->address && ! empty($conf->global->LDAP_MEMBER_FIELD_ADDRESS))				$info[$conf->global->LDAP_MEMBER_FIELD_ADDRESS] = $this->address;
 		if ($this->zip && ! empty($conf->global->LDAP_MEMBER_FIELD_ZIP))						$info[$conf->global->LDAP_MEMBER_FIELD_ZIP] = $this->zip;
 		if ($this->town && ! empty($conf->global->LDAP_MEMBER_FIELD_TOWN))						$info[$conf->global->LDAP_MEMBER_FIELD_TOWN] = $this->town;
@@ -2881,7 +2886,7 @@ class Adherent extends CommonObject
 	    						$actioncomm->type_code   = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 	    						$actioncomm->code        = 'AC_'.$actioncode;
 	    						$actioncomm->label       = $actionmsg2;
-	    						$actioncomm->note        = $actionmsg;
+	    						$actioncomm->note_private= $actionmsg;
 	    						$actioncomm->fk_project  = 0;
 	    						$actioncomm->datep       = $now;
 	    						$actioncomm->datef       = $now;

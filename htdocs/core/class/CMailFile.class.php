@@ -286,8 +286,7 @@ class CMailFile
 			// We now define $this->headers and $this->message
 			$this->headers = $smtp_headers . $mime_headers;
 			// On nettoie le header pour qu'il ne se termine pas par un retour chariot.
-			// Ceci evite aussi les lignes vides en fin qui peuvent etre interpretees
-			// comme des injections mail par les serveurs de messagerie.
+			// This avoid also empty lines at end that can be interpreted as mail injection by email servers.
 			$this->headers = preg_replace("/([\r\n]+)$/i", "", $this->headers);
 
 			//$this->message = $this->eol.'This is a message with multiple parts in MIME format.'.$this->eol;
@@ -429,7 +428,7 @@ class CMailFile
 				foreach ($this->images_encoded as $img)
 				{
 					//$img['fullpath'],$img['image_encoded'],$img['name'],$img['content_type'],$img['cid']
-					$attachment = Swift_Image::fromPath($img['fullpath'], $img['content_type']);
+					$attachment = Swift_Image::fromPath($img['fullpath']);
 					// embed image
 					$imgcid = $this->message->embed($attachment);
 					// replace cid by the one created by swiftmail in html message
@@ -503,6 +502,31 @@ class CMailFile
 			if ($reshook == 1)	// Hook replace standard code
 			{
 				return true;
+			}
+
+			$sendingmode = $this->sendmode;
+			if ($this->context == 'emailing' && ! empty($conf->global->MAILING_NO_USING_PHPMAIL) && $sendingmode == 'mail')
+			{
+			    // List of sending methods
+			    $listofmethods=array();
+			    $listofmethods['mail']='PHP mail function';
+			    //$listofmethods['simplemail']='Simplemail class';
+			    $listofmethods['smtps']='SMTP/SMTPS socket library';
+
+			    // EMailing feature may be a spam problem, so when you host several users/instance, having this option may force each user to use their own SMTP agent.
+			    // You ensure that every user is using its own SMTP server when using the mass emailing module.
+			    $linktoadminemailbefore='<a href="'.DOL_URL_ROOT.'/admin/mails.php">';
+			    $linktoadminemailend='</a>';
+			    $this->error = $langs->trans("MailSendSetupIs", $listofmethods[$sendingmode]);
+			    $this->errors[] = $langs->trans("MailSendSetupIs", $listofmethods[$sendingmode]);
+			    $this->error .= '<br>'.$langs->trans("MailSendSetupIs2", $linktoadminemailbefore, $linktoadminemailend, $langs->transnoentitiesnoconv("MAIN_MAIL_SENDMODE"), $listofmethods['smtps']);
+			    $this->errors[] = $langs->trans("MailSendSetupIs2", $linktoadminemailbefore, $linktoadminemailend, $langs->transnoentitiesnoconv("MAIN_MAIL_SENDMODE"), $listofmethods['smtps']);
+			    if (! empty($conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS))
+			    {
+			        $this->error .= '<br>'.$langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS);
+			        $this->errors[] = $langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS);
+			    }
+                return false;
 			}
 
 			// Check number of recipient is lower or equal than MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL

@@ -331,7 +331,7 @@ if (! empty($id) || ! empty($ref)) {
 
 			<form method="post" id="combinationsform">
 
-					<p><?php echo $langs->trans('TooMuchCombinationsWarning', $langs->trans('DoNotRemovePreviousCombinations')) ?></p>
+					<p><?php echo $langs->trans('TooMuchCombinationsWarning', $langs->transnoentitiesnoconv('DoNotRemovePreviousCombinations')) ?></p>
 					<input type="checkbox" name="price_var_percent"
 					       id="price_var_percent"<?php echo $price_var_percent ? ' checked' : '' ?>> <label
 						for="price_var_percent"><?php echo $langs->trans('UsePercentageVariations') ?></label>

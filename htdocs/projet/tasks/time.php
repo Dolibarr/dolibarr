@@ -467,7 +467,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		$object->project = clone $projectstatic;
     }
 
-    $userWrite = $projectstatic->restrictedProjectArea($user, 'write');
+    $userRead = $projectstatic->restrictedProjectArea($user, 'read');
     $linktocreatetime = '';
 
 	if ($projectstatic->id > 0)
@@ -509,7 +509,35 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
             print '<div class="fichehalfleft">';
             print '<div class="underbanner clearboth"></div>';
 
-            print '<table class="border tableforfield" width="100%">';
+            print '<table class="border tableforfield centpercent">';
+
+            // Usage
+            print '<tr><td class="tdtop">';
+            print $langs->trans("Usage");
+            print '</td>';
+            print '<td>';
+            if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+            {
+            	print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha')!=''?' checked="checked"':'') : ($projectstatic->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+            	$htmltext = $langs->trans("ProjectFollowOpportunity");
+            	print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+            	print '<br>';
+            }
+            if (empty($conf->global->PROJECT_HIDE_TASKS))
+            {
+            	print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha')!=''?' checked="checked"':'') : ($projectstatic->usage_task ? ' checked="checked"' : '')).'"> ';
+            	$htmltext = $langs->trans("ProjectFollowTasks");
+            	print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+            	print '<br>';
+            }
+            if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+            {
+            	print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha')!=''?' checked="checked"':'') : ($projectstatic->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+            	$htmltext = $langs->trans("ProjectBillTimeDescription");
+            	print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+            	print '<br>';
+            }
+            print '</td></tr>';
 
             // Visibility
             print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
@@ -554,7 +582,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
             if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
             {
 	            print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
-	            print yn($projectstatic->bill_time);
+	            print yn($projectstatic->usage_bill_time);
 	            print '</td></tr>';
             }
 
@@ -582,9 +610,9 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
         $linktocreatetimeBtnStatus = 0;
         $linktocreatetimeUrl = '';
         $linktocreatetimeHelpText = '';
-		if ($user->rights->projet->all->creer || $user->rights->projet->creer)
+        if ($user->rights->projet->all->lire || $user->rights->projet->lire)	// To enter time, read permission is enough
 		{
-			if ($projectstatic->public || $userWrite > 0)
+			if ($projectstatic->public || $userRead > 0)
 		    {
                 $linktocreatetimeBtnStatus = 1;
 
@@ -610,7 +638,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     }
 
 	$massactionbutton = '';
-	if ($projectstatic->bill_time)
+	if ($projectstatic->usage_bill_time)
 	{
 	    $arrayofmassactions =  array(
 	        'generateinvoice'=>$langs->trans("GenerateBill"),
@@ -747,7 +775,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	    $arrayfields['t.note']=array('label'=>$langs->trans("Note"), 'checked'=>1);
 	    $arrayfields['t.task_duration']=array('label'=>$langs->trans("Duration"), 'checked'=>1);
 	    $arrayfields['value'] =array('label'=>$langs->trans("Value"), 'checked'=>1, 'enabled'=>(empty($conf->salaries->enabled)?0:1));
-	    $arrayfields['valuebilled'] =array('label'=>$langs->trans("Billed"), 'checked'=>1, 'enabled'=>(((! empty($conf->global->PROJECT_HIDE_TASKS) || empty($conf->global->PROJECT_BILL_TIME_SPENT))?0:1) && $projectstatic->bill_time));
+	    $arrayfields['valuebilled'] =array('label'=>$langs->trans("Billed"), 'checked'=>1, 'enabled'=>(((! empty($conf->global->PROJECT_HIDE_TASKS) || empty($conf->global->PROJECT_BILL_TIME_SPENT))?0:1) && $projectstatic->usage_bill_time));
 	    // Extra fields
 	    if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	    {
@@ -959,6 +987,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '<!-- table to add time spent -->'."\n";
             if (! empty($id)) print '<input type="hidden" name="taskid" value="'.$id.'">';
 
+            print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 			print '<table class="noborder nohover" width="100%">';
 
 			print '<tr class="liste_titre">';
@@ -1002,7 +1031,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 				else $userid = $contactsofproject[0];
 
 				if ($projectstatic->public) $contactsofproject = array();
-				print $form->select_dolusers((GETPOST('userid')?GETPOST('userid'):$userid), 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToProject"), 'maxwidth200');
+				print $form->select_dolusers((GETPOST('userid', 'int')?GETPOST('userid', 'int'):$userid), 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToProject"), 'maxwidth200');
 			}
 			else
 			{
@@ -1017,7 +1046,12 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 			// Duration - Time spent
 			print '<td>';
-			print $form->select_duration('timespent_duration', ($_POST['timespent_duration']?$_POST['timespent_duration']:''), 0, 'text');
+			$durationtouse = ($_POST['timespent_duration']?$_POST['timespent_duration']:'');
+			if (GETPOSTISSET('timespent_durationhour') || GETPOSTISSET('timespent_durationmin'))
+			{
+				$durationtouse = (GETPOST('timespent_durationhour') * 3600 + GETPOST('timespent_durationmin') * 60);
+			}
+			print $form->select_duration('timespent_duration', $durationtouse, 0, 'text');
 			print '</td>';
 
 			// Progress declared
@@ -1039,6 +1073,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '</td></tr>';
 
 			print '</table>';
+			print '</div>';
 
 			print '<br>';
 		}
@@ -1283,7 +1318,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
                 print '<td class="center">';    // invoice_id and invoice_line_id
                 if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
                 {
-                    if ($projectstatic->bill_time)
+                    if ($projectstatic->usage_bill_time)
                     {
                         if ($task_time->invoice_id)
                         {
@@ -1686,7 +1721,19 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		    print '</tr>';
 		}
 
-		print '</tr>';
+
+		if (! count($tasks))
+		{
+			$totalnboffields = 1;
+			foreach($arrayfields as $value)
+			{
+				if ($value['checked']) $totalnboffields++;
+			}
+			print '<tr class="oddeven"><td colspan="'.$totalnboffields.'">';
+			print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+			print '</td></tr>';
+		}
+
 
 		print "</table>";
 		print '</div>';

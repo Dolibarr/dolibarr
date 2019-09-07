@@ -22,9 +22,11 @@
  */
 include_once DOL_DOCUMENT_ROOT.'/societe/canvas/actions_card_common.class.php';
 
+
 /**
- *	\class      ActionsCardIndividual
- *	\brief      Class with controller methods for individual canvas
+ *	ActionsCardIndividual
+ *
+ *	Class with controller methods for individual canvas
  */
 class ActionsCardIndividual extends ActionsCardCommon
 {

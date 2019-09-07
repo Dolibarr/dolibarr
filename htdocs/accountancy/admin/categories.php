@@ -18,7 +18,7 @@
 
 /**
  * \file	htdocs/accountancy/admin/categories.php
- * \ingroup Advanced accountancy
+ * \ingroup Accountancy (Double entries)
  * \brief	Page to assign mass categories to accounts
  */
 

@@ -167,11 +167,12 @@ if ($dirins && $action == 'initmodule' && $modulename)
 		dol_delete_file($destdir.'/test/phpunit/MyObjectTest.php');
 		dol_delete_file($destdir.'/test/phpunit');
 		dol_delete_file($destdir.'/test');
-		dol_delete_file($destdir.'/sql/llx'.strtolower($modulename).'_myobject.sql');
+		dol_delete_file($destdir.'/sql/llx_'.strtolower($modulename).'_myobject.sql');
 		dol_delete_file($destdir.'/sql/llx_'.strtolower($modulename).'_myobject_extrafields.sql');
 		dol_delete_file($destdir.'/sql/llx_'.strtolower($modulename).'_myobject.key.sql');
 		dol_delete_file($destdir.'/img/object_myobject.png');
 		dol_delete_file($destdir.'/class/myobject.class.php');
+		dol_delete_dir($destdir.'/sql');
 	}
 
 	// Edit PHP files
@@ -202,6 +203,7 @@ if ($dirins && $action == 'initmodule' && $modulename)
             }
 
 			$result=dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
+
 			//var_dump($result);
 			if ($result < 0)
 			{
@@ -211,6 +213,7 @@ if ($dirins && $action == 'initmodule' && $modulename)
 
 		if (!empty($conf->global->MODULEBUILDER_SPECIFIC_README))
 		{
+			setEventMessages($langs->trans("ContentOfREADMECustomized"), null, 'warnings');
 			dol_delete_file($destdir.'/README.md');
 			file_put_contents($destdir.'/README.md', $conf->global->MODULEBUILDER_SPECIFIC_README);
 		}
@@ -257,7 +260,6 @@ if ($dirins && $action == 'initapi' && !empty($module))
         dolReplaceInFile($destfile, $arrayreplacement);
     }
 }
-
 if ($dirins && $action == 'initphpunit' && !empty($module))
 {
     $modulename = ucfirst($module);     // Force first letter in uppercase
@@ -296,7 +298,45 @@ if ($dirins && $action == 'initphpunit' && !empty($module))
 
     }
 }
+if ($dirins && $action == 'initsqlextrafields' && !empty($module))
+{
+	$modulename = ucfirst($module);     // Force first letter in uppercase
+	$objectname = $tabobj;
 
+	dol_mkdir($dirins.'/'.strtolower($module).'/sql');
+	$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template';
+	$srcfile1 = $srcdir.'/sql/llx_mymodule_myobject_extrafields.sql';
+	$destfile1 = $dirins.'/'.strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql';
+	//var_dump($srcfile);var_dump($destfile);
+	$result1 = dol_copy($srcfile1, $destfile1, 0, 0);
+	$srcfile2 = $srcdir.'/sql/llx_mymodule_myobject_extrafields.key.sql';
+	$destfile2 = $dirins.'/'.strtolower($module).'/sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.key.sql';
+	//var_dump($srcfile);var_dump($destfile);
+	$result2 = dol_copy($srcfile2, $destfile2, 0, 0);
+
+	if ($result1 > 0 && $result2 > 0)
+	{
+		$modulename = ucfirst($module);     // Force first letter in uppercase
+
+		//var_dump($phpfileval['fullname']);
+		$arrayreplacement=array(
+			'mymodule'=>strtolower($modulename),
+			'MyModule'=>$modulename,
+			'MYMODULE'=>strtoupper($modulename),
+			'My module'=>$modulename,
+			'my module'=>$modulename,
+			'Mon module'=>$modulename,
+			'mon module'=>$modulename,
+			'htdocs/modulebuilder/template'=>strtolower($modulename),
+			'---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email?' <'.$user->email.'>':'')
+		);
+
+		dolReplaceInFile($destfile1, $arrayreplacement);
+		dolReplaceInFile($destfile2, $arrayreplacement);
+	}
+
+	// TODO Enable in class the property $isextrafieldmanaged = 1
+}
 if ($dirins && $action == 'inithook' && !empty($module))
 {
     dol_mkdir($dirins.'/'.strtolower($module).'/class');
@@ -835,7 +875,10 @@ if ($dirins && $action == 'addproperty' && !empty($module) && ! empty($tabobj))
 	if (! $error)
 	{
 		$object=rebuildObjectClass($destdir, $module, $objectname, $newmask, $srcdir, $addfieldentry);
-		if (is_numeric($result) && $result <= 0) $error++;
+		if (is_numeric($object) && $object <= 0)
+		{
+			$error++;
+		}
 	}
 
 	// Edit sql with new properties
@@ -1203,9 +1246,11 @@ print load_fiche_titre($text, '', 'title_setup');
 print '<span class="opacitymedium">'.$langs->trans("ModuleBuilderDesc", 'https://wiki.dolibarr.org/index.php/Module_development#Create_your_module').'</span><br>';
 
 $dirsrootforscan=array($dirread);
-if ($dirread != DOL_DOCUMENT_ROOT && $conf->global->MAIN_FEATURES_LEVEL >=2) { $dirsrootforscan[]=DOL_DOCUMENT_ROOT; }
+// Add also the core modules into the list of modules to show/edit
+if ($dirread != DOL_DOCUMENT_ROOT && ($conf->global->MAIN_FEATURES_LEVEL >=2 || ! empty($conf->global->MODULEBUILDER_ADD_DOCUMENT_ROOT))) { $dirsrootforscan[]=DOL_DOCUMENT_ROOT; }
 
 // Search modules to edit
+print '<!-- Scanned dir -->'."\n";
 $listofmodules=array();
 foreach($dirsrootforscan as $dirread)
 {
@@ -1369,7 +1414,7 @@ if ($module == 'initmodule')
 	print '<input type="hidden" name="action" value="initmodule">';
 	print '<input type="hidden" name="module" value="initmodule">';
 
-	print $langs->trans("ModuleBuilderDesc2", 'conf/conf.php', $newdircustom).'<br>';
+	//print '<span class="opacitymedium">'.$langs->trans("ModuleBuilderDesc2", 'conf/conf.php', $newdircustom).'</span><br>';
 	print $langs->trans("EnterNameOfModuleDesc").'<br>';
 	print '<br>';
 
@@ -1499,7 +1544,7 @@ elseif (! empty($module))
 
 		if (realpath($dirread.'/'.$modulelowercase) != $dirread.'/'.$modulelowercase)
 		{
-			print $langs->trans("RealPathOfModule").' : <strong>'.realpath($dirread.'/'.$modulelowercase).'</strong><br>';
+			print '<span class="opacitymedium">'.$langs->trans("RealPathOfModule").' :</span> <strong>'.realpath($dirread.'/'.$modulelowercase).'</strong><br>';
 		}
 		print '<br>';
 
@@ -1873,6 +1918,12 @@ elseif (! empty($module))
 						$realpathtopicto    = dol_buildpath($pathtopicto, 0, 2);
 						$realpathtoscript   = dol_buildpath($pathtoscript, 0, 2);
 
+						if (empty($realpathtoapi)) 	// For compatibility with some old modules
+						{
+							$pathtoapi = strtolower($module).'/class/api_'.strtolower($module).'s.class.php';
+							$realpathtoapi = dol_buildpath($pathtoapi, 0, 2);
+						}
+
 						print '<div class="fichehalfleft">';
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("ClassFile").' : <strong>'.($realpathtoclass?'':'<strike>').$pathtoclass.($realpathtoclass?'':'</strike>').'</strong>';
 						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtoclass).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
@@ -1881,8 +1932,8 @@ elseif (! empty($module))
 						if ($realpathtoapi)
 						{
     						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtoapi).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
-	       					print ' &nbsp; ';
-	       					print '<a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=confirm_removefile&file='.urlencode($pathtoapi).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
+	       					print ' ';
+	       					print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=confirm_removefile&file='.urlencode($pathtoapi).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
 	       					print ' &nbsp; ';
 	       					if (empty($conf->global->$const_name))	// If module is not activated
 	       					{
@@ -1905,8 +1956,8 @@ elseif (! empty($module))
 						if ($realpathtophpunit)
 						{
 						    print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtophpunit).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
-						    print ' &nbsp; ';
-						    print '<a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=confirm_removefile&file='.urlencode($pathtophpunit).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
+						    print ' ';
+						    print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=confirm_removefile&file='.urlencode($pathtophpunit).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
 						}
 						else
 						{
@@ -1930,12 +1981,21 @@ elseif (! empty($module))
 						print '<br>';
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("SqlFile").' : <strong>'.($realpathtosql?'':'<strike>').$pathtosql.($realpathtosql?'':'</strike>').'</strong>';
 						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=sql&file='.urlencode($pathtosql).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
-						print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=droptable">'.$langs->trans("DropTableIfEmpty").'</a>';
+						print ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=droptable">'.$langs->trans("DropTableIfEmpty").'</a>';
 						//print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
 						print '<br>';
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("SqlFileExtraFields").' : <strong>'.($realpathtosqlextra?'':'<strike>').$pathtosqlextra.($realpathtosqlextra?'':'</strike>').'</strong>';
-						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&file='.urlencode($pathtosqlextra).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
-						print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=droptableextrafields">'.$langs->trans("DropTableIfEmpty").'</a>';
+						if ($realpathtosqlextra)
+						{
+							print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&file='.urlencode($pathtosqlextra).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+							print ' ';
+							print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=confirm_removefile&file='.urlencode($pathtosqlextra).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
+							print ' &nbsp; ';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=droptableextrafields">'.$langs->trans("DropTableIfEmpty").'</a>';
+						}
+						else {
+							print '<a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=initsqlextrafields&format=sql&file='.urlencode($pathtosqlextra).'"><input type="button" class="button" value="'.$langs->trans("Generate").'"></a>';
+						}
 						//print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
 						print '<br>';
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("SqlFileKey").' : <strong>'.($realpathtosqlkey?'':'<strike>').$pathtosqlkey.($realpathtosqlkey?'':'</strike>').'</strong>';
@@ -1943,7 +2003,12 @@ elseif (! empty($module))
 						//print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
 						print '<br>';
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("SqlFileKeyExtraFields").' : <strong>'.($realpathtosqlextrakey?'':'<strike>').$pathtosqlextrakey.($realpathtosqlextrakey?'':'</strike>').'</strong>';
-						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=sql&file='.urlencode($pathtosqlextrakey).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+						if ($realpathtosqlextrakey)
+						{
+							print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=sql&file='.urlencode($pathtosqlextrakey).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+							print ' ';
+							print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=confirm_removefile&file='.urlencode($pathtosqlextrakey).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
+						}
 						//print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
 						print '<br>';
 
@@ -1962,12 +2027,27 @@ elseif (! empty($module))
 						print '<br>';
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("PageForAgendaTab").' : <strong>'.($realpathtoagenda?'':'<strike>').$pathtoagenda.($realpathtoagenda?'':'</strike>').'</strong>';
 						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtoagenda).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+						if ($realpathtoagenda)
+						{
+							print ' ';
+							print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=confirm_removefile&file='.urlencode($pathtoagenda).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
+						}
 						print '<br>';
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("PageForDocumentTab").' : <strong>'.($realpathtodocument?'':'<strike>').$pathtodocument.($realpathtodocument?'':'</strike>').'</strong>';
 						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtodocument).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+						if ($realpathtodocument)
+						{
+							print ' ';
+							print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=confirm_removefile&file='.urlencode($pathtodocument).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
+						}
 						print '<br>';
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("PageForNoteTab").' : <strong>'.($realpathtonote?'':'<strike>').$pathtonote.($realpathtonote?'':'</strike>').'</strong>';
 						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtonote).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+						if ($realpathtonote)
+						{
+							print ' ';
+							print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=confirm_removefile&file='.urlencode($pathtonote).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
+						}
 						print '<br>';
 
 						/* This is already on Tab CLI

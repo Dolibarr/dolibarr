@@ -61,7 +61,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 
 
 	/**
-	 *   Renvoi la description du modele de numerotation
+	 *   Returns the description of the numbering model
 	 *
 	 *   @return     string      Texte descripif
 	 */

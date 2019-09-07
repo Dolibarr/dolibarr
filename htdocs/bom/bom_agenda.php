@@ -23,25 +23,12 @@
  */
 
 // Load Dolibarr environment
-$res=0;
-// Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
-if (! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res=@include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
-// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
-$tmp=empty($_SERVER['SCRIPT_FILENAME'])?'':$_SERVER['SCRIPT_FILENAME'];$tmp2=realpath(__FILE__); $i=strlen($tmp)-1; $j=strlen($tmp2)-1;
-while($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i]==$tmp2[$j]) { $i--; $j--; }
-if (! $res && $i > 0 && file_exists(substr($tmp, 0, ($i+1))."/main.inc.php")) $res=@include substr($tmp, 0, ($i+1))."/main.inc.php";
-if (! $res && $i > 0 && file_exists(dirname(substr($tmp, 0, ($i+1)))."/main.inc.php")) $res=@include dirname(substr($tmp, 0, ($i+1)))."/main.inc.php";
-// Try main.inc.php using relative path
-if (! $res && file_exists("../main.inc.php")) $res=@include "../main.inc.php";
-if (! $res && file_exists("../../main.inc.php")) $res=@include "../../main.inc.php";
-if (! $res && file_exists("../../../main.inc.php")) $res=@include "../../../main.inc.php";
-if (! $res) die("Include of main fails");
-
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-dol_include_once('/bom/class/bom.class.php');
-dol_include_once('/bom/lib/bom.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
 
 
 // Load translation files required by the page
@@ -196,7 +183,7 @@ if ($object->id > 0)
     print '<div class="underbanner clearboth"></div>';
 
     $object->info($object->id);
-	print dol_print_object_info($object, 1);
+	dol_print_object_info($object, 1);
 
 	print '</div>';
 
@@ -209,7 +196,7 @@ if ($object->id > 0)
     $objthirdparty=$object;
     $objcon=new stdClass();
 
-    $out='';
+    $out='&origin='.$object->element.'&originid='.$object->id;
     $permok=$user->rights->agenda->myactions->create;
     if ((! empty($objthirdparty->id) || ! empty($objcon->id)) && $permok)
     {
@@ -240,9 +227,9 @@ if ($object->id > 0)
 
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
     {
-        $param='&socid='.$socid;
-        if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-        if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    	$param='&id='.$object->id.'&socid='.$socid;
+        if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+        if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 
 
 		//print load_fiche_titre($langs->trans("ActionsOnBom"), '', '');
@@ -252,7 +239,7 @@ if ($object->id > 0)
         $filters['search_agenda_label']=$search_agenda_label;
 
         // TODO Replace this with same code than into list.php
-        //show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
+        show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
     }
 }
 

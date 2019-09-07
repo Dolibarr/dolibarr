@@ -43,6 +43,7 @@ create table llx_mailing
   date_valid		datetime,                            -- 
   date_appro		datetime,                            -- 
   date_envoi		datetime,                            -- date d'envoi
+  tms				timestamp,  
   fk_user_creat		integer,                             -- user creator
   fk_user_valid		integer,                             -- user validator
   fk_user_appro		integer,                             -- not used

@@ -65,7 +65,7 @@ class AdherentType extends CommonObject
      * @var string Adherent type label
      */
     public $label;
-    
+
     /**
      * @var string Adherent type nature
      */
@@ -121,10 +121,12 @@ class AdherentType extends CommonObject
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type (";
-		$sql.= "libelle";
+		$sql.= " morphy";
+		$sql.= ", libelle";
 		$sql.= ", entity";
 		$sql.= ") VALUES (";
-		$sql.= "'".$this->db->escape($this->label)."'";
+		$sql.= "'".$this->db->escape($this->morphy)."'";
+		$sql.= ", '".$this->db->escape($this->label)."'";
 		$sql.= ", ".$conf->entity;
 		$sql.= ")";
 
@@ -410,8 +412,8 @@ class AdherentType extends CommonObject
 			return -1;
 		}
 	}
-  
-  /**
+
+	/**
 	 *	Return translated label by the nature of a adherent (physical or moral)
 	 *
 	 *	@param	string		$morphy		Nature of the adherent (physical or moral)
@@ -422,7 +424,7 @@ class AdherentType extends CommonObject
 		global $langs;
 		if ($morphy == 'phy') { return $langs->trans("Physical"); }
 		elseif ($morphy == 'mor') { return $langs->trans("Moral"); }
-    else return $langs->trans("Physical & Morale");
+        else return $langs->trans("Physical & Morale");
 		//return $morphy;
 	}
 
@@ -463,6 +465,7 @@ class AdherentType extends CommonObject
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -472,7 +475,7 @@ class AdherentType extends CommonObject
 	 *									2=Return key only (uid=qqq)
 	 *	@return		string				DN
 	 */
-	private function _load_ldap_dn($info, $mode = 0)
+	public function _load_ldap_dn($info, $mode = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -485,12 +488,13 @@ class AdherentType extends CommonObject
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
-	private function _load_ldap_info()
+	public function _load_ldap_info()
 	{
         // phpcs:enable
 		global $conf,$langs;

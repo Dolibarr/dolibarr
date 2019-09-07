@@ -185,12 +185,6 @@ if ($action == 'setvarother') {
     if (!$res > 0) {
         $error++;
     }
-
-    $param_auto_assign = GETPOST('TICKET_AUTO_ASSIGN_USER_CREATE', 'alpha');
-    $res = dolibarr_set_const($db, 'TICKET_AUTO_ASSIGN_USER_CREATE', $param_auto_assign, 'chaine', 0, '', $conf->entity);
-    if (!$res > 0) {
-        $error++;
-    }
 }
 
 
@@ -260,7 +254,7 @@ if (! empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
     print '</tr>';
 
     // Check if email exists
-    print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsEmailMustExist") . '</td>';
+    print '<tr class="oddeven"><td>' . $langs->trans("TicketsEmailMustExist") . '</td>';
     print '<td class="left">';
     if ($conf->use_javascript_ajax) {
         print ajax_constantonoff('TICKET_EMAIL_MUST_EXISTS');
@@ -277,7 +271,7 @@ if (! empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
     /*if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
     {
     	// Show logo for module
-    	print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsShowModuleLogo") . '</td>';
+    	print '<tr class="oddeven"><td>' . $langs->trans("TicketsShowModuleLogo") . '</td>';
     	print '<td class="left">';
     	if ($conf->use_javascript_ajax) {
     	    print ajax_constantonoff('TICKET_SHOW_MODULE_LOGO');
@@ -293,7 +287,7 @@ if (! empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
     }*/
 
     // Show logo for company
-    print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsShowCompanyLogo") . '</td>';
+    print '<tr class="oddeven"><td>' . $langs->trans("TicketsShowCompanyLogo") . '</td>';
     print '<td class="left">';
     if ($conf->use_javascript_ajax) {
     	print ajax_constantonoff('TICKET_SHOW_COMPANY_LOGO');
@@ -310,7 +304,7 @@ if (! empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
     // Also send to main email address
     if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
     {
-    	print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsEmailAlsoSendToMainAddress") . '</td>';
+    	print '<tr class="oddeven"><td>' . $langs->trans("TicketsEmailAlsoSendToMainAddress") . '</td>';
     	print '<td class="left">';
     	if ($conf->use_javascript_ajax) {
     	    print ajax_constantonoff('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS');
@@ -329,21 +323,6 @@ if (! empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
         print '<tr class="impair"><td colspan="3" align="center"><input type="submit" class="button" value="' . $langs->trans("Save") . '"></td>';
         print '</tr>';
     }
-
-    // Auto assign ticket at user who created it
-    print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsAutoAssignTicket") . '</td>';
-    print '<td class="left">';
-    if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('TICKET_AUTO_ASSIGN_USER_CREATE');
-    } else {
-        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-        print $form->selectarray("TICKET_AUTO_ASSIGN_USER_CREATE", $arrval, $conf->global->TICKET_AUTO_ASSIGN_USER_CREATE);
-    }
-    print '</td>';
-    print '<td align="center">';
-    print $form->textwithpicto('', $langs->trans("TicketsAutoAssignTicketHelp"), 1, 'help');
-    print '</td>';
-    print '</tr>';
 
     print '</table><br>';
 

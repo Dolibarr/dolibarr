@@ -24,6 +24,8 @@ abstract class Webhook
      */
     public static function constructEvent($payload, $sigHeader, $secret, $tolerance = self::DEFAULT_TOLERANCE)
     {
+        WebhookSignature::verifyHeader($payload, $sigHeader, $secret, $tolerance);
+
         $data = json_decode($payload, true);
         $jsonError = json_last_error();
         if ($data === null && $jsonError !== JSON_ERROR_NONE) {
@@ -32,8 +34,6 @@ abstract class Webhook
             throw new \UnexpectedValueException($msg);
         }
         $event = Event::constructFrom($data);
-
-        WebhookSignature::verifyHeader($payload, $sigHeader, $secret, $tolerance);
 
         return $event;
     }

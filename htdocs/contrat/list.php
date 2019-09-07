@@ -130,13 +130,16 @@ $arrayfields=array(
 	'status'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-	foreach($extrafields->attribute_label as $key => $val)
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
 	{
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
+		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
 	}
 }
+$object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 /*
@@ -592,7 +595,7 @@ if (! empty($arrayfields['c.tms']['checked'])){
     print_liste_field_titre($arrayfields['c.tms']['label'], $_SERVER["PHP_SELF"], "c.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 }
 if (! empty($arrayfields['lower_planned_end_date']['checked'])) {
-    print_liste_field_titre($arrayfields['lower_planned_end_date']['label'], $_SERVER["PHP_SELF"], "lower_planned_end_date", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+    print_liste_field_titre($arrayfields['lower_planned_end_date']['label'], $_SERVER["PHP_SELF"], "lower_planned_end_date", "", $param, '', $sortfield, $sortorder, 'center ');
 }
 if (! empty($arrayfields['status']['checked'])) {
 	print_liste_field_titre($staticcontratligne->LibStatut(0, 3), '', '', '', '', 'width="16"');

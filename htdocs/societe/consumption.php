@@ -114,7 +114,7 @@ dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'n
 print '<div class="fichecenter">';
 
 print '<div class="underbanner clearboth"></div>';
-print '<table class="border" width="100%">';
+print '<table class="border centpercent tableforfield">';
 
 if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 {
@@ -595,7 +595,7 @@ if ($sql_select)
 		print '</td>';
 
 		//print '<td class="left">'.$prodreftxt.'</td>';
-
+		if ($type_element == 'invoice' && $objp->doc_type == Facture::TYPE_CREDIT_NOTE) $objp->prod_qty=-($objp->prod_qty);
 		print '<td class="right">'.$objp->prod_qty.'</td>';
 		$total_qty+=$objp->prod_qty;
 

@@ -107,7 +107,7 @@ ExpenseReportsVentilation=費用報表的關聯
 CreateMvts=建立新的交易
 UpdateMvts=交易的修改
 ValidTransaction=驗證交易
-WriteBookKeeping=在總帳中記錄交易
+WriteBookKeeping=Register transactions in Ledger
 Bookkeeping=總帳
 AccountBalance=項目餘額
 ObjectsRef=參考的來源物件
@@ -158,6 +158,7 @@ ACCOUNTING_RESULT_LOSS=Result accounting account (Loss)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal of closure
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transitional bank transfer
+TransitionalAccount=Transitional bank transfer account
 
 ACCOUNTING_ACCOUNT_SUSPENSE=等待的會計項目
 DONATION_ACCOUNTINGACCOUNT=註冊捐款的會計項目
@@ -165,8 +166,8 @@ ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Accounting account to register subscript
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=預設已購產品的會計項目(如果在產品頁沒有定義時使用)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=預設已售產品的會計項目(如果在產品頁沒有定義時使用)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT_INTRA=Accounting account by default for the sold products in EEC (used if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT_EXPORT=Accounting account by default for the sold products export out of EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Accounting account by default for the sold products in EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Accounting account by default for the sold products export out of EEC (used if not defined in the product sheet)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=委外服務預設會計項目(若沒在服務頁中定義時使用)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=服務收入預設會計項目(若沒在服務頁中定義時使用)
 
@@ -177,6 +178,7 @@ LabelAccount=標籤會計項目
 LabelOperation=標籤操作
 Sens=Sens
 LetteringCode=Lettering code
+Lettering=Lettering
 Codejournal=日記簿
 JournalLabel=Journal label
 NumPiece=件數
@@ -215,7 +217,8 @@ DescThirdPartyReport=Consult here the list of third-party customers and vendors 
 ListAccounts=各式會計項目清單
 UnknownAccountForThirdparty=Unknown third-party account. We will use %s
 UnknownAccountForThirdpartyBlocking=Unknown third-party account. Blocking error
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. Blocking error.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Third-party account not defined or third party unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third-party account and waiting account not defined. Blocking error
 PaymentsNotLinkedToProduct=Payment not linked to any product / service
 
@@ -262,7 +265,7 @@ AccountingJournals=各式會計日記簿
 AccountingJournal=會計日記簿
 NewAccountingJournal=新會計日記簿
 ShowAccoutingJournal=顯示會計日記簿
-Nature=性質
+NatureOfJournal=Nature of Journal
 AccountingJournalType1=雜項操作
 AccountingJournalType2=各式銷貨
 AccountingJournalType3=各式採購
@@ -288,19 +291,26 @@ Modelcsv_quadratus=Export for Quadratus QuadraCompta
 Modelcsv_ebp=Export for EBP
 Modelcsv_cogilog=Export for Cogilog
 Modelcsv_agiris=Export for Agiris
+Modelcsv_LDCompta=Export for LD Compta (v9 & higher) (Test)
+Modelcsv_openconcerto=Export for OpenConcerto (Test)
 Modelcsv_configurable=Export CSV Configurable
-Modelcsv_FEC=Export FEC (Art. L47 A) (Test)
+Modelcsv_FEC=Export FEC
+Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
 ChartofaccountsId=會計項目表ID
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=初始會計
 InitAccountancyDesc=此頁可在沒有定義產品及服務的銷售及採購會計項目下使用產品及服務的會計項目。
 DefaultBindingDesc=當沒有設定特定會計項目時，此頁面可設定預設會計項目連結到薪資、捐贈、稅捐及營業稅的交易紀錄。
-DefaultClosureDesc=This page can be used to set parameters to use to enclose a balance sheet.
+DefaultClosureDesc=This page can be used to set parameters used for accounting closures.
 Options=選項
 OptionModeProductSell=銷售模式
+OptionModeProductSellIntra=Mode sales exported in EEC
+OptionModeProductSellExport=Mode sales exported in other countries
 OptionModeProductBuy=採購模式
 OptionModeProductSellDesc=顯示銷售產品的會計項目
+OptionModeProductSellIntraDesc=Show all products with accounting account for sales in EEC.
+OptionModeProductSellExportDesc=Show all products with accounting account for other foreign sales.
 OptionModeProductBuyDesc=顯示採購所有產品的會計項目
 CleanFixHistory=移除會計代號將不再出現在會計項目表中。
 CleanHistory=針對選定年度重設全部關聯性
@@ -309,6 +319,9 @@ WithoutValidAccount=沒有驗證的指定會計項目
 WithValidAccount=驗證的指定會計項目
 ValueNotIntoChartOfAccount=在會計項目表中沒有會計項目的值
 AccountRemovedFromGroup=Account removed from group
+SaleLocal=Local sale
+SaleExport=Export sale
+SaleEEC=Sale in EEC
 
 ## Dictionary
 Range=會計項目範圍
@@ -329,7 +342,7 @@ UseMenuToSetBindindManualy=Lines not yet bound, use menu <a href="%s">%s</a> to 
 
 ## Import
 ImportAccountingEntries=Accounting entries
-
+DateExport=Date export
 WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Expense Report Journal
 InventoryJournal=Inventory Journal

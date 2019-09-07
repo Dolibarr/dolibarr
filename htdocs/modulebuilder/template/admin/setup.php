@@ -103,7 +103,8 @@ if ($action == 'edit')
 	foreach($arrayofparameters as $key => $val)
 	{
 		print '<tr class="oddeven"><td>';
-		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
+		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
+		print $form->textwithpicto($langs->trans($key), $tooltiphelp);
 		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css'])?'minwidth200':$val['css']).'" value="' . $conf->global->$key . '"></td></tr>';
 	}
 	print '</table>';
@@ -119,13 +120,14 @@ else
 {
 	if (! empty($arrayofparameters))
 	{
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 		foreach($arrayofparameters as $key => $val)
 		{
 			print '<tr class="oddeven"><td>';
-			print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
+			$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
+			print $form->textwithpicto($langs->trans($key), $tooltiphelp);
 			print '</td><td>' . $conf->global->$key . '</td></tr>';
 		}
 

@@ -38,6 +38,7 @@ ActionsEvents=Pasākumi, par kuriem Dolibarr radīs prasību kārtībā automāt
 EventRemindersByEmailNotEnabled=Pasākumu atgādinājumi pa e-pastu netika iespējoti %s moduļa iestatījumos.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Trešā puse izveidota %s
+COMPANY_DELETEInDolibarr=Izdzēsta trešā persona %s
 ContractValidatedInDolibarr=Līgumi %s apstiprināti
 CONTRACT_DELETEInDolibarr=Līgums %s svītrots
 PropalClosedSignedInDolibarr=Piedāvājumi %s parakstīti
@@ -95,6 +96,7 @@ PROJECT_MODIFYInDolibarr=Projekts %s ir labots
 PROJECT_DELETEInDolibarr=Projekts %s dzēsts
 TICKET_CREATEInDolibarr=Biļete %s izveidota
 TICKET_MODIFYInDolibarr=Biļete %s modificēta
+TICKET_ASSIGNEDInDolibarr=Biļete %s piešķirta
 TICKET_CLOSEInDolibarr=Biļete %s slēgta
 TICKET_DELETEInDolibarr=Pieteikums %s dzēsts
 ##### End agenda events #####
@@ -122,7 +124,7 @@ AgendaExtNb=Kalendāra Nr. %s
 ExtSiteUrlAgenda=URL, lai piekļūtu. ICal failam
 ExtSiteNoLabel=Nav Apraksta
 VisibleTimeRange=Visible time range
-VisibleDaysRange=Visible days range
+VisibleDaysRange=Redzamo dienu diapazons
 AddEvent=Izveidot notikumu
 MyAvailability=Mana pieejamība
 ActionType=Pasākuma veids

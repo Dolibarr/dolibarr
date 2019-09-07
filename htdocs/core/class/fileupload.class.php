@@ -17,7 +17,7 @@
  */
 
 /**
- *       \file       htdocs/core/ajax/fileupload.php
+ *       \file       htdocs/core/ajax/fileupload.class.php
  *       \brief      File to return Ajax response on file upload
  */
 
@@ -45,6 +45,8 @@ class FileUpload
 	{
 		global $db, $conf;
 		global $object;
+		global $hookmanager;
+		$hookmanager->initHooks(array('fileupload'));
 
 		$this->fk_element=$fk_element;
 		$this->element=$element;
@@ -183,6 +185,18 @@ class FileUpload
 						)
 				)
 		);
+
+        $hookmanager->executeHooks(
+            'overrideUploadOptions',
+            array(
+                'options' => &$options,
+                'element' => $element
+            ),
+            $object,
+            $action,
+            $hookmanager
+        );
+
 		if ($options) {
 			$this->options = array_replace_recursive($this->options, $options);
 		}

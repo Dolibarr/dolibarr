@@ -419,7 +419,7 @@ class FormTicket
 
         if ($withdolfichehead) dol_fiche_end();
 
-        print '<center>';
+        print '<br><center>';
         print '<input class="button" type="submit" name="add" value="' . $langs->trans(($this->withthreadid > 0 ? "SendResponse" : "NewTicket")) . '" />';
 
         if ($this->withcancel) {
@@ -733,40 +733,97 @@ class FormTicket
         print ajax_combobox('select'.$htmlname);
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     * Clear list of attached files in send mail form (also stored in session)
+     *
+     * @return	void
+     */
+    public function clear_attached_files()
+    {
+    	// phpcs:enable
+    	global $conf,$user;
+    	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+    	// Set tmp user directory
+    	$vardir=$conf->user->dir_output."/".$user->id;
+    	$upload_dir = $vardir.'/temp/';                     // TODO Add $keytoavoidconflict in upload_dir path
+    	if (is_dir($upload_dir)) dol_delete_dir_recursive($upload_dir);
+
+    	$keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
+    	unset($_SESSION["listofpaths".$keytoavoidconflict]);
+    	unset($_SESSION["listofnames".$keytoavoidconflict]);
+    	unset($_SESSION["listofmimes".$keytoavoidconflict]);
+    }
+
     /**
      * Show the form to add message on ticket
      *
-     * @param  string   $width      Width of form
-     * @return void
+     * @param  	string  $width      	Width of form
+     * @return 	void
      */
     public function showMessageForm($width = '40%')
     {
-        global $conf, $langs, $user, $mysoc;
+        global $conf, $langs, $user, $hookmanager, $form, $mysoc;
+
+        $formmail = new FormMail($this->db);
+        $addfileaction = 'addfile';
+
+        if (! is_object($form)) $form=new Form($this->db);
 
         // Load translation files required by the page
         $langs->loadLangs(array('other', 'mails'));
 
-        $addfileaction = 'addfile';
+        // Clear temp files. Must be done at beginning, before call of triggers
+        if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1'))
+        {
+        	$this->clear_attached_files();
+        }
 
-        $form = new Form($this->db);
-        $formmail = new FormMail($this->db);
+        // Define output language
+        $outputlangs = $langs;
+        $newlang = '';
+        if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $this->param['langsmodels'];
+        if (! empty($newlang))
+        {
+        	$outputlangs = new Translate("", $conf);
+        	$outputlangs->setDefaultLang($newlang);
+        	$outputlangs->load('other');
+        }
 
+        // Get message template for $this->param["models"] into c_email_templates
+        $arraydefaultmessage = -1;
+        if ($this->param['models'] != 'none')
+        {
+        	$model_id=0;
+        	if (array_key_exists('models_id', $this->param))
+        	{
+        		$model_id=$this->param["models_id"];
+        	}
+
+        	$arraydefaultmessage=$formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id);		// If $model_id is empty, preselect the first one
+        }
 
         // Define list of attached files
         $listofpaths = array();
         $listofnames = array();
         $listofmimes = array();
-        if (!empty($_SESSION["listofpaths"])) {
-            $listofpaths = explode(';', $_SESSION["listofpaths"]);
+        $keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
+
+        if (GETPOST('mode', 'alpha') == 'init' || (GETPOST('modelmailselected', 'alpha') && GETPOST('modelmailselected', 'alpha') != '-1'))
+        {
+        	if (! empty($arraydefaultmessage->joinfiles) && is_array($this->param['fileinit']))
+        	{
+        		foreach($this->param['fileinit'] as $file)
+        		{
+        			$this->add_attached_files($file, basename($file), dol_mimetype($file));
+        		}
+        	}
         }
 
-        if (!empty($_SESSION["listofnames"])) {
-            $listofnames = explode(';', $_SESSION["listofnames"]);
-        }
-
-        if (!empty($_SESSION["listofmimes"])) {
-            $listofmimes = explode(';', $_SESSION["listofmimes"]);
-        }
+        if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';', $_SESSION["listofpaths".$keytoavoidconflict]);
+        if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';', $_SESSION["listofnames".$keytoavoidconflict]);
+        if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';', $_SESSION["listofmimes".$keytoavoidconflict]);
 
         // Define output language
         $outputlangs = $langs;
@@ -808,6 +865,7 @@ class FormTicket
         print '<form method="post" name="ticket" enctype="multipart/form-data" action="' . $this->param["returnurl"] . '">';
         print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
         print '<input type="hidden" name="action" value="' . $this->action . '">';
+        print '<input type="hidden" name="actionbis" value="add_message">';
         foreach ($this->param as $key => $value) {
             print '<input type="hidden" name="' . $key . '" value="' . $value . '">';
         }
@@ -1000,7 +1058,7 @@ class FormTicket
                     $out .= '<div id="attachfile_' . $key . '">';
                     $out .= img_mime($listofnames[$key]) . ' ' . $listofnames[$key];
                     if (!$this->withfilereadonly) {
-                        $out .= ' <input type="image" style="border: 0px;" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/delete.png" value="' . ($key + 1) . '" class="removedfile" id="removedfile_' . $key . '" name="removedfile_' . $key . '" />';
+                        $out .= ' <input type="image" style="border: 0px;" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/delete.png" value="' . ($key + 1) . '" class="removedfile reposition" id="removedfile_' . $key . '" name="removedfile_' . $key . '" />';
                     }
                     $out .= '<br></div>';
                 }

@@ -61,6 +61,18 @@ if ($user->societe_id > 0)	// Protection if external user
 }
 $result = restrictedArea($user, 'holiday', $id, '');
 $id = GETPOST('id', 'int');
+// If we are on the view of a specific user
+if ($id > 0)
+{
+    $canread=0;
+    if ($id == $user->id) $canread=1;
+    if (! empty($user->rights->holiday->read_all)) $canread=1;
+    if (! empty($user->rights->holiday->read) && in_array($id, $childids)) $canread=1;
+    if (! $canread)
+    {
+        accessforbidden();
+    }
+}
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -319,11 +331,12 @@ if ($id > 0)		// For user tab
 
 	dol_fiche_end();
 
+	// Buttons for actions
+
 	print '<div class="tabsAction">';
 
 	$canedit=(($user->id == $user_id && $user->rights->holiday->write) || ($user->id != $user_id && $user->rights->holiday->write_all));
 
-	// Boutons d'actions
 	if ($canedit)
 	{
 		print '<a href="'.DOL_URL_ROOT.'/holiday/card.php?action=request&fuserid='.$user_id.'" class="butAction">'.$langs->trans("AddCP").'</a>';

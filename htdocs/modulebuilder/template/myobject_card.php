@@ -73,6 +73,7 @@ $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'myobjectcard';   // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
+//$lineid   = GETPOST('lineid', 'int');
 
 // Initialize technical objects
 $object=new MyObject($db);
@@ -159,7 +160,7 @@ if (empty($reshook))
 $form=new Form($db);
 $formfile=new FormFile($db);
 
-llxHeader('', 'MyObject', '');
+llxHeader('', $langs->trans('MyObject'), '');
 
 // Example : Adding jquery code
 print '<script type="text/javascript" language="javascript">
@@ -223,7 +224,7 @@ if (($id || $ref) && $action == 'edit')
 
 	dol_fiche_head();
 
-	print '<table class="border centpercent">'."\n";
+	print '<table class="border centpercent tableforfield">'."\n";
 
 	// Common attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_edit.tpl.php';
@@ -248,16 +249,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     $res = $object->fetch_optionals();
 
 	$head = myobjectPrepareHead($object);
-	dol_fiche_head($head, 'card', $langs->trans("MyObject"), -1, 'myobject@mymodule');
+	dol_fiche_head($head, 'card', $langs->trans("MyObject"), -1, $object->picto);
 
 	$formconfirm = '';
 
 	// Confirmation to delete
 	if ($action == 'delete')
 	{
-	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteMyObject'), $langs->trans('ConfirmDeleteMyObject'), 'confirm_delete', '', 0, 1);
+	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteMyObject'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 1);
 	}
-
+	// Confirmation to delete line
+	if ($action == 'deleteline')
+	{
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
+	}
 	// Clone confirmation
 	if ($action == 'clone') {
 		// Create an array for form
@@ -356,7 +361,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</div>';
 	print '</div>';
 
-	print '<div class="clearboth"></div><br>';
+	print '<div class="clearboth"></div>';
 
 	dol_fiche_end();
 
@@ -389,7 +394,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
     	if (! empty($object->lines))
     	{
-    	    $ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
+    		$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1);
     	}
 
     	// Form to add new line
@@ -416,6 +421,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 
 	// Buttons for actions
+
 	if ($action != 'presend' && $action != 'editline') {
     	print '<div class="tabsAction">'."\n";
     	$parameters=array();
@@ -428,7 +434,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
             print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
 
             // Modify
-    		if ($user->rights->mymodule->write)
+            if (! empty($user->rights->mymodule->write))
     		{
     			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
     		}
@@ -438,7 +444,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		}
 
     		// Clone
-    		if ($user->rights->mymodule->write)
+    		if (! empty($user->rights->mymodule->write))
     		{
     			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=order">' . $langs->trans("ToClone") . '</a></div>';
     		}
@@ -457,7 +463,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		}
     		*/
 
-    		if ($user->rights->mymodule->delete)
+    		// Delete (need delete permission, or if draft, just need create/modify permission)
+    		if (! empty($user->rights->mymodule->delete) || (! empty($object->fields['status']) && $object->status == $object::STATUS_DRAFT && ! empty($user->rights->mymodule->write)))
     		{
     			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>'."\n";
     		}
@@ -499,7 +506,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	    $MAXEVENT = 10;
 
-	    $morehtmlright = '<a href="'.dol_buildpath('/mymodule/myobject_info.php', 1).'?id='.$object->id.'">';
+	    $morehtmlright = '<a href="'.dol_buildpath('/mymodule/myobject_agenda.php', 1).'?id='.$object->id.'">';
 	    $morehtmlright.= $langs->trans("SeeAll");
 	    $morehtmlright.= '</a>';
 

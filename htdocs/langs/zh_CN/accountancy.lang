@@ -107,7 +107,7 @@ ExpenseReportsVentilation=费用报告绑定
 CreateMvts=创建新交易
 UpdateMvts=修改交易
 ValidTransaction=验证交易
-WriteBookKeeping=在帐目中记录交易
+WriteBookKeeping=Register transactions in Ledger
 Bookkeeping=分类帐
 AccountBalance=账目平衡
 ObjectsRef=源对象引用
@@ -158,6 +158,7 @@ ACCOUNTING_RESULT_LOSS=Result accounting account (Loss)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal of closure
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transitional bank transfer
+TransitionalAccount=Transitional bank transfer account
 
 ACCOUNTING_ACCOUNT_SUSPENSE=会计科目-等待
 DONATION_ACCOUNTINGACCOUNT=会计科目-登记捐款
@@ -165,8 +166,8 @@ ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Accounting account to register subscript
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=购买产品的默认会计科目（如果未在产品说明书中定义，则使用）
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=销售产品的默认会计科目（如果未在产品说明书中定义，则使用）
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT_INTRA=Accounting account by default for the sold products in EEC (used if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT_EXPORT=Accounting account by default for the sold products export out of EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Accounting account by default for the sold products in EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Accounting account by default for the sold products export out of EEC (used if not defined in the product sheet)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=已购买服务的默认会计科目（如果未在服务单中定义，则使用）
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=默认情况下，已售出服务的会计科目（如果未在服务单中定义，则使用）
 
@@ -177,6 +178,7 @@ LabelAccount=标签帐户
 LabelOperation=标签操作
 Sens=SENS
 LetteringCode=刻字代码
+Lettering=Lettering
 Codejournal=日记帐
 JournalLabel=Journal label
 NumPiece=件数
@@ -215,7 +217,8 @@ DescThirdPartyReport=Consult here the list of third-party customers and vendors 
 ListAccounts=会计科目清单
 UnknownAccountForThirdparty=Unknown third-party account. We will use %s
 UnknownAccountForThirdpartyBlocking=Unknown third-party account. Blocking error
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. Blocking error.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Third-party account not defined or third party unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third-party account and waiting account not defined. Blocking error
 PaymentsNotLinkedToProduct=付款未与任何产品/服务相关联
 
@@ -262,7 +265,7 @@ AccountingJournals=会计日常报表
 AccountingJournal=会计日常报表
 NewAccountingJournal=新建会计日常报表
 ShowAccoutingJournal=显示会计日常报表
-Nature=属性
+NatureOfJournal=Nature of Journal
 AccountingJournalType1=杂项业务
 AccountingJournalType2=销售
 AccountingJournalType3=采购
@@ -288,19 +291,26 @@ Modelcsv_quadratus=Export for Quadratus QuadraCompta
 Modelcsv_ebp=Export for EBP
 Modelcsv_cogilog=Export for Cogilog
 Modelcsv_agiris=Export for Agiris
+Modelcsv_LDCompta=Export for LD Compta (v9 & higher) (Test)
+Modelcsv_openconcerto=Export for OpenConcerto (Test)
 Modelcsv_configurable=导出CSV可配置
-Modelcsv_FEC=Export FEC (Art. L47 A) (Test)
+Modelcsv_FEC=Export FEC
+Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
 ChartofaccountsId=会计科目表ID
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=初始化会计
 InitAccountancyDesc=此页面可用于初始化没有为销售和购买定义的会计科目的产品和服务的会计科目。
 DefaultBindingDesc=此页面可用于设置默认帐户，用于在未设置特定会计帐户时链接有关付款工资，捐款，税金和增值税的交易记录。
-DefaultClosureDesc=This page can be used to set parameters to use to enclose a balance sheet.
+DefaultClosureDesc=This page can be used to set parameters used for accounting closures.
 Options=选项
 OptionModeProductSell=销售模式
+OptionModeProductSellIntra=Mode sales exported in EEC
+OptionModeProductSellExport=Mode sales exported in other countries
 OptionModeProductBuy=采购模式
 OptionModeProductSellDesc=显示所有具有销售会计帐户的产品。
+OptionModeProductSellIntraDesc=Show all products with accounting account for sales in EEC.
+OptionModeProductSellExportDesc=Show all products with accounting account for other foreign sales.
 OptionModeProductBuyDesc=显示所有带有会计帐户的产品。
 CleanFixHistory=将不存在于会计科目表中的行删除科目代码
 CleanHistory=重置所选年份的所有绑定
@@ -309,6 +319,9 @@ WithoutValidAccount=没有有效的专用帐户
 WithValidAccount=有效的专用帐户
 ValueNotIntoChartOfAccount=会计科目的这个值不存在于会计科目表中
 AccountRemovedFromGroup=Account removed from group
+SaleLocal=Local sale
+SaleExport=Export sale
+SaleEEC=Sale in EEC
 
 ## Dictionary
 Range=会计科目范围
@@ -323,13 +336,13 @@ ErrorInvoiceContainsLinesNotYetBoundedShort=发票上的某些行未绑定到会
 ExportNotSupported=本页不支持设置导出格式
 BookeppingLineAlreayExists=已经存在于簿记中的行
 NoJournalDefined=没有定义日常报表
-Binded=线条约束
+Binded=已绑定的行
 ToBind=要绑定的行
 UseMenuToSetBindindManualy=Lines not yet bound, use menu <a href="%s">%s</a> to make the binding manually
 
 ## Import
 ImportAccountingEntries=会计分录
-
+DateExport=Date export
 WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=费用报告日常报表
 InventoryJournal=库存日常报表

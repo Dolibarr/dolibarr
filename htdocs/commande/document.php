@@ -72,7 +72,7 @@ $object = new Commande($db);
 if ($object->fetch($id))
 {
 	$object->fetch_thirdparty();
-	$upload_dir = $conf->commande->dir_output . "/" . dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->commande->multidir_output[$object->entity] . "/" . dol_sanitizeFileName($object->ref);
 }
 
 include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
@@ -92,7 +92,7 @@ if ($id > 0 || ! empty($ref))
 	{
 		$object->fetch_thirdparty();
 
-		$upload_dir = $conf->commande->dir_output.'/'.dol_sanitizeFileName($object->ref);
+		$upload_dir = $conf->commande->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 
 		$head = commande_prepare_head($object);
 		dol_fiche_head($head, 'documents', $langs->trans('CustomerOrder'), -1, 'order');
@@ -174,7 +174,7 @@ if ($id > 0 || ! empty($ref))
 		$modulepart = 'commande';
 		$permission = $user->rights->commande->creer;
 		$permtoedit = $user->rights->commande->creer;
-		$param = '&id=' . $object->id;
+		$param = '&id=' . $object->id.'&entity=' . (! empty($object->entity)?$object->entity:$conf->entity);
 		include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 	}
 	else

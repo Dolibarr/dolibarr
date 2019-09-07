@@ -1,0 +1,17 @@
+MRPArea=MRP apgabals
+MenuBOM=Materiālu rēķini
+LatestBOMModified=Jaunākie %s Grozītie materiālu rēķini
+BillOfMaterials=Materiālu rēķins
+BOMsSetup=Moduļa BOM iestatīšana
+ListOfBOMs=Materiālu rēķinu saraksts - BOM
+NewBOM=Jauns rēķins par materiālu
+ProductBOMHelp=Produkts, kas jāizveido ar šo BOM
+BOMsNumberingModules=BOM numerācijas veidnes
+BOMsModelModule=BOMS dokumentu veidnes
+FreeLegalTextOnBOMs=Brīvs teksts BOM dokumentā
+WatermarkOnDraftBOMs=Ūdenszīme BOM projektā
+ConfirmCloneBillOfMaterials=Vai tiešām vēlaties klonēt šo materiālu?
+ManufacturingEfficiency=Ražošanas efektivitāte
+ValueOfMeansLoss=0,95 vērtība nozīmē vidējo 5%% zudumu ražošanas laikā
+DeleteBillOfMaterials=Dzēst materiālus
+ConfirmDeleteBillOfMaterials=Vai tiešām vēlaties dzēst šo materiālu?
