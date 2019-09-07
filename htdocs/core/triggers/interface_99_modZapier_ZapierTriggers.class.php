@@ -54,7 +54,7 @@ class InterfaceZapierTriggers extends DolibarrTriggers
         $this->db = $db;
 
         $this->name = preg_replace('/^Interface/i', '', get_class($this));
-        $this->family = "demo";
+        $this->family = "technic";
         $this->description = "Zapier triggers.";
         // 'development', 'experimental', 'dolibarr' or version
         $this->version = 'development';
@@ -104,8 +104,8 @@ class InterfaceZapierTriggers extends DolibarrTriggers
         $logtriggeraction = false;
         if ($action!='') {
             $actions = explode('_', $action);
-            $sql = 'SELECT rowid, url FROM '.MAIN_DB_PREFIX.'zapier_hook WHERE';
-            $sql .= ' module="'.$db->escape(strtolower($actions[0])).'" AND action="'.$db->escape(strtolower($actions[1])).'"';
+            $sql = 'SELECT rowid, url FROM '.MAIN_DB_PREFIX.'zapier_hook';
+            $sql .= ' WHERE module="'.$db->escape(strtolower($actions[0])).'" AND action="'.$db->escape(strtolower($actions[1])).'"';
             //setEventMessages($sql, null);
         }
 
@@ -119,28 +119,11 @@ class InterfaceZapierTriggers extends DolibarrTriggers
             //case 'USER_DELETE':
             //case 'USER_SETINGROUP':
             //case 'USER_REMOVEFROMGROUP':
-
-            case 'USER_LOGIN':
-                //$logtriggeraction = true;
-                break;
-            case 'USER_LOGIN_FAILED':
-                //$logtriggeraction = true;
-                break;
-            case 'USER_LOGOUT':
-                //$logtriggeraction = true;
-                break;
+            // case 'USER_LOGIN':
+            // case 'USER_LOGIN_FAILED':
+            // case 'USER_LOGOUT':
             // Warning: To increase performances, this action is triggered only if constant MAIN_ACTIVATE_UPDATESESSIONTRIGGER is set to 1.
-            //case 'USER_UPDATE_SESSION':
-
-            case 'DOSSIERISOLATION_CREATE':
-                //$logtriggeraction = true;
-                break;
-            case 'DOSSIERISOLATION_MODIFY':
-                //$logtriggeraction = true;
-                break;
-            case 'DOSSIERISOLATION_DELETE':
-                //$logtriggeraction = true;
-                break;
+            // // case 'USER_UPDATE_SESSION':
 
             // Actions
             case 'ACTION_MODIFY':
@@ -200,20 +183,20 @@ class InterfaceZapierTriggers extends DolibarrTriggers
             case 'CONTACT_ENABLEDISABLE':
 
             // Products
-            case 'PRODUCT_CREATE':
-            case 'PRODUCT_MODIFY':
-            case 'PRODUCT_DELETE':
-            case 'PRODUCT_PRICE_MODIFY':
-            case 'PRODUCT_SET_MULTILANGS':
-            case 'PRODUCT_DEL_MULTILANGS':
+            // case 'PRODUCT_CREATE':
+            // case 'PRODUCT_MODIFY':
+            // case 'PRODUCT_DELETE':
+            // case 'PRODUCT_PRICE_MODIFY':
+            // case 'PRODUCT_SET_MULTILANGS':
+            // case 'PRODUCT_DEL_MULTILANGS':
 
             //Stock mouvement
-            case 'STOCK_MOVEMENT':
+            // case 'STOCK_MOVEMENT':
 
             //MYECMDIR
-            case 'MYECMDIR_DELETE':
-            case 'MYECMDIR_CREATE':
-            case 'MYECMDIR_MODIFY':
+            // case 'MYECMDIR_DELETE':
+            // case 'MYECMDIR_CREATE':
+            // case 'MYECMDIR_MODIFY':
 
             // Customer orders
             case 'ORDER_CREATE':
@@ -240,165 +223,145 @@ class InterfaceZapierTriggers extends DolibarrTriggers
             case 'LINEORDER_DELETE':
 
             // Supplier orders
-            case 'ORDER_SUPPLIER_CREATE':
-            case 'ORDER_SUPPLIER_CLONE':
-            case 'ORDER_SUPPLIER_VALIDATE':
-            case 'ORDER_SUPPLIER_DELETE':
-            case 'ORDER_SUPPLIER_APPROVE':
-            case 'ORDER_SUPPLIER_REFUSE':
-            case 'ORDER_SUPPLIER_CANCEL':
-            case 'ORDER_SUPPLIER_SENTBYMAIL':
-            case 'ORDER_SUPPLIER_DISPATCH':
-            case 'LINEORDER_SUPPLIER_DISPATCH':
-            case 'LINEORDER_SUPPLIER_CREATE':
-            case 'LINEORDER_SUPPLIER_UPDATE':
+            // case 'ORDER_SUPPLIER_CREATE':
+            // case 'ORDER_SUPPLIER_CLONE':
+            // case 'ORDER_SUPPLIER_VALIDATE':
+            // case 'ORDER_SUPPLIER_DELETE':
+            // case 'ORDER_SUPPLIER_APPROVE':
+            // case 'ORDER_SUPPLIER_REFUSE':
+            // case 'ORDER_SUPPLIER_CANCEL':
+            // case 'ORDER_SUPPLIER_SENTBYMAIL':
+            // case 'ORDER_SUPPLIER_DISPATCH':
+            // case 'LINEORDER_SUPPLIER_DISPATCH':
+            // case 'LINEORDER_SUPPLIER_CREATE':
+            // case 'LINEORDER_SUPPLIER_UPDATE':
 
             // Proposals
-            case 'PROPAL_CREATE':
-            case 'PROPAL_CLONE':
-            case 'PROPAL_MODIFY':
-            case 'PROPAL_VALIDATE':
-            case 'PROPAL_SENTBYMAIL':
-            case 'PROPAL_CLOSE_SIGNED':
-                //$logtriggeraction = true;
-                break;
-            case 'PROPAL_CLOSE_REFUSED':
-                //$logtriggeraction = true;
-                break;
-            case 'PROPAL_DELETE':
-                //$logtriggeraction = true;
-                break;
-            case 'LINEPROPAL_INSERT':
-            case 'LINEPROPAL_UPDATE':
-            case 'LINEPROPAL_DELETE':
+            // case 'PROPAL_CREATE':
+            // case 'PROPAL_CLONE':
+            // case 'PROPAL_MODIFY':
+            // case 'PROPAL_VALIDATE':
+            // case 'PROPAL_SENTBYMAIL':
+            // case 'PROPAL_CLOSE_SIGNED':
+            // case 'PROPAL_CLOSE_REFUSED':
+            // case 'PROPAL_DELETE':
+            // case 'LINEPROPAL_INSERT':
+            // case 'LINEPROPAL_UPDATE':
+            // case 'LINEPROPAL_DELETE':
 
             // SupplierProposal
-            case 'SUPPLIER_PROPOSAL_CREATE':
-            case 'SUPPLIER_PROPOSAL_CLONE':
-            case 'SUPPLIER_PROPOSAL_MODIFY':
-            case 'SUPPLIER_PROPOSAL_VALIDATE':
-            case 'SUPPLIER_PROPOSAL_SENTBYMAIL':
-            case 'SUPPLIER_PROPOSAL_CLOSE_SIGNED':
-            case 'SUPPLIER_PROPOSAL_CLOSE_REFUSED':
-            case 'SUPPLIER_PROPOSAL_DELETE':
-            case 'LINESUPPLIER_PROPOSAL_INSERT':
-            case 'LINESUPPLIER_PROPOSAL_UPDATE':
-            case 'LINESUPPLIER_PROPOSAL_DELETE':
+            // case 'SUPPLIER_PROPOSAL_CREATE':
+            // case 'SUPPLIER_PROPOSAL_CLONE':
+            // case 'SUPPLIER_PROPOSAL_MODIFY':
+            // case 'SUPPLIER_PROPOSAL_VALIDATE':
+            // case 'SUPPLIER_PROPOSAL_SENTBYMAIL':
+            // case 'SUPPLIER_PROPOSAL_CLOSE_SIGNED':
+            // case 'SUPPLIER_PROPOSAL_CLOSE_REFUSED':
+            // case 'SUPPLIER_PROPOSAL_DELETE':
+            // case 'LINESUPPLIER_PROPOSAL_INSERT':
+            // case 'LINESUPPLIER_PROPOSAL_UPDATE':
+            // case 'LINESUPPLIER_PROPOSAL_DELETE':
 
             // Contracts
-            case 'CONTRACT_CREATE':
-            case 'CONTRACT_ACTIVATE':
-            case 'CONTRACT_CANCEL':
-            case 'CONTRACT_CLOSE':
-            case 'CONTRACT_DELETE':
-            case 'LINECONTRACT_INSERT':
-            case 'LINECONTRACT_UPDATE':
-            case 'LINECONTRACT_DELETE':
+            // case 'CONTRACT_CREATE':
+            // case 'CONTRACT_ACTIVATE':
+            // case 'CONTRACT_CANCEL':
+            // case 'CONTRACT_CLOSE':
+            // case 'CONTRACT_DELETE':
+            // case 'LINECONTRACT_INSERT':
+            // case 'LINECONTRACT_UPDATE':
+            // case 'LINECONTRACT_DELETE':
 
             // Bills
-            case 'BILL_CREATE':
-                //$logtriggeraction = true;
-                break;
-            case 'BILL_CLONE':
-            case 'BILL_MODIFY':
-            case 'BILL_VALIDATE':
-            case 'BILL_UNVALIDATE':
-                //$logtriggeraction = true;
-                break;
-            case 'BILL_SENTBYMAIL':
-                //$logtriggeraction = true;
-                break;
-            case 'BILL_CANCEL':
-                //$logtriggeraction = true;
-                break;
-            case 'BILL_DELETE':
-                //$logtriggeraction = true;
-                break;
-            case 'BILL_PAYED':
-            case 'LINEBILL_INSERT':
-            case 'LINEBILL_UPDATE':
-            case 'LINEBILL_DELETE':
+            // case 'BILL_CREATE':
+            // case 'BILL_CLONE':
+            // case 'BILL_MODIFY':
+            // case 'BILL_VALIDATE':
+            // case 'BILL_UNVALIDATE':
+            // case 'BILL_SENTBYMAIL':
+            // case 'BILL_CANCEL':
+            // case 'BILL_DELETE':
+            // case 'BILL_PAYED':
+            // case 'LINEBILL_INSERT':
+            // case 'LINEBILL_UPDATE':
+            // case 'LINEBILL_DELETE':
 
             //Supplier Bill
-            case 'BILL_SUPPLIER_CREATE':
-            case 'BILL_SUPPLIER_UPDATE':
-            case 'BILL_SUPPLIER_DELETE':
-            case 'BILL_SUPPLIER_PAYED':
-            case 'BILL_SUPPLIER_UNPAYED':
-            case 'BILL_SUPPLIER_VALIDATE':
-            case 'BILL_SUPPLIER_UNVALIDATE':
-            case 'LINEBILL_SUPPLIER_CREATE':
-            case 'LINEBILL_SUPPLIER_UPDATE':
-            case 'LINEBILL_SUPPLIER_DELETE':
+            // case 'BILL_SUPPLIER_CREATE':
+            // case 'BILL_SUPPLIER_UPDATE':
+            // case 'BILL_SUPPLIER_DELETE':
+            // case 'BILL_SUPPLIER_PAYED':
+            // case 'BILL_SUPPLIER_UNPAYED':
+            // case 'BILL_SUPPLIER_VALIDATE':
+            // case 'BILL_SUPPLIER_UNVALIDATE':
+            // case 'LINEBILL_SUPPLIER_CREATE':
+            // case 'LINEBILL_SUPPLIER_UPDATE':
+            // case 'LINEBILL_SUPPLIER_DELETE':
 
-                // Payments
-            case 'PAYMENT_CUSTOMER_CREATE':
-            case 'PAYMENT_SUPPLIER_CREATE':
-            case 'PAYMENT_ADD_TO_BANK':
-            case 'PAYMENT_DELETE':
+            // Payments
+            // case 'PAYMENT_CUSTOMER_CREATE':
+            // case 'PAYMENT_SUPPLIER_CREATE':
+            // case 'PAYMENT_ADD_TO_BANK':
+            // case 'PAYMENT_DELETE':
 
-                // Online
-            case 'PAYMENT_PAYBOX_OK':
-            case 'PAYMENT_PAYPAL_OK':
-            case 'PAYMENT_STRIPE_OK':
+            // Online
+            // case 'PAYMENT_PAYBOX_OK':
+            // case 'PAYMENT_PAYPAL_OK':
+            // case 'PAYMENT_STRIPE_OK':
 
-                // Donation
-            case 'DON_CREATE':
-            case 'DON_UPDATE':
-            case 'DON_DELETE':
+            // Donation
+            // case 'DON_CREATE':
+            // case 'DON_UPDATE':
+            // case 'DON_DELETE':
 
-                // Interventions
-            case 'FICHINTER_CREATE':
-            case 'FICHINTER_MODIFY':
-            case 'FICHINTER_VALIDATE':
-            case 'FICHINTER_DELETE':
-            case 'LINEFICHINTER_CREATE':
-            case 'LINEFICHINTER_UPDATE':
-            case 'LINEFICHINTER_DELETE':
+            // Interventions
+            // case 'FICHINTER_CREATE':
+            // case 'FICHINTER_MODIFY':
+            // case 'FICHINTER_VALIDATE':
+            // case 'FICHINTER_DELETE':
+            // case 'LINEFICHINTER_CREATE':
+            // case 'LINEFICHINTER_UPDATE':
+            // case 'LINEFICHINTER_DELETE':
 
-                // Members
-            case 'MEMBER_CREATE':
-            case 'MEMBER_VALIDATE':
-            case 'MEMBER_SUBSCRIPTION':
-            case 'MEMBER_MODIFY':
-            case 'MEMBER_NEW_PASSWORD':
-            case 'MEMBER_RESILIATE':
-            case 'MEMBER_DELETE':
+            // Members
+            // case 'MEMBER_CREATE':
+            // case 'MEMBER_VALIDATE':
+            // case 'MEMBER_SUBSCRIPTION':
+            // case 'MEMBER_MODIFY':
+            // case 'MEMBER_NEW_PASSWORD':
+            // case 'MEMBER_RESILIATE':
+            // case 'MEMBER_DELETE':
 
-                // Categories
-            case 'CATEGORY_CREATE':
-            case 'CATEGORY_MODIFY':
-            case 'CATEGORY_DELETE':
-            case 'CATEGORY_SET_MULTILANGS':
+            // Categories
+            // case 'CATEGORY_CREATE':
+            // case 'CATEGORY_MODIFY':
+            // case 'CATEGORY_DELETE':
+            // case 'CATEGORY_SET_MULTILANGS':
 
-                // Projects
-            case 'PROJECT_CREATE':
-            case 'PROJECT_MODIFY':
-            case 'PROJECT_DELETE':
+            // Projects
+            // case 'PROJECT_CREATE':
+            // case 'PROJECT_MODIFY':
+            // case 'PROJECT_DELETE':
 
-                // Project tasks
-            case 'TASK_CREATE':
-            case 'TASK_MODIFY':
-            case 'TASK_DELETE':
+            // Project tasks
+            // case 'TASK_CREATE':
+            // case 'TASK_MODIFY':
+            // case 'TASK_DELETE':
 
-                // Task time spent
-            case 'TASK_TIMESPENT_CREATE':
-            case 'TASK_TIMESPENT_MODIFY':
-            case 'TASK_TIMESPENT_DELETE':
+            // Task time spent
+            // case 'TASK_TIMESPENT_CREATE':
+            // case 'TASK_TIMESPENT_MODIFY':
+            // case 'TASK_TIMESPENT_DELETE':
 
-                // Shipping
-            case 'SHIPPING_CREATE':
-            case 'SHIPPING_MODIFY':
-            case 'SHIPPING_VALIDATE':
-            case 'SHIPPING_SENTBYMAIL':
-            case 'SHIPPING_BILLED':
-            case 'SHIPPING_CLOSED':
-            case 'SHIPPING_REOPEN':
-                //$logtriggeraction = true;
-                break;
-            case 'SHIPPING_DELETE':
-                //$logtriggeraction = true;
-                break;
+            // Shipping
+            // case 'SHIPPING_CREATE':
+            // case 'SHIPPING_MODIFY':
+            // case 'SHIPPING_VALIDATE':
+            // case 'SHIPPING_SENTBYMAIL':
+            // case 'SHIPPING_BILLED':
+            // case 'SHIPPING_CLOSED':
+            // case 'SHIPPING_REOPEN':
+            // case 'SHIPPING_DELETE':
         }
         if ($logtriggeraction) {
             dol_syslog("Trigger '" . $this->name . "' for action '.$action.' launched by " . __FILE__ . " id=" . $object->id);
