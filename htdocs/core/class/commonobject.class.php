@@ -4511,10 +4511,15 @@ abstract class CommonObject
 	 */
 	protected function commonGenerateDocument($modelspath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams = null)
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs, $user, $hookmanager;
 
 		$srctemplatepath='';
 
+		$parameters = array('modelspath'=>$modelspath,'modele'=>$modele,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'hidedesc'=>$hidedesc,'hideref'=>$hideref, 'moreparams'=>$moreparams);
+		$reshook = $hookmanager->executeHooks('commonGenerateDocument', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		
+		if(empty($reshook))
+		{
 		dol_syslog("commonGenerateDocument modele=".$modele." outputlangs->defaultlang=".(is_object($outputlangs)?$outputlangs->defaultlang:'null'));
 
 		// Increase limit for PDF build
@@ -4759,6 +4764,8 @@ abstract class CommonObject
 			dol_print_error('', $this->error);
 			return -1;
 		}
+		}
+		else return $reshook;
 	}
 
 	/**
