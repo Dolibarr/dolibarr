@@ -383,6 +383,7 @@ class Stripe extends CommonObject
             {
                 $metadata['dol_type'] = $object->element;
                 $metadata['dol_id'] = $object->id;
+				if (is_object($object->thirdparty) && $object->thirdparty->id > 0) $metadata['dol_thirdparty_id'] = $object->thirdparty->id;
             }
 
     		$dataforintent = array(
