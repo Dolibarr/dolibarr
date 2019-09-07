@@ -676,8 +676,19 @@ jQuery(document).ready(function() {
 		setforpredef();		// TODO Keep vat combo visible and set it to first entry into list that match result of get_default_tva
 
 		jQuery('#trlinefordates').show();
-
 		<?php
+		if (!empty($conf->global->MAIN_EDIT_PREDEF_PRICEHT))
+		{
+		?>
+			// get the HT price for the product and display it
+			$.post('<?php echo DOL_URL_ROOT; ?>/product/ajax/products.php?action=fetch', { 'id': $(this).val(), 'socid' : <?php print $object->socid; ?> }, function(data) {
+				jQuery("#price_ht").val(data.price_ht);
+			},
+			'json');
+				
+		<?php
+		}
+		
 		if (! empty($usemargins) && $user->rights->margins->creer)
 		{
 			$langs->load('stocks');
@@ -840,6 +851,9 @@ function setforpredef() {
 	jQuery("#select_type").val(-1);
 	jQuery("#prod_entry_mode_free").prop('checked',false).change();
 	jQuery("#prod_entry_mode_predef").prop('checked',true).change();
+	<?php if (empty($conf->global->MAIN_EDIT_PREDEF_PRICEHT)) { ?>
+		jQuery("#price_ht").val('').hide();
+  <?php } ?>
 	jQuery("#price_ht").val('')
 	jQuery("#price_ht, #multicurrency_price_ht, #price_ttc, #fourn_ref, #tva_tx, #title_vat, #title_up_ht, #title_up_ht_currency, #title_up_ttc, #title_up_ttc_currency").hide();
 	jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").hide();
