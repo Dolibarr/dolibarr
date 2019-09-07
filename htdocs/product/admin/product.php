@@ -155,9 +155,6 @@ if ($action == 'other')
 	        $resql_new = $db->query($sql_new);
 	    }
 	}
-	
-	$value = GETPOST('activate_EditPredifinedPriceHT','alpha');
-	$res = dolibarr_set_const($db, "EDIT_PREDEF_PRICEHT", $value,'chaine',0,'',$conf->entity);
 }
 
 if ($action == 'specimen') // For products
