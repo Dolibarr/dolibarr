@@ -647,7 +647,7 @@ jQuery(document).ready(function() {
 
 		jQuery('#trlinefordates').show();
 		<?php
-		if (!empty($conf->global->EDIT_PREDEF_PRICEHT))
+		if (!empty($conf->global->MAIN_EDIT_PREDEF_PRICEHT))
 		{
 		?>
 			// get the HT price for the product and display it
@@ -842,10 +842,9 @@ function setforpredef() {
 
 	jQuery("#prod_entry_mode_free").prop('checked',false).change();
 	jQuery("#prod_entry_mode_predef").prop('checked',true).change();
-	<?php if (empty($conf->global->EDIT_PREDEF_PRICEHT))
-	{?>
+	<?php if (empty($conf->global->MAIN_EDIT_PREDEF_PRICEHT)) { ?>
 		jQuery("#price_ht").val('').hide();
-    <?php }?>
+        <?php } ?>
 	jQuery("#multicurrency_price_ht").hide();
 	jQuery("#price_ttc").hide();	// May no exists
 	jQuery("#fourn_ref").hide();
