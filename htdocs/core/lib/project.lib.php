@@ -664,12 +664,48 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		print convertSecondToTime($total_projectlinesa_spent, 'allhourmin');
 		if ($projectidfortotallink > 0) print '</a>';
 		print '</td>';
+
+        if ($total_projectlinesa_planned) {
+            $totalAverageDeclaredProgress = round(100 * $total_projectlinesa_declared_if_planned / $total_projectlinesa_planned, 2);
+            $totalCalculatedProgress = round(100 * $total_projectlinesa_spent / $total_projectlinesa_planned, 2);
+            // this conf is actually hidden, by default we use 1% for "be carefull or warning"
+            $warningRatio = !empty($conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT) ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.01;
+
+            // define progress color according to time spend vs workload
+            $progressBarClass = 'progress-bar-info';
+            $badgeClass = 'badge ';
+
+            if ($totalCalculatedProgress > $totalAverageDeclaredProgress) {
+                $progressBarClass = 'progress-bar-danger';
+                $badgeClass.= 'badge-danger';
+            } elseif ($totalCalculatedProgress * $warningRatio >= $totalAverageDeclaredProgress) { // warning if close at 1%
+                $progressBarClass = 'progress-bar-warning';
+                $badgeClass.= 'badge-warning';
+            } else {
+                $progressBarClass = 'progress-bar-success';
+                $badgeClass.= 'badge-success';
+            }
+        }
+
 		print '<td class="nowrap liste_total right">';
-		if ($total_projectlinesa_planned) print round(100 * $total_projectlinesa_spent / $total_projectlinesa_planned, 2).' %';
+		if ($total_projectlinesa_planned) print $totalCalculatedProgress.' %';
 		print '</td>';
 		print '<td class="nowrap liste_total right">';
-        if ($total_projectlinesa_planned) print round(100 * $total_projectlinesa_declared_if_planned / $total_projectlinesa_planned, 2).' %';
+        if ($total_projectlinesa_planned) print '<span class="'.$badgeClass.'" >'.$totalAverageDeclaredProgress.' %</span>';
 		print '</td>';
+
+
+        // resume
+        print '<td class="right">';
+        if ($total_projectlinesa_planned){
+            print '</span>';
+            print '    <div class="progress sm" title="'.$totalAverageDeclaredProgress.'%" >';
+            print '        <div class="progress-bar '.$progressBarClass.'" style="width: '.$totalAverageDeclaredProgress.'%"></div>';
+            print '    </div>';
+            print '</div>';
+        }
+        print '</td>';
+
 		if ($showbilltime)
 		{
     		print '<td class="nowrap liste_total right">';
