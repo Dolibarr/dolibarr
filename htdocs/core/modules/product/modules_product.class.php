@@ -90,7 +90,7 @@ abstract class ModeleProductCode
     }
 
 
-    /**     Renvoi un exemple de numerotation
+    /**     Return an example of numbering
      *
      *		@param	Translate	$langs		Object langs
      *      @return string      			Example

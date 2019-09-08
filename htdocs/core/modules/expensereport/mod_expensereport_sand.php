@@ -95,7 +95,7 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
     }
 
     /**
-     *  Renvoi un exemple de numerotation
+     *  Return an example of numbering
      *
      *  @return     string      Example
      */

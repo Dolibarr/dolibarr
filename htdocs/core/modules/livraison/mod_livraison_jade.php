@@ -72,7 +72,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 	}
 
 	/**
-	 *  Renvoi un exemple de numerotation
+	 *  Return an example of numbering
 	 *
      *  @return     string      Example
      */

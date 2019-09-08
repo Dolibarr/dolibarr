@@ -84,7 +84,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	}
 
 	/**
-	 *  Renvoi un exemple de numerotation
+	 *  Return an example of numbering
 	 *
 	 *  @return     string      Example
 	 */

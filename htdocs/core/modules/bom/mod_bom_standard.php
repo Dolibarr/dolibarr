@@ -61,7 +61,7 @@ class mod_bom_standard extends ModeleNumRefboms
 
 
 	/**
-	 *  Renvoi un exemple de numerotation
+	 *  Return an example of numbering
 	 *
 	 *  @return     string      Example
 	 */

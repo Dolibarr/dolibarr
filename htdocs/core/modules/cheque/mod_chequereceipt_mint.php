@@ -58,7 +58,7 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 
 
 	/**
-	 *  Renvoi un exemple de numerotation
+	 *  Return an example of numbering
 	 *
 	 *  @return     string      Example
 	 */

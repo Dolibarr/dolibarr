@@ -68,7 +68,7 @@ class mod_pacific extends ModeleNumRefFicheinter
     }
 
 	/**
-	 *  Renvoi un exemple de numerotation
+	 *  Return an example of numbering
 	 *
 	 *  @return     string      Example
 	 */

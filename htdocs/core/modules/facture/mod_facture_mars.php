@@ -74,7 +74,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 	}
 
 	/**
-	 *  Renvoi un exemple de numerotation
+	 *  Return an example of numbering
 	 *
 	 *  @return     string      Example
 	 */

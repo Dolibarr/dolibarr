@@ -61,7 +61,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 
 
 	/**
-	 *  Renvoi un exemple de numerotation
+	 *  Return an example of numbering
 	 *
 	 *  @return     string      Example
 	 */

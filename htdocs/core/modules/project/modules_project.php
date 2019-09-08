@@ -95,7 +95,7 @@ abstract class ModeleNumRefProjects
 	}
 
 	/**
-	 *  Renvoi un exemple de numerotation
+	 *  Return an example of numbering
 	 *
 	 *  @return     string      Example
 	 */
