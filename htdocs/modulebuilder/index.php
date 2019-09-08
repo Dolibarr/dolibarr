@@ -2372,18 +2372,18 @@ elseif (! empty($module))
 				print '<table class="noborder">';
 
 				print '<tr class="liste_titre">';
-				print_liste_field_titre("Type",$_SERVER["PHP_SELF"],'',"",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("fk_menu",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("Title",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("mainmenu",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("leftmenu",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("URL",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("LanguageFile",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("Position",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("Enabled",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("perms",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("Target",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("UserType",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+				print_liste_field_titre("Type", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("fk_menu", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Title", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("mainmenu", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("leftmenu", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("URL", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("LanguageFile", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Position", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Enabled", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("perms", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Target", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("UserType", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 				print "</tr>\n";
 
 				if (count($menus))
@@ -2513,10 +2513,10 @@ elseif (! empty($module))
 				print '<table class="noborder">';
 
 				print '<tr class="liste_titre">';
-				print_liste_field_titre("ID",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("Label",$_SERVER["PHP_SELF"],'',"",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("Permission",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+				print_liste_field_titre("ID", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Label", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Permission", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 				print "</tr>\n";
 
 				if (count($perms))
