@@ -121,7 +121,7 @@ abstract class ModeleNumRefCommandes
 	}
 
 	/**
-	 *	Renvoie prochaine valeur attribuee
+	 *	Returns next assigned value
 	 *
 	 *	@param	Societe		$objsoc     Object thirdparty
 	 *	@param	Object		$object		Object we need next value for
@@ -134,7 +134,7 @@ abstract class ModeleNumRefCommandes
 	}
 
 	/**
-	 *	Renvoie version du module numerotation
+	 *	Returns version of numbering module
 	 *
 	 *	@return     string      Valeur
 	 */
