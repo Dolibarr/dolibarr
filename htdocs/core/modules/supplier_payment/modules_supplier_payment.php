@@ -98,10 +98,11 @@ abstract class ModeleNumRefSupplierPayments
 	}
 
 	/**
-	 *  Test if the existing numbers in the database do not cause conflicts that would prevent this numbering run.
-	 *
-	 *	@return     boolean     false si conflit, true si ok
-	 */
+     *  Checks if the numbers already in force in the data base do not
+     *  cause conflicts that would prevent this numbering from working.
+     *
+     *	@return     boolean     false if conflict, true if ok
+     */
 	public function canBeActivated()
 	{
 		return true;

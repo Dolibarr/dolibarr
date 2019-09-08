@@ -109,7 +109,7 @@ abstract class ModeleNumRefBoms
 	}
 
 	/**
-	 *	Checks if the numbers already in force in the data base do not
+	 *  Checks if the numbers already in force in the data base do not
      *  cause conflicts that would prevent this numbering from working.
 	 *
 	 *	@return     boolean     false if conflict, true if ok
