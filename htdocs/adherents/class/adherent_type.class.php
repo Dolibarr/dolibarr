@@ -424,7 +424,7 @@ class AdherentType extends CommonObject
 		global $langs;
 		if ($morphy == 'phy') { return $langs->trans("Physical"); }
 		elseif ($morphy == 'mor') { return $langs->trans("Moral"); }
-        else return $langs->trans("Physical & Morale");
+        else return $langs->trans("MorPhy");
 		//return $morphy;
 	}
 
