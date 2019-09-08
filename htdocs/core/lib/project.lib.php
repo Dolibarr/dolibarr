@@ -565,7 +565,9 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				// resume
                 print '<td class="right">';
-                print getTaskProgressView($taskstatic, false, false);
+                if ($lines[$i]->progress != '' && $lines[$i]->duration) {
+                    print getTaskProgressView($taskstatic, false, false);
+                }
                 print '</td>';
 
 				if ($showbilltime)
