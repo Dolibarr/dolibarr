@@ -53,14 +53,8 @@ class InterfaceContactRoles extends DolibarrTriggers
 	 * All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
 	 * Following properties may be set before calling trigger. The may be completed by this trigger to be used for writing the event into database:
-	 *      $object->actiontypecode (translation action code: AC_OTH, ...)
-	 *      $object->actionmsg (note, long text)
-	 *      $object->actionmsg2 (label, short text)
-	 *      $object->sendtoid (id of contact or array of ids)
-	 *      $object->socid (id of thirdparty)
-	 *      $object->fk_project
-	 *      $object->fk_element
-	 *      $object->elementtype
+	 *      $object->socid or $object->fk_soc(id of thirdparty)
+	 *      $object->element (element type of object)
 	 *
 	 * @param string		$action		Event action code
 	 * @param Object		$object     Object
@@ -113,5 +107,6 @@ class InterfaceContactRoles extends DolibarrTriggers
 				}
 			}
 		}
-    }
+		return 0;
+	}
 }
