@@ -58,7 +58,7 @@ class modReception extends DolibarrModules
 		// Data directories to create when module is enabled
 		$this->dirs = array("/reception/receipt",
 		                    "/reception/receipt/temp",
-		                    "/doctemplates/reception"
+		                    "/doctemplates/receptions"
 		                    );
 
 		// Config pages

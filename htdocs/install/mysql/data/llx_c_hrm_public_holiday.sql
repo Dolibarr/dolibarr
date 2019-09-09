@@ -41,3 +41,4 @@ INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, year, month, day
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, year, month, day, active) VALUES('FRASSOMPTION',  0, 1, 0,  8, 15, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, year, month, day, active) VALUES('FRTOUSSAINT',   0, 1, 0, 11,  1, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, year, month, day, active) VALUES('FRARMISTICE',   0, 1, 0, 11, 11, 1);
+--INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('EASTER',       0, 1, 'easter', 0, 0, 0, 1);

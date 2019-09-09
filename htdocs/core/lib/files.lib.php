@@ -1023,22 +1023,16 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			{
 				case UPLOAD_ERR_INI_SIZE:	// 1
 					return 'ErrorFileSizeTooLarge';
-					break;
 				case UPLOAD_ERR_FORM_SIZE:	// 2
 					return 'ErrorFileSizeTooLarge';
-					break;
 				case UPLOAD_ERR_PARTIAL:	// 3
 					return 'ErrorPartialFile';
-					break;
 				case UPLOAD_ERR_NO_TMP_DIR:	//
 					return 'ErrorNoTmpDir';
-					break;
 				case UPLOAD_ERR_CANT_WRITE:
 					return 'ErrorFailedToWriteInDir';
-					break;
 				case UPLOAD_ERR_EXTENSION:
 					return 'ErrorUploadBlockedByAddon';
-					break;
 				default:
 					break;
 			}

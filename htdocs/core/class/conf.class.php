@@ -552,9 +552,6 @@ class Conf
 		if (! isset($this->global->MAIN_PDF_DASH_BETWEEN_LINES)) $this->global->MAIN_PDF_DASH_BETWEEN_LINES=1;    // use dash between lines
 		if (! isset($this->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) $this->global->PDF_ALLOW_HTML_FOR_FREE_TEXT=1;  // allow html content into free footer text
 
-		// Set default value to MAIN_SHOW_LOGO
-		if (! isset($this->global->MAIN_SHOW_LOGO)) $this->global->MAIN_SHOW_LOGO=1;
-
 		// Default max file size for upload
 		$this->maxfilesize = (empty($this->global->MAIN_UPLOAD_DOC) ? 0 : (int) $this->global->MAIN_UPLOAD_DOC * 1024);
 

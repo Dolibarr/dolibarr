@@ -2063,9 +2063,10 @@ class Adherent extends CommonObject
 	 *  @param  string  $mode           			''=Show firstname+lastname as label (using default order), 'firstname'=Show only firstname, 'login'=Show login, 'ref'=Show ref
 	 *  @param  string  $morecss        			Add more css on link
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param	int		$notooltip					1=Disable tooltip
 	 *	@return	string								Chaine avec URL
 	 */
-	public function getNomUrl($withpictoimg = 0, $maxlen = 0, $option = 'card', $mode = '', $morecss = '', $save_lastsearch_value = -1)
+	public function getNomUrl($withpictoimg = 0, $maxlen = 0, $option = 'card', $mode = '', $morecss = '', $save_lastsearch_value = -1, $notooltip = 0)
 	{
 		global $conf, $langs;
 

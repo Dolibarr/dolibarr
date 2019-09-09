@@ -705,7 +705,7 @@ if ($action == 'addcontainer')
 						getAllImages($object, $objectpage, $urltograbbis, $tmpgeturl['content'], $action, 1, $grabimages, $grabimagesinto);
 
 						include_once DOL_DOCUMENT_ROOT.'/core/class/lessc.class.php';
-						$lesscobj = new lessc();
+						$lesscobj = new Lessc();
 						try {
 							$contentforlessc = ".bodywebsite {\n".$tmpgeturl['content']."\n}\n";
 							//print '<pre>'.$contentforlessc.'</pre>';

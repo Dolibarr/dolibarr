@@ -124,7 +124,7 @@ class Thirdparties extends DolibarrApi
 		$obj_ret = array();
 
 		// case of external user, we force socids
-		$socids = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
+		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;

@@ -106,6 +106,7 @@ ALTER TABLE llx_societe_contacts ADD CONSTRAINT fk_societe_contacts_fk_c_type_co
 ALTER TABLE llx_societe_contacts ADD CONSTRAINT fk_societe_contacts_fk_soc FOREIGN KEY (fk_soc)  REFERENCES llx_societe(rowid);
 ALTER TABLE llx_societe_contacts ADD CONSTRAINT fk_societe_contacts_fk_socpeople FOREIGN KEY (fk_socpeople)  REFERENCES llx_socpeople(rowid);
 
+ALTER TABLE llx_accounting_account MODIFY COLUMN rowid bigint AUTO_INCREMENT;
 
 create table llx_c_hrm_public_holiday
 (
@@ -121,4 +122,6 @@ create table llx_c_hrm_public_holiday
   import_key			varchar(14)
 )ENGINE=innodb;
 
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN  date_start	datetime   DEFAULT NULL;
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN  date_end	datetime   DEFAULT NULL;
 
