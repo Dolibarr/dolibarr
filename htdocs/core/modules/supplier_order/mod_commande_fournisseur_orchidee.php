@@ -98,7 +98,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
     }
 
     /**
-     *  Renvoi un exemple de numerotation
+     *  Return an example of numbering
      *
      *  @return     string      Example
      */

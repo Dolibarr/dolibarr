@@ -156,6 +156,8 @@ class box_task extends ModeleBoxes
 			$sql.= " pt.entity = ".$conf->entity;
 			$sql.= " AND p.fk_statut = ".Project::STATUS_VALIDATED;
 			$sql.= " AND (pt.progress < 100 OR pt.progress IS NULL ) "; // 100% is done and not displayed
+            $sql.= " AND p.usage_task = 1 ";
+
 
 			$sql.= " ORDER BY pt.datee ASC, pt.dateo ASC";
 			$sql.= $db->plimit($max, 0);

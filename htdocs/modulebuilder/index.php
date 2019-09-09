@@ -2390,68 +2390,68 @@ elseif (! empty($module))
 				{
 					foreach ($menus as $menu)
 					{
-					 print '<tr class="oddeven">';
+						print '<tr class="oddeven">';
 
-					 print '<td>';
-					 print $menu['type'];
-					 print '</td>';
+						print '<td>';
+						print $menu['type'];
+						print '</td>';
 
-					 print '<td>';
-					 print $menu['fk_menu'];
-					 print '</td>';
+						print '<td>';
+						print $menu['fk_menu'];
+						print '</td>';
 
-					 print '<td>';
-					 print $menu['titre'];
-					 print '</td>';
+						print '<td>';
+						print $menu['titre'];
+						print '</td>';
 
-					 print '<td>';
-					 print $menu['mainmenu'];
-					 print '</td>';
+						print '<td>';
+						print $menu['mainmenu'];
+						print '</td>';
 
-					 print '<td>';
-					 print $menu['left'];
-					 print '</td>';
+						print '<td>';
+						print $menu['left'];
+						print '</td>';
 
-					 print '<td>';
-					 print $menu['url'];
-					 print '</td>';
+						print '<td>';
+						print $menu['url'];
+						print '</td>';
 
-					 print '<td>';
-					 print $menu['langs'];
-					 print '</td>';
+						print '<td>';
+						print $menu['langs'];
+						print '</td>';
 
-					 print '<td>';
-					 print $menu['position'];
-					 print '</td>';
+						print '<td>';
+						print $menu['position'];
+						print '</td>';
 
-					 print '<td>';
-					 print $menu['enabled'];
-					 print '</td>';
+						print '<td>';
+						print $menu['enabled'];
+						print '</td>';
 
-					 print '<td>';
-					 print $menu['perms'];
-					 print '</td>';
+						print '<td>';
+						print $menu['perms'];
+						print '</td>';
 
-					 print '<td>';
-					 print $menu['target'];
-					 print '</td>';
+						print '<td>';
+						print $menu['target'];
+						print '</td>';
 
-					 print '<td>';
-					 print $menu['user'];
-					 print '</td>';
+						print '<td>';
+						print $menu['user'];
+						print '</td>';
 
-					 print '</tr>';
-					 }
-				 }
-				 else
-				 {
+						print '</tr>';
+					}
+				}
+				else
+				{
 				 	 print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("None").'</td></tr>';
-				 }
+				}
 
-				 print '</table>';
-				 print '</div>';
+				print '</table>';
+				print '</div>';
 
-				 print '</form>';
+				print '</form>';
 			}
 			else
 			{
@@ -2523,26 +2523,26 @@ elseif (! empty($module))
 				{
 					foreach ($perms as $perm)
 					{
-						 print '<tr class="oddeven">';
+						print '<tr class="oddeven">';
 
-						 print '<td>';
-						 print $perm[0];
-						 print '</td>';
+						print '<td>';
+						print $perm[0];
+						print '</td>';
 
-						 print '<td>';
-						 print $perm[1];
-						 print '</td>';
+						print '<td>';
+						print $perm[1];
+						print '</td>';
 
-						 print '<td>';
-						 print $perm[4];
-						 print '</td>';
+						print '<td>';
+						print $perm[4];
+						print '</td>';
 
-						 print '<td>';
-						 print $perm[5];
-						 print '</td>';
+						print '<td>';
+						print $perm[5];
+						print '</td>';
 
-						 print '</tr>';
-					 }
+						print '</tr>';
+					}
 				}
 				else
 				{
