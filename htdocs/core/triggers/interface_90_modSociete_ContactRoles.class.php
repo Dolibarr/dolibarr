@@ -81,12 +81,11 @@ class InterfaceContactRoles extends DolibarrTriggers
 
 			if(!empty($socid) && $socid != '-1') {
 				global $db, $langs;
-				var_dump($socid);
+				require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 				$contactdefault = new Contact($this->db);
 				$contactdefault->socid=$socid;
 				$TContact = $contactdefault->getContactRoles($object->element);
 
-				// Le trigger est appelé avant que le core n'ajoute lui-même des contacts (contact propale, clone), il ne faut pas les associer avant sinon bug
 				$TContactAlreadyLinked = array();
 				if ($object->id > 0)
 				{
@@ -98,7 +97,6 @@ class InterfaceContactRoles extends DolibarrTriggers
 				}
 
 				foreach($TContact as $i => $infos) {
-					// Gestion du cas du clone
 					foreach ($TContactAlreadyLinked as $contactData) {
 						if($contactData['id'] == $infos['fk_socpeople'] && $contactData['fk_c_type_contact'] == $infos['type_contact']) unset($TContact[$i]);
 					}
@@ -106,7 +104,6 @@ class InterfaceContactRoles extends DolibarrTriggers
 
 				$nb = 0;
 				foreach($TContact as $infos) {
-					// Gestion du cas spécifique de la création de propale avec sélection du contact, cela créé un bug si le contact est ajouté par le module contactdefault
 					$res = $object->add_contact($infos['fk_socpeople'], $infos['type_contact']);
 					if($res > 0) $nb++;
 				}
