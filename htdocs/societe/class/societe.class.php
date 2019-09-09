@@ -3914,14 +3914,14 @@ class Societe extends CommonObject
 			while($obj=$this->db->fetch_object($resql)) {
                 $tmpobject->id=$obj->rowid;
 
-				if ($obj->fk_statut != Facture::STATUS_DRAFT                                           // Not a draft
+				if ($mode != 'supplier' && $obj->fk_statut != Facture::STATUS_DRAFT                                           // Not a draft
 					&& ! ($obj->fk_statut == Facture::STATUS_ABANDONED && $obj->close_code == 'replaced')  // Not a replaced invoice
 					)
 				{
 					$outstandingTotal+= $obj->total_ht;
 					$outstandingTotalIncTax+= $obj->total_ttc;
 				}
-				if ($obj->paye == 0
+				if ($mode != 'supplier' && $obj->paye == 0
 					&& $obj->fk_statut != Facture::STATUS_DRAFT    		// Not a draft
 					&& $obj->fk_statut != Facture::STATUS_ABANDONED	    // Not abandonned
 					&& $obj->fk_statut != Facture::STATUS_CLOSED)   	// Not classified as paid
