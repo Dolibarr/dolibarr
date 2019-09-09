@@ -65,7 +65,7 @@ class mailing_advthirdparties extends MailingTargets
         // phpcs:enable
 		global $conf, $langs;
 
-		dol_syslog(get_class($this)."::add_to_target socid=".var_export($socid, true).' contactid='.var_export($contactid, true));
+		dol_syslog(get_class($this)."::add_to_target_spec socid=".var_export($socid, true).' contactid='.var_export($contactid, true));
 
 		$cibles = array();
 
@@ -86,7 +86,7 @@ class mailing_advthirdparties extends MailingTargets
     				$num = $this->db->num_rows($result);
     				$i = 0;
 
-    				dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found", LOG_DEBUG);
+    				dol_syslog(get_class($this)."::add_to_target_spec mailing ".$num." targets found", LOG_DEBUG);
 
     				$old = '';
     				while ($i < $num)
@@ -142,7 +142,7 @@ class mailing_advthirdparties extends MailingTargets
     				$num = $this->db->num_rows($result);
     				$i = 0;
 
-    				dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found");
+    				dol_syslog(get_class($this)."::add_to_target_spec mailing ".$num." targets found");
 
     				$old = '';
     				while ($i < $num)
@@ -177,8 +177,9 @@ class mailing_advthirdparties extends MailingTargets
 		}
 
 
-		dol_syslog(get_class($this)."::add_to_target mailing cibles=".var_export($cibles, true), LOG_DEBUG);
-		return parent::add_to_target($mailing_id, $cibles);
+		dol_syslog(get_class($this)."::add_to_target_spec mailing cibles=".var_export($cibles, true), LOG_DEBUG);
+
+		return parent::addTargetsToDatabase($mailing_id, $cibles);
 	}
 
 

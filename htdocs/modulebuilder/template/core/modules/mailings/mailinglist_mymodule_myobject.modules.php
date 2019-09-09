@@ -161,7 +161,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 
         // ----- Your code end here -----
 
-        return parent::add_to_target($mailing_id, $target);
+        return parent::addTargetsToDatabase($mailing_id, $target);
     }
 
 

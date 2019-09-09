@@ -113,10 +113,9 @@ class mailing_xinputuser extends MailingTargets
 	 *  Ajoute destinataires dans table des cibles
 	 *
 	 *  @param	int		$mailing_id    	Id of emailing
-     *  @param  array	$cibles         Array with targets
 	 *  @return int           			< 0 si erreur, nb ajout si ok
 	 */
-    public function add_to_target($mailing_id, $cibles)
+    public function add_to_target($mailing_id)
 	{
         // phpcs:enable
 		global $conf,$langs,$_FILES;
@@ -144,7 +143,7 @@ class mailing_xinputuser extends MailingTargets
                     'source_type' => 'file'
 				);
 
-				return parent::add_to_target($mailing_id, $cibles);
+				return parent::addTargetsToDatabase($mailing_id, $cibles);
 			}
 			else
 			{
