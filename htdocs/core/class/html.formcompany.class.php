@@ -755,7 +755,7 @@ class FormCompany extends Form
 	 * @param array $selected $key=>$val $val is selected Roles for input mode
 	 * @return string   String with contacts roles
 	 */
-	public function showRoles($htmlname = '', Contact $contact, $rendermode = 'view', $selected = array())
+	public function showRoles($htmlname, Contact $contact, $rendermode = 'view', $selected = array())
 	{
 		if ($rendermode === 'view') {
 			$toprint = array();
