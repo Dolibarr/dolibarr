@@ -1262,7 +1262,13 @@ if ($action == 'create')
 									if ($line->fk_product > 0)
 									{
 									    print '<!-- Show warehouse selection -->';
-										print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 1, 0, $line->fk_product, '', 1);
+
+                                        $stockMin = false;
+									    if (empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER)) {
+									        $stockMin = 0;
+									    }
+                                        print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 1, 0, $line->fk_product, '', 1, 0, array(), 'minwidth200', '', 1, $stockMin, 'stock DESC, e.ref');
+
 										if ($tmpentrepot_id > 0 && $tmpentrepot_id == $warehouse_id)
 										{
 											//print $stock.' '.$quantityToBeDelivered;
