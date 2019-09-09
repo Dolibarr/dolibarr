@@ -176,7 +176,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	$menu_arr[] = array(
 	    'name' => 'TMenuMRP',
 	    'link' => '/mrp/index.php?mainmenu=mrp&amp;leftmenu=',
-	    'title' => $langs->trans("TMenuMRP"),
+	    'title' => "TMenuMRP",
 	    'level' => 0,
 	    'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
 	    'target' => $atarget,
