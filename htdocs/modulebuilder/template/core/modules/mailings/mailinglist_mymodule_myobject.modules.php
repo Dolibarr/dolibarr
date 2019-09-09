@@ -97,15 +97,13 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
      *  This is the main function that returns the array of emails
      *
      *  @param  int     $mailing_id     Id of emailing
-     *  @param  array   $cibles         Array with targets
      *  @return int                     <0 if error, number of emails added if ok
      */
-    public function add_to_target($mailing_id, $cibles)
+    public function add_to_target($mailing_id)
     {
         // phpcs:enable
         $target = array();
         $j = 0;
-
 
         $sql = " select rowid as id, email, firstname, lastname, plan, partner";
         $sql.= " from ".MAIN_DB_PREFIX."myobject";

@@ -102,7 +102,10 @@ $sql.= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 $sql.= " WHERE s.rowid = f.fk_soc";
 $sql.= " AND f.entity IN (".getEntity('invoice').")";
 $sql.= " AND f.total_ttc > 0";
-$sql.= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
+if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS))
+{
+	$sql.= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
+}
 $sql.= " AND pfd.traite = 0 AND pfd.fk_facture = f.rowid";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;

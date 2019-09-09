@@ -93,7 +93,10 @@ if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 if (!$status) $sql.= " AND pfd.traite = 0";
 if ($status) $sql.= " AND pfd.traite = ".$status;
 $sql.= " AND f.total_ttc > 0";
-$sql.= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
+if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS))
+{
+	$sql.= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
+}
 $sql.= " AND pfd.fk_facture = f.rowid";
 if (dol_strlen(trim(GETPOST('search_societe', 'alpha'))))
 {
