@@ -813,7 +813,7 @@ class RemiseCheque extends CommonObject
 			$rejectedPayment->amounts = array();
 			$rejectedPayment->datepaye = $rejection_date;
 			$rejectedPayment->paiementid = dol_getIdFromCode($this->db, 'CHQ', 'c_paiement', 'code', 'id', 1);
-			$rejectedPayment->num_paiement = $payment->numero;
+			$rejectedPayment->num_payment = $payment->num_payment;
 
 			while($obj = $db->fetch_object($resql))
 			{
