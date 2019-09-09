@@ -607,10 +607,22 @@ if ($resql)
         $event->fk_element=$obj->fk_element;
         $event->elementtype=$obj->elementtype;
 
-        $event->societe->id=$obj->fk_soc;
-        $event->thirdparty_id=$obj->fk_soc;
-        $event->contact->id=$obj->fk_contact;
-        $event->contact_id=$obj->fk_contact;
+        if ($obj->fk_soc > 0) {
+            if (! is_object($cachethirdparties[$obj->fk_soc])) {
+                $cachethirdparties[$obj->fk_soc] = new Societe($db);
+                $cachethirdparties[$obj->fk_soc]->fetch($obj->fk_soc);
+            }
+            $event->societe = $cachethirdparties[$obj->fk_soc];
+        }
+        $event->thirdparty_id = $obj->fk_soc;
+        if ($obj->fk_contact > 0) {
+            if (! is_object($cachecontacts[$obj->fk_contact])) {
+                $cachecontacts[$obj->fk_contact] = new Contact($db);
+                $cachecontacts[$obj->fk_contact]->fetch($obj->fk_contact);
+            }
+            $event->contact = $cachecontacts[$obj->fk_contact];
+        }
+        $event->contact_id = $obj->fk_contact;
 
         // Defined date_start_in_calendar and date_end_in_calendar property
         // They are date start and end of action but modified to not be outside calendar view.
