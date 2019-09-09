@@ -601,14 +601,14 @@ function dol_get_first_day_week($day, $month, $year, $gm = false)
  *
  *	@param	    int			$timestampStart     Timestamp de debut
  *	@param	    int			$timestampEnd       Timestamp de fin
- *  @param      string		$countrycode        Country code
+ *  @param      string		$country_code       Country code
  *	@param      int			$lastday            Last day is included, 0: no, 1:yes
  *  @param		int			$includesaturday	Include saturday as non working day (-1=use setup, 0=no, 1=yes)
  *  @param		int			$includesunday		Include sunday as non working day (-1=use setup, 0=no, 1=yes)
  *	@return   	int|string						Number of non working days or error message string if error
  *  @see num_between_day(), num_open_day()
  */
-function num_public_holiday($timestampStart, $timestampEnd, $countrycode = 'FR', $lastday = 0, $includesaturday = -1, $includesunday = -1)
+function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', $lastday = 0, $includesaturday = -1, $includesunday = -1)
 {
 	global $db, $conf, $mysoc;
 
@@ -617,6 +617,8 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode = 'FR',
 
 	// Check to ensure we use correct parameters
 	if ((($timestampEnd - $timestampStart) % 86400) != 0) return 'ErrorDates must use same hours and must be GMT dates';
+
+	if (empty($country_code)) $country_code = $mysoc->country_code;
 
 	if ($includesaturday < 0) $includesaturday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY : 1);
 	if ($includesunday < 0)   $includesunday   = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY : 1);
@@ -651,10 +653,12 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode = 'FR',
 			}
 		}
 
+		$country_id = dol_getIdFromCode($db, $country_code, 'c_country', 'code', 'rowid');
+
 		// Loop on public holiday defined into hrm_public_holiday
 		$sql = "SELECT code, entity, fk_country, dayrule, year, month, day, active";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_hrm_public_holiday";
-		$sql.= " WHERE active = 1 and fk_country IN (0, ".$mysoc->country_id.")";
+		$sql.= " WHERE active = 1 and fk_country IN (0".($country_id > 0 ? ", ".$country_id : 0).")";
 
 		$resql = $db->query($sql);
 		if ($resql)
