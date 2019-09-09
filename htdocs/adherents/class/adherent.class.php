@@ -1740,8 +1740,7 @@ class Adherent extends CommonObject
 				$paiement->datepaye     = $paymentdate;
 				$paiement->amounts      = $amounts;
 				$paiement->paiementid   = dol_getIdFromCode($this->db, $operation, 'c_paiement', 'code', 'id', 1);
-				$paiement->num_paiement = $num_chq;
-				$paiement->note         = $label;
+				$paiement->num_payment  = $num_chq;
 				$paiement->note_public  = $label;
 
 				if (! $error)
