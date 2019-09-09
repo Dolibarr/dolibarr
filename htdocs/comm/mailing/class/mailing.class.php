@@ -370,7 +370,7 @@ class Mailing extends CommonObject
 					return -1;
 				}
 
-				$mailing_target->add_to_target($object->id, $target_array);
+				$mailing_target->addTargetsToDatabase($object->id, $target_array);
 			}
 		}
 
