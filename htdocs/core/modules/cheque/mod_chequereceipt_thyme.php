@@ -86,7 +86,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
     }
 
     /**
-     *  Renvoi un exemple de numerotation
+     *  Return an example of numbering
      *
      *  @return     string      Example
      */

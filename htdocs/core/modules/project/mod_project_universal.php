@@ -96,7 +96,7 @@ class mod_project_universal extends ModeleNumRefProjects
     }
 
     /**
-     *  Renvoi un exemple de numerotation
+     *  Return an example of numbering
      *
      *  @return     string      Example
      */

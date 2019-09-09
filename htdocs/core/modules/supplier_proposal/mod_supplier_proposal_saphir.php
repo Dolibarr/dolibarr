@@ -98,7 +98,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
     }
 
     /**
-     *  Renvoi un exemple de numerotation
+     *  Return an example of numbering
      *
      *  @return     string      Example
      */
