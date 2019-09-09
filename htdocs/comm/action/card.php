@@ -520,7 +520,7 @@ if ($action == 'update')
 
                 $sql  = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
                 $sql .= " FROM " . MAIN_DB_PREFIX . "element_resources as er";
-                $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "resource as r ON r.rowid = er.resource_id AND er.resource_type = 'resource'";
+                $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "resource as r ON r.rowid = er.resource_id AND er.resource_type = 'dolresource'";
                 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "actioncomm as ac ON ac.id = er.element_id AND er.element_type = '" . $db->escape($object->element) . "'";
                 $sql .= " WHERE ac.id != " . $object->id;
                 $sql .= " AND er.resource_id IN (";
