@@ -81,10 +81,10 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 
 
 	/**
-	 *  Test si les numeros deje en vigueur dans la base ne provoquent pas de
-	 *  de conflits qui empechera cette numerotation de fonctionner.
+     *  Checks if the numbers already in force in the data base do not
+     *  cause conflicts that would prevent this numbering from working.
 	 *
-	 *  @return     boolean     false si conflit, true si ok
+	 *  @return     boolean     false if conflict, true if ok
 	 */
 	public function canBeActivated()
 	{
