@@ -113,7 +113,7 @@ if ($action == 'update' && ! empty($permissiontoadd))
 			$value = dol_mktime(12, 0, 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
         } elseif ($object->fields[$key]['type']=='datetime' ) {
             $value = dol_mktime(GETPOST($key.'hour'), GETPOST($key.'min'), 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'),false,0);
-        } elseif ($object->fields[$key]['type']=='time') {
+        } elseif ($object->fields[$key]['type']=='odootime') {
             $value = GETPOST($key.'hour')+ GETPOST($key.'min')/60;
 		} elseif ($object->fields[$key]['type']=='price') {
 			$value = price2num(GETPOST($key));
