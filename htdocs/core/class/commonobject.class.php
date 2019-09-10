@@ -5574,16 +5574,15 @@ abstract class CommonObject
 		elseif ($type=='odootime')
 		{
             $hour=floor($value);
-            $value=dol_mktime($hour, ($value-$hour)*60, 0, 0,0,0,'',0);
+            $value=dol_mktime($hour, ($value-$hour)*60, 0, 0, 0, 0, '', 0);
 
 			// Do not show current date when field not required (see selectDate() method)
 			if (!$required && $value == '') $value = '-1';
 
-			$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, 1, 1, $required, '', 0, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1,'','',1);
+			$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, 1, 1, $required, '', 0, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1, '', '', 1);
             $out.= '<input type="hidden" name="'.$keyprefix.$key.$keysuffix.'">';
-
         }
-		elseif (in_array($type,array('int','integer')))
+		elseif (in_array($type, array('int','integer')))
 		{
 			$tmp=explode(',', $size);
 			$newsize=$tmp[0];
@@ -6198,8 +6197,8 @@ abstract class CommonObject
 		{
 			if(! empty($value)) {
 			    $hour=floor($value);
-			    $value=dol_mktime($hour, ($value-$hour)*60, 0, 0,0,0,'',0);
-				$value=dol_print_date($value,'hour');
+			    $value=dol_mktime($hour, ($value-$hour)*60, 0, 0, 0, 0, '', 0);
+				$value=dol_print_date($value, 'hour');
 			} else {
 				$value='';
 			}
