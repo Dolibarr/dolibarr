@@ -17,3 +17,5 @@ TJMDescription=Cette valeur est actuellement seulement une information et n'est 
 LastSalaries=Les %s derniers règlements de salaires
 AllSalaries=Tous les règlements de salaires
 SalariesStatistics=Statistiques
+# Export
+SalariesAndPayments=Salaires et paiements

@@ -19,6 +19,7 @@
 
 /**
  *     \defgroup    ticket    Module Ticket
+ *     \brief       Module for ticket and request management.
  *     \file        core/modules/modTicket.class.php
  *     \ingroup     ticket
  *     \brief       Description and activation file for module Ticket
@@ -99,6 +100,7 @@ class modTicket extends DolibarrModules
 		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
 		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
         $this->langfiles = array("ticket");
+
         // Constants
         // List of particular constants to add when module is enabled
         // (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -151,7 +153,7 @@ class modTicket extends DolibarrModules
         $this->rights[$r][0] = 56001; // id de la permission
         $this->rights[$r][1] = "Read ticket"; // libelle de la permission
         $this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-        $this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
+        $this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
         $this->rights[$r][4] = 'read';
 
         $r++;

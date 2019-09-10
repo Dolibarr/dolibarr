@@ -1,0 +1,21 @@
+# Dolibarr language file - Source file is en_US - receptions
+RefReception=Ref. réception
+ShowReception=Montrer les réceptions
+ReceptionsArea=Zone de réception
+LastReceptions=Dernières %s réceptions
+ReceptionCard=Carte de réception
+QtyInOtherReceptions=Qtée dans d'autres réceptions
+OtherReceptionsForSameOrder=Autres réceptions sur cette commande
+StatusReceptionValidated=Validée (produits à envoyer ou déjà envoyé)
+StatusReceptionProcessed=Traité
+StatusReceptionValidatedShort=Validée
+StatusReceptionProcessedShort=Traité
+ReceptionSheet=Feuille de réception
+ConfirmDeleteReception=Êtes-vous certain que vous voulez supprimer cette réception?
+ConfirmValidateReception=Êtes vous certain que vous voulez valider cette réception avec la référence <b>%s</b>
+ConfirmCancelReception=Êtes-vous certain que vous voulez annuler cette réception?
+SendReceptionByEMail=Envoyer la réception par courriel
+SendReceptionRef=Envoi de la réception %s
+ReceptionCreationIsDoneFromOrder=Pour le moment, la création d'une nouvelle réception se fait à partir de la fiche de commande.
+ProductQtyInReceptionAlreadySent=Quantité de produit de la commande client en cours déjà envoyée
+ProductQtyInSuppliersReceptionAlreadyRecevied=Quantité de produit de la commande fournisseur ouverte déjà reçue

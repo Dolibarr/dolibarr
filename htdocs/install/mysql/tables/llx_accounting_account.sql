@@ -21,7 +21,7 @@
 
 create table llx_accounting_account
 (
-  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  rowid                     bigint AUTO_INCREMENT PRIMARY KEY,
   entity                    integer DEFAULT 1 NOT NULL,
   datec                     datetime,
   tms                       timestamp,

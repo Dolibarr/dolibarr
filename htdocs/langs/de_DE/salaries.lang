@@ -1,10 +1,11 @@
 # Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Standard Buchhaltungskonto für Benutzer Partner
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Das in der Benutzerkarte hinterlegte Konto wird nur für die Nebenbücher verwendet. Dieses Konto wird für das Hauptbuch und als Vorgabewert für die Nebnbücher verwendet, wenn beim Benutzer kein Konto hinterlegt ist.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Das in der Benutzerkarte hinterlegte Konto wird nur für die Nebenbücher verwendet. Dieses Konto wird für das Hauptbuch und als Vorgabewert für die Nebenbücher verwendet, wenn beim Benutzer kein Konto hinterlegt ist.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Buchhaltungs-Konto für Löhne
 Salary=Lohn
 Salaries=Löhne
 NewSalaryPayment=Neue Lohnzahlung
+AddSalaryPayment=Gehaltszahlung hinzufügen
 SalaryPayment=Lohnzahlung
 SalariesPayments=Lohnzahlungen
 ShowSalaryPayment=Zeige Lohnzahlung
@@ -13,6 +14,8 @@ TJM=Durchschnittlicher Tagessatz
 CurrentSalary=aktueller  Lohn
 THMDescription=Dieser Wert kann verwendet werden, um die Kosten für die verbrauchte Zeit eines Anwender zu berechnen, wenn das Modul Projektverwaltung verwendet wird,
 TJMDescription=Dieser Wert ist aktuell nur zu Informationszwecken und wird nicht für eine Berechnung verwendet
-LastSalaries=Letzte %sLohnzahlungen
+LastSalaries=Letzte %s Lohnzahlungen
 AllSalaries=Alle Lohnzahlungen
-SalariesStatistics=Statistiques salaires
+SalariesStatistics=Statistik Gehälter
+# Export
+SalariesAndPayments=Salaries and payments

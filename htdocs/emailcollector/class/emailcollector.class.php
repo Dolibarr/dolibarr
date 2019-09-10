@@ -62,9 +62,13 @@ class EmailCollector extends CommonObject
     public $fk_element = 'fk_emailcollector';
 
     /**
-     * @var array  Array of child tables (child tables to delete before deleting a record)
+	 * @var array	List of child tables. To test if we can delete object.
      */
-    protected $childtables=array('emailcollector_emailcollectorfilter', 'emailcollector_emailcollectoraction');
+    protected $childtables=array();
+    /**
+     * @var array	List of child tables. To know object to delete on cascade.
+     */
+    protected $childtablesoncascade=array('emailcollector_emailcollectorfilter','emailcollector_emailcollectoraction');
 
 
     /**
@@ -205,11 +209,11 @@ class EmailCollector extends CommonObject
         // Translate some data of arrayofkeyval
         foreach($this->fields as $key => $val)
         {
-            if (is_array($this->fields['status']['arrayofkeyval']))
+        	if (is_array($val['arrayofkeyval']))
             {
-                foreach($this->fields['status']['arrayofkeyval'] as $key2 => $val2)
+            	foreach($val['arrayofkeyval'] as $key2 => $val2)
                 {
-                    $this->fields['status']['arrayofkeyval'][$key2]=$langs->trans($val2);
+                	$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
                 }
             }
         }
@@ -1287,13 +1291,14 @@ class EmailCollector extends CommonObject
                 if (empty($contactid))		// Try to find contact using email
                 {
                     $result = $contactstatic->fetch(0, null, '', $from);
+
                     if ($result > 0)
                     {
                         $contactid = $contactstatic->id;
                         $contactfoundby = 'email of contact ('.$from.')';
-                        if ($contactstatic->fk_soc > 0)
+	                    if ($contactstatic->socid > 0)
                         {
-                            $result = $thirdpartystatic->fetch($contactstatic->fk_soc);
+	                        $result = $thirdpartystatic->fetch($contactstatic->socid);
                             if ($result > 0)
                             {
                                 $thirdpartyid = $thirdpartystatic->id;
@@ -1308,7 +1313,6 @@ class EmailCollector extends CommonObject
                     $result = $thirdpartystatic->fetch(0, '', '', '', '', '', '', '', '', '', $from);
                     if ($result > 0) $thirdpartyfoundby = 'email ('.$from.')';
                 }
-
 
                 // Do operations
                 foreach($this->actions as $operation)
@@ -1492,17 +1496,17 @@ class EmailCollector extends CommonObject
 
                         // Insert record of emails sent
                         $actioncomm = new ActionComm($this->db);
-
                         $actioncomm->type_code   = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
                         $actioncomm->code        = 'AC_'.$actioncode;
                         $actioncomm->label       = $langs->trans("ActionAC_".$actioncode).' - '.$langs->trans("MailFrom").' '.$from;
-                        $actioncomm->note        = $descriptionfull;
+                        $actioncomm->note_private= $descriptionfull;
                         $actioncomm->fk_project  = $projectstatic->id;
                         $actioncomm->datep       = $date;
                         $actioncomm->datef       = $date;
                         $actioncomm->percentage  = -1;   // Not applicable
                         $actioncomm->socid       = $thirdpartystatic->id;
                         $actioncomm->contactid   = $contactstatic->id;
+	                    $actioncomm->socpeopleassigned = (!empty($contactstatic->id) ? array($contactstatic->id => '') : array());
                         $actioncomm->authorid    = $user->id;   // User saving action
                         $actioncomm->userownerid = $user->id;	// Owner of action
                         // Fields when action is an email (content should be added into note)

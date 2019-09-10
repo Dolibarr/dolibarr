@@ -180,10 +180,10 @@ class Ticket extends CommonObject
         'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'position'=>1, 'visible'=>-2, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id"),
     	'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>5, 'notnull'=>1, 'index'=>1),
     	'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'css'=>''),
-	    'track_id' => array('type'=>'varchar(255)', 'label'=>'TrackID', 'visible'=>0, 'enabled'=>1, 'position'=>11, 'notnull'=>-1, 'searchall'=>1, 'help'=>"Help text"),
+	    'track_id' => array('type'=>'varchar(255)', 'label'=>'TicketTrackId', 'visible'=>-2, 'enabled'=>1, 'position'=>11, 'notnull'=>-1, 'searchall'=>1, 'help'=>"Help text"),
 	    'fk_user_create' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Author', 'visible'=>1, 'enabled'=>1, 'position'=>15, 'notnull'=>1, 'css'=>'nowraponall'),
     	'origin_email' => array('type'=>'mail', 'label'=>'OriginEmail', 'visible'=>-2, 'enabled'=>1, 'position'=>16, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object"),
-    	'subject' => array('type'=>'varchar(255)', 'label'=>'Subject', 'visible'=>1, 'enabled'=>1, 'position'=>18, 'notnull'=>-1, 'searchall'=>1, 'help'=>""),
+    	'subject' => array('type'=>'varchar(255)', 'label'=>'Subject', 'visible'=>1, 'enabled'=>1, 'position'=>18, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth75'),
     	'type_code' => array('type'=>'varchar(32)', 'label'=>'Type', 'visible'=>1, 'enabled'=>1, 'position'=>20, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth100'),
     	'category_code' => array('type'=>'varchar(32)', 'label'=>'TicketGroup', 'visible'=>-1, 'enabled'=>1, 'position'=>21, 'notnull'=>-1, 'help'=>"", 'css'=>'maxwidth100'),
 	    'severity_code' => array('type'=>'varchar(32)', 'label'=>'Severity', 'visible'=>1, 'enabled'=>1, 'position'=>22, 'notnull'=>-1, 'help'=>"", 'css'=>'maxwidth100'),
@@ -224,8 +224,8 @@ class Ticket extends CommonObject
     {
         $this->db = $db;
 
-        $this->statuts_short = array(self::STATUS_NOT_READ => 'Unread', self::STATUS_READ => 'Read', self::STATUS_ASSIGNED => 'Assigned', self::STATUS_IN_PROGRESS => 'InProgress', self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation', self::STATUS_WAITING => 'Waiting', self::STATUS_CLOSED => 'Closed', self::STATUS_CANCELED => 'Canceled');
-        $this->statuts       = array(self::STATUS_NOT_READ => 'Unread', self::STATUS_READ => 'Read', self::STATUS_ASSIGNED => 'Assigned', self::STATUS_IN_PROGRESS => 'InProgress', self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation', self::STATUS_WAITING => 'Waiting', self::STATUS_CLOSED => 'Closed', self::STATUS_CANCELED => 'Canceled');
+        $this->statuts_short = array(self::STATUS_NOT_READ => 'Unread', self::STATUS_READ => 'Read', self::STATUS_ASSIGNED => 'Assigned', self::STATUS_IN_PROGRESS => 'InProgress', self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation', self::STATUS_WAITING => 'Suspended', self::STATUS_CLOSED => 'Closed', self::STATUS_CANCELED => 'Canceled');
+        $this->statuts       = array(self::STATUS_NOT_READ => 'Unread', self::STATUS_READ => 'Read', self::STATUS_ASSIGNED => 'Assigned', self::STATUS_IN_PROGRESS => 'InProgress', self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation', self::STATUS_WAITING => 'Suspended', self::STATUS_CLOSED => 'Closed', self::STATUS_CANCELED => 'Canceled');
     }
 
     /**
@@ -1034,7 +1034,7 @@ class Ticket extends CommonObject
     /**
      *      Charge dans cache la liste des types de tickets (paramétrable dans dictionnaire)
      *
-     *      @return int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      @return int             Number of lines loaded, 0 if already loaded, <0 if KO
      */
     public function loadCacheTypesTickets()
     {
@@ -1074,7 +1074,7 @@ class Ticket extends CommonObject
     /**
      *      Charge dans cache la liste des catégories de tickets (paramétrable dans dictionnaire)
      *
-     *      @return int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      @return int             Number of lines loaded, 0 if already loaded, <0 if KO
      */
     public function loadCacheCategoriesTickets()
     {
@@ -1114,7 +1114,7 @@ class Ticket extends CommonObject
     /**
      *      Charge dans cache la liste des sévérité de tickets (paramétrable dans dictionnaire)
      *
-     *      @return int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      @return int             Number of lines loaded, 0 if already loaded, <0 if KO
      */
     public function loadCacheSeveritiesTickets()
     {
@@ -1370,7 +1370,7 @@ class Ticket extends CommonObject
             $this->db->begin();
 
             $sql = "UPDATE " . MAIN_DB_PREFIX . "ticket";
-            $sql .= " SET fk_statut = 1, date_read='" . $this->db->idate(dol_now()) . "'";
+            $sql .= " SET fk_statut = ".Ticket::STATUS_READ.", date_read='" . $this->db->idate(dol_now()) . "'";
             $sql .= " WHERE rowid = " . $this->id;
 
             dol_syslog(get_class($this) . "::markAsRead");
@@ -1387,7 +1387,6 @@ class Ticket extends CommonObject
                     }
                     // End call triggers
                 }
-
 
                 if (!$error) {
                     $this->db->commit();
@@ -1421,20 +1420,23 @@ class Ticket extends CommonObject
 
         $this->db->begin();
 
+        $this->oldcopy = dol_clone($this);
+
         $sql = "UPDATE " . MAIN_DB_PREFIX . "ticket";
         if ($id_assign_user > 0)
         {
-            $sql .= " SET fk_user_assign=".$id_assign_user.", fk_statut=4";
+            $sql .= " SET fk_user_assign=".$id_assign_user.", fk_statut = ".Ticket::STATUS_ASSIGNED;
         }
         else
         {
-            $sql .= " SET fk_user_assign=null, fk_statut=1";
+            $sql .= " SET fk_user_assign=null, fk_statut = ".Ticket::STATUS_READ;
         }
         $sql .= " WHERE rowid = " . $this->id;
 
         dol_syslog(get_class($this) . "::assignUser sql=" . $sql);
         $resql = $this->db->query($sql);
-        if ($resql) {
+        if ($resql)
+        {
             $this->fk_user_assign = $id_assign_user; // May be used by trigger
 
             if (! $notrigger) {
@@ -1559,7 +1561,7 @@ class Ticket extends CommonObject
     /**
      *      Charge la liste des actions sur le ticket
      *
-     *      @return int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      @return int             Number of lines loaded, 0 if already loaded, <0 if KO
      */
     public function loadCacheLogsTicket()
     {
@@ -1631,7 +1633,7 @@ class Ticket extends CommonObject
         $actioncomm->code = 'TICKET_MSG';
         $actioncomm->socid = $this->socid;
         $actioncomm->label = $this->subject;
-        $actioncomm->note = $this->message;
+        $actioncomm->note_private = $this->message;
         $actioncomm->userassigned = array($user->id);
         $actioncomm->userownerid = $user->id;
         $actioncomm->datep = $now;
@@ -1658,20 +1660,19 @@ class Ticket extends CommonObject
     }
 
     /**
-     *      Charge la liste des messages sur le ticket
+     *      Load the list of event on ticket into ->cache_msgs_ticket
      *
-     *      @return int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      @return int             Number of lines loaded, 0 if already loaded, <0 if KO
      */
     public function loadCacheMsgsTicket()
     {
-        global $langs;
-
         if (is_array($this->cache_msgs_ticket) && count($this->cache_msgs_ticket)) {
             return 0;
         }
-        // Cache deja charge
 
-        $sql = "SELECT rowid, fk_user_author, datec, label, message, visibility";
+        // Cache already loaded
+
+        $sql = "SELECT id as rowid, fk_user_author, datec, label, note as message, visibility";
         $sql .= " FROM " . MAIN_DB_PREFIX . "actioncomm";
         $sql .= " WHERE fk_element = " . (int) $this->id;
         $sql .= " AND elementtype = 'ticket'";
@@ -1685,7 +1686,7 @@ class Ticket extends CommonObject
             while ($i < $num) {
                 $obj = $this->db->fetch_object($resql);
                 $this->cache_msgs_ticket[$i]['id'] = $obj->rowid;
-                $this->cache_msgs_ticket[$i]['fk_user_action'] = $obj->fk_user_action;
+                $this->cache_msgs_ticket[$i]['fk_user_author'] = $obj->fk_user_author;
                 $this->cache_msgs_ticket[$i]['datec'] = $this->db->jdate($obj->datec);
                 $this->cache_msgs_ticket[$i]['subject'] = $obj->label;
                 $this->cache_msgs_ticket[$i]['message'] = $obj->message;
@@ -1710,11 +1711,11 @@ class Ticket extends CommonObject
     {
         global $conf, $langs;
 
-        if ($this->fk_statut != 9) { // not closed
+        if ($this->fk_statut != Ticket::STATUS_CLOSED) { // not closed
             $this->db->begin();
 
             $sql = "UPDATE " . MAIN_DB_PREFIX . "ticket";
-            $sql .= " SET fk_statut=8, progress=100, date_close='" . $this->db->idate(dol_now()) . "'";
+            $sql .= " SET fk_statut=".Ticket::STATUS_CLOSED.", progress=100, date_close='" . $this->db->idate(dol_now()) . "'";
             $sql .= " WHERE rowid = " . $this->id;
 
             dol_syslog(get_class($this) . "::close sql=" . $sql);
@@ -2372,7 +2373,7 @@ class Ticket extends CommonObject
         if (file_exists($dir_osencoded)) {
             $handle = opendir($dir_osencoded);
             if (is_resource($handle)) {
-                while (($file = readdir($handle)) != false) {
+                while (($file = readdir($handle)) !== false) {
                     if (!utf8_check($file)) {
                         $file = utf8_encode($file);
                     }

@@ -66,7 +66,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 	    $listofmodulesforexternal=explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
 	    $tmpentry=array('enabled'=>((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && ! empty($conf->stock->enabled)), 'perms'=>($user->rights->stock->lire), 'module'=>'product|service|stock');
 	    $showmode=isVisibleToUserType(($user->societe_id > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
-	    $this->hidden=($showmode != 1);
+	    $this->hidden = ($showmode != 1);
 	}
 
 	/**
@@ -179,12 +179,12 @@ class box_produits_alerte_stock extends ModeleBoxes
 	               	}
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right"',
+                        'td' => 'class="right nowraponall"',
                         'text' => $price,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="nowrap"',
+                        'td' => 'class="right"',
                         'text' => $price_base_type,
                     );
 

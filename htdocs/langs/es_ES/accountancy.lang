@@ -158,6 +158,7 @@ ACCOUNTING_RESULT_LOSS=Cuenta contable de resultados (Pérdidas)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Diario de cierre
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Cuenta de caja
+TransitionalAccount=Cuenta de transferencia bancaria de transición
 
 ACCOUNTING_ACCOUNT_SUSPENSE=Cuenta operaciones pendientes de asignar
 DONATION_ACCOUNTINGACCOUNT=Cuenta contable para registrar donaciones
@@ -165,8 +166,8 @@ ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Cuenta contable para registrar subscripc
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cuenta contable predeterminada para los productos comprados (si no se define en el producto)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Cuenta contable predeterminada para los productos vendidos (si no se define en el producto)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT_INTRA=Cuenta contable predeterminada para los productos vendidos en la CEE (si no se define en el producto)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT_EXPORT=Cuenta contable predeterminada para los productos vendidos fuera de la CEE (si no se define en el producto)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Cuenta contable predeterminada para los productos vendidos en la CEE (si no se define en el producto)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Cuenta contable predeterminada para los productos vendidos fuera de la CEE (si no se define en el producto)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Cuenta contable predeterminada para los servicios comprados (si no se define en el servicio)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Cuenta contable predeterminada para los servicios vendidos (si no se define en el servico)
 
@@ -177,6 +178,7 @@ LabelAccount=Descripción
 LabelOperation=Etiqueta operación
 Sens=Sentido
 LetteringCode=Cogido de letras
+Lettering=Letras
 Codejournal=Diario
 JournalLabel=Etiqueta del diario
 NumPiece=Apunte
@@ -215,7 +217,8 @@ DescThirdPartyReport=Consulte aquí el listado de clientes y proveedores y sus c
 ListAccounts=Listado de cuentas contables
 UnknownAccountForThirdparty=Cuenta contable de tercero desconocida, usaremos %s
 UnknownAccountForThirdpartyBlocking=Cuenta contable de tercero desconocida. Error de bloqueo
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Cuenta del tercero desconocida o tercero desconocido. Error de bloqueo
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Cuenta de tercero no definida o tercero desconocido. Usaremos %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Cuenta del tercero desconocida o tercero desconocido. Error de bloqueo
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Cuenta del tercero desconocida y cuenta de espera no definida. Error de bloqueo
 PaymentsNotLinkedToProduct=Pagos no vinculados a un producto/servicio
 
@@ -262,7 +265,7 @@ AccountingJournals=Diarios contables
 AccountingJournal=Diario contable
 NewAccountingJournal=Nuevo diario contable
 ShowAccoutingJournal=Mostrar diario contable
-Nature=Naturaleza
+NatureOfJournal=Naturaleza del diario
 AccountingJournalType1=Operaciones varias
 AccountingJournalType2=Ventas
 AccountingJournalType3=Compras
@@ -288,19 +291,26 @@ Modelcsv_quadratus=Exportar a Quadratus QuadraCompta
 Modelcsv_ebp=Exportar a EBP
 Modelcsv_cogilog=Eportar a Cogilog
 Modelcsv_agiris=Exportar a Agiris
+Modelcsv_LDCompta=Exportar para LD Compta (v9 y superior) (En pruebas)
+Modelcsv_openconcerto=Exportar a OpenConcerto (En pruebas)
 Modelcsv_configurable=Exportación CSV Configurable
-Modelcsv_FEC=Exportación FEC (Art. L47 A) (Prueba)
+Modelcsv_FEC=Exportación FEC
+Modelcsv_Sage50_Swiss=Exportación a Sage 50 Suiza
 ChartofaccountsId=Id plan contable
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Iniciar contabilidad
 InitAccountancyDesc=Puede usar esta página para inicializar el código contable en productos y servicios que no tienen código contable definido para ventas y compras
 DefaultBindingDesc=Esta página puede usarse para establecer una cuenta predeterminada que se utilizará para enlazar registros de salarios, donaciones, impuestos e IVA cuando no tengan establecida una cuenta contable.
-DefaultClosureDesc=Esta página se puede usar para configurar los parámetros que se usarán para incluir un balance general.
+DefaultClosureDesc=Esta página se puede usar para configurar los parámetros que se usarán en los cierres contables.
 Options=Opciones
 OptionModeProductSell=Modo ventas
+OptionModeProductSellIntra=Modo Ventas exportación CEE
+OptionModeProductSellExport=Modo ventas exportación otros paises
 OptionModeProductBuy=Modo compras
 OptionModeProductSellDesc=Mostrar todos los productos con cuenta contable de ventas
+OptionModeProductSellIntraDesc=Mostrar todos los productos con cuenta contable para ventas en CEE.
+OptionModeProductSellExportDesc=Mostrar todos los productos con cuenta contable para otras ventas al exterior.
 OptionModeProductBuyDesc=Mostrar todos los productos con cuenta contable de compras
 CleanFixHistory=Eliminar código contable de las líneas que no existen en el plan contable
 CleanHistory=Resetear todos los vínculos del año seleccionado
@@ -309,6 +319,9 @@ WithoutValidAccount=Sin cuenta dedicada válida
 WithValidAccount=Con cuenta dedicada válida
 ValueNotIntoChartOfAccount=Este valor de cuenta contable no existe en el plan general contable
 AccountRemovedFromGroup=Cuenta eliminada del grupo
+SaleLocal=Venta local
+SaleExport=Venta de exportación
+SaleEEC=Venta en CEE
 
 ## Dictionary
 Range=Rango de cuenta contable
@@ -329,7 +342,7 @@ UseMenuToSetBindindManualy=No es posible autodetectar, utilice el menú <a href=
 
 ## Import
 ImportAccountingEntries=Entradas contables
-
+DateExport=Fecha de exportación
 WarningReportNotReliable=Advertencia, este informe no se basa en el Libro mayor, por lo que no contiene modificaciones manualmente modificadas en el Libro mayor.. Si su diario está actualizado, la vista contable es más precisa.
 ExpenseReportJournal=Informe de gastos diario
 InventoryJournal=Inventario

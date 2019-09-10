@@ -78,10 +78,10 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 
 
 	/**
-	 *  Test whether the numbers already in force in the base do not cause conflicts
-	 *  that would prevent this numbering from working.
+     *  Checks if the numbers already in force in the data base do not
+     *  cause conflicts that would prevent this numbering from working.
 	 *
-	 *  @return     boolean     false si conflit, true si ok
+	 *  @return     boolean     false if conflict, true if ok
 	 */
     public function canBeActivated()
 	{

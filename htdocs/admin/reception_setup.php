@@ -16,8 +16,8 @@
  */
 
 /**
- *	    \file       htdocs/admin/confexped.php
- *		\ingroup    produit
+ *	    \file       htdocs/admin/reception_setup.php
+ *		\ingroup    reception
  *		\brief      Page to setup reception module
  */
 
@@ -27,13 +27,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/reception.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 
-$langs->load("admin");
-$langs->load("receptions");
-$langs->load('other');
+$langs->loadLangs(array("admin", "receptions", 'other'));
 
 
-if (!$user->admin)
-  accessforbidden();
+if (!$user->admin) accessforbidden();
 
 $action=GETPOST('action', 'alpha');
 $value=GETPOST('value', 'alpha');
@@ -225,7 +222,7 @@ clearstatcache();
 foreach ($dirmodels as $reldir)
 {
 	$dir = dol_buildpath($reldir."core/modules/reception/");
-	
+
 	if (is_dir($dir))
 	{
 		$handle = opendir($dir);
@@ -269,7 +266,7 @@ foreach ($dirmodels as $reldir)
 						}
 						else
 						{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmodel&amp;value='.$file.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodel&amp;value='.$file.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
 						}

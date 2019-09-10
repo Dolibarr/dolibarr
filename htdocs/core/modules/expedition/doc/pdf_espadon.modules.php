@@ -168,7 +168,7 @@ class pdf_espadon extends ModelePdfExpedition
 		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch"));
 
-		$nblignes = count($object->lines);
+		$nblines = count($object->lines);
 
         // Loop on each lines to detect if there is at least one image to show
         $realpatharray=array();
@@ -176,7 +176,7 @@ class pdf_espadon extends ModelePdfExpedition
         {
             $objphoto = new Product($this->db);
 
-            for ($i = 0 ; $i < $nblignes ; $i++)
+            for ($i = 0 ; $i < $nblines ; $i++)
             {
                 if (empty($object->lines[$i]->fk_product)) continue;
 
@@ -253,8 +253,8 @@ class pdf_espadon extends ModelePdfExpedition
 				global $action;
 				$reshook=$hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 
-				// Set nblignes with the new facture lines content after hook
-				$nblignes = count($object->lines);
+				// Set nblines with the new facture lines content after hook
+				$nblines = count($object->lines);
 
 				$pdf=pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -404,7 +404,7 @@ class pdf_espadon extends ModelePdfExpedition
 				$nexY = $tab_top + $this->tabTitleHeight + 2;
 
 				// Loop on each lines
-				for ($i = 0; $i < $nblignes; $i++)
+				for ($i = 0; $i < $nblines; $i++)
 				{
 					$curY = $nexY;
 					$pdf->SetFont('', '', $default_font_size - 1);   // Into loop to work with multipage
@@ -464,7 +464,7 @@ class pdf_espadon extends ModelePdfExpedition
 					        //var_dump($posyafter); var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;
 					        if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforsignature+$heightforinfotot)))	// There is no space left for total+free text
 					        {
-					            if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
+					            if ($i == ($nblines-1))	// No more lines, and no space left to show total, so we create a new page
 					            {
 					                $pdf->AddPage('', '', true);
 					                if (! empty($tplidx)) $pdf->useTemplate($tplidx);
@@ -548,7 +548,7 @@ class pdf_espadon extends ModelePdfExpedition
 					if ($weighttxt && $voltxt) $nexY+=2;
 
 					// Add line
-					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
+					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
 					{
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80,80,80)));
@@ -648,6 +648,7 @@ class pdf_espadon extends ModelePdfExpedition
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show total to pay
@@ -659,7 +660,7 @@ class pdf_espadon extends ModelePdfExpedition
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
-	private function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
+	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
 		// phpcs:enable
 		global $conf,$mysoc;
@@ -749,6 +750,7 @@ class pdf_espadon extends ModelePdfExpedition
 		return ($tab2_top + ($tab2_hl * $index));
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -761,7 +763,7 @@ class pdf_espadon extends ModelePdfExpedition
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
+	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
 		global $conf;
 
@@ -796,6 +798,7 @@ class pdf_espadon extends ModelePdfExpedition
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -805,7 +808,7 @@ class pdf_espadon extends ModelePdfExpedition
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
 	 */
-	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -1044,6 +1047,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$pdf->SetTextColor(0, 0, 0);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   	Show footer of page. Need this->emetteur object
      *
@@ -1053,7 +1057,7 @@ class pdf_espadon extends ModelePdfExpedition
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
 	 */
-	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;

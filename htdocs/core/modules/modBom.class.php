@@ -66,7 +66,7 @@ class modBom extends DolibarrModules
 		$this->descriptionlong = "Bill of Materials definitions. They can be used to make Manufacturing Resource Planning";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'experimental';
+		$this->version = 'dolibarr';
 
         //Url to the file with your last numberversion of this module
         //$this->url_last_version = 'http://www.example.com/versionmodule.txt';
@@ -105,7 +105,7 @@ class modBom extends DolibarrModules
 		// Dependencies
 		$this->hidden = false;			// A condition to hide module
 		$this->depends = array('modProduct');		// List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
-		$this->requiredby = array();	// List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
+		$this->requiredby = array('modMrp');	// List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array();	// List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
 		$this->langfiles = array("mrp");
 		//$this->phpmin = array(5,4);					// Minimum version of PHP required by module
@@ -211,21 +211,21 @@ class modBom extends DolibarrModules
 		$r=0;
 		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read bom of Bom';	// Permission label
-		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
+		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->bom->level1->level2)
 		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->bom->level1->level2)
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = 'Create/Update bom of Bom';	// Permission label
-		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
+		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'write';				// In php code, permission will be checked by test if ($user->rights->bom->level1->level2)
 		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->bom->level1->level2)
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = 'Delete bom of Bom';	// Permission label
-		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
+		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'delete';				// In php code, permission will be checked by test if ($user->rights->bom->level1->level2)
 		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->bom->level1->level2)
 

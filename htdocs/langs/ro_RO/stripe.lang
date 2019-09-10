@@ -12,7 +12,7 @@ YourEMail=E-mail de confirmare de plată
 STRIPE_PAYONLINE_SENDEMAIL=Email de notificare după o încercare de plată (succes sau eșec)
 Creditor=Creditor
 PaymentCode=Cod Plata
-StripeDoPayment=Plătiți cu card de credit sau de debit (Stripe)
+StripeDoPayment=Pay with Stripe
 YouWillBeRedirectedOnStripe=Veți fi redirecționat pe pagina Stripe securizată pentru a vă introduce informațiile despre cardul de credit
 Continue=Următor
 ToOfferALinkForOnlinePayment=URL-ul pentru plata %s
@@ -40,7 +40,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Cheie in direct Webhook
 ONLINE_PAYMENT_WAREHOUSE=Stoc de utilizat pentru scăderea stocului atunci când se efectuează plata online <br> (TODO Când opțiunea de a reduce stocul se face printr-o acțiune pe factură, iar plata online generează factura?)
 StripeLiveEnabled=Stripe live activat (altfel test / modul sandbox)
 StripeImportPayment=Plățile pentru importul Stripe
-ExampleOfTestCreditCard=Exemplu de card de credit pentru test: %s (valid), %s (eroare CVC), %s (expirat), %s (taxa nu reușește)
+ExampleOfTestCreditCard=Example of credit card for test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
 StripeGateways=Iesiri Stripe
 OAUTH_STRIPE_TEST_ID=ID-ul de conectare Stripe a clientului (ca _...)
 OAUTH_STRIPE_LIVE_ID=ID-ul de conectare Stripe a clientului (ca _...)
@@ -63,3 +63,7 @@ CreateCardOnStripe=Creați un card pe Stripe
 ShowInStripe=Arată în Stripe
 StripeUserAccountForActions=Cont utilizator pe care să îl utilizați pentru notificarea prin email a anumitor evenimente Stripe (plăți Stripe)
 StripePayoutList=Listă de plăți Stripe
+ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mode)
+ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
+PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
+ClickHereToTryAgain=<a href="%s">Click here to try again...</a>

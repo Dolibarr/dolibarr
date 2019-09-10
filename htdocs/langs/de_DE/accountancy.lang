@@ -21,8 +21,8 @@ ConfigAccountingExpert=Konfiguration des Experten-Buchhaltungsmoduls
 Journalization=Journalisieren
 Journaux=Journale
 JournalFinancial=Finanzjournale
-BackToChartofaccounts=Zurück zum  Kontenplan
-Chartofaccounts=Kontenplan
+BackToChartofaccounts=Zurück zur  Kontenplanvorlage
+Chartofaccounts=Kontenplanvorlagen
 CurrentDedicatedAccountingAccount=Aktuelles dediziertes Konto
 AssignDedicatedAccountingAccount=Neues Konto zuweisen
 InvoiceLabel=Rechnungsanschrift
@@ -30,7 +30,7 @@ OverviewOfAmountOfLinesNotBound=Übersicht über die Anzahl der nicht an ein Buc
 OverviewOfAmountOfLinesBound=Übersicht über die Anzahl der bereits an ein Buchhaltungskonto zugeordneten Zeilen
 OtherInfo=Zusatzinformationen
 DeleteCptCategory=Buchhaltungskonto aus Gruppe entfernen
-ConfirmDeleteCptCategory=Are you sure you want to remove this accounting account from the accounting account group?
+ConfirmDeleteCptCategory=Soll dieses Buchhaltungskonto wirklich aus der Gruppe entfernt werden?
 JournalizationInLedgerStatus=Status der Journalisierung
 AlreadyInGeneralLedger=Schon ins Hauptbuch übernommen
 NotYetInGeneralLedger=Noch nicht ins Hauptbuch übernommen
@@ -42,13 +42,13 @@ CountriesInEEC=EU-Länder
 CountriesNotInEEC=Nicht-EU Länder
 CountriesInEECExceptMe=EU-Länder außer %s
 CountriesExceptMe=Alle Länder außer %s
-AccountantFiles=Export accounting documents
+AccountantFiles=Buchhaltungsdokumente exportieren
 
 MainAccountForCustomersNotDefined=Standardkonto für Kunden im Setup nicht definiert
 MainAccountForSuppliersNotDefined=Standardkonto für Lieferanten die nicht im Setup definiert sind
 MainAccountForUsersNotDefined=Standardkonto für Benutzer ist im Setup nicht definiert
 MainAccountForVatPaymentNotDefined=Standardkonto für MWSt Zahlungen ist im Setup nicht definiert
-MainAccountForSubscriptionPaymentNotDefined=Main accounting account for subscription payment not defined in setup
+MainAccountForSubscriptionPaymentNotDefined=Standardkonto für wiederkehrende Zahlungen ist im Setup nicht definiert
 
 AccountancyArea=Bereich Buchhaltung
 AccountancyAreaDescIntro=Die Verwendung des Buchhaltungsmoduls erfolgt in mehreren Schritten:
@@ -78,13 +78,13 @@ AccountancyAreaDescAnalyze=SCHRITT %s: Vorhandene Transaktionen hinzufügen oder
 
 AccountancyAreaDescClosePeriod=SCHRITT %s: Schließen Sie die Periode, damit wir in Zukunft keine Veränderungen vornehmen können.
 
-TheJournalCodeIsNotDefinedOnSomeBankAccount=Eine erofrderliche Einrichtung wurde nicht abgeschlossen. (Kontierungsinformationen fehlen bei einigen Finanzkonten)
-Selectchartofaccounts=Kontenplan wählen
+TheJournalCodeIsNotDefinedOnSomeBankAccount=Eine erforderliche Einrichtung wurde nicht abgeschlossen. (Kontierungsinformationen fehlen bei einigen Bankkonten)
+Selectchartofaccounts=Aktiven Kontenplan wählen
 ChangeAndLoad=Ändere und Lade
 Addanaccount=Fügen Sie ein Buchhaltungskonto hinzu
 AccountAccounting=Buchhaltungskonto
 AccountAccountingShort=Konto
-SubledgerAccount=Subledger account
+SubledgerAccount=Nebenbuchkonto
 SubledgerAccountLabel=Subledger account label
 ShowAccountingAccount=Buchhaltungskonten anzeigen
 ShowAccountingJournal=Buchhaltungsjournal anzeigen
@@ -107,7 +107,7 @@ ExpenseReportsVentilation=Spesenabrechnung Zuordnung
 CreateMvts=Neue Transaktion erstellen
 UpdateMvts=Änderung einer Transaktion
 ValidTransaction=Transaktion bestätigen
-WriteBookKeeping=Buchungen ins Hauptbuch übernehmen
+WriteBookKeeping=Register transactions in Ledger
 Bookkeeping=Hauptbuch
 AccountBalance=Saldo Sachkonto
 ObjectsRef=Quellreferenz
@@ -158,6 +158,7 @@ ACCOUNTING_RESULT_LOSS=Result accounting account (Loss)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal of closure
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transitional bank transfer
+TransitionalAccount=Transitional bank transfer account
 
 ACCOUNTING_ACCOUNT_SUSPENSE=Buchhaltungskonten in Wartestellung
 DONATION_ACCOUNTINGACCOUNT=Buchhaltungskonto für die Buchung von Spenden
@@ -165,8 +166,8 @@ ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Accounting account to register subscript
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Buchhaltungskonto standardmäßig für die gekauften Produkte (wenn nicht im Produktblatt definiert)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Standard-Buchhaltungskonto für die verkauften Produkte (wenn nicht anders im Produktblatt definiert)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT_INTRA=Accounting account by default for the sold products in EEC (used if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT_EXPORT=Accounting account by default for the sold products export out of EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Accounting account by default for the sold products in EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Accounting account by default for the sold products export out of EEC (used if not defined in the product sheet)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Standard-Buchhaltungskonto für die gekauften Leistungen (wenn nicht anders im Produktblatt definiert)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Standard-Buchhaltungskonto für die verkauften Leistungen (wenn nicht anders im Produktblatt definiert)
 
@@ -177,6 +178,7 @@ LabelAccount=Konto-Beschriftung
 LabelOperation=Bezeichnung der Operation
 Sens=Zweck
 LetteringCode=Lettering code
+Lettering=Lettering
 Codejournal=Journal
 JournalLabel=Journal label
 NumPiece=Teilenummer
@@ -192,7 +194,7 @@ NotMatch=undefiniert
 DeleteMvt=Zeilen im Hauptbuch löschen
 DelYear=Jahr zu entfernen
 DelJournal=Journal zu entfernen
-ConfirmDeleteMvt=This will delete all lines of the Ledger for year and/or from a specific journal. At least one criterion is required.
+ConfirmDeleteMvt=Es werden alle Zeilen des Hauptbuchs für das gewählte Jahr und/oder des gewählten Journals gelöscht. Mindestens eine Auswahl ist notwendig.
 ConfirmDeleteMvtPartial=Die Buchung wird aus dem Hauptbuch gelöscht (Alle Einträge aus dieser Buchung werden gelöscht)
 FinanceJournal=Finanzjournal
 ExpenseReportsJournal=Spesenabrechnungsjournal
@@ -215,7 +217,8 @@ DescThirdPartyReport=Consult here the list of third-party customers and vendors 
 ListAccounts=Liste der Abrechnungskonten
 UnknownAccountForThirdparty=Unknown third-party account. We will use %s
 UnknownAccountForThirdpartyBlocking=Unknown third-party account. Blocking error
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. Blocking error.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Third-party account not defined or third party unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third-party account and waiting account not defined. Blocking error
 PaymentsNotLinkedToProduct=Zahlung ist keinem Produkt oder Dienstleistung zugewisen
 
@@ -262,7 +265,7 @@ AccountingJournals=Buchhaltungsjournale
 AccountingJournal=Buchhaltungsjournal
 NewAccountingJournal=Neues Buchhaltungsjournal
 ShowAccoutingJournal=Buchhaltungsjournal anzeigen
-Nature=Art
+NatureOfJournal=Nature of Journal
 AccountingJournalType1=Verschiedene Aktionen
 AccountingJournalType2=Verkauf
 AccountingJournalType3=Einkauf
@@ -288,19 +291,26 @@ Modelcsv_quadratus=Export for Quadratus QuadraCompta
 Modelcsv_ebp=Export for EBP
 Modelcsv_cogilog=Export for Cogilog
 Modelcsv_agiris=Export for Agiris
+Modelcsv_LDCompta=Export for LD Compta (v9 & higher) (Test)
+Modelcsv_openconcerto=Export for OpenConcerto (Test)
 Modelcsv_configurable=Konfigurierbarer CSV Export
-Modelcsv_FEC=Export FEC (Art. L47 A) (Test)
+Modelcsv_FEC=Export FEC
+Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
 ChartofaccountsId=Kontenplan ID
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Rechnungswesen initialisieren
 InitAccountancyDesc=Auf dieser Seite kann ein Sachkonto für Artikel und Dienstleistungen vorgegeben werden, wenn noch kein Buchhaltungs-Konto für Ein- und Verkäufe definiert ist.
 DefaultBindingDesc=Diese Seite kann verwendet werden, um ein Standardkonto festzulegen, das für die Verknüpfung von Transaktionsdatensätzen zu Lohnzahlungen, Spenden, Steuern und Mwst. verwendet werden soll, wenn kein bestimmtes Konto angegeben wurde.
-DefaultClosureDesc=This page can be used to set parameters to use to enclose a balance sheet.
+DefaultClosureDesc=This page can be used to set parameters used for accounting closures.
 Options=Optionen
-OptionModeProductSell=Modus Verkauf
+OptionModeProductSell=Modus Verkäufe Inland
+OptionModeProductSellIntra=Modus Verkäufe in EU/EWG
+OptionModeProductSellExport=Modus Verkäufe Export (ausserhalb EU/EWG)
 OptionModeProductBuy=Modus Einkäufe
 OptionModeProductSellDesc=Alle Artikel mit Sachkonten für Vertrieb anzeigen
+OptionModeProductSellIntraDesc=Show all products with accounting account for sales in EEC.
+OptionModeProductSellExportDesc=Show all products with accounting account for other foreign sales.
 OptionModeProductBuyDesc=Alle Artikel mit Sachkonten für Einkauf anzeigen
 CleanFixHistory=Nicht existierenden Buchhaltungskonten von Positionen entfernen, die im Kontenplan nicht vorkommen.
 CleanHistory=Aller Zuordungen für das selektierte Jahr zurücksetzen
@@ -309,6 +319,9 @@ WithoutValidAccount=Mit keinem gültigen dedizierten Konto
 WithValidAccount=Mit gültigen dedizierten Konto
 ValueNotIntoChartOfAccount=Dieser Wert für das Buchhaltungs-Konto existiert nicht im Kontenplan
 AccountRemovedFromGroup=Account removed from group
+SaleLocal=Verkauf Inland
+SaleExport=Verkauf Export (ausserhalb EWG)
+SaleEEC=Verkauf in EU/EWG
 
 ## Dictionary
 Range=Bereich von Sachkonten
@@ -329,7 +342,7 @@ UseMenuToSetBindindManualy=Zeilen noch nicht zugeordnet, verwende das Menu <a hr
 
 ## Import
 ImportAccountingEntries=Buchaltungseinträge
-
+DateExport=Date export
 WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Spesenabrechnung Journal
 InventoryJournal=Inventarjournal

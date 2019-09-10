@@ -438,7 +438,6 @@ foreach ($dirmodels as $reldir)
 
 	                        if ($modulequalified)
 	                        {
-	                            $var = !$var;
 	                            print '<tr class="oddeven"><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";

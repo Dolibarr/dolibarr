@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,12 +58,12 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 	$ret=$object->fetch($id);
 	if ($ret > 0)
 	{
-		$outname=$object->name;
-		$outlabel = '';
+		$outref = $object->ref;
+		$outname = $object->name;
 		$outdesc = '';
 		$outtype = $object->type;
 
-		$outjson = array('ref' => $outref,'name' => $outname,'desc' => $outdesc,'type' => $outtype);
+		$outjson = array('ref' => $outref, 'name' => $outname, 'desc' => $outdesc, 'type' => $outtype);
 	}
 
 	echo json_encode($outjson);

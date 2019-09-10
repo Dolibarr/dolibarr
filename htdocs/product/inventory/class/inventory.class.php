@@ -59,7 +59,7 @@ class Inventory extends CommonObject
 	 *  'type' if the field format.
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed.
-	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only. Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
@@ -96,7 +96,7 @@ class Inventory extends CommonObject
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0,  'position'=>1000),
 
-		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>1000, 'default'=>0, 'arrayofkeyval'=>array(0=>'Todo', 1=>'Done', -1=>'Cancel')),
+		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>4, 'enabled'=>1, 'position'=>1000, 'default'=>0, 'arrayofkeyval'=>array(0=>'ToDo', 1=>'Done', -1=>'Cancel')),
 	);
 
 	/**
@@ -169,9 +169,13 @@ class Inventory extends CommonObject
 	public $class_element_line = 'Inventoryline';
 
 	/**
-	 * @var array  Array of child tables (child tables to delete before deleting a record)
+	 * @var array	List of child tables. To test if we can delete object.
 	 */
-	protected $childtables=array('inventorydet');
+	protected $childtables=array();
+	/**
+	 * @var array	List of child tables. To know object to delete on cascade.
+	 */
+	protected $childtablesoncascade=array('inventorydet');
 
 	/**
 	 * @var InventoryLine[]     Array of subtable lines

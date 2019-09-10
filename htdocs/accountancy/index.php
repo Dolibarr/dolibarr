@@ -18,7 +18,7 @@
 
 /**
  * \file    htdocs/accountancy/index.php
- * \ingroup Advanced accountancy
+ * \ingroup Accountancy (Double entries)
  * \brief   Home accounting module
  */
 

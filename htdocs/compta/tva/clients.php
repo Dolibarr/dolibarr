@@ -185,7 +185,7 @@ $productcust=$langs->trans("Description");
 $namerate=$langs->trans("VATRate");
 $amountcust=$langs->trans("AmountHT");
 if ($mysoc->tva_assuj) {
-    $vatcust.=' ('.$langs->trans("ToPay").')';
+    $vatcust.=' ('.$langs->trans("StatusToPay").')';
 }
 $elementsup=$langs->trans("SuppliersInvoices");
 $productsup=$langs->trans("Description");

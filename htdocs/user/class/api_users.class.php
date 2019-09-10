@@ -76,7 +76,7 @@ class Users extends DolibarrApi
 	    }
 
 	    // case of external user, $societe param is ignored and replaced by user's socid
-	    //$socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $societe;
+	    //$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $societe;
 
 	    $sql = "SELECT t.rowid";
 	    $sql.= " FROM ".MAIN_DB_PREFIX."user as t";
@@ -378,7 +378,7 @@ class Users extends DolibarrApi
 	    unset($object->total_localtax2);
 	    unset($object->total_ttc);
 
-	    unset($object->libelle_incoterms);
+	    unset($object->label_incoterms);
 	    unset($object->location_incoterms);
 
 	    unset($object->fk_delivery_address);

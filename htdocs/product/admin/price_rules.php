@@ -113,7 +113,7 @@ while ($result = $db->fetch_object($query)) {
 $title = $langs->trans('ProductServiceSetup');
 $tab = $langs->trans("ProductsAndServices");
 
-if (empty($conf->produit->enabled)) {
+if (empty($conf->product->enabled)) {
 	$title = $langs->trans('ServiceSetup');
 	$tab = $langs->trans('Services');
 } elseif (empty($conf->service->enabled)) {
@@ -183,7 +183,7 @@ $genPriceOptions = function ($level) use ($price_options) {
 				</td>
 				<td style="text-align: center">
 					<input type="text" style="text-align: right" name="var_min_percent[<?php echo $i ?>]" size="5" value="<?php echo price(isset($rules[$i]) ? $rules[$i]->var_min_percent : 0, 2) ?>">
-					<?php echo $langs->trans('PercentDiscountOver', $langs->trans('SellingPrice').' '.$i) ?>
+					<?php echo $langs->trans('PercentDiscountOver', $langs->transnoentitiesnoconv('SellingPrice').' '.$i) ?>
 				</td>
 			</tr>
 		<?php endfor ?>

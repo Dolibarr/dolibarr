@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2018	Jean-François FERRY	<hello@librethic.io>
  * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
  * Copyright (C) 2018		Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2019		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ include_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 include_once DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("ticket","companies","other","projects"));
+$langs->loadLangs(array("ticket", "companies", "other", "projects"));
 
 
 // Get parameters
@@ -209,9 +210,11 @@ $sql=preg_replace('/, $/', '', $sql);
 $sql.= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (t.fk_soc = s.rowid)";
-if ($object->ismultientitymanaged == 1) $sql.= " WHERE t.entity IN (".getEntity($object->element).")";
-else $sql.=" WHERE 1 = 1";
-
+$sql.= " WHERE t.entity IN (".getEntity($object->element).")";
+if ($socid > 0)
+{
+	$sql.= " AND t.fk_soc = ".$socid;
+}
 
 foreach($search as $key => $val)
 {
@@ -314,7 +317,7 @@ if ($socid && !$projectid && $user->rights->societe->lire) {
         print '<div class="fichecenter">';
 
         print '<div class="underbanner clearboth"></div>';
-        print '<table class="border centpercent">';
+        print '<table class="border centpercent tableforfield">';
 
         // Customer code
         if ($socstat->client && !empty($socstat->code_client)) {
@@ -451,14 +454,12 @@ if ($socid)     print '<input type="hidden" name="socid" value="' . $socid . '" 
 if ($projectid) print '<input type="hidden" name="projectid" value="' . $projectid . '" >';
 
 $newcardbutton='';
-if ($user->rights->ticket->write)
-{
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/ticket/card.php?action=create' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : '') . '"><span class="valignmiddle text-plus-circle">' . $langs->trans('NewTicket').'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
-}
+$newcardbutton.= dolGetButtonTitle($langs->trans('NewTicket'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/ticket/card.php?action=create' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : ''), '', !empty($user->rights->ticket->write));
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_ticket', 0, $newcardbutton, '', $limit);
+$picto = 'title_ticket';
+if ($socid > 0) $picto = '';
+
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit);
 
 if ($mode == 'mine') {
     print '<div class="opacitymedium">' . $langs->trans('TicketAssignedToMeInfos') . '</div><br>';
@@ -506,10 +507,11 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 print '<tr class="liste_titre">';
 foreach($object->fields as $key => $val)
 {
-	$cssforfield='';
-	if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
-	if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
-	if ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
+	$cssforfield=(empty($val['css'])?'':$val['css']);
+	if ($key == 'fk_statut') $cssforfield.=($cssforfield?' ':'').'center';
+	elseif (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
+	elseif (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
+	elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price'))) $cssforfield.=($cssforfield?' ':'').'right';
 	if (! empty($arrayfields['t.'.$key]['checked'])) {
 		if ($key == 'type_code') {
 			print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
@@ -537,7 +539,9 @@ foreach($object->fields as $key => $val)
 		    }
 		    print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
 		    //var_dump($arrayofstatus);var_dump($search['fk_statut']);var_dump(array_values($search[$key]));
-			print Form::multiselectarray('search_fk_statut', $arrayofstatus, array_values($search[$key]), 0, 0, 'minwidth150', 1, 0, '', '', '');
+		    $selectedarray = null;
+		    if ($search[$key]) $selectedarray = array_values($search[$key]);
+			print Form::multiselectarray('search_fk_statut', $arrayofstatus, $selectedarray, 0, 0, 'minwidth150', 1, 0, '', '', '');
 			print '</td>';
 		}
 		elseif ($key == "fk_soc")
@@ -557,7 +561,7 @@ $parameters=array('arrayfields'=>$arrayfields);
 $reshook=$hookmanager->executeHooks('printFieldListOption', $parameters, $object);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-print '<td class="liste_titre right">';
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -569,10 +573,11 @@ print '</tr>'."\n";
 print '<tr class="liste_titre">';
 foreach($object->fields as $key => $val)
 {
-	$cssforfield='';
-	if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
-	if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
+	$cssforfield=(empty($val['css'])?'':$val['css']);
 	if ($key == 'fk_statut') $cssforfield.=($cssforfield?' ':'').'center';
+	elseif (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
+	elseif (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
+	elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price'))) $cssforfield.=($cssforfield?' ':'').'right';
 	if (! empty($arrayfields['t.'.$key]['checked']))
 	{
         print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, '', $sortfield, $sortorder, ($cssforfield?$cssforfield.' ':''))."\n";
@@ -612,7 +617,7 @@ while ($i < min($num, $limit))
 	$object->id = $obj->rowid;
 	foreach($object->fields as $key => $val)
 	{
-		if (isset($obj->$key)) $object->$key = $obj->$key;
+		if (property_exists($obj, $key)) $object->$key = $obj->$key;
 	}
 	$langs->load("ticket");
 
