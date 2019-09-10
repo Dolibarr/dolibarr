@@ -27,7 +27,7 @@
 /**
  *	\file       htdocs/core/modules/propale/doc/pdf_azur.modules.php
  *	\ingroup    propale
- *	\brief      File of Class to generate PDF proposal with Azur template 
+ *	\brief      File of Class to generate PDF proposal with Azur template
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/propale/modules_propale.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
