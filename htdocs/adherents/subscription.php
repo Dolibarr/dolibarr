@@ -478,7 +478,7 @@ if ($rowid > 0)
     print '<div class="fichehalfleft">';
 
     print '<div class="underbanner clearboth"></div>';
-    print '<table class="border" width="100%">';
+    print '<table class="border centpercent tableforfield">';
 
 	// Login
 	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
@@ -494,7 +494,7 @@ if ($rowid > 0)
 	print '</tr>';
 
 	// Company
-	print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'</td></tr>';
+	print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->company.'</td></tr>';
 
 	// Civility
 	print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
@@ -862,13 +862,13 @@ if ($rowid > 0)
 
 			if ($object->morphy == 'mor')
 			{
-				$companyname=$object->societe;
+				$companyname=$object->company;
 				if (! empty($fullname)) $companyalias=$fullname;
 			}
 			else
 			{
 				$companyname=$fullname;
-				if (! empty($object->societe)) $companyalias=$object->societe;
+				if (! empty($object->company)) $companyalias=$object->company;
 			}
 
 			// Create a form array
@@ -903,7 +903,7 @@ if ($rowid > 0)
         print '<input type="hidden" name="action" value="subscription">';
         print '<input type="hidden" name="rowid" value="'.$rowid.'">';
         print '<input type="hidden" name="memberlabel" id="memberlabel" value="'.dol_escape_htmltag($object->getFullName($langs)).'">';
-        print '<input type="hidden" name="thirdpartylabel" id="thirdpartylabel" value="'.dol_escape_htmltag($object->societe).'">';
+        print '<input type="hidden" name="thirdpartylabel" id="thirdpartylabel" value="'.dol_escape_htmltag($object->company).'">';
 
 		dol_fiche_head('');
 

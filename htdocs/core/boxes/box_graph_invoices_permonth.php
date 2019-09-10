@@ -74,6 +74,9 @@ class box_graph_invoices_permonth extends ModeleBoxes
 		//include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		//$facturestatic=new Facture($db);
 
+		$startmonth = $conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START) : 1;
+		if (empty($conf->global->GRAPH_USE_FISCAL_YEAR)) $startmonth = 1;
+
 		$text = $langs->trans("BoxCustomersInvoicesPerMonth", $max);
 		$this->info_box_head = array(
 			'text' => $text,
@@ -129,7 +132,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb)
 			{
-				$data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
+				$data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0), $startmonth);
 
 				$filenamenb = $dir."/".$prefix."invoicesnbinyear-".$endyear.".png";
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesnbinyear-'.$endyear.'.png';
@@ -146,7 +149,14 @@ class box_graph_invoices_permonth extends ModeleBoxes
 					$i=$startyear;$legend=array();
 					while ($i <= $endyear)
 					{
-						$legend[]=$i;
+						if ($startmonth != 1)
+						{
+							$legend[]=sprintf("%d/%d", $i-2001, $i-2000);
+						}
+						else
+						{
+							$legend[]=$i;
+						}
 						$i++;
 					}
 					$px1->SetLegend($legend);
@@ -167,7 +177,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showtot)
 			{
-				$data2 = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
+				$data2 = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0), $startmonth);
 
 				$filenamenb = $dir."/".$prefix."invoicesamountinyear-".$endyear.".png";
 				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesamountinyear-'.$endyear.'.png';
@@ -184,7 +194,14 @@ class box_graph_invoices_permonth extends ModeleBoxes
 					$i=$startyear;$legend=array();
 					while ($i <= $endyear)
 					{
-						$legend[]=$i;
+						if ($startmonth != 1)
+						{
+							$legend[]=sprintf("%d/%d", $i-2001, $i-2000);
+						}
+						else
+						{
+							$legend[]=$i;
+						}
 						$i++;
 					}
 					$px2->SetLegend($legend);
@@ -220,6 +237,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 					</script>';
 				$stringtoshow.='<div class="center hideobject" id="idfilter'.$this->boxcode.'">';	// hideobject is to start hidden
 				$stringtoshow.='<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+				$stringtoshow.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				$stringtoshow.='<input type="hidden" name="action" value="'.$refreshaction.'">';
 				$stringtoshow.='<input type="hidden" name="page_y" value="">';
 				$stringtoshow.='<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_box_'.$this->boxcode.':year,shownb,showtot">';

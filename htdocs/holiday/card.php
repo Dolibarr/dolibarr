@@ -55,13 +55,6 @@ $langs->load("holiday");
 
 $childids = $user->getAllChildIds(1);
 
-$cancreate = 0;
-if (! empty($user->rights->holiday->write_all)) $cancreate=1;
-if (! empty($user->rights->holiday->write) && in_array($fuserid, $childids)) $cancreate=1;
-
-$candelete = 0;
-if (! empty($user->rights->holiday->delete)) $candelete=1;
-
 $morefilter = 'AND employee = 1';
 if (! empty($conf->global->HOLIDAY_FOR_NON_SALARIES_TOO)) $morefilter = '';
 
@@ -82,6 +75,13 @@ if ($id > 0)
     }
 }
 
+$cancreate = 0;
+if (! empty($user->rights->holiday->write_all)) $cancreate=1;
+if (! empty($user->rights->holiday->write) && in_array($fuserid, $childids)) $cancreate=1;
+
+$candelete = 0;
+if (! empty($user->rights->holiday->delete)) $candelete=1;
+if ($object->statut == Holiday::STATUS_DRAFT && $user->rights->holiday->write && in_array($object->fk_user, $childids)) $candelete=1;
 
 /*
  * Actions
@@ -122,7 +122,7 @@ if ($action == 'create')
 	    elseif ($starthalfday == 'afternoon') $halfday=-1;
 	    elseif ($endhalfday == 'morning') $halfday=1;
 
-	    $valideur = GETPOST('valideur');
+	    $valideur = GETPOST('valideur', 'int');
 	    $description = trim(GETPOST('description'));
 
     	// If no type
@@ -270,8 +270,8 @@ if ($action == 'update' && ! GETPOSTISSET('savevalidator'))
         // If this is the requestor or has read/write rights
         if ($cancreate)
         {
-            $valideur = $_POST['valideur'];
-            $description = trim($_POST['description']);
+            $valideur = GETPOST('valideur', 'int');
+            $description = trim(GETPOST('description', 'none'));
 
             // If no start date
             if (empty($_POST['date_debut_'])) {
@@ -1297,7 +1297,8 @@ else
                     if (empty($include_users)) print img_warning().' '.$langs->trans("NobodyHasPermissionToValidateHolidays");
                     else
                     {
-                        $s=$form->select_dolusers($object->fk_validator, "valideur", (($action == 'editvalidator') ? 0 : 1), ($user->admin ? '' : array($user->id)), 0, $include_users);
+                    	$arrayofvalidatorstoexclude = (($user->admin || ($user->id != $userRequest->id))? '' : array($user->id));	// Nobody if we are admin or if we are not the user of the leave.
+                    	$s=$form->select_dolusers($object->fk_validator, "valideur", (($action == 'editvalidator') ? 0 : 1), $arrayofvalidatorstoexclude, 0, $include_users);
                     	print $form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
                     }
                     if ($action == 'editvalidator')
@@ -1434,7 +1435,7 @@ else
                     {
                         print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=backtodraft" class="butAction">'.$langs->trans("SetToDraft").'</a>';
                     }
-                    if ($user->rights->holiday->delete && ($object->statut == Holiday::STATUS_DRAFT || $object->statut == Holiday::STATUS_CANCELED || $object->statut == Holiday::STATUS_REFUSED))	// If draft or canceled or refused
+                    if ($candelete && ($object->statut == Holiday::STATUS_DRAFT || $object->statut == Holiday::STATUS_CANCELED || $object->statut == Holiday::STATUS_REFUSED))	// If draft or canceled or refused
                     {
                     	print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete" class="butActionDelete">'.$langs->trans("DeleteCP").'</a>';
                     }

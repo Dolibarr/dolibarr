@@ -65,3 +65,5 @@ StripeUserAccountForActions=User account to use for email notification of some S
 StripePayoutList=List of Stripe payouts
 ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mode)
 ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
+PaymentWillBeRecordedForNextPeriod=Ödeme gelecek dönem için kaydedilecektir.
+ClickHereToTryAgain=<a href="%s">Tekrar denemek için burayı tıklayın...</a>

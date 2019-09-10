@@ -209,9 +209,9 @@ class EmailCollector extends CommonObject
         // Translate some data of arrayofkeyval
         foreach($this->fields as $key => $val)
         {
-        	if (is_array($this->fields[$key]['arrayofkeyval']))
+        	if (is_array($val['arrayofkeyval']))
             {
-            	foreach($this->fields[$key]['arrayofkeyval'] as $key2 => $val2)
+            	foreach($val['arrayofkeyval'] as $key2 => $val2)
                 {
                 	$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
                 }
@@ -1499,7 +1499,7 @@ class EmailCollector extends CommonObject
                         $actioncomm->type_code   = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
                         $actioncomm->code        = 'AC_'.$actioncode;
                         $actioncomm->label       = $langs->trans("ActionAC_".$actioncode).' - '.$langs->trans("MailFrom").' '.$from;
-                        $actioncomm->note        = $descriptionfull;
+                        $actioncomm->note_private= $descriptionfull;
                         $actioncomm->fk_project  = $projectstatic->id;
                         $actioncomm->datep       = $date;
                         $actioncomm->datef       = $date;

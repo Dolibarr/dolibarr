@@ -52,9 +52,9 @@ class box_graph_propales_permonth extends ModeleBoxes
 	{
 		global $user;
 
-		$this->db=$db;
+		$this->db = $db;
 
-		$this->hidden=! ($user->rights->propale->lire);
+		$this->hidden = ! ($user->rights->propale->lire);
 	}
 
 	/**
@@ -73,6 +73,9 @@ class box_graph_propales_permonth extends ModeleBoxes
 
 		//include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 		//$propalstatic=new Propal($db);
+
+		$startmonth = $conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START) : 1;
+		if (empty($conf->global->GRAPH_USE_FISCAL_YEAR)) $startmonth = 1;
 
 		$langs->load("propal");
 
@@ -128,7 +131,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb)
 			{
-				$data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
+				$data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0), $startmonth);
 				$datatype1 = array_pad(array(), ($endyear-$startyear+1), 'bars');
 
 				$filenamenb = $dir."/".$prefix."propalsnbinyear-".$endyear.".png";
@@ -144,7 +147,14 @@ class box_graph_propales_permonth extends ModeleBoxes
 					$i=$startyear;$legend=array();
 					while ($i <= $endyear)
 					{
-						$legend[]=$i;
+						if ($startmonth != 1)
+						{
+							$legend[]=sprintf("%d/%d", $i-2001, $i-2000);
+						}
+						else
+						{
+							$legend[]=$i;
+						}
 						$i++;
 					}
 					$px1->SetLegend($legend);
@@ -165,7 +175,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showtot)
 			{
-				$data2 = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0));
+				$data2 = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0), $startmonth);
 				$datatype2 = array_pad(array(), ($endyear-$startyear+1), 'bars');
 				//$datatype2 = array('lines','bars');
 
@@ -183,7 +193,14 @@ class box_graph_propales_permonth extends ModeleBoxes
 					$i=$startyear;$legend=array();
 					while ($i <= $endyear)
 					{
-						$legend[]=$i;
+						if ($startmonth != 1)
+						{
+                            $legend[]=sprintf("%d/%d", $i-2001, $i-2000);
+						}
+						else
+						{
+							$legend[]=$i;
+						}
 						$i++;
 					}
 					$px2->SetLegend($legend);
@@ -219,6 +236,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 					</script>';
 				$stringtoshow.='<div class="center hideobject divboxfilter" id="idfilter'.$this->boxcode.'">';	// hideobject is to start hidden
 				$stringtoshow.='<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+				$stringtoshow.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				$stringtoshow.='<input type="hidden" name="action" value="'.$refreshaction.'">';
 				$stringtoshow.='<input type="hidden" name="page_y" value="">';
 				$stringtoshow.='<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_box_'.$this->boxcode.':year,shownb,showtot">';

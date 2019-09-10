@@ -55,18 +55,18 @@ $action = GETPOST('action', 'alpha');
 $form = new Form($db);
 $formticket = new FormTicket($db);
 
-$arrayofjs = array();
-$arrayofcss = array('/ticket/css/styles.css.php');
-
 if (empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
 {
 	print $langs->trans('TicketPublicInterfaceForbidden');
 	exit;
 }
 
+$arrayofjs = array();
+$arrayofcss = array('/ticket/css/styles.css.php');
+
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
-print '<div style="margin: 0 auto; width:60%">';
+print '<div style="margin: 0 auto; width:60%" class="ticketpublicarea">';
 print '<p style="text-align: center">' . ($conf->global->TICKET_PUBLIC_TEXT_HOME ? $conf->global->TICKET_PUBLIC_TEXT_HOME : $langs->trans("TicketPublicDesc")) . '</p>';
 print '<div class="ticketform">';
 print '<a href="create_ticket.php" class=""><div class="index_create orange bigrounded">' . dol_escape_htmltag($langs->trans("CreateTicket")) . '</div></a>';
@@ -77,7 +77,7 @@ print '</div>';
 print '</div>';
 
 // End of page
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 1, $suffix, $object);
+htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix, $object);
 
 llxFooter('', 'public');
 

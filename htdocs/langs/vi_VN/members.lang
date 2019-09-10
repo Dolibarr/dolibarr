@@ -29,6 +29,7 @@ MenuMembersUpToDate=Lên đến các thành viên ngày
 MenuMembersNotUpToDate=Thành viên hết hạn
 MenuMembersResiliated=Terminated members
 MembersWithSubscriptionToReceive=Thành viên có đăng ký để nhận được
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=Ngày đăng ký
 DateEndSubscription=Ngày kết thúc đăng ký
 EndSubscription=Kết thúc đăng ký

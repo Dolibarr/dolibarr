@@ -316,27 +316,29 @@ class Utils
 				// TODO Replace with executeCLI function
 				if ($execmethod == 1)
 				{
-					exec($fullcommandclear, $readt, $retval);
-					$result = $retval;
+					$output_arr = array(); $retval = null;
+					exec($fullcommandclear, $output_arr, $retval);
 
 					if ($retval != 0)
 					{
 						$langs->load("errors");
 						dol_syslog("Datadump retval after exec=".$retval, LOG_ERR);
-						$error = 'Error '.$retval;
+						$errormsg = 'Error '.$retval;
 						$ok=0;
 					}
 					else
 					{
 						$i=0;
-						if (!empty($readt))
-						foreach($readt as $key=>$read)
+						if (!empty($output_arr))
 						{
-							$i++;   // output line number
-							if ($i == 1 && preg_match('/Warning.*Using a password/i', $read)) continue;
-							fwrite($handle, $read.($execmethod == 2 ? '' : "\n"));
-							if (preg_match('/'.preg_quote('-- Dump completed').'/i', $read)) $ok=1;
-							elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i', $read)) $ok=1;
+							foreach($output_arr as $key => $read)
+							{
+								$i++;   // output line number
+								if ($i == 1 && preg_match('/Warning.*Using a password/i', $read)) continue;
+								fwrite($handle, $read.($execmethod == 2 ? '' : "\n"));
+								if (preg_match('/'.preg_quote('-- Dump completed').'/i', $read)) $ok=1;
+								elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i', $read)) $ok=1;
+							}
 						}
 					}
 				}
@@ -534,6 +536,7 @@ class Utils
 
 		if ($execmethod == 1)
 		{
+			$retval = null;
 			exec($command, $output_arr, $retval);
 			$result = $retval;
 			if ($retval != 0)
@@ -545,7 +548,6 @@ class Utils
 		}
 		if ($execmethod == 2)	// With this method, there is no way to get the return code, only output
 		{
-			$ok=0;
 			$handle = fopen($outputfile, 'w+b');
 			if ($handle)
 			{
@@ -802,7 +804,7 @@ class Utils
 
 		dol_include_once('/core/lib/files.lib.php');
 
-		$nbSaves = ! empty($conf->global->SYSLOG_FILE_SAVES) ? intval($conf->global->SYSLOG_FILE_SAVES) : 14;
+		$nbSaves = empty($conf->global->SYSLOG_FILE_SAVES) ? 10 : intval($conf->global->SYSLOG_FILE_SAVES);
 
 		if (empty($conf->global->SYSLOG_FILE)) {
 			$mainlogdir = DOL_DATA_ROOT;

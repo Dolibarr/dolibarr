@@ -116,7 +116,7 @@ class Products extends DolibarrApi
 
         $obj_ret = array();
 
-        $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
+        $socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
 
         $sql = "SELECT t.rowid, t.ref, t.ref_ext";
         $sql.= " FROM ".MAIN_DB_PREFIX."product as t";
@@ -467,6 +467,59 @@ class Products extends DolibarrApi
         );
     }
 
+    /**
+     * Get purchase prices for a product
+     *
+     * Return an array with product information.
+     * TODO implement getting a product by ref or by $ref_ext
+     *
+     * @param  int    $id               ID of product
+     * @param  string $ref              Ref of element
+     * @param  string $ref_ext          Ref ext of element
+     * @param  string $barcode          Barcode of element
+     * @param  int    $includestockdata Load also information about stock (slower)
+     * @return array|mixed                 Data without useless information
+     *
+     * @url GET {id}/purchase_prices
+     *
+     * @throws 401
+     * @throws 403
+     * @throws 404
+     *
+     */
+    public function getPurchasePrices($id, $ref = '', $ref_ext = '', $barcode = '', $includestockdata = 0)
+    {
+        if (empty($id) && empty($ref) && empty($ref_ext) && empty($barcode)) {
+            throw new RestException(400, 'bad value for parameter id, ref, ref_ext or barcode');
+        }
+
+        $id = (empty($id)?0:$id);
+
+        if(! DolibarrApiAccess::$user->rights->produit->lire) {
+            throw new RestException(403);
+        }
+
+        $result = $this->product->fetch($id, $ref, $ref_ext, $barcode);
+        if(! $result ) {
+            throw new RestException(404, 'Product not found');
+        }
+
+        if(! DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        if ($includestockdata) {
+               $this->product->load_stock();
+        }
+
+        if($result) {
+        $this->product = new ProductFournisseur($this->db);
+        $this->product->fetch($id, $ref);
+        $this->product->list_product_fournisseur_price($id, $sortfield, $sortorder, 0, 0);
+        }
+
+        return $this->_cleanObjectDatas($this->product);
+    }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**

@@ -894,14 +894,15 @@ class Cronjob extends CommonObject
 	/**
 	 *	Load object information
 	 *
-	 *	@return	int
+	 *  @param	int		$id		ID
+	 *	@return	int				<0 if KO, >0 if OK
 	 */
-	public function info()
+	public function info($id)
 	{
 		$sql = "SELECT";
 		$sql.= " f.rowid, f.datec, f.tms, f.fk_user_mod, f.fk_user_author";
 		$sql.= " FROM ".MAIN_DB_PREFIX."cronjob as f";
-		$sql.= " WHERE f.rowid = ".$this->id;
+		$sql.= " WHERE f.rowid = ".$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);

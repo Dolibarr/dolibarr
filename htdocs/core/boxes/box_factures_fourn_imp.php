@@ -56,9 +56,9 @@ class box_factures_fourn_imp extends ModeleBoxes
 	{
 	    global $user;
 
-	    $this->db=$db;
+	    $this->db = $db;
 
-	    $this->hidden=! ($user->rights->fournisseur->facture->lire);
+	    $this->hidden = ! ($user->rights->fournisseur->facture->lire);
 	}
 
 	/**

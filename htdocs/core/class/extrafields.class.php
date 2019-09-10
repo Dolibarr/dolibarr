@@ -274,9 +274,10 @@ class ExtraFields
 	 *  @param	string	$perms				Permission
 	 *	@param	string	$list				Into list view by default
 	 *  @param  string  $computed           Computed value
+	 *  @param	string	$help				Help on tooltip
 	 *  @return int      	           		<=0 if KO, >0 if OK
 	 */
-	private function create($attrname, $type = 'varchar', $length = 255, $elementtype = 'member', $unique = 0, $required = 0, $default_value = '', $param = '', $perms = '', $list = '0', $computed = '')
+	private function create($attrname, $type = 'varchar', $length = 255, $elementtype = 'member', $unique = 0, $required = 0, $default_value = '', $param = '', $perms = '', $list = '0', $computed = '', $help = '')
 	{
 		if ($elementtype == 'thirdparty') $elementtype='societe';
 		if ($elementtype == 'contact') $elementtype='socpeople';
@@ -1411,7 +1412,7 @@ class ExtraFields
                         // current object id can be use into filter
                         if (strpos($InfoFieldList[4], '$ID$') !== false && !empty($objectid)) {
                             $InfoFieldList[4] = str_replace('$ID$', $objectid, $InfoFieldList[4]);
-                        } elseif (preg_match("#^.*list.php$#", $_SERVER["DOCUMENT_URI"])) {
+                        } elseif (preg_match("#^.*list.php$#", $_SERVER["PHP_SELF"])) {
                             // Pattern for word=$ID$
                             $word = '\b[a-zA-Z0-9-\.-_]+\b=\$ID\$';
 
@@ -1445,13 +1446,13 @@ class ExtraFields
                                     $InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
                                 } else {
                                     if (!empty($matchCondition[1])) {
-                                        $boolCond = (($matchCondition[1] == "AND") ? ' AND 1 ' : ' OR 0 ');
+                                        $boolCond = (($matchCondition[1] == "AND") ? ' AND TRUE ' : ' OR FALSE ');
                                         $InfoFieldList[4] = str_replace($matchCondition[0], $boolCond . $matchCondition[3], $InfoFieldList[4]);
                                     } elseif (!empty($matchCondition[3])) {
-                                        $boolCond = (($matchCondition[3] == "AND") ? ' 1 AND ' : ' 0 OR');
+                                        $boolCond = (($matchCondition[3] == "AND") ? ' TRUE AND ' : ' FALSE OR');
                                         $InfoFieldList[4] = str_replace($matchCondition[0], $boolCond, $InfoFieldList[4]);
                                     } else {
-                                        $InfoFieldList[4] = 1;
+                                        $InfoFieldList[4] = " TRUE ";
                                     }
                                 }
 
@@ -1626,6 +1627,8 @@ class ExtraFields
 		}
 
 		if ($hidden) return '';		// This is a protection. If field is hidden, we should just not call this method.
+
+		//if ($computed) $value =		// $value is already calculated into $value before calling this method
 
 		$showsize=0;
 		if ($type == 'date')
@@ -1970,24 +1973,29 @@ class ExtraFields
             if (count($extrafield_param_list) > 0) {
                 $extrafield_collapse_display_value = intval($extrafield_param_list[0]);
                 if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
-                    $collapse_display = ($extrafield_collapse_display_value == 2 ? false : true);
+                	// Set the collapse_display status to cookie in priority or if ignorecollapsesetup is 1, if cookie and ignorecollapsesetup not defined, use the setup.
+                	$collapse_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOST('ignorecollapsesetup', 'int')) ? ($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key] ? true : false) : ($extrafield_collapse_display_value == 2 ? false : true));
                     $extrafields_collapse_num = $this->attributes[$object->table_element]['pos'][$key];
 
+                    $out .= '<!-- Add js script to manage the collpase/uncollapse of extrafields separators '.$key.' -->';
                     $out .= '<script type="text/javascript">';
                     $out .= 'jQuery(document).ready(function(){';
                     if ($collapse_display === false) {
-                        $out .= '   jQuery("#trextrafieldseparator' . $key . ' td").prepend("<span class=\"cursorpointer fa fa-plus-square\"></span>&nbsp;");';
-                        $out .= '   jQuery(".trextrafields_collapse' . $extrafields_collapse_num . '").hide();';
+                        $out .= '   jQuery("#trextrafieldseparator' . $key . ' td").prepend("<span class=\"cursorpointer fa fa-plus-square\"></span>&nbsp;");'."\n";
+                        $out .= '   jQuery(".trextrafields_collapse' . $extrafields_collapse_num . '").hide();'."\n";
                     } else {
-                        $out .= '   jQuery("#trextrafieldseparator' . $key . ' td").prepend("<span class=\"cursorpointer fa fa-minus-square\"></span>&nbsp;");';
+                    	$out .= '   jQuery("#trextrafieldseparator' . $key . ' td").prepend("<span class=\"cursorpointer fa fa-minus-square\"></span>&nbsp;");'."\n";
+                    	$out .= '   document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
                     }
-                    $out .= '   jQuery("#trextrafieldseparator' . $key . '").click(function(){';
-                    $out .= '       jQuery(".trextrafields_collapse' . $extrafields_collapse_num . '").toggle("slow", function(){';
-                    $out .= '           if (jQuery(".trextrafields_collapse' . $extrafields_collapse_num . '").is(":hidden")) {';
-                    $out .= '               jQuery("#trextrafieldseparator' . $key . ' td span").addClass("fa-plus-square").removeClass("fa-minus-square");';
-                    $out .= '           } else {';
-                    $out .= '               jQuery("#trextrafieldseparator' . $key . ' td span").addClass("fa-minus-square").removeClass("fa-plus-square");';
-                    $out .= '           }';
+                    $out .= '   jQuery("#trextrafieldseparator' . $key . '").click(function(){'."\n";
+                    $out .= '       jQuery(".trextrafields_collapse' . $extrafields_collapse_num . '").toggle(300, function(){'."\n";
+                    $out .= '           if (jQuery(".trextrafields_collapse' . $extrafields_collapse_num . '").is(":hidden")) {'."\n";
+                    $out .= '               jQuery("#trextrafieldseparator' . $key . ' td span").addClass("fa-plus-square").removeClass("fa-minus-square");'."\n";
+                    $out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=0; path='.$_SERVER["PHP_SELF"].'"'."\n";
+                    $out .= '           } else {'."\n";
+                    $out .= '               jQuery("#trextrafieldseparator' . $key . ' td span").addClass("fa-minus-square").removeClass("fa-plus-square");'."\n";
+                    $out .= '               document.cookie = "DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key.'=1; path='.$_SERVER["PHP_SELF"].'"'."\n";
+                    $out .= '           }'."\n";
                     $out .= '       });';
                     $out .= '   });';
                     $out .= '});';

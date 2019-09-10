@@ -118,14 +118,14 @@ function create_script_table($list)
 {
     global $sortby,$langs;
 
-    if (GETPOT('order') == "asc" || GETPOST('order') =="desc") {
-        $order = GETPOST('order');
+    if (GETPOT('order', 'alpha') == "asc" || GETPOST('order', 'alpha') == "desc") {
+        $order = GETPOST('order', 'alpha');
     } else {
         $order = "asc";
     }
 
-    if (GETPOST('order')) {
-        switch (GETPOST('order')) {
+    if (GETPOST('order', 'alpha')) {
+        switch (GETPOST('order', 'alpha')) {
             case "mtime":
             case "size":
             case "reloads":

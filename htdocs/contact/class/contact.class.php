@@ -82,26 +82,11 @@ class Contact extends CommonObject
 
 	public $civility_id;      // In fact we store civility_code
 	public $civility_code;
-  public $civility;
+	public $civility;
 	public $address;
 	public $zip;
 	public $town;
 
-	/**
-	 * @deprecated
-	 * @see $state_id
-	 */
-	public $fk_departement;
-	/**
-	 * @deprecated
-	 * @see $state_code
-	 */
-	public $departement_code;
-	/**
-	 * @deprecated
-	 * @see $state
-	 */
-	public $departement;
 	public $state_id;	        	// Id of department
 	public $state_code;		    // Code of department
 	public $state;			        // Label of department
@@ -499,6 +484,7 @@ class Contact extends CommonObject
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -508,7 +494,7 @@ class Contact extends CommonObject
 	 *									2=Return key only (uid=qqq)
 	 *	@return		string				DN
 	 */
-	private function _load_ldap_dn($info, $mode = 0)
+	public function _load_ldap_dn($info, $mode = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -1022,7 +1008,7 @@ class Contact extends CommonObject
 		// Removed extrafields
         if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) {
             // For avoid conflicts if trigger used
-			$result=$this->deleteExtraFields($this);
+			$result=$this->deleteExtraFields();
 			if ($result < 0) $error++;
 		}
 
@@ -1216,11 +1202,12 @@ class Contact extends CommonObject
 	public function getCivilityLabel()
 	{
 		global $langs;
-		$langs->load("dict");
 
-		$code=(! empty($this->civility_id)?$this->civility_id:(! empty($this->civilite_id)?$this->civilite_id:''));
+		$code=($this->civility_code ? $this->civility_code : (! empty($this->civility_id)?$this->civility:(! empty($this->civilite)?$this->civilite:'')));
 		if (empty($code)) return '';
-        return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civility", "code", "label", $code);
+
+		$langs->load("dict");
+		return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civility", "code", "label", $code);
 	}
 
 	/**

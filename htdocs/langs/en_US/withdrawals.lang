@@ -77,6 +77,7 @@ SetToStatusSent=Set to status "File Sent"
 ThisWillAlsoAddPaymentOnInvoice=This will also record payments to invoices and will classify them as "Paid" if remain to pay is null
 StatisticsByLineStatus=Statistics by status of lines
 RUM=UMR
+DateRUM=Mandate signature date
 RUMLong=Unique Mandate Reference
 RUMWillBeGenerated=If empty, a UMR (Unique Mandate Reference) will be generated once the bank account information is saved.
 WithdrawMode=Direct debit mode (FRST or RECUR)

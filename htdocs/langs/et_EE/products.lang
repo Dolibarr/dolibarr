@@ -2,6 +2,7 @@
 ProductRef=Toote viide
 ProductLabel=Toote nimi
 ProductLabelTranslated=Translated product label
+ProductDescription=Product description
 ProductDescriptionTranslated=Translated product description
 ProductNoteTranslated=Translated product note
 ProductServiceCard=Toodete/teenuste kaart
@@ -79,7 +80,7 @@ ErrorProductAlreadyExists=Toode viitega %s on juba olemas.
 ErrorProductBadRefOrLabel=Vale viite või nime väärtus.
 ErrorProductClone=Toote või teenuse kloonimisel tekkis probleem.
 ErrorPriceCantBeLowerThanMinPrice=Error, price can't be lower than minimum price.
-Suppliers=Vendors
+Suppliers=Tarnijad
 SupplierRef=Vendor SKU
 ShowProduct=Näita toodet
 ShowService=Näita teenust

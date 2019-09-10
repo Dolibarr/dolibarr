@@ -170,7 +170,7 @@ $amountcust=$langs->trans("AmountHT");
 $vatcust=$langs->trans("VATReceived");
 $namecust=$langs->trans("Name");
 if ($mysoc->tva_assuj) {
-	$vatcust.=' ('.$langs->trans("ToPay").')';
+	$vatcust.=' ('.$langs->trans("StatusToPay").')';
 }
 
 // Suppliers invoices

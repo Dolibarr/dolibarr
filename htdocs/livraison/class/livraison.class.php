@@ -322,9 +322,7 @@ class Livraison extends CommonObject
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
-				/*
-				 * Lignes
-				 */
+				// Load lines
 				$result=$this->fetch_lines();
 				if ($result < 0)
 				{
@@ -441,13 +439,18 @@ class Livraison extends CommonObject
 						// Rename directory if dir was a temporary ref
 						if (preg_match('/^[\(]?PROV/i', $this->ref))
 						{
-							// On renomme repertoire ($this->ref = ancienne ref, $numfa = nouvelle ref)
-							// afin de ne pas perdre les fichiers attaches
+							// Now we rename also files into index
+							$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'expedition/receipt/".$this->db->escape($this->newref)."'";
+							$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expedition/receipt/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+							$resql = $this->db->query($sql);
+							if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+							// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 							$oldref = dol_sanitizeFileName($this->ref);
 							$newref = dol_sanitizeFileName($numref);
 							$dirsource = $conf->expedition->dir_output.'/receipt/'.$oldref;
 							$dirdest = $conf->expedition->dir_output.'/receipt/'.$newref;
-							if (file_exists($dirsource))
+							if (! $error && file_exists($dirsource))
 							{
 								dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
 
@@ -942,7 +945,7 @@ class Livraison extends CommonObject
 			{
 				$objSourceLine = $this->db->fetch_object($resultSourceLine);
 
-				// Recupere les lignes de la source deja livrees
+				// Get lines of sources alread delivered
 				$sql = "SELECT ld.fk_origin_line, sum(ld.qty) as qty";
 				$sql.= " FROM ".MAIN_DB_PREFIX."livraisondet as ld, ".MAIN_DB_PREFIX."livraison as l,";
 				$sql.= " ".MAIN_DB_PREFIX.$this->linked_object[0]['type']." as c";

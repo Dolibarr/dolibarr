@@ -183,9 +183,9 @@ class BOM extends CommonObject
 		// Translate some data of arrayofkeyval
 		foreach($this->fields as $key => $val)
 		{
-			if (is_array($this->fields[$key]['arrayofkeyval']))
+			if (is_array($val['arrayofkeyval']))
 			{
-				foreach($this->fields[$key]['arrayofkeyval'] as $key2 => $val2)
+				foreach($val['arrayofkeyval'] as $key2 => $val2)
 				{
 					$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
 				}
@@ -515,6 +515,7 @@ class BOM extends CommonObject
 	public function valid($user, $notrigger = 0)
 	{
 	    global $conf, $langs;
+
 	    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	    $error=0;
@@ -582,13 +583,18 @@ class BOM extends CommonObject
 	        // Rename directory if dir was a temporary ref
 	        if (preg_match('/^[\(]?PROV/i', $this->ref))
 	        {
-	            // On renomme repertoire ($this->ref = ancienne ref, $num = nouvelle ref)
-	            // in order not to lose the attachments
-	            $oldref = dol_sanitizeFileName($this->ref);
+	        	// Now we rename also files into index
+	        	$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'bom/".$this->db->escape($this->newref)."'";
+	        	$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'bom/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+	        	$resql = $this->db->query($sql);
+	        	if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+	        	// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
+	        	$oldref = dol_sanitizeFileName($this->ref);
 	            $newref = dol_sanitizeFileName($num);
 	            $dirsource = $conf->bom->dir_output.'/'.$oldref;
 	            $dirdest = $conf->bom->dir_output.'/'.$newref;
-	            if (file_exists($dirsource))
+	            if (! $error && file_exists($dirsource))
 	            {
 	                dol_syslog(get_class($this)."::valid() rename dir ".$dirsource." into ".$dirdest);
 
@@ -889,7 +895,7 @@ class BOM extends CommonObject
 	    $this->lines=array();
 
 	    $objectline = new BOMLine($this->db);
-	    $result = $objectline->fetchAll('ASC', 'rank', 0, 0, array('customsql'=>'fk_bom = '.$this->id));
+	    $result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_bom = '.$this->id));
 
 	    if (is_numeric($result))
 	    {
@@ -1044,7 +1050,7 @@ class BOMLine extends CommonObject
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'notnull'=>-1,),
 		'qty' => array('type'=>'double(24,8)', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'position'=>100, 'notnull'=>1, 'isameasure'=>'1',),
 		'efficiency' => array('type'=>'double(8,4)', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>1, 'default'=>1, 'position'=>110, 'notnull'=>1, 'css'=>'maxwidth50imp', 'help'=>'ValueOfMeansLoss'),
-		'rank' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>1, 'visible'=>0, 'position'=>200, 'notnull'=>1,),
+		'position' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>1, 'visible'=>0, 'position'=>200, 'notnull'=>1,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
 	);
 	public $rowid;
@@ -1053,7 +1059,7 @@ class BOMLine extends CommonObject
 	public $description;
 	public $qty;
 	public $efficiency;
-	public $rank;
+	public $position;
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
 
@@ -1084,9 +1090,9 @@ class BOMLine extends CommonObject
 		// Translate some data of arrayofkeyval
 		foreach($this->fields as $key => $val)
 		{
-			if (is_array($this->fields[$key]['arrayofkeyval']))
+			if (is_array($val['arrayofkeyval']))
 			{
-				foreach($this->fields[$key]['arrayofkeyval'] as $key2 => $val2)
+				foreach($val['arrayofkeyval'] as $key2 => $val2)
 				{
 					$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
 				}

@@ -40,7 +40,7 @@ function multicurrencyAdminPrepareHead()
     $head[$h][2] = 'settings';
     $h++;
 
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'multicurrency');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'multicurrency');
 
     return $head;
 }

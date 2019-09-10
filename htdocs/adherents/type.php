@@ -106,11 +106,11 @@ if ($cancel) {
 if ($action == 'add' && $user->rights->adherent->configurer) {
 	$object->label			= trim($label);
     $object->morphy         = trim($morphy);
-	$object->statut = (int) $statut;
-	$object->subscription = (int) $subscription;
+	$object->statut         = (int) $statut;
+	$object->subscription   = (int) $subscription;
 	$object->note			= trim($comment);
 	$object->mail_valid		= trim($mail_valid);
-	$object->vote			= (boolean) trim($vote);
+	$object->vote			= (int) $vote;
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
@@ -283,7 +283,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
             print '<td class="center">';
 			if ($objp->morphy == 'phy') { print $langs->trans("Physical"); }
 			elseif ($objp->morphy == 'mor') { print $langs->trans("Moral"); }
-			else print $langs->trans("Physical & Morale");
+			else print $langs->trans("MorPhy");
             print '</td>';
 			print '<td class="center">'.yn($objp->subscription).'</td>';
 			print '<td class="center">'.yn($objp->vote).'</td>';
@@ -342,7 +342,7 @@ if ($action == 'create')
     // Morphy
     $morphys[""] = $langs->trans("MorPhy");
     $morphys["phy"] = $langs->trans("Physical");
-	$morphys["mor"] = $langs->trans("Morale");
+	$morphys["mor"] = $langs->trans("Moral");
 	print '<tr><td><span>'.$langs->trans("MemberNature").'</span></td><td>';
 	print $form->selectarray("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$object->morphy);
 	print "</td></tr>";
@@ -489,7 +489,7 @@ if ($rowid > 0)
 
 		$now=dol_now();
 
-		$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, ";
+		$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe as company,";
 		$sql.= " d.datefin,";
 		$sql.= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
 		$sql.= " t.libelle as type, t.subscription";
@@ -603,7 +603,7 @@ if ($rowid > 0)
             print '<div class="div-table-responsive">';
             print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-			// Lignes des champs de filtre
+            // Fields title search
 			print '<tr class="liste_titre_filter">';
 
 			print '<td class="liste_titre left">';
@@ -649,7 +649,7 @@ if ($rowid > 0)
 
 		        // Lastname
 		        print '<tr class="oddeven">';
-		        if ($objp->societe != '')
+		        if ($objp->company != '')
 		        {
 		            print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"), "user").' '.$adh->getFullName($langs, 0, -1, 20).' / '.dol_trunc($objp->societe, 12).'</a></td>'."\n";
 		        }
@@ -775,7 +775,7 @@ if ($rowid > 0)
         // Morphy
         $morphys[""] = $langs->trans("MorPhy");
         $morphys["phy"] = $langs->trans("Physical");
-        $morphys["mor"] = $langs->trans("Morale");
+        $morphys["mor"] = $langs->trans("Moral");
         print '<tr><td><span>'.$langs->trans("MemberNature").'</span></td><td>';
         print $form->selectarray("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$object->morphy);
         print "</td></tr>";
@@ -812,21 +812,25 @@ if ($rowid > 0)
 		if (empty($reshook))
 		{
 			print '<br><br><table class="border" width="100%">';
-			foreach($extrafields->attribute_label as $key=>$label)
+			if (is_array($extrafields->attributes['adherent_type']['label']))
 			{
-				if (isset($_POST["options_" . $key])) {
-					if (is_array($_POST["options_" . $key])) {
-						// $_POST["options"] is an array but following code expects a comma separated string
-						$value = implode(",", $_POST["options_" . $key]);
+				foreach($extrafields->attributes['adherent_type']['label'] as $key=>$label)
+				{
+					if (isset($_POST["options_" . $key])) {
+						if (is_array($_POST["options_" . $key])) {
+							// $_POST["options"] is an array but following code expects a comma separated string
+							$value = implode(",", $_POST["options_" . $key]);
+						} else {
+							$value = $_POST["options_" . $key];
+						}
 					} else {
-						$value = $_POST["options_" . $key];
+						$value = $object->array_options["options_" . $key];
 					}
-				} else {
-					$value = $adht->array_options["options_" . $key];
+
+					print '<tr><td width="30%">'.$label.'</td><td>';
+					print $extrafields->showInputField($key, $value);
+					print "</td></tr>\n";
 				}
-				print '<tr><td width="30%">'.$label.'</td><td>';
-				print $extrafields->showInputField($key, $value);
-				print "</td></tr>\n";
 			}
 			print '</table><br><br>';
 		}

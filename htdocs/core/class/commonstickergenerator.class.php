@@ -267,7 +267,7 @@ abstract class CommonStickerGenerator
 	protected function _Get_Height_Chars($pt)
 	{
         // phpcs:enable
-		// Tableau de concordance entre la hauteur des caracteres et de l'espacement entre les lignes
+		// Array for link between height of characters and space between lines
 		$_Table_Hauteur_Chars = array(6=>2, 7=>2.5, 8=>3, 9=>3.5, 10=>4, 11=>6, 12=>7, 13=>8, 14=>9, 15=>10);
 		if (in_array($pt, array_keys($_Table_Hauteur_Chars))) {
 			return $_Table_Hauteur_Chars[$pt];

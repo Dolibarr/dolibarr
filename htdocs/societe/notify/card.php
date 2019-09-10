@@ -32,10 +32,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Noti
 
 $langs->loadLangs(array("companies", "mails", "admin", "other"));
 
-$socid = GETPOST("socid", 'int');
-$action = GETPOST('action', 'aZ09');
-$contactid=GETPOST('contactid');    // May be an int or 'thirdparty'
-$actionid=GETPOST('actionid');
+$socid     = GETPOST("socid", 'int');
+$action    = GETPOST('action', 'aZ09');
+$contactid = GETPOST('contactid');    // May be an int or 'thirdparty'
+$actionid  = GETPOST('actionid');
+$optioncss = GETPOST('optioncss', 'aZ');												// Option for the css output (always '' except when 'print')
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;

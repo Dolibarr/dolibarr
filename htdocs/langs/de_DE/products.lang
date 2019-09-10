@@ -2,6 +2,7 @@
 ProductRef=Produkt-Nr.
 ProductLabel=Produktbezeichnung
 ProductLabelTranslated=Übersetzte Produktbezeichnung
+ProductDescription=Product description
 ProductDescriptionTranslated=Übersetzte Produktbeschreibung
 ProductNoteTranslated=Übersetzte Produkt Notiz
 ProductServiceCard=Produkte/Leistungen Karte
@@ -80,7 +81,7 @@ ErrorProductBadRefOrLabel=Für Artikel Nr. oder Bezeichnung wurde ein ungültige
 ErrorProductClone=Beim Duplizieren des Produkts oder der Leistung ist ein Problem aufgetreten
 ErrorPriceCantBeLowerThanMinPrice=Fehler, Preis darf nicht unter dem Minimalpreis liegen.
 Suppliers=Lieferanten
-SupplierRef=Hersteller-SKU
+SupplierRef=Lieferanten-Artikelnummer
 ShowProduct=Produkt anzeigen
 ShowService=Leistung anzeigen
 ProductsAndServicesArea=Produkt- und Leistungsübersicht

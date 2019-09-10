@@ -179,11 +179,12 @@ if (empty($reshook))
 			}
 			else
 			{
-				$object->datestart	= $datestart;
-				$object->dateend	= $dateend;
-				$object->capital	= $capital;
-				$object->nbterm		= GETPOST("nbterm", 'int');
-				$object->rate		= price2num(GETPOST("rate", 'alpha'));
+				$object->datestart	        = $datestart;
+				$object->dateend	        = $dateend;
+				$object->capital	        = $capital;
+				$object->nbterm		        = GETPOST("nbterm", 'int');
+				$object->rate		        = price2num(GETPOST("rate", 'alpha'));
+                $object->insurance_amount   = price2num(GETPOST('insurance_amount', 'int'));
 
 				$accountancy_account_capital	= GETPOST('accountancy_account_capital');
 				$accountancy_account_insurance	= GETPOST('accountancy_account_insurance');
@@ -793,25 +794,25 @@ if ($id > 0)
 				{
 					// print '<a href="javascript:popEcheancier()" class="butAction">'.$langs->trans('CreateCalcSchedule').'</a>';
 
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>';
 				}
 
 				// Emit payment
 				if ($object->paid == 0 && ((price2num($object->capital) > 0 && round($staytopay) < 0) || (price2num($object->capital) > 0 && round($staytopay) > 0)) && $user->rights->loan->write)
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&amp;action=create&last=true">'.$langs->trans("DoPayment").'</a>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&amp;action=create&last=true">'.$langs->trans("DoPayment").'</a></div>';
 				}
 
 				// Classify 'paid'
 				if ($object->paid == 0 && round($staytopay) <=0 && $user->rights->loan->write)
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=paid">'.$langs->trans("ClassifyPaid").'</a>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=paid">'.$langs->trans("ClassifyPaid").'</a></div>';
 				}
 
 				// Delete
 				if ($object->paid == 0 && $user->rights->loan->delete)
 				{
-					print '<a class="butActionDelete" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
 				}
 
 				print "</div>";

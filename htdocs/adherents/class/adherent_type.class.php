@@ -121,10 +121,12 @@ class AdherentType extends CommonObject
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type (";
-		$sql.= "libelle";
+		$sql.= " morphy";
+		$sql.= ", libelle";
 		$sql.= ", entity";
 		$sql.= ") VALUES (";
-		$sql.= "'".$this->db->escape($this->label)."'";
+		$sql.= "'".$this->db->escape($this->morphy)."'";
+		$sql.= ", '".$this->db->escape($this->label)."'";
 		$sql.= ", ".$conf->entity;
 		$sql.= ")";
 
@@ -422,7 +424,7 @@ class AdherentType extends CommonObject
 		global $langs;
 		if ($morphy == 'phy') { return $langs->trans("Physical"); }
 		elseif ($morphy == 'mor') { return $langs->trans("Moral"); }
-        else return $langs->trans("Physical & Morale");
+        else return $langs->trans("MorPhy");
 		//return $morphy;
 	}
 

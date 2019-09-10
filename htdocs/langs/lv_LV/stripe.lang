@@ -6,7 +6,7 @@ FollowingUrlAreAvailableToMakePayments=Pēc URL ir pieejami, lai piedāvātu lap
 PaymentForm=Maksājuma forma
 WelcomeOnPaymentPage=Laipni lūdzam mūsu tiešsaistes maksājumu pakalpojumu
 ThisScreenAllowsYouToPay=Šis logs ļauj jums veikt tiešsaistes maksājumu %s.
-ThisIsInformationOnPayment=Šī ir informācija par maksājumu, kas darīt
+ThisIsInformationOnPayment=Šī ir informācija par maksājumu, kas jādara
 ToComplete=Lai pabeigtu
 YourEMail=Nosūtīt saņemt maksājuma apstiprinājumu
 STRIPE_PAYONLINE_SENDEMAIL=E-pasta paziņojums pēc maksājuma mēģinājuma (veiksmes vai neveiksmes)
@@ -65,3 +65,5 @@ StripeUserAccountForActions=Lietotāja konts, lai izmantotu e-pasta paziņojumu 
 StripePayoutList=Svītru izmaksu saraksts
 ToOfferALinkForTestWebhook=Saite uz iestatījumu Stripe WebHook, lai izsauktu IPN (testa režīms)
 ToOfferALinkForLiveWebhook=Saite uz iestatījumu Stripe WebHook, lai izsauktu IPN (tiešraides režīms)
+PaymentWillBeRecordedForNextPeriod=Maksājums tiks reģistrēts par nākamo periodu.
+ClickHereToTryAgain=<a href="%s">Noklikšķiniet šeit, lai mēģinātu vēlreiz ...</a>

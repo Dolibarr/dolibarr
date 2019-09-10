@@ -62,3 +62,7 @@ NoWebSiteCreateOneFirst=Nenhum site foi criado ainda. Comece a criar o primeiro.
 GoTo=Ir para
 DynamicPHPCodeContainsAForbiddenInstruction=Você adiciona código PHP dinâmico que contém a instrução PHP <strong>%s</strong> que é proibida por padrão como conteúdo dinâmico (consulte as opções ocultas WEBSITE_PHP_ALLOW_xxx para aumentar a lista de comandos permitidos).
 NotAllowedToAddDynamicContent=Você não tem permissão para adicionar ou editar conteúdo em PHP dinâmico dos sites. Solicite a permissão ou apenas mantenha o código em tags do php não modificadas.
+ReplaceWebsiteContent=Pesquisar ou substituir conteúdo do site
+DeleteAlsoJs=Excluir todos os arquivos javascript específicos deste site?\n
+DeleteAlsoMedias=Excluir todos os arquivos de mídia específicos deste site?
+MyWebsitePages=Paginas do meu site

@@ -186,7 +186,13 @@ class modExpenseReport extends DolibarrModules
 			'u.lastname'=>'Lastname','u.firstname'=>'Firstname','u.login'=>"Login",'ed.rowid'=>'LineId','tf.code'=>'Type','ed.date'=>'Date','ed.tva_tx'=>'VATRate',
 			'ed.total_ht'=>'TotalHT','ed.total_tva'=>'TotalVAT','ed.total_ttc'=>'TotalTTC','ed.comments'=>'Comment','p.rowid'=>'ProjectId','p.ref'=>'Ref'
 		);
-		$this->export_entities_array[$r]=array(
+        $this->export_TypeFields_array[$r]=array(
+        	'd.rowid'=>"Numeric",'d.ref'=>'Text','d.date_debut'=>'Date','d.date_fin'=>'Date','d.date_create'=>'Date','d.date_approve'=>'Date',
+        	'd.total_ht'=>"Numeric",'d.total_tva'=>'Numeric','d.total_ttc'=>'Numeric','d.note_private'=>'Text','d.note_public'=>'Text',
+        	'u.lastname'=>'Text','u.firstname'=>'Text','u.login'=>"Text",'ed.rowid'=>'Numeric','tf.code'=>'Code','ed.date'=>'Date','ed.tva_tx'=>'Numeric',
+        	'ed.total_ht'=>'Numeric','ed.total_tva'=>'Numeric','ed.total_ttc'=>'Numeric','ed.comments'=>'Text','p.rowid'=>'Numeric','p.ref'=>'Text'
+        );
+        $this->export_entities_array[$r]=array(
 			'u.lastname'=>'user','u.firstname'=>'user','u.login'=>'user','ed.rowid'=>'expensereport_line','ed.date'=>'expensereport_line',
 			'ed.tva_tx'=>'expensereport_line','ed.total_ht'=>'expensereport_line','ed.total_tva'=>'expensereport_line','ed.total_ttc'=>'expensereport_line',
 			'ed.comments'=>'expensereport_line','tf.code'=>'expensereport_line','p.project_ref'=>'expensereport_line','p.rowid'=>'project','p.ref'=>'project'

@@ -43,6 +43,4 @@ ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cuenta de contabilidad por defecto para los produ
 Sens=Significado
 Codejournal=Periódico
 FinanceJournal=Periodo Financiero
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. Blocking error.
 TotalMarge=Margen total de ventas
-Modelcsv_FEC=Export FEC (Art. L47 A)

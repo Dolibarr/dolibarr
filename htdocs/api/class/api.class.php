@@ -32,7 +32,7 @@ class DolibarrApi
     /**
      * @var DoliDb        $db Database object
      */
-    static protected $db;
+    protected static $db;
 
     /**
      * @var Restler     $r	Restler object
@@ -143,7 +143,6 @@ class DolibarrApi
         unset($object->picto);
 
         unset($object->fieldsforcombobox);
-		unset($object->comments);
 
         unset($object->skip_update_total);
         unset($object->context);
