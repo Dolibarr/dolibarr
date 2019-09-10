@@ -595,7 +595,7 @@ abstract class CommonDocGenerator
         foreach ($extralabels as $key => $value) {
             $columns .= "$key, ";
         }
-        substr($columns, 0, strlen($columns) - 2);
+        $columns = substr($columns, 0, strlen($columns) - 2);
         $resql = $this->db->query("SELECT $columns FROM " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields AS ex INNER JOIN " . MAIN_DB_PREFIX . "product_fournisseur_price AS f ON ex.fk_object = f.rowid WHERE f.ref_fourn = " . $line->ref_fourn);
         if ($this->db->num_rows($resql) > 0) {
             $resql = $this->db->fetch_object($resql);
