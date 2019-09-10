@@ -8,6 +8,7 @@
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019	   Ferran Marcet	    <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,7 +147,7 @@ if ($action == 'classin' && ($user->rights->agenda->allactions->create ||
     (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create)))
 {
     $object->fetch($id);
-    $object->setProject(GETPOST('projectid'));
+    $object->setProject(GETPOST('projectid', 'int'));
 }
 
 // Action clone object
@@ -164,7 +165,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
                 reset($object->socpeopleassigned);
                 $object->contactid = key($object->socpeopleassigned);
             }
-			$result = $object->createFromClone($user, GETPOST('fk_userowner'), GETPOST('socid'));
+			$result = $object->createFromClone($user, GETPOST('socid', 'int'));
 			if ($result > 0) {
 				header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
 				exit();
@@ -252,7 +253,10 @@ if ($action == 'add')
 				{
 					$object->label = $langs->transnoentitiesnoconv("Action".$object->type_code)."\n";
 				}
-				else $object->label = $cactioncomm->libelle;
+				else {
+					$cactioncomm->fetch($object->type_code);
+					$object->label = $cactioncomm->label;
+				}
 			}
 		}
 		$object->fk_project = isset($_POST["projectid"])?$_POST["projectid"]:0;

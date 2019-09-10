@@ -31,7 +31,7 @@
  */
 
 if (! defined('DOL_APPLICATION_TITLE')) define('DOL_APPLICATION_TITLE', 'Dolibarr');
-if (! defined('DOL_VERSION')) define('DOL_VERSION', '10.0.0');		// a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
+if (! defined('DOL_VERSION')) define('DOL_VERSION', '11.0.0-alpha');		// a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
 
 if (! defined('EURO')) define('EURO', chr(128));
 
@@ -149,6 +149,7 @@ if (empty($dolibarr_strict_mode)) $dolibarr_strict_mode=0; // For debug in php s
 // This test check if referrer ($_SERVER['HTTP_REFERER']) is same web site than Dolibarr ($_SERVER['HTTP_HOST'])
 // when we post forms (we allow GET to allow direct link to access a particular page).
 // Note about $_SERVER[HTTP_HOST/SERVER_NAME]: http://shiflett.org/blog/2006/mar/server-name-versus-http-host
+// See also option $conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN for a stronger CSRF protection.
 if (! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck))
 {
 	if (! empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] != 'GET' && ! empty($_SERVER['HTTP_HOST']))

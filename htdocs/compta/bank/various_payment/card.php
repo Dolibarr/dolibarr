@@ -382,7 +382,7 @@ if ($action == 'create')
         }
         else
         {
-            print '<input type="text" name="subledger_account" value="'.$subledger_account.'">';
+            print '<input type="text" class="maxwidth200" name="subledger_account" value="'.$subledger_account.'">';
         }
         print '</td></tr>';
     }
@@ -544,16 +544,16 @@ if ($id)
 	{
 		if (! empty($user->rights->banque->modifier))
 		{
-			print '<a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a>';
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a></div>';
 		}
 		else
 		{
-			print '<a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a>';
+			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a></div>';
 		}
 	}
 	else
 	{
-		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a>';
+		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a></div>';
 	}
 
 	print "</div>";

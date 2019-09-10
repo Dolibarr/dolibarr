@@ -286,14 +286,14 @@ class Product extends CommonObject
      * @var int
      */
     public $barcode_type;
-    
+
     /**
      * Main Barcode type code
      *
      * @var string
      */
     public $barcode_type_code;
-    
+
     /**
      * Additional barcodes (Some products have different barcodes according to the country of origin of manufacture)
      *
@@ -449,7 +449,7 @@ class Product extends CommonObject
             $error=0;
 
         // Clean parameters
-        $this->ref = dol_string_nospecial(trim($this->ref));
+        $this->ref = dol_sanitizeFileName(dol_string_nospecial(trim($this->ref)));
         $this->label = trim($this->label);
         $this->price_ttc=price2num($this->price_ttc);
         $this->price=price2num($this->price);
@@ -2058,7 +2058,7 @@ class Product extends CommonObject
         $sql.= " fk_price_expression, price_autogen";
         $sql.= " FROM ".MAIN_DB_PREFIX."product";
         if ($id) {
-            $sql.= " WHERE rowid = ".$this->db->escape($id);
+            $sql.= " WHERE rowid = ".(int) $id;
         } else {
             $sql.= " WHERE entity IN (".getEntity($this->element).")";
             if ($ref) {
@@ -2796,11 +2796,10 @@ class Product extends CommonObject
     public function load_stats_facture($socid = 0)
     {
         // phpcs:enable
-        global $conf;
-        global $user;
+        global $db, $conf, $user;
 
         $sql = "SELECT COUNT(DISTINCT f.fk_soc) as nb_customers, COUNT(DISTINCT f.rowid) as nb,";
-        $sql.= " COUNT(fd.rowid) as nb_rows, SUM(fd.qty) as qty";
+        $sql.= " COUNT(fd.rowid) as nb_rows, SUM(".$db->ifsql('f.type != 2', 'fd.qty', 'fd.qty * -1').") as qty";
         $sql.= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
         $sql.= ", ".MAIN_DB_PREFIX."facture as f";
         $sql.= ", ".MAIN_DB_PREFIX."societe as s";
@@ -3288,8 +3287,10 @@ class Product extends CommonObject
     	if (!$user->rights->societe->client->voir && !$socid) {
     		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     	}
+
 		$sql.= " WHERE c.entity IN (".getEntity('contract').")";
 		$sql.= " AND c.rowid = d.fk_contrat";
+
     	if ($this->id > 0) {
     		$sql.= " AND d.fk_product =".$this->id;
     	} else {
@@ -3299,6 +3300,7 @@ class Product extends CommonObject
     		$sql.= " AND p.rowid = d.fk_product AND p.fk_product_type =".$filteronproducttype;
     	}
     	$sql.= " AND c.fk_soc = s.rowid";
+
     	if (!$user->rights->societe->client->voir && !$socid) {
     		$sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
     	}

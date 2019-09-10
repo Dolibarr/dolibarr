@@ -380,7 +380,6 @@ if (empty($reshook))
 				}
 			} else {
 				$object->ref = GETPOST('ref');
-				$object->entity = (GETPOSTISSET('entity')?GETPOST('entity', 'int'):$conf->entity);
 				$object->ref_client = GETPOST('ref_client');
 				$object->datep = $datep;
 				$object->date_livraison = $date_delivery;
@@ -1688,7 +1687,7 @@ if ($action == 'create')
 	if (!empty($conf->incoterm->enabled))
 	{
 		print '<tr>';
-		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $soc->libelle_incoterms, 1).'</label></td>';
+		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $soc->label_incoterms, 1).'</label></td>';
 		print '<td class="maxwidthonsmartphone">';
 		print $form->select_incoterms((!empty($soc->fk_incoterms) ? $soc->fk_incoterms : ''), (!empty($soc->location_incoterms)?$soc->location_incoterms:''));
 		print '</td></tr>';
@@ -2249,7 +2248,8 @@ $formquestion = array_merge($formquestion, array(
 		print '<tr><td>';
 		print $langs->trans('OutstandingBill');
 		print '</td><td class="right">';
-		print price($soc->get_OutstandingBill()) . ' / ';
+		$arrayoutstandingbills = $soc->getOutstandingBills();
+		print price($arrayoutstandingbills['opened']) . ' / ';
 		print price($soc->outstanding_limit, 0, $langs, 1, - 1, - 1, $conf->currency);
 		print '</td>';
 		print '</tr>';
@@ -2305,7 +2305,7 @@ $formquestion = array_merge($formquestion, array(
 		print '<td>';
 		if ($action != 'editincoterm')
 		{
-			print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+			print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 		}
 		else
 		{
@@ -2500,7 +2500,7 @@ $formquestion = array_merge($formquestion, array(
 					if ($usercansend) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a></div>';
 					} else
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">' . $langs->trans('SendMail') . '</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">' . $langs->trans('SendMail') . '</a></div>';
 				}
 
 				// Create an order
@@ -2538,7 +2538,14 @@ $formquestion = array_merge($formquestion, array(
 					$arrayofinvoiceforpropal = $object->getInvoiceArrayList();
 					if ((is_array($arrayofinvoiceforpropal) && count($arrayofinvoiceforpropal) > 0) || empty($conf->global->WORKFLOW_PROPAL_NEED_INVOICE_TO_BE_CLASSIFIED_BILLED))
 					{
-						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=classifybilled&amp;socid=' . $object->socid . '">' . $langs->trans("ClassifyBilled") . '</a></div>';
+						if ($usercanclose)
+						{
+							print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=classifybilled&amp;socid=' . $object->socid . '">' . $langs->trans("ClassifyBilled") . '</a></div>';
+						}
+						else
+						{
+							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">' . $langs->trans("ClassifyBilled") . '</a></div>';
+						}
 					}
 				}
 

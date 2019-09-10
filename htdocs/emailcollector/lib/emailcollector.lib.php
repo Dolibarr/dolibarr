@@ -81,5 +81,7 @@ function emailcollectorPrepareHead($object)
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'emailcollector');
 
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'emailcollector', 'remove');
+
 	return $head;
 }

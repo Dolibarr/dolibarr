@@ -172,20 +172,20 @@ class pdf_standard extends ModelePDFProduct
 		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries"));
 
-		$nblignes = count($object->lines);
+		$nblines = count($object->lines);
 
-		if ($conf->produit->dir_output)
+		if ($conf->product->dir_output)
 		{
 		    // Definition of $dir and $file
 			if ($object->specimen)
 			{
-				$dir = $conf->produit->dir_output;
+				$dir = $conf->product->dir_output;
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->produit->dir_output . "/" . $objectref;
+				$dir = $conf->product->dir_output . "/" . $objectref;
 				$file = $dir . "/" . $objectref . ".pdf";
 			}
 
@@ -346,7 +346,7 @@ class pdf_standard extends ModelePDFProduct
 
 				// Loop on each lines
 				/*
-				for ($i = 0 ; $i < $nblignes ; $i++)
+				for ($i = 0 ; $i < $nblines ; $i++)
 				{
 					$curY = $nexY;
 					$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
@@ -375,7 +375,7 @@ class pdf_standard extends ModelePDFProduct
 						$posyafter=$pdf->GetY();
 						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
 						{
-							if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
+							if ($i == ($nblines-1))	// No more lines, and no space left to show total, so we create a new page
 							{
 								$pdf->AddPage('','',true);
 								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
@@ -484,7 +484,7 @@ class pdf_standard extends ModelePDFProduct
 					$this->tva[$vatrate] += $tvaligne;
 
 					// Add line
-					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
+					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
 					{
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(80,80,80)));
@@ -493,7 +493,7 @@ class pdf_standard extends ModelePDFProduct
 						$pdf->SetLineStyle(array('dash'=>0));
 					}
 
-					$nexY+=2;    // Passe espace entre les lignes
+					$nexY+=2;    // Add space between lines
 
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)
@@ -587,7 +587,7 @@ class pdf_standard extends ModelePDFProduct
 		}
     }
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -601,7 +601,7 @@ class pdf_standard extends ModelePDFProduct
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
 	    global $conf;
 
@@ -694,6 +694,7 @@ class pdf_standard extends ModelePDFProduct
 	    }
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -704,7 +705,7 @@ class pdf_standard extends ModelePDFProduct
 	 *  @param	string		$titlekey		Translation key to show as title of document
 	 *  @return	void
 	 */
-	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "")
+	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "")
 	{
 	    global $conf,$langs,$hookmanager;
 
@@ -844,6 +845,7 @@ class pdf_standard extends ModelePDFProduct
         $pdf->SetTextColor(0, 0, 0);
     }
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      *  Show footer of page. Need this->emetteur object
      *
@@ -853,7 +855,7 @@ class pdf_standard extends ModelePDFProduct
      *  @param	int			$hidefreetext		1=Hide free text
      *  @return	int								Return height of bottom margin including footer text
      */
-    private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
     {
         global $conf;
         $showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;

@@ -221,6 +221,6 @@ class mailing_xinputfile extends MailingTargets
 
 		ini_set('auto_detect_line_endings', false);
 
-		return parent::add_to_target($mailing_id, $cibles);
+		return parent::addTargetsToDatabase($mailing_id, $cibles);
 	}
 }

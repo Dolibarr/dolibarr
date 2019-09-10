@@ -58,9 +58,9 @@ class box_commandes extends ModeleBoxes
     {
         global $user;
 
-        $this->db=$db;
+        $this->db = $db;
 
-        $this->hidden=! ($user->rights->commande->lire);
+        $this->hidden = ! ($user->rights->commande->lire);
     }
 
     /**
@@ -146,7 +146,7 @@ class box_commandes extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right"',
+                        'td' => 'class="nowrap right"',
                         'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
                     );
 

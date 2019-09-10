@@ -655,7 +655,7 @@ if ($id > 0)
 			else
 			{
 
-				print '<tr class="oddeven"><td class="opacitymedium">'.$langs->trans("None").'</td>';
+				print '<tr class="oddeven"><td><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
 				print '<td></td><td></td><td></td><td></td>';
 				print '</tr>';
 			}
@@ -710,37 +710,37 @@ if ($id > 0)
 			// Reopen
 			if ($object->paye && $user->rights->tax->charges->creer)
 			{
-				print "<a class=\"butAction\" href=\"".dol_buildpath("/compta/sociales/card.php", 1). "?id=$object->id&amp;action=reopen\">".$langs->trans("ReOpen")."</a>";
+				print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".dol_buildpath("/compta/sociales/card.php", 1). "?id=$object->id&amp;action=reopen\">".$langs->trans("ReOpen")."</a></div>";
 			}
 
 			// Edit
 			if ($object->paye == 0 && $user->rights->tax->charges->creer)
 			{
-				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/card.php?id=$object->id&amp;action=edit\">".$langs->trans("Modify")."</a>";
+				print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/card.php?id=$object->id&amp;action=edit\">".$langs->trans("Modify")."</a></div>";
 			}
 
 			// Emit payment
 			if ($object->paye == 0 && ((price2num($object->amount) < 0 && price2num($resteapayer, 'MT') < 0) || (price2num($object->amount) > 0 && price2num($resteapayer, 'MT') > 0)) && $user->rights->tax->charges->creer)
 			{
-				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/paiement_charge.php?id=$object->id&amp;action=create\">".$langs->trans("DoPayment")."</a>";
+				print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/paiement_charge.php?id=$object->id&amp;action=create\">".$langs->trans("DoPayment")."</a></div>";
 			}
 
 			// Classify 'paid'
 			if ($object->paye == 0 && round($resteapayer) <=0 && $user->rights->tax->charges->creer)
 			{
-				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/card.php?id=$object->id&amp;action=paid\">".$langs->trans("ClassifyPaid")."</a>";
+				print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/card.php?id=$object->id&amp;action=paid\">".$langs->trans("ClassifyPaid")."</a></div>";
 			}
 
 			// Clone
 			if ($user->rights->tax->charges->creer)
 			{
-				print "<a class=\"butAction\" href=\"".dol_buildpath("/compta/sociales/card.php", 1). "?id=$object->id&amp;action=clone\">".$langs->trans("ToClone")."</a>";
+				print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".dol_buildpath("/compta/sociales/card.php", 1). "?id=$object->id&amp;action=clone\">".$langs->trans("ToClone")."</a></div>";
 			}
 
 			// Delete
 			if ($user->rights->tax->charges->supprimer)
 			{
-				print "<a class=\"butActionDelete\" href=\"".DOL_URL_ROOT."/compta/sociales/card.php?id=$object->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
+				print "<div class=\"inline-block divButAction\"><a class=\"butActionDelete\" href=\"".DOL_URL_ROOT."/compta/sociales/card.php?id=$object->id&amp;action=delete\">".$langs->trans("Delete")."</a></div>";
 			}
 
 			print "</div>";

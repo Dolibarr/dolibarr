@@ -19,6 +19,7 @@
 
 /**
  *     \defgroup    ticket    Module Ticket
+ *     \brief       Module for ticket and request management.
  *     \file        core/modules/modTicket.class.php
  *     \ingroup     ticket
  *     \brief       Description and activation file for module Ticket
@@ -99,6 +100,7 @@ class modTicket extends DolibarrModules
 		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
 		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
         $this->langfiles = array("ticket");
+
         // Constants
         // List of particular constants to add when module is enabled
         // (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)

@@ -213,24 +213,22 @@ class FormActions
 
         	$page=0; $param='';
 
-        	$total = 0;
-
         	print '<div class="div-table-responsive-no-min">';
         	print '<table class="centpercent noborder'.($morecss?' '.$morecss:'').'">';
         	print '<tr class="liste_titre">';
-        	print getTitleFieldOfList('Ref', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
-        	print getTitleFieldOfList('By', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
-        	print getTitleFieldOfList('Type', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('Ref',   0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('By',    0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
+        	print getTitleFieldOfList('Type',  0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
         	print getTitleFieldOfList('Title', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, '', 1);
-        	print getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', $page, $param, '', $sortfield, $sortorder, 'center ', 1);
-        	print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, 'right ', 1);
+        	print getTitleFieldOfList('Date',  0, $_SERVER["PHP_SELF"], 'a.datep', $page, $param, '', $sortfield, $sortorder, 'center ', 1);
+        	print getTitleFieldOfList('',      0, $_SERVER["PHP_SELF"], '', $page, $param, '', $sortfield, $sortorder, 'right ', 1);
         	print '</tr>';
         	print "\n";
 
-        	$userstatic = new User($this->db);
-
-        	if (count($listofactions))
+        	if (is_array($listofactions) && count($listofactions))
         	{
+        		$cacheusers=array();
+
 	        	$cursorevent = 0;
 	        	foreach($listofactions as $action)
 	        	{
@@ -246,8 +244,20 @@ class FormActions
 	        		print '<td>';
 	        		if (! empty($action->userownerid))
 	        		{
-	        			$userstatic->fetch($action->userownerid);	// TODO Introduce a cache on users fetched
-	        			print $userstatic->getNomUrl(-1, '', 0, 0, 16, 0, 'firstelselast', '');
+	        			if (is_object($cacheusers[$action->userownerid]))
+	        			{
+	        				$tmpuser = $cacheusers[$action->userownerid];
+	        			}
+	        			else
+	        			{
+	        				$tmpuser = new User($this->db);
+	        				$tmpuser->fetch($action->userownerid);
+	        				$cacheusers[$action->userownerid] = $tmpuser;
+	        			}
+	        			if ($tmpuser->id > 0)
+	        			{
+	        				print $tmpuser->getNomUrl(-1, '', 0, 0, 16, 0, 'firstelselast', '');
+	        			}
 	        		}
 	        		print '</td>';
 					// Type
@@ -284,10 +294,7 @@ class FormActions
 	        		}
 	        		print '</td>';
 	        		print '<td class="right">';
-	        		if (! empty($action->author->id))
-	        		{
-	        			print $action->getLibStatut(3);
-	        		}
+        			print $action->getLibStatut(3);
 	        		print '</td>';
 	        		print '</tr>';
 

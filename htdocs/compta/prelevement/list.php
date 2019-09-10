@@ -172,7 +172,7 @@ if ($result)
         print $ligne->LibStatut($obj->statut_ligne, 2);
         print "&nbsp;";
 
-        print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid_ligne.'">';
+        print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid_ligne.'">';
         print substr('000000'.$obj->rowid_ligne, -6);
         print '</a></td>';
 

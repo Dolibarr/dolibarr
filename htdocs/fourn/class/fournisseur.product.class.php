@@ -430,8 +430,8 @@ class ProductFournisseur extends Product
                 $sql .= " " . $newnpr . ",";
                 $sql .= $conf->entity . ",";
                 $sql .= $delivery_time_days . ",";
-                $sql .= (empty($supplier_reputation) ? 'NULL' : "'" . $this->db->escape($supplier_reputation) . "'");
-                $sql .= (empty($barcode) ? 'NULL' : "'" . $this->db->escape($barcode) . "'");
+                $sql .= (empty($supplier_reputation) ? 'NULL' : "'" . $this->db->escape($supplier_reputation) . "'") . ",";
+                $sql .= (empty($barcode) ? 'NULL' : "'" . $this->db->escape($barcode) . "'") . ",";
                 $sql .= (empty($fk_barcode_type) ? 'NULL' : "'" . $this->db->escape($fk_barcode_type) . "'");
                 $sql .= ")";
 
@@ -462,7 +462,8 @@ class ProductFournisseur extends Product
 
                     if (empty($error)) {
                         $this->db->commit();
-                        return $idinserted;
+						$this->product_fourn_price_id = $idinserted;
+                        return $this->product_fourn_price_id;
                     } else {
                         $this->db->rollback();
                         return -1;
@@ -1009,7 +1010,8 @@ class ProductFournisseur extends Product
 
 
     /**
-     *  Return a link to the object card (with optionaly the picto)
+     *  Return a link to the object card (with optionaly the picto).
+     *  Used getNomUrl of ProductFournisseur if a specific supplier ref is loaded. Otherwise use Product->getNomUrl().
      *
      *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
      *	@param	string	$option						On what the link point to ('nolink', ...)
@@ -1025,11 +1027,10 @@ class ProductFournisseur extends Product
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
         $result = '';
-        $companylink = '';
 
         $label = '<u>' . $langs->trans("SupplierRef") . '</u>';
         $label.= '<br>';
-        $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->fourn_ref;
+        $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref_supplier;
 
         $logPrices = $this->listProductFournisseurPriceLog($this->product_fourn_price_id, 'pfpl.datec', 'DESC'); // set sort order here
         if (is_array($logPrices) && count($logPrices) > 0) {

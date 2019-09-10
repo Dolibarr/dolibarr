@@ -56,9 +56,9 @@ class box_factures extends ModeleBoxes
 	{
 	    global $user;
 
-	    $this->db=$db;
+	    $this->db = $db;
 
-	    $this->hidden=! ($user->rights->facture->lire);
+	    $this->hidden = ! ($user->rights->facture->lire);
 	}
 
 	/**
@@ -156,7 +156,7 @@ class box_factures extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="tdoverflowmax200"',
                         'text' => $societestatic->getNomUrl(1, '', 40),
                         'asis' => 1,
                     );

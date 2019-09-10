@@ -188,10 +188,12 @@ class Categorie extends CommonObject
 	 * @var string     Color
 	 */
 	public $color;
+
 	/**
-	 * @var ???
+	 * @var int		  Id of thirdparty when CATEGORY_ASSIGNED_TO_A_CUSTOMER is set
 	 */
 	public $socid;
+
 	/**
 	 * @var string	Category type
 	 *
@@ -744,13 +746,19 @@ class Categorie extends CommonObject
 	/**
 	 * Return list of fetched instance of elements having this category
 	 *
-	 * @param   string     $type       Type of category ('customer', 'supplier', 'contact', 'product', 'member')
-	 * @param   int        $onlyids    Return only ids of objects (consume less memory)
-	 * @return  array|int              -1 if KO, array of instance of object if OK
+	 * @param   string     	$type       Type of category ('customer', 'supplier', 'contact', 'product', 'member')
+	 * @param   int        	$onlyids    Return only ids of objects (consume less memory)
+	 * @param	int			$limit		Limit
+	 * @param	int			$offset		Offset
+	 * @param	string		$sortfield	Sort fields
+	 * @param	string		$sortorder	Sort order ('ASC' or 'DESC');
+	 * @return  array|int              	-1 if KO, array of instance of object if OK
 	 * @see containsObject()
 	 */
-	public function getObjectsInCateg($type, $onlyids = 0)
+	public function getObjectsInCateg($type, $onlyids = 0, $limit = 0, $offset = 0, $sortfield = '', $sortorder = 'ASC')
 	{
+		global $user;
+
 		$objs = array();
 
 		$obj = new $this->MAP_OBJ_CLASS[$type]( $this->db );
@@ -759,8 +767,15 @@ class Categorie extends CommonObject
 		$sql .= " FROM " . MAIN_DB_PREFIX . "categorie_" . $this->MAP_CAT_TABLE[$type] . " as c";
 		$sql .= ", " . MAIN_DB_PREFIX . $this->MAP_OBJ_TABLE[$type] . " as o";
 		$sql .= " WHERE o.entity IN (" . getEntity($obj->element).")";
-		$sql.= " AND c.fk_categorie = ".$this->id;
+		$sql .= " AND c.fk_categorie = ".$this->id;
 		$sql .= " AND c.fk_" . $this->MAP_CAT_FK[$type] . " = o.rowid";
+		// Protection for external users
+		if (($type == 'customer' || $type == 'supplier') && $user->societe_id > 0)
+		{
+			$sql.= " AND o.rowid = ".$user->societe_id;
+		}
+		if ($limit > 0 || $offset > 0)  $sql .= $this->db->plimit($limit + 1, $offset);
+		$sql .= $this->db->order($sortfield, $sortorder);
 
 		dol_syslog(get_class($this)."::getObjectsInCateg", LOG_DEBUG);
 		$resql = $this->db->query($sql);

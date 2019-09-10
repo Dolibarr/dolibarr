@@ -315,6 +315,6 @@ class mailing_fraise extends MailingTargets
             return -1;
         }
 
-        return parent::add_to_target($mailing_id, $cibles);
+        return parent::addTargetsToDatabase($mailing_id, $cibles);
     }
 }

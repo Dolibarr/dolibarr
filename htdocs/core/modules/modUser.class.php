@@ -46,7 +46,7 @@ class modUser extends DolibarrModules
 		$this->numero = 0;
 
 		$this->family = "hr";		// Family for module (or "base" if core module)
-		$this->module_position = '10';
+		$this->module_position = '05';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des utilisateurs (requis)";

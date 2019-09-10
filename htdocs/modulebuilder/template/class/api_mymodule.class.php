@@ -111,7 +111,7 @@ class MyModuleApi extends DolibarrApi
             throw new RestException(401);
         }
 
-        $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
+        $socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
 
         $restrictonsocid = 0;	// Set to 1 if there is a field socid in table of object
 

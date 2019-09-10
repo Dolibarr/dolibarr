@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/takepos/floors.php
+ *	\file       htdocs/takepos/takepos.php
  *	\ingroup    takepos
  *	\brief      Main TakePOS screen
  */
@@ -47,6 +47,8 @@ if ($setterminal>0)
 	$_SESSION["takeposterminal"]=$setterminal;
 }
 
+$_SESSION["urlfrom"]='/takepos/takepos.php';
+
 $langs->loadLangs(array("bills","orders","commercial","cashdesk","receiptprinter"));
 
 $categorie = new Categorie($db);
@@ -57,6 +59,13 @@ if ($conf->browser->layout == 'phone')
 {
     $maxcategbydefaultforthisdevice=8;
     $maxproductbydefaultforthisdevice=16;
+	//REDIRECT TO BASIC LAYOUT IF TERMINAL SELECTED AND BASIC MOBILE LAYOUT ENABLED
+	if ($_SESSION["takeposterminal"]!="" && $conf->global->TAKEPOS_PHONE_BASIC_LAYOUT==1)
+	{
+		$_SESSION["basiclayout"]=1;
+		header("Location: invoice.php?mobilepage=invoice");
+		exit;
+	}
 }
 $MAXCATEG = (empty($conf->global->TAKEPOS_NB_MAXCATEG)?$maxcategbydefaultforthisdevice:$conf->global->TAKEPOS_NB_MAXCATEG);
 $MAXPRODUCT = (empty($conf->global->TAKEPOS_NB_MAXPRODUCT)?$maxproductbydefaultforthisdevice:$conf->global->TAKEPOS_NB_MAXPRODUCT);
@@ -149,7 +158,7 @@ if(localStorage.hasKeyboard) {
 function ClearSearch() {
 	console.log("ClearSearch");
 	$("#search").val('');
-	<?php if ($conf->browser->layer == 'classic') { ?>
+	<?php if ($conf->browser->layout == 'classic') { ?>
 	setFocusOnSearchField();
 	<?php } ?>
 }
@@ -349,10 +358,11 @@ function deleteline() {
 	$("#poslines").load("invoice.php?action=deleteline&place="+place+"&idline="+selectedline, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
+	ClearSearch();
 }
 
 function Customer() {
-	console.log("Open box to select the thirdparty");
+	console.log("Open box to select the thirdparty place="+place);
 	$.colorbox({href:"../societe/list.php?contextpage=poslist&nomassaction=1&place="+place, width:"90%", height:"80%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("Customer");?>"});
 }
 
@@ -391,12 +401,14 @@ function Refresh() {
 }
 
 function New() {
-	console.log("New");
-	var r = confirm('<?php echo $langs->trans("ConfirmDeletionOfThisPOSSale"); ?>');
+	// If we go here,it means $conf->global->TAKEPOS_BAR_RESTAURANT is not defined
+	console.log("New with place = <?php echo $place; ?>, js place="+place);
+	var r = confirm('<?php echo ($place > 0 ? $langs->trans("ConfirmDeletionOfThisPOSSale") : $langs->trans("ConfirmDiscardOfThisPOSSale")); ?>');
 	if (r == true) {
     	$("#poslines").load("invoice.php?action=delete&place="+place, function() {
     		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
     	});
+		ClearSearch();
 	}
 }
 
@@ -568,6 +580,12 @@ function TerminalsDialog()
 	});
 }
 
+function DirectPayment(){
+	console.log("DirectPayment");
+	$("#poslines").load("invoice.php?place"+place+"&action=valid&pay=<?php echo $langs->trans("cash");?>", function() {
+	});
+}
+
 $( document ).ready(function() {
     PrintCategories(0);
 	LoadProducts(0);
@@ -619,6 +637,7 @@ $sql = "SELECT code, libelle FROM ".MAIN_DB_PREFIX."c_paiement";
 $sql.= " WHERE entity IN (".getEntity('c_paiement').")";
 $sql.= " AND active = 1";
 $sql.= " ORDER BY libelle";
+
 $resql = $db->query($sql);
 $paiementsModes = array();
 if ($resql){
@@ -633,7 +652,8 @@ if ($resql){
 	}
 }
 if (empty($paiementsModes)) {
-	setEventMessages($langs->trans("ErrorModuleSetupNotComplete"), null, 'errors');
+	$langs->load('errors');
+	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("TakePOS")), null, 'errors');
 }
 if (count($maincategories)==0) {
 	setEventMessages($langs->trans("TakeposNeedsCategories"), null, 'errors');
@@ -649,13 +669,17 @@ if (empty($conf->global->TAKEPOS_BAR_RESTAURANT))
 else
 {
     // BAR RESTAURANT specific menu
-    $menus[$r++]=array('title'=>'<span class="fa fa-layer-group paddingrightonly"></span><div class="trunc">'.$langs->trans("Floors").'</div>', 'action'=>'Floors();');
+    $menus[$r++]=array('title'=>'<span class="fa fa-layer-group paddingrightonly"></span><div class="trunc">'.$langs->trans("Place").'</div>', 'action'=>'Floors();');
 }
 
 $menus[$r++]=array('title'=>'<span class="far fa-building paddingrightonly"></span><div class="trunc">'.$langs->trans("Customer").'</div>', 'action'=>'Customer();');
 $menus[$r++]=array('title'=>'<span class="fa fa-history paddingrightonly"></span><div class="trunc">'.$langs->trans("History").'</div>', 'action'=>'History();');
 $menus[$r++]=array('title'=>'<span class="fa fa-cube paddingrightonly"></span><div class="trunc">'.$langs->trans("FreeZone").'</div>', 'action'=>'FreeZone();');
 $menus[$r++]=array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Payment").'</div>', 'action'=>'CloseBill();');
+
+if ($conf->global->TAKEPOS_DIRECT_PAYMENT){
+	$menus[$r++]=array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("DirectPayment").'</div>', 'action'=>'DirectPayment();');
+}
 
 // BAR RESTAURANT specific menu
 if ($conf->global->TAKEPOS_BAR_RESTAURANT)

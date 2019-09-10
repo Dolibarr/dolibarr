@@ -57,7 +57,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 
 
     /**
-     *  Renvoi la description du modele de numerotation
+     *  Returns the description of the numbering model
      *
      * 	@return     string      Texte descripif
      */
@@ -98,7 +98,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
     }
 
     /**
-     *  Renvoi un exemple de numerotation
+     *  Return an example of numbering
      *
      *  @return     string      Example
      */

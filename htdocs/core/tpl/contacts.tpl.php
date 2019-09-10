@@ -69,7 +69,7 @@ $userstatic=new User($db);
 if ($permission) {
 ?>
 	<form class="tagtr liste_titre">
-		<div class="tagtd liste_titre"><?php echo $langs->trans("Nature"); ?></div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("NatureOfContact"); ?></div>
 		<div class="tagtd liste_titre"><?php echo $langs->trans("ThirdParty"); ?></div>
 		<div class="tagtd liste_titre"><?php echo $langs->trans("Users").'/'.$langs->trans("Contacts"); ?></div>
 		<div class="tagtd liste_titre"><?php echo $langs->trans("ContactType"); ?></div>
@@ -149,7 +149,7 @@ if ($permission) {
 ?>
 
 	<form class="tagtr liste_titre liste_titre_add formnoborder">
-		<div class="tagtd liste_titre"><?php echo $langs->trans("Nature"); ?></div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("NatureOfContact"); ?></div>
 		<div class="tagtd liste_titre"><?php echo $langs->trans("ThirdParty"); ?></div>
 		<div class="tagtd liste_titre"><?php echo $langs->trans("Users").'/'.$langs->trans("Contacts"); ?></div>
 		<div class="tagtd liste_titre"><?php echo $langs->trans("ContactType"); ?></div>
@@ -208,7 +208,7 @@ if ($permission) {
 			if ($tab[$i]['source']=='external')
 			{
 				$contactstatic->fetch($tab[$i]['id']);
-				echo $contactstatic->getNomUrl(1, '', 0, '', 0, 0, '', 'valignmiddle');
+				echo $contactstatic->getNomUrl(1, '', 0, '', 0, 0);
 			}
 			?>
 		</div>

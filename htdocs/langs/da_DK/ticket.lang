@@ -1,0 +1,294 @@
+# en_US lang file for module ticket
+# Copyright (C) 2013  Jean-François FERRY <hello@librethic.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+Module56000Name=Billetter
+Module56000Desc=Billetsystem til udstedelse eller forespørgselsstyring
+
+Permission56001=Se billetter
+Permission56002=Ændre billetter
+Permission56003=Slet billetter
+Permission56004=Administrer billetter
+Permission56005=See tickets of all third parties (not effective for external users, always be limited to the third party they depend on)
+
+TicketDictType=Ticket - Types
+TicketDictCategory=Ticket - Groupes
+TicketDictSeverity=Ticket - Severities
+TicketTypeShortBUGSOFT=Dysfonctionnement logiciel
+TicketTypeShortBUGHARD=Dysfonctionnement matériel
+TicketTypeShortCOM=Kommercielt spørgsmål
+TicketTypeShortINCIDENT=Anmodning om assistance
+TicketTypeShortPROJET=Projekt
+TicketTypeShortOTHER=Andre
+
+TicketSeverityShortLOW=Lav
+TicketSeverityShortNORMAL=Normal
+TicketSeverityShortHIGH=Høj
+TicketSeverityShortBLOCKING=Kritiske / Blokering
+
+ErrorBadEmailAddress=Felt '%s' forkert
+MenuTicketMyAssign=Mine billetter
+MenuTicketMyAssignNonClosed=Mine åbne billetter
+MenuListNonClosed=Åbn billetter
+
+TypeContact_ticket_internal_CONTRIBUTOR=Bidragyder
+TypeContact_ticket_internal_SUPPORTTEC=Tildelt bruger
+TypeContact_ticket_external_SUPPORTCLI=Kundekontakt / hændelsesporing
+TypeContact_ticket_external_CONTRIBUTOR=Ekstern bidragyder
+
+OriginEmail=E-mail-kilde
+Notify_TICKET_SENTBYMAIL=Send ticket message by email
+
+# Status
+NotRead=Ikke læst
+Read=Læs
+Assigned=Tildelt
+InProgress=I gang
+NeedMoreInformation=Waiting for information
+Answered=besvaret
+Waiting=Venter
+Closed=Lukket
+Deleted=slettet
+
+# Dict
+Type=Type
+Category=Analytic code
+Severity=Alvorlighed
+
+# Email templates
+MailToSendTicketMessage=At sende e-mail fra billet besked
+
+#
+# Admin page
+#
+TicketSetup=Opsætning af billedmodul
+TicketSettings=Indstillinger
+TicketSetupPage=
+TicketPublicAccess=En offentlig grænseflade, der kræver ingen identifikation, er tilgængelig på følgende url
+TicketSetupDictionaries=The type of ticket, severity and analytic codes are configurable from dictionaries
+TicketParamModule=Indstilling af modulvariabler
+TicketParamMail=Email opsætning
+TicketEmailNotificationFrom=Meddelelses email fra
+TicketEmailNotificationFromHelp=Bruges i billet besked svar med et eksempel
+TicketEmailNotificationTo=Meddelelser email til
+TicketEmailNotificationToHelp=Send e-mail-meddelelser til denne adresse.
+TicketNewEmailBodyLabel=Text message sent after creating a ticket
+TicketNewEmailBodyHelp=Teksten, der er angivet her, indsættes i e-mailen, der bekræfter oprettelsen af ​​en ny billet fra den offentlige grænseflade. Oplysninger om høring af billetten tilføjes automatisk.
+TicketParamPublicInterface=Opsætning af offentlig grænseflade
+TicketsEmailMustExist=Kræv en eksisterende emailadresse for at oprette en billet
+TicketsEmailMustExistHelp=I den offentlige grænseflade skal e-mailadressen allerede udfyldes i databasen for at oprette en ny billet.
+PublicInterface=Offentlig grænseflade
+TicketUrlPublicInterfaceLabelAdmin=Alternative URL for public interface
+TicketUrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server and thus make available the public interface with another URL (the server must act as a proxy on this new URL)
+TicketPublicInterfaceTextHomeLabelAdmin=Velkommen tekst af den offentlige grænseflade
+TicketPublicInterfaceTextHome=Du kan oprette en supportbillet eller se eksisterende fra sin identifikationssporingsbillet.
+TicketPublicInterfaceTextHomeHelpAdmin=Teksten, der er defineret her, vises på hjemmesiden for den offentlige grænseflade.
+TicketPublicInterfaceTopicLabelAdmin=Interface titel
+TicketPublicInterfaceTopicHelp=Denne tekst vises som titlen på den offentlige grænseflade.
+TicketPublicInterfaceTextHelpMessageLabelAdmin=Hjælp tekst til meddelelsesindgangen
+TicketPublicInterfaceTextHelpMessageHelpAdmin=Denne tekst vises over brugerens meddelelsesindtastningsområde.
+ExtraFieldsTicket=Ekstra attributter
+TicketCkEditorEmailNotActivated=HTML editor er ikke aktiveret. Indsæt venligst FCKEDITOR_ENABLE_MAIL indhold til 1 for at få det.
+TicketsDisableEmail=Send ikke e-mails til oprettelse af billet eller beskedoptagelse
+TicketsDisableEmailHelp=Som standard sendes e-mails, når der oprettes nye billetter eller meddelelser. Aktivér denne mulighed for at deaktivere * alle * e-mail-meddelelser
+TicketsLogEnableEmail=Aktivér log via e-mail
+TicketsLogEnableEmailHelp=Ved hver ændring sendes en mail ** til hver kontaktperson **, der er knyttet til billetten.
+TicketParams=Parametre
+TicketsShowModuleLogo=Vis modulets logo i den offentlige grænseflade
+TicketsShowModuleLogoHelp=Aktivér denne mulighed for at skjule logo-modulet på siderne i den offentlige grænseflade
+TicketsShowCompanyLogo=Vis firmaets logo i den offentlige grænseflade
+TicketsShowCompanyLogoHelp=Aktivér denne mulighed for at skjule logoet for hovedvirksomheden på siderne i den offentlige grænseflade
+TicketsEmailAlsoSendToMainAddress=Send også besked til hoved e-mail-adresse
+TicketsEmailAlsoSendToMainAddressHelp=Aktivér denne mulighed for at sende en email til "Meddelelses email fra" adresse (se opsætning nedenfor)
+TicketsLimitViewAssignedOnly=Restrict the display to tickets assigned to the current user (not effective for external users, always be limited to the third party they depend on)
+TicketsLimitViewAssignedOnlyHelp=Kun billetter tildelt den aktuelle bruger vil være synlige. Gælder ikke for en bruger med billetforvaltningsrettigheder.
+TicketsActivatePublicInterface=Aktivér den offentlige grænseflade
+TicketsActivatePublicInterfaceHelp=Offentlig grænseflade tillader alle besøgende at lave billetter.
+TicketsAutoAssignTicket=Tildel automatisk brugeren, der oprettede billetten
+TicketsAutoAssignTicketHelp=Når du opretter en billet, kan brugeren automatisk tildeles billetten.
+TicketNumberingModules=Billetter nummerering modul
+TicketNotifyTiersAtCreation=Notify third party at creation
+TicketGroup=Gruppe
+TicketsDisableCustomerEmail=Always disable emails when a ticket is created from public interface
+#
+# Index & list page
+#
+TicketsIndex=Billet - hjem
+TicketList=Liste over billetter
+TicketAssignedToMeInfos=This page display ticket list created by or assigned to current user
+NoTicketsFound=Ingen billet fundet
+NoUnreadTicketsFound=No unread ticket found
+TicketViewAllTickets=Se alle billetter
+TicketViewNonClosedOnly=Se kun åbne billetter
+TicketStatByStatus=Billetter efter status
+
+#
+# Ticket card
+#
+Ticket=Billet
+TicketCard=Billetkort
+CreateTicket=Opret billet
+EditTicket=Rediger billet
+TicketsManagement=Billetter Management
+CreatedBy=Lavet af
+NewTicket=Ny billet
+SubjectAnswerToTicket=Billet svar
+TicketTypeRequest=Anmodningstype
+TicketCategory=Analytic code
+SeeTicket=Se billet
+TicketMarkedAsRead=Billet er blevet markeret som læst
+TicketReadOn=Læs videre
+TicketCloseOn=Udløbsdato
+MarkAsRead=Markér billet som læst
+TicketHistory=Billets historie
+AssignUser=Tildel til bruger
+TicketAssigned=Billet er nu tildelt
+TicketChangeType=Skift type
+TicketChangeCategory=Change analytic code
+TicketChangeSeverity=Ændre sværhedsgrad
+TicketAddMessage=Tilføj en besked
+AddMessage=Tilføj en besked
+MessageSuccessfullyAdded=Billet tilføjet
+TicketMessageSuccessfullyAdded=Meddelelse med succes tilføjet
+TicketMessagesList=Meddelelsesliste
+NoMsgForThisTicket=Ingen besked til denne billet
+Properties=Klassifikation
+LatestNewTickets=Seneste %s nyeste billetter (ikke læses)
+TicketSeverity=Alvorlighed
+ShowTicket=Se billet
+RelatedTickets=Relaterede billetter
+TicketAddIntervention=Opret indgreb
+CloseTicket=Tæt billet
+CloseATicket=Luk en billet
+ConfirmCloseAticket=Bekræft afslutningen af ​​billet
+ConfirmDeleteTicket=Venligst bekræft billetets sletning
+TicketDeletedSuccess=Billet slettet med succes
+TicketMarkedAsClosed=Billet mærket som lukket
+TicketDurationAuto=Beregnet varighed
+TicketDurationAutoInfos=Varighed beregnes automatisk fra interventionsrelateret
+TicketUpdated=Billet opdateret
+SendMessageByEmail=Send besked via email
+TicketNewMessage=Ny besked
+ErrorMailRecipientIsEmptyForSendTicketMessage=Modtageren er tom. Ingen email send
+TicketGoIntoContactTab=Gå til fanen "Kontakter" for at vælge dem
+TicketMessageMailIntro=Introduktion
+TicketMessageMailIntroHelp=Denne tekst tilføjes kun i begyndelsen af ​​e-mailen og bliver ikke gemt.
+TicketMessageMailIntroLabelAdmin=Introduktion til meddelelsen, når du sender e-mail
+TicketMessageMailIntroText=Hej, <br> Et nyt svar blev sendt på en billet, som du kontakter. Her er meddelelsen: <br>
+TicketMessageMailIntroHelpAdmin=Denne tekst indsættes før teksten til svaret på en billet.
+TicketMessageMailSignature=Underskrift
+TicketMessageMailSignatureHelp=Denne tekst tilføjes kun i slutningen af ​​e-mailen og bliver ikke gemt.
+TicketMessageMailSignatureText=<P> Med venlig hilsen </ p> <p> - </ p>
+TicketMessageMailSignatureLabelAdmin=Signatur af svar email
+TicketMessageMailSignatureHelpAdmin=Denne tekst indsættes efter svarmeddelelsen.
+TicketMessageHelp=Kun denne tekst gemmes i meddelelseslisten på billetkort.
+TicketMessageSubstitutionReplacedByGenericValues=Substitutionsvariabler erstattes af generiske værdier.
+TimeElapsedSince=Tid forløbet siden
+TicketTimeToRead=Tid forløbet før læst
+TicketContacts=Kontakter billet
+TicketDocumentsLinked=Dokumenter knyttet til billet
+ConfirmReOpenTicket=Bekræft genåbne denne billet?
+TicketMessageMailIntroAutoNewPublicMessage=A new message was posted on the ticket with the subject %s:
+TicketAssignedToYou=Billet tildelt
+TicketAssignedEmailBody=Du er blevet tildelt billetten # %s ved %s
+MarkMessageAsPrivate=Markér besked som privat
+TicketMessagePrivateHelp=Denne meddelelse vises ikke til eksterne brugere
+TicketEmailOriginIssuer=Udsteder ved oprindelsen af ​​billetterne
+InitialMessage=Indledende besked
+LinkToAContract=Link til en kontrakt
+TicketPleaseSelectAContract=Vælg en kontrakt
+UnableToCreateInterIfNoSocid=Can not create an intervention when no third party is defined
+TicketMailExchanges=Mail udvekslinger
+TicketInitialMessageModified=Indledende besked ændret
+TicketMessageSuccesfullyUpdated=Meddelelsen er opdateret
+TicketChangeStatus=Skift status
+TicketConfirmChangeStatus=Confirm the status change: %s ?
+TicketLogStatusChanged=Status changed: %s to %s
+TicketNotNotifyTiersAtCreate=Ikke underret firma på create
+Unread=Ulæst
+
+#
+# Logs
+#
+TicketLogMesgReadBy=Ticket %s read by %s
+NoLogForThisTicket=Ingen log på denne billet endnu
+TicketLogAssignedTo=Ticket %s assigned to %s
+TicketLogPropertyChanged=Ticket %s modified: classification from %s to %s
+TicketLogClosedBy=Ticket %s closed by %s
+TicketLogReopen=Ticket %s re-opened
+
+#
+# Public pages
+#
+TicketSystem=Billetsystem
+ShowListTicketWithTrackId=Vis billet liste fra spor ID
+ShowTicketWithTrackId=Vis billet fra spor ID
+TicketPublicDesc=Du kan oprette en supportbillet eller tjekke fra et eksisterende ID.
+YourTicketSuccessfullySaved=Billet er blevet gemt!
+MesgInfosPublicTicketCreatedWithTrackId=En ny billet er oprettet med ID %s.
+PleaseRememberThisId=Vær venlig at holde sporingsnummeret, som vi måske spørger dig senere.
+TicketNewEmailSubject=Bekræftelse af oprettelse af billetter
+TicketNewEmailSubjectCustomer=Ny support billet
+TicketNewEmailBody=Dette er en automatisk email for at bekræfte, at du har registreret en ny billet.
+TicketNewEmailBodyCustomer=Dette er en automatisk email for at bekræfte en ny billet er netop blevet oprettet til din konto.
+TicketNewEmailBodyInfosTicket=Information til overvågning af billetten
+TicketNewEmailBodyInfosTrackId=Ticket tracking number: %s
+TicketNewEmailBodyInfosTrackUrl=Du kan se billets fremskridt ved at klikke på linket ovenfor.
+TicketNewEmailBodyInfosTrackUrlCustomer=Du kan se fremskridt på billetten i den specifikke grænseflade ved at klikke på nedenstående link
+TicketEmailPleaseDoNotReplyToThisEmail=Venligst svar ikke direkte på denne email! Brug linket til at svare på grænsefladen.
+TicketPublicInfoCreateTicket=Denne formular giver dig mulighed for at optage en supportbillet i vores styringssystem.
+TicketPublicPleaseBeAccuratelyDescribe=Beskriv venligst problemet korrekt. Giv den mest mulige information, så vi kan identificere din anmodning korrekt.
+TicketPublicMsgViewLogIn=Indtast venligst billedsporings-id
+TicketTrackId=Public Tracking ID
+OneOfTicketTrackId=One of your tracking ID
+ErrorTicketNotFound=Ticket with tracking ID %s not found!
+Subject=Emne
+ViewTicket=Se billet
+ViewMyTicketList=Se min billet liste
+ErrorEmailMustExistToCreateTicket=Error: email address not found in our database
+TicketNewEmailSubjectAdmin=Ny billet oprettet
+TicketNewEmailBodyAdmin=<p>Ticket has just been created with ID #%s, see information:</p>
+SeeThisTicketIntomanagementInterface=Se billet i ledelsesgrænseflade
+TicketPublicInterfaceForbidden=The public interface for the tickets was not enabled
+ErrorEmailOrTrackingInvalid=Bad value for tracking ID or email
+OldUser=Old user
+NewUser=Ny bruger
+NumberOfTicketsByMonth=Number of tickets per month
+NbOfTickets=Number of tickets
+# notifications
+TicketNotificationEmailSubject=Billet %s opdateret
+TicketNotificationEmailBody=Dette er en automatisk besked, der giver dig besked om, at billetten %s er blevet opdateret
+TicketNotificationRecipient=Meddelelsesmodtager
+TicketNotificationLogMessage=Logbesked
+TicketNotificationEmailBodyInfosTrackUrlinternal=Se billet i grænseflade
+TicketNotificationNumberEmailSent=Notification email sent: %s
+
+ActionsOnTicket=Events on ticket
+
+#
+# Boxes
+#
+BoxLastTicket=Nyligt oprettede billetter
+BoxLastTicketDescription=Seneste %s oprettet billetter
+BoxLastTicketContent=
+BoxLastTicketNoRecordedTickets=Ingen nyere ulæste billetter
+BoxLastModifiedTicket=Seneste ændrede billetter
+BoxLastModifiedTicketDescription=Seneste %s ændrede billetter
+BoxLastModifiedTicketContent=
+BoxLastModifiedTicketNoRecordedTickets=Ingen nyligt ændrede billetter
