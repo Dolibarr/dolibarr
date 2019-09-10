@@ -195,6 +195,7 @@ $colortext=join(',', colorStringToArray($colortext));
 $colortextlink=join(',', colorStringToArray($colortextlink));
 
 $nbtopmenuentries=$menumanager->showmenu('topnb');
+if ($conf->browser->layout == 'phone') $nbtopmenuentries = max($nbtopmenuentries, 10);
 
 print '/*'."\n";
 print 'colorbackbody='.$colorbackbody."\n";
@@ -352,18 +353,32 @@ input.smallpadd {	/* Used for timesheet input */
 input.buttongen {
 	vertical-align: middle;
 }
-input.buttonpayment {
-	min-width: 320px;
+input.buttonpayment, button.buttonpayment, div.buttonpayment {
+	min-width: 290px;
 	margin-bottom: 15px;
+	margin-top: 0;
+    margin-left: 5px;
+    margin-right: 5px;
 	background-image: none;
 	line-height: 24px;
 	padding: 8px;
 	background: none;
-	padding-left: 30px;
-	text-align: <?php echo $left; ?>;
+	text-align: center;
 	border: 2px solid #ccc;
 	background-color: #eee;
 	white-space: normal;
+	color: #888 !important;
+}
+div.buttonpayment input {
+    background-color: unset;
+    border-bottom: unset;
+    font-weight: bold;
+    text-transform: uppercase;
+	color: #333;
+	cursor: pointer;
+}
+div.buttonpayment input:focus {
+    color: #008;
 }
 input.buttonpaymentcb {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png', 1) ?>);
@@ -402,6 +417,11 @@ input.buttonpaymentstripe {
 	background-repeat: no-repeat;
 	background-position: 8px 7px;
 }
+a.buttonticket {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
 /* Used for timesheets */
 span.timesheetalreadyrecorded input {
     border: none;
@@ -485,6 +505,10 @@ input[name=surface] { margin-right: 4px; }
 fieldset { border: 1px solid #AAAAAA !important; }
 .legendforfieldsetstep { padding-bottom: 10px; }
 
+div#moretabsListaction {
+    z-index: 5;
+}
+
 hr { border: 0; border-top: 1px solid #ccc; }
 
 .button, .buttonDelete, input[name="sbmtConnexion"] {
@@ -524,7 +548,7 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	-webkit-box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
-.button:disabled, .buttonDelete:disabled {
+.button:disabled, .buttonDelete:disabled, .button.disabled {
 	opacity: 0.4;
     box-shadow: none;
     -webkit-box-shadow: none;
@@ -659,20 +683,33 @@ textarea.centpercent {
 .cursornotallowed {
 	cursor: not-allowed;
 }
-.badge {
-	display: inline-block;
-	min-width: 10px;
-	padding: 2px 5px;
-	font-size: 10px;
-	font-weight: 700;
-	line-height: 1em;
-	color: #fff;
-	text-align: center;
-	white-space: nowrap;
-	vertical-align: baseline;
-	background-color: #777;
-	border-radius: 10px;
+.backgroundblank {
+    background-color: #fff;
 }
+.checkboxattachfilelabel {
+    font-size: 0.85em;
+    opacity: 0.7;
+}
+
+.text-warning{
+    color : <?php print $textWarning ; ?>
+}
+body[class*="colorblind-"] .text-warning{
+    color : <?php print $colorblind_deuteranopes_textWarning ; ?>
+}
+.text-success{
+    color : <?php print $textSuccess ; ?>
+}
+body[class*="colorblind-"] .text-success{
+    color : <?php print $colorblind_deuteranopes_textSuccess ; ?>
+}
+
+.text-danger{
+    color : <?php print $textDanger ; ?>
+}
+
+/* Themes for badges */
+<?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
 
 .borderrightlight
 {
@@ -1336,17 +1373,19 @@ div.fichetwothirdright {
 	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
 	<?php if ($conf->browser->layout == 'phone') { print "padding-bottom: 6px\n"; } ?>
 }
+div.fichetwothirdright div.ficheaddleft {
+    padding-left: 20px;
+}
 div.fichehalfleft {
 	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$left.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: calc(50% - 10px);\n"; } ?>
 }
 div.fichehalfright {
 	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$right.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: calc(50% - 10px);\n"; } ?>
 }
-div.ficheaddleft {
-	<?php if ($conf->browser->layout != 'phone')   { print "padding-".$left.": 16px;\n"; }
-	else print "margin-top: 10px;\n"; ?>
+div.fichehalfright {
+	<?php if ($conf->browser->layout == 'phone')   { print "margin-top: 10px;\n"; } ?>
 }
 div.firstcolumn div.box {
 	padding-right: 10px;
@@ -1380,6 +1419,9 @@ div.secondcolumn div.box {
     	width: auto;
     	padding-bottom: 6px;
     }
+    div.fichetwothirdright div.ficheaddleft {
+    	padding-left: 0;
+	}
     div.fichehalfleft {
     	float: none;
     	width: auto;
@@ -1388,8 +1430,7 @@ div.secondcolumn div.box {
     	float: none;
     	width: auto;
     }
-    div.ficheaddleft {
-    	<?php print "padding-".$left.": 0px;\n"; ?>
+    div.fichehalfright {
     	margin-top: 10px;
     }
     div.firstcolumn div.box {
@@ -1401,7 +1442,7 @@ div.secondcolumn div.box {
 }
 
 /* For table into table into card */
-div.ficheaddleft tr.liste_titre:first-child td table.nobordernopadding td, div.nopadding {
+div.fichehalfright tr.liste_titre:first-child td table.nobordernopadding td, div.nopadding {
     padding: 0 0 0 0;
 }
 div.nopadding {
@@ -1438,6 +1479,9 @@ table.noborder tr.liste_titre td {
 }
 .pictowarning {
     vertical-align: text-bottom;
+}
+.pictomodule {
+	width: 14px;
 }
 .fiche .arearef img.pictoedit, .fiche .arearef span.pictoedit,
 .fiche .fichecenter img.pictoedit, .fiche .fichecenter span.pictoedit,
@@ -1529,9 +1573,17 @@ img.photorefnoborder {
 .underbanner {
 	border-bottom: <?php echo $borderwidth; ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
+
+.trextrafieldseparator td {
+    border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>) !important;
+}
 .tdhrthin {
 	margin: 0;
 	padding-bottom: 0 !important;
+}
+/* Payment Screen : Pointer cursor in the autofill image */
+.AutoFillAmount {
+	cursor:pointer;
 }
 
 
@@ -1715,6 +1767,9 @@ div.mainmenu {
 
 /* Do not load menu img if hidden to save bandwidth */
 <?php if (empty($dol_hide_topmenu)) { ?>
+    <?php if (! defined('DISABLE_FONT_AWSOME') && empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) { ?>
+        <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
+    <?php } ?>
 
 div.mainmenu.home{
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home.png', 1) ?>);
@@ -1895,7 +1950,6 @@ a.tmenuimage:focus {
 }
 
 
-
 /* Login */
 
 .bodylogin
@@ -1971,6 +2025,9 @@ form#login {
 	width: 14px;
 }
 
+.login_main_home {
+    word-break: break-word;
+}
 .login_main_message {
 	text-align: center;
 	max-width: 570px;
@@ -2304,6 +2361,9 @@ img.toolbarbutton {
     height: 30px;
 }
 
+li.expanded > a.fmdirlia.jqft.ecmjqft {
+    font-weight: bold !important;
+}
 
 
 /* ============================================================================== */
@@ -2361,7 +2421,7 @@ div.tabBar table.tableforservicepart2:last-child {
 }
 
 /* ============================================================================== */
-/* Boutons actions                                                                */
+/* Buttons for actions                                                            */
 /* ============================================================================== */
 
 div.divButAction {
@@ -2385,8 +2445,8 @@ div.popuptabset {
 	border: 1px solid #888;
 }
 div.popuptab {
-	padding-top: 3px;
-	padding-bottom: 3px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 	padding-left: 5px;
 	padding-right: 5px;
 }
@@ -2464,148 +2524,9 @@ span.tabspan {
 }
 
 /* ============================================================================== */
-/* Boutons actions                                                                */
+/* Buttons for actions                                                            */
 /* ============================================================================== */
-
-div.divButAction {
-	margin-bottom: 1.4em;
-	vertical-align: top;
-}
-div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused {
-	margin-bottom: 1.4em !important;
-}
-
-span.butAction, span.butActionDelete {
-	cursor: pointer;
-}
-
-
-.button, .butAction, .butActionDelete, .butActionRefused, .butActionNewRefused {
-	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
-	display: inline-block;
-    padding: 0.4em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
-    margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
-	line-height: 20px;
-	text-align: center;
-	vertical-align: middle;
-	cursor: pointer;
-	color: #333333 !important;
-	text-decoration: none !important;
-	text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
-	background-color: #f5f5f5;
-	background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
-	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
-	background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
-	background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
-	background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
-	background-repeat: repeat-x;
-	border-color: #e6e6e6 #e6e6e6 #bfbfbf;
-	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-	border: 1px solid #bbbbbb;
-	border-bottom-color: #a2a2a2;
-	-webkit-border-radius: 2px;
-	border-radius: 2px;
-	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-.butActionNew, .butActionNewRefused, .butActionNew:link, .butActionNew:visited, .butActionNew:hover, .butActionNew:active {
-	text-decoration: none;
-	/* border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25); */
-	display: inline-block;
-    padding: 0.2em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
-    margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
-	line-height: 20px;
-	/* text-align: center;  New button are on right of screen */
-	vertical-align: middle;
-	cursor: pointer;
-	/* color: #ffffff !important; */
-	/* text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25); */
-	-webkit-border-radius: 2px;
-	border-radius: 2px;
-	/* -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05); */
-	/* background-color: #006dcc;
-	background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
-	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0044cc));
-	background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
-	background-image: -o-linear-gradient(top, #0088cc, #0044cc);
-	background-image: linear-gradient(to bottom, #0088cc, #0044cc);
-	background-repeat: repeat-x; */
-}
-a.butActionNew>span.fa-plus-circle { padding-left: 6px; font-size: 1.5em; }
-a.butActionNewRefused>span.fa-plus-circle { padding-left: 6px; font-size: 1.5em; }
-
-.button, .butAction {
-	color: #ffffff !important;
-	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-	background-color: #006dcc;
-	background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
-	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0044cc));
-	background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
-	background-image: -o-linear-gradient(top, #0088cc, #0044cc);
-	background-image: linear-gradient(to bottom, #0088cc, #0044cc);
-	background-repeat: repeat-x;
-	border-color: #0044cc #0044cc #002a80;
-	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-}
-.button:disabled, .butAction:disabled {
-    color: #666 !important;
-    text-shadow: none;
-    border-color: #555;
-    cursor: not-allowed;
-
-    background-color: #f5f5f5;
-    background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
-    background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
-    background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
-    background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
-    background-repeat: repeat-x
-}
-
-.butActionDelete, .buttonDelete {
-	color: #ffffff !important;
-	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-	background-color: #cc6d00;
-	background-image: -moz-linear-gradient(top, #cc8800, #cc4400);
-	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#cc8800), to(#cc4400));
-	background-image: -webkit-linear-gradient(top, #cc8800, #cc4400);
-	background-image: -o-linear-gradient(top, #cc8800, #cc4400);
-	background-image: linear-gradient(to bottom, #cc8800, #cc4400);
-	background-repeat: repeat-x;
-	border-color: #cc4400 #cc4400 #802a00;
-	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-}
-a.butAction:link, a.butAction:visited, a.butAction:hover, a.butAction:active {
-	color: #FFFFFF;
-}
-
-.butActionRefused, .butActionNewRefused {
-	color: #AAAAAA !important;
-	cursor: not-allowed !important;
-}
-
-a.butAction:hover, a.butActionDelete:hover, a.butActionRefused:hover {
-    text-decoration: none;
-}
-a.butActionNewRefused:hover {
-	border-color: unset !important;
-	border: 1px solid #bbbbbb;
-}
-a.butAction:hover, a.butActionNew:hover, a.butActionDelete:hover {
-	opacity: 0.9;
-}
-
-.butActionTransparent {
-	color: #222 ! important;
-	background-color: transparent ! important;
-}
-
-<?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) { ?>
-.butActionRefused, .butActionNewRefused {
-	display: none;
-}
-<?php } ?>
+<?php include dol_buildpath($path.'/theme/'.$theme.'/btn.inc.php', 0); ?>
 
 
 
@@ -2712,7 +2633,7 @@ td.border, div.tagtable div div.border {
 	border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
 
-.ficheaddleft table.noborder {
+.fichehalfright table.noborder {
 	margin: 0px 0px 0px 0px;
 }
 div.colorback
@@ -3251,8 +3172,8 @@ div .tdtop {
 /* Prepare to remove class pair - impair */
 
 .noborder > tbody > tr:nth-child(even):not(.liste_titre), .liste > tbody > tr:nth-child(even):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(even):not(.liste_titre)
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(even):not(.liste_titre)
 {
 	background: linear-gradient(to bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
@@ -3267,8 +3188,8 @@ div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) .oddeven.tagtr:nth-
 }
 
 .noborder > tbody > tr:nth-child(odd):not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre)
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre)
 {
 	background: linear-gradient(to bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
@@ -3294,10 +3215,13 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 .box {
     overflow-x: auto;
     min-height: 40px;
+    padding-right: 0px;
+    padding-left: 0px;
+    padding-bottom: 12px;
 }
-/*.ficheaddleft div.boxstats, .ficheaddright div.boxstats {
+.ficheaddleft div.boxstats, .ficheaddright div.boxstats {
     border: none;
-}*/
+}
 .boxstatsborder {
     /* border: 1px solid #CCC !important; */
 }
@@ -3321,7 +3245,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 }
 .boxstats130 {
     width: 135px;
-    height: 48px;
+    height: 54px;
     padding: 3px;
 }
 @media only screen and (max-width: 767px)
@@ -3418,12 +3342,6 @@ span.dashboardlineko {
 }
 a.valignmiddle.dashboardlineindicator {
     line-height: 30px;
-}
-
-.box {
-    padding-right: 0px;
-    padding-left: 0px;
-    padding-bottom: 12px;
 }
 
 tr.box_titre {
@@ -3558,6 +3476,10 @@ a.impayee:hover { font-weight: bold; color: #550000; }
  *  Other
  */
 
+.opened-dash-board-wrap {
+    margin-bottom: 25px;
+}
+
 div.boximport {
     min-height: unset;
 }
@@ -3576,6 +3498,9 @@ div.dolgraph div.legend, div.dolgraph div.legend div { background-color: rgba(25
 div.dolgraph div.legend table tbody tr { height: auto; }
 td.legendColorBox { padding: 2px 2px 2px 0 !important; }
 td.legendLabel { padding: 2px 2px 2px 0 !important; }
+td.legendLabel {
+    text-align: <?php echo $left; ?>;
+}
 
 label.radioprivate {
     white-space: nowrap;
@@ -3647,6 +3572,7 @@ div#card-errors {
 	color: #fa755a;
     text-align: center;
     padding-top: 3px;
+    max-width: 320px;
 }
 
 
@@ -3883,6 +3809,12 @@ tr.visible {
     background-image: none;
     color: #000 !important;
     text-shadow: none;
+}
+.bordertransp {
+    background-color: transparent;
+    background-image: none;
+    border: 1px solid #aaa;
+	font-weight: normal;
 }
 .websitebar {
 	border-bottom: 1px solid #ccc;
@@ -5339,7 +5271,6 @@ border-top-right-radius: 6px;
 }
 
 
-
 /* ============================================================================== */
 /*  Public                                                                        */
 /* ============================================================================== */
@@ -5353,25 +5284,29 @@ border-top-right-radius: 6px;
 }
 
 
-
-::-webkit-scrollbar {
-    width: 12px;
-}
-::-webkit-scrollbar-button {
-    background: #aaa
-}
-::-webkit-scrollbar-track-piece {
-    background: #fff
-}
-::-webkit-scrollbar-thumb {
-    background: #ddd
-}​
-
-
-
 /* ============================================================================== */
 /* Ticket module                                                                  */
 /* ============================================================================== */
+
+.ticketpublicarea {
+	width: 70%;
+}
+.publicnewticketform {
+	margin-top: 25px !important;
+}
+.ticketlargemargin {
+	padding-left: 50px;
+	padding-right: 50px;
+}
+@media only screen and (max-width: 767px)
+{
+	.ticketlargemargin {
+		padding-left: 5px; padding-right: 5px;
+	}
+	.ticketpublicarea {
+		width: 100%;
+	}
+}
 
 #cd-timeline {
   position: relative;
@@ -5665,6 +5600,10 @@ border-top-right-radius: 6px;
         border-left: none;
     }
 
+	.box-flex-container {
+	    margin: 0 0 0 -8px !important;
+	}
+
 }
 
 @media only screen and (max-width: 1024px)
@@ -5783,10 +5722,31 @@ border-top-right-radius: 6px;
 }
 
 
+
+/* This must be at end */
+::-webkit-scrollbar {
+    width: 12px;
+}
+::-webkit-scrollbar-button {
+    background: #aaa;
+}
+::-webkit-scrollbar-track-piece {
+    background: #fff;
+}
+::-webkit-scrollbar-thumb {
+    background: #ddd;
+}​
+
+
+
 <?php if (! defined('DISABLE_FONT_AWSOME') && empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) { ?>
         <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
-<?php } ?>
+<?php }
+
+include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
+include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
+include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
 
 
-<?php
+
 if (is_object($db)) $db->close();

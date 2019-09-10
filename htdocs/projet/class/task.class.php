@@ -48,7 +48,11 @@ class Task extends CommonObject
 	public $fk_element='fk_task';
 
 	public $picto = 'task';
-	protected $childtables=array('projet_task_time');    // To test if we can delete object
+
+	/**
+	 * @var array	List of child tables. To test if we can delete object.
+	 */
+	protected $childtables=array('projet_task_time');
 
 	/**
      * @var int ID parent task
@@ -744,7 +748,7 @@ class Task extends CommonObject
 		// List of tasks (does not care about permissions. Filtering will be done later)
 		$sql = "SELECT ";
 		if ($filteronprojuser > 0 || $filterontaskuser > 0) $sql.= " DISTINCT";		// We may get several time the same record if user has several roles on same project/task
-		$sql.= " p.rowid as projectid, p.ref, p.title as plabel, p.public, p.fk_statut as projectstatus, p.bill_time,";
+		$sql.= " p.rowid as projectid, p.ref, p.title as plabel, p.public, p.fk_statut as projectstatus, p.usage_bill_time,";
 		$sql.= " t.rowid as taskid, t.ref as taskref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut as status,";
 		$sql.= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang,";
 		$sql.= " s.rowid as thirdparty_id, s.nom as thirdparty_name, s.email as thirdparty_email,";
@@ -843,7 +847,7 @@ class Task extends CommonObject
 		if ($morewherefilter) $sql.=$morewherefilter;
 		if ($includebilltime)
 		{
-    		$sql.=" GROUP BY p.rowid, p.ref, p.title, p.public, p.fk_statut, p.bill_time,";
+    		$sql.=" GROUP BY p.rowid, p.ref, p.title, p.public, p.fk_statut, p.usage_bill_time,";
     		$sql.=" t.datec, t.dateo, t.datee, t.tms,";
     		$sql.=" t.rowid, t.ref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut,";
     		$sql.=" t.dateo, t.datee, t.planned_workload, t.rang,";
@@ -899,7 +903,7 @@ class Task extends CommonObject
 					$tasks[$i]->projectref		= $obj->ref;
 					$tasks[$i]->projectlabel	= $obj->plabel;
 					$tasks[$i]->projectstatus	= $obj->projectstatus;
-					$tasks[$i]->bill_time	   	= $obj->bill_time;
+					$tasks[$i]->usage_bill_time	   	= $obj->usage_bill_time;
 					$tasks[$i]->label			= $obj->label;
 					$tasks[$i]->description		= $obj->description;
 					$tasks[$i]->fk_parent		= $obj->fk_task_parent;      // deprecated
@@ -927,7 +931,7 @@ class Task extends CommonObject
                     $tasks[$i]->opp_amount = $obj->opp_amount;
                     $tasks[$i]->opp_percent = $obj->opp_percent;
                     $tasks[$i]->budget_amount = $obj->budget_amount;
-                    $tasks[$i]->bill_time = $obj->bill_time;
+                    $tasks[$i]->usage_bill_time = $obj->usage_bill_time;
 
                     if (!empty($extrafields->attributes['projet']['label']))
                     {
@@ -1587,6 +1591,7 @@ class Task extends CommonObject
 
     /**	Load an object from its id and create a new one in database
      *
+	 *  @param	User	$user		            User making the clone
 	 *  @param	int		$fromid     			Id of object to clone
 	 *  @param	int		$project_id				Id of project to attach clone task
 	 *  @param	int		$parent_task_id			Id of task to attach clone task
@@ -1598,9 +1603,9 @@ class Task extends CommonObject
 	 *  @param	bool	$clone_prog				clone progress of project
 	 *  @return	int								New id of clone
      */
-	public function createFromClone($fromid, $project_id, $parent_task_id, $clone_change_dt = false, $clone_affectation = false, $clone_time = false, $clone_file = false, $clone_note = false, $clone_prog = false)
+	public function createFromClone(User $user, $fromid, $project_id, $parent_task_id, $clone_change_dt = false, $clone_affectation = false, $clone_time = false, $clone_file = false, $clone_note = false, $clone_prog = false)
 	{
-		global $user,$langs,$conf;
+		global $langs,$conf;
 
 		$error=0;
 

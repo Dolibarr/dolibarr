@@ -54,7 +54,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	public $enabled=1;
 
 	/**
-	 * @var int Condition to have widget visible (in most cases, permissions)
+	 * @var boolean Condition to have widget visible (in most cases, permissions)
 	 */
 	public $hidden=0;
 

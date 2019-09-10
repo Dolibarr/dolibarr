@@ -1,0 +1,17 @@
+MRPArea=Секция за планиране на материалните изисквания
+MenuBOM=Спецификации
+LatestBOMModified=Спецификации: %s последно променени
+BillOfMaterials=Спецификация
+BOMsSetup=Настройка на модул Спецификации
+ListOfBOMs=Списък на спецификации
+NewBOM=Нова спецификация
+ProductBOMHelp=Продукт за създаване с тази спецификация
+BOMsNumberingModules=Шаблони за номериране на спецификации
+BOMsModelModule=Шаблони на документи на спецификации
+FreeLegalTextOnBOMs=Свободен текст към документа на спецификация
+WatermarkOnDraftBOMs=Воден знак върху чернова на спецификация
+ConfirmCloneBillOfMaterials=Сигурни ли сте, че искате да клонирате тази спецификация?
+ManufacturingEfficiency=Ефективност на производството
+ValueOfMeansLoss=Стойност 0.95 означава средна стойност от 5%% загуба по време на производството
+DeleteBillOfMaterials=Изтриване на спецификация
+ConfirmDeleteBillOfMaterials=Сигурни ли сте, че искате да изтриете тази спецификация?

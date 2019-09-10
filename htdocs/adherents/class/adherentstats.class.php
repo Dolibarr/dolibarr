@@ -37,6 +37,7 @@ class AdherentStats extends Stats
      */
     public $table_element;
 
+    public $memberid;
     public $socid;
     public $userid;
 

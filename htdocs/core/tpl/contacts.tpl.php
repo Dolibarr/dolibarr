@@ -69,7 +69,7 @@ $userstatic=new User($db);
 if ($permission) {
 ?>
 	<form class="tagtr liste_titre">
-		<div class="tagtd liste_titre"><?php echo $langs->trans("Nature"); ?></div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("NatureOfContact"); ?></div>
 		<div class="tagtd liste_titre"><?php echo $langs->trans("ThirdParty"); ?></div>
 		<div class="tagtd liste_titre"><?php echo $langs->trans("Users").'/'.$langs->trans("Contacts"); ?></div>
 		<div class="tagtd liste_titre"><?php echo $langs->trans("ContactType"); ?></div>
@@ -129,7 +129,7 @@ if ($permission) {
 			<?php $selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp'); ?>
 		</div>
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
-			<?php $nbofcontacts=$form->select_contacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 0, 'minwidth100imp'); ?>
+			<?php $nbofcontacts=$form->select_contacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 1, 'minwidth100imp'); ?>
 		</div>
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
 			<?php
@@ -149,7 +149,7 @@ if ($permission) {
 ?>
 
 	<form class="tagtr liste_titre liste_titre_add formnoborder">
-		<div class="tagtd liste_titre"><?php echo $langs->trans("Nature"); ?></div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("NatureOfContact"); ?></div>
 		<div class="tagtd liste_titre"><?php echo $langs->trans("ThirdParty"); ?></div>
 		<div class="tagtd liste_titre"><?php echo $langs->trans("Users").'/'.$langs->trans("Contacts"); ?></div>
 		<div class="tagtd liste_titre"><?php echo $langs->trans("ContactType"); ?></div>
@@ -208,7 +208,7 @@ if ($permission) {
 			if ($tab[$i]['source']=='external')
 			{
 				$contactstatic->fetch($tab[$i]['id']);
-				echo $contactstatic->getNomUrl(1, '', 0, '', 0, 0, '', 'valignmiddle');
+				echo $contactstatic->getNomUrl(1, '', 0, '', 0, 0);
 			}
 			?>
 		</div>

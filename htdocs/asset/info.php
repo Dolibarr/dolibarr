@@ -44,14 +44,17 @@ $object->fetch($id);
  * Actions
  */
 
+
+
 /*
  * View
  */
+
+$form = new Form($db);
+
 $title = $langs->trans('Asset') . " - " . $langs->trans('Info');
 $helpurl = "";
 llxHeader('', $title, $helpurl);
-
-$form = new Form($db);
 
 $object->info($id);
 

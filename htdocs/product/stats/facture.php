@@ -142,7 +142,7 @@ if ($id > 0 || ! empty($ref))
 
 		if ($showmessage && $nboflines > 1)
 		{
-			print $langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers"));
+			print '<span class="opacitymedium">'.$langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")).'</span>';
 		}
         elseif ($user->rights->facture->lire)
         {
@@ -234,8 +234,10 @@ if ($id > 0 || ! empty($ref))
                     while ($i < min($num, $limit))
 					{
                         $objp = $db->fetch_object($result);
+                        
+						if ($objp->type == Facture::TYPE_CREDIT_NOTE) $objp->qty=-($objp->qty);
 
-                        $total_ht+=$objp->total_ht;
+						$total_ht+=$objp->total_ht;
                         $total_qty+=$objp->qty;
 
                         $invoicestatic->id=$objp->facid;

@@ -97,7 +97,7 @@ if (empty($reshook))
 		}
 		else
 		{
-			$result=$object->createFromClone($object->id, $_REQUEST["clone_content"], $_REQUEST["clone_receivers"]);
+			$result=$object->createFromClone($user, $object->id, $_REQUEST["clone_content"], $_REQUEST["clone_receivers"]);
 			if ($result > 0)
 			{
 				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -424,7 +424,7 @@ if (empty($reshook))
 		$object->sendto = $_POST["sendto"];
 		if (! $object->sendto)
 		{
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("MailTo")), null, 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("MailTo")), null, 'errors');
 			$error++;
 		}
 
@@ -471,13 +471,13 @@ if (empty($reshook))
 			if ($result)
 			{
 				setEventMessages($langs->trans("MailSuccessfulySent", $mailfile->getValidAddress($object->email_from, 2), $mailfile->getValidAddress($object->sendto, 2)), null, 'mesgs');
+				$action = '';
 			}
 			else
 			{
 				setEventMessages($langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result, null, 'errors');
+				$action = 'test';
 			}
-
-			$action='';
 		}
 	}
 
@@ -746,7 +746,7 @@ if ($action == 'create')
 
 	dol_fiche_head();
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTitle").'</td><td><input class="flat minwidth300" name="titre" value="'.dol_escape_htmltag(GETPOST('titre')).'" autofocus="autofocus"></td></tr>';
 	print '<tr><td class="fieldrequired">'.$langs->trans("MailFrom").'</td><td><input class="flat minwidth200" name="from" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
 	print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td><input class="flat minwidth200" name="errorsto" value="'.(!empty($conf->global->MAILING_EMAIL_ERRORSTO)?$conf->global->MAILING_EMAIL_ERRORSTO:$conf->global->MAIN_MAIL_ERRORS_TO).'"></td></tr>';
@@ -835,7 +835,7 @@ else
 				{
 					// EMailing feature may be a spam problem, so when you host several users/instance, having this option may force each user to use their own SMTP agent.
 					// You ensure that every user is using its own SMTP server when using the mass emailing module.
-					$linktoadminemailbefore='<a href="'.DOL_URL_ROOT.'/admin/mails.php">';
+					$linktoadminemailbefore='<a href="'.DOL_URL_ROOT.'/admin/mails_emailing.php">';
 					$linktoadminemailend='</a>';
 					setEventMessages($langs->trans("MailSendSetupIs", $listofmethods[$sendingmode]), null, 'warnings');
 					setEventMessages($langs->trans("MailSendSetupIs2", $linktoadminemailbefore, $linktoadminemailend, $langs->transnoentitiesnoconv("MAIN_MAIL_SENDMODE"), $listofmethods['smtps']), null, 'warnings');
@@ -870,7 +870,7 @@ else
                     }
 				    $text.=$langs->trans('ConfirmSendingEmailing').'<br>';
 					$text.=$langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
-					print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('SendMailing'), $text, 'sendallconfirmed', $formquestion, '', 1, 300);
+					print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('SendMailing'), $text, 'sendallconfirmed', $formquestion, '', 1, 330, 600);
 				}
 			}
 
@@ -893,7 +893,7 @@ else
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent tableforfield">';
 
 			// Description
 			print '<tr><td class="titlefield">'.$form->editfieldkey("MailTitle", 'titre', $object->titre, $object, $user->rights->mailing->creer && $object->statut < 3, 'string').'</td><td colspan="3">';

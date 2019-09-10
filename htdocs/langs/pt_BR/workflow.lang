@@ -1,13 +1,12 @@
 # Dolibarr language file - Source file is en_US - workflow
 WorkflowSetup=Configuração do módulo de Fluxo de Trabalho
-WorkflowDesc=Este módulo é concebido para modificar o comportamento das ações automáticas para aplicação. Por padrão, o fluxo de trabalho está aberto (você pode fazer as coisas na ordem que você quiser). Você pode ativar as ações automáticas que você está interessado.
 ThereIsNoWorkflowToModify=Não há alterações do fluxo de trabalho disponíveis com os módulos ativados.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Crie automaticamente uma ordem de cliente após a assinatura de uma proposta comercial (a nova ordem terá o mesmo valor que a proposta)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Crie automaticamente uma fatura do cliente após a assinatura de uma proposta comercial (a nova fatura terá o mesmo valor que a proposta)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Criar automaticamente uma pedido de venda após a assinatura de uma proposta comercial (a nova ordem terá o mesmo valor que constar na proposta)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Criar automaticamente uma fatura de cliente depois que um contrato é validado
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Crie automaticamente uma fatura do cliente após a conclusão de uma ordem do cliente (a nova fatura terá o mesmo valor do que o pedido)
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classifique a(s) proposta(s) de origem vinculada a faturada quando a ordem do cliente é definida como faturada (e se a quantidade da ordem for igual à quantidade total de propostas vinculadas assinadas)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classifique a(s) proposta(s) de origem vinculada a faturada quando a fatura do cliente é validada (e se o valor da fatura for igual ao montante total de propostas vinculadas assinadas)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classifique a(s) ordem(s) do cliente de origem vinculada a faturar quando a fatura do cliente é validada (e se o valor da fatura for igual ao montante total de pedidos vinculados)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classifique a(s) ordem(s) do cliente de origem vinculada a faturar quando a fatura do cliente é definida como paga (e se o valor da fatura for igual ao montante total de pedidos vinculados)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classifique a ordem do cliente de origem vinculada a ser enviada quando uma remessa é validada (e se a quantidade enviada por todas as remessas for o mesmo que na ordem de atualização)
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Criar automaticamente uma fatura após a conclusão do pedido (a nova fatura terá o mesmo valor que constar no pedido)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classifique a proposta de origem vinculada como faturado quando a ordem do cliente é definida como faturado (e se a quantidade da ordem for igual à quantidade total de propostas vinculadas assinadas)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classificar a proposta de origem vinculada como faturado quando a fatura do cliente é validada (e se o valor da fatura é o mesmo que o valor total da proposta vinculada assinada)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classifique pedidos do cliente de origem vinculada como faturado quando a fatura do cliente for validada (e se o valor da fatura for igual ao montante total de pedidos vinculados)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classifique pedidos do cliente de origem vinculada como faturado quando a fatura do cliente constar o pagamento (e se o valor da fatura for igual ao montante total de pedidos vinculados)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classifique pedidos do cliente de origem vinculada como enviados quando uma remessa for validada (e se a quantidade enviada por todas as remessas for o mesmo que na ordem de atualização)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classificar a proposta do fornecedor de origem vinculada como faturado quando a fatura do fornecedor for validada (e se o valor da fatura for o mesmo que o valor total da proposta vinculada)

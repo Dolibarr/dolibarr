@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2002		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+/* Copyright (C) 2002		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Charlie Benke			<charlie@patas-monkey.com>
+ * Copyright (C) 2018-2019  Thibault Foucart		<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,6 +66,11 @@ class AdherentType extends CommonObject
      */
     public $label;
 
+    /**
+     * @var string Adherent type nature
+     */
+    public $morphy;
+
 	/**
 	 * @var int Subsription required (0 or 1)
 	 * @since 5.0
@@ -115,10 +121,12 @@ class AdherentType extends CommonObject
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type (";
-		$sql.= "libelle";
+		$sql.= " morphy";
+		$sql.= ", libelle";
 		$sql.= ", entity";
 		$sql.= ") VALUES (";
-		$sql.= "'".$this->db->escape($this->label)."'";
+		$sql.= "'".$this->db->escape($this->morphy)."'";
+		$sql.= ", '".$this->db->escape($this->label)."'";
 		$sql.= ", ".$conf->entity;
 		$sql.= ")";
 
@@ -184,6 +192,7 @@ class AdherentType extends CommonObject
 		$sql.= "SET ";
 		$sql.= "statut = ".$this->statut.",";
 		$sql.= "libelle = '".$this->db->escape($this->label) ."',";
+        $sql.= "morphy = '".$this->db->escape($this->morphy) ."',";
 		$sql.= "subscription = '".$this->db->escape($this->subscription)."',";
 		$sql.= "note = '".$this->db->escape($this->note)."',";
 		$sql.= "vote = ".(integer) $this->db->escape($this->vote).",";
@@ -274,7 +283,7 @@ class AdherentType extends CommonObject
 	 */
 	public function fetch($rowid)
 	{
-		$sql = "SELECT d.rowid, d.libelle as label, d.statut, d.subscription, d.mail_valid, d.note, d.vote";
+		$sql = "SELECT d.rowid, d.libelle as label, d.morphy, d.statut, d.subscription, d.mail_valid, d.note, d.vote";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 		$sql .= " WHERE d.rowid = ".(int) $rowid;
 
@@ -290,6 +299,7 @@ class AdherentType extends CommonObject
 				$this->id             = $obj->rowid;
 				$this->ref            = $obj->rowid;
 				$this->label          = $obj->label;
+                $this->morphy         = $obj->morphy;
 				$this->statut         = $obj->statut;
 				$this->subscription   = $obj->subscription;
 				$this->mail_valid     = $obj->mail_valid;
@@ -403,6 +413,21 @@ class AdherentType extends CommonObject
 		}
 	}
 
+	/**
+	 *	Return translated label by the nature of a adherent (physical or moral)
+	 *
+	 *	@param	string		$morphy		Nature of the adherent (physical or moral)
+	 *	@return	string					Label
+	 */
+	public function getmorphylib($morphy = '')
+	{
+		global $langs;
+		if ($morphy == 'phy') { return $langs->trans("Physical"); }
+		elseif ($morphy == 'mor') { return $langs->trans("Moral"); }
+        else return $langs->trans("MorPhy");
+		//return $morphy;
+	}
+
     /**
      *  Return clicable name (with picto eventually)
      *
@@ -440,6 +465,7 @@ class AdherentType extends CommonObject
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -449,7 +475,7 @@ class AdherentType extends CommonObject
 	 *									2=Return key only (uid=qqq)
 	 *	@return		string				DN
 	 */
-	private function _load_ldap_dn($info, $mode = 0)
+	public function _load_ldap_dn($info, $mode = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -462,12 +488,13 @@ class AdherentType extends CommonObject
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
-	private function _load_ldap_info()
+	public function _load_ldap_info()
 	{
         // phpcs:enable
 		global $conf,$langs;

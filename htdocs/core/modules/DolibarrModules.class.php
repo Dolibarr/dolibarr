@@ -667,7 +667,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                     array(
                         'doc/' => dol_buildpath(strtolower($this->name).'/doc/', 1),
                         'img/' => dol_buildpath(strtolower($this->name).'/img/', 1),
-                        'images/' => dol_buildpath(strtolower($this->name).'/imgages/', 1),
+                        'images/' => dol_buildpath(strtolower($this->name).'/images/', 1),
                     )
                 );
             }
@@ -746,7 +746,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         $filefound= false;
 
         // Define path to file README.md.
-        // First check README-la_LA.md then README.md
+        // First check ChangeLog-la_LA.md then ChangeLog.md
         $pathoffile = dol_buildpath(strtolower($this->name).'/ChangeLog-'.$langs->defaultlang.'.md', 0);
         if (dol_is_file($pathoffile)) {
             $filefound = true;
@@ -1297,7 +1297,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                 // For the moment, we manage this with hard coded exception
                 //print "Remove box ".$file.'<br>';
                 if ($file == 'box_graph_product_distribution.php') {
-                    if (! empty($conf->produit->enabled) || ! empty($conf->service->enabled)) {
+                    if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) {
                         dol_syslog("We discard disabling of module ".$file." because another module still active require it.");
                         continue;
                     }
@@ -1740,8 +1740,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                     $r_subperms = isset($this->rights[$key][5])?$this->rights[$key][5]:'';
                     $r_modul = empty($this->rights_class)?strtolower($this->name):$this->rights_class;
 
-                    if (empty($r_type)) { $r_type='w';
-                    }
+                    if (empty($r_type)) { $r_type='w'; }
+                    if (empty($r_def)) { $r_def=0; }
 
                     // Search if perm already present
                     $sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."rights_def";
@@ -1938,7 +1938,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
             $menu->type=$this->menu[$key]['type'];
             $menu->mainmenu=isset($this->menu[$key]['mainmenu'])?$this->menu[$key]['mainmenu']:(isset($menu->fk_mainmenu)?$menu->fk_mainmenu:'');
             $menu->leftmenu=isset($this->menu[$key]['leftmenu'])?$this->menu[$key]['leftmenu']:'';
-            $menu->titre=$this->menu[$key]['titre'];
+            $menu->titre=$this->menu[$key]['titre'];	// deprecated
+            $menu->title=$this->menu[$key]['titre'];
             $menu->url=$this->menu[$key]['url'];
             $menu->langs=$this->menu[$key]['langs'];
             $menu->position=$this->menu[$key]['position'];

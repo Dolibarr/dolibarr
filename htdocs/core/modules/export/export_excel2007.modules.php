@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 class ExportExcel2007 extends ExportExcel
 {
 	/**
-	 * @var int ID
+	 * @var string ID
 	 */
 	public $id;
 
@@ -76,7 +76,7 @@ class ExportExcel2007 extends ExportExcel
 		$this->db = $db;
 
 		$this->id='excel2007';                  // Same value then xxx in file name export_xxx.modules.php
-		$this->label='Excel 2007';               // Label of driver
+		$this->label='Excel 2007 (old library)';               // Label of driver
 		$this->desc = $langs->trans('Excel2007FormatDesc');
 		$this->extension='xlsx';             // Extension for generated file by this driver
         $this->picto='mime/xls';			// Picto

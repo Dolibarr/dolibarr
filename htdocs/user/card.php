@@ -329,12 +329,12 @@ if (empty($reshook)) {
 		{
 			$error = 0;
 
-			if (!$_POST["lastname"]) {
+			if (! GETPOST("lastname", 'alpha')) {
 				setEventMessages($langs->trans("NameNotDefined"), null, 'errors');
 				$action = "edit";       // Go back to create page
 				$error ++;
 			}
-			if (!$_POST["login"]) {
+			if (! GETPOST("login", 'alpha')) {
 				setEventMessages($langs->trans("LoginNotDefined"), null, 'errors');
 				$action = "edit";       // Go back to create page
 				$error ++;
@@ -423,8 +423,20 @@ if (empty($reshook)) {
 				if (GETPOST('deletephoto')) {
 					$object->photo = '';
 				}
-				if (!empty($_FILES['photo']['name'])) {
-					$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
+				if (!empty($_FILES['photo']['name']))
+				{
+				    $isimage=image_format_supported($_FILES['photo']['name']);
+				    if ($isimage > 0)
+				    {
+    					$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
+				    }
+				    else
+				    {
+				        $error++;
+				        $langs->load("errors");
+				        setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
+				        dol_syslog($langs->transnoentities("ErrorBadImageFormat"), LOG_INFO);
+				    }
 				}
 
 				if (!$error) {
@@ -1778,7 +1790,7 @@ else
 				if (! empty($object->email))
 				{
 					$langs->load("mails");
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=presend&amp;mode=init#presend">'.$langs->trans('SendMail').'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=presend&amp;mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
 				}
 				else
 				{
@@ -2111,7 +2123,7 @@ else
 				&& ($user->id != $object->id)                   // Don't downgrade ourself
 				&& (
 					(empty($conf->multicompany->enabled) && $nbAdmin >= 1)
-					|| (! empty($conf->multicompany->enabled) && ($object->entity > 0 || $nbSuperAdmin > 1))    // Don't downgrade a superadmin if alone
+					|| (! empty($conf->multicompany->enabled) && (($object->entity > 0 || ($user->entity == 0 && $object->entity == 0)) || $nbSuperAdmin > 1))    // Don't downgrade a superadmin if alone
 					)
 				)
 				{
@@ -2531,7 +2543,7 @@ else
             		if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
 	            	{
 	            		print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
-	            		print "<td>".$mc->select_entities($object->entity, 'entity', '', 0, 1);		// last parameter 1 means, show also a choice 0=>'all entities'
+	            		print "<td>".$mc->select_entities($object->entity, 'entity', '', 0, 1, false, false, 1);		// last parameter 1 means, show also a choice 0=>'all entities'
 	            		print "</td></tr>\n";
 	            	}
 	            	else

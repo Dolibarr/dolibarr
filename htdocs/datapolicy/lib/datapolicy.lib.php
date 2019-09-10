@@ -48,7 +48,9 @@ function datapolicyAdminPrepareHead()
         $h++;
     }
 
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'datapolicy');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'datapolicy');
+
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'datapolicy', 'remove');
 
     return $head;
 }

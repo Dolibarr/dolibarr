@@ -223,7 +223,7 @@ class Productbatch extends CommonObject
 		$sql.= " batch=".(isset($this->batch)?"'".$this->db->escape($this->batch)."'":"null").",";
 		$sql.= " qty=".(isset($this->qty)?$this->qty:"null").",";
 		$sql.= " import_key=".(isset($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null")."";
-        $sql.= " WHERE rowid=".$this->id." AND tms='".$this->db->idate($this->tms)."'";
+        $sql.= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
 
@@ -327,13 +327,12 @@ class Productbatch extends CommonObject
 	/**
 	 *	Load an object from its id and create a new one in database
 	 *
+	 *  @param	User	$user		User making the clone
 	 *	@param	int		$fromid     Id of object to clone
 	 * 	@return	int					New id of clone
 	 */
-	public function createFromClone($fromid)
+	public function createFromClone(User $user, $fromid)
 	{
-		global $user,$langs;
-
 		$error=0;
 
 		$object=new Productbatch($this->db);

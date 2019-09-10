@@ -574,13 +574,20 @@ class Fichinter extends CommonObject
 				// Rename directory if dir was a temporary ref
 				if (preg_match('/^[\(]?PROV/i', $this->ref))
 				{
-					// Rename of object directory ($this->ref = old ref, $num = new ref)
-					// to  not lose the linked files
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+					// Now we rename also files into index
+					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'ficheinter/".$this->db->escape($this->newref)."'";
+					$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'ficheinter/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$resql = $this->db->query($sql);
+					if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+					// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 					$oldref = dol_sanitizeFileName($this->ref);
 					$newref = dol_sanitizeFileName($num);
 					$dirsource = $conf->ficheinter->dir_output.'/'.$oldref;
 					$dirdest = $conf->ficheinter->dir_output.'/'.$newref;
-					if (file_exists($dirsource))
+					if (! $error && file_exists($dirsource))
 					{
 						dol_syslog(get_class($this)."::setValid rename dir ".$dirsource." into ".$dirdest);
 
@@ -1144,12 +1151,13 @@ class Fichinter extends CommonObject
 	/**
 	 *	Load an object from its id and create a new one in database
 	 *
-	 *	@param		int			$socid			Id of thirdparty
-	 *	@return		int							New id of clone
+	 *  @param	    User	$user		    User making the clone
+	 *	@param		int		$socid			Id of thirdparty
+	 *	@return		int						New id of clone
 	 */
-	public function createFromClone($socid = 0)
+	public function createFromClone(User $user, $socid = 0)
 	{
-		global $user,$hookmanager;
+		global $hookmanager;
 
 		$error=0;
 
@@ -1385,7 +1393,7 @@ class Fichinter extends CommonObject
 }
 
 /**
- *	Classe permettant la gestion des lignes d'intervention
+ *	Class to manage intervention lines
  */
 class FichinterLigne extends CommonObjectLine
 {

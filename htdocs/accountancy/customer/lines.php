@@ -21,7 +21,7 @@
 
 /**
  * \file 		htdocs/accountancy/customer/lines.php
- * \ingroup 	Advanced accountancy
+ * \ingroup 	Accountancy (Double entries)
  * \brief 		Page of detail of the lines of ventilation of invoices customers
  */
 require '../../main.inc.php';
@@ -294,7 +294,7 @@ if ($result) {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
 	print_barre_liste($langs->trans("InvoiceLinesDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
-	print $langs->trans("DescVentilDoneCustomer") . '<br>';
+	print '<span class="opacitymedium">'.$langs->trans("DescVentilDoneCustomer") . '</span><br>';
 
 	print '<br><div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br>';
 	print $formaccounting->select_account($account_parent, 'account_parent', 2, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone valignmiddle');
@@ -310,9 +310,9 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="' . dol_escape_htmltag($search_invoice) . '"></td>';
 	print '<td class="liste_titre center nowraponall">';
     if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-        print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day" value="'.dol_escape_htmltag($search_day).'">';
+        print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_day" value="'.dol_escape_htmltag($search_day).'">';
     }
-   	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_month" value="'.dol_escape_htmltag($search_month).'">';
+   	print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month" value="'.dol_escape_htmltag($search_month).'">';
    	$formother->select_year($search_year, 'search_year', 1, 20, 5);
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="' . dol_escape_htmltag($search_ref) . '"></td>';
@@ -374,9 +374,9 @@ if ($result) {
 
 		// Ref Product
 		print '<td>';
-		if ($product_static->id)
-			print $product_static->getNomUrl(1);
-		if ($objp->product_label) print '<br>'.$objp->product_label;
+		if ($product_static->id > 0) print $product_static->getNomUrl(1);
+		if ($product_static->id > 0 && $objp->product_label) print '<br>';
+		if ($objp->product_label) print $objp->product_label;
 		print '</td>';
 
 		print '<td class="tdoverflowonsmartphone">';
@@ -385,7 +385,7 @@ if ($result) {
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->description);
 		print '</td>';
 
-		print '<td class="right">' . price($objp->total_ht) . '</td>';
+		print '<td class="nowrap right">' . price($objp->total_ht) . '</td>';
 
 		print '<td class="right">' . vatrate($objp->tva_tx.($objp->vat_src_code?' ('.$objp->vat_src_code.')':'')) . '</td>';
 

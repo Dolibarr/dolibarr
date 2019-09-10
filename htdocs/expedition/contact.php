@@ -255,7 +255,7 @@ if ($id > 0 || ! empty($ref))
 
 	dol_fiche_end();
 
-	// Lignes de contacts
+	// Lines of contacts
 	echo '<br>';
 
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)

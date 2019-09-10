@@ -37,12 +37,12 @@ $action = GETPOST('action', 'aZ09');
 /*
  *	Actions
  */
- 
+
 if ($action == 'setvalue' && $user->admin)
 {
-    $result=dolibarr_set_const($db, "CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS", GETPOST("CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS"), 'chaine', 0, '', $conf->entity);
-    $result=dolibarr_set_const($db, "CLICKTODIAL_URL", GETPOST("CLICKTODIAL_URL"), 'chaine', 0, '', $conf->entity);
-    
+    $result1=dolibarr_set_const($db, "CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS", GETPOST("CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS"), 'chaine', 0, '', $conf->entity);
+    $result2=dolibarr_set_const($db, "CLICKTODIAL_URL", GETPOST("CLICKTODIAL_URL"), 'chaine', 0, '', $conf->entity);
+
     if ($result1 >= 0 && $result2 >= 0)
     {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');

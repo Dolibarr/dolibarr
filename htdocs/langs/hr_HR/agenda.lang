@@ -38,6 +38,7 @@ ActionsEvents=Događaji za koje Dolibarr će kreirat akcije u podsjetnicima auto
 EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into %s module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Third party %s created
+COMPANY_DELETEInDolibarr=Third party %s deleted
 ContractValidatedInDolibarr=Contract %s validated
 CONTRACT_DELETEInDolibarr=Contract %s deleted
 PropalClosedSignedInDolibarr=Proposal %s signed
@@ -95,6 +96,7 @@ PROJECT_MODIFYInDolibarr=Project %s modified
 PROJECT_DELETEInDolibarr=Project %s deleted
 TICKET_CREATEInDolibarr=Ticket %s created
 TICKET_MODIFYInDolibarr=Ticket %s modified
+TICKET_ASSIGNEDInDolibarr=Ticket %s assigned
 TICKET_CLOSEInDolibarr=Ticket %s closed
 TICKET_DELETEInDolibarr=Ticket %s deleted
 ##### End agenda events #####
@@ -123,9 +125,9 @@ ExtSiteUrlAgenda=URL za pristup .ical datoteki
 ExtSiteNoLabel=Bez opisa
 VisibleTimeRange=Vidljivi vremenski raspon
 VisibleDaysRange=Vidljivi dnevni raspon
-AddEvent=Kreiraj događaj
+AddEvent=Izradi događaj
 MyAvailability=Moja dostupnost
-ActionType=Tip događaja
+ActionType=Vrsta događaja
 DateActionBegin=Datum početka događaja
 ConfirmCloneEvent=Are you sure you want to clone the event <b>%s</b>?
 RepeatEvent=Ponovi događaj

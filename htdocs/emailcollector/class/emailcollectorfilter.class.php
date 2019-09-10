@@ -114,7 +114,7 @@ class EmailCollectorFilter extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs;
 
 		$this->db = $db;
 
@@ -133,11 +133,11 @@ class EmailCollectorFilter extends CommonObject
 		// Translate some data of arrayofkeyval
 		foreach($this->fields as $key => $val)
 		{
-			if (is_array($this->fields['status']['arrayofkeyval']))
+			if (is_array($val['arrayofkeyval']))
 			{
-				foreach($this->fields['status']['arrayofkeyval'] as $key2 => $val2)
+				foreach($val['arrayofkeyval'] as $key2 => $val2)
 				{
-					$this->fields['status']['arrayofkeyval'][$key2]=$langs->trans($val2);
+					$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
 				}
 			}
 		}
@@ -159,7 +159,7 @@ class EmailCollectorFilter extends CommonObject
 			$this->errors[]=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"));
 			return -1;
 		}
-		if (! in_array($this->type, array('seen','unseen','withtrackingid','withouttrackingid')) && empty($this->rulevalue))
+		if (! in_array($this->type, array('seen', 'unseen', 'unanswered', 'answered', 'withtrackingid', 'withouttrackingid')) && empty($this->rulevalue))
 		{
 			$langs->load("errors");
 			$this->errors[]=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("SearchString"));
