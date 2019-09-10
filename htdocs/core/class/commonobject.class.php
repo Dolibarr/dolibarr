@@ -5475,7 +5475,7 @@ abstract class CommonObject
 			{
 				$morecss = 'minwidth100imp';
 			}
-			elseif ($type == 'datetime' || $type == 'time')
+			elseif ($type == 'datetime' || $type == 'odootime')
 			{
 				$morecss = 'minwidth200imp';
 			}
@@ -5519,7 +5519,7 @@ abstract class CommonObject
 			// TODO Must also support $moreparam
 			$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1);
 		}
-		elseif ($type=='time')
+		elseif ($type=='odootime')
 		{
             $hour=floor($value);
             $value=dol_mktime($hour, ($value-$hour)*60, 0, 0,0,0,'',0);
@@ -6084,7 +6084,7 @@ abstract class CommonObject
 			{
 				$morecss = 'minwidth100imp';
 			}
-			elseif ($type == 'datetime'|| $type == 'time')
+			elseif ($type == 'datetime'|| $type == 'odootime')
 			{
 				$morecss = 'minwidth200imp';
 			}
@@ -6136,7 +6136,7 @@ abstract class CommonObject
 				$value='';
 			}
 		}
-		elseif ($type == 'time')
+		elseif ($type == 'odootime')
 		{
 			if(! empty($value)) {
 			    $hour=floor($value);
