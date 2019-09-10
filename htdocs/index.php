@@ -425,7 +425,8 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
     if (!empty($conf->supplier_order->enabled) && $user->rights->fournisseur->commande->lire) {
         include_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
         $board = new CommandeFournisseur($db);
-        $dashboardlines[$board->element] = $board->load_board($user);
+        $dashboardlines[$board->element . '_opened'] = $board->load_board($user, "opened");
+        $dashboardlines[$board->element . '_awaiting'] = $board->load_board($user, 'awaiting');
     }
 
 // Number of services enabled (delayed)
@@ -550,7 +551,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
             array(
                 'groupName' => 'SuppliersOrders',
                 'stats' =>
-                    array('order_supplier'),
+                    array('order_supplier_opened', 'order_supplier_awaiting'),
             ),
         'invoice_supplier' =>
             array(
