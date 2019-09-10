@@ -1437,7 +1437,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
                 {
                 	$pathckeditor=constant('JS_CKEDITOR');
                 }
-                print '<script>';
+                print '<script><!-- enable ckeditor by main.inc.php -->';
                 print 'var CKEDITOR_BASEPATH = \''.$pathckeditor.'\';'."\n";
                 print 'var ckeditorConfig = \''.dol_buildpath($themesubdir.'/theme/'.$conf->theme.'/ckeditor/config.js'.($ext?'?'.$ext:''), 1).'\';'."\n";		// $themesubdir='' in standard usage
                 print 'var ckeditorFilebrowserBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
@@ -1445,7 +1445,14 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
                 print '</script>'."\n";
                 print '<script src="'.$pathckeditor.$jsckeditor.($ext?'?'.$ext:'').'"></script>'."\n";
                 print '<script>';
-                print 'CKEDITOR.disableAutoInline = true;'."\n";
+                if (GETPOST('mode', 'aZ09') == 'Full_inline')
+                {
+                	print 'CKEDITOR.disableAutoInline = false;'."\n";
+                }
+                else
+                {
+                	print 'CKEDITOR.disableAutoInline = true;'."\n";
+                }
                 print '</script>'."\n";
             }
 
@@ -2066,8 +2073,8 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
             $bugbaseurl.= urlencode("## [Attached files](https://help.github.com/articles/issue-attachments) (Screenshots, screencasts, dolibarr.log, debugging informations…)\n");
             $bugbaseurl.= urlencode("[*Files*]\n");
             $bugbaseurl.= urlencode("\n");
-			
-			
+
+
 			// Execute hook printBugtrackInfo
 			$parameters=array('bugbaseurl'=>$bugbaseurl);
 			$reshook=$hookmanager->executeHooks('printBugtrackInfo', $parameters);    // Note that $action and $object may have been modified by some hooks

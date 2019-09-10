@@ -2290,7 +2290,8 @@ if (! GETPOST('hide_websitemenu'))
 				print '<div class="websiteselectionsection inline-block">';
 				print '<div class="inline-block">';
 
-				print '<span id="switchckeditorinline">';
+				print '<span id="switchckeditorinline">'."\n";
+				print '<!-- Code to enabled edit inline ckeditor -->'."\n";
 				print '<script type="text/javascript">
 						$(document).ready(function() {
 							var isEditingEnabled = '.($conf->global->WEBSITE_EDITINLINE?'true':'false').';
@@ -2314,7 +2315,8 @@ if (! GETPOST('hide_websitemenu'))
 										CKEDITOR.inline(idtouse, {
 											// Allow some non-standard markup that we used in the introduction.
 											extraAllowedContent: \'span(*);cite(*);q(*);dl(*);dt(*);dd(*);ul(*);li(*);header(*);button(*);h1(*);h2(*);\',
-											removePlugins: \'stylescombo\',
+											//extraPlugins: \'sourcedialog\',
+											removePlugins: \'flash,stylescombo\',
 											// Show toolbar on startup (optional).
 											// startupFocus: true
 										});
