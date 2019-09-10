@@ -95,6 +95,7 @@ HelpPaymentHigherThanReminderToPay=Attention, le montant de paiement pour une ou
 HelpPaymentHigherThanReminderToPaySupplier=Attention, le montant de paiement pour une ou plusieurs factures est supérieur au reste à payer.<br>Corrigez votre saisie, sinon, confirmez et pensez à créer un avoir pour l'excédent pour chaque facture surpayée.
 ClassifyPaid=Classer 'Payée'
 ClassifyPaidPartially=Classer 'Payée partiellement'
+ClassifyUnPaid=Classer 'Non payée'
 ClassifyCanceled=Classer 'Abandonnée'
 ClassifyClosed=Classer 'Fermée'
 ClassifyUnBilled=Classer 'Non facturée'

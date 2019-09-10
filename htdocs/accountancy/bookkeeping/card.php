@@ -641,8 +641,8 @@ if ($action == 'create')
 						print '<td>' . $accountingaccount->getNomUrl(0,1,1,'',0) . '</td>';
 						print '<td>' . length_accounta($line->subledger_account) . '</td>';
 						print '<td>' . $line->label_operation. '</td>';
-						print '<td align="right">' . price($line->debit) . '</td>';
-						print '<td align="right">' . price($line->credit) . '</td>';
+						print '<td class="nowrap right">' . price($line->debit) . '</td>';
+						print '<td class="nowrap right">' . price($line->credit) . '</td>';
 
 						print '<td align="center">';
 						print '<a href="' . $_SERVER["PHP_SELF"] . '?action=update&id=' . $line->id . '&piece_num=' . $line->piece_num . '&mode='.$mode.'">';
@@ -675,7 +675,7 @@ if ($action == 'create')
 					print $formaccounting->select_account($accountingaccount_number, 'accountingaccount_number', 1, array (), 1, 1, '');
 					print '</td>';
 					print '<td>';
-					// TODO For the moment we keep a fre input text instead of a combo. The select_auxaccount has problem because it does not
+					// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
 					// use setup of keypress to select thirdparty and this hang browser on large database.
 					if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
 					{

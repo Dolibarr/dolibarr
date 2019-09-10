@@ -121,7 +121,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 	$result=$object->delete($user);
 	if ($result > 0)
 	{
-		header("Location: index.php");
+		header("Location: list.php");
 		exit;
 	}
 	else

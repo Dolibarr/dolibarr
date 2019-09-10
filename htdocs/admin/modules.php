@@ -130,13 +130,13 @@ if ($action=='install')
     }
     else
     {
-        if (! preg_match('/\.zip$/i',$original_file))
+        if (! $error && ! preg_match('/\.zip$/i', $original_file))
         {
             $langs->load("errors");
             setEventMessages($langs->trans("ErrorFileMustBeADolibarrPackage",$original_file), null, 'errors');
             $error++;
         }
-    	if (! preg_match('/module_.*\-[\d]+\.[\d]+.*$/i',$original_file))
+    	if (! $error && ! preg_match('/^(module[a-zA-Z0-9]*|theme)_.*\-([0-9][0-9\.]*)\.zip$/i', $original_file))
 		{
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFilenameDosNotMatchDolibarrPackageRules",$original_file, 'module_*-x.y*.zip'), null, 'errors');
@@ -180,13 +180,13 @@ if ($action=='install')
             {
                 // Now we move the dir of the module
                 $modulename=preg_replace('/module_/', '', $original_file);
-                $modulename=preg_replace('/\-[\d]+\.[\d]+.*$/', '', $modulename);
+                $modulename=preg_replace('/\-([0-9][0-9\.]*)\.zip$/i', '', $modulename);
                 // Search dir $modulename
-                $modulenamedir=$conf->admin->dir_temp.'/'.$tmpdir.'/'.$modulename;
+                $modulenamedir=$conf->admin->dir_temp.'/'.$tmpdir.'/'.$modulename;		// Example .../mymodule
                 //var_dump($modulenamedir);
                 if (! dol_is_dir($modulenamedir))
                 {
-                    $modulenamedir=$conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulename;
+                	$modulenamedir=$conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulename;	// Example .../htdocs/mymodule
                     //var_dump($modulenamedir);
                     if (! dol_is_dir($modulenamedir))
                     {
@@ -197,8 +197,14 @@ if ($action=='install')
 
                 if (! $error)
                 {
+                	// TODO Make more test
+                }
+
+                // Now we install the module
+                if (! $error)
+                {
                     //var_dump($dirins);
-                    @dol_delete_dir_recursive($dirins.'/'.$modulename);
+                    @dol_delete_dir_recursive($dirins.'/'.$modulename);	// delete the zip file
                     dol_syslog("Uncompress of module file is a success. We copy it from ".$modulenamedir." into target dir ".$dirins.'/'.$modulename);
                     $result=dolCopyDir($modulenamedir, $dirins.'/'.$modulename, '0444', 1);
                     if ($result <= 0)

@@ -94,6 +94,7 @@ PaymentHigherThanReminderToPay=Payment higher than reminder to pay
 HelpPaymentHigherThanReminderToPay=Attention, the payment amount of one or more bills is higher than the outstanding amount to pay. <br> Edit your entry, otherwise confirm and consider creating a credit note for the excess received for each overpaid invoice.
 HelpPaymentHigherThanReminderToPaySupplier=Attention, the payment amount of one or more bills is higher than the outstanding amount to pay. <br> Edit your entry, otherwise confirm and consider creating a credit note for the excess paid for each overpaid invoice.
 ClassifyPaid=Classify 'Paid'
+ClassifyUnPaid=Classify 'Unpaid'
 ClassifyPaidPartially=Classify 'Paid partially'
 ClassifyCanceled=Classify 'Abandoned'
 ClassifyClosed=Classify 'Closed'

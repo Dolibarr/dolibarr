@@ -29,7 +29,7 @@ require '../main.inc.php';	// Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
-$langs->loadLangs(array("bills", "cashdesk"));
+$langs->loadLangs(array("companies","commercial","bills", "cashdesk"));
 
 $id = GETPOST('id','int');
 $action = GETPOST('action','alpha');

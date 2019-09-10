@@ -810,8 +810,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				if ($facture->type == 2) { $remaindertopay=$langs->trans("RemainderToPayBack"); $multicurrencyremaindertopay=$langs->trans("MulticurrencyRemainderToPayBack"); }
 
                 $i = 0;
-                //print '<tr><td colspan="3">';
+
                 print '<br>';
+
                 print_barre_liste($langs->trans('StripeInvoiceList').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, '', '');
                 print '<table class="noborder" width="100%">';
                 print '<tr class="liste_titre">';
@@ -830,6 +831,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 if (!empty($conf->multicurrency->enabled)) {
                     print '<td align="right">'.$langs->trans('MulticurrencyPaymentAmount').'</td>';
                 }
+
+                $tmpinvoice =new Facture($db);
+                $parameters=array();
+                $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $tmpinvoice, $action); // Note that $action and $object may have been modified by hook
+
                 print '<td align="right">&nbsp;</td>';
                 print "</tr>\n";
 
@@ -960,6 +966,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                    print "</td>";
 					}
 
+					$parameters=array();
+					$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $objp, $action); // Note that $action and $object may have been modified by hook
+
                     // Warning
                     print '<td align="center" width="16">';
                     //print "xx".$amounts[$invoice->id]."-".$amountsresttopay[$invoice->id]."<br>";
@@ -969,9 +978,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                         print ' '.img_warning($langs->trans("PaymentHigherThanReminderToPay"));
                     }
                     print '</td>';
-
-					$parameters=array();
-					$reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$objp,$action); // Note that $action and $object may have been modified by hook
 
                     print "</tr>\n";
 
@@ -984,7 +990,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 }
                 if ($i > 1)
                 {
-                $amount=round(price($sign * price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits,'MT'))*100);
+                    $amount=round(price($sign * price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits,'MT'))*100);
+
                     // Print total
                     print '<tr class="liste_total">';
                     print '<td colspan="2" align="left">'.$langs->trans('TotalTTC').'</td>';
@@ -1003,6 +1010,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 					if (!empty($conf->multicurrency->enabled)) {
                         print '<td align="right" id="multicurrency_result" style="font-weight: bold;"></td>';
                     }
+                    print '<td></td>';
                     print "</tr>\n";
                 }
                 print "</table>";
@@ -1100,7 +1108,12 @@ if (! GETPOST('action'))
         print_liste_field_titre('Type',$_SERVER["PHP_SELF"],'libelle','','','',$sortfield,$sortorder);
         print_liste_field_titre('Amount',$_SERVER["PHP_SELF"],'fa_amount','','','align="right"',$sortfield,$sortorder);
 		print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
-        print "</tr>\n";
+
+		$tmpobject = new Paiement($db);
+		$parameters=array();
+		$reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $tmpobject, $action); // Note that $action and $object may have been modified by hook
+
+		print "</tr>\n";
 
         while ($i < min($num,$limit))
         {
@@ -1112,7 +1125,7 @@ if (! GETPOST('action'))
             print '<td align="right">'.price($objp->amount).'</td><td>&nbsp;</td>';
 
 			$parameters=array();
-			$reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$objp,$action); // Note that $action and $object may have been modified by hook
+			$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $objp, $action); // Note that $action and $object may have been modified by hook
 
             print '</tr>';
             $i++;
