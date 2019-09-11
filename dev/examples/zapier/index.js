@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 const triggerThirdparty = require('./triggers/thirdparty');
 const triggerOrder = require('./triggers/order');
 const triggerAction = require('./triggers/action');
