@@ -528,6 +528,8 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
             $actionstatic->type_picto=$histo[$key]['apicto'];
             $actionstatic->type_code=$histo[$key]['acode'];
 
+            $url = DOL_URL_ROOT.'/comm/action/card.php?id='.$histo[$key]['id'];
+
             $tmpa=dol_getdate($histo[$key]['datestart'], false);
             if($actualCycleDate !== $tmpa['year'].'-'.$tmpa['yday']){
                 $actualCycleDate = $tmpa['year'].'-'.$tmpa['yday'];
@@ -598,7 +600,18 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 
             $out.='<div class="timeline-item">'."\n";
 
+            $out.='<span class="timeline-header-action">';
 
+            //$out.='<a href="'.$url.'" class="timeline-btn">'.$langs->trans('Show').'</a>';
+
+            if ($user->rights->agenda->allactions->create ||
+                (($actionstatic->authorid == $user->id || $actionstatic->userownerid == $user->id) && $user->rights->agenda->myactions->create))
+            {
+                $out.='<a class="timeline-btn" href="' . DOL_MAIN_URL_ROOT.  '/comm/action/card.php?action=edit&id='.$actionstatic->id.'"><i class="fa fa-pencil" title="'.$langs->trans("Modify").'" ></i></a>';
+            }
+
+
+            $out.='</span>';
             // Date
             $out.='<span class="time"><i class="fa fa-clock-o"></i> ';
             $out.=dol_print_date($histo[$key]['datestart'], 'dayhour');
@@ -643,6 +656,9 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 
             // Title
             $out .= ' <span class="messaging-title">';
+
+
+
             if($actionstatic->code == 'TICKET_MSG') {
                 $out .= $langs->trans('TicketNewMessage');
             }else{
@@ -660,6 +676,8 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
                     $out .= dol_trunc($libelle, 120);
                 }
             }
+
+
             $out .= '</span>';
 
             $out.='</h3>';
@@ -679,7 +697,29 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
             $footer = '';
 
             // Contact for this action
-            if (empty($objcon->id) && isset($histo[$key]['contact_id']) && $histo[$key]['contact_id'] > 0)
+            if (isset($histo[$key]['socpeopleassigned']) && is_array($histo[$key]['socpeopleassigned']) && count($histo[$key]['socpeopleassigned']) > 0) {
+
+                $contactList = '';
+                foreach ($histo[$key]['socpeopleassigned'] as $cid => $Tab) {
+                    $contact = new Contact($db);
+                    $result = $contact->fetch($cid);
+
+                    if ($result < 0)
+                        dol_print_error($db, $contact->error);
+
+                    if ($result > 0) {
+                        $contactList.= !empty($contactList)?', ':'';
+                        $contactList .= $contact->getNomUrl(1);
+                        if (isset($histo[$key]['acode']) && $histo[$key]['acode'] == 'AC_TEL') {
+                            if (! empty($contact->phone_pro))
+                                $contactList .= '(' . dol_print_phone($contact->phone_pro) . ')';
+                        }
+                    }
+                }
+
+                $footer .= $langs->trans('ActionOnContact').' : '.$contactList;
+            }
+            elseif (empty($objcon->id) && isset($histo[$key]['contact_id']) && $histo[$key]['contact_id'] > 0)
             {
                 $contact = new Contact($db);
                 $result = $contact->fetch($histo[$key]['contact_id']);
@@ -694,24 +734,6 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
                             $footer .= '(' . dol_print_phone($contact->phone_pro) . ')';
                     }
                 }
-            } elseif (isset($histo[$key]['socpeopleassigned']) && is_array($histo[$key]['socpeopleassigned']) && count($histo[$key]['socpeopleassigned']) > 0) {
-
-                foreach ($histo[$key]['socpeopleassigned'] as $cid => $Tab) {
-                    $contact = new Contact($db);
-                    $result = $contact->fetch($cid);
-
-                    if ($result < 0)
-                        dol_print_error($db, $contact->error);
-
-                    if ($result > 0) {
-                        $footer .= $contact->getNomUrl(1);
-                        if (isset($histo[$key]['acode']) && $histo[$key]['acode'] == 'AC_TEL') {
-                            if (! empty($contact->phone_pro))
-                                $footer .= '(' . dol_print_phone($contact->phone_pro) . ')';
-                        }
-                    }
-                }
-
             }
 
             if(!empty($footer)){

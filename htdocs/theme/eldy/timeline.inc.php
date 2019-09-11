@@ -35,7 +35,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 }
 .timeline > li {
     position: relative;
-    margin-right: 10px;
+    margin-right: 0;
     margin-bottom: 15px;
 }
 .timeline > li:before,
@@ -55,16 +55,60 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     background: #fff;
     color: #444;
     margin-left: 60px;
-    margin-right: 15px;
+    margin-right: 0px;
     padding: 0;
     position: relative;
 }
-.timeline > li > .timeline-item > .time {
+.timeline > li > .timeline-item > .time{
     color: #6f6f6f;
     float: right;
     padding: 10px;
     font-size: 12px;
 }
+
+
+.timeline > li > .timeline-item > .timeline-header-action{
+    color: #6f6f6f;
+    float: right;
+    padding: 7px;
+    font-size: 12px;
+}
+
+
+a.timeline-btn:link,
+a.timeline-btn:visited,
+a.timeline-btn:hover,
+a.timeline-btn:active
+{
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: 400;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 1px 5px;
+    font-size: 12px;
+    line-height: 1.5;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    user-select: none;
+    background-image: none;
+    text-decoration: none;
+    background-color: #f4f4f4;
+    color: #444;
+    border: 1px solid #ddd;
+}
+
+a.timeline-btn:hover
+{
+    background-color: #e7e7e7;
+    color: #333;
+    border-color: #adadad;;
+}
+
+
 .timeline > li > .timeline-item > .timeline-header {
     margin: 0;
     color: #333;
