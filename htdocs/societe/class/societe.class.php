@@ -212,11 +212,31 @@ class Societe extends CommonObject
 	 * @var string
 	 */
 	public $facebook;
-    /**
-     * LinkedIn username
-     * @var string
-     */
-    public $linkedin;
+  /**
+   * Instagram username
+   * @var string
+   */
+  public $instagram;
+	/**
+	 * Youtube
+	 * @var string
+	 */
+  public $youtube;
+	/**
+	 * Snapchat
+	 * @var string
+	 */
+  public $snapchat;
+	/**
+	 * Webpage
+	 * @var string
+	 */
+  public $linkedin;
+	/**
+	 * Whatsapp
+	 * @var string
+	 */
+  public $whatsapp;
 	/**
 	 * Webpage
 	 * @var string
@@ -862,8 +882,12 @@ class Societe extends CommonObject
 		$this->skype		= trim($this->skype);
 		$this->twitter		= trim($this->twitter);
 		$this->facebook		= trim($this->facebook);
-        $this->linkedin		= trim($this->linkedin);
-		$this->url			= $this->url?clean_url($this->url, 0):'';
+    $this->instagram	= trim($this->instagram);
+    $this->youtube		= trim($this->youtube);
+    $this->snapchat		= trim($this->snapchat);
+    $this->linkedin		= trim($this->linkedin);
+    $this->whatsapp		= trim($this->whatsapp);
+		$this->url			  = $this->url?clean_url($this->url, 0):'';
 		$this->note_private = trim($this->note_private);
 		$this->note_public  = trim($this->note_public);
 		$this->idprof1		= trim($this->idprof1);
@@ -1006,7 +1030,11 @@ class Societe extends CommonObject
 			$sql .= ",skype = ".(! empty($this->skype)?"'".$this->db->escape($this->skype)."'":"null");
 			$sql .= ",twitter = ".(! empty($this->twitter)?"'".$this->db->escape($this->twitter)."'":"null");
 			$sql .= ",facebook = ".(! empty($this->facebook)?"'".$this->db->escape($this->facebook)."'":"null");
+			$sql .= ",instagram = ".(! empty($this->instagram)?"'".$this->db->escape($this->instagram)."'":"null");
+			$sql .= ",youtube = ".(! empty($this->youtube)?"'".$this->db->escape($this->youtube)."'":"null");
+			$sql .= ",snapchat = ".(! empty($this->snapchat)?"'".$this->db->escape($this->snapchat)."'":"null");
 			$sql .= ",linkedin = ".(! empty($this->linkedin)?"'".$this->db->escape($this->linkedin)."'":"null");
+			$sql .= ",whatsapp = ".(! empty($this->whatsapp)?"'".$this->db->escape($this->whatsapp)."'":"null");
 			$sql .= ",url = ".(! empty($this->url)?"'".$this->db->escape($this->url)."'":"null");
 
 			$sql .= ",parent = " . ($this->parent > 0 ? $this->parent : "null");
@@ -1150,7 +1178,11 @@ class Societe extends CommonObject
 							$lmember->skype=$this->skype;
 							$lmember->twitter=$this->twitter;
 							$lmember->facebook=$this->facebook;
+							$lmember->instagram=$this->instagram;
+							$lmember->youtube=$this->youtube;
+							$lmember->snapchat=$this->snapchat;
 							$lmember->linkedin=$this->linkedin;
+							$lmember->whatsapp=$this->whatsapp;
 							$lmember->phone=$this->phone;
 							$lmember->state_id=$this->state_id;
 							$lmember->country_id=$this->country_id;
@@ -1257,7 +1289,7 @@ class Societe extends CommonObject
 		$sql .= ', s.status';
 		$sql .= ', s.price_level';
 		$sql .= ', s.tms as date_modification, s.fk_user_creat, s.fk_user_modif';
-		$sql .= ', s.phone, s.fax, s.email, s.skype, s.twitter, s.facebook, s.linkedin, s.url, s.zip, s.town, s.note_private, s.note_public, s.model_pdf, s.client, s.fournisseur';
+		$sql .= ', s.phone, s.fax, s.email, s.skype, s.twitter, s.facebook, s.instagram, s.youtube, s.snapchat, s.linkedin, s.whatsapp, s.url, s.zip, s.town, s.note_private, s.note_public, s.model_pdf, s.client, s.fournisseur';
 		$sql .= ', s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6';
 		$sql .= ', s.capital, s.tva_intra';
 		$sql .= ', s.fk_typent as typent_id';
@@ -1354,7 +1386,11 @@ class Societe extends CommonObject
 				$this->skype = $obj->skype;
 				$this->twitter = $obj->twitter;
 				$this->facebook = $obj->facebook;
+				$this->instagram = $obj->instagram;
+				$this->youtube = $obj->youtube;
+				$this->snapchat = $obj->snapchat;
 				$this->linkedin = $obj->linkedin;
+				$this->whatsapp = $obj->whatsapp;
 				$this->url = $obj->url;
 				$this->phone = $obj->phone;
 				$this->fax = $obj->fax;
@@ -3395,7 +3431,11 @@ class Societe extends CommonObject
 		$this->skype=$member->skype;
 		$this->twitter=$member->twitter;
 		$this->facebook=$member->facebook;
+		$this->instagram=$member->instagram;
+		$this->youtube=$member->youtube;
+		$this->snapchat=$member->snapchat;
 		$this->linkedin=$member->linkedin;
+		$this->whatsapp=$member->whatsapp;
 
 		$this->client = 1;				// A member is a customer by default
 		$this->code_client = ($customercode?$customercode:-1);
@@ -3563,7 +3603,11 @@ class Societe extends CommonObject
 		$this->skype='tom.hanson';
 		$this->twitter='tomhanson';
 		$this->facebook='tomhanson';
+		$this->instagram='tomhanson';
+		$this->youtube='tomhanson';
+		$this->snapchat='tomhanson';
 		$this->linkedin='tomhanson';
+		$this->whatsapp='0909090902';  
 		$this->url='http://www.specimen.com';
 
 		$this->phone='0909090901';
@@ -3914,14 +3958,14 @@ class Societe extends CommonObject
 			while($obj=$this->db->fetch_object($resql)) {
                 $tmpobject->id=$obj->rowid;
 
-				if ($obj->fk_statut != Facture::STATUS_DRAFT                                           // Not a draft
+				if ($mode != 'supplier' && $obj->fk_statut != Facture::STATUS_DRAFT                                           // Not a draft
 					&& ! ($obj->fk_statut == Facture::STATUS_ABANDONED && $obj->close_code == 'replaced')  // Not a replaced invoice
 					)
 				{
 					$outstandingTotal+= $obj->total_ht;
 					$outstandingTotalIncTax+= $obj->total_ttc;
 				}
-				if ($obj->paye == 0
+				if ($mode != 'supplier' && $obj->paye == 0
 					&& $obj->fk_statut != Facture::STATUS_DRAFT    		// Not a draft
 					&& $obj->fk_statut != Facture::STATUS_ABANDONED	    // Not abandonned
 					&& $obj->fk_statut != Facture::STATUS_CLOSED)   	// Not classified as paid
