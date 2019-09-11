@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 // create a particular thirdparty by name
 const createThirdparty = async (z, bundle) => {
     const apiurl = bundle.authData.url  + '/api/index.php/thirdparties';
