@@ -3607,7 +3607,7 @@ class Societe extends CommonObject
 		$this->youtube='tomhanson';
 		$this->snapchat='tomhanson';
 		$this->linkedin='tomhanson';
-		$this->whatsapp='0909090902';  
+		$this->whatsapp='0909090902';
 		$this->url='http://www.specimen.com';
 
 		$this->phone='0909090901';
