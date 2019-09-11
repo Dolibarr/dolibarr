@@ -193,7 +193,7 @@ if (empty($reshook))
         $object->youtube		= GETPOST("youtube", 'alpha');
         $object->snapchat		= GETPOST("snapchat", 'alpha');
         $object->linkedin		= GETPOST("linkedin", 'alpha');
-        $object->whatsapp		= GETPOST("whatsapp", 'alpha');  
+        $object->whatsapp		= GETPOST("whatsapp", 'alpha');
         $object->email			= GETPOST("email", 'alpha');
         $object->phone_pro		= GETPOST("phone_pro", 'alpha');
         $object->phone_perso	= GETPOST("phone_perso", 'alpha');
@@ -370,7 +370,7 @@ if (empty($reshook))
             $object->youtube		= GETPOST("youtube", 'alpha');
             $object->snapchat		= GETPOST("snapchat", 'alpha');
             $object->linkedin		= GETPOST("linkedin", 'alpha');
-            $object->whatsapp		= GETPOST("whatsapp", 'alpha');  
+            $object->whatsapp		= GETPOST("whatsapp", 'alpha');
             $object->phone_pro		= GETPOST("phone_pro", 'alpha');
             $object->phone_perso	= GETPOST("phone_perso", 'alpha');
             $object->phone_mobile	= GETPOST("phone_mobile", 'alpha');
