@@ -47,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
-$langs->loadLangs(array("companies","commercial","bills","banks","users"));
+$langs->loadLangs(array("companies", "commercial", "bills", "banks", "members", "users"));
 if (! empty($conf->categorie->enabled)) $langs->load("categories");
 if (! empty($conf->incoterm->enabled)) $langs->load("incoterm");
 if (! empty($conf->notification->enabled)) $langs->load("mails");
@@ -146,7 +146,7 @@ if (empty($reshook))
 				$object->client = $object->client | $soc_origin->client;
 				$object->fournisseur = $object->fournisseur | $soc_origin->fournisseur;
 				$listofproperties=array(
-					'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'twitter', 'facebook', 'linkedin', 'url', 'barcode',
+					'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'twitter', 'facebook', 'instagram', 'youtube', 'snapchat', 'linkedin', 'whatsapp', 'url', 'barcode',
 					'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
 					'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'remise_supplier_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
 					'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
@@ -408,7 +408,11 @@ if (empty($reshook))
 	        $object->skype					= GETPOST('skype', 'alpha');
 	        $object->twitter				= GETPOST('twitter', 'alpha');
 	        $object->facebook				= GETPOST('facebook', 'alpha');
-            $object->linkedin				= GETPOST('linkedin', 'alpha');
+	        $object->instagram			= GETPOST('instagram', 'alpha');
+	        $object->youtube			  = GETPOST('youtube', 'alpha');
+          $object->snapchat				= GETPOST('snapchat', 'alpha');
+          $object->linkedin				= GETPOST('linkedin', 'alpha');
+          $object->whatsapp 			= GETPOST('whatsapp', 'alpha');
 	        $object->phone					= GETPOST('phone', 'alpha');
 	        $object->fax					= GETPOST('fax', 'alpha');
 	        $object->email					= trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
@@ -974,8 +978,12 @@ else
         $object->skype				= GETPOST('skype', 'alpha');
         $object->twitter			= GETPOST('twitter', 'alpha');
         $object->facebook			= GETPOST('facebook', 'alpha');
-        $object->linkedin			= GETPOST('linkedin', 'alpha');
-        $object->phone				= GETPOST('phone', 'alpha');
+	      $object->instagram			= GETPOST('instagram', 'alpha');
+	      $object->youtube			  = GETPOST('youtube', 'alpha');
+        $object->snapchat				= GETPOST('snapchat', 'alpha');
+        $object->linkedin				= GETPOST('linkedin', 'alpha');
+        $object->whatsapp 			= GETPOST('whatsapp', 'alpha');
+	      $object->phone					= GETPOST('phone', 'alpha');
         $object->fax				= GETPOST('fax', 'alpha');
         $object->email				= GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL);
         $object->url				= GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL);
@@ -1321,12 +1329,44 @@ else
                 print '<input type="text" name="facebook" class="minwidth100" maxlength="80" id="facebook" value="'.dol_escape_htmltag(GETPOSTISSET("facebook")?GETPOST("facebook", 'alpha'):$object->facebook).'">';
                 print '</td></tr>';
             }
+        	// INSTAGRAM
+            if (! empty($conf->global->SOCIALNETWORKS_INSTAGRAM))
+            {
+                print '<tr><td>'.$form->editfieldkey('Instagram', 'instagram', '', $object, 0).'</td>';
+                print '<td colspan="3">';
+                print '<input type="text" name="instagram" class="minwidth100" maxlength="80" id="instagram" value="'.dol_escape_htmltag(GETPOSTISSET("instagram")?GETPOST("instagram", 'alpha'):$object->instagram).'">';
+                print '</td></tr>';
+            }
+        	// YOUTUBE
+            if (! empty($conf->global->SOCIALNETWORKS_YOUTUBE))
+            {
+                print '<tr><td>'.$form->editfieldkey('Youtube', 'youtube', '', $object, 0).'</td>';
+                print '<td colspan="3">';
+                print '<input type="text" name="youtube" class="minwidth100" maxlength="80" id="youtube" value="'.dol_escape_htmltag(GETPOSTISSET("youtube")?GETPOST("youtube", 'alpha'):$object->youtube).'">';
+                print '</td></tr>';
+            }
             // LinkedIn
             if (! empty($conf->global->SOCIALNETWORKS_LINKEDIN))
             {
                 print '<tr><td>'.$form->editfieldkey('LinkedIn', 'linkedin', '', $object, 0).'</td>';
                 print '<td colspan="3">';
                 print '<input type="text" name="linkedin" class="minwidth100" maxlength="80" id="linkedin" value="'.dol_escape_htmltag(GETPOSTISSET("linkedin")?GETPOST("linkedin", 'alpha'):$object->linkedin).'">';
+                print '</td></tr>';
+            }
+            // Snapchat
+            if (! empty($conf->global->SOCIALNETWORKS_SNAPCHAT))
+            {
+                print '<tr><td>'.$form->editfieldkey('Snapchat', 'snapchat', '', $object, 0).'</td>';
+                print '<td colspan="3">';
+                print '<input type="text" name="snapchat" class="minwidth100" maxlength="80" id="snapchat" value="'.dol_escape_htmltag(GETPOSTISSET("snapchat")?GETPOST("snapchat", 'alpha'):$object->snapchat).'">';
+                print '</td></tr>';
+            }
+            // Whatsapp
+            if (! empty($conf->global->SOCIALNETWORKS_WHATSAPP))
+            {
+                print '<tr><td>'.$form->editfieldkey('Whatsapp', 'whatsapp', '', $object, 0).'</td>';
+                print '<td colspan="3">';
+                print '<input type="text" name="whatsapp" class="minwidth100" maxlength="80" id="whatsapp" value="'.dol_escape_htmltag(GETPOSTISSET("whatsapp")?GETPOST("whatsapp", 'alpha'):$object->whatsapp).'">';
                 print '</td></tr>';
             }
         }
@@ -1938,12 +1978,36 @@ else
 	        		print '<tr><td>'.$form->editfieldkey('Facebook', 'facebook', '', $object, 0).'</td>';
 	        		print '<td colspan="3"><input type="text" name="facebook" id="facebook" value="'.$object->facebook.'"></td></tr>';
 	        	}
-                // LinkedIn
-                if (! empty($conf->global->SOCIALNETWORKS_LINKEDIN))
-                {
-                    print '<tr><td>'.$form->editfieldkey('LinkedIn', 'linkedin', '', $object, 0).'</td>';
-                    print '<td colspan="3"><input type="text" name="linkedin" id="linkedin" value="'.$object->linkedin.'"></td></tr>';
-                }
+	        	// Instagram
+	        	if (! empty($conf->global->SOCIALNETWORKS_INSTAGRAM))
+	        	{
+	        		print '<tr><td>'.$form->editfieldkey('Instagram', 'instagram', '', $object, 0).'</td>';
+	        		print '<td colspan="3"><input type="text" name="instagram" id="instagram" value="'.$object->instagram.'"></td></tr>';
+	        	}
+	        	// Youtube
+	        	if (! empty($conf->global->SOCIALNETWORKS_YOUTUBE))
+	        	{
+	        		print '<tr><td>'.$form->editfieldkey('Youtube', 'youtube', '', $object, 0).'</td>';
+	        		print '<td colspan="3"><input type="text" name="youtube" id="youtube" value="'.$object->youtube.'"></td></tr>';
+	        	}
+	        	// Snapchat
+	        	if (! empty($conf->global->SOCIALNETWORKS_SNAPCHAT))
+	        	{
+	        		print '<tr><td>'.$form->editfieldkey('Snapchat', 'snapchat', '', $object, 0).'</td>';
+	        		print '<td colspan="3"><input type="text" name="snapchat" id="snapchat" value="'.$object->snapchat.'"></td></tr>';
+	        	}
+            // LinkedIn
+            if (! empty($conf->global->SOCIALNETWORKS_LINKEDIN))
+            {
+              print '<tr><td>'.$form->editfieldkey('LinkedIn', 'linkedin', '', $object, 0).'</td>';
+              print '<td colspan="3"><input type="text" name="linkedin" id="linkedin" value="'.$object->linkedin.'"></td></tr>';
+            }
+            // Whatsapp
+            if (! empty($conf->global->SOCIALNETWORKS_WHATSAPP))
+            {
+              print '<tr><td>'.$form->editfieldkey('Whatsapp', 'whatsapp', '', $object, 0).'</td>';
+              print '<td colspan="3"><input type="text" name="whatsapp" id="whatsapp" value="'.$object->whatsapp.'"></td></tr>';
+            }
 	        }
 
             // Phone / Fax
@@ -2648,7 +2712,7 @@ else
 						break;
 					}
 				}
-
+            
 		        if (! empty($object->email) || $at_least_one_email_contact)
 		        {
 		        	$langs->load("mails");
@@ -2664,6 +2728,17 @@ else
 		        {
 		            print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
 		        }
+            
+            
+		        if (! empty($conf->adherent->enabled))
+		        {  
+            $adh = new Adherent($db);
+            $result=$adh->fetch('','',$object->id);
+            if (!$result && $object->client == 1)
+            {
+            print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/card.php?&action=create&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("NewMember")).'">'.$langs->trans("NewMember").'</a>';
+            }    
+            }
 
 		        if ($user->rights->societe->supprimer)
 		        {
