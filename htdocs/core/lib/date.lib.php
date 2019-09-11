@@ -795,7 +795,8 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		if (in_array('fronleichnam', $specialdayrule))
 		{
 		    // Fronleichnam (60 days after easter sunday)
-    		$date_fronleichnam = mktime(
+			$date_paques = easter_date($annee);
+			$date_fronleichnam = mktime(
 		        date("H", $date_paques),
 		        date("i", $date_paques),
 		        date("s", $date_paques),
