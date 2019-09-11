@@ -699,7 +699,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
         // resume
         print '<td class="right">';
-        if ($total_projectlinesa_planned){
+        if ($total_projectlinesa_planned) {
             print '</span>';
             print '    <div class="progress sm" title="'.$totalAverageDeclaredProgress.'%" >';
             print '        <div class="progress-bar '.$progressBarClass.'" style="width: '.$totalAverageDeclaredProgress.'%"></div>';
