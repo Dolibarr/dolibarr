@@ -1078,7 +1078,7 @@ abstract class CommonObject
 		$sql.= ", ".MAIN_DB_PREFIX."element_contact ec";
 		if ($source == 'internal') $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."user t on ec.fk_socpeople = t.rowid";
 		if ($source == 'external'|| $source == 'thirdparty') $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."socpeople t on ec.fk_socpeople = t.rowid";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON t.fk_pays = co.rowid";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON t.fk_country = co.rowid";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON t.fk_departement = d.rowid";
 		$sql.= " WHERE ec.element_id =".$this->id;
 		$sql.= " AND ec.fk_c_type_contact=tc.rowid";
