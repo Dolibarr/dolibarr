@@ -97,7 +97,7 @@ dol_fiche_head($head, 'setup', '', 0, 'user');
 
 print '<br>';
 
-$arrayofsocialnetworks=array('jabber'=>'Jabber', 'skype'=>'Skype', 'twitter'=>'Twitter', 'facebook'=>'Facebook', 'linkedin'=>'LinkedIn');
+$arrayofsocialnetworks=array('jabber'=>'Jabber', 'skype'=>'Skype', 'twitter'=>'Twitter', 'facebook'=>'Facebook', 'instagram'=>'Instagram', 'youtube'=>'Youtube', 'snapchat'=>'Snapchat', 'linkedin'=>'LinkedIn', 'whatsapp'=>'Whatsapp');
 
 foreach($arrayofsocialnetworks as $snkey => $snlabel) {
     $consttocheck = 'SOCIALNETWORKS_'.strtoupper($snkey);
