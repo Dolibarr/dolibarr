@@ -138,11 +138,31 @@ class Adherent extends CommonObject
      * @var string facebook account
      */
 	public $facebook;
-
+  
     /**
+     * @var string instagram account
+     */
+    public $instagram;
+    
+    /**
+     * @var string youtube account
+     */
+    public $youtube;
+    
+    /**
+     * @var string snapchat account
+     */
+    public $snapchat;
+
+     /**
      * @var string linkedin account
      */
     public $linkedin;
+    
+    /**
+     * @var string whatsapp account
+     */
+    public $whatsapp;
 
     /**
      * @var string Phone number
@@ -569,7 +589,11 @@ class Adherent extends CommonObject
 		$sql.= ", skype = '".$this->db->escape($this->skype)."'";
 		$sql.= ", twitter = '".$this->db->escape($this->twitter)."'";
 		$sql.= ", facebook = '".$this->db->escape($this->facebook)."'";
+		$sql.= ", instagram = '".$this->db->escape($this->instagram)."'";
+		$sql.= ", youtube = '".$this->db->escape($this->youtube)."'";
+		$sql.= ", snapchat = '".$this->db->escape($this->snapchat)."'";
 		$sql.= ", linkedin = '".$this->db->escape($this->linkedin)."'";
+		$sql.= ", whatsapp = '".$this->db->escape($this->whatsapp)."'";
 		$sql.= ", phone = ".($this->phone?"'".$this->db->escape($this->phone)."'":"null");
 		$sql.= ", phone_perso = ".($this->phone_perso?"'".$this->db->escape($this->phone_perso)."'":"null");
 		$sql.= ", phone_mobile = ".($this->phone_mobile?"'".$this->db->escape($this->phone_mobile)."'":"null");
@@ -581,6 +605,7 @@ class Adherent extends CommonObject
 		$sql.= ", fk_adherent_type = ".$this->db->escape($this->typeid);
 		$sql.= ", morphy = '".$this->db->escape($this->morphy)."'";
 		$sql.= ", birth = ".($this->birth?"'".$this->db->idate($this->birth)."'":"null");
+		if ($this->socid)   $sql.= ", fk_soc = '".$this->db->escape($this->socid)."'";		// Must be modified only when creating from a thirdpart
 		if ($this->datefin)   $sql.= ", datefin = '".$this->db->idate($this->datefin)."'";		// Must be modified only when deleting a subscription
 		if ($this->datevalid) $sql.= ", datevalid = '".$this->db->idate($this->datevalid)."'";	// Must be modified only when validating a member
 		$sql.= ", fk_user_mod = ".($user->id>0?$user->id:'null');	// Can be null because member can be create by a guest
@@ -696,7 +721,11 @@ class Adherent extends CommonObject
 						$luser->skype=$this->skype;
 						$luser->twitter=$this->twitter;
 						$luser->facebook=$this->facebook;
+						$luser->instagram=$this->instagram;
+						$luser->youtube=$this->youtube;
+						$luser->snapchat=$this->snapchat;
 						$luser->linkedin=$this->linkedin;
+						$luser->whatsapp=$this->whatsapp;
 						$luser->office_phone=$this->phone;
 						$luser->user_mobile=$this->phone_mobile;
 
@@ -738,7 +767,11 @@ class Adherent extends CommonObject
 						$lthirdparty->skype=$this->skype;
 						$lthirdparty->twitter=$this->twitter;
 						$lthirdparty->facebook=$this->facebook;
+						$lthirdparty->instagram=$this->instagram;
+						$lthirdparty->youtube=$this->youtube;
+						$lthirdparty->snapchat=$this->snapchat;
 						$lthirdparty->linkedin=$this->linkedin;
+						$lthirdparty->whatsapp=$this->whatsapp;
 						$lthirdparty->phone=$this->phone;
 						$lthirdparty->state_id=$this->state_id;
 						$lthirdparty->country_id=$this->country_id;
@@ -1227,7 +1260,7 @@ class Adherent extends CommonObject
 
 		$sql = "SELECT d.rowid, d.ref_ext, d.civility as civility_code, d.gender, d.firstname, d.lastname, d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note_private,";
 		$sql.= " d.note_public,";
-		$sql.= " d.email, d.skype, d.twitter, d.facebook, d.linkedin, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
+		$sql.= " d.email, d.skype, d.twitter, d.facebook, d.instagram, d.youtube, d.snapchat, d.linkedin, d.whatsapp, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
 		$sql.= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
 		$sql.= " d.datec as datec,";
 		$sql.= " d.tms as datem,";
@@ -1309,8 +1342,12 @@ class Adherent extends CommonObject
 				$this->skype			= $obj->skype;
 				$this->twitter			= $obj->twitter;
 				$this->facebook			= $obj->facebook;
+				$this->instagram		= $obj->instagram;
+				$this->youtube			= $obj->youtube;
+				$this->snapchat			= $obj->snapchat;
 				$this->linkedin			= $obj->linkedin;
-
+ 				$this->whatsapp			= $obj->whatsapp;
+        
 				$this->photo			= $obj->photo;
 				$this->statut			= $obj->statut;
 				$this->public			= $obj->public;
@@ -1740,7 +1777,8 @@ class Adherent extends CommonObject
 				$paiement->datepaye     = $paymentdate;
 				$paiement->amounts      = $amounts;
 				$paiement->paiementid   = dol_getIdFromCode($this->db, $operation, 'c_paiement', 'code', 'id', 1);
-				$paiement->num_payment  = $num_chq;
+				$paiement->num_payment = $num_chq;
+				$paiement->note         = $label;
 				$paiement->note_public  = $label;
 
 				if (! $error)
@@ -2410,7 +2448,11 @@ class Adherent extends CommonObject
 		$this->skype = 'skypepseudo';
 		$this->twitter = 'twitterpseudo';
 		$this->facebook = 'facebookpseudo';
+    $this->instagram = 'instagrampseudo';
+		$this->youtube = 'youtubepseudo';
+		$this->snapchat = 'snapchatpseudo';
 		$this->linkedin = 'linkedinpseudo';
+		$this->whatsapp = 'whatsapppseudo';
 		$this->phone        = '0999999999';
 		$this->phone_perso  = '0999999998';
 		$this->phone_mobile = '0999999997';
@@ -2521,8 +2563,12 @@ class Adherent extends CommonObject
 		if ($this->skype && ! empty($conf->global->LDAP_MEMBER_FIELD_SKYPE))					$info[$conf->global->LDAP_MEMBER_FIELD_SKYPE] = $this->skype;
 		if ($this->twitter && ! empty($conf->global->LDAP_MEMBER_FIELD_TWITTER))				$info[$conf->global->LDAP_MEMBER_FIELD_TWITTER] = $this->twitter;
 		if ($this->facebook && ! empty($conf->global->LDAP_MEMBER_FIELD_FACEBOOK))			$info[$conf->global->LDAP_MEMBER_FIELD_FACEBOOK] = $this->facebook;
+		if ($this->instagram && ! empty($conf->global->LDAP_MEMBER_FIELD_INSTAGRAM))			$info[$conf->global->LDAP_MEMBER_FIELD_INSTAGRAM] = $this->instagram;
+		if ($this->youtube && ! empty($conf->global->LDAP_MEMBER_FIELD_YOUTUBE))			$info[$conf->global->LDAP_MEMBER_FIELD_YOUTUBE] = $this->youtube;
+		if ($this->snapchat && ! empty($conf->global->LDAP_MEMBER_FIELD_SNAPCHAT))			$info[$conf->global->LDAP_MEMBER_FIELD_SNAPCHAT] = $this->snapchat;
 		if ($this->linkedin && ! empty($conf->global->LDAP_MEMBER_FIELD_LINKEDIN))			$info[$conf->global->LDAP_MEMBER_FIELD_LINKEDIN] = $this->linkedin;
-        if ($this->phone && ! empty($conf->global->LDAP_MEMBER_FIELD_PHONE))					$info[$conf->global->LDAP_MEMBER_FIELD_PHONE] = $this->phone;
+		if ($this->whatsapp && ! empty($conf->global->LDAP_MEMBER_FIELD_WHATSAPP))			$info[$conf->global->LDAP_MEMBER_FIELD_WHATSAPP] = $this->whatsapp;
+    if ($this->phone && ! empty($conf->global->LDAP_MEMBER_FIELD_PHONE))					$info[$conf->global->LDAP_MEMBER_FIELD_PHONE] = $this->phone;
 		if ($this->phone_perso && ! empty($conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO))		$info[$conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO] = $this->phone_perso;
 		if ($this->phone_mobile && ! empty($conf->global->LDAP_MEMBER_FIELD_MOBILE))			$info[$conf->global->LDAP_MEMBER_FIELD_MOBILE] = $this->phone_mobile;
 		if ($this->fax && ! empty($conf->global->LDAP_MEMBER_FIELD_FAX))						$info[$conf->global->LDAP_MEMBER_FIELD_FAX] = $this->fax;
