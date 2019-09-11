@@ -85,6 +85,12 @@ $socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
+if (empty($local))
+{
+	accessforbidden('Parameter localTaxType is missing');
+	exit;
+}
+
 
 
 /*
@@ -106,11 +112,12 @@ llxHeader('', '', '', '', 0, 0, '', '', $morequerystring);
 
 $name=$langs->transcountry($local==1?"LT1ReportByCustomers":"LT2ReportByCustomers", $mysoc->country_code);
 
-$fsearch.='<br>';
-$fsearch.='  <input type="hidden" name="year" value="'.$year.'">';
-$fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
-$fsearch.='  '.$langs->trans("SalesTurnoverMinimum").': ';
-$fsearch.='  <input type="text" name="min" id="min" value="'.$min.'" size="6">';
+$fsearch ='<!-- hidden fields for form -->';
+$fsearch.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+$fsearch.='<input type="hidden" name="modetax" value="'.$modetax.'">';
+$fsearch.='<input type="hidden" name="localTaxType" value="'.$local.'">';
+$fsearch.=$langs->trans("SalesTurnoverMinimum").': ';
+$fsearch.='<input type="text" name="min" id="min" value="'.$min.'" size="6">';
 
 $calc=$conf->global->MAIN_INFO_LOCALTAX_CALC.$local;
 // Affiche en-tete du rapport
