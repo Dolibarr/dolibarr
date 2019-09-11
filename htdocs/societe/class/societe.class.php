@@ -1257,7 +1257,9 @@ class Societe extends CommonObject
 		$sql .= ', s.status';
 		$sql .= ', s.price_level';
 		$sql .= ', s.tms as date_modification, s.fk_user_creat, s.fk_user_modif';
-		$sql .= ', s.phone, s.fax, s.email, s.skype, s.twitter, s.facebook, s.linkedin, s.url, s.zip, s.town, s.note_private, s.note_public, s.model_pdf, s.client, s.fournisseur';
+		$sql .= ', s.phone, s.fax, s.email';
+		$sql .= ', s.socialnetworks, s.skype, s.twitter, s.facebook, s.linkedin';
+		$sql .= ', s.url, s.zip, s.town, s.note_private, s.note_public, s.model_pdf, s.client, s.fournisseur';
 		$sql .= ', s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6';
 		$sql .= ', s.capital, s.tva_intra';
 		$sql .= ', s.fk_typent as typent_id';
@@ -1309,7 +1311,7 @@ class Societe extends CommonObject
 			$num=$this->db->num_rows($resql);
 			if ($num > 1)
 			{
-				$this->error='Fetch found several records. Rename one of tirdparties to avoid duplicate.';
+				$this->error='Fetch found several records. Rename one of thirdparties to avoid duplicate.';
 				dol_syslog($this->error, LOG_ERR);
 				$result = -2;
 			}
@@ -1355,6 +1357,8 @@ class Societe extends CommonObject
 				$this->twitter = $obj->twitter;
 				$this->facebook = $obj->facebook;
 				$this->linkedin = $obj->linkedin;
+				$this->socialnetworks = json_decode($obj->socialnetworks);
+
 				$this->url = $obj->url;
 				$this->phone = $obj->phone;
 				$this->fax = $obj->fax;

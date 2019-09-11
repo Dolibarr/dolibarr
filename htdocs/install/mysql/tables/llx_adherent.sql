@@ -48,6 +48,7 @@ create table llx_adherent
   country          integer,
   email            varchar(255),
 
+  socialnetworks   text DEFAULT NULL,       -- json with socialnetworks
   skype            varchar(255),
   twitter          varchar(255),                        		--
   facebook         varchar(255),                        		--

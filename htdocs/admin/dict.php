@@ -88,7 +88,7 @@ $hookmanager->initHooks(array('admin'));
 // Put here declaration of dictionaries properties
 
 // Sort order to show dictionary (0 is space). All other dictionaries (added by modules) will be at end of this.
-$taborder=array(9,0,4,3,2,0,1,8,19,16,27,0,5,11,0,32,33,34,0,6,0,29,0,7,24,28,17,35,36,0,10,23,12,13,0,14,0,22,20,18,21,0,15,30,0,37,0,25,0);
+$taborder=array(9,0,4,3,2,0,1,8,19,16,27,38,0,5,11,0,32,33,34,0,6,0,29,0,7,24,28,17,35,36,0,10,23,12,13,0,14,0,22,20,18,21,0,15,30,0,37,0,25,0);
 
 // Name of SQL tables of dictionaries
 $tabname=array();
@@ -130,6 +130,7 @@ $tabname[34]= MAIN_DB_PREFIX."c_hrm_function";
 $tabname[35]= MAIN_DB_PREFIX."c_exp_tax_cat";
 $tabname[36]= MAIN_DB_PREFIX."c_exp_tax_range";
 $tabname[37]= MAIN_DB_PREFIX."c_units";
+$tabname[38]= MAIN_DB_PREFIX."c_socialnetworks";
 
 // Dictionary labels
 $tablib=array();
@@ -170,6 +171,7 @@ $tablib[34]= "DictionaryFunction";
 $tablib[35]= "DictionaryExpenseTaxCat";
 $tablib[36]= "DictionaryExpenseTaxRange";
 $tablib[37]= "DictionaryMeasuringUnits";
+$tablib[38]= "DictionarySocialNetworks";
 
 // Requests to extract data
 $tabsql=array();
@@ -210,6 +212,7 @@ $tabsql[34]= "SELECT rowid, pos, code, label, c_level, active FROM ".MAIN_DB_PRE
 $tabsql[35]= "SELECT c.rowid, c.label, c.active, c.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_cat c";
 $tabsql[36]= "SELECT r.rowid, r.fk_c_exp_tax_cat, r.range_ik, r.active, r.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_range r";
 $tabsql[37]= "SELECT r.rowid, r.code, r.label, r.short_label, r.unit_type, r.scale, r.active FROM ".MAIN_DB_PREFIX."c_units r";
+$tabsql[38]= "SELECT rowid, code, label, url, icon, active FROM ".MAIN_DB_PREFIX."c_socialnetworks";
 
 // Criteria to sort dictionaries
 $tabsqlsort=array();
@@ -250,6 +253,7 @@ $tabsqlsort[34]="code ASC";
 $tabsqlsort[35]="c.label ASC";
 $tabsqlsort[36]="r.fk_c_exp_tax_cat ASC, r.range_ik ASC";
 $tabsqlsort[37]="r.unit_type ASC, r.scale ASC, r.code ASC";
+$tabsqlsort[38]="rowid, code ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield=array();
@@ -290,6 +294,7 @@ $tabfield[34]= "code,label";
 $tabfield[35]= "label";
 $tabfield[36]= "range_ik,fk_c_exp_tax_cat";
 $tabfield[37]= "code,label,short_label,unit_type,scale";
+$tabfield[38]= "code,label,url,icon";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue=array();
@@ -330,6 +335,7 @@ $tabfieldvalue[34]= "code,label";
 $tabfieldvalue[35]= "label";
 $tabfieldvalue[36]= "range_ik,fk_c_exp_tax_cat";
 $tabfieldvalue[37]= "code,label,short_label,unit_type,scale";
+$tabfieldvalue[38]= "code,label,url,icon";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert=array();
@@ -371,6 +377,7 @@ $tabfieldinsert[34]= "code,label";
 $tabfieldinsert[35]= "label";
 $tabfieldinsert[36]= "range_ik,fk_c_exp_tax_cat";
 $tabfieldinsert[37]= "code,label,short_label,unit_type,scale";
+$tabfieldinsert[38]= "code,label,url,icon";
 
 // Rowid name of field depending if field is autoincrement on or off..
 // Use "" if id field is "rowid" and has autoincrement on
@@ -413,6 +420,7 @@ $tabrowid[34]= "rowid";
 $tabrowid[35]= "";
 $tabrowid[36]= "";
 $tabrowid[37]= "";
+$tabrowid[38]= "";
 
 // Condition to show dictionary in setup page
 $tabcond=array();
@@ -453,6 +461,7 @@ $tabcond[34]= ! empty($conf->hrm->enabled);
 $tabcond[35]= ! empty($conf->expensereport->enabled);
 $tabcond[36]= ! empty($conf->expensereport->enabled);
 $tabcond[37]= ! empty($conf->product->enabled);
+$tabcond[38]= ! empty($conf->socialnetworks->enabled);
 
 // List of help for fields
 $tabhelp=array();
@@ -493,6 +502,7 @@ $tabhelp[34] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[35] = array();
 $tabhelp[36] = array('range_ik'=>$langs->trans('PrevRangeToThisRange'));
 $tabhelp[37] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[38] = array('code'=>$langs->trans("EnterAnyCode"), 'url' => $langs->trans('UrlSocialNetworksDesc'), 'icon' => $langs->trans('FafaIconSocialNetworksDesc'));
 
 // List of check for fields (NOT USED YET)
 $tabfieldcheck=array();
@@ -533,6 +543,7 @@ $tabfieldcheck[34] = array();
 $tabfieldcheck[35] = array();
 $tabfieldcheck[36] = array();
 $tabfieldcheck[37] = array();
+$tabfieldcheck[38] = array();
 
 // Complete all arrays with entries found into modules
 complete_dictionary_with_modules($taborder, $tabname, $tablib, $tabsql, $tabsqlsort, $tabfield, $tabfieldvalue, $tabfieldinsert, $tabrowid, $tabcond, $tabhelp, $tabfieldcheck);

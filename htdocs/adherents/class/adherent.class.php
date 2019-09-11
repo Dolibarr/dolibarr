@@ -566,10 +566,11 @@ class Adherent extends CommonObject
 		$sql.= ", country = ".($this->country_id>0?$this->db->escape($this->country_id):"null");
 		$sql.= ", state_id = ".($this->state_id>0?$this->db->escape($this->state_id):"null");
 		$sql.= ", email = '".$this->db->escape($this->email)."'";
-		$sql.= ", skype = '".$this->db->escape($this->skype)."'";
-		$sql.= ", twitter = '".$this->db->escape($this->twitter)."'";
-		$sql.= ", facebook = '".$this->db->escape($this->facebook)."'";
-		$sql.= ", linkedin = '".$this->db->escape($this->linkedin)."'";
+		$sql.= ", socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
+		// $sql.= ", skype = '".$this->db->escape($this->skype)."'";
+		// $sql.= ", twitter = '".$this->db->escape($this->twitter)."'";
+		// $sql.= ", facebook = '".$this->db->escape($this->facebook)."'";
+		// $sql.= ", linkedin = '".$this->db->escape($this->linkedin)."'";
 		$sql.= ", phone = ".($this->phone?"'".$this->db->escape($this->phone)."'":"null");
 		$sql.= ", phone_perso = ".($this->phone_perso?"'".$this->db->escape($this->phone_perso)."'":"null");
 		$sql.= ", phone_mobile = ".($this->phone_mobile?"'".$this->db->escape($this->phone_mobile)."'":"null");
@@ -1227,7 +1228,7 @@ class Adherent extends CommonObject
 
 		$sql = "SELECT d.rowid, d.ref_ext, d.civility as civility_code, d.gender, d.firstname, d.lastname, d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note_private,";
 		$sql.= " d.note_public,";
-		$sql.= " d.email, d.skype, d.twitter, d.facebook, d.linkedin, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
+		$sql.= " d.email, d.socialnetworks, d.skype, d.twitter, d.facebook, d.linkedin, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
 		$sql.= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
 		$sql.= " d.datec as datec,";
 		$sql.= " d.tms as datem,";
@@ -1306,10 +1307,38 @@ class Adherent extends CommonObject
 				$this->phone_mobile		= $obj->phone_mobile;
 				$this->email			= $obj->email;
 
-				$this->skype			= $obj->skype;
-				$this->twitter			= $obj->twitter;
-				$this->facebook			= $obj->facebook;
-				$this->linkedin			= $obj->linkedin;
+				$arraysocialnetworks = array();
+				$updatesocial = false;
+				if (!empty($obj->skype)) {
+					$arraysocialnetworks['skype'] = $obj->skype;
+					$updatesocial = true;
+				}
+				if (!empty($obj->twitter)) {
+					$arraysocialnetworks['twitter'] = $obj->twitter;
+					$updatesocial = true;
+				}
+				if (!empty($obj->facebook)) {
+					$arraysocialnetworks['facebook'] = $obj->facebook;
+					$updatesocial = true;
+				}
+				if (!empty($obj->linkedin)) {
+					$arraysocialnetworks['linkedin'] = $obj->linkedin;
+					$updatesocial = true;
+				}
+				$this->socialnetworks = array_merge($arraysocialnetworks, json_decode($obj->socialnetworks, true));
+				if ($updatesocial) {
+					$sqlupd = 'UPDATE '.MAIN_DB_PREFIX.'adherent SET skype=null';
+					$sqlupd .= ', twitter=null';
+					$sqlupd .= ', facebook=null';
+					$sqlupd .= ', linkedin=null';
+					$sqlupd .= ', socialnetworks="'.$this->db->escape(json_encode($this->socialnetworks)).'"';
+					$sqlupd .= ' WHERE rowid='.$this->id;
+					$this->db->query($sqlupd);
+				}
+				$this->skype			= $this->socialnetworks['skype'];
+				$this->twitter			= $this->socialnetworks['twitter'];
+				$this->facebook			= $this->socialnetworks['facebook'];
+				$this->linkedin			= $this->socialnetworks['linkedin'];
 
 				$this->photo			= $obj->photo;
 				$this->statut			= $obj->statut;

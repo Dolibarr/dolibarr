@@ -94,13 +94,13 @@ ALTER TABLE llx_accounting_account MODIFY COLUMN rowid bigint AUTO_INCREMENT;
 
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN  date_start	datetime   DEFAULT NULL;
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN  date_end	datetime   DEFAULT NULL;
-  
+
 
 create table llx_c_hrm_public_holiday
 (
   id					integer AUTO_INCREMENT PRIMARY KEY,
   entity				integer	DEFAULT 0 NOT NULL,	-- multi company id, 0 = all
-  fk_country			integer,			
+  fk_country			integer,
   code		    		varchar(62),
   dayrule               varchar(64) DEFAULT '', 	-- 'easter', 'eastermonday', ...
   day					integer,
@@ -163,4 +163,30 @@ INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, m
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('IN-REPUBLICDAY',  0, 117, '', 0,  1, 26, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('IN-GANDI',        0, 117, '', 0, 10,  2, 1);
 
+create table llx_c_socialnetworks
+(
+  rowid       integer AUTO_INCREMENT PRIMARY KEY,
+  code        varchar(100),
+  label       varchar(150),
+  url         text,
+  icon        varchar(15),
+  active      tinyint DEFAULT 1 NOT NULL
+)ENGINE=innodb;
+
+ALTER TABLE llx_c_socialnetworks ADD UNIQUE INDEX idx_c_socialnetworks_code (code);
+
+INSERT INTO llx_c_socialnetworks (code, label, url, icon, active) VALUES('facebook', 'Facebook', 'https://www.facebook.com/{socialid}', 'fa-facebook', 1);
+INSERT INTO llx_c_socialnetworks (code, label, url, icon, active) VALUES('skype', 'Skype', 'https://www.skype.com/{socialid}', 'fa-skype', 1);
+INSERT INTO llx_c_socialnetworks (code, label, url, icon, active) VALUES('twitter', 'Twitter', 'https://www.twitter.com/{socialid}', 'fa-twitter', 1);
+INSERT INTO llx_c_socialnetworks (code, label, url, icon, active) VALUES('linkedin', 'LinkedIn', 'https://www.linkedin.com/{socialid}', 'fa-linkedin', 1);
+INSERT INTO llx_c_socialnetworks (code, label, url, icon, active) VALUES('instagram', 'Instagram', 'https://www.instagram.com/{socialid}', 'fa-instagram', 1);
+INSERT INTO llx_c_socialnetworks (code, label, url, icon, active) VALUES('snapchat', 'Snapchat', '{socialid}', 'fa-snapchat', 1);
+INSERT INTO llx_c_socialnetworks (code, label, url, icon, active) VALUES('googleplus', 'GooglePlus', 'https://www.googleplus.com/{socialid}', 'fa-googleplus', 1);
+INSERT INTO llx_c_socialnetworks (code, label, url, icon, active) VALUES('youtube', 'Youtube', 'https://www.youtube.com/{socialid}', 'fa-youtube', 1);
+INSERT INTO llx_c_socialnetworks (code, label, url, icon, active) VALUES('whatsapp', 'Whatsapp', '{socialid}', 'fa-whatsapp', 1);
+
+ALTER TABLE llx_adherent ADD COLUMN socialnetworks text DEFAULT NULL AFTER email;
+ALTER TABLE llx_societe ADD COLUMN socialnetworks text DEFAULT NULL AFTER email;
+ALTER TABLE llx_socpeople ADD COLUMN socialnetworks text DEFAULT NULL AFTER email;
+ALTER TABLE llx_user ADD COLUMN socialnetworks text DEFAULT NULL AFTER personal_email;
 

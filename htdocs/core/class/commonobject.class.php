@@ -680,16 +680,23 @@ abstract class CommonObject
 		$out.='<div style="clear: both;">';
 		if (! empty($conf->socialnetworks->enabled))
 		{
-			if ($this->skype) $out.=dol_print_socialnetworks($this->skype, $this->id, $object->id, 'skype');
-			$outdone++;
-			if ($this->jabberid) $out.=dol_print_socialnetworks($this->jabberid, $this->id, $object->id, 'jabber');
-			$outdone++;
-			if ($this->twitter) $out.=dol_print_socialnetworks($this->twitter, $this->id, $object->id, 'twitter');
-			$outdone++;
-			if ($this->facebook) $out.=dol_print_socialnetworks($this->facebook, $this->id, $object->id, 'facebook');
-			$outdone++;
-			if ($this->linkedin) $out.=dol_print_socialnetworks($this->linkedin, $this->id, $object->id, 'linkedin');
-			$outdone++;
+			if (is_array($this->socialnetworks) && count($this->socialnetworks)>0) {
+				foreach ($this->socialnetworks as $key => $value) {
+					$out.=dol_print_socialnetworks($value, $this->id, $object->id, $key);
+					$outdone++;
+				}
+			} else {
+				if ($this->skype) $out.=dol_print_socialnetworks($this->skype, $this->id, $object->id, 'skype');
+				$outdone++;
+				if ($this->jabberid) $out.=dol_print_socialnetworks($this->jabberid, $this->id, $object->id, 'jabber');
+				$outdone++;
+				if ($this->twitter) $out.=dol_print_socialnetworks($this->twitter, $this->id, $object->id, 'twitter');
+				$outdone++;
+				if ($this->facebook) $out.=dol_print_socialnetworks($this->facebook, $this->id, $object->id, 'facebook');
+				$outdone++;
+				if ($this->linkedin) $out.=dol_print_socialnetworks($this->linkedin, $this->id, $object->id, 'linkedin');
+				$outdone++;
+			}
 		}
 		$out.='</div>';
 
@@ -4517,7 +4524,7 @@ abstract class CommonObject
 
 		$parameters = array('modelspath'=>$modelspath,'modele'=>$modele,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'hidedesc'=>$hidedesc,'hideref'=>$hideref, 'moreparams'=>$moreparams);
 		$reshook = $hookmanager->executeHooks('commonGenerateDocument', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-		
+
 		if(empty($reshook))
 		{
 		dol_syslog("commonGenerateDocument modele=".$modele." outputlangs->defaultlang=".(is_object($outputlangs)?$outputlangs->defaultlang:'null'));

@@ -2199,42 +2199,42 @@ function dol_print_socialnetworks($value, $cid, $socid, $type)
 {
 	global $conf,$user,$langs;
 
-	$newskype=$value;
+	$htmllink=$value;
 
 	if (empty($value)) return '&nbsp;';
 
 	if (! empty($type))
 	{
-		$newskype ='<div class="divsocialnetwork inline-block valignmiddle">';
-		$newskype.=img_picto($langs->trans(strtoupper($type)), $type.'.png', '', false, 0, 0, '', 'paddingright');
-		$newskype.=$value;
+		$htmllink ='<div class="divsocialnetwork inline-block valignmiddle">';
+		$htmllink.=img_picto($langs->trans(strtoupper($type)), $type.'.png', '', false, 0, 0, '', 'paddingright');
+		$htmllink.=$value;
 		if ($type == 'skype')
 		{
-			$newskype.= '&nbsp;';
-			$newskype.='<a href="skype:';
-			$newskype.=$value;
-			$newskype.='?call" alt="'.$langs->trans("Call").'&nbsp;'.$value.'" title="'.$langs->trans("Call").'&nbsp;'.$value.'">';
-			$newskype.='<img src="'.DOL_URL_ROOT.'/theme/common/skype_callbutton.png" border="0">';
-			$newskype.='</a><a href="skype:';
-			$newskype.=$value;
-			$newskype.='?chat" alt="'.$langs->trans("Chat").'&nbsp;'.$value.'" title="'.$langs->trans("Chat").'&nbsp;'.$value.'">';
-			$newskype.='<img class="paddingleft" src="'.DOL_URL_ROOT.'/theme/common/skype_chatbutton.png" border="0">';
-			$newskype.='</a>';
+			$htmllink.= '&nbsp;';
+			$htmllink.='<a href="skype:';
+			$htmllink.=$value;
+			$htmllink.='?call" alt="'.$langs->trans("Call").'&nbsp;'.$value.'" title="'.$langs->trans("Call").'&nbsp;'.$value.'">';
+			$htmllink.='<img src="'.DOL_URL_ROOT.'/theme/common/skype_callbutton.png" border="0">';
+			$htmllink.='</a><a href="skype:';
+			$htmllink.=$value;
+			$htmllink.='?chat" alt="'.$langs->trans("Chat").'&nbsp;'.$value.'" title="'.$langs->trans("Chat").'&nbsp;'.$value.'">';
+			$htmllink.='<img class="paddingleft" src="'.DOL_URL_ROOT.'/theme/common/skype_chatbutton.png" border="0">';
+			$htmllink.='</a>';
 		}
 		if (($cid || $socid) && ! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create && $type=='skype')
 		{
 			$addlink='AC_SKYPE'; $link='';
 			if (! empty($conf->global->AGENDA_ADDACTIONFORSKYPE)) $link='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$addlink.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
-			$newskype.=($link?' '.$link:'');
+			$htmllink.=($link?' '.$link:'');
 		}
-		$newskype.='</div>';
+		$htmllink.='</div>';
 	}
 	else
 	{
 		$langs->load("errors");
-		$newskype.=img_warning($langs->trans("ErrorBadSocialNetworkValue", $value));
+		$htmllink.=img_warning($langs->trans("ErrorBadSocialNetworkValue", $value));
 	}
-	return $newskype;
+	return $htmllink;
 }
 
 /**
