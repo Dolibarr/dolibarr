@@ -636,8 +636,8 @@ if (empty($reshook)) {
 					$ldap_skype = $attribute[$conf->global->LDAP_FIELD_SKYPE];
 					$ldap_twitter = $attribute[$conf->global->LDAP_FIELD_TWITTER];
 					$ldap_facebook = $attribute[$conf->global->LDAP_FIELD_FACEBOOK];
-					$ldap_instagram = $attribute[$conf->global->LDAP_FIELD_INSTAGRAM];  
-					$ldap_youtube = $attribute[$conf->global->LDAP_FIELD_YOUTUBE];    
+					$ldap_instagram = $attribute[$conf->global->LDAP_FIELD_INSTAGRAM];
+					$ldap_youtube = $attribute[$conf->global->LDAP_FIELD_YOUTUBE];
 					$ldap_snapchat = $attribute[$conf->global->LDAP_FIELD_SNAPCHAT];
 					$ldap_linkedin = $attribute[$conf->global->LDAP_FIELD_LINKEDIN];
 					$ldap_whatsapp = $attribute[$conf->global->LDAP_FIELD_WHATSAPP];
