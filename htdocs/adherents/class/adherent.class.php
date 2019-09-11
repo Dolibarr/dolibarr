@@ -125,22 +125,31 @@ class Adherent extends CommonObject
 	public $email;
 
     /**
+     * @var array array of socialnetworks
+     */
+    public $socialnetworks;
+
+    /**
      * @var string skype account
+	 * @deprecated
      */
     public $skype;
 
     /**
      * @var string twitter account
+	 * @deprecated
      */
     public $twitter;
 
     /**
      * @var string facebook account
+	 * @deprecated
      */
 	public $facebook;
 
     /**
      * @var string linkedin account
+	 * @deprecated
      */
     public $linkedin;
 
@@ -2440,6 +2449,12 @@ class Adherent extends CommonObject
 		$this->twitter = 'twitterpseudo';
 		$this->facebook = 'facebookpseudo';
 		$this->linkedin = 'linkedinpseudo';
+		$this->socialnetworks = array(
+			'skype' => 'skypepseudo',
+			'twitter' => 'twitterpseudo',
+			'facebook' => 'facebookpseudo',
+			'linkedin' => 'linkedinpseudo',
+		);
 		$this->phone        = '0999999999';
 		$this->phone_perso  = '0999999998';
 		$this->phone_mobile = '0999999997';
