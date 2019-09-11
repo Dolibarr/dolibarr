@@ -1070,7 +1070,6 @@ abstract class CommonObject
 		if ($source == 'internal') $sql.=", '-1' as socid, t.statut as statuscontact, t.login, t.photo";
 		if ($source == 'external' || $source == 'thirdparty') $sql.=", t.fk_soc as socid, t.statut as statuscontact, t.phone, t.phone_perso, t.phone_mobile, t.fax, t.email";
 		$sql.= ", t.civility as civility, t.lastname as lastname, t.firstname, t.address, t.zip, t.town, t.fk_country as country_id, t.fk_state as state_id";
-		$sql.= ", t.phone, t.phone_perso, t.phone_mobile, t.fax, t.email";
 		$sql.= ", tc.source, tc.element, tc.code, tc.libelle";
         $sql.= ", co.label as country, co.code as country_code";
 		$sql.= ", d.nom as state, d.code_departement as state_code";
