@@ -250,7 +250,7 @@ class User extends CommonObject
 		$login=trim($login);
 
 		// Get user
-		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.birth, u.email, u.personal_email, u.job, u.skype, u.twitter, u.facebook, u.instagram, u.youtube, u.snapchat, u.linkedin, u.whatsapp";
+		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.birth, u.email, u.personal_email, u.job, u.skype, u.twitter, u.facebook, u.instagram, u.youtube, u.snapchat, u.linkedin, u.whatsapp,";
 		$sql.= " u.signature, u.office_phone, u.office_fax, u.user_mobile, u.personal_mobile,";
 		$sql.= " u.address, u.zip, u.town, u.fk_state as state_id, u.fk_country as country_id,";
 		$sql.= " u.admin, u.login, u.note,";
@@ -361,8 +361,8 @@ class User extends CommonObject
 				$this->skype		= $obj->skype;
 				$this->twitter		= $obj->twitter;
 				$this->facebook		= $obj->facebook;
-				$this->instagram	= $obj->instagram;
-				$this->youtube		= $obj->youtube;
+				$this->instagram	= $obj->instagram;    
+				$this->youtube		= $obj->youtube; 
 				$this->snapchat		= $obj->snapchat;
 				$this->linkedin		= $obj->linkedin;
 				$this->whatsapp	= $obj->whatsapp;
@@ -1285,8 +1285,8 @@ class User extends CommonObject
 		$this->skype = $contact->skype;
 		$this->twitter = $contact->twitter;
 		$this->facebook = $contact->facebook;
-		$this->instagram = $contact->instagram;
-		$this->youtube = $contact->youtube;
+		$this->instagram = $contact->instagram;   
+		$this->youtube = $contact->youtube;   
 		$this->snapchat = $contact->snapchat;
 		$this->linkedin = $contact->linkedin;
 		$this->whatsapp = $contact->whatsapp;
@@ -1509,7 +1509,7 @@ class User extends CommonObject
 		$this->skype        = trim($this->skype);
 		$this->twitter      = trim($this->twitter);
 		$this->facebook     = trim($this->facebook);
-		$this->instagram     = trim($this->instagram);
+		$this->instagram     = trim($this->instagram);  
 		$this->youtube     = trim($this->youtube);
 		$this->snapchat     = trim($this->snapchat);
 		$this->linkedin     = trim($this->linkedin);
@@ -1569,11 +1569,11 @@ class User extends CommonObject
 		$sql.= ", skype = '".$this->db->escape($this->skype)."'";
 		$sql.= ", twitter = '".$this->db->escape($this->twitter)."'";
 		$sql.= ", facebook = '".$this->db->escape($this->facebook)."'";
-		$sql.= ", instagram = '".$this->db->escape($this->instagram)."'";
-		$sql.= ", youtube = '".$this->db->escape($this->youtube)."'";
+		$sql.= ", instagram = '".$this->db->escape($this->instagram)."'";  
+		$sql.= ", youtube = '".$this->db->escape($this->youtube)."'";  
 		$sql.= ", snapchat = '".$this->db->escape($this->snapchat)."'";
 		$sql.= ", linkedin = '".$this->db->escape($this->linkedin)."'";
- 		$sql.= ", whatsapp = '".$this->db->escape($this->whatsapp)."'";
+ 		$sql.= ", whatsapp = '".$this->db->escape($this->whatsapp)."'";   
 		$sql.= ", job = '".$this->db->escape($this->job)."'";
 		$sql.= ", signature = '".$this->db->escape($this->signature)."'";
 		$sql.= ", accountancy_code = '".$this->db->escape($this->accountancy_code)."'";
@@ -1667,7 +1667,7 @@ class User extends CommonObject
 						$adh->facebook=$this->facebook;
 						$adh->instagram=$this->instagram;
 						$adh->youtube=$this->youtube;
-						$adh->snapchat=$this->snapchat;
+						$adh->snapchat=$this->snapchat;  
 						$adh->linkedin=$this->linkedin;
 						$adh->whatsapp=$this->whatsapp;
 
@@ -1723,8 +1723,8 @@ class User extends CommonObject
 						$tmpobj->twitter=$this->twitter;
 						$tmpobj->facebook=$this->facebook;
 						$tmpobj->instagram=$this->instagram;
-						$tmpobj->youtube=$this->youtube;
-						$tmpobj->snapchat=$this->snapchat;
+						$tmpobj->youtube=$this->youtube;      
+						$tmpobj->snapchat=$this->snapchat;           
 						$tmpobj->linkedin=$this->linkedin;
 						$tmpobj->whatsapp=$this->whatsapp;
 
@@ -2600,7 +2600,7 @@ class User extends CommonObject
 			'LDAP_FIELD_TWITTER'	=> 'twitter',
 			'LDAP_FIELD_FACEBOOK'	=> 'facebook',
 			'LDAP_FIELD_INSTAGRAM'	=> 'instagram',
-			'LDAP_FIELD_YOUTUBE'	=> 'youtube',
+			'LDAP_FIELD_YOUTUBE'	=> 'youtube',  
 			'LDAP_FIELD_SNAPCHAT'	=> 'snapchat',
       'LDAP_FIELD_LINKEDIN'	=> 'linkedin',
       'LDAP_FIELD_WHATSAPP'	=> 'whatsapp'
@@ -2720,7 +2720,7 @@ class User extends CommonObject
 		$this->facebook='facebookpseudo';
 		$this->instagram='instagrampseudo';
 		$this->youtube='youtubepseudo';
-		$this->snapchat='snapchatpseudo';
+		$this->snapchat='snapchatpseudo'; 
 		$this->linkedin='linkedinpseudo';
 		$this->whatsapp='whatsapppseudo';
 		$this->office_phone='0999999999';
@@ -2877,11 +2877,11 @@ class User extends CommonObject
 		$this->skype=$ldapuser->{$conf->global->LDAP_FIELD_SKYPE};
 		$this->twitter=$ldapuser->{$conf->global->LDAP_FIELD_TWITTER};
 		$this->facebook=$ldapuser->{$conf->global->LDAP_FIELD_FACEBOOK};
-		$this->instagram=$ldapuser->{$conf->global->LDAP_FIELD_INSTAGRAM};
-		$this->youtube=$ldapuser->{$conf->global->LDAP_FIELD_YOUTUBE};
+		$this->instagram=$ldapuser->{$conf->global->LDAP_FIELD_INSTAGRAM};  
+		$this->youtube=$ldapuser->{$conf->global->LDAP_FIELD_YOUTUBE};  
 		$this->snapchat=$ldapuser->{$conf->global->LDAP_FIELD_SNAPCHAT};
 		$this->linkedin=$ldapuser->{$conf->global->LDAP_FIELD_LINKEDIN};
-		$this->whatsapp=$ldapuser->{$conf->global->LDAP_FIELD_WHATSAPP};
+		$this->whatsapp=$ldapuser->{$conf->global->LDAP_FIELD_WHATSAPP}; 
 		$this->ldap_sid=$ldapuser->{$conf->global->LDAP_FIELD_SID};
 
 		$this->job=$ldapuser->{$conf->global->LDAP_FIELD_TITLE};
