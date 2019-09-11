@@ -181,7 +181,7 @@ INSERT INTO llx_c_socialnetworks (code, label, url, icon, active) VALUES('twitte
 INSERT INTO llx_c_socialnetworks (code, label, url, icon, active) VALUES('linkedin', 'LinkedIn', 'https://www.linkedin.com/{socialid}', 'fa-linkedin', 1);
 INSERT INTO llx_c_socialnetworks (code, label, url, icon, active) VALUES('instagram', 'Instagram', 'https://www.instagram.com/{socialid}', 'fa-instagram', 1);
 INSERT INTO llx_c_socialnetworks (code, label, url, icon, active) VALUES('snapchat', 'Snapchat', '{socialid}', 'fa-snapchat', 1);
-INSERT INTO llx_c_socialnetworks (code, label, url, icon, active) VALUES('googleplus', 'GooglePlus', 'https://www.googleplus.com/{socialid}', 'fa-googleplus', 1);
+INSERT INTO llx_c_socialnetworks (code, label, url, icon, active) VALUES('googleplus', 'GooglePlus', 'https://www.googleplus.com/{socialid}', 'fa-google-plus-g', 1);
 INSERT INTO llx_c_socialnetworks (code, label, url, icon, active) VALUES('youtube', 'Youtube', 'https://www.youtube.com/{socialid}', 'fa-youtube', 1);
 INSERT INTO llx_c_socialnetworks (code, label, url, icon, active) VALUES('whatsapp', 'Whatsapp', '{socialid}', 'fa-whatsapp', 1);
 
