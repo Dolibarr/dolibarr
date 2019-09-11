@@ -98,7 +98,16 @@ class Contact extends CommonObject
 
 	public $code;
 	public $email;
+
 	public $skype;
+  public $twitter;
+  public $facebook;
+  public $instagram;
+  public $youtube;
+  public $snapchat;
+  public $linkedin;
+  public $whatsapp;
+                
 	public $photo;
 	public $jabberid;
 	public $phone_pro;
@@ -319,7 +328,14 @@ class Contact extends CommonObject
 		$this->phone_mobile=trim($this->phone_mobile);
 		$this->jabberid=trim($this->jabberid);
 		$this->skype=trim($this->skype);
-		$this->photo=trim($this->photo);
+		$this->twitter=trim($this->twitter);
+		$this->facebook=trim($this->facebook);
+		$this->instagram=trim($this->instagram);
+		$this->youtube=trim($this->youtube);
+    $this->snapchat=trim($this->snapchat);
+    $this->linkedin=trim($this->linkedin);
+    $this->whatsapp=trim($this->whatsapp);
+    $this->photo=trim($this->photo);
 		$this->fax=trim($this->fax);
 		$this->zip=(empty($this->zip)?'':$this->zip);
 		$this->town=(empty($this->town)?'':$this->town);
@@ -345,7 +361,11 @@ class Contact extends CommonObject
 		$sql .= ", skype='".$this->db->escape($this->skype)."'";
 		$sql .= ", twitter='".$this->db->escape($this->twitter)."'";
 		$sql .= ", facebook='".$this->db->escape($this->facebook)."'";
+		$sql .= ", instagram='".$this->db->escape($this->instagram)."'";
+		$sql .= ", youtube='".$this->db->escape($this->youtube)."'";
+		$sql .= ", snapchat='".$this->db->escape($this->snapchat)."'";
 		$sql .= ", linkedin='".$this->db->escape($this->linkedin)."'";
+		$sql .= ", whatsapp='".$this->db->escape($this->whatsapp)."'";
 		$sql .= ", photo='".$this->db->escape($this->photo)."'";
 		$sql .= ", birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
 		$sql .= ", note_private = ".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
@@ -701,7 +721,7 @@ class Contact extends CommonObject
 		$sql.= " c.fk_pays as country_id,";
 		$sql.= " c.fk_departement as state_id,";
 		$sql.= " c.birthday,";
-		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid, c.skype, c.twitter, c.facebook, c.linkedin,";
+		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid, c.skype, c.twitter, c.facebook, c.instagram, c.youtube, c.snapchat, c.linkedin, c.whatsapp,";
         $sql.= " c.photo,";
 		$sql.= " c.priv, c.note_private, c.note_public, c.default_lang, c.canvas,";
 		$sql.= " c.import_key,";
@@ -774,7 +794,11 @@ class Contact extends CommonObject
 				$this->skype			= $obj->skype;
 				$this->twitter			= $obj->twitter;
 				$this->facebook			= $obj->facebook;
+				$this->instagram		= $obj->instagram;
+				$this->youtube			= $obj->youtube;
+				$this->snapchat			= $obj->snapchat;
 				$this->linkedin			= $obj->linkedin;
+				$this->whatsapp			= $obj->whatsapp;
 				$this->photo			= $obj->photo;
 				$this->priv				= $obj->priv;
 				$this->mail				= $obj->email;
@@ -1313,7 +1337,14 @@ class Contact extends CommonObject
 		$this->country_code = 'FR';
 		$this->country = 'France';
 		$this->email = 'specimen@specimen.com';
-    	$this->skype = 'tom.hanson';
+    $this->skype = 'tom.hanson';
+    $this->twitter = 'tom.hanson';
+    $this->facebook = 'tom.hanson';
+    $this->instagram = 'tom.hanson';
+    $this->youtube = 'tom.hanson';
+    $this->snapchat = 'tom.hanson';
+    $this->linkedin = 'tom.hanson';
+    $this->whatsapp = '0909090904';
 
 		$this->phone_pro = '0909090901';
 		$this->phone_perso = '0909090902';
