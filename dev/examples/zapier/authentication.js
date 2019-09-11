@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 const testAuth = (z , bundle) => {
     const url = bundle.authData.url+'/api/index.php/login';
     // Normally you want to make a request to an endpoint that is either specifically designed to test auth, or one that
