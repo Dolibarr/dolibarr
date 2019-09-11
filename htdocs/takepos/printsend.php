@@ -65,8 +65,6 @@ else
     }
 }
 
-top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
-
 $langs->loadLangs(array("main", "bills", "cashdesk"));
 
 ?>
