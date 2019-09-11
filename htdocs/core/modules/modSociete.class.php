@@ -304,10 +304,10 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'societe as s';
         $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extra ON s.rowid = extra.fk_object';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_country = c.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as ce ON s.fk_effectif = ce.id';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as cfj ON s.fk_forme_juridique = cfj.code';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_state = d.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_stcomm as st ON s.fk_stcomm = st.id';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON sc.fk_user = u.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as payterm ON s.cond_reglement = payterm.rowid';
@@ -369,8 +369,8 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON c.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extrasoc ON s.rowid = extrasoc.fk_object';
 		if (is_object($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON c.fk_departement = d.rowid';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON c.fk_pays = co.rowid';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON c.fk_state = d.rowid';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON c.fk_country = co.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra ON extra.fk_object = c.rowid';
         $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id';
 		$this->export_sql_end[$r] .=' WHERE c.entity IN ('.getEntity('socpeople').')';
@@ -410,8 +410,8 @@ class modSociete extends DolibarrModules
             's.address' => "Address",
             's.zip' => "Zip",
             's.town' => "Town",
-            's.fk_departement' => "StateId",
-            's.fk_pays' => "CountryCode",
+            's.fk_state' => "StateId",
+            's.fk_country' => "CountryCode",
             's.phone' => "Phone",
             's.fax' => "Fax",
             's.url' => "Url",
@@ -467,14 +467,14 @@ class modSociete extends DolibarrModules
             's.code_fournisseur' => array('rule' => 'getsuppliercodeifauto'),
             's.code_compta' => array('rule' => 'getcustomeraccountancycodeifauto'),
             's.code_compta_fournisseur' => array('rule' => 'getsupplieraccountancycodeifauto'),
-            's.fk_departement' => array(
+            's.fk_state' => array(
                 'rule' => 'fetchidfromcodeid',
                 'classfile' => '/core/class/cstate.class.php',
                 'class' => 'Cstate',
                 'method' => 'fetch',
                 'dict' => 'DictionaryState'
             ),
-            's.fk_pays' => array(
+            's.fk_country' => array(
                 'rule' => 'fetchidfromcodeid',
                 'classfile' => '/core/class/ccountry.class.php',
                 'class' => 'Ccountry',
@@ -518,8 +518,8 @@ class modSociete extends DolibarrModules
             's.address' => "61 Jump Street",
             's.zip' => "123456",
             's.town' => "Bigtown",
-            's.fk_departement' => 'matches field "code_departement" in table "' . MAIN_DB_PREFIX . 'c_departements"',
-            's.fk_pays' => 'US/FR/DE etc. matches field "code" in table "' . MAIN_DB_PREFIX . 'c_country"',
+            's.fk_state' => 'matches field "code_departement" in table "' . MAIN_DB_PREFIX . 'c_departements"',
+            's.fk_country' => 'US/FR/DE etc. matches field "code" in table "' . MAIN_DB_PREFIX . 'c_country"',
             's.phone' => "eg: +34123456789",
             's.fax' => "eg. +34987654321",
             's.url' => "e.g. https://www.mybigcompany.com",
@@ -581,8 +581,8 @@ class modSociete extends DolibarrModules
             's.address' => "Address",
             's.zip' => "Zip",
             's.town' => "Town",
-            's.fk_departement' => "StateId",
-            's.fk_pays' => "CountryCode",
+            's.fk_state' => "StateId",
+            's.fk_country' => "CountryCode",
             's.birthday' => "BirthdayDate",
             's.poste' => "Role",
             's.phone' => "Phone",
@@ -618,14 +618,14 @@ class modSociete extends DolibarrModules
                 'method' => 'fetch',
                 'element' => 'ThirdParty'
             ),
-            's.fk_departement' => array(
+            's.fk_state' => array(
                 'rule' => 'fetchidfromcodeid',
                 'classfile' => '/core/class/cstate.class.php',
                 'class' => 'Cstate',
                 'method' => 'fetch',
                 'dict' => 'DictionaryState'
             ),
-            's.fk_pays' => array(
+            's.fk_country' => array(
                 'rule' => 'fetchidfromcodeid',
                 'classfile' => '/core/class/ccountry.class.php',
                 'class' => 'Ccountry',
@@ -647,8 +647,8 @@ class modSociete extends DolibarrModules
             's.address' => '61 Jump street',
             's.zip' => '75000',
             's.town' => 'Bigtown',
-            's.fk_departement' => 'matches field "code_departement" in table "' . MAIN_DB_PREFIX . 'c_departements"',
-            's.fk_pays' => 'US/FR/DE etc. matches field "code" in table "' . MAIN_DB_PREFIX . 'c_country"',
+            's.fk_state' => 'matches field "code_departement" in table "' . MAIN_DB_PREFIX . 'c_departements"',
+            's.fk_country' => 'US/FR/DE etc. matches field "code" in table "' . MAIN_DB_PREFIX . 'c_country"',
             's.birthday' => 'formatted as ' . dol_print_date(dol_now(), '%Y-%m-%d'),
             's.poste' => "Director",
             's.phone' => "5551122",
