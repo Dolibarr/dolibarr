@@ -979,7 +979,6 @@ class UserGroup extends CommonObject
 				$valueofldapfield[] = $muser->_load_ldap_dn($info2);
 			}
 			$info[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] = (!empty($valueofldapfield)?$valueofldapfield:'');
-
         }
         $info[$conf->global->LDAP_FIELD_GROUPID]=$this->id;
 		return $info;
