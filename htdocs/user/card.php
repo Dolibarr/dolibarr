@@ -215,8 +215,12 @@ if (empty($reshook)) {
 			$object->skype = GETPOST("skype", 'alphanohtml');
 			$object->twitter = GETPOST("twitter", 'alphanohtml');
 			$object->facebook = GETPOST("facebook", 'alphanohtml');
+			$object->instagram = GETPOST("instagram", 'alphanohtml');
+			$object->youtube = GETPOST("youtube", 'alphanohtml');
+			$object->snapchat = GETPOST("snapchat", 'alphanohtml');
 			$object->linkedin = GETPOST("linkedin", 'alphanohtml');
-
+			$object->whatsapp = GETPOST("whatsapp", 'alphanohtml');
+      
 			$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
 			$object->job = GETPOST("job", 'alpha');
 			$object->signature = GETPOST("signature", 'none');
@@ -368,7 +372,11 @@ if (empty($reshook)) {
 				$object->skype = GETPOST("skype", 'alpha');
 				$object->twitter = GETPOST("twitter", 'alpha');
 				$object->facebook = GETPOST("facebook", 'alpha');
+				$object->instagram = GETPOST("instagram", 'alpha');
+				$object->youtube = GETPOST("youtube", 'alpha');
+				$object->snapchat = GETPOST("snapchat", 'alpha');
 				$object->linkedin = GETPOST("linkedin", 'alpha');
+				$object->whatsapp = GETPOST("whastapp", 'alpha');
 				$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
 				$object->job = GETPOST("job", 'alpha');
 				$object->signature = GETPOST("signature", 'none');
@@ -628,7 +636,11 @@ if (empty($reshook)) {
 					$ldap_skype = $attribute[$conf->global->LDAP_FIELD_SKYPE];
 					$ldap_twitter = $attribute[$conf->global->LDAP_FIELD_TWITTER];
 					$ldap_facebook = $attribute[$conf->global->LDAP_FIELD_FACEBOOK];
+					$ldap_instagram = $attribute[$conf->global->LDAP_FIELD_INSTAGRAM];  
+					$ldap_youtube = $attribute[$conf->global->LDAP_FIELD_YOUTUBE];    
+					$ldap_snapchat = $attribute[$conf->global->LDAP_FIELD_SNAPCHAT];
 					$ldap_linkedin = $attribute[$conf->global->LDAP_FIELD_LINKEDIN];
+					$ldap_whatsapp = $attribute[$conf->global->LDAP_FIELD_WHATSAPP];
 					$ldap_mail = $attribute[$conf->global->LDAP_FIELD_MAIL];
 					$ldap_sid = $attribute[$conf->global->LDAP_FIELD_SID];
 				}
@@ -1091,6 +1103,57 @@ if ($action == 'create' || $action == 'adduserldap')
 		print '</td></tr>';
 	}
 
+	// Instagram
+	if (! empty($conf->socialnetworks->enabled))
+	{
+		print '<tr><td>'.$langs->trans("Instagram").'</td>';
+		print '<td>';
+		if (! empty($ldap_skype))
+		{
+			print '<input type="hidden" name="instagram" value="'.$ldap_instagram.'">';
+			print $ldap_instagram;
+		}
+		else
+		{
+			print '<input class="maxwidth200" type="text" name="intagram value="'.GETPOST('instagram', 'alpha').'">';
+		}
+		print '</td></tr>';
+	}
+  
+	// Youtube
+	if (! empty($conf->socialnetworks->enabled))
+	{
+		print '<tr><td>'.$langs->trans("Youtube").'</td>';
+		print '<td>';
+		if (! empty($ldap_youtube))
+		{
+			print '<input type="hidden" name="skype" value="'.$ldap_youtube.'">';
+			print $ldap_youtube;
+		}
+		else
+		{
+			print '<input class="maxwidth200" type="text" name="youtube" value="'.GETPOST('youtube', 'alpha').'">';
+		}
+		print '</td></tr>';
+	}
+  
+	// Snapchat
+	if (! empty($conf->socialnetworks->enabled))
+	{
+		print '<tr><td>'.$langs->trans("Snapchat").'</td>';
+		print '<td>';
+		if (! empty($ldap_snapchat))
+		{
+			print '<input type="hidden" name="skype" value="'.$ldap_snapchat.'">';
+			print $ldap_snapchat;
+		}
+		else
+		{
+			print '<input class="maxwidth200" type="text" name="snapchat" value="'.GETPOST('snapchat', 'alpha').'">';
+		}
+		print '</td></tr>';
+	}
+  
     // LinkedIn
     if (! empty($conf->socialnetworks->enabled))
     {
@@ -1104,6 +1167,23 @@ if ($action == 'create' || $action == 'adduserldap')
         else
         {
             print '<input class="maxwidth200" type="text" name="linkedin" value="'.GETPOST('linkedin', 'alpha').'">';
+        }
+        print '</td></tr>';
+    }
+    
+    // Whatsapp
+    if (! empty($conf->socialnetworks->enabled))
+    {
+        print '<tr><td>'.$langs->trans("Whatsapp").'</td>';
+        print '<td>';
+        if (! empty($ldap_whatsapp))
+        {
+            print '<input type="hidden" name="whatsapp" value="'.$ldap_whatsapp.'">';
+            print $ldap_whatsapp;
+        }
+        else
+        {
+            print '<input class="maxwidth200" type="text" name="whatsapp" value="'.GETPOST('whatsapp', 'alpha').'">';
         }
         print '</td></tr>';
     }
@@ -2369,6 +2449,56 @@ else
 				print '</td></tr>';
 			}
 
+			// Instagram
+			if (! empty($conf->socialnetworks->enabled))
+			{
+				print '<tr><td>'.$langs->trans("Instagram").'</td>';
+				print '<td>';
+				if ($caneditfield  && empty($object->ldap_sid))
+				{
+					print '<input size="40" type="text" name="instagram" class="flat" value="'.$object->instagram.'">';
+				}
+				else
+				{
+					print '<input type="hidden" name="instagram" value="'.$object->instagram.'">';
+					print $object->instagram;
+				}
+				print '</td></tr>';
+			}
+      
+			// Youtube
+			if (! empty($conf->socialnetworks->enabled))
+			{
+				print '<tr><td>'.$langs->trans("Youtube").'</td>';
+				print '<td>';
+				if ($caneditfield  && empty($object->ldap_sid))
+				{
+					print '<input size="40" type="text" name="youtube" class="flat" value="'.$object->youtube.'">';
+				}
+				else
+				{
+					print '<input type="hidden" name="youtube" value="'.$object->youtube.'">';
+					print $object->youtube;
+				}
+				print '</td></tr>';
+			}
+      
+			// Snapchat
+			if (! empty($conf->socialnetworks->enabled))
+			{
+				print '<tr><td>'.$langs->trans("Snapchat").'</td>';
+				print '<td>';
+				if ($caneditfield  && empty($object->ldap_sid))
+				{
+					print '<input size="40" type="text" name="snapchat" class="flat" value="'.$object->snapchat.'">';
+				}
+				else
+				{
+					print '<input type="hidden" name="snapchat" value="'.$object->snapchat.'">';
+					print $object->snapchat;
+				}
+				print '</td></tr>';
+			}
             // LinkedIn
             if (! empty($conf->socialnetworks->enabled))
             {
@@ -2382,6 +2512,23 @@ else
                 {
                     print '<input type="hidden" name="linkedin" value="'.$object->linkedin.'">';
                     print $object->linkedin;
+                }
+                print '</td></tr>';
+            }
+            
+            // Whatsapp
+            if (! empty($conf->socialnetworks->enabled))
+            {
+                print '<tr><td>'.$langs->trans("Whatsapp").'</td>';
+                print '<td>';
+                if ($caneditfield  && empty($object->ldap_sid))
+                {
+                    print '<input size="40" type="text" name="whatsapp" class="flat" value="'.$object->whatsapp.'">';
+                }
+                else
+                {
+                    print '<input type="hidden" name="whatsapp" value="'.$object->whatsapp.'">';
+                    print $object->whatsapp;
                 }
                 print '</td></tr>';
             }
