@@ -305,7 +305,11 @@ if (empty($reshook))
 			$object->skype       = trim(GETPOST("skype", 'alpha'));
 			$object->twitter     = trim(GETPOST("twitter", 'alpha'));
 			$object->facebook    = trim(GETPOST("facebook", 'alpha'));
+			$object->instagram   = trim(GETPOST("instagram", 'alpha'));
+			$object->youtube     = trim(GETPOST("youtube", 'alpha'));
+			$object->snapchat    = trim(GETPOST("snapchat", 'alpha'));
 			$object->linkedin    = trim(GETPOST("linkedin", 'alpha'));
+			$object->whatsapp    = trim(GETPOST("whatsapp", 'alpha'));
 			$object->birth       = $birthdate;
 
 			$object->typeid      = GETPOST("typeid", 'int');
@@ -451,7 +455,11 @@ if (empty($reshook))
 		$skype=GETPOST("member_skype", 'alpha');
 		$twitter=GETPOST("member_twitter", 'alpha');
 		$facebook=GETPOST("member_facebook", 'alpha');
-        $linkedin=GETPOST("member_linkedin", 'alpha');
+    $instagram=GETPOST("member_instagram", 'alpha');
+    $youtube=GETPOST("member_youtube", 'alpha');
+    $snapchat=GETPOST("member_snapchat", 'alpha');
+    $linkedin=GETPOST("member_linkedin", 'alpha');
+    $whatsapp=GETPOST("member_whatsapp", 'alpha');
 		$email=preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
 		$login=GETPOST("member_login", 'alpha');
 		$pass=GETPOST("password", 'alpha');
@@ -482,7 +490,11 @@ if (empty($reshook))
 		$object->skype       = $skype;
 		$object->twitter     = $twitter;
 		$object->facebook    = $facebook;
+		$object->instagram   = $instagram;
+		$object->youtube     = $youtube;
+		$object->snapchat    = $snapchat;
 		$object->linkedin    = $linkedin;
+		$object->whatsapp    = $whatsapp;
 
 		$object->email       = $email;
 		$object->login       = $login;
@@ -866,6 +878,18 @@ else
 			$object->country_code=$tmparray['code'];
 			$object->country=$tmparray['label'];
 		}
+    
+    if (!empty($socid)) {
+$object = new Societe($db);
+if ($socid > 0) $object->fetch($socid);
+
+if (! ($object->id > 0))
+{
+	$langs->load("errors");
+	print($langs->trans('ErrorRecordNotFound'));
+	exit;
+}
+    }
 
 		$adht = new AdherentType($db);
 
@@ -905,6 +929,7 @@ else
 		print '<form name="formsoc" action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
+		print '<input type="hidden" name="socid" value="'.$socid.'">';
 		if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 
         dol_fiche_head('');
@@ -1032,12 +1057,36 @@ else
 	    {
 	    	print '<tr><td>'.$langs->trans("Facebook").'</td><td><input type="text" name="member_facebook" size="40" value="'.(GETPOST('member_facebook', 'alpha')?GETPOST('member_facebook', 'alpha'):$object->facebook).'"></td></tr>';
 	    }
+      
+	    // Instagram
+	    if (! empty($conf->socialnetworks->enabled))
+	    {
+	    	print '<tr><td>'.$langs->trans("Instagram").'</td><td><input type="text" name="member_instagram" size="40" value="'.(GETPOST('member_instagram', 'alpha')?GETPOST('member_instagram', 'alpha'):$object->instagram).'"></td></tr>';
+	    }
+      
+	    // Facebook
+	    if (! empty($conf->socialnetworks->enabled))
+	    {
+	    	print '<tr><td>'.$langs->trans("Youtube").'</td><td><input type="text" name="member_youtube" size="40" value="'.(GETPOST('member_youtube', 'alpha')?GETPOST('member_youtube', 'alpha'):$object->youtube).'"></td></tr>';
+	    }
+      
+	    // Facebook
+	    if (! empty($conf->socialnetworks->enabled))
+	    {
+	    	print '<tr><td>'.$langs->trans("Snapchat").'</td><td><input type="text" name="member_snapchat" size="40" value="'.(GETPOST('member_snapchat', 'alpha')?GETPOST('member_snapchat', 'alpha'):$object->snapchat).'"></td></tr>';
+	    }
 
         // LinkedIn
         if (! empty($conf->socialnetworks->enabled))
         {
             print '<tr><td>'.$langs->trans("LinkedIn").'</td><td><input type="text" name="member_linkedin" size="40" value="'.(GETPOST('member_linkedin', 'alpha')?GETPOST('member_linkedin', 'alpha'):$object->linkedin).'"></td></tr>';
         }
+        
+	    // Whatsapp
+	    if (! empty($conf->socialnetworks->enabled))
+	    {
+	    	print '<tr><td>'.$langs->trans("Whatsapp").'</td><td><input type="text" name="member_whatsapp" size="40" value="'.(GETPOST('member_whatsapp', 'alpha')?GETPOST('member_whatsapp', 'alpha'):$object->whatsapp).'"></td></tr>';
+	    }
 
 	    // Birthday
 		print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
@@ -1301,11 +1350,35 @@ else
         {
             print '<tr><td>'.$langs->trans("Facebook").'</td><td><input type="text" name="facebook" class="minwidth100" value="'.(isset($_POST["facebook"])?GETPOST("facebook"):$object->facebook).'"></td></tr>';
         }
+        
+	    // Facebook
+        if (! empty($conf->socialnetworks->enabled))
+        {
+            print '<tr><td>'.$langs->trans("Instagram").'</td><td><input type="text" name="instagram" class="minwidth100" value="'.(isset($_POST["instagram"])?GETPOST("instagram"):$object->instagram).'"></td></tr>';
+        }
+        
+	    // Facebook
+        if (! empty($conf->socialnetworks->enabled))
+        {
+            print '<tr><td>'.$langs->trans("Youtube").'</td><td><input type="text" name="youtube" class="minwidth100" value="'.(isset($_POST["youtube"])?GETPOST("youtube"):$object->youtube).'"></td></tr>';
+        }
+        
+	    // Snapchat
+        if (! empty($conf->socialnetworks->enabled))
+        {
+            print '<tr><td>'.$langs->trans("Snapchat").'</td><td><input type="text" name="snpachat" class="minwidth100" value="'.(isset($_POST["snapchat"])?GETPOST("snapchat"):$object->snapchat).'"></td></tr>';
+        }
 
         // LinkedIn
         if (! empty($conf->socialnetworks->enabled))
         {
             print '<tr><td>'.$langs->trans("LinkedIn").'</td><td><input type="text" name="linkedin" class="minwidth100" value="'.(isset($_POST["linkedin"])?GETPOST("linkedin"):$object->linkedin).'"></td></tr>';
+        }
+        
+        // whatsapp
+        if (! empty($conf->socialnetworks->enabled))
+        {
+            print '<tr><td>'.$langs->trans("Whatsapp").'</td><td><input type="text" name="whatsapp" class="minwidth100" value="'.(isset($_POST["whatsapp"])?GETPOST("whatsapp"):$object->whatsapp).'"></td></tr>';
         }
 
 	    // Birthday
