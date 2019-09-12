@@ -72,9 +72,35 @@ class User extends CommonObject
 	public $email;
 	public $personal_email;
 
+
+    /**
+     * @var array array of socialnetworks
+     */
+    public $socialnetworks;
+
+    /**
+     * Skype username
+     * @var string
+     * @deprecated
+     */
 	public $skype;
+    /**
+     * Twitter username
+     * @var string
+     * @deprecated
+     */
 	public $twitter;
+    /**
+     * Facebook username
+     * @var string
+     * @deprecated
+     */
 	public $facebook;
+    /**
+     * Linkedin username
+     * @var string
+     * @deprecated
+     */
 	public $linkedin;
 
 	public $job;			// job position

@@ -98,6 +98,17 @@ class Contact extends CommonObject
 
 	public $code;
 	public $email;
+
+    /**
+     * @var array array of socialnetworks
+     */
+    public $socialnetworks;
+
+    /**
+     * Skype username
+     * @var string
+     * @deprecated
+     */
 	public $skype;
 	public $photo;
 	public $jabberid;
@@ -122,6 +133,10 @@ class Contact extends CommonObject
 	// END MODULEBUILDER PROPERTIES
 
 
+    /**
+     * Old copy
+     * @var Contact
+     */
 	public $oldcopy;				// To contains a clone of this when we need to save old properties of object
 
 

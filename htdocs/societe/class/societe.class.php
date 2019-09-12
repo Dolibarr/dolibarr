@@ -197,24 +197,35 @@ class Societe extends CommonObject
 	 * @var string
 	 */
 	public $email;
+
+    /**
+     * @var array array of socialnetworks
+     */
+    public $socialnetworks;
+
 	/**
 	 * Skype username
 	 * @var string
+	 * @deprecated
 	 */
 	public $skype;
+
 	/**
 	 * Twitter username
 	 * @var string
+	 * @deprecated
 	 */
 	public $twitter;
 	/**
 	 * Facebook username
 	 * @var string
+	 * @deprecated
 	 */
 	public $facebook;
     /**
      * LinkedIn username
      * @var string
+	 * @deprecated
      */
     public $linkedin;
 	/**
