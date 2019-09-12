@@ -177,14 +177,14 @@ create table llx_c_socialnetworks
 ALTER TABLE llx_c_socialnetworks ADD UNIQUE INDEX idx_c_socialnetworks_code (code);
 
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'facebook', 'Facebook', 'https://www.facebook.com/{socialid}', 'fa-facebook', 1);
-INSERT INTO llx_c_socialnetworks (entity,code, label, url, icon, active) VALUES(1, 'skype', 'Skype', 'https://www.skype.com/{socialid}', 'fa-skype', 1);
-INSERT INTO llx_c_socialnetworks (entity,code, label, url, icon, active) VALUES(1, 'twitter', 'Twitter', 'https://www.twitter.com/{socialid}', 'fa-twitter', 1);
-INSERT INTO llx_c_socialnetworks (entity,code, label, url, icon, active) VALUES(1, 'linkedin', 'LinkedIn', 'https://www.linkedin.com/{socialid}', 'fa-linkedin', 1);
-INSERT INTO llx_c_socialnetworks (entity,code, label, url, icon, active) VALUES(1, 'instagram', 'Instagram', 'https://www.instagram.com/{socialid}', 'fa-instagram', 1);
-INSERT INTO llx_c_socialnetworks (entity,code, label, url, icon, active) VALUES(1, 'snapchat', 'Snapchat', '{socialid}', 'fa-snapchat', 1);
-INSERT INTO llx_c_socialnetworks (entity,code, label, url, icon, active) VALUES(1, 'googleplus', 'GooglePlus', 'https://www.googleplus.com/{socialid}', 'fa-google-plus-g', 1);
-INSERT INTO llx_c_socialnetworks (entity,code, label, url, icon, active) VALUES(1, 'youtube', 'Youtube', 'https://www.youtube.com/{socialid}', 'fa-youtube', 1);
-INSERT INTO llx_c_socialnetworks (entity,code, label, url, icon, active) VALUES(1, 'whatsapp', 'Whatsapp', '{socialid}', 'fa-whatsapp', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'skype', 'Skype', 'https://www.skype.com/{socialid}', 'fa-skype', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'twitter', 'Twitter', 'https://www.twitter.com/{socialid}', 'fa-twitter', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'linkedin', 'LinkedIn', 'https://www.linkedin.com/{socialid}', 'fa-linkedin', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'instagram', 'Instagram', 'https://www.instagram.com/{socialid}', 'fa-instagram', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'snapchat', 'Snapchat', '{socialid}', 'fa-snapchat', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'googleplus', 'GooglePlus', 'https://www.googleplus.com/{socialid}', 'fa-google-plus-g', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'youtube', 'Youtube', 'https://www.youtube.com/{socialid}', 'fa-youtube', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'whatsapp', 'Whatsapp', '{socialid}', 'fa-whatsapp', 1);
 
 ALTER TABLE llx_adherent ADD COLUMN socialnetworks text DEFAULT NULL AFTER email;
 ALTER TABLE llx_societe ADD COLUMN socialnetworks text DEFAULT NULL AFTER email;
