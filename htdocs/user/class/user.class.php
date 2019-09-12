@@ -399,7 +399,8 @@ class User extends CommonObject
 					$arraysocialnetworks['linkedin'] = $obj->linkedin;
 					$updatesocial = true;
 				}
-				$this->socialnetworks = array_merge($arraysocialnetworks, json_decode($obj->socialnetworks, true));
+				$socialarray = ($obj->socialnetworks==''?array():json_decode($obj->socialnetworks, true));
+				$this->socialnetworks = array_merge($arraysocialnetworks, $socialarray);
 				if ($updatesocial) {
 					$sqlupd = 'UPDATE '.MAIN_DB_PREFIX.'user SET skype=null';
 					$sqlupd .= ', twitter=null';
