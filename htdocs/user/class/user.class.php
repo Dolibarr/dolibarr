@@ -2657,17 +2657,19 @@ class User extends CommonObject
 			if ($this->phone_mobile) $info["phpgwCellTelephoneNumber"] = $this->phone_mobile;
 		}
 
-        $info[$conf->global->LDAP_FIELD_USERID] = $this->id;
-        $info[$conf->global->LDAP_FIELD_GROUPID] = '1';
-        $usergroup = new UserGroup($this->db);
-        $groupslist = $usergroup->listGroupsForUser($this->id);
-        if(!empty($groupslist)){
-            foreach ($groupslist as $groupforuser) {
-                $info[$conf->global->LDAP_FIELD_GROUPID] = $groupforuser->id;//Select first group in list
-                break;
+        if (!empty($conf->global->LDAP_FIELD_USERID))$info[$conf->global->LDAP_FIELD_USERID] = $this->id;
+        if(!empty($info[$conf->global->LDAP_FIELD_GROUPID])){
+            $usergroup = new UserGroup($this->db);
+            $groupslist = $usergroup->listGroupsForUser($this->id);
+            $info[$conf->global->LDAP_FIELD_GROUPID] = '1';
+            if(!empty($groupslist)){
+                foreach ($groupslist as $groupforuser) {
+                    $info[$conf->global->LDAP_FIELD_GROUPID] = $groupforuser->id;//Select first group in list
+                    break;
+                }
             }
         }
-        $info[$conf->global->LDAP_FIELD_HOMEDIRECTORY]="{$conf->global->LDAP_FIELD_HOMEDIRECTORYPREFIX}/$this->firstname";
+        if (!empty($this->firstname) && !empty($conf->global->LDAP_FIELD_HOMEDIRECTORY) && !empty($conf->global->LDAP_FIELD_HOMEDIRECTORYPREFIX)) $info[$conf->global->LDAP_FIELD_HOMEDIRECTORY]="{$conf->global->LDAP_FIELD_HOMEDIRECTORYPREFIX}/$this->firstname";
 
         return $info;
     }
