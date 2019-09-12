@@ -2,6 +2,28 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 11.0.0 compared to 10.0.0 *****
+For Users:
+
+
+For Developers:
+
+
+WARNING:
+
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* Properties ->libelle_incoterms were renamed into ->label_incoterms
+* Removed the method liste_array() of project class. It was not used by core code.
+* The function show_theme() hase been renamed into showSkins()
+* Rename 'module_part' parameter into 'modulepart' into document APIs, for consistency.
+* The deprecated method get_OutstandingBill has been removed. You can use getOutstandingBills() instead.
+* The hook "moreFamily" must return payment into var "totalpayment" and no more "paiement" (english replace french).
+* Removed deprecated method actioncomm->add(), use create() instead
+* If you have developed your own emailing target selector and used parent::add_to_target(...), you must now use parent::addToTargets(...)
+
+
+
 ***** ChangeLog for 10.0.2 compared to 10.0.1 *****
 
 FIX: #10460 compatibility with MariaDB 10.4
@@ -101,26 +123,6 @@ FIX: vulenrability in uploading file found by 美创科技安全实验室
 FIX: wrong display (and hidden input) for already dispatched quantity
 FIX: wrong parameters (same error in branch 9, 10, develop)
 FIX: Wrong variable. Must be PROJECT_HIDE_UNSELECTABLES
-
-***** ChangeLog for 11.0.0 compared to 10.0.0 *****
-For Users:
-
-
-For Developers:
-
-
-WARNING:
-
-Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
-* Properties ->libelle_incoterms were renamed into ->label_incoterms
-* Removed the method liste_array() of project class. It was not used by core code.
-* The function show_theme() hase been renamed into showSkins()
-* Rename 'module_part' parameter into 'modulepart' into document APIs, for consistency.
-* The deprecated method get_OutstandingBill has been removed. You can use getOutstandingBills() instead.
-* The hook "moreFamily" must return payment into var "totalpayment" and no more "paiement" (english replace french).
-* Removed deprecated method actioncomm->add(), use create() instead
-* If you develop your own emailing target selector and used parent::add_to_target(...), you must now use parent::addToTargets(...)
-
 
 ***** ChangeLog for 10.0.1 compared to 10.0.0 *****
 FIX: #10930
