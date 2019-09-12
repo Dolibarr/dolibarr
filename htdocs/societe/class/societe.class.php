@@ -3579,6 +3579,12 @@ class Societe extends CommonObject
 		$this->twitter='tomhanson';
 		$this->facebook='tomhanson';
 		$this->linkedin='tomhanson';
+		$this->socialnetworks = array(
+			'skype' => 'tom.hanson',
+			'twitter' => 'tomhanson',
+			'facebook' => 'tomhanson',
+			'linkedin' => 'tomhanson',
+		);
 		$this->url='http://www.specimen.com';
 
 		$this->phone='0909090901';

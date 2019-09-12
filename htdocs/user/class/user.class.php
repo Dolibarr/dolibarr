@@ -2713,6 +2713,12 @@ class User extends CommonObject
 		$this->twitter='twitterpseudo';
 		$this->facebook='facebookpseudo';
 		$this->linkedin='linkedinpseudo';
+		$this->socialnetworks = array(
+			'skype' => 'skypepseudo',
+			'twitter' => 'twitterpseudo',
+			'facebook' => 'facebookpseudo',
+			'linkedin' => 'linkedinpseudo',
+		);
 		$this->office_phone='0999999999';
 		$this->office_fax='0999999998';
 		$this->user_mobile='0999999997';
