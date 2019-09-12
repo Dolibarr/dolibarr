@@ -515,9 +515,9 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
         }
 
 
-        require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
-        $caction=new CActionComm($db);
-        $arraylist=$caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0), '', 1);
+        //require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
+        //$caction=new CActionComm($db);
+        //$arraylist=$caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0), '', 1);
 
         $actualCycleDate = false;
 
@@ -579,6 +579,9 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
             }
             elseif($actionstatic->code == 'TICKET_MSG'){
                 $iconClass = 'fa fa-comments';
+            }
+            elseif($actionstatic->code == 'TICKET_MSG_PRIVATE'){
+                $iconClass = 'fa fa-mask';
             }
             elseif (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
             {

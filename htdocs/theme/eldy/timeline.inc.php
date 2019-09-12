@@ -62,7 +62,9 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 
 .timeline > li.timeline-code-ticket_msg_private  > .timeline-item {
 		background: #fffbe5;
+        border-color: #d0cfc0;
 }
+
 
 .timeline > li > .timeline-item > .time{
     color: #6f6f6f;
@@ -123,6 +125,10 @@ a.timeline-btn:hover
     font-weight: normal;
     line-height: 1.1;
 }
+.timeline > li.timeline-code-ticket_msg_private  > .timeline-item > .timeline-header {
+    border-color: #ecebda;
+}
+
 .timeline > li > .timeline-item > .timeline-header > a {
     font-weight: 600;
 }

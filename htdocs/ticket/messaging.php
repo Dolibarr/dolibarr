@@ -47,7 +47,7 @@ $page = GETPOST("page");
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
 if (! $sortfield) $sortfield="a.datep,a.id";
-if (! $sortorder) $sortorder="DESC";
+if (! $sortorder) $sortorder="desc";
 $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -225,7 +225,25 @@ if (!empty($object->id))
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
-	print_barre_liste($langs->trans("ActionsOnTicket"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlcenter, '', 0, 1, 1);
+    $morehtmlright = '';
+
+    if($sortorder === 'desc') {
+        $sortUrl = $_SERVER["PHP_SELF"] . '?sortfield=a.datep&sortorder=asc' . $param;
+        $morehtmlright .= dolGetButtonTitle($langs->trans('Date'), $langs->trans('OrderByDateAsc'), 'fa fa-sort-numeric-down', $sortUrl, $id = '', $status = 1);
+    }
+    else{
+        $sortUrl = $_SERVER["PHP_SELF"] . '?sortfield=a.datep&sortorder=desc' . $param;
+        $morehtmlright .= dolGetButtonTitle($langs->trans('Date'), $langs->trans('OrderByDateDesc'), 'fa fa-sort-numeric-down-alt', $sortUrl, $id = '', $status = 1);
+    }
+
+    // Show link to add a message (if read and not closed)
+    $btnstatus = $object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
+    $url = 'card.php?track_id=' . $object->track_id . '&action=presend_addmessage&mode=init';
+    $morehtmlright .= dolGetButtonTitle($langs->trans('TicketAddMessage') , '', 'fa fa-comment', $url, 'add-new-ticket-title-button', $btnstatus);
+
+
+
+	print_barre_liste($langs->trans("ActionsOnTicket"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
 
 	// List of all actions
 	$filters=array();
