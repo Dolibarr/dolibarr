@@ -272,7 +272,8 @@ class User extends CommonObject
 		$login=trim($login);
 
 		// Get user
-		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.birth, u.email, u.personal_email, u.job, u.skype, u.twitter, u.facebook, u.linkedin,";
+		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.birth, u.email, u.personal_email, u.job,";
+		$sql.= " u.socialnetworks, u.skype, u.twitter, u.facebook, u.linkedin,";
 		$sql.= " u.signature, u.office_phone, u.office_fax, u.user_mobile, u.personal_mobile,";
 		$sql.= " u.address, u.zip, u.town, u.fk_state as state_id, u.fk_country as country_id,";
 		$sql.= " u.admin, u.login, u.note,";
@@ -379,11 +380,39 @@ class User extends CommonObject
 				$this->user_mobile  = $obj->user_mobile;
                 $this->personal_mobile = $obj->personal_mobile;
 				$this->email		= $obj->email;
-                $this->personal_email = $obj->personal_email;
-				$this->skype		= $obj->skype;
-				$this->twitter		= $obj->twitter;
-				$this->facebook		= $obj->facebook;
-				$this->linkedin		= $obj->linkedin;
+				$this->personal_email = $obj->personal_email;
+				$arraysocialnetworks = array();
+				$updatesocial = false;
+				if (!empty($obj->skype)) {
+					$arraysocialnetworks['skype'] = $obj->skype;
+					$updatesocial = true;
+				}
+				if (!empty($obj->twitter)) {
+					$arraysocialnetworks['twitter'] = $obj->twitter;
+					$updatesocial = true;
+				}
+				if (!empty($obj->facebook)) {
+					$arraysocialnetworks['facebook'] = $obj->facebook;
+					$updatesocial = true;
+				}
+				if (!empty($obj->linkedin)) {
+					$arraysocialnetworks['linkedin'] = $obj->linkedin;
+					$updatesocial = true;
+				}
+				$this->socialnetworks = array_merge($arraysocialnetworks, json_decode($obj->socialnetworks, true));
+				if ($updatesocial) {
+					$sqlupd = 'UPDATE '.MAIN_DB_PREFIX.'user SET skype=null';
+					$sqlupd .= ', twitter=null';
+					$sqlupd .= ', facebook=null';
+					$sqlupd .= ', linkedin=null';
+					$sqlupd .= ', socialnetworks="'.$this->db->escape(json_encode($this->socialnetworks)).'"';
+					$sqlupd .= ' WHERE rowid='.$this->id;
+					$this->db->query($sqlupd);
+				}
+				$this->skype = $this->socialnetworks['skype'];
+				$this->twitter = $this->socialnetworks['twitter'];
+				$this->facebook = $this->socialnetworks['facebook'];
+				$this->linkedin = $this->socialnetworks['linkedin'];
 				$this->job			= $obj->job;
 				$this->signature	= $obj->signature;
 				$this->admin		= $obj->admin;
@@ -1576,10 +1605,11 @@ class User extends CommonObject
         $sql.= ", personal_mobile = '".$this->db->escape($this->personal_mobile)."'";
 		$sql.= ", email = '".$this->db->escape($this->email)."'";
         $sql.= ", personal_email = '".$this->db->escape($this->personal_email)."'";
-		$sql.= ", skype = '".$this->db->escape($this->skype)."'";
-		$sql.= ", twitter = '".$this->db->escape($this->twitter)."'";
-		$sql.= ", facebook = '".$this->db->escape($this->facebook)."'";
-		$sql.= ", linkedin = '".$this->db->escape($this->linkedin)."'";
+        $sql.= ", socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
+		//$sql.= ", skype = '".$this->db->escape($this->skype)."'";
+		//$sql.= ", twitter = '".$this->db->escape($this->twitter)."'";
+		//$sql.= ", facebook = '".$this->db->escape($this->facebook)."'";
+		//$sql.= ", linkedin = '".$this->db->escape($this->linkedin)."'";
 		$sql.= ", job = '".$this->db->escape($this->job)."'";
 		$sql.= ", signature = '".$this->db->escape($this->signature)."'";
 		$sql.= ", accountancy_code = '".$this->db->escape($this->accountancy_code)."'";
