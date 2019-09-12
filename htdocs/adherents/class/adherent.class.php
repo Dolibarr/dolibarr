@@ -2071,10 +2071,8 @@ class Adherent extends CommonObject
 
 		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpictoimg) $withpictoimg=0;
 
-		$notooltip=0;
-
 		$result=''; $label='';
-		$link=''; $linkstart=''; $linkend='';
+		$linkstart=''; $linkend='';
 
 		if (! empty($this->photo))
 		{
@@ -2107,7 +2105,7 @@ class Adherent extends CommonObject
 			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 		}
 
-		$link = '<a href="'.$url.'"';
+		$linkstart.= '<a href="'.$url.'"';
 		$linkclose="";
 		if (empty($notooltip))
 		{
@@ -2121,10 +2119,10 @@ class Adherent extends CommonObject
 			$linkclose.= ' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
 		}
 
-		$link.=$linkclose.'>';
+		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
-		$result.=$link;
+		$result.=$linkstart;
 		if ($withpictoimg) $result.='<div class="inline-block nopadding valignmiddle">';
 		if ($withpictoimg)
 		{
