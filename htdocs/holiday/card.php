@@ -83,6 +83,13 @@ $candelete = 0;
 if (! empty($user->rights->holiday->delete)) $candelete=1;
 if ($object->statut == Holiday::STATUS_DRAFT && $user->rights->holiday->write && in_array($object->fk_user, $childids)) $candelete=1;
 
+// Use to check disponibility of email server
+$port=! empty($conf->global->MAIN_MAIL_SMTP_PORT)?$conf->global->MAIN_MAIL_SMTP_PORT:ini_get('smtp_port');
+if (! $port) $port=25;
+$server=! empty($conf->global->MAIN_MAIL_SMTP_SERVER)?$conf->global->MAIN_MAIL_SMTP_SERVER:ini_get('SMTP');
+if (! $server) $server='127.0.0.1';
+
+
 /*
  * Actions
  */
@@ -397,7 +404,10 @@ if ($action == 'confirm_send')
             $destinataire->fetch($object->fk_validator);
             $emailTo = $destinataire->email;
 
-            if (!$emailTo)
+            $mail = new CMailFile('', '', '', '');
+            $result = $mail->check_server_port($server, $port);
+
+            if (! $emailTo || ! $result)
             {
                 dol_syslog("Expected validator has no email, so we redirect directly to finished page without sending email");
                 header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -534,7 +544,10 @@ if ($action == 'confirm_valid')
             $destinataire->fetch($object->fk_user);
             $emailTo = $destinataire->email;
 
-            if (!$emailTo)
+            $mail = new CMailFile('', '', '', '');
+            $result = $mail->check_server_port($server, $port);
+
+            if (! $emailTo || ! $result)
             {
                 dol_syslog("User that request leave has no email, so we redirect directly to finished page without sending email");
             }
@@ -622,7 +635,10 @@ if ($action == 'confirm_refuse' && GETPOST('confirm', 'alpha') == 'yes')
                 $destinataire->fetch($object->fk_user);
                 $emailTo = $destinataire->email;
 
-                if (!$emailTo)
+                $mail = new CMailFile('', '', '', '');
+                $result = $mail->check_server_port($server, $port);
+
+                if (! $emailTo || ! $result)
                 {
                     dol_syslog("User that request leave has no email, so we redirect directly to finished page without sending email");
                 }
@@ -776,7 +792,10 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
             $destinataire->fetch($object->fk_user);
             $emailTo = $destinataire->email;
 
-            if (!$emailTo)
+            $mail = new CMailFile('', '', '', '');
+            $result = $mail->check_server_port($server, $port);
+
+            if (! $emailTo || ! $result)
             {
                 header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
                 exit;
