@@ -59,6 +59,11 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     padding: 0;
     position: relative;
 }
+
+.timeline > li.timeline-code-ticket_msg_private  > .timeline-item {
+		background: #fffbe5;
+}
+
 .timeline > li > .timeline-item > .time{
     color: #6f6f6f;
     float: right;

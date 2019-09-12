@@ -658,10 +658,12 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
             $out .= ' <span class="messaging-title">';
 
 
-
-            if($actionstatic->code == 'TICKET_MSG') {
-                $out .= $langs->trans('TicketNewMessage');
-            }else{
+			if($actionstatic->code == 'TICKET_MSG') {
+				$out .= $langs->trans('TicketNewMessage');
+			}
+			elseif($actionstatic->code == 'TICKET_MSG_PRIVATE') {
+				$out .= $langs->trans('TicketNewMessage').' <em>('.$langs->trans('Private').')</em>';
+			}else{
                 if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'action') {
                     $transcode = $langs->trans("Action" . $histo[$key]['acode']);
                     $libelle = ($transcode != "Action" . $histo[$key]['acode'] ? $transcode : $histo[$key]['alabel']);
