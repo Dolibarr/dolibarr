@@ -2249,11 +2249,18 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     	    function stripeTokenHandler(token) {
     	      // Insert the token ID into the form so it gets submitted to the server
     	      var form = document.getElementById('payment-form');
+
     	      var hiddenInput = document.createElement('input');
     	      hiddenInput.setAttribute('type', 'hidden');
     	      hiddenInput.setAttribute('name', 'stripeToken');
     	      hiddenInput.setAttribute('value', token.id);
     	      form.appendChild(hiddenInput);
+
+			  var hiddenInput2 = document.createElement('input');
+			  hiddenInput2.setAttribute('type', 'hidden');
+			  hiddenInput2.setAttribute('name', 'token');
+              hiddenInput2.setAttribute('value', '<?php echo $_SESSION["newtoken"]; ?>');
+			  form.appendChild(hiddenInput2);
 
     	      // Submit the form
     	      jQuery('#buttontopay').hide();
@@ -2266,11 +2273,18 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     		function stripeSourceHandler(source) {
     		  // Insert the source ID into the form so it gets submitted to the server
     		  var form = document.getElementById('payment-form');
+
     		  var hiddenInput = document.createElement('input');
     		  hiddenInput.setAttribute('type', 'hidden');
     		  hiddenInput.setAttribute('name', 'stripeSource');
     		  hiddenInput.setAttribute('value', source.id);
     		  form.appendChild(hiddenInput);
+
+			  var hiddenInput2 = document.createElement('input');
+			  hiddenInput2.setAttribute('type', 'hidden');
+			  hiddenInput2.setAttribute('name', 'token');
+              hiddenInput2.setAttribute('value', '<?php echo $_SESSION["newtoken"]; ?>');
+			  form.appendChild(hiddenInput2);
 
     		  // Submit the form
     	      jQuery('#buttontopay').hide();

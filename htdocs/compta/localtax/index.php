@@ -188,6 +188,19 @@ function pt($db, $sql, $date)
     }
 }
 
+if (empty($localTaxType))
+{
+	accessforbidden('Parameter localTaxType is missing');
+	exit;
+}
+
+
+/*
+ * Actions
+ */
+
+// None
+
 
 /*
  * View
@@ -213,7 +226,11 @@ if($localTaxType==1) {
 	$CalcLT= $conf->global->MAIN_INFO_LOCALTAX_CALC2;
 }
 
-$fsearch.='  <input type="hidden" name="localTaxType" value="'.$localTaxType.'">';
+$fsearch = '<!-- hidden fields for form -->';
+$fsearch.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+$fsearch.= '<input type="hidden" name="localTaxType" value="'.$localTaxType.'">';
+$fsearch.= '<input type="hidden" name="modetax" value="'.$modetax.'">';
+
 $description = $fsearch;
 
 // Show report header
@@ -528,7 +545,7 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000)	// $mc
     $total = $total + $diff;
     $subtotal = price2num($subtotal + $diff, 'MT');
 
-    print '<td class="nowrap right">'.price(price2num($diff, 'MT')).'</td>\n';
+    print '<td class="nowrap right">'.price(price2num($diff, 'MT')).'</td>'."\n";
     print "<td>&nbsp;</td>\n";
     print "</tr>\n";
 
