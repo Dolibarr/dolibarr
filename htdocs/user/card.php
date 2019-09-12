@@ -100,6 +100,20 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
+$sql = "SELECT rowid, code, label, url, active FROM ".MAIN_DB_PREFIX."c_socialnetworks";
+$socialnetworks = array();
+$resql = $db->query($sql);
+if ($resql) {
+	while ($obj = $db->fetch_object($resql)) {
+		$socialnetworks[$obj->code] = array(
+			'rowid' => $obj->rowid,
+			'label' => $obj->label,
+			'url' => $obj->url,
+			'active' => $obj->active,
+		);
+	}
+}
+
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('usercard','globalcard'));
 
@@ -212,11 +226,17 @@ if (empty($reshook)) {
 			$object->office_fax = GETPOST("office_fax", 'alphanohtml');
 			$object->user_mobile = GETPOST("user_mobile", 'alphanohtml');
 
-			$object->skype = GETPOST("skype", 'alphanohtml');
-			$object->twitter = GETPOST("twitter", 'alphanohtml');
-			$object->facebook = GETPOST("facebook", 'alphanohtml');
-			$object->linkedin = GETPOST("linkedin", 'alphanohtml');
-
+			//$object->skype = GETPOST("skype", 'alphanohtml');
+			//$object->twitter = GETPOST("twitter", 'alphanohtml');
+			//$object->facebook = GETPOST("facebook", 'alphanohtml');
+			//$object->linkedin = GETPOST("linkedin", 'alphanohtml');
+			$object->socialnetworks = array();
+			if (! empty($conf->socialnetworks->enabled)) {
+				foreach ($socialnetworks as $key => $value) {
+					if (!$value['active']) continue;
+					$object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
+				}
+			}
 			$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
 			$object->job = GETPOST("job", 'alpha');
 			$object->signature = GETPOST("signature", 'none');
@@ -365,10 +385,17 @@ if (empty($reshook)) {
 				$object->office_phone = GETPOST("office_phone", 'alphanohtml');
 				$object->office_fax = GETPOST("office_fax", 'alphanohtml');
 				$object->user_mobile = GETPOST("user_mobile", 'alphanohtml');
-				$object->skype = GETPOST("skype", 'alpha');
-				$object->twitter = GETPOST("twitter", 'alpha');
-				$object->facebook = GETPOST("facebook", 'alpha');
-				$object->linkedin = GETPOST("linkedin", 'alpha');
+				//$object->skype = GETPOST("skype", 'alpha');
+				//$object->twitter = GETPOST("twitter", 'alpha');
+				//$object->facebook = GETPOST("facebook", 'alpha');
+				//$object->linkedin = GETPOST("linkedin", 'alpha');
+				$object->socialnetworks = array();
+				if (! empty($conf->socialnetworks->enabled)) {
+					foreach ($socialnetworks as $key => $value) {
+						if (!$value['active']) continue;
+						$object->socialnetworks[$key] = GETPOST($key, 'alpha');
+					}
+				}
 				$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
 				$object->job = GETPOST("job", 'alpha');
 				$object->signature = GETPOST("signature", 'none');
@@ -625,10 +652,10 @@ if (empty($reshook)) {
 					$ldap_phone = $attribute[$conf->global->LDAP_FIELD_PHONE];
 					$ldap_fax = $attribute[$conf->global->LDAP_FIELD_FAX];
 					$ldap_mobile = $attribute[$conf->global->LDAP_FIELD_MOBILE];
-					$ldap_skype = $attribute[$conf->global->LDAP_FIELD_SKYPE];
-					$ldap_twitter = $attribute[$conf->global->LDAP_FIELD_TWITTER];
-					$ldap_facebook = $attribute[$conf->global->LDAP_FIELD_FACEBOOK];
-					$ldap_linkedin = $attribute[$conf->global->LDAP_FIELD_LINKEDIN];
+					$ldap_social['skype'] = $attribute[$conf->global->LDAP_FIELD_SKYPE];
+					$ldap_social['twitter'] = $attribute[$conf->global->LDAP_FIELD_TWITTER];
+					$ldap_social['facebook'] = $attribute[$conf->global->LDAP_FIELD_FACEBOOK];
+					$ldap_social['linkedin'] = $attribute[$conf->global->LDAP_FIELD_LINKEDIN];
 					$ldap_mail = $attribute[$conf->global->LDAP_FIELD_MAIL];
 					$ldap_sid = $attribute[$conf->global->LDAP_FIELD_SID];
 				}
@@ -1040,73 +1067,87 @@ if ($action == 'create' || $action == 'adduserldap')
 	}
 	print '</td></tr>';
 
-	// Skype
-	if (! empty($conf->socialnetworks->enabled))
-	{
-		print '<tr><td>'.$langs->trans("Skype").'</td>';
-		print '<td>';
-		if (! empty($ldap_skype))
-		{
-			print '<input type="hidden" name="skype" value="'.$ldap_skype.'">';
-			print $ldap_skype;
+	if (! empty($conf->socialnetworks->enabled)) {
+		foreach ($socialnetworks as $key => $value) {
+			if (!$value['active']) continue;
+			print '<tr><td>'.$langs->trans($value['label']).'</td>';
+			print '<td>';
+			if (! empty($ldap_social[$key])) {
+				print '<input type="hidden" name="'.$key.'" value="'.$ldap_social[$key].'">';
+				print $ldap_social[$key];
+			} else {
+				print '<input class="maxwidth200" type="text" name="'.$key.'" value="'.GETPOST($key, 'alphanohtml').'">';
+			}
+			print '</td></tr>';
 		}
-		else
-		{
-			print '<input class="maxwidth200" type="text" name="skype" value="'.GETPOST('skype', 'alpha').'">';
-		}
-		print '</td></tr>';
 	}
+	// // Skype
+	// if (! empty($conf->socialnetworks->enabled))
+	// {
+	// 	print '<tr><td>'.$langs->trans("Skype").'</td>';
+	// 	print '<td>';
+	// 	if (! empty($ldap_skype))
+	// 	{
+	// 		print '<input type="hidden" name="skype" value="'.$ldap_skype.'">';
+	// 		print $ldap_skype;
+	// 	}
+	// 	else
+	// 	{
+	// 		print '<input class="maxwidth200" type="text" name="skype" value="'.GETPOST('skype', 'alpha').'">';
+	// 	}
+	// 	print '</td></tr>';
+	// }
 
-	// Twitter
-	if (! empty($conf->socialnetworks->enabled))
-	{
-		print '<tr><td>'.$langs->trans("Twitter").'</td>';
-		print '<td>';
-		if (! empty($ldap_twitter))
-		{
-			print '<input type="hidden" name="twitter" value="'.$ldap_twitter.'">';
-			print $ldap_twitter;
-		}
-		else
-		{
-			print '<input class="maxwidth200" type="text" name="twitter" value="'.GETPOST('twitter', 'alpha').'">';
-		}
-		print '</td></tr>';
-	}
+	// // Twitter
+	// if (! empty($conf->socialnetworks->enabled))
+	// {
+	// 	print '<tr><td>'.$langs->trans("Twitter").'</td>';
+	// 	print '<td>';
+	// 	if (! empty($ldap_twitter))
+	// 	{
+	// 		print '<input type="hidden" name="twitter" value="'.$ldap_twitter.'">';
+	// 		print $ldap_twitter;
+	// 	}
+	// 	else
+	// 	{
+	// 		print '<input class="maxwidth200" type="text" name="twitter" value="'.GETPOST('twitter', 'alpha').'">';
+	// 	}
+	// 	print '</td></tr>';
+	// }
 
-	// Facebook
-	if (! empty($conf->socialnetworks->enabled))
-	{
-		print '<tr><td>'.$langs->trans("Facebook").'</td>';
-		print '<td>';
-		if (! empty($ldap_facebook))
-		{
-			print '<input type="hidden" name="facebook" value="'.$ldap_facebook.'">';
-			print $ldap_facebook;
-		}
-		else
-		{
-			print '<input class="maxwidth200" type="text" name="facebook" value="'.GETPOST('facebook', 'alpha').'">';
-		}
-		print '</td></tr>';
-	}
+	// // Facebook
+	// if (! empty($conf->socialnetworks->enabled))
+	// {
+	// 	print '<tr><td>'.$langs->trans("Facebook").'</td>';
+	// 	print '<td>';
+	// 	if (! empty($ldap_facebook))
+	// 	{
+	// 		print '<input type="hidden" name="facebook" value="'.$ldap_facebook.'">';
+	// 		print $ldap_facebook;
+	// 	}
+	// 	else
+	// 	{
+	// 		print '<input class="maxwidth200" type="text" name="facebook" value="'.GETPOST('facebook', 'alpha').'">';
+	// 	}
+	// 	print '</td></tr>';
+	// }
 
-    // LinkedIn
-    if (! empty($conf->socialnetworks->enabled))
-    {
-        print '<tr><td>'.$langs->trans("LinkedIn").'</td>';
-        print '<td>';
-        if (! empty($ldap_linkedin))
-        {
-            print '<input type="hidden" name="linkedin" value="'.$ldap_linkedin.'">';
-            print $ldap_linkedin;
-        }
-        else
-        {
-            print '<input class="maxwidth200" type="text" name="linkedin" value="'.GETPOST('linkedin', 'alpha').'">';
-        }
-        print '</td></tr>';
-    }
+    // // LinkedIn
+    // if (! empty($conf->socialnetworks->enabled))
+    // {
+    //     print '<tr><td>'.$langs->trans("LinkedIn").'</td>';
+    //     print '<td>';
+    //     if (! empty($ldap_linkedin))
+    //     {
+    //         print '<input type="hidden" name="linkedin" value="'.$ldap_linkedin.'">';
+    //         print $ldap_linkedin;
+    //     }
+    //     else
+    //     {
+    //         print '<input class="maxwidth200" type="text" name="linkedin" value="'.GETPOST('linkedin', 'alpha').'">';
+    //     }
+    //     print '</td></tr>';
+    // }
 
 	// EMail
 	print '<tr><td'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.$langs->trans("EMail").'</td>';
