@@ -239,7 +239,7 @@ if (!empty($object->id))
     // Show link to add a message (if read and not closed)
     $btnstatus = $object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
     $url = 'card.php?track_id=' . $object->track_id . '&action=presend_addmessage&mode=init';
-    $morehtmlright .= dolGetButtonTitle($langs->trans('TicketAddMessage') , '', 'fa fa-comment', $url, 'add-new-ticket-title-button', $btnstatus);
+    $morehtmlright .= dolGetButtonTitle($langs->trans('TicketAddMessage'), '', 'fa fa-comment', $url, 'add-new-ticket-title-button', $btnstatus);
 
 
 
