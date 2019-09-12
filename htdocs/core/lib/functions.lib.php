@@ -2187,6 +2187,31 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 }
 
 /**
+ * Get array of social network dictionary
+ *
+ * @return  array       Array of Social Networks Dictionary
+ */
+function getArrayOfSocialNetworks()
+{
+    global $conf, $db;
+    $sql = "SELECT rowid, code, label, url, icon, active FROM ".MAIN_DB_PREFIX."c_socialnetworks";
+    $socialnetworks = array();
+    $resql = $db->query($sql);
+    if ($resql) {
+        while ($obj = $db->fetch_object($resql)) {
+            $socialnetworks[$obj->code] = array(
+                'rowid' => $obj->rowid,
+                'label' => $obj->label,
+                'url' => $obj->url,
+                'icon' => $obj->icon,
+                'active' => $obj->active,
+            );
+        }
+    }
+    return $socialnetworks;
+}
+
+/**
  * Show social network link
  *
  * @param	string		$value			Skype to show (only skype, without 'Name of recipient' before)

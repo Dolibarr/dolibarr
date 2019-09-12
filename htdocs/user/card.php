@@ -100,19 +100,7 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
-$sql = "SELECT rowid, code, label, url, active FROM ".MAIN_DB_PREFIX."c_socialnetworks";
-$socialnetworks = array();
-$resql = $db->query($sql);
-if ($resql) {
-	while ($obj = $db->fetch_object($resql)) {
-		$socialnetworks[$obj->code] = array(
-			'rowid' => $obj->rowid,
-			'label' => $obj->label,
-			'url' => $obj->url,
-			'active' => $obj->active,
-		);
-	}
-}
+$socialnetworks = getArrayOfSocialNetworks();
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('usercard','globalcard'));
