@@ -11,6 +11,7 @@
  * Copyright (C) 2011-2016	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -212,7 +213,7 @@ $tabsql[34]= "SELECT rowid, pos, code, label, c_level, active FROM ".MAIN_DB_PRE
 $tabsql[35]= "SELECT c.rowid, c.label, c.active, c.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_cat c";
 $tabsql[36]= "SELECT r.rowid, r.fk_c_exp_tax_cat, r.range_ik, r.active, r.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_range r";
 $tabsql[37]= "SELECT r.rowid, r.code, r.label, r.short_label, r.unit_type, r.scale, r.active FROM ".MAIN_DB_PREFIX."c_units r";
-$tabsql[38]= "SELECT rowid, code, label, url, icon, active FROM ".MAIN_DB_PREFIX."c_socialnetworks";
+$tabsql[38]= "SELECT rowid, entity, code, label, url, icon, active FROM ".MAIN_DB_PREFIX."c_socialnetworks";
 
 // Criteria to sort dictionaries
 $tabsqlsort=array();
@@ -294,7 +295,7 @@ $tabfield[34]= "code,label";
 $tabfield[35]= "label";
 $tabfield[36]= "range_ik,fk_c_exp_tax_cat";
 $tabfield[37]= "code,label,short_label,unit_type,scale";
-$tabfield[38]= "code,label,url,icon";
+$tabfield[38]= "code,label,url,icon,entity";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue=array();
@@ -377,7 +378,7 @@ $tabfieldinsert[34]= "code,label";
 $tabfieldinsert[35]= "label";
 $tabfieldinsert[36]= "range_ik,fk_c_exp_tax_cat";
 $tabfieldinsert[37]= "code,label,short_label,unit_type,scale";
-$tabfieldinsert[38]= "code,label,url,icon";
+$tabfieldinsert[38]= "entity,code,label,url,icon";
 
 // Rowid name of field depending if field is autoincrement on or off..
 // Use "" if id field is "rowid" and has autoincrement on
