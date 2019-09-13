@@ -1909,7 +1909,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 
             <br>';
 
-       	    print '<button class="button buttonpayment" style="text-align: center; padding-left: 0; padding-right: 0;" id="buttontopay" data-secret="'.$paymentintent->client_secret.'">'.$langs->trans("ValidatePayment").'</button>';
+       	    print '<button class="button buttonpayment" style="text-align: center; padding-left: 0; padding-right: 0;" id="buttontopay" data-secret="'.(is_object($paymentintent) ? $paymentintent->client_secret : '').'">'.$langs->trans("ValidatePayment").'</button>';
             print '<img id="hourglasstopay" class="hidden" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/working.gif'.'">';
 
     	    print '
@@ -1943,7 +1943,6 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 		{
 			print '<!-- JS Code for Stripe components -->';
     		print '<script src="https://js.stripe.com/v3/"></script>'."\n";
-    		$urllogofull = 'http://home.destailleur.fr:805/dolibarr_dev/htdocs/viewimage.php?modulepart=mycompany&entity=1&file=logos%2Fthumbs%2Ffbm+logo_small.png';
     		print '<!-- urllogofull = '.$urllogofull.' -->'."\n";
 
     	    // Code to ask the credit card. This use the default "API version". No way to force API version when using JS code.
