@@ -2114,7 +2114,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
         			        	<?php if (is_object($object) && is_object($object->thirdparty)) { ?>, address: {
         			        	    city: '<?php echo dol_escape_js($object->thirdparty->town); ?>',
         			        	    country: '<?php echo dol_escape_js($object->thirdparty->country_code); ?>',
-        			        	    line1: '<?php echo dol_escape_js($object->thirdparty->address); ?>',
+        			        	    line1: '<?php echo dol_escape_js(preg_replace('/\s\s+/', ' ', $object->thirdparty->address)); ?>',
         			        	    postal_code: '<?php echo dol_escape_js($object->thirdparty->zip); ?>'}<?php } ?>
         			        }	/* TODO Add all other known data like emails, ... to be SCA compliant */
               			},
