@@ -246,6 +246,9 @@ if ($resql)
 else dol_print_error($db);
 
 
+$companystatic=new Societe($db);    // We need a clean new object for next loop because current one has some properties set.
+
+
 // Open project per thirdparty
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
