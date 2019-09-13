@@ -29,6 +29,7 @@ MenuMembersUpToDate=Miembros al día
 MenuMembersNotUpToDate=Miembros no al día
 MenuMembersResiliated=Miembros de baja
 MembersWithSubscriptionToReceive=Miembros a la espera de recibir afiliación
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=Fecha afiliación
 DateEndSubscription=Fecha fin afiliación
 EndSubscription=Fin afiliación

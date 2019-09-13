@@ -29,6 +29,7 @@ MenuMembersUpToDate=到今天為止成員
 MenuMembersNotUpToDate=過時成員
 MenuMembersResiliated=Terminated members
 MembersWithSubscriptionToReceive=接收與認購成員
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=認購日期
 DateEndSubscription=認購結束日期
 EndSubscription=認購完

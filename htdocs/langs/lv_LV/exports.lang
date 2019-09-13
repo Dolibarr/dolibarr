@@ -49,7 +49,7 @@ LineTotalTTC=Summa ar nodokļiem līniju
 LineTotalVAT=PVN summu, par līnijas
 TypeOfLineServiceOrProduct=Veids (0=produkts, 1=pakalpojums)
 FileWithDataToImport=Fails ar datiem, lai importētu
-FileToImport=Avota failu, lai importētu
+FileToImport=Avota fails, kas jāimportē
 FileMustHaveOneOfFollowingFormat=Importa failam ir jābūt šādam formātam
 DownloadEmptyExample=Lejupielādēt veidlapas failu ar lauka satura informāciju (* ir obligāti aizpildāmie lauki)
 ChooseFormatOfFileToImport=Izvēlieties faila formātu, ko izmantot kā importa faila formātu, noklikšķinot uz %s ikonas, lai to atlasītu ...
@@ -112,7 +112,7 @@ ExportStringFilter=%% allows replacing one or more characters in the text
 ExportDateFilter=YYYY, YYYYMM, YYYYMMDD: filtri par vienu gadu / mēnesi / dienu, YYYY + YYYY, YYYYMM + YYYYMM, YYYYMMDD + YYYYMMDD: filtri ilgāk par gadiem / mēnešiem / dienām <br>> GGGG,> GGGGM,> GGGGMDD : filtri visos nākamajos gados / mēnešos / dienās, <YYYY, <YYYYMM, <YYYYMMDD: filtri visos iepriekšējos gados / mēnešos / dienās
 ExportNumericFilter=NNNNN filtrē ar vienu vērtību <br> NNNNN + NNNNN filtrus vērtību diapazonā <br> <NNNNN filtri ar zemākām vērtībām <br >> NNNNN filtri ar lielākām vērtībām
 ImportFromLine=Importēt, sākot ar līnijas numuru
-EndAtLineNb=End at line number
+EndAtLineNb=Beigt ar rindas numuru
 ImportFromToLine=Limit diapazons (no - līdz), piem. <b> lai izlaistu virsraksta rindu (-as) </b>
 SetThisValueTo2ToExcludeFirstLine=Piemēram, iestatiet šo vērtību uz 3, lai izslēgtu 2 pirmās rindas. <br> Ja galvenes rindas NAV izlaistas, tas izraisīs vairākas kļūdas importa modelēšanā.
 KeepEmptyToGoToEndOfFile=Saglabājiet šo lauku tukšu, lai apstrādātu visas rindas līdz faila beigām.

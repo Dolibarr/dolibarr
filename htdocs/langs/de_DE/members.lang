@@ -29,6 +29,7 @@ MenuMembersUpToDate=Aktuelle Mitglieder
 MenuMembersNotUpToDate=Deaktivierte Mitglieder
 MenuMembersResiliated=Deaktivierte Mitglieder
 MembersWithSubscriptionToReceive=Mitglieder mit ausstehendem Beitrag
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=Abo-Datum
 DateEndSubscription=Abo-Ablaufdatum
 EndSubscription=Abo-Ende

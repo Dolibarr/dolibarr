@@ -98,14 +98,14 @@ print '<br>';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("RuleForStockManagementDecrease")."</td>\n";
-print '<td align="center">'.$langs->trans("Status").'</td>'."\n";
+print '<td class="right">'.$langs->trans("Status").'</td>'."\n";
 print '</tr>'."\n";
 
 $found=0;
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnBill").'</td>';
-print '<td align="center">';
+print '<td class="right">';
 if (! empty($conf->facture->enabled))
 {
 if ($conf->use_javascript_ajax) {
@@ -125,7 +125,7 @@ $found++;
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnValidateOrder").'</td>';
-print '<td align="center">';
+print '<td class="right">';
 if (! empty($conf->commande->enabled))
 {
 if ($conf->use_javascript_ajax) {
@@ -147,7 +147,7 @@ $found++;
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnShipment").'</td>';
-print '<td align="center">';
+print '<td class="right">';
 if (! empty($conf->expedition->enabled))
 {
 if ($conf->use_javascript_ajax) {
@@ -167,7 +167,7 @@ $found++;
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnShipmentOnClosing").'</td>';
-print '<td align="center">';
+print '<td class="right">';
 if (! empty($conf->expedition->enabled))
 {
 if ($conf->use_javascript_ajax) {
@@ -200,14 +200,14 @@ print '<br>';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("RuleForStockManagementIncrease")."</td>\n";
-print '<td align="center">'.$langs->trans("Status").'</td>'."\n";
+print '<td class="right">'.$langs->trans("Status").'</td>'."\n";
 print '</tr>'."\n";
 
 $found=0;
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ReStockOnBill").'</td>';
-print '<td align="center">';
+print '<td class="right">';
 if (! empty($conf->fournisseur->enabled))
 {
 if ($conf->use_javascript_ajax) {
@@ -228,7 +228,7 @@ $found++;
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ReStockOnValidateOrder").'</td>';
-print '<td align="center">';
+print '<td class="right">';
 if (! empty($conf->fournisseur->enabled))
 {
 if ($conf->use_javascript_ajax) {
@@ -248,8 +248,8 @@ $found++;
 if (!empty($conf->reception->enabled))
 {
 	print '<tr class="oddeven">';
-	print '<td width="60%">'.$langs->trans("StockOnReception").'</td>';
-  print '<td align="center">';
+	print '<td>'.$langs->trans("StockOnReception").'</td>';
+  print '<td class="right">';
 
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STOCK_CALCULATE_ON_RECEPTION');
@@ -263,8 +263,8 @@ if ($conf->use_javascript_ajax) {
 
 
 print '<tr class="oddeven">';
-	print '<td width="60%">'.$langs->trans("StockOnReceptionOnClosing").'</td>';
-  print '<td align="center">';
+	print '<td>'.$langs->trans("StockOnReceptionOnClosing").'</td>';
+  print '<td class="right">';
 
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STOCK_CALCULATE_ON_RECEPTION_CLOSE');
@@ -279,7 +279,7 @@ else
 {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("ReStockOnDispatchOrder").'</td>';
-  print '<td align="center">';
+  print '<td class="right">';
 	if (! empty($conf->fournisseur->enabled))
 	{
 if ($conf->use_javascript_ajax) {
@@ -308,16 +308,17 @@ if ($conf->use_javascript_ajax) {
 print '</table>';
 
 print '<br>';
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("RuleForStockAvailability")."</td>\n";
-print '<td align="center">'.$langs->trans("Status").'</td>'."\n";
+print '<td class="right">'.$langs->trans("Status").'</td>'."\n";
 print '</tr>'."\n";
 
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("WarehouseAllowNegativeTransfer").'</td>';
-print '<td align="center">';
+print '<td class="right">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STOCK_ALLOW_NEGATIVE_TRANSFER');
 } else {
@@ -332,7 +333,7 @@ if($conf->invoice->enabled)
 {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForInvoice").'</td>';
-  print '<td align="center">';
+  print '<td class="right">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STOCK_MUST_BE_ENOUGH_FOR_INVOICE');
 } else {
@@ -347,7 +348,7 @@ if($conf->order->enabled)
 {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForOrder").'</td>';
-  print '<td align="center">';
+  print '<td class="right">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STOCK_MUST_BE_ENOUGH_FOR_ORDER');
 } else {
@@ -362,7 +363,7 @@ if($conf->expedition->enabled)
 {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForShipment").'</td>';
-  print '<td align="center">';
+  print '<td class="right">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT');
 } else {
@@ -386,12 +387,12 @@ if ($virtualdiffersfromphysical)
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 	print "<td>".$langs->trans("RuleForStockReplenishment")." ".img_help('help', $langs->trans("VirtualDiffersFromPhysical"))."</td>\n";
-  print '<td align="center">'.$langs->trans("Status").'</td>'."\n";
+  print '<td class="right">'.$langs->trans("Status").'</td>'."\n";
 	print '</tr>'."\n";
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("UseVirtualStockByDefault").'</td>';
-  print '<td align="center">';
+  print '<td class="right">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STOCK_USE_VIRTUAL_STOCK');
 } else {
@@ -409,12 +410,12 @@ print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Other")."</td>\n";
-print '<td class="center">'.$langs->trans("Status").'</td>'."\n";
+print '<td class="right">'.$langs->trans("Status").'</td>'."\n";
 print '</tr>'."\n";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UserWarehouseAutoCreate").'</td>';
-print '<td class="center">';
+print '<td class="right">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STOCK_USERSTOCK_AUTOCREATE');
 } else {
@@ -428,7 +429,7 @@ print '<tr class="oddeven">';
 print '<td>';
 print $form->textwithpicto($langs->trans("StockSupportServices"), $langs->trans("StockSupportServicesDesc"));
 print '</td>';
-print '<td class="center">';
+print '<td class="right">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STOCK_SUPPORTS_SERVICES');
 } else {
@@ -440,7 +441,7 @@ print "</tr>\n";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowAddLimitStockByWarehouse").'</td>';
-print '<td class="center">';
+print '<td class="right">';
 if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE');
 } else {
@@ -450,19 +451,6 @@ if ($conf->use_javascript_ajax) {
 print "</td>\n";
 print "</tr>\n";
 
-if (! empty($conf->fournisseur->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
-    print '<tr class="oddeven">';
-    print '<td>'.$langs->trans("UseDispatchStatus").'</td>';
-    print '<td class="center">';
-if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('SUPPLIER_ORDER_USE_DISPATCH_STATUS');
-} else {
-    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("SUPPLIER_ORDER_USE_DISPATCH_STATUS", $arrval, $conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS);
-}
-    print "</td>\n</tr>\n";
-}
-
 print '</table>';
 
 print '<br>';
@@ -471,43 +459,45 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Inventory").'</td>'."\n";
-  print '<td align="center">'.$langs->trans("Status").'</td>'."\n";
-  print '</tr>'."\n";
+	print '<td class="right">'.$langs->trans("Status").'</td>'."\n";
+	print '</tr>'."\n";
 
 	// Example with a yes / no select
-	print '<tr class="oddeven">';
+	/*print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("INVENTORY_DISABLE_VIRTUAL").'</td>';
-  print '<td align="center">';
-if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('INVENTORY_DISABLE_VIRTUAL');
-} else {
-    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("INVENTORY_DISABLE_VIRTUAL", $arrval, $conf->global->INVENTORY_DISABLE_VIRTUAL);
-}
+	print '<td align="center">';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('INVENTORY_DISABLE_VIRTUAL');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("INVENTORY_DISABLE_VIRTUAL", $arrval, $conf->global->INVENTORY_DISABLE_VIRTUAL);
+	}
 	print '</td></tr>';
+	*/
 
 	// Example with a yes / no select
-	print '<tr class="oddeven">';
+    /*print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("INVENTORY_USE_MIN_PA_IF_NO_LAST_PA").'</td>';
-  print '<td align="center">';
-if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('INVENTORY_USE_MIN_PA_IF_NO_LAST_PA');
-} else {
-    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("INVENTORY_USE_MIN_PA_IF_NO_LAST_PA", $arrval, $conf->global->INVENTORY_USE_MIN_PA_IF_NO_LAST_PA);
-}
-	print '</td></tr>';
+	print '<td align="center">';
+  	if ($conf->use_javascript_ajax) {
+  		print ajax_constantonoff('INVENTORY_USE_MIN_PA_IF_NO_LAST_PA');
+  	} else {
+  		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+  		print $form->selectarray("INVENTORY_USE_MIN_PA_IF_NO_LAST_PA", $arrval, $conf->global->INVENTORY_USE_MIN_PA_IF_NO_LAST_PA);
+  	}
+  	print '</td></tr>';
+  	*/
 
-	// Example with a yes / no select
+  	// Example with a yes / no select
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("INVENTORY_USE_INVENTORY_DATE_FROM_DATEMVT").'</td>';
-  print '<td align="center">';
-if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('INVENTORY_USE_INVENTORY_DATE_FROM_DATEMVT');
-} else {
-    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("INVENTORY_USE_INVENTORY_DATE_FROM_DATEMVT", $arrval, $conf->global->INVENTORY_USE_INVENTORY_DATE_FROM_DATEMVT);
-}
+	print '<td>'.$langs->trans("INVENTORY_USE_INVENTORY_DATE_FOR_DATE_OF_MVT").'</td>';
+	print '<td class="right">';
+	if ($conf->use_javascript_ajax) {
+    	print ajax_constantonoff('INVENTORY_USE_INVENTORY_DATE_FOR_DATE_OF_MVT');
+	} else {
+    	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+    	print $form->selectarray("INVENTORY_USE_INVENTORY_DATE_FOR_DATE_OF_MVT", $arrval, $conf->global->INVENTORY_USE_INVENTORY_DATE_FOR_DATE_OF_MVT);
+	}
 	print '</td></tr>';
 
 	print '</table>';

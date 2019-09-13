@@ -40,7 +40,7 @@ $type = GETPOST('type', 'az09');
 $action=GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $removeelem = GETPOST('removeelem', 'int');
-$elemid     = GETPOST('elemid', 'alpha');
+$elemid     = GETPOST('elemid', 'int');
 
 if ($id == "" && $label == "")
 {

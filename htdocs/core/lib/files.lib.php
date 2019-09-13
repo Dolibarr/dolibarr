@@ -1221,9 +1221,12 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 							}
 						}
 					}
-					else dol_syslog("Failed to remove file ".$filename, LOG_WARNING);
-					// TODO Failure to remove can be because file was already removed or because of permission
-					// If error because it does not exists, we should return true, and we should return false if this is a permission problem
+					else
+					{
+						dol_syslog("Failed to remove file ".$filename, LOG_WARNING);
+						// TODO Failure to remove can be because file was already removed or because of permission
+						// If error because it does not exists, we should return true, and we should return false if this is a permission problem
+					}
 				}
 			}
 			else dol_syslog("No files to delete found", LOG_DEBUG);
@@ -2062,9 +2065,10 @@ function dol_uncompress($inputfile, $outputdir)
  * @param 	string	$inputdir		Source dir name
  * @param 	string	$outputfile		Target file name (output directory must exists and be writable)
  * @param 	string	$mode			'zip'
+ * @param	string	$excludefiles   A regex pattern. For example: '/\.log$|\/temp\//'
  * @return	int						<0 if KO, >0 if OK
  */
-function dol_compress_dir($inputdir, $outputfile, $mode = "zip")
+function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles = '')
 {
 	$foundhandler=0;
 
@@ -2095,6 +2099,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip")
                 return 1;
             }
             else*/
+			//if (class_exists('ZipArchive') && ! empty($conf->global->MAIN_USE_ZIPARCHIVE_FOR_ZIP_COMPRESS))
 			if (class_exists('ZipArchive'))
 			{
 				$foundhandler=1;
@@ -2102,6 +2107,13 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip")
 				// Initialize archive object
 				$zip = new ZipArchive();
 				$result = $zip->open($outputfile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+				if (! $result)
+				{
+					global $langs, $errormsg;
+					$langs->load("errors");
+					$errormsg=$langs->trans("ErrorFailedToWriteInFile", $outputfile);
+					return -4;
+				}
 
 				// Create recursive directory iterator
 				/** @var SplFileInfo[] $files */
@@ -2118,9 +2130,11 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip")
 						// Get real and relative path for current file
 						$filePath = $file->getRealPath();
 						$relativePath = substr($filePath, strlen($inputdir) + 1);
-
-						// Add current file to archive
-						$zip->addFile($filePath, $relativePath);
+						if (empty($excludefiles) || ! preg_match($excludefiles, $filePath))
+						{
+							// Add current file to archive
+							$zip->addFile($filePath, $relativePath);
+						}
 					}
 				}
 

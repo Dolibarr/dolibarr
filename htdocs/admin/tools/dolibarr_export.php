@@ -50,10 +50,20 @@ if (! $user->admin)
 
 if ($action == 'delete')
 {
-	$file=$conf->admin->dir_output.'/backup/'.basename(GETPOST('urlfile', 'alpha'));
-    $ret=dol_delete_file($file, 1);
-    if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-    else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
+	if (preg_match('/^backup\//', GETPOST('urlfile', 'alpha')))
+	{
+		$file=$conf->admin->dir_output.'/backup/'.basename(GETPOST('urlfile', 'alpha'));
+		$ret=dol_delete_file($file, 1);
+		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
+	}
+	else
+	{
+		$file=$conf->admin->dir_output.'/documents/'.basename(GETPOST('urlfile', 'alpha'));
+		$ret=dol_delete_file($file, 1);
+		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
+	}
     $action='';
 }
 
@@ -577,7 +587,7 @@ print "\n";
 
 ?>
 <br>
-<div class="center"><input type="submit" class="button"
+<div class="center"><input type="submit" class="button reposition"
 	value="<?php echo $langs->trans("GenerateBackup") ?>" id="buttonGo" /><br>
 <br>
 </div>

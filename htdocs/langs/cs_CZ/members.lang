@@ -29,6 +29,7 @@ MenuMembersUpToDate=Aktuální členové
 MenuMembersNotUpToDate=Neaktuální členové
 MenuMembersResiliated=Ukončené členové
 MembersWithSubscriptionToReceive=Členové s předplatným k přijímání
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=Vstupní data
 DateEndSubscription=Datum ukončení předplatného
 EndSubscription=Konec odběru

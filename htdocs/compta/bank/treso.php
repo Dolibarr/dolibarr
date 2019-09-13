@@ -264,12 +264,12 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 				$paiement = -1*$socialcontribstatic->getSommePaiement();	// Payment already done
 			}
 
-			$parameters = array('obj' => $obj);
+			$parameters = array('obj' => $obj, 'ref' => $ref, 'refcomp' => $refcomp, 'payment' => $paiement);
 			$reshook = $hookmanager->executeHooks('moreFamily', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if(empty($reshook)){
-				$ref = isset($hookmanager->resArray['ref']) ? $hookmanager->resArray['ref'] : '';
-				$refcomp = isset($hookmanager->resArray['refcomp']) ? $hookmanager->resArray['refcomp'] : '';
-				$paiement = isset($hookmanager->resArray['paiement']) ? $hookmanager->resArray['paiement'] : 0;
+				$ref = isset($hookmanager->resArray['ref']) ? $hookmanager->resArray['ref'] : $ref;
+				$refcomp = isset($hookmanager->resArray['refcomp']) ? $hookmanager->resArray['refcomp'] : $refcomp;
+				$paiement = isset($hookmanager->resArray['paiement']) ? $hookmanager->resArray['paiement'] : $paiement;
 			}
 
 			$total_ttc = $obj->total_ttc;
