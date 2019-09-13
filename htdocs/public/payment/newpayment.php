@@ -2121,13 +2121,13 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
                     	payment_method_data: {
         			        billing_details: {
         			        	name: cardholderName.value
-        			        	<?php if (GETPOST('email', 'alpha') || (is_object($object) && is_object($object->thirdparty) && ! empty($object->thirdparty->email))) { ?>, email: '<?php echo (GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $object->thirdparty->email); ?>'<?php } ?>
-        			        	<?php if (is_object($object) && is_object($object->thirdparty) && ! empty($object->thirdparty->phone)) { ?>, phone: '<?php echo $object->thirdparty->phone; ?>'<?php } ?>
+        			        	<?php if (GETPOST('email', 'alpha') || (is_object($object) && is_object($object->thirdparty) && ! empty($object->thirdparty->email))) { ?>, email: '<?php echo dol_escape_js(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $object->thirdparty->email); ?>'<?php } ?>
+        			        	<?php if (is_object($object) && is_object($object->thirdparty) && ! empty($object->thirdparty->phone)) { ?>, phone: '<?php echo dol_escape_js($object->thirdparty->phone); ?>'<?php } ?>
         			        	<?php if (is_object($object) && is_object($object->thirdparty)) { ?>, address: {
-        			        	    city: '<?php echo $object->thirdparty->town; ?>',
-        			        	    country: '<?php echo $object->thirdparty->country_code; ?>',
-        			        	    line1: '<?php echo $object->thirdparty->address; ?>',
-        			        	    postal_code: '<?php echo $object->thirdparty->zip; ?>'}<?php } ?>
+        			        	    city: '<?php echo dol_escape_js($object->thirdparty->town); ?>',
+        			        	    country: '<?php echo dol_escape_js($object->thirdparty->country_code); ?>',
+        			        	    line1: '<?php echo dol_escape_js(preg_replace('/\s\s+/', ' ', $object->thirdparty->address)); ?>',
+        			        	    postal_code: '<?php echo dol_escape_js($object->thirdparty->zip); ?>'}<?php } ?>
         			        }
               			},
               			save_payment_method: <?php if ($stripecu) { print 'true'; } else { print 'false'; } ?>	/* true when a customer was provided when creating payment intent. true ask to save the card */
