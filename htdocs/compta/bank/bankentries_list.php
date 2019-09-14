@@ -1356,7 +1356,7 @@ if ($resql)
     	// Debit
     	if (! empty($arrayfields['b.debit']['checked']))
     	{
-    	    print '<td class="right">';
+    	    print '<td class="nowrap right">';
     	    if ($objp->amount < 0)
     	    {
     	    	print price($objp->amount * -1);
@@ -1370,7 +1370,7 @@ if ($resql)
     	// Credit
     	if (! empty($arrayfields['b.credit']['checked']))
     	{
-    	    print '<td class="right">';
+    	    print '<td class="nowrap right">';
     	    if ($objp->amount > 0)
     	    {
 				print price($objp->amount);
