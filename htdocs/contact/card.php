@@ -196,7 +196,9 @@ if (empty($reshook))
         $object->socialnetworks = array();
         if (! empty($conf->socialnetworks->enabled)) {
             foreach ($socialnetworks as $key => $value) {
-                $object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
+                if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml')!='') {
+                    $object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
+                }
             }
         }
         $object->email			= GETPOST("email", 'alpha');
@@ -374,7 +376,9 @@ if (empty($reshook))
             //$object->linkedin		= GETPOST("linkedin", 'alpha');
             if (! empty($conf->socialnetworks->enabled)) {
                 foreach ($socialnetworks as $key => $value) {
-                    $object->socialnetworks[$key] = GETPOST($key, 'alpha');
+                    if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml')!='') {
+                        $object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
+                    }
                 }
             }
             $object->phone_pro		= GETPOST("phone_pro", 'alpha');
@@ -383,7 +387,7 @@ if (empty($reshook))
             $object->fax			= GETPOST("fax", 'alpha');
             $object->priv			= GETPOST("priv", 'int');
             $object->note_public	= GETPOST("note_public", 'none');
-       		$object->note_private	= GETPOST("note_private", 'none');
+            $object->note_private	= GETPOST("note_private", 'none');
 
             // Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);

@@ -750,8 +750,8 @@ class Contact extends CommonObject
 		$sql.= " c.fk_pays as country_id,";
 		$sql.= " c.fk_departement as state_id,";
 		$sql.= " c.birthday,";
-		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid,";
-		$sql.= " c.socialnetworks, c.skype, c.twitter, c.facebook, c.linkedin,";
+		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email,";
+		$sql.= " c.socialnetworks, c.jabberid, c.skype, c.twitter, c.facebook, c.linkedin,";
         $sql.= " c.photo,";
 		$sql.= " c.priv, c.note_private, c.note_public, c.default_lang, c.canvas,";
 		$sql.= " c.import_key,";

@@ -487,7 +487,6 @@ if (empty($reshook))
 		$object->socialnetworks = array();
 		if (! empty($conf->socialnetworks->enabled)) {
 			foreach ($socialnetworks as $key => $value) {
-				if (!$value['active']) break;
 				$object->socialnetworks[$key] = GETPOST("member_".$key, 'alpha');
 			}
 		}

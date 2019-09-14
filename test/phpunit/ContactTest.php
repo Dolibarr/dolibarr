@@ -208,6 +208,7 @@ class ContactTest extends PHPUnit\Framework\TestCase
 		$localobject->fax='New fax';
 		$localobject->email='newemail@newemail.com';
 		$localobject->jabberid='New im id';
+		$localobject->socialnetworks['jabber']='New im id';
 		$localobject->default_lang='es_ES';
 
 		$result=$localobject->update($localobject->id, $user);
