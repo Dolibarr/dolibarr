@@ -487,7 +487,7 @@ if (empty($reshook))
 		$object->socialnetworks = array();
 		if (! empty($conf->socialnetworks->enabled)) {
 			foreach ($socialnetworks as $key => $value) {
-				if (!$value['active']) continue;
+				if (!$value['active']) break;
 				$object->socialnetworks[$key] = GETPOST("member_".$key, 'alpha');
 			}
 		}
@@ -1030,7 +1030,7 @@ else
 
 	    if (! empty($conf->socialnetworks->enabled)) {
 			foreach ($socialnetworks as $key => $value) {
-                if (!$value['active']) continue;
+                if (!$value['active']) break;
 				print '<tr><td>'.$langs->trans($value['label']).'</td><td><input type="text" name="member_'.$key.'" size="40" value="'.(GETPOST('member_'.$key, 'alpha')?GETPOST('member_'.$key, 'alpha'):$object->socialnetworks[$key]).'"></td></tr>';
 			}
 		}
@@ -1282,7 +1282,7 @@ else
 
         if (! empty($conf->socialnetworks->enabled)) {
 			foreach ($socialnetworks as $key => $value) {
-                if (!$value['active']) continue;
+                if (!$value['active']) break;
 				print '<tr><td>'.$langs->trans($value['label']).'</td><td><input type="text" name="'.$key.'" class="minwidth100" value="'.(isset($_POST[$key])?GETPOST($key):$object->socialnetworks[$key]).'"></td></tr>';
 			}
 		}
