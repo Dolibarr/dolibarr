@@ -110,7 +110,6 @@ $hookmanager->initHooks(array('usercard','globalcard'));
 /**
  * Actions
  */
-
 $parameters=array('id' => $id, 'socid' => $socid, 'group' => $group, 'caneditgroup' => $caneditgroup);
 $reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -221,7 +220,6 @@ if (empty($reshook)) {
 			$object->socialnetworks = array();
 			if (! empty($conf->socialnetworks->enabled)) {
 				foreach ($socialnetworks as $key => $value) {
-					if (!$value['active']) break;
 					$object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
 				}
 			}
@@ -380,7 +378,6 @@ if (empty($reshook)) {
 				$object->socialnetworks = array();
 				if (! empty($conf->socialnetworks->enabled)) {
 					foreach ($socialnetworks as $key => $value) {
-						if (!$value['active']) break;
 						$object->socialnetworks[$key] = GETPOST($key, 'alpha');
 					}
 				}
@@ -1057,16 +1054,24 @@ if ($action == 'create' || $action == 'adduserldap')
 
 	if (! empty($conf->socialnetworks->enabled)) {
 		foreach ($socialnetworks as $key => $value) {
-			if (!$value['active']) break;
-			print '<tr><td>'.$langs->trans($value['label']).'</td>';
-			print '<td>';
-			if (! empty($ldap_social[$key])) {
-				print '<input type="hidden" name="'.$key.'" value="'.$ldap_social[$key].'">';
-				print $ldap_social[$key];
+			if ($value['active']) {
+				print '<tr><td>'.$langs->trans($value['label']).'</td>';
+				print '<td>';
+				if (! empty($ldap_social[$key])) {
+					print '<input type="hidden" name="'.$key.'" value="'.$ldap_social[$key].'">';
+					print $ldap_social[$key];
+				} else {
+					print '<input class="maxwidth200" type="text" name="'.$key.'" value="'.GETPOST($key, 'alphanohtml').'">';
+				}
+				print '</td></tr>';
 			} else {
-				print '<input class="maxwidth200" type="text" name="'.$key.'" value="'.GETPOST($key, 'alphanohtml').'">';
+				// if social network is not active but value exist we do not want to loose it
+				if (! empty($ldap_social[$key])) {
+					print '<input type="hidden" name="'.$key.'" value="'.$ldap_social[$key].'">';
+				} else {
+					print '<input type="hidden" name="'.$key.'" value="'.GETPOST($key, 'alphanohtml').'">';
+				}
 			}
-			print '</td></tr>';
 		}
 	}
 	// // Skype
@@ -2347,73 +2352,92 @@ else
 			}
 			print '</td></tr>';
 
-			// Skype
-			if (! empty($conf->socialnetworks->enabled))
-			{
-				print '<tr><td>'.$langs->trans("Skype").'</td>';
-				print '<td>';
-				if ($caneditfield  && empty($object->ldap_sid))
-				{
-					print '<input size="40" type="text" name="skype" class="flat" value="'.$object->skype.'">';
+			if (! empty($conf->socialnetworks->enabled)) {
+				foreach ($socialnetworks as $key => $value) {
+					if ($value['active']) {
+						print '<tr><td>'.$langs->trans($value['label']).'</td>';
+						print '<td>';
+						if ($caneditfield  && empty($object->ldap_sid)) {
+							print '<input size="40" type="text" name="'.$key.'" class="flat" value="'.$object->socialnetworks[$key].'">';
+						} else {
+							print '<input type="hidden" name="'.$key.'" value="'.$object->socialnetworks[$key].'">';
+							print $object->socialnetworks[$key];
+						}
+						print '</td></tr>';
+					} else {
+						// if social network is not active but value exist we do not want to loose it
+						print '<input type="hidden" name="'.$key.'" value="'.$object->socialnetworks[$key].'">';
+					}
 				}
-				else
-				{
-					print '<input type="hidden" name="skype" value="'.$object->skype.'">';
-					print $object->skype;
-				}
-				print '</td></tr>';
 			}
 
-			// Twitter
-			if (! empty($conf->socialnetworks->enabled))
-			{
-				print '<tr><td>'.$langs->trans("Twitter").'</td>';
-				print '<td>';
-				if ($caneditfield  && empty($object->ldap_sid))
-				{
-					print '<input size="40" type="text" name="twitter" class="flat" value="'.$object->twitter.'">';
-				}
-				else
-				{
-					print '<input type="hidden" name="twitter" value="'.$object->twitter.'">';
-					print $object->twitter;
-				}
-				print '</td></tr>';
-			}
+			// // Skype
+			// if (! empty($conf->socialnetworks->enabled))
+			// {
+			// 	print '<tr><td>'.$langs->trans("Skype").'</td>';
+			// 	print '<td>';
+			// 	if ($caneditfield  && empty($object->ldap_sid))
+			// 	{
+			// 		print '<input size="40" type="text" name="skype" class="flat" value="'.$object->skype.'">';
+			// 	}
+			// 	else
+			// 	{
+			// 		print '<input type="hidden" name="skype" value="'.$object->skype.'">';
+			// 		print $object->skype;
+			// 	}
+			// 	print '</td></tr>';
+			// }
 
-			// Facebook
-			if (! empty($conf->socialnetworks->enabled))
-			{
-				print '<tr><td>'.$langs->trans("Facebook").'</td>';
-				print '<td>';
-				if ($caneditfield  && empty($object->ldap_sid))
-				{
-					print '<input size="40" type="text" name="facebook" class="flat" value="'.$object->facebook.'">';
-				}
-				else
-				{
-					print '<input type="hidden" name="facebook" value="'.$object->facebook.'">';
-					print $object->facebook;
-				}
-				print '</td></tr>';
-			}
+			// // Twitter
+			// if (! empty($conf->socialnetworks->enabled))
+			// {
+			// 	print '<tr><td>'.$langs->trans("Twitter").'</td>';
+			// 	print '<td>';
+			// 	if ($caneditfield  && empty($object->ldap_sid))
+			// 	{
+			// 		print '<input size="40" type="text" name="twitter" class="flat" value="'.$object->twitter.'">';
+			// 	}
+			// 	else
+			// 	{
+			// 		print '<input type="hidden" name="twitter" value="'.$object->twitter.'">';
+			// 		print $object->twitter;
+			// 	}
+			// 	print '</td></tr>';
+			// }
 
-            // LinkedIn
-            if (! empty($conf->socialnetworks->enabled))
-            {
-                print '<tr><td>'.$langs->trans("LinkedIn").'</td>';
-                print '<td>';
-                if ($caneditfield  && empty($object->ldap_sid))
-                {
-                    print '<input size="40" type="text" name="linkedin" class="flat" value="'.$object->linkedin.'">';
-                }
-                else
-                {
-                    print '<input type="hidden" name="linkedin" value="'.$object->linkedin.'">';
-                    print $object->linkedin;
-                }
-                print '</td></tr>';
-            }
+			// // Facebook
+			// if (! empty($conf->socialnetworks->enabled))
+			// {
+			// 	print '<tr><td>'.$langs->trans("Facebook").'</td>';
+			// 	print '<td>';
+			// 	if ($caneditfield  && empty($object->ldap_sid))
+			// 	{
+			// 		print '<input size="40" type="text" name="facebook" class="flat" value="'.$object->facebook.'">';
+			// 	}
+			// 	else
+			// 	{
+			// 		print '<input type="hidden" name="facebook" value="'.$object->facebook.'">';
+			// 		print $object->facebook;
+			// 	}
+			// 	print '</td></tr>';
+			// }
+
+            // // LinkedIn
+            // if (! empty($conf->socialnetworks->enabled))
+            // {
+            //     print '<tr><td>'.$langs->trans("LinkedIn").'</td>';
+            //     print '<td>';
+            //     if ($caneditfield  && empty($object->ldap_sid))
+            //     {
+            //         print '<input size="40" type="text" name="linkedin" class="flat" value="'.$object->linkedin.'">';
+            //     }
+            //     else
+            //     {
+            //         print '<input type="hidden" name="linkedin" value="'.$object->linkedin.'">';
+            //         print $object->linkedin;
+            //     }
+            //     print '</td></tr>';
+            // }
 
 			// EMail
 			print "<tr>".'<td'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.$langs->trans("EMail").'</td>';
