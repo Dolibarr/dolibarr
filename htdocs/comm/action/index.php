@@ -607,9 +607,9 @@ if ($resql)
         $event->fk_element=$obj->fk_element;
         $event->elementtype=$obj->elementtype;
 
-        $event->societe->id=$obj->fk_soc;
+        //$event->societe->id=$obj->fk_soc;
         $event->thirdparty_id=$obj->fk_soc;
-        $event->contact->id=$obj->fk_contact;
+        //$event->contact->id=$obj->fk_contact;
         $event->contact_id=$obj->fk_contact;
 
         // Defined date_start_in_calendar and date_end_in_calendar property
