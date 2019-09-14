@@ -196,7 +196,6 @@ if (empty($reshook))
         $object->socialnetworks = array();
         if (! empty($conf->socialnetworks->enabled)) {
             foreach ($socialnetworks as $key => $value) {
-                if (!$value['active']) break;
                 $object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
             }
         }
@@ -375,7 +374,6 @@ if (empty($reshook))
             //$object->linkedin		= GETPOST("linkedin", 'alpha');
             if (! empty($conf->socialnetworks->enabled)) {
                 foreach ($socialnetworks as $key => $value) {
-                    if (!$value['active']) break;
                     $object->socialnetworks[$key] = GETPOST($key, 'alpha');
                 }
             }
@@ -693,13 +691,16 @@ else
 
             if (! empty($conf->socialnetworks->enabled)) {
                 foreach ($socialnetworks as $key => $value) {
-                    if (!$value['active']) break;
-                    print '<tr>';
-                    print '<td><label for="'.$value['label'].'">'.$form->editfieldkey($value['label]'], $key, '', $object, 0).'</label></td>';
-                    print '<td colspan="3">';
-                    print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key)?GETPOST($key, 'alphanohtml'):$object->socialnetworks[$key]).'">';
-                    print '</td>';
-                    print '</tr>';
+                    if ($value['active']) {
+                        print '<tr>';
+                        print '<td><label for="'.$value['label'].'">'.$form->editfieldkey($value['label]'], $key, '', $object, 0).'</label></td>';
+                        print '<td colspan="3">';
+                        print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key)?GETPOST($key, 'alphanohtml'):$object->socialnetworks[$key]).'">';
+                        print '</td>';
+                        print '</tr>';
+                    } elseif (!empty($object->socialnetworks[$key])) {
+                        print '<input type="hidden" name="'.$key.'" value="'.$object->socialnetworks[$key].'">';
+                    }
                 }
             }
             // if (! empty($conf->socialnetworks->enabled))
@@ -996,13 +997,16 @@ else
 
             if (! empty($conf->socialnetworks->enabled)) {
                 foreach ($socialnetworks as $key => $value) {
-                    if (!$value['active']) break;
-                    print '<tr>';
-                    print '<td><label for="'.$value['label'].'">'.$form->editfieldkey($value['label'], $key, '', $object, 0).'</label></td>';
-                    print '<td colspan="3">';
-                    print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key)?GETPOST($key, 'alphanohtml'):$object->socialnetworks[$key]).'">';
-                    print '</td>';
-                    print '</tr>';
+                    if ($value['active']) {
+                        print '<tr>';
+                        print '<td><label for="'.$value['label'].'">'.$form->editfieldkey($value['label'], $key, '', $object, 0).'</label></td>';
+                        print '<td colspan="3">';
+                        print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key)?GETPOST($key, 'alphanohtml'):$object->socialnetworks[$key]).'">';
+                        print '</td>';
+                        print '</tr>';
+                    } elseif (!empty($object->socialnetworks[$key])) {
+                        print '<input type="hidden" name="'.$key.'" value="'.$object->socialnetworks[$key].'">';
+                    }
                 }
             }
             // if (! empty($conf->socialnetworks->enabled))
