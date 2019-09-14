@@ -173,7 +173,7 @@ print '</tr>';
 
 // Group id
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldGroupid").'</td><td>';
-print '<input size="25" type="text" name="fieldgroupid" value="'.$conf->global->LDAP_FIELD_GROUPID.'">';
+print '<input size="25" type="text" name="fieldgroupid" value="'.$conf->global->LDAP_GROUP_FIELD_GROUPID.'">';
 print '</td><td>'.$langs->trans("LDAPFieldGroupidExample").'</td>';
 print '<td class="right">&nbsp;</td>';
 print '</tr>';
