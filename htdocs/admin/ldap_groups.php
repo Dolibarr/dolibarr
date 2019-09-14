@@ -58,7 +58,7 @@ if ($action == 'setvalue' && $user->admin)
 	//if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_NAME',$_POST["fieldname"],'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_DESCRIPTION', GETPOST("fielddescription"), 'chaine', 0, '', $conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_GROUPMEMBERS', GETPOST("fieldgroupmembers"), 'chaine', 0, '', $conf->entity)) $error++;
-    if (! dolibarr_set_const($db, 'LDAP_FIELD_GROUPID', GETPOST("fieldgroupid"), 'chaine', 0, '', $conf->entity)) $error++;
+    if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_GROUPID', GETPOST("fieldgroupid"), 'chaine', 0, '', $conf->entity)) $error++;
 
 	// This one must be after the others
     $valkey='';
