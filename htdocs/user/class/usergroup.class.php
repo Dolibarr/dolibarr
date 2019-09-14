@@ -980,8 +980,8 @@ class UserGroup extends CommonObject
 			}
 			$info[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] = (!empty($valueofldapfield)?$valueofldapfield:'');
         }
-        if(!empty($info[$conf->global->LDAP_FIELD_GROUPID])){
-            $info[$conf->global->LDAP_FIELD_GROUPID]=$this->id;
+        if(!empty($info[$conf->global->LDAP_GROUP_FIELD_GROUPID])){
+            $info[$conf->global->LDAP_GROUP_FIELD_GROUPID]=$this->id;
         }
 		return $info;
 	}
