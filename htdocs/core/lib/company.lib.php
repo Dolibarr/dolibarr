@@ -818,7 +818,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
             }
             else
 			{
-            	print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+            	print '<tr class="oddeven"><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
             }
             $db->free($result);
         }
