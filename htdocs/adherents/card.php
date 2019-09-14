@@ -306,7 +306,9 @@ if (empty($reshook))
 			$object->email       = preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
 			$object->socialnetworks = array();
 			foreach ($socialnetworks as $key => $value) {
-				$object->socialnetworks[$key] = trim(GETPOST($key, 'alpha'));
+				if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml')!='') {
+					$object->socialnetworks[$key] = trim(GETPOST($key, 'alphanohtml'));
+				}
 			}
 			//$object->skype       = trim(GETPOST("skype", 'alpha'));
 			//$object->twitter     = trim(GETPOST("twitter", 'alpha'));
@@ -487,7 +489,9 @@ if (empty($reshook))
 		$object->socialnetworks = array();
 		if (! empty($conf->socialnetworks->enabled)) {
 			foreach ($socialnetworks as $key => $value) {
-				$object->socialnetworks[$key] = GETPOST("member_".$key, 'alpha');
+				if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml')!='') {
+					$object->socialnetworks[$key] = GETPOST("member_".$key, 'alphanohtml');
+				}
 			}
 		}
 
