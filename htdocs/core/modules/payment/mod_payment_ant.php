@@ -95,7 +95,7 @@ class mod_payment_ant extends ModeleNumRefPayments
     }
 
     /**
-     *  Renvoi un exemple de numerotation
+     *  Return an example of numbering
      *
      *  @return     string      Example
      */

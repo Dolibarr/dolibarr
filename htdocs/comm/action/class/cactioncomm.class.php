@@ -84,7 +84,7 @@ class CActionComm
         $sql = "SELECT id, code, type, libelle as label, color, active, picto";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
         if (is_numeric($id)) $sql.= " WHERE id=".$id;
-        else $sql.= " WHERE code='".$id."'";
+        else $sql.= " WHERE code='".$this->db->escape($id)."'";
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);

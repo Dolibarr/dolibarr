@@ -284,14 +284,14 @@ class Product extends CommonObject
      * @var int
      */
     public $barcode_type;
-    
+
     /**
      * Main Barcode type code
      *
      * @var string
      */
     public $barcode_type_code;
-    
+
     /**
      * Additional barcodes (Some products have different barcodes according to the country of origin of manufacture)
      *
@@ -447,7 +447,7 @@ class Product extends CommonObject
             $error=0;
 
         // Clean parameters
-        $this->ref = dol_string_nospecial(trim($this->ref));
+        $this->ref = dol_sanitizeFileName(dol_string_nospecial(trim($this->ref)));
         $this->label = trim($this->label);
         $this->price_ttc=price2num($this->price_ttc);
         $this->price=price2num($this->price);
@@ -2052,7 +2052,7 @@ class Product extends CommonObject
         $sql.= " fk_price_expression, price_autogen";
         $sql.= " FROM ".MAIN_DB_PREFIX."product";
         if ($id) {
-            $sql.= " WHERE rowid = ".$this->db->escape($id);
+            $sql.= " WHERE rowid = ".(int) $id;
         } else {
             $sql.= " WHERE entity IN (".getEntity($this->element).")";
             if ($ref) {

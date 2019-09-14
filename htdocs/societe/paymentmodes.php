@@ -600,7 +600,7 @@ if (empty($reshook))
 				$db->rollback();
 			}
 		}
-		
+
 		if ($action == 'setkey_account_supplier')
 		{
 			$error = 0;
@@ -819,7 +819,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	print '<div class="fichecenter">';
 
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border tableforfield" width="100%">';
+	print '<table class="border tableforfield centpercent">';
 
 	if ($object->client)
 	{
@@ -872,7 +872,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print '</td></tr>';
 		}
     }
-    
+
 	if ($object->fournisseur)
 	{
 		print '<tr><td class="titlefield">';
@@ -891,12 +891,12 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		if ($conf->facture->enabled && $user->rights->facture->lire) $elementTypeArray['invoice']=$langs->transnoentitiesnoconv('Invoices');
 		if ($conf->contrat->enabled && $user->rights->contrat->lire) $elementTypeArray['contract']=$langs->transnoentitiesnoconv('Contracts');
 	}
-	
+
 	if (! empty($conf->stripe->enabled) && ! empty($conf->stripeconnect->enabled) && $conf->global->MAIN_FEATURES_LEVEL >= 2)
 	{
 		$permissiontowrite = $user->rights->societe->creer;
 		$stripesupplieracc = $stripe->getStripeAccount($service, $object->id);								// Get Stripe OAuth connect account (no network access here)
-    
+
 		// Stripe customer key 'cu_....' stored into llx_societe_account
 		print '<tr><td class="titlefield">';
 		print $form->editfieldkey("StripeConnectAccount", 'key_account_supplier', $stripesupplieracc, $object, $permissiontowrite, 'string', '', 0, 2, 'socid');
@@ -905,7 +905,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		if (! empty($conf->stripe->enabled) && $stripesupplieracc && $action != 'editkey_account_supplier')
 		{
 		    $connect='';
-			
+
 			$url='https://dashboard.stripe.com/test/connect/accounts/'.$stripesupplieracc;
 			if ($servicestatus)
 			{
@@ -1299,7 +1299,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print "</div>";
    	print '<br>';
 	}
-  
+
   	// List of Stripe payment modes
 	if (! empty($conf->stripe->enabled) && ! empty($conf->stripeconnect->enabled) && $object->fournisseur && ! empty($stripesupplieracc))
 	{
@@ -1311,7 +1311,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print '<td>'.$langs->trans('Amount').'</td>';
 		print '<td>'.$langs->trans('Currency').'</td>';
     print '</tr>';
-  
+
 		if (is_array($balance->available) && count($balance->available))
 		{
 			foreach ($balance->available as $cpt)
@@ -1322,7 +1322,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
       print '<tr><td>'.$langs->trans("Available").'</td><td>'.price($amount, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).' </td><td>'.$langs->trans("Currency".strtoupper($cpt->currency)).'</td></tr>';
 			}
 		}
-    
+
     if (is_array($balance->pending) && count($balance->pending))
 		{
 			foreach ($balance->pending as $cpt)
@@ -1598,7 +1598,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 // Edit BAN
 if ($socid && $action == 'edit' && $user->rights->societe->creer)
 {
-	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
+	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), -1, 'company');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
 
@@ -1705,7 +1705,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 // Edit Card
 if ($socid && $action == 'editcard' && $user->rights->societe->creer)
 {
-	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
+	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), -1, 'company');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
 
@@ -1753,7 +1753,7 @@ if ($socid && $action == 'editcard' && $user->rights->societe->creer)
 // Create BAN
 if ($socid && $action == 'create' && $user->rights->societe->creer)
 {
-	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
+	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), -1, 'company');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
 
@@ -1854,7 +1854,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 // Create Card
 if ($socid && $action == 'createcard' && $user->rights->societe->creer)
 {
-	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), 0, 'company');
+	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"), -1, 'company');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
 

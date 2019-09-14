@@ -5789,10 +5789,13 @@ div.tabsElem a.tab {
     }
 
 	.titlefield {
-	    width: auto !important;		/* We want to ignor the 30%, try to use more if you can */
+	    width: auto !important;		/* We want to ignore the 30%, try to use more if you can */
 	}
-	.tableforfield>tr>td:first-child {
-	    max-width: 100px;			/* but no more than 100px */
+	.tableforfield>tr>td:first-child, .tableforfield>tbody>tr>td:first-child, div.tableforfield div.tagtr>div.tagtd:first-of-type {
+	    /* max-width: 100px; */			/* but no more than 100px */
+	}
+	.tableforfield>tr>td:nth-child(2), .tableforfield>tbody>tr>td:nth-child(2), div.tableforfield div.tagtr>div.tagtd:nth-child(2) {
+	    word-break: break-word;
 	}
 	.badge {
 		line-height: 1.2em;

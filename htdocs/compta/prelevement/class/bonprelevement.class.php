@@ -739,8 +739,11 @@ class BonPrelevement extends CommonObject
 		$sql = "SELECT count(f.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql.= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-		$sql.= " WHERE f.fk_statut = ".Facture::STATUS_VALIDATED;
-		$sql.= " AND f.entity IN (".getEntity('invoice').")";
+		$sql.= " WHERE f.entity IN (".getEntity('invoice').")";
+		if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS))
+		{
+			$sql.= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
+		}
 		$sql.= " AND f.rowid = pfd.fk_facture";
 		$sql.= " AND pfd.traite = 0";
 		$sql.= " AND f.total_ttc > 0";
