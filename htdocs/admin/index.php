@@ -73,6 +73,7 @@ print $langs->trans("AreaForAdminOnly").' ';
 print $langs->trans("SetupDescription2", $langs->transnoentities("MenuCompanySetup"), $langs->transnoentities("Modules"))."<br><br>";
 
 print '<br>';
+dol_fiche_head();
 
 // Show info setup company
 if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY)) $setupcompanynotcomplete=1;
@@ -121,6 +122,7 @@ if (empty($reshook))
 	// Show logo
 	print '<div class="center"><div class="logo_setup"></div></div>';
 }
+dol_fiche_end();
 
 // End of page
 llxFooter();
