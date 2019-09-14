@@ -609,7 +609,7 @@ class Ldap
 		}
 		if ($result <= 0)
 		{
-			$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection)." ".$this->error;
+			$this->error = ldap_error($this->connection).' (Code '.ldap_errno($this->connection).") ".$this->error;
 			dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
 			//print_r($info);
 			return -1;

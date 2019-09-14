@@ -21,7 +21,7 @@ Following changes may create regressions for some external modules, but were nec
 * The hook "moreFamily" must return payment into var "totalpayment" and no more "paiement" (english replace french).
 * Removed deprecated method actioncomm->add(), use create() instead
 * If you have developed your own emailing target selector and used parent::add_to_target(...), you must now use parent::addToTargets(...)
-
+* Removed function dol_micro_time. Use native PHP microtime instead.
 
 
 ***** ChangeLog for 10.0.2 compared to 10.0.1 *****

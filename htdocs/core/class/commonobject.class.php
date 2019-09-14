@@ -4909,13 +4909,12 @@ abstract class CommonObject
 		if (! is_array($optionsArray))
 		{
 			// If $extrafields is not a known object, we initialize it. Best practice is to have $extrafields defined into card.php or list.php page.
-			// TODO Use of existing $extrafield is not yet ready (must mutualize code that use extrafields in form first)
-			// global $extrafields;
-			//if (! is_object($extrafields))
-			//{
+			global $extrafields;
+			if (! isset($extrafields) || ! is_object($extrafields))
+			{
 				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 				$extrafields = new ExtraFields($this->db);
-			//}
+			}
 
 			// Load array of extrafields for elementype = $this->table_element
 			if (empty($extrafields->attributes[$this->table_element]['loaded']))

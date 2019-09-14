@@ -5780,20 +5780,6 @@ function dol_nboflines_bis($text, $maxlinesize = 0, $charset = 'UTF-8')
 }
 
 /**
- *	 Same function than microtime in PHP 5 but compatible with PHP4
- *
- * @return		float		Time (millisecondes) with microsecondes in decimal part
- * @deprecated Dolibarr does not support PHP4, you should use native function
- * @see microtime()
- */
-function dol_microtime_float()
-{
-	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
-
-	return microtime(true);
-}
-
-/**
  *	Return if a text is a html content
  *
  *	@param	string	$msg		Content to check
