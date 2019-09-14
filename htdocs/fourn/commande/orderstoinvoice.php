@@ -450,7 +450,7 @@ if (($action != 'create' && $action != 'add') && !$error) {
 	$sql .= ' AND c.fk_soc = s.rowid';
 
 	// Show orders with status validated, shipping started and delivered (well any order we can bill)
-	$sql .= " AND c.fk_statut IN (5)";
+	$sql .= " AND c.fk_statut IN (".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY.")";		// Must match filter in htdocs/fourn/card.php
 	$sql .= " AND c.billed = 0";
 
 	// Find order that are not already invoiced
