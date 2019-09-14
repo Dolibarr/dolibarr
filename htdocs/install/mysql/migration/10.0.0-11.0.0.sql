@@ -43,6 +43,7 @@ create table llx_entrepot_extrafields
 
 ALTER TABLE llx_entrepot_extrafields ADD INDEX idx_entrepot_extrafields (fk_object);
 
+ALTER TABLE llx_extrafields ADD COLUMN printable boolean DEFAULT FALSE;
 
 ALTER TABLE llx_facture ADD COLUMN retained_warranty real DEFAULT NULL after situation_final;
 ALTER TABLE llx_facture ADD COLUMN retained_warranty_date_limit	date DEFAULT NULL after retained_warranty;

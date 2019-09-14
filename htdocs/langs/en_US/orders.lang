@@ -154,7 +154,7 @@ OptionToSetOrderBilledNotEnabled=Option from module Workflow, to set order to 'B
 IfValidateInvoiceIsNoOrderStayUnbilled=If invoice validation is 'No', the order will remain to status 'Unbilled' until the invoice is validated.
 CloseReceivedSupplierOrdersAutomatically=Close order to status "%s" automatically if all products are received.
 SetShippingMode=Set shipping mode
-
+WithReceptionFinished=With reception finished
 #### supplier orders status
 StatusSupplierOrderCanceledShort=Canceled
 StatusSupplierOrderDraftShort=Draft
