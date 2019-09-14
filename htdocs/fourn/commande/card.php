@@ -2494,11 +2494,18 @@ elseif (! empty($object->id))
 				{
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
 				}
-				elseif (!empty($object->linkedObjectsIds['invoice_supplier']))
+				else
 				{
-					if ($user->rights->fournisseur->facture->creer)
+					if (!empty($object->linkedObjectsIds['invoice_supplier']))
 					{
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
+						if ($user->rights->fournisseur->facture->creer)
+						{
+							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a>';
+						}
+					}
+					else
+					{
+						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NeedAtLeastOneInvoice")).'">'.$langs->trans("ClassifyBilled").'</a>';
 					}
 				}
 			}
