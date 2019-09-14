@@ -51,7 +51,7 @@ $hookmanager->initHooks(array('accountancyindex'));
 llxHeader('', $langs->trans("AccountancyArea"));
 
 print load_fiche_titre($langs->trans("AccountancyArea"), '', 'title_accountancy');
-dol_fiche_head();
+//dol_fiche_head();
 
 $step = 0;
 
@@ -177,7 +177,7 @@ else
 {
 	print $langs->trans("Module10Desc")."<br>\n";
 }
-dol_fiche_end();
+//dol_fiche_end();
 
 // End of page
 llxFooter();
