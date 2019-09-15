@@ -6,7 +6,7 @@
  * Copyright (C) 2014       Florian Henry        <florian.henry@open-cooncept.pro>
  * Copyright (C) 2015       Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2016       Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2017       Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2017-2019  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -1110,7 +1110,27 @@ if ($resql)
             $bankaccount = $cachebankaccount[$objp->bankid];
         }
 
-        print '<tr class="oddeven">';
+        if (empty($conf->global->BANK_COLORIZE_MOVEMENT)) {
+            $backgroundcolor = "class='oddeven'";
+        } else {
+            if ($objp->amount < 0)
+            {
+                if (empty($conf->global->BANK_COLORIZE_MOVEMENT_COLOR1)) {
+                    $color = '#fca955';
+                } else {
+                    $color = '#' . $conf->global->BANK_COLORIZE_MOVEMENT_COLOR1;
+                }
+                $backgroundcolor = 'style="background-color: ' . $color . ';"';
+            } else {
+                if (empty($conf->global->BANK_COLORIZE_MOVEMENT_COLOR2)) {
+                    $color = '#7fdb86';
+                } else {
+                    $color = '#' . $conf->global->BANK_COLORIZE_MOVEMENT_COLOR2;
+                }
+                $backgroundcolor = 'style="background-color: ' . $color . ';"';
+            }
+        }
+        print '<tr class="oddeven" '.$backgroundcolor.'>';
 
         // Ref
     	if (! empty($arrayfields['b.rowid']['checked']))
