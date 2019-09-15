@@ -1060,7 +1060,7 @@ div.blockvmenulogo
 }
 .backgroundforcompanylogo {
     margin: <?php echo $disableimages?'0':'6'; ?>px;
-    margin-left: 6px;
+    margin-left: 8px;
     margin-right: 8px;
     background-color: rgba(255,255,255,0.7);
     padding: 0;
