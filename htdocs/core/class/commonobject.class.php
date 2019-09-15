@@ -7536,18 +7536,20 @@ abstract class CommonObject
 		}
 
 		// Delete cascade first
-		foreach($this->childtablesoncascade as $table)
-		{
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table.' WHERE '.$this->fk_element.' = '.$this->id;
-			$resql = $this->db->query($sql);
-			if (! $resql)
-			{
-				$this->error=$this->db->lasterror();
-				$this->errors[]=$this->error;
-				$this->db->rollback();
-				return -1;
-			}
-		}
+		if (! empty($this->childtablesoncascade)) {
+            foreach($this->childtablesoncascade as $table)
+            {
+                $sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table.' WHERE '.$this->fk_element.' = '.$this->id;
+                $resql = $this->db->query($sql);
+                if (! $resql)
+                {
+                    $this->error=$this->db->lasterror();
+                    $this->errors[]=$this->error;
+                    $this->db->rollback();
+                    return -1;
+                }
+            }
+        }
 
 		if (! $error) {
 			if (! $notrigger) {
