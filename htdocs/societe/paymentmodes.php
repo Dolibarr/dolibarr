@@ -481,7 +481,7 @@ if (empty($reshook))
 		$_POST['lang_id'] = GETPOST('lang_idrib'.GETPOST('companybankid', 'int'), 'alpha');
 		$_POST['model'] =  GETPOST('modelrib'.GETPOST('companybankid', 'int'), 'alpha');
 	}
-	https://dashboard.stripe.com/search?query=risk_level%3Ahighest&account=acct_1CVGWQLYhjvFj9Sz
+	
 	$id = $socid;
 	$upload_dir = $conf->societe->multidir_output[$object->entity];
 	$permissioncreate=$user->rights->societe->creer;
