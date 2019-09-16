@@ -96,11 +96,11 @@ else
 
 	<tr>
 		<td class="label1"><?php echo $langs->trans("Login"); ?></td>
-		<td><input name="txtUsername" class="texte_login" type="text" value="<?php echo $usertxt; ?>" /></td>
+		<td><input name="txtUsername" class="texte_login maxwidth150onsmartphoneimp" type="text" value="<?php echo $usertxt; ?>" /></td>
 	</tr>
 	<tr>
 		<td class="label1"><?php echo $langs->trans("Password"); ?></td>
-		<td><input name="pwdPassword" class="texte_login" type="password" value="" /></td>
+		<td><input name="pwdPassword" class="texte_login maxwidth150onsmartphoneimp" type="password" value="" /></td>
 	</tr>
 
 <?php
