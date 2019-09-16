@@ -421,6 +421,7 @@ if ($action == 'update')
 		if ($p2min == -1) $p2min='0';
 
 		$object->fetch($id);
+        $object->fetch_optionals();
 		$object->fetch_userassigned();
 
 		$datep=dol_mktime($fulldayevent?'00':$aphour, $fulldayevent?'00':$apmin, 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
