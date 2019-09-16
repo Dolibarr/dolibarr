@@ -191,7 +191,7 @@ print "</tr>\n";
 </table>
 <br>
 
-<div align="center"><span class="bouton_login"><input class="button" name="sbmtConnexion" type="submit" value=<?php echo $langs->trans("Connection"); ?> /></span></div>
+<div align="center"><span class="bouton_login"><input class="button" name="sbmtConnexion" type="submit" value="<?php echo dol_escape_htmltag($langs->trans("Connection")); ?>" /></span></div>
 
 </form>
 </fieldset>
