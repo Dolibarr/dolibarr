@@ -2036,27 +2036,28 @@ elseif ($id || $ref)
 		print '<br>';
 
         print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder" width="100%" id="tablelines" >';
+		print '<thead>';
 		print '<tr class="liste_titre">';
 		// Adds a line numbering column
 		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 		{
-			print '<td width="5" class="center">&nbsp;</td>';
+			print '<td width="5" class="center linecolnum">&nbsp;</td>';
 		}
 		// Product/Service
-		print '<td>'.$langs->trans("Products").'</td>';
+		print '<td  class="linecoldescription" >'.$langs->trans("Products").'</td>';
 		// Qty
-		print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
+		print '<td class="center linecolqty">'.$langs->trans("QtyOrdered").'</td>';
 		if ($origin && $origin_id > 0)
 		{
-			print '<td class="center">'.$langs->trans("QtyInOtherShipments").'</td>';
+			print '<td class="center linecolqtyinothershipments">'.$langs->trans("QtyInOtherShipments").'</td>';
 		}
 		if ($action == 'editline')
 		{
 			$editColspan = 3;
 			if (empty($conf->stock->enabled)) $editColspan--;
 			if (empty($conf->productbatch->enabled)) $editColspan--;
-			print '<td class="center" colspan="'. $editColspan . '">';
+			print '<td class="center linecoleditlineotherinfo" colspan="'. $editColspan . '">';
 			if ($object->statut <= 1)
 			{
 				print $langs->trans("QtyToShip").' - ';
@@ -2079,24 +2080,24 @@ elseif ($id || $ref)
 		{
 			if ($object->statut <= 1)
 			{
-				print '<td class="center">'.$langs->trans("QtyToShip").'</td>';
+				print '<td class="center linecolqtytoship">'.$langs->trans("QtyToShip").'</td>';
 			}
 			else
 			{
-				print '<td class="center">'.$langs->trans("QtyShipped").'</td>';
+				print '<td class="center linecolqtyshipped">'.$langs->trans("QtyShipped").'</td>';
 			}
 			if (! empty($conf->stock->enabled))
 			{
-				print '<td class="left">'.$langs->trans("WarehouseSource").'</td>';
+				print '<td class="left linecolwarehousesource">'.$langs->trans("WarehouseSource").'</td>';
 			}
 
 			if (! empty($conf->productbatch->enabled))
 			{
-				print '<td class="left">'.$langs->trans("Batch").'</td>';
+				print '<td class="left linecolbatch">'.$langs->trans("Batch").'</td>';
 			}
 		}
-		print '<td class="center">'.$langs->trans("CalculatedWeight").'</td>';
-		print '<td class="center">'.$langs->trans("CalculatedVolume").'</td>';
+		print '<td class="center linecolweight">'.$langs->trans("CalculatedWeight").'</td>';
+		print '<td class="center linecolvolume">'.$langs->trans("CalculatedVolume").'</td>';
 		//print '<td class="center">'.$langs->trans("Size").'</td>';
 		if ($object->statut == 0)
 		{
@@ -2104,7 +2105,7 @@ elseif ($id || $ref)
 			print '<td class="linecoldelete" width="10"></td>';
 		}
 		print "</tr>\n";
-
+		print '</thead>';
 		$var=false;
 
 		if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
@@ -2164,6 +2165,7 @@ elseif ($id || $ref)
     		//var_dump($alreadysent);
 		}
 
+		print '<tbody>';
 		// Loop on each product to send/sent
 		for ($i = 0 ; $i < $num_prod ; $i++)
 		{
@@ -2174,12 +2176,12 @@ elseif ($id || $ref)
 			if(empty($reshook))
 			{
 			    print '<!-- origin line id = '.$lines[$i]->origin_line_id.' -->'; // id of order line
-				print '<tr class="oddeven">';
+				print '<tr class="oddeven" id="row-'.$lines[$i]->id.'" data-id="'.$lines[$i]->id.'" data-element="'.$lines[$i]->element.'" >';
 
 				// #
 				if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 				{
-					print '<td class="center">'.($i+1).'</td>';
+					print '<td class="center linecolnum">'.($i+1).'</td>';
 				}
 
 				// Predefined product or service
@@ -2195,7 +2197,7 @@ elseif ($id || $ref)
 					else
 						$label = (! empty($lines[$i]->label)?$lines[$i]->label:$lines[$i]->product_label);
 
-					print '<td>';
+					print '<td class="linecoldescription">';
 
 					// Show product and description
 					$product_static->type=$lines[$i]->fk_product_type;
@@ -2215,7 +2217,7 @@ elseif ($id || $ref)
 				}
 				else
 				{
-					print "<td>";
+					print '<td class="linecoldescription" >';
 					if ($lines[$i]->product_type == Product::TYPE_SERVICE) $text = img_object($langs->trans('Service'), 'service');
 					else $text = img_object($langs->trans('Product'), 'product');
 
@@ -2231,12 +2233,12 @@ elseif ($id || $ref)
 				}
 
 				// Qty ordered
-				print '<td class="center">'.$lines[$i]->qty_asked.'</td>';
+				print '<td class="center linecolqty">'.$lines[$i]->qty_asked.'</td>';
 
 				// Qty in other shipments (with shipment and warehouse used)
 	    		if ($origin && $origin_id > 0)
 	    		{
-	    			print '<td class="center" class="nowrap">';
+	    			print '<td class="linecolqtyinothershipments center nowrap">';
 	    			foreach ($alreadysent as $key => $val)
 	    			{
 	    			    if ($lines[$i]->fk_origin_line == $key)
@@ -2350,12 +2352,12 @@ elseif ($id || $ref)
 				else
 				{
 					// Qty to ship or shipped
-					print '<td class="center">'.$lines[$i]->qty_shipped.'</td>';
+					print '<td class="linecolqtytoship center">'.$lines[$i]->qty_shipped.'</td>';
 
 					// Warehouse source
 					if (! empty($conf->stock->enabled))
 					{
-						print '<td class="left">';
+						print '<td class="linecolwarehousesource left">';
 						if ($lines[$i]->entrepot_id > 0)
 						{
 							$entrepot = new Entrepot($db);
@@ -2385,7 +2387,7 @@ elseif ($id || $ref)
 						if (isset($lines[$i]->detail_batch))
 						{
 							print '<!-- Detail of lot -->';
-							print '<td>';
+							print '<td class="linecolbatch">';
 							if ($lines[$i]->product_tobatch)
 							{
 								$detail = '';
@@ -2405,19 +2407,19 @@ elseif ($id || $ref)
 							}
 							print '</td>';
 						} else {
-							print '<td></td>';
+							print '<td class="linecolbatch" ></td>';
 						}
 					}
 				}
 
 				// Weight
-				print '<td class="center">';
+				print '<td class="center linecolweight">';
 				if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->weight*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->weight_units, "weight");
 				else print '&nbsp;';
 				print '</td>';
 
 				// Volume
-				print '<td class="center">';
+				print '<td class="center linecolvolume">';
 				if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->volume_units, "volume");
 				else print '&nbsp;';
 				print '</td>';
@@ -2473,6 +2475,7 @@ elseif ($id || $ref)
 		// TODO Show also lines ordered but not delivered
 
 		print "</table>\n";
+		print '</tbody>';
 		print '</div>';
 	}
 
