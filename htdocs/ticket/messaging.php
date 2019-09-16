@@ -103,6 +103,12 @@ $parameters=array('id'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
+if(empty($reshook))
+{
+	// Set view style
+	$_SESSION['ticket-view-type'] = "messaging";
+}
+
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
 {
@@ -143,7 +149,7 @@ if (!$user->socid && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) {
 }
 $head = ticket_prepare_head($object);
 
-dol_fiche_head($head, 'tabTicketMessaging', $langs->trans("Ticket"), 0, 'ticket');
+dol_fiche_head($head, 'tabTicketLogs', $langs->trans("Ticket"), 0, 'ticket');
 
 $morehtmlref ='<div class="refidno">';
 $morehtmlref.= $object->subject;
@@ -227,20 +233,27 @@ if (!empty($object->id))
 
     $morehtmlright = '';
 
-    if($sortorder === 'desc') {
-        $sortUrl = $_SERVER["PHP_SELF"] . '?sortfield=a.datep&sortorder=asc' . $param;
-        $morehtmlright .= dolGetButtonTitle($langs->trans('Date'), $langs->trans('OrderByDateAsc'), 'fa fa-sort-numeric-down', $sortUrl, $id = '', $status = 1);
-    }
-    else{
-        $sortUrl = $_SERVER["PHP_SELF"] . '?sortfield=a.datep&sortorder=desc' . $param;
-        $morehtmlright .= dolGetButtonTitle($langs->trans('Date'), $langs->trans('OrderByDateDesc'), 'fa fa-sort-numeric-down-alt', $sortUrl, $id = '', $status = 1);
-    }
+	if($sortorder === 'desc') {
+		$sortUrl = $_SERVER["PHP_SELF"] . '?sortfield=a.datep&sortorder=asc' . $param;
+		$morehtmlright .= dolGetButtonTitle($langs->trans('Date'), $langs->trans('OrderByDateAsc'), 'fa fa-sort-numeric-down', $sortUrl, $id = '', $status = 1);
+	}
+	else{
+		$sortUrl = $_SERVER["PHP_SELF"] . '?sortfield=a.datep&sortorder=desc' . $param;
+		$morehtmlright .= dolGetButtonTitle($langs->trans('Date'), $langs->trans('OrderByDateDesc'), 'fa fa-sort-numeric-down-alt', $sortUrl, $id = '', $status = 1);
+	}
 
-    // Show link to add a message (if read and not closed)
-    $btnstatus = $object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
-    $url = 'card.php?track_id=' . $object->track_id . '&action=presend_addmessage&mode=init';
-    $morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-comment', $url, 'add-new-ticket-title-button', $btnstatus);
+	$messagingUrl = DOL_URL_ROOT.'/ticket/agenda.php?track_id=' . $object->track_id;
+	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-tasks', $messagingUrl, $id = '', $status = 1);
 
+	// Show link to add a message (if read and not closed)
+	$btnstatus = $object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
+	$url = 'card.php?track_id=' . $object->track_id . '&action=presend_addmessage&mode=init';
+	$morehtmlright .= dolGetButtonTitle($langs->trans('TicketAddMessage'), '', 'fa fa-plus-circle', $url, 'add-new-ticket-title-button', $btnstatus);
+
+	// Show link to add event (if read and not closed)
+	$btnstatus = $object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
+	$url = dol_buildpath('/comm/action/card.php', 1).'?action=create&datep='.date('YmdHi').'&origin=ticket&originid='.$object->id.'&projectid='.$object->fk_project.'&backtopage='.urlencode($_SERVER["PHP_SELF"]);
+	$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-calendar-plus', $url, 'add-new-ticket-even-button', $btnstatus);
 
 
 	print_barre_liste($langs->trans("ActionsOnTicket"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);

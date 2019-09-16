@@ -139,6 +139,8 @@ TicketViewNonClosedOnly=View only open tickets
 TicketStatByStatus=Tickets by status
 OrderByDateAsc=Sort by ascending date
 OrderByDateDesc=Sort by descending date
+MessagingViewType=Show as messaging list
+MessageListViewType=Show as table list
 
 #
 # Ticket card

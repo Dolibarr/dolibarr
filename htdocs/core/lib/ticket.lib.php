@@ -108,7 +108,21 @@ function ticket_prepare_head($object)
 
 
     // History
-    $head[$h][0] = DOL_URL_ROOT.'/ticket/agenda.php?track_id=' . $object->track_id;
+	$ticketViewType = "messaging";
+	if(empty($_SESSION['ticket-view-type'])){
+		$_SESSION['ticket-view-type'] = $ticketViewType;
+	}
+	else{
+		$ticketViewType = $_SESSION['ticket-view-type'];
+	}
+
+	if($ticketViewType == "messaging"){
+		$head[$h][0] = DOL_URL_ROOT.'/ticket/messaging.php?track_id=' . $object->track_id;
+	}
+	else{
+		// $ticketViewType == "list"
+		$head[$h][0] = DOL_URL_ROOT.'/ticket/agenda.php?track_id=' . $object->track_id;
+	}
     $head[$h][1] = $langs->trans('Events');
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
     {
@@ -118,11 +132,6 @@ function ticket_prepare_head($object)
     $head[$h][2] = 'tabTicketLogs';
     $h++;
 
-    // History
-    $head[$h][0] = DOL_URL_ROOT.'/ticket/messaging.php?track_id=' . $object->track_id;
-    $head[$h][1] = $langs->trans('Messaging');
-    $head[$h][2] = 'tabTicketMessaging';
-    $h++;
 
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'ticket', 'remove');
 
