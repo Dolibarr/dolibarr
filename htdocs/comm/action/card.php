@@ -608,6 +608,7 @@ if ($action == 'update')
 if ($action == 'confirm_delete' && GETPOST("confirm") == 'yes')
 {
 	$object->fetch($id);
+    $object->fetch_optionals();
 
 	if ($user->rights->agenda->myactions->delete
 		|| $user->rights->agenda->allactions->delete)
