@@ -5673,7 +5673,7 @@ div.tabsElem a.tab {
 
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo is_numeric($fontsize)?$fontsize.'px':$fontsize ?> */
 /* rule to reduce top menu - 1st reduction: Reduce width of top menu icons */
-@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC1) ? round($nbtopmenuentries * 90, 0) + 240 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC1; ?>px)	/* reduction 1 */
+@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC1) ? round($nbtopmenuentries * 90, 0) + 340 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC1; ?>px)	/* reduction 1 */
 {
 	div.tmenucenter {
 	    width: <?php echo round(52); ?>px;	/* size of viewport */
@@ -5706,7 +5706,7 @@ div.tabsElem a.tab {
 	}
 }
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
-@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 40 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
+@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 140 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
 {
 	li.tmenucompanylogo {
 		display: none;
@@ -5733,7 +5733,7 @@ div.tabsElem a.tab {
 	}
 }
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
-@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 40 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
+@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 140 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
 	.side-nav {
 		z-index: 200;

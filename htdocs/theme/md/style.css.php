@@ -5670,7 +5670,7 @@ border-top-right-radius: 6px;
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo $fontsize ?> */
 /* disableimages = <?php echo $disableimages; ?> */
 /* rule to reduce top menu - 1st reduction */
-@media only screen and (max-width:  <?php echo round($nbtopmenuentries * $fontsize * 7, 0) + 200; ?>px)
+@media only screen and (max-width:  <?php echo round($nbtopmenuentries * $fontsize * 7, 0) + 300; ?>px)
 {
 	div.tmenucenter {
 	    max-width: <?php echo round($fontsize * 4); ?>px;	/* size of viewport */
@@ -5697,7 +5697,7 @@ border-top-right-radius: 6px;
 	}
 }
 /* rule to reduce top menu - 2nd reduction */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 4.5, 0) + 200; ?>px)
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 4.5, 0) + 300; ?>px)
 {
 	li.tmenucompanylogo {
 		display: none;
