@@ -2120,7 +2120,7 @@ class Form
         // Units
         if (! empty($conf->global->PRODUCT_USE_UNITS)) {
             $sql .= ", u.label as unit_long, u.short_label as unit_short, p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units";
-            $selectFields .= ', unit_long, unit_short';
+            $selectFields .= ', unit_long, unit_short, p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units';
         }
 
 		// Multilang : we add translation
@@ -2419,19 +2419,19 @@ class Form
             if (!empty($objp->unit_short)) {
                 $outvalUnits .= ' - ' . $objp->unit_short;
             }
-            if (!empty($objp->weight)) {
+            if (!empty($objp->weight) && $objp->weight_units!==null) {
                 $unitToShow = showDimensionInBestUnit($objp->weight, $objp->weight_units, 'weight', $langs);
                 $outvalUnits .= ' - ' . $unitToShow;
             }
-            if (!empty($objp->length) || !empty($objp->width) || !empty($objp->height)) {
+            if ((!empty($objp->length) || !empty($objp->width) || !empty($objp->height)) && $objp->length_units!==null) {
                 $unitToShow = $objp->length . ' x ' . $objp->width . ' x ' . $objp->height . ' ' . measuring_units_string($objp->length_units, 'size');
                 $outvalUnits .= ' - ' . $unitToShow;
             }
-            if (!empty($objp->surface)) {
+            if (!empty($objp->surface) && $objp->surface_units!==null) {
                 $unitToShow = showDimensionInBestUnit($objp->surface, $objp->surface_units, 'surface', $langs);
                 $outvalUnits .= ' - ' . $unitToShow;
             }
-            if (!empty($objp->volume)) {
+            if (!empty($objp->volume) && $objp->volume_units!==null) {
                 $unitToShow = showDimensionInBestUnit($objp->volume, $objp->volume_units, 'volume', $langs);
                 $outvalUnits .= ' - ' . $unitToShow;
             }
@@ -2796,19 +2796,19 @@ class Form
                     if (!empty($objp->unit_short)) {
                         $outvalUnits .= ' - ' . $objp->unit_short;
                     }
-                    if (!empty($objp->weight)) {
+                    if (!empty($objp->weight) && $objp->weight_units!==null) {
                         $unitToShow = showDimensionInBestUnit($objp->weight, $objp->weight_units, 'weight', $langs);
                         $outvalUnits .= ' - ' . $unitToShow;
                     }
-                    if (!empty($objp->length) || !empty($objp->width) || !empty($objp->height)) {
+                    if ((!empty($objp->length) || !empty($objp->width) || !empty($objp->height)) && $objp->length_units!==null) {
                         $unitToShow = $objp->length . ' x ' . $objp->width . ' x ' . $objp->height . ' ' . measuring_units_string($objp->length_units, 'size');
                         $outvalUnits .= ' - ' . $unitToShow;
                     }
-                    if (!empty($objp->surface)) {
+                    if (!empty($objp->surface) && $objp->surface_units!==null) {
                         $unitToShow = showDimensionInBestUnit($objp->surface, $objp->surface_units, 'surface', $langs);
                         $outvalUnits .= ' - ' . $unitToShow;
                     }
-                    if (!empty($objp->volume)) {
+                    if (!empty($objp->volume) && $objp->volume_units!==null) {
                         $unitToShow = showDimensionInBestUnit($objp->volume, $objp->volume_units, 'volume', $langs);
                         $outvalUnits .= ' - ' . $unitToShow;
                     }
