@@ -57,7 +57,7 @@ $form=new Form($db);
 $formfile=new FormFile($db);
 
 $projectset = ($mine?$mine:(empty($user->rights->projet->all->lire)?0:2));
-$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $projetset, 1);
+$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $projectset, 1);
 //var_dump($projectsListId);
 
 
