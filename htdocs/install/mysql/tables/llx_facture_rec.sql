@@ -29,7 +29,6 @@ create table llx_facture_rec
   tms				 timestamp,           -- date creation/modification
 
   suspended          integer DEFAULT 0,					-- 1=suspended
-  ref_client		 varchar(255),							-- reference for customer
   
   amount             double(24,8)     DEFAULT 0 NOT NULL,
   remise             real     DEFAULT 0,
