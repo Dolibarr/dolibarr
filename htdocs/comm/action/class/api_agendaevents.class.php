@@ -274,7 +274,7 @@ class AgendaEvents extends DolibarrApi
             throw new RestException(401, "Insuffisant rights to delete your Agenda Event");
         }
 
-		$result = $this->actioncomm->fetch($id);
+        $result = $this->actioncomm->fetch($id);
         if ($result) {
             $this->actioncomm->fetch_optionals();
             $this->actioncomm->fetch_userassigned();
