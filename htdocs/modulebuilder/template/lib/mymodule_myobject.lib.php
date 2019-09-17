@@ -79,5 +79,7 @@ function myobjectPrepareHead($object)
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'myobject@mymodule');
 
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'myobject@mymodule', 'remove');
+
 	return $head;
 }

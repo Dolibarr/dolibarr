@@ -19,7 +19,7 @@
 
 /**
  * \file	htdocs/accountancy/class/accountancycategory.class.php
- * \ingroup Advanced accountancy
+ * \ingroup Accountancy (Double entries)
  * \brief	File of class to manage categories of an accounting category_type
  */
 

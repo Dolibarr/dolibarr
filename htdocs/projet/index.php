@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,11 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('projectsindex'));
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
@@ -62,7 +68,6 @@ $formfile=new FormFile($db);
 $projectset = ($mine?$mine:(empty($user->rights->projet->all->lire)?0:2));
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $projetset, 1);
 //var_dump($projectsListId);
-
 
 llxHeader("", $langs->trans("Projects"), "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
@@ -180,6 +185,7 @@ $sql.= $db->plimit($max, 0);
 $resql=$db->query($sql);
 if ($resql)
 {
+    print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="4">'.$langs->trans("LatestModifiedProjects", $max).'</th></tr>';
@@ -243,9 +249,12 @@ if ($resql)
 			$i++;
 		}
 	}
-	print "</table><br>";
+	print "</table></div><br>";
 }
 else dol_print_error($db);
+
+
+$companystatic=new Societe($db);    // We need a clean new object for next loop because current one has some properties set.
 
 
 // Open project per thirdparty
@@ -260,7 +269,7 @@ $sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount)";
 $sql.= ", s.nom as name, s.rowid as socid";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-$sql.= " WHERE p.entity IN (".getEntity('project', $conf->entity).")";
+$sql.= " WHERE p.entity IN (".getEntity('project').")";
 $sql.= " AND p.fk_statut = 1";
 if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";		// If we have this test true, it also means projectset is not 2
 if ($socid)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
@@ -319,6 +328,9 @@ if (! empty($conf->global->PROJECT_SHOW_PROJECT_LIST_ON_PROJECT_AREA))
 }
 
 print '</div></div></div>';
+
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardProjects', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

@@ -143,7 +143,7 @@ class mailing_xinputuser extends MailingTargets
                     'source_type' => 'file'
 				);
 
-				return parent::add_to_target($mailing_id, $cibles);
+				return parent::addTargetsToDatabase($mailing_id, $cibles);
 			}
 			else
 			{

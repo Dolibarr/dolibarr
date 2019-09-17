@@ -2,7 +2,7 @@
 /* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2017		Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
- * Copyright (C) 2018		Thibault FOUCART		<support@ptibogxiv.net>
+ * Copyright (C) 2018-2019  Thibault FOUCART		<support@ptibogxiv.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -57,6 +57,9 @@ if ($action == 'setvalue' && $user->admin)
 		$result = dolibarr_set_const($db, "STRIPE_TEST_SECRET_KEY", GETPOST('STRIPE_TEST_SECRET_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
 		if (! $result > 0)
 			$error ++;
+		$result = dolibarr_set_const($db, "STRIPE_TEST_WEBHOOK_ID", GETPOST('STRIPE_TEST_WEBHOOK_ID', 'alpha'), 'chaine', 0, '', $conf->entity);
+		if (! $result > 0)
+			$error ++;
 		$result = dolibarr_set_const($db, "STRIPE_TEST_WEBHOOK_KEY", GETPOST('STRIPE_TEST_WEBHOOK_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
 		if (! $result > 0)
 			$error ++;
@@ -64,6 +67,9 @@ if ($action == 'setvalue' && $user->admin)
 		if (! $result > 0)
 			$error ++;
 		$result = dolibarr_set_const($db, "STRIPE_LIVE_SECRET_KEY", GETPOST('STRIPE_LIVE_SECRET_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
+		if (! $result > 0)
+			$error ++;
+		$result = dolibarr_set_const($db, "STRIPE_LIVE_WEBHOOK_ID", GETPOST('STRIPE_LIVE_WEBHOOK_ID', 'alpha'), 'chaine', 0, '', $conf->entity);
 		if (! $result > 0)
 			$error ++;
 		$result = dolibarr_set_const($db, "STRIPE_LIVE_WEBHOOK_KEY", GETPOST('STRIPE_LIVE_WEBHOOK_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -155,7 +161,7 @@ print '<input type="hidden" name="action" value="setvalue">';
 
 dol_fiche_head($head, 'stripeaccount', '', -1);
 
-$stripearrayofwebhookevents=array('payout.created','payout.paid','charge.pending','charge.refunded','charge.succeeded','charge.failed','payment_intent.succeeded','payment_intent.payment_failed','source.chargeable','customer.deleted');
+$stripearrayofwebhookevents=array('payout.created','payout.paid','charge.pending','charge.refunded','charge.succeeded','charge.failed','payment_intent.succeeded','payment_intent.payment_failed','payment_method.attached','payment_method.updated','payment_method.card_automatically_updated','payment_method.detached','source.chargeable','customer.deleted');
 
 print $langs->trans("StripeDesc")."<br>\n";
 
@@ -194,14 +200,14 @@ if (empty($conf->stripeconnect->enabled))
 	print '</td><td></td></tr>';
 
 	print '<tr class="oddeven"><td>';
-	print '<span class="titlefield fieldrequired">'.$langs->trans("STRIPE_TEST_WEBHOOK_KEY").'</span></td><td>';
+	print '<span class="titlefield">'.$langs->trans("STRIPE_TEST_WEBHOOK_KEY").'</span></td><td>';
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	    print '<input class="minwidth300" type="text" name="STRIPE_TEST_WEBHOOK_ID" value="'.$conf->global->STRIPE_TEST_WEBHOOK_ID.'">';
-        print ' &nbsp; '.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx<br>';
+      print ' &nbsp; '.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx<br>';
 	}
 	print '<input class="minwidth300" type="text" name="STRIPE_TEST_WEBHOOK_KEY" value="'.$conf->global->STRIPE_TEST_WEBHOOK_KEY.'">';
 	print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
-	$out = img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForTestWebhook").' ';
+	  $out = img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForTestWebhook").' ';
     $url = dol_buildpath('/public/stripe/ipn.php?test', 3);
 	$out.= '<input type="text" id="onlinetestwebhookurl" class="minwidth500" value="'.$url.'">';
 	$out.= ajax_autoselect("onlinetestwebhookurl", 0);
@@ -215,7 +221,7 @@ if (empty($conf->stripeconnect->enabled))
             $endpoint = \Stripe\WebhookEndpoint::retrieve($conf->global->STRIPE_TEST_WEBHOOK_ID);
             $endpoint->enabled_events = $stripearrayofwebhookevents;
             if (GETPOST('webhook', 'alpha') == $conf->global->STRIPE_TEST_WEBHOOK_ID) {
-                if (empty(GETPOST('status', 'alpha'))) {
+                if (! GETPOST('status', 'alpha')) {
                     $endpoint->disabled = true;
                 } else {
                     $endpoint->disabled = false;
@@ -225,12 +231,12 @@ if (empty($conf->stripeconnect->enabled))
             $endpoint->save();
             if ($endpoint->status == 'enabled')
             {
-            	print '<a href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=0">';
+            	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=0">';
             	print img_picto($langs->trans("Activated"), 'switch_on');
             }
             else
             {
-            	print '<a href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=1">';
+            	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=1">';
             	print img_picto($langs->trans("Disabled"), 'switch_off');
             }
         //print $endpoint;
@@ -248,7 +254,7 @@ if (empty($conf->stripeconnect->enabled))
 	print price($conf->global->STRIPE_APPLICATION_FEE_PERCENT);
 	print '% + ';
 	print price($conf->global->STRIPE_APPLICATION_FEE);
-	print ' '.$langs->getCurrencySymbol($conf->currency).' '.$langs->trans("minimum").' '.price($conf->global->STRIPE_APPLICATION_FEE_MINIMAL).' '.$langs->getCurrencySymbol($conf->currency).' </td></tr>';
+	print ' '.$langs->getCurrencySymbol($conf->currency).' '.$langs->trans("minimum").' '.price($conf->global->STRIPE_APPLICATION_FEE_MINIMAL).' '.$langs->getCurrencySymbol($conf->currency);
 	print '</td><td></td></tr>';
 }
 
@@ -267,10 +273,10 @@ if (empty($conf->stripeconnect->enabled))
 	print '</td><td></td></tr>';
 
 	print '<tr class="oddeven"><td>';
-	print '<span class="titlefield fieldrequired">'.$langs->trans("STRIPE_LIVE_WEBHOOK_KEY").'</span></td><td>';
+	print '<span class="titlefield">'.$langs->trans("STRIPE_LIVE_WEBHOOK_KEY").'</span></td><td>';
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
-        print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_ID" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_ID.'">';
-        print ' &nbsp; '.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx<br>';
+      print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_ID" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_ID.'">';
+      print ' &nbsp; '.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx<br>';
 	}
 	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_KEY" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_KEY.'">';
 	print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
@@ -298,12 +304,12 @@ if (empty($conf->stripeconnect->enabled))
             $endpoint->save();
             if ($endpoint->status == 'enabled')
             {
-                print '<a href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=0">';
+                print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=0">';
                 print img_picto($langs->trans("Activated"), 'switch_on');
             }
             else
             {
-                print '<a href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=1">';
+                print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=1">';
                 print img_picto($langs->trans("Disabled"), 'switch_off');
             }
         //print $endpoint;

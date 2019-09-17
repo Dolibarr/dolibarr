@@ -143,18 +143,18 @@ $AccCat = new AccountancyCategory($db);
  */
 
 $months = array(
-	$langs->trans("JanuaryMin"),
-	$langs->trans("FebruaryMin"),
-	$langs->trans("MarchMin"),
-	$langs->trans("AprilMin"),
-	$langs->trans("MayMin"),
-	$langs->trans("JuneMin"),
-	$langs->trans("JulyMin"),
-	$langs->trans("AugustMin"),
-	$langs->trans("SeptemberMin"),
-	$langs->trans("OctoberMin"),
-	$langs->trans("NovemberMin"),
-	$langs->trans("DecemberMin"),
+	$langs->trans("MonthShort01"),
+	$langs->trans("MonthShort02"),
+	$langs->trans("MonthShort03"),
+	$langs->trans("MonthShort04"),
+	$langs->trans("MonthShort05"),
+	$langs->trans("MonthShort06"),
+	$langs->trans("MonthShort07"),
+	$langs->trans("MonthShort08"),
+	$langs->trans("MonthShort09"),
+	$langs->trans("MonthShort10"),
+	$langs->trans("MonthShort11"),
+	$langs->trans("MonthShort12"),
 );
 
 llxheader('', $langs->trans('ReportInOut'));

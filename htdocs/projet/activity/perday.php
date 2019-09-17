@@ -125,7 +125,7 @@ $arrayfields['t.progress']=array('label'=>'ProgressDeclared', 'checked'=>1, 'ena
  'p.fk_opp_status'=>array('label'=>$langs->trans("OpportunityStatusShort"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>104),
  'p.opp_percent'=>array('label'=>$langs->trans("OpportunityProbabilityShort"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>105),
  'p.budget_amount'=>array('label'=>$langs->trans("Budget"), 'checked'=>0, 'position'=>110),
- 'p.bill_time'=>array('label'=>$langs->trans("BillTimeShort"), 'checked'=>0, 'position'=>115),
+ 'p.usage_bill_time'=>array('label'=>$langs->trans("BillTimeShort"), 'checked'=>0, 'position'=>115),
  );
  */
 // Extra fields
@@ -515,7 +515,7 @@ $moreforfilter='';
 // If the user can view user other than himself
 $moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.='<div class="inline-block hideonsmartphone">'.$langs->trans('User'). ' </div>';
-$includeonly='hierachyme';
+$includeonly='hierarchyme';
 if (empty($user->rights->user->user->lire)) $includeonly=array($user->id);
 $moreforfilter.=$form->select_dolusers($search_usertoprocessid?$search_usertoprocessid:$usertoprocess->id, 'search_usertoprocessid', $user->rights->user->user->lire?0:0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200 marginleftonly');
 $moreforfilter.='</div>';

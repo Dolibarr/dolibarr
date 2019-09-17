@@ -121,6 +121,7 @@ $arrayfields=array(
 	't.duration_effective'=>array('label'=>$langs->trans("TimeSpent"), 'checked'=>1, 'position'=>103),
 	't.progress_calculated'=>array('label'=>$langs->trans("ProgressCalculated"), 'checked'=>1, 'position'=>104),
 	't.progress'=>array('label'=>$langs->trans("ProgressDeclared"), 'checked'=>1, 'position'=>105),
+	't.progress_summary'=>array('label'=>$langs->trans("TaskProgressSummary"), 'checked'=>1, 'position'=>106),
     't.tobill'=>array('label'=>$langs->trans("TimeToBill"), 'checked'=>0, 'position'=>110),
     't.billed'=>array('label'=>$langs->trans("TimeBilled"), 'checked'=>0, 'position'=>111),
     't.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
@@ -128,13 +129,16 @@ $arrayfields=array(
 	//'t.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-	foreach($extrafields->attribute_label as $key => $val)
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
 	{
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
+		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
 	}
 }
+$object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 /*
@@ -255,7 +259,7 @@ else dol_print_error($db);
 if (count($listoftaskcontacttype) == 0) $listoftaskcontacttype[0]='0';         // To avoid sql syntax error if not found
 
 $distinct='DISTINCT';   // We add distinct until we are added a protection to be sure a contact of a project and task is assigned only once.
-$sql = "SELECT ".$distinct." p.rowid as projectid, p.ref as projectref, p.title as projecttitle, p.fk_statut as projectstatus, p.datee as projectdatee, p.fk_opp_status, p.public, p.fk_user_creat as projectusercreate, p.bill_time,";
+$sql = "SELECT ".$distinct." p.rowid as projectid, p.ref as projectref, p.title as projecttitle, p.fk_statut as projectstatus, p.datee as projectdatee, p.fk_opp_status, p.public, p.fk_user_creat as projectusercreate, p.usage_bill_time,";
 $sql.= " s.nom as name, s.rowid as socid,";
 $sql.= " t.datec as date_creation, t.dateo as date_start, t.datee as date_end, t.tms as date_update,";
 $sql.= " t.rowid as id, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress, t.fk_statut";
@@ -425,9 +429,7 @@ $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 $newcardbutton='';
 if ($user->rights->projet->creer)
 {
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/projet/tasks.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewTask').'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
+    $newcardbutton.= dolGetButtonTitle($langs->trans('NewTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?action=create');
 }
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -523,7 +525,7 @@ if (! empty($arrayfields['t.label']['checked']))
 // Start date
 if (! empty($arrayfields['t.dateo']['checked']))
 {
-	print '<td class="liste_titre center">';
+	print '<td class="liste_titre center minwidth150">';
 	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_sday" value="'.$search_sday.'">';
 	print '<input class="flat" type="text" size="1" maxlength="2" name="search_smonth" value="'.$search_smonth.'">';
 	$formother->select_year($search_syear?$search_syear:-1, 'search_syear', 1, 20, 5);
@@ -532,7 +534,7 @@ if (! empty($arrayfields['t.dateo']['checked']))
 // End date
 if (! empty($arrayfields['t.datee']['checked']))
 {
-	print '<td class="liste_titre center">';
+	print '<td class="liste_titre center minwidth150">';
 	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_eday" value="'.$search_eday.'">';
 	print '<input class="flat" type="text" size="1" maxlength="2" name="search_emonth" value="'.$search_emonth.'">';
 	$formother->select_year($search_eyear?$search_eyear:-1, 'search_eyear', 1, 20, 5);
@@ -569,6 +571,7 @@ if (! empty($arrayfields['t.planned_workload']['checked'])) print '<td class="li
 if (! empty($arrayfields['t.duration_effective']['checked'])) print '<td class="liste_titre"></td>';
 if (! empty($arrayfields['t.progress_calculated']['checked'])) print '<td class="liste_titre"></td>';
 if (! empty($arrayfields['t.progress']['checked'])) print '<td class="liste_titre"></td>';
+if (! empty($arrayfields['t.progress_summary']['checked'])) print '<td class="liste_titre"></td>';
 if (! empty($arrayfields['t.tobill']['checked'])) print '<td class="liste_titre"></td>';
 if (! empty($arrayfields['t.billed']['checked'])) print '<td class="liste_titre"></td>';
 // Extra fields
@@ -590,7 +593,7 @@ if (! empty($arrayfields['t.tms']['checked']))
 	print '</td>';
 }
 // Action column
-print '<td class="liste_titre right">';
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -609,6 +612,7 @@ if (! empty($arrayfields['t.planned_workload']['checked']))         print_liste_
 if (! empty($arrayfields['t.duration_effective']['checked']))       print_liste_field_titre($arrayfields['t.duration_effective']['label'], $_SERVER["PHP_SELF"], "t.duration_effective", "", $param, '', $sortfield, $sortorder, 'center ');
 if (! empty($arrayfields['t.progress_calculated']['checked']))      print_liste_field_titre($arrayfields['t.progress_calculated']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'center ');
 if (! empty($arrayfields['t.progress']['checked']))      print_liste_field_titre($arrayfields['t.progress']['label'], $_SERVER["PHP_SELF"], "t.progress", "", $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['t.progress_summary']['checked']))      print_liste_field_titre($arrayfields['t.progress_summary']['label'], $_SERVER["PHP_SELF"], "t.progress", "", $param, '', $sortfield, $sortorder, 'center ');
 if (! empty($arrayfields['t.tobill']['checked']))        print_liste_field_titre($arrayfields['t.tobill']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
 if (! empty($arrayfields['t.billed']['checked']))        print_liste_field_titre($arrayfields['t.billed']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
 // Extra fields
@@ -641,6 +645,9 @@ while ($i < min($num, $limit))
 	$object->progress = $obj->progress;
 	$object->datee = $db->jdate($obj->date_end);	// deprecated
 	$object->date_end = $db->jdate($obj->date_end);
+    $object->planned_workload= $obj->planned_workload;
+    $object->duration_effective= $obj->duration_effective;
+
 
 	$projectstatic->id = $obj->projectid;
 	$projectstatic->ref = $obj->projectref;
@@ -657,7 +664,7 @@ while ($i < min($num, $limit))
 		// Ref
 		if (! empty($arrayfields['t.ref']['checked']))
 		{
-			print '<td>';
+			print '<td class="nowraponall">';
 			print $object->getNomUrl(1, 'withproject');
 			if ($object->hasDelay()) print img_warning("Late");
 			print '</td>';
@@ -775,7 +782,7 @@ while ($i < min($num, $limit))
 			}
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['totalprogress_calculated']=$totalarray['nbfield'];
+			if (! $i) $totalarray['totalprogress_calculatedfield']=$totalarray['nbfield'];
 		}
 		// Declared progress
 		if (! empty($arrayfields['t.progress']['checked']))
@@ -783,16 +790,29 @@ while ($i < min($num, $limit))
 			print '<td class="center">';
 			if ($obj->progress != '')
 			{
-				print $obj->progress.' %';
+				print getTaskProgressBadge($object);
 			}
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
+            if (! $i) $totalarray['totalprogress_declaredfield']=$totalarray['nbfield'];
+            $totalarray['totaldurationdeclared'] += $obj->planned_workload * $obj->progress / 100;
+		}
+		// Progress summary
+		if (! empty($arrayfields['t.progress_summary']['checked']))
+		{
+			print '<td class="center">';
+			if($obj->progress != '' && $obj->duration_effective){
+                print getTaskProgressView($object, false, false);
+            }
+			print '</td>';
+			if (! $i) $totalarray['nbfield']++;
+            if (! $i) $totalarray['totalprogress_summary']=$totalarray['nbfield'];
 		}
 		// Time not billed
 		if (! empty($arrayfields['t.tobill']['checked']))
 		{
 		    print '<td class="center">';
-		    if ($obj->bill_time)
+		    if ($obj->usage_bill_time)
 		    {
 		        print convertSecondToTime($obj->tobill, 'allhourmin');
 		        $totalarray['totaltobill'] += $obj->tobill;
@@ -809,7 +829,7 @@ while ($i < min($num, $limit))
 		if (! empty($arrayfields['t.billed']['checked']))
 		{
 		    print '<td class="center">';
-		    if ($obj->bill_time)
+		    if ($obj->usage_bill_time)
 		    {
 		        print convertSecondToTime($obj->billed, 'allhourmin');
 		        $totalarray['totalbilled'] += $obj->billed;
@@ -885,9 +905,10 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 		elseif ($totalarray['totalplannedworkloadfield'] == $i) print '<td class="center">'.convertSecondToTime($totalarray['totalplannedworkload'], $plannedworkloadoutputformat).'</td>';
 		elseif ($totalarray['totaldurationeffectivefield'] == $i) print '<td class="center">'.convertSecondToTime($totalarray['totaldurationeffective'], $timespentoutputformat).'</td>';
 		elseif ($totalarray['totalprogress_calculatedfield'] == $i) print '<td class="center">'.($totalarray['totalplannedworkload'] > 0 ? round(100 * $totalarray['totaldurationeffective'] / $totalarray['totalplannedworkload'], 2).' %' : '').'</td>';
+		elseif ($totalarray['totalprogress_declaredfield'] == $i) print '<td class="center">'.($totalarray['totalplannedworkload'] > 0 ? round(100 * $totalarray['totaldurationdeclared'] / $totalarray['totalplannedworkload'], 2).' %' : '').'</td>';
 		elseif ($totalarray['totaltobillfield'] == $i) print '<td class="center">'.convertSecondToTime($totalarray['totaltobill'], $plannedworkloadoutputformat).'</td>';
 		elseif ($totalarray['totalbilledfield'] == $i) print '<td class="center">'.convertSecondToTime($totalarray['totalbilled'], $plannedworkloadoutputformat).'</td>';
-		else print '<td></td>';
+        else print '<td></td>';
 	}
 	print '</tr>';
 }

@@ -1,0 +1,65 @@
+# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+Assets = 資產
+NewAsset = 新資產
+AccountancyCodeAsset = 會計代碼(資產)
+AccountancyCodeDepreciationAsset = 會計代碼(折舊性資產帳號)
+AccountancyCodeDepreciationExpense = 會計代碼(折舊性費用帳號)
+NewAssetType=新資產類型
+AssetsTypeSetup=Asset type setup
+AssetTypeModified=修改資產類型
+AssetType=資產類型
+AssetsLines=資產
+DeleteType=刪除
+DeleteAnAssetType=刪除資產類型
+ConfirmDeleteAssetType=您確定要刪除此資產類型嗎？
+ShowTypeCard=顯示類型'%s'
+
+# Module label 'ModuleAssetsName'
+ModuleAssetsName = 資產
+# Module description 'ModuleAssetsDesc'
+ModuleAssetsDesc = 資產描述
+
+#
+# Admin page
+#
+AssetsSetup = 資產設定
+Settings = 設定
+AssetsSetupPage = 資產設定頁面
+ExtraFieldsAssetsType = Complementary attributes (Asset type)
+AssetsType=資產類型
+AssetsTypeId=資產類型ID
+AssetsTypeLabel=資產類型標籤
+AssetsTypes=資產類型
+
+#
+# Menu
+#
+MenuAssets = 資產
+MenuNewAsset = 新資產
+MenuTypeAssets = 類型資產
+MenuListAssets = 清單列表
+MenuNewTypeAssets = 新
+MenuListTypeAssets = 清單列表
+
+#
+# Module
+#
+NewAssetType=新資產類型
+NewAsset=新資產

@@ -253,34 +253,10 @@ foreach ($handlers as $handler)
 	if (empty($conf->loghandlers[$handler])) $conf->loghandlers[$handler]=$loghandlerinstance;
 }
 
-// Removed magic_quotes
-if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP 5.4
-{
-    if (get_magic_quotes_gpc())
-    {
-        // Forcing parameter setting magic_quotes_gpc and cleaning parameters
-        // (Otherwise he would have for each position, condition
-        // Reading stripslashes variable according to state get_magic_quotes_gpc).
-        // Off mode (recommended, you just do $db->escape when an insert / update.
-        function stripslashes_deep($value)
-        {
-            return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
-        }
-        $_GET     = array_map('stripslashes_deep', $_GET);
-        $_POST    = array_map('stripslashes_deep', $_POST);
-        $_COOKIE  = array_map('stripslashes_deep', $_COOKIE);
-        $_REQUEST = array_map('stripslashes_deep', $_REQUEST);
-        @set_magic_quotes_runtime(0);
-    }
-}
-
-// Defini objet langs
+// Define object $langs
 $langs = new Translate('..', $conf);
 if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));
 else $langs->setDefaultLang('auto');
-
-$bc[false]=' class="bg1"';
-$bc[true]=' class="bg2"';
 
 
 /**
@@ -433,7 +409,9 @@ function pHeader($subtitle, $next, $action = 'set', $param = '', $forcejqueryurl
     }
     print '</span>'."\n";
 
-    print '<form name="forminstall" style="width: 100%" action="'.$next.'.php'.($param?'?'.$param:'').'" method="POST">'."\n";
+    print '<form name="forminstall" style="width: 100%" action="'.$next.'.php'.($param?'?'.$param:'').'" method="POST"';
+    if ($next == 'step5') print ' autocomplete="off"';
+    print '>'."\n";
     print '<input type="hidden" name="testpost" value="ok">'."\n";
     print '<input type="hidden" name="action" value="'.$action.'">'."\n";
 

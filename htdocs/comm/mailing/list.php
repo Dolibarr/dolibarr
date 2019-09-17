@@ -156,9 +156,7 @@ if ($result)
 	$newcardbutton='';
 	if ($user->rights->mailing->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/mailing/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewMailing').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
+        $newcardbutton.= dolGetButtonTitle($langs->trans('NewMailing'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/mailing/card.php?action=create');
 	}
 
 	$i = 0;
@@ -193,7 +191,7 @@ if ($result)
 	if (! $filteremail) print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre right">';
+	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto=$form->showFilterAndCheckAddButtons(0);
 	print $searchpicto;
 	print '</td>';

@@ -163,7 +163,6 @@ function bank_admin_prepare_head($object)
  */
 function various_payment_prepare_head($object)
 {
-
 	global $db, $langs, $conf;
 
 	$h = 0;

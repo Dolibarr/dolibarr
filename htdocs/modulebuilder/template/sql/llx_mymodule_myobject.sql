@@ -22,7 +22,7 @@ CREATE TABLE llx_mymodule_myobject(
 	qty INTEGER,
 	status INTEGER,
 	date_creation DATETIME NOT NULL,
-	tms TIMESTAMP NOT NULL,
+	tms TIMESTAMP,
 	import_key VARCHAR(14)
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

@@ -1,22 +1,22 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Joslas moduļa iestatīšana
-StripeDesc=Module to offer an online payment page accepting payments with Credit/Debit card via <a href="http://www.stripe.com" target="_blank">Stripe</a>. This can be used to allow your customers to make free payments or for a payment on a particular Dolibarr object (invoice, order, ...)
+StripeDesc=Piedāvājiet klientiem Stripe tiešsaistes maksājumu lapu maksājumiem ar kredītkartēm / kredītkartēm, izmantojot <a href="http://www.stripe.com" target="_blank"> Stripe </a>. To var izmantot, lai ļautu saviem klientiem veikt ad-hoc maksājumus vai maksājumus, kas saistīti ar konkrētu Dolibarr objektu (rēķins, pasūtījums, ...)
 StripeOrCBDoPayment=Maksājiet ar kredītkarti vai Stripe
 FollowingUrlAreAvailableToMakePayments=Pēc URL ir pieejami, lai piedāvātu lapu, lai klients varētu veikt maksājumu par Dolibarr objektiem
 PaymentForm=Maksājuma forma
 WelcomeOnPaymentPage=Laipni lūdzam mūsu tiešsaistes maksājumu pakalpojumu
 ThisScreenAllowsYouToPay=Šis logs ļauj jums veikt tiešsaistes maksājumu %s.
-ThisIsInformationOnPayment=Šī ir informācija par maksājumu, kas darīt
+ThisIsInformationOnPayment=Šī ir informācija par maksājumu, kas jādara
 ToComplete=Lai pabeigtu
 YourEMail=Nosūtīt saņemt maksājuma apstiprinājumu
-STRIPE_PAYONLINE_SENDEMAIL=E-pastu, lai brīdinātu pēc maksājuma (veiksme vai ne)
+STRIPE_PAYONLINE_SENDEMAIL=E-pasta paziņojums pēc maksājuma mēģinājuma (veiksmes vai neveiksmes)
 Creditor=Kreditoru
 PaymentCode=Maksājuma kods
-StripeDoPayment=Pay with Credit or Debit Card (Stripe)
+StripeDoPayment=Maksājiet ar svītru
 YouWillBeRedirectedOnStripe=Jūs tiksiet novirzīts uz drošo lapu, lai ievadītu kredītkartes informāciju
 Continue=Nākamais
 ToOfferALinkForOnlinePayment=maksājumu %s URL
-ToOfferALinkForOnlinePaymentOnOrder=URL piedāvāt %s tiešsaistes maksājumu lietotāja interfeisu klienta pasūtījuma
+ToOfferALinkForOnlinePaymentOnOrder=URL, lai piedāvātu tiešsaistes maksājuma lietotāja interfeisu %s pārdošanas pasūtījumam
 ToOfferALinkForOnlinePaymentOnInvoice=URL piedāvāt %s tiešsaistes maksājumu lietotāja interfeisu klientu rēķina
 ToOfferALinkForOnlinePaymentOnContractLine=URL piedāvāt %s tiešsaistes maksājumu lietotāja interfeisu līguma līnijas
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL piedāvāt %s tiešsaistes maksājumu lietotāja saskarni par brīvu summu
@@ -40,7 +40,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhokas tiešraides atslēga
 ONLINE_PAYMENT_WAREHOUSE=Krājums, ko izmanto, lai krājumu samazinātu, kad tiek veikts tiešsaistes maksājums <br> (TODO Kad iespēja samazināt akciju tiek veikta, veicot darbību rēķinā, un tiešsaistes maksājums pats par sevi sagatavo rēķinu?)
 StripeLiveEnabled=Ieslēgta josla dzīvot (citādi tests / smilškastē režīms)
 StripeImportPayment=Importēšanas joslas maksājumi
-ExampleOfTestCreditCard=Testa kredītkartes piemērs: %s (derīgs), %s (kļūda CVC), %s (beidzies derīguma termiņš), %s (maksa neizdodas)
+ExampleOfTestCreditCard=Kredītkartes paraugs testam: %s =&gt; derīgs, %s =&gt; kļūda CVC, %s =&gt; beidzies, %s =&gt; maksa neizdodas
 StripeGateways=Joslas vārti
 OAUTH_STRIPE_TEST_ID=Stripe Connect klienta ID (ca _...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect klienta ID (ca _...)
@@ -61,4 +61,9 @@ ConfirmDeleteCard=Vai tiešām vēlaties izdzēst šo kredītkarti vai debetkart
 CreateCustomerOnStripe=Izveidojiet klientu joslā
 CreateCardOnStripe=Izveidojiet karti joslā
 ShowInStripe=Rādīt joslā
-StripeUserAccountForActions=Lietotāja konts, lai izmantotu dažu e-pasta paziņojumu par joslu notikumiem (Stripe payouts)
+StripeUserAccountForActions=Lietotāja konts, lai izmantotu e-pasta paziņojumu par dažiem Stripe notikumiem (Stripe izmaksas)
+StripePayoutList=Svītru izmaksu saraksts
+ToOfferALinkForTestWebhook=Saite uz iestatījumu Stripe WebHook, lai izsauktu IPN (testa režīms)
+ToOfferALinkForLiveWebhook=Saite uz iestatījumu Stripe WebHook, lai izsauktu IPN (tiešraides režīms)
+PaymentWillBeRecordedForNextPeriod=Maksājums tiks reģistrēts par nākamo periodu.
+ClickHereToTryAgain=<a href="%s">Noklikšķiniet šeit, lai mēģinātu vēlreiz ...</a>

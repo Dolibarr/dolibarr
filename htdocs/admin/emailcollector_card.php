@@ -33,8 +33,8 @@ include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollectorfilter.class
 include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollectoraction.class.php';
 include_once DOL_DOCUMENT_ROOT.'/emailcollector/lib/emailcollector.lib.php';
 
-if (!$user->admin)
-	accessforbidden();
+if (!$user->admin) accessforbidden();
+if (empty($conf->emailcollector->enabled)) accessforbidden();
 
 // Load traductions files requiredby by page
 $langs->loadLangs(array("admin", "mails", "other"));
@@ -47,6 +47,8 @@ $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'myobjectcard';   // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
+
+$operationid = GETPOST('operationid', 'int');
 
 // Initialize technical objects
 $object = new EmailCollector($db);
@@ -64,6 +66,7 @@ foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha')) $search[$key]=GETPOST('search_'.$key, 'alpha');
 }
 
+if (GETPOST('saveoperation2')) $action = 'updateoperation';
 if (empty($action) && empty($id) && empty($ref)) $action='view';
 
 // Load object
@@ -165,6 +168,24 @@ if (GETPOST('addoperation', 'alpha'))
 	}
 }
 
+if ($action == 'updateoperation')
+{
+    $emailcollectoroperation = new EmailCollectorAction($db);
+    $emailcollectoroperation->fetch(GETPOST('rowidoperation2', 'int'));
+
+    $emailcollectoroperation->actionparam = GETPOST('operationparam2', 'none');
+
+    $result = $emailcollectoroperation->update($user);
+
+    if ($result > 0)
+    {
+        $object->fetchActions();
+    }
+    else
+    {
+        setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
+    }
+}
 if ($action == 'deleteoperation')
 {
 	$emailcollectoroperation = new EmailCollectorAction($db);
@@ -564,7 +585,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
             print $form->textwithpicto('', $langs->transnoentitiesnoconv('IfTrackingIDFoundEventWillBeLinked'));
 		}
 		print '</td>';
-		print '<td>'.$ruleaction['actionparam'].'</td>';
+		print '<td>';
+		if ($action == 'editoperation' && $ruleaction['id'] == $operationid)
+		{
+		    print '<input type="text" class="quatrevingtquinzepercent" name="operationparam2" value="'.$ruleaction['actionparam'].'"><br>';
+		    print '<input type="hidden" name="rowidoperation2" value="'.$ruleaction['id'].'"><br>';
+		    print '<input type="submit" class="button" name="saveoperation2" value="'.$langs->trans("Save").'"> <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		}
+		else
+		{
+		    print $ruleaction['actionparam'];
+		}
+		print '</td>';
 		// Move up/down
 		print '<td class="center linecolmove tdlineupdown">';
 		if ($i > 0)
@@ -576,7 +608,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 		print '</td>';
 		// Delete
-		print '<td class="right">';
+		print '<td class="right nowraponall">';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editoperation&operationid='.$ruleaction['id'].'">'.img_edit().'</a>';
 		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteoperation&operationid='.$ruleaction['id'].'">'.img_delete().'</a>';
 		print '</td>';
 		print '</tr>';

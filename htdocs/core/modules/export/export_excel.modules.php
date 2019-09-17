@@ -76,7 +76,7 @@ class ExportExcel extends ModeleExports
 		$this->db = $db;
 
 		$this->id='excel';                  // Same value then xxx in file name export_xxx.modules.php
-		$this->label='Excel 95';            // Label of driver
+		$this->label='Excel 95 (old library)';            // Label of driver
 		$this->desc = $langs->trans('Excel95FormatDesc');
 		$this->extension='xls';             // Extension for generated file by this driver
         $this->picto='mime/xls';            // Picto
@@ -344,6 +344,8 @@ class ExportExcel extends ModeleExports
 
 		// Define first row
 		$this->col=0;
+
+		$reg=array();
 
 		foreach($array_selected_sorted as $code => $value)
 		{

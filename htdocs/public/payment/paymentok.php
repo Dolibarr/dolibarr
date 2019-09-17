@@ -280,7 +280,7 @@ $fulltag            = $FULLTAG;
 $tmptag=dolExplodeIntoArray($fulltag, '.', '=');
 
 
-dol_syslog("ispaymentok=".$ispaymentok, LOG_DEBUG, 0, '_payment');
+dol_syslog("ispaymentok=".$ispaymentok." tmptag=".var_export($tmptag, true), LOG_DEBUG, 0, '_payment');
 
 
 // Make complementary actions
@@ -296,7 +296,7 @@ if ($ispaymentok)
 	$user->rights->facture->creer = 1;
 	$user->rights->adherent->cotisation->creer = 1;
 
-	if (in_array('MEM', array_keys($tmptag)))
+	if (array_key_exists('MEM', $tmptag) && $tmptag['MEM'] > 0)
 	{
 		// Validate member
 		// Create subscription
@@ -583,7 +583,7 @@ if ($ispaymentok)
 			$ispostactionok = -1;
 		}
 	}
-	elseif (in_array('INV', array_keys($tmptag)))
+	elseif (array_key_exists('INV', $tmptag) && $tmptag['INV'] > 0)
 	{
 		// Record payment
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -769,14 +769,14 @@ if ($ispaymentok)
 		$urlback=$_SERVER["REQUEST_URI"];
 		$topic='['.$appli.'] '.$companylangs->transnoentitiesnoconv("NewOnlinePaymentReceived");
 		$content="";
-		if (in_array('MEM', array_keys($tmptag)))
+		if (array_key_exists('MEM', $tmptag))
 		{
 			$url=$urlwithroot."/adherents/subscription.php?rowid=".$tmptag['MEM'];
 			$content.='<strong>'.$companylangs->trans("PaymentSubscription")."</strong><br><br>\n";
 			$content.=$companylangs->trans("MemberId").': <strong>'.$tmptag['MEM']."</strong><br>\n";
 			$content.=$companylangs->trans("Link").': <a href="'.$url.'">'.$url.'</a>'."<br>\n";
 		}
-		elseif (in_array('INV', array_keys($tmptag)))
+		elseif (array_key_exists('INV', $tmptag))
 		{
 			$url=$urlwithroot."/compta/facture/card.php?id=".$tmptag['INV'];
 			$content.='<strong>'.$companylangs->trans("Payment")."</strong><br><br>\n";

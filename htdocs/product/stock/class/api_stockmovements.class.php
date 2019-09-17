@@ -292,7 +292,7 @@ class StockMovements extends DolibarrApi
         unset($object->lastname);
         unset($object->name);
         unset($object->location_incoterms);
-        unset($object->libelle_incoterms);
+        unset($object->label_incoterms);
         unset($object->fk_incoterms);
         unset($object->lines);
         unset($object->total_ht);

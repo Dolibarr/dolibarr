@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       htdocs/core/modules/oauth/stripe_oauthcallback.php
+ *      \file       htdocs/core/modules/oauth/stripetest_oauthcallback.php
  *      \ingroup    oauth
  *      \brief      Page to get oauth callback
  */
@@ -45,7 +45,7 @@ $backtourl = GETPOST('backtourl', 'alpha');
 $uriFactory = new \OAuth\Common\Http\Uri\UriFactory();
 //$currentUri = $uriFactory->createFromSuperGlobalArray($_SERVER);
 //$currentUri->setQuery('');
-$currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/stripe_oauthcallback.php');
+$currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/stripetest_oauthcallback.php');
 
 
 /**

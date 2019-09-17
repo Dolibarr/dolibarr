@@ -6,6 +6,7 @@
  * Copyright (C) 2015       Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet	     <fmarcet@2byte.es>
  * Copyright (C) 2018       Charlene Benke       <charlie@patas-monkey.com>
+ * Copyright (C) 2019       Juanjo Menent		 <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,10 +47,25 @@ $confirm=GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'expensereportlist';
 
+$childids = $user->getAllChildIds(1);
+
 // Security check
 $socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'expensereport', '', '');
+$id = GETPOST('id', 'int');
+// If we are on the view of a specific user
+if ($id > 0)
+{
+    $canread=0;
+    if ($id == $user->id) $canread=1;
+    if (! empty($user->rights->expensereport->readall)) $canread=1;
+    if (! empty($user->rights->expensereport->lire) && in_array($id, $childids)) $canread=1;
+    if (! $canread)
+    {
+        accessforbidden();
+    }
+}
 
 $diroutputmassaction=$conf->expensereport->dir_output . '/temp/massgeneration/'.$user->id;
 
@@ -66,10 +82,9 @@ $pagenext = $page + 1;
 if (!$sortorder) $sortorder="DESC";
 if (!$sortfield) $sortfield="d.date_debut";
 
-$id = GETPOST('id', 'int');
 
 $sall         = trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
-$search_ref   = GETPOST('search_ref');
+$search_ref   = GETPOST('search_ref', 'alpha');
 $search_user  = GETPOST('search_user', 'int');
 $search_amount_ht = GETPOST('search_amount_ht', 'alpha');
 $search_amount_vat = GETPOST('search_amount_vat', 'alpha');
@@ -290,7 +305,6 @@ if ($search_status != '' && $search_status >= 0) $sql.=" AND d.fk_statut IN (".$
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
     && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)))
 {
-	$childids = $user->getAllChildIds(1);
 	$sql.= " AND d.fk_user_author IN (".join(',', $childids).")\n";
 }
 // Add where from extra fields
@@ -340,9 +354,9 @@ if ($resql)
 
 	// List of mass actions available
 	$arrayofmassactions =  array(
-		'generate_doc'=>$langs->trans("Generate"),
-	    'presend'=>$langs->trans("SendByMail"),
+		'generate_doc'=>$langs->trans("ReGeneratePDF"),
 	    'builddoc'=>$langs->trans("PDFMerge"),
+	    'presend'=>$langs->trans("SendByMail"),
 	);
 	if ($user->rights->expensereport->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
@@ -433,7 +447,7 @@ if ($resql)
 			$canedit=((in_array($user_id, $childids) && $user->rights->expensereport->creer)
 				|| ($conf->global->MAIN_USE_ADVANCED_PERMS && $user->rights->expensereport->writeall_advance));
 
-			// Boutons d'actions
+			// Buttons for actions
 			if ($canedit)
 			{
 				print '<a href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create&fk_user_author='.$fuser->id.'" class="butAction">'.$langs->trans("AddTrip").'</a>';
@@ -455,9 +469,7 @@ if ($resql)
 		$newcardbutton='';
 		if ($user->rights->expensereport->creer)
 		{
-			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewTrip').'</span>';
-			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-			$newcardbutton.= '</a>';
+            $newcardbutton.= dolGetButtonTitle($langs->trans('NewTrip'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expensereport/card.php?action=create');
 		}
 
 		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);

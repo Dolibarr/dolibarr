@@ -116,9 +116,7 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->loan->write)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/loan/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewLoan').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
+        $newcardbutton.= dolGetButtonTitle($langs->trans('NewLoan'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/loan/card.php?action=create');
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";

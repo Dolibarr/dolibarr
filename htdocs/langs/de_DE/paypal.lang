@@ -1,20 +1,19 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal Moduleinstellungen
-PaypalDesc=Dieses Modul ermöglicht es Zahlungen von Kunden per <a href="http://www.paypal.com" target="_blank">PayPal</a> zu tätigen.
-PaypalOrCBDoPayment=Mit Paypal (Kreditkarte oder Paypal) bezahlen
-PaypalDoPayment=Zahlen mit Paypal
-PAYPAL_API_SANDBOX=Testmoduds/Sandbox
+PaypalDesc=Dieses Modul ermöglicht Zahlungen von Kunden über <a href="http://www.paypal.com" target="_blank">PayPal</a> zu tätigen. Es können ad-hoxc Zahlungen oder Zahlungen zu Vorgängen aus Dolibarr (Rechnungen, Bestellungen ...) erfolgen
+PaypalOrCBDoPayment=Bezahlen mit PayPal  (Kreditkarte oder PayPal)
+PaypalDoPayment=Zahlung mit PayPal 
+PAYPAL_API_SANDBOX=Testmodus/Sandbox
 PAYPAL_API_USER=Paypal Benutzername
 PAYPAL_API_PASSWORD=Paypal Passwort
 PAYPAL_API_SIGNATURE=Paypal Signatur
 PAYPAL_SSLVERSION=Curl SSL Version
-PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Bieten Sie Zahlungen "integral" (Kreditkarte + Paypal) an, oder nur per "Paypal"?
-PaypalModeIntegral=Integral
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Integrierte Zahlung (Kreditkarte + PayPal) oder nur basic (PayPal)
+PaypalModeIntegral=Integriert
 PaypalModeOnlyPaypal=Nur PayPal
-ONLINE_PAYMENT_CSS_URL=Optionale Adresse der CSS-Datei für die Onlinebezahlseite
+ONLINE_PAYMENT_CSS_URL=Optionale URL des CSS-Stylesheet auf Zahlungsseite
 ThisIsTransactionId=Die Transaktions ID lautet: <b>%s</b>
-PAYPAL_ADD_PAYMENT_URL=Fügen Sie die Webadresse für Paypal Zahlungen hinzu, wenn Sie ein Dokument per E-Mail versenden.
-YouAreCurrentlyInSandboxMode=Sie befinden sich derzeit im %s "Sandbox" -Modus
+PAYPAL_ADD_PAYMENT_URL=Webadresse für Paypal Zahlungen hinzufügen für den Dokumentenversand per Email
 NewOnlinePaymentReceived=Neue Onlinezahlung erhalten
 NewOnlinePaymentFailed=Neue Onlinezahlung versucht, aber fehlgeschlagen
 ONLINE_PAYMENT_SENDEMAIL=Status-E-Mail nach einer Zahlung (erfolgreich oder nicht)
@@ -28,7 +27,10 @@ ShortErrorMessage=verkürzte Fehlermeldung
 ErrorCode=Fehlercode
 ErrorSeverityCode=Fehlercode Schwierigkeitsgrad
 OnlinePaymentSystem=Online Zahlungssystem
-PaypalLiveEnabled=Paypal live aktiviert (Nicht im Test/Sandbox Modus)
-PaypalImportPayment=Paypal-Zahlungen importieren
+PaypalLiveEnabled=PayPal live aktiviert (ansonsten im Test/Sandbox Modus) 
+PaypalImportPayment=Importieren der PayPal-Zahlungen
 PostActionAfterPayment=Aktionen nach Zahlungseingang
 ARollbackWasPerformedOnPostActions=Bei allen Post-Aktionen wurde ein Rollback durchgeführt. Sie müssen die Post-Aktionen manuell durchführen, wenn sie notwendig sind.
+ValidationOfPaymentFailed=Validierung der Paypal-Zahlung gescheitert
+CardOwner=Karteninhaber
+PayPalBalance=PayPal-Gutschrift
