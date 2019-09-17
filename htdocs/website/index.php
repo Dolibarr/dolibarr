@@ -3308,7 +3308,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 					print '<tr>';
 					print '<td>'.$langs->trans("Container").'</td>';
 					print '<td>';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$website->ref.'&pageid='.$answerrecord->id.'">'.$answerrecord->title.'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$website->ref.'&pageid='.$answerrecord->id.'">'.($answerrecord->title ? $answerrecord->title : $langs->trans("NoTitle")).'</a>';
 					print '</td>';
 					print '<td class="tdoverflow100">'.$answerrecord->description;
 					print '</td>';

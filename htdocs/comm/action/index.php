@@ -607,9 +607,7 @@ if ($resql)
         $event->fk_element=$obj->fk_element;
         $event->elementtype=$obj->elementtype;
 
-        $event->societe->id=$obj->fk_soc;
         $event->thirdparty_id=$obj->fk_soc;
-        $event->contact->id=$obj->fk_contact;
         $event->contact_id=$obj->fk_contact;
 
         // Defined date_start_in_calendar and date_end_in_calendar property
@@ -1569,28 +1567,31 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
                         if ($event->type_code == 'ICALEVENT') print '<br>('.dol_trunc($event->icalname, $maxnbofchar).')';
 
+                        $thirdparty_id = ($event->thirdparty_id > 0 ? $event->thirdparty_id : ((is_object($event->societe) && $event->societe->id > 0) ? $event->societe->id : 0));
+                        $contact_id = ($event->contact_id > 0 ? $event->contact_id : ((is_object($event->contact) && $event->cotact->id > 0) ? $event->contact->id : 0));
+
                         // If action related to company / contact
                         $linerelatedto='';
-                        if (! empty($event->societe->id) && $event->societe->id > 0)
+                        if ($thirdparty_id > 0)
                         {
-                            if (! isset($cachethirdparties[$event->societe->id]) || ! is_object($cachethirdparties[$event->societe->id]))
+                        	if (! isset($cachethirdparties[$thirdparty_id]) || ! is_object($cachethirdparties[$thirdparty_id]))
                             {
                                 $thirdparty=new Societe($db);
-                                $thirdparty->fetch($event->societe->id);
-                                $cachethirdparties[$event->societe->id]=$thirdparty;
+                                $thirdparty->fetch($thirdparty_id);
+                                $cachethirdparties[$thirdparty_id]=$thirdparty;
                             }
-                            else $thirdparty=$cachethirdparties[$event->societe->id];
+                            else $thirdparty=$cachethirdparties[$thirdparty_id];
                             if (! empty($thirdparty->id)) $linerelatedto.=$thirdparty->getNomUrl(1, '', 0);
                         }
-                        if (! empty($event->contact->id) && $event->contact->id > 0)
+                        if (! empty($contact_id) && $contact_id > 0)
                         {
-                            if (! is_object($cachecontacts[$event->contact->id]))
+                        	if (! is_object($cachecontacts[$contact_id]))
                             {
                                 $contact=new Contact($db);
-                                $contact->fetch($event->contact->id);
-                                $cachecontacts[$event->contact->id]=$contact;
+                                $contact->fetch($contact_id);
+                                $cachecontacts[$contact_id]=$contact;
                             }
-                            else $contact=$cachecontacts[$event->contact->id];
+                            else $contact=$cachecontacts[$contact_id];
                             if ($linerelatedto) $linerelatedto.='&nbsp;';
                             if (! empty($contact->id)) $linerelatedto.=$contact->getNomUrl(1, '', 0);
                         }

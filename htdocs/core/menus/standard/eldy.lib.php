@@ -55,22 +55,23 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
     $usemenuhider = 1;
 
-	// Show/Hide vertical menu
+	// Show/Hide vertical menu. The hamburger icon for .menuhider action.
 	if ($mode != 'jmobile' && $mode != 'topnb' && $usemenuhider && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 	{
     	$showmode=1;
     	$classname = 'class="tmenu menuhider"';
     	$idsel='menu';
 
-    	$menu->add('#', '', 0, $showmode, $atarget, "xxx", '', 0, $id, $idsel, $classname);
+    	$menu->add('#', (! empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE) ? '<span class="fa fa-bars"></span>' : ''), 0, $showmode, $atarget, "xxx", '', 0, $id, $idsel, $classname);
 	}
 
     $menu_arr = array();
+
 	// Home
 	$menu_arr[] = array(
 		'name' => 'Home',
 		'link' => '/index.php?mainmenu=home&amp;leftmenu=home',
-		'title' => (! empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)? '&nbsp; <span class="fa fa-home"></span> &nbsp;' : "Home") ,
+		'title' => (! empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE) ? '<span class="fa fa-home"></span>' : "Home") ,
 		'level' => 0,
 		'enabled' => $showmode = 1,
 		'target' => $atarget,
@@ -473,8 +474,35 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	$menu->liste = dol_sort_array($menu->liste, 'position');
 
     // Output menu entries
+	// Show logo company
+	if (empty($conf->global->MAIN_MENU_INVERT) && empty($noout) && ! empty($conf->global->MAIN_SHOW_LOGO) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+	{
+		$mysoc->logo_mini=$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
+		$mysoc->logo_squarred_mini=$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI;
+		if (! empty($mysoc->logo_squarred_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini))
+		{
+			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
+		}
+		elseif (! empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
+		{
+			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini);
+		}
+		else
+		{
+			$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo_squarred.png';
+		}
+		$title=$langs->trans("GoIntoSetupToChangeLogo");
+
+		print "\n".'<!-- Show logo on menu -->'."\n";
+		print_start_menu_entry('companylogo', 'class="tmenu tmenucompanylogo"', 1);
+
+		print '<div class="center backgroundforcompanylogo"><img class="mycompany" title="'.dol_escape_htmltag($title).'" alt="" src="'.$urllogo.'" style="max-width: 100px"></div>'."\n";
+
+		print_end_menu_entry(4);
+	}
+
     if (empty($noout)) {
-        foreach($menu->liste as $menkey => $menuval) {
+        foreach($menu->liste as $menuval) {
             print_start_menu_entry($menuval['idsel'], $menuval['classname'], $menuval['enabled']);
             print_text_menu_entry($menuval['titre'], $menuval['enabled'], (($menuval['url']!='#' && !preg_match('/^(http:\/\/|https:\/\/)/i', $menuval['url'])) ? DOL_URL_ROOT:'').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target']?$menuval['target']:$atarget));
             print_end_menu_entry($menuval['enabled']);
@@ -614,30 +642,6 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 	$leftmenu=($forceleftmenu?'':(empty($_SESSION["leftmenu"])?'none':$_SESSION["leftmenu"]));
 
     $usemenuhider = 0;
-
-	// Show logo company
-	if (empty($conf->global->MAIN_MENU_INVERT) && empty($noout) && ! empty($conf->global->MAIN_SHOW_LOGO) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-	{
-		$mysoc->logo_mini=$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
-		if (! empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
-		{
-			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini);
-		}
-		else
-		{
-			$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
-		}
-		$title=$langs->trans("GoIntoSetupToChangeLogo");
-		print "\n".'<!-- Show logo on menu -->'."\n";
-		print '<div class="blockvmenuimpair blockvmenulogo">'."\n";
-		print '<div class="menu_titre" id="menu_titre_logo"></div>';
-		print '<div class="menu_top" id="menu_top_logo"></div>';
-		print '<div class="menu_contenu" id="menu_contenu_logo">';
-		print '<div class="center"><img class="mycompany" title="'.dol_escape_htmltag($title).'" alt="" src="'.$urllogo.'" style="max-width: 70%"></div>'."\n";
-		print '</div>';
-		print '<div class="menu_end" id="menu_end_logo"></div>';
-		print '</div>'."\n";
-	}
 
 	if (is_array($moredata) && ! empty($moredata['searchform']))	// searchform can contains select2 code or link to show old search form or link to switch on search page
 	{
