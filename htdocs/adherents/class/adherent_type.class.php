@@ -504,7 +504,6 @@ class AdherentType extends CommonObject
         if (! empty($conf->global->MAIN_MULTILANGS)) {
         $this->getMultiLangs();
         }
-        
 			}
 
 			return 1;
