@@ -540,7 +540,7 @@ class Export
     public function build_file($user, $model, $datatoexport, $array_selected, $array_filterValue, $sqlquery = '')
     {
         // phpcs:enable
-		global $conf,$langs;
+		global $conf,$langs,$mysoc;
 
 		$indice=0;
 		asort($array_selected);
@@ -633,6 +633,13 @@ class Export
 								//$alias=$this->array_export_alias[$indice][$key];
 								$alias=str_replace(array('.', '-','(',')'), '_', $key);
 								if ($obj->$alias < 0) $obj->$alias='0';
+							}
+							// Operation GETNUMOPENDAYS (for Holiday module)
+							elseif ($this->array_export_special[$indice][$key]=='getNumOpenDays')
+							{
+								//$alias=$this->array_export_alias[$indice][$key];
+								$alias=str_replace(array('.', '-','(',')'), '_', $key);
+								$obj->$alias=num_open_day(dol_stringtotime($obj->d_date_debut, 1), dol_stringtotime($obj->d_date_fin, 1), 0, 1, $obj->d_halfday, $mysoc->country_code);
 							}
 							// Operation INVOICEREMAINTOPAY
 							elseif ($this->array_export_special[$indice][$key]=='getRemainToPay')

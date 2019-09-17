@@ -1134,6 +1134,7 @@ else
                 	if ($action == 'edit' && $object->statut == Holiday::STATUS_DRAFT) $edit = true;
 
                     print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">'."\n";
+                    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />'."\n";
                     print '<input type="hidden" name="action" value="update"/>'."\n";
                     print '<input type="hidden" name="id" value="'.$object->id.'" />'."\n";
                 }
