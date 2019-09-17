@@ -493,7 +493,7 @@ class AdherentType extends CommonObject
 				$this->id             = $obj->rowid;
 				$this->ref            = $obj->rowid;
 				$this->label          = $obj->label;
-        $this->morphy         = $obj->morphy;
+				$this->morphy         = $obj->morphy;
 				$this->statut         = $obj->statut;
 				$this->subscription   = $obj->subscription;
 				$this->mail_valid     = $obj->mail_valid;
