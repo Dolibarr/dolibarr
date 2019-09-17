@@ -2650,7 +2650,7 @@ table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.nobor
 }
 table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
 	padding: 7px 8px 7px 8px;			/* t r b l */
-	line-height: 22px;
+	/* line-height: 22px; This create trouble on cell login on list of last events of a contract*/
 	height: 22px;
 }
 div.liste_titre_bydiv .divsearchfield {
