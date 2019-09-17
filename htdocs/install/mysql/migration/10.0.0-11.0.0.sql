@@ -164,4 +164,13 @@ INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, m
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('IN-REPUBLICDAY',  0, 117, '', 0,  1, 26, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('IN-GANDI',        0, 117, '', 0, 10,  2, 1);
 
-
+create table llx_adherent_type_lang
+(
+  rowid          integer AUTO_INCREMENT PRIMARY KEY,
+  fk_type        integer      DEFAULT 0 NOT NULL,
+  lang           varchar(5)   DEFAULT 0 NOT NULL,
+  label          varchar(255) NOT NULL,
+  description    text,
+  email          text,
+  import_key varchar(14) DEFAULT NULL
+)ENGINE=innodb;
