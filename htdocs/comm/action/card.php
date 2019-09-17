@@ -422,7 +422,9 @@ if ($action == 'update')
 
 		$object->fetch($id);
         $object->fetch_optionals();
-		$object->fetch_userassigned();
+        $object->fetch_userassigned();
+        $object->oldcopy = clone $object;
+
 
 		$datep=dol_mktime($fulldayevent?'00':$aphour, $fulldayevent?'00':$apmin, 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
 		$datef=dol_mktime($fulldayevent?'23':$p2hour, $fulldayevent?'59':$p2min, $fulldayevent?'59':'0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
@@ -610,6 +612,8 @@ if ($action == 'confirm_delete' && GETPOST("confirm") == 'yes')
 {
 	$object->fetch($id);
     $object->fetch_optionals();
+    $object->fetch_userassigned();
+    $object->oldcopy = clone $object;
 
 	if ($user->rights->agenda->myactions->delete
 		|| $user->rights->agenda->allactions->delete)

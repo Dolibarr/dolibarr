@@ -772,7 +772,6 @@ class ActionComm extends CommonObject
         $error=0;
 
         $this->db->begin();
-        $this->oldcopy = clone $this;
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm";
         $sql.= " WHERE id=".$this->id;
