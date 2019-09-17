@@ -109,7 +109,7 @@ class box_fournisseurs extends ModeleBoxes
     				$datem=$db->jdate($objp->tms);
 					$thirdpartytmp->id = $objp->socid;
                     $thirdpartytmp->name = $objp->name;
-                    $thirdpartytmp->email = $objp->email;
+                    $thirdpartytmp->email = $objp->semail;
                     $thirdpartytmp->code_client = $objp->code_client;
                     $thirdpartytmp->logo = $objp->logo;
 
