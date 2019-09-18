@@ -485,27 +485,50 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
         $userstatic=new User($db);
         $contactstatic = new Contact($db);
         $userGetNomUrlCache = array();
-//        $out.='<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
-//        if ($objcon && get_class($objcon) == 'Contact' &&
-//            (is_null($filterobj) || get_class($filterobj) == 'Societe'))
-//        {
-//            $out.='<input type="hidden" name="id" value="'.$objcon->id.'" />';
-//        }
-//        else
-//        {
-//            $out.='<input type="hidden" name="id" value="'.$filterobj->id.'" />';
-//        }
-//        if ($filterobj && get_class($filterobj) == 'Societe') $out.='<input type="hidden" name="socid" value="'.$filterobj->id.'" />';
-//
-//
-//        $out.=$formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:-1, 0, 0, 1);
-//
-//        $out.='<input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'" placeholder="'.$langs->trans("Label").'" >';
-//
-//        $searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
-//        $out.=$searchpicto;
-//
-//        $out.='</form>';
+
+		$out.='<div class="filters-container" >';
+		$out.='<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
+		if ($objcon && get_class($objcon) == 'Contact' &&
+			(is_null($filterobj) || get_class($filterobj) == 'Societe'))
+		{
+			$out.='<input type="hidden" name="id" value="'.$objcon->id.'" />';
+		}
+		else
+		{
+			$out.='<input type="hidden" name="id" value="'.$filterobj->id.'" />';
+		}
+		if ($filterobj && get_class($filterobj) == 'Societe') $out.='<input type="hidden" name="socid" value="'.$filterobj->id.'" />';
+
+		$out.="\n";
+
+		$out.='<div class="div-table-responsive-no-min">';
+		$out.='<table class="noborder" width="100%">';
+
+		$out.='<tr class="liste_titre">';
+		$out.='<td class="liste_titre"><strong>'.$langs->trans("Search").' : </strong></td>';
+		if ($donetodo)
+		{
+			$out.='<td class="liste_titre"></td>';
+		}
+		$out.='<td class="liste_titre">'.$langs->trans("Type").' ';
+		$out.=$formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:-1, 0, 0, 1);
+		$out.='</td>';
+		$out.='<td class="liste_titre maxwidth100onsmartphone">';
+		$out.=$langs->trans("Label").' ';
+		$out.='<input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'">';
+		$out.='</td>';
+
+		$out.='<td class="liste_titre" align="middle">';
+		$searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+		$out.=$searchpicto;
+		$out.='</td>';
+		$out.='</tr>';
+
+
+		$out.='</table>';
+
+        $out.='</form>';
+		$out.='</div>';
 
         $out.="\n";
 
@@ -614,7 +637,19 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 
             $out.='<span class="timeline-header-action">';
 
-            //$out.='<a href="'.$url.'" class="timeline-btn">'.$langs->trans('Show').'</a>';
+			if (isset($histo[$key]['type']) && $histo[$key]['type']=='mailing') {
+				$out.='<a class="timeline-btn" href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"), "email").' ';
+				$out.=$histo[$key]['id'];
+				$out.='</a> ';
+			} else {
+				$out.=$actionstatic->getNomUrl(1, -1).' ';
+			}
+
+//			if ($user->rights->agenda->allactions->read || $actionstatic->authorid == $user->id)
+//			{
+//				$out.='<a href="'.$url.'" class="timeline-btn" title="'.$langs->trans('Show').'" ><i class="fa fa-calendar" ></i>'.$langs->trans('Show').'</a>';
+//			}
+
 
             if ($user->rights->agenda->allactions->create ||
                 (($actionstatic->authorid == $user->id || $actionstatic->userownerid == $user->id) && $user->rights->agenda->myactions->create))
@@ -645,13 +680,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
             // Ref
 
            $out.='<h3 class="timeline-header">';
-//            if (isset($histo[$key]['type']) && $histo[$key]['type']=='mailing') {
-//                $out.='<a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"), "email").' ';
-//                $out.=$histo[$key]['id'];
-//                $out.='</a>';
-//            } else {
-//                $out.=$actionstatic->getNomUrl(1, -1);
-//            }
+
 
             // Author of event
             $out.='<span class="messaging-author">';
