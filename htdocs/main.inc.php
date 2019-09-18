@@ -100,6 +100,8 @@ function testSqlAndScriptInject($val, $type)
 		$inj += preg_match('/union.+select/i', $val);
 		$inj += preg_match('/(\.\.%2f)+/i', $val);
 	}
+	// For XSS Injection done by closing textarea to exucute content into a textarea field
+	$inj += preg_match('/<\/textarea/i', $val);
 	// For XSS Injection done by adding javascript with script
 	// This is all cases a browser consider text is javascript:
 	// When it found '<script', 'javascript:', '<style', 'onload\s=' on body tag, '="&' on a tag size with old browsers
