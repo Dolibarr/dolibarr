@@ -491,6 +491,13 @@ if ($id > 0 || $ref)
 				{
 					print '<input class="flat" name="qty" size="5" value="'.$quantity.'">';
 				}
+                // Units
+                if ($conf->global->PRODUCT_USE_UNITS) {
+                    $unit = $object->getLabelOfUnit();
+                    if ($unit !== '') {
+                        print '&nbsp;&nbsp;' . $langs->trans($unit);
+                    }
+                }
 				print '</td></tr>';
 
 				// Vat rate
@@ -778,11 +785,11 @@ SCRIPT;
 				$num = count($product_fourn_list);
 				if (($num + ($offset * $limit)) < $nbtotalofrecords) $num++;
 
-				print_barre_liste($langs->trans('SupplierPrices'), $page, $_SERVER ['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit, 1);
+				print_barre_liste($langs->trans('SupplierPrices'), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit, 1);
 
 				// Suppliers list title
 				print '<div class="div-table-responsive">';
-				print '<table class="noborder" width="100%">';
+				print '<table class="liste" width="100%">';
 
 				$param="&id=".$object->id;
 
@@ -851,6 +858,13 @@ SCRIPT;
 						// Quantity
 						print '<td class="right">';
 						print $productfourn->fourn_qty;
+                        // Units
+                        if ($conf->global->PRODUCT_USE_UNITS) {
+                            $unit = $object->getLabelOfUnit();
+                            if ($unit !== '') {
+                                print '&nbsp;&nbsp;' . $langs->trans($unit);
+                            }
+                        }
 						print '</td>';
 
 						// VAT rate
