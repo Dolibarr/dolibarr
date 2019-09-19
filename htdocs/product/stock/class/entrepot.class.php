@@ -854,7 +854,8 @@ class Entrepot extends CommonObject
 	 * @param int[]|int $categories Category or categories IDs
 	 * @return void
 	 */
-	public function setCategories($categories) {
+	public function setCategories($categories)
+    {
 		// Handle single category
 		if (! is_array($categories)) {
 			$categories = array($categories);
@@ -888,5 +889,4 @@ class Entrepot extends CommonObject
 
 		return;
 	}
-
 }
