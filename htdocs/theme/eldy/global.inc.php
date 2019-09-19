@@ -655,6 +655,14 @@ select.flat.selectlimit {
     max-width: 0;
     overflow: auto;
 }
+.divintdwithtwolinesmax {
+    width: 75px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+
 .tablelistofcalendars {
 	margin-top: 25px !important;
 }
