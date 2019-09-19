@@ -4517,7 +4517,7 @@ abstract class CommonObject
 
 		$parameters = array('modelspath'=>$modelspath,'modele'=>$modele,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'hidedesc'=>$hidedesc,'hideref'=>$hideref, 'moreparams'=>$moreparams);
 		$reshook = $hookmanager->executeHooks('commonGenerateDocument', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-		
+
 		if(empty($reshook))
 		{
 		dol_syslog("commonGenerateDocument modele=".$modele." outputlangs->defaultlang=".(is_object($outputlangs)?$outputlangs->defaultlang:'null'));
@@ -4902,13 +4902,12 @@ abstract class CommonObject
 		if (! is_array($optionsArray))
 		{
 			// If $extrafields is not a known object, we initialize it. Best practice is to have $extrafields defined into card.php or list.php page.
-			// TODO Use of existing $extrafield is not yet ready (must mutualize code that use extrafields in form first)
-			// global $extrafields;
-			//if (! is_object($extrafields))
-			//{
+			global $extrafields;
+			if (! isset($extrafields) || ! is_object($extrafields))
+			{
 				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 				$extrafields = new ExtraFields($this->db);
-			//}
+			}
 
 			// Load array of extrafields for elementype = $this->table_element
 			if (empty($extrafields->attributes[$this->table_element]['loaded']))
@@ -7625,18 +7624,20 @@ abstract class CommonObject
 		}
 
 		// Delete cascade first
-		foreach($this->childtablesoncascade as $table)
-		{
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table.' WHERE '.$this->fk_element.' = '.$this->id;
-			$resql = $this->db->query($sql);
-			if (! $resql)
-			{
-				$this->error=$this->db->lasterror();
-				$this->errors[]=$this->error;
-				$this->db->rollback();
-				return -1;
-			}
-		}
+		if (! empty($this->childtablesoncascade)) {
+            foreach($this->childtablesoncascade as $table)
+            {
+                $sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table.' WHERE '.$this->fk_element.' = '.$this->id;
+                $resql = $this->db->query($sql);
+                if (! $resql)
+                {
+                    $this->error=$this->db->lasterror();
+                    $this->errors[]=$this->error;
+                    $this->db->rollback();
+                    return -1;
+                }
+            }
+        }
 
 		if (! $error) {
 			if (! $notrigger) {
@@ -7810,4 +7811,35 @@ abstract class CommonObject
             }
         }
     }
+
+    /**
+     *  copy related categories to another object
+     *
+     * @param  int		$fromId	Id object source
+     * @param  int		$toId	Id object cible
+     * @param  string	$type	Type of category ('product', ...)
+     * @return int      < 0 si erreur, > 0 si ok
+     */
+	public function cloneCategories($fromId, $toId, $type = '')
+	{
+		$this->db->begin();
+
+		if (empty($type)) $type = $this->table_element;
+
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		$categorystatic = new Categorie($this->db);
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_" . $categorystatic->MAP_CAT_TABLE[$type] . " (fk_categorie, fk_product)";
+		$sql.= " SELECT fk_categorie, $toId FROM ".MAIN_DB_PREFIX."categorie_" . $categorystatic->MAP_CAT_TABLE[$type];
+		$sql.= " WHERE fk_product = '".$fromId."'";
+
+		if (! $this->db->query($sql))
+		{
+			$this->db->rollback();die($sql);
+			return -1;
+		}
+
+		$this->db->commit();
+		return 1;
+	}
 }

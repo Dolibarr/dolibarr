@@ -2372,86 +2372,86 @@ elseif (! empty($module))
 				print '<table class="noborder">';
 
 				print '<tr class="liste_titre">';
-				print_liste_field_titre("Type",$_SERVER["PHP_SELF"],'',"",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("fk_menu",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("Title",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("mainmenu",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("leftmenu",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("URL",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("LanguageFile",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("Position",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("Enabled",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("perms",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("Target",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("UserType",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+				print_liste_field_titre("Type", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("fk_menu", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Title", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("mainmenu", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("leftmenu", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("URL", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("LanguageFile", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Position", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Enabled", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("perms", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Target", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("UserType", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 				print "</tr>\n";
 
 				if (count($menus))
 				{
 					foreach ($menus as $menu)
 					{
-					 print '<tr class="oddeven">';
+						print '<tr class="oddeven">';
 
-					 print '<td>';
-					 print $menu['type'];
-					 print '</td>';
+						print '<td>';
+						print $menu['type'];
+						print '</td>';
 
-					 print '<td>';
-					 print $menu['fk_menu'];
-					 print '</td>';
+						print '<td>';
+						print $menu['fk_menu'];
+						print '</td>';
 
-					 print '<td>';
-					 print $menu['titre'];
-					 print '</td>';
+						print '<td>';
+						print $menu['titre'];
+						print '</td>';
 
-					 print '<td>';
-					 print $menu['mainmenu'];
-					 print '</td>';
+						print '<td>';
+						print $menu['mainmenu'];
+						print '</td>';
 
-					 print '<td>';
-					 print $menu['left'];
-					 print '</td>';
+						print '<td>';
+						print $menu['left'];
+						print '</td>';
 
-					 print '<td>';
-					 print $menu['url'];
-					 print '</td>';
+						print '<td>';
+						print $menu['url'];
+						print '</td>';
 
-					 print '<td>';
-					 print $menu['langs'];
-					 print '</td>';
+						print '<td>';
+						print $menu['langs'];
+						print '</td>';
 
-					 print '<td>';
-					 print $menu['position'];
-					 print '</td>';
+						print '<td>';
+						print $menu['position'];
+						print '</td>';
 
-					 print '<td>';
-					 print $menu['enabled'];
-					 print '</td>';
+						print '<td>';
+						print $menu['enabled'];
+						print '</td>';
 
-					 print '<td>';
-					 print $menu['perms'];
-					 print '</td>';
+						print '<td>';
+						print $menu['perms'];
+						print '</td>';
 
-					 print '<td>';
-					 print $menu['target'];
-					 print '</td>';
+						print '<td>';
+						print $menu['target'];
+						print '</td>';
 
-					 print '<td>';
-					 print $menu['user'];
-					 print '</td>';
+						print '<td>';
+						print $menu['user'];
+						print '</td>';
 
-					 print '</tr>';
-					 }
-				 }
-				 else
-				 {
+						print '</tr>';
+					}
+				}
+				else
+				{
 				 	 print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("None").'</td></tr>';
-				 }
+				}
 
-				 print '</table>';
-				 print '</div>';
+				print '</table>';
+				print '</div>';
 
-				 print '</form>';
+				print '</form>';
 			}
 			else
 			{
@@ -2513,36 +2513,36 @@ elseif (! empty($module))
 				print '<table class="noborder">';
 
 				print '<tr class="liste_titre">';
-				print_liste_field_titre("ID",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("Label",$_SERVER["PHP_SELF"],'',"",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("Permission",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				print_liste_field_titre("",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
+				print_liste_field_titre("ID", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Label", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Permission", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
 				print "</tr>\n";
 
 				if (count($perms))
 				{
 					foreach ($perms as $perm)
 					{
-						 print '<tr class="oddeven">';
+						print '<tr class="oddeven">';
 
-						 print '<td>';
-						 print $perm[0];
-						 print '</td>';
+						print '<td>';
+						print $perm[0];
+						print '</td>';
 
-						 print '<td>';
-						 print $perm[1];
-						 print '</td>';
+						print '<td>';
+						print $perm[1];
+						print '</td>';
 
-						 print '<td>';
-						 print $perm[4];
-						 print '</td>';
+						print '<td>';
+						print $perm[4];
+						print '</td>';
 
-						 print '<td>';
-						 print $perm[5];
-						 print '</td>';
+						print '<td>';
+						print $perm[5];
+						print '</td>';
 
-						 print '</tr>';
-					 }
+						print '</tr>';
+					}
 				}
 				else
 				{

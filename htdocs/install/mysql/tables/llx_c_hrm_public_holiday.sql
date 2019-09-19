@@ -22,7 +22,7 @@ create table llx_c_hrm_public_holiday
   entity				integer	DEFAULT 0 NOT NULL,	-- multi company id, 0 = all
   fk_country			integer,			
   code		    		varchar(62),
-  dayrule               varchar(255) DEFAULT 'date',				-- 'date', 'xxx', ...
+  dayrule               varchar(64) DEFAULT '',		-- 'easter', 'eastermonday', ...
   day					integer,
   month					integer,
   year					integer,					-- 0 for all years

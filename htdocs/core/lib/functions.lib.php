@@ -3897,7 +3897,7 @@ function dol_print_error_email($prefixcode, $errormessage = '', $errormessages =
 	$now=dol_now();
 
 	print '<br><div class="center login_main_message"><div class="'.$morecss.'">';
-	print $langs->trans("ErrorContactEMail", $email, $prefixcode.dol_print_date($now, '%Y%m%d'));
+	print $langs->trans("ErrorContactEMail", $email, $prefixcode.dol_print_date($now, '%Y%m%d%H%M%S'));
 	if ($errormessage) print '<br><br>'.$errormessage;
 	if (is_array($errormessages) && count($errormessages))
 	{
@@ -5754,20 +5754,6 @@ function dol_nboflines_bis($text, $maxlinesize = 0, $charset = 'UTF-8')
 }
 
 /**
- *	 Same function than microtime in PHP 5 but compatible with PHP4
- *
- * @return		float		Time (millisecondes) with microsecondes in decimal part
- * @deprecated Dolibarr does not support PHP4, you should use native function
- * @see microtime()
- */
-function dol_microtime_float()
-{
-	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
-
-	return microtime(true);
-}
-
-/**
  *	Return if a text is a html content
  *
  *	@param	string	$msg		Content to check
@@ -7279,7 +7265,7 @@ function printCommonFooter($zone = 'private')
 			{
 				print "\n";
 				print '/* JS CODE TO ENABLE to manage handler to switch left menu page (menuhider) */'."\n";
-				print 'jQuery(".menuhider").click(function(event) {';
+				print 'jQuery("li.menuhider").click(function(event) {';
 				print '  if (!$( "body" ).hasClass( "sidebar-collapse" )){ event.preventDefault(); }'."\n";
 				print '  console.log("We click on .menuhider");'."\n";
 				print '  $("body").toggleClass("sidebar-collapse")'."\n";

@@ -1137,9 +1137,15 @@ select.selectarrowonleft option {
    	}
 }
 .linkobject { cursor: pointer; }
+
+table.tableforfield tr>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
+	color: #666;
+}
+
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 .hideonprint { display: none; }
 <?php } ?>
+
 
 
 /* ============================================================================== */
@@ -1942,6 +1948,11 @@ foreach($mainmenuusedarray as $val)
     	display: none;
     <?php } ?>
 }
+.topmenuimage {
+	<?php if ($disableimages) { ?>
+    	display: none;
+    <?php } ?>
+}
 a.tmenuimage {
     display: block;
 }
@@ -2226,6 +2237,41 @@ div.blockvmenulogo
 {
 	border-bottom: 0 !important;
 }
+.backgroundforcompanylogo {
+    margin: <?php echo $disableimages?'0':'6'; ?>px;
+    margin-left: 12px;
+    margin-right: 6px;
+    background-color: rgba(255,255,255,0.7);
+    padding: 0;
+    border-radius: 5px;
+    height: <?php echo $disableimages?'20':'32'; ?>px;
+    /* width: 100px; */
+    max-width: 100px;
+    vertical-align: middle;
+}
+.backgroundforcompanylogo img.mycompany {
+    object-fit: contain;
+    width: inherit;
+    height: inherit;
+}
+#mainmenutd_companylogo::after {
+	content: unset;
+}
+li#mainmenutd_companylogo .tmenucenter {
+	width: unset;
+}
+li#mainmenutd_companylogo {
+	min-width: unset !important;
+}
+<?php if ($disableimages) { ?>
+	li#mainmenutd_home {
+		min-width: unset !important;
+	}
+	li#mainmenutd_home .tmenucenter {
+		width: unset;
+	}
+<?php } ?>
+
 div.blockvmenupair, div.blockvmenuimpair
 {
 	font-family: <?php print $fontlist ?>;
@@ -5618,7 +5664,7 @@ border-top-right-radius: 6px;
 }
 
 .menuhider {
-	width: 40px;
+	width: <?php echo $disableimages ? 'auto' : '40'; ?>px;
 }
 
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo $fontsize ?> */
@@ -5653,6 +5699,10 @@ border-top-right-radius: 6px;
 /* rule to reduce top menu - 2nd reduction */
 @media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 4.5, 0) + 200; ?>px)
 {
+	li.tmenucompanylogo {
+		display: none;
+	}
+
 	div.tmenucenter {
 	    max-width: <?php echo round($fontsize * 2); ?>px;	/* size of viewport */
   		text-overflow: clip;
@@ -5716,8 +5766,11 @@ border-top-right-radius: 6px;
 	.titlefield {
 		width: auto !important;		/* We want to ignor the 30%, try to use more if you can */
 	}
-	.tableforfield>tr>td:first-child, div.tableforfield div.tagtr>div.tagtd:first-of-type {
-		max-width: 100px;			/* but no more than 100px */
+	.tableforfield>tr>td:first-child, .tableforfield>tbody>tr>td:first-child, div.tableforfield div.tagtr>div.tagtd:first-of-type {
+	    /* max-width: 100px; */			/* but no more than 100px */
+	}
+	.tableforfield>tr>td:nth-child(2), .tableforfield>tbody>tr>td:nth-child(2), div.tableforfield div.tagtr>div.tagtd:nth-child(2) {
+	    word-break: break-word;
 	}
 }
 

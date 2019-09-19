@@ -121,6 +121,7 @@ $arrayfields=array(
 	't.duration_effective'=>array('label'=>$langs->trans("TimeSpent"), 'checked'=>1, 'position'=>103),
 	't.progress_calculated'=>array('label'=>$langs->trans("ProgressCalculated"), 'checked'=>1, 'position'=>104),
 	't.progress'=>array('label'=>$langs->trans("ProgressDeclared"), 'checked'=>1, 'position'=>105),
+	't.progress_summary'=>array('label'=>$langs->trans("TaskProgressSummary"), 'checked'=>1, 'position'=>106),
     't.tobill'=>array('label'=>$langs->trans("TimeToBill"), 'checked'=>0, 'position'=>110),
     't.billed'=>array('label'=>$langs->trans("TimeBilled"), 'checked'=>0, 'position'=>111),
     't.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
@@ -570,6 +571,7 @@ if (! empty($arrayfields['t.planned_workload']['checked'])) print '<td class="li
 if (! empty($arrayfields['t.duration_effective']['checked'])) print '<td class="liste_titre"></td>';
 if (! empty($arrayfields['t.progress_calculated']['checked'])) print '<td class="liste_titre"></td>';
 if (! empty($arrayfields['t.progress']['checked'])) print '<td class="liste_titre"></td>';
+if (! empty($arrayfields['t.progress_summary']['checked'])) print '<td class="liste_titre"></td>';
 if (! empty($arrayfields['t.tobill']['checked'])) print '<td class="liste_titre"></td>';
 if (! empty($arrayfields['t.billed']['checked'])) print '<td class="liste_titre"></td>';
 // Extra fields
@@ -610,6 +612,7 @@ if (! empty($arrayfields['t.planned_workload']['checked']))         print_liste_
 if (! empty($arrayfields['t.duration_effective']['checked']))       print_liste_field_titre($arrayfields['t.duration_effective']['label'], $_SERVER["PHP_SELF"], "t.duration_effective", "", $param, '', $sortfield, $sortorder, 'center ');
 if (! empty($arrayfields['t.progress_calculated']['checked']))      print_liste_field_titre($arrayfields['t.progress_calculated']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'center ');
 if (! empty($arrayfields['t.progress']['checked']))      print_liste_field_titre($arrayfields['t.progress']['label'], $_SERVER["PHP_SELF"], "t.progress", "", $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['t.progress_summary']['checked']))      print_liste_field_titre($arrayfields['t.progress_summary']['label'], $_SERVER["PHP_SELF"], "t.progress", "", $param, '', $sortfield, $sortorder, 'center ');
 if (! empty($arrayfields['t.tobill']['checked']))        print_liste_field_titre($arrayfields['t.tobill']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
 if (! empty($arrayfields['t.billed']['checked']))        print_liste_field_titre($arrayfields['t.billed']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
 // Extra fields
@@ -642,6 +645,9 @@ while ($i < min($num, $limit))
 	$object->progress = $obj->progress;
 	$object->datee = $db->jdate($obj->date_end);	// deprecated
 	$object->date_end = $db->jdate($obj->date_end);
+    $object->planned_workload= $obj->planned_workload;
+    $object->duration_effective= $obj->duration_effective;
+
 
 	$projectstatic->id = $obj->projectid;
 	$projectstatic->ref = $obj->projectref;
@@ -784,12 +790,23 @@ while ($i < min($num, $limit))
 			print '<td class="center">';
 			if ($obj->progress != '')
 			{
-				print $obj->progress.' %';
+				print getTaskProgressBadge($object);
 			}
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
             if (! $i) $totalarray['totalprogress_declaredfield']=$totalarray['nbfield'];
             $totalarray['totaldurationdeclared'] += $obj->planned_workload * $obj->progress / 100;
+		}
+		// Progress summary
+		if (! empty($arrayfields['t.progress_summary']['checked']))
+		{
+			print '<td class="center">';
+			if($obj->progress != '' && $obj->duration_effective){
+                print getTaskProgressView($object, false, false);
+            }
+			print '</td>';
+			if (! $i) $totalarray['nbfield']++;
+            if (! $i) $totalarray['totalprogress_summary']=$totalarray['nbfield'];
 		}
 		// Time not billed
 		if (! empty($arrayfields['t.tobill']['checked']))
@@ -891,7 +908,7 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 		elseif ($totalarray['totalprogress_declaredfield'] == $i) print '<td class="center">'.($totalarray['totalplannedworkload'] > 0 ? round(100 * $totalarray['totaldurationdeclared'] / $totalarray['totalplannedworkload'], 2).' %' : '').'</td>';
 		elseif ($totalarray['totaltobillfield'] == $i) print '<td class="center">'.convertSecondToTime($totalarray['totaltobill'], $plannedworkloadoutputformat).'</td>';
 		elseif ($totalarray['totalbilledfield'] == $i) print '<td class="center">'.convertSecondToTime($totalarray['totalbilled'], $plannedworkloadoutputformat).'</td>';
-		else print '<td></td>';
+        else print '<td></td>';
 	}
 	print '</tr>';
 }

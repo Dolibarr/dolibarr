@@ -55,7 +55,7 @@ function dolStripPhpCode($str, $replacewith = '')
 				//remove content before closing tag
 				if (count($partlings) > 1) $partlings[0] = '';	// Todo why a count > 1 and not >= 1 ?
 				//append to out string
-				$newstr .= '<span class="phptag">'.$replacewith.'<!-- '.$phppart.' --></span>'.implode('', $partlings);
+				$newstr .= '<span class="phptag" class="tooltip" title="'.dol_escape_htmltag(dolGetFirstLineOfText($phppart).'...').'">'.$replacewith.'<!-- '.$phppart.' --></span>'.implode('', $partlings);
 			}
 		}
 	}

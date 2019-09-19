@@ -58,7 +58,8 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 $socid=0;
 if (isset($user->societe_id) && $user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-if ($user->id == $id && (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->user->self_advance->readperms)))	// A user can always read its own card if not advanced perms enabled, or if he has advanced perms
+// A user can always read its own card if not advanced perms enabled, or if he has advanced perms, except for admin
+if ($user->id == $id && (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->user->self_advance->readperms) && empty($user->admin)))
 {
 	accessforbidden();
 }
