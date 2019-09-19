@@ -1597,7 +1597,9 @@ else
 			{
 				// TODO change for compatibility with edit in place
 				$typeformat='select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
-				print '<tr><td class="titlefield">'.$form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat).'</td><td colspan="2">';
+				print '<tr><td class="titlefield">';
+				print (!empty($conf->global->MAIN_ALLOW_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
+				print '</td><td colspan="2">';
 				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat);
 				print '</td></tr>';
 			}
