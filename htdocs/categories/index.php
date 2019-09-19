@@ -58,6 +58,7 @@ elseif ($type == Categorie::TYPE_CONTACT)   { $title=$langs->trans("ContactsCate
 elseif ($type == Categorie::TYPE_ACCOUNT)   { $title=$langs->trans("AccountsCategoriesArea");  $typetext='bank_account'; }
 elseif ($type == Categorie::TYPE_PROJECT)   { $title=$langs->trans("ProjectsCategoriesArea");  $typetext='project'; }
 elseif ($type == Categorie::TYPE_USER)      { $title=$langs->trans("UsersCategoriesArea");     $typetext='user'; }
+elseif ($type == Categorie::TYPE_STOCK)      { $title=$langs->trans("StocksCategoriesArea");   $typetext='stock'; }
 else                                        { $title=$langs->trans("CategoriesArea");          $typetext='unknown'; }
 
 $arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
