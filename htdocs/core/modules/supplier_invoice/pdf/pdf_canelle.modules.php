@@ -128,7 +128,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$this->name = "canelle";
 		$this->description = $langs->trans('SuppliersInvoiceModel');
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -148,7 +148,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 		$this->franchise=!$mysoc->tva_assuj;
 
-        // Defini position des colonnes
+        // Define column position
 		$this->posxdesc=$this->marge_gauche+1;
 		$this->posxtva=112;
 		$this->posxup=126;

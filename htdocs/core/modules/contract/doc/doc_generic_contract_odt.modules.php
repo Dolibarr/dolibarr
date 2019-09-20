@@ -74,7 +74,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 		$this->description = $langs->trans("DocumentModelOdt");
 		$this->scandir = 'CONTRACT_ADDON_PDF_ODT_PATH';	// Name of constant that is used to save list of directories to scan
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'odt';
 		$this->page_largeur = 0;
 		$this->page_hauteur = 0;

@@ -128,7 +128,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$this->name = "standard";
 		$this->description = $langs->trans('DocumentModelStandardPDF');
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -144,7 +144,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 		$this->franchise=!$mysoc->tva_assuj;
 
-        // Defini position des colonnes
+        // Define column position
 		$this->posxdate=$this->marge_gauche+1;
 		$this->posxreffacturefourn=30;
 		$this->posxreffacture=65;

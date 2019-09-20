@@ -126,7 +126,7 @@ class pdf_standard extends ModelePDFProduct
 		$this->name = "standard";
 		$this->description = $langs->trans("DocumentModelStandardPDF");
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];

@@ -21,8 +21,7 @@
 /**
  *	\file       htdocs/core/modules/project/doc/pdf_beluga.modules.php
  *	\ingroup    project
- *	\brief      Fichier de la classe permettant de generer les projets au modele beluga
- *	\author	    Charlie Benke
+ *	\brief      File of the class allowing to generate projects with the beluga model
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/modules_project.php';
@@ -50,7 +49,7 @@ if (! empty($conf->agenda->enabled))        require_once DOL_DOCUMENT_ROOT.'/com
 
 
 /**
- *	Class to manage generation of project document Baleine
+ *	Class to manage generation of project document Beluga
  */
 
 class pdf_beluga extends ModelePDFProjects
@@ -83,7 +82,7 @@ class pdf_beluga extends ModelePDFProjects
 		$this->name = "beluga";
 		$this->description = $langs->trans("DocumentModelBeluga");
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
         $this->orientation = 'L';
@@ -104,11 +103,11 @@ class pdf_beluga extends ModelePDFProjects
 		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
 		$this->option_codeproduitservice = 1;      // Affiche code produit-service
 
-		// Recupere emmetteur
+		// Retrieves transmitter
 		$this->emetteur=$mysoc;
 		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default if not defined
 
-        // Defini position des colonnes
+        // Define column position
         if ($this->orientation == 'L' || $this->orientation == 'Landscape') {
             $this->posxref=$this->marge_gauche+1;
             $this->posxdate=$this->marge_gauche+105;

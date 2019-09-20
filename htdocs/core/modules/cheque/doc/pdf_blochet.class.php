@@ -57,7 +57,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 		$this->tab_top = 60;
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -68,11 +68,11 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
 		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 
-        // Recupere emmetteur
+        // Retrieves transmitter
         $this->emetteur=$mysoc;
         if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default if not defined
 
-        // Defini position des colonnes
+        // Define column position
         $this->line_height = 5;
 		$this->line_per_page = 40;
 		$this->tab_height = 200;	//$this->line_height * $this->line_per_page;

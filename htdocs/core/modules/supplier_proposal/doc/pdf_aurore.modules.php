@@ -128,7 +128,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		$this->name = "aurore";
 		$this->description = $langs->trans('DocModelAuroreDescription');
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];

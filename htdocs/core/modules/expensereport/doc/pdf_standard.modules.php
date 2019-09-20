@@ -133,7 +133,7 @@ class pdf_standard extends ModeleExpenseReport
 		$this->name = "";
 		$this->description = $langs->trans('PDFStandardExpenseReports');
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];

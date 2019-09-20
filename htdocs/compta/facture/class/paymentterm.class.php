@@ -19,7 +19,6 @@
  *      \file       compta/facture/class/paymentterm.class.php
  *      \ingroup    facture
  *      \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *		\author		Put author name here
  */
 
 

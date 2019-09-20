@@ -17,10 +17,9 @@
  */
 
 /**
- *	\file       htdocs/core/modules/project/doc/pdf_baleine.modules.php
+ *	\file       htdocs/core/modules/project/doc/pdf_timespent.modules.php
  *	\ingroup    project
  *	\brief      File of class to generate project document Baleine
- *	\author	    Regis Houssin
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/modules_project.php';
@@ -33,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 
 /**
- *	Class to manage generation of project document Baleine
+ *	Class to manage generation of project document Timespent
  */
 
 class pdf_timespent extends ModelePDFProjects
@@ -60,7 +59,7 @@ class pdf_timespent extends ModelePDFProjects
 		$this->name = "timespent";
 		$this->description = $langs->trans("DocumentModelTimeSpent");
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -75,11 +74,11 @@ class pdf_timespent extends ModelePDFProjects
 		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
 		$this->option_codeproduitservice = 1;      // Affiche code produit-service
 
-		// Recupere emmetteur
+		// Retrieves transmitter
 		$this->emetteur=$mysoc;
 		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default if not defined
 
-		// Defini position des colonnes
+		// Define column position
 		$this->posxref=$this->marge_gauche+1;
 		$this->posxlabel=$this->marge_gauche+25;
 		$this->posxtimespent=$this->marge_gauche+120;

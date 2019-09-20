@@ -132,7 +132,7 @@ class pdf_strato extends ModelePDFContract
 		$this->name = 'strato';
 		$this->description = $langs->trans("StandardContractsTemplate");
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 

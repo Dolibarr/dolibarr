@@ -63,7 +63,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$this->name = "sepamandate";
 		$this->description = $langs->transnoentitiesnoconv("DocumentModelSepaMandate");
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -78,11 +78,11 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
 		$this->option_codeproduitservice = 1;      // Affiche code produit-service
 
-		// Recupere emmetteur
+		// Retrieves transmitter
 		$this->emetteur=$mysoc;
 		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default if not defined
 
-		// Defini position des colonnes
+		// Define column position
 		$this->posxref=$this->marge_gauche;
 	}
 

@@ -21,7 +21,6 @@
  *     	\file       htdocs/public/paybox/newpayment.php
  *		\ingroup    paybox
  *		\brief      File to offer a way to make a payment for a particular Dolibarr entity
- *		\author	    Laurent Destailleur
  */
 
 define("NOLOGIN", 1);		// This means this output page does not require to be logged.

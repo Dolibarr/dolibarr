@@ -25,7 +25,6 @@
  *	\file       htdocs/core/modules/livraison/doc/pdf_typhon.modules.php
  *	\ingroup    livraison
  *	\brief      File of class to manage receving receipts with template Typhon
- *	\author	    Laurent Destailleur
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/livraison/modules_livraison.php';
@@ -128,7 +127,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$this->name = "typhon";
 		$this->description = $langs->trans("DocumentModelTyphon");
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
