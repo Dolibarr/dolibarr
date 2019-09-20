@@ -94,7 +94,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	{
 		global $conf,$langs;
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$langs->loadLangs(array("companies", "errors"));
 
 		$form = new Form($this->db);

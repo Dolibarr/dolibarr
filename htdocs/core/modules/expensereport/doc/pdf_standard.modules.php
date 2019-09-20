@@ -217,7 +217,7 @@ class pdf_standard extends ModeleExpenseReport
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "trips", "projects", "dict", "bills", "banks"));
 
 		$nblines = count($object->lines);
@@ -635,7 +635,7 @@ class pdf_standard extends ModeleExpenseReport
 		// global $conf, $langs, $hookmanager;
 		global $user, $langs, $conf, $mysoc, $db, $hookmanager;
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "trips", "companies"));
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);

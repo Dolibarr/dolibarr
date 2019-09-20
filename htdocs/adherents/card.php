@@ -638,7 +638,7 @@ if (empty($reshook))
 				// Set output language
 				$outputlangs = new Translate('', $conf);
 				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-				// Load traductions files requiredby by page
+				// Load traductions files required by page
 				$outputlangs->loadLangs(array("main", "members"));
 				// Get email content from template
 				$arraydefaultmessage=null;
@@ -719,7 +719,7 @@ if (empty($reshook))
 					// Set output language
 					$outputlangs = new Translate('', $conf);
 					$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-					// Load traductions files requiredby by page
+					// Load traductions files required by page
 					$outputlangs->loadLangs(array("main", "members"));
 					// Get email content from template
 					$arraydefaultmessage=null;
@@ -1483,7 +1483,7 @@ else
 			// Set output language
 			$outputlangs = new Translate('', $conf);
 			$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-			// Load traductions files requiredby by page
+			// Load traductions files required by page
 			$outputlangs->loadLangs(array("main", "members"));
 			// Get email content from template
 			$arraydefaultmessage=null;
@@ -1544,7 +1544,7 @@ else
 			// Set output language
 			$outputlangs = new Translate('', $conf);
 			$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-			// Load traductions files requiredby by page
+			// Load traductions files required by page
 			$outputlangs->loadLangs(array("main", "members"));
 			// Get email content from template
 			$arraydefaultmessage=null;

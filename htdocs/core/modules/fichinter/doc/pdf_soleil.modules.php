@@ -173,7 +173,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "interventions", "dict", "companies"));
 
 		if ($conf->ficheinter->dir_output)
@@ -562,7 +562,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		global $conf,$langs;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "interventions"));
 
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);

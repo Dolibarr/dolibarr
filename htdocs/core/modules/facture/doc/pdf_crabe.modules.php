@@ -243,7 +243,7 @@ class pdf_crabe extends ModelePDFFactures
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies"));
 
 		$nblines = count($object->lines);
@@ -1351,7 +1351,7 @@ class pdf_crabe extends ModelePDFFactures
 
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($sign * $total_ttc, 0, $outputlangs), $useborder, 'R', 1);
-				
+
 				// Retained warranty
 				if( !empty($object->situation_final) &&  ( $object->type == Facture::TYPE_SITUATION && (!empty($object->retained_warranty) ) ) )
 				{
@@ -1367,29 +1367,29 @@ class pdf_crabe extends ModelePDFFactures
 				            }
 						}
 				    }
-				    
+
 				    if($displayWarranty){
     				    $pdf->SetTextColor(40, 40, 40);
     				    $pdf->SetFillColor(255, 255, 255);
-    				    
+
     				    $retainedWarranty = $object->total_ttc * $object->retained_warranty / 100;
     				    $billedWithRetainedWarranty = $object->total_ttc - $retainedWarranty ;
-    				    
+
     				    // Billed - retained warranty
     				    $index++;
     				    $pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
     				    $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("ToPayOn", dol_print_date($object->date_lim_reglement, 'day')), $useborder, 'L', 1);
-    				    
+
     				    $pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
     				    $pdf->MultiCell($largcol2, $tab2_hl, price($billedWithRetainedWarranty), $useborder, 'R', 1);
-    				    
+
     				    // retained warranty
     				    $index++;
     				    $pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-    				    
+
     				    $retainedWarrantyToPayOn = $outputlangs->transnoentities("RetainedWarranty") . ' ('.$object->retained_warranty.'%)';
     				    $retainedWarrantyToPayOn.=  !empty($object->retained_warranty_date_limit)?' '.$outputlangs->transnoentities("toPayOn", dol_print_date($object->retained_warranty_date_limit, 'day')):'';
-    				    
+
     				    $pdf->MultiCell($col2x-$col1x, $tab2_hl, $retainedWarrantyToPayOn, $useborder, 'L', 1);
     				    $pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
     				    $pdf->MultiCell($largcol2, $tab2_hl, price($retainedWarranty), $useborder, 'R', 1);
@@ -1591,7 +1591,7 @@ class pdf_crabe extends ModelePDFFactures
 	{
 		global $conf, $langs;
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "bills", "propal", "companies"));
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);

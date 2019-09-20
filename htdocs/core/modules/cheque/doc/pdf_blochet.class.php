@@ -49,7 +49,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	{
 		global $conf,$langs,$mysoc;
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$langs->loadLangs(array("main", "bills"));
 
 		$this->db = $db;
@@ -98,7 +98,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
         $sav_charset_output=$outputlangs->charset_output;
         if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-        // Load traductions files requiredby by page
+        // Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "companies", "bills", "products", "compta"));
 
 		$dir = $_dir . "/".get_exdir($number, 0, 1, 0, $object, 'cheque').$number;
@@ -225,7 +225,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		global $langs;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("compta", "banks"));
 
 		$title = $outputlangs->transnoentities("CheckReceipt");

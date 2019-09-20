@@ -119,7 +119,7 @@ class pdf_stdmovement extends ModelePDFMovement
 	{
 		global $conf,$langs,$mysoc;
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$langs->loadLangs(array("main", "companies"));
 
 		$this->db = $db;
@@ -200,7 +200,7 @@ class pdf_stdmovement extends ModelePDFMovement
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "stocks", "orders", "deliveries"));
 
         /**
@@ -954,7 +954,7 @@ class pdf_stdmovement extends ModelePDFMovement
 	{
 	    global $conf,$langs,$db,$hookmanager;
 
-	    // Load traductions files requiredby by page
+	    // Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "propal", "companies", "bills", "orders", "stocks"));
 
 	    $default_font_size = pdf_getPDFFontSize($outputlangs);

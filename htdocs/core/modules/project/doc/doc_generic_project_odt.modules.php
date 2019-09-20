@@ -82,7 +82,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	{
 		global $conf, $langs, $mysoc;
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$langs->loadLangs(array("companies", "main"));
 
 		$this->db = $db;

@@ -1236,7 +1236,7 @@ class pdf_einstein extends ModelePDFCommandes
 		// phpcs:enable
 		global $conf,$langs,$hookmanager;
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "bills", "propal", "orders", "companies"));
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
