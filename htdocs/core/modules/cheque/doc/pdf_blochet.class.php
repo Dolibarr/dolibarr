@@ -205,7 +205,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$this->result = array('fullpath'=>$file);
 
         $outputlangs->charset_output=$sav_charset_output;
-	    return 1;   // Pas d'erreur
+	    return 1;   // No error
 	}
 
 

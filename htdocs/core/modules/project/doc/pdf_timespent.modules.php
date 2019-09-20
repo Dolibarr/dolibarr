@@ -225,7 +225,7 @@ class pdf_timespent extends ModelePDFProjects
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
-					// Rect prend une longueur en 3eme param
+					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
 					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
@@ -437,7 +437,7 @@ class pdf_timespent extends ModelePDFProjects
 
 				$this->result = array('fullpath'=>$file);
 
-				return 1;   // Pas d'erreur
+				return 1;   // No error
 			}
 			else
 			{
@@ -475,7 +475,7 @@ class pdf_timespent extends ModelePDFProjects
 
 		$pdf->SetDrawColor(128, 128, 128);
 
-		// Draw rect of all tab (title + lines). Rect prend une longueur en 3eme param
+		// Draw rect of all tab (title + lines). Rect takes a length in 3rd parameter
 		$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height);
 
 		// line prend une position y en 3eme param

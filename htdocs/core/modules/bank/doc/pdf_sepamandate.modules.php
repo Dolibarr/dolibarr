@@ -109,7 +109,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		// Load traductions files required by page
+		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "withdrawals", "companies", "projects", "bills"));
 
 		if (! empty($conf->bank->dir_output))
@@ -194,7 +194,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$tab_top_newpage = 40;
                 $tab_height_newpage = 210;
 
-				// Affiche notes
+				// Show notes
 				if (! empty($object->note_public))
 				{
 					$pdf->SetFont('', '', $default_font_size - 1);
@@ -202,7 +202,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-($tab_top-2);
 
-					// Rect prend une longueur en 3eme param
+					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
 					$pdf->Rect($this->marge_gauche, $tab_top-3, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
@@ -374,7 +374,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
 
 				/*
-				 * Pied de page
+				 * Footer of the page
 				 */
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
@@ -404,7 +404,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 				$this->result = array('fullpath'=>$file);
 
-				return 1;   // Pas d'erreur
+				return 1;   // No error
 			}
 			else
 			{
