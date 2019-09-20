@@ -979,7 +979,7 @@ if ($sortfield) $paramwithsearch.= '&sortfield='.urlencode($sortfield);
 if (GETPOST('from')) $paramwithsearch.= '&from='.urlencode(GETPOST('from', 'alpha'));
 
 
-// Confirmation de la suppression de la ligne
+// Confirmation of the deletion of the line
 if ($action == 'delete')
 {
     print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'rowid='.urlencode($rowid).'&code='.urlencode($code).$paramwithsearch, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
@@ -991,7 +991,7 @@ if ($action == 'delete')
  */
 if ($id)
 {
-    // Complete requete recherche valeurs avec critere de tri
+    // Complete search values request with sort criteria
     $sql=$tabsql[$id];
 
     if (! preg_match('/ WHERE /', $sql)) $sql.= " WHERE 1 = 1";
