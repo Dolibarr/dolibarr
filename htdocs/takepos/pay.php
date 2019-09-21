@@ -33,6 +33,7 @@ if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
 require '../main.inc.php';	// Load $user and permissions
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
 
@@ -177,6 +178,36 @@ else print "var received=0;";
 			//parent.setFocusOnSearchField();	// This does not have effect
 		});
 	}
+
+	function ValidateSumup()
+    {
+        <?php  $_SESSION['SMP_CURRENT_PAYMENT'] = "NEW" ?>
+        var invoiceid = <?php echo ($invoiceid > 0 ? $invoiceid : 0); ?>;
+        var amountpayed = $("#change1").val();
+        if (amountpayed > <?php echo $invoice->total_ttc; ?>) {
+            amountpayed = <?php echo $invoice->total_ttc; ?>;
+        }
+
+        // Starting sumup app
+        window.open('sumupmerchant://pay/1.0?affiliate-key=<?php echo dolibarr_get_const($db,"TAKEPOS_SUMUP_AFFILIATE")?>&app-id=<?php echo dolibarr_get_const($db,"TAKEPOS_SUMUP_APPID")?>&total='+amountpayed+'&currency=EUR&title='+invoiceid+'&callback=<?php echo DOL_MAIN_URL_ROOT ?>/takepos/smpcb.php');
+
+        var loop = window.setInterval(function() {
+            $.ajax('/takepos/smpcb.php?status').done(function(data) {
+                console.log(data);
+                if(data === "SUCCESS") {
+                    parent.$("#poslines").load("invoice.php?place=<?php echo $place;?>&action=valid&pay=CB&amount="+amountpayed+"&invoiceid="+invoiceid, function() {
+                        //parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
+                        parent.$.colorbox.close();
+                        //parent.setFocusOnSearchField();	// This does not have effect
+                    });
+                    clearInterval(loop);
+                } else if(data === "FAILED") {
+                    parent.$.colorbox.close();
+                    clearInterval(loop);
+                }
+            });
+        }, 2500);
+    }
 </script>
 
 <div style="position:absolute; top:2%; left:5%; height:30%; width:91%;">
@@ -190,7 +221,7 @@ else print "var received=0;";
 </div>
 <?php } ?>
 <div style="width:40%; background-color:#333333; border-radius:8px; margin-bottom: 4px;">
-<center><span style='font-family: verdana,arial,helvetica; font-size: 200%;'><font color="white"><?php echo $langs->trans("Received"); ?>: </font><span class="change1 colorred"><?php echo price(0) ?></span><input type="hidden" id="change1" class="change1" value="0"></font></center>
+    <center><span style='font-family: verdana,arial,helvetica; font-size: 200%;'><font color="white"><?php echo $langs->trans("Received"); ?>: </font><span class="change1 colorred"><?php echo price(0) ?></span><input type="hidden" id="change1" class="change1" value="0"></font></span></center>
 </div>
 <div style="width:40%; background-color:#333333; border-radius:8px; margin-bottom: 4px;">
 <center><span style='font-family: verdana,arial,helvetica; font-size: 200%;'><font color="white"><?php echo $langs->trans("Change"); ?>: </font><span class="change2 colorwhite"><?php echo price(0) ?></span><input type="hidden" id="change2" class="change2" value="0"></font></span></center>
@@ -271,6 +302,13 @@ while($i < count($paiements)){
 <?php
 	$i=$i+1;
 }
+
+if(!empty(dolibarr_get_const($db,"CASHDESK_ID_BANKACCOUNT_SUMUP".$_SESSION["takeposterminal"]))) {
+?>
+    <button type="button" class="calcbutton2" onclick="ValidateSumup();">Sumup</button>
+<?php
+}
+
 $class=($i==3)?"calcbutton3":"calcbutton2";
 foreach($action_buttons as $button){
     $newclass = $class.($button["class"]?" ".$button["class"]:"");

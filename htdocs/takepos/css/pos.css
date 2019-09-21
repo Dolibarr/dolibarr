@@ -15,8 +15,8 @@ button.calcbutton {
 	vertical-align: middle;
 	text-align: center;
 	overflow: visible; /* removes extra width in IE */
-	width:24%;
-	height:24%;
+	width:20%;
+	height:20%;
 	font-weight: bold;
 }
 
@@ -29,8 +29,8 @@ button.calcbutton2 {
 	vertical-align: middle;
 	text-align: center;
 	overflow: visible; /* removes extra width in IE */
-	width:24%;
-	height:24%;
+	width:20%;
+	height:20%;
 	font-weight: bold;
 }
 
@@ -44,8 +44,8 @@ button.calcbutton3 {
 	text-align: center;
 	font-size:120%;
 	overflow: visible; /* removes extra width in IE */
-	width:24%;
-	height:24%;
+	width:20%;
+	height:20%;
 }
 
 button.actionbutton {
