@@ -91,6 +91,13 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     -webkit-transition: opacity 0.5s, visibility 0s 0.5s;
     transition: opacity 0.5s, visibility 0s 0.5s;
 }
+
+<?php if(empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS) && !empty($conf->global->MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD)){ ?>
+.info-box-icon-text{
+    opacity: 1;
+}
+<?php } ?>
+
 .info-box-sm .info-box-icon-text{
     overflow: hidden;
     width: 80px;
