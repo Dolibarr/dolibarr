@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  */
 function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 0, $mode = '')
 {
-	global $user,$conf,$langs,$dolibarr_main_db_name, $mysoc;
+	global $user,$conf,$langs,$dolibarr_main_db_name,$mysoc;
 
 	$mainmenu=(empty($_SESSION["mainmenu"])?'':$_SESSION["mainmenu"]);
 	$leftmenu=(empty($_SESSION["leftmenu"])?'':$_SESSION["leftmenu"]);
