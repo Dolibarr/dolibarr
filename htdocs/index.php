@@ -889,7 +889,7 @@ if (empty($user->societe_id) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTAT
 {
     // Remove allready present info in new dash board
     if(!empty($conf->global->MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD) && is_array($boxstatItems) && count($boxstatItems) > 0){
-        foreach ( $boxstatItems as $boxstatItemKey => $boxstatItemHtml) {
+        foreach ($boxstatItems as $boxstatItemKey => $boxstatItemHtml) {
             if (in_array($boxstatItemKey, $globalStatInTopOpenedDashBoard)) {
                 unset($boxstatItems[$boxstatItemKey]);
             }
