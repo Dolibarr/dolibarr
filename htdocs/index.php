@@ -701,7 +701,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
                         {
                             $groupElement['globalStats']['total'] = $boardloaded[$classe]->nb[$globalStatsKey]?$boardloaded[$classe]->nb[$globalStatsKey]:0;
                             $nbTotal = doubleval($groupElement['globalStats']['total']);
-                            if($nbTotal>=10000){ $nbTotal = round($nbTotal/1000 , 2) .'k'; }
+                            if($nbTotal>=10000){ $nbTotal = round($nbTotal/1000, 2) .'k'; }
                             $groupElement['globalStats']['text'] = $langs->trans('Total').' : '.$langs->trans($titres[$keyIndex]).' ('.$groupElement['globalStats']['total'].')';
                             $groupElement['globalStats']['total'] = $nbTotal;
                             $groupElement['globalStats']['link'] = $links[$keyIndex];
