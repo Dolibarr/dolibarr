@@ -662,7 +662,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 
 // Show dashboard
     $nbworkboardempty = 0;
-    $isIntopOpenedDashBoard = array();
+    $isIntopOpenedDashBoard = $globalStatInTopOpenedDashBoard = array();
     if (!empty($valid_dashboardlines)) {
         $openedDashBoard = '';
 
@@ -716,6 +716,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
                 $openedDashBoard.= '		<i class="fa fa-dol-'.$groupKeyLowerCase.'"></i>'."\n";
 
                 if(!empty($groupElement['globalStats'])){
+                    $globalStatInTopOpenedDashBoard[] = $groupElement['globalStats'];
                     $openedDashBoard.= '		<span class="info-box-icon-text" title="'.$groupElement['globalStats']['text'].'">'.$nbTotal.'</span>'."\n";
                 }
 
