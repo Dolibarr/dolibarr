@@ -846,9 +846,9 @@ class Livraison extends CommonObject
 		}
 		elseif ($mode == 3)
 		{
-			if ($statut==-1) return img_picto($langs->trans('StatusDeliveryCanceled'),'statut5');
-			if ($statut==0)  return img_picto($langs->trans('StatusDeliveryDraft'),'statut0');
-			if ($statut==1)  return img_picto($langs->trans('StatusDeliveryValidated'),'statut4');
+			if ($statut==-1) return img_picto($langs->trans('StatusDeliveryCanceled'), 'statut5');
+			if ($statut==0)  return img_picto($langs->trans('StatusDeliveryDraft'), 'statut0');
+			if ($statut==1)  return img_picto($langs->trans('StatusDeliveryValidated'), 'statut4');
 		}
 		elseif ($mode == 4)
 		{
