@@ -84,7 +84,8 @@ class box_contracts extends ModeleBoxes
         	$thirdpartytmp=new Societe($db);
 
     	    $sql = "SELECT s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
-    		$sql.= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.datec, c.fin_validite, c.date_cloture";
+            $sql.= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.datec, c.fin_validite, c.date_cloture";
+            $sql.= ", c.ref_customer, c.ref_supplier";
     		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
     		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     		$sql.= " WHERE c.fk_soc = s.rowid";
@@ -117,6 +118,8 @@ class box_contracts extends ModeleBoxes
     				$contractstatic->statut=$objp->fk_statut;
     				$contractstatic->id=$objp->rowid;
     				$contractstatic->ref=$objp->ref;
+    				$contractstatic->ref_customer = $objp->ref_customer;
+    				$contractstatic->ref_supplier = $objp->ref_supplier;
     				$result=$contractstatic->fetch_lines();
 
     				$thirdpartytmp->name = $objp->name;

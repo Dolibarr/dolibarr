@@ -87,7 +87,7 @@ class box_factures_fourn extends ModeleBoxes
 		if ($user->rights->fournisseur->facture->lire)
 		{
 			$sql = "SELECT s.nom as name, s.rowid as socid,";
-            $sql.= " s.code_fournisseur,";
+            $sql.= " s.code_fournisseur, s.email,";
             $sql.= " s.logo,";
 			$sql.= " f.rowid as facid, f.ref, f.ref_supplier,";
             $sql.= " f.total_ht,";
@@ -133,6 +133,7 @@ class box_factures_fourn extends ModeleBoxes
 
                     $thirdpartytmp->id = $objp->socid;
                     $thirdpartytmp->name = $objp->name;
+                    $thirdpartytmp->email = $objp->email;
                     $thirdpartytmp->fournisseur = 1;
                     $thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
                     $thirdpartytmp->logo = $objp->logo;
