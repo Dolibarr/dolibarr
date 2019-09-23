@@ -162,7 +162,10 @@ class modAccounting extends DolibarrModules
 		$this->module_parts = array();
 
 		// Boxes
-		$this->boxes = array();
+		$this->boxes = array(
+			0=>array('file'=>'box_accountancy_last_manual_entries.php', 'enabledbydefaulton'=>'Accountancy'),
+			1=>array('file'=>'box_accountancy_suspense_account.php', 'enabledbydefaulton'=>'Accountancy')
+		);
 
 		// Permissions
 		$this->rights_class = 'accounting';

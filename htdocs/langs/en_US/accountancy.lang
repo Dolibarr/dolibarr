@@ -1,4 +1,5 @@
-# Dolibarr language file - en_US - Accounting Expert
+# Dolibarr language file - en_US - Accountancy (Double entries)
+Accountancy=Accountancy
 Accounting=Accounting
 ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
@@ -133,6 +134,7 @@ NotVentilatedinAccount=Not bound to the accounting account
 XLineSuccessfullyBinded=%s products/services successfully bound to an accounting account
 XLineFailedToBeBinded=%s products/services were not bound to any accounting account
 
+ACCOUNTING_DISABLE_FAQ=Disable FAQ on accountancy area
 ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to bind shown by page (maximum recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the page "Binding to do" by the most recent elements
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the page "Binding done" by the most recent elements
@@ -264,7 +266,7 @@ CategoryDeleted=Category for the accounting account has been removed
 AccountingJournals=Accounting journals
 AccountingJournal=Accounting journal
 NewAccountingJournal=New accounting journal
-ShowAccoutingJournal=Show accounting journal
+ShowAccountingJournal=Show accounting journal
 NatureOfJournal=Nature of Journal
 AccountingJournalType1=Miscellaneous operations
 AccountingJournalType2=Sales
