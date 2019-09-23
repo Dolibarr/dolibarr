@@ -3831,6 +3831,8 @@ function dol_print_error($db = '', $error = '', $errors = null)
 	if (empty($dolibarr_main_prod)) print $out;
 	else
 	{
+		print 'This website is currently temporarly offline. This may be due to a maintenance operation. Current status of operation are on next line...<br><br>'."\n";
+		$langs->load("errors");
 		print $langs->trans("DolibarrHasDetectedError").'. ';
 		print $langs->trans("YouCanSetOptionDolibarrMainProdToZero");
 		define("MAIN_CORE_ERROR", 1);
@@ -3859,7 +3861,7 @@ function dol_print_error_email($prefixcode, $errormessage = '', $errormessages =
 	$now=dol_now();
 
 	print '<br><div class="center login_main_message"><div class="'.$morecss.'">';
-	print $langs->trans("ErrorContactEMail", $email, $prefixcode.dol_print_date($now, '%Y%m%d'));
+	print $langs->trans("ErrorContactEMail", $email, $prefixcode.dol_print_date($now, '%Y%m%d%H%M%S'));
 	if ($errormessage) print '<br><br>'.$errormessage;
 	if (is_array($errormessages) && count($errormessages))
 	{
@@ -5866,11 +5868,13 @@ $substitutionarray=array_merge($substitutionarray, array(
 			$substitutionarray['__REF_SUPPLIER__'] = '__REF_SUPPLIER__';
 			$substitutionarray['__EXTRAFIELD_XXX__'] = '__EXTRAFIELD_XXX__';
 
-			$substitutionarray['__THIRDPARTY_ID__'] = '__THIRDPARTY_ID__';
-			$substitutionarray['__THIRDPARTY_NAME__'] = '__THIRDPARTY_NAME__';
-			$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = '__THIRDPARTY_NAME_ALIAS__';
-			$substitutionarray['__THIRDPARTY_EMAIL__'] = '__THIRDPARTY_EMAIL__';
-
+			if (! empty($conf->societe->enabled))
+			{
+				$substitutionarray['__THIRDPARTY_ID__'] = '__THIRDPARTY_ID__';
+				$substitutionarray['__THIRDPARTY_NAME__'] = '__THIRDPARTY_NAME__';
+				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = '__THIRDPARTY_NAME_ALIAS__';
+				$substitutionarray['__THIRDPARTY_EMAIL__'] = '__THIRDPARTY_EMAIL__';
+			}
 			if (! empty($conf->adherent->enabled))
 			{
 				$substitutionarray['__MEMBER_ID__'] = '__MEMBER_ID__';
@@ -5878,15 +5882,19 @@ $substitutionarray=array_merge($substitutionarray, array(
 				$substitutionarray['__MEMBER_FIRSTNAME__'] = '__MEMBER_FIRSTNAME__';
 				$substitutionarray['__MEMBER_LASTNAME__'] = '__MEMBER_LASTNAME__';
 			}
-			$substitutionarray['__PROJECT_ID__'] = '__PROJECT_ID__';
-			$substitutionarray['__PROJECT_REF__'] = '__PROJECT_REF__';
-			$substitutionarray['__PROJECT_NAME__'] = '__PROJECT_NAME__';
-
-			$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATE__'] = 'Highest date planned for a service start';
-			$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATETIME__'] = 'Highest date and hour planned for service start';
-			$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = 'Lowest data for planned expiration of service';
-			$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = 'Lowest date and hour for planned expiration of service';
-
+			if (! empty($conf->projet->enabled))
+			{
+				$substitutionarray['__PROJECT_ID__'] = '__PROJECT_ID__';
+				$substitutionarray['__PROJECT_REF__'] = '__PROJECT_REF__';
+				$substitutionarray['__PROJECT_NAME__'] = '__PROJECT_NAME__';
+			}
+			if (! empty($conf->contrat->enabled))
+			{
+				$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATE__'] = 'Highest date planned for a service start';
+				$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATETIME__'] = 'Highest date and hour planned for service start';
+				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = 'Lowest data for planned expiration of service';
+				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = 'Lowest date and hour for planned expiration of service';
+			}
 			$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'UrlToPayOnlineIfApplicable';
 			$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__'] = 'TextAndUrlToPayOnlineIfApplicable';
 			$substitutionarray['__SECUREKEYPAYMENT__'] = 'Security key (if key is not unique per record)';
@@ -5964,7 +5972,13 @@ $substitutionarray=array_merge($substitutionarray, array(
 				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object->thirdparty)?$object->thirdparty->email:'');
 			}
 
-			if (is_object($object->projet) && $object->projet->id > 0)
+			if (is_object($object->project) && $object->project->id > 0)
+			{
+				$substitutionarray['__PROJECT_ID__'] = (is_object($object->project)?$object->project->id:'');
+				$substitutionarray['__PROJECT_REF__'] = (is_object($object->project)?$object->project->ref:'');
+				$substitutionarray['__PROJECT_NAME__'] = (is_object($object->project)?$object->project->title:'');
+			}
+			if (is_object($object->projet) && $object->projet->id > 0)	// Deprecated, for backward compatibility
 			{
 				$substitutionarray['__PROJECT_ID__'] = (is_object($object->projet)?$object->projet->id:'');
 				$substitutionarray['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
