@@ -36,6 +36,8 @@ UPDATE llx_expensereport set paid = 1 WHERE fk_statut = 6 and paid = 0;
 
 -- For v11
 
+ALTER TABLE llx_societe_rib MODIFY label varchar(200);
+
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('USER_SENTBYMAIL','Email sent','Executed when an email is sent from user card','user',300);
 
 create table llx_entrepot_extrafields

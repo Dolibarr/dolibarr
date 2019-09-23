@@ -419,7 +419,11 @@ class Stripe extends CommonObject
     		    unset($dataforintent['setup_future_usage']);
     		    $dataforintent["off_session"] = true;
     		}
-    		if (! is_null($payment_method)) $dataforintent["payment_method"] = $payment_method;
+    		if (! is_null($payment_method))
+    		{
+    			$dataforintent["payment_method"] = $payment_method;
+    			$description.=' - '.$payment_method;
+    		}
 
     		if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $stripefee > 0)
     		{
