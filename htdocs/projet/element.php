@@ -513,9 +513,10 @@ elseif ($action == "unlink")
 {
 
 	$tablename = GETPOST("tablename");
+    $projectField = GETPOST("projectfield");
 	$elementselectid = GETPOST("elementselect");
 
-	$result = $object->remove_element($tablename, $elementselectid);
+	$result = $object->remove_element($tablename, $elementselectid, $projectField);
 	if ($result < 0)
 	{
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -889,7 +890,7 @@ foreach ($listofreferent as $key => $value)
 				{
 					if (empty($conf->global->PROJECT_DISABLE_UNLINK_FROM_OVERVIEW) || $user->admin)		// PROJECT_DISABLE_UNLINK_FROM_OVERVIEW is empty by defaut, so this test true
 					{
-						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $projectid . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . '" class="reposition">';
+						print sprintf('<a href="%s?id=%s&action=unlink&tablename=%s&elementselect=%s&projectfield=%s" class="reposition">', $_SERVER["PHP_SELF"], $projectid, $tablename, $element->id, $project_field?: 'fk_projet');
 						print img_picto($langs->trans('Unlink'), 'unlink');
 						print '</a>';
 					}
