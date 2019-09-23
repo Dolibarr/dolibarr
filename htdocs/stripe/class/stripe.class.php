@@ -654,7 +654,7 @@ class Stripe extends CommonObject
 	 * @param	string					$stripeacc						''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int						$status							Status (0=test, 1=live)
 	 * @param	int						$createifnotlinkedtostripe		1=Create the stripe card and the link if the card is not yet linked to a stripe card
-	 * @return 	\Stripe\StripeCard|null 								Stripe Card or null if not found
+	 * @return 	\Stripe\StripeCard|\Stripe\PaymentMethod|null 			Stripe Card or null if not found
 	 */
 	public function cardStripe($cu, CompanyPaymentMode $object, $stripeacc = '', $status = 0, $createifnotlinkedtostripe = 0)
 	{
@@ -680,10 +680,24 @@ class Stripe extends CommonObject
 				{
 					try {
 						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
-							$card = $cu->sources->retrieve($cardref);
+							if (! preg_match('/^pm_/', $cardref))
+							{
+								$card = $cu->sources->retrieve($cardref);
+							}
+							else
+							{
+								$card = \Stripe\PaymentMethod::retrieve($cardref);
+							}
 						} else {
-							//$card = $cu->sources->retrieve($cardref, array("stripe_account" => $stripeacc));		// this API fails when array stripe_account is provided
-							$card = $cu->sources->retrieve($cardref);
+							if (! preg_match('/^pm_/', $cardref))
+							{
+								//$card = $cu->sources->retrieve($cardref, array("stripe_account" => $stripeacc));		// this API fails when array stripe_account is provided
+								$card = $cu->sources->retrieve($cardref);
+							}
+							else {
+								//$card = \Stripe\PaymentMethod::retrieve($cardref, array("stripe_account" => $stripeacc));		// Don't know if this works
+								$card = \Stripe\PaymentMethod::retrieve($cardref);
+							}
 						}
 					}
 					catch(Exception $e)
@@ -707,12 +721,28 @@ class Stripe extends CommonObject
 
 					//$a = \Stripe\Stripe::getApiKey();
 					//var_dump($a);var_dump($stripeacc);exit;
-					dol_syslog("Try to create card dataforcard = ".json_encode($dataforcard));
+					dol_syslog("Try to create card with dataforcard = ".json_encode($dataforcard));
 					try {
 						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
-							$card = $cu->sources->create($dataforcard);
+							if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
+							{
+								$card = $cu->sources->create($dataforcard);
+							}
+							else
+							{
+								// TODO
+								dol_syslog("Error: This case is not supported", LOG_ERR);
+							}
 						} else {
-							$card = $cu->sources->create($dataforcard, array("stripe_account" => $stripeacc));
+							if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
+							{
+								$card = $cu->sources->create($dataforcard, array("stripe_account" => $stripeacc));
+							}
+							else
+							{
+								// TODO
+								dol_syslog("Error: This case is not supported", LOG_ERR);
+							}
 						}
 
 						if ($card)
