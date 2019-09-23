@@ -71,13 +71,13 @@ class box_birthdays extends ModeleBoxes
 	 */
 	public function loadBox($max = 20)
 	{
-		global $user, $langs, $db;
+		global $user, $langs;
 		$langs->load("boxes");
 
 		$this->max=$max;
 
         include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-        $userstatic=new User($db);
+        $userstatic=new User($this->db);
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleUserBirthdaysOfMonth"));
 
@@ -89,23 +89,23 @@ class box_birthdays extends ModeleBoxes
 			$sql.= " WHERE u.entity IN (".getEntity('user').")";
             $sql.= " AND MONTH(u.birth) = ".date('m');
 			$sql.= " ORDER BY u.birth ASC";
-			$sql.= $db->plimit($max, 0);
+			$sql.= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
-			$result = $db->query($sql);
+			$result = $this->db->query($sql);
 			if ($result)
 			{
-				$num = $db->num_rows($result);
+				$num = $this->db->num_rows($result);
 
 				$line = 0;
 				while ($line < $num)
 				{
-					$objp = $db->fetch_object($result);
+					$objp = $this->db->fetch_object($result);
                     $userstatic->id = $objp->rowid;
                     $userstatic->firstname = $objp->firstname;
                     $userstatic->lastname = $objp->lastname;
                     $userstatic->email = $objp->email;
-                    $dateb=$db->jdate($objp->birth);
+                    $dateb=$this->db->jdate($objp->birth);
                     $age = date('Y', dol_now()) - date('Y', $dateb);
 
                     $this->info_box_contents[$line][] = array(
@@ -129,13 +129,13 @@ class box_birthdays extends ModeleBoxes
 
 				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedUsers"));
 
-				$db->free($result);
+				$this->db->free($result);
 			}
 			else {
 				$this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql)
+                    'text' => ($this->db->error().' sql='.$sql)
                 );
 			}
 		}

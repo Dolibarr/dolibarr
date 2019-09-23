@@ -70,7 +70,7 @@ class box_contracts extends ModeleBoxes
      */
     public function loadBox($max = 5)
     {
-    	global $user, $langs, $db, $conf;
+    	global $user, $langs, $conf;
 
     	$this->max=$max;
 
@@ -80,8 +80,8 @@ class box_contracts extends ModeleBoxes
 
     	if ($user->rights->contrat->lire)
     	{
-        	$contractstatic=new Contrat($db);
-        	$thirdpartytmp=new Societe($db);
+        	$contractstatic=new Contrat($this->db);
+        	$thirdpartytmp=new Societe($this->db);
 
     	    $sql = "SELECT s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
             $sql.= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.datec, c.fin_validite, c.date_cloture";
@@ -94,12 +94,12 @@ class box_contracts extends ModeleBoxes
     		if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
     		if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY c.date_contrat DESC, c.ref DESC ";
     		else $sql.= " ORDER BY c.tms DESC, c.ref DESC ";
-    		$sql.= $db->plimit($max, 0);
+    		$sql.= $this->db->plimit($max, 0);
 
-    		$resql = $db->query($sql);
+    		$resql = $this->db->query($sql);
     		if ($resql)
     		{
-    			$num = $db->num_rows($resql);
+    			$num = $this->db->num_rows($resql);
     			$now=dol_now();
 
     			$line = 0;
@@ -108,11 +108,11 @@ class box_contracts extends ModeleBoxes
 
                 while ($line < $num)
                 {
-    				$objp = $db->fetch_object($resql);
+    				$objp = $this->db->fetch_object($resql);
 
-    				$datec=$db->jdate($objp->datec);
-    				$dateterm=$db->jdate($objp->fin_validite);
-    				$dateclose=$db->jdate($objp->date_cloture);
+    				$datec=$this->db->jdate($objp->datec);
+    				$dateterm=$this->db->jdate($objp->fin_validite);
+    				$dateclose=$this->db->jdate($objp->date_cloture);
     				$late = '';
 
     				$contractstatic->statut=$objp->fk_statut;
@@ -168,12 +168,12 @@ class box_contracts extends ModeleBoxes
                         'text'=>$langs->trans("NoRecordedContracts"),
                     );
 
-                $db->free($resql);
+                $this->db->free($resql);
             } else {
                 $this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
             }
         } else {
