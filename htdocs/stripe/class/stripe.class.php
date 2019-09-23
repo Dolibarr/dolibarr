@@ -60,6 +60,7 @@ class Stripe extends CommonObject
 	public $type;
 
 	public $code;
+	public $declinecode;
 
 	public $message;
 
@@ -442,7 +443,6 @@ class Stripe extends CommonObject
     				$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array("idempotency_key" => "$description", "stripe_account" => $key));
     			    //$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array("stripe_account" => $key));
     			}
-    			//var_dump($paymentintent->id);
 
     			// Store the payment intent
     			if (is_object($object))
@@ -487,15 +487,25 @@ class Stripe extends CommonObject
     			    $_SESSION["stripe_payment_intent"] = $paymentintent;
     			}
     		}
+    		catch(Stripe\Error\Card $e)
+    		{
+    			$error++;
+    			$this->error = $e->getMessage();
+    			$this->code = $e->getStripeCode();
+    			$this->declinecode = $e->getDeclineCode();
+    		}
     		catch(Exception $e)
     		{
     		    /*var_dump($dataforintent);
     		    var_dump($description);
     		    var_dump($key);
     		    var_dump($paymentintent);
-    		    var_dump($e->getMessage());*/
-                $error++;
+    		    var_dump($e->getMessage());
+    		    var_dump($e);*/
+    		    $error++;
     			$this->error = $e->getMessage();
+    			$this->code = '';
+    			$this->declinecode = '';
     		}
 		}
 
@@ -790,13 +800,12 @@ class Stripe extends CommonObject
 
 	/**
 	 * Create charge with public/payment/newpayment.php, stripe/card.php, cronjobs or REST API
-	 * This is using old Stripe API charge.
 	 *
 	 * @param	int 	$amount									Amount to pay
 	 * @param	string 	$currency								EUR, GPB...
 	 * @param	string 	$origin									Object type to pay (order, invoice, contract...)
 	 * @param	int 	$item									Object id to pay
-	 * @param	string 	$source									src_xxxxx or card_xxxxx
+	 * @param	string 	$source									src_xxxxx or card_xxxxx or pm_xxxxx
 	 * @param	string 	$customer								Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
 	 * @param	string 	$account								Stripe account ref 'acc_xxxxxxxxxxxxx' via  getStripeAccount()
 	 * @param	int		$status									Status (0=test, 1=live)
