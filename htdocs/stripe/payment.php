@@ -28,7 +28,7 @@
 /**
  *	\file       htdocs/stripe/payment.php
  *	\ingroup    stripe
- *	\brief      Payment page for customers invoices
+ *	\brief      Payment page for customers invoices. TODO Seems deprecated and bugged !
  */
 
 // Load Dolibarr environment
