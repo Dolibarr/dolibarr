@@ -1269,7 +1269,7 @@ class ExtraFields
                             // Several field into label (eq table:code|libelle:rowid)
                             $notrans = false;
                             $fields_label = explode('|', $InfoFieldList[1]);
-                            if (is_array($fields_label)) {
+                            if (is_array($fields_label) && count($fields_label) > 1) {
                                 $notrans = true;
                                 foreach ($fields_label as $field_toshow) {
                                     $labeltoshow .= $obj->$field_toshow . ' ';
@@ -1283,27 +1283,16 @@ class ExtraFields
                             	if (!$notrans) {
 	                                foreach ($fields_label as $field_toshow) {
 	                                    $translabel = $langs->trans($obj->$field_toshow);
-	                                    if ($translabel != $obj->$field_toshow) {
-	                                        $labeltoshow = dol_trunc($translabel, 18) . ' ';
-	                                    } else {
-	                                        $labeltoshow = dol_trunc($obj->$field_toshow, 18) . ' ';
-	                                    }
+	                                    $labeltoshow = dol_trunc($translabel, 18) . ' ';
 	                                }
                             	}
                                 $out .= '<option value="' . $obj->rowid . '" selected>' . $labeltoshow . '</option>';
                             } else {
                                 if (!$notrans) {
                                     $translabel = $langs->trans($obj->{$InfoFieldList[1]});
-                                    if ($translabel != $obj->{$InfoFieldList[1]}) {
-                                        $labeltoshow = dol_trunc($translabel, 18);
-                                    } else {
-                                        $labeltoshow = dol_trunc($obj->{$InfoFieldList[1]}, 18);
-                                    }
+                                    $labeltoshow = dol_trunc($translabel, 18);
                                 }
                                 if (empty($labeltoshow)) $labeltoshow = '(not defined)';
-                                if ($value == $obj->rowid) {
-                                    $out .= '<option value="' . $obj->rowid . '" selected>' . $labeltoshow . '</option>';
-                                }
 
                                 if (!empty($InfoFieldList[3]) && $parentField) {
                                     $parent = $parentName . ':' . $obj->{$parentField};
