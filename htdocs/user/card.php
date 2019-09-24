@@ -54,7 +54,6 @@ $id			= GETPOST('id', 'int');
 $action		= GETPOST('action', 'aZ09');
 $mode		= GETPOST('mode', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
-$subaction	= GETPOST('subaction', 'alpha');
 $group		= GETPOST("group", "int", 3);
 $cancel		= GETPOST('cancel', 'alpha');
 $contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'useracard';   // To manage different context of search
@@ -195,14 +194,14 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$object->lastname = GETPOST("lastname", 'alpha');
-			$object->firstname = GETPOST("firstname", 'alpha');
-			$object->login = GETPOST("login", 'alpha');
-			$object->api_key = GETPOST("api_key", 'alpha');
-			$object->gender = GETPOST("gender", 'alpha');
-			$birth = dol_mktime(0, 0, 0, GETPOST('birthmonth'), GETPOST('birthday'), GETPOST('birthyear'));
+			$object->lastname = GETPOST("lastname", 'alphanohtml');
+			$object->firstname = GETPOST("firstname", 'alphanohtml');
+			$object->login = GETPOST("login", 'alphanohtml');
+			$object->api_key = GETPOST("api_key", 'alphanohtml');
+			$object->gender = GETPOST("gender", 'aZ09');
+			$birth = dol_mktime(0, 0, 0, GETPOST('birthmonth', 'int'), GETPOST('birthday', 'int'), GETPOST('birthyear', 'int'));
 			$object->birth = $birth;
-			$object->admin = GETPOST("admin", 'alpha');
+			$object->admin = GETPOST("admin", 'int');
 			$object->address = GETPOST('address', 'alphanohtml');
 			$object->zip = GETPOST('zipcode', 'alphanohtml');
 			$object->town = GETPOST('town', 'alphanohtml');
@@ -217,8 +216,8 @@ if (empty($reshook)) {
 			$object->facebook = GETPOST("facebook", 'alphanohtml');
 			$object->linkedin = GETPOST("linkedin", 'alphanohtml');
 
-			$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
-			$object->job = GETPOST("job", 'alpha');
+			$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alphanohtml'));
+			$object->job = GETPOST("job", 'nohtml');
 			$object->signature = GETPOST("signature", 'none');
 			$object->accountancy_code = GETPOST("accountancy_code", 'alphanohtml');
 			$object->note = GETPOST("note", 'none');
@@ -233,10 +232,10 @@ if (empty($reshook)) {
 			$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
 
 			$object->color = GETPOST("color", 'alphanohtml') != '' ? GETPOST("color", 'alphanohtml') : '';
-			$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth'), GETPOST('dateemploymentday'), GETPOST('dateemploymentyear'));
+			$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth', 'int'), GETPOST('dateemploymentday', 'int'), GETPOST('dateemploymentyear', 'int'));
 			$object->dateemployment = $dateemployment;
 
-			$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth'), GETPOST('dateemploymentendday'), GETPOST('dateemploymentendyear'));
+			$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth', 'int'), GETPOST('dateemploymentendday', 'int'), GETPOST('dateemploymentendyear', 'int'));
 			$object->dateemploymentend = $dateemploymentend;
 
 			$object->fk_warehouse = GETPOST('fk_warehouse', 'int');
@@ -348,15 +347,15 @@ if (empty($reshook)) {
 
 				$db->begin();
 
-				$object->lastname = GETPOST("lastname", 'alpha');
-				$object->firstname = GETPOST("firstname", 'alpha');
-				$object->login = GETPOST("login", 'alpha');
-				$object->gender = GETPOST("gender", 'alpha');
-				$birth = dol_mktime(0, 0, 0, GETPOST('birthmonth'), GETPOST('birthday'), GETPOST('birthyear'));
+				$object->lastname = GETPOST("lastname", 'alphanohtml');
+				$object->firstname = GETPOST("firstname", 'alphanohtml');
+				$object->login = GETPOST("login", 'alphanohtml');
+				$object->gender = GETPOST("gender", 'aZ09');
+				$birth = dol_mktime(0, 0, 0, GETPOST('birthmonth', 'int'), GETPOST('birthday', 'int'), GETPOST('birthyear', 'int'));
 				$object->birth = $birth;
 				$object->pass = GETPOST("password", 'none');
-				$object->api_key = (GETPOST("api_key", 'alpha')) ? GETPOST("api_key", 'alpha') : $object->api_key;
-				if (! empty($user->admin)) $object->admin = GETPOST("admin"); 	// admin flag can only be set/unset by an admin user. A test is also done later when forging sql request
+				$object->api_key = (GETPOST("api_key", 'alphanohtml')) ? GETPOST("api_key", 'alphanohtml') : $object->api_key;
+				if (! empty($user->admin)) $object->admin = GETPOST("admin", "int"); 	// admin flag can only be set/unset by an admin user. A test is also done later when forging sql request
 				$object->address = GETPOST('address', 'alphanohtml');
 				$object->zip = GETPOST('zipcode', 'alphanohtml');
 				$object->town = GETPOST('town', 'alphanohtml');
@@ -365,15 +364,17 @@ if (empty($reshook)) {
 				$object->office_phone = GETPOST("office_phone", 'alphanohtml');
 				$object->office_fax = GETPOST("office_fax", 'alphanohtml');
 				$object->user_mobile = GETPOST("user_mobile", 'alphanohtml');
-				$object->skype = GETPOST("skype", 'alpha');
-				$object->twitter = GETPOST("twitter", 'alpha');
-				$object->facebook = GETPOST("facebook", 'alpha');
-				$object->linkedin = GETPOST("linkedin", 'alpha');
-				$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
-				$object->job = GETPOST("job", 'alpha');
+
+				$object->skype = GETPOST("skype", 'alphanohtml');
+				$object->twitter = GETPOST("twitter", 'alphanohtml');
+				$object->facebook = GETPOST("facebook", 'alphanohtml');
+				$object->linkedin = GETPOST("linkedin", 'alphanohtml');
+
+				$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alphanohtml'));
+				$object->job = GETPOST("job", 'nohtml');
 				$object->signature = GETPOST("signature", 'none');
-				$object->accountancy_code = GETPOST("accountancy_code", 'alpha');
-				$object->openid = GETPOST("openid", 'alpha');
+				$object->accountancy_code = GETPOST("accountancy_code", 'alphanohtml');
+				$object->openid = GETPOST("openid", 'alphanohtml');
 				$object->fk_user = GETPOST("fk_user", 'int') > 0 ? GETPOST("fk_user", 'int') : 0;
 				$object->employee = GETPOST('employee', 'int');
 
@@ -383,7 +384,7 @@ if (empty($reshook)) {
 				$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOST("salaryextra", 'alphanohtml') : '';
 				$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
 
-				$object->color = GETPOST("color", 'alpha') != '' ? GETPOST("color", 'alpha') : '';
+				$object->color = GETPOST("color", 'alphanohtml') != '' ? GETPOST("color", 'alphanohtml') : '';
 				$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth', 'int'), GETPOST('dateemploymentday', 'int'), GETPOST('dateemploymentyear', 'int'));
 				$object->dateemployment = $dateemployment;
 				$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth', 'int'), GETPOST('dateemploymentendday', 'int'), GETPOST('dateemploymentendyear', 'int'));
@@ -1203,7 +1204,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	// Position/Job
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("PostOrFunction").'</td>';
 	print '<td>';
-	print '<input class="maxwidth200" type="text" name="job" value="'.GETPOST('job').'">';
+	print '<input class="maxwidth200" type="text" name="job" value="'.GETPOST('job', 'nohtml').'">';
 	print '</td></tr>';
 
 	// Default warehouse
