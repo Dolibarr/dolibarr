@@ -144,38 +144,39 @@ if ($action == 'valid' && $user->rights->facture->creer)
 
 		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 		dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".$conf->global->$constantforkey);
-		$invoice->validate($user, '', $conf->global->$constantforkey);
+		$res = $invoice->validate($user, '', $conf->global->$constantforkey);
 
 		$conf->global->STOCK_CALCULATE_ON_BILL = $savconst;
 	}
 	else
 	{
-	    $invoice->validate($user);
+	    $res = $invoice->validate($user);
 	}
 
 	// Add the payment
-	$payment=new Paiement($db);
-	$payment->datepaye = $now;
-	$payment->fk_account = $bankaccount;
-	$payment->amounts[$invoice->id] = $amountofpayment;
+    if ($res > 0) {
+		$payment = new Paiement($db);
+		$payment->datepaye = $now;
+		$payment->fk_account = $bankaccount;
+		$payment->amounts[$invoice->id] = $amountofpayment;
 
-	$payment->paiementid=$paiementid;
-	$payment->num_payment=$invoice->ref;
+		$payment->paiementid = $paiementid;
+		$payment->num_payment = $invoice->ref;
 
-    $payment->create($user);
-	$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
+		$payment->create($user);
+		$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
 
-	$remaintopay = $invoice->getRemainToPay();
-	if ($remaintopay == 0)
-	{
-	    dol_syslog("Invoice is paid, so we set it to pay");
-	    $result = $invoice->set_paid($user);
-	    if ($result > 0) $invoice->paye = 1;
-	}
-	else
-	{
-	    dol_syslog("Invoice is not paid, remain to pay = ".$remaintopay);
-	}
+		$remaintopay = $invoice->getRemainToPay();
+		if ($remaintopay == 0) {
+			dol_syslog("Invoice is paid, so we set it to pay");
+			$result = $invoice->set_paid($user);
+			if ($result > 0) $invoice->paye = 1;
+		} else {
+			dol_syslog("Invoice is not paid, remain to pay = " . $remaintopay);
+		}
+	} else {
+		dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+    }
 }
 
 if ($action == 'history')
