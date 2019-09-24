@@ -570,9 +570,9 @@ if ($action == "change_property" && GETPOST('btn_update_ticket_prop', 'alpha') &
 {
 	$object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha'));
 
-	$object->type_code = GETPOST('update_value_type', 'az09');
-	$object->severity_code = GETPOST('update_value_severity', 'az09');
-	$object->category_code = GETPOST('update_value_category', 'az09');
+	$object->type_code = GETPOST('update_value_type', 'aZ09');
+	$object->severity_code = GETPOST('update_value_severity', 'aZ09');
+	$object->category_code = GETPOST('update_value_category', 'aZ09');
 
 	$ret = $object->update($user);
 	if ($ret > 0) {

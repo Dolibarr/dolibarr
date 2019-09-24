@@ -273,10 +273,9 @@ class ProductFournisseur extends Product
         $buyprice=price2num($buyprice, 'MU');
 		$charges=price2num($charges, 'MU');
         $qty=price2num($qty);
- 		$error=0;
-
 		$unitBuyPrice = price2num($buyprice/$qty, 'MU');
 
+		$error=0;
 		$now=dol_now();
 
 		$newvat = $tva_tx;
@@ -297,6 +296,12 @@ class ProductFournisseur extends Product
 		}
 		if (empty($localtax1)) $localtax1=0;	// If = '' then = 0
 		if (empty($localtax2)) $localtax2=0;	// If = '' then = 0
+
+		// Check parameters
+		if ($buyprice != '' && ! is_numeric($buyprice))
+		{
+
+		}
 
         $this->db->begin();
 
@@ -331,7 +336,7 @@ class ProductFournisseur extends Product
 			$sql.= " SET fk_user = " . $user->id." ,";
             $sql.= " ref_fourn = '" . $this->db->escape($ref_fourn) . "',";
             $sql.= " desc_fourn = '" . $this->db->escape($desc_fourn) . "',";
-			$sql.= " price = ".price2num($buyprice).",";
+			$sql.= " price = ".$buyprice.",";
 			$sql.= " quantity = ".$qty.",";
 			$sql.= " remise_percent = ".$remise_percent.",";
 			$sql.= " remise = ".$remise.",";
