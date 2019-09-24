@@ -168,7 +168,7 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 	// Purge search criteria
-	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha'))		// Both test must be present to be compatible with all browsers
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 	{
 	    $search_ref="";
 	    $search_user="";
@@ -259,9 +259,9 @@ $title = $langs->trans("ListOfTrips");
 llxHeader('', $title);
 
 $max_year = 5;
-$min_year = 5;
+$min_year = 10;
 
-// Récupération de l'ID de l'utilisateur
+// Get current user id
 $user_id = $user->id;
 
 if ($id > 0)
@@ -803,10 +803,9 @@ if ($resql)
 	}
 	else
 	{
-	    $colspan=1;
-        foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
-
-        print '<tr>'.'<td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+		$colspan=1;
+		foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
+		print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 	}
 
 	// Show total line

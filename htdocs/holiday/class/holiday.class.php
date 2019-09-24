@@ -402,6 +402,8 @@ class Holiday extends CommonObject
 			}
 			$this->db->free($resql);
 
+			$this->fetch_optionals();
+
 			return 1;
 		}
 		else
