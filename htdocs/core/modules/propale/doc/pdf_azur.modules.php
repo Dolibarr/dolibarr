@@ -440,7 +440,7 @@ class pdf_azur extends ModelePDFPropales
 				{
 				    $tmpuser=new User($this->db);
 				    $tmpuser->fetch($object->user_author_id);
-				    $notetoshow.='Affaire suivi par '.$tmpuser->getFullName($langs);
+				    $notetoshow.=$langs->trans("CaseFollowedBy").' '.$tmpuser->getFullName($langs);
 				    if ($tmpuser->email) $notetoshow.=',  Mail: '.$tmpuser->email;
 				    if ($tmpuser->office_phone) $notetoshow.=', Tel: '.$tmpuser->office_phone;
 				}
