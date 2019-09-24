@@ -1311,7 +1311,7 @@ else
                 }
 
                 print '<tr>';
-                print '<td>'.$langs->trans('DateCreateCP').'</td>';
+                print '<td>'.$langs->trans('DateCreation').'</td>';
                 print '<td>'.dol_print_date($object->date_create, 'dayhour').'</td>';
                 print '</tr>';
                 if ($object->statut == Holiday::STATUS_APPROVED || $object->statut == Holiday::STATUS_CANCELED) {

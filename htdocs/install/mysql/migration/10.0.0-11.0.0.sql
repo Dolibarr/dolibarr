@@ -36,6 +36,16 @@ UPDATE llx_expensereport set paid = 1 WHERE fk_statut = 6 and paid = 0;
 
 -- For v11
 
+create table llx_holiday_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_holiday_extrafields ADD INDEX idx_holiday_extrafields (fk_object);
+
 ALTER TABLE llx_societe_rib MODIFY label varchar(200);
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('USER_SENTBYMAIL','Email sent','Executed when an email is sent from user card','user',300);
