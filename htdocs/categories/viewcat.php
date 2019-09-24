@@ -36,7 +36,7 @@ $langs->load("categories");
 
 $id   = GETPOST('id', 'int');
 $label= GETPOST('label', 'alpha');
-$type = GETPOST('type', 'az09');
+$type = GETPOST('type', 'aZ09');
 $action=GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $removeelem = GETPOST('removeelem', 'int');
