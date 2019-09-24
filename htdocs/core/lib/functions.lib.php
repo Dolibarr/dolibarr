@@ -4473,7 +4473,9 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  *									'MS'=Round to Max for stock quantity (MAIN_MAX_DECIMALS_STOCK)
  *									Numeric = Nb of digits for rounding
  * 	@param	int		$alreadysqlnb	Put 1 if you know that content is already universal format number
- *	@return	string					Amount with universal numeric format (Example: '99.99999') or unchanged text if conversion fails. If amount is null or '', it returns ''.
+ *	@return	string					Amount with universal numeric format (Example: '99.99999').
+ *									If conversion fails, it return text unchanged if $rounding = '' or '0' if $rounding is defined.
+ *									If amount is null or '', it returns '' if $rounding = '' or '0' if $rounding is defined..
  *
  *	@see    price()					Opposite function of price2num
  */
