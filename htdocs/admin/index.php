@@ -43,7 +43,7 @@ $wikihelp='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones'
 llxHeader('', $langs->trans("Setup"), $wikihelp);
 
 
-print load_fiche_titre($langs->trans("SetupArea"), '', 'title_setup.png');
+print load_fiche_titre($langs->trans("SetupArea"), '', 'tools_title');
 
 
 if (! empty($conf->global->MAIN_MOTD_SETUPPAGE))
