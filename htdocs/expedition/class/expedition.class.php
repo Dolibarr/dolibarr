@@ -603,6 +603,8 @@ class Expedition extends CommonObject
 				$this->location_incoterms   = $obj->location_incoterms;
 				$this->libelle_incoterms    = $obj->libelle_incoterms;
 
+				$this->lines				= array();
+				
 				$this->db->free($result);
 
 				if ($this->statut == self::STATUS_DRAFT) $this->brouillon = 1;
