@@ -959,9 +959,10 @@ class ExtraFields
 	 * @param  string  $morecss        			More css (to defined size of field. Old behaviour: may also be a numeric)
 	 * @param  int     $objectid       			Current object id
 	 * @param  string  $extrafieldsobjectkey	If defined (for example $object->table_element), use the new method to get extrafields data
+	 * @param  string  $mode                    1=Used for search filters
 	 * @return string
 	 */
-	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $objectid = 0, $extrafieldsobjectkey = '')
+	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $objectid = 0, $extrafieldsobjectkey = '', $mode = 0)
 	{
 		global $conf,$langs,$form;
 
@@ -1116,13 +1117,20 @@ class ExtraFields
 		}
 		elseif ($type == 'boolean')
 		{
-			$checked='';
-			if (!empty($value)) {
-				$checked=' checked value="1" ';
-			} else {
-				$checked=' value="1" ';
+			if (empty($mode))
+			{
+				$checked='';
+				if (!empty($value)) {
+					$checked=' checked value="1" ';
+				} else {
+					$checked=' value="1" ';
+				}
+				$out='<input type="checkbox" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.$checked.' '.($moreparam?$moreparam:'').'>';
 			}
-			$out='<input type="checkbox" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.$checked.' '.($moreparam?$moreparam:'').'>';
+			else
+			{
+				$out.=$form->selectyesno($keyprefix.$key.$keysuffix, $value, 1, false, 1);
+			}
 		}
 		elseif ($type == 'price')
 		{
