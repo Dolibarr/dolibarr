@@ -52,7 +52,7 @@ elseif ($action=="search" && $term != '') {
     $sql = 'SELECT * FROM '.MAIN_DB_PREFIX.'product';
     $sql.= ' WHERE entity IN ('.getEntity('product').')';
     $sql.= ' AND tosell = 1';
-    $sql.= natural_search(array('label','barcode'), $term);
+    $sql.= natural_search(array('ref','label','barcode'), $term);
     $resql = $db->query($sql);
     $rows = array();
     while ($row = $db->fetch_array($resql)) {
