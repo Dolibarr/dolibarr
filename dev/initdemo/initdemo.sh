@@ -50,7 +50,7 @@ fi
 # ----------------------------- if no params on command line
 if [ "x$passwd" = "x" ]
 then
-	export dumpfile=`ls $mydir/mysqldump_dolibarr_*.sql | sort | tail -n 1`
+	export dumpfile=`ls -v $mydir/mysqldump_dolibarr_*.sql | tail -n 1`
 	export dumpfile=`basename $dumpfile`
 
 	# ----------------------------- input file
