@@ -53,6 +53,7 @@ class Categorie extends CommonObject
 	const TYPE_PROJECT   = 'project';
 	const TYPE_ACCOUNT   = 'bank_account';
     const TYPE_BANK_LINE = 'bank_line';
+    const TYPE_STOCK = 'stock';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -75,6 +76,7 @@ class Categorie extends CommonObject
         'project'      => 6,
 		'user'         => 7,
 		'bank_line'    => 8,
+		'stock'    => 9,
 	);
 
     /**
@@ -90,6 +92,7 @@ class Categorie extends CommonObject
 		6 => 'project',
 		7 => 'user',
 		8 => 'bank_line',
+		9 => 'stock',
 	);
 
 	/**
@@ -107,6 +110,7 @@ class Categorie extends CommonObject
         'account'  => 'account',		// old for bank_account
         'bank_account' => 'account',
         'project'  => 'project',
+        'stock'  => 'entrepot',
     );
 
     /**
@@ -124,6 +128,7 @@ class Categorie extends CommonObject
         'account'  => 'account',		// old for bank_account
         'bank_account'=> 'account',
         'project'  => 'project',
+        'stock'  => 'entrepot',
 	);
 
     /**
@@ -141,6 +146,7 @@ class Categorie extends CommonObject
 		'account'  => 'Account',		// old for bank account
 		'bank_account'  => 'Account',
         'project'  => 'Project',
+        'stock'  => 'Entrepot',
 	);
 
     /**
@@ -157,6 +163,7 @@ class Categorie extends CommonObject
 		'user'     => 'user',
         'account'  => 'bank_account',
         'project'  => 'projet',
+        'stock'  => 'entrepot',
 	);
 
 	/**

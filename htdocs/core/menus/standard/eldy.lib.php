@@ -1523,6 +1523,9 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
                 $newmenu->add("/product/stock/massstockmove.php", $langs->trans("MassStockTransferShort"), 1, $user->rights->stock->mouvement->creer);
                 if ($conf->supplier_order->enabled) $newmenu->add("/product/stock/replenish.php", $langs->trans("Replenishment"), 1, $user->rights->stock->mouvement->creer && $user->rights->fournisseur->lire);
 			}
+			//Categories Stock
+			$newmenu->add("/categories/index.php?leftmenu=stock&amp;type=9", $langs->trans("StockCategoriesShort"), 0, $user->rights->categorie->lire, '', $mainmenu, 'cat');
+			$newmenu->add("/categories/card.php?leftmenu=stock&amp;action=create&amp;type=9", $langs->trans("NewCategory"), 1, $user->rights->categorie->creer);
 
 			// Inventory
 			if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
