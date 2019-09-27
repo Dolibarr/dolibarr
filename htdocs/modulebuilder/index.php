@@ -2195,7 +2195,7 @@ elseif (! empty($module))
 									print '<td>';
 									print $proptype;
 									print '</td>';
-									print '<td>';
+									print '<td class="wordbreak">';
 									if ($proparrayofkeyval) {
 										print json_encode($proparrayofkeyval);
 									}
@@ -2344,7 +2344,7 @@ elseif (! empty($module))
 		{
 			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 
-			//$menus = $moduleobj->;
+			$menus = $moduleobj->menu;
 
 			if ($action != 'editfile' || empty($file))
 			{
@@ -2361,9 +2361,6 @@ elseif (! empty($module))
 				print '<br>';
 				print load_fiche_titre($langs->trans("ListOfMenusEntries"), '', '');
 
-				// @TODO
-				print $langs->trans("FeatureNotYetAvailable");
-
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="addproperty">';
@@ -2371,77 +2368,90 @@ elseif (! empty($module))
 				print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
 				print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
 
-				/*
-				 print '<div class="div-table-responsive">';
-				 print '<table class="noborder">';
+				print '<div class="div-table-responsive">';
+				print '<table class="noborder">';
 
-				 print '<tr class="liste_titre">';
-				 print_liste_field_titre("Menu",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				 print_liste_field_titre("CronTask",'','',"",$param,'',$sortfield,$sortorder);
-				 print_liste_field_titre("CronFrequency",'',"","",$param,'',$sortfield,$sortorder);
-				 print_liste_field_titre("StatusAtInstall",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				 print_liste_field_titre("Comment",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				 print "</tr>\n";
+				print '<tr class="liste_titre">';
+				print_liste_field_titre("Type", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("fk_menu", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Title", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("mainmenu", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("leftmenu", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("URL", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("LanguageFile", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Position", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Enabled", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("perms", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Target", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("UserType", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print "</tr>\n";
 
-				 if (count($menus))
-				 {
-				 foreach ($cronjobs as $cron)
-				 {
-				 print '<tr class="oddeven">';
+				if (count($menus))
+				{
+					foreach ($menus as $menu)
+					{
+						print '<tr class="oddeven">';
 
-				 print '<td>';
-				 print $cron['label'];
-				 print '</td>';
+						print '<td>';
+						print $menu['type'];
+						print '</td>';
 
-				 print '<td>';
-				 if ($cron['jobtype']=='method')
-				 {
-				 $text=$langs->trans("CronClass");
-				 $texttoshow=$langs->trans('CronModule').': '.$module.'<br>';
-				 $texttoshow.=$langs->trans('CronClass').': '. $cron['class'].'<br>';
-				 $texttoshow.=$langs->trans('CronObject').': '. $cron['objectname'].'<br>';
-				 $texttoshow.=$langs->trans('CronMethod').': '. $cron['method'];
-				 $texttoshow.='<br>'.$langs->trans('CronArgs').': '. $cron['parameters'];
-				 $texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($cron['comment']);
-				 }
-				 elseif ($cron['jobtype']=='command')
-				 {
-				 $text=$langs->trans('CronCommand');
-				 $texttoshow=$langs->trans('CronCommand').': '.dol_trunc($cron['command']);
-				 $texttoshow.='<br>'.$langs->trans('CronArgs').': '. $cron['parameters'];
-				 $texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($cron['comment']);
-				 }
-				 print $form->textwithpicto($text, $texttoshow, 1);
-				 print '</td>';
+						print '<td>';
+						print $menu['fk_menu'];
+						print '</td>';
 
-				 print '<td>';
-				 if($cron['unitfrequency'] == "60") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Minutes');
-				 if($cron['unitfrequency'] == "3600") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Hours');
-				 if($cron['unitfrequency'] == "86400") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Days');
-				 if($cron['unitfrequency'] == "604800") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Weeks');
-				 print '</td>';
+						print '<td>';
+						print $menu['titre'];
+						print '</td>';
 
-				 print '<td>';
-				 print $cron['status'];
-				 print '</td>';
+						print '<td>';
+						print $menu['mainmenu'];
+						print '</td>';
 
-				 print '<td>';
-				 if (!empty($cron['comment'])) {print $cron['comment'];}
-				 print '</td>';
+						print '<td>';
+						print $menu['left'];
+						print '</td>';
 
-				 print '</tr>';
-				 }
-				 }
-				 else
-				 {
-				 print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("None").'</td></tr>';
-				 }
+						print '<td>';
+						print $menu['url'];
+						print '</td>';
 
-				 print '</table>';
-				 print '</div>';
+						print '<td>';
+						print $menu['langs'];
+						print '</td>';
 
-				 print '</form>';
-				 */
+						print '<td>';
+						print $menu['position'];
+						print '</td>';
+
+						print '<td>';
+						print $menu['enabled'];
+						print '</td>';
+
+						print '<td>';
+						print $menu['perms'];
+						print '</td>';
+
+						print '<td>';
+						print $menu['target'];
+						print '</td>';
+
+						print '<td>';
+						print $menu['user'];
+						print '</td>';
+
+						print '</tr>';
+					}
+				}
+				else
+				{
+				 	 print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("None").'</td></tr>';
+				}
+
+				print '</table>';
+				print '</div>';
+
+				print '</form>';
 			}
 			else
 			{
@@ -2474,7 +2484,7 @@ elseif (! empty($module))
 		{
 			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 
-			//$perms = $moduleobj->;
+			$perms = $moduleobj->rights;
 
 			if ($action != 'editfile' || empty($file))
 			{
@@ -2492,10 +2502,6 @@ elseif (! empty($module))
 				print '<br>';
 				print load_fiche_titre($langs->trans("ListOfPermissionsDefined"), '', '');
 
-
-				// @TODO
-				print $langs->trans("FeatureNotYetAvailable");
-
 				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="addproperty">';
@@ -2503,77 +2509,50 @@ elseif (! empty($module))
 				print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
 				print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
 
-				/*
-				 print '<div class="div-table-responsive">';
-				 print '<table class="noborder">';
+				print '<div class="div-table-responsive">';
+				print '<table class="noborder">';
 
-				 print '<tr class="liste_titre">';
-				 print_liste_field_titre("CronLabel",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				 print_liste_field_titre("CronTask",'','',"",$param,'',$sortfield,$sortorder);
-				 print_liste_field_titre("CronFrequency",'',"","",$param,'',$sortfield,$sortorder);
-				 print_liste_field_titre("StatusAtInstall",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				 print_liste_field_titre("Comment",$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
-				 print "</tr>\n";
+				print '<tr class="liste_titre">';
+				print_liste_field_titre("ID", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Label", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Permission", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print "</tr>\n";
 
-				 if (count($cronjobs))
-				 {
-				 foreach ($cronjobs as $cron)
-				 {
-				 print '<tr class="oddeven">';
+				if (count($perms))
+				{
+					foreach ($perms as $perm)
+					{
+						print '<tr class="oddeven">';
 
-				 print '<td>';
-				 print $cron['label'];
-				 print '</td>';
+						print '<td>';
+						print $perm[0];
+						print '</td>';
 
-				 print '<td>';
-				 if ($cron['jobtype']=='method')
-				 {
-				 $text=$langs->trans("CronClass");
-				 $texttoshow=$langs->trans('CronModule').': '.$module.'<br>';
-				 $texttoshow.=$langs->trans('CronClass').': '. $cron['class'].'<br>';
-				 $texttoshow.=$langs->trans('CronObject').': '. $cron['objectname'].'<br>';
-				 $texttoshow.=$langs->trans('CronMethod').': '. $cron['method'];
-				 $texttoshow.='<br>'.$langs->trans('CronArgs').': '. $cron['parameters'];
-				 $texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($cron['comment']);
-				 }
-				 elseif ($cron['jobtype']=='command')
-				 {
-				 $text=$langs->trans('CronCommand');
-				 $texttoshow=$langs->trans('CronCommand').': '.dol_trunc($cron['command']);
-				 $texttoshow.='<br>'.$langs->trans('CronArgs').': '. $cron['parameters'];
-				 $texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($cron['comment']);
-				 }
-				 print $form->textwithpicto($text, $texttoshow, 1);
-				 print '</td>';
+						print '<td>';
+						print $perm[1];
+						print '</td>';
 
-				 print '<td>';
-				 if($cron['unitfrequency'] == "60") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Minutes');
-				 if($cron['unitfrequency'] == "3600") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Hours');
-				 if($cron['unitfrequency'] == "86400") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Days');
-				 if($cron['unitfrequency'] == "604800") print $langs->trans('CronEach')." ".($cron['frequency'])." ".$langs->trans('Weeks');
-				 print '</td>';
+						print '<td>';
+						print $perm[4];
+						print '</td>';
 
-				 print '<td>';
-				 print $cron['status'];
-				 print '</td>';
+						print '<td>';
+						print $perm[5];
+						print '</td>';
 
-				 print '<td>';
-				 if (!empty($cron['comment'])) {print $cron['comment'];}
-				 print '</td>';
+						print '</tr>';
+					}
+				}
+				else
+				{
+					 print '<tr><td class="opacitymedium" colspan="4">'.$langs->trans("None").'</td></tr>';
+				}
 
-				 print '</tr>';
-				 }
-				 }
-				 else
-				 {
-				 print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("None").'</td></tr>';
-				 }
+				print '</table>';
+				print '</div>';
 
-				 print '</table>';
-				 print '</div>';
-
-				 print '</form>';
-				 */
+				print '</form>';
 			}
 			else
 			{

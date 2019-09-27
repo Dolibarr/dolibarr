@@ -75,15 +75,15 @@ class box_task extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs;
 
 		$this->max=$max;
 		include_once DOL_DOCUMENT_ROOT."/projet/class/task.class.php";
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
         require_once DOL_DOCUMENT_ROOT."/core/lib/project.lib.php";
         $projectstatic = new Project($this->db);
-		$taskstatic=new Task($db);
-		$form= new Form($db);
+		$taskstatic=new Task($this->db);
+		$form= new Form($this->db);
         $cookie_name='boxfilter_task';
         $boxcontent='';
 
@@ -156,15 +156,17 @@ class box_task extends ModeleBoxes
 			$sql.= " pt.entity = ".$conf->entity;
 			$sql.= " AND p.fk_statut = ".Project::STATUS_VALIDATED;
 			$sql.= " AND (pt.progress < 100 OR pt.progress IS NULL ) "; // 100% is done and not displayed
+            $sql.= " AND p.usage_task = 1 ";
+
 
 			$sql.= " ORDER BY pt.datee ASC, pt.dateo ASC";
-			$sql.= $db->plimit($max, 0);
+			$sql.= $this->db->plimit($max, 0);
 
-			$result = $db->query($sql);
+			$result = $this->db->query($sql);
 			$i = 0;
 			if ($result) {
-				$num = $db->num_rows($result);
-                while ($objp = $db->fetch_object($result)) {
+				$num = $this->db->num_rows($result);
+                while ($objp = $this->db->fetch_object($result)) {
 
                     $taskstatic->id=$objp->rowid;
                     $taskstatic->ref=$objp->ref;

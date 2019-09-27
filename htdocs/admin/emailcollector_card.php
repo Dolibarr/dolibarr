@@ -36,7 +36,7 @@ include_once DOL_DOCUMENT_ROOT.'/emailcollector/lib/emailcollector.lib.php';
 if (!$user->admin) accessforbidden();
 if (empty($conf->emailcollector->enabled)) accessforbidden();
 
-// Load traductions files requiredby by page
+// Load traductions files required by page
 $langs->loadLangs(array("admin", "mails", "other"));
 
 // Get parameters
@@ -116,7 +116,7 @@ if (empty($reshook))
 if (GETPOST('addfilter', 'alpha'))
 {
 	$emailcollectorfilter = new EmailCollectorFilter($db);
-	$emailcollectorfilter->type = GETPOST('filtertype', 'az09');
+	$emailcollectorfilter->type = GETPOST('filtertype', 'aZ09');
 	$emailcollectorfilter->rulevalue = GETPOST('rulevalue', 'alpha');
 	$emailcollectorfilter->fk_emailcollector = $object->id;
 	$emailcollectorfilter->status = 1;
@@ -150,7 +150,7 @@ if ($action == 'deletefilter')
 if (GETPOST('addoperation', 'alpha'))
 {
 	$emailcollectoroperation = new EmailCollectorAction($db);
-	$emailcollectoroperation->type = GETPOST('operationtype', 'az09');
+	$emailcollectoroperation->type = GETPOST('operationtype', 'aZ09');
 	$emailcollectoroperation->actionparam = GETPOST('operationparam', 'none');
 	$emailcollectoroperation->fk_emailcollector = $object->id;
 	$emailcollectoroperation->status = 1;

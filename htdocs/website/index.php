@@ -2237,7 +2237,7 @@ if (! GETPOST('hide_websitemenu'))
 				$formquestion = array(
 					array('type' => 'checkbox', 'name' => 'delete_also_js', 'label' => $langs->trans("DeleteAlsoJs"), 'value' => 0),
 					array('type' => 'checkbox', 'name' => 'delete_also_medias', 'label' => $langs->trans("DeleteAlsoMedias"), 'value' => 0),
-					//array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'az09')?GETPOST('newlang', 'az09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')),
+					//array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'aZ09')?GETPOST('newlang', 'aZ09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')),
 					//array('type' => 'other','name' => 'newwebsite','label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0))
 				);
 
@@ -2252,7 +2252,7 @@ if (! GETPOST('hide_websitemenu'))
 				$formquestion = array(
 				array('type' => 'text', 'name' => 'siteref', 'label'=> $langs->trans("WebSite")  ,'value'=> 'copy_of_'.$object->ref),
 				//array('type' => 'checkbox', 'name' => 'is_a_translation', 'label' => $langs->trans("SiteIsANewTranslation"), 'value' => 0),
-				//array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'az09')?GETPOST('newlang', 'az09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')),
+				//array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'aZ09')?GETPOST('newlang', 'aZ09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')),
 				//array('type' => 'other','name' => 'newwebsite','label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0))
 				);
 
@@ -2266,7 +2266,7 @@ if (! GETPOST('hide_websitemenu'))
 				// Confirmation to clone
 				if ($action == 'createpagefromclone') {
 					// Create an array for form
-					$preselectedlanguage = GETPOST('newlang', 'az09') ? GETPOST('newlang', 'az09') : ($objectpage->lang ? $objectpage->lang : $langs->defaultlang);
+					$preselectedlanguage = GETPOST('newlang', 'aZ09') ? GETPOST('newlang', 'aZ09') : ($objectpage->lang ? $objectpage->lang : $langs->defaultlang);
 					$formquestion = array(
 						array('type' => 'hidden', 'name' => 'sourcepageurl', 'value'=> $objectpage->pageurl),
 						array('type' => 'checkbox', 'tdclass'=>'maxwidth200', 'name' => 'is_a_translation', 'label' => $langs->trans("PageIsANewTranslation"), 'value' => 0),
@@ -2290,7 +2290,8 @@ if (! GETPOST('hide_websitemenu'))
 				print '<div class="websiteselectionsection inline-block">';
 				print '<div class="inline-block">';
 
-				print '<span id="switchckeditorinline">';
+				print '<span id="switchckeditorinline">'."\n";
+				print '<!-- Code to enabled edit inline ckeditor -->'."\n";
 				print '<script type="text/javascript">
 						$(document).ready(function() {
 							var isEditingEnabled = '.($conf->global->WEBSITE_EDITINLINE?'true':'false').';
@@ -2314,7 +2315,8 @@ if (! GETPOST('hide_websitemenu'))
 										CKEDITOR.inline(idtouse, {
 											// Allow some non-standard markup that we used in the introduction.
 											extraAllowedContent: \'span(*);cite(*);q(*);dl(*);dt(*);dd(*);ul(*);li(*);header(*);button(*);h1(*);h2(*);\',
-											removePlugins: \'stylescombo\',
+											//extraPlugins: \'sourcedialog\',
+											removePlugins: \'flash,stylescombo\',
 											// Show toolbar on startup (optional).
 											// startupFocus: true
 										});
@@ -3306,7 +3308,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 					print '<tr>';
 					print '<td>'.$langs->trans("Container").'</td>';
 					print '<td>';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$website->ref.'&pageid='.$answerrecord->id.'">'.$answerrecord->title.'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$website->ref.'&pageid='.$answerrecord->id.'">'.($answerrecord->title ? $answerrecord->title : $langs->trans("NoTitle")).'</a>';
 					print '</td>';
 					print '<td class="tdoverflow100">'.$answerrecord->description;
 					print '</td>';
@@ -3317,7 +3319,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 					print '<tr>';
 					print '<td>'.$answerrecord['type'].'</td>';
 					print '<td>';
-					$backtopageurl = $_SERVER["PHP_SELF"].'?action=replacesiteconfirm&searchstring='.urlencode($searchkey).'&optioncontent='.GETPOST('optioncontent', 'az09').'&optionmeta='.GETPOST('optionmeta', 'az09').'&optionsitefiles='.GETPOST('optionsitefiles', 'az09');
+					$backtopageurl = $_SERVER["PHP_SELF"].'?action=replacesiteconfirm&searchstring='.urlencode($searchkey).'&optioncontent='.GETPOST('optioncontent', 'aZ09').'&optionmeta='.GETPOST('optionmeta', 'aZ09').'&optionsitefiles='.GETPOST('optionsitefiles', 'aZ09');
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcss&website='.$website->ref.'&backtopage='.urlencode($backtopageurl).'">'.$langs->trans("EditCss").'</a>';
 					print '</td>';
 					print '<td class="tdoverflow100">';

@@ -24,7 +24,7 @@ create table llx_societe_rib
 (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
   type           varchar(32) DEFAULT 'ban' NOT NULL,							-- 'ban' or 'paypal' or 'card' or 'stripe'
-  label          varchar(30),
+  label          varchar(200),
   fk_soc         integer NOT NULL,
   datec          datetime,
   tms            timestamp,

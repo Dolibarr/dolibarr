@@ -67,7 +67,7 @@ class box_bookmarks extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $db, $conf;
+		global $user, $langs, $conf;
 		$langs->load("boxes");
 
 		$this->max=$max;
@@ -92,18 +92,18 @@ class box_bookmarks extends ModeleBoxes
 			$sql.= " FROM ".MAIN_DB_PREFIX."bookmark as b";
 			$sql.= " WHERE fk_user = ".$user->id;
             $sql.= " AND b.entity = ".$conf->entity;
-			$sql.= $db->order("position", "ASC");
-			$sql.= $db->plimit($max, 0);
+			$sql.= $this->db->order("position", "ASC");
+			$sql.= $this->db->plimit($max, 0);
 
-			$result = $db->query($sql);
+			$result = $this->db->query($sql);
 			if ($result)
 			{
-				$num = $db->num_rows($result);
+				$num = $this->db->num_rows($result);
 
 				$line = 0;
 
                 while ($line < $num) {
-                    $objp = $db->fetch_object($result);
+                    $objp = $this->db->fetch_object($result);
 
                     $this->info_box_contents[$line][0] = array(
                         'td' => 'class="left" width="16"',
@@ -133,12 +133,12 @@ class box_bookmarks extends ModeleBoxes
                     );
                 }
 
-                $db->free($result);
+                $this->db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
             }
         } else {

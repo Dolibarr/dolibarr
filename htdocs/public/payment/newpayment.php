@@ -1834,7 +1834,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 
 		print '<br>';
 
-		print '<!-- STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = '.$conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION.' STRIPE_USE_NEW_CHECKOUT = '.$conf->global->STRIPE_USE_NEW_CHECKOUT.' -->'."\n";
+		print '<!-- Form payment-form STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = '.$conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION.' STRIPE_USE_NEW_CHECKOUT = '.$conf->global->STRIPE_USE_NEW_CHECKOUT.' -->'."\n";
 		print '<form action="'.$_SERVER['REQUEST_URI'].'" method="POST" id="payment-form">'."\n";
 
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
@@ -1909,7 +1909,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 
             <br>';
 
-       	    print '<button class="button buttonpayment" style="text-align: center; padding-left: 0; padding-right: 0;" id="buttontopay" data-secret="'.$paymentintent->client_secret.'">'.$langs->trans("ValidatePayment").'</button>';
+       	    print '<button class="button buttonpayment" style="text-align: center; padding-left: 0; padding-right: 0;" id="buttontopay" data-secret="'.(is_object($paymentintent) ? $paymentintent->client_secret : '').'">'.$langs->trans("ValidatePayment").'</button>';
             print '<img id="hourglasstopay" class="hidden" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/working.gif'.'">';
 
     	    print '
@@ -1943,7 +1943,6 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 		{
 			print '<!-- JS Code for Stripe components -->';
     		print '<script src="https://js.stripe.com/v3/"></script>'."\n";
-    		$urllogofull = 'http://home.destailleur.fr:805/dolibarr_dev/htdocs/viewimage.php?modulepart=mycompany&entity=1&file=logos%2Fthumbs%2Ffbm+logo_small.png';
     		print '<!-- urllogofull = '.$urllogofull.' -->'."\n";
 
     	    // Code to ask the credit card. This use the default "API version". No way to force API version when using JS code.
@@ -2122,13 +2121,13 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
                     	payment_method_data: {
         			        billing_details: {
         			        	name: cardholderName.value
-        			        	<?php if (GETPOST('email', 'alpha') || (is_object($object) && is_object($object->thirdparty) && ! empty($object->thirdparty->email))) { ?>, email: '<?php echo (GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $object->thirdparty->email); ?>'<?php } ?>
-        			        	<?php if (is_object($object) && is_object($object->thirdparty) && ! empty($object->thirdparty->phone)) { ?>, phone: '<?php echo $object->thirdparty->phone; ?>'<?php } ?>
+        			        	<?php if (GETPOST('email', 'alpha') || (is_object($object) && is_object($object->thirdparty) && ! empty($object->thirdparty->email))) { ?>, email: '<?php echo dol_escape_js(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $object->thirdparty->email); ?>'<?php } ?>
+        			        	<?php if (is_object($object) && is_object($object->thirdparty) && ! empty($object->thirdparty->phone)) { ?>, phone: '<?php echo dol_escape_js($object->thirdparty->phone); ?>'<?php } ?>
         			        	<?php if (is_object($object) && is_object($object->thirdparty)) { ?>, address: {
-        			        	    city: '<?php echo $object->thirdparty->town; ?>',
-        			        	    country: '<?php echo $object->thirdparty->country_code; ?>',
-        			        	    line1: '<?php echo $object->thirdparty->address; ?>',
-        			        	    postal_code: '<?php echo $object->thirdparty->zip; ?>'}<?php } ?>
+        			        	    city: '<?php echo dol_escape_js($object->thirdparty->town); ?>',
+        			        	    country: '<?php echo dol_escape_js($object->thirdparty->country_code); ?>',
+        			        	    line1: '<?php echo dol_escape_js(preg_replace('/\s\s+/', ' ', $object->thirdparty->address)); ?>',
+        			        	    postal_code: '<?php echo dol_escape_js($object->thirdparty->zip); ?>'}<?php } ?>
         			        }
               			},
               			save_payment_method: <?php if ($stripecu) { print 'true'; } else { print 'false'; } ?>	/* true when a customer was provided when creating payment intent. true ask to save the card */
@@ -2249,11 +2248,18 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     	    function stripeTokenHandler(token) {
     	      // Insert the token ID into the form so it gets submitted to the server
     	      var form = document.getElementById('payment-form');
+
     	      var hiddenInput = document.createElement('input');
     	      hiddenInput.setAttribute('type', 'hidden');
     	      hiddenInput.setAttribute('name', 'stripeToken');
     	      hiddenInput.setAttribute('value', token.id);
     	      form.appendChild(hiddenInput);
+
+			  var hiddenInput2 = document.createElement('input');
+			  hiddenInput2.setAttribute('type', 'hidden');
+			  hiddenInput2.setAttribute('name', 'token');
+              hiddenInput2.setAttribute('value', '<?php echo $_SESSION["newtoken"]; ?>');
+			  form.appendChild(hiddenInput2);
 
     	      // Submit the form
     	      jQuery('#buttontopay').hide();
@@ -2266,11 +2272,18 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     		function stripeSourceHandler(source) {
     		  // Insert the source ID into the form so it gets submitted to the server
     		  var form = document.getElementById('payment-form');
+
     		  var hiddenInput = document.createElement('input');
     		  hiddenInput.setAttribute('type', 'hidden');
     		  hiddenInput.setAttribute('name', 'stripeSource');
     		  hiddenInput.setAttribute('value', source.id);
     		  form.appendChild(hiddenInput);
+
+			  var hiddenInput2 = document.createElement('input');
+			  hiddenInput2.setAttribute('type', 'hidden');
+			  hiddenInput2.setAttribute('name', 'token');
+              hiddenInput2.setAttribute('value', '<?php echo $_SESSION["newtoken"]; ?>');
+			  form.appendChild(hiddenInput2);
 
     		  // Submit the form
     	      jQuery('#buttontopay').hide();

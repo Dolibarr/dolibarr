@@ -204,7 +204,7 @@ $tabsql[28]= "SELECT h.rowid as rowid, h.code, h.label, h.affect, h.delay, h.new
 $tabsql[29]= "SELECT rowid   as rowid, code, label, percent, position, active FROM ".MAIN_DB_PREFIX."c_lead_status";
 $tabsql[30]= "SELECT rowid, code, name, paper_size, orientation, metric, leftmargin, topmargin, nx, ny, spacex, spacey, width, height, font_size, custom_x, custom_y, active FROM ".MAIN_DB_PREFIX."c_format_cards";
 //$tabsql[31]= "SELECT s.rowid as rowid, pcg_version, s.label, s.active FROM ".MAIN_DB_PREFIX."accounting_system as s";
-$tabsql[32]= "SELECT a.id    as rowid, a.entity, a.code, a.fk_country as country_id, c.code as country_code, c.label as country, a.day, a.month, a.year, a.active FROM ".MAIN_DB_PREFIX."c_hrm_public_holiday as a LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON a.fk_country=c.rowid AND c.active=1";
+$tabsql[32]= "SELECT a.id    as rowid, a.entity, a.code, a.fk_country as country_id, c.code as country_code, c.label as country, a.dayrule, a.day, a.month, a.year, a.active FROM ".MAIN_DB_PREFIX."c_hrm_public_holiday as a LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON a.fk_country=c.rowid AND c.active=1";
 $tabsql[33]= "SELECT rowid, pos, code, label, active FROM ".MAIN_DB_PREFIX."c_hrm_department";
 $tabsql[34]= "SELECT rowid, pos, code, label, c_level, active FROM ".MAIN_DB_PREFIX."c_hrm_function";
 $tabsql[35]= "SELECT c.rowid, c.label, c.active, c.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_cat c";
@@ -244,14 +244,14 @@ $tabsqlsort[28]="country ASC, code ASC";
 $tabsqlsort[29]="position ASC";
 $tabsqlsort[30]="code ASC";
 //$tabsqlsort[31]="pcg_version ASC";
-$tabsqlsort[32]="year ASC, month ASC, day ASC";
+$tabsqlsort[32]="country, year ASC, month ASC, day ASC";
 $tabsqlsort[33]="code ASC";
 $tabsqlsort[34]="code ASC";
 $tabsqlsort[35]="c.label ASC";
 $tabsqlsort[36]="r.fk_c_exp_tax_cat ASC, r.range_ik ASC";
 $tabsqlsort[37]="r.unit_type ASC, r.scale ASC, r.code ASC";
 
-// Nom des champs en resultat de select pour affichage du dictionnaire
+// Field names in select result for dictionary display
 $tabfield=array();
 $tabfield[1] = "code,libelle,country";
 $tabfield[2] = "code,libelle,region_id,region,country";   // "code,libelle,region,country_code-country"
@@ -284,14 +284,14 @@ $tabfield[28]= "code,label,affect,delay,newbymonth,country_id,country";
 $tabfield[29]= "code,label,percent,position";
 $tabfield[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 //$tabfield[31]= "pcg_version,label";
-$tabfield[32]= "code,year,month,day,country_id,country";
+$tabfield[32]= "code,dayrule,year,month,day,country_id,country";
 $tabfield[33]= "code,label";
 $tabfield[34]= "code,label";
 $tabfield[35]= "label";
 $tabfield[36]= "range_ik,fk_c_exp_tax_cat";
 $tabfield[37]= "code,label,short_label,unit_type,scale";
 
-// Nom des champs d'edition pour modification d'un enregistrement
+// Edit field names for editing a record
 $tabfieldvalue=array();
 $tabfieldvalue[1] = "code,libelle,country";
 $tabfieldvalue[2] = "code,libelle,region";   // "code,libelle,region"
@@ -324,14 +324,14 @@ $tabfieldvalue[28]= "code,label,affect,delay,newbymonth,country";
 $tabfieldvalue[29]= "code,label,percent,position";
 $tabfieldvalue[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 //$tabfieldvalue[31]= "pcg_version,label";
-$tabfieldvalue[32]= "code,day,month,year,country";
+$tabfieldvalue[32]= "code,dayrule,day,month,year,country";
 $tabfieldvalue[33]= "code,label";
 $tabfieldvalue[34]= "code,label";
 $tabfieldvalue[35]= "label";
 $tabfieldvalue[36]= "range_ik,fk_c_exp_tax_cat";
 $tabfieldvalue[37]= "code,label,short_label,unit_type,scale";
 
-// Nom des champs dans la table pour insertion d'un enregistrement
+// Field names in the table for inserting a record
 $tabfieldinsert=array();
 $tabfieldinsert[1] = "code,libelle,fk_pays";
 $tabfieldinsert[2] = "code_departement,nom,fk_region";
@@ -365,7 +365,7 @@ $tabfieldinsert[29]= "code,label,percent,position";
 $tabfieldinsert[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 //$tabfieldinsert[31]= "pcg_version,label";
 //$tabfieldinsert[32]= "code,label,range_account,sens,category_type,formula,position,fk_country";
-$tabfieldinsert[32]= "code,day,month,year,fk_country";
+$tabfieldinsert[32]= "code,dayrule,day,month,year,fk_country";
 $tabfieldinsert[33]= "code,label";
 $tabfieldinsert[34]= "code,label";
 $tabfieldinsert[35]= "label";
@@ -487,7 +487,7 @@ $tabhelp[28] = array('affect'=>$langs->trans("FollowedByACounter"),'delay'=>$lan
 $tabhelp[29] = array('code'=>$langs->trans("EnterAnyCode"), 'percent'=>$langs->trans("OpportunityPercent"), 'position'=>$langs->trans("PositionIntoComboList"));
 $tabhelp[30] = array('code'=>$langs->trans("EnterAnyCode"), 'name'=>$langs->trans("LabelName"), 'paper_size'=>$langs->trans("LabelPaperSize"));
 //$tabhelp[31] = array('pcg_version'=>$langs->trans("EnterAnyCode"));
-$tabhelp[32] = array('code'=>$langs->trans("EnterAnyCode"), 'daterule'=>"Use 'date'", 'country'=>$langs->trans("EnterACountryOnlyIfSpecificToOneCountry"), 'year'=>$langs->trans("ZeroMeansEveryYear"));
+$tabhelp[32] = array('code'=>$langs->trans("EnterAnyCode"), 'dayrule'=>"Keep empty for a date defined with month and day (most common case).<br>Use a keyword like 'easter', 'eastermonday', ... for a date predefined by complex rules.", 'country'=>$langs->trans("EnterACountryOnlyIfSpecificToOneCountry"), 'year'=>$langs->trans("ZeroMeansEveryYear"));
 $tabhelp[33] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[34] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[35] = array();
@@ -979,7 +979,7 @@ if ($sortfield) $paramwithsearch.= '&sortfield='.urlencode($sortfield);
 if (GETPOST('from')) $paramwithsearch.= '&from='.urlencode(GETPOST('from', 'alpha'));
 
 
-// Confirmation de la suppression de la ligne
+// Confirmation of the deletion of the line
 if ($action == 'delete')
 {
     print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'rowid='.urlencode($rowid).'&code='.urlencode($code).$paramwithsearch, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
@@ -991,7 +991,7 @@ if ($action == 'delete')
  */
 if ($id)
 {
-    // Complete requete recherche valeurs avec critere de tri
+    // Complete search values request with sort criteria
     $sql=$tabsql[$id];
 
     if (! preg_match('/ WHERE /', $sql)) $sql.= " WHERE 1 = 1";
@@ -1283,8 +1283,8 @@ if ($id)
         {
         	if ($fieldlist[$field] == 'entity') continue;
 
-            // Determine le nom du champ par rapport aux noms possibles
-            // dans les dictionnaires de donnees
+            // Determines the name of the field in relation to the possible names
+            // in data dictionaries
             $showfield=1;							  	// By defaut
             $align="left";
             $cssprefix='';
@@ -1850,14 +1850,14 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'lang');
 			print '</td>';
 		}
-		// Le type de l'element (pour les type de contact)
+		// The type of the element (for contact types)
 		elseif ($fieldlist[$field] == 'element')
 		{
 			print '<td>';
 			print $form->selectarray('element', $elementList, (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''));
 			print '</td>';
 		}
-		// La source de l'element (pour les type de contact)
+		// The source of the element (for contact types)
 		elseif ($fieldlist[$field] == 'source')
 		{
 			print '<td>';
