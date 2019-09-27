@@ -383,6 +383,11 @@ class pdf_beluga extends ModelePDFProjects
                         'lang'=>'agenda')
                 );
 
+                $hookmanager->initHooks(array('completeListOfReferent'));
+                $hookmanager->executeHooks('completeListOfReferent', ['listofreferent'=>$listofreferent], $object, $action);
+                if(!empty($hookmanager->resArray)) {
+                    $listofreferent = array_merge($listofreferent, $hookmanager->resArray);
+                }
 
                 foreach ($listofreferent as $key => $value)
                 {
@@ -392,17 +397,13 @@ class pdf_beluga extends ModelePDFProjects
                 	$datefieldname=$value['datefieldname'];
                 	$qualified=$value['test'];
                 	$langstoload=$value['lang'];
+                    $projectField=isset($value['project_field']) ? $value['project_field'] : 'fk_projet';
                 	$langs->load($langstoload);
 
                     if (! $qualified) continue;
 
                     //var_dump("$key, $tablename, $datefieldname, $dates, $datee");
-                    $elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee);
-
-                    if ($key == 'agenda')
-                    {
-//                    	var_dump($elementarray);
-                    }
+                    $elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, $projectField);
 
                     $num = count($elementarray);
                     if ($num >= 0)
@@ -416,7 +417,7 @@ class pdf_beluga extends ModelePDFProjects
                         $pdf->SetXY($this->posxref, $curY);
                         $pdf->MultiCell($this->posxstatut - $this->posxref, 3, $outputlangs->transnoentities($title), 0, 'L');
 
-                        $selectList = $formproject->select_element($tablename, $project->thirdparty->id);
+                        $selectList = $formproject->select_element($tablename, $project->thirdparty->id, '', -2, $projectField);
                         $nexY = $pdf->GetY() + 1;
                         $curY = $nexY;
                         $pdf->SetXY($this->posxref, $curY);
@@ -591,9 +592,9 @@ class pdf_beluga extends ModelePDFProjects
                                 // Amount without tax
                                 if (empty($value['disableamount'])) {
                                     $pdf->SetXY($this->posxamountht, $curY);
-                                    $pdf->MultiCell($this->posxamountttc - $this->posxamountht, 3, (isset($element->total_ht) ? price($element->total_ht) : '&nbsp;'), 1, 'R');
+                                    $pdf->MultiCell($this->posxamountttc - $this->posxamountht, 3, (isset($element->total_ht) ? price($element->total_ht) : ''), 1, 'R');
                                     $pdf->SetXY($this->posxamountttc, $curY);
-                                    $pdf->MultiCell($this->posxstatut - $this->posxamountttc, 3, (isset($element->total_ttc) ? price($element->total_ttc) : '&nbsp;'), 1, 'R');
+                                    $pdf->MultiCell($this->posxstatut - $this->posxamountttc, 3, (isset($element->total_ttc) ? price($element->total_ttc) : ''), 1, 'R');
                                 } else {
                                 	$pdf->SetXY($this->posxamountht, $curY);
                                 	if ($key == 'agenda')
@@ -630,9 +631,9 @@ class pdf_beluga extends ModelePDFProjects
                                 $pdf->SetXY($this->posxref, $curY);
                                 $pdf->MultiCell($this->posxamountttc - $this->posxref, 3, "TOTAL", 1, 'L');
                                 $pdf->SetXY($this->posxamountht, $curY);
-                                $pdf->MultiCell($this->posxamountttc - $this->posxamountht, 3, (isset($element->total_ht) ? price($total_ht) : '&nbsp;'), 1, 'R');
+                                $pdf->MultiCell($this->posxamountttc - $this->posxamountht, 3, (isset($element->total_ht) ? price($total_ht) : ''), 1, 'R');
                                 $pdf->SetXY($this->posxamountttc, $curY);
-                                $pdf->MultiCell($this->posxstatut - $this->posxamountttc, 3, (isset($element->total_ttc) ? price($total_ttc) : '&nbsp;'), 1, 'R');
+                                $pdf->MultiCell($this->posxstatut - $this->posxamountttc, 3, (isset($element->total_ttc) ? price($total_ttc) : ''), 1, 'R');
                                 $pdf->SetXY($this->posxstatut, $curY);
                                 $pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxstatut, 3, $outputlangs->transnoentities("Nb") . " " . $num, 1, 'L');
                             }

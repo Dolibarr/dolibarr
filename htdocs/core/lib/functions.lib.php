@@ -3015,9 +3015,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
         if (empty($srconly) && in_array($pictowithoutext, array(
 				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'note', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
-                'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', '1downarrow', '1uparrow', '1leftarrow', '1rightarrow',
+				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', '1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 				'jabber','skype','twitter','facebook','linkedin',
-                'chevron-left','chevron-right','chevron-down','chevron-top'
+				'chevron-left','chevron-right','chevron-down','chevron-top'
 			)
 		)) {
 		    $fa='fa';
