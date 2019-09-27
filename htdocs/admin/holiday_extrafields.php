@@ -21,20 +21,20 @@
  */
 
 /**
- *      \file       htdocs/admin/expensereport_extrafields.php
- *		\ingroup    expensereport
- *		\brief      Page to setup extra fields of expensereport
+ *      \file       htdocs/admin/holiday_extrafields.php
+ *		\ingroup    holiday
+ *		\brief      Page to setup extra fields of holiday
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 if (!$user->admin)
 	accessforbidden();
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'errors', 'trips', 'other'));
+$langs->loadLangs(array('admin', 'errors', 'holiday', 'other'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -46,7 +46,7 @@ foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->transnoentiti
 
 $action=GETPOST('action', 'alpha');
 $attrname=GETPOST('attrname', 'alpha');
-$elementtype='expensereport'; //Must be the $table_element of the class that manage extrafield
+$elementtype='holiday'; //Must be the $table_element of the class that manage extrafield
 
 if (!$user->admin) accessforbidden();
 
@@ -63,14 +63,14 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
-llxHeader('', $langs->trans("ExpenseReportsSetup"));
+llxHeader('', $langs->trans("HolidaySetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("ExpenseReportsSetup"), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans("HolidaySetup"), $linkback, 'title_setup');
 
-$head = expensereport_admin_prepare_head();
+$head = holiday_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes', $langs->trans("ExpenseReports"), -1, 'trip');
+dol_fiche_head($head, 'attributes', $langs->trans("Holidays"), -1, 'holiday');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

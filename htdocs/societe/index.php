@@ -288,7 +288,7 @@ if ($result)
 
             print '<tr class="oddeven">';
             // Name
-            print '<td class="nowrap">';
+            print '<td class="nowrap tdoverflowmax200">';
             print $thirdparty_static->getNomUrl(1);
             print "</td>\n";
             // Type

@@ -73,7 +73,7 @@ class box_contacts extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $db, $conf;
+		global $user, $langs, $conf;
 		$langs->load("boxes");
 
 		$this->max=$max;
@@ -93,21 +93,21 @@ class box_contacts extends ModeleBoxes
 			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " AND sp.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if ($user->societe_id) $sql.= " AND sp.fk_soc = ".$user->societe_id;
 			$sql.= " ORDER BY sp.tms DESC";
-			$sql.= $db->plimit($max, 0);
+			$sql.= $this->db->plimit($max, 0);
 
-			$result = $db->query($sql);
+			$result = $this->db->query($sql);
 			if ($result) {
-				$num = $db->num_rows($result);
+				$num = $this->db->num_rows($result);
 
-				$contactstatic=new Contact($db);
-				$societestatic=new Societe($db);
+				$contactstatic=new Contact($this->db);
+				$societestatic=new Societe($this->db);
 
 				$line = 0;
 				while ($line < $num)
 				{
-					$objp = $db->fetch_object($result);
-					$datec=$db->jdate($objp->datec);
-					$datem=$db->jdate($objp->tms);
+					$objp = $this->db->fetch_object($result);
+					$datec=$this->db->jdate($objp->datec);
+					$datem=$this->db->jdate($objp->tms);
 
 					$contactstatic->id=$objp->id;
 					$contactstatic->lastname=$objp->lastname;
@@ -161,12 +161,12 @@ class box_contacts extends ModeleBoxes
 						'text'=>$langs->trans("NoRecordedContacts"),
 					);
 
-				$db->free($result);
+				$this->db->free($result);
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
 					'maxlength'=>500,
-					'text' => ($db->error().' sql='.$sql),
+					'text' => ($this->db->error().' sql='.$sql),
 				);
 			}
 		} else {
