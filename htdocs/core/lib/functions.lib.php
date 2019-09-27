@@ -3015,7 +3015,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
         if (empty($srconly) && in_array($pictowithoutext, array(
 				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'note', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
-                'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow', '1leftarrow', '1rightarrow',
+                'note', 'setup', 'tools_title', 'sign-out', 'split', 'switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow', '1leftarrow', '1rightarrow',
 				'jabber','skype','twitter','facebook','linkedin',
                 'chevron-left','chevron-right','chevron-down','chevron-top'
 			)
@@ -3028,6 +3028,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			if ($pictowithoutext == 'setup') {
 			    $fakey = 'fa-cog';
 			    $fasize = '1.4em';
+			}
+			elseif ($pictowithoutext == 'tools_title') {
+				$fakey = 'fa-tools';
+				$fasize = '2.4em';
 			}
 			elseif ($pictowithoutext == 'switch_off') {
 				$fakey = 'fa-toggle-off';
