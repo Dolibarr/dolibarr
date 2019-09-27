@@ -21,8 +21,7 @@
 /**
  *	\file       htdocs/core/modules/project/doc/pdf_beluga.modules.php
  *	\ingroup    project
- *	\brief      Fichier de la classe permettant de generer les projets au modele beluga
- *	\author	    Charlie Benke
+ *	\brief      File of the class allowing to generate projects with the beluga model
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/modules_project.php';
@@ -50,7 +49,7 @@ if (! empty($conf->agenda->enabled))        require_once DOL_DOCUMENT_ROOT.'/com
 
 
 /**
- *	Class to manage generation of project document Baleine
+ *	Class to manage generation of project document Beluga
  */
 
 class pdf_beluga extends ModelePDFProjects
@@ -83,7 +82,7 @@ class pdf_beluga extends ModelePDFProjects
 		$this->name = "beluga";
 		$this->description = $langs->trans("DocumentModelBeluga");
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
         $this->orientation = 'L';
@@ -104,11 +103,11 @@ class pdf_beluga extends ModelePDFProjects
 		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
 		$this->option_codeproduitservice = 1;      // Affiche code produit-service
 
-		// Recupere emmetteur
+		// Retrieves transmitter
 		$this->emetteur=$mysoc;
 		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default if not defined
 
-        // Defini position des colonnes
+        // Define column position
         if ($this->orientation == 'L' || $this->orientation == 'Landscape') {
             $this->posxref=$this->marge_gauche+1;
             $this->posxdate=$this->marge_gauche+105;
@@ -155,7 +154,7 @@ class pdf_beluga extends ModelePDFProjects
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
 		if ($conf->projet->dir_output)
@@ -268,7 +267,7 @@ class pdf_beluga extends ModelePDFProjects
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
-					// Rect prend une longueur en 3eme param
+					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
 					$pdf->Rect($this->marge_gauche, $tab_top-2, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+2);
 
@@ -680,7 +679,7 @@ class pdf_beluga extends ModelePDFProjects
 
 				$this->result = array('fullpath'=>$file);
 
-				return 1;   // Pas d'erreur
+				return 1;   // No error
 			}
 			else
 			{
@@ -718,7 +717,7 @@ class pdf_beluga extends ModelePDFProjects
 
 		$pdf->SetDrawColor(128, 128, 128);
 
-		// Draw rect of all tab (title + lines). Rect prend une longueur en 3eme param
+		// Draw rect of all tab (title + lines). Rect takes a length in 3rd parameter
 		$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height);
 
 		// line prend une position y en 3eme param

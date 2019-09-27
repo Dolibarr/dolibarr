@@ -20,7 +20,6 @@
  *	\file       htdocs/core/modules/export/export_excel2007.modules.php
  *	\ingroup    export
  *	\brief      File of class to generate export file with Excel format
- *	\author	    Laurent Destailleur
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';

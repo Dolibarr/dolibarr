@@ -19,7 +19,6 @@
  *		\file       htdocs/core/modules/export/export_csv.modules.php
  *		\ingroup    export
  *		\brief      File of class to build exports with CSV format
- *		\author	    Laurent Destailleur
  */
 
 require_once DOL_DOCUMENT_ROOT .'/core/modules/export/modules_export.php';
