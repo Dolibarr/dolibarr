@@ -4714,6 +4714,10 @@ div.dataTables_length select {
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
 }
+.select2-dropdown {
+	border: 1px solid #ccc;
+	box-shadow: 5px 5px 15px #ddd;
+}
 .select2-dropdown-open {
 	background-color: #fff;
 }
@@ -5014,6 +5018,7 @@ dl.dropdown {
     list-style:none;
     max-height: 264px;
     overflow: auto;
+    border-radius: 2px;
 }
 .dropdown dd ul li {
 	white-space: nowrap;

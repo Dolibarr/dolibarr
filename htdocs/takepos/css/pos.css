@@ -129,6 +129,14 @@ table.postablelines tr td {
     height: 40px !important;
 }
 
+div.paymentbordline
+{
+	width:50%; 
+	background-color:#666; 
+	border-radius: 8px; 
+	margin-bottom: 4px;
+}
+
 @media only screen and (max-aspect-ratio: 6/4) {
 	div.description{
 	min-height:20%;
