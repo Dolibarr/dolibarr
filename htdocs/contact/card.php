@@ -475,6 +475,9 @@ else
         // Si edition contact deja existant
         $object = new Contact($db);
         $res=$object->fetch($id, $user);
+        if ($res<0) {
+        	setEventMessage($this->error,'errors');
+        }
 
         // Show tabs
         $head = contact_prepare_head($object);
