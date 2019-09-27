@@ -408,6 +408,7 @@ function New() {
 function Search2() {
 	console.log("Search2");
 	pageproducts=0;
+	jQuery(".catwatermark").hide();
 	$.getJSON('./ajax.php?action=search&term='+$('#search').val(), function(data) {
 		for (i = 0; i < 30; i++) {
 			if (typeof (data[i]) == "undefined"){
