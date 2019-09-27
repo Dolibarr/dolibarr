@@ -300,17 +300,17 @@ if (empty($reshook))
             $object->desiredstock            = GETPOST('desiredstock')?GETPOST('desiredstock'):0;
             $object->canvas             	 = GETPOST('canvas');
             $object->weight             	 = GETPOST('weight');
-            $object->weight_units       	 = GETPOST('weight_units');
+            $object->weight_units       	 = GETPOST('weight_units');		// This is not the fk_unit but the power of unit
             $object->length             	 = GETPOST('size');
-            $object->length_units       	 = GETPOST('size_units');
+            $object->length_units       	 = GETPOST('size_units');		// This is not the fk_unit but the power of unit
             $object->width               	 = GETPOST('sizewidth');
             $object->height             	 = GETPOST('sizeheight');
 	        $object->surface            	 = GETPOST('surface');
-            $object->surface_units      	 = GETPOST('surface_units');
+	        $object->surface_units      	 = GETPOST('surface_units');	// This is not the fk_unit but the power of unit
             $object->volume             	 = GETPOST('volume');
-            $object->volume_units       	 = GETPOST('volume_units');
+            $object->volume_units       	 = GETPOST('volume_units');		// This is not the fk_unit but the power of unit
             $object->finished           	 = GETPOST('finished', 'alpha');
-            $object->fk_unit                 = GETPOST('units', 'alpha');
+            $object->fk_unit                 = GETPOST('units', 'alpha');	// This is the fk_unit of sale
 
 	        $accountancy_code_sell 			 = GETPOST('accountancy_code_sell', 'alpha');
 	        $accountancy_code_sell_intra	 = GETPOST('accountancy_code_sell_intra', 'alpha');
@@ -404,16 +404,16 @@ if (empty($reshook))
 
                 $object->canvas                 = GETPOST('canvas');
                 $object->weight                 = GETPOST('weight');
-                $object->weight_units           = GETPOST('weight_units');
+                $object->weight_units           = GETPOST('weight_units');	// This is not the fk_unit but the power of unit
                 $object->length                 = GETPOST('size');
-                $object->length_units           = GETPOST('size_units');
-                $object->width               	 = GETPOST('sizewidth');
-                $object->height             	 = GETPOST('sizeheight');
+                $object->length_units           = GETPOST('size_units');	// This is not the fk_unit but the power of unit
+                $object->width               	= GETPOST('sizewidth');
+                $object->height             	= GETPOST('sizeheight');
 
                 $object->surface                = GETPOST('surface');
-                $object->surface_units          = GETPOST('surface_units');
+                $object->surface_units          = GETPOST('surface_units');	// This is not the fk_unit but the power of unit
                 $object->volume                 = GETPOST('volume');
-                $object->volume_units           = GETPOST('volume_units');
+                $object->volume_units           = GETPOST('volume_units');	// This is not the fk_unit but the power of unit
                 $object->finished               = GETPOST('finished', 'alpha');
 
 	            $units = GETPOST('units', 'int');
@@ -1044,7 +1044,7 @@ else
             // Weight
             print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="3">';
             print '<input name="weight" size="4" value="'.GETPOST('weight').'">';
-            print $formproduct->selectMeasuringUnits("weight_units", "weight", (empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?0:$conf->global->MAIN_WEIGHT_DEFAULT_UNIT));
+            print $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOSTISSET('weight_units')?GETPOST('weight_units', 'alpha'):(empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?0:$conf->global->MAIN_WEIGHT_DEFAULT_UNIT), 0, 2);
             print '</td></tr>';
             // Length
             if (empty($conf->global->PRODUCT_DISABLE_SIZE))
@@ -1053,7 +1053,7 @@ else
                 print '<input name="size" size="4" value="'.GETPOST('size').'"> x ';
                 print '<input name="sizewidth" size="4" value="'.GETPOST('sizewidth').'"> x ';
                 print '<input name="sizeheight" size="4" value="'.GETPOST('sizeheight').'">';
-                print $formproduct->selectMeasuringUnits("size_units", "size");
+                print $formproduct->selectMeasuringUnits("size_units", "size", GETPOSTISSET('size_units')?GETPOST('size_units', 'alpha'):'0', 0, 2);
                 print '</td></tr>';
             }
             if (empty($conf->global->PRODUCT_DISABLE_SURFACE))
@@ -1061,7 +1061,7 @@ else
                 // Surface
                 print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="3">';
                 print '<input name="surface" size="4" value="'.GETPOST('surface').'">';
-                print $formproduct->selectMeasuringUnits("surface_units", "surface");
+                print $formproduct->selectMeasuringUnits("surface_units", "surface", GETPOSTISSET('surface_units')?GETPOST('surface_units', 'alpha'):'0', 0, 2);
                 print '</td></tr>';
             }
             if (empty($conf->global->PRODUCT_DISABLE_VOLUME))
@@ -1069,7 +1069,7 @@ else
                 // Volume
                 print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="3">';
                 print '<input name="volume" size="4" value="'.GETPOST('volume').'">';
-                print $formproduct->selectMeasuringUnits("volume_units", "volume");
+                print $formproduct->selectMeasuringUnits("volume_units", "volume", GETPOSTISSET('volume_units')?GETPOST('volume_units', 'alpha'):'0', 0, 2);
                 print '</td></tr>';
             }
         }
@@ -1417,7 +1417,7 @@ else
                 // Weight
                 print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="3">';
                 print '<input name="weight" size="5" value="'.$object->weight.'"> ';
-                print $formproduct->selectMeasuringUnits("weight_units", "weight", $object->weight_units);
+                print $formproduct->selectMeasuringUnits("weight_units", "weight", $object->weight_units, 0, 2);
                 print '</td></tr>';
                 if (empty($conf->global->PRODUCT_DISABLE_SIZE))
                 {
@@ -1426,7 +1426,7 @@ else
                   print '<input name="size" size="5" value="'.$object->length.'">x';
                   print '<input name="sizewidth" size="5" value="'.$object->width.'">x';
                   print '<input name="sizeheight" size="5" value="'.$object->height.'"> ';
-                  print $formproduct->selectMeasuringUnits("size_units", "size", $object->length_units);
+                  print $formproduct->selectMeasuringUnits("size_units", "size", $object->length_units, 0, 2);
                   print '</td></tr>';
                 }
                 if (empty($conf->global->PRODUCT_DISABLE_SURFACE))
@@ -1434,7 +1434,7 @@ else
                     // Surface
                     print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="3">';
                     print '<input name="surface" size="5" value="'.$object->surface.'"> ';
-                    print $formproduct->selectMeasuringUnits("surface_units", "surface", $object->surface_units);
+                    print $formproduct->selectMeasuringUnits("surface_units", "surface", $object->surface_units, 0, 2);
                     print '</td></tr>';
                 }
                 if (empty($conf->global->PRODUCT_DISABLE_VOLUME))
@@ -1442,7 +1442,7 @@ else
                     // Volume
                     print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="3">';
                     print '<input name="volume" size="5" value="'.$object->volume.'"> ';
-                    print $formproduct->selectMeasuringUnits("volume_units", "volume", $object->volume_units);
+                    print $formproduct->selectMeasuringUnits("volume_units", "volume", $object->volume_units, 0, 2);
                     print '</td></tr>';
                 }
             }
@@ -1818,11 +1818,12 @@ else
                 print '<tr><td class="titlefield">'.$langs->trans("Nature").'</td><td colspan="2">';
                 print $object->getLibFinished();
                 print '</td></tr>';
+
                 // Weight
                 print '<tr><td class="titlefield">'.$langs->trans("Weight").'</td><td colspan="2">';
                 if ($object->weight != '')
                 {
-                    print $object->weight." ".measuring_units_string($object->weight_units, "weight");
+                	print $object->weight." ".measuring_units_string(0, "weight", $object->weight_units);
                 }
                 else
                 {
@@ -1838,7 +1839,7 @@ else
                         print $object->length;
                         if ($object->width) print " x ".$object->width;
                         if ($object->height) print " x ".$object->height;
-                        print ' '.measuring_units_string($object->length_units, "size");
+                        print ' '.measuring_units_string(0, "size", $object->length_units);
                     }
                     else
                     {
@@ -1852,7 +1853,7 @@ else
                     print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="2">';
                     if ($object->surface != '')
                     {
-                        print $object->surface." ".measuring_units_string($object->surface_units, "surface");
+                    	print $object->surface." ".measuring_units_string(0, "surface", $object->surface_units);
                     }
                     else
                     {
@@ -1866,7 +1867,7 @@ else
                     print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="2">';
                     if ($object->volume != '')
                     {
-                        print $object->volume." ".measuring_units_string($object->volume_units, "volume");
+                    	print $object->volume." ".measuring_units_string(0, "volume", $object->volume_units);
                     }
                     else
                     {
