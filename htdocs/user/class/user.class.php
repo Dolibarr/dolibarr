@@ -1053,6 +1053,8 @@ class User extends CommonObject
 	 */
 	public function setCategories($categories)
 	{
+		$type_categ = Categorie::TYPE_USER;
+
 		// Handle single category
 		if (!is_array($categories)) {
 			$categories = array($categories);
@@ -1061,7 +1063,7 @@ class User extends CommonObject
 		// Get current categories
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 		$c = new Categorie($this->db);
-		$existing = $c->containing($this->id, Categorie::TYPE_USER, 'id');
+		$existing = $c->containing($this->id, $type_categ, 'id');
 
 		// Diff
 		if (is_array($existing)) {
@@ -1075,12 +1077,12 @@ class User extends CommonObject
 		// Process
 		foreach ($to_del as $del) {
 			if ($c->fetch($del) > 0) {
-				$c->del_type($this, 'user');
+				$c->del_type($this, $type_categ);
 			}
 		}
 		foreach ($to_add as $add) {
 			if ($c->fetch($add) > 0) {
-				$c->add_type($this, 'user');
+				$c->add_type($this, $type_categ);
 			}
 		}
 

@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'companies', 'categories'));
 
@@ -115,6 +115,8 @@ if ($action == 'add' && $user->rights->stock->creer)
             if ($id > 0) {
                 setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 
+				$categories = GETPOST('categories', 'array');
+				$object->setCategories($categories);
                 if (!empty($backtopage)) {
                     header("Location: " . $backtopage);
                     exit;
@@ -181,6 +183,8 @@ if ($action == 'update' && $cancel <> $langs->trans("Cancel"))
 			$action = 'edit';
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
+			$categories = GETPOST('categories', 'array');
+			$object->setCategories($categories);
             $action = '';
         }
 	}
@@ -303,6 +307,13 @@ if ($action == 'create')
     // Other attributes
     include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
 
+	if ($conf->categorie->enabled) {
+		// Categories
+		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 1);
+		print $form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, '', 0, '100%');
+		print "</td></tr>";
+	}
 	print '</table>';
 
 	dol_fiche_end();
@@ -440,7 +451,12 @@ else
 
             // Other attributes
             include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
-
+			// Categories
+			if($conf->categorie->enabled) {
+				print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
+				print $form->showCategories($object->id, 'warehouse', 1);
+				print "</td></tr>";
+			}
 			print "</table>";
 
 			print '</div>';
@@ -636,7 +652,7 @@ else
 		/*
 		 * Edition fiche
 		 */
-		if (($action == 'edit' || $action == 're-edit') && 1)
+		if ($action == 'edit' || $action == 're-edit')
 		{
 			$langs->trans("WarehouseEdit");
 
@@ -712,7 +728,20 @@ else
             {
                 print $object->showOptionals($extrafields, 'edit');
             }
-
+			// Tags-Categories
+			if ($conf->categorie->enabled)
+			{
+				print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td colspan="3">';
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 1);
+				$c = new Categorie($db);
+				$cats = $c->containing($object->id, Categorie::TYPE_WAREHOUSE);
+				$arrayselected=array();
+				foreach($cats as $cat) {
+					$arrayselected[] = $cat->id;
+				}
+				print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+				print "</td></tr>";
+			}
 			print '</table>';
 
 			dol_fiche_end();

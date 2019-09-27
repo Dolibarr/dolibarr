@@ -2733,12 +2733,12 @@ class Adherent extends CommonObject
 		// Process
 		foreach ($to_del as $del) {
 			if ($c->fetch($del) > 0) {
-				$c->del_type($this, 'member');
+				$c->del_type($this, Categorie::TYPE_MEMBER);
 			}
 		}
 		foreach ($to_add as $add) {
 			if ($c->fetch($add) > 0) {
-				$c->add_type($this, 'member');
+				$c->add_type($this, Categorie::TYPE_MEMBER);
 			}
 		}
 

@@ -49,7 +49,7 @@ $type = 'bankaccount';
  * Actions
  */
 
-//Order display of bank account
+// Order display of bank account
 if ($action == 'setbankorder') {
     if (dolibarr_set_const($db, "BANK_SHOW_ORDER_OPTION", GETPOST('value', 'alpha'), 'chaine', 0, '', $conf->entity) > 0)
     {

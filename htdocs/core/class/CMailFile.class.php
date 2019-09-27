@@ -80,6 +80,18 @@ class CMailFile
 
     public $headers;
     public $message;
+    /**
+	 * @var array fullfilenames list
+	 */
+	public $filename_list = array();
+	/**
+	 * @var array mimetypes of files list
+	 */
+	public $mimetype_list = array();
+	/**
+	 * @var array filenames list
+	 */
+	public $mimefilename_list = array();
 
 	// Image
     public $html;
@@ -125,6 +137,9 @@ class CMailFile
 		global $conf, $dolibarr_main_data_root;
 
 		$this->sendcontext = $sendcontext;
+		$this->filename_list = $filename_list;
+		$this->mimetype_list = $mimetype_list;
+		$this->mimefilename_list = $mimefilename_list;
 
 		if (empty($replyto)) $replyto=$from;
 

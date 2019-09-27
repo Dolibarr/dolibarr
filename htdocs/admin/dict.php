@@ -256,7 +256,7 @@ $tabsqlsort[36]="r.fk_c_exp_tax_cat ASC, r.range_ik ASC";
 $tabsqlsort[37]="r.unit_type ASC, r.scale ASC, r.code ASC";
 $tabsqlsort[38]="rowid, code ASC";
 
-// Nom des champs en resultat de select pour affichage du dictionnaire
+// Field names in select result for dictionary display
 $tabfield=array();
 $tabfield[1] = "code,libelle,country";
 $tabfield[2] = "code,libelle,region_id,region,country";   // "code,libelle,region,country_code-country"
@@ -297,7 +297,7 @@ $tabfield[36]= "range_ik,fk_c_exp_tax_cat";
 $tabfield[37]= "code,label,short_label,unit_type,scale";
 $tabfield[38]= "code,label,url,icon,entity";
 
-// Nom des champs d'edition pour modification d'un enregistrement
+// Edit field names for editing a record
 $tabfieldvalue=array();
 $tabfieldvalue[1] = "code,libelle,country";
 $tabfieldvalue[2] = "code,libelle,region";   // "code,libelle,region"
@@ -338,7 +338,7 @@ $tabfieldvalue[36]= "range_ik,fk_c_exp_tax_cat";
 $tabfieldvalue[37]= "code,label,short_label,unit_type,scale";
 $tabfieldvalue[38]= "code,label,url,icon";
 
-// Nom des champs dans la table pour insertion d'un enregistrement
+// Field names in the table for inserting a record
 $tabfieldinsert=array();
 $tabfieldinsert[1] = "code,libelle,fk_pays";
 $tabfieldinsert[2] = "code_departement,nom,fk_region";
@@ -991,7 +991,7 @@ if ($sortfield) $paramwithsearch.= '&sortfield='.urlencode($sortfield);
 if (GETPOST('from')) $paramwithsearch.= '&from='.urlencode(GETPOST('from', 'alpha'));
 
 
-// Confirmation de la suppression de la ligne
+// Confirmation of the deletion of the line
 if ($action == 'delete')
 {
     print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'rowid='.urlencode($rowid).'&code='.urlencode($code).$paramwithsearch, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
@@ -1003,7 +1003,7 @@ if ($action == 'delete')
  */
 if ($id)
 {
-    // Complete requete recherche valeurs avec critere de tri
+    // Complete search values request with sort criteria
     $sql=$tabsql[$id];
 
     if (! preg_match('/ WHERE /', $sql)) $sql.= " WHERE 1 = 1";
@@ -1295,8 +1295,8 @@ if ($id)
         {
         	if ($fieldlist[$field] == 'entity') continue;
 
-            // Determine le nom du champ par rapport aux noms possibles
-            // dans les dictionnaires de donnees
+            // Determines the name of the field in relation to the possible names
+            // in data dictionaries
             $showfield=1;							  	// By defaut
             $align="left";
             $cssprefix='';
@@ -1862,14 +1862,14 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'lang');
 			print '</td>';
 		}
-		// Le type de l'element (pour les type de contact)
+		// The type of the element (for contact types)
 		elseif ($fieldlist[$field] == 'element')
 		{
 			print '<td>';
 			print $form->selectarray('element', $elementList, (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''));
 			print '</td>';
 		}
-		// La source de l'element (pour les type de contact)
+		// The source of the element (for contact types)
 		elseif ($fieldlist[$field] == 'source')
 		{
 			print '<td>';

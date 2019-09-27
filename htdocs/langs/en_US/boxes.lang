@@ -34,6 +34,7 @@ BoxTitleLastFicheInter=Latest %s modified interventions
 BoxTitleOldestUnpaidCustomerBills=Customer Invoices: oldest %s unpaid
 BoxTitleOldestUnpaidSupplierBills=Vendor Invoices: oldest %s unpaid
 BoxTitleCurrentAccounts=Open Accounts: balances
+BoxTitleSupplierOrdersAwaitingReception=Supplier orders awaiting reception
 BoxTitleLastModifiedContacts=Contacts/Addresses: last %s modified
 BoxMyLastBookmarks=Bookmarks: latest %s
 BoxOldestExpiredServices=Oldest active expired services
