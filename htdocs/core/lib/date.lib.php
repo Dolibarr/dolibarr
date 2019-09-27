@@ -323,6 +323,7 @@ function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date)
  *                              0 =Input date is local date using PHP server timezone
  *  @return	int					Date as a timestamp
  *		                		19700101020000 -> 7200 with gm=1
+ *								19700101000000 -> 0 with gm=1
  *
  *  @see    dol_print_date(), dol_mktime(), dol_getdate()
  */

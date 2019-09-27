@@ -207,7 +207,7 @@ class ProductFournisseur extends Product
     /**
      *    Modify the purchase price for a supplier
      *
-     *    @param  	int			$qty				            Min quantity for which price is valid
+     *    @param  	float		$qty				            Min quantity for which price is valid
      *    @param  	float		$buyprice			            Purchase price for the quantity min
      *    @param  	User		$user				            Object user user made changes
      *    @param  	string		$price_base_type	            HT or TTC
@@ -230,7 +230,7 @@ class ProductFournisseur extends Product
      *    @param  	string		$desc_fourn     	            Custom description for product_fourn_price
      *    @param  	string		$barcode     	                Barcode
      *    @param  	int		    $fk_barcode_type     	        Barcode type
-     *    @return	int								<0 if KO, >=0 if OK
+     *    @return	int											<0 if KO, >=0 if OK
      */
     public function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges = 0, $remise_percent = 0, $remise = 0, $newnpr = 0, $delivery_time_days = 0, $supplier_reputation = '', $localtaxes_array = array(), $newdefaultvatcode = '', $multicurrency_buyprice = 0, $multicurrency_price_base_type = 'HT', $multicurrency_tx = 1, $multicurrency_code = '', $desc_fourn = '', $barcode = '', $fk_barcode_type = '')
     {
@@ -272,11 +272,10 @@ class ProductFournisseur extends Product
 
         $buyprice=price2num($buyprice, 'MU');
 		$charges=price2num($charges, 'MU');
-        $qty=price2num($qty);
- 		$error=0;
-
+        $qty=price2num($qty, 'MS');
 		$unitBuyPrice = price2num($buyprice/$qty, 'MU');
 
+		$error=0;
 		$now=dol_now();
 
 		$newvat = $tva_tx;
@@ -297,6 +296,12 @@ class ProductFournisseur extends Product
 		}
 		if (empty($localtax1)) $localtax1=0;	// If = '' then = 0
 		if (empty($localtax2)) $localtax2=0;	// If = '' then = 0
+
+		// Check parameters
+		if ($buyprice != '' && ! is_numeric($buyprice))
+		{
+
+		}
 
         $this->db->begin();
 
@@ -331,7 +336,7 @@ class ProductFournisseur extends Product
 			$sql.= " SET fk_user = " . $user->id." ,";
             $sql.= " ref_fourn = '" . $this->db->escape($ref_fourn) . "',";
             $sql.= " desc_fourn = '" . $this->db->escape($desc_fourn) . "',";
-			$sql.= " price = ".price2num($buyprice).",";
+			$sql.= " price = ".$buyprice.",";
 			$sql.= " quantity = ".$qty.",";
 			$sql.= " remise_percent = ".$remise_percent.",";
 			$sql.= " remise = ".$remise.",";
@@ -998,7 +1003,7 @@ class ProductFournisseur extends Product
             //$out .= '<td class="liste_titre right">'.$langs->trans("QtyMin").'</td>';
             $out .= '<td class="liste_titre">'.$langs->trans("User").'</td></tr>';
             foreach ($productFournLogList as $productFournLog) {
-                $out.= '<tr><td class="right">'.dol_print_date($productFournLog['datec'], 'dayhour', 'tzuser').'</td>';
+                $out.= '<tr><td class="right">'.dol_print_date($this->db->jdate($productFournLog['datec']), 'dayhour', 'tzuser').'</td>';
                 $out.= '<td class="right">'.price($productFournLog['price']).'</td>';
                 //$out.= '<td class="right">'.$productFournLog['quantity'].'</td>';
                 $out.= '<td>'.$productFournLog['lastname'].'</td></tr>';
