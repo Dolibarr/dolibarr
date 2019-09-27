@@ -418,6 +418,7 @@ function Search2() {
 				continue;
 			}
 			$("#prodesc"+i).text(data[parseInt(i)]['label']);
+			$("#prodivdesc"+i).show();
 			$("#proimg"+i).attr("src","genimg/?query=pro&id="+data[i]['rowid']);
 			$("#prodiv"+i).data("rowid",data[i]['rowid']);
 			$("#prodiv"+i).data("iscat",0);
