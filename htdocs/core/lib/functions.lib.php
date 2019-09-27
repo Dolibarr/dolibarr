@@ -3015,10 +3015,11 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
         if (empty($srconly) && in_array($pictowithoutext, array(
 				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'note', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
-                'note', 'setup', 'tools_title', 'sign-out', 'split', 'switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow', '1leftarrow', '1rightarrow',
+                'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow', '1leftarrow', '1rightarrow',
 				'jabber','skype','twitter','facebook','linkedin',
-                'chevron-left','chevron-right','chevron-down','chevron-top'
-			)
+                'chevron-left','chevron-right','chevron-down','chevron-top',
+				'title_tools', 'title_home','title_companies','title_products','title_commercial','title_invoicing','title_accountancy', 'title_bank','title_project','title_hrm','title_generic','title_members','title_ticket'
+				)
 		)) {
 		    $fa='fa';
 		    if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fa='fas';
@@ -3029,10 +3030,62 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			    $fakey = 'fa-cog';
 			    $fasize = '1.4em';
 			}
-			elseif ($pictowithoutext == 'tools_title') {
+
+			// Title fa-icon
+			elseif ($pictowithoutext == 'title_tools') {
 				$fakey = 'fa-tools';
 				$fasize = '2.4em';
 			}
+			elseif ($pictowithoutext == 'title_home') {
+				$fakey = 'fa-home';
+				$fasize = '2.4em';
+			}
+			elseif ($pictowithoutext == 'title_companies') {
+				$fakey = 'fa-building';
+				$fasize = '2.4em';
+			}
+			elseif ($pictowithoutext == 'title_products') {
+				$fakey = 'fa-box-open';
+				$fasize = '2.4em';
+			}
+			elseif ($pictowithoutext == 'title_commercial') {
+				$fakey = 'fa-user-tie';
+				$fasize = '2.4em';
+			}
+			elseif ($pictowithoutext == 'title_invoicing') {
+				$fakey = 'fa-file-invoice';
+				$fasize = '2.4em';
+			}
+			elseif ($pictowithoutext == 'title_accountancy') {
+				$fakey = 'fa-coins';
+				$fasize = '2.4em';
+			}
+			elseif ($pictowithoutext == 'title_bank') {
+				$fakey = 'fa-university';
+				$fasize = '2.4em';
+			}
+			elseif ($pictowithoutext == 'title_project') {
+				$fakey = 'fa-project-diagram';
+				$fasize = '2.4em';
+			}
+			elseif ($pictowithoutext == 'title_hrm') {
+				$fakey = 'fa-umbrella-beach';
+				$fasize = '2.4em';
+			}
+			elseif ($pictowithoutext == 'title_members') {
+				$fakey = 'fa-user-friends';
+				$fasize = '2.4em';
+			}
+			elseif ($pictowithoutext == 'title_ticket') {
+				$fakey = 'fa-sticky-note';
+				$fasize = '2.4em';
+			}
+			elseif ($pictowithoutext == 'title_generic') {
+				$fakey = 'fa-folder-open';
+				$fasize = '2.4em';
+			}
+
+			// Button fa-icon
 			elseif ($pictowithoutext == 'switch_off') {
 				$fakey = 'fa-toggle-off';
 				$facolor = '#999';
