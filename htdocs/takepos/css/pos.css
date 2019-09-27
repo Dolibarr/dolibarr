@@ -266,6 +266,12 @@ p.description_content{
 	padding:10px;
 	margin:0px;
 }
+div.description_content {
+	display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
 
 @media screen and (min-width: 892px) {
 	.calcbutton{

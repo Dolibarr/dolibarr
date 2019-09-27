@@ -43,6 +43,8 @@ class modHoliday extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
+		global $conf, $user;   // Required by some include code
+
 		$this->db = $db;
 
 		// Id for module (must be unique).

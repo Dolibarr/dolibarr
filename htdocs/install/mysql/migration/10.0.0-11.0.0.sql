@@ -36,6 +36,21 @@ UPDATE llx_expensereport set paid = 1 WHERE fk_statut = 6 and paid = 0;
 
 -- For v11
 
+create table llx_categorie_warehouse
+(
+  fk_categorie  integer NOT NULL,
+  fk_warehouse  integer NOT NULL,
+  import_key    varchar(14)
+) ENGINE=innodb;
+
+ALTER TABLE llx_categorie_warehouse ADD PRIMARY KEY pk_categorie_warehouse (fk_categorie, fk_warehouse);
+ALTER TABLE llx_categorie_warehouse ADD INDEX idx_categorie_warehouse_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_warehouse ADD INDEX idx_categorie_warehouse_fk_warehouse (fk_warehouse);
+
+ALTER TABLE llx_categorie_warehouse ADD CONSTRAINT fk_categorie_warehouse_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_warehouse ADD CONSTRAINT fk_categorie_warehouse_fk_warehouse_rowid FOREIGN KEY (fk_warehouse) REFERENCES llx_entrepot (rowid);
+
+
 create table llx_holiday_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,

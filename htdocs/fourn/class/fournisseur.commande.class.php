@@ -2804,9 +2804,10 @@ class CommandeFournisseur extends CommonOrder
      *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
      *	@param          User	$user   Objet user
+     *  @param          int		$mode   "opened", "awaiting" for orders awaiting reception
      *	@return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
      */
-    public function load_board($user)
+    public function load_board($user, $mode = 'opened')
     {
         // phpcs:enable
         global $conf, $langs;
@@ -2822,7 +2823,12 @@ class CommandeFournisseur extends CommonOrder
             $clause = " AND";
         }
         $sql.= $clause." c.entity = ".$conf->entity;
-        $sql.= " AND c.fk_statut IN (".self::STATUS_VALIDATED.", ".self::STATUS_ACCEPTED.")";
+        if($mode==='awaiting'){
+            $sql.= " AND c.fk_statut = ".self::STATUS_ORDERSENT;
+        }
+        else{
+            $sql.= " AND c.fk_statut IN (".self::STATUS_VALIDATED.", ".self::STATUS_ACCEPTED.")";
+        }
         if ($user->societe_id) $sql.=" AND c.fk_soc = ".$user->societe_id;
 
         $resql=$this->db->query($sql);
@@ -2834,8 +2840,14 @@ class CommandeFournisseur extends CommonOrder
 	        $response->warning_delay=$conf->commande->fournisseur->warning_delay/60/60/24;
 	        $response->label=$langs->trans("SuppliersOrdersToProcess");
 	        $response->labelShort=$langs->trans("Opened");
-	        $response->url=DOL_URL_ROOT.'/fourn/commande/list.php?statut=1,2,3&mainmenu=commercial&leftmenu=orders_suppliers';
+	        $response->url=DOL_URL_ROOT.'/fourn/commande/list.php?statut=1,2&mainmenu=commercial&leftmenu=orders_suppliers';
 	        $response->img=img_object('', "order");
+
+            if($mode==='awaiting'){
+                $response->label=$langs->trans("SuppliersOrdersAwaitingReception");
+                $response->labelShort=$langs->trans("AwaitingReception");
+                $response->url=DOL_URL_ROOT.'/fourn/commande/list.php?statut=3&mainmenu=commercial&leftmenu=orders_suppliers';
+            }
 
             while ($obj=$this->db->fetch_object($resql))
             {

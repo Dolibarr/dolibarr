@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2006 Destailleur Laurent  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2019 Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ class box_fournisseurs extends ModeleBoxes
         if ($user->rights->societe->lire)
         {
             $sql = "SELECT s.nom as name, s.rowid as socid, s.datec, s.tms, s.status,";
-            $sql.= " s.code_fournisseur,";
+            $sql.= " s.code_fournisseur, s.email as semail,";
             $sql.= " s.logo";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -109,6 +109,7 @@ class box_fournisseurs extends ModeleBoxes
     				$datem=$this->db->jdate($objp->tms);
 					$thirdpartytmp->id = $objp->socid;
                     $thirdpartytmp->name = $objp->name;
+                    $thirdpartytmp->email = $objp->semail;
                     $thirdpartytmp->code_client = $objp->code_client;
                     $thirdpartytmp->logo = $objp->logo;
 
