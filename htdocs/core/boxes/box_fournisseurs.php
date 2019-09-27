@@ -70,15 +70,15 @@ class box_fournisseurs extends ModeleBoxes
      */
     public function loadBox($max = 5)
     {
-        global $conf, $user, $langs, $db;
+        global $conf, $user, $langs;
         $langs->load("boxes");
 
 		$this->max=$max;
 
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-        $thirdpartystatic=new Societe($db);
+        $thirdpartystatic=new Societe($this->db);
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-		$thirdpartytmp=new Fournisseur($db);
+		$thirdpartytmp=new Fournisseur($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedSuppliers", $max));
 
@@ -94,19 +94,19 @@ class box_fournisseurs extends ModeleBoxes
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
             if ($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
             $sql.= " ORDER BY s.tms DESC ";
-            $sql.= $db->plimit($max, 0);
+            $sql.= $this->db->plimit($max, 0);
 
-            $result = $db->query($sql);
+            $result = $this->db->query($sql);
             if ($result)
             {
-                $num = $db->num_rows($result);
+                $num = $this->db->num_rows($result);
 
                 $line = 0;
                 while ($line < $num)
                 {
-                    $objp = $db->fetch_object($result);
-    				$datec=$db->jdate($objp->datec);
-    				$datem=$db->jdate($objp->tms);
+                    $objp = $this->db->fetch_object($result);
+    				$datec=$this->db->jdate($objp->datec);
+    				$datem=$this->db->jdate($objp->tms);
 					$thirdpartytmp->id = $objp->socid;
                     $thirdpartytmp->name = $objp->name;
                     $thirdpartytmp->code_client = $objp->code_client;
@@ -136,12 +136,12 @@ class box_fournisseurs extends ModeleBoxes
                     'text'=>$langs->trans("NoRecordedSuppliers"),
                 );
 
-                $db->free($result);
+                $this->db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
             }
         } else {

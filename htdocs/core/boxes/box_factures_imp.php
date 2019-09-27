@@ -72,15 +72,15 @@ class box_factures_imp extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs;
 
 		$this->max=$max;
 
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-        $facturestatic = new Facture($db);
-        $societestatic = new Societe($db);
+        $facturestatic = new Facture($this->db);
+        $societestatic = new Societe($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpaidCustomerBills", $max));
 
@@ -111,12 +111,12 @@ class box_factures_imp extends ModeleBoxes
 			$sql.= " f.type, f.amount, f.datef, f.total, f.tva, f.total_ttc, f.paye, f.fk_statut, f.rowid";
 			//$sql.= " ORDER BY f.datef DESC, f.ref DESC ";
 			$sql.= " ORDER BY datelimite ASC, f.ref ASC ";
-			$sql.= $db->plimit($max, 0);
+			$sql.= $this->db->plimit($max, 0);
 
-			$result = $db->query($sql);
+			$result = $this->db->query($sql);
 			if ($result)
 			{
-				$num = $db->num_rows($result);
+				$num = $this->db->num_rows($result);
 				$now=dol_now();
 
 				$line = 0;
@@ -124,8 +124,8 @@ class box_factures_imp extends ModeleBoxes
 
 				while ($line < $num)
 				{
-					$objp = $db->fetch_object($result);
-					$datelimite=$db->jdate($objp->datelimite);
+					$objp = $this->db->fetch_object($result);
+					$datelimite=$this->db->jdate($objp->datelimite);
                     $facturestatic->id = $objp->facid;
                     $facturestatic->ref = $objp->ref;
                     $facturestatic->type = $objp->type;
@@ -133,7 +133,7 @@ class box_factures_imp extends ModeleBoxes
                     $facturestatic->total_tva = $objp->total_tva;
                     $facturestatic->total_ttc = $objp->total_ttc;
 					$facturestatic->statut = $objp->fk_statut;
-					$facturestatic->date_lim_reglement = $db->jdate($objp->datelimite);
+					$facturestatic->date_lim_reglement = $this->db->jdate($objp->datelimite);
 
                     $societestatic->id = $objp->socid;
                     $societestatic->name = $objp->name;
@@ -180,14 +180,14 @@ class box_factures_imp extends ModeleBoxes
 
 				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoUnpaidCustomerBills"));
 
-				$db->free($result);
+				$this->db->free($result);
 			}
 			else
 			{
                 $this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
 			}
 		}
