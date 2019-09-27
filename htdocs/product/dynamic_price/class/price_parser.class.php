@@ -104,7 +104,7 @@ class PriceParser
 		{
 			return $langs->trans("ErrorPriceExpression".$code);
 		}
-		else if (in_array($code, array(1, 2, 3, 4, 5, 8, 10, 11, 17, 21, 22))) //Errors which have 1 arg
+		else if (in_array($code, array(1, 2, 3, 4, 5, 8, 10, 11, 17, 21, 22, 24))) //Errors which have 1 arg
 		{
 			return $langs->trans("ErrorPriceExpression".$code, $info);
 		}
