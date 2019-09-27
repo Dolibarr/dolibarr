@@ -107,27 +107,21 @@ if (! empty($conf->global->MAIN_MOTD))
  * Dashboard Dolibarr states (statistics)
  * Hidden for external users
  */
-$boxstat='';
+
+
+$boxstatItems = array();
+$boxstatFromHook = '';
 
 // Load translation files required by page
 $langs->loadLangs(array('commercial', 'bills', 'orders', 'contracts'));
 
 if (empty($user->societe_id) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 {
-    $boxstat.='<div class="box">';
-    $boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable boxtablenobottom nohover" width="100%">';
-    $boxstat.='<tr class="liste_titre">';
-    $boxstat.='<th class="liste_titre">';
-    $boxstat.='<div class="inline-block valignmiddle">'.$langs->trans("DolibarrStateBoard").'</div>';
-    $boxstat.='</th>';
-    $boxstat.='</tr>';
-    $boxstat.='<tr class="nobottom nohover"><td class="tdboxstats nohover flexcontainer">';
-
     $object=new stdClass();
     $parameters=array();
     $action='';
     $reshook=$hookmanager->executeHooks('addStatisticLine', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
-    $boxstat.=$hookmanager->resPrint;
+    $boxstatFromHook=$hookmanager->resPrint;
 
     if (empty($reshook))
     {
@@ -318,6 +312,7 @@ if (empty($user->societe_id) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTAT
 	    {
 	        if ($conditions[$key])
 	        {
+                $boxstatItem = '';
 	            $classe=$classes[$key];
 	            // Search in cache if load_state_board is already realized
 	            if (! isset($boardloaded[$classe]) || ! is_object($boardloaded[$classe]))
@@ -336,28 +331,17 @@ if (empty($user->societe_id) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTAT
 
 	            if (!empty($langfile[$key])) $langs->load($langfile[$key]);
 	            $text=$langs->trans($titres[$key]);
-	            $boxstat.='<a href="'.$links[$key].'" class="boxstatsindicator thumbstat nobold nounderline">';
-	            $boxstat.='<div class="boxstats">';
-	            $boxstat.='<span class="boxstatstext" title="'.dol_escape_htmltag($text).'">'.$text.'</span><br>';
-	            $boxstat.='<span class="boxstatsindicator">'.img_object("", $icons[$key], 'class="inline-block"').' '.($board->nb[$val]?$board->nb[$val]:0).'</span>';
-	            $boxstat.='</div>';
-	            $boxstat.='</a>';
+	            $boxstatItem.='<a href="'.$links[$key].'" class="boxstatsindicator thumbstat nobold nounderline">';
+	            $boxstatItem.='<div class="boxstats">';
+	            $boxstatItem.='<span class="boxstatstext" title="'.dol_escape_htmltag($text).'">'.$text.'</span><br>';
+	            $boxstatItem.='<span class="boxstatsindicator">'.img_object("", $icons[$key], 'class="inline-block"').' '.($board->nb[$val]?$board->nb[$val]:0).'</span>';
+	            $boxstatItem.='</div>';
+	            $boxstatItem.='</a>';
+
+                $boxstatItems[$val] = $boxstatItem;
 	        }
 	    }
     }
-
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
-
-    $boxstat.='</td></tr>';
-    $boxstat.='</table>';
-    $boxstat.='</div>';
 }
 
 
@@ -589,7 +573,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
         'Holiday' =>
             array(
                 'groupName' => 'Holidays',
-			    'globalStatsKey' => 'holidays',
+                'globalStatsKey' => 'holidays',
                 'stats' =>
                     array('Holiday'),
             ),
@@ -710,18 +694,18 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
                 }
 
 
-                $openedDashBoard .= '<div class="box-flex-item">' . "\n";
-                $openedDashBoard .= '	<div class="info-box ' . $openedDashBoardSize . '">' . "\n";
+                $openedDashBoard.= '<div class="box-flex-item">' . "\n";
+                $openedDashBoard.= '	<div class="info-box ' . $openedDashBoardSize . '">' . "\n";
                 $openedDashBoard.= '		<span class="info-box-icon bg-infoxbox-'.$groupKeyLowerCase.'">'."\n";
                 $openedDashBoard.= '		<i class="fa fa-dol-'.$groupKeyLowerCase.'"></i>'."\n";
 
                 if(!empty($groupElement['globalStats'])){
-                    $globalStatInTopOpenedDashBoard[] = $groupElement['globalStats'];
+                    $globalStatInTopOpenedDashBoard[] = $globalStatsKey;
                     $openedDashBoard.= '		<span class="info-box-icon-text" title="'.$groupElement['globalStats']['text'].'">'.$nbTotal.'</span>'."\n";
                 }
 
                 $openedDashBoard.= '		</span>'."\n";
-                    $openedDashBoard .= '		<div class="info-box-content">' . "\n";
+                $openedDashBoard .= '		<div class="info-box-content">' . "\n";
 
                 $openedDashBoard .= '			<span class="info-box-title" title="'.strip_tags($groupName).'">'.$groupName.'</span>' . "\n";
 
@@ -899,6 +883,50 @@ if(!empty($nbworkboardcount))
 $boxlist.=$resultboxes['boxlista'];
 
 $boxlist.= '</div>';
+
+
+if (empty($user->societe_id) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
+{
+    // Remove allready present info in new dash board
+    if(!empty($conf->global->MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD) && is_array($boxstatItems) && count($boxstatItems) > 0){
+        foreach ($boxstatItems as $boxstatItemKey => $boxstatItemHtml) {
+            if (in_array($boxstatItemKey, $globalStatInTopOpenedDashBoard)) {
+                unset($boxstatItems[$boxstatItemKey]);
+            }
+        }
+    }
+
+    if(!empty($boxstatFromHook) || !empty($boxstatItems)){
+        $boxstat.='<div class="box">';
+        $boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable boxtablenobottom nohover" width="100%">';
+        $boxstat.='<tr class="liste_titre">';
+        $boxstat.='<th class="liste_titre">';
+        $boxstat.='<div class="inline-block valignmiddle">'.$langs->trans("DolibarrStateBoard").'</div>';
+        $boxstat.='</th>';
+        $boxstat.='</tr>';
+        $boxstat.='<tr class="nobottom nohover"><td class="tdboxstats nohover flexcontainer">';
+
+        $boxstat.=$boxstatFromHook;
+
+        if(is_array($boxstatItems) && count($boxstatItems) > 0)
+        {
+            $boxstat.= implode('', $boxstatItems);
+        }
+
+        $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+        $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+        $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+        $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+        $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+        $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+        $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+        $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+
+        $boxstat.='</td></tr>';
+        $boxstat.='</table>';
+        $boxstat.='</div>';
+    }
+}
 
 $boxlist.= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
