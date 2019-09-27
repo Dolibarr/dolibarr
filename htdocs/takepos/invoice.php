@@ -137,6 +137,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
     	$bankaccount=$conf->global->$accountname;
     }
 	$now=dol_now();
+	$res = 0;
 
 	$invoice = new Facture($db);
 	$invoice->fetch($placeid);
@@ -179,41 +180,42 @@ if ($action == 'valid' && $user->rights->facture->creer)
 
 		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 		dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".$conf->global->$constantforkey);
-		$invoice->validate($user, '', $conf->global->$constantforkey);
+		$res = $invoice->validate($user, '', $conf->global->$constantforkey);
 
 		$conf->global->STOCK_CALCULATE_ON_BILL = $savconst;
 	}
 	else
 	{
-	    $invoice->validate($user);
+	    $res = $invoice->validate($user);
 	}
 
 	// Add the payment
-	$payment=new Paiement($db);
-	$payment->datepaye = $now;
-	$payment->fk_account = $bankaccount;
-	$payment->amounts[$invoice->id] = $amountofpayment;
+    if ($res > 0) {
+		$payment = new Paiement($db);
+		$payment->datepaye = $now;
+		$payment->fk_account = $bankaccount;
+		$payment->amounts[$invoice->id] = $amountofpayment;
 
-	// If user has not used change control, add total invoice payment
-	if ($amountofpayment == 0) $payment->amounts[$invoice->id] = $invoice->total_ttc;
+		// If user has not used change control, add total invoice payment
+		if ($amountofpayment == 0) $payment->amounts[$invoice->id] = $invoice->total_ttc;
 
-	$payment->paiementid=$paiementid;
-	$payment->num_payment=$invoice->ref;
+		$payment->paiementid=$paiementid;
+		$payment->num_payment=$invoice->ref;
 
-    $payment->create($user);
-	$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
+		$payment->create($user);
+		$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
 
-	$remaintopay = $invoice->getRemainToPay();
-	if ($remaintopay == 0)
-	{
-	    dol_syslog("Invoice is paid, so we set it to pay");
-	    $result = $invoice->set_paid($user);
-	    if ($result > 0) $invoice->paye = 1;
-	}
-	else
-	{
-	    dol_syslog("Invoice is not paid, remain to pay = ".$remaintopay);
-	}
+		$remaintopay = $invoice->getRemainToPay();
+		if ($remaintopay == 0) {
+			dol_syslog("Invoice is paid, so we set it to pay");
+			$result = $invoice->set_paid($user);
+			if ($result > 0) $invoice->paye = 1;
+		} else {
+			dol_syslog("Invoice is not paid, remain to pay = " . $remaintopay);
+		}
+	} else {
+		dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+    }
 }
 
 if ($action == 'history')
@@ -320,8 +322,10 @@ if ($action == "delete") {
         	$resql1 = $db->query($sql);
         	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "facturedet where fk_facture = ".$placeid;
             $resql2 = $db->query($sql);
+			$sql="UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]}." where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+			$resql3 = $db->query($sql);
 
-            if ($resql1 && $resql2)
+            if ($resql1 && $resql2 && $resql3)
             {
             	$db->commit();
             }

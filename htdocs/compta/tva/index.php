@@ -198,7 +198,11 @@ $form=new Form($db);
 $company_static=new Societe($db);
 $tva = new Tva($db);
 
-$description = '';
+$fsearch ='<!-- hidden fields for form -->';
+$fsearch.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+$fsearch.='<input type="hidden" name="modetax" value="'.$modetax.'">';
+
+$description = $fsearch;
 
 // Show report header
 $name = $langs->trans("ReportByMonth");
@@ -208,7 +212,7 @@ if ($modetax == 1) $calcmode=$langs->trans('OptionVATDebitOption');
 if ($modetax == 2) $calcmode=$langs->trans('OptionPaymentForProductAndServices');
 $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')';
 
-$description = $langs->trans("VATSummary").'<br>';
+$description .= $langs->trans("VATSummary").'<br>';
 if ($conf->global->TAX_MODE_SELL_PRODUCT == 'invoice') $description.=$langs->trans("RulesVATDueProducts");
 if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment') $description.=$langs->trans("RulesVATInProducts");
 if ($conf->global->TAX_MODE_SELL_SERVICE == 'invoice') $description.='<br>'.$langs->trans("RulesVATDueServices");

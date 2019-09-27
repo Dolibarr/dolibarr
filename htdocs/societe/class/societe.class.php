@@ -3914,17 +3914,17 @@ class Societe extends CommonObject
 			while($obj=$this->db->fetch_object($resql)) {
                 $tmpobject->id=$obj->rowid;
 
-				if ($obj->fk_statut != Facture::STATUS_DRAFT                                           // Not a draft
-					&& ! ($obj->fk_statut == Facture::STATUS_ABANDONED && $obj->close_code == 'replaced')  // Not a replaced invoice
+                if ($obj->fk_statut != $tmpobject::STATUS_DRAFT                                           // Not a draft
+                	&& ! ($obj->fk_statut == $tmpobject::STATUS_ABANDONED && $obj->close_code == 'replaced')  // Not a replaced invoice
 					)
 				{
 					$outstandingTotal+= $obj->total_ht;
 					$outstandingTotalIncTax+= $obj->total_ttc;
 				}
 				if ($obj->paye == 0
-					&& $obj->fk_statut != Facture::STATUS_DRAFT    		// Not a draft
-					&& $obj->fk_statut != Facture::STATUS_ABANDONED	    // Not abandonned
-					&& $obj->fk_statut != Facture::STATUS_CLOSED)   	// Not classified as paid
+					&& $obj->fk_statut != $tmpobject::STATUS_DRAFT    		// Not a draft
+					&& $obj->fk_statut != $tmpobject::STATUS_ABANDONED	    // Not abandonned
+					&& $obj->fk_statut != $tmpobject::STATUS_CLOSED)   		// Not classified as paid
 				//$sql .= " AND (fk_statut <> 3 OR close_code <> 'abandon')";		// Not abandonned for undefined reason
 				{
 					$paiement = $tmpobject->getSommePaiement();
@@ -3935,7 +3935,11 @@ class Societe extends CommonObject
 				}
 
                 //if credit note is converted but not used
-                if($mode == 'supplier' && $obj->type == FactureFournisseur::TYPE_CREDIT_NOTE  && $tmpobject->isCreditNoteUsed())$outstandingOpened-=$tmpobject->getSumFromThisCreditNotesNotUsed();
+                // TODO Do this also for customer ?
+                if($mode == 'supplier' && $obj->type == FactureFournisseur::TYPE_CREDIT_NOTE  && $tmpobject->isCreditNoteUsed())
+                {
+                	$outstandingOpened-=$tmpobject->getSumFromThisCreditNotesNotUsed();
+                }
 			}
 			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);	// 'opened' is 'incl taxes'
 		}
@@ -4033,22 +4037,16 @@ class Societe extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param 	int[]|int 	$categories 	Category ID or array of Categories IDs
-	 * @param 	string 		$type 			Category type ('customer' or 'supplier')
+	 * @param 	string 		$type_categ 			Category type ('customer' or 'supplier')
 	 * @return	int							<0 if KO, >0 if OK
 	 */
-	public function setCategories($categories, $type)
+	public function setCategories($categories, $type_categ)
 	{
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
 		// Decode type
-		if ($type == 'customer') {
-			$type_id = Categorie::TYPE_CUSTOMER;
-			$type_text = 'customer';
-		} elseif ($type == 'supplier') {
-			$type_id = Categorie::TYPE_SUPPLIER;
-			$type_text = 'supplier';
-		} else {
-			dol_syslog(__METHOD__ . ': Type ' . $type .  'is an unknown company category type. Done nothing.', LOG_ERR);
+		if (! in_array($type_categ, array(Categorie::TYPE_CUSTOMER, Categorie::TYPE_SUPPLIER))) {
+			dol_syslog(__METHOD__ . ': Type ' . $type_categ .  'is an unknown company category type. Done nothing.', LOG_ERR);
 			return -1;
 		}
 
@@ -4059,7 +4057,7 @@ class Societe extends CommonObject
 
 		// Get current categories
 		$c = new Categorie($this->db);
-		$existing = $c->containing($this->id, $type_id, 'id');
+		$existing = $c->containing($this->id, $type_categ, 'id');
 
 		// Diff
 		if (is_array($existing)) {
@@ -4075,13 +4073,13 @@ class Societe extends CommonObject
 		// Process
 		foreach ($to_del as $del) {
 			if ($c->fetch($del) > 0) {
-				$c->del_type($this, $type_text);
+				$c->del_type($this, $type_categ);
 			}
 		}
 		foreach ($to_add as $add) {
 			if ($c->fetch($add) > 0)
 			{
-				$result = $c->add_type($this, $type_text);
+				$result = $c->add_type($this, $type_categ);
 				if ($result < 0)
 				{
 					$error++;

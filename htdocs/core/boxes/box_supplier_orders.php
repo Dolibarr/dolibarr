@@ -69,15 +69,15 @@ class box_supplier_orders extends ModeleBoxes
      */
     public function loadBox($max = 5)
     {
-        global $conf, $user, $langs, $db;
+        global $conf, $user, $langs;
         $langs->load("boxes");
 
         $this->max = $max;
 
         include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-        $supplierorderstatic=new CommandeFournisseur($db);
+        $supplierorderstatic=new CommandeFournisseur($this->db);
         include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-        $thirdpartytmp = new Fournisseur($db);
+        $thirdpartytmp = new Fournisseur($this->db);
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLatest".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."SupplierOrders", $max));
 
@@ -100,18 +100,18 @@ class box_supplier_orders extends ModeleBoxes
             if ($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
             if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY c.date_commande DESC, c.ref DESC ";
             else $sql.= " ORDER BY c.tms DESC, c.ref DESC ";
-            $sql.= $db->plimit($max, 0);
+            $sql.= $this->db->plimit($max, 0);
 
-            $result = $db->query($sql);
+            $result = $this->db->query($sql);
             if ($result)
             {
-                $num = $db->num_rows($result);
+                $num = $this->db->num_rows($result);
 
                 $line = 0;
                 while ($line < $num) {
-                    $objp = $db->fetch_object($result);
-                    $date=$db->jdate($objp->date_commande);
-					$datem=$db->jdate($objp->tms);
+                    $objp = $this->db->fetch_object($result);
+                    $date=$this->db->jdate($objp->date_commande);
+					$datem=$this->db->jdate($objp->tms);
 
 					$supplierorderstatic->id = $objp->rowid;
 					$supplierorderstatic->ref = $objp->ref;
@@ -158,12 +158,12 @@ class box_supplier_orders extends ModeleBoxes
                         'text' => $langs->trans("NoSupplierOrder"),
                     );
 
-                $db->free($result);
+                $this->db->free($result);
             } else {
                 $this->info_box_contents[0][] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
             }
         }

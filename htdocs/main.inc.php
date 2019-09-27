@@ -79,6 +79,8 @@ function testSqlAndScriptInject($val, $type)
 		$inj += preg_match('/union.+select/i', $val);
 		$inj += preg_match('/(\.\.%2f)+/i', $val);
 	}
+	// For XSS Injection done by closing textarea to exucute content into a textarea field
+	$inj += preg_match('/<\/textarea/i', $val);
 	// For XSS Injection done by adding javascript with script
 	// This is all cases a browser consider text is javascript:
 	// When it found '<script', 'javascript:', '<style', 'onload\s=' on body tag, '="&' on a tag size with old browsers
@@ -360,7 +362,7 @@ if (! defined('NOTOKENRENEWAL'))
 if ((! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN))
 	|| defined('CSRFCHECK_WITH_TOKEN'))	// Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set
 {
-	if ($_SERVER['REQUEST_METHOD'] == 'POST' && ! GETPOSTISSET('token')) // Note, offender can still send request by GET
+	if ($_SERVER['REQUEST_METHOD'] == 'POST' && ! GETPOSTISSET('token')) // Note: offender can still send request by GET
 	{
 		dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." refused by CSRFCHECK_WITH_TOKEN protection. Token not provided.");
 		print "Access by POST method refused by CSRF protection in main.inc.php. Token not provided.\n";
@@ -368,17 +370,14 @@ if ((! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->
 		die;
 	}
 
-	//if ($_SERVER['REQUEST_METHOD'] === 'POST')  // This test must be after loading $_SESSION['token'].
-	//{
 	if (GETPOSTISSET('token') && GETPOST('token', 'alpha') != $_SESSION['token'])
 	{
 		dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." refused due to invalid token, so we disable POST and some GET parameters - referer=".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha').", _SESSION['token']=".$_SESSION['token'], LOG_WARNING);
 		//print 'Unset POST by CSRF protection in main.inc.php.';	// Do not output anything because this create problems when using the BACK button on browsers.
-		if ($conf->global->MAIN_FEATURES_LEVEL>1) setEventMessages('Unset POST by CSRF protection in main.inc.php (POST was already done or was done by a not allowed web page).'."<br>\n".'$_SERVER[REQUEST_URI] = '.$_SERVER['REQUEST_URI'].' $_SERVER[REQUEST_METHOD] = '.$_SERVER['REQUEST_METHOD'].' GETPOST(token) = '.GETPOST('token', 'alpha').' $_SESSION[token] = '.$_SESSION['token'], null, 'warnings');
+		if ($conf->global->MAIN_FEATURES_LEVEL>1) setEventMessages('Unset POST by CSRF protection in main.inc.php (POST for this token was already done or was done by a not allowed web page with a wrong token).'."<br>\n".'$_SERVER[REQUEST_URI] = '.$_SERVER['REQUEST_URI'].' $_SERVER[REQUEST_METHOD] = '.$_SERVER['REQUEST_METHOD'].' GETPOST(token) = '.GETPOST('token', 'alpha').' $_SESSION[token] = '.$_SESSION['token'], null, 'warnings');
 		unset($_POST);
 		unset($_GET['confirm']);
 	}
-	//}
 }
 
 // Disable modules (this must be after session_start and after conf has been loaded)
@@ -751,7 +750,7 @@ if (! defined('NOLOGIN'))
 			    	$_SESSION['lastsearch_contextpage_'.$relativepathstring]=$_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring];
 			    	unset($_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]);
 			    }
-			    if (! empty($_SESSION['lastsearch_page_tmp_'.$relativepathstring]) && $_SESSION['lastsearch_page_tmp_'.$relativepathstring] > 1)
+			    if (! empty($_SESSION['lastsearch_page_tmp_'.$relativepathstring]) && $_SESSION['lastsearch_page_tmp_'.$relativepathstring] > 0)
 			    {
 			    	$_SESSION['lastsearch_page_'.$relativepathstring]=$_SESSION['lastsearch_page_tmp_'.$relativepathstring];
 			    	unset($_SESSION['lastsearch_page_tmp_'.$relativepathstring]);
@@ -968,7 +967,7 @@ if (! defined('NOLOGIN'))
 }
 
 
-dol_syslog("--- Access to ".$_SERVER["PHP_SELF"].' - action='.GETPOST('action', 'az09').', massaction='.GETPOST('massaction', 'az09'));
+dol_syslog("--- Access to ".$_SERVER["PHP_SELF"].' - action='.GETPOST('action', 'aZ09').', massaction='.GETPOST('massaction', 'aZ09'));
 //Another call for easy debugg
 //dol_syslog("Access to ".$_SERVER["PHP_SELF"].' GET='.join(',',array_keys($_GET)).'->'.join(',',$_GET).' POST:'.join(',',array_keys($_POST)).'->'.join(',',$_POST));
 
@@ -2274,7 +2273,7 @@ if (! function_exists("llxFooter"))
 			unset($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]);
 
 			if (! empty($contextpage))                     $_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]=$contextpage;
-			if (! empty($page) && $page > 1)               $_SESSION['lastsearch_page_tmp_'.$relativepathstring]=$page;
+			if (! empty($page) && $page > 0)               $_SESSION['lastsearch_page_tmp_'.$relativepathstring]=$page;
 			if (! empty($limit) && $limit != $conf->limit) $_SESSION['lastsearch_limit_tmp_'.$relativepathstring]=$limit;
 
 			unset($_SESSION['lastsearch_contextpage_'.$relativepathstring]);

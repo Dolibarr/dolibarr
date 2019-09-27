@@ -86,6 +86,18 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formactions = new FormActions($db);
 
+// Load object
+if ($id > 0 && $action!='add') {
+    $ret = $object->fetch($id);
+    if ($ret > 0) {
+        $ret = $object->fetch_optionals();
+        $ret1 = $object->fetch_userassigned();
+    }
+    if ($ret < 0 || $ret1 < 0) {
+       dol_print_error('', $object->error);
+    }
+}
+
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -94,6 +106,9 @@ $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('actioncard','globalcard'));
 
+$parameters = array('socid' => $socid);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 /*
  * Actions
@@ -101,7 +116,7 @@ $hookmanager->initHooks(array('actioncard','globalcard'));
 
 $listUserAssignedUpdated = false;
 // Remove user to assigned list
-if (GETPOST('removedassigned') || GETPOST('removedassigned') == '0')
+if (empty($reshook) && (GETPOST('removedassigned') || GETPOST('removedassigned') == '0'))
 {
 	$idtoremove=GETPOST('removedassigned');
 
@@ -122,7 +137,7 @@ if (GETPOST('removedassigned') || GETPOST('removedassigned') == '0')
 }
 
 // Add user to assigned list
-if (GETPOST('addassignedtouser') || GETPOST('updateassignedtouser'))
+if (empty($reshook) && (GETPOST('addassignedtouser') || GETPOST('updateassignedtouser')))
 {
 	// Add a new user
 	if (GETPOST('assignedtouser') > 0)
@@ -143,15 +158,15 @@ if (GETPOST('addassignedtouser') || GETPOST('updateassignedtouser'))
 }
 
 // Link to a project
-if ($action == 'classin' && ($user->rights->agenda->allactions->create ||
+if (empty($reshook) && $action == 'classin' && ($user->rights->agenda->allactions->create ||
     (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create)))
 {
-    $object->fetch($id);
+    //$object->fetch($id);
     $object->setProject(GETPOST('projectid', 'int'));
 }
 
 // Action clone object
-if ($action == 'confirm_clone' && $confirm == 'yes')
+if (empty($reshook) && $action == 'confirm_clone' && $confirm == 'yes')
 {
 	if (1 == 0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers'))
 	{
@@ -160,7 +175,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
 	else
 	{
 		if ($id > 0) {
-			$object->fetch($id);
+			//$object->fetch($id);
             if (!empty($object->socpeopleassigned)) {
                 reset($object->socpeopleassigned);
                 $object->contactid = key($object->socpeopleassigned);
@@ -178,7 +193,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
 }
 
 // Add event
-if ($action == 'add')
+if (empty($reshook) && $action == 'add')
 {
 	$error=0;
 
@@ -221,7 +236,7 @@ if ($action == 'add')
 	}
 
 	// Initialisation objet cactioncomm
-	if (! GETPOST('actioncode') > 0)	// actioncode is id
+	if (GETPOSTISSET('actioncode') && ! GETPOST('actioncode', 'aZ09'))	// actioncode is '0'
 	{
 		$error++; $donotclearsession=1;
 		$action = 'create';
@@ -229,7 +244,7 @@ if ($action == 'add')
 	}
 	else
 	{
-		$object->type_code = GETPOST('actioncode');
+		$object->type_code = GETPOST('actioncode', 'aZ09');
 	}
 
 	if (! $error)
@@ -243,7 +258,7 @@ if ($action == 'add')
 		$object->elementtype = GETPOST("elementtype", 'alpha');
 		if (! GETPOST('label'))
 		{
-			if (GETPOST('actioncode') == 'AC_RDV' && $contact->getFullName($langs))
+			if (GETPOST('actioncode', 'aZ09') == 'AC_RDV' && $contact->getFullName($langs))
 			{
 				$object->label = $langs->transnoentitiesnoconv("TaskRDVWith", $contact->getFullName($langs));
 			}
@@ -403,7 +418,7 @@ if ($action == 'add')
 /*
  * Action update event
  */
-if ($action == 'update')
+if (empty($reshook) && $action == 'update')
 {
 	if (empty($cancel))
 	{
@@ -421,20 +436,22 @@ if ($action == 'update')
 		if ($p2min == -1) $p2min='0';
 
 		$object->fetch($id);
+		$object->fetch_optionals();
 		$object->fetch_userassigned();
+		$object->oldcopy = clone $object;
 
 		$datep=dol_mktime($fulldayevent?'00':$aphour, $fulldayevent?'00':$apmin, 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
 		$datef=dol_mktime($fulldayevent?'23':$p2hour, $fulldayevent?'59':$p2min, $fulldayevent?'59':'0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
 
-		$object->type_id     = dol_getIdFromCode($db, GETPOST("actioncode"), 'c_actioncomm');
-		$object->label       = GETPOST("label");
+		$object->type_id     = dol_getIdFromCode($db, GETPOST("actioncode", 'aZ09'), 'c_actioncomm');
+		$object->label       = GETPOST("label", "alphanohtml");
 		$object->datep       = $datep;
 		$object->datef       = $datef;
 		$object->percentage  = $percentage;
-		$object->priority    = GETPOST("priority");
+		$object->priority    = GETPOST("priority", "alphanohtml");
         $object->fulldayevent= GETPOST("fullday")?1:0;
-		$object->location    = GETPOST('location');
-		$object->socid       = GETPOST("socid");
+        $object->location    = GETPOST('location', "alphanohtml");
+		$object->socid       = GETPOST("socid", "int");
 		$socpeopleassigned   = GETPOST("socpeopleassigned", 'array');
 		$object->socpeopleassigned = array();
 		foreach ($socpeopleassigned as $cid) $object->socpeopleassigned[$cid] = array('id' => $cid);
@@ -446,8 +463,8 @@ if ($action == 'update')
 		$object->fk_project  = GETPOST("projectid", 'int');
 		$object->note        = GETPOST("note", "none");	// deprecated
 		$object->note_private= GETPOST("note", "none");
-		$object->fk_element	 = GETPOST("fk_element");
-		$object->elementtype = GETPOST("elementtype");
+		$object->fk_element	 = GETPOST("fk_element", "int");
+		$object->elementtype = GETPOST("elementtype", "alphanohtml");
 
 		if (! $datef && $percentage == 100)
 		{
@@ -491,7 +508,7 @@ if ($action == 'update')
 		}
 
 		// Check parameters
-		if (! GETPOST('actioncode') > 0)
+		if (GETPOSTISSET('actioncode') && ! GETPOST('actioncode', 'aZ09'))	// actioncode is '0'
 		{
 			$error++; $donotclearsession=1;
 			$action = 'edit';
@@ -499,7 +516,7 @@ if ($action == 'update')
 		}
 		else
 		{
-			$result=$cactioncomm->fetch(GETPOST('actioncode'));
+			$result=$cactioncomm->fetch(GETPOST('actioncode', 'aZ09'));
 		}
 		if (empty($object->userownerid))
 		{
@@ -511,6 +528,65 @@ if ($action == 'update')
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
 		if ($ret < 0) $error++;
+
+        if (!$error) {
+            // check if an event resource is already in use
+            if (!empty($conf->global->RESOURCE_USED_IN_EVENT_CHECK) && $object->element == 'action') {
+                $eventDateStart = $object->datep;
+                $eventDateEnd = $object->datef;
+
+                $sql  = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
+                $sql .= " FROM " . MAIN_DB_PREFIX . "element_resources as er";
+                $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "resource as r ON r.rowid = er.resource_id AND er.resource_type = 'dolresource'";
+                $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "actioncomm as ac ON ac.id = er.element_id AND er.element_type = '" . $db->escape($object->element) . "'";
+                $sql .= " WHERE ac.id != " . $object->id;
+                $sql .= " AND er.resource_id IN (";
+                $sql .= " SELECT resource_id FROM " . MAIN_DB_PREFIX . "element_resources";
+                $sql .= " WHERE element_id = " . $object->id;
+                $sql .= " AND element_type = '" . $db->escape($object->element) . "'";
+                $sql .= " AND busy = 1";
+                $sql .= ")";
+                $sql .= " AND er.busy = 1";
+                $sql .= " AND (";
+
+                // event date start between ac.datep and ac.datep2 (if datep2 is null we consider there is no end)
+                $sql .= " (ac.datep <= '" . $db->idate($eventDateStart) . "' AND (ac.datep2 IS NULL OR ac.datep2 >= '" . $db->idate($eventDateStart) . "'))";
+                // event date end between ac.datep and ac.datep2
+                if (!empty($eventDateEnd)) {
+                    $sql .= " OR (ac.datep <= '" . $db->idate($eventDateEnd) . "' AND (ac.datep2 >= '" . $db->idate($eventDateEnd) . "'))";
+                }
+                // event date start before ac.datep and event date end after ac.datep2
+                $sql .= " OR (";
+                $sql .= "ac.datep >= '" . $db->idate($eventDateStart) . "'";
+                if (!empty($eventDateEnd)) {
+                    $sql .= " AND (ac.datep2 IS NOT NULL AND ac.datep2 <= '" . $db->idate($eventDateEnd) . "')";
+                }
+                $sql .= ")";
+
+                $sql .= ")";
+                $resql = $db->query($sql);
+                if (!$resql) {
+                    $error++;
+                    $object->error = $db->lasterror();
+                    $object->errors[] = $object->error;
+                } else {
+                    if ($db->num_rows($resql) > 0) {
+                        // already in use
+                        $error++;
+                        $object->error = $langs->trans('ErrorResourcesAlreadyInUse') . ' : ';
+                        while ($obj = $db->fetch_object($resql)) {
+                            $object->error .= '<br> - ' . $langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label . ' [' . $obj->ac_id . ']');
+                        }
+                        $object->errors[] = $object->error;
+                    }
+                    $db->free($resql);
+                }
+
+                if ($error) {
+                    setEventMessages($object->error, $object->errors, 'errors');
+                }
+            }
+        }
 
 		if (! $error)
 		{
@@ -546,9 +622,12 @@ if ($action == 'update')
 /*
  * delete event
  */
-if ($action == 'confirm_delete' && GETPOST("confirm") == 'yes')
+if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes')
 {
-	$object->fetch($id);
+		$object->fetch($id);
+    $object->fetch_optionals();
+    $object->fetch_userassigned();
+    $object->oldcopy = clone $object;
 
 	if ($user->rights->agenda->myactions->delete
 		|| $user->rights->agenda->allactions->delete)
@@ -571,10 +650,9 @@ if ($action == 'confirm_delete' && GETPOST("confirm") == 'yes')
  * Action move update, used when user move an event in calendar by drag'n drop
  * TODO Move this into page comm/action/index that trigger this call by the drag and drop of event.
  */
-if (GETPOST('actionmove', 'alpha') == 'mupdate')
+if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate')
 {
-    $object->fetch($id);
-    $object->fetch_userassigned();
+    $error = 0;
 
     $shour = dol_print_date($object->datep, "%H");
     $smin = dol_print_date($object->datep, "%M");
@@ -594,10 +672,76 @@ if (GETPOST('actionmove', 'alpha') == 'mupdate')
             $object->datef+=$datep-$object->datep;
         }
         $object->datep=$datep;
-        $result=$object->update($user);
-        if ($result < 0)
-        {
-            setEventMessages($object->error, $object->errors, 'errors');
+
+        if (!$error) {
+            // check if an event resource is already in use
+            if (!empty($conf->global->RESOURCE_USED_IN_EVENT_CHECK) && $object->element == 'action') {
+                $eventDateStart = $object->datep;
+                $eventDateEnd = $object->datef;
+
+                $sql  = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
+                $sql .= " FROM " . MAIN_DB_PREFIX . "element_resources as er";
+                $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "resource as r ON r.rowid = er.resource_id AND er.resource_type = 'dolresource'";
+                $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "actioncomm as ac ON ac.id = er.element_id AND er.element_type = '" . $db->escape($object->element) . "'";
+                $sql .= " WHERE ac.id != " . $object->id;
+                $sql .= " AND er.resource_id IN (";
+                $sql .= " SELECT resource_id FROM " . MAIN_DB_PREFIX . "element_resources";
+                $sql .= " WHERE element_id = " . $object->id;
+                $sql .= " AND element_type = '" . $db->escape($object->element) . "'";
+                $sql .= " AND busy = 1";
+                $sql .= ")";
+                $sql .= " AND er.busy = 1";
+                $sql .= " AND (";
+
+                // event date start between ac.datep and ac.datep2 (if datep2 is null we consider there is no end)
+                $sql .= " (ac.datep <= '" . $db->idate($eventDateStart) . "' AND (ac.datep2 IS NULL OR ac.datep2 >= '" . $db->idate($eventDateStart) . "'))";
+                // event date end between ac.datep and ac.datep2
+                if (!empty($eventDateEnd)) {
+                    $sql .= " OR (ac.datep <= '" . $db->idate($eventDateEnd) . "' AND (ac.datep2 >= '" . $db->idate($eventDateEnd) . "'))";
+                }
+                // event date start before ac.datep and event date end after ac.datep2
+                $sql .= " OR (";
+                $sql .= "ac.datep >= '" . $db->idate($eventDateStart) . "'";
+                if (!empty($eventDateEnd)) {
+                    $sql .= " AND (ac.datep2 IS NOT NULL AND ac.datep2 <= '" . $db->idate($eventDateEnd) . "')";
+                }
+                $sql .= ")";
+
+                $sql .= ")";
+                $resql = $db->query($sql);
+                if (!$resql) {
+                    $error++;
+                    $object->error = $db->lasterror();
+                    $object->errors[] = $object->error;
+                } else {
+                    if ($db->num_rows($resql) > 0) {
+                        // already in use
+                        $error++;
+                        $object->error = $langs->trans('ErrorResourcesAlreadyInUse') . ' : ';
+                        while ($obj = $db->fetch_object($resql)) {
+                            $object->error .= '<br> - ' . $langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label . ' [' . $obj->ac_id . ']');
+                        }
+                        $object->errors[] = $object->error;
+                    }
+                    $db->free($resql);
+                }
+
+                if ($error) {
+                    setEventMessages($object->error, $object->errors, 'errors');
+                }
+            }
+        }
+
+        if (!$error) {
+            $db->begin();
+            $result = $object->update($user);
+            if ($result < 0) {
+                $error++;
+                setEventMessages($object->error, $object->errors, 'errors');
+                $db->rollback();
+            } else {
+                $db->commit();
+            }
         }
     }
     if (! empty($backtopage))
@@ -614,7 +758,9 @@ if (GETPOST('actionmove', 'alpha') == 'mupdate')
 // Actions to delete doc
 $upload_dir = $conf->agenda->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $permissioncreate = ($user->rights->agenda->allactions->create || (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->read));
-include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+if (empty($reshook)) {
+    include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+}
 
 
 /*
@@ -689,7 +835,7 @@ if ($action == 'create')
 	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 	if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) print '<input type="hidden" name="actioncode" value="'.dol_getIdFromCode($db, 'AC_OTH', 'c_actioncomm').'">';
 
-	if (GETPOST("actioncode") == 'AC_RDV') print load_fiche_titre($langs->trans("AddActionRendezVous"), '', 'title_agenda');
+	if (GETPOST("actioncode", 'aZ09') == 'AC_RDV') print load_fiche_titre($langs->trans("AddActionRendezVous"), '', 'title_agenda');
 	else print load_fiche_titre($langs->trans("AddAnAction"), '', 'title_agenda');
 
 	dol_fiche_head();
@@ -701,7 +847,7 @@ if ($action == 'create')
 	{
 		print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
 		$default=(empty($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT)?'':$conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT);
-		$formactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):($object->type_code?$object->type_code:$default), "actioncode", "systemauto", 0, -1);
+		$formactions->select_type_actions(GETPOST("actioncode", 'aZ09')?GETPOST("actioncode", 'aZ09'):($object->type_code?$object->type_code:$default), "actioncode", "systemauto", 0, -1);
 		print '</td></tr>';
 	}
 
@@ -731,7 +877,7 @@ if ($action == 'create')
 	{
 		$datef=dol_time_plus_duree($datep, $conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS, 'h');
 	}
-	print '<tr><td><span id="dateend"'.(GETPOST("actioncode") == 'AC_RDV'?' class="fieldrequired"':'').'>'.$langs->trans("DateActionEnd").'</span></td><td>';
+	print '<tr><td><span id="dateend"'.(GETPOST("actioncode", 'aZ09') == 'AC_RDV'?' class="fieldrequired"':'').'>'.$langs->trans("DateActionEnd").'</span></td><td>';
 	if (GETPOST("afaire") == 1) {
         print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
     } elseif (GETPOST("afaire") == 2) {
@@ -1010,15 +1156,15 @@ if ($id > 0)
 		$datep=dol_mktime($fulldayevent?'00':$aphour, $fulldayevent?'00':$apmin, 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
 		$datef=dol_mktime($fulldayevent?'23':$p2hour, $fulldayevent?'59':$p2min, $fulldayevent?'59':'0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
 
-		$object->type_id     = dol_getIdFromCode($db, GETPOST("actioncode"), 'c_actioncomm');
-		$object->label       = GETPOST("label");
+		$object->type_id     = dol_getIdFromCode($db, GETPOST("actioncode", 'aZ09'), 'c_actioncomm');
+		$object->label       = GETPOST("label", "alphanohtml");
 		$object->datep       = $datep;
 		$object->datef       = $datef;
 		$object->percentage  = $percentage;
-		$object->priority    = GETPOST("priority");
+		$object->priority    = GETPOST("priority", "alphanohtml");
         $object->fulldayevent= GETPOST("fullday")?1:0;
-		$object->location    = GETPOST('location');
-		$object->socid       = GETPOST("socid");
+		$object->location    = GETPOST('location', "alpanohtml");
+		$object->socid       = GETPOST("socid", "int");
 		$socpeopleassigned   = GETPOST("socpeopleassigned", 'array');
 		foreach ($socpeopleassigned as $tmpid) $object->socpeopleassigned[$id] = array('id' => $tmpid);
 		$object->contactid   = GETPOST("contactid", 'int');
@@ -1101,7 +1247,7 @@ if ($id > 0)
 		    print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td colspan="3">';
 		    if ($object->type_code != 'AC_OTH_AUTO')
 		    {
-                $formactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):$object->type_code, "actioncode", "systemauto");
+		    	$formactions->select_type_actions(GETPOST("actioncode", 'aZ09')?GETPOST("actioncode", 'aZ09'):$object->type_code, "actioncode", "systemauto");
 		    }
 		    else
 		    {

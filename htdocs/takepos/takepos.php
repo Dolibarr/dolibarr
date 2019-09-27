@@ -226,7 +226,8 @@ function MoreCategories(moreorless) {
 	ClearSearch();
 }
 
-function LoadProducts(position, issubcat=false) {
+// LoadProducts
+function LoadProducts(position, issubcat) {
 	console.log("LoadProducts");
 	var maxproduct = <?php echo ($MAXPRODUCT - 2); ?>;
 
@@ -251,7 +252,7 @@ function LoadProducts(position, issubcat=false) {
 	});
 
 	idata=0; //product data counter
-	$.getJSON('./ajax.php?action=getProducts&category='+currentcat, function(data) {
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&category='+currentcat, function(data) {
 		console.log("Call ajax.php (in LoadProducts) to get Products of category "+currentcat);
 
 		while (ishow < maxproduct) {
@@ -297,7 +298,7 @@ function MoreProducts(moreorless) {
 		if (pageproducts==0) return; //Return if no less pages
 		pageproducts=pageproducts-1;
 	}
-	$.getJSON('./ajax.php?action=getProducts&category='+currentcat, function(data) {
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&category='+currentcat, function(data) {
 		console.log("Call ajax.php (in MoreProducts) to get Products of category "+currentcat);
 
 		if (typeof (data[(maxproduct * pageproducts)]) == "undefined" && moreorless=="more"){ // Return if no more pages
@@ -413,10 +414,11 @@ function New() {
 }
 
 function Search2() {
-	console.log("Search2");
+	console.log("Search2 Call ajax search to replace products");
 	pageproducts=0;
-	$.getJSON('./ajax.php?action=search&term='+$('#search').val(), function(data) {
-		for (i = 0; i < 30; i++) {
+	jQuery(".catwatermark").hide();
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&term='+$('#search').val(), function(data) {
+		for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
 			if (typeof (data[i]) == "undefined"){
 				$("#prodesc"+i).text("");
 				$("#proimg"+i).attr("src","genimg/empty.png");
@@ -424,6 +426,7 @@ function Search2() {
 				continue;
 			}
 			$("#prodesc"+i).text(data[parseInt(i)]['label']);
+			$("#prodivdesc"+i).show();
 			$("#proimg"+i).attr("src","genimg/?query=pro&id="+data[i]['rowid']);
 			$("#prodiv"+i).data("rowid",data[i]['rowid']);
 			$("#prodiv"+i).data("iscat",0);
