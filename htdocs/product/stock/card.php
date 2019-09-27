@@ -636,7 +636,7 @@ else
 		/*
 		 * Edition fiche
 		 */
-		if (($action == 'edit' || $action == 're-edit') && 1)
+		if ($action == 'edit' || $action == 're-edit')
 		{
 			$langs->trans("WarehouseEdit");
 

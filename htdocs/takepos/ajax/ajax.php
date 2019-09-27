@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file       htdocs/takepos/ajax.php
+ *	\file       htdocs/takepos/ajax/ajax.php
  *	\brief      Ajax search component for TakePos. It search products of a category.
  */
 
@@ -30,7 +30,7 @@ if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
 if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
 if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
-require '../main.inc.php';	// Load $user and permissions
+require '../../main.inc.php';	// Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 $category = GETPOST('category', 'alpha');
@@ -52,7 +52,7 @@ elseif ($action=="search" && $term != '') {
     $sql = 'SELECT * FROM '.MAIN_DB_PREFIX.'product';
     $sql.= ' WHERE entity IN ('.getEntity('product').')';
     $sql.= ' AND tosell = 1';
-    $sql.= natural_search(array('label','barcode'), $term);
+    $sql.= natural_search(array('ref','label','barcode'), $term);
     $resql = $db->query($sql);
     $rows = array();
     while ($row = $db->fetch_array($resql)) {

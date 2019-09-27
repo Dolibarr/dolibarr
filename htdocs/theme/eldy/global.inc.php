@@ -3500,7 +3500,7 @@ div.boximport {
 
 .fieldrequired { font-weight: bold; color: #000055; }
 
-.widthpictotitle { width: 40px; text-align: <?php echo $left; ?>; }
+.widthpictotitle { width: 40px; font-size: 1.5em; text-align: <?php echo $left; ?>; }
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
 .dolgraphtitlecssboxes { /* margin: 0px; */ }
@@ -4714,6 +4714,10 @@ div.dataTables_length select {
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
 }
+.select2-dropdown {
+	border: 1px solid #ccc;
+	box-shadow: 5px 5px 15px #ddd;
+}
 .select2-dropdown-open {
 	background-color: #fff;
 }
@@ -5014,6 +5018,7 @@ dl.dropdown {
     list-style:none;
     max-height: 264px;
     overflow: auto;
+    border-radius: 2px;
 }
 .dropdown dd ul li {
 	white-space: nowrap;
