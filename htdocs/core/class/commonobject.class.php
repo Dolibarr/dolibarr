@@ -6814,16 +6814,9 @@ abstract class CommonObject
 
 		$dir = $sdir . '/';
 		$pdir = '/';
-		if ($modulepart == 'ticket')
-		{
-			$dir .= get_exdir(0, 0, 0, 0, $this, $modulepart).$this->track_id.'/';
-			$pdir .= get_exdir(0, 0, 0, 0, $this, $modulepart).$this->track_id.'/';
-		}
-		else
-		{
-			$dir .= get_exdir(0, 0, 0, 0, $this, $modulepart).$this->ref.'/';
-			$pdir .= get_exdir(0, 0, 0, 0, $this, $modulepart).$this->ref.'/';
-		}
+
+		$dir .= get_exdir(0, 0, 0, 0, $this, $modulepart).$this->ref.'/';
+		$pdir .= get_exdir(0, 0, 0, 0, $this, $modulepart).$this->ref.'/';
 
 		// For backward compatibility
 		if ($modulepart == 'product' && ! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
