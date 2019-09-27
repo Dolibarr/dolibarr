@@ -1676,9 +1676,11 @@ class Project extends CommonObject
 	 *
 	 *    @param	string	$tableName			Table of the element to update
 	 *    @param	int		$elementSelectId	Key-rowid of the line of the element to update
+	 *    @param	string	$projectfield	    The column name that stores the link with the project
+     *
 	 *    @return	int							1 if OK or < 0 if KO
 	 */
-	public function remove_element($tableName, $elementSelectId)
+	public function remove_element($tableName, $elementSelectId, $projectfield = 'fk_projet')
 	{
         // phpcs:enable
 		$sql="UPDATE ".MAIN_DB_PREFIX.$tableName;
@@ -1687,10 +1689,9 @@ class Project extends CommonObject
 		{
 			$sql.= " SET fk_project=NULL";
 			$sql.= " WHERE id=".$elementSelectId;
-		}
-		else
+		}else
 		{
-			$sql.= " SET fk_projet=NULL";
+			$sql.= " SET ".$projectfield."=NULL";
 			$sql.= " WHERE rowid=".$elementSelectId;
 		}
 
