@@ -310,7 +310,7 @@ if ($action == 'create')
 	if ($conf->categorie->enabled) {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_STOCK, '', 'parent', 64, 0, 1);
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 1);
 		print $form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, '', 0, '100%');
 		print "</td></tr>";
 	}
@@ -454,7 +454,7 @@ else
 			// Categories
 			if($conf->categorie->enabled) {
 				print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
-				print $form->showCategories($object->id, 'stock', 1);
+				print $form->showCategories($object->id, 'warehouse', 1);
 				print "</td></tr>";
 			}
 			print "</table>";
@@ -732,9 +732,9 @@ else
 			if ($conf->categorie->enabled)
 			{
 				print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td colspan="3">';
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_STOCK, '', 'parent', 64, 0, 1);
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 1);
 				$c = new Categorie($db);
-				$cats = $c->containing($object->id, Categorie::TYPE_STOCK);
+				$cats = $c->containing($object->id, Categorie::TYPE_WAREHOUSE);
 				$arrayselected=array();
 				foreach($cats as $cat) {
 					$arrayselected[] = $cat->id;

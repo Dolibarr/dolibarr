@@ -1979,10 +1979,7 @@ class Project extends CommonObject
 	 */
 	public function setCategories($categories)
 	{
-		// Decode type
-		$type_id = Categorie::TYPE_PROJECT;
-		$type_text = 'project';
-
+		$type_categ = Categorie::TYPE_PROJECT;
 
 		// Handle single category
 		if (!is_array($categories)) {
@@ -1992,7 +1989,7 @@ class Project extends CommonObject
 		// Get current categories
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 		$c = new Categorie($this->db);
-		$existing = $c->containing($this->id, $type_id, 'id');
+		$existing = $c->containing($this->id, $type_categ, 'id');
 
 		// Diff
 		if (is_array($existing)) {
@@ -2006,7 +2003,7 @@ class Project extends CommonObject
 		// Process
 		foreach ($to_del as $del) {
 			if ($c->fetch($del) > 0) {
-				$result=$c->del_type($this, $type_text);
+				$result=$c->del_type($this, $type_categ);
 				if ($result<0) {
 					$this->errors=$c->errors;
 					$this->error=$c->error;
@@ -2016,7 +2013,7 @@ class Project extends CommonObject
 		}
 		foreach ($to_add as $add) {
 			if ($c->fetch($add) > 0) {
-				$result=$c->add_type($this, $type_text);
+				$result=$c->add_type($this, $type_categ);
 				if ($result<0) {
 					$this->errors=$c->errors;
 					$this->error=$c->error;

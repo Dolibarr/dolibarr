@@ -1,6 +1,8 @@
 -- ============================================================================
--- Copyright (C) 2007 Patrick Raguin            <patrick.raguin@gmail.com>
--- Copyright (C) 2019 Quentin Vial-Gouteyron    <quentin.vial-gouteyron@atm-consulting.fr>
+-- Copyright (C) 2005 Brice Davoleau <e1davole@iu-vannes.fr>
+-- Copyright (C) 2005 Matthieu Valleton <mv@seeschloss.org>
+-- Copyright (C) 2012 Juanjo Menent <jmenent@2byte.es>
+-- Copyright (C) 2019 Quentin Vial-Gouteyron <quentin.vial-gouteyron@atm-consulting.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,9 +19,9 @@
 --
 -- ============================================================================
 
-ALTER TABLE llx_categorie_entrepot ADD PRIMARY KEY pk_categorie_entrepot (fk_categorie, fk_entrepot);
-ALTER TABLE llx_categorie_entrepot ADD INDEX idx_categorie_entrepot_fk_categorie (fk_categorie);
-ALTER TABLE llx_categorie_entrepot ADD INDEX idx_categorie_entrepot_fk_entrepot (fk_entrepot);
-
-ALTER TABLE llx_categorie_entrepot ADD CONSTRAINT fk_categorie_entrepot_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
-ALTER TABLE llx_categorie_entrepot ADD CONSTRAINT fk_categorie_entrepot_fk_entrepot_rowid FOREIGN KEY (fk_entrepot) REFERENCES llx_entrepot (rowid);
+create table llx_categorie_warehouse
+(
+  fk_categorie  integer NOT NULL,
+  fk_warehouse  integer NOT NULL,
+  import_key    varchar(14)
+)ENGINE=innodb;

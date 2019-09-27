@@ -6481,6 +6481,7 @@ class Form
 
 		if ($rendermode == 0)
 		{
+			$arrayselected=array();
 			$cate_arbo = $this->select_all_categories($type, '', 'parent', 64, 0, 1);
 			foreach($categories as $c) {
 				$arrayselected[] = $c->id;

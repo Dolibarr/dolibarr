@@ -856,7 +856,9 @@ class Entrepot extends CommonObject
 	 */
 	public function setCategories($categories)
     {
-		// Handle single category
+    	$type_categ = Categorie::TYPE_WAREHOUSE;
+
+    	// Handle single category
 		if (! is_array($categories)) {
 			$categories = array($categories);
 		}
@@ -864,7 +866,7 @@ class Entrepot extends CommonObject
 		// Get current categories
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 		$c = new Categorie($this->db);
-		$existing = $c->containing($this->id, Categorie::TYPE_STOCK, 'id');
+		$existing = $c->containing($this->id, $type_categ, 'id');
 
 		// Diff
 		if (is_array($existing)) {
@@ -878,12 +880,12 @@ class Entrepot extends CommonObject
 		// Process
 		foreach($to_del as $del) {
 			if ($c->fetch($del) > 0) {
-				$c->del_type($this, 'stock');
+				$c->del_type($this, $type_categ);
 			}
 		}
 		foreach ($to_add as $add) {
 			if ($c->fetch($add) > 0) {
-				$c->add_type($this, 'stock');
+				$c->add_type($this, $type_categ);
 			}
 		}
 
