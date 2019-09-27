@@ -587,21 +587,25 @@ abstract class CommonDocGenerator
 		$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey, true);
 		$line->fetch_optionals();
 
-		$resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);
+        $resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);
         
-        // Add the product supplier extrafields to the substitutions
-        $extralabels=$extrafields->fetch_name_optionals_label("product_fournisseur_price");
-        $columns = "";
-        foreach ($extralabels as $key => $value) {
-            $columns .= "$key, ";
-        }
-        $columns = substr($columns, 0, strlen($columns) - 2);
-        $resql = $this->db->query("SELECT $columns FROM " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields AS ex INNER JOIN " . MAIN_DB_PREFIX . "product_fournisseur_price AS f ON ex.fk_object = f.rowid WHERE f.ref_fourn = '" . $line->ref_fourn . "'");
-        if ($this->db->num_rows($resql) > 0) {
-            $resql = $this->db->fetch_object($resql);
+        // Check if the current line belongs to a supplier order
+        if (get_class($line) == 'CommandeFournisseurLigne') {
+            // Add the product supplier extrafields to the substitutions
+            $extralabels=$extrafields->fetch_name_optionals_label("product_fournisseur_price");
+            $columns = "";
             foreach ($extralabels as $key => $value) {
-                $resarray['line_product_supplier_'.$key] = $resql->{$key};
+                $columns .= "$key, ";
             }
+            $columns = substr($columns, 0, strlen($columns) - 2);
+            $resql = $this->db->query("SELECT $columns FROM " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields AS ex INNER JOIN " . MAIN_DB_PREFIX . "product_fournisseur_price AS f ON ex.fk_object = f.rowid WHERE f.ref_fourn = '" . $line->ref_fourn . "'");
+            if ($this->db->num_rows($resql) > 0) {
+                $resql = $this->db->fetch_object($resql);
+                foreach ($extralabels as $key => $value) {
+                    $resarray['line_product_supplier_'.$key] = $resql->{$key};
+                }
+            }
+
         }
 
 		// Load product data optional fields to the line -> enables to use "line_options_{extrafield}"
