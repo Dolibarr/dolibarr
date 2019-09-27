@@ -70,7 +70,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
     public function loadBox($max = 5)
     {
         global $conf, $user, $langs, $db;
-        $langs->loadLangs(array("boxes", "sendings"));
+        $langs->loadLangs(array("boxes", "sendings", "orders"));
 
         $this->max = $max;
 
