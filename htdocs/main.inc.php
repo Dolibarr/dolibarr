@@ -750,7 +750,7 @@ if (! defined('NOLOGIN'))
 			    	$_SESSION['lastsearch_contextpage_'.$relativepathstring]=$_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring];
 			    	unset($_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]);
 			    }
-			    if (! empty($_SESSION['lastsearch_page_tmp_'.$relativepathstring]) && $_SESSION['lastsearch_page_tmp_'.$relativepathstring] > 1)
+			    if (! empty($_SESSION['lastsearch_page_tmp_'.$relativepathstring]) && $_SESSION['lastsearch_page_tmp_'.$relativepathstring] > 0)
 			    {
 			    	$_SESSION['lastsearch_page_'.$relativepathstring]=$_SESSION['lastsearch_page_tmp_'.$relativepathstring];
 			    	unset($_SESSION['lastsearch_page_tmp_'.$relativepathstring]);
@@ -2273,7 +2273,7 @@ if (! function_exists("llxFooter"))
 			unset($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]);
 
 			if (! empty($contextpage))                     $_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]=$contextpage;
-			if (! empty($page) && $page > 1)               $_SESSION['lastsearch_page_tmp_'.$relativepathstring]=$page;
+			if (! empty($page) && $page > 0)               $_SESSION['lastsearch_page_tmp_'.$relativepathstring]=$page;
 			if (! empty($limit) && $limit != $conf->limit) $_SESSION['lastsearch_limit_tmp_'.$relativepathstring]=$limit;
 
 			unset($_SESSION['lastsearch_contextpage_'.$relativepathstring]);
