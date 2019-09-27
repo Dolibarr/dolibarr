@@ -1691,7 +1691,8 @@ class Project extends CommonObject
 			$sql.= " WHERE id=".$elementSelectId;
 		}else
 		{
-			$sql.= sprintf(" SET %s=NULL WHERE rowid=%s", $projectfield, $elementSelectId);
+			$sql.= " SET ".$projectfield."=NULL";
+			$sql.= " WHERE rowid=".$elementSelectId;
 		}
 
 		dol_syslog(get_class($this)."::remove_element", LOG_DEBUG);
