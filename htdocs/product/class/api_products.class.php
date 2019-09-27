@@ -467,6 +467,41 @@ class Products extends DolibarrApi
         );
     }
 
+    /**
+     * Delete purchase price for a product
+     *
+     * @param  int $id Product ID
+     * @param  int $priceid purchase price ID
+     *
+     * @url DELETE {id}/purchase_prices/{priceid}
+     *
+     * @return array
+     *
+     * @throws 401
+     * @throws 404
+     *
+     */
+    public function deletePurchasePrice($id, $priceid)
+    {
+        if(! DolibarrApiAccess::$user->rights->produit->supprimer) {
+            throw new RestException(401);
+        }
+        $result = $this->product->fetch($id);
+        if(! $result ) {
+            throw new RestException(404, 'Product not found');
+        }
+
+        if(! DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        if($result) {
+        $this->product = new ProductFournisseur($this->db);
+        $this->product->fetch($id);
+        }
+
+        return $this->product->remove_product_fournisseur_price($priceid);
+    }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
