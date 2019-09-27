@@ -605,7 +605,6 @@ abstract class CommonDocGenerator
                     $resarray['line_product_supplier_'.$key] = $resql->{$key};
                 }
             }
-
         }
 
 		// Load product data optional fields to the line -> enables to use "line_options_{extrafield}"
