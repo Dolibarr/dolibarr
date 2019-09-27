@@ -526,7 +526,7 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 	}
 
 	// Blank line
-	print '<tr><td colspan="'.($span+1).'">&nbsp;</td></tr>';
+	print '<tr><td colspan="'.($span+2).'">&nbsp;</td></tr>';
 
 	// Print table headers for this quadri - expenses now
 	print '<tr class="liste_titre liste_titre_topborder">';
