@@ -6588,7 +6588,7 @@ abstract class CommonObject
 					$out .= '<td class="';
 					//$out .= "titlefield";
 					//if (GETPOST('action', 'none') == 'create') $out.='create';
-					// BUG #11554 : For public page, use red dot for required fields, instead of bold label 
+					// BUG #11554 : For public page, use red dot for required fields, instead of bold label
 					$context = isset($params["context"]) ? $params["context"] : "none";
 					if ($context=="public") {	// Public page : red dot instead of bold ble characters
 						$out .= '">';
