@@ -34,7 +34,7 @@ class box_birthdays_members extends ModeleBoxes
 {
     public $boxcode="birthdays_members";
     public $boximg="object_user";
-    public $boxlabel="BoxBirthdaysMembers";
+    public $boxlabel="BoxTitleMemberNextBirthdays";
     public $depends = array("adherent");
 
 	/**
@@ -76,20 +76,22 @@ class box_birthdays_members extends ModeleBoxes
 
 		$this->max=$max;
 
-        include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
         $memberstatic=new Adherent($this->db);
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleMemberNextBirthdays"));
 
 		if ($user->rights->adherent->lire)
 		{
-			$sql = "SELECT u.rowid, u.firstname, u.lastname";
-      		$sql.= ", u.birth";
+			$tmparray=dol_getdate(dol_now(), true);
+
+			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth";
 			$sql.= " FROM ".MAIN_DB_PREFIX."adherent as u";
 			$sql.= " WHERE u.entity IN (".getEntity('adherent').")";
       		$sql.= " AND u.statut = 1";
-      		$sql.= " AND date_format(u.birth, '%m-%d') >= date_format(curdate(), '%m-%d')";
-			$sql.= " ORDER BY date_format(u.birth, '%m-%d') ASC";
+      		$sql.= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], $tmparray['year']);
+			$sql.= " ORDER BY u.birth ASC";
 			$sql.= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
@@ -128,7 +130,7 @@ class box_birthdays_members extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedUsers"));
+				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center opacitymedium"','text'=>$langs->trans("None"));
 
 				$this->db->free($result);
 			}
