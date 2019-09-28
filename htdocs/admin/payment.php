@@ -252,13 +252,15 @@ print "</td></tr>\n";
 
 print '</table>';
 
-print '<center>';
+dol_fiche_end();
+
+print '<br>';
+print '<div class="center">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
-print '</center>';
+print '</div>';
+print '<br>';
 
 print '</form>';
-
-dol_fiche_end();
 
 // End of page
 llxFooter();
