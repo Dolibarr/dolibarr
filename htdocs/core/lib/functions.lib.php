@@ -3030,37 +3030,33 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			    $fakey = 'fa-cog';
 			    $fasize = '1.4em';
 			}
-			elseif ($pictowithoutext == 'home') {
-				$fakey = 'fa-home';
-				$fasize = '2.4em';
-			}
 			elseif ($pictowithoutext == 'companies') {
 				$fakey = 'fa-building';
-				$fasize = '2.4em';
+				$fasize = '1.4em';
 			}
 			elseif ($pictowithoutext == 'products') {
 				$fakey = 'fa-box-open';
-				$fasize = '2.4em';
+				$fasize = '1.4em';
 			}
 			elseif ($pictowithoutext == 'commercial') {
 				$fakey = 'fa-user-tie';
-				$fasize = '2.4em';
+				$fasize = '1.4em';
 			}
 			elseif ($pictowithoutext == 'invoicing') {
 				$fakey = 'fa-file-invoice';
-				$fasize = '2.4em';
+				$fasize = '1.4em';
 			}
 			elseif ($pictowithoutext == 'accountancy') {
 				$fakey = 'fa-coins';
-				$fasize = '2.4em';
+				$fasize = '1.4em';
 			}
 			elseif ($pictowithoutext == 'project') {
 				$fakey = 'fa-project-diagram';
-				$fasize = '2.4em';
+				$fasize = '1.4em';
 			}
 			elseif ($pictowithoutext == 'hrm') {
 				$fakey = 'fa-umbrella-beach';
-				$fasize = '2.4em';
+				$fasize = '1.4em';
 			}
 			elseif ($pictowithoutext == 'members') {
 				$fakey = 'fa-user-friends';
@@ -3068,11 +3064,11 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			}
 			elseif ($pictowithoutext == 'ticket') {
 				$fakey = 'fa-sticky-note';
-				$fasize = '2.4em';
+				$fasize = '1.4em';
 			}
 			elseif ($pictowithoutext == 'generic') {
 				$fakey = 'fa-folder-open';
-				$fasize = '2.4em';
+				$fasize = '1.4em';
 			}
 			elseif ($pictowithoutext == 'switch_off') {
 				$fakey = 'fa-toggle-off';
