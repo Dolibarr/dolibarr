@@ -83,7 +83,7 @@ class AdherentStats extends Stats
 	 * Return the number of proposition by month for a given year
 	 *
      * @param   int		$year       Year
-     *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
      * @return	array				Array of nb each month
 	 */
 	public function getNbByMonth($year, $format = 0)
@@ -124,7 +124,7 @@ class AdherentStats extends Stats
 	 * Return the number of subscriptions by month for a given year
 	 *
      * @param   int		$year       Year
-     * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
      * @return	array				Array of amount each month
 	 */
 	public function getAmountByMonth($year, $format = 0)

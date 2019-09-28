@@ -83,8 +83,8 @@ class box_contacts extends ModeleBoxes
 		if ($user->rights->societe->lire && $user->rights->societe->contact->lire)
 		{
 			$sql = "SELECT sp.rowid as id, sp.lastname, sp.firstname, sp.civility as civility_id, sp.datec, sp.tms, sp.fk_soc, sp.statut as status";
-			$sql.= ", sp.address, sp.zip, sp.town, sp.phone, sp.phone_perso, sp.phone_mobile";
-			$sql.= ", s.nom as socname, s.name_alias";
+			$sql.= ", sp.address, sp.zip, sp.town, sp.phone, sp.phone_perso, sp.phone_mobile, sp.email as spemail";
+			$sql.= ", s.nom as socname, s.name_alias, s.email as semail";
 			$sql.= ", s.client, s.fournisseur, s.code_client, s.code_fournisseur";
 			$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON sp.fk_soc = s.rowid";
@@ -117,12 +117,14 @@ class box_contacts extends ModeleBoxes
 					$contactstatic->phone_pro = $objp->phone;
 					$contactstatic->phone_perso = $objp->phone_perso;
 					$contactstatic->phone_mobile = $objp->phone_mobile;
+                    $contactstatic->email = $objp->spemail;
 					$contactstatic->address = $objp->address;
 					$contactstatic->zip = $objp->zip;
 					$contactstatic->town = $objp->town;
 
 					$societestatic->id = $objp->fk_soc;
 					$societestatic->name = $objp->socname;
+                    $societestatic->email = $objp->semail;
 					$societestatic->name_alias = $objp->name_alias;
 					$societestatic->code_client = $objp->code_client;
 					$societestatic->code_fournisseur = $objp->code_fournisseur;

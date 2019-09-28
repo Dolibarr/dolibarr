@@ -34,7 +34,7 @@ dol_include_once('/emailcollector/class/emailcollector.class.php');
 if (!$user->admin) accessforbidden();
 if (empty($conf->emailcollector->enabled)) accessforbidden();
 
-// Load traductions files requiredby by page
+// Load traductions files required by page
 $langs->loadLangs(array("admin", "other"));
 
 $action     = GETPOST('action', 'aZ09')?GETPOST('action', 'aZ09'):'view';				// The action 'add', 'create', 'edit', 'update', 'view', ...

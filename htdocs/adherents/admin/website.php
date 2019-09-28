@@ -22,7 +22,6 @@
  *     	\file       htdocs/adherents/admin/website.php
  *		\ingroup    member
  *		\brief      File of main public page for member module
- *		\author	    Laurent Destailleur
  */
 
 require '../../main.inc.php';
@@ -211,9 +210,9 @@ if (! empty($conf->global->MEMBER_ENABLE_PUBLIC))
 
 	print '</table>';
 
-	print '<center>';
+	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-	print '</center>';
+	print '</div>';
 }
 
 
