@@ -2201,7 +2201,7 @@ class Facture extends CommonInvoice
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 		$sql.= ' SET paye=0, fk_statut='.self::STATUS_VALIDATED.', close_code=null, close_note=null';
 		$sql.= ' date_closing as dateclosing,';
-		$sql.= ' fk_user_author, fk_user_valid, fk_user_cloture';
+		$sql.= ' fk_user_author, fk_user_valid, fk_user_closing';
 		$sql.= ' WHERE rowid = '.$this->id;
 
 		dol_syslog(get_class($this)."::set_unpaid", LOG_DEBUG);
