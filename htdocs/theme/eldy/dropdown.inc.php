@@ -181,17 +181,19 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     border-color: #ddd;
 }
 
-.top-menu-dropdown-link {
+.dropdown-menu a.top-menu-dropdown-link {
     color: rgb(<?php print $colortextlink; ?>) !important;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
+    display: block;
+    margin: 5px 0px;
 }
 
 .dropdown-item {
     display: block;
     width: 100%;
-    padding: .25rem 1.5rem;
+    padding: .25rem 1.5rem .25rem 1rem;
     clear: both;
     font-weight: 400;
     color: #212529  !important;
@@ -204,6 +206,23 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     -moz-box-shadow: none;
     box-shadow: none;
 }
+
+.dropdown-item::before {
+    /* font part */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    text-align:center;
+    text-decoration:none;
+    margin-right: 5px;
+    display: inline-block;
+    content: "\f0da";
+    color: rgba(0,0,0,0.3);
+}
+
 
 .dropdown-item.active, .dropdown-item:hover {
     color: #<?php echo $colortextbackhmenu; ?> !important;

@@ -231,7 +231,7 @@ function printDropdownBookmarksList($aDb, $aLangs)
             while ($i < $conf->global->BOOKMARKS_SHOW_IN_MENU && $obj = $db->fetch_object($resql))
             {
                 $bookmarkList.='<a class="dropdown-item bookmark-item" id="bookmark-item-'.$obj->rowid.'" data-id="'.$obj->rowid.'" '.($obj->target == 1?' target="_blank"':'').' href="'.dol_escape_htmltag($obj->url).'" >';
-                $bookmarkList.=dol_escape_htmltag($obj->title);
+                $bookmarkList.= dol_escape_htmltag($obj->title);
                 $bookmarkList.='</a>';
                 $i++;
             }
@@ -263,7 +263,7 @@ function printDropdownBookmarksList($aDb, $aLangs)
     $html.= '
         <!-- Menu Footer-->
         <div class="bookmark-footer">
-                '.$newbtn.'<br/>'.$listbtn.'
+                '.$newbtn.$listbtn.'
             <div style="clear:both;"></div>
         </div>
     ';
