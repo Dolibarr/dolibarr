@@ -265,7 +265,7 @@ class DolEditor
 			if ($titlecontent)
 			{
 	            $out.= '<div class="aceeditorstatusbar" id="statusBar'.$this->htmlname.'">'.$titlecontent;
-	            $out.= ' &nbsp; - &nbsp; <a id="morelines" href="#" class="right morelines'.$this->htmlname.'">'.dol_escape_htmltag($langs->trans("ShowMoreLines")).'</a> &nbsp; &nbsp; ';
+	            $out.= ' &nbsp; - &nbsp; <a id="morelines" href="#" class="right morelines'.$this->htmlname.' reposition">'.dol_escape_htmltag($langs->trans("ShowMoreLines")).'</a> &nbsp; &nbsp; ';
 	            $out.= '</div>';
 	            $out.= '<script type="text/javascript" language="javascript">'."\n";
 	            $out.= 'jQuery(document).ready(function() {'."\n";
