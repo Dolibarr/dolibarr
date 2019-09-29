@@ -1016,10 +1016,10 @@ class Societe extends CommonObject
 			$sql .= ",fax = ".(! empty($this->fax)?"'".$this->db->escape($this->fax)."'":"null");
             $sql .= ",email = ".(! empty($this->email)?"'".$this->db->escape($this->email)."'":"null");
             $sql .= ", socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
-			$sql .= ",skype = ".(! empty($this->skype)?"'".$this->db->escape($this->skype)."'":"null");
-			$sql .= ",twitter = ".(! empty($this->twitter)?"'".$this->db->escape($this->twitter)."'":"null");
-			$sql .= ",facebook = ".(! empty($this->facebook)?"'".$this->db->escape($this->facebook)."'":"null");
-			$sql .= ",linkedin = ".(! empty($this->linkedin)?"'".$this->db->escape($this->linkedin)."'":"null");
+			//$sql .= ",skype = ".(! empty($this->skype)?"'".$this->db->escape($this->skype)."'":"null");
+			//$sql .= ",twitter = ".(! empty($this->twitter)?"'".$this->db->escape($this->twitter)."'":"null");
+			//$sql .= ",facebook = ".(! empty($this->facebook)?"'".$this->db->escape($this->facebook)."'":"null");
+			//$sql .= ",linkedin = ".(! empty($this->linkedin)?"'".$this->db->escape($this->linkedin)."'":"null");
 			$sql .= ",url = ".(! empty($this->url)?"'".$this->db->escape($this->url)."'":"null");
 
 			$sql .= ",parent = " . ($this->parent > 0 ? $this->parent : "null");
@@ -3607,10 +3607,10 @@ class Societe extends CommonObject
 		$this->country_id=1;
 		$this->country_code='FR';
 		$this->email='specimen@specimen.com';
-		// $this->skype='tom.hanson';
-		// $this->twitter='tomhanson';
-		// $this->facebook='tomhanson';
-		// $this->linkedin='tomhanson';
+		$this->skype='tom.hanson';
+		$this->twitter='tomhanson';
+		$this->facebook='tomhanson';
+		$this->linkedin='tomhanson';
 		$this->socialnetworks = array(
 			'skype' => 'tom.hanson',
 			'twitter' => 'tomhanson',
