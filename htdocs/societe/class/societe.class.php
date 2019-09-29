@@ -1384,7 +1384,7 @@ class Societe extends CommonObject
 					$arraysocialnetworks['linkedin'] = $obj->linkedin;
 					$updatesocial = true;
 				}
-				$socialarray = (empty($obj->socialnetworks)?array():json_decode($obj->socialnetworks, true));
+				$socialarray = ((is_null($obj->socialnetworks) || $obj->socialnetworks=='')?array():json_decode($obj->socialnetworks, true));
 				$this->socialnetworks = array_merge($arraysocialnetworks, $socialarray);
 				if ($updatesocial) {
 					$sqlupd = 'UPDATE '.MAIN_DB_PREFIX.'societe SET skype=null';
