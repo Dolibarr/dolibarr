@@ -1973,7 +1973,6 @@ function top_menu_bookmark(User $user, Translate $langs)
         });
         </script>
         ';
-
     }
     return $html;
 }
