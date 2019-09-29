@@ -697,7 +697,7 @@ else
                 foreach ($socialnetworks as $key => $value) {
                     if ($value['active']) {
                         print '<tr>';
-                        print '<td><label for="'.$value['label'].'">'.$form->editfieldkey($value['label]'], $key, '', $object, 0).'</label></td>';
+                        print '<td><label for="'.$value['label'].'">'.$form->editfieldkey($value['label'], $key, '', $object, 0).'</label></td>';
                         print '<td colspan="3">';
                         print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key)?GETPOST($key, 'alphanohtml'):$object->socialnetworks[$key]).'">';
                         print '</td>';

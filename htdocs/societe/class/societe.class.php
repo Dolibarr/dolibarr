@@ -15,6 +15,7 @@
  * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018	    Philippe Grand	        <philippe.grand@atoo-net.com>
  * Copyright (C) 2019	    Josep Lluís Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1013,7 +1014,8 @@ class Societe extends CommonObject
 
 			$sql .= ",phone = ".(! empty($this->phone)?"'".$this->db->escape($this->phone)."'":"null");
 			$sql .= ",fax = ".(! empty($this->fax)?"'".$this->db->escape($this->fax)."'":"null");
-			$sql .= ",email = ".(! empty($this->email)?"'".$this->db->escape($this->email)."'":"null");
+            $sql .= ",email = ".(! empty($this->email)?"'".$this->db->escape($this->email)."'":"null");
+            $sql .= ", socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
 			$sql .= ",skype = ".(! empty($this->skype)?"'".$this->db->escape($this->skype)."'":"null");
 			$sql .= ",twitter = ".(! empty($this->twitter)?"'".$this->db->escape($this->twitter)."'":"null");
 			$sql .= ",facebook = ".(! empty($this->facebook)?"'".$this->db->escape($this->facebook)."'":"null");
@@ -1363,12 +1365,41 @@ class Societe extends CommonObject
 				$this->stcomm_id = $obj->fk_stcomm;     // id statut commercial
 				$this->statut_commercial = $libelle;    // libelle statut commercial
 
-				$this->email = $obj->email;
-				$this->skype = $obj->skype;
-				$this->twitter = $obj->twitter;
-				$this->facebook = $obj->facebook;
-				$this->linkedin = $obj->linkedin;
-				$this->socialnetworks = json_decode($obj->socialnetworks);
+                $this->email = $obj->email;
+                $arraysocialnetworks = array();
+				$updatesocial = false;
+				if (!empty($obj->skype)) {
+					$arraysocialnetworks['skype'] = $obj->skype;
+					$updatesocial = true;
+				}
+				if (!empty($obj->twitter)) {
+					$arraysocialnetworks['twitter'] = $obj->twitter;
+					$updatesocial = true;
+				}
+				if (!empty($obj->facebook)) {
+					$arraysocialnetworks['facebook'] = $obj->facebook;
+					$updatesocial = true;
+				}
+				if (!empty($obj->linkedin)) {
+					$arraysocialnetworks['linkedin'] = $obj->linkedin;
+					$updatesocial = true;
+				}
+				$socialarray = ($obj->socialnetworks==''?array():json_decode($obj->socialnetworks, true));
+				$this->socialnetworks = array_merge($arraysocialnetworks, $socialarray);
+				if ($updatesocial) {
+					$sqlupd = 'UPDATE '.MAIN_DB_PREFIX.'societe SET skype=null';
+					$sqlupd .= ', twitter=null';
+					$sqlupd .= ', facebook=null';
+					$sqlupd .= ', linkedin=null';
+					$sqlupd .= ', socialnetworks="'.$this->db->escape(json_encode($this->socialnetworks)).'"';
+					$sqlupd .= ' WHERE rowid='.$this->id;
+					$this->db->query($sqlupd);
+				}
+
+				$this->skype			= $this->socialnetworks['skype'];
+				$this->twitter			= $this->socialnetworks['twitter'];
+				$this->facebook			= $this->socialnetworks['facebook'];
+				$this->linkedin			= $this->socialnetworks['linkedin'];
 
 				$this->url = $obj->url;
 				$this->phone = $obj->phone;
@@ -3410,7 +3441,8 @@ class Societe extends CommonObject
 		$this->skype=$member->skype;
 		$this->twitter=$member->twitter;
 		$this->facebook=$member->facebook;
-		$this->linkedin=$member->linkedin;
+        $this->linkedin=$member->linkedin;
+        $this->socialnetworks = $member->socialnetworks;
 
 		$this->client = 1;				// A member is a customer by default
 		$this->code_client = ($customercode?$customercode:-1);
