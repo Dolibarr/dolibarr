@@ -196,15 +196,13 @@ function printDropdownBookmarksList($aDb, $aLangs)
     }
 
     $searchForm = '<!-- form with POST method by default, will be replaced with GET for external link by js -->'."\n";
-    $searchForm.= '<form id="top-menu-action-bookmark" name="actionbookmark" method="POST" action="">';
-    $searchForm.= '<input name="bookmark" id="top-bookmark-search-input" class="dropdown-search-input" alt="Bookmarks" placeholder="'.$langs->trans('Bookmarks').'" autocomplete="off" >';
+    $searchForm.= '<form id="top-menu-action-bookmark" name="actionbookmark" method="POST" action="" onsubmit="return false" >';
+    $searchForm.= '<input name="bookmark" id="top-bookmark-search-input" class="dropdown-search-input" placeholder="'.$langs->trans('Bookmarks').'" autocomplete="off" >';
     $searchForm.= '</form>';
 
     // Url to list bookmark
-    $listbtn = '<option hidden value="listbookmarks" class="optiongrey" selected rel="'.DOL_URL_ROOT.'/bookmarks/list.php">'.$langs->trans('Bookmarks').'</option>';
-
     $listbtn = '<a class="top-menu-dropdown-link" title="'.$langs->trans('AddThisPageToBookmarks').'" href="'.DOL_URL_ROOT.'/bookmarks/list.php" >';
-    $listbtn.= '<span class="fa fa-list"></span> '.$langs->trans('Bookmarks').'...</a>';
+    $listbtn.= '<span class="fa fa-list"></span> '.$langs->trans('Bookmarks').'</a>';
 
     // Url to go on create new bookmark page
     $newbtn = '';
@@ -213,7 +211,7 @@ function printDropdownBookmarksList($aDb, $aLangs)
         //$urltoadd=DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url);
         $urltoadd=DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;url='.urlencode($url);
         $newbtn.= '<a class="top-menu-dropdown-link" title="'.$langs->trans('AddThisPageToBookmarks').'" href="'.dol_escape_htmltag($urltoadd).'" >';
-        $newbtn.= '<span class="fa fa-star-o"></span> '.dol_escape_htmltag($langs->trans('AddThisPageToBookmarks').'...').'</a>';
+        $newbtn.= '<span class="fa fa-star-o"></span> '.dol_escape_htmltag($langs->trans('AddThisPageToBookmarks')).'</a>';
     }
 
 
@@ -246,8 +244,8 @@ function printDropdownBookmarksList($aDb, $aLangs)
     $html= '';
     if (! empty($conf->global->BOOKMARKS_SHOW_IN_MENU)) {
         $html.= '
-        <!-- User image -->
-        <div class="bookmark-header">
+        <!-- search input -->
+        <div class="dropdown-header bookmark-header">
             ' . $searchForm . '
         </div>
         ';
@@ -255,7 +253,7 @@ function printDropdownBookmarksList($aDb, $aLangs)
 
     $html.= '
         <!-- Menu Body -->
-        <div class="bookmark-body">
+        <div class="bookmark-body dropdown-body">
         '.$bookmarkList.'
         </div>
         ';
@@ -288,88 +286,4 @@ function printDropdownBookmarksList($aDb, $aLangs)
     }
 
     return $html;
-
-
-
-    if (! empty($conf->use_javascript_ajax)) {		// Bookmark autosubmit can't work when javascript is off.
-
-
-
-
-
-        // Menu bookmark
-        $ret = '<div class="menu_top"></div>'."\n";
-
-        $ret.= '<!-- form with POST method by default, will be replaced with GET for external link by js -->'."\n";
-        $ret.= '<form id="actionbookmark" name="actionbookmark" method="POST" action="">';
-        $ret.= '<select name="bookmark" id="boxbookmark" class="flat boxcombo vmenusearchselectcombo" alt="Bookmarks">';
-        $ret.= '<option hidden value="listbookmarks" class="optiongrey" selected rel="'.DOL_URL_ROOT.'/bookmarks/list.php">'.$langs->trans('Bookmarks').'</option>';
-        $ret.= '<option value="listbookmark" class="optionblue" rel="'.dol_escape_htmltag(DOL_URL_ROOT.'/bookmarks/list.php').'" ';
-        $ret.= ' data-html="'.dol_escape_htmltag('<span class="fa fa-star-o"></span> '.dol_escape_htmltag($user->rights->bookmark->creer ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...').'">';
-        $ret.= dol_escape_htmltag($user->rights->bookmark->creer ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...</option>';
-
-        // Menu with all bookmarks
-        if (! empty($conf->global->BOOKMARKS_SHOW_IN_MENU))
-        {
-            $sql = "SELECT rowid, title, url, target FROM ".MAIN_DB_PREFIX."bookmark";
-            $sql.= " WHERE (fk_user = ".$user->id." OR fk_user is NULL OR fk_user = 0)";
-            $sql.= " AND entity IN (".getEntity('bookmarks').")";
-            $sql.= " ORDER BY position";
-            if ($resql = $db->query($sql) )
-            {
-                $i=0;
-                while ($i < $conf->global->BOOKMARKS_SHOW_IN_MENU && $obj = $db->fetch_object($resql))
-                {
-                    $ret.='<option name="bookmark'.$obj->rowid.'" value="'.$obj->rowid.'" '.($obj->target == 1?' target="_blank"':'').' rel="'.dol_escape_htmltag($obj->url).'"';
-                    //$ret.=' data-html="'.dol_escape_htmltag('<span class="fa fa-print"></span> '.$obj->title).'"';
-                    $ret.='>';
-                    $ret.=dol_escape_htmltag($obj->title);
-                    $ret.='</option>';
-                    $i++;
-                }
-            }
-            else
-            {
-                dol_print_error($db);
-            }
-        }
-
-        $ret.= '</select>';
-        $ret.= '</form>';
-
-        $ret.=ajax_combobox('boxbookmark');
-
-        $ret.='<script>
-	        	$(document).ready(function () {';
-        $ret.='    jQuery("#boxbookmark").change(function() {
-		            var urlselected = jQuery("#boxbookmark option:selected").attr("rel");
-					if (! urlselected) console.log("Error, failed to get the URL to jump to from the rel attribute");
-		            var urltarget = jQuery("#boxbookmark option:selected").attr("target");
-		            if (! urltarget) { urltarget=""; }
-	                jQuery("form#actionbookmark").attr("target",urltarget);
-		            jQuery("form#actionbookmark").attr("action",urlselected);
-
-		            console.log("We change select bookmark. We choose urlselected="+urlselected+" with target="+urltarget);
-
-		            // Method is POST for internal link, GET for external
-		            if (urlselected.startsWith(\'http\'))
-		            {
-		                var newmethod=\'GET\';
-		                jQuery("form#actionbookmark").attr("method", newmethod);
-		                console.log("We change method to newmethod="+newmethod);
-			            jQuery("#actionbookmark").submit();
-		                console.log("We restore method to POST");
-						jQuery("form#actionbookmark").attr("method", \'POST\');
-					}
-					else
-					{
-		            	jQuery("#actionbookmark").submit();
-					}
-		       });';
-        $ret.='})</script>';
-    }
-
-    $ret.= '<div class="menu_end"></div>'."\n";
-
-    return $ret;
 }
