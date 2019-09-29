@@ -60,7 +60,7 @@ $reshook=$hookmanager->executeHooks('TakeposReceipt', $parameters, $object);
 if (!empty($hookmanager->resPrint)) {
     print $hookmanager->resPrint;
 	exit;
-} 
+}
 
 // IMPORTANT: This file is sended to 'Takepos Printing' application. Keep basic file. No external files as css, js... If you need images use absolute path.
 ?>
@@ -189,7 +189,6 @@ if ($conf->global->TAKEPOS_CUSTOM_RECEIPT)
 	if (! empty($conf->global->TAKEPOS_FOOTER)){
 		$newfreetext=make_substitutions($conf->global->TAKEPOS_FOOTER, $substitutionarray);
 		echo $newfreetext;
-	
 	}
 }
 ?>
