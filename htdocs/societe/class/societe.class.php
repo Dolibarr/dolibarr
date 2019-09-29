@@ -1385,11 +1385,7 @@ class Societe extends CommonObject
 					$updatesocial = true;
 				}
 				$socialarray = ((is_null($obj->socialnetworks) || $obj->socialnetworks=='')?array():json_decode($obj->socialnetworks, true));
-				if (is_array($socialarray)) {
-					$this->socialnetworks = array_merge($arraysocialnetworks, $socialarray);
-				} else {
-					$this->socialnetworks = $arraysocialnetworks;
-				}
+				$this->socialnetworks = array_merge($arraysocialnetworks, $socialarray);
 				if ($updatesocial) {
 					$sqlupd = 'UPDATE '.MAIN_DB_PREFIX.'societe SET skype=null';
 					$sqlupd .= ', twitter=null';
@@ -3611,10 +3607,10 @@ class Societe extends CommonObject
 		$this->country_id=1;
 		$this->country_code='FR';
 		$this->email='specimen@specimen.com';
-		$this->skype='tom.hanson';
-		$this->twitter='tomhanson';
-		$this->facebook='tomhanson';
-		$this->linkedin='tomhanson';
+		// $this->skype='tom.hanson';
+		// $this->twitter='tomhanson';
+		// $this->facebook='tomhanson';
+		// $this->linkedin='tomhanson';
 		$this->socialnetworks = array(
 			'skype' => 'tom.hanson',
 			'twitter' => 'tomhanson',
