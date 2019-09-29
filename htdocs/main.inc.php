@@ -1617,12 +1617,15 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		$mode=-1;
 		$toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
 
+        if(!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)){
+            // Add search dropdown
+            $toprightmenu.= top_menu_search($user, $langs);
+        }
 
-        // Add search dropdown
-        $toprightmenu.= top_menu_search($user, $langs);
-
-        // Add bookmark dropdown
-        $toprightmenu.= top_menu_bookmark($user, $langs);
+        if(!empty($conf->global->MAIN_USE_TOP_MENU_BOOKMARK_DROPDOWN)) {
+            // Add bookmark dropdown
+            $toprightmenu .= top_menu_bookmark($user, $langs);
+        }
 
         // add user dropdown
 	    $toprightmenu.= top_menu_user($user, $langs);
@@ -2138,55 +2141,47 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 
 		if (! is_object($form)) $form=new Form($db);
 		$selected=-1;
-		$usedbyinclude=1;
-		$arrayresult=null;
-		include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php';	// This set $arrayresult
+        if(empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)) {
+            $usedbyinclude = 1;
+            $arrayresult = null;
+            include DOL_DOCUMENT_ROOT . '/core/ajax/selectsearchbox.php';    // This set $arrayresult
 
-		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_USE_OLD_SEARCH_FORM))
-		{
-			$searchform.=$form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, '', 1, 0, (empty($conf->global->MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY)?1:0), 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);
-		}
-		else
-		{
-		    if (is_array($arrayresult))
-		    {
-    			foreach($arrayresult as $key => $val)
-    			{
-    				$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleft'.$key, img_picto('', $val['img'], '', false, 1, 1));
-    			}
-		    }
-		}
+            if ($conf->use_javascript_ajax && empty($conf->global->MAIN_USE_OLD_SEARCH_FORM)) {
+                $searchform .= $form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, '', 1, 0, (empty($conf->global->MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY) ? 1 : 0), 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);
+            } else {
+                if (is_array($arrayresult)) {
+                    foreach ($arrayresult as $key => $val) {
+                        $searchform .= printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleft' . $key, img_picto('', $val['img'], '', false, 1, 1));
+                    }
+                }
+            }
 
-		// Execute hook printSearchForm
-		$parameters=array('searchform'=>$searchform);
-		$reshook=$hookmanager->executeHooks('printSearchForm', $parameters);    // Note that $action and $object may have been modified by some hooks
-		if (empty($reshook))
-		{
-			$searchform.=$hookmanager->resPrint;
-		}
-		else $searchform=$hookmanager->resPrint;
+            // Execute hook printSearchForm
+            $parameters = array('searchform' => $searchform);
+            $reshook = $hookmanager->executeHooks('printSearchForm', $parameters);    // Note that $action and $object may have been modified by some hooks
+            if (empty($reshook)) {
+                $searchform .= $hookmanager->resPrint;
+            } else $searchform = $hookmanager->resPrint;
 
-		// Force special value for $searchform
-		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) || empty($conf->use_javascript_ajax))
-		{
-			$urltosearch=DOL_URL_ROOT.'/core/search_page.php?showtitlebefore=1';
-			$searchform='<div class="blockvmenuimpair blockvmenusearchphone"><div id="divsearchforms1"><a href="'.$urltosearch.'" accesskey="s" alt="'.dol_escape_htmltag($langs->trans("ShowSearchFields")).'">'.$langs->trans("Search").'...</a></div></div>';
-		}
-		elseif ($conf->use_javascript_ajax && ! empty($conf->global->MAIN_USE_OLD_SEARCH_FORM))
-		{
-			$searchform='<div class="blockvmenuimpair blockvmenusearchphone"><div id="divsearchforms1"><a href="#" alt="'.dol_escape_htmltag($langs->trans("ShowSearchFields")).'">'.$langs->trans("Search").'...</a></div><div id="divsearchforms2" style="display: none">'.$searchform.'</div>';
-			$searchform.='<script>
+            // Force special value for $searchform
+            if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) || empty($conf->use_javascript_ajax)) {
+                $urltosearch = DOL_URL_ROOT . '/core/search_page.php?showtitlebefore=1';
+                $searchform = '<div class="blockvmenuimpair blockvmenusearchphone"><div id="divsearchforms1"><a href="' . $urltosearch . '" accesskey="s" alt="' . dol_escape_htmltag($langs->trans("ShowSearchFields")) . '">' . $langs->trans("Search") . '...</a></div></div>';
+            } elseif ($conf->use_javascript_ajax && !empty($conf->global->MAIN_USE_OLD_SEARCH_FORM)) {
+                $searchform = '<div class="blockvmenuimpair blockvmenusearchphone"><div id="divsearchforms1"><a href="#" alt="' . dol_escape_htmltag($langs->trans("ShowSearchFields")) . '">' . $langs->trans("Search") . '...</a></div><div id="divsearchforms2" style="display: none">' . $searchform . '</div>';
+                $searchform .= '<script>
             	jQuery(document).ready(function () {
             		jQuery("#divsearchforms1").click(function(){
 	                   jQuery("#divsearchforms2").toggle();
 	               });
             	});
                 </script>' . "\n";
-			$searchform.='</div>';
-		}
+                $searchform .= '</div>';
+            }
+        }
 
 		// Define $bookmarks
-		if (! empty($conf->bookmark->enabled) && $user->rights->bookmark->lire)
+		if (! empty($conf->bookmark->enabled) && $user->rights->bookmark->lire && empty($conf->global->MAIN_USE_TOP_MENU_BOOKMARK_DROPDOWN))
 		{
 			include_once DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php';
 			$langs->load("bookmarks");
