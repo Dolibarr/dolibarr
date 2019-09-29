@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Simon Tosser			<simon@kornog-computing.com>
- * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016	    Francis Appels       	<francis.appels@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'companies', 'categories'));
 
@@ -122,6 +122,8 @@ if (empty($reshook))
 				if ($id > 0) {
 					setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 
+					$categories = GETPOST('categories', 'array');
+					$object->setCategories($categories);
 					if (!empty($backtopage)) {
 						header("Location: " . $backtopage);
 						exit;
@@ -156,10 +158,9 @@ if (empty($reshook))
 		else
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
-			$action='';
+			$action = '';
 		}
 	}
- 
 
 	// Modification entrepot
 	if ($action == 'update' && $cancel <> $langs->trans("Cancel"))
@@ -189,6 +190,8 @@ if (empty($reshook))
 				$action = 'edit';
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
+				$categories = GETPOST('categories', 'array');
+				$object->setCategories($categories);
 				$action = '';
 			}
 		}
@@ -198,7 +201,6 @@ if (empty($reshook))
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-	 
 	elseif ($action == 'update_extras') {
 		$object->oldcopy = dol_clone($object);
 
@@ -215,7 +217,6 @@ if (empty($reshook))
 		}
 		if ($error) $action = 'edit_extras';
 	}
-
 
 	if ($cancel == $langs->trans("Cancel"))
 	{
@@ -312,11 +313,18 @@ if ($action == 'create')
 	print '</td></tr>';
 
     // Other attributes
-    include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+    include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
+	if ($conf->categorie->enabled) {
+		// Categories
+		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 1);
+		print $form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, '', 0, '100%');
+		print "</td></tr>";
+	}
 	print '</table>';
 
 	dol_fiche_end();
@@ -391,6 +399,7 @@ else
 			// Parent entrepot
 			$e = new Entrepot($db);
 			if(!empty($object->fk_parent) && $e->fetch($object->fk_parent) > 0) {
+
 				print '<tr><td>'.$langs->trans("ParentWarehouse").'</td><td>';
 				print $e->getNomUrl(3);
 				print '</td></tr>';
@@ -455,10 +464,15 @@ else
 
             // Other attributes
             include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+			// Categories
+			if($conf->categorie->enabled) {
+				print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
+				print $form->showCategories($object->id, 'warehouse', 1);
+				print "</td></tr>";
+			}
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
-
 			print "</table>";
 
 			print '</div>';
@@ -654,7 +668,7 @@ else
 		/*
 		 * Edition fiche
 		 */
-		if (($action == 'edit' || $action == 're-edit') && 1)
+		if ($action == 'edit' || $action == 're-edit')
 		{
 			$langs->trans("WarehouseEdit");
 
@@ -730,7 +744,20 @@ else
             {
                 print $object->showOptionals($extrafields, 'edit');
             }
-
+			// Tags-Categories
+			if ($conf->categorie->enabled)
+			{
+				print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td colspan="3">';
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 1);
+				$c = new Categorie($db);
+				$cats = $c->containing($object->id, Categorie::TYPE_WAREHOUSE);
+				$arrayselected=array();
+				foreach($cats as $cat) {
+					$arrayselected[] = $cat->id;
+				}
+				print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+				print "</td></tr>";
+			}
 			print '</table>';
 
 			dol_fiche_end();
