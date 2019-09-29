@@ -1933,9 +1933,9 @@ function top_menu_bookmark(User $user, Translate $langs)
 
         $html.= '<!-- div for bookmark link -->
         <div id="topmenu-bookmark-dropdown" class="atoplogin dropdown">
-            <span class="dropdown-toggle login-dropdown-a" data-toggle="dropdown">
+            <a class="dropdown-toggle login-dropdown-a" data-toggle="dropdown" href="#">
                 <i class="fa fa-star" ></i>
-            </span>
+            </a>
             <div class="dropdown-menu">
                 '.printDropdownBookmarksList($db, $langs).'
             </div>
@@ -1960,11 +1960,23 @@ function top_menu_bookmark(User $user, Translate $langs)
                 });
     
                 $("#topmenu-bookmark-dropdown .dropdown-toggle").on("click", function(event) {
-                    event.preventDefault();
-                    $("#topmenu-bookmark-dropdown").toggleClass("open");
-                    $("#topboxbookmark").focus();
+                    openBookMarkDropDown();
                 });
 
+                // Key map shortcut
+                $(document).keydown(function(e){
+                      if( e.which === 77 && e.ctrlKey && e.shiftKey ){
+                         console.log(\'control + shift + m : trigger open bookmark dropdown\');
+                         openBookMarkDropDown();
+                      }      
+                });
+                
+                         
+                var openBookMarkDropDown = function() {
+                    event.preventDefault();
+                    $("#topmenu-bookmark-dropdown").toggleClass("open");
+                    $("#top-bookmark-search-input").focus();
+                }
     
             });
             </script>

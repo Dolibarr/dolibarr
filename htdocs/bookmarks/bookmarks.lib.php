@@ -197,7 +197,7 @@ function printDropdownBookmarksList($aDb, $aLangs)
 
     $searchForm = '<!-- form with POST method by default, will be replaced with GET for external link by js -->'."\n";
     $searchForm.= '<form id="top-menu-action-bookmark" name="actionbookmark" method="POST" action="">';
-    $searchForm.= '<input name="bookmark" id="topboxbookmark" class="dropdown-search-input" alt="Bookmarks" placeholder="'.$langs->trans('Bookmarks').'">';
+    $searchForm.= '<input name="bookmark" id="top-bookmark-search-input" class="dropdown-search-input" alt="Bookmarks" placeholder="'.$langs->trans('Bookmarks').'" autocomplete="off" >';
     $searchForm.= '</form>';
 
     // Url to list bookmark
@@ -217,23 +217,75 @@ function printDropdownBookmarksList($aDb, $aLangs)
     }
 
 
-    $html = '
+    $bookmarkList='<div id="dropdown-bookmarks-list" >';
+    // Menu with all bookmarks
+    if (! empty($conf->global->BOOKMARKS_SHOW_IN_MENU))
+    {
+        $sql = "SELECT rowid, title, url, target FROM ".MAIN_DB_PREFIX."bookmark";
+        $sql.= " WHERE (fk_user = ".$user->id." OR fk_user is NULL OR fk_user = 0)";
+        $sql.= " AND entity IN (".getEntity('bookmarks').")";
+        $sql.= " ORDER BY position";
+        if ($resql = $db->query($sql) )
+        {
+            $i=0;
+            while ($i < $conf->global->BOOKMARKS_SHOW_IN_MENU && $obj = $db->fetch_object($resql))
+            {
+                $bookmarkList.='<a class="dropdown-item bookmark-item" id="bookmark-item-'.$obj->rowid.'" data-id="'.$obj->rowid.'" '.($obj->target == 1?' target="_blank"':'').' href="'.dol_escape_htmltag($obj->url).'" >';
+                $bookmarkList.=dol_escape_htmltag($obj->title);
+                $bookmarkList.='</a>';
+                $i++;
+            }
+        }
+        else
+        {
+            dol_print_error($db);
+        }
+    }
+    $bookmarkList.='</div>';
 
+    $html= '';
+    if (! empty($conf->global->BOOKMARKS_SHOW_IN_MENU)) {
+        $html.= '
         <!-- User image -->
         <div class="bookmark-header">
-            '.$searchForm.'
+            ' . $searchForm . '
         </div>
+        ';
+    }
 
+    $html.= '
         <!-- Menu Body -->
-        <div class="bookmark-body"></div>
+        <div class="bookmark-body">
+        '.$bookmarkList.'
+        </div>
+        ';
 
+    $html.= '
         <!-- Menu Footer-->
         <div class="bookmark-footer">
                 '.$newbtn.'<br/>'.$listbtn.'
             <div style="clear:both;"></div>
-        </div>';
+        </div>
+    ';
 
+    if (! empty($conf->global->BOOKMARKS_SHOW_IN_MENU)) {
+        $html .= '<script>
+            $( document ).on("keyup", "#top-bookmark-search-input", function () {
 
+                var filter = $(this).val(), count = 0;
+                $("#dropdown-bookmarks-list .bookmark-item").each(function () {
+        
+                    if ($(this).text().search(new RegExp(filter, "i")) < 0) {
+                        $(this).addClass("hidden-search-result");
+                    } else {
+                        $(this).removeClass("hidden-search-result");
+                        count++;
+                    }
+                });
+                $("#top-bookmark-search-filter-count").text(count);
+            });
+		    </script>';
+    }
 
     return $html;
 

@@ -124,6 +124,10 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     white-space: normal;
 }
 
+.dropdown-menu > .bookmark-body{
+    padding: 10px 0;
+}
+
 #topmenu-login-dropdown{
     padding: 0 5px 0 5px;
 }
@@ -184,7 +188,28 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     box-shadow: none;
 }
 
+.dropdown-item {
+    display: block;
+    width: 100%;
+    padding: .25rem 1.5rem;
+    clear: both;
+    font-weight: 400;
+    color: #212529  !important;
+    text-align: inherit;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
 
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+
+.dropdown-item.active, .dropdown-item:hover {
+    color: #<?php echo $colortextbackhmenu; ?> !important;
+    text-decoration: none;
+    background: rgb(<?php echo $colorbackhmenu1 ?>);
+}
 
 /*
 * SEARCH
@@ -219,4 +244,6 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     letter-spacing: 1.5px;
 }
 
-
+.hidden-search-result{
+    display: none !important;
+}
