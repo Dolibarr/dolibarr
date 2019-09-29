@@ -60,6 +60,19 @@ span.butAction, span.butActionDelete {
     /* text-align: center; New button are on right of screen */
     cursor: pointer;
 }
+
+.tableforfieldcreate a.butActionNew>span.fa-plus-circle, a.butActionNew>span.fa-plus-circle:hover,
+span.butActionNew>span.fa-plus-circle, span.butActionNew>span.fa-plus-circle:hover,
+a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-circle:hover,
+span.butActionNewRefused>span.fa-plus-circle, span.butActionNewRefused>span.fa-plus-circle:hover,
+a.butActionNew>span.fa-list-alt, a.butActionNew>span.fa-list-alt:hover,
+span.butActionNew>span.fa-list-alt, span.butActionNew>span.fa-list-alt:hover,
+a.butActionNewRefused>span.fa-list-alt, a.butActionNewRefused>span.fa-list-alt:hover,
+span.butActionNewRefused>span.fa-list-alt, span.butActionNewRefused>span.fa-list-alt:hover {
+	font-size: 1em;
+	padding-left: 0px;
+}
+
 a.butActionNew>span.fa-plus-circle, a.butActionNew>span.fa-plus-circle:hover,
 span.butActionNew>span.fa-plus-circle, span.butActionNew>span.fa-plus-circle:hover,
 a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-circle:hover,
@@ -68,7 +81,10 @@ a.butActionNew>span.fa-list-alt, a.butActionNew>span.fa-list-alt:hover,
 span.butActionNew>span.fa-list-alt, span.butActionNew>span.fa-list-alt:hover,
 a.butActionNewRefused>span.fa-list-alt, a.butActionNewRefused>span.fa-list-alt:hover,
 span.butActionNewRefused>span.fa-list-alt, span.butActionNewRefused>span.fa-list-alt:hover {
-	padding-<?php echo $left; ?>: 6px; font-size: 1.5em; border: none; box-shadow: none; webkit-box-shadow: none;
+	padding-<?php echo $left; ?>: 6px;
+	font-size: 1.5em;
+	border: none;
+	box-shadow: none; webkit-box-shadow: none;
 }
 
 .butAction:hover   {
