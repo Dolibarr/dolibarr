@@ -1606,6 +1606,12 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 
 		print '<div class="login_block usedropdown">'."\n";
 
+
+        // Add bookmark dropdown
+        $toprightmenu.=top_menu_bookmark($user, $langs);
+
+
+
 		// Add login user link
 		$toprightmenu.='<div class="login_block_user">';
 
@@ -1895,6 +1901,77 @@ function top_menu_user(User $user, Translate $langs)
     }
 
     return $btnUser;
+}
+
+
+/**
+ * Build the tooltip on top menu bookmark
+ *
+ * @param   user        $user       User object
+ * @param   Translate   $langs      Language object
+ * @return  string                  HTML content
+ */
+function top_menu_bookmark(User $user, Translate $langs)
+{
+    global $langs, $conf, $db, $hookmanager, $user;
+    global $menumanager;
+    $html = '';
+
+
+
+    // Define $bookmarks
+    if (! empty($conf->bookmark->enabled) && $user->rights->bookmark->lire)
+    {
+        include_once DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php';
+        $langs->load("bookmarks");
+
+        // Add login user link
+        $html.='<div class="login_block_user">';
+
+        // Login name with photo and tooltip
+        $html.='<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
+
+        $html.= '<!-- div for bookmark link -->
+        <div id="topmenu-bookmark-dropdown" class="atoplogin dropdown">
+            <span class="dropdown-toggle login-dropdown-a" data-toggle="dropdown">
+                <i class="fa fa-star" ></i>
+            </span>
+            <div class="dropdown-menu">
+                '.printDropdownBookmarksList($db, $langs).'
+            </div>
+        </div>';
+
+        $html.='</div></div>';
+
+        $html.='</div>'."\n";
+
+
+        if (! defined('JS_JQUERY_DISABLE_DROPDOWN'))    // This may be set by some pages that use different jquery version to avoid errors
+        {
+            $html .= '
+            <!-- Code to show/hide the user drop-down -->
+            <script>
+            $( document ).ready(function() {
+                $(document).on("click", function(event) {
+                    if (!$(event.target).closest("#topmenu-bookmark-dropdown").length) {
+                        // Hide the menus.
+                        $("#topmenu-bookmark-dropdown").removeClass("open");
+                    }
+                });
+    
+                $("#topmenu-bookmark-dropdown .dropdown-toggle").on("click", function(event) {
+                    event.preventDefault();
+                    $("#topmenu-bookmark-dropdown").toggleClass("open");
+                    $("#topboxbookmark").focus();
+                });
+
+    
+            });
+            </script>
+            ';
+        }
+    }
+    return $html;
 }
 
 /**
