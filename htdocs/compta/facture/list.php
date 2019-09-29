@@ -180,7 +180,7 @@ $arrayfields=array(
 	'rtp'=>array('label'=>"Rest", 'checked'=>0),
 	'f.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
-	'f.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>500),
+	'f.date_closing'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>500),
 	'f.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
 
@@ -382,7 +382,7 @@ $sql.= ' f.rowid as id, f.ref, f.ref_client, f.type, f.note_private, f.note_publ
 $sql.= ' f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,';
 $sql.= ' f.datef as df, f.date_lim_reglement as datelimite,';
 $sql.= ' f.paye as paye, f.fk_statut,';
-$sql.= ' f.datec as date_creation, f.tms as date_update, f.date_cloture as date_cloture,';
+$sql.= ' f.datec as date_creation, f.tms as date_update, f.date_closing as date_closing,';
 if($conf->global->INVOICE_USE_SITUATION && $conf->global->INVOICE_USE_SITUATION_RETAINED_WARRANTY)
 {
     $sql.= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final,f.situation_cycle_ref,f.situation_counter,';
@@ -496,7 +496,7 @@ if (! $sall)
 	$sql.= ' f.localtax1, f.localtax2,';
 	$sql.= ' f.datef, f.date_lim_reglement,';
 	$sql.= ' f.paye, f.fk_statut,';
-	$sql.= ' f.datec, f.tms, f.date_cloture,';
+	$sql.= ' f.datec, f.tms, f.date_closing,';
 	$sql.= ' s.rowid, s.nom, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
 	$sql.= ' typent.code,';
 	$sql.= ' state.code_departement, state.nom,';
@@ -865,7 +865,7 @@ if ($resql)
 		print '<td class="liste_titre right">';
 		print '</td>';
 	}
-	if (! empty($arrayfields['f.date_cloture']['checked']))
+	if (! empty($arrayfields['f.date_closing']['checked']))
 	{
 		print '<td class="liste_titre">';
 		print '</td>';
@@ -937,7 +937,7 @@ if ($resql)
 	print $hookmanager->resPrint;
 	if (! empty($arrayfields['f.datec']['checked']))     print_liste_field_titre($arrayfields['f.datec']['label'], $_SERVER["PHP_SELF"], "f.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 	if (! empty($arrayfields['f.tms']['checked']))       print_liste_field_titre($arrayfields['f.tms']['label'], $_SERVER["PHP_SELF"], "f.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
-	if (! empty($arrayfields['f.date_cloture']['checked']))       print_liste_field_titre($arrayfields['f.date_cloture']['label'], $_SERVER["PHP_SELF"], "f.date_cloture", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+	if (! empty($arrayfields['f.date_closing']['checked']))       print_liste_field_titre($arrayfields['f.date_closing']['label'], $_SERVER["PHP_SELF"], "f.date_closing", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 	if (! empty($arrayfields['f.fk_statut']['checked'])) print_liste_field_titre($arrayfields['f.fk_statut']['label'], $_SERVER["PHP_SELF"], "f.fk_statut,f.paye,f.type,dynamount_payed", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
 	print "</tr>\n";
@@ -1268,11 +1268,11 @@ if ($resql)
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
 			}
-			// Date cloture
-			if (! empty($arrayfields['f.date_cloture']['checked']))
+			// Date closing
+			if (! empty($arrayfields['f.date_closing']['checked']))
 			{
 				print '<td align="center" class="nowrap">';
-				print dol_print_date($db->jdate($obj->date_cloture), 'dayhour', 'tzuser');
+				print dol_print_date($db->jdate($obj->date_closing), 'dayhour', 'tzuser');
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
 			}
