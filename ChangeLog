@@ -22,7 +22,7 @@ Following changes may create regressions for some external modules, but were nec
 * Removed deprecated method actioncomm->add(), use create() instead
 * If you have developed your own emailing target selector and used parent::add_to_target(...), you must now use parent::addToTargets(...)
 * Removed function dol_micro_time. Use native PHP microtime instead.
-* The trigger BON_PRELEVEMENT has been renamed into DIRECT_DEBIT_ORDER_CREATE.
+* The trigger BON_PRELEVEMENT_CREATE has been renamed into DIRECT_DEBIT_ORDER_CREATE.
 
 
 ***** ChangeLog for 10.0.2 compared to 10.0.1 *****
