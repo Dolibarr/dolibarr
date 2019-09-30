@@ -249,8 +249,9 @@ select.flat, form.flat select {
 select:invalid {
 	color: gray;
 }
-input:disabled {
-	background:#ddd;
+input:disabled, textarea:disabled, select[disabled='disabled']
+{
+	background:#eee;
 }
 
 input.liste_titre {
@@ -260,9 +261,6 @@ input.removedfile {
 	padding: 0px !important;
 	border: 0px !important;
 	vertical-align: text-bottom;
-}
-textarea:disabled {
-	background:#ddd;
 }
 input[type=file ]    { background-color: transparent; border-top: none; border-left: none; border-right: none; box-shadow: none; }
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
