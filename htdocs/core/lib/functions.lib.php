@@ -8262,7 +8262,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 
     $class = 'btnTitle';
     // hidden conf keep during button transition TODO: remove this block
-    if (empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)) {
+    if (!empty($conf->global->MAIN_USE_OLD_TITLE_BUTTON)) {
         $class = 'butActionNew';
     }
     if (! empty($params['morecss'])) $class.=' '.$params['morecss'];
@@ -8280,7 +8280,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
         $attr['class'] .= ' refused';
 
         // hidden conf keep during button transition TODO: remove this block
-        if(empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)){
+        if(!empty($conf->global->MAIN_USE_OLD_TITLE_BUTTON)){
             $attr['class'] = 'butActionNewRefused';
         }
 
@@ -8342,7 +8342,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
     $button.= '</'.$tag.'>';
 
     // hidden conf keep during button transition TODO: remove this block
-    if(empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)){
+    if(!empty($conf->global->MAIN_USE_OLD_TITLE_BUTTON)){
         $button='<'.$tag.' '.$compiledAttributes.' ><span class="text-plus-circle">'.$label.'</span>';
         $button.= '<span class="'.$iconClass.' valignmiddle"></span>';
         $button.= '</'.$tag.'>';
