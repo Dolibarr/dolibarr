@@ -77,7 +77,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(401);
 		}
 		if ($id ==0) {
-			$result = $this->company->intiAsSpecimen();
+			$result = $this->company->initAsSpecimen();
 		} else {
 			$result = $this->company->fetch($id);
 		}
