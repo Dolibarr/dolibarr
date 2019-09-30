@@ -79,7 +79,7 @@ if (! empty($conf->fournisseur->enabled)) $supplierorderstatic=new CommandeFourn
 
 llxHeader("", $langs->trans("CommercialArea"));
 
-print load_fiche_titre($langs->trans("CommercialArea"), '', 'title_commercial.png');
+print load_fiche_titre($langs->trans("CommercialArea"), '', 'commercial');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 

@@ -3017,7 +3017,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'note', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
 				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', '1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 				'jabber','skype','twitter','facebook','linkedin',
-				'chevron-left','chevron-right','chevron-down','chevron-top'
+				'chevron-left','chevron-right','chevron-down','chevron-top',
+				'home', 'companies', 'products', 'commercial', 'invoicing', 'accountancy', 'project', 'hrm', 'members', 'ticket', 'generic'
 			)
 		)) {
 		    $fa='fa';
@@ -3027,7 +3028,36 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 			if ($pictowithoutext == 'setup') {
 			    $fakey = 'fa-cog';
-			    $fasize = '1.4em';
+			}
+			elseif ($pictowithoutext == 'companies') {
+				$fakey = 'fa-building';
+			}
+			elseif ($pictowithoutext == 'products') {
+				$fakey = 'fa-box-open';
+			}
+			elseif ($pictowithoutext == 'commercial') {
+				$fakey = 'fa-user-tie';
+			}
+			elseif ($pictowithoutext == 'invoicing') {
+				$fakey = 'fa-file-invoice';
+			}
+			elseif ($pictowithoutext == 'accountancy') {
+				$fakey = 'fa-coins';
+			}
+			elseif ($pictowithoutext == 'project') {
+				$fakey = 'fa-project-diagram';
+			}
+			elseif ($pictowithoutext == 'hrm') {
+				$fakey = 'fa-umbrella-beach';
+			}
+			elseif ($pictowithoutext == 'members') {
+				$fakey = 'fa-user-friends';
+			}
+			elseif ($pictowithoutext == 'ticket') {
+				$fakey = 'fa-sticky-note';
+			}
+			elseif ($pictowithoutext == 'generic') {
+				$fakey = 'fa-folder-open';
 			}
 			elseif ($pictowithoutext == 'switch_off') {
 				$fakey = 'fa-toggle-off';
@@ -4073,7 +4103,7 @@ function print_titre($title)
  * 	@return	void
  *  @deprecated Use print load_fiche_titre instead
  */
-function print_fiche_titre($title, $mesg = '', $picto = 'title_generic.png', $pictoisfullpath = 0, $id = '')
+function print_fiche_titre($title, $mesg = '', $picto = 'generic', $pictoisfullpath = 0, $id = '')
 {
 	print load_fiche_titre($title, $mesg, $picto, $pictoisfullpath, $id);
 }
@@ -4091,13 +4121,13 @@ function print_fiche_titre($title, $mesg = '', $picto = 'title_generic.png', $pi
  * 	@return	string
  *  @see print_barre_liste()
  */
-function load_fiche_titre($titre, $morehtmlright = '', $picto = 'title_generic.png', $pictoisfullpath = 0, $id = '', $morecssontable = '', $morehtmlcenter = '')
+function load_fiche_titre($titre, $morehtmlright = '', $picto = 'generic', $pictoisfullpath = 0, $id = '', $morecssontable = '', $morehtmlcenter = '')
 {
 	global $conf;
 
 	$return='';
 
-	if ($picto == 'setup') $picto='title_generic.png';
+	if ($picto == 'setup') $picto='generic';
 
 	$return.= "\n";
 	$return.= '<table '.($id?'id="'.$id.'" ':'').'class="centpercent notopnoleftnoright'.($morecssontable?' '.$morecssontable:'').'" style="margin-bottom: 6px;"><tr>';	// maring bottom must be same than into print_barre_list
@@ -4139,7 +4169,7 @@ function load_fiche_titre($titre, $morehtmlright = '', $picto = 'title_generic.p
  *  @param  int         $hidenavigation     Force to hide all navigation tools
  *	@return	void
  */
-function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '', $sortorder = '', $morehtmlcenter = '', $num = -1, $totalnboflines = '', $picto = 'title_generic.png', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limit = -1, $hideselectlimit = 0, $hidenavigation = 0)
+function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '', $sortorder = '', $morehtmlcenter = '', $num = -1, $totalnboflines = '', $picto = 'generic', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limit = -1, $hideselectlimit = 0, $hidenavigation = 0)
 {
 	global $conf,$langs;
 
@@ -4148,7 +4178,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 	$totalnboflines=abs($totalnboflines);
 
 	if ($picto == 'setup') $picto='title_setup.png';
-	if (($conf->browser->name == 'ie') && $picto=='title_generic.png') $picto='title.gif';
+	if (($conf->browser->name == 'ie') && $picto=='generic') $picto='title.gif';
 	if ($limit < 0) $limit = $conf->liste_limit;
 	if ($savlimit != 0 && (($num > $limit) || ($num == -1) || ($limit == 0)))
 	{

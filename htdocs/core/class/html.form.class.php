@@ -7509,7 +7509,7 @@ class Form
 	 */
     public function showFilterAndCheckAddButtons($addcheckuncheckall = 0, $cssclass = 'checkforaction', $calljsfunction = 0)
 	{
-		$out.=$this->showFilterButtons();
+		$out=$this->showFilterButtons();
 		if ($addcheckuncheckall)
 		{
 			$out.=$this->showCheckAddButtons($cssclass, $calljsfunction);
