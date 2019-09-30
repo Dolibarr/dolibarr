@@ -19,7 +19,7 @@
  *  \defgroup   zapier     Module Zapier
  *  \brief      Zapier module descriptor.
  *
- *  \file       htdocs/zapier/core/modules/modZapier.class.php
+ *  \file       htdocs/core/modules/modZapier.class.php
  *  \ingroup    zapier
  *  \brief      Description and activation file for module Zapier
  */
@@ -67,7 +67,7 @@ class modZapier extends DolibarrModules
         // Name of image file used for this module.
         // If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
         // If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-        $this->picto = 'zapier@zapier';
+        $this->picto = 'zapier';
         // Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
         $this->module_parts = array(
             // Set this to 1 if module has its own trigger directory (core/triggers)
