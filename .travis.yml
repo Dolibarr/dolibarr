@@ -300,13 +300,9 @@ script:
   set +e
   echo
 
-# TODO: Check Javascript (jshint?)
-
-# TODO: Check CSS (csslint?)
-
 - |
   export INSTALL_FORCED_FILE=htdocs/install/install.forced.php
-  echo "Setting up Dolibarr $INSTALL_FORCED_FILE"
+  echo "Setting up Dolibarr $INSTALL_FORCED_FILE to test installation"
   # Ensure we catch errors
   set +e
   echo '<?php ' > $INSTALL_FORCED_FILE
@@ -327,9 +323,10 @@ script:
   echo '$'force_install_createuser=false';' >> $INSTALL_FORCED_FILE
   echo '$'force_install_mainforcehttps=false';' >> $INSTALL_FORCED_FILE
   echo '$'force_install_main_data_root=\'$TRAVIS_BUILD_DIR/htdocs\'';' >> $INSTALL_FORCED_FILE
-  # TODO: SQLite
   #cat $INSTALL_FORCED_FILE
-  echo "Installation test"
+
+- |
+  echo "Installing Dolibarr"
   cd htdocs/install
   php step1.php $TRAVIS_BUILD_DIR/htdocs > $TRAVIS_BUILD_DIR/install.log
   php step2.php set >> $TRAVIS_BUILD_DIR/install.log
@@ -344,7 +341,7 @@ script:
   set +e
   echo
   
-  - |
+- |
   echo "Setting up database to test migrations"
   if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ] || [ "$DB" = 'postgresql' ]; then
     echo "MySQL"
@@ -359,7 +356,6 @@ script:
     #pgloader mysql://root:pass@127.0.0.1/base postgresql://dolibarrowner@127.0.0.1/dolibarr
     pgloader mysql://root@127.0.0.1/travis postgresql:///travis
   fi
-  # TODO: SQLite
   echo
   
 - |
