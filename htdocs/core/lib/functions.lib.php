@@ -3028,47 +3028,36 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 			if ($pictowithoutext == 'setup') {
 			    $fakey = 'fa-cog';
-			    $fasize = '1.4em';
 			}
 			elseif ($pictowithoutext == 'companies') {
 				$fakey = 'fa-building';
-				$fasize = '1.4em';
 			}
 			elseif ($pictowithoutext == 'products') {
 				$fakey = 'fa-box-open';
-				$fasize = '1.4em';
 			}
 			elseif ($pictowithoutext == 'commercial') {
 				$fakey = 'fa-user-tie';
-				$fasize = '1.4em';
 			}
 			elseif ($pictowithoutext == 'invoicing') {
 				$fakey = 'fa-file-invoice';
-				$fasize = '1.4em';
 			}
 			elseif ($pictowithoutext == 'accountancy') {
 				$fakey = 'fa-coins';
-				$fasize = '1.4em';
 			}
 			elseif ($pictowithoutext == 'project') {
 				$fakey = 'fa-project-diagram';
-				$fasize = '1.4em';
 			}
 			elseif ($pictowithoutext == 'hrm') {
 				$fakey = 'fa-umbrella-beach';
-				$fasize = '1.4em';
 			}
 			elseif ($pictowithoutext == 'members') {
 				$fakey = 'fa-user-friends';
-				$fasize = '2.4em';
 			}
 			elseif ($pictowithoutext == 'ticket') {
 				$fakey = 'fa-sticky-note';
-				$fasize = '1.4em';
 			}
 			elseif ($pictowithoutext == 'generic') {
 				$fakey = 'fa-folder-open';
-				$fasize = '1.4em';
 			}
 			elseif ($pictowithoutext == 'switch_off') {
 				$fakey = 'fa-toggle-off';
