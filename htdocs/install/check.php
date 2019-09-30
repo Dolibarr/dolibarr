@@ -147,6 +147,16 @@ else
     print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportCurl")."<br>\n";
 }
 
+// Check if PHP calendar extension is available
+if (! function_exists("easter_date"))
+{
+    print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportCalendar")."<br>\n";
+}
+else
+{
+    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportCalendar")."<br>\n";
+}
+
 
 // Check if UTF8 supported
 if (! function_exists("utf8_encode"))
