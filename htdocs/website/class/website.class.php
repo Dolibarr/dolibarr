@@ -123,7 +123,7 @@ class Website extends CommonObject
 
 		// Clean parameters
 		if (isset($this->entity)) {
-			 $this->entity = trim($this->entity);
+			 $this->entity = (int) $this->entity;
 		}
 		if (isset($this->ref)) {
 			 $this->ref = trim($this->ref);
@@ -132,17 +132,17 @@ class Website extends CommonObject
 			 $this->description = trim($this->description);
 		}
 		if (isset($this->status)) {
-			 $this->status = trim($this->status);
+			 $this->status = (int) $this->status;
 		}
-		if (empty($this->date_creation)) {
+        if (empty($this->date_creation)) {
             $this->date_creation = $now;
         }
-		if (empty($this->date_modification)) {
+        if (empty($this->date_modification)) {
             $this->date_modification = $now;
         }
 
-		// Check parameters
-		if (empty($this->entity)) {
+        // Check parameters
+        if (empty($this->entity)) {
             $this->entity = $conf->entity;
         }
 
@@ -301,7 +301,7 @@ class Website extends CommonObject
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-	public function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -331,7 +331,7 @@ class Website extends CommonObject
 		}
 
 		if (!empty($sortfield)) {
-			$sql .= $this->db->order($sortfield,$sortorder);
+			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
 		 $sql .=  ' ' . $this->db->plimit($limit, $offset);
@@ -388,7 +388,7 @@ class Website extends CommonObject
 		// Clean parameters
 
 		if (isset($this->entity)) {
-			 $this->entity = trim($this->entity);
+			 $this->entity = (int) $this->entity;
 		}
 		if (isset($this->ref)) {
 			 $this->ref = trim($this->ref);
@@ -397,7 +397,7 @@ class Website extends CommonObject
 			 $this->description = trim($this->description);
 		}
 		if (isset($this->status)) {
-			 $this->status = trim($this->status);
+			 $this->status = (int) $this->status;
 		}
 
 		// Check parameters
@@ -412,8 +412,8 @@ class Website extends CommonObject
 		$sql .= ' fk_default_home = '.(($this->fk_default_home > 0)?$this->fk_default_home:"null").',';
 		$sql .= ' virtualhost = '.(($this->virtualhost != '')?"'".$this->db->escape($this->virtualhost)."'":"null").',';
 		$sql .= ' fk_user_modif = '.(! isset($this->fk_user_modif) ? $user->id : $this->fk_user_modif).',';
-		$sql .= ' date_creation = '.(! isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null');
-		$sql .= ', tms = '.(dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : "'".$this->db->idate(dol_now())."'");
+		$sql .= ' date_creation = '.(! isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').',';
+		$sql .= ' tms = '.(dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : "'".$this->db->idate(dol_now())."'");
 		$sql .= ' WHERE rowid=' . $this->id;
 
 		$this->db->begin();
@@ -489,8 +489,7 @@ class Website extends CommonObject
 
 		if (! $error && ! empty($this->ref))
 		{
-			global $dolibarr_main_data_root;
-			$pathofwebsite=$dolibarr_main_data_root.'/website/'.$this->ref;
+			$pathofwebsite=DOL_DATA_ROOT.'/website/'.$this->ref;
 
 			dol_delete_dir_recursive($pathofwebsite);
 		}
@@ -517,9 +516,9 @@ class Website extends CommonObject
 	 * @param	string	$newlang	New language
 	 * @return 	mixed 				New object created, <0 if KO
 	 */
-	public function createFromClone($user, $fromid, $newref, $newlang='')
+	public function createFromClone($user, $fromid, $newref, $newlang = '')
 	{
-        global $hookmanager, $langs;
+        global $conf;
 		global $dolibarr_main_data_root;
 
 		$now = dol_now();
@@ -532,7 +531,7 @@ class Website extends CommonObject
         // Check no site with ref exists
 		if ($object->fetch(0, $newref) > 0)
 		{
-			$this->error='NewRefIsAlreadyUsed';
+			$this->error='ErrorNewRefIsAlreadyUsed';
 			return -1;
 		}
 
@@ -542,8 +541,9 @@ class Website extends CommonObject
 		$object->fetch($fromid);
 
 		$oldidforhome=$object->fk_default_home;
+		$oldref=$object->ref;
 
-		$pathofwebsiteold=$dolibarr_main_data_root.'/website/'.$object->ref;
+		$pathofwebsiteold=$dolibarr_main_data_root.'/website/'.$oldref;
 		$pathofwebsitenew=$dolibarr_main_data_root.'/website/'.$newref;
 		dol_delete_dir_recursive($pathofwebsitenew);
 
@@ -575,14 +575,23 @@ class Website extends CommonObject
 			dolCopyDir($pathofwebsiteold, $pathofwebsitenew, $conf->global->MAIN_UMASK, 0);
 
 			// Check symlink to medias and restore it if ko
-			$pathtomedias=DOL_DATA_ROOT.'/medias';
-			$pathtomediasinwebsite=$pathofwebsitenew.'/medias';
+			$pathtomedias=DOL_DATA_ROOT.'/medias';					// Target
+			$pathtomediasinwebsite=$pathofwebsitenew.'/medias';		// Source / Link name
 			if (! is_link(dol_osencode($pathtomediasinwebsite)))
 			{
 				dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
 				dol_mkdir(dirname($pathtomediasinwebsite));     // To be sure dir for website exists
 				$result = symlink($pathtomedias, $pathtomediasinwebsite);
 			}
+
+			// Copy images and js dir
+			$pathofmediasjsold=DOL_DATA_ROOT.'/medias/js/'.$oldref;
+			$pathofmediasjsnew=DOL_DATA_ROOT.'/medias/js/'.$newref;
+			dolCopyDir($pathofmediasjsold, $pathofmediasjsnew, $conf->global->MAIN_UMASK, 0);
+
+			$pathofmediasimageold=DOL_DATA_ROOT.'/medias/image/'.$oldref;
+			$pathofmediasimagenew=DOL_DATA_ROOT.'/medias/image/'.$newref;
+			dolCopyDir($pathofmediasimageold, $pathofmediasimagenew, $conf->global->MAIN_UMASK, 0);
 
 			$newidforhome=0;
 
@@ -661,7 +670,7 @@ class Website extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the user card (with optionaly the picto)
+	 *  Return a link to the user card (with optionally the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
@@ -671,7 +680,7 @@ class Website extends CommonObject
      *  @param  string  $morecss            Add more css on link
 	 *	@return	string						String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $notooltip=0, $maxlen=24, $morecss='')
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
 	{
 		global $langs, $conf, $db;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -707,12 +716,12 @@ class Website extends CommonObject
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status
 	 */
-	function getLibStatut($mode=0)
+	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->status,$mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un status donne
 	 *
@@ -720,7 +729,7 @@ class Website extends CommonObject
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Label of status
 	 */
-	function LibStatut($status,$mode=0)
+	public function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -728,27 +737,27 @@ class Website extends CommonObject
 		if ($mode == 0 || $mode == 1)
 		{
 			if ($status == 1) return $langs->trans('Enabled');
-			if ($status == 0) return $langs->trans('Disabled');
+			elseif ($status == 0) return $langs->trans('Disabled');
 		}
 		elseif ($mode == 2)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
 		}
 		elseif ($mode == 3)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5');
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
 		}
 		elseif ($mode == 4)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
 		}
 		elseif ($mode == 5)
 		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
+			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
 		}
 	}
 
@@ -781,9 +790,9 @@ class Website extends CommonObject
 	/**
 	 * Generate a zip with all data of web site.
 	 *
-	 * @return  string						Path to file with zip
+	 * @return  string						Path to file with zip or '' if error
 	 */
-	function exportWebSite()
+	public function exportWebSite()
 	{
 		global $conf, $mysoc;
 
@@ -814,32 +823,49 @@ class Website extends CommonObject
 			return '';
 		}
 
-		$arrayreplacement=array();
+		$arrayreplacementinfilename=array();
+		$arrayreplacementincss=array();
+		$arrayreplacementincss['file=image/'.$website->ref.'/'] = "file=image/__WEBSITE_KEY__/";
+		$arrayreplacementincss['file=js/'.$website->ref.'/'] = "file=js/__WEBSITE_KEY__/";
+		$arrayreplacementincss['medias/image/'.$website->ref.'/'] = "medias/image/__WEBSITE_KEY__/";
+		$arrayreplacementincss['medias/js/'.$website->ref.'/'] = "medias/js/__WEBSITE_KEY__/";
+		$arrayreplacementincss['file=logos%2Fthumbs%2F'.$mysoc->logo_small] = "file=logos%2Fthumbs%2F__LOGO_SMALL_KEY__";
+		$arrayreplacementincss['file=logos%2Fthumbs%2F'.$mysoc->logo_mini] = "file=logos%2Fthumbs%2F__LOGO_MINI_KEY__";
+		$arrayreplacementincss['file=logos%2Fthumbs%2F'.$mysoc->logo] = "file=logos%2Fthumbs%2F__LOGO_KEY__";
 
 		$srcdir = $conf->website->dir_output.'/'.$website->ref;
 		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/containers';
 
+		// Create containers dir
+		dol_syslog("Create containers dir");
+		dol_mkdir($conf->website->dir_temp.'/'.$website->ref.'/containers');
+
+		// Copy files into medias
 		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
-		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacement);
+		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename);
 
 		$srcdir = DOL_DATA_ROOT.'/medias/image/'.$website->ref;
 		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/medias/image/websitekey';
 
 		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
-		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacement);
+		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename);
 
 		$srcdir = DOL_DATA_ROOT.'/medias/js/'.$website->ref;
 		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/medias/js/websitekey';
 
+		// Copy containers files
 		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
-		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacement);
+		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename);
+
+		$cssindestdir = $conf->website->dir_temp.'/'.$website->ref.'/containers/styles.css.php';
+		dolReplaceInFile($cssindestdir, $arrayreplacementincss);
+
+		$htmldeaderindestdir = $conf->website->dir_temp.'/'.$website->ref.'/containers/htmlheader.html';
+		dolReplaceInFile($htmldeaderindestdir, $arrayreplacementincss);
 
 		// Build sql file
-		dol_syslog("Create containers dir");
-		dol_mkdir($conf->website->dir_temp.'/'.$website->ref.'/containers');
-
 		$filesql = $conf->website->dir_temp.'/'.$website->ref.'/website_pages.sql';
-		$fp = fopen($filesql,"w");
+		$fp = fopen($filesql, "w");
 		if (empty($fp))
 		{
 			setEventMessages("Failed to create file ".$filesql, null, 'errors');
@@ -922,6 +948,10 @@ class Website extends CommonObject
 			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo_small, "file=logos%2Fthumbs%2F__LOGO_SMALL_KEY__", $stringtoexport);
 			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo_mini, "file=logos%2Fthumbs%2F__LOGO_MINI_KEY__", $stringtoexport);
 			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo, "file=logos%2Fthumbs%2F__LOGO_KEY__", $stringtoexport);
+
+			// When we have a link src="image/websiteref/file.png" into html content
+			$stringtoexport = str_replace('="image/'.$website->ref.'/', '="image/__WEBSITE_KEY__/', $stringtoexport);
+
 			$line.= "'".$this->db->escape($stringtoexport)."'";		// Replace \r \n to have record on 1 line
 			$line.= ");";
 			$line.= "\n";
@@ -945,12 +975,21 @@ class Website extends CommonObject
 		// Build zip file
 		$filedir  = $conf->website->dir_temp.'/'.$website->ref.'/.';
 		$fileglob = $conf->website->dir_temp.'/'.$website->ref.'/website_'.$website->ref.'-*.zip';
-		$filename = $conf->website->dir_temp.'/'.$website->ref.'/website_'.$website->ref.'-'.dol_print_date(dol_now(),'dayhourlog').'.zip';
+		$filename = $conf->website->dir_temp.'/'.$website->ref.'/website_'.$website->ref.'-'.dol_print_date(dol_now(), 'dayhourlog').'.zip';
 
 		dol_delete_file($fileglob, 0);
-		dol_compress_file($filedir, $filename, 'zip');
+		$result = dol_compress_file($filedir, $filename, 'zip');
 
-		return $filename;
+		if ($result > 0)
+		{
+			return $filename;
+		}
+		else
+		{
+			global $errormsg;
+			$this->error = $errormsg;
+			return '';
+		}
 	}
 
 
@@ -960,7 +999,7 @@ class Website extends CommonObject
 	 * @param 	string		$pathtofile		Path of zip file
 	 * @return  int							<0 if KO, Id of new website if OK
 	 */
-	function importWebSite($pathtofile)
+	public function importWebSite($pathtofile)
 	{
 		global $conf, $mysoc;
 
@@ -990,8 +1029,23 @@ class Website extends CommonObject
 			return -1;
 		}
 
+		$arrayreplacement = array();
+		$arrayreplacement['__WEBSITE_ID__'] = $object->id;
+		$arrayreplacement['__WEBSITE_KEY__'] = $object->ref;
+		$arrayreplacement['__N__'] = $this->db->escape("\n");			// Restore \n
+		$arrayreplacement['__LOGO_SMALL_KEY__'] = $this->db->escape($mysoc->logo_small);
+		$arrayreplacement['__LOGO_MINI_KEY__'] = $this->db->escape($mysoc->logo_mini);
+		$arrayreplacement['__LOGO_KEY__'] = $this->db->escape($mysoc->logo);
 
+		// Copy containers
 		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/containers', $conf->website->dir_output.'/'.$object->ref, 0, 1);	// Overwrite if exists
+
+		// Make replacement into css and htmlheader file
+		$cssindestdir = $conf->website->dir_output.'/'.$object->ref.'/styles.css.php';
+		$result=dolReplaceInFile($cssindestdir, $arrayreplacement);
+
+		$htmldeaderindestdir = $conf->website->dir_output.'/'.$object->ref.'/htmlheader.html';
+		$result = dolReplaceInFile($htmldeaderindestdir, $arrayreplacement);
 
 		// Now generate the master.inc.php page
 		$filemaster=$conf->website->dir_output.'/'.$object->ref.'/master.inc.php';
@@ -1003,17 +1057,10 @@ class Website extends CommonObject
 		}
 
 		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref, 0, 1);	// Medias can be shared, do not overwrite if exists
-		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey',    $conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref, 0, 1);	    // Medias can be shared, do not overwrite if exists
+		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref, 0, 1);	    // Medias can be shared, do not overwrite if exists
 
 		$sqlfile = $conf->website->dir_temp.'/'.$object->ref.'/website_pages.sql';
 
-		$arrayreplacement = array();
-		$arrayreplacement['__WEBSITE_ID__'] = $object->id;
-		$arrayreplacement['__WEBSITE_KEY__'] = $object->ref;
-		$arrayreplacement['__N__'] = $this->db->escape("\n");			// Restore \n
-		$arrayreplacement['__LOGO_SMALL_KEY__'] = $this->db->escape($mysoc->logo_small);
-		$arrayreplacement['__LOGO_MINI_KEY__'] = $this->db->escape($mysoc->logo_mini);
-		$arrayreplacement['__LOGO_KEY__'] = $this->db->escape($mysoc->logo);
 		$result = dolReplaceInFile($sqlfile, $arrayreplacement);
 
 		$this->db->begin();
@@ -1038,11 +1085,13 @@ class Website extends CommonObject
 		$objectpagestatic = new WebsitePage($this->db);
 
 		// Make replacement of IDs
-		$fp = fopen($sqlfile,"r");
+		$fp = fopen($sqlfile, "r");
 		if ($fp)
 		{
 			while (! feof($fp))
 			{
+				$reg = array();
+
 				// Warning fgets with second parameter that is null or 0 hang.
 				$buf = fgets($fp, 65000);
 				if (preg_match('/^-- Page ID (\d+)\s[^\s]+\s(\d+).*Aliases\s(.*)\s--;/i', $buf, $reg))
@@ -1062,10 +1111,16 @@ class Website extends CommonObject
 					dolSavePageContent($filetpl, $object, $objectpagestatic);
 
 					// Regenerate alternative aliases pages
-					foreach($aliasesarray as $aliasshortcuttocreate)
+					if (is_array($aliasesarray))
 					{
-						$filealias=$conf->website->dir_output.'/'.$object->ref.'/'.$aliasshortcuttocreate.'.php';
-						dolSavePageAlias($filealias, $object, $objectpagestatic);
+						foreach($aliasesarray as $aliasshortcuttocreate)
+						{
+							if (trim($aliasshortcuttocreate))
+							{
+								$filealias=$conf->website->dir_output.'/'.$object->ref.'/'.trim($aliasshortcuttocreate).'.php';
+								dolSavePageAlias($filealias, $object, $objectpagestatic);
+							}
+						}
 					}
 				}
 			}
@@ -1096,7 +1151,7 @@ class Website extends CommonObject
 	 * @param	string			$htmlname				Suffix for HTML name
 	 * @return 	string									HTML select component
 	 */
-	public function componentSelectLang($languagecodes, $weblangs, $morecss='', $htmlname='')
+	public function componentSelectLang($languagecodes, $weblangs, $morecss = '', $htmlname = '')
 	{
 		global $websitepagefile, $website;
 
@@ -1108,7 +1163,9 @@ class Website extends CommonObject
 		$pageid = 0;
 		if (! empty($websitepagefile))
 		{
-			$pageid = str_replace(array('.tpl.php', 'page'), array('', ''), basename($websitepagefile));
+		    $websitepagefileshort=basename($websitepagefile);
+		    if ($websitepagefileshort == 'index.php') $pageid = $website->fk_default_home;
+		    else $pageid = str_replace(array('.tpl.php', 'page'), array('', ''), $websitepagefileshort);
 			if ($pageid > 0)
 			{
 				$tmppage->fetch($pageid);
@@ -1175,7 +1232,7 @@ class Website extends CommonObject
 			height: '.$HEIGHTOPTION.'px;
 			overflow: hidden;
 			transition: all .3s ease;
-			margin: 0 50px 0 0;
+			margin: 0 0 0 0;
 			vertical-align: top;
 		}
 		.componentSelectLang'.$htmlname.':hover, .componentSelectLang'.$htmlname.':hover a { background-color: #fff; color: #000 !important; }
@@ -1197,19 +1254,22 @@ class Website extends CommonObject
 			$out.= '</li></a>';
 		}
 		$i=0;
-		foreach($languagecodes as $languagecode)
-		{
-			if ($languagecode == $languagecodeselected) continue;	// Already output
-			$shortcode = strtolower(substr($languagecode, -2));
-			$label = $weblangs->trans("Language_".$languagecode);
-			if ($shortcode == 'us') $label = preg_replace('/\s*\(.*\)/', '', $label);
-			$out.= '<a href="'.$url.$languagecode.'"><li><img height="12px" src="medias/image/common/flags/'.$shortcode.'.png" style="margin-right: 5px;"/>'.$label;
-			if (empty($i) && empty($languagecodeselected)) $out.= '<span class="fa fa-caret-down" style="padding-left: 5px;" />';
-			$out.= '</li></a>';
-			$i++;
-		}
-		$out.= '</ul>';
+        if (is_array($languagecodes))
+        {
+            foreach($languagecodes as $languagecode)
+            {
+                if ($languagecode == $languagecodeselected) continue;	// Already output
+                $shortcode = strtolower(substr($languagecode, -2));
+                $label = $weblangs->trans("Language_".$languagecode);
+                if ($shortcode == 'us') $label = preg_replace('/\s*\(.*\)/', '', $label);
+                $out.= '<a href="'.$url.$languagecode.'"><li><img height="12px" src="medias/image/common/flags/'.$shortcode.'.png" style="margin-right: 5px;"/>'.$label;
+                if (empty($i) && empty($languagecodeselected)) $out.= '<span class="fa fa-caret-down" style="padding-left: 5px;" />';
+                $out.= '</li></a>';
+                $i++;
+            }
+        }
+        $out.= '</ul>';
 
-		return $out;
-	}
+        return $out;
+    }
 }

@@ -35,8 +35,8 @@ if (! empty($conf->projet->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills'));
 
-$id = GETPOST("facid","int");
-$ref=GETPOST("ref",'alpha');
+$id = GETPOST("facid", "int");
+$ref=GETPOST("ref", 'alpha');
 
 
 /*
@@ -69,7 +69,7 @@ $morehtmlref='<div class="refidno">';
 $morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
 $morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
 // Thirdparty
-$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1,'customer');
+$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'customer');
 // Project
 if (! empty($conf->projet->enabled))
 {
@@ -107,7 +107,7 @@ $morehtmlref.='</div>';
 
 $object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-dol_banner_tab($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref, '', 0);
+dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0);
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';

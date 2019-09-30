@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2017	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ $langs->load("modulebuilder");
 <!-- BEGIN PHP TEMPLATE admin_extrafields_view.tpl.php -->
 <?php
 
-print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";
+print '<span class="opacitymedium">'.$langs->trans("DefineHereComplementaryAttributes", $textobject).'</span><br>'."\n";
 print '<br>';
 
 // Load attribute_label
@@ -49,7 +49,7 @@ print '<div class="div-table-responsive">';
 print '<table summary="listofattributes" class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
-print '<td align="left">'.$langs->trans("Position");
+print '<td class="left">'.$langs->trans("Position");
 print '<span class="nowrap">';
 print img_picto('A-Z', '1downarrow.png');
 print '</span>';
@@ -58,15 +58,15 @@ print '<td>'.$langs->trans("LabelOrTranslationKey").'</td>';
 print '<td>'.$langs->trans("TranslationString").'</td>';
 print '<td>'.$langs->trans("AttributeCode").'</td>';
 print '<td>'.$langs->trans("Type").'</td>';
-print '<td align="right">'.$langs->trans("Size").'</td>';
+print '<td class="right">'.$langs->trans("Size").'</td>';
 print '<td>'.$langs->trans("ComputedFormula").'</td>';
-print '<td align="center">'.$langs->trans("Unique").'</td>';
-print '<td align="center">'.$langs->trans("Required").'</td>';
-print '<td align="center">'.$langs->trans("AlwaysEditable").'</td>';
-print '<td align="center">'.$form->textwithpicto($langs->trans("Visible"), $langs->trans("VisibleDesc")).'</td>';
-print '<td align="center">'.$form->textwithpicto($langs->trans("Totalizable"), $langs->trans("TotalizableDesc")).'</td>';
+print '<td class="center">'.$langs->trans("Unique").'</td>';
+print '<td class="center">'.$langs->trans("Required").'</td>';
+print '<td class="center">'.$langs->trans("AlwaysEditable").'</td>';
+print '<td class="center">'.$form->textwithpicto($langs->trans("Visible"), $langs->trans("VisibleDesc")).'</td>';
+print '<td class="center">'.$form->textwithpicto($langs->trans("Totalizable"), $langs->trans("TotalizableDesc")).'</td>';
 if ($conf->multicompany->enabled)  {
-	print '<td align="center">'.$langs->trans("Entities").'</td>';
+	print '<td class="center">'.$langs->trans("Entities").'</td>';
 }
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
@@ -86,24 +86,25 @@ if (is_array($extrafields->attributes[$elementtype]['type']) && count($extrafiel
 		print "<td>".$langs->trans($extrafields->attributes[$elementtype]['label'][$key])."</td>\n";
 		print "<td>".$key."</td>\n";
 		print "<td>".$type2label[$extrafields->attributes[$elementtype]['type'][$key]]."</td>\n";
-		print '<td align="right">'.$extrafields->attributes[$elementtype]['size'][$key]."</td>\n";
+		print '<td class="right">'.$extrafields->attributes[$elementtype]['size'][$key]."</td>\n";
 		print '<td>'.dol_trunc($extrafields->attributes[$elementtype]['computed'][$key], 20)."</td>\n";
-		print '<td align="center">'.yn($extrafields->attributes[$elementtype]['unique'][$key])."</td>\n";
-		print '<td align="center">'.yn($extrafields->attributes[$elementtype]['required'][$key])."</td>\n";
-		print '<td align="center">'.yn($extrafields->attributes[$elementtype]['alwayseditable'][$key])."</td>\n";
-		print '<td align="center">'.$extrafields->attributes[$elementtype]['list'][$key]."</td>\n";
-		print '<td align="center">'.yn($extrafields->attributes[$elementtype]['totalizable'][$key])."</td>\n";
+		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['unique'][$key])."</td>\n";
+		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['required'][$key])."</td>\n";
+		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['alwayseditable'][$key])."</td>\n";
+		print '<td class="center">'.$extrafields->attributes[$elementtype]['list'][$key]."</td>\n";
+		print '<td class="center">'.yn($extrafields->attributes[$elementtype]['totalizable'][$key])."</td>\n";
 		if (! empty($conf->multicompany->enabled))  {
-			print '<td align="center">'.($extrafields->attributes[$elementtype]['entityid'][$key]==0?$langs->trans("All"):$extrafields->attributes[$elementtype]['entitylabel'][$key]).'</td>';
+			print '<td class="center">'.($extrafields->attributes[$elementtype]['entityid'][$key]==0?$langs->trans("All"):$extrafields->attributes[$elementtype]['entitylabel'][$key]).'</td>';
 		}
-		print '<td class="right nowraponall""><a href="'.$_SERVER["PHP_SELF"].'?action=edit&attrname='.$key.'#formeditextrafield">'.img_edit().'</a>';
+		print '<td class="right nowraponall"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&attrname='.$key.'#formeditextrafield">'.img_edit().'</a>';
 		print "&nbsp; <a href=\"".$_SERVER["PHP_SELF"]."?action=delete&attrname=$key\">".img_delete()."</a></td>\n";
 		print "</tr>";
 	}
 }
 else
 {
-	$colspan=9;
+	$colspan=13;
+	if (! empty($conf->multicompany->enabled))  $colspan++;
 
 	print '<tr class="oddeven">';
 	print '<td class="opacitymedium" colspan="'.$colspan.'">';

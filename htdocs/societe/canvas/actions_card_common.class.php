@@ -32,15 +32,15 @@ abstract class ActionsCardCommon
      */
     public $db;
 
-    var $dirmodule;
-    var $targetmodule;
-    var $canvas;
-    var $card;
+    public $dirmodule;
+    public $targetmodule;
+    public $canvas;
+    public $card;
 
 	//! Template container
-	var $tpl = array();
+	public $tpl = array();
 	//! Object container
-	var $object;
+	public $object;
 
 	/**
 	 * @var string Error code (or message)
@@ -58,19 +58,19 @@ abstract class ActionsCardCommon
      *  Get object from id or ref and save it into this->object
 	 *
      *  @param		int		$id			Object id
-     *  @param		ref		$ref		Object ref
+     *  @param		string	$ref		Object ref
      *  @return		object				Object loaded
      */
-    protected function getObject($id,$ref='')
+    protected function getObject($id, $ref = '')
     {
     	//$ret = $this->getInstanceDao();
 
     	$object = new Societe($this->db);
-    	if (! empty($id) || ! empty($ref)) $object->fetch($id,$ref);
+    	if (! empty($id) || ! empty($ref)) $object->fetch($id, $ref);
     	$this->object = $object;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
@@ -79,7 +79,7 @@ abstract class ActionsCardCommon
 	 *    @param	string	$ref		Ref of object
 	 *    @return	void
      */
-    function assign_values(&$action, $id=0, $ref='')
+    public function assign_values(&$action, $id = 0, $ref = '')
     {
         // phpcs:enable
         global $conf, $langs, $user, $mysoc, $canvas;
@@ -98,8 +98,8 @@ abstract class ActionsCardCommon
             $this->tpl[$key] = $value;
         }
 
-        $this->tpl['error'] = get_htmloutput_errors($this->object->error,$this->object->errors);
-        if (is_array($GLOBALS['errors'])) $this->tpl['error'] = get_htmloutput_mesg('',$GLOBALS['errors'],'error');
+        $this->tpl['error'] = get_htmloutput_errors($this->object->error, $this->object->errors);
+        if (is_array($GLOBALS['errors'])) $this->tpl['error'] = get_htmloutput_mesg('', $GLOBALS['errors'], 'error');
 
         if ($action == 'create')
         {
@@ -145,7 +145,7 @@ abstract class ActionsCardCommon
             {
                 $module = substr($module, 0, dol_strlen($module)-4);
             }
-            $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
+            $dirsociete=array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
             foreach ($dirsociete as $dirroot)
             {
                 $res=dol_include_once($dirroot.$module.'.php');
@@ -166,10 +166,10 @@ abstract class ActionsCardCommon
 
             // Customer
             $this->tpl['customercode'] = $this->object->code_client;
-            if ((!$this->object->code_client || $this->object->code_client == -1) && $modCodeClient->code_auto) $this->tpl['customercode'] = $modCodeClient->getNextValue($this->object,0);
+            if ((!$this->object->code_client || $this->object->code_client == -1) && $modCodeClient->code_auto) $this->tpl['customercode'] = $modCodeClient->getNextValue($this->object, 0);
             $this->tpl['ismodifiable_customercode'] = $this->object->codeclient_modifiable();
-            $s=$modCodeClient->getToolTip($langs,$this->object,0);
-            $this->tpl['help_customercode'] = $form->textwithpicto('',$s,1);
+            $s=$modCodeClient->getToolTip($langs, $this->object, 0);
+            $this->tpl['help_customercode'] = $form->textwithpicto('', $s, 1);
 
             if (! empty($conf->fournisseur->enabled))
             {
@@ -181,7 +181,7 @@ abstract class ActionsCardCommon
             	{
             		$module = substr($module, 0, dol_strlen($module)-4);
             	}
-                $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
+                $dirsociete=array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
                 foreach ($dirsociete as $dirroot)
                 {
                     $res=dol_include_once($dirroot.$module.'.php');
@@ -193,40 +193,40 @@ abstract class ActionsCardCommon
             	if ($modCodeFournisseur->code_auto) $this->tpl['prefix_suppliercode'] = $modCodeFournisseur->verif_prefixIsUsed();
 
             	// Supplier
-            	$this->tpl['yn_supplier'] = $form->selectyesno("fournisseur",$this->object->fournisseur,1);
+            	$this->tpl['yn_supplier'] = $form->selectyesno("fournisseur", $this->object->fournisseur, 1);
             	$this->tpl['suppliercode'] = $this->object->code_fournisseur;
-            	if ((!$this->object->code_fournisseur || $this->object->code_fournisseur == -1) && $modCodeFournisseur->code_auto) $this->tpl['suppliercode'] = $modCodeFournisseur->getNextValue($this->object,1);
+            	if ((!$this->object->code_fournisseur || $this->object->code_fournisseur == -1) && $modCodeFournisseur->code_auto) $this->tpl['suppliercode'] = $modCodeFournisseur->getNextValue($this->object, 1);
             	$this->tpl['ismodifiable_suppliercode'] = $this->object->codefournisseur_modifiable();
-            	$s=$modCodeFournisseur->getToolTip($langs,$this->object,1);
-            	$this->tpl['help_suppliercode'] = $form->textwithpicto('',$s,1);
+            	$s=$modCodeFournisseur->getToolTip($langs, $this->object, 1);
+            	$this->tpl['help_suppliercode'] = $form->textwithpicto('', $s, 1);
 
             	$this->object->LoadSupplierCateg();
             	$this->tpl['suppliercategory'] = $this->object->SupplierCategories;
             }
 
             // Zip
-            $this->tpl['select_zip'] = $formcompany->select_ziptown($this->object->zip,'zipcode',array('town','selectcountry_id','state_id'),6);
+            $this->tpl['select_zip'] = $formcompany->select_ziptown($this->object->zip, 'zipcode', array('town','selectcountry_id','state_id'), 6);
 
             // Town
-            $this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town,'town',array('zipcode','selectcountry_id','state_id'));
+            $this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town, 'town', array('zipcode','selectcountry_id','state_id'));
 
             // Country
             $this->object->country_id = ($this->object->country_id ? $this->object->country_id : $mysoc->country_id);
             $this->object->country_code = ($this->object->country_code ? $this->object->country_code : $mysoc->country_code);
-            $this->tpl['select_country'] = $form->select_country($this->object->country_id,'country_id');
+            $this->tpl['select_country'] = $form->select_country($this->object->country_id, 'country_id');
             $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
-            if ($user->admin) $this->tpl['info_admin'] = info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+            if ($user->admin) $this->tpl['info_admin'] = info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 
             // State
-            if ($this->object->country_id) $this->tpl['select_state'] = $formcompany->select_state($this->object->state_id,$this->object->country_code);
+            if ($this->object->country_id) $this->tpl['select_state'] = $formcompany->select_state($this->object->state_id, $this->object->country_code);
             else $this->tpl['select_state'] = $countrynotdefined;
 
             // Language
-            if (! empty($conf->global->MAIN_MULTILANGS)) $this->tpl['select_lang'] = $formadmin->select_language(($this->object->default_lang?$this->object->default_lang:$conf->global->MAIN_LANG_DEFAULT),'default_lang',0,0,1);
+            if (! empty($conf->global->MAIN_MULTILANGS)) $this->tpl['select_lang'] = $formadmin->select_language(($this->object->default_lang?$this->object->default_lang:$conf->global->MAIN_LANG_DEFAULT), 'default_lang', 0, 0, 1);
 
             // VAT
-            $this->tpl['yn_assujtva'] = $form->selectyesno('assujtva_value',$this->tpl['tva_assuj'],1);	// Assujeti par defaut en creation
+            $this->tpl['yn_assujtva'] = $form->selectyesno('assujtva_value', $this->tpl['tva_assuj'], 1);	// Assujeti par defaut en creation
 
             // Select users
             $this->tpl['select_users'] = $form->select_dolusers($this->object->commercial_id, 'commercial_id', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
@@ -240,21 +240,21 @@ abstract class ActionsCardCommon
                 if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
                 {
                     $this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td>';
-                    $this->tpl['localtax'].= $form->selectyesno('localtax1assuj_value',$this->object->localtax1_assuj,1);
+                    $this->tpl['localtax'].= $form->selectyesno('localtax1assuj_value', $this->object->localtax1_assuj, 1);
                     $this->tpl['localtax'].= '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
-                    $this->tpl['localtax'].= $form->selectyesno('localtax2assuj_value',$this->object->localtax1_assuj,1);
+                    $this->tpl['localtax'].= $form->selectyesno('localtax2assuj_value', $this->object->localtax1_assuj, 1);
                     $this->tpl['localtax'].= '</td></tr>';
                 }
                 elseif($mysoc->localtax1_assuj=="1")
                 {
                     $this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
-                    $this->tpl['localtax'].= $form->selectyesno('localtax1assuj_value',$this->object->localtax1_assuj,1);
+                    $this->tpl['localtax'].= $form->selectyesno('localtax1assuj_value', $this->object->localtax1_assuj, 1);
                     $this->tpl['localtax'].= '</td><tr>';
                 }
                 elseif($mysoc->localtax2_assuj=="1")
                 {
                     $this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
-                    $this->tpl['localtax'].= $form->selectyesno('localtax2assuj_value',$this->object->localtax1_assuj,1);
+                    $this->tpl['localtax'].= $form->selectyesno('localtax2assuj_value', $this->object->localtax1_assuj, 1);
                     $this->tpl['localtax'].= '</td><tr>';
                 }
             }
@@ -266,19 +266,19 @@ abstract class ActionsCardCommon
             $this->tpl['showhead']=dol_get_fiche_head($head, 'card', '', 0, 'company');
             $this->tpl['showend']=dol_get_fiche_end();
 
-            $this->tpl['showrefnav'] 		= $form->showrefnav($this->object,'socid','',($user->societe_id?0:1),'rowid','nom');
+            $this->tpl['showrefnav'] 		= $form->showrefnav($this->object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
 
             $this->tpl['checkcustomercode'] = $this->object->check_codeclient();
             $this->tpl['checksuppliercode'] = $this->object->check_codefournisseur();
             $this->tpl['address'] 			= dol_nl2br($this->object->address);
 
             $img=picto_from_langcode($this->object->country_code);
-            if ($this->object->isInEEC()) $this->tpl['country'] = $form->textwithpicto(($img?$img.' ':'').$this->object->country,$langs->trans("CountryIsInEEC"),1,0);
+            if ($this->object->isInEEC()) $this->tpl['country'] = $form->textwithpicto(($img?$img.' ':'').$this->object->country, $langs->trans("CountryIsInEEC"), 1, 0);
             $this->tpl['country'] = ($img?$img.' ':'').$this->object->country;
 
-            $this->tpl['phone'] 	= dol_print_phone($this->object->phone,$this->object->country_code,0,$this->object->id,'AC_TEL');
-            $this->tpl['fax'] 		= dol_print_phone($this->object->fax,$this->object->country_code,0,$this->object->id,'AC_FAX');
-            $this->tpl['email'] 	= dol_print_email($this->object->email,0,$this->object->id,'AC_EMAIL');
+            $this->tpl['phone'] 	= dol_print_phone($this->object->phone, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
+            $this->tpl['fax'] 		= dol_print_phone($this->object->fax, $this->object->country_code, 0, $this->object->id, 'AC_FAX');
+            $this->tpl['email'] 	= dol_print_email($this->object->email, 0, $this->object->id, 'AC_EMAIL');
             $this->tpl['url'] 		= dol_print_url($this->object->url);
 
             $this->tpl['tva_assuj']		= yn($this->object->tva_assuj);
@@ -310,7 +310,7 @@ abstract class ActionsCardCommon
             	$this->tpl['sales_representatives'].= $nbofsalesrepresentative;
             	$this->tpl['sales_representatives'].= '</a>';
             }
-            else if ($nbofsalesrepresentative > 0)
+            elseif ($nbofsalesrepresentative > 0)
             {
             	$userstatic=new User($this->db);
             	$i=0;
@@ -331,7 +331,7 @@ abstract class ActionsCardCommon
             {
                 $langs->load("members");
                 $adh=new Adherent($this->db);
-                $result=$adh->fetch('','',$this->object->id);
+                $result=$adh->fetch('', '', $this->object->id);
                 if ($result > 0)
                 {
                     $adh->ref=$adh->getFullName($langs);
@@ -420,7 +420,7 @@ abstract class ActionsCardCommon
         // We set country_id, and country_code label of the chosen country
         if ($this->object->country_id)
         {
-            $tmparray=getCountry($this->object->country_id,'all',$this->db,$langs,0);
+            $tmparray=getCountry($this->object->country_id, 'all', $this->db, $langs, 0);
             $this->object->country_code	=	$tmparray['code'];
             $this->object->country_label=	$tmparray['label'];
         }

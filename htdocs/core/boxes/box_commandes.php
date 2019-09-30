@@ -32,20 +32,20 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_commandes extends ModeleBoxes
 {
-    var $boxcode="lastcustomerorders";
-    var $boximg="object_order";
-    var $boxlabel="BoxLastCustomerOrders";
-    var $depends = array("commande");
+    public $boxcode="lastcustomerorders";
+    public $boximg="object_order";
+    public $boxlabel="BoxLastCustomerOrders";
+    public $depends = array("commande");
 
 	/**
      * @var DoliDB Database handler.
      */
     public $db;
-    
-	var $param;
 
-    var $info_box_head = array();
-    var $info_box_contents = array();
+    public $param;
+
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
     /**
@@ -54,13 +54,13 @@ class box_commandes extends ModeleBoxes
      *  @param  DoliDB  $db         Database handler
      *  @param  string  $param      More parameters
      */
-    function __construct($db,$param)
+    public function __construct($db, $param)
     {
         global $user;
 
-        $this->db=$db;
+        $this->db = $db;
 
-        $this->hidden=! ($user->rights->commande->lire);
+        $this->hidden = ! ($user->rights->commande->lire);
     }
 
     /**
@@ -69,20 +69,20 @@ class box_commandes extends ModeleBoxes
      *  @param	int		$max        Maximum number of records to load
      *  @return	void
      */
-    function loadBox($max=5)
+    public function loadBox($max = 5)
     {
-        global $user, $langs, $db, $conf;
+        global $user, $langs, $conf;
 
         $this->max = $max;
 
         include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-        $commandestatic = new Commande($db);
-        $societestatic = new Societe($db);
-        $userstatic = new User($db);
+        $commandestatic = new Commande($this->db);
+        $societestatic = new Societe($this->db);
+        $userstatic = new User($this->db);
 
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."CustomerOrders",$max));
+        $this->info_box_head = array('text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."CustomerOrders", $max));
 
         if ($user->rights->commande->lire)
         {
@@ -110,18 +110,18 @@ class box_commandes extends ModeleBoxes
             if ($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
             if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY c.date_commande DESC, c.ref DESC ";
             else $sql.= " ORDER BY c.tms DESC, c.ref DESC ";
-            $sql.= $db->plimit($max, 0);
+            $sql.= $this->db->plimit($max, 0);
 
-            $result = $db->query($sql);
+            $result = $this->db->query($sql);
             if ($result) {
-                $num = $db->num_rows($result);
+                $num = $this->db->num_rows($result);
 
                 $line = 0;
 
                 while ($line < $num) {
-                    $objp = $db->fetch_object($result);
-                    $date=$db->jdate($objp->date_commande);
-                    $datem=$db->jdate($objp->tms);
+                    $objp = $this->db->fetch_object($result);
+                    $date=$this->db->jdate($objp->date_commande);
+                    $datem=$this->db->jdate($objp->tms);
                     $commandestatic->id = $objp->rowid;
                     $commandestatic->ref = $objp->ref;
                     $commandestatic->ref_client = $objp->ref_client;
@@ -146,7 +146,7 @@ class box_commandes extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right"',
+                        'td' => 'class="nowrap right"',
                         'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
                     );
 
@@ -161,30 +161,30 @@ class box_commandes extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
-                        'text' => dol_print_date($date,'day'),
+                        'text' => dol_print_date($date, 'day'),
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
-                        'text' => $commandestatic->LibStatut($objp->fk_statut,$objp->facture,3),
+                        'td' => 'class="right" width="18"',
+                        'text' => $commandestatic->LibStatut($objp->fk_statut, $objp->facture, 3),
                     );
 
                     $line++;
                 }
 
-                if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedOrders"));
+                if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedOrders"));
 
-                $db->free($result);
+                $this->db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
@@ -198,9 +198,8 @@ class box_commandes extends ModeleBoxes
 	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	string
 	 */
-    function showBox($head = null, $contents = null, $nooutput=0)
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }
 }
-

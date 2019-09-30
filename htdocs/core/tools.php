@@ -39,11 +39,11 @@ if ($user->societe_id > 0) $socid=$user->societe_id;
 
 $socstatic=new Societe($db);
 
-llxHeader("",$langs->trans("Tools"),"");
+llxHeader("", $langs->trans("Tools"), "");
 
 $text=$langs->trans("Tools");
 
-print load_fiche_titre($text);
+print load_fiche_titre($text, '', 'generic');
 
 // Show description of content
 print '<div class="justify">'.$langs->trans("ToolsDesc").'</div><br><br>';

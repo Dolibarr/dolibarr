@@ -46,7 +46,7 @@ $langs->load("main");
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class BankAccountTest extends PHPUnit_Framework_TestCase
+class BankAccountTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -59,7 +59,7 @@ class BankAccountTest extends PHPUnit_Framework_TestCase
      *
      * @return BankAccountTest
      */
-    function __construct()
+    public function __construct()
     {
     	parent::__construct();
 

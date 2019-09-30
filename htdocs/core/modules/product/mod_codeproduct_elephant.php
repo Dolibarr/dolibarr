@@ -56,7 +56,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
 
@@ -72,7 +72,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	/**
 	 *	Constructor
 	 */
-	function __construct()
+	public function __construct()
 	{
 		$this->code_null = 0;
 		$this->code_modifiable = 1;
@@ -83,13 +83,14 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	}
 
 
-	/**		Return description of module
-	 *
-	 * 		@param	Translate	$langs		Object langs
-	 * 		@return string      			Description of module
-	 */
-	function info($langs)
-	{
+    /**
+     *  Return description of module
+     *
+     *  @param	Translate	$langs		Object langs
+     *  @return string      			Description of module
+     */
+    public function info($langs)
+    {
 		global $conf, $mc;
 		global $form;
 
@@ -105,29 +106,29 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		$texte.= '<input type="hidden" name="param2" value="PRODUCT_ELEPHANT_MASK_SERVICE">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Product"),$langs->transnoentities("Product"));
+		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Product"), $langs->transnoentities("Product"));
 		$tooltip.=$langs->trans("GenericMaskCodes3");
 		$tooltip.=$langs->trans("GenericMaskCodes4c");
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix customers
 		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("ProductCodeModel").'):</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value1" value="'.(! empty($conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT)?$conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT:'').'"'.$disabled.'>',$tooltip,1,1).'</td>';
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value1" value="'.(! empty($conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT)?$conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT:'').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
 
-		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"'.$disabled.'></td>';
+		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"'.$disabled.'></td>';
 
 		$texte.= '</tr>';
 
 		// Parametrage du prefix suppliers
 		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("ServiceCodeModel").'):</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value2" value="'.(! empty($conf->global->PRODUCT_ELEPHANT_MASK_SERVICE)?$conf->global->PRODUCT_ELEPHANT_MASK_SERVICE:'').'"'.$disabled.'>',$tooltip,1,1).'</td>';
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value2" value="'.(! empty($conf->global->PRODUCT_ELEPHANT_MASK_SERVICE)?$conf->global->PRODUCT_ELEPHANT_MASK_SERVICE:'').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
 		$texte.= '</tr>';
 
 		$texte.= '</table>';
 		$texte.= '</form>';
 
 		return $texte;
-	}
+    }
 
 
 	/**
@@ -138,11 +139,11 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return string example
 	 */
-	function getExample($langs,$objproduct=0,$type=-1)
+    public function getExample($langs, $objproduct = 0, $type = -1)
 	{
 		if ($type == 0 || $type == -1)
 		{
-			$exampleproduct = $this->getNextValue($objproduct,0);
+			$exampleproduct = $this->getNextValue($objproduct, 0);
 			if (! $exampleproduct)
 			{
 				$exampleproduct = $langs->trans('NotConfigured');
@@ -155,7 +156,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		}
 		if ($type == 1 || $type == -1)
 		{
-			$exampleservice = $this->getNextValue($objproduct,1);
+			$exampleservice = $this->getNextValue($objproduct, 1);
 			if (! $exampleservice)
 			{
 				$exampleservice = $langs->trans('NotConfigured');
@@ -179,7 +180,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 * @param  	int		    $type       Produit ou service (0:product, 1:service)
 	 * @return 	string      			Value if OK, '' if module not configured, <0 if KO
 	 */
-	function getNextValue($objproduct=0,$type=-1)
+	public function getNextValue($objproduct = 0, $type = -1)
 	{
 		global $db,$conf;
 
@@ -189,7 +190,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		$mask = '';
 		if ($type == 0 && ! empty($conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT))
 			$mask = $conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT;
-		else if ($type == 1 && ! empty($conf->global->PRODUCT_ELEPHANT_MASK_SERVICE))
+		elseif ($type == 1 && ! empty($conf->global->PRODUCT_ELEPHANT_MASK_SERVICE))
 			$mask = $conf->global->PRODUCT_ELEPHANT_MASK_SERVICE;
 
 		if (empty($mask))
@@ -204,7 +205,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 			$field = 'ref';
 			//$where = ' AND client in (1,2)';
 		}
-		else if ($type == 1)
+		elseif ($type == 1)
 		{
 			$field = 'ref';
 			//$where = ' AND fournisseur = 1';
@@ -213,28 +214,28 @@ class mod_codeproduct_elephant extends ModeleProductCode
 
 		$now=dol_now();
 
-		$numFinal=get_next_value($db,$mask,'product',$field,$where,'',$now);
+		$numFinal=get_next_value($db, $mask, 'product', $field, $where, '', $now);
 
 		return  $numFinal;
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *   Check if mask/numbering use prefix
 	 *
 	 *   @return	int			0 or 1
 	 */
-	function verif_prefixIsUsed()
+	public function verif_prefixIsUsed()
 	{
         // phpcs:enable
 		global $conf;
 
 		$mask = $conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT;
-		if (preg_match('/\{pre\}/i',$mask)) return 1;
+		if (preg_match('/\{pre\}/i', $mask)) return 1;
 
 		$mask = $conf->global->PRODUCT_ELEPHANT_MASK_SERVICE;
-		if (preg_match('/\{pre\}/i',$mask)) return 1;
+		if (preg_match('/\{pre\}/i', $mask)) return 1;
 
 		return 0;
 	}
@@ -254,7 +255,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 * 								-4 ErrorPrefixRequired
 	 * 								-5 Other (see this->error)
 	 */
-	function verif($db, &$code, $product, $type)
+	public function verif($db, &$code, $product, $type)
 	{
 		global $conf;
 
@@ -267,7 +268,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		{
 			$result=0;
 		}
-		else if (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) )
+		elseif (empty($code) && (! $this->code_null || ! empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) )
 		{
 			$result=-2;
 		}
@@ -283,7 +284,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 				return -5;
 			}
 
-			$result=check_value($mask,$code);
+			$result=check_value($mask, $code);
 			if (is_string($result))
 			{
 				$this->error = $result;
@@ -296,16 +297,16 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *		Renvoi si un code est pris ou non (par autre tiers)
+	 *  Renvoi si un code est pris ou non (par autre tiers)
 	 *
-	 *		@param	DoliDB		$db			Handler acces base
-	 *		@param	string		$code		Code a verifier
-	 *		@param	Product		$product		Objet product
-	 *		@return	int						0 if available, <0 if KO
+	 *  @param	DoliDB		$db			Handler acces base
+	 *  @param	string		$code		Code a verifier
+	 *  @param	Product		$product		Objet product
+	 *  @return	int						0 if available, <0 if KO
 	 */
-	function verif_dispo($db, $code, $product)
+	public function verif_dispo($db, $code, $product)
 	{
         // phpcs:enable
 		$sql = "SELECT ref FROM ".MAIN_DB_PREFIX."product";

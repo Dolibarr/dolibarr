@@ -30,16 +30,20 @@ if (empty($conf) || ! is_object($conf))
 print '<tr class="oddeven'.(empty($this->tpl['strike'])?'':' strikefordisabled').'">';
 print '<td>'.$this->tpl['label'].'</td>';
 print '<td>'.$this->tpl['description'].'</td>';
-print '<td align="right">'.$this->tpl['vat_rate'].'</td>';
-print '<td align="right">'.$this->tpl['price'].'</td>';
+print '<td class="right">'.$this->tpl['vat_rate'].'</td>';
+print '<td class="right">'.$this->tpl['price'].'</td>';
 if (!empty($conf->multicurrency->enabled))
-	print '<td align="right">'.$this->tpl['multicurrency_price'].'</td>';
+	print '<td class="right">'.$this->tpl['multicurrency_price'].'</td>';
 
-print '<td align="right">'.$this->tpl['qty'].'</td>';
+print '<td class="right">'.$this->tpl['qty'].'</td>';
 if($conf->global->PRODUCT_USE_UNITS)
-	print '<td align="left">'.$langs->trans($this->tpl['unit']).'</td>';
+	print '<td class="left">'.$langs->trans($this->tpl['unit']).'</td>';
 
-print '<td align="right">'.$this->tpl['remise_percent'].'</td>';
+print '<td class="right">'.$this->tpl['remise_percent'].'</td>';
+
+$selected=1;
+if (!empty($selectedLines) && !in_array($this->tpl['id'], $selectedLines)) $selected=0;
+print '<td class="center"><input id="cb'.$this->tpl['id'].'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$this->tpl['id'].'"'.($selected?' checked="checked"':'').'></td>';
 print '</tr>'."\n";
 ?>
 <!-- END PHP TEMPLATE originproductline.tpl.php -->

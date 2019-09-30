@@ -19,10 +19,8 @@
  *     	\file       htdocs/public/donations/index.php
  *		\ingroup    core
  *		\brief      A redirect page to an error
- *		\author	    Laurent Destailleur
  */
 
 require '../../master.inc.php';
 
 header("Location: ".DOL_URL_ROOT.'/public/error-404.php');
-

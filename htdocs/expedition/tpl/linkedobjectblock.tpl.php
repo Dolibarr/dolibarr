@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2012 Regis Houssin <regis.houssin@inodbox.com>
- * Copyright (C) 2014 Marcos García <marcosgdf@gmail.com>
+/* Copyright (C) 2012       Regis Houssin   <regis.houssin@inodbox.com>
+ * Copyright (C) 2014       Marcos García   <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,14 +49,14 @@ foreach($linkedObjectBlock as $key => $objectlink)
         <td><?php echo $langs->trans("Shipment"); ?></td>
         <td><?php echo $objectlink->getNomUrl(1); ?></td>
         <td></td>
-    	<td align="center"><?php echo dol_print_date($objectlink->date_delivery,'day'); ?></td>
-    	<td align="right"><?php
+    	<td class="center"><?php echo dol_print_date($objectlink->date_delivery, 'day'); ?></td>
+    	<td class="right"><?php
     		if ($user->rights->expedition->lire) {
     			$total = $total + $objectlink->total_ht;
     			echo price($objectlink->total_ht);
     		} ?></td>
-    	<td align="right"><?php echo $objectlink->getLibStatut(3); ?></td>
-    	<td align="right">
+    	<td class="right"><?php echo $objectlink->getLibStatut(3); ?></td>
+    	<td class="right">
     		<?php
     		// For now, shipments must stay linked to order, so link is not deletable
     		if($object->element != 'commande') {
@@ -68,17 +68,16 @@ foreach($linkedObjectBlock as $key => $objectlink)
     </tr>
 <?php
 }
-if (count($linkedObjectBlock) > 1)
-{
+if (count($linkedObjectBlock) > 1) {
     ?>
     <tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter)?'liste_sub_total':''); ?>">
         <td><?php echo $langs->trans("Total"); ?></td>
         <td></td>
-    	<td align="center"></td>
-    	<td align="center"></td>
-    	<td align="right"><?php echo price($total); ?></td>
-    	<td align="right"></td>
-    	<td align="right"></td>
+    	<td class="center"></td>
+    	<td class="center"></td>
+    	<td class="right"><?php echo price($total); ?></td>
+    	<td class="right"></td>
+    	<td class="right"></td>
     </tr>
     <?php
 }

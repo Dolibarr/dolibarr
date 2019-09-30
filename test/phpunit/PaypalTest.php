@@ -46,7 +46,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class PaypalTest extends PHPUnit_Framework_TestCase
+class PaypalTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -59,7 +59,7 @@ class PaypalTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return ProductTest
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -75,8 +75,8 @@ class PaypalTest extends PHPUnit_Framework_TestCase
 		print "\n";
 	}
 
-	// Static methods
-  	public static function setUpBeforeClass()
+    // Static methods
+    public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
 
@@ -135,7 +135,7 @@ class PaypalTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$urltotest=getPaypalPaymentUrl(1,'free');
+		$urltotest=getPaypalPaymentUrl(1, 'free');
 		print "urltotest=".$urltotest."\n";
 
 		$result=getURLContent($urltotest, 'GET');

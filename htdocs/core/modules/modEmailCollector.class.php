@@ -57,14 +57,14 @@ class modEmailCollector extends DolibarrModules
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
 
 		// Module label (no space allowed), used if translation string 'ModuledavName' not found (MyModue is name of module).
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description, used if translation string 'ModuledavDesc' not found (MyModue is name of module).
 		$this->description = "EmailCollectorDescription";
 		// Used only if file README.md and README-LL.md not found.
 		$this->descriptionlong = "EmailCollectorDescription";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'experimental';
+		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where DAV is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
@@ -185,21 +185,21 @@ class modEmailCollector extends DolibarrModules
 		$r=0;
 		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read myobject of dav';	// Permission label
-		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
+		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->dav->level1->level2)
 		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->dav->level1->level2)
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = 'Create/Update myobject of dav';	// Permission label
-		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
+		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'write';				// In php code, permission will be checked by test if ($user->rights->dav->level1->level2)
 		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->dav->level1->level2)
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = 'Delete myobject of dav';	// Permission label
-		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
+		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'delete';				// In php code, permission will be checked by test if ($user->rights->dav->level1->level2)
 		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->dav->level1->level2)
 		*/
@@ -284,7 +284,7 @@ class modEmailCollector extends DolibarrModules
      *	@param      string	$options    Options when enabling module ('', 'noboxes')
 	 *	@return     int             	1 if OK, 0 if KO
 	 */
-	public function init($options='')
+	public function init($options = '')
 	{
 		//$this->_load_tables('/dav/sql/');
 

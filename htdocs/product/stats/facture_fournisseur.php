@@ -50,7 +50,7 @@ $hookmanager->initHooks(array('productstatssupplyinvoice'));
 $mesg = '';
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOST("page", 'int');
@@ -63,7 +63,7 @@ if (! $sortfield) $sortfield = "f.datef";
 $search_month = GETPOST('search_month', 'aplha');
 $search_year = GETPOST('search_year', 'int');
 
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha')) {
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	$search_month = '';
 	$search_year = '';
 }
@@ -105,7 +105,7 @@ if ($id > 0 || ! empty($ref))
         $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
         $shownav = 1;
-        if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+        if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
         dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
@@ -244,8 +244,8 @@ if ($id > 0 || ! empty($ref))
 					}
 				}
 				print '<tr class="liste_total">';
-				if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
-				else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+				if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
+				else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 				print '<td colspan="3"></td>';
 				print '<td align="center">' . $total_qty . '</td>';
 				print '<td align="right">' . price($total_ht) . '</td>';

@@ -203,7 +203,7 @@ for ($i=1; $i<=4; $i++) {
 <?php } ?>
 
 <tr>
-	<td colspan="4" align="center"><input type="submit" class="button" value="<?php echo $langs->trans('AddThirdParty'); ?>"></td>
+	<td colspan="4" class="center"><input type="submit" class="button" value="<?php echo $langs->trans('AddThirdParty'); ?>"></td>
 </tr>
 
 </table>

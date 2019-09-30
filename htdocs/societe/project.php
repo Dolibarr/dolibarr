@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 $langs->loadLangs(array("companies", "projects"));
 
 // Security check
-$socid = GETPOST('socid','int');
+$socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
@@ -47,7 +47,7 @@ $hookmanager->initHooks(array('projectthirdparty'));
  */
 
 $parameters=array('id'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 
@@ -72,8 +72,8 @@ if ($socid)
 	$result = $object->fetch($socid);
 
 	$title=$langs->trans("Projects");
-	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
-	llxHeader('',$title);
+	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
+	llxHeader('', $title);
 
 	if (! empty($conf->notification->enabled)) $langs->load("mails");
 	$head = societe_prepare_head($object);
@@ -87,7 +87,7 @@ if ($socid)
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfield">';
 
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {
@@ -133,7 +133,7 @@ if ($socid)
     /*	}
     	else
     	{
-        	print '<a class="butActionRefused" href="#">'.$langs->trans("AddProject").'</a>';
+        	print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddProject").'</a>';
     	}
     }
 

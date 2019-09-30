@@ -22,8 +22,8 @@
  *		\brief      Page to list donators
  */
 
-define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+define("NOLOGIN", 1);		// This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
 
 // C'est un wrapper, donc header vierge
 /**
@@ -77,7 +77,7 @@ if ($resql)
 		print '<tr>';
 		print "<td>".$langs->trans("Name")." / ".$langs->trans("Company")."</td>";
 		print "<td>Date</td>";
-		print "<td align=\"right\">".$langs->trans("Amount")."</td>";
+		print '<td class="right">'.$langs->trans("Amount").'</td>';
 		print "</tr>\n";
 
 		while ($i < $num)
@@ -94,7 +94,7 @@ if ($resql)
 				print "<td>Anonyme Anonyme</td>\n";
 			}
 			print "<td>".dol_print_date($db->jdate($objp->datedon))."</td>\n";
-			print '<td align="right">'.number_format($objp->amount,2,'.',' ').' '.$langs->trans("Currency".$conf->currency).'</td>';
+			print '<td class="right">'.number_format($objp->amount, 2, '.', ' ').' '.$langs->trans("Currency".$conf->currency).'</td>';
 			print "</tr>";
 			$i++;
 		}

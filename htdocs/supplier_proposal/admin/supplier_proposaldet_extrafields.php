@@ -62,49 +62,16 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 $textobject=$langs->transnoentitiesnoconv("CommRequests");
 
-llxHeader('',$langs->trans("SupplierProposalSetup"));
+llxHeader('', $langs->trans("SupplierProposalSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("SupplierProposalSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("SupplierProposalSetup"), $linkback, 'title_setup');
 
 $head = supplier_proposal_admin_prepare_head();
 
-dol_fiche_head($head, 'attributeslines', $langs->trans("CommRequests"), 0, 'supplier_proposal');
+dol_fiche_head($head, 'attributeslines', $langs->trans("CommRequests"), -1, 'supplier_proposal');
 
-
-print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";
-print '<br>';
-
-// Load attribute_label
-$extrafields->fetch_name_optionals_label($elementtype);
-
-print "<table summary=\"listofattributes\" class=\"noborder\" width=\"100%\">";
-
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Label").'</td>';
-print '<td>'.$langs->trans("AttributeCode").'</td>';
-print '<td>'.$langs->trans("Type").'</td>';
-print '<td align="right">'.$langs->trans("Size").'</td>';
-print '<td align="center">'.$langs->trans("Unique").'</td>';
-print '<td align="center">'.$langs->trans("Required").'</td>';
-print '<td width="80">&nbsp;</td>';
-print "</tr>\n";
-
-foreach($extrafields->attribute_type as $key => $value)
-{
-    print '<tr class="oddeven">';
-    print "<td>".$extrafields->attribute_label[$key]."</td>\n";
-    print "<td>".$key."</td>\n";
-    print "<td>".$type2label[$extrafields->attribute_type[$key]]."</td>\n";
-    print '<td align="right">'.$extrafields->attribute_size[$key]."</td>\n";
-    print '<td align="center">'.yn($extrafields->attribute_unique[$key])."</td>\n";
-    print '<td align="center">'.yn($extrafields->attribute_required[$key])."</td>\n";
-    print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&attrname='.$key.'">'.img_edit().'</a>';
-    print "&nbsp; <a href=\"".$_SERVER["PHP_SELF"]."?action=delete&attrname=$key\">".img_delete()."</a></td>\n";
-    print "</tr>";
-}
-
-print "</table>";
+require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
 dol_fiche_end();
 

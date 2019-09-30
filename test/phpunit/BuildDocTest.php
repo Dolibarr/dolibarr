@@ -74,7 +74,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class BuildDocTest extends PHPUnit_Framework_TestCase
+class BuildDocTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -87,11 +87,11 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
      *
      * @return BuildDocTest
      */
-    function __construct()
+    public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
-    	//$this->sharedFixture
+        //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -184,7 +184,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$result."\n";
 
         // Crabe (japanese)
-        $newlangs1=new Translate("",$conf);
+        $newlangs1=new Translate("", $conf);
         $newlangs1->setDefaultLang('ja_JP');
         $localobject->modelpdf='crabe';
         $result = $localobject->generateDocument($localobject->modelpdf, $newlangs1);
@@ -192,7 +192,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$result."\n";
 
         // Crabe (saudiarabia)
-        $newlangs2a=new Translate("",$conf);
+        $newlangs2a=new Translate("", $conf);
         $newlangs2a->setDefaultLang('sa_SA');
         $localobject->modelpdf='crabe';
         $result = $localobject->generateDocument($localobject->modelpdf, $newlangs2a);
@@ -200,7 +200,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$result."\n";
 
         // Crabe (english_saudiarabia)
-        $newlangs2b=new Translate("",$conf);
+        $newlangs2b=new Translate("", $conf);
         $newlangs2b->setDefaultLang('en_SA');
         $localobject->modelpdf='crabe';
         $result = $localobject->generateDocument($localobject->modelpdf, $newlangs2b);
@@ -208,7 +208,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$result."\n";
 
         // Crabe (greek)
-        $newlangs3=new Translate("",$conf);
+        $newlangs3=new Translate("", $conf);
         $newlangs3->setDefaultLang('el_GR');
         $localobject->modelpdf='crabe';
         $result = $localobject->generateDocument($localobject->modelpdf, $newlangs3);
@@ -216,7 +216,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$result."\n";
 
         // Crabe (chinese)
-        $newlangs4=new Translate("",$conf);
+        $newlangs4=new Translate("", $conf);
         $newlangs4->setDefaultLang('zh_CN');
         $localobject->modelpdf='crabe';
         $result = $localobject->generateDocument($localobject->modelpdf, $newlangs4);
@@ -224,7 +224,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$result."\n";
 
         // Crabe (russian)
-        $newlangs5=new Translate("",$conf);
+        $newlangs5=new Translate("", $conf);
         $newlangs5->setDefaultLang('ru_RU');
         $localobject->modelpdf='crabe';
         $result = $localobject->generateDocument($localobject->modelpdf, $newlangs5);
@@ -314,7 +314,7 @@ class BuildDocTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$result."\n";
 
         return 0;
-        }
+    }
 
     /**
      * testPropalBuild

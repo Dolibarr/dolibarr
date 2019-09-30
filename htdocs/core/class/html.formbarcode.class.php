@@ -45,7 +45,7 @@ class FormBarCode
      *
      *  @param  DoliDB		$db		Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -60,7 +60,7 @@ class FormBarCode
      *  @param  int		$idForm			Id du formulaire
      * 	@return	string					HTML select string
      */
-    function setBarcodeEncoder($selected,$barcodelist,$code_id,$idForm='formbarcode')
+    public function setBarcodeEncoder($selected, $barcodelist, $code_id, $idForm = 'formbarcode')
     {
         global $conf, $langs;
 
@@ -86,7 +86,7 @@ class FormBarCode
         {
             $disable = 'disabled';
         }
-        
+
         if (!empty($conf->use_javascript_ajax))
         {
             $select_encoder = '<form action="'.DOL_URL_ROOT.'/admin/barcode.php" method="POST" id="form'.$idForm.'">';
@@ -94,7 +94,7 @@ class FormBarCode
             $select_encoder.= '<input type="hidden" name="action" value="update">';
             $select_encoder.= '<input type="hidden" name="code_id" value="'.$code_id.'">';
         }
-        
+
         $selectname=(!empty($conf->use_javascript_ajax)?'coder':'coder'.$code_id);
         $select_encoder.= '<select id="select'.$idForm.'" class="flat" name="'.$selectname.'">';
         $select_encoder.= '<option value="0"'.($selected==0?' selected':'').' '.$disable.'>'.$langs->trans('Disable').'</option>';
@@ -104,7 +104,7 @@ class FormBarCode
             $select_encoder.= '<option value="'.$key.'"'.($selected==$key?' selected':'').'>'.$value.'</option>';
         }
         $select_encoder.= '</select>';
-        
+
         if (!empty($conf->use_javascript_ajax))
         {
             $select_encoder.= '</form>';
@@ -113,7 +113,7 @@ class FormBarCode
         return $select_encoder;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Print form to select type of barcode
      *
@@ -123,7 +123,7 @@ class FormBarCode
      *  @return void
      *  @deprecated
      */
-    function select_barcode_type($selected='', $htmlname='barcodetype_id', $useempty=0)
+    public function select_barcode_type($selected = '', $htmlname = 'barcodetype_id', $useempty = 0)
     {
         // phpcs:enable
         print $this->selectBarcodeType($selected, $htmlname, $useempty);
@@ -137,7 +137,7 @@ class FormBarCode
      *  @param  int     $useempty          Display empty value in select
      *  @return string
      */
-    function selectBarcodeType($selected='', $htmlname='barcodetype_id', $useempty=0)
+    public function selectBarcodeType($selected = '', $htmlname = 'barcodetype_id', $useempty = 0)
     {
         global $langs, $conf;
 
@@ -183,7 +183,7 @@ class FormBarCode
         return $out;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Show form to select type of barcode
      *
@@ -193,7 +193,7 @@ class FormBarCode
      *  @return	void
      *  @deprecated
      */
-    function form_barcode_type($page, $selected='', $htmlname='barcodetype_id')
+    public function form_barcode_type($page, $selected = '', $htmlname = 'barcodetype_id')
     {
         // phpcs:enable
         print $this->formBarcodeType($page, $selected, $htmlname);
@@ -207,7 +207,7 @@ class FormBarCode
      *  @param  string      $htmlname       Nom du formulaire select
      *  @return string
      */
-    function formBarcodeType($page, $selected='', $htmlname='barcodetype_id')
+    public function formBarcodeType($page, $selected = '', $htmlname = 'barcodetype_id')
     {
         global $langs, $conf;
         $out = '';
@@ -219,7 +219,7 @@ class FormBarCode
             $out .= '<tr><td>';
             $out .= $this->selectBarcodeType($selected, $htmlname, 1);
             $out .= '</td>';
-            $out .= '<td align="left"><input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
+            $out .= '<td class="left"><input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
             $out .= '</td></tr></table></form>';
         }
         return $out;

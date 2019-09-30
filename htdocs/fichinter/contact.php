@@ -34,16 +34,16 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('interventions', 'sendings', 'companies'));
 
-$id = GETPOST('id','int');
+$id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 $object = new Fichinter($db);
-$result = $object->fetch($id,$ref);
+$result = $object->fetch($id, $ref);
 if (! $result)
 {
     print 'Record not found';
@@ -58,8 +58,8 @@ if ($action == 'addcontact' && $user->rights->ficheinter->creer)
 {
     if ($result > 0 && $id > 0)
     {
-    	$contactid = (GETPOST('userid','int') ? GETPOST('userid','int') : GETPOST('contactid','int'));
-  		$result = $object->add_contact($contactid, GETPOST('type','int'), GETPOST('source','alpha'));
+    	$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+  		$result = $object->add_contact($contactid, GETPOST('type', 'int'), GETPOST('source', 'alpha'));
     }
 
 	if ($result >= 0)
@@ -81,15 +81,15 @@ if ($action == 'addcontact' && $user->rights->ficheinter->creer)
 }
 
 // Toggle the status of a contact
-else if ($action == 'swapstatut' && $user->rights->ficheinter->creer)
+elseif ($action == 'swapstatut' && $user->rights->ficheinter->creer)
 {
-    $result=$object->swapContactStatus(GETPOST('ligne','int'));
+    $result=$object->swapContactStatus(GETPOST('ligne', 'int'));
 }
 
 // Deletes a contact
-else if ($action == 'deletecontact' && $user->rights->ficheinter->creer)
+elseif ($action == 'deletecontact' && $user->rights->ficheinter->creer)
 {
-	$result = $object->delete_contact(GETPOST('lineid','int'));
+	$result = $object->delete_contact(GETPOST('lineid', 'int'));
 
 	if ($result >= 0)
 	{
@@ -112,7 +112,7 @@ $contactstatic=new Contact($db);
 $userstatic=new User($db);
 $formproject=new FormProjets($db);
 
-llxHeader('',$langs->trans("Intervention"));
+llxHeader('', $langs->trans("Intervention"));
 
 // Mode vue et edition
 
@@ -179,7 +179,7 @@ if ($id > 0 || ! empty($ref))
 	if (! empty($conf->global->FICHINTER_HIDE_ADD_CONTACT_THIPARTY)) $hideaddcontactforthirdparty=1;
 
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
-	$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+	$dirtpls=array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
 	foreach($dirtpls as $reldir)
 	{
 	    $res=@include dol_buildpath($reldir.'/contacts.tpl.php');

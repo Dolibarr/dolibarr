@@ -31,14 +31,16 @@ ViewWeek=Обзор недели
 ViewPerUser=Просмотр по пользователям
 ViewPerType=Просмотр по типу
 AutoActions= Автоматическое заполнение дня
-AgendaAutoActionDesc= Определите здесь события, для которых вы хотите, чтобы Dolibarr автоматически создавал событие в повестке дня. Если ничего не будет проверено, в журнал будут включены только ручные действия, которые будут включены в журнал. Автоматическое отслеживание деловых действий, выполняемых над объектами (валидация, изменение статуса), не будет сохранено.
-AgendaSetupOtherDesc= Эта страница позволяет настроить и другие параметры модуля дня.
+AgendaAutoActionDesc= Here you may define events which you want Dolibarr to create automatically  in Agenda. If nothing is checked, only manual actions will be included in logs and displayed in Agenda. Automatic tracking of business actions done on objects (validation, status change) will not be saved.
+AgendaSetupOtherDesc= This page provides options to allow the export of your Dolibarr events into an external calendar (Thunderbird, Google Calendar etc...)
 AgendaExtSitesDesc=Эта страница позволяет настроить внешний календарей.
 ActionsEvents=События, за которые Dolibarr создадут действий в повестку дня автоматически
-EventRemindersByEmailNotEnabled=Уведомления о событиях по электронной почте не были включены в настройку модуля повестки дня.
+EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into %s module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Третья сторона %s создана
+COMPANY_DELETEInDolibarr=Third party %s deleted
 ContractValidatedInDolibarr=Контакт %s подтверждён
+CONTRACT_DELETEInDolibarr=Contract %s deleted
 PropalClosedSignedInDolibarr=Ком. предложение  %s подписано
 PropalClosedRefusedInDolibarr=Ком. предложение %s отклонено
 PropalValidatedInDolibarr=Предложение проверены
@@ -59,6 +61,7 @@ MemberSubscriptionDeletedInDolibarr=Подписка %s для участник�
 ShipmentValidatedInDolibarr=Отправка %s  подтверждена
 ShipmentClassifyClosedInDolibarr=Отправка %sотмечена "оплачено"
 ShipmentUnClassifyCloseddInDolibarr=Отправка %s классифицирована переоткрыта
+ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
 ShipmentDeletedInDolibarr=Отправка %s удалена
 OrderCreatedInDolibarr=Заказ %s создан
 OrderValidatedInDolibarr=Заказ %s проверен
@@ -68,15 +71,15 @@ OrderBilledInDolibarr=Заказ %s готов к выставлению счё�
 OrderApprovedInDolibarr=Заказ %s утвержден
 OrderRefusedInDolibarr=Заказ %s  отклонён
 OrderBackToDraftInDolibarr=Заказ %s возращен в статус черновик
-ProposalSentByEMail=Коммерческое предложение %s отправлены по электронной почте
-ContractSentByEMail=Контракт %s отправлен на e-mail
-OrderSentByEMail=Заказ покупателя %s отправлен по электронной почте
-InvoiceSentByEMail=Счёт клиента %s отправлен по электронной почте
-SupplierOrderSentByEMail=Поставщик порядке %s отправлены по электронной почте
-SupplierInvoiceSentByEMail=Поставщиком счета %s отправлены по электронной почте
-ShippingSentByEMail=Посылка %s отправлена с помощью EMail
+ProposalSentByEMail=Commercial proposal %s sent by email
+ContractSentByEMail=Contract %s sent by email
+OrderSentByEMail=Sales order %s sent by email
+InvoiceSentByEMail=Customer invoice %s sent by email
+SupplierOrderSentByEMail=Purchase order %s sent by email
+SupplierInvoiceSentByEMail=Vendor invoice %s sent by email
+ShippingSentByEMail=Shipment %s sent by email
 ShippingValidated= Отправка %s  подтверждена
-InterventionSentByEMail=Посредничество %s отправлено по электронной почте.
+InterventionSentByEMail=Intervention %s sent by email
 ProposalDeleted=Предложение удалено
 OrderDeleted=Заказ удалён
 InvoiceDeleted=Счёт удалён
@@ -91,6 +94,11 @@ EXPENSE_REPORT_REFUSEDInDolibarr=Отчет о расходах %s отказа�
 PROJECT_CREATEInDolibarr=Проект %s создан
 PROJECT_MODIFYInDolibarr=Проект %s изменен
 PROJECT_DELETEInDolibarr=Проект %s удален
+TICKET_CREATEInDolibarr=Ticket %s created
+TICKET_MODIFYInDolibarr=Ticket %s modified
+TICKET_ASSIGNEDInDolibarr=Ticket %s assigned
+TICKET_CLOSEInDolibarr=Ticket %s closed
+TICKET_DELETEInDolibarr=Ticket %s deleted
 ##### End agenda events #####
 AgendaModelModule=Шаблоны документов для события
 DateActionStart=Начальная дата
@@ -100,7 +108,7 @@ AgendaUrlOptions3=<b> logina = %s </b>, чтобы ограничить выво
 AgendaUrlOptionsNotAdmin=<b>logina =! %s </b> для ограничения вывода на действий, не принадлежащих пользователю <b>%s</b>.
 AgendaUrlOptions4=<b>logint = %s</b> для ограничения вывода на действия, назначенные пользователю <b>%s</b> (владелец и другие).
 AgendaUrlOptionsProject=<b>project = __ PROJECT_ID __</b>, чтобы ограничить вывод действий, связанных с проектом <b>__ PROJECT_ID __ </b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b>, чтобы исключить автоматическое событие.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic events.
 AgendaShowBirthdayEvents=Показывать дни рождения контактов 
 AgendaHideBirthdayEvents=Скрыть дни рождения контактов
 Busy=Занят
@@ -110,7 +118,7 @@ DefaultWorkingHours=Диапазон рабочих часов в день (На
 # External Sites ical
 ExportCal=Экспорт календаря
 ExtSites=Импортировать календари
-ExtSitesEnableThisTool=Показывать внешние календари (заданные в глобальных настройках) в повестке дня. Не окажет влияния на внешние календари, заданные пользователями.
+ExtSitesEnableThisTool=Show external calendars (defined in global setup) in Agenda. Does not affect external calendars defined by users.
 ExtSitesNbOfAgenda=Количество календарей
 AgendaExtNb=Календарь №. %s
 ExtSiteUrlAgenda=URL для файла календаря .ical
@@ -121,7 +129,6 @@ AddEvent=Создать событие
 MyAvailability=Моя доступность
 ActionType=Тип события
 DateActionBegin=Дата начала события
-CloneAction=Клонировать событие
 ConfirmCloneEvent=Вы действительно хотите клонировать событие <b>%s</b>?
 RepeatEvent=Повторять событие
 EveryWeek=Каждую неделю

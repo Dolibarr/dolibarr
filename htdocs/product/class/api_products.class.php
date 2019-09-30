@@ -44,7 +44,7 @@ class Products extends DolibarrApi
     /**
      * Constructor
      */
-    function __construct()
+    public function __construct()
     {
         global $db, $conf;
         $this->db = $db;
@@ -68,14 +68,14 @@ class Products extends DolibarrApi
      * @throws 403
      * @throws 404
      */
-    function get($id, $ref='', $ref_ext='', $barcode='', $includestockdata=0)
+    public function get($id, $ref = '', $ref_ext = '', $barcode = '', $includestockdata = 0)
     {
         if (empty($id) && empty($ref) && empty($ref_ext) && empty($barcode)) {
             throw new RestException(400, 'bad value for parameter id, ref, ref_ext or barcode');
         }
 
         $id = (empty($id)?0:$id);
-        
+
         if(! DolibarrApiAccess::$user->rights->produit->lire) {
             throw new RestException(403);
         }
@@ -84,7 +84,7 @@ class Products extends DolibarrApi
         if(! $result ) {
             throw new RestException(404, 'Product not found');
         }
-        
+
         if(! DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
@@ -110,13 +110,13 @@ class Products extends DolibarrApi
      * @param  string $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.tobuy:=:0) and (t.tosell:=:1)"
      * @return array                Array of product objects
      */
-    function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '')
+    public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '')
     {
         global $db, $conf;
 
         $obj_ret = array();
 
-        $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
+        $socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
 
         $sql = "SELECT t.rowid, t.ref, t.ref_ext";
         $sql.= " FROM ".MAIN_DB_PREFIX."product as t";
@@ -185,7 +185,7 @@ class Products extends DolibarrApi
      * @param  array $request_data Request data
      * @return int     ID of product
      */
-    function post($request_data = null)
+    public function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
@@ -215,7 +215,7 @@ class Products extends DolibarrApi
      * @throws 401
      * @throws 404
      */
-    function put($id, $request_data = null)
+    public function put($id, $request_data = null)
     {
         global $conf;
 
@@ -300,7 +300,7 @@ class Products extends DolibarrApi
      * @param  int $id Product ID
      * @return array
      */
-    function delete($id)
+    public function delete($id)
     {
         if(! DolibarrApiAccess::$user->rights->produit->supprimer) {
             throw new RestException(401);
@@ -335,7 +335,7 @@ class Products extends DolibarrApi
      *
      * @url GET {id}/categories
      */
-    function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+    public function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
     {
         if (! DolibarrApiAccess::$user->rights->categorie->lire) {
             throw new RestException(401);
@@ -365,7 +365,7 @@ class Products extends DolibarrApi
      *
      * @url GET {id}/selling_multiprices/per_segment
      */
-    function getCustomerPricesPerSegment($id)
+    public function getCustomerPricesPerSegment($id)
     {
         global $conf;
 
@@ -387,13 +387,13 @@ class Products extends DolibarrApi
         }
 
         return array(
-        'multiprices'=>$this->product->multiprices,
-        'multiprices_inc_tax'=>$this->product->multiprices_ttc,
-        'multiprices_min'=>$this->product->multiprices_min,
-        'multiprices_min_inc_tax'=>$this->product->multiprices_min_ttc,
-        'multiprices_vat'=>$this->product->multiprices_tva_tx,
-        'multiprices_base_type'=>$this->product->multiprices_base_type,
-        //'multiprices_default_vat_code'=>$this->product->multiprices_default_vat_code
+            'multiprices'=>$this->product->multiprices,
+            'multiprices_inc_tax'=>$this->product->multiprices_ttc,
+            'multiprices_min'=>$this->product->multiprices_min,
+            'multiprices_min_inc_tax'=>$this->product->multiprices_min_ttc,
+            'multiprices_vat'=>$this->product->multiprices_tva_tx,
+            'multiprices_base_type'=>$this->product->multiprices_base_type,
+            //'multiprices_default_vat_code'=>$this->product->multiprices_default_vat_code
         );
     }
 
@@ -406,7 +406,7 @@ class Products extends DolibarrApi
      *
      * @url GET {id}/selling_multiprices/per_customer
      */
-    function getCustomerPricesPerCustomer($id)
+    public function getCustomerPricesPerCustomer($id)
     {
         global $conf;
 
@@ -440,7 +440,7 @@ class Products extends DolibarrApi
      *
      * @url GET {id}/selling_multiprices/per_quantity
      */
-    function getCustomerPricesPerQuantity($id)
+    public function getCustomerPricesPerQuantity($id)
     {
         global $conf;
 
@@ -469,14 +469,156 @@ class Products extends DolibarrApi
 
 
     /**
+     * List purchase prices
+     *
+     * Get a list of all purchase prices of products
+     *
+     * @param  string $sortfield  Sort field
+     * @param  string $sortorder  Sort order
+     * @param  int    $limit      Limit for list
+     * @param  int    $page       Page number
+     * @param  int    $mode       Use this param to filter list (0 for all, 1 for only product, 2 for only service)
+     * @param  int    $category   Use this param to filter list by category of product
+     * @param  int    $supplier   Use this param to filter list by supplier
+     * @param  string $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.tobuy:=:0) and (t.tosell:=:1)"
+     * @return array              Array of product objects
+     *
+     * @url GET purchase_prices
+     */
+    public function getSupplierProducts($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $supplier = 0, $sqlfilters = '')
+    {
+    	global $db, $conf;
+    	$obj_ret = array();
+    	$socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
+    	$sql = "SELECT t.rowid, t.ref, t.ref_ext";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."product as t";
+    	if ($category > 0) {
+    		$sql.= ", ".MAIN_DB_PREFIX."categorie_product as c";
+    	}
+    	$sql.= ", ".MAIN_DB_PREFIX."product_fournisseur_price as s";
+
+    	$sql.= ' WHERE t.entity IN ('.getEntity('product').')';
+
+    	if ($supplier > 0) {
+    		$sql.= " AND s.fk_soc = ".$db->escape($supplier);
+    	}
+    	$sql.= " AND s.fk_product = t.rowid ";
+    	// Select products of given category
+    	if ($category > 0) {
+    		$sql.= " AND c.fk_categorie = ".$db->escape($category);
+    		$sql.= " AND c.fk_product = t.rowid ";
+    	}
+    	if ($mode == 1) {
+    		// Show only products
+    		$sql.= " AND t.fk_product_type = 0";
+    	} elseif ($mode == 2) {
+    		// Show only services
+    		$sql.= " AND t.fk_product_type = 1";
+    	}
+    	// Add sql filters
+    	if ($sqlfilters) {
+    		if (! DolibarrApi::_checkFilters($sqlfilters)) {
+    			throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+    		}
+    		$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+    		$sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+    	}
+    	$sql.= $db->order($sortfield, $sortorder);
+    	if ($limit) {
+    		if ($page < 0) {
+    			$page = 0;
+    		}
+    		$offset = $limit * $page;
+    		$sql.= $db->plimit($limit + 1, $offset);
+    	}
+    	$result = $db->query($sql);
+    	if ($result) {
+    		$num = $db->num_rows($result);
+    		$min = min($num, ($limit <= 0 ? $num : $limit));
+    		$i = 0;
+    		while ($i < $min)
+    		{
+    			$obj = $db->fetch_object($result);
+    			$product_static = new Product($db);
+    			if($product_static->fetch($obj->rowid)) {
+    				$obj_ret[] = $this->_cleanObjectDatas($product_static);
+    			}
+    			$i++;
+    		}
+    	}
+    	else {
+    		throw new RestException(503, 'Error when retrieve product list : '.$db->lasterror());
+    	}
+    	if(! count($obj_ret)) {
+    		throw new RestException(404, 'No product found');
+    	}
+    	return $obj_ret;
+    }
+
+    /**
+     * Get purchase prices for a product
+     *
+     * Return an array with product information.
+     * TODO implement getting a product by ref or by $ref_ext
+     *
+     * @param  int    $id               ID of product
+     * @param  string $ref              Ref of element
+     * @param  string $ref_ext          Ref ext of element
+     * @param  string $barcode          Barcode of element
+     * @param  int    $includestockdata Load also information about stock (slower)
+     * @return array|mixed                 Data without useless information
+     *
+     * @url GET {id}/purchase_prices
+     *
+     * @throws 401
+     * @throws 403
+     * @throws 404
+     *
+     */
+    public function getPurchasePrices($id, $ref = '', $ref_ext = '', $barcode = '', $includestockdata = 0)
+    {
+        if (empty($id) && empty($ref) && empty($ref_ext) && empty($barcode)) {
+            throw new RestException(400, 'bad value for parameter id, ref, ref_ext or barcode');
+        }
+
+        $id = (empty($id)?0:$id);
+
+        if(! DolibarrApiAccess::$user->rights->produit->lire) {
+            throw new RestException(403);
+        }
+
+        $result = $this->product->fetch($id, $ref, $ref_ext, $barcode);
+        if(! $result ) {
+            throw new RestException(404, 'Product not found');
+        }
+
+        if(! DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        if ($includestockdata) {
+               $this->product->load_stock();
+        }
+
+        if($result) {
+        $this->product = new ProductFournisseur($this->db);
+        $this->product->fetch($id, $ref);
+        $this->product->list_product_fournisseur_price($id, '', '', 0, 0);
+        }
+
+        return $this->_cleanObjectDatas($this->product);
+    }
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+    /**
      * Clean sensible object datas
      *
      * @param  object $object Object to clean
      * @return array    Array of cleaned object properties
      */
-    function _cleanObjectDatas($object)
+    protected function _cleanObjectDatas($object)
     {
-
+        // phpcs:enable
         $object = parent::_cleanObjectDatas($object);
 
         unset($object->regeximgext);
@@ -502,7 +644,7 @@ class Products extends DolibarrApi
      * @return array
      * @throws RestException
      */
-    function _validate($data)
+    private function _validate($data)
     {
         $product = array();
         foreach (Products::$FIELDS as $field) {

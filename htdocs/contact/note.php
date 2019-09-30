@@ -29,13 +29,13 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 
 // Load translation files required by the page
 $langs->load("companies");
 
 // Security check
-$id = GETPOST('id','int');
+$id = GETPOST('id', 'int');
 if ($user->societe_id) $id=$user->societe_id;
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 

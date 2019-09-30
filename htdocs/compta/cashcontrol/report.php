@@ -6,7 +6,7 @@
  * Copyright (C) 2014       Florian Henry        <florian.henry@open-cooncept.pro>
  * Copyright (C) 2015       Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2016       Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2017       Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2017       Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Andreu Bisquerra	 <jove@bisquerra.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,14 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php'
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-$id = GETPOST('id','int');
+$id = GETPOST('id', 'int');
 
 $_GET['optioncss']="print";
 include_once 'class/cashcontrol.class.php';
 $cashcontrol= new CashControl($db);
 $cashcontrol->fetch($id);
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+//$limit = GETPOST('limit')?GETPOST('limit', 'int'):$conf->liste_limit;
 $sortorder='ASC';
 $sortfield='b.datev,b.dateo,b.rowid';
 
@@ -72,7 +72,7 @@ llxHeader('', $langs->trans("CashControl"), '', '', 0, 0, array(), array(), $par
 $sql.= " b.fk_account, b.fk_type,";
 $sql.= " ba.rowid as bankid, ba.ref as bankref,";
 $sql.= " bu.url_id,";
-$sql.= " f.module_source, f.facnumber as facnumber";
+$sql.= " f.module_source, f.ref as ref";
 $sql.= " FROM ";
 //if ($bid) $sql.= MAIN_DB_PREFIX."bank_class as l,";
 $sql.= " ".MAIN_DB_PREFIX."bank_account as ba,";
@@ -95,7 +95,7 @@ $sql.=" OR b.fk_account=".$conf->global->CASHDESK_ID_BANKACCOUNT_CB;
 $sql.=" OR b.fk_account=".$conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE;
 $sql.=")";
 */
-$sql = "SELECT f.rowid as facid, f.facnumber, f.datef as do, pf.amount as amount, b.fk_account as bankid, cp.code";
+$sql = "SELECT f.rowid as facid, f.ref, f.datef as do, pf.amount as amount, b.fk_account as bankid, cp.code";
 $sql.= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as cp, ".MAIN_DB_PREFIX."bank as b";
 $sql.= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id = p.fk_paiement AND p.fk_bank = b.rowid";
 $sql.= " AND f.module_source = '".$db->escape($posmodule)."'";
@@ -138,11 +138,11 @@ if ($resql)
 
 	// Fields title
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($arrayfields['b.rowid']['label'],$_SERVER['PHP_SELF'],'b.rowid','',$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($arrayfields['b.dateo']['label'],$_SERVER['PHP_SELF'],'b.dateo','',$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($arrayfields['ba.ref']['label'],$_SERVER['PHP_SELF'],'ba.ref','',$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($arrayfields['b.debit']['label'],$_SERVER['PHP_SELF'],'b.amount','',$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($arrayfields['b.credit']['label'],$_SERVER['PHP_SELF'],'b.amount','',$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($arrayfields['b.rowid']['label'], $_SERVER['PHP_SELF'], 'b.rowid', '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['b.dateo']['label'], $_SERVER['PHP_SELF'], 'b.dateo', '', $param, 'class="left"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['ba.ref']['label'], $_SERVER['PHP_SELF'], 'ba.ref', '', $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['b.debit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['b.credit']['label'], $_SERVER['PHP_SELF'], 'b.amount', '', $param, 'class="right"', $sortfield, $sortorder);
 	print "</tr>\n";
 
 	$posconciliatecol = 0;
@@ -152,7 +152,7 @@ if ($resql)
 	$cash=$bank=$cheque=$other=0;
 
     $totalarray=array();
-    while ($i < min($num,$limit))
+    while ($i < $num)
     {
         $objp = $db->fetch_object($resql);
 
@@ -172,7 +172,7 @@ if ($resql)
 		{
 			print '<tr class="oddeven">';
 			print '<td>'.$langs->trans("InitialBankBalance").' - '.$langs->trans("Cash").'</td>';
-			print '<td></td><td></td><td></td><td align="right">'.price($cashcontrol->opening).'</td>';
+			print '<td></td><td></td><td></td><td class="right">'.price($cashcontrol->opening).'</td>';
 			print '</tr>';
 			$first = "no";
 		}*/
@@ -180,7 +180,7 @@ if ($resql)
 		print '<tr class="oddeven">';
 
 		// Ref
-        print '<td align="left" class="nowrap">';
+        print '<td class="nowrap left">';
         $invoicetmp->fetch($objp->facid);
         print $invoicetmp->getNomUrl(1);
         print '</td>';
@@ -188,23 +188,31 @@ if ($resql)
 
 
         // Date ope
-    	print '<td align="left" class="nowrap">';
-    	print '<span id="dateoperation_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->do),"day")."</span>";
+    	print '<td class="nowrap left">';
+    	print '<span id="dateoperation_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->do), "day")."</span>";
     	print "</td>\n";
         if (! $i) $totalarray['nbfield']++;
 
     	// Bank account
-        print '<td align="right" class="nowrap">';
+        print '<td class="nowrap right">';
 		print $bankaccount->getNomUrl(1);
-		if ($conf->global->CASHDESK_ID_BANKACCOUNT_CASH==$bankaccount->id) $cash+=$objp->amount;
-		elseif ($conf->global->CASHDESK_ID_BANKACCOUNT_CB==$bankaccount->id) $bank+=$objp->amount;
-		elseif ($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE==$bankaccount->id) $cheque+=$objp->amount;
-		else $other+=$objp->amount;
+		if ($cashcontrol->posmodule=="takepos"){
+			if ($conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$cashcontrol->posnumber}==$bankaccount->id) $cash+=$objp->amount;
+			elseif ($conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$cashcontrol->posnumber}==$bankaccount->id) $bank+=$objp->amount;
+			elseif ($conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$cashcontrol->posnumber}==$bankaccount->id) $cheque+=$objp->amount;
+			else $other+=$objp->amount;
+		}
+		else{
+			if ($conf->global->CASHDESK_ID_BANKACCOUNT_CASH==$bankaccount->id) $cash+=$objp->amount;
+			elseif ($conf->global->CASHDESK_ID_BANKACCOUNT_CB==$bankaccount->id) $bank+=$objp->amount;
+			elseif ($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE==$bankaccount->id) $cheque+=$objp->amount;
+			else $other+=$objp->amount;
+		}
 		print "</td>\n";
         if (! $i) $totalarray['nbfield']++;
 
     	// Debit
-    	print '<td align="right">';
+    	print '<td class="right">';
     	if ($objp->amount < 0)
     	{
     	    print price($objp->amount * -1);
@@ -215,7 +223,7 @@ if ($resql)
     	if (! $i) $totalarray['totaldebfield']=$totalarray['nbfield'];
 
     	// Credit
-    	print '<td align="right">';
+    	print '<td class="right">';
     	if ($objp->amount > 0)
     	{
 			print price($objp->amount);
@@ -240,11 +248,11 @@ if ($resql)
 	        $i++;
 	        if ($i == 1)
 	        {
-	            if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
-	            else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+	            if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
+	            else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 	        }
-	        elseif ($totalarray['totaldebfield'] == $i) print '<td align="right">'.price(-1 * $totalarray['totaldeb']).'</td>';
-	        elseif ($totalarray['totalcredfield'] == $i) print '<td align="right">'.price($totalarray['totalcred']).'</td>';
+	        elseif ($totalarray['totaldebfield'] == $i) print '<td class="right">'.price(-1 * $totalarray['totaldeb']).'</td>';
+	        elseif ($totalarray['totalcredfield'] == $i) print '<td class="right">'.price($totalarray['totalcred']).'</td>';
 	        else print '<td></td>';
 	    }
 	    print '</tr>';

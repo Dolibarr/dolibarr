@@ -31,20 +31,20 @@ require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php'
 $langs->loadLangs(array('companies', 'users', 'trips'));
 
 // Security check
-$socid = GETPOST('socid','int');
+$socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'deplacement','','');
+$result = restrictedArea($user, 'deplacement', '', '');
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="d.dated";
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 
 
 /*
@@ -58,7 +58,7 @@ $childids[]=$user->id;
 
 //$help_url='EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones';
 $help_url='';
-llxHeader('',$langs->trans("ListOfFees"),$help_url);
+llxHeader('', $langs->trans("ListOfFees"), $help_url);
 
 
 
@@ -66,7 +66,7 @@ $totalnb=0;
 $sql = "SELECT count(d.rowid) as nb, sum(d.km) as km, d.type";
 $sql.= " FROM ".MAIN_DB_PREFIX."deplacement as d";
 $sql.= " WHERE d.entity = ".$conf->entity;
-if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $sql.=' AND d.fk_user IN ('.join(',',$childids).')';
+if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $sql.=' AND d.fk_user IN ('.join(',', $childids).')';
 $sql.= " GROUP BY d.type";
 $sql.= " ORDER BY d.type";
 
@@ -127,7 +127,7 @@ if ($conf->use_javascript_ajax)
 
 print '<tr class="liste_total">';
 print '<td>'.$langs->trans("Total").'</td>';
-print '<td align="right">'.$totalnb.'</td>';
+print '<td class="right">'.$totalnb.'</td>';
 print '</tr>';
 
 print '</table>';
@@ -146,10 +146,10 @@ $sql.= " FROM ".MAIN_DB_PREFIX."deplacement as d, ".MAIN_DB_PREFIX."user as u";
 if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE u.rowid = d.fk_user";
 $sql.= " AND d.entity = ".$conf->entity;
-if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $sql.=' AND d.fk_user IN ('.join(',',$childids).')';
+if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $sql.=' AND d.fk_user IN ('.join(',', $childids).')';
 if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND d.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND d.fk_soc = ".$socid;
-$sql.= $db->order("d.tms","DESC");
+$sql.= $db->order("d.tms", "DESC");
 $sql.= $db->plimit($max, 0);
 
 $result = $db->query($sql);
@@ -162,9 +162,9 @@ if ($result)
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses",min($max,$num)).'</td>';
-    print '<td align="right">'.$langs->trans("FeesKilometersOrAmout").'</td>';
-    print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
+    print '<td colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num)).'</td>';
+    print '<td class="right">'.$langs->trans("FeesKilometersOrAmout").'</td>';
+    print '<td class="right">'.$langs->trans("DateModificationShort").'</td>';
     print '<td width="16">&nbsp;</td>';
     print '</tr>';
     if ($num)
@@ -184,9 +184,9 @@ if ($result)
             print '<tr class="oddeven">';
             print '<td>'.$deplacementstatic->getNomUrl(1).'</td>';
             print '<td>'.$userstatic->getNomUrl(1).'</td>';
-            print '<td align="right">'.$obj->km.'</td>';
-            print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
-            print '<td>'.$deplacementstatic->LibStatut($obj->fk_statut,3).'</td>';
+            print '<td class="right">'.$obj->km.'</td>';
+            print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
+            print '<td>'.$deplacementstatic->LibStatut($obj->fk_statut, 3).'</td>';
             print '</tr>';
 
             $i++;

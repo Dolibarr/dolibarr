@@ -54,6 +54,7 @@ create table llx_societe
   skype                    varchar(255),                        		--
   twitter                  varchar(255),                        		--
   facebook                 varchar(255),                        		--
+  linkedin                 varchar(255),                        		--
   instagram                varchar(255),                        		--
   snapchat                 varchar(255),                        		--
   googleplus               varchar(255),                        		--
@@ -64,34 +65,34 @@ create table llx_societe
   fk_typent                integer        DEFAULT 0,            		--
   fk_forme_juridique       integer        DEFAULT 0,            		-- juridical status
   fk_currency			   varchar(3),									-- default currency
-  siren	                   varchar(128),                         		-- IDProf1: siren or RCS for france, ...
-  siret                    varchar(128),                         		-- IDProf2: siret for france, ...
-  ape                      varchar(128),                         		-- IDProf3: code ape for france, ...
-  idprof4                  varchar(128),                         		-- IDProf4: nu for france
-  idprof5                  varchar(128),                         		-- IDProf5: nu for france
-  idprof6                  varchar(128),                         		-- IDProf6: nu for france
-  tva_intra                varchar(20),                         		-- tva
-  capital                  double(24,8)   DEFAULT NULL,        			-- capital de la societe
-  fk_stcomm                integer        DEFAULT 0 NOT NULL,      		-- commercial statut
+  siren	                   varchar(128),                         		-- IDProf1: depends on country (example: siren or RCS for france, ...)
+  siret                    varchar(128),                         		-- IDProf2: depends on country (example: siret for france, ...)
+  ape                      varchar(128),                         		-- IDProf3: depends on country (example: code ape for france, ...)
+  idprof4                  varchar(128),                         		-- IDProf4: depends on country (example: nu for france, ...)
+  idprof5                  varchar(128),                         		-- IDProf5: depends on country (example: nu for france, ...)
+  idprof6                  varchar(128),                         		-- IDProf6: depends on country (example: nu for france, ...
+  tva_intra                varchar(20),                         		-- vat numero
+  capital                  double(24,8)   DEFAULT NULL,        			-- capital of company
+  fk_stcomm                integer        DEFAULT 0 NOT NULL,      		-- commercial status
   note_private             text,                                		--
   note_public              text,                                        --
   model_pdf				   varchar(255),
-  prefix_comm              varchar(5),                          		-- prefix commercial
+  prefix_comm              varchar(5),                          		-- prefix commercial (deprecated)
   client                   tinyint        DEFAULT 0,            		-- client 0/1/2
   fournisseur              tinyint        DEFAULT 0,            		-- fournisseur 0/1
-  supplier_account         varchar(32),                         		-- compte client chez un fournisseur
+  supplier_account         varchar(32),                         		-- Id of our customer account known by the supplier
   fk_prospectlevel         varchar(12),                         		-- prospect level (in llx_c_prospectlevel)
   fk_incoterms             integer,										-- for incoterms
   location_incoterms       varchar(255),								-- for incoterms
   customer_bad             tinyint        DEFAULT 0,            		-- mauvais payeur 0/1
   customer_rate            real           DEFAULT 0,            		-- taux fiabilite client (0 a 1)
   supplier_rate            real           DEFAULT 0,            		-- taux fiabilite fournisseur (0 a 1)
-  remise_client            real           DEFAULT 0,            		-- remise systematique pour le client
-  remise_supplier          real           DEFAULT 0,            		-- remise systematique auprès du fournisseur
-  mode_reglement           tinyint,                             		-- mode de reglement
-  cond_reglement           tinyint,                             		-- condition de reglement
-  mode_reglement_supplier  tinyint,                             		-- mode de reglement fournisseur
-  cond_reglement_supplier  tinyint,                             		-- condition de reglement fournisseur
+  remise_client            real           DEFAULT 0,            		-- discount by default granted to this customer
+  remise_supplier          real           DEFAULT 0,            		-- discount by default granted by this supplier
+  mode_reglement           tinyint,                             		-- payment mode customer
+  cond_reglement           tinyint,                             		-- payment term customer
+  mode_reglement_supplier  tinyint,                             		-- payment mode supplier
+  cond_reglement_supplier  tinyint,                             		-- payment term supplier
   fk_shipping_method       integer,                                     -- preferred shipping method id
   tva_assuj                tinyint        DEFAULT 1,	        		-- assujeti ou non a la TVA
   localtax1_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 1

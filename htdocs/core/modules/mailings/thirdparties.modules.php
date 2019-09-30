@@ -24,13 +24,13 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
  */
 class mailing_thirdparties extends MailingTargets
 {
-	var $name='ThirdPartiesByCategories';
+	public $name='ThirdPartiesByCategories';
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
-	var $desc="Third parties (by categories)";
-	var $require_admin=0;
+	public $desc="Third parties (by categories)";
+	public $require_admin=0;
 
-	var $require_module=array("societe");	// This module allows to select by categories must be also enabled if category module is not activated
-	var $picto='company';
+	public $require_module=array("societe");	// This module allows to select by categories must be also enabled if category module is not activated
+	public $picto='company';
 
 	/**
      * @var DoliDB Database handler.
@@ -43,7 +43,7 @@ class mailing_thirdparties extends MailingTargets
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+    public function __construct($db)
 	{
 		global $conf, $langs;
         $langs->load("companies");
@@ -52,21 +52,21 @@ class mailing_thirdparties extends MailingTargets
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *    This is the main function that returns the array of emails
 	 *
 	 *    @param	int		$mailing_id    	Id of mailing. No need to use it.
-	 *    @param	array	$filtersarray   If you used the formFilter function. Empty otherwise.
 	 *    @return   int 					<0 if error, number of emails added if ok
 	 */
-	function add_to_target($mailing_id, $filtersarray=array())
+    public function add_to_target($mailing_id)
 	{
         // phpcs:enable
 		global $conf, $langs;
 
 		$cibles = array();
 
+        $addDescription= "";
 		// Select the third parties from category
 		if (empty($_POST['filter']))
 		{
@@ -78,6 +78,50 @@ class mailing_thirdparties extends MailingTargets
 		}
 		else
 		{
+            $addFilter ="";
+            if (isset($_POST["filter_client"]) && $_POST["filter_client"] <> '-1')
+            {
+                $addFilter.= " AND s.client=" . $_POST["filter_client"];
+                $addDescription= $langs->trans('ProspectCustomer')."=";
+                if ($_POST["filter_client"] == 0)
+                {
+                    $addDescription.= $langs->trans('NorProspectNorCustomer');
+                }
+                elseif ($_POST["filter_client"] == 1)
+                {
+                    $addDescription.= $langs->trans('Customer');
+                }
+                elseif ($_POST["filter_client"] == 2)
+                {
+                    $addDescription.= $langs->trans('Prospect');
+                }
+                elseif ($_POST["filter_client"] == 3)
+                {
+                    $addDescription.= $langs->trans('ProspectCustomer');
+                }
+                else
+                {
+                    $addDescription.= "Unknown status ".$_POST["filter_client"];
+                }
+            }
+            if (isset($_POST["filter_status"]))
+            {
+                if (strlen($addDescription) > 0)
+                {
+                    $addDescription.= ";";
+                }
+                $addDescription.= $langs->trans("Status")."=";
+                if ($_POST["filter_status"] == '1')
+                {
+                    $addFilter.= " AND s.status=1";
+                    $addDescription.= $langs->trans("Enabled");
+                }
+                else
+                {
+                    $addFilter.= " AND s.status=0";
+                    $addDescription.= $langs->trans("Disabled");
+                }
+            }
 		    $sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, c.label as label";
 		    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."categorie_societe as cs, ".MAIN_DB_PREFIX."categorie as c";
 		    $sql.= " WHERE s.email <> ''";
@@ -86,6 +130,7 @@ class mailing_thirdparties extends MailingTargets
 		    $sql.= " AND cs.fk_soc = s.rowid";
 		    $sql.= " AND c.rowid = cs.fk_categorie";
 		    $sql.= " AND c.rowid='".$this->db->escape($_POST['filter'])."'";
+            $sql.= $addFilter;
 		    $sql.= " UNION ";
 		    $sql.= "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, c.label as label";
 		    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."categorie_fournisseur as cs, ".MAIN_DB_PREFIX."categorie as c";
@@ -95,51 +140,7 @@ class mailing_thirdparties extends MailingTargets
 		    $sql.= " AND cs.fk_soc = s.rowid";
 		    $sql.= " AND c.rowid = cs.fk_categorie";
 		    $sql.= " AND c.rowid='".$this->db->escape($_POST['filter'])."'";
-		}
-
-        $addDescription= "";
-        if (isset($_POST["filter_client"]) && $_POST["filter_client"] <> '-1')
-        {
-            $sql.= " AND s.client=" . $_POST["filter_client"];
-            $addDescription= $langs->trans('ProspectCustomer')."=";
-            if ($_POST["filter_client"] == 0)
-            {
-                $addDescription.= $langs->trans('NorProspectNorCustomer');
-            }
-            elseif ($_POST["filter_client"] == 1)
-            {
-                $addDescription.= $langs->trans('Customer');
-            }
-            elseif ($_POST["filter_client"] == 2)
-            {
-                $addDescription.= $langs->trans('Prospect');
-            }
-            elseif ($_POST["filter_client"] == 3)
-            {
-                $addDescription.= $langs->trans('ProspectCustomer');
-            }
-            else
-            {
-                $addDescription.= "Unknown status ".$_POST["filter_client"];
-            }
-        }
-        if (isset($_POST["filter_status"]))
-        {
-            if (strlen($addDescription) > 0)
-            {
-                $addDescription.= ";";
-            }
-            $addDescription.= $langs->trans("Status")."=";
-            if ($_POST["filter_status"] == '1')
-            {
-                $sql.= " AND s.status=1";
-                $addDescription.= $langs->trans("Enabled");
-            }
-            else
-            {
-                $sql.= " AND s.status=0";
-                $addDescription.= $langs->trans("Disabled");
-            }
+            $sql.= $addFilter;
         }
         $sql.= " ORDER BY email";
 
@@ -189,7 +190,7 @@ class mailing_thirdparties extends MailingTargets
 			return -1;
 		}
 
-		return parent::add_to_target($mailing_id, $cibles);
+		return parent::addTargetsToDatabase($mailing_id, $cibles);
 	}
 
 
@@ -201,7 +202,7 @@ class mailing_thirdparties extends MailingTargets
 	 *
 	 *	@return		array		Array with SQL requests
 	 */
-	function getSqlArrayForStats()
+    public function getSqlArrayForStats()
 	{
 		// CHANGE THIS: Optionnal
 
@@ -219,7 +220,7 @@ class mailing_thirdparties extends MailingTargets
 	 *  @param      string	$sql        Requete sql de comptage
 	 *	@return		int					Nb of recipients
 	 */
-	function getNbOfRecipients($sql='')
+    public function getNbOfRecipients($sql = '')
 	{
 		global $conf;
 
@@ -239,7 +240,7 @@ class mailing_thirdparties extends MailingTargets
 	 *
 	 *  @return     string      A html select zone
 	 */
-	function formFilter()
+    public function formFilter()
 	{
 		global $conf, $langs;
 
@@ -275,7 +276,7 @@ class mailing_thirdparties extends MailingTargets
 				$type='';
 				if ($obj->type == 1) $type=$langs->trans("Supplier");
 				if ($obj->type == 2) $type=$langs->trans("Customer");
-				$s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->label,38,'middle');
+				$s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->label, 38, 'middle');
 				if ($type) $s.=' ('.$type.')';
 				$s.='</option>';
 				$i++;
@@ -320,8 +321,8 @@ class mailing_thirdparties extends MailingTargets
      *  @param	int		$id		ID
 	 *  @return string      	Url link
 	 */
-	function url($id)
+    public function url($id)
 	{
-		return '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$id.'">'.img_object('',"company").'</a>';
+		return '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$id.'">'.img_object('', "company").'</a>';
 	}
 }

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2016  Alexandre Spangaro  <aspangaro@zendsi.com>
+/* Copyright (C) 2014-2016  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 
 /**
  * \file        htdocs/accountancy/admin/fiscalyear_card.php
- * \ingroup     Advanced accountancy
+ * \ingroup     Accountancy (Double entries)
  * \brief       Page to show a fiscal year
  */
 
@@ -50,7 +50,7 @@ static $tmpstatut2label = array (
 $statut2label = array (
 		''
 );
-foreach ( $tmpstatut2label as $key => $val )
+foreach ($tmpstatut2label as $key => $val)
 	$statut2label[$key] = $langs->trans($val);
 
 $object = new Fiscalyear($db);
@@ -73,7 +73,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 	}
 }
 
-else if ($action == 'add') {
+elseif ($action == 'add') {
 	if (! GETPOST('cancel', 'alpha')) {
 		$error = 0;
 
@@ -118,7 +118,7 @@ else if ($action == 'add') {
 }
 
 // Update record
-else if ($action == 'update') {
+elseif ($action == 'update') {
 	if (! GETPOST('cancel', 'alpha')) {
 		$result = $object->fetch($id);
 
@@ -151,7 +151,7 @@ $form = new Form($db);
 
 $title = $langs->trans("Fiscalyear") . " - " . $langs->trans("Card");
 $helpurl = "";
-llxHeader("",$title,$helpurl);
+llxHeader("", $title, $helpurl);
 
 if ($action == 'create')
 {
@@ -198,7 +198,7 @@ if ($action == 'create')
 	print '</div>';
 
 	print '</form>';
-} else if ($id) {
+} elseif ($id) {
 	$result = $object->fetch($id);
 	if ($result > 0) {
 		$head = fiscalyear_prepare_head($object);

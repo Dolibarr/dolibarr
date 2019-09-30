@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2013-2018  Alexandre Spangaro  <aspangaro@zendsi.com>
+ * Copyright (C) 2013-2018  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2014       Florian Henry       <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,9 +18,9 @@
  */
 
 /**
- * \file 		htdocs/accountancy/admin/card.php
- * \ingroup		Advanced accountancy
- * \brief 		Card of accounting account
+ *  \file       htdocs/accountancy/admin/card.php
+ *  \ingroup    Accountancy (Double entries)
+ *  \brief      Card of accounting account
  */
 
 require '../../main.inc.php';
@@ -35,13 +35,13 @@ $error = 0;
 $langs->loadLangs(array("bills","accountancy"));
 
 $mesg = '';
-$action = GETPOST('action','aZ09');
-$backtopage = GETPOST('backtopage','alpha');
+$action = GETPOST('action', 'aZ09');
+$backtopage = GETPOST('backtopage', 'alpha');
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $rowid = GETPOST('rowid', 'int');
-$cancel = GETPOST('cancel','alpha');
-$accountingaccount = GETPOST('accountingaccount','alpha');
+$cancel = GETPOST('cancel', 'alpha');
+$accountingaccount = GETPOST('accountingaccount', 'alpha');
 
 // Security check
 
@@ -53,9 +53,9 @@ $object = new AccountingAccount($db);
  * Action
  */
 
-if (GETPOST('cancel','alpha'))
+if (GETPOST('cancel', 'alpha'))
 {
-	$urltogo=$backtopage?$backtopage:dol_buildpath('/accountancy/admin/account.php',1);
+	$urltogo=$backtopage?$backtopage:dol_buildpath('/accountancy/admin/account.php', 1);
 	header("Location: ".$urltogo);
 	exit;
 }
@@ -74,28 +74,28 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		// To manage zero or not at the end of the accounting account
 		if($conf->global->ACCOUNTING_MANAGE_ZERO == 1)
 		{
-			$account_number = GETPOST('account_number','string');
+			$account_number = GETPOST('account_number', 'string');
 		}
 		else
 		{
-			$account_number = clean_account(GETPOST('account_number','string'));
+			$account_number = clean_account(GETPOST('account_number', 'string'));
 		}
 
-		if (GETPOST('account_parent','int') <= 0)
+		if (GETPOST('account_parent', 'int') <= 0)
 		{
 			$account_parent = 0;
 		}
 		else
 		{
-			$account_parent = GETPOST('account_parent','int');
+			$account_parent = GETPOST('account_parent', 'int');
 		}
 
 		$object->fk_pcg_version = $obj->pcg_version;
-		$object->pcg_type = GETPOST('pcg_type','alpha');
-		$object->pcg_subtype = GETPOST('pcg_subtype','alpha');
+		$object->pcg_type = GETPOST('pcg_type', 'alpha');
+		$object->pcg_subtype = GETPOST('pcg_subtype', 'alpha');
 		$object->account_number = $account_number;
 		$object->account_parent = $account_parent;
-		$object->account_category = GETPOST('account_category','alpha');
+		$object->account_category = GETPOST('account_category', 'alpha');
 		$object->label = GETPOST('label', 'alpha');
 		$object->active = 1;
 
@@ -118,13 +118,13 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		}
 		if (! $error)
 		{
-		    setEventMessages("RecordCreatedSuccessfully",null,'mesgs');
-		    $urltogo=$backtopage?$backtopage:dol_buildpath('/accountancy/admin/account.php',1);
+		    setEventMessages("RecordCreatedSuccessfully", null, 'mesgs');
+		    $urltogo=$backtopage?$backtopage:dol_buildpath('/accountancy/admin/account.php', 1);
 		    header("Location: ".$urltogo);
 		    exit;
 		}
 	}
-} else if ($action == 'edit' && $user->rights->accounting->chartofaccount) {
+} elseif ($action == 'edit' && $user->rights->accounting->chartofaccount) {
 	if (! $cancel) {
 		$result = $object->fetch($id);
 
@@ -139,28 +139,28 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		// To manage zero or not at the end of the accounting account
 		if($conf->global->ACCOUNTING_MANAGE_ZERO == 1)
 		{
-			$account_number = GETPOST('account_number','string');
+			$account_number = GETPOST('account_number', 'string');
 		}
 		else
 		{
-			$account_number = clean_account(GETPOST('account_number','string'));
+			$account_number = clean_account(GETPOST('account_number', 'string'));
 		}
 
-		if (GETPOST('account_parent','int') <= 0)
+		if (GETPOST('account_parent', 'int') <= 0)
 		{
 			$account_parent = 0;
 		}
 		else
 		{
-			$account_parent = GETPOST('account_parent','int');
+			$account_parent = GETPOST('account_parent', 'int');
 		}
 
 		$object->fk_pcg_version = $obj->pcg_version;
-		$object->pcg_type = GETPOST('pcg_type','alpha');
-		$object->pcg_subtype = GETPOST('pcg_subtype','alpha');
+		$object->pcg_type = GETPOST('pcg_type', 'alpha');
+		$object->pcg_subtype = GETPOST('pcg_subtype', 'alpha');
 		$object->account_number = $account_number;
 		$object->account_parent = $account_parent;
-		$object->account_category = GETPOST('account_category','alpha');
+		$object->account_category = GETPOST('account_category', 'alpha');
 		$object->label = GETPOST('label', 'alpha');
 
 		$result = $object->update($user);
@@ -177,7 +177,7 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 	    header("Location: " . $urltogo);
 		exit();
 	}
-} else if ($action == 'delete' && $user->rights->accounting->chartofaccount) {
+} elseif ($action == 'delete' && $user->rights->accounting->chartofaccount) {
 	$result = $object->fetch($id);
 
 	if (! empty($object->id)) {
@@ -251,13 +251,13 @@ if ($action == 'create') {
 	// Chart of accounts type
 	print '<tr><td>' . $langs->trans("Pcgtype") . '</td>';
 	print '<td>';
-	print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(isset($_POST['pcg_type'])?GETPOST('pcg_type','alpha'):$object->pcg_type).'">';
+	print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(isset($_POST['pcg_type'])?GETPOST('pcg_type', 'alpha'):$object->pcg_type).'">';
 	print '</td></tr>';
 
 	// Chart of acounts subtype
 	print '<tr><td>' . $langs->trans("Pcgsubtype") . '</td>';
 	print '<td>';
-	print '<input type="text" name="pcg_subtype" value="'.dol_escape_htmltag(isset($_POST['pcg_subtype'])?GETPOST('pcg_subtype','alpha'):$object->pcg_subtype).'">';
+	print '<input type="text" name="pcg_subtype" value="'.dol_escape_htmltag(isset($_POST['pcg_subtype'])?GETPOST('pcg_subtype', 'alpha'):$object->pcg_subtype).'">';
 	print '</td></tr>';
 
 	print '</table>';
@@ -272,7 +272,7 @@ if ($action == 'create') {
 
 	print '</form>';
 }
-else if ($id > 0 || $ref) {
+elseif ($id > 0 || $ref) {
 
 	$result = $object->fetch($id, $ref, 1);
 
@@ -317,13 +317,13 @@ else if ($id > 0 || $ref) {
 			// Chart of accounts type
 			print '<tr><td>' . $langs->trans("Pcgtype") . '</td>';
 			print '<td>';
-			print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(isset($_POST['pcg_type'])?GETPOST('pcg_type','alpha'):$object->pcg_type).'">';
+			print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(isset($_POST['pcg_type'])?GETPOST('pcg_type', 'alpha'):$object->pcg_type).'">';
 			print '</td></tr>';
 
 			// Chart of accounts subtype
 			print '<tr><td>' . $langs->trans("Pcgsubtype") . '</td>';
 			print '<td>';
-			print '<input type="text" name="pcg_subtype" value="'.dol_escape_htmltag(isset($_POST['pcg_subtype'])?GETPOST('pcg_subtype','alpha'):$object->pcg_subtype).'">';
+			print '<input type="text" name="pcg_subtype" value="'.dol_escape_htmltag(isset($_POST['pcg_subtype'])?GETPOST('pcg_subtype', 'alpha'):$object->pcg_subtype).'">';
 			print '</td></tr>';
 
 			print '</table>';
@@ -388,13 +388,13 @@ else if ($id > 0 || $ref) {
 			if (! empty($user->rights->accounting->chartofaccount)) {
 				print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=update&id=' . $id . '">' . $langs->trans('Modify') . '</a>';
 			} else {
-				print '<a class="butActionRefused" href="#" title="' . dol_escape_htmltag($langs->trans("NotAllowed")) . '">' . $langs->trans('Modify') . '</a>';
+				print '<a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("NotAllowed")) . '">' . $langs->trans('Modify') . '</a>';
 			}
 
 			if (! empty($user->rights->accounting->chartofaccount)) {
 				print '<a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?action=delete&id=' . $id . '">' . $langs->trans('Delete') . '</a>';
 			} else {
-				print '<a class="butActionRefused" href="#" title="' . dol_escape_htmltag($langs->trans("NotAllowed")) . '">' . $langs->trans('Delete') . '</a>';
+				print '<a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("NotAllowed")) . '">' . $langs->trans('Delete') . '</a>';
 			}
 
 			print '</div>';

@@ -34,10 +34,10 @@ $langs->loadLangs(array("admin", "errors", "other", "supplier_proposal"));
 
 if (! $user->admin) accessforbidden();
 
-$action = GETPOST('action','alpha');
-$value = GETPOST('value','alpha');
-$label = GETPOST('label','alpha');
-$scandir = GETPOST('scan_dir','alpha');
+$action = GETPOST('action', 'alpha');
+$value = GETPOST('value', 'alpha');
+$label = GETPOST('label', 'alpha');
+$scandir = GETPOST('scan_dir', 'alpha');
 $type='supplier_proposal';
 
 $error=0;
@@ -51,9 +51,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask')
 {
-	$maskconstsupplier_proposal=GETPOST('maskconstsupplier_proposal','alpha');
-	$masksupplier_proposal=GETPOST('masksupplier_proposal','alpha');
-	if ($maskconstsupplier_proposal) $res = dolibarr_set_const($db,$maskconstsupplier_proposal,$masksupplier_proposal,'chaine',0,'',$conf->entity);
+	$maskconstsupplier_proposal=GETPOST('maskconstsupplier_proposal', 'alpha');
+	$masksupplier_proposal=GETPOST('masksupplier_proposal', 'alpha');
+	if ($maskconstsupplier_proposal) $res = dolibarr_set_const($db, $maskconstsupplier_proposal, $masksupplier_proposal, 'chaine', 0, '', $conf->entity);
 
 	if (! $res > 0) $error++;
 
@@ -69,14 +69,14 @@ if ($action == 'updateMask')
 
 if ($action == 'specimen')
 {
-	$modele=GETPOST('module','alpha');
+	$modele=GETPOST('module', 'alpha');
 
 	$supplier_proposal = new SupplierProposal($db);
 	$supplier_proposal->initAsSpecimen();
 
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
-	$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+	$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach($dirmodels as $reldir)
 	{
 	    $file=dol_buildpath($reldir."core/modules/supplier_proposal/doc/pdf_".$modele.".modules.php");
@@ -94,7 +94,7 @@ if ($action == 'specimen')
 
 		$module = new $classname($db);
 
-		if ($module->write_file($supplier_proposal,$langs) > 0)
+		if ($module->write_file($supplier_proposal, $langs) > 0)
 		{
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=supplier_proposal&file=SPECIMEN.pdf");
 			return;
@@ -114,9 +114,9 @@ if ($action == 'specimen')
 
 if ($action == 'set_SUPPLIER_PROPOSAL_DRAFT_WATERMARK')
 {
-	$draft = GETPOST('SUPPLIER_PROPOSAL_DRAFT_WATERMARK','alpha');
+	$draft = GETPOST('SUPPLIER_PROPOSAL_DRAFT_WATERMARK', 'alpha');
 
-	$res = dolibarr_set_const($db, "SUPPLIER_PROPOSAL_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, "SUPPLIER_PROPOSAL_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
 	if (! $res > 0) $error++;
 
  	if (! $error)
@@ -131,9 +131,9 @@ if ($action == 'set_SUPPLIER_PROPOSAL_DRAFT_WATERMARK')
 
 if ($action == 'set_SUPPLIER_PROPOSAL_FREE_TEXT')
 {
-	$freetext = GETPOST('SUPPLIER_PROPOSAL_FREE_TEXT','none');	// No alpha here, we want exact string
+	$freetext = GETPOST('SUPPLIER_PROPOSAL_FREE_TEXT', 'none');	// No alpha here, we want exact string
 
-	$res = dolibarr_set_const($db, "SUPPLIER_PROPOSAL_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, "SUPPLIER_PROPOSAL_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
 
 	if (! $res > 0) $error++;
 
@@ -149,7 +149,7 @@ if ($action == 'set_SUPPLIER_PROPOSAL_FREE_TEXT')
 
 if ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL')
 {
-    $res = dolibarr_set_const($db, "BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL",$value,'chaine',0,'',$conf->entity);
+    $res = dolibarr_set_const($db, "BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL", $value, 'chaine', 0, '', $conf->entity);
 
     if (! $res > 0) $error++;
 
@@ -169,18 +169,18 @@ if ($action == 'set')
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
 
-else if ($action == 'del')
+elseif ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
 	{
-        if ($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF == "$value") dolibarr_del_const($db, 'SUPPLIER_PROPOSAL_ADDON_PDF',$conf->entity);
+        if ($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF == "$value") dolibarr_del_const($db, 'SUPPLIER_PROPOSAL_ADDON_PDF', $conf->entity);
 	}
 }
 
-else if ($action == 'setdoc')
+elseif ($action == 'setdoc')
 {
-    if (dolibarr_set_const($db, "SUPPLIER_PROPOSAL_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
+    if (dolibarr_set_const($db, "SUPPLIER_PROPOSAL_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
 	{
 		$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF = $value;
 	}
@@ -193,12 +193,12 @@ else if ($action == 'setdoc')
 	}
 }
 
-else if ($action == 'setmod')
+elseif ($action == 'setmod')
 {
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
 
-	dolibarr_set_const($db, "SUPPLIER_PROPOSAL_ADDON",$value,'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "SUPPLIER_PROPOSAL_ADDON", $value, 'chaine', 0, '', $conf->entity);
 }
 
 
@@ -206,26 +206,26 @@ else if ($action == 'setmod')
  * Affiche page
  */
 
-$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 
-llxHeader('',$langs->trans("SupplierProposalSetup"));
+llxHeader('', $langs->trans("SupplierProposalSetup"));
 
 $form=new Form($db);
 
 //if ($mesg) print $mesg;
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("SupplierProposalSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("SupplierProposalSetup"), $linkback, 'title_setup');
 
 $head = supplier_proposal_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("CommRequests"), 0, 'supplier_proposal');
+dol_fiche_head($head, 'general', $langs->trans("CommRequests"), -1, 'supplier_proposal');
 
 /*
  *  Module numerotation
  */
-print load_fiche_titre($langs->trans("SupplierProposalNumberingModules"),'','');
+print load_fiche_titre($langs->trans("SupplierProposalNumberingModules"), '', '');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -271,7 +271,7 @@ foreach ($dirmodels as $reldir)
                         // Show example of numbering module
                         print '<td class="nowrap">';
                         $tmp=$module->getExample();
-                        if (preg_match('/^Error/',$tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
+                        if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
                         elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
                         else print $tmp;
                         print '</td>'."\n";
@@ -279,12 +279,12 @@ foreach ($dirmodels as $reldir)
 						print '<td align="center">';
 						if ($conf->global->SUPPLIER_PROPOSAL_ADDON == "$file")
 						{
-							print img_picto($langs->trans("Activated"),'switch_on');
+							print img_picto($langs->trans("Activated"), 'switch_on');
 						}
 						else
 						{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
-							print img_picto($langs->trans("Disabled"),'switch_off');
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
+							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
 						}
 						print '</td>';
@@ -295,11 +295,11 @@ foreach ($dirmodels as $reldir)
 						// Info
 						$htmltooltip='';
 						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$nextval=$module->getNextValue($mysoc,$supplier_proposal);
+						$nextval=$module->getNextValue($mysoc, $supplier_proposal);
                         if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
                             $htmltooltip.=''.$langs->trans("NextValue").': ';
                             if ($nextval) {
-                                if (preg_match('/^Error/',$nextval) || $nextval=='NotConfigured')
+                                if (preg_match('/^Error/', $nextval) || $nextval=='NotConfigured')
                                     $nextval = $langs->trans($nextval);
                                 $htmltooltip.=$nextval.'<br>';
                             } else {
@@ -308,7 +308,7 @@ foreach ($dirmodels as $reldir)
                         }
 
 						print '<td align="center">';
-						print $form->textwithpicto('',$htmltooltip,1,0);
+						print $form->textwithpicto('', $htmltooltip, 1, 0);
 						print '</td>';
 
 						print "</tr>\n";
@@ -326,7 +326,7 @@ print "</table><br>\n";
  * Document templates generators
  */
 
-print load_fiche_titre($langs->trans("SupplierProposalPDFModules"),'','');
+print load_fiche_titre($langs->trans("SupplierProposalPDFModules"), '', '');
 
 // Load array def with activated templates
 $def = array();
@@ -384,7 +384,7 @@ foreach ($dirmodels as $reldir)
 
                 foreach($filelist as $file)
                 {
-                    if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))
+                    if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
                     {
                     	if (file_exists($dir.'/'.$file))
                     	{
@@ -403,7 +403,7 @@ foreach ($dirmodels as $reldir)
 	                            print '<tr class="oddeven"><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";
-	                            if (method_exists($module,'info')) print $module->info($langs);
+	                            if (method_exists($module, 'info')) print $module->info($langs);
 	                            else print $module->description;
 	                            print '</td>';
 
@@ -412,14 +412,14 @@ foreach ($dirmodels as $reldir)
 	                            {
 	                            	print '<td align="center">'."\n";
 	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
-	                            	print img_picto($langs->trans("Enabled"),'switch_on');
+	                            	print img_picto($langs->trans("Enabled"), 'switch_on');
 	                            	print '</a>';
 	                            	print '</td>';
 	                            }
 	                            else
 	                            {
 	                                print "<td align=\"center\">\n";
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 	                                print "</td>";
 	                            }
 
@@ -427,11 +427,11 @@ foreach ($dirmodels as $reldir)
 	                            print "<td align=\"center\">";
 	                            if ($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF == "$name")
 	                            {
-	                                print img_picto($langs->trans("Default"),'on');
+	                                print img_picto($langs->trans("Default"), 'on');
 	                            }
 	                            else
 	                            {
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	                            }
 	                            print '</td>';
 
@@ -443,28 +443,28 @@ foreach ($dirmodels as $reldir)
 	                                $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
 	                            }
 								$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-								$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
-								$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
-								$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
-								$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
+								$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
+								$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
+								$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
+								$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
 								//$htmltooltip.='<br>'.$langs->trans("Discounts").': '.yn($module->option_escompte,1,1);
 								//$htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
-								$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftProposal").': '.yn($module->option_draft_watermark,1,1);
+								$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftProposal").': '.yn($module->option_draft_watermark, 1, 1);
 
 
 	                            print '<td align="center">';
-	                            print $form->textwithpicto('',$htmltooltip,1,0);
+	                            print $form->textwithpicto('', $htmltooltip, 1, 0);
 	                            print '</td>';
 
 	                            // Preview
 	                            print '<td align="center">';
 	                            if ($module->type == 'pdf')
 	                            {
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'bill').'</a>';
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
 	                            }
 	                            else
 	                            {
-	                                print img_object($langs->trans("PreviewNotAvailable"),'generic');
+	                                print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 	                            }
 	                            print '</td>';
 
@@ -486,7 +486,7 @@ print '<br>';
  * Other options
  *
  */
-print load_fiche_titre($langs->trans("OtherOptions"),'','');
+print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
@@ -514,10 +514,10 @@ if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 else
 {
     include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_notes');
+    $doleditor=new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
     print $doleditor->Create();
 }
-print '</td><td align="right">';
+print '</td><td class="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
@@ -530,7 +530,7 @@ print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftProposal"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '</td><td>';
 print '<input size="50" class="flat" type="text" name="SUPPLIER_PROPOSAL_DRAFT_WATERMARK" value="'.$conf->global->SUPPLIER_PROPOSAL_DRAFT_WATERMARK.'">';
-print '</td><td align="right">';
+print '</td><td class="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
@@ -539,7 +539,7 @@ if ($conf->banque->enabled)
 {
 
     print '<tr class="oddeven"><td>';
-    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL").'</td><td>&nbsp</td><td align="right">';
+    print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL").'</td><td>&nbsp</td><td class="right">';
     if (! empty($conf->use_javascript_ajax))
     {
         print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL');
@@ -548,11 +548,11 @@ if ($conf->banque->enabled)
     {
         if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL))
         {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL&amp;value=1">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL&amp;value=1">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
         }
         else
         {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL&amp;value=0">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL&amp;value=0">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
         }
     }
     print '</td></tr>';
@@ -572,7 +572,7 @@ print '</table>';
  *  Directory
  */
 print '<br>';
-print load_fiche_titre($langs->trans("PathToDocuments"),'','');
+print load_fiche_titre($langs->trans("PathToDocuments"), '', '');
 
 print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
@@ -585,4 +585,3 @@ print "</table>\n<br>";
 // End of page
 llxFooter();
 $db->close();
-

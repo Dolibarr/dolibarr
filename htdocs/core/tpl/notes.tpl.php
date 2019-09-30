@@ -18,8 +18,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || ! is_object($object))
-{
+if (empty($object) || ! is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -39,7 +38,7 @@ $value_private=$object->note_private;
 if (! empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PUBLIC_NOTES))
 {
 	$stringtoadd=dol_print_date(dol_now(), 'dayhour').' '.$user->getFullName($langs).' --';
-	if (GETPOST('action','aZ09') == 'edit'.$note_public)
+	if (GETPOST('action', 'aZ09') == 'edit'.$note_public)
 	{
 		$value_public=dol_concatdesc($value_public, ($value_public?"\n":"")."-- ".$stringtoadd);
 		if (dol_textishtml($value_public)) $value_public.="<br>\n";
@@ -49,7 +48,7 @@ if (! empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PUBLIC_NOTES))
 if (! empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES))
 {
 	$stringtoadd=dol_print_date(dol_now(), 'dayhour').' '.$user->getFullName($langs).' --';
-	if (GETPOST('action','aZ09') == 'edit'.$note_private)
+	if (GETPOST('action', 'aZ09') == 'edit'.$note_private)
 	{
 		$value_private=dol_concatdesc($value_private, ($value_private?"\n":"")."-- ".$stringtoadd);
 		if (dol_textishtml($value_private)) $value_private.="<br>\n";
@@ -75,10 +74,10 @@ if (! empty($conf->fckeditor->enabled) && ! empty($conf->global->FCKEDITOR_ENABL
 else $typeofdata='textarea:12:95%';
 
 print '<!-- BEGIN PHP TEMPLATE NOTES -->'."\n";
-print '<div class="tagtable border table-border centpercent">'."\n";
+print '<div class="tagtable border table-border tableforfield centpercent">'."\n";
 if ($module != 'product') {
 	// No public note yet on products
-	print '<div class="tagtr pair table-border-row">'."\n";
+	print '<div class="tagtr table-border-row">'."\n";
 	print '<div class="tagtd tagtdnote tdtop table-key-border-col'.(empty($cssclass)?'':' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
 	print $form->editfieldkey("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, $moreparam, '', 0);
 	print '</div>'."\n";
@@ -88,7 +87,7 @@ if ($module != 'product') {
 	print '</div>'."\n";
 }
 if (empty($user->societe_id)) {
-	print '<div class="tagtr '.($module != 'product'?'impair':'pair').' table-border-row">'."\n";
+	print '<div class="tagtr table-border-row">'."\n";
 	print '<div class="tagtd tagtdnote tdtop table-key-border-col'.(empty($cssclass)?'':' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
 	print $form->editfieldkey("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, $moreparam, '', 0);
 	print '</div>'."\n";

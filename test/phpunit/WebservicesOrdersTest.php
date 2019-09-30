@@ -48,7 +48,7 @@ $conf->global->MAIN_UMASK='0666';
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class WebservicesOrdersTest extends PHPUnit_Framework_TestCase
+class WebservicesOrdersTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -61,7 +61,7 @@ class WebservicesOrdersTest extends PHPUnit_Framework_TestCase
      *
      * @return DateLibTest
      */
-    function __construct()
+    public function __construct()
     {
     	parent::__construct();
 
@@ -160,7 +160,7 @@ class WebservicesOrdersTest extends PHPUnit_Framework_TestCase
         $parameters = array('authentication'=>$authentication,'id'=>1);
         print __METHOD__." call method ".$WS_METHOD."\n";
         try {
-            $result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
+            $result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
         } catch(SoapFault $exception) {
             echo $exception;
             $result=0;
@@ -176,7 +176,7 @@ class WebservicesOrdersTest extends PHPUnit_Framework_TestCase
         }
 
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals('OK',$result['result']['result_code']);
+        $this->assertEquals('OK', $result['result']['result_code']);
 
         return $result;
     }

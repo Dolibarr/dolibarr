@@ -36,9 +36,9 @@ if (! empty($conf->projet->enabled)) {
 
 $langs->loadLangs(array("bills", "other", "companies"));
 
-$id		= (GETPOST('id','int') ? GETPOST('id','int') : GETPOST('facid','int'));
-$ref	= GETPOST('ref','alpha');
-$action	= GETPOST('action','alpha');
+$id		= (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int'));
+$ref	= GETPOST('ref', 'alpha');
+$action	= GETPOST('action', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -81,7 +81,7 @@ if ($action == 'addcontact' && $user->rights->fournisseur->facture->creer)
 }
 
 // bascule du statut d'un contact
-else if ($action == 'swapstatut' && $user->rights->fournisseur->facture->creer)
+elseif ($action == 'swapstatut' && $user->rights->fournisseur->facture->creer)
 {
 	if ($object->fetch($id))
 	{
@@ -94,7 +94,7 @@ else if ($action == 'swapstatut' && $user->rights->fournisseur->facture->creer)
 }
 
 // Efface un contact
-else if ($action == 'deletecontact' && $user->rights->fournisseur->facture->creer)
+elseif ($action == 'deletecontact' && $user->rights->fournisseur->facture->creer)
 {
 	$object->fetch($id);
 	$result = $object->delete_contact($_GET["lineid"]);
@@ -202,13 +202,13 @@ if ($id > 0 || ! empty($ref))
 		{
 			$facreplaced=new FactureFournisseur($db);
 			$facreplaced->fetch($object->fk_facture_source);
-			print ' ('.$langs->transnoentities("ReplaceInvoice",$facreplaced->getNomUrl(1)).')';
+			print ' ('.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)).')';
 		}
 		if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE)
 		{
 			$facusing=new FactureFournisseur($db);
 			$facusing->fetch($object->fk_facture_source);
-			print ' ('.$langs->transnoentities("CorrectInvoice",$facusing->getNomUrl(1)).')';
+			print ' ('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')';
 		}
 
 		$facidavoir=$object->getListIdAvoirFromInvoice();
@@ -230,34 +230,34 @@ if ($id > 0 || ! empty($ref))
 		{
 			$facthatreplace=new FactureFournisseur($db);
 			$facthatreplace->fetch($facidnext);
-			print ' ('.$langs->transnoentities("ReplacedByInvoice",$facthatreplace->getNomUrl(1)).')';
+			print ' ('.$langs->transnoentities("ReplacedByInvoice", $facthatreplace->getNomUrl(1)).')';
 		}
 		print '</td></tr>';
 
 		// Label
-		print '<tr><td>'.$form->editfieldkey("Label",'label',$object->label,$object,0).'</td><td>';
-		print $form->editfieldval("Label",'label',$object->label,$object,0);
+		print '<tr><td>'.$form->editfieldkey("Label", 'label', $object->label, $object, 0).'</td><td>';
+		print $form->editfieldval("Label", 'label', $object->label, $object, 0);
 		print '</td></tr>';
 
         // Amount
-        print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($object->total_ht,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
-        print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($object->total_tva,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
+        print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($object->total_ht, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
+        print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($object->total_tva, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
 
         // Amount Local Taxes
         //TODO: Place into a function to control showing by country or study better option
         if ($societe->localtax1_assuj=="1") //Localtax1
         {
-            print '<tr><td>'.$langs->transcountry("AmountLT1",$societe->country_code).'</td>';
-            print '<td>'.price($object->total_localtax1,1,$langs,0,-1,-1,$conf->currency).'</td>';
+            print '<tr><td>'.$langs->transcountry("AmountLT1", $societe->country_code).'</td>';
+            print '<td>'.price($object->total_localtax1, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
             print '</tr>';
         }
         if ($societe->localtax2_assuj=="1") //Localtax2
         {
-            print '<tr><td>'.$langs->transcountry("AmountLT2",$societe->country_code).'</td>';
-            print '<td>'.price($object->total_localtax2,1,$langs,0,-1,-1,$conf->currency).'</td>';
+            print '<tr><td>'.$langs->transcountry("AmountLT2", $societe->country_code).'</td>';
+            print '<td>'.price($object->total_localtax2, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
             print '</tr>';
         }
-        print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($object->total_ttc,1,$langs,0,-1,-1,$conf->currency).'</td></tr>';
+        print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($object->total_ttc, 1, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
 
 		print "</table>";
 

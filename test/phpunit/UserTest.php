@@ -44,7 +44,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class UserTest extends PHPUnit_Framework_TestCase
+class UserTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -57,7 +57,7 @@ class UserTest extends PHPUnit_Framework_TestCase
      *
      * @return UserTest
      */
-    function __construct()
+    public function __construct()
     {
     	parent::__construct();
 
@@ -192,7 +192,7 @@ class UserTest extends PHPUnit_Framework_TestCase
         $newlocalobject=new User($this->savdb);
         $newlocalobject->initAsSpecimen();
         $this->changeProperties($newlocalobject);
-        $this->assertEquals($this->objCompare($localobject,$newlocalobject,true,array('id','socid','societe_id','ref','pass','pass_indatabase','pass_indatabase_crypted','datec','datem','datelastlogin','datepreviouslogin')), array());    // Actual, Expected
+        $this->assertEquals($this->objCompare($localobject, $newlocalobject, true, array('id','socid','societe_id','ref','pass','pass_indatabase','pass_indatabase_crypted','datec','datem','datelastlogin','datepreviouslogin')), array());    // Actual, Expected
 
         return $localobject;
     }
@@ -267,7 +267,7 @@ class UserTest extends PHPUnit_Framework_TestCase
 
         $localobject=new User($this->savdb);
         $result=$localobject->fetch($id);
-        $result=$localobject->delete($id);
+        $result=$localobject->delete($user);
 
         print __METHOD__." id=".$id." result=".$result."\n";
         $this->assertLessThan($result, 0);
@@ -321,7 +321,7 @@ class UserTest extends PHPUnit_Framework_TestCase
      * @param   array       $fieldstoignorearray    Array of fields to ignore in diff
      * @return  array                               Array with differences
      */
-    public function objCompare($oA,$oB,$ignoretype=true,$fieldstoignorearray=array('id'))
+    public function objCompare($oA, $oB, $ignoretype = true, $fieldstoignorearray = array('id'))
     {
         $retAr=array();
 
@@ -332,7 +332,7 @@ class UserTest extends PHPUnit_Framework_TestCase
             $oVarsB=get_object_vars($oB);
             $aKeys=array_keys($oVarsA);
             foreach($aKeys as $sKey) {
-                if (in_array($sKey,$fieldstoignorearray))
+                if (in_array($sKey, $fieldstoignorearray))
                     continue;
                 if (! $ignoretype && $oVarsA[$sKey] !== $oVarsB[$sKey]) {
                     $retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey])?get_class($oVarsA[$sKey]):$oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey])?get_class($oVarsB[$sKey]):$oVarsB[$sKey]);

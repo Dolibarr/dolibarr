@@ -28,17 +28,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 // Load translation files required by page
 $langs->loadLangs(array('users', 'admin'));
 
-$action=GETPOST('action','alpha');
-$id=GETPOST('id','int');
+$action=GETPOST('action', 'alpha');
+$id=GETPOST('id', 'int');
 
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-if ($user->id == $id)	// A user can always read its own card
-{
-	$feature2='';
-}
+
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -49,11 +46,11 @@ $hookmanager->initHooks(array('usercard','globalcard'));
  */
 
 $parameters=array('id'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
-    if ($action == 'update' && !GETPOST('cancel','alpha')) {
+    if ($action == 'update' && !GETPOST('cancel', 'alpha')) {
         $edituser = new User($db);
         $edituser->fetch($id);
 
@@ -77,7 +74,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-llxHeader("","ClickToDial");
+llxHeader("", "ClickToDial");
 
 
 if ($id > 0)
@@ -105,7 +102,7 @@ if ($id > 0)
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
-    dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
+    dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
@@ -113,24 +110,24 @@ if ($id > 0)
     // Edit mode
     if ($action == 'edit')
     {
-	   print '<table class="border" width="100%">';
+       print '<table class="border centpercent">';
 
         if ($user->admin)
         {
-        	print '<tr><td width="25%" valign="top">ClickToDial URL</td>';
-        	print '<td class="valeur">';
-        	print '<input name="url" value="'.(! empty($object->clicktodial_url)?$object->clicktodial_url:'').'" size="92">';
-        	if (empty($conf->global->CLICKTODIAL_URL) && empty($object->clicktodial_url))
+            print '<tr><td width="25%" valign="top">ClickToDial URL</td>';
+            print '<td class="valeur">';
+            print '<input name="url" value="'.(! empty($object->clicktodial_url)?$object->clicktodial_url:'').'" size="92">';
+            if (empty($conf->global->CLICKTODIAL_URL) && empty($object->clicktodial_url))
             {
                 $langs->load("errors");
-                print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete").'</font>';
+                print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("ClickToDial")).'</font>';
             }
             else
-           {
-            	print ' &nbsp; &nbsp; '.$form->textwithpicto($langs->trans("KeepEmptyToUseDefault").': '.$conf->global->CLICKTODIAL_URL,$langs->trans("ClickToDialUrlDesc"));
-           }
+            {
+                print ' &nbsp; &nbsp; '.$form->textwithpicto($langs->trans("KeepEmptyToUseDefault").': '.$conf->global->CLICKTODIAL_URL, $langs->trans("ClickToDialUrlDesc"));
+            }
             print '</td>';
-        	print '</tr>';
+            print '</tr>';
         }
 
         print '<tr><td class="titlefield">ClickToDial '.$langs->trans("IdPhoneCaller").'</td>';
@@ -141,7 +138,7 @@ if ($id > 0)
         print '<tr><td>ClickToDial '.$langs->trans("Login").'</td>';
         print '<td class="valeur">';
         print '<input name="login" value="'.(! empty($object->clicktodial_login)?$object->clicktodial_login:'').'"></td>';
-		print '</tr>';
+        print '</tr>';
 
         print '<tr><td>ClickToDial '.$langs->trans("Password").'</td>';
         print '<td class="valeur">';
@@ -153,7 +150,7 @@ if ($id > 0)
     else	// View mode
     {
 
-        print '<table class="border" width="100%">';
+        print '<table class="border centpercent">';
 
         if (! empty($user->admin))
         {
@@ -164,11 +161,11 @@ if ($id > 0)
         	if (empty($url))
         	{
         	    $langs->load("errors");
-        	    print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete").'</font>';
+        	    print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("ClickToDial")).'</font>';
         	}
         	else
         	{
-        		print $form->textwithpicto((empty($object->clicktodial_url)?$langs->trans("DefaultLink").': ':'').$url,$langs->trans("ClickToDialUrlDesc"));
+        		print $form->textwithpicto((empty($object->clicktodial_url)?$langs->trans("DefaultLink").': ':'').$url, $langs->trans("ClickToDialUrlDesc"));
         	}
         	print '</td>';
         	print '</tr>';
@@ -183,7 +180,7 @@ if ($id > 0)
         print '</tr>';
 
         print '<tr><td>ClickToDial '.$langs->trans("Password").'</td>';
-        print '<td class="valeur">'.preg_replace('/./','*',(! empty($object->clicktodial_password)?$object->clicktodial_password:'')).'</a></td>';
+        print '<td class="valeur">'.preg_replace('/./', '*', (! empty($object->clicktodial_password)?$object->clicktodial_password:'')).'</a></td>';
         print "</tr>\n";
 
         print "</table>\n";
@@ -193,7 +190,7 @@ if ($id > 0)
 
     if ($action == 'edit')
     {
-        print '<div align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">';
+        print '<div class="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">';
         print '&nbsp;&nbsp;&nbsp;&nbsp&nbsp;';
         print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
         print '</div>';

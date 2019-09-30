@@ -1,5 +1,5 @@
 <?php
-/*
+/* Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,9 +43,19 @@ class Comment extends CommonObject
 	 */
 	public $description;
 
+	/**
+     * Date modification record (tms)
+     *
+     * @var integer
+     */
 	public $tms;
 
-	public $datec;
+	/**
+     * Date creation record (datec)
+     *
+     * @var integer
+     */
+    public $datec;
 
 	/**
      * @var int ID
@@ -69,7 +79,7 @@ class Comment extends CommonObject
 	 *
 	 *  @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -82,7 +92,7 @@ class Comment extends CommonObject
 	 *  @param 	int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return int 		        	<0 if KO, Id of created object if OK
 	 */
-	function create($user, $notrigger=0)
+	public function create($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -123,7 +133,7 @@ class Comment extends CommonObject
 			if (! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('TASK_COMMENT_CREATE',$user);
+				$result=$this->call_trigger('TASK_COMMENT_CREATE', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -155,7 +165,7 @@ class Comment extends CommonObject
 	 *  @param	int		$ref		ref object
 	 *  @return int 		        <0 if KO, 0 if not found, >0 if OK
 	 */
-	function fetch($id, $ref='')
+	public function fetch($id, $ref = '')
 	{
 		global $langs;
 
@@ -213,7 +223,7 @@ class Comment extends CommonObject
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return int			         	<=0 if KO, >0 if OK
 	 */
-	function update(User $user, $notrigger=0)
+	public function update(User $user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -246,7 +256,7 @@ class Comment extends CommonObject
 			if (! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('TASK_COMMENT_MODIFY',$user);
+				$result=$this->call_trigger('TASK_COMMENT_MODIFY', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -278,7 +288,7 @@ class Comment extends CommonObject
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
+	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
@@ -298,7 +308,7 @@ class Comment extends CommonObject
 			if (! $notrigger)
 			{
 				// Call trigger
-				$result=$this->call_trigger('TASK_COMMENT_DELETE',$user);
+				$result=$this->call_trigger('TASK_COMMENT_DELETE', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
@@ -357,7 +367,7 @@ class Comment extends CommonObject
 				}
 				$db->free($resql);
 			} else {
-				$error++; $this->errors[]="Error ".$this->db->lasterror();
+				$this->errors[]="Error ".$this->db->lasterror();
 				return -1;
 			}
 		}

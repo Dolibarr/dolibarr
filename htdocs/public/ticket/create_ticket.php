@@ -17,7 +17,7 @@
  */
 
 /**
- *       \file       htdocs/public/ticket/index.php
+ *       \file       htdocs/public/ticket/create_ticket.php
  *       \ingroup    ticket
  *       \brief      Display public form to add new ticket
  */
@@ -33,6 +33,9 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
@@ -56,7 +59,7 @@ $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
  */
 
 // Add file in email form
-if (GETPOST('addfile') && !GETPOST('add_ticket')) {
+if (GETPOST('addfile', 'alpha') && ! GETPOST('add', 'alpha')) {
     ////$res = $object->fetch('','',GETPOST('track_id'));
     ////if($res > 0)
     ////{
@@ -74,7 +77,7 @@ if (GETPOST('addfile') && !GETPOST('add_ticket')) {
 }
 
 // Remove file
-if (GETPOST('removedfile') && !GETPOST('add_ticket')) {
+if (GETPOST('removedfile', 'alpha') && !GETPOST('add', 'alpha')) {
 
     include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
@@ -86,7 +89,7 @@ if (GETPOST('removedfile') && !GETPOST('add_ticket')) {
     dol_remove_file_process($_POST['removedfile'], 0, 0);
     $action = 'create_ticket';
 }
-if ($action == 'create_ticket' && GETPOST('add_ticket')) {
+if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
     $error = 0;
     $origin_email = GETPOST('email', 'alpha');
     if (empty($origin_email)) {
@@ -109,11 +112,11 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
         }
     }
 
-    if (!GETPOST("subject","none")) {
+    if (!GETPOST("subject", "none")) {
         $error++;
         array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")));
         $action = '';
-    } elseif (!GETPOST("message","none")) {
+    } elseif (!GETPOST("message", "none")) {
         $error++;
         array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("message")));
         $action = '';
@@ -131,13 +134,13 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
 
         $object->track_id = generate_random_id(16);
 
-        $object->subject = GETPOST("subject","none");
-        $object->message = GETPOST("message","none");
+        $object->subject = GETPOST("subject", "none");
+        $object->message = GETPOST("message", "none");
         $object->origin_email = $origin_email;
 
-        $object->type_code = GETPOST("type_code", 'az09');
-        $object->category_code = GETPOST("category_code", 'az09');
-        $object->severity_code = GETPOST("severity_code", 'az09');
+        $object->type_code = GETPOST("type_code", 'aZ09');
+        $object->category_code = GETPOST("category_code", 'aZ09');
+        $object->severity_code = GETPOST("severity_code", 'aZ09');
         if (is_array($searched_companies)) {
             $object->fk_soc = $searched_companies[0]->id;
         }
@@ -213,7 +216,7 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
                 $message .= dol_nl2br($infos_new_ticket);
                 $message .= $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE ? $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE : $langs->transnoentities('TicketMessageMailSignatureText');
 
-                $sendto = GETPOST('email','alpha');
+                $sendto = GETPOST('email', 'alpha');
 
                 $from = $conf->global->MAIN_INFO_SOCIETE_NOM . '<' . $conf->global->TICKET_NOTIFICATION_EMAIL_FROM . '>';
                 $replyto = $from;
@@ -308,7 +311,13 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
             	$formmail->remove_attached_files($i);
             }
 
-            setEventMessages($langs->trans('YourTicketSuccessfullySaved'), null, 'mesgs');
+            //setEventMessages($langs->trans('YourTicketSuccessfullySaved'), null, 'mesgs');
+
+            // Make a redirect to avoid to have ticket submitted twice if we make back
+            setEventMessages($langs->trans('MesgInfosPublicTicketCreatedWithTrackId', '<strong>' . $object->track_id . '</strong>'), null, 'warnings');
+            setEventMessages($langs->trans('PleaseRememberThisId'), null, 'warnings');
+            header("Location: index.php");
+			exit;
         }
     } else {
         setEventMessages($object->error, $object->errors, 'errors');
@@ -321,21 +330,23 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
  * View
  */
 
-$arrayofjs = array();
-$arrayofcss = array('/opensurvey/css/style.css', '/ticket/css/styles.css.php');
-
-llxHeaderTicket($langs->trans("CreateTicket"), "", 0, 0, $arrayofjs, $arrayofcss);
-
 $form = new Form($db);
 $formticket = new FormTicket($db);
 
-if (!$conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) {
+if (!$conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)
+{
     print '<div class="error">' . $langs->trans('TicketPublicInterfaceForbidden') . '</div>';
     $db->close();
     exit();
 }
 
-print '<div style="width:60%; margin: 0 auto;">';
+$arrayofjs = array();
+$arrayofcss = array('/opensurvey/css/style.css', '/ticket/css/styles.css.php');
+
+llxHeaderTicket($langs->trans("CreateTicket"), "", 0, 0, $arrayofjs, $arrayofcss);
+
+
+print '<div style="width:60%; margin: 0 auto;" class="ticketpublicarea">';
 
 if ($action != "infos_success") {
     $formticket->withfromsocid = isset($socid) ? $socid : $user->societe_id;
@@ -358,15 +369,13 @@ if ($action != "infos_success") {
 
     print '<div class="info marginleftonly marginrightonly">' . $langs->trans('TicketPublicInfoCreateTicket') . '</div>';
     $formticket->showForm();
-} else {
-    print '<div class="info center">' . $langs->trans('MesgInfosPublicTicketCreatedWithTrackId', '<strong>' . $object->track_id . '</strong>');
-    print '<br>';
-    print $langs->trans('PleaseRememberThisId');
 }
+
 print '</div>';
 
 // End of page
+htmlPrintOnlinePaymentFooter($mysoc, $langs, 1, $suffix, $object);
 
-llxFooter('');
+llxFooter('', 'public');
 
 $db->close();

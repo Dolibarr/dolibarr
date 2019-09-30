@@ -44,7 +44,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class CompanyLibTest extends PHPUnit_Framework_TestCase
+class CompanyLibTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -57,7 +57,7 @@ class CompanyLibTest extends PHPUnit_Framework_TestCase
      *
      * @return AdminLibTest
      */
-    function __construct()
+    public function __construct()
     {
     	parent::__construct();
 
@@ -131,14 +131,14 @@ class CompanyLibTest extends PHPUnit_Framework_TestCase
 
         $result=currency_name('USD');
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals('US Dollars',$result,'Test to get currency name USD in default language '.$langs->defaultlang);
+        $this->assertEquals('US Dollars', $result, 'Test to get currency name USD in default language '.$langs->defaultlang);
 
         $outputlangs=new Translate('', $conf);
         $outputlangs->setDefaultLang('fr_FR');
 
         $result=currency_name('USD', 1, $outputlangs);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals('USD - Dollars US',$result,'Test to get currency name USD in default language '.$outputlangs->getDefaultLang());
+        $this->assertEquals('USD - Dollars US', $result, 'Test to get currency name USD in default language '.$outputlangs->getDefaultLang());
 
         return $result;
     }

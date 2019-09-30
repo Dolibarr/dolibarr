@@ -41,19 +41,19 @@ if (! empty($conf->projet->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "orders", "sendings", "companies", "deliveries", "products", "stocks","other"));
 
-$id = GETPOST('id','int');
+$id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action','alpha');
-$confirm = GETPOST('confirm','alpha');
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 // Get parameters
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -63,7 +63,7 @@ if (! $sortfield) $sortfield="name";
 
 
 $object = new CommandeFournisseur($db);
-if ($object->fetch($id,$ref) < 0)
+if ($object->fetch($id, $ref) < 0)
 {
 	dol_print_error($db);
 	exit;
@@ -89,7 +89,7 @@ $form =	new	Form($db);
 if ($object->id > 0)
 {
 	$help_url='EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-	llxHeader('',$langs->trans("Order"),$help_url);
+	llxHeader('', $langs->trans("Order"), $help_url);
 
 	$object->fetch_thirdparty();
 
@@ -102,7 +102,7 @@ if ($object->id > 0)
 
 
 	// Build file list
-	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
@@ -160,9 +160,9 @@ if ($object->id > 0)
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border" width="100%">';
+	print '<table class="border tableforfield centpercent">';
 	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
 	print "</table>\n";
 
 	print "</div>\n";

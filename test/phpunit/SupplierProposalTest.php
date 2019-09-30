@@ -48,7 +48,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class SupplierProposalTest extends PHPUnit_Framework_TestCase
+class SupplierProposalTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -61,9 +61,9 @@ class SupplierProposalTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return PropalTest
 	 */
-	function __construct()
+	public function __construct()
 	{
-    	parent::__construct();
+        parent::__construct();
 
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
@@ -78,7 +78,7 @@ class SupplierProposalTest extends PHPUnit_Framework_TestCase
 	}
 
 	// Static methods
-  	public static function setUpBeforeClass()
+    public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.

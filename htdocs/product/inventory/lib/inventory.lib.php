@@ -50,7 +50,7 @@ function inventoryAdminPrepareHead()
     //$this->tabs = array(
     //	'entity:-tabname:Title:@inventory:/inventory/mypage.php?id=__ID__'
     //); // to remove a tab
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'inventory');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'inventory');
 
     return $head;
 }
@@ -64,7 +64,7 @@ function inventoryAdminPrepareHead()
  *
  *  @return array                       Array of head
  */
-function inventoryPrepareHead(&$inventory, $title='Inventory', $get='')
+function inventoryPrepareHead(&$inventory, $title = 'Inventory', $get = '')
 {
 	global $langs;
 

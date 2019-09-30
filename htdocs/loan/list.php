@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  * Copyright (C) 2015       Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2016       Laurent Destailleur  <eldy@users.sourceforge.net>
@@ -35,10 +35,10 @@ $socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'loan', '', '', '');
 
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -46,14 +46,14 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield="l.rowid";
 if (! $sortorder) $sortorder="DESC";
 
-$search_ref=GETPOST('search_ref','int');
-$search_label=GETPOST('search_label','alpha');
-$search_amount=GETPOST('search_amount','alpha');
+$search_ref=GETPOST('search_ref', 'int');
+$search_label=GETPOST('search_label', 'alpha');
+$search_amount=GETPOST('search_amount', 'alpha');
 $filtre=GETPOST("filtre");
-$optioncss = GETPOST('optioncss','alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
 
 // Purge search criteria
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
 {
 	$search_ref="";
 	$search_label="";
@@ -78,11 +78,11 @@ if ($search_amount)	$sql.= natural_search("l.capital", $search_amount, 1);
 if ($search_ref) 	$sql.= " AND l.rowid = ".$db->escape($search_ref);
 if ($search_label)	$sql.= natural_search("l.label", $search_label);
 if ($filtre) {
-	$filtre=str_replace(":","=",$filtre);
+	$filtre=str_replace(":", "=", $filtre);
 	$sql .= " AND ".$filtre;
 }
 $sql.= " GROUP BY l.rowid, l.label, l.capital, l.paid, l.datestart, l.dateend";
-$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -116,9 +116,7 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->loan->write)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/loan/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewLoan').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
+        $newcardbutton.= dolGetButtonTitle($langs->trans('NewLoan'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/loan/card.php?action=create');
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -139,27 +137,27 @@ if ($resql)
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre"><input class="flat" size="4" type="text" name="search_ref" value="'.$search_ref.'"></td>';
 	print '<td class="liste_titre"><input class="flat" size="12" type="text" name="search_label" value="'.$search_label.'"></td>';
-	print '<td class="liste_titre" align="right" ><input class="flat" size="8" type="text" name="search_amount" value="'.$search_amount.'"></td>';
+	print '<td class="liste_titre right" ><input class="flat" size="8" type="text" name="search_amount" value="'.$search_amount.'"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre"></td>';
-	print '<td align="right" class="liste_titre">';
-	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+	print '<td class="right liste_titre">';
+	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print '</td>';
 	print '</tr>';
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"l.rowid","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre("Label",$_SERVER["PHP_SELF"],"l.label","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre("LoanCapital",$_SERVER["PHP_SELF"],"l.capital","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre("DateStart",$_SERVER["PHP_SELF"],"l.datestart","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre("DateEnd",$_SERVER["PHP_SELF"],"l.dateend","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"l.paid","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "l.rowid", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "l.label", "", $param, '', $sortfield, $sortorder, 'left ');
+	print_liste_field_titre("LoanCapital", $_SERVER["PHP_SELF"], "l.capital", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "l.datestart", "", $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "l.dateend", "", $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "l.paid", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('');
 	print "</tr>\n";
 
-	while ($i < min($num,$limit))
+	while ($i < min($num, $limit))
 	{
 		$obj = $db->fetch_object($resql);
 		$loan_static->id = $obj->rowid;
@@ -172,18 +170,18 @@ if ($resql)
 		print '<td>'.$loan_static->getNomUrl(1, 42).'</td>';
 
 		// Label
-		print '<td>'.dol_trunc($obj->label,42).'</td>';
+		print '<td>'.dol_trunc($obj->label, 42).'</td>';
 
 		// Capital
-		print '<td align="right" width="100">'.price($obj->capital).'</td>';
+		print '<td class="right" width="100">'.price($obj->capital).'</td>';
 
 		// Date start
-		print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->datestart), 'day').'</td>';
+		print '<td width="110" class="center">'.dol_print_date($db->jdate($obj->datestart), 'day').'</td>';
 
 		// Date end
-		print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->dateend), 'day').'</td>';
+		print '<td width="110" class="center">'.dol_print_date($db->jdate($obj->dateend), 'day').'</td>';
 
-		print '<td align="right" class="nowrap">'.$loan_static->LibStatut($obj->paid,5,$obj->alreadypayed).'</a></td>';
+		print '<td class="right nowrap">'.$loan_static->LibStatut($obj->paid, 5, $obj->alreadypayed).'</a></td>';
 
 		print '<td></td>';
 

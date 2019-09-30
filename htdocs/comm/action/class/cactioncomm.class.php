@@ -68,7 +68,7 @@ class CActionComm
      *
      *  @param	DoliDB		$db		Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -76,15 +76,15 @@ class CActionComm
     /**
      *  Load action type from database
      *
-     *  @param	int		$id     id or code of action type to read
-     *  @return int 			1=ok, 0=not found, -1=error
+     *  @param  int     $id     id or code of action type to read
+     *  @return int             1=ok, 0=not found, -1=error
      */
-    function fetch($id)
+    public function fetch($id)
     {
         $sql = "SELECT id, code, type, libelle as label, color, active, picto";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
         if (is_numeric($id)) $sql.= " WHERE id=".$id;
-        else $sql.= " WHERE code='".$id."'";
+        else $sql.= " WHERE code='".$this->db->escape($id)."'";
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -118,19 +118,19 @@ class CActionComm
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Return list of event types: array(id=>label) or array(code=>label)
      *
-     *  @param	string|int	$active     	1 or 0 to filter on event state active or not ('' by default = no filter)
-     *  @param	string		$idorcode		'id' or 'code'
-     *  @param	string		$excludetype	Type to exclude ('system' or 'systemauto')
-     *  @param	int		    $onlyautoornot	1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1=Keep details and add a combined line "All manual"
+     *  @param  string|int  $active         1 or 0 to filter on event state active or not ('' by default = no filter)
+     *  @param  string      $idorcode       'id' or 'code'
+     *  @param  string      $excludetype    Type to exclude ('system' or 'systemauto')
+     *  @param  int         $onlyautoornot  1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1=Keep details and add a combined line "All manual"
      *  @param  string      $morefilter     Add more SQL filter
-     *  @param	int			$shortlabel		1=Get short label instead of long label
-     *  @return mixed      					Array of all event types if OK, <0 if KO. Key of array is id or code depending on parameter $idorcode.
+     *  @param  int         $shortlabel     1=Get short label instead of long label
+     *  @return mixed                       Array of all event types if OK, <0 if KO. Key of array is id or code depending on parameter $idorcode.
      */
-    function liste_array($active='',$idorcode='id',$excludetype='',$onlyautoornot=0, $morefilter='', $shortlabel=0)
+    public function liste_array($active = '', $idorcode = 'id', $excludetype = '', $onlyautoornot = 0, $morefilter = '', $shortlabel = 0)
     {
         // phpcs:enable
         global $langs,$conf;
@@ -162,7 +162,7 @@ class CActionComm
                     $qualified=1;
 
                     // $obj->type can be system, systemauto, module, moduleauto, xxx, xxxauto
-                    if ($qualified && $onlyautoornot > 0 && preg_match('/^system/',$obj->type) && ! preg_match('/^AC_OTH/',$obj->code)) $qualified=0;	// We discard detailed system events. We keep only the 2 generic lines (AC_OTH and AC_OTH_AUTO)
+                    if ($qualified && $onlyautoornot > 0 && preg_match('/^system/', $obj->type) && ! preg_match('/^AC_OTH/', $obj->code)) $qualified=0;	// We discard detailed system events. We keep only the 2 generic lines (AC_OTH and AC_OTH_AUTO)
 
                     if ($qualified && $obj->module)
                     {
@@ -176,7 +176,7 @@ class CActionComm
 
                     if ($qualified)
                     {
-                    	$keyfortrans='';
+                        $keyfortrans='';
                     	$transcode='';
                     	$code=$obj->code;
                     	if ($onlyautoornot > 0 && $code == 'AC_OTH') $code='AC_MANUAL';
@@ -200,7 +200,7 @@ class CActionComm
                         }
                     	$repid[$obj->id] = $label;
                     	$repcode[$obj->code] = $label;
-                        if ($onlyautoornot > 0 && preg_match('/^module/',$obj->type) && $obj->module) $repcode[$obj->code].=' ('.$langs->trans("Module").': '.$obj->module.')';
+                        if ($onlyautoornot > 0 && preg_match('/^module/', $obj->type) && $obj->module) $repcode[$obj->code].=' ('.$langs->trans("Module").': '.$obj->module.')';
                     }
                     $i++;
                 }
@@ -223,7 +223,7 @@ class CActionComm
      *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Picto only
      *  @return string			      	Label of action type
      */
-    function getNomUrl($withpicto=0)
+    public function getNomUrl($withpicto = 0)
     {
         global $langs;
 

@@ -25,8 +25,8 @@
  *                  This token can be used to get more informations.
  */
 
-define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+define("NOLOGIN", 1);		// This means this output page does not require to be logged.
+define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -63,7 +63,7 @@ if (! empty($conf->stripe->enabled))
 $FULLTAG=GETPOST('FULLTAG');
 if (empty($FULLTAG)) $FULLTAG=GETPOST('fulltag');
 
-$suffix=GETPOST("suffix",'aZ09');
+$suffix=GETPOST("suffix", 'aZ09');
 
 
 // Detect $paymentmethod
@@ -131,7 +131,7 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
     // Appel des triggers
     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     $interface=new Interfaces($db);
-    $result=$interface->run_triggers('PAYMENTONLINE_PAYMENT_KO',$object,$user,$langs,$conf);
+    $result=$interface->run_triggers('PAYMENTONLINE_PAYMENT_KO', $object, $user, $langs, $conf);
     if ($result < 0) { $error++; $errors=$interface->errors; }
     // Fin appel triggers
 
@@ -218,7 +218,7 @@ $logosmall=$mysoc->logo_small;
 $logo=$mysoc->logo;
 $paramlogo='ONLINE_PAYMENT_LOGO_'.$suffix;
 if (! empty($conf->global->$paramlogo)) $logosmall=$conf->global->$paramlogo;
-else if (! empty($conf->global->ONLINE_PAYMENT_LOGO)) $logosmall=$conf->global->ONLINE_PAYMENT_LOGO;
+elseif (! empty($conf->global->ONLINE_PAYMENT_LOGO)) $logosmall=$conf->global->ONLINE_PAYMENT_LOGO;
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
 $urllogo='';
@@ -235,7 +235,7 @@ elseif (! empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$lo
 // Output html code for logo
 if ($urllogo)
 {
-	print '<center><img id="dolpaymentlogo" title="'.$title.'" src="'.$urllogo.'"';
+	print '<center><img id="dolpaymentlogo" src="'.$urllogo.'"';
 	if ($width) print ' width="'.$width.'"';
 	print '></center>';
 	print '<br>';
@@ -246,10 +246,21 @@ print $langs->trans("YourPaymentHasNotBeenRecorded")."<br><br>";
 $key='ONLINE_PAYMENT_MESSAGE_KO';
 if (! empty($conf->global->$key)) print $conf->global->$key;
 
+$type = GETPOST('s', 'alpha');
+$ref = GETPOST('ref', 'none');
+$tag = GETPOST('tag', 'alpha');
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+if ($type || $tag)
+{
+	$urlsubscription =getOnlinePaymentUrl(0, ($type?$type:'free'), $ref, $FinalPaymentAmt, $tag);
+
+	print $langs->trans("ClickHereToTryAgain", $urlsubscription);
+}
+
 print "\n</div>\n";
 
 
-htmlPrintOnlinePaymentFooter($mysoc,$langs,0,$suffix);
+htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix);
 
 
 llxFooter('', 'public');

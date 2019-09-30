@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017       Alexandre Spangaro  <aspangaro@zendsi.com>
+/* Copyright (C) 2017       Alexandre Spangaro  <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,20 +32,20 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "banks", "bills", "users", "accountancy"));
 
-$id = GETPOST('id','int');
+$id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action','alpha');
-$confirm = GETPOST('confirm','alpha');
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
 
 // Security check
-$socid = GETPOST("socid","int");
+$socid = GETPOST("socid", "int");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'banque', '', '', '');
 
 // Get parameters
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
@@ -57,7 +57,7 @@ if (! $sortfield) $sortfield="name";
 $object = new PaymentVarious($db);
 $object->fetch($id, $ref);
 
-$upload_dir = $conf->banque->dir_output.'/'.dol_sanitizeFileName($object->id);
+$upload_dir = $conf->bank->dir_output.'/'.dol_sanitizeFileName($object->id);
 $modulepart='banque';
 
 
@@ -76,13 +76,13 @@ $form = new Form($db);
 
 $title = $langs->trans("VariousPayment") . ' - ' . $langs->trans("Documents");
 $help_url = '';
-llxHeader("",$title,$help_url);
+llxHeader("", $title, $help_url);
 
 if ($object->id)
 {
 	$head=various_payment_prepare_head($object);
 
-	dol_fiche_head($head, 'documents',  $langs->trans("VariousPayment"), -1, 'payment');
+	dol_fiche_head($head, 'documents', $langs->trans("VariousPayment"), -1, $object->picto);
 
 	$morehtmlref='<div class="refidno">';
 	// Project
@@ -124,14 +124,14 @@ if ($object->id)
 	print '<div class="underbanner clearboth"></div>';
 
 	// Build file list
-	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
 		$totalsize+=$file['size'];
 	}
 
-	print '<table class="border" width="100%">';
+	print '<table class="border tableforfield centpercent">';
 
 	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';

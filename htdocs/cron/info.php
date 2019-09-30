@@ -32,7 +32,7 @@ $langs->loadLangs(array('admin', 'cron'));
 // Security check
 if (!$user->rights->cron->read) accessforbidden();
 
-$id=GETPOST('id','int');
+$id=GETPOST('id', 'int');
 
 $mesg = '';
 
@@ -40,7 +40,7 @@ $mesg = '';
  * View
 */
 
-llxHeader('',$langs->trans("CronInfo"));
+llxHeader('', $langs->trans("CronInfo"));
 
 $object = new Cronjob($db);
 $object->fetch($id);
@@ -50,7 +50,7 @@ $head = cron_prepare_head($object);
 
 dol_fiche_head($head, 'info', $langs->trans("CronTask"), -1, 'cron');
 
-$linkback = '<a href="' . DOL_URL_ROOT . '/cron/list.php?status=-2&restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
+$linkback = '<a href="' . DOL_URL_ROOT . '/cron/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
 $morehtmlref='<div class="refidno">';
 $morehtmlref.='</div>';

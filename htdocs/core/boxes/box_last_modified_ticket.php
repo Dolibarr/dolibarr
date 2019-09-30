@@ -1,7 +1,8 @@
 <?php
 /* Module descriptor for ticket system
- * Copyright (C) - 2013-2016	Jean-François FERRY	<hello@librethic.io>
- * 				   2016			Christophe Battarel <christophe@altairis.fr>
+ * Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
+ *               2016       Christophe Battarel     <christophe@altairis.fr>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,23 +35,26 @@ class box_last_modified_ticket extends ModeleBoxes
     public $boximg = "ticket";
     public $boxlabel;
     public $depends = array("ticket");
-    
+
     /**
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
     public $param;
     public $info_box_head = array();
     public $info_box_contents = array();
 
     /**
      * Constructor
+     *  @param	DoliDB	$db         Database handler
+     *  @param  string  $param      More parameters
      */
-    public function __construct()
+    public function __construct($db, $param = '')
     {
         global $langs;
-        $langs->load("boxes");
+		$langs->load("boxes");
+		$this->db = $db;
 
         $this->boxlabel = $langs->transnoentitiesnoconv("BoxLastModifiedTicket");
     }
@@ -63,7 +67,7 @@ class box_last_modified_ticket extends ModeleBoxes
      */
     public function loadBox($max = 5)
     {
-        global $conf, $user, $langs, $db;
+        global $conf, $user, $langs;
 
         $this->max = $max;
 
@@ -71,12 +75,14 @@ class box_last_modified_ticket extends ModeleBoxes
 
         $text = $langs->trans("BoxLastModifiedTicketDescription", $max);
         $this->info_box_head = array(
-         'text' => $text,
-         'limit' => dol_strlen($text)
+         	'text' => $text,
+         	'limit' => dol_strlen($text)
         );
 
-        $this->info_box_contents[0][0] = array('td' => 'align="left"',
-         'text' => $langs->trans("BoxLastModifiedTicketContent"));
+        $this->info_box_contents[0][0] = array(
+            'td' => 'class="left"',
+            'text' => $langs->trans("BoxLastModifiedTicketContent"),
+        );
 
         if ($user->rights->ticket->read) {
             $sql = "SELECT t.rowid as id, t.ref, t.track_id, t.fk_soc, t.fk_user_create, t.fk_user_assign, t.subject, t.message, t.fk_statut, t.type_code, t.category_code, t.severity_code, t.datec, t.date_read, t.date_close, t.origin_email ";
@@ -96,20 +102,20 @@ class box_last_modified_ticket extends ModeleBoxes
             }
 
             $sql.= " ORDER BY t.tms DESC, t.rowid DESC ";
-            $sql.= $db->plimit($max, 0);
+            $sql.= $this->db->plimit($max, 0);
 
-            $resql = $db->query($sql);
+            $resql = $this->db->query($sql);
             if ($resql) {
-                $num = $db->num_rows($resql);
+                $num = $this->db->num_rows($resql);
                 $now=gmmktime();
 
                 $i = 0;
 
                 while ($i < $num) {
-                    $objp = $db->fetch_object($resql);
-                    $datec=$db->jdate($objp->datec);
-                    $dateterm=$db->jdate($objp->fin_validite);
-                    $dateclose=$db->jdate($objp->date_cloture);
+                    $objp = $this->db->fetch_object($resql);
+                    $datec=$this->db->jdate($objp->datec);
+                    $dateterm=$this->db->jdate($objp->fin_validite);
+                    $dateclose=$this->db->jdate($objp->date_cloture);
                     $late = '';
 
                     $ticket = new Ticket($this->db);
@@ -119,39 +125,42 @@ class box_last_modified_ticket extends ModeleBoxes
 
                     // Picto
                     $this->info_box_contents[$i][0] = array(
-                     'td' => 'align="left" width="16"',
-                     'logo' => $this->boximg,
-                     'url' => dol_buildpath("/ticket/card.php?track_id=".$objp->track_id, 1));
+                        'td' => 'class="left" width="16"',
+                        'logo' => $this->boximg,
+                        'url' => dol_buildpath("/ticket/card.php?track_id=".$objp->track_id, 1),
+                    );
                     $r++;
 
                     // Id
                     $this->info_box_contents[$i][$r] = array(
-                     'td' => 'align="left"',
-                     'text' => $objp->ref,
-                     'url' => dol_buildpath("/ticket/card.php?track_id=".$objp->track_id, 1));
+                        'td' => 'class="left"',
+                        'text' => $objp->ref,
+                        'url' => dol_buildpath("/ticket/card.php?track_id=".$objp->track_id, 1),
+                    );
                     $r++;
 
                     // Subject
                     $this->info_box_contents[$i][$r] = array(
-                     'td' => 'align="left"',
-                     'text' => $objp->subject,    // Some event have no ref
-                     'url' => dol_buildpath("/ticket/card.php?track_id=".$objp->track_id, 1));
+                        'td' => 'class="left"',
+                        'text' => $objp->subject,    // Some event have no ref
+                        'url' => dol_buildpath("/ticket/card.php?track_id=".$objp->track_id, 1),
+                    );
                     $r++;
 
                     // Customer
                     $this->info_box_contents[$i][$r] = array(
-                     'td' => 'align="left"',
-                     'logo' => ($objp->fk_soc>0?'company':''),
-                     'text' => ($objp->company_name?$objp->company_name:$objp->origin_email),
-                     'url' => ($objp->fk_soc>0?DOL_URL_ROOT."/comm/card.php?socid=".$objp->fk_soc:'')
+                        'td' => 'class="left"',
+                        'logo' => ($objp->fk_soc>0?'company':''),
+                        'text' => ($objp->company_name?$objp->company_name:$objp->origin_email),
+                        'url' => ($objp->fk_soc>0?DOL_URL_ROOT."/comm/card.php?socid=".$objp->fk_soc:'')
                     );
                     $r++;
 
 
                     // Date creation
                     $this->info_box_contents[$i][$r] = array(
-                     'td' => 'align="right"',
-                     'text' => dol_print_date($db->idate($objp->datec), 'dayhour')
+                        'td' => 'class="right"',
+                        'text' => dol_print_date($this->db->idate($objp->datec), 'dayhour')
                     );
                     $r++;
 
@@ -159,8 +168,8 @@ class box_last_modified_ticket extends ModeleBoxes
                     $ticketstat = new Ticket($this->db);
                     $ticketstat->fk_statut = $objp->fk_statut;
                     $this->info_box_contents[$i][$r] = array(
-                     'td' => 'align="right"',
-                     'text' => $ticketstat->getLibStatut(3)
+                        'td' => 'class="right"',
+                        'text' => $ticketstat->getLibStatut(3)
                     );
                     $r++;
 
@@ -168,14 +177,16 @@ class box_last_modified_ticket extends ModeleBoxes
                 }
 
                 if ($num==0) {
-                    $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("BoxLastModifiedTicketNoRecordedTickets"));
+                    $this->info_box_contents[$i][0] = array('td' => 'class="center"','text'=>$langs->trans("BoxLastModifiedTicketNoRecordedTickets"));
                 }
             } else {
-                dol_print_error($db);
+                dol_print_error($this->db);
             }
         } else {
-            $this->info_box_contents[0][0] = array('td' => 'align="left"',
-             'text' => $langs->trans("ReadPermissionNotAllowed"));
+            $this->info_box_contents[0][0] = array(
+                'td' => 'class="left"',
+                'text' => $langs->trans("ReadPermissionNotAllowed"),
+            );
         }
     }
 
@@ -187,7 +198,7 @@ class box_last_modified_ticket extends ModeleBoxes
      *     @param  int   $nooutput No print, only return string
      *     @return string
      */
-    function showBox($head = null, $contents = null, $nooutput=0)
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
         parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }

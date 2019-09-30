@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@ if (! empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/ban
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies', 'trips'));
 
-$id=GETPOST('rowid')?GETPOST('rowid','int'):GETPOST('id','int');
-$action=GETPOST('action','aZ09');
+$id=GETPOST('rowid')?GETPOST('rowid', 'int'):GETPOST('id', 'int');
+$action=GETPOST('action', 'aZ09');
 $confirm=GETPOST('confirm');
 
 // Security check
@@ -45,7 +45,7 @@ $object = new PaymentExpenseReport($db);
 if ($id > 0)
 {
 	$result=$object->fetch($id);
-	if (! $result) dol_print_error($db,'Failed to get payment id '.$id);
+	if (! $result) dol_print_error($db, 'Failed to get payment id '.$id);
 }
 
 
@@ -92,7 +92,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->expensere
 			$outputlangs = $langs;
 			if (! empty($_REQUEST['lang_id']))
 			{
-				$outputlangs = new Translate("",$conf);
+				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 			}
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -128,7 +128,7 @@ dol_fiche_head($head, 'payment', $langs->trans("ExpenseReportPayment"), -1, 'pay
  */
 if ($action == 'delete')
 {
-	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
+	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete', '', 0, 2);
 }
 
 /*
@@ -137,7 +137,7 @@ if ($action == 'delete')
 if ($action == 'valide')
 {
 	$facid = $_GET['facid'];
-	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
+	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide', '', 0, 2);
 }
 
 $linkback = '';
@@ -151,7 +151,7 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent">'."\n";
 
 // Date payment
-print '<tr><td class="titlefield">'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($object->datep,'day').'</td></tr>';
+print '<tr><td class="titlefield">'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($object->datep, 'day').'</td></tr>';
 
 // Mode
 print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$langs->trans("PaymentType".$object->type_code).'</td></tr>';
@@ -182,7 +182,7 @@ if (! empty($conf->banque->enabled))
     	print '<tr>';
     	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
 		print '<td colspan="3">';
-		print $bankline->getNomUrl(1,0,'showconciliated');
+		print $bankline->getNomUrl(1, 0, 'showconciliated');
     	print '</td>';
     	print '</tr>';
 
@@ -229,10 +229,10 @@ if ($resql)
 
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('ExpenseReport').'</td>';
-	print '<td align="right">'.$langs->trans('ExpectedToPay').'</td>';
-	print '<td align="right">'.$langs->trans('PayedByThisPayment').'</td>';
-	print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
-	print '<td align="center">'.$langs->trans('Status').'</td>';
+	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
+	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
+	print '<td class="right">'.$langs->trans('RemainderToPay').'</td>';
+	print '<td class="center">'.$langs->trans('Status').'</td>';
 	print "</tr>\n";
 
 	if ($num > 0)
@@ -252,16 +252,16 @@ if ($resql)
 			print "</td>\n";
 
 			// Expected to pay
-			print '<td align="right">'.price($objp->total_ttc).'</td>';
+			print '<td class="right">'.price($objp->total_ttc).'</td>';
 
 			// Amount paid
-			print '<td align="right">'.price($objp->amount).'</td>';
+			print '<td class="right">'.price($objp->amount).'</td>';
 
 			// Remain to pay
-            print '<td align="right">'.price($remaintopay).'</td>';
+            print '<td class="right">'.price($remaintopay).'</td>';
 
 			// Status
-			print '<td align="center">'.$expensereport->getLibStatut(4,$objp->amount).'</td>';
+			print '<td class="center">'.$expensereport->getLibStatut(4, $objp->amount).'</td>';
 
 			print "</tr>\n";
 
@@ -286,7 +286,6 @@ else
 	dol_print_error($db);
 }
 
-print '</div>';
 
 
 /*
@@ -304,7 +303,7 @@ if ($action == '')
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($title_button).'">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($title_button).'">'.$langs->trans('Delete').'</a>';
 		}
 	}
 }

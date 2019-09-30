@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +31,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('projectsindex'));
+
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
 
-$search_project_user = GETPOST('search_project_user','int');
-$mine = GETPOST('mode','aZ09')=='mine' ? 1 : 0;
+$search_project_user = GETPOST('search_project_user', 'int');
+$mine = GETPOST('mode', 'aZ09')=='mine' ? 1 : 0;
 if ($search_project_user == $user->id) $mine = 1;
 
 // Security check
@@ -42,8 +48,10 @@ $socid=0;
 //if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 if (!$user->rights->projet->lire) accessforbidden();
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+
+$max=3;
 
 
 /*
@@ -52,16 +60,14 @@ $sortorder = GETPOST("sortorder",'alpha');
 
 $companystatic=new Societe($db);
 $projectstatic=new Project($db);
-$userstatic=new User($db);
 $form=new Form($db);
 $formfile=new FormFile($db);
 
 $projectset = ($mine?$mine:(empty($user->rights->projet->all->lire)?0:2));
-$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $projetset, 1);
+$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $projectset, 1);
 //var_dump($projectsListId);
 
-
-llxHeader("",$langs->trans("Projects"),"EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
+llxHeader("", $langs->trans("Projects"), "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
 $title=$langs->trans("ProjectsArea");
 //if ($mine) $title=$langs->trans("MyProjectsArea");
@@ -72,25 +78,27 @@ $titleall=$langs->trans("AllAllowedProjects");
 if (! empty($user->rights->projet->all->lire) && ! $socid) $titleall=$langs->trans("AllProjects");
 else $titleall=$langs->trans("AllAllowedProjects").'<br><br>';
 
-
 $morehtml='';
-$morehtml.='<form name="projectform">';
+$morehtml.='<form name="projectform" method="POST">';
+$morehtml.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 $morehtml.='<SELECT name="search_project_user">';
 $morehtml.='<option name="all" value="0"'.($mine?'':' selected').'>'.$titleall.'</option>';
 $morehtml.='<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id)?' selected':'').'>'.$langs->trans("ProjectsImContactFor").'</option>';
 $morehtml.='</SELECT>';
 $morehtml.='<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
+$morehtml.='</form>';
 
-print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'title_project.png', 0, $morehtml);
+print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'project', 0, $morehtml);
 
 // Show description of content
+print '<div class="opacitymedium">';
 if ($mine) print $langs->trans("MyProjectsDesc").'<br><br>';
 else
 {
 	if (! empty($user->rights->projet->all->lire) && ! $socid) print $langs->trans("ProjectsDesc").'<br><br>';
 	else print $langs->trans("ProjectsPublicDesc").'<br><br>';
 }
-
+print '</div>';
 
 // Get list of ponderated percent for each status
 $listofoppstatus=array(); $listofopplabel=array(); $listofoppcode=array();
@@ -161,9 +169,6 @@ print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppst
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
-
-$max=5;
-
 // Last modified projects
 $sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut, p.tms as datem,";
 $sql.= " s.rowid as socid, s.nom as name, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.canvas";
@@ -178,9 +183,10 @@ $sql.= $db->plimit($max, 0);
 $resql=$db->query($sql);
 if ($resql)
 {
+    print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="4">'.$langs->trans("LatestModifiedProjects",$max).'</th></tr>';
+	print '<th colspan="4">'.$langs->trans("LatestModifiedProjects", $max).'</th></tr>';
 
 	$num = $db->num_rows($resql);
 	if ($num)
@@ -220,7 +226,7 @@ if ($resql)
 			print '&nbsp;';
 			print '</td>';
 
-			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+			print '<td width="16" class="right nobordernopadding hideonsmartphone">';
 			$filename=dol_sanitizeFileName($obj->ref);
 			$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
@@ -232,26 +238,29 @@ if ($resql)
 			print '<td class="nowrap">';
 			if ($companystatic->id > 0)
 			{
-				print $companystatic->getNomUrl(1,'company',16);
+				print $companystatic->getNomUrl(1, 'company', 16);
 			}
 			print '</td>';
-			print '<td>'.dol_print_date($db->jdate($obj->datem),'day').'</td>';
-			print '<td align="right">'.$projectstatic->LibStatut($obj->fk_statut,5).'</td>';
+			print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
+			print '<td class="right">'.$projectstatic->LibStatut($obj->fk_statut, 5).'</td>';
 			print '</tr>';
 			$i++;
 		}
 	}
-	print "</table><br>";
+	print "</table></div><br>";
 }
 else dol_print_error($db);
+
+
+$companystatic=new Societe($db);    // We need a clean new object for next loop because current one has some properties set.
 
 
 // Open project per thirdparty
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print_liste_field_titre("OpenedProjectsByThirdparties",$_SERVER["PHP_SELF"],"s.nom","","",'',$sortfield,$sortorder);
-print_liste_field_titre("NbOfProjects","","","","",'align="right"',$sortfield,$sortorder);
+print_liste_field_titre("OpenedProjectsByThirdparties", $_SERVER["PHP_SELF"], "s.nom", "", "", '', $sortfield, $sortorder);
+print_liste_field_titre("NbOfProjects", "", "", "", "", '', $sortfield, $sortorder, 'right ');
 print "</tr>\n";
 
 $sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount)";
@@ -288,7 +297,7 @@ if ( $resql )
 			print $langs->trans("OthersNotLinkedToThirdParty");
 		}
 		print '</td>';
-		print '<td align="right">';
+		print '<td class="right">';
 		if ($obj->socid) print '<a href="'.DOL_URL_ROOT.'/projet/list.php?socid='.$obj->socid.'&search_status=1">'.$obj->nb.'</a>';
 		else print '<a href="'.DOL_URL_ROOT.'/projet/list.php?search_societe='.urlencode('^$').'&search_status=1">'.$obj->nb.'</a>';
 		print '</td>';
@@ -317,6 +326,9 @@ if (! empty($conf->global->PROJECT_SHOW_PROJECT_LIST_ON_PROJECT_AREA))
 }
 
 print '</div></div></div>';
+
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardProjects', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

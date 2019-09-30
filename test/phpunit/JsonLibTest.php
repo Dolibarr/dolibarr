@@ -18,9 +18,9 @@
 
 /**
  *      \file       test/phpunit/JsonLibTest.php
- *		\ingroup    test
+ *      \ingroup    test
  *      \brief      PHPUnit test
- *		\remarks	To run this script as CLI:  phpunit filename.php
+ *      \remarks    To run this script as CLI:  phpunit filename.php
  */
 
 global $conf,$user,$langs,$db;
@@ -28,16 +28,16 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 
-if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
-if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1'); // If there is no menu to show
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't need to load the html.form.class.php
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is public (can be called outside logged session)
+if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER', '1');
+if (! defined('NOREQUIREDB'))    define('NOREQUIREDB', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN', '1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no menu to show
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined("NOLOGIN"))        define("NOLOGIN", '1');       // If this page is public (can be called outside logged session)
 
 
 /**
@@ -47,7 +47,7 @@ if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class JsonLibTest extends PHPUnit_Framework_TestCase
+class JsonLibTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -60,11 +60,11 @@ class JsonLibTest extends PHPUnit_Framework_TestCase
      *
      * @return CoreTest
      */
-    function __construct()
+    public function __construct()
     {
-    	parent::__construct();
+        parent::__construct();
 
-    	//$this->sharedFixture
+        //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -94,11 +94,11 @@ class JsonLibTest extends PHPUnit_Framework_TestCase
         print __METHOD__."\n";
     }
 
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * Init phpunit tests
+     *
+     * @return	void
+     */
     protected function setUp()
     {
         global $conf,$user,$langs,$db;
@@ -109,11 +109,11 @@ class JsonLibTest extends PHPUnit_Framework_TestCase
 
         print __METHOD__."\n";
     }
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
+    /**
+     * End phpunit tests
+     *
+     * @return	void
+     */
     protected function tearDown()
     {
         print __METHOD__."\n";
@@ -122,7 +122,7 @@ class JsonLibTest extends PHPUnit_Framework_TestCase
     /**
      * testJsonEncode
      *
-     * @return	void
+     * @return  void
      */
     public function testJsonEncode()
     {
@@ -135,39 +135,39 @@ class JsonLibTest extends PHPUnit_Framework_TestCase
 
         // Do a test with an array starting with 0
         $arraytotest=array(0=>array('key'=>1,'value'=>'PRODREF','label'=>'Product ref with é and special chars \\ \' "'));
-		$arrayencodedexpected='[{"key":1,"value":"PRODREF","label":"Product ref with \u00e9 and special chars \\\\ \' \""}]';
+        $arrayencodedexpected='[{"key":1,"value":"PRODREF","label":"Product ref with \u00e9 and special chars \\\\ \' \""}]';
 
         $encoded=json_encode($arraytotest);
-        $this->assertEquals($arrayencodedexpected,$encoded);
-        $decoded=json_decode($encoded,true);
-        $this->assertEquals($arraytotest,$decoded,'test for json_xxx');
+        $this->assertEquals($arrayencodedexpected, $encoded);
+        $decoded=json_decode($encoded, true);
+        $this->assertEquals($arraytotest, $decoded, 'test for json_xxx');
 
         $encoded=dol_json_encode($arraytotest);
-        $this->assertEquals($arrayencodedexpected,$encoded);
-        $decoded=dol_json_decode($encoded,true);
-        $this->assertEquals($arraytotest,$decoded,'test for dol_json_xxx');
+        $this->assertEquals($arrayencodedexpected, $encoded);
+        $decoded=dol_json_decode($encoded, true);
+        $this->assertEquals($arraytotest, $decoded, 'test for dol_json_xxx');
 
-		// Same test but array start with 2 instead of 0
+        // Same test but array start with 2 instead of 0
         $arraytotest=array(2=>array('key'=>1,'value'=>'PRODREF','label'=>'Product ref with é and special chars \\ \' "'));
-		$arrayencodedexpected='{"2":{"key":1,"value":"PRODREF","label":"Product ref with \u00e9 and special chars \\\\ \' \""}}';
+        $arrayencodedexpected='{"2":{"key":1,"value":"PRODREF","label":"Product ref with \u00e9 and special chars \\\\ \' \""}}';
 
         $encoded=json_encode($arraytotest);
-        $this->assertEquals($arrayencodedexpected,$encoded);
-        $decoded=json_decode($encoded,true);
-        $this->assertEquals($arraytotest,$decoded,'test for json_xxx');
+        $this->assertEquals($arrayencodedexpected, $encoded);
+        $decoded=json_decode($encoded, true);
+        $this->assertEquals($arraytotest, $decoded, 'test for json_xxx');
 
         $encoded=dol_json_encode($arraytotest);
-        $this->assertEquals($arrayencodedexpected,$encoded);
-        $decoded=dol_json_decode($encoded,true);
-        $this->assertEquals($arraytotest,$decoded,'test for dol_json_xxx');
+        $this->assertEquals($arrayencodedexpected, $encoded);
+        $decoded=dol_json_decode($encoded, true);
+        $this->assertEquals($arraytotest, $decoded, 'test for dol_json_xxx');
 
         // Test with object
-        $now=gmmktime(12,0,0,1,1,1970);
+        $now=gmmktime(12, 0, 0, 1, 1, 1970);
         $objecttotest=new stdClass();
         $objecttotest->property1='abc';
         $objecttotest->property2=1234;
         $objecttotest->property3=$now;
         $encoded=dol_json_encode($objecttotest);
-        $this->assertEquals('{"property1":"abc","property2":1234,"property3":43200}',$encoded);
+        $this->assertEquals('{"property1":"abc","property2":1234,"property3":43200}', $encoded);
     }
 }

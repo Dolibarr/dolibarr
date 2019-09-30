@@ -20,13 +20,13 @@
  *		\brief      Fichier de javascript de traduction pour JSGantt
  */
 
-if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
-if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK',1);
-if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
-if (! defined('NOLOGIN'))         define('NOLOGIN',1);
-if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);
-if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML',1);
-if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
+if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
+if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
+if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
+if (! defined('NOLOGIN'))         define('NOLOGIN', 1);
+if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU', 1);
+if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
+if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
 
 require_once __DIR__.'/../main.inc.php';
 
@@ -48,8 +48,8 @@ var vLangs={'<?php print $langs->getDefaultLang(1);?>':
     'notes':'<?php print $langs->transnoentities('NotePublic'); ?>',
     'january':'<?php print $langs->transnoentities('January'); ?>','february':'<?php print $langs->transnoentities('February'); ?>','march':'<?php print $langs->transnoentities('March'); ?>','april':'<?php print $langs->transnoentities('April'); ?>','maylong':'<?php print $langs->transnoentities('May'); ?>','june':'<?php print $langs->transnoentities('June'); ?>','july':'<?php print $langs->transnoentities('July'); ?>',
     'august':'<?php print $langs->transnoentities('August'); ?>','september':'<?php print $langs->transnoentities('September'); ?>','october':'<?php print $langs->transnoentities('October'); ?>','november':'<?php print $langs->transnoentities('November'); ?>','december':'<?php print $langs->transnoentities('December'); ?>',
-    'jan':'<?php print $langs->transnoentities('JanuaryMin'); ?>','feb':'<?php print $langs->transnoentities('FebruaryMin'); ?>','mar':'<?php print $langs->transnoentities('MarchMin'); ?>','apr':'<?php print $langs->transnoentities('AprilMin'); ?>','may':'<?php print $langs->transnoentities('MayMin'); ?>','jun':'<?php print $langs->transnoentities('JuneMin'); ?>','jul':'<?php print $langs->transnoentities('JulyMin'); ?>',
-    'aug':'<?php print $langs->transnoentities('AugustMin'); ?>','sep':'<?php print $langs->transnoentities('SeptemberMin'); ?>','oct':'<?php print $langs->transnoentities('OctoberMin'); ?>','nov':'<?php print $langs->transnoentities('NovemberMin'); ?>','dec':'<?php print $langs->transnoentities('DecemberMin'); ?>',
+    'jan':'<?php print $langs->transnoentities('MonthShort01'); ?>','feb':'<?php print $langs->transnoentities('MonthShort02'); ?>','mar':'<?php print $langs->transnoentities('MonthShort03'); ?>','apr':'<?php print $langs->transnoentities('MonthShort04'); ?>','may':'<?php print $langs->transnoentities('MonthShort05'); ?>','jun':'<?php print $langs->transnoentities('MonthShort06'); ?>','jul':'<?php print $langs->transnoentities('MonthShort07'); ?>',
+    'aug':'<?php print $langs->transnoentities('MonthShort08'); ?>','sep':'<?php print $langs->transnoentities('MonthShort09'); ?>','oct':'<?php print $langs->transnoentities('MonthShort10'); ?>','nov':'<?php print $langs->transnoentities('MonthShort11'); ?>','dec':'<?php print $langs->transnoentities('MonthShort12'); ?>',
     'sunday':'<?php print $langs->transnoentities('Sunday'); ?>','monday':'<?php print $langs->transnoentities('Monday'); ?>','tuesday':'<?php print $langs->transnoentities('Tuesday'); ?>','wednesday':'<?php print $langs->transnoentities('Wednesday'); ?>','thursday':'<?php print $langs->transnoentities('Thursday'); ?>','friday':'<?php print $langs->transnoentities('Friday'); ?>','saturday':'<?php print $langs->transnoentities('Saturday'); ?>',
     'sun':'<?php print $langs->transnoentities('SundayMin'); ?>','mon':'<?php print $langs->transnoentities('MondayMin'); ?>','tue':'<?php print $langs->transnoentities('TuesdayMin'); ?>','wed':'<?php print $langs->transnoentities('WednesdayMin'); ?>','thu':'<?php print $langs->transnoentities('ThursdayMin'); ?>','fri':'<?php print $langs->transnoentities('FridayMin'); ?>','sat':'<?php print $langs->transnoentities('SaturdayMin'); ?>'
     }

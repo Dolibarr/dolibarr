@@ -106,8 +106,8 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
             $return=0;
             if ($object->add_to_abo() < 0)
             {
-                if (! empty($object->error)) $this->error=$object->error;
                 $this->errors=$object->errors;
+                if (! empty($object->error)) $this->errors[]=$object->error;
                 $return=-1;
             }
             else
@@ -129,8 +129,8 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
                 {
                     if ($object->oldcopy->del_to_abo() < 0)
                     {
-                        if (! empty($object->oldcopy->error)) $this->error=$object->oldcopy->error;
                         $this->errors=$object->oldcopy->errors;
+                        if (! empty($object->oldcopy->error)) $this->errors[]=$object->oldcopy->error;
                         $return=-1;
                     }
                     else
@@ -141,8 +141,8 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
                 // We add subscription if new email or new type (new type may means more mailing-list to subscribe)
                 if ($object->add_to_abo() < 0)
                 {
-                    if (! empty($object->error)) $this->error=$object->error;
                     $this->errors=$object->errors;
+                    if (! empty($object->error)) $this->errors[]=$object->error;
                     $return=-1;
                 }
                 else
@@ -161,8 +161,8 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
             // Remove from external tools (mailman, spip, etc...)
         	if ($object->del_to_abo() < 0)
 			{
-				if (! empty($object->error)) $this->error=$object->error;
 				$this->errors=$object->errors;
+				if (! empty($object->error)) $this->errors[]=$object->error;
 				$return=-1;
 			}
 			else

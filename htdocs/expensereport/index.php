@@ -3,7 +3,8 @@
  * Copyright (C) 2004-2015	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015       Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015           Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2019           Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,24 +31,29 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('expensereportindex'));
+
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'users', 'trips'));
 
 // Security check
-$socid = GETPOST('socid','int');
+$socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'expensereport','','');
+$result = restrictedArea($user, 'expensereport', '', '');
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="d.date_create";
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 
 
 /*
@@ -61,7 +67,7 @@ $childids[]=$user->id;
 
 //$help_url='EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones';
 $help_url='';
-llxHeader('',$langs->trans("ListOfFees"),$help_url);
+llxHeader('', $langs->trans("ListOfFees"), $help_url);
 
 
 $label=$somme=$nb=array();
@@ -76,7 +82,7 @@ if (empty($user->rights->expensereport->readall) && empty($user->rights->expense
 {
     $childids = $user->getAllChildIds();
     $childids[]=$user->id;
-    $sql.= " AND d.fk_user_author IN (".join(',',$childids).")\n";
+    $sql.= " AND d.fk_user_author IN (".join(',', $childids).")\n";
 }
 
 $sql.= " GROUP BY tf.code, tf.label";
@@ -122,7 +128,7 @@ foreach ($listoftype as $code => $label)
 
 if ($conf->use_javascript_ajax)
 {
-    print '<tr><td align="center" colspan="4">';
+    print '<tr><td class="center" colspan="4">';
 
     include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
     $dolgraph = new DolGraph();
@@ -139,7 +145,7 @@ if ($conf->use_javascript_ajax)
 
 print '<tr class="liste_total">';
 print '<td>'.$langs->trans("Total").'</td>';
-print '<td align="right" colspan="3">'.price($totalsum,1,$langs,0,0,0,$conf->currency).'</td>';
+print '<td class="right" colspan="3">'.price($totalsum, 1, $langs, 0, 0, 0, $conf->currency).'</td>';
 print '</tr>';
 
 print '</table>';
@@ -164,12 +170,12 @@ if (empty($user->rights->expensereport->readall) && empty($user->rights->expense
 {
     $childids = $user->getAllChildIds();
     $childids[]=$user->id;
-    $sql.= " AND d.fk_user_author IN (".join(',',$childids).")\n";
+    $sql.= " AND d.fk_user_author IN (".join(',', $childids).")\n";
 }
 $sql.= ' AND d.entity IN ('.getEntity('expensereport').')';
 if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND d.fk_user_author = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND d.fk_user_author = ".$socid;
-$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->order($sortfield, $sortorder);
 $sql.= $db->plimit($max, 0);
 
 $result = $db->query($sql);
@@ -182,10 +188,10 @@ if ($result)
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses",min($max,$num)).'</th>';
-    print '<th align="right">'.$langs->trans("AmountHT").'</th>';
-    print '<th align="right">'.$langs->trans("AmountTTC").'</th>';
-    print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+    print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num)).'</th>';
+    print '<th class="right">'.$langs->trans("AmountHT").'</th>';
+    print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
+    print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
     print '<th>&nbsp;</th>';
     print '</tr>';
     if ($num)
@@ -208,12 +214,12 @@ if ($result)
             print '<tr class="oddeven">';
             print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
             print '<td>'.$userstatic->getNomUrl(-1).'</td>';
-            print '<td align="right">'.price($obj->total_ht).'</td>';
-            print '<td align="right">'.price($obj->total_ttc).'</td>';
-            print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
-            print '<td align="right">';
+            print '<td class="right">'.price($obj->total_ht).'</td>';
+            print '<td class="right">'.price($obj->total_ttc).'</td>';
+            print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
+            print '<td class="right">';
             //print $obj->libelle;
-			print $expensereportstatic->LibStatut($obj->fk_status,3);
+			print $expensereportstatic->LibStatut($obj->fk_status, 3);
             print '</td>';
             print '</tr>';
 
@@ -229,6 +235,9 @@ if ($result)
 else dol_print_error($db);
 
 print '</div></div></div>';
+
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardExpenseReport', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

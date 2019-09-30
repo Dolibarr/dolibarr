@@ -48,13 +48,13 @@ class LoanSchedule extends CommonObject
     /**
      * @var string Create date
      */
-    public $datec='';
-	public $tms='';
+    public $datec;
+	public $tms;
 
     /**
      * @var string Payment date
      */
-    public $datep='';
+    public $datep;
 
     public $amounts=array();   // Array of amounts
     public $amount_capital;    // Total amount of payment
@@ -90,7 +90,7 @@ class LoanSchedule extends CommonObject
 
 	/**
 	 * @deprecated
-	 * @see amount, amounts
+	 * @see $amount, $amounts
 	 */
 	public $total;
 
@@ -177,7 +177,6 @@ class LoanSchedule extends CommonObject
 		if ($totalamount != 0 && ! $error)
 		{
 		    $this->amount_capital=$totalamount;
-            $this->total=$totalamount;    // deprecated
 		    $this->db->commit();
 			return $this->id;
 		}
@@ -270,23 +269,19 @@ class LoanSchedule extends CommonObject
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return int         			<0 if KO, >0 if OK
 	 */
-	public function update($user=0, $notrigger=0)
+	public function update($user = 0, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
 
 		// Clean parameters
-		if (isset($this->fk_loan)) $this->fk_loan=trim($this->fk_loan);
 		if (isset($this->amount_capital)) $this->amount_capital=trim($this->amount_capital);
 		if (isset($this->amount_insurance)) $this->amount_insurance=trim($this->amount_insurance);
 		if (isset($this->amount_interest)) $this->amount_interest=trim($this->amount_interest);
-		if (isset($this->fk_typepayment)) $this->fk_typepayment=trim($this->fk_typepayment);
 		if (isset($this->num_payment)) $this->num_payment=trim($this->num_payment);
 		if (isset($this->note_private)) $this->note_private=trim($this->note_private);
 		if (isset($this->note_public)) $this->note_public=trim($this->note_public);
 		if (isset($this->fk_bank)) $this->fk_bank=trim($this->fk_bank);
-		if (isset($this->fk_user_creat)) $this->fk_user_creat=trim($this->fk_user_creat);
-		if (isset($this->fk_user_modif)) $this->fk_user_modif=trim($this->fk_user_modif);
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -354,22 +349,21 @@ class LoanSchedule extends CommonObject
 	 *  @param  int		$notrigger		0=launch triggers after, 1=disable triggers
 	 *  @return int						<0 if KO, >0 if OK
 	 */
-	public function delete($user, $notrigger=0)
+    public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error=0;
 
 		$this->db->begin();
 
-	    if (! $error)
-		{
+        if (! $error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
 			$sql.= " WHERE rowid=".$this->id;
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-		}
+        }
 
 		if (! $error)
 		{
@@ -403,7 +397,7 @@ class LoanSchedule extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-	}
+    }
 
 	/**
 	 * Calculate Monthly Payments
@@ -418,7 +412,7 @@ class LoanSchedule extends CommonObject
 		$result='';
 
 		if (!empty($capital) && !empty($rate) && !empty($nbterm)) {
-			$result = ($capital*($rate/12))/(1-pow((1+($rate/12)),($nbterm*-1)));
+			$result = ($capital*($rate/12))/(1-pow((1+($rate/12)), ($nbterm*-1)));
 		}
 
 		return $result;
@@ -566,6 +560,9 @@ class LoanSchedule extends CommonObject
 	 */
 	public function paimenttorecord($loanid, $datemax)
 	{
+
+		$result=array();
+
 		$sql = "SELECT p.rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p ";
 		$sql.= " WHERE p.fk_loan = " . $loanid;

@@ -42,7 +42,7 @@ $title=$langs->trans("AdminTools");
 
 llxHeader('', $title);
 
-print load_fiche_titre($title,'','title_setup');
+print load_fiche_titre($title, '', 'title_setup');
 
 print $langs->trans("SystemToolsAreaDesc").'<br>';
 print "<br>";

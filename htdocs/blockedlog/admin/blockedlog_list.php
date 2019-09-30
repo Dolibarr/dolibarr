@@ -35,15 +35,15 @@ $langs->loadLangs(array("admin", "other", "blockedlog", "bills"));
 
 if ((! $user->admin && ! $user->rights->blockedlog->read) || empty($conf->blockedlog->enabled)) accessforbidden();
 
-$action = GETPOST('action','alpha');
-$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'blockedloglist';   // To manage different context of search
-$backtopage = GETPOST('backtopage','alpha');											// Go back to a dedicated page
-$optioncss  = GETPOST('optioncss','aZ');												// Option for the css output (always '' except when 'print')
+$action = GETPOST('action', 'alpha');
+$contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'blockedloglist';   // To manage different context of search
+$backtopage = GETPOST('backtopage', 'alpha');											// Go back to a dedicated page
+$optioncss  = GETPOST('optioncss', 'aZ');												// Option for the css output (always '' except when 'print')
 
-$search_showonlyerrors = GETPOST('search_showonlyerrors','int');
+$search_showonlyerrors = GETPOST('search_showonlyerrors', 'int');
 if ($search_showonlyerrors < 0) $search_showonlyerrors=0;
 
-$search_fk_user=GETPOST('search_fk_user','intcomma');
+$search_fk_user=GETPOST('search_fk_user', 'intcomma');
 $search_start = -1;
 if (GETPOST('search_startyear')!='') $search_start = dol_mktime(0, 0, 0, GETPOST('search_startmonth'), GETPOST('search_startday'), GETPOST('search_startyear'));
 $search_end = -1;
@@ -55,10 +55,10 @@ $search_amount = GETPOST('search_amount', 'alpha');
 if (($search_start == -1 || empty($search_start)) && ! GETPOSTISSET('search_startmonth')) $search_start = dol_time_plus_duree(dol_now(), '-1', 'w');
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -78,7 +78,7 @@ $result = restrictedArea($user, 'blockedlog', 0, '');
  */
 
 // Purge search criteria
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') ||GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
 	$search_fk_user = '';
 	$search_start = -1;
@@ -104,9 +104,7 @@ if ($action === 'downloadblockchain') {
 	echo $bc;
 
 	exit;
-}
-else if (GETPOST('downloadcsv','alpha'))
-{
+} elseif (GETPOST('downloadcsv', 'alpha')) {
 	$error = 0;
 
 	$previoushash='';
@@ -118,10 +116,10 @@ else if (GETPOST('downloadcsv','alpha'))
 		$sql = "SELECT rowid,date_creation,tms,user_fullname,action,amounts,element,fk_object,date_object,ref_object,signature,fk_user,object_data";
 		$sql.= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql.= " WHERE entity = ".$conf->entity;
-		if (GETPOST('monthtoexport','int') > 0 || GETPOST('yeartoexport','int') > 0)
+		if (GETPOST('monthtoexport', 'int') > 0 || GETPOST('yeartoexport', 'int') > 0)
 		{
-			$dates = dol_get_first_day(GETPOST('yeartoexport','int'), GETPOST('monthtoexport','int')?GETPOST('monthtoexport','int'):1);
-			$datee = dol_get_last_day(GETPOST('yeartoexport','int'), GETPOST('monthtoexport','int')?GETPOST('monthtoexport','int'):12);
+			$dates = dol_get_first_day(GETPOST('yeartoexport', 'int'), GETPOST('monthtoexport', 'int')?GETPOST('monthtoexport', 'int'):1);
+			$datee = dol_get_last_day(GETPOST('yeartoexport', 'int'), GETPOST('monthtoexport', 'int')?GETPOST('monthtoexport', 'int'):12);
 			$sql.= " AND date_creation BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
 		}
 		$sql.= " ORDER BY rowid ASC";					// Required so we get the first one
@@ -156,10 +154,10 @@ else if (GETPOST('downloadcsv','alpha'))
 		$sql = "SELECT rowid,date_creation,tms,user_fullname,action,amounts,element,fk_object,date_object,ref_object,signature,fk_user,object_data";
 		$sql.= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql.= " WHERE entity = ".$conf->entity;
-		if (GETPOST('monthtoexport','int') > 0 || GETPOST('yeartoexport','int') > 0)
+		if (GETPOST('monthtoexport', 'int') > 0 || GETPOST('yeartoexport', 'int') > 0)
 		{
-			$dates = dol_get_first_day(GETPOST('yeartoexport','int'), GETPOST('monthtoexport','int')?GETPOST('monthtoexport','int'):1);
-			$datee = dol_get_last_day(GETPOST('yeartoexport','int'), GETPOST('monthtoexport','int')?GETPOST('monthtoexport','int'):12);
+			$dates = dol_get_first_day(GETPOST('yeartoexport', 'int'), GETPOST('monthtoexport', 'int')?GETPOST('monthtoexport', 'int'):1);
+			$datee = dol_get_last_day(GETPOST('yeartoexport', 'int'), GETPOST('monthtoexport', 'int')?GETPOST('monthtoexport', 'int'):12);
 			$sql.= " AND date_creation BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
 		}
 		$sql.= " ORDER BY rowid ASC";					// Required so later we can use the parameter $previoushash of checkSignature()
@@ -169,7 +167,7 @@ else if (GETPOST('downloadcsv','alpha'))
 		{
 			header('Content-Type: application/octet-stream');
 			header("Content-Transfer-Encoding: Binary");
-			header("Content-disposition: attachment; filename=\"unalterable-log-archive-" .$dolibarr_main_db_name."-".(GETPOST('yeartoexport','int')>0 ? GETPOST('yeartoexport','int').(GETPOST('monthtoexport','int')>0?sprintf("%02d",GETPOST('monthtoexport','int')):'').'-':'').$previoushash. ".csv\"");
+			header("Content-disposition: attachment; filename=\"unalterable-log-archive-" .$dolibarr_main_db_name."-".(GETPOST('yeartoexport', 'int')>0 ? GETPOST('yeartoexport', 'int').(GETPOST('monthtoexport', 'int')>0?sprintf("%02d", GETPOST('monthtoexport', 'int')):'').'-':'').$previoushash. ".csv\"");
 
 			print $langs->transnoentities('Id')
 				.';'.$langs->transnoentities('Date')
@@ -238,7 +236,7 @@ else if (GETPOST('downloadcsv','alpha'))
 					.';'.$obj->signature
 					.';'.$statusofrecord
 					.';'.$statusofrecordnote
-					.';"'.str_replace('"','""',$obj->object_data).'"'
+					.';"'.str_replace('"', '""', $obj->object_data).'"'
 					."\n";
 
 				// Set new previous hash for next fetch
@@ -263,7 +261,7 @@ else if (GETPOST('downloadcsv','alpha'))
 
 $form=new Form($db);
 
-if (GETPOST('withtab','alpha'))
+if (GETPOST('withtab', 'alpha'))
 {
 	$title=$langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
 }
@@ -272,7 +270,7 @@ else
 	$title=$langs->trans("BrowseBlockedLog");
 }
 
-llxHeader('',$langs->trans("BrowseBlockedLog"));
+llxHeader('', $langs->trans("BrowseBlockedLog"));
 
 $MAXLINES = 10000;
 
@@ -291,14 +289,14 @@ if (! is_array($blocks))
 }
 
 $linkback='';
-if (GETPOST('withtab','alpha'))
+if (GETPOST('withtab', 'alpha'))
 {
 	$linkback='<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
 }
 
 print load_fiche_titre($title, $linkback);
 
-if (GETPOST('withtab','alpha'))
+if (GETPOST('withtab', 'alpha'))
 {
 	$head=blockedlogadmin_prepare_head();
 	dol_fiche_head($head, 'fingerprints', '', -1);
@@ -312,24 +310,24 @@ $param='';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 if ($search_fk_user > 0)    $param.='&search_fk_user='.urlencode($search_fk_user);
-if ($search_startyear > 0)  $param.='&search_startyear='.urlencode(GETPOST('search_startyear','int'));
-if ($search_startmonth > 0) $param.='&search_startmonth='.urlencode(GETPOST('search_startmonth','int'));
-if ($search_startday > 0)   $param.='&search_startday='.urlencode(GETPOST('search_startday','int'));
-if ($search_endyear > 0)    $param.='&search_endyear='.urlencode(GETPOST('search_endyear','int'));
-if ($search_endmonth > 0)   $param.='&search_endmonth='.urlencode(GETPOST('search_endmonth','int'));
-if ($search_endday > 0)     $param.='&search_endday='.urlencode(GETPOST('search_endday','int'));
+if ($search_startyear > 0)  $param.='&search_startyear='.urlencode(GETPOST('search_startyear', 'int'));
+if ($search_startmonth > 0) $param.='&search_startmonth='.urlencode(GETPOST('search_startmonth', 'int'));
+if ($search_startday > 0)   $param.='&search_startday='.urlencode(GETPOST('search_startday', 'int'));
+if ($search_endyear > 0)    $param.='&search_endyear='.urlencode(GETPOST('search_endyear', 'int'));
+if ($search_endmonth > 0)   $param.='&search_endmonth='.urlencode(GETPOST('search_endmonth', 'int'));
+if ($search_endday > 0)     $param.='&search_endday='.urlencode(GETPOST('search_endday', 'int'));
 if ($search_showonlyerrors > 0) $param.='&search_showonlyerrors='.urlencode($search_showonlyerrors);
 if ($optioncss != '')       $param.='&optioncss='.urlencode($optioncss);
-if (GETPOST('withtab','alpha')) $param.='&withtab='.urlencode(GETPOST('withtab','alpha'));
+if (GETPOST('withtab', 'alpha')) $param.='&withtab='.urlencode(GETPOST('withtab', 'alpha'));
 
 // Add $param from extra fields
 //include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 
-print '<div align="right">';
+print '<div class="right">';
 print $langs->trans("RestrictYearToExport").': ';
-$smonth=GETPOST('monthtoexport','int');
+$smonth=GETPOST('monthtoexport', 'int');
 // Month
 $retstring='';
 $retstring.='<select class="flat valignmiddle maxwidth75imp marginrightonly" id="monthtoexport" name="monthtoexport">';
@@ -337,15 +335,15 @@ $retstring.='<option value="0" selected>&nbsp;</option>';
 for ($month = 1 ; $month <= 12 ; $month++)
 {
 	$retstring.='<option value="'.$month.'"'.($month == $smonth?' selected':'').'>';
-	$retstring.=dol_print_date(mktime(12,0,0,$month,1,2000),"%b");
+	$retstring.=dol_print_date(mktime(12, 0, 0, $month, 1, 2000), "%b");
 	$retstring.="</option>";
 }
 $retstring.="</select>";
 print $retstring;
-print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth50imp" value="'.GETPOST('yeartoexport','int').'">';
-print '<input type="hidden" name="withtab" value="'.GETPOST('withtab','alpha').'">';
+print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth50imp" value="'.GETPOST('yeartoexport', 'int').'">';
+print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
 print '<input type="submit" name="downloadcsv" class="button" value="'.$langs->trans('DownloadLogCSV').'">';
-if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) print ' | <a href="?action=downloadblockchain'.(GETPOST('withtab','alpha')?'&withtab='.GETPOST('withtab','alpha'):'').'">'.$langs->trans('DownloadBlockChain').'</a>';
+if (!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY)) print ' | <a href="?action=downloadblockchain'.(GETPOST('withtab', 'alpha')?'&withtab='.GETPOST('withtab', 'alpha'):'').'">'.$langs->trans('DownloadBlockChain').'</a>';
 print ' </div><br>';
 
 print '</form>';
@@ -362,7 +360,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-print '<input type="hidden" name="withtab" value="'.GETPOST('withtab','alpha').'">';
+print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
 
 print '<table class="noborder" width="100%">';
 
@@ -373,10 +371,10 @@ print '<td class="liste_titre">&nbsp;</td>';
 
 print '<td class="liste_titre">';
 //print $langs->trans("from").': ';
-print $form->selectDate($search_start,'search_start');
+print $form->selectDate($search_start, 'search_start');
 //print '<br>';
 //print $langs->trans("to").': ';
-print $form->selectDate($search_end,'search_end');
+print $form->selectDate($search_end, 'search_end');
 print '</td>';
 
 // User
@@ -424,22 +422,21 @@ print '</td>';
 print '</tr>';
 
 print '<tr class="liste_titre">';
-print getTitleFieldOfList($langs->trans('#'), 0, $_SERVER["PHP_SELF"],'rowid','',$param,'',$sortfield,$sortorder,'minwidth50 ')."\n";
-print getTitleFieldOfList($langs->trans('Date'), 0, $_SERVER["PHP_SELF"],'date_creation','',$param,'',$sortfield,$sortorder,'')."\n";
-print getTitleFieldOfList($langs->trans('Author'), 0, $_SERVER["PHP_SELF"],'user_fullname','',$param,'',$sortfield,$sortorder,'')."\n";
-print getTitleFieldOfList($langs->trans('Action'), 0, $_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder,'')."\n";
-print getTitleFieldOfList($langs->trans('Ref'), 0, $_SERVER["PHP_SELF"],'ref_object','',$param,'',$sortfield,$sortorder,'')."\n";
-print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder,'')."\n";
-print getTitleFieldOfList($langs->trans('Amount'), 0, $_SERVER["PHP_SELF"],'','',$param,'align="right"',$sortfield,$sortorder,'')."\n";
-print getTitleFieldOfList($langs->trans('DataOfArchivedEvent'), 0, $_SERVER["PHP_SELF"],'','',$param,'align="center"',$sortfield,$sortorder,'')."\n";
-print getTitleFieldOfList($langs->trans('Fingerprint'), 0, $_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder,'')."\n";
-print getTitleFieldOfList($langs->trans('Status'), 0, $_SERVER["PHP_SELF"],'','',$param,'align="center"',$sortfield,$sortorder,'')."\n";
-print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"],'','',$param,'align="center"',$sortfield,$sortorder,'')."\n";
-print getTitleFieldOfList('<span id="blockchainstatus"></span>', 0, $_SERVER["PHP_SELF"],'','',$param,'align="center"',$sortfield,$sortorder,'')."\n";
+print getTitleFieldOfList($langs->trans('#'), 0, $_SERVER["PHP_SELF"], 'rowid', '', $param, '', $sortfield, $sortorder, 'minwidth50 ')."\n";
+print getTitleFieldOfList($langs->trans('Date'), 0, $_SERVER["PHP_SELF"], 'date_creation', '', $param, '', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList($langs->trans('Author'), 0, $_SERVER["PHP_SELF"], 'user_fullname', '', $param, '', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList($langs->trans('Action'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList($langs->trans('Ref'), 0, $_SERVER["PHP_SELF"], 'ref_object', '', $param, '', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList($langs->trans('Amount'), 0, $_SERVER["PHP_SELF"], '', '', $param, 'class="right"', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList($langs->trans('DataOfArchivedEvent'), 0, $_SERVER["PHP_SELF"], '', '', $param, 'align="center"', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList($langs->trans('Fingerprint'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList($langs->trans('Status'), 0, $_SERVER["PHP_SELF"], '', '', $param, 'align="center"', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, 'align="center"', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList('<span id="blockchainstatus"></span>', 0, $_SERVER["PHP_SELF"], '', '', $param, 'align="center"', $sortfield, $sortorder, '')."\n";
 print '</tr>';
 
-if (! empty($conf->global->BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR))
-{
+if (! empty($conf->global->BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR)) {
 	// This is version that is faster but require more memory and report errors that are outside the filter range
 
 	// TODO Make a full scan of table in reverse order of id of $block, so we can use the parameter $previoushash into checkSignature to save requests
@@ -480,7 +477,7 @@ if (is_array($blocks))
 		   	print '<td>'.$block->id.'</td>';
 
 		   	// Date
-		   	print '<td>'.dol_print_date($block->date_creation,'dayhour').'</td>';
+		   	print '<td>'.dol_print_date($block->date_creation, 'dayhour').'</td>';
 
 			// User
 		   	print '<td>';
@@ -498,7 +495,7 @@ if (is_array($blocks))
 		   	print '<td'.(preg_match('/<a/', $object_link) ? ' class="nowrap"' : '').'><!-- object_link -->'.$object_link.'</td>';
 
 		   	// Amount
-		   	print '<td align="right">'.price($block->amounts).'</td>';
+		   	print '<td class="right nowraponall">'.price($block->amounts).'</td>';
 
 		   	// Details link
 		   	print '<td align="center"><a href="#" data-blockid="'.$block->id.'" rel="show-info">'.img_info($langs->trans('ShowDetails')).'</a></td>';
@@ -582,7 +579,7 @@ if(!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->globa
 		<script type="text/javascript">
 
 			$.ajax({
-				url : "<?php echo dol_buildpath('/blockedlog/ajax/check_signature.php',1) ?>"
+				url : "<?php echo dol_buildpath('/blockedlog/ajax/check_signature.php', 1) ?>"
 				,dataType:"html"
 			}).done(function(data) {
 
@@ -599,7 +596,7 @@ if(!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->globa
 <?php
 }
 
-if (GETPOST('withtab','alpha'))
+if (GETPOST('withtab', 'alpha'))
 {
 	dol_fiche_end();
 }

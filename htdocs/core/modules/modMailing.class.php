@@ -39,7 +39,7 @@ class modMailing extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 		$this->numero = 22;
@@ -51,7 +51,7 @@ class modMailing extends DolibarrModules
 		$this->module_position = '11';
 
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des EMailings";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
@@ -142,20 +142,20 @@ class modMailing extends DolibarrModules
 
 
 	/**
-	 *		Function called when module is enabled.
-	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *		It also creates data directories
+	 *  Function called when module is enabled.
+	 *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
+	 *  It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
+     *  @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *  @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
+	public function init($options = '')
 	{
 		// Permissions
 		$this->remove($options);
 
 		$sql = array();
 
-		return $this->_init($sql,$options);
+		return $this->_init($sql, $options);
 	}
 }

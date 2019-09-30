@@ -39,7 +39,7 @@ class Client extends Societe
      *
      *  @param	DoliDB	$db		Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
 
@@ -47,13 +47,13 @@ class Client extends Societe
         $this->fournisseur = 0;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Load indicators into this->nb for board
      *
      *  @return     int         <0 if KO, >0 if OK
      */
-    function load_state_board()
+    public function load_state_board()
     {
         // phpcs:enable
         global $user;
@@ -98,7 +98,7 @@ class Client extends Societe
 	 *  @param	int		$active     1=Active only, 0=Not active only, -1=All
 	 *  @return int					<0 if KO, >0 if OK
 	 */
-    function loadCacheOfProspStatus($active=1)
+    public function loadCacheOfProspStatus($active = 1)
     {
     	global $langs;
 
@@ -107,8 +107,7 @@ class Client extends Societe
 		$resql=$this->db->query($sql);
 		$num=$this->db->num_rows($resql);
 		$i=0;
-		while ($i < $num)
-		{
+		while ($i < $num) {
 			$obj=$this->db->fetch_object($resql);
 			$this->cacheprospectstatus[$obj->id]=array('id'=>$obj->id, 'code'=>$obj->code, 'label'=> ($langs->trans("ST_".strtoupper($obj->code))=="ST_".strtoupper($obj->code))?$obj->label:$langs->trans("ST_".strtoupper($obj->code)));
 			$i++;

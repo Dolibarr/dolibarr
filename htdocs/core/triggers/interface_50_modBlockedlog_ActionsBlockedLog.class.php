@@ -113,7 +113,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 				}
 			}
 		}
-		elseif (strpos($action,'PAYMENT')!==false && ! in_array($action, array('PAYMENT_ADD_TO_BANK')))
+		elseif (strpos($action, 'PAYMENT')!==false && ! in_array($action, array('PAYMENT_ADD_TO_BANK')))
 		{
 			$qualified++;
 			$amounts = (double) $object->amount;

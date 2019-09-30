@@ -35,45 +35,45 @@ $langs->loadLangs(array('admin', 'other', 'paybox', 'paypal'));
 if (!$user->admin)
   accessforbidden();
 
-$action = GETPOST('action','alpha');
+$action = GETPOST('action', 'alpha');
 
 
 if ($action == 'setvalue' && $user->admin)
 {
 	$db->begin();
 	//$result=dolibarr_set_const($db, "PAYBOX_IBS_DEVISE",$_POST["PAYBOX_IBS_DEVISE"],'chaine',0,'',$conf->entity);
-	$result=dolibarr_set_const($db, "PAYBOX_CGI_URL_V1", GETPOST('PAYBOX_CGI_URL_V1','alpha'),'chaine',0,'',$conf->entity);
+	$result=dolibarr_set_const($db, "PAYBOX_CGI_URL_V1", GETPOST('PAYBOX_CGI_URL_V1', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0) $error++;
-	$result=dolibarr_set_const($db, "PAYBOX_CGI_URL_V2",GETPOST('PAYBOX_CGI_URL_V2','alpha'),'chaine',0,'',$conf->entity);
+	$result=dolibarr_set_const($db, "PAYBOX_CGI_URL_V2", GETPOST('PAYBOX_CGI_URL_V2', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0) $error++;
-	$result=dolibarr_set_const($db, "PAYBOX_IBS_SITE",GETPOST('PAYBOX_IBS_SITE','alpha'),'chaine',0,'',$conf->entity);
+	$result=dolibarr_set_const($db, "PAYBOX_IBS_SITE", GETPOST('PAYBOX_IBS_SITE', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0) $error++;
-	$result=dolibarr_set_const($db, "PAYBOX_IBS_RANG",GETPOST('PAYBOX_IBS_RANG','alpha'),'chaine',0,'',$conf->entity);
+	$result=dolibarr_set_const($db, "PAYBOX_IBS_RANG", GETPOST('PAYBOX_IBS_RANG', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0) $error++;
-	$result=dolibarr_set_const($db, "PAYBOX_PBX_IDENTIFIANT",GETPOST('PAYBOX_PBX_IDENTIFIANT','alpha'),'chaine',0,'',$conf->entity);
+	$result=dolibarr_set_const($db, "PAYBOX_PBX_IDENTIFIANT", GETPOST('PAYBOX_PBX_IDENTIFIANT', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0) $error++;
-    $result=dolibarr_set_const($db, "ONLINE_PAYMENT_CREDITOR",GETPOST('ONLINE_PAYMENT_CREDITOR','alpha'),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "ONLINE_PAYMENT_CREDITOR", GETPOST('ONLINE_PAYMENT_CREDITOR', 'alpha'), 'chaine', 0, '', $conf->entity);
     if (! $result > 0) $error++;
-    $result=dolibarr_set_const($db, "PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS",GETPOST('PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS','int'),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS", GETPOST('PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS', 'int'), 'chaine', 0, '', $conf->entity);
     if (! $result > 0) $error++;
-	$result=dolibarr_set_const($db, "ONLINE_PAYMENT_CSS_URL",GETPOST('ONLINE_PAYMENT_CSS_URL','alpha'),'chaine',0,'',$conf->entity);
+	$result=dolibarr_set_const($db, "ONLINE_PAYMENT_CSS_URL", GETPOST('ONLINE_PAYMENT_CSS_URL', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0) $error++;
-    $result=dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_FORM",GETPOST('ONLINE_PAYMENT_MESSAGE_FORM','alpha'),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_FORM", GETPOST('ONLINE_PAYMENT_MESSAGE_FORM', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0) $error++;
-    $result=dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_OK",GETPOST('ONLINE_PAYMENT_MESSAGE_OK','alpha'),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_OK", GETPOST('ONLINE_PAYMENT_MESSAGE_OK', 'alpha'), 'chaine', 0, '', $conf->entity);
     if (! $result > 0) $error++;
-    $result=dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_KO",GETPOST('ONLINE_PAYMENT_MESSAGE_KO','alpha'),'chaine',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_KO", GETPOST('ONLINE_PAYMENT_MESSAGE_KO', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0) $error++;
-	$result=dolibarr_set_const($db, "ONLINE_PAYMENT_SENDEMAIL",GETPOST('ONLINE_PAYMENT_SENDEMAIL'),'chaine',0,'',$conf->entity);
+	$result=dolibarr_set_const($db, "ONLINE_PAYMENT_SENDEMAIL", GETPOST('ONLINE_PAYMENT_SENDEMAIL'), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0) $error++;
 	// Payment token for URL
-	$result=dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN",GETPOST('PAYMENT_SECURITY_TOKEN','alpha'),'chaine',0,'',$conf->entity);
+	$result=dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN", GETPOST('PAYMENT_SECURITY_TOKEN', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0) $error++;
-	$result=dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE",GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE','alpha'),'chaine',0,'',$conf->entity);
+	$result=dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE", GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0) $error++;
-        $result=dolibarr_set_const($db, "PAYBOX_HMAC_KEY", dol_encode(GETPOST('PAYBOX_HMAC_KEY','alpha')),'chaine',0,'',$conf->entity);
+        $result=dolibarr_set_const($db, "PAYBOX_HMAC_KEY", dol_encode(GETPOST('PAYBOX_HMAC_KEY', 'alpha')), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0) $error++;
-        
+
 
     if (! $error)
   	{
@@ -102,7 +102,7 @@ if (empty($conf->global->PAYBOX_IBS_DEVISE)) $conf->global->PAYBOX_IBS_DEVISE=$I
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("PayBoxSetup"),$linkback,'title_setup');
+print load_fiche_titre($langs->trans("PayBoxSetup"), $linkback, 'title_setup');
 
 $h = 0;
 $head = array();
@@ -151,7 +151,7 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYBOX_HMAC_KEY").'</span></td><td>';
 print '<input size="100" type="text" name="PAYBOX_HMAC_KEY" value="'.dol_decode($conf->global->PAYBOX_HMAC_KEY).'">';
-print '<br>'.$langs->trans("Example").': 2 ('.$langs->trans("Test").')';
+print '<br>'.$langs->trans("Example").': 1A2B3C4D5E6F';
 print '</td></tr>';
 
 print '<tr class="liste_titre">';
@@ -181,7 +181,8 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYBOX_CGI_URL_V2").'</span></td><td>';
 print '<input size="64" type="text" name="PAYBOX_CGI_URL_V2" value="'.$conf->global->PAYBOX_CGI_URL_V2.'">';
-print '<br>'.$langs->trans("Example").': http://mysite/cgi-bin/modulev2_redhat72.cgi';
+print '<br>'.$langs->trans("Example").' (preprod): https://preprod-tpeweb.paybox.com/php/';
+print '<br>'.$langs->trans("Example").' (prod): https://tpeweb.paybox.com/php/';
 print '</td></tr>';
 
 
@@ -196,7 +197,7 @@ if (! empty($conf->banque->enabled))
 {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BankAccount").'</td><td>';
-	print $form->select_comptes($conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS, 'PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
+	$form->select_comptes($conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS, 'PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
 	print '</td></tr>';
 }
 
@@ -210,20 +211,20 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MessageForm").'</td><td>';
-$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_FORM',$conf->global->ONLINE_PAYMENT_MESSAGE_FORM,'',100,'dolibarr_details','In',false,true,true,ROWS_2,'90%');
+$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_FORM', $conf->global->ONLINE_PAYMENT_MESSAGE_FORM, '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_2, '90%');
 $doleditor->Create();
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MessageOK").'</td><td>';
-$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_OK',$conf->global->ONLINE_PAYMENT_MESSAGE_OK,'',100,'dolibarr_details','In',false,true,true,ROWS_2,'90%');
+$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_OK', $conf->global->ONLINE_PAYMENT_MESSAGE_OK, '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_2, '90%');
 $doleditor->Create();
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("MessageKO").'</td><td>';
-$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_KO',$conf->global->ONLINE_PAYMENT_MESSAGE_KO,'',100,'dolibarr_details','In',false,true,true,ROWS_2,'90%');
+$doleditor=new DolEditor('ONLINE_PAYMENT_MESSAGE_KO', $conf->global->ONLINE_PAYMENT_MESSAGE_KO, '', 100, 'dolibarr_details', 'In', false, true, true, ROWS_2, '90%');
 $doleditor->Create();
 print '</td></tr>';
 
@@ -244,7 +245,7 @@ print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("SecurityTokenIsUnique").'</td><td>';
-print $form->selectyesno("PAYMENT_SECURITY_TOKEN_UNIQUE",(empty($conf->global->PAYMENT_SECURITY_TOKEN)?0:$conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE),1);
+print $form->selectyesno("PAYMENT_SECURITY_TOKEN_UNIQUE", (empty($conf->global->PAYMENT_SECURITY_TOKEN)?0:$conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE), 1);
 print '</td></tr>';
 
 print '</table>';

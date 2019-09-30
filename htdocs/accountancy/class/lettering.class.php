@@ -20,7 +20,7 @@
 
 /**
  * \file      	htdocs/accountancy/class/lettering.class.php
- * \ingroup 	Advanced accountancy
+ * \ingroup 	Accountancy (Double entries)
  * \brief 		File of class for lettering
  */
 
@@ -67,11 +67,11 @@ class Lettering extends BookKeeping
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk";
 		$sql .= " LEFT JOIN  " . MAIN_DB_PREFIX . "bank_url as bu ON(bk.fk_doc = bu.fk_bank AND bu.type IN ('payment', 'payment_supplier') ) ";
 		$sql .= " WHERE ( ";
-		if (! empty($object->code_compta))
+		if ($object->code_compta != "")
 			$sql .= " bk.subledger_account = '" . $object->code_compta . "'  ";
-		if (! empty($object->code_compta) && ! empty($object->code_compta_fournisseur))
+		if ($object->code_compta != "" && $object->code_compta_fournisseur != "")
 			$sql .= " OR ";
-		if (! empty($object->code_compta_fournisseur))
+		if ($object->code_compta_fournisseur != "")
 			$sql .= " bk.subledger_account = '" . $object->code_compta_fournisseur . "' ";
 
 		$sql .= " ) AND (bk.date_lettering ='' OR bk.date_lettering IS NULL) ";
@@ -99,13 +99,13 @@ class Lettering extends BookKeeping
 					$sql .= " AND facf.entity = ".$conf->entity;
 					$sql .= " AND code_journal IN (SELECT code FROM " . MAIN_DB_PREFIX . "accounting_journal WHERE nature=4 AND entity=".$conf->entity.") ";
 					$sql .= " AND ( ";
-					if (! empty($object->code_compta)) {
+					if ($object->code_compta != "") {
 						$sql .= "  bk.subledger_account = '" . $object->code_compta . "'  ";
 					}
-					if (! empty($object->code_compta) && ! empty($object->code_compta_fournisseur)) {
+					if ($object->code_compta != "" && $object->code_compta_fournisseur != "") {
 						$sql .= "  OR  ";
 					}
-					if (! empty($object->code_compta_fournisseur)) {
+					if ($object->code_compta_fournisseur != "") {
 						$sql .= "   bk.subledger_account = '" . $object->code_compta_fournisseur . "' ";
 					}
 					$sql .= " )  ";
@@ -127,13 +127,13 @@ class Lettering extends BookKeeping
 						$sql .= " WHERE bk.code_journal IN (SELECT code FROM " . MAIN_DB_PREFIX . "accounting_journal WHERE nature=3 AND entity=".$conf->entity.") ";
 						$sql .= " AND facf.entity = ".$conf->entity;
 						$sql .= " AND ( ";
-						if (! empty($object->code_compta)) {
+						if ($object->code_compta != "") {
 							$sql .= " bk.subledger_account = '" . $object->code_compta . "'  ";
 						}
-						if (! empty($object->code_compta) && ! empty($object->code_compta_fournisseur)) {
+						if ($object->code_compta != "" && $object->code_compta_fournisseur != "") {
 							$sql .= " OR ";
 						}
-						if (! empty($object->code_compta_fournisseur)) {
+						if ($object->code_compta_fournisseur != "") {
 							$sql .= " bk.subledger_account = '" . $object->code_compta_fournisseur . "' ";
 						}
 						$sql .= ") ";
@@ -157,15 +157,15 @@ class Lettering extends BookKeeping
 					$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk ON (bk.fk_doc = pay.fk_bank AND bk.code_journal='" . $obj->code_journal . "')";
 					$sql .= " WHERE payfac.fk_paiement = '" . $obj->url_id . "' ";
 					$sql .= " AND bk.code_journal IN (SELECT code FROM " . MAIN_DB_PREFIX . "accounting_journal WHERE nature=4 AND entity=".$conf->entity.") ";
-					$sql .= " AND fac.entity = ".$conf->entity;
+					$sql .= " AND fac.entity IN (".getEntity('invoice', 0).")";// We don't share object for accountancy
 					$sql .= " AND ( ";
-					if (! empty($object->code_compta)) {
+					if ($object->code_compta != "") {
 						$sql .= "  bk.subledger_account = '" . $object->code_compta . "'  ";
 					}
-					if (! empty($object->code_compta) && ! empty($object->code_compta_fournisseur)) {
+					if ($object->code_compta != "" && $object->code_compta_fournisseur != "") {
 						$sql .= "  OR  ";
 					}
-					if (! empty($object->code_compta_fournisseur)) {
+					if ($object->code_compta_fournisseur != "") {
 						$sql .= "   bk.subledger_account = '" . $object->code_compta_fournisseur . "' ";
 					}
 					$sql .= " )  ";
@@ -185,15 +185,15 @@ class Lettering extends BookKeeping
 						$sql .= " FROM " . MAIN_DB_PREFIX . "facture fac ";
 						$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk ON(  bk.fk_doc = fac.rowid AND fac.rowid IN (" . implode(',', $ids_fact) . "))";
 						$sql .= " WHERE code_journal IN (SELECT code FROM " . MAIN_DB_PREFIX . "accounting_journal WHERE nature=2 AND entity=".$conf->entity.") ";
-						$sql .= " AND fac.entity = ".$conf->entity;
+						$sql .= " AND fac.entity IN (".getEntity('invoice', 0).")";// We don't share object for accountancy
 						$sql .= " AND ( ";
-						if (! empty($object->code_compta)) {
+						if ($object->code_compta != "") {
 							$sql .= "  bk.subledger_account = '" . $object->code_compta . "'  ";
 						}
-						if (! empty($object->code_compta) && ! empty($object->code_compta_fournisseur)) {
+						if ($object->code_compta != "" && $object->code_compta_fournisseur != "") {
 							$sql .= "  OR  ";
 						}
-						if (! empty($object->code_compta_fournisseur)) {
+						if ($object->code_compta_fournisseur != "") {
 							$sql .= "   bk.subledger_account = '" . $object->code_compta_fournisseur . "' ";
 						}
 						$sql .= " )  ";
@@ -216,7 +216,7 @@ class Lettering extends BookKeeping
 			}
 		}
 		if ($error) {
-			foreach ( $this->errors as $errmsg ) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this) . "::" . __METHOD__ . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
@@ -302,7 +302,7 @@ class Lettering extends BookKeeping
 		}
 		// Commit or rollback
 		if ($error) {
-			foreach ( $this->errors as $errmsg ) {
+			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this) . "::update " . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
@@ -314,4 +314,3 @@ class Lettering extends BookKeeping
 		}
 	}
 }
-

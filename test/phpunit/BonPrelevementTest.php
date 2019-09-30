@@ -47,7 +47,7 @@ $langs->load("main");
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class BonPrelevementTest extends PHPUnit_Framework_TestCase
+class BonPrelevementTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -60,7 +60,7 @@ class BonPrelevementTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return BankAccountTest
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -153,7 +153,7 @@ class BonPrelevementTest extends PHPUnit_Framework_TestCase
 		// Create withdraw record and generate SEPA file
 		$localobject=new BonPrelevement($this->savdb);
     	//$localobject->date_solde=dol_now();
-    	$result=$localobject->Create(0,0,'simu');
+    	$result=$localobject->Create(0, 0, 'simu');
 
     	print __METHOD__." result=".$result."\n";
     	$this->assertEquals($result, 0);

@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("install","other","admin"));
 
-$action=GETPOST('action','alpha');
+$action=GETPOST('action', 'alpha');
 
 if (! $user->admin)
 	accessforbidden();
@@ -64,7 +64,7 @@ $title=$langs->trans("InfoDolibarr");
 
 llxHeader('', $title);
 
-print load_fiche_titre($title,'','title_setup');
+print load_fiche_titre($title, '', 'title_setup');
 
 // Version
 print '<div class="div-table-responsive-no-min">';
@@ -75,12 +75,12 @@ print '<tr class="oddeven"><td>'.$langs->trans("CurrentVersion").' ('.$langs->tr
 if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE))
 {
     // Compare version with last install database version (upgrades never occured)
-    if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_INSTALL) print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_INSTALL));
+    if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_INSTALL) print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, $conf->global->MAIN_VERSION_LAST_INSTALL));
 }
 else
 {
     // Compare version with last upgrade database version
-    if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_UPGRADE) print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE));
+    if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_UPGRADE) print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, $conf->global->MAIN_VERSION_LAST_UPGRADE));
 }
 
 if (function_exists('curl_init'))
@@ -97,8 +97,8 @@ if (function_exists('curl_init'))
                 if (preg_match('/([0-9]+\.([0-9\.]+))/', $title, $reg))
                 {
                     $newversion=$reg[1];
-                    $newversionarray=explode('.',$newversion);
-                    $versionarray=explode('.',$version);
+                    $newversionarray=explode('.', $newversion);
+                    $versionarray=explode('.', $version);
                     //var_dump($newversionarray);var_dump($versionarray);
                     if (versioncompare($newversionarray, $versionarray) > 0) $version=$newversion;
                 }
@@ -141,11 +141,11 @@ print '<tr class="oddeven"><td>'.$langs->trans("SessionSavePath").'</td><td cols
 print '<tr class="oddeven"><td>'.$langs->trans("SessionName").'</td><td colspan="2">'.session_name().'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("SessionId").'</td><td colspan="2">'.session_id().'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("CurrentSessionTimeOut").' (session.gc_maxlifetime)</td><td>'.ini_get('session.gc_maxlifetime').' '.$langs->trans("seconds");
-print '</td><td align="right">';
+print '</td><td class="right">';
 print '<!-- session.gc_maxlifetime = '.ini_get("session.gc_maxlifetime").' -->'."\n";
 print '<!-- session.gc_probability = '.ini_get("session.gc_probability").' -->'."\n";
 print '<!-- session.gc_divisor = '.ini_get("session.gc_divisor").' -->'."\n";
-print $form->textwithpicto('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
+print $form->textwithpicto('', $langs->trans("SessionExplanation", ini_get("session.gc_probability"), ini_get("session.gc_divisor")));
 print "</td></tr>\n";
 print '<tr class="oddeven"><td>'.$langs->trans("CurrentTheme").'</td><td colspan="2">'.$conf->theme.'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("CurrentMenuHandler").'</td><td colspan="2">';
@@ -179,14 +179,14 @@ if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_S
 	print '<tr class="liste_titre">';
 	print '<td class="titlefield">'.$langs->trans("LanguageFilesCachedIntoShmopSharedMemory").'</td>';
 	print '<td>'.$langs->trans("NbOfEntries").'</td>';
-	print '<td align="right">'.$langs->trans("Address").'</td>';
+	print '<td class="right">'.$langs->trans("Address").'</td>';
 	print '</tr>'."\n";
 
 	foreach($shmoparray as $key => $val)
 	{
 		print '<tr class="oddeven"><td>'.$key.'</td>';
 		print '<td>'.count($val).'</td>';
-		print '<td align="right">'.dol_getshmopaddress($key).'</td>';
+		print '<td class="right">'.dol_getshmopaddress($key).'</td>';
 		print '</tr>'."\n";
 	}
 
@@ -200,7 +200,7 @@ if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_S
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("LocalisationDolibarrParameters").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("LanguageBrowserParameter","HTTP_ACCEPT_LANGUAGE").'</td><td>'.$_SERVER["HTTP_ACCEPT_LANGUAGE"].'</td></tr>'."\n";
+print '<tr class="oddeven"><td>'.$langs->trans("LanguageBrowserParameter", "HTTP_ACCEPT_LANGUAGE").'</td><td>'.$_SERVER["HTTP_ACCEPT_LANGUAGE"].'</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("CurrentUserLanguage").'</td><td>'.$langs->getDefaultLang().'</td></tr>'."\n";
 // Thousands
 $thousand=$langs->transnoentitiesnoconv("SeparatorThousand");
@@ -211,11 +211,11 @@ print '<tr class="oddeven"><td>'.$langs->trans("CurrentValueSeparatorThousand").
 $dec=$langs->transnoentitiesnoconv("SeparatorDecimal");
 print '<tr class="oddeven"><td>'.$langs->trans("CurrentValueSeparatorDecimal").'</td><td>'.$dec.'</td></tr>'."\n";
 // Show results of functions to see if everything works
-print '<tr class="oddeven"><td>&nbsp; => price2num(1233.56+1)</td><td>'.price2num(1233.56+1,'2').'</td></tr>'."\n";
-print '<tr class="oddeven"><td>&nbsp; => price2num('."'1".$thousand."234".$dec."56')</td><td>".price2num("1".$thousand."234".$dec."56",'2')."</td></tr>\n";
+print '<tr class="oddeven"><td>&nbsp; => price2num(1233.56+1)</td><td>'.price2num(1233.56+1, '2').'</td></tr>'."\n";
+print '<tr class="oddeven"><td>&nbsp; => price2num('."'1".$thousand."234".$dec."56')</td><td>".price2num("1".$thousand."234".$dec."56", '2')."</td></tr>\n";
 if (($thousand != ',' && $thousand != '.') || ($thousand != ' '))
 {
-	print '<tr class="oddeven"><td>&nbsp; => price2num('."'1 234.56')</td><td>".price2num("1 234.56",'2')."</td>";
+	print '<tr class="oddeven"><td>&nbsp; => price2num('."'1 234.56')</td><td>".price2num("1 234.56", '2')."</td>";
 	print "</tr>\n";
 }
 print '<tr class="oddeven"><td>&nbsp; => price(1234.56)</td><td>'.price(1234.56).'</td></tr>'."\n";
@@ -233,12 +233,12 @@ $val=($a>=0?'+':'').$a;
 $val.=' ('.($a=='unknown'?'unknown':($a>=0?'+':'').($a*3600)).')';
 $val.=' &nbsp; &nbsp; &nbsp; '.getServerTimeZoneString();
 $val.=' &nbsp; &nbsp; &nbsp; '.$langs->trans("DaylingSavingTime").': '.($daylight==='unknown'?'unknown':($a==$c?yn($daylight):yn(0).($daylight?'  &nbsp; &nbsp; ('.$langs->trans('YesInSummer').')':'')));
-print $form->textwithtooltip($val,$txt,2,1,img_info(''));
+print $form->textwithtooltip($val, $txt, 2, 1, img_info(''));
 print '</td></tr>'."\n";	// value defined in http://fr3.php.net/manual/en/timezones.europe.php
-print '<tr class="oddeven"><td>&nbsp; => '.$langs->trans("CurrentHour").'</td><td>'.dol_print_date(dol_now(),'dayhour','tzserver').'</td></tr>'."\n";
-print '<tr class="oddeven"><td>&nbsp; => dol_print_date(0,"dayhourtext")</td><td>'.dol_print_date(0,"dayhourtext").'</td>';
-print '<tr class="oddeven"><td>&nbsp; => dol_get_first_day(1970,1,false)</td><td>'.dol_get_first_day(1970,1,false).' &nbsp; &nbsp; (=> dol_print_date() or idate() of this value = '.dol_print_date(dol_get_first_day(1970,1,false),'dayhour').')</td>';
-print '<tr class="oddeven"><td>&nbsp; => dol_get_first_day(1970,1,true)</td><td>'.dol_get_first_day(1970,1,true).' &nbsp; &nbsp; (=> dol_print_date() or idate() of this value = '.dol_print_date(dol_get_first_day(1970,1,true),'dayhour').')</td>';
+print '<tr class="oddeven"><td>&nbsp; => '.$langs->trans("CurrentHour").'</td><td>'.dol_print_date(dol_now(), 'dayhour', 'tzserver').'</td></tr>'."\n";
+print '<tr class="oddeven"><td>&nbsp; => dol_print_date(0,"dayhourtext")</td><td>'.dol_print_date(0, "dayhourtext").'</td>';
+print '<tr class="oddeven"><td>&nbsp; => dol_get_first_day(1970,1,false)</td><td>'.dol_get_first_day(1970, 1, false).' &nbsp; &nbsp; (=> dol_print_date() or idate() of this value = '.dol_print_date(dol_get_first_day(1970, 1, false), 'dayhour').')</td>';
+print '<tr class="oddeven"><td>&nbsp; => dol_get_first_day(1970,1,true)</td><td>'.dol_get_first_day(1970, 1, true).' &nbsp; &nbsp; (=> dol_print_date() or idate() of this value = '.dol_print_date(dol_get_first_day(1970, 1, true), 'dayhour').')</td>';
 // Database timezone
 if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
 {
@@ -248,7 +248,7 @@ if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
 	if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
-		print $form->textwithtooltip($obj->Value,$langs->trans('TZHasNoEffect'),2,1,img_info(''));
+		print $form->textwithtooltip($obj->Value, $langs->trans('TZHasNoEffect'), 2, 1, img_info(''));
 	}
 	print '</td></tr>'."\n";
 }
@@ -259,10 +259,10 @@ print ' &nbsp; &nbsp; &nbsp; '.$_SESSION['dol_tz_string'];
 print ' &nbsp; &nbsp; &nbsp; '.$langs->trans("DaylingSavingTime").': ';
 if ($_SESSION['dol_dst']>0) print yn(1);
 else print yn(0);
-if (! empty($_SESSION['dol_dst_first'])) print ' &nbsp; &nbsp; ('.dol_print_date(dol_stringtotime($_SESSION['dol_dst_first']),'dayhour','gmt').' - '.dol_print_date(dol_stringtotime($_SESSION['dol_dst_second']),'dayhour','gmt').')';
+if (! empty($_SESSION['dol_dst_first'])) print ' &nbsp; &nbsp; ('.dol_print_date(dol_stringtotime($_SESSION['dol_dst_first']), 'dayhour', 'gmt').' - '.dol_print_date(dol_stringtotime($_SESSION['dol_dst_second']), 'dayhour', 'gmt').')';
 print '</td></tr>'."\n";
 print '</td></tr>'."\n";
-print '<tr class="oddeven"><td>&nbsp; => '.$langs->trans("ClientHour").'</td><td>'.dol_print_date(dol_now(),'dayhour','tzuser').'</td></tr>'."\n";
+print '<tr class="oddeven"><td>&nbsp; => '.$langs->trans("ClientHour").'</td><td>'.dol_print_date(dol_now(), 'dayhour', 'tzuser').'</td></tr>'."\n";
 
 $filesystemencoding=ini_get("unicode.filesystem_encoding");	// Disponible avec PHP 6.0
 print '<tr class="oddeven"><td>'.$langs->trans("File encoding").' (php.ini unicode.filesystem_encoding)</td><td>'.$filesystemencoding.'</td></tr>'."\n";
@@ -286,7 +286,8 @@ $configfileparameters=array(
 		'dolibarr_main_document_root'=> $langs->trans("DocumentRootServer"),
 		'?dolibarr_main_document_root_alt' => $langs->trans("DocumentRootServer").' (alt)',
 		'dolibarr_main_data_root' => $langs->trans("DataRootServer"),
-		'separator1' => '',
+        'dolibarr_main_instance_unique_id' => $langs->trans("InstanceUniqueID"),
+        'separator1' => '',
 		'dolibarr_main_db_host' => $langs->trans("DatabaseServer"),
 		'dolibarr_main_db_port' => $langs->trans("DatabasePort"),
 		'dolibarr_main_db_name' => $langs->trans("DatabaseName"),
@@ -351,9 +352,9 @@ foreach($configfileparameters as $key => $value)
 
 	if (empty($ignore))
 	{
-		$newkey = preg_replace('/^\?/','',$key);
+		$newkey = preg_replace('/^\?/', '', $key);
 
-		if (preg_match('/^\?/',$key) && empty(${$newkey}))
+		if (preg_match('/^\?/', $key) && empty(${$newkey}))
 		{
 		    if ($newkey != 'multicompany_transverse_mode' || empty($conf->multicompany->enabled))
                 continue;    // We discard parameters starting with ?
@@ -373,11 +374,11 @@ foreach($configfileparameters as $key => $value)
 			print '<td>'.$newkey.'</td>';
 			// Value
 			print "<td>";
-			if ($newkey == 'dolibarr_main_db_pass') print preg_replace('/./i','*',${$newkey});
-			else if ($newkey == 'dolibarr_main_url_root' && preg_match('/__auto__/',${$newkey})) print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT');
-			else if ($newkey == 'dolibarr_main_document_root_alt')
+			if ($newkey == 'dolibarr_main_db_pass') print preg_replace('/./i', '*', ${$newkey});
+			elseif ($newkey == 'dolibarr_main_url_root' && preg_match('/__auto__/', ${$newkey})) print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT');
+			elseif ($newkey == 'dolibarr_main_document_root_alt')
 			{
-				$tmparray=explode(',',${$newkey});
+				$tmparray=explode(',', ${$newkey});
 				$i=0;
 				foreach($tmparray as $value2)
 				{
@@ -386,12 +387,25 @@ foreach($configfileparameters as $key => $value)
 					if (! is_readable($value2))
 					{
 						$langs->load("errors");
-						print ' '.img_warning($langs->trans("ErrorCantReadDir",$value2));
+						print ' '.img_warning($langs->trans("ErrorCantReadDir", $value2));
 					}
 					++$i;
 				}
 			}
-			else print ${$newkey};
+			elseif ($newkey == 'dolibarr_main_instance_unique_id')
+			{
+			    //print $conf->file->instance_unique_id;
+			    global $dolibarr_main_cookie_cryptkey;
+			    $valuetoshow = ${$newkey} ? ${$newkey} : $dolibarr_main_cookie_cryptkey;
+			    print $valuetoshow;
+			    if (empty($valuetoshow)) {
+			        print img_warning("EditConfigFileToAddEntry", 'dolibarr_main_instance_unique_id');
+			    }
+			}
+			else
+			{
+			    print ${$newkey};
+			}
 			if ($newkey == 'dolibarr_main_url_root' && ${$newkey} != DOL_MAIN_URL_ROOT) print ' (currently overwritten by autodetected value: '.DOL_MAIN_URL_ROOT.')';
 			print "</td>";
 		}
@@ -446,7 +460,7 @@ if ($resql)
 		print '<tr class="oddeven">';
 		print '<td class="tdoverflowmax300">'.$obj->name.'</td>'."\n";
 		print '<td class="tdoverflowmax300">'.dol_escape_htmltag($obj->value).'</td>'."\n";
-		if (empty($conf->multicompany->enabled) || !$user->entity) print '<td align="center" width="80px">'.$obj->entity.'</td>'."\n";	// If superadmin or multicompany disabled
+		if (empty($conf->multicompany->enabled) || !$user->entity) print '<td class="center" width="80px">'.$obj->entity.'</td>'."\n";	// If superadmin or multicompany disabled
 		print "</tr>\n";
 
 		$i++;

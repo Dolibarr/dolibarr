@@ -24,12 +24,12 @@
  *       \brief      File to return Ajax response on third parties request
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');
 
 $res=0;
 require '../../main.inc.php';
@@ -48,7 +48,7 @@ top_httphead();
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-dol_syslog(join(',',$_GET));
+dol_syslog(join(',', $_GET));
 
 
 // Generation liste des projets
@@ -72,7 +72,7 @@ if (GETPOST('fk_projet') != '')
 			 $row_array['value'] = $label;
 	       $row_array['key'] = $row['rowid'];
 
-	        array_push($return_arr,$row_array);
+	        array_push($return_arr, $row_array);
 	    }
 
 	    echo json_encode($return_arr);

@@ -47,7 +47,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class MouvementStockTest extends PHPUnit_Framework_TestCase
+class MouvementStockTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -60,7 +60,7 @@ class MouvementStockTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return ContratTest
 	 */
-	function __construct()
+	public function __construct()
 	{
 		parent::__construct();
 
@@ -77,7 +77,7 @@ class MouvementStockTest extends PHPUnit_Framework_TestCase
 	}
 
 	// Static methods
-  	public static function setUpBeforeClass()
+    public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -162,27 +162,27 @@ class MouvementStockTest extends PHPUnit_Framework_TestCase
 
     	// Do a list of movement into warehouse 1
 
-    	// Create an input movement (type = 3) of price 9.9 -> shoul dupdate PMP to 9.9
-    	$result=$localobject->_create($user, $product1id, $warehouse1id, 10, 3, 9.9, 'Movement for unit test 1', 'Inventory Code Test');
+    	// Create an input movement (type = 3) of price 9.9 -> should update PMP to 9.9
+		$result=$localobject->reception($user, $product1id, $warehouse1id, 10, 9.9, 'Movement for unit test 1', '', '', '', '', 0, 'Inventory Code Test');
     	print __METHOD__." result=".$result."\n";
     	$this->assertLessThan($result, 0);
 
-    	// Create an input movement (type = 3) of price 9.7 -> shoul dupdate PMP to 9.9/9.7 = 9.8
-    	$result=$localobject->_create($user, $product1id, $warehouse1id, 10, 3, 9.7, 'Movement for unit test 2', 'Inventory Code Test');
+    	// Create an input movement (type = 3) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
+    	$result=$localobject->reception($user, $product1id, $warehouse1id, 10, 9.7, 'Movement for unit test 2', '', '', '', '', 0, 'Inventory Code Test');
     	print __METHOD__." result=".$result."\n";
     	$this->assertLessThan($result, 0);
 
-    	// Create an output movement (type = 2) of price 9.7 -> shoul dupdate PMP to 9.9/9.7 = 9.8
-    	$result=$localobject->_create($user, $product1id, $warehouse1id, -5, 2, 999, 'Movement for unit test 3', 'Inventory Code Test');
+    	// Create an output movement (type = 2) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
+    	$result=$localobject->livraison($user, $product1id, $warehouse1id, 5, 999, 'Movement for unit test 3', '', '', '', '', 0, 'Inventory Code Test');
     	print __METHOD__." result=".$result."\n";
     	$this->assertLessThan($result, 0);
 
-    	// Create an output movement (type = 1) of price 9.7 -> shoul dupdate PMP to 9.9/9.7 = 9.8
+    	// Create an output movement (type = 1) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
     	$result=$localobject->_create($user, $product1id, $warehouse1id, 1, 0, 0, 'Input from transfer', 'Transfert X');
     	print __METHOD__." result=".$result."\n";
     	$this->assertLessThan($result, 0);
 
-    	// Create an output movement (type = 1) of price 9.7 -> shoul dupdate PMP to 9.9/9.7 = 9.8
+    	// Create an output movement (type = 1) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
     	$result=$localobject->_create($user, $product1id, $warehouse1id, -2, 1, 0, 'Output from transfer', 'Transfert Y');
     	print __METHOD__." result=".$result."\n";
     	$this->assertLessThan($result, 0);
@@ -190,27 +190,27 @@ class MouvementStockTest extends PHPUnit_Framework_TestCase
 
     	// Do same but into warehouse 2
 
-    	// Create an input movement (type = 3) of price 9.9 -> shoul dupdate PMP to 9.9
-    	$result=$localobject->_create($user, $product1id, $warehouse2id, 10, 3, 9.9, 'Movement for unit test 1 wh 2', 'Inventory Code Test 2');
+    	// Create an input movement (type = 3) of price 9.9 -> should update PMP to 9.9
+    	$result=$localobject->reception($user, $product1id, $warehouse2id, 10, 9.9, 'Movement for unit test 1 wh 2', '', '', '', '', 0, 'Inventory Code Test 2');
     	print __METHOD__." result=".$result."\n";
     	$this->assertLessThan($result, 0);
 
-    	// Create an input movement (type = 3) of price 9.7 -> shoul dupdate PMP to 9.9/9.7 = 9.8
-    	$result=$localobject->_create($user, $product1id, $warehouse2id, 10, 3, 9.7, 'Movement for unit test 2 wh 2', 'Inventory Code Test 2');
+    	// Create an input movement (type = 3) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
+    	$result=$localobject->reception($user, $product1id, $warehouse2id, 10, 9.7, 'Movement for unit test 2 wh 2', '', '', '', '', 0, 'Inventory Code Test 2');
     	print __METHOD__." result=".$result."\n";
     	$this->assertLessThan($result, 0);
 
-    	// Create an output movement (type = 2) of price 9.7 -> shoul dupdate PMP to 9.9/9.7 = 9.8
-    	$result=$localobject->_create($user, $product1id, $warehouse2id, -5, 2, 999, 'Movement for unit test 3 wh 2', 'Inventory Code Test 2');
+    	// Create an output movement (type = 2) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
+    	$result=$localobject->livraison($user, $product1id, $warehouse2id, 5, 999, 'Movement for unit test 3 wh 2', '', '', '', '', 0, 'Inventory Code Test 2');
     	print __METHOD__." result=".$result."\n";
     	$this->assertLessThan($result, 0);
 
-    	// Create an output movement (type = 1) of price 9.7 -> shoul dupdate PMP to 9.9/9.7 = 9.8
+    	// Create an output movement (type = 1) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
     	$result=$localobject->_create($user, $product1id, $warehouse2id, 1, 0, 0, 'Input from transfer wh 2', 'Transfert X 2');
     	print __METHOD__." result=".$result."\n";
     	$this->assertLessThan($result, 0);
 
-    	// Create an output movement (type = 1) of price 9.7 -> shoul dupdate PMP to 9.9/9.7 = 9.8
+    	// Create an output movement (type = 1) of price 9.7 -> should update PMP to 9.9/9.7 = 9.8
     	$result=$localobject->_create($user, $product1id, $warehouse2id, -2, 1, 0, 'Output from transfer wh 2', 'Transfert Y 2');
     	print __METHOD__." result=".$result."\n";
     	$this->assertLessThan($result, 0);

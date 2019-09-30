@@ -54,11 +54,6 @@ class Productlot extends CommonObject
     public $ismultientitymanaged = 1;
 
 	/**
-	 * @var ProductlotLine[] Lines
-	 */
-	public $lines = array();
-
-	/**
 	 * @var int Entity
 	 */
 	public $entity;
@@ -188,7 +183,7 @@ class Productlot extends CommonObject
 				// want this action to call a trigger.
 
 				// Call triggers
-				$result=$this->call_trigger('PRODUCTLOT_CREATE',$user);
+				$result=$this->call_trigger('PRODUCTLOT_CREATE', $user);
 				if ($result < 0) $error++;
 				// End call triggers
 			}
@@ -359,7 +354,7 @@ class Productlot extends CommonObject
 
 		if (!$error && !$notrigger) {
 			// Call triggers
-			$result=$this->call_trigger('PRODUCTLOT_MODIFY',$user);
+			$result=$this->call_trigger('PRODUCTLOT_MODIFY', $user);
 			if ($result < 0) { $error++; }
 			// End call triggers
 		}
@@ -431,15 +426,14 @@ class Productlot extends CommonObject
 	/**
 	 * Load an object from its id and create a new one in database
 	 *
-	 * @param int $fromid Id of object to clone
-	 *
-	 * @return int New id of clone
+	 * @param	User	$user		User making the clone
+	 * @param   int     $fromid     Id of object to clone
+	 * @return  int                 New id of clone
 	 */
-	public function createFromClone($fromid)
+	public function createFromClone(User $user, $fromid)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		global $user;
 		$error = 0;
 		$object = new Productlot($this->db);
 
@@ -485,12 +479,12 @@ class Productlot extends CommonObject
 	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *	@return     string      		Label of status
 	 */
-	function getLibStatut($mode=0)
+	public function getLibStatut($mode = 0)
 	{
-	    return $this->LibStatut(0,$mode);
+	    return $this->LibStatut(0, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return label of a given status
 	 *
@@ -498,7 +492,7 @@ class Productlot extends CommonObject
 	 *	@param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *	@return string      		Label of status
 	 */
-	function LibStatut($statut,$mode=0)
+	public function LibStatut($statut, $mode = 0)
 	{
         // phpcs:enable
 	    global $langs;
@@ -521,7 +515,7 @@ class Productlot extends CommonObject
      *  @param  int     $save_lastsearch_value	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string							String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $notooltip=0, $maxlen=24, $morecss='', $save_lastsearch_value=-1)
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $langs, $conf, $db;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -547,7 +541,7 @@ class Productlot extends CommonObject
         {
         	// Add param to save lastsearch_values or not
         	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
         	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
         }
 

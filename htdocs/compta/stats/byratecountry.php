@@ -41,24 +41,24 @@ $langs->loadLangs(array("other","compta","banks","bills","companies","product","
 $modecompta = (GETPOST('modecompta', 'alpha') ? GETPOST('modecompta', 'alpha') : $conf->global->ACCOUNTING_MODE);
 
 // Date range
-$year=GETPOST("year",'int');
-$month=GETPOST("month",'int');
+$year=GETPOST("year", 'int');
+$month=GETPOST("month", 'int');
 if (empty($year))
 {
-	$year_current = strftime("%Y",dol_now());
-	$month_current = strftime("%m",dol_now());
+	$year_current = strftime("%Y", dol_now());
+	$month_current = strftime("%m", dol_now());
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
-	$month_current = strftime("%m",dol_now());
+	$month_current = strftime("%m", dol_now());
 	$year_start = $year;
 }
-$date_start=dol_mktime(0,0,0,GETPOST("date_startmonth"),GETPOST("date_startday"),GETPOST("date_startyear"));
-$date_end=dol_mktime(23,59,59,GETPOST("date_endmonth"),GETPOST("date_endday"),GETPOST("date_endyear"));
+$date_start=dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
+$date_end=dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
 // Quarter
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
-	$q=GETPOST("q","int");
+	$q=GETPOST("q", "int");
 	if (empty($q))
 	{
 		// We define date_start and date_end
@@ -76,14 +76,14 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 			if ($month_end < 1) $month_end=12;
 			else $year_end++;
 		}
-		$date_start=dol_get_first_day($year_start,$month_start,false); $date_end=dol_get_last_day($year_end,$month_end,false);
+		$date_start=dol_get_first_day($year_start, $month_start, false); $date_end=dol_get_last_day($year_end, $month_end, false);
 	}
 	else
 	{
-		if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
-		if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
-		if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
-		if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
+		if ($q==1) { $date_start=dol_get_first_day($year_start, 1, false); $date_end=dol_get_last_day($year_start, 3, false); }
+		if ($q==2) { $date_start=dol_get_first_day($year_start, 4, false); $date_end=dol_get_last_day($year_start, 6, false); }
+		if ($q==3) { $date_start=dol_get_first_day($year_start, 7, false); $date_end=dol_get_last_day($year_start, 9, false); }
+		if ($q==4) { $date_start=dol_get_first_day($year_start, 10, false); $date_end=dol_get_last_day($year_start, 12, false); }
 	}
 }
 
@@ -96,17 +96,17 @@ $year_end = $tmpe['year'];
 $tmp_date_end = dol_time_plus_duree($date_start, 1, 'y') - 1;
 if ($tmp_date_end < $date_end || $date_end < $date_start) $date_end = $tmp_date_end;
 
-$min = price2num(GETPOST("min","alpha"));
+$min = price2num(GETPOST("min", "alpha"));
 if (empty($min)) $min = 0;
 
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
 $modetax = $conf->global->TAX_MODE;
-if (GETPOSTISSET("modetax")) $modetax=GETPOST("modetax",'int');
+if (GETPOSTISSET("modetax")) $modetax=GETPOST("modetax", 'int');
 if (empty($modetax)) $modetax=0;
 
 // Security check
-$socid = GETPOST('socid','int');
+$socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
@@ -133,7 +133,7 @@ foreach ($listofparams as $param)
 	if (GETPOST($param)!='') $morequerystring.=($morequerystring?'&':'').$param.'='.GETPOST($param);
 }
 
-llxHeader('',$langs->trans("TurnoverReport"),'','',0,0,'','',$morequerystring);
+llxHeader('', $langs->trans("TurnoverReport"), '', '', 0, 0, '', '', $morequerystring);
 
 
 //print load_fiche_titre($langs->trans("VAT"),"");
@@ -151,7 +151,7 @@ $calcmode='';
 if ($modetax == 0) $calcmode=$langs->trans('OptionVATDefault');
 if ($modetax == 1) $calcmode=$langs->trans('OptionVATDebitOption');
 if ($modetax == 2) $calcmode=$langs->trans('OptionPaymentForProductAndServices');
-$calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
+$calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')';
 // Set period
 $period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 $prevyear=$year_start; $prevquarter=$q;
@@ -210,7 +210,7 @@ if ($modecompta=="CREANCES-DETTES") {
 
 	$builddate=dol_now();
 }
-else if ($modecompta=="RECETTES-DEPENSES")
+elseif ($modecompta=="RECETTES-DEPENSES")
 {
 	$name=$langs->trans("TurnoverCollected").', '.$langs->trans("ByVatRate");
 	$calcmode=$langs->trans("CalcModeEngagement");
@@ -221,12 +221,12 @@ else if ($modecompta=="RECETTES-DEPENSES")
 
 	$builddate=dol_now();
 }
-else if ($modecompta=="BOOKKEEPING")
+elseif ($modecompta=="BOOKKEEPING")
 {
 
 
 }
-else if ($modecompta=="BOOKKEEPINGCOLLECTED")
+elseif ($modecompta=="BOOKKEEPINGCOLLECTED")
 {
 
 
@@ -237,7 +237,7 @@ else $periodlink = '';
 
 $description.='  <input type="hidden" name="modecompta" value="'.$modecompta.'">';
 
-report_header($name,'',$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
+report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 
 if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
@@ -250,17 +250,17 @@ if ($modecompta == 'CREANCES-DETTES')
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="6%" class="right">' . $langs->trans("TurnoverbyVatrate") . '</td>';
-print '<td align="left">' . $langs->trans("ProductOrService") . '</td>';
-print '<td align="left">' . $langs->trans("Country") . '</td>';
+print '<td class="left">' . $langs->trans("ProductOrService") . '</td>';
+print '<td class="left">' . $langs->trans("Country") . '</td>';
 $i=0;
 while($i < 12)
 {
 	$j = $i + (empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START);
 	if ($j > 12) $j -= 12;
-	print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
+	print '<td width="60" class="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
 	$i++;
 }
-print '<td width="60" align="right"><b>' . $langs->trans("TotalHT") . '</b></td></tr>';
+print '<td width="60" class="right"><b>' . $langs->trans("TotalHT") . '</b></td></tr>';
 
 $sql = "SELECT fd.tva_tx AS vatrate,";
 $sql .= " fd.product_type AS product_type,";
@@ -281,7 +281,7 @@ if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 } else {
 	$sql.= " AND f.type IN (0,1,2,3,5)";
 }
-$sql .= " AND f.entity IN (" . getEntity("facture", 0) . ")";
+$sql .= " AND f.entity IN (" . getEntity('invoice', 0) . ")";
 $sql .= " GROUP BY fd.tva_tx,fd.product_type, cc.label ";
 
 dol_syslog("htdocs/compta/tva/index.php sql=" . $sql, LOG_DEBUG);
@@ -292,19 +292,19 @@ if ($resql) {
 	while ( $obj = $db->fetch_object($resql)) {
 		print '<tr class="oddeven"><td class="right">' . vatrate($obj->vatrate) . '</td>';
 		if ($obj->product_type == 0) {
-			print '<td align="left">'. $langs->trans("Product") . '</td>';
+			print '<td class="left">'. $langs->trans("Product") . '</td>';
 		} else {
-			print '<td align="left">'. $langs->trans("Service") . '</td>';
+			print '<td class="left">'. $langs->trans("Service") . '</td>';
 		}
 		print '<td>' .$obj->country . '</td>';
 		for($i = 0; $i < 12; $i++) {
 			$j = $i + (empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START);
 			if ($j > 12) $j -= 12;
 			$monthj = 'month'.str_pad($j, 2, '0', STR_PAD_LEFT);
-			print '<td align="right" width="6%">' . price($obj->$monthj) . '</td>';
+			print '<td class="right" width="6%">' . price($obj->$monthj) . '</td>';
 			$totalpermonth[$j]=(empty($totalpermonth[$j])?0:$totalpermonth[$j])+$obj->$monthj;
 		}
-		print '<td align="right" width="6%"><b>' . price($obj->total) . '</b></td>';
+		print '<td class="right" width="6%"><b>' . price($obj->total) . '</b></td>';
 		$totalpermonth['total']=(empty($totalpermonth['total'])?0:$totalpermonth['total'])+$obj->total;
 		print '</tr>';
 	}
@@ -312,15 +312,15 @@ if ($resql) {
 
 	// Total
 	print '<tr class="liste_total"><td class="right"></td>';
-	print '<td align="left"></td>';
+	print '<td class="left"></td>';
 	print '<td></td>';
 	for($i = 0; $i < 12; $i++) {
 		$j = $i + (empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START);
 		if ($j > 12) $j -= 12;
 		$monthj = 'month'.str_pad($j, 2, '0', STR_PAD_LEFT);
-		print '<td align="right" width="6%">' . price($totalpermonth[$j]) . '</td>';
+		print '<td class="right" width="6%">' . price($totalpermonth[$j]) . '</td>';
 	}
-	print '<td align="right" width="6%"><b>' . price($totalpermonth['total']) . '</b></td>';
+	print '<td class="right" width="6%"><b>' . price($totalpermonth['total']) . '</b></td>';
 	print '</tr>';
 } else {
 	print $db->lasterror(); // Show last sql error
@@ -328,17 +328,17 @@ if ($resql) {
 
 
 print '<tr class="liste_titre"><td width="6%" class="right">' . $langs->trans("PurchasebyVatrate") . '</td>';
-print '<td align="left">' . $langs->trans("ProductOrService") . '</td>';
-print '<td align="left">' . $langs->trans("Country") . '</td>';
+print '<td class="left">' . $langs->trans("ProductOrService") . '</td>';
+print '<td class="left">' . $langs->trans("Country") . '</td>';
 $i=0;
 while($i < 12)
 {
 	$j = $i + (empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START);
 	if ($j > 12) $j -= 12;
-	print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
+	print '<td width="60" class="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
 	$i++;
 }
-print '<td width="60" align="right"><b>' . $langs->trans("TotalHT") . '</b></td></tr>';
+print '<td width="60" class="right"><b>' . $langs->trans("TotalHT") . '</b></td></tr>';
 
 $sql2 = "SELECT ffd.tva_tx AS vatrate,";
 $sql2 .= " ffd.product_type AS product_type,";
@@ -371,19 +371,19 @@ if ($resql2) {
 	while ( $obj = $db->fetch_object($resql2)) {
 		print '<tr class="oddeven"><td class="right">' . vatrate($obj->vatrate) . '</td>';
 		if ($obj->product_type == 0) {
-			print '<td align="left">'. $langs->trans("Product") . '</td>';
+			print '<td class="left">'. $langs->trans("Product") . '</td>';
 		} else {
-			print '<td align="left">'. $langs->trans("Service") . '</td>';
+			print '<td class="left">'. $langs->trans("Service") . '</td>';
 		}
 		print '<td>' . $obj->country . '</td>';
 		for($i = 0; $i < 12; $i++) {
 			$j = $i + (empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START);
 			if ($j > 12) $j -= 12;
 			$monthj = 'month'.str_pad($j, 2, '0', STR_PAD_LEFT);
-			print '<td align="right" width="6%">' . price($obj->$monthj) . '</td>';
+			print '<td class="right" width="6%">' . price($obj->$monthj) . '</td>';
 			$totalpermonth[$j]=(empty($totalpermonth[$j])?0:$totalpermonth[$j])+$obj->$monthj;
 		}
-		print '<td align="right" width="6%"><b>' . price($obj->total) . '</b></td>';
+		print '<td class="right" width="6%"><b>' . price($obj->total) . '</b></td>';
 		$totalpermonth['total']=(empty($totalpermonth['total'])?0:$totalpermonth['total'])+$obj->total;
 		print '</tr>';
 	}
@@ -391,15 +391,15 @@ if ($resql2) {
 
 	// Total
 	print '<tr class="liste_total"><td class="right"></td>';
-	print '<td align="left"></td>';
+	print '<td class="left"></td>';
 	print '<td></td>';
 	for($i = 0; $i < 12; $i++) {
 		$j = $i + (empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START);
 		if ($j > 12) $j -= 12;
 		$monthj = 'month'.str_pad($j, 2, '0', STR_PAD_LEFT);
-		print '<td align="right" width="6%">' . price($totalpermonth[$j]) . '</td>';
+		print '<td class="right" width="6%">' . price($totalpermonth[$j]) . '</td>';
 	}
-	print '<td align="right" width="6%"><b>' . price($totalpermonth['total']) . '</b></td>';
+	print '<td class="right" width="6%"><b>' . price($totalpermonth['total']) . '</b></td>';
 	print '</tr>';
 } else {
 	print $db->lasterror(); // Show last sql error

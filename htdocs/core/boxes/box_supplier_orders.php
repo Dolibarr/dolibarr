@@ -31,19 +31,19 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 class box_supplier_orders extends ModeleBoxes
 {
 
-    var $boxcode = "latestsupplierorders";
-    var $boximg = "object_order";
-    var $boxlabel="BoxLatestSupplierOrders";
-    var $depends = array("fournisseur");
+    public $boxcode = "latestsupplierorders";
+    public $boximg = "object_order";
+    public $boxlabel="BoxLatestSupplierOrders";
+    public $depends = array("fournisseur");
 
     /**
      * @var DoliDB Database handler.
      */
     public $db;
-    
-    var $param;
-    var $info_box_head = array();
-    var $info_box_contents = array();
+
+    public $param;
+    public $info_box_head = array();
+    public $info_box_contents = array();
 
 
     /**
@@ -52,13 +52,13 @@ class box_supplier_orders extends ModeleBoxes
      *  @param  DoliDB  $db         Database handler
      *  @param  string  $param      More parameters
      */
-    function __construct($db,$param)
+    public function __construct($db, $param)
     {
         global $user;
 
-        $this->db=$db;
+        $this->db = $db;
 
-        $this->hidden=! ($user->rights->fournisseur->commande->lire);
+        $this->hidden = ! ($user->rights->fournisseur->commande->lire);
     }
 
     /**
@@ -67,17 +67,17 @@ class box_supplier_orders extends ModeleBoxes
      *  @param	int		$max        Maximum number of records to load
      *  @return	void
      */
-    function loadBox($max = 5)
+    public function loadBox($max = 5)
     {
-        global $conf, $user, $langs, $db;
+        global $conf, $user, $langs;
         $langs->load("boxes");
 
         $this->max = $max;
 
         include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-        $supplierorderstatic=new CommandeFournisseur($db);
+        $supplierorderstatic=new CommandeFournisseur($this->db);
         include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-        $thirdpartytmp = new Fournisseur($db);
+        $thirdpartytmp = new Fournisseur($this->db);
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLatest".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."SupplierOrders", $max));
 
@@ -100,18 +100,18 @@ class box_supplier_orders extends ModeleBoxes
             if ($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
             if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY c.date_commande DESC, c.ref DESC ";
             else $sql.= " ORDER BY c.tms DESC, c.ref DESC ";
-            $sql.= $db->plimit($max, 0);
+            $sql.= $this->db->plimit($max, 0);
 
-            $result = $db->query($sql);
+            $result = $this->db->query($sql);
             if ($result)
             {
-                $num = $db->num_rows($result);
+                $num = $this->db->num_rows($result);
 
                 $line = 0;
                 while ($line < $num) {
-                    $objp = $db->fetch_object($result);
-                    $date=$db->jdate($objp->date_commande);
-					$datem=$db->jdate($objp->tms);
+                    $objp = $this->db->fetch_object($result);
+                    $date=$this->db->jdate($objp->date_commande);
+					$datem=$this->db->jdate($objp->tms);
 
 					$supplierorderstatic->id = $objp->rowid;
 					$supplierorderstatic->ref = $objp->ref;
@@ -135,18 +135,18 @@ class box_supplier_orders extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right"',
+                        'td' => 'class="right nowrap"',
                         'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
                     );
 
 					$this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
-                        'text' => dol_print_date($date,'day'),
+                        'text' => dol_print_date($date, 'day'),
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" width="18"',
-                        'text' => $supplierorderstatic->LibStatut($objp->fk_statut,3),
+                        'td' => 'class="right" width="18"',
+                        'text' => $supplierorderstatic->LibStatut($objp->fk_statut, 3),
                     );
 
                     $line++;
@@ -154,39 +154,38 @@ class box_supplier_orders extends ModeleBoxes
 
                 if ($num == 0)
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="center"',
+                        'td' => 'class="center"',
                         'text' => $langs->trans("NoSupplierOrder"),
                     );
 
-                $db->free($result);
+                $this->db->free($result);
             } else {
                 $this->info_box_contents[0][] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
             }
         }
         else
         {
             $this->info_box_contents[0][] = array(
-                'td' => 'align="left" class="nohover opacitymedium"',
+                'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
     }
 
     /**
-     * 	Method to show box
+     *  Method to show box
      *
-     * 	@param	array	$head       Array with properties of box title
-     * 	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *	@return	string
-	 */
-    function showBox($head = null, $contents = null, $nooutput=0)
+     *  @param  array   $head       Array with properties of box title
+     *  @param  array   $contents   Array with properties of box lines
+     *  @param  int     $nooutput   No print, only return string
+     *  @return string
+     */
+    public function showBox($head = null, $contents = null, $nooutput = 0)
     {
         return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }
 }
-

@@ -30,7 +30,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 
@@ -44,7 +44,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Safor';
 
@@ -59,10 +59,10 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *
 	 *	@return     string      text description
 	 */
-    function info()
+    public function info()
     {
     	global $langs;
-      	return $langs->trans("SimpleNumRefModelDesc",$this->prefix);
+      	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
     }
 
 
@@ -71,7 +71,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *
 	 *	@return     string      Example
 	 */
-	function getExample()
+    public function getExample()
 	{
 		return $this->prefix."0501-0001";
 	}
@@ -82,7 +82,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *
 	 *	@return     boolean     false if conflit, true if ok
 	 */
-	function canBeActivated()
+    public function canBeActivated()
 	{
 		global $conf,$langs,$db;
 
@@ -98,9 +98,9 @@ class mod_expedition_safor extends ModelNumRefExpedition
 		if ($resql)
 		{
 			$row = $db->fetch_row($resql);
-			if ($row) { $coyymm = substr($row[0],0,6); $max=$row[0]; }
+			if ($row) { $coyymm = substr($row[0], 0, 6); $max=$row[0]; }
 		}
-		if ($coyymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i',$coyymm))
+		if ($coyymm && ! preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm))
 		{
 			$langs->load("errors");
 			$this->error=$langs->trans('ErrorNumRefModel', $max);
@@ -117,7 +117,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *	@param	Object		$shipment	Shipment object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-	function getNextValue($objsoc,$shipment)
+    public function getNextValue($objsoc, $shipment)
 	{
 		global $db,$conf;
 
@@ -141,16 +141,16 @@ class mod_expedition_safor extends ModelNumRefExpedition
 		}
 
 		$date=time();
-		$yymm = strftime("%y%m",$date);
+		$yymm = strftime("%y%m", $date);
 
 		if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
-		else $num = sprintf("%04s",$max+1);
+		else $num = sprintf("%04s", $max+1);
 
 		dol_syslog("mod_expedition_safor::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return next free value
 	 *
@@ -158,9 +158,9 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 *	@param	Object		$objforref	Shipment object
 	 *	@return string      			Next free value
 	 */
-	function expedition_get_num($objsoc,$objforref)
+    public function expedition_get_num($objsoc, $objforref)
 	{
         // phpcs:enable
-		return $this->getNextValue($objsoc,$objforref);
+		return $this->getNextValue($objsoc, $objforref);
 	}
 }

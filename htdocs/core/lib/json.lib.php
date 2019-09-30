@@ -119,7 +119,7 @@ function _val($val)
 	     */
 	    for ($c = 0; $c < $strlen_var; ++$c) {
 
-	        $ord_var_c = ord($val{$c});
+	        $ord_var_c = ord($val[$c]);
 
 	        switch (true) {
 	            case $ord_var_c == 0x08:
@@ -142,18 +142,18 @@ function _val($val)
 	            case $ord_var_c == 0x2F:
 	            case $ord_var_c == 0x5C:
 	                // double quote, slash, slosh
-	                $ascii .= '\\'.$val{$c};
+	                $ascii .= '\\'.$val[$c];
 	                break;
 
 	            case (($ord_var_c >= 0x20) && ($ord_var_c <= 0x7F)):
 	                // characters U-00000000 - U-0000007F (same as ASCII)
-	                $ascii .= $val{$c};
+	                $ascii .= $val[$c];
 	                break;
 
 	            case (($ord_var_c & 0xE0) == 0xC0):
 	                // characters U-00000080 - U-000007FF, mask 110XXXXX
 	                // see http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
-	                $char = pack('C*', $ord_var_c, ord($val{$c + 1}));
+	                $char = pack('C*', $ord_var_c, ord($val[$c + 1]));
 	                $c += 1;
 	                $utf16 = utf82utf16($char);
 	                $ascii .= sprintf('\u%04s', bin2hex($utf16));
@@ -162,7 +162,7 @@ function _val($val)
 	            case (($ord_var_c & 0xF0) == 0xE0):
 	                // characters U-00000800 - U-0000FFFF, mask 1110XXXX
 	                // see http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
-	                $char = pack('C*', $ord_var_c, ord($val{$c + 1}), ord($val{$c + 2}));
+	                $char = pack('C*', $ord_var_c, ord($val[$c + 1]), ord($val[$c + 2]));
 	                $c += 2;
 	                $utf16 = utf82utf16($char);
 	                $ascii .= sprintf('\u%04s', bin2hex($utf16));
@@ -171,7 +171,7 @@ function _val($val)
 	            case (($ord_var_c & 0xF8) == 0xF0):
 	                // characters U-00010000 - U-001FFFFF, mask 11110XXX
 	                // see http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
-	                $char = pack('C*', $ord_var_c, ord($val{$c + 1}), ord($val{$c + 2}), ord($val{$c + 3}));
+	                $char = pack('C*', $ord_var_c, ord($val[$c + 1]), ord($val[$c + 2]), ord($val[$c + 3]));
 	                $c += 3;
 	                $utf16 = utf82utf16($char);
 	                $ascii .= sprintf('\u%04s', bin2hex($utf16));
@@ -180,7 +180,7 @@ function _val($val)
 	            case (($ord_var_c & 0xFC) == 0xF8):
 	                // characters U-00200000 - U-03FFFFFF, mask 111110XX
 	                // see http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
-	                $char = pack('C*', $ord_var_c, ord($val{$c + 1}), ord($val{$c + 2}), ord($val{$c + 3}), ord($val{$c + 4}));
+	                $char = pack('C*', $ord_var_c, ord($val[$c + 1]), ord($val[$c + 2]), ord($val[$c + 3]), ord($val[$c + 4]));
 	                $c += 4;
 	                $utf16 = utf82utf16($char);
 	                $ascii .= sprintf('\u%04s', bin2hex($utf16));
@@ -189,7 +189,7 @@ function _val($val)
 	            case (($ord_var_c & 0xFE) == 0xFC):
 	                // characters U-04000000 - U-7FFFFFFF, mask 1111110X
 	                // see http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
-	                $char = pack('C*', $ord_var_c, ord($val{$c + 1}), ord($val{$c + 2}), ord($val{$c + 3}), ord($val{$c + 4}), ord($val{$c + 5}));
+	                $char = pack('C*', $ord_var_c, ord($val[$c + 1]), ord($val[$c + 2]), ord($val[$c + 3]), ord($val[$c + 4]), ord($val[$c + 5]));
 	                $c += 5;
 	                $utf16 = utf82utf16($char);
 	                $ascii .= sprintf('\u%04s', bin2hex($utf16));
@@ -214,7 +214,7 @@ if (! function_exists('json_decode'))
 	 * @param	bool	$assoc		False return an object, true return an array
 	 * @return 	mixed				Object or Array
 	 */
-	function json_decode($json, $assoc=false)
+	function json_decode($json, $assoc = false)
 	{
 		return dol_json_decode($json, $assoc);
 	}
@@ -229,7 +229,7 @@ if (! function_exists('json_decode'))
  * @return 	mixed				Object or Array or false on error
  * @see json_decode()
  */
-function dol_json_decode($json, $assoc=false)
+function dol_json_decode($json, $assoc = false)
 {
 	dol_syslog("For better performance, enable the native json in your PHP", LOG_WARNING);
 
@@ -242,8 +242,8 @@ function dol_json_decode($json, $assoc=false)
 		if (! $comment)
 		{
 			if (($json[$i] == '{') || ($json[$i] == '[')) $out.= 'array(';
-			else if (($json[$i] == '}') || ($json[$i] == ']')) $out.= ')';
-			else if ($json[$i] == ':') $out.= ' => ';
+			elseif (($json[$i] == '}') || ($json[$i] == ']')) $out.= ')';
+			elseif ($json[$i] == ':') $out.= ' => ';
 			else $out.=$json[$i];
 		}
 		else $out.= $json[$i];
@@ -282,8 +282,8 @@ function dol_json_decode($json, $assoc=false)
 /**
  * Return text according to type
  *
- * @param 	string	$val	Value to decode
- * @return	string			Formated value
+ * @param   string  $val    Value to decode
+ * @return  string          Formated value
  */
 function _unval($val)
 {
@@ -292,7 +292,7 @@ function _unval($val)
 	    // single, escaped unicode character
 	    $utf16 = chr(hexdec($reg[1])) . chr(hexdec($reg[2]));
 	    $utf8  = utf162utf8($utf16);
-	    $val=preg_replace('/\\\u'.$reg[1].$reg[2].'/i',$utf8,$val);
+	    $val=preg_replace('/\\\u'.$reg[1].$reg[2].'/i', $utf8, $val);
 	}
 	return $val;
 }
@@ -310,7 +310,7 @@ function _unval($val)
 function utf162utf8($utf16)
 {
 	// oh please oh please oh please oh please oh please
-	if(function_exists('mb_convert_encoding')) {
+	if (function_exists('mb_convert_encoding')) {
 	    return mb_convert_encoding($utf16, 'UTF-8', 'UTF-16');
 	}
 

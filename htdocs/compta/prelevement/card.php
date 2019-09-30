@@ -40,16 +40,16 @@ accessforbidden();
 if ($user->societe_id > 0) accessforbidden();
 
 // Get supervariables
-$action = GETPOST('action','alpha');
-$id = GETPOST('id','int');
+$action = GETPOST('action', 'alpha');
+$id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$socid = GETPOST('socid','int');
+$socid = GETPOST('socid', 'int');
 
 // Load variable for pagination
-$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
-$page = GETPOST('page','int');
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -58,7 +58,7 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield='pl.fk_soc';
 if (! $sortorder) $sortorder='DESC';
 
-$object = new BonPrelevement($db,"");
+$object = new BonPrelevement($db, "");
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
@@ -85,8 +85,8 @@ if (empty($reshook))
         }
     }
 
-    // Seems to no be used and replaced with $action == 'infocredit
-    if ( $action == 'confirm_credite' && GETPOST('confirm','alpha') == 'yes')
+    // Seems to no be used and replaced with $action == 'infocredit'
+    if ( $action == 'confirm_credite' && GETPOST('confirm', 'alpha') == 'yes')
     {
         $res=$object->set_credite();
         if ($res >= 0)
@@ -100,7 +100,7 @@ if (empty($reshook))
     {
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-        $dt = dol_mktime(12,0,0,GETPOST('remonth','int'),GETPOST('reday','int'),GETPOST('reyear','int'));
+		$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
         /*
         if ($_FILES['userfile']['name'] && basename($_FILES['userfile']['name'],".ps") == $object->ref)
@@ -121,7 +121,7 @@ if (empty($reshook))
             $mesg='BadFile';
         }*/
 
-        $error = $object->set_infotrans($user, $dt, GETPOST('methode','alpha'));
+		$error = $object->set_infotrans($user, $dt, GETPOST('methode', 'alpha'));
 
         if ($error)
         {
@@ -130,10 +130,10 @@ if (empty($reshook))
         }
     }
 
-    // Set direct debit order to credited, create payment and close invoices
-    if ($action == 'infocredit' && $user->rights->prelevement->bons->credit)
-    {
-        $dt = dol_mktime(12,0,0,GETPOST('remonth','int'),GETPOST('reday','int'),GETPOST('reyear','int'));
+	// Set direct debit order to credited, create payment and close invoices
+	if ($action == 'infocredit' && $user->rights->prelevement->bons->credit)
+	{
+		$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
         $error = $object->set_infocredit($user, $dt);
 
@@ -153,16 +153,16 @@ if (empty($reshook))
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans("WithdrawalsReceipts"));
+llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
 if ($id > 0 || $ref)
 {
 	$head = prelevement_prepare_head($object);
 	dol_fiche_head($head, 'prelevement', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
-	if (GETPOST('error','alpha')!='')
+	if (GETPOST('error', 'alpha')!='')
 	{
-		print '<div class="error">'.$object->getErrorString(GETPOST('error','alpha')).'</div>';
+		print '<div class="error">'.$object->getErrorString(GETPOST('error', 'alpha')).'</div>';
 	}
 
 	/*if ($action == 'credite')
@@ -180,7 +180,7 @@ if ($id > 0 || $ref)
 	print '<table class="border" width="100%">';
 
 	//print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
-	print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec,'day').'</td></tr>';
+	print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
 	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
 
 	// Status
@@ -196,7 +196,7 @@ if ($id > 0 || $ref)
 		$muser->fetch($object->user_trans);
 
 		print '<tr><td>'.$langs->trans("TransData").'</td><td>';
-		print dol_print_date($object->date_trans,'day');
+		print dol_print_date($object->date_trans, 'day');
 		print ' '.$langs->trans("By").' '.$muser->getFullName($langs).'</td></tr>';
 		print '<tr><td>'.$langs->trans("TransMetod").'</td><td>';
 		print $object->methodes_trans[$object->method_trans];
@@ -205,7 +205,7 @@ if ($id > 0 || $ref)
 	if($object->date_credit <> 0)
 	{
 		print '<tr><td>'.$langs->trans('CreditDate').'</td><td>';
-		print dol_print_date($object->date_credit,'day');
+		print dol_print_date($object->date_credit, 'day');
 		print '</td></tr>';
 	}
 
@@ -239,6 +239,23 @@ if ($id > 0 || $ref)
 	dol_fiche_end();
 
 
+	$formconfirm = '';
+
+	// Confirmation to delete
+	if ($action == 'delete')
+	{
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('Delete'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 1);
+	}
+
+	// Call Hook formConfirm
+	/*$parameters = array();
+	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+	elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;*/
+
+	// Print form confirm
+	print $formconfirm;
+
 
 	if (empty($object->date_trans) && $user->rights->prelevement->bons->send && $action=='settransmitted')
 	{
@@ -252,7 +269,7 @@ if ($id > 0 || $ref)
 		print $form->selectDate('', '', '', '', '', "userfile", 1, 1);
 		print '</td></tr>';
 		print '<tr class="oddeven"><td>'.$langs->trans("TransMetod").'</td><td>';
-		print $form->selectarray("methode",$object->methodes_trans);
+		print $form->selectarray("methode", $object->methodes_trans);
 		print '</td></tr>';
 /*			print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
 		print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
@@ -298,13 +315,13 @@ if ($id > 0 || $ref)
 			print "<a class=\"butAction\" href=\"card.php?action=setcredited&id=".$object->id."\">".$langs->trans("ClassCredited")."</a>";
 		}
 
-		print "<a class=\"butActionDelete\" href=\"card.php?action=confirm_delete&id=".$object->id."\">".$langs->trans("Delete")."</a>";
+		print "<a class=\"butActionDelete\" href=\"card.php?action=delete&id=".$object->id."\">".$langs->trans("Delete")."</a>";
 
 		print "</div>";
 	}
 
 
-	$ligne=new LignePrelevement($db,$user);
+	$ligne=new LignePrelevement($db, $user);
 
 	/*
 	 * Lines into withdraw request
@@ -350,17 +367,15 @@ if ($id > 0 || $ref)
 		print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 		print '<tr class="liste_titre">';
-		print_liste_field_titre("Lines",$_SERVER["PHP_SELF"],"pl.rowid",'',$urladd);
-		print_liste_field_titre("ThirdParty",$_SERVER["PHP_SELF"],"s.nom",'',$urladd);
-		print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"pl.amount","",$urladd,'align="right"');
+		print_liste_field_titre("Lines", $_SERVER["PHP_SELF"], "pl.rowid", '', $urladd);
+		print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $urladd);
+		print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "pl.amount", "", $urladd, 'class="right"');
 		print_liste_field_titre('');
 		print "</tr>\n";
 
-		$var=false;
-
 		$total = 0;
 
-		while ($i < min($num,$conf->liste_limit))
+		while ($i < min($num, $conf->liste_limit))
 		{
 			$obj = $db->fetch_object($result);
 
@@ -368,10 +383,10 @@ if ($id > 0 || $ref)
 
 			// Status of line
 			print "<td>";
-			print $ligne->LibStatut($obj->statut,2);
+			print $ligne->LibStatut($obj->statut, 2);
 			print "&nbsp;";
-			print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
-			print sprintf("%06s",$obj->rowid);
+			print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'">';
+			print sprintf("%06s", $obj->rowid);
 			print '</a></td>';
 
 			$thirdparty=new Societe($db);
@@ -380,7 +395,7 @@ if ($id > 0 || $ref)
 			print $thirdparty->getNomUrl(1);
 			print "</td>\n";
 
-			print '<td align="right">'.price($obj->amount)."</td>\n";
+			print '<td class="right">'.price($obj->amount)."</td>\n";
 
 			print '<td>';
 
@@ -405,8 +420,11 @@ if ($id > 0 || $ref)
 			print '<tr class="liste_total">';
 			print '<td>'.$langs->trans("Total").'</td>';
 			print '<td>&nbsp;</td>';
-			print '<td align="right">';
-			if ($total != $object->amount) print img_warning("AmountOfFileDiffersFromSumOfInvoices");
+			print '<td class="right">';
+			if (empty($offset) && $num <= $limit)	// If we have all record on same page, then the following test/warning can be done
+			{
+				if ($total != $object->amount) print img_warning("TotalAmountOfdirectDebitOrderDiffersFromSumOfLines");
+			}
 			print price($total);
 			print "</td>\n";
 			print '<td>&nbsp;</td>';

@@ -42,19 +42,19 @@ if (! empty($conf->projet->enabled))
 // Load translation files required by the page
 $langs->loadLangs(array('other', 'companies', 'compta', 'bills'));
 
-$id = GETPOST('id','int');
-$action = GETPOST('action','aZ09');
+$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'tax', $id, 'chargesociales','charges');
+$result = restrictedArea($user, 'tax', $id, 'chargesociales', 'charges');
 
 
 // Get parameters
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
     $page = 0;
 }
@@ -96,7 +96,7 @@ if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 $title = $langs->trans("SocialContribution") . ' - ' . $langs->trans("Documents");
 $help_url='EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividendes|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
-llxHeader("",$title,$help_url);
+llxHeader("", $title, $help_url);
 
 if ($object->id)
 {
@@ -104,7 +104,7 @@ if ($object->id)
 
     $head=tax_prepare_head($object);
 
-    dol_fiche_head($head, 'documents',  $langs->trans("SocialContribution"), -1, 'bill');
+    dol_fiche_head($head, 'documents', $langs->trans("SocialContribution"), -1, 'bill');
 
 	$morehtmlref='<div class="refidno">';
 	// Label of social contribution
@@ -137,7 +137,7 @@ if ($object->id)
 	print '<div class="underbanner clearboth"></div>';
 
     // Build file list
-    $filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+    $filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
     $totalsize=0;
     foreach($filearray as $key => $file)
     {
@@ -145,10 +145,10 @@ if ($object->id)
     }
 
 
-    print '<table class="border" width="100%">';
+    print '<table class="border tableforfield centpercent">';
 
     print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
     print '</table>';
 
     print '</div>';

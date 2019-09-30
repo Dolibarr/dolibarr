@@ -31,14 +31,16 @@ ViewWeek=周檢視
 ViewPerUser=檢視每位用戶
 ViewPerType=每種類別檢視
 AutoActions= 自動填滿
-AgendaAutoActionDesc= 在此定義你可使 Dolibarr 在行程中自動建立事件。若沒有勾選，只能自行登入行程中增加。而且完成公事事件的自動追踪不會儲存。
-AgendaSetupOtherDesc= 這頁允許配置議程模塊其他參數。
+AgendaAutoActionDesc= Here you may define events which you want Dolibarr to create automatically  in Agenda. If nothing is checked, only manual actions will be included in logs and displayed in Agenda. Automatic tracking of business actions done on objects (validation, status change) will not be saved.
+AgendaSetupOtherDesc= This page provides options to allow the export of your Dolibarr events into an external calendar (Thunderbird, Google Calendar etc...)
 AgendaExtSitesDesc=此頁面允許在 Dolibarr 待辦事項中查看已宣告外部日曆來源的事件
 ActionsEvents=Dolibarr 會在待辦中自動建立行動的事件
-EventRemindersByEmailNotEnabled=在行程模組設定中沒有啟用透過 EMail 提醒事件
+EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into %s module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=合作方 %s 已建立
+COMPANY_DELETEInDolibarr=Third party %s deleted
 ContractValidatedInDolibarr=合約 %s 已驗證
+CONTRACT_DELETEInDolibarr=Contract %s deleted
 PropalClosedSignedInDolibarr=提案/建議書 %s 已簽署
 PropalClosedRefusedInDolibarr=提案/建議書 %s 已拒絕
 PropalValidatedInDolibarr=提案/建議書 %s 已驗證
@@ -59,6 +61,7 @@ MemberSubscriptionDeletedInDolibarr=會員 %s 刪除 %s 訂閱
 ShipmentValidatedInDolibarr=貨運單 %s 已驗證
 ShipmentClassifyClosedInDolibarr=貨運單 %s 歸類為已結帳
 ShipmentUnClassifyCloseddInDolibarr=貨運單 %s 歸類為再開啓
+ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
 ShipmentDeletedInDolibarr=貨運單 %s 已刪除
 OrderCreatedInDolibarr=訂單 %s 已建立
 OrderValidatedInDolibarr=訂單 %s 已驗證
@@ -68,15 +71,15 @@ OrderBilledInDolibarr=訂單 %s 歸類為已結帳
 OrderApprovedInDolibarr=訂單 %s 已核准
 OrderRefusedInDolibarr=訂單 %s 被拒絕
 OrderBackToDraftInDolibarr=訂單 %s 回復到草案狀態
-ProposalSentByEMail=已透過 E-Mail 傳送商業提案/建議書 %s
-ContractSentByEMail=合約 %s 透過 EMail 傳送
-OrderSentByEMail=已透過 E-Mail 傳送客戶訂單 %s
-InvoiceSentByEMail=已透過 E-Mail 傳送客戶發票 %s
-SupplierOrderSentByEMail=已透過 E-Mail 傳送供應商訂單 %s
-SupplierInvoiceSentByEMail=已透過 E-Mail 傳送供應商發票 %s
-ShippingSentByEMail=已透過 E-Mail 傳送貨運單 %s
+ProposalSentByEMail=Commercial proposal %s sent by email
+ContractSentByEMail=Contract %s sent by email
+OrderSentByEMail=Sales order %s sent by email
+InvoiceSentByEMail=Customer invoice %s sent by email
+SupplierOrderSentByEMail=Purchase order %s sent by email
+SupplierInvoiceSentByEMail=Vendor invoice %s sent by email
+ShippingSentByEMail=Shipment %s sent by email
 ShippingValidated= 貨運單 %s 已驗證
-InterventionSentByEMail=已透過 E-Mail 傳送 Intervention %s
+InterventionSentByEMail=Intervention %s sent by email
 ProposalDeleted=提案/建議書已刪除
 OrderDeleted=訂單已刪除
 InvoiceDeleted=發票已刪除
@@ -91,6 +94,11 @@ EXPENSE_REPORT_REFUSEDInDolibarr=費用報表 %s 已拒絕
 PROJECT_CREATEInDolibarr=專案 %s 已建立
 PROJECT_MODIFYInDolibarr=專案 %s 已修改
 PROJECT_DELETEInDolibarr=專案 %s 已刪除
+TICKET_CREATEInDolibarr=Ticket %s created
+TICKET_MODIFYInDolibarr=Ticket %s modified
+TICKET_ASSIGNEDInDolibarr=Ticket %s assigned
+TICKET_CLOSEInDolibarr=Ticket %s closed
+TICKET_DELETEInDolibarr=Ticket %s deleted
 ##### End agenda events #####
 AgendaModelModule=適用事件的文件範例/本
 DateActionStart=開始日期
@@ -100,7 +108,7 @@ AgendaUrlOptions3=<b>logina=%s</b> 將限制輸出為使用者自行操作 <b>%s
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> 將限制輸出為非使用者自行操作 <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> 將限制輸出為指定使用者操作 <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> 將限制輸出為指定專案 <b>PROJECT_ID</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b>排除自動事件。
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic events.
 AgendaShowBirthdayEvents=顯示連絡人生日
 AgendaHideBirthdayEvents=隱藏連絡人生日
 Busy=忙錄
@@ -110,7 +118,7 @@ DefaultWorkingHours=預設一天工作小時 (例如: 9-18)
 # External Sites ical
 ExportCal=匯出日曆
 ExtSites=匯入外部日曆
-ExtSitesEnableThisTool=顯示外部日曆 (已在全域設定中定義) 到行程。不會影響由使用者自行定義的外部日曆。
+ExtSitesEnableThisTool=Show external calendars (defined in global setup) in Agenda. Does not affect external calendars defined by users.
 ExtSitesNbOfAgenda=日曆數量
 AgendaExtNb=行事曆編號 %s
 ExtSiteUrlAgenda=用 URL 存取 .iCal 檔案
@@ -121,7 +129,6 @@ AddEvent=建立事件
 MyAvailability=我的空檔
 ActionType=事件類別
 DateActionBegin=事件開始日期
-CloneAction=複製本身事件
 ConfirmCloneEvent=您確定要複製本身事件 <b>%s</b>?
 RepeatEvent=重覆事件
 EveryWeek=每周

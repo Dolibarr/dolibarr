@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2019 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Cedric Gross         <c.gross@kreiz-it.fr>
  * Copyright (C) 2016      Florian Henry        <florian.henry@atm-consulting.fr>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
@@ -41,7 +41,7 @@ if (! empty($conf->projet->enabled))
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("bills", "orders", "sendings", "companies", "deliveries", "products", "stocks"));
+$langs->loadLangs(array("bills", "orders", "sendings", "companies", "deliveries", "products", "stocks","receptions"));
 
 if (! empty($conf->productbatch->enabled))
 	$langs->load('productbatch');
@@ -50,7 +50,7 @@ if (! empty($conf->productbatch->enabled))
 $id = GETPOST("id", 'int');
 $ref = GETPOST('ref');
 $lineid = GETPOST('lineid', 'int');
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 if ($user->societe_id)
 	$socid = $user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
@@ -85,7 +85,7 @@ if ($id > 0 || ! empty($ref)) {
  */
 
 $parameters=array();
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action); // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if ($action == 'checkdispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check))))
@@ -239,6 +239,16 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 			$pu = "pu_" . $reg[1] . '_' . $reg[2]; // This is unit price including discount
 			$fk_commandefourndet = "fk_commandefourndet_" . $reg[1] . '_' . $reg[2];
 
+			if (! empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
+				if (empty($conf->multicurrency->enabled) && empty($conf->dynamicprices->enabled)) {
+					$dto = GETPOST("dto_" . $reg[1] . '_' . $reg[2]);
+					if (! empty($dto)) {
+						$unit_price = price2num(GETPOST("pu_" . $reg[1]) * (100 - $dto) / 100, 'MU');
+					}
+					$saveprice = "saveprice_" . $reg[1] . '_' . $reg[2];
+				}
+			}
+
 			// We ask to move a qty
 			if (GETPOST($qty) != 0) {
 				if (! (GETPOST($ent, 'int') > 0)) {
@@ -253,6 +263,24 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 					if ($result < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error ++;
+					}
+
+					if (! $error && ! empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
+						if (empty($conf->multicurrency->enabled) && empty($conf->dynamicprices->enabled)) {
+							$dto = GETPOST("dto_" . $reg[1] . '_' . $reg[2]);
+							//update supplier price
+							if (isset($_POST[$saveprice])) {
+								// TODO Use class
+								$sql = "UPDATE " . MAIN_DB_PREFIX . "product_fournisseur_price";
+								$sql .= " SET unitprice='" . GETPOST($pu) . "'";
+								$sql .= ", price=" . GETPOST($pu) . "*quantity";
+								$sql .= ", remise_percent='" . $dto . "'";
+								$sql .= " WHERE fk_soc=" . $object->socid;
+								$sql .= " AND fk_product=" . GETPOST($prod, 'int');
+
+								$resql = $db->query($sql);
+							}
+						}
 					}
 				}
 			}
@@ -414,13 +442,13 @@ if ($id > 0 || ! empty($ref)) {
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border" width="100%">';
+	print '<table class="border tableforfield" width="100%">';
 
 	// Date
 	if ($object->methode_commande_id > 0) {
 		print '<tr><td class="titlefield">' . $langs->trans("Date") . '</td><td>';
 		if ($object->date_commande) {
-			print dol_print_date($object->date_commande, "dayhourtext") . "\n";
+			print dol_print_date($object->date_commande, "dayhour") . "\n";
 		}
 		print "</td></tr>";
 
@@ -435,7 +463,7 @@ if ($id > 0 || ! empty($ref)) {
 	print '</tr>';
 
   $parameters=array();
-  $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
+  $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 	print "</table>";
 
@@ -450,7 +478,7 @@ if ($id > 0 || ! empty($ref)) {
 
 	// Line of orders
 	if ($object->statut <= CommandeFournisseur::STATUS_ACCEPTED || $object->statut >= CommandeFournisseur::STATUS_CANCELED) {
-		print '<span class="opacitymedium">'.$langs->trans("OrderStatusNotReadyToDispatch").'</span>';
+		print '<br><span class="opacitymedium">'.$langs->trans("OrderStatusNotReadyToDispatch").'</span>';
 	}
 
 	if ($object->statut == CommandeFournisseur::STATUS_ORDERSENT
@@ -459,9 +487,12 @@ if ($id > 0 || ! empty($ref)) {
 		$entrepot = new Entrepot($db);
 		$listwarehouses = $entrepot->list_array(1);
 
-		print '<form method="POST" action="dispatch.php?id=' . $object->id . '">';
+		if(empty($conf->reception->enabled))print '<form method="POST" action="dispatch.php?id=' . $object->id . '">';
+        else print '<form method="post" action="'.dol_buildpath('/reception/card.php', 1).'?originid='.$object->id.'&origin=supplierorder">';
+
 		print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
-		print '<input type="hidden" name="action" value="dispatch">';
+		if(empty($conf->reception->enabled))print '<input type="hidden" name="action" value="dispatch">';
+		else print '<input type="hidden" name="action" value="create">';
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
@@ -544,11 +575,20 @@ if ($id > 0 || ! empty($ref)) {
 					print '<td></td>';
 					print '<td></td>';
 				}
-				print '<td align="right">' . $langs->trans("SupplierRef") . '</td>';
-				print '<td align="right">' . $langs->trans("QtyOrdered") . '</td>';
-				print '<td align="right">' . $langs->trans("QtyDispatchedShort") . '</td>';
-				print '<td align="right">' . $langs->trans("QtyToDispatchShort") . '</td>';
+				print '<td class="right">' . $langs->trans("SupplierRef") . '</td>';
+				print '<td class="right">' . $langs->trans("QtyOrdered") . '</td>';
+				print '<td class="right">' . $langs->trans("QtyDispatchedShort") . '</td>';
+				print '<td class="right">' . $langs->trans("QtyToDispatchShort") . '</td>';
 				print '<td width="32"></td>';
+
+				if (! empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
+					if (empty($conf->multicurrency->enabled) && empty($conf->dynamicprices->enabled)) {
+						print '<td class="right">' . $langs->trans("Price") . '</td>';
+						print '<td class="right">' . $langs->trans("ReductionShort") . ' (%)</td>';
+						print '<td class="right">' . $langs->trans("UpdatePrice") . '</td>';
+					}
+				}
+
 				print '<td align="right">' . $langs->trans("Warehouse") . '</td>';
 
                 // Enable hooks to append additional columns
@@ -628,17 +668,17 @@ if ($id > 0 || ! empty($ref)) {
 							$up_ht_disc = price2num($up_ht_disc * (100 - $objp->remise_percent) / 100, 'MU');
 
 						// Supplier ref
-						print '<td align="right">'.$objp->sref.'</td>';
+						print '<td class="right">'.$objp->sref.'</td>';
 
 						// Qty ordered
-						print '<td align="right">' . $objp->qty . '</td>';
+						print '<td class="right">' . $objp->qty . '</td>';
 
 						// Already dispatched
-						print '<td align="right">' . $products_dispatched[$objp->rowid] . '</td>';
+						print '<td class="right">' . $products_dispatched[$objp->rowid] . '</td>';
 
 						if (! empty($conf->productbatch->enabled) && $objp->tobatch == 1) {
 							$type = 'batch';
-							print '<td align="right">';
+							print '<td class="right">';
 							print '</td>';     // Qty to dispatch
 							print '<td>';
 							//print img_picto($langs->trans('AddDispatchBatchLine'), 'split.png', 'onClick="addDispatchLine(' . $i . ',\'' . $type . '\')"');
@@ -695,7 +735,7 @@ if ($id > 0 || ! empty($ref)) {
 						} else {
 
 							$type = 'dispatch';
-							print '<td align="right">';
+							print '<td class="right">';
 							print '</td>';     // Qty to dispatch
 							print '<td>';
 							//print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'onClick="addDispatchLine(' . $i . ',\'' . $type . '\')"');
@@ -739,7 +779,7 @@ if ($id > 0 || ! empty($ref)) {
 						}
 
 						// Qty to dispatch
-						print '<td align="right">';
+						print '<td class="right">';
 						print '<input id="qty' . $suffix . '" name="qty' . $suffix . '" type="text" class="width50 right" value="' . (GETPOST('qty' . $suffix) != '' ? GETPOST('qty' . $suffix) : $remaintodispatch) . '">';
 						print '</td>';
 
@@ -757,8 +797,27 @@ if ($id > 0 || ! empty($ref)) {
 
 						print '</td>';
 
+						if (! empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
+							if (empty($conf->multicurrency->enabled) && empty($conf->dynamicprices->enabled)) {
+								// Price
+								print '<td class="right">';
+								print '<input id="pu' . $suffix . '" name="pu' . $suffix . '" type="text" size="8" value="' . price((GETPOST('pu' . $suffix) != '' ? GETPOST('pu' . $suffix) : $up_ht_disc)) . '">';
+								print '</td>';
+
+								// Discount
+								print '<td class="right">';
+								print '<input id="pu' . $suffix . '" name="dto' . $suffix . '" type="text" size="8" value="' . (GETPOST('dto' . $suffix) != '' ? GETPOST('dto' . $suffix) : '') . '">';
+								print '</td>';
+
+								// Save price
+								print '<td class="center">';
+								print '<input class="flat checkformerge" type="checkbox" name="saveprice' . $suffix . '" value="' . (GETPOST('saveprice' . $suffix) != '' ? GETPOST('saveprice' . $suffix) : '') . '">';
+								print '</td>';
+							}
+						}
+
 						// Warehouse
-						print '<td align="right">';
+						print '<td class="right">';
 						if (count($listwarehouses) > 1) {
 							print $formproduct->selectWarehouses(GETPOST("entrepot" . $suffix)?GETPOST("entrepot" . $suffix):($objp->fk_default_warehouse?$objp->fk_default_warehouse:''), "entrepot" . $suffix, '', 1, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
 						} elseif (count($listwarehouses) == 1) {
@@ -794,28 +853,30 @@ if ($id > 0 || ! empty($ref)) {
 
 		print "</table>\n";
 		print '</div>';
-		print "<br>\n";
 
 		if ($nbproduct)
 		{
 			$checkboxlabel = $langs->trans("CloseReceivedSupplierOrdersAutomatically", $langs->transnoentitiesnoconv('StatusOrderReceivedAll'));
 
-			print '<br><div class="center">';
+			print '<div class="center">';
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 			// modified by hook
 			if (empty($reshook))
 			{
-				print $langs->trans("Comment").' : ';
-				print '<input type="text" class="minwidth400" maxlength="128" name="comment" value="';
-				print $_POST["comment"] ? GETPOST("comment") : $langs->trans("DispatchSupplierOrder", $object->ref);
-				// print ' / '.$object->ref_supplier; // Not yet available
-				print '" class="flat"><br>';
+                if (empty($conf->reception->enabled)){
+                    print $langs->trans("Comment").' : ';
+                    print '<input type="text" class="minwidth400" maxlength="128" name="comment" value="';
+                    print $_POST["comment"] ? GETPOST("comment") : $langs->trans("DispatchSupplierOrder", $object->ref);
+                    // print ' / '.$object->ref_supplier; // Not yet available
+                    print '" class="flat"><br>';
 
-				print '<input type="checkbox" checked="checked" name="closeopenorder"> '.$checkboxlabel;
+                    print '<input type="checkbox" checked="checked" name="closeopenorder"> '.$checkboxlabel;
+                }
+                empty($conf->reception->enabled)?$dispatchBt=$langs->trans("DispatchVerb"):$dispatchBt=$langs->trans("Receive");
 
-				print '<br><input type="submit" class="button" value="'.$langs->trans("DispatchVerb").'"';
-				if (count($listwarehouses) <= 0)
+                print '<br><input type="submit" class="button" name="dispatch" value="' . dol_escape_htmltag($dispatchBt). '"';
+                if (count($listwarehouses) <= 0)
 					print ' disabled';
 				print '>';
 			}
@@ -824,7 +885,8 @@ if ($id > 0 || ! empty($ref)) {
 
 		// Message if nothing to dispatch
 		if (! $nbproduct) {
-			if (empty($conf->global->SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED))
+		    print "<br>\n";
+		    if (empty($conf->global->SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED))
 				print '<div class="opacitymedium">'.$langs->trans("NoPredefinedProductToDispatch").'</div>';		// No predefined line at all
 			else
 				print '<div class="opacitymedium">'.$langs->trans("NoMorePredefinedProductToDispatch").'</div>';	// No predefined line that remain to be dispatched.
@@ -840,9 +902,11 @@ if ($id > 0 || ! empty($ref)) {
 	$sql = "SELECT p.ref, p.label,";
 	$sql .= " e.rowid as warehouse_id, e.ref as entrepot,";
 	$sql .= " cfd.rowid as dispatchlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status, cfd.datec";
+	if($conf->reception->enabled)$sql.=" ,cfd.fk_reception, r.date_delivery";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "product as p,";
 	$sql .= " " . MAIN_DB_PREFIX . "commande_fournisseur_dispatch as cfd";
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "entrepot as e ON cfd.fk_entrepot = e.rowid";
+	if($conf->reception->enabled)$sql.=" LEFT JOIN " . MAIN_DB_PREFIX . "reception as r ON cfd.fk_reception = r.rowid";
 	$sql .= " WHERE cfd.fk_commande = " . $object->id;
 	$sql .= " AND cfd.fk_product = p.rowid";
 	$sql .= " ORDER BY cfd.rowid ASC";
@@ -861,29 +925,56 @@ if ($id > 0 || ! empty($ref)) {
 			print '<table id="dispatch_received_products" class="noborder" width="100%">';
 
 			print '<tr class="liste_titre">';
+			if($conf->reception->enabled)print '<td>' . $langs->trans("Reception") . '</td>';
+
 			print '<td>' . $langs->trans("Product") . '</td>';
+			print '<td>' . $langs->trans("DateCreation") . '</td>';
+			print '<td>' . $langs->trans("DateDeliveryPlanned") . '</td>';
 			if (! empty($conf->productbatch->enabled)) {
 				print '<td class="dispatch_batch_number_title">' . $langs->trans("batch_number") . '</td>';
 				print '<td class="dispatch_dluo_title">' . $langs->trans("EatByDate") . '</td>';
 				print '<td class="dispatch_dlc_title">' . $langs->trans("SellByDate") . '</td>';
 			}
-			print '<td align="right">' . $langs->trans("QtyDispatched") . '</td>';
+			print '<td class="right">' . $langs->trans("QtyDispatched") . '</td>';
 			print '<td></td>';
 			print '<td>' . $langs->trans("Warehouse") . '</td>';
 			print '<td>' . $langs->trans("Comment") . '</td>';
-			if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS))
-				print '<td align="center" colspan="2">' . $langs->trans("Status") . '</td>';
-			print '<td>' . $langs->trans("Date") . '</td>';
+
+			// Status
+			if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS) && empty($reception->rowid)) {
+				print '<td class="center" colspan="2">' . $langs->trans("Status") . '</td>';
+			}
+			elseif(!empty($conf->reception->enabled)) {
+				print '<td class="center"></td>';
+			}
+
+			print '<td class="center"></td>';
+
 			print "</tr>\n";
 
 			while ( $i < $num ) {
 				$objp = $db->fetch_object($resql);
 
 				print "<tr " . $bc[$var] . ">";
+
+				if(!empty($conf->reception->enabled) ){
+					print '<td>';
+					if (!empty($objp->fk_reception)){
+
+						$reception = new Reception($db);
+						$reception->fetch($objp->fk_reception);
+						print $reception->getNomUrl(1);
+					}
+
+					print "</td>";
+				}
+
 				print '<td>';
 				print '<a href="' . DOL_URL_ROOT . '/product/fournisseurs.php?id=' . $objp->fk_product . '">' . img_object($langs->trans("ShowProduct"), 'product') . ' ' . $objp->ref . '</a>';
 				print ' - ' . $objp->label;
 				print "</td>\n";
+				print '<td>'.dol_print_date($db->jdate($objp->datec), 'day').'</td>';
+				print '<td>'.dol_print_date($db->jdate($objp->date_delivery), 'day').'</td>';
 
 				if (! empty($conf->productbatch->enabled)) {
 					print '<td class="dispatch_batch_number">' . $objp->batch . '</td>';
@@ -892,7 +983,7 @@ if ($id > 0 || ! empty($ref)) {
 				}
 
 				// Qty
-				print '<td align="right">' . $objp->qty . '</td>';
+				print '<td class="right">' . $objp->qty . '</td>';
 				print '<td>&nbsp;</td>';
 
 				// Warehouse
@@ -903,18 +994,18 @@ if ($id > 0 || ! empty($ref)) {
 				print '</td>';
 
 				// Comment
-				print '<td class="tdoverflowmax300">' . $objp->comment . '</td>';
+				print '<td class="tdoverflowmax300" style="white-space: pre;">' . $objp->comment . '</td>';
 
 				// Status
-				if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) {
-					print '<td align="right">';
+				if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS) && empty($reception->rowid)) {
+					print '<td class="right">';
 					$supplierorderdispatch->status = (empty($objp->status) ? 0 : $objp->status);
 					// print $supplierorderdispatch->status;
 					print $supplierorderdispatch->getLibStatut(5);
 					print '</td>';
 
 					// Add button to check/uncheck disaptching
-					print '<td align="center">';
+					print '<td class="center">';
 					if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check)))
 					{
 						if (empty($objp->status)) {
@@ -942,9 +1033,15 @@ if ($id > 0 || ! empty($ref)) {
 						}
 					}
 					print '</td>';
+				} elseif(!empty($conf->reception->enabled)) {
+					print '<td class="right">';
+					if(!empty($reception->id)){
+						print $reception->getLibStatut(5);
+					}
+					print '</td>';
 				}
-				// date
-				print '<td>' . dol_print_date($objp->datec, "dayhour") . '</td>';
+
+				print '<td class="center"></td>';
 
 				print "</tr>\n";
 

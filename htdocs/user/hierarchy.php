@@ -40,14 +40,14 @@ if ($user->societe_id > 0)
 	$socid = $user->societe_id;
 
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
-$search_user=GETPOST('search_user','alpha');
+$search_user=GETPOST('search_user', 'alpha');
 
 $userstatic=new User($db);
-$search_statut=GETPOST('search_statut','int');
+$search_statut=GETPOST('search_statut', 'int');
 
 if ($search_statut == '') $search_statut='1';
 
-if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
 {
 	$search_statut="";
 }
@@ -63,10 +63,13 @@ $canadduser=(! empty($user->admin) || $user->rights->user->user->creer);
 
 $form = new Form($db);
 
-$arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
+$arrayofjs = array(
+    '/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
+    '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js',
+);
 $arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
-llxHeader('',$langs->trans("ListOfUsers"). ' - '.$langs->trans("HierarchicView"),'','',0,0,$arrayofjs,$arrayofcss);
+llxHeader('', $langs->trans("ListOfUsers"). ' - '.$langs->trans("HierarchicView"), '', '', 0, 0, $arrayofjs, $arrayofcss);
 
 
 // Load hierarchy of users
@@ -116,14 +119,14 @@ foreach($fulltree as $key => $val)
 		}
 	}
 
-	$li=$userstatic->getNomUrl(-1,'',0,1);
+	$li=$userstatic->getNomUrl(-1, '', 0, 1);
 	if (! empty($conf->multicompany->enabled) && $userstatic->admin && ! $userstatic->entity)
 	{
-		$li.=img_picto($langs->trans("SuperAdministrator"),'redstar');
+		$li.=img_picto($langs->trans("SuperAdministrator"), 'redstar');
 	}
-	else if ($userstatic->admin)
+	elseif ($userstatic->admin)
 	{
-		$li.=img_picto($langs->trans("Administrator"),'star');
+		$li.=img_picto($langs->trans("Administrator"), 'star');
 	}
 	$li.=' ('.$val['login'].($entitystring?' - '.$entitystring:'').')';
 
@@ -144,12 +147,10 @@ $param="search_statut=".urlencode($search_statut);
 $newcardbutton='';
 if ($canadduser)
 {
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1': '').'&leftmenu="><span class="valignmiddle">'.$langs->trans('NewUser').'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
+    $newcardbutton.= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1': '').'&leftmenu=');
 }
 
-$morehtmlright = '<a class="nohover" href="'.DOL_URL_ROOT.'/user/list.php'.(($search_statut != '' && $search_statut >= 0) ?'?search_statut='.$search_statut:'').'">'.$langs->trans("ViewList").'</a>';
+$morehtmlright.= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list paddingleft', DOL_URL_ROOT.'/user/list.php'.(($search_statut != '' && $search_statut >= 0) ?'?search_statut='.$search_statut:''));
 
 print load_fiche_titre($title, $morehtmlright.' '.$newcardbutton);
 
@@ -162,16 +163,16 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print '<table class="liste nohover" width="100%">';
+print '<table class="liste nohover centpercent">';
 
 print '<tr class="liste_titre_filter">';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 // Status
-print '<td class="liste_titre" align="right">';
-print $form->selectarray('search_statut', array('-1'=>'','1'=>$langs->trans('Enabled')),$search_statut);
+print '<td class="liste_titre right">';
+print $form->selectarray('search_statut', array('-1'=>'','1'=>$langs->trans('Enabled')), $search_statut);
 print '</td>';
-print '<td class="liste_titre" align="right">';
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
 print '</td>';
@@ -179,9 +180,9 @@ print '</tr>';
 
 print '<tr class="liste_titre">';
 print_liste_field_titre("HierarchicView");
-print_liste_field_titre('<div id="iddivjstreecontrol"><a href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a> | <a href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div>',$_SERVER['PHP_SELF'],"",'',"",'align="center"');
-print_liste_field_titre("Status",$_SERVER['PHP_SELF'],"",'',"",'align="right"');
-print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','','','','maxwidthsearch ');
+print_liste_field_titre('<div id="iddivjstreecontrol"><a href="#">'.img_picto('', 'object_category').' '.$langs->trans("UndoExpandAll").'</a> | <a href="#">'.img_picto('', 'object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div>', $_SERVER['PHP_SELF'], "", '', "", 'align="center"');
+print_liste_field_titre("Status", $_SERVER['PHP_SELF'], "", '', "", 'align="right"');
+print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', '', '', 'maxwidthsearch ');
 print '</tr>';
 
 
@@ -190,7 +191,7 @@ $nbofentries=(count($data) - 1);
 if ($nbofentries > 0)
 {
 	print '<tr '.$bc[false].'><td colspan="3">';
-	tree_recur($data,$data[0],0);
+	tree_recur($data, $data[0], 0);
 	print '</td>';
 	print '<td></td>';
 	print '</tr>';
@@ -199,7 +200,7 @@ else
 {
 	print '<tr '.$bc[true].'>';
 	print '<td colspan="3">';
-	print '<table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('','treemenu/branchbottom.gif').'</td>';
+	print '<table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
 	print '<td valign="middle">';
 	print $langs->trans("NoCategoryYet");
 	print '</td>';

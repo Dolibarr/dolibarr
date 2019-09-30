@@ -31,14 +31,16 @@ ViewWeek=عرض اسبوعي
 ViewPerUser=لكل وجهة نظر المستخدم
 ViewPerType=العرض حسب النوع
 AutoActions= إكمال تلقائي
-AgendaAutoActionDesc= تحديد الأحداث هنا التي تريد دوليبار ان ينشأها تلقائيا في جدول الأعمال. إذا لم يتم فحص أي شيء، سيتم تضمين الإجراءات اليدوية فقط في تسجيل و اظهارها في جدول الأعمال. لن يتم حفظ تتبع تلقائي للأعمال التجارية التي تتم على الكائنات (التحقق من الصحة، تغيير الوضع).
-AgendaSetupOtherDesc= توفر هذه الصفحة خيارات للسماح بتصدير أحداث دوليبار إلى تقويم خارجي (ثوندربيرد، تقويم غوغل، ...)
+AgendaAutoActionDesc= Here you may define events which you want Dolibarr to create automatically  in Agenda. If nothing is checked, only manual actions will be included in logs and displayed in Agenda. Automatic tracking of business actions done on objects (validation, status change) will not be saved.
+AgendaSetupOtherDesc= This page provides options to allow the export of your Dolibarr events into an external calendar (Thunderbird, Google Calendar etc...)
 AgendaExtSitesDesc=تسمح هذه الصفحة بإعلان المصادر الخارجية للتقاويم لمشاهدة أحداثها في جدول أعمال دوليبار.
 ActionsEvents=الأحداث التي سيقوم دوليبار بإنشاء أعمال في جدول الأعمال بشكل تلقائي
-EventRemindersByEmailNotEnabled=لم يتم تمكين تذكيرات الأحداث عبر البريد الإلكتروني في إعدادات نموذج جدول الأعمال.
+EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into %s module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=تم إنشاء الطرف الثالث %s
+COMPANY_DELETEInDolibarr=Third party %s deleted
 ContractValidatedInDolibarr=العقد%s  تم التأكد من صلاحيته
+CONTRACT_DELETEInDolibarr=Contract %s deleted
 PropalClosedSignedInDolibarr=الإقتراح%sتم توقعية
 PropalClosedRefusedInDolibarr=الإقتراح%s تم رفضة
 PropalValidatedInDolibarr=اقتراح %s التحقق من صحة
@@ -59,6 +61,7 @@ MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=شحنة%s التأكد من صلاحيتها
 ShipmentClassifyClosedInDolibarr=الشحنة %sتم تصنيفها مدفوعة
 ShipmentUnClassifyCloseddInDolibarr=الشحنة %s تم تصنيفها معاد فتحها
+ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
 ShipmentDeletedInDolibarr=الشحنة%sتم حذفها
 OrderCreatedInDolibarr=الطلب %s تم إنشاؤة
 OrderValidatedInDolibarr=الطلب %s تم التحقق منه
@@ -68,15 +71,15 @@ OrderBilledInDolibarr=الطلب%s  مصنف تم الدفع
 OrderApprovedInDolibarr=الطلب %s تم الموافقة علية
 OrderRefusedInDolibarr=الطلب %s تم رفضه
 OrderBackToDraftInDolibarr=الطلب  %s تم إرجاعة إلى حالة المسودة
-ProposalSentByEMail= العرض التجاري %s  تم إرساله بواسطة البريد الإلكتروني
-ContractSentByEMail=العقد %s تم إرسالة بواسطة البريد الإلكتروني
-OrderSentByEMail=تم إرسال طلبية العميل %s بواسطة البريد الإلكتروني
-InvoiceSentByEMail=تم إرسال فاتورة العميل %s بواسطة البريد الإلكتروني
-SupplierOrderSentByEMail=تم إرسال طلبية المورد %s بواسطة البريد الإلكتروني
-SupplierInvoiceSentByEMail=تم إرسال فاتورة المورد%s بواسطة البريد الإلكتروني
-ShippingSentByEMail=الشحنة%s تم إرسالها عن طريق البريد الإلكتروني
+ProposalSentByEMail=Commercial proposal %s sent by email
+ContractSentByEMail=Contract %s sent by email
+OrderSentByEMail=Sales order %s sent by email
+InvoiceSentByEMail=Customer invoice %s sent by email
+SupplierOrderSentByEMail=Purchase order %s sent by email
+SupplierInvoiceSentByEMail=Vendor invoice %s sent by email
+ShippingSentByEMail=Shipment %s sent by email
 ShippingValidated= الشحنة %s تم التأكد من صلاحيتها
-InterventionSentByEMail=التدخل%s تم إرساله عن طريق البريد الإلكتروني
+InterventionSentByEMail=Intervention %s sent by email
 ProposalDeleted=تم حذف العرض
 OrderDeleted=تم حذف الطلب
 InvoiceDeleted=تم حذف الفاتورة
@@ -91,6 +94,11 @@ EXPENSE_REPORT_REFUSEDInDolibarr=تقرير المصروفات%s تم رفضة
 PROJECT_CREATEInDolibarr=مشروع٪ الصورة التي تم إنشاؤها
 PROJECT_MODIFYInDolibarr=المشروع %s تم تعديلة
 PROJECT_DELETEInDolibarr=المشروع %s تم حذفة
+TICKET_CREATEInDolibarr=Ticket %s created
+TICKET_MODIFYInDolibarr=Ticket %s modified
+TICKET_ASSIGNEDInDolibarr=Ticket %s assigned
+TICKET_CLOSEInDolibarr=Ticket %s closed
+TICKET_DELETEInDolibarr=Ticket %s deleted
 ##### End agenda events #####
 AgendaModelModule=نماذج المستندات للحدث
 DateActionStart=تاريخ البدء
@@ -100,7 +108,7 @@ AgendaUrlOptions3=<b>وجينا =%sإلى</b> تقييد الإخراج إلى �
 AgendaUrlOptionsNotAdmin=<b>لوجينا=!%s</b> لمنع اخراج الجراءات التى لا يمتلكها المستخدم <b>%s</b>.
 AgendaUrlOptions4=<b>لوجينت =%s</b> لتقييد الإخراج على الإجراءات المعينة للمستخدم <b>%s</b> (المالك والآخرين).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic events.
 AgendaShowBirthdayEvents=عرض تواريخ ميلاد جهات الإتصال
 AgendaHideBirthdayEvents=إخفاء تواريخ ميلاد جهات الإتصال
 Busy=مشغول
@@ -110,7 +118,7 @@ DefaultWorkingHours=افتراضي ساعات العمل في اليوم (على
 # External Sites ical
 ExportCal=تصدير التقويم
 ExtSites=استيراد التقويمات الخارجية
-ExtSitesEnableThisTool=عرض التقويمات الخارجية (المعرفة في الإعدادات العالمية) في جدول الأعمال. لا يؤثر على التقويمات الخارجية المحددة من قبل المستخدمين.
+ExtSitesEnableThisTool=Show external calendars (defined in global setup) in Agenda. Does not affect external calendars defined by users.
 ExtSitesNbOfAgenda=عدد التقويمات
 AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=عنوان المتصفح للدخول لملف .ical
@@ -121,7 +129,6 @@ AddEvent=إنشاء الحدث
 MyAvailability=تواجدي
 ActionType=نوع الحدث
 DateActionBegin=تاريخ البدء الحدث
-CloneAction=استنساخ الحدث 
 ConfirmCloneEvent=هل انت متأكد انك ترغب في استنساخ الحدث <b>%s</b> ؟
 RepeatEvent=تكرار الحدث
 EveryWeek=كل اسبوع
