@@ -224,7 +224,9 @@ TITLE BUTTON
     display: block;
 }
 
-
+div.pagination li:first-child a.btnTitle{
+    margin-left: 10px;
+}
 
 
 
