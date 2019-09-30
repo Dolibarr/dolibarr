@@ -335,6 +335,7 @@ script:
   php step2.php set >> $TRAVIS_BUILD_DIR/install.log
   if [ "$?" -ne "0" ]; then
     echo "SORRY, AN ERROR OCCURED DURING INSTALLATION PROCESS"
+    tail -n 100 $TRAVIS_BUILD_DIR/install.log
     exit 1
   fi
   cd ../..
