@@ -3010,66 +3010,41 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		    $moreatt = str_replace('class="'.$reg[1].'"', '', $moreatt);
 		}
 	} else {
-		$pictowithoutext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
+		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
-        if (empty($srconly) && in_array($pictowithoutext, array(
-				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'note', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
+        if (empty($srconly) && in_array($pictowithouttext, array(
+				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'note',
+        		'object_list','object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
+        		'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
 				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', '1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 				'jabber','skype','twitter','facebook','linkedin',
 				'chevron-left','chevron-right','chevron-down','chevron-top',
 				'home', 'companies', 'products', 'commercial', 'invoicing', 'accountancy', 'project', 'hrm', 'members', 'ticket', 'generic'
 			)
 		)) {
-		    $fa='fa';
+			$fa='fa';
 		    if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fa='fas';
-		    $fakey = $pictowithoutext;
-			$facolor = ''; $fasize = '';
+		    $fakey = $pictowithouttext;
+		    $facolor = ''; $fasize = '';
 
-			if ($pictowithoutext == 'setup') {
-			    $fakey = 'fa-cog';
-			}
-			elseif ($pictowithoutext == 'companies') {
-				$fakey = 'fa-building';
-			}
-			elseif ($pictowithoutext == 'products') {
-				$fakey = 'fa-box-open';
-			}
-			elseif ($pictowithoutext == 'commercial') {
-				$fakey = 'fa-user-tie';
-			}
-			elseif ($pictowithoutext == 'invoicing') {
-				$fakey = 'fa-file-invoice';
-			}
-			elseif ($pictowithoutext == 'accountancy') {
-				$fakey = 'fa-coins';
-			}
-			elseif ($pictowithoutext == 'project') {
-				$fakey = 'fa-project-diagram';
-			}
-			elseif ($pictowithoutext == 'hrm') {
-				$fakey = 'fa-umbrella-beach';
-			}
-			elseif ($pictowithoutext == 'members') {
-				$fakey = 'fa-user-friends';
-			}
-			elseif ($pictowithoutext == 'ticket') {
-				$fakey = 'fa-sticky-note';
-			}
-			elseif ($pictowithoutext == 'generic') {
-				$fakey = 'fa-folder-open';
-			}
-			elseif ($pictowithoutext == 'switch_off') {
-				$fakey = 'fa-toggle-off';
+		    $arrayconvpictotofa = array(
+		    	'setup'=>'cog', 'companies'=>'building', 'products'=>'box_open', 'commercial'=>'box-tie', 'invoicing'=>'file-invoice', 'accountancy'=>'coins', 'project'=>'project-diagram',
+		    	'hrm'=>'umbrella-beach', 'members'=>'user-friends', 'ticket'=>'sticky-note', 'generic'=>'folder-open',
+		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on',
+		    	'bank'=>'bank', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil', 'filter'=>'filter', 'split'=>'code-fork',
+		    	'object_list'=>'list-alt','object_calendar'=>'calendar-alt', 'object_calendarweek'=>'calendar-week', 'object_calendarmonth'=>'calendar-alt', 'object_calendarday'=>'calendar-day', 'object_calendarperuser'=>'table'
+		    );
+
+		    if ($pictowithouttext == 'switch_off') {
 				$facolor = '#999';
 				$fasize = '2em';
 			}
-			elseif ($pictowithoutext == 'switch_on') {
-				$fakey = 'fa-toggle-on';
+			elseif ($pictowithouttext == 'switch_on') {
 				$facolor = '#227722';
 				$fasize = '2em';
 			}
-			elseif ($pictowithoutext == 'off') {
+			elseif ($pictowithouttext == 'off') {
 				$fakey = 'fa-square-o';
 				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5))
 				{
@@ -3078,7 +3053,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				}
 				$fasize = '1.3em';
 			}
-			elseif ($pictowithoutext == 'on') {
+			elseif ($pictowithouttext == 'on') {
 				$fakey = 'fa-check-square-o';
 				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5))
 				{
@@ -3087,44 +3062,35 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				}
 				$fasize = '1.3em';
 			}
-			elseif ($pictowithoutext == 'bank') {
-				$fakey = 'fa-bank';
+			elseif ($pictowithouttext == 'bank') {
 				$facolor = '#444';
 			}
-			elseif ($pictowithoutext == 'close_title') {
-				$fakey = 'fa-window-close';
-			}
-			elseif ($pictowithoutext == 'delete') {
-				$fakey = 'fa-trash';
+			elseif ($pictowithouttext == 'delete') {
 				$facolor = '#444';
 			}
-			elseif ($pictowithoutext == 'edit') {
-				$fakey = 'fa-pencil';
+			elseif ($pictowithouttext == 'edit') {
 				$facolor = '#444';
 				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fakey = 'fa-pencil-alt';
 			}
-			elseif ($pictowithoutext == 'filter') {
-				$fakey = 'fa-'.$pictowithoutext;
-			}
-			elseif ($pictowithoutext == 'grip_title' || $pictowithoutext == 'grip') {
+			elseif ($pictowithouttext == 'grip_title' || $pictowithouttext == 'grip') {
 				$fakey = 'fa-arrows';
 				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fakey = 'fa-arrows-alt';
 			}
-			elseif ($pictowithoutext == 'listlight') {
+			elseif ($pictowithouttext == 'listlight') {
 				$fakey = 'fa-download';
 				$facolor = '#999';
 				$marginleftonlyshort=1;
 			}
-			elseif ($pictowithoutext == 'printer') {
+			elseif ($pictowithouttext == 'printer') {
 				$fakey = 'fa-print';
 				$fasize = '1.2em';
 				$facolor = '#444';
 			}
-			elseif ($pictowithoutext == 'resize') {
+			elseif ($pictowithouttext == 'resize') {
 				$fakey = 'fa-crop';
 				$facolor = '#444';
 			}
-			elseif ($pictowithoutext == 'note') {
+			elseif ($pictowithouttext == 'note') {
 				$fakey = 'fa-sticky-note-o';
 				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5))
 				{
@@ -3133,45 +3099,53 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$facolor = '#999';
 				$marginleftonlyshort=1;
 			}
-			elseif ($pictowithoutext == 'uparrow') {
+			elseif ($pictowithouttext == 'uparrow') {
 				$fakey = 'fa-mail-forward';
 				$facolor = '#555';
 			}
-			elseif (in_array($pictowithoutext, array('1uparrow', '1downarrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected'))) {
+			elseif (in_array($pictowithouttext, array('1uparrow', '1downarrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected'))) {
 			    $convertarray=array('1uparrow'=>'caret-up', '1downarrow'=>'caret-down', '1leftarrow'=>'caret-left', '1rightarrow'=>'caret-right', '1uparrow_selected'=>'caret-up', '1downarrow_selected'=>'caret-down', '1leftarrow_selected'=>'caret-left', '1rightarrow_selected'=>'caret-right');
-			    $fakey = 'fa-'.$convertarray[$pictowithoutext];
-			    if (preg_match('/selected/', $pictowithoutext)) $facolor = '#888';
+			    $fakey = 'fa-'.$convertarray[$pictowithouttext];
+			    if (preg_match('/selected/', $pictowithouttext)) $facolor = '#888';
 				$marginleftonlyshort = 1;
 			}
-			elseif ($pictowithoutext == 'sign-out')     {
+			elseif ($pictowithouttext == 'sign-out')     {
                 $fakey = 'fa-sign-out';
 			    $marginleftonlyshort=0;
 			    if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fakey = 'fa-sign-out-alt';
 			}
-			elseif ($pictowithoutext == 'unlink')     {
+			elseif ($pictowithouttext == 'unlink')     {
 				$fakey = 'fa-chain-broken';
 				$facolor = '#555';
 			}
-			elseif ($pictowithoutext == 'playdisabled') {
+			elseif ($pictowithouttext == 'playdisabled') {
 				$fakey = 'fa-play';
 				$facolor = '#ccc';
 			}
-			elseif ($pictowithoutext == 'play') {
+			elseif ($pictowithouttext == 'play') {
 				$fakey = 'fa-play';
 				$facolor = '#444';
 			}
-			elseif ($pictowithoutext == 'jabber') {
+			elseif ($pictowithouttext == 'jabber') {
 				$fakey = 'fa-comment-o';
 			}
-			elseif (in_array($pictowithoutext, array('skype', 'twitter', 'facebook', 'linkedin'))) {
-			    $fakey = 'fa-'.$pictowithoutext;
+			elseif (in_array($pictowithouttext, array('skype', 'twitter', 'facebook', 'linkedin'))) {
+			    $fakey = 'fa-'.$pictowithouttext;
 			    if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fa = 'fab';
 			}
-			elseif ($pictowithoutext == 'split') {
-			    $fakey = 'fa-code-fork';
+			// Img for type of views
+			elseif (in_array($pictowithouttext, array('object_list', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser'))) {
+				$fakey = 'imgforviewmode fa-'.$arrayconvpictotofa[$pictowithouttext];
+				$marginleftonlyshort=0;
+			}
+			elseif (! empty($arrayconvpictotofa[$pictowithouttext]))
+			{
+				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
+				$facolor = '#444';
+				$marginleftonlyshort=0;
 			}
 			else {
-				$fakey = 'fa-'.$pictowithoutext;
+				$fakey = 'fa-'.$pictowithouttext;
 				$facolor = '#444';
 				$marginleftonlyshort=0;
 			}
@@ -3189,7 +3163,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
             $moreatt=trim($moreatt);
 
             $enabledisablehtml = '<span class="' . $fa . ' ' . $fakey . ($marginleftonlyshort ? ($marginleftonlyshort == 1 ? ' marginleftonlyshort' : ' marginleftonly') : '');
-            $enabledisablehtml .= ' valignmiddle' . ($morecss ? ' ' . $morecss : '') . '" style="' . ($fasize ? ('font-size: ' . $fasize . ';') : '') . ($facolor ? (' color: ' . $facolor . ';') : '') . ($morestyle ? ' ' . $morestyle : '') . '"' . (($notitle || empty($titlealt)) ? '' : ' title="' . dol_escape_htmltag($titlealt) . '"') . ($moreatt ? ' ' . $moreatt : '') . '>';
+            $enabledisablehtml .= ' ' . ($morecss ? ' ' . $morecss : '') . '" style="' . ($fasize ? ('font-size: ' . $fasize . ';') : '') . ($facolor ? (' color: ' . $facolor . ';') : '') . ($morestyle ? ' ' . $morestyle : '') . '"' . (($notitle || empty($titlealt)) ? '' : ' title="' . dol_escape_htmltag($titlealt) . '"') . ($moreatt ? ' ' . $moreatt : '') . '>';
 			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$enabledisablehtml.= $titlealt;
 			}
