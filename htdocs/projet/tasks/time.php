@@ -954,7 +954,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 				$title=$langs->trans("ListTaskTimeUserProject");
 
-				print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic', 0, $linktocreatetime, '', $limit);
+				print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, $linktocreatetime, '', $limit);
 			}
 			else
 			{
@@ -962,7 +962,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 			    $title=$langs->trans("ListTaskTimeForTask");
 
-			    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic', 0, $linktocreatetime, '', $limit);
+			    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, $linktocreatetime, '', $limit);
 			}
 
 			$i = 0;

@@ -4114,7 +4114,7 @@ function print_titre($title)
  * 	@return	void
  *  @deprecated Use print load_fiche_titre instead
  */
-function print_fiche_titre($title, $mesg = '', $picto = 'title_generic.png', $pictoisfullpath = 0, $id = '')
+function print_fiche_titre($title, $mesg = '', $picto = 'generic', $pictoisfullpath = 0, $id = '')
 {
 	print load_fiche_titre($title, $mesg, $picto, $pictoisfullpath, $id);
 }
@@ -4132,13 +4132,13 @@ function print_fiche_titre($title, $mesg = '', $picto = 'title_generic.png', $pi
  * 	@return	string
  *  @see print_barre_liste()
  */
-function load_fiche_titre($titre, $morehtmlright = '', $picto = 'title_generic.png', $pictoisfullpath = 0, $id = '', $morecssontable = '', $morehtmlcenter = '')
+function load_fiche_titre($titre, $morehtmlright = '', $picto = 'generic', $pictoisfullpath = 0, $id = '', $morecssontable = '', $morehtmlcenter = '')
 {
 	global $conf;
 
 	$return='';
 
-	if ($picto == 'setup') $picto='title_generic.png';
+	if ($picto == 'setup') $picto='generic';
 
 	$return.= "\n";
 	$return.= '<table '.($id?'id="'.$id.'" ':'').'class="centpercent notopnoleftnoright'.($morecssontable?' '.$morecssontable:'').'" style="margin-bottom: 6px;"><tr>';	// maring bottom must be same than into print_barre_list
@@ -4180,7 +4180,7 @@ function load_fiche_titre($titre, $morehtmlright = '', $picto = 'title_generic.p
  *  @param  int         $hidenavigation     Force to hide all navigation tools
  *	@return	void
  */
-function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '', $sortorder = '', $morehtmlcenter = '', $num = -1, $totalnboflines = '', $picto = 'title_generic.png', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limit = -1, $hideselectlimit = 0, $hidenavigation = 0)
+function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '', $sortorder = '', $morehtmlcenter = '', $num = -1, $totalnboflines = '', $picto = 'generic', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limit = -1, $hideselectlimit = 0, $hidenavigation = 0)
 {
 	global $conf,$langs;
 
@@ -4189,7 +4189,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 	$totalnboflines=abs($totalnboflines);
 
 	if ($picto == 'setup') $picto='title_setup.png';
-	if (($conf->browser->name == 'ie') && $picto=='title_generic.png') $picto='title.gif';
+	if (($conf->browser->name == 'ie') && $picto=='generic') $picto='title.gif';
 	if ($limit < 0) $limit = $conf->liste_limit;
 	if ($savlimit != 0 && (($num > $limit) || ($num == -1) || ($limit == 0)))
 	{
