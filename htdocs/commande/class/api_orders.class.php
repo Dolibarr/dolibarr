@@ -312,7 +312,7 @@ class Orders extends DolibarrApi
      *
      * @url	PUT {id}/lines/{lineid}
      *
-     * @return object
+     * @return array|bool
      */
     public function putLine($id, $lineid, $request_data = null)
     {
