@@ -545,11 +545,15 @@ function detect_dolibarr_main_url_root()
 		$dolibarr_main_url_root = $_SERVER["SERVER_URL"] . $_SERVER["DOCUMENT_URI"];
 	} // If SCRIPT_URI, SERVER_URL, DOCUMENT_URI not defined (Ie: Apache 2.0.44 for Windows)
 	else {
-        $proto = ( (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') || $_SERVER['SERVER_PORT'] == 443) ? 'https' : 'http';
+		$proto = ((!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') || (! empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443)) ? 'https' : 'http';
 		if (!empty($_SERVER["HTTP_HOST"])) {
 			$serverport = $_SERVER["HTTP_HOST"];
-		} else {
+		}
+		elseif (!empty($_SERVER["SERVER_NAME"])) {
 			$serverport = $_SERVER["SERVER_NAME"];
+		}
+		else {
+			$serverport = 'localhost';
 		}
 		$dolibarr_main_url_root = $proto . "://" . $serverport . $_SERVER["SCRIPT_NAME"];
 	}
