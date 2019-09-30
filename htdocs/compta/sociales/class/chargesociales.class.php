@@ -76,6 +76,11 @@ class ChargeSociales extends CommonObject
     public $accountid;
 
     /**
+     * @var int payment type (identical to mode_reglement_id in commonobject class)
+     */
+    public $paiementtype;
+
+    /**
      * @var int ID
      */
 	public $fk_project;
