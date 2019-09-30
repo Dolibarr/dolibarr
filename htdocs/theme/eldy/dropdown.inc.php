@@ -161,6 +161,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     overflow-y: auto;
     max-height: 60vh ; /* fallback for browsers without support for calc() */
     max-height: calc(90vh - 110px) ;
+	white-space: normal;
 }
 
 .dropdown-body::-webkit-scrollbar {
@@ -169,17 +170,12 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 .dropdown-body::-webkit-scrollbar-thumb {
     -webkit-border-radius: 0;
     border-radius: 0;
-    background: #d31b11;
+    background: rgb(<?php echo $colorbackhmenu1 ?>);
 }
 .dropdown-body::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     -webkit-border-radius: 0;
     border-radius: 0;
-}
-.dropdown-body::selection {
-    background: #d31b11;
-    color: #fff;
-    text-shadow: none;
 }
 
 
@@ -254,7 +250,6 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     font-weight: 400;
     color: #212529  !important;
     text-align: inherit;
-    white-space: nowrap;
     background-color: transparent;
     border: 0;
 
