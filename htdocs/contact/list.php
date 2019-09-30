@@ -70,6 +70,7 @@ $search_phone_mobile=GETPOST("search_phone_mobile", 'alpha');
 $search_fax=GETPOST("search_fax", 'alpha');
 $search_email=GETPOST("search_email", 'alpha');
 $search_no_email=GETPOST("search_no_email", 'int');
+$search_jabberid=GETPOST("search_jabberid", 'alpha');
 $search_skype=GETPOST("search_skype", 'alpha');
 $search_twitter=GETPOST("search_twitter", 'alpha');
 $search_facebook=GETPOST("search_facebook", 'alpha');
@@ -134,6 +135,8 @@ elseif ($type == "o")
 $object = new Contact($db);
 $hookmanager->initHooks(array('contactlist'));
 $extrafields = new ExtraFields($db);
+
+$socialnetworks = getArrayOfSocialNetworks();
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('contact');
@@ -230,6 +233,7 @@ if (empty($reshook))
 		$search_fax="";
 		$search_email="";
 		$search_no_email=-1;
+		$search_jabberid="";
 		$search_skype="";
 		$search_twitter="";
 		$search_facebook="";
@@ -267,7 +271,8 @@ $contactstatic=new Contact($db);
 $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
 $sql = "SELECT s.rowid as socid, s.nom as name,";
-$sql.= " p.rowid, p.lastname as lastname, p.statut, p.firstname, p.zip, p.town, p.poste, p.email, p.no_email, p.skype,";
+$sql.= " p.rowid, p.lastname as lastname, p.statut, p.firstname, p.zip, p.town, p.poste, p.email, p.no_email,";
+$sql.= " p.socialnetworks, p.skype, p.facebook,";
 $sql.= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.datec as date_creation, p.tms as date_update,";
 $sql.= " co.code as country_code";
 // Add fields from extrafields
@@ -327,6 +332,7 @@ if (strlen($search_phone_perso))    $sql.= natural_search('p.phone_perso', $sear
 if (strlen($search_phone_pro))      $sql.= natural_search('p.phone', $search_phone_pro);
 if (strlen($search_phone_mobile))   $sql.= natural_search('p.phone_mobile', $search_phone_mobile);
 if (strlen($search_fax))            $sql.= natural_search('p.fax', $search_fax);
+if (strlen($search_jabberid))       $sql.= natural_search('p.jabberid', $search_jabberid);
 if (strlen($search_skype))          $sql.= natural_search('p.skype', $search_skype);
 if (strlen($search_twitter))        $sql.= natural_search('p.twitter', $search_twitter);
 if (strlen($search_facebook))       $sql.= natural_search('p.facebook', $search_facebook);
@@ -766,7 +772,7 @@ while ($i < min($num, $limit))
 	$obj = $db->fetch_object($result);
 
 	print '<tr class="oddeven">';
-
+	$arraysocialnetworks = (array) json_decode($obj->socialnetworks, true);
 	$contactstatic->lastname=$obj->lastname;
 	$contactstatic->firstname='';
 	$contactstatic->id=$obj->rowid;
@@ -778,6 +784,7 @@ while ($i < min($num, $limit))
 	$contactstatic->phone_mobile=$obj->phone_mobile;
 	$contactstatic->zip=$obj->zip;
 	$contactstatic->town=$obj->town;
+	$contactstatic->socialnetworks = $arraysocialnetworks;
 
 	// ID
 	if (! empty($arrayfields['p.rowid']['checked']))
@@ -879,31 +886,31 @@ while ($i < min($num, $limit))
 	// Skype
 	if (! empty($arrayfields['p.skype']['checked']))
 	{
-		if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($obj->skype, $obj->rowid, $obj->socid, 'skype').'</td>'; }
+		if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($arraysocialnetworks['skype'], $obj->rowid, $obj->socid, 'skype').'</td>'; }
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Jabber
 	if (! empty($arrayfields['p.jabberid']['checked']))
 	{
-		if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($obj->jabberid, $obj->rowid, $obj->socid, 'jabberid').'</td>'; }
+		if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($arraysocialnetworks['jabber'], $obj->rowid, $obj->socid, 'jabberid').'</td>'; }
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Twitter
 	if (! empty($arrayfields['p.twitter']['checked']))
 	{
-		if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($obj->twitter, $obj->rowid, $obj->socid, 'twitter').'</td>'; }
+		if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($arraysocialnetworks['twitter'], $obj->rowid, $obj->socid, 'twitter').'</td>'; }
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Facebook
     if (! empty($arrayfields['p.facebook']['checked']))
     {
-        if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($obj->facebook, $obj->rowid, $obj->socid, 'facebook').'</td>'; }
+        if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($arraysocialnetworks['facebook'], $obj->rowid, $obj->socid, 'facebook').'</td>'; }
         if (! $i) $totalarray['nbfield']++;
     }
     // LinkedIn
     if (! empty($arrayfields['p.linkedin']['checked']))
     {
-        if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($obj->linkedin, $obj->rowid, $obj->socid, 'linkedin').'</td>'; }
+        if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($arraysocialnetworks['linkedin'], $obj->rowid, $obj->socid, 'linkedin').'</td>'; }
         if (! $i) $totalarray['nbfield']++;
     }
     // Company
