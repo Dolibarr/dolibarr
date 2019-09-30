@@ -669,10 +669,10 @@ elseif ($id > 0 || ! empty($ref))
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 	$title=$langs->trans("ListOfTasks");
-    $linktotasks = dolGetButtonTitle($langs->trans('GoToGanttView'), '', 'fa fa-calendar-minus-o paddingleft', DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1');
+	$linktotasks = dolGetButtonTitle($langs->trans('GoToGanttView'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1', '', 1, array('morecss'=>'reposition'));
 
-	//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
-	print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'title_generic.png');
+	//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'generic', 0, '', '', 0, 1);
+	print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'generic');
 
 	// Get list of tasks in tasksarray and taskarrayfiltered
 	// We need all tasks (even not limited to a user because a task to user can have a parent that is not affected to him).

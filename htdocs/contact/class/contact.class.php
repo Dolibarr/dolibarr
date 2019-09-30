@@ -1372,7 +1372,7 @@ class Contact extends CommonObject
      *  Used to build previews or test instances.
      *	id must be 0 if object instance is a specimen.
      *
-     *  @return	void
+     *  @return	int >0 if ok
 	 */
 	public function initAsSpecimen()
 	{
@@ -1411,6 +1411,7 @@ class Contact extends CommonObject
 
 		$this->socid = $socid;
 		$this->statut=1;
+		return 1;
 	}
 
 	/**
