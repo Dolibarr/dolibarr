@@ -272,7 +272,8 @@ $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("
 
 $sql = "SELECT s.rowid as socid, s.nom as name,";
 $sql.= " p.rowid, p.lastname as lastname, p.statut, p.firstname, p.zip, p.town, p.poste, p.email, p.no_email,";
-$sql.= " p.socialnetworks, p.skype, p.facebook,";
+// socialnetworks->>'$.facebook' as facebook
+$sql.= " p.socialnetworks,";
 $sql.= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.datec as date_creation, p.tms as date_update,";
 $sql.= " co.code as country_code";
 // Add fields from extrafields
@@ -332,11 +333,11 @@ if (strlen($search_phone_perso))    $sql.= natural_search('p.phone_perso', $sear
 if (strlen($search_phone_pro))      $sql.= natural_search('p.phone', $search_phone_pro);
 if (strlen($search_phone_mobile))   $sql.= natural_search('p.phone_mobile', $search_phone_mobile);
 if (strlen($search_fax))            $sql.= natural_search('p.fax', $search_fax);
-if (strlen($search_jabberid))       $sql.= natural_search('p.jabberid', $search_jabberid);
-if (strlen($search_skype))          $sql.= natural_search('p.skype', $search_skype);
-if (strlen($search_twitter))        $sql.= natural_search('p.twitter', $search_twitter);
-if (strlen($search_facebook))       $sql.= natural_search('p.facebook', $search_facebook);
-if (strlen($search_linkedin))       $sql.= natural_search('p.linkedin', $search_linkedin);
+if (strlen($search_jabberid))       $sql.= natural_search("p.socialnetworks->>'$.jabber'", $search_jabberid);
+if (strlen($search_skype))          $sql.= natural_search("p.socialnetworks->>'$.skype'", $search_skype);
+if (strlen($search_twitter))        $sql.= natural_search("p.socialnetworks->>'$.twitter'", $search_twitter);
+if (strlen($search_facebook))       $sql.= natural_search("p.socialnetworks->>'$.facebook'", $search_facebook);
+if (strlen($search_linkedin))       $sql.= natural_search("p.socialnetworks->>'$.linkedin'", $search_linkedin);
 if (strlen($search_email))          $sql.= natural_search('p.email', $search_email);
 if (strlen($search_zip))   			$sql.= natural_search("p.zip", $search_zip);
 if (strlen($search_town))   		$sql.= natural_search("p.town", $search_town);
@@ -653,7 +654,7 @@ if (! empty($arrayfields['p.facebook']['checked']))
 	print '<input class="flat" type="text" name="search_facebook" size="6" value="'.dol_escape_htmltag($search_facebook).'">';
 	print '</td>';
 }
-if (! empty($arrayfields['p.linkedin']['checked']))
+if (! empty($arrayfields['p.lp.facebookinkedin']['checked']))
 {
     print '<td class="liste_titre">';
     print '<input class="flat" type="text" name="search_linkedin" size="6" value="'.dol_escape_htmltag($search_linkedin).'">';
