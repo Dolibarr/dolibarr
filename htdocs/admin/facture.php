@@ -808,36 +808,39 @@ print '</table>';
 print '<br>';
 print load_fiche_titre($langs->trans("PathToDocuments"), '', '');
 
-print '<table class="noborder" width="100%">'."\n";
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '<td>'.$langs->trans("Name").'</td>'."\n";
 print '<td>'.$langs->trans("Value").'</td>'."\n";
 print "</tr>\n";
-print '<tr '.$bc[false].'>'."\n";
+print '<tr class="oddeven">'."\n";
 print '<td width="140">'.$langs->trans("PathDirectory").'</td>'."\n";
 print '<td>'.$conf->facture->dir_output.'</td>'."\n";
 print '</tr>'."\n";
 print "</table>\n";
-
+print "</div>\n";
 
 /*
  * Notifications
  */
 print '<br>';
 print load_fiche_titre($langs->trans("Notifications"), '', '');
-print '<table class="noborder" width="100%">';
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td class="center" width="60"></td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
-
 print '<tr class="oddeven"><td colspan="2">';
 print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification").'<br>';
 print '</td><td class="right">';
 print "</td></tr>\n";
-
 print '</table>';
+print "</div>\n";
+
 
 dol_fiche_end();
 
