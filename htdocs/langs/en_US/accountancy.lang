@@ -134,7 +134,6 @@ NotVentilatedinAccount=Not bound to the accounting account
 XLineSuccessfullyBinded=%s products/services successfully bound to an accounting account
 XLineFailedToBeBinded=%s products/services were not bound to any accounting account
 
-ACCOUNTING_DISABLE_FAQ=Disable FAQ on accountancy area
 ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to bind shown by page (maximum recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the page "Binding to do" by the most recent elements
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the page "Binding done" by the most recent elements

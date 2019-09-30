@@ -82,20 +82,6 @@ if ($action == 'update') {
     }
 }
 
-// TO DO Mutualize code for yes/no constants
-if ($action == 'setdisablefaq') {
-	$setdisablefaq = GETPOST('value', 'int');
-	$res = dolibarr_set_const($db, "ACCOUNTING_DISABLE_FAQ", $setdisablefaq, 'yesno', 0, '', $conf->entity);
-	if (! $res > 0)
-		$error ++;
-
-	if (! $error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'mesgs');
-	}
-}
-
 if ($action == 'setlistsorttodo') {
     $setlistsorttodo = GETPOST('value', 'int');
     $res = dolibarr_set_const($db, "ACCOUNTING_LIST_SORT_VENTILATION_TODO", $setlistsorttodo, 'yesno', 0, '', $conf->entity);
@@ -225,20 +211,7 @@ if (! empty($user->admin))
 {
     // TO DO Mutualize code for yes/no constants
     print '<tr class="oddeven">';
-	print '<td>' . $langs->trans("ACCOUNTING_DISABLE_FAQ") . '</td>';
-	if (! empty($conf->global->ACCOUNTING_DISABLE_FAQ)) {
-		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setdisablefaq&value=0">';
-		print img_picto($langs->trans("Activated"), 'switch_on');
-		print '</a></td>';
-	} else {
-		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setdisablefaq&value=1">';
-		print img_picto($langs->trans("Disabled"), 'switch_off');
-		print '</a></td>';
-	}
-	print '</tr>';
-
-	print '<tr>';
-    print '<td>' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_TODO") . '</td>';
+	print '<td>' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_TODO") . '</td>';
     if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO)) {
         print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setlistsorttodo&value=0">';
         print img_picto($langs->trans("Activated"), 'switch_on');
