@@ -8239,7 +8239,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
  *
  * @param string    $label      label of button
  * @param string    $helpText   optional : content for help tooltip
- * @param string    $iconClass  class for icon element
+ * @param string    $iconClass  class for icon element (Example: 'fa fa-file')
  * @param string    $url        the url for link
  * @param string    $id         attribute id of button
  * @param int       $status     0 no user rights, 1 active, -1 Feature Disabled, -2 disable Other reason use helpText as tooltip
@@ -8255,12 +8255,12 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
         return '';
     }
 
-    $class = 'btnTitle' ;
-
+    $class = 'btnTitle';
     // hidden conf keep during button transition TODO: remove this block
-    if(empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)){
+    if (empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)) {
         $class = 'butActionNew';
     }
+    if (! empty($params['morecss'])) $class.=' '.$params['morecss'];
 
     $attr=array(
         'class' => $class
@@ -8326,9 +8326,9 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
         $TCompiledAttr[] = $key.'="'.$value.'"';
     }
 
-    $compiledAttributes = !empty($TCompiledAttr)?implode(' ', $TCompiledAttr):'';
+    $compiledAttributes = (empty($TCompiledAttr) ? '' : implode(' ', $TCompiledAttr));
 
-    $tag = !empty($attr['href'])?'a':'span';
+    $tag = (empty($attr['href']) ? 'span' : 'a');
 
 
     $button ='<'.$tag.' '.$compiledAttributes.' >';
