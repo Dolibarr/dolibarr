@@ -1119,7 +1119,7 @@ class BonPrelevement extends CommonObject
             if (! $error && ! $notrigger)
             {
                 // Call trigger
-                $result=$this->call_trigger('BON_PRELEVEMENT_CREATE', $user);
+                $result=$this->call_trigger('DIRECT_DEBIT_ORDER_CREATE', $user);
                 if ($result < 0) $error++;
                 // End call triggers
             }
