@@ -75,11 +75,11 @@ if (GETPOST('action', 'alpha') == 'set')
 	$res = dolibarr_set_const($db, "TAKEPOS_ORDER_NOTES", GETPOST('TAKEPOS_ORDER_NOTES', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_PHONE_BASIC_LAYOUT", GETPOST('TAKEPOS_PHONE_BASIC_LAYOUT', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_AUTO_PRINT_TICKETS", GETPOST('TAKEPOS_AUTO_PRINT_TICKETS', 'int'), 'int', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "TAKEPOS_HEADER", GETPOST('TAKEPOS_HEADER', 'alpha'), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "TAKEPOS_FOOTER", GETPOST('TAKEPOS_FOOTER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUMPAD", GETPOST('TAKEPOS_NUMPAD', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUM_TERMINALS", GETPOST('TAKEPOS_NUM_TERMINALS', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_DIRECT_PAYMENT", GETPOST('TAKEPOS_DIRECT_PAYMENT', 'int'), 'int', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_CUSTOM_RECEIPT", GETPOST('TAKEPOS_CUSTOM_RECEIPT', 'int'), 'int', 0, '', $conf->entity);
+  $res = dolibarr_set_const($db, "TAKEPOS_EMAIL_TEMPLATE_INVOICE", GETPOST('TAKEPOS_EMAIL_TEMPLATE_INVOICE', 'alpha'), 'chaine', 0, '', $conf->entity);
 
 	if ($conf->global->TAKEPOS_ORDER_NOTES==1)
 	{
@@ -231,42 +231,35 @@ print '<td colspan="2">';
 print $form->selectyesno("TAKEPOS_DIRECT_PAYMENT", $conf->global->TAKEPOS_DIRECT_PAYMENT, 1);
 print "</td></tr>\n";
 
-$substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
-$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
-$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
-foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
-$htmltext.='</i>';
-
+// Custom Receipt
 print '<tr class="oddeven"><td>';
-print $form->textwithpicto($langs->trans("FreeLegalTextOnInvoices")." - ".$langs->trans("Header"), $htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
-print '</td><td>';
-$variablename='TAKEPOS_HEADER';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
-{
-    print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
-}
-else
-{
-    include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
-    print $doleditor->Create();
-}
+print $langs->trans('CustomReceipt');
+print '<td colspan="2">';
+print $form->selectyesno("TAKEPOS_CUSTOM RECEIPT", $conf->global->TAKEPOS_CUSTOM_RECEIPT, 1);
 print "</td></tr>\n";
 
+// Email template for send invoice
 print '<tr class="oddeven"><td>';
-print $form->textwithpicto($langs->trans("FreeLegalTextOnInvoices")." - ".$langs->trans("Footer"), $htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
-print '</td><td>';
-$variablename='TAKEPOS_FOOTER';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
+print $langs->trans('EmailTemplate');
+print '<td colspan="2">';
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+$formmail = new FormMail($db);
+$nboftemplates = $formmail->fetchAllEMailTemplate('facture_send', $user, null, -1);	// We set lang=null to get in priority record with no lang
+//$arraydefaultmessage = $formmail->getEMailTemplate($db, $tmp[1], $user, null, 0, 1, '');
+$arrayofmessagename=array();
+if (is_array($formmail->lines_model))
 {
-    print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
+	                	foreach($formmail->lines_model as $modelmail)
+	                	{
+	                		//var_dump($modelmail);
+	                		$moreonlabel='';
+	                		if (! empty($arrayofmessagename[$modelmail->label])) $moreonlabel=' <span class="opacitymedium">('.$langs->trans("SeveralLangugeVariatFound").')</span>';
+	                		$arrayofmessagename[$modelmail->label]=$langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)).$moreonlabel;
+	                	}
 }
-else
-{
-    include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
-    print $doleditor->Create();
-}
+//var_dump($arraydefaultmessage);
+//var_dump($arrayofmessagename);
+print $form->selectarray('TAKEPOS_EMAIL_TEMPLATE_INVOICE', $arrayofmessagename, $conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE, 'None', 1, 0, '', 0, 0, 0, '', '', 1);
 print "</td></tr>\n";
 
 print '</table>';

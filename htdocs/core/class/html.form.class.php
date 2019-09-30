@@ -1152,9 +1152,8 @@ class Form
 		 	$sql .= ", dictp.code as country_code";
 		}
 
-		$sql.= " FROM (".MAIN_DB_PREFIX ."societe as s";
+		$sql.= " FROM ".MAIN_DB_PREFIX ."societe as s";
 		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " )";
 		if ($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST) {
 			$sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."c_country as dictp ON dictp.rowid=s.fk_pays";
 		}
@@ -1887,10 +1886,10 @@ class Form
 	 * 	@param		int			$forcecombo				Force to use combo box
 	 *  @param      string      $morecss                Add more css on select
 	 *  @param      int         $hidepriceinlabel       1=Hide prices in label
-	 *  @param      string      $warehouseStatus        warehouse status filter, following comma separated filter options can be used
-	 *										            'warehouseopen' = select products from open warehouses,
-	 *										            'warehouseclosed' = select products from closed warehouses,
-	 *										            'warehouseinternal' = select products from warehouses for internal correct/transfer only
+	 *  @param      string      $warehouseStatus        Warehouse status filter to count the quantity in stock. Following comma separated filter options can be used
+	 *										            'warehouseopen' = count products from open warehouses,
+	 *										            'warehouseclosed' = count products from closed warehouses,
+	 *										            'warehouseinternal' = count products from warehouses for internal correct/transfer only
 	 *  @param 		array 		$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
 	 *  @return		void
 	 */
@@ -1902,6 +1901,15 @@ class Form
 		// check parameters
 		$price_level = (! empty($price_level) ? $price_level : 0);
 		if (is_null($ajaxoptions)) $ajaxoptions=array();
+
+		if(strval($filtertype) === '' && (!empty($conf->product->enabled) || !empty($conf->service->enabled))){
+			if(!empty($conf->product->enabled) && empty($conf->service->enabled)){
+				$filtertype = '0';
+			}
+			elseif(empty($conf->product->enabled) && !empty($conf->service->enabled)){
+				$filtertype = '1';
+			}
+		}
 
 		if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
 		{
@@ -2042,10 +2050,10 @@ class Form
 	 * 	@param		int		$forcecombo		    Force to use combo box
 	 *  @param      string  $morecss            Add more css on select
 	 *  @param      int     $hidepriceinlabel   1=Hide prices in label
-	 *  @param      string  $warehouseStatus    warehouse status filter, following comma separated filter options can be used
-	 *										    'warehouseopen' = select products from open warehouses,
-	 *										    'warehouseclosed' = select products from closed warehouses,
-	 *										    'warehouseinternal' = select products from warehouses for internal correct/transfer only
+	 *  @param      string  $warehouseStatus    Warehouse status filter to group/count stock. Following comma separated filter options can be used.
+	 *										    'warehouseopen' = count products from open warehouses,
+	 *										    'warehouseclosed' = count products from closed warehouses,
+	 *										    'warehouseinternal' = count products from warehouses for internal correct/transfer only
 	 *  @return     array    				    Array of keys for json
 	 */
     public function select_produits_list($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $filterkey = '', $status = 1, $finished = 2, $outputmode = 0, $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '')
@@ -2055,6 +2063,11 @@ class Form
 
 		$out='';
 		$outarray=array();
+
+        // Units
+        if ($conf->global->PRODUCT_USE_UNITS) {
+            $langs->load('other');
+        }
 
 		$warehouseStatusArray = array();
 		if (! empty($warehouseStatus))
@@ -2075,7 +2088,14 @@ class Form
 		}
 
 		$selectFields = " p.rowid, p.label, p.ref, p.description, p.barcode, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.fk_price_expression";
-		(count($warehouseStatusArray)) ? $selectFieldsGrouped = ", sum(ps.reel) as stock" : $selectFieldsGrouped = ", p.stock";
+		if (count($warehouseStatusArray))
+		{
+		    $selectFieldsGrouped = ", sum(".$db->ifsql("e.statut IS NULL", "0", "ps.reel").") as stock";           // e.statut is null if there is no record in stock
+		}
+		else
+		{
+		    $selectFieldsGrouped = ", p.stock";
+		}
 
 		$sql = "SELECT ";
 		$sql.= $selectFields . $selectFieldsGrouped;
@@ -2099,8 +2119,8 @@ class Form
 		}
         // Units
         if (! empty($conf->global->PRODUCT_USE_UNITS)) {
-            $sql .= ', u.label as unit_long, u.short_label as unit_short';
-            $selectFields .= ', unit_long, unit_short';
+            $sql .= ", u.label as unit_long, u.short_label as unit_short, p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units";
+            $selectFields .= ', unit_long, unit_short, p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units';
         }
 
 		// Multilang : we add translation
@@ -2126,7 +2146,8 @@ class Form
 		if (count($warehouseStatusArray))
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_product = p.rowid";
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e on ps.fk_entrepot = e.rowid";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e on ps.fk_entrepot = e.rowid AND e.entity IN (".getEntity('stock').")";
+			$sql.= ' AND e.statut IN ('.$this->db->escape(implode(',', $warehouseStatusArray)).')';    // Return line if product is inside the selected stock. If not, an empty line will be returned so we will count 0.
 		}
 
 		// include search in supplier ref
@@ -2154,10 +2175,6 @@ class Form
 		}
 
 		$sql.= ' WHERE p.entity IN ('.getEntity('product').')';
-		if (count($warehouseStatusArray))
-		{
-			$sql.= ' AND (p.fk_product_type = 1 OR e.statut IN ('.$this->db->escape(implode(',', $warehouseStatusArray)).'))';
-		}
 
 		if (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
 			$sql .= " AND pac.rowid IS NULL";
@@ -2396,6 +2413,42 @@ class Form
 		$outdurationvalue=$outtype == Product::TYPE_SERVICE?substr($objp->duration, 0, dol_strlen($objp->duration)-1):'';
 		$outdurationunit=$outtype == Product::TYPE_SERVICE?substr($objp->duration, -1):'';
 
+        // Units
+        $outvalUnits = '';
+        if ($conf->global->PRODUCT_USE_UNITS) {
+            if (!empty($objp->unit_short)) {
+                $outvalUnits .= ' - ' . $objp->unit_short;
+            }
+            if (!empty($objp->weight) && $objp->weight_units!==null) {
+                $unitToShow = showDimensionInBestUnit($objp->weight, $objp->weight_units, 'weight', $langs);
+                $outvalUnits .= ' - ' . $unitToShow;
+            }
+            if ((!empty($objp->length) || !empty($objp->width) || !empty($objp->height)) && $objp->length_units!==null) {
+                $unitToShow = $objp->length . ' x ' . $objp->width . ' x ' . $objp->height . ' ' . measuring_units_string($objp->length_units, 'size');
+                $outvalUnits .= ' - ' . $unitToShow;
+            }
+            if (!empty($objp->surface) && $objp->surface_units!==null) {
+                $unitToShow = showDimensionInBestUnit($objp->surface, $objp->surface_units, 'surface', $langs);
+                $outvalUnits .= ' - ' . $unitToShow;
+            }
+            if (!empty($objp->volume) && $objp->volume_units!==null) {
+                $unitToShow = showDimensionInBestUnit($objp->volume, $objp->volume_units, 'volume', $langs);
+                $outvalUnits .= ' - ' . $unitToShow;
+            }
+            if ($outdurationvalue && $outdurationunit) {
+                $da = array(
+                    'h' => $langs->trans('Hour'),
+                    'd' => $langs->trans('Day'),
+                    'w' => $langs->trans('Week'),
+                    'm' => $langs->trans('Month'),
+                    'y' => $langs->trans('Year')
+                );
+                if (isset($da[$outdurationunit])) {
+                    $outvalUnits .= ' - ' . $outdurationvalue . ' ' . $langs->transnoentities($da[$outdurationunit].($outdurationvalue > 1 ? 's' : ''));
+                }
+            }
+        }
+
 		$opt = '<option value="'.$objp->rowid.'"';
 		$opt.= ($objp->rowid == $selected)?' selected':'';
 		if (!empty($objp->price_by_qty_rowid) && $objp->price_by_qty_rowid > 0)
@@ -2411,16 +2464,15 @@ class Form
 		$opt.= $objp->ref;
 		if ($outbarcode) $opt.=' ('.$outbarcode.')';
 		$opt.=' - '.dol_trunc($label, $maxlengtharticle);
-        // Units
-        if (! empty($conf->global->PRODUCT_USE_UNITS)) {
-            $opt .= ' (' . $objp->unit_short . ')';
-        }
 
 		$objRef = $objp->ref;
 		if (! empty($filterkey) && $filterkey != '') $objRef=preg_replace('/('.preg_quote($filterkey).')/i', '<strong>$1</strong>', $objRef, 1);
 		$outval.=$objRef;
 		if ($outbarcode) $outval.=' ('.$outbarcode.')';
 		$outval.=' - '.dol_trunc($label, $maxlengtharticle);
+        // Units
+        $opt .= $outvalUnits;
+        $outval .= $outvalUnits;
 
 		$found=0;
 
@@ -2582,17 +2634,6 @@ class Form
 			}
 		}
 
-		if ($outdurationvalue && $outdurationunit)
-		{
-			$da=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
-			if (isset($da[$outdurationunit]))
-			{
-				$key = $da[$outdurationunit].($outdurationvalue > 1?'s':'');
-				$opt.= ' - '.$outdurationvalue.' '.$langs->trans($key);
-				$outval.=' - '.$outdurationvalue.' '.$langs->transnoentities($key);
-			}
-		}
-
 		$opt.= "</option>\n";
 		$optJson = array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'label2'=>$outlabel, 'desc'=>$outdesc, 'type'=>$outtype, 'price_ht'=>price2num($outprice_ht), 'price_ttc'=>price2num($outprice_ttc), 'pricebasetype'=>$outpricebasetype, 'tva_tx'=>$outtva_tx, 'qty'=>$outqty, 'discount'=>$outdiscount, 'duration_value'=>$outdurationvalue, 'duration_unit'=>$outdurationunit);
 	}
@@ -2667,16 +2708,28 @@ class Form
 		$outarray=array();
 
 		$langs->load('stocks');
+        // Units
+        if ($conf->global->PRODUCT_USE_UNITS) {
+            $langs->load('other');
+        }
 
 		$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration, p.fk_product_type,";
 		$sql.= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.remise_percent, pfp.remise, pfp.unitprice,";
 		$sql.= " pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, pfp.fk_soc, s.nom as name,";
 		$sql.= " pfp.supplier_reputation";
+        // Units
+        if ($conf->global->PRODUCT_USE_UNITS) {
+            $sql .= ", u.label as unit_long, u.short_label as unit_short, p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units";
+        }
         if (! empty($conf->barcode->enabled)) $sql.= " ,pfp.barcode";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
 		if ($socid) $sql.= " AND pfp.fk_soc = ".$socid;
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pfp.fk_soc = s.rowid";
+        // Units
+        if ($conf->global->PRODUCT_USE_UNITS) {
+            $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_units u ON u.rowid = p.fk_unit";
+        }
 		$sql.= " WHERE p.entity IN (".getEntity('product').")";
 		$sql.= " AND p.tobuy = 1";
 		if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$this->db->escape($filtertype);
@@ -2737,6 +2790,42 @@ class Form
 				$outdurationvalue=$outtype == Product::TYPE_SERVICE?substr($objp->duration, 0, dol_strlen($objp->duration)-1):'';
 				$outdurationunit=$outtype == Product::TYPE_SERVICE?substr($objp->duration, -1):'';
 
+                // Units
+                $outvalUnits = '';
+                if ($conf->global->PRODUCT_USE_UNITS) {
+                    if (!empty($objp->unit_short)) {
+                        $outvalUnits .= ' - ' . $objp->unit_short;
+                    }
+                    if (!empty($objp->weight) && $objp->weight_units!==null) {
+                        $unitToShow = showDimensionInBestUnit($objp->weight, $objp->weight_units, 'weight', $langs);
+                        $outvalUnits .= ' - ' . $unitToShow;
+                    }
+                    if ((!empty($objp->length) || !empty($objp->width) || !empty($objp->height)) && $objp->length_units!==null) {
+                        $unitToShow = $objp->length . ' x ' . $objp->width . ' x ' . $objp->height . ' ' . measuring_units_string($objp->length_units, 'size');
+                        $outvalUnits .= ' - ' . $unitToShow;
+                    }
+                    if (!empty($objp->surface) && $objp->surface_units!==null) {
+                        $unitToShow = showDimensionInBestUnit($objp->surface, $objp->surface_units, 'surface', $langs);
+                        $outvalUnits .= ' - ' . $unitToShow;
+                    }
+                    if (!empty($objp->volume) && $objp->volume_units!==null) {
+                        $unitToShow = showDimensionInBestUnit($objp->volume, $objp->volume_units, 'volume', $langs);
+                        $outvalUnits .= ' - ' . $unitToShow;
+                    }
+                    if ($outdurationvalue && $outdurationunit) {
+                        $da = array(
+                            'h' => $langs->trans('Hour'),
+                            'd' => $langs->trans('Day'),
+                            'w' => $langs->trans('Week'),
+                            'm' => $langs->trans('Month'),
+                            'y' => $langs->trans('Year')
+                        );
+                        if (isset($da[$outdurationunit])) {
+                            $outvalUnits .= ' - ' . $outdurationvalue . ' ' . $langs->transnoentities($da[$outdurationunit].($outdurationvalue > 1 ? 's' : ''));
+                        }
+                    }
+                }
+
 				$opt = '<option value="'.$outkey.'"';
 				if ($selected && $selected == $objp->idprodfournprice) $opt.= ' selected';
 				if (empty($objp->idprodfournprice) && empty($alsoproductwithnosupplierprice)) $opt.=' disabled';
@@ -2761,8 +2850,11 @@ class Form
 				if (! empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn))
 					$outval.=' ('.$objRefFourn.')';
 				$outval.=' - ';
-				$opt.=dol_trunc($label, 72).' - ';
-				$outval.=dol_trunc($label, 72).' - ';
+				$opt.=dol_trunc($label, 72);
+				$outval.=dol_trunc($label, 72);
+                // Units
+                $opt .= $outvalUnits;
+                $outval .= $outvalUnits;
 
 				if (! empty($objp->idprodfournprice))
 				{
@@ -2787,15 +2879,15 @@ class Form
 					}
 					if ($objp->quantity == 1)
 					{
-						$opt.= price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 1, $langs, 0, 0, -1, $conf->currency)."/";
-						$outval.= price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 0, $langs, 0, 0, -1, $conf->currency)."/";
+						$opt.= ' - '.price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 1, $langs, 0, 0, -1, $conf->currency)."/";
+						$outval.= ' - '.price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 0, $langs, 0, 0, -1, $conf->currency)."/";
 						$opt.= $langs->trans("Unit");	// Do not use strtolower because it breaks utf8 encoding
 						$outval.=$langs->transnoentities("Unit");
 					}
 					else
 					{
-						$opt.= price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 1, $langs, 0, 0, -1, $conf->currency)."/".$objp->quantity;
-						$outval.= price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 0, $langs, 0, 0, -1, $conf->currency)."/".$objp->quantity;
+						$opt.= ' - '.price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 1, $langs, 0, 0, -1, $conf->currency)."/".$objp->quantity;
+						$outval.= ' - '.price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 0, $langs, 0, 0, -1, $conf->currency)."/".$objp->quantity;
 						$opt.= ' '.$langs->trans("Units");	// Do not use strtolower because it breaks utf8 encoding
 						$outval.= ' '.$langs->transnoentities("Units");
 					}
@@ -2838,13 +2930,13 @@ class Form
 				{
 					if (empty($alsoproductwithnosupplierprice))     // No supplier price defined for couple product/supplier
 					{
-						$opt.= $langs->trans("NoPriceDefinedForThisSupplier");
-						$outval.=$langs->transnoentities("NoPriceDefinedForThisSupplier");
+						$opt.= ' - '.$langs->trans("NoPriceDefinedForThisSupplier");
+						$outval.=' - '.$langs->transnoentities("NoPriceDefinedForThisSupplier");
 					}
 					else                                            // No supplier price defined for product, even on other suppliers
 					{
-						$opt.= $langs->trans("NoPriceDefinedForThisSupplier");
-						$outval.=$langs->transnoentities("NoPriceDefinedForThisSupplier");
+						$opt.= ' - '.$langs->trans("NoPriceDefinedForThisSupplier");
+						$outval.=' - '.$langs->transnoentities("NoPriceDefinedForThisSupplier");
 					}
 				}
 				$opt .= "</option>\n";
@@ -4225,7 +4317,7 @@ class Form
 			$formconfirm.= '<td class="valid">';
 			$formconfirm.= $this->selectyesno("confirm", $newselectedchoice);
 			$formconfirm.= '</td>';
-			$formconfirm.= '<td class="valid center"><input class="button valignmiddle" type="submit" onclick="this.disabled=\'disabled\' value="'.$langs->trans("Validate").'"></td>';
+			$formconfirm.= '<td class="valid center"><input class="button valignmiddle" type="submit" value="'.$langs->trans("Validate").'"></td>';
 			$formconfirm.= '</tr>'."\n";
 
 			$formconfirm.= '</table>'."\n";
@@ -5203,7 +5295,7 @@ class Form
 	 *  @param  datetime    $adddateof      Add a link "Date of invoice" using the following date.
 	 *  @return	string|void					Nothing or string if nooutput is 1
      *  @deprecated
-	 *  @see    form_date(), select_month(), select_year(), select_dayofweek()
+	 *  @see    selectDate(), form_date(), select_month(), select_year(), select_dayofweek()
 	 */
     public function select_date($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $nooutput = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '')
     {
@@ -6469,6 +6561,7 @@ class Form
 
 		if ($rendermode == 0)
 		{
+			$arrayselected=array();
 			$cate_arbo = $this->select_all_categories($type, '', 'parent', 64, 0, 1);
 			foreach($categories as $c) {
 				$arrayselected[] = $c->id;
@@ -7002,8 +7095,8 @@ class Form
 		// Left part of banner
 		if ($morehtmlleft)
 		{
-			if ($conf->browser->layout == 'phone') $ret.='<div class="floatleft">'.$morehtmlleft.'</div>';    // class="center" to have photo in middle
-			else $ret.='<div class="inline-block floatleft">'.$morehtmlleft.'</div>';
+			if ($conf->browser->layout == 'phone') $ret.='<!-- morehmltleft --><div class="floatleft">'.$morehtmlleft.'</div>';    // class="center" to have photo in middle
+			else $ret.='<!-- morehmltleft --><div class="inline-block floatleft">'.$morehtmlleft.'</div>';
 		}
 
 		//if ($conf->browser->layout == 'phone') $ret.='<div class="clearboth"></div>';
@@ -7416,7 +7509,7 @@ class Form
 	 */
     public function showFilterAndCheckAddButtons($addcheckuncheckall = 0, $cssclass = 'checkforaction', $calljsfunction = 0)
 	{
-		$out.=$this->showFilterButtons();
+		$out=$this->showFilterButtons();
 		if ($addcheckuncheckall)
 		{
 			$out.=$this->showCheckAddButtons($cssclass, $calljsfunction);

@@ -1140,7 +1140,7 @@ class Societe extends CommonObject
 
 						if ($result > 0)
 						{
-							$lmember->societe=$this->name;
+							$lmember->company=$this->name;
 							//$lmember->firstname=$this->firstname?$this->firstname:$lmember->firstname;	// We keep firstname and lastname of member unchanged
 							//$lmember->lastname=$this->lastname?$this->lastname:$lmember->lastname;		// We keep firstname and lastname of member unchanged
 							$lmember->address=$this->address;
@@ -1158,7 +1158,8 @@ class Societe extends CommonObject
 							$result=$lmember->update($user, 0, 1, 1, 1);	// Use nosync to 1 to avoid cyclic updates
 							if ($result < 0)
 							{
-								$this->error=$lmember->error;
+								$this->error = $lmember->error;
+								$this->errors = array_merge($this->errors, $lmember->errors);
 								dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
 								$error++;
 							}
@@ -3884,7 +3885,7 @@ class Societe extends CommonObject
 		 $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
 		 $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
 		 */
-		if ($mode == 'supplier') $sql  = "SELECT rowid, total_ht as total_ht, total_ttc, paye, fk_statut, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
+		if ($mode == 'supplier') $sql  = "SELECT rowid, total_ht as total_ht, total_ttc, paye, type, fk_statut, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
 		else $sql  = "SELECT rowid, total as total_ht, total_ttc, paye, fk_statut, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
 		$sql .= " WHERE fk_soc = ". $this->id;
 		if ($mode == 'supplier') {
@@ -3911,25 +3912,34 @@ class Societe extends CommonObject
 				$tmpobject=new Facture($this->db);
 			}
 			while($obj=$this->db->fetch_object($resql)) {
-				$tmpobject->id=$obj->rowid;
-				if ($obj->fk_statut != 0                                           // Not a draft
-					&& ! ($obj->fk_statut == 3 && $obj->close_code == 'replaced')  // Not a replaced invoice
+                $tmpobject->id=$obj->rowid;
+
+                if ($obj->fk_statut != $tmpobject::STATUS_DRAFT                                           // Not a draft
+                	&& ! ($obj->fk_statut == $tmpobject::STATUS_ABANDONED && $obj->close_code == 'replaced')  // Not a replaced invoice
 					)
 				{
 					$outstandingTotal+= $obj->total_ht;
 					$outstandingTotalIncTax+= $obj->total_ttc;
 				}
 				if ($obj->paye == 0
-					&& $obj->fk_statut != 0    // Not a draft
-					&& $obj->fk_statut != 3	   // Not abandonned
-					&& $obj->fk_statut != 2)   // Not classified as paid
+					&& $obj->fk_statut != $tmpobject::STATUS_DRAFT    		// Not a draft
+					&& $obj->fk_statut != $tmpobject::STATUS_ABANDONED	    // Not abandonned
+					&& $obj->fk_statut != $tmpobject::STATUS_CLOSED)   		// Not classified as paid
 				//$sql .= " AND (fk_statut <> 3 OR close_code <> 'abandon')";		// Not abandonned for undefined reason
 				{
 					$paiement = $tmpobject->getSommePaiement();
 					$creditnotes = $tmpobject->getSumCreditNotesUsed();
 					$deposits = $tmpobject->getSumDepositsUsed();
+
 					$outstandingOpened+=$obj->total_ttc - $paiement - $creditnotes - $deposits;
 				}
+
+                //if credit note is converted but not used
+                // TODO Do this also for customer ?
+                if($mode == 'supplier' && $obj->type == FactureFournisseur::TYPE_CREDIT_NOTE  && $tmpobject->isCreditNoteUsed())
+                {
+                	$outstandingOpened-=$tmpobject->getSumFromThisCreditNotesNotUsed();
+                }
 			}
 			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax);	// 'opened' is 'incl taxes'
 		}
@@ -3937,54 +3947,6 @@ class Societe extends CommonObject
 		{
 			return array();
 		}
-	}
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-    /**
-     *  Return amount of bill not paid
-     *
-     *  @return		int				Amount in debt for thirdparty
-     *  @deprecated
-     *  @see getOutstandingBills()
-     */
-    public function get_OutstandingBill()
-    {
-        // phpcs:enable
-		/* Accurate value of remain to pay is to sum remaintopay for each invoice
-	     $paiement = $invoice->getSommePaiement();
-	     $creditnotes=$invoice->getSumCreditNotesUsed();
-	     $deposits=$invoice->getSumDepositsUsed();
-	     $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
-	     $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
-	     */
-		$sql  = "SELECT rowid, total_ttc FROM ".MAIN_DB_PREFIX."facture as f";
-		$sql .= " WHERE fk_soc = ". $this->id;
-		$sql .= " AND entity IN (".getEntity('invoice').")";
-		$sql .= " AND paye = 0";
-		$sql .= " AND fk_statut <> 0";	// Not a draft
-		$sql .= " AND entity IN (".getEntity('invoice').")";
-		//$sql .= " AND (fk_statut <> 3 OR close_code <> 'abandon')";		// Not abandonned for undefined reason
-		$sql .= " AND fk_statut <> 3";		// Not abandonned
-		$sql .= " AND fk_statut <> 2";		// Not clasified as paid
-
-		dol_syslog("get_OutstandingBill", LOG_DEBUG);
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			$outstandingAmount = 0;
-			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-			$tmpobject=new Facture($this->db);
-			while($obj=$this->db->fetch_object($resql)) {
-				$tmpobject->id=$obj->rowid;
-				$paiement = $tmpobject->getSommePaiement();
-				$creditnotes = $tmpobject->getSumCreditNotesUsed();
-				$deposits = $tmpobject->getSumDepositsUsed();
-				$outstandingAmount+= $obj->total_ttc - $paiement - $creditnotes - $deposits;
-			}
-			return $outstandingAmount;
-		}
-		else
-			return 0;
 	}
 
 	/**
@@ -3999,7 +3961,7 @@ class Societe extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Return the label of the customer/prospect status
 	 *
 	 *  @param	int		$statut         Id statut
 	 *  @return	string          		Libelle du statut
@@ -4075,22 +4037,16 @@ class Societe extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param 	int[]|int 	$categories 	Category ID or array of Categories IDs
-	 * @param 	string 		$type 			Category type ('customer' or 'supplier')
+	 * @param 	string 		$type_categ 			Category type ('customer' or 'supplier')
 	 * @return	int							<0 if KO, >0 if OK
 	 */
-	public function setCategories($categories, $type)
+	public function setCategories($categories, $type_categ)
 	{
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
 		// Decode type
-		if ($type == 'customer') {
-			$type_id = Categorie::TYPE_CUSTOMER;
-			$type_text = 'customer';
-		} elseif ($type == 'supplier') {
-			$type_id = Categorie::TYPE_SUPPLIER;
-			$type_text = 'supplier';
-		} else {
-			dol_syslog(__METHOD__ . ': Type ' . $type .  'is an unknown company category type. Done nothing.', LOG_ERR);
+		if (! in_array($type_categ, array(Categorie::TYPE_CUSTOMER, Categorie::TYPE_SUPPLIER))) {
+			dol_syslog(__METHOD__ . ': Type ' . $type_categ .  'is an unknown company category type. Done nothing.', LOG_ERR);
 			return -1;
 		}
 
@@ -4101,7 +4057,7 @@ class Societe extends CommonObject
 
 		// Get current categories
 		$c = new Categorie($this->db);
-		$existing = $c->containing($this->id, $type_id, 'id');
+		$existing = $c->containing($this->id, $type_categ, 'id');
 
 		// Diff
 		if (is_array($existing)) {
@@ -4117,13 +4073,13 @@ class Societe extends CommonObject
 		// Process
 		foreach ($to_del as $del) {
 			if ($c->fetch($del) > 0) {
-				$c->del_type($this, $type_text);
+				$c->del_type($this, $type_categ);
 			}
 		}
 		foreach ($to_add as $add) {
 			if ($c->fetch($add) > 0)
 			{
-				$result = $c->add_type($this, $type_text);
+				$result = $c->add_type($this, $type_categ);
 				if ($result < 0)
 				{
 					$error++;

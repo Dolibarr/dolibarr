@@ -202,9 +202,10 @@ if (empty($reshook))
 				}
 
 				// Update
-				$object->update($object->id, $user, 0, 1, 1, 'merge');
+				$result = $object->update($object->id, $user, 0, 1, 1, 'merge');
 				if ($result < 0)
 				{
+					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
 				}
 
@@ -669,6 +670,7 @@ if (empty($reshook))
                 //var_dump($object);exit;
 
                 $result = $object->update($socid, $user, 1, $object->oldcopy->codeclient_modifiable(), $object->oldcopy->codefournisseur_modifiable(), 'update', 0);
+
                 if ($result <=  0)
                 {
                     setEventMessages($object->error, $object->errors, 'errors');
@@ -1511,7 +1513,7 @@ else
 		print '<td>'.$form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0).'</td>';
 		print '<td colspan="3" class="maxwidthonsmartphone">';
 		$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, '', 0, '', '', 0, 1);
-		// Note: If user has no right to "see all thirdparties", we for selection of sale representative to him, so after creation he can see the record.
+		// Note: If user has no right to "see all thirdparties", we force selection of sale representative to him, so after creation he can see the record.
 		$selected = (count(GETPOST('commercial', 'array')) > 0 ? GETPOST('commercial', 'array') : (GETPOST('commercial', 'int') > 0 ? array(GETPOST('commercial', 'int')) : (empty($user->rights->societe->client->voir)?array($user->id):array())));
 		print $form->multiselectarray('commercial', $userlist, $selected, null, null, null, null, "90%");
 		print '</td></tr>';

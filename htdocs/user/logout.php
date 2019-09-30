@@ -80,6 +80,7 @@ if (session_status() === PHP_SESSION_ACTIVE)
 // Not sure this is required
 unset($_SESSION['dol_login']);
 unset($_SESSION['dol_entity']);
+unset($_SESSION['urlfrom']);
 
 if (GETPOST('noredirect')) return;
 header("Location: ".$url);		// Default behaviour is redirect to index.php page

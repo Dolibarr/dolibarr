@@ -88,7 +88,7 @@ class Project extends CommonObject
 	public $user_close_id;
     public $public;      //!< Tell if this is a public or private project
     public $budget_amount;
-    public $bill_time;			// Is the time spent on project must be invoiced or not
+    public $usage_bill_time;			// Is the time spent on project must be invoiced or not
 
     public $statuts_short;
     public $statuts_long;
@@ -213,7 +213,10 @@ class Project extends CommonObject
         $sql.= ", datee";
         $sql.= ", opp_amount";
         $sql.= ", budget_amount";
-        $sql.= ", bill_time";
+        $sql.= ", usage_opportunity";
+        $sql.= ", usage_task";
+        $sql.= ", usage_bill_time";
+        $sql.= ", usage_organize_event";
         $sql.= ", note_private";
         $sql.= ", note_public";
         $sql.= ", entity";
@@ -232,7 +235,10 @@ class Project extends CommonObject
         $sql.= ", " . ($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null');
         $sql.= ", " . (strcmp($this->opp_amount, '') ? price2num($this->opp_amount) : 'null');
         $sql.= ", " . (strcmp($this->budget_amount, '') ? price2num($this->budget_amount) : 'null');
-        $sql.= ", " . ($this->bill_time ? 1 : 0);
+        $sql.= ", " . ($this->usage_opportunity ? 1 : 0);
+        $sql.= ", " . ($this->usage_task ? 1 : 0);
+        $sql.= ", " . ($this->usage_bill_time ? 1 : 0);
+        $sql.= ", " . ($this->usage_organize_event ? 1 : 0);
         $sql.= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : 'null');
         $sql.= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : 'null');
         $sql.= ", ".$conf->entity;
@@ -338,7 +344,10 @@ class Project extends CommonObject
             $sql.= ", opp_amount = " . (strcmp($this->opp_amount, '') ? price2num($this->opp_amount) : "null");
             $sql.= ", budget_amount = " . (strcmp($this->budget_amount, '')  ? price2num($this->budget_amount) : "null");
             $sql.= ", fk_user_modif = " . $user->id;
-            $sql.= ", bill_time = " . ($this->bill_time ? 1 : 0);
+            $sql.= ", usage_opportunity = " . ($this->usage_opportunity ? 1 : 0);
+            $sql.= ", usage_task = " . ($this->usage_task ? 1 : 0);
+            $sql.= ", usage_bill_time = " . ($this->usage_bill_time ? 1 : 0);
+            $sql.= ", usage_organize_event = " . ($this->usage_organize_event ? 1 : 0);
             $sql.= " WHERE rowid = " . $this->id;
 
             dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -437,7 +446,7 @@ class Project extends CommonObject
 
         $sql = "SELECT rowid, ref, title, description, public, datec, opp_amount, budget_amount,";
         $sql.= " tms, dateo, datee, date_close, fk_soc, fk_user_creat, fk_user_modif, fk_user_close, fk_statut, fk_opp_status, opp_percent,";
-        $sql.= " note_private, note_public, model_pdf, bill_time, entity";
+        $sql.= " note_private, note_public, model_pdf, usage_opportunity, usage_task, usage_bill_time, usage_organize_event, entity";
         $sql.= " FROM " . MAIN_DB_PREFIX . "projet";
         if (! empty($id))
         {
@@ -483,7 +492,10 @@ class Project extends CommonObject
                 $this->opp_percent	= $obj->opp_percent;
                 $this->budget_amount	= $obj->budget_amount;
                 $this->modelpdf	= $obj->model_pdf;
-                $this->bill_time = (int) $obj->bill_time;
+                $this->usage_opportunity = (int) $obj->usage_opportunity;
+                $this->usage_task = (int) $obj->usage_task;
+                $this->usage_bill_time = (int) $obj->usage_bill_time;
+                $this->usage_organize_event = (int) $obj->usage_organize_event;
                 $this->entity = $obj->entity;
 
                 $this->db->free($resql);
@@ -1097,6 +1109,11 @@ class Project extends CommonObject
         $this->opp_amount = 20000;
         $this->budget_amount = 10000;
 
+        $this->usage_opportunity = 1;
+        $this->usage_task = 1;
+        $this->usage_bill_time = 1;
+        $this->usage_organize_event = 1;
+
         /*
         $nbp = mt_rand(1, 9);
         $xnbp = 0;
@@ -1629,9 +1646,11 @@ class Project extends CommonObject
 	 *
 	 *    @param	string	$tableName			Table of the element to update
 	 *    @param	int		$elementSelectId	Key-rowid of the line of the element to update
+	 *    @param	string	$projectfield	    The column name that stores the link with the project
+     *
 	 *    @return	int							1 if OK or < 0 if KO
 	 */
-	public function remove_element($tableName, $elementSelectId)
+	public function remove_element($tableName, $elementSelectId, $projectfield = 'fk_projet')
 	{
         // phpcs:enable
 		$sql="UPDATE ".MAIN_DB_PREFIX.$tableName;
@@ -1640,10 +1659,9 @@ class Project extends CommonObject
 		{
 			$sql.= " SET fk_project=NULL";
 			$sql.= " WHERE id=".$elementSelectId;
-		}
-		else
+		}else
 		{
-			$sql.= " SET fk_projet=NULL";
+			$sql.= " SET ".$projectfield."=NULL";
 			$sql.= " WHERE rowid=".$elementSelectId;
 		}
 
@@ -1845,9 +1863,9 @@ class Project extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Charge indicateurs this->nb pour le tableau de bord
+	 * Charge indicateurs this->nb pour le tableau de bord
 	 *
-	 *      @return     int         <0 if KO, >0 if OK
+	 * @return     int         <0 if KO, >0 if OK
 	 */
 	public function load_state_board()
 	{
@@ -1962,10 +1980,7 @@ class Project extends CommonObject
 	 */
 	public function setCategories($categories)
 	{
-		// Decode type
-		$type_id = Categorie::TYPE_PROJECT;
-		$type_text = 'project';
-
+		$type_categ = Categorie::TYPE_PROJECT;
 
 		// Handle single category
 		if (!is_array($categories)) {
@@ -1975,7 +1990,7 @@ class Project extends CommonObject
 		// Get current categories
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 		$c = new Categorie($this->db);
-		$existing = $c->containing($this->id, $type_id, 'id');
+		$existing = $c->containing($this->id, $type_categ, 'id');
 
 		// Diff
 		if (is_array($existing)) {
@@ -1989,7 +2004,7 @@ class Project extends CommonObject
 		// Process
 		foreach ($to_del as $del) {
 			if ($c->fetch($del) > 0) {
-				$result=$c->del_type($this, $type_text);
+				$result=$c->del_type($this, $type_categ);
 				if ($result<0) {
 					$this->errors=$c->errors;
 					$this->error=$c->error;
@@ -1999,7 +2014,7 @@ class Project extends CommonObject
 		}
 		foreach ($to_add as $add) {
 			if ($c->fetch($add) > 0) {
-				$result=$c->add_type($this, $type_text);
+				$result=$c->add_type($this, $type_categ);
 				if ($result<0) {
 					$this->errors=$c->errors;
 					$this->error=$c->error;

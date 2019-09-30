@@ -157,7 +157,7 @@ function length_accounta($accounta)
 
 
 /**
- *	Show header of a VAT report
+ *	Show header of a page used to transfer/dispatch data in accounting
  *
  *	@param	string				$nom            Name of report
  *	@param 	string				$variante       Link for alternate report

@@ -29,6 +29,7 @@ MenuMembersUpToDate=Up to date members
 MenuMembersNotUpToDate=Out of date members
 MenuMembersResiliated=Terminated members
 MembersWithSubscriptionToReceive=Μέλη αναμένοντα για  λήψη συνδρομής
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=Ημερομηνία συνδρομής
 DateEndSubscription=Ημερομηνία Λήξης Συνδρομής
 EndSubscription=Λήξη συνδρομής

@@ -522,7 +522,11 @@ class DoliDBPgsql extends DoliDB
 			@pg_query($this->db, 'SAVEPOINT mysavepoint');
 		}
 
-		if (! in_array($query, array('BEGIN','COMMIT','ROLLBACK'))) dol_syslog('sql='.$query, LOG_DEBUG);
+		if (! in_array($query, array('BEGIN','COMMIT','ROLLBACK')))
+		{
+			$SYSLOG_SQL_LIMIT = 10000;	// limit log to 10kb per line to limit DOS attacks
+			dol_syslog('sql='.substr($query, 0, $SYSLOG_SQL_LIMIT), LOG_DEBUG);
+		}
 
 		$ret = @pg_query($this->db, $query);
 
@@ -603,7 +607,7 @@ class DoliDBPgsql extends DoliDB
     /**
      *	Return number of lines for result of a SELECT
      *
-     *	@param	resourse	$resultset  Resulset of requests
+     *	@param	resource	$resultset  Resulset of requests
      *	@return int		    			Nb of lines, -1 on error
      *	@see    affected_rows()
      */

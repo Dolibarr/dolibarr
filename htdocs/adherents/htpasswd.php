@@ -20,8 +20,7 @@
 /**
  *  	\file 		htdocs/adherents/htpasswd.php
  *      \ingroup    member
- *      \brief      Page d'export htpasswd du fichier des adherents
- *      \author     Rodolphe Quiedeville
+ *      \brief      Export page htpasswd of the membership file
  */
 
 require '../main.inc.php';

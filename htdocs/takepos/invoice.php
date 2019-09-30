@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
 
-$langs->loadLangs(array("bills", "cashdesk"));
+$langs->loadLangs(array("companies", "commercial", "bills", "cashdesk", "stocks"));
 
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
@@ -137,6 +137,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
     	$bankaccount=$conf->global->$accountname;
     }
 	$now=dol_now();
+	$res = 0;
 
 	$invoice = new Facture($db);
 	$invoice->fetch($placeid);
@@ -161,41 +162,60 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		$invoice->update($user);
 	}
 
-	if (! empty($conf->stock->enabled) && $conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"]} != "1")
+	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
+	if ($invoice->statut != Facture::STATUS_DRAFT)
 	{
-	    $invoice->validate($user, '', $conf->global->{'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"]});
+		dol_syslog("Sale already validated");
+		dol_htmloutput_errors($langs->trans("InvoiceIsAlreadyValidated", "TakePos"), null, 1);
+	}
+	elseif (count($invoice->lines)==0)
+	{
+		dol_syslog("Sale without lines");
+		dol_htmloutput_errors($langs->trans("NoLinesToBill", "TakePos"), null, 1);
+	}
+	elseif (! empty($conf->stock->enabled) && $conf->global->$constantforkey != "1")
+	{
+		$savconst = $conf->global->STOCK_CALCULATE_ON_BILL;
+		$conf->global->STOCK_CALCULATE_ON_BILL=1;
+
+		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
+		dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".$conf->global->$constantforkey);
+		$res = $invoice->validate($user, '', $conf->global->$constantforkey);
+
+		$conf->global->STOCK_CALCULATE_ON_BILL = $savconst;
 	}
 	else
 	{
-	    $invoice->validate($user);
+	    $res = $invoice->validate($user);
 	}
 
 	// Add the payment
-	$payment=new Paiement($db);
-	$payment->datepaye = $now;
-	$payment->fk_account = $bankaccount;
-	$payment->amounts[$invoice->id] = $amountofpayment;
-	
-	// If user has not used change control, add total invoice payment
-	if ($amountofpayment == 0) $payment->amounts[$invoice->id] = $invoice->total_ttc;
+    if ($res > 0) {
+		$payment = new Paiement($db);
+		$payment->datepaye = $now;
+		$payment->fk_account = $bankaccount;
+		$payment->amounts[$invoice->id] = $amountofpayment;
 
-	$payment->paiementid=$paiementid;
-	$payment->num_payment=$invoice->ref;
+		// If user has not used change control, add total invoice payment
+		if ($amountofpayment == 0) $payment->amounts[$invoice->id] = $invoice->total_ttc;
 
-    $payment->create($user);
-	$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
+		$payment->paiementid=$paiementid;
+		$payment->num_payment=$invoice->ref;
 
-	$remaintopay = $invoice->getRemainToPay();
-	if ($remaintopay == 0)
-	{
-	    dol_syslog("Invoice is paid, so we set it to pay");
-	    $result = $invoice->set_paid($user);
-	    if ($result > 0) $invoice->paye = 1;
-	}
-	else
-	{
-	    dol_syslog("Invoice is not paid, remain to pay = ".$remaintopay);
-	}
+		$payment->create($user);
+		$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
+
+		$remaintopay = $invoice->getRemainToPay();
+		if ($remaintopay == 0) {
+			dol_syslog("Invoice is paid, so we set it to pay");
+			$result = $invoice->set_paid($user);
+			if ($result > 0) $invoice->paye = 1;
+		} else {
+			dol_syslog("Invoice is not paid, remain to pay = " . $remaintopay);
+		}
+	} else {
+		dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+    }
 }
 
 if ($action == 'history')
@@ -255,7 +275,9 @@ if ($action == "addline")
 }
 
 if ($action == "freezone") {
-    $invoice->addline($desc, $number, 1, $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS, 0, 0, 0, 0, '', 0, 0, 0, '', 'TTC', $number, 0, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', null, 0);
+    $customer = new Societe($db);
+    $customer->fetch($invoice->socid);
+    $invoice->addline($desc, $number, 1, get_default_tva($mysoc, $customer), 0, 0, 0, 0, '', 0, 0, 0, '', 'TTC', $number, 0, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', null, 0);
     $invoice->fetch($placeid);
 }
 
@@ -287,12 +309,30 @@ if ($action == "deleteline") {
 }
 
 if ($action == "delete") {
-    if ($placeid > 0) { //If invoice exists
+	// $placeid is the invoice id (it differs from place) and is defined if the place is set and the ref of invoice is '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')', so the fetch at begining of page works.
+	if ($placeid > 0) {
         $result = $invoice->fetch($placeid);
-        if ($result > 0)
+
+        if ($result > 0 && $invoice->statut == Facture::STATUS_DRAFT)
         {
-            $sql = "DELETE FROM " . MAIN_DB_PREFIX . "facturedet where fk_facture='".$placeid."'";
-            $resql = $db->query($sql);
+        	$db->begin();
+
+        	// We delete the lines
+        	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "facturedet_extrafields where fk_object = ".$placeid;
+        	$resql1 = $db->query($sql);
+        	$sql = "DELETE FROM " . MAIN_DB_PREFIX . "facturedet where fk_facture = ".$placeid;
+            $resql2 = $db->query($sql);
+			$sql="UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]}." where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+			$resql3 = $db->query($sql);
+
+            if ($resql1 && $resql2 && $resql3)
+            {
+            	$db->commit();
+            }
+            else
+            {
+            	$db->rollback();
+            }
 
             $invoice->fetch($placeid);
         }
@@ -395,7 +435,7 @@ if ($action=="valid" || $action=="history")
     }
     else
     {
-        if ($invoice->paye) $sectionwithinvoicelink.='<span class="amountpaymentcomplete" style="font-size: unset">'.$langs->trans("Payed").'</span>';
+        if ($invoice->paye) $sectionwithinvoicelink.='<span class="amountpaymentcomplete" style="font-size: unset">'.$langs->trans("Paid").'</span>';
         else $sectionwithinvoicelink.=$langs->trans('BillShortStatusValidated');
     }
     $sectionwithinvoicelink.='</span>';
@@ -541,7 +581,7 @@ if ($_SESSION["basiclayout"]!=1)
 {
 	print '<td class="linecolqty right">' . $langs->trans('ReductionShort') . '</td>';
 	print '<td class="linecolqty right">' . $langs->trans('Qty') . '</td>';
-	print '<td class="linecolht right nowraponall">' . $langs->trans('TotalHTShort') . '</td>';
+	print '<td class="linecolht right nowraponall">' . $langs->trans('TotalTTCShort') . '</td>';
 }
 print "</tr>\n";
 
@@ -567,7 +607,7 @@ if ($_SESSION["basiclayout"]==1)
 		$htmlforlines.= '</div>';
 		print $htmlforlines;
 	}
-	
+
 	if ($mobilepage=="products")
 	{
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -591,7 +631,7 @@ if ($_SESSION["basiclayout"]==1)
 		$htmlforlines.= '</div>';
 		print $htmlforlines;
 	}
-	
+
 	if ($mobilepage=="places")
 	{
 		$sql="SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables";
@@ -689,9 +729,52 @@ if ($invoice->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takep
     $soc = new Societe($db);
     if ($invoice->socid > 0) $soc->fetch($invoice->socid);
     else $soc->fetch($conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]});
-    print '<p style="font-size:120%;" class="right">';
+    print '<!-- Show customer --><p style="font-size:120%;" class="right">';
     print $langs->trans("Customer").': '.$soc->name;
+
+	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
+	if (! empty($conf->stock->enabled) && $conf->global->$constantforkey != "1")
+	{
+		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
+		$warehouse = new Entrepot($db);
+		$warehouse->fetch($conf->global->$constantforkey);
+		print '<br>'.$langs->trans("Warehouse").': '.$warehouse->ref;
+	}
     print '</p>';
+
+        // Module Adherent
+        if (! empty($conf->adherent->enabled))
+		{
+    require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+    $langs->load("members");
+    print '<p style="font-size:120%;" class="right">';
+    print $langs->trans("Member").': ';
+    $adh=new Adherent($db);
+    $result=$adh->fetch('', '', $invoice->socid);
+            if ($result > 0)
+			{
+    $adh->ref=$adh->getFullName($langs);
+    print $adh->getFullName($langs);
+    print '<br>'.$langs->trans("Type").': '.$adh->type;
+		if ($adh->datefin)
+		{
+			print '<br>'.$langs->trans("SubscriptionEndDate").': '.dol_print_date($adh->datefin, 'day');
+			if ($adh->hasDelay()) {
+				print " ".img_warning($langs->trans("Late"));
+			}
+		}
+		else
+		{
+				print $langs->trans("SubscriptionNotReceived");
+				if ($adh->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
+		}
+			}
+			else
+			{
+    print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
+			}
+    print '</p>';
+		}
 }
 
 if ($action == "search")

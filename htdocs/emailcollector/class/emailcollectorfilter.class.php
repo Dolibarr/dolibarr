@@ -201,7 +201,7 @@ class EmailCollectorFilter extends CommonObject
 	    // Clear extrafields that are unique
 	    if (is_array($object->array_options) && count($object->array_options) > 0)
 	    {
-	    	$extrafields->fetch_name_optionals_label($this->element);
+	    	$extrafields->fetch_name_optionals_label($this->table_element);
 	    	foreach($object->array_options as $key => $option)
 	    	{
 	    		$shortkey = preg_replace('/options_/', '', $key);

@@ -79,6 +79,8 @@ function testSqlAndScriptInject($val, $type)
 		$inj += preg_match('/union.+select/i', $val);
 		$inj += preg_match('/(\.\.%2f)+/i', $val);
 	}
+	// For XSS Injection done by closing textarea to exucute content into a textarea field
+	$inj += preg_match('/<\/textarea/i', $val);
 	// For XSS Injection done by adding javascript with script
 	// This is all cases a browser consider text is javascript:
 	// When it found '<script', 'javascript:', '<style', 'onload\s=' on body tag, '="&' on a tag size with old browsers
@@ -90,13 +92,15 @@ function testSqlAndScriptInject($val, $type)
 	$inj += preg_match('/Set\.constructor/i', $val);	// ECMA script 6
 	if (! defined('NOSTYLECHECK')) $inj += preg_match('/<style/i', $val);
 	$inj += preg_match('/base[\s]+href/si', $val);
-	$inj += preg_match('/<.*onmouse/si', $val);       // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
-	$inj += preg_match('/onerror\s*=/i', $val);       // onerror can be set on img or any html tag like <img title='...' onerror = alert(1)>
-	$inj += preg_match('/onfocus\s*=/i', $val);       // onfocus can be set on input text html tag like <input type='text' value='...' onfocus = alert(1)>
-	$inj += preg_match('/onload\s*=/i', $val);        // onload can be set on svg tag <svg/onload=alert(1)> or other tag like body <body onload=alert(1)>
-	$inj += preg_match('/onloadstart\s*=/i', $val);   // onload can be set on audio tag <audio onloadstart=alert(1)>
-	$inj += preg_match('/onclick\s*=/i', $val);       // onclick can be set on img text html tag like <img onclick = alert(1)>
-	$inj += preg_match('/onscroll\s*=/i', $val);      // onscroll can be on textarea
+	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp
+	$inj += preg_match('/onmouse([a-z]*)\s*=/i', $val);       // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
+	$inj += preg_match('/ondrag([a-z]*)\s*=/i', $val);        //
+	$inj += preg_match('/ontouch([a-z]*)\s*=/i', $val);        //
+	$inj += preg_match('/on(abort|afterprint|beforeprint|beforeunload|blur|canplay|canplaythrough|change|click|contextmenu|copy|cut)\s*=/i', $val);
+	$inj += preg_match('/on(dblclick|drop|durationchange|ended|error|focus|focusin|focusout|hashchange|input|invalid)\s*=/i', $val);
+	$inj += preg_match('/on(keydown|keypress|keyup|load|loadeddata|loadedmetadata|loadstart|offline|online|pagehide|pageshow)\s*=/i', $val);
+	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|resize|reset|scroll|search|seeking|select|show|stalled|start|submit|suspend)\s*=/i', $val);
+	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting)\s*=/i', $val);
 	//$inj += preg_match('/on[A-Z][a-z]+\*=/', $val);   // To lock event handlers onAbort(), ...
 	$inj += preg_match('/&#58;|&#0000058|&#x3A/i', $val);		// refused string ':' encoded (no reason to have it encoded) to lock 'javascript:...'
 	//if ($type == 1)
@@ -358,7 +362,7 @@ if (! defined('NOTOKENRENEWAL'))
 if ((! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN))
 	|| defined('CSRFCHECK_WITH_TOKEN'))	// Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set
 {
-	if ($_SERVER['REQUEST_METHOD'] == 'POST' && ! GETPOSTISSET('token')) // Note, offender can still send request by GET
+	if ($_SERVER['REQUEST_METHOD'] == 'POST' && ! GETPOSTISSET('token')) // Note: offender can still send request by GET
 	{
 		dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." refused by CSRFCHECK_WITH_TOKEN protection. Token not provided.");
 		print "Access by POST method refused by CSRF protection in main.inc.php. Token not provided.\n";
@@ -366,17 +370,14 @@ if ((! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->
 		die;
 	}
 
-	//if ($_SERVER['REQUEST_METHOD'] === 'POST')  // This test must be after loading $_SESSION['token'].
-	//{
 	if (GETPOSTISSET('token') && GETPOST('token', 'alpha') != $_SESSION['token'])
 	{
 		dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." refused due to invalid token, so we disable POST and some GET parameters - referer=".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha').", _SESSION['token']=".$_SESSION['token'], LOG_WARNING);
 		//print 'Unset POST by CSRF protection in main.inc.php.';	// Do not output anything because this create problems when using the BACK button on browsers.
-		if ($conf->global->MAIN_FEATURES_LEVEL>1) setEventMessages('Unset POST by CSRF protection in main.inc.php (POST was already done or was done by a not allowed web page).'."<br>\n".'$_SERVER[REQUEST_URI] = '.$_SERVER['REQUEST_URI'].' $_SERVER[REQUEST_METHOD] = '.$_SERVER['REQUEST_METHOD'].' GETPOST(token) = '.GETPOST('token', 'alpha').' $_SESSION[token] = '.$_SESSION['token'], null, 'warnings');
+		if ($conf->global->MAIN_FEATURES_LEVEL>1) setEventMessages('Unset POST by CSRF protection in main.inc.php (POST for this token was already done or was done by a not allowed web page with a wrong token).'."<br>\n".'$_SERVER[REQUEST_URI] = '.$_SERVER['REQUEST_URI'].' $_SERVER[REQUEST_METHOD] = '.$_SERVER['REQUEST_METHOD'].' GETPOST(token) = '.GETPOST('token', 'alpha').' $_SESSION[token] = '.$_SESSION['token'], null, 'warnings');
 		unset($_POST);
 		unset($_GET['confirm']);
 	}
-	//}
 }
 
 // Disable modules (this must be after session_start and after conf has been loaded)
@@ -469,7 +470,7 @@ if (! defined('NOLOGIN'))
 		$dol_hide_leftmenu=GETPOST('dol_hide_leftmenu', 'int', 3);
 		$dol_optimize_smallscreen=GETPOST('dol_optimize_smallscreen', 'int', 3);
 		$dol_no_mouse_hover=GETPOST('dol_no_mouse_hover', 'int', 3);
-		$dol_use_jmobile=GETPOST('dol_use_jmobile', 'int', 3);
+		$dol_use_jmobile=GETPOST('dol_use_jmobile', 'int', 3);			// 0=default, 1=to say we use app from a webview app, 2=to say we use app from a webview app and keep ajax
 		//dol_syslog("POST key=".join(array_keys($_POST),',').' value='.join($_POST,','));
 
 		// If in demo mode, we check we go to home page through the public/demo/index.php page
@@ -491,7 +492,7 @@ if (! defined('NOLOGIN'))
 		}
 
 		// Verification security graphic code
-		if (GETPOST("username", "alpha", 2) && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
+		if (GETPOST("username", "alpha", 2) && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA) && ! isset($_SESSION['dol_bypass_antispam']))
 		{
 			$sessionkey = 'dol_antispam_value';
 			$ok=(array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
@@ -749,7 +750,7 @@ if (! defined('NOLOGIN'))
 			    	$_SESSION['lastsearch_contextpage_'.$relativepathstring]=$_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring];
 			    	unset($_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]);
 			    }
-			    if (! empty($_SESSION['lastsearch_page_tmp_'.$relativepathstring]) && $_SESSION['lastsearch_page_tmp_'.$relativepathstring] > 1)
+			    if (! empty($_SESSION['lastsearch_page_tmp_'.$relativepathstring]) && $_SESSION['lastsearch_page_tmp_'.$relativepathstring] > 0)
 			    {
 			    	$_SESSION['lastsearch_page_'.$relativepathstring]=$_SESSION['lastsearch_page_tmp_'.$relativepathstring];
 			    	unset($_SESSION['lastsearch_page_tmp_'.$relativepathstring]);
@@ -966,7 +967,7 @@ if (! defined('NOLOGIN'))
 }
 
 
-dol_syslog("--- Access to ".$_SERVER["PHP_SELF"].' - action='.GETPOST('action', 'az09').', massaction='.GETPOST('massaction', 'az09'));
+dol_syslog("--- Access to ".$_SERVER["PHP_SELF"].' - action='.GETPOST('action', 'aZ09').', massaction='.GETPOST('massaction', 'aZ09'));
 //Another call for easy debugg
 //dol_syslog("Access to ".$_SERVER["PHP_SELF"].' GET='.join(',',array_keys($_GET)).'->'.join(',',$_GET).' POST:'.join(',',array_keys($_POST)).'->'.join(',',$_POST));
 
@@ -1435,7 +1436,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
                 {
                 	$pathckeditor=constant('JS_CKEDITOR');
                 }
-                print '<script>';
+                print '<script><!-- enable ckeditor by main.inc.php -->';
                 print 'var CKEDITOR_BASEPATH = \''.$pathckeditor.'\';'."\n";
                 print 'var ckeditorConfig = \''.dol_buildpath($themesubdir.'/theme/'.$conf->theme.'/ckeditor/config.js'.($ext?'?'.$ext:''), 1).'\';'."\n";		// $themesubdir='' in standard usage
                 print 'var ckeditorFilebrowserBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
@@ -1443,7 +1444,14 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
                 print '</script>'."\n";
                 print '<script src="'.$pathckeditor.$jsckeditor.($ext?'?'.$ext:'').'"></script>'."\n";
                 print '<script>';
-                print 'CKEDITOR.disableAutoInline = true;'."\n";
+                if (GETPOST('mode', 'aZ09') == 'Full_inline')
+                {
+                	print 'CKEDITOR.disableAutoInline = false;'."\n";
+                }
+                else
+                {
+                	print 'CKEDITOR.disableAutoInline = true;'."\n";
+                }
                 print '</script>'."\n";
             }
 
@@ -1764,7 +1772,7 @@ function top_menu_user(User $user, Translate $langs)
     $dropdownBody.= '<br>';
 
     $dropdownBody.= '<br><u>'.$langs->trans("Session").'</u>';
-    $dropdownBody.= '<br><b>'.$langs->trans("IPAddress").'</b>: '.$_SERVER["REMOTE_ADDR"];
+    $dropdownBody.= '<br><b>'.$langs->trans("IPAddress").'</b>: '.dol_escape_htmltag($_SERVER["REMOTE_ADDR"]);
     if (! empty($conf->global->MAIN_MODULE_MULTICOMPANY)) $dropdownBody.= '<br><b>'.$langs->trans("ConnectedOnMultiCompany").':</b> '.$conf->entity.' (user entity '.$user->entity.')';
     $dropdownBody.= '<br><b>'.$langs->trans("AuthenticationMode").':</b> '.$_SESSION["dol_authmode"].(empty($dolibarr_main_demo)?'':' (demo)');
     $dropdownBody.= '<br><b>'.$langs->trans("ConnectedSince").':</b> '.dol_print_date($user->datelastlogin, "dayhour", 'tzuser');
@@ -1773,7 +1781,7 @@ function top_menu_user(User $user, Translate $langs)
     $dropdownBody.= '<br><b>'.$langs->trans("CurrentMenuManager").':</b> '.$menumanager->name;
     $langFlag=picto_from_langcode($langs->getDefaultLang());
     $dropdownBody.= '<br><b>'.$langs->trans("CurrentUserLanguage").':</b> '.($langFlag?$langFlag.' ':'').$langs->getDefaultLang();
-    $dropdownBody.= '<br><b>'.$langs->trans("Browser").':</b> '.$conf->browser->name.($conf->browser->version?' '.$conf->browser->version:'').' ('.$_SERVER['HTTP_USER_AGENT'].')';
+    $dropdownBody.= '<br><b>'.$langs->trans("Browser").':</b> '.$conf->browser->name.($conf->browser->version?' '.$conf->browser->version:'').' ('.dol_escape_htmltag($_SERVER['HTTP_USER_AGENT']).')';
     $dropdownBody.= '<br><b>'.$langs->trans("Layout").':</b> '.$conf->browser->layout;
     $dropdownBody.= '<br><b>'.$langs->trans("Screen").':</b> '.$_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
     if ($conf->browser->layout == 'phone') $dropdownBody.= '<br><b>'.$langs->trans("Phone").':</b> '.$langs->trans("Yes");
@@ -2033,19 +2041,38 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-			$bugbaseurl = 'https://github.com/Dolibarr/dolibarr/issues/new';
-			$bugbaseurl.= '?title=';
+            $bugbaseurl = 'https://github.com/Dolibarr/dolibarr/issues/new?labels=Bug';
+			$bugbaseurl.= '&title=';
 			$bugbaseurl.= urlencode("Bug: ");
-			$bugbaseurl.= '&body=';
-			$bugbaseurl.= urlencode("# Bug\n");
-			$bugbaseurl.= urlencode("\n");
-			$bugbaseurl.= urlencode("## Environment\n");
-			$bugbaseurl.= urlencode("- **Version**: " . DOL_VERSION . "\n");
-			$bugbaseurl.= urlencode("- **OS**: " . php_uname('s') . "\n");
-			$bugbaseurl.= urlencode("- **Web server**: " . $_SERVER["SERVER_SOFTWARE"] . "\n");
-			$bugbaseurl.= urlencode("- **PHP**: " . php_sapi_name() . ' ' . phpversion() . "\n");
-			$bugbaseurl.= urlencode("- **Database**: " . $db::LABEL . ' ' . $db->getVersion() . "\n");
-			$bugbaseurl.= urlencode("- **URL**: " . $_SERVER["REQUEST_URI"] . "\n");
+            $bugbaseurl.= '&body=';
+            $bugbaseurl.= urlencode("# Instructions\n");
+            $bugbaseurl.= urlencode("*This is a template to help you report good issues. You may use [Github Markdown](https://help.github.com/articles/getting-started-with-writing-and-formatting-on-github/) syntax to format your issue report.*\n");
+            $bugbaseurl.= urlencode("*Please:*\n");
+            $bugbaseurl.= urlencode("- *replace the bracket enclosed texts with meaningful information*\n");
+            $bugbaseurl.= urlencode("- *remove any unused sub-section*\n");
+            $bugbaseurl.= urlencode("\n");
+            $bugbaseurl.= urlencode("\n");
+            $bugbaseurl.= urlencode("# Bug\n");
+            $bugbaseurl.= urlencode("[*Short description*]\n");
+            $bugbaseurl.= urlencode("\n");
+            $bugbaseurl.= urlencode("## Environment\n");
+            $bugbaseurl.= urlencode("- **Version**: " . DOL_VERSION . "\n");
+            $bugbaseurl.= urlencode("- **OS**: " . php_uname('s') . "\n");
+            $bugbaseurl.= urlencode("- **Web server**: " . $_SERVER["SERVER_SOFTWARE"] . "\n");
+            $bugbaseurl.= urlencode("- **PHP**: " . php_sapi_name() . ' ' . phpversion() . "\n");
+            $bugbaseurl.= urlencode("- **Database**: " . $db::LABEL . ' ' . $db->getVersion() . "\n");
+            $bugbaseurl.= urlencode("- **URL(s)**: " . $_SERVER["REQUEST_URI"] . "\n");
+            $bugbaseurl.= urlencode("\n");
+            $bugbaseurl.= urlencode("## Expected and actual behavior\n");
+            $bugbaseurl.= urlencode("[*Verbose description*]\n");
+            $bugbaseurl.= urlencode("\n");
+            $bugbaseurl.= urlencode("## Steps to reproduce the behavior\n");
+            $bugbaseurl.= urlencode("[*Verbose description*]\n");
+            $bugbaseurl.= urlencode("\n");
+            $bugbaseurl.= urlencode("## [Attached files](https://help.github.com/articles/issue-attachments) (Screenshots, screencasts, dolibarr.log, debugging informations…)\n");
+            $bugbaseurl.= urlencode("[*Files*]\n");
+            $bugbaseurl.= urlencode("\n");
+
 
 			// Execute hook printBugtrackInfo
 			$parameters=array('bugbaseurl'=>$bugbaseurl);
@@ -2205,7 +2232,7 @@ if (! function_exists("llxFooter"))
 	 */
 	function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages = 0)
 	{
-		global $conf, $langs, $user, $object;
+		global $conf, $db, $langs, $user, $object;
 		global $delayedhtmlcontent;
 		global $contextpage, $page, $limit;
 
@@ -2246,7 +2273,7 @@ if (! function_exists("llxFooter"))
 			unset($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]);
 
 			if (! empty($contextpage))                     $_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]=$contextpage;
-			if (! empty($page) && $page > 1)               $_SESSION['lastsearch_page_tmp_'.$relativepathstring]=$page;
+			if (! empty($page) && $page > 0)               $_SESSION['lastsearch_page_tmp_'.$relativepathstring]=$page;
 			if (! empty($limit) && $limit != $conf->limit) $_SESSION['lastsearch_limit_tmp_'.$relativepathstring]=$limit;
 
 			unset($_SESSION['lastsearch_contextpage_'.$relativepathstring]);
@@ -2334,65 +2361,62 @@ if (! function_exists("llxFooter"))
 		// Add code for the asynchronous anonymous first ping (for telemetry)
 		if (($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') || GETPOST('forceping', 'alpha'))
 		{
+			//print '<!-- instance_unique_id='.$conf->file->instance_unique_id.' MAIN_FIRST_PING_OK_ID='.$conf->global->MAIN_FIRST_PING_OK_ID.' -->';
 			if (empty($conf->global->MAIN_FIRST_PING_OK_DATE)
-			|| (! empty($conf->file->instance_unique_id) && (md5($conf->file->instance_unique_id) != $conf->global->MAIN_FIRST_PING_OK_ID))
+			|| (! empty($conf->file->instance_unique_id) && (md5($conf->file->instance_unique_id) != $conf->global->MAIN_FIRST_PING_OK_ID) && ($conf->global->MAIN_FIRST_PING_OK_ID != 'disabled'))
 			|| GETPOST('forceping', 'alpha'))
 			{
-				print "\n".'<!-- Includes JS for Ping of Dolibarr MAIN_FIRST_PING_OK_DATE = '.$conf->global->MAIN_FIRST_PING_OK_DATE.' MAIN_FIRST_PING_OK_ID = '.$conf->global->MAIN_FIRST_PING_OK_ID.' -->'."\n";
-				print "\n<!-- JS CODE TO ENABLE the anonymous Ontime Ping -->\n";
-				?>
-	    			<script>
-	    			jQuery(document).ready(function (tmp) {
-	    				$.ajax({
-	    					  method: "POST",
-	    					  url: "https://ping.dolibarr.org/",
-	    					  timeout: 500,     // timeout milliseconds
-	    					  cache: false,
-	    					  data: { hash_algo: "md5", hash_unique_id: "<?php echo md5('dolibarr'.$conf->file->instance_unique_id); ?>", action: "dolibarrping", version: "<?php echo (float) DOL_VERSION; ?>", entity: <?php echo (int) $conf->entity; ?> },
-	    					  success: function (data, status, xhr) {   // success callback function (data contains body of response)
-	      					    	console.log("Ping ok");
-	        	    				$.ajax({
-	      	    					  method: "GET",
-	      	    					  url: "<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>",
-	      	    					  timeout: 500,     // timeout milliseconds
-	      	    					  cache: false,
-	      	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo md5($conf->file->instance_unique_id); ?>", action: "firstpingok" },
-	    					  		});
-	    					  },
-	    					  error: function (data,status,xhr) {   // success callback function
-	        					    console.log("Ping ko: " + data);
-	        	    				$.ajax({
-	        	    					  method: "GET",
-	        	    					  url: "<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>",
-	        	    					  timeout: 500,     // timeout milliseconds
-	        	    					  cache: false,
-	        	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo md5($conf->file->instance_unique_id); ?>", action: "firstpingko", version: "<?php echo (float) DOL_VERSION; ?>" },
-	      					  		});
-	    					  }
-	    				});
-	    			});
-	    			</script>
-				<?php
+				if (empty($_COOKIE['DOLINSTALLNOPING_'.md5($conf->file->instance_unique_id)]))
+				{
+					print "\n".'<!-- Includes JS for Ping of Dolibarr MAIN_FIRST_PING_OK_DATE = '.$conf->global->MAIN_FIRST_PING_OK_DATE.' MAIN_FIRST_PING_OK_ID = '.$conf->global->MAIN_FIRST_PING_OK_ID.' -->'."\n";
+					print "\n<!-- JS CODE TO ENABLE the anonymous Ontime Ping -->\n";
+					$hash_unique_id = md5('dolibarr'.$conf->file->instance_unique_id);
+					?>
+		    			<script>
+		    			jQuery(document).ready(function (tmp) {
+		    				$.ajax({
+		    					  method: "POST",
+		    					  url: "https://ping.dolibarr.org/",
+		    					  timeout: 500,     // timeout milliseconds
+		    					  cache: false,
+		    					  data: { hash_algo: "md5", hash_unique_id: "<?php echo $hash_unique_id; ?>", action: "dolibarrping", version: "<?php echo (float) DOL_VERSION; ?>", entity: <?php echo (int) $conf->entity; ?> },
+		    					  success: function (data, status, xhr) {   // success callback function (data contains body of response)
+		      					    	console.log("Ping ok");
+		        	    				$.ajax({
+		      	    					  method: "GET",
+		      	    					  url: "<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>",
+		      	    					  timeout: 500,     // timeout milliseconds
+		      	    					  cache: false,
+		      	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo $hash_unique_id; ?>", action: "firstpingok" },
+		    					  		});
+		    					  },
+		    					  error: function (data,status,xhr) {   // success callback function
+		        					    console.log("Ping ko: " + data);
+		        	    				$.ajax({
+		        	    					  method: "GET",
+		        	    					  url: "<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>",
+		        	    					  timeout: 500,     // timeout milliseconds
+		        	    					  cache: false,
+		        	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo $hash_unique_id; ?>", action: "firstpingko", version: "<?php echo (float) DOL_VERSION; ?>" },
+		      					  		});
+		    					  }
+		    				});
+		    			});
+		    			</script>
+					<?php
+				}
+				else
+				{
+					$now = dol_now();
+					print "\n<!-- NO JS CODE TO ENABLE the anonymous One time Ping. It was disabled -->\n";
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'));
+					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_ID', 'disabled');
+				}
 			}
 		}
 
 		print "</body>\n";
 		print "</html>\n";
-
-        ?>
-
-		<!-- Disabled. This creates a lot of regression. A better solution is to add a protection on submitted page to avoid action to be done twice.
-        <script type="text/javascript">
-            //Prevent from multiple form sending
-            $(function() {
-                $('input[type=submit]').click(function(e) {
-                    e.preventDefault();
-                    $(this).prop('disabled', true);
-                    $(this).closest('form').submit();
-                });
-            });
-        </script>
-        -->
-        <?php
     }
 }

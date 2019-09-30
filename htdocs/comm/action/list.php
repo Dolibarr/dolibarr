@@ -80,8 +80,10 @@ $object = new ActionComm($db);
 $hookmanager->initHooks(array('agendalist'));
 
 $extrafields = new ExtraFields($db);
+
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('actioncomm');
+$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 // If not choice done on calendar owner, we filter on user.
 if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS))
@@ -452,6 +454,7 @@ if ($resql)
 	if (! empty($arrayfields['owner']['checked']))		print '<td class="liste_titre"></td>';
 	if (! empty($arrayfields['c.libelle']['checked']))	print '<td class="liste_titre"></td>';
 	if (! empty($arrayfields['a.label']['checked']))	print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_title" value="'.$search_title.'"></td>';
+	if (! empty($arrayfields['a.note']['checked']))	print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_note" value="'.$search_note.'"></td>';
 	if (! empty($arrayfields['a.datep']['checked']))	{
 		print '<td class="liste_titre nowraponall" align="center">';
 		print $form->selectDate($datestart, 'datestart', 0, 0, 1, '', 1, 0);

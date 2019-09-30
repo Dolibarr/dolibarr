@@ -80,6 +80,18 @@ class CMailFile
 
     public $headers;
     public $message;
+    /**
+	 * @var array fullfilenames list
+	 */
+	public $filename_list = array();
+	/**
+	 * @var array mimetypes of files list
+	 */
+	public $mimetype_list = array();
+	/**
+	 * @var array filenames list
+	 */
+	public $mimefilename_list = array();
 
 	// Image
     public $html;
@@ -117,7 +129,7 @@ class CMailFile
 	 *	@param	string	$css                 Css option
 	 *	@param	string	$trackid             Tracking string (contains type and id of related element)
 	 *  @param  string  $moreinheader        More in header. $moreinheader must contains the "\r\n" (TODO not supported for other MAIL_SEND_MODE different than 'phpmail' and 'smtps' for the moment)
-	 *  @param  string  $sendcontext      	 'standard', 'emailing', ... (used to define with sending mode and parameters to use)
+	 *  @param  string  $sendcontext      	 'standard', 'emailing', ... (used to define which sending mode and parameters to use)
 	 *  @param	string	$replyto			 Reply-to email (will be set to same value than From by default if not provided)
 	 */
 	public function __construct($subject, $to, $from, $msg, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = 0, $errors_to = '', $css = '', $trackid = '', $moreinheader = '', $sendcontext = 'standard', $replyto = '')
@@ -125,6 +137,9 @@ class CMailFile
 		global $conf, $dolibarr_main_data_root;
 
 		$this->sendcontext = $sendcontext;
+		$this->filename_list = $filename_list;
+		$this->mimetype_list = $mimetype_list;
+		$this->mimefilename_list = $mimefilename_list;
 
 		if (empty($replyto)) $replyto=$from;
 
@@ -428,7 +443,7 @@ class CMailFile
 				foreach ($this->images_encoded as $img)
 				{
 					//$img['fullpath'],$img['image_encoded'],$img['name'],$img['content_type'],$img['cid']
-					$attachment = Swift_Image::fromPath($img['fullpath'], $img['content_type']);
+					$attachment = Swift_Image::fromPath($img['fullpath']);
 					// embed image
 					$imgcid = $this->message->embed($attachment);
 					// replace cid by the one created by swiftmail in html message

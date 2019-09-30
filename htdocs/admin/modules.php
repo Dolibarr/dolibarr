@@ -659,8 +659,8 @@ if ($mode == 'common')
         //if (is_array($objMod->phpmin)) $alttext.=($alttext?' - ':'').'PHP >= '.join('.',$objMod->phpmin);
         if (! empty($objMod->picto))
         {
-        	if (preg_match('/^\//i', $objMod->picto)) print img_picto($alttext, $objMod->picto, ' width="14px"', 1);
-        	else print img_object($alttext, $objMod->picto, 'class="valignmiddle" width="14px"');
+        	if (preg_match('/^\//i', $objMod->picto)) print img_picto($alttext, $objMod->picto, 'class="valignmiddle pictomodule"', 1);
+        	else print img_object($alttext, $objMod->picto, 'class="valignmiddle pictomodule"');
         }
         else
         {

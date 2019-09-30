@@ -1023,22 +1023,16 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			{
 				case UPLOAD_ERR_INI_SIZE:	// 1
 					return 'ErrorFileSizeTooLarge';
-					break;
 				case UPLOAD_ERR_FORM_SIZE:	// 2
 					return 'ErrorFileSizeTooLarge';
-					break;
 				case UPLOAD_ERR_PARTIAL:	// 3
 					return 'ErrorPartialFile';
-					break;
 				case UPLOAD_ERR_NO_TMP_DIR:	//
 					return 'ErrorNoTmpDir';
-					break;
 				case UPLOAD_ERR_CANT_WRITE:
 					return 'ErrorFailedToWriteInDir';
-					break;
 				case UPLOAD_ERR_EXTENSION:
 					return 'ErrorUploadBlockedByAddon';
-					break;
 				default:
 					break;
 			}
@@ -1222,9 +1216,12 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 							}
 						}
 					}
-					else dol_syslog("Failed to remove file ".$filename, LOG_WARNING);
-					// TODO Failure to remove can be because file was already removed or because of permission
-					// If error because it does not exists, we should return true, and we should return false if this is a permission problem
+					else
+					{
+						dol_syslog("Failed to remove file ".$filename, LOG_WARNING);
+						// TODO Failure to remove can be because file was already removed or because of permission
+						// If error because it does not exists, we should return true, and we should return false if this is a permission problem
+					}
 				}
 			}
 			else dol_syslog("No files to delete found", LOG_DEBUG);
@@ -1881,14 +1878,16 @@ function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = ''
 
 
 /**
- * Compress a file
+ * Compress a file.
+ * An error string may be returned into parameters.
  *
  * @param 	string	$inputfile		Source file name
  * @param 	string	$outputfile		Target file name
  * @param 	string	$mode			'gz' or 'bz' or 'zip'
+ * @param	string	$errorstring	Error string
  * @return	int						<0 if KO, >0 if OK
  */
-function dol_compress_file($inputfile, $outputfile, $mode = "gz")
+function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring = null)
 {
 	global $conf;
 
@@ -1913,8 +1912,12 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz")
 				$zip = new ZipArchive;
 
 				if ($zip->open($outputfile, ZipArchive::CREATE) !== true) {
-					$errormsg="Failed to open file ".$outputfile."\n";
-					dol_syslog("dol_compress_file failure - ".$errormsg, LOG_ERR);
+					$errorstring="dol_compress_file failure - Failed to open file ".$outputfile."\n";
+					dol_syslog($errorstring, LOG_ERR);
+
+					global $errormsg;
+					$errormsg = $errorstring;
+
 					return -6;
 				}
 
@@ -1958,12 +1961,16 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz")
 				{
 					global $errormsg;
 					$errormsg=$archive->errorInfo(true);
-					dol_syslog("dol_compress_file failure - ".$errormsg, LOG_ERR);
+
 					if ($archive->errorCode() == PCLZIP_ERR_WRITE_OPEN_FAIL)
 					{
-						dol_syslog("dol_compress_file error PCLZIP_ERR_WRITE_OPEN_FAIL", LOG_ERR);
+						$errorstring = "PCLZIP_ERR_WRITE_OPEN_FAIL";
+						dol_syslog("dol_compress_file error - archive->errorCode() = PCLZIP_ERR_WRITE_OPEN_FAIL", LOG_ERR);
 						return -4;
 					}
+
+					$errorstring = "dol_compress_file error archive->errorCode = ".$archive->errorCode()." errormsg=".$errormsg;
+					dol_syslog("dol_compress_file failure - ".$errormsg, LOG_ERR);
 					return -3;
 				}
 				else
@@ -1983,7 +1990,11 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz")
 		}
 		else
 		{
-			dol_syslog("Try to zip with format ".$mode." with no handler for this format", LOG_ERR);
+			$errorstring = "Try to zip with format ".$mode." with no handler for this format";
+			dol_syslog($errorstring, LOG_ERR);
+
+			global $errormsg;
+			$errormsg = $errorstring;
 			return -2;
 		}
 	}
@@ -1991,8 +2002,10 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz")
 	{
 		global $langs, $errormsg;
 		$langs->load("errors");
-		dol_syslog("Failed to open file ".$outputfile, LOG_ERR);
 		$errormsg=$langs->trans("ErrorFailedToWriteInDir");
+
+		$errorstring = "Failed to open file ".$outputfile;
+		dol_syslog($errorstring, LOG_ERR);
 		return -1;
 	}
 }
@@ -2063,13 +2076,14 @@ function dol_uncompress($inputfile, $outputdir)
  * @param 	string	$inputdir		Source dir name
  * @param 	string	$outputfile		Target file name (output directory must exists and be writable)
  * @param 	string	$mode			'zip'
+ * @param	string	$excludefiles   A regex pattern. For example: '/\.log$|\/temp\//'
  * @return	int						<0 if KO, >0 if OK
  */
-function dol_compress_dir($inputdir, $outputfile, $mode = "zip")
+function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles = '')
 {
 	$foundhandler=0;
 
-	dol_syslog("Try to zip dir ".$inputdir." into ".$outputdir." mode=".$mode);
+	dol_syslog("Try to zip dir ".$inputdir." into ".$outputfile." mode=".$mode);
 
 	if (! dol_is_dir(dirname($outputfile)) || ! is_writable(dirname($outputfile)))
 	{
@@ -2096,6 +2110,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip")
                 return 1;
             }
             else*/
+			//if (class_exists('ZipArchive') && ! empty($conf->global->MAIN_USE_ZIPARCHIVE_FOR_ZIP_COMPRESS))
 			if (class_exists('ZipArchive'))
 			{
 				$foundhandler=1;
@@ -2103,6 +2118,13 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip")
 				// Initialize archive object
 				$zip = new ZipArchive();
 				$result = $zip->open($outputfile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+				if (! $result)
+				{
+					global $langs, $errormsg;
+					$langs->load("errors");
+					$errormsg=$langs->trans("ErrorFailedToWriteInFile", $outputfile);
+					return -4;
+				}
 
 				// Create recursive directory iterator
 				/** @var SplFileInfo[] $files */
@@ -2119,9 +2141,11 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip")
 						// Get real and relative path for current file
 						$filePath = $file->getRealPath();
 						$relativePath = substr($filePath, strlen($inputdir) + 1);
-
-						// Add current file to archive
-						$zip->addFile($filePath, $relativePath);
+						if (empty($excludefiles) || ! preg_match($excludefiles, $filePath))
+						{
+							// Add current file to archive
+							$zip->addFile($filePath, $relativePath);
+						}
 					}
 				}
 
@@ -2452,7 +2476,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping for third parties
-	elseif (($modulepart == 'company' || $modulepart == 'societe') && !empty($conf->societe->dir_output))
+	elseif (($modulepart == 'company' || $modulepart == 'societe' || $modulepart == 'thirdparty') && !empty($conf->societe->dir_output))
 	{
 		if (empty($entity) || empty($conf->societe->multidir_output[$entity])) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		if ($fuser->rights->societe->{$lire} || preg_match('/^specimen/i', $original_file))

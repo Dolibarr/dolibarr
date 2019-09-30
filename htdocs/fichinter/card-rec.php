@@ -248,7 +248,7 @@ $today = dol_mktime(
  * Create mode
  */
 if ($action == 'create') {
-	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'title_commercial.png');
+	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'commercial');
 
 	$object = new Fichinter($db);   // Source invoice
 	//$object = new Managementfichinter($db);   // Source invoice
@@ -439,7 +439,7 @@ $date_next_execution = (GETPOST('remonth') ? dol_mktime(
 	else
 		dol_print_error('', "Error, no invoice ".$object->id);
 } elseif ($action == 'selsocforcreatefrommodel') {
-	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'title_commercial.png');
+	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'commercial');
 	dol_fiche_head('');
 
 	print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
@@ -810,7 +810,7 @@ $date_next_execution = (GETPOST('remonth') ? dol_mktime(
                 '',
                 $num,
                 '',
-                'title_commercial.png'
+                'commercial'
             );
 
 			print $langs->trans("ToCreateAPredefinedInterventional").'<br><br>';

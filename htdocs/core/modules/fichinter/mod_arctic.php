@@ -97,7 +97,7 @@ class mod_arctic extends ModeleNumRefFicheinter
     }
 
     /**
-     * Renvoi un exemple de numerotation
+     * Return an example of numbering
      *
      * @return     string      Example
      */

@@ -29,6 +29,7 @@ MenuMembersUpToDate=Socis al dia
 MenuMembersNotUpToDate=Socis no al dia
 MenuMembersResiliated=Socis donats de baixa
 MembersWithSubscriptionToReceive=Socis amb afiliació per rebre
+MembersWithSubscriptionToReceiveShort=Subscripcions per rebre
 DateSubscription=Data afiliació
 DateEndSubscription=Data final d'afiliació
 EndSubscription=Final d'afiliació

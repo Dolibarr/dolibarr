@@ -29,6 +29,7 @@ MenuMembersUpToDate=Aktualni członkowie
 MenuMembersNotUpToDate=Nieaktualni człokowie
 MenuMembersResiliated=członkowie zakończone
 MembersWithSubscriptionToReceive=Użytkownicy z subskrypcji otrzymują
+MembersWithSubscriptionToReceiveShort=Subscription to receive
 DateSubscription=Data subskrypcji
 DateEndSubscription=Data końca subskrypcji
 EndSubscription=Koniec subskrypcji

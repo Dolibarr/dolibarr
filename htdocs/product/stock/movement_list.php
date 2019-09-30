@@ -420,7 +420,7 @@ $formproduct=new FormProduct($db);
 if (!empty($conf->projet->enabled)) $formproject=new FormProjets($db);
 
 $sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.entity,";
-$sql.= " e.ref as stock, e.rowid as entrepot_id, e.lieu,";
+$sql.= " e.ref as warehouse_ref, e.rowid as entrepot_id, e.lieu, e.fk_parent, e.statut,";
 $sql.= " m.rowid as mid, m.value as qty, m.datem, m.fk_user_author, m.label, m.inventorycode, m.fk_origin, m.origintype,";
 $sql.= " m.batch, m.price,";
 $sql.= " m.type_mouvement,";
@@ -445,17 +445,7 @@ $sql.= " AND m.fk_entrepot = e.rowid";
 $sql.= " AND e.entity IN (".getEntity('stock').")";
 if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql.= " AND p.fk_product_type = 0";
 if ($id > 0) $sql.= " AND e.rowid ='".$id."'";
-if ($month > 0)
-{
-    if ($year > 0)
-    $sql.= " AND m.datem BETWEEN '".$db->idate(dol_get_first_day($year, $month, false))."' AND '".$db->idate(dol_get_last_day($year, $month, false))."'";
-    else
-    $sql.= " AND date_format(m.datem, '%m') = '$month'";
-}
-elseif ($year > 0)
-{
-    $sql.= " AND m.datem BETWEEN '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
-}
+$sql.= dolSqlDateFilter('m.datem', 0, $month, $year);
 if ($idproduct > 0) $sql.= " AND p.rowid = '".$idproduct."'";
 if (! empty($search_ref))			$sql.= natural_search('m.rowid', $search_ref, 1);
 if (! empty($search_movement))      $sql.= natural_search('m.label', $search_movement);
@@ -716,7 +706,7 @@ if ($resql)
     if ($id > 0) print '<input type="hidden" name="id" value="'.$id.'">';
 
     if ($id > 0) print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit);
-    else print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
+    else print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, '', '', $limit);
 
 	if ($sall)
     {
@@ -988,8 +978,12 @@ if ($resql)
         $productlot->sellby= $objp->sellby;
 
         $warehousestatic->id=$objp->entrepot_id;
-        $warehousestatic->libelle=$objp->stock;
+        $warehousestatic->ref=$objp->warehouse_ref;
+        $warehousestatic->libelle=$objp->warehouse_ref;
+        $warehousestatic->label=$objp->warehouse_ref;
         $warehousestatic->lieu=$objp->lieu;
+        $warehousestatic->fk_parent = $objp->fk_parent;
+        $warehousestatic->statut = $objp->statut;
 
         $arrayofuniqueproduct[$objp->rowid]=$objp->produit;
 		if(!empty($objp->fk_origin)) {

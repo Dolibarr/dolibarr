@@ -47,6 +47,8 @@ if ($setterminal>0)
 	$_SESSION["takeposterminal"]=$setterminal;
 }
 
+$_SESSION["urlfrom"]='/takepos/takepos.php';
+
 $langs->loadLangs(array("bills","orders","commercial","cashdesk","receiptprinter"));
 
 $categorie = new Categorie($db);
@@ -156,7 +158,7 @@ if(localStorage.hasKeyboard) {
 function ClearSearch() {
 	console.log("ClearSearch");
 	$("#search").val('');
-	<?php if ($conf->browser->layer == 'classic') { ?>
+	<?php if ($conf->browser->layout == 'classic') { ?>
 	setFocusOnSearchField();
 	<?php } ?>
 }
@@ -224,7 +226,8 @@ function MoreCategories(moreorless) {
 	ClearSearch();
 }
 
-function LoadProducts(position, issubcat=false) {
+// LoadProducts
+function LoadProducts(position, issubcat) {
 	console.log("LoadProducts");
 	var maxproduct = <?php echo ($MAXPRODUCT - 2); ?>;
 
@@ -249,7 +252,7 @@ function LoadProducts(position, issubcat=false) {
 	});
 
 	idata=0; //product data counter
-	$.getJSON('./ajax.php?action=getProducts&category='+currentcat, function(data) {
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&category='+currentcat, function(data) {
 		console.log("Call ajax.php (in LoadProducts) to get Products of category "+currentcat);
 
 		while (ishow < maxproduct) {
@@ -295,7 +298,7 @@ function MoreProducts(moreorless) {
 		if (pageproducts==0) return; //Return if no less pages
 		pageproducts=pageproducts-1;
 	}
-	$.getJSON('./ajax.php?action=getProducts&category='+currentcat, function(data) {
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&category='+currentcat, function(data) {
 		console.log("Call ajax.php (in MoreProducts) to get Products of category "+currentcat);
 
 		if (typeof (data[(maxproduct * pageproducts)]) == "undefined" && moreorless=="more"){ // Return if no more pages
@@ -356,6 +359,7 @@ function deleteline() {
 	$("#poslines").load("invoice.php?action=deleteline&place="+place+"&idline="+selectedline, function() {
 		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 	});
+	ClearSearch();
 }
 
 function Customer() {
@@ -398,20 +402,23 @@ function Refresh() {
 }
 
 function New() {
-	console.log("New");
-	var r = confirm('<?php echo $langs->trans("ConfirmDeletionOfThisPOSSale"); ?>');
+	// If we go here,it means $conf->global->TAKEPOS_BAR_RESTAURANT is not defined
+	console.log("New with place = <?php echo $place; ?>, js place="+place);
+	var r = confirm('<?php echo ($place > 0 ? $langs->trans("ConfirmDeletionOfThisPOSSale") : $langs->trans("ConfirmDiscardOfThisPOSSale")); ?>');
 	if (r == true) {
     	$("#poslines").load("invoice.php?action=delete&place="+place, function() {
     		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
     	});
+		ClearSearch();
 	}
 }
 
 function Search2() {
-	console.log("Search2");
+	console.log("Search2 Call ajax search to replace products");
 	pageproducts=0;
-	$.getJSON('./ajax.php?action=search&term='+$('#search').val(), function(data) {
-		for (i = 0; i < 30; i++) {
+	jQuery(".catwatermark").hide();
+	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&term='+$('#search').val(), function(data) {
+		for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
 			if (typeof (data[i]) == "undefined"){
 				$("#prodesc"+i).text("");
 				$("#proimg"+i).attr("src","genimg/empty.png");
@@ -419,6 +426,7 @@ function Search2() {
 				continue;
 			}
 			$("#prodesc"+i).text(data[parseInt(i)]['label']);
+			$("#prodivdesc"+i).show();
 			$("#proimg"+i).attr("src","genimg/?query=pro&id="+data[i]['rowid']);
 			$("#prodiv"+i).data("rowid",data[i]['rowid']);
 			$("#prodiv"+i).data("iscat",0);
@@ -664,7 +672,7 @@ if (empty($conf->global->TAKEPOS_BAR_RESTAURANT))
 else
 {
     // BAR RESTAURANT specific menu
-    $menus[$r++]=array('title'=>'<span class="fa fa-layer-group paddingrightonly"></span><div class="trunc">'.$langs->trans("Floors").'</div>', 'action'=>'Floors();');
+    $menus[$r++]=array('title'=>'<span class="fa fa-layer-group paddingrightonly"></span><div class="trunc">'.$langs->trans("Place").'</div>', 'action'=>'Floors();');
 }
 
 $menus[$r++]=array('title'=>'<span class="far fa-building paddingrightonly"></span><div class="trunc">'.$langs->trans("Customer").'</div>', 'action'=>'Customer();');

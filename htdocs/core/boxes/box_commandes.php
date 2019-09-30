@@ -58,9 +58,9 @@ class box_commandes extends ModeleBoxes
     {
         global $user;
 
-        $this->db=$db;
+        $this->db = $db;
 
-        $this->hidden=! ($user->rights->commande->lire);
+        $this->hidden = ! ($user->rights->commande->lire);
     }
 
     /**
@@ -71,16 +71,16 @@ class box_commandes extends ModeleBoxes
      */
     public function loadBox($max = 5)
     {
-        global $user, $langs, $db, $conf;
+        global $user, $langs, $conf;
 
         $this->max = $max;
 
         include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-        $commandestatic = new Commande($db);
-        $societestatic = new Societe($db);
-        $userstatic = new User($db);
+        $commandestatic = new Commande($this->db);
+        $societestatic = new Societe($this->db);
+        $userstatic = new User($this->db);
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."CustomerOrders", $max));
 
@@ -110,18 +110,18 @@ class box_commandes extends ModeleBoxes
             if ($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
             if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY c.date_commande DESC, c.ref DESC ";
             else $sql.= " ORDER BY c.tms DESC, c.ref DESC ";
-            $sql.= $db->plimit($max, 0);
+            $sql.= $this->db->plimit($max, 0);
 
-            $result = $db->query($sql);
+            $result = $this->db->query($sql);
             if ($result) {
-                $num = $db->num_rows($result);
+                $num = $this->db->num_rows($result);
 
                 $line = 0;
 
                 while ($line < $num) {
-                    $objp = $db->fetch_object($result);
-                    $date=$db->jdate($objp->date_commande);
-                    $datem=$db->jdate($objp->tms);
+                    $objp = $this->db->fetch_object($result);
+                    $date=$this->db->jdate($objp->date_commande);
+                    $datem=$this->db->jdate($objp->tms);
                     $commandestatic->id = $objp->rowid;
                     $commandestatic->ref = $objp->ref;
                     $commandestatic->ref_client = $objp->ref_client;
@@ -174,12 +174,12 @@ class box_commandes extends ModeleBoxes
 
                 if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedOrders"));
 
-                $db->free($result);
+                $this->db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
             }
         } else {

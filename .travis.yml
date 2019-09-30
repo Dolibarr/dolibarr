@@ -18,9 +18,7 @@ addons:
   apt:
     sources:
     # To use the last version of pgloader, we add repo of postgresql
-    - postgresql
-    - sourceline: 'deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main'
-    - key_url: 'https://www.postgresql.org/media/keys/ACCC4CF8.asc'
+    - pgdg-trusty
     packages:
     # We need a webserver to test the webservices
     # Let's install Apache with.
@@ -112,32 +110,33 @@ install:
   rm $TRAVIS_BUILD_DIR/composer.json
   rm $TRAVIS_BUILD_DIR/composer.lock
   composer self-update
+  # To have composer making parallel downloads
+  composer global require hirak/prestissimo
   composer -n init
   composer -n config vendor-dir htdocs/includes
   echo
 
 - |
-  echo "Installing Parallel Lint"
-  composer -n require jakub-onderka/php-parallel-lint ^0
-  composer -n require jakub-onderka/php-console-highlighter ^0
-  echo
-
-- |
-  echo "Installing PHP Unit"
+  echo "Installing Composer dependencies (PHP Unit, Parallel Lint & PHP CodeSniffer"
   if [ "$TRAVIS_PHP_VERSION" = '5.4' ] || [ "$TRAVIS_PHP_VERSION" = '5.5' ]; then
-    composer -n require phpunit/phpunit ^4
+    composer -n require phpunit/phpunit ^4 \
+                        jakub-onderka/php-parallel-lint ^0 \
+                        jakub-onderka/php-console-highlighter ^0 \
+                        squizlabs/php_codesniffer ^3
   fi
-  if [ "$TRAVIS_PHP_VERSION" = '5.6' ] || [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ]; then
-    composer -n require phpunit/phpunit ^5
+  if [ "$TRAVIS_PHP_VERSION" = '5.6' ] || [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] \
+     [ "$TRAVIS_PHP_VERSION" = '7.2' ] || [ "$TRAVIS_PHP_VERSION" = '7.3' ]; then
+    composer -n require phpunit/phpunit ^5 \
+                        jakub-onderka/php-parallel-lint ^0 \
+                        jakub-onderka/php-console-highlighter ^0 \
+                        squizlabs/php_codesniffer ^3
   fi
-  if [ "$TRAVIS_PHP_VERSION" = '7.2' ] || [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
-    composer -n require phpunit/phpunit ^5
-  fi
-  echo
-
-- |
-  echo "Installing PHP CodeSniffer"
-  composer -n require squizlabs/php_codesniffer ^3
+  if [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
+      composer -n require --ignore-platform-reqs phpunit/phpunit ^5 \
+                                                 jakub-onderka/php-parallel-lint ^0 \
+                                                 jakub-onderka/php-console-highlighter ^0 \
+                                                 squizlabs/php_codesniffer ^3
+    fi
   echo
 
 - |
@@ -246,8 +245,6 @@ before_script:
 
 
   - echo "Setting up Apache + FPM"
-  - sudo apt-get update
-  - sudo apt-get install apache2 libapache2-mod-fastcgi
   # enable php-fpm
   - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
   - |
@@ -293,12 +290,12 @@ script:
   echo
 
 - |
-  echo "Checking coding style"
+  echo "Checking coding style (excluding Pull Requests builds)"
   # Ensure we catch errors
   set -e
   # Exclusions are defined in the ruleset.xml file
   #phpcs -s -n -p -d memory_limit=-1 --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 .
-  phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .
+  if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .; fi
   set +e
   echo
 
