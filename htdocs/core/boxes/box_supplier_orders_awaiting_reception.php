@@ -69,22 +69,22 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
      */
     public function loadBox($max = 5)
     {
-        global $conf, $user, $langs, $db;
+        global $conf, $user, $langs;
         $langs->loadLangs(array("boxes", "sendings", "orders"));
 
         $this->max = $max;
 
         include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-        $supplierorderstatic=new CommandeFournisseur($db);
+        $supplierorderstatic=new CommandeFournisseur($this->db);
         include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-        $thirdpartytmp = new Fournisseur($db);
+        $thirdpartytmp = new Fournisseur($this->db);
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleSupplierOrdersAwaitingReception", $max));
 
         if ($user->rights->fournisseur->commande->lire)
         {
             $sql = "SELECT s.nom as name, s.rowid as socid,";
-            $sql.= " s.code_client, s.code_fournisseur,";
+            $sql.= " s.code_client, s.code_fournisseur, s.email,";
             $sql.= " s.logo,";
             $sql.= " c.rowid, c.ref, c.tms, c.date_commande, c.date_livraison, ";
             $sql.= " c.total_ht,";
@@ -102,19 +102,19 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
             if ($user->socid) $sql.= " AND s.rowid = ".$user->socid;
             if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY c.date_commande DESC, c.ref DESC ";
             else $sql.= " ORDER BY c.date_livraison ASC, c.fk_statut ASC ";
-            $sql.= $db->plimit($max, 0);
+            $sql.= $this->db->plimit($max, 0);
 
-            $result = $db->query($sql);
+            $result = $this->db->query($sql);
             if ($result)
             {
-                $num = $db->num_rows($result);
+                $num = $this->db->num_rows($result);
 
                 $line = 0;
                 while ($line < $num) {
-                    $objp = $db->fetch_object($result);
-                    $date=$db->jdate($objp->date_commande);
-                    $date_livraison=$db->jdate($objp->date_livraison);
-					$datem=$db->jdate($objp->tms);
+                    $objp = $this->db->fetch_object($result);
+                    $date=$this->db->jdate($objp->date_commande);
+                    $date_livraison=$this->db->jdate($objp->date_livraison);
+					$datem=$this->db->jdate($objp->tms);
 
                     $supplierorderstatic->date_livraison = $date_livraison;
                     $supplierorderstatic->statut = $objp->fk_statut;
@@ -124,6 +124,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 
 					$thirdpartytmp->id = $objp->socid;
                     $thirdpartytmp->name = $objp->name;
+                    $thirdpartytmp->email = $objp->email;
                     $thirdpartytmp->fournisseur = 1;
                     $thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
                     $thirdpartytmp->logo = $objp->logo;
@@ -165,12 +166,12 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
                         'text' => $langs->trans("NoSupplierOrder"),
                     );
 
-                $db->free($result);
+                $this->db->free($result);
             } else {
                 $this->info_box_contents[0][] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
             }
         }
