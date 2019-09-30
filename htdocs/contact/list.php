@@ -654,7 +654,7 @@ if (! empty($arrayfields['p.facebook']['checked']))
 	print '<input class="flat" type="text" name="search_facebook" size="6" value="'.dol_escape_htmltag($search_facebook).'">';
 	print '</td>';
 }
-if (! empty($arrayfields['p.lp.facebookinkedin']['checked']))
+if (! empty($arrayfields['p.linkedin']['checked']))
 {
     print '<td class="liste_titre">';
     print '<input class="flat" type="text" name="search_linkedin" size="6" value="'.dol_escape_htmltag($search_linkedin).'">';
