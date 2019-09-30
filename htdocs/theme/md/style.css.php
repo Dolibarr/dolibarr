@@ -468,8 +468,10 @@ select.flat, form.flat select {
 	opacity: 0;
 }
 select:invalid { color: gray; }
-input:disabled {
-	background:#f4f4f4;
+
+input:disabled, textarea:disabled, select[disabled='disabled']
+{
+	background:#eee;
 }
 
 input.liste_titre {
@@ -483,9 +485,7 @@ input.removedfile {
 	border: 0px !important;
 	vertical-align: text-bottom;
 }
-textarea:disabled {
-	background:#f4f4f4;
-}
+
 input[type=file ]    { background-color: transparent; border-top: none; border-left: none; border-right: none; box-shadow: none; }
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=radio]    { background-color: transparent; border: none; box-shadow: none; }
@@ -5800,6 +5800,7 @@ border-top-right-radius: 6px;
 include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
+include dol_buildpath($path.'/theme/eldy/timeline.inc.php', 0); // actually md use same style as eldy theme
 
 
 

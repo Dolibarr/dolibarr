@@ -205,7 +205,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'link' => '/projet/index.php?mainmenu=project&amp;leftmenu=',
 		'title' => (empty($conf->global->PROJECT_USE_OPPORTUNITIES) || $conf->global->PROJECT_USE_OPPORTUNITIES == 2 )
 					? (($conf->global->PROJECT_USE_OPPORTUNITIES == 2)?"Leads":"Projects")
-					: "LeadsOrProjects",
+					: "Projects",
 		'level' => 0,
 	    'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
 		'target' => $atarget,
