@@ -3160,13 +3160,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithouttext == 'jabber') {
 				$fakey = 'fa-comment-o';
 			}
-<<<<<<< HEAD
-			elseif (in_array($pictowithoutext, array('skype', 'twitter', 'facebook', 'linkedin', 'instagram','snapchat','youtube','google-plus-g','whatsapp'))) {
-			    $fakey = 'fa-'.$pictowithoutext;
-=======
-			elseif (in_array($pictowithouttext, array('skype', 'twitter', 'facebook', 'linkedin'))) {
+			elseif (in_array($pictowithouttext, array('skype', 'twitter', 'facebook', 'linkedin', 'instagram','snapchat','youtube','google-plus-g','whatsapp'))) {
 			    $fakey = 'fa-'.$pictowithouttext;
->>>>>>> upstream/develop
 			    if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fa = 'fab';
 			}
 			// Img for type of views
