@@ -86,6 +86,7 @@ $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 $hookmanager->initHooks(array('thirdpartycomm','globalcard'));
 
 
+
 /*
  * Actions
  */

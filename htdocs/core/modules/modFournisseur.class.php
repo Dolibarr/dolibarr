@@ -126,6 +126,7 @@ class modFournisseur extends DolibarrModules
 		3=>array('file'=>'box_factures_fourn_imp.php','enabledbydefaulton'=>'Home'),
 		4=>array('file'=>'box_factures_fourn.php','enabledbydefaulton'=>'Home'),
 		5=>array('file'=>'box_supplier_orders.php','enabledbydefaulton'=>'Home'),
+		6=>array('file'=>'box_supplier_orders_awaiting_reception.php','enabledbydefaulton'=>'Home'),
 		);
 
 		// Permissions

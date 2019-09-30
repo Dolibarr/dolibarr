@@ -240,6 +240,11 @@ class AgendaEvents extends DolibarrApi
         }
 
         $result = $this->actioncomm->fetch($id);
+        if ($result) {
+            $this->actioncomm->fetch_optionals();
+            $this->actioncomm->fetch_userassigned();
+            $this->actioncomm->oldcopy = clone $this->actioncomm;
+        }
         if ( ! $result ) {
             throw new RestException(404, 'actioncomm not found');
         }
@@ -273,6 +278,11 @@ class AgendaEvents extends DolibarrApi
         }
 
         $result = $this->actioncomm->fetch($id);
+        if ($result) {
+            $this->actioncomm->fetch_optionals();
+            $this->actioncomm->fetch_userassigned();
+            $this->actioncomm->oldcopy = clone $this->actioncomm;
+        }
 
         if(! DolibarrApiAccess::$user->rights->agenda->allactions->delete && DolibarrApiAccess::$user->id != $this->actioncomm->userownerid) {
             throw new RestException(401, "Insufficient rights to delete an Agenda Event of owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
