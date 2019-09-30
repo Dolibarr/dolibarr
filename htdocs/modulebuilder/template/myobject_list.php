@@ -98,8 +98,14 @@ $object = new MyObject($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('myobjectlist'));     // Note that conf->hooks_modules contains array
+
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('myobject');	// Load $extrafields->attributes['myobject']
+$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+
+// fetch optionals attributes lines and labels
+//$extrafieldsline = new ExtraFields($db);
+//$extralabelslines=$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Default sort order (if not yet defined by previous GETPOST)
@@ -234,6 +240,7 @@ foreach($search as $key => $val)
 	if ($search[$key] != '') $sql.=natural_search($key, $search[$key], (($key == 'status')?2:$mode_search));
 }
 if ($search_all) $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
+//$sql.= dolSqlDateFilter("t.field", $search_xxxday, $search_xxxmonth, $search_xxxyear);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
@@ -291,7 +298,7 @@ else
 }
 
 // Direct jump if only one record found
-if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all)
+if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && ! $page)
 {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
@@ -514,7 +521,7 @@ while ($i < min($num, $limit))
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
-	$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+	$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 	$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $object);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column

@@ -156,8 +156,6 @@ $title=$langs->trans("LT".$object->ltt) . " - " . $langs->trans("Card");
 $help_url='';
 llxHeader("", $title, $helpurl);
 
-
-
 if ($action == 'create')
 {
     print load_fiche_titre($langs->transcountry($lttype==2?"newLT2Payment":"newLT1Payment", $mysoc->country_code));

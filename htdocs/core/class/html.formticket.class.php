@@ -981,7 +981,7 @@ class FormTicket
             include_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
             $uselocalbrowser = true;
 
-            $doleditor = new DolEditor('mail_intro', $mail_intro, '100%', 140, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
+            $doleditor = new DolEditor('mail_intro', $mail_intro, '100%', 90, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
 
             $doleditor->Create();
             print '</td><td align="center">';

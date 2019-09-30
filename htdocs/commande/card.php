@@ -670,7 +670,7 @@ if (empty($reshook))
 		}
 
 		$qty = GETPOST('qty' . $predef);
-		$remise_percent = GETPOST('remise_percent' . $predef);
+		$remise_percent = (GETPOST('remise_percent'.$predef) != '' ? GETPOST('remise_percent'.$predef) : 0);
 
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
@@ -1485,7 +1485,7 @@ if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 // Mode creation
 if ($action == 'create' && $usercancreate)
 {
-	print load_fiche_titre($langs->trans('CreateOrder'), '', 'title_commercial.png');
+	print load_fiche_titre($langs->trans('CreateOrder'), '', 'commercial');
 
 	$soc = new Societe($db);
 	if ($socid > 0)

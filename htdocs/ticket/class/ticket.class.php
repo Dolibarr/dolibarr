@@ -573,7 +573,7 @@ class Ticket extends CommonObject
         $extrafields = new ExtraFields($this->db);
 
         // fetch optionals attributes and labels
-        $extralabels = $extrafields->fetch_name_optionals_label($this->element);
+        $extralabels = $extrafields->fetch_name_optionals_label($this->table_element);
 
         $sql = "SELECT";
         $sql .= " t.rowid,";
@@ -1631,6 +1631,9 @@ class Ticket extends CommonObject
         $actioncomm=new ActionComm($this->db);
         $actioncomm->type_code = 'AC_OTH_AUTO';
         $actioncomm->code = 'TICKET_MSG';
+		if($this->private){
+			$actioncomm->code = 'TICKET_MSG_PRIVATE';
+		}
         $actioncomm->socid = $this->socid;
         $actioncomm->label = $this->subject;
         $actioncomm->note_private = $this->message;

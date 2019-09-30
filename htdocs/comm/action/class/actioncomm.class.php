@@ -657,7 +657,7 @@ class ActionComm extends CommonObject
 
                 $this->socid				= $obj->fk_soc;			// To have fetch_thirdparty method working
                 $this->contactid			= $obj->fk_contact;		// To have fetch_contact method working
-                $this->fk_project			= $obj->fk_project;		// To have fetch_project method working
+                $this->fk_project			= $obj->fk_project;		// To have fetch_projet method working
 
                 //$this->societe->id			= $obj->fk_soc;			// deprecated
                 //$this->contact->id			= $obj->fk_contact;		// deprecated
@@ -1637,7 +1637,7 @@ class ActionComm extends CommonObject
      *  Used to build previews or test instances.
      *  id must be 0 if object instance is a specimen.
      *
-     *  @return	void
+     *  @return	int >0 if ok
      */
     public function initAsSpecimen()
     {
@@ -1669,6 +1669,7 @@ class ActionComm extends CommonObject
 
         $this->userownerid=$user->id;
         $this->userassigned[$user->id]=array('id'=>$user->id, 'transparency'=> 1);
+        return 1;
     }
 
 	/**

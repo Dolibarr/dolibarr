@@ -638,7 +638,7 @@ if (empty($reshook))
 				// Set output language
 				$outputlangs = new Translate('', $conf);
 				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-				// Load traductions files requiredby by page
+				// Load traductions files required by page
 				$outputlangs->loadLangs(array("main", "members"));
 				// Get email content from template
 				$arraydefaultmessage=null;
@@ -719,7 +719,7 @@ if (empty($reshook))
 					// Set output language
 					$outputlangs = new Translate('', $conf);
 					$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-					// Load traductions files requiredby by page
+					// Load traductions files required by page
 					$outputlangs->loadLangs(array("main", "members"));
 					// Get email content from template
 					$arraydefaultmessage=null;
@@ -1039,8 +1039,8 @@ else
             print '<tr><td>'.$langs->trans("LinkedIn").'</td><td><input type="text" name="member_linkedin" size="40" value="'.(GETPOST('member_linkedin', 'alpha')?GETPOST('member_linkedin', 'alpha'):$object->linkedin).'"></td></tr>';
         }
 
-	    // Birthday
-		print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
+	    // Birth Date
+		print "<tr><td>".$langs->trans("DateToBirth")."</td><td>\n";
 		print $form->selectDate(($object->birth ? $object->birth : -1), 'birth', '', '', 1, 'formsoc');
 		print "</td></tr>\n";
 
@@ -1308,8 +1308,8 @@ else
             print '<tr><td>'.$langs->trans("LinkedIn").'</td><td><input type="text" name="linkedin" class="minwidth100" value="'.(isset($_POST["linkedin"])?GETPOST("linkedin"):$object->linkedin).'"></td></tr>';
         }
 
-	    // Birthday
-		print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
+	    // Birth Date
+		print "<tr><td>".$langs->trans("DateToBirth")."</td><td>\n";
 		print $form->selectDate(($object->birth ? $object->birth : -1), 'birth', '', '', 1, 'formsoc');
 		print "</td></tr>\n";
 
@@ -1483,7 +1483,7 @@ else
 			// Set output language
 			$outputlangs = new Translate('', $conf);
 			$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-			// Load traductions files requiredby by page
+			// Load traductions files required by page
 			$outputlangs->loadLangs(array("main", "members"));
 			// Get email content from template
 			$arraydefaultmessage=null;
@@ -1544,7 +1544,7 @@ else
 			// Set output language
 			$outputlangs = new Translate('', $conf);
 			$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-			// Load traductions files requiredby by page
+			// Load traductions files required by page
 			$outputlangs->loadLangs(array("main", "members"));
 			// Get email content from template
 			$arraydefaultmessage=null;
@@ -1750,8 +1750,8 @@ else
 
         print '<table class="border tableforfield tableforfield" width="100%">';
 
-		// Birthday
-		print '<tr><td class="titlefield">'.$langs->trans("Birthday").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
+		// Birth Date
+		print '<tr><td class="titlefield">'.$langs->trans("DateToBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
 
 		// Public
 		print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';

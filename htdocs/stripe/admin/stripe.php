@@ -221,7 +221,7 @@ if (empty($conf->stripeconnect->enabled))
             $endpoint = \Stripe\WebhookEndpoint::retrieve($conf->global->STRIPE_TEST_WEBHOOK_ID);
             $endpoint->enabled_events = $stripearrayofwebhookevents;
             if (GETPOST('webhook', 'alpha') == $conf->global->STRIPE_TEST_WEBHOOK_ID) {
-                if (empty(GETPOST('status', 'alpha'))) {
+                if (! GETPOST('status', 'alpha')) {
                     $endpoint->disabled = true;
                 } else {
                     $endpoint->disabled = false;
