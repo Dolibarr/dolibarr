@@ -16,7 +16,7 @@
  */
 
 /**
- *		\file       htdocs/ticket/agenda.php
+ *		\file       htdocs/ticket/messaging.php
  *    	\ingroup	ticket
  *    	\brief		Page with events on ticket
  */
@@ -47,7 +47,7 @@ $page = GETPOST("page");
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
 if (! $sortfield) $sortfield="a.datep,a.id";
-if (! $sortorder) $sortorder="DESC";
+if (! $sortorder) $sortorder="desc";
 $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -106,7 +106,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if(empty($reshook))
 {
 	// Set view style
-	$_SESSION['ticket-view-type'] = "list";
+	$_SESSION['ticket-view-type'] = "messaging";
 }
 
 // Purge search criteria
@@ -137,15 +137,15 @@ if ($socid > 0) {
 
     dol_fiche_head($head, 'ticket', $langs->trans("ThirdParty"), 0, 'company');
 
-    dol_banner_tab($object->thirdparty, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom');
+    dol_banner_tab($object->thirdparty, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
 
     dol_fiche_end();
 }
 
-if (!$user->societe_id && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) {
+if (!$user->socid && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) {
     $object->next_prev_filter = "te.fk_user_assign = '" . $user->id . "'";
-} elseif ($user->societe_id > 0) {
-    $object->next_prev_filter = "te.fk_soc = '" . $user->societe_id . "'";
+} elseif ($user->socid > 0) {
+    $object->next_prev_filter = "te.fk_soc = '" . $user->socid . "'";
 }
 $head = ticket_prepare_head($object);
 
@@ -218,7 +218,7 @@ $morehtmlref.='</div>';
 
 $linkback = '<a href="' . dol_buildpath('/ticket/list.php', 1) . '"><strong>' . $langs->trans("BackToList") . '</strong></a> ';
 
-dol_banner_tab($object, 'ref', $linkback, ($user->societe_id ? 0 : 1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
+dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
 dol_fiche_end();
 
@@ -233,13 +233,13 @@ if (!empty($object->id))
 
     $morehtmlright = '';
 
-	$messagingUrl = DOL_URL_ROOT.'/ticket/messaging.php?track_id=' . $object->track_id;
-    $morehtmlright .= dolGetButtonTitle($langs->trans('MessagingViewType'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
+	$messagingUrl = DOL_URL_ROOT.'/ticket/agenda.php?track_id=' . $object->track_id;
+	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-list-alt imgforviewmode', $messagingUrl, '', 1);
 
-    // Show link to add a message (if read and not closed)
-    $btnstatus = $object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
-    $url = 'card.php?track_id=' . $object->track_id . '&action=presend_addmessage&mode=init';
-    $morehtmlright .= dolGetButtonTitle($langs->trans('TicketAddMessage'), '', 'fa fa-comment-dots', $url, 'add-new-ticket-title-button', $btnstatus);
+	// Show link to add a message (if read and not closed)
+	$btnstatus = $object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
+	$url = 'card.php?track_id=' . $object->track_id . '&action=presend_addmessage&mode=init';
+	$morehtmlright .= dolGetButtonTitle($langs->trans('TicketAddMessage'), '', 'fa fa-comment-dots', $url, 'add-new-ticket-title-button', $btnstatus);
 
 	// Show link to add event (if read and not closed)
 	$btnstatus = $object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
@@ -252,7 +252,7 @@ if (!empty($object->id))
 	// List of all actions
 	$filters=array();
 	$filters['search_agenda_label']=$search_agenda_label;
-	show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
+    show_ticket_messaging($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
 }
 
 // End of page

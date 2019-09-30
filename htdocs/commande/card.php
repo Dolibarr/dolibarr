@@ -1485,7 +1485,7 @@ if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 // Mode creation
 if ($action == 'create' && $usercancreate)
 {
-	print load_fiche_titre($langs->trans('CreateOrder'), '', 'title_commercial.png');
+	print load_fiche_titre($langs->trans('CreateOrder'), '', 'commercial');
 
 	$soc = new Societe($db);
 	if ($socid > 0)
