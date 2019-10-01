@@ -1003,7 +1003,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     if ($search_status != '') $param.='&search_status='.urlencode($search_status);
     if ($search_name != '')   $param.='&search_name='.urlencode($search_name);
     if ($searchJobFunction != '')     $param.='&search_poste='.urlencode($searchJobFunction);
-    if ($searchAddressPhone != '')     $param.='&search_address='.urlencode($optioncss);
+    if ($searchAddressPhone != '')     $param.='&search_address='.urlencode($searchAddressPhone);
     if ($optioncss != '')     $param.='&optioncss='.urlencode($optioncss);
 
     // Add $param from extra fields
