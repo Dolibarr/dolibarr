@@ -507,12 +507,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 		$out.='<tr class="liste_titre">';
 
 		//$out.='<td class="liste_titre">';
-		if($sortorder === 'desc') {
-			$out .= getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ')."\n";
-		}
-		else{
-			$out .= getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ')."\n";
-		}
+		$out .= getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', '', $param, '', $sortfield, $sortorder, '')."\n";
 		//$out.='</td>';
 
 		$out.='<th class="liste_titre"><strong>'.$langs->trans("Search").' : </strong></th>';
