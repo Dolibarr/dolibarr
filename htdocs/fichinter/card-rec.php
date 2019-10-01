@@ -164,8 +164,9 @@ if ($action == 'add') {
 		$newinter->fk_projet=$object->fk_projet;
 		$newinter->fk_project=$object->fk_projet;
 		$newinter->fk_contrat=$object->fk_contrat;
-	} else
+	} else {
 		$newinter->socid=GETPOST("socid");
+	}
 
 	$newinter->entity=$object->entity;
 	$newinter->duree=$object->duree;
@@ -184,8 +185,9 @@ if ($action == 'add') {
 
 	if ($newfichinterid > 0) {
 		// Now we add line of details
-		foreach ($object->lines as $ficheinterligne)
-			$newinter->addline($user, $newfichinterid, $ficheinterligne->desc, "", $ficheinterligne->duree, '');
+		foreach ($object->lines as $ficheinterligne) {
+			$newinter->addline($user, $newfichinterid, $ficheinterligne->desc, '', $ficheinterligne->duree, '');
+		}
 
 		// on update le nombre d'inter crée à partir du modèle
 		$object->updateNbGenDone();
@@ -197,7 +199,7 @@ if ($action == 'add') {
 		$action='';
 	}
 } elseif ($action == 'delete' && $user->rights->ficheinter->supprimer) {
-		// delete modele
+	// delete modele
 	$object->fetch($id);
 	$object->delete();
 	$id = 0 ;
@@ -210,13 +212,10 @@ if ($action == 'add') {
 } elseif ($action == 'setdate_when' && $user->rights->ficheinter->creer) {
 	// Set next date of execution
 	$object->fetch($id);
-$date = dol_mktime(
-					GETPOST('date_whenhour'), GETPOST('date_whenmin'), 0,
-					GETPOST('date_whenmonth'), GETPOST('date_whenday'), GETPOST('date_whenyear')
-	);
+	$date = dol_mktime(GETPOST('date_whenhour'), GETPOST('date_whenmin'), 0, GETPOST('date_whenmonth'), GETPOST('date_whenday'), GETPOST('date_whenyear'));
 	if (!empty($date)) $object->setNextDate($date);
 } elseif ($action == 'setnb_gen_max' && $user->rights->ficheinter->creer) {
-// Set max period
+	// Set max period
 	$object->fetch($id);
 	$object->setMaxPeriod(GETPOST('nb_gen_max', 'int'));
 }
@@ -884,7 +883,7 @@ if ($action == 'create') {
 					}
 				}
 			} else {
-				print '<tr class="oddeven"><td colspan="9">'.$langs->trans("NoneF").'</td></tr>';
+				print '<tr class="oddeven"><td colspan="10">'.$langs->trans("NoneF").'</td></tr>';
 			}
 
 			print "</table>";

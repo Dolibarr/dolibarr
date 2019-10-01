@@ -431,32 +431,30 @@ class FichinterRec extends Fichinter
 
 
     /**
-    * 	Add a line to fichinter
+    *  Add a line to fichinter
     *
-    *	@param		string		$desc				Description de la ligne
-    *	@param		integer		$duration		   Durée
-    *	@param		string	    $datei				Date
-    *	@param	    int			$rang			   Position of line
-    *	@param		double		$pu_ht			  Prix unitaire HT (> 0 even for credit note)
-    *	@param		double		$qty			 	Quantite
-    *	@param		double		$txtva		   	Taux de tva force, sinon -1
-    *	@param		int			$fk_product	  	Id du produit/service predefini
-    *	@param		double		$remise_percent  	Pourcentage de remise de la ligne
-    *	@param		string		$price_base_type	HT or TTC
-    *	@param		int			$info_bits			Bits de type de lignes
-    *	@param		int			$fk_remise_except	Id remise
-    *	@param		double		$pu_ttc			 Prix unitaire TTC (> 0 even for credit note)
-    *	@param		int			$type				Type of line (0=product, 1=service)
-    *	@param		int			$special_code		Special code
-    *	@param		string		$label				Label of the line
-    *	@param		string		$fk_unit			Unit
-    *	@return		int			 				<0 if KO, Id of line if OK
+    *  @param		string		$desc				Description de la ligne
+    *  @param		integer		$duration		   Durée
+    *  @param		string	    $datei				Date
+    *  @param	    int			$rang			   Position of line
+    *  @param		double		$pu_ht			  Prix unitaire HT (> 0 even for credit note)
+    *  @param		double		$qty			 	Quantite
+    *  @param		double		$txtva		   	Taux de tva force, sinon -1
+    *  @param		int			$fk_product	  	Id du produit/service predefini
+    *  @param		double		$remise_percent  	Pourcentage de remise de la ligne
+    *  @param		string		$price_base_type	HT or TTC
+    *  @param		int			$info_bits			Bits de type de lignes
+    *  @param		int			$fk_remise_except	Id remise
+    *  @param		double		$pu_ttc			 Prix unitaire TTC (> 0 even for credit note)
+    *  @param		int			$type				Type of line (0=product, 1=service)
+    *  @param		int			$special_code		Special code
+    *  @param		string		$label				Label of the line
+    *  @param		string		$fk_unit			Unit
+    *  @return		int			 				<0 if KO, Id of line if OK
     */
     public function addline($desc, $duration, $datei, $rang = -1, $pu_ht = 0, $qty = 0, $txtva = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = '', $pu_ttc = 0, $type = 0, $special_code = 0, $label = '', $fk_unit = null)
     {
         global $mysoc;
-
-        $fichinterid=$this->id;
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
@@ -465,13 +463,13 @@ class FichinterRec extends Fichinter
 
         if ($this->brouillon) {
             // Clean parameters
-            $remise_percent=price2num($remise_percent);
-            $qty=price2num($qty);
+            $remise_percent = price2num($remise_percent);
+            $qty = price2num($qty);
             if (! $qty) $qty=1;
             if (! $info_bits) $info_bits=0;
-            $pu_ht=price2num($pu_ht);
-            $pu_ttc=price2num($pu_ttc);
-            $txtva=price2num($txtva);
+            $pu_ht = price2num($pu_ht);
+            $pu_ttc = price2num($pu_ttc);
+            $txtva = price2num($txtva);
 
             if ($price_base_type=='HT') {
                 $pu=$pu_ht;
@@ -490,11 +488,11 @@ class FichinterRec extends Fichinter
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
 
-            $product_type=$type;
+            $product_type = $type;
             if ($fk_product) {
-                $product=new Product($this->db);
-                $result=$product->fetch($fk_product);
-                $product_type=$product->type;
+                $product = new Product($this->db);
+                $result = $product->fetch($fk_product);
+                $product_type = $product->type;
             }
 
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinterdet_rec (";
@@ -518,7 +516,7 @@ class FichinterRec extends Fichinter
             $sql.= ", special_code";
             $sql.= ", fk_unit";
             $sql.= ") VALUES (";
-            $sql.= "'".$fichinterid."'";
+            $sql.= "'".$this->id."'";
             $sql.= ", ".(! empty($label)?"'".$this->db->escape($label)."'":"null");
             $sql.= ", ".(! empty($desc)?"'".$this->db->escape($desc)."'":"null");
             $sql.= ", ".(! empty($datei)?"'".$this->db->idate($datei)."'":"null");
@@ -540,9 +538,9 @@ class FichinterRec extends Fichinter
             $sql.= ")";
 
             dol_syslog(get_class($this)."::addline", LOG_DEBUG);
-            if ($this->db->query($sql))
+            if ($this->db->query($sql)) {
                 return 1;
-            else {
+            } else {
                 $this->error=$this->db->lasterror();
                 return -1;
             }
