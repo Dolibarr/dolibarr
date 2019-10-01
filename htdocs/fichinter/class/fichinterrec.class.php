@@ -536,7 +536,7 @@ class FichinterRec extends Fichinter
             //$sql.= ", ".$special_code;
             $sql.= ", ".(! empty($fk_unit) ? $fk_unit :"null");
             $sql.= ")";
-print $sql;
+
             dol_syslog(get_class($this)."::addline", LOG_DEBUG);
             if ($this->db->query($sql)) {
                 return 1;
