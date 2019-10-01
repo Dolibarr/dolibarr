@@ -20,7 +20,6 @@
  *  \file       htdocs/ecm/dir_card.php
  *	\ingroup    ecm
  *	\brief     	Card of a directory for ECM module
- *	\author		Laurent Destailleur
  */
 
 require '../main.inc.php';

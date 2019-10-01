@@ -90,7 +90,7 @@ class SalariesStats extends Stats
      *  Return the number of salary by month, for a given year
      *
      *	@param	string	$year		Year to scan
-     *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
      *	@return	array				Array of values
      */
     public function getNbByMonth($year, $format = 0)
@@ -112,7 +112,7 @@ class SalariesStats extends Stats
      * 	Return amount of salaries by month for a given year
      *
      *	@param	int		$year		Year to scan
-    *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+    *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
      *	@return	array				Array of values
      */
     public function getAmountByMonth($year, $format = 0)

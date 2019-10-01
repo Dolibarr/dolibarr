@@ -60,8 +60,10 @@ $object = new BOM($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->bom->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('bomlist'));     // Note that conf->hooks_modules contains array
+
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('bom');	// Load $extrafields->attributes['bom']
+$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);	// Load $extrafields->attributes['bom']
+
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Default sort order (if not yet defined by previous GETPOST)

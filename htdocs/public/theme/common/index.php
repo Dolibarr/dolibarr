@@ -20,7 +20,6 @@
  *     	\file       htdocs/public/theme/common/index.php
  *		\ingroup    core
  *		\brief      A redirect page to an error
- *		\author	    Laurent Destailleur
  */
 
 require '../../../master.inc.php';

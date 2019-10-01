@@ -222,7 +222,7 @@ if ($action == 'edit')
 else
 {
     /*
-     * Affichage des parametres
+     * Show parameters
      */
 
 	print '<table class="noborder" width="100%">';

@@ -76,11 +76,11 @@ class box_prospect extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $db, $conf;
+		global $user, $langs, $conf;
 
 		$this->max=$max;
 
-		$thirdpartystatic=new Client($db);
+		$thirdpartystatic=new Client($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedProspects", $max));
 
@@ -100,20 +100,20 @@ class box_prospect extends ModeleBoxes
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if ($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
 			$sql.= " ORDER BY s.tms DESC";
-			$sql.= $db->plimit($max, 0);
+			$sql.= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
-			$resql = $db->query($sql);
+			$resql = $this->db->query($sql);
 			if ($resql)
 			{
-				$num = $db->num_rows($resql);
+				$num = $this->db->num_rows($resql);
 
 				$line = 0;
 				while ($line < $num)
 				{
-					$objp = $db->fetch_object($resql);
-					$datec=$db->jdate($objp->datec);
-					$datem=$db->jdate($objp->tms);
+					$objp = $this->db->fetch_object($resql);
+					$datec=$this->db->jdate($objp->datec);
+					$datem=$this->db->jdate($objp->tms);
 					$thirdpartystatic->id = $objp->socid;
                     $thirdpartystatic->name = $objp->name;
                     $thirdpartystatic->code_client = $objp->code_client;
@@ -153,12 +153,12 @@ class box_prospect extends ModeleBoxes
                     );
                 }
 
-                $db->free($resql);
+                $this->db->free($resql);
             } else {
                 $this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength' => 500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
             }
         } else {

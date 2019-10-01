@@ -959,9 +959,10 @@ class ExtraFields
 	 * @param  string  $morecss        			More css (to defined size of field. Old behaviour: may also be a numeric)
 	 * @param  int     $objectid       			Current object id
 	 * @param  string  $extrafieldsobjectkey	If defined (for example $object->table_element), use the new method to get extrafields data
+	 * @param  string  $mode                    1=Used for search filters
 	 * @return string
 	 */
-	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $objectid = 0, $extrafieldsobjectkey = '')
+	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $objectid = 0, $extrafieldsobjectkey = '', $mode = 0)
 	{
 		global $conf,$langs,$form;
 
@@ -1116,13 +1117,20 @@ class ExtraFields
 		}
 		elseif ($type == 'boolean')
 		{
-			$checked='';
-			if (!empty($value)) {
-				$checked=' checked value="1" ';
-			} else {
-				$checked=' value="1" ';
+			if (empty($mode))
+			{
+				$checked='';
+				if (!empty($value)) {
+					$checked=' checked value="1" ';
+				} else {
+					$checked=' value="1" ';
+				}
+				$out='<input type="checkbox" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.$checked.' '.($moreparam?$moreparam:'').'>';
 			}
-			$out='<input type="checkbox" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.$checked.' '.($moreparam?$moreparam:'').'>';
+			else
+			{
+				$out.=$form->selectyesno($keyprefix.$key.$keysuffix, $value, 1, false, 1);
+			}
 		}
 		elseif ($type == 'price')
 		{
@@ -1269,7 +1277,7 @@ class ExtraFields
                             // Several field into label (eq table:code|libelle:rowid)
                             $notrans = false;
                             $fields_label = explode('|', $InfoFieldList[1]);
-                            if (is_array($fields_label)) {
+                            if (is_array($fields_label) && count($fields_label) > 1) {
                                 $notrans = true;
                                 foreach ($fields_label as $field_toshow) {
                                     $labeltoshow .= $obj->$field_toshow . ' ';
@@ -1283,27 +1291,16 @@ class ExtraFields
                             	if (!$notrans) {
 	                                foreach ($fields_label as $field_toshow) {
 	                                    $translabel = $langs->trans($obj->$field_toshow);
-	                                    if ($translabel != $obj->$field_toshow) {
-	                                        $labeltoshow = dol_trunc($translabel, 18) . ' ';
-	                                    } else {
-	                                        $labeltoshow = dol_trunc($obj->$field_toshow, 18) . ' ';
-	                                    }
+	                                    $labeltoshow = dol_trunc($translabel, 18) . ' ';
 	                                }
                             	}
                                 $out .= '<option value="' . $obj->rowid . '" selected>' . $labeltoshow . '</option>';
                             } else {
                                 if (!$notrans) {
                                     $translabel = $langs->trans($obj->{$InfoFieldList[1]});
-                                    if ($translabel != $obj->{$InfoFieldList[1]}) {
-                                        $labeltoshow = dol_trunc($translabel, 18);
-                                    } else {
-                                        $labeltoshow = dol_trunc($obj->{$InfoFieldList[1]}, 18);
-                                    }
+                                    $labeltoshow = dol_trunc($translabel, 18);
                                 }
                                 if (empty($labeltoshow)) $labeltoshow = '(not defined)';
-                                if ($value == $obj->rowid) {
-                                    $out .= '<option value="' . $obj->rowid . '" selected>' . $labeltoshow . '</option>';
-                                }
 
                                 if (!empty($InfoFieldList[3]) && $parentField) {
                                     $parent = $parentName . ':' . $obj->{$parentField};

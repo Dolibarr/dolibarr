@@ -22,7 +22,6 @@
 /**
  *      \file       htdocs/compta/tva/class/tva.class.php
  *      \ingroup    tax
- *      \author		Laurent Destailleur
  */
 
 // Put here all includes required by your class file

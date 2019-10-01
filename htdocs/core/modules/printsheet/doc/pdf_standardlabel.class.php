@@ -260,7 +260,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "admin"));
 
 		$title=$outputlangs->transnoentities('Labels');

@@ -91,7 +91,7 @@ if ($action == 'set_BANK_CHEQUERECEIPT_FREE_TEXT')
 }
 
 /*
- * view
+ * View
  */
 
 $dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -233,7 +233,6 @@ print '<br>';
 
 /*
  * Other options
- *
  */
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 

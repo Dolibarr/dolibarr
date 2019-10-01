@@ -243,6 +243,7 @@ class FormProduct
 
 		$out='';
 		if (empty($conf->global->ENTREPOT_EXTRA_STATUS)) $filterstatus = '';
+        if (!empty($fk_product))  $this->cache_warehouses = array();
 		$this->loadWarehouses($fk_product, '', $filterstatus, true, $exclude, $stockMin, $orderBy);
 		$nbofwarehouses=count($this->cache_warehouses);
 

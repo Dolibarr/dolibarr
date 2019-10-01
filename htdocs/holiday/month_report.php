@@ -27,6 +27,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
@@ -68,7 +69,6 @@ print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">' . "\n";
 $search_month = GETPOST("remonth", 'int')?GETPOST("remonth", 'int'):date("m", time());
 $search_year = GETPOST("reyear", 'int')?GETPOST("reyear", 'int'):date("Y", time());
 
-$month_year = sprintf("%02d", $search_month).'-'.sprintf("%04d", $search_year);
 $year_month = sprintf("%04d", $search_year).'-'.sprintf("%02d", $search_month);
 
 print $formother->select_month($search_month, 'remonth');

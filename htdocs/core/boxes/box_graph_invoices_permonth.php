@@ -65,14 +65,14 @@ class box_graph_invoices_permonth extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs;
 
 		$this->max=$max;
 
 		$refreshaction='refresh_'.$this->boxcode;
 
 		//include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-		//$facturestatic=new Facture($db);
+		//$facturestatic=new Facture($this->db);
 
 		$startmonth = $conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START) : 1;
 		if (empty($conf->global->GRAPH_USE_FISCAL_YEAR)) $startmonth = 1;

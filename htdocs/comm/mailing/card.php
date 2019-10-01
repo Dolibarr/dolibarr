@@ -716,10 +716,10 @@ $htmlother = new FormOther($db);
 $help_url='EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing';
 llxHeader('', $langs->trans("Mailing"), $help_url, '', 0, 0,
 	array(
-	'/includes/ace/ace.js',
-	'/includes/ace/ext-statusbar.js',
-	'/includes/ace/ext-language_tools.js',
-	//'/includes/ace/ext-chromevox.js'
+	'/includes/ace/src/ace.js',
+	'/includes/ace/src/ext-statusbar.js',
+	'/includes/ace/src/ext-language_tools.js',
+	//'/includes/ace/src/ext-chromevox.js'
 	), array());
 
 if ($action == 'create')

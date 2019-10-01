@@ -38,7 +38,7 @@ class modExpenseReport extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf;
+		global $conf, $user;   // Required by some include code
 
 		$this->db = $db;
 		$this->numero = 770;
@@ -200,8 +200,13 @@ class modExpenseReport extends DolibarrModules
         $this->export_alias_array[$r]=array('d.rowid'=>"idtrip",'d.type'=>"type",'d.note_private'=>'note_private','d.note_public'=>'note_public','u.lastname'=>'name','u.firstname'=>'firstname','u.login'=>'login');
 		$this->export_dependencies_array[$r]=array('expensereport_line'=>'ed.rowid','type_fees'=>'tf.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 
+		$keyforselect='expensereport'; $keyforelement='expensereport'; $keyforaliasextra='extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'expensereport as d, '.MAIN_DB_PREFIX.'user as u,';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'expensereport as d';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'expensereport_extrafields as extra on d.rowid = extra.fk_object,';
+		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'user as u,';
 		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'expensereport_det as ed LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as tf ON ed.fk_c_type_fees = tf.id';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'projet as p ON ed.fk_projet = p.rowid';
 		$this->export_sql_end[$r] .=' WHERE ed.fk_expensereport = d.rowid AND d.fk_user_author = u.rowid';

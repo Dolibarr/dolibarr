@@ -177,35 +177,11 @@ if (!empty($search_tasklabel)) {
 	$morewherefilterarray[]= natural_search('t.label', $search_tasklabel, 0, 1);
 }
 
-if ($search_dtstartmonth > 0)
-{
-	if ($search_dtstartyear > 0 && empty($search_dtstartday)) {
-		$morewherefilterarray[]= " (t.dateo BETWEEN '".$db->idate(dol_get_first_day($search_dtstartyear, $search_dtstartmonth, false))."' AND '".$db->idate(dol_get_last_day($search_dtstartyear, $search_dtstartmonth, false))."')";
-	} elseif ($search_dtstartyear > 0 && ! empty($search_dtstartday)) {
-		$morewherefilterarray[]= " (t.dateo BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_dtstartmonth, $search_dtstartday, $search_dtstartyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_dtstartmonth, $search_dtstartday, $search_dtstartyear))."')";
-	} else {
-		$morewherefilterarray[]= " date_format(t.dateo, '%m') = '".$search_dtstartmonth."'";
-	}
-}
-elseif ($search_dtstartyear > 0)
-{
-	$morewherefilterarray[]= " (t.dateo BETWEEN '".$db->idate(dol_get_first_day($search_dtstartyear, 1, false))."' AND '".$db->idate(dol_get_last_day($search_dtstartyear, 12, false))."')";
-}
+$moresql = dolSqlDateFilter('t.dateo', $search_dtstartday, $search_dtstartmonth, $search_dtstartyear, 1);
+if ($moresql) $morewherefilterarray[] = $moresql;
 
-if ($search_dtendmonth > 0)
-{
-	if ($search_dtendyear > 0 && empty($search_dtendday)) {
-		$morewherefilterarray[]= " (t.datee BETWEEN '".$db->idate(dol_get_first_day($search_dtendyear, $search_dtendmonth, false))."' AND '".$db->idate(dol_get_last_day($search_dtendyear, $search_dtendmonth, false))."')";
-	}elseif ($search_dtendyear > 0 && ! empty($search_dtendday)) {
-		$morewherefilterarray[]= " (t.datee BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_dtendmonth, $search_dtendday, $search_dtendyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_dtendmonth, $search_dtendday, $search_dtendyear))."')";
-	}else {
-		$morewherefilterarray[]= " date_format(t.datee, '%m') = '".$search_dtendmonth."'";
-	}
-}
-elseif ($search_dtendyear > 0)
-{
-	$morewherefilterarray[]= " (t.datee BETWEEN '".$db->idate(dol_get_first_day($search_dtendyear, 1, false))."' AND '".$db->idate(dol_get_last_day($search_dtendyear, 12, false))."')";
-}
+$moresql = dolSqlDateFilter('t.datee', $search_dtendday, $search_dtendmonth, $search_dtendyear, 1);
+if ($moresql) $morewherefilterarray[] = $moresql;
 
 if (!empty($search_planedworkload)) {
 	$morewherefilterarray[]= natural_search('t.planned_workload', $search_planedworkload, 1, 1);

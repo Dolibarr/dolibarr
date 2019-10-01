@@ -496,7 +496,7 @@ else
 }
 print '</td></tr>'."\n";
 
-//Use draft Watermark
+// Use draft Watermark
 
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftExpenseReports"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';

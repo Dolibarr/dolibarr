@@ -87,7 +87,7 @@ $week=GETPOST("week", "int")?GETPOST("week", "int"):date("W");
 $day=GETPOST("day", "int")?GETPOST("day", "int"):date("d");
 $pid=GETPOST("search_projectid", "int", 3)?GETPOST("search_projectid", "int", 3):GETPOST("projectid", "int", 3);
 $status=GETPOST("search_status", 'aZ09')?GETPOST("search_status", 'aZ09'):GETPOST("status", 'aZ09');		// status may be 0, 50, 100, 'todo'
-$type=GETPOST("search_type", 'az09')?GETPOST("search_type", 'az09'):GETPOST("type", 'az09');
+$type=GETPOST("search_type", 'aZ09')?GETPOST("search_type", 'aZ09'):GETPOST("type", 'aZ09');
 $maxprint=(isset($_GET["maxprint"])?GETPOST("maxprint"):$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
 if (GETPOST('search_actioncode', 'array'))

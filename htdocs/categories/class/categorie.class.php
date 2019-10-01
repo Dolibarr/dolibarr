@@ -53,6 +53,7 @@ class Categorie extends CommonObject
 	const TYPE_PROJECT   = 'project';
 	const TYPE_ACCOUNT   = 'bank_account';
     const TYPE_BANK_LINE = 'bank_line';
+    const TYPE_WAREHOUSE = 'warehouse';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -75,6 +76,7 @@ class Categorie extends CommonObject
         'project'      => 6,
 		'user'         => 7,
 		'bank_line'    => 8,
+		'warehouse'    => 9,
 	);
 
     /**
@@ -90,12 +92,13 @@ class Categorie extends CommonObject
 		6 => 'project',
 		7 => 'user',
 		8 => 'bank_line',
+		9 => 'warehouse',
 	);
 
 	/**
 	 * @var array Foreign keys mapping from type string
 	 *
-	 * @note Move to const array when PHP 5.6 will be our minimum target
+	 * @TODO Move to const array when PHP 5.6 will be our minimum target
 	 */
 	protected $MAP_CAT_FK = array(
 		'product'  => 'product',
@@ -104,13 +107,14 @@ class Categorie extends CommonObject
 		'member'   => 'member',
 		'contact'  => 'socpeople',
 		'user'     => 'user',
-        'account'  => 'account',		// old for bank_account
+        'account'  => 'account',		// old key for bank_account
         'bank_account' => 'account',
         'project'  => 'project',
+        'warehouse'=> 'warehouse',
     );
 
     /**
-	 * @var array Category tables mapping from type string
+	 * @var array Category tables mapping from type string (llx_categorie_...)
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
@@ -121,9 +125,10 @@ class Categorie extends CommonObject
 		'member'   => 'member',
 		'contact'  => 'contact',
 		'user'     => 'user',
-        'account'  => 'account',		// old for bank_account
+        'account'  => 'account',		// old key for bank_account
         'bank_account'=> 'account',
         'project'  => 'project',
+        'warehouse'=> 'warehouse',
 	);
 
     /**
@@ -141,10 +146,11 @@ class Categorie extends CommonObject
 		'account'  => 'Account',		// old for bank account
 		'bank_account'  => 'Account',
         'project'  => 'Project',
+        'warehouse'=> 'Entrepot',
 	);
 
     /**
-	 * @var array Object table mapping from type string
+	 * @var array Object table mapping from type string (table llx_...)
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
@@ -157,6 +163,7 @@ class Categorie extends CommonObject
 		'user'     => 'user',
         'account'  => 'bank_account',
         'project'  => 'projet',
+        'warehouse'=> 'entrepot',
 	);
 
 	/**
@@ -197,14 +204,16 @@ class Categorie extends CommonObject
 	/**
 	 * @var string	Category type
 	 *
+	 * @see Categorie::TYPE_ACCOUNT
 	 * @see Categorie::TYPE_PRODUCT
 	 * @see Categorie::TYPE_SUPPLIER
 	 * @see Categorie::TYPE_CUSTOMER
 	 * @see Categorie::TYPE_MEMBER
 	 * @see Categorie::TYPE_CONTACT
 	 * @see Categorie::TYPE_USER
-	 * @see Categorie::TYPE_ACCOUNT
 	 * @see Categorie::TYPE_PROJECT
+	 * @see Categorie::TYPE_BANK_LINE
+     * @see Categorie::TYPE_WAREHOUSE
 	 */
 	public $type;
 

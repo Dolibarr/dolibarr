@@ -603,7 +603,7 @@ class Expedition extends CommonObject
 				//Incoterms
 				$this->fk_incoterms         = $obj->fk_incoterms;
 				$this->location_incoterms   = $obj->location_incoterms;
-				$this->label_incoterms    = $obj->label_incoterms;
+				$this->label_incoterms      = $obj->label_incoterms;
 
 				$this->db->free($result);
 
@@ -1384,6 +1384,7 @@ class Expedition extends CommonObject
         // phpcs:enable
 		global $conf, $mysoc;
 		// TODO: recuperer les champs du document associe a part
+		$this->lines=array();
 
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.label as custom_label, cd.description, cd.qty as qty_asked, cd.product_type";
 		$sql.= ", cd.total_ht, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.total_tva";

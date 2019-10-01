@@ -76,7 +76,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 		$this->description = $langs->trans("DocumentModelOdt");
 		$this->scandir = 'EXPEDITION_ADDON_PDF_ODT_PATH';	// Name of constant that is used to save list of directories to scan
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'odt';
 		$this->page_largeur = 0;
 		$this->page_hauteur = 0;
@@ -227,7 +227,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
 		if ($conf->expedition->dir_output."/sending")

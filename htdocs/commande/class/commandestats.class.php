@@ -98,7 +98,7 @@ class CommandeStats extends Stats
 	 * Return orders number by month for a year
 	 *
 	 * @param	int		$year		Year to scan
-     *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 * @return	array				Array with number by month
 	 */
 	public function getNbByMonth($year, $format = 0)
@@ -141,7 +141,7 @@ class CommandeStats extends Stats
 	 * Return the orders amount by month for a year
 	 *
 	 * @param	int		$year		Year to scan
-     * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 * @return	array				Array with amount by month
 	 */
 	public function getAmountByMonth($year, $format = 0)

@@ -18,7 +18,6 @@
 /**
  *      \file       htdocs/compta/localtax/class/localtax.class.php
  *      \ingroup    tax
- *      \author		Laurent Destailleur
  */
 
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';

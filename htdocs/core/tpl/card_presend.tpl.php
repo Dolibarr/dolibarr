@@ -76,7 +76,7 @@ if ($action == 'presend')
 	{
 		$outputlangs = new Translate('', $conf);
 		$outputlangs->setDefaultLang($newlang);
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array('commercial','bills','orders','contracts','members','propal','products','supplier_proposal','interventions'));
 	}
 

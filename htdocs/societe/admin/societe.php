@@ -477,8 +477,8 @@ foreach ($dirsociete as $dirroot)
     			$arrayofmodules[$file] = $modCodeCompta;
     		}
     	}
+        closedir($handle);
     }
-    closedir($handle);
 }
 
 $arrayofmodules = dol_sort_array($arrayofmodules, 'position');

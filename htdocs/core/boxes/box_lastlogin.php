@@ -68,7 +68,7 @@ class box_lastlogin extends ModeleBoxes
      */
     public function loadBox($max = 5)
     {
-        global $conf, $user, $langs, $db;
+        global $conf, $user, $langs;
 
         $textHead = $langs->trans("BoxLoginInformation");
         $this->info_box_head = array(
