@@ -108,17 +108,7 @@ if ($search_ref)	$sql.= natural_search("t.rowid", $search_ref);
 if ($search_label) 	$sql.= natural_search("t.label", $search_label);
 if ($search_amount) $sql.= natural_search("t.amount", price2num(trim($search_amount)), 1);
 if ($search_account > 0) $sql .=" AND b.fk_account=".$search_account;
-if ($month > 0)
-{
-	if ($year > 0)
-	$sql.= " AND t.datev BETWEEN '".$db->idate(dol_get_first_day($year, $month, false))."' AND '".$db->idate(dol_get_last_day($year, $month, false))."'";
-	else
-	$sql.= " AND date_format(t.datev, '%m') = '$month'";
-}
-elseif ($year > 0)
-{
-	$sql.= " AND t.datev BETWEEN '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
-}
+$sql.= dolSqlDateFilter('t.datev', 0, $month, $year);
 if ($filtre) {
     $filtre=str_replace(":", "=", $filtre);
     $sql .= " AND ".$filtre;

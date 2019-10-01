@@ -899,20 +899,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		if ($search_user > 0) $sql .= natural_search('t.fk_user', $search_user);
 		if ($search_valuebilled == '1') $sql .= ' AND t.invoice_id > 0';
 		if ($search_valuebilled == '0') $sql .= ' AND (t.invoice_id = 0 OR t.invoice_id IS NULL)';
-		if ($search_month > 0)
-		{
-			if ($search_year > 0 && empty($search_day))
-			$sql.= " AND t.task_datehour BETWEEN '".$db->idate(dol_get_first_day($search_year, $search_month, false))."' AND '".$db->idate(dol_get_last_day($search_year, $search_month, false))."'";
-			elseif ($search_year > 0 && ! empty($search_day))
-			$sql.= " AND t.task_datehour BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
-			else
-			$sql.= " AND date_format(t.task_datehour, '%m') = '".$db->escape($search_month)."'";
-		}
-		elseif ($search_year > 0)
-		{
-			$sql.= " AND t.task_datehour BETWEEN '".$db->idate(dol_get_first_day($search_year, 1, false))."' AND '".$db->idate(dol_get_last_day($search_year, 12, false))."'";
-		}
-        //$sql .= ' GROUP BY t.rowid, t.fk_task, t.task_date, t.task_datehour, t.task_date_withhour, t.task_duration, t.fk_user, t.note, t.thm, pt.ref, pt.label, u.lastname, u.firstname, u.login, u.photo, u.statut, il.fk_facture';
+		$sql .= dolSqlDateFilter('t.task_datehour', $search_day, $search_month, $search_year);
 		$sql .= $db->order($sortfield, $sortorder);
 
 		// Count total nb of records
@@ -954,7 +941,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 				$title=$langs->trans("ListTaskTimeUserProject");
 
-				print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic', 0, $linktocreatetime, '', $limit);
+				print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, $linktocreatetime, '', $limit);
 			}
 			else
 			{
@@ -962,7 +949,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 			    $title=$langs->trans("ListTaskTimeForTask");
 
-			    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic', 0, $linktocreatetime, '', $limit);
+			    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, $linktocreatetime, '', $limit);
 			}
 
 			$i = 0;

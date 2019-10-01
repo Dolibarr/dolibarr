@@ -182,6 +182,10 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
                 print __METHOD__." Result for checking we don't have 'NUMERIC(' = ".$result."\n";
                 $this->assertTrue($result===false, 'Found NUMERIC( into '.$file.'. Bad.');
 
+                $result=strpos($filecontent, 'NUMERIC(');
+                print __METHOD__." Result for checking we don't have 'curdate(' = ".$result."\n";
+                $this->assertTrue($result===false, 'Found curdate( into '.$file.'. Bad. Current date must be generated with PHP.');
+
                 $result=strpos($filecontent, 'integer(');
                 print __METHOD__." Result for checking we don't have 'integer(' = ".$result."\n";
                 $this->assertTrue($result===false, 'Found value in parenthesis after the integer. It must be integer not integer(x) into '.$file.'. Bad.');

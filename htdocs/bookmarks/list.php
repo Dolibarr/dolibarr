@@ -85,7 +85,7 @@ $newcardbutton='';
 $newcardbutton.= dolGetButtonTitle($langs->trans('NewBookmark'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bookmarks/card.php?action=create', '', !empty($user->rights->bookmark->creer));
 
 
-print_barre_liste($langs->trans("ListOfBookmarks"), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', -1, '', 'title_generic.png', 0, $newcardbutton);
+print_barre_liste($langs->trans("ListOfBookmarks"), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', -1, '', 'generic', 0, $newcardbutton);
 
 $sql = "SELECT b.rowid, b.dateb, b.fk_user, b.url, b.target, b.title, b.favicon, b.position,";
 $sql.= " u.login, u.lastname, u.firstname";
