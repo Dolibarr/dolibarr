@@ -505,6 +505,18 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 		$out.='<table class="noborder" width="100%">';
 
 		$out.='<tr class="liste_titre">';
+
+		$out.='<td class="liste_titre">';
+		if($sortorder === 'desc') {
+			$sortUrl = $_SERVER["PHP_SELF"] . '?sortfield=a.datep&sortorder=asc' . $param;
+			$out .= dolGetButtonTitle($langs->trans('Date'), $langs->trans('OrderByDateAsc'), 'fa fa-sort-numeric-down', $sortUrl, '', 1);
+		}
+		else{
+			$sortUrl = $_SERVER["PHP_SELF"] . '?sortfield=a.datep&sortorder=desc' . $param;
+			$out .= dolGetButtonTitle($langs->trans('Date'), $langs->trans('OrderByDateDesc'), 'fa fa-sort-numeric-down-alt', $sortUrl, '', 1);
+		}
+		$out.='</td>';
+
 		$out.='<td class="liste_titre"><strong>'.$langs->trans("Search").' : </strong></td>';
 		if ($donetodo)
 		{
