@@ -873,6 +873,8 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     $search_address = GETPOST("search_address", 'alpha');
     $search_poste   = GETPOST("search_poste", 'alpha');
 
+    $socialnetworks = getArrayOfSocialNetworks();
+
     $searchAddressPhoneDBFields = array(
         //Address
         't.address',
@@ -889,18 +891,13 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 
         //E-mail
         't.email',
-
-        //Social media
-        "t.skype",
-        "t.jabberid",
-        "t.twitter",
-        "t.facebook",
-        "t.linkedin",
-        "t.whatsapp",
-        "t.youtube",
-        "t.snapchat",
-        "t.instagram"
     );
+    //Social media
+    foreach ($socialnetworks as $key => $value) {
+        if ($value['active']) {
+            $searchAddressPhoneDBFields['t.'.$key] = "t.socialnetworks->>'$.".$key."'";
+        }
+    }
 
     if (! $sortorder) $sortorder="ASC";
     if (! $sortfield) $sortfield="t.lastname";
@@ -916,19 +913,19 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     $extralabels=$extrafields->fetch_name_optionals_label($contactstatic->table_element);
 
     $contactstatic->fields=array(
-    'name'      =>array('type'=>'varchar(128)', 'label'=>'Name',             'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
-    'poste'     =>array('type'=>'varchar(128)', 'label'=>'PostOfFunction',   'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>20),
-    'address'   =>array('type'=>'varchar(128)', 'label'=>'Address',          'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>30),
-    'statut'    =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>40, 'arrayofkeyval'=>array(0=>$contactstatic->LibStatut(0, 1), 1=>$contactstatic->LibStatut(1, 1))),
+        'name'      =>array('type'=>'varchar(128)', 'label'=>'Name',             'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
+        'poste'     =>array('type'=>'varchar(128)', 'label'=>'PostOfFunction',   'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>20),
+        'address'   =>array('type'=>'varchar(128)', 'label'=>'Address',          'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>30),
+        'statut'    =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>40, 'arrayofkeyval'=>array(0=>$contactstatic->LibStatut(0, 1), 1=>$contactstatic->LibStatut(1, 1))),
     );
 
     // Definition of fields for list
     $arrayfields=array(
-    't.rowid'=>array('label'=>"TechnicalID", 'checked'=>($conf->global->MAIN_SHOW_TECHNICAL_ID?1:0), 'enabled'=>($conf->global->MAIN_SHOW_TECHNICAL_ID?1:0), 'position'=>1),
-    't.name'=>array('label'=>"Name", 'checked'=>1, 'position'=>10),
-    't.poste'=>array('label'=>"PostOrFunction", 'checked'=>1, 'position'=>20),
-    't.address'=>array('label'=>(empty($conf->dol_optimize_smallscreen) ? $langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email") : $langs->trans("Address")), 'checked'=>1, 'position'=>30),
-    't.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>40, 'class'=>'center'),
+        't.rowid'=>array('label'=>"TechnicalID", 'checked'=>($conf->global->MAIN_SHOW_TECHNICAL_ID?1:0), 'enabled'=>($conf->global->MAIN_SHOW_TECHNICAL_ID?1:0), 'position'=>1),
+        't.name'=>array('label'=>"Name", 'checked'=>1, 'position'=>10),
+        't.poste'=>array('label'=>"PostOrFunction", 'checked'=>1, 'position'=>20),
+        't.address'=>array('label'=>(empty($conf->dol_optimize_smallscreen) ? $langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email") : $langs->trans("Address")), 'checked'=>1, 'position'=>30),
+        't.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>40, 'class'=>'center'),
     );
     // Extra fields
     if (is_array($extrafields->attributes[$contactstatic->table_element]['label']) && count($extrafields->attributes[$contactstatic->table_element]['label']))
@@ -1012,7 +1009,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     $extrafieldsobjectkey=$contactstatic->table_element;
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-    $sql = "SELECT t.rowid, t.lastname, t.firstname, t.fk_pays as country_id, t.civility, t.poste, t.phone as phone_pro, t.phone_mobile, t.phone_perso, t.fax, t.email, t.skype, t.statut, t.photo,";
+    $sql = "SELECT t.rowid, t.lastname, t.firstname, t.fk_pays as country_id, t.civility, t.poste, t.phone as phone_pro, t.phone_mobile, t.phone_perso, t.fax, t.email, t.socialnetworks, t.statut, t.photo,";
     $sql .= " t.civility as civility_id, t.address, t.zip, t.town";
     $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
     $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (t.rowid = ef.fk_object)";
@@ -1020,7 +1017,9 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     if ($search_status!='' && $search_status != '-1') $sql .= " AND t.statut = ".$db->escape($search_status);
     if ($search_name)    $sql .= natural_search(array('t.lastname', 't.firstname'), $search_name);
     if ($search_poste)   $sql .= natural_search('t.poste', $search_poste);
-    if ($search_address) $sql .= natural_search($searchAddressPhoneDBFields, $search_address);
+    if ($search_address) {
+        $sql .= natural_search($searchAddressPhoneDBFields, $search_address);
+    }
     // Add where from extra fields
     $extrafieldsobjectkey=$contactstatic->table_element;
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -1047,7 +1046,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     		print '<td class="liste_titre'.($align?' '.$align:'').'">';
     		if (in_array($key, array('t.statut'))){
                 print $form->selectarray('search_status', array('-1'=>'','0'=>$contactstatic->LibStatut(0, 1),'1'=>$contactstatic->LibStatut(1, 1)), $search_status);
-            }else{
+            } else {
     		    $fieldName = substr($key, 2);
                 print sprintf('<input type="text" class="flat maxwidth75" name="search_%s" value="%s">', $fieldName, dol_escape_htmltag($search[$key]));
             }
@@ -1116,7 +1115,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
             $contactstatic->phone_perso = $obj->phone_perso;
             $contactstatic->email = $obj->email;
             $contactstatic->web = $obj->web;
-            $contactstatic->skype = $obj->skype;
+            $contactstatic->socialnetworks = $obj->socialnetworks;
             $contactstatic->photo = $obj->photo;
 
             $country_code = getCountry($obj->country_id, 2);
