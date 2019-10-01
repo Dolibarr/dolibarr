@@ -87,7 +87,7 @@ $colorblind_deuteranopes_textWarning = $textWarning; // currently not tested wit
 
 // Badges colors
 $badgePrimary   ='#007bff';
-$badgeSecondary ='#999999';
+$badgeSecondary ='#cccccc';
 $badgeSuccess   ='#28a745';
 $badgeDanger    ='#9f4705';
 $badgeWarning   ='#ffc107';
