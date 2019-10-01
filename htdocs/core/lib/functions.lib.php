@@ -1,6 +1,4 @@
 <?php
-use PhpOffice\PhpSpreadsheet\NamedRange;
-
 /* Copyright (C) 2000-2007	Rodolphe Quiedeville			<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
  * Copyright (C) 2004-2018	Laurent Destailleur			<eldy@users.sourceforge.net>
@@ -968,11 +966,15 @@ function dol_escape_js($stringtoescape, $mode=0, $noescapebackslashn=0)
  *  @param      string		$stringtoescape		String to escape
  *  @param		int			$keepb				1=Preserve b tags (otherwise, remove them)
  *  @param      int         $keepn              1=Preserve \r\n strings (otherwise, replace them with escaped value). Set to 1 when escaping for a <textarea>.
+ *  @param		string		$keepmoretags		'' or 'common' or list of tags
  *  @return     string     				 		Escaped string
  *  @see		dol_string_nohtmltag, dol_string_nospecial, dol_string_unaccent
  */
-function dol_escape_htmltag($stringtoescape, $keepb=0, $keepn=0)
+function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $keepmoretags = '')
 {
+	if ($keepmoretags == 'common') $keepmoretags = 'html,body,a,em,i,u,ul,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody';
+	// TODO Implement $keepmoretags
+
 	// escape quotes and backslashes, newlines, etc.
 	$tmp=html_entity_decode($stringtoescape, ENT_COMPAT, 'UTF-8');		// TODO Use htmlspecialchars_decode instead, that make only required change for html tags
 	if (! $keepb) $tmp=strtr($tmp, array("<b>"=>'','</b>'=>''));
@@ -5541,7 +5543,7 @@ function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
 
 /**
  *	This function is called to encode a string into a HTML string but differs from htmlentities because
- * 	a detection is done before to see if text is already HTML or not. Also, all entities but &,<,> are converted.
+ * 	a detection is done before to see if text is already HTML or not. Also, all entities but &,<,>," are converted.
  *  This permits to encode special chars to entities with no double encoding for already encoded HTML strings.
  * 	This function also remove last EOL or BR if $removelasteolbr=1 (default).
  *  For PDF usage, you can show text by 2 ways:

@@ -209,7 +209,7 @@ if (empty($reshook)) {
 			$object->facebook = GETPOST("facebook", 'alphanohtml');
 
 			$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
-			$object->job = GETPOST("job", 'alpha');
+			$object->job = GETPOST("job", 'nohtml');
 			$object->signature = GETPOST("signature", 'none');
 			$object->accountancy_code = GETPOST("accountancy_code", 'alphanohtml');
 			$object->note = GETPOST("note", 'none');
@@ -358,7 +358,7 @@ if (empty($reshook)) {
 				$object->twitter = GETPOST("twitter", 'alpha');
 				$object->facebook = GETPOST("facebook", 'alpha');
 				$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
-				$object->job = GETPOST("job", 'alpha');
+				$object->job = GETPOST("job", 'nohtml');
 				$object->signature = GETPOST("signature",'none');
 				$object->accountancy_code = GETPOST("accountancy_code",'alpha');
 				$object->openid = GETPOST("openid",'alpha');
@@ -1156,7 +1156,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	// Position/Job
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("PostOrFunction").'</td>';
 	print '<td>';
-	print '<input class="maxwidth200" type="text" name="job" value="'.GETPOST('job').'">';
+	print '<input class="maxwidth200" type="text" name="job" value="'.GETPOST('job', 'nohtml').'">';
 	print '</td></tr>';
 
 

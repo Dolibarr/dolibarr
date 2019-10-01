@@ -116,6 +116,8 @@ function testSqlAndScriptInject($val, $type)
 		$inj += preg_match('/union.+select/i', 	 $val);
 		$inj += preg_match('/(\.\.%2f)+/i',		 $val);
 	}
+	// For XSS Injection done by closing textarea to exucute content into a textarea field
+	$inj += preg_match('/<\/textarea/i', $val);
 	// For XSS Injection done by adding javascript with script
 	// This is all cases a browser consider text is javascript:
 	// When it found '<script', 'javascript:', '<style', 'onload\s=' on body tag, '="&' on a tag size with old browsers
@@ -127,13 +129,15 @@ function testSqlAndScriptInject($val, $type)
 	$inj += preg_match('/Set\.constructor/i', $val);	// ECMA script 6
 	if (! defined('NOSTYLECHECK')) $inj += preg_match('/<style/i', $val);
 	$inj += preg_match('/base[\s]+href/si', $val);
-	$inj += preg_match('/<.*onmouse/si', $val);       // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
-	$inj += preg_match('/onerror\s*=/i', $val);       // onerror can be set on img or any html tag like <img title='...' onerror = alert(1)>
-	$inj += preg_match('/onfocus\s*=/i', $val);       // onfocus can be set on input text html tag like <input type='text' value='...' onfocus = alert(1)>
-	$inj += preg_match('/onload\s*=/i', $val);        // onload can be set on svg tag <svg/onload=alert(1)> or other tag like body <body onload=alert(1)>
-	$inj += preg_match('/onloadstart\s*=/i', $val);   // onload can be set on audio tag <audio onloadstart=alert(1)>
-	$inj += preg_match('/onclick\s*=/i', $val);       // onclick can be set on img text html tag like <img onclick = alert(1)>
-	$inj += preg_match('/onscroll\s*=/i', $val);      // onscroll can be on textarea
+	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp
+	$inj += preg_match('/onmouse([a-z]*)\s*=/i', $val);       // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
+	$inj += preg_match('/ondrag([a-z]*)\s*=/i', $val);        //
+	$inj += preg_match('/ontouch([a-z]*)\s*=/i', $val);        //
+	$inj += preg_match('/on(abort|afterprint|beforeprint|beforeunload|blur|canplay|canplaythrough|change|click|contextmenu|copy|cut)\s*=/i', $val);
+	$inj += preg_match('/on(dblclick|drop|durationchange|ended|error|focus|focusin|focusout|hashchange|input|invalid)\s*=/i', $val);
+	$inj += preg_match('/on(keydown|keypress|keyup|load|loadeddata|loadedmetadata|loadstart|offline|online|pagehide|pageshow)\s*=/i', $val);
+	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|resize|reset|scroll|search|seeking|select|show|stalled|submit|suspend)\s*=/i', $val);
+	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting)\s*=/i', $val);
 	//$inj += preg_match('/on[A-Z][a-z]+\*=/', $val);   // To lock event handlers onAbort(), ...
 	$inj += preg_match('/&#58;|&#0000058|&#x3A/i', $val);		// refused string ':' encoded (no reason to have it encoded) to lock 'javascript:...'
 	//if ($type == 1)
