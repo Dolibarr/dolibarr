@@ -865,11 +865,13 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     $sortfield = GETPOST("sortfield", 'alpha');
     $sortorder = GETPOST("sortorder", 'alpha');
     $page = GETPOST('page', 'int');
+
     $search_status = GETPOST("search_status", 'int');
     if ($search_status=='') $search_status=1; // always display active customer first
-    $search_name = GETPOST("search_name", 'alpha');
-    $searchAddressPhone = GETPOST("search_address", 'alpha');
-    $searchJobFunction=GETPOST("search_poste", 'alpha');
+
+    $search_name    = GETPOST("search_name", 'alpha');
+    $search_address = GETPOST("search_address", 'alpha');
+    $search_poste   = GETPOST("search_poste", 'alpha');
 
     $searchAddressPhoneDBFields = array(
         //Address
@@ -959,8 +961,8 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     {
     	$search_status		 = '';
     	$search_name         = '';
-        $searchAddressPhone = '';
-        $searchJobFunction = '';
+        $search_address = '';
+        $search_poste = '';
         $search= [];
     	$search_array_options=array();
 
@@ -1002,8 +1004,8 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     $param="socid=".urlencode($object->id);
     if ($search_status != '') $param.='&search_status='.urlencode($search_status);
     if ($search_name != '')   $param.='&search_name='.urlencode($search_name);
-    if ($searchJobFunction != '')     $param.='&search_poste='.urlencode($searchJobFunction);
-    if ($searchAddressPhone != '')     $param.='&search_address='.urlencode($searchAddressPhone);
+    if ($search_poste != '')     $param.='&search_poste='.urlencode($search_poste);
+    if ($search_address != '')     $param.='&search_address='.urlencode($search_address);
     if ($optioncss != '')     $param.='&optioncss='.urlencode($optioncss);
 
     // Add $param from extra fields
@@ -1016,9 +1018,9 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (t.rowid = ef.fk_object)";
     $sql .= " WHERE t.fk_soc = ".$object->id;
     if ($search_status!='' && $search_status != '-1') $sql .= " AND t.statut = ".$db->escape($search_status);
-    if ($search_name) $sql .= natural_search(array('t.lastname', 't.firstname'), $search_name);
-    if ($searchJobFunction) $sql.= natural_search('t.poste', $searchJobFunction);
-    if ($searchAddressPhone) $sql .= natural_search($searchAddressPhoneDBFields, $searchAddressPhone);
+    if ($search_name)    $sql .= natural_search(array('t.lastname', 't.firstname'), $search_name);
+    if ($search_poste)   $sql .= natural_search('t.poste', $search_poste);
+    if ($search_address) $sql .= natural_search($searchAddressPhoneDBFields, $search_address);
     // Add where from extra fields
     $extrafieldsobjectkey=$contactstatic->table_element;
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
