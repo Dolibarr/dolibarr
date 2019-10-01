@@ -947,7 +947,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     $search=array();
     foreach($arrayfields as $key => $val)
     {
-        $queryName = sprintf('search_%s', substr($key, 2));
+        $queryName = 'search_'.substr($key, 2);
     	if (GETPOST($queryName, 'alpha')){
             $search[$key]=GETPOST($queryName, 'alpha');
         }
