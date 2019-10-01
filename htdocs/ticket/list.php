@@ -131,6 +131,13 @@ if (!$user->rights->ticket->read) {
 // Store current page url
 $url_page_current = dol_buildpath('/ticket/list.php', 1);
 
+if ($project_ref)
+{
+	$tmpproject = new Project($db);
+	$tmpproject->fetch(0, $project_ref);
+	$projectid = $tmpproject->id;
+	$search_fk_project = $projectid;
+}
 
 
 /*
