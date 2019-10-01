@@ -1859,10 +1859,10 @@ $formother = new FormOther($db);
 $help_url='';
 
 $arrayofjs = array(
-	'/includes/ace/ace.js',
-	'/includes/ace/ext-statusbar.js',
-	'/includes/ace/ext-language_tools.js',
-	//'/includes/ace/ext-chromevox.js'
+	'/includes/ace/src/ace.js',
+	'/includes/ace/src/ext-statusbar.js',
+	'/includes/ace/src/ext-language_tools.js',
+	//'/includes/ace/src/ext-chromevox.js'
 	//'/includes/jquery/plugins/jqueryscoped/jquery.scoped.js',
 );
 $arrayofcss = array();

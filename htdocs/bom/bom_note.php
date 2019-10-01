@@ -42,8 +42,9 @@ $object=new BOM($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->bom->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('bomnote','globalcard'));     // Note that conf->hooks_modules contains array
+
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('bom');
+$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Security check - Protection if external user
 //if ($user->societe_id > 0) access_forbidden();

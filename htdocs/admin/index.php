@@ -45,7 +45,6 @@ llxHeader('', $langs->trans("Setup"), $wikihelp);
 
 print load_fiche_titre($langs->trans("SetupArea"), '', 'tools');
 
-
 if (! empty($conf->global->MAIN_MOTD_SETUPPAGE))
 {
     $conf->global->MAIN_MOTD_SETUPPAGE=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', $conf->global->MAIN_MOTD_SETUPPAGE);
