@@ -2568,14 +2568,13 @@ else
         // Parent company
         if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY))
         {
-        	// Payment term
         	print '<tr><td>';
         	print '<table class="nobordernopadding" width="100%"><tr><td>';
         	print $langs->trans('ParentCompany');
         	print '</td>';
         	if ($action != 'editparentcompany') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editparentcompany&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
         	print '</tr></table>';
-        	print '</td><td colspan="3">';
+        	print '</td><td>';
         	if ($action == 'editparentcompany')
         	{
         		$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->parent, 'editparentcompany', 's.rowid <> '.$object->id, 1);
@@ -2596,7 +2595,7 @@ else
         {
             $langs->load("members");
             print '<tr><td>'.$langs->trans("LinkedToDolibarrMember").'</td>';
-            print '<td colspan="3">';
+            print '<td>';
             $adh=new Adherent($db);
             $result=$adh->fetch('', '', $object->id);
             if ($result > 0)
