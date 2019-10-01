@@ -108,7 +108,7 @@ $sql.= " SUM(p.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellv
 // Add fields from extrafields
 if (! empty($extrafields->attributes[$object->table_element]['label'])){
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val){
-        $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key.', ' : '');
+        $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? sprintf(", ef.%s as options_%s", $key, $key): '');
 	}
 }
 
