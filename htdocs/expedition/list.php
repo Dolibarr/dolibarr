@@ -332,13 +332,15 @@ if ($resql)
 
 	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);
-	if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);// This also change content of $arrayfields
+	//if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);// This also change content of $arrayfields
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 	// Fields title search
 	print '<tr class="liste_titre_filter">';
+	print '<td>&nbsp;</td>';
+	
 	// Ref
 	if (! empty($arrayfields['e.ref']['checked']))
 	{
@@ -443,6 +445,7 @@ if ($resql)
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
+	if ($massactionbutton)									  print_liste_field_titre($form->showCheckAddButtons('checkforselect', 1), $_SERVER['PHP_SELF'], '', '', '', 'align="center"', $sortfield, $sortorder); else print '<td>&nbsp;</td>';
 	if (! empty($arrayfields['e.ref']['checked']))            print_liste_field_titre($arrayfields['e.ref']['label'], $_SERVER["PHP_SELF"], "e.ref", "", $param, '', $sortfield, $sortorder);
 	if (! empty($arrayfields['e.ref_customer']['checked']))   print_liste_field_titre($arrayfields['e.ref_customer']['label'], $_SERVER["PHP_SELF"], "e.ref_customer", "", $param, '', $sortfield, $sortorder);
 	if (! empty($arrayfields['s.nom']['checked']))            print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder, 'left ');
@@ -495,6 +498,16 @@ if ($resql)
 
 
 		print '<tr class="oddeven">';
+		
+		// Action column
+        print '<td class="nowrap" align="center">';
+        if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+        {
+            $selected=0;
+            if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+            print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+        }
+        print '</td>';
 
 		// Ref
 		if (! empty($arrayfields['e.ref']['checked']))
@@ -632,15 +645,9 @@ if ($resql)
 			if (! $i) $totalarray['nbfield']++;
 		}
 
-        // Action column
-        print '<td class="nowrap" align="center">';
-        if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-        {
-            $selected=0;
-            if (in_array($obj->rowid, $arrayofselected)) $selected=1;
-            print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
-        }
-        print '</td>';
+        // Empty colmun (former Action column)
+        print '<td>&nbsp;</td>';
+        
 		if (! $i) $totalarray['nbfield']++;
 
 		print "</tr>\n";

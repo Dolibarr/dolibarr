@@ -280,7 +280,7 @@ if (! empty($moreforfilter))
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 //$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 $selectedfields='';
-$selectedfields.=(count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+//$selectedfields.=(count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
@@ -288,6 +288,7 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 // Fields title search
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
+print '<td>&nbsp;</td>';
 print '<td class="liste_titre"><input type="text" class="maxwidth100" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
 print '<td class="liste_titre"><input type="text" class="maxwidth100onsmartphone" name="search_title" value="'.dol_escape_htmltag($search_title).'"></td>';
 print '<td class="liste_titre"></td>';
@@ -314,6 +315,7 @@ print '</tr>'."\n";
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
+if ($massactionbutton)					print_liste_field_titre($form->showCheckAddButtons('checkforselect', 1), $_SERVER['PHP_SELF'], '', '', '', 'align="center"', $sortfield, $sortorder); else print '<td>&nbsp;</td>';
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.id_sondage", $param, "", "", $sortfield, $sortorder);
 print_liste_field_titre("Title", $_SERVER["PHP_SELF"], "p.titre", $param, "", "", $sortfield, $sortorder);
 print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "p.format", $param, "", "", $sortfield, $sortorder);
@@ -358,6 +360,16 @@ while ($i < min($num, $limit))
 
 	// Show here line of result
 	print '<tr class="oddeven">';
+	
+	// Action column
+	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+	{
+		print '<td class="nowrap center">';
+	    $selected=0;
+	    if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+	    print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+	    print '</td>';
+	}
 
 	// Ref
 	print '<td>';
@@ -404,15 +416,9 @@ while ($i < min($num, $limit))
 	$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
 	$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $object);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	// Action column
-	print '<td class="nowrap center">';
-	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-	{
-	    $selected=0;
-	    if (in_array($obj->rowid, $arrayofselected)) $selected=1;
-	    print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
-	}
-	print '</td>';
+	
+	// Empty column (former Action column)
+	print '<td>&nbsp;</td>';
 
 	print '</tr>'."\n";
 	$i++;
@@ -422,6 +428,7 @@ while ($i < min($num, $limit))
 if (isset($totalarray['pos']))
 {
     print '<tr class="liste_total">';
+    print '<td>&nbsp;</td>';
     $i=0;
     while ($i < $totalarray['nbfield'])
     {
