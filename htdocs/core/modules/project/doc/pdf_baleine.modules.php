@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -138,15 +138,15 @@ class pdf_baleine extends ModelePDFProjects
 		$this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
 		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 
-		$this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
-		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
-		$this->option_codeproduitservice = 1;      // Affiche code produit-service
+		$this->option_logo = 1;                    // Display logo FAC_PDF_LOGO
+		$this->option_tva = 1;                     // Manage the vat option FACTURE_TVAOPTION
+		$this->option_codeproduitservice = 1;      // Display product-service code
 
-		// Retrieves transmitter
+		// Get source company
 		$this->emetteur=$mysoc;
 		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // By default if not defined
 
-		// Define column position
+		// Define position of columns
 		$this->posxref=$this->marge_gauche+1;
 		$this->posxlabel=$this->marge_gauche+25;
 		$this->posxworkload=$this->marge_gauche+120;
@@ -167,7 +167,7 @@ class pdf_baleine extends ModelePDFProjects
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Fonction generant le projet sur le disque
+	 *  Function to build pdf project onto disk
 	 *
 	 *	@param	Project		$object   		Object project a generer
 	 *	@param	Translate	$outputlangs	Lang output object

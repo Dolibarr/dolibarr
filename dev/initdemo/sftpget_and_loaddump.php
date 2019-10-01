@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * or see https://www.gnu.org/
  *
  * Get a distant dump file and load it into a mysql database
  */
