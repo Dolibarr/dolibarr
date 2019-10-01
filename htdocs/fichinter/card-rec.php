@@ -816,8 +816,9 @@ if ($action == 'create') {
 						$companystatic->id=$objp->socid;
 						$companystatic->name=$objp->name;
 						print '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
-					} else
+					} else {
 						print '<td>'.$langs->trans("None").'</td>';
+					}
 
 					if (! empty($conf->contrat->enabled)) {
 						print '<td>';
@@ -882,8 +883,9 @@ if ($action == 'create') {
 						$i++;
 					}
 				}
-			} else
-				print '<tr class="oddeven"><td colspan="6">'.$langs->trans("NoneF").'</td></tr>';
+			} else {
+				print '<tr class="oddeven"><td colspan="9">'.$langs->trans("NoneF").'</td></tr>';
+			}
 
 			print "</table>";
 			$db->free($resql);
