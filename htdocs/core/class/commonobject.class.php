@@ -294,8 +294,8 @@ abstract class CommonObject
 
 	/**
 	 * @var int Delivery address ID
-	 * @deprecated
 	 * @see setDeliveryAddress()
+	 * @deprecated
 	 */
 	public $fk_delivery_address;
 
@@ -424,6 +424,8 @@ abstract class CommonObject
 	public $date_creation;			// Date creation
 	public $date_validation;		// Date validation
 	public $date_modification;		// Date last change (tms field)
+
+	public $next_prev_filter;
 
 
 

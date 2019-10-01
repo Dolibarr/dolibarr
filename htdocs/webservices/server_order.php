@@ -209,7 +209,6 @@ $order_fields = array(
 	'cond_reglement_doc' => array('name'=>'cond_reglement_doc','type'=>'xsd:string'),
 
 	'date_livraison' => array('name'=>'date_livraison','type'=>'xsd:date'),
-	'fk_delivery_address' => array('name'=>'fk_delivery_address','type'=>'xsd:int'),
 	'demand_reason_id' => array('name'=>'demand_reason_id','type'=>'xsd:string'),
 
 	'lines' => array('name'=>'lines','type'=>'tns:LinesArray2')
@@ -467,7 +466,6 @@ function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 					'mode_reglement' => $order->mode_reglement,
 
 					'date_livraison' => $order->date_livraison,
-					'fk_delivery_address' => $order->fk_delivery_address,
 
 					'demand_reason_id' => $order->demand_reason_id,
 					'demand_reason_code' => $order->demand_reason_code,
@@ -698,7 +696,6 @@ function createOrder($authentication, $order)
 		$newobject->statut=Commande::STATUS_DRAFT;	// We start with status draft
 		$newobject->billed=$order['billed'];
 		$newobject->fk_project=$order['project_id'];
-		$newobject->fk_delivery_address=$order['fk_delivery_address'];
 		$newobject->cond_reglement_id=$order['cond_reglement_id'];
 		$newobject->demand_reason_id=$order['demand_reason_id'];
 		$newobject->date_creation=$now;

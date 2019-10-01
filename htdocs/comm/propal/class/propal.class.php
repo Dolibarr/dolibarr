@@ -172,6 +172,7 @@ class Propal extends CommonObject
 
 	/**
      * @var int ID
+     * @deprecated
      */
 	public $fk_address;
 
@@ -1124,7 +1125,7 @@ class Propal extends CommonObject
 				}
 
 				// Set delivery address
-				if (! $error && $this->fk_delivery_address)
+				/*if (! $error && $this->fk_delivery_address)
 				{
 					$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
 					$sql.= " SET fk_delivery_address = ".$this->fk_delivery_address;
@@ -1132,7 +1133,7 @@ class Propal extends CommonObject
 					$sql.= " AND entity = ".setEntity($this);
 
 					$result=$this->db->query($sql);
-				}
+				}*/
 
 				if (! $error)
 				{
