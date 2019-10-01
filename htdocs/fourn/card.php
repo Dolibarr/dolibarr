@@ -605,9 +605,16 @@ if ($object->id > 0)
 		$sql2.= ' WHERE c.fk_soc = s.rowid';
 		$sql2.= " AND c.entity IN (".getEntity('commande_fournisseur').")";
 		$sql2.= ' AND s.rowid = '.$object->id;
-		// Show orders with status validated, shipping started and delivered (even if any order we can bill).
-		//$sql2.= " AND c.fk_statut IN (".CommandeFournisseur::STATUS_ORDERSENT.", ".CommandeFournisseur::STATUS_RECEIVED_PARTIALLY.", ".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY.")";
-		$sql2.= " AND c.fk_statut IN (".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY.")";	//  Must match filter in htdocs/fourn/orderstoinvoice.php
+		// Show orders we can bill
+		if (empty($conf->global->SUPPLIER_ORDER_TO_INVOICE_STATUS))
+		{
+			$sql2.= " AND c.fk_statut IN (".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY.")";	//  Must match filter in htdocs/fourn/orderstoinvoice.php
+		}
+		else
+		{
+			// CommandeFournisseur::STATUS_ORDERSENT.", ".CommandeFournisseur::STATUS_RECEIVED_PARTIALLY.", ".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY
+			$sql2.= " AND c.fk_statut IN (".$db->escape($conf->global->SUPPLIER_ORDER_TO_INVOICE_STATUS).")";
+		}
 		$sql2.= " AND c.billed = 0";
 		// Find order that are not already invoiced
 		// just need to check received status because we have the billed status now
