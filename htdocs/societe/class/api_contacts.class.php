@@ -74,8 +74,11 @@ class Contacts extends DolibarrApi
 		{
 			throw new RestException(401, 'No permission to read contacts');
 		}
-
-		$result = $this->contact->fetch($id);
+		if ($id ==0) {
+			$result = $this->contact->intiAsSpecimen();
+		} else {
+			$result = $this->contact->fetch($id);
+		}
 
 		if (!$result)
 		{

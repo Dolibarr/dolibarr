@@ -50,7 +50,7 @@ $hookmanager->initHooks(array('accountancyindex'));
 
 llxHeader('', $langs->trans("AccountancyArea"));
 
-print load_fiche_titre($langs->trans("AccountancyArea"), '', 'title_accountancy');
+print load_fiche_titre($langs->trans("AccountancyArea"), '', 'accountancy');
 //dol_fiche_head();
 
 $step = 0;

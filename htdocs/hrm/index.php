@@ -77,7 +77,7 @@ $childids[]=$user->id;
 
 llxHeader('', $langs->trans('HRMArea'));
 
-print load_fiche_titre($langs->trans("HRMArea"), '', 'title_hrm.png');
+print load_fiche_titre($langs->trans("HRMArea"), '', 'hrm');
 
 
 if (! empty($setupcompanynotcomplete))

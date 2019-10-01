@@ -65,7 +65,7 @@ $dir=$conf->ficheinter->dir_temp;
 
 llxHeader('', $title);
 
-print load_fiche_titre($title, '', 'title_commercial.png');
+print load_fiche_titre($title, '', 'commercial');
 
 dol_mkdir($dir);
 

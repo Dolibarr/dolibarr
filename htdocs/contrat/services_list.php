@@ -336,7 +336,7 @@ if ($mode == "0") $title=$langs->trans("ListOfInactiveServices");	// Must use ==
 if ($mode == "4" && $filter != "expired") $title=$langs->trans("ListOfRunningServices");
 if ($mode == "4" && $filter == "expired") $title=$langs->trans("ListOfExpiredServices");
 if ($mode == "5") $title=$langs->trans("ListOfClosedServices");
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'commercial', 0, '', '', $limit);
 
 if ($sall)
 {

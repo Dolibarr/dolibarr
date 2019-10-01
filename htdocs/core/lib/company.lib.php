@@ -1568,7 +1568,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
             $out.='</td>';
 
             // Author of event
-            $out.='<td class="tdoverflowmax100">';
+            $out.='<td class="tdoverflowmax200">';
             //$userstatic->id=$histo[$key]['userid'];
             //$userstatic->login=$histo[$key]['login'];
             //$out.=$userstatic->getLoginUrl(1);

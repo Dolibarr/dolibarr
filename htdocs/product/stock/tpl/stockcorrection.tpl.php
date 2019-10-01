@@ -53,7 +53,7 @@ if (empty($conf) || ! is_object($conf)) {
 		</script>';
 
 
-		print load_fiche_titre($langs->trans("StockCorrection"), '', 'title_generic.png');
+		print load_fiche_titre($langs->trans("StockCorrection"), '', 'generic');
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">'."\n";
 

@@ -1631,6 +1631,9 @@ class Ticket extends CommonObject
         $actioncomm=new ActionComm($this->db);
         $actioncomm->type_code = 'AC_OTH_AUTO';
         $actioncomm->code = 'TICKET_MSG';
+		if($this->private){
+			$actioncomm->code = 'TICKET_MSG_PRIVATE';
+		}
         $actioncomm->socid = $this->socid;
         $actioncomm->label = $this->subject;
         $actioncomm->note_private = $this->message;

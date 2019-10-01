@@ -541,7 +541,12 @@ class Notify
 							'',
 							'',
 							0,
-							-1
+							-1,
+                            '',
+                            '',
+                            '',
+                            '',
+                            'notification'
                         );
 
 						if ($mailfile->sendfile())
@@ -769,7 +774,12 @@ class Notify
 						'',
 						'',
 						0,
-						1
+						1,
+                        '',
+                        '',
+                        '',
+                        '',
+                        'notification'
 					);
 
 					if ($mailfile->sendfile())

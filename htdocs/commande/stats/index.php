@@ -79,7 +79,7 @@ if ($mode == 'supplier')
 
 llxHeader('', $title);
 
-print load_fiche_titre($title, '', 'title_commercial.png');
+print load_fiche_titre($title, '', 'commercial');
 
 dol_mkdir($dir);
 

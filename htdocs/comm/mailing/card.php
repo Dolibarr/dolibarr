@@ -742,7 +742,7 @@ if ($action == 'create')
 
 
 	// Print mail form
-	print load_fiche_titre($langs->trans("NewMailing"), $availablelink, 'title_generic');
+	print load_fiche_titre($langs->trans("NewMailing"), $availablelink, 'generic');
 
 	dol_fiche_head();
 
@@ -1117,7 +1117,7 @@ else
 			$htmltext.='</i>';
 
 			// Print mail content
-			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto('<span class="hideonsmartphone">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'help', '', 0, 2, 'emailsubstitionhelp'), 'title_generic');
+			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto('<span class="hideonsmartphone">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'help', '', 0, 2, 'emailsubstitionhelp'), 'generic');
 
 			dol_fiche_head('', '', '', -1);
 
@@ -1262,7 +1262,7 @@ else
 			$htmltext.='</i>';
 
 			// Print mail content
-			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto($langs->trans("AvailableVariables"), $htmltext, 1, 'help', '', 0, 2, 'emailsubstitionhelp'), 'title_generic');
+			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto($langs->trans("AvailableVariables"), $htmltext, 1, 'help', '', 0, 2, 'emailsubstitionhelp'), 'generic');
 
 			dol_fiche_head(null, '', '', -1);
 

@@ -187,7 +187,7 @@ class Contracts extends DolibarrApi
     public function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->contrat->creer) {
-            throw new RestException(401, "Insuffisant rights");
+            throw new RestException(401, "Insufficient rights");
         }
         // Check mandatory fields
         $result = $this->_validate($request_data);
