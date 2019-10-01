@@ -448,6 +448,16 @@ if (! GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'a
         {
         	migrate_user_photospath();
         }
+
+        // Scripts for 11.0
+        $afterversionarray=explode('.', '10.0.9');
+        $beforeversionarray=explode('.', '11.0.9');
+        if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+            migrate_users_socialnetworks();
+            migrate_members_socialnetworks();
+            migrate_contacts_socialnetworks();
+            migrate_thirdparties_socialnetworks();
+        }
     }
 
 	// Code executed only if migration is LAST ONE. Must always be done.
@@ -4925,3 +4935,63 @@ On les corrige:
 update llx_facture set paye=1, fk_statut=2 where close_code is null
 and rowid in (...)
 */
+
+/**
+ * Migrate users fields facebook and co to socialnetworks
+ *
+ * @return  void
+ */
+function migrate_users_socialnetworks()
+{
+    global $db, $langs;
+
+    print '<tr><td colspan="4">';
+
+    print '<b>'.$langs->trans('MigrationUsersSocialNetworks')."</b><br>\n";
+    print '</td></tr>';
+}
+
+/**
+ * Migrate members fields facebook and co to socialnetworks
+ *
+ * @return  void
+ */
+function migrate_members_socialnetworks()
+{
+    global $db, $langs;
+
+    print '<tr><td colspan="4">';
+
+    print '<b>'.$langs->trans('MigrationMembersSocialNetworks')."</b><br>\n";
+    print '</td></tr>';
+}
+
+/**
+ * Migrate contacts fields facebook and co to socialnetworks
+ *
+ * @return  void
+ */
+function migrate_contacts_socialnetworks()
+{
+    global $db, $langs;
+
+    print '<tr><td colspan="4">';
+
+    print '<b>'.$langs->trans('MigrationContactsSocialNetworks')."</b><br>\n";
+    print '</td></tr>';
+}
+
+/**
+ * Migrate thirdpartie fields facebook and co to socialnetworks
+ *
+ * @return  void
+ */
+function migrate_thirdparties_socialnetworks()
+{
+    global $db, $langs;
+
+    print '<tr><td colspan="4">';
+
+    print '<b>'.$langs->trans('MigrationThirdpartiesSocialNetworks')."</b><br>\n";
+    print '</td></tr>';
+}

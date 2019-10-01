@@ -22,6 +22,6 @@ create table llx_c_socialnetworks
   code        varchar(100),
   label       varchar(150),
   url         text,
-  icon        varchar(15),
+  icon        varchar(20),
   active      tinyint DEFAULT 1 NOT NULL
 )ENGINE=innodb;
