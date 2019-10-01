@@ -275,7 +275,7 @@ class User extends CommonObject
 
 		// Get user
 		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.birth, u.email, u.personal_email, u.job,";
-		$sql.= " u.socialnetworks, u.skype, u.twitter, u.facebook, u.linkedin,";
+		$sql.= " u.socialnetworks,";
 		$sql.= " u.signature, u.office_phone, u.office_fax, u.user_mobile, u.personal_mobile,";
 		$sql.= " u.address, u.zip, u.town, u.fk_state as state_id, u.fk_country as country_id,";
 		$sql.= " u.admin, u.login, u.note,";
@@ -383,39 +383,7 @@ class User extends CommonObject
                 $this->personal_mobile = $obj->personal_mobile;
 				$this->email		= $obj->email;
 				$this->personal_email = $obj->personal_email;
-				$arraysocialnetworks = array();
-				$updatesocial = false;
-				if (!empty($obj->skype)) {
-					$arraysocialnetworks['skype'] = $obj->skype;
-					$updatesocial = true;
-				}
-				if (!empty($obj->twitter)) {
-					$arraysocialnetworks['twitter'] = $obj->twitter;
-					$updatesocial = true;
-				}
-				if (!empty($obj->facebook)) {
-					$arraysocialnetworks['facebook'] = $obj->facebook;
-					$updatesocial = true;
-				}
-				if (!empty($obj->linkedin)) {
-					$arraysocialnetworks['linkedin'] = $obj->linkedin;
-					$updatesocial = true;
-				}
-				$socialarray = ($obj->socialnetworks==''?array():json_decode($obj->socialnetworks, true));
-				$this->socialnetworks = array_merge($arraysocialnetworks, $socialarray);
-				if ($updatesocial) {
-					$sqlupd = 'UPDATE '.MAIN_DB_PREFIX.'user SET skype=null';
-					$sqlupd .= ', twitter=null';
-					$sqlupd .= ', facebook=null';
-					$sqlupd .= ', linkedin=null';
-					$sqlupd .= ', socialnetworks="'.$this->db->escape(json_encode($this->socialnetworks)).'"';
-					$sqlupd .= ' WHERE rowid='.$this->id;
-					$this->db->query($sqlupd);
-				}
-				$this->skype = $this->socialnetworks['skype'];
-				$this->twitter = $this->socialnetworks['twitter'];
-				$this->facebook = $this->socialnetworks['facebook'];
-				$this->linkedin = $this->socialnetworks['linkedin'];
+				$this->socialnetworks = (array) json_decode($obj->socialnetworks, true);
 				$this->job			= $obj->job;
 				$this->signature	= $obj->signature;
 				$this->admin		= $obj->admin;
@@ -1334,10 +1302,7 @@ class User extends CommonObject
 		$this->firstname = $contact->firstname;
 		$this->gender = $contact->gender;
 		$this->email = $contact->email;
-		$this->skype = $contact->skype;
-		$this->twitter = $contact->twitter;
-		$this->facebook = $contact->facebook;
-		$this->linkedin = $contact->linkedin;
+		$this->socialnetworks = $contact->socialnetworks;
 		$this->office_phone = $contact->phone_pro;
 		$this->office_fax = $contact->fax;
 		$this->user_mobile = $contact->phone_mobile;
@@ -1554,11 +1519,6 @@ class User extends CommonObject
 		$this->email        = trim($this->email);
         $this->personal_email = trim($this->personal_email);
 
-		$this->skype        = trim($this->skype);
-		$this->twitter      = trim($this->twitter);
-		$this->facebook     = trim($this->facebook);
-		$this->linkedin     = trim($this->linkedin);
-
 		$this->job    		= trim($this->job);
 		$this->signature    = trim($this->signature);
 		$this->note         = trim($this->note);
@@ -1611,10 +1571,6 @@ class User extends CommonObject
 		$sql.= ", email = '".$this->db->escape($this->email)."'";
         $sql.= ", personal_email = '".$this->db->escape($this->personal_email)."'";
         $sql.= ", socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
-		//$sql.= ", skype = '".$this->db->escape($this->skype)."'";
-		//$sql.= ", twitter = '".$this->db->escape($this->twitter)."'";
-		//$sql.= ", facebook = '".$this->db->escape($this->facebook)."'";
-		//$sql.= ", linkedin = '".$this->db->escape($this->linkedin)."'";
 		$sql.= ", job = '".$this->db->escape($this->job)."'";
 		$sql.= ", signature = '".$this->db->escape($this->signature)."'";
 		$sql.= ", accountancy_code = '".$this->db->escape($this->accountancy_code)."'";
@@ -1703,10 +1659,7 @@ class User extends CommonObject
 
 						$adh->email=$this->email;
 
-						$adh->skype=$this->skype;
-						$adh->twitter=$this->twitter;
-						$adh->facebook=$this->facebook;
-						$adh->linkedin=$this->linkedin;
+						$adh->socialnetworks=$this->socialnetworks;
 
 						$adh->phone=$this->office_phone;
 						$adh->phone_mobile=$this->user_mobile;
@@ -1756,10 +1709,7 @@ class User extends CommonObject
 
 						$tmpobj->email=$this->email;
 
-						$tmpobj->skype=$this->skype;
-						$tmpobj->twitter=$this->twitter;
-						$tmpobj->facebook=$this->facebook;
-						$tmpobj->linkedin=$this->linkedin;
+						$tmpobj->socialnetworks=$this->socialnetworks;
 
 						$tmpobj->phone_pro=$this->office_phone;
 						$tmpobj->phone_mobile=$this->user_mobile;
@@ -2758,10 +2708,6 @@ class User extends CommonObject
 		$this->note='This is a note';
 		$this->email='email@specimen.com';
         $this->personal_email='personalemail@specimen.com';
-		$this->skype='skypepseudo';
-		$this->twitter='twitterpseudo';
-		$this->facebook='facebookpseudo';
-		$this->linkedin='linkedinpseudo';
 		$this->socialnetworks = array(
 			'skype' => 'skypepseudo',
 			'twitter' => 'twitterpseudo',
