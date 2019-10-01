@@ -82,7 +82,6 @@ class FichinterRec extends Fichinter
 
         $this->statuts_logo[0]='statut0';
         $this->statuts_logo[1]='statut1';
-
     }
 
     /**
@@ -453,7 +452,7 @@ class FichinterRec extends Fichinter
     *	@param		string		$fk_unit			Unit
     *	@return		int			 				<0 if KO, Id of line if OK
     */
-    public function addline($desc, $duration, $datei, $rang = -1, $pu_ht = 0, $qty = 0, $txtva = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0,  $special_code=0, $label='', $fk_unit=null)
+    public function addline($desc, $duration, $datei, $rang = -1, $pu_ht = 0, $qty = 0, $txtva = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = '', $pu_ttc = 0, $type = 0, $special_code = 0, $label = '', $fk_unit = null)
     {
         global $mysoc;
 
