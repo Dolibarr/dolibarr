@@ -40,6 +40,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "suppliers", "categories"));
 
+$socialnetworks = getArrayOfSocialNetworks();
+
 $action=GETPOST('action', 'alpha');
 $massaction=GETPOST('massaction', 'alpha');
 $show_files=GETPOST('show_files', 'int');
@@ -70,11 +72,13 @@ $search_phone_mobile=GETPOST("search_phone_mobile", 'alpha');
 $search_fax=GETPOST("search_fax", 'alpha');
 $search_email=GETPOST("search_email", 'alpha');
 $search_no_email=GETPOST("search_no_email", 'int');
-$search_jabberid=GETPOST("search_jabberid", 'alpha');
-$search_skype=GETPOST("search_skype", 'alpha');
-$search_twitter=GETPOST("search_twitter", 'alpha');
-$search_facebook=GETPOST("search_facebook", 'alpha');
-$search_linkedin=GETPOST("search_linkedin", 'alpha');
+if (! empty($conf->socialnetworks->enabled)) {
+	foreach ($socialnetworks as $key => $value) {
+		if ($value['active']) {
+			$search_{$key} = GETPOST("search_".$key, 'alpha');
+		}
+	}
+}
 $search_priv=GETPOST("search_priv", 'alpha');
 $search_categ=GETPOST("search_categ", 'int');
 $search_categ_thirdparty=GETPOST("search_categ_thirdparty", 'int');
@@ -136,8 +140,6 @@ $object = new Contact($db);
 $hookmanager->initHooks(array('contactlist'));
 $extrafields = new ExtraFields($db);
 
-$socialnetworks = getArrayOfSocialNetworks();
-
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('contact');
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
@@ -168,11 +170,6 @@ $arrayfields=array(
 	'p.fax'=>array('label'=>"Fax", 'checked'=>0),
 	'p.email'=>array('label'=>"EMail", 'checked'=>1),
 	'p.no_email'=>array('label'=>"No_Email", 'checked'=>0, 'enabled'=>(! empty($conf->mailing->enabled))),
-	'p.skype'=>array('label'=>"Skype", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
-	'p.jabberid'=>array('label'=>"Jabber", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
-	'p.twitter'=>array('label'=>"Twitter", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
-	'p.facebook'=>array('label'=>"Facebook", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
-    'p.linkedin'=>array('label'=>"LinkedIn", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
 	'p.thirdparty'=>array('label'=>"ThirdParty", 'checked'=>1, 'enabled'=>empty($conf->global->SOCIETE_DISABLE_CONTACTS)),
 	'p.priv'=>array('label'=>"ContactVisibility", 'checked'=>1, 'position'=>200),
 	'p.datec'=>array('label'=>"DateCreationShort", 'checked'=>0, 'position'=>500),
@@ -180,6 +177,16 @@ $arrayfields=array(
 	'p.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 	'p.import_key'=>array('label'=>"ImportId", 'checked'=>0, 'position'=>1100),
 );
+if (! empty($conf->socialnetworks->enabled)) {
+	foreach ($socialnetworks as $key => $value) {
+		if ($value['active']) {
+			$arrayfields['p.'.$key] = array(
+				'label' => $value['label'],
+				'checked' => 0,
+			);
+		}
+	}
+}
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
@@ -233,11 +240,13 @@ if (empty($reshook))
 		$search_fax="";
 		$search_email="";
 		$search_no_email=-1;
-		$search_jabberid="";
-		$search_skype="";
-		$search_twitter="";
-		$search_facebook="";
-		$search_linkedin="";
+		if (! empty($conf->socialnetworks->enabled)) {
+			foreach ($socialnetworks as $key => $value) {
+				if ($value['active']) {
+					$search_{$key} = "";
+				}
+			}
+		}
 		$search_priv="";
 		$search_status=-1;
 		$search_categ='';
@@ -333,11 +342,13 @@ if (strlen($search_phone_perso))    $sql.= natural_search('p.phone_perso', $sear
 if (strlen($search_phone_pro))      $sql.= natural_search('p.phone', $search_phone_pro);
 if (strlen($search_phone_mobile))   $sql.= natural_search('p.phone_mobile', $search_phone_mobile);
 if (strlen($search_fax))            $sql.= natural_search('p.fax', $search_fax);
-if (strlen($search_jabberid))       $sql.= natural_search("p.socialnetworks->>'$.jabber'", $search_jabberid);
-if (strlen($search_skype))          $sql.= natural_search("p.socialnetworks->>'$.skype'", $search_skype);
-if (strlen($search_twitter))        $sql.= natural_search("p.socialnetworks->>'$.twitter'", $search_twitter);
-if (strlen($search_facebook))       $sql.= natural_search("p.socialnetworks->>'$.facebook'", $search_facebook);
-if (strlen($search_linkedin))       $sql.= natural_search("p.socialnetworks->>'$.linkedin'", $search_linkedin);
+if (! empty($conf->socialnetworks->enabled)) {
+	foreach ($socialnetworks as $key => $value) {
+		if ($value['active'] && strlen($search_{$key})) {
+			$sql.= natural_search("p.socialnetworks->>'$.".$key."'", $search_{$key});
+		}
+	}
+}
 if (strlen($search_email))          $sql.= natural_search('p.email', $search_email);
 if (strlen($search_zip))   			$sql.= natural_search("p.zip", $search_zip);
 if (strlen($search_town))   		$sql.= natural_search("p.town", $search_town);
@@ -630,35 +641,17 @@ if (! empty($arrayfields['p.no_email']['checked']))
 	print $form->selectarray('search_no_email', array('-1'=>'', '0'=>$langs->trans('No'), '1'=>$langs->trans('Yes')), $search_no_email);
 	print '</td>';
 }
-if (! empty($arrayfields['p.skype']['checked']))
-{
-	print '<td class="liste_titre">';
-	print '<input class="flat" type="text" name="search_skype" size="6" value="'.dol_escape_htmltag($search_skype).'">';
-	print '</td>';
-}
-if (! empty($arrayfields['p.jabberid']['checked']))
-{
-	print '<td class="liste_titre">';
-	print '<input class="flat" type="text" name="search_jabberid" size="6" value="'.dol_escape_htmltag($search_jabberid).'">';
-	print '</td>';
-}
-if (! empty($arrayfields['p.twitter']['checked']))
-{
-	print '<td class="liste_titre">';
-	print '<input class="flat" type="text" name="search_twitter" size="6" value="'.dol_escape_htmltag($search_twitter).'">';
-	print '</td>';
-}
-if (! empty($arrayfields['p.facebook']['checked']))
-{
-	print '<td class="liste_titre">';
-	print '<input class="flat" type="text" name="search_facebook" size="6" value="'.dol_escape_htmltag($search_facebook).'">';
-	print '</td>';
-}
-if (! empty($arrayfields['p.linkedin']['checked']))
-{
-    print '<td class="liste_titre">';
-    print '<input class="flat" type="text" name="search_linkedin" size="6" value="'.dol_escape_htmltag($search_linkedin).'">';
-    print '</td>';
+if (! empty($conf->socialnetworks->enabled)) {
+	foreach ($socialnetworks as $key => $value) {
+		if ($value['active']) {
+			if (! empty($arrayfields['p.'.$key]['checked']))
+			{
+				print '<td class="liste_titre">';
+				print '<input class="flat" type="text" name="search_'.$key.'" size="6" value="'.dol_escape_htmltag($search_{$key}).'">';
+				print '</td>';
+			}
+		}
+	}
 }
 if (! empty($arrayfields['p.thirdparty']['checked']))
 {
@@ -732,11 +725,13 @@ if (! empty($arrayfields['p.phone_mobile']['checked']))        print_liste_field
 if (! empty($arrayfields['p.fax']['checked']))                 print_liste_field_titre($arrayfields['p.fax']['label'], $_SERVER["PHP_SELF"], "p.fax", $begin, $param, '', $sortfield, $sortorder);
 if (! empty($arrayfields['p.email']['checked']))               print_liste_field_titre($arrayfields['p.email']['label'], $_SERVER["PHP_SELF"], "p.email", $begin, $param, '', $sortfield, $sortorder);
 if (! empty($arrayfields['p.no_email']['checked']))            print_liste_field_titre($arrayfields['p.no_email']['label'], $_SERVER["PHP_SELF"], "p.no_email", $begin, $param, '', $sortfield, $sortorder, 'center ');
-if (! empty($arrayfields['p.skype']['checked']))               print_liste_field_titre($arrayfields['p.skype']['label'], $_SERVER["PHP_SELF"], "p.skype", $begin, $param, '', $sortfield, $sortorder);
-if (! empty($arrayfields['p.jabberid']['checked']))            print_liste_field_titre($arrayfields['p.jabberid']['label'], $_SERVER["PHP_SELF"], "p.jabberid", $begin, $param, '', $sortfield, $sortorder);
-if (! empty($arrayfields['p.twitter']['checked']))             print_liste_field_titre($arrayfields['p.twitter']['label'], $_SERVER["PHP_SELF"], "p.twitter", $begin, $param, '', $sortfield, $sortorder);
-if (! empty($arrayfields['p.facebook']['checked']))            print_liste_field_titre($arrayfields['p.facebook']['label'], $_SERVER["PHP_SELF"], "p.facebook", $begin, $param, '', $sortfield, $sortorder);
-if (! empty($arrayfields['p.linkedin']['checked']))            print_liste_field_titre($arrayfields['p.linkedin']['label'], $_SERVER["PHP_SELF"], "p.linkedin", $begin, $param, '', $sortfield, $sortorder);
+if (! empty($conf->socialnetworks->enabled)) {
+	foreach ($socialnetworks as $key => $value) {
+		if ($value['active'] && ! empty($arrayfields['p.'.$key]['checked'])) {
+			print_liste_field_titre($arrayfields['p.'.$key]['label'], $_SERVER["PHP_SELF"], "p.".$key, $begin, $param, '', $sortfield, $sortorder);
+		}
+	}
+}
 if (! empty($arrayfields['p.thirdparty']['checked']))          print_liste_field_titre($arrayfields['p.thirdparty']['label'], $_SERVER["PHP_SELF"], "s.nom", $begin, $param, '', $sortfield, $sortorder);
 if (! empty($arrayfields['p.priv']['checked']))                print_liste_field_titre($arrayfields['p.priv']['label'], $_SERVER["PHP_SELF"], "p.priv", $begin, $param, '', $sortfield, $sortorder, 'center ');
 // Extra fields
@@ -884,36 +879,14 @@ while ($i < min($num, $limit))
 		print '<td align="center">'.yn($obj->no_email).'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
-	// Skype
-	if (! empty($arrayfields['p.skype']['checked']))
-	{
-		if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($arraysocialnetworks['skype'], $obj->rowid, $obj->socid, 'skype').'</td>'; }
-		if (! $i) $totalarray['nbfield']++;
+	if (! empty($conf->socialnetworks->enabled)) {
+		foreach ($socialnetworks as $key => $value) {
+			if ($value['active'] && ! empty($arrayfields['p.'.$key]['checked'])) {
+				print '<td>'.dol_print_socialnetworks($arraysocialnetworks[$key], $obj->rowid, $obj->socid, $key).'</td>';
+				if (! $i) $totalarray['nbfield']++;
+			}
+		}
 	}
-	// Jabber
-	if (! empty($arrayfields['p.jabberid']['checked']))
-	{
-		if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($arraysocialnetworks['jabber'], $obj->rowid, $obj->socid, 'jabberid').'</td>'; }
-		if (! $i) $totalarray['nbfield']++;
-	}
-	// Twitter
-	if (! empty($arrayfields['p.twitter']['checked']))
-	{
-		if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($arraysocialnetworks['twitter'], $obj->rowid, $obj->socid, 'twitter').'</td>'; }
-		if (! $i) $totalarray['nbfield']++;
-	}
-	// Facebook
-    if (! empty($arrayfields['p.facebook']['checked']))
-    {
-        if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($arraysocialnetworks['facebook'], $obj->rowid, $obj->socid, 'facebook').'</td>'; }
-        if (! $i) $totalarray['nbfield']++;
-    }
-    // LinkedIn
-    if (! empty($arrayfields['p.linkedin']['checked']))
-    {
-        if (! empty($conf->socialnetworks->enabled)) { print '<td>'.dol_print_socialnetworks($arraysocialnetworks['linkedin'], $obj->rowid, $obj->socid, 'linkedin').'</td>'; }
-        if (! $i) $totalarray['nbfield']++;
-    }
     // Company
 	if (! empty($arrayfields['p.thirdparty']['checked']))
 	{
