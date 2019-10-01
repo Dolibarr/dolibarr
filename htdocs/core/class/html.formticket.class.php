@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -1041,7 +1041,7 @@ class FormTicket
 
         // Attached files
         if (!empty($this->withfile)) {
-            $out .= '<tr>';
+            $out = '<tr>';
             $out .= '<td width="180">' . $langs->trans("MailFile") . '</td>';
             $out .= '<td colspan="2">';
             // TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
