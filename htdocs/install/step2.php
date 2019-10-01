@@ -64,6 +64,8 @@ if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.fo
 if (@file_exists($forcedfile)) {
 	$useforcedwizard = true;
 	include_once $forcedfile;
+	// test for travis
+	if (!empty($argv[1]) && $argv[1] == "set") $action = "set";
 }
 
 dolibarr_install_syslog("- step2: entering step2.php page");
