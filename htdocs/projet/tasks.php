@@ -675,7 +675,7 @@ elseif ($id > 0 || ! empty($ref))
 	// Get list of tasks in tasksarray and taskarrayfiltered
 	// We need all tasks (even not limited to a user because a task to user can have a parent that is not affected to him).
 	$filteronthirdpartyid = $socid;
-	$tasksarray=$taskstatic->getTasksArray(0, 0, $object->id, $filteronthirdpartyid, 0, '', -1, $morewherefilter, 0, 0, 1);
+	$tasksarray=$taskstatic->getTasksArray(0, 0, $object->id, $filteronthirdpartyid, 0, '', -1, $morewherefilter, 0, 0, array(), 1);
 	// We load also tasks limited to a particular user
 	$tmpuser=new User($db);
 	if ($search_user_id > 0) $tmpuser->fetch($search_user_id);
