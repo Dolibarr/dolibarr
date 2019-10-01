@@ -316,7 +316,7 @@ class Invoices extends DolibarrApi
      *
      * @url	PUT {id}/lines/{lineid}
      *
-     * @return object
+     * @return array
      *
      * @throws 200
      * @throws 304
@@ -423,7 +423,7 @@ class Invoices extends DolibarrApi
 	 *
 	 * @url	DELETE {id}/contact/{rowid}
 	 *
-	 * @return int
+	 * @return array
      * @throws 401
      * @throws 404
      * @throws 500
