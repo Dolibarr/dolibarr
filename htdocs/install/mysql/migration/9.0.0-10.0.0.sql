@@ -404,3 +404,98 @@ ALTER TABLE llx_ticket_extrafields ADD INDEX idx_ticket_extrafields (fk_object);
 
 UPDATE llx_website_page set fk_user_creat = fk_user_modif WHERE fk_user_creat IS NULL and fk_user_modif IS NOT NULL;
 
+-- FIX the units in the product table
+-- UPDATE unit : weight
+UPDATE llx_product
+  SET weight_units = (
+    SELECT
+      rowid
+    FROM
+      llx_c_units
+    WHERE
+      llx_c_units.active = 1
+      AND (llx_c_units.scale = llx_product.weight_units
+        OR (
+          llx_product.weight_units = 0
+          AND
+          llx_c_units.scale IS NULL
+        )
+      )
+      AND llx_c_units.unit_type = 'weight'
+    LIMIT 1
+  )
+
+  WHERE
+    llx_product.weight_units <= 0;
+
+-- UPDATE unit : length
+UPDATE llx_product
+  SET length_units = (
+    SELECT
+      rowid
+    FROM
+      llx_c_units
+    WHERE
+      llx_c_units.active = 1
+      AND (llx_c_units.scale = llx_product.length_units
+        OR (
+          llx_product.length_units = 0
+          AND
+          llx_c_units.scale IS NULL
+        )
+      )
+      AND llx_c_units.unit_type = 'size'
+    LIMIT 1
+  )
+
+  WHERE
+    llx_product.length_units <= 0;
+
+
+-- UPDATE unit : surface
+UPDATE llx_product
+  SET surface_units = (
+    SELECT
+      rowid
+    FROM
+      llx_c_units
+    WHERE
+      llx_c_units.active = 1
+      AND (llx_c_units.scale = llx_product.surface_units
+        OR (
+          llx_product.surface_units = 0
+          AND
+          llx_c_units.scale IS NULL
+        )
+      )
+      AND llx_c_units.unit_type = 'surface'
+    LIMIT 1
+  )
+
+  WHERE
+    llx_product.surface_units <= 0;
+
+
+-- UPDATE unit : volume
+UPDATE llx_product
+  SET volume_units = (
+    SELECT
+      rowid
+    FROM
+      llx_c_units
+    WHERE
+      llx_c_units.active = 1
+      AND (llx_c_units.scale = llx_product.volume_units
+        OR (
+          llx_product.volume_units = 0
+          AND
+          llx_c_units.scale IS NULL
+        )
+      )
+      AND llx_c_units.unit_type = 'volume'
+    LIMIT 1
+  )
+
+  WHERE
+    llx_product.volume_units <= 0;
+
