@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -716,10 +716,10 @@ $htmlother = new FormOther($db);
 $help_url='EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing';
 llxHeader('', $langs->trans("Mailing"), $help_url, '', 0, 0,
 	array(
-	'/includes/ace/ace.js',
-	'/includes/ace/ext-statusbar.js',
-	'/includes/ace/ext-language_tools.js',
-	//'/includes/ace/ext-chromevox.js'
+	'/includes/ace/src/ace.js',
+	'/includes/ace/src/ext-statusbar.js',
+	'/includes/ace/src/ext-language_tools.js',
+	//'/includes/ace/src/ext-chromevox.js'
 	), array());
 
 if ($action == 'create')
@@ -742,7 +742,7 @@ if ($action == 'create')
 
 
 	// Print mail form
-	print load_fiche_titre($langs->trans("NewMailing"), $availablelink, 'title_generic');
+	print load_fiche_titre($langs->trans("NewMailing"), $availablelink, 'generic');
 
 	dol_fiche_head();
 
@@ -1117,7 +1117,7 @@ else
 			$htmltext.='</i>';
 
 			// Print mail content
-			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto('<span class="hideonsmartphone">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'help', '', 0, 2, 'emailsubstitionhelp'), 'title_generic');
+			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto('<span class="hideonsmartphone">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'help', '', 0, 2, 'emailsubstitionhelp'), 'generic');
 
 			dol_fiche_head('', '', '', -1);
 
@@ -1262,7 +1262,7 @@ else
 			$htmltext.='</i>';
 
 			// Print mail content
-			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto($langs->trans("AvailableVariables"), $htmltext, 1, 'help', '', 0, 2, 'emailsubstitionhelp'), 'title_generic');
+			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto($langs->trans("AvailableVariables"), $htmltext, 1, 'help', '', 0, 2, 'emailsubstitionhelp'), 'generic');
 
 			dol_fiche_head(null, '', '', -1);
 

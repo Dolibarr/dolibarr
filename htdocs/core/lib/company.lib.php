@@ -23,8 +23,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -867,11 +867,43 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     $sortfield = GETPOST("sortfield", 'alpha');
     $sortorder = GETPOST("sortorder", 'alpha');
     $page = GETPOST('page', 'int');
+
     $search_status = GETPOST("search_status", 'int');
     if ($search_status=='') $search_status=1; // always display active customer first
-    $search_name = GETPOST("search_name", 'alpha');
-    $search_addressphone = GETPOST("search_addressphone", 'alpha');
-    $search_roles = GETPOST("search_roles", 'array');
+
+    $search_name    = GETPOST("search_name", 'alpha');
+    $search_address = GETPOST("search_address", 'alpha');
+    $search_poste   = GETPOST("search_poste", 'alpha');
+	$search_roles   = GETPOST("search_roles", 'array');
+
+    $searchAddressPhoneDBFields = array(
+        //Address
+        't.address',
+        't.zip',
+        't.town',
+
+        //Phone
+        't.phone',
+        't.phone_perso',
+        't.phone_mobile',
+
+        //Fax
+        't.fax',
+
+        //E-mail
+        't.email',
+
+        //Social media
+        "t.skype",
+        "t.jabberid",
+        "t.twitter",
+        "t.facebook",
+        "t.linkedin",
+        "t.whatsapp",
+        "t.youtube",
+        "t.snapchat",
+        "t.instagram"
+    );
 
     if (! $sortorder) $sortorder="ASC";
     if (! $sortfield) $sortfield="t.lastname";
@@ -920,9 +952,12 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 
     // Initialize array of search criterias
     $search=array();
-    foreach($contactstatic->fields as $key => $val)
+    foreach($arrayfields as $key => $val)
     {
-    	if (GETPOST('search_'.$key, 'alpha')) $search[$key]=GETPOST('search_'.$key, 'alpha');
+        $queryName = 'search_'.substr($key, 2);
+    	if (GETPOST($queryName, 'alpha')){
+            $search[$key]=GETPOST($queryName, 'alpha');
+        }
     }
     $search_array_options=$extrafields->getOptionalsFromPost($contactstatic->table_element, '', 'search_');
 
@@ -931,15 +966,16 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     {
     	$search_status		 = '';
     	$search_name         = '';
-    	$search_roles         = array();
-    	$search_addressphone = '';
+    	$search_roles        = array();
+        $search_address = '';
+        $search_poste = '';
+        $search = array();
     	$search_array_options=array();
 
     	foreach($contactstatic->fields as $key => $val)
    		{
    			$search[$key]='';
    		}
-   		$toselect='';
     }
 
     $contactstatic->fields = dol_sort_array($contactstatic->fields, 'position');
@@ -975,7 +1011,10 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     if ($search_status != '') $param.='&search_status='.urlencode($search_status);
     if (count($search_roles)>0) $param.=implode('&search_roles[]=', $search_roles);
     if ($search_name != '')   $param.='&search_name='.urlencode($search_name);
+    if ($search_poste != '')     $param.='&search_poste='.urlencode($search_poste);
+    if ($search_address != '')     $param.='&search_address='.urlencode($search_address);
     if ($optioncss != '')     $param.='&optioncss='.urlencode($optioncss);
+
     // Add $param from extra fields
     $extrafieldsobjectkey=$contactstatic->table_element;
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -986,7 +1025,9 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (t.rowid = ef.fk_object)";
     $sql .= " WHERE t.fk_soc = ".$object->id;
     if ($search_status!='' && $search_status != '-1') $sql .= " AND t.statut = ".$db->escape($search_status);
-    if ($search_name) $sql .= natural_search(array('t.lastname', 't.firstname'), $search_name);
+    if ($search_name)    $sql .= natural_search(array('t.lastname', 't.firstname'), $search_name);
+    if ($search_poste)   $sql .= natural_search('t.poste', $search_poste);
+    if ($search_address) $sql .= natural_search($searchAddressPhoneDBFields, $search_address);
 	if (count($search_roles)>0) {
 		$sql .= " AND t.rowid IN (SELECT sc.fk_socpeople FROM ".MAIN_DB_PREFIX."societe_contacts as sc WHERE sc.fk_c_type_contact IN (".implode(',', $search_roles)."))";
 	}
@@ -1002,25 +1043,26 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 
     $num = $db->num_rows($result);
 
-
     // Fields title search
     // --------------------------------------------------------------------
     print '<tr class="liste_titre">';
-    foreach($contactstatic->fields as $key => $val)
+    foreach($arrayfields as $key => $val)
     {
     	$align='';
-    	if (in_array($val['type'], array('date','datetime','timestamp'))) $align.=($align?' ':'').'center';
-    	if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
-    	if ($key == 'status' || $key == 'statut') $align.=($align?' ':'').'center';
-    	if (! empty($arrayfields['t.'.$key]['checked']) || ! empty($arrayfields['sc.'.$key]['checked']))
+    	if (in_array($val['type'], array('t.date','t.datetime','t.timestamp'))) $align.=($align?' ':'').'center';
+    	if (in_array($val['type'], array('t.timestamp'))) $align.=($align?' ':'').'nowrap';
+    	if ($key == 't.status' || $key == 't.statut') $align.=($align?' ':'').'center';
+    	if (! empty($arrayfields[$key]['checked']))
     	{
-
     		print '<td class="liste_titre'.($align?' '.$align:'').'">';
-    		if (in_array($key, array('lastname','name'))) print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
-    		elseif (in_array($key, array('statut'))) print $form->selectarray('search_status', array('-1'=>'','0'=>$contactstatic->LibStatut(0, 1),'1'=>$contactstatic->LibStatut(1, 1)), $search_status);
-    		elseif (in_array($key, array('role'))) {
+    		if (in_array($key, array('t.statut'))){
+                print $form->selectarray('search_status', array('-1'=>'','0'=>$contactstatic->LibStatut(0, 1),'1'=>$contactstatic->LibStatut(1, 1)), $search_status);
+            } elseif (in_array($key, array('sc.role'))) {
 			    print $formcompany->showRoles("search_roles", $contactstatic, 'edit', $search_roles);
-		    }
+		    } else{
+    		    $fieldName = substr($key, 2);
+                print sprintf('<input type="text" class="flat maxwidth75" name="search_%s" value="%s">', $fieldName, dol_escape_htmltag($search[$key]));
+            }
     		print '</td>';
     	}
     }
@@ -1034,8 +1076,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     print $hookmanager->resPrint;
     // Action column
     print '<td class="liste_titre" align="right">';
-    $searchpicto=$form->showFilterButtons();
-    print $searchpicto;
+    print $form->showFilterButtons();
     print '</td>';
     print '</tr>'."\n";
 
@@ -1602,7 +1643,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
             $out.='</td>';
 
             // Author of event
-            $out.='<td class="tdoverflowmax100">';
+            $out.='<td class="tdoverflowmax200">';
             //$userstatic->id=$histo[$key]['userid'];
             //$userstatic->login=$histo[$key]['login'];
             //$out.=$userstatic->getLoginUrl(1);

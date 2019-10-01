@@ -22,7 +22,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -1112,7 +1112,7 @@ if ($result > 0)
 // Create
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans('AddContract'), '', 'title_commercial.png');
+	print load_fiche_titre($langs->trans('AddContract'), '', 'commercial');
 
 	$soc = new Societe($db);
 	if ($socid>0) $soc->fetch($socid);

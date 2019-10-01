@@ -26,7 +26,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -294,8 +294,8 @@ abstract class CommonObject
 
 	/**
 	 * @var int Delivery address ID
-	 * @deprecated
 	 * @see setDeliveryAddress()
+	 * @deprecated
 	 */
 	public $fk_delivery_address;
 
@@ -424,6 +424,8 @@ abstract class CommonObject
 	public $date_creation;			// Date creation
 	public $date_validation;		// Date validation
 	public $date_modification;		// Date last change (tms field)
+
+	public $next_prev_filter;
 
 
 
@@ -866,9 +868,9 @@ abstract class CommonObject
 		// Socpeople must have already been added by some trigger, then we have to check it to avoid DB_ERROR_RECORD_ALREADY_EXISTS error
 		$TListeContacts=$this->liste_contact(-1, $source);
 		$already_added=false;
-		if(!empty($TListeContacts)) {
+		if (is_array($TListeContacts) && ! empty($TListeContacts)) {
 			foreach($TListeContacts as $array_contact) {
-				if($array_contact['status'] == 4 && $array_contact['id'] == $fk_socpeople && $array_contact['fk_c_type_contact'] == $id_type_contact) {
+				if ($array_contact['status'] == 4 && $array_contact['id'] == $fk_socpeople && $array_contact['fk_c_type_contact'] == $id_type_contact) {
 					$already_added=true;
 					break;
 				}
@@ -6664,10 +6666,19 @@ abstract class CommonObject
 					$out .= '<td class="';
 					//$out .= "titlefield";
 					//if (GETPOST('action', 'none') == 'create') $out.='create';
-					if ($mode != 'view' && ! empty($extrafields->attributes[$this->table_element]['required'][$key])) $out .= ' fieldrequired';
-					$out .= '">';
-					if (! empty($extrafields->attributes[$this->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $extrafields->attributes[$this->table_element]['help'][$key]);
-					else $out .= $labeltoshow;
+					// BUG #11554 : For public page, use red dot for required fields, instead of bold label
+					$context = isset($params["context"]) ? $params["context"] : "none";
+					if ($context=="public") {	// Public page : red dot instead of bold ble characters
+						$out .= '">';
+						if (! empty($extrafields->attributes[$this->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $extrafields->attributes[$this->table_element]['help'][$key]);
+						else $out .= $labeltoshow;
+						if ($mode != 'view' && ! empty($extrafields->attributes[$this->table_element]['required'][$key])) $out .= '&nbsp;<font color="red">*</font>';
+					} else {
+						if ($mode != 'view' && ! empty($extrafields->attributes[$this->table_element]['required'][$key])) $out .= ' fieldrequired';
+						$out .= '">';
+						if (! empty($extrafields->attributes[$this->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $extrafields->attributes[$this->table_element]['help'][$key]);
+						else $out .= $labeltoshow;
+					}
 					$out .= '</td>';
 
 					$html_id = !empty($this->id) ? $this->element.'_extras_'.$key.'_'.$this->id : '';

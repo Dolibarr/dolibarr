@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -573,7 +573,7 @@ class Ticket extends CommonObject
         $extrafields = new ExtraFields($this->db);
 
         // fetch optionals attributes and labels
-        $extralabels = $extrafields->fetch_name_optionals_label($this->element);
+        $extralabels = $extrafields->fetch_name_optionals_label($this->table_element);
 
         $sql = "SELECT";
         $sql .= " t.rowid,";
@@ -1631,6 +1631,9 @@ class Ticket extends CommonObject
         $actioncomm=new ActionComm($this->db);
         $actioncomm->type_code = 'AC_OTH_AUTO';
         $actioncomm->code = 'TICKET_MSG';
+		if($this->private){
+			$actioncomm->code = 'TICKET_MSG_PRIVATE';
+		}
         $actioncomm->socid = $this->socid;
         $actioncomm->label = $this->subject;
         $actioncomm->note_private = $this->message;
@@ -2669,7 +2672,7 @@ class Ticket extends CommonObject
         global $conf, $langs;
 
         if ($conf->global->TICKET_DISABLE_ALL_MAILS) {
-            dol_syslog(get_class($this) . '::sendTicketMessageByEmail: Emails are disable into ticket setup by option TICKETSUP_DISABLE_ALL_MAILS', LOG_WARNING);
+            dol_syslog(get_class($this) . '::sendTicketMessageByEmail: Emails are disable into ticket setup by option TICKET_DISABLE_ALL_MAILS', LOG_WARNING);
             return '';
         }
 

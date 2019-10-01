@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -98,8 +98,14 @@ $object = new MyObject($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('myobjectlist'));     // Note that conf->hooks_modules contains array
+
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('myobject');	// Load $extrafields->attributes['myobject']
+$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+
+// fetch optionals attributes lines and labels
+//$extrafieldsline = new ExtraFields($db);
+//$extralabelslines=$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Default sort order (if not yet defined by previous GETPOST)
@@ -234,6 +240,7 @@ foreach($search as $key => $val)
 	if ($search[$key] != '') $sql.=natural_search($key, $search[$key], (($key == 'status')?2:$mode_search));
 }
 if ($search_all) $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
+//$sql.= dolSqlDateFilter("t.field", $search_xxxday, $search_xxxmonth, $search_xxxyear);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks

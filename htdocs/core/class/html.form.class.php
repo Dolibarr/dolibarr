@@ -33,7 +33,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -7508,7 +7508,7 @@ class Form
 	 */
     public function showFilterAndCheckAddButtons($addcheckuncheckall = 0, $cssclass = 'checkforaction', $calljsfunction = 0)
 	{
-		$out.=$this->showFilterButtons();
+		$out=$this->showFilterButtons();
 		if ($addcheckuncheckall)
 		{
 			$out.=$this->showCheckAddButtons($cssclass, $calljsfunction);

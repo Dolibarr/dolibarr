@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -323,32 +323,8 @@ if ($search_label) $sql .= natural_search('p.title', $search_label);
 if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
 if ($search_opp_amount) $sql .= natural_search('p.opp_amount', $search_opp_amount, 1);
 if ($search_opp_percent) $sql .= natural_search('p.opp_percent', $search_opp_percent, 1);
-if ($search_smonth > 0)
-{
-	if ($search_syear > 0 && empty($search_sday))
-		$sql.= " AND p.dateo BETWEEN '".$db->idate(dol_get_first_day($search_syear, $search_smonth, false))."' AND '".$db->idate(dol_get_last_day($search_syear, $search_smonth, false))."'";
-	elseif ($search_syear > 0 && ! empty($search_sday))
-		$sql.= " AND p.dateo BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_smonth, $search_sday, $search_syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_smonth, $search_sday, $search_syear))."'";
-	else
-		$sql.= " AND date_format(p.dateo, '%m') = '".$search_smonth."'";
-}
-elseif ($search_syear > 0)
-{
-	$sql.= " AND p.dateo BETWEEN '".$db->idate(dol_get_first_day($search_syear, 1, false))."' AND '".$db->idate(dol_get_last_day($search_syear, 12, false))."'";
-}
-if ($search_emonth > 0)
-{
-	if ($search_eyear > 0 && empty($search_eday))
-		$sql.= " AND p.datee BETWEEN '".$db->idate(dol_get_first_day($search_eyear, $search_emonth, false))."' AND '".$db->idate(dol_get_last_day($search_eyear, $search_emonth, false))."'";
-	elseif ($search_eyear > 0 && ! empty($search_eday))
-		$sql.= " AND p.datee BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_emonth, $search_eday, $search_eyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_emonth, $search_eday, $search_eyear))."'";
-	else
-		$sql.= " AND date_format(p.datee, '%m') = '".$search_emonth."'";
-}
-elseif ($search_eyear > 0)
-{
-	$sql.= " AND p.datee BETWEEN '".$db->idate(dol_get_first_day($search_eyear, 1, false))."' AND '".$db->idate(dol_get_last_day($search_eyear, 12, false))."'";
-}
+$sql .= dolSqlDateFilter('p.dateo', $search_sday, $search_smonth, $search_syear);
+$sql .= dolSqlDateFilter('p.datee', $search_eday, $search_emonth, $search_eyear);
 if ($search_all) $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 if ($search_status >= 0)
 {

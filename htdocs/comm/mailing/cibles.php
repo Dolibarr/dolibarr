@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -250,7 +250,7 @@ if ($object->fetch($id) >= 0)
 	// Show email selectors
 	if ($allowaddtarget && $user->rights->mailing->creer)
 	{
-		print load_fiche_titre($langs->trans("ToAddRecipientsChooseHere"), ($user->admin?info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"), 1):''), 'title_generic');
+		print load_fiche_titre($langs->trans("ToAddRecipientsChooseHere"), ($user->admin?info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"), 1):''), 'generic');
 
 		//print '<table class="noborder" width="100%">';
 		print '<div class="tagtable centpercent liste_titre_bydiv borderbottom" id="tablelines">';
@@ -453,7 +453,7 @@ if ($object->fetch($id) >= 0)
 		if ($allowaddtarget) {
 		    $cleartext=$langs->trans("ToClearAllRecipientsClickHere").' '.'<a href="'.$_SERVER["PHP_SELF"].'?clearlist=1&id='.$object->id.'" class="button reposition">'.$langs->trans("TargetsReset").'</a>';
 		}
-		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $cleartext, $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
+		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $cleartext, $num, $nbtotalofrecords, 'generic', 0, '', '', $limit);
 
 		print '</form>';
 

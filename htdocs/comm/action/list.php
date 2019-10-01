@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -80,8 +80,10 @@ $object = new ActionComm($db);
 $hookmanager->initHooks(array('agendalist'));
 
 $extrafields = new ExtraFields($db);
+
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('actioncomm');
+$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 // If not choice done on calendar owner, we filter on user.
 if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS))

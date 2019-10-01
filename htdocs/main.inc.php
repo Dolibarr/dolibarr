@@ -23,7 +23,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -1228,7 +1228,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		if (! empty($conf->global->MAIN_FAVICON_URL)) $favicon=$conf->global->MAIN_FAVICON_URL;
 		if (empty($conf->dol_use_jmobile)) print '<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>'."\n";	// Not required into an Android webview
 		//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.(DOL_URL_ROOT?DOL_URL_ROOT:'/').'">'."\n";
-		//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
+		//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="copyright" title="GNU General Public License" href="https://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
 		//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="author" title="Dolibarr Development Team" href="https://www.dolibarr.org">'."\n";
 
 		// Auto refresh page
@@ -1463,7 +1463,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
                 if ($conf->browser->layout == 'phone') $enablebrowsernotif=false;
                 if ($enablebrowsernotif)
                 {
-                    print '<!-- Includes JS of Dolibarr (brwoser layout = '.$conf->browser->layout.')-->'."\n";
+                    print '<!-- Includes JS of Dolibarr (browser layout = '.$conf->browser->layout.')-->'."\n";
                     print '<script src="'.DOL_URL_ROOT.'/core/js/lib_notification.js.php'.($ext?'?'.$ext:'').'"></script>'."\n";
                 }
             }

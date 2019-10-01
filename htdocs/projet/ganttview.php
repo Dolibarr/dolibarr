@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -201,6 +201,14 @@ if (($id > 0 && is_numeric($id)) || ! empty($ref))
     print nl2br($object->description);
     print '</td></tr>';
 
+    // Bill time
+    if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+    {
+    	print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
+    	print yn($object->usage_bill_time);
+    	print '</td></tr>';
+    }
+
     // Categories
     if($conf->categorie->enabled) {
         print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
@@ -234,10 +242,10 @@ if ($user->rights->projet->all->creer || $user->rights->projet->creer) {
 
 $linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', $linktocreatetaskUserRight, $linktocreatetaskParam);
 
-$linktolist = dolGetButtonTitle($langs->trans('GoToListOfTasks'), '', 'fa fa-tasks paddingleft', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id);
+$linktolist = dolGetButtonTitle($langs->trans('GoToListOfTasks'), '', 'fa fa-list-alt paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id, '', 1, array('morecss'=>'reposition'));
 
-//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
-print load_fiche_titre($title, $linktolist.' &nbsp; '.$linktocreatetask, 'title_generic.png');
+//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'generic', 0, '', '', 0, 1);
+print load_fiche_titre($title, $linktolist.' &nbsp; '.$linktocreatetask, 'generic');
 
 
 // Get list of tasks in tasksarray and taskarrayfiltered

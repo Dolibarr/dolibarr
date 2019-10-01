@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -77,7 +77,7 @@ $childids[]=$user->id;
 
 llxHeader('', $langs->trans('HRMArea'));
 
-print load_fiche_titre($langs->trans("HRMArea"), '', 'title_hrm.png');
+print load_fiche_titre($langs->trans("HRMArea"), '', 'hrm');
 
 
 if (! empty($setupcompanynotcomplete))

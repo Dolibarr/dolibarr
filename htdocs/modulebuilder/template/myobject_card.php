@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -190,7 +190,7 @@ if ($action == 'create')
 
 	dol_fiche_head(array(), '');
 
-	print '<table class="border centpercent">'."\n";
+	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
 	// Common attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_add.tpl.php';

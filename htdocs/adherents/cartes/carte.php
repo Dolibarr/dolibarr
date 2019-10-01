@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -48,7 +48,7 @@ $object=new Adherent($db);
 
 $extrafields = new ExtraFields($db);
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('adherent');
+$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
 
 /*

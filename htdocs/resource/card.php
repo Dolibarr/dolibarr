@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -226,7 +226,7 @@ if ($action == 'create' || $object->fetch($id) > 0)
 {
 	if ($action == 'create')
 	{
-		print load_fiche_titre($title, '', 'title_generic');
+		print load_fiche_titre($title, '', 'generic');
 		dol_fiche_head('');
 	}
 	else

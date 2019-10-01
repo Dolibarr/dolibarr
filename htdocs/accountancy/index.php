@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -50,7 +50,7 @@ $hookmanager->initHooks(array('accountancyindex'));
 
 llxHeader('', $langs->trans("AccountancyArea"));
 
-print load_fiche_titre($langs->trans("AccountancyArea"), '', 'title_accountancy');
+print load_fiche_titre($langs->trans("AccountancyArea"), '', 'accountancy');
 //dol_fiche_head();
 
 $step = 0;

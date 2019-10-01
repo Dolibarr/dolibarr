@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -1859,10 +1859,10 @@ $formother = new FormOther($db);
 $help_url='';
 
 $arrayofjs = array(
-	'/includes/ace/ace.js',
-	'/includes/ace/ext-statusbar.js',
-	'/includes/ace/ext-language_tools.js',
-	//'/includes/ace/ext-chromevox.js'
+	'/includes/ace/src/ace.js',
+	'/includes/ace/src/ext-statusbar.js',
+	'/includes/ace/src/ext-language_tools.js',
+	//'/includes/ace/src/ext-chromevox.js'
 	//'/includes/jquery/plugins/jqueryscoped/jquery.scoped.js',
 );
 $arrayofcss = array();

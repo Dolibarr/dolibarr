@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -65,7 +65,7 @@ $object = new AssetType($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('asset_type');
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
@@ -237,7 +237,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-		print_barre_liste($langs->trans("AssetsTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);
+		print_barre_liste($langs->trans("AssetsTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit);
 
 		$moreforfilter = '';
 

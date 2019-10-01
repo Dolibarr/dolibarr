@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -80,7 +80,7 @@ llxHeader('', $title);
 $resultboxes=FormOther::getBoxesArea($user, "0");    // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
 
-print load_fiche_titre($langs->trans("HomeArea"), $resultboxes['selectboxlist'], 'title_home');
+print load_fiche_titre($langs->trans("HomeArea"), $resultboxes['selectboxlist'], 'home');
 
 if (! empty($conf->global->MAIN_MOTD))
 {

@@ -27,8 +27,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -1368,12 +1368,23 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	{
 		$width=80; $cssclass='photoref';
 		$showimage=$object->is_photo_available($conf->ticket->multidir_output[$entity].'/'.$object->ref);
-		$maxvisiblephotos=(isset($conf->global->TICKETSUP_MAX_VISIBLE_PHOTO)?$conf->global->TICKETSUP_MAX_VISIBLE_PHOTO:2);
+		$maxvisiblephotos=(isset($conf->global->TICKET_MAX_VISIBLE_PHOTO)?$conf->global->TICKET_MAX_VISIBLE_PHOTO:2);
 		if ($conf->browser->layout == 'phone') $maxvisiblephotos=1;
-		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos('ticket', $conf->ticket->multidir_output[$entity], 'small', $maxvisiblephotos, 0, 0, 0, $width, 0).'</div>';
-		else
+		if ($showimage)
 		{
-			if (!empty($conf->global->TICKETSUP_NODISPLAYIFNOPHOTO)) {
+			$showphoto = $object->show_photos('ticket', $conf->ticket->multidir_output[$entity], 'small', $maxvisiblephotos, 0, 0, 0, $width, 0);
+			if ($object->nbphoto > 0)
+			{
+				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$showphoto.'</div>';
+			}
+			else
+			{
+				$showimage = 0;
+			}
+		}
+		if (! $showimage)
+		{
+			if (!empty($conf->global->TICKET_NODISPLAYIFNOPHOTO)) {
 				$nophoto='';
 				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"></div>';
 			}
@@ -3010,36 +3021,43 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		    $moreatt = str_replace('class="'.$reg[1].'"', '', $moreatt);
 		}
 	} else {
-		$pictowithoutext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
+		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
-        if (empty($srconly) && in_array($pictowithoutext, array(
-				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'note', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
+        if (empty($srconly) && in_array($pictowithouttext, array(
+				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'note',
+        		'object_list','object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
+        		'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
 				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', '1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 				'jabber','skype','twitter','facebook','linkedin',
-				'chevron-left','chevron-right','chevron-down','chevron-top'
+				'chevron-left','chevron-right','chevron-down','chevron-top',
+				'home', 'companies', 'products', 'commercial', 'invoicing', 'accountancy', 'project', 'hrm', 'members', 'ticket', 'generic'
 			)
 		)) {
-		    $fa='fa';
+			$fa='fa';
 		    if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fa='fas';
-		    $fakey = $pictowithoutext;
-			$facolor = ''; $fasize = '';
+		    $fakey = $pictowithouttext;
+		    $facolor = ''; $fasize = '';
 
-			if ($pictowithoutext == 'setup') {
-			    $fakey = 'fa-cog';
-			    $fasize = '1.4em';
-			}
-			elseif ($pictowithoutext == 'switch_off') {
-				$fakey = 'fa-toggle-off';
+		    $arrayconvpictotofa = array(
+		    	'setup'=>'cog', 'companies'=>'building', 'products'=>'box_open', 'commercial'=>'box-tie', 'invoicing'=>'file-invoice', 'accountancy'=>'coins', 'project'=>'project-diagram',
+		    	'hrm'=>'umbrella-beach', 'members'=>'user-friends', 'ticket'=>'sticky-note', 'generic'=>'folder-open',
+		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on',
+		    	'bank'=>'bank', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil', 'filter'=>'filter', 'split'=>'code-fork',
+		    	'object_list'=>'list-alt','object_calendar'=>'calendar-alt', 'object_calendarweek'=>'calendar-week', 'object_calendarmonth'=>'calendar-alt', 'object_calendarday'=>'calendar-day', 'object_calendarperuser'=>'table'
+		    );
+
+		    if ($pictowithouttext == 'switch_off') {
 				$facolor = '#999';
 				$fasize = '2em';
+				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 			}
-			elseif ($pictowithoutext == 'switch_on') {
-				$fakey = 'fa-toggle-on';
+			elseif ($pictowithouttext == 'switch_on') {
 				$facolor = '#227722';
 				$fasize = '2em';
+				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 			}
-			elseif ($pictowithoutext == 'off') {
+			elseif ($pictowithouttext == 'off') {
 				$fakey = 'fa-square-o';
 				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5))
 				{
@@ -3048,7 +3066,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				}
 				$fasize = '1.3em';
 			}
-			elseif ($pictowithoutext == 'on') {
+			elseif ($pictowithouttext == 'on') {
 				$fakey = 'fa-check-square-o';
 				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5))
 				{
@@ -3057,44 +3075,38 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				}
 				$fasize = '1.3em';
 			}
-			elseif ($pictowithoutext == 'bank') {
-				$fakey = 'fa-bank';
+			elseif ($pictowithouttext == 'bank') {
+				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 				$facolor = '#444';
 			}
-			elseif ($pictowithoutext == 'close_title') {
-				$fakey = 'fa-window-close';
-			}
-			elseif ($pictowithoutext == 'delete') {
-				$fakey = 'fa-trash';
+			elseif ($pictowithouttext == 'delete') {
+				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 				$facolor = '#444';
 			}
-			elseif ($pictowithoutext == 'edit') {
-				$fakey = 'fa-pencil';
+			elseif ($pictowithouttext == 'edit') {
 				$facolor = '#444';
+				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fakey = 'fa-pencil-alt';
 			}
-			elseif ($pictowithoutext == 'filter') {
-				$fakey = 'fa-'.$pictowithoutext;
-			}
-			elseif ($pictowithoutext == 'grip_title' || $pictowithoutext == 'grip') {
+			elseif ($pictowithouttext == 'grip_title' || $pictowithouttext == 'grip') {
 				$fakey = 'fa-arrows';
 				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fakey = 'fa-arrows-alt';
 			}
-			elseif ($pictowithoutext == 'listlight') {
+			elseif ($pictowithouttext == 'listlight') {
 				$fakey = 'fa-download';
 				$facolor = '#999';
 				$marginleftonlyshort=1;
 			}
-			elseif ($pictowithoutext == 'printer') {
+			elseif ($pictowithouttext == 'printer') {
 				$fakey = 'fa-print';
 				$fasize = '1.2em';
 				$facolor = '#444';
 			}
-			elseif ($pictowithoutext == 'resize') {
+			elseif ($pictowithouttext == 'resize') {
 				$fakey = 'fa-crop';
 				$facolor = '#444';
 			}
-			elseif ($pictowithoutext == 'note') {
+			elseif ($pictowithouttext == 'note') {
 				$fakey = 'fa-sticky-note-o';
 				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5))
 				{
@@ -3103,45 +3115,53 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$facolor = '#999';
 				$marginleftonlyshort=1;
 			}
-			elseif ($pictowithoutext == 'uparrow') {
+			elseif ($pictowithouttext == 'uparrow') {
 				$fakey = 'fa-mail-forward';
 				$facolor = '#555';
 			}
-			elseif (in_array($pictowithoutext, array('1uparrow', '1downarrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected'))) {
+			elseif (in_array($pictowithouttext, array('1uparrow', '1downarrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected'))) {
 			    $convertarray=array('1uparrow'=>'caret-up', '1downarrow'=>'caret-down', '1leftarrow'=>'caret-left', '1rightarrow'=>'caret-right', '1uparrow_selected'=>'caret-up', '1downarrow_selected'=>'caret-down', '1leftarrow_selected'=>'caret-left', '1rightarrow_selected'=>'caret-right');
-			    $fakey = 'fa-'.$convertarray[$pictowithoutext];
-			    if (preg_match('/selected/', $pictowithoutext)) $facolor = '#888';
+			    $fakey = 'fa-'.$convertarray[$pictowithouttext];
+			    if (preg_match('/selected/', $pictowithouttext)) $facolor = '#888';
 				$marginleftonlyshort = 1;
 			}
-			elseif ($pictowithoutext == 'sign-out')     {
+			elseif ($pictowithouttext == 'sign-out')     {
                 $fakey = 'fa-sign-out';
 			    $marginleftonlyshort=0;
 			    if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fakey = 'fa-sign-out-alt';
 			}
-			elseif ($pictowithoutext == 'unlink')     {
+			elseif ($pictowithouttext == 'unlink')     {
 				$fakey = 'fa-chain-broken';
 				$facolor = '#555';
 			}
-			elseif ($pictowithoutext == 'playdisabled') {
+			elseif ($pictowithouttext == 'playdisabled') {
 				$fakey = 'fa-play';
 				$facolor = '#ccc';
 			}
-			elseif ($pictowithoutext == 'play') {
+			elseif ($pictowithouttext == 'play') {
 				$fakey = 'fa-play';
 				$facolor = '#444';
 			}
-			elseif ($pictowithoutext == 'jabber') {
+			elseif ($pictowithouttext == 'jabber') {
 				$fakey = 'fa-comment-o';
 			}
-			elseif (in_array($pictowithoutext, array('skype', 'twitter', 'facebook', 'linkedin'))) {
-			    $fakey = 'fa-'.$pictowithoutext;
+			elseif (in_array($pictowithouttext, array('skype', 'twitter', 'facebook', 'linkedin'))) {
+			    $fakey = 'fa-'.$pictowithouttext;
 			    if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fa = 'fab';
 			}
-			elseif ($pictowithoutext == 'split') {
-			    $fakey = 'fa-code-fork';
+			// Img for type of views
+			elseif (in_array($pictowithouttext, array('object_list', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser'))) {
+				$fakey = 'imgforviewmode fa-'.$arrayconvpictotofa[$pictowithouttext];
+				$marginleftonlyshort=0;
+			}
+			elseif (! empty($arrayconvpictotofa[$pictowithouttext]))
+			{
+				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
+				$facolor = '#444';
+				$marginleftonlyshort=0;
 			}
 			else {
-				$fakey = 'fa-'.$pictowithoutext;
+				$fakey = 'fa-'.$pictowithouttext;
 				$facolor = '#444';
 				$marginleftonlyshort=0;
 			}
@@ -4073,7 +4093,7 @@ function print_titre($title)
  * 	@return	void
  *  @deprecated Use print load_fiche_titre instead
  */
-function print_fiche_titre($title, $mesg = '', $picto = 'title_generic.png', $pictoisfullpath = 0, $id = '')
+function print_fiche_titre($title, $mesg = '', $picto = 'generic', $pictoisfullpath = 0, $id = '')
 {
 	print load_fiche_titre($title, $mesg, $picto, $pictoisfullpath, $id);
 }
@@ -4091,13 +4111,13 @@ function print_fiche_titre($title, $mesg = '', $picto = 'title_generic.png', $pi
  * 	@return	string
  *  @see print_barre_liste()
  */
-function load_fiche_titre($titre, $morehtmlright = '', $picto = 'title_generic.png', $pictoisfullpath = 0, $id = '', $morecssontable = '', $morehtmlcenter = '')
+function load_fiche_titre($titre, $morehtmlright = '', $picto = 'generic', $pictoisfullpath = 0, $id = '', $morecssontable = '', $morehtmlcenter = '')
 {
 	global $conf;
 
 	$return='';
 
-	if ($picto == 'setup') $picto='title_generic.png';
+	if ($picto == 'setup') $picto='generic';
 
 	$return.= "\n";
 	$return.= '<table '.($id?'id="'.$id.'" ':'').'class="centpercent notopnoleftnoright'.($morecssontable?' '.$morecssontable:'').'" style="margin-bottom: 6px;"><tr>';	// maring bottom must be same than into print_barre_list
@@ -4139,7 +4159,7 @@ function load_fiche_titre($titre, $morehtmlright = '', $picto = 'title_generic.p
  *  @param  int         $hidenavigation     Force to hide all navigation tools
  *	@return	void
  */
-function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '', $sortorder = '', $morehtmlcenter = '', $num = -1, $totalnboflines = '', $picto = 'title_generic.png', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limit = -1, $hideselectlimit = 0, $hidenavigation = 0)
+function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '', $sortorder = '', $morehtmlcenter = '', $num = -1, $totalnboflines = '', $picto = 'generic', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limit = -1, $hideselectlimit = 0, $hidenavigation = 0)
 {
 	global $conf,$langs;
 
@@ -4148,7 +4168,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 	$totalnboflines=abs($totalnboflines);
 
 	if ($picto == 'setup') $picto='title_setup.png';
-	if (($conf->browser->name == 'ie') && $picto=='title_generic.png') $picto='title.gif';
+	if (($conf->browser->name == 'ie') && $picto=='generic') $picto='title.gif';
 	if ($limit < 0) $limit = $conf->liste_limit;
 	if ($savlimit != 0 && (($num > $limit) || ($num == -1) || ($limit == 0)))
 	{
@@ -8235,7 +8255,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
  *
  * @param string    $label      label of button
  * @param string    $helpText   optional : content for help tooltip
- * @param string    $iconClass  class for icon element
+ * @param string    $iconClass  class for icon element (Example: 'fa fa-file')
  * @param string    $url        the url for link
  * @param string    $id         attribute id of button
  * @param int       $status     0 no user rights, 1 active, -1 Feature Disabled, -2 disable Other reason use helpText as tooltip
@@ -8251,12 +8271,12 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
         return '';
     }
 
-    $class = 'btnTitle' ;
-
+    $class = 'btnTitle';
     // hidden conf keep during button transition TODO: remove this block
-    if(empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)){
+    if (empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)) {
         $class = 'butActionNew';
     }
+    if (! empty($params['morecss'])) $class.=' '.$params['morecss'];
 
     $attr=array(
         'class' => $class
@@ -8322,9 +8342,9 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
         $TCompiledAttr[] = $key.'="'.$value.'"';
     }
 
-    $compiledAttributes = !empty($TCompiledAttr)?implode(' ', $TCompiledAttr):'';
+    $compiledAttributes = (empty($TCompiledAttr) ? '' : implode(' ', $TCompiledAttr));
 
-    $tag = !empty($attr['href'])?'a':'span';
+    $tag = (empty($attr['href']) ? 'span' : 'a');
 
 
     $button ='<'.$tag.' '.$compiledAttributes.' >';

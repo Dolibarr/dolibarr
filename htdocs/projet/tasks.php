@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -177,35 +177,11 @@ if (!empty($search_tasklabel)) {
 	$morewherefilterarray[]= natural_search('t.label', $search_tasklabel, 0, 1);
 }
 
-if ($search_dtstartmonth > 0)
-{
-	if ($search_dtstartyear > 0 && empty($search_dtstartday)) {
-		$morewherefilterarray[]= " (t.dateo BETWEEN '".$db->idate(dol_get_first_day($search_dtstartyear, $search_dtstartmonth, false))."' AND '".$db->idate(dol_get_last_day($search_dtstartyear, $search_dtstartmonth, false))."')";
-	} elseif ($search_dtstartyear > 0 && ! empty($search_dtstartday)) {
-		$morewherefilterarray[]= " (t.dateo BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_dtstartmonth, $search_dtstartday, $search_dtstartyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_dtstartmonth, $search_dtstartday, $search_dtstartyear))."')";
-	} else {
-		$morewherefilterarray[]= " date_format(t.dateo, '%m') = '".$search_dtstartmonth."'";
-	}
-}
-elseif ($search_dtstartyear > 0)
-{
-	$morewherefilterarray[]= " (t.dateo BETWEEN '".$db->idate(dol_get_first_day($search_dtstartyear, 1, false))."' AND '".$db->idate(dol_get_last_day($search_dtstartyear, 12, false))."')";
-}
+$moresql = dolSqlDateFilter('t.dateo', $search_dtstartday, $search_dtstartmonth, $search_dtstartyear, 1);
+if ($moresql) $morewherefilterarray[] = $moresql;
 
-if ($search_dtendmonth > 0)
-{
-	if ($search_dtendyear > 0 && empty($search_dtendday)) {
-		$morewherefilterarray[]= " (t.datee BETWEEN '".$db->idate(dol_get_first_day($search_dtendyear, $search_dtendmonth, false))."' AND '".$db->idate(dol_get_last_day($search_dtendyear, $search_dtendmonth, false))."')";
-	}elseif ($search_dtendyear > 0 && ! empty($search_dtendday)) {
-		$morewherefilterarray[]= " (t.datee BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_dtendmonth, $search_dtendday, $search_dtendyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_dtendmonth, $search_dtendday, $search_dtendyear))."')";
-	}else {
-		$morewherefilterarray[]= " date_format(t.datee, '%m') = '".$search_dtendmonth."'";
-	}
-}
-elseif ($search_dtendyear > 0)
-{
-	$morewherefilterarray[]= " (t.datee BETWEEN '".$db->idate(dol_get_first_day($search_dtendyear, 1, false))."' AND '".$db->idate(dol_get_last_day($search_dtendyear, 12, false))."')";
-}
+$moresql = dolSqlDateFilter('t.datee', $search_dtendday, $search_dtendmonth, $search_dtendyear, 1);
+if ($moresql) $morewherefilterarray[] = $moresql;
 
 if (!empty($search_planedworkload)) {
 	$morewherefilterarray[]= natural_search('t.planned_workload', $search_planedworkload, 1, 1);
@@ -693,15 +669,15 @@ elseif ($id > 0 || ! empty($ref))
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 	$title=$langs->trans("ListOfTasks");
-    $linktotasks = dolGetButtonTitle($langs->trans('GoToGanttView'), '', 'fa fa-calendar-minus-o paddingleft', DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1');
+	$linktotasks = dolGetButtonTitle($langs->trans('GoToGanttView'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1', '', 1, array('morecss'=>'reposition'));
 
-	//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
-	print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'title_generic.png');
+	//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'generic', 0, '', '', 0, 1);
+	print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'generic');
 
 	// Get list of tasks in tasksarray and taskarrayfiltered
 	// We need all tasks (even not limited to a user because a task to user can have a parent that is not affected to him).
 	$filteronthirdpartyid = $socid;
-	$tasksarray=$taskstatic->getTasksArray(0, 0, $object->id, $filteronthirdpartyid, 0, '', -1, $morewherefilter, 0, 0, 1);
+	$tasksarray=$taskstatic->getTasksArray(0, 0, $object->id, $filteronthirdpartyid, 0, '', -1, $morewherefilter, 0, 0, array(), 1);
 	// We load also tasks limited to a particular user
 	$tmpuser=new User($db);
 	if ($search_user_id > 0) $tmpuser->fetch($search_user_id);
