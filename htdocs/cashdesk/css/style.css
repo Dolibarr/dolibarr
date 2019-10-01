@@ -66,6 +66,10 @@ p {
 	display: none;
 }
 
+.principal_login td.label1 {
+    width: 50%;
+}
+
 /* ------------------- Menu ------------------- */
 .menu_principal {
     margin: 0;
