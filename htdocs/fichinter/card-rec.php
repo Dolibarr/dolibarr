@@ -254,7 +254,7 @@ if ($action == 'create') {
 	//$object = new Managementfichinter($db);   // Source invoice
 
 	if ($object->fetch($id, $ref) > 0) {
-		print '<form action="fiche-rec.php" method="post">';
+		print '<form action="card-rec.php" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="fichinterid" value="'.$object->id.'">';
@@ -273,7 +273,7 @@ if ($action == 'create') {
 		print '<tr><td>'.$langs->trans("Customer").'</td><td>';
 		print $form->select_company($object->thirdparty->id, 'socid', '', 0, 1);
 
-//		.$object->thirdparty->getNomUrl(1,'customer').
+		//.$object->thirdparty->getNomUrl(1,'customer').
 		print '</td><td>';
 		print $langs->trans("Comment");
 		print '</td></tr>';
@@ -295,10 +295,7 @@ if ($action == 'create') {
 		if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) {
 			// Duration
 			print '<tr><td>'.$langs->trans("TotalDuration").'</td>';
-print '<td colspan="3">'.convertSecondToTime(
-							$object->duration, 'all',
-							$conf->global->MAIN_DURATION_OF_WORKDAY
-			).'</td>';
+			print '<td colspan="3">'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
 			print '</tr>';
 		}
 
@@ -308,10 +305,7 @@ print '<td colspan="3">'.convertSecondToTime(
 			print "<tr><td>".$langs->trans("Project")."</td><td>";
 			$projectid = GETPOST('projectid')?GETPOST('projectid'):$object->fk_project;
 
-$numprojet = $formproject->select_projects(
-							$object->thirdparty->id, $projectid, 'projectid',
-							0, 0, 1, 0, 0, 0, 0, '', 0, 0, ''
-			);
+			$numprojet = $formproject->select_projects($object->thirdparty->id, $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, '');
 			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->thirdparty->id;
 			print '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"]).'?action=create';
 			print '&socid='.$object->thirdparty->id.(!empty($id)?'&id='.$id:'').'">';
@@ -343,19 +337,14 @@ $numprojet = $formproject->select_projects(
 		print $form->textwithpicto($langs->trans("Frequency"), $langs->transnoentitiesnoconv('toolTipFrequency'));
 		print "</td><td>";
 		print "<input type='text' name='frequency' value='".GETPOST('frequency', 'int')."' size='4' />&nbsp;";
-print $form->selectarray(
-						'unit_frequency',
-						array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')),
-						(GETPOST('unit_frequency')?GETPOST('unit_frequency'):'m')
-		);
+		print $form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), (GETPOST('unit_frequency')?GETPOST('unit_frequency'):'m'));
 		print "</td></tr>";
 
 		// First date of execution for cron
 		print "<tr><td>".$langs->trans('NextDateToExecution')."</td><td>";
-		if ($date_next_execution != "")
-$date_next_execution = (GETPOST('remonth') ? dol_mktime(
-							12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')
-			) : -1);
+		if ($date_next_execution != "") {
+			$date_next_execution = (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
+		}
 		print $form->selectDate($date_next_execution, '', 1, 1, '', "add", 1, 1);
 		print "</td></tr>";
 
@@ -369,10 +358,11 @@ $date_next_execution = (GETPOST('remonth') ? dol_mktime(
 		print '<br>';
 
 		$title = $langs->trans("ProductsAndServices");
-		if (empty($conf->service->enabled))
+		if (empty($conf->service->enabled)) {
 			$title = $langs->trans("Products");
-		elseif (empty($conf->product->enabled))
+		} elseif (empty($conf->product->enabled)) {
 			$title = $langs->trans("Services");
+		}
 
 		print load_fiche_titre($title, '', '');
 
@@ -382,16 +372,17 @@ $date_next_execution = (GETPOST('remonth') ? dol_mktime(
 		print '<table class="notopnoleftnoright" width="100%">';
 		print '<tr><td colspan="3">';
 
-		$sql = 'SELECT l.*';
+		$sql = 'SELECT l.rowid, l.description, l.duree';
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinterdet as l";
 		$sql.= " WHERE l.fk_fichinter= ".$object->id;
-		$sql.= " AND l.fk_product is null ";
+		//$sql.= " AND l.fk_product is null ";
 		$sql.= " ORDER BY l.rang";
 
 		$result = $db->query($sql);
 		if ($result) {
 			$num = $db->num_rows($result);
-			$i = 0; $total = 0;
+			$i = 0;
+			$total = 0;
 
 			echo '<table class="noborder" width="100%">';
 			if ($num) {
@@ -492,32 +483,25 @@ $date_next_execution = (GETPOST('remonth') ? dol_mktime(
 						$morehtmlref.=img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 					}
 					if ($action == 'classify') {
-
-						$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-						$morehtmlref.='<input type="hidden" name="action" value="classin">';
-						$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-                        $morehtmlref.=$formproject->select_projects(
-										$object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1
-						);
-						$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-						$morehtmlref.='</form>';
+						$morehtmlref.= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+						$morehtmlref.= '<input type="hidden" name="action" value="classin">';
+						$morehtmlref.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                        $morehtmlref.= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+						$morehtmlref.= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+						$morehtmlref.= '</form>';
 					} else {
-                        $morehtmlref.=$form->form_project(
-										$_SERVER['PHP_SELF'].'?id='.$object->id,
-										$object->socid, $object->fk_project,
-										'none', 0, 0, 0, 1
-						);
+                        $morehtmlref.= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 					}
 				} else {
 					if (! empty($object->fk_project)) {
 						$proj = new Project($db);
 						$proj->fetch($object->fk_project);
-						$morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'"';
-						$morehtmlref.='title="'.$langs->trans('ShowProject').'">';
-						$morehtmlref.=$proj->ref;
-						$morehtmlref.='</a>';
+						$morehtmlref.= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'"';
+						$morehtmlref.= 'title="'.$langs->trans('ShowProject').'">';
+						$morehtmlref.= $proj->ref;
+						$morehtmlref.= '</a>';
 					} else {
-						$morehtmlref.='';
+						$morehtmlref.= '';
 					}
 				}
 			}
@@ -606,11 +590,7 @@ $date_next_execution = (GETPOST('remonth') ? dol_mktime(
 				print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 				print '<tr><td>';
 				print "<input type='text' name='frequency' value='".$object->frequency."' size='5' />&nbsp;";
-				print $form->selectarray(
-								'unit_frequency',
-								array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')),
-								($object->unit_frequency?$object->unit_frequency:'m')
-				);
+				print $form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), ($object->unit_frequency?$object->unit_frequency:'m'));
 				print '</td>';
 				print '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 				print '</tr></table></form>';
@@ -625,19 +605,13 @@ $date_next_execution = (GETPOST('remonth') ? dol_mktime(
 			// Date when
 			print '<tr><td>';
 			if ( $user->rights->ficheinter->creer && ($action == 'date_when' || $object->frequency > 0)) {
-				print $form->editfieldkey(
-								$langs->trans("NextDateToExecution"), 'date_when', $object->date_when,
-								$object, $user->rights->facture->creer, 'day'
-				);
+				print $form->editfieldkey($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'day');
 			} else {
 				print $langs->trans("NextDateToExecution");
 			}
 			print '</td><td>';
 			if ($action == 'date_when' || $object->frequency > 0) {
-				print $form->editfieldval(
-								$langs->trans("NextDateToExecution"), 'date_when', $object->date_when,
-								$object, $user->rights->facture->creer, 'day'
-				);
+				print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'day');
 			}
 			print '</td>';
 			print '</tr>';
@@ -645,19 +619,13 @@ $date_next_execution = (GETPOST('remonth') ? dol_mktime(
 			// Max period / Rest period
 			print '<tr><td>';
 			if ($user->rights->ficheinter->creer && ($action == 'nb_gen_max' || $object->frequency > 0)) {
-				print $form->editfieldkey(
-								$langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max,
-								$object, $user->rights->facture->creer
-				);
+				print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
 			} else
 				print $langs->trans("MaxPeriodNumber");
 
 			print '</td><td>';
 			if ($action == 'nb_gen_max' || $object->frequency > 0) {
-				print $form->editfieldval(
-							$langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max?$object->nb_gen_max:'',
-							$object, $user->rights->facture->creer
-				);
+				print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max?$object->nb_gen_max:'', $object, $user->rights->facture->creer);
 			}
 			else
 				print '';
@@ -671,10 +639,7 @@ $date_next_execution = (GETPOST('remonth') ? dol_mktime(
 			if ($object->frequency > 0) {
 				print '<br>';
 				if (empty($conf->cron->enabled)) {
-    $txtinfoadmin=$langs->trans(
-									"EnableAndSetupModuleCron",
-									$langs->transnoentitiesnoconv("Module2300Name")
-					);
+    				$txtinfoadmin = $langs->trans("EnableAndSetupModuleCron", $langs->transnoentitiesnoconv("Module2300Name"));
 					print info_admin($txtinfoadmin);
 				}
 				print '<div class="underbanner clearboth"></div>';
@@ -709,10 +674,11 @@ $date_next_execution = (GETPOST('remonth') ? dol_mktime(
 			 */
 
 			$title = $langs->trans("ProductsAndServices");
-			if (empty($conf->service->enabled))
+			if (empty($conf->service->enabled)) {
 				$title = $langs->trans("Products");
-			elseif (empty($conf->product->enabled))
+			} elseif (empty($conf->product->enabled)) {
 				$title = $langs->trans("Services");
+			}
 
 			print load_fiche_titre($title);
 
