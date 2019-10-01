@@ -386,11 +386,6 @@ class Contact extends CommonObject
 		$sql .= ", fax='".$this->db->escape($this->fax)."'";
 		$sql .= ", email='".$this->db->escape($this->email)."'";
         $sql .= ", socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
-		//$sql .= ", jabberid = ".(isset($this->jabberid)?"'".$this->db->escape($this->jabberid)."'":"null");
-		//$sql .= ", skype='".$this->db->escape($this->skype)."'";
-		//$sql .= ", twitter='".$this->db->escape($this->twitter)."'";
-		//$sql .= ", facebook='".$this->db->escape($this->facebook)."'";
-		//$sql .= ", linkedin='".$this->db->escape($this->linkedin)."'";
 		$sql .= ", photo='".$this->db->escape($this->photo)."'";
 		$sql .= ", birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
 		$sql .= ", note_private = ".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
@@ -751,7 +746,7 @@ class Contact extends CommonObject
 		$sql.= " c.fk_departement as state_id,";
 		$sql.= " c.birthday,";
 		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email,";
-		$sql.= " c.socialnetworks, c.jabberid, c.skype, c.twitter, c.facebook, c.linkedin,";
+		$sql.= " c.socialnetworks,";
         $sql.= " c.photo,";
 		$sql.= " c.priv, c.note_private, c.note_public, c.default_lang, c.canvas,";
 		$sql.= " c.import_key,";
@@ -820,45 +815,7 @@ class Contact extends CommonObject
 				$this->phone_mobile		= trim($obj->phone_mobile);
 
 				$this->email			= $obj->email;
-				$arraysocialnetworks = array();
-				$updatesocial = false;
-				if (!empty($obj->jabberid)) {
-					$arraysocialnetworks['jabber'] = $obj->jabberid;
-					$updatesocial = true;
-				}
-				if (!empty($obj->skype)) {
-					$arraysocialnetworks['skype'] = $obj->skype;
-					$updatesocial = true;
-				}
-				if (!empty($obj->twitter)) {
-					$arraysocialnetworks['twitter'] = $obj->twitter;
-					$updatesocial = true;
-				}
-				if (!empty($obj->facebook)) {
-					$arraysocialnetworks['facebook'] = $obj->facebook;
-					$updatesocial = true;
-				}
-				if (!empty($obj->linkedin)) {
-					$arraysocialnetworks['linkedin'] = $obj->linkedin;
-					$updatesocial = true;
-				}
-				$socialarray = ($obj->socialnetworks==''?array():json_decode($obj->socialnetworks, true));
-				$this->socialnetworks = array_merge($arraysocialnetworks, $socialarray);
-				if ($updatesocial) {
-					$sqlupd = 'UPDATE '.MAIN_DB_PREFIX.'socpeople SET skype=null';
-					$sqlupd .= ', twitter=null';
-					$sqlupd .= ', facebook=null';
-					$sqlupd .= ', linkedin=null';
-					$sqlupd .= ', jabberid=null';
-					$sqlupd .= ', socialnetworks="'.$this->db->escape(json_encode($this->socialnetworks)).'"';
-					$sqlupd .= ' WHERE rowid='.$this->id;
-					$this->db->query($sqlupd);
-				}
-				$this->jabberid			= $this->socialnetworks['jabber'];
-				$this->skype			= $this->socialnetworks['skype'];
-				$this->twitter			= $this->socialnetworks['twitter'];
-				$this->facebook			= $this->socialnetworks['facebook'];
-				$this->linkedin			= $this->socialnetworks['linkedin'];
+				$this->socialnetworks = (array) json_decode($obj->socialnetworks, true);
 				$this->photo			= $obj->photo;
 				$this->priv				= $obj->priv;
 				$this->mail				= $obj->email;

@@ -871,10 +871,6 @@ class Societe extends CommonObject
 		$this->fax			= preg_replace("/\s/", "", $this->fax);
 		$this->fax			= preg_replace("/\./", "", $this->fax);
 		$this->email		= trim($this->email);
-		$this->skype		= trim($this->skype);
-		$this->twitter		= trim($this->twitter);
-		$this->facebook		= trim($this->facebook);
-        $this->linkedin		= trim($this->linkedin);
 		$this->url			= $this->url?clean_url($this->url, 0):'';
 		$this->note_private = trim($this->note_private);
 		$this->note_public  = trim($this->note_public);
@@ -1016,10 +1012,6 @@ class Societe extends CommonObject
 			$sql .= ",fax = ".(! empty($this->fax)?"'".$this->db->escape($this->fax)."'":"null");
             $sql .= ",email = ".(! empty($this->email)?"'".$this->db->escape($this->email)."'":"null");
             $sql .= ", socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
-			//$sql .= ",skype = ".(! empty($this->skype)?"'".$this->db->escape($this->skype)."'":"null");
-			//$sql .= ",twitter = ".(! empty($this->twitter)?"'".$this->db->escape($this->twitter)."'":"null");
-			//$sql .= ",facebook = ".(! empty($this->facebook)?"'".$this->db->escape($this->facebook)."'":"null");
-			//$sql .= ",linkedin = ".(! empty($this->linkedin)?"'".$this->db->escape($this->linkedin)."'":"null");
 			$sql .= ",url = ".(! empty($this->url)?"'".$this->db->escape($this->url)."'":"null");
 
 			$sql .= ",parent = " . ($this->parent > 0 ? $this->parent : "null");
@@ -1160,10 +1152,7 @@ class Societe extends CommonObject
 							$lmember->zip=$this->zip;
 							$lmember->town=$this->town;
 							$lmember->email=$this->email;
-							$lmember->skype=$this->skype;
-							$lmember->twitter=$this->twitter;
-							$lmember->facebook=$this->facebook;
-							$lmember->linkedin=$this->linkedin;
+							$lmember->socialnetworks=$this->socialnetworks;
 							$lmember->phone=$this->phone;
 							$lmember->state_id=$this->state_id;
 							$lmember->country_id=$this->country_id;
@@ -1271,7 +1260,7 @@ class Societe extends CommonObject
 		$sql .= ', s.price_level';
 		$sql .= ', s.tms as date_modification, s.fk_user_creat, s.fk_user_modif';
 		$sql .= ', s.phone, s.fax, s.email';
-		$sql .= ', s.socialnetworks, s.skype, s.twitter, s.facebook, s.linkedin';
+		$sql .= ', s.socialnetworks';
 		$sql .= ', s.url, s.zip, s.town, s.note_private, s.note_public, s.model_pdf, s.client, s.fournisseur';
 		$sql .= ', s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6';
 		$sql .= ', s.capital, s.tva_intra';
@@ -1366,40 +1355,7 @@ class Societe extends CommonObject
 				$this->statut_commercial = $libelle;    // libelle statut commercial
 
                 $this->email = $obj->email;
-                $arraysocialnetworks = array();
-				$updatesocial = false;
-				if (!empty($obj->skype)) {
-					$arraysocialnetworks['skype'] = $obj->skype;
-					$updatesocial = true;
-				}
-				if (!empty($obj->twitter)) {
-					$arraysocialnetworks['twitter'] = $obj->twitter;
-					$updatesocial = true;
-				}
-				if (!empty($obj->facebook)) {
-					$arraysocialnetworks['facebook'] = $obj->facebook;
-					$updatesocial = true;
-				}
-				if (!empty($obj->linkedin)) {
-					$arraysocialnetworks['linkedin'] = $obj->linkedin;
-					$updatesocial = true;
-				}
-				$socialarray = (array) json_decode($obj->socialnetworks, true);
-				$this->socialnetworks = array_merge($arraysocialnetworks, $socialarray);
-				if ($updatesocial) {
-					$sqlupd = 'UPDATE '.MAIN_DB_PREFIX.'societe SET skype=null';
-					$sqlupd .= ', twitter=null';
-					$sqlupd .= ', facebook=null';
-					$sqlupd .= ', linkedin=null';
-					$sqlupd .= ', socialnetworks="'.$this->db->escape(json_encode($this->socialnetworks)).'"';
-					$sqlupd .= ' WHERE rowid='.$this->id;
-					$this->db->query($sqlupd);
-				}
-
-				$this->skype			= $this->socialnetworks['skype'];
-				$this->twitter			= $this->socialnetworks['twitter'];
-				$this->facebook			= $this->socialnetworks['facebook'];
-				$this->linkedin			= $this->socialnetworks['linkedin'];
+				$this->socialnetworks = (array) json_decode($obj->socialnetworks, true);
 
 				$this->url = $obj->url;
 				$this->phone = $obj->phone;
@@ -3438,10 +3394,6 @@ class Societe extends CommonObject
 		$this->country_id=$member->country_id;
 		$this->phone=$member->phone;       // Prof phone
 		$this->email=$member->email;
-		$this->skype=$member->skype;
-		$this->twitter=$member->twitter;
-		$this->facebook=$member->facebook;
-        $this->linkedin=$member->linkedin;
         $this->socialnetworks = $member->socialnetworks;
 
 		$this->client = 1;				// A member is a customer by default
@@ -3607,10 +3559,6 @@ class Societe extends CommonObject
 		$this->country_id=1;
 		$this->country_code='FR';
 		$this->email='specimen@specimen.com';
-		$this->skype='tom.hanson';
-		$this->twitter='tomhanson';
-		$this->facebook='tomhanson';
-		$this->linkedin='tomhanson';
 		$this->socialnetworks = array(
 			'skype' => 'tom.hanson',
 			'twitter' => 'tomhanson',

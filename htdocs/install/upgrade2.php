@@ -4944,21 +4944,21 @@ and rowid in (...)
 function migrate_users_socialnetworks()
 {
     global $db, $langs;
-    // jabberid,skype,twitter,facebook,linkedin,instagram,snapchat,googleplus,youtube,whatsapp
+    // skype,twitter,facebook,linkedin,instagram,snapchat,googleplus,youtube,whatsapp
 
     print '<tr><td colspan="4">';
-	$sql = 'UPDATE '.MAIN_DB_PREFIX.'user SET socialnetworks=JSON_OBJECT(';
-	$sql.= '"skype", skype,';
-	$sql.= '"twitter", twitter,';
-	$sql.= '"facebook", facebook,';
-	$sql.= '"linkedin", linkedin,';
-	$sql.= '"instagram", instagram,';
-	$sql.= '"snapchat", snapchat,';
-	$sql.= '"googleplus", googleplus,';
-	$sql.= '"youtube", youtube,';
-	$sql.= '"whatsapp", whatsapp)';
-	//print $sql;
-	$db->query($sql);
+    $sql = 'UPDATE '.MAIN_DB_PREFIX.'user SET socialnetworks=JSON_OBJECT(';
+    $sql.= '"skype", skype,';
+    $sql.= '"twitter", twitter,';
+    $sql.= '"facebook", facebook,';
+    $sql.= '"linkedin", linkedin,';
+    $sql.= '"instagram", instagram,';
+    $sql.= '"snapchat", snapchat,';
+    $sql.= '"googleplus", googleplus,';
+    $sql.= '"youtube", youtube,';
+    $sql.= '"whatsapp", whatsapp)';
+    //print $sql;
+    $db->query($sql);
     print '<b>'.$langs->trans('MigrationUsersSocialNetworks')."</b><br>\n";
     print '</td></tr>';
 }
@@ -4973,7 +4973,18 @@ function migrate_members_socialnetworks()
     global $db, $langs;
 
     print '<tr><td colspan="4">';
-
+    $sql = 'UPDATE '.MAIN_DB_PREFIX.'adherent SET socialnetworks=JSON_OBJECT(';
+    $sql.= '"skype", skype,';
+    $sql.= '"twitter", twitter,';
+    $sql.= '"facebook", facebook,';
+    $sql.= '"linkedin", linkedin,';
+    $sql.= '"instagram", instagram,';
+    $sql.= '"snapchat", snapchat,';
+    $sql.= '"googleplus", googleplus,';
+    $sql.= '"youtube", youtube,';
+    $sql.= '"whatsapp", whatsapp)';
+    //print $sql;
+    $db->query($sql);
     print '<b>'.$langs->trans('MigrationMembersSocialNetworks')."</b><br>\n";
     print '</td></tr>';
 }
@@ -4986,9 +4997,21 @@ function migrate_members_socialnetworks()
 function migrate_contacts_socialnetworks()
 {
     global $db, $langs;
-
+    // jabberid,skype,twitter,facebook,linkedin,instagram,snapchat,googleplus,youtube,whatsapp
     print '<tr><td colspan="4">';
-
+    $sql = 'UPDATE '.MAIN_DB_PREFIX.'socpeople SET socialnetworks=JSON_OBJECT(';
+    $sql.= '"jabber", jabberid,';
+    $sql.= '"skype", skype,';
+    $sql.= '"twitter", twitter,';
+    $sql.= '"facebook", facebook,';
+    $sql.= '"linkedin", linkedin,';
+    $sql.= '"instagram", instagram,';
+    $sql.= '"snapchat", snapchat,';
+    $sql.= '"googleplus", googleplus,';
+    $sql.= '"youtube", youtube,';
+    $sql.= '"whatsapp", whatsapp)';
+    //print $sql;
+    $db->query($sql);
     print '<b>'.$langs->trans('MigrationContactsSocialNetworks')."</b><br>\n";
     print '</td></tr>';
 }
@@ -5004,7 +5027,18 @@ function migrate_thirdparties_socialnetworks()
     // skype,twitter,facebook,linkedin,instagram,snapchat,googleplus,youtube,whatsapp
 
     print '<tr><td colspan="4">';
-
+    $sql = 'UPDATE '.MAIN_DB_PREFIX.'societe SET socialnetworks=JSON_OBJECT(';
+    $sql.= '"skype", skype,';
+    $sql.= '"twitter", twitter,';
+    $sql.= '"facebook", facebook,';
+    $sql.= '"linkedin", linkedin,';
+    $sql.= '"instagram", instagram,';
+    $sql.= '"snapchat", snapchat,';
+    $sql.= '"googleplus", googleplus,';
+    $sql.= '"youtube", youtube,';
+    $sql.= '"whatsapp", whatsapp)';
+    //print $sql;
+    $db->query($sql);
     print '<b>'.$langs->trans('MigrationThirdpartiesSocialNetworks')."</b><br>\n";
     print '</td></tr>';
 }
