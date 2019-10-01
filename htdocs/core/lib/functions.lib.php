@@ -1370,8 +1370,19 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		$showimage=$object->is_photo_available($conf->ticket->multidir_output[$entity].'/'.$object->ref);
 		$maxvisiblephotos=(isset($conf->global->TICKET_MAX_VISIBLE_PHOTO)?$conf->global->TICKET_MAX_VISIBLE_PHOTO:2);
 		if ($conf->browser->layout == 'phone') $maxvisiblephotos=1;
-		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos('ticket', $conf->ticket->multidir_output[$entity], 'small', $maxvisiblephotos, 0, 0, 0, $width, 0).'</div>';
-		else
+		if ($showimage)
+		{
+			$showphoto = $object->show_photos('ticket', $conf->ticket->multidir_output[$entity], 'small', $maxvisiblephotos, 0, 0, 0, $width, 0);
+			if ($object->nbphoto > 0)
+			{
+				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$showphoto.'</div>';
+			}
+			else
+			{
+				$showimage = 0;
+			}
+		}
+		if (! $showimage)
 		{
 			if (!empty($conf->global->TICKET_NODISPLAYIFNOPHOTO)) {
 				$nophoto='';
