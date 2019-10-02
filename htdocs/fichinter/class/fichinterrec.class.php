@@ -151,7 +151,7 @@ class FichinterRec extends Fichinter
             // $sql.= ", auto_validate";
 
             $sql.= ") VALUES (";
-            $sql.= "'".$this->title."'";
+            $sql.= "'".$this->db->escape($this->title)."'";
             $sql.= ", ".($this->socid >0 ? $this->socid : 'null');
             $sql.= ", ".$conf->entity;
             $sql.= ", '".$this->db->idate($now)."'";
@@ -168,7 +168,7 @@ class FichinterRec extends Fichinter
                 $sql.= ", null, null";
             }
 
-            $sql.= ", ".(! empty($fichintsrc->modelpdf)?"'".$fichintsrc->modelpdf."'":"''");
+            $sql.= ", ".(! empty($fichintsrc->modelpdf)?"'".$this->db->escape($fichintsrc->modelpdf)."'":"''");
 
             // récurrence
             $sql.= ", ".(! empty($this->frequency)? $this->frequency:"null");
@@ -562,7 +562,7 @@ class FichinterRec extends Fichinter
         // phpcs:enable
         if ($user->rights->fichinter->creer) {
             $sql = "UPDATE ".MAIN_DB_PREFIX."fichinter_rec ";
-            $sql .= " SET frequency = '".$freq."', last_gen='".$courant."'";
+            $sql .= " SET frequency = '".$this->db->escape($freq)."', last_gen='".$this->db-escpae($courant)."'";
             $sql .= " WHERE rowid = ".$this->id;
 
             $resql = $this->db->query($sql);
@@ -596,7 +596,7 @@ class FichinterRec extends Fichinter
         $result='';
         $label=$langs->trans("ShowInterventionModel").': '.$this->ref;
 
-        $url = dol_buildpath('/management/fichinter/', 1).'fiche-rec.php?fichinterid='.$this->id;
+        $url = DOL_URL_ROOT.'/fichinter/card-rec.php?id='.$this->id;
 
         if ($short) return $url;
 
