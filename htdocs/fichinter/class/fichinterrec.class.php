@@ -562,7 +562,7 @@ class FichinterRec extends Fichinter
         // phpcs:enable
         if ($user->rights->fichinter->creer) {
             $sql = "UPDATE ".MAIN_DB_PREFIX."fichinter_rec ";
-            $sql .= " SET frequency = '".$this->db->escape($freq)."', last_gen='".$this->db-escpae($courant)."'";
+            $sql .= " SET frequency = '".$this->db->escape($freq)."', last_gen='".$this->db-escape($courant)."'";
             $sql .= " WHERE rowid = ".$this->id;
 
             $resql = $this->db->query($sql);
@@ -580,14 +580,14 @@ class FichinterRec extends Fichinter
     }
 
     /**
-     *	Return clicable name (with picto eventually)
+     *  Return clicable name (with picto eventually)
      *
-     * @param	int		$withpicto	   Add picto into link
-     * @param  string	$option		  Where point the link
-     * @param  int		$max			 Maxlength of ref
-     * @param  int		$short		   1=Return just URL
-     * @param  string   $moretitle	   Add more text to title tooltip
-     * @return string 					 String with URL
+     *  @param	int		$withpicto      Add picto into link
+     *  @param  string	$option		    Where point the link
+     *  @param  int		$max			Maxlength of ref
+     *  @param  int		$short		    1=Return just URL
+     *  @param  string   $moretitle     Add more text to title tooltip
+     *  @return string 					String with URL
      */
     public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '')
     {
@@ -605,8 +605,9 @@ class FichinterRec extends Fichinter
         $link = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $linkend='</a>';
 
-        if ($withpicto)
-            $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+        if ($withpicto) {
+            $result.= $link.img_object($label, $picto, 'class="classfortooltip"').$linkend;
+        }
         if ($withpicto && $withpicto != 2) $result.=' ';
         if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
         return $result;
