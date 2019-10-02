@@ -39,4 +39,5 @@ insert into llx_c_type_category (rowid, code, element_key, element_table, object
 insert into llx_c_type_category (rowid, code, element_key, element_table, object_class, object_table) values (6, 'project',      'project',   'project',     'Project',     'projet');
 insert into llx_c_type_category (rowid, code, element_key, element_table, object_class, object_table) values (7, 'user',         'user',      'user',        'User',        'user');
 insert into llx_c_type_category (rowid, code, element_key, element_table, object_class, object_table) values (8, 'bank_line',    'account',   'account',     'Account',     'bank_account');
+insert into llx_c_type_category (rowid, code, element_key, element_table, object_class, object_table) values (9, 'warehouse',    'warehouse', 'warehouse',   'Entrepot',    'entrepot');
 
