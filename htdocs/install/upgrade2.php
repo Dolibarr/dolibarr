@@ -5041,8 +5041,8 @@ function migrate_members_socialnetworks()
     print '<tr><td colspan="4">';
     $sql = 'SELECT rowid, socialnetworks';
     $sql .= ', skype, twitter, facebook, linkedin, instagram, snapchat, googleplus, youtube, whatsapp FROM '.MAIN_DB_PREFIX.'adherent WHERE ';
-    $sql .= ' skype IS NOT NULL OR skype !=""';
-    $sql .= ' OR twitter IS NOT NULL OR twitter !=""';
+    $sql .= ' skype IS NOT NULL OR skype!=""';
+    $sql .= ' OR twitter IS NOT NULL OR twitter!=""';
     $sql .= ' OR facebook IS NOT NULL OR facebook!=""';
     $sql .= ' OR linkedin IS NOT NULL OR linkedin!=""';
     $sql .= ' OR instagram IS NOT NULL OR instagram!=""';
@@ -5131,9 +5131,9 @@ function migrate_contacts_socialnetworks()
     print '<tr><td colspan="4">';
     $sql = 'SELECT rowid, socialnetworks';
     $sql .= ', jabberid, skype, twitter, facebook, linkedin, instagram, snapchat, googleplus, youtube, whatsapp FROM '.MAIN_DB_PREFIX.'socpeople WHERE ';
-    $sql .= ' jabberid IS NOT NULL OR jabberid !=""';
-    $sql .= ' OR skype IS NOT NULL OR skype !=""';
-    $sql .= ' OR twitter IS NOT NULL OR twitter !=""';
+    $sql .= ' jabberid IS NOT NULL OR jabberid!=""';
+    $sql .= ' OR skype IS NOT NULL OR skype!=""';
+    $sql .= ' OR twitter IS NOT NULL OR twitter!=""';
     $sql .= ' OR facebook IS NOT NULL OR facebook!=""';
     $sql .= ' OR linkedin IS NOT NULL OR linkedin!=""';
     $sql .= ' OR instagram IS NOT NULL OR instagram!=""';
@@ -5226,8 +5226,8 @@ function migrate_thirdparties_socialnetworks()
     print '<tr><td colspan="4">';
     $sql = 'SELECT rowid, socialnetworks';
     $sql .= ', skype, twitter, facebook, linkedin, instagram, snapchat, googleplus, youtube, whatsapp FROM '.MAIN_DB_PREFIX.'societe WHERE ';
-    $sql .= ' OR skype IS NOT NULL OR skype !=""';
-    $sql .= ' OR twitter IS NOT NULL OR twitter !=""';
+    $sql .= ' skype IS NOT NULL OR skype!=""';
+    $sql .= ' OR twitter IS NOT NULL OR twitter!=""';
     $sql .= ' OR facebook IS NOT NULL OR facebook!=""';
     $sql .= ' OR linkedin IS NOT NULL OR linkedin!=""';
     $sql .= ' OR instagram IS NOT NULL OR instagram!=""';
