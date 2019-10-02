@@ -223,7 +223,7 @@ function societe_prepare_head(Societe $object)
         else {
             dol_print_error($db);
         }
-$key
+
         //if (! empty($conf->stripe->enabled) && $nbBankAccount > 0) $nbBankAccount = '...';	// No way to know exact number
 
         $head[$h][0] = DOL_URL_ROOT .'/societe/paymentmodes.php?socid='.$object->id;
@@ -243,7 +243,7 @@ $key
     	$sql.= " FROM ".MAIN_DB_PREFIX."societe_account as n";
     	$sql.= " WHERE fk_soc = ".$object->id.' AND fk_website > 0';
     	$resql=$db->query($sql);
-    	if ($resql)$key
+    	if ($resql)
     	{
     		$num = $db->num_rows($resql);
     		$i = 0;
