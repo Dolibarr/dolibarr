@@ -516,7 +516,7 @@ class FichinterRec extends Fichinter
             //$sql.= ", special_code";
             $sql.= ", fk_unit";
             $sql.= ") VALUES (";
-            $sql.= "'".$this->id."'";
+            $sql.= $this->id;
             $sql.= ", ".(! empty($label)?"'".$this->db->escape($label)."'":"null");
             $sql.= ", ".(! empty($desc)?"'".$this->db->escape($desc)."'":"null");
             $sql.= ", ".(! empty($datei)?"'".$this->db->idate($datei)."'":"null");

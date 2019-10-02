@@ -366,7 +366,7 @@ if ($action == 'create') {
 		print load_fiche_titre($title, '', '');
 
 		/*
-		 * Invoice lines
+		 * Fichinter lines
 		 */
 		print '<table class="notopnoleftnoright" width="100%">';
 		print '<tr><td colspan="3">';
@@ -403,15 +403,16 @@ if ($action == 'create') {
 
 				print $text.' '.nl2br($objp->description);
 
-				// Qty
+				// Duration
 				print '<td class="center">'.convertSecondToTime($objp->duree).'</td>';
 				print "</tr>";
 
 				$i++;
 			}
 			$db->free($result);
-		} else
+		} else {
 			print $db->error();
+		}
 		print "</table>";
 
 		print '</td></tr>';
@@ -426,8 +427,9 @@ if ($action == 'create') {
 		print '</div>';
 		print "</form>\n";
 	}
-	else
+	else {
 		dol_print_error('', "Error, no invoice ".$object->id);
+	}
 } elseif ($action == 'selsocforcreatefrommodel') {
 	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'commercial');
 	dol_fiche_head('');
@@ -888,8 +890,9 @@ if ($action == 'create') {
 
 			print "</table>";
 			$db->free($resql);
-		} else
+		} else {
 			dol_print_error($db);
+		}
 	}
 }
 llxFooter();
