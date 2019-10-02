@@ -171,7 +171,7 @@ class FichinterRec extends Fichinter
             $sql.= ", ".(! empty($fichintsrc->modelpdf)?"'".$this->db->escape($fichintsrc->modelpdf)."'":"''");
 
             // récurrence
-            $sql.= ", ".(! empty($this->frequency)? $this->frequency:"null");
+            $sql.= ", ".(! empty($this->frequency)?$this->frequency:"null");
             $sql.= ", '".$this->db->escape($this->unit_frequency)."'";
             $sql.= ", ".(!empty($this->date_when)?"'".$this->db->idate($this->date_when)."'":'null');
             $sql.= ", ".(!empty($this->date_last_gen)?"'".$this->db->idate($this->date_last_gen)."'":'null');
@@ -516,7 +516,7 @@ class FichinterRec extends Fichinter
             //$sql.= ", special_code";
             $sql.= ", fk_unit";
             $sql.= ") VALUES (";
-            $sql.= $this->id;
+            $sql.= (int) $this->id;
             $sql.= ", ".(! empty($label)?"'".$this->db->escape($label)."'":"null");
             $sql.= ", ".(! empty($desc)?"'".$this->db->escape($desc)."'":"null");
             $sql.= ", ".(! empty($datei)?"'".$this->db->idate($datei)."'":"null");
@@ -532,7 +532,7 @@ class FichinterRec extends Fichinter
             $sql.= ", '".price2num($total_ht)."'";
             $sql.= ", '".price2num($total_tva)."'";
             $sql.= ", '".price2num($total_ttc)."'";
-            $sql.= ", ".$rang;
+            $sql.= ", ".(int) $rang;
             //$sql.= ", ".$special_code;
             $sql.= ", ".(! empty($fk_unit) ? $fk_unit :"null");
             $sql.= ")";
@@ -562,14 +562,15 @@ class FichinterRec extends Fichinter
         // phpcs:enable
         if ($user->rights->fichinter->creer) {
             $sql = "UPDATE ".MAIN_DB_PREFIX."fichinter_rec ";
-            $sql .= " SET frequency = '".$this->db->escape($freq)."', last_gen='".$this->db-escape($courant)."'";
+            $sql .= " SET frequency='".$this->db->escape($freq)."'";
+            $sql .= ", last_gen='".$this->db-escape($courant)."'";
             $sql .= " WHERE rowid = ".$this->id;
 
             $resql = $this->db->query($sql);
 
             if ($resql) {
-                $this->frequency 	= $freq;
-                $this->last_gen 	= $courant;
+                $this->frequency = $freq;
+                $this->last_gen = $courant;
                 return 0;
             } else {
                 dol_print_error($this->db);
