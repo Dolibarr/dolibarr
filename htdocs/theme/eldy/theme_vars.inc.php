@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -87,7 +87,7 @@ $colorblind_deuteranopes_textWarning = $textWarning; // currently not tested wit
 
 // Badges colors
 $badgePrimary   ='#007bff';
-$badgeSecondary ='#999999';
+$badgeSecondary ='#cccccc';
 $badgeSuccess   ='#28a745';
 $badgeDanger    ='#9f4705';
 $badgeWarning   ='#ffc107';

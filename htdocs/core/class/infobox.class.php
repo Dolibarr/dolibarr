@@ -2,6 +2,7 @@
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2019		Nicolas ZABOURI			<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -28,13 +29,51 @@
 class InfoBox
 {
     /**
-     * Name of positions 0=Home, 1=Accountancy, 2=xxx
+     * Name of positions (See below)
      *
      * @return	string[]		Array with list of zones
      */
     public static function getListOfPagesForBoxes()
     {
-        return array(0=>'Home',1=>'Accountancy');
+		global $conf;
+
+		if (empty($conf->global->MAIN_FEATURES_LEVEL) || $conf->global->MAIN_FEATURES_LEVEL < 2)
+		{
+        	return array(0 => 'Home');
+		}
+		else
+		{
+			return array(
+				0 => 'Home',
+				1 => 'userhome',
+				2 => 'membersindex',
+				3 => 'thirdpartiesindex',
+				4 => 'productindex',
+				5 => 'productindex',
+				6 => 'mrpindex',
+				7 => 'commercialindex',
+				8 => 'projectsindex',
+				9 => 'invoiceindex',
+				10 => 'hrmindex',
+				11 => 'ticketsindex',
+				12 => 'stockindex',
+				13 => 'sendingindex',
+				14 => 'receptionindex',
+				15 => 'activityindex',
+				16 => 'proposalindex',
+				17 => 'ordersindex',
+				18 => 'orderssuppliersindex',
+				19 => 'contractindex',
+				20 => 'interventionindex',
+				21 => 'suppliersproposalsindex',
+				22 => 'donationindex',
+				23 => 'specialexpensesindex',
+				24 => 'expensereportindex',
+				25 => 'mailingindex',
+				26 => 'opensurveyindex',
+				27 => 'accountancyindex'
+			);
+		}
     }
 
     /**

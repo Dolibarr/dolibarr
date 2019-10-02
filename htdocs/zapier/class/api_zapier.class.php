@@ -210,7 +210,8 @@ class ZapierApi extends DolibarrApi
             $sql.= $db->plimit($limit + 1, $offset);
         }
 
-        $result = $db->query($sql);
+		$result = $db->query($sql);
+		$i = 0;
         if ($result) {
             $num = $db->num_rows($result);
             while ($i < $num) {
@@ -240,9 +241,6 @@ class ZapierApi extends DolibarrApi
      */
     public function post($request_data = null)
     {
-        // $debug = '<pre>'.print_r($request_data, true).'</pre>';
-        // $debug .= '<pre>'.print_r(DolibarrApiAccess::$user->rights->zapier, true).'</pre>';
-        // mail('frederic.france@free.fr', 'test hook', $debug);
         if (! DolibarrApiAccess::$user->rights->zapier->write) {
             throw new RestException(401);
         }
