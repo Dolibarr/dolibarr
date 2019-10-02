@@ -97,11 +97,11 @@ class FichinterRec extends Fichinter
 
 
     /**
-     *  Create a predefined invoice
+     *  Create a predefined fichinter
      *
      *  @param      User    $user       User object
      *  @param      int     $notrigger  no trigger
-     *  @return     int                 <0 if KO, id of invoice if OK
+     *  @return     int                 <0 if KO, id of fichinter if OK
      */
     public function create($user, $notrigger = 0)
     {
@@ -237,8 +237,8 @@ class FichinterRec extends Fichinter
      *	Recupere l'objet facture et ses lignes de factures
      *
      *	@param	  int		$rowid	   	Id of object to load
-     * 	@param		string	$ref			Reference of invoice
-     * 	@param		string	$ref_ext		External reference of invoice
+     * 	@param		string	$ref			Reference of fichinter
+     * 	@param		string	$ref_ext		External reference of fichinter
      * 	@param		int		$ref_int		Internal reference of other object
      *	@return	 int		 			>0 if OK, <0 if KO, 0 if not found
      */
@@ -254,7 +254,7 @@ class FichinterRec extends Fichinter
         if ($rowid >0 ) $sql.= ' WHERE f.rowid='.$rowid;
         elseif ($ref) $sql.= " WHERE f.titre='".$this->db->escape($ref)."'";
 
-        /* This field are not used for template invoice
+        /* This field are not used for template fichinter
         if ($ref_ext) $sql.= " AND f.ref_ext='".$this->db->escape($ref_ext)."'";
         if ($ref_int) $sql.= " AND f.ref_int='".$this->db->escape($ref_int)."'";
         */
@@ -390,11 +390,11 @@ class FichinterRec extends Fichinter
 
 
     /**
-     * 	Delete template invoice
+     * 	Delete template fichinter rec
      *
-     *	@param	 	int		$rowid	  	Id of invoice to delete. If empty, we delete current instance of invoice
-     *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-     *	@param		int		$idwarehouse	Id warehouse to use for stock change.
+     *	@param	 	int		$rowid	  	    Id of fichinter rec to delete. If empty, we delete current instance of fichinter rec
+     *	@param		int		$notrigger	    1=Does not execute triggers, 0= execute triggers
+     *	@param		int		$idwarehouse    Id warehouse to use for stock change.
      *	@return		int						<0 if KO, >0 if OK
      */
     public function delete($rowid = 0, $notrigger = 0, $idwarehouse = -1)
@@ -431,26 +431,26 @@ class FichinterRec extends Fichinter
 
 
     /**
-    *  Add a line to fichinter
+    *  Add a line to fichinter rec
     *
-    *  @param		string		$desc				Description de la ligne
-    *  @param		integer		$duration		   Durée
+    *  @param		string		$desc               Description de la ligne
+    *  @param		integer		$duration           Durée
     *  @param		string	    $datei				Date
-    *  @param	    int			$rang			   Position of line
-    *  @param		double		$pu_ht			  Prix unitaire HT (> 0 even for credit note)
+    *  @param	    int			$rang			    Position of line
+    *  @param		double		$pu_ht			    Prix unitaire HT (> 0 even for credit note)
     *  @param		double		$qty			 	Quantite
-    *  @param		double		$txtva		   	Taux de tva force, sinon -1
-    *  @param		int			$fk_product	  	Id du produit/service predefini
+    *  @param		double		$txtva		   	    Taux de tva force, sinon -1
+    *  @param		int			$fk_product	  	    Id du produit/service predefini
     *  @param		double		$remise_percent  	Pourcentage de remise de la ligne
     *  @param		string		$price_base_type	HT or TTC
     *  @param		int			$info_bits			Bits de type de lignes
-    *  @param		int			$fk_remise_except	Id remise
-    *  @param		double		$pu_ttc			 Prix unitaire TTC (> 0 even for credit note)
+    *  @param		int			$fk_remise_except   Id remise
+    *  @param		double		$pu_ttc			    Prix unitaire TTC (> 0 even for credit note)
     *  @param		int			$type				Type of line (0=product, 1=service)
     *  @param		int			$special_code		Special code
     *  @param		string		$label				Label of the line
     *  @param		string		$fk_unit			Unit
-    *  @return		int			 				<0 if KO, Id of line if OK
+    *  @return		int			 				    <0 if KO, Id of line if OK
     */
     public function addline($desc, $duration, $datei, $rang = -1, $pu_ht = 0, $qty = 0, $txtva = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = '', $pu_ttc = 0, $type = 0, $special_code = 0, $label = '', $fk_unit = null)
     {
@@ -575,8 +575,9 @@ class FichinterRec extends Fichinter
                 dol_print_error($this->db);
                 return -1;
             }
-        } else
+        } else {
             return -2;
+        }
     }
 
     /**
@@ -608,8 +609,12 @@ class FichinterRec extends Fichinter
         if ($withpicto) {
             $result.= $link.img_object($label, $picto, 'class="classfortooltip"').$linkend;
         }
-        if ($withpicto && $withpicto != 2) $result.=' ';
-        if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
+        if ($withpicto && $withpicto != 2) {
+            $result.=' ';
+        }
+        if ($withpicto != 2) {
+            $result.=$link.$this->ref.$linkend;
+        }
         return $result;
     }
 
@@ -619,7 +624,7 @@ class FichinterRec extends Fichinter
      *  Used to build previews or test instances.
      *	id must be 0 if object instance is a specimen.
      *
-     *	@param	string		$option		''=Create a specimen invoice with lines, 'nolines'=No lines
+     *	@param	string		$option		''=Create a specimen fichinter with lines, 'nolines'=No lines
      *  @return	void
      */
     public function initAsSpecimen($option = '')
@@ -747,9 +752,9 @@ class FichinterRec extends Fichinter
     }
 
     /**
-     *	Update the auto validate invoice
+     *	Update the auto validate fichinter
      *
-     *	@param	 	int		$validate		0 to create in draft, 1 to create and validate invoice
+     *	@param	 	int		$validate		0 to create in draft, 1 to create and validate fichinter
      *	@return		int						<0 if KO, >0 if OK
      */
     public function setAutoValidate($validate)
