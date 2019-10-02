@@ -5221,21 +5221,78 @@ function migrate_thirdparties_socialnetworks()
 {
     global $db, $langs;
     // skype,twitter,facebook,linkedin,instagram,snapchat,googleplus,youtube,whatsapp
-
+    $error = 0;
+    $db->begin();
     print '<tr><td colspan="4">';
-    $sql = 'UPDATE '.MAIN_DB_PREFIX.'societe SET socialnetworks=JSON_OBJECT(';
-    $sql.= '"skype", skype,';
-    $sql.= '"twitter", twitter,';
-    $sql.= '"facebook", facebook,';
-    $sql.= '"linkedin", linkedin,';
-    $sql.= '"instagram", instagram,';
-    $sql.= '"snapchat", snapchat,';
-    $sql.= '"googleplus", googleplus,';
-    $sql.= '"youtube", youtube,';
-    $sql.= '"whatsapp", whatsapp)';
+    $sql = 'SELECT rowid, socialnetworks';
+    $sql .= ', skype, twitter, facebook, linkedin, instagram, snapchat, googleplus, youtube, whatsapp FROM '.MAIN_DB_PREFIX.'societe WHERE ';
+    $sql .= ' OR skype IS NOT NULL OR skype !=""';
+    $sql .= ' OR twitter IS NOT NULL OR twitter !=""';
+    $sql .= ' OR facebook IS NOT NULL OR facebook!=""';
+    $sql .= ' OR linkedin IS NOT NULL OR linkedin!=""';
+    $sql .= ' OR instagram IS NOT NULL OR instagram!=""';
+    $sql .= ' OR snapchat IS NOT NULL OR snapchat!=""';
+    $sql .= ' OR googleplus IS NOT NULL OR googleplus!=""';
+    $sql .= ' OR youtube IS NOT NULL OR youtube!=""';
+    $sql .= ' OR whatsapp IS NOT NULL OR whatsapp!=""';
     //print $sql;
     $resql = $db->query($sql);
     if ($resql) {
+        while ($obj = $db->fetch_object($resql)) {
+            $arraysocialnetworks = array();
+            if (!empty($obj->skype)) {
+                $arraysocialnetworks['skype'] = $obj->skype;
+            }
+            if (!empty($obj->twitter)) {
+                $arraysocialnetworks['twitter'] = $obj->twitter;
+            }
+            if (!empty($obj->facebook)) {
+                $arraysocialnetworks['facebook'] = $obj->facebook;
+            }
+            if (!empty($obj->linkedin)) {
+                $arraysocialnetworks['linkedin'] = $obj->linkedin;
+            }
+            if (!empty($obj->instagram)) {
+                $arraysocialnetworks['instagram'] = $obj->instagram;
+            }
+            if (!empty($obj->snapchat)) {
+                $arraysocialnetworks['snapchat'] = $obj->snapchat;
+            }
+            if (!empty($obj->googleplus)) {
+                $arraysocialnetworks['googleplus'] = $obj->googleplus;
+            }
+            if (!empty($obj->youtube)) {
+                $arraysocialnetworks['youtube'] = $obj->youtube;
+            }
+            if (!empty($obj->whatsapp)) {
+                $arraysocialnetworks['whatsapp'] = $obj->whatsapp;
+            }
+            if ($obj->socialnetworks == '' || is_null($obj->socialnetworks)) {
+                $obj->socialnetworks = '[]';
+            }
+            $socialnetworks = array_merge($arraysocialnetworks, json_decode($obj->socialnetworks, true));
+            $sqlupd = 'UPDATE '.MAIN_DB_PREFIX.'societe SET socialnetworks="'.$db->escape(json_encode($socialnetworks, true)).'"';
+            $sqlupd.= ', skype=null';
+            $sqlupd.= ', twitter=null';
+            $sqlupd.= ', facebook=null';
+            $sqlupd.= ', linkedin=null';
+            $sqlupd.= ', instagram=null';
+            $sqlupd.= ', snapchat=null';
+            $sqlupd.= ', googleplus=null';
+            $sqlupd.= ', youtube=null';
+            $sqlupd.= ', whatsapp=null';
+            $sqlupd.= ' WHERE rowid='.$obj->rowid;
+            //print $sqlupd."<br>";
+            $resqlupd = $db->query($sqlupd);
+            if (! $resqlupd) {
+                dol_print_error($db);
+                $error++;
+            }
+        }
+    } else {
+        $error++;
+    }
+    if (! $error) {
         $db->commit();
     } else {
         dol_print_error($db);
