@@ -185,8 +185,8 @@ if ($action == 'add') {
 
 	if ($newfichinterid > 0) {
 		// Now we add line of details
-		foreach ($object->lines as $ficheinterligne) {
-			$newinter->addline($user, $newfichinterid, $ficheinterligne->desc, '', $ficheinterligne->duree, '');
+		foreach ($object->lines as $line) {
+			$newinter->addline($user, $newfichinterid, $line->desc, '', $line->duree, '');
 		}
 
 		// on update le nombre d'inter crée à partir du modèle

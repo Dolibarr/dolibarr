@@ -193,7 +193,7 @@ class FichinterRec extends Fichinter
                     //var_dump($fichintsrc->lines[$i]);
                     $result_insert = $this->addline(
                         $fichintsrc->lines[$i]->desc,
-                        $fichintsrc->lines[$i]->duree,
+                        $fichintsrc->lines[$i]->duration,
                         $fichintsrc->lines[$i]->datei,
                         $fichintsrc->lines[$i]->rang,
                         $fichintsrc->lines[$i]->subprice,
@@ -352,6 +352,7 @@ class FichinterRec extends Fichinter
                 $line->fk_product_type = $objp->fk_product_type;	// Type of product
                 $line->qty = $objp->qty;
                 $line->duree = $objp->duree;
+                $line->duration = $objp->duree;
                 $line->datei = $objp->date;
                 $line->subprice = $objp->subprice;
                 $line->tva_tx = $objp->tva_tx;
@@ -500,7 +501,7 @@ class FichinterRec extends Fichinter
             $sql.= ", label";
             $sql.= ", description";
             $sql.= ", date";
-            //$sql.= ", duree";
+            $sql.= ", duree";
             //$sql.= ", price";
             //$sql.= ", qty";
             //$sql.= ", tva_tx";
@@ -520,7 +521,7 @@ class FichinterRec extends Fichinter
             $sql.= ", ".(! empty($label)?"'".$this->db->escape($label)."'":"null");
             $sql.= ", ".(! empty($desc)?"'".$this->db->escape($desc)."'":"null");
             $sql.= ", ".(! empty($datei)?"'".$this->db->idate($datei)."'":"null");
-            //$sql.= ", ".$duration;
+            $sql.= ", ".$duration;
             //$sql.= ", ".price2num($pu_ht);
             //$sql.= ", ".(!empty($qty)? $qty :(!empty($duration)? $duration :"null"));
             //$sql.= ", ".price2num($txtva);
