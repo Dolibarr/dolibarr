@@ -3842,6 +3842,7 @@ tr.visible {
 	border-bottom: 1px solid #ccc;
 	background: #e6e6e6;
 	display: inline-block;
+	padding: 4px 0 4px 0;
 }
 .websitebar .buttonDelete, .websitebar .button {
 	text-shadow: none;
@@ -3853,10 +3854,10 @@ tr.visible {
     line-height: normal;
 }
 .websiteselection {
-	display: inline-block;
+	/* display: inline-block; */
 	padding-left: 10px;
 	vertical-align: middle;
-	line-height: 28px;
+	/* line-height: 28px; */
 }
 .websitetools {
 	float: right;
