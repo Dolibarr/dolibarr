@@ -65,7 +65,7 @@ $colorbacklinepair1='250,250,250';    // line pair
 $colorbacklinepair2='250,250,250';    // line pair
 $colorbacklinepairhover='230,237,244';	// line hover
 $colorbacklinepairchecked='230,237,244';	// line checked
-$colorbacklinebreak='223,218,220';		// line break
+$colorbacklinebreak='233,228,230';		// line break
 $colorbackbody='255,255,255';
 $colortexttitlenotab='110,80,20';
 $colortexttitle='0,0,0';
@@ -87,7 +87,7 @@ $colorblind_deuteranopes_textWarning = $textWarning; // currently not tested wit
 
 // Badges colors
 $badgePrimary   ='#007bff';
-$badgeSecondary ='#999999';
+$badgeSecondary ='#cccccc';
 $badgeSuccess   ='#28a745';
 $badgeDanger    ='#9f4705';
 $badgeWarning   ='#ffc107';

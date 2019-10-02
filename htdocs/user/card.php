@@ -686,9 +686,9 @@ if ($action == 'create' || $action == 'adduserldap')
 	/*                                                                            */
 	/* ************************************************************************** */
 
-	print load_fiche_titre($langs->trans("NewUser"));
+	print load_fiche_titre($langs->trans("NewUser"), '', 'user');
 
-	print $langs->trans("CreateInternalUserDesc")."<br>\n";
+	print '<span class="opacitymedium">'.$langs->trans("CreateInternalUserDesc")."</span><br>\n";
 	print "<br>";
 
 

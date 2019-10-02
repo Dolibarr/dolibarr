@@ -417,7 +417,7 @@ $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0, $usertoprocess, ($proj
 
 llxHeader("", $title, "", '', '', '', array('/core/js/timesheet.js'));
 
-//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'title_project');
+//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'project');
 
 $param='';
 $param.=($mode?'&mode='.urlencode($mode):'');

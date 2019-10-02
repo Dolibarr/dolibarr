@@ -461,7 +461,7 @@ else
     else $texthelp.=$langs->trans("ProjectsPublicDesc");
 }
 
-print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_project', 0, $newcardbutton, '', $limit);
+print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'project', 0, $newcardbutton, '', $limit);
 
 
 $topicmail="Information";

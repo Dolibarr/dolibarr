@@ -1571,7 +1571,7 @@ class ExtraFields
 		 elseif ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
 		 */
 		 if (! empty($help)) {
-			$out .= $form->textwithpicto("", $help);
+			$out .= $form->textwithpicto('', $help, 1, 'help', '', 0, 3);
 		 }
 		return $out;
 	}

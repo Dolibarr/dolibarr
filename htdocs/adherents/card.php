@@ -885,7 +885,7 @@ else
 
 		$adht = new AdherentType($db);
 
-		print load_fiche_titre($langs->trans("NewMember"));
+		print load_fiche_titre($langs->trans("NewMember"), '', 'members');
 
 		if ($conf->use_javascript_ajax)
 		{
