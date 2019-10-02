@@ -778,6 +778,10 @@ select.selectarrowonleft option {
 	direction: ltr;
 }
 
+table[summary="list_of_modules"] .fa-cog {
+    font-size: 1.5em;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
