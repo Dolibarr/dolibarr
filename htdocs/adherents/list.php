@@ -39,6 +39,7 @@ $massaction=GETPOST('massaction', 'alpha');
 $show_files=GETPOST('show_files', 'int');
 $confirm=GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'memberslist';   // To manage different context of search
 
 // Security check
 $result=restrictedArea($user, 'adherent');
@@ -419,7 +420,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit);
+print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit);
 
 $topicmail="Information";
 $modelmail="member";
