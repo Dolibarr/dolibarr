@@ -1675,12 +1675,12 @@ else
 			if ($object->need_subscription == 0)
                         {
                                 print $langs->trans("SubscriptionNotNeeded");
-                        }
+            }
                         elseif (! $adht->subscription)
 			{
 				print $langs->trans("SubscriptionNotRecorded");
 				if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
-			}
+			            }
 			else
 			{
 				print $langs->trans("SubscriptionNotReceived");
