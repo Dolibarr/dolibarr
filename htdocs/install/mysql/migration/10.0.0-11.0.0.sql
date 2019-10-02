@@ -196,4 +196,27 @@ INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, m
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('IN-REPUBLICDAY',  0, 117, '', 0,  1, 26, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('IN-GANDI',        0, 117, '', 0, 10,  2, 1);
 
+-- Category type
+CREATE TABLE llx_c_type_category
+(
+  rowid         integer PRIMARY KEY,
+  code          varchar(255) NOT NULL,
+  element_key   varchar(255) NOT NULL,
+  element_table varchar(255) NOT NULL,
+  object_class  varchar(255) NOT NULL,
+  object_table  varchar(255) NOT NULL
+)ENGINE=innodb;
+
+ALTER TABLE llx_c_type_category ADD UNIQUE INDEX uk_c_type_category(code);
+
+INSERT INTO llx_c_type_category (rowid, code, element_key, element_table, object_class, object_table) values (0, 'product',      'product',   'product',     'Product',     'product');
+INSERT INTO llx_c_type_category (rowid, code, element_key, element_table, object_class, object_table) values (1, 'supplier',     'soc',       'fournisseur', 'Fournisseur', 'societe');
+INSERT INTO llx_c_type_category (rowid, code, element_key, element_table, object_class, object_table) values (2, 'customer',     'soc',       'societe',     'Societe',     'societe');
+INSERT INTO llx_c_type_category (rowid, code, element_key, element_table, object_class, object_table) values (3, 'member',       'member',    'member',      'Adherent',    'adherent');
+INSERT INTO llx_c_type_category (rowid, code, element_key, element_table, object_class, object_table) values (4, 'contact',      'socpeople', 'contact',     'Contact',     'socpeople');
+INSERT INTO llx_c_type_category (rowid, code, element_key, element_table, object_class, object_table) values (5, 'bank_account', 'account',   'account',     'Account',     'bank_account');
+INSERT INTO llx_c_type_category (rowid, code, element_key, element_table, object_class, object_table) values (6, 'project',      'project',   'project',     'Project',     'projet');
+INSERT INTO llx_c_type_category (rowid, code, element_key, element_table, object_class, object_table) values (7, 'user',         'user',      'user',        'User',        'user');
+INSERT INTO llx_c_type_category (rowid, code, element_key, element_table, object_class, object_table) values (8, 'bank_line',    'account',   'account',     'Account',     'bank_account');
+
 

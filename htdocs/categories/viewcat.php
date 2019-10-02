@@ -81,7 +81,7 @@ if ($result <= 0) {
 }
 
 $type=$object->type;
-if (is_numeric($type)) $type=Categorie::$MAP_ID_TO_CODE[$type];	// For backward compatibility
+if (is_numeric($type)) $type=Categorie::getMapIdToCodeFromDb($db, $type);	    // For backward compatibility
 
 $extrafields = new ExtraFields($db);
 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);

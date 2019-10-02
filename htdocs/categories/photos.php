@@ -42,7 +42,7 @@ $type=GETPOST('type');
 $action=GETPOST('action', 'aZ09');
 $confirm=GETPOST('confirm');
 
-if (is_numeric($type)) $type=Categorie::$MAP_ID_TO_CODE[$type];	// For backward compatibility
+if (is_numeric($type)) $type=Categorie::getMapIdToCodeFromDb($db, $type);	    // For backward compatibility
 
 if ($id == "")
 {

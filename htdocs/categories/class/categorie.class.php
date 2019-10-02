@@ -235,7 +235,49 @@ class Categorie extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+        $this->_loadAllType();
 	}
+
+    /**
+     * Load type of category
+     * @return  void
+     */
+    private function _loadAllType()
+    {
+        $sql  = "SELECT rowid, code, element_key, element_table, object_class, object_table";
+        $sql .= " FROM " . MAIN_DB_PREFIX . "c_type_category";
+
+        $resql = $this->db->query($sql);
+        if ($resql) {
+            while ($obj = $this->db->fetch_object($resql)) {
+                $idType   = intval($obj->rowid);
+                $typeCode = $obj->code;
+
+                $this->MAP_ID[$typeCode] = $idType;
+                self::$MAP_ID_TO_CODE[$idType] = $typeCode;
+                $this->MAP_CAT_FK[$typeCode] = $obj->element_key;
+                $this->MAP_CAT_TABLE[$typeCode] = $obj->element_table;
+                $this->MAP_OBJ_CLASS[$typeCode] = $obj->object_class;
+                $this->MAP_OBJ_TABLE[$typeCode] = $obj->object_table;
+            }
+
+            $this->db->free($resql);
+        }
+    }
+
+    /**
+     * Get type of category
+     *
+     * @param   DoliDB      $db         Database handler
+     * @param   int         $idType     Id of category type
+     * @return  array
+     */
+    public static function getMapIdToCodeFromDb(DoliDB $db, $idType)
+    {
+        $category = new self($db);
+        return self::$MAP_ID_TO_CODE[$idType];
+    }
 
 	/**
 	 * 	Load category into memory from database
