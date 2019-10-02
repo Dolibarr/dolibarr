@@ -2198,11 +2198,12 @@ function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinpu
 	global $conf,$langs,$user;
 
 	$ret='';
-	$ret.='<form action="'.$urlaction.'" method="post" class="searchform nowraponall">';
+	$ret.='<form action="'.$urlaction.'" method="post" class="searchform nowraponall tagtr">';
 	$ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	$ret.='<input type="hidden" name="mode" value="search">';
 	$ret.='<input type="hidden" name="savelogin" value="'.dol_escape_htmltag($user->login).'">';
-	if ($showtitlebefore) $ret.=$title.' ';
+	if ($showtitlebefore) $ret.='<div class="tagtd left">'.$title.'</div> ';
+	$ret.='<div class="tagtd">';
 	$ret.='<input type="text" class="flat '.$htmlmorecss.'"';
 	$ret.=' style="text-indent: 22px; background-image: url(\''.$img.'\'); background-repeat: no-repeat; background-position: 3px;"';
 	$ret.=($accesskey?' accesskey="'.$accesskey.'"':'');
@@ -2213,6 +2214,7 @@ function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinpu
 	$ret.='<button type="submit" class="button" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px">';
 	$ret.='<span class="fa fa-search"></span>';
 	$ret.='</button>';
+	$ret.='</div>';
 	$ret.="</form>\n";
 	return $ret;
 }
