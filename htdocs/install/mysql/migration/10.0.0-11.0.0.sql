@@ -220,4 +220,4 @@ INSERT INTO llx_c_type_category (rowid, code, element_key, element_table, object
 INSERT INTO llx_c_type_category (rowid, code, element_key, element_table, object_class, object_table) values (8, 'bank_line',    'account',   'account',     'Account',     'bank_account');
 INSERT INTO llx_c_type_category (rowid, code, element_key, element_table, object_class, object_table) values (9, 'warehouse',    'warehouse', 'warehouse',   'Entrepot',    'entrepot');
 
-
+ALTER TABLE `llx_categorie` CHANGE `type` `type` integer NOT NULL DEFAULT '1';
