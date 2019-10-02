@@ -223,6 +223,8 @@ if (empty($reshook)) {
 			$object->note = GETPOST("note", 'none');
 			$object->ldap_sid = GETPOST("ldap_sid", 'alphanohtml');
 			$object->fk_user = GETPOST("fk_user", 'int') > 0 ? GETPOST("fk_user", 'int') : 0;
+			$object->fk_user_expense_validator = GETPOST("fk_user_expense_validator", 'int') > 0 ? GETPOST("fk_user_expense_validator", 'int') : 0;
+			$object->fk_user_holiday_validator = GETPOST("fk_user_holiday_validator", 'int') > 0 ? GETPOST("fk_user_holiday_validator", 'int') : 0;
 			$object->employee = GETPOST('employee', 'alphanohtml');
 
 			$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
@@ -376,6 +378,8 @@ if (empty($reshook)) {
 				$object->accountancy_code = GETPOST("accountancy_code", 'alphanohtml');
 				$object->openid = GETPOST("openid", 'alphanohtml');
 				$object->fk_user = GETPOST("fk_user", 'int') > 0 ? GETPOST("fk_user", 'int') : 0;
+				$object->fk_user_expense_validator = GETPOST("fk_user_expense_validator", 'int') > 0 ? GETPOST("fk_user_expense_validator", 'int') : 0;
+				$object->fk_user_holiday_validator = GETPOST("fk_user_holiday_validator", 'int') > 0 ? GETPOST("fk_user_holiday_validator", 'int') : 0;
 				$object->employee = GETPOST('employee', 'int');
 
 				$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
@@ -964,6 +968,26 @@ if ($action == 'create' || $action == 'adduserldap')
 	print $form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
 	print '</td>';
 	print "</tr>\n";
+
+	// Expense report validator
+	if(!empty($conf->expensereport->enabled))
+	{
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("UserExpenseValidator").'</td>';
+		print '<td>';
+		print $form->select_dolusers($object->fk_user_expense_validator, 'fk_user_expense_validator', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
+		print '</td>';
+		print "</tr>\n";
+	}
+
+	// Holiday request validator
+	if(!empty($conf->holiday->enabled))
+	{
+		print '<tr><td class="titlefieldcreate">' . $langs->trans("UserHolidayValidator") . '</td>';
+		print '<td>';
+		print $form->select_dolusers($object->fk_user_holiday_validator, 'fk_user_holiday_validator', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
+		print '</td>';
+		print "</tr>\n";
+	}
 
 
 	print '</table><hr><table class="border centpercent">';
@@ -1558,6 +1582,30 @@ else
 				$huser=new User($db);
 				$huser->fetch($object->fk_user);
 				print $huser->getNomUrl(1);
+			}
+			print '</td>';
+			print "</tr>\n";
+
+			// Expense report validator
+			print '<tr><td>'.$langs->trans("UserExpenseValidator").'</td>';
+			print '<td>';
+			if (empty($object->fk_user_expense_validator)) print $langs->trans("None");
+			else {
+				$evuser=new User($db);
+				$evuser->fetch($object->fk_user_expense_validator);
+				print $evuser->getNomUrl(1);
+			}
+			print '</td>';
+			print "</tr>\n";
+
+			// Holiday request validator
+			print '<tr><td>'.$langs->trans("UserHolidayValidator").'</td>';
+			print '<td>';
+			if (empty($object->fk_user_holiday_validator)) print $langs->trans("None");
+			else {
+				$hvuser=new User($db);
+				$hvuser->fetch($object->fk_user_holiday_validator);
+				print $hvuser->getNomUrl(1);
 			}
 			print '</td>';
 			print "</tr>\n";
@@ -2242,6 +2290,40 @@ else
 		   	}
 		   	print '</td>';
 		   	print "</tr>\n";
+
+			// Expense report validator
+			print '<tr><td class="titlefield">'.$langs->trans("UserExpenseValidator").'</td>';
+			print '<td>';
+			if ($caneditfield)
+			{
+				print $form->select_dolusers($object->fk_user_expense_validator, 'fk_user_expense_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'maxwidth300');
+			}
+			else
+			{
+				print '<input type="hidden" name="fk_user_expense_validator" value="'.$object->fk_user_expense_validator.'">';
+				$evuser=new User($db);
+				$evuser->fetch($object->fk_user_expense_validator);
+				print $evuser->getNomUrl(1);
+			}
+			print '</td>';
+			print "</tr>\n";
+
+			// Holiday request validator
+			print '<tr><td class="titlefield">'.$langs->trans("UserHolidayValidator").'</td>';
+			print '<td>';
+			if ($caneditfield)
+			{
+				print $form->select_dolusers($object->fk_user_holiday_validator, 'fk_user_holiday_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'maxwidth300');
+			}
+			else
+			{
+				print '<input type="hidden" name="fk_user_holiday_validator" value="'.$object->fk_user_holiday_validator.'">';
+				$hvuser=new User($db);
+				$hvuser->fetch($object->fk_user_holiday_validator);
+				print $hvuser->getNomUrl(1);
+			}
+			print '</td>';
+			print "</tr>\n";
 
 
 		   	print '</table><hr><table class="border centpercent">';
