@@ -64,7 +64,7 @@ if ($conf->accounting->enabled)
 {
     $step = 0;
 
-    $resultboxes=FormOther::getBoxesArea($user, "1");    // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
+    $resultboxes=FormOther::getBoxesArea($user, "27");    // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
     print load_fiche_titre($langs->trans("AccountancyArea"), $resultboxes['selectboxlist'], 'accountancy');
 
