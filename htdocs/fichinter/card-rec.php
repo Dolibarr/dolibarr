@@ -229,17 +229,16 @@ llxHeader('', $langs->trans("RepeatableInterventional"), 'ch-fichinter.html#s-fa
 
 $form = new Form($db);
 $companystatic = new Societe($db);
-if (! empty($conf->contrat->enabled))
+if (! empty($conf->contrat->enabled)) {
 	$contratstatic = new Contrat($db);
-if (! empty($conf->projet->enabled))
+}
+if (! empty($conf->projet->enabled)) {
 	$projectstatic = new Project($db);
+}
 
 $now = dol_now();
 $tmparray=dol_getdate($now);
-$today = dol_mktime(
-				23, 59, 59,
-				$tmparray['mon'], $tmparray['mday'], $tmparray['year']
-);   // Today is last second of current day
+$today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year']);   // Today is last second of current day
 
 
 
@@ -247,7 +246,7 @@ $today = dol_mktime(
  * Create mode
  */
 if ($action == 'create') {
-	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'commercial');
+	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'fichinter');
 
 	$object = new Fichinter($db);   // Source invoice
 	//$object = new Managementfichinter($db);   // Source invoice
@@ -335,7 +334,7 @@ if ($action == 'create') {
 		print '<tr><td class="titlefieldcreate">';
 		print $form->textwithpicto($langs->trans("Frequency"), $langs->transnoentitiesnoconv('toolTipFrequency'));
 		print "</td><td>";
-		print "<input type='text' name='frequency' value='".GETPOST('frequency', 'int')."' size='4' />&nbsp;";
+		print '<input type="text" name="frequency" value="'.GETPOST('frequency', 'int').'" size="4">&nbsp;';
 		print $form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), (GETPOST('unit_frequency')?GETPOST('unit_frequency'):'m'));
 		print "</td></tr>";
 
@@ -349,7 +348,7 @@ if ($action == 'create') {
 
 		// Number max of generation
 		print "<tr><td>".$langs->trans("MaxPeriodNumber")."</td><td>";
-		print '<input type="text" name="nb_gen_max" value="'.GETPOST('nb_gen_max').'" size="5" />';
+		print '<input type="text" name="nb_gen_max" value="'.GETPOST('nb_gen_max', 'int').'" size="5">';
 		print "</td></tr>";
 
 		print "</table>";
@@ -428,7 +427,7 @@ if ($action == 'create') {
 		print "</form>\n";
 	}
 	else {
-		dol_print_error('', "Error, no invoice ".$object->id);
+		dol_print_error('', "Error, no fichinter ".$object->id);
 	}
 } elseif ($action == 'selsocforcreatefrommodel') {
 	print load_fiche_titre($langs->trans("CreateRepeatableIntervention"), '', 'commercial');
@@ -590,7 +589,7 @@ if ($action == 'create') {
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 				print '<tr><td>';
-				print "<input type='text' name='frequency' value='".$object->frequency."' size='5' />&nbsp;";
+				print '<input type="text" name="frequency" value="'.$object->frequency.'" size="5">&nbsp;';
 				print $form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), ($object->unit_frequency?$object->unit_frequency:'m'));
 				print '</td>';
 				print '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
