@@ -53,8 +53,11 @@ $form = new Form($db);
 if ($type == Categorie::TYPE_ACCOUNT) {
     $title = $langs->trans('AccountsCategoriesArea');
     $typetext = $type;
+} elseif ($type == Categorie::TYPE_WAREHOUSE) {
+    $title = $langs->trans('StocksCategoriesArea');
+    $typetext = $type;
 } else {
-    $title = $langs->trans(ucfirst($type). 'CategoriesArea');
+    $title = $langs->trans(ucfirst($type). 'sCategoriesArea');
     $typetext = $type;
 }
 
