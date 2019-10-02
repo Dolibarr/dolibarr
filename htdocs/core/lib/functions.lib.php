@@ -3029,11 +3029,11 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
         		'bank', 'building', 'cash-register', 'close_title', 'cubes', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'note',
         		'object_list','object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
         		'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
-				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user',
+				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench',
 				'jabber','skype','twitter','facebook','linkedin',
 				'chevron-left','chevron-right','chevron-down','chevron-top',
 				'home', 'companies', 'products', 'commercial', 'invoicing', 'accountancy', 'project', 'hrm', 'members', 'ticket', 'generic',
-        		'title_setup', 'title_accountancy', 'title_bank', 'title_hrm'
+        		'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda'
 			)
 		)) {
 			$fa='fa';
@@ -3047,7 +3047,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on',
 		    	'bank'=>'bank', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil', 'filter'=>'filter', 'split'=>'code-fork',
 		    	'object_list'=>'list-alt','object_calendar'=>'calendar-alt', 'object_calendarweek'=>'calendar-week', 'object_calendarmonth'=>'calendar-alt', 'object_calendarday'=>'calendar-day', 'object_calendarperuser'=>'table',
-		    	'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'bank', 'title_hrm'=>'umbrella-beach'
+		    	'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'bank', 'title_hrm'=>'umbrella-beach', 'title_agenda'=>'calendar-alt'
 		    );
 
 		    if ($pictowithouttext == 'switch_off') {
