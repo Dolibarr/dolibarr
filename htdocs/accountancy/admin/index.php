@@ -160,12 +160,12 @@ if ($action == 'setenablesubsidiarylist') {
  * View
  */
 
-llxHeader();
+$title= $langs->trans('ConfigAccountingExpert');
+llxHeader('', $title);
 
-$form = new Form($db);
-
+$linkback='';
 //$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
-print load_fiche_titre($langs->trans('ConfigAccountingExpert'), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans('ConfigAccountingExpert'), $linkback, 'accountancy');
 
 print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';

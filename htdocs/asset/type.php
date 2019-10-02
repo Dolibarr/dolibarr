@@ -197,6 +197,7 @@ if ($action == 'confirm_delete' && $user->rights->asset->write)
  */
 
 $form=new Form($db);
+
 $helpurl='';
 llxHeader('', $langs->trans("AssetsTypeSetup"), $helpurl);
 
@@ -237,7 +238,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-		print_barre_liste($langs->trans("AssetsTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit);
+		print_barre_liste($langs->trans("AssetsTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'accountancy', 0, $newcardbutton, '', $limit);
 
 		$moreforfilter = '';
 
