@@ -442,7 +442,7 @@ class Form
 	 *	@see	textwithpicto() Use thisfunction if you can.
 	 *  TODO Move this as static as soon as everybody use textwithpicto or @Form::textwithtooltip
 	 */
-    public function textwithtooltip($text, $htmltext, $tooltipon = 1, $direction = 0, $img = '', $extracss = '', $notabs = 2, $incbefore = '', $noencodehtmltext = 0, $tooltiptrigger = '', $forcenowrap = 0)
+    public function textwithtooltip($text, $htmltext, $tooltipon = 1, $direction = 0, $img = '', $extracss = '', $notabs = 3, $incbefore = '', $noencodehtmltext = 0, $tooltiptrigger = '', $forcenowrap = 0)
 	{
 		global $conf;
 
@@ -458,8 +458,8 @@ class Form
 		$htmltext=str_replace("\n", "", $htmltext);
 
 		$extrastyle='';
-		if ($direction < 0) { $extracss=($extracss?$extracss.' ':'').'inline-block'; $extrastyle='padding: 0px; padding-left: 3px !important;'; }
-		if ($direction > 0) { $extracss=($extracss?$extracss.' ':'').'inline-block'; $extrastyle='padding: 0px; padding-right: 3px !important;'; }
+		if ($direction < 0) { $extracss=($extracss?$extracss.' ':'').($notabs != 3 ? 'inline-block' : ''); $extrastyle='padding: 0px; padding-left: 3px !important;'; }
+		if ($direction > 0) { $extracss=($extracss?$extracss.' ':'').($notabs != 3 ? 'inline-block' : ''); $extrastyle='padding: 0px; padding-right: 3px !important;'; }
 
 		$classfortooltip='classfortooltip';
 
@@ -476,7 +476,7 @@ class Form
 		}
 		if ($tooltipon == 2 || $tooltipon == 3)
 		{
-			$paramfortooltipimg=' class="'.$classfortooltip.' inline-block'.($extracss?' '.$extracss:'').'" style="padding: 0px;'.($extrastyle?' '.$extrastyle:'').'"';
+			$paramfortooltipimg=' class="'.$classfortooltip.($notabs != 3 ? ' inline-block' : '').($extracss?' '.$extracss:'').'" style="padding: 0px;'.($extrastyle?' '.$extrastyle:'').'"';
 			if ($tooltiptrigger == '') $paramfortooltipimg.=' title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext, 1)).'"'; // Attribut to put on img tag to store tooltip
 			else $paramfortooltipimg.=' dolid="'.$tooltiptrigger.'"';
 		}
@@ -527,7 +527,7 @@ class Form
 	 *  @param	int		$forcenowrap		Force no wrap between text and picto (works with notabs=2 only)
 	 * 	@return	string						HTML code of text, picto, tooltip
 	 */
-    public function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = '', $noencodehtmltext = 0, $notabs = 2, $tooltiptrigger = '', $forcenowrap = 0)
+    public function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = '', $noencodehtmltext = 0, $notabs = 3, $tooltiptrigger = '', $forcenowrap = 0)
 	{
 		global $conf, $langs;
 
