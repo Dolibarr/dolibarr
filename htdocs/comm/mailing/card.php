@@ -73,7 +73,6 @@ $object->substitutionarrayfortest = $substitutionarray;
 // List of sending methods
 $listofmethods=array();
 $listofmethods['mail']='PHP mail function';
-//$listofmethods['simplemail']='Simplemail class';
 $listofmethods['smtps']='SMTP/SMTPS socket library';
 
 
@@ -896,17 +895,23 @@ else
 			print '<table class="border centpercent tableforfield">';
 
 			// Description
-			print '<tr><td class="titlefield">'.$form->editfieldkey("MailTitle", 'titre', $object->titre, $object, $user->rights->mailing->creer && $object->statut < 3, 'string').'</td><td colspan="3">';
+			print '<tr><td class="titlefield">';
+			print $form->editfieldkey("MailTitle", 'titre', $object->titre, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			print '</td><td>';
 			print $form->editfieldval("MailTitle", 'titre', $object->titre, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
 			print '</td></tr>';
 
 			// From
-			print '<tr><td>'.$form->editfieldkey("MailFrom", 'email_from', $object->email_from, $object, $user->rights->mailing->creer && $object->statut < 3, 'string').'</td><td colspan="3">';
+			print '<tr><td>';
+			print $form->editfieldkey("MailFrom", 'email_from', $object->email_from, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			print '</td><td>';
 			print $form->editfieldval("MailFrom", 'email_from', $object->email_from, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
 			print '</td></tr>';
 
 			// Errors to
-			print '<tr><td>'.$form->editfieldkey("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->rights->mailing->creer && $object->statut < 3, 'string').'</td><td colspan="3">';
+			print '<tr><td>';
+			print $form->editfieldkey("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			print '</td><td>';
 			print $form->editfieldval("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
 			print '</td></tr>';
 
