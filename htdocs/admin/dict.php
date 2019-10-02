@@ -23,7 +23,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -565,7 +565,7 @@ if ($id == 11)
 			'project'           => $langs->trans('Project'),
 			'project_task'      => $langs->trans('Task'),
 			'agenda'			=> $langs->trans('Agenda'),
-			'resource'           => $langs->trans('Resource'),
+			'dolresource'       => $langs->trans('Resource'),
 			// old deprecated
 			'propal'            => $langs->trans('Proposal'),
 			'commande'          => $langs->trans('Order'),
