@@ -949,6 +949,7 @@ class Project extends CommonObject
     public function LibStatut($status, $mode = 0)
     {
         // phpcs:enable
+        global $langs;
 
         $statustrans = array(
             0 => 'status0',
@@ -961,7 +962,7 @@ class Project extends CommonObject
             $statusClass = $statustrans[$status];
         }
 
-        return dolGetStatus($this->statuts_long[$status], $this->statuts_short[$status], '', $statusClass, $mode);
+        return dolGetStatus($langs->trans($this->statuts_long[$status]), $langs->trans($this->statuts_short[$status]), '', $statusClass, $mode);
 
     }
 
