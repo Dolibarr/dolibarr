@@ -3036,8 +3036,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
         		'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda'
 			)
 		)) {
-			$fa='fa';
-		    if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fa='fas';
+			$fa='fas';
 		    $fakey = $pictowithouttext;
 		    $facolor = ''; $fasize = '';
 
@@ -3061,21 +3060,13 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 			}
 			elseif ($pictowithouttext == 'off') {
-				$fakey = 'fa-square-o';
-				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5))
-				{
-				    $fakey = 'fa-square';
-				    $fa='far';
-				}
+			    $fakey = 'fa-square';
+			    $fa='far';
 				$fasize = '1.3em';
 			}
 			elseif ($pictowithouttext == 'on') {
-				$fakey = 'fa-check-square-o';
-				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5))
-				{
-				    $fakey = 'fa-check-square';
-				    $fa='far';
-				}
+			    $fakey = 'fa-check-square';
+			    $fa='far';
 				$fasize = '1.3em';
 			}
 			elseif ($pictowithouttext == 'bank') {
@@ -3088,12 +3079,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			}
 			elseif ($pictowithouttext == 'edit') {
 				$facolor = '#444';
-				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
-				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fakey = 'fa-pencil-alt';
+				$fakey = 'fa-pencil-alt';
 			}
 			elseif ($pictowithouttext == 'grip_title' || $pictowithouttext == 'grip') {
-				$fakey = 'fa-arrows';
-				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fakey = 'fa-arrows-alt';
+				$fakey = 'fa-arrows-alt';
 			}
 			elseif ($pictowithouttext == 'listlight') {
 				$fakey = 'fa-download';
@@ -3110,11 +3099,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$facolor = '#444';
 			}
 			elseif ($pictowithouttext == 'note') {
-				$fakey = 'fa-sticky-note-o';
-				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5))
-				{
-				    $fakey = 'fa-sticky-note'; $fa = 'far';
-				}
+			    $fakey = 'fa-sticky-note';
+			    $fa = 'far';
 				$facolor = '#999';
 				$marginleftonlyshort=1;
 			}
@@ -3129,9 +3115,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$marginleftonlyshort = 1;
 			}
 			elseif ($pictowithouttext == 'sign-out')     {
-                $fakey = 'fa-sign-out';
+				$fakey = 'fa-sign-out-alt';
 			    $marginleftonlyshort=0;
-			    if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fakey = 'fa-sign-out-alt';
 			}
 			elseif ($pictowithouttext == 'unlink')     {
 				$fakey = 'fa-chain-broken';
@@ -3150,7 +3135,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			}
 			elseif (in_array($pictowithouttext, array('skype', 'twitter', 'facebook', 'linkedin'))) {
 			    $fakey = 'fa-'.$pictowithouttext;
-			    if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fa = 'fab';
+			    $fa = 'fab';
 			}
 			// Img for type of views
 			elseif (in_array($pictowithouttext, array('object_list', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser'))) {
