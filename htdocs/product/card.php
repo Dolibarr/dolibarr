@@ -1,22 +1,22 @@
 <?php
-/* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005		Eric Seigne		<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2015	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2006		Andre Cianfarani	<acianfa@free.fr>
- * Copyright (C) 2006		Auguria SARL		<info@auguria.org>
- * Copyright (C) 2010-2015	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2013-2016	Marcos García		<marcosgdf@gmail.com>
- * Copyright (C) 2012-2013	Cédric Salvador		<csalvador@gpcsolutions.fr>
- * Copyright (C) 2011-2017	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2014		Cédric Gross		<c.gross@kreiz-it.fr>
- * Copyright (C) 2014-2015	Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2015		Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2015		Raphaël Doursenaud	<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2016		Meziane Sof		<virtualsof@yahoo.fr>
- * Copyright (C) 2017		Josep Lluís Amador	<joseplluis@lliuretic.cat>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2001-2007	Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016	Laurent Destailleur	 <eldy@users.sourceforge.net>
+ * Copyright (C) 2005		Eric Seigne		     <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2015	Regis Houssin		 <regis.houssin@capnetworks.com>
+ * Copyright (C) 2006		Andre Cianfarani	 <acianfa@free.fr>
+ * Copyright (C) 2006		Auguria SARL		 <info@auguria.org>
+ * Copyright (C) 2010-2015	Juanjo Menent		 <jmenent@2byte.es>
+ * Copyright (C) 2013-2016	Marcos García		 <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2013	Cédric Salvador		 <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2011-2017	Alexandre Spangaro	 <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2014		Cédric Gross		 <c.gross@kreiz-it.fr>
+ * Copyright (C) 2014-2015	Ferran Marcet		 <fmarcet@2byte.es>
+ * Copyright (C) 2015		Jean-François Ferry	 <jfefe@aternatik.fr>
+ * Copyright (C) 2015		Raphaël Doursenaud	 <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2016		Charlie Benke		 <charlie@patas-monkey.com>
+ * Copyright (C) 2016		Meziane Sof		     <virtualsof@yahoo.fr>
+ * Copyright (C) 2017		Josep Lluís Amador	 <joseplluis@lliuretic.cat>
+ * Copyright (C) 2019       Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1605,7 +1605,9 @@ else
 			{
 				// TODO change for compatibility with edit in place
 				$typeformat='select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
-				print '<tr><td class="titlefield">'.$form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat).'</td><td colspan="2">';
+				print '<tr><td class="titlefield">';
+				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
+				print '</td><td colspan="2">';
 				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat);
 				print '</td></tr>';
 			}

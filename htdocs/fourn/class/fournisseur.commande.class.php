@@ -3511,6 +3511,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
 
         $error=0;
 
+        $this->db->begin();
+
         // Mise a jour ligne en base
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
         $sql.= "  description='".$this->db->escape($this->desc)."'";
