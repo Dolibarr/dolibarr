@@ -67,10 +67,11 @@
     <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassBeforeLastUsed">
 		<severity>0</severity>
     </rule>
-
+    <!--
     <rule ref="Generic.CodeAnalysis.UselessOverridingMethod">
    		<severity>0</severity>
     </rule>
+    -->
 
     <!--
     <rule ref="Generic.Commenting.Todo" />
