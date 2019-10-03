@@ -935,6 +935,11 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		{
 			$line1.=($line1?" ":"").$fromcompany->town;
 		}
+		// Country
+		if ($fromcompany->country)
+		{
+			$line1.=($line1?", ":"").$fromcompany->country;
+		}
 		// Phone
 		if ($fromcompany->phone)
 		{
