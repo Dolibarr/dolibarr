@@ -1492,7 +1492,7 @@ if ($action == 'create')
 	if (empty($include_users)) print img_warning().' '.$langs->trans("NobodyHasPermissionToValidateExpenseReport");
 	else
 	{
-    	$defaultselectuser=!empty($user->fk_user_expense_validator) ? $user->fk_user_expense_validator : $user->fk_user;	// Will work only if supervisor has permission to approve so is inside include_users
+    	$defaultselectuser=(empty($user->fk_user_expense_validator) ? $user->fk_user : $user->fk_user_expense_validator);	// Will work only if supervisor has permission to approve so is inside include_users
     	if (! empty($conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR)) $defaultselectuser=$conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR;   // Can force default approver
     	if (GETPOST('fk_user_validator', 'int') > 0) $defaultselectuser=GETPOST('fk_user_validator', 'int');
     	$s=$form->select_dolusers($defaultselectuser, "fk_user_validator", 1, "", ((empty($defaultselectuser) || empty($conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR_UNCHANGEABLE))?0:1), $include_users);
