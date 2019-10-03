@@ -782,7 +782,7 @@ class Translate
 			{
 				$this->load("languages");
 				
-				if (! empty($conf->global->MAIN_LANGUAGES_ALLOWED) && ! in_array($dir, explode(',' , $conf->global->MAIN_LANGUAGES_ALLOWED)) ) continue;
+				if (! empty($conf->global->MAIN_LANGUAGES_ALLOWED) && ! in_array($dir, explode(',', $conf->global->MAIN_LANGUAGES_ALLOWED)) ) continue;
 
 				if ($usecode == 2)
 				{
