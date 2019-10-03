@@ -2309,7 +2309,7 @@ class Adherent extends CommonObject
 		$sql = "SELECT a.rowid, a.datefin, a.statut";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		$sql.= ", ".MAIN_DB_PREFIX."adherent_type as t";
-		$sql.= " WHERE d.fk_adherent_type = t.rowid";
+		$sql.= " WHERE a.fk_adherent_type = t.rowid";
 		$sql.= " AND a.statut = 1";
 		$sql.= " AND a.entity IN (".getEntity('adherent').")";
 		$sql.= " AND ((a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."') AND t.subscription = 1)";
