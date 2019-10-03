@@ -1334,7 +1334,7 @@ class FormFile
 
 								$fulllink=$urlwithroot.'/document.php'.($paramlink?'?'.$paramlink:'');
 
-								print img_picto($langs->trans("FileSharedViaALink"), 'object_globe.png').' ';
+								print img_picto($langs->trans("FileSharedViaALink"), 'globe').' ';
 								print '<input type="text" class="quatrevingtpercent minwidth200imp" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
 							}
 							else
@@ -1851,7 +1851,7 @@ class FormFile
 			else
 			{
 				print '<td>';
-				print img_picto('', 'object_globe').' ';
+				print img_picto('', 'globe').' ';
 				print '<a data-ajax="false" href="' . $link->url . '" target="_blank">';
 				print dol_escape_htmltag($link->label);
 				print '</a>';

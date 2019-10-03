@@ -132,7 +132,7 @@ function showOnlinePaymentUrl($type, $ref)
 
 	$servicename='Online';
 
-	$out = img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'<br>';
+	$out = img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'<br>';
 	$url = getOnlinePaymentUrl(0, $type, $ref);
 	$out.= '<input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$url.'">';
 	$out.= ajax_autoselect("onlinepaymenturl", 0);
