@@ -8109,6 +8109,11 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 
     $return = '';
 
+    $dolGetBadgeParams = array();
+    if(!empty($params['badgeParams'])){
+        $dolGetBadgeParams = $params['badgeParams'];
+    }
+
     // image's filename are still in French
     $statusImg=array(
         'status0' => 'statut0'
@@ -8164,13 +8169,13 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         $statusLabelShort = !empty($statusLabelShort)?$statusLabelShort:$statusLabel;
 
         if ($displayMode == 3) {
-            $return = dolGetBadge($statusLabel, '', $statusType, 'dot', $url);
+            $return = dolGetBadge($statusLabel, '', $statusType, 'dot', $url, $dolGetBadgeParams);
         }
         elseif ($displayMode === 5) {
-            $return = dolGetBadge($statusLabelShort, $html, $statusType, '', $url);
+            $return = dolGetBadge($statusLabelShort, $html, $statusType, '', $url, $dolGetBadgeParams);
         }
         else {
-            $return = dolGetBadge($statusLabel, $html, $statusType, '', $url);
+            $return = dolGetBadge($statusLabel, $html, $statusType, '', $url, $dolGetBadgeParams);
         }
     }
 
