@@ -294,8 +294,8 @@ if ($search_town)     $sql.= natural_search("d.town", $search_town);
 if ($search_zip)      $sql.= natural_search("d.zip", $search_zip);
 if ($search_state)    $sql.= natural_search("state.nom", $search_state);
 if ($search_country) $sql .= " AND d.country IN (".$search_country.')';
-if ($filter == 'uptodate') $sql.=" AND datefin >= '".$db->idate($now)."'";
-if ($filter == 'outofdate') $sql.=" AND (datefin IS NULL OR datefin < '".$db->idate($now)."')";
+if ($filter == 'uptodate') $sql.=" AND (datefin >= '".$db->idate($now)."' OR t.subscription = 0)";
+if ($filter == 'outofdate') $sql.=" AND ((datefin IS NULL OR datefin < '".$db->idate($now)."') AND t.subscription = 1)";
 
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';

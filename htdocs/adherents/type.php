@@ -524,14 +524,14 @@ if ($rowid > 0)
 		{
 			$sql.= natural_search("d.email", $search_email);
 		}
-		if ($filter == 'uptodate')
-		{
-		    $sql.=" AND datefin >= '".$db->idate($now)."'";
-		}
-		if ($filter == 'outofdate')
-		{
-		    $sql.=" AND datefin < '".$db->idate($now)."'";
-		}
+                if ($filter == 'uptodate')
+                {
+                    $sql.=" AND (datefin >= '".$db->idate($now)."') OR t.subscription = 0)";
+                }
+                if ($filter == 'outofdate')
+                {
+                    $sql.=" AND (datefin < '".$db->idate($now)."' AND t.subscription = 1)";
+                }
 
 		$sql.= " ".$db->order($sortfield, $sortorder);
 
