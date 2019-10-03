@@ -22,7 +22,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -1571,7 +1571,7 @@ class ExtraFields
 		 elseif ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
 		 */
 		 if (! empty($help)) {
-			$out .= $form->textwithpicto("", $help);
+			$out .= $form->textwithpicto('', $help, 1, 'help', '', 0, 3);
 		 }
 		return $out;
 	}

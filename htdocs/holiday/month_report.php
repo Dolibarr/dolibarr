@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -48,17 +48,15 @@ $result = restrictedArea($user, 'holiday', $id, '');
  * View
  */
 
+$html = new Form($db);
+$formother = new FormOther($db);
 $holidaystatic = new Holiday($db);
 
 $listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->trans("Afternoon"));
 
-
 llxHeader('', $langs->trans('CPTitreMenu'));
 
-print load_fiche_titre($langs->trans('MenuReportMonth'));
-
-$html = new Form($db);
-$formother = new FormOther($db);
+print load_fiche_titre($langs->trans('MenuReportMonth'), '', 'title_hrm');
 
 
 // Selection filter

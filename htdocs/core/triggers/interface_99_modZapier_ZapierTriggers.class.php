@@ -58,7 +58,7 @@ class InterfaceZapierTriggers extends DolibarrTriggers
         $this->description = "Zapier triggers.";
         // 'development', 'experimental', 'dolibarr' or version
         $this->version = 'development';
-        $this->picto = 'zapier@zapier';
+        $this->picto = 'zapier';
     }
 
     /**
@@ -102,6 +102,7 @@ class InterfaceZapierTriggers extends DolibarrTriggers
             return 0;
         }
         $logtriggeraction = false;
+        $sql = '';
         if ($action!='') {
             $actions = explode('_', $action);
             $sql = 'SELECT rowid, url FROM '.MAIN_DB_PREFIX.'zapier_hook';
@@ -460,7 +461,7 @@ function cleanObjectDatas($toclean)
     if (isset($toclean->lines) && count($toclean->lines) > 0)  {
         $nboflines = count($toclean->lines);
         for ($i=0; $i < $nboflines; $i++) {
-            $this->cleanObjectDatas($toclean->lines[$i]);
+            cleanObjectDatas($toclean->lines[$i]);
         }
     }
 

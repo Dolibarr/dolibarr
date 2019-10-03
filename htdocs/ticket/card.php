@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -97,7 +97,7 @@ $url_page_current = DOL_URL_ROOT.'/ticket/card.php';
 //if ($user->societe_id > 0) $socid = $user->societe_id;
 $result = restrictedArea($user, 'ticket', $object->id);
 
-$triggermodname = 'TICKETSUP_MODIFY';
+$triggermodname = 'TICKET_MODIFY';
 $permissiontoadd = $user->rights->ticket->write;
 
 $actionobject = new ActionsTicket($db);
@@ -621,7 +621,7 @@ if ($action == 'create' || $action == 'presend')
 {
     $formticket = new FormTicket($db);
 
-    print load_fiche_titre($langs->trans('NewTicket'), '', 'title_ticket');
+    print load_fiche_titre($langs->trans('NewTicket'), '', 'ticket');
 
     $formticket->withfromsocid = $socid ? $socid : $user->societe_id;
     $formticket->withfromcontactid = $contactid ? $contactid : '';
