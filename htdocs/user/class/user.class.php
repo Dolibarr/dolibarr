@@ -1371,7 +1371,7 @@ class User extends CommonObject
 		$this->db->begin();
 
 		// Create and set $this->id
-		$result=$this->create($user, 1);
+		$result=$this->create($user);
 		if ($result > 0)
 		{
 			$newpass=$this->setPassword($user, $this->pass);
