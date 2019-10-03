@@ -1298,7 +1298,7 @@ class User extends CommonObject
 		$this->db->begin();
 
 		// Cree et positionne $this->id
-		$result=$this->create($user);
+		$result=$this->create($user, 1);
 		if ($result > 0)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
@@ -1371,7 +1371,7 @@ class User extends CommonObject
 		$this->db->begin();
 
 		// Create and set $this->id
-		$result=$this->create($user);
+		$result=$this->create($user, 1);
 		if ($result > 0)
 		{
 			$newpass=$this->setPassword($user, $this->pass);
