@@ -647,16 +647,18 @@ if ($resql){
 	while ($obj = $db->fetch_object($resql)){
         $paycode = $obj->code;
         if ($paycode == 'LIQ') $paycode = 'CASH';
-        if ($paycode == 'CB')  $paycode = 'CARD';
         if ($paycode == 'CHQ') $paycode = 'CHEQUE';
 
-		$accountname="CASHDESK_ID_BANKACCOUNT_".$paycode.$_SESSION["takeposterminal"];
-		if (! empty($conf->global->$accountname) && $conf->global->$accountname > 0) array_push($paiementsModes, $obj);
+		$constantforkey="CASHDESK_ID_BANKACCOUNT_".$paycode.$_SESSION["takeposterminal"];
+		//var_dump($constantforkey.' '.$conf->global->$constantforkey);
+		if (! empty($conf->global->$constantforkey) && $conf->global->$constantforkey > 0) array_push($paiementsModes, $obj);
 	}
 }
+
 if (empty($paiementsModes)) {
 	$langs->load('errors');
 	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("TakePOS")), null, 'errors');
+	setEventMessages($langs->trans("ProblemIsInSetupOfTerminal").' '.$_SESSION["takeposterminal"], null, 'errors');
 }
 if (count($maincategories)==0) {
 	setEventMessages($langs->trans("TakeposNeedsCategories"), null, 'errors');
