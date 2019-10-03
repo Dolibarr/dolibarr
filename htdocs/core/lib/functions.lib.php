@@ -8164,13 +8164,13 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         $statusLabelShort = !empty($statusLabelShort)?$statusLabelShort:$statusLabel;
 
         if ($displayMode == 3) {
-            $return = dolGetBadge($statusLabel, '', $statusType, 'dot');
+            $return = dolGetBadge($statusLabel, '', $statusType, 'dot', $url);
         }
         elseif ($displayMode === 5) {
-            $return = dolGetBadge($statusLabelShort, $html, $statusType);
+            $return = dolGetBadge($statusLabelShort, $html, $statusType, '', $url);
         }
         else {
-            $return = dolGetBadge($statusLabel, $html, $statusType);
+            $return = dolGetBadge($statusLabel, $html, $statusType, '', $url);
         }
     }
 
