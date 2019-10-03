@@ -506,7 +506,7 @@ else
 
             $title = $addcontact = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
             $linkback='';
-            print load_fiche_titre($title, $linkback, 'building');
+            print load_fiche_titre($title, $linkback, 'address');
 
             // Show errors
             dol_htmloutput_errors(is_numeric($error)?'':$error, $errors);
