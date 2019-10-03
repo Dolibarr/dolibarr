@@ -963,7 +963,6 @@ class Project extends CommonObject
         }
 
         return dolGetStatus($langs->trans($this->statuts_long[$status]), $langs->trans($this->statuts_short[$status]), '', $statusClass, $mode);
-
     }
 
     /**
