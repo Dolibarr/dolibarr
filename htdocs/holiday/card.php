@@ -1092,7 +1092,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
         if (empty($include_users)) print img_warning().' '.$langs->trans("NobodyHasPermissionToValidateHolidays");
         else
         {
-        	$defaultselectuser=!empty($user->fk_user_holiday_validator) ? $user->fk_user_holiday_validator : $user->fk_user;	// Will work only if supervisor has permission to approve so is inside include_users
+        	$defaultselectuser=(empty($user->fk_user_holiday_validator) ? $user->fk_user : $user->fk_user_holiday_validator);	// Will work only if supervisor has permission to approve so is inside include_users
         	if (! empty($conf->global->HOLIDAY_DEFAULT_VALIDATOR)) $defaultselectuser=$conf->global->HOLIDAY_DEFAULT_VALIDATOR;   // Can force default approver
         	if (GETPOST('valideur', 'int') > 0) $defaultselectuser=GETPOST('valideur', 'int');
         	$s=$form->select_dolusers($defaultselectuser, "valideur", 1, "", 0, $include_users);
