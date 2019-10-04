@@ -1336,7 +1336,7 @@ class ActionComm extends CommonObject
 			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 		}
 
-		$linkstart = '<a href="'.$url.'"';
+		$linkstart = '<a href="'.$url.'" title="'.$label.'"';
 		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
