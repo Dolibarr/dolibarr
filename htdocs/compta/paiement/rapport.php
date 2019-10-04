@@ -88,7 +88,7 @@ $formother=new FormOther($db);
 llxHeader();
 
 $titre=($year?$langs->trans("PaymentsReportsForYear", $year):$langs->trans("PaymentsReports"));
-print load_fiche_titre($titre, '', 'title_accountancy.png');
+print load_fiche_titre($titre, '', 'invoicing');
 
 // Formulaire de generation
 print '<form method="post" action="rapport.php?year='.$year.'">';
@@ -152,7 +152,7 @@ if ($year)
             {
                 if (preg_match('/^payment/i', $file))
                 {
-                    
+
                     $tfile = $dir . '/'.$year.'/'.$file;
                     $relativepath = $year.'/'.$file;
                     print '<tr class="oddeven">'.'<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';

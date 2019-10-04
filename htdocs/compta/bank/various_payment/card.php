@@ -263,7 +263,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	print load_fiche_titre($langs->trans("NewVariousPayment"), '', 'title_accountancy.png');
+	print load_fiche_titre($langs->trans("NewVariousPayment"), '', 'invoicing');
 
 	dol_fiche_head('', '');
 

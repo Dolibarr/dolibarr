@@ -50,7 +50,7 @@ if (empty($conf->dol_no_mouse_hover))
 {
 	print 'jQuery(".classfortooltip").tooltip({
 				show: { collision: "flipfit", effect:\'toggle\', delay:50 },
-				hide: { delay: 50 },
+				hide: { delay: 250 },
 				tooltipClass: "mytooltip",
 				content: function () {
                     console.log("Return title for popup");

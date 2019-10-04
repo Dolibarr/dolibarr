@@ -956,7 +956,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     {
         $queryName = 'search_'.substr($key, 2);
     	if (GETPOST($queryName, 'alpha')){
-            $search[$key]=GETPOST($queryName, 'alpha');
+            $search[substr($key, 2)]=GETPOST($queryName, 'alpha');
         }
     }
     $search_array_options=$extrafields->getOptionalsFromPost($contactstatic->table_element, '', 'search_');
@@ -1057,11 +1057,10 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     		print '<td class="liste_titre'.($align?' '.$align:'').'">';
     		if (in_array($key, array('statut'))){
                 print $form->selectarray('search_status', array('-1'=>'','0'=>$contactstatic->LibStatut(0, 1),'1'=>$contactstatic->LibStatut(1, 1)), $search_status);
-            } elseif (in_array($key, array('role'))) {
+            }elseif (in_array($key, array('role'))) {
 			    print $formcompany->showRoles("search_roles", $contactstatic, 'edit', $search_roles);
-		    } else{
-    		    $fieldName = substr($key, 2);
-                print sprintf('<input type="text" class="flat maxwidth75" name="search_%s" value="%s">', $fieldName, dol_escape_htmltag($search[$key]));
+		    } else {
+                print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
             }
     		print '</td>';
     	}

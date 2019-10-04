@@ -621,7 +621,7 @@ if ($action == 'create' || $action == 'presend')
 {
     $formticket = new FormTicket($db);
 
-    print load_fiche_titre($langs->trans('NewTicket'), '', 'title_ticket');
+    print load_fiche_titre($langs->trans('NewTicket'), '', 'ticket');
 
     $formticket->withfromsocid = $socid ? $socid : $user->societe_id;
     $formticket->withfromcontactid = $contactid ? $contactid : '';
