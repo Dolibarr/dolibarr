@@ -938,7 +938,7 @@ else
         if ($type==1) $title=$langs->trans("NewService");
         else $title=$langs->trans("NewProduct");
         $linkback="";
-        print load_fiche_titre($title, $linkback, 'title_products.png');
+        print load_fiche_titre($title, $linkback, 'products');
 
         dol_fiche_head('');
 

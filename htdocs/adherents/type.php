@@ -248,7 +248,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-		print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit);
+		print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit);
 
 		$moreforfilter = '';
 
@@ -322,7 +322,7 @@ if ($action == 'create')
 {
 	$object = new AdherentType($db);
 
-	print load_fiche_titre($langs->trans("NewMemberType"));
+	print load_fiche_titre($langs->trans("NewMemberType"), '', 'members');
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -524,14 +524,14 @@ if ($rowid > 0)
 		{
 			$sql.= natural_search("d.email", $search_email);
 		}
-		if ($filter == 'uptodate')
-		{
-		    $sql.=" AND datefin >= '".$db->idate($now)."'";
-		}
-		if ($filter == 'outofdate')
-		{
-		    $sql.=" AND datefin < '".$db->idate($now)."'";
-		}
+                if ($filter == 'uptodate')
+                {
+                    $sql.=" AND (datefin >= '".$db->idate($now)."') OR t.subscription = 0)";
+                }
+                if ($filter == 'outofdate')
+                {
+                    $sql.=" AND (datefin < '".$db->idate($now)."' AND t.subscription = 1)";
+                }
 
 		$sql.= " ".$db->order($sortfield, $sortorder);
 

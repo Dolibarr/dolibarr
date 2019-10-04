@@ -188,11 +188,11 @@ if ($resql)
 	if ($year)
 	{
 	    $center=($year?"<a href='list.php?year=".($year-1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='list.php?year=".($year+1)."'>".img_next()."</a>":"");
-	    print_barre_liste($langs->trans("SocialContributions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'title_accountancy.png', 0, $newcardbutton, '', $limit);
+	    print_barre_liste($langs->trans("SocialContributions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'invoicing', 0, $newcardbutton, '', $limit);
 	}
 	else
 	{
-		print_barre_liste($langs->trans("SocialContributions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, $newcardbutton, '', $limit);
+		print_barre_liste($langs->trans("SocialContributions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'invoicing', 0, $newcardbutton, '', $limit);
 	}
 
 	if (empty($mysoc->country_id) && empty($mysoc->country_code))
