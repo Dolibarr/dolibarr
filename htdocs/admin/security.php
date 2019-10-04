@@ -171,7 +171,7 @@ elseif ($action == 'disable_MAIN_SECURITY_DISABLEFORGETPASSLINK')
 if ($action == 'maj_pattern')
 {
     $pattern = GETPOST("pattern");
-    $explodePattern = explode(';',$pattern);
+    $explodePattern = explode(';', $pattern);
 
     $patternInError = false;
     if($explodePattern[0] < 1 || $explodePattern[4] < 1){
