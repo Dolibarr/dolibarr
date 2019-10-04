@@ -540,6 +540,9 @@ function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $opti
 				$out=dol_string_nohtmltag($out);
 			}
 			break;
+		case 'restricthtml':		// Recommended for most html textarea
+			$out=dol_string_onlythesehtmltags($out, 0);
+			break;
 		case 'custom':
 			if (empty($filter)) return 'BadFourthParameterForGETPOST';
 			$out=filter_var($out, $filter, $options);
