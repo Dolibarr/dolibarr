@@ -4617,7 +4617,7 @@ elseif ($id > 0 || ! empty($ref))
 			// Editer une facture deja validee, sans paiement effectue et pas exporte en compta
 			if ($object->statut == Facture::STATUS_VALIDATED)
 			{
-				// On verifie si les lignes de factures ont ete exportees en compta et/ou ventilees
+				// We check if lines of invoice are not already transfered into accountancy
 				$ventilExportCompta = $object->getVentilExportCompta();
 
 				if ($ventilExportCompta == 0)
@@ -4652,7 +4652,7 @@ elseif ($id > 0 || ! empty($ref))
 			if ((($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT)
 				|| ($object->type == Facture::TYPE_CREDIT_NOTE && empty($discount->id))
 				|| ($object->type == Facture::TYPE_DEPOSIT && empty($discount->id)))
-				&& ($object->statut == 2 || $object->statut == 3 || ($object->statut == 1 && $object->paye == 1))   // Condition ($object->statut == 1 && $object->paye == 1) should not happened but can be found due to corrupted data
+				&& ($object->statut == Facture::STATUS_CLOSED || $object->statut == Facture::STATUS_ABANDONED || ($object->statut == 1 && $object->paye == 1))   // Condition ($object->statut == 1 && $object->paye == 1) should not happened but can be found due to corrupted data
 				&& ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || $usercanreopen))				// A paid invoice (partially or completely)
 			{
 			    if ($object->close_code != 'replaced' || (! $objectidnext)) 				// Not replaced by another invoice or replaced but the replacement invoice has been deleted
@@ -4834,7 +4834,7 @@ elseif ($id > 0 || ! empty($ref))
 			    }
 			}
 
-			// remove situation from cycle
+			// Remove situation from cycle
 			if ($object->statut > Facture::STATUS_DRAFT
 			    && $object->type == Facture::TYPE_SITUATION
 			    && $usercancreate
