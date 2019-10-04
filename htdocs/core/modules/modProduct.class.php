@@ -533,16 +533,27 @@ class modProduct extends DolibarrModules
                     'p.fk_unit' => 'use a unit of measure from the dictionary. G/KG/M2/M3 etc....matches field "code" in table "' . MAIN_DB_PREFIX . 'c_units"'
                 )
             );
-
-			$this->import_convertvalue_array[$r] = array_merge($this->import_convertvalue_array[$r], array(
-				'p.fk_unit' => array(
-					'rule' => 'fetchidfromcodeorlabel',
-					'classfile' => '/core/class/cunits.class.php',
-					'class' => 'CUnits',
-					'method' => 'fetch',
-					'dict' => 'DictionaryUnits'
-				)
-			));
+            if(is_array($this->import_convertvalue_array[$r])) {
+				$this->import_convertvalue_array[$r] = array_merge($this->import_convertvalue_array[$r], array(
+					'p.fk_unit' => array(
+						'rule' => 'fetchidfromcodeorlabel',
+						'classfile' => '/core/class/cunits.class.php',
+						'class' => 'CUnits',
+						'method' => 'fetch',
+						'dict' => 'DictionaryUnits'
+					)
+				));
+			} else {
+				$this->import_convertvalue_array[$r] = array(
+					'p.fk_unit' => array(
+						'rule' => 'fetchidfromcodeorlabel',
+						'classfile' => '/core/class/cunits.class.php',
+						'class' => 'CUnits',
+						'method' => 'fetch',
+						'dict' => 'DictionaryUnits'
+					)
+				);
+			}
 		}
 		$this->import_examplevalues_array[$r]=array_merge($import_sample, $import_extrafield_sample);
         $this->import_updatekeys_array[$r] = array('p.ref'=>'Ref');
