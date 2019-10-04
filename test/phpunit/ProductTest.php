@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -45,7 +45,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class ProductTest extends PHPUnit_Framework_TestCase
+class ProductTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -166,6 +166,31 @@ class ProductTest extends PHPUnit_Framework_TestCase
         $this->assertLessThan($result, 0);
 
         return $localobject;
+    }
+
+    /**
+     * testProductGetArboEachProd
+     *
+     * @return  void
+     */
+    public function testProductGetArboEachProd()
+    {
+    	global $conf,$user,$langs,$db;
+    	$conf=$this->savconf;
+    	$user=$this->savuser;
+    	$langs=$this->savlangs;
+    	$db=$this->savdb;
+
+		/*
+    	$localobject=new Product($db);
+    	$localobject->fetch(208);
+    	$localobject->get_sousproduits_arbo();
+    	$localobject->get_arbo_each_prod();
+
+    	var_dump($localobject->res); print (json_encode($localobject->res)); exit;
+		*/
+
+    	return;
     }
 
     /**

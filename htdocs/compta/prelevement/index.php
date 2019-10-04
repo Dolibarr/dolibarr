@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -58,7 +58,7 @@ llxHeader('', $langs->trans("CustomersStandingOrdersArea"));
 if (prelevement_check_config() < 0)
 {
 	$langs->load("errors");
-	setEventMessages($langs->trans("ErrorModuleSetupNotComplete"), null, 'errors');
+	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Withdraw")), null, 'errors');
 }
 
 print load_fiche_titre($langs->trans("CustomersStandingOrdersArea"));
@@ -70,6 +70,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 $thirdpartystatic=new Societe($db);
 $invoicestatic=new Facture($db);
 $bprev = new BonPrelevement($db);
+
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
@@ -100,6 +101,11 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX
 $sql.= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 $sql.= " WHERE s.rowid = f.fk_soc";
 $sql.= " AND f.entity IN (".getEntity('invoice').")";
+$sql.= " AND f.total_ttc > 0";
+if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS))
+{
+	$sql.= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
+}
 $sql.= " AND pfd.traite = 0 AND pfd.fk_facture = f.rowid";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;

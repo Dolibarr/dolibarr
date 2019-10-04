@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Configurar módulo de Stripe
-StripeDesc=Módulo para oferecer uma página de pagamento on-line que aceita pagamentos com cartão de crédito / débito via <a href="http://www.stripe.com" target="_blank"> Listra </a>. Isso pode ser usado para permitir que seus clientes façam pagamentos gratuitos ou para um pagamento em um determinado objeto Dolibarr (fatura, ordem, ...)
+StripeDesc=Offer customers a Stripe online payment page for payments with credit/cebit cards via <a href="http://www.stripe.com" target="_blank">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
 StripeOrCBDoPayment=Pagar com cartão de crédito ou Stripe
 FollowingUrlAreAvailableToMakePayments=As seguintes URL estão disponiveis para permitir a um cliente efectuar um pagamento
 PaymentForm=Forma de pagamento
@@ -9,14 +9,14 @@ ThisScreenAllowsYouToPay=Esta tela permite que você faça o seu pagamento onlin
 ThisIsInformationOnPayment=Aqui estão as informações de pagamento para fazer
 ToComplete=A completar
 YourEMail=E-Mail de confirmação de pagamento
-STRIPE_PAYONLINE_SENDEMAIL=Correio eletrónico para avisar depois de um pagamento (bem sucedido ou não)
+STRIPE_PAYONLINE_SENDEMAIL=Email notification after a payment attempt (success or fail)
 Creditor=Beneficiario
 PaymentCode=Código de pagamento
-StripeDoPayment=Pagar com cartão de crédito ou débito (Stripe)
+StripeDoPayment=Pay with Stripe
 YouWillBeRedirectedOnStripe=Você será redirecionado para uma página segura do Stripe de forma a inserir as informações do seu cartão de crédito
 Continue=Continuar
 ToOfferALinkForOnlinePayment=URL para o pagamento %s
-ToOfferALinkForOnlinePaymentOnOrder=URL que fornece pagamento on-line interface% s com base no valor de um pedido de venda
+ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
 ToOfferALinkForOnlinePaymentOnInvoice=URL que fornece pagamento on-line interface% s com base no valor de um projeto de lei
 ToOfferALinkForOnlinePaymentOnContractLine=URL que fornece linha de pagamento  interface% com base na quantidade de uma linha de contrato
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL que fornece pagamento on-line %s interface baseada numa quantidade livre
@@ -40,7 +40,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Chave ao vivo do Webhook
 ONLINE_PAYMENT_WAREHOUSE=Estoque a ser usado para redução de estoque quando o pagamento on-line é feito <br> (TODO Quando a opção para diminuir o estoque é feita em uma ação na fatura e o pagamento on-line gera a fatura em si?)
 StripeLiveEnabled=Stripe live enabled (caso contrário, modo de teste / sandbox)
 StripeImportPayment=Importar pagamentos de tarja
-ExampleOfTestCreditCard=Exemplo de cartão de crédito para teste: %s (válido), %s (erro CVC), %s (expirado), %s (falha de carga)
+ExampleOfTestCreditCard=Example of credit card for test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
 StripeGateways=Gateways listra
 OAUTH_STRIPE_TEST_ID=ID do cliente do Stripe Connect (ca _...)
 OAUTH_STRIPE_LIVE_ID=ID do cliente do Stripe Connect (ca _...)
@@ -61,4 +61,9 @@ ConfirmDeleteCard=Tem certeza de que deseja excluir este cartão de crédito ou 
 CreateCustomerOnStripe=Criar cliente no Stripe
 CreateCardOnStripe=Criar ficha no Stripe
 ShowInStripe=Mostrar na listra
-StripeUserAccountForActions=Conta de usuário para usar para alguns e-mails de notificação de eventos Stripe (pagamentos de faixa)
+StripeUserAccountForActions=User account to use for email notification of some Stripe events (Stripe payouts)
+StripePayoutList=List of Stripe payouts
+ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mode)
+ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
+PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
+ClickHereToTryAgain=<a href="%s">Click here to try again...</a>

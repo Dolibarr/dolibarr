@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -55,17 +55,6 @@ $langs->loadLangs(array("main","bills","cashdesk"));
 				onfocus="javascript: this.select();" />
 			</td>
 			<td class="select_design maxwidthonsmartphone">
-            <?php /*
-            $selected='';
-            $htmlname='idprod';
-            $status=-1;
-            $rice_level=$company->price_level;
-            print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', 'outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
-            if (! $hidelabel) print $langs->trans("RefOrLabel").' : ';
-            print '<input type="text" size="4" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'" />';
-            */
-            ?>
-
 				<select id="selProduit" class="maxwidthonsmartphone" name="selProduit" onchange="javascript: setSource('LISTE');">
 					<?php
                         print '<option value="0">'.$top_liste_produits.'</option>'."\n";
@@ -176,7 +165,7 @@ $langs->loadLangs(array("main","bills","cashdesk"));
 			if (empty($_SESSION['CASHDESK_ID_BANKACCOUNT_CASH']) || $_SESSION['CASHDESK_ID_BANKACCOUNT_CASH'] < 0)
 			{
 				$langs->load("errors");
-				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("Cash").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete")).'" />';
+				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("Cash").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("CashDesk"))).'" />';
 			}
 			else print '<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("Cash").'" onclick="javascript: verifClic(\'ESP\');" />';
 			print '</div>';
@@ -184,7 +173,7 @@ $langs->loadLangs(array("main","bills","cashdesk"));
 			if (empty($_SESSION['CASHDESK_ID_BANKACCOUNT_CB']) || $_SESSION['CASHDESK_ID_BANKACCOUNT_CB'] < 0)
 			{
 				$langs->load("errors");
-				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("CreditCard").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete")).'" />';
+				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("CreditCard").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("CashDesk"))).'" />';
 			}
 			else print '<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("CreditCard").'" onclick="javascript: verifClic(\'CB\');" />';
 			print '</div>';
@@ -192,7 +181,7 @@ $langs->loadLangs(array("main","bills","cashdesk"));
 			if (empty($_SESSION['CASHDESK_ID_BANKACCOUNT_CHEQUE']) || $_SESSION['CASHDESK_ID_BANKACCOUNT_CHEQUE'] < 0)
 			{
 				$langs->load("errors");
-				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("CheckBank").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete")).'" />';
+				print '<input class="bouton_mode_reglement_disabled" type="button" name="btnModeReglement" value="'.$langs->trans("CheckBank").'" title="'.dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete"), $langs->transnoentitiesnoconv("CashDesk")).'" />';
 			}
 			else print '<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="'.$langs->trans("CheckBank").'" onclick="javascript: verifClic(\'CHQ\');" />';
 			print '</div>';

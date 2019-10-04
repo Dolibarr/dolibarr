@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * $object must be defined
  * $backtopage
@@ -53,7 +53,7 @@ if (empty($conf) || ! is_object($conf)) {
 		</script>';
 
 
-		print load_fiche_titre($langs->trans("StockCorrection"), '', 'title_generic.png');
+		print load_fiche_titre($langs->trans("StockCorrection"), '', 'generic');
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">'."\n";
 
@@ -100,7 +100,7 @@ if (empty($conf) || ! is_object($conf)) {
 		{
 			print '<td>'.$langs->trans('Project').'</td>';
 			print '<td>';
-			$formproject->select_projects(0, '', 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, 'maxwidth300');
+			$formproject->select_projects(-1, '', 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, 'maxwidth300');
 			print '</td>';
 		}
 		print '</tr>';

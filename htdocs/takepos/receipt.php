@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -28,10 +28,9 @@
 require '../main.inc.php';	// Load $user and permissions
 include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-$langs->loadLangs(array("main", "cashdesk"));
+$langs->loadLangs(array("main", "cashdesk", "companies"));
 
 $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
-$posnb = (GETPOST('posnb', 'int') > 0 ? GETPOST('posnb', 'int') : 0);   // $posnb is id of POS
 
 $facid=GETPOST('facid', 'int');
 
@@ -44,7 +43,7 @@ top_httphead('text/html');
 
 if ($place > 0)
 {
-    $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS-".$place.")'";
+    $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
     $resql = $db->query($sql);
     $obj = $db->fetch_object($resql);
     if ($obj)
@@ -54,6 +53,14 @@ if ($place > 0)
 }
 $object=new Facture($db);
 $object->fetch($facid);
+
+// Call to external receipt modules if exist
+$hookmanager->initHooks(array('takeposfrontend'), $facid);
+$reshook=$hookmanager->executeHooks('TakeposReceipt', $parameters, $object);
+if (!empty($hookmanager->resPrint)) {
+    print $hookmanager->resPrint;
+	exit;
+}
 
 // IMPORTANT: This file is sended to 'Takepos Printing' application. Keep basic file. No external files as css, js... If you need images use absolute path.
 ?>
@@ -78,19 +85,34 @@ $object->fetch($facid);
 <br>
 <p class="left">
 <?php
-$substitutionarray=getCommonSubstitutionArray($langs);
-if (! empty($conf->global->TAKEPOS_HEADER))
+if ($conf->global->TAKEPOS_CUSTOM_RECEIPT)
 {
-	$newfreetext=make_substitutions($conf->global->TAKEPOS_HEADER, $substitutionarray);
-	echo $newfreetext;
+	$substitutionarray=getCommonSubstitutionArray($langs);
+	if (! empty($conf->global->TAKEPOS_HEADER))
+	{
+		$newfreetext=make_substitutions($conf->global->TAKEPOS_HEADER, $substitutionarray);
+		echo $newfreetext;
+	}
 }
 ?>
 </p>
 <p class="right">
 <?php
 print $langs->trans('Date')." ".dol_print_date($object->date, 'day').'<br>';
-if ($mysoc->country_code == 'ES') print "Factura simplificada ";
+if ($conf->global->TAKEPOS_CUSTOM_RECEIPT) print $conf->global->TAKEPOS_RECEIPT_NAME." ";
 print $object->ref;
+if ($conf->global->TAKEPOS_CUSTOM_RECEIPT && $conf->global->TAKEPOS_SHOW_CUSTOMER)
+{
+	$soc = new Societe($db);
+	$soc->fetch($invoice->socid);
+	if ($invoice->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]})
+	{
+		$soc = new Societe($db);
+		if ($invoice->socid > 0) $soc->fetch($invoice->socid);
+		else $soc->fetch($conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]});
+		print "<br>".$langs->trans("Customer").': '.$soc->name;
+	}
+}
 ?>
 </p>
 <br>
@@ -161,11 +183,13 @@ print $object->ref;
 <br>
 <br>
 <?php
-$substitutionarray=getCommonSubstitutionArray($langs);
-if (! empty($conf->global->TAKEPOS_FOOTER))
+if ($conf->global->TAKEPOS_CUSTOM_RECEIPT)
 {
-	$newfreetext=make_substitutions($conf->global->TAKEPOS_FOOTER, $substitutionarray);
-	echo $newfreetext;
+	$substitutionarray=getCommonSubstitutionArray($langs);
+	if (! empty($conf->global->TAKEPOS_FOOTER)){
+		$newfreetext=make_substitutions($conf->global->TAKEPOS_FOOTER, $substitutionarray);
+		echo $newfreetext;
+	}
 }
 ?>
 

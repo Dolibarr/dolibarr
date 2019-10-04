@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -50,13 +50,22 @@ if (! $user->admin)
 
 if ($action == 'delete')
 {
-	$file=$conf->admin->dir_output.'/backup/'.basename(GETPOST('urlfile', 'alpha'));
-    $ret=dol_delete_file($file, 1);
-    if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-    else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-    $action='';
+	if (preg_match('/^backup\//', GETPOST('urlfile', 'alpha')))
+	{
+		$file=$conf->admin->dir_output.'/backup/'.basename(GETPOST('urlfile', 'alpha'));
+		$ret=dol_delete_file($file, 1);
+		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
+	}
+	else
+	{
+		$file=$conf->admin->dir_output.'/documents/'.basename(GETPOST('urlfile', 'alpha'));
+		$ret=dol_delete_file($file, 1);
+		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
+	}
+	$action='';
 }
-
 
 /*
  * View
@@ -446,8 +455,10 @@ print "\n";
 
 
 <br>
-<div class="center"><input type="submit" class="button"
-	value="<?php echo $langs->trans("GenerateBackup") ?>" id="buttonGo" /><br>
+<div class="center">
+	<input type="submit" class="button reposition" value="<?php echo $langs->trans("GenerateBackup") ?>" id="buttonGo">
+	<input type="hidden" name="page_y" value="<?php echo GETPOST('page_y', 'int'); ?>">
+	<br>
 <br>
 
 <?php
@@ -459,7 +470,7 @@ if (! empty($_SESSION["commandbackuplastdone"]))
 
     //print $paramclear;
 
-    // Now run command and show result
+    // Now show result
     print '<b>'.$langs->trans("BackupResult").':</b> ';
 	print $_SESSION["commandbackupresult"];
 
@@ -575,7 +586,7 @@ print "\n";
 
 ?>
 <br>
-<div class="center"><input type="submit" class="button"
+<div class="center"><input type="submit" class="button reposition"
 	value="<?php echo $langs->trans("GenerateBackup") ?>" id="buttonGo" /><br>
 <br>
 </div>
@@ -597,9 +608,6 @@ print '<br>';
 
 </fieldset>
 </form>
-
-
-
 
 <?php
 

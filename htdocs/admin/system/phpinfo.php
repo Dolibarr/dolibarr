@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -48,14 +48,31 @@ if (isset($title))
 }
 
 
+// Check PHP setup is OK
+$maxphp=@ini_get('upload_max_filesize');	// In unknown
+if (preg_match('/k$/i', $maxphp)) $maxphp=$maxphp*1;
+if (preg_match('/m$/i', $maxphp)) $maxphp=$maxphp*1024;
+if (preg_match('/g$/i', $maxphp)) $maxphp=$maxphp*1024*1024;
+if (preg_match('/t$/i', $maxphp)) $maxphp=$maxphp*1024*1024*1024;
+$maxphp2=@ini_get('post_max_size');			// In unknown
+if (preg_match('/k$/i', $maxphp2)) $maxphp2=$maxphp2*1;
+if (preg_match('/m$/i', $maxphp2)) $maxphp2=$maxphp2*1024;
+if (preg_match('/g$/i', $maxphp2)) $maxphp2=$maxphp2*1024*1024;
+if (preg_match('/t$/i', $maxphp2)) $maxphp2=$maxphp2*1024*1024*1024;
+if ($maxphp > 0 && $maxphp2 > 0 && $maxphp > $maxphp2)
+{
+	$langs->load("errors");
+	print info_admin($langs->trans("WarningParamUploadMaxFileSizeHigherThanPostMaxSize", @ini_get('upload_max_filesize'), @ini_get('post_max_size')), 0, 0, 0, 'warning');
+	print '<br>';
+}
+
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 print "\n";
 
-$var=false;
 
-// Recupere la version de PHP
+// Get PHP version
 $phpversion=version_php();
 print '<tr class="oddeven"><td  width="220px">'.$langs->trans("Version")."</td><td>".$phpversion."</td></tr>\n";
 

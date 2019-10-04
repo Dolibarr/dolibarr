@@ -2,10 +2,11 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2016 Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2015-2016 Juanjo Menent	<jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -63,6 +64,7 @@ if ($user->societe_id > 0)
 
 $max=3;
 
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('invoiceindex'));
 
 /*
@@ -85,7 +87,7 @@ $thirdpartystatic = new Societe($db);
 
 llxHeader("", $langs->trans("AccountancyTreasuryArea"));
 
-print load_fiche_titre($langs->trans("AccountancyTreasuryArea"), '', 'title_accountancy.png');
+print load_fiche_titre($langs->trans("AccountancyTreasuryArea"), '', 'invoicing');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -136,8 +138,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
  */
 if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
-    $sql = "SELECT f.ref";
-    $sql.= ", f.rowid, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.ref_client";
+    $sql = "SELECT f.rowid, f.ref, f.datef as date, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.ref_client";
     $sql.= ", f.type";
     $sql.= ", s.nom as name";
     $sql.= ", s.rowid as socid, s.email";
@@ -177,13 +178,14 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 			{
 				$obj = $db->fetch_object($resql);
 
-				$facturestatic->ref=$obj->ref;
 				$facturestatic->id=$obj->rowid;
+				$facturestatic->ref=$obj->ref;
+				$facturestatic->date=$db->jdate($obj->date);
+				$facturestatic->type=$obj->type;
 				$facturestatic->total_ht=$obj->total_ht;
 				$facturestatic->total_tva=$obj->total_tva;
 				$facturestatic->total_ttc=$obj->total_ttc;
 				$facturestatic->ref_client=$obj->ref_client;
-				$facturestatic->type=$obj->type;
 
 				$companystatic->id=$obj->socid;
 				$companystatic->name=$obj->name;
@@ -351,6 +353,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 		$num = $db->num_rows($resql);
 		$i = 0;
 
+        print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BoxTitleLastCustomerBills", $max).'</th>';
 		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th class="right">'.$langs->trans("AmountHT").'</th>';
@@ -409,8 +412,8 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print '<td class="left">';
                 print $thirdpartystatic->getNomUrl(1, 'customer', 44);
 				print '</td>';
-				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($obj->total_ht).'</td>';
-				print '<td class="right">'.price($obj->total_ttc).'</td>';
+				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="nowrap right">'.price($obj->total_ht).'</td>';
+				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->tms), 'day').'</td>';
 				print '<td>'.$facstatic->LibStatut($obj->paye, $obj->fk_statut, 3, $obj->am).'</td>';
 				print '</tr>';
@@ -428,7 +431,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
 			print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
-		print '</table><br>';
+		print '</table></div><br>';
 		$db->free($resql);
 	}
 	else
@@ -472,6 +475,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	{
 		$num = $db->num_rows($resql);
 
+        print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BoxTitleLastSupplierBills", $max).'</th>';
 		if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th class="right">'.$langs->trans("AmountHT").'</th>';
@@ -508,7 +512,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				print $thirdpartystatic->getNomUrl(1, 'supplier', 44);
 				print '</td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($obj->total_ht).'</td>';
-				print '<td class="right">'.price($obj->total_ttc).'</td>';
+				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->tms), 'day').'</td>';
 				print '<td>'.$facstatic->LibStatut($obj->paye, $obj->fk_statut, 3).'</td>';
 				print '</tr>';
@@ -524,7 +528,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
 			print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
-		print '</table><br>';
+		print '</table></div><br>';
 	}
 	else
 	{
@@ -561,6 +565,7 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 
 		$i = 0;
 
+        print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<th>'.$langs->trans("BoxTitleLastModifiedDonations", $max).'</th>';
@@ -588,7 +593,7 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 				print '<tr class="oddeven">';
 				print '<td>'.$donationstatic->getNomUrl(1).'</td>';
 				print '<td>'.$label.'</td>';
-				print '<td class="right">'.price($objp->amount).'</td>';
+				print '<td class="nowrap right">'.price($objp->amount).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($objp->dm), 'day').'</td>';
                 print '<td>'.$donationstatic->LibStatut($objp->fk_statut, 3).'</td>';
 				print '</tr>';
@@ -600,7 +605,7 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 		{
 			print '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
-		print '</table><br>';
+		print '</table></div><br>';
 	}
 	else dol_print_error($db);
 }
@@ -634,6 +639,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		{
 			$num = $db->num_rows($resql);
 
+            print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<th>'.$langs->trans("ContributionsToPay").($num?' <a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?status=0"><span class="badge">'.$num.'</span></a>':'').'</th>';
@@ -658,8 +664,8 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 					print '<tr class="oddeven">';
 					print '<td>'.$chargestatic->getNomUrl(1).'</td>';
 					print '<td align="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
-					print '<td class="right">'.price($obj->amount).'</td>';
-					print '<td class="right">'.price($obj->sumpaid).'</td>';
+					print '<td class="nowrap right">'.price($obj->amount).'</td>';
+					print '<td class="nowrap right">'.price($obj->sumpaid).'</td>';
 					print '<td align="center">'.$chargestatic->getLibStatut(3).'</td>';
 					print '</tr>';
 					$tot_ttc+=$obj->amount;
@@ -667,7 +673,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 				}
 
 				print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Total").'</td>';
-				print '<td class="right">'.price($tot_ttc).'</td>';
+				print '<td class="nowrap right">'.price($tot_ttc).'</td>';
 				print '<td class="right"></td>';
 				print '<td class="right">&nbsp;</td>';
 				print '</tr>';
@@ -676,7 +682,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			{
 				print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}
-			print "</table><br>";
+			print "</table></div><br>";
 			$db->free($resql);
 		}
 		else
@@ -726,6 +732,8 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 		if ($num)
 		{
 			$i = 0;
+
+            print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder" width="100%">';
 			print "<tr class=\"liste_titre\">";
 			print '<th colspan="2">'.$langs->trans("OrdersDeliveredToBill").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=3&amp;billed=0"><span class="badge">'.$num.'</span></a></th>';
@@ -778,8 +786,8 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
                 print $societestatic->getNomUrl(1, 'customer', 44);
 				print '</td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($obj->total_ht).'</td>';
-				print '<td class="right">'.price($obj->total_ttc).'</td>';
-				print '<td class="right">'.price($obj->total_ttc-$obj->tot_fttc).'</td>';
+				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
+				print '<td class="nowrap right">'.price($obj->total_ttc-$obj->tot_fttc).'</td>';
 				print '<td>'.$commandestatic->LibStatut($obj->fk_statut, $obj->facture, 3).'</td>';
 				print '</tr>';
 				$tot_ht += $obj->total_ht;
@@ -791,11 +799,11 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 
 			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToBill").': '.price($tot_tobill).')</font> </td>';
 			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($tot_ht).'</td>';
-			print '<td class="right">'.price($tot_ttc).'</td>';
-			print '<td class="right">'.price($tot_tobill).'</td>';
+			print '<td class="nowrap right">'.price($tot_ttc).'</td>';
+			print '<td class="nowrap right">'.price($tot_tobill).'</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
-			print '</table><br>';
+			print '</table></div><br>';
 		}
 		$db->free($resql);
 	}
@@ -903,8 +911,8 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print '</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->datelimite), 'day').'</td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($obj->total_ht).'</td>';
-				print '<td class="right">'.price($obj->total_ttc).'</td>';
-				print '<td class="right">'.price($obj->am).'</td>';
+				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
+				print '<td class="nowrap right">'.price($obj->am).'</td>';
 				print '<td>'.$facstatic->LibStatut($obj->paye, $obj->fk_statut, 3, $obj->am).'</td>';
 				print '</tr>';
 
@@ -918,8 +926,8 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToTake").': '.price($total_ttc-$totalam).')</font> </td>';
 			print '<td>&nbsp;</td>';
 			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($total).'</td>';
-			print '<td class="right">'.price($total_ttc).'</td>';
-			print '<td class="right">'.price($totalam).'</td>';
+			print '<td class="nowrap right">'.price($total_ttc).'</td>';
+			print '<td class="nowrap right">'.price($totalam).'</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}
@@ -1015,8 +1023,8 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				print '<td>'.$societestatic->getNomUrl(1, 'supplier', 44).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->date_lim_reglement), 'day').'</td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($obj->total_ht).'</td>';
-				print '<td class="right">'.price($obj->total_ttc).'</td>';
-				print '<td class="right">'.price($obj->am).'</td>';
+				print '<td class="nowrap right">'.price($obj->total_ttc).'</td>';
+				print '<td class="nowrap right">'.price($obj->am).'</td>';
 				print '<td>'.$facstatic->LibStatut($obj->paye, $obj->fk_statut, 3).'</td>';
 				print '</tr>';
 				$total += $obj->total_ht;
@@ -1028,8 +1036,8 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToPay").': '.price($total_ttc-$totalam).')</font> </td>';
 			print '<td>&nbsp;</td>';
 			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td class="right">'.price($total).'</td>';
-			print '<td class="right">'.price($total_ttc).'</td>';
-			print '<td class="right">'.price($totalam).'</td>';
+			print '<td class="nowrap right">'.price($total_ttc).'</td>';
+			print '<td class="nowrap right">'.price($totalam).'</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}
@@ -1053,6 +1061,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 $resql = 0;
 if ($resql)
 {
+    print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><thcolspan="2">'.$langs->trans("TasksToDo").'</th>';
 	print "</tr>\n";
@@ -1067,11 +1076,14 @@ if ($resql)
 		$i++;
 	}
 	$db->free($resql);
-	print "</table><br>";
+	print "</table></div><br>";
 }
 
 
 print '</div></div></div>';
+
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardAccountancy', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

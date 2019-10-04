@@ -22,7 +22,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -179,7 +179,7 @@ if (empty($reshook))
         $object->socid			= GETPOST("socid", 'int');
         $object->lastname		= GETPOST("lastname", 'alpha');
         $object->firstname		= GETPOST("firstname", 'alpha');
-        $object->civility_id	= GETPOST("civility_id", 'alpha');
+		$object->civility_id	= GETPOST("civility_id", 'alpha');
         $object->poste			= GETPOST("poste", 'alpha');
         $object->address		= GETPOST("address", 'alpha');
         $object->zip			= GETPOST("zipcode", 'alpha');
@@ -376,21 +376,24 @@ if (empty($reshook))
 			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
 			if ($ret < 0) $error++;
 
-			$result = $object->update($contactid, $user);
-
-			if ($result > 0) {
-				// Categories association
-				$categories = GETPOST('contcats', 'array');
-				$object->setCategories($categories);
-
-				$object->old_lastname='';
-				$object->old_firstname='';
-				$action = 'view';
-			}
-			else
+			if (! $error)
 			{
-				setEventMessages($object->error, $object->errors, 'errors');
-				$action = 'edit';
+                $result = $object->update($contactid, $user);
+
+    			if ($result > 0) {
+    				// Categories association
+    				$categories = GETPOST('contcats', 'array');
+    				$object->setCategories($categories);
+
+    				$object->old_lastname='';
+    				$object->old_firstname='';
+    				$action = 'view';
+    			}
+    			else
+    			{
+    				setEventMessages($object->error, $object->errors, 'errors');
+    				$action = 'edit';
+    			}
 			}
         }
 
@@ -503,9 +506,9 @@ else
 
             $title = $addcontact = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
             $linkback='';
-            print load_fiche_titre($title, $linkback, 'title_companies.png');
+            print load_fiche_titre($title, $linkback, 'address');
 
-            // Affiche les erreurs
+            // Show errors
             dol_htmloutput_errors(is_numeric($error)?'':$error, $errors);
 
             if ($conf->use_javascript_ajax)
@@ -570,7 +573,7 @@ else
 
             // Civility
             print '<tr><td><label for="civility_id">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
-            print $formcompany->select_civility(GETPOST("civility_id", 'alpha')?GETPOST("civility_id", 'alpha'):$object->civility_id);
+            print $formcompany->select_civility(GETPOST("civility", 'alpha')?GETPOST("civility", 'alpha'):$object->civility_code);
             print '</td></tr>';
 
             print '<tr><td><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';
@@ -800,8 +803,8 @@ else
 			$objsoc = new Societe($db);
 			$objsoc->fetch($object->socid);
 
-            // Affiche les erreurs
-            dol_htmloutput_errors($error, $errors);
+			// Show errors
+			dol_htmloutput_errors(is_numeric($error)?'':$error, $errors);
 
             if ($conf->use_javascript_ajax)
             {
@@ -869,7 +872,7 @@ else
 
             // Civility
             print '<tr><td><label for="civility_id">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
-            print $formcompany->select_civility(isset($_POST["civility_id"])?GETPOST("civility_id"):$object->civility_id);
+            print $formcompany->select_civility(isset($_POST["civility"])?GETPOST("civility"):$object->civility_code);
             print '</td></tr>';
 
             print '<tr><td><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';
@@ -1122,11 +1125,10 @@ else
     {
         $objsoc = new Societe($db);
 
-        /*
-         * Fiche en mode visualisation
-         */
+        // View mode
 
-        dol_htmloutput_errors($error, $errors);
+        // Show errors
+        dol_htmloutput_errors(is_numeric($error)?'':$error, $errors);
 
         dol_fiche_head($head, 'card', $title, -1, 'contact');
 

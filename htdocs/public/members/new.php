@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -281,7 +281,7 @@ if ($action == 'add')
             	// Set output language
             	$outputlangs = new Translate('', $conf);
             	$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-            	// Load traductions files requiredby by page
+            	// Load traductions files required by page
             	$outputlangs->loadLangs(array("main", "members"));
             	// Get email content from template
             	$arraydefaultmessage=null;
@@ -645,6 +645,7 @@ print '<tr><td>'.$langs->trans("URLPhoto").'</td><td><input type="text" name="ph
 // Public
 print '<tr><td>'.$langs->trans("Public").'</td><td><input type="checkbox" name="public"></td></tr>'."\n";
 // Other attributes
+$tpl_context = 'public';	//BUG #11554 : define templae context to public
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 // Comments
 print '<tr>';

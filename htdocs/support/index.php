@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -60,7 +60,7 @@ $style1='color: #333344; font-size: 16px; font-weight: bold';
 $style2='color: #5D4455; font-weight: bold;';
 
 print "\n";
-print '<div style="width: 100%; text-align: center"><div class="inline-block">';
+print '<div style="width: 100%; text-align: center"><div class="inline-block blocksupport">';
 print "\n";
 
 // Forum/wiki support
@@ -103,7 +103,7 @@ print '</tr>';
 print '</table>'."\n";
 print "\n";
 
-print '</div><div class="inline-block">';
+print '</div><div class="inline-block blocksupport">';
 
 // EMail support
 print '<table class="login tablesupport" width="100%">';
@@ -135,7 +135,7 @@ print '</tr>';
 print '</table>'."\n";
 
 
-print '</div><div class="inline-block">';
+print '</div><div class="inline-block blocksupport">';
 
 
 // Other support

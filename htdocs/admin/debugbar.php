@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -77,9 +77,16 @@ $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("DebugBarSetup"), $linkback, 'title_setup');
-print '<br>';
 
 //print load_fiche_titre($langs->trans("DebugBar"));
+
+if (! function_exists('mb_check_encoding'))
+{
+    $langs->load("errors");
+    print info_admin($langs->trans("ErrorPHPNeedModule", 'mbstring'), 0, 0, 'error');
+}
+
+print '<br>';
 
 // Level
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';

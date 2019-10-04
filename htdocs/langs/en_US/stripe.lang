@@ -12,7 +12,7 @@ YourEMail=Email to receive payment confirmation
 STRIPE_PAYONLINE_SENDEMAIL=Email notification after a payment attempt (success or fail)
 Creditor=Creditor
 PaymentCode=Payment code
-StripeDoPayment=Pay with Credit or Debit Card (Stripe)
+StripeDoPayment=Pay with Stripe
 YouWillBeRedirectedOnStripe=You will be redirected on secured Stripe page to input you credit card information
 Continue=Next
 ToOfferALinkForOnlinePayment=URL for %s payment
@@ -65,3 +65,5 @@ StripeUserAccountForActions=User account to use for email notification of some S
 StripePayoutList=List of Stripe payouts
 ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mode)
 ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
+PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
+ClickHereToTryAgain=<a href="%s">Click here to try again...</a>

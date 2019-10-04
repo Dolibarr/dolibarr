@@ -13,6 +13,7 @@
  * Copyright (C) 2018       charlene Benke          <charlie@patas-monkey.com>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,6 +36,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT .'/user/class/usergroup.class.php';
 
 /**
  *	Class to manage Dolibarr users
@@ -520,8 +522,8 @@ class User extends CommonObject
 	 *  Add a right to the user
 	 *
 	 * 	@param	int		$rid			Id of permission to add or 0 to add several permissions
-	 *  @param  string	$allmodule		Add all permissions of module $allmodule
-	 *  @param  string	$allperms		Add all permissions of module $allmodule, subperms $allperms only
+	 *  @param  string	$allmodule		Add all permissions of module $allmodule or 'allmodules' to include all modules.
+	 *  @param  string	$allperms		Add all permissions of module $allmodule, subperms $allperms only or '' to include all permissions.
 	 *  @param	int		$entity			Entity to use
 	 *  @param  int	    $notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *  @return int						> 0 if OK, < 0 if KO
@@ -774,7 +776,7 @@ class User extends CommonObject
 		dol_syslog(get_class($this)."::clearrights reset user->rights");
 		$this->rights='';
 		$this->nb_rights=0;
-		$this->all_permissions_are_loaded=false;
+		$this->all_permissions_are_loaded=0;
 		$this->_tab_loaded=array();
 	}
 
@@ -799,16 +801,16 @@ class User extends CommonObject
 				return;
 			}
 
-			if ($this->all_permissions_are_loaded)
+			if (! empty($this->all_permissions_are_loaded))
 			{
 				// We already loaded all rights for this user, so we leave
 				return;
 			}
 		}
 
-		// Recuperation des droits utilisateurs + recuperation des droits groupes
+		// Get permission of users + Get permissions of groups
 
-		// D'abord les droits utilisateurs
+		// First user permissions
 		$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
 		$sql.= ", ".MAIN_DB_PREFIX."rights_def as r";
@@ -862,7 +864,7 @@ class User extends CommonObject
 			$this->db->free($resql);
 		}
 
-		// Maintenant les droits groupes
+		// Now permissions of groups
 		$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr,";
 		$sql.= " ".MAIN_DB_PREFIX."usergroup_user as gu,";
@@ -933,7 +935,7 @@ class User extends CommonObject
 		}
 		else
 		{
-			// Si module defini, on le marque comme charge en cache
+			// If module defined, we flag it as loaded into cache
 			$this->_tab_loaded[$moduletag]=1;
 		}
 	}
@@ -995,6 +997,8 @@ class User extends CommonObject
 	 */
 	public function setCategories($categories)
 	{
+		$type_categ = Categorie::TYPE_USER;
+
 		// Handle single category
 		if (!is_array($categories)) {
 			$categories = array($categories);
@@ -1003,7 +1007,7 @@ class User extends CommonObject
 		// Get current categories
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 		$c = new Categorie($this->db);
-		$existing = $c->containing($this->id, Categorie::TYPE_USER, 'id');
+		$existing = $c->containing($this->id, $type_categ, 'id');
 
 		// Diff
 		if (is_array($existing)) {
@@ -1017,12 +1021,12 @@ class User extends CommonObject
 		// Process
 		foreach ($to_del as $del) {
 			if ($c->fetch($del) > 0) {
-				$c->del_type($this, 'user');
+				$c->del_type($this, $type_categ);
 			}
 		}
 		foreach ($to_add as $add) {
 			if ($c->fetch($add) > 0) {
-				$c->add_type($this, 'user');
+				$c->add_type($this, $type_categ);
 			}
 		}
 
@@ -1961,17 +1965,21 @@ class User extends CommonObject
 		$mesg = '';
 
 		$outputlangs=new Translate("", $conf);
+
 		if (isset($this->conf->MAIN_LANG_DEFAULT)
 		&& $this->conf->MAIN_LANG_DEFAULT != 'auto')
 		{	// If user has defined its own language (rare because in most cases, auto is used)
 			$outputlangs->getDefaultLang($this->conf->MAIN_LANG_DEFAULT);
 		}
+		if($user->conf->MAIN_LANG_DEFAULT){
+            $outputlangs->setDefaultLang($user->conf->MAIN_LANG_DEFAULT);
+        }
 		else
 		{	// If user has not defined its own language, we used current language
 			$outputlangs=$langs;
 		}
 
-		// Load translation files required by the page
+        // Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "errors", "users", "other"));
 
 		$appli=constant('DOL_APPLICATION_TITLE');
@@ -1986,7 +1994,6 @@ class User extends CommonObject
 		if (! $changelater)
 		{
 			$url = $urlwithroot.'/';
-
 			$mesg.= $outputlangs->transnoentitiesnoconv("RequestToResetPasswordReceived").".\n";
 			$mesg.= $outputlangs->transnoentitiesnoconv("NewKeyIs")." :\n\n";
 			$mesg.= $outputlangs->transnoentitiesnoconv("Login")." = ".$this->login."\n";
@@ -2297,7 +2304,6 @@ class User extends CommonObject
 		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpictoimg) $withpictoimg=0;
 
 		$result=''; $label='';
-		$link=''; $linkstart=''; $linkend='';
 
 		if (! empty($this->photo))
 		{
@@ -2387,19 +2393,19 @@ class User extends CommonObject
 		if ($withpictoimg)
 		{
 		  	$paddafterimage='';
-			if (abs($withpictoimg) == 1) $paddafterimage='style="margin-right: 3px;"';
+		  	if (abs($withpictoimg) == 1) $paddafterimage='style="margin-'.($langs->trans("DIRECTION")=='rtl'?'left':'right').': 3px;"';
 			// Only picto
-			if ($withpictoimg > 0) $picto='<!-- picto user --><div class="inline-block nopadding userimg'.($morecss?' '.$morecss:'').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).'</div>';
+			if ($withpictoimg > 0) $picto='<!-- picto user --><span class="nopadding userimg'.($morecss?' '.$morecss:'').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).'</span>';
 			// Picto must be a photo
-			else $picto='<!-- picto photo user --><div class="inline-block nopadding userimg'.($morecss?' '.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg==-3?'small':''), 'mini', 0, 1).'</div>';
+			else $picto='<!-- picto photo user --><span class="nopadding userimg'.($morecss?' '.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg==-3?'small':''), 'mini', 0, 1).'</span>';
 			$result.=$picto;
 		}
 		if ($withpictoimg > -2 && $withpictoimg != 2)
 		{
-			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='<div class="inline-block nopadding valignmiddle usertext'.((! isset($this->statut) || $this->statut)?'':' strikefordisabled').($morecss?' '.$morecss:'').'">';
+			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='<span class=" nopadding valignmiddle usertext'.((! isset($this->statut) || $this->statut)?'':' strikefordisabled').($morecss?' '.$morecss:'').'">';
 			if ($mode == 'login') $result.=dol_trunc($this->login, $maxlen);
 			else $result.=$this->getFullName($langs, '', ($mode == 'firstelselast' ? 3 : ($mode == 'firstname' ? 2 : -1)), $maxlen);
-			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='</div>';
+			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='</span>';
 		}
 		$result.=(($option == 'nolink')?'':$linkend);
 		//if ($withpictoimg == -1) $result.='</div>';
@@ -2512,7 +2518,8 @@ class User extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -2522,7 +2529,7 @@ class User extends CommonObject
 	 *								2=Return key only (RDN) (uid=qqq)
 	 *	@return	string				DN
 	 */
-	private function _load_ldap_dn($info, $mode = 0)
+	public function _load_ldap_dn($info, $mode = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -2533,13 +2540,14 @@ class User extends CommonObject
 		return $dn;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
-	private function _load_ldap_info()
+	public function _load_ldap_info()
 	{
         // phpcs:enable
 		global $conf,$langs;
@@ -2651,8 +2659,22 @@ class User extends CommonObject
 			if ($this->phone_mobile) $info["phpgwCellTelephoneNumber"] = $this->phone_mobile;
 		}
 
-		return $info;
-	}
+        if (!empty($conf->global->LDAP_FIELD_USERID))$info[$conf->global->LDAP_FIELD_USERID] = $this->id;
+        if(!empty($info[$conf->global->LDAP_FIELD_GROUPID])){
+            $usergroup = new UserGroup($this->db);
+            $groupslist = $usergroup->listGroupsForUser($this->id);
+            $info[$conf->global->LDAP_FIELD_GROUPID] = '1';
+            if(!empty($groupslist)){
+                foreach ($groupslist as $groupforuser) {
+                    $info[$conf->global->LDAP_FIELD_GROUPID] = $groupforuser->id;//Select first group in list
+                    break;
+                }
+            }
+        }
+        if (!empty($this->firstname) && !empty($conf->global->LDAP_FIELD_HOMEDIRECTORY) && !empty($conf->global->LDAP_FIELD_HOMEDIRECTORYPREFIX)) $info[$conf->global->LDAP_FIELD_HOMEDIRECTORY]="{$conf->global->LDAP_FIELD_HOMEDIRECTORYPREFIX}/$this->firstname";
+
+        return $info;
+    }
 
 
 	/**

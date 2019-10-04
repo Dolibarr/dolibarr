@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2015      Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,14 +16,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
  *	\file       htdocs/core/modules/expedition/doc/pdf_merou.modules.php
  *	\ingroup    expedition
- *	\brief      Fichier de la classe permettant de generer les bordereaux envoi au modele Merou
+ *	\brief      Class file used to generate the dispatch slips for the Merou model
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
@@ -134,7 +134,7 @@ class pdf_merou extends ModelePdfExpedition
 		$this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
 		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 
-		$this->option_logo = 1;
+		$this->option_logo = 1;    // Display logo
 
 		// Get source company
 		$this->emetteur=$mysoc;
@@ -165,7 +165,7 @@ class pdf_merou extends ModelePdfExpedition
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch"));
 
 		if ($conf->expedition->dir_output)
@@ -222,7 +222,7 @@ class pdf_merou extends ModelePdfExpedition
 				global $action;
 				$reshook=$hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 
-				$nblignes = count($object->lines);
+				$nblines = count($object->lines);
 
 				$pdf=pdf_getInstance($this->format, 'mm', 'l');
 				$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -281,7 +281,7 @@ class pdf_merou extends ModelePdfExpedition
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
-					// Rect prend une longueur en 3eme param
+					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
 					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
@@ -347,7 +347,7 @@ class pdf_merou extends ModelePdfExpedition
 					$pdf->MultiCell(30, 3, $object->lines[$i]->qty_shipped, 0, 'C', 0);
 
 					// Add line
-					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
+					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
 					{
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(80,80,80)));
@@ -356,7 +356,7 @@ class pdf_merou extends ModelePdfExpedition
 						$pdf->SetLineStyle(array('dash'=>0));
 					}
 
-					$nexY+=2;    // Passe espace entre les lignes
+					$nexY+=2;    // Add space between lines
 
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)
@@ -448,6 +448,7 @@ class pdf_merou extends ModelePdfExpedition
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -460,7 +461,7 @@ class pdf_merou extends ModelePdfExpedition
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
+	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
 		global $langs;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -489,6 +490,7 @@ class pdf_merou extends ModelePdfExpedition
 		$pdf->Rect(10, $tab_top, 190, $tab_height);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   	Show footer of page. Need this->emetteur object
      *
@@ -498,7 +500,7 @@ class pdf_merou extends ModelePdfExpedition
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	void
 	 */
-	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 		$pdf->SetFont('', '', $default_font_size - 2);
@@ -517,7 +519,7 @@ class pdf_merou extends ModelePdfExpedition
         //}
 	}
 
-
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -527,7 +529,7 @@ class pdf_merou extends ModelePdfExpedition
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
 	 */
-	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $conf, $langs,$hookmanager;
 

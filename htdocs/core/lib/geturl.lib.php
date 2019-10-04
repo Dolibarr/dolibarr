@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -172,14 +172,25 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
  * For example: https://www.abc.mydomain.com/dir/page.html return 'mydomain'
  *
  * @param	string	  $url 				    Full URL.
+ * @param	int	 	  $mode					0=return 'mydomain', 1=return 'mydomain.com', 2=return 'abc.mydomain.com'
  * @return	string						    Returns domaine name
  */
-function getDomainFromURL($url)
+function getDomainFromURL($url, $mode = 0)
 {
 	$tmpdomain = preg_replace('/^https?:\/\//i', '', $url);				// Remove http(s)://
 	$tmpdomain = preg_replace('/\/.*$/i', '', $tmpdomain);				// Remove part after domain
-	$tmpdomain = preg_replace('/\.[^\.]+$/', '', $tmpdomain);			// Remove first level domain (.com, .net, ...)
-	$tmpdomain = preg_replace('/^[^\.]+\./', '', $tmpdomain);			// Remove part www. before domain name
+	if ($mode == 2)
+	{
+		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)\.([^\.]+)$/', '\1.\2.\3', $tmpdomain);	// Remove part 'www.' before 'abc.mydomain.com'
+	}
+	else
+	{
+		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)$/', '\1.\2', $tmpdomain);				// Remove part 'www.abc.' before 'mydomain.com'
+	}
+	if (empty($mode))
+	{
+		$tmpdomain = preg_replace('/\.[^\.]+$/', '', $tmpdomain);			// Remove first level domain (.com, .net, ...)
+	}
 
 	return $tmpdomain;
 }

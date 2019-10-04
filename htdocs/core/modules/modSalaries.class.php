@@ -5,7 +5,7 @@
  * Copyright (C) 2004		Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014		Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2014		Alexandre Spangaro	 <aspangaro@open-dsi.fr>
+ * Copyright (C) 2014-2019  Alexandre Spangaro	 <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -68,8 +68,7 @@ class modSalaries extends DolibarrModules
 		$this->dirs = array("/salaries/temp");
 
 		// Config pages
-		//$this->config_page_url = array('salaries.php');
-		$this->config_page_url = array();
+		$this->config_page_url = array('salaries.php@salaries');
 
 		// Dependencies
 		$this->hidden = false;			// A condition to hide module
@@ -144,7 +143,7 @@ class modSalaries extends DolibarrModules
 
 		$r++;
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='Salaries and payments';
+		$this->export_label[$r]='SalariesAndPayments';
 		$this->export_permission[$r]=array(array("salaries","export"));
 		$this->export_fields_array[$r]=array('u.firstname'=>"Firstname",'u.lastname'=>"Lastname",'u.login'=>"Login",'u.salary'=>'CurrentSalary','p.datep'=>'DatePayment','p.datesp'=>'DateStartPeriod','p.dateep'=>'DateEndPeriod','p.amount'=>'AmountPayment','p.num_payment'=>'Numero','p.label'=>'Label','p.note'=>'Note');
 		$this->export_TypeFields_array[$r]=array('u.firstname'=>"Text",'u.lastname'=>"Text",'u.login'=>'Text','u.salary'=>"Numeric",'p.datep'=>'Date','p.datesp'=>'Date','p.dateep'=>'Date','p.amount'=>'Numeric','p.num_payment'=>'Numeric','p.label'=>'Text');

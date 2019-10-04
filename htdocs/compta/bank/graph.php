@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -252,7 +252,6 @@ else
 		$px1->setBgColor('onglet');
 		$px1->setBgColorGrid(array(255,255,255));
 		$px1->SetHorizTickIncrement(1);
-		$px1->SetPrecisionY(0);
 		$px1->draw($file, $fileurl);
 
 		$show1=$px1->show();
@@ -389,7 +388,6 @@ else
 		$px2->setBgColorGrid(array(255,255,255));
 		$px2->SetHideXGrid(true);
 		//$px2->SetHorizTickIncrement(30.41);	// 30.41 jours/mois en moyenne
-		$px2->SetPrecisionY(0);
 		$px2->draw($file, $fileurl);
 
 		$show2=$px2->show();
@@ -503,7 +501,6 @@ else
 		$px3->SetType(array('linesnopoint','linesnopoint','linesnopoint'));
 		$px3->setBgColor('onglet');
 		$px3->setBgColorGrid(array(255,255,255));
-		$px3->SetPrecisionY(0);
 		$px3->draw($file, $fileurl);
 
 		$show3=$px3->show();
@@ -633,7 +630,6 @@ else
 		$px4->setBgColor('onglet');
 		$px4->setBgColorGrid(array(255,255,255));
 		$px4->SetHorizTickIncrement(1);
-		$px4->SetPrecisionY(0);
 		$px4->draw($file, $fileurl);
 
 		$show4=$px4->show();
@@ -742,7 +738,6 @@ else
 		$px5->setBgColor('onglet');
 		$px5->setBgColorGrid(array(255,255,255));
 		$px5->SetHorizTickIncrement(1);
-		$px5->SetPrecisionY(0);
 		$px5->draw($file, $fileurl);
 
 		$show5=$px5->show();

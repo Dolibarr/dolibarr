@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -199,7 +199,7 @@ class ActionsCardProduct
 		if ($action == 'view')
 		{
     		// Photo
-			$this->tpl['nblignes'] = 4;
+			$this->tpl['nblines'] = 4;
 			if ($this->object->is_photo_available($conf->product->multidir_output[$this->object->entity]))
 			{
 				$this->tpl['photos'] = $this->object->show_photos('product', $conf->product->multidir_output[$this->object->entity], 1, 1, 0, 0, 0, 80);

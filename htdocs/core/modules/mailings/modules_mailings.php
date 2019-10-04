@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -151,17 +151,15 @@ class MailingTargets // This can't be abstract as it is used for some method
         return $nb;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     * Ajoute destinataires dans table des cibles
+     * Add a list of targets int the database
      *
      * @param	int		$mailing_id    Id of emailing
      * @param   array	$cibles        Array with targets
      * @return  int      			   < 0 si erreur, nb ajout si ok
      */
-    public function add_to_target($mailing_id, $cibles)
+    public function addTargetsToDatabase($mailing_id, $cibles)
     {
-        // phpcs:enable
     	global $conf;
 
     	$this->db->begin();

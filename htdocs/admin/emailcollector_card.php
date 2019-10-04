@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,10 +33,10 @@ include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollectorfilter.class
 include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollectoraction.class.php';
 include_once DOL_DOCUMENT_ROOT.'/emailcollector/lib/emailcollector.lib.php';
 
-if (!$user->admin)
-	accessforbidden();
+if (!$user->admin) accessforbidden();
+if (empty($conf->emailcollector->enabled)) accessforbidden();
 
-// Load traductions files requiredby by page
+// Load traductions files required by page
 $langs->loadLangs(array("admin", "mails", "other"));
 
 // Get parameters
@@ -55,8 +55,10 @@ $object = new EmailCollector($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->emailcollector->dir_output . '/temp/massgeneration/' . $user->id;
 $hookmanager->initHooks(array('emailcollectorcard')); // Note that conf->hooks_modules contains array
+
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('emailcollector');
+$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Initialize array of search criterias
@@ -116,7 +118,7 @@ if (empty($reshook))
 if (GETPOST('addfilter', 'alpha'))
 {
 	$emailcollectorfilter = new EmailCollectorFilter($db);
-	$emailcollectorfilter->type = GETPOST('filtertype', 'az09');
+	$emailcollectorfilter->type = GETPOST('filtertype', 'aZ09');
 	$emailcollectorfilter->rulevalue = GETPOST('rulevalue', 'alpha');
 	$emailcollectorfilter->fk_emailcollector = $object->id;
 	$emailcollectorfilter->status = 1;
@@ -150,7 +152,7 @@ if ($action == 'deletefilter')
 if (GETPOST('addoperation', 'alpha'))
 {
 	$emailcollectoroperation = new EmailCollectorAction($db);
-	$emailcollectoroperation->type = GETPOST('operationtype', 'az09');
+	$emailcollectoroperation->type = GETPOST('operationtype', 'aZ09');
 	$emailcollectoroperation->actionparam = GETPOST('operationparam', 'none');
 	$emailcollectoroperation->fk_emailcollector = $object->id;
 	$emailcollectoroperation->status = 1;
@@ -608,9 +610,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 		print '</td>';
 		// Delete
-		print '<td class="right">';
-		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editoperation&operationid='.$ruleaction['id'].'">'.img_edit().'</a>';
-		print ' &nbsp; ';
+		print '<td class="right nowraponall">';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editoperation&operationid='.$ruleaction['id'].'">'.img_edit().'</a>';
 		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteoperation&operationid='.$ruleaction['id'].'">'.img_delete().'</a>';
 		print '</td>';
 		print '</tr>';

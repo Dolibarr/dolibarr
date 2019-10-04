@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -58,6 +58,7 @@ if ($action == 'setvalue' && $user->admin)
 	//if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_NAME',$_POST["fieldname"],'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_DESCRIPTION', GETPOST("fielddescription"), 'chaine', 0, '', $conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_GROUPMEMBERS', GETPOST("fieldgroupmembers"), 'chaine', 0, '', $conf->entity)) $error++;
+    if (! dolibarr_set_const($db, 'LDAP_GROUP_FIELD_GROUPID', GETPOST("fieldgroupid"), 'chaine', 0, '', $conf->entity)) $error++;
 
 	// This one must be after the others
     $valkey='';
@@ -168,6 +169,13 @@ print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldGroupMembers").'</td><t
 print '<input size="25" type="text" name="fieldgroupmembers" value="'.$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS.'">';
 print '</td><td>'.$langs->trans("LDAPFieldGroupMembersExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_GROUP_FIELD_GROUPMEMBERS"'.(($conf->global->LDAP_KEY_GROUPS && $conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS)?' checked':'')."></td>";
+print '</tr>';
+
+// Group id
+print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldGroupid").'</td><td>';
+print '<input size="25" type="text" name="fieldgroupid" value="'.$conf->global->LDAP_GROUP_FIELD_GROUPID.'">';
+print '</td><td>'.$langs->trans("LDAPFieldGroupidExample").'</td>';
+print '<td class="right">&nbsp;</td>';
 print '</tr>';
 
 print '</table>';

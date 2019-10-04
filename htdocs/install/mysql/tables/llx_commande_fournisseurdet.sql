@@ -15,7 +15,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -47,7 +47,7 @@ create table llx_commande_fournisseurdet
   date_start                 datetime     DEFAULT NULL, -- date debut si service
   date_end                   datetime     DEFAULT NULL, -- date fin si service
   info_bits	                 integer      DEFAULT 0,    -- TVA NPR ou non
-  special_code               integer      DEFAULT 0,    -- code pour les lignes speciales
+  special_code               integer      DEFAULT 0,    -- code for special lines
   rang                       integer      DEFAULT 0,
   import_key                 varchar(14),
   fk_unit                    integer      DEFAULT NULL,

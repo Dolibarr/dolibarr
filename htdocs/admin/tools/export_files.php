@@ -14,7 +14,7 @@
 * GNU General Public License for more details.
 *
 * You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
+* along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
 /**
@@ -35,6 +35,8 @@ $what=GETPOST('what', 'alpha');
 $export_type=GETPOST('export_type', 'alpha');
 $file=GETPOST('zipfilename_template', 'alpha');
 $compression = GETPOST('compression');
+
+$file = dol_sanitizeFileName($file);
 
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
@@ -57,10 +59,11 @@ $errormsg='';
 
 if ($action == 'delete')
 {
-	$file=$conf->admin->dir_output.'/'.GETPOST('urlfile');
-	$ret=dol_delete_file($file, 1);
-	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
+    $filerelative = dol_sanitizeFileName(GETPOST('urlfile', 'alpha'));
+    $filepath=$conf->admin->dir_output.'/'.$filerelative;
+	$ret=dol_delete_file($filepath, 1);
+	if ($ret) setEventMessages($langs->trans("FileWasRemoved", $filerelative), null, 'mesgs');
+	else setEventMessages($langs->trans("ErrorFailToDeleteFile", $filerelative), null, 'errors');
 	$action='';
 }
 
@@ -109,21 +112,27 @@ $utils = new Utils($db);
 
 if ($compression == 'zip')
 {
-    $ret = dol_compress_dir(DOL_DATA_ROOT, $outputdir."/".$file, $compression);
+    $ret = dol_compress_dir(DOL_DATA_ROOT, $outputdir."/".$file, $compression, '/(\.log|\/temp\/|documents\/admin\/documents\/)/');
     if ($ret < 0)
     {
-        $errormsg = $langs->trans("ErrorFailedToWriteInDir", $outputfile);
+    	$errormsg = $langs->trans("ErrorFailedToWriteInDir", $outputdir);
     }
 }
 elseif (in_array($compression, array('gz', 'bz')))
 {
-    $file = substr($file, 0, strrpos($file, '.'));
+	$userlogin = ($user->login ? $user->login : 'unknown');
+
+	$outputfile = $conf->admin->dir_temp.'/export_files.'.$userlogin.'.out';	// File used with popen method
+
+	$file = substr($file, 0, strrpos($file, '.'));
     $file .= '.tar';
-    $cmd = 'tar -cf '.$outputdir."/".$file." --exclude=documents/admin/documents -C ".DOL_DATA_ROOT." ".DOL_DATA_ROOT."/../documents/";
-    exec($cmd, $out, $retval);
-    //var_dump($cmd, DOL_DATA_ROOT);exit;
-    
-    if ($retval != 0)
+    // We also exclude '/temp/' dir and 'documents/admin/documents'
+    $cmd = "tar -cf ".$outputdir."/".$file." --exclude-vcs --exclude 'temp' --exclude 'dolibarr.log' --exclude='documents/admin/documents' -C ".dirname(DOL_DATA_ROOT)." ".basename(DOL_DATA_ROOT);
+
+    $result = $utils->executeCLI($cmd, $outputfile);
+
+    $retval = $result['error'];
+    if ($result['result'] || ! empty($retval))
     {
         $langs->load("errors");
         dol_syslog("Documents tar retval after exec=".$retval, LOG_ERR);
@@ -133,15 +142,17 @@ elseif (in_array($compression, array('gz', 'bz')))
     {
         if ($compression == 'gz')
         {
-            $cmd = "gzip " . $outputdir."/".$file;
+            $cmd = "gzip -f " . $outputdir."/".$file;
         }
         if ($compression == 'bz')
         {
-            $cmd = "bzip2 " . $outputdir."/".$file;
+            $cmd = "bzip2 -f " . $outputdir."/".$file;
         }
-        
-        exec($cmd, $out, $retval);
-        if ($retval != 0)
+
+        $result = $utils->executeCLI($cmd, $outputfile);
+
+        $retval = $result['error'];
+        if ($result['result'] || ! empty($retval))
         {
             $errormsg = 'Error '.$compression.' generation return '.$retval;
             unlink($outputdir."/".$file);

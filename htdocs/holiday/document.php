@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -251,7 +251,7 @@ if ($object->id)
     }
 
     print '<tr>';
-    print '<td>'.$langs->trans('DateCreateCP').'</td>';
+    print '<td>'.$langs->trans('DateCreation').'</td>';
     print '<td>'.dol_print_date($object->date_create,'dayhour').'</td>';
     print '</tr>';
     if ($object->statut == 3) {

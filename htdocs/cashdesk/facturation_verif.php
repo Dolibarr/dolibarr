@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -49,11 +49,11 @@ switch($action)
 			// Recuperation des donnees en fonction de la source (liste deroulante ou champ texte) ...
 			if ( $_POST['hdnSource'] == 'LISTE' )
 			{
-				$sql.= " AND p.rowid = ".$_POST['selProduit'];
+				$sql.= " AND p.rowid = ".((int) GETPOST('selProduit', 'int'));
 			}
 			elseif ( $_POST['hdnSource'] == 'REF' )
 			{
-				$sql.= " AND p.ref = '".$_POST['txtRef']."'";
+				$sql.= " AND p.ref = '".$db->escape(GETPOST('txtRef', 'alpha'))."'";
 			}
 
 			$result = $db->query($sql);

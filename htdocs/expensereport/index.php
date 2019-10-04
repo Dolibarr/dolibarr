@@ -3,7 +3,8 @@
  * Copyright (C) 2004-2015	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015       Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015           Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2019           Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -29,6 +30,11 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
+
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('expensereportindex'));
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'users', 'trips'));
@@ -229,6 +235,9 @@ if ($result)
 else dol_print_error($db);
 
 print '</div></div></div>';
+
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardExpenseReport', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

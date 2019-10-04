@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -412,7 +412,7 @@ $titlepicto='title_setup';
 
 print load_fiche_titre($titre, $linkback, $titlepicto);
 
-print $langs->trans("AccountingAccountGroupsDesc", $langs->transnoentitiesnoconv("ByPersonalizedAccountGroups")).'<br><br>';
+print '<span class="opacitymedium">'.$langs->trans("AccountingAccountGroupsDesc", $langs->transnoentitiesnoconv("ByPersonalizedAccountGroups")).'</span><br><br>';
 
 // Confirmation de la suppression de la ligne
 if ($action == 'delete')

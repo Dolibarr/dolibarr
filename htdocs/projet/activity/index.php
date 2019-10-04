@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -38,6 +39,11 @@ $socid=0;
 if ($user->societe_id > 0) $socid=$user->societe_id;
 //$result = restrictedArea($user, 'projet', $projectid);
 if (!$user->rights->projet->lire) accessforbidden();
+
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('activityindex'));
 
 // Load translation files required by the page
 $langs->load("projects");
@@ -79,8 +85,8 @@ $morehtml.='<option name="mine" value="'.$user->id.'"'.(($search_project_user ==
 $morehtml.='</SELECT>';
 $morehtml.='<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
 
-print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'title_project.png', 0, $morehtml);
-//print load_fiche_titre($title, '', 'title_project');
+print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'project', 0, $morehtml);
+//print load_fiche_titre($title, '', 'project');
 
 if ($mine) print $langs->trans("MyTasksDesc").'<br><br>';
 else
@@ -572,6 +578,9 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 
 
 print '</div></div></div>';
+
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardActivities', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

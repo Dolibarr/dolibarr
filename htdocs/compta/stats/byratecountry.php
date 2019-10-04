@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.
 // Load translation files required by the page
 $langs->loadLangs(array("other","compta","banks","bills","companies","product","trips","admin","accountancy"));
 
-$modecompta = GETPOST('modecompta', 'alpha');
+$modecompta = (GETPOST('modecompta', 'alpha') ? GETPOST('modecompta', 'alpha') : $conf->global->ACCOUNTING_MODE);
 
 // Date range
 $year=GETPOST("year", 'int');

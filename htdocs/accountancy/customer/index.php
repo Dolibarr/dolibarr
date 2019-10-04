@@ -16,13 +16,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
 /**
  * \file 	htdocs/accountancy/customer/index.php
- * \ingroup Advanced accountancy
+ * \ingroup Accountancy (Double entries)
  * \brief 	Home customer journalization page
  */
 
@@ -143,9 +143,9 @@ $textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_cur
 
 print load_fiche_titre($langs->trans("CustomersVentilation") . " " . $textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear, '', 'title_accountancy');
 
-print $langs->trans("DescVentilCustomer") . '<br>';
+print '<span class="opacitymedium">'.$langs->trans("DescVentilCustomer") . '<br>';
 print $langs->trans("DescVentilMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToBind")) . '<br>';
-print '<br>';
+print '</span><br>';
 
 
 $y = $year_current;
@@ -211,10 +211,10 @@ if ($resql) {
 		else print $row[1];
 		print '</td>';
 		for($i = 2; $i <= 12; $i ++) {
-			print '<td class="right">' . price($row[$i]) . '</td>';
+			print '<td class="nowrap right">' . price($row[$i]) . '</td>';
 		}
-		print '<td class="right">' . price($row[13]) . '</td>';
-		print '<td class="right"><b>' . price($row[14]) . '</b></td>';
+		print '<td class="nowrap right">' . price($row[13]) . '</td>';
+		print '<td class="nowrap right"><b>' . price($row[14]) . '</b></td>';
 		print '</tr>';
 	}
 	$db->free($resql);
@@ -289,10 +289,10 @@ if ($resql) {
 		print '</td>';
 
 		for($i = 2; $i <= 12; $i++) {
-			print '<td class="right">' . price($row[$i]) . '</td>';
+			print '<td class="nowrap right">' . price($row[$i]) . '</td>';
 		}
-		print '<td class="right">' . price($row[13]) . '</td>';
-		print '<td class="right"><b>' . price($row[14]) . '</b></td>';
+		print '<td class="nowrap right">' . price($row[13]) . '</td>';
+		print '<td class="nowrap right"><b>' . price($row[14]) . '</b></td>';
 		print '</tr>';
 	}
 	$db->free($resql);
@@ -348,9 +348,9 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 		while ($row = $db->fetch_row($resql)) {
 			print '<tr><td>' . $row[0] . '</td>';
 			for($i = 1; $i <= 12; $i ++) {
-				print '<td class="right">' . price($row[$i]) . '</td>';
+				print '<td class="nowrap right">' . price($row[$i]) . '</td>';
 			}
-			print '<td class="right"><b>' . price($row[13]) . '</b></td>';
+			print '<td class="nowrap right"><b>' . price($row[13]) . '</b></td>';
 			print '</tr>';
 		}
 		$db->free($resql);
@@ -401,9 +401,9 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 
 				print '<tr><td>' . $row[0] . '</td>';
 				for($i = 1; $i <= 12; $i ++) {
-					print '<td class="right">' . price(price2num($row[$i])) . '</td>';
+					print '<td class="nowrap right">' . price(price2num($row[$i])) . '</td>';
 				}
-				print '<td class="right"><b>' . price(price2num($row[13])) . '</b></td>';
+				print '<td class="nowrap right"><b>' . price(price2num($row[13])) . '</b></td>';
 				print '</tr>';
 			}
 			$db->free($resql);

@@ -14,7 +14,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -28,7 +28,7 @@ create table llx_paiement
   datep            datetime,							-- payment date
   amount           double(24,8) DEFAULT 0,				-- amount paid in Dolibarr currency
   multicurrency_amount double(24,8) DEFAULT 0,			-- amount paid in invoice currency	
-  fk_paiement      integer NOT NULL,
+  fk_paiement      integer NOT NULL,					-- type of payment in llx_c_paiement
   num_paiement     varchar(50),
   note             text,
   ext_payment_id   varchar(128),						-- external id of payment (for example Stripe charge id)

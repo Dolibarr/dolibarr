@@ -17,7 +17,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===========================================================================
 
@@ -87,6 +87,10 @@ create table llx_facture
   situation_cycle_ref smallint,  -- situation cycle reference
   situation_counter   smallint,  -- situation counter
   situation_final     smallint,  -- is the situation final ?
+
+  retained_warranty							real DEFAULT NULL,  -- % of retained warranty
+  retained_warranty_date_limit				date DEFAULT NULL,
+  retained_warranty_fk_cond_reglement		integer  DEFAULT NULL,			-- payment condition of retained warranty
 
   import_key			varchar(14),
   extraparams			varchar(255),							-- for other parameters with json format

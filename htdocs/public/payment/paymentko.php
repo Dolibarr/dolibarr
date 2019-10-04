@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -235,7 +235,7 @@ elseif (! empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$lo
 // Output html code for logo
 if ($urllogo)
 {
-	print '<center><img id="dolpaymentlogo" title="'.$title.'" src="'.$urllogo.'"';
+	print '<center><img id="dolpaymentlogo" src="'.$urllogo.'"';
 	if ($width) print ' width="'.$width.'"';
 	print '></center>';
 	print '<br>';
@@ -245,6 +245,17 @@ print $langs->trans("YourPaymentHasNotBeenRecorded")."<br><br>";
 
 $key='ONLINE_PAYMENT_MESSAGE_KO';
 if (! empty($conf->global->$key)) print $conf->global->$key;
+
+$type = GETPOST('s', 'alpha');
+$ref = GETPOST('ref', 'none');
+$tag = GETPOST('tag', 'alpha');
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+if ($type || $tag)
+{
+	$urlsubscription =getOnlinePaymentUrl(0, ($type?$type:'free'), $ref, $FinalPaymentAmt, $tag);
+
+	print $langs->trans("ClickHereToTryAgain", $urlsubscription);
+}
 
 print "\n</div>\n";
 

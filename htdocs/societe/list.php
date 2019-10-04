@@ -22,7 +22,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,6 +35,7 @@ require_once '../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
@@ -197,8 +198,8 @@ $arrayfields=array(
 	's.idprof4'=>array('label'=>"ProfId4Short", 'checked'=>$checkedprofid4),
 	's.idprof5'=>array('label'=>"ProfId5Short", 'checked'=>$checkedprofid5),
 	's.idprof6'=>array('label'=>"ProfId6Short", 'checked'=>$checkedprofid6),
-	's.tva_intra'=>array('label'=>"VATIntra", 'checked'=>0),
-	'customerorsupplier'=>array('label'=>'Nature', 'checked'=>1),
+	's.tva_intra'=>array('label'=>"VATIntraShort", 'checked'=>0),
+	'customerorsupplier'=>array('label'=>'NatureOfThirdParty', 'checked'=>1),
 	's.fk_prospectlevel'=>array('label'=>"ProspectLevelShort", 'checked'=>$checkprospectlevel),
 	's.fk_stcomm'=>array('label'=>"StatusProsp", 'checked'=>$checkstcomm),
     's2.nom'=>array('label'=>'ParentCompany', 'checked'=>0),
@@ -223,22 +224,25 @@ $object = new Societe($db);
  * Actions
  */
 
-if ($action=="change")
+if ($action=="change")	// Change customer for TakePOS
 {
     $idcustomer = GETPOST('idcustomer', 'int');
     $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
-    $posnb = (GETPOST('posnb', 'int') > 0 ? GETPOST('posnb', 'int') : 0);   // $posnb is id of POS
 
-    $sql="UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$idcustomer." where ref='(PROV-POS-".$place.")'";
+    // @TODO Check if draft invoice already exists, if not create it or return a warning to ask to enter at least one line to have it created automatically
+    $sql="UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$idcustomer." where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
     $resql = $db->query($sql);
-    ?>
-    <script>
-    parent.$("#poslines").load("invoice.php?place="+<?php print $place;?>, function() {
-        //parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
-        parent.$.colorbox.close();
-    });
-    </script>
-    <?php
+	    ?>
+	    <script>
+	    parent.$("#poslines").load("invoice.php?place="+<?php print $place;?>, function() {
+	        //parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
+			<?php if (! $resql) { ?>
+				alert('Error failed to update customer on draft invoice.');
+			<?php } ?>
+	        parent.$.colorbox.close(); /* Close the popup */
+	    });
+	    </script>
+	    <?php
     exit;
 }
 
@@ -374,7 +378,7 @@ $sql.= " s.code_compta, s.code_compta_fournisseur, s.parent as fk_parent,";
 $sql.= " s2.nom as name2,";
 $sql.= " typent.code as typent_code,";
 $sql.= " staff.code as staff_code,";
-$sql.= " country.code as country_code,";
+$sql.= " country.code as country_code, country.label as country_label,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
 $sql.= " region.code_region as region_code, region.nom as region_name";
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
@@ -582,9 +586,7 @@ if ($user->rights->societe->creer && $contextpage != 'poslist')
 		if($type == 'f') $label='NewSupplier';
 	}
 
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter.'"><span class="valignmiddle text-plus-circle">'.$langs->trans($label).'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
+    $newcardbutton.= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter);
 }
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">';
@@ -594,8 +596,9 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
+print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, $newcardbutton, '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'building', 0, $newcardbutton, '', $limit);
 
 $langs->load("other");
 $textprofid=array();
@@ -667,7 +670,7 @@ if ($moreforfilter)
 
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
+if ($massactionbutton && $contextpage != 'poslist') $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
 if (empty($arrayfields['customerorsupplier']['checked'])) print '<input type="hidden" name="type" value="'.$type.'">';
 
@@ -992,6 +995,8 @@ while ($i < min($num, $limit))
 	$companystatic->fournisseur=$obj->fournisseur;
 	$companystatic->code_client=$obj->code_client;
 	$companystatic->code_fournisseur=$obj->code_fournisseur;
+	$companystatic->tva_intra=$obj->tva_intra;
+	$companystatic->country_code=$obj->country_code;
 
 	$companystatic->code_compta_client=$obj->code_compta;
 	$companystatic->code_compta_fournisseur=$obj->code_compta_fournisseur;
@@ -1002,6 +1007,7 @@ while ($i < min($num, $limit))
 	print '<tr class="oddeven"';
 	if ($contextpage == 'poslist')
 	{
+		$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
 	    print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.$place.'\'"';
 	}
 	print '>';
@@ -1094,8 +1100,8 @@ while ($i < min($num, $limit))
 	if (! empty($arrayfields['country.code_iso']['checked']))
 	{
 		print '<td class="center">';
-		$tmparray=getCountry($obj->fk_pays, 'all');
-		print $tmparray['label'];
+		$labelcountry=($obj->country_code && ($langs->trans("Country".$obj->country_code)!="Country".$obj->country_code))?$langs->trans("Country".$obj->country_code):$obj->country_label;
+		print $labelcountry;
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
@@ -1169,7 +1175,13 @@ while ($i < min($num, $limit))
 	}
 	if (! empty($arrayfields['s.tva_intra']['checked']))
 	{
-		print "<td>".$obj->tva_intra."</td>\n";
+		print "<td>";
+		print $obj->tva_intra;
+		if ($obj->tva_intra && ! isValidVATID($companystatic))
+		{
+			print img_warning("BadVATNumber", '', '');
+		}
+		print "</td>\n";
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Type
@@ -1276,7 +1288,7 @@ while ($i < min($num, $limit))
 
 	// Action column
 	print '<td class="nowrap center">';
-	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+	if (($massactionbutton || $massaction) && $contextpage != 'poslist')   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 	{
 		$selected=0;
 		if (in_array($obj->rowid, $arrayofselected)) $selected=1;

@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -142,9 +142,7 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->don->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/don/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewDonation').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
+        $newcardbutton.= dolGetButtonTitle($langs->trans('NewDonation'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/don/card.php?action=create');
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -156,7 +154,7 @@ if ($resql)
     print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="type" value="'.$type.'">';
 
-	print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton);
+	print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'invoicing', 0, $newcardbutton);
 
 	if ($search_all)
     {
@@ -195,7 +193,7 @@ if ($resql)
     }
     print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
     print '<td class="liste_titre right"></td>';
-    print '<td class="liste_titre right">';
+    print '<td class="liste_titre maxwidthsearch">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';

@@ -5,6 +5,7 @@
  * Copyright (C) 2006-2015  Yannick Warnier         <ywarnier@beeznest.org>
  * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019       Eric Seigne             <eric.seigne@cap-rel.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -116,14 +117,16 @@ foreach ($listofparams as $param)
 	if (GETPOST($param)!='') $morequerystring.=($morequerystring?'&':'').$param.'='.GETPOST($param);
 }
 
-llxHeader('', $langs->trans("VATReport"), '', '', 0, 0, '', '', $morequerystring);
+$title = $langs->trans("VATReport") . " " . dol_print_date($date_start) . " -> " . dol_print_date($date_end);
+llxHeader('', $title, '', '', 0, 0, '', '', $morequerystring);
 
 
 //print load_fiche_titre($langs->trans("VAT"),"");
 
 //$fsearch.='<br>';
-$fsearch.='  <input type="hidden" name="year" value="'.$year.'">';
-$fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
+$fsearch ='<!-- hidden fields for form -->';
+$fsearch.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+$fsearch.='<input type="hidden" name="modetax" value="'.$modetax.'">';
 //$fsearch.='  '.$langs->trans("SalesTurnoverMinimum").': ';
 //$fsearch.='  <input type="text" name="min" value="'.$min.'">';
 
@@ -171,7 +174,7 @@ $amountcust=$langs->trans("AmountHT");
 $vatcust=$langs->trans("VATReceived");
 $namecust=$langs->trans("Name");
 if ($mysoc->tva_assuj) {
-	$vatcust.=' ('.$langs->trans("ToPay").')';
+	$vatcust.=' ('.$langs->trans("VATToPay").')';
 }
 
 // Suppliers invoices
@@ -184,8 +187,10 @@ if ($mysoc->tva_assuj) {
 	$vatsup.=' ('.$langs->trans("ToGetBack").')';
 }
 
-
-report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
+$optioncss = GETPOST('optioncss');
+if($optioncss != "print") {
+	report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
+}
 
 $vatcust=$langs->trans("VATReceived");
 $vatsup=$langs->trans("VATPaid");
@@ -525,7 +530,7 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 	}
 
 	// Blank line
-	print '<tr><td colspan="'.($span+1).'">&nbsp;</td></tr>';
+	print '<tr><td colspan="'.($span+2).'">&nbsp;</td></tr>';
 
 	// Print table headers for this quadri - expenses now
 	print '<tr class="liste_titre liste_titre_topborder">';

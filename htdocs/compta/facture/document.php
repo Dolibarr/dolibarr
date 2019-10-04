@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -97,7 +97,7 @@ if ($id > 0 || ! empty($ref))
 	{
 		$object->fetch_thirdparty();
 
-		$upload_dir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($object->ref);
+		$upload_dir = $conf->facture->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 
 		$head = facture_prepare_head($object);
 		dol_fiche_head($head, 'documents', $langs->trans('InvoiceCustomer'), -1, 'bill');

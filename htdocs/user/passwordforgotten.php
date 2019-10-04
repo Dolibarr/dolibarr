@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -125,8 +125,9 @@ if ($action == 'buildnewpassword' && $username)
                 }
                 else
                 {
+
                     // Success
-                    if ($edituser->send_password($user, $newpassword, 1) > 0)
+                    if ($edituser->send_password($edituser, $newpassword, 1) > 0)
                     {
 
                         $message = '<div class="ok">'.$langs->trans("PasswordChangeRequestSent", $edituser->login, dolObfuscateEmail($edituser->email)).'</div>';

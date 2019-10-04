@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -324,7 +324,7 @@ if ($id > 0 || ! empty($ref))
 	    print '<div class="fichehalfleft">';
 	    print '<div class="underbanner clearboth"></div>';
 
-	    print '<table class="border" width="100%">';
+	    print '<table class="border centpercent tableforfield">';
 
 		// Discounts for third party
 	    if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
@@ -529,7 +529,7 @@ if ($id > 0 || ! empty($ref))
 		    print '<td colspan="3">';
 		    if ($action != 'editincoterm')
 		    {
-		        print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+		        print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 		    }
 		    else
 		    {
@@ -549,7 +549,7 @@ if ($id > 0 || ! empty($ref))
 		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border centpercent">';
+		print '<table class="border centpercent tableforfield">';
 
 		if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency))
 		{

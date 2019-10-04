@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * Module to manage resources into Dolibarr ERP/CRM
  */
@@ -55,7 +55,7 @@ class modResource extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
 		$this->family = "projects";
-		$this->module_position = '20';
+		$this->module_position = '16';
 		// Module label (no space allowed)
 		// used if translation string 'ModuleXXXName' not found
 		// (where XXX is value of numeric property 'numero' of module)
@@ -313,7 +313,7 @@ class modResource extends DolibarrModules
 	 *
 	 * 	@return		int		<=0 if KO, >0 if OK
 	 */
-	private function loadTables()
+	protected function loadTables()
 	{
 		return $this->_load_tables('/resource/sql/');
 	}

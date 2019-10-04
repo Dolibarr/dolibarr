@@ -12,12 +12,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, seehttp://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  * \file	    htdocs/accountancy/admin/fiscalyear_info.php
- * \ingroup     Advanced accountancy
+ * \ingroup     Accountancy (Double entries)
  * \brief	    Page to show info of a fiscal year
  */
 

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -50,14 +50,7 @@ print '<br>';
 print '<div class="center">';
 if (count($export->array_export_code))
 {
-	if ($user->rights->export->creer)
-	{
-		print '<a class="butActionNew" href="'.DOL_URL_ROOT.'/exports/export.php?leftmenu=export"><span class="valignmiddle text-plus-circle">'.$langs->trans("NewExport").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
-	}
-	else
-	{
-		print '<a class="butActionNewRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'"><span class="valignmiddle text-plus-circle">'.$langs->trans("NewExport").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
-	}
+    print dolGetButtonTitle($langs->trans('NewExport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/exports/export.php?leftmenu=export', '', $user->rights->export->creer);
 }
 print '</div>';
 print '<br>';

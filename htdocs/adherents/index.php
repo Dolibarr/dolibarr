@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2003		Jean-Louis Bergamo	<jlb@j1b.org>
+ * Copyright (C) 2004-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2019           Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -28,6 +29,11 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
+
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('membersindex'));
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies","members"));
@@ -46,7 +52,7 @@ $staticmember=new Adherent($db);
 $statictype=new AdherentType($db);
 $subscriptionstatic=new Subscription($db);
 
-print load_fiche_titre($langs->trans("MembersArea"));
+print load_fiche_titre($langs->trans("MembersArea"), '', 'members');
 
 $Adherents=array();
 $AdherentsAValider=array();
@@ -98,8 +104,7 @@ $now=dol_now();
 $sql = "SELECT count(*) as somme , d.fk_adherent_type";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 $sql.= " WHERE d.entity IN (".getEntity('adherent').")";
-//$sql.= " AND d.statut = 1 AND ((t.subscription = 0 AND d.datefin IS NULL) OR d.datefin >= '".$db->idate($now)."')";
-$sql.= " AND d.statut = 1 AND d.datefin >= '".$db->idate($now)."'";
+$sql.= " AND d.statut = 1 AND (d.datefin >= '".$db->idate($now)."' OR t.subscription = 0)";
 $sql.= " AND t.rowid = d.fk_adherent_type";
 $sql.= " GROUP BY d.fk_adherent_type";
 
@@ -434,6 +439,9 @@ print "</table>\n";
 print "</div>";
 
 print '</div></div></div>';
+
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardMembers', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

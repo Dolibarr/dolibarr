@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016       Laurent Destailleur      <eldy@users.sourceforge.net>
  * Copyright (C) 2016-2019  Alexandre Spangaro       <aspangaro@open-dsi.fr>
+ * Copyright (C) 2019       Frédéric France             <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,12 +14,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  * \file    htdocs/accountancy/index.php
- * \ingroup Advanced accountancy
+ * \ingroup Accountancy (Double entries)
  * \brief   Home accounting module
  */
 
@@ -49,7 +50,8 @@ $hookmanager->initHooks(array('accountancyindex'));
 
 llxHeader('', $langs->trans("AccountancyArea"));
 
-print load_fiche_titre($langs->trans("AccountancyArea"), '', 'title_accountancy');
+print load_fiche_titre($langs->trans("AccountancyArea"), '', 'accountancy');
+//dol_fiche_head();
 
 $step = 0;
 
@@ -175,6 +177,7 @@ else
 {
 	print $langs->trans("Module10Desc")."<br>\n";
 }
+//dol_fiche_end();
 
 // End of page
 llxFooter();

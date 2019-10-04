@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -96,6 +96,20 @@ class ActionComm extends CommonObject
     public $datec;
 
     /**
+     * Date end record (datef)
+     *
+     * @var integer
+     */
+    public $datef;
+
+    /**
+     * Duration (duree)
+     *
+     * @var integer
+     */
+    public $duree;
+
+    /**
      * Date modification record (tms)
      *
      * @var integer
@@ -106,7 +120,7 @@ class ActionComm extends CommonObject
      * Object user that create action
      * @var User
      * @deprecated
-     * @see authorid
+     * @see $authorid
      */
     public $author;
 
@@ -114,7 +128,7 @@ class ActionComm extends CommonObject
      * Object user that modified action
      * @var User
      * @deprecated
-     * @see usermodid
+     * @see $usermodid
      */
     public $usermod;
 
@@ -237,9 +251,6 @@ class ActionComm extends CommonObject
     public function __construct(DoliDB $db)
     {
         $this->db = $db;
-
-        $this->societe = new stdClass();	// deprecated
-        $this->contact = new stdClass();	// deprecated
     }
 
     /**
@@ -281,6 +292,7 @@ class ActionComm extends CommonObject
         if (! empty($this->datep) && ! empty($this->datef) && $this->datep > $this->datef) $this->datef=$this->datep;
         //if (! empty($this->date)  && ! empty($this->dateend) && $this->date > $this->dateend) $this->dateend=$this->date;
         if (! isset($this->fk_project) || $this->fk_project < 0) $this->fk_project = 0;
+        // For backward compatibility
         if ($this->elementtype=='facture')  $this->elementtype='invoice';
         if ($this->elementtype=='commande') $this->elementtype='order';
         if ($this->elementtype=='contrat')  $this->elementtype='contract';
@@ -291,8 +303,6 @@ class ActionComm extends CommonObject
         	$this->userassigned=array();
         	$this->userassigned[$tmpid]=array('id'=>$tmpid, 'transparency'=>$this->transparency);
         }
-
-        //if (is_object($this->contact) && isset($this->contact->id) && $this->contact->id > 0 && ! ($this->contactid > 0)) $this->contactid = $this->contact->id;		// For backward compatibility. Using this->contact->xx is deprecated
 
 
         $userownerid=$this->userownerid;
@@ -487,20 +497,6 @@ class ActionComm extends CommonObject
         }
     }
 
-	/**
-	 *    Add an action/event into database.
-	 *    $this->type_id OR $this->type_code must be set.
-	 *
-	 *    @param	User	$user      		Object user making action
-	 *    @param    int		$notrigger		1 = disable triggers, 0 = enable triggers
-	 *    @return   int 		        	Id of created event, < 0 if KO
-	 * @deprecated Use create instead
-	 */
-	public function add(User $user, $notrigger = 0)
-	{
-		return $this->create($user, $notrigger);
-	}
-
     /**
      *  Load an object from its id and create a new one in database
      *
@@ -661,9 +657,9 @@ class ActionComm extends CommonObject
 
                 $this->socid				= $obj->fk_soc;			// To have fetch_thirdparty method working
                 $this->contactid			= $obj->fk_contact;		// To have fetch_contact method working
-                $this->fk_project			= $obj->fk_project;		// To have fetch_project method working
+                $this->fk_project			= $obj->fk_project;		// To have fetch_projet method working
 
-                $this->societe->id			= $obj->fk_soc;			// deprecated
+                //$this->societe->id			= $obj->fk_soc;			// deprecated
                 //$this->contact->id			= $obj->fk_contact;		// deprecated
 
                 $this->fk_element			= $obj->elementid;
@@ -874,8 +870,8 @@ class ActionComm extends CommonObject
             return -1;
         }
 
-        $socid=($this->socid?$this->socid:((isset($this->societe->id) && $this->societe->id > 0) ? $this->societe->id : 0));
-        $contactid=($this->contactid?$this->contactid:0);
+        $socid=(($this->socid > 0)?$this->socid:0);
+        $contactid=(($this->contactid > 0)?$this->contactid:0);
 		$userownerid=($this->userownerid?$this->userownerid:0);
 		$userdoneid=($this->userdoneid?$this->userdoneid:0);
 
@@ -995,7 +991,7 @@ class ActionComm extends CommonObject
 
     /**
      *  Load all objects with filters.
-     *  WARNING: This make a fetch on all records instead of making one request with a join.
+     *  @TODO WARNING: This make a fetch on all records instead of making one request with a join.
      *
      *  @param		DoliDb	$db				Database handler
      *  @param		int		$socid			Filter by thirdparty
@@ -1005,13 +1001,15 @@ class ActionComm extends CommonObject
      *  @param		string	$sortfield		Sort on this field
      *  @param		string	$sortorder		ASC or DESC
      *  @param		string	$limit			Limit number of answers
-     *  @return	array or string			Error string if KO, array with actions if OK
+     *  @return		array|string			Error string if KO, array with actions if OK
      */
     public static function getActions($db, $socid = 0, $fk_element = 0, $elementtype = '', $filter = '', $sortfield = 'a.datep', $sortorder = 'DESC', $limit = 0)
     {
         global $conf, $langs;
 
         $resarray=array();
+
+        dol_syslog(get_class()."::getActions", LOG_DEBUG);
 
         $sql = "SELECT a.id";
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
@@ -1026,7 +1024,6 @@ class ActionComm extends CommonObject
 		if ($sortorder && $sortfield) $sql.=$db->order($sortfield, $sortorder);
 		$sql.=$db->plimit($limit, 0);
 
-        dol_syslog(get_class()."::getActions", LOG_DEBUG);
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -1087,6 +1084,7 @@ class ActionComm extends CommonObject
 	    		$response = new WorkboardResponse();
 	    		$response->warning_delay = $conf->agenda->warning_delay/60/60/24;
 	    		$response->label = $langs->trans("ActionsToDo");
+	    		$response->labelShort = $langs->trans("ActionsToDoShort");
 	    		$response->url = DOL_URL_ROOT.'/comm/action/list.php?actioncode=0&amp;status=todo&amp;mainmenu=agenda';
 	    		if ($user->rights->agenda->allactions->read) $response->url.='&amp;filtert=-1';
 	    		$response->img = img_object('', "action", 'class="inline-block valigntextmiddle"');
@@ -1270,8 +1268,10 @@ class ActionComm extends CommonObject
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
-        if ((!$user->rights->agenda->allactions->read && $this->author->id != $user->id) || (!$user->rights->agenda->myactions->read && $this->author->id == $user->id))
+		if ((!$user->rights->agenda->allactions->read && $this->authorid != $user->id) || (!$user->rights->agenda->myactions->read && $this->authorid == $user->id))
+		{
             $option = 'nolink';
+		}
 
         $label = $this->label;
 		if (empty($label)) $label=$this->libelle;   // For backward compatibility
@@ -1637,7 +1637,7 @@ class ActionComm extends CommonObject
      *  Used to build previews or test instances.
      *  id must be 0 if object instance is a specimen.
      *
-     *  @return	void
+     *  @return	int >0 if ok
      */
     public function initAsSpecimen()
     {
@@ -1669,6 +1669,7 @@ class ActionComm extends CommonObject
 
         $this->userownerid=$user->id;
         $this->userassigned[$user->id]=array('id'=>$user->id, 'transparency'=> 1);
+        return 1;
     }
 
 	/**

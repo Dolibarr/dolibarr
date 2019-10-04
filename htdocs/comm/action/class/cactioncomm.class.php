@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -84,7 +84,7 @@ class CActionComm
         $sql = "SELECT id, code, type, libelle as label, color, active, picto";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
         if (is_numeric($id)) $sql.= " WHERE id=".$id;
-        else $sql.= " WHERE code='".$id."'";
+        else $sql.= " WHERE code='".$this->db->escape($id)."'";
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);

@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -60,6 +60,7 @@ if (GETPOST('cancel', 'alpha'))
 
 if ($action == 'removebackgroundlogin' && ! empty($conf->global->MAIN_LOGIN_BACKGROUND))
 {
+	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV+1, 'chaine', 0, '', $conf->entity);
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$logofile=$conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_LOGIN_BACKGROUND;
@@ -81,6 +82,7 @@ if ($action == 'removebackgroundlogin' && ! empty($conf->global->MAIN_LOGIN_BACK
 if ($action == 'update')
 {
 	dolibarr_set_const($db, "MAIN_LANG_DEFAULT", $_POST["MAIN_LANG_DEFAULT"], 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV+1, 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_MULTILANGS", $_POST["MAIN_MULTILANGS"], 'chaine', 0, '', $conf->entity);
 
 	dolibarr_set_const($db, "MAIN_THEME", $_POST["main_theme"], 'chaine', 0, '', $conf->entity);
@@ -257,7 +259,7 @@ if ($action == 'edit')	// Edit
 	print '</table><br>'."\n";
 
 	// Themes and themes options
-	show_theme(null, 1);
+	showSkins(null, 1);
 	print '<br>';
 
 	// Other
@@ -430,11 +432,13 @@ if ($action == 'edit')	// Edit
 	print '</table>'."\n";
 
 
-	print '<br><div class="center">';
+	print '<br>';
+	print '<div class="center">';
 	print '<input class="button" type="submit" name="submit" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; ';
+	print '&nbsp;&nbsp;&nbsp;';
 	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
+	print '<br>';
 
 	print '</form>';
 }
@@ -462,7 +466,7 @@ else	// Show
 
 
 	// Themes
-	show_theme(null, 0);
+	showSkins(null, 0);
 	print '<br>';
 
 

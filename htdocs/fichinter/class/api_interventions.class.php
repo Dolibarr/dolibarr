@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
  use Luracast\Restler\RestException;
@@ -80,7 +80,7 @@ class Interventions extends DolibarrApi
 
         $result = $this->fichinter->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Intervention report not found');
+            throw new RestException(404, 'Intervention not found');
         }
 
         if( ! DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
@@ -100,7 +100,7 @@ class Interventions extends DolibarrApi
      * @param string	       $sortorder	        Sort order
      * @param int	       $limit		        Limit for list
      * @param int	       $page		        Page number
-     * @param string   	       $thirdparty_ids	        Thirdparty ids to filter orders of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
+     * @param string   	       $thirdparty_ids	        Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
      * @param string           $sqlfilters              Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return  array                                   Array of order objects
      *
@@ -113,7 +113,7 @@ class Interventions extends DolibarrApi
         $obj_ret = array();
 
         // case of external user, $thirdparty_ids param is ignored and replaced by user's socid
-        $socids = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $thirdparty_ids;
+        $socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $thirdparty_ids;
 
         // If the internal user must only see his customers, force searching by him
         $search_sale = 0;
@@ -174,10 +174,10 @@ class Interventions extends DolibarrApi
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve fichinter list : '.$db->lasterror());
+            throw new RestException(503, 'Error when retrieve intervention list : '.$db->lasterror());
         }
         if( ! count($obj_ret)) {
-            throw new RestException(404, 'No finchinter found');
+            throw new RestException(404, 'No intervention found');
         }
         return $obj_ret;
     }
@@ -200,7 +200,7 @@ class Interventions extends DolibarrApi
         }
 
         if ($this->fichinter->create(DolibarrApiAccess::$user) < 0) {
-            throw new RestException(500, "Error creating fichinter", array_merge(array($this->fichinter->error), $this->fichinter->errors));
+            throw new RestException(500, "Error creating intervention", array_merge(array($this->fichinter->error), $this->fichinter->errors));
         }
 
         return $this->fichinter->id;
@@ -301,7 +301,7 @@ class Interventions extends DolibarrApi
             throw new RestException(404, 'Intervention not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('commande', $this->fichinter->id)) {
+        if( ! DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -115,7 +115,7 @@ llxHeader('', $langs->trans("PrintingSetup"));
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('ConfigOAuth'), $linkback, 'title_setup');
 
-$head=oauthadmin_prepare_head($mode);
+$head = oauthadmin_prepare_head();
 
 dol_fiche_head($head, 'tokengeneration', '', -1, 'technic');
 

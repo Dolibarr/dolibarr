@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -318,7 +318,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 		$case = dol_print_date(dol_mktime(1, 1, 1, $mois_modulo, 1, $annee_decalage), "%Y-%m");
 		$caseprev = dol_print_date(dol_mktime(1, 1, 1, $mois_modulo, 1, $annee_decalage-1), "%Y-%m");
 
-		if ($annee >= $year_start)
+		if ($annee >= $year_start)	// We ignore $annee < $year_start, we loop on it to be able to make delta, nothing is output.
 		{
 			if ($modecompta == 'CREANCES-DETTES') {
 				// Valeur CA du mois w/o VAT
@@ -386,11 +386,12 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 				else { print '&nbsp;'; }
 				print '</td>';
 			}
-			if ($annee_decalage != $year_end) print '<td width="15">&nbsp;</td>';
+
+			if ($annee_decalage < $year_end || ($annee_decalage == $year_end && $mois > 12 && $annee < $year_end)) print '<td width="15">&nbsp;</td>';
 		}
 
-		$total_ht[$annee]+=!empty($cum_ht[$case]) ? $cum_ht[$case] : 0;
-		$total[$annee]+=$cum[$case];
+		$total_ht[$annee] += ((! empty($cum_ht[$case])) ? $cum_ht[$case] : 0);
+		$total[$annee] += $cum[$case];
 	}
 
 	print '</tr>';

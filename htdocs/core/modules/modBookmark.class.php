@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -93,8 +93,8 @@ class modBookmark extends DolibarrModules
 		$r++;
 		$this->rights[$r][0] = 333; // id de la permission
 		$this->rights[$r][1] = 'Supprimer les bookmarks'; // libelle de la permission
-		$this->rights[$r][2] = 'r'; // type de la permission (d�pr�ci� � ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'supprimer';
 
 

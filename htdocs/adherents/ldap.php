@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -83,9 +83,9 @@ if ($action == 'dolibarr2ldap')
  *	View
  */
 
-llxHeader('', $langs->trans("Member"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
-
 $form = new Form($db);
+
+llxHeader('', $langs->trans("Member"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 $head = member_prepare_head($object);
 
@@ -98,12 +98,12 @@ dol_banner_tab($object, 'rowid', $linkback);
 print '<div class="fichecenter">';
 
 print '<div class="underbanner clearboth"></div>';
-print '<table class="border centpercent">';
+print '<table class="border centpercent tableforfield">';
 
 // Login
-print '<tr><td class="titlefield">'.$langs->trans("Login").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
 
-// Password not crypted
+// If there is a link to password not crypted, we show value in database here so we can compare because it is shown nowhere else
 if (! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD))
 {
 	print '<tr><td>'.$langs->trans("LDAPFieldPasswordNotCrypted").'</td>';
@@ -111,18 +111,11 @@ if (! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD))
 	print "</tr>\n";
 }
 
-// Password crypted
-if (! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED))
-{
-	print '<tr><td>'.$langs->trans("LDAPFieldPasswordCrypted").'</td>';
-	print '<td class="valeur">'.$object->pass_crypted.'</td>';
-	print "</tr>\n";
-}
+$adht = new AdherentType($db);
+$adht->fetch($object->typeid);
 
 // Type
-print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$object->type."</td></tr>\n";
-
-$langs->load("admin");
+print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
 // LDAP DN
 print '<tr><td>LDAP '.$langs->trans("LDAPMemberDn").'</td><td class="valeur">'.$conf->global->LDAP_MEMBER_DN."</td></tr>\n";
@@ -182,7 +175,7 @@ if ($result > 0)
 	if (empty($dn))
 	{
 	    $langs->load("errors");
-	    print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorModuleSetupNotComplete").'</font></td></tr>';
+	    print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Member")).'</font></td></tr>';
 	}
     else
     {
@@ -190,12 +183,12 @@ if ($result > 0)
 
     	//print_r($records);
 
-    	// Affichage arbre
-    	if ((! is_numeric($records) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
+    	// Show tree
+    	if (((! is_numeric($records)) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
     	{
     		if (! is_array($records))
     		{
-    			print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
+    			print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
     		}
     		else
     		{
@@ -204,7 +197,7 @@ if ($result > 0)
     	}
     	else
     	{
-    		print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
+    		print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
     	}
     }
 

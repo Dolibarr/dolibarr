@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -149,12 +149,12 @@ print '<td class="titlefield">';
 print $langs->trans("PaypalLiveEnabled").'</td><td>';
 if (empty($conf->global->PAYPAL_API_SANDBOX))
 {
-    print '<a href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=0">';
+    print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=0">';
     print img_picto($langs->trans("Activated"), 'switch_on');
 }
 else
 {
-    print '<a href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=1">';
+    print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=1">';
     print img_picto($langs->trans("Disabled"), 'switch_off');
 }
 print '</td></tr>';
@@ -214,7 +214,7 @@ if (! empty($conf->banque->enabled))
 {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BankAccount").'</td><td>';
-	print $form->select_comptes($conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS, 'PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
+	$form->select_comptes($conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS, 'PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS', 0, '', 1);
 	print '</td></tr>';
 }
 

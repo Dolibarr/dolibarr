@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -203,7 +203,7 @@ if ($resql)
 
     		print '<tr class="oddeven"><td>';
 
-    		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
+    		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'">';
     		print img_picto('', 'statut'.$obj->statut).' ';
     		print substr('000000'.$obj->rowid, -6);
     		print '</a></td>';

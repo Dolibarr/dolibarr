@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -183,7 +183,7 @@ foreach ($dirmodels as $reldir)
                             }
                             else
                             {
-                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+                                print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
                             }
                             print '</td>';
 
@@ -252,13 +252,15 @@ print "</td></tr>\n";
 
 print '</table>';
 
-print '<center>';
+dol_fiche_end();
+
+print '<br>';
+print '<div class="center">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
-print '</center>';
+print '</div>';
+print '<br>';
 
 print '</form>';
-
-dol_fiche_end();
 
 // End of page
 llxFooter();

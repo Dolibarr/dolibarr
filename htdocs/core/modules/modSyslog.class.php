@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -46,7 +46,7 @@ class modSyslog extends DolibarrModules
 		// It is used to group modules in module setup page
 		$this->family = "base";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
-		$this->module_position = '50';
+		$this->module_position = '75';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
@@ -92,7 +92,7 @@ class modSyslog extends DolibarrModules
 				'objectname' => 'Utils',
 				'method' => 'compressSyslogs',
 				'parameters' => '',
-				'comment' => 'Compress and archive log files. Warning: batch must be run with same account than your web server to avoid to get log files with different owner than required by web server. Another solution is to set web server Operating System group as the group of directory documents and set GROUP permission "rws" on this directory so log files will always have the group and permissions of the web server Operating System group',
+				'comment' => 'Compress and archive log files. The number of versions to keep is defined into the setup of module. Warning: Main application cron script must be run with same account than your web server to avoid to get log files with different owner than required by web server. Another solution is to set web server Operating System group as the group of directory documents and set GROUP permission "rws" on this directory so log files will always have the group and permissions of the web server Operating System group',
 				'frequency' => 1,
 				'unitfrequency' => 3600 * 24,
 				'priority' => 50,

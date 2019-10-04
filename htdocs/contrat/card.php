@@ -22,7 +22,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -433,7 +433,7 @@ if (empty($reshook))
 		}
 
 		$qty = GETPOST('qty'.$predef);
-		$remise_percent = GETPOST('remise_percent'.$predef);
+		$remise_percent = ((GETPOST('remise_percent'.$predef) != '') ? GETPOST('remise_percent'.$predef) : 0);
 
 		if ($qty == '')
 		{
@@ -566,7 +566,8 @@ if (empty($reshook))
 			$info_bits=0;
 			if ($tva_npr) $info_bits |= 0x01;
 
-			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS) )&& ($price_min && (price2num($pu_ht)*(1-price2num($remise_percent)/100) < price2num($price_min))))
+			if (((! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance))
+				|| empty($conf->global->MAIN_USE_ADVANCED_PERMS) ) && ($price_min && (price2num($pu_ht)*(1-price2num($remise_percent)/100) < price2num($price_min))))
 			{
 				$object->error = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 				$result = -1 ;
@@ -1096,8 +1097,6 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 if (! empty($conf->projet->enabled)) $formproject = new FormProjets($db);
 
-$objectlignestatic=new ContratLigne($db);
-
 // Load object modContract
 $module=(! empty($conf->global->CONTRACT_ADDON)?$conf->global->CONTRACT_ADDON:'mod_contract_serpis');
 if (substr($module, 0, 13) == 'mod_contract_' && substr($module, -3) == 'php')
@@ -1113,7 +1112,7 @@ if ($result > 0)
 // Create
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans('AddContract'), '', 'title_commercial.png');
+	print load_fiche_titre($langs->trans('AddContract'), '', 'commercial');
 
 	$soc = new Societe($db);
 	if ($socid>0) $soc->fetch($socid);
@@ -2139,22 +2138,22 @@ else
 				{
 					if ($user->rights->contrat->activer)
 					{
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=activate">'.$langs->trans("ActivateAllContracts").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" id="btnactivateall" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=activate">'.$langs->trans("ActivateAllContracts").'</a></div>';
 					}
 					else
 					{
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("ActivateAllContracts").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" id="btnactivateall" href="#">'.$langs->trans("ActivateAllContracts").'</a></div>';
 					}
 				}
 				if ($object->nbofservicesclosed < $nbofservices)
 				{
 					if ($user->rights->contrat->desactiver)
 					{
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close">'.$langs->trans("CloseAllContracts").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" id="btncloseall" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close">'.$langs->trans("CloseAllContracts").'</a></div>';
 					}
 					else
 					{
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CloseAllContracts").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" id="btncloseall" href="#">'.$langs->trans("CloseAllContracts").'</a></div>';
 					}
 
 					//if (! $numactive)
@@ -2211,10 +2210,14 @@ else
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
+			$MAXEVENT = 10;
+
+			$morehtmlright = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt', DOL_URL_ROOT.'/contrat/agenda.php?id='.$object->id);
+
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
-			$somethingshown = $formactions->showactions($object, 'contract', $socid, 1);
+			$somethingshown = $formactions->showactions($object, 'contract', $socid, 1, 'listactions', $MAXEVENT, '', $morehtmlright);
 
 
 			print '</div></div></div>';
@@ -2239,14 +2242,18 @@ $db->close();
 <?php
 if (! empty($conf->margin->enabled) && $action == 'editline')
 {
+		// TODO Why this ? To manage margin on contracts ?
 ?>
-
 <script type="text/javascript">
 $(document).ready(function() {
   var idprod = $("input[name='idprod']").val();
   var fournprice = $("input[name='fournprice']").val();
+  var token = '<?php echo $_SESSION["token"]; ?>';		// For AJAX Call we use old 'token' and not 'newtoken'
   if (idprod > 0) {
-	  $.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': idprod}, function(data) {
+	  $.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {
+		  'idprod': idprod,
+		  'token': token
+		  }, function(data) {
 	    if (data.length > 0) {
 	      var options = '';
 	      var trouve=false;
@@ -2291,6 +2298,5 @@ $(document).ready(function() {
     }
 });
 </script>
-
 <?php
 }

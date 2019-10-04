@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -50,7 +50,7 @@ $object->info($id);
 
 $head = various_payment_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("VariousPayment"), -1, 'payment');
+dol_fiche_head($head, 'info', $langs->trans("VariousPayment"), -1, $object->picto);
 
 
 $morehtmlref='<div class="refidno">';

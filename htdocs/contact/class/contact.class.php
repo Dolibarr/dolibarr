@@ -9,6 +9,7 @@
  * Copyright (C) 2013      Alexandre Spangaro 	       <aspangaro@open-dsi.fr>
  * Copyright (C) 2013      Juanjo Menent	 	       <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
+ * Copyright (C) 2019       Nicolas ZABOURI 		<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -81,26 +82,11 @@ class Contact extends CommonObject
 
 	public $civility_id;      // In fact we store civility_code
 	public $civility_code;
-  public $civility;
+	public $civility;
 	public $address;
 	public $zip;
 	public $town;
 
-	/**
-	 * @deprecated
-	 * @see $state_id
-	 */
-	public $fk_departement;
-	/**
-	 * @deprecated
-	 * @see $state_code
-	 */
-	public $departement_code;
-	/**
-	 * @deprecated
-	 * @see $state
-	 */
-	public $departement;
 	public $state_id;	        	// Id of department
 	public $state_code;		    // Code of department
 	public $state;			        // Label of department
@@ -498,6 +484,7 @@ class Contact extends CommonObject
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
@@ -507,7 +494,7 @@ class Contact extends CommonObject
 	 *									2=Return key only (uid=qqq)
 	 *	@return		string				DN
 	 */
-	private function _load_ldap_dn($info, $mode = 0)
+	public function _load_ldap_dn($info, $mode = 0)
 	{
         // phpcs:enable
 		global $conf;
@@ -520,12 +507,13 @@ class Contact extends CommonObject
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *	Initialise tableau info (tableau des attributs LDAP)
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
-	private function _load_ldap_info()
+	public function _load_ldap_info()
 	{
         // phpcs:enable
 		global $conf, $langs;
@@ -698,9 +686,9 @@ class Contact extends CommonObject
 
         $langs->load("dict");
 
-		dol_syslog(get_class($this)."::fetch id=".$id, LOG_DEBUG);
+		dol_syslog(get_class($this) . "::fetch id=" . $id . " ref_ext=" . $ref_ext . " email=" . $email, LOG_DEBUG);
 
-		if (empty($id) && empty($ref_ext))
+		if (empty($id) && empty($ref_ext) && empty($email))
 		{
 			$this->error='BadParameter';
 			return -1;
@@ -1020,7 +1008,7 @@ class Contact extends CommonObject
 		// Removed extrafields
         if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) {
             // For avoid conflicts if trigger used
-			$result=$this->deleteExtraFields($this);
+			$result=$this->deleteExtraFields();
 			if ($result < 0) $error++;
 		}
 
@@ -1214,11 +1202,12 @@ class Contact extends CommonObject
 	public function getCivilityLabel()
 	{
 		global $langs;
-		$langs->load("dict");
 
-		$code=(! empty($this->civility_id)?$this->civility_id:(! empty($this->civilite_id)?$this->civilite_id:''));
+		$code=($this->civility_code ? $this->civility_code : (! empty($this->civility_id)?$this->civility:(! empty($this->civilite)?$this->civilite:'')));
 		if (empty($code)) return '';
-        return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civility", "code", "label", $code);
+
+		$langs->load("dict");
+		return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civility", "code", "label", $code);
 	}
 
 	/**
@@ -1299,7 +1288,7 @@ class Contact extends CommonObject
      *  Used to build previews or test instances.
      *	id must be 0 if object instance is a specimen.
      *
-     *  @return	void
+     *  @return	int >0 if ok
 	 */
 	public function initAsSpecimen()
 	{
@@ -1336,6 +1325,7 @@ class Contact extends CommonObject
 
 		$this->socid = $socid;
 		$this->statut=1;
+		return 1;
 	}
 
 	/**
@@ -1417,12 +1407,12 @@ class Contact extends CommonObject
 		// Process
 		foreach ($to_del as $del) {
 			if ($c->fetch($del) > 0) {
-				$c->del_type($this, 'contact');
+				$c->del_type($this, Categorie::TYPE_CONTACT);
 			}
 		}
 		foreach ($to_add as $add) {
 			if ($c->fetch($add) > 0) {
-				$c->add_type($this, 'contact');
+				$c->add_type($this, Categorie::TYPE_CONTACT);
 			}
 		}
 

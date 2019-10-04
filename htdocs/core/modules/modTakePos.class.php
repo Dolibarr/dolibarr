@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -65,7 +65,7 @@ class modTakePos extends DolibarrModules
 		$this->descriptionlong = "Point Of Sales (compliant with touch screen)";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'experimental';
+		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where TAKEPOS is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -95,7 +95,7 @@ if ($id > 0 || ! empty($ref))
 
 	$head = myobjectPrepareHead($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("MyObject"), -1, 'myobject@mymodule');
+	dol_fiche_head($head, 'note', $langs->trans("MyObject"), -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------

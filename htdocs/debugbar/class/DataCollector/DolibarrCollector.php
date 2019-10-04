@@ -66,7 +66,7 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 		$info .= $langs->trans('Currency') . ': <strong>' . $conf->currency . '</strong><br>';
 		$info .= $langs->trans('DolEntity') . ': <strong>' . $conf->entity . '</strong><br>';
 		$info .= $langs->trans('ListLimit') . ': <strong>' . ($conf->liste_limit ?: $conf->global->MAIN_SIZE_LISTE_LIMIT) . '</strong><br>';
-		$info .= $langs->trans('UploadSize') . ': <strong>' . $conf->global->MAIN_UPLOAD_DOC . '</strong>';
+		$info .= $langs->trans('MaxSizeForUploadedFiles') . ': <strong>' . $conf->global->MAIN_UPLOAD_DOC . '</strong>';
 
 		return $info;
 	}
@@ -84,9 +84,9 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 		$info .= $langs->trans('Server') . ': <strong>' . $conf->global->MAIN_MAIL_SMTP_SERVER . '</strong><br>';
 		$info .= $langs->trans('Port') . ': <strong>' . $conf->global->MAIN_MAIL_SMTP_PORT . '</strong><br>';
 		$info .= $langs->trans('ID') . ': <strong>' . $conf->global->MAIN_MAIL_SMTPS_ID . '</strong><br>';
-		$info .= $langs->trans('Pwd') . ': <strong>' . $conf->global->MAIN_MAIL_SMTPS_PW . '</strong><br>';
+		$info .= $langs->trans('Pwd') . ': <strong>' . preg_replace('/./', '*', $conf->global->MAIN_MAIL_SMTPS_PW) . '</strong><br>';
 		$info .= $langs->trans('TLS/STARTTLS') . ': <strong>' . $conf->global->MAIN_MAIL_EMAIL_TLS . '</strong> / <strong>' . $conf->global->MAIN_MAIL_EMAIL_STARTTLS . '</strong><br>';
-		$info .= $langs->trans('Status') . ': <strong>' . ($conf->global->MAIN_DISABLE_ALL_MAILS ? $langs->trans('StatusDisabled') : $langs->trans('StatusEnabled')) . '</strong>';
+		$info .= $langs->trans('MAIN_DISABLE_ALL_MAILS') . ': <strong>' . ($conf->global->MAIN_DISABLE_ALL_MAILS ? $langs->trans('Yes') : $langs->trans('No')) . '</strong>';
 
 		return $info;
 	}

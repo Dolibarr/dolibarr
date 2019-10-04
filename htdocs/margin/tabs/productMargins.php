@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -135,9 +135,9 @@ if ($id > 0 || ! empty($ref))
             $sql.= " f.datef, f.paye, f.fk_statut as statut, f.type,";
             if (!$user->rights->societe->client->voir && !$socid) $sql.= " sc.fk_soc, sc.fk_user,";
             $sql.= " sum(d.total_ht) as selling_price,";							// may be negative or positive
-            $sql.= " IF(f.type = 2, -1, 1) * sum(d.qty) as qty,";						// not always positive in case of Credit note
-            $sql.= " IF(f.type = 2, -1, 1) * sum(d.qty * d.buy_price_ht) as buying_price,";			// not always positive in case of Credit note
-            $sql.= " IF(f.type = 2, -1, 1) * sum(abs(d.total_ht) - (d.buy_price_ht * d.qty)) as marge" ;	// not always positive in case of Credit note
+            $sql.= " ".$db->ifsql('f.type = 2', -1, 1)." * sum(d.qty) as qty,";						// not always positive in case of Credit note
+            $sql.= " ".$db->ifsql('f.type = 2', -1, 1)." * sum(d.qty * d.buy_price_ht) as buying_price,";			// not always positive in case of Credit note
+            $sql.= " ".$db->ifsql('f.type = 2', -1, 1)." * sum(abs(d.total_ht) - (d.buy_price_ht * d.qty)) as marge" ;	// not always positive in case of Credit note
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
             $sql.= ", ".MAIN_DB_PREFIX."facture as f";
             $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";

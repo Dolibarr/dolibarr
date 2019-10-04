@@ -1,14 +1,14 @@
 # Dolibarr language file - Source file is en_US - ftp
-FTPClientSetup=راه اندازی ماژول FTP کارفرما
-NewFTPClient=جدید راه اندازی اتصال به FTP
-FTPArea=منطقه FTP
-FTPAreaDesc=این صفحه نمایش نشان می دهد محتوای شما را از مشخصات سرور FTP
-SetupOfFTPClientModuleNotComplete=راه اندازی ماژول سرویس گیرنده FTP به نظر می رسد کامل نیست
-FTPFeatureNotSupportedByYourPHP=PHP شما توابع FTP پشتیبانی نمی کند
-FailedToConnectToFTPServer=برای اتصال به سرور FTP با شکست مواجه شد (٪ s سرور، پورت٪ بازدید کنندگان)
-FailedToConnectToFTPServerWithCredentials=برای ورود به سایت به سرور FTP با ورود به سیستم / رمز عبور تعریف شده شکست خورده
-FTPFailedToRemoveFile=حذف <b>فایل٪ s</b> شکست خورد.
-FTPFailedToRemoveDir=برای حذف <b>دایرکتوری٪ s</b> شکست خورد (مجوز ورود و پوشه خالی است).
-FTPPassiveMode=حالت منفعل
-ChooseAFTPEntryIntoMenu=Choose a FTP entry into menu...
-FailedToGetFile=Failed to get files %s
+FTPClientSetup=برپاسازی واحد متقاضی FTP
+NewFTPClient=برپاسازی اتصال جدید FTP
+FTPArea=بخش FTP
+FTPAreaDesc=این صفحه نمائی از سرور FTP را نمایش می‌دهد.
+SetupOfFTPClientModuleNotComplete=ظاهرا برپاسازی واحد متقاضی FTP ناقص است
+FTPFeatureNotSupportedByYourPHP=PHP شما از توابع FTP پشتیبانی نمی‌کن
+FailedToConnectToFTPServer=امکان اتصال به سرور FTP نبود (سرور %s، درگاه %s)
+FailedToConnectToFTPServerWithCredentials=امکان ورود به سرور FTP با نام‌ورود/گذرواژه تعریف شده نبود
+FTPFailedToRemoveFile=حذف فایل <b>%s</b> مقدور نبود
+FTPFailedToRemoveDir=حذف پوشۀ <b>%s</b> مقدور نبود: مجوزها را بررسی کرده و مطمئن شوید پوشه خالی است.
+FTPPassiveMode=حالت انفعالی
+ChooseAFTPEntryIntoMenu=یک سایت FTP از فهرست انتخاب کنید...
+FailedToGetFile=عدم امکان دریافت فایل‌های %s

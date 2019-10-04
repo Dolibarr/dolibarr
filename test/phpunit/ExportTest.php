@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -49,7 +49,7 @@ if (! defined("NOLOGIN"))        define("NOLOGIN", '1');       // If this page i
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class ExportTest extends PHPUnit_Framework_TestCase
+class ExportTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;

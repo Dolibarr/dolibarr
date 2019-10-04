@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -131,9 +131,9 @@ class EmailSenderProfile extends CommonObject
 	 */
 	//public $class_element_line = 'EmailSenderProfileline';
 	/**
-	 * @var array  Array of child tables (child tables to delete before deleting a record)
+	 * @var array	List of child tables. To test if we can delete object.
 	 */
-	//protected $childtables=array('emailsenderprofiledet');
+	//protected $childtables=array();
 	/**
 	 * @var EmailSenderProfileLine[]     Array of subtable lines
 	 */

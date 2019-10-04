@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -396,7 +396,7 @@ else
 {
     dol_fiche_head($head, 'common_emailing', '', -1);
 
-    print $langs->trans("EMailsDesc")."<br>\n";
+    print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
     print "<br>\n";
 
 	print '<table class="noborder" width="100%">';
@@ -493,7 +493,8 @@ else
     }
 
 
-	// Boutons actions
+    // Buttons for actions
+
 	print '<div class="tabsAction">';
 
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';

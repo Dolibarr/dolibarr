@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -98,8 +98,14 @@ $object = new MyObject($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('myobjectlist'));     // Note that conf->hooks_modules contains array
+
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('myobject');	// Load $extrafields->attributes['myobject']
+$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+
+// fetch optionals attributes lines and labels
+//$extrafieldsline = new ExtraFields($db);
+//$extralabelslines=$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Default sort order (if not yet defined by previous GETPOST)
@@ -107,6 +113,7 @@ if (! $sortfield) $sortfield="t.".key($object->fields);   // Set here default se
 if (! $sortorder) $sortorder="ASC";
 
 // Security check
+if (empty($conf->mymodule->enabled)) accessforbidden('Module not enabled');
 $socid=0;
 if ($user->societe_id > 0)	// Protection if external user
 {
@@ -135,7 +142,7 @@ $arrayfields=array();
 foreach($object->fields as $key => $val)
 {
 	// If $val['visible']==0, then we never show the field
-	if (! empty($val['visible'])) $arrayfields['t.'.$key]=array('label'=>$val['label'], 'checked'=>(($val['visible']<0)?0:1), 'enabled'=>$val['enabled'], 'position'=>$val['position']);
+	if (! empty($val['visible'])) $arrayfields['t.'.$key]=array('label'=>$val['label'], 'checked'=>(($val['visible']<0)?0:1), 'enabled'=>($val['enabled'] && ($val['visible'] != 3)), 'position'=>$val['position']);
 }
 // Extra fields
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
@@ -220,8 +227,8 @@ if (! empty($extrafields->attributes[$object->table_element]['label']))
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters, $object);    // Note that $action and $object may have been modified by hook
-$sql.=$hookmanager->resPrint;
-$sql=preg_replace('/, $/', '', $sql);
+$sql.=preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql =preg_replace('/,\s*$/', '', $sql);
 $sql.= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 if ($object->ismultientitymanaged == 1) $sql.= " WHERE t.entity IN (".getEntity($object->element).")";
@@ -229,10 +236,11 @@ else $sql.=" WHERE 1 = 1";
 foreach($search as $key => $val)
 {
 	if ($key == 'status' && $search[$key] == -1) continue;
-	$mode_search=(($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key]))?1:0);
+	$mode_search=(($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
 	if ($search[$key] != '') $sql.=natural_search($key, $search[$key], (($key == 'status')?2:$mode_search));
 }
 if ($search_all) $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
+//$sql.= dolSqlDateFilter("t.field", $search_xxxday, $search_xxxmonth, $search_xxxyear);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
@@ -290,7 +298,7 @@ else
 }
 
 // Direct jump if only one record found
-if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all)
+if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && ! $page)
 {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
@@ -335,8 +343,10 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions =  array(
-	//'presend'=>$langs->trans("SendByMail"),
-	//'builddoc'=>$langs->trans("PDFMerge"),
+    //'validate'=>$langs->trans("Validate"),
+    //'generate_doc'=>$langs->trans("ReGeneratePDF"),
+    //'builddoc'=>$langs->trans("PDFMerge"),
+    //'presend'=>$langs->trans("SendByMail"),
 );
 if ($user->rights->mymodule->delete) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
@@ -352,19 +362,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$newcardbutton='';
-//if ($user->rights->mymodule->creer)
-//{
-	$newcardbutton='<a class="butActionNew" href="myobject_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']).'"><span class="valignmiddle text-plus-circle">'.$langs->trans('New').'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
-//}
-//else
-//{
-//    $newcardbutton='<a class="butActionNewRefused" href="#"><span class="valignmiddle text-plus-circle">'.$langs->trans('New').'</span>;
-//    $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-//    $newcardbutton.= '</a>';
-//}
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/mymodule/myobject_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $user->rights->mymodule->write);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, $newcardbutton, '', $limit);
 
@@ -411,12 +409,18 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 print '<tr class="liste_titre">';
 foreach($object->fields as $key => $val)
 {
-	$cssforfield='';
-	if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
-	if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
-	if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real'))) $cssforfield.=($cssforfield?' ':'').'right';
+	$cssforfield=(empty($val['css'])?'':$val['css']);
 	if ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
-	if (! empty($arrayfields['t.'.$key]['checked'])) print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
+	elseif (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
+	elseif (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
+	elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $val['label'] != 'TechnicalID') $cssforfield.=($cssforfield?' ':'').'right';
+	if (! empty($arrayfields['t.'.$key]['checked']))
+	{
+		print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
+		if (is_array($val['arrayofkeyval'])) print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 0, 0, 0, '', 'maxwidth75');
+		else print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
+		print '</td>';
+	}
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
@@ -426,7 +430,7 @@ $parameters=array('arrayfields'=>$arrayfields);
 $reshook=$hookmanager->executeHooks('printFieldListOption', $parameters, $object);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-print '<td class="liste_titre right">';
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -438,11 +442,11 @@ print '</tr>'."\n";
 print '<tr class="liste_titre">';
 foreach($object->fields as $key => $val)
 {
-	$cssforfield='';
-	if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
-	if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
-	if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real'))) $cssforfield.=($cssforfield?' ':'').'right';
+	$cssforfield=(empty($val['css'])?'':$val['css']);
 	if ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
+	elseif (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
+	elseif (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
+	elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $val['label'] != 'TechnicalID') $cssforfield.=($cssforfield?' ':'').'right';
 	if (! empty($arrayfields['t.'.$key]['checked']))
 	{
 		print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield?'class="'.$cssforfield.'"':''), $sortfield, $sortorder, ($cssforfield?$cssforfield.' ':''))."\n";
@@ -483,31 +487,25 @@ while ($i < min($num, $limit))
 	$object->id = $obj->rowid;
 	foreach($object->fields as $key => $val)
 	{
-		if (isset($obj->$key)) $object->$key = $obj->$key;
+		if (property_exists($obj, $key)) $object->$key = $obj->$key;
 	}
 
 	// Show here line of result
 	print '<tr class="oddeven">';
 	foreach($object->fields as $key => $val)
 	{
-	    $cssforfield='';
+		$cssforfield=(empty($val['css'])?'':$val['css']);
 	    if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
 	    elseif ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
 
 	    if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
 	    elseif ($key == 'ref') $cssforfield.=($cssforfield?' ':'').'nowrap';
 
-	    if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real'))) $cssforfield.=($cssforfield?' ':'').'right';
+	    if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $key != 'status') $cssforfield.=($cssforfield?' ':'').'right';
 
 	    if (! empty($arrayfields['t.'.$key]['checked']))
 		{
-			print '<td';
-			if ($cssforfield || $val['css']) print ' class="';
-			print $cssforfield;
-			if ($cssforfield && $val['css']) print ' ';
-			print $val['css'];
-			if ($cssforfield || $val['css']) print '"';
-			print '>';
+			print '<td'.($cssforfield ? ' class="'.$cssforfield.'"' : '').'>';
 			if ($key == 'status') print $object->getLibStatut(5);
 			elseif (in_array($val['type'], array('date','datetime','timestamp'))) print $object->showOutputField($val, $key, $db->jdate($obj->$key), '');
 			else print $object->showOutputField($val, $key, $obj->$key, '');
@@ -523,7 +521,7 @@ while ($i < min($num, $limit))
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
-	$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+	$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 	$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $object);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column
@@ -598,7 +596,7 @@ if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $n
 
 	$filedir=$diroutputmassaction;
 	$genallowed=$user->rights->mymodule->read;
-	$delallowed=$user->rights->mymodule->create;
+	$delallowed=$user->rights->mymodule->write;
 
 	print $formfile->showdocuments('massfilesarea_mymodule', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }

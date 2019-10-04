@@ -2,9 +2,6 @@
 AddThisPageToBookmarks=Füge diese Seite zu deinen Lesezeichen hinzu.
 EditBookmarks=Lesezeichen anzeigen und bearbeiten
 OpenANewWindow=Neuen Tab öffnen
-ReplaceWindow=Aktuellen Tab ersetzen
-BookmarkTargetNewWindowShort=Neuer Tab
-BookmarkTargetReplaceWindowShort=Aktueller Tab
 BookmarkTitle=Name des Lesezeichens
 BehaviourOnClick=Was soll passieren, wenn ein Lesezeichen - Link angewählt wird?
 SetHereATitleForLink=Gib dem Lesezeichen einen Namen

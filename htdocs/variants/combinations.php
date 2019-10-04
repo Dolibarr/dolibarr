@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 require '../main.inc.php';
@@ -307,7 +307,8 @@ if (! empty($id) || ! empty($ref))
     $head=product_prepare_head($object);
     $titre=$langs->trans("CardProduct".$object->type);
     $picto=($object->type== Product::TYPE_SERVICE?'service':'product');
-    dol_fiche_head($head, 'combinations', $titre, 0, $picto);
+
+    dol_fiche_head($head, 'combinations', $titre, -1, $picto);
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
     $object->next_prev_filter=" fk_product_type = ".$object->type;

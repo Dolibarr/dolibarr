@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -62,8 +62,6 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 /*
  * View
  */
-
-$textobject=$langs->transnoentitiesnoconv("expensereports");
 
 llxHeader('', $langs->trans("ExpenseReportsSetup"));
 

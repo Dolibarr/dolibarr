@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
- * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2018    	Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -305,21 +305,16 @@ if ($resql)
 
 	// List of mass actions available
 	$arrayofmassactions =  array(
-		'generate_doc'=>$langs->trans("Generate"),
-		//'presend'=>$langs->trans("SendByMail"),
+		'generate_doc'=>$langs->trans("ReGeneratePDF"),
 		'builddoc'=>$langs->trans("PDFMerge"),
+	    //'presend'=>$langs->trans("SendByMail"),
 	);
 	if ($user->rights->ficheinter->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 	$newcardbutton='';
-	if ($user->rights->ficheinter->creer)
-	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/fichinter/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewIntervention').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
-	}
+	$morehtmlcenter.= dolGetButtonTitle($langs->trans('NewIntervention'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/fichinter/card.php?action=create', '', $user->rights->ficheinter->creer);
 
 	// Lines of title fields
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -332,7 +327,7 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-	print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, $newcardbutton, '', $limit);
+	print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'commercial', 0, $newcardbutton, '', $limit);
 
 	$topicmail="Information";
 	$modelmail="intervention";
@@ -438,7 +433,7 @@ if ($resql)
 	{
 	    print '<td class="liste_titre">&nbsp;</td>';
 	}
-	print '<td class="liste_titre right">';
+	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto=$form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';

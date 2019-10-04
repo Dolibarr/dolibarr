@@ -16,8 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -127,7 +127,7 @@ function product_prepare_head($object)
             $h++;
         }
     }
-    
+
     // Tab to link resources
     if (!empty($conf->resource->enabled))
     {
@@ -173,7 +173,7 @@ function product_prepare_head($object)
     if (! empty($conf->service->enabled) && ($object->type==Product::TYPE_SERVICE)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
     $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
-        if (! empty($conf->product->enabled) && ($object->type==Product::TYPE_PRODUCT)) $upload_dir = $conf->produit->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
+        if (! empty($conf->product->enabled) && ($object->type==Product::TYPE_PRODUCT)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
         if (! empty($conf->service->enabled) && ($object->type==Product::TYPE_SERVICE)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
         $nbFiles += count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     }
@@ -483,21 +483,35 @@ function show_stats_for_company($product, $socid)
 /**
  *	Return translation label of a unit key
  *
- *	@param	int		$unit                Unit key (-3,0,3,98,99...)
+ *	@param	int		$unit                ID of unit (rowid in llx_c_units table)
  *	@param  string	$measuring_style     Style of unit: weight, volume,...
+ *  @param	string  $scale				 Scale of unit: '0', '-3', '6', ...
  *	@return	string	   			         Unit string
  * 	@see	formproduct->selectMeasuringUnits
  */
-function measuring_units_string($unit, $measuring_style = '')
+function measuring_units_string($unit, $measuring_style = '', $scale = '')
 {
 	global $langs, $db;
 	require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 	$measuringUnits= new CUnits($db);
-	$result = $measuringUnits->fetchAll('', '', 0, 0, array(
-			't.code' => $unit,
+
+	if ($scale !== '')
+	{
+		$arrayforfilter = array(
+			't.scale' => $scale,
 			't.unit_type' => $measuring_style,
 			't.active' => 1
-	));
+		);
+	}
+	else
+	{
+		$arrayforfilter = array(
+			't.rowid' => $unit,
+			't.unit_type' => $measuring_style,
+			't.active' => 1
+		);
+	}
+	$result = $measuringUnits->fetchAll('', '', 0, 0, $arrayforfilter);
 
 	if ($result<0) {
 		return -1;

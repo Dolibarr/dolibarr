@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
 if (! empty($conf->holiday->enabled)) require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 if (! empty($conf->expensereport->enabled)) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-if (! empty($conf->salaries->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
+if (! empty($conf->salaries->enabled)) require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'commercial', 'banks', 'bills', 'trips', 'holiday', 'salaries'));
@@ -307,7 +307,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 	        print '<table class="noborder" width="100%">';
 
             print '<tr class="liste_titre">';
-   			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSalaries", ($num<=$MAXLIST?"":$MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/salaries/list.php?search_user='.$object->login.'">'.$langs->trans("AllSalaries").' <span class="badge">'.$num.'</span></a></td>';
+   			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSalaries", ($num<=$MAXLIST?"":$MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/salaries/list.php?search_user='.$object->login.'">'.$langs->trans("AllSalaries").' <span class="badge">'.$num.'</span></a></td>';
    			print '</tr></table></td>';
    			print '</tr>';
 

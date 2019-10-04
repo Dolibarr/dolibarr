@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -81,7 +81,7 @@ if (GETPOST('newcompany') || GETPOST('socid', 'int') || GETPOST('id_fourn'))
 		if (! empty($conf->global->SOCIETE_ALLOW_SEARCH_ON_ROWID)) $sql.=" OR rowid = '" . $db->escape($socid) . "'";
 		$sql.=")";
 	}
-	if (GETPOST("filter")) $sql.= " AND ".GETPOST("filter", "alpha"); // Add other filters
+	//if (GETPOST("filter")) $sql.= " AND (".GETPOST("filter", "alpha").")"; // Add other filters
 	$sql.= " ORDER BY nom ASC";
 
 	//dol_syslog("ajaxcompanies", LOG_DEBUG);

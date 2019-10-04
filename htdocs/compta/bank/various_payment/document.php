@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -82,7 +82,7 @@ if ($object->id)
 {
 	$head=various_payment_prepare_head($object);
 
-	dol_fiche_head($head, 'documents', $langs->trans("VariousPayment"), -1, 'payment');
+	dol_fiche_head($head, 'documents', $langs->trans("VariousPayment"), -1, $object->picto);
 
 	$morehtmlref='<div class="refidno">';
 	// Project

@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -75,6 +75,7 @@ if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
 if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
+
 $reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
@@ -117,9 +118,9 @@ if ($fourn_id)
 
 
 $arrayofmassactions =  array(
-	'generate_doc'=>$langs->trans("Generate"),
-    'presend'=>$langs->trans("SendByMail"),
+	'generate_doc'=>$langs->trans("ReGeneratePDF"),
     'builddoc'=>$langs->trans("PDFMerge"),
+    'presend'=>$langs->trans("SendByMail"),
 );
 if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
@@ -129,6 +130,11 @@ $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 $sql = "SELECT p.rowid, p.label, p.ref, p.fk_product_type, p.entity,";
 $sql.= " ppf.fk_soc, ppf.ref_fourn, ppf.price as price, ppf.quantity as qty, ppf.unitprice,";
 $sql.= " s.rowid as socid, s.nom as name";
+// Add fields to SELECT from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action);
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+$sql .= $hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 if ($catid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON p.rowid = ppf.fk_product";
@@ -158,6 +164,12 @@ if ($fourn_id > 0)
 {
 	$sql .= " AND ppf.fk_soc = ".$fourn_id;
 }
+
+// Add WHERE filters from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters);
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+$sql .= $hookmanager->resPrint;
 
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -228,7 +240,7 @@ if ($resql)
 
 	print '<table class="liste" width="100%">';
 
-	// Lignes des champs de filtre
+	// Fields title search
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="sref" value="'.$sref.'" size="12">';
@@ -243,13 +255,18 @@ if ($resql)
 	print '<td></td>';
 	print '<td></td>';
 	print '<td></td>';
-	print '<td class="liste_titre right">';
+    // add filters from hooks
+    $parameters = array();
+    $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action);
+    if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+    print $hookmanager->resPrint;
+	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto=$form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
 	print '</tr>';
 
-	// Lignes des titres
+	// Line for title
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", $param, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("RefSupplierShort", $_SERVER["PHP_SELF"], "ppf.ref_fourn", $param, "", "", $sortfield, $sortorder);
@@ -258,6 +275,11 @@ if ($resql)
 	print_liste_field_titre("BuyingPrice", $_SERVER["PHP_SELF"], "ppf.price", $param, "", '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("QtyMin", $_SERVER["PHP_SELF"], "ppf.quantity", $param, "", '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("UnitPrice", $_SERVER["PHP_SELF"], "ppf.unitprice", $param, "", '', $sortfield, $sortorder, 'right ');
+	// add header cells from hooks
+    $parameters = array();
+    $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action);
+    if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+    print $hookmanager->resPrint;
 	print_liste_field_titre('', $_SERVER["PHP_SELF"]);
 	print "</tr>\n";
 
@@ -292,6 +314,12 @@ if ($resql)
 		print '<td class="right">'.$objp->qty.'</td>';
 
 		print '<td class="right">'.(isset($objp->unitprice) ? price($objp->unitprice) : '').'</td>';
+
+		// add additional columns from hooks
+        $parameters = array();
+        $reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $objp, $action);
+        if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+        print $hookmanager->resPrint;
 
 		print '<td class="right"></td>';
 

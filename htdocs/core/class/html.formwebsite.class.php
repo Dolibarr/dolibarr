@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -162,13 +162,13 @@ class FormWebsite
 
 
     /**
-     *  Return a HTML select list of a dictionary
+     *  Return a HTML select list of type of containers
      *
      *  @param  string	$htmlname          	Name of select zone
      *  @param	string	$selected			Selected value
      *  @param  int		$useempty          	1=Add an empty value in list
      *  @param  string  $moreattrib         More attributes on HTML select tag
-     * 	@return	void
+     * 	@return	string						HTML select component with list of type of containers
      */
     public function selectSampleOfContainer($htmlname, $selected = '', $useempty = 0, $moreattrib = '')
     {
@@ -176,7 +176,21 @@ class FormWebsite
 
     	$langs->load("admin");
 
-    	$arrayofsamples=array('empty'=>'EmptyPage', 'corporatehome'=>'CorporateHomePage');
+    	$listofsamples = dol_dir_list(DOL_DOCUMENT_ROOT.'/website/samples', 'files', 0, '^page-sample-.*\.html$');
+
+    	$arrayofsamples = array();
+    	$arrayofsamples['empty']='EmptyPage';	// Always this one first
+    	foreach($listofsamples as $sample)
+    	{
+    		$reg = array();
+    		if (preg_match('/^page-sample-(.*)\.html$/', $sample['name'], $reg))
+    		{
+    			$key = $reg[1];
+	    		$labelkey = ucfirst($key);
+    			if ($key == 'empty') $labelkey = 'EmptyPage';
+    			$arrayofsamples[$key] = $labelkey;
+    		}
+    	}
 
     	$out = '';
     	$out .= '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';

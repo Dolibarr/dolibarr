@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -40,6 +40,7 @@ if (! empty($conf->projet->enabled)) {
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 
 // Load translation files required by the page
@@ -133,13 +134,16 @@ $arrayfields=array(
 	'f.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 );
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-	foreach($extrafields->attribute_label as $key => $val)
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
 	{
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
+		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
 	}
 }
+$object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 /*
@@ -213,7 +217,7 @@ $today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['
 /*
  *  List mode
  */
-$sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre, f.total, f.tva as total_vat, f.total_ttc, f.frequency, f.unit_frequency,";
+$sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre as title, f.total, f.tva as total_vat, f.total_ttc, f.frequency, f.unit_frequency,";
 $sql.= " f.nb_gen_done, f.nb_gen_max, f.date_last_gen, f.date_when, f.suspended,";
 $sql.= " f.datec, f.tms,";
 $sql.= " f.fk_cond_reglement, f.fk_mode_reglement";
@@ -243,32 +247,8 @@ if ($search_status != '' && $search_status >= -1)
 	if ($search_status == 1) $sql.= ' AND frequency != 0 AND suspended = 0';
 	if ($search_status == -1) $sql.= ' AND suspended = 1';
 }
-if ($search_month > 0)
-{
-	if ($search_year > 0 && empty($search_day))
-		$sql.= " AND f.date_last_gen BETWEEN '".$db->idate(dol_get_first_day($search_year, $search_month, false))."' AND '".$db->idate(dol_get_last_day($search_year, $search_month, false))."'";
-	elseif ($search_year > 0 && ! empty($search_day))
-		$sql.= " AND f.date_last_gen BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
-	else
-		$sql.= " AND date_format(f.date_last_gen, '%m') = '".$db->escape($search_month)."'";
-}
-elseif ($search_year > 0)
-{
-	$sql.= " AND f.date_last_gen BETWEEN '".$db->idate(dol_get_first_day($search_year, 1, false))."' AND '".$db->idate(dol_get_last_day($search_year, 12, false))."'";
-}
-if ($search_month_date_when > 0)
-{
-	if ($search_year_date_when > 0 && empty($search_day_date_when))
-		$sql.= " AND f.date_when BETWEEN '".$db->idate(dol_get_first_day($search_year_date_when, $search_month_date_when, false))."' AND '".$db->idate(dol_get_last_day($search_year_date_when, $search_month_date_when, false))."'";
-	elseif ($search_year_date_when > 0 && ! empty($search_day_date_when))
-		$sql.= " AND f.date_date_when_reglement BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month_date_when, $search_day_date_when, $search_year_date_when))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month_date_when, $search_day_date_when, $search_year_date_when))."'";
-	else
-		$sql.= " AND date_format(f.date_when, '%m') = '".$db->escape($search_month_date_when)."'";
-}
-elseif ($search_year_date_when > 0)
-{
-	$sql.= " AND f.date_when BETWEEN '".$db->idate(dol_get_first_day($search_year_date_when, 1, false))."' AND '".$db->idate(dol_get_last_day($search_year_date_when, 12, false))."'";
-}
+$sql.=dolSqlDateFilter('f.date_last_gen', $search_day, $search_month, $search_year);
+$sql.=dolSqlDateFilter('f.date_last_gen', $search_day_date_when, $search_month_date_when, $search_year_date_when);
 
 $sql.= $db->order($sortfield, $sortorder);
 
@@ -334,7 +314,7 @@ if ($resql)
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
-	print_barre_liste($langs->trans("RepeatableInvoices"), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);
+	print_barre_liste($langs->trans("RepeatableInvoices"), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'invoicing', 0, '', '', $limit);
 
 	print $langs->trans("ToCreateAPredefinedInvoice", $langs->transnoentitiesnoconv("ChangeIntoRepeatableInvoice")).'<br><br>';
 
@@ -514,7 +494,7 @@ if ($resql)
 			$invoicerectmp->unit_frequency=$objp->unit_frequency;
 			$invoicerectmp->nb_gen_max=$objp->nb_gen_max;
 			$invoicerectmp->nb_gen_done=$objp->nb_gen_done;
-			$invoicerectmp->ref=$objp->titre;
+			$invoicerectmp->ref=$objp->title;
 
 			print '<tr class="oddeven">';
 

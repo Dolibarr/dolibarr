@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -121,7 +121,7 @@ print "</tr>\n";
 
 print '<tr class="oddeven"><td width=\"50%\">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
 print '<td colspan="2">';
-print $form->select_company($conf->global->CASHDESK_ID_THIRDPARTY, 'socid', 's.client in (1,3) AND s.status = 1', 1, 0, 0, array(), 0);
+print $form->select_company($conf->global->CASHDESK_ID_THIRDPARTY, 'socid', '(s.client in (1,3) AND s.status = 1)', 1, 0, 0, array(), 0);
 print '</td></tr>';
 if (! empty($conf->banque->enabled))
 {

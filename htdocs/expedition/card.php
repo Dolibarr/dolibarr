@@ -24,7 +24,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -441,7 +441,7 @@ if (empty($reshook))
 	    if ($result < 0)
 	    {
 			$langs->load("errors");
-	        setEventMessages($langs->trans($object->error), null, 'errors');
+			setEventMessages($langs->trans($object->error), $object->errors, 'errors');
 	    }
 	    else
 	    {
@@ -467,7 +467,8 @@ if (empty($reshook))
 
 	elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expedition->supprimer)
 	{
-	    $result = $object->delete();
+	    $also_update_stock = (GETPOST('alsoUpdateStock', 'alpha') ? 1 : 0);
+	    $result = $object->delete(0, $also_update_stock);
 	    if ($result > 0)
 	    {
 	        header("Location: ".DOL_URL_ROOT.'/expedition/index.php');
@@ -550,6 +551,7 @@ if (empty($reshook))
 	    	header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
 	    	exit();
 	    }
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	elseif ($action == 'classifyclosed')
@@ -560,6 +562,7 @@ if (empty($reshook))
 	    	header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
 	    	exit();
 	    }
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	/*
@@ -1046,7 +1049,7 @@ if ($action == 'create')
 			if (!empty($conf->incoterm->enabled))
 			{
 				print '<tr>';
-				print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $object->libelle_incoterms, 1).'</label></td>';
+				print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $object->label_incoterms, 1).'</label></td>';
 		        print '<td colspan="3" class="maxwidthonsmartphone">';
 		        print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''));
 				print '</td></tr>';
@@ -1261,7 +1264,13 @@ if ($action == 'create')
 									if ($line->fk_product > 0)
 									{
 									    print '<!-- Show warehouse selection -->';
-										print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 1, 0, $line->fk_product, '', 1);
+
+                                        $stockMin = false;
+									    if (empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER)) {
+									        $stockMin = 0;
+									    }
+                                        print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 1, 0, $line->fk_product, '', 1, 0, array(), 'minwidth200', '', 1, $stockMin, 'stock DESC, e.ref');
+
 										if ($tmpentrepot_id > 0 && $tmpentrepot_id == $warehouse_id)
 										{
 											//print $stock.' '.$quantityToBeDelivered;
@@ -1583,9 +1592,9 @@ if ($action == 'create')
 						print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan), $indiceAsked);
 						print '</tr>';
 					}
-
-                	$indiceAsked++;
                 }
+
+	            $indiceAsked++;
             }
 
             print "</table>";
@@ -1642,7 +1651,26 @@ elseif ($id || $ref)
 		// Confirm deleteion
 		if ($action == 'delete')
 		{
-			$formconfirm=$form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('DeleteSending'), $langs->trans("ConfirmDeleteSending", $object->ref), 'confirm_delete', '', 0, 1);
+		    $formquestion = array();
+		    if ($object->statut == Expedition::STATUS_CLOSED && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
+		        $formquestion = array(
+                        array(
+                            'label' => $langs->trans('ShipmentIncrementStockOnDelete'),
+                            'name' => 'alsoUpdateStock',
+                            'type' => 'checkbox',
+                            'value' => 0
+                        ),
+                    );
+            }
+		    $formconfirm=$form->formconfirm(
+			    $_SERVER['PHP_SELF'].'?id='.$object->id,
+                $langs->trans('DeleteSending'),
+                $langs->trans("ConfirmDeleteSending", $object->ref),
+                'confirm_delete',
+                $formquestion,
+                0,
+                1
+            );
 		}
 
 		// Confirmation validation
@@ -1973,7 +2001,7 @@ elseif ($id || $ref)
 	        print '<td colspan="3">';
 			if ($action != 'editincoterm')
 			{
-				print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+				print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 			}
 			else
 			{
@@ -2010,27 +2038,28 @@ elseif ($id || $ref)
 		print '<br>';
 
         print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder" width="100%" id="tablelines" >';
+		print '<thead>';
 		print '<tr class="liste_titre">';
 		// Adds a line numbering column
 		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 		{
-			print '<td width="5" class="center">&nbsp;</td>';
+			print '<td width="5" class="center linecolnum">&nbsp;</td>';
 		}
 		// Product/Service
-		print '<td>'.$langs->trans("Products").'</td>';
+		print '<td  class="linecoldescription" >'.$langs->trans("Products").'</td>';
 		// Qty
-		print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
+		print '<td class="center linecolqty">'.$langs->trans("QtyOrdered").'</td>';
 		if ($origin && $origin_id > 0)
 		{
-			print '<td class="center">'.$langs->trans("QtyInOtherShipments").'</td>';
+			print '<td class="center linecolqtyinothershipments">'.$langs->trans("QtyInOtherShipments").'</td>';
 		}
 		if ($action == 'editline')
 		{
 			$editColspan = 3;
 			if (empty($conf->stock->enabled)) $editColspan--;
 			if (empty($conf->productbatch->enabled)) $editColspan--;
-			print '<td class="center" colspan="'. $editColspan . '">';
+			print '<td class="center linecoleditlineotherinfo" colspan="'. $editColspan . '">';
 			if ($object->statut <= 1)
 			{
 				print $langs->trans("QtyToShip").' - ';
@@ -2053,24 +2082,24 @@ elseif ($id || $ref)
 		{
 			if ($object->statut <= 1)
 			{
-				print '<td class="center">'.$langs->trans("QtyToShip").'</td>';
+				print '<td class="center linecolqtytoship">'.$langs->trans("QtyToShip").'</td>';
 			}
 			else
 			{
-				print '<td class="center">'.$langs->trans("QtyShipped").'</td>';
+				print '<td class="center linecolqtyshipped">'.$langs->trans("QtyShipped").'</td>';
 			}
 			if (! empty($conf->stock->enabled))
 			{
-				print '<td class="left">'.$langs->trans("WarehouseSource").'</td>';
+				print '<td class="left linecolwarehousesource">'.$langs->trans("WarehouseSource").'</td>';
 			}
 
 			if (! empty($conf->productbatch->enabled))
 			{
-				print '<td class="left">'.$langs->trans("Batch").'</td>';
+				print '<td class="left linecolbatch">'.$langs->trans("Batch").'</td>';
 			}
 		}
-		print '<td class="center">'.$langs->trans("CalculatedWeight").'</td>';
-		print '<td class="center">'.$langs->trans("CalculatedVolume").'</td>';
+		print '<td class="center linecolweight">'.$langs->trans("CalculatedWeight").'</td>';
+		print '<td class="center linecolvolume">'.$langs->trans("CalculatedVolume").'</td>';
 		//print '<td class="center">'.$langs->trans("Size").'</td>';
 		if ($object->statut == 0)
 		{
@@ -2078,7 +2107,7 @@ elseif ($id || $ref)
 			print '<td class="linecoldelete" width="10"></td>';
 		}
 		print "</tr>\n";
-
+		print '</thead>';
 		$var=false;
 
 		if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
@@ -2138,6 +2167,7 @@ elseif ($id || $ref)
     		//var_dump($alreadysent);
 		}
 
+		print '<tbody>';
 		// Loop on each product to send/sent
 		for ($i = 0 ; $i < $num_prod ; $i++)
 		{
@@ -2148,12 +2178,12 @@ elseif ($id || $ref)
 			if(empty($reshook))
 			{
 			    print '<!-- origin line id = '.$lines[$i]->origin_line_id.' -->'; // id of order line
-				print '<tr class="oddeven">';
+				print '<tr class="oddeven" id="row-'.$lines[$i]->id.'" data-id="'.$lines[$i]->id.'" data-element="'.$lines[$i]->element.'" >';
 
 				// #
 				if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 				{
-					print '<td class="center">'.($i+1).'</td>';
+					print '<td class="center linecolnum">'.($i+1).'</td>';
 				}
 
 				// Predefined product or service
@@ -2169,7 +2199,7 @@ elseif ($id || $ref)
 					else
 						$label = (! empty($lines[$i]->label)?$lines[$i]->label:$lines[$i]->product_label);
 
-					print '<td>';
+					print '<td class="linecoldescription">';
 
 					// Show product and description
 					$product_static->type=$lines[$i]->fk_product_type;
@@ -2189,7 +2219,7 @@ elseif ($id || $ref)
 				}
 				else
 				{
-					print "<td>";
+					print '<td class="linecoldescription" >';
 					if ($lines[$i]->product_type == Product::TYPE_SERVICE) $text = img_object($langs->trans('Service'), 'service');
 					else $text = img_object($langs->trans('Product'), 'product');
 
@@ -2205,12 +2235,12 @@ elseif ($id || $ref)
 				}
 
 				// Qty ordered
-				print '<td class="center">'.$lines[$i]->qty_asked.'</td>';
+				print '<td class="center linecolqty">'.$lines[$i]->qty_asked.'</td>';
 
 				// Qty in other shipments (with shipment and warehouse used)
 	    		if ($origin && $origin_id > 0)
 	    		{
-	    			print '<td class="center" class="nowrap">';
+	    			print '<td class="linecolqtyinothershipments center nowrap">';
 	    			foreach ($alreadysent as $key => $val)
 	    			{
 	    			    if ($lines[$i]->fk_origin_line == $key)
@@ -2324,12 +2354,12 @@ elseif ($id || $ref)
 				else
 				{
 					// Qty to ship or shipped
-					print '<td class="center">'.$lines[$i]->qty_shipped.'</td>';
+					print '<td class="linecolqtytoship center">'.$lines[$i]->qty_shipped.'</td>';
 
 					// Warehouse source
 					if (! empty($conf->stock->enabled))
 					{
-						print '<td class="left">';
+						print '<td class="linecolwarehousesource left">';
 						if ($lines[$i]->entrepot_id > 0)
 						{
 							$entrepot = new Entrepot($db);
@@ -2359,7 +2389,7 @@ elseif ($id || $ref)
 						if (isset($lines[$i]->detail_batch))
 						{
 							print '<!-- Detail of lot -->';
-							print '<td>';
+							print '<td class="linecolbatch">';
 							if ($lines[$i]->product_tobatch)
 							{
 								$detail = '';
@@ -2379,19 +2409,19 @@ elseif ($id || $ref)
 							}
 							print '</td>';
 						} else {
-							print '<td></td>';
+							print '<td class="linecolbatch" ></td>';
 						}
 					}
 				}
 
 				// Weight
-				print '<td class="center">';
+				print '<td class="center linecolweight">';
 				if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->weight*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->weight_units, "weight");
 				else print '&nbsp;';
 				print '</td>';
 
 				// Volume
-				print '<td class="center">';
+				print '<td class="center linecolvolume">';
 				if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->volume_units, "volume");
 				else print '&nbsp;';
 				print '</td>';
@@ -2447,6 +2477,7 @@ elseif ($id || $ref)
 		// TODO Show also lines ordered but not delivered
 
 		print "</table>\n";
+		print '</tbody>';
 		print '</div>';
 	}
 

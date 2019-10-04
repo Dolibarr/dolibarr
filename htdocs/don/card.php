@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -84,14 +84,14 @@ if ($action == 'update')
 
     if (empty($donation_date))
     {
-	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
+    	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
         $action = "create";
         $error++;
     }
 
 	if (empty($amount))
 	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Amount")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
 		$action = "create";
 		$error++;
 	}
@@ -140,21 +140,21 @@ if ($action == 'add')
 
     if (empty($donation_date))
     {
-	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
+    	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
         $action = "create";
         $error++;
     }
 
 	if (empty($amount))
 	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Amount")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
 		$action = "create";
 		$error++;
 	}
 
 	if (! $error)
 	{
-    $object->socid = GETPOST("socid", 'int');
+        $object->socid = GETPOST("socid", 'int');
 		$object->firstname = GETPOST("firstname", 'alpha');
 		$object->lastname = GETPOST("lastname", 'alpha');
 		$object->societe = GETPOST("societe", 'alpha');
@@ -164,7 +164,7 @@ if ($action == 'add')
 		$object->town = GETPOST("town", 'alpha');
 		$object->country_id = GETPOST('country_id', 'int');
 		$object->email = GETPOST('email', 'alpha');
-    $object->date = $donation_date;
+        $object->date = $donation_date;
 		$object->note_private = GETPOST("note_private", 'none');
 		$object->note_public = GETPOST("note_public", 'none');
 		$object->public = GETPOST("public", 'alpha');
@@ -318,7 +318,7 @@ if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("AddDonation"));
+	print load_fiche_titre($langs->trans("AddDonation"), '', 'invoicing');
 
 	print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -343,7 +343,8 @@ if ($action == 'create')
 			print $soc->getNomUrl(1);
 			print '<input type="hidden" name="socid" value="' . $soc->id . '">';
 			// Outstanding Bill
-			$outstandingBills = $soc->get_OutstandingBill();
+			$arrayoutstandingbills = $soc->getOutstandingBills();
+			$outstandingBills = $arrayoutstandingbills['opened'];
 			print ' (' . $langs->trans('CurrentOutstandingBill') . ': ';
 			print price($outstandingBills, '', $langs, 0, 0, -1, $conf->currency);
 			if ($soc->outstanding_limit != '')
@@ -499,7 +500,7 @@ if (! empty($id) && $action == 'edit')
 	print '<input type="hidden" name="amount" value="'.$object->amount.'">';
 
 
-	dol_fiche_head($head, $hselected, $langs->trans("Donation"), 0, 'generic');
+	dol_fiche_head($head, $hselected, $langs->trans("Donation"), 0, 'invoicing');
 
 	print '<table class="border" width="100%">';
 

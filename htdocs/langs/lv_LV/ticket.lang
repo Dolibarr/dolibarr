@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -31,7 +31,7 @@ TicketDictType=Pieteikumu veids
 TicketDictCategory=Pieteikumu - grupas
 TicketDictSeverity=Pieteikuma svarīgums
 TicketTypeShortBUGSOFT=Dysfontionnement logiciel
-TicketTypeShortBUGHARD=Dysfontionnement matériel
+TicketTypeShortBUGHARD=Dysfonctionnement matériel
 TicketTypeShortCOM=Tirdzniecības jautājums
 TicketTypeShortINCIDENT=Palīdzības pieprasījums
 TicketTypeShortPROJET=Projekts
@@ -58,9 +58,10 @@ Notify_TICKET_SENTBYMAIL=Sūtīt biļeti pa e-pastu
 # Status
 NotRead=Nav lasāms
 Read=Lasīt
-Answered=Atbildēts
 Assigned=Piešķirts
 InProgress=Procesā
+NeedMoreInformation=Gaida informāciju
+Answered=Atbildēts
 Waiting=Gaida
 Closed=Slēgts
 Deleted=Dzēsts
@@ -132,6 +133,7 @@ TicketsIndex=Pieteikumi - mājās
 TicketList=Pieteikumu saraksts
 TicketAssignedToMeInfos=Šī lapa parāda pieteikumu sarakstu, kas izveidots vai piešķirts pašreizējam lietotājam
 NoTicketsFound=Nav atrasts neviens pieteikums
+NoUnreadTicketsFound=Nav atrastas nelasītas biļetes
 TicketViewAllTickets=Skatīt visus pieteikumus
 TicketViewNonClosedOnly=Skatīt tikai atvērtos pieteikumus
 TicketStatByStatus=Pieteikumi pēc statusa
@@ -265,7 +267,10 @@ TicketNewEmailBodyAdmin=<p> Biļete tikko ir izveidota ar ID # %s, skatiet infor
 SeeThisTicketIntomanagementInterface=Skatiet biļeti vadības saskarnē
 TicketPublicInterfaceForbidden=Pieteikumu publiskā saskarne nav iespējota
 ErrorEmailOrTrackingInvalid=Slikta vērtība izsekošanas ID vai e-pasta ziņojumam
-
+OldUser=Vecais lietotājs
+NewUser=Jauns lietotājs
+NumberOfTicketsByMonth=Pieteikumu skaits mēnesī
+NbOfTickets=Pieteikumu skaits
 # notifications
 TicketNotificationEmailSubject=Pieteikums %s ir atjaunots
 TicketNotificationEmailBody=Šī ir automātiska ziņa, kas informē jūs, ka biļete %s tikko atjaunināta

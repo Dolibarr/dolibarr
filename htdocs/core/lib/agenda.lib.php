@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -469,7 +469,7 @@ function actions_prepare_head($object)
 
 		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=action&element_id='.$object->id;
         $listofresourcelinked = $resource->getElementResources($object->element, $object->id);
-        $nbResources=count($listofresourcelinked);
+        $nbResources=(is_array($listofresourcelinked)?count($listofresourcelinked):0);
 		$head[$h][1] = $langs->trans("Resources");
 		if ($nbResources > 0) $head[$h][1].= ' <span class="badge">'.($nbResources).'</span>';
 		$head[$h][2] = 'resources';
@@ -549,15 +549,13 @@ function calendars_prepare_head($param)
     $h++;
 
 
-	$object=new stdClass();
-
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'agenda');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'agenda');
 
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'agenda', 'remove');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'agenda', 'remove');
 
     return $head;
 }

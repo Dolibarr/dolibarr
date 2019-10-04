@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -174,7 +174,7 @@ if ($object->id)
 }
 else
 {
-	accessforbidden('', 0, 0);
+	accessforbidden('', 0, 1);
 }
 
 // End of page

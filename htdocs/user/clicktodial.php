@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -120,7 +120,7 @@ if ($id > 0)
             if (empty($conf->global->CLICKTODIAL_URL) && empty($object->clicktodial_url))
             {
                 $langs->load("errors");
-                print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete").'</font>';
+                print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("ClickToDial")).'</font>';
             }
             else
             {
@@ -161,7 +161,7 @@ if ($id > 0)
         	if (empty($url))
         	{
         	    $langs->load("errors");
-        	    print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete").'</font>';
+        	    print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("ClickToDial")).'</font>';
         	}
         	else
         	{

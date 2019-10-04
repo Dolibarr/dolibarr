@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -131,7 +131,7 @@ if ($result)
     print"\n<!-- debut table -->\n";
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
 
-	print_barre_liste($langs->trans("WithdrawalsLines"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
+	print_barre_liste($langs->trans("WithdrawalsLines"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, '', '', $limit);
 
 	$moreforfilter='';
 
@@ -146,7 +146,7 @@ if ($result)
     print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_code" value="'. dol_escape_htmltag($search_code).'" size="6"></td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre right">';
+    print '<td class="liste_titre maxwidthsearch">';
     $searchpicto=$form->showFilterButtons();
     print $searchpicto;
     print '</td>';
@@ -172,7 +172,7 @@ if ($result)
         print $ligne->LibStatut($obj->statut_ligne, 2);
         print "&nbsp;";
 
-        print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid_ligne.'">';
+        print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid_ligne.'">';
         print substr('000000'.$obj->rowid_ligne, -6);
         print '</a></td>';
 

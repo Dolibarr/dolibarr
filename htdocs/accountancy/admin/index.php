@@ -19,12 +19,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  * \file		htdocs/accountancy/admin/index.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief		Setup page to configure accounting expert module
  */
 
@@ -160,12 +160,12 @@ if ($action == 'setenablesubsidiarylist') {
  * View
  */
 
-llxHeader();
+$title= $langs->trans('ConfigAccountingExpert');
+llxHeader('', $title);
 
-$form = new Form($db);
-
+$linkback='';
 //$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
-print load_fiche_titre($langs->trans('ConfigAccountingExpert'), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans('ConfigAccountingExpert'), $linkback, 'accountancy');
 
 print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
@@ -214,11 +214,11 @@ if (! empty($user->admin))
     print '<tr class="oddeven">';
     print '<td>' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_TODO") . '</td>';
     if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO)) {
-        print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsorttodo&value=0">';
+        print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setlistsorttodo&value=0">';
         print img_picto($langs->trans("Activated"), 'switch_on');
         print '</a></td>';
     } else {
-        print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsorttodo&value=1">';
+        print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setlistsorttodo&value=1">';
         print img_picto($langs->trans("Disabled"), 'switch_off');
         print '</a></td>';
     }
@@ -227,11 +227,11 @@ if (! empty($user->admin))
     print '<tr class="oddeven">';
     print '<td>' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_DONE") . '</td>';
     if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {
-        print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsortdone&value=0">';
+        print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setlistsortdone&value=0">';
         print img_picto($langs->trans("Activated"), 'switch_on');
         print '</a></td>';
     } else {
-        print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsortdone&value=1">';
+        print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setlistsortdone&value=1">';
         print img_picto($langs->trans("Disabled"), 'switch_off');
         print '</a></td>';
     }
@@ -240,11 +240,11 @@ if (! empty($user->admin))
 	print '<tr class="oddeven">';
 	print '<td>' . $langs->trans("ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL") . '</td>';
 	if (! empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL)) {
-		print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setenabledraftexport&value=0">';
+		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setenabledraftexport&value=0">';
 		print img_picto($langs->trans("Activated"), 'switch_on');
 		print '</a></td>';
 	} else {
-		print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setenabledraftexport&value=1">';
+		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setenabledraftexport&value=1">';
 		print img_picto($langs->trans("Disabled"), 'switch_off');
 		print '</a></td>';
 	}
@@ -253,11 +253,11 @@ if (! empty($user->admin))
 	print '<tr class="oddeven">';
 	print '<td>' . $langs->trans("BANK_DISABLE_DIRECT_INPUT") . '</td>';
 	if (! empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
-		print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=0">';
+		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=0">';
 		print img_picto($langs->trans("Activated"), 'switch_on');
 		print '</a></td>';
 	} else {
-		print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=1">';
+		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=1">';
 		print img_picto($langs->trans("Disabled"), 'switch_off');
 		print '</a></td>';
 	}
@@ -266,11 +266,11 @@ if (! empty($user->admin))
     print '<tr class="oddeven">';
     print '<td>' . $langs->trans("ACCOUNTANCY_COMBO_FOR_AUX") . '</td>';
     if (! empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
-        print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setenablesubsidiarylist&value=0">';
+        print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setenablesubsidiarylist&value=0">';
         print img_picto($langs->trans("Activated"), 'switch_on');
         print '</a></td>';
     } else {
-        print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setenablesubsidiarylist&value=1">';
+        print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setenablesubsidiarylist&value=1">';
         print img_picto($langs->trans("Disabled"), 'switch_off');
         print '</a></td>';
     }
@@ -279,11 +279,11 @@ if (! empty($user->admin))
     print '<tr class="oddeven">';
     print '<td>' . $langs->trans("ACCOUNTING_MANAGE_ZERO") . '</td>';
     if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
-        print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=0">';
+        print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=0">';
         print img_picto($langs->trans("Activated"), 'switch_on');
         print '</a></td>';
     } else {
-        print '<td class="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=1">';
+        print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=1">';
         print img_picto($langs->trans("Disabled"), 'switch_off');
         print '</a></td>';
     }

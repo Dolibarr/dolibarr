@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -428,7 +428,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		$option = '&socid=' . GETPOST('socid', 'int') . '&prodid=' . GETPOST('prodid', 'int');
 
-		print_barre_liste($langs->trans('PriceByCustomerLog'), $page, $_SERVEUR ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords);
+		print_barre_liste($langs->trans('PriceByCustomerLog'), $page, $_SERVER ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords);
 
 		if (count($prodcustprice->lines) > 0) {
 
@@ -519,7 +519,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 	    print '<!-- view specific price for each product -->'."\n";
 
-	    print_barre_liste($langs->trans('PriceForEachProduct'), $page, $_SERVEUR['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords, '');
+	    print_barre_liste($langs->trans('PriceForEachProduct'), $page, $_SERVER['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords, '');
 
         print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
         print '<input type="hidden" name="id" value="' . $object->id . '">';
@@ -545,7 +545,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			print '<td class="liste_titre"><input type="text" class="flat" name="search_prod" value="' . $search_prod . '" size="20"></td>';
             print '<td class="liste_titre" colspan="8">&nbsp;</td>';
             // Print the search button
-            print '<td class="liste_titre right">';
+            print '<td class="liste_titre maxwidthsearch">';
             $searchpicto=$form->showFilterAndCheckAddButtons(0);
             print $searchpicto;
             print '</td>';
@@ -603,7 +603,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
         {
             $colspan=9;
             if ($user->rights->produit->supprimer || $user->rights->service->supprimer) $colspan+=1;
-            print '<tr ' . $bc[false] . '><td colspan="'.$colspan.'">' . $langs->trans('None') . '</td></tr>';
+            print '<tr class="oddeven"><td colspan="'.$colspan.'">' . $langs->trans('None') . '</td></tr>';
         }
 
         print "</table>";

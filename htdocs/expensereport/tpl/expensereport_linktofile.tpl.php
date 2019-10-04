@@ -1,6 +1,6 @@
 <?php
 // Add line to select existing file
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES))
 {
     print '<!-- expensereport_linktofile.tpl.php -->'."\n";
 

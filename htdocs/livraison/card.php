@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -529,7 +529,7 @@ else
 		        print '<td colspan="3">';
 				if ($action != 'editincoterm')
 				{
-					print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+					print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 				}
 				else
 				{
@@ -568,7 +568,7 @@ else
 			}
 
 			// Other attributes
-			if ($action = 'create_delivery') {
+			if ($action == 'create_delivery') {
 				// copy from expedition
 				$expeditionExtrafields = new Extrafields($db);
 				$expeditionExtrafieldLabels = $expeditionExtrafields->fetch_name_optionals_label($expedition->table_element);
@@ -681,7 +681,7 @@ else
 						$mode = ($object->statut == 0) ? 'edit' : 'view';
 						$line = new LivraisonLigne($db);
 						$line->fetch_optionals($object->lines[$i]->id);
-						if ($action = 'create_delivery') {
+						if ($action == 'create_delivery') {
 							$srcLine = new ExpeditionLigne($db);
 							$expeditionLineExtrafields = new Extrafields($db);
 							$expeditionLineExtrafieldLabels = $expeditionLineExtrafields->fetch_name_optionals_label($srcLine->table_element);

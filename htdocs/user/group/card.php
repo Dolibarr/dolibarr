@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -135,7 +135,7 @@ if (empty($reshook)) {
 			} else {
 				$object->name	= trim(GETPOST("nom", 'nohtml'));
 				$object->nom	= $object->name;	// For backward compatibility
-				$object->note	= trim(GETPOST("note", 'none'));
+				$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'none')));
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
@@ -218,7 +218,7 @@ if (empty($reshook)) {
 
 			$object->name	= trim(GETPOST("group", 'nohtml'));
 			$object->nom	= $object->name;			// For backward compatibility
-			$object->note	= dol_htmlcleanlastbr(GETPOST("note", 'none'));
+			$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'none')));
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);

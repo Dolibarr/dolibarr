@@ -5,6 +5,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -47,11 +48,11 @@ if (! $sortorder) $sortorder="ASC";
 
 $mode = GETPOST("mode");
 $filter=GETPOST("filter");
-$search_name=GETPOST("search_name");
-$search_contract=GETPOST("search_contract");
-$search_service=GETPOST("search_service");
-$search_status=GETPOST("search_status", "alpha");
-$statut=GETPOST('statut')?GETPOST('statut'):1;
+$search_name=GETPOST("search_name", 'alpha');
+$search_contract=GETPOST("search_contract", 'alpha');
+$search_service=GETPOST("search_service", 'alpha');
+$search_status=GETPOST("search_status", 'alpha');
+$statut=GETPOST('statut', 'int')?GETPOST('statut', 'int'):1;
 $search_product_category=GETPOST('search_product_category', 'int');
 $socid=GETPOST('socid', 'int');
 $contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'contractservicelist'.$mode;
@@ -61,20 +62,20 @@ $opouvertureprevueday=GETPOST('opouvertureprevueday');
 $opouvertureprevueyear=GETPOST('opouvertureprevueyear');
 $filter_opouvertureprevue=GETPOST('filter_opouvertureprevue');
 
-$op1month=GETPOST('op1month');
-$op1day=GETPOST('op1day');
-$op1year=GETPOST('op1year');
-$filter_op1=GETPOST('filter_op1');
+$op1month=GETPOST('op1month', 'int');
+$op1day=GETPOST('op1day', 'int');
+$op1year=GETPOST('op1year', 'int');
+$filter_op1=GETPOST('filter_op1', 'alpha');
 
-$op2month=GETPOST('op2month');
-$op2day=GETPOST('op2day');
-$op2year=GETPOST('op2year');
-$filter_op2=GETPOST('filter_op2');
+$op2month=GETPOST('op2month', 'int');
+$op2day=GETPOST('op2day', 'int');
+$op2year=GETPOST('op2year', 'int');
+$filter_op2=GETPOST('filter_op2', 'alpha');
 
-$opcloturemonth=GETPOST('opcloturemonth');
-$opclotureday=GETPOST('opclotureday');
-$opclotureyear=GETPOST('opclotureyear');
-$filter_opcloture=GETPOST('filter_opcloture');
+$opcloturemonth=GETPOST('opcloturemonth', 'int');
+$opclotureday=GETPOST('opclotureday', 'int');
+$opclotureyear=GETPOST('opclotureyear', 'int');
+$filter_opcloture=GETPOST('filter_opcloture', 'alpha');
 
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -131,13 +132,16 @@ $arrayfields=array(
 	'cd.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500)
 );
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-	foreach($extrafields->attribute_label as $key => $val)
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
 	{
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
+		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
 	}
 }
+$object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 
@@ -332,7 +336,7 @@ if ($mode == "0") $title=$langs->trans("ListOfInactiveServices");	// Must use ==
 if ($mode == "4" && $filter != "expired") $title=$langs->trans("ListOfRunningServices");
 if ($mode == "4" && $filter == "expired") $title=$langs->trans("ListOfExpiredServices");
 if ($mode == "5") $title=$langs->trans("ListOfClosedServices");
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'commercial', 0, '', '', $limit);
 
 if ($sall)
 {
@@ -523,7 +527,7 @@ if (! empty($arrayfields['status']['checked']))
 	print '</td>';
 }
 // Action column
-print '<td class="liste_titre right">';
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
 print '</td>';
@@ -701,7 +705,7 @@ while ($i < min($num, $limit))
 	   print '<td class="right">';
 	   if ($obj->cstatut == 0)	// If contract is draft, we say line is also draft
 	   {
-		   print $contractstatic->LibStatut(0, 5, ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < $now));
+		   print $contractstatic->LibStatut(0, 5);
 	   }
 	   else
 	   {

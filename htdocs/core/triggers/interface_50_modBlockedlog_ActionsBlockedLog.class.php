@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -76,17 +76,18 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		// Event/record is qualified
 		$qualified = 0;
 		$amounts = 0;
-		if ($action==='BILL_VALIDATE' || $action==='BILL_DELETE' || $action === 'BILL_SENTBYMAIL'
-			|| $action==='BILL_SUPPLIER_VALIDATE' || $action==='BILL_SUPPLIER_DELETE' || $action === 'BILL_SUPPLIER_SENTBYMAIL'
-			|| $action==='MEMBER_SUBSCRIPTION_CREATE' || $action==='MEMBER_SUBSCRIPTION_MODIFY' || $action==='MEMBER_SUBSCRIPTION_DELETE'
-			|| $action==='DON_VALIDATE' || $action==='DON_MODIFY' || $action==='DON_DELETE'
-			|| $action==='CASHCONTROL_VALIDATE'
-			|| (in_array($object->element, array('facture','suplier_invoice')) && $action === 'DOC_DOWNLOAD') || (in_array($object->element, array('facture','suplier_invoice')) && $action === 'DOC_PREVIEW')
+		if ($action==='BILL_VALIDATE' || (($action==='BILL_DELETE' || $action === 'BILL_SENTBYMAIL') && $object->statut != 0)
+		    || $action==='BILL_SUPPLIER_VALIDATE' || (($action==='BILL_SUPPLIER_DELETE' || $action === 'BILL_SUPPLIER_SENTBYMAIL') && $object->statut != 0)
+		    || $action==='MEMBER_SUBSCRIPTION_CREATE' || $action==='MEMBER_SUBSCRIPTION_MODIFY' || $action==='MEMBER_SUBSCRIPTION_DELETE'
+		    || $action==='DON_VALIDATE' || (($action==='DON_MODIFY' || $action==='DON_DELETE') && $object->statut != 0)
+		    || $action==='CASHCONTROL_VALIDATE'
+		    || (in_array($object->element, array('facture','supplier_invoice')) && $action === 'DOC_DOWNLOAD' && $object->statut != 0)
+		    || (in_array($object->element, array('facture','supplier_invoice')) && $action === 'DOC_PREVIEW' && $object->statut != 0)
 		)
 		{
 			$qualified++;
 
-if (in_array($action, array(
+			if (in_array($action, array(
 				'MEMBER_SUBSCRIPTION_CREATE','MEMBER_SUBSCRIPTION_MODIFY','MEMBER_SUBSCRIPTION_DELETE',
 				'DON_VALIDATE','DON_MODIFY','DON_DELETE'))) $amounts = (double) $object->amount;
 			elseif ($action == 'CASHCONTROL_VALIDATE')
