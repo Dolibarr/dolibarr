@@ -239,7 +239,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 			$prod = "product_" . $reg[1] . '_' . $reg[2];
 			$qty = "qty_" . $reg[1] . '_' . $reg[2];
 			$ent = "entrepot_" . $reg[1] . '_' . $reg[2];
-			if(empty($ent)) $ent = $fk_default_warehouse;
+			if (empty(GETPOST($ent))) $ent = $fk_default_warehouse;
 			$pu = "pu_" . $reg[1] . '_' . $reg[2]; // This is unit price including discount
 			$fk_commandefourndet = "fk_commandefourndet_" . $reg[1] . '_' . $reg[2];
 
