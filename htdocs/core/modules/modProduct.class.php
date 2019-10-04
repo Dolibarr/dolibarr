@@ -354,6 +354,7 @@ class modProduct extends DolibarrModules
             'p.note_public' => "PublicNote",//public note
             'p.note' => "PrivateNote",//private note
             'p.customcode' => 'CustomCode',
+            'p.fk_country' => 'CountryCode',
             'p.price' => "SellingPriceHT",//without
             'p.price_min' => "MinPrice",
             'p.price_ttc' => "SellingPriceTTC",//with tax
@@ -440,7 +441,14 @@ class modProduct extends DolibarrModules
 						'method' => 'fetch',
 						'units' => 'volume',
 						'dict' => 'DictionaryMeasuringUnits'
-				)
+				),
+                'p.fk_country' => array(
+                    'rule' => 'fetchidfromcodeid',
+                    'classfile' => '/core/class/ccountry.class.php',
+                    'class' => 'Ccountry',
+                    'method' => 'fetch',
+                    'dict' => 'DictionaryCountry'
+                )
 		);
 
 		if (! empty($conf->fournisseur->enabled) || !empty($conf->margin->enabled)) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r], array('p.cost_price'=>'CostPrice'));
@@ -485,6 +493,7 @@ class modProduct extends DolibarrModules
             'p.note_public' => "a public note (free text)",
             'p.note' => "a private note (free text)",
             'p.customcode' => 'customs code',
+            'p.fk_country' => 'FR',
             'p.price' => "price ex-vat eg. 100",
 			'p.price_min' => "price ex-vat eg. 100",
             'p.price_ttc' => "price inc-vat eg. 110",
