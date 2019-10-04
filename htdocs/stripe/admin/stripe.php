@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -221,7 +221,7 @@ if (empty($conf->stripeconnect->enabled))
             $endpoint = \Stripe\WebhookEndpoint::retrieve($conf->global->STRIPE_TEST_WEBHOOK_ID);
             $endpoint->enabled_events = $stripearrayofwebhookevents;
             if (GETPOST('webhook', 'alpha') == $conf->global->STRIPE_TEST_WEBHOOK_ID) {
-                if (empty(GETPOST('status', 'alpha'))) {
+                if (! GETPOST('status', 'alpha')) {
                     $endpoint->disabled = true;
                 } else {
                     $endpoint->disabled = false;

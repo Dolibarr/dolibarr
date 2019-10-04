@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -55,7 +55,7 @@ function dolStripPhpCode($str, $replacewith = '')
 				//remove content before closing tag
 				if (count($partlings) > 1) $partlings[0] = '';	// Todo why a count > 1 and not >= 1 ?
 				//append to out string
-				$newstr .= '<span class="phptag">'.$replacewith.'<!-- '.$phppart.' --></span>'.implode('', $partlings);
+				$newstr .= '<span class="phptag" class="tooltip" title="'.dol_escape_htmltag(dolGetFirstLineOfText($phppart).'...').'">'.$replacewith.'<!-- '.$phppart.' --></span>'.implode('', $partlings);
 			}
 		}
 	}

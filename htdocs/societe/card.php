@@ -25,7 +25,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -1047,7 +1047,7 @@ else
         /* Show create form */
 
         $linkback="";
-        print load_fiche_titre($langs->trans("NewThirdParty"), $linkback, 'title_companies.png');
+        print load_fiche_titre($langs->trans("NewThirdParty"), $linkback, 'building');
 
         if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION))
         {
@@ -1513,7 +1513,7 @@ else
 		print '<td>'.$form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0).'</td>';
 		print '<td colspan="3" class="maxwidthonsmartphone">';
 		$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, '', 0, '', '', 0, 1);
-		// Note: If user has no right to "see all thirdparties", we for selection of sale representative to him, so after creation he can see the record.
+		// Note: If user has no right to "see all thirdparties", we force selection of sale representative to him, so after creation he can see the record.
 		$selected = (count(GETPOST('commercial', 'array')) > 0 ? GETPOST('commercial', 'array') : (GETPOST('commercial', 'int') > 0 ? array(GETPOST('commercial', 'int')) : (empty($user->rights->societe->client->voir)?array($user->id):array())));
 		print $form->multiselectarray('commercial', $userlist, $selected, null, null, null, null, "90%");
 		print '</td></tr>';
@@ -2568,14 +2568,13 @@ else
         // Parent company
         if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY))
         {
-        	// Payment term
         	print '<tr><td>';
         	print '<table class="nobordernopadding" width="100%"><tr><td>';
         	print $langs->trans('ParentCompany');
         	print '</td>';
         	if ($action != 'editparentcompany') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editparentcompany&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
         	print '</tr></table>';
-        	print '</td><td colspan="3">';
+        	print '</td><td>';
         	if ($action == 'editparentcompany')
         	{
         		$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->parent, 'editparentcompany', 's.rowid <> '.$object->id, 1);
@@ -2596,7 +2595,7 @@ else
         {
             $langs->load("members");
             print '<tr><td>'.$langs->trans("LinkedToDolibarrMember").'</td>';
-            print '<td colspan="3">';
+            print '<td>';
             $adh=new Adherent($db);
             $result=$adh->fetch('', '', $object->id);
             if ($result > 0)

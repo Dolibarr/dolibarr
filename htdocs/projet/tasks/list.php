@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -121,6 +121,7 @@ $arrayfields=array(
 	't.duration_effective'=>array('label'=>$langs->trans("TimeSpent"), 'checked'=>1, 'position'=>103),
 	't.progress_calculated'=>array('label'=>$langs->trans("ProgressCalculated"), 'checked'=>1, 'position'=>104),
 	't.progress'=>array('label'=>$langs->trans("ProgressDeclared"), 'checked'=>1, 'position'=>105),
+	't.progress_summary'=>array('label'=>$langs->trans("TaskProgressSummary"), 'checked'=>1, 'position'=>106),
     't.tobill'=>array('label'=>$langs->trans("TimeToBill"), 'checked'=>0, 'position'=>110),
     't.billed'=>array('label'=>$langs->trans("TimeBilled"), 'checked'=>0, 'position'=>111),
     't.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
@@ -300,32 +301,8 @@ if ($search_project_title) $sql .= natural_search('p.title', $search_project_tit
 if ($search_task_ref)      $sql .= natural_search('t.ref', $search_task_ref);
 if ($search_task_label)    $sql .= natural_search('t.label', $search_task_label);
 if ($search_societe)       $sql .= natural_search('s.nom', $search_societe);
-if ($search_smonth > 0)
-{
-	if ($search_syear > 0 && empty($search_sday))
-		$sql.= " AND t.dateo BETWEEN '".$db->idate(dol_get_first_day($search_syear, $search_smonth, false))."' AND '".$db->idate(dol_get_last_day($search_syear, $search_smonth, false))."'";
-		elseif ($search_syear > 0 && ! empty($search_sday))
-			$sql.= " AND t.dateo BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_smonth, $search_sday, $search_syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_smonth, $search_sday, $search_syear))."'";
-			else
-				$sql.= " AND date_format(t.dateo, '%m') = '".$search_smonth."'";
-}
-elseif ($search_syear > 0)
-{
-	$sql.= " AND t.dateo BETWEEN '".$db->idate(dol_get_first_day($search_syear, 1, false))."' AND '".$db->idate(dol_get_last_day($search_syear, 12, false))."'";
-}
-if ($search_emonth > 0)
-{
-	if ($search_eyear > 0 && empty($search_eday))
-		$sql.= " AND t.datee BETWEEN '".$db->idate(dol_get_first_day($search_eyear, $search_emonth, false))."' AND '".$db->idate(dol_get_last_day($search_eyear, $search_emonth, false))."'";
-		elseif ($search_eyear > 0 && ! empty($search_eday))
-			$sql.= " AND t.datee BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_emonth, $search_eday, $search_eyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_emonth, $search_eday, $search_eyear))."'";
-			else
-				$sql.= " AND date_format(t.datee, '%m') = '".$search_emonth."'";
-}
-elseif ($search_eyear > 0)
-{
-	$sql.= " AND t.datee BETWEEN '".$db->idate(dol_get_first_day($search_eyear, 1, false))."' AND '".$db->idate(dol_get_last_day($search_eyear, 12, false))."'";
-}
+$sql.= dolSqlDateFilter('t.dateo', $search_sday, $search_smonth, $search_syear);
+$sql.= dolSqlDateFilter('t.datee', $search_eday, $search_emonth, $search_eyear);
 if ($search_all) $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 if ($search_projectstatus >= 0)
 {
@@ -451,7 +428,7 @@ else
     else $texthelp.=$langs->trans("TasksOnProjectsPublicDesc");
 }
 
-print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_project', 0, $newcardbutton, '', $limit);
+print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'project', 0, $newcardbutton, '', $limit);
 
 $topicmail="Information";
 $modelmail="task";
@@ -570,6 +547,7 @@ if (! empty($arrayfields['t.planned_workload']['checked'])) print '<td class="li
 if (! empty($arrayfields['t.duration_effective']['checked'])) print '<td class="liste_titre"></td>';
 if (! empty($arrayfields['t.progress_calculated']['checked'])) print '<td class="liste_titre"></td>';
 if (! empty($arrayfields['t.progress']['checked'])) print '<td class="liste_titre"></td>';
+if (! empty($arrayfields['t.progress_summary']['checked'])) print '<td class="liste_titre"></td>';
 if (! empty($arrayfields['t.tobill']['checked'])) print '<td class="liste_titre"></td>';
 if (! empty($arrayfields['t.billed']['checked'])) print '<td class="liste_titre"></td>';
 // Extra fields
@@ -610,6 +588,7 @@ if (! empty($arrayfields['t.planned_workload']['checked']))         print_liste_
 if (! empty($arrayfields['t.duration_effective']['checked']))       print_liste_field_titre($arrayfields['t.duration_effective']['label'], $_SERVER["PHP_SELF"], "t.duration_effective", "", $param, '', $sortfield, $sortorder, 'center ');
 if (! empty($arrayfields['t.progress_calculated']['checked']))      print_liste_field_titre($arrayfields['t.progress_calculated']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'center ');
 if (! empty($arrayfields['t.progress']['checked']))      print_liste_field_titre($arrayfields['t.progress']['label'], $_SERVER["PHP_SELF"], "t.progress", "", $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['t.progress_summary']['checked']))      print_liste_field_titre($arrayfields['t.progress_summary']['label'], $_SERVER["PHP_SELF"], "t.progress", "", $param, '', $sortfield, $sortorder, 'center ');
 if (! empty($arrayfields['t.tobill']['checked']))        print_liste_field_titre($arrayfields['t.tobill']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
 if (! empty($arrayfields['t.billed']['checked']))        print_liste_field_titre($arrayfields['t.billed']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
 // Extra fields
@@ -642,6 +621,9 @@ while ($i < min($num, $limit))
 	$object->progress = $obj->progress;
 	$object->datee = $db->jdate($obj->date_end);	// deprecated
 	$object->date_end = $db->jdate($obj->date_end);
+    $object->planned_workload= $obj->planned_workload;
+    $object->duration_effective= $obj->duration_effective;
+
 
 	$projectstatic->id = $obj->projectid;
 	$projectstatic->ref = $obj->projectref;
@@ -784,12 +766,23 @@ while ($i < min($num, $limit))
 			print '<td class="center">';
 			if ($obj->progress != '')
 			{
-				print $obj->progress.' %';
+				print getTaskProgressBadge($object);
 			}
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
             if (! $i) $totalarray['totalprogress_declaredfield']=$totalarray['nbfield'];
             $totalarray['totaldurationdeclared'] += $obj->planned_workload * $obj->progress / 100;
+		}
+		// Progress summary
+		if (! empty($arrayfields['t.progress_summary']['checked']))
+		{
+			print '<td class="center">';
+			if($obj->progress != '' && $obj->duration_effective){
+                print getTaskProgressView($object, false, false);
+            }
+			print '</td>';
+			if (! $i) $totalarray['nbfield']++;
+            if (! $i) $totalarray['totalprogress_summary']=$totalarray['nbfield'];
 		}
 		// Time not billed
 		if (! empty($arrayfields['t.tobill']['checked']))
@@ -891,7 +884,7 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 		elseif ($totalarray['totalprogress_declaredfield'] == $i) print '<td class="center">'.($totalarray['totalplannedworkload'] > 0 ? round(100 * $totalarray['totaldurationdeclared'] / $totalarray['totalplannedworkload'], 2).' %' : '').'</td>';
 		elseif ($totalarray['totaltobillfield'] == $i) print '<td class="center">'.convertSecondToTime($totalarray['totaltobill'], $plannedworkloadoutputformat).'</td>';
 		elseif ($totalarray['totalbilledfield'] == $i) print '<td class="center">'.convertSecondToTime($totalarray['totalbilled'], $plannedworkloadoutputformat).'</td>';
-		else print '<td></td>';
+        else print '<td></td>';
 	}
 	print '</tr>';
 }

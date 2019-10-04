@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -44,14 +44,17 @@ $object->fetch($id);
  * Actions
  */
 
+
+
 /*
  * View
  */
+
+$form = new Form($db);
+
 $title = $langs->trans('Asset') . " - " . $langs->trans('Info');
 $helpurl = "";
 llxHeader('', $title, $helpurl);
-
-$form = new Form($db);
 
 $object->info($id);
 

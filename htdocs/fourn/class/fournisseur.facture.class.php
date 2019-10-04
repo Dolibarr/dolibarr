@@ -25,7 +25,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -2203,7 +2203,7 @@ class FactureFournisseur extends CommonInvoice
 	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->facture->fournisseur->warning_delay/60/60/24;
 	        $response->label=$langs->trans("SupplierBillsToPay");
-	        $response->labelShort=$langs->trans("ToPay");
+	        $response->labelShort=$langs->trans("StatusToPay");
 
 	        $response->url=DOL_URL_ROOT.'/fourn/facture/list.php?search_status=1&mainmenu=billing&leftmenu=suppliers_bills';
 	        $response->img=img_object($langs->trans("Bills"), "bill");

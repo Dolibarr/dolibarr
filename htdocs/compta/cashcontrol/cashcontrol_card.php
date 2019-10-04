@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -315,7 +315,7 @@ if ($action=="create" || $action=="start")
 		}
 	}
 
-	print load_fiche_titre($langs->trans("CashControl")." - ".$langs->trans("New"), '', 'title_bank.png');
+	print load_fiche_titre($langs->trans("CashControl")." - ".$langs->trans("New"), '', 'cash-register');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     if ($action == 'start' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '-1')

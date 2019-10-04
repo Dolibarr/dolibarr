@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -438,7 +438,7 @@ $head[1][1] = $langs->trans("ReplenishmentOrders");
 $head[1][2] = 'replenishorders';
 
 
-print load_fiche_titre($langs->trans('Replenishment'), '', 'title_generic.png');
+print load_fiche_titre($langs->trans('Replenishment'), '', 'generic');
 
 dol_fiche_head($head, 'replenish', '', -1, '');
 

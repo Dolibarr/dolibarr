@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
  use Luracast\Restler\RestException;
@@ -234,8 +234,8 @@ class Tickets extends DolibarrApi
 
         $obj_ret = array();
 
-        if (!$socid && DolibarrApiAccess::$user->societe_id) {
-            $socid = DolibarrApiAccess::$user->societe_id;
+        if (!$socid && DolibarrApiAccess::$user->socid) {
+            $socid = DolibarrApiAccess::$user->socid;
         }
 
         // If the internal user must only see his customers, force searching by him

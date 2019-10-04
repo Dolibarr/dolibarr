@@ -21,7 +21,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -154,7 +154,7 @@ if (empty($reshook))
 		if (empty($ref_fourn)) $ref_fourn=GETPOST("search_ref_fourn");
 		$ref_fourn_old=GETPOST("ref_fourn_old");
 		if (empty($ref_fourn_old)) $ref_fourn_old = $ref_fourn;
-		$quantity=GETPOST("qty");
+		$quantity=price2num(GETPOST("qty", 'nohtml'), 'MS');
 		$remise_percent=price2num(GETPOST('remise_percent', 'alpha'));
 		$npr = preg_match('/\*/', $_POST['tva_tx']) ? 1 : 0 ;
 		$tva_tx = str_replace('*', '', GETPOST('tva_tx', 'alpha'));
@@ -481,7 +481,7 @@ if ($id > 0 || $ref)
 				print '<tr>';
 				print '<td class="fieldrequired">'.$langs->trans("QtyMin").'</td>';
 				print '<td>';
-				$quantity = GETPOST('qty') ? GETPOST('qty') : "1";
+				$quantity = GETPOSTISSET('qty') ? price2num(GETPOST('qty', 'nohtml'), 'MS') : "1";
 				if ($rowid)
 				{
 					print '<input type="hidden" name="qty" value="'.$object->fourn_qty.'">';
@@ -491,6 +491,13 @@ if ($id > 0 || $ref)
 				{
 					print '<input class="flat" name="qty" size="5" value="'.$quantity.'">';
 				}
+                // Units
+                if ($conf->global->PRODUCT_USE_UNITS) {
+                    $unit = $object->getLabelOfUnit();
+                    if ($unit !== '') {
+                        print '&nbsp;&nbsp;' . $langs->trans($unit);
+                    }
+                }
 				print '</td></tr>';
 
 				// Vat rate
@@ -778,11 +785,11 @@ SCRIPT;
 				$num = count($product_fourn_list);
 				if (($num + ($offset * $limit)) < $nbtotalofrecords) $num++;
 
-				print_barre_liste($langs->trans('SupplierPrices'), $page, $_SERVER ['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit, 1);
+				print_barre_liste($langs->trans('SupplierPrices'), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit, 1);
 
 				// Suppliers list title
 				print '<div class="div-table-responsive">';
-				print '<table class="noborder" width="100%">';
+				print '<table class="liste" width="100%">';
 
 				$param="&id=".$object->id;
 
@@ -851,6 +858,13 @@ SCRIPT;
 						// Quantity
 						print '<td class="right">';
 						print $productfourn->fourn_qty;
+                        // Units
+                        if ($conf->global->PRODUCT_USE_UNITS) {
+                            $unit = $object->getLabelOfUnit();
+                            if ($unit !== '') {
+                                print '&nbsp;&nbsp;' . $langs->trans($unit);
+                            }
+                        }
 						print '</td>';
 
 						// VAT rate

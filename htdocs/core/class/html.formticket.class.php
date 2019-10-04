@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -147,7 +147,7 @@ class FormTicket
         $extrafields = new ExtraFields($this->db);
         $extralabels = $extrafields->fetch_name_optionals_label($ticketstat->table_element);
 
-        print "\n<!-- Begin form TICKETSUP -->\n";
+        print "\n<!-- Begin form TICKET -->\n";
 
         if ($withdolfichehead) dol_fiche_head(null, 'card', '', 0, '');
 
@@ -242,7 +242,7 @@ class FormTicket
         }
         include_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
         $uselocalbrowser = true;
-        $doleditor = new DolEditor('message', $msg, '100%', 230, $toolbarname, 'In', true, $uselocalbrowser);
+        $doleditor = new DolEditor('message', $msg, '100%', 230, $toolbarname, 'In', true, $uselocalbrowser, $conf->global->FCKEDITOR_ENABLE_TICKET);
         $doleditor->Create();
         print '</td></tr>';
 
@@ -837,7 +837,7 @@ class FormTicket
             $outputlangs->load('other');
         }
 
-        print "\n<!-- Begin message_form TICKETSUP -->\n";
+        print "\n<!-- Begin message_form TICKET -->\n";
 
         $send_email = GETPOST('send_email', 'int') ? GETPOST('send_email', 'int') : 0;
 
@@ -981,7 +981,7 @@ class FormTicket
             include_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
             $uselocalbrowser = true;
 
-            $doleditor = new DolEditor('mail_intro', $mail_intro, '100%', 140, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
+            $doleditor = new DolEditor('mail_intro', $mail_intro, '100%', 90, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
 
             $doleditor->Create();
             print '</td><td align="center">';
@@ -1041,7 +1041,7 @@ class FormTicket
 
         // Attached files
         if (!empty($this->withfile)) {
-            $out .= '<tr>';
+            $out = '<tr>';
             $out .= '<td width="180">' . $langs->trans("MailFile") . '</td>';
             $out .= '<td colspan="2">';
             // TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript

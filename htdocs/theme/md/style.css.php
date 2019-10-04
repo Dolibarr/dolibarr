@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -468,8 +468,10 @@ select.flat, form.flat select {
 	opacity: 0;
 }
 select:invalid { color: gray; }
-input:disabled {
-	background:#f4f4f4;
+
+input:disabled, textarea:disabled, select[disabled='disabled']
+{
+	background:#eee;
 }
 
 input.liste_titre {
@@ -483,9 +485,7 @@ input.removedfile {
 	border: 0px !important;
 	vertical-align: text-bottom;
 }
-textarea:disabled {
-	background:#f4f4f4;
-}
+
 input[type=file ]    { background-color: transparent; border-top: none; border-left: none; border-right: none; box-shadow: none; }
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=radio]    { background-color: transparent; border: none; box-shadow: none; }
@@ -707,6 +707,14 @@ body[class*="colorblind-"] .text-success{
 .text-danger{
     color : <?php print $textDanger ; ?>
 }
+
+.editfielda span.fa-pencil-alt {
+    color: #ccc !important;
+}
+.editfielda span.fa-pencil-alt:hover {
+    color: rgb(<?php echo $colortexttitle; ?>) !important;
+}
+
 
 /* Themes for badges */
 <?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
@@ -939,6 +947,10 @@ select.selectarrowonleft option {
 	direction: ltr;
 }
 
+table[summary="list_of_modules"] .fa-cog {
+    font-size: 1.5em;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -1083,6 +1095,7 @@ select.selectarrowonleft option {
     .maxwidth75onsmartphone { max-width: 50px; }
     .maxwidth100onsmartphone { max-width: 70px; }
     .maxwidth150onsmartphone { max-width: 120px; }
+    .maxwidth150onsmartphoneimp { max-width: 120px !important; }
     .maxwidth200onsmartphone { max-width: 200px; }
     .maxwidth300onsmartphone { max-width: 300px; }
     .maxwidth400onsmartphone { max-width: 400px; }
@@ -1137,9 +1150,15 @@ select.selectarrowonleft option {
    	}
 }
 .linkobject { cursor: pointer; }
+
+table.tableforfield tr>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
+	color: #666;
+}
+
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 .hideonprint { display: none; }
 <?php } ?>
+
 
 
 /* ============================================================================== */
@@ -1942,6 +1961,11 @@ foreach($mainmenuusedarray as $val)
     	display: none;
     <?php } ?>
 }
+.topmenuimage {
+	<?php if ($disableimages) { ?>
+    	display: none;
+    <?php } ?>
+}
 a.tmenuimage {
     display: block;
 }
@@ -2226,6 +2250,41 @@ div.blockvmenulogo
 {
 	border-bottom: 0 !important;
 }
+.backgroundforcompanylogo {
+    margin: <?php echo $disableimages?'0':'6'; ?>px;
+    margin-left: 12px;
+    margin-right: 6px;
+    background-color: rgba(255,255,255,0.7);
+    padding: 0;
+    border-radius: 5px;
+    height: <?php echo $disableimages?'20':'32'; ?>px;
+    /* width: 100px; */
+    max-width: 100px;
+    vertical-align: middle;
+}
+.backgroundforcompanylogo img.mycompany {
+    object-fit: contain;
+    width: inherit;
+    height: inherit;
+}
+#mainmenutd_companylogo::after {
+	content: unset;
+}
+li#mainmenutd_companylogo .tmenucenter {
+	width: unset;
+}
+li#mainmenutd_companylogo {
+	min-width: unset !important;
+}
+<?php if ($disableimages) { ?>
+	li#mainmenutd_home {
+		min-width: unset !important;
+	}
+	li#mainmenutd_home .tmenucenter {
+		width: unset;
+	}
+<?php } ?>
+
 div.blockvmenupair, div.blockvmenuimpair
 {
 	font-family: <?php print $fontlist ?>;
@@ -2361,6 +2420,9 @@ img.toolbarbutton {
     height: 30px;
 }
 
+li.expanded > a.fmdirlia.jqft.ecmjqft {
+    font-weight: bold !important;
+}
 
 
 /* ============================================================================== */
@@ -3486,7 +3548,7 @@ div.boximport {
 
 .fieldrequired { font-weight: bold; color: #000055; }
 
-.widthpictotitle { width: 40px; text-align: <?php echo $left; ?>; }
+.widthpictotitle { width: 40px; font-size: 1.4em; text-align: <?php echo $left; ?>; }
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
 .dolgraphtitlecssboxes { /* margin: 0px; */ }
@@ -5615,13 +5677,13 @@ border-top-right-radius: 6px;
 }
 
 .menuhider {
-	width: 40px;
+	width: <?php echo $disableimages ? 'auto' : '40'; ?>px;
 }
 
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo $fontsize ?> */
 /* disableimages = <?php echo $disableimages; ?> */
 /* rule to reduce top menu - 1st reduction */
-@media only screen and (max-width:  <?php echo round($nbtopmenuentries * $fontsize * 7, 0) + 200; ?>px)
+@media only screen and (max-width:  <?php echo round($nbtopmenuentries * $fontsize * 7, 0) + 300; ?>px)
 {
 	div.tmenucenter {
 	    max-width: <?php echo round($fontsize * 4); ?>px;	/* size of viewport */
@@ -5648,8 +5710,12 @@ border-top-right-radius: 6px;
 	}
 }
 /* rule to reduce top menu - 2nd reduction */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 4.5, 0) + 200; ?>px)
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 4.5, 0) + 300; ?>px)
 {
+	li.tmenucompanylogo {
+		display: none;
+	}
+
 	div.tmenucenter {
 	    max-width: <?php echo round($fontsize * 2); ?>px;	/* size of viewport */
   		text-overflow: clip;
@@ -5713,8 +5779,11 @@ border-top-right-radius: 6px;
 	.titlefield {
 		width: auto !important;		/* We want to ignor the 30%, try to use more if you can */
 	}
-	.tableforfield>tr>td:first-child, div.tableforfield div.tagtr>div.tagtd:first-of-type {
-		max-width: 100px;			/* but no more than 100px */
+	.tableforfield>tr>td:first-child, .tableforfield>tbody>tr>td:first-child, div.tableforfield div.tagtr>div.tagtd:first-of-type {
+	    /* max-width: 100px; */			/* but no more than 100px */
+	}
+	.tableforfield>tr>td:nth-child(2), .tableforfield>tbody>tr>td:nth-child(2), div.tableforfield div.tagtr>div.tagtd:nth-child(2) {
+	    word-break: break-word;
 	}
 }
 
@@ -5743,6 +5812,7 @@ border-top-right-radius: 6px;
 include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
+include dol_buildpath($path.'/theme/eldy/timeline.inc.php', 0); // actually md use same style as eldy theme
 
 
 

@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -185,16 +185,33 @@ class DateLibTest extends PHPUnit\Framework\TestCase
         // With same hours - Tuesday/Wednesday jan 2013
         $date1=dol_mktime(0, 0, 0, 1, 1, 2013);
         $date2=dol_mktime(0, 0, 0, 1, 2, 2013);
+        $date3=dol_mktime(0, 0, 0, 1, 3, 2013);
 
         $result=num_public_holiday($date1, $date2, 'FR', 1);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals(1, $result, 'NumPublicHoliday for Tuesday/Wednesday jan 2013 for FR');   // 1 closed days
+        $this->assertEquals(1, $result, 'NumPublicHoliday for Tuesday 1 - Wednesday 2 jan 2013 for FR');   // 1 closed days (country france)
 
         $result=num_public_holiday($date1, $date2, 'XX', 1);
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals(0, $result, 'NumPublicHoliday for Tuesday/Wednesday jan 2013 for XX');   // no closed days (country unknown)
+        $this->assertEquals(1, $result, 'NumPublicHoliday for Tuesday 1 - Wednesday 2 jan 2013 for XX');   // 1 closed days (country unknown)
 
-        // With same hours - Friday/Sunday jan 2013
+        $result=num_public_holiday($date2, $date3, 'FR', 1);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(0, $result, 'NumPublicHoliday for Wednesday 2 - Thursday 3 jan 2013 for FR');   // no closed days
+
+        // Check with easter monday
+        $date1=dol_mktime(0, 0, 0, 4, 21, 2019);
+        $date2=dol_mktime(0, 0, 0, 4, 23, 2019);
+
+        $result=num_public_holiday($date1, $date2, 'XX', 1);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(1, $result, 'NumPublicHoliday including eastermonday for XX');   // 2 opened day, 1 closed days (sunday)
+
+        $result=num_public_holiday($date1, $date2, 'FR', 1);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(2, $result, 'NumPublicHoliday including eastermonday for FR');   // 1 opened day, 2 closed days (sunday + easter monday)
+
+        // Check for sunday/saturday - Friday 4 - Sunday 6 jan 2013
         $date1=dol_mktime(0, 0, 0, 1, 4, 2013);
         $date2=dol_mktime(0, 0, 0, 1, 6, 2013);
 
@@ -202,10 +219,25 @@ class DateLibTest extends PHPUnit\Framework\TestCase
         print __METHOD__." result=".$result."\n";
         $this->assertEquals(2, $result, 'NumPublicHoliday for FR');   // 1 opened day, 2 closed days
 
+        $result=num_public_holiday($date1, $date2, 'FR', 1, 1, 1);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(2, $result, 'NumPublicHoliday for FR');   // 1 opened day, 2 closed days
+
+        $result=num_public_holiday($date1, $date2, 'FR', 1, 1, 0);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(1, $result, 'NumPublicHoliday for FR');   // 2 opened day, 1 closed days
+
+        $result=num_public_holiday($date1, $date2, 'FR', 1, 0, 0);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(0, $result, 'NumPublicHoliday for FR');   // 3 opened day, 0 closed days
+
         $result=num_public_holiday($date1, $date2, 'XX', 1);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals(2, $result, 'NumPublicHoliday for XX');   // 1 opened day, 2 closed days (even if country unknown)
 
+
+
+        // Add more holiday with constant HOLIDAY_MORE_PUBLIC_HOLIDAYS
         $conf->global->HOLIDAY_MORE_PUBLIC_HOLIDAYS='12-13,2019-12-14';
 
         $date1=dol_mktime(0, 0, 0, 12, 13, 2018);
@@ -243,14 +275,19 @@ class DateLibTest extends PHPUnit\Framework\TestCase
         // With same hours - Tuesday/Wednesday jan 2013
         $date1=dol_mktime(0, 0, 0, 1, 1, 2013);
         $date2=dol_mktime(0, 0, 0, 1, 2, 2013);
+        $date3=dol_mktime(0, 0, 0, 1, 3, 2013);
 
         $result=num_open_day($date1, $date2, 0, 1, 0, 'FR');
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals(1, $result, 'NumOpenDay Tuesday/Wednesday jan 2013 for FR');   // 1 opened days
+        $this->assertEquals(1, $result, 'NumOpenDay Tuesday 1 - Wednesday 2 jan 2013 for FR');   // 1 opened days (country france)
 
         $result=num_open_day($date1, $date2, 0, 1, 0, 'XX');
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals(2, $result, 'NumOpenDay Tuesday/Wednesday jan 2013 for XX');   // 2 opened days (country unknown)
+        $this->assertEquals(1, $result, 'NumOpenDay Tuesday 1 - Wednesday 2 jan 2013 for XX');   // 1 opened days (country unknown)
+
+        $result=num_open_day($date2, $date3, 0, 1, 0, 'FR');
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(2, $result, 'NumOpenDay Wednesday 2 - Thursday 3 jan 2013 for FR');   // 2 opened days
 
         // With same hours - Friday/Sunday jan 2013
         $date1=dol_mktime(0, 0, 0, 1, 4, 2013);

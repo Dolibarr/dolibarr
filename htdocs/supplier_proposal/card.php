@@ -23,7 +23,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -357,7 +357,7 @@ if (empty($reshook))
 										$array_options = $lines[$i]->array_options;
 									}
 
-        $result = $object->addline(
+									$result = $object->addline(
 										$desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx,
 										$lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx,
 										$lines[$i]->fk_product, $lines[$i]->remise_percent,
@@ -646,6 +646,9 @@ if (empty($reshook))
 					$pu_ht = $productsupplier->fourn_pu;
 					if (empty($pu_ht)) $pu_ht = 0;	// If pu is '' or null, we force to have a numeric value
 
+					$fournprice = 0;
+					$buyingprice = 0;
+
 					$result=$object->addline(
 						$desc,
 						$pu_ht,
@@ -670,9 +673,17 @@ if (empty($reshook))
 						$productsupplier->fk_unit,
 						'',
 						0,
-						$productsupplier->fourn_multicurrency_unitprice
+						$productsupplier->fourn_multicurrency_unitprice,
+						$date_start,
+						$date_end
                     );
+
 					//var_dump($tva_tx);var_dump($productsupplier->fourn_pu);var_dump($price_base_type);exit;
+					if ($result < 0)
+					{
+						$error++;
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
 				}
 				if ($idprod == -99 || $idprod == 0)
 				{
@@ -1756,7 +1767,7 @@ if ($action == 'create')
 	if (! empty($conf->global->SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY)) $senderissupplier=1;
 
 	if (! empty($object->lines))
-		$ret = $object->printObjectLines($action, $soc, $mysoc, $lineid, 1);
+		$ret = $object->printObjectLines($action, $soc, $mysoc, $lineid, $dateSelector);
 
 	// Form to add new line
 	if ($object->statut == SupplierProposal::STATUS_DRAFT && $user->rights->supplier_proposal->creer)
@@ -1764,7 +1775,7 @@ if ($action == 'create')
 		if ($action != 'editline')
 		{
 			// Add products/services form
-			$object->formAddObjectLine(1, $soc, $mysoc);
+			$object->formAddObjectLine($dateSelector, $soc, $mysoc);
 
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook

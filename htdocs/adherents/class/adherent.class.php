@@ -24,7 +24,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -1740,8 +1740,7 @@ class Adherent extends CommonObject
 				$paiement->datepaye     = $paymentdate;
 				$paiement->amounts      = $amounts;
 				$paiement->paiementid   = dol_getIdFromCode($this->db, $operation, 'c_paiement', 'code', 'id', 1);
-				$paiement->num_paiement = $num_chq;
-				$paiement->note         = $label;
+				$paiement->num_payment  = $num_chq;
 				$paiement->note_public  = $label;
 
 				if (! $error)
@@ -2063,18 +2062,17 @@ class Adherent extends CommonObject
 	 *  @param  string  $mode           			''=Show firstname+lastname as label (using default order), 'firstname'=Show only firstname, 'login'=Show login, 'ref'=Show ref
 	 *  @param  string  $morecss        			Add more css on link
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param	int		$notooltip					1=Disable tooltip
 	 *	@return	string								Chaine avec URL
 	 */
-	public function getNomUrl($withpictoimg = 0, $maxlen = 0, $option = 'card', $mode = '', $morecss = '', $save_lastsearch_value = -1)
+	public function getNomUrl($withpictoimg = 0, $maxlen = 0, $option = 'card', $mode = '', $morecss = '', $save_lastsearch_value = -1, $notooltip = 0)
 	{
 		global $conf, $langs;
 
 		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpictoimg) $withpictoimg=0;
 
-		$notooltip=0;
-
 		$result=''; $label='';
-		$link=''; $linkstart=''; $linkend='';
+		$linkstart=''; $linkend='';
 
 		if (! empty($this->photo))
 		{
@@ -2107,7 +2105,7 @@ class Adherent extends CommonObject
 			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 		}
 
-		$link = '<a href="'.$url.'"';
+		$linkstart.= '<a href="'.$url.'"';
 		$linkclose="";
 		if (empty($notooltip))
 		{
@@ -2121,10 +2119,10 @@ class Adherent extends CommonObject
 			$linkclose.= ' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
 		}
 
-		$link.=$linkclose.'>';
+		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
-		$result.=$link;
+		$result.=$linkstart;
 		if ($withpictoimg) $result.='<div class="inline-block nopadding valignmiddle">';
 		if ($withpictoimg)
 		{
@@ -2180,7 +2178,8 @@ class Adherent extends CommonObject
 		{
 			if ($statut == -1) return $langs->trans("MemberStatusDraft");
 			elseif ($statut >= 1) {
-				if (! $date_end_subscription)            return $langs->trans("MemberStatusActive");
+				if ($need_subscription == 0)		 return $langs->trans("MemberStatusNoSubscription");
+				elseif (! $date_end_subscription)        return $langs->trans("MemberStatusActive");
 				elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLate");
 				else                                     return $langs->trans("MemberStatusPaid");
 			}
@@ -2190,7 +2189,8 @@ class Adherent extends CommonObject
 		{
 			if ($statut == -1) return $langs->trans("MemberStatusDraftShort");
 			elseif ($statut >= 1) {
-				if (! $date_end_subscription)            return $langs->trans("MemberStatusActiveShort");
+				if ($need_subscription == 0)		 return $langs->trans("MemberStatusNoSubscription");
+				elseif (! $date_end_subscription)        return $langs->trans("MemberStatusActiveShort");
 				elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLateShort");
 				else                                     return $langs->trans("MemberStatusPaidShort");
 			}
@@ -2200,7 +2200,8 @@ class Adherent extends CommonObject
 		{
 			if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'), 'statut0').' '.$langs->trans("MemberStatusDraftShort");
 			elseif ($statut >= 1) {
-				if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'), 'statut1').' '.$langs->trans("MemberStatusActiveShort");
+				if ($need_subscription == 0)		 return img_picto($langs->trans('MemberStatusNoSubscription'), 'statut4').' '.$langs->trans("MemberStatusNoSubscriptionShort");
+				elseif (! $date_end_subscription)        return img_picto($langs->trans('MemberStatusActive'), 'statut1').' '.$langs->trans("MemberStatusActiveShort");
 				elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'), 'statut3').' '.$langs->trans("MemberStatusActiveLateShort");
 				else                                     return img_picto($langs->trans('MemberStatusPaid'), 'statut4').' '.$langs->trans("MemberStatusPaidShort");
 			}
@@ -2210,7 +2211,8 @@ class Adherent extends CommonObject
 		{
 			if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'), 'statut0');
 			elseif ($statut >= 1) {
-				if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'), 'statut1');
+				if ($need_subscription == 0)		 return img_picto($langs->trans('MemberStatusNoSubscription'), 'statut4');
+				elseif (! $date_end_subscription)        return img_picto($langs->trans('MemberStatusActive'), 'statut1');
 				elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'), 'statut3');
 				else                                     return img_picto($langs->trans('MemberStatusPaid'), 'statut4');
 			}
@@ -2220,7 +2222,8 @@ class Adherent extends CommonObject
 		{
 			if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'), 'statut0').' '.$langs->trans("MemberStatusDraft");
 			elseif ($statut >= 1) {
-				if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'), 'statut1').' '.$langs->trans("MemberStatusActive");
+				if ($need_subscription == 0)		 return img_picto($langs->trans('MemberStatusNoSubscription'), 'statut4').' '.$langs->trans("MemberStatusNoSubscription");
+				elseif (! $date_end_subscription)        return img_picto($langs->trans('MemberStatusActive'), 'statut1').' '.$langs->trans("MemberStatusActive");
 				elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'), 'statut3').' '.$langs->trans("MemberStatusActiveLate");
 				else                                     return img_picto($langs->trans('MemberStatusPaid'), 'statut4').' '.$langs->trans("MemberStatusPaid");
 			}
@@ -2230,7 +2233,8 @@ class Adherent extends CommonObject
 		{
 		    if ($statut == -1) return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusDraftShort").'</span> '.img_picto($langs->trans('MemberStatusDraft'), 'statut0');
 			elseif ($statut >= 1) {
-				if (! $date_end_subscription)            return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveShort").' </span>'.img_picto($langs->trans('MemberStatusActive'), 'statut1');
+				if ($need_subscription == 0)		 return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusNoSubscriptionShort").' </span>'.img_picto($langs->trans('MemberStatusNoSubscription'), 'statut4');
+				elseif (! $date_end_subscription)        return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveShort").' </span>'.img_picto($langs->trans('MemberStatusActive'), 'statut1');
 				elseif ($date_end_subscription < time()) return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveLateShort").' </span>'.img_picto($langs->trans('MemberStatusActiveLate'), 'statut3');
 				else                                     return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusPaidShort").' </span>'.img_picto($langs->trans('MemberStatusPaid'), 'statut4');
 			}
@@ -2240,7 +2244,8 @@ class Adherent extends CommonObject
 		{
 		    if ($statut == -1) return $langs->trans("MemberStatusDraft").' '.img_picto($langs->trans('MemberStatusDraft'), 'statut0');
 			if ($statut >= 1) {
-				if (! $date_end_subscription)            return $langs->trans("MemberStatusActive").' '.img_picto($langs->trans('MemberStatusActive'), 'statut1');
+				if ($need_subscription == 0)		 return $langs->trans("MemberStatusNoSubscription").' '.img_picto($langs->trans('MemberStatusNoSubscription'), 'statut4');
+				elseif (! $date_end_subscription)        return $langs->trans("MemberStatusActive").' '.img_picto($langs->trans('MemberStatusActive'), 'statut1');
 				elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLate").' '.img_picto($langs->trans('MemberStatusActiveLate'), 'statut3');
 				else                                     return $langs->trans("MemberStatusPaid").' '.img_picto($langs->trans('MemberStatusPaid'), 'statut4');
 			}
@@ -2303,9 +2308,11 @@ class Adherent extends CommonObject
 
 		$sql = "SELECT a.rowid, a.datefin, a.statut";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
-		$sql.= " WHERE a.statut = 1";
+		$sql.= ", ".MAIN_DB_PREFIX."adherent_type as t";
+		$sql.= " WHERE a.fk_adherent_type = t.rowid";
+		$sql.= " AND a.statut = 1";
 		$sql.= " AND a.entity IN (".getEntity('adherent').")";
-		$sql.= " AND (a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."')";
+		$sql.= " AND ((a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."') AND t.subscription = 1)";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -2690,12 +2697,12 @@ class Adherent extends CommonObject
 		// Process
 		foreach ($to_del as $del) {
 			if ($c->fetch($del) > 0) {
-				$c->del_type($this, 'member');
+				$c->del_type($this, Categorie::TYPE_MEMBER);
 			}
 		}
 		foreach ($to_add as $add) {
 			if ($c->fetch($add) > 0) {
-				$c->add_type($this, 'member');
+				$c->add_type($this, Categorie::TYPE_MEMBER);
 			}
 		}
 

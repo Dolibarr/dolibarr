@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -336,7 +336,7 @@ foreach ($demoprofiles as $profilearray)
         print '<input type="hidden" name="dol_no_mouse_hover" value="'.$conf->dol_no_mouse_hover.'">'."\n";
         print '<input type="hidden" name="dol_use_jmobile" value="'.$conf->dol_use_jmobile.'">'."\n";
 
-        print '<div id="div'.$profilearray['key'].'" summary="Dolibarr online demonstration for profile '.$profilearray['label'].'" class="center inline-block CTable CTableRow'.($i%2==0?'1':'0').'" style="width: 346px;">'."\n";
+        print '<div id="div'.$profilearray['key'].'" summary="Dolibarr online demonstration for profile '.$profilearray['label'].'" class="center inline-block CTable CTableRow'.($i%2==0?'1':'0').'">'."\n";
 
 
         print '<div id="a1'.$profilearray['key'].'" class="demobox '.(empty($profilearray['url'])?'modulelineshow cursorpointer':'nomodulelines').'">';

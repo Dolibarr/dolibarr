@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -334,6 +334,7 @@ class Link extends CommonObject
             if($this->db->num_rows($resql) > 0)
             {
                 $obj = $this->db->fetch_object($resql);
+	            $this->id=$obj->rowid;
                 $this->entity = $obj->entity;
                 $this->datea = $this->db->jdate($obj->datea);
                 $this->url = $obj->url;

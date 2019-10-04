@@ -16,8 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -82,7 +82,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	{
 		global $conf, $langs, $mysoc;
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$langs->loadLangs(array("companies", "main"));
 
 		$this->db = $db;
@@ -90,7 +90,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		$this->description = $langs->trans("DocumentModelOdt");
 		$this->scandir = 'PROJECT_ADDON_PDF_ODT_PATH';	// Name of constant that is used to save list of directories to scan
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'odt';
 		$this->page_largeur = 0;
 		$this->page_hauteur = 0;

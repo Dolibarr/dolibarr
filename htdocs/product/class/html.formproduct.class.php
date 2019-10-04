@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -55,21 +55,24 @@ class FormProduct
 	}
 
 
-	/**
-	 * Load in cache array list of warehouses
-	 * If fk_product is not 0, we do not use cache
-	 *
-	 * @param	int		$fk_product			Add quantity of stock in label for product with id fk_product. Nothing if 0.
-	 * @param	string	$batch				Add quantity of batch stock in label for product with batch name batch, batch name precedes batch_id. Nothing if ''.
-	 * @param	string	$status				warehouse status filter, following comma separated filter options can be used
-	 *                      				'warehouseopen' = select products from open warehouses,
-	 *                      				'warehouseclosed' = select products from closed warehouses,
-	 *                      				'warehouseinternal' = select products from warehouses for internal correct/transfer only
-	 * @param	boolean	$sumStock		    sum total stock of a warehouse, default true
-	 * @param	array	$exclude		    warehouses ids to exclude
-	 * @return  int  		    		    Nb of loaded lines, 0 if already loaded, <0 if KO
-	 */
-	public function loadWarehouses($fk_product = 0, $batch = '', $status = '', $sumStock = true, $exclude = '')
+    /**
+     * Load in cache array list of warehouses
+     * If fk_product is not 0, we do not use cache
+     *
+     * @param	int		    $fk_product			Add quantity of stock in label for product with id fk_product. Nothing if 0.
+     * @param	string	    $batch				Add quantity of batch stock in label for product with batch name batch, batch name precedes batch_id. Nothing if ''.
+     * @param	string	    $status				warehouse status filter, following comma separated filter options can be used
+     *                      				    'warehouseopen' = select products from open warehouses,
+     *                      				    'warehouseclosed' = select products from closed warehouses,
+     *                      				    'warehouseinternal' = select products from warehouses for internal correct/transfer only
+     * @param	boolean	    $sumStock		    sum total stock of a warehouse, default true
+     * @param	string      $exclude            warehouses ids to exclude
+     * @param   bool|int    $stockMin           [=false] Value of minimum stock to filter or false not not filter by minimum stock
+     * @param   string      $orderBy            [='e.ref'] Order by
+     * @return  int                             Nb of loaded lines, 0 if already loaded, <0 if KO
+     * @throws  Exception
+     */
+	public function loadWarehouses($fk_product = 0, $batch = '', $status = '', $sumStock = true, $exclude = '', $stockMin = false, $orderBy = 'e.ref')
 	{
 		global $conf, $langs;
 
@@ -130,8 +133,26 @@ class FormProduct
 
 		if(!empty($exclude)) $sql.= ' AND e.rowid NOT IN('.$this->db->escape(implode(',', $exclude)).')';
 
-		if ($sumStock && empty($fk_product)) $sql.= " GROUP BY e.rowid, e.ref, e.description, e.fk_parent";
-		$sql.= " ORDER BY e.ref";
+		// minimum stock
+        if ($stockMin !== false) {
+            if (!empty($fk_product)) {
+                if (!empty($batch)) {
+                    $sql .= " AND pb.qty > " . $this->db->escape($stockMin);
+                } else {
+                    $sql .= " AND ps.reel > " . $this->db->escape($stockMin);
+                }
+            }
+        }
+
+		if ($sumStock && empty($fk_product)) {
+		    $sql.= " GROUP BY e.rowid, e.ref, e.description, e.fk_parent";
+
+            // minimum stock
+            if ($stockMin !== false) {
+                $sql .= " HAVING sum(ps.reel) > " . $this->db->escape($stockMin);
+            }
+		}
+        $sql.= " ORDER BY " . $orderBy;
 
 		dol_syslog(get_class($this).'::loadWarehouses', LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -192,25 +213,29 @@ class FormProduct
 	/**
 	 *  Return list of warehouses
 	 *
-	 *  @param	int		$selected       Id of preselected warehouse ('' for no value, 'ifone'=select value if one value otherwise no value)
-	 *  @param  string	$htmlname       Name of html select html
-	 *  @param  string	$filterstatus   warehouse status filter, following comma separated filter options can be used
-	 *                                	'warehouseopen' = select products from open warehouses,
-	 *                                	'warehouseclosed' = select products from closed warehouses,
-	 *                                	'warehouseinternal' = select products from warehouses for internal correct/transfer only
-	 *  @param  int		$empty			1=Can be empty, 0 if not
-	 * 	@param	int		$disabled		1=Select is disabled
-	 * 	@param	int		$fk_product		Add quantity of stock in label for product with id fk_product. Nothing if 0.
-	 *  @param	string	$empty_label	Empty label if needed (only if $empty=1)
-	 *  @param	int		$showstock		1=Show stock count
-	 *  @param	int		$forcecombo		1=Force combo iso ajax select2
-	 *  @param	array	$events			Events to add to select2
-	 *  @param  string  $morecss        Add more css classes to HTML select
-	 *  @param	array	$exclude		Warehouses ids to exclude
-	 *  @param  int     $showfullpath   1=Show full path of name (parent ref into label), 0=Show only ref of current warehouse
-	 * 	@return	string					HTML select
+	 *  @param  string|int  $selected           Id of preselected warehouse ('' for no value, 'ifone'=select value if one value otherwise no value)
+	 *  @param  string      $htmlname           Name of html select html
+	 *  @param  string      $filterstatus       warehouse status filter, following comma separated filter options can be used
+     *                                          'warehouseopen' = select products from open warehouses,
+     *                                          'warehouseclosed' = select products from closed warehouses,
+     *                                          'warehouseinternal' = select products from warehouses for internal correct/transfer only
+	 *  @param  int		    $empty			    1=Can be empty, 0 if not
+	 * 	@param	int		    $disabled		    1=Select is disabled
+	 * 	@param	int		    $fk_product		    Add quantity of stock in label for product with id fk_product. Nothing if 0.
+	 *  @param	string	    $empty_label	    Empty label if needed (only if $empty=1)
+	 *  @param	int		    $showstock		    1=Show stock count
+	 *  @param	int	    	$forcecombo		    1=Force combo iso ajax select2
+	 *  @param	array	    $events			            Events to add to select2
+	 *  @param  string      $morecss                    Add more css classes to HTML select
+	 *  @param	string	    $exclude            Warehouses ids to exclude
+	 *  @param  int         $showfullpath       1=Show full path of name (parent ref into label), 0=Show only ref of current warehouse
+     *  @param  bool|int    $stockMin           [=false] Value of minimum stock to filter or false not not filter by minimum stock
+     *  @param  string      $orderBy            [='e.ref'] Order by
+	 * 	@return string					        HTML select
+     *
+     *  @throws Exception
 	 */
-	public function selectWarehouses($selected = '', $htmlname = 'idwarehouse', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $empty_label = '', $showstock = 0, $forcecombo = 0, $events = array(), $morecss = 'minwidth200', $exclude = '', $showfullpath = 1)
+	public function selectWarehouses($selected = '', $htmlname = 'idwarehouse', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $empty_label = '', $showstock = 0, $forcecombo = 0, $events = array(), $morecss = 'minwidth200', $exclude = '', $showfullpath = 1, $stockMin = false, $orderBy = 'e.ref')
 	{
 		global $conf,$langs,$user;
 
@@ -218,7 +243,8 @@ class FormProduct
 
 		$out='';
 		if (empty($conf->global->ENTREPOT_EXTRA_STATUS)) $filterstatus = '';
-		$this->loadWarehouses($fk_product, '', $filterstatus, true, $exclude);
+        if (!empty($fk_product))  $this->cache_warehouses = array();
+		$this->loadWarehouses($fk_product, '', $filterstatus, true, $exclude, $stockMin, $orderBy);
 		$nbofwarehouses=count($this->cache_warehouses);
 
 		if ($conf->use_javascript_ajax && ! $forcecombo)

@@ -25,7 +25,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -1722,7 +1722,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '<input type="checkbox" name="updatechildprice" value="1"> ';
 		print $langs->trans('ForceUpdateChildPriceSoc');
 		print '</div>';
-		
+
 		print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '">';
@@ -1816,7 +1816,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '<input type="checkbox" name="updatechildprice" value="1"> ';
 		print $langs->trans('ForceUpdateChildPriceSoc');
 		print "</div>";
-		
+
 		print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
 		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="' . $langs->trans("Cancel") . '">';

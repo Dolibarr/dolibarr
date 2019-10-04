@@ -21,7 +21,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -117,6 +117,7 @@ class Paiement extends CommonObject
     /**
      * @var int bank account id of payment
      * @deprecated
+     * @see $fk_account
      */
     public $bank_account;
 
@@ -182,7 +183,6 @@ class Paiement extends CommonObject
 				$this->ref            = $obj->ref?$obj->ref:$obj->rowid;
 				$this->date           = $this->db->jdate($obj->dp);
 				$this->datepaye       = $this->db->jdate($obj->dp);
-				$this->numero         = $obj->num_payment;	// deprecated
 				$this->num_paiement   = $obj->num_payment;	// deprecated
 				$this->num_payment    = $obj->num_payment;
 				$this->montant        = $obj->amount;   // deprecated
@@ -286,10 +286,12 @@ class Paiement extends CommonObject
 			$total = $totalamount_converted; // Maybe use price2num with MT for the converted value
 			$mtotal = $totalamount;
 		}
+
+		$num_payment = ($this->num_payment?$this->num_payment:$this->num_paiement);
 		$note = ($this->note_public?$this->note_public:$this->note);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, ext_payment_id, ext_payment_site, fk_user_creat)";
-		$sql.= " VALUES (".$conf->entity.", '".$this->db->escape($this->ref)."', '". $this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', ".$total.", ".$mtotal.", ".$this->paiementid.", '".$this->db->escape($this->num_paiement)."', '".$this->db->escape($note)."', ".($this->ext_payment_id?"'".$this->db->escape($this->ext_payment_id)."'":"null").", ".($this->ext_payment_site?"'".$this->db->escape($this->ext_payment_site)."'":"null").", ".$user->id.")";
+		$sql.= " VALUES (".$conf->entity.", '".$this->db->escape($this->ref)."', '". $this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', ".$total.", ".$mtotal.", ".$this->paiementid.", '".$this->db->escape($num_payment)."', '".$this->db->escape($note)."', ".($this->ext_payment_id?"'".$this->db->escape($this->ext_payment_id)."'":"null").", ".($this->ext_payment_site?"'".$this->db->escape($this->ext_payment_site)."'":"null").", ".$user->id.")";
 
 		dol_syslog(get_class($this)."::Create insert paiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -885,7 +887,7 @@ class Paiement extends CommonObject
             $result = $this->db->query($sql);
             if ($result)
             {
-            	$this->numero = $this->db->escape($num);
+            	$this->num_payment = $this->db->escape($num);
                 return 0;
             }
             else

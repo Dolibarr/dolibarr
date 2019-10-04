@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Put here all includes required by your class file
@@ -131,7 +131,7 @@ if (!$rowid)
 	    	$label.="Statut: ".$langs->trans("".$charge->outcome->seller_message."");
 	    	$status = $form->textwithpicto(img_picto($langs->trans("".$charge->status.""), 'statut8'), $label, 1);
 	  }
-    
+
       if ($charge->payment_method_details->type=='card')
 	  {
 		    $type = $langs->trans("card");
@@ -140,7 +140,7 @@ if (!$rowid)
 	  } elseif ($charge->payment_method_details->type=='three_d_secure'){
 			$type = $langs->trans("card3DS");
 	  }
-  
+
     if (! empty($charge->payment_intent)) {
     $charge = \Stripe\PaymentIntent::retrieve($charge->payment_intent);
     }

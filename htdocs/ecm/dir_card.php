@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 
@@ -20,7 +20,6 @@
  *  \file       htdocs/ecm/dir_card.php
  *	\ingroup    ecm
  *	\brief     	Card of a directory for ECM module
- *	\author		Laurent Destailleur
  */
 
 require '../main.inc.php';

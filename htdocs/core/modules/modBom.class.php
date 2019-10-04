@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -66,7 +66,7 @@ class modBom extends DolibarrModules
 		$this->descriptionlong = "Bill of Materials definitions. They can be used to make Manufacturing Resource Planning";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'experimental';
+		$this->version = 'dolibarr';
 
         //Url to the file with your last numberversion of this module
         //$this->url_last_version = 'http://www.example.com/versionmodule.txt';
@@ -105,7 +105,7 @@ class modBom extends DolibarrModules
 		// Dependencies
 		$this->hidden = false;			// A condition to hide module
 		$this->depends = array('modProduct');		// List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
-		$this->requiredby = array();	// List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
+		$this->requiredby = array('modMrp');	// List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array();	// List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
 		$this->langfiles = array("mrp");
 		//$this->phpmin = array(5,4);					// Minimum version of PHP required by module

@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -73,7 +73,7 @@ $object = new AdherentType($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('adherent_type');
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
@@ -248,7 +248,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-		print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);
+		print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit);
 
 		$moreforfilter = '';
 
@@ -283,7 +283,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
             print '<td class="center">';
 			if ($objp->morphy == 'phy') { print $langs->trans("Physical"); }
 			elseif ($objp->morphy == 'mor') { print $langs->trans("Moral"); }
-			else print $langs->trans("Physical & Morale");
+			else print $langs->trans("MorPhy");
             print '</td>';
 			print '<td class="center">'.yn($objp->subscription).'</td>';
 			print '<td class="center">'.yn($objp->vote).'</td>';
@@ -322,7 +322,7 @@ if ($action == 'create')
 {
 	$object = new AdherentType($db);
 
-	print load_fiche_titre($langs->trans("NewMemberType"));
+	print load_fiche_titre($langs->trans("NewMemberType"), '', 'members');
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -524,14 +524,14 @@ if ($rowid > 0)
 		{
 			$sql.= natural_search("d.email", $search_email);
 		}
-		if ($filter == 'uptodate')
-		{
-		    $sql.=" AND datefin >= '".$db->idate($now)."'";
-		}
-		if ($filter == 'outofdate')
-		{
-		    $sql.=" AND datefin < '".$db->idate($now)."'";
-		}
+                if ($filter == 'uptodate')
+                {
+                    $sql.=" AND (datefin >= '".$db->idate($now)."') OR t.subscription = 0)";
+                }
+                if ($filter == 'outofdate')
+                {
+                    $sql.=" AND (datefin < '".$db->idate($now)."' AND t.subscription = 1)";
+                }
 
 		$sql.= " ".$db->order($sortfield, $sortorder);
 

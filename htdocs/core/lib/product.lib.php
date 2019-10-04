@@ -16,8 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -485,19 +485,33 @@ function show_stats_for_company($product, $socid)
  *
  *	@param	int		$unit                ID of unit (rowid in llx_c_units table)
  *	@param  string	$measuring_style     Style of unit: weight, volume,...
+ *  @param	string  $scale				 Scale of unit: '0', '-3', '6', ...
  *	@return	string	   			         Unit string
  * 	@see	formproduct->selectMeasuringUnits
  */
-function measuring_units_string($unit, $measuring_style = '')
+function measuring_units_string($unit, $measuring_style = '', $scale = '')
 {
 	global $langs, $db;
 	require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 	$measuringUnits= new CUnits($db);
-	$result = $measuringUnits->fetchAll('', '', 0, 0, array(
+
+	if ($scale !== '')
+	{
+		$arrayforfilter = array(
+			't.scale' => $scale,
+			't.unit_type' => $measuring_style,
+			't.active' => 1
+		);
+	}
+	else
+	{
+		$arrayforfilter = array(
 			't.rowid' => $unit,
 			't.unit_type' => $measuring_style,
 			't.active' => 1
-	));
+		);
+	}
+	$result = $measuringUnits->fetchAll('', '', 0, 0, $arrayforfilter);
 
 	if ($result<0) {
 		return -1;

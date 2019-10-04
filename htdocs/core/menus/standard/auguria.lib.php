@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -53,8 +53,8 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 
 	if (empty($noout)) print_start_menu_array_auguria();
 
-    $usemenuhider = 1;
     global $usemenuhider;
+    $usemenuhider = 1;
 
 	// Show/Hide vertical menu
 	if ($mode != 'jmobile' && $mode != 'topnb' && $usemenuhider && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
@@ -265,20 +265,25 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 	$mainmenu=($forcemainmenu?$forcemainmenu:$_SESSION["mainmenu"]);
 	$leftmenu=($forceleftmenu?'':(empty($_SESSION["leftmenu"])?'none':$_SESSION["leftmenu"]));
 
-	$usemenuhider = 0;
 	global $usemenuhider;
+	$usemenuhider = 0;
 
 	// Show logo company
 	if (empty($noout) && ! empty($conf->global->MAIN_SHOW_LOGO) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 	{
-		$mysoc->logo_mini=$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
-		if (! empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
+		$mysoc->logo_mini=(empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI);
+		$mysoc->logo_squarred_mini=(empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI);
+		if (! empty($mysoc->logo_squarred_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini))
+		{
+			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
+		}
+		elseif (! empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
 		{
 			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini);
 		}
 		else
 		{
-			$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
+			$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo_squarred.png';
 		}
 		$title=$langs->trans("GoIntoSetupToChangeLogo");
 		print "\n".'<!-- Show logo on menu -->'."\n";

@@ -14,14 +14,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *  	\file 		htdocs/adherents/htpasswd.php
  *      \ingroup    member
- *      \brief      Page d'export htpasswd du fichier des adherents
- *      \author     Rodolphe Quiedeville
+ *      \brief      Export page htpasswd of the membership file
  */
 
 require '../main.inc.php';

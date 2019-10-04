@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -166,9 +166,13 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 						if ($ldapdebug) print "DEBUG: pwdLastSet = ".dol_print_date($ldap->pwdlastset, 'day')."<br>\n";
 						if ($ldapdebug) print "DEBUG: badPasswordTime = ".dol_print_date($ldap->badpwdtime, 'day')."<br>\n";
 
-						// On recherche le user dolibarr en fonction de son SID ldap
-						$sid = $ldap->getObjectSid($login);
-						if ($ldapdebug) print "DEBUG: sid = ".$sid."<br>\n";
+						// On recherche le user dolibarr en fonction de son SID ldap (only for Active Directory)
+						$sid = null;
+						if ($conf->global->LDAP_SERVER_TYPE == "activedirectory")
+						{
+							$sid = $ldap->getObjectSid($login);
+							if ($ldapdebug) print "DEBUG: sid = ".$sid."<br>\n";
+						}
 
 						$usertmp=new User($db);
 						$resultFetchUser=$usertmp->fetch('', $login, $sid);

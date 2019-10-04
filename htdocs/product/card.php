@@ -29,7 +29,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -522,6 +522,19 @@ if (empty($reshook))
                             }
                         }
 
+                        if (GETPOST('clone_categories'))
+                        {
+                            $result = $object->cloneCategories($originalId, $id);
+
+                            if ($result < 1)
+                            {
+                                $db->rollback();
+                                setEventMessage($langs->trans('ErrorProductClone'), null, 'errors');
+                                header("Location: ".$_SERVER["PHP_SELF"]."?id=".$originalId);
+                                exit;
+                            }
+                        }
+
                         // $object->clone_fournisseurs($originalId, $id);
 
                         $db->commit();
@@ -925,7 +938,7 @@ else
         if ($type==1) $title=$langs->trans("NewService");
         else $title=$langs->trans("NewProduct");
         $linkback="";
-        print load_fiche_titre($title, $linkback, 'title_products.png');
+        print load_fiche_titre($title, $linkback, 'products');
 
         dol_fiche_head('');
 
@@ -1951,6 +1964,7 @@ $formquestionclone=array(
 	'text' => $langs->trans("ConfirmClone"),
     array('type' => 'text', 'name' => 'clone_ref','label' => $langs->trans("NewRefForClone"), 'value' => empty($tmpcode) ? $langs->trans("CopyOf").' '.$object->ref : $tmpcode, 'size'=>24),
     array('type' => 'checkbox', 'name' => 'clone_content','label' => $langs->trans("CloneContentProduct"), 'value' => 1),
+    array('type' => 'checkbox', 'name' => 'clone_categories', 'label' => $langs->trans("CloneCategoriesProduct"), 'value' => 1),
     array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("FeatureNotYetAvailable").')', 'value' => 0, 'disabled' => true),
 );
 if (! empty($conf->global->PRODUIT_SOUSPRODUITS))

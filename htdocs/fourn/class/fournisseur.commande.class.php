@@ -23,7 +23,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -639,28 +639,27 @@ class CommandeFournisseur extends CommonOrder
     	{
 	        $langs->load('orders');
 
-	        $this->statuts[0] = 'StatusOrderDraft';
-	        $this->statuts[1] = 'StatusOrderValidated';
-	        $this->statuts[2] = 'StatusOrderApproved';
-	        if (empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) $this->statuts[3] = 'StatusOrderOnProcess';
-	        else $this->statuts[3] = 'StatusOrderOnProcessWithValidation';
-	        $this->statuts[4] = 'StatusOrderReceivedPartially';
-	        $this->statuts[5] = 'StatusOrderReceivedAll';
-	        $this->statuts[6] = 'StatusOrderCanceled';	// Approved->Canceled
-	        $this->statuts[7] = 'StatusOrderCanceled';	// Process running->canceled
-	        //$this->statuts[8] = 'StatusOrderBilled';	// Everything is finished, order received totally and bill received
-	        $this->statuts[9] = 'StatusOrderRefused';
+	        $this->statuts[0] = 'StatusSupplierOrderDraft';
+	        $this->statuts[1] = 'StatusSupplierOrderValidated';
+	        $this->statuts[2] = 'StatusSupplierOrderApproved';
+	        if (empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) $this->statuts[3] = 'StatusSupplierOrderOnProcess';
+	        else $this->statuts[3] = 'StatusSupplierOrderOnProcessWithValidation';
+	        $this->statuts[4] = 'StatusSupplierOrderReceivedPartially';
+	        $this->statuts[5] = 'StatusSupplierOrderReceivedAll';
+	        $this->statuts[6] = 'StatusSupplierOrderCanceled';	// Approved->Canceled
+	        $this->statuts[7] = 'StatusSupplierOrderCanceled';	// Process running->canceled
+	        $this->statuts[9] = 'StatusSupplierOrderRefused';
 
 	        // List of language codes for status
-	        $this->statutshort[0] = 'StatusOrderDraftShort';
-	        $this->statutshort[1] = 'StatusOrderValidatedShort';
-	        $this->statutshort[2] = 'StatusOrderApprovedShort';
-	        $this->statutshort[3] = 'StatusOrderOnProcessShort';
-	        $this->statutshort[4] = 'StatusOrderReceivedPartiallyShort';
-	        $this->statutshort[5] = 'StatusOrderReceivedAllShort';
-	        $this->statutshort[6] = 'StatusOrderCanceledShort';
-	        $this->statutshort[7] = 'StatusOrderCanceledShort';
-	        $this->statutshort[9] = 'StatusOrderRefusedShort';
+	        $this->statutshort[0] = 'StatusSupplierOrderDraftShort';
+	        $this->statutshort[1] = 'StatusSupplierOrderValidatedShort';
+	        $this->statutshort[2] = 'StatusSupplierOrderApprovedShort';
+	        $this->statutshort[3] = 'StatusSupplierOrderOnProcessShort';
+	        $this->statutshort[4] = 'StatusSupplierOrderReceivedPartiallyShort';
+	        $this->statutshort[5] = 'StatusSupplierOrderReceivedAllShort';
+	        $this->statutshort[6] = 'StatusSupplierOrderCanceledShort';
+	        $this->statutshort[7] = 'StatusSupplierOrderCanceledShort';
+	        $this->statutshort[9] = 'StatusSupplierOrderRefusedShort';
     	}
 
         $billedtext='';
@@ -1822,10 +1821,9 @@ class CommandeFournisseur extends CommonOrder
                 $error++;
             }
 
-            // Si module stock gere et que incrementation faite depuis un dispatching en stock
+            // If module stock is enabled and the stock increase is done on purchase order dispatching
             if (! $error && $entrepot > 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
             {
-
                 $mouv = new MouvementStock($this->db);
                 if ($product > 0)
                 {
@@ -2806,9 +2804,10 @@ class CommandeFournisseur extends CommonOrder
      *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
      *	@param          User	$user   Objet user
+     *  @param          int		$mode   "opened", "awaiting" for orders awaiting reception
      *	@return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
      */
-    public function load_board($user)
+    public function load_board($user, $mode = 'opened')
     {
         // phpcs:enable
         global $conf, $langs;
@@ -2824,7 +2823,12 @@ class CommandeFournisseur extends CommonOrder
             $clause = " AND";
         }
         $sql.= $clause." c.entity = ".$conf->entity;
-        $sql.= " AND c.fk_statut IN (".self::STATUS_VALIDATED.", ".self::STATUS_ACCEPTED.")";
+        if($mode==='awaiting'){
+            $sql.= " AND c.fk_statut = ".self::STATUS_ORDERSENT;
+        }
+        else{
+            $sql.= " AND c.fk_statut IN (".self::STATUS_VALIDATED.", ".self::STATUS_ACCEPTED.")";
+        }
         if ($user->societe_id) $sql.=" AND c.fk_soc = ".$user->societe_id;
 
         $resql=$this->db->query($sql);
@@ -2836,8 +2840,14 @@ class CommandeFournisseur extends CommonOrder
 	        $response->warning_delay=$conf->commande->fournisseur->warning_delay/60/60/24;
 	        $response->label=$langs->trans("SuppliersOrdersToProcess");
 	        $response->labelShort=$langs->trans("Opened");
-	        $response->url=DOL_URL_ROOT.'/fourn/commande/list.php?statut=1,2,3&mainmenu=commercial&leftmenu=orders_suppliers';
+	        $response->url=DOL_URL_ROOT.'/fourn/commande/list.php?statut=1,2&mainmenu=commercial&leftmenu=orders_suppliers';
 	        $response->img=img_object('', "order");
+
+            if($mode==='awaiting'){
+                $response->label=$langs->trans("SuppliersOrdersAwaitingReception");
+                $response->labelShort=$langs->trans("AwaitingReception");
+                $response->url=DOL_URL_ROOT.'/fourn/commande/list.php?statut=3&mainmenu=commercial&leftmenu=orders_suppliers';
+            }
 
             while ($obj=$this->db->fetch_object($resql))
             {

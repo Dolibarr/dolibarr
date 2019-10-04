@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -93,7 +93,7 @@ class modBlockedLog extends DolibarrModules
         $this->always_enabled = (!empty($conf->blockedlog->enabled)
             && !empty($conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY)
             && in_array($mysoc->country_code, explode(',', $conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY))
-            && $this->alreadyUsed(1));
+            && $this->alreadyUsed());
 
         // Constants
         //-----------

@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -739,14 +739,16 @@ class BonPrelevement extends CommonObject
 		$sql = "SELECT count(f.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql.= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-		$sql.= " WHERE f.fk_statut = 1";
-		$sql.= " AND f.entity IN (".getEntity('invoice').")";
+		$sql.= " WHERE f.entity IN (".getEntity('invoice').")";
+		if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS))
+		{
+			$sql.= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
+		}
 		$sql.= " AND f.rowid = pfd.fk_facture";
-		$sql.= " AND f.paye = 0";
 		$sql.= " AND pfd.traite = 0";
 		$sql.= " AND f.total_ttc > 0";
 
-		dol_syslog(get_class($this)."::SommeAPrelever");
+		dol_syslog(get_class($this)."::NbFactureAPrelever");
 		$resql = $this->db->query($sql);
 
 		if ( $resql )
@@ -759,7 +761,7 @@ class BonPrelevement extends CommonObject
 		}
 		else
 		{
-			$this->error=get_class($this)."::SommeAPrelever Erreur -1 sql=".$this->db->error();
+			$this->error=get_class($this)."::NbFactureAPrelever Erreur -1 sql=".$this->db->error();
 			return -1;
 		}
 	}
@@ -770,17 +772,18 @@ class BonPrelevement extends CommonObject
 	 *	Create a withdraw
 	 *  TODO delete params banque and agence when not necesary
 	 *
-	 *	@param 	int		$banque		dolibarr mysoc bank
-	 *	@param	int		$agence		dolibarr mysoc bank office (guichet)
+	 *	@param 	int		  $banque		dolibarr mysoc bank
+	 *	@param	int		  $agence		dolibarr mysoc bank office (guichet)
 	 *	@param	string	$mode		real=do action, simu=test only
 	 *  @param	string	$format		FRST, RCUR or ALL
-         * @param       string  $executiondate	Date to execute the transfer
+	 *  @param  string  $executiondate	Date to execute the transfer
+	 *  @param	int	    $notrigger		Disable triggers
 	 *	@return	int					<0 if KO, nbre of invoice withdrawed if OK
 	 */
-	public function Create($banque = 0, $agence = 0, $mode = 'real', $format = 'ALL', $executiondate = '')
+	public function Create($banque = 0, $agence = 0, $mode = 'real', $format = 'ALL', $executiondate = '', $notrigger = 0)
 	{
         // phpcs:enable
-		global $conf,$langs;
+		global $conf, $langs, $user;
 
 		dol_syslog(__METHOD__."::Bank=".$banque." Office=".$agence." mode=".$mode." format=".$format, LOG_DEBUG);
 
@@ -797,8 +800,6 @@ class BonPrelevement extends CommonObject
 
 		$month = strftime("%m", $datetimeprev);
 		$year = strftime("%Y", $datetimeprev);
-
-		$puser = new User($this->db, $conf->global->PRELEVEMENT_USER);
 
 		$this->invoice_in_error = array();
 		$this->thirdparty_in_error = array();
@@ -1091,6 +1092,7 @@ class BonPrelevement extends CommonObject
 					}
 
 					$this->factures = $factures_prev_id;
+					$this->context['factures_prev'] = $factures_prev;
 
 					// Generation of SEPA file $this->filename
 					$this->generate($format, $executiondate);
@@ -1113,6 +1115,14 @@ class BonPrelevement extends CommonObject
 				$error++;
 				dol_syslog(__METHOD__."::Error update total: ".$this->db->error(), LOG_ERR);
 			}
+
+            if (! $error && ! $notrigger)
+            {
+                // Call trigger
+                $result=$this->call_trigger('DIRECT_DEBIT_ORDER_CREATE', $user);
+                if ($result < 0) $error++;
+                // End call triggers
+            }
 
 			if (!$error)
 			{
@@ -1149,7 +1159,7 @@ class BonPrelevement extends CommonObject
 		if (! $notrigger)
 		{
 		    // Call trigger
-		    $result=$this->call_trigger('BON_PRELEVEMENT_DELETE', $user);
+		    $result=$this->call_trigger('DIRECT_DEBIT_ORDER_DELETE', $user);
 		    if ($result < 0) $error++;
 		    // End call triggers
 		}
@@ -1631,8 +1641,8 @@ class BonPrelevement extends CommonObject
 	public static function buildRumNumber($row_code_client, $row_datec, $row_drum)
 	{
 		global $langs;
-		$pre = $langs->trans('RUM').'-';
-		return $pre.$row_code_client.'-'.$row_drum.'-'.date('U', $row_datec);
+		$pre = substr(dol_string_nospecial(dol_string_unaccent($langs->transnoentitiesnoconv('RUM'))), 0, 3);	// Must always be on 3 char ('RUM' or 'UMR'. This is a protection against bad translation)
+		return $pre.'-'.$row_code_client.'-'.$row_drum.'-'.date('U', $row_datec);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

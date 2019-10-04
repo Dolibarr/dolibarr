@@ -10,6 +10,7 @@
  * Copyright (C) 2014-2016  Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2016-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019       Ferran Marcet	        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -1765,49 +1766,6 @@ if ($action == 'create')
     print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplier').'</td><td><input name="ref_supplier" value="'.(isset($_POST['ref_supplier'])?$_POST['ref_supplier']:$objectsrc->ref_supplier).'" type="text"></td>';
 	print '</tr>';
 
-	// Type invoice
-	$facids = $facturestatic->list_replacable_supplier_invoices($societe->id);
-	if ($facids < 0) {
-		dol_print_error($db, $facturestatic);
-		exit();
-	}
-	$options = "";
-	foreach ($facids as $facparam)
-	{
-		$options .= '<option value="' . $facparam ['id'] . '"';
-		if ($facparam ['id'] == $_POST['fac_replacement'])
-			$options .= ' selected';
-		$options .= '>' . $facparam ['ref'];
-		$options .= ' (' . $facturestatic->LibStatut(0, $facparam ['status']) . ')';
-		$options .= '</option>';
-	}
-
-	// Show link for credit note
-	$facids=$facturestatic->list_qualified_avoir_supplier_invoices($societe->id);
-	if ($facids < 0)
-	{
-		dol_print_error($db, $facturestatic);
-		exit;
-	}
-	$optionsav = "";
-	$newinvoice_static = new FactureFournisseur($db);
-	foreach ($facids as $key => $valarray)
-	{
-		$newinvoice_static->id = $key;
-		$newinvoice_static->ref = $valarray ['ref'];
-		$newinvoice_static->statut = $valarray ['status'];
-		$newinvoice_static->type = $valarray ['type'];
-		$newinvoice_static->paye = $valarray ['paye'];
-
-		$optionsav .= '<option value="' . $key . '"';
-		if ($key == GETPOST('fac_avoir', 'int'))
-			$optionsav .= ' selected';
-		$optionsav .= '>';
-		$optionsav .= $newinvoice_static->ref;
-		$optionsav .= ' (' . $newinvoice_static->getLibStatut(1, $valarray ['paymentornot']) . ')';
-		$optionsav .= '</option>';
-	}
-
 	print '<tr><td class="tdtop fieldrequired">'.$langs->trans('Type').'</td><td>';
 
 	print '<div class="tagtable">' . "\n";
@@ -1860,6 +1818,23 @@ if ($action == 'create')
 		// Replacement
 		if (empty($conf->global->INVOICE_DISABLE_REPLACEMENT))
 		{
+			// Type invoice
+			$facids = $facturestatic->list_replacable_supplier_invoices($societe->id);
+			if ($facids < 0) {
+				dol_print_error($db, $facturestatic);
+				exit();
+			}
+			$options = "";
+			foreach ($facids as $facparam)
+			{
+				$options .= '<option value="' . $facparam ['id'] . '"';
+				if ($facparam ['id'] == $_POST['fac_replacement'])
+					$options .= ' selected';
+				$options .= '>' . $facparam ['ref'];
+				$options .= ' (' . $facturestatic->LibStatut(0, $facparam ['status']) . ')';
+				$options .= '</option>';
+			}
+
 			print '<!-- replacement line -->';
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 			$tmp='<input type="radio" name="type" id="radio_replacement" value="1"' . (GETPOST('type') == 1 ? ' checked' : '');
@@ -1908,6 +1883,32 @@ if ($action == 'create')
 			// Credit note
 			if (empty($conf->global->INVOICE_DISABLE_CREDIT_NOTE))
 			{
+				// Show link for credit note
+				$facids=$facturestatic->list_qualified_avoir_supplier_invoices($societe->id);
+				if ($facids < 0)
+				{
+					dol_print_error($db, $facturestatic);
+					exit;
+				}
+				$optionsav = "";
+				$newinvoice_static = new FactureFournisseur($db);
+				foreach ($facids as $key => $valarray)
+				{
+					$newinvoice_static->id = $key;
+					$newinvoice_static->ref = $valarray ['ref'];
+					$newinvoice_static->statut = $valarray ['status'];
+					$newinvoice_static->type = $valarray ['type'];
+					$newinvoice_static->paye = $valarray ['paye'];
+
+					$optionsav .= '<option value="' . $key . '"';
+					if ($key == GETPOST('fac_avoir', 'int'))
+						$optionsav .= ' selected';
+					$optionsav .= '>';
+					$optionsav .= $newinvoice_static->ref;
+					$optionsav .= ' (' . $newinvoice_static->getLibStatut(1, $valarray ['paymentornot']) . ')';
+					$optionsav .= '</option>';
+				}
+
 				print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 				$tmp='<input type="radio" id="radio_creditnote" name="type" value="2"' . (GETPOST('type') == 2 ? ' checked' : '');
 				if (! $optionsav) $tmp.=' disabled';

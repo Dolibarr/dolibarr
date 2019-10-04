@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -239,6 +239,23 @@ if ($id > 0 || $ref)
 	dol_fiche_end();
 
 
+	$formconfirm = '';
+
+	// Confirmation to delete
+	if ($action == 'delete')
+	{
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('Delete'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 1);
+	}
+
+	// Call Hook formConfirm
+	/*$parameters = array();
+	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+	elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;*/
+
+	// Print form confirm
+	print $formconfirm;
+
 
 	if (empty($object->date_trans) && $user->rights->prelevement->bons->send && $action=='settransmitted')
 	{
@@ -298,7 +315,7 @@ if ($id > 0 || $ref)
 			print "<a class=\"butAction\" href=\"card.php?action=setcredited&id=".$object->id."\">".$langs->trans("ClassCredited")."</a>";
 		}
 
-		print "<a class=\"butActionDelete\" href=\"card.php?action=confirm_delete&id=".$object->id."\">".$langs->trans("Delete")."</a>";
+		print "<a class=\"butActionDelete\" href=\"card.php?action=delete&id=".$object->id."\">".$langs->trans("Delete")."</a>";
 
 		print "</div>";
 	}
@@ -356,8 +373,6 @@ if ($id > 0 || $ref)
 		print_liste_field_titre('');
 		print "</tr>\n";
 
-		$var=false;
-
 		$total = 0;
 
 		while ($i < min($num, $conf->liste_limit))
@@ -406,7 +421,10 @@ if ($id > 0 || $ref)
 			print '<td>'.$langs->trans("Total").'</td>';
 			print '<td>&nbsp;</td>';
 			print '<td class="right">';
-			if ($total != $object->amount) print img_warning("AmountOfFileDiffersFromSumOfInvoices");
+			if (empty($offset) && $num <= $limit)	// If we have all record on same page, then the following test/warning can be done
+			{
+				if ($total != $object->amount) print img_warning("TotalAmountOfdirectDebitOrderDiffersFromSumOfLines");
+			}
 			print price($total);
 			print "</td>\n";
 			print '<td>&nbsp;</td>';

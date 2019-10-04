@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -435,7 +435,7 @@ $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0, $usertoprocess, ($proj
 
 llxHeader("", $title, "", '', '', '', array('/core/js/timesheet.js'));
 
-//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'title_project');
+//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'project');
 
 $param='';
 $param.=($mode?'&mode='.urlencode($mode):'');
@@ -564,7 +564,7 @@ if (! empty($conf->categorie->enabled))
 // If the user can view user other than himself
 $moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.='<div class="inline-block hideonsmartphone">'.$langs->trans('User'). ' </div>';
-$includeonly='hierachyme';
+$includeonly='hierarchyme';
 if (empty($user->rights->user->user->lire)) $includeonly=array($user->id);
 $moreforfilter.=$form->select_dolusers($search_usertoprocessid?$search_usertoprocessid:$usertoprocess->id, 'search_usertoprocessid', $user->rights->user->user->lire?0:0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200');
 $moreforfilter.='</div>';

@@ -114,3 +114,7 @@ CSSContentTooltipHelp=Entrez ici le contenu CSS. Pour éviter tout conflit avec 
 LinkAndScriptsHereAreNotLoadedInEditor=Avertissement: Ce contenu est affiché uniquement lorsque le site est accessible depuis un serveur. Il n'est pas utilisé en mode édition. Par conséquent, si vous devez charger des fichiers javascript également en mode édition, ajoutez simplement la balise 'script src=...' dans la page.
 Dynamiccontent=Exemple de page à contenu dynamique
 ImportSite=Importer modèle de site web
+EditInLineOnOff=Mode 'Modifier en ligne' est %s
+ShowSubContainersOnOff=Mode 'exécution dynamique' est %s
+GlobalCSSorJS=Fichier CSS/JS/Header global du site Web
+BackToHomePage=Retour à la page d'accueil...

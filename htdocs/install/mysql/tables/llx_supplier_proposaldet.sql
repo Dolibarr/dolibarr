@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 -- ========================================================================
 
 CREATE TABLE llx_supplier_proposaldet (
@@ -40,6 +40,8 @@ CREATE TABLE llx_supplier_proposaldet (
   total_localtax2 double(24,8) DEFAULT 0,
   total_ttc double(24,8) DEFAULT 0,
   product_type integer DEFAULT 0,
+  date_start	datetime   DEFAULT NULL,         -- date debut si service
+  date_end		datetime   DEFAULT NULL,         -- date fin si service
   info_bits integer DEFAULT 0,
   buy_price_ht double(24,8) DEFAULT 0,
   fk_product_fournisseur_price integer DEFAULT NULL,

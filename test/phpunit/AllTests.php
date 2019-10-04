@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -87,6 +87,8 @@ class AllTests
         $suite->addTestSuite('DateLibTest');
         require_once dirname(__FILE__).'/UtilsTest.php';
         $suite->addTestSuite('UtilsTest');
+        require_once dirname(__FILE__).'/LesscTest.php';
+        $suite->addTestSuite('LesscTest');
         //require_once dirname(__FILE__).'/DateLibTzFranceTest.php';
         //$suite->addTestSuite('DateLibTzFranceTest');
         require_once dirname(__FILE__).'/MarginsLibTest.php';

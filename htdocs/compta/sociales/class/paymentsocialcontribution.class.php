@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -184,7 +184,7 @@ class PaymentSocialContribution extends CommonObject
 							$remaintopay=price2num($contrib->amount - $paiement - $creditnotes - $deposits, 'MT');
 							if ($remaintopay == 0)
 							{
-								$result=$contrib->set_paid($user, '', '');
+								$result=$contrib->set_paid($user);
 							}
 							else dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
 						}

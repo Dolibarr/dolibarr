@@ -22,7 +22,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -506,7 +506,7 @@ else
 
             $title = $addcontact = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
             $linkback='';
-            print load_fiche_titre($title, $linkback, 'title_companies.png');
+            print load_fiche_titre($title, $linkback, 'address');
 
             // Show errors
             dol_htmloutput_errors(is_numeric($error)?'':$error, $errors);

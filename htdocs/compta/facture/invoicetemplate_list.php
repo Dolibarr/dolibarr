@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -40,6 +40,7 @@ if (! empty($conf->projet->enabled)) {
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 
 // Load translation files required by the page
@@ -246,32 +247,8 @@ if ($search_status != '' && $search_status >= -1)
 	if ($search_status == 1) $sql.= ' AND frequency != 0 AND suspended = 0';
 	if ($search_status == -1) $sql.= ' AND suspended = 1';
 }
-if ($search_month > 0)
-{
-	if ($search_year > 0 && empty($search_day))
-		$sql.= " AND f.date_last_gen BETWEEN '".$db->idate(dol_get_first_day($search_year, $search_month, false))."' AND '".$db->idate(dol_get_last_day($search_year, $search_month, false))."'";
-	elseif ($search_year > 0 && ! empty($search_day))
-		$sql.= " AND f.date_last_gen BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
-	else
-		$sql.= " AND date_format(f.date_last_gen, '%m') = '".$db->escape($search_month)."'";
-}
-elseif ($search_year > 0)
-{
-	$sql.= " AND f.date_last_gen BETWEEN '".$db->idate(dol_get_first_day($search_year, 1, false))."' AND '".$db->idate(dol_get_last_day($search_year, 12, false))."'";
-}
-if ($search_month_date_when > 0)
-{
-	if ($search_year_date_when > 0 && empty($search_day_date_when))
-		$sql.= " AND f.date_when BETWEEN '".$db->idate(dol_get_first_day($search_year_date_when, $search_month_date_when, false))."' AND '".$db->idate(dol_get_last_day($search_year_date_when, $search_month_date_when, false))."'";
-	elseif ($search_year_date_when > 0 && ! empty($search_day_date_when))
-		$sql.= " AND f.date_when BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month_date_when, $search_day_date_when, $search_year_date_when))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month_date_when, $search_day_date_when, $search_year_date_when))."'";
-	else
-		$sql.= " AND date_format(f.date_when, '%m') = '".$db->escape($search_month_date_when)."'";
-}
-elseif ($search_year_date_when > 0)
-{
-	$sql.= " AND f.date_when BETWEEN '".$db->idate(dol_get_first_day($search_year_date_when, 1, false))."' AND '".$db->idate(dol_get_last_day($search_year_date_when, 12, false))."'";
-}
+$sql.=dolSqlDateFilter('f.date_last_gen', $search_day, $search_month, $search_year);
+$sql.=dolSqlDateFilter('f.date_last_gen', $search_day_date_when, $search_month_date_when, $search_year_date_when);
 
 $sql.= $db->order($sortfield, $sortorder);
 
@@ -337,7 +314,7 @@ if ($resql)
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
-	print_barre_liste($langs->trans("RepeatableInvoices"), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);
+	print_barre_liste($langs->trans("RepeatableInvoices"), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'invoicing', 0, '', '', $limit);
 
 	print $langs->trans("ToCreateAPredefinedInvoice", $langs->transnoentitiesnoconv("ChangeIntoRepeatableInvoice")).'<br><br>';
 

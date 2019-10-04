@@ -21,7 +21,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -972,7 +972,7 @@ $today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['
  */
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("CreateRepeatableInvoice"), '', 'title_accountancy.png');
+	print load_fiche_titre($langs->trans("CreateRepeatableInvoice"), '', 'invoicing');
 
 	$object = new Facture($db);   // Source invoice
 	$product_static = new Product($db);

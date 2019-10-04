@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -413,7 +413,7 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 
         $result=dol_compress_file($filein, $fileout, $format, $errorstring);
         print __METHOD__." result=".$result."\n";
-        $this->assertGreaterThanOrEqual(1, $result, "Pb with dol_compress_file ".$errorstring);
+        $this->assertGreaterThanOrEqual(1, $result, "Pb with dol_compress_file on ".$filein." : ".$errorstring);
 
         $result=dol_uncompress($fileout, $dirout);
         print __METHOD__." result=".join(',', $result)."\n";

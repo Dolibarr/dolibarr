@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -318,7 +318,7 @@ if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("AddDonation"));
+	print load_fiche_titre($langs->trans("AddDonation"), '', 'invoicing');
 
 	print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -500,7 +500,7 @@ if (! empty($id) && $action == 'edit')
 	print '<input type="hidden" name="amount" value="'.$object->amount.'">';
 
 
-	dol_fiche_head($head, $hselected, $langs->trans("Donation"), 0, 'generic');
+	dol_fiche_head($head, $hselected, $langs->trans("Donation"), 0, 'invoicing');
 
 	print '<table class="border" width="100%">';
 

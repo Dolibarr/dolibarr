@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Need to have following variables defined:
  * $object (invoice, order, ...)
@@ -109,7 +109,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 		{
             print '<tr class="trextrafields_collapse'.$extrafields_collapse_num.'">';
 			print '<td class="titlefield">';
-			print '<table width="100%" class="nobordernopadding">';
+			print '<table class="nobordernopadding centpercent">';
 			print '<tr>';
 			print '<td class="';
 			//var_dump($action);exit;
@@ -138,7 +138,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			{
 			    $fieldid='id';
 			    if ($object->table_element == 'societe') $fieldid='socid';
-			    print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?'.$fieldid.'=' . $object->id . '&action=edit_extras&attribute=' . $key . '&ignorecollapsesetup=1">' . img_edit().'</a></td>';
+			    print '<td class="right"><a class="reposition editfielda" href="' . $_SERVER['PHP_SELF'] . '?'.$fieldid.'=' . $object->id . '&action=edit_extras&attribute=' . $key . '&ignorecollapsesetup=1">' . img_edit().'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td>';
