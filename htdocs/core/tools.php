@@ -43,7 +43,7 @@ llxHeader("", $langs->trans("Tools"), "");
 
 $text=$langs->trans("Tools");
 
-print load_fiche_titre($text, '', 'generic');
+print load_fiche_titre($text, '', 'wrench');
 
 // Show description of content
 print '<div class="justify">'.$langs->trans("ToolsDesc").'</div><br><br>';

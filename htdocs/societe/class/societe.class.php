@@ -2070,13 +2070,11 @@ class Societe extends CommonObject
             if (empty($option) && $this->fournisseur > 0) $option = 'supplier';
         }
 
-
 		if (! empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto)))
 		{
 			$code = '';
 			if (($this->client) && (! empty($this->code_client))
-				&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
-				|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 2
+				&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1 || $conf->global->SOCIETE_ADD_REF_IN_LIST == 2
 				)
 			)
 			{
@@ -2084,8 +2082,7 @@ class Societe extends CommonObject
 			}
 
 			if (($this->fournisseur) && (! empty($this->code_fournisseur))
-				&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
-				|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 3
+				&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1	|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 3
 				)
 			)
 			{

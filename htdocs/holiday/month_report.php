@@ -48,17 +48,15 @@ $result = restrictedArea($user, 'holiday', $id, '');
  * View
  */
 
+$html = new Form($db);
+$formother = new FormOther($db);
 $holidaystatic = new Holiday($db);
 
 $listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->trans("Afternoon"));
 
-
 llxHeader('', $langs->trans('CPTitreMenu'));
 
-print load_fiche_titre($langs->trans('MenuReportMonth'));
-
-$html = new Form($db);
-$formother = new FormOther($db);
+print load_fiche_titre($langs->trans('MenuReportMonth'), '', 'title_hrm');
 
 
 // Selection filter

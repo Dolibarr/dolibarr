@@ -1047,7 +1047,7 @@ else
         /* Show create form */
 
         $linkback="";
-        print load_fiche_titre($langs->trans("NewThirdParty"), $linkback, 'title_companies.png');
+        print load_fiche_titre($langs->trans("NewThirdParty"), $linkback, 'building');
 
         if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION))
         {

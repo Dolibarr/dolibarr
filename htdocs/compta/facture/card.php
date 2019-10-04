@@ -2587,7 +2587,7 @@ if ($action == 'create')
 	$facturestatic = new Facture($db);
 	$extralabels = $extrafields->fetch_name_optionals_label($facturestatic->table_element);
 
-	print load_fiche_titre($langs->trans('NewBill'));
+	print load_fiche_titre($langs->trans('NewBill'), '', 'invoicing');
 
 	$soc = new Societe($db);
 	if ($socid > 0)

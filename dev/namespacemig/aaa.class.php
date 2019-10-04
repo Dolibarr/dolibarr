@@ -20,4 +20,3 @@ class Aaa
 		echo 'doaaa'."\n";
 	}
 }
-

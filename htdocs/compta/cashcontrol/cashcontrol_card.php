@@ -315,7 +315,7 @@ if ($action=="create" || $action=="start")
 		}
 	}
 
-	print load_fiche_titre($langs->trans("CashControl")." - ".$langs->trans("New"), '', 'title_bank.png');
+	print load_fiche_titre($langs->trans("CashControl")." - ".$langs->trans("New"), '', 'cash-register');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     if ($action == 'start' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '-1')

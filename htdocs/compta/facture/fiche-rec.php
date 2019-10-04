@@ -972,7 +972,7 @@ $today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['
  */
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("CreateRepeatableInvoice"), '', 'title_accountancy.png');
+	print load_fiche_titre($langs->trans("CreateRepeatableInvoice"), '', 'invoicing');
 
 	$object = new Facture($db);   // Source invoice
 	$product_static = new Product($db);

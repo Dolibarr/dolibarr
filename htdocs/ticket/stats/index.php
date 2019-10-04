@@ -65,7 +65,7 @@ $dir=$conf->ticket->dir_temp;
 
 llxHeader('', $title);
 
-print load_fiche_titre($title, '', 'title_ticket.png');
+print load_fiche_titre($title, '', 'ticket');
 
 dol_mkdir($dir);
 
