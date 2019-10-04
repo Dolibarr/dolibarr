@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2006 Destailleur Laurent  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2019 Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ class box_supplier_orders extends ModeleBoxes
         {
             $sql = "SELECT s.nom as name, s.rowid as socid,";
             $sql.= " s.code_client, s.code_fournisseur,";
-            $sql.= " s.logo,";
+            $sql.= " s.logo, s.email,";
             $sql.= " c.rowid, c.ref, c.tms, c.date_commande,";
             $sql.= " c.total_ht,";
             $sql.= " c.tva as total_tva,";
@@ -118,6 +118,7 @@ class box_supplier_orders extends ModeleBoxes
 
 					$thirdpartytmp->id = $objp->socid;
                     $thirdpartytmp->name = $objp->name;
+                    $thirdpartytmp->email = $objp->email;
                     $thirdpartytmp->fournisseur = 1;
                     $thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
                     $thirdpartytmp->logo = $objp->logo;
@@ -135,7 +136,7 @@ class box_supplier_orders extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right"',
+                        'td' => 'class="right nowrap"',
                         'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
                     );
 

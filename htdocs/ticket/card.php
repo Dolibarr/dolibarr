@@ -97,7 +97,7 @@ $url_page_current = DOL_URL_ROOT.'/ticket/card.php';
 //if ($user->societe_id > 0) $socid = $user->societe_id;
 $result = restrictedArea($user, 'ticket', $object->id);
 
-$triggermodname = 'TICKETSUP_MODIFY';
+$triggermodname = 'TICKET_MODIFY';
 $permissiontoadd = $user->rights->ticket->write;
 
 $actionobject = new ActionsTicket($db);
@@ -570,9 +570,9 @@ if ($action == "change_property" && GETPOST('btn_update_ticket_prop', 'alpha') &
 {
 	$object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha'));
 
-	$object->type_code = GETPOST('update_value_type', 'az09');
-	$object->severity_code = GETPOST('update_value_severity', 'az09');
-	$object->category_code = GETPOST('update_value_category', 'az09');
+	$object->type_code = GETPOST('update_value_type', 'aZ09');
+	$object->severity_code = GETPOST('update_value_severity', 'aZ09');
+	$object->category_code = GETPOST('update_value_category', 'aZ09');
 
 	$ret = $object->update($user);
 	if ($ret > 0) {

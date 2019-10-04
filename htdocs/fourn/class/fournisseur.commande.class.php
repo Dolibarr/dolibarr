@@ -1822,10 +1822,9 @@ class CommandeFournisseur extends CommonOrder
                 $error++;
             }
 
-            // Si module stock gere et que incrementation faite depuis un dispatching en stock
+            // If module stock is enabled and the stock increase is done on purchase order dispatching
             if (! $error && $entrepot > 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
             {
-
                 $mouv = new MouvementStock($this->db);
                 if ($product > 0)
                 {
@@ -3511,6 +3510,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
         global $conf,$user;
 
         $error=0;
+
+        $this->db->begin();
 
         // Mise a jour ligne en base
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";

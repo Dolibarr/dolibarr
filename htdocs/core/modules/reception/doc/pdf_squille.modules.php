@@ -121,15 +121,7 @@ class pdf_squille extends ModelePdfReception
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("products");
-		$outputlangs->load("propal");
-		$outputlangs->load("deliveries");
-        $outputlangs->load("receptions");
-		$outputlangs->load("productbatch");
+		$outputlangs->loadLangs(array("main","dict","companies","bills","products","propal","deliveries","receptions","productbatch","sendings"));
 
 		$nblignes = count($object->lines);
 

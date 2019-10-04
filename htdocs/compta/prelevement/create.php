@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('banks', 'categories', 'widthdrawals', 'companies', 'bills'));
+$langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies', 'bills'));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -105,6 +105,7 @@ if (empty($reshook))
 /*
  * View
  */
+
 $form = new Form($db);
 
 $thirdpartystatic=new Societe($db);
@@ -206,9 +207,14 @@ $sql.= " ".MAIN_DB_PREFIX."societe as s,";
 $sql.= " ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 $sql.= " WHERE s.rowid = f.fk_soc";
 $sql.= " AND f.entity IN (".getEntity('invoice').")";
+if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS))
+{
+	$sql.= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
+}
+$sql.= " AND f.total_ttc > 0";
 $sql.= " AND pfd.traite = 0";
 $sql.= " AND pfd.fk_facture = f.rowid";
-if ($socid) $sql.= " AND f.fk_soc = ".$socid;
+if ($socid > 0) $sql.= " AND f.fk_soc = ".$socid;
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -292,7 +298,7 @@ if ($resql)
 			$i++;
 		}
 	}
-	else print '<tr '.$bc[0].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+	else print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 	print "</table>";
 	print "</form>";
 	print "<br>\n";

@@ -53,6 +53,7 @@ $id			= GETPOST('id', 'int');
 $msg_id     = GETPOST('msg_id', 'int');
 $socid      = GETPOST('socid', 'int');
 $projectid  = GETPOST('projectid', 'int');
+$project_ref= GETPOST('project_ref', 'alpha');
 $search_societe = GETPOST('search_societe', 'alpha');
 $search_fk_project=GETPOST('search_fk_project', 'int')?GETPOST('search_fk_project', 'int'):GETPOST('projectid', 'int');
 $search_fk_status = GETPOST('search_fk_statut', 'array');
@@ -130,6 +131,13 @@ if (!$user->rights->ticket->read) {
 // Store current page url
 $url_page_current = dol_buildpath('/ticket/list.php', 1);
 
+if ($project_ref)
+{
+	$tmpproject = new Project($db);
+	$tmpproject->fetch(0, $project_ref);
+	$projectid = $tmpproject->id;
+	$search_fk_project = $projectid;
+}
 
 
 /*
@@ -300,7 +308,7 @@ if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && 
 llxHeader('', $title, $help_url);
 
 
-if ($socid && !$projectid && $user->rights->societe->lire) {
+if ($socid && ! $projectid && ! $project_ref && $user->rights->societe->lire) {
     $socstat = new Societe($db);
     $res = $socstat->fetch($socid);
     if ($res > 0) {
@@ -350,9 +358,10 @@ if ($socid && !$projectid && $user->rights->societe->lire) {
     }
 }
 
-if ($projectid > 0) {
+if ($projectid > 0 || $project_ref) {
     $projectstat = new Project($db);
-    if ($projectstat->fetch($projectid) > 0) {
+    if ($projectstat->fetch($projectid, $project_ref) > 0) {
+    	$projectid = $projectstat->id;
         $projectstat->fetch_thirdparty();
 
         $savobject = $object;
@@ -388,7 +397,7 @@ if ($projectid > 0) {
         	$object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',', array_keys($objectsListId)):'0').")";
         }
 
-        dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+        dol_banner_tab($object, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
         print '<div class="fichecenter">';
         print '<div class="underbanner clearboth"></div>';

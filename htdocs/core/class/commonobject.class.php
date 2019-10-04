@@ -1936,8 +1936,14 @@ abstract class CommonObject
 				{
 					foreach ($this->lines as &$line)
 					{
+						// Amounts in company currency will be recalculated
 						if($mode == 1) {
 							$line->subprice = 0;
+						}
+
+						// Amounts in foreign currency will be recalculated
+						if($mode == 2) {
+							$line->multicurrency_subprice = 0;
 						}
 
 						switch ($this->element) {
@@ -3687,7 +3693,7 @@ abstract class CommonObject
 			if (empty($totalVolume)) $totalVolume=0;  // Avoid warning because $totalVolume is ''
 
 			//var_dump($line->volume_units);
-			if ($weight_units < 50)   // >50 means a standard unit (power of 10 of official unit), > 50 means an exotic unit (like inch)
+			if ($weight_units < 50)   // < 50 means a standard unit (power of 10 of official unit), > 50 means an exotic unit (like inch)
 			{
 				$trueWeightUnit=pow(10, $weightUnit);
 				$totalWeight += $weight * $qty * $trueWeightUnit;
@@ -6450,9 +6456,12 @@ abstract class CommonObject
 				}
 				else
 				{
-					$csstyle='';
 					$class=(!empty($extrafields->attributes[$this->table_element]['hidden'][$key]) ? 'hideobject ' : '');
+					$csstyle='';
 					if (is_array($params) && count($params)>0) {
+						if (array_key_exists('class', $params)) {
+							$class.=$params['class'].' ';
+						}
 						if (array_key_exists('style', $params)) {
 							$csstyle=$params['style'];
 						}
@@ -6489,16 +6498,19 @@ abstract class CommonObject
 
 					$labeltoshow = $langs->trans($label);
 
-					$out .= '<td class="titlefield';
-					if (GETPOST('action', 'none') == 'create') $out.='create';
+					$out .= '<td class="';
+					//$out .= "titlefield";
+					//if (GETPOST('action', 'none') == 'create') $out.='create';
 					if ($mode != 'view' && ! empty($extrafields->attributes[$this->table_element]['required'][$key])) $out .= ' fieldrequired';
 					$out .= '">';
-					if (! empty($extrafields->attributes[$object->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $extrafields->attributes[$object->table_element]['help'][$key]);
+					if (! empty($extrafields->attributes[$this->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $extrafields->attributes[$this->table_element]['help'][$key]);
 					else $out .= $labeltoshow;
 					$out .= '</td>';
 
 					$html_id = !empty($this->id) ? $this->element.'_extras_'.$key.'_'.$this->id : '';
+
 					$out .='<td id="'.$html_id.'" class="'.$this->element.'_extras_'.$key.'" '.($colspan?' colspan="'.$colspan.'"':'').'>';
+					//$out .='<td id="'.$html_id.'" class="'.$this->element.'_extras_'.$key.'">';
 
 					switch($mode) {
 						case "view":
@@ -6510,6 +6522,11 @@ abstract class CommonObject
 					}
 
 					$out .= '</td>';
+
+					/*for($ii = 0; $ii < ($colspan - 1); $ii++)
+					{
+						$out .='<td class="'.$this->element.'_extras_'.$key.'"></td>';
+					}*/
 
 					if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && (($e % 2) == 1)) $out .= '</tr>';
 					else $out .= '</tr>';
@@ -6710,16 +6727,9 @@ abstract class CommonObject
 
 		$dir = $sdir . '/';
 		$pdir = '/';
-		if ($modulepart == 'ticket')
-		{
-			$dir .= get_exdir(0, 0, 0, 0, $this, $modulepart).$this->track_id.'/';
-			$pdir .= get_exdir(0, 0, 0, 0, $this, $modulepart).$this->track_id.'/';
-		}
-		else
-		{
-			$dir .= get_exdir(0, 0, 0, 0, $this, $modulepart).$this->ref.'/';
-			$pdir .= get_exdir(0, 0, 0, 0, $this, $modulepart).$this->ref.'/';
-		}
+
+		$dir .= get_exdir(0, 0, 0, 0, $this, $modulepart).$this->ref.'/';
+		$pdir .= get_exdir(0, 0, 0, 0, $this, $modulepart).$this->ref.'/';
 
 		// For backward compatibility
 		if ($modulepart == 'product' && ! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
@@ -7525,18 +7535,20 @@ abstract class CommonObject
 		}
 
 		// Delete cascade first
-		foreach($this->childtablesoncascade as $table)
-		{
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table.' WHERE '.$this->fk_element.' = '.$this->id;
-			$resql = $this->db->query($sql);
-			if (! $resql)
-			{
-				$this->error=$this->db->lasterror();
-				$this->errors[]=$this->error;
-				$this->db->rollback();
-				return -1;
-			}
-		}
+		if (! empty($this->childtablesoncascade)) {
+            foreach($this->childtablesoncascade as $table)
+            {
+                $sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table.' WHERE '.$this->fk_element.' = '.$this->id;
+                $resql = $this->db->query($sql);
+                if (! $resql)
+                {
+                    $this->error=$this->db->lasterror();
+                    $this->errors[]=$this->error;
+                    $this->db->rollback();
+                    return -1;
+                }
+            }
+        }
 
 		if (! $error) {
 			if (! $notrigger) {

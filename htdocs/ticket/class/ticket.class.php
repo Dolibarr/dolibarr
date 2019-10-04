@@ -2669,7 +2669,7 @@ class Ticket extends CommonObject
         global $conf, $langs;
 
         if ($conf->global->TICKET_DISABLE_ALL_MAILS) {
-            dol_syslog(get_class($this) . '::sendTicketMessageByEmail: Emails are disable into ticket setup by option TICKETSUP_DISABLE_ALL_MAILS', LOG_WARNING);
+            dol_syslog(get_class($this) . '::sendTicketMessageByEmail: Emails are disable into ticket setup by option TICKET_DISABLE_ALL_MAILS', LOG_WARNING);
             return '';
         }
 

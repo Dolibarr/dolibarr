@@ -147,7 +147,7 @@ class FormTicket
         $extrafields = new ExtraFields($this->db);
         $extralabels = $extrafields->fetch_name_optionals_label($ticketstat->table_element);
 
-        print "\n<!-- Begin form TICKETSUP -->\n";
+        print "\n<!-- Begin form TICKET -->\n";
 
         if ($withdolfichehead) dol_fiche_head(null, 'card', '', 0, '');
 
@@ -837,7 +837,7 @@ class FormTicket
             $outputlangs->load('other');
         }
 
-        print "\n<!-- Begin message_form TICKETSUP -->\n";
+        print "\n<!-- Begin message_form TICKET -->\n";
 
         $send_email = GETPOST('send_email', 'int') ? GETPOST('send_email', 'int') : 0;
 

@@ -563,7 +563,7 @@ if ($id == 11)
 			'project'           => $langs->trans('Project'),
 			'project_task'      => $langs->trans('Task'),
 			'agenda'			=> $langs->trans('Agenda'),
-			'resource'           => $langs->trans('Resource'),
+			'dolresource'       => $langs->trans('Resource'),
 			// old deprecated
 			'propal'            => $langs->trans('Proposal'),
 			'commande'          => $langs->trans('Order'),

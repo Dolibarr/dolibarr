@@ -284,14 +284,14 @@ class Product extends CommonObject
      * @var int
      */
     public $barcode_type;
-    
+
     /**
      * Main Barcode type code
      *
      * @var string
      */
     public $barcode_type_code;
-    
+
     /**
      * Additional barcodes (Some products have different barcodes according to the country of origin of manufacture)
      *
@@ -447,7 +447,7 @@ class Product extends CommonObject
             $error=0;
 
         // Clean parameters
-        $this->ref = dol_string_nospecial(trim($this->ref));
+        $this->ref = dol_sanitizeFileName(dol_string_nospecial(trim($this->ref)));
         $this->label = trim($this->label);
         $this->price_ttc=price2num($this->price_ttc);
         $this->price=price2num($this->price);
@@ -2052,7 +2052,7 @@ class Product extends CommonObject
         $sql.= " fk_price_expression, price_autogen";
         $sql.= " FROM ".MAIN_DB_PREFIX."product";
         if ($id) {
-            $sql.= " WHERE rowid = ".$this->db->escape($id);
+            $sql.= " WHERE rowid = ".(int) $id;
         } else {
             $sql.= " WHERE entity IN (".getEntity($this->element).")";
             if ($ref) {
@@ -3437,7 +3437,7 @@ class Product extends CommonObject
      * @param  int    $id_fourn  Supplier id
      * @param  string $ref_fourn Supplier ref
      * @param  float  $quantity  Quantity minimum for price
-     * @return int                 < 0 if KO, 0 if link already exists for this product, > 0 if OK
+     * @return int               < 0 if KO, 0 if link already exists for this product, > 0 if OK
      */
     public function add_fournisseur($user, $id_fourn, $ref_fourn, $quantity)
     {
@@ -3447,6 +3447,9 @@ class Product extends CommonObject
         $now=dol_now();
 
         dol_syslog(get_class($this)."::add_fournisseur id_fourn = ".$id_fourn." ref_fourn=".$ref_fourn." quantity=".$quantity, LOG_DEBUG);
+
+        // Clean parameters
+        $quantity = price2num($quantity, 'MS');
 
         if ($ref_fourn) {
             $sql = "SELECT rowid, fk_product";
@@ -3474,7 +3477,7 @@ class Product extends CommonObject
         if ($ref_fourn) { $sql.= " AND ref_fourn = '".$this->db->escape($ref_fourn)."'";
         } else { $sql.= " AND (ref_fourn = '' OR ref_fourn IS NULL)";
         }
-        $sql.= " AND quantity = '".$quantity."'";
+        $sql.= " AND quantity = ".$quantity;
         $sql.= " AND fk_product = ".$this->id;
         $sql.= " AND entity IN (".getEntity('productsupplierprice').")";
 

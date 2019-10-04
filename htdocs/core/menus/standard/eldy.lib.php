@@ -55,14 +55,14 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
     $usemenuhider = 1;
 
-	// Show/Hide vertical menu
-	if ($mode != 'jmobile' && $mode != 'topnb' && $usemenuhider && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+    // Show/Hide vertical menu. The hamburger icon for .menuhider action.
+    if ($mode != 'jmobile' && $mode != 'topnb' && $usemenuhider && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 	{
     	$showmode=1;
     	$classname = 'class="tmenu menuhider"';
     	$idsel='menu';
 
-    	$menu->add('#', '', 0, $showmode, $atarget, "xxx", '', 0, $id, $idsel, $classname);
+    	$menu->add('#', (! empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE) ? '<span class="fa fa-bars"></span>' : ''), 0, $showmode, $atarget, "xxx", '', 0, $id, $idsel, $classname);
 	}
 
     $menu_arr = array();
@@ -70,7 +70,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	$menu_arr[] = array(
 		'name' => 'Home',
 		'link' => '/index.php?mainmenu=home&amp;leftmenu=home',
-		'title' => (! empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)? '&nbsp; <span class="fa fa-home"></span> &nbsp;' : "Home") ,
+		'title' => (! empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE) ? '<span class="fa fa-home"></span>' : "Home") ,
 		'level' => 0,
 		'enabled' => $showmode = 1,
 		'target' => $atarget,

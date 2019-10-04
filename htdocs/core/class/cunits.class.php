@@ -235,6 +235,7 @@ class CUnits // extends CommonObject
     	$sql.= " t.label,";
     	$sql.= " t.short_label,";
     	$sql.= " t.unit_type,";
+    	$sql.= " t.scale,";
     	$sql.= " t.active";
     	$sql .= ' FROM ' . MAIN_DB_PREFIX . 'c_units as t';
     	// Manage filter
@@ -279,6 +280,7 @@ class CUnits // extends CommonObject
 	    			$record->label = $obj->label;
 	    			$record->short_label = $obj->short_label;
 	    			$record->unit_type = $obj->unit_type;
+	    			$record->scale = $obj->scale;
 	    			$record->active = $obj->active;
 	    			$this->records[$record->id] = $record;
 	    		}
