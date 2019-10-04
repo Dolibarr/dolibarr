@@ -96,11 +96,6 @@ $search_country=GETPOST("search_country", 'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty", 'int');
 $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
-/*
-$search_day	= GETPOST('search_day', 'int');
-$search_month	= GETPOST('search_month', 'int');
-$search_year	= GETPOST('search_year', 'int');
-*/
 $search_datef_start = dol_mktime(0, 0, 0, GETPOST('search_datef_startmonth', 'int'), GETPOST('search_datef_startday', 'int'), GETPOST('search_datef_startyear', 'int'));
 $search_datef_end = dol_mktime(0, 0, 0, GETPOST('search_datef_endmonth', 'int'), GETPOST('search_datef_endday', 'int'), GETPOST('search_datef_endyear', 'int'));
 $search_day_lim		= GETPOST('search_day_lim', 'int');
@@ -244,11 +239,6 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_type='';
 	$search_country='';
 	$search_type_thirdparty='';
-	/*
-	$search_day='';
-	$search_year='';
-	$search_month='';
-	*/
 	$search_datef_start='';
 	$search_datef_end='';
 	$option='';
@@ -482,7 +472,6 @@ if ($search_status != '-1' && $search_status != '')
 }
 if ($search_paymentmode > 0) $sql .= " AND f.fk_mode_reglement = ".$db->escape($search_paymentmode);
 if ($search_paymentterms > 0) $sql .= " AND f.fk_cond_reglement = ".$db->escape($search_paymentterms);
-// $sql.= dolSqlDateFilter("f.datef", $search_day, $search_month, $search_year);
 if (! empty($search_datef_start)) {
 	$filter['f.datef>='] = $search_datef_start;
 	$tmp=dol_getdate($search_datef_start);
@@ -581,14 +570,8 @@ if ($resql)
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 	if ($sall)				 $param.='&sall='.urlencode($sall);
-	/*
-	if ($search_day)         $param.='&search_day='.urlencode($search_day);
-	if ($search_month)       $param.='&search_month='.urlencode($search_month);
-	if ($search_year)        $param.='&search_year=' .urlencode($search_year);
-	*/
 	if ($search_datef_start) $param.='&search_datef_start=' . urlencode($search_datef_start);
 	if ($search_datef_end)	 $param.='&search_datef_end=' . urlencode($search_datef_end);
-
 	if ($search_day_lim)     $param.='&search_day_lim='.urlencode($search_day_lim);
 	if ($search_month_lim)   $param.='&search_month_lim='.urlencode($search_month_lim);
 	if ($search_year_lim)    $param.='&search_year_lim=' .urlencode($search_year_lim);

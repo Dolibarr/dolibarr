@@ -93,9 +93,8 @@ $search_country=GETPOST("search_country", 'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty", 'int');
 $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
-$day	= GETPOST('day', 'int');
-$month	= GETPOST('month', 'int');
-$year	= GETPOST('year', 'int');
+$search_datef_start = dol_mktime(0, 0, 0, GETPOST('search_datef_startmonth', 'int'), GETPOST('search_datef_startday', 'int'), GETPOST('search_datef_startyear', 'int'));
+$search_datef_end = dol_mktime(0, 0, 0, GETPOST('search_datef_endmonth', 'int'), GETPOST('search_datef_endday', 'int'), GETPOST('search_datef_endyear', 'int'));
 $day_lim	= GETPOST('day_lim', 'int');
 $month_lim	= GETPOST('month_lim', 'int');
 $year_lim	= GETPOST('year_lim', 'int');
@@ -225,9 +224,8 @@ if (empty($reshook))
 		$search_type='';
 		$search_country='';
 		$search_type_thirdparty='';
-		$year="";
-		$month="";
-		$day="";
+		$search_datef_start='';
+		$search_datef_end='';
 		$year_lim="";
 		$month_lim="";
 		$day_lim="";
@@ -333,7 +331,17 @@ if ($search_montant_localtax2 != '') $sql.= natural_search('f.localtax2', $searc
 if ($search_montant_ttc != '') $sql.= natural_search('f.total_ttc', $search_montant_ttc, 1);
 if ($search_status != '' && $search_status >= 0) $sql.= " AND f.fk_statut = ".$db->escape($search_status);
 if ($search_paymentmode > 0) $sql .= " AND f.fk_mode_reglement = ".$search_paymentmode."";
-$sql.= dolSqlDateFilter("f.datef", $day, $month, $year);
+
+if (! empty($search_datef_start)) {
+	$filter['f.datef>='] = $search_datef_start;
+	$tmp=dol_getdate($search_datef_start);
+	$sql .= " AND f.datef >= '" . $db->idate($search_datef_start) . "'";
+}
+if (! empty($search_datef_end)) {
+	$filter['f.datef<='] = $search_datef_end;
+	$tmp=dol_getdate($search_datef_end);
+	$sql .= " AND f.datef <= '" . $db->idate($search_datef_end) . "'";
+}
 $sql.= dolSqlDateFilter("f.date_lim_reglement", $day_lim, $month_lim, $year_lim);
 if ($option == 'late') $sql.=" AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->fournisseur->warning_delay)."'";
 if ($search_label) $sql .= natural_search('f.libelle', $search_label);
@@ -429,9 +437,8 @@ if ($resql)
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($search_all)			$param.='&search_all='.urlencode($search_all);
-	if ($day) 					$param.='&day='.urlencode($day);
-	if ($month) 				$param.='&month='.urlencode($month);
-	if ($year)  				$param.='&year=' .urlencode($year);
+	if ($search_datef_start)	$param.='&search_datef_start=' . urlencode($search_datef_start);
+	if ($search_datef_end)		$param.='&search_datef_end=' . urlencode($search_datef_end);
 	if ($day_lim) 				$param.='&day_lim='.urlencode($day_lim);
 	if ($month_lim) 			$param.='&month_lim='.urlencode($month_lim);
 	if ($year_lim)  			$param.='&year_lim=' .urlencode($year_lim);
@@ -631,10 +638,15 @@ if ($resql)
 	// Date invoice
 	if (! empty($arrayfields['f.datef']['checked']))
 	{
-		print '<td class="liste_titre nowraponall center">';
-		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="day" value="'.dol_escape_htmltag($day).'">';
-		print '<input class="flat width25 valignmiddle" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
-		$formother->select_year($year?$year:-1, 'year', 1, 20, 5);
+		print '<td class="liste_titre center">';
+		print '<div class="nowrap">';
+		print $langs->trans('From') . ' ';
+		print $form->selectDate($search_datef_start?$search_datef_start:-1, 'search_datef_start', 0, 0, 1);
+		print '</div>';
+		print '<div class="nowrap">';
+		print $langs->trans('to') . ' ';
+		print $form->selectDate($search_datef_end?$search_datef_end:-1, 'search_datef_end', 0, 0, 1);
+		print '</div>';
 		print '</td>';
 	}
 	// Date due
