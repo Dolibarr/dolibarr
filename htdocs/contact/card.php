@@ -476,7 +476,7 @@ else
         $object = new Contact($db);
         $res=$object->fetch($id, $user);
         if ($res<0) {
-        	setEventMessage($this->error,'errors');
+        	setEventMessage($this->error, 'errors');
         }
 
         // Show tabs
@@ -1054,7 +1054,7 @@ else
 	        if (!empty($object->socid)) {
 		        print '<tr><td>' . $langs->trans("Role") . '</td>';
 		        print '<td colspan="3">';
-		        print $formcompany->showRoles("roles", $object, 'edit' ,$object->roles);
+		        print $formcompany->showRoles("roles", $object, 'edit', $object->roles);
 		        print '</td></tr>';
 	        }
 

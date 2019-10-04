@@ -1610,5 +1610,4 @@ class Contact extends CommonObject
 			return $error*-1;
 		}
 	}
-
 }

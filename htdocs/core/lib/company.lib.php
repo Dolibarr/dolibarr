@@ -1142,7 +1142,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 
 	        $resultRole=$contactstatic->fetchRoles();
 	        if ($resultRole<0) {
-	        	setEventMessages(null, $contactstatic->errors,'errors');
+	        	setEventMessages(null, $contactstatic->errors, 'errors');
 	        }
 
             if (is_array($contactstatic->array_options))
