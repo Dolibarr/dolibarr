@@ -3744,7 +3744,7 @@ abstract class CommonObject
 			if (empty($totalVolume)) $totalVolume=0;  // Avoid warning because $totalVolume is ''
 
 			//var_dump($line->volume_units);
-			if ($weight_units < 50)   // >50 means a standard unit (power of 10 of official unit), > 50 means an exotic unit (like inch)
+			if ($weight_units < 50)   // < 50 means a standard unit (power of 10 of official unit), > 50 means an exotic unit (like inch)
 			{
 				$trueWeightUnit=pow(10, $weightUnit);
 				$totalWeight += $weight * $qty * $trueWeightUnit;
