@@ -41,10 +41,10 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 $search_ref = GETPOST('search_ref', 'int');
 $search_label = GETPOST('search_label', 'alpha');
-$search_amount = GETPOST('search_amount', 'alpha');
+$search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
+$search_date_end = dol_mktime(0, 0, 0, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
 $search_account = GETPOST('search_account', 'int');
-$month = GETPOST("month", "int");
-$year = GETPOST("year", "int");
+$search_amount = GETPOST('search_amount', 'alpha');
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -78,11 +78,11 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 {
 	$search_ref="";
 	$search_label="";
-	$search_amount="";
+	$search_date_start='';
+	$search_date_end='';
 	$search_account='';
-	$year="";
-	$month="";
-    $typeid="";
+	$search_amount="";
+	$typeid="";
 }
 
 
@@ -104,11 +104,12 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON t.fk_typepayment = pst
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON t.fk_bank = b.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
 $sql.= " WHERE t.entity IN (".getEntity('tax').")";
-if ($search_ref)	$sql.= natural_search("t.rowid", $search_ref);
-if ($search_label) 	$sql.= natural_search("t.label", $search_label);
-if ($search_amount) $sql.= natural_search("t.amount", price2num(trim($search_amount)), 1);
-if ($search_account > 0) $sql .=" AND b.fk_account=".$search_account;
-$sql.= dolSqlDateFilter('t.datev', 0, $month, $year);
+if ($search_ref)			$sql.= natural_search("t.rowid", $search_ref);
+if ($search_label)			$sql.= natural_search("t.label", $search_label);
+if ($search_date_start)		$sql.= " AND t.datep >= '" . $db->idate($search_date_start) . "'";
+if ($search_date_end)		$sql.= " AND t.datep <= '" . $db->idate($search_date_end) . "'";
+if ($search_account > 0)	$sql .=" AND b.fk_account=".$search_account;
+if ($search_amount)			$sql.= natural_search("t.amount", price2num(trim($search_amount)), 1);
 if ($filtre) {
     $filtre=str_replace(":", "=", $filtre);
     $sql .= " AND ".$filtre;
@@ -157,16 +158,25 @@ if ($result)
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 	print '<tr class="liste_titre_filter">';
+	// Ref
 	print '<td class="liste_titre"><input type="text" class="flat" size="4" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
+	// Label
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
+	// Date end period
 	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre" align="center">';
-	print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
-	$syear = $year;
-	$formother->select_year($syear?$syear:-1, 'year', 1, 20, 5);
+	// Date payment
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $langs->trans('From') . ' ';
+	print $form->selectDate($search_date_start?$search_date_start:-1, 'search_date_start', 0, 0, 1);
+	print '</div>';
+	print '<div class="nowrap">';
+	print $langs->trans('to') . ' ';
+	print $form->selectDate($search_date_end?$search_date_end:-1, 'search_date_end', 0, 0, 1);
+	print '</div>';
 	print '</td>';
 	// Type
-	print '<td class="liste_titre" align="left">';
+	print '<td class="liste_titre left">';
 	$form->select_types_paiements($typeid, 'typeid', '', 0, 1, 1, 16);
 	print '</td>';
 	// Account
@@ -176,6 +186,7 @@ if ($result)
 	    $form->select_comptes($search_account, 'search_account', 0, '', 1);
 	    print '</td>';
     }
+	// Amount
 	print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
     print '<td class="liste_titre maxwidthsearch">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
@@ -216,8 +227,8 @@ if ($result)
 		print "<td>".$tva_static->getNomUrl(1)."</td>\n";
         // Label
 		print "<td>".dol_trunc($obj->label, 40)."</td>\n";
-        print '<td align="center">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>\n";
-        print '<td align="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
+        print '<td class="center">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>\n";
+        print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
         // Type
 		print $type;
 		// Account
@@ -243,7 +254,7 @@ if ($result)
 		}
 		// Amount
         $total = $total + $obj->amount;
-		print "<td align=\"right\">".price($obj->amount)."</td>";
+		print '<td class="nowrap right">'.price($obj->amount).'</td>';
 	    print "<td>&nbsp;</td>";
         print "</tr>\n";
 
@@ -253,7 +264,7 @@ if ($result)
     $colspan=5;
     if (! empty($conf->banque->enabled)) $colspan++;
     print '<tr class="liste_total"><td colspan="'.$colspan.'">'.$langs->trans("Total").'</td>';
-    print '<td class="right">'.price($total).'</td>';
+    print '<td class="nowrap right">'.price($total).'</td>';
 	print "<td>&nbsp;</td></tr>";
 
     print "</table>";
