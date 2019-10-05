@@ -229,8 +229,8 @@ foreach($search as $key => $val)
     if ($key == 'fk_statut')
 	{
 	    $tmpstatus='';
-	    if ($search['fk_statut'] == 'openall' || in_array('openall', $search['fk_statut'])) $tmpstatus.=($tmpstatus?',':'')."'0', '1', '3', '4', '5', '6'";
-	    if ($search['fk_statut'] == 'closeall' || in_array('closeall', $search['fk_statut'])) $tmpstatus.=($tmpstatus?',':'')."'8', '9'";
+	    if ($search['fk_statut'] == 'openall' || in_array('openall', $search['fk_statut'])) $tmpstatus.=($tmpstatus?',':'')."'".Ticket::STATUS_NOT_READ."', '".Ticket::STATUS_READ."', '".Ticket::STATUS_ASSIGNED."', '".Ticket::STATUS_IN_PROGRESS."', '".Ticket::STATUS_NEED_MORE_INFO."', '".Ticket::STATUS_WAITING."'";
+	    if ($search['fk_statut'] == 'closeall' || in_array('closeall', $search['fk_statut'])) $tmpstatus.=($tmpstatus?',':'')."'".Ticket::STATUS_CLOSED."', '".Ticket::STATUS_CANCELED."'";
 	    if ($tmpstatus) $sql.=" AND fk_statut IN (".$tmpstatus.")";
 	    elseif (is_array($search[$key]) && count($search[$key])) $sql.=natural_search($key, join(',', $search[$key]), 2);
 	    continue;

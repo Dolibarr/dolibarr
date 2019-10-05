@@ -371,7 +371,7 @@ if ($action == "assign_user" && GETPOST('btn_assign_user', 'aplha') && $user->ri
     $action = 'view';
 }
 
-if ($action == "add_message" && GETPOST('btn_add_message') && $user->rights->ticket->read) {
+if ($action == 'add_message' && GETPOSTISSET('btn_add_message') && $user->rights->ticket->read) {
     $ret = $object->newMessage($user, $action, (GETPOST('private_message', 'alpha') == "on" ? 1 : 0));
 
     if ($ret > 0) {
@@ -1298,10 +1298,8 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			//$formticket->param['socid']=$object->fk_soc;
 			$formticket->param['returnurl']=$_SERVER["PHP_SELF"].'?track_id='.$object->track_id;
 
-
 			$formticket->withsubstit = 1;
 			$formticket->substit = $substitutionarray;
-
 			$formticket->showMessageForm('100%');
 			print '</div>';
 	    }
