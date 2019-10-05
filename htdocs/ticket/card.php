@@ -371,7 +371,7 @@ if ($action == "assign_user" && GETPOST('btn_assign_user', 'aplha') && $user->ri
     $action = 'view';
 }
 
-if ($action == "add_message" && GETPOST('btn_add_message') && $user->rights->ticket->read) {
+if ($action == 'add_message' && GETPOSTISSET('btn_add_message') && $user->rights->ticket->read) {
     $ret = $object->newMessage($user, $action, (GETPOST('private_message', 'alpha') == "on" ? 1 : 0));
 
     if ($ret > 0) {
@@ -621,7 +621,7 @@ if ($action == 'create' || $action == 'presend')
 {
     $formticket = new FormTicket($db);
 
-    print load_fiche_titre($langs->trans('NewTicket'), '', 'title_ticket');
+    print load_fiche_titre($langs->trans('NewTicket'), '', 'ticket');
 
     $formticket->withfromsocid = $socid ? $socid : $user->societe_id;
     $formticket->withfromcontactid = $contactid ? $contactid : '';
@@ -769,7 +769,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
         }
         if (!empty($object->origin_email)) {
         	$morehtmlref .= '<br>' . $langs->trans("CreatedBy") . ' : ';
-        	$morehtmlref .= $object->origin_email . ' <small>(' . $langs->trans("TicketEmailOriginIssuer") . ')</small>';
+        	$morehtmlref .= dol_escape_htmltag($object->origin_email) . ' <small>(' . $langs->trans("TicketEmailOriginIssuer") . ')</small>';
         }
 
         // Thirdparty
@@ -983,6 +983,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
         }
         print '</td>';
         print '</tr>';
+
         if (GETPOST('set', 'alpha') == 'properties' && $user->rights->ticket->write) {
             print '<tr>';
             // Type
@@ -1194,7 +1195,10 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			}
 	        print '</div>'."\n";
 		}
-
+		else
+		{
+			print '<br>';
+		}
 
 		// Select mail models is same action as presend
 		if (GETPOST('modelselected')) {
@@ -1211,6 +1215,10 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			// Show links to link elements
 			$linktoelem = $form->showLinkToObjectBlock($object, null, array('ticket'));
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+
+			// Show direct link to public interface
+			print '<br><!-- Link to public interface -->'."\n";
+			print showDirectPublicLink($object).'<br>';
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
@@ -1256,7 +1264,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 		    foreach ($substitutionarray as $key => $val) {
 		        $help.=$key.' -> '.$langs->trans($val).'<br>';
 		    }
-		    $morehtmlright.=$form->textwithpicto($langs->trans("TicketMessageSubstitutionReplacedByGenericValues"), $help);
+		    $morehtmlright.=$form->textwithpicto('<span class="opacitymedium">'.$langs->trans("TicketMessageSubstitutionReplacedByGenericValues").'</span>', $help, 1, 'helpclickable', '', 0, 3, 'helpsubstitution');
 
 			print '<div>';
 			print load_fiche_titre($langs->trans('TicketAddMessage'), $morehtmlright, 'messages@ticket');
@@ -1290,10 +1298,8 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			//$formticket->param['socid']=$object->fk_soc;
 			$formticket->param['returnurl']=$_SERVER["PHP_SELF"].'?track_id='.$object->track_id;
 
-
 			$formticket->withsubstit = 1;
 			$formticket->substit = $substitutionarray;
-
 			$formticket->showMessageForm('100%');
 			print '</div>';
 	    }

@@ -48,7 +48,7 @@ $staticbom = new BOM($db);
 
 llxHeader('', $langs->trans("MRP"), '');
 
-print load_fiche_titre($langs->trans("MRPArea"));
+print load_fiche_titre($langs->trans("MRPArea"), '', 'cubes');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';

@@ -560,6 +560,9 @@ function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $opti
 				$out=dol_string_nohtmltag($out);
 			}
 			break;
+		case 'restricthtml':		// Recommended for most html textarea
+			$out=dol_string_onlythesehtmltags($out, 0);
+			break;
 		case 'custom':
 			if (empty($filter)) return 'BadFourthParameterForGETPOST';
 			$out=filter_var($out, $filter, $options);
@@ -3025,13 +3028,15 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
         if (empty($srconly) && in_array($pictowithouttext, array(
-				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'note',
+        		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
+        		'address', 'bank', 'building', 'cash-register', 'close_title', 'cubes', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'note',
         		'object_list','object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
         		'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
-				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', '1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
+				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench',
 				'jabber','skype','twitter','facebook','linkedin',
 				'chevron-left','chevron-right','chevron-down','chevron-top',
-				'home', 'companies', 'products', 'commercial', 'invoicing', 'accountancy', 'project', 'hrm', 'members', 'ticket', 'generic'
+				'home', 'companies', 'products', 'commercial', 'invoicing', 'accountancy', 'project', 'hrm', 'members', 'ticket', 'generic',
+        		'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda'
 			)
 		)) {
 			$fa='fa';
@@ -3040,11 +3045,12 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		    $facolor = ''; $fasize = '';
 
 		    $arrayconvpictotofa = array(
-		    	'setup'=>'cog', 'companies'=>'building', 'products'=>'box_open', 'commercial'=>'box-tie', 'invoicing'=>'file-invoice', 'accountancy'=>'coins', 'project'=>'project-diagram',
-		    	'hrm'=>'umbrella-beach', 'members'=>'user-friends', 'ticket'=>'sticky-note', 'generic'=>'folder-open',
+		    	'address'=> 'address-book', 'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins', 'accountancy'=>'money-check-alt', 'project'=>'sitemap',
+		    	'hrm'=>'umbrella-beach', 'members'=>'users', 'ticket'=>'ticket-alt', 'generic'=>'folder-open',
 		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on',
 		    	'bank'=>'bank', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil', 'filter'=>'filter', 'split'=>'code-fork',
-		    	'object_list'=>'list-alt','object_calendar'=>'calendar-alt', 'object_calendarweek'=>'calendar-week', 'object_calendarmonth'=>'calendar-alt', 'object_calendarday'=>'calendar-day', 'object_calendarperuser'=>'table'
+		    	'object_list'=>'list-alt','object_calendar'=>'calendar-alt', 'object_calendarweek'=>'calendar-week', 'object_calendarmonth'=>'calendar-alt', 'object_calendarday'=>'calendar-day', 'object_calendarperuser'=>'table',
+		    	'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'bank', 'title_hrm'=>'umbrella-beach', 'title_agenda'=>'calendar-alt'
 		    );
 
 		    if ($pictowithouttext == 'switch_off') {
@@ -4578,7 +4584,7 @@ function price2num($amount, $rounding = '', $alreadysqlnb = 0)
  * Output a dimension with best unit
  *
  * @param   float       $dimension      Dimension
- * @param   int         $unit           Unit scale of dimension (Example: 0=kg, -3=g, 98=ounce, 99=pound, ...)
+ * @param   int         $unit           Unit scale of dimension (Example: 0=kg, -3=g, -6=mg, 98=ounce, 99=pound, ...)
  * @param   string      $type           'weight', 'volume', ...
  * @param   Translate   $outputlangs    Translate language object
  * @param   int         $round          -1 = non rounding, x = number of decimal
@@ -4622,7 +4628,7 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
 	    $unit = $forceunitoutput;
 	}*/
 
-	$ret=price($dimension, 0, $outputlangs, 0, 0, $round).' '.measuring_units_string($unit, $type);
+	$ret=price($dimension, 0, $outputlangs, 0, 0, $round).' '.measuring_units_string(0, $type, $unit);
 
 	return $ret;
 }

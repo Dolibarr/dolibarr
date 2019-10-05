@@ -342,7 +342,7 @@ $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 $newcardbutton.= '</a>';
 //}
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, $newcardbutton, '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'cash-register', 0, $newcardbutton, '', $limit);
 
 // Add code for pre mass action (confirmation or email presend form)
 $topicmail="SendCashControlRef";

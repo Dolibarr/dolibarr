@@ -636,7 +636,7 @@ if ($resql)
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-	print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_accountancy.png', 0, $newcardbutton, '', $limit);
+	print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'invoicing', 0, $newcardbutton, '', $limit);
 
 	$topicmail="SendBillRef";
 	$modelmail="facture_send";

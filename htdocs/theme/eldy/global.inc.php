@@ -508,6 +508,13 @@ body[class*="colorblind-"] .text-success{
     color : <?php print $textDanger ; ?>
 }
 
+.editfielda span.fa-pencil-alt {
+    color: #ccc !important;
+}
+.editfielda span.fa-pencil-alt:hover {
+    color: rgb(<?php echo $colortexttitle; ?>) !important;
+}
+
 
 /* Themes for badges */
 <?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
@@ -771,6 +778,10 @@ select.selectarrowonleft option {
 	direction: ltr;
 }
 
+table[summary="list_of_modules"] .fa-cog {
+    font-size: 1.5em;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -780,7 +791,7 @@ select.selectarrowonleft option {
 .hideobject { display: none; }
 .minwidth50  { min-width: 50px; }
 /* rule for not too small screen only */
-@media only screen and (min-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 40 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)
+@media only screen and (min-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 140 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)
 {
 	.width25  { width: 25px; }
     .width50  { width: 50px; }
@@ -1132,7 +1143,7 @@ div.vmenu, td.vmenu {
 .menuhider { display: none !important; }
 
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
-@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 40 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
+@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 140 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
 body.sidebar-collapse .side-nav {
 	display: none;
@@ -3498,7 +3509,8 @@ div.boximport {
 
 .fieldrequired { font-weight: bold; color: #000055; }
 
-.widthpictotitle { width: 40px; font-size: 1.5em; text-align: <?php echo $left; ?>; }
+.widthpictotitle { width: 44px; text-align: <?php echo $left; ?>; }
+span.widthpictotitle { font-size: 2.5em; };
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
 .dolgraphtitlecssboxes { /* margin: 0px; */ }
@@ -3831,6 +3843,7 @@ tr.visible {
 	border-bottom: 1px solid #ccc;
 	background: #e6e6e6;
 	display: inline-block;
+	padding: 4px 0 4px 0;
 }
 .websitebar .buttonDelete, .websitebar .button {
 	text-shadow: none;
@@ -3842,22 +3855,23 @@ tr.visible {
     line-height: normal;
 }
 .websiteselection {
-	display: inline-block;
+	/* display: inline-block; */
 	padding-left: 10px;
 	vertical-align: middle;
-	line-height: 28px;
+	/* line-height: 28px; */
 }
 .websitetools {
 	float: right;
 }
 .websiteselection, .websitetools {
-	margin-top: 3px;
+	/* margin-top: 3px;
 	padding-top: 3px;
-	padding-bottom: 3px;
+	padding-bottom: 3px; */
 }
 .websiteinputurl {
     display: inline-block;
     vertical-align: top;
+    line-height: 28px;
 }
 .websiteiframenoborder {
 	border: 0px;

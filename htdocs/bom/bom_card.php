@@ -204,7 +204,7 @@ jQuery(document).ready(function() {
 // Part to create
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("NewBOM"));
+	print load_fiche_titre($langs->trans("NewBOM"), '', 'cubes');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -237,7 +237,7 @@ if ($action == 'create')
 // Part to edit record
 if (($id || $ref) && $action == 'edit')
 {
-	print load_fiche_titre($langs->trans("BillOfMaterials"));
+	print load_fiche_titre($langs->trans("BillOfMaterials"), '', 'cubes');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
