@@ -15,10 +15,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
- require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 /**
  * API class for products
@@ -42,6 +43,11 @@ class Products extends DolibarrApi
     public $product;
 
     /**
+     * @var ProductFournisseur $productsupplier {@type ProductFournisseur}
+     */
+    public $productsupplier;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -49,6 +55,7 @@ class Products extends DolibarrApi
         global $db, $conf;
         $this->db = $db;
         $this->product = new Product($this->db);
+        $this->productsupplier = new ProductFournisseur($this->db);
     }
 
     /**
@@ -475,7 +482,7 @@ class Products extends DolibarrApi
      *
      * @url DELETE {id}/purchase_prices/{priceid}
      *
-     * @return array
+     * @return int
      *
      * @throws 401
      * @throws 404
@@ -494,13 +501,13 @@ class Products extends DolibarrApi
         if(! DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
-
-        if($result) {
-        $this->product = new ProductFournisseur($this->db);
-        $this->product->fetch($id);
+        $resultsupplier = 0;
+        if ($result) {
+            $this->productsupplier->fetch($id);
+            $resultsupplier = $this->product->remove_product_fournisseur_price($priceid);
         }
 
-        return $this->product->remove_product_fournisseur_price($priceid);
+        return $resultsupplier;
     }
 
     /**
@@ -632,13 +639,13 @@ class Products extends DolibarrApi
         }
 
         if ($includestockdata) {
-               $this->product->load_stock();
+            $this->product->load_stock();
         }
 
         if($result) {
-        $this->product = new ProductFournisseur($this->db);
-        $this->product->fetch($id, $ref);
-        $this->product->list_product_fournisseur_price($id, '', '', 0, 0);
+            $this->product = new ProductFournisseur($this->db);
+            $this->product->fetch($id, $ref);
+            $this->product->list_product_fournisseur_price($id, '', '', 0, 0);
         }
 
         return $this->_cleanObjectDatas($this->product);
