@@ -769,7 +769,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
         }
         if (!empty($object->origin_email)) {
         	$morehtmlref .= '<br>' . $langs->trans("CreatedBy") . ' : ';
-        	$morehtmlref .= $object->origin_email . ' <small>(' . $langs->trans("TicketEmailOriginIssuer") . ')</small>';
+        	$morehtmlref .= dol_escape_htmltag($object->origin_email) . ' <small>(' . $langs->trans("TicketEmailOriginIssuer") . ')</small>';
         }
 
         // Thirdparty
@@ -983,6 +983,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
         }
         print '</td>';
         print '</tr>';
+
         if (GETPOST('set', 'alpha') == 'properties' && $user->rights->ticket->write) {
             print '<tr>';
             // Type
@@ -1211,6 +1212,10 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			// Show links to link elements
 			$linktoelem = $form->showLinkToObjectBlock($object, null, array('ticket'));
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+
+			// Show direct link to public interface
+			print '<br><!-- Link to public interface -->'."\n";
+			print showDirectPublicLink($object).'<br>';
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
