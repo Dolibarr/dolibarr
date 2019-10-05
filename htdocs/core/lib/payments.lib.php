@@ -130,7 +130,7 @@ function showOnlinePaymentUrl($type, $ref)
 	// Load translation files required by the page
     $langs->loadLangs(array('payment', 'paybox'));
 
-	$servicename='Online';
+	$servicename=$langs->transnoentitiesnoconve('Online'):;
 
 	$out = img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'<br>';
 	$url = getOnlinePaymentUrl(0, $type, $ref);
