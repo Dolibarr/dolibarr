@@ -1195,7 +1195,10 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			}
 	        print '</div>'."\n";
 		}
-
+		else
+		{
+			print '<br>';
+		}
 
 		// Select mail models is same action as presend
 		if (GETPOST('modelselected')) {
@@ -1261,7 +1264,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 		    foreach ($substitutionarray as $key => $val) {
 		        $help.=$key.' -> '.$langs->trans($val).'<br>';
 		    }
-		    $morehtmlright.=$form->textwithpicto($langs->trans("TicketMessageSubstitutionReplacedByGenericValues"), $help);
+		    $morehtmlright.=$form->textwithpicto('<span class="opacitymedium">'.$langs->trans("TicketMessageSubstitutionReplacedByGenericValues").'</span>', $help, 1, 'helpclickable', '', 0, 3, 'helpsubstitution');
 
 			print '<div>';
 			print load_fiche_titre($langs->trans('TicketAddMessage'), $morehtmlright, 'messages@ticket');
