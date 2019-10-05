@@ -1610,7 +1610,7 @@ else
 			// Holiday request validator
 			print '<tr><td>';
 			$text = $langs->trans("UserHolidayValidator");
-			print $form->textwithpicto($text , $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+			print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
 			print '</td>';
 			print '<td>';
 			if (empty($object->fk_user_holiday_validator)) print $langs->trans("None");
