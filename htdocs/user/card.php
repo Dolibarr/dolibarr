@@ -972,7 +972,10 @@ if ($action == 'create' || $action == 'adduserldap')
 	// Expense report validator
 	if(!empty($conf->expensereport->enabled))
 	{
-		print '<tr><td class="titlefieldcreate">'.$langs->trans("UserExpenseValidator").'</td>';
+		print '<tr><td class="titlefieldcreate">';
+		$text = $langs->trans("UserExpenseValidator");
+		print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+		print '</td>';
 		print '<td>';
 		print $form->select_dolusers($object->fk_user_expense_validator, 'fk_user_expense_validator', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
 		print '</td>';
@@ -982,7 +985,10 @@ if ($action == 'create' || $action == 'adduserldap')
 	// Holiday request validator
 	if(!empty($conf->holiday->enabled))
 	{
-		print '<tr><td class="titlefieldcreate">' . $langs->trans("UserHolidayValidator") . '</td>';
+		print '<tr><td class="titlefieldcreate">';
+		$text = $langs->trans("UserHolidayValidator");
+		print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+		print '</td>';
 		print '<td>';
 		print $form->select_dolusers($object->fk_user_holiday_validator, 'fk_user_holiday_validator', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
 		print '</td>';
@@ -1587,7 +1593,10 @@ else
 			print "</tr>\n";
 
 			// Expense report validator
-			print '<tr><td>'.$langs->trans("UserExpenseValidator").'</td>';
+			print '<tr><td>';
+			$text = $langs->trans("UserExpenseValidator");
+			print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+			print '</td>';
 			print '<td>';
 			if (empty($object->fk_user_expense_validator)) print $langs->trans("None");
 			else {
@@ -1599,7 +1608,10 @@ else
 			print "</tr>\n";
 
 			// Holiday request validator
-			print '<tr><td>'.$langs->trans("UserHolidayValidator").'</td>';
+			print '<tr><td>';
+			$text = $langs->trans("UserHolidayValidator");
+			print $form->textwithpicto($text , $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+			print '</td>';
 			print '<td>';
 			if (empty($object->fk_user_holiday_validator)) print $langs->trans("None");
 			else {
@@ -2292,7 +2304,10 @@ else
 		   	print "</tr>\n";
 
 			// Expense report validator
-			print '<tr><td class="titlefield">'.$langs->trans("UserExpenseValidator").'</td>';
+			print '<tr><td class="titlefield">';
+			$text = $langs->trans("UserExpenseValidator");
+			print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+			print '</td>';
 			print '<td>';
 			if ($caneditfield)
 			{
@@ -2309,7 +2324,10 @@ else
 			print "</tr>\n";
 
 			// Holiday request validator
-			print '<tr><td class="titlefield">'.$langs->trans("UserHolidayValidator").'</td>';
+			print '<tr><td class="titlefield">';
+			$text = $langs->trans("UserHolidayValidator");
+			print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+			print '</td>';
 			print '<td>';
 			if ($caneditfield)
 			{
