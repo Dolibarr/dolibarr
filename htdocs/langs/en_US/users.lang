@@ -110,3 +110,6 @@ UserLogged=User logged
 DateEmployment=Employment Start Date
 DateEmploymentEnd=Employment End Date
 CantDisableYourself=You can't disable your own user record
+UserExpenseValidator=Expense report validator
+UserHolidayValidator=Leave request validator
+ValidatorIsSupervisorByDefault=By default, the supervisor is the validator for expense reports and leave requests
