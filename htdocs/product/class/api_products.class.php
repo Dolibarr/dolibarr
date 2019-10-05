@@ -642,13 +642,12 @@ class Products extends DolibarrApi
             $this->product->load_stock();
         }
 
-        if($result) {
-            $this->product = new ProductFournisseur($this->db);
-            $this->product->fetch($id, $ref);
-            $this->product->list_product_fournisseur_price($id, '', '', 0, 0);
+        if ($result) {
+            $this->productsupplier->fetch($id, $ref);
+            $this->productsupplier->list_product_fournisseur_price($id, '', '', 0, 0);
         }
 
-        return $this->_cleanObjectDatas($this->product);
+        return $this->_cleanObjectDatas($this->productsupplier);
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
