@@ -39,8 +39,8 @@ $result = restrictedArea($user, 'salaries', '', '', '');
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $search_ref = GETPOST('search_ref', 'int');
 $search_user = GETPOST('search_user', 'alpha');
-$search_datef_start = dol_mktime(0, 0, 0, GETPOST('search_datef_startmonth', 'int'), GETPOST('search_datef_startday', 'int'), GETPOST('search_datef_startyear', 'int'));
-$search_datef_end = dol_mktime(0, 0, 0, GETPOST('search_datef_endmonth', 'int'), GETPOST('search_datef_endday', 'int'), GETPOST('search_datef_endyear', 'int'));
+$search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
+$search_date_end = dol_mktime(0, 0, 0, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
 $search_label = GETPOST('search_label', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_account = GETPOST('search_account', 'int');
@@ -84,8 +84,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_ref="";
 	$search_user="";
 	$search_label="";
-	$search_datef_start='';
-	$search_datef_end='';
+	$search_date_start='';
+	$search_date_end='';
 	$search_amount="";
 	$search_account='';
     $typeid="";
@@ -119,8 +119,8 @@ $sql.= " AND s.entity = ".$conf->entity;
 if ($search_ref)			$sql.=" AND s.rowid=".$search_ref;
 if ($search_user)			$sql.=natural_search(array('u.login', 'u.lastname', 'u.firstname', 'u.email'), $search_user);
 if ($search_label) 			$sql.=natural_search(array('s.label'), $search_label);
-if ($search_datef_start)	$sql.= " AND s.datep >= '" . $db->idate($search_datef_start) . "'";
-if ($search_datef_end)		$sql.= " AND s.datep <= '" . $db->idate($search_datef_end) . "'";
+if ($search_date_start)		$sql.= " AND s.datep >= '" . $db->idate($search_date_start) . "'";
+if ($search_date_end)		$sql.= " AND s.datep <= '" . $db->idate($search_date_end) . "'";
 if ($search_amount)			$sql.=natural_search("s.amount", $search_amount, 1);
 if ($search_account > 0)	$sql .=" AND b.fk_account=".$search_account;
 if ($filtre) {
@@ -191,11 +191,11 @@ if ($result)
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
 	print $langs->trans('From') . ' ';
-	print $form->selectDate($search_datef_start?$search_datef_start:-1, 'search_datef_start', 0, 0, 1);
+	print $form->selectDate($search_date_start?$search_date_start:-1, 'search_date_start', 0, 0, 1);
 	print '</div>';
 	print '<div class="nowrap">';
 	print $langs->trans('to') . ' ';
-	print $form->selectDate($search_datef_end?$search_datef_end:-1, 'search_datef_end', 0, 0, 1);
+	print $form->selectDate($search_date_end?$search_date_end:-1, 'search_date_end', 0, 0, 1);
 	print '</div>';
 	print '</td>';
 	// Type
