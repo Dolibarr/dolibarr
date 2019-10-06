@@ -1031,8 +1031,7 @@ if ($action == 'create')
 
 			if (empty($reshook)) {
 				// copy from order
-				$orderExtrafields = new Extrafields($db);
-				$orderExtrafieldLabels = $orderExtrafields->fetch_name_optionals_label($object->table_element);
+				$extrafields->fetch_name_optionals_label($object->table_element);
 				if ($object->fetch_optionals() > 0) {
 					$expe->array_options = array_merge($expe->array_options, $object->array_options);
 				}
@@ -1576,13 +1575,16 @@ if ($action == 'create')
 					{
 						//var_dump($line);
 						$colspan=5;
-						$extrafields->fetch_name_optionals_label($object->table_element_line);
+						$extrafields->fetch_name_optionals_label($expe->table_element_line);
+						$expLine = new ExpeditionLigne($db);
+
 						$srcLine = new OrderLine($db);
+						$extrafields->fetch_name_optionals_label($srcLine->table_element);
 						$srcLine->fetch_optionals($line->id); // fetch extrafields also available in orderline
 						//$line->fetch_optionals($line->id);
 						$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 
-						print $line->showOptionals($extrafields, 'edit', array('style'=>'class="drag drop oddeven"','colspan'=>$colspan), $indiceAsked, '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+						print $expLine->showOptionals($extrafields, 'edit', array('style'=>'class="drag drop oddeven"', 'colspan'=>$colspan), $indiceAsked, '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
 					}
                 }
 
@@ -2256,8 +2258,8 @@ elseif ($id || $ref)
 	    			        }
 	    			    }
 	    			}
+	    			print '</td>';
 	    		}
-				print '</td>';
 
 				if ($action == 'editline' && $lines[$i]->id == $line_id)
 				{
@@ -2425,8 +2427,9 @@ elseif ($id || $ref)
 					print '<td class="center" colspan="2" valign="middle">';
 					print '<input type="submit" class="button" id="savelinebutton" name="save" value="' . $langs->trans("Save") . '"><br>';
 					print '<input type="submit" class="button" id="cancellinebutton" name="cancel" value="' . $langs->trans("Cancel") . '"><br>';
+					print '</td>';
 				}
-				elseif ($object->statut == 0)
+				elseif ($object->statut == Expedition::STATUS_DRAFT)
 				{
 					// edit-delete buttons
 					print '<td class="linecoledit center">';
@@ -2448,7 +2451,10 @@ elseif ($id || $ref)
 
 				// Display lines extrafields
 				if (! empty($extrafields)) {
-					$colspan= empty($conf->productbatch->enabled) ? 5 : 6;
+					$colspan=6;
+					if ($origin && $origin_id > 0) $colspan++;
+					if (! empty($conf->productbatch->enabled)) $colspan++;
+					if (! empty($conf->stock->enabled)) $colspan++;
 
 					$lines[$i]->fetch_optionals($lines[$i]->id);
 

@@ -537,6 +537,9 @@ if ($id > 0 || ! empty($ref))
 		    print '</td></tr>';
 		}
 
+		$expe = new Expedition($db);
+		$extrafields->fetch_name_optionals_label($expe->table_element);
+
 		// Other attributes
 		$cols = 2;
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
