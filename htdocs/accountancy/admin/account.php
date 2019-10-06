@@ -101,7 +101,7 @@ if (empty($reshook))
 		$search_array_options=array();
     }
 
-    if (GETPOST('change_chart', 'alpha') && GETPOST('valid_change_chart', 'int'))
+    if (GETPOST('change_chart', 'alpha') && (GETPOST('valid_change_chart', 'int') || empty($conf->use_javascript_ajax)))
     {
         $chartofaccounts = GETPOST('chartofaccounts', 'int');
 
@@ -237,21 +237,24 @@ if ($resql)
 	if ($search_pcgsubtype) $param.= '&search_pcgsubtype='.urlencode($search_pcgsubtype);
     if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
-    print '<!-- Add javascript to update a flag when we select "Change plan" -->
-		<script type="text/javascript">
-		$(document).ready(function () {
-	    	$("#searchFormList").on("submit", function (e) {
-				console.log("chartofaccounts focus = "+$("#chartofaccounts").is(":focus"));
-				console.log("change_chart focus = "+$("#change_chart").is(":focus"));
-				if ($("#change_chart").is(":focus"))
-				{
-					console.log("We set valid_change_chart to 1");
-					$("#valid_change_chart").val(1);
-				}
-				return true;
-		    });
-		});
-    	</script>';
+    if (! empty($conf->use_javascript_ajax))
+    {
+	    print '<!-- Add javascript to update a flag when we select "Change plan" -->
+			<script type="text/javascript">
+			$(document).ready(function () {
+		    	$("#searchFormList").on("submit", function (e) {
+					console.log("chartofaccounts focus = "+$("#chartofaccounts").is(":focus"));
+					console.log("change_chart focus = "+$("#change_chart").is(":focus"));
+					if ($("#change_chart").is(":focus"))
+					{
+						console.log("We set valid_change_chart to 1");
+						$("#valid_change_chart").val(1);
+					}
+					return true;
+			    });
+			});
+	    	</script>';
+    }
 
 	print '<form method="POST" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
