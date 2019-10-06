@@ -1285,14 +1285,14 @@ class FormFile
 						{
 						    if ($useinecm == 5 || $useinecm == 6)
 						    {
-						        $minifile=getImageFileNameForSize($file['name'], '');     // There is no thumb for ECM module and Media filemanager, so we use true image
+						        $smallfile=getImageFileNameForSize($file['name'], '');     // There is no thumb for ECM module and Media filemanager, so we use true image
 						    }
 						    else
 						    {
-						        $minifile=getImageFileNameForSize($file['name'], '_mini'); // For new thumbs using same ext (in lower case howerver) than original
+						        $smallfile=getImageFileNameForSize($file['name'], '_small'); // For new thumbs using same ext (in lower case however) than original
 						    }
-						    if (! dol_is_file($file['path'].'/'.$minifile)) $minifile=getImageFileNameForSize($file['name'], '_mini', '.png'); // For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
-							//print $file['path'].'/'.$minifile.'<br>';
+						    if (! dol_is_file($file['path'].'/'.$smallfile)) $smallfile=getImageFileNameForSize($file['name'], '_small', '.png'); // For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
+							//print $file['path'].'/'.$smallfile.'<br>';
 
 							$urlforhref=getAdvancedPreviewUrl($modulepart, $relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(!empty($object->entity)?$object->entity:$conf->entity));
 							if (empty($urlforhref)) {
@@ -1301,7 +1301,7 @@ class FormFile
 							} else {
 								print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
 							}
-							print '<img class="photo" height="'.(($useinecm == 4 || $useinecm == 5 || $useinecm == 6)? '12' : $maxheightmini).'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$minifile).'" title="">';
+							print '<img class="photo" height="'.(($useinecm == 4 || $useinecm == 5 || $useinecm == 6)? '12' : $maxheightmini).'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$smallfile).'" title="">';
 							print '</a>';
 						}
 						else print '&nbsp;';
