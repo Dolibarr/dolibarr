@@ -68,7 +68,7 @@ $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 $socialnetworks = getArrayOfSocialNetworks();
 
@@ -328,7 +328,7 @@ if (empty($reshook))
 			$object->public      = GETPOST("public", 'alpha');
 
 			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+			$ret = $extrafields->setOptionalsFromPost(null, $object);
 			if ($ret < 0) $error++;
 
 			// Check if we need to also synchronize user information
@@ -513,7 +513,7 @@ if (empty($reshook))
 		$object->public      = $public;
 
 		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) $error++;
 
 		// Check parameters
@@ -1344,15 +1344,8 @@ else
 		else print $langs->trans("NoDolibarrAccess");
 		print '</td></tr>';
 
-		// Other attributes
+		// Other attributes. Fields from hook formObjectOptions and Extrafields.
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
-		//Hooks here
-		$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
-		if (empty($reshook))
-		{
-      	    print $object->showOptionals($extrafields, 'edit');
-		}
 
 		print '</table>';
 		dol_fiche_end();

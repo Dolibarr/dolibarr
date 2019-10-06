@@ -745,8 +745,9 @@ class Contrat extends CommonObject
 	 */
 	public function fetch_lines($only_product = 0, $loadalsotranslation = 0)
 	{
-		global $langs, $conf;
-        // phpcs:enable
+		// phpcs:enable
+		global $langs, $conf, $extrafields;
+
 		$this->nbofserviceswait=0;
 		$this->nbofservicesopened=0;
 		$this->nbofservicesexpired=0;
@@ -758,10 +759,14 @@ class Contrat extends CommonObject
 
 		$now=dol_now();
 
-		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-		$extrafieldsline=new ExtraFields($this->db);
+		if (! is_object($extrafields))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+			$extrafields=new ExtraFields($this->db);
+		}
+
 		$line = new ContratLigne($this->db);
-		$extralabelsline=$extrafieldsline->fetch_name_optionals_label($line->table_element, true);
+		$extrafields->fetch_name_optionals_label($line->table_element, true);
 
 		$this->lines=array();
         $pos = 0;

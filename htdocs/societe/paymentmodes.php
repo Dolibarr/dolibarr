@@ -63,7 +63,7 @@ $prelevement = new BonPrelevement($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartybancard','globalcard'));
@@ -1334,7 +1334,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		else $currencybalance[$cpt->currency]->pending=$currencybalance[$cpt->currency]->available+$cpt->amount;
 			}
     }
-    
+
 		if (is_array($currencybalance))
 		{
 			foreach ($currencybalance as $cpt)
@@ -1342,7 +1342,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
       print '<tr><td>'.$langs->trans("Currency".strtoupper($cpt->currency)).'</td><td>'.price($cpt->available, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).'</td><td>'.price($cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).'</td><td>'.price($cpt->available+$cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).'</td></tr>';
 			}
 		}
-     
+
     print '</table>';
     print '<br>';
 	}

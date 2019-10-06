@@ -509,7 +509,7 @@ else
 				if ($user->rights->commande->creer)
 				{
 					if ($action != 'classify')
-						//$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $fichinter->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+						//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $fichinter->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 						$morehtmlref.=' : ';
 					if ($action == 'classify') {
 						//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $fichinter->id, $fichinter->socid, $fichinter->fk_project, 'projectid', 0, 0, 1, 1);
@@ -597,7 +597,7 @@ else
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			$defaulttpldir='/core/tpl';
 			$dirtpls=array_merge($conf->modules_parts['tpl'], array($defaulttpldir), array($path.$defaulttpldir));
-			
+
 			foreach($dirtpls as $module => $reldir)
 			{
 				if(file_exists(dol_buildpath($reldir.'/resource_'.$element_prop['element'].'_add.tpl.php')))

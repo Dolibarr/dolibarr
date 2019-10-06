@@ -77,7 +77,7 @@ if ($socid > 0)       $hookmanager->initHooks(array('thirdpartyticket'));
 elseif ($project > 0) $hookmanager->initHooks(array('projectticket'));
 else $hookmanager->initHooks(array('ticketlist'));
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('ticket');
+$extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Default sort order (if not yet defined by previous GETPOST)

@@ -62,7 +62,7 @@ if ($id > 0)
 }
 
 $extrafields = new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categorycard'));
@@ -102,7 +102,7 @@ if ($action == 'update' && $user->rights->categorie->creer)
 	}
 	if (! $error && empty($object->error))
 	{
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) $error++;
 
 		if (! $error && $object->update($user) > 0)

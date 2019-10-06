@@ -910,7 +910,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 
     $contactstatic = new Contact($db);
 
-    $extralabels=$extrafields->fetch_name_optionals_label($contactstatic->table_element);
+    $extrafields->fetch_name_optionals_label($contactstatic->table_element);
 
     $contactstatic->fields=array(
         'name'      =>array('type'=>'varchar(128)', 'label'=>'Name',             'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),

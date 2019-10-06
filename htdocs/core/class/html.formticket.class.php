@@ -145,7 +145,7 @@ class FormTicket
         $ticketstat = new Ticket($this->db);
 
         $extrafields = new ExtraFields($this->db);
-        $extralabels = $extrafields->fetch_name_optionals_label($ticketstat->table_element);
+        $extrafields->fetch_name_optionals_label($ticketstat->table_element);
 
         print "\n<!-- Begin form TICKET -->\n";
 

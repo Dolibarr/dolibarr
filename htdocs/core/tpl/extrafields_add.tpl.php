@@ -41,8 +41,8 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (empty($reshook)) {
-	$params = isset($tpl_context) ? array('context' => $tpl_context) : array();	// BUG #11554 : Add context in params
-	print $object->showOptionals($extrafields, 'edit', $params);	// BUG #11554 : Add context in params
+	$params = isset($tpl_context) ? array('tpl_context' => $tpl_context) : array();	// BUG #11554 : Add tpl_context in params
+	print $object->showOptionals($extrafields, 'edit', $params);				// BUG #11554 : Add context in params
 }
 
 ?>

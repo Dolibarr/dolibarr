@@ -75,7 +75,7 @@ if ($id > 0)
 
 $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('groupcard','globalcard'));
@@ -138,7 +138,7 @@ if (empty($reshook)) {
 				$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'none')));
 
 				// Fill array 'array_options' with data from add form
-				$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+				$ret = $extrafields->setOptionalsFromPost(null, $object);
 				if ($ret < 0) $error++;
 
 				if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) $object->entity = 0;
@@ -221,7 +221,7 @@ if (empty($reshook)) {
 			$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'none')));
 
 			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+			$ret = $extrafields->setOptionalsFromPost(null, $object);
 			if ($ret < 0) $error++;
 
 			if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) $object->entity = 0;
@@ -362,7 +362,7 @@ else
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border centpercent">';
+			print '<table class="border centpercent tableforfield">';
 
             // Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
             if (! empty($conf->mutlicompany->enabled))
