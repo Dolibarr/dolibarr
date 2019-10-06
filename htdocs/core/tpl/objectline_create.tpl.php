@@ -850,7 +850,7 @@ function setforpredef() {
 	console.log("Call setforpredef. We hide some fields and show dates");
 	jQuery("#select_type").val(-1);
 	jQuery("#prod_entry_mode_free").prop('checked',false).change();
-	jQuery("#prod_entry_mode_predef").prop('checked',true).change(
+	jQuery("#prod_entry_mode_predef").prop('checked',true).change();
 	<?php if (empty($conf->global->MAIN_EDIT_PREDEF_PRICEHT)) { ?>
 		jQuery("#price_ht").val('').hide();
 	<?php } ?>
