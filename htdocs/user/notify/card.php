@@ -144,7 +144,7 @@ if ($result > 0)
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
-    print '<table class="border centpercent">';
+    print '<table class="border centpercent tableforfield">';
 
     // Login
     print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
@@ -179,10 +179,12 @@ if ($result > 0)
     print "\n";
 
     // Help
+    print '<span class="opacitymedium">';
     print '<br>'.$langs->trans("NotificationsDesc");
     print '<br>'.$langs->trans("NotificationsDescUser");
     print '<br>'.$langs->trans("NotificationsDescContact");
     print '<br>'.$langs->trans("NotificationsDescGlobal");
+    print '</span>';
 
     print '<br><br><br>'."\n";
 

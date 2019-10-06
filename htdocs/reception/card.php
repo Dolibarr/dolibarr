@@ -1336,7 +1336,7 @@ elseif ($id || $ref)
             $morehtmlref .= '<br>' . $langs->trans('Project') . ' ';
             if (0) {    // Do not change on reception
                 if ($action != 'classify') {
-                    $morehtmlref .= '<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+                    $morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
                 }
                 if ($action == 'classify') {
                     // $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -1416,7 +1416,7 @@ elseif ($id || $ref)
 		print $langs->trans('DateDeliveryPlanned');
 		print '</td>';
 
-		if ($action != 'editdate_livraison') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
+		if ($action != 'editdate_livraison') print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editdate_livraison')
@@ -1556,7 +1556,7 @@ elseif ($id || $ref)
 		print $langs->trans('ReceptionMethod');
 		print '</td>';
 
-		if ($action != 'editshipping_method_id') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshipping_method_id&amp;id='.$object->id.'">'.img_edit($langs->trans('SetReceptionMethod'), 1).'</a></td>';
+		if ($action != 'editshipping_method_id') print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshipping_method_id&amp;id='.$object->id.'">'.img_edit($langs->trans('SetReceptionMethod'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editshipping_method_id')
@@ -1595,7 +1595,7 @@ elseif ($id || $ref)
 	        print '<table width="100%" class="nobordernopadding"><tr><td>';
 	        print $langs->trans('IncotermLabel');
 	        print '<td><td class="right">';
-	        if ($user->rights->reception->creer) print '<a href="'.DOL_URL_ROOT.'/reception/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+	        if ($user->rights->reception->creer) print '<a class="editfielda" href="'.DOL_URL_ROOT.'/reception/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
 	        else print '&nbsp;';
 	        print '</td></tr></table>';
 	        print '</td>';

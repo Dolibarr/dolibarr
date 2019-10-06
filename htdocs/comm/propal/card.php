@@ -1900,7 +1900,7 @@ if ($action == 'create')
 		{
 			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
 			$notify = new Notify($db);
-$formquestion = array_merge($formquestion, array(
+			$formquestion = array_merge($formquestion, array(
 				array('type' => 'onecolumn', 'value' => $notify->confirmMessage('PROPAL_CLOSE_SIGNED', $object->socid, $object)),
 			));
 		}
@@ -1980,7 +1980,7 @@ $formquestion = array_merge($formquestion, array(
 		if ($usercancreate)
 		{
 			if ($action != 'classify')
-				$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			if ($action == 'classify') {
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 				$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -2046,7 +2046,7 @@ $formquestion = array_merge($formquestion, array(
 	print $langs->trans('Date');
 	print '</td>';
 	if ($action != 'editdate' && $object->statut == Propal::STATUS_DRAFT && $usercancreate)
-		print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdate&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetDate'), 1) . '</a></td>';
+		print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editdate&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetDate'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td>';
 	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editdate' && $usercancreate) {
@@ -2072,7 +2072,7 @@ $formquestion = array_merge($formquestion, array(
 	print $langs->trans('DateEndPropal');
 	print '</td>';
 	if ($action != 'editecheance' && $object->statut == Propal::STATUS_DRAFT && $usercancreate)
-		print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editecheance&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetConditions'), 1) . '</a></td>';
+		print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editecheance&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetConditions'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td>';
 	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editecheance' && $usercancreate) {
@@ -2100,7 +2100,7 @@ $formquestion = array_merge($formquestion, array(
 	print $langs->trans('PaymentConditionsShort');
 	print '</td>';
 	if ($action != 'editconditions' && $object->statut == Propal::STATUS_DRAFT && $usercancreate)
-		print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editconditions&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetConditions'), 1) . '</a></td>';
+		print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editconditions&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetConditions'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td>';
 	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editconditions' && $usercancreate) {
@@ -2128,7 +2128,7 @@ $formquestion = array_merge($formquestion, array(
 		print ' (' . $langs->trans('AfterOrder') . ')';
 	print '</td>';
 	if ($action != 'editavailability' && $object->statut == Propal::STATUS_DRAFT && $usercancreate)
-		print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editavailability&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetAvailability'), 1) . '</a></td>';
+		print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editavailability&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetAvailability'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td>';
 	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editavailability' && $usercancreate) {
@@ -2147,7 +2147,7 @@ $formquestion = array_merge($formquestion, array(
 		print $langs->trans('SendingMethod');
 		print '</td>';
 		if ($action != 'editshippingmethod' && $usercancreate)
-			print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&amp;id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&amp;id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editshippingmethod' && $usercancreate) {
@@ -2165,7 +2165,7 @@ $formquestion = array_merge($formquestion, array(
 	print $langs->trans('Source');
 	print '</td>';
 	if ($action != 'editdemandreason' && $object->statut == Propal::STATUS_DRAFT && $usercancreate)
-		print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdemandreason&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetDemandReason'), 1) . '</a></td>';
+		print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editdemandreason&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetDemandReason'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td>';
 	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editdemandreason' && $usercancreate) {
@@ -2183,7 +2183,7 @@ $formquestion = array_merge($formquestion, array(
 	print $langs->trans('PaymentMode');
 	print '</td>';
 	if ($action != 'editmode' && $object->statut == Propal::STATUS_DRAFT && $usercancreate)
-		print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMode'), 1) . '</a></td>';
+		print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMode'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td>';
 	if ($object->statut == Propal::STATUS_DRAFT && $action == 'editmode' && $usercancreate) {
@@ -2203,7 +2203,7 @@ $formquestion = array_merge($formquestion, array(
 		print $form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0);
 		print '</td>';
 		if ($action != 'editmulticurrencycode' && $object->statut == Propal::STATUS_DRAFT && $usercancreate)
-			print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencycode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
+			print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencycode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($object->statut == Propal::STATUS_DRAFT && $action == 'editmulticurrencycode' && $usercancreate) {
@@ -2220,7 +2220,7 @@ $formquestion = array_merge($formquestion, array(
 		print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
 		print '</td>';
 		if ($action != 'editmulticurrencyrate' && $object->statut == Propal::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency && $usercancreate)
-			print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
+			print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($object->statut == Propal::STATUS_DRAFT && ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') && $usercancreate) {
@@ -2260,7 +2260,7 @@ $formquestion = array_merge($formquestion, array(
 		print $langs->trans('BankAccount');
 		print '</td>';
 		if ($action != 'editbankaccount' && $usercancreate)
-			print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editbankaccount') {
@@ -2295,7 +2295,7 @@ $formquestion = array_merge($formquestion, array(
 		print '<table width="100%" class="nobordernopadding"><tr><td>';
 		print $langs->trans('IncotermLabel');
 		print '<td><td class="right">';
-		if ($usercancreate) print '<a href="'.DOL_URL_ROOT.'/comm/propal/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+		if ($usercancreate) print '<a class="editfielda" href="'.DOL_URL_ROOT.'/comm/propal/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
 		else print '&nbsp;';
 		print '</td></tr></table>';
 		print '</td>';

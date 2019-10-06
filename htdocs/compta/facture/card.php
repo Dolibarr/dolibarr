@@ -3805,7 +3805,7 @@ elseif ($id > 0 || ! empty($ref))
 		if ($usercancreate)
 		{
 			if ($action != 'classify')
-				$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				if ($action == 'classify') {
 					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 					$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -3909,7 +3909,7 @@ elseif ($id > 0 || ! empty($ref))
 	print $langs->trans('DateInvoice');
 	print '</td>';
 	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editinvoicedate' && ! empty($object->brouillon) && $usercancreate && empty($conf->global->FAC_FORCE_DATE_VALIDATION))
-		print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editinvoicedate&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetDate'), 1) . '</a></td>';
+		print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editinvoicedate&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetDate'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td>';
 
@@ -3933,7 +3933,7 @@ elseif ($id > 0 || ! empty($ref))
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('DatePointOfTax');
 		print '</td>';
-		print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdate_pointoftax&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetDate'), 1) . '</a></td>';
+		print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editdate_pointoftax&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetDate'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editdate_pointoftax') {
@@ -3950,7 +3950,7 @@ elseif ($id > 0 || ! empty($ref))
 	print $langs->trans('PaymentConditionsShort');
 	print '</td>';
 	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editconditions' && $usercancreate)
-		print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editconditions&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetConditions'), 1) . '</a></td>';
+		print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editconditions&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetConditions'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td>';
 	if ($object->type != Facture::TYPE_CREDIT_NOTE)
@@ -3971,7 +3971,7 @@ elseif ($id > 0 || ! empty($ref))
 	print $langs->trans('DateMaxPayment');
 	print '</td>';
 	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editpaymentterm' && $usercancreate)
-		print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editpaymentterm&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetDate'), 1) . '</a></td>';
+		print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editpaymentterm&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetDate'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td>';
 	if ($object->type != Facture::TYPE_CREDIT_NOTE)
@@ -3995,7 +3995,7 @@ elseif ($id > 0 || ! empty($ref))
 	print $langs->trans('PaymentMode');
 	print '</td>';
 	if ($action != 'editmode' && $usercancreate)
-		print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetMode'), 1) . '</a></td>';
+		print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetMode'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td>';
 	if ($action == 'editmode')
@@ -4018,7 +4018,7 @@ elseif ($id > 0 || ! empty($ref))
 		print $form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0);
 		print '</td>';
 		if ($usercancreate && $action != 'editmulticurrencycode' && ! empty($object->brouillon))
-			print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencycode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
+			print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencycode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		$htmlname = (($usercancreate && $action == 'editmulticurrencycode')?'multicurrency_code':'none');
@@ -4056,7 +4056,7 @@ elseif ($id > 0 || ! empty($ref))
 	print $langs->trans('BankAccount');
 	print '<td>';
 	if (($action != 'editbankaccount') && $usercancreate)
-		print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td>';
 	if ($action == 'editbankaccount')
@@ -4077,7 +4077,7 @@ elseif ($id > 0 || ! empty($ref))
 		print '<table width="100%" class="nobordernopadding"><tr><td>';
 		print $langs->trans('IncotermLabel');
 		print '<td><td class="right">';
-		if ($usercancreate) print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+		if ($usercancreate) print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
 		else print '&nbsp;';
 		print '</td></tr></table>';
 		print '</td>';
@@ -4115,7 +4115,7 @@ elseif ($id > 0 || ! empty($ref))
     	print $langs->trans('RetainedWarranty');
     	print '</td>';
     	if ($action != 'editretainedwarranty' && $user->rights->facture->creer){
-    	    print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editretainedwarranty&amp;facid=' . $object->id . '">' . img_edit($langs->trans('setretainedwarranty'), 1) . '</a></td>';
+    	    print '<td align="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editretainedwarranty&amp;facid=' . $object->id . '">' . img_edit($langs->trans('setretainedwarranty'), 1) . '</a></td>';
     	}
 
         print '</tr></table>';
@@ -4141,7 +4141,7 @@ elseif ($id > 0 || ! empty($ref))
         print $langs->trans('PaymentConditionsShortRetainedWarranty');
         print '</td>';
         if ($action != 'editretainedwarrantypaymentterms' && $user->rights->facture->creer){
-            print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editretainedwarrantypaymentterms&amp;facid=' . $object->id . '">' . img_edit($langs->trans('setPaymentConditionsShortRetainedWarranty'), 1) . '</a></td>';
+            print '<td align="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editretainedwarrantypaymentterms&amp;facid=' . $object->id . '">' . img_edit($langs->trans('setPaymentConditionsShortRetainedWarranty'), 1) . '</a></td>';
         }
 
         print '</tr></table>';
@@ -4184,7 +4184,7 @@ elseif ($id > 0 || ! empty($ref))
             print $langs->trans('RetainedWarrantyDateLimit');
             print '</td>';
             if ($action != 'editretainedwarrantydatelimit' && $user->rights->facture->creer){
-                print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editretainedwarrantydatelimit&amp;facid=' . $object->id . '">' . img_edit($langs->trans('setretainedwarrantyDateLimit'), 1) . '</a></td>';
+                print '<td align="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editretainedwarrantydatelimit&amp;facid=' . $object->id . '">' . img_edit($langs->trans('setretainedwarrantyDateLimit'), 1) . '</a></td>';
             }
 
             print '</tr></table>';
@@ -4272,7 +4272,7 @@ elseif ($id > 0 || ! empty($ref))
 		print '</td>';
 		if ($action != 'editrevenuestamp' && ! empty($object->brouillon) && $usercancreate)
 		{
-			print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editrevenuestamp&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetRevenuStamp'), 1) . '</a></td>';
+			print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editrevenuestamp&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetRevenuStamp'), 1) . '</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';

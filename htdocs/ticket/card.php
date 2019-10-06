@@ -776,7 +776,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
         {
 	        $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' ';
 	        if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->societe_id && $user->rights->ticket->write) {
-	        	$morehtmlref.='<a href="' . $url_page_current . '?action=editcustomer&track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 0) . '</a> : ';
+	        	$morehtmlref.='<a class="editfielda" href="' . $url_page_current . '?action=editcustomer&track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 0) . '</a> : ';
 	        }
 	        if ($action == 'editcustomer') {
 	        	$morehtmlref.=$form->form_thirdparty($url_page_current . '?track_id=' . $object->track_id, $object->socid, 'editcustomer', '', 1, 0, 0, array(), 1);
@@ -793,7 +793,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
         	if ($user->rights->ticket->write)
         	{
         		if ($action != 'classify')
-        			$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
+        			$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
        			$morehtmlref.=' : ';
        			if ($action == 'classify') {
        				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -903,7 +903,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
         print $langs->trans('Progression') . '</td><td class="left">';
         print '</td>';
         if ($action != 'progression' && $object->fk_statut < 8 && !$user->societe_id) {
-            print '<td class="right"><a href="' . $url_page_current . '?action=progression&amp;track_id=' . $object->track_id . '">' . img_edit($langs->trans('Modify')) . '</a></td>';
+            print '<td class="right"><a class="editfielda" href="' . $url_page_current . '?action=progression&amp;track_id=' . $object->track_id . '">' . img_edit($langs->trans('Modify')) . '</a></td>';
         }
         print '</tr></table>';
         print '</td><td colspan="5">';
@@ -977,7 +977,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
         else {
         	//    Button to edit Properties
         	if ($object->fk_statut < 5 && $user->rights->ticket->write) {
-        		print '<a href="card.php?track_id=' . $object->track_id . '&action=view&set=properties">' . img_edit($langs->trans('Modify')) . '</a>';
+        		print '<a class="editfielda" href="card.php?track_id=' . $object->track_id . '&action=view&set=properties">' . img_edit($langs->trans('Modify')) . '</a>';
         	}
         }
         print '</td>';
