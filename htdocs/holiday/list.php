@@ -114,7 +114,8 @@ $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('holidaylist'));     // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('holiday');
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"

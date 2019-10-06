@@ -97,7 +97,7 @@ $object=new ExpenseReport($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
@@ -238,7 +238,7 @@ if (empty($reshook))
     	// Fill array 'array_options' with data from add form
     	if (! $error)
     	{
-    	    $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+    	    $ret = $extrafields->setOptionalsFromPost(null, $object);
     	    if ($ret < 0) $error++;
     	}
 
@@ -309,8 +309,7 @@ if (empty($reshook))
     	$object->oldcopy = dol_clone($object);
 
     	// Fill array 'array_options' with data from update form
-        $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
+        $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
         if ($ret < 0) $error++;
 
         if (! $error)

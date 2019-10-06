@@ -68,7 +68,7 @@ $extrafields = new ExtraFields($db);
 $adht = new AdherentType($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 $errmsg='';
 $errmsgs=array();

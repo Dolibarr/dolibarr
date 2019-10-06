@@ -44,8 +44,10 @@ $object=new SocieteAccount($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->website->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('websiteaccountcard'));     // Note that conf->hooks_modules contains array
+
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('societeaccount');
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Initialize array of search criterias
@@ -67,9 +69,6 @@ $permissionnote=$user->rights->websiteaccount->write;	// Used by the include of 
 $permissiondellink=$user->rights->websiteaccount->write;	// Used by the include of actions_dellink.inc.php
 $permissionedit=$user->rights->websiteaccount->write; // Used by the include of actions_lineupdown.inc.php
 $permissiontoadd=$user->rights->websiteaccount->write; // Used by the include of actions_addupdatedelete.inc.php
-
-// fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once.

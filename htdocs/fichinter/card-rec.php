@@ -70,6 +70,7 @@ if ($sortfield == "")
 	$sortfield="f.datec";
 
 $object = new FichinterRec($db);
+$extrafields = new ExtraFields($db);
 
 
 $arrayfields=array(
@@ -176,8 +177,8 @@ if ($action == 'add') {
 	$newinter->note_public=$object->note_public;
 
 	// on créer un nouvelle intervention
-	$extrafields = new ExtraFields($db);
-	$extralabels = $extrafields->fetch_name_optionals_label($newinter->table_element);
+	$extrafields->fetch_name_optionals_label($newinter->table_element);
+
 	$array_options = $extrafields->getOptionalsFromPost($newinter->table_element);
 	$newinter->array_options = $array_options;
 

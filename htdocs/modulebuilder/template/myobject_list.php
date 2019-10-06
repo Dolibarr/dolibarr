@@ -100,11 +100,8 @@ $diroutputmassaction = $conf->mymodule->dir_output . '/temp/massgeneration/'.$us
 $hookmanager->initHooks(array('myobjectlist'));     // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-
-// fetch optionals attributes lines and labels
-//$extrafieldsline = new ExtraFields($db);
-//$extralabelslines=$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+$extrafields->fetch_name_optionals_label($object->table_element);
+//$extrafields->fetch_name_optionals_label($object->table_element_line);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 

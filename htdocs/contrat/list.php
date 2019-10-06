@@ -100,7 +100,8 @@ $hookmanager->initHooks(array('contractlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('contrat');
+$extrafields->fetch_name_optionals_label('contrat');
+
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(

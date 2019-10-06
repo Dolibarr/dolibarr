@@ -59,8 +59,10 @@ $hookmanager->initHooks(array('ticketcard','globalcard'));
 
 $object = new Ticket($db);
 $extrafields = new ExtraFields($db);
+
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Initialize array of search criterias
@@ -152,9 +154,7 @@ if (GETPOST('add', 'alpha') && $user->rights->ticket->write) {
 
         $object->fk_project = GETPOST('projectid', 'int');
 
-        $extrafields = new ExtraFields($db);
-        $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+        $ret = $extrafields->setOptionalsFromPost(null, $object);
 
         $id = $object->create($user);
         if ($id <= 0) {
@@ -213,8 +213,7 @@ if (GETPOST('add', 'alpha') && $user->rights->ticket->write) {
                 $fichinter->origin_id = $object->id;
 
                 // Extrafields
-                $extrafields = new ExtraFields($db);
-                $extralabels = $extrafields->fetch_name_optionals_label($fichinter->table_element);
+                $extrafields->fetch_name_optionals_label($fichinter->table_element);
                 $array_options = $extrafields->getOptionalsFromPost($fichinter->table_element);
                 $fichinter->array_options = $array_options;
 

@@ -115,7 +115,7 @@ $elementtype = 'commandedet';
 //Retreive all extrafield for thirdsparty
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label('commandedet', true);
+$extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_line_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_line_array = array();
@@ -219,7 +219,7 @@ $elementtype = 'commande';
 //Retreive all extrafield for thirdsparty
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label('commande', true);
+$extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_array = array();
@@ -705,7 +705,7 @@ function createOrder($authentication, $order)
 		// Retrieve all extrafield for order
 		// fetch optionals attributes and labels
 		$extrafields=new ExtraFields($db);
-		$extralabels=$extrafields->fetch_name_optionals_label('commande', true);
+		$extrafields->fetch_name_optionals_label($elementtype, true);
 		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
 			foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
@@ -743,7 +743,7 @@ function createOrder($authentication, $order)
 			// Retrieve all extrafield for lines
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
-			$extralabels=$extrafields->fetch_name_optionals_label('commandedet', true);
+			$extrafields->fetch_name_optionals_label($elementtype, true);
 			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 			{
 				foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
@@ -954,7 +954,7 @@ function updateOrder($authentication, $order)
 			//Retreive all extrafield for object
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
-			$extralabels=$extrafields->fetch_name_optionals_label('commande', true);
+			$extrafields->fetch_name_optionals_label($elementtype, true);
 			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 			{
 				foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)

@@ -61,7 +61,7 @@ $diroutputmassaction=$conf->admin->dir_output . '/temp/massgeneration/'.$user->i
 $hookmanager->initHooks(array('emailsenderprofilelist'));     // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 

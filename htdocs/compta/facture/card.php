@@ -902,8 +902,7 @@ if (empty($reshook))
 		$error = 0;
 		$originentity = GETPOST('originentity');
 		// Fill array 'array_options' with data from add form
-		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) $error++;
 
 		// Replacement invoice
@@ -1679,8 +1678,8 @@ if (empty($reshook))
 					$nextSituationInvoice = new Facture($db);
 					$nextSituationInvoice->fetch($id);
 					// create extrafields with data from create form
-					$extralabels = $extrafields->fetch_name_optionals_label($nextSituationInvoice->table_element);
-					$ret = $extrafields->setOptionalsFromPost($extralabels, $nextSituationInvoice);
+					$extrafields->fetch_name_optionals_label($nextSituationInvoice->table_element);
+					$ret = $extrafields->setOptionalsFromPost(null, $nextSituationInvoice);
 					if ($ret > 0) {
 						$nextSituationInvoice->insertExtraFields();
 					}
@@ -1752,9 +1751,8 @@ if (empty($reshook))
 		$remise_percent = GETPOST('remise_percent' . $predef);
 
 		// Extrafields
-		$extrafieldsline = new ExtraFields($db);
-		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $predef);
+		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
+		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line, $predef);
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -2075,9 +2073,8 @@ if (empty($reshook))
 		$buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : '');       // If buying_price is '0', we muste keep this value
 
 		// Extrafields
-		$extrafieldsline = new ExtraFields($db);
-		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line);
+		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
+		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -2496,8 +2493,7 @@ if (empty($reshook))
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from add form
-		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
 		if ($ret < 0) $error++;
 
 		if (! $error)
@@ -2585,7 +2581,7 @@ llxHeader('', $title, $helpurl);
 if ($action == 'create')
 {
 	$facturestatic = new Facture($db);
-	$extralabels = $extrafields->fetch_name_optionals_label($facturestatic->table_element);
+	$extrafields->fetch_name_optionals_label($facturestatic->table_element);
 
 	print load_fiche_titre($langs->trans('NewBill'), '', 'invoicing');
 
@@ -3460,7 +3456,7 @@ elseif ($id > 0 || ! empty($ref))
 	}
 
 	// fetch optionals attributes and labels
-	$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+	$extrafields->fetch_name_optionals_label($object->table_element);
 
 	if ($user->societe_id > 0 && $user->societe_id != $object->socid)
 	{

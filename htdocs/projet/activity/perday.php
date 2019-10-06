@@ -105,15 +105,14 @@ else
 	$usertoprocess=new User($db);
 }
 
-$object=new Task($db);
+$object = new Task($db);
+$project = new Project($db);
 
 // Extra fields
 $extrafields = new ExtraFields($db);
 
-$extralabels = array();
 // fetch optionals attributes and labels
-//$extralabels += $extrafields->fetch_name_optionals_label('projet');
-$extralabels += $extrafields->fetch_name_optionals_label('projet_task');
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Definition of fields for list
 $arrayfields=array();
@@ -129,20 +128,19 @@ $arrayfields['t.progress']=array('label'=>'ProgressDeclared', 'checked'=>1, 'ena
  );
  */
 // Extra fields
-if (is_array($extrafields->attributes['projet_task']['label']) && count($extrafields->attributes['projet_task']['label']) > 0)
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-    foreach($extrafields->attributes['projet_task']['label'] as $key => $val)
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
     {
-        if (! empty($extrafields->attributes['projet_task']['list'][$key]))
-            $arrayfields["efpt.".$key]=array('label'=>$extrafields->attributes['projet_task']['label'][$key], 'checked'=>(($extrafields->attributes['projet_task']['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes['projet_task']['pos'][$key], 'enabled'=>(abs($extrafields->attributes['projet_task']['list'][$key])!=3 && $extrafields->attributes['projet_task']['perms'][$key]));
+    	if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+    		$arrayfields["efpt.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
     }
 }
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 
-$search_array_options=array();
-$search_array_options_project=$extrafields->getOptionalsFromPost('projet', '', 'search_');
-$search_array_options_task=$extrafields->getOptionalsFromPost('projet_task', '', 'search_task_');
+$search_array_options_project=$extrafields->getOptionalsFromPost($project->table_element, '', 'search_');
+$search_array_options_task=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_task_');
 
 
 /*
@@ -694,7 +692,7 @@ if (count($tasksarray) > 0)
 
 	$j=0;
 	$level=0;
-	$totalforvisibletasks = projectLinesPerDay($j, 0, $usertoprocess, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask, $daytoparse, $isavailable, 0, $arrayfields, $extrafields, $extralabels);
+	$totalforvisibletasks = projectLinesPerDay($j, 0, $usertoprocess, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask, $daytoparse, $isavailable, 0, $arrayfields, $extrafields);
 	//var_dump($totalforvisibletasks);
 
 	// Show total for all other tasks

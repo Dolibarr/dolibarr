@@ -83,7 +83,7 @@ $object->type = $type;	// so test later to fill $usercancxxx is correct
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 if ($id > 0 || ! empty($ref))
 {
@@ -340,7 +340,7 @@ if (empty($reshook))
             }
 
             // Fill array 'array_options' with data from add form
-        	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+        	$ret = $extrafields->setOptionalsFromPost(null, $object);
 			if ($ret < 0) $error++;
 
 			if (! $error)
@@ -452,7 +452,7 @@ if (empty($reshook))
 				if ($accountancy_code_buy <= 0) { $object->accountancy_code_buy = ''; } else { $object->accountancy_code_buy = $accountancy_code_buy; }
 
                 // Fill array 'array_options' with data from add form
-        		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+        		$ret = $extrafields->setOptionalsFromPost(null, $object);
 				if ($ret < 0) $error++;
 
                 if (! $error && $object->check())

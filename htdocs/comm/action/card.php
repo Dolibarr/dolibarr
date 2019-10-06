@@ -99,7 +99,7 @@ if ($id > 0 && $action!='add') {
 }
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 //var_dump($_POST);
 
@@ -361,7 +361,7 @@ if (empty($reshook) && $action == 'add')
 	}
 
 	// Fill array 'array_options' with data from add form
-	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	$ret = $extrafields->setOptionalsFromPost(null, $object);
 	if ($ret < 0) $error++;
 
 	if (! $error)
@@ -526,7 +526,7 @@ if (empty($reshook) && $action == 'update')
 		}
 
 		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) $error++;
 
         if (!$error) {

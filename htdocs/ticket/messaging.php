@@ -67,7 +67,7 @@ $object = new Ticket($db);
 $object->fetch($id, $ref, $track_id);
 
 $extrafields = new ExtraFields($db);
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 if (!$action) {
 	$action = 'view';

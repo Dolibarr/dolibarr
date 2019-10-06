@@ -121,10 +121,9 @@ $object=new Task($db);
 // Extra fields
 $extrafields = new ExtraFields($db);
 
-$extralabels = array();
 // fetch optionals attributes and labels
-//$extralabels += $extrafields->fetch_name_optionals_label('projet');
-$extralabels += $extrafields->fetch_name_optionals_label('projet_task');
+//$extrafields->fetch_name_optionals_label('projet');
+$extrafields->fetch_name_optionals_label('projet_task');
 
 $arrayfields=array();
 /*$arrayfields=array(
@@ -730,7 +729,7 @@ if (count($tasksarray) > 0)
 
 	$j=0;
 	$level=0;
-	$totalforvisibletasks = projectLinesPerWeek($j, $firstdaytoshow, $usertoprocess, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask, $isavailable, 0, $arrayfields, $extrafields, $extralabels);
+	$totalforvisibletasks = projectLinesPerWeek($j, $firstdaytoshow, $usertoprocess, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask, $isavailable, 0, $arrayfields, $extrafields);
 	//var_dump($totalforvisibletasks);
 
 	// Show total for all other tasks
