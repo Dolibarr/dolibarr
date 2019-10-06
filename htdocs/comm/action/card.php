@@ -1622,7 +1622,7 @@ if ($id > 0)
 		// Type
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 		{
-			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td colspan="3">'.$object->type.'</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td colspan="3">'.$langs->trans($object->type).'</td></tr>';
 		}
 
         // Full day event
