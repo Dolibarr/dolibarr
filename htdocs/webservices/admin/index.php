@@ -120,7 +120,7 @@ foreach($webservices as $name => $right)
 {
 	if (!empty($right) && !verifCond($right)) continue;
 	$url=DOL_MAIN_URL_ROOT.'/webservices/server_'.$name.'.php?wsdl';
-	print img_picto('', 'object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+	print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 }
 print '<br>';
 
@@ -131,7 +131,7 @@ foreach($webservices as $name => $right)
 {
 	if (!empty($right) && !verifCond($right)) continue;
 	$url=DOL_MAIN_URL_ROOT.'/webservices/server_'.$name.'.php';
-	print img_picto('', 'object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+	print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 }
 print '<br>';
 

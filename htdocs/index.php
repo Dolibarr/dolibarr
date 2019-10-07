@@ -301,7 +301,7 @@ if (empty($user->societe_id) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTAT
 	                    "supplier_proposal",
 	                    "projects",
 						"trips",
-                        "holidays",
+                        "holiday",
 						"donations"
 	    );
 

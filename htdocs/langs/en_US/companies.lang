@@ -298,6 +298,7 @@ FromContactName=Name:
 NoContactDefinedForThirdParty=No contact defined for this third party
 NoContactDefined=No contact defined
 DefaultContact=Default contact/address
+ContactByDefaultFor=Default contact/address for
 AddThirdParty=Create third party
 DeleteACompany=Delete a company
 PersonalInformations=Personal data

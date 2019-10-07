@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('other', 'holidays', 'companies'));
+$langs->loadLangs(array('other', 'holiday', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -47,8 +47,6 @@ $confirm = GETPOST('confirm', 'alpha');
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'holiday', $id, 'holiday');
-
-$langs->load("holiday");
 
 // Get parameters
 $sortfield = GETPOST('sortfield', 'alpha');

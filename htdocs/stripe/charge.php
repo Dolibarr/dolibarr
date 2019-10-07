@@ -183,7 +183,7 @@ if (!$rowid)
         	$url='https://dashboard.stripe.com/'.$connect.'payments/'.$charge->id;
         }
 		print "<td>";
-        print "<a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." ".$charge->id."</a>";
+        print "<a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." ".$charge->id."</a>";
 		print "</td>\n";
 		// Stripe customer
 		print "<td>";
@@ -195,7 +195,7 @@ if (!$rowid)
 		}
 		if (! empty($charge->customer))
 		{
-    		print '<a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').' '.$charge->customer.'</a>';
+    		print '<a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'globe').' '.$charge->customer.'</a>';
 		}
         print "</td>\n";
 		// Link

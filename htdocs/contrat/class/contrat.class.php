@@ -2077,7 +2077,7 @@ class Contrat extends CommonObject
 	 *  Return list of line rowid
 	 *
 	 *  @param	int		$statut     Status of lines to get
-	 *  @return array       		Array of line's rowid
+	 *  @return array|int       	Array of line's rowid or <0 if error
 	 */
 	public function array_detail($statut = -1)
 	{
@@ -2114,7 +2114,7 @@ class Contrat extends CommonObject
 	 *  Return list of other contracts for same company than current contract
 	 *
 	 *	@param	string		$option		'all' or 'others'
-	 *  @return array   				Array of contracts id
+	 *  @return array|int   			Array of contracts id or <0 if error
 	 */
 	public function getListOfContracts($option = 'all')
 	{

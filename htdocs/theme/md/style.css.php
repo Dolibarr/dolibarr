@@ -1003,7 +1003,7 @@ table[summary="list_of_modules"] .fa-cog {
 .minheight20 { min-height: 20px; }
 .minheight40 { min-height: 40px; }
 .titlefieldcreate { width: 20%; }
-.titlefield       { width: 25%; }
+.titlefield       { /* width: 25%; */ width: 250px; }
 .titlefieldmiddle { width: 50%; }
 .imgmaxwidth180 { max-width: 180px; }
 
@@ -1011,7 +1011,7 @@ table[summary="list_of_modules"] .fa-cog {
 /* Force values for small screen 1400 */
 @media only screen and (max-width: 1400px)
 {
-	.titlefield { width: 30% !important; }
+	.titlefield { /* width: 30% !important; */ }
 	.titlefieldcreate { width: 30% !important; }
 	.minwidth50imp  { min-width: 50px !important; }
     .minwidth75imp  { min-width: 75px !important; }
@@ -1786,7 +1786,7 @@ div.mainmenu {
 
 /* Do not load menu img if hidden to save bandwidth */
 <?php if (empty($dol_hide_topmenu)) { ?>
-    <?php if (! defined('DISABLE_FONT_AWSOME') && empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) { ?>
+    <?php if (! defined('DISABLE_FONT_AWSOME')) { ?>
         <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
     <?php } ?>
 
@@ -1926,7 +1926,7 @@ foreach($mainmenuusedarray as $val)
 	// Img file not found
 	if (! $found)
 	{
-	    if (! defined('DISABLE_FONT_AWSOME') && empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) {
+	    if (! defined('DISABLE_FONT_AWSOME')) {
 	        print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
 	        print 'div.mainmenu.'.$val.'::before {
                     content: "\f249";
@@ -5805,7 +5805,7 @@ border-top-right-radius: 6px;
 
 
 
-<?php if (! defined('DISABLE_FONT_AWSOME') && empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) { ?>
+<?php if (! defined('DISABLE_FONT_AWSOME')) { ?>
         <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
 <?php }
 

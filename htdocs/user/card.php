@@ -230,6 +230,8 @@ if (empty($reshook)) {
 			$object->note = GETPOST("note", 'none');
 			$object->ldap_sid = GETPOST("ldap_sid", 'alphanohtml');
 			$object->fk_user = GETPOST("fk_user", 'int') > 0 ? GETPOST("fk_user", 'int') : 0;
+			$object->fk_user_expense_validator = GETPOST("fk_user_expense_validator", 'int') > 0 ? GETPOST("fk_user_expense_validator", 'int') : 0;
+			$object->fk_user_holiday_validator = GETPOST("fk_user_holiday_validator", 'int') > 0 ? GETPOST("fk_user_holiday_validator", 'int') : 0;
 			$object->employee = GETPOST('employee', 'alphanohtml');
 
 			$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
@@ -387,6 +389,8 @@ if (empty($reshook)) {
 				$object->accountancy_code = GETPOST("accountancy_code", 'alphanohtml');
 				$object->openid = GETPOST("openid", 'alphanohtml');
 				$object->fk_user = GETPOST("fk_user", 'int') > 0 ? GETPOST("fk_user", 'int') : 0;
+				$object->fk_user_expense_validator = GETPOST("fk_user_expense_validator", 'int') > 0 ? GETPOST("fk_user_expense_validator", 'int') : 0;
+				$object->fk_user_holiday_validator = GETPOST("fk_user_holiday_validator", 'int') > 0 ? GETPOST("fk_user_holiday_validator", 'int') : 0;
 				$object->employee = GETPOST('employee', 'int');
 
 				$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
@@ -976,6 +980,32 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '</td>';
 	print "</tr>\n";
 
+	// Expense report validator
+	if(!empty($conf->expensereport->enabled))
+	{
+		print '<tr><td class="titlefieldcreate">';
+		$text = $langs->trans("ForceUserExpenseValidator");
+		print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+		print '</td>';
+		print '<td>';
+		print $form->select_dolusers($object->fk_user_expense_validator, 'fk_user_expense_validator', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
+		print '</td>';
+		print "</tr>\n";
+	}
+
+	// Holiday request validator
+	if(!empty($conf->holiday->enabled))
+	{
+		print '<tr><td class="titlefieldcreate">';
+		$text = $langs->trans("ForceUserHolidayValidator");
+		print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+		print '</td>';
+		print '<td>';
+		print $form->select_dolusers($object->fk_user_holiday_validator, 'fk_user_holiday_validator', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
+		print '</td>';
+		print "</tr>\n";
+	}
+
 
 	print '</table><hr><table class="border centpercent">';
 
@@ -1234,19 +1264,19 @@ if ($action == 'create' || $action == 'adduserldap')
 
 	// TODO Move this into tab RH (HierarchicalResponsible must be on both tab)
 
-	// Position/Job
-	print '<tr><td class="titlefieldcreate">'.$langs->trans("PostOrFunction").'</td>';
-	print '<td>';
-	print '<input class="maxwidth200" type="text" name="job" value="'.GETPOST('job', 'nohtml').'">';
-	print '</td></tr>';
-
 	// Default warehouse
-    if (! empty($conf->stock->enabled))
+	if (! empty($conf->stock->enabled) && ! empty($conf->global->USER_DEFAULT_WAREHOUSE))	// TODO What is goal of this. How it is used ?
     {
 		print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 		print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
 		print '</td></tr>';
 	}
+
+	// Position/Job
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("PostOrFunction").'</td>';
+	print '<td>';
+	print '<input class="maxwidth200" type="text" name="job" value="'.GETPOST('job', 'nohtml').'">';
+	print '</td></tr>';
 
 	if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
 		|| (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
@@ -1595,13 +1625,36 @@ else
 			print '</td>';
 			print "</tr>\n";
 
-			// Position/Job
-			print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
-			print '<td>'.$object->job.'</td>';
-			print '</tr>'."\n";
+			// Expense report validator
+			print '<tr><td>';
+			$text = $langs->trans("ForceUserExpenseValidator");
+			print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+			print '</td>';
+			print '<td>';
+			if (! empty($object->fk_user_expense_validator)) {
+				$evuser=new User($db);
+				$evuser->fetch($object->fk_user_expense_validator);
+				print $evuser->getNomUrl(1);
+			}
+			print '</td>';
+			print "</tr>\n";
+
+			// Holiday request validator
+			print '<tr><td>';
+			$text = $langs->trans("ForceUserHolidayValidator");
+			print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+			print '</td>';
+			print '<td>';
+			if (! empty($object->fk_user_holiday_validator)) {
+				$hvuser=new User($db);
+				$hvuser->fetch($object->fk_user_holiday_validator);
+				print $hvuser->getNomUrl(1);
+			}
+			print '</td>';
+			print "</tr>\n";
 
 			// Default warehouse
-            if (! empty($conf->stock->enabled))
+			if (! empty($conf->stock->enabled) && ! empty($conf->global->USER_DEFAULT_WAREHOUSE))	// TODO What is goal of this. How it is used ?
             {
 				require_once DOL_DOCUMENT_ROOT .'/product/stock/class/entrepot.class.php';
 				$warehousestatic=new Entrepot($db);
@@ -1611,7 +1664,12 @@ else
 				print '</td></tr>';
             }
 
-			//$childids = $user->getAllChildIds(1);
+            // Position/Job
+            print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
+            print '<td>'.$object->job.'</td>';
+            print '</tr>'."\n";
+
+            //$childids = $user->getAllChildIds(1);
 
 			if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
 				|| (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
@@ -2276,6 +2334,46 @@ else
 		   	print '</td>';
 		   	print "</tr>\n";
 
+			// Expense report validator
+			print '<tr><td class="titlefield">';
+			$text = $langs->trans("ForceUserExpenseValidator");
+			print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+			print '</td>';
+			print '<td>';
+			if ($caneditfield)
+			{
+				print $form->select_dolusers($object->fk_user_expense_validator, 'fk_user_expense_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'maxwidth300');
+			}
+			else
+			{
+				print '<input type="hidden" name="fk_user_expense_validator" value="'.$object->fk_user_expense_validator.'">';
+				$evuser=new User($db);
+				$evuser->fetch($object->fk_user_expense_validator);
+				print $evuser->getNomUrl(1);
+			}
+			print '</td>';
+			print "</tr>\n";
+
+			// Holiday request validator
+			print '<tr><td class="titlefield">';
+			$text = $langs->trans("ForceUserHolidayValidator");
+			print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+			print '</td>';
+			print '<td>';
+			if ($caneditfield)
+			{
+				print $form->select_dolusers($object->fk_user_holiday_validator, 'fk_user_holiday_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'maxwidth300');
+			}
+			else
+			{
+				print '<input type="hidden" name="fk_user_holiday_validator" value="'.$object->fk_user_holiday_validator.'">';
+				$hvuser=new User($db);
+				$hvuser->fetch($object->fk_user_holiday_validator);
+				print $hvuser->getNomUrl(1);
+			}
+			print '</td>';
+			print "</tr>\n";
+
 
 		   	print '</table><hr><table class="border centpercent">';
 
@@ -2641,22 +2739,8 @@ else
 
 			// TODO Move this into tab RH (HierarchicalResponsible must be on both tab)
 
-			// Position/Job
-			print '<tr><td class="titlefield">'.$langs->trans("PostOrFunction").'</td>';
-			print '<td>';
-			if ($caneditfield)
-			{
-				print '<input size="30" type="text" name="job" value="'.$object->job.'">';
-			}
-			else
-			{
-				print '<input type="hidden" name="job" value="'.$object->job.'">';
-				print $object->job;
-			}
-			print '</td></tr>';
-
 			// Default warehouse
-            if (! empty($conf->stock->enabled))
+            if (! empty($conf->stock->enabled) && ! empty($conf->global->USER_DEFAULT_WAREHOUSE))	// TODO What is goal of this. How it is used ?
             {
                 print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
                 print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
@@ -2664,7 +2748,21 @@ else
                 print '</td></tr>';
             }
 
-			if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
+            // Position/Job
+            print '<tr><td class="titlefield">'.$langs->trans("PostOrFunction").'</td>';
+            print '<td>';
+            if ($caneditfield)
+            {
+            	print '<input size="30" type="text" name="job" value="'.$object->job.'">';
+            }
+            else
+            {
+            	print '<input type="hidden" name="job" value="'.$object->job.'">';
+            	print $object->job;
+            }
+            print '</td></tr>';
+
+            if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
 				|| (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
 			{
 				$langs->load("salaries");

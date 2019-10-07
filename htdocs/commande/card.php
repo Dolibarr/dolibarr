@@ -70,6 +70,7 @@ $action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $lineid = GETPOST('lineid', 'int');
+$contactid = GETPOST('contactid', 'int');
 $projectid = GETPOST('projectid', 'int');
 $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
@@ -1646,8 +1647,9 @@ if ($action == 'create' && $usercancreate)
 
 	// Contact of order
 	if ($socid > 0) {
+		// Contacts (ask contact only if thirdparty already defined).
 		print "<tr><td>" . $langs->trans("DefaultContact") . '</td><td>';
-		$form->select_contacts($soc->id, $setcontact, 'contactid', 1, $srccontactslist, '', 1);
+		$form->select_contacts($soc->id, $contactid, 'contactid', 1, $srccontactslist, '', 1);
 		print '</td></tr>';
 
 		// Ligne info remises tiers
@@ -2539,7 +2541,7 @@ if ($action == 'create' && $usercancreate)
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);
 			if (empty($reshook)) {
 				// Send
-				if ($object->statut > Commande::STATUS_DRAFT) {
+				if ($object->statut > Commande::STATUS_DRAFT || !empty($conf->global->COMMANDE_SENDBYEMAIL_FOR_ALL_STATUS)) {
 					if ($usercansend) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a></div>';
 					} else
