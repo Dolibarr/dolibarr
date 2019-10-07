@@ -37,7 +37,7 @@ class box_accountancy_suspense_account extends ModeleBoxes
     public $boxlabel="BoxSuspenseAccount";
     public $depends = array("accounting");
 
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
@@ -70,11 +70,11 @@ class box_accountancy_suspense_account extends ModeleBoxes
      */
     public function loadBox()
     {
-        global $user, $langs, $db, $conf;
+        global $user, $langs, $conf;
 
         include_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 
-        $bookkeepingstatic = new BookKeeping($db);
+        $bookkeepingstatic = new BookKeeping($this->db);
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleSuspenseAccount"));
 
@@ -88,10 +88,11 @@ class box_accountancy_suspense_account extends ModeleBoxes
 				$sql .= " WHERE b.numero_compte = ". $suspenseAccount;
 				$sql .= " AND b.entity = " . $conf->entity;
 
-				$result = $db->query($sql);
+				$result = $this->db->query($sql);
+				$nbSuspenseAccount = 0;
 				if ($result)
 				{
-					$obj=$db->fetch_object($result);
+					$obj=$this->db->fetch_object($result);
 					$nbSuspenseAccount = $obj->nb_suspense_account;
 				}
 
