@@ -160,11 +160,11 @@ class CUnits // extends CommonObject
     /**
      *  Load object in memory from database
      *
-     *  @param      int		$id    	Id object
-     *  @param		string	$code	Code
-     *  @param		string	$short_label	Short Label
-     *  @param		string	$unit_type	unit type
-     *  @return     int		<0 if KO, >0 if OK
+     *  @param      int		$id    			Id object
+     *  @param		string	$code			Code
+     *  @param		string	$short_label	Short Label ('g', 'kg', ...)
+     *  @param		string	$unit_type		Unit type ('size', 'surface', 'volume', 'weight', ...)
+     *  @return     int						<0 if KO, >0 if OK
      */
     public function fetch($id, $code = '', $short_label = '', $unit_type = '')
     {
