@@ -479,12 +479,12 @@ class modService extends DolibarrModules
 			'p.note' => "a private note (free text)",
 			'p.customcode' => 'customs code',
 			'p.fk_country' => 'FR',
-			'p.price' => "price ex-vat eg. 100",
-			'p.price_min' => "price ex-vat eg. 100",
-			'p.price_ttc' => "price inc-vat eg. 110",
-			'p.price_min_ttc' => "price inc-vat eg. 110",
+			'p.price' => "100",
+			'p.price_min' => "100",
+			'p.price_ttc' => "110",
+			'p.price_min_ttc' => "110",
 			'p.price_base_type' => "HT (show/use price excl. tax) / TTC (show/use price incl. tax)",
-			'p.tva_tx' => 'tax rate eg: 10. Must match numerically one of the tax rates defined for your country',
+			'p.tva_tx' => '10',	// tax rate eg: 10. Must match numerically one of the tax rates defined for your country'
 			'p.tosell' => "0 (not for sale to customer, eg. raw material) / 1 (for sale)",
 			'p.tobuy' => "0 (not for purchase from supplier, eg. virtual product) / 1 (for purchase)",
 			'p.fk_product_type' => "0 (product) / 1 (service)",
@@ -495,27 +495,27 @@ class modService extends DolibarrModules
 			'p.accountancy_code_sell_export' => "",
 			'p.accountancy_code_buy' => "",
 			'p.weight' => "",
-			'p.weight_units' => 'Use a unit of measure from the dictionary. g/Kg/T etc....matches field "Short label" for unit type "weight" in table "' . MAIN_DB_PREFIX . 'c_units',
+			'p.weight_units' => 'kg',	// Use a unit of measure from the dictionary. g/Kg/T etc....matches field "Short label" for unit type "weight" in table "' . MAIN_DB_PREFIX . 'c_units',
 			'p.length' => "",
-			'p.length_units' => 'Use a unit of measure from the dictionary. m/cm/mm etc....matches field "Short label" for unit type "size" in table "' . MAIN_DB_PREFIX . 'c_units',
+			'p.length_units' => 'm', 	// Use a unit of measure from the dictionary. m/cm/mm etc....matches field "Short label" for unit type "size" in table "' . MAIN_DB_PREFIX . 'c_units',
 			'p.width' => "",
-			'p.width_units' => 'Use a unit of measure from the dictionary. m/cm/mm etc....matches field "Short label" for unit type "size" in table "' . MAIN_DB_PREFIX . 'c_units',
+			'p.width_units' => 'm',		// Use a unit of measure from the dictionary. m/cm/mm etc....matches field "Short label" for unit type "size" in table "' . MAIN_DB_PREFIX . 'c_units',
 			'p.height' => "",
-			'p.height_units' => 'Use a unit of measure from the dictionary. m/cm/mm etc....matches field "Short label" for unit type "size" in table "' . MAIN_DB_PREFIX . 'c_units',
+			'p.height_units' => 'm',	// Use a unit of measure from the dictionary. m/cm/mm etc....matches field "Short label" for unit type "size" in table "' . MAIN_DB_PREFIX . 'c_units',
 			'p.surface' => "",
-			'p.surface_units' => 'Use a unit of measure from the dictionary. m2/cm2/mm2 etc....matches field "Short label" for unit type "surface" in table "' . MAIN_DB_PREFIX . 'c_units',
+			'p.surface_units' => 'm2',	// Use a unit of measure from the dictionary. m2/cm2/mm2 etc....matches field "Short label" for unit type "surface" in table "' . MAIN_DB_PREFIX . 'c_units',
 			'p.volume' => "",
-			'p.volume_units' => 'use a unit of measure from the dictionary. m3/cm3/mm3 etc....matches field "Short label" for unit type "volume" in table "' . MAIN_DB_PREFIX . 'c_units',
+			'p.volume_units' => 'm3',	//Use a unit of measure from the dictionary. m3/cm3/mm3 etc....matches field "Short label" for unit type "volume" in table "' . MAIN_DB_PREFIX . 'c_units',
 			'p.finished' => '0 (raw material) / 1 (finished goods)'
 		);
 		//clauses copied from import_fields_array
 		if (!empty($conf->stock->enabled)) $import_sample = array_merge($import_sample, array(
-			'p.seuil_stock_alerte' => 'quantity for low-stock warning (empty for no warning)',
-			'p.pmp' => '0 (default)',
-			'p.desiredstock' => 'target quantity to maintain in stock (for replenishment feature)'
+			'p.seuil_stock_alerte' => '',
+			'p.pmp' => '0',
+			'p.desiredstock' => ''
 		));
-		if (! empty($conf->fournisseur->enabled) || !empty($conf->margin->enabled)) $import_sample=array_merge($import_sample, array('p.cost_price'=>'user-editable, used for margin calculations only'));
-		if (is_object($mysoc) && $mysoc->useNPR()) $import_sample=array_merge($import_sample, array('p.recuperableonly'=>'0 / 1 (French VAT NPR yes/no'));
+		if (! empty($conf->fournisseur->enabled) || !empty($conf->margin->enabled)) $import_sample=array_merge($import_sample, array('p.cost_price'=>'90'));
+		if (is_object($mysoc) && $mysoc->useNPR()) $import_sample=array_merge($import_sample, array('p.recuperableonly'=>'0'));
 		if (is_object($mysoc) && $mysoc->useLocalTax(1)) $import_sample=array_merge($import_sample, array('p.localtax1_tx'=>'', 'p.localtax1_type'=>''));
 		if (is_object($mysoc) && $mysoc->useLocalTax(2)) $import_sample=array_merge($import_sample, array('p.localtax2_tx'=>'', 'p.localtax2_type'=>''));
 		if (! empty($conf->barcode->enabled)) $import_sample=array_merge($import_sample, array('p.barcode'=>''));
@@ -590,34 +590,34 @@ class modService extends DolibarrModules
 				$this->import_examplevalues_array[$r]=array(
 					'sp.fk_product' => "PRODUCT_REF or id:123456",
 					'sp.fk_soc' => "My Supplier",
-					'sp.ref_fourn' => "eg: XYZ-F123456",
+					'sp.ref_fourn' => "XYZ-F123456",
 					'sp.quantity' => "5",
-					'sp.tva_tx' => 'one of the defined rates eg. 21',
+					'sp.tva_tx' => '10',
 					'sp.price'=>"50",
 					'sp.unitprice'=>'50',
 					'sp.remise_percent'=>'0',
 					'sp.default_vat_code' => '',
-					'sp.delivery_time_days' => 'eg. 5',
+					'sp.delivery_time_days' => '5',
 					'sp.supplier_reputation' => 'FAVORITE / NOTTHGOOD / DONOTORDER'
 				);
 				if (is_object($mysoc) && $mysoc->useNPR()) $this->import_examplevalues_array[$r]=array_merge($this->import_examplevalues_array[$r], array('sp.recuperableonly'=>''));
 				if (is_object($mysoc) && $mysoc->useLocalTax(1)) $this->import_examplevalues_array[$r]=array_merge($this->import_examplevalues_array[$r], array('sp.localtax1_tx'=>'LT1', 'sp.localtax1_type'=>'LT1Type'));
 				if (is_object($mysoc) && $mysoc->useLocalTax(2)) $this->import_examplevalues_array[$r]=array_merge($this->import_examplevalues_array[$r], array('sp.localtax2_tx'=>'LT2', 'sp.localtax2_type'=>'LT2Type'));
 				$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array(
-					'sp.price' => "eg. 50.00",
-					'sp.unitprice' => 'eg. 10',
+					'sp.price' => "50.00",
+					'sp.unitprice' => '10',
 					// TODO Make this field not required and calculate it from price and qty
-					'sp.remise_percent' => 'eg: 20'
+					'sp.remise_percent' => '20'
 				));
 				if ($conf->multicurrency->enabled)
 				{
 					$this->import_examplevalues_array[$r]=array_merge($this->import_examplevalues_array[$r], array(
 						'sp.fk_multicurrency'=>'eg: 2, rowid for code of multicurrency currency',
-						'sp.multicurrency_code'=>'eg: GBP',
-						'sp.multicurrency_tx'=>'currency rate eg: 1.12345',
-						'sp.multicurrency_unitprice'=>'cost per unit in supplier currency',
+						'sp.multicurrency_code'=>'GBP',
+						'sp.multicurrency_tx'=>'1.12345',
+						'sp.multicurrency_unitprice'=>'',
 						// TODO Make this field not required and calculate it from price and qty
-						'sp.multicurrency_price'=>'cost for min quantity in supplier currency'
+						'sp.multicurrency_price'=>''
 					));
 				}
 

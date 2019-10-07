@@ -356,7 +356,7 @@ class modProduct extends DolibarrModules
 		$this->import_entities_array[$r]=array();		// We define here only fields that use a different icon from the one defined in import_icon
 		$this->import_tables_array[$r]=array('p'=>MAIN_DB_PREFIX.'product','extra'=>MAIN_DB_PREFIX.'product_extrafields');
 		$this->import_tables_creator_array[$r]=array('p'=>'fk_user_author');	// Fields to store import user id
-		$this->import_fields_array[$r]=array(//field order as per structure of table llx_product
+		$this->import_fields_array[$r]=array(
 	        'p.ref' => "Ref*",
             'p.label' => "Label*",
 			'p.fk_product_type' => "Type*",
