@@ -1442,7 +1442,7 @@ img.photorefnoborder {
 }
 .trextrafieldseparator td {
     /* border-bottom: 2px solid rgb(<?php echo $colorbackhmenu1 ?>) !important; */
-    border-bottom: 2px dashed rgb(<?php echo $colortopbordertitle1 ?>) !important;
+    border-bottom: 2px solid rgb(<?php echo $colortopbordertitle1 ?>) !important;
 }
 
 .tdhrthin {

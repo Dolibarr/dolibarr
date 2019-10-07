@@ -1629,7 +1629,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
             }
 
             // Ref
-            $out.='<td class="nowrap">';
+            $out.='<td class="nowraponall">';
             if (isset($histo[$key]['type']) && $histo[$key]['type']=='mailing') {
                 $out.='<a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"), "email").' ';
                 $out.=$histo[$key]['id'];
