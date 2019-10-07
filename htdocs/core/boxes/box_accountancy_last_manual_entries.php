@@ -71,13 +71,11 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
      */
     public function loadBox($max = 5)
     {
-        global $user, $langs, $db, $conf;
-
-        $this->max = $max;
+        global $user, $langs, $conf;
 
         include_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 
-        $bookkeepingstatic = new BookKeeping($db);
+        $bookkeepingstatic = new BookKeeping($this->db);
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLastManualEntries", $max));
 
@@ -92,17 +90,17 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
             $sql.= " WHERE b.fk_doc = 0";
             $sql.= " AND b.entity = ".$conf->entity;
             $sql.= " ORDER BY b.piece_num DESC ";
-            $sql.= $db->plimit($max, 0);
+            $sql.= $this->db->plimit($max, 0);
 
-            $result = $db->query($sql);
+            $result = $this->db->query($sql);
             if ($result) {
-                $num = $db->num_rows($result);
+                $num = $this->db->num_rows($result);
 
                 $line = 0;
 
                 while ($line < $num) {
-                    $objp		= $db->fetch_object($result);
-                    $date		= $db->jdate($objp->date_movement);
+                    $objp		= $this->db->fetch_object($result);
+                    $date		= $this->db->jdate($objp->date_movement);
 					$journal	= $objp->code_journal;
                     $label		= $objp->label_operation;
 					$amount		= $objp->montant;
@@ -144,12 +142,12 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
 
                 if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedManualEntries"));
 
-                $db->free($result);
+                $this->db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
             }
         } else {
