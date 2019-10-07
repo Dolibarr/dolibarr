@@ -536,12 +536,12 @@ class ImportXlsx extends ModeleImports
                                 		}
                                 		$classinstance=new $class($this->db);
                                 		// Try the fetch from code or ref
-                                		call_user_func_array(array($classinstance, $method), array('', $units, '', $newval));
-                                		$this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval]=$classinstance->code;
+                                        call_user_func_array(array($classinstance, $method), array('', '', $newval, $units));
+                                		$this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval]=$classinstance->id;
                                 		//print 'We have made a '.$class.'->'.$method.' to get id from code '.$newval.'. ';
-                                		if ($classinstance->code != '')	// id may be 0, it is a found value
+                                		if ($classinstance->id != '')	// id may be 0, it is a found value
                                 		{
-                                			$newval=$classinstance->code;
+                                			$newval=$classinstance->id;
                                 		}
                                 		else
                                 		{
