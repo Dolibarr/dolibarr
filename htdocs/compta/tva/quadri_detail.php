@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -530,7 +530,7 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 	}
 
 	// Blank line
-	print '<tr><td colspan="'.($span+1).'">&nbsp;</td></tr>';
+	print '<tr><td colspan="'.($span+2).'">&nbsp;</td></tr>';
 
 	// Print table headers for this quadri - expenses now
 	print '<tr class="liste_titre liste_titre_topborder">';

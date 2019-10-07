@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -68,7 +68,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, 
 
 if ($user->rights->adherent->cotisation->creer && $action == 'update' && ! $cancel)
 {
-	// Charge objet actuel
+	// Load current object
 	$result=$object->fetch($rowid);
 	if ($result > 0)
 	{
@@ -101,7 +101,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'update' && ! $canc
 
 		if (! $errmsg)
 		{
-			// Modifie valeures
+			// Modify values
 			$object->dateh=dol_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
 			$object->datef=dol_mktime($_POST['datesubendhour'], $_POST['datesubendmin'], 0, $_POST['datesubendmonth'], $_POST['datesubendday'], $_POST['datesubendyear']);
 			$object->fk_type=$_POST["typeid"];
@@ -389,7 +389,7 @@ if ($rowid && $action != 'edit')
 		}
 	}
 
-    // Supprimer
+    // Delete
     if ($user->rights->adherent->cotisation->creer)
     {
         print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"]."?rowid=".$object->id."&action=delete\">".$langs->trans("Delete")."</a></div>\n";

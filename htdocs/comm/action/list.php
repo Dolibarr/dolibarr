@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -80,8 +80,10 @@ $object = new ActionComm($db);
 $hookmanager->initHooks(array('agendalist'));
 
 $extrafields = new ExtraFields($db);
+
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('actioncomm');
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 // If not choice done on calendar owner, we filter on user.
 if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS))
@@ -502,8 +504,8 @@ if ($resql)
 	if (! empty($arrayfields['a.datep']['checked']))	  print_liste_field_titre($arrayfields['a.datep']['label'], $_SERVER["PHP_SELF"], "a.datep,a.id", $param, '', 'align="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['a.datep2']['checked']))	  print_liste_field_titre($arrayfields['a.datep2']['label'], $_SERVER["PHP_SELF"], "a.datep2", $param, '', 'align="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['s.nom']['checked']))	      print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", $param, "", "", $sortfield, $sortorder);
-	if (! empty($arrayfields['a.fk_contact']['checked'])) print_liste_field_titre($arrayfields['a.fk_contact']['label'], $_SERVER["PHP_SELF"], "a.fk_contact", $param, "", "", $sortfield, $sortorder);
-    if (! empty($arrayfields['a.fk_element']['checked'])) print_liste_field_titre($arrayfields['a.fk_element']['label'], $_SERVER["PHP_SELF"], "a.fk_element", $param, "", "", $sortfield, $sortorder);
+	if (! empty($arrayfields['a.fk_contact']['checked'])) print_liste_field_titre($arrayfields['a.fk_contact']['label'], $_SERVER["PHP_SELF"], "", $param, "", "", $sortfield, $sortorder);
+    if (! empty($arrayfields['a.fk_element']['checked'])) print_liste_field_titre($arrayfields['a.fk_element']['label'], $_SERVER["PHP_SELF"], "", $param, "", "", $sortfield, $sortorder);
 
 	// Extra fields
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -560,7 +562,7 @@ if ($resql)
 		// User owner
 		if (! empty($arrayfields['owner']['checked']))
 		{
-			print '<td class="'.($conf->browser->name != 'chrome'?'':'tdoverflowmax100').'">';	// With edge and chrom the td overflow is not supported correctly when content is not full text.
+			print '<td class="tdoverflowmax150">';	// With edge and chrome the td overflow is not supported correctly when content is not full text.
 			if ($obj->fk_user_action > 0)
 			{
 				$userstatic->fetch($obj->fk_user_action);
@@ -630,7 +632,7 @@ if ($resql)
 
 		// Third party
 		if (! empty($arrayfields['s.nom']['checked'])) {
-			print '<td class="tdoverflowmax100">';
+			print '<td class="tdoverflowmax150">';
 			if ($obj->socid > 0)
 			{
 				$societestatic->id=$obj->socid;
@@ -648,12 +650,11 @@ if ($resql)
 		if (! empty($arrayfields['a.fk_contact']['checked'])) {
 			print '<td>';
 
-
             $actionstatic->fetchResources();
             if(!empty($actionstatic->socpeopleassigned))
             {
                 $contactList = array();
-                foreach ($actionstatic->socpeopleassigned as $socpeopleId => $socpeopleassigned)
+                foreach ($actionstatic->socpeopleassigned as $socpeopleassigned)
                 {
                     if(!isset($contactListCache[$socpeopleassigned['id']]))
                     {
@@ -661,8 +662,8 @@ if ($resql)
                         $contact = new Contact($db);
                         if($contact->fetch($socpeopleassigned['id'])>0)
                         {
-                            $contactListCache[$socpeopleassigned['id']] = $contact->getNomUrl(1, '', 28);
-                            $contactList[] = $contact->getNomUrl(1, '', 28);
+                            $contactListCache[$socpeopleassigned['id']] = $contact->getNomUrl(1, '', 0);
+                            $contactList[] = $contact->getNomUrl(1, '', 0);
                         }
                     }
                     else{
@@ -684,7 +685,7 @@ if ($resql)
 				$contactstatic->phone_mobile=$obj->phone_mobile;
 				$contactstatic->phone_perso=$obj->phone_perso;
 				$contactstatic->country_id=$obj->country_id;
-				print $contactstatic->getNomUrl(1, '', 28);
+				print $contactstatic->getNomUrl(1, '', 0);
 			}
 			else
 			{

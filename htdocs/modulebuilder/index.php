@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * You can also make a direct call the page with parameter like this:
  * htdocs/modulebuilder/index.php?module=Inventory@/pathtodolibarr/htdocs/product
@@ -1232,10 +1232,10 @@ $dirins_ok=(dol_is_dir($dirins));
 
 llxHeader('', $langs->trans("ModuleBuilder"), '', '', 0, 0,
 	array(
-	'/includes/ace/ace.js',
-	'/includes/ace/ext-statusbar.js',
-	'/includes/ace/ext-language_tools.js',
-	//'/includes/ace/ext-chromevox.js'
+	'/includes/ace/src/ace.js',
+	'/includes/ace/src/ext-statusbar.js',
+	'/includes/ace/src/ext-language_tools.js',
+	//'/includes/ace/src/ext-chromevox.js'
 	), array());
 
 

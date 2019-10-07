@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -1859,10 +1859,10 @@ $formother = new FormOther($db);
 $help_url='';
 
 $arrayofjs = array(
-	'/includes/ace/ace.js',
-	'/includes/ace/ext-statusbar.js',
-	'/includes/ace/ext-language_tools.js',
-	//'/includes/ace/ext-chromevox.js'
+	'/includes/ace/src/ace.js',
+	'/includes/ace/src/ext-statusbar.js',
+	'/includes/ace/src/ext-language_tools.js',
+	//'/includes/ace/src/ext-chromevox.js'
 	//'/includes/jquery/plugins/jqueryscoped/jquery.scoped.js',
 );
 $arrayofcss = array();
@@ -1953,18 +1953,18 @@ if (! GETPOST('hide_websitemenu'))
 
 	// ***** Part for web sites
 	print '<!-- Bar for website -->';
-	print '<div class="websiteselection hideonsmartphoneimp minwidth100 tdoverflowmax100">';
+	print '<span class="websiteselection hideonsmartphoneimp minwidth100 tdoverflowmax100">';
 	print $langs->trans("Website").' : ';
-	print '</div>';
+	print '</span>';
 
-	print '<div class="websiteselection hideonsmartphoneimp">';
+	print '<span class="websiteselection hideonsmartphoneimp">';
 	print ' <input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'" name="createsite">';
-	print '</div>';
+	print '</span>';
 
 	// List of website
-	print '<div class="websiteselection">';
+	print '<span class="websiteselection">';
 	$out='';
-	$out.='<select name="website" class="minwidth100" id="website">';
+	$out.='<select name="website" class="minwidth100 maxwidth300" id="website">';
 	if (empty($object->records)) $out.='<option value="-1">&nbsp;</option>';
 	// Loop on each sites
 	$i=0;
@@ -2050,21 +2050,21 @@ if (! GETPOST('hide_websitemenu'))
 		print '<a href="'.$_SERVER["PHP_SEFL"].'?action=replacesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-search"><span></a>';
 	}
 
-	print '</div>';
+	print '</span>';
 
 
 	// Toolbar for websites
 
-	print '<div class="websitetools websiteselection">';
+	print '<span class="websitetools websiteselection">';
 
 	if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite')
 	{
 		$urlext=$virtualurl;
 		$urlint=$urlwithroot.'/public/website/index.php?website='.$websitekey;
 
-		print '<div class="websiteinputurl valignmiddle" id="websiteinputurl">';
+		print '<span class="websiteinputurl valignmiddle" id="websiteinputurl">';
 		$linktotestonwebserver = '<a href="'.($virtualurl?$virtualurl:'#').'" class="valignmiddle">';
-		$linktotestonwebserver.= $langs->trans("TestDeployOnWeb", $virtualurl).' '.img_picto('', 'object_globe');
+		$linktotestonwebserver.= $langs->trans("TestDeployOnWeb", $virtualurl).' '.img_picto('', 'globe');
 		$linktotestonwebserver.= '</a>';
 		$htmltext = '';
 		if (empty($object->fk_default_home))
@@ -2096,8 +2096,8 @@ if (! GETPOST('hide_websitemenu'))
     		$htmltext.='<br>';
     		$htmltext.=$langs->trans("YouCanAlsoDeployToAnotherWHP");
 		}
-		print $form->textwithpicto($linktotestonwebserver, $htmltext, 1, 'none', 'valignmiddle', 0, 2, 'helpvirtualhost');
-		print '</div>';
+		print $form->textwithpicto($linktotestonwebserver, $htmltext, 1, 'none', 'valignmiddle', 0, 3, 'helpvirtualhost');
+		print '</span>';
 	}
 
 	if (in_array($action, array('editcss','editmenu','file_manager','replacesite','replacesiteconfirm')))
@@ -2107,7 +2107,7 @@ if (! GETPOST('hide_websitemenu'))
 		if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="cancel">';
 	}
 
-	print '</div>';
+	print '</span>';
 
 
 	// Toolbar for pages
@@ -2119,15 +2119,15 @@ if (! GETPOST('hide_websitemenu'))
 		print '<!-- Bar for websitepage -->';
 		print '<div class="centpercent websitebar"'.($style?' style="'.$style.'"':'').'">';
 
-		print '<div class="websiteselection hideonsmartphoneimp minwidth100 tdoverflowmax100">';
+		print '<span class="websiteselection hideonsmartphoneimp minwidth100 tdoverflowmax100">';
 		print $langs->trans("PageContainer").': ';
-		print '</div>';
+		print '</span>';
 
-		print '<div class="websiteselection hideonsmartphoneimp">';
+		print '<span class="websiteselection hideonsmartphoneimp">';
 		print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'" name="createcontainer">';
-		print '</div>';
+		print '</span>';
 
-		print '<div class="websiteselection">';
+		print '<span class="websiteselection">';
 
 		if ($action != 'addcontainer')
 		{
@@ -2237,7 +2237,7 @@ if (! GETPOST('hide_websitemenu'))
 				$formquestion = array(
 					array('type' => 'checkbox', 'name' => 'delete_also_js', 'label' => $langs->trans("DeleteAlsoJs"), 'value' => 0),
 					array('type' => 'checkbox', 'name' => 'delete_also_medias', 'label' => $langs->trans("DeleteAlsoMedias"), 'value' => 0),
-					//array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'az09')?GETPOST('newlang', 'az09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')),
+					//array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'aZ09')?GETPOST('newlang', 'aZ09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')),
 					//array('type' => 'other','name' => 'newwebsite','label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0))
 				);
 
@@ -2252,7 +2252,7 @@ if (! GETPOST('hide_websitemenu'))
 				$formquestion = array(
 				array('type' => 'text', 'name' => 'siteref', 'label'=> $langs->trans("WebSite")  ,'value'=> 'copy_of_'.$object->ref),
 				//array('type' => 'checkbox', 'name' => 'is_a_translation', 'label' => $langs->trans("SiteIsANewTranslation"), 'value' => 0),
-				//array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'az09')?GETPOST('newlang', 'az09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')),
+				//array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'aZ09')?GETPOST('newlang', 'aZ09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')),
 				//array('type' => 'other','name' => 'newwebsite','label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0))
 				);
 
@@ -2266,7 +2266,7 @@ if (! GETPOST('hide_websitemenu'))
 				// Confirmation to clone
 				if ($action == 'createpagefromclone') {
 					// Create an array for form
-					$preselectedlanguage = GETPOST('newlang', 'az09') ? GETPOST('newlang', 'az09') : ($objectpage->lang ? $objectpage->lang : $langs->defaultlang);
+					$preselectedlanguage = GETPOST('newlang', 'aZ09') ? GETPOST('newlang', 'aZ09') : ($objectpage->lang ? $objectpage->lang : $langs->defaultlang);
 					$formquestion = array(
 						array('type' => 'hidden', 'name' => 'sourcepageurl', 'value'=> $objectpage->pageurl),
 						array('type' => 'checkbox', 'tdclass'=>'maxwidth200', 'name' => 'is_a_translation', 'label' => $langs->trans("PageIsANewTranslation"), 'value' => 0),
@@ -2395,9 +2395,9 @@ if (! GETPOST('hide_websitemenu'))
 			}
 		}
 
-		print '</div>';	// end website selection
+		print '</span>';	// end website selection
 
-		print '<div class="websitetools">';
+		print '<span class="websitetools">';
 
 		if (($pageid > 0 && $atleastonepage) && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite'))
 		{
@@ -2437,9 +2437,9 @@ if (! GETPOST('hide_websitemenu'))
 			if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
 		}
 
-		print '</div>';	// end websitetools
+		print '</span>';	// end websitetools
 
-		print '<div class="websitehelp">';
+		print '<span class="websitehelp">';
 		if (GETPOST('editsource', 'alpha') || GETPOST('editcontent', 'alpha'))
 		{
 			$htmltext=$langs->transnoentitiesnoconv("YouCanEditHtmlSource").'<br>';
@@ -2453,7 +2453,7 @@ if (! GETPOST('hide_websitemenu'))
             	print $form->textwithpicto($langs->trans("SyntaxHelp").' '.img_help(2, $langs->trans("SyntaxHelp")), $htmltext, 1, 'none', 'inline-block', 1, 2, 'tooltipsubstitution');
             }
 		}
-		print '</div>';	// end websitehelp
+		print '</span>';	// end websitehelp
 
 
 
@@ -3319,7 +3319,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 					print '<tr>';
 					print '<td>'.$answerrecord['type'].'</td>';
 					print '<td>';
-					$backtopageurl = $_SERVER["PHP_SELF"].'?action=replacesiteconfirm&searchstring='.urlencode($searchkey).'&optioncontent='.GETPOST('optioncontent', 'az09').'&optionmeta='.GETPOST('optionmeta', 'az09').'&optionsitefiles='.GETPOST('optionsitefiles', 'az09');
+					$backtopageurl = $_SERVER["PHP_SELF"].'?action=replacesiteconfirm&searchstring='.urlencode($searchkey).'&optioncontent='.GETPOST('optioncontent', 'aZ09').'&optionmeta='.GETPOST('optionmeta', 'aZ09').'&optionsitefiles='.GETPOST('optionsitefiles', 'aZ09');
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcss&website='.$website->ref.'&backtopage='.urlencode($backtopageurl).'">'.$langs->trans("EditCss").'</a>';
 					print '</td>';
 					print '<td class="tdoverflow100">';

@@ -177,7 +177,7 @@ class ActionsTicket
      */
     public function viewTicketOriginalMessage($user, $action, $object)
     {
-        global $langs;
+        global $conf, $langs;
 
         print '<!-- initial message of ticket -->'."\n";
         if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
@@ -208,7 +208,7 @@ class ActionsTicket
             $msg = GETPOST('message_initial', 'alpha') ? GETPOST('message_initial', 'alpha') : $object->message;
             include_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
             $uselocalbrowser = true;
-            $doleditor = new DolEditor('message_initial', $msg, '100%', 250, 'dolibarr_details', 'In', true, $uselocalbrowser);
+            $doleditor = new DolEditor('message_initial', $msg, '100%', 250, 'dolibarr_details', 'In', true, $uselocalbrowser, $conf->global->FCKEDITOR_ENABLE_TICKET);
             $doleditor->Create();
         } else {
             // Deal with format differences (text / HTML)

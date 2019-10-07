@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -84,7 +84,8 @@ $hookmanager->initHooks(array('contractservicelist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('contratdet');
+$extrafields->fetch_name_optionals_label('contratdet');
+
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Security check
@@ -336,7 +337,7 @@ if ($mode == "0") $title=$langs->trans("ListOfInactiveServices");	// Must use ==
 if ($mode == "4" && $filter != "expired") $title=$langs->trans("ListOfRunningServices");
 if ($mode == "4" && $filter == "expired") $title=$langs->trans("ListOfExpiredServices");
 if ($mode == "5") $title=$langs->trans("ListOfClosedServices");
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'commercial', 0, '', '', $limit);
 
 if ($sall)
 {

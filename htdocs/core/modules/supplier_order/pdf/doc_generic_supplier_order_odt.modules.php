@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -76,7 +76,7 @@ class doc_generic_supplier_order_odt extends ModelePDFSuppliersOrders
 		$this->description = $langs->trans("DocumentModelOdt");
 		$this->scandir = 'SUPPLIER_ORDER_ADDON_PDF_ODT_PATH';	// Name of constant that is used to save list of directories to scan
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'odt';
 		$this->page_largeur = 0;
 		$this->page_hauteur = 0;
@@ -233,7 +233,7 @@ class doc_generic_supplier_order_odt extends ModelePDFSuppliersOrders
 		if ($conf->fournisseur->commande->dir_output)
 		{
             $object->fetch_thirdparty();
-            
+
             if ($object->specimen)
 			{
 				$dir = $conf->fournisseur->commande->dir_output;

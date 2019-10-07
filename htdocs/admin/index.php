@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -43,8 +43,7 @@ $wikihelp='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones'
 llxHeader('', $langs->trans("Setup"), $wikihelp);
 
 
-print load_fiche_titre($langs->trans("SetupArea"), '', 'title_setup.png');
-
+print load_fiche_titre($langs->trans("SetupArea"), '', 'tools');
 
 if (! empty($conf->global->MAIN_MOTD_SETUPPAGE))
 {

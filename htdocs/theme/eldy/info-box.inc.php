@@ -8,6 +8,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
  */
 .info-box {
 	display: block;
+    position: relative;
 	min-height: 90px;
 	background: #fff;
 	width: 100%;
@@ -54,6 +55,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 	border-bottom-right-radius: 0;
 	border-bottom-left-radius: 2px;
 	display: block;
+    overflow: hidden;
 	float: left;
 	height: 90px;
 	width: 90px;
@@ -71,6 +73,39 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 .info-box-icon > img {
 	max-width: 100%;
 }
+.info-box-icon-text{
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 90px;
+    bottom: 0px;
+    color: #ffffff;
+    background-color: rgba(0,0,0,0.1);
+    cursor: default;
+
+    font-size: 10px;
+    line-height: 15px;
+    padding: 0px 3px;
+    text-align: center;
+    opacity: 0;
+    -webkit-transition: opacity 0.5s, visibility 0s 0.5s;
+    transition: opacity 0.5s, visibility 0s 0.5s;
+}
+
+<?php if(empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS) && !empty($conf->global->MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD)){ ?>
+.info-box-icon-text{
+    opacity: 1;
+}
+<?php } ?>
+
+.info-box-sm .info-box-icon-text{
+    overflow: hidden;
+    width: 80px;
+}
+.info-box:hover .info-box-icon-text{
+    opacity: 1;
+}
+
 .info-box-content {
 	padding: 5px 10px;
 	margin-left: 90px;

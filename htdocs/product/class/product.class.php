@@ -27,7 +27,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -3487,7 +3487,7 @@ class Product extends CommonObject
      * @param  int    $id_fourn  Supplier id
      * @param  string $ref_fourn Supplier ref
      * @param  float  $quantity  Quantity minimum for price
-     * @return int                 < 0 if KO, 0 if link already exists for this product, > 0 if OK
+     * @return int               < 0 if KO, 0 if link already exists for this product, > 0 if OK
      */
     public function add_fournisseur($user, $id_fourn, $ref_fourn, $quantity)
     {
@@ -3497,6 +3497,9 @@ class Product extends CommonObject
         $now=dol_now();
 
         dol_syslog(get_class($this)."::add_fournisseur id_fourn = ".$id_fourn." ref_fourn=".$ref_fourn." quantity=".$quantity, LOG_DEBUG);
+
+        // Clean parameters
+        $quantity = price2num($quantity, 'MS');
 
         if ($ref_fourn) {
             $sql = "SELECT rowid, fk_product";
@@ -3524,7 +3527,7 @@ class Product extends CommonObject
         if ($ref_fourn) { $sql.= " AND ref_fourn = '".$this->db->escape($ref_fourn)."'";
         } else { $sql.= " AND (ref_fourn = '' OR ref_fourn IS NULL)";
         }
-        $sql.= " AND quantity = '".$quantity."'";
+        $sql.= " AND quantity = ".$quantity;
         $sql.= " AND fk_product = ".$this->id;
         $sql.= " AND entity IN (".getEntity('productsupplierprice').")";
 
@@ -5037,12 +5040,12 @@ class Product extends CommonObject
         // Process
         foreach($to_del as $del) {
             if ($c->fetch($del) > 0) {
-                $c->del_type($this, 'product');
+            	$c->del_type($this, Categorie::TYPE_PRODUCT);
             }
         }
         foreach ($to_add as $add) {
             if ($c->fetch($add) > 0) {
-                $c->add_type($this, 'product');
+            	$c->add_type($this, Categorie::TYPE_PRODUCT);
             }
         }
 

@@ -33,7 +33,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -136,7 +136,7 @@ class Form
 			if (! empty($notabletag)) $ret.=' ';
 			if (empty($notabletag) && GETPOST('action', 'aZ09') != 'edit'.$htmlname && $perm) $ret.='</td>';
 			if (empty($notabletag) && GETPOST('action', 'aZ09') != 'edit'.$htmlname && $perm) $ret.='<td class="right">';
-			if ($htmlname && GETPOST('action', 'aZ09') != 'edit'.$htmlname && $perm) $ret.='<a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;'.$paramid.'='.$object->id.$moreparam.'">'.img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1)).'</a>';
+			if ($htmlname && GETPOST('action', 'aZ09') != 'edit'.$htmlname && $perm) $ret.='<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;'.$paramid.'='.$object->id.$moreparam.'">'.img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1)).'</a>';
 			if (! empty($notabletag) && $notabletag == 1) $ret.=' : ';
 			if (! empty($notabletag) && $notabletag == 3) $ret.=' ';
 			if (empty($notabletag) && GETPOST('action', 'aZ09') != 'edit'.$htmlname && $perm) $ret.='</td>';
@@ -442,7 +442,7 @@ class Form
 	 *	@see	textwithpicto() Use thisfunction if you can.
 	 *  TODO Move this as static as soon as everybody use textwithpicto or @Form::textwithtooltip
 	 */
-    public function textwithtooltip($text, $htmltext, $tooltipon = 1, $direction = 0, $img = '', $extracss = '', $notabs = 2, $incbefore = '', $noencodehtmltext = 0, $tooltiptrigger = '', $forcenowrap = 0)
+    public function textwithtooltip($text, $htmltext, $tooltipon = 1, $direction = 0, $img = '', $extracss = '', $notabs = 3, $incbefore = '', $noencodehtmltext = 0, $tooltiptrigger = '', $forcenowrap = 0)
 	{
 		global $conf;
 
@@ -458,8 +458,8 @@ class Form
 		$htmltext=str_replace("\n", "", $htmltext);
 
 		$extrastyle='';
-		if ($direction < 0) { $extracss=($extracss?$extracss.' ':'').'inline-block'; $extrastyle='padding: 0px; padding-left: 3px !important;'; }
-		if ($direction > 0) { $extracss=($extracss?$extracss.' ':'').'inline-block'; $extrastyle='padding: 0px; padding-right: 3px !important;'; }
+		if ($direction < 0) { $extracss=($extracss?$extracss.' ':'').($notabs != 3 ? 'inline-block' : ''); $extrastyle='padding: 0px; padding-left: 3px !important;'; }
+		if ($direction > 0) { $extracss=($extracss?$extracss.' ':'').($notabs != 3 ? 'inline-block' : ''); $extrastyle='padding: 0px; padding-right: 3px !important;'; }
 
 		$classfortooltip='classfortooltip';
 
@@ -476,7 +476,7 @@ class Form
 		}
 		if ($tooltipon == 2 || $tooltipon == 3)
 		{
-			$paramfortooltipimg=' class="'.$classfortooltip.' inline-block'.($extracss?' '.$extracss:'').'" style="padding: 0px;'.($extrastyle?' '.$extrastyle:'').'"';
+			$paramfortooltipimg=' class="'.$classfortooltip.($notabs != 3 ? ' inline-block' : '').($extracss?' '.$extracss:'').'" style="padding: 0px;'.($extrastyle?' '.$extrastyle:'').'"';
 			if ($tooltiptrigger == '') $paramfortooltipimg.=' title="'.($noencodehtmltext?$htmltext:dol_escape_htmltag($htmltext, 1)).'"'; // Attribut to put on img tag to store tooltip
 			else $paramfortooltipimg.=' dolid="'.$tooltiptrigger.'"';
 		}
@@ -519,15 +519,15 @@ class Form
 	 *	@param	string	$text				Text to show
 	 *	@param  string	$htmltext	     	Content of tooltip
 	 *	@param	int		$direction			1=Icon is after text, -1=Icon is before text, 0=no icon
-	 * 	@param	string	$type				Type of picto ('info', 'help', 'warning', 'superadmin', 'mypicto@mymodule', ...) or image filepath or 'none'
+	 * 	@param	string	$type				Type of picto ('info', 'infoclickable', 'help', 'helpclickable', 'warning', 'superadmin', 'mypicto@mymodule', ...) or image filepath or 'none'
 	 *  @param  string	$extracss           Add a CSS style to td, div or span tag
 	 *  @param  int		$noencodehtmltext   Do not encode into html entity the htmltext
 	 *  @param	int		$notabs				0=Include table and tr tags, 1=Do not include table and tr tags, 2=use div, 3=use span
-	 *  @param  string  $tooltiptrigger     ''=Tooltip on hover, 'abc'=Tooltip on click (abc is a unique key, clickable link is on image or on link if param $type='none')
+	 *  @param  string  $tooltiptrigger     ''=Tooltip on hover, 'abc'=Tooltip on click (abc is a unique key, clickable link is on image or on link if param $type='none' or on both if $type='xxxclickable')
 	 *  @param	int		$forcenowrap		Force no wrap between text and picto (works with notabs=2 only)
 	 * 	@return	string						HTML code of text, picto, tooltip
 	 */
-    public function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = '', $noencodehtmltext = 0, $notabs = 2, $tooltiptrigger = '', $forcenowrap = 0)
+    public function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = '', $noencodehtmltext = 0, $notabs = 3, $tooltiptrigger = '', $forcenowrap = 0)
 	{
 		global $conf, $langs;
 
@@ -541,7 +541,7 @@ class Form
 		// If info or help with no javascript, show only text
 		if (empty($conf->use_javascript_ajax))
 		{
-			if ($type == 'info' || $type == 'help')	return $text;
+			if ($type == 'info' || $type == 'infoclickable' || $type == 'help' || $type == 'helpclickable')	return $text;
 			else
 			{
 				$alt = $htmltext;
@@ -552,7 +552,7 @@ class Form
 		// If info or help with smartphone, show only text (tooltip hover can't works)
 		if (! empty($conf->dol_no_mouse_hover) && empty($tooltiptrigger))
 		{
-			if ($type == 'info' || $type == 'help') return $text;
+			if ($type == 'info' || $type == 'infoclickable' || $type == 'help' || $type == 'helpclickable') return $text;
 		}
 		// If info or help with smartphone, show only text (tooltip on click does not works with dialog on smaprtphone)
 		//if (! empty($conf->dol_no_mouse_hover) && ! empty($tooltiptrigger))
@@ -563,12 +563,13 @@ class Form
 		$img='';
 		if ($type == 'info') $img = img_help(0, $alt);
 		elseif ($type == 'help') $img = img_help(($tooltiptrigger != '' ? 2 : 1), $alt);
+		elseif ($type == 'helpclickable') $img = img_help(($tooltiptrigger != '' ? 2 : 1), $alt);
 		elseif ($type == 'superadmin') $img = img_picto($alt, 'redstar');
 		elseif ($type == 'admin') $img = img_picto($alt, 'star');
 		elseif ($type == 'warning') $img = img_warning($alt);
 		elseif ($type != 'none') $img = img_picto($alt, $type);   // $type can be an image path
 
-		return $this->textwithtooltip($text, $htmltext, (($tooltiptrigger && ! $img)?3:2), $direction, $img, $extracss, $notabs, '', $noencodehtmltext, $tooltiptrigger, $forcenowrap);
+		return $this->textwithtooltip($text, $htmltext, ((($tooltiptrigger && ! $img) || strpos($type, 'clickable'))?3:2), $direction, $img, $extracss, $notabs, '', $noencodehtmltext, $tooltiptrigger, $forcenowrap);
 	}
 
 	/**
@@ -2064,6 +2065,11 @@ class Form
 		$out='';
 		$outarray=array();
 
+        // Units
+        if ($conf->global->PRODUCT_USE_UNITS) {
+            $langs->load('other');
+        }
+
 		$warehouseStatusArray = array();
 		if (! empty($warehouseStatus))
 		{
@@ -2114,8 +2120,8 @@ class Form
 		}
         // Units
         if (! empty($conf->global->PRODUCT_USE_UNITS)) {
-            $sql .= ', u.label as unit_long, u.short_label as unit_short';
-            $selectFields .= ', unit_long, unit_short';
+            $sql .= ", u.label as unit_long, u.short_label as unit_short, p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units";
+            $selectFields .= ', unit_long, unit_short, p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units';
         }
 
 		// Multilang : we add translation
@@ -2408,6 +2414,42 @@ class Form
 		$outdurationvalue=$outtype == Product::TYPE_SERVICE?substr($objp->duration, 0, dol_strlen($objp->duration)-1):'';
 		$outdurationunit=$outtype == Product::TYPE_SERVICE?substr($objp->duration, -1):'';
 
+        // Units
+        $outvalUnits = '';
+        if ($conf->global->PRODUCT_USE_UNITS) {
+            if (!empty($objp->unit_short)) {
+                $outvalUnits .= ' - ' . $objp->unit_short;
+            }
+            if (!empty($objp->weight) && $objp->weight_units!==null) {
+                $unitToShow = showDimensionInBestUnit($objp->weight, $objp->weight_units, 'weight', $langs);
+                $outvalUnits .= ' - ' . $unitToShow;
+            }
+            if ((!empty($objp->length) || !empty($objp->width) || !empty($objp->height)) && $objp->length_units!==null) {
+                $unitToShow = $objp->length . ' x ' . $objp->width . ' x ' . $objp->height . ' ' . measuring_units_string($objp->length_units, 'size');
+                $outvalUnits .= ' - ' . $unitToShow;
+            }
+            if (!empty($objp->surface) && $objp->surface_units!==null) {
+                $unitToShow = showDimensionInBestUnit($objp->surface, $objp->surface_units, 'surface', $langs);
+                $outvalUnits .= ' - ' . $unitToShow;
+            }
+            if (!empty($objp->volume) && $objp->volume_units!==null) {
+                $unitToShow = showDimensionInBestUnit($objp->volume, $objp->volume_units, 'volume', $langs);
+                $outvalUnits .= ' - ' . $unitToShow;
+            }
+            if ($outdurationvalue && $outdurationunit) {
+                $da = array(
+                    'h' => $langs->trans('Hour'),
+                    'd' => $langs->trans('Day'),
+                    'w' => $langs->trans('Week'),
+                    'm' => $langs->trans('Month'),
+                    'y' => $langs->trans('Year')
+                );
+                if (isset($da[$outdurationunit])) {
+                    $outvalUnits .= ' - ' . $outdurationvalue . ' ' . $langs->transnoentities($da[$outdurationunit].($outdurationvalue > 1 ? 's' : ''));
+                }
+            }
+        }
+
 		$opt = '<option value="'.$objp->rowid.'"';
 		$opt.= ($objp->rowid == $selected)?' selected':'';
 		if (!empty($objp->price_by_qty_rowid) && $objp->price_by_qty_rowid > 0)
@@ -2423,16 +2465,15 @@ class Form
 		$opt.= $objp->ref;
 		if ($outbarcode) $opt.=' ('.$outbarcode.')';
 		$opt.=' - '.dol_trunc($label, $maxlengtharticle);
-        // Units
-        if (! empty($conf->global->PRODUCT_USE_UNITS)) {
-            $opt .= ' (' . $objp->unit_short . ')';
-        }
 
 		$objRef = $objp->ref;
 		if (! empty($filterkey) && $filterkey != '') $objRef=preg_replace('/('.preg_quote($filterkey).')/i', '<strong>$1</strong>', $objRef, 1);
 		$outval.=$objRef;
 		if ($outbarcode) $outval.=' ('.$outbarcode.')';
 		$outval.=' - '.dol_trunc($label, $maxlengtharticle);
+        // Units
+        $opt .= $outvalUnits;
+        $outval .= $outvalUnits;
 
 		$found=0;
 
@@ -2594,17 +2635,6 @@ class Form
 			}
 		}
 
-		if ($outdurationvalue && $outdurationunit)
-		{
-			$da=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
-			if (isset($da[$outdurationunit]))
-			{
-				$key = $da[$outdurationunit].($outdurationvalue > 1?'s':'');
-				$opt.= ' - '.$outdurationvalue.' '.$langs->trans($key);
-				$outval.=' - '.$outdurationvalue.' '.$langs->transnoentities($key);
-			}
-		}
-
 		$opt.= "</option>\n";
 		$optJson = array('key'=>$outkey, 'value'=>$outref, 'label'=>$outval, 'label2'=>$outlabel, 'desc'=>$outdesc, 'type'=>$outtype, 'price_ht'=>price2num($outprice_ht), 'price_ttc'=>price2num($outprice_ttc), 'pricebasetype'=>$outpricebasetype, 'tva_tx'=>$outtva_tx, 'qty'=>$outqty, 'discount'=>$outdiscount, 'duration_value'=>$outdurationvalue, 'duration_unit'=>$outdurationunit);
 	}
@@ -2679,16 +2709,28 @@ class Form
 		$outarray=array();
 
 		$langs->load('stocks');
+        // Units
+        if ($conf->global->PRODUCT_USE_UNITS) {
+            $langs->load('other');
+        }
 
 		$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration, p.fk_product_type,";
 		$sql.= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.remise_percent, pfp.remise, pfp.unitprice,";
 		$sql.= " pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, pfp.fk_soc, s.nom as name,";
 		$sql.= " pfp.supplier_reputation";
+        // Units
+        if ($conf->global->PRODUCT_USE_UNITS) {
+            $sql .= ", u.label as unit_long, u.short_label as unit_short, p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units";
+        }
         if (! empty($conf->barcode->enabled)) $sql.= " ,pfp.barcode";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
 		if ($socid) $sql.= " AND pfp.fk_soc = ".$socid;
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pfp.fk_soc = s.rowid";
+        // Units
+        if ($conf->global->PRODUCT_USE_UNITS) {
+            $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_units u ON u.rowid = p.fk_unit";
+        }
 		$sql.= " WHERE p.entity IN (".getEntity('product').")";
 		$sql.= " AND p.tobuy = 1";
 		if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$this->db->escape($filtertype);
@@ -2749,6 +2791,42 @@ class Form
 				$outdurationvalue=$outtype == Product::TYPE_SERVICE?substr($objp->duration, 0, dol_strlen($objp->duration)-1):'';
 				$outdurationunit=$outtype == Product::TYPE_SERVICE?substr($objp->duration, -1):'';
 
+                // Units
+                $outvalUnits = '';
+                if ($conf->global->PRODUCT_USE_UNITS) {
+                    if (!empty($objp->unit_short)) {
+                        $outvalUnits .= ' - ' . $objp->unit_short;
+                    }
+                    if (!empty($objp->weight) && $objp->weight_units!==null) {
+                        $unitToShow = showDimensionInBestUnit($objp->weight, $objp->weight_units, 'weight', $langs);
+                        $outvalUnits .= ' - ' . $unitToShow;
+                    }
+                    if ((!empty($objp->length) || !empty($objp->width) || !empty($objp->height)) && $objp->length_units!==null) {
+                        $unitToShow = $objp->length . ' x ' . $objp->width . ' x ' . $objp->height . ' ' . measuring_units_string($objp->length_units, 'size');
+                        $outvalUnits .= ' - ' . $unitToShow;
+                    }
+                    if (!empty($objp->surface) && $objp->surface_units!==null) {
+                        $unitToShow = showDimensionInBestUnit($objp->surface, $objp->surface_units, 'surface', $langs);
+                        $outvalUnits .= ' - ' . $unitToShow;
+                    }
+                    if (!empty($objp->volume) && $objp->volume_units!==null) {
+                        $unitToShow = showDimensionInBestUnit($objp->volume, $objp->volume_units, 'volume', $langs);
+                        $outvalUnits .= ' - ' . $unitToShow;
+                    }
+                    if ($outdurationvalue && $outdurationunit) {
+                        $da = array(
+                            'h' => $langs->trans('Hour'),
+                            'd' => $langs->trans('Day'),
+                            'w' => $langs->trans('Week'),
+                            'm' => $langs->trans('Month'),
+                            'y' => $langs->trans('Year')
+                        );
+                        if (isset($da[$outdurationunit])) {
+                            $outvalUnits .= ' - ' . $outdurationvalue . ' ' . $langs->transnoentities($da[$outdurationunit].($outdurationvalue > 1 ? 's' : ''));
+                        }
+                    }
+                }
+
 				$opt = '<option value="'.$outkey.'"';
 				if ($selected && $selected == $objp->idprodfournprice) $opt.= ' selected';
 				if (empty($objp->idprodfournprice) && empty($alsoproductwithnosupplierprice)) $opt.=' disabled';
@@ -2773,8 +2851,11 @@ class Form
 				if (! empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn))
 					$outval.=' ('.$objRefFourn.')';
 				$outval.=' - ';
-				$opt.=dol_trunc($label, 72).' - ';
-				$outval.=dol_trunc($label, 72).' - ';
+				$opt.=dol_trunc($label, 72);
+				$outval.=dol_trunc($label, 72);
+                // Units
+                $opt .= $outvalUnits;
+                $outval .= $outvalUnits;
 
 				if (! empty($objp->idprodfournprice))
 				{
@@ -2799,15 +2880,15 @@ class Form
 					}
 					if ($objp->quantity == 1)
 					{
-						$opt.= price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 1, $langs, 0, 0, -1, $conf->currency)."/";
-						$outval.= price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 0, $langs, 0, 0, -1, $conf->currency)."/";
+						$opt.= ' - '.price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 1, $langs, 0, 0, -1, $conf->currency)."/";
+						$outval.= ' - '.price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 0, $langs, 0, 0, -1, $conf->currency)."/";
 						$opt.= $langs->trans("Unit");	// Do not use strtolower because it breaks utf8 encoding
 						$outval.=$langs->transnoentities("Unit");
 					}
 					else
 					{
-						$opt.= price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 1, $langs, 0, 0, -1, $conf->currency)."/".$objp->quantity;
-						$outval.= price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 0, $langs, 0, 0, -1, $conf->currency)."/".$objp->quantity;
+						$opt.= ' - '.price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 1, $langs, 0, 0, -1, $conf->currency)."/".$objp->quantity;
+						$outval.= ' - '.price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 0, $langs, 0, 0, -1, $conf->currency)."/".$objp->quantity;
 						$opt.= ' '.$langs->trans("Units");	// Do not use strtolower because it breaks utf8 encoding
 						$outval.= ' '.$langs->transnoentities("Units");
 					}
@@ -2850,13 +2931,13 @@ class Form
 				{
 					if (empty($alsoproductwithnosupplierprice))     // No supplier price defined for couple product/supplier
 					{
-						$opt.= $langs->trans("NoPriceDefinedForThisSupplier");
-						$outval.=$langs->transnoentities("NoPriceDefinedForThisSupplier");
+						$opt.= ' - '.$langs->trans("NoPriceDefinedForThisSupplier");
+						$outval.=' - '.$langs->transnoentities("NoPriceDefinedForThisSupplier");
 					}
 					else                                            // No supplier price defined for product, even on other suppliers
 					{
-						$opt.= $langs->trans("NoPriceDefinedForThisSupplier");
-						$outval.=$langs->transnoentities("NoPriceDefinedForThisSupplier");
+						$opt.= ' - '.$langs->trans("NoPriceDefinedForThisSupplier");
+						$outval.=' - '.$langs->transnoentities("NoPriceDefinedForThisSupplier");
 					}
 				}
 				$opt .= "</option>\n";
@@ -6481,6 +6562,7 @@ class Form
 
 		if ($rendermode == 0)
 		{
+			$arrayselected=array();
 			$cate_arbo = $this->select_all_categories($type, '', 'parent', 64, 0, 1);
 			foreach($categories as $c) {
 				$arrayselected[] = $c->id;
@@ -7014,8 +7096,8 @@ class Form
 		// Left part of banner
 		if ($morehtmlleft)
 		{
-			if ($conf->browser->layout == 'phone') $ret.='<div class="floatleft">'.$morehtmlleft.'</div>';    // class="center" to have photo in middle
-			else $ret.='<div class="inline-block floatleft">'.$morehtmlleft.'</div>';
+			if ($conf->browser->layout == 'phone') $ret.='<!-- morehmltleft --><div class="floatleft">'.$morehtmlleft.'</div>';    // class="center" to have photo in middle
+			else $ret.='<!-- morehmltleft --><div class="inline-block floatleft">'.$morehtmlleft.'</div>';
 		}
 
 		//if ($conf->browser->layout == 'phone') $ret.='<div class="clearboth"></div>';
@@ -7368,11 +7450,7 @@ class Form
 	 */
     public function showFilterButtons()
 	{
-		global $conf, $langs;
-
 		$out='<div class="nowrap">';
-		//$out.='<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-		//$out.='<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 		$out.='<button type="submit" class="liste_titre button_search" name="button_search_x" value="x"><span class="fa fa-search"></span></button>';
 		$out.='<button type="submit" class="liste_titre button_removefilter" name="button_removefilter_x" value="x"><span class="fa fa-remove"></span></button>';
 		$out.='</div>';
@@ -7428,7 +7506,7 @@ class Form
 	 */
     public function showFilterAndCheckAddButtons($addcheckuncheckall = 0, $cssclass = 'checkforaction', $calljsfunction = 0)
 	{
-		$out.=$this->showFilterButtons();
+		$out=$this->showFilterButtons();
 		if ($addcheckuncheckall)
 		{
 			$out.=$this->showCheckAddButtons($cssclass, $calljsfunction);

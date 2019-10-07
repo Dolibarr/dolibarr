@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 
@@ -87,7 +87,7 @@ $week=GETPOST("week", "int")?GETPOST("week", "int"):date("W");
 $day=GETPOST("day", "int")?GETPOST("day", "int"):date("d");
 $pid=GETPOST("search_projectid", "int", 3)?GETPOST("search_projectid", "int", 3):GETPOST("projectid", "int", 3);
 $status=GETPOST("search_status", 'aZ09')?GETPOST("search_status", 'aZ09'):GETPOST("status", 'aZ09');		// status may be 0, 50, 100, 'todo'
-$type=GETPOST("search_type", 'az09')?GETPOST("search_type", 'az09'):GETPOST("type", 'az09');
+$type=GETPOST("search_type", 'aZ09')?GETPOST("search_type", 'aZ09'):GETPOST("type", 'aZ09');
 $maxprint=(isset($_GET["maxprint"])?GETPOST("maxprint"):$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
 if (GETPOST('search_actioncode', 'array'))
@@ -174,6 +174,26 @@ if ($action =='delete_action')
 /*
  * View
  */
+$parameters = array(
+	'socid' => $socid,
+	'status' => $status,
+	'year' => $year,
+	'month' => $month,
+	'day' => $day,
+	'type' => $type,
+	'maxprint' => $maxprint,
+	'filter' => $filter,
+	'filtert' => $filtert,
+	'showbirthday' => $showbirthday,
+	'canedit' => $canedit,
+	'optioncss' => $optioncss,
+	'actioncode' => $actioncode,
+	'pid' => $pid,
+	'resourceid' => $resourceid,
+	'usergroup' => $usergroup,
+);
+$reshook = $hookmanager->executeHooks('beforeAgenda', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 $help_url='EN:Module_Agenda_En|FR:Module_Agenda|ES:M&oacute;dulo_Agenda';
 llxHeader('', $langs->trans("Agenda"), $help_url);

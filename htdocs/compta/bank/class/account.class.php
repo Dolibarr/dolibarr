@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -989,12 +989,12 @@ class Account extends CommonObject
 		// Process
 		foreach($to_del as $del) {
 			if ($c->fetch($del) > 0) {
-				$c->del_type($this, 'account');
+				$c->del_type($this, Categorie::TYPE_ACCOUNT);
 			}
 		}
 		foreach ($to_add as $add) {
 			if ($c->fetch($add) > 0) {
-				$c->add_type($this, 'account');
+				$c->add_type($this, Categorie::TYPE_ACCOUNT);
 			}
 		}
 

@@ -23,7 +23,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -103,7 +103,7 @@ $extrafields = new ExtraFields($db);
 $form=new Form($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('product');
+$extrafields->fetch_name_optionals_label('product');
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 if (empty($action)) $action='list';
@@ -505,7 +505,7 @@ if ($resql)
 	print '<input type="hidden" name="type" value="'.$type.'">';
 	if (empty($arrayfields['p.fk_product_type']['checked'])) print '<input type="hidden" name="search_type" value="'.dol_escape_htmltag($search_type).'">';
 
-	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_products.png', 0, $newcardbutton, '', $limit);
+	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'products', 0, $newcardbutton, '', $limit);
 
 	$topicmail="Information";
 	$modelmail="product";
@@ -537,7 +537,7 @@ if ($resql)
 		$categoriesProductArr = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', '', 64, 0, 1);
         $categoriesProductArr[-2] = '- ' . $langs->trans('NotCategorized') . ' -';
         $moreforfilter.=Form::multiselectarray('search_category_product_list', $categoriesProductArr, $searchCategoryProductList, 0, 0, 'minwidth300');
-        $moreforfilter.='<input type="checkbox" class="valignmiddle" name="search_category_product_operator" value="1"' . ($searchCategoryProductOperator==1 ? ' checked="checked"' : '') . '/> ' . $langs->trans('or');
+        $moreforfilter.=' <input type="checkbox" class="valignmiddle" name="search_category_product_operator" value="1"' . ($searchCategoryProductOperator==1 ? ' checked="checked"' : '') . '/> ' . $langs->trans('UseOrOperatorForCategories');
         $moreforfilter.='</div>';
 	}
 

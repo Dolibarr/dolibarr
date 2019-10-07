@@ -33,6 +33,51 @@ ALTER TABLE llx_account_bookkeeping ADD COLUMN date_export datetime DEFAULT NULL
 ALTER TABLE llx_expensereport ADD COLUMN paid smallint default 0 NOT NULL;
 UPDATE llx_expensereport set paid = 1 WHERE fk_statut = 6 and paid = 0;
 
+UPDATE llx_c_units SET short_label = 'i' WHERE code = 'MI';
+UPDATE llx_c_units SET unit_type = 'weight', short_label = 'kg', scale = 0 WHERE code = 'KG';
+UPDATE llx_c_units SET unit_type = 'weight', short_label = 'g', scale = -3 WHERE code = 'G';
+UPDATE llx_c_units SET unit_type = 'time' WHERE code IN ('S','H','D');
+UPDATE llx_c_units SET unit_type = 'size' WHERE code IN ('M','LM');
+UPDATE llx_c_units SET label = 'SizeUnitm', scale = 0 WHERE code IN ('M');
+UPDATE llx_c_units SET active = 0, scale = 0 WHERE code IN ('LM');
+UPDATE llx_c_units SET unit_type = 'surface', scale = 0 WHERE code IN ('M2');
+UPDATE llx_c_units SET unit_type = 'volume', scale = 0 WHERE code IN ('M3','L');
+UPDATE llx_c_units SET scale = -3, active = 0 WHERE code IN ('L');
+UPDATE llx_c_units SET label = 'VolumeUnitm3' WHERE code IN ('M3');
+UPDATE llx_c_units SET label = 'SurfaceUnitm2' WHERE code IN ('M2');
+
+
+-- For v11
+
+create table llx_categorie_warehouse
+(
+  fk_categorie  integer NOT NULL,
+  fk_warehouse  integer NOT NULL,
+  import_key    varchar(14)
+) ENGINE=innodb;
+
+ALTER TABLE llx_categorie_warehouse ADD PRIMARY KEY pk_categorie_warehouse (fk_categorie, fk_warehouse);
+ALTER TABLE llx_categorie_warehouse ADD INDEX idx_categorie_warehouse_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_warehouse ADD INDEX idx_categorie_warehouse_fk_warehouse (fk_warehouse);
+
+ALTER TABLE llx_categorie_warehouse ADD CONSTRAINT fk_categorie_warehouse_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_warehouse ADD CONSTRAINT fk_categorie_warehouse_fk_warehouse_rowid FOREIGN KEY (fk_warehouse) REFERENCES llx_entrepot (rowid);
+
+
+create table llx_holiday_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_holiday_extrafields ADD INDEX idx_holiday_extrafields (fk_object);
+
+ALTER TABLE llx_societe_rib MODIFY label varchar(200);
+
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('USER_SENTBYMAIL','Email sent','Executed when an email is sent from user card','user',300);
+
 create table llx_entrepot_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
@@ -95,13 +140,13 @@ ALTER TABLE llx_accounting_account MODIFY COLUMN rowid bigint AUTO_INCREMENT;
 
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN  date_start	datetime   DEFAULT NULL;
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN  date_end	datetime   DEFAULT NULL;
-  
+
 
 create table llx_c_hrm_public_holiday
 (
   id					integer AUTO_INCREMENT PRIMARY KEY,
   entity				integer	DEFAULT 0 NOT NULL,	-- multi company id, 0 = all
-  fk_country			integer,			
+  fk_country			integer,
   code		    		varchar(62),
   dayrule               varchar(64) DEFAULT '', 	-- 'easter', 'eastermonday', ...
   day					integer,
@@ -174,3 +219,76 @@ create table llx_adherent_type_lang
   email          text,
   import_key varchar(14) DEFAULT NULL
 )ENGINE=innodb;
+
+create table llx_fichinter_rec
+(
+	rowid				integer AUTO_INCREMENT PRIMARY KEY,
+	titre				varchar(50) NOT NULL,
+	entity				integer DEFAULT 1 NOT NULL,	 -- multi company id
+	fk_soc				integer DEFAULT NULL,
+	datec				datetime,  -- date de creation
+	fk_contrat			integer DEFAULT 0,          -- contrat auquel est rattache la fiche
+	fk_user_author		integer,                    -- createur
+	fk_projet			integer,                    -- projet auquel est associe la facture
+	duree				real,                       -- duree totale de l'intervention
+	description			text,
+	modelpdf			varchar(50),
+	note_private		text,
+	note_public			text,
+	frequency			integer,					-- frequency (for example: 3 for every 3 month)
+	unit_frequency		varchar(2) DEFAULT 'm',		-- 'm' for month (date_when must be a day <= 28), 'y' for year, ...
+	date_when			datetime DEFAULT NULL,		-- date for next gen (when an invoice is generated, this field must be updated with next date)
+	date_last_gen		datetime DEFAULT NULL,		-- date for last gen (date with last successfull generation of invoice)
+	nb_gen_done			integer DEFAULT NULL,		-- nb of generation done (when an invoice is generated, this field must incremented)
+	nb_gen_max			integer DEFAULT NULL,		-- maximum number of generation
+	auto_validate		integer NULL DEFAULT NULL	-- statut of the generated intervention
+
+)ENGINE=innodb;
+
+ALTER TABLE llx_fichinter_rec ADD UNIQUE INDEX idx_fichinter_rec_uk_titre (titre, entity);
+ALTER TABLE llx_fichinter_rec ADD INDEX idx_fichinter_rec_fk_soc (fk_soc);
+ALTER TABLE llx_fichinter_rec ADD INDEX idx_fichinter_rec_fk_user_author (fk_user_author);
+ALTER TABLE llx_fichinter_rec ADD INDEX idx_fichinter_rec_fk_projet (fk_projet);
+ALTER TABLE llx_fichinter_rec ADD CONSTRAINT fk_fichinter_rec_fk_user_author    FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);
+ALTER TABLE llx_fichinter_rec ADD CONSTRAINT fk_fichinter_rec_fk_projet         FOREIGN KEY (fk_projet) REFERENCES llx_projet (rowid);
+
+create table llx_fichinterdet_rec
+(
+	rowid				integer AUTO_INCREMENT PRIMARY KEY,
+	fk_fichinter		integer NOT NULL,
+	date				datetime,				-- date de la ligne d'intervention
+	description			text,					-- description de la ligne d'intervention
+	duree				integer,				-- duree de la ligne d'intervention
+	rang				integer DEFAULT 0,		-- ordre affichage sur la fiche
+	total_ht			DOUBLE(24, 8) NULL DEFAULT NULL,
+	subprice			DOUBLE(24, 8) NULL DEFAULT NULL,
+	fk_parent_line		integer NULL DEFAULT NULL,
+	fk_product			integer NULL DEFAULT NULL,
+	label				varchar(255) NULL DEFAULT NULL,
+	tva_tx				DOUBLE(6, 3) NULL DEFAULT NULL,
+	localtax1_tx		DOUBLE(6, 3) NULL DEFAULT 0,
+	localtax1_type		VARCHAR(1) NULL DEFAULT NULL,
+	localtax2_tx		DOUBLE(6, 3) NULL DEFAULT 0,
+	localtax2_type		VARCHAR(1) NULL DEFAULT NULL,
+	qty					double NULL DEFAULT NULL,
+	remise_percent		double NULL DEFAULT 0,
+	remise				double NULL DEFAULT 0,
+	fk_remise_except	integer NULL DEFAULT NULL,
+	price				DOUBLE(24, 8) NULL DEFAULT NULL,
+	total_tva			DOUBLE(24, 8) NULL DEFAULT NULL,
+	total_localtax1		DOUBLE(24, 8) NULL DEFAULT 0,
+	total_localtax2		DOUBLE(24, 8) NULL DEFAULT 0,
+	total_ttc			DOUBLE(24, 8) NULL DEFAULT NULL,
+	product_type		INTEGER NULL DEFAULT 0,
+	date_start			datetime NULL DEFAULT NULL,
+	date_end			datetime NULL DEFAULT NULL,
+	info_bits			INTEGER NULL DEFAULT 0,
+	buy_price_ht		DOUBLE(24, 8) NULL DEFAULT 0,
+	fk_product_fournisseur_price	integer NULL DEFAULT NULL,
+	fk_code_ventilation	integer NOT NULL DEFAULT 0,
+	fk_export_commpta	integer NOT NULL DEFAULT 0,
+	special_code		integer UNSIGNED NULL DEFAULT 0,
+	fk_unit				integer NULL DEFAULT NULL,
+	import_key			varchar(14) NULL DEFAULT NULL
+)ENGINE=innodb;
+

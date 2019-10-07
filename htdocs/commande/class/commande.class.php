@@ -23,7 +23,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -1266,7 +1266,7 @@ class Commande extends CommonOrder
 		$object->fetch_optionals($object->id);
 
 		$e = new ExtraFields($this->db);
-		$element_extrafields = $e->fetch_name_optionals_label($this->element);
+		$element_extrafields = $e->fetch_name_optionals_label($this->table_element);
 
 		foreach($object->array_options as $options_key => $value) {
 			if(array_key_exists(str_replace('options_', '', $options_key), $element_extrafields)){

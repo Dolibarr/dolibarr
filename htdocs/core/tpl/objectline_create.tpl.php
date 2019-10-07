@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Need to have following variables defined:
  * $object (invoice, order, ...)
@@ -63,7 +63,7 @@ if (in_array($object->element, array('propal','commande','order','facture','fact
 
 // Lines for extrafield
 $objectline = null;
-if (!empty($extrafieldsline))
+if (!empty($extrafields))
 {
 	if ($this->table_element_line=='commandedet') {
 		$objectline = new OrderLine($this->db);
@@ -475,7 +475,7 @@ if ($nolinesbefore) {
 
 <?php
 if (is_object($objectline)) {
-	print $objectline->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+	print $objectline->showOptionals($extrafields, 'edit', array('colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
 }
 
 if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $dateSelector && GETPOST('type') != '0')	// We show date field if required
@@ -850,11 +850,11 @@ function setforpredef() {
 	console.log("Call setforpredef. We hide some fields and show dates");
 	jQuery("#select_type").val(-1);
 	jQuery("#prod_entry_mode_free").prop('checked',false).change();
-	jQuery("#prod_entry_mode_predef").prop('checked',true).change(
+	jQuery("#prod_entry_mode_predef").prop('checked',true).change();
 	<?php if (empty($conf->global->MAIN_EDIT_PREDEF_PRICEHT)) { ?>
 		jQuery("#price_ht").val('').hide();
 	<?php } ?>
-	jQuery("#price_ht").val('')
+	jQuery("#price_ht").val('');
 	jQuery("#price_ht, #multicurrency_price_ht, #price_ttc, #fourn_ref, #tva_tx, #title_vat, #title_up_ht, #title_up_ht_currency, #title_up_ttc, #title_up_ttc_currency").hide();
 	jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").hide();
 	jQuery("#buying_price").show();

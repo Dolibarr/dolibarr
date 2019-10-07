@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -66,19 +66,20 @@ function fichinter_prepare_head($object)
 	if ($conf->resource->enabled)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
- 		$nbResource = 0;
-		$objectres=new Dolresource($db);
-		if (is_array($objectres->available_resources))
-		{
-	 		foreach ($objectres->available_resources as $modresources => $resources)
-			{
-				$resources=(array) $resources;  // To be sure $resources is an array
-				foreach($resources as $resource_obj)
-				{
-					$linked_resources = $object->getElementResources('fichinter', $object->id, $resource_obj);
-				}
-			}
-		}
+		$objectres = new Dolresource($db);
+		$linked_resources = $objectres->getElementResources('fichinter', $object->id);
+		$nbResource = (is_array($linked_resources)?count($linked_resources):0);
+		// if (is_array($objectres->available_resources))
+		// {
+	 	// 	foreach ($objectres->available_resources as $modresources => $resources)
+		// 	{
+		// 		$resources=(array) $resources;  // To be sure $resources is an array
+		// 		foreach($resources as $resource_obj)
+		// 		{
+		// 			$linked_resources = $object->getElementResources('fichinter', $object->id, $resource_obj);
+		// 		}
+		// 	}
+		// }
 
    		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=fichinter&element_id='.$object->id;
 		$head[$h][1] = $langs->trans("Resources");

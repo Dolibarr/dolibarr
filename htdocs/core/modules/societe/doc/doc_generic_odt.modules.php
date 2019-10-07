@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -66,7 +66,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$this->description = $langs->trans("DocumentModelOdt");
 		$this->scandir = 'COMPANY_ADDON_PDF_ODT_PATH';	// Name of constant that is used to save list of directories to scan
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'odt';
 		$this->page_largeur = 0;
 		$this->page_hauteur = 0;
@@ -78,7 +78,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 		$this->option_logo = 1;                    // Affiche logo
 
-		// Recupere emmetteur
+		// Retrieves transmitter
 		$this->emetteur=$mysoc;
 		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // Par defaut, si n'etait pas defini
 	}
@@ -94,7 +94,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	{
 		global $conf,$langs;
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$langs->loadLangs(array("companies", "errors"));
 
 		$form = new Form($this->db);

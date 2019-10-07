@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Put here all includes required by your class file
@@ -60,6 +60,7 @@ class Stripe extends CommonObject
 	public $type;
 
 	public $code;
+	public $declinecode;
 
 	public $message;
 
@@ -305,16 +306,18 @@ class Stripe extends CommonObject
 	 * @param   string  $currency_code                      Currency code
 	 * @param   string  $tag                                Tag
 	 * @param   string  $description                        Description
-	 * @param	Societe	$object							    Object to pay with Stripe
+	 * @param	mixed	$object							    Object to pay with Stripe
 	 * @param	string 	$customer							Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
 	 * @param	string	$key							    ''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int		$status							    Status (0=test, 1=live)
 	 * @param	int		$usethirdpartyemailforreceiptemail	1=use thirdparty email for receipt
 	 * @param	int		$mode		                        automatic=automatic confirmation/payment when conditions are ok, manual=need to call confirm() on intent
 	 * @param   boolean $confirmnow                         false=default, true=try to confirm immediatly after create (if conditions are ok)
+	 * @param   string  $payment_method                     'pm_....' (if known)
+	 * @param   string  $off_session                        If we use an already known payment method to pay off line.
 	 * @return 	\Stripe\PaymentIntent|null 			        Stripe PaymentIntent or null if not found and failed to create
 	 */
-	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false)
+	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false, $payment_method = null, $off_session = 0)
 	{
 		global $conf;
 
@@ -335,7 +338,7 @@ class Stripe extends CommonObject
 		} elseif ($fee < $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
 		    $fee = $conf->global->STRIPE_APPLICATION_FEE_MINIMAL;
 		}
-				if (! in_array($currency, $arrayzerounitcurrency)) $stripefee = round($fee * 100);
+				if (! in_array($currency_code, $arrayzerounitcurrency)) $stripefee = round($fee * 100);
 				else $stripefee = round($fee);
 
 		$paymentintent = null;
@@ -411,6 +414,16 @@ class Stripe extends CommonObject
     		// payment_method =
     		// payment_method_types = array('card')
             //var_dump($dataforintent);
+    		if ($off_session)
+    		{
+    		    unset($dataforintent['setup_future_usage']);
+    		    $dataforintent["off_session"] = true;
+    		}
+    		if (! is_null($payment_method))
+    		{
+    			$dataforintent["payment_method"] = $payment_method;
+    			$description.=' - '.$payment_method;
+    		}
 
     		if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $stripefee > 0)
     		{
@@ -434,7 +447,6 @@ class Stripe extends CommonObject
     				$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array("idempotency_key" => "$description", "stripe_account" => $key));
     			    //$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array("stripe_account" => $key));
     			}
-    			//var_dump($paymentintent->id);
 
     			// Store the payment intent
     			if (is_object($object))
@@ -479,19 +491,29 @@ class Stripe extends CommonObject
     			    $_SESSION["stripe_payment_intent"] = $paymentintent;
     			}
     		}
+    		catch(Stripe\Error\Card $e)
+    		{
+    			$error++;
+    			$this->error = $e->getMessage();
+    			$this->code = $e->getStripeCode();
+    			$this->declinecode = $e->getDeclineCode();
+    		}
     		catch(Exception $e)
     		{
     		    /*var_dump($dataforintent);
     		    var_dump($description);
     		    var_dump($key);
     		    var_dump($paymentintent);
-    		    var_dump($e->getMessage());*/
-                $error++;
+    		    var_dump($e->getMessage());
+    		    var_dump($e);*/
+    		    $error++;
     			$this->error = $e->getMessage();
+    			$this->code = '';
+    			$this->declinecode = '';
     		}
 		}
 
-		dol_syslog("getPaymentIntent return error=".$error, LOG_INFO, -1);
+		dol_syslog("getPaymentIntent return error=".$error." this->error=".$this->error, LOG_INFO, -1);
 
 		if (! $error)
 		{
@@ -654,7 +676,7 @@ class Stripe extends CommonObject
 	 * @param	string					$stripeacc						''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int						$status							Status (0=test, 1=live)
 	 * @param	int						$createifnotlinkedtostripe		1=Create the stripe card and the link if the card is not yet linked to a stripe card
-	 * @return 	\Stripe\StripeCard|null 								Stripe Card or null if not found
+	 * @return 	\Stripe\StripeCard|\Stripe\PaymentMethod|null 			Stripe Card or null if not found
 	 */
 	public function cardStripe($cu, CompanyPaymentMode $object, $stripeacc = '', $status = 0, $createifnotlinkedtostripe = 0)
 	{
@@ -680,10 +702,24 @@ class Stripe extends CommonObject
 				{
 					try {
 						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
-							$card = $cu->sources->retrieve($cardref);
+							if (! preg_match('/^pm_/', $cardref))
+							{
+								$card = $cu->sources->retrieve($cardref);
+							}
+							else
+							{
+								$card = \Stripe\PaymentMethod::retrieve($cardref);
+							}
 						} else {
-							//$card = $cu->sources->retrieve($cardref, array("stripe_account" => $stripeacc));		// this API fails when array stripe_account is provided
-							$card = $cu->sources->retrieve($cardref);
+							if (! preg_match('/^pm_/', $cardref))
+							{
+								//$card = $cu->sources->retrieve($cardref, array("stripe_account" => $stripeacc));		// this API fails when array stripe_account is provided
+								$card = $cu->sources->retrieve($cardref);
+							}
+							else {
+								//$card = \Stripe\PaymentMethod::retrieve($cardref, array("stripe_account" => $stripeacc));		// Don't know if this works
+								$card = \Stripe\PaymentMethod::retrieve($cardref);
+							}
 						}
 					}
 					catch(Exception $e)
@@ -707,12 +743,28 @@ class Stripe extends CommonObject
 
 					//$a = \Stripe\Stripe::getApiKey();
 					//var_dump($a);var_dump($stripeacc);exit;
-					dol_syslog("Try to create card dataforcard = ".json_encode($dataforcard));
+					dol_syslog("Try to create card with dataforcard = ".json_encode($dataforcard));
 					try {
 						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
-							$card = $cu->sources->create($dataforcard);
+							if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
+							{
+								$card = $cu->sources->create($dataforcard);
+							}
+							else
+							{
+								// TODO
+								dol_syslog("Error: This case is not supported", LOG_ERR);
+							}
 						} else {
-							$card = $cu->sources->create($dataforcard, array("stripe_account" => $stripeacc));
+							if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
+							{
+								$card = $cu->sources->create($dataforcard, array("stripe_account" => $stripeacc));
+							}
+							else
+							{
+								// TODO
+								dol_syslog("Error: This case is not supported", LOG_ERR);
+							}
 						}
 
 						if ($card)
@@ -752,13 +804,12 @@ class Stripe extends CommonObject
 
 	/**
 	 * Create charge with public/payment/newpayment.php, stripe/card.php, cronjobs or REST API
-	 * This is using old Stripe API charge.
 	 *
 	 * @param	int 	$amount									Amount to pay
 	 * @param	string 	$currency								EUR, GPB...
 	 * @param	string 	$origin									Object type to pay (order, invoice, contract...)
 	 * @param	int 	$item									Object id to pay
-	 * @param	string 	$source									src_xxxxx or card_xxxxx
+	 * @param	string 	$source									src_xxxxx or card_xxxxx or pm_xxxxx
 	 * @param	string 	$customer								Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
 	 * @param	string 	$account								Stripe account ref 'acc_xxxxxxxxxxxxx' via  getStripeAccount()
 	 * @param	int		$status									Status (0=test, 1=live)

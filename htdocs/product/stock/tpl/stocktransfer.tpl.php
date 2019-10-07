@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * $object must be defined
  * $backtopage
@@ -53,7 +53,7 @@ if (empty($conf) || ! is_object($conf)) {
 	        }
 	    }
 
-		print load_fiche_titre($langs->trans("StockTransfer"), '', 'title_generic.png');
+		print load_fiche_titre($langs->trans("StockTransfer"), '', 'generic');
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">'."\n";
 
