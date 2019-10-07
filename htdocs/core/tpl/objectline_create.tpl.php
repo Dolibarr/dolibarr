@@ -694,7 +694,7 @@ jQuery(document).ready(function() {
     	      			{
     	      				// If margin is calculated on PMP, we set it by defaut (but only if value is not 0)
     			      		//console.log("id="+this.id+"-price="+this.price);
-    			      		if ('pmp' == defaultbuyprice || 'costprice' == defaultbuyprice)
+    			      		if ('pmp' == defaultbuyprice)
     			      		{
     			      			if (this.price > 0) {
     				      			defaultkey = this.id; defaultprice = this.price; pmppriceid = this.id; pmppricevalue = this.price;
