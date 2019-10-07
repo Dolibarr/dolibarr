@@ -83,10 +83,12 @@ if (! $sortfield)
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Fichinter($db);
 $hookmanager->initHooks(array('interventionlist'));
+
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('fichinter');
+$extrafields->fetch_name_optionals_label('fichinter');
+
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"

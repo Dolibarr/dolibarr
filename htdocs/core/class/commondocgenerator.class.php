@@ -163,7 +163,7 @@ abstract class CommonDocGenerator
     /**
      * Define array with couple subtitution key => subtitution value
      *
-     * @param	Object		$object			Object
+     * @param	Societe		$object			Object
      * @param   Translate	$outputlangs    Language object for output
      * @return	array						Array of substitution key->code
      */
@@ -221,7 +221,7 @@ abstract class CommonDocGenerator
         {
         	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
         	$extrafields = new ExtraFields($this->db);
-        	$extralabels = $extrafields->fetch_name_optionals_label('societe', true);
+        	$extrafields->fetch_name_optionals_label($object->table_element, true);
         	$object->fetch_optionals();
 
         	foreach($extrafields->attribute_label as $key=>$label)
@@ -295,7 +295,7 @@ abstract class CommonDocGenerator
 		// Retrieve extrafields
 		require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
-		$extralabels = $extrafields->fetch_name_optionals_label('socpeople', true);
+		$extrafields->fetch_name_optionals_label($object->table_element, true);
 		$object->fetch_optionals();
 
 		foreach($extrafields->attribute_label as $key => $label)
@@ -517,7 +517,7 @@ abstract class CommonDocGenerator
 
 			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($this->db);
-			$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey, true);
+			$extrafields->fetch_name_optionals_label($extrafieldkey, true);
 			$object->fetch_optionals();
 
 			$resarray = $this->fill_substitutionarray_with_extrafields($object, $resarray, $extrafields, $array_key, $outputlangs);
@@ -592,7 +592,7 @@ abstract class CommonDocGenerator
 		$array_key="line";
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
-		$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey, true);
+		$extrafields->fetch_name_optionals_label($extrafieldkey, true);
 		$line->fetch_optionals();
 
 		$resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);
@@ -662,7 +662,7 @@ abstract class CommonDocGenerator
     	{
     		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
     		$extrafields = new ExtraFields($this->db);
-    		$extralabels = $extrafields->fetch_name_optionals_label('expedition', true);
+    		$extrafields->fetch_name_optionals_label('expedition', true);
     		$object->fetch_optionals();
 
     		$array_shipment = $this->fill_substitutionarray_with_extrafields($object, $array_shipment, $extrafields, $array_key, $outputlangs);
@@ -712,7 +712,7 @@ abstract class CommonDocGenerator
         $array_key = "line";
         require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
         $extrafields = new ExtraFields($this->db);
-        $extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey, true);
+        $extrafields->fetch_name_optionals_label($extrafieldkey, true);
         $line->fetch_optionals();
 
         $resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);

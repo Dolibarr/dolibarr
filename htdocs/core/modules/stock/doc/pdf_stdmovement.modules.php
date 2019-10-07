@@ -245,7 +245,7 @@ class pdf_stdmovement extends ModelePDFMovement
 		$extrafields = new ExtraFields($db);
 
 		// fetch optionals attributes and labels
-		$extralabels = $extrafields->fetch_name_optionals_label('movement');
+		$extrafields->fetch_name_optionals_label('movement');
 		$search_array_options=$extrafields->getOptionalsFromPost('movement', '', 'search_');
 
 		$productlot=new ProductLot($db);

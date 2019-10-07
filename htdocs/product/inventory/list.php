@@ -58,7 +58,7 @@ $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->inventory->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('inventorylist'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('inventory');
+$extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Default sort order (if not yet defined by previous GETPOST)
