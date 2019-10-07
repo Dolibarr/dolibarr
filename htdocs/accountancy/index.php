@@ -64,26 +64,33 @@ if ($conf->accounting->enabled)
 {
     $step = 0;
 
-    $resultboxes=FormOther::getBoxesArea($user, "27");    // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
+    $resultboxes=FormOther::getBoxesArea($user, "27");    	// Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
-    print load_fiche_titre($langs->trans("AccountancyArea"), $resultboxes['selectboxlist'], 'accountancy');
+	$helpisexpanded = empty($resultboxes['boxactivated']);	// If there is no widget, the tooltip help is expanded by default.
+	$showtutorial = '';
 
-    print '<div align="right"><a href="#" id="show_hide">';
-    print img_picto('', 'chevron-down');
-    print ' ' . $langs->trans("ShowFAQ");
-    print '</a></div>';
+	if (! $helpisexpanded)
+	{
+		$showtutorial  = '<div align="right"><a href="#" id="show_hide">';
+		$showtutorial .= img_picto('', 'chevron-down');
+		$showtutorial .= ' ' . $langs->trans("ShowTutorial");
+		$showtutorial .= '</a></div>';
 
-    print '<script type="text/javascript" language="javascript">
-    jQuery(document).ready(function() {
-        jQuery("#show_hide").click(function () {
-            jQuery( "#idfaq" ).toggle({
-                duration: 400,
-            });
-        });  
-    });
-    </script>';
+		$showtutorial .= '<script type="text/javascript" language="javascript">
+	    jQuery(document).ready(function() {
+	        jQuery("#show_hide").click(function () {
+	            jQuery( "#idfaq" ).toggle({
+	                duration: 400,
+	            });
+	        });
+	    });
+	    </script>';
+	}
 
-    print '<div class="hideobject" id="idfaq">'; 	// hideobject is to start hidden
+
+	print load_fiche_titre($langs->trans("AccountancyArea"), $showtutorial . $resultboxes['selectboxlist'], 'accountancy');
+
+    print '<div class="'.($helpisexpanded ? '' : 'hideobject').'" id="idfaq">'; 	// hideobject is to start hidden
     print "<br>\n";
     print '<span class="opacitymedium">'.$langs->trans("AccountancyAreaDescIntro")."</span><br>\n";
 	print "<br>\n";print "<br>\n";
@@ -200,6 +207,8 @@ if ($conf->accounting->enabled)
 	$step++;
 	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescAnalyze", chr(64+$step))."<br>\n";
 	print "<br>\n";
+
+	print '<br>';
 
 	print '</div>';
 

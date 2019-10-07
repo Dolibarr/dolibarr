@@ -39,7 +39,10 @@ class InfoBox
 
 		if (empty($conf->global->MAIN_FEATURES_LEVEL) || $conf->global->MAIN_FEATURES_LEVEL < 2)
 		{
-        	return array(0 => 'Home');
+        	return array(
+        		0 => 'Home',
+        		27 => 'Accountancy Home'
+        	);
 		}
 		else
 		{
@@ -71,7 +74,7 @@ class InfoBox
 				24 => 'expensereportindex',
 				25 => 'mailingindex',
 				26 => 'opensurveyindex',
-				27 => 'accountancyindex'
+				27 => 'Accountancy Home'
 			);
 		}
     }
