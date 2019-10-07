@@ -371,7 +371,7 @@ if (empty($reshook))
             $object->priv			= GETPOST("priv", 'int');
             $object->note_public	= GETPOST("note_public", 'none');
        		$object->note_private	= GETPOST("note_private", 'none');
-       		$object->roles	= GETPOST("roles", 'array');
+       		$object->roles			= GETPOST("roles", 'array');
 
             // Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -725,9 +725,9 @@ else
 				print "</td></tr>";
 			}
 
-	        //Role
+	        // Contact by default
 	        if (!empty($socid)) {
-		        print '<tr><td>' . $langs->trans("Role") . '</td>';
+		        print '<tr><td>' . $langs->trans("ContactByDefaultFor") . '</td>';
 		        print '<td colspan="3">';
 		        $contactType = $object->listeTypeContacts('external', '', 1);
 		        print $form->multiselectarray('roles', $contactType);
@@ -1050,9 +1050,9 @@ else
 				print "</td></tr>";
 			}
 
-			//Role
+			// Contact by default
 	        if (!empty($object->socid)) {
-		        print '<tr><td>' . $langs->trans("Role") . '</td>';
+		        print '<tr><td>' . $langs->trans("ContactByDefaultFor") . '</td>';
 		        print '<td colspan="3">';
 		        print $formcompany->showRoles("roles", $object, 'edit', $object->roles);
 		        print '</td></tr>';
@@ -1206,7 +1206,7 @@ else
         print $object->getCivilityLabel();
         print '</td></tr>';
 
-        // Role
+        // Job / position
         print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td>'.$object->poste.'</td></tr>';
 
         // Email
@@ -1257,7 +1257,7 @@ else
 		}
 
 	    if (!empty($object->socid)) {
-		    print '<tr><td class="titlefield">' . $langs->trans("Roles") . '</td>';
+		    print '<tr><td class="titlefield">' . $langs->trans("ContactByDefaultFor") . '</td>';
 		    print '<td colspan="3">';
 		    print $formcompany->showRoles("roles", $object, 'view');
 		    print '</td></tr>';

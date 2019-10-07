@@ -1595,7 +1595,7 @@ if ($action == 'create')
 
 	if ($socid > 0)
 	{
-         	// Contacts (ask contact only if thirdparty already defined). TODO do this also into order and invoice.
+        // Contacts (ask contact only if thirdparty already defined).
 		print "<tr><td>" . $langs->trans("DefaultContact") . '</td><td>';
 		$form->select_contacts($soc->id, $contactid, 'contactid', 1, $srccontactslist);
 		print '</td></tr>';
