@@ -131,7 +131,7 @@ function member_type_prepare_head(AdherentType $object)
 	// Multilangs
 	if (! empty($conf->global->MAIN_MULTILANGS))
 	{
-		$head[$h][0] = DOL_URL_ROOT."/adherents/traduction.php?rowid=".$object->id;
+		$head[$h][0] = DOL_URL_ROOT."/adherents/type_translation.php?rowid=".$object->id;
 		$head[$h][1] = $langs->trans("Translation");
 		$head[$h][2] = 'translation';
 		$h++;
