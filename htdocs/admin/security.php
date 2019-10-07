@@ -325,7 +325,7 @@ if ($conf->global->USER_PASSWORD_GENERATED == "Perso"){
 
 	print '<tr class="oddeven">';
 	print '<td>' . $langs->trans("NbIteConsecutive")."</td>";
-	print '<td colspan="2"><input type="number" value="'.$tabConf[4].'" id="NbIteConsecutive" min="1"></td>';
+	print '<td colspan="2"><input type="number" value="'.$tabConf[4].'" id="NbIteConsecutive" min="0"></td>';
 	print '</tr>';
 
 
