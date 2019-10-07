@@ -1003,7 +1003,7 @@ table[summary="list_of_modules"] .fa-cog {
 .minheight20 { min-height: 20px; }
 .minheight40 { min-height: 40px; }
 .titlefieldcreate { width: 20%; }
-.titlefield       { width: 25%; }
+.titlefield       { /* width: 25%; */ width: 250px; }
 .titlefieldmiddle { width: 50%; }
 .imgmaxwidth180 { max-width: 180px; }
 
@@ -1011,7 +1011,7 @@ table[summary="list_of_modules"] .fa-cog {
 /* Force values for small screen 1400 */
 @media only screen and (max-width: 1400px)
 {
-	.titlefield { width: 30% !important; }
+	.titlefield { /* width: 30% !important; */ }
 	.titlefieldcreate { width: 30% !important; }
 	.minwidth50imp  { min-width: 50px !important; }
     .minwidth75imp  { min-width: 75px !important; }
