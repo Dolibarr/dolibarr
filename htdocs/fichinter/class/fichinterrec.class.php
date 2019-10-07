@@ -155,7 +155,7 @@ class FichinterRec extends Fichinter
             $sql.= ", ".($this->socid >0 ? $this->socid : 'null');
             $sql.= ", ".$conf->entity;
             $sql.= ", '".$this->db->idate($now)."'";
-            $sql.= ", ".(!empty($fichintsrc->duree)?$fichintsrc->duree:'0');
+            $sql.= ", ".(!empty($fichintsrc->duration)?$fichintsrc->duration:'0');
             $sql.= ", ".(!empty($this->description)?("'".$this->db->escape($this->description)."'"):"null");
             $sql.= ", ".(!empty($fichintsrc->note_private)?("'".$this->db->escape($fichintsrc->note_private)."'"):"null");
             $sql.= ", ".(!empty($fichintsrc->note_public)?("'".$this->db->escape($fichintsrc->note_public)."'"):"null");
@@ -271,6 +271,7 @@ class FichinterRec extends Fichinter
                 $this->ref					= $obj->titre;
                 $this->description			= $obj->description;
                 $this->datec				= $obj->datec;
+                $this->duration = $obj->duree;
                 $this->socid				= $obj->fk_soc;
                 $this->statut				= 0;
                 $this->fk_project			= $obj->fk_projet;
