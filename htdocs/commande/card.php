@@ -2539,7 +2539,7 @@ if ($action == 'create' && $usercancreate)
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);
 			if (empty($reshook)) {
 				// Send
-				if ($object->statut > Commande::STATUS_DRAFT) {
+				if ($object->statut > Commande::STATUS_DRAFT || !empty($conf->global->COMMANDE_SENDBYEMAIL_FOR_ALL_STATUS)) {
 					if ($usercansend) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a></div>';
 					} else

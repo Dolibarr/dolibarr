@@ -2493,7 +2493,7 @@ if ($action == 'create')
 				}
 
 				// Send
-				if ($object->statut == Propal::STATUS_VALIDATED || $object->statut == Propal::STATUS_SIGNED) {
+				if ($object->statut == Propal::STATUS_VALIDATED || $object->statut == Propal::STATUS_SIGNED || !empty($conf->global->PROPOSAL_SENDBYEMAIL_FOR_ALL_STATUS)) {
 					if ($usercansend) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a></div>';
 					} else
