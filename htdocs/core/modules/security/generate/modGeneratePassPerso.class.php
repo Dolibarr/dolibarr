@@ -187,31 +187,32 @@ class modGeneratePassPerso extends ModeleGenPassword
 		$spe = str_split($this->Spe);
 
 		if (count(array_intersect($password_a, $maj)) < $this->NbMaj) {
-			return 0;
+			return false;
 		}
 
 		if (count(array_intersect($password_a, $num)) < $this->NbNum) {
-			return 0;
+			return false;
 		}
 
 		if (count(array_intersect($password_a, $spe)) < $this->NbSpe) {
-			return 0;
+			return false;
 		}
 
 		if (!$this->consecutiveInterationSameCharacter($password)) {
-			return 0;
+			return false;
 		}
 
-		return 1;
+		return true;
 	}
 
 	/**
-	 *  consecutive iterations of the same character
+	 *  check the consecutive iterations of the same character. Return false if the number doesn't match the maximum consecutive value allowed.
 	 *
 	 *  @param		string	$password	Password to check
-	 *  @return     int					0 if KO, >0 if OK
+     *
+	 *  @return     bool
 	 */
-    public function consecutiveInterationSameCharacter($password)
+    private function consecutiveInterationSameCharacter($password)
     {
 		$last = "";
 		$count = 0;
@@ -220,14 +221,16 @@ class modGeneratePassPerso extends ModeleGenPassword
 			if($c != $last) {
 				$last = $c;
 				$count = 0;
-			} else {
-				$count++;
+
+				continue;
 			}
 
-			if ($count >= $this->NbRepeat) {
-				return 0;
+            $count++;
+			if ($count > $this->NbRepeat) {
+				return false;
 			}
 		}
-		return 1;
+
+		return true;
 	}
 }

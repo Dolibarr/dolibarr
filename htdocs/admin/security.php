@@ -174,7 +174,7 @@ if ($action == 'maj_pattern')
     $explodePattern = explode(';', $pattern);
 
     $patternInError = false;
-    if($explodePattern[0] < 1 || $explodePattern[4] < 1){
+    if($explodePattern[0] < 1){
         $patternInError = true;
     }
 
