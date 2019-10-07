@@ -853,9 +853,13 @@ function setforpredef() {
 	jQuery("#prod_entry_mode_predef").prop('checked',true).change();
 	<?php if (empty($conf->global->MAIN_EDIT_PREDEF_PRICEHT)) { ?>
 		jQuery("#price_ht").val('').hide();
+		jQuery("#multicurrency_price_ht").val('').hide();
+	<?php } else { ?>
+		jQuery("#price_ht").val('').show();
+		jQuery("#multicurrency_price_ht").val('').show();
 	<?php } ?>
 	jQuery("#price_ht").val('');
-	jQuery("#price_ht, #multicurrency_price_ht, #price_ttc, #fourn_ref, #tva_tx, #title_vat, #title_up_ht, #title_up_ht_currency, #title_up_ttc, #title_up_ttc_currency").hide();
+	jQuery("#price_ttc, #fourn_ref, #tva_tx, #title_vat, #title_up_ht, #title_up_ht_currency, #title_up_ttc, #title_up_ttc_currency").hide();
 	jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").hide();
 	jQuery("#buying_price").show();
 	jQuery('#trlinefordates, .divlinefordates').show();
