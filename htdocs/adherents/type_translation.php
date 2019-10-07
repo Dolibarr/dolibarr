@@ -20,7 +20,7 @@
  */
 
 /**
- *	\file       htdocs/product/traduction.php
+ *	\file       htdocs/adherents/type_translation.php
  *	\ingroup    product
  *	\brief      Page de traduction des produits
  */
@@ -205,8 +205,8 @@ if ($action == '')
 {
     if ($user->rights->produit->creer || $user->rights->service->creer)
     {
-        print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/traduction.php?action=add&rowid='.$object->id.'">'.$langs->trans("Add").'</a>';
-        if ($cnt_trans > 0) print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/traduction.php?action=edit&rowid='.$object->id.'">'.$langs->trans("Update").'</a>';
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=add&rowid='.$object->id.'">'.$langs->trans("Add").'</a>';
+        if ($cnt_trans > 0) print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=edit&rowid='.$object->id.'">'.$langs->trans("Update").'</a>';
     }
 }
 
