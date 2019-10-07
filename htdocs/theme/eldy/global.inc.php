@@ -2068,8 +2068,8 @@ img.userphoto {			/* size for user photo in lists */
 }
 img.userphotosmall {			/* size for user photo in lists */
 	border-radius: 6px;
-	width: 12px;
-    height: 12px;
+	width: 1em;
+    height: 1em;
     background-size: contain;
     vertical-align: middle;
     background-color: #FFF;
