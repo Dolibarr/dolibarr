@@ -135,6 +135,23 @@ ALTER TABLE llx_projet ADD COLUMN usage_organize_event integer DEFAULT 0;
 
 UPDATE llx_projet set usage_opportunity = 1 WHERE fk_opp_status > 0;
 
+create table llx_societe_contacts
+(
+    rowid           integer AUTO_INCREMENT PRIMARY KEY,
+    entity          integer DEFAULT 1 NOT NULL,
+    date_creation           datetime NOT NULL,
+    fk_soc		        integer NOT NULL,
+    fk_c_type_contact	int NOT NULL,
+    fk_socpeople        integer NOT NULL,
+    tms TIMESTAMP,
+    import_key VARCHAR(14)
+)ENGINE=innodb;
+
+ALTER TABLE llx_societe_contacts ADD UNIQUE INDEX idx_societe_contacts_idx1 (entity, fk_soc, fk_c_type_contact, fk_socpeople);
+ALTER TABLE llx_societe_contacts ADD CONSTRAINT fk_societe_contacts_fk_c_type_contact FOREIGN KEY (fk_c_type_contact)  REFERENCES llx_c_type_contact(rowid);
+ALTER TABLE llx_societe_contacts ADD CONSTRAINT fk_societe_contacts_fk_soc FOREIGN KEY (fk_soc)  REFERENCES llx_societe(rowid);
+ALTER TABLE llx_societe_contacts ADD CONSTRAINT fk_societe_contacts_fk_socpeople FOREIGN KEY (fk_socpeople)  REFERENCES llx_socpeople(rowid);
+
 ALTER TABLE llx_accounting_account MODIFY COLUMN rowid bigint AUTO_INCREMENT;
 
 
@@ -281,3 +298,5 @@ create table llx_fichinterdet_rec
 	import_key			varchar(14) NULL DEFAULT NULL
 )ENGINE=innodb;
 
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN date_start datetime DEFAULT NULL AFTER product_type;
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN date_end datetime DEFAULT NULL AFTER date_start;

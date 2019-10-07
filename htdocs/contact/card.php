@@ -371,6 +371,7 @@ if (empty($reshook))
             $object->priv			= GETPOST("priv", 'int');
             $object->note_public	= GETPOST("note_public", 'none');
        		$object->note_private	= GETPOST("note_private", 'none');
+       		$object->roles	= GETPOST("roles", 'array');
 
             // Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -474,9 +475,9 @@ else
         // Si edition contact deja existant
         $object = new Contact($db);
         $res=$object->fetch($id, $user);
-        if ($res < 0) { dol_print_error($db, $object->error); exit; }
-        $res=$object->fetch_optionals();
-        if ($res < 0) { dol_print_error($db, $object->error); exit; }
+        if ($res<0) {
+        	setEventMessages($object->error, $object->errors, 'errors');
+        }
 
         // Show tabs
         $head = contact_prepare_head($object);
@@ -723,6 +724,15 @@ else
 				print $form->multiselectarray('contcats', $cate_arbo, GETPOST('contcats', 'array'), null, null, null, null, '90%');
 				print "</td></tr>";
 			}
+
+	        //Role
+	        if (!empty($socid)) {
+		        print '<tr><td>' . $langs->trans("Role") . '</td>';
+		        print '<td colspan="3">';
+		        $contactType = $object->listeTypeContacts('external', '', 1);
+		        print $form->multiselectarray('roles', $contactType);
+		        print '</td></tr>';
+	        }
 
             // Other attributes
             $parameters=array('socid' => $socid, 'objsoc' => $objsoc, 'colspan' => ' colspan="3"', 'cols' => 3);
@@ -1040,6 +1050,14 @@ else
 				print "</td></tr>";
 			}
 
+			//Role
+	        if (!empty($object->socid)) {
+		        print '<tr><td>' . $langs->trans("Role") . '</td>';
+		        print '<td colspan="3">';
+		        print $formcompany->showRoles("roles", $object, 'edit', $object->roles);
+		        print '</td></tr>';
+	        }
+
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"', 'cols'=>3);
             $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
@@ -1237,6 +1255,13 @@ else
 			print $form->showCategories($object->id, 'contact', 1);
 			print '</td></tr>';
 		}
+
+	    if (!empty($object->socid)) {
+		    print '<tr><td class="titlefield">' . $langs->trans("Roles") . '</td>';
+		    print '<td colspan="3">';
+		    print $formcompany->showRoles("roles", $object, 'view');
+		    print '</td></tr>';
+	    }
 
     	// Other attributes
     	$cols = 3;

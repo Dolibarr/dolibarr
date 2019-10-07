@@ -6574,7 +6574,6 @@ class Form
 		return 'ErrorBadValueForParameterRenderMode';	// Should not happened
 	}
 
-
 	/**
 	 *  Show linked object block.
 	 *

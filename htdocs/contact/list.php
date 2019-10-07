@@ -36,6 +36,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "suppliers", "categories"));
@@ -84,6 +85,7 @@ $search_zip=GETPOST('search_zip', 'alpha');
 $search_town=GETPOST('search_town', 'alpha');
 $search_import_key=GETPOST("search_import_key", "alpha");
 $search_country=GETPOST("search_country", 'intcomma');
+$search_roles=GETPOST("search_roles", 'array');
 
 if ($search_status=='') $search_status=1; // always display active customer first
 
@@ -243,6 +245,7 @@ if (empty($reshook))
 		$search_import_key='';
 		$toselect='';
 		$search_array_options=array();
+		$search_roles=array();
 	}
 
 	// Mass actions
@@ -263,6 +266,7 @@ if ($search_priv < 0) $search_priv='';
 
 $form=new Form($db);
 $formother=new FormOther($db);
+$formcompany=new FormCompany($db);
 $contactstatic=new Contact($db);
 
 $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
@@ -335,6 +339,9 @@ if (strlen($search_linkedin))       $sql.= natural_search('p.linkedin', $search_
 if (strlen($search_email))          $sql.= natural_search('p.email', $search_email);
 if (strlen($search_zip))   			$sql.= natural_search("p.zip", $search_zip);
 if (strlen($search_town))   		$sql.= natural_search("p.town", $search_town);
+if (count($search_roles)>0) {
+	$sql .= " AND p.rowid IN (SELECT sc.fk_socpeople FROM ".MAIN_DB_PREFIX."societe_contacts as sc WHERE sc.fk_c_type_contact IN (".implode(',', $search_roles)."))";
+}
 
 if ($search_no_email != '' && $search_no_email >= 0) $sql.= " AND p.no_email = ".$db->escape($search_no_email);
 if ($search_status != '' && $search_status >= 0) $sql.= " AND p.statut = ".$db->escape($search_status);
@@ -439,6 +446,7 @@ if ($search_status != '') $param.='&amp;search_status='.urlencode($search_status
 if ($search_priv == '0' || $search_priv == '1') $param.="&amp;search_priv=".urlencode($search_priv);
 if ($search_import_key != '') $param.='&amp;search_import_key='.urlencode($search_import_key);
 if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
+if (count($search_roles)>0) $param.=implode('&search_roles[]=', $search_roles);
 
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -511,6 +519,10 @@ if (! empty($conf->categorie->enabled))
 		$moreforfilter.=$formother->select_categories(Categorie::TYPE_SUPPLIER, $search_categ_supplier, 'search_categ_supplier', 1);
 		$moreforfilter.='</div>';
 	}
+	$moreforfilter.='<div class="divsearchfield">';
+	$moreforfilter.=$langs->trans('Roles'). ': ';
+	$moreforfilter.=$formcompany->showRoles("search_roles", $objecttmp, 'edit', $search_roles);
+	$moreforfilter.='</div>';
 }
 if ($moreforfilter)
 {

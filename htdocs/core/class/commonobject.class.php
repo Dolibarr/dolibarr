@@ -1217,6 +1217,82 @@ abstract class CommonObject
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *      Return array with list of possible values for type of contacts
+	 *
+	 *      @param	string	$source     'internal', 'external' or 'all'
+	 *      @param  int		$option     0=Return array id->label, 1=Return array code->label
+	 *      @param  int		$activeonly 0=all status of contact, 1=only the active
+	 *		@param	string	$code		Type of contact (Example: 'CUSTOMER', 'SERVICE')
+	 *		@param	string	$element	Filter Element Type
+	 *      @return array       		Array list of type of contacts (id->label if option=0, code->label if option=1)
+	 */
+	public function listeTypeContacts($source = 'internal', $option = 0, $activeonly = 0, $code = '', $element = '')
+	{
+		// phpcs:enable
+		global $langs, $conf;
+
+		$tab = array();
+
+		$sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle, tc.position, tc.element";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
+
+		$sqlWhere=array();
+		if (!empty($element))
+			$sqlWhere[]=" tc.element='".$this->db->escape($element)."'";
+
+		if ($activeonly == 1)
+			$sqlWhere[]=" tc.active=1"; // only the active types
+
+		if (! empty($source) && $source != 'all')
+			$sqlWhere[]=" tc.source='".$this->db->escape($source)."'";
+
+		if (! empty($code))
+			$sqlWhere[]=" tc.code='".$this->db->escape($code)."'";
+
+		if (count($sqlWhere)>0) {
+			$sql .= " WHERE ". implode(' AND ', $sqlWhere);
+		}
+
+		$sql.= $this->db->order('tc.element, tc.position', 'ASC');
+
+		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			if ($num > 0) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					if (strpos($obj->element, 'project')!==false) {
+						$element='projet';
+					} elseif($obj->element=='contrat') {
+						$element='contract';
+					} elseif(strpos($obj->element, 'supplier')!==false && $obj->element!='supplier_proposal') {
+						$element='fournisseur';
+					} elseif(strpos($obj->element, 'supplier')!==false && $obj->element!='supplier_proposal') {
+						$element='fournisseur';
+					} else {
+						$element=$obj->element;
+					}
+					if ($conf->{$element}->enabled) {
+						$libelle_element = $langs->trans('ContactDefault_' . $obj->element);
+						$transkey = "TypeContact_" . $this->element . "_" . $source . "_" . $obj->code;
+						$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->libelle);
+						if (empty($option))
+							$tab[$obj->rowid] = $libelle_element . ' - ' . $libelle_type;
+						else $tab[$obj->rowid] = $libelle_element . ' - ' . $libelle_type;
+					}
+				}
+			}
+			return $tab;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			return null;
+		}
+	}
+
 	/**
 	 *      Return id of contacts for a source and a contact code.
 	 *      Example: contact client de facturation ('external', 'BILLING')
