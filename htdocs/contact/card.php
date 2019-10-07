@@ -476,7 +476,7 @@ else
         $object = new Contact($db);
         $res=$object->fetch($id, $user);
         if ($res<0) {
-        	setEventMessage($this->error, 'errors');
+        	setEventMessages($object->error, $object->errors, 'errors');
         }
 
         // Show tabs
