@@ -2668,12 +2668,12 @@ else
 				
 		        if (! empty($conf->adherent->enabled))
 		        {
-				$adh = new Adherent($db);
-				$result=$adh->fetch('', '', $object->id);
-				if (!$result && $object->client == 1)
-            	{
-            	print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/card.php?&action=create&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("NewMember")).'">'.$langs->trans("NewMember").'</a>';
-            	}
+					$adh = new Adherent($db);
+					$result=$adh->fetch('', '', $object->id);
+					if ($result == 0 && ($object->client == 1 || $object->client == 3) && ! empty($conf->global->MEMBER_CAN_CONVERT_CUSTOMERS_TO_MEMBERS))
+            		{
+            			print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/card.php?&action=create&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("NewMember")).'">'.$langs->trans("NewMember").'</a>';
+            		}
             	}
 
 		        if ($user->rights->societe->supprimer)
