@@ -466,8 +466,8 @@ print '<script type="text/javascript" language="javascript">
                 if($value == 'radio')$value = 'select';
             }
 
-            foreach ($extrafields-> as $key => $val) {
-
+            foreach ($extrafields->attributes[$elementtype]['label'] as $key => $val)
+            {
 				print '<tr><td>' . $extrafields->attributes[$elementtype]['label'][$key];
 				if ($array_query['options_' . $key . '_cnct'] != '' || (is_array($array_query['options_' . $key . '_cnct']) && count($array_query['options_' . $key . '_cnct']) > 0)) {
 					print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
