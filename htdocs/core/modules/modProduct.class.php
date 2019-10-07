@@ -552,6 +552,7 @@ class modProduct extends DolibarrModules
                 )
             );
 
+            if (! is_array($this->import_convertvalue_array[$r])) $this->import_convertvalue_array[$r] = array();
 			$this->import_convertvalue_array[$r] = array_merge($this->import_convertvalue_array[$r], array(
 				'p.fk_unit' => array(
 					'rule' => 'fetchidfromcodeorlabel',
