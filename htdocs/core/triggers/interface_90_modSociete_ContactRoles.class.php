@@ -103,7 +103,7 @@ class InterfaceContactRoles extends DolibarrTriggers
 				}
 
 				if($nb > 0) {
-					setEventMessage($langs->trans('ContactAddedAutomatically', $nb));
+					setEventMessages($langs->trans('ContactAddedAutomatically', $nb), null, 'mesgs');
 				}
 			}
 		}
