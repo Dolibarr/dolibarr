@@ -174,15 +174,15 @@ if ($action == 'maj_pattern')
     $explodePattern = explode(';', $pattern);
 
     $patternInError = false;
-    if($explodePattern[0] < 1 || $explodePattern[4] < 0){
+    if ($explodePattern[0] < 1 || $explodePattern[4] < 0) {
         $patternInError = true;
     }
 
-    if($explodePattern[0] < $explodePattern[1] + $explodePattern[2] + $explodePattern[3]){
+    if ($explodePattern[0] < $explodePattern[1] + $explodePattern[2] + $explodePattern[3]) {
         $patternInError = true;
     }
 
-    if(!$patternInError){
+    if (!$patternInError) {
 	    dolibarr_set_const($db, "USER_PASSWORD_PATTERN", $pattern, 'chaine', 0, '', $conf->entity);
 	    header("Location: security.php");
 	    exit;
