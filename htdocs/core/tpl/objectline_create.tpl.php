@@ -677,7 +677,7 @@ jQuery(document).ready(function() {
 
 		jQuery('#trlinefordates').show();
 		<?php
-		if (!empty($conf->global->MAIN_EDIT_PREDEF_PRICEHT))
+		if (empty($conf->global->MAIN_DISABLE_EDIT_PREDEF_PRICEHT))
 		{
 		?>
 			// get the HT price for the product and display it
@@ -851,12 +851,12 @@ function setforpredef() {
 	jQuery("#select_type").val(-1);
 	jQuery("#prod_entry_mode_free").prop('checked',false).change();
 	jQuery("#prod_entry_mode_predef").prop('checked',true).change();
-	<?php if (empty($conf->global->MAIN_EDIT_PREDEF_PRICEHT)) { ?>
-		jQuery("#price_ht").val('').hide();
-		jQuery("#multicurrency_price_ht").val('').hide();
-	<?php } else { ?>
+	<?php if (empty($conf->global->MAIN_DISABLE_EDIT_PREDEF_PRICEHT)) { ?>
 		jQuery("#price_ht").val('').show();
 		jQuery("#multicurrency_price_ht").val('').show();
+	<?php } else { ?>
+		jQuery("#price_ht").val('').hide();
+		jQuery("#multicurrency_price_ht").val('').hide();
 	<?php } ?>
 	jQuery("#price_ht").val('');
 	jQuery("#price_ttc, #fourn_ref, #tva_tx, #title_vat, #title_up_ht, #title_up_ht_currency, #title_up_ttc, #title_up_ttc_currency").hide();
