@@ -70,7 +70,7 @@ function showStripePaymentUrl($type, $ref)
 
     $servicename='Stripe';
     $out='<br><br>';
-    $out.=img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'<br>';
+    $out.=img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'<br>';
     $url=getStripePaymentUrl(0, $type, $ref);
     $out.='<input type="text" id="stripeurl" class="quatrevingtpercent" value="'.$url.'"><br>';
     $out.=ajax_autoselect("stripeurl", 0);

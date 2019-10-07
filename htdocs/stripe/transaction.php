@@ -178,7 +178,7 @@ if (! $rowid) {
         if ($txn->type == 'stripe_fee' || $txn->type == 'reserve_transaction') {
             print "<td>".$txn->type."</td>";
         } else {
-            print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." " . $txn->source . "</a></td>\n";
+            print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." " . $txn->source . "</a></td>\n";
         }
 
 		// Stripe customer

@@ -2137,7 +2137,7 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0)
 	if (! preg_match('/^http/i', $url)) $link.='http://';
 	$link.=dol_trunc($url, $max);
 	$link.='</a>';
-	return '<div class="nospan float" style="margin-right: 10px">'.($withpicto?img_picto($langs->trans("Url"), 'object_globe.png').' ':'').$link.'</div>';
+	return '<div class="nospan float" style="margin-right: 10px">'.($withpicto?img_picto($langs->trans("Url"), 'globe').' ':'').$link.'</div>';
 }
 
 /**
@@ -3029,7 +3029,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
         if (empty($srconly) && in_array($pictowithouttext, array(
         		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
-        		'address', 'bank', 'building', 'cash-register', 'close_title', 'cubes', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'note',
+        		'address', 'bank', 'building', 'cash-register', 'close_title', 'cubes', 'delete', 'edit', 'ellipsis-h', 'bookmark', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'note',
         		'object_list','object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
         		'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
 				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench',
@@ -3039,18 +3039,17 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
         		'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda'
 			)
 		)) {
-			$fa='fa';
-		    if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fa='fas';
+			$fa='fas';
 		    $fakey = $pictowithouttext;
 		    $facolor = ''; $fasize = '';
 
 		    $arrayconvpictotofa = array(
 		    	'address'=> 'address-book', 'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins', 'accountancy'=>'money-check-alt', 'project'=>'sitemap',
 		    	'hrm'=>'umbrella-beach', 'members'=>'users', 'ticket'=>'ticket-alt', 'generic'=>'folder-open',
-		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on',
-		    	'bank'=>'bank', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil', 'filter'=>'filter', 'split'=>'code-fork',
+		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'bookmark'=>'star',
+		    	'bank'=>'university', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil', 'filter'=>'filter', 'split'=>'code-fork',
 		    	'object_list'=>'list-alt','object_calendar'=>'calendar-alt', 'object_calendarweek'=>'calendar-week', 'object_calendarmonth'=>'calendar-alt', 'object_calendarday'=>'calendar-day', 'object_calendarperuser'=>'table',
-		    	'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'bank', 'title_hrm'=>'umbrella-beach', 'title_agenda'=>'calendar-alt'
+		    	'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach', 'title_agenda'=>'calendar-alt'
 		    );
 
 		    if ($pictowithouttext == 'switch_off') {
@@ -3064,21 +3063,13 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 			}
 			elseif ($pictowithouttext == 'off') {
-				$fakey = 'fa-square-o';
-				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5))
-				{
-				    $fakey = 'fa-square';
-				    $fa='far';
-				}
+			    $fakey = 'fa-square';
+			    $fa='far';
 				$fasize = '1.3em';
 			}
 			elseif ($pictowithouttext == 'on') {
-				$fakey = 'fa-check-square-o';
-				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5))
-				{
-				    $fakey = 'fa-check-square';
-				    $fa='far';
-				}
+			    $fakey = 'fa-check-square';
+			    $fa='far';
 				$fasize = '1.3em';
 			}
 			elseif ($pictowithouttext == 'bank') {
@@ -3091,12 +3082,14 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			}
 			elseif ($pictowithouttext == 'edit') {
 				$facolor = '#444';
-				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
-				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fakey = 'fa-pencil-alt';
+				$fakey = 'fa-pencil-alt';
 			}
 			elseif ($pictowithouttext == 'grip_title' || $pictowithouttext == 'grip') {
-				$fakey = 'fa-arrows';
-				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fakey = 'fa-arrows-alt';
+				$fakey = 'fa-arrows-alt';
+			}
+			elseif ($pictowithouttext == 'bookmark') {
+				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
+				$fa='far';
 			}
 			elseif ($pictowithouttext == 'listlight') {
 				$fakey = 'fa-download';
@@ -3113,11 +3106,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$facolor = '#444';
 			}
 			elseif ($pictowithouttext == 'note') {
-				$fakey = 'fa-sticky-note-o';
-				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5))
-				{
-				    $fakey = 'fa-sticky-note'; $fa = 'far';
-				}
+			    $fakey = 'fa-sticky-note';
+			    $fa = 'far';
 				$facolor = '#999';
 				$marginleftonlyshort=1;
 			}
@@ -3132,9 +3122,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$marginleftonlyshort = 1;
 			}
 			elseif ($pictowithouttext == 'sign-out')     {
-                $fakey = 'fa-sign-out';
+				$fakey = 'fa-sign-out-alt';
 			    $marginleftonlyshort=0;
-			    if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fakey = 'fa-sign-out-alt';
 			}
 			elseif ($pictowithouttext == 'unlink')     {
 				$fakey = 'fa-chain-broken';
@@ -3153,7 +3142,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			}
 			elseif (in_array($pictowithouttext, array('skype', 'twitter', 'facebook', 'linkedin'))) {
 			    $fakey = 'fa-'.$pictowithouttext;
-			    if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fa = 'fab';
+			    $fa = 'fab';
 			}
 			// Img for type of views
 			elseif (in_array($pictowithouttext, array('object_list', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser'))) {
@@ -7709,7 +7698,7 @@ function showDirectDownloadLink($object)
 
 	if ($url)
 	{
-		$out.= img_picto('', 'object_globe.png').' '.$langs->trans("DirectDownloadLink").'<br>';
+		$out.= img_picto('', 'globe').' '.$langs->trans("DirectDownloadLink").'<br>';
 		$out.= '<input type="text" id="directdownloadlink" class="quatrevingtpercent" value="'.$url.'">';
 		$out.= ajax_autoselect("directdownloadlink", 0);
 	}
