@@ -669,7 +669,7 @@ class ImportXlsx extends ModeleImports
 									    $errorforthistable++;
 										$error++;
 									}
-								} 
+								}
 								// If test is just a static regex
 								elseif (! preg_match('/'.$objimport->array_import_regex[0][$val].'/i', $newval)) {
 								    //if ($key == 19) print "xxx".$newval."zzz".$objimport->array_import_regex[0][$val]."<br>";
