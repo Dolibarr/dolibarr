@@ -29,7 +29,7 @@
 class InfoBox
 {
     /**
-     * Name of positions 0=Home, 1=...
+     * Name of positions (See below)
      *
      * @return	string[]		Array with list of zones
      */
@@ -81,7 +81,7 @@ class InfoBox
      *
      *  @param	DoliDB		$db				Database handler
      *  @param	string		$mode			'available' or 'activated'
-     *  @param	string		$zone			Name or area (-1 for all, 0 for Homepage, 1 for xxx, ...)
+     *  @param	string		$zone			Name or area (-1 for all, 0 for Homepage, 1 for Accountancy, 2 for xxx, ...)
      *  @param  User|null   $user	  		Object user to filter
      *  @param	array		$excludelist	Array of box id (box.box_id = boxes_def.rowid) to exclude
      *  @param  int         $includehidden  Include also hidden boxes
@@ -110,7 +110,7 @@ class InfoBox
         {
             $sql = "SELECT d.rowid as box_id, d.file, d.note, d.tms";
             $sql.= " FROM ".MAIN_DB_PREFIX."boxes_def as d";
-               $sql.= " WHERE d.entity IN (0,".$conf->entity.")";
+            $sql.= " WHERE d.entity IN (0,".$conf->entity.")";
         }
 
         dol_syslog(get_class()."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user)?$user->id:'')."", LOG_DEBUG);
@@ -152,7 +152,7 @@ class InfoBox
                         // box properties
                         $box->rowid		= (empty($obj->rowid) ? '' : $obj->rowid);
                         $box->id		= (empty($obj->box_id) ? '' : $obj->box_id);
-                        $box->position	= ($obj->position == '' ? '' : $obj->position);		// '0' must staty '0'
+                        $box->position	= ($obj->position == '' ? '' : $obj->position);		// '0' must stay '0'
                         $box->box_order	= (empty($obj->box_order) ? '' : $obj->box_order);
                         $box->fk_user	= (empty($obj->fk_user) ? 0 : $obj->fk_user);
                         $box->sourcefile= $relsourcefile;
