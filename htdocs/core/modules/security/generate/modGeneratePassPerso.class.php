@@ -206,17 +206,20 @@ class modGeneratePassPerso extends ModeleGenPassword
 	}
 
 	/**
-	 *  check the consecutive iterations of the same character. Return false if the number doesn't match the maximum consecutive value allowed.
+	 *  Check the consecutive iterations of the same character. Return false if the number doesn't match the maximum consecutive value allowed.
 	 *
 	 *  @param		string	$password	Password to check
-     *
 	 *  @return     bool
 	 */
     private function consecutiveInterationSameCharacter($password)
     {
 		$last = "";
+
+		if (empty($this->NbRepeat)) return 1;
+
 		$count = 0;
 		$char = str_split($password);
+
 		foreach($char as $c) {
 			if($c != $last) {
 				$last = $c;
