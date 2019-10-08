@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 define("NOLOGIN", 1);		// This means this output page does not require to be logged.
@@ -146,7 +146,7 @@ $societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
 if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $societeName = $conf->global->MAIN_APPLICATION_TITLE;
 
 
-dol_syslog("Stripe IPN was called with event->type = ".$event->type);
+dol_syslog("***** Stripe IPN was called with event->type = ".$event->type);
 
 
 if ($event->type == 'payout.created') {
@@ -404,18 +404,7 @@ elseif ($event->type == 'charge.failed') {
     // TODO: Redirect to paymentko.php
 }
 elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 'three_d_secure') && ($event->data->object->three_d_secure->authenticated==true)) {
-
-    $fulltag=$event->data->object->metadata->FULLTAG;
-    dol_syslog("fulltag=".$fulltag);
-    // Save into $tmptag all metadata
-	$tmptag=dolExplodeIntoArray($fulltag, '.', '=');
-
-    $stripe=new Stripe($db);
-    /*
-    $stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
-    $stripecu = $stripe->getStripeCustomerAccount($tmptag['CUS'], $servicestatus);		// Get thirdparty cu_...
-	$charge=$stripe->createPaymentStripe($event->data->object->amount/100, $event->data->object->currency, $origin, $item, $event->data->object->id, $stripecu, $stripeacc, $servicestatus);
-    */
+	// This event is deprecated.
 }
 
 http_response_code(200); // PHP 5.4 or greater

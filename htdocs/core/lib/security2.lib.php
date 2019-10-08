@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -47,7 +47,7 @@ function dol_getwebuser($mode)
  *	@param		string	$passwordtotest		Password value to test
  *	@param		string	$entitytotest		Instance of data we must check
  *	@param		array	$authmode			Array list of selected authentication mode array('http', 'dolibarr', 'xxx'...)
- *	@param		string	$context			Context checkLoginPassEntity was created for ('api', 'dav', '')
+ *	@param		string	$context			Context checkLoginPassEntity was created for ('api', 'dav', 'ws', '')
  *  @return		string						Login or ''
  */
 function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode, $context = '')

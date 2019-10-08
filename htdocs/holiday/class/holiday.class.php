@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -376,7 +376,6 @@ class Holiday extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id    = $obj->rowid;
-				$this->rowid = $obj->rowid;	// deprecated
 				$this->ref   = ($obj->ref?$obj->ref:$obj->rowid);
 				$this->fk_user = $obj->fk_user;
 				$this->date_create = $this->db->jdate($obj->date_create);
@@ -402,6 +401,8 @@ class Holiday extends CommonObject
 				$this->entity = $obj->entity;
 			}
 			$this->db->free($resql);
+
+			$this->fetch_optionals();
 
 			return 1;
 		}
@@ -559,6 +560,7 @@ class Holiday extends CommonObject
 		$sql.= " cp.fk_user,";
 		$sql.= " cp.fk_type,";
 		$sql.= " cp.date_create,";
+		$sql.= " cp.tms as date_update,";
 		$sql.= " cp.description,";
 		$sql.= " cp.date_debut,";
 		$sql.= " cp.date_fin,";
@@ -624,6 +626,7 @@ class Holiday extends CommonObject
 				$tab_result[$i]['fk_user'] = $obj->fk_user;
 				$tab_result[$i]['fk_type'] = $obj->fk_type;
 				$tab_result[$i]['date_create'] = $this->db->jdate($obj->date_create);
+				$tab_result[$i]['date_update'] = $this->db->jdate($obj->date_update);
 				$tab_result[$i]['description'] = $obj->description;
 				$tab_result[$i]['date_debut'] = $this->db->jdate($obj->date_debut);
 				$tab_result[$i]['date_fin'] = $this->db->jdate($obj->date_fin);

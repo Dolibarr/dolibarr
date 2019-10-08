@@ -22,7 +22,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -81,11 +81,10 @@ if ($id > 0 || ! empty($ref) && $action!='add') {
 }
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // fetch optionals attributes lines and labels
-$extrafieldsline = new ExtraFields($db);
-$extralabelslines=$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+$extralabelslines=$extrafields->fetch_name_optionals_label($object->table_element_line);
 
 $permissionnote=$user->rights->contrat->creer;	// Used by the include of actions_setnotes.inc.php
 $permissiondellink=$user->rights->contrat->creer;	// Used by the include of actions_dellink.inc.php
@@ -217,7 +216,7 @@ if (empty($reshook))
 		}
 
 		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) {
 			$error ++;
 			$action = 'create';
@@ -433,7 +432,7 @@ if (empty($reshook))
 		}
 
 		$qty = GETPOST('qty'.$predef);
-		$remise_percent = GETPOST('remise_percent'.$predef);
+		$remise_percent = ((GETPOST('remise_percent'.$predef) != '') ? GETPOST('remise_percent'.$predef) : 0);
 
 		if ($qty == '')
 		{
@@ -455,9 +454,8 @@ if (empty($reshook))
 	  }
 
 		// Extrafields
-		$extrafieldsline = new ExtraFields($db);
-		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $predef);
+		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
+		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line, $predef);
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -566,7 +564,8 @@ if (empty($reshook))
 			$info_bits=0;
 			if ($tva_npr) $info_bits |= 0x01;
 
-			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS) )&& ($price_min && (price2num($pu_ht)*(1-price2num($remise_percent)/100) < price2num($price_min))))
+			if (((! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance))
+				|| empty($conf->global->MAIN_USE_ADVANCED_PERMS) ) && ($price_min && (price2num($pu_ht)*(1-price2num($remise_percent)/100) < price2num($price_min))))
 			{
 				$object->error = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 				$result = -1 ;
@@ -735,9 +734,8 @@ if (empty($reshook))
 			}
 
 			// Extrafields
-			$extrafieldsline = new ExtraFields($db);
-			$extralabelsline = $extrafieldsline->fetch_name_optionals_label($objectline->table_element);
-			$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $predef);
+			$extralabelsline = $extrafields->fetch_name_optionals_label($objectline->table_element);
+			$array_options = $extrafields->getOptionalsFromPost($object->table_element_line, $predef);
 			$objectline->array_options=$array_options;
 
 			// TODO verifier price_min si fk_product et multiprix
@@ -875,8 +873,7 @@ if (empty($reshook))
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
-		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
 		if ($ret < 0) $error++;
 
 		if (! $error) {
@@ -1111,7 +1108,7 @@ if ($result > 0)
 // Create
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans('AddContract'), '', 'title_commercial.png');
+	print load_fiche_titre($langs->trans('AddContract'), '', 'commercial');
 
 	$soc = new Societe($db);
 	if ($socid>0) $soc->fetch($socid);
@@ -1424,7 +1421,7 @@ else
 			if ($user->rights->contrat->creer)
 			{
 				if ($action != 'classify')
-					$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+					$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 					if ($action == 'classify') {
 						//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 						$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -1711,7 +1708,7 @@ else
 					if (is_array($extralabelslines) && count($extralabelslines)>0) {
 						$line = new ContratLigne($db);
 						$line->fetch_optionals($objp->rowid);
-						print $line->showOptionals($extrafieldsline, 'view', array('style'=>'class="oddeven"', 'colspan'=>$colspan), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+						print $line->showOptionals($extrafields, 'view', array('style'=>'class="oddeven"', 'colspan'=>$colspan), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
 					}
 				}
 				// Ligne en mode update
@@ -1785,7 +1782,7 @@ else
 					if (is_array($extralabelslines) && count($extralabelslines)>0) {
 						$line = new ContratLigne($db);
 						$line->fetch_optionals($objp->rowid);
-						print $line->showOptionals($extrafieldsline, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+						print $line->showOptionals($extrafields, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
 					}
 				}
 

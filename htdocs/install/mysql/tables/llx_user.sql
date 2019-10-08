@@ -14,7 +14,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 -- ===========================================================================
 
 create table llx_user
@@ -36,7 +36,7 @@ create table llx_user
   pass_encoding     varchar(24),
   pass              varchar(128),
   pass_crypted      varchar(128),
-  pass_temp         varchar(128),				-- temporary password when asked for forget password or 'hashtoallowreset:YYYMMDDHHMMSS' (where date is max date of validaity)
+  pass_temp         varchar(128),				-- temporary password when asked for forget password or 'hashtoallowreset:YYYMMDDHHMMSS' (where date is max date of validity)
   api_key           varchar(128),				-- key to use REST API by this user
   gender            varchar(10),
   civility          varchar(6),

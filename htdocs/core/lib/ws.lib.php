@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -84,7 +84,7 @@ function check_authentication($authentication, &$error, &$errorcode, &$errorlabe
         	$authmode=explode(',', $dolibarr_main_authentication);
 
             include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-        	$login = checkLoginPassEntity($authentication['login'], $authentication['password'], $authentication['entity'], $authmode);
+        	$login = checkLoginPassEntity($authentication['login'], $authentication['password'], $authentication['entity'], $authmode, 'ws');
 			if (empty($login))
 			{
 			    $error++;

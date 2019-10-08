@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -157,7 +157,35 @@ print '<div class="fichecenter">';
 print '<div class="fichehalfleft">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border tableforfield" width="100%">';
+print '<table class="border tableforfield centpercent">';
+
+// Usage
+print '<tr><td class="tdtop">';
+print $langs->trans("Usage");
+print '</td>';
+print '<td>';
+if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+{
+	print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha')!=''?' checked="checked"':'') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+	$htmltext = $langs->trans("ProjectFollowOpportunity");
+	print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+	print '<br>';
+}
+if (empty($conf->global->PROJECT_HIDE_TASKS))
+{
+	print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha')!=''?' checked="checked"':'') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
+	$htmltext = $langs->trans("ProjectFollowTasks");
+	print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+	print '<br>';
+}
+if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+{
+	print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha')!=''?' checked="checked"':'') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+	$htmltext = $langs->trans("ProjectBillTimeDescription");
+	print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+	print '<br>';
+}
+print '</td></tr>';
 
 // Visibility
 print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
@@ -221,7 +249,7 @@ print '</td></tr>';
 if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
 {
 	print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
-	print yn($object->bill_time);
+	print yn($object->usage_bill_time);
 	print '</td></tr>';
 }
 
@@ -512,10 +540,11 @@ if ($action=="addelement")
 elseif ($action == "unlink")
 {
 
-	$tablename = GETPOST("tablename");
-	$elementselectid = GETPOST("elementselect");
+	$tablename = GETPOST("tablename", "aZ09");
+    $projectField = GETPOST("projectfield", "aZ09");
+	$elementselectid = GETPOST("elementselect", "int");
 
-	$result = $object->remove_element($tablename, $elementselectid);
+	$result = $object->remove_element($tablename, $elementselectid, $projectField);
 	if ($result < 0)
 	{
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -889,7 +918,7 @@ foreach ($listofreferent as $key => $value)
 				{
 					if (empty($conf->global->PROJECT_DISABLE_UNLINK_FROM_OVERVIEW) || $user->admin)		// PROJECT_DISABLE_UNLINK_FROM_OVERVIEW is empty by defaut, so this test true
 					{
-						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $projectid . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . '" class="reposition">';
+						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $projectid . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . ($project_field ? '&projectfield=' . $project_field : '') . '" class="reposition">';
 						print img_picto($langs->trans('Unlink'), 'unlink');
 						print '</a>';
 					}

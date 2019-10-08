@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -71,7 +71,8 @@ else $morehead='<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/th
 llxHeaderVierge($langs->trans("MemberCard"), $morehead);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('adherent');
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 if ($id > 0)
 {
 	$res=$object->fetch($id);

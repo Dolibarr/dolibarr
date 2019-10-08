@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -74,8 +74,11 @@ class Contacts extends DolibarrApi
 		{
 			throw new RestException(401, 'No permission to read contacts');
 		}
-
-		$result = $this->contact->fetch($id);
+		if ($id ==0) {
+			$result = $this->contact->initAsSpecimen();
+		} else {
+			$result = $this->contact->fetch($id);
+		}
 
 		if (!$result)
 		{
@@ -104,7 +107,7 @@ class Contacts extends DolibarrApi
 	 * @param string	$sortorder	        Sort order
 	 * @param int		$limit		        Limit for list
 	 * @param int		$page		        Page number
-	 * @param string   	$thirdparty_ids	    Thirdparty ids to filter contacts of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
+	 * @param string   	$thirdparty_ids	    Thirdparty ids to filter contacts of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param int       $includecount       Count and return also number of elements the contact is used as a link for
 	 * @return array                        Array of contact objects

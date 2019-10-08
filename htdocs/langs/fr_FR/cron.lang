@@ -76,7 +76,7 @@ CronType_method=Appelle d'une méthode d'une classe Dolibarr
 CronType_command=Commande terminal
 CronCannotLoadClass=Impossible de charger le fichier %s (pour charger l'objet %s)
 CronCannotLoadObject=Le fichier de classe %s a été chargé, mais l'objet %s n'a pas été trouvé dedans
-UseMenuModuleToolsToAddCronJobs=Aller à la page "Accueil - Outils administration - Travaux planifiées" pour voir la listes des travaux programmées et les modifier.
+UseMenuModuleToolsToAddCronJobs=Aller à la page "<a href="%s">Accueil - Outils administration - Travaux planifiées</a>" pour voir la listes des travaux programmés et les modifier.
 JobDisabled=Travail désactivé
 MakeLocalDatabaseDumpShort=Sauvegarde locale de base
 MakeLocalDatabaseDump=Créez un fichier dump de base local. Les paramètres sont: compression ('gz' ou 'bz' ou 'none'), type de sauvegarde ('mysql', 'pgsql', 'auto'), 1, 'auto' ou nom du fichier à générer, nombre de fichiers de sauvegarde à garder

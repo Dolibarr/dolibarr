@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -88,7 +88,7 @@ class PaiementFourn extends Paiement
 
 		$sql = 'SELECT p.rowid, p.ref, p.entity, p.datep as dp, p.amount, p.statut, p.fk_bank,';
 		$sql.= ' c.code as paiement_code, c.libelle as paiement_type,';
-		$sql.= ' p.num_paiement, p.note, b.fk_account';
+		$sql.= ' p.num_paiement as num_payment, p.note, b.fk_account';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid ';
@@ -113,12 +113,15 @@ class PaiementFourn extends Paiement
 				$this->entity         = $obj->entity;
 				$this->date           = $this->db->jdate($obj->dp);
 				$this->datepaye       = $this->db->jdate($obj->dp);
-				$this->numero         = $obj->num_paiement;
-				$this->num_paiement   = $obj->num_paiement;
+				$this->num_paiement   = $obj->num_payment;
+				$this->num_payment    = $obj->num_payment;
 				$this->bank_account   = $obj->fk_account;
+				$this->fk_account     = $obj->fk_account;
 				$this->bank_line      = $obj->fk_bank;
 				$this->montant        = $obj->amount;
+				$this->amount         = $obj->amount;
 				$this->note           = $obj->note;
+				$this->note_private   = $obj->note;
 				$this->type_code      = $obj->paiement_code;
 				$this->type_libelle   = $obj->paiement_type;
 				$this->statut         = $obj->statut;

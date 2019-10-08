@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -335,15 +335,15 @@ class Mailing extends CommonObject
 
 				$target_array=array();
 
-				$sql = "SELECT fk_contact, ";
-				$sql.=" lastname,   ";
-				$sql.=" firstname,";
-				$sql.=" email,";
-				$sql.=" other,";
-				$sql.=" source_url,";
-				$sql.=" source_id ,";
-				$sql.=" source_type ";
-				$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles ";
+				$sql = "SELECT fk_contact,";
+				$sql.= " lastname,";
+				$sql.= " firstname,";
+				$sql.= " email,";
+				$sql.= " other,";
+				$sql.= " source_url,";
+				$sql.= " source_id ,";
+				$sql.= " source_type";
+				$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles";
 				$sql.= " WHERE fk_mailing = ".$fromid;
 
 				$result=$this->db->query($sql);
@@ -353,14 +353,16 @@ class Mailing extends CommonObject
 					{
 						while ($obj = $this->db->fetch_object($result)) {
 
-							$target_array[]=array('fk_contact'=>$obj->fk_contact,
-							'lastname'=>$obj->lastname,
-							'firstname'=>$obj->firstname,
-							'email'=>$obj->email,
-							'other'=>$obj->other,
-							'source_url'=>$obj->source_url,
-							'source_id'=>$obj->source_id,
-							'source_type'=>$obj->source_type);
+							$target_array[]=array(
+								'fk_contact'=>$obj->fk_contact,
+								'lastname'=>$obj->lastname,
+								'firstname'=>$obj->firstname,
+								'email'=>$obj->email,
+								'other'=>$obj->other,
+								'source_url'=>$obj->source_url,
+								'source_id'=>$obj->source_id,
+								'source_type'=>$obj->source_type
+							);
 						}
 					}
 				}
@@ -370,7 +372,7 @@ class Mailing extends CommonObject
 					return -1;
 				}
 
-				$mailing_target->add_to_target($object->id, $target_array);
+				$mailing_target->addTargetsToDatabase($object->id, $target_array);
 			}
 		}
 

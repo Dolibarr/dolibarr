@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -1094,6 +1094,8 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 {
     global $db, $modules, $conf, $langs;
 
+    dol_syslog("complete_dictionary_with_modules Search external modules to complete the list of dictionnary tables", LOG_DEBUG, 1);
+
     // Search modules
 	$modulesdir = dolGetModulesDirs();
     $i = 0; // is a sequencer of modules found
@@ -1191,6 +1193,8 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
         }
     }
 
+    dol_syslog("", LOG_DEBUG, -1);
+
     return 1;
 }
 
@@ -1259,7 +1263,7 @@ function activateModulesRequiredByCountry($country_code)
 }
 
 /**
- *  Add external modules to list of contact element
+ *  Search external modules to complete the list of contact element
  *
  * 	@param		array		$elementList			elementList
  * 	@return		int			1
@@ -1277,6 +1281,8 @@ function complete_elementList_with_modules(&$elementList)
 
     $i = 0; // is a sequencer of modules found
     $j = 0; // j is module number. Automatically affected if module number not defined.
+
+    dol_syslog("complete_elementList_with_modules Search external modules to complete the list of contact element", LOG_DEBUG, 1);
 
     $modulesdir = dolGetModulesDirs();
 
@@ -1354,6 +1360,8 @@ function complete_elementList_with_modules(&$elementList)
             dol_syslog("htdocs/admin/modules.php: Failed to open directory ".$dir.". See permission and open_basedir option.", LOG_WARNING);
         }
     }
+
+    dol_syslog("", LOG_DEBUG, -1);
 
     return 1;
 }

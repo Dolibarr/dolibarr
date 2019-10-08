@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -101,7 +101,7 @@ function contract_prepare_head(Contrat $object)
  */
 function contract_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf;
 
 	$h = 0;
 	$head = array();
@@ -127,9 +127,7 @@ function contract_admin_prepare_head()
     $head[$h][2] = 'attributeslines';
     $h++;
 
-
-
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'contract_admin', 'remove');
 
-		return $head;
+	return $head;
 }

@@ -26,7 +26,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -324,9 +324,6 @@ class SupplierProposal extends CommonObject
             $supplier_proposalligne->rang=-1;
             $supplier_proposalligne->info_bits=2;
 
-            // TODO deprecated
-            $supplier_proposalligne->price=-$remise->amount_ht;
-
             $supplier_proposalligne->total_ht  = -$remise->amount_ht;
             $supplier_proposalligne->total_tva = -$remise->amount_tva;
             $supplier_proposalligne->total_ttc = -$remise->amount_ttc;
@@ -391,11 +388,13 @@ class SupplierProposal extends CommonObject
      * 		@param		string		$origin				'order', 'supplier_proposal', ...
      * 		@param		int			$origin_id			Id of origin line
      * 		@param		double		$pu_ht_devise		Amount in currency
+     * 		@param		int			$date_start			Date start
+     * 		@param		int			$date_end			Date end
      *    	@return    	int         	    			>0 if OK, <0 if KO
      *
      *    	@see       	add_product()
      */
-    public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $pu_ttc = 0, $info_bits = 0, $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $array_option = 0, $ref_supplier = '', $fk_unit = '', $origin = '', $origin_id = 0, $pu_ht_devise = 0)
+    public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $pu_ttc = 0, $info_bits = 0, $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $array_option = 0, $ref_supplier = '', $fk_unit = '', $origin = '', $origin_id = 0, $pu_ht_devise = 0, $date_start = 0, $date_end = 0)
     {
         global $mysoc, $conf;
 
@@ -570,6 +569,8 @@ class SupplierProposal extends CommonObject
             $this->line->origin=$origin;
             $this->line->origin_id=$origin_id;
             $this->line->ref_fourn = $this->db->escape($ref_supplier);
+			$this->line->date_start = $date_start;
+			$this->line->date_end = $date_end;
 
             // infos marge
             if (!empty($fk_product) && empty($fk_fournprice) && empty($pa_ht)) {
@@ -594,10 +595,6 @@ class SupplierProposal extends CommonObject
             // Mise en option de la ligne
             if (empty($qty) && empty($special_code)) $this->line->special_code=3;
 
-            // TODO deprecated
-            $this->line->price=$price;
-            $this->line->remise=$remise;
-
             if (is_array($array_option) && count($array_option)>0) {
                 $this->line->array_options=$array_option;
             }
@@ -613,7 +610,7 @@ class SupplierProposal extends CommonObject
                 if ($result > 0)
                 {
                     $this->db->commit();
-                    return $this->line->rowid;
+                    return $this->line->id;
                 }
                 else
                 {
@@ -628,6 +625,11 @@ class SupplierProposal extends CommonObject
                 $this->db->rollback();
                 return -2;
             }
+        }
+        else
+        {
+        	$this->error = 'BadStatusOfObjectToAddLine';
+        	return -5;
         }
     }
 
@@ -688,6 +690,7 @@ class SupplierProposal extends CommonObject
             $localtaxes_type=getLocalTaxesFromRate($txtva, 0, $mysoc, $this->thirdparty);
 
             // Clean vat code
+            $reg = array();
             $vat_src_code='';
             if (preg_match('/\((.*)\)/', $txtva, $reg))
             {
@@ -707,14 +710,6 @@ class SupplierProposal extends CommonObject
             $multicurrency_total_tva = $tabprice[17];
             $multicurrency_total_ttc = $tabprice[18];
 
-            // Anciens indicateurs: $price, $remise (a ne plus utiliser)
-            $price = $pu;
-            if ($remise_percent > 0)
-            {
-                $remise = round(($pu * $remise_percent / 100), 2);
-                $price = $pu - $remise;
-            }
-
             // Update line
             $this->line=new SupplierProposalLine($this->db);
 
@@ -730,7 +725,7 @@ class SupplierProposal extends CommonObject
                 $this->line->rang = $rangmax + 1;
             }
 
-            $this->line->rowid				= $rowid;
+            $this->line->id					= $rowid;
             $this->line->label				= $label;
             $this->line->desc				= $desc;
             $this->line->qty				= $qty;
@@ -768,10 +763,6 @@ class SupplierProposal extends CommonObject
             }
             $this->line->pa_ht = $pa_ht;
 
-            // TODO deprecated
-            $this->line->price=$price;
-            $this->line->remise=$remise;
-
             if (is_array($array_option) && count($array_option)>0) {
                 $this->line->array_options=$array_option;
             }
@@ -791,7 +782,6 @@ class SupplierProposal extends CommonObject
                 $this->update_price(1);
 
                 $this->fk_supplier_proposal = $this->id;
-                $this->rowid = $rowid;
 
                 $this->db->commit();
                 return $result;
@@ -1357,7 +1347,6 @@ class SupplierProposal extends CommonObject
                         $line->subprice         = $objp->subprice;
                         $line->fk_remise_except = $objp->fk_remise_except;
                         $line->remise_percent   = $objp->remise_percent;
-                        $line->price            = $objp->price;		// TODO deprecated
 
                         $line->info_bits        = $objp->info_bits;
                         $line->total_ht         = $objp->total_ht;
@@ -2371,7 +2360,6 @@ class SupplierProposal extends CommonObject
             $line->desc=$langs->trans("Description")." ".$xnbp;
             $line->qty=1;
             $line->subprice=100;
-            $line->price=100;
             $line->tva_tx=19.6;
             $line->localtax1_tx=0;
             $line->localtax2_tx=0;
@@ -2745,9 +2733,6 @@ class SupplierProposalLine extends CommonObjectLine
 
     public $oldline;
 
-    // From llx_supplier_proposaldet
-    public $rowid; // deprecated
-
     /**
      * @var int ID
      */
@@ -2813,20 +2798,11 @@ class SupplierProposalLine extends CommonObjectLine
     // Bit 1:	0 ligne normale - 1 si ligne de remise fixe
 
     public $total_ht;			// Total HT  de la ligne toute quantite et incluant la remise ligne
-    public $total_tva;			// Total TVA  de la ligne toute quantite et incluant la remise ligne
+    public $total_tva;			// Total TVA de la ligne toute quantite et incluant la remise ligne
     public $total_ttc;			// Total TTC de la ligne toute quantite et incluant la remise ligne
 
-    /**
-     * @deprecated
-     * @see remise_percent, fk_remise_except
-     */
-    public $remise;
-
-    /**
-     * @deprecated
-     * @see subprice
-     */
-    public $price;
+    public $date_start;
+    public $date_end;
 
     // From llx_product
     /**
@@ -2902,6 +2878,7 @@ class SupplierProposalLine extends CommonObjectLine
     public function fetch($rowid)
     {
         $sql = 'SELECT pd.rowid, pd.fk_supplier_proposal, pd.fk_parent_line, pd.fk_product, pd.label as custom_label, pd.description, pd.price, pd.qty, pd.tva_tx,';
+        $sql.= ' pd.date_start, pd.date_end,';
         $sql.= ' pd.remise, pd.remise_percent, pd.fk_remise_except, pd.subprice,';
         $sql.= ' pd.info_bits, pd.total_ht, pd.total_tva, pd.total_ttc, pd.fk_product_fournisseur_price as fk_fournprice, pd.buy_price_ht as pa_ht, pd.special_code, pd.rang,';
         $sql.= ' pd.localtax1_tx, pd.localtax2_tx, pd.total_localtax1, pd.total_localtax2,';
@@ -2917,21 +2894,20 @@ class SupplierProposalLine extends CommonObjectLine
         {
             $objp = $this->db->fetch_object($result);
 
-            $this->rowid			= $objp->rowid; // deprecated
             $this->id				= $objp->rowid;
             $this->fk_supplier_proposal		= $objp->fk_supplier_proposal;
             $this->fk_parent_line	= $objp->fk_parent_line;
             $this->label			= $objp->custom_label;
             $this->desc				= $objp->description;
             $this->qty				= $objp->qty;
-            $this->price			= $objp->price;		// deprecated
             $this->subprice			= $objp->subprice;
             $this->tva_tx			= $objp->tva_tx;
-            $this->remise			= $objp->remise;
             $this->remise_percent	= $objp->remise_percent;
             $this->fk_remise_except = $objp->fk_remise_except;
             $this->fk_product		= $objp->fk_product;
             $this->info_bits		= $objp->info_bits;
+            $this->date_start		= $this->db->jdate($objp->date_start);
+            $this->date_end			= $this->db->jdate($objp->date_end);
 
             $this->total_ht			= $objp->total_ht;
             $this->total_tva		= $objp->total_tva;
@@ -3028,6 +3004,7 @@ class SupplierProposalLine extends CommonObjectLine
         // Insert line into database
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'supplier_proposaldet';
         $sql.= ' (fk_supplier_proposal, fk_parent_line, label, description, fk_product, product_type,';
+        $sql.= ' date_start, date_end,';
         $sql.= ' fk_remise_except, qty, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
         $sql.= ' subprice, remise_percent, ';
         $sql.= ' info_bits, ';
@@ -3040,6 +3017,8 @@ class SupplierProposalLine extends CommonObjectLine
         $sql.= " '".$this->db->escape($this->desc)."',";
         $sql.= " ".($this->fk_product?"'".$this->db->escape($this->fk_product)."'":"null").",";
         $sql.= " '".$this->db->escape($this->product_type)."',";
+        $sql.= " ".($this->date_start ? "'".$this->db->idate($this->date_start)."'" : "null").",";
+        $sql.= " ".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : "null").",";
         $sql.= " ".($this->fk_remise_except?"'".$this->db->escape($this->fk_remise_except)."'":"null").",";
         $sql.= " ".price2num($this->qty).",";
         $sql.= " ".price2num($this->tva_tx).",";
@@ -3073,8 +3052,7 @@ class SupplierProposalLine extends CommonObjectLine
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            $this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'supplier_proposaldet');
-            $this->id=$this->rowid;
+            $this->id=$this->db->last_insert_id(MAIN_DB_PREFIX.'supplier_proposaldet');
 
             if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
             {
@@ -3120,7 +3098,7 @@ class SupplierProposalLine extends CommonObjectLine
         $error=0;
         $this->db->begin();
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."supplier_proposaldet WHERE rowid = ".$this->rowid;
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."supplier_proposaldet WHERE rowid = ".$this->id;
         dol_syslog("SupplierProposalLine::delete", LOG_DEBUG);
         if ($this->db->query($sql) )
         {
@@ -3128,7 +3106,6 @@ class SupplierProposalLine extends CommonObjectLine
             // Remove extrafields
             if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
             {
-                $this->id=$this->rowid;
                 $result=$this->deleteExtraFields();
                 if ($result < 0)
                 {
@@ -3180,8 +3157,6 @@ class SupplierProposalLine extends CommonObjectLine
         if (empty($this->localtax2_type)) $this->localtax2_type=0;
         if (empty($this->marque_tx)) $this->marque_tx=0;
         if (empty($this->marge_tx)) $this->marge_tx=0;
-        if (empty($this->price)) $this->price=0;	// TODO A virer
-        if (empty($this->remise)) $this->remise=0;	// TODO A virer
         if (empty($this->remise_percent)) $this->remise_percent=0;
         if (empty($this->info_bits)) $this->info_bits=0;
         if (empty($this->special_code)) $this->special_code=0;
@@ -3212,6 +3187,8 @@ class SupplierProposalLine extends CommonObjectLine
         $sql.= " description='".$this->db->escape($this->desc)."'";
         $sql.= " , label=".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null");
         $sql.= " , product_type=".$this->product_type;
+        $sql.= " , date_start=".($this->date_start ? "'".$this->db->idate($this->date_start)."'" : "null");
+        $sql.= " , date_end=".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : "null");
         $sql.= " , tva_tx='".price2num($this->tva_tx)."'";
         $sql.= " , localtax1_tx=".price2num($this->localtax1_tx);
         $sql.= " , localtax2_tx=".price2num($this->localtax2_tx);
@@ -3220,8 +3197,6 @@ class SupplierProposalLine extends CommonObjectLine
         $sql.= " , qty='".price2num($this->qty)."'";
         $sql.= " , subprice=".price2num($this->subprice)."";
         $sql.= " , remise_percent=".price2num($this->remise_percent)."";
-        $sql.= " , price=".price2num($this->price)."";					// TODO A virer
-        $sql.= " , remise=".price2num($this->remise)."";				// TODO A virer
         $sql.= " , info_bits='".$this->db->escape($this->info_bits)."'";
         if (empty($this->skip_update_total))
         {
@@ -3245,7 +3220,7 @@ class SupplierProposalLine extends CommonObjectLine
         $sql.= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
         $sql.= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
 
-        $sql.= " WHERE rowid = ".$this->rowid;
+        $sql.= " WHERE rowid = ".$this->id;
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -3253,7 +3228,6 @@ class SupplierProposalLine extends CommonObjectLine
         {
             if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
             {
-                $this->id=$this->rowid;
                 $result=$this->insertExtraFields();
                 if ($result < 0)
                 {
@@ -3298,10 +3272,10 @@ class SupplierProposalLine extends CommonObjectLine
 
         // Mise a jour ligne en base
         $sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposaldet SET";
-        $sql.= " total_ht=".price2num($this->total_ht, 'MT')."";
-        $sql.= ",total_tva=".price2num($this->total_tva, 'MT')."";
-        $sql.= ",total_ttc=".price2num($this->total_ttc, 'MT')."";
-        $sql.= " WHERE rowid = ".$this->rowid;
+        $sql.= " total_ht=".price2num($this->total_ht, 'MT');
+        $sql.= ",total_tva=".price2num($this->total_tva, 'MT');
+        $sql.= ",total_ttc=".price2num($this->total_ttc, 'MT');
+        $sql.= " WHERE rowid = ".$this->id;
 
         dol_syslog("SupplierProposalLine::update_total", LOG_DEBUG);
 

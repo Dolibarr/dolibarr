@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -40,7 +40,7 @@ function multicurrencyAdminPrepareHead()
     $head[$h][2] = 'settings';
     $h++;
 
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'multicurrency');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'multicurrency');
 
     return $head;
 }

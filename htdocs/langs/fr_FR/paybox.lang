@@ -11,7 +11,6 @@ YourEMail=Email de confirmation du paiement
 Creditor=Bénéficiaire
 PaymentCode=Code de paiement
 PayBoxDoPayment=Payer avec PayBox
-ToPay=Saisir règlement
 YouWillBeRedirectedOnPayBox=Vous serez redirigé vers la page sécurisée Paybox de saisie de votre carte bancaire
 Continue=Continuer
 ToOfferALinkForOnlinePayment=URL de paiement %s

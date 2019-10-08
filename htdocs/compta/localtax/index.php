@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -188,6 +188,19 @@ function pt($db, $sql, $date)
     }
 }
 
+if (empty($localTaxType))
+{
+	accessforbidden('Parameter localTaxType is missing');
+	exit;
+}
+
+
+/*
+ * Actions
+ */
+
+// None
+
 
 /*
  * View
@@ -213,7 +226,11 @@ if($localTaxType==1) {
 	$CalcLT= $conf->global->MAIN_INFO_LOCALTAX_CALC2;
 }
 
-$fsearch.='  <input type="hidden" name="localTaxType" value="'.$localTaxType.'">';
+$fsearch = '<!-- hidden fields for form -->';
+$fsearch.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+$fsearch.= '<input type="hidden" name="localTaxType" value="'.$localTaxType.'">';
+$fsearch.= '<input type="hidden" name="modetax" value="'.$modetax.'">';
+
 $description = $fsearch;
 
 // Show report header
@@ -233,7 +250,7 @@ llxHeader('', $name);
 
 //$textprevyear="<a href=\"index.php?localTaxType=".$localTaxType."&year=" . ($year_current-1) . "\">".img_previous()."</a>";
 //$textnextyear=" <a href=\"index.php?localTaxType=".$localTaxType."&year=" . ($year_current+1) . "\">".img_next()."</a>";
-//print load_fiche_titre($langs->transcountry($LT,$mysoc->country_code),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear", 'title_accountancy.png');
+//print load_fiche_titre($langs->transcountry($LT,$mysoc->country_code),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear", 'invoicing');
 
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 //report_header($name,'',$textprevyear.$langs->trans("Year")." ".$year_start.$textnextyear,'',$description,$builddate,$exportlink,array(),$calcmode);
@@ -528,7 +545,7 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000)	// $mc
     $total = $total + $diff;
     $subtotal = price2num($subtotal + $diff, 'MT');
 
-    print '<td class="nowrap right">'.price(price2num($diff, 'MT')).'</td>\n';
+    print '<td class="nowrap right">'.price(price2num($diff, 'MT')).'</td>'."\n";
     print "<td>&nbsp;</td>\n";
     print "</tr>\n";
 

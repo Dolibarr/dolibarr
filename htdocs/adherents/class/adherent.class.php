@@ -24,7 +24,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -324,7 +324,7 @@ class Adherent extends CommonObject
 		$infos.= $langs->transnoentities("id").": ".$this->id."\n";
 		$infos.= $langs->transnoentities("Lastname").": ".$this->lastname."\n";
 		$infos.= $langs->transnoentities("Firstname").": ".$this->firstname."\n";
-		$infos.= $langs->transnoentities("Company").": ".$this->societe."\n";
+		$infos.= $langs->transnoentities("Company").": ".$this->company."\n";
 		$infos.= $langs->transnoentities("Address").": ".$this->address."\n";
 		$infos.= $langs->transnoentities("Zip").": ".$this->zip."\n";
 		$infos.= $langs->transnoentities("Town").": ".$this->town."\n";
@@ -350,7 +350,7 @@ class Adherent extends CommonObject
 			'__FIRSTNAME__'=>$msgishtml?dol_htmlentitiesbr($this->firstname):($this->firstname?$this->firstname:''),
 			'__LASTNAME__'=>$msgishtml?dol_htmlentitiesbr($this->lastname):($this->lastname?$this->lastname:''),
 			'__FULLNAME__'=>$msgishtml?dol_htmlentitiesbr($this->getFullName($langs)):$this->getFullName($langs),
-			'__COMPANY__'=>$msgishtml?dol_htmlentitiesbr($this->societe):($this->societe?$this->societe:''),
+			'__COMPANY__'=>$msgishtml?dol_htmlentitiesbr($this->company):($this->company?$this->company:''),
 			'__ADDRESS__'=>$msgishtml?dol_htmlentitiesbr($this->address):($this->address?$this->address:''),
 			'__ZIP__'=>$msgishtml?dol_htmlentitiesbr($this->zip):($this->zip?$this->zip:''),
 			'__TOWN__'=>$msgishtml?dol_htmlentitiesbr($this->town):($this->town?$this->town:''),
@@ -558,7 +558,7 @@ class Adherent extends CommonObject
 		$sql.= ", lastname = ".($this->lastname?"'".$this->db->escape($this->lastname)."'":"null");
 		$sql.= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null");	// 'man' or 'woman'
 		$sql.= ", login = ".($this->login?"'".$this->db->escape($this->login)."'":"null");
-		$sql.= ", societe = ".($this->societe?"'".$this->db->escape($this->societe)."'":"null");
+		$sql.= ", societe = ".($this->company?"'".$this->db->escape($this->company)."'":($this->societe?"'".$this->db->escape($this->societe)."'":"null"));
 		$sql.= ", fk_soc = ".($this->socid > 0?$this->db->escape($this->socid):"null");
 		$sql.= ", address = ".($this->address?"'".$this->db->escape($this->address)."'":"null");
 		$sql.= ", zip = ".($this->zip?"'".$this->db->escape($this->zip)."'":"null");
@@ -682,7 +682,7 @@ class Adherent extends CommonObject
 						$luser->lastname=$this->lastname;
 						$luser->gender=$this->gender;
 						$luser->pass=$this->pass;
-						$luser->societe_id=$this->societe;
+						//$luser->socid=$this->fk_soc;		// We do not enable this. This may transform a user into an external user.
 
 						$luser->birth=$this->birth;
 
@@ -1608,13 +1608,13 @@ class Adherent extends CommonObject
 
 						if ($this->morphy == 'mor')
 						{
-							$companyname=$this->societe;
+							$companyname=$this->company;
 							if (! empty($fullname)) $companyalias=$fullname;
 						}
 						else
 						{
 							$companyname=$fullname;
-							if (! empty($this->societe)) $companyalias=$this->societe;
+							if (! empty($this->company)) $companyalias=$this->company;
 						}
 
 						$result=$customer->create_from_member($this, $companyname, $companyalias);
@@ -1740,8 +1740,7 @@ class Adherent extends CommonObject
 				$paiement->datepaye     = $paymentdate;
 				$paiement->amounts      = $amounts;
 				$paiement->paiementid   = dol_getIdFromCode($this->db, $operation, 'c_paiement', 'code', 'id', 1);
-				$paiement->num_paiement = $num_chq;
-				$paiement->note         = $label;
+				$paiement->num_payment  = $num_chq;
 				$paiement->note_public  = $label;
 
 				if (! $error)
@@ -2063,18 +2062,17 @@ class Adherent extends CommonObject
 	 *  @param  string  $mode           			''=Show firstname+lastname as label (using default order), 'firstname'=Show only firstname, 'login'=Show login, 'ref'=Show ref
 	 *  @param  string  $morecss        			Add more css on link
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @param	int		$notooltip					1=Disable tooltip
 	 *	@return	string								Chaine avec URL
 	 */
-	public function getNomUrl($withpictoimg = 0, $maxlen = 0, $option = 'card', $mode = '', $morecss = '', $save_lastsearch_value = -1)
+	public function getNomUrl($withpictoimg = 0, $maxlen = 0, $option = 'card', $mode = '', $morecss = '', $save_lastsearch_value = -1, $notooltip = 0)
 	{
 		global $conf, $langs;
 
 		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpictoimg) $withpictoimg=0;
 
-		$notooltip=0;
-
 		$result=''; $label='';
-		$link=''; $linkstart=''; $linkend='';
+		$linkstart=''; $linkend='';
 
 		if (! empty($this->photo))
 		{
@@ -2107,7 +2105,7 @@ class Adherent extends CommonObject
 			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 		}
 
-		$link = '<a href="'.$url.'"';
+		$linkstart.= '<a href="'.$url.'"';
 		$linkclose="";
 		if (empty($notooltip))
 		{
@@ -2121,10 +2119,10 @@ class Adherent extends CommonObject
 			$linkclose.= ' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
 		}
 
-		$link.=$linkclose.'>';
+		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
-		$result.=$link;
+		$result.=$linkstart;
 		if ($withpictoimg) $result.='<div class="inline-block nopadding valignmiddle">';
 		if ($withpictoimg)
 		{
@@ -2180,7 +2178,8 @@ class Adherent extends CommonObject
 		{
 			if ($statut == -1) return $langs->trans("MemberStatusDraft");
 			elseif ($statut >= 1) {
-				if (! $date_end_subscription)            return $langs->trans("MemberStatusActive");
+				if ($need_subscription == 0)		 return $langs->trans("MemberStatusNoSubscription");
+				elseif (! $date_end_subscription)        return $langs->trans("MemberStatusActive");
 				elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLate");
 				else                                     return $langs->trans("MemberStatusPaid");
 			}
@@ -2190,7 +2189,8 @@ class Adherent extends CommonObject
 		{
 			if ($statut == -1) return $langs->trans("MemberStatusDraftShort");
 			elseif ($statut >= 1) {
-				if (! $date_end_subscription)            return $langs->trans("MemberStatusActiveShort");
+				if ($need_subscription == 0)		 return $langs->trans("MemberStatusNoSubscription");
+				elseif (! $date_end_subscription)        return $langs->trans("MemberStatusActiveShort");
 				elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLateShort");
 				else                                     return $langs->trans("MemberStatusPaidShort");
 			}
@@ -2200,7 +2200,8 @@ class Adherent extends CommonObject
 		{
 			if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'), 'statut0').' '.$langs->trans("MemberStatusDraftShort");
 			elseif ($statut >= 1) {
-				if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'), 'statut1').' '.$langs->trans("MemberStatusActiveShort");
+				if ($need_subscription == 0)		 return img_picto($langs->trans('MemberStatusNoSubscription'), 'statut4').' '.$langs->trans("MemberStatusNoSubscriptionShort");
+				elseif (! $date_end_subscription)        return img_picto($langs->trans('MemberStatusActive'), 'statut1').' '.$langs->trans("MemberStatusActiveShort");
 				elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'), 'statut3').' '.$langs->trans("MemberStatusActiveLateShort");
 				else                                     return img_picto($langs->trans('MemberStatusPaid'), 'statut4').' '.$langs->trans("MemberStatusPaidShort");
 			}
@@ -2210,7 +2211,8 @@ class Adherent extends CommonObject
 		{
 			if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'), 'statut0');
 			elseif ($statut >= 1) {
-				if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'), 'statut1');
+				if ($need_subscription == 0)		 return img_picto($langs->trans('MemberStatusNoSubscription'), 'statut4');
+				elseif (! $date_end_subscription)        return img_picto($langs->trans('MemberStatusActive'), 'statut1');
 				elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'), 'statut3');
 				else                                     return img_picto($langs->trans('MemberStatusPaid'), 'statut4');
 			}
@@ -2220,7 +2222,8 @@ class Adherent extends CommonObject
 		{
 			if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'), 'statut0').' '.$langs->trans("MemberStatusDraft");
 			elseif ($statut >= 1) {
-				if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'), 'statut1').' '.$langs->trans("MemberStatusActive");
+				if ($need_subscription == 0)		 return img_picto($langs->trans('MemberStatusNoSubscription'), 'statut4').' '.$langs->trans("MemberStatusNoSubscription");
+				elseif (! $date_end_subscription)        return img_picto($langs->trans('MemberStatusActive'), 'statut1').' '.$langs->trans("MemberStatusActive");
 				elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'), 'statut3').' '.$langs->trans("MemberStatusActiveLate");
 				else                                     return img_picto($langs->trans('MemberStatusPaid'), 'statut4').' '.$langs->trans("MemberStatusPaid");
 			}
@@ -2230,7 +2233,8 @@ class Adherent extends CommonObject
 		{
 		    if ($statut == -1) return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusDraftShort").'</span> '.img_picto($langs->trans('MemberStatusDraft'), 'statut0');
 			elseif ($statut >= 1) {
-				if (! $date_end_subscription)            return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveShort").' </span>'.img_picto($langs->trans('MemberStatusActive'), 'statut1');
+				if ($need_subscription == 0)		 return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusNoSubscriptionShort").' </span>'.img_picto($langs->trans('MemberStatusNoSubscription'), 'statut4');
+				elseif (! $date_end_subscription)        return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveShort").' </span>'.img_picto($langs->trans('MemberStatusActive'), 'statut1');
 				elseif ($date_end_subscription < time()) return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveLateShort").' </span>'.img_picto($langs->trans('MemberStatusActiveLate'), 'statut3');
 				else                                     return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusPaidShort").' </span>'.img_picto($langs->trans('MemberStatusPaid'), 'statut4');
 			}
@@ -2240,7 +2244,8 @@ class Adherent extends CommonObject
 		{
 		    if ($statut == -1) return $langs->trans("MemberStatusDraft").' '.img_picto($langs->trans('MemberStatusDraft'), 'statut0');
 			if ($statut >= 1) {
-				if (! $date_end_subscription)            return $langs->trans("MemberStatusActive").' '.img_picto($langs->trans('MemberStatusActive'), 'statut1');
+				if ($need_subscription == 0)		 return $langs->trans("MemberStatusNoSubscription").' '.img_picto($langs->trans('MemberStatusNoSubscription'), 'statut4');
+				elseif (! $date_end_subscription)        return $langs->trans("MemberStatusActive").' '.img_picto($langs->trans('MemberStatusActive'), 'statut1');
 				elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLate").' '.img_picto($langs->trans('MemberStatusActiveLate'), 'statut3');
 				else                                     return $langs->trans("MemberStatusPaid").' '.img_picto($langs->trans('MemberStatusPaid'), 'statut4');
 			}
@@ -2297,15 +2302,17 @@ class Adherent extends CommonObject
         // phpcs:enable
 		global $conf, $langs;
 
-		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
+		if ($user->socid) return -1;   // protection pour eviter appel par utilisateur externe
 
 		$now=dol_now();
 
 		$sql = "SELECT a.rowid, a.datefin, a.statut";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
-		$sql.= " WHERE a.statut = 1";
+		$sql.= ", ".MAIN_DB_PREFIX."adherent_type as t";
+		$sql.= " WHERE a.fk_adherent_type = t.rowid";
+		$sql.= " AND a.statut = 1";
 		$sql.= " AND a.entity IN (".getEntity('adherent').")";
-		$sql.= " AND (a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."')";
+		$sql.= " AND ((a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."') AND t.subscription = 1)";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -2398,7 +2405,7 @@ class Adherent extends CommonObject
 		$this->gender='man';
 		$this->login='dolibspec';
 		$this->pass='dolibspec';
-		$this->societe = 'Societe ABC';
+		$this->company = 'Societe ABC';
 		$this->address = '61 jump street';
 		$this->zip = '75000';
 		$this->town = 'Paris';
@@ -2483,9 +2490,9 @@ class Adherent extends CommonObject
 		$this->fullname=$this->getFullName($langs);
 
 		// For avoid ldap error when firstname and lastname are empty
-		if ($this->morphy == 'mor' && (empty($this->fullname) || $this->fullname == $this->societe)) {
-			$this->fullname = $this->societe;
-			$this->lastname = $this->societe;
+		if ($this->morphy == 'mor' && (empty($this->fullname) || $this->fullname == $this->company)) {
+			$this->fullname = $this->company;
+			$this->lastname = $this->company;
 		}
 
 		// Possible LDAP KEY (constname => varname)
@@ -2513,7 +2520,7 @@ class Adherent extends CommonObject
 		}
 		if ($this->firstname && ! empty($conf->global->LDAP_MEMBER_FIELD_FIRSTNAME))			$info[$conf->global->LDAP_MEMBER_FIELD_FIRSTNAME] = $this->firstname;
 		if ($this->poste && ! empty($conf->global->LDAP_MEMBER_FIELD_TITLE))					$info[$conf->global->LDAP_MEMBER_FIELD_TITLE] = $this->poste;
-		if ($this->societe && ! empty($conf->global->LDAP_MEMBER_FIELD_COMPANY))				$info[$conf->global->LDAP_MEMBER_FIELD_COMPANY] = $this->societe;
+		if ($this->company && ! empty($conf->global->LDAP_MEMBER_FIELD_COMPANY))				$info[$conf->global->LDAP_MEMBER_FIELD_COMPANY] = $this->company;
 		if ($this->address && ! empty($conf->global->LDAP_MEMBER_FIELD_ADDRESS))				$info[$conf->global->LDAP_MEMBER_FIELD_ADDRESS] = $this->address;
 		if ($this->zip && ! empty($conf->global->LDAP_MEMBER_FIELD_ZIP))						$info[$conf->global->LDAP_MEMBER_FIELD_ZIP] = $this->zip;
 		if ($this->town && ! empty($conf->global->LDAP_MEMBER_FIELD_TOWN))						$info[$conf->global->LDAP_MEMBER_FIELD_TOWN] = $this->town;
@@ -2690,12 +2697,12 @@ class Adherent extends CommonObject
 		// Process
 		foreach ($to_del as $del) {
 			if ($c->fetch($del) > 0) {
-				$c->del_type($this, 'member');
+				$c->del_type($this, Categorie::TYPE_MEMBER);
 			}
 		}
 		foreach ($to_add as $add) {
 			if ($c->fetch($add) > 0) {
-				$c->add_type($this, 'member');
+				$c->add_type($this, Categorie::TYPE_MEMBER);
 			}
 		}
 
@@ -2885,7 +2892,7 @@ class Adherent extends CommonObject
 	    						$actioncomm->type_code   = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 	    						$actioncomm->code        = 'AC_'.$actioncode;
 	    						$actioncomm->label       = $actionmsg2;
-	    						$actioncomm->note        = $actionmsg;
+	    						$actioncomm->note_private= $actionmsg;
 	    						$actioncomm->fk_project  = 0;
 	    						$actioncomm->datep       = $now;
 	    						$actioncomm->datef       = $now;

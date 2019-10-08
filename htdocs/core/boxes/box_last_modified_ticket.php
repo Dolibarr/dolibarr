@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -47,11 +47,14 @@ class box_last_modified_ticket extends ModeleBoxes
 
     /**
      * Constructor
+     *  @param	DoliDB	$db         Database handler
+     *  @param  string  $param      More parameters
      */
-    public function __construct()
+    public function __construct($db, $param = '')
     {
         global $langs;
-        $langs->load("boxes");
+		$langs->load("boxes");
+		$this->db = $db;
 
         $this->boxlabel = $langs->transnoentitiesnoconv("BoxLastModifiedTicket");
     }
@@ -64,7 +67,7 @@ class box_last_modified_ticket extends ModeleBoxes
      */
     public function loadBox($max = 5)
     {
-        global $conf, $user, $langs, $db;
+        global $conf, $user, $langs;
 
         $this->max = $max;
 
@@ -72,8 +75,8 @@ class box_last_modified_ticket extends ModeleBoxes
 
         $text = $langs->trans("BoxLastModifiedTicketDescription", $max);
         $this->info_box_head = array(
-         'text' => $text,
-         'limit' => dol_strlen($text)
+         	'text' => $text,
+         	'limit' => dol_strlen($text)
         );
 
         $this->info_box_contents[0][0] = array(
@@ -99,20 +102,20 @@ class box_last_modified_ticket extends ModeleBoxes
             }
 
             $sql.= " ORDER BY t.tms DESC, t.rowid DESC ";
-            $sql.= $db->plimit($max, 0);
+            $sql.= $this->db->plimit($max, 0);
 
-            $resql = $db->query($sql);
+            $resql = $this->db->query($sql);
             if ($resql) {
-                $num = $db->num_rows($resql);
+                $num = $this->db->num_rows($resql);
                 $now=gmmktime();
 
                 $i = 0;
 
                 while ($i < $num) {
-                    $objp = $db->fetch_object($resql);
-                    $datec=$db->jdate($objp->datec);
-                    $dateterm=$db->jdate($objp->fin_validite);
-                    $dateclose=$db->jdate($objp->date_cloture);
+                    $objp = $this->db->fetch_object($resql);
+                    $datec=$this->db->jdate($objp->datec);
+                    $dateterm=$this->db->jdate($objp->fin_validite);
+                    $dateclose=$this->db->jdate($objp->date_cloture);
                     $late = '';
 
                     $ticket = new Ticket($this->db);
@@ -157,7 +160,7 @@ class box_last_modified_ticket extends ModeleBoxes
                     // Date creation
                     $this->info_box_contents[$i][$r] = array(
                         'td' => 'class="right"',
-                        'text' => dol_print_date($db->idate($objp->datec), 'dayhour')
+                        'text' => dol_print_date($this->db->idate($objp->datec), 'dayhour')
                     );
                     $r++;
 
@@ -177,7 +180,7 @@ class box_last_modified_ticket extends ModeleBoxes
                     $this->info_box_contents[$i][0] = array('td' => 'class="center"','text'=>$langs->trans("BoxLastModifiedTicketNoRecordedTickets"));
                 }
             } else {
-                dol_print_error($db);
+                dol_print_error($this->db);
             }
         } else {
             $this->info_box_contents[0][0] = array(

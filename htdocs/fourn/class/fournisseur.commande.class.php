@@ -23,7 +23,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -625,93 +625,69 @@ class CommandeFournisseur extends CommonOrder
     /**
      *  Return label of a status
      *
-     * 	@param  int		$statut		Id statut
+     * 	@param  int		$status		Id statut
      *  @param  int		$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
      *  @param  int     $billed     1=Billed
      *  @return string				Label of status
      */
-    public function LibStatut($statut, $mode = 0, $billed = 0)
+    public function LibStatut($status, $mode = 0, $billed = 0)
     {
         // phpcs:enable
     	global $conf, $langs;
 
-    	if (empty($this->statuts) || empty($this->statutshort))
-    	{
+    	if (empty($this->statuts) || empty($this->statutshort)){
 	        $langs->load('orders');
 
-	        $this->statuts[0] = 'StatusOrderDraft';
-	        $this->statuts[1] = 'StatusOrderValidated';
-	        $this->statuts[2] = 'StatusOrderApproved';
-	        if (empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) $this->statuts[3] = 'StatusOrderOnProcess';
-	        else $this->statuts[3] = 'StatusOrderOnProcessWithValidation';
-	        $this->statuts[4] = 'StatusOrderReceivedPartially';
-	        $this->statuts[5] = 'StatusOrderReceivedAll';
-	        $this->statuts[6] = 'StatusOrderCanceled';	// Approved->Canceled
-	        $this->statuts[7] = 'StatusOrderCanceled';	// Process running->canceled
-	        //$this->statuts[8] = 'StatusOrderBilled';	// Everything is finished, order received totally and bill received
-	        $this->statuts[9] = 'StatusOrderRefused';
+	        $this->statuts[0] = 'StatusSupplierOrderDraft';
+	        $this->statuts[1] = 'StatusSupplierOrderValidated';
+	        $this->statuts[2] = 'StatusSupplierOrderApproved';
+	        if (empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) $this->statuts[3] = 'StatusSupplierOrderOnProcess';
+	        else $this->statuts[3] = 'StatusSupplierOrderOnProcessWithValidation';
+	        $this->statuts[4] = 'StatusSupplierOrderReceivedPartially';
+	        $this->statuts[5] = 'StatusSupplierOrderReceivedAll';
+	        $this->statuts[6] = 'StatusSupplierOrderCanceled';	// Approved->Canceled
+	        $this->statuts[7] = 'StatusSupplierOrderCanceled';	// Process running->canceled
+	        $this->statuts[9] = 'StatusSupplierOrderRefused';
 
 	        // List of language codes for status
-	        $this->statutshort[0] = 'StatusOrderDraftShort';
-	        $this->statutshort[1] = 'StatusOrderValidatedShort';
-	        $this->statutshort[2] = 'StatusOrderApprovedShort';
-	        $this->statutshort[3] = 'StatusOrderOnProcessShort';
-	        $this->statutshort[4] = 'StatusOrderReceivedPartiallyShort';
-	        $this->statutshort[5] = 'StatusOrderReceivedAllShort';
-	        $this->statutshort[6] = 'StatusOrderCanceledShort';
-	        $this->statutshort[7] = 'StatusOrderCanceledShort';
-	        $this->statutshort[9] = 'StatusOrderRefusedShort';
+	        $this->statutshort[0] = 'StatusSupplierOrderDraftShort';
+	        $this->statutshort[1] = 'StatusSupplierOrderValidatedShort';
+	        $this->statutshort[2] = 'StatusSupplierOrderApprovedShort';
+	        $this->statutshort[3] = 'StatusSupplierOrderOnProcessShort';
+	        $this->statutshort[4] = 'StatusSupplierOrderReceivedPartiallyShort';
+	        $this->statutshort[5] = 'StatusSupplierOrderReceivedAllShort';
+	        $this->statutshort[6] = 'StatusSupplierOrderCanceledShort';
+	        $this->statutshort[7] = 'StatusSupplierOrderCanceledShort';
+	        $this->statutshort[9] = 'StatusSupplierOrderRefusedShort';
     	}
 
-        $billedtext='';
-		//if ($statut==5 && $this->billed == 1) $statut = 8;
-        if ($billed == 1) $billedtext=$langs->trans("Billed");
+        $statustrans = array(
+            0 => 'status0',
+            1 => 'status1',
+            2 => 'status3',
+            3 => 'status3',
+            4 => 'status3',
+            5 => 'status6',
+            6 => 'status5',
+            7 => 'status5',
 
-        if ($mode == 0)
-        {
-            return $langs->trans($this->statuts[$statut]);
+            9 => 'status5',
+        );
+
+        $statusClass = 'status0';
+        if(!empty($statustrans[$status])){
+            $statusClass = $statustrans[$status];
         }
-        elseif ($mode == 1)
-        {
-        	return $langs->trans($this->statutshort[$statut]);
+
+        $billedtext = '';
+        if($mode == 4 && $billed){
+            $billedtext = ' - '.$langs->trans("Billed");
         }
-        elseif ($mode == 2)
-        {
-            return $langs->trans($this->statuts[$statut]);
-        }
-        elseif ($mode == 3)
-        {
-            if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut0');
-            elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]), 'statut1');
-            elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]), 'statut3');
-            elseif ($statut==3) return img_picto($langs->trans($this->statuts[$statut]), 'statut3');
-            elseif ($statut==4) return img_picto($langs->trans($this->statuts[$statut]), 'statut3');
-            elseif ($statut==5) return img_picto($langs->trans($this->statuts[$statut]), 'statut6');
-            elseif ($statut==6 || $statut==7) return img_picto($langs->trans($this->statuts[$statut]), 'statut5');
-            elseif ($statut==9) return img_picto($langs->trans($this->statuts[$statut]), 'statut5');
-        }
-        elseif ($mode == 4)
-        {
-            if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut0').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]), 'statut1').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]), 'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==3) return img_picto($langs->trans($this->statuts[$statut]), 'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==4) return img_picto($langs->trans($this->statuts[$statut]), 'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==5) return img_picto($langs->trans($this->statuts[$statut]), 'statut6').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==6 || $statut==7) return img_picto($langs->trans($this->statuts[$statut]), 'statut5').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==9) return img_picto($langs->trans($this->statuts[$statut]), 'statut5').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-        }
-        elseif ($mode == 5)
-        {
-        	if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut0');
-        	elseif ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut1');
-        	elseif ($statut==2) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut3');
-        	elseif ($statut==3) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut3');
-        	elseif ($statut==4) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut3');
-        	elseif ($statut==5) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut6');
-        	elseif ($statut==6 || $statut==7) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut5');
-        	elseif ($statut==9) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut5');
-        }
+
+        $statusLong = $langs->trans($this->statuts_long[$status]).$billedtext;
+        $statusShort = $langs->trans($this->statutshort[$status]);
+
+        return dolGetStatus($statusLong, $statusShort, '', $statusClass, $mode);
     }
 
 
@@ -1822,10 +1798,9 @@ class CommandeFournisseur extends CommonOrder
                 $error++;
             }
 
-            // Si module stock gere et que incrementation faite depuis un dispatching en stock
+            // If module stock is enabled and the stock increase is done on purchase order dispatching
             if (! $error && $entrepot > 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
             {
-
                 $mouv = new MouvementStock($this->db);
                 if ($product > 0)
                 {
@@ -2806,9 +2781,10 @@ class CommandeFournisseur extends CommonOrder
      *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
      *	@param          User	$user   Objet user
+     *  @param          int		$mode   "opened", "awaiting" for orders awaiting reception
      *	@return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
      */
-    public function load_board($user)
+    public function load_board($user, $mode = 'opened')
     {
         // phpcs:enable
         global $conf, $langs;
@@ -2824,7 +2800,12 @@ class CommandeFournisseur extends CommonOrder
             $clause = " AND";
         }
         $sql.= $clause." c.entity = ".$conf->entity;
-        $sql.= " AND c.fk_statut IN (".self::STATUS_VALIDATED.", ".self::STATUS_ACCEPTED.")";
+        if($mode==='awaiting'){
+            $sql.= " AND c.fk_statut = ".self::STATUS_ORDERSENT;
+        }
+        else{
+            $sql.= " AND c.fk_statut IN (".self::STATUS_VALIDATED.", ".self::STATUS_ACCEPTED.")";
+        }
         if ($user->societe_id) $sql.=" AND c.fk_soc = ".$user->societe_id;
 
         $resql=$this->db->query($sql);
@@ -2836,8 +2817,14 @@ class CommandeFournisseur extends CommonOrder
 	        $response->warning_delay=$conf->commande->fournisseur->warning_delay/60/60/24;
 	        $response->label=$langs->trans("SuppliersOrdersToProcess");
 	        $response->labelShort=$langs->trans("Opened");
-	        $response->url=DOL_URL_ROOT.'/fourn/commande/list.php?statut=1,2,3&mainmenu=commercial&leftmenu=orders_suppliers';
+	        $response->url=DOL_URL_ROOT.'/fourn/commande/list.php?statut=1,2&mainmenu=commercial&leftmenu=orders_suppliers';
 	        $response->img=img_object('', "order");
+
+            if($mode==='awaiting'){
+                $response->label=$langs->trans("SuppliersOrdersAwaitingReception");
+                $response->labelShort=$langs->trans("AwaitingReception");
+                $response->url=DOL_URL_ROOT.'/fourn/commande/list.php?statut=3&mainmenu=commercial&leftmenu=orders_suppliers';
+            }
 
             while ($obj=$this->db->fetch_object($resql))
             {
@@ -3512,6 +3499,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
         global $conf,$user;
 
         $error=0;
+
+        $this->db->begin();
 
         // Mise a jour ligne en base
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";

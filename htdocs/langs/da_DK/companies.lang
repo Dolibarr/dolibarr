@@ -54,6 +54,7 @@ Firstname=Fornavn
 PostOrFunction=Stilling
 UserTitle=Titel
 NatureOfThirdParty=Tredjepartens art
+NatureOfContact=Nature of Contact
 Address=Adresse
 State=Stat/provins
 StateShort=Stat

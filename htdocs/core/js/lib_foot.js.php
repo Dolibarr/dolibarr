@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -50,7 +50,7 @@ if (empty($conf->dol_no_mouse_hover))
 {
 	print 'jQuery(".classfortooltip").tooltip({
 				show: { collision: "flipfit", effect:\'toggle\', delay:50 },
-				hide: { delay: 50 },
+				hide: { delay: 250 },
 				tooltipClass: "mytooltip",
 				content: function () {
                     console.log("Return title for popup");

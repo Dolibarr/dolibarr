@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -163,7 +163,7 @@ abstract class CommonDocGenerator
     /**
      * Define array with couple subtitution key => subtitution value
      *
-     * @param	Object		$object			Object
+     * @param	Societe		$object			Object
      * @param   Translate	$outputlangs    Language object for output
      * @return	array						Array of substitution key->code
      */
@@ -221,7 +221,7 @@ abstract class CommonDocGenerator
         {
         	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
         	$extrafields = new ExtraFields($this->db);
-        	$extralabels = $extrafields->fetch_name_optionals_label('societe', true);
+        	$extrafields->fetch_name_optionals_label($object->table_element, true);
         	$object->fetch_optionals();
 
         	foreach($extrafields->attribute_label as $key=>$label)
@@ -295,7 +295,7 @@ abstract class CommonDocGenerator
 		// Retrieve extrafields
 		require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
-		$extralabels = $extrafields->fetch_name_optionals_label('socpeople', true);
+		$extrafields->fetch_name_optionals_label($object->table_element, true);
 		$object->fetch_optionals();
 
 		foreach($extrafields->attribute_label as $key => $label)
@@ -497,8 +497,16 @@ abstract class CommonDocGenerator
 			$resarray['object_total_up'] = $totalUp;
 			$resarray['object_total_up_locale'] = price($resarray['object_total_up'], 0, $outputlangs);
 			if (method_exists($object, 'getTotalDiscount')) {
-				$resarray['object_total_discount'] = round(100 / $totalUp * $object->getTotalDiscount(), 2);
+				$totalDiscount=$object->getTotalDiscount();
+			} else {
+				$totalDiscount=0;
+			}
+			if (!empty($totalUp) && !empty($totalDiscount)) {
+				$resarray['object_total_discount'] = round(100 / $totalUp * $totalDiscount, 2);
 				$resarray['object_total_discount_locale'] = price($resarray['object_total_discount'], 0, $outputlangs);
+			} else {
+				$resarray['object_total_discount']='';
+				$resarray['object_total_discount_locale']='';
 			}
 		}
 
@@ -509,7 +517,7 @@ abstract class CommonDocGenerator
 
 			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($this->db);
-			$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey, true);
+			$extrafields->fetch_name_optionals_label($extrafieldkey, true);
 			$object->fetch_optionals();
 
 			$resarray = $this->fill_substitutionarray_with_extrafields($object, $resarray, $extrafields, $array_key, $outputlangs);
@@ -584,7 +592,7 @@ abstract class CommonDocGenerator
 		$array_key="line";
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
-		$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey, true);
+		$extrafields->fetch_name_optionals_label($extrafieldkey, true);
 		$line->fetch_optionals();
 
 		$resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);
@@ -654,7 +662,7 @@ abstract class CommonDocGenerator
     	{
     		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
     		$extrafields = new ExtraFields($this->db);
-    		$extralabels = $extrafields->fetch_name_optionals_label('expedition', true);
+    		$extrafields->fetch_name_optionals_label('expedition', true);
     		$object->fetch_optionals();
 
     		$array_shipment = $this->fill_substitutionarray_with_extrafields($object, $array_shipment, $extrafields, $array_key, $outputlangs);
@@ -704,7 +712,7 @@ abstract class CommonDocGenerator
         $array_key = "line";
         require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
         $extrafields = new ExtraFields($this->db);
-        $extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey, true);
+        $extrafields->fetch_name_optionals_label($extrafieldkey, true);
         $line->fetch_optionals();
 
         $resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);
@@ -766,9 +774,19 @@ abstract class CommonDocGenerator
 				//Add value to store price with currency
 				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_currency' => $object->array_options['options_'.$key.'_currency']));
 			}
-			elseif($extrafields->attribute_type[$key] == 'select' || $extrafields->attribute_type[$key] == 'checkbox')
+			elseif($extrafields->attribute_type[$key] == 'select')
 			{
 				$object->array_options['options_'.$key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_'.$key]];
+			}
+			elseif($extrafields->attribute_type[$key] == 'checkbox') {
+				$valArray=explode(',', $object->array_options['options_'.$key]);
+				$output=array();
+				foreach($extrafields->attribute_param[$key]['options'] as $keyopt=>$valopt) {
+					if  (in_array($keyopt, $valArray)) {
+						$output[]=$valopt;
+					}
+				}
+				$object->array_options['options_'.$key] = implode(', ', $output);
 			}
 			elseif($extrafields->attribute_type[$key] == 'date')
 			{

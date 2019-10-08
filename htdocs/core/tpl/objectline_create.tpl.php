@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Need to have following variables defined:
  * $object (invoice, order, ...)
@@ -63,7 +63,7 @@ if (in_array($object->element, array('propal','commande','order','facture','fact
 
 // Lines for extrafield
 $objectline = null;
-if (!empty($extrafieldsline))
+if (!empty($extrafields))
 {
 	if ($this->table_element_line=='commandedet') {
 		$objectline = new OrderLine($this->db);
@@ -110,7 +110,9 @@ if ($nolinesbefore) {
 	{
 	?>
 		<td class="linecolrefsupplier"><span id="title_fourn_ref"><?php echo $langs->trans('SupplierRef'); ?></span></td>
-	<?php } ?>
+	<?php
+	}
+	?>
 	<td class="linecolvat right"><span id="title_vat"><?php echo $langs->trans('VAT'); ?></span></td>
 	<td class="linecoluht right"><span id="title_up_ht"><?php echo $langs->trans('PriceUHT'); ?></span></td>
 	<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { ?>
@@ -249,11 +251,11 @@ if ($nolinesbefore) {
 			if (! empty($conf->global->ENTREPOT_EXTRA_STATUS))
 			{
 				// hide products in closed warehouse, but show products for internal transfer
-				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth300', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'));
+				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, -1, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth300', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'));
 			}
 			else
 			{
-				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth300', 0, '', GETPOST('combinations', 'array'));
+				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, -1, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth300', 0, '', GETPOST('combinations', 'array'));
 			}
 
 			if (! empty($conf->global->MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_CUSTOMER_PRODUCTS))
@@ -373,7 +375,7 @@ if ($nolinesbefore) {
 	{
 		$coldisplay++;
         ?>
-		<td class="nobottom linecolresupplier"><input id="fourn_ref" name="fourn_ref" class="flat maxwidth75" value="<?php echo (isset($_POST["fourn_ref"])?GETPOST("fourn_ref", 'alpha', 2):''); ?>"></td>
+		<td class="nobottom linecolresupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth150" value="<?php echo (isset($_POST["fourn_ref"])?GETPOST("fourn_ref", 'alpha', 2):''); ?>"></td>
 	<?php } ?>
 
 	<td class="nobottom linecolvat right"><?php
@@ -473,7 +475,7 @@ if ($nolinesbefore) {
 
 <?php
 if (is_object($objectline)) {
-	print $objectline->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+	print $objectline->showOptionals($extrafields, 'edit', array('colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
 }
 
 if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $dateSelector && GETPOST('type') != '0')	// We show date field if required
@@ -674,8 +676,19 @@ jQuery(document).ready(function() {
 		setforpredef();		// TODO Keep vat combo visible and set it to first entry into list that match result of get_default_tva
 
 		jQuery('#trlinefordates').show();
+		<?php
+		if (empty($conf->global->MAIN_DISABLE_EDIT_PREDEF_PRICEHT))
+		{
+		?>
+			// get the HT price for the product and display it
+			$.post('<?php echo DOL_URL_ROOT; ?>/product/ajax/products.php?action=fetch', { 'id': $(this).val(), 'socid' : <?php print $object->socid; ?> }, function(data) {
+				jQuery("#price_ht").val(data.price_ht);
+			},
+			'json');
 
 		<?php
+		}
+
 		if (! empty($usemargins) && $user->rights->margins->creer)
 		{
 			$langs->load('stocks');
@@ -838,8 +851,15 @@ function setforpredef() {
 	jQuery("#select_type").val(-1);
 	jQuery("#prod_entry_mode_free").prop('checked',false).change();
 	jQuery("#prod_entry_mode_predef").prop('checked',true).change();
-	jQuery("#price_ht").val('')
-	jQuery("#price_ht, #multicurrency_price_ht, #price_ttc, #fourn_ref, #tva_tx, #title_vat, #title_up_ht, #title_up_ht_currency, #title_up_ttc, #title_up_ttc_currency").hide();
+	<?php if (empty($conf->global->MAIN_DISABLE_EDIT_PREDEF_PRICEHT)) { ?>
+		jQuery("#price_ht").val('').show();
+		jQuery("#multicurrency_price_ht").val('').show();
+	<?php } else { ?>
+		jQuery("#price_ht").val('').hide();
+		jQuery("#multicurrency_price_ht").val('').hide();
+	<?php } ?>
+	jQuery("#price_ht").val('');
+	jQuery("#price_ttc, #fourn_ref, #tva_tx, #title_vat, #title_up_ht, #title_up_ht_currency, #title_up_ttc, #title_up_ttc_currency").hide();
 	jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").hide();
 	jQuery("#buying_price").show();
 	jQuery('#trlinefordates, .divlinefordates').show();

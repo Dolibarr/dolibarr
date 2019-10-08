@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -181,7 +181,10 @@ class modAdherent extends DolibarrModules
 
         // Boxes
         //-------
-        $this->boxes = array(0=>array('file'=>'box_members.php','enabledbydefaulton'=>'Home'));
+        $this->boxes = array(
+			0=>array('file'=>'box_members.php','enabledbydefaulton'=>'Home'),
+			2=>array('file'=>'box_birthdays_members.php','enabledbydefaulton'=>'Home')
+		);
 
         // Permissions
         //------------

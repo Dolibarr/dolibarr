@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -56,9 +56,9 @@ class box_services_expired extends ModeleBoxes
     {
         global $user;
 
-        $this->db=$db;
+        $this->db = $db;
 
-        $this->hidden=! ($user->rights->contrat->lire);
+        $this->hidden = ! ($user->rights->contrat->lire);
     }
 
     /**
@@ -69,7 +69,7 @@ class box_services_expired extends ModeleBoxes
      */
     public function loadBox($max = 5)
     {
-    	global $user, $langs, $db, $conf;
+    	global $user, $langs, $conf;
 
     	$this->max=$max;
 
@@ -88,19 +88,19 @@ class box_services_expired extends ModeleBoxes
 			$sql.= " MIN(cd.date_fin_validite) as date_line, COUNT(cd.rowid) as nb_services";
     		$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe s, ".MAIN_DB_PREFIX."contratdet as cd";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-    		$sql.= " WHERE cd.statut = 4 AND cd.date_fin_validite <= '".$db->idate($now)."'";
+    		$sql.= " WHERE cd.statut = 4 AND cd.date_fin_validite <= '".$this->db->idate($now)."'";
     		$sql.= " AND c.entity = ".$conf->entity;
     		$sql.= " AND c.fk_soc=s.rowid AND cd.fk_contrat=c.rowid AND c.statut > 0";
             if ($user->societe_id) $sql.=' AND c.fk_soc = '.$user->societe_id;
             if (!$user->rights->societe->client->voir  && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
     		$sql.= " GROUP BY c.rowid, c.ref, c.statut, c.date_contrat, c.ref_customer, c.ref_supplier, s.nom, s.rowid";
     		$sql.= " ORDER BY date_line ASC";
-    		$sql.= $db->plimit($max, 0);
+    		$sql.= $this->db->plimit($max, 0);
 
-    		$resql = $db->query($sql);
+    		$resql = $this->db->query($sql);
     		if ($resql)
     		{
-    			$num = $db->num_rows($resql);
+    			$num = $this->db->num_rows($resql);
 
     			$i = 0;
 
@@ -111,7 +111,7 @@ class box_services_expired extends ModeleBoxes
     			{
     			    $late='';
 
-    				$objp = $db->fetch_object($resql);
+    				$objp = $this->db->fetch_object($resql);
 
     				$thirdpartytmp->name = $objp->name;
     				$thirdpartytmp->id = $objp->socid;
@@ -129,7 +129,7 @@ class box_services_expired extends ModeleBoxes
     				$contract->ref_customer = $objp->ref_customer;
     				$contract->ref_supplier = $objp->ref_supplier;
 
-					$dateline=$db->jdate($objp->date_line);
+					$dateline=$this->db->jdate($objp->date_line);
 					if (($dateline + $conf->contrat->services->expires->warning_delay) < $now) $late=img_warning($langs->trans("Late"));
 
     				$this->info_box_contents[$i][] = array(
@@ -168,14 +168,14 @@ class box_services_expired extends ModeleBoxes
                     );
     			}
 
-				$db->free($resql);
+				$this->db->free($resql);
     		}
     		else
     		{
     			$this->info_box_contents[0][] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
     		}
     	}

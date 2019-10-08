@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -271,7 +271,7 @@ $list = array (
  */
 function oauthadmin_prepare_head()
 {
-    global $langs, $conf, $user;
+    global $langs, $conf;
     $h = 0;
     $head = array();
 

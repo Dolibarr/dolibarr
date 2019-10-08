@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -178,7 +178,7 @@ class Setup extends DolibarrApi
                 }
             }
         } else {
-            throw new RestException(503, 'Error when retrieving list of countries : '.$country->error);
+            throw new RestException(503, 'Error when retrieving list of countries');
         }
 
         return $list;
@@ -331,7 +331,7 @@ class Setup extends DolibarrApi
      * @param string    $module     To filter on module events
      * @param int       $active     Payment term is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
-     * @return List of events types
+     * @return array				List of events types
      *
      * @url     GET dictionary/event_types
      *
@@ -394,7 +394,7 @@ class Setup extends DolibarrApi
      * @param string    $module     To filter on module events
      * @param int       $active     Payment term is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
-     * @return List of events types
+     * @return array				List of civility types
      *
      * @url     GET dictionary/civilities
      *
@@ -456,7 +456,7 @@ class Setup extends DolibarrApi
      * @param int       $page       Page number (starting from zero)
      * @param int       $active     Payment term is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
-     * @return List of events types
+     * @return array				List of currencies
      *
      * @url     GET dictionary/currencies
      *
@@ -477,7 +477,7 @@ class Setup extends DolibarrApi
         $sql.= " AND m.entity IN (".getEntity('multicurrency').")";
         if (!empty($multicurrency) && $multicurrency != 2) $sql.= " AND cr.date_sync = (SELECT MAX(cr2.date_sync) FROM ".MAIN_DB_PREFIX."multicurrency_rate AS cr2 WHERE cr2.fk_multicurrency = m.rowid)";
         }
-        
+
         // Add sql filters
         if ($sqlfilters)
         {
@@ -523,7 +523,7 @@ class Setup extends DolibarrApi
      * @param string	$sortorder	Sort order
      * @param string    $type       Type of element ('adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...)
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'SO-%')"
-     * @return List of extra fields
+     * @return array				List of extra fields
      *
      * @url     GET extrafields
      *
@@ -602,7 +602,7 @@ class Setup extends DolibarrApi
      * @param string    $town       To filter on city name
      * @param int       $active     Payment term is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
-     * @return List of towns
+     * @return array				List of towns
      *
      * @url     GET dictionary/towns
      *
@@ -717,7 +717,7 @@ class Setup extends DolibarrApi
 
         return $list;
     }
-    
+
     /**
      * Get the list of shipping methods.
      *
@@ -788,7 +788,7 @@ class Setup extends DolibarrApi
      * @param int       $page       Page number (starting from zero)
      * @param int       $active     Payment term is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
-     * @return List of events types
+     * @return array				List of measuring unit
      *
      * @url     GET dictionary/units
      *
@@ -848,7 +848,7 @@ class Setup extends DolibarrApi
      * @param int       $page       Page number (starting from zero)
      * @param int       $active     Payment term is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
-     * @return List of events types
+     * @return array				List of ticket categories
      *
      * @url     GET dictionary/ticket_categories
      *
@@ -908,7 +908,7 @@ class Setup extends DolibarrApi
      * @param int       $page       Page number (starting from zero)
      * @param int       $active     Payment term is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
-     * @return List of events types
+     * @return array				List of ticket severities
      *
      * @url     GET dictionary/ticket_severities
      *
@@ -968,7 +968,7 @@ class Setup extends DolibarrApi
      * @param int       $page       Page number (starting from zero)
      * @param int       $active     Payment term is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
-     * @return List of events types
+     * @return array				List of ticket types
      *
      * @url     GET dictionary/ticket_types
      *
@@ -1026,7 +1026,7 @@ class Setup extends DolibarrApi
      * Do a test of integrity for files and setup.
      *
      * @param string	$target			Can be 'local' or 'default' or Url of the signatures file to use for the test. Must be reachable by the tested Dolibarr.
-     * @return 							Result of file and setup integrity check
+     * @return array					Result of file and setup integrity check
      *
      * @url     GET checkintegrity
      *
@@ -1158,7 +1158,7 @@ class Setup extends DolibarrApi
     			$scanfiles = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude);
 
     			// Fill file_list with files in signature, new files, modified files
-    			$ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', DOL_DOCUMENT_ROOT, $checksumconcat, $scanfiles);		// Fill array $file_list
+    			$ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', DOL_DOCUMENT_ROOT, $checksumconcat);		// Fill array $file_list
     			// Complete with list of new files
     			foreach ($scanfiles as $keyfile => $valfile)
     			{

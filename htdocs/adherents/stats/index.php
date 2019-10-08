@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -56,9 +56,10 @@ $langs->loadLangs(array("companies","members"));
 
 $form=new Form($db);
 
-llxHeader();
+$title = $langs->trans("SubscriptionsStatistics");
+llxHeader('', $title);
 
-print load_fiche_titre($langs->trans("SubscriptionsStatistics"), $mesg);
+print load_fiche_titre($title, '', 'members');
 
 $dir=$conf->adherent->dir_temp;
 

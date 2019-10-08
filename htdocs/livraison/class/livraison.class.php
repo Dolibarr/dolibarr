@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -843,6 +843,12 @@ class Livraison extends CommonObject
 			if ($statut==-1) return $langs->trans($this->statuts[$statut]);
 			elseif ($statut==0)  return $langs->trans($this->statuts[$statut]);
 			elseif ($statut==1)  return $langs->trans($this->statuts[$statut]);
+		}
+		elseif ($mode == 3)
+		{
+			if ($statut==-1) return img_picto($langs->trans('StatusDeliveryCanceled'), 'statut5');
+			if ($statut==0)  return img_picto($langs->trans('StatusDeliveryDraft'), 'statut0');
+			if ($statut==1)  return img_picto($langs->trans('StatusDeliveryValidated'), 'statut4');
 		}
 		elseif ($mode == 4)
 		{

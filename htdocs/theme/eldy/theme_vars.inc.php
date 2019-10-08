@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -65,7 +65,7 @@ $colorbacklinepair1='250,250,250';    // line pair
 $colorbacklinepair2='250,250,250';    // line pair
 $colorbacklinepairhover='230,237,244';	// line hover
 $colorbacklinepairchecked='230,237,244';	// line checked
-$colorbacklinebreak='223,218,220';		// line break
+$colorbacklinebreak='233,228,230';		// line break
 $colorbackbody='255,255,255';
 $colortexttitlenotab='110,80,20';
 $colortexttitle='0,0,0';
@@ -74,7 +74,7 @@ $colortextlink='10, 10, 100';
 $fontsize='0.86em';
 $fontsizesmaller='0.75em';
 $topMenuFontSize='1.2em';
-$toolTipBgColor='rgba(255, 255, 255, 0.96);';
+$toolTipBgColor='rgba(255, 255, 255, 0.96)';
 $toolTipFontColor='#333';
 
 // text color
@@ -87,7 +87,7 @@ $colorblind_deuteranopes_textWarning = $textWarning; // currently not tested wit
 
 // Badges colors
 $badgePrimary   ='#007bff';
-$badgeSecondary ='#999999';
+$badgeSecondary ='#cccccc';
 $badgeSuccess   ='#28a745';
 $badgeDanger    ='#9f4705';
 $badgeWarning   ='#ffc107';

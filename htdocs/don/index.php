@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -85,7 +85,7 @@ if ($result)
     dol_print_error($db);
 }
 
-print load_fiche_titre($langs->trans("DonationsArea"));
+print load_fiche_titre($langs->trans("DonationsArea"), '', 'invoicing');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';

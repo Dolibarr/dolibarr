@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -251,9 +251,6 @@ class ActionComm extends CommonObject
     public function __construct(DoliDB $db)
     {
         $this->db = $db;
-
-        $this->societe = new stdClass();	// deprecated
-        $this->contact = new stdClass();	// deprecated
     }
 
     /**
@@ -306,8 +303,6 @@ class ActionComm extends CommonObject
         	$this->userassigned=array();
         	$this->userassigned[$tmpid]=array('id'=>$tmpid, 'transparency'=>$this->transparency);
         }
-
-        //if (is_object($this->contact) && isset($this->contact->id) && $this->contact->id > 0 && ! ($this->contactid > 0)) $this->contactid = $this->contact->id;		// For backward compatibility. Using this->contact->xx is deprecated
 
 
         $userownerid=$this->userownerid;
@@ -502,20 +497,6 @@ class ActionComm extends CommonObject
         }
     }
 
-	/**
-	 *    Add an action/event into database.
-	 *    $this->type_id OR $this->type_code must be set.
-	 *
-	 *    @param	User	$user      		Object user making action
-	 *    @param    int		$notrigger		1 = disable triggers, 0 = enable triggers
-	 *    @return   int 		        	Id of created event, < 0 if KO
-	 * @deprecated Use create instead
-	 */
-	public function add(User $user, $notrigger = 0)
-	{
-		return $this->create($user, $notrigger);
-	}
-
     /**
      *  Load an object from its id and create a new one in database
      *
@@ -676,9 +657,9 @@ class ActionComm extends CommonObject
 
                 $this->socid				= $obj->fk_soc;			// To have fetch_thirdparty method working
                 $this->contactid			= $obj->fk_contact;		// To have fetch_contact method working
-                $this->fk_project			= $obj->fk_project;		// To have fetch_project method working
+                $this->fk_project			= $obj->fk_project;		// To have fetch_projet method working
 
-                $this->societe->id			= $obj->fk_soc;			// deprecated
+                //$this->societe->id			= $obj->fk_soc;			// deprecated
                 //$this->contact->id			= $obj->fk_contact;		// deprecated
 
                 $this->fk_element			= $obj->elementid;
@@ -889,8 +870,8 @@ class ActionComm extends CommonObject
             return -1;
         }
 
-        $socid=($this->socid?$this->socid:((isset($this->societe->id) && $this->societe->id > 0) ? $this->societe->id : 0));
-        $contactid=($this->contactid?$this->contactid:0);
+        $socid=(($this->socid > 0)?$this->socid:0);
+        $contactid=(($this->contactid > 0)?$this->contactid:0);
 		$userownerid=($this->userownerid?$this->userownerid:0);
 		$userdoneid=($this->userdoneid?$this->userdoneid:0);
 
@@ -1656,7 +1637,7 @@ class ActionComm extends CommonObject
      *  Used to build previews or test instances.
      *  id must be 0 if object instance is a specimen.
      *
-     *  @return	void
+     *  @return	int >0 if ok
      */
     public function initAsSpecimen()
     {
@@ -1688,6 +1669,7 @@ class ActionComm extends CommonObject
 
         $this->userownerid=$user->id;
         $this->userassigned[$user->id]=array('id'=>$user->id, 'transparency'=> 1);
+        return 1;
     }
 
 	/**

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -53,6 +53,9 @@ $pageref=GETPOST('pageref', 'aZ09');
 $action=GETPOST('action', 'aZ09');
 $confirm=GETPOST('confirm', 'alpha');
 $cancel=GETPOST('cancel', 'alpha');
+$contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'bomlist';   // To manage different context of search
+$backtopage = GETPOST('backtopage', 'alpha');											// Go back to a dedicated page
+$optioncss  = GETPOST('optioncss', 'aZ');												// Option for the css output (always '' except when 'print')
 
 $type_container=GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha');
 
@@ -258,11 +261,11 @@ $manifestjsoncontentdefault.= '{
  */
 
 // Protections
-if ($action == 'updatesource' && (GETPOST('refreshsite_x') || GETPOST('refreshsite.x') || GETPOST('refreshpage_x') || GETPOST('refreshpage.x')))
+if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x') ||  GETPOST('refreshpage') || GETPOST('refreshpage_x') || GETPOST('refreshpage.x'))
 {
-    $action = 'preview';    // To avoid to update another page or another site when we click on button to select another site or page.
+    $action = 'preview';    // To avoid to make an action on another page or another site when we click on button to select another site or page.
 }
-if (GETPOST('refreshsite', 'alpha'))		// If we change the site, we reset the pageid and cancel addsite action.
+if (GETPOST('refreshsite', 'alpha') || GETPOST('refreshsite.x', 'alpha') || GETPOST('refreshsite_x', 'alpha'))		// If we change the site, we reset the pageid and cancel addsite action.
 {
     $pageid=0;
     if ($action == 'addsite') $action = 'preview';
@@ -270,9 +273,21 @@ if (GETPOST('refreshsite', 'alpha'))		// If we change the site, we reset the pag
 }
 if (GETPOST('refreshpage', 'alpha') && ! in_array($action, array('updatecss'))) $action='preview';
 
+// Cancel
+if ($cancel)
+{
+	$action = 'preview';
+	if ($backtopage)
+	{
+		header("Location: ".$backtopage);
+		exit;
+	}
+}
 
-$backtopage=$_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid.(GETPOST('section_dir', 'alpha')?'&section_dir='.urlencode(GETPOST('section_dir', 'alpha')):'');	// used after a confirm_deletefile into actions_linkedfiles.inc.php
+$savbacktopage = $backtopage;
+$backtopage = $_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid.(GETPOST('section_dir', 'alpha')?'&section_dir='.urlencode(GETPOST('section_dir', 'alpha')):'');	// used after a confirm_deletefile into actions_linkedfiles.inc.php
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+$backtopage = $savbacktopage;
 
 if ($action == 'renamefile') $action='file_manager';		// After actions_linkedfiles, if action were renamefile, we set it to 'file_manager'
 
@@ -476,8 +491,10 @@ if ($action == 'addcontainer')
 				// Remove comments
 				$tmp['content'] = removeHtmlComment($tmp['content']);
 
-				preg_match('/<head>(.*)<\/head>/ims', $tmp['content'], $reg);
-				$head = $reg[1];
+				$regs=array();
+
+				preg_match('/<head>(.*)<\/head>/ims', $tmp['content'], $regs);
+				$head = $regs[1];
 
 				$objectpage->type_container = 'page';
 	   			$objectpage->pageurl = $pageurl;
@@ -488,8 +505,10 @@ if ($action == 'addcontainer')
 	   			}
 
 	   			$objectpage->aliasalt = '';
-	   			if (preg_match('/^(\d+)\-/', basename($urltograb), $reg)) $objectpage->aliasalt = $reg[1];
 
+	   			if (preg_match('/^(\d+)\-/', basename($urltograb), $regs)) $objectpage->aliasalt = $regs[1];
+
+	   			$regtmp=array();
 				if (preg_match('/<title>(.*)<\/title>/ims', $head, $regtmp))
 				{
 					$objectpage->title = $regtmp[1];
@@ -548,7 +567,7 @@ if ($action == 'addcontainer')
 				$errorforsubresource = 0;
 				foreach ($regs[0] as $key => $val)
 				{
-					dol_syslog("We will grab the resource found into script tag ".$regs[2][$key]);
+					dol_syslog("We will grab the script resource found into script tag ".$regs[2][$key]);
 
 					$linkwithoutdomain = $regs[2][$key];
 					if (preg_match('/^\//', $regs[2][$key]))
@@ -617,7 +636,7 @@ if ($action == 'addcontainer')
 				$errorforsubresource = 0;
 				foreach ($regs[0] as $key => $val)
 				{
-					dol_syslog("We will grab the resources found into link tag ".$regs[2][$key]);
+					dol_syslog("We will grab the css resources found into link tag ".$regs[2][$key]);
 
 					$linkwithoutdomain = $regs[2][$key];
 					if (preg_match('/^\//', $regs[2][$key]))
@@ -662,6 +681,16 @@ if ($action == 'addcontainer')
 					}
 					else
 					{
+						// Clean some comment
+						//$tmpgeturl['content'] = dol_string_is_good_iso($tmpgeturl['content'], 1);
+						//$tmpgeturl['content'] = utf8_encode(utf8_decode($tmpgeturl['content']));
+						//$tmpgeturl['content'] = mb_convert_encoding($tmpgeturl['content'], 'UTF-8', 'UTF-8');
+						//$tmpgeturl['content'] = remove_bs($tmpgeturl['content']);
+						//$tmpgeturl['content'] = str_replace('$screen-md-max', 'auto', $tmpgeturl['content']);
+
+						//var_dump($tmpgeturl['content']);exit;
+						$tmpgeturl['content'] = preg_replace('/\/\*\s+CSS content[a-z\s]*\s+\*\//', '', $tmpgeturl['content']);
+
 						//dol_mkdir(dirname($filetosave));
 
 						//$fp = fopen($filetosave, "w");
@@ -675,7 +704,21 @@ if ($action == 'addcontainer')
 
 						getAllImages($object, $objectpage, $urltograbbis, $tmpgeturl['content'], $action, 1, $grabimages, $grabimagesinto);
 
-						$pagecsscontent.=$tmpgeturl['content']."\n";
+						include_once DOL_DOCUMENT_ROOT.'/core/class/lessc.class.php';
+						$lesscobj = new Lessc();
+						try {
+							$contentforlessc = ".bodywebsite {\n".$tmpgeturl['content']."\n}\n";
+							//print '<pre>'.$contentforlessc.'</pre>';
+							$contentforlessc = $lesscobj->compile($contentforlessc);
+							//var_dump($contentforlessc); exit;
+
+							$pagecsscontent.=$contentforlessc."\n";
+							//$pagecsscontent.=$tmpgeturl['content']."\n";
+						} catch (exception $e) {
+							//echo "failed to compile lessc";
+							dol_syslog("Failed to compile the CSS from URL ".$urltograbbis." with lessc: ".$e->getMessage(), LOG_WARNING);
+							$pagecsscontent.=$tmpgeturl['content']."\n";
+						}
 
 						$objectpage->htmlheader = preg_replace('/'.preg_quote($regs[0][$key], '/').'\n*/ims', '', $objectpage->htmlheader);
 					}
@@ -956,7 +999,8 @@ if ($action == 'delete')
 // Update css
 if ($action == 'updatecss')
 {
-	if (GETPOST('refreshsite', 'alpha') || GETPOST('refreshpage', 'alpha'))		// If we tried to reload another site/page, we stay on editcss mode.
+	// If we tried to reload another site/page, we stay on editcss mode.
+	if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x') ||  GETPOST('refreshpage') || GETPOST('refreshpage_x') || GETPOST('refreshpage.x'))
 	{
 		$action='editcss';
 	}
@@ -1193,6 +1237,12 @@ if ($action == 'updatecss')
     		}
 
     		$action='preview';
+
+    		if ($backtopage)
+    		{
+    			header("Location: ".$backtopage);
+    			exit;
+    		}
 		}
 	}
 }
@@ -1809,10 +1859,10 @@ $formother = new FormOther($db);
 $help_url='';
 
 $arrayofjs = array(
-	'/includes/ace/ace.js',
-	'/includes/ace/ext-statusbar.js',
-	'/includes/ace/ext-language_tools.js',
-	//'/includes/ace/ext-chromevox.js'
+	'/includes/ace/src/ace.js',
+	'/includes/ace/src/ext-statusbar.js',
+	'/includes/ace/src/ext-language_tools.js',
+	//'/includes/ace/src/ext-chromevox.js'
 	//'/includes/jquery/plugins/jqueryscoped/jquery.scoped.js',
 );
 $arrayofcss = array();
@@ -1833,6 +1883,7 @@ llxHeader($moreheadcss.$moreheadjs, $langs->trans("WebsiteSetup"), $help_url, ''
 print "\n";
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 if ($action == 'createsite')
 {
@@ -1902,18 +1953,18 @@ if (! GETPOST('hide_websitemenu'))
 
 	// ***** Part for web sites
 	print '<!-- Bar for website -->';
-	print '<div class="websiteselection hideonsmartphoneimp minwidth100 tdoverflowmax100">';
+	print '<span class="websiteselection hideonsmartphoneimp minwidth100 tdoverflowmax100">';
 	print $langs->trans("Website").' : ';
-	print '</div>';
+	print '</span>';
 
-	print '<div class="websiteselection hideonsmartphoneimp">';
+	print '<span class="websiteselection hideonsmartphoneimp">';
 	print ' <input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'" name="createsite">';
-	print '</div>';
+	print '</span>';
 
 	// List of website
-	print '<div class="websiteselection">';
+	print '<span class="websiteselection">';
 	$out='';
-	$out.='<select name="website" class="minwidth100" id="website">';
+	$out.='<select name="website" class="minwidth100 maxwidth300" id="website">';
 	if (empty($object->records)) $out.='<option value="-1">&nbsp;</option>';
 	// Loop on each sites
 	$i=0;
@@ -1996,24 +2047,24 @@ if (! GETPOST('hide_websitemenu'))
 			</script>';
 		*/
 
-		print '<a href="'.$_SERVER["PHP_SEFL"].'?action=replacesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-file-code"><span></a>';
+		print '<a href="'.$_SERVER["PHP_SEFL"].'?action=replacesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-search"><span></a>';
 	}
 
-	print '</div>';
+	print '</span>';
 
 
 	// Toolbar for websites
 
-	print '<div class="websitetools websiteselection">';
+	print '<span class="websitetools websiteselection">';
 
 	if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite')
 	{
 		$urlext=$virtualurl;
 		$urlint=$urlwithroot.'/public/website/index.php?website='.$websitekey;
 
-		print '<div class="websiteinputurl valignmiddle" id="websiteinputurl">';
+		print '<span class="websiteinputurl valignmiddle" id="websiteinputurl">';
 		$linktotestonwebserver = '<a href="'.($virtualurl?$virtualurl:'#').'" class="valignmiddle">';
-		$linktotestonwebserver.= $langs->trans("TestDeployOnWeb", $virtualurl).' '.img_picto('', 'object_globe');
+		$linktotestonwebserver.= $langs->trans("TestDeployOnWeb", $virtualurl).' '.img_picto('', 'globe');
 		$linktotestonwebserver.= '</a>';
 		$htmltext = '';
 		if (empty($object->fk_default_home))
@@ -2045,18 +2096,18 @@ if (! GETPOST('hide_websitemenu'))
     		$htmltext.='<br>';
     		$htmltext.=$langs->trans("YouCanAlsoDeployToAnotherWHP");
 		}
-		print $form->textwithpicto($linktotestonwebserver, $htmltext, 1, 'none', 'valignmiddle', 0, 2, 'helpvirtualhost');
-		print '</div>';
+		print $form->textwithpicto($linktotestonwebserver, $htmltext, 1, 'none', 'valignmiddle', 0, 3, 'helpvirtualhost');
+		print '</span>';
 	}
 
 	if (in_array($action, array('editcss','editmenu','file_manager','replacesite','replacesiteconfirm')))
 	{
 		if (preg_match('/^create/', $action) && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 		if (preg_match('/^edit/', $action) && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
-		if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
+		if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="cancel">';
 	}
 
-	print '</div>';
+	print '</span>';
 
 
 	// Toolbar for pages
@@ -2068,15 +2119,15 @@ if (! GETPOST('hide_websitemenu'))
 		print '<!-- Bar for websitepage -->';
 		print '<div class="centpercent websitebar"'.($style?' style="'.$style.'"':'').'">';
 
-		print '<div class="websiteselection hideonsmartphoneimp minwidth100 tdoverflowmax100">';
+		print '<span class="websiteselection hideonsmartphoneimp minwidth100 tdoverflowmax100">';
 		print $langs->trans("PageContainer").': ';
-		print '</div>';
+		print '</span>';
 
-		print '<div class="websiteselection hideonsmartphoneimp">';
+		print '<span class="websiteselection hideonsmartphoneimp">';
 		print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'" name="createcontainer">';
-		print '</div>';
+		print '</span>';
 
-		print '<div class="websiteselection">';
+		print '<span class="websiteselection">';
 
 		if ($action != 'addcontainer')
 		{
@@ -2186,7 +2237,7 @@ if (! GETPOST('hide_websitemenu'))
 				$formquestion = array(
 					array('type' => 'checkbox', 'name' => 'delete_also_js', 'label' => $langs->trans("DeleteAlsoJs"), 'value' => 0),
 					array('type' => 'checkbox', 'name' => 'delete_also_medias', 'label' => $langs->trans("DeleteAlsoMedias"), 'value' => 0),
-					//array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'az09')?GETPOST('newlang', 'az09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')),
+					//array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'aZ09')?GETPOST('newlang', 'aZ09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')),
 					//array('type' => 'other','name' => 'newwebsite','label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0))
 				);
 
@@ -2201,7 +2252,7 @@ if (! GETPOST('hide_websitemenu'))
 				$formquestion = array(
 				array('type' => 'text', 'name' => 'siteref', 'label'=> $langs->trans("WebSite")  ,'value'=> 'copy_of_'.$object->ref),
 				//array('type' => 'checkbox', 'name' => 'is_a_translation', 'label' => $langs->trans("SiteIsANewTranslation"), 'value' => 0),
-				//array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'az09')?GETPOST('newlang', 'az09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')),
+				//array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'aZ09')?GETPOST('newlang', 'aZ09'):$langs->defaultlang, 'newlang', 0, null, '', 0, 0, 'minwidth200')),
 				//array('type' => 'other','name' => 'newwebsite','label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0))
 				);
 
@@ -2215,7 +2266,7 @@ if (! GETPOST('hide_websitemenu'))
 				// Confirmation to clone
 				if ($action == 'createpagefromclone') {
 					// Create an array for form
-					$preselectedlanguage = GETPOST('newlang', 'az09') ? GETPOST('newlang', 'az09') : ($objectpage->lang ? $objectpage->lang : $langs->defaultlang);
+					$preselectedlanguage = GETPOST('newlang', 'aZ09') ? GETPOST('newlang', 'aZ09') : ($objectpage->lang ? $objectpage->lang : $langs->defaultlang);
 					$formquestion = array(
 						array('type' => 'hidden', 'name' => 'sourcepageurl', 'value'=> $objectpage->pageurl),
 						array('type' => 'checkbox', 'tdclass'=>'maxwidth200', 'name' => 'is_a_translation', 'label' => $langs->trans("PageIsANewTranslation"), 'value' => 0),
@@ -2239,7 +2290,8 @@ if (! GETPOST('hide_websitemenu'))
 				print '<div class="websiteselectionsection inline-block">';
 				print '<div class="inline-block">';
 
-				print '<span id="switchckeditorinline">';
+				print '<span id="switchckeditorinline">'."\n";
+				print '<!-- Code to enabled edit inline ckeditor -->'."\n";
 				print '<script type="text/javascript">
 						$(document).ready(function() {
 							var isEditingEnabled = '.($conf->global->WEBSITE_EDITINLINE?'true':'false').';
@@ -2263,7 +2315,8 @@ if (! GETPOST('hide_websitemenu'))
 										CKEDITOR.inline(idtouse, {
 											// Allow some non-standard markup that we used in the introduction.
 											extraAllowedContent: \'span(*);cite(*);q(*);dl(*);dt(*);dd(*);ul(*);li(*);header(*);button(*);h1(*);h2(*);\',
-											removePlugins: \'stylescombo\',
+											//extraPlugins: \'sourcedialog\',
+											removePlugins: \'flash,stylescombo\',
 											// Show toolbar on startup (optional).
 											// startupFocus: true
 										});
@@ -2295,11 +2348,11 @@ if (! GETPOST('hide_websitemenu'))
 					//print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
 					if (empty($conf->global->WEBSITE_EDITINLINE))
 					{
-						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=seteditinline">'.img_picto($langs->trans("EditInLineOff"), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
+						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=seteditinline">'.img_picto($langs->trans("EditInLineOnOff", $langs->transnoentitiesnoconv("Off")), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
 					}
 					else
 					{
-						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unseteditinline">'.img_picto($langs->trans("EditInLineOn"), 'switch_on', '', false, 0, 0, '', 'nomarginleft').'</a>';
+						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unseteditinline">'.img_picto($langs->trans("EditInLineOnOff", $langs->transnoentitiesnoconv("On")), 'switch_on', '', false, 0, 0, '', 'nomarginleft').'</a>';
 					}
 				}
 
@@ -2314,11 +2367,11 @@ if (! GETPOST('hide_websitemenu'))
 				{*/
 					if (empty($conf->global->WEBSITE_SUBCONTAINERSINLINE))
 					{
-						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=setshowsubcontainers">'.img_picto($langs->trans("ShowSubContainersOff"), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
+						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=setshowsubcontainers">'.img_picto($langs->trans("ShowSubContainersOnOff", $langs->transnoentitiesnoconv("Off")), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
 					}
 					else
 					{
-						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unsetshowsubcontainers">'.img_picto($langs->trans("ShowSubContainersOn"), 'switch_on', '', false, 0, 0, '', 'nomarginleft').'</a>';
+						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unsetshowsubcontainers">'.img_picto($langs->trans("ShowSubContainersOnOff", $langs->transnoentitiesnoconv("On")), 'switch_on', '', false, 0, 0, '', 'nomarginleft').'</a>';
 					}
 				/*}*/
 				print '</div>';
@@ -2342,9 +2395,9 @@ if (! GETPOST('hide_websitemenu'))
 			}
 		}
 
-		print '</div>';	// end website selection
+		print '</span>';	// end website selection
 
-		print '<div class="websitetools">';
+		print '<span class="websitetools">';
 
 		if (($pageid > 0 && $atleastonepage) && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite'))
 		{
@@ -2384,9 +2437,9 @@ if (! GETPOST('hide_websitemenu'))
 			if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
 		}
 
-		print '</div>';	// end websitetools
+		print '</span>';	// end websitetools
 
-		print '<div class="websitehelp">';
+		print '<span class="websitehelp">';
 		if (GETPOST('editsource', 'alpha') || GETPOST('editcontent', 'alpha'))
 		{
 			$htmltext=$langs->transnoentitiesnoconv("YouCanEditHtmlSource").'<br>';
@@ -2400,7 +2453,7 @@ if (! GETPOST('hide_websitemenu'))
             	print $form->textwithpicto($langs->trans("SyntaxHelp").' '.img_help(2, $langs->trans("SyntaxHelp")), $htmltext, 1, 'none', 'inline-block', 1, 2, 'tooltipsubstitution');
             }
 		}
-		print '</div>';	// end websitehelp
+		print '</span>';	// end websitehelp
 
 
 
@@ -2472,7 +2525,8 @@ if ($action == 'editcss')
 	print '<div class="fiche">';
 
 	print '<br>';
-	if (GETPOST('editcss', 'alpha') || GETPOST('refreshpage', 'alpha'))
+
+	if (! GETPOSTISSET('WEBSITE_CSS_INLINE'))
 	{
 		$csscontent = @file_get_contents($filecss);
 		// Clean the php css file to remove php code and get only css part
@@ -2480,11 +2534,11 @@ if ($action == 'editcss')
 	}
 	else
 	{
-		$csscontent = GETPOST('WEBSITE_CSS_INLINE');
+		$csscontent = GETPOST('WEBSITE_CSS_INLINE', 'none');
 	}
 	if (! trim($csscontent)) $csscontent='/* CSS content (all pages) */'."\n"."body.bodywebsite { margin: 0; font-family: 'Open Sans', sans-serif; }\n.bodywebsite h1 { margin-top: 0; margin-bottom: 0; padding: 10px;}";
 
-	if (GETPOST('editcss', 'alpha') || GETPOST('refreshpage', 'alpha'))
+	if (! GETPOSTISSET('WEBSITE_JS_INLINE'))
 	{
 		$jscontent = @file_get_contents($filejs);
 		// Clean the php js file to remove php code and get only js part
@@ -2492,11 +2546,11 @@ if ($action == 'editcss')
 	}
 	else
 	{
-		$jscontent = GETPOST('WEBSITE_JS_INLINE');
+		$jscontent = GETPOST('WEBSITE_JS_INLINE', 'none');
 	}
 	if (! trim($jscontent)) $jscontent='/* JS content (all pages) */'."\n";
 
-	if (GETPOST('editcss', 'alpha') || GETPOST('refreshpage', 'alpha'))
+	if (! GETPOSTISSET('WEBSITE_HTML_HEADER'))
 	{
 		$htmlheadercontent = @file_get_contents($filehtmlheader);
 		// Clean the php htmlheader file to remove php code and get only html part
@@ -2504,7 +2558,7 @@ if ($action == 'editcss')
 	}
 	else
 	{
-		$htmlheadercontent = GETPOST('WEBSITE_HTML_HEADER');
+		$htmlheadercontent = GETPOST('WEBSITE_HTML_HEADER', 'none');
 	}
 	if (! trim($htmlheadercontent))
 	{
@@ -2519,7 +2573,7 @@ if ($action == 'editcss')
 		$htmlheadercontent='<html>'."\n".trim($htmlheadercontent)."\n".'</html>';
 	}
 
-	if (GETPOST('editcss', 'alpha') || GETPOST('refreshpage', 'alpha'))
+	if (! GETPOSTISSET('WEBSITE_ROBOT'))
 	{
 		$robotcontent = @file_get_contents($filerobot);
 		// Clean the php htmlheader file to remove php code and get only html part
@@ -2527,7 +2581,7 @@ if ($action == 'editcss')
 	}
 	else
 	{
-		$robotcontent = GETPOST('WEBSITE_ROBOT');
+		$robotcontent = GETPOST('WEBSITE_ROBOT', 'nothtml');
 	}
 	if (! trim($robotcontent))
 	{
@@ -2537,7 +2591,7 @@ if ($action == 'editcss')
 		$robotcontent.="Disallow: /administrator/\n";
 	}
 
-	if (GETPOST('editcss', 'alpha') || GETPOST('refreshpage', 'alpha'))
+	if (! GETPOSTISSET('WEBSITE_HTACCESS'))
 	{
 		$htaccesscontent = @file_get_contents($filehtaccess);
 		// Clean the php htaccesscontent file to remove php code and get only html part
@@ -2545,7 +2599,7 @@ if ($action == 'editcss')
 	}
 	else
 	{
-		$htaccesscontent = GETPOST('WEBSITE_HTACCESS');
+		$htaccesscontent = GETPOST('WEBSITE_HTACCESS', 'nohtml');
 	}
 	if (! trim($htaccesscontent))
 	{
@@ -2554,7 +2608,7 @@ if ($action == 'editcss')
 	}
 
 
-	if (GETPOST('editcss', 'alpha') || GETPOST('refreshpage', 'alpha'))
+	if (! GETPOSTISSET('WEBSITE_MANIFEST_JSON'))
 	{
 		$manifestjsoncontent = @file_get_contents($filemanifestjson);
 		// Clean the manifestjson file to remove php code and get only html part
@@ -2562,14 +2616,14 @@ if ($action == 'editcss')
 	}
 	else
 	{
-		$manifestjsoncontent = GETPOST('WEBSITE_MANIFEST_JSON');
+		$manifestjsoncontent = GETPOST('WEBSITE_MANIFEST_JSON', 'none');
 	}
 	if (! trim($manifestjsoncontent))
 	{
 		//$manifestjsoncontent.="";
 	}
 
-	if (GETPOST('editcss', 'alpha') || GETPOST('refreshpage', 'alpha'))
+	if (! GETPOSTISSET('WEBSITE_README'))
 	{
 		$readmecontent = @file_get_contents($filereadme);
 		// Clean the readme file to remove php code and get only html part
@@ -2577,7 +2631,7 @@ if ($action == 'editcss')
 	}
 	else
 	{
-		$readmecontent = GETPOST('WEBSITE_README');
+		$readmecontent = GETPOST('WEBSITE_README', 'none');
 	}
 	if (! trim($readmecontent))
 	{
@@ -3028,7 +3082,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '<tr><td>';
 	print $langs->trans('DateCreation');
 	print '</td><td>';
-	print $form->select_date($pagedatecreation, 'datecreation', 1, 1, 0, '', 1, 1);
+	print $form->selectDate($pagedatecreation, 'datecreation', 1, 1, 0, '', 1, 1);
 	//print dol_print_date($pagedatecreation, 'dayhour');
 	print '</td></tr>';
 
@@ -3168,6 +3222,8 @@ print "</form>\n";
 
 if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 {
+	$searchkey = GETPOST('searchstring', 'none');
+
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="replacesiteconfirm">';
@@ -3188,6 +3244,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 	print '<div class="tagtd">';
 	print '<input type="checkbox" name="optioncontent" value="content"'.((! GETPOSTISSET('buttonreplacesitesearch') || GETPOST('optioncontent', 'aZ09'))?' checked':'').'> '.$langs->trans("Content");
 	print '<input type="checkbox" class="marginleftonly" name="optionmeta" value="meta"'.(GETPOST('optionmeta', 'aZ09')?' checked':'').'> '.$langs->trans("Title").' | '.$langs->trans("Description").' | '.$langs->trans("Keywords");
+	print '<input type="checkbox" class="marginleftonly" name="optionsitefiles" value="sitefiles"'.(GETPOST('optionsitefiles', 'aZ09')?' checked':'').'> '.$langs->trans("GlobalCSSorJS");
 	print '</div>';
 	print '</div>';
 
@@ -3196,7 +3253,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 	print $langs->trans("SearchString");
 	print '</div>';
 	print '<div class="tagtd">';
-	print '<input type="text" name="searchstring" value="'.dol_escape_htmltag(GETPOST('searchstring', 'none')).'">';
+	print '<input type="text" name="searchstring" value="'.dol_escape_htmltag($searchkey).'">';
 	print '</div>';
 	print '</div>';
 
@@ -3211,36 +3268,72 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 		$algo = '';
 		if (GETPOST('optionmeta')) $algo.='meta';
 		if (GETPOST('optioncontent')) $algo.='content';
+		if (GETPOST('optionsitefiles')) $algo.='sitefiles';
 
-		$listofpages = getPagesFromSearchCriterias('', $algo, GETPOST('searchstring', 'none'), 1000);
+		$listofpages = getPagesFromSearchCriterias('', $algo, $searchkey, 1000);
 
 		print '<br>';
 		print '<br>';
 
 		if ($listofpages['code'] == 'OK')
 		{
-			foreach($listofpages['list'] as $websitepagefound)
+			print '<div class="rowsearchresult">';
+
+			if ($action == 'replacesiteconfirm')
 			{
-				print '<div class="rowsearchresult"><a href="'.$_SERVER["PHP_SELF"].'?website='.$website->ref.'&pageid='.$websitepagefound->id.'">'.$websitepagefound->title.'</a> - '.$websitepagefound->description.'</div>';
+				print '<div class="tagtr">';
+				print '<div class="tagtd paddingrightonly">';
+				print $langs->trans("ReplaceString");
+				print '</div>';
+				print '<div class="tagtd">';
+				print '<input type="text" name="replacestring" value="'.dol_escape_htmltag(GETPOST('replacestring', 'none')).'">';
+				print '<input type="submit" disabled class="button" name="buttonreplacesitesearch" value="'.$langs->trans("Replace").'">';
+				print '</div>';
+				print '</div>';
+				print '<br>';
 			}
+
+			print '<div class="div-table-responsive-no-min">';
+			print '<table class="noborder centpercent">';
+			print '<tr class="liste_titre">';
+			print '<th>'.$langs->trans("Type").'</th>';
+			print '<th>'.$langs->trans("Link").'</th>';
+			print '<th>'.$langs->trans("Description").'</th>';
+			print '</tr>';
+
+			foreach($listofpages['list'] as $answerrecord)
+			{
+				if (get_class($answerrecord) == 'WebsitePage')
+				{
+					print '<tr>';
+					print '<td>'.$langs->trans("Container").'</td>';
+					print '<td>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$website->ref.'&pageid='.$answerrecord->id.'">'.($answerrecord->title ? $answerrecord->title : $langs->trans("NoTitle")).'</a>';
+					print '</td>';
+					print '<td class="tdoverflow100">'.$answerrecord->description;
+					print '</td>';
+					print '</tr>';
+				}
+				else
+				{
+					print '<tr>';
+					print '<td>'.$answerrecord['type'].'</td>';
+					print '<td>';
+					$backtopageurl = $_SERVER["PHP_SELF"].'?action=replacesiteconfirm&searchstring='.urlencode($searchkey).'&optioncontent='.GETPOST('optioncontent', 'aZ09').'&optionmeta='.GETPOST('optionmeta', 'aZ09').'&optionsitefiles='.GETPOST('optionsitefiles', 'aZ09');
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcss&website='.$website->ref.'&backtopage='.urlencode($backtopageurl).'">'.$langs->trans("EditCss").'</a>';
+					print '</td>';
+					print '<td class="tdoverflow100">';
+					print '</td>';
+					print '</tr>';
+				}
+			}
+			print '</table>';
+			print '</div></div>';
 		}
 		else
 		{
 			print $listofpages['message'];
 		}
-	}
-
-	if ($action == 'replacesiteconfirm')
-	{
-		print '<div class="tagtr">';
-		print '<div class="tagtd paddingrightonly">';
-		print $langs->trans("ReplaceString");
-		print '</div>';
-		print '<div class="tagtd">';
-		print '<input type="text" name="replacestring" value="'.dol_escape_htmltag(GETPOST('replacestring', 'none')).'">';
-		print '<input type="submit" disabled class="button" name="buttonreplacesitesearch" value="'.$langs->trans("Replace").'">';
-		print '</div>';
-		print '</div>';
 	}
 
 	print '</form>';
@@ -3329,7 +3422,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		// Do not enable the contenteditable when page was grabbed, ckeditor is removing span and adding borders,
 		// so editable will be available only from container created from scratch
 		//$out.='<div id="bodywebsite" class="bodywebsite"'.($objectpage->grabbed_from ? ' contenteditable="true"' : '').'>'."\n";
-		$out.='<div id="divbodywebsite" class="bodywebsite">'."\n";
+		$out.='<div id="divbodywebsite" class="bodywebsite bodywebpage-'.$objectpage->ref.'">'."\n";
 
 		$newcontent = $objectpage->content;
 

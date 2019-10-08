@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -659,8 +659,8 @@ if ($mode == 'common')
         //if (is_array($objMod->phpmin)) $alttext.=($alttext?' - ':'').'PHP >= '.join('.',$objMod->phpmin);
         if (! empty($objMod->picto))
         {
-        	if (preg_match('/^\//i', $objMod->picto)) print img_picto($alttext, $objMod->picto, ' width="14px"', 1);
-        	else print img_object($alttext, $objMod->picto, 'class="valignmiddle" width="14px"');
+        	if (preg_match('/^\//i', $objMod->picto)) print img_picto($alttext, $objMod->picto, 'class="valignmiddle pictomodule"', 1);
+        	else print img_object($alttext, $objMod->picto, 'class="valignmiddle pictomodule"');
         }
         else
         {

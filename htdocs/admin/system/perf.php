@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -522,9 +522,9 @@ if ($resql)
 	$nb=$obj->nb;
 	if ($nb > $limitforoptim)
 	{
-		if (empty($conf->global->THIRDPARTY_DONOTSEARCH_ANYWHERE))
+		if (empty($conf->global->COMPANY_DONOTSEARCH_ANYWHERE))
 		{
-			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'THIRDPARTY_DONOTSEARCH_ANYWHERE');
+			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_DONOTSEARCH_ANYWHERE');
 		}
 		else
 		{
