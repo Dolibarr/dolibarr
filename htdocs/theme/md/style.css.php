@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -468,8 +468,10 @@ select.flat, form.flat select {
 	opacity: 0;
 }
 select:invalid { color: gray; }
-input:disabled {
-	background:#f4f4f4;
+
+input:disabled, textarea:disabled, select[disabled='disabled']
+{
+	background:#eee;
 }
 
 input.liste_titre {
@@ -483,9 +485,7 @@ input.removedfile {
 	border: 0px !important;
 	vertical-align: text-bottom;
 }
-textarea:disabled {
-	background:#f4f4f4;
-}
+
 input[type=file ]    { background-color: transparent; border-top: none; border-left: none; border-right: none; box-shadow: none; }
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=radio]    { background-color: transparent; border: none; box-shadow: none; }
@@ -647,6 +647,9 @@ textarea.centpercent {
 .wordwrap {
 	word-wrap: break-word;
 }
+.wordbreakimp {
+	word-break: break-word;
+}
 .wordbreak {
 	word-break: break-all;
 }
@@ -707,6 +710,14 @@ body[class*="colorblind-"] .text-success{
 .text-danger{
     color : <?php print $textDanger ; ?>
 }
+
+.editfielda span.fa-pencil-alt {
+    color: #ccc !important;
+}
+.editfielda span.fa-pencil-alt:hover {
+    color: rgb(<?php echo $colortexttitle; ?>) !important;
+}
+
 
 /* Themes for badges */
 <?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
@@ -939,6 +950,10 @@ select.selectarrowonleft option {
 	direction: ltr;
 }
 
+table[summary="list_of_modules"] .fa-cog {
+    font-size: 1.5em;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -991,7 +1006,7 @@ select.selectarrowonleft option {
 .minheight20 { min-height: 20px; }
 .minheight40 { min-height: 40px; }
 .titlefieldcreate { width: 20%; }
-.titlefield       { width: 25%; }
+.titlefield       { /* width: 25%; */ width: 250px; }
 .titlefieldmiddle { width: 50%; }
 .imgmaxwidth180 { max-width: 180px; }
 
@@ -999,7 +1014,7 @@ select.selectarrowonleft option {
 /* Force values for small screen 1400 */
 @media only screen and (max-width: 1400px)
 {
-	.titlefield { width: 30% !important; }
+	.titlefield { /* width: 30% !important; */ }
 	.titlefieldcreate { width: 30% !important; }
 	.minwidth50imp  { min-width: 50px !important; }
     .minwidth75imp  { min-width: 75px !important; }
@@ -1774,7 +1789,7 @@ div.mainmenu {
 
 /* Do not load menu img if hidden to save bandwidth */
 <?php if (empty($dol_hide_topmenu)) { ?>
-    <?php if (! defined('DISABLE_FONT_AWSOME') && empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) { ?>
+    <?php if (! defined('DISABLE_FONT_AWSOME')) { ?>
         <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
     <?php } ?>
 
@@ -1914,7 +1929,7 @@ foreach($mainmenuusedarray as $val)
 	// Img file not found
 	if (! $found)
 	{
-	    if (! defined('DISABLE_FONT_AWSOME') && empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) {
+	    if (! defined('DISABLE_FONT_AWSOME')) {
 	        print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
 	        print 'div.mainmenu.'.$val.'::before {
                     content: "\f249";
@@ -5793,13 +5808,14 @@ border-top-right-radius: 6px;
 
 
 
-<?php if (! defined('DISABLE_FONT_AWSOME') && empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) { ?>
+<?php if (! defined('DISABLE_FONT_AWSOME')) { ?>
         <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
 <?php }
 
 include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
+include dol_buildpath($path.'/theme/eldy/timeline.inc.php', 0); // actually md use same style as eldy theme
 
 
 

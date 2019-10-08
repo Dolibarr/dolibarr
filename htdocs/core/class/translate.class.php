@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -781,6 +781,8 @@ class Translate
 			if (preg_match('/^[a-z]+_[A-Z]+/i', $dir))
 			{
 				$this->load("languages");
+				
+				if (! empty($conf->global->MAIN_LANGUAGES_ALLOWED) && ! in_array($dir, explode(',', $conf->global->MAIN_LANGUAGES_ALLOWED)) ) continue;
 
 				if ($usecode == 2)
 				{

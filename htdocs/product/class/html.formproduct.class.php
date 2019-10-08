@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -333,7 +333,7 @@ class FormProduct
 	 *  @param  string		$measuring_style     Unit to show: weight, size, surface, volume, time
 	 *  @param  string		$default             Preselected value
 	 *  @param  int			$adddefault			 Add empty unit called "Default"
-	 *  @param  int         $mode                1=Use short label as value, 0=Use rowid
+	 *  @param  int         $mode                1=Use short label as value, 0=Use rowid, 2=Use scale (power)
 	 *  @return string
 	 */
 	public function selectMeasuringUnits($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0, $mode = 0)
@@ -370,10 +370,12 @@ class FormProduct
 			{
 				$return .= '<option value="';
 				if ($mode == 1) $return .= $lines->short_label;
+				elseif ($mode == 2) $return .= $lines->scale;
 				else $return .= $lines->id;
 				$return .= '"';
 				if ($mode == 1 && $lines->short_label == $default) $return .= ' selected';
-				if ($mode == 0 && $lines->id == $default) $return .= ' selected';
+				elseif ($mode == 2 && $lines->scale == $default) $return .= ' selected';
+				elseif ($mode == 0 && $lines->id == $default) $return .= ' selected';
 				$return .= '>';
 				if ($measuring_style == 'time') $return.= $langs->trans(ucfirst($lines->label));
 				else $return .= $langs->trans($lines->label);

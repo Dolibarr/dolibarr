@@ -27,7 +27,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -2417,6 +2417,28 @@ class Product extends CommonObject
             $this->stats_propale['nb']=$obj->nb;
             $this->stats_propale['rows']=$obj->nb_rows;
             $this->stats_propale['qty']=$obj->qty?$obj->qty:0;
+
+            // if it's a virtual product, maybe it is in proposal by extension
+            if (! empty($conf->global->PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)) {
+                $TFather = $this->getFather();
+                if (is_array($TFather) && !empty($TFather)) {
+                    foreach($TFather as &$fatherData) {
+                        $pFather = new Product($this->db);
+                        $pFather->id = $fatherData['id'];
+                        $qtyCoef = $fatherData['qty'];
+
+                        if ($fatherData['incdec']) {
+                            $pFather->load_stats_propale($socid);
+
+                            $this->stats_propale['customers']+=$pFather->stats_propale['customers'];
+                            $this->stats_propale['nb']+=$pFather->stats_propale['nb'];
+                            $this->stats_propale['rows']+=$pFather->stats_propale['rows'];
+                            $this->stats_propale['qty']+=$pFather->stats_propale['qty'] * $qtyCoef;
+                        }
+                    }
+                }
+            }
+
             return 1;
         }
         else
@@ -2519,7 +2541,7 @@ class Product extends CommonObject
             $this->stats_commande['qty']=$obj->qty?$obj->qty:0;
 
             // if it's a virtual product, maybe it is in order by extension
-            if (! empty($conf->global->ORDER_ADD_ORDERS_WITH_PARENT_PROD_IF_INCDEC)) {
+            if (! empty($conf->global->PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)) {
                 $TFather = $this->getFather();
                 if (is_array($TFather) && !empty($TFather)) {
                     foreach($TFather as &$fatherData) {
@@ -2672,6 +2694,27 @@ class Product extends CommonObject
             $this->stats_expedition['nb']=$obj->nb;
             $this->stats_expedition['rows']=$obj->nb_rows;
             $this->stats_expedition['qty']=$obj->qty?$obj->qty:0;
+
+            // if it's a virtual product, maybe it is in sending by extension
+            if (! empty($conf->global->PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)) {
+                $TFather = $this->getFather();
+                if (is_array($TFather) && !empty($TFather)) {
+                    foreach($TFather as &$fatherData) {
+                        $pFather = new Product($this->db);
+                        $pFather->id = $fatherData['id'];
+                        $qtyCoef = $fatherData['qty'];
+
+                        if ($fatherData['incdec']) {
+                            $pFather->load_stats_sending($socid, $filtrestatut, $forVirtualStock);
+
+                            $this->stats_expedition['customers']+=$pFather->stats_expedition['customers'];
+                            $this->stats_expedition['nb']+=$pFather->stats_expedition['nb'];
+                            $this->stats_expedition['rows']+=$pFather->stats_expedition['rows'];
+                            $this->stats_expedition['qty']+=$pFather->stats_expedition['qty'] * $qtyCoef;
+                        }
+                    }
+                }
+            }
             return 1;
         }
         else
@@ -2769,6 +2812,27 @@ class Product extends CommonObject
             $this->stats_contrat['nb']=$obj->nb;
             $this->stats_contrat['rows']=$obj->nb_rows;
             $this->stats_contrat['qty']=$obj->qty?$obj->qty:0;
+
+            // if it's a virtual product, maybe it is in contract by extension
+            if (! empty($conf->global->PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)) {
+                $TFather = $this->getFather();
+                if (is_array($TFather) && !empty($TFather)) {
+                    foreach($TFather as &$fatherData) {
+                        $pFather = new Product($this->db);
+                        $pFather->id = $fatherData['id'];
+                        $qtyCoef = $fatherData['qty'];
+
+                        if ($fatherData['incdec']) {
+                            $pFather->load_stats_contrat($socid);
+
+                            $this->stats_contrat['customers']+=$pFather->stats_contrat['customers'];
+                            $this->stats_contrat['nb']+=$pFather->stats_contrat['nb'];
+                            $this->stats_contrat['rows']+=$pFather->stats_contrat['rows'];
+                            $this->stats_contrat['qty']+=$pFather->stats_contrat['qty'] * $qtyCoef;
+                        }
+                    }
+                }
+            }
             return 1;
         }
         else
@@ -2817,6 +2881,27 @@ class Product extends CommonObject
             $this->stats_facture['nb']=$obj->nb;
             $this->stats_facture['rows']=$obj->nb_rows;
             $this->stats_facture['qty']=$obj->qty?$obj->qty:0;
+
+            // if it's a virtual product, maybe it is in invoice by extension
+            if (! empty($conf->global->PRODUCT_STATS_WITH_PARENT_PROD_IF_INCDEC)) {
+                $TFather = $this->getFather();
+                if (is_array($TFather) && !empty($TFather)) {
+                    foreach($TFather as &$fatherData) {
+                        $pFather = new Product($this->db);
+                        $pFather->id = $fatherData['id'];
+                        $qtyCoef = $fatherData['qty'];
+
+                        if ($fatherData['incdec']) {
+                            $pFather->load_stats_facture($socid);
+
+                            $this->stats_facture['customers']+=$pFather->stats_facture['customers'];
+                            $this->stats_facture['nb']+=$pFather->stats_facture['nb'];
+                            $this->stats_facture['rows']+=$pFather->stats_facture['rows'];
+                            $this->stats_facture['qty']+=$pFather->stats_facture['qty'] * $qtyCoef;
+                        }
+                    }
+                }
+            }
             return 1;
         }
         else

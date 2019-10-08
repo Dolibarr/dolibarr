@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -58,7 +58,7 @@ $help_url="EN:Module_Ask_Price_Supplier|FR:Module_Demande_de_prix_fournisseur";
 
 llxHeader("", $langs->trans("SupplierProposalArea"), $help_url);
 
-print load_fiche_titre($langs->trans("SupplierProposalArea"));
+print load_fiche_titre($langs->trans("SupplierProposalArea"), '', 'commercial');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 

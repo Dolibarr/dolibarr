@@ -21,7 +21,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -73,9 +73,10 @@ $date_endy = dol_mktime(23, 59, 59, $_REQUEST["date_end_delymonth"], $_REQUEST["
 
 $extrafields = new ExtraFields($db);
 
+$object = new FactureFournisseur($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('facture_fourn');
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 if ($action == 'create')
 {
@@ -176,7 +177,7 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 			if (empty($object->date_echeance))
 				$object->date_echeance = $object->calculate_date_lim_reglement();
 
-			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+			$ret = $extrafields->setOptionalsFromPost(null, $object);
 			if ($ret < 0) $error++;
 
 			if ($_POST['origin'] && $_POST['originid']) {
@@ -449,8 +450,17 @@ if (($action != 'create' && $action != 'add') && !$error) {
 	$sql .= ' WHERE c.entity = ' . $conf->entity;
 	$sql .= ' AND c.fk_soc = s.rowid';
 
-	// Show orders with status validated, shipping started and delivered (well any order we can bill)
-	$sql .= " AND c.fk_statut IN (".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY.")";		// Must match filter in htdocs/fourn/card.php
+	// Show orders we can bill
+	if (empty($conf->global->SUPPLIER_ORDER_TO_INVOICE_STATUS))
+	{
+		$sql.= " AND c.fk_statut IN (".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY.")";		// Must match filter in htdocs/fourn/card.php
+	}
+	else
+	{
+		// CommandeFournisseur::STATUS_ORDERSENT.", ".CommandeFournisseur::STATUS_RECEIVED_PARTIALLY.", ".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY
+		$sql.= " AND c.fk_statut IN (".$db->escape($conf->global->SUPPLIER_ORDER_TO_INVOICE_STATUS).")";
+	}
+
 	$sql .= " AND c.billed = 0";
 
 	// Find order that are not already invoiced

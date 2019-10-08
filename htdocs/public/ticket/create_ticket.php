@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -49,9 +49,9 @@ $msg_id = GETPOST('msg_id', 'int');
 $action = GETPOST('action', 'alpha');
 
 $object = new Ticket($db);
-
 $extrafields = new ExtraFields($db);
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 
 /*
@@ -150,7 +150,7 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
             $usertoassign = $contacts[0]->id;
         }
 
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+        $ret = $extrafields->setOptionalsFromPost(null, $object);
 
         // Generate new ref
         $object->ref = $object->getDefaultRef();

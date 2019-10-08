@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -200,7 +200,11 @@ $heightmenu=48;			/* height of top menu, part with image */
 $heightmenu2=49;        /* height of top menu, part with login  */
 $disableimages = 0;
 $maxwidthloginblock = 180;
-if (! empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) { $disableimages = 1; $maxwidthloginblock = 180; $minwidthtmenu=0; }
+if (! empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) { $disableimages = 1; $maxwidthloginblock = $maxwidthloginblock + 50; $minwidthtmenu=0; }
+
+
+if(!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)){ $maxwidthloginblock = $maxwidthloginblock + 55; }
+if(! empty($conf->bookmark->enabled) && !empty($conf->global->MAIN_USE_TOP_MENU_BOOKMARK_DROPDOWN)) { $maxwidthloginblock = $maxwidthloginblock + 55; }
 
 
 print '/*'."\n";

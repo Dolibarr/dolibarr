@@ -21,7 +21,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -99,7 +99,7 @@ if ($id > 0 && $action!='add') {
 }
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 //var_dump($_POST);
 
@@ -361,7 +361,7 @@ if (empty($reshook) && $action == 'add')
 	}
 
 	// Fill array 'array_options' with data from add form
-	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	$ret = $extrafields->setOptionalsFromPost(null, $object);
 	if ($ret < 0) $error++;
 
 	if (! $error)
@@ -526,7 +526,7 @@ if (empty($reshook) && $action == 'update')
 		}
 
 		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) $error++;
 
         if (!$error) {
@@ -652,8 +652,7 @@ if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes
  */
 if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate')
 {
-    //$object->fetch($id);
-    //$object->fetch_userassigned();
+    $error = 0;
 
     $shour = dol_print_date($object->datep, "%H");
     $smin = dol_print_date($object->datep, "%M");
@@ -673,10 +672,76 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate')
             $object->datef+=$datep-$object->datep;
         }
         $object->datep=$datep;
-        $result=$object->update($user);
-        if ($result < 0)
-        {
-            setEventMessages($object->error, $object->errors, 'errors');
+
+        if (!$error) {
+            // check if an event resource is already in use
+            if (!empty($conf->global->RESOURCE_USED_IN_EVENT_CHECK) && $object->element == 'action') {
+                $eventDateStart = $object->datep;
+                $eventDateEnd = $object->datef;
+
+                $sql  = "SELECT er.rowid, r.ref as r_ref, ac.id as ac_id, ac.label as ac_label";
+                $sql .= " FROM " . MAIN_DB_PREFIX . "element_resources as er";
+                $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "resource as r ON r.rowid = er.resource_id AND er.resource_type = 'dolresource'";
+                $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "actioncomm as ac ON ac.id = er.element_id AND er.element_type = '" . $db->escape($object->element) . "'";
+                $sql .= " WHERE ac.id != " . $object->id;
+                $sql .= " AND er.resource_id IN (";
+                $sql .= " SELECT resource_id FROM " . MAIN_DB_PREFIX . "element_resources";
+                $sql .= " WHERE element_id = " . $object->id;
+                $sql .= " AND element_type = '" . $db->escape($object->element) . "'";
+                $sql .= " AND busy = 1";
+                $sql .= ")";
+                $sql .= " AND er.busy = 1";
+                $sql .= " AND (";
+
+                // event date start between ac.datep and ac.datep2 (if datep2 is null we consider there is no end)
+                $sql .= " (ac.datep <= '" . $db->idate($eventDateStart) . "' AND (ac.datep2 IS NULL OR ac.datep2 >= '" . $db->idate($eventDateStart) . "'))";
+                // event date end between ac.datep and ac.datep2
+                if (!empty($eventDateEnd)) {
+                    $sql .= " OR (ac.datep <= '" . $db->idate($eventDateEnd) . "' AND (ac.datep2 >= '" . $db->idate($eventDateEnd) . "'))";
+                }
+                // event date start before ac.datep and event date end after ac.datep2
+                $sql .= " OR (";
+                $sql .= "ac.datep >= '" . $db->idate($eventDateStart) . "'";
+                if (!empty($eventDateEnd)) {
+                    $sql .= " AND (ac.datep2 IS NOT NULL AND ac.datep2 <= '" . $db->idate($eventDateEnd) . "')";
+                }
+                $sql .= ")";
+
+                $sql .= ")";
+                $resql = $db->query($sql);
+                if (!$resql) {
+                    $error++;
+                    $object->error = $db->lasterror();
+                    $object->errors[] = $object->error;
+                } else {
+                    if ($db->num_rows($resql) > 0) {
+                        // already in use
+                        $error++;
+                        $object->error = $langs->trans('ErrorResourcesAlreadyInUse') . ' : ';
+                        while ($obj = $db->fetch_object($resql)) {
+                            $object->error .= '<br> - ' . $langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label . ' [' . $obj->ac_id . ']');
+                        }
+                        $object->errors[] = $object->error;
+                    }
+                    $db->free($resql);
+                }
+
+                if ($error) {
+                    setEventMessages($object->error, $object->errors, 'errors');
+                }
+            }
+        }
+
+        if (!$error) {
+            $db->begin();
+            $result = $object->update($user);
+            if ($result < 0) {
+                $error++;
+                setEventMessages($object->error, $object->errors, 'errors');
+                $db->rollback();
+            } else {
+                $db->commit();
+            }
         }
     }
     if (! empty($backtopage))
@@ -1481,24 +1546,28 @@ if ($id > 0)
 			print $formconfirm;
 		}
 
-		$linkback =img_picto($langs->trans("BackToList"), 'object_list', 'class="hideonsmartphone pictoactionview"');
-		$linkback.= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-
+		$linkback='';
 		// Link to other agenda views
-		$out='';
-		$out.='</li>';
-		$out.='<li class="noborder litext">'.img_picto($langs->trans("ViewCal"), 'object_calendar', 'class="hideonsmartphone pictoactionview"');
-		$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewCal").'</a>';
-		$out.='</li>';
-		$out.='<li class="noborder litext">'.img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="hideonsmartphone pictoactionview"');
-		$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_week&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewWeek").'</a>';
-		$out.='</li>';
-		$out.='<li class="noborder litext">'.img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="hideonsmartphone pictoactionview"');
-		$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewDay").'</a>';
-		$out.='</li>';
-		$out.='<li class="noborder litext">'.img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="hideonsmartphone pictoactionview"');
-		$out.='<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewPerUser").'</a>';
-		$linkback.=$out;
+		$linkback.=img_picto($langs->trans("BackToList"), 'object_list', 'class="hideonsmartphone pictoactionview"');
+		$linkback.='<a href="'.DOL_URL_ROOT.'/comm/action/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback.='</li>';
+		$linkback.='<li class="noborder litext">';
+		$linkback.=img_picto($langs->trans("ViewCal"), 'object_calendar', 'class="hideonsmartphone pictoactionview"');
+		$linkback.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewCal").'</a>';
+		$linkback.='</li>';
+		$linkback.='<li class="noborder litext">';
+		$linkback.=img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="hideonsmartphone pictoactionview"');
+		$linkback.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_week&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewWeek").'</a>';
+		$linkback.='</li>';
+		$linkback.='<li class="noborder litext">';
+		$linkback.=img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="hideonsmartphone pictoactionview"');
+		$linkback.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewDay").'</a>';
+		$linkback.='</li>';
+		$linkback.='<li class="noborder litext">';
+		$linkback.=img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="hideonsmartphone pictoactionview"');
+		$linkback.='<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewPerUser").'</a>';
+
+		//$linkback.=$out;
 
 		$morehtmlref='<div class="refidno">';
 		// Thirdparty
@@ -1513,7 +1582,7 @@ if ($id > 0)
 	       	    (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create))
 		    {
 		        if ($action != 'classify')
-		            $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+		            $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 		            if ($action == 'classify') {
 		                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 		                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -1553,7 +1622,7 @@ if ($id > 0)
 		// Type
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 		{
-			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td colspan="3">'.$object->type.'</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td colspan="3">'.$langs->trans($object->type).'</td></tr>';
 		}
 
         // Full day event

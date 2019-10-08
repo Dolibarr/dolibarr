@@ -22,7 +22,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -825,7 +825,7 @@ class ExtraFields
 	 * 	Load array this->attributes, or old this->attribute_xxx like attribute_label, attribute_type, ...
 	 *
 	 * 	@param	string		$elementtype		Type of element ('adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
-	 * 	@param	boolean		$forceload			Force load of extra fields whatever is option MAIN_EXTRAFIELDS_DISABLED. Deprecated. Should not be required.
+	 * 	@param	boolean		$forceload			Force load of extra fields whatever is status of cache.
 	 * 	@return	array							Array of attributes keys+label for all extra fields.
 	 */
 	public function fetch_name_optionals_label($elementtype, $forceload = false)
@@ -835,14 +835,18 @@ class ExtraFields
 
 		if (empty($elementtype)) return array();
 
-		if ($elementtype == 'thirdparty') $elementtype='societe';
-		if ($elementtype == 'contact') $elementtype='socpeople';
+		if ($elementtype == 'thirdparty')     $elementtype='societe';
+		if ($elementtype == 'contact')        $elementtype='socpeople';
 		if ($elementtype == 'order_supplier') $elementtype='commande_fournisseur';
 
 		$array_name_label=array();
 
 		// To avoid conflicts with external modules. TODO Remove this.
-		if (!$forceload && !empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return $array_name_label;
+		if (empty($forceload) && !empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return $array_name_label;
+
+		// If already loaded
+		// TODO Enable this cache test
+		// if (empty($forceload) && ! empty($this->attributes[$tab->elementtype]['loaded'])) return $array_name_label;
 
 		// Set array of label of entity
 		// TODO Remove completely loading of label. This should be done by presentation.
@@ -1555,7 +1559,7 @@ class ExtraFields
 		{
 			$param_list=array_keys($param['options']);				// $param_list='ObjectName:classPath'
 			$showempty=(($required && $default != '')?0:1);
-			$out=$form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty);
+			$out=$form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss);
 		}
 		elseif ($type == 'password')
 		{
@@ -1571,7 +1575,7 @@ class ExtraFields
 		 elseif ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
 		 */
 		 if (! empty($help)) {
-			$out .= $form->textwithpicto("", $help);
+			$out .= $form->textwithpicto('', $help, 1, 'help', '', 0, 3);
 		 }
 		return $out;
 	}
@@ -2007,14 +2011,15 @@ class ExtraFields
 	/**
 	 * Fill array_options property of object by extrafields value (using for data sent by forms)
 	 *
-	 * @param   array	$extralabels    Deprecated $array of extrafields
+	 * @param   array	$extralabels    Deprecated (old $array of extrafields, now set this to null)
 	 * @param   object	$object         Object
-	 * @param	string	$onlykey		Only following key is filled. When we make update of only one extrafield ($action = 'update_extras'), calling page must must set this to avoid to have other extrafields being reset.
+	 * @param	string	$onlykey		Only the following key is filled. When we make update of only one extrafield ($action = 'update_extras'), calling page must set this to avoid to have other extrafields being reset.
 	 * @return	int						1 if array_options set, 0 if no value, -1 if error (field required missing for example)
 	 */
 	public function setOptionalsFromPost($extralabels, &$object, $onlykey = '')
 	{
 		global $_POST, $langs;
+
 		$nofillrequired=0;// For error when required field left blank
 		$error_field_required = array();
 

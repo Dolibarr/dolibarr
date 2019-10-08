@@ -21,7 +21,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -137,7 +137,7 @@ $hookmanager->initHooks(array('banktransactionlist', $contextpage));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('banktransaction');
+$extrafields->fetch_name_optionals_label('banktransaction');
 $search_array_options=$extrafields->getOptionalsFromPost('banktransaction', '', 'search_');
 
 $arrayfields=array(
@@ -481,7 +481,7 @@ $sql.= " FROM ";
 if ($search_bid>0) $sql.= MAIN_DB_PREFIX."bank_class as l,";
 $sql.= " ".MAIN_DB_PREFIX."bank_account as ba,";
 $sql.= " ".MAIN_DB_PREFIX."bank as b";
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_extrafields as ef on (b.rowid = ef.fk_object)";
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (b.rowid = ef.fk_object)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND type = 'company'";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu.url_id = s.rowid";
 $sql.= " WHERE b.fk_account = ba.rowid";
@@ -603,7 +603,7 @@ if ($resql)
 	        print $langs->trans("EventualyAddCategory").': ';
 	        print Form::selectarray('cat', $options, GETPOST('cat'), 1);
 	    }
-	    print '<br><div style="margin-top: 5px;">'.$langs->trans("ThenCheckLinesAndConciliate").' ';
+	    print '<br><div style="margin-top: 5px;"><span class="opacitymedium">'.$langs->trans("ThenCheckLinesAndConciliate").'</span> ';
 	    print '<input class="button" name="confirm_savestatement" type="submit" value="'.$langs->trans("SaveStatementOnly").'">';
 	    print ' '.$langs->trans("or").' ';
 	    print '<input class="button" name="confirm_reconcile" type="submit" value="'.$langs->trans("Conciliate").'">';
@@ -909,7 +909,7 @@ if ($resql)
 	}
 	if (! empty($arrayfields['balance']['checked']))
 	{
-		print '<td class="liste_titre maxwidthsearch">';
+		print '<td class="liste_titre right">';
 		$htmltext=$langs->trans("BalanceVisibilityDependsOnSortAndFilters", $langs->transnoentitiesnoconv("DateValue"));
 		print $form->textwithpicto('', $htmltext, 1);
 		print '</td>';

@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,7 +34,7 @@ class box_birthdays extends ModeleBoxes
 {
     public $boxcode="birthdays";
     public $boximg="object_user";
-    public $boxlabel="BoxBirthdays";
+    public $boxlabel="BoxTitleUserBirthdaysOfMonth";
     public $depends = array("user");
 
 	/**
@@ -76,18 +76,20 @@ class box_birthdays extends ModeleBoxes
 
 		$this->max=$max;
 
-        include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
         $userstatic=new User($this->db);
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleUserBirthdaysOfMonth"));
 
 		if ($user->rights->user->user->lire)
 		{
-			$sql = "SELECT u.rowid, u.firstname, u.lastname";
-            $sql.= ", u.birth";
+			$tmparray=dol_getdate(dol_now(), true);
+
+			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth";
 			$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 			$sql.= " WHERE u.entity IN (".getEntity('user').")";
-            $sql.= " AND MONTH(u.birth) = ".date('m');
+			$sql.= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], $tmparray['year']);
 			$sql.= " ORDER BY u.birth ASC";
 			$sql.= $this->db->plimit($max, 0);
 
@@ -127,7 +129,7 @@ class box_birthdays extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedUsers"));
+				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center opacitymedium"','text'=>$langs->trans("None"));
 
 				$this->db->free($result);
 			}

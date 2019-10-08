@@ -23,7 +23,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -565,7 +565,7 @@ if ($id == 11)
 			'project'           => $langs->trans('Project'),
 			'project_task'      => $langs->trans('Task'),
 			'agenda'			=> $langs->trans('Agenda'),
-			'resource'           => $langs->trans('Resource'),
+			'dolresource'       => $langs->trans('Resource'),
 			// old deprecated
 			'propal'            => $langs->trans('Proposal'),
 			'commande'          => $langs->trans('Order'),
@@ -938,34 +938,35 @@ if ($action == 'disable_favorite')
 $form = new Form($db);
 $formadmin=new FormAdmin($db);
 
-llxHeader();
+$title=$langs->trans("DictionarySetup");
 
-$titre=$langs->trans("DictionarySetup");
+llxHeader('', $title);
+
 $linkback='';
 if ($id)
 {
-    $titre.=' - '.$langs->trans($tablib[$id]);
+    $title.=' - '.$langs->trans($tablib[$id]);
     $linkback='<a href="'.$_SERVER['PHP_SELF'].'">'.$langs->trans("BackToDictionaryList").'</a>';
 }
 $titlepicto='title_setup';
 if ($id == 10 && GETPOST('from') == 'accountancy')
 {
-    $titre=$langs->trans("MenuVatAccounts");
-    $titlepicto='title_accountancy';
+    $title=$langs->trans("MenuVatAccounts");
+    $titlepicto='accountancy';
 }
 if ($id == 7 && GETPOST('from') == 'accountancy')
 {
-    $titre=$langs->trans("MenuTaxAccounts");
-    $titlepicto='title_accountancy';
+    $title=$langs->trans("MenuTaxAccounts");
+    $titlepicto='accountancy';
 }
 
-print load_fiche_titre($titre, $linkback, $titlepicto);
+print load_fiche_titre($title, $linkback, $titlepicto);
 
 if (empty($id))
 {
-    print $langs->trans("DictionaryDesc");
+    print '<span class="opacitymedium">'.$langs->trans("DictionaryDesc");
     print " ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
-    print '<br>';
+    print '</span><br>';
 }
 
 
@@ -1697,7 +1698,6 @@ if ($id)
         dol_print_error($db);
     }
 
-
     print '</form>';
 }
 else
@@ -1711,7 +1711,6 @@ else
 	print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    //print '<td>'.$langs->trans("Module").'</td>';
     print '<td colspan="2">'.$langs->trans("Dictionary").'</td>';
     print '<td>'.$langs->trans("Table").'</td>';
     print '</tr>';
@@ -1726,7 +1725,7 @@ else
         	if ($showemptyline)
         	{
 
-        		print '<tr class="oddeven"><td width="30%">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
+        		print '<tr class="oddeven"><td width="50%">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
         		$showemptyline=0;
         	}
 

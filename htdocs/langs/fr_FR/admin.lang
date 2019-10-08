@@ -1586,6 +1586,7 @@ FCKeditorForProductDetails=Création/édition WYSIWIG des lignes détails produi
 FCKeditorForMailing= Création/édition WYSIWIG des emailings (Outils->Emailings)
 FCKeditorForUserSignature=Création/édition WYSIWIG de la signature des utilisateurs
 FCKeditorForMail=Création/édition WYSIWIG tous les emails (sauf Outils->Emailings)
+FCKeditorForTicket=Création/édition WYSIWIG pour les tickets
 ##### Stock #####
 StockSetup=Configuration du module Stock / Entrepôt
 IfYouUsePointOfSaleCheckModule=Si vous utilisez un module Point de Vente (module POS fourni par défaut ou un autre module externe), cette configuration peut être ignoré par votre module point de vente. La plupart de modules Point de Vente sont conçus pour créer immédiatement une facture et de réduire les stocks par défaut quelles que soient les options ici. Donc, si vous avez besoin ou non d'avoir une diminution du stock lors de l'enregistrement d'une vente dans votre Point de Vente, vérifiez également la configuration de votre module POS.

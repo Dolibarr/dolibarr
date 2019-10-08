@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -56,9 +56,34 @@ print "***** " . $script_file . " (" . $version . ") pid=" . dol_getmypid() . " 
 dol_syslog($script_file . " launched with arg " . join(',', $argv));
 
 // List of fields to get from LDAP
-$required_fields = array($conf->global->LDAP_KEY_MEMBERS,$conf->global->LDAP_FIELD_FULLNAME,$conf->global->LDAP_FIELD_LOGIN,$conf->global->LDAP_FIELD_LOGIN_SAMBA,$conf->global->LDAP_FIELD_PASSWORD,$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,$conf->global->LDAP_FIELD_NAME,$conf->global->LDAP_FIELD_FIRSTNAME,$conf->global->LDAP_FIELD_MAIL,$conf->global->LDAP_FIELD_PHONE,$conf->global->LDAP_FIELD_PHONE_PERSO,$conf->global->LDAP_FIELD_MOBILE,$conf->global->LDAP_FIELD_FAX,$conf->global->LDAP_FIELD_ADDRESS,$conf->global->LDAP_FIELD_ZIP,$conf->global->LDAP_FIELD_TOWN,$conf->global->LDAP_FIELD_COUNTRY,$conf->global->LDAP_FIELD_DESCRIPTION,$conf->global->LDAP_FIELD_BIRTHDATE,$conf->global->LDAP_FIELD_MEMBER_STATUS,$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION,
+$required_fields = array(
+	$conf->global->LDAP_KEY_MEMBERS,
+	$conf->global->LDAP_FIELD_FULLNAME,
+	$conf->global->LDAP_FIELD_LOGIN,
+	$conf->global->LDAP_FIELD_LOGIN_SAMBA,
+	$conf->global->LDAP_FIELD_PASSWORD,
+	$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,
+	$conf->global->LDAP_FIELD_NAME,
+	$conf->global->LDAP_FIELD_FIRSTNAME,
+	$conf->global->LDAP_FIELD_MAIL,
+	$conf->global->LDAP_FIELD_PHONE,
+	$conf->global->LDAP_FIELD_PHONE_PERSO,
+	$conf->global->LDAP_FIELD_MOBILE,
+	$conf->global->LDAP_FIELD_FAX,
+	$conf->global->LDAP_FIELD_ADDRESS,
+	$conf->global->LDAP_FIELD_ZIP,
+	$conf->global->LDAP_FIELD_TOWN,
+	$conf->global->LDAP_FIELD_COUNTRY,
+	$conf->global->LDAP_FIELD_DESCRIPTION,
+	$conf->global->LDAP_FIELD_BIRTHDATE,
+	$conf->global->LDAP_FIELD_MEMBER_STATUS,
+	$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION,
 	// Subscriptions
-	$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE,$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT,$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE,$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT);
+	$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE,
+	$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT,
+	$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE,
+	$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT
+);
 
 // Remove from required_fields all entries not configured in LDAP (empty) and duplicated
 $required_fields = array_unique(array_values(array_filter($required_fields, "dolValidElement")));

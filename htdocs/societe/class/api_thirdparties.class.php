@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -76,8 +76,11 @@ class Thirdparties extends DolibarrApi
 		if(! DolibarrApiAccess::$user->rights->societe->lire) {
 			throw new RestException(401);
 		}
-
-		$result = $this->company->fetch($id);
+		if ($id ==0) {
+			$result = $this->company->initAsSpecimen();
+		} else {
+			$result = $this->company->fetch($id);
+		}
 		if( ! $result ) {
 			throw new RestException(404, 'Thirdparty not found');
 		}

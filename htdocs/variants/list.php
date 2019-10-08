@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 require '../main.inc.php';
@@ -62,7 +62,7 @@ if ($user->rights->produit->creer)
     $newcardbutton.= dolGetButtonTitle($langs->trans('Create'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/variants/create.php');
 }
 
-print load_fiche_titre($title, $newcardbutton, 'title_products');
+print load_fiche_titre($title, $newcardbutton, 'products');
 
 $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 ?>

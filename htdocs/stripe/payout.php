@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Put here all includes required by your class file
@@ -169,7 +169,7 @@ if (! $rowid) {
 			$url='https://dashboard.stripe.com/'.$connect.'payouts/'.$payout->id;
 		}
 
-        print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." " . $payout->id . "</a></td>\n";
+        print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." " . $payout->id . "</a></td>\n";
 
 
 		// Stripe customer

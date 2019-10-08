@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -125,14 +125,14 @@ function getValidOnlinePaymentMethods($paymentmethod = '')
  */
 function showOnlinePaymentUrl($type, $ref)
 {
-	global $conf, $langs;
+	global $langs;
 
 	// Load translation files required by the page
     $langs->loadLangs(array('payment', 'paybox'));
 
-	$servicename='Online';
+	$servicename=$langs->transnoentitiesnoconv('Online');
 
-	$out = img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'<br>';
+	$out = img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'<br>';
 	$url = getOnlinePaymentUrl(0, $type, $ref);
 	$out.= '<input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$url.'">';
 	$out.= ajax_autoselect("onlinepaymenturl", 0);

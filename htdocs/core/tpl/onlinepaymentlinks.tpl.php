@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
@@ -28,12 +28,12 @@ print '<!-- BEGIN PHP TEMPLATE ONLINEPAYMENTLINKS -->';
 
 // Url list
 print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br><br>';
-print img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount", $servicename).':<br>';
+print img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount", $servicename).':<br>';
 print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'free')."</strong><br><br>\n";
 if (! empty($conf->commande->enabled))
 {
     print '<div id="order"></div>';
-    print img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder", $servicename).':<br>';
+    print img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder", $servicename).':<br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'order')."</strong><br>\n";
 	if (! empty($conf->global->PAYMENT_SECURITY_TOKEN) && ! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
 	{
@@ -56,7 +56,7 @@ if (! empty($conf->commande->enabled))
 if (! empty($conf->facture->enabled))
 {
     print '<div id="invoice"></div>';
-    print img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice", $servicename).':<br>';
+    print img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice", $servicename).':<br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'invoice')."</strong><br>\n";
 	if (! empty($conf->global->PAYMENT_SECURITY_TOKEN) && ! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
 	{
@@ -79,7 +79,7 @@ if (! empty($conf->facture->enabled))
 if (! empty($conf->contrat->enabled))
 {
     print '<div id="contractline"></div>';
-    print img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine", $servicename).':<br>';
+    print img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine", $servicename).':<br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'contractline')."</strong><br>\n";
 	if (! empty($conf->global->PAYMENT_SECURITY_TOKEN) && ! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
 	{
@@ -102,7 +102,7 @@ if (! empty($conf->contrat->enabled))
 if (! empty($conf->adherent->enabled))
 {
     print '<div id="membersubscription"></div>';
-    print img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnMemberSubscription", $servicename).':<br>';
+    print img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnMemberSubscription", $servicename).':<br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'membersubscription')."</strong><br>\n";
 	if (! empty($conf->global->PAYMENT_SECURITY_TOKEN) && ! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
 	{
@@ -125,7 +125,7 @@ if (! empty($conf->adherent->enabled))
 if (! empty($conf->don->enabled))
 {
     print '<div id="donation"></div>';
-	print img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnDonation", $servicename).':<br>';
+	print img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForOnlinePaymentOnDonation", $servicename).':<br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'donation')."</strong><br>\n";
 	if (! empty($conf->global->PAYMENT_SECURITY_TOKEN) && ! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
 	{

@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -80,7 +80,7 @@ llxHeader('', $title);
 $resultboxes=FormOther::getBoxesArea($user, "0");    // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
 
-print load_fiche_titre($langs->trans("HomeArea"), $resultboxes['selectboxlist'], 'title_home');
+print load_fiche_titre($langs->trans("HomeArea"), $resultboxes['selectboxlist'], 'home');
 
 if (! empty($conf->global->MAIN_MOTD))
 {
@@ -301,7 +301,7 @@ if (empty($user->societe_id) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTAT
 	                    "supplier_proposal",
 	                    "projects",
 						"trips",
-                        "holidays",
+                        "holiday",
 						"donations"
 	    );
 
@@ -409,7 +409,8 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
     if (!empty($conf->supplier_order->enabled) && $user->rights->fournisseur->commande->lire) {
         include_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
         $board = new CommandeFournisseur($db);
-        $dashboardlines[$board->element] = $board->load_board($user);
+        $dashboardlines[$board->element . '_opened'] = $board->load_board($user, "opened");
+        $dashboardlines[$board->element . '_awaiting'] = $board->load_board($user, 'awaiting');
     }
 
 // Number of services enabled (delayed)
@@ -541,7 +542,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
                 'groupName' => 'SuppliersOrders',
                 'globalStatsKey' => 'supplier_orders',
                 'stats' =>
-                    array('order_supplier'),
+                    array('order_supplier_opened', 'order_supplier_awaiting'),
             ),
         'invoice_supplier' =>
             array(
@@ -655,7 +656,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
         foreach ($dashboardgroup as $groupKey => $groupElement) {
             $boards = array();
 
-            if (!empty($conf->global->MAIN_DISPLAY_NEW_OPENED_DASH_BOARD) || !empty($conf->global->MAIN_FEATURES_LEVEL)) {
+            if (empty($conf->global->MAIN_DISABLE_NEW_OPENED_DASH_BOARD)) {
                 foreach ($groupElement['stats'] as $infoKey) {
                     if (!empty($valid_dashboardlines[$infoKey])) {
                         $boards[] = $valid_dashboardlines[$infoKey];

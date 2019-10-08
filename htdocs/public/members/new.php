@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -257,8 +257,8 @@ if ($action == 'add')
 
 
         // Fill array 'array_options' with data from add form
-        $extralabels=$extrafields->fetch_name_optionals_label($adh->table_element);
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $adh);
+        $extrafields->fetch_name_optionals_label($adh->table_element);
+        $ret = $extrafields->setOptionalsFromPost(null, $adh);
 		if ($ret < 0) $error++;
 
         $result=$adh->create($user);
@@ -645,6 +645,7 @@ print '<tr><td>'.$langs->trans("URLPhoto").'</td><td><input type="text" name="ph
 // Public
 print '<tr><td>'.$langs->trans("Public").'</td><td><input type="checkbox" name="public"></td></tr>'."\n";
 // Other attributes
+$tpl_context = 'public';	//BUG #11554 : define templae context to public
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 // Comments
 print '<tr>';

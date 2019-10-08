@@ -27,7 +27,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -2070,13 +2070,11 @@ class Societe extends CommonObject
             if (empty($option) && $this->fournisseur > 0) $option = 'supplier';
         }
 
-
 		if (! empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto)))
 		{
 			$code = '';
 			if (($this->client) && (! empty($this->code_client))
-				&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
-				|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 2
+				&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1 || $conf->global->SOCIETE_ADD_REF_IN_LIST == 2
 				)
 			)
 			{
@@ -2084,8 +2082,7 @@ class Societe extends CommonObject
 			}
 
 			if (($this->fournisseur) && (! empty($this->code_fournisseur))
-				&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
-				|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 3
+				&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1	|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 3
 				)
 			)
 			{
@@ -3539,7 +3536,7 @@ class Societe extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return	int >0 if ok
 	 */
     public function initAsSpecimen()
 	{
@@ -3586,6 +3583,7 @@ class Societe extends CommonObject
 		$this->idprof4='idprof4';
 		$this->idprof5='idprof5';
 		$this->idprof6='idprof6';
+		return 1;
 	}
 
 	/**

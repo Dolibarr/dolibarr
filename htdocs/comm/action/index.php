@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 
@@ -174,6 +174,26 @@ if ($action =='delete_action')
 /*
  * View
  */
+$parameters = array(
+	'socid' => $socid,
+	'status' => $status,
+	'year' => $year,
+	'month' => $month,
+	'day' => $day,
+	'type' => $type,
+	'maxprint' => $maxprint,
+	'filter' => $filter,
+	'filtert' => $filtert,
+	'showbirthday' => $showbirthday,
+	'canedit' => $canedit,
+	'optioncss' => $optioncss,
+	'actioncode' => $actioncode,
+	'pid' => $pid,
+	'resourceid' => $resourceid,
+	'usergroup' => $usergroup,
+);
+$reshook = $hookmanager->executeHooks('beforeAgenda', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 $help_url='EN:Module_Agenda_En|FR:Module_Agenda|ES:M&oacute;dulo_Agenda';
 llxHeader('', $langs->trans("Agenda"), $help_url);
@@ -1542,7 +1562,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                         	$savlabel=$event->label?$event->label:$event->libelle;
                         	$event->label=$titletoshow;
                         	$event->libelle=$titletoshow;
-                        	print $event->getNomUrl(0, $maxnbofchar, 'cal_event', '', 0, 1);
+                        	print $event->getNomUrl(0, $maxnbofchar, 'cal_event', '', 0, 0);
                         	$event->label=$savlabel;
                         	$event->libelle=$savlabel;
                         }

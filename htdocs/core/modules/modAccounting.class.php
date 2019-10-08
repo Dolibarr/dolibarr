@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -162,7 +162,10 @@ class modAccounting extends DolibarrModules
 		$this->module_parts = array();
 
 		// Boxes
-		$this->boxes = array();
+		$this->boxes = array(
+			0=>array('file'=>'box_accountancy_last_manual_entries.php', 'enabledbydefaulton'=>'accountancyindex'),
+			1=>array('file'=>'box_accountancy_suspense_account.php', 'enabledbydefaulton'=>'accountancyindex')
+		);
 
 		// Permissions
 		$this->rights_class = 'accounting';

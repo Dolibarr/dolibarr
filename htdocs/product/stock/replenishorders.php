@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -93,7 +93,7 @@ $texte = $langs->trans('ReplenishmentOrders');
 
 llxHeader('', $texte, $helpurl, '');
 
-print load_fiche_titre($langs->trans('Replenishment'), '', 'title_generic.png');
+print load_fiche_titre($langs->trans('Replenishment'), '', 'generic');
 
 $head = array();
 $head[0][0] = DOL_URL_ROOT.'/product/stock/replenish.php';
@@ -131,20 +131,7 @@ if ($sref) $sql .= natural_search('cf.ref', $sref);
 if ($snom) $sql .= natural_search('s.nom', $snom);
 if ($suser) $sql .= natural_search('u.login', $suser);
 if ($sttc) $sql .= natural_search('cf.total_ttc', $sttc, 1);
-
-if ($search_datemonth > 0)
-{
-	if ($search_dateyear > 0 && empty($search_dateday))
-		$sql.= " AND cf.date_creation BETWEEN '".$db->idate(dol_get_first_day($search_dateyear, $search_datemonth, false))."' AND '".$db->idate(dol_get_last_day($search_dateyear, $search_datemonth, false))."'";
-		elseif ($search_dateyear > 0 && ! empty($search_dateday))
-			$sql.= " AND cf.date_creation BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_datemonth, $search_dateday, $search_dateyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_datemonth, $search_dateday, $search_dateyear))."'";
-			else
-				$sql.= " AND date_format(cf.date_creation, '%m') = '".$search_datemonth."'";
-}
-elseif ($search_dateyear > 0)
-{
-	$sql.= " AND cf.date_creation BETWEEN '".$db->idate(dol_get_first_day($search_dateyear, 1, false))."' AND '".$db->idate(dol_get_last_day($search_dateyear, 12, false))."'";
-}
+$sql.= dolSqlDateFilter('cf.date_creation', $search_dateday, $search_datemonth, $search_dateyear);
 if ($sall) $sql .= natural_search(array('cf.ref','cf.note'), $sall);
 if (!empty($socid)) $sql .= ' AND s.rowid = ' . $socid;
 if (GETPOST('statut', 'int')) {
