@@ -139,7 +139,7 @@ TicketViewNonClosedOnly=View only open tickets
 TicketStatByStatus=Tickets by status
 OrderByDateAsc=Sort by ascending date
 OrderByDateDesc=Sort by descending date
-MessagingViewType=Show as messaging list
+ShowAsConversation=Show as conversation list
 MessageListViewType=Show as table list
 
 #
