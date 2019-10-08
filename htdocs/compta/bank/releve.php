@@ -263,7 +263,8 @@ if (empty($numref))
 
 		print_barre_liste('', $page, $_SERVER["PHP_SELF"], "&account=".$object->id, $sortfield, $sortorder, '', $numrows, $totalnboflines, '');
 
-		print '<form name="aaa" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		if ($page==0)	print '<form name="aaa" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		else			print '<form name="aaa" action="'.$_SERVER["PHP_SELF"].'?page='.$page.'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="confirm_editbankreceipt">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
@@ -335,7 +336,7 @@ if (empty($numref))
 
 				print '<td class="center">';
 				if ($user->rights->banque->consolidate && $action != 'editbankreceipt') {
-					print '<a href="'.$_SERVER["PHP_SELF"].'?account='.$object->id.'&action=editbankreceipt&brref='.$objp->numr.'">'.img_edit().'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?account='.$object->id.'&page='.$page.'&action=editbankreceipt&brref='.$objp->numr.'">'.img_edit().'</a>';
 				}
 				print '</td>';
 
