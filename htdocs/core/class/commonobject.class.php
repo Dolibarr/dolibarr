@@ -7802,6 +7802,7 @@ abstract class CommonObject
 	 *	@param  User	$user       User that delete
 	 *  @param	int		$idline		Id of line to delete
 	 *  @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
+     * 
 	 *  @return int         		>0 if OK, <0 if KO
 	 */
 	public function deleteLineCommon(User $user, $idline, $notrigger = false)
@@ -7857,7 +7858,7 @@ abstract class CommonObject
 	}
 
 	/**
-	 * Initialise object with example values
+	 * Initialise object with example values.
 	 * Id must be 0 if object instance is a specimen
 	 *
 	 * @return void
@@ -7867,6 +7868,7 @@ abstract class CommonObject
 	    global $user;
 
 		$this->id = 0;
+
 		if (array_key_exists('label', $this->fields)) $this->label='This is label';
 		if (array_key_exists('note_public', $this->fields)) $this->note_public='Public note';
 		if (array_key_exists('note_private', $this->fields)) $this->note_private='Private note';
@@ -7875,15 +7877,15 @@ abstract class CommonObject
 		if (array_key_exists('fk_user_creat', $this->fields)) $this->fk_user_creat=$user->id;
 		if (array_key_exists('fk_user_modif', $this->fields)) $this->fk_user_modif=$user->id;
 		if (array_key_exists('date', $this->fields)) $this->date=dol_now();
-		// ...
 	}
 
 
 	/* Part for comments */
 
 	/**
-	 * Load comments linked with current task
-	 *	@return boolean	1 if ok
+	 * Load comments linked with current task and return the number of comments.
+     *
+	 *	@return int -1 if error
 	 */
 	public function fetchComments()
 	{
@@ -7894,10 +7896,10 @@ abstract class CommonObject
 		if ($result<0) {
 			$this->errors=array_merge($this->errors, $comment->errors);
 			return -1;
-		} else {
-			$this->comments = $comment->comments;
 		}
-		return count($this->comments);
+
+		$this->comments = $comment->comments;
+		return $this->getNbComments();
 	}
 
     /**
@@ -7911,7 +7913,8 @@ abstract class CommonObject
     }
 
     /**
-     * Trim object parameters
+     * Trim object parameters.
+     *
      * @param string[] $parameters array of parameters to trim
      *
      * @return void
