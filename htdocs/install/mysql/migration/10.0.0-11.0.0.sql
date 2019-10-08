@@ -93,7 +93,8 @@ ALTER TABLE llx_extrafields ADD COLUMN printable boolean DEFAULT FALSE;
 ALTER TABLE llx_facture ADD COLUMN retained_warranty real DEFAULT NULL after situation_final;
 ALTER TABLE llx_facture ADD COLUMN retained_warranty_date_limit	date DEFAULT NULL after retained_warranty;
 ALTER TABLE llx_facture ADD COLUMN retained_warranty_fk_cond_reglement	integer  DEFAULT NULL after retained_warranty_date_limit;
-
+ALTER TABLE llx_facture ADD COLUMN date_closing datetime DEFAULT NULL after date_valid;
+ALTER TABLE llx_facture ADD COLUMN fk_user_closing integer DEFAULT NULL after fk_user_valid;
 
 ALTER TABLE llx_c_shipment_mode ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 
@@ -311,3 +312,4 @@ create table llx_fichinterdet_rec
 
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN date_start datetime DEFAULT NULL AFTER product_type;
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN date_end datetime DEFAULT NULL AFTER date_start;
+
