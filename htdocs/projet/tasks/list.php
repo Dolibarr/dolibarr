@@ -285,7 +285,7 @@ if (! empty($arrayfields['t.tobill']['checked']) || ! empty($arrayfields['t.bill
 {
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time as tt ON tt.fk_task = t.rowid";
 }
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_extrafields as ef on (t.rowid = ef.fk_object)";
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 if ($search_project_user > 0)  $sql.=", ".MAIN_DB_PREFIX."element_contact as ecp";
 if ($search_task_user > 0)     $sql.=", ".MAIN_DB_PREFIX."element_contact as ect";
 $sql.= " WHERE t.fk_projet = p.rowid";
@@ -325,7 +325,9 @@ if (! empty($arrayfields['t.tobill']['checked']) || ! empty($arrayfields['t.bill
     $sql.=" t.datec, t.dateo, t.datee, t.tms,";
     $sql.=" t.rowid, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress, t.fk_statut";
     if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_project";
-    foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key : '');
+    // Add fields from extrafields
+    if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+    	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key : '');
 }
 $sql.= $db->order($sortfield, $sortorder);
 
