@@ -33,7 +33,7 @@ Restler                3.0.0RC6      LGPL-3+                     Yes            
 Sabre                  3.2.2         BSD                         Yes             DAV support
 Swift Mailer           5.4.2-DEV     MIT license                 Yes             Comprehensive mailing tools for PHP
 Stripe                 6.41          MIT licence                 Yes             Library for Stripe module
-TCPDF                  6.2.25        LGPL-3+                     Yes             PDF generation
+TCPDF                  6.3.2         LGPL-3+                     Yes             PDF generation
 TCPDI                  1.0.0         LGPL-3+ / Apache 2.0        Yes             FPDI replacement
 
 JS libraries:

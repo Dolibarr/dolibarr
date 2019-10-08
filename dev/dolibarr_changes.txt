@@ -67,7 +67,7 @@ define('QR_FIND_FROM_RANDOM', false);
     zapfdingbats.php (for special chars like form checkboxes)
 
 * Optionnaly, made freemono the default monotype font if we removed courier
-In htdocs/includes/tcpdf/tcpdf.php
+In htdocs/includes/tecnickcom/tcpdf/tcpdf.php
 -       protected $default_monospaced_font = 'courier';
 +       protected $default_monospaced_font = 'freemono';
 
