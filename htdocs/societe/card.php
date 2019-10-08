@@ -47,7 +47,8 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
-$langs->loadLangs(array("companies","commercial","bills","banks","users"));
+$langs->loadLangs(array("companies", "commercial", "bills", "banks", "users"));
+if (! empty($conf->adherent->enabled)) $langs->load("members");
 if (! empty($conf->categorie->enabled)) $langs->load("categories");
 if (! empty($conf->incoterm->enabled)) $langs->load("incoterm");
 if (! empty($conf->notification->enabled)) $langs->load("mails");
@@ -2664,6 +2665,16 @@ else
 		        {
 		            print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
 		        }
+				
+		        if (! empty($conf->adherent->enabled))
+		        {
+					$adh = new Adherent($db);
+					$result=$adh->fetch('', '', $object->id);
+					if ($result == 0 && ($object->client == 1 || $object->client == 3) && ! empty($conf->global->MEMBER_CAN_CONVERT_CUSTOMERS_TO_MEMBERS))
+            		{
+            			print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/card.php?&action=create&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("NewMember")).'">'.$langs->trans("NewMember").'</a>';
+            		}
+            	}
 
 		        if ($user->rights->societe->supprimer)
 		        {

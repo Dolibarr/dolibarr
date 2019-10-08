@@ -866,6 +866,18 @@ else
 			$object->country_code=$tmparray['code'];
 			$object->country=$tmparray['label'];
 		}
+		
+    if (!empty($socid)) {
+$object = new Societe($db);
+if ($socid > 0) $object->fetch($socid);
+
+if (! ($object->id > 0))
+{
+	$langs->load("errors");
+	print($langs->trans('ErrorRecordNotFound'));
+	exit;
+}
+    }
 
 		$adht = new AdherentType($db);
 
@@ -905,6 +917,7 @@ else
 		print '<form name="formsoc" action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
+		print '<input type="hidden" name="socid" value="'.$socid.'">';
 		if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 
         dol_fiche_head('');
