@@ -18,18 +18,11 @@
 #
 
 # Module label 'ModuleZapierForDolibarrName'
-ModuleZapierForDolibarrName = ZapierForDolibarr
+ModuleZapierForDolibarrName = Zapier for Dolibarr
 # Module description 'ModuleZapierForDolibarrDesc'
-ModuleZapierForDolibarrDesc = ZapierForDolibarr description
+ModuleZapierForDolibarrDesc = Zapier for Dolibarr module
 
 #
 # Admin page
 #
-ZapierForDolibarrSetup = ZapierForDolibarr setup
-
-#
-# About page
-#
-About = About
-ZapierForDolibarrAbout = About ZapierForDolibarr
-ZapierForDolibarrAboutPage = ZapierForDolibarr about page
+ZapierForDolibarrSetup = Setup of Zapier for Dolibarr
