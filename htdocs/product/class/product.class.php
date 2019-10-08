@@ -257,8 +257,8 @@ class Product extends CommonObject
     public $url;
 
     //! Unites de mesure
-    public $capacity;
-    public $capacity_units;
+    public $net_measure;
+    public $net_measure_units;
     public $weight;
     public $weight_units;
     public $length;
@@ -808,8 +808,8 @@ class Product extends CommonObject
         $this->label = trim($this->label);
         $this->description = trim($this->description);
         $this->note = (isset($this->note) ? trim($this->note) : null);
-        $this->capacity = price2num($this->capacity);
-        $this->capacity_units = trim($this->capacity_units);
+        $this->net_measure = price2num($this->net_measure);
+        $this->net_measure_units = trim($this-net_measure_units);
         $this->weight = price2num($this->weight);
         $this->weight_units = trim($this->weight_units);
         $this->length = price2num($this->length);
@@ -956,8 +956,8 @@ class Product extends CommonObject
             $sql.= ", tobuy = " . (int) $this->status_buy;
             $sql.= ", tobatch = " . ((empty($this->status_batch) || $this->status_batch < 0) ? '0' : (int) $this->status_batch);
             $sql.= ", finished = " . ((! isset($this->finished) || $this->finished < 0) ? "null" : (int) $this->finished);
-            $sql.= ", capacity = " . ($this->capacity!='' ? "'".$this->db->escape($this->capacity)."'" : 'null');
-            $sql.= ", capacity_units = " . ($this->capacity_units!='' ? "'".$this->db->escape($this->capacity_units)."'": 'null');
+            $sql.= ", net_measure = " . ($this->net_measure!='' ? "'".$this->db->escape($this->net_measure)."'" : 'null');
+            $sql.= ", net_measure_units = " . ($this->net_measure_units!='' ? "'".$this->db->escape($this->net_measure_units)."'": 'null');
             $sql.= ", weight = " . ($this->weight!='' ? "'".$this->db->escape($this->weight)."'" : 'null');
             $sql.= ", weight_units = " . ($this->weight_units!='' ? "'".$this->db->escape($this->weight_units)."'": 'null');
             $sql.= ", length = " . ($this->length!='' ? "'".$this->db->escape($this->length)."'" : 'null');
@@ -2114,8 +2114,8 @@ class Product extends CommonObject
                 $this->duration_value                = substr($obj->duration, 0, dol_strlen($obj->duration)-1);
                 $this->duration_unit                = substr($obj->duration, -1);
                 $this->canvas                        = $obj->canvas;
-                $this->capacity                        = $obj->capacity;
-                $this->capacity_units                    = $obj->capacity_units;
+                $this->net_measure                        = $obj->net_measure;
+                $this->net_measure_units                    = $obj->net_measure_units;
                 $this->weight                        = $obj->weight;
                 $this->weight_units                    = $obj->weight_units;
                 $this->length                        = $obj->length;
