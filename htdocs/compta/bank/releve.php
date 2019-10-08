@@ -263,12 +263,12 @@ if (empty($numref))
 
 		print_barre_liste('', $page, $_SERVER["PHP_SELF"], "&account=".$object->id, $sortfield, $sortorder, '', $numrows, $totalnboflines, '');
 
-		if ($page==0)	print '<form name="aaa" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		else			print '<form name="aaa" action="'.$_SERVER["PHP_SELF"].'?page='.$page.'" method="POST">';
+		print '<form name="aaa" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="confirm_editbankreceipt">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		print '<input type="hidden" name="account" value="'.$object->id.'">';
+		print '<input type="hidden" name="page" value="'.$page.'">';
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
