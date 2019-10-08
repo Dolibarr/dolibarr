@@ -2064,8 +2064,8 @@ img.login, img.printer, img.entity {
 }
 img.userphoto {			/* size for user photo in lists */
 	border-radius: 9px;
-	width: 18px;
-    height: 18px;
+	width: 1.5em;
+    height: 1.5em;
     background-size: contain;
     vertical-align: middle;
 }
