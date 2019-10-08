@@ -871,21 +871,23 @@ if ($mode == 'marketplace')
     dol_fiche_head($head, $mode, '', -1);
 
     // Marketplace
-    print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
-    print "<tr class=\"liste_titre\">\n";
-    //print '<td>'.$langs->trans("Logo").'</td>';
-    print '<td colspan="2">'.$langs->trans("WebSiteDesc").'</td>';
+    print '<div class="div-table-responsive-no-min">';
+    print '<table summary="list_of_modules" class="noborder centpercent">'."\n";
+    print '<tr class="liste_titre">'."\n";
+    print '<td class="hideonsmartphone">'.$form->textwithpicto($langs->trans("Provider"), $langs->trans("WebSiteDesc")).'</td>';
+    print '<td></td>';
     print '<td>'.$langs->trans("URL").'</td>';
     print '</tr>';
 
     print '<tr class="oddeven">'."\n";
     $url='https://www.dolistore.com';
-    print '<td class="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
+    print '<td class="hideonsmartphone"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
     print '<td>'.$langs->trans("DoliStoreDesc").'</td>';
     print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
     print '</tr>';
 
     print "</table>\n";
+	print '</div>';
 
     dol_fiche_end();
 
