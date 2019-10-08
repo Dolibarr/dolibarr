@@ -280,18 +280,19 @@ $reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters, $objectw
 $sql.=$hookmanager->resPrint;
 
 /* If a group by is required
- $sql.= " GROUP BY "
- foreach($objectwebsiteaccount->fields as $key => $val)
- {
- $sql.='t.'.$key.', ';
- }
- // Add fields from extrafields
- foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key : '');
- // Add where from hooks
- $parameters=array();
- $reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $objectwebsiteaccount may have been modified by hook
- $sql.=$hookmanager->resPrint;
- */
+$sql.= " GROUP BY "
+foreach($objectwebsiteaccount->fields as $key => $val)
+{
+	$sql.='t.'.$key.', ';
+}
+// Add fields from extrafields
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
+// Add where from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $objectwebsiteaccount may have been modified by hook
+$sql.=$hookmanager->resPrint;
+*/
 
 $sql.=$db->order($sortfield, $sortorder);
 

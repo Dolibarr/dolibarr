@@ -21,7 +21,7 @@
  * @category   PHPExcel
  * @package    PHPExcel_Reader_Excel5
  * @copyright  Copyright (c) 2006 - 2014 PHPExcel (http://www.codeplex.com/PHPExcel)
- * @license    https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
+ * @license    http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
  * @version    ##VERSION##, ##DATE##
  */
 
@@ -163,7 +163,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
 	const MS_BIFF_CRYPTO_NONE = 0;
 	const MS_BIFF_CRYPTO_XOR  = 1;
 	const MS_BIFF_CRYPTO_RC4  = 2;
-
+	
 	// Size of stream blocks when using RC4 encryption
 	const REKEY_BLOCK = 0x400;
 
@@ -389,10 +389,10 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
 	/**
 	 * The type of encryption in use
 	 *
-	 * @var int
+	 * @var int	
 	 */
 	private $_encryption = 0;
-
+	
 	/**
 	 * The position in the stream after which contents are encrypted
 	 *
@@ -1093,25 +1093,25 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
 
 		return $this->_phpExcel;
 	}
-
+	
 	/**
 	 * Read record data from stream, decrypting as required
-	 *
+	 * 
 	 * @param string $data   Data stream to read from
 	 * @param int    $pos    Position to start reading from
 	 * @param int    $length Record data length
-	 *
+	 * 
 	 * @return string Record data
 	 */
 	private function _readRecordData($data, $pos, $len)
 	{
 		$data = substr($data, $pos, $len);
-
+		
 		// File not encrypted, or record before encryption start point
 		if ($this->_encryption == self::MS_BIFF_CRYPTO_NONE || $pos < $this->_encryptionStartPos) {
 			return $data;
 		}
-
+	
 		$recordData = '';
 		if ($this->_encryption == self::MS_BIFF_CRYPTO_RC4) {
 
@@ -1144,7 +1144,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
 			// Keep track of the position of this decryptor.
 			// We'll try and re-use it later if we can to speed things up
 			$this->_rc4Pos = $pos + $len;
-
+			
 		} elseif ($this->_encryption == self::MS_BIFF_CRYPTO_XOR) {
 			throw new PHPExcel_Reader_Exception('XOr encryption not supported');
 		}
@@ -1663,7 +1663,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
 	 *
 	 * --	"OpenOffice.org's Documentation of the Microsoft
 	 * 		Excel File Format"
-	 *
+	 * 
 	 * The decryption functions and objects used from here on in
 	 * are based on the source of Spreadsheet-ParseExcel:
 	 * http://search.cpan.org/~jmcnamara/Spreadsheet-ParseExcel/
@@ -1675,12 +1675,12 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
 		if ($length != 54) {
 			throw new PHPExcel_Reader_Exception('Unexpected file pass record length');
 		}
-
+		
 		$recordData = $this->_readRecordData($this->_data, $this->_pos + 4, $length);
-
+		
 		// move stream pointer to next record
 		$this->_pos += 4 + $length;
-
+		
 		if (!$this->_verifyPassword(
 			'VelvetSweatshop',
 			substr($recordData, 6,  16),
@@ -1690,7 +1690,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
 		)) {
 			throw new PHPExcel_Reader_Exception('Decryption password incorrect');
 		}
-
+		
 		$this->_encryption = self::MS_BIFF_CRYPTO_RC4;
 
 		// Decryption required from the record after next onwards
@@ -1699,10 +1699,10 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
 
 	/**
 	 * Make an RC4 decryptor for the given block
-	 *
+	 * 
 	 * @var int    $block      Block for which to create decrypto
 	 * @var string $valContext MD5 context state
-	 *
+	 * 
 	 * @return PHPExcel_Reader_Excel5_RC4
 	 */
 	private function _makeKey($block, $valContext)
@@ -1712,7 +1712,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
 		for ($i = 0; $i < 5; $i++) {
 			$pwarray[$i] = $valContext[$i];
 		}
-
+		
 		$pwarray[5] = chr($block & 0xff);
 		$pwarray[6] = chr(($block >> 8) & 0xff);
 		$pwarray[7] = chr(($block >> 16) & 0xff);
@@ -1730,13 +1730,13 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
 
 	/**
 	 * Verify RC4 file password
-	 *
+	 * 
 	 * @var string $password        Password to check
 	 * @var string $docid           Document id
 	 * @var string $salt_data       Salt data
 	 * @var string $hashedsalt_data Hashed salt data
 	 * @var string &$valContext     Set to the MD5 context of the value
-	 *
+	 * 
 	 * @return bool Success
 	 */
 	private function _verifyPassword($password, $docid, $salt_data, $hashedsalt_data, &$valContext)
@@ -1766,7 +1766,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
 			if ((64 - $offset) < 5) {
 				$tocopy = 64 - $offset;
 			}
-
+			
 			for ($i = 0; $i <= $tocopy; $i++) {
 				$pwarray[$offset + $i] = $mdContext1[$keyoffset + $i];
 			}
@@ -1803,7 +1803,7 @@ class PHPExcel_Reader_Excel5 extends PHPExcel_Reader_Abstract implements PHPExce
 
 		$salt = $key->RC4($salt_data);
 		$hashedsalt = $key->RC4($hashedsalt_data);
-
+		
 		$salt .= "\x80" . str_repeat("\0", 47);
 		$salt[56] = "\x80";
 

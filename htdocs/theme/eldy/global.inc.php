@@ -447,6 +447,9 @@ textarea.centpercent {
 .wordwrap {
 	word-wrap: break-word;
 }
+.wordbreakimp {
+	word-break: break-word;
+}
 .wordbreak {
 	word-break: break-all;
 }

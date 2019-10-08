@@ -607,7 +607,6 @@ class Products extends DolibarrApi
      * @param  string $ref              Ref of element
      * @param  string $ref_ext          Ref ext of element
      * @param  string $barcode          Barcode of element
-     * @param  int    $includestockdata Load also information about stock (slower)
      * @return array|mixed                 Data without useless information
      *
      * @url GET {id}/purchase_prices
@@ -617,7 +616,7 @@ class Products extends DolibarrApi
      * @throws 404
      *
      */
-    public function getPurchasePrices($id, $ref = '', $ref_ext = '', $barcode = '', $includestockdata = 0)
+    public function getPurchasePrices($id, $ref = '', $ref_ext = '', $barcode = '')
     {
         if (empty($id) && empty($ref) && empty($ref_ext) && empty($barcode)) {
             throw new RestException(400, 'bad value for parameter id, ref, ref_ext or barcode');
@@ -636,10 +635,6 @@ class Products extends DolibarrApi
 
         if(! DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
-
-        if ($includestockdata) {
-            $this->product->load_stock();
         }
 
         if ($result) {

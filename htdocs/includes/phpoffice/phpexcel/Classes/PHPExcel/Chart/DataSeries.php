@@ -21,7 +21,7 @@
  * @category	PHPExcel
  * @package		PHPExcel_Chart
  * @copyright	Copyright (c) 2006 - 2014 PHPExcel (http://www.codeplex.com/PHPExcel)
- * @license		https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
+ * @license		http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
  * @version	##VERSION##, ##DATE##
  */
 
@@ -155,7 +155,7 @@ class PHPExcel_Chart_DataSeries
 		$this->_plotCategory = $plotCategory;
 		$this->_smoothLine = $smoothLine;
 		$this->_plotStyle = $plotStyle;
-
+		
 		if (is_null($plotDirection)) {
 			$plotDirection = self::DIRECTION_COL;
 		}
