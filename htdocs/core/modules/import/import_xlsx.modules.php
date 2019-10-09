@@ -486,10 +486,14 @@ class ImportXlsx extends ModeleImports
                                                     $error++;
                                                 }*/
                                                 $param_array = array('', $newval, 0, $arrayrecord[0]['val']);       // Param to fetch parent from account, in chart.
+                                            } elseif ($class == 'Categorie') {
+                                                if ($objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeorlabel') {
+                                                    $param_array = array('', $newval, $arrayrecord[1]['val']);
+                                                }
                                             }
                                             call_user_func_array(array($classinstance, $method), $param_array);
                                             // If not found, try the fetch from label
-                                            if (! ($classinstance->id != '') && $objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeorlabel')
+                                            if (! ($classinstance->id != '') && $objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeorlabel' && $class!='Categorie')
                                             {
                                                 $param_array = array('', '', $newval);
                                                 call_user_func_array(array($classinstance, $method), $param_array);
