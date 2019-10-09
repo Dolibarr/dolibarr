@@ -7391,7 +7391,7 @@ abstract class CommonObject
 		unset($fieldvalues['rowid']);	// The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
 		if (array_key_exists('ref', $fieldvalues)) $fieldvalues['ref']=dol_string_nospecial($fieldvalues['ref']);					// If field is a ref,we sanitize data
 
-		$keys=array();
+		$keys = array();
 		$values = array();
 		foreach ($fieldvalues as $k => $v) {
 			$keys[$k] = $k;
@@ -7406,7 +7406,6 @@ abstract class CommonObject
 			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && $values[$key] == '-1') $values[$key]='';
 			if (! empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') $values[$key]='';
 
-			//var_dump($key.'-'.$values[$key].'-'.($this->fields[$key]['notnull'] == 1));
 			if (isset($this->fields[$key]['notnull']) && $this->fields[$key]['notnull'] == 1 && ! isset($values[$key]) && is_null($val['default']))
 			{
 				$error++;
