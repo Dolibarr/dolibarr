@@ -404,7 +404,7 @@ class Product extends CommonObject
      */
     public function __construct($db)
     {
-        $this->db = $db;
+        parent::__construct($db);
         $this->canvas = '';
     }
 

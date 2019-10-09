@@ -426,11 +426,40 @@ abstract class CommonObject
 
 	public $next_prev_filter;
 
+    /**
+     * @var string
+     */
+    public $skype;
 
+    /**
+     * @var string
+     */
+    public $jabberid;
 
-	// No constructor as it is an abstract class
+    /**
+     * @var string
+     */
+    public $twitter;
 
-	/**
+    /**
+     * @var string
+     */
+    public $facebook;
+
+    /**
+     * @var string
+     */
+    public $linkedin;
+
+    /**
+     * @param DoliDB $db
+     */
+    public function __construct($db = null)
+    {
+        $this->db = $db;
+    }
+
+    /**
 	 * Check an object id/ref exists
 	 * If you don't need/want to instantiate object and just need to know if object exists, use this method instead of fetch
 	 *
@@ -1958,7 +1987,7 @@ abstract class CommonObject
 	 */
 	public function setMulticurrencyCode($code)
 	{
-		dol_syslog(get_class($this).'::setMulticurrencyCode('.$id.')');
+		dol_syslog(get_class($this).'::setMulticurrencyCode('.$this->id.')');
 		if ($this->statut >= 0 || $this->element == 'societe')
 		{
 			$fieldname = 'multicurrency_code';
@@ -7802,7 +7831,7 @@ abstract class CommonObject
 	 *	@param  User	$user       User that delete
 	 *  @param	int		$idline		Id of line to delete
 	 *  @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
-     * 
+     *
 	 *  @return int         		>0 if OK, <0 if KO
 	 */
 	public function deleteLineCommon(User $user, $idline, $notrigger = false)
