@@ -926,91 +926,131 @@ class AccountancyExport
      *
      * @return void
      */
-    public function exportLDCompta($objectLines)
-    {
+	public function exportLDCompta($objectLines)
+	{
 
-        $separator = ';';
-        $end_line = "\n";
+		$separator = ';';
+		$end_line = "\r\n";
 
-        foreach ($objectLines as $line) {
+		foreach ($objectLines as $line) {
 
-            $date_document = dol_print_date($line->doc_date, '%Y%m%d');
-            $date_creation = dol_print_date($line->date_creation,  '%Y%m%d');
+			$date_document = dol_print_date($line->doc_date, '%Y%m%d');
+			$date_creation = dol_print_date($line->date_creation,  '%Y%m%d');
 
-            // TYPE
-            $type_enregistrement = 'E'; // For write movement
-            print $type_enregistrement . $separator;
-            // JNAL
-            print substr($line->code_journal, 0, 2) . $separator;
-            // NECR
-            print $line->id . $separator;
-            // NPIE
-            print $line->piece_num . $separator;
-            // DATP
-            print $date_document . $separator;
-            // LIBE
-            print $line->label_operation . $separator;
-            // DATH
-            print $line->date_lim_reglement . $separator;
-            // CNPI
-            if ($line->doc_type == 'supplier_invoice') {
-                if ($line->montant < 0) {
-                    $nature_piece = 'AF';
-                } else {
-                    $nature_piece = 'FF';
-                }
-            } elseif ($line->doc_type == 'customer_invoice') {
-                if ($line->montant < 0) {
-                    $nature_piece = 'AC';
-                } else {
-                    $nature_piece = 'FC';
-                }
-            } else {
-                $nature_piece = '';
-            }
-            print $nature_piece . $separator;
-            // RACI
-            /*
-            if (! empty($line->subledger_account)) {
-                if ($line->doc_type == 'supplier_invoice') {
-                    $racine_subledger_account = '40';
-                } elseif ($line->doc_type == 'customer_invoice') {
-                    $racine_subledger_account = '41';
-                } else {
-                    $nature_piece = '';
-                }
-                print $racine_subledger_account . $separator;
-            } else {
-                print $separator;
-            }
-            */
-            // MONT
-            print price(abs($line->montant)) . $separator;
-            // CODC
-            print $line->sens . $separator;
-            // CPTG
-            print length_accountg($line->numero_compte) . $separator;
-            // DATE
-            print $date_creation . $separator;
-            // CLET
-            print $line->lettering_code . $separator;
-            // DATL
-            print $line->date_lettering . $separator;
-            // CPTA
-            if (! empty($line->subledger_account)) {
-                print length_accounta($line->subledger_account) . $separator;
-            }
-            // CNAT
-            if ($line->doc_type == 'supplier_invoice' && ! empty($line->subledger_account)) {
-                print 'F';
-            } elseif ($line->doc_type == 'customer_invoice' && ! empty($line->subledger_account)) {
-                print 'C';
-            } else {
-                print '';
-            }
-            print $end_line;
-        }
-    }
+			// TYPE
+			$type_enregistrement = 'E'; // For write movement
+			print $type_enregistrement . $separator;
+			// JNAL
+			print substr($line->code_journal, 0, 2) . $separator;
+			// NECR
+			print $line->id . $separator;
+			// NPIE
+			print $line->piece_num . $separator;
+			// DATP
+			print $date_document . $separator;
+			// LIBE
+			print $line->label_operation . $separator;
+			// DATH
+			print $line->date_lim_reglement . $separator;
+			// CNPI
+			if ($line->doc_type == 'supplier_invoice') {
+				if ($line->montant < 0) {
+					$nature_piece = 'AF';
+				} else {
+					$nature_piece = 'FF';
+				}
+			} elseif ($line->doc_type == 'customer_invoice') {
+				if ($line->montant < 0) {
+					$nature_piece = 'AC';
+				} else {
+					$nature_piece = 'FC';
+				}
+			} else {
+				$nature_piece = '';
+			}
+			print $nature_piece . $separator;
+			// RACI
+			/*
+			if (! empty($line->subledger_account)) {
+				if ($line->doc_type == 'supplier_invoice') {
+					$racine_subledger_account = '40';
+				} elseif ($line->doc_type == 'customer_invoice') {
+					$racine_subledger_account = '41';
+				} else {
+					$nature_piece = '';
+				}
+				print $racine_subledger_account . $separator;
+			} else {
+				print $separator;
+			}
+			*/
+			print $separator; // deprecated CPTG & CPTA use instead
+			// MONT
+			print price(abs($line->montant), 0, '', 1, 2) . $separator;
+			// CODC
+			print $line->sens . $separator;
+			// CPTG
+			print length_accountg($line->numero_compte) . $separator;
+			// DATE
+			print $date_creation . $separator;
+			// CLET
+			print $line->lettering_code . $separator;
+			// DATL
+			print $line->date_lettering . $separator;
+			// CPTA
+			if (! empty($line->subledger_account)) {
+				print length_accounta($line->subledger_account) . $separator;
+			} else {
+				print $separator;
+			}
+			// CNAT
+			if ($line->doc_type == 'supplier_invoice' && ! empty($line->subledger_account)) {
+				print 'F' . $separator;
+			} elseif ($line->doc_type == 'customer_invoice' && ! empty($line->subledger_account)) {
+				print 'C' . $separator;
+			} else {
+				print $separator;
+			}
+			// SECT
+			print $separator;
+			// CTRE
+			print $separator;
+			// NORL
+			print $separator;
+			// DATV
+			print $separator;
+			// REFD
+			print $line->doc_ref . $separator;
+			// CODH
+			print $separator;
+			// NSEQ
+			print $separator;
+			// MTDV
+			print '0' . $separator;
+			// CODV
+			print $separator;
+			// TXDV
+			print '0' . $separator;
+			// MOPM
+			print $separator;
+			// BONP
+			print $separator;
+			// BQAF
+			print $separator;
+			// ECES
+			print $separator;
+			// TXTL
+			print $separator;
+			// ECRM
+			print $separator;
+			// DATK
+			print $separator;
+			// HEUK
+			print $separator;
+
+			print $end_line;
+		}
+	}
 
 	/**
 	 * Export format : Charlemagne
