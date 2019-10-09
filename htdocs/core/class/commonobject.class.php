@@ -7634,7 +7634,7 @@ abstract class CommonObject
 	 */
 	public function updateCommon(User $user, $notrigger = false)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		$error = 0;
 
@@ -7659,14 +7659,6 @@ abstract class CommonObject
 		{
 			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && $values[$key] == '-1') $values[$key]='';		// This is an implicit foreign key field
 			if (! empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') $values[$key]='';					// This is an explicit foreign key field
-
-			//var_dump($key.'-'.$values[$key].'-'.($this->fields[$key]['notnull'] == 1));
-			/*
-			if ($this->fields[$key]['notnull'] == 1 && empty($values[$key]))
-			{
-				$error++;
-				$this->errors[]=$langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
-			}*/
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET '.implode(',', $tmp).' WHERE rowid='.$this->id ;
