@@ -742,39 +742,39 @@ if ($invoice->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takep
 	}
     print '</p>';
 
-        // Module Adherent
-        if (! empty($conf->adherent->enabled))
+    // Module Adherent
+    if (! empty($conf->adherent->enabled))
+    {
+    	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+    	$langs->load("members");
+    	print '<p style="font-size:120%;" class="right">';
+    	print $langs->trans("Member").': ';
+    	$adh=new Adherent($db);
+    	$result=$adh->fetch('', '', $invoice->socid);
+    	if ($result > 0)
 		{
-    require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-    $langs->load("members");
-    print '<p style="font-size:120%;" class="right">';
-    print $langs->trans("Member").': ';
-    $adh=new Adherent($db);
-    $result=$adh->fetch('', '', $invoice->socid);
-            if ($result > 0)
+		    $adh->ref=$adh->getFullName($langs);
+		    print $adh->getFullName($langs);
+		    print '<br>'.$langs->trans("Type").': '.$adh->type;
+			if ($adh->datefin)
 			{
-    $adh->ref=$adh->getFullName($langs);
-    print $adh->getFullName($langs);
-    print '<br>'.$langs->trans("Type").': '.$adh->type;
-		if ($adh->datefin)
-		{
-			print '<br>'.$langs->trans("SubscriptionEndDate").': '.dol_print_date($adh->datefin, 'day');
-			if ($adh->hasDelay()) {
-				print " ".img_warning($langs->trans("Late"));
+				print '<br>'.$langs->trans("SubscriptionEndDate").': '.dol_print_date($adh->datefin, 'day');
+				if ($adh->hasDelay()) {
+					print " ".img_warning($langs->trans("Late"));
+				}
+			}
+			else
+			{
+				print '<br>'.$langs->trans("SubscriptionNotReceived");
+				if ($adh->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
 			}
 		}
 		else
 		{
-				print $langs->trans("SubscriptionNotReceived");
-				if ($adh->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
+   			print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
 		}
-			}
-			else
-			{
-    print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
-			}
-    print '</p>';
-		}
+	    print '</p>';
+	}
 }
 
 if ($action == "search")
