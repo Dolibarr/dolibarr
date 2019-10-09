@@ -7216,12 +7216,7 @@ abstract class CommonObject
 	 */
 	protected function isIndex($info)
 	{
-		if(is_array($info))
-		{
-			if(isset($info['index']) && $info['index']==true) return true;
-			else return false;
-		}
-		return false;
+	    return is_array($info) && isset($info['index']) && $info['index']==true;
 	}
 
 	/**
