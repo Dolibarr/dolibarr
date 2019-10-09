@@ -457,7 +457,7 @@ abstract class CommonObject
     public $fields;
 
     /**
-     * @param DoliDB $db
+     * @param DoliDB|null $db the connection to the DB.
      */
     public function __construct($db = null)
     {
