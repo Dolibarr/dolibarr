@@ -1349,7 +1349,8 @@ div.nopadding {
     padding-<?php echo $left; ?>: 3px;
 }
 .pictowarning {
-    vertical-align: text-bottom;
+    /* vertical-align: text-bottom; */
+    color: #9f4705;
 }
 .pictomodule {
 	width: 14px;
