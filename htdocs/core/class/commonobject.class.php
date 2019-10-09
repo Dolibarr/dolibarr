@@ -2414,12 +2414,10 @@ abstract class CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-		else
-		{
-			$this->fk_account = ($fk_account=='NULL')?null:$fk_account;
-			$this->db->commit();
-			return 1;
-		}
+
+        $this->fk_account = ($fk_account=='NULL')?null:$fk_account;
+        $this->db->commit();
+        return 1;
 	}
 
 
