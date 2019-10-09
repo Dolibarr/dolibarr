@@ -452,6 +452,11 @@ abstract class CommonObject
     public $linkedin;
 
     /**
+     * @var array
+     */
+    public $fields;
+
+    /**
      * @param DoliDB $db
      */
     public function __construct($db = null)
@@ -7364,9 +7369,15 @@ abstract class CommonObject
 	 */
 	protected function quote($value, $fieldsentry)
 	{
-		if (is_null($value)) return 'NULL';
-		elseif (preg_match('/^(int|double|real)/i', $fieldsentry['type'])) return $this->db->escape("$value");
-		else return "'".$this->db->escape($value)."'";
+		if (is_null($value)){
+            return 'NULL';
+        }
+
+		if(preg_match('/^(int|double|real)/i', $fieldsentry['type'])){
+            return $this->db->escape("$value");
+        }
+
+		return "'".$this->db->escape($value)."'";
 	}
 
 
@@ -7391,40 +7402,54 @@ abstract class CommonObject
 		unset($fieldvalues['rowid']);	// The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
 		if (array_key_exists('ref', $fieldvalues)) $fieldvalues['ref']=dol_string_nospecial($fieldvalues['ref']);					// If field is a ref,we sanitize data
 
-		$keys = array();
+		$fields = array();
 		$values = array();
-		foreach ($fieldvalues as $k => $v) {
-			$keys[$k] = $k;
-			$value = $this->fields[$k];
-			$values[$k] = $this->quote($v, $value);
+
+        foreach ($fieldvalues as $fieldName => $value) {
+			$fields[] = $fieldName;
+			$fieldDescription = $this->fields[$fieldName];
+			$values[$fieldName] = $this->quote($value, $fieldDescription);
 		}
 
 		// Clean and check mandatory
-		foreach($keys as $key)
+		foreach($fields as $fieldName)
 		{
-			// If field is an implicit foreign key field
-			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && $values[$key] == '-1') $values[$key]='';
-			if (! empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') $values[$key]='';
+            $fieldDescription = $this->fields[$fieldName];
 
-			if (isset($this->fields[$key]['notnull']) && $this->fields[$key]['notnull'] == 1 && ! isset($values[$key]) && is_null($val['default']))
+			// If field is an implicit foreign key field
+			if ($this->isInt($fieldDescription) && $values[$fieldName] == '-1'){
+			    $values[$fieldName]='';
+            }
+
+			if (! empty($fieldDescription['foreignkey']) && $values[$fieldName] == '-1'){
+			    $values[$fieldName]='';
+            }
+
+			if (isset($fieldDescription['notnull']) && $fieldDescription['notnull'] == 1 && ! isset($values[$fieldName]) && is_null($fieldDescription['default']))
 			{
 				$error++;
-				$this->errors[]=$langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
+				$this->errors[]=$langs->trans("ErrorFieldRequired", $fieldDescription['label']);
 			}
 
 			// If field is an implicit foreign key field
-			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && empty($values[$key])) $values[$key]='null';
-			if (! empty($this->fields[$key]['foreignkey']) && empty($values[$key])) $values[$key]='null';
+			if ($this->isInt($fieldDescription) && empty($values[$fieldName])){
+			    $values[$fieldName]='null';
+            }
+			if (! empty($fieldDescription['foreignkey']) && empty($values[$fieldName])){
+			    $values[$fieldName]='null';
+            }
 		}
 
-		if ($error) return -1;
+		if ($error){
+		    return -1;
+        }
 
 		$this->db->begin();
 
 		if (! $error)
 		{
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element;
-			$sql.= ' ('.implode(", ", $keys).')';
+			$sql.= ' ('.implode(", ", $fields).')';
 			$sql.= ' VALUES ('.implode(", ", $values).')';
 
 			$res = $this->db->query($sql);
@@ -7489,20 +7514,20 @@ abstract class CommonObject
 		// Triggers
 		if (! $error && ! $notrigger)
 		{
-			// Call triggers
 			$result=$this->call_trigger(strtoupper(get_class($this)).'_CREATE', $user);
-			if ($result < 0) { $error++; }
-			// End call triggers
+			if ($result < 0) {
+			    $error++;
+			}
 		}
 
 		// Commit or rollback
 		if ($error) {
 			$this->db->rollback();
 			return -1;
-		} else {
-			$this->db->commit();
-			return $this->id;
 		}
+
+        $this->db->commit();
+        return $this->id;
 	}
 
 
