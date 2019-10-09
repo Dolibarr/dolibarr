@@ -2104,7 +2104,7 @@ table.login_table_securitycode tr td {
 
 div.login_block {
 	border-right: 1px solid rgba(0,0,0,0.3);
-    padding-top: 5px;
+    padding-top: 3px;
     padding-bottom: 3px;
 	<?php print $left; ?>: 0;
 	top: 0px;
@@ -2316,6 +2316,7 @@ a.vsmenu.addbookmarkpicto {
 }
 div.blockvmenufirst {
 	padding-top: 10px;
+/*	border-top: 1px solid #e0e0e0; */
 }
 div.blockvmenusearch, div.blockvmenubookmarks
 {

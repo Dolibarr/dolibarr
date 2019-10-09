@@ -1039,15 +1039,21 @@ td.showDragHandle {
 }
 #id-right, #id-left {
 	padding-top: 20px;
-	padding-bottom: 20px;
 
 	display: table-cell;			/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
 	float: none;
 	vertical-align: top;
 }
+#id-left {
+	padding-bottom: 5px;
+	<?php if (! empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN) && ! empty($conf->global->MAIN_USE_TOP_MENU_BOOKMARK_DROPDOWN)) { ?>
+	padding-top: 8px;
+	<?php } ?>
+}
 #id-right {	/* This must stay id-right and not be replaced with echo $right */
 	width: 100%;
 	background: rgb(<?php print $colorbackbody; ?>);
+	padding-bottom: 20px;
 }
 #id-left {
 /*	background-color: #fff;
@@ -1130,7 +1136,7 @@ div.vmenu, td.vmenu {
 }
 .blockvmenu .menu_titre {
     margin-top: 4px;
-    margin-bottom: 3px;
+    margin-bottom: 1px;
 }
 
 /* Try responsive even not on smartphone
@@ -2183,8 +2189,8 @@ div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmen
 	text-decoration: none;
     padding-left: 5px;
     padding-right: 1px;
-    padding-top: 3px;
-    padding-bottom: 3px;
+    padding-top: 4px;
+    padding-bottom: 7px;
     margin: 0 0 0 2px;
 
 	background: rgb(<?php echo $colorbackvmenu1; ?>);

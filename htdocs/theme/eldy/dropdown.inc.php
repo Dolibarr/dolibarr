@@ -111,6 +111,13 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     max-width: 100%;
 }
 
+div#topmenu-global-search-dropdown, div#topmenu-bookmark-dropdown {
+    line-height: 46px;
+}
+a.top-menu-dropdown-link {
+    padding: 8px;
+}
+
 .dropdown-user-image {
     border-radius: 50%;
     vertical-align: middle;
