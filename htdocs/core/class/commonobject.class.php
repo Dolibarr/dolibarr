@@ -7118,14 +7118,26 @@ abstract class CommonObject
 	 */
 	protected function isArray($info)
 	{
+	    return is_array($info) && isset($info['type']) && $info['type']=='array';
+	}
+
+	/**
+	 * Function test if type is null
+	 *
+	 * @param   array   $info   content informations of field
+	 * @return                  bool
+	 */
+	protected function isNull($info)
+	{
 		if(is_array($info))
 		{
-			if(isset($info['type']) && $info['type']=='array'){
+			if(isset($info['type']) && $info['type']=='null'){
 			    return true;
             }
 
 			return false;
 		}
+
 		return false;
 	}
 
