@@ -16,8 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -282,27 +282,28 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 /**
  * Generate a SQL string to make a filter into a range (for second of date until last second of date)
  *
- * @param      string	$datefield		Name of SQL field where apply sql date filter
- * @param      int		$day_date		Day date
- * @param      int		$month_date		Month date
- * @param      int		$year_date		Year date
- * @return     string	$sqldate		String with SQL filter
+ * @param      string	$datefield			Name of SQL field where apply sql date filter
+ * @param      int		$day_date			Day date
+ * @param      int		$month_date			Month date
+ * @param      int		$year_date			Year date
+ * @param	   int      $excludefirstand	Exclude first and
+ * @return     string	$sqldate			String with SQL filter
  */
-function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date)
+function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $excludefirstand = 0)
 {
 	global $db;
 	$sqldate="";
 	if ($month_date > 0) {
 		if ($year_date > 0 && empty($day_date)) {
-			$sqldate.= " AND ".$datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, $month_date, false));
+			$sqldate.= ($excludefirstand ? "" : " AND ").$datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, $month_date, false));
 			$sqldate.= "' AND '".$db->idate(dol_get_last_day($year_date, $month_date, false))."'";
 		} elseif ($year_date > 0 && ! empty($day_date)) {
-			$sqldate.= " AND ".$datefield." BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_date, $day_date, $year_date));
+			$sqldate.= ($excludefirstand ? "" : " AND ").$datefield." BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_date, $day_date, $year_date));
 			$sqldate.= "' AND '".$db->idate(dol_mktime(23, 59, 59, $month_date, $day_date, $year_date))."'";
 		} else
-			$sqldate.= " AND date_format( ".$datefield.", '%m') = '".$db->escape($month_date)."'";
+			$sqldate.= ($excludefirstand ? "" : " AND ")." date_format( ".$datefield.", '%m') = '".$db->escape($month_date)."'";
 	} elseif ($year_date > 0){
-		$sqldate.= " AND ".$datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, 1, false));
+		$sqldate.= ($excludefirstand ? "" : " AND ").$datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, 1, false));
 		$sqldate.= "' AND '".$db->idate(dol_get_last_day($year_date, 12, false))."'";
 	}
 	return $sqldate;
@@ -323,6 +324,7 @@ function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date)
  *                              0 =Input date is local date using PHP server timezone
  *  @return	int					Date as a timestamp
  *		                		19700101020000 -> 7200 with gm=1
+ *								19700101000000 -> 0 with gm=1
  *
  *  @see    dol_print_date(), dol_mktime(), dol_getdate()
  */
@@ -795,7 +797,8 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		if (in_array('fronleichnam', $specialdayrule))
 		{
 		    // Fronleichnam (60 days after easter sunday)
-    		$date_fronleichnam = mktime(
+			$date_paques = easter_date($annee);
+			$date_fronleichnam = mktime(
 		        date("H", $date_paques),
 		        date("i", $date_paques),
 		        date("s", $date_paques),

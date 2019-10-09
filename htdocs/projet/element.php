@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -540,10 +540,11 @@ if ($action=="addelement")
 elseif ($action == "unlink")
 {
 
-	$tablename = GETPOST("tablename");
-	$elementselectid = GETPOST("elementselect");
+	$tablename = GETPOST("tablename", "aZ09");
+    $projectField = GETPOST("projectfield", "aZ09");
+	$elementselectid = GETPOST("elementselect", "int");
 
-	$result = $object->remove_element($tablename, $elementselectid);
+	$result = $object->remove_element($tablename, $elementselectid, $projectField);
 	if ($result < 0)
 	{
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -917,7 +918,7 @@ foreach ($listofreferent as $key => $value)
 				{
 					if (empty($conf->global->PROJECT_DISABLE_UNLINK_FROM_OVERVIEW) || $user->admin)		// PROJECT_DISABLE_UNLINK_FROM_OVERVIEW is empty by defaut, so this test true
 					{
-						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $projectid . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . '" class="reposition">';
+						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $projectid . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . ($project_field ? '&projectfield=' . $project_field : '') . '" class="reposition">';
 						print img_picto($langs->trans('Unlink'), 'unlink');
 						print '</a>';
 					}

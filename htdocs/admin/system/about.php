@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -63,7 +63,7 @@ print '<div class="fichecenter"><div class="fichehalfleft">';
 
 print $langs->trans("DolibarrLicense").' : ';
 print '<ul><li>';
-print '<a href="http://www.gnu.org/copyleft/gpl.html">GNU-GPL v3+</a></li>';
+print '<a href="https://www.gnu.org/copyleft/gpl.html">GNU-GPL v3+</a></li>';
 print '</li></ul>';
 
 //print "<br>\n";
@@ -160,7 +160,6 @@ print '<ul>';
 
 print '<li><a href="https://facebook.com/dolibarr" target="_blank" rel="external">FaceBook</a></li>';
 print '<li><a href="https://twitter.com/dolibarr" target="_blank" rel="external">Twitter</a></li>';
-print '<li><a href="https://plus.google.com/+DolibarrOrg" target="_blank" rel="external">Google Plus page</a></li>';
 
 print '</ul>';
 

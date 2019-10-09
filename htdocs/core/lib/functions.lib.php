@@ -27,8 +27,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -559,6 +559,9 @@ function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $opti
 				elseif (preg_match('/\.\.\//', $out)) $out='';
 				$out=dol_string_nohtmltag($out);
 			}
+			break;
+		case 'restricthtml':		// Recommended for most html textarea
+			$out=dol_string_onlythesehtmltags($out, 0);
 			break;
 		case 'custom':
 			if (empty($filter)) return 'BadFourthParameterForGETPOST';
@@ -1120,7 +1123,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 {
 	global $conf, $langs, $hookmanager;
 
-	$out="\n".'<div class="tabs" data-role="controlgroup" data-type="horizontal">'."\n";
+	$out="\n".'<!-- dol_get_fiche_head --><div class="tabs" data-role="controlgroup" data-type="horizontal">'."\n";
 
 	if ($morehtmlright) $out.='<div class="inline-block floatright tabsElem">'.$morehtmlright.'</div>';	// Output right area first so when space is missing, text is in front of tabs and not under.
 
@@ -1367,13 +1370,24 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	elseif ($object->element == 'ticket')
 	{
 		$width=80; $cssclass='photoref';
-		$showimage=$object->is_photo_available($conf->ticket->multidir_output[$entity].'/'.$object->track_id);
-		$maxvisiblephotos=(isset($conf->global->TICKETSUP_MAX_VISIBLE_PHOTO)?$conf->global->TICKETSUP_MAX_VISIBLE_PHOTO:2);
+		$showimage=$object->is_photo_available($conf->ticket->multidir_output[$entity].'/'.$object->ref);
+		$maxvisiblephotos=(isset($conf->global->TICKET_MAX_VISIBLE_PHOTO)?$conf->global->TICKET_MAX_VISIBLE_PHOTO:2);
 		if ($conf->browser->layout == 'phone') $maxvisiblephotos=1;
-		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos('ticket', $conf->ticket->multidir_output[$entity], 'small', $maxvisiblephotos, 0, 0, 0, $width, 0).'</div>';
-		else
+		if ($showimage)
 		{
-			if (!empty($conf->global->TICKETSUP_NODISPLAYIFNOPHOTO)) {
+			$showphoto = $object->show_photos('ticket', $conf->ticket->multidir_output[$entity], 'small', $maxvisiblephotos, 0, 0, 0, $width, 0);
+			if ($object->nbphoto > 0)
+			{
+				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$showphoto.'</div>';
+			}
+			else
+			{
+				$showimage = 0;
+			}
+		}
+		if (! $showimage)
+		{
+			if (!empty($conf->global->TICKET_NODISPLAYIFNOPHOTO)) {
 				$nophoto='';
 				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"></div>';
 			}
@@ -2123,7 +2137,7 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0)
 	if (! preg_match('/^http/i', $url)) $link.='http://';
 	$link.=dol_trunc($url, $max);
 	$link.='</a>';
-	return '<div class="nospan float" style="margin-right: 10px">'.($withpicto?img_picto($langs->trans("Url"), 'object_globe.png').' ':'').$link.'</div>';
+	return '<div class="nospan float" style="margin-right: 10px">'.($withpicto?img_picto($langs->trans("Url"), 'globe').' ':'').$link.'</div>';
 }
 
 /**
@@ -3010,138 +3024,139 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		    $moreatt = str_replace('class="'.$reg[1].'"', '', $moreatt);
 		}
 	} else {
-		$pictowithoutext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
+		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
-        if (empty($srconly) && in_array($pictowithoutext, array(
-				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'note', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
-                'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'unlink', 'uparrow', '1downarrow', '1uparrow', '1leftarrow', '1rightarrow',
+        if (empty($srconly) && in_array($pictowithouttext, array(
+        		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
+        		'address', 'bank', 'building', 'cash-register', 'close_title', 'cubes', 'delete', 'edit', 'ellipsis-h', 'bookmark', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'note',
+        		'object_list','object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
+        		'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
+				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench',
 				'jabber','skype','twitter','facebook','linkedin',
-                'chevron-left','chevron-right','chevron-down','chevron-top'
+				'chevron-left','chevron-right','chevron-down','chevron-top',
+				'home', 'companies', 'products', 'commercial', 'invoicing', 'accountancy', 'project', 'hrm', 'members', 'ticket', 'generic',
+        		'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda'
 			)
 		)) {
-		    $fa='fa';
-		    if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fa='fas';
-		    $fakey = $pictowithoutext;
-			$facolor = ''; $fasize = '';
+			$fa='fas';
+		    $fakey = $pictowithouttext;
+		    $facolor = ''; $fasize = '';
 
-			if ($pictowithoutext == 'setup') {
-			    $fakey = 'fa-cog';
-			    $fasize = '1.4em';
-			}
-			elseif ($pictowithoutext == 'switch_off') {
-				$fakey = 'fa-toggle-off';
+		    $arrayconvpictotofa = array(
+		    	'address'=> 'address-book', 'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins', 'accountancy'=>'money-check-alt', 'project'=>'sitemap',
+		    	'hrm'=>'umbrella-beach', 'members'=>'users', 'ticket'=>'ticket-alt', 'generic'=>'folder-open',
+		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'bookmark'=>'star',
+		    	'bank'=>'university', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil', 'filter'=>'filter', 'split'=>'code-fork',
+		    	'object_list'=>'list-alt','object_calendar'=>'calendar-alt', 'object_calendarweek'=>'calendar-week', 'object_calendarmonth'=>'calendar-alt', 'object_calendarday'=>'calendar-day', 'object_calendarperuser'=>'table',
+		    	'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach', 'title_agenda'=>'calendar-alt'
+		    );
+
+		    if ($pictowithouttext == 'switch_off') {
 				$facolor = '#999';
 				$fasize = '2em';
+				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 			}
-			elseif ($pictowithoutext == 'switch_on') {
-				$fakey = 'fa-toggle-on';
+			elseif ($pictowithouttext == 'switch_on') {
 				$facolor = '#227722';
 				$fasize = '2em';
+				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 			}
-			elseif ($pictowithoutext == 'off') {
-				$fakey = 'fa-square-o';
-				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5))
-				{
-				    $fakey = 'fa-square';
-				    $fa='far';
-				}
+			elseif ($pictowithouttext == 'off') {
+			    $fakey = 'fa-square';
+			    $fa='far';
 				$fasize = '1.3em';
 			}
-			elseif ($pictowithoutext == 'on') {
-				$fakey = 'fa-check-square-o';
-				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5))
-				{
-				    $fakey = 'fa-check-square';
-				    $fa='far';
-				}
+			elseif ($pictowithouttext == 'on') {
+			    $fakey = 'fa-check-square';
+			    $fa='far';
 				$fasize = '1.3em';
 			}
-			elseif ($pictowithoutext == 'bank') {
-				$fakey = 'fa-bank';
+			elseif ($pictowithouttext == 'bank') {
+				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 				$facolor = '#444';
 			}
-			elseif ($pictowithoutext == 'close_title') {
-				$fakey = 'fa-window-close';
-			}
-			elseif ($pictowithoutext == 'delete') {
-				$fakey = 'fa-trash';
+			elseif ($pictowithouttext == 'delete') {
+				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 				$facolor = '#444';
 			}
-			elseif ($pictowithoutext == 'edit') {
-				$fakey = 'fa-pencil';
+			elseif ($pictowithouttext == 'edit') {
 				$facolor = '#444';
-				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fakey = 'fa-pencil-alt';
+				$fakey = 'fa-pencil-alt';
 			}
-			elseif ($pictowithoutext == 'filter') {
-				$fakey = 'fa-'.$pictowithoutext;
+			elseif ($pictowithouttext == 'grip_title' || $pictowithouttext == 'grip') {
+				$fakey = 'fa-arrows-alt';
 			}
-			elseif ($pictowithoutext == 'grip_title' || $pictowithoutext == 'grip') {
-				$fakey = 'fa-arrows';
-				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fakey = 'fa-arrows-alt';
+			elseif ($pictowithouttext == 'bookmark') {
+				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
+				$fa='far';
 			}
-			elseif ($pictowithoutext == 'listlight') {
+			elseif ($pictowithouttext == 'listlight') {
 				$fakey = 'fa-download';
 				$facolor = '#999';
 				$marginleftonlyshort=1;
 			}
-			elseif ($pictowithoutext == 'printer') {
+			elseif ($pictowithouttext == 'printer') {
 				$fakey = 'fa-print';
 				$fasize = '1.2em';
 				$facolor = '#444';
 			}
-			elseif ($pictowithoutext == 'resize') {
+			elseif ($pictowithouttext == 'resize') {
 				$fakey = 'fa-crop';
 				$facolor = '#444';
 			}
-			elseif ($pictowithoutext == 'note') {
-				$fakey = 'fa-sticky-note-o';
-				if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5))
-				{
-				    $fakey = 'fa-sticky-note'; $fa = 'far';
-				}
+			elseif ($pictowithouttext == 'note') {
+			    $fakey = 'fa-sticky-note';
+			    $fa = 'far';
 				$facolor = '#999';
 				$marginleftonlyshort=1;
 			}
-			elseif ($pictowithoutext == 'uparrow') {
+			elseif ($pictowithouttext == 'uparrow') {
 				$fakey = 'fa-mail-forward';
 				$facolor = '#555';
 			}
-			elseif (in_array($pictowithoutext, array('1uparrow', '1downarrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected'))) {
+			elseif (in_array($pictowithouttext, array('1uparrow', '1downarrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected'))) {
 			    $convertarray=array('1uparrow'=>'caret-up', '1downarrow'=>'caret-down', '1leftarrow'=>'caret-left', '1rightarrow'=>'caret-right', '1uparrow_selected'=>'caret-up', '1downarrow_selected'=>'caret-down', '1leftarrow_selected'=>'caret-left', '1rightarrow_selected'=>'caret-right');
-			    $fakey = 'fa-'.$convertarray[$pictowithoutext];
-			    if (preg_match('/selected/', $pictowithoutext)) $facolor = '#888';
+			    $fakey = 'fa-'.$convertarray[$pictowithouttext];
+			    if (preg_match('/selected/', $pictowithouttext)) $facolor = '#888';
 				$marginleftonlyshort = 1;
 			}
-			elseif ($pictowithoutext == 'sign-out')     {
-                $fakey = 'fa-sign-out';
+			elseif ($pictowithouttext == 'sign-out')     {
+				$fakey = 'fa-sign-out-alt';
 			    $marginleftonlyshort=0;
-			    if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fakey = 'fa-sign-out-alt';
 			}
-			elseif ($pictowithoutext == 'unlink')     {
+			elseif ($pictowithouttext == 'unlink')     {
 				$fakey = 'fa-chain-broken';
 				$facolor = '#555';
 			}
-			elseif ($pictowithoutext == 'playdisabled') {
+			elseif ($pictowithouttext == 'playdisabled') {
 				$fakey = 'fa-play';
 				$facolor = '#ccc';
 			}
-			elseif ($pictowithoutext == 'play') {
+			elseif ($pictowithouttext == 'play') {
 				$fakey = 'fa-play';
 				$facolor = '#444';
 			}
-			elseif ($pictowithoutext == 'jabber') {
+			elseif ($pictowithouttext == 'jabber') {
 				$fakey = 'fa-comment-o';
 			}
-			elseif (in_array($pictowithoutext, array('skype', 'twitter', 'facebook', 'linkedin'))) {
-			    $fakey = 'fa-'.$pictowithoutext;
-			    if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) $fa = 'fab';
+			elseif (in_array($pictowithouttext, array('skype', 'twitter', 'facebook', 'linkedin'))) {
+			    $fakey = 'fa-'.$pictowithouttext;
+			    $fa = 'fab';
 			}
-			elseif ($pictowithoutext == 'split') {
-			    $fakey = 'fa-code-fork';
+			// Img for type of views
+			elseif (in_array($pictowithouttext, array('object_list', 'object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser'))) {
+				$fakey = 'imgforviewmode fa-'.$arrayconvpictotofa[$pictowithouttext];
+				$marginleftonlyshort=0;
+			}
+			elseif (! empty($arrayconvpictotofa[$pictowithouttext]))
+			{
+				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
+				$facolor = '#444';
+				$marginleftonlyshort=0;
 			}
 			else {
-				$fakey = 'fa-'.$pictowithoutext;
+				$fakey = 'fa-'.$pictowithouttext;
 				$facolor = '#444';
 				$marginleftonlyshort=0;
 			}
@@ -3897,7 +3912,7 @@ function dol_print_error_email($prefixcode, $errormessage = '', $errormessages =
 	$now=dol_now();
 
 	print '<br><div class="center login_main_message"><div class="'.$morecss.'">';
-	print $langs->trans("ErrorContactEMail", $email, $prefixcode.dol_print_date($now, '%Y%m%d'));
+	print $langs->trans("ErrorContactEMail", $email, $prefixcode.dol_print_date($now, '%Y%m%d%H%M%S'));
 	if ($errormessage) print '<br><br>'.$errormessage;
 	if (is_array($errormessages) && count($errormessages))
 	{
@@ -4073,7 +4088,7 @@ function print_titre($title)
  * 	@return	void
  *  @deprecated Use print load_fiche_titre instead
  */
-function print_fiche_titre($title, $mesg = '', $picto = 'title_generic.png', $pictoisfullpath = 0, $id = '')
+function print_fiche_titre($title, $mesg = '', $picto = 'generic', $pictoisfullpath = 0, $id = '')
 {
 	print load_fiche_titre($title, $mesg, $picto, $pictoisfullpath, $id);
 }
@@ -4091,13 +4106,13 @@ function print_fiche_titre($title, $mesg = '', $picto = 'title_generic.png', $pi
  * 	@return	string
  *  @see print_barre_liste()
  */
-function load_fiche_titre($titre, $morehtmlright = '', $picto = 'title_generic.png', $pictoisfullpath = 0, $id = '', $morecssontable = '', $morehtmlcenter = '')
+function load_fiche_titre($titre, $morehtmlright = '', $picto = 'generic', $pictoisfullpath = 0, $id = '', $morecssontable = '', $morehtmlcenter = '')
 {
 	global $conf;
 
 	$return='';
 
-	if ($picto == 'setup') $picto='title_generic.png';
+	if ($picto == 'setup') $picto='generic';
 
 	$return.= "\n";
 	$return.= '<table '.($id?'id="'.$id.'" ':'').'class="centpercent notopnoleftnoright'.($morecssontable?' '.$morecssontable:'').'" style="margin-bottom: 6px;"><tr>';	// maring bottom must be same than into print_barre_list
@@ -4111,7 +4126,7 @@ function load_fiche_titre($titre, $morehtmlright = '', $picto = 'title_generic.p
 	}
 	if (dol_strlen($morehtmlright))
 	{
-		$return.= '<td class="nobordernopadding titre_right wordbreak right valignmiddle">'.$morehtmlright.'</td>';
+		$return.= '<td class="nobordernopadding titre_right wordbreakimp right valignmiddle">'.$morehtmlright.'</td>';
 	}
 	$return.= '</tr></table>'."\n";
 
@@ -4139,7 +4154,7 @@ function load_fiche_titre($titre, $morehtmlright = '', $picto = 'title_generic.p
  *  @param  int         $hidenavigation     Force to hide all navigation tools
  *	@return	void
  */
-function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '', $sortorder = '', $morehtmlcenter = '', $num = -1, $totalnboflines = '', $picto = 'title_generic.png', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limit = -1, $hideselectlimit = 0, $hidenavigation = 0)
+function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '', $sortorder = '', $morehtmlcenter = '', $num = -1, $totalnboflines = '', $picto = 'generic', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limit = -1, $hideselectlimit = 0, $hidenavigation = 0)
 {
 	global $conf,$langs;
 
@@ -4148,7 +4163,7 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 	$totalnboflines=abs($totalnboflines);
 
 	if ($picto == 'setup') $picto='title_setup.png';
-	if (($conf->browser->name == 'ie') && $picto=='title_generic.png') $picto='title.gif';
+	if (($conf->browser->name == 'ie') && $picto=='generic') $picto='title.gif';
 	if ($limit < 0) $limit = $conf->liste_limit;
 	if ($savlimit != 0 && (($num > $limit) || ($num == -1) || ($limit == 0)))
 	{
@@ -4473,7 +4488,9 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  *									'MS'=Round to Max for stock quantity (MAIN_MAX_DECIMALS_STOCK)
  *									Numeric = Nb of digits for rounding
  * 	@param	int		$alreadysqlnb	Put 1 if you know that content is already universal format number
- *	@return	string					Amount with universal numeric format (Example: '99.99999') or unchanged text if conversion fails. If amount is null or '', it returns ''.
+ *	@return	string					Amount with universal numeric format (Example: '99.99999').
+ *									If conversion fails, it return text unchanged if $rounding = '' or '0' if $rounding is defined.
+ *									If amount is null or '', it returns '' if $rounding = '' or '0' if $rounding is defined..
  *
  *	@see    price()					Opposite function of price2num
  */
@@ -4556,7 +4573,7 @@ function price2num($amount, $rounding = '', $alreadysqlnb = 0)
  * Output a dimension with best unit
  *
  * @param   float       $dimension      Dimension
- * @param   int         $unit           Unit of dimension (Example: 0=kg, -3=g, 98=ounce, 99=pound, ...)
+ * @param   int         $unit           Unit scale of dimension (Example: 0=kg, -3=g, -6=mg, 98=ounce, 99=pound, ...)
  * @param   string      $type           'weight', 'volume', ...
  * @param   Translate   $outputlangs    Translate language object
  * @param   int         $round          -1 = non rounding, x = number of decimal
@@ -4600,7 +4617,7 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
 	    $unit = $forceunitoutput;
 	}*/
 
-	$ret=price($dimension, 0, $outputlangs, 0, 0, $round).' '.measuring_units_string($unit, $type);
+	$ret=price($dimension, 0, $outputlangs, 0, 0, $round).' '.measuring_units_string(0, $type, $unit);
 
 	return $ret;
 }
@@ -5754,20 +5771,6 @@ function dol_nboflines_bis($text, $maxlinesize = 0, $charset = 'UTF-8')
 }
 
 /**
- *	 Same function than microtime in PHP 5 but compatible with PHP4
- *
- * @return		float		Time (millisecondes) with microsecondes in decimal part
- * @deprecated Dolibarr does not support PHP4, you should use native function
- * @see microtime()
- */
-function dol_microtime_float()
-{
-	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
-
-	return microtime(true);
-}
-
-/**
  *	Return if a text is a html content
  *
  *	@param	string	$msg		Content to check
@@ -5909,11 +5912,13 @@ $substitutionarray=array_merge($substitutionarray, array(
 			$substitutionarray['__REF_SUPPLIER__'] = '__REF_SUPPLIER__';
 			$substitutionarray['__EXTRAFIELD_XXX__'] = '__EXTRAFIELD_XXX__';
 
-			$substitutionarray['__THIRDPARTY_ID__'] = '__THIRDPARTY_ID__';
-			$substitutionarray['__THIRDPARTY_NAME__'] = '__THIRDPARTY_NAME__';
-			$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = '__THIRDPARTY_NAME_ALIAS__';
-			$substitutionarray['__THIRDPARTY_EMAIL__'] = '__THIRDPARTY_EMAIL__';
-
+			if (! empty($conf->societe->enabled))
+			{
+				$substitutionarray['__THIRDPARTY_ID__'] = '__THIRDPARTY_ID__';
+				$substitutionarray['__THIRDPARTY_NAME__'] = '__THIRDPARTY_NAME__';
+				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = '__THIRDPARTY_NAME_ALIAS__';
+				$substitutionarray['__THIRDPARTY_EMAIL__'] = '__THIRDPARTY_EMAIL__';
+			}
 			if (! empty($conf->adherent->enabled))
 			{
 				$substitutionarray['__MEMBER_ID__'] = '__MEMBER_ID__';
@@ -5921,15 +5926,19 @@ $substitutionarray=array_merge($substitutionarray, array(
 				$substitutionarray['__MEMBER_FIRSTNAME__'] = '__MEMBER_FIRSTNAME__';
 				$substitutionarray['__MEMBER_LASTNAME__'] = '__MEMBER_LASTNAME__';
 			}
-			$substitutionarray['__PROJECT_ID__'] = '__PROJECT_ID__';
-			$substitutionarray['__PROJECT_REF__'] = '__PROJECT_REF__';
-			$substitutionarray['__PROJECT_NAME__'] = '__PROJECT_NAME__';
-
-			$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATE__'] = 'Highest date planned for a service start';
-			$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATETIME__'] = 'Highest date and hour planned for service start';
-			$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = 'Lowest data for planned expiration of service';
-			$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = 'Lowest date and hour for planned expiration of service';
-
+			if (! empty($conf->projet->enabled))
+			{
+				$substitutionarray['__PROJECT_ID__'] = '__PROJECT_ID__';
+				$substitutionarray['__PROJECT_REF__'] = '__PROJECT_REF__';
+				$substitutionarray['__PROJECT_NAME__'] = '__PROJECT_NAME__';
+			}
+			if (! empty($conf->contrat->enabled))
+			{
+				$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATE__'] = 'Highest date planned for a service start';
+				$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATETIME__'] = 'Highest date and hour planned for service start';
+				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = 'Lowest data for planned expiration of service';
+				$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = 'Lowest date and hour for planned expiration of service';
+			}
 			$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'UrlToPayOnlineIfApplicable';
 			$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__'] = 'TextAndUrlToPayOnlineIfApplicable';
 			$substitutionarray['__SECUREKEYPAYMENT__'] = 'Security key (if key is not unique per record)';
@@ -6007,7 +6016,13 @@ $substitutionarray=array_merge($substitutionarray, array(
 				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object->thirdparty)?$object->thirdparty->email:'');
 			}
 
-			if (is_object($object->projet) && $object->projet->id > 0)
+			if (is_object($object->project) && $object->project->id > 0)
+			{
+				$substitutionarray['__PROJECT_ID__'] = (is_object($object->project)?$object->project->id:'');
+				$substitutionarray['__PROJECT_REF__'] = (is_object($object->project)?$object->project->ref:'');
+				$substitutionarray['__PROJECT_NAME__'] = (is_object($object->project)?$object->project->title:'');
+			}
+			if (is_object($object->projet) && $object->projet->id > 0)	// Deprecated, for backward compatibility
 			{
 				$substitutionarray['__PROJECT_ID__'] = (is_object($object->projet)?$object->projet->id:'');
 				$substitutionarray['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
@@ -7279,7 +7294,7 @@ function printCommonFooter($zone = 'private')
 			{
 				print "\n";
 				print '/* JS CODE TO ENABLE to manage handler to switch left menu page (menuhider) */'."\n";
-				print 'jQuery(".menuhider").click(function(event) {';
+				print 'jQuery("li.menuhider").click(function(event) {';
 				print '  if (!$( "body" ).hasClass( "sidebar-collapse" )){ event.preventDefault(); }'."\n";
 				print '  console.log("We click on .menuhider");'."\n";
 				print '  $("body").toggleClass("sidebar-collapse")'."\n";
@@ -7683,7 +7698,7 @@ function showDirectDownloadLink($object)
 
 	if ($url)
 	{
-		$out.= img_picto('', 'object_globe.png').' '.$langs->trans("DirectDownloadLink").'<br>';
+		$out.= img_picto('', 'globe').' '.$langs->trans("DirectDownloadLink").'<br>';
 		$out.= '<input type="text" id="directdownloadlink" class="quatrevingtpercent" value="'.$url.'">';
 		$out.= ajax_autoselect("directdownloadlink", 0);
 	}
@@ -8086,6 +8101,11 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 
     $return = '';
 
+    $dolGetBadgeParams = array();
+    if(!empty($params['badgeParams'])){
+        $dolGetBadgeParams = $params['badgeParams'];
+    }
+
     // image's filename are still in French
     $statusImg=array(
         'status0' => 'statut0'
@@ -8141,13 +8161,13 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         $statusLabelShort = !empty($statusLabelShort)?$statusLabelShort:$statusLabel;
 
         if ($displayMode == 3) {
-            $return = dolGetBadge($statusLabel, '', $statusType, 'dot');
+            $return = dolGetBadge($statusLabel, '', $statusType, 'dot', $url, $dolGetBadgeParams);
         }
         elseif ($displayMode === 5) {
-            $return = dolGetBadge($statusLabelShort, $html, $statusType);
+            $return = dolGetBadge($statusLabelShort, $html, $statusType, '', $url, $dolGetBadgeParams);
         }
         else {
-            $return = dolGetBadge($statusLabel, $html, $statusType);
+            $return = dolGetBadge($statusLabel, $html, $statusType, '', $url, $dolGetBadgeParams);
         }
     }
 
@@ -8235,7 +8255,7 @@ function dolGetButtonAction($label, $html = '', $actionType = 'default', $url = 
  *
  * @param string    $label      label of button
  * @param string    $helpText   optional : content for help tooltip
- * @param string    $iconClass  class for icon element
+ * @param string    $iconClass  class for icon element (Example: 'fa fa-file')
  * @param string    $url        the url for link
  * @param string    $id         attribute id of button
  * @param int       $status     0 no user rights, 1 active, -1 Feature Disabled, -2 disable Other reason use helpText as tooltip
@@ -8251,12 +8271,12 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
         return '';
     }
 
-    $class = 'btnTitle' ;
-
+    $class = 'btnTitle';
     // hidden conf keep during button transition TODO: remove this block
-    if(empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)){
+    if (empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)) {
         $class = 'butActionNew';
     }
+    if (! empty($params['morecss'])) $class.=' '.$params['morecss'];
 
     $attr=array(
         'class' => $class
@@ -8322,9 +8342,9 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
         $TCompiledAttr[] = $key.'="'.$value.'"';
     }
 
-    $compiledAttributes = !empty($TCompiledAttr)?implode(' ', $TCompiledAttr):'';
+    $compiledAttributes = (empty($TCompiledAttr) ? '' : implode(' ', $TCompiledAttr));
 
-    $tag = !empty($attr['href'])?'a':'span';
+    $tag = (empty($attr['href']) ? 'span' : 'a');
 
 
     $button ='<'.$tag.' '.$compiledAttributes.' >';

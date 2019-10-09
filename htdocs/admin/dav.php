@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -123,7 +123,9 @@ else
 	{
 		print '<tr class="oddeven"><td>';
 		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
-		print $form->textwithpicto($langs->trans($key), $tooltiphelp);
+		$label = $langs->trans($key);
+		if ($key == 'DAV_RESTICT_ON_IP') $label = $langs->trans("RESTRICT_ON_IP");
+		print $form->textwithpicto($label, $tooltiphelp);
 		print '</td><td>';
 		if ($key == 'DAV_ALLOW_PRIVATE_DIR')
 		{
@@ -172,13 +174,13 @@ $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain
 // Show message
 $message='';
 $url='<a href="'.$urlwithroot.'/dav/fileserver.php" target="_blank">'.$urlwithroot.'/dav/fileserver.php</a>';
-$message.=img_picto('', 'object_globe.png').' '.$langs->trans("WebDavServer", 'WebDAV', $url);
+$message.=img_picto('', 'globe').' '.$langs->trans("WebDavServer", 'WebDAV', $url);
 $message.='<br>';
 if (! empty($conf->global->DAV_ALLOW_PUBLIC_DIR))
 {
 	$urlEntity = (! empty($conf->multicompany->enabled)?'?entity='.$conf->entity:'');
 	$url='<a href="'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'" target="_blank">'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'</a>';
-	$message.=img_picto('', 'object_globe.png').' '.$langs->trans("WebDavServer", 'WebDAV public', $url);
+	$message.=img_picto('', 'globe').' '.$langs->trans("WebDavServer", 'WebDAV public', $url);
 	$message.='<br>';
 }
 print $message;

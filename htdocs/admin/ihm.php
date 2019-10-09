@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -432,11 +432,13 @@ if ($action == 'edit')	// Edit
 	print '</table>'."\n";
 
 
-	print '<br><div class="center">';
+	print '<br>';
+	print '<div class="center">';
 	print '<input class="button" type="submit" name="submit" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; ';
+	print '&nbsp;&nbsp;&nbsp;';
 	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
+	print '<br>';
 
 	print '</form>';
 }

@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -55,7 +55,7 @@ $helpurl='EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Terceros';
 
 llxHeader("", $langs->trans("ThirdParties"), $helpurl);
 $linkback='';
-print load_fiche_titre($transAreaType, $linkback, 'title_companies.png');
+print load_fiche_titre($transAreaType, $linkback, 'companies');
 
 
 //print '<table border="0" width="100%" class="notopnoleftnoright">';
@@ -288,7 +288,7 @@ if ($result)
 
             print '<tr class="oddeven">';
             // Name
-            print '<td class="nowrap">';
+            print '<td class="nowrap tdoverflowmax200">';
             print $thirdparty_static->getNomUrl(1);
             print "</td>\n";
             // Type

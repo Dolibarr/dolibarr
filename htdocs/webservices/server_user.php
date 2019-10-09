@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -188,7 +188,7 @@ $elementtype = 'socpeople';
 //Retreive all extrafield for contact
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label('socpeople', true);
+$extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_array = array();
@@ -604,7 +604,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 						//Retreive all extrafield for thirdsparty
 						// fetch optionals attributes and labels
 						$extrafields=new ExtraFields($db);
-						$extralabels=$extrafields->fetch_name_optionals_label('socpeople', true);
+						$extrafields->fetch_name_optionals_label($elementtype, true);
 						if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 						{
 							foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)

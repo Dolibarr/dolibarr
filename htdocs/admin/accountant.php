@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -112,56 +112,56 @@ if ($action == 'edit' || $action == 'updateedit')
 	print '<input type="hidden" name="action" value="update">';
 
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><th class="titlefield wordbreak">'.$langs->trans("CompanyInfo").'</th><th>'.$langs->trans("Value").'</th></tr>'."\n";
+	print '<tr class="oddeven liste_titre"><th class="titlefield wordbreak">'.$langs->trans("CompanyInfo").'</th><th>'.$langs->trans("Value").'</th></tr>'."\n";
 
 	// Name
-	print '<tr class="oddeven"><td class="fieldrequired"><label for="name">'.$langs->trans("CompanyName").'</label></td><td>';
+	print '<tr><td class="fieldrequired"><label for="name">'.$langs->trans("CompanyName").'</label></td><td>';
 	print '<input name="nom" id="name" class="minwidth200" value="'. ($conf->global->MAIN_INFO_ACCOUNTANT_NAME?$conf->global->MAIN_INFO_ACCOUNTANT_NAME: GETPOST("nom", 'nohtml')) . '" autofocus="autofocus"></td></tr>'."\n";
 
 	// Address
-	print '<tr class="oddeven"><td><label for="address">'.$langs->trans("CompanyAddress").'</label></td><td>';
+	print '<tr><td><label for="address">'.$langs->trans("CompanyAddress").'</label></td><td>';
 	print '<textarea name="address" id="address" class="quatrevingtpercent" rows="'.ROWS_3.'">'. ($conf->global->MAIN_INFO_ACCOUNTANT_ADDRESS?$conf->global->MAIN_INFO_ACCOUNTANT_ADDRESS: GETPOST("address", 'nohtml')) . '</textarea></td></tr>'."\n";
 
-	print '<tr class="oddeven"><td><label for="zipcode">'.$langs->trans("CompanyZip").'</label></td><td>';
+	print '<tr><td><label for="zipcode">'.$langs->trans("CompanyZip").'</label></td><td>';
 	print '<input class="minwidth100" name="zipcode" id="zipcode" value="'. ($conf->global->MAIN_INFO_ACCOUNTANT_ZIP?$conf->global->MAIN_INFO_ACCOUNTANT_ZIP: GETPOST("zipcode", 'alpha')) . '"></td></tr>'."\n";
 
-	print '<tr class="oddeven"><td><label for="town">'.$langs->trans("CompanyTown").'</label></td><td>';
+	print '<tr><td><label for="town">'.$langs->trans("CompanyTown").'</label></td><td>';
 	print '<input name="town" class="minwidth100" id="town" value="'. ($conf->global->MAIN_INFO_ACCOUNTANT_TOWN?$conf->global->MAIN_INFO_ACCOUNTANT_TOWN: GETPOST("town", 'nohtml')) . '"></td></tr>'."\n";
 
 	// Country
-	print '<tr class="oddeven"><td class="fieldrequired"><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td class="maxwidthonsmartphone">';
+	print '<tr><td class="fieldrequired"><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td class="maxwidthonsmartphone">';
 	//if (empty($country_selected)) $country_selected=substr($langs->defaultlang,-2);    // By default, country of localization
 	print $form->select_country($conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY, 'country_id');
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 	print '</td></tr>'."\n";
 
-	print '<tr class="oddeven"><td><label for="state_id">'.$langs->trans("State").'</label></td><td class="maxwidthonsmartphone">';
+	print '<tr><td><label for="state_id">'.$langs->trans("State").'</label></td><td class="maxwidthonsmartphone">';
 	$formcompany->select_departement($conf->global->MAIN_INFO_ACCOUNTANT_STATE, $conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY, 'state_id');
 	print '</td></tr>'."\n";
 
-	print '<tr class="oddeven"><td><label for="phone">'.$langs->trans("Phone").'</label></td><td>';
+	print '<tr><td><label for="phone">'.$langs->trans("Phone").'</label></td><td>';
 	print '<input name="tel" id="phone" value="'. $conf->global->MAIN_INFO_ACCOUNTANT_PHONE . '"></td></tr>';
 	print '</td></tr>'."\n";
 
-	print '<tr class="oddeven"><td><label for="fax">'.$langs->trans("Fax").'</label></td><td>';
+	print '<tr><td><label for="fax">'.$langs->trans("Fax").'</label></td><td>';
 	print '<input name="fax" id="fax" value="'. $conf->global->MAIN_INFO_ACCOUNTANT_FAX . '"></td></tr>';
 	print '</td></tr>'."\n";
 
-	print '<tr class="oddeven"><td><label for="email">'.$langs->trans("EMail").'</label></td><td>';
+	print '<tr><td><label for="email">'.$langs->trans("EMail").'</label></td><td>';
 	print '<input name="mail" id="email" class="minwidth200" value="'. $conf->global->MAIN_INFO_ACCOUNTANT_MAIL . '"></td></tr>';
 	print '</td></tr>'."\n";
 
 	// Web
-	print '<tr class="oddeven"><td><label for="web">'.$langs->trans("Web").'</label></td><td>';
+	print '<tr><td><label for="web">'.$langs->trans("Web").'</label></td><td>';
 	print '<input name="web" id="web" class="minwidth300" value="'. $conf->global->MAIN_INFO_ACCOUNTANT_WEB . '"></td></tr>';
 	print '</td></tr>'."\n";
 
 	// Code
-	print '<tr class="oddeven"><td><label for="code">'.$langs->trans("AccountantFileNumber").'</label></td><td>';
+	print '<tr><td><label for="code">'.$langs->trans("AccountantFileNumber").'</label></td><td>';
 	print '<input name="code" id="code" class="minwidth100" value="'. ($conf->global->MAIN_INFO_ACCOUNTANT_CODE?$conf->global->MAIN_INFO_ACCOUNTANT_CODE: GETPOST("code", 'nohtml')) . '" autofocus="autofocus"></td></tr>'."\n";
 
 	// Note
-	print '<tr class="oddeven"><td class="tdtop"><label for="note">'.$langs->trans("Note").'</label></td><td>';
+	print '<tr><td class="tdtop"><label for="note">'.$langs->trans("Note").'</label></td><td>';
 	print '<textarea class="flat quatrevingtpercent" name="note" id="note" rows="'.ROWS_5.'">'.(GETPOST('note', 'none') ? GETPOST('note', 'none') : $conf->global->MAIN_INFO_ACCOUNTANT_NOTE).'</textarea></td></tr>';
 	print '</td></tr>';
 
@@ -189,24 +189,24 @@ else
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("CompanyInfo").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="oddeven liste_titre"><td>'.$langs->trans("CompanyInfo").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 
-	print '<tr class="oddeven"><td class="titlefield wordbreak">'.$langs->trans("CompanyName").'</td><td>';
+	print '<tr><td class="titlefield wordbreak">'.$langs->trans("CompanyName").'</td><td>';
 	print $conf->global->MAIN_INFO_ACCOUNTANT_NAME;
 	print '</td></tr>';
 
 
-	print '<tr class="oddeven"><td>'.$langs->trans("CompanyAddress").'</td><td>' . nl2br(empty($conf->global->MAIN_INFO_ACCOUNTANT_ADDRESS)?'':$conf->global->MAIN_INFO_ACCOUNTANT_ADDRESS) . '</td></tr>';
+	print '<tr><td>'.$langs->trans("CompanyAddress").'</td><td>' . nl2br(empty($conf->global->MAIN_INFO_ACCOUNTANT_ADDRESS)?'':$conf->global->MAIN_INFO_ACCOUNTANT_ADDRESS) . '</td></tr>';
 
 
-	print '<tr class="oddeven"><td>'.$langs->trans("CompanyZip").'</td><td>' . (empty($conf->global->MAIN_INFO_ACCOUNTANT_ZIP)?'':$conf->global->MAIN_INFO_ACCOUNTANT_ZIP) . '</td></tr>';
+	print '<tr><td>'.$langs->trans("CompanyZip").'</td><td>' . (empty($conf->global->MAIN_INFO_ACCOUNTANT_ZIP)?'':$conf->global->MAIN_INFO_ACCOUNTANT_ZIP) . '</td></tr>';
 
 
-	print '<tr class="oddeven"><td>'.$langs->trans("CompanyTown").'</td><td>' . (empty($conf->global->MAIN_INFO_ACCOUNTANT_TOWN)?'':$conf->global->MAIN_INFO_ACCOUNTANT_TOWN) . '</td></tr>';
+	print '<tr><td>'.$langs->trans("CompanyTown").'</td><td>' . (empty($conf->global->MAIN_INFO_ACCOUNTANT_TOWN)?'':$conf->global->MAIN_INFO_ACCOUNTANT_TOWN) . '</td></tr>';
 
 
-	print '<tr class="oddeven"><td>'.$langs->trans("CompanyCountry").'</td><td>';
+	print '<tr><td>'.$langs->trans("CompanyCountry").'</td><td>';
 	if (! empty($conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY))
 	{
 		$code = getCountry($conf->global->MAIN_INFO_ACCOUNTANT_COUNTRY, 2);
@@ -217,23 +217,23 @@ else
 	print '</td></tr>';
 
 
-	if (! empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT)) print '<tr class="oddeven"><td>'.$langs->trans("Region-State").'</td><td>';
-	else print '<tr class="oddeven"><td>'.$langs->trans("State").'</td><td>';
+	if (! empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT)) print '<tr><td>'.$langs->trans("Region-State").'</td><td>';
+	else print '<tr><td>'.$langs->trans("State").'</td><td>';
 	if (! empty($conf->global->MAIN_INFO_ACCOUNTANT_STATE)) print getState($conf->global->MAIN_INFO_ACCOUNTANT_STATE, $conf->global->MAIN_SHOW_STATE_CODE, 0, $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT);
 	else print '&nbsp;';
 	print '</td></tr>';
 
-	print '<tr class="oddeven"><td>'.$langs->trans("Phone").'</td><td>' . dol_print_phone($conf->global->MAIN_INFO_ACCOUNTANT_PHONE, $mysoc->country_code) . '</td></tr>';
+	print '<tr><td>'.$langs->trans("Phone").'</td><td>' . dol_print_phone($conf->global->MAIN_INFO_ACCOUNTANT_PHONE, $mysoc->country_code) . '</td></tr>';
 
-	print '<tr class="oddeven"><td>'.$langs->trans("Fax").'</td><td>' . dol_print_phone($conf->global->MAIN_INFO_ACCOUNTANT_FAX, $mysoc->country_code) . '</td></tr>';
+	print '<tr><td>'.$langs->trans("Fax").'</td><td>' . dol_print_phone($conf->global->MAIN_INFO_ACCOUNTANT_FAX, $mysoc->country_code) . '</td></tr>';
 
-	print '<tr class="oddeven"><td>'.$langs->trans("Mail").'</td><td>' . dol_print_email($conf->global->MAIN_INFO_ACCOUNTANT_MAIL, 0, 0, 0, 80) . '</td></tr>';
+	print '<tr><td>'.$langs->trans("Mail").'</td><td>' . dol_print_email($conf->global->MAIN_INFO_ACCOUNTANT_MAIL, 0, 0, 0, 80) . '</td></tr>';
 
-	print '<tr class="oddeven"><td>'.$langs->trans("Web").'</td><td>' . dol_print_url($conf->global->MAIN_INFO_ACCOUNTANT_WEB, '_blank', 80) . '</td></tr>';
+	print '<tr><td>'.$langs->trans("Web").'</td><td>' . dol_print_url($conf->global->MAIN_INFO_ACCOUNTANT_WEB, '_blank', 80) . '</td></tr>';
 
-	print '<tr class="oddeven"><td>'.$langs->trans("AccountantFileNumber").'</td><td>' . $conf->global->MAIN_INFO_ACCOUNTANT_CODE . '</td></tr>';
+	print '<tr><td>'.$langs->trans("AccountantFileNumber").'</td><td>' . $conf->global->MAIN_INFO_ACCOUNTANT_CODE . '</td></tr>';
 
-	print '<tr class="oddeven"><td class="tdtop">'.$langs->trans("Note").'</td><td>' . (! empty($conf->global->MAIN_INFO_ACCOUNTANT_NOTE) ? nl2br($conf->global->MAIN_INFO_ACCOUNTANT_NOTE) : '') . '</td></tr>';
+	print '<tr><td class="tdtop">'.$langs->trans("Note").'</td><td>' . (! empty($conf->global->MAIN_INFO_ACCOUNTANT_NOTE) ? nl2br($conf->global->MAIN_INFO_ACCOUNTANT_NOTE) : '') . '</td></tr>';
 
 	print '</table>';
 	print "</div>";

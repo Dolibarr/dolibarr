@@ -68,7 +68,9 @@
 		<severity>0</severity>
     </rule>
 
-    <rule ref="Generic.CodeAnalysis.UselessOverridingMethod" />
+    <rule ref="Generic.CodeAnalysis.UselessOverridingMethod">
+   		<severity>0</severity>
+    </rule>
 
     <!--
     <rule ref="Generic.Commenting.Todo" />

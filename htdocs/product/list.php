@@ -23,7 +23,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -57,7 +57,8 @@ $search_label=GETPOST("search_label", 'alpha');
 $search_type = GETPOST("search_type", 'int');
 $search_sale = GETPOST("search_sale", 'int');
 $search_vatrate=GETPOST("search_vatrate", 'alpha');
-$search_categ = GETPOST("search_categ", 'int');
+$searchCategoryProductOperator = (GETPOST('search_category_product_operator', 'int') ? GETPOST('search_category_product_operator', 'int') : 0);
+$searchCategoryProductList = GETPOST('search_category_product_list', 'array');
 $search_tosell = GETPOST("search_tosell", 'int');
 $search_tobuy = GETPOST("search_tobuy", 'int');
 $fourn_id = GETPOST("fourn_id", 'int');
@@ -102,7 +103,7 @@ $extrafields = new ExtraFields($db);
 $form=new Form($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('product');
+$extrafields->fetch_name_optionals_label('product');
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 if (empty($action)) $action='list';
@@ -231,7 +232,8 @@ if (empty($reshook))
 		$search_ref="";
 		$search_label="";
 		$search_barcode="";
-		$search_categ=0;
+        $searchCategoryProductOperator = 0;
+        $searchCategoryProductList = array();
 		$search_tosell="";
 		$search_tobuy="";
 		$search_vatrate="";
@@ -301,7 +303,7 @@ $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // 
 $sql.=$hookmanager->resPrint;
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_extrafields as ef on (p.rowid = ef.fk_object)";
-if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product"; // We'll need this table joined to the select in order to filter by categ
+if (!empty($searchCategoryProductList) || !empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product"; // We'll need this table joined to the select in order to filter by categ
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
 // multilang
 if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang = '".$langs->getDefaultLang() ."'";
@@ -333,8 +335,30 @@ if ($search_vatrate) $sql .= natural_search('p.tva_tx', $search_vatrate);
 if (dol_strlen($canvas) > 0)                    $sql.= " AND p.canvas = '".$db->escape($canvas)."'";
 if ($catid > 0)     $sql.= " AND cp.fk_categorie = ".$catid;
 if ($catid == -2)   $sql.= " AND cp.fk_categorie IS NULL";
-if ($search_categ > 0)   $sql.= " AND cp.fk_categorie = ".$db->escape($search_categ);
-if ($search_categ == -2) $sql.= " AND cp.fk_categorie IS NULL";
+$searchCategoryProductSqlList = array();
+if ($searchCategoryProductOperator == 1) {
+    foreach ($searchCategoryProductList as $searchCategoryProduct) {
+        if (intval($searchCategoryProduct) == -2) {
+            $searchCategoryProductSqlList[] = "cp.fk_categorie IS NULL";
+        } elseif (intval($searchCategoryProduct) > 0) {
+            $searchCategoryProductSqlList[] = "cp.fk_categorie = " . $db->escape($searchCategoryProduct);
+        }
+    }
+    if (!empty($searchCategoryProductSqlList)) {
+        $sql .= " AND (" . implode(' OR ', $searchCategoryProductSqlList) . ")";
+    }
+} else {
+    foreach ($searchCategoryProductList as $searchCategoryProduct) {
+        if (intval($searchCategoryProduct) == -2) {
+            $searchCategoryProductSqlList[] = "cp.fk_categorie IS NULL";
+        } elseif (intval($searchCategoryProduct) > 0) {
+            $searchCategoryProductSqlList[] = "p.rowid IN (SELECT fk_product FROM " . MAIN_DB_PREFIX . "categorie_product WHERE fk_categorie = " . $searchCategoryProduct . ")";
+        }
+    }
+    if (!empty($searchCategoryProductSqlList)) {
+        $sql .= " AND (" . implode(' AND ', $searchCategoryProductSqlList) . ")";
+    }
+}
 if ($fourn_id > 0)  $sql.= " AND pfp.fk_soc = ".$fourn_id;
 if ($search_tobatch != '' && $search_tobatch >= 0)   $sql.= " AND p.tobatch = ".$db->escape($search_tobatch);
 if ($search_accountancy_code_sell)        $sql.= natural_search('p.accountancy_code_sell', $search_accountancy_code_sell);
@@ -421,7 +445,10 @@ if ($resql)
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 	if ($sall) $param.="&sall=".urlencode($sall);
-	if ($search_categ > 0) $param.="&search_categ=".urlencode($search_categ);
+    if ($searchCategoryProductOperator == 1) $param .= "&search_category_product_operator=" . urlencode($searchCategoryProductOperator);
+    foreach ($searchCategoryProductList as $searchCategoryProduct) {
+        $param .= "&search_category_product_list[]=" . urlencode($searchCategoryProduct);
+    }
 	if ($search_ref) $param="&search_ref=".urlencode($search_ref);
 	if ($search_ref_supplier) $param="&search_ref_supplier=".urlencode($search_ref_supplier);
 	if ($search_barcode) $param.=($search_barcode?"&search_barcode=".urlencode($search_barcode):"");
@@ -430,7 +457,7 @@ if ($resql)
 	if ($search_tobuy != '') $param.="&search_tobuy=".urlencode($search_tobuy);
     if ($search_vatrate) $sql .= natural_search('p.tva_tx', $search_vatrate);
 	if ($fourn_id > 0) $param.=($fourn_id?"&fourn_id=".$fourn_id:"");
-	if ($seach_categ) $param.=($search_categ?"&search_categ=".urlencode($search_categ):"");
+	//if ($seach_categ) $param.=($search_categ?"&search_categ=".urlencode($search_categ):"");
 	if ($show_childproducts) $param.=($show_childproducts?"&search_show_childproducts=".urlencode($show_childproducts):"");
 	if ($type != '') $param.='&type='.urlencode($type);
 	if ($search_type != '') $param.='&search_type='.urlencode($search_type);
@@ -465,7 +492,7 @@ if ($resql)
 		$label='NewProduct';
 		if($type == Product::TYPE_SERVICE) $label='NewService';
         $newcardbutton.= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&amp;type='.$type);
-    }
+	}
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -478,7 +505,7 @@ if ($resql)
 	print '<input type="hidden" name="type" value="'.$type.'">';
 	if (empty($arrayfields['p.fk_product_type']['checked'])) print '<input type="hidden" name="search_type" value="'.dol_escape_htmltag($search_type).'">';
 
-	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_products.png', 0, $newcardbutton, '', $limit);
+	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'products', 0, $newcardbutton, '', $limit);
 
 	$topicmail="Information";
 	$modelmail="product";
@@ -507,8 +534,11 @@ if ($resql)
 	{
 		$moreforfilter.='<div class="divsearchfield">';
 		$moreforfilter.=$langs->trans('Categories'). ': ';
-		$moreforfilter.=$htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1);
-		$moreforfilter.='</div>';
+		$categoriesProductArr = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', '', 64, 0, 1);
+        $categoriesProductArr[-2] = '- ' . $langs->trans('NotCategorized') . ' -';
+        $moreforfilter.=Form::multiselectarray('search_category_product_list', $categoriesProductArr, $searchCategoryProductList, 0, 0, 'minwidth300');
+        $moreforfilter.=' <input type="checkbox" class="valignmiddle" name="search_category_product_operator" value="1"' . ($searchCategoryProductOperator==1 ? ' checked="checked"' : '') . '/> ' . $langs->trans('UseOrOperatorForCategories');
+        $moreforfilter.='</div>';
 	}
 
 	//Show/hide child products. Hidden by default

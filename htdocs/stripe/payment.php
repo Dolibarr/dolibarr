@@ -22,13 +22,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/stripe/payment.php
  *	\ingroup    stripe
- *	\brief      Payment page for customers invoices
+ *	\brief      Payment page for customers invoices. TODO Seems deprecated and bugged !
  */
 
 // Load Dolibarr environment
@@ -71,6 +71,7 @@ if ($user->societe_id > 0)
 }
 
 $object=new Facture($db);
+$stripe=new Stripe($db);
 
 // Load object
 if ($facid > 0)
@@ -78,9 +79,9 @@ if ($facid > 0)
 	$ret=$object->fetch($facid);
 }
 
-if (! empty($conf->stripe->enabled))
+if (empty($conf->stripe->enabled))
 {
-    access_forbidden();
+    accessforbidden();
 }
 
 if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
@@ -306,7 +307,7 @@ if (empty($reshook))
 		elseif (preg_match('/src_/i', $source))
 		{
 
-		        $customer2 = $customerstripe=$stripe->customerStripe($facture->thirdparty, $stripeacc, $servicestatus);
+			$customer2 = $customerstripe=$stripe->customerStripe($facture->thirdparty, $stripeacc, $servicestatus);
 			$src = $customer2->sources->retrieve("$source");
 			if ($src->type=='card')
 			{
@@ -1082,7 +1083,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 if (! GETPOST('action'))
 {
-    if ($page == -1) $page = 0 ;
+    if ($page == -1 || empty($page)) $page = 0 ;
     $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
     $offset = $limit * $page ;
 

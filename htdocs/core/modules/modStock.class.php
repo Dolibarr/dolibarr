@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -316,17 +316,21 @@ class modStock extends DolibarrModules
 		$this->import_fields_array[$r]=array('e.ref'=>"LocationSummary*",
 				'e.description'=>"DescWareHouse",'e.lieu'=>"LieuWareHouse",
 				'e.address'=>"Address",'e.zip'=>'Zip','e.fk_pays'=>'CountryCode',
-				'e.statut'=>'Status'
+				'e.statut'=>'Status',
+                'e.fk_parent'=>'ParentWarehouse'
 		);
 
 		$this->import_convertvalue_array[$r]=array(
-				'e.fk_pays'=>array('rule'=>'fetchidfromcodeid','classfile'=>'/core/class/ccountry.class.php','class'=>'Ccountry','method'=>'fetch','dict'=>'DictionaryCountry')
+				'e.fk_pays'=>array('rule'=>'fetchidfromcodeid','classfile'=>'/core/class/ccountry.class.php','class'=>'Ccountry','method'=>'fetch','dict'=>'DictionaryCountry'),
+                'e.fk_parent'=>array('rule'=>'fetchidfromref','classfile'=>'/product/stock/class/entrepot.class.php','class'=>'Entrepot','method'=>'fetch','element'=>'ref')
 		);
 		$this->import_regex_array[$r]=array('e.statut'=>'^[0|1]');
 		$this->import_examplevalues_array[$r]=array('e.ref'=>"ALM001",
 				'e.description'=>"Central Warehouse",'e.lieu'=>"Central",
 				'e.address'=>"Route 66",'e.zip'=>'28080','e.fk_pays'=>'US',
-				'e.statut'=>'1');
+				'e.statut'=>'1',
+                'e.fk_parent'=>''
+        );
 
 		// Import stocks
 		$r++;

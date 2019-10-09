@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -206,7 +206,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 	}
 
 	/**
-	 *  consecutive iterations of the same character
+	 *  Consecutive iterations of the same character
 	 *
 	 *  @param		string	$password	Password to check
 	 *  @return     int					0 if KO, >0 if OK
@@ -214,8 +214,12 @@ class modGeneratePassPerso extends ModeleGenPassword
     public function consecutiveInterationSameCharacter($password)
     {
 		$last = "";
+
+		if (empty($this->NbRepeat)) return 1;
+
 		$count = 0;
 		$char = str_split($password);
+
 		foreach($char as $c) {
 			if($c != $last) {
 				$last = $c;

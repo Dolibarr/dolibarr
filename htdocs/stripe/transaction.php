@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Put here all includes required by your class file
@@ -178,7 +178,7 @@ if (! $rowid) {
         if ($txn->type == 'stripe_fee' || $txn->type == 'reserve_transaction') {
             print "<td>".$txn->type."</td>";
         } else {
-            print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." " . $txn->source . "</a></td>\n";
+            print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." " . $txn->source . "</a></td>\n";
         }
 
 		// Stripe customer

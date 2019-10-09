@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -75,15 +75,15 @@ class box_task extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs;
 
 		$this->max=$max;
 		include_once DOL_DOCUMENT_ROOT."/projet/class/task.class.php";
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
         require_once DOL_DOCUMENT_ROOT."/core/lib/project.lib.php";
         $projectstatic = new Project($this->db);
-		$taskstatic=new Task($db);
-		$form= new Form($db);
+		$taskstatic=new Task($this->db);
+		$form= new Form($this->db);
         $cookie_name='boxfilter_task';
         $boxcontent='';
 
@@ -160,13 +160,13 @@ class box_task extends ModeleBoxes
 
 
 			$sql.= " ORDER BY pt.datee ASC, pt.dateo ASC";
-			$sql.= $db->plimit($max, 0);
+			$sql.= $this->db->plimit($max, 0);
 
-			$result = $db->query($sql);
+			$result = $this->db->query($sql);
 			$i = 0;
 			if ($result) {
-				$num = $db->num_rows($result);
-                while ($objp = $db->fetch_object($result)) {
+				$num = $this->db->num_rows($result);
+                while ($objp = $this->db->fetch_object($result)) {
 
                     $taskstatic->id=$objp->rowid;
                     $taskstatic->ref=$objp->ref;

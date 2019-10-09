@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -91,7 +91,7 @@ $titre=($year?$langs->trans("PaymentsReportsForYear", $year):$langs->trans("Paym
 
 llxHeader('', $titre);
 
-print load_fiche_titre($titre, '', 'title_accountancy.png');
+print load_fiche_titre($titre, '', 'invoicing');
 
 // Formulaire de generation
 print '<form method="post" action="rapport.php?year='.$year.'">';

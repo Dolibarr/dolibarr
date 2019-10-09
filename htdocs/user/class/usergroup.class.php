@@ -6,6 +6,7 @@
  * Copyright (C) 2014		Juanjo Menent		 <jmenent@2byte.es>
  * Copyright (C) 2014		Alexis Algoud		 <alexis@atm-consulting.fr>
  * Copyright (C) 2018       Nicolas ZABOURI		 <info@inovea-conseil.com>
+ * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -978,7 +979,10 @@ class UserGroup extends CommonObject
 				$valueofldapfield[] = $muser->_load_ldap_dn($info2);
 			}
 			$info[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] = (!empty($valueofldapfield)?$valueofldapfield:'');
-		}
+        }
+        if(!empty($info[$conf->global->LDAP_GROUP_FIELD_GROUPID])){
+            $info[$conf->global->LDAP_GROUP_FIELD_GROUPID]=$this->id;
+        }
 		return $info;
 	}
 

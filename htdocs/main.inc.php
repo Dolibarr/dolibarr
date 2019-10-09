@@ -23,7 +23,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -79,6 +79,8 @@ function testSqlAndScriptInject($val, $type)
 		$inj += preg_match('/union.+select/i', $val);
 		$inj += preg_match('/(\.\.%2f)+/i', $val);
 	}
+	// For XSS Injection done by closing textarea to exucute content into a textarea field
+	$inj += preg_match('/<\/textarea/i', $val);
 	// For XSS Injection done by adding javascript with script
 	// This is all cases a browser consider text is javascript:
 	// When it found '<script', 'javascript:', '<style', 'onload\s=' on body tag, '="&' on a tag size with old browsers
@@ -360,7 +362,7 @@ if (! defined('NOTOKENRENEWAL'))
 if ((! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN))
 	|| defined('CSRFCHECK_WITH_TOKEN'))	// Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set
 {
-	if ($_SERVER['REQUEST_METHOD'] == 'POST' && ! GETPOSTISSET('token')) // Note, offender can still send request by GET
+	if ($_SERVER['REQUEST_METHOD'] == 'POST' && ! GETPOSTISSET('token')) // Note: offender can still send request by GET
 	{
 		dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." refused by CSRFCHECK_WITH_TOKEN protection. Token not provided.");
 		print "Access by POST method refused by CSRF protection in main.inc.php. Token not provided.\n";
@@ -368,17 +370,14 @@ if ((! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->
 		die;
 	}
 
-	//if ($_SERVER['REQUEST_METHOD'] === 'POST')  // This test must be after loading $_SESSION['token'].
-	//{
 	if (GETPOSTISSET('token') && GETPOST('token', 'alpha') != $_SESSION['token'])
 	{
 		dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." refused due to invalid token, so we disable POST and some GET parameters - referer=".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha').", _SESSION['token']=".$_SESSION['token'], LOG_WARNING);
 		//print 'Unset POST by CSRF protection in main.inc.php.';	// Do not output anything because this create problems when using the BACK button on browsers.
-		if ($conf->global->MAIN_FEATURES_LEVEL>1) setEventMessages('Unset POST by CSRF protection in main.inc.php (POST was already done or was done by a not allowed web page).'."<br>\n".'$_SERVER[REQUEST_URI] = '.$_SERVER['REQUEST_URI'].' $_SERVER[REQUEST_METHOD] = '.$_SERVER['REQUEST_METHOD'].' GETPOST(token) = '.GETPOST('token', 'alpha').' $_SESSION[token] = '.$_SESSION['token'], null, 'warnings');
+		if ($conf->global->MAIN_FEATURES_LEVEL>1) setEventMessages('Unset POST by CSRF protection in main.inc.php (POST for this token was already done or was done by a not allowed web page with a wrong token).'."<br>\n".'$_SERVER[REQUEST_URI] = '.$_SERVER['REQUEST_URI'].' $_SERVER[REQUEST_METHOD] = '.$_SERVER['REQUEST_METHOD'].' GETPOST(token) = '.GETPOST('token', 'alpha').' $_SESSION[token] = '.$_SESSION['token'], null, 'warnings');
 		unset($_POST);
 		unset($_GET['confirm']);
 	}
-	//}
 }
 
 // Disable modules (this must be after session_start and after conf has been loaded)
@@ -751,7 +750,7 @@ if (! defined('NOLOGIN'))
 			    	$_SESSION['lastsearch_contextpage_'.$relativepathstring]=$_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring];
 			    	unset($_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]);
 			    }
-			    if (! empty($_SESSION['lastsearch_page_tmp_'.$relativepathstring]) && $_SESSION['lastsearch_page_tmp_'.$relativepathstring] > 1)
+			    if (! empty($_SESSION['lastsearch_page_tmp_'.$relativepathstring]) && $_SESSION['lastsearch_page_tmp_'.$relativepathstring] > 0)
 			    {
 			    	$_SESSION['lastsearch_page_'.$relativepathstring]=$_SESSION['lastsearch_page_tmp_'.$relativepathstring];
 			    	unset($_SESSION['lastsearch_page_tmp_'.$relativepathstring]);
@@ -968,7 +967,7 @@ if (! defined('NOLOGIN'))
 }
 
 
-dol_syslog("--- Access to ".$_SERVER["PHP_SELF"].' - action='.GETPOST('action', 'az09').', massaction='.GETPOST('massaction', 'az09'));
+dol_syslog("--- Access to ".$_SERVER["PHP_SELF"].' - action='.GETPOST('action', 'aZ09').', massaction='.GETPOST('massaction', 'aZ09'));
 //Another call for easy debugg
 //dol_syslog("Access to ".$_SERVER["PHP_SELF"].' GET='.join(',',array_keys($_GET)).'->'.join(',',$_GET).' POST:'.join(',',array_keys($_POST)).'->'.join(',',$_POST));
 
@@ -1229,7 +1228,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		if (! empty($conf->global->MAIN_FAVICON_URL)) $favicon=$conf->global->MAIN_FAVICON_URL;
 		if (empty($conf->dol_use_jmobile)) print '<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>'."\n";	// Not required into an Android webview
 		//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.(DOL_URL_ROOT?DOL_URL_ROOT:'/').'">'."\n";
-		//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
+		//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="copyright" title="GNU General Public License" href="https://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
 		//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="author" title="Dolibarr Development Team" href="https://www.dolibarr.org">'."\n";
 
 		// Auto refresh page
@@ -1285,12 +1284,8 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		if (! defined('DISABLE_FONT_AWSOME'))
 		{
 			print '<!-- Includes CSS for font awesome -->'."\n";
-			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome/css/font-awesome.min.css'.($ext?'?'.$ext:'').'">'."\n";
-			if (empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5))
-			{
-                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome-5/css/all.min.css'.($ext?'?'.$ext:'').'">'."\n";
-                print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome-5/css/v4-shims.min.css'.($ext?'?'.$ext:'').'">'."\n";
-			}
+            print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome-5/css/all.min.css'.($ext?'?'.$ext:'').'">'."\n";
+            print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/fontawesome-5/css/v4-shims.min.css'.($ext?'?'.$ext:'').'">'."\n";
 		}
 
 		print '<!-- Includes CSS for Dolibarr theme -->'."\n";
@@ -1464,7 +1459,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
                 if ($conf->browser->layout == 'phone') $enablebrowsernotif=false;
                 if ($enablebrowsernotif)
                 {
-                    print '<!-- Includes JS of Dolibarr (brwoser layout = '.$conf->browser->layout.')-->'."\n";
+                    print '<!-- Includes JS of Dolibarr (browser layout = '.$conf->browser->layout.')-->'."\n";
                     print '<script src="'.DOL_URL_ROOT.'/core/js/lib_notification.js.php'.($ext?'?'.$ext:'').'"></script>'."\n";
                 }
             }
@@ -1607,6 +1602,10 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 
 		print '<div class="login_block usedropdown">'."\n";
 
+
+
+
+
 		// Add login user link
 		$toprightmenu.='<div class="login_block_user">';
 
@@ -1614,6 +1613,17 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		$mode=-1;
 		$toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
 
+        if(!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)){
+            // Add search dropdown
+            $toprightmenu.= top_menu_search($user, $langs);
+        }
+
+        if(!empty($conf->global->MAIN_USE_TOP_MENU_BOOKMARK_DROPDOWN)) {
+            // Add bookmark dropdown
+            $toprightmenu .= top_menu_bookmark($user, $langs);
+        }
+
+        // add user dropdown
 	    $toprightmenu.= top_menu_user($user, $langs);
 
 		$toprightmenu.='</div></div>';
@@ -1828,12 +1838,10 @@ function top_menu_user(User $user, Translate $langs)
     else $appli.=" ".DOL_VERSION;
 
     $btnUser = '<!-- div for user link -->
-    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu">
+    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu  inline-block">
         <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a" data-toggle="dropdown">
             '.$userImage.'
             <span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
-            <span class="fa fa-chevron-down login-dropdown-btn" id="dropdown-icon-down"></span>
-            <span class="fa fa-chevron-up login-dropdown-btn hidden" id="dropdown-icon-up"></span>
         </a>
         <div class="dropdown-menu">
             <!-- User image -->
@@ -1874,16 +1882,12 @@ function top_menu_user(User $user, Translate $langs)
                 if (!$(event.target).closest("#topmenu-login-dropdown").length) {
                     // Hide the menus.
                     $("#topmenu-login-dropdown").removeClass("open");
-    				$("#dropdown-icon-down").show();	// use show/hide instead toggle for avoid conflict
-    				$("#dropdown-icon-up").hide();		// use show/hide instead toggle for avoid conflict
                 }
             });
 
             $("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
                 event.preventDefault();
                 $("#topmenu-login-dropdown").toggleClass("open");
-                $("#dropdown-icon-down").toggle();
-                $("#dropdown-icon-up").toggle();
             });
 
             $("#topmenuloginmoreinfo-btn").on("click", function() {
@@ -1896,6 +1900,203 @@ function top_menu_user(User $user, Translate $langs)
     }
 
     return $btnUser;
+}
+
+
+/**
+ * Build the tooltip on top menu bookmark
+ *
+ * @param   user        $user       User object
+ * @param   Translate   $langs      Language object
+ * @return  string                  HTML content
+ */
+function top_menu_bookmark(User $user, Translate $langs)
+{
+    global $langs, $conf, $db, $hookmanager, $user;
+    global $menumanager;
+    $html = '';
+
+
+
+    // Define $bookmarks
+    if (! empty($conf->bookmark->enabled) && $user->rights->bookmark->lire)
+    {
+        include_once DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php';
+        $langs->load("bookmarks");
+
+        $html.= '<!-- div for bookmark link -->
+        <div id="topmenu-bookmark-dropdown" class="atoplogin dropdown inline-block">
+            <a class="dropdown-toggle login-dropdown-a" data-toggle="dropdown" href="#" title="'.$langs->trans('Bookmarks').' ('.$langs->trans('BookmarksMenuShortCut').')">
+                <i class="fa fa-star" ></i>
+            </a>
+            <div class="dropdown-menu">
+                '.printDropdownBookmarksList($db, $langs).'
+            </div>
+        </div>';
+
+
+
+        $html .= '
+        <!-- Code to show/hide the user drop-down -->
+        <script>
+        $( document ).ready(function() {
+            $(document).on("click", function(event) {
+                if (!$(event.target).closest("#topmenu-bookmark-dropdown").length) {
+                    // Hide the menus.
+                    $("#topmenu-bookmark-dropdown").removeClass("open");
+                }
+            });
+
+            $("#topmenu-bookmark-dropdown .dropdown-toggle").on("click", function(event) {
+                openBookMarkDropDown();
+            });
+
+            // Key map shortcut
+            $(document).keydown(function(e){
+                  if( e.which === 77 && e.ctrlKey && e.shiftKey ){
+                     console.log(\'control + shift + m : trigger open bookmark dropdown\');
+                     openBookMarkDropDown();
+                  }      
+            });
+            
+                     
+            var openBookMarkDropDown = function() {
+                event.preventDefault();
+                $("#topmenu-bookmark-dropdown").toggleClass("open");
+                $("#top-bookmark-search-input").focus();
+            }
+
+        });
+        </script>
+        ';
+    }
+    return $html;
+}
+
+/**
+ * Build the tooltip on top menu tsearch
+ *
+ * @param   user        $user       User object
+ * @param   Translate   $langs      Language object
+ * @return  string                  HTML content
+ */
+function top_menu_search(User $user, Translate $langs)
+{
+    global $langs, $conf, $db, $hookmanager, $user;
+    global $menumanager;
+    $html = '';
+
+    $usedbyinclude=1;
+    $arrayresult=null;
+    include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php';	// This set $arrayresult
+
+    $defaultAction = '';
+    $buttonList='<div class="dropdown-global-search-button-list" >';
+    // Menu with all bookmarks
+    foreach ($arrayresult as $keyItem => $item)
+    {
+        if(empty($defaultAction)){
+            $defaultAction= $item['url'];
+        }
+        $buttonList.='<button class="dropdown-item global-search-item" data-target="'.dol_escape_htmltag($item['url']).'" >';
+        $buttonList.= $item['text'];
+        $buttonList.='</button>';
+    }
+    $buttonList.='</div>';
+
+
+
+    $searchInput = '<input name="sall" id="top-global-search-input" class="dropdown-search-input" placeholder="'.$langs->trans('Search').'" autocomplete="off" >';
+
+
+    $dropDownHtml = '<!-- form with POST method by default, will be replaced with GET for external link by js -->'."\n";
+    $dropDownHtml.= '<form id="top-menu-action-bookmark" name="actionbookmark" method="POST" action="'.$defaultAction.'" >';
+
+    $dropDownHtml.= '
+        <!-- search input -->
+        <div class="dropdown-header search-dropdown-header">
+            ' . $searchInput . '
+        </div>
+    ';
+
+    $dropDownHtml.= '
+        <!-- Menu Body -->
+        <div class="dropdown-body search-dropdown-body">
+        '.$buttonList.'
+        </div>
+        ';
+
+    $dropDownHtml.= '</form>';
+
+
+    $html.= '<!-- div for Global Search -->
+    <div id="topmenu-global-search-dropdown" class="atoplogin dropdown inline-block">
+        <a class="dropdown-toggle login-dropdown-a" data-toggle="dropdown" href="#" title="'.$langs->trans('Search').' ('.$langs->trans('SearchMenuShortCut').')">
+            <i class="fa fa-search" ></i>
+        </a>
+        <div class="dropdown-menu">
+            '.$dropDownHtml.'
+        </div>
+    </div>';
+
+    $html .= '
+    <!-- Code to show/hide the user drop-down -->
+    <script>
+    $( document ).ready(function() {
+        
+        // prevent submiting form on press ENTER
+        $("#top-global-search-input").keydown(function (e) {
+            if (e.keyCode == 13) {
+                var inputs = $(this).parents("form").eq(0).find(":button");
+                if (inputs[inputs.index(this) + 1] != null) {                    
+                    inputs[inputs.index(this) + 1].focus();
+                }
+                e.preventDefault();
+                return false;
+            }
+        });
+        
+        
+        // submit form action
+        $(".dropdown-global-search-button-list .global-search-item").on("click", function(event) {
+            $("#top-menu-action-bookmark").attr("action", $(this).data("target"));
+            $("#top-menu-action-bookmark").submit();
+        });
+        
+        // close drop down
+        $(document).on("click", function(event) {
+            if (!$(event.target).closest("#topmenu-global-search-dropdown").length) {
+                // Hide the menus.
+                $("#topmenu-global-search-dropdown").removeClass("open");
+            }
+        });
+
+        // Open drop down
+        $("#topmenu-global-search-dropdown .dropdown-toggle").on("click", function(event) {
+            openGlobalSearchDropDown();
+        });
+
+        // Key map shortcut
+        $(document).keydown(function(e){
+              if( e.which === 70 && e.ctrlKey && e.shiftKey ){
+                 console.log(\'control + shift + f : trigger open global-search dropdown\');
+                 openGlobalSearchDropDown();
+              }      
+        });
+        
+                 
+        var openGlobalSearchDropDown = function() {
+            event.preventDefault();
+            $("#topmenu-global-search-dropdown").toggleClass("open");
+            $("#top-global-search-input").focus();
+        }
+
+    });
+    </script>
+    ';
+
+
+    return $html;
 }
 
 /**
@@ -1935,55 +2136,47 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 
 		if (! is_object($form)) $form=new Form($db);
 		$selected=-1;
-		$usedbyinclude=1;
-		$arrayresult=null;
-		include_once DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php';	// This set $arrayresult
+        if(empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)) {
+            $usedbyinclude = 1;
+            $arrayresult = null;
+            include DOL_DOCUMENT_ROOT . '/core/ajax/selectsearchbox.php';    // This set $arrayresult
 
-		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_USE_OLD_SEARCH_FORM))
-		{
-			$searchform.=$form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, '', 1, 0, (empty($conf->global->MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY)?1:0), 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);
-		}
-		else
-		{
-		    if (is_array($arrayresult))
-		    {
-    			foreach($arrayresult as $key => $val)
-    			{
-    				$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleft'.$key, img_picto('', $val['img'], '', false, 1, 1));
-    			}
-		    }
-		}
+            if ($conf->use_javascript_ajax && empty($conf->global->MAIN_USE_OLD_SEARCH_FORM)) {
+                $searchform .= $form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, '', 1, 0, (empty($conf->global->MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY) ? 1 : 0), 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);
+            } else {
+                if (is_array($arrayresult)) {
+                    foreach ($arrayresult as $key => $val) {
+                        $searchform .= printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleft' . $key, img_picto('', $val['img'], '', false, 1, 1));
+                    }
+                }
+            }
 
-		// Execute hook printSearchForm
-		$parameters=array('searchform'=>$searchform);
-		$reshook=$hookmanager->executeHooks('printSearchForm', $parameters);    // Note that $action and $object may have been modified by some hooks
-		if (empty($reshook))
-		{
-			$searchform.=$hookmanager->resPrint;
-		}
-		else $searchform=$hookmanager->resPrint;
+            // Execute hook printSearchForm
+            $parameters = array('searchform' => $searchform);
+            $reshook = $hookmanager->executeHooks('printSearchForm', $parameters);    // Note that $action and $object may have been modified by some hooks
+            if (empty($reshook)) {
+                $searchform .= $hookmanager->resPrint;
+            } else $searchform = $hookmanager->resPrint;
 
-		// Force special value for $searchform
-		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) || empty($conf->use_javascript_ajax))
-		{
-			$urltosearch=DOL_URL_ROOT.'/core/search_page.php?showtitlebefore=1';
-			$searchform='<div class="blockvmenuimpair blockvmenusearchphone"><div id="divsearchforms1"><a href="'.$urltosearch.'" accesskey="s" alt="'.dol_escape_htmltag($langs->trans("ShowSearchFields")).'">'.$langs->trans("Search").'...</a></div></div>';
-		}
-		elseif ($conf->use_javascript_ajax && ! empty($conf->global->MAIN_USE_OLD_SEARCH_FORM))
-		{
-			$searchform='<div class="blockvmenuimpair blockvmenusearchphone"><div id="divsearchforms1"><a href="#" alt="'.dol_escape_htmltag($langs->trans("ShowSearchFields")).'">'.$langs->trans("Search").'...</a></div><div id="divsearchforms2" style="display: none">'.$searchform.'</div>';
-			$searchform.='<script>
+            // Force special value for $searchform
+            if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) || empty($conf->use_javascript_ajax)) {
+                $urltosearch = DOL_URL_ROOT . '/core/search_page.php?showtitlebefore=1';
+                $searchform = '<div class="blockvmenuimpair blockvmenusearchphone"><div id="divsearchforms1"><a href="' . $urltosearch . '" accesskey="s" alt="' . dol_escape_htmltag($langs->trans("ShowSearchFields")) . '">' . $langs->trans("Search") . '...</a></div></div>';
+            } elseif ($conf->use_javascript_ajax && !empty($conf->global->MAIN_USE_OLD_SEARCH_FORM)) {
+                $searchform = '<div class="blockvmenuimpair blockvmenusearchphone"><div id="divsearchforms1"><a href="#" alt="' . dol_escape_htmltag($langs->trans("ShowSearchFields")) . '">' . $langs->trans("Search") . '...</a></div><div id="divsearchforms2" style="display: none">' . $searchform . '</div>';
+                $searchform .= '<script>
             	jQuery(document).ready(function () {
             		jQuery("#divsearchforms1").click(function(){
 	                   jQuery("#divsearchforms2").toggle();
 	               });
             	});
                 </script>' . "\n";
-			$searchform.='</div>';
-		}
+                $searchform .= '</div>';
+            }
+        }
 
 		// Define $bookmarks
-		if (! empty($conf->bookmark->enabled) && $user->rights->bookmark->lire)
+		if (! empty($conf->bookmark->enabled) && $user->rights->bookmark->lire && empty($conf->global->MAIN_USE_TOP_MENU_BOOKMARK_DROPDOWN))
 		{
 			include_once DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php';
 			$langs->load("bookmarks");
@@ -2199,11 +2392,12 @@ function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinpu
 	global $conf,$langs,$user;
 
 	$ret='';
-	$ret.='<form action="'.$urlaction.'" method="post" class="searchform nowraponall">';
+	$ret.='<form action="'.$urlaction.'" method="post" class="searchform nowraponall tagtr">';
 	$ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	$ret.='<input type="hidden" name="mode" value="search">';
 	$ret.='<input type="hidden" name="savelogin" value="'.dol_escape_htmltag($user->login).'">';
-	if ($showtitlebefore) $ret.=$title.' ';
+	if ($showtitlebefore) $ret.='<div class="tagtd left">'.$title.'</div> ';
+	$ret.='<div class="tagtd">';
 	$ret.='<input type="text" class="flat '.$htmlmorecss.'"';
 	$ret.=' style="text-indent: 22px; background-image: url(\''.$img.'\'); background-repeat: no-repeat; background-position: 3px;"';
 	$ret.=($accesskey?' accesskey="'.$accesskey.'"':'');
@@ -2214,6 +2408,7 @@ function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinpu
 	$ret.='<button type="submit" class="button" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px">';
 	$ret.='<span class="fa fa-search"></span>';
 	$ret.='</button>';
+	$ret.='</div>';
 	$ret.="</form>\n";
 	return $ret;
 }
@@ -2274,7 +2469,7 @@ if (! function_exists("llxFooter"))
 			unset($_SESSION['lastsearch_limit_tmp_'.$relativepathstring]);
 
 			if (! empty($contextpage))                     $_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]=$contextpage;
-			if (! empty($page) && $page > 1)               $_SESSION['lastsearch_page_tmp_'.$relativepathstring]=$page;
+			if (! empty($page) && $page > 0)               $_SESSION['lastsearch_page_tmp_'.$relativepathstring]=$page;
 			if (! empty($limit) && $limit != $conf->limit) $_SESSION['lastsearch_limit_tmp_'.$relativepathstring]=$limit;
 
 			unset($_SESSION['lastsearch_contextpage_'.$relativepathstring]);
