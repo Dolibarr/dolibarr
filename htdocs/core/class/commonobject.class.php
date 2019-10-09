@@ -2806,11 +2806,9 @@ abstract class CommonObject
 			$this->ref_ext = $ref_ext;
 			return 1;
 		}
-		else
-		{
-			$this->error=$this->db->error();
-			return -1;
-		}
+
+        $this->error=$this->db->error();
+        return -1;
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
