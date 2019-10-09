@@ -7705,10 +7705,10 @@ abstract class CommonObject
 		if ($error) {
 			$this->db->rollback();
 			return -1;
-		} else {
-			$this->db->commit();
-			return $this->id;
 		}
+
+        $this->db->commit();
+        return $this->id;
 	}
 
 	/**
@@ -7806,10 +7806,10 @@ abstract class CommonObject
 		if ($error) {
 			$this->db->rollback();
 			return -1;
-		} else {
-			$this->db->commit();
-			return 1;
 		}
+
+        $this->db->commit();
+        return 1;
 	}
 
 	/**
@@ -7866,11 +7866,11 @@ abstract class CommonObject
 		if (empty($error)) {
 			$this->db->commit();
 			return 1;
-		} else {
-			dol_syslog(get_class($this)."::deleteLineCommon ERROR:".$this->error, LOG_ERR);
-			$this->db->rollback();
-			return -1;
 		}
+
+        dol_syslog(get_class($this)."::deleteLineCommon ERROR:".$this->error, LOG_ERR);
+        $this->db->rollback();
+        return -1;
 	}
 
 	/**
