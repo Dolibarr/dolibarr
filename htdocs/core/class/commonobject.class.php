@@ -7151,12 +7151,7 @@ abstract class CommonObject
 	 */
 	public function isInt($info)
 	{
-		if(is_array($info))
-		{
-			if(isset($info['type']) && ($info['type']=='int' || preg_match('/^integer/i', $info['type']) ) ) return true;
-			else return false;
-		}
-		else return false;
+	    return is_array($info) && isset($info['type']) && ($info['type']=='int' || preg_match('/^integer/i', $info['type']) );
 	}
 
 	/**
@@ -7167,12 +7162,7 @@ abstract class CommonObject
 	 */
 	public function isFloat($info)
 	{
-		if(is_array($info))
-		{
-			if (isset($info['type']) && (preg_match('/^(double|real|price)/i', $info['type']))) return true;
-			else return false;
-		}
-		return false;
+	    return is_array($info) && isset($info['type']) && (preg_match('/^(double|real|price)/i', $info['type']));
 	}
 
 	/**
