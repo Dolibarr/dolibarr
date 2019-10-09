@@ -3371,11 +3371,9 @@ abstract class CommonObject
 			}
 			return 1;
 		}
-		else
-		{
-			dol_print_error($this->db);
-			return -1;
-		}
+
+        dol_print_error($this->db);
+        return -1;
 	}
 
 	/**
@@ -3417,11 +3415,9 @@ abstract class CommonObject
 		{
 			return 1;
 		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			return -1;
-		}
+
+        $this->error=$this->db->lasterror();
+        return -1;
 	}
 
 	/**
@@ -3479,12 +3475,10 @@ abstract class CommonObject
 		{
 			return 1;
 		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			$this->errors[]=$this->error;
-			return -1;
-		}
+
+        $this->error=$this->db->lasterror();
+        $this->errors[]=$this->error;
+        return -1;
 	}
 
 	/**
@@ -3568,12 +3562,10 @@ abstract class CommonObject
 				return -1;
 			}
 		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			$this->db->rollback();
-			return -1;
-		}
+
+        $this->error=$this->db->lasterror();
+        $this->db->rollback();
+        return -1;
 	}
 
 
@@ -3611,11 +3603,9 @@ abstract class CommonObject
 			}
 			else return 0;
 		}
-		else
-		{
-			dol_print_error($this->db);
-			return -1;
-		}
+
+        dol_print_error($this->db);
+        return -1;
 	}
 
 
@@ -3635,6 +3625,8 @@ abstract class CommonObject
 			$row = $this->db->fetch_row($resql);
 			return $row[0];
 		}
+
+		//TODO add a return here
 	}
 
 	/**
@@ -3704,7 +3696,8 @@ abstract class CommonObject
 			$this->errors[]="ErrorRecordHasChildren";
 			return $haschild;
 		}
-		else return 0;
+
+		return 0;
 	}
 
 	/**
@@ -3765,7 +3758,6 @@ abstract class CommonObject
 			}
 		}
 
-		//print $total_discount; exit;
 		return price2num($total_discount);
 	}
 
@@ -3889,11 +3881,9 @@ abstract class CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-		else
-		{
-			$this->db->commit();
-			return 1;
-		}
+
+        $this->db->commit();
+        return 1;
 	}
 
 
