@@ -1522,6 +1522,10 @@ if ($id)
                                 $key=$langs->trans("PaymentType".strtoupper($obj->code));
                                 $valuetoshow=($obj->code && $key != "PaymentType".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
                             }
+                            elseif ($fieldlist[$field]=='type' && $tabname[$id]==MAIN_DB_PREFIX.'c_paiement') {
+                            	$payment_type_list = array(0=>$langs->trans('PaymentTypeCustomer'), 1=>$langs->trans('PaymentTypeSupplier'), 2=>$langs->trans('PaymentTypeBoth'));
+                            	$valuetoshow = $payment_type_list[$valuetoshow];
+                            }
                             elseif ($fieldlist[$field]=='label' && $tabname[$id]==MAIN_DB_PREFIX.'c_input_reason') {
                                 $key=$langs->trans("DemandReasonType".strtoupper($obj->code));
                                 $valuetoshow=($obj->code && $key != "DemandReasonType".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
@@ -1886,6 +1890,13 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			$type = (! empty($obj->type)?$obj->type:'user'); // Check if type is different of 'user' (external module)
 			print '<td>';
 			print $type.'<input type="hidden" name="type" value="'.$type.'">';
+			print '</td>';
+		}
+		elseif ($fieldlist[$field] == 'type' && $tabname == MAIN_DB_PREFIX.'c_paiement')
+		{
+			print '<td>';
+			$select_list = array(0=>$langs->trans('PaymentTypeCustomer'), 1=>$langs->trans('PaymentTypeSupplier'), 2=>$langs->trans('PaymentTypeBoth'));
+			print $form->selectarray($fieldlist[$field], $select_list, (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'2'));
 			print '</td>';
 		}
 		elseif ($fieldlist[$field] == 'recuperableonly' || $fieldlist[$field] == 'type_cdr' || $fieldlist[$field] == 'deductible' || $fieldlist[$field] == 'category_type') {

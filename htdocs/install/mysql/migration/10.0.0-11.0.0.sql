@@ -93,7 +93,8 @@ ALTER TABLE llx_extrafields ADD COLUMN printable boolean DEFAULT FALSE;
 ALTER TABLE llx_facture ADD COLUMN retained_warranty real DEFAULT NULL after situation_final;
 ALTER TABLE llx_facture ADD COLUMN retained_warranty_date_limit	date DEFAULT NULL after retained_warranty;
 ALTER TABLE llx_facture ADD COLUMN retained_warranty_fk_cond_reglement	integer  DEFAULT NULL after retained_warranty_date_limit;
-
+ALTER TABLE llx_facture ADD COLUMN date_closing datetime DEFAULT NULL after date_valid;
+ALTER TABLE llx_facture ADD COLUMN fk_user_closing integer DEFAULT NULL after fk_user_valid;
 
 ALTER TABLE llx_c_shipment_mode ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 
@@ -226,6 +227,7 @@ INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, m
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('IN-REPUBLICDAY',  0, 117, '', 0,  1, 26, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('IN-GANDI',        0, 117, '', 0, 10,  2, 1);
 
+
 create table llx_c_socialnetworks
 (
   rowid       integer AUTO_INCREMENT PRIMARY KEY,
@@ -277,15 +279,18 @@ ALTER TABLE llx_societe ADD COLUMN socialnetworks text DEFAULT NULL AFTER email;
 ALTER TABLE llx_socpeople ADD COLUMN socialnetworks text DEFAULT NULL AFTER email;
 ALTER TABLE llx_user ADD COLUMN socialnetworks text DEFAULT NULL AFTER personal_email;
 
+ALTER TABLE llx_product ADD COLUMN net_measure         float;
+ALTER TABLE llx_product ADD COLUMN net_measure_units     tinyint;
+
 create table llx_adherent_type_lang
 (
-  rowid          integer AUTO_INCREMENT PRIMARY KEY,
-  fk_type        integer      DEFAULT 0 NOT NULL,
-  lang           varchar(5)   DEFAULT 0 NOT NULL,
-  label          varchar(255) NOT NULL,
-  description    text,
-  email          text,
-  import_key varchar(14) DEFAULT NULL
+	rowid          integer AUTO_INCREMENT PRIMARY KEY,
+	fk_type        integer      DEFAULT 0 NOT NULL,
+	lang           varchar(5)   DEFAULT 0 NOT NULL,
+	label          varchar(255) NOT NULL,
+	description    text,
+	email          text,
+	import_key varchar(14) DEFAULT NULL
 )ENGINE=innodb;
 
 create table llx_fichinter_rec

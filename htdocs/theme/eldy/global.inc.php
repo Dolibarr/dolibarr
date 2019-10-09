@@ -2063,16 +2063,16 @@ img.login, img.printer, img.entity {
     background-size: contain;
 }
 img.userphoto {			/* size for user photo in lists */
-	border-radius: 9px;
-	width: 18px;
-    height: 18px;
+	border-radius: 0.75em;
+	width: 1.5em;
+    height: 1.5em;
     background-size: contain;
     vertical-align: middle;
 }
 img.userphotosmall {			/* size for user photo in lists */
-	border-radius: 6px;
-	width: 1em;
-    height: 1em;
+	border-radius: 0.6em;
+	width: 1.2em;
+    height: 1.2em;
     background-size: contain;
     vertical-align: middle;
     background-color: #FFF;
