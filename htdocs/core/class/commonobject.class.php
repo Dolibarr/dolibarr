@@ -3937,11 +3937,9 @@ abstract class CommonObject
 				return '';
 			}
 		}
-		else
-		{
-			$this->errors[] = $this->db->lasterror();
-			return false;
-		}
+
+        $this->errors[] = $this->db->lasterror();
+        return false;
 	}
 
 	/**
@@ -3975,13 +3973,12 @@ abstract class CommonObject
 				}
 				return 1;
 			}
-			else
-			{
-				$this->errors[] = $this->db->lasterror();
-				return -1;
-			}
+
+            $this->errors[] = $this->db->lasterror();
+            return -1;
 		}
-		else return -1;
+
+		return -1;
 	}
 
 
