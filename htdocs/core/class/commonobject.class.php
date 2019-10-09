@@ -2350,16 +2350,15 @@ abstract class CommonObject
 
 		dol_syslog(get_class($this)."::setDocModel", LOG_DEBUG);
 		$resql=$this->db->query($sql);
+
 		if ($resql)
 		{
 			$this->modelpdf=$modelpdf;
 			return 1;
 		}
-		else
-		{
-			dol_print_error($this->db);
-			return 0;
-		}
+
+        dol_print_error($this->db);
+        return 0;
 	}
 
 
