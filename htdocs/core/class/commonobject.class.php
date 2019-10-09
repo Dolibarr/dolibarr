@@ -7567,12 +7567,10 @@ abstract class CommonObject
 				return 0;
 			}
 		}
-		else
-		{
-			$this->error = $this->db->lasterror();
-			$this->errors[] = $this->error;
-			return -1;
-		}
+
+        $this->error = $this->db->lasterror();
+        $this->errors[] = $this->error;
+        return -1;
 	}
 
 	/**
@@ -7617,12 +7615,10 @@ abstract class CommonObject
 
 			return 1;
 		}
-		else
-		{
-			$this->error = $this->db->lasterror();
-			$this->errors[] = $this->error;
-			return -1;
-		}
+
+        $this->error = $this->db->lasterror();
+        $this->errors[] = $this->error;
+        return -1;
 	}
 
 	/**
