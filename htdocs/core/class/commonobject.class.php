@@ -2857,11 +2857,9 @@ abstract class CommonObject
 			}
 			return 1;
 		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			return -1;
-		}
+
+        $this->error=$this->db->lasterror();
+        return -1;
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -3158,12 +3156,10 @@ abstract class CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			$this->db->rollback();
-			return 0;
-		}
+
+        $this->error=$this->db->lasterror();
+        $this->db->rollback();
+        return 0;
 	}
 
 	/**
