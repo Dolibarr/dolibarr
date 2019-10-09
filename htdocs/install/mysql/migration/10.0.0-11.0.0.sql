@@ -227,6 +227,9 @@ INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, m
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('IN-REPUBLICDAY',  0, 117, '', 0,  1, 26, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('IN-GANDI',        0, 117, '', 0, 10,  2, 1);
 
+ALTER TABLE llx_product ADD COLUMN net_measure         float;
+ALTER TABLE llx_product ADD COLUMN net_measure_units     tinyint;
+
 create table llx_adherent_type_lang
 (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
@@ -312,4 +315,3 @@ create table llx_fichinterdet_rec
 
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN date_start datetime DEFAULT NULL AFTER product_type;
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN date_end datetime DEFAULT NULL AFTER date_start;
-

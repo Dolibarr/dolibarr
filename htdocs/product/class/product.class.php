@@ -257,6 +257,8 @@ class Product extends CommonObject
     public $url;
 
     //! Unites de mesure
+    public $net_measure;
+    public $net_measure_units;
     public $weight;
     public $weight_units;
     public $length;
@@ -806,6 +808,8 @@ class Product extends CommonObject
         $this->label = trim($this->label);
         $this->description = trim($this->description);
         $this->note = (isset($this->note) ? trim($this->note) : null);
+        $this->net_measure = price2num($this->net_measure);
+        $this->net_measure_units = trim($this->net_measure_units);
         $this->weight = price2num($this->weight);
         $this->weight_units = trim($this->weight_units);
         $this->length = price2num($this->length);
@@ -952,6 +956,8 @@ class Product extends CommonObject
             $sql.= ", tobuy = " . (int) $this->status_buy;
             $sql.= ", tobatch = " . ((empty($this->status_batch) || $this->status_batch < 0) ? '0' : (int) $this->status_batch);
             $sql.= ", finished = " . ((! isset($this->finished) || $this->finished < 0) ? "null" : (int) $this->finished);
+            $sql.= ", net_measure = " . ($this->net_measure!='' ? "'".$this->db->escape($this->net_measure)."'" : 'null');
+            $sql.= ", net_measure_units = " . ($this->net_measure_units!='' ? "'".$this->db->escape($this->net_measure_units)."'": 'null');
             $sql.= ", weight = " . ($this->weight!='' ? "'".$this->db->escape($this->weight)."'" : 'null');
             $sql.= ", weight_units = " . ($this->weight_units!='' ? "'".$this->db->escape($this->weight_units)."'": 'null');
             $sql.= ", length = " . ($this->length!='' ? "'".$this->db->escape($this->length)."'" : 'null');
@@ -2044,7 +2050,7 @@ class Product extends CommonObject
 
         $sql = "SELECT rowid, ref, ref_ext, label, description, url, note as note_private, customcode, fk_country, price, price_ttc,";
         $sql.= " price_min, price_min_ttc, price_base_type, cost_price, default_vat_code, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, tosell,";
-        $sql.= " tobuy, fk_product_type, duration, fk_default_warehouse, seuil_stock_alerte, canvas, weight, weight_units,";
+        $sql.= " tobuy, fk_product_type, duration, fk_default_warehouse, seuil_stock_alerte, canvas, net_measure, net_measure_units, weight, weight_units,";
         $sql.= " length, length_units, width, width_units, height, height_units,";
         $sql.= " surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
         $sql.= " accountancy_code_buy, accountancy_code_sell, accountancy_code_sell_intra, accountancy_code_sell_export, stock, pmp,";
@@ -2108,6 +2114,8 @@ class Product extends CommonObject
                 $this->duration_value                = substr($obj->duration, 0, dol_strlen($obj->duration)-1);
                 $this->duration_unit                = substr($obj->duration, -1);
                 $this->canvas                        = $obj->canvas;
+                $this->net_measure                        = $obj->net_measure;
+                $this->net_measure_units                    = $obj->net_measure_units;
                 $this->weight                        = $obj->weight;
                 $this->weight_units                    = $obj->weight_units;
                 $this->length                        = $obj->length;
@@ -3364,7 +3372,10 @@ class Product extends CommonObject
     	if (!$user->rights->societe->client->voir && !$socid) {
     		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     	}
-    	$sql.= " WHERE c.rowid = d.fk_contrat";
+
+		$sql.= " WHERE c.entity IN (".getEntity('contract').")";
+		$sql.= " AND c.rowid = d.fk_contrat";
+
     	if ($this->id > 0) {
     		$sql.= " AND d.fk_product =".$this->id;
     	} else {
@@ -3374,7 +3385,7 @@ class Product extends CommonObject
     		$sql.= " AND p.rowid = d.fk_product AND p.fk_product_type =".$filteronproducttype;
     	}
     	$sql.= " AND c.fk_soc = s.rowid";
-    	$sql.= " AND c.entity IN (".getEntity('contract').")";
+
     	if (!$user->rights->societe->client->voir && !$socid) {
     		$sql.= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
     	}
