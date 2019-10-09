@@ -3029,14 +3029,14 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
         if (empty($srconly) && in_array($pictowithouttext, array(
         		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
-        		'address', 'bank', 'building', 'cash-register', 'close_title', 'cubes', 'delete', 'edit', 'ellipsis-h', 'bookmark', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'note',
+        		'address', 'bank', 'building', 'cash-register', 'close_title', 'cubes', 'delete', 'dolly', 'edit', 'ellipsis-h', 'bookmark', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'note',
         		'object_list','object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
         		'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
 				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench',
 				'jabber','skype','twitter','facebook','linkedin',
 				'chevron-left','chevron-right','chevron-down','chevron-top',
 				'home', 'companies', 'products', 'commercial', 'invoicing', 'accountancy', 'project', 'hrm', 'members', 'ticket', 'generic',
-        		'warning',
+        		'error','warning',
         		'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda'
 			)
 		)) {
@@ -3049,13 +3049,14 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'bookmark'=>'star',
 		    	'bank'=>'university', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil', 'filter'=>'filter', 'split'=>'code-fork',
 		    	'object_list'=>'list-alt','object_calendar'=>'calendar-alt', 'object_calendarweek'=>'calendar-week', 'object_calendarmonth'=>'calendar-alt', 'object_calendarday'=>'calendar-day', 'object_calendarperuser'=>'table',
-		    	'warning'=>'exclamation-triangle',
+		    	'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
 		    	'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach', 'title_agenda'=>'calendar-alt'
 		    );
-		    if ($pictowithouttext == 'warning') {
+		    if ($pictowithouttext == 'error' || $pictowithouttext == 'warning') {
 		    	$facolor = '';
 		    	$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 		    	$marginleftonlyshort = 0;
+		    	$morecss .= ($morecss ? ' ' : '').('picto'.$pictowithouttext);
 		    } elseif ($pictowithouttext == 'switch_off') {
 				$facolor = '#999';
 				$fasize = '2em';
@@ -3156,12 +3157,12 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif (! empty($arrayconvpictotofa[$pictowithouttext]))
 			{
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
-				$facolor = '#444';
+				//$facolor = '#444';
 				$marginleftonlyshort=0;
 			}
 			else {
 				$fakey = 'fa-'.$pictowithouttext;
-				$facolor = '#444';
+				//$facolor = '#444';
 				$marginleftonlyshort=0;
 			}
 			//this snippet only needed since function img_edit accepts only one additional parameter: no separate one for css only.

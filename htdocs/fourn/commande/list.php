@@ -484,13 +484,13 @@ $help_url='';
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
-$sql.= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
+$sql.= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, s.email,';
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
 $sql.= " cf.rowid, cf.ref, cf.ref_supplier, cf.fk_statut, cf.billed, cf.total_ht, cf.tva as total_tva, cf.total_ttc, cf.fk_user_author, cf.date_commande as date_commande, cf.date_livraison as date_delivery,";
 $sql.= ' cf.date_creation as date_creation, cf.tms as date_update,';
 $sql.= " p.rowid as project_id, p.ref as project_ref, p.title as project_title,";
-$sql.= " u.firstname, u.lastname, u.photo, u.login";
+$sql.= " u.firstname, u.lastname, u.photo, u.login, u.email as user_email";
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
@@ -946,20 +946,12 @@ if ($resql)
 		{
 			print '<td class="nowrap">';
 
-			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			// Picto + Ref
-			print '<td class="nobordernopadding nowrap">';
 			print $objectstatic->getNomUrl(1);
-			print '</td>';
-			// Warning
-			//print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
-			//print '</td>';
 			// Other picto tool
-			print '<td width="16" class="right nobordernopadding hideonsmartphone">';
 			$filename=dol_sanitizeFileName($obj->ref);
 			$filedir=$conf->fournisseur->commande->dir_output.'/' . dol_sanitizeFileName($obj->ref);
 			print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
-			print '</td></tr></table>';
 
 			print '</td>'."\n";
 			if (! $i) $totalarray['nbfield']++;
@@ -987,20 +979,21 @@ if ($resql)
 		$userstatic->firstname = $obj->firstname;
 		$userstatic->login = $obj->login;
 		$userstatic->photo = $obj->photo;
+		$userstatic->email = $obj->user_email;
 		if (! empty($arrayfields['u.login']['checked']))
 		{
-			print "<td>";
+			print '<td class="tdoverflowmax150">';
 			if ($userstatic->id) print $userstatic->getNomUrl(1);
-			else print "&nbsp;";
 			print "</td>";
 			if (! $i) $totalarray['nbfield']++;
 		}
 		// Thirdparty
 		if (! empty($arrayfields['s.nom']['checked']))
 		{
-			print '<td>';
+			print '<td class="tdoverflowmax150">';
 			$thirdpartytmp->id = $obj->socid;
 			$thirdpartytmp->name = $obj->name;
+			$thirdpartytmp->email = $obj->email;
 			print $thirdpartytmp->getNomUrl(1, 'supplier');
 			print '</td>'."\n";
 			if (! $i) $totalarray['nbfield']++;
