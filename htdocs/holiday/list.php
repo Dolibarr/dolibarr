@@ -467,7 +467,7 @@ if ($resql)
 
 	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-	$selectedfields.=(count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+	//$selectedfields.=(count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 
 	$include = '';
@@ -479,6 +479,7 @@ if ($resql)
 
 	// Filters
 	print '<tr class="liste_titre_filter">';
+	print '<td>&nbsp;</td>';
 
 	if (! empty($arrayfields['cp.ref']['checked']))
 	{
@@ -612,6 +613,7 @@ if ($resql)
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
+	if ($massactionbutton)									 		 print_liste_field_titre($form->showCheckAddButtons('checkforselect', 1), $_SERVER['PHP_SELF'], '', '', '', 'align="center"', $sortfield, $sortorder); else print '<td>&nbsp;</td>';
 	if (! empty($arrayfields['cp.ref']['checked']))                  print_liste_field_titre($arrayfields['cp.ref']['label'],          $_SERVER["PHP_SELF"], "cp.ref", "", $param, '', $sortfield, $sortorder);
 	if (! empty($arrayfields['cp.fk_user']['checked']))              print_liste_field_titre($arrayfields['cp.fk_user']['label'],      $_SERVER["PHP_SELF"], "cp.fk_user", "", $param, '', $sortfield, $sortorder);
 	if (! empty($arrayfields['cp.fk_validator']['checked']))         print_liste_field_titre($arrayfields['cp.fk_validator']['label'], $_SERVER["PHP_SELF"], "cp.fk_validator", "", $param, '', $sortfield, $sortorder);
@@ -681,6 +683,16 @@ if ($resql)
 			$endhalfday=($obj->halfday == 1 || $obj->halfday == 2)?'morning':'afternoon';
 
 			print '<tr class="oddeven">';
+			
+			// Action column
+			print '<td class="center">';
+			if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			{
+				$selected=0;
+				if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+			}
+			print '</td>';
 
 			if (! empty($arrayfields['cp.ref']['checked']))
 			{
@@ -756,15 +768,8 @@ if ($resql)
 				if (! $i) $totalarray['nbfield']++;
 			}
 
-		    // Action column
-		    print '<td class="nowrap center">';
-			if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-		    {
-			    $selected=0;
-				if (in_array($obj->rowid, $arrayofselected)) $selected=1;
-				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
-		    }
-			print '</td>';
+		    // Empty column (former action column)
+			print '<td>&nbsp;</td>';
 			if (! $i) $totalarray['nbfield']++;
 
 			print '</tr>'."\n";

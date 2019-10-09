@@ -457,7 +457,7 @@ if (! empty($moreforfilter))
 
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
+//if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
@@ -465,6 +465,7 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 
 // Line for filters fields
 print '<tr class="liste_titre_filter">';
+print '<td>&nbsp;</td>';
 
 // Line numbering
 if (! empty($conf->global->MAIN_SHOW_TECHNICAL_ID))
@@ -630,6 +631,7 @@ print '</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
+if ($massactionbutton)									  print_liste_field_titre($form->showCheckAddButtons('checkforselect', 1), $_SERVER['PHP_SELF'], '', '', '', 'align="center"', $sortfield, $sortorder); else print '<td>&nbsp;</td>';
 if (! empty($conf->global->MAIN_SHOW_TECHNICAL_ID))       print_liste_field_titre("ID", $_SERVER["PHP_SELF"], '', '', $param, 'align="center"', $sortfield, $sortorder);
 if (! empty($arrayfields['d.ref']['checked']))            print_liste_field_titre($arrayfields['d.ref']['label'], $_SERVER["PHP_SELF"], 'd.rowid', '', $param, '', $sortfield, $sortorder);
 if (! empty($arrayfields['d.civility']['checked']))       print_liste_field_titre($arrayfields['d.civility']['label'], $_SERVER["PHP_SELF"], 'd.civility', '', $param, '', $sortfield, $sortorder);
@@ -697,6 +699,16 @@ while ($i < min($num, $limit))
 		print '<td class="center">'.$obj->rowid.'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
+	
+	// Action column
+	print '<td class="center">';
+	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+	{
+		$selected=0;
+		if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+	}
+	print '</td>';
 
 	// Ref
 	if (! empty($arrayfields['d.ref']['checked']))
@@ -902,15 +914,9 @@ while ($i < min($num, $limit))
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
-	// Action column
-	print '<td class="center">';
-	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-	{
-		$selected=0;
-		if (in_array($obj->rowid, $arrayofselected)) $selected=1;
-		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
-	}
-	print '</td>';
+	// Empty line (former Action column)
+	print '<td>&nbsp;</td>';
+	
 	if (! $i) $totalarray['nbfield']++;
 
 	print "</tr>\n";
