@@ -536,12 +536,12 @@ function measuring_units_string($unit, $measuring_style = '', $scale = '', $use_
 function measuring_units_squared($unit)
 {
 	$measuring_units=array();
-	$measuring_units[0] = 0;   // m -> m3
-	$measuring_units[-1] = -2; // dm-> dm2
-	$measuring_units[-2] = -4; // cm -> cm2
-	$measuring_units[-3] = -6; // mm -> mm2
-	$measuring_units[98] = 98; // foot -> foot2
-	$measuring_units[99] = 99; // inch -> inch2
+	$measuring_units[7] = 13;   // m -> m3
+	$measuring_units[8] = 14; // dm-> dm2
+	$measuring_units[9] = 15; // cm -> cm2
+	$measuring_units[10] = 16; // mm -> mm2
+	$measuring_units[11] = 17; // foot -> foot2
+	$measuring_units[12] = 18; // inch -> inch2
 	return $measuring_units[$unit];
 }
 
@@ -556,11 +556,11 @@ function measuring_units_squared($unit)
 function measuring_units_cubed($unit)
 {
 	$measuring_units=array();
-	$measuring_units[0] = 0;   // m -> m2
-	$measuring_units[-1] = -3; // dm-> dm3
-	$measuring_units[-2] = -6; // cm -> cm3
-	$measuring_units[-3] = -9; // mm -> mm3
-	$measuring_units[98] = 88; // foot -> foot3
-	$measuring_units[99] = 89; // inch -> inch3
+	$measuring_units[7] = 19;   // m -> m2
+	$measuring_units[8] = 20; // dm-> dm3
+	$measuring_units[9] = 21; // cm -> cm3
+	$measuring_units[10] = 22; // mm -> mm3
+	$measuring_units[11] = 23; // foot -> foot3
+	$measuring_units[12] = 24; // inch -> inch3
 	return $measuring_units[$unit];
 }
