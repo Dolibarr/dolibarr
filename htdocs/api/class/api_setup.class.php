@@ -329,7 +329,7 @@ class Setup extends DolibarrApi
      * @param int       $page       Page number (starting from zero)
      * @param string    $type       To filter on type of event
      * @param string    $module     To filter on module events
-     * @param int       $active     Payment term is active or not {@min 0} {@max 1}
+     * @param int       $active     Event's type is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
      * @return array				List of events types
      *
@@ -393,7 +393,7 @@ class Setup extends DolibarrApi
      * @param int       $page       Page number (starting from zero)
      * @param string    $type       To filter on type of contact
      * @param string    $module     To filter on module contacts
-     * @param int       $active     Payment term is active or not {@min 0} {@max 1}
+     * @param int       $active     Contact's type is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
      * @return array	  List of Contacts types
      *
@@ -456,7 +456,7 @@ class Setup extends DolibarrApi
      * @param int       $limit      Number of items per page
      * @param int       $page       Page number (starting from zero)
      * @param string    $module     To filter on module events
-     * @param int       $active     Payment term is active or not {@min 0} {@max 1}
+     * @param int       $active     Civility is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
      * @return array		List of civility types
      *
