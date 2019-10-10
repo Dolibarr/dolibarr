@@ -35,26 +35,6 @@ class FormAccounting extends Form
 
 	private $options_cache = array();
 
-	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
-
-   /**
-	* Constructor
-	*
-	* @param		DoliDB		$db      Database handler
-	*/
-	public function __construct($db)
-	{
-	    $this->db = $db;
-	}
-
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return list of journals with label by nature

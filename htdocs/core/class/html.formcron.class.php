@@ -41,23 +41,21 @@ class FormCron extends Form
     public function select_typejob($htmlname, $selected = 0, $readonly = 0)
     {
         // phpcs:enable
-        global $langs;
-
-        $langs->load('cron@cron');
+        $this->langs->load('cron@cron');
         if (!empty($readonly)) {
             if ($selected=='command') {
-                $out= $langs->trans('CronType_command');
+                $out= $this->langs->trans('CronType_command');
                 $out.='<SELECT name="'.$htmlname.'" id="'.$htmlname.'" style="display:none"/>';
-                $out.= '<OPTION value="command" selected>'.$langs->trans('CronType_command').'</OPTION>';
+                $out.= '<OPTION value="command" selected>'.$this->langs->trans('CronType_command').'</OPTION>';
                 $out.='</SELECT>';
 
                 return $out;
             }
 
             if ($selected=='method') {
-                $out= $langs->trans('CronType_method');
+                $out= $this->langs->trans('CronType_method');
                 $out.='<SELECT name="'.$htmlname.'" id="'.$htmlname.'" style="display:none"/>';
-                $out.= '<OPTION value="method" selected>'.$langs->trans('CronType_method').'</OPTION>';
+                $out.= '<OPTION value="method" selected>'.$this->langs->trans('CronType_method').'</OPTION>';
                 $out.='</SELECT>';
 
                 return $out;
@@ -72,13 +70,13 @@ class FormCron extends Form
             $selected_attr=' selected ';
         }
 
-        $out.= '<OPTION value="command" '.$selected_attr.'>'.$langs->trans('CronType_command').'</OPTION>';
+        $out.= '<OPTION value="command" '.$selected_attr.'>'.$this->langs->trans('CronType_command').'</OPTION>';
 
         $selected_attr='';
         if ($selected=='method') {
             $selected_attr=' selected ';
         }
-        $out.= '<OPTION value="method" '.$selected_attr.'>'.$langs->trans('CronType_method').'</OPTION>';
+        $out.= '<OPTION value="method" '.$selected_attr.'>'.$this->langs->trans('CronType_method').'</OPTION>';
 
         $out.='</SELECT>';
 

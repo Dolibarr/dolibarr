@@ -76,6 +76,10 @@ class Form
 	public $cache_types_fees=array();
 	public $cache_vatrates=array();
 
+    /**
+     * @var Translate
+     */
+	protected $langs;
 
 	/**
 	 * Constructor
@@ -84,7 +88,10 @@ class Form
 	 */
 	public function __construct($db)
 	{
+		global $langs;
+
 		$this->db = $db;
+		$this->langs = $langs;
 	}
 
 	/**
