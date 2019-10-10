@@ -234,7 +234,7 @@ class modFacture extends DolibarrModules
 		}
 		if (! empty($conf->cashdesk->enabled) || ! empty($conf->takepos->enabled) || ! empty($conf->global->INVOICE_SHOW_POS_IN_EXPORT))
 		{
-			$this->export_fields_array[$r]['f.module_source']='POSModule';
+			$this->export_fields_array[$r]['f.module_source']='Module';
 			$this->export_fields_array[$r]['f.pos_source']='POSTerminal';
 		}
 		$this->export_TypeFields_array[$r] = array(
