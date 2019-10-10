@@ -177,7 +177,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 	 *  Validate a password
 	 *
 	 *  @param      string  $password   Password to check
-	 *  @return     int                 0 if KO, >0 if OK
+	 *  @return     bool                false if KO, true if OK
 	 */
 	public function validatePassword($password)
 	{
