@@ -38,6 +38,9 @@ if (! defined("NOLOGIN"))        define("NOLOGIN", '1');				// If this page is p
 if (! empty($_SERVER['HTTP_DOLAPIENTITY'])) define("DOLENTITY", (int) $_SERVER['HTTP_DOLAPIENTITY']);
 
 
+// Fix for NGINX
+$url = $_SERVER["SCRIPT_URI"] !== null ? $_SERVER["SCRIPT_URI"] : $_SERVER['PHP_SELF'];
+
 $res=0;
 if (! $res && file_exists("../main.inc.php")) $res=include '../main.inc.php';
 if (! $res) die("Include of main fails");
@@ -67,7 +70,7 @@ if (empty($conf->global->MAIN_MODULE_API))
 }
 
 // Test if explorer is not disabled
-if (preg_match('/api\/index\.php\/explorer/', $_SERVER["PHP_SELF"]) && ! empty($conf->global->API_EXPLORER_DISABLED))
+if (preg_match('/api\/index\.php\/explorer/', $url) && ! empty($conf->global->API_EXPLORER_DISABLED))
 {
     $langs->load("admin");
     dol_syslog("Call Dolibarr API interfaces with module REST disabled");
@@ -91,7 +94,7 @@ if (preg_match('/api\/index\.php\/explorer/', $_SERVER["PHP_SELF"]) && ! empty($
 
 
 $reg=array();
-preg_match('/index\.php\/([^\/]+)(.*)$/', $_SERVER["PHP_SELF"], $reg);
+preg_match('/index\.php\/([^\/]+)(.*)$/', $url, $reg);
 // .../index.php/categories?sortfield=t.rowid&sortorder=ASC
 
 
