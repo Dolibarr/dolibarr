@@ -442,7 +442,7 @@ class Setup extends DolibarrApi
                 $list[] = $this->db->fetch_object($result);
             }
         } else {
-            throw new RestException(503, 'Error when retrieving list of events types : '.$this->db->lasterror());
+            throw new RestException(503, 'Error when retrieving list of contacts types : '.$this->db->lasterror());
         }
 
         return $list;
