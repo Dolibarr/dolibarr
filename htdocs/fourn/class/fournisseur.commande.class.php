@@ -2983,7 +2983,9 @@ class CommandeFournisseur extends CommonOrder
     					$qtydelivered[$line->fk_product]+=$line->qty;
     				}
     				foreach($this->lines as $line) {
-    					$qtywished[$line->fk_product]+=$line->qty;
+					    if(! empty($line->fk_product) && ($line->product_type == Product::TYPE_PRODUCT || ($line->product_type == Product::TYPE_SERVICE && ! empty($conf->global->STOCK_SUPPORTS_SERVICES)))) {
+						    $qtywished[$line->fk_product] += $line->qty;
+					    }
     				}
     				//Compare array
     				$diff_array=array_diff_assoc($qtydelivered,$qtywished);		// Warning: $diff_array is done only on common keys.
