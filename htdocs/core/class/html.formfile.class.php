@@ -115,7 +115,7 @@ class FormFile
 			if (empty($title)) $title=$langs->trans("AttachANewFile");
 			if ($title != 'none') $out.=load_fiche_titre($title, null, null);
 
-			if (empty($usewithoutform))
+			if (empty($usewithoutform))		// Try to avoid this and set instead the form by the caller.
 			{
     			$out .= '<form name="'.$htmlname.'" id="'.$htmlname.'" action="'.$url.'" enctype="multipart/form-data" method="POST">';
     			$out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
