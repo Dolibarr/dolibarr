@@ -28,26 +28,6 @@
  */
 class FormCron extends Form
 {
-    /**
-     * @var DoliDB Database handler.
-     */
-    public $db;
-
-    /**
-     * @var string Error code (or message)
-     */
-    public $error='';
-
-    /**
-     *  Constructor
-     *
-     *  @param      DoliDB      $db      Database handler
-     */
-    public function __construct($db)
-    {
-        $this->db = $db;
-    }
-
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
@@ -70,32 +50,37 @@ class FormCron extends Form
                 $out.='<SELECT name="'.$htmlname.'" id="'.$htmlname.'" style="display:none"/>';
                 $out.= '<OPTION value="command" selected>'.$langs->trans('CronType_command').'</OPTION>';
                 $out.='</SELECT>';
-            } elseif ($selected=='method') {
+
+                return $out;
+            }
+
+            if ($selected=='method') {
                 $out= $langs->trans('CronType_method');
                 $out.='<SELECT name="'.$htmlname.'" id="'.$htmlname.'" style="display:none"/>';
                 $out.= '<OPTION value="method" selected>'.$langs->trans('CronType_method').'</OPTION>';
                 $out.='</SELECT>';
+
+                return $out;
             }
-        } else {
+        }
+
 
         $out='<SELECT class="flat" name="'.$htmlname.'" id="'.$htmlname.'" />';
 
+        $selected_attr='';
         if ($selected=='command') {
             $selected_attr=' selected ';
-        } else {
-            $selected_attr='';
         }
+
         $out.= '<OPTION value="command" '.$selected_attr.'>'.$langs->trans('CronType_command').'</OPTION>';
 
+        $selected_attr='';
         if ($selected=='method') {
             $selected_attr=' selected ';
-        } else {
-            $selected_attr='';
         }
         $out.= '<OPTION value="method" '.$selected_attr.'>'.$langs->trans('CronType_method').'</OPTION>';
 
         $out.='</SELECT>';
-        }
 
         return $out;
     }
