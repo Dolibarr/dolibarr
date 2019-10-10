@@ -1243,7 +1243,7 @@ $text=$langs->trans("ModuleBuilder");
 
 print load_fiche_titre($text, '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("ModuleBuilderDesc", 'https://wiki.dolibarr.org/index.php/Module_development#Create_your_module').'</span><br>';
+print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModuleBuilderDesc", 'https://wiki.dolibarr.org/index.php/Module_development#Create_your_module').'</span><br>';
 
 $dirsrootforscan=array($dirread);
 // Add also the core modules into the list of modules to show/edit
@@ -1309,7 +1309,7 @@ foreach($dirsrootforscan as $dirread)
     if (empty($newdircustom)) $newdircustom=img_warning();
     // If dirread was forced to somewhere else, by using URL
     // htdocs/modulebuilder/index.php?module=Inventory@/home/ldestailleur/git/dolibarr/htdocs/product
-    print $langs->trans("DirScanned").' : <strong>'.$dirread.'</strong><br>';
+    print $langs->trans("DirScanned").' : <strong class="wordbreakimp">'.$dirread.'</strong><br>';
 }
 //var_dump($listofmodules);
 

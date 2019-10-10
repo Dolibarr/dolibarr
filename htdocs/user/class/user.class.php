@@ -1318,7 +1318,7 @@ class User extends CommonObject
 
 		$this->db->begin();
 
-		// Cree et positionne $this->id
+		// Create user and set $this->id. Trigger is disabled because executed later.
 		$result=$this->create($user, 1);
 		if ($result > 0)
 		{

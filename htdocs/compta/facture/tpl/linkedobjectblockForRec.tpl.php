@@ -48,7 +48,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
 ?>
 <tr class="<?php echo $trclass; ?>" >
     <td class="linkedcol-element"><?php echo $langs->trans("RepeatableInvoice"); ?></td>
-    <td class="linkedcol-name"><?php echo $objectlink->getNomUrl(1); ?></td>
+    <td class="linkedcol-name nowraponall"><?php echo $objectlink->getNomUrl(1); ?></td>
 	<td class="linkedcol-ref" align="center"></td>
 	<td class="linkedcol-date" align="center"><?php echo dol_print_date($objectlink->date_when, 'day'); ?></td>
 	<td class="linkedcol-amount right"><?php
