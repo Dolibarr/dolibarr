@@ -3215,6 +3215,10 @@ tr.liste_sub_total, tr.liste_sub_total td {
 	-webkit-box-shadow: 0px 0px 0px #f4f4f4 !important;
 	box-shadow: 0px 0px 0px #f4f4f4 !important;
 }
+.shadow {
+	-webkit-box-shadow: 2px 2px 5px #CCC !important;
+	box-shadow: 2px 2px 5px #CCC !important;
+}
 
 div.tabBar .noborder {
 	-webkit-box-shadow: 0px 0px 0px #f4f4f4 !important;
