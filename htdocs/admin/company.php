@@ -105,68 +105,78 @@ if ( ($action == 'update' && ! GETPOST("cancel", 'alpha'))
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOTE", GETPOST("note", 'none'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_GENCOD", GETPOST("barcode", 'alpha'), 'chaine', 0, '', $conf->entity);
 
-	$varforimage='logo'; $dirforimage=$conf->mycompany->dir_output.'/logos/';
-	if ($_FILES[$varforimage]["tmp_name"])
+	$dirforimage=$conf->mycompany->dir_output.'/logos/';
+
+	$arrayofimages = array('logo', 'logo_squarred');
+
+	foreach($arrayofimages as $varforimage)
 	{
-		if (preg_match('/([^\\/:]+)$/i', $_FILES[$varforimage]["name"], $reg))
+		if ($_FILES[$varforimage]["tmp_name"])
 		{
-			$original_file=$reg[1];
-
-			$isimage=image_format_supported($original_file);
-			if ($isimage >= 0)
+			$reg = array();
+			if (preg_match('/([^\\/:]+)$/i', $_FILES[$varforimage]["name"], $reg))
 			{
-				dol_syslog("Move file ".$_FILES[$varforimage]["tmp_name"]." to ".$dirforimage.$original_file);
-				if (! is_dir($dirforimage))
-				{
-					dol_mkdir($dirforimage);
-				}
-				$result=dol_move_uploaded_file($_FILES[$varforimage]["tmp_name"], $dirforimage.$original_file, 1, 0, $_FILES[$varforimage]['error']);
-				if ($result > 0)
-				{
-					dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO", $original_file, 'chaine', 0, '', $conf->entity);
+				$original_file=$reg[1];
 
-					// Create thumbs of logo (Note that PDF use original file and not thumbs)
-					if ($isimage > 0)
+				$isimage=image_format_supported($original_file);
+				if ($isimage >= 0)
+				{
+					dol_syslog("Move file ".$_FILES[$varforimage]["tmp_name"]." to ".$dirforimage.$original_file);
+					if (! is_dir($dirforimage))
 					{
-					    // Create thumbs
-					    //$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retreive value with get...
-
-						// Create small thumb, Used on logon for example
-						$imgThumbSmall = vignette($dirforimage.$original_file, $maxwidthsmall, $maxheightsmall, '_small', $quality);
-						if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbSmall, $reg))
-						{
-							$imgThumbSmall = $reg[1];    // Save only basename
-							dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL", $imgThumbSmall, 'chaine', 0, '', $conf->entity);
-						}
-						else dol_syslog($imgThumbSmall);
-
-						// Create mini thumb, Used on menu or for setup page for example
-						$imgThumbMini = vignette($dirforimage.$original_file, $maxwidthmini, $maxheightmini, '_mini', $quality);
-						if (image_format_supported($imgThumbMini) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbMini, $reg))
-						{
-							$imgThumbMini = $reg[1];     // Save only basename
-							dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI", $imgThumbMini, 'chaine', 0, '', $conf->entity);
-						}
-						else dol_syslog($imgThumbMini);
+						dol_mkdir($dirforimage);
 					}
-					else dol_syslog("ErrorImageFormatNotSupported", LOG_WARNING);
-				} elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/', $result)) {
-					$error++;
-					$langs->load("errors");
-					$tmparray=explode(':', $result);
-					setEventMessages($langs->trans('ErrorFileIsInfectedWithAVirus', $tmparray[1]), null, 'errors');
+					$result=dol_move_uploaded_file($_FILES[$varforimage]["tmp_name"], $dirforimage.$original_file, 1, 0, $_FILES[$varforimage]['error']);
+					if ($result > 0)
+					{
+						$constant = "MAIN_INFO_SOCIETE_LOGO";
+						if ($varforimage == 'logo_squarred') $constant = "MAIN_INFO_SOCIETE_LOGO_SQUARRED";
+
+						dolibarr_set_const($db, $constant, $original_file, 'chaine', 0, '', $conf->entity);
+
+						// Create thumbs of logo (Note that PDF use original file and not thumbs)
+						if ($isimage > 0)
+						{
+						    // Create thumbs
+						    //$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retreive value with get...
+
+							// Create small thumb, Used on logon for example
+							$imgThumbSmall = vignette($dirforimage.$original_file, $maxwidthsmall, $maxheightsmall, '_small', $quality);
+							if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbSmall, $reg))
+							{
+								$imgThumbSmall = $reg[1];    // Save only basename
+								dolibarr_set_const($db, $constant."_SMALL", $imgThumbSmall, 'chaine', 0, '', $conf->entity);
+							}
+							else dol_syslog($imgThumbSmall);
+
+							// Create mini thumb, Used on menu or for setup page for example
+							$imgThumbMini = vignette($dirforimage.$original_file, $maxwidthmini, $maxheightmini, '_mini', $quality);
+							if (image_format_supported($imgThumbMini) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbMini, $reg))
+							{
+								$imgThumbMini = $reg[1];     // Save only basename
+								dolibarr_set_const($db, $constant."_MINI", $imgThumbMini, 'chaine', 0, '', $conf->entity);
+							}
+							else dol_syslog($imgThumbMini);
+						}
+						else dol_syslog("ErrorImageFormatNotSupported", LOG_WARNING);
+					} elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/', $result)) {
+						$error++;
+						$langs->load("errors");
+						$tmparray=explode(':', $result);
+						setEventMessages($langs->trans('ErrorFileIsInfectedWithAVirus', $tmparray[1]), null, 'errors');
+					}
+					else
+					{
+						$error++;
+						setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
+					}
 				}
 				else
 				{
 					$error++;
-					setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
 				}
-			}
-			else
-			{
-				$error++;
-				$langs->load("errors");
-				setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
 			}
 		}
 	}
@@ -247,7 +257,7 @@ if ( ($action == 'update' && ! GETPOST("cancel", 'alpha'))
 	}
 }
 
-if ($action == 'addthumb')  // Regenerate thumbs
+if ($action == 'addthumb' || $action == 'addthumbsquarred')  // Regenerate thumbs
 {
 	if (file_exists($conf->mycompany->dir_output.'/logos/'.$_GET["file"]))
 	{
@@ -256,15 +266,20 @@ if ($action == 'addthumb')  // Regenerate thumbs
 		// Create thumbs of logo
 		if ($isimage > 0)
 		{
+			$constant = "MAIN_INFO_SOCIETE_LOGO";
+			if ($action == 'addthumbsquarred') $constant = "MAIN_INFO_SOCIETE_LOGO_SQUARRED";
+
+			$reg = array();
+
 		    // Create thumbs
-		    //$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retreive value with get...
+			//$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retreive value with get...
 
 			// Create small thumb. Used on logon for example
 			$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$_GET["file"], $maxwidthsmall, $maxheightsmall, '_small', $quality);
 			if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbSmall, $reg))
 			{
 				$imgThumbSmall = $reg[1];   // Save only basename
-				dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL", $imgThumbSmall, 'chaine', 0, '', $conf->entity);
+				dolibarr_set_const($db, $constant."_SMALL", $imgThumbSmall, 'chaine', 0, '', $conf->entity);
 			}
 			else dol_syslog($imgThumbSmall);
 
@@ -273,7 +288,7 @@ if ($action == 'addthumb')  // Regenerate thumbs
 			if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbMini, $reg))
 			{
 				$imgThumbMini = $reg[1];   // Save only basename
-				dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI", $imgThumbMini, 'chaine', 0, '', $conf->entity);
+				dolibarr_set_const($db, $constant."_MINI", $imgThumbMini, 'chaine', 0, '', $conf->entity);
 			}
 			else dol_syslog($imgThumbMini);
 
@@ -297,24 +312,37 @@ if ($action == 'addthumb')  // Regenerate thumbs
 	}
 }
 
-if ($action == 'removelogo')
+
+if ($action == 'removelogo' || $action == 'removelogosquarred')
 {
+	$constant = "MAIN_INFO_SOCIETE_LOGO";
+	if ($action == 'removelogosquarred') $constant = "MAIN_INFO_SOCIETE_LOGO_SQUARRED";
+
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-	$logofile=$conf->mycompany->dir_output.'/logos/'.$mysoc->logo;
-	if ($mysoc->logo != '') dol_delete_file($logofile);
-	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO", $conf->entity);
-	$mysoc->logo='';
+	$logofilename = $mysoc->logo;
+	if ($action == 'removelogosquarred') $logofilename = $mysoc->logo_squarred;
+	$logofile=$conf->mycompany->dir_output.'/logos/'.$logofilename;
+	if ($logofilename != '') dol_delete_file($logofile);
+	dolibarr_del_const($db, $constant, $conf->entity);
+	if ($action == 'removelogosquarred') $mysoc->logo_squarred='';
+	else $mysoc->logo='';
 
-	$logosmallfile=$conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
-	if ($mysoc->logo_small != '') dol_delete_file($logosmallfile);
-	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL", $conf->entity);
-	$mysoc->logo_small='';
+	$logofilename = $mysoc->logo_small;
+	if ($action == 'removelogosquarred') $logofilename = $mysoc->logo_squarred_small;
+	$logosmallfile=$conf->mycompany->dir_output.'/logos/thumbs/'.$logofilename;
+	if ($logofilename != '') dol_delete_file($logosmallfile);
+	dolibarr_del_const($db, $constant."_SMALL", $conf->entity);
+	if ($action == 'removelogosquarred') $mysoc->logo_squarred_small='';
+	else $mysoc->logo_small='';
 
-	$logominifile=$conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini;
-	if ($mysoc->logo_mini != '') dol_delete_file($logominifile);
-	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI", $conf->entity);
-	$mysoc->logo_mini='';
+	$logofilename = $mysoc->logo_mini;
+	if ($action == 'removelogosquarred') $logofilename = $mysoc->logo_squarred_mini;
+	$logominifile=$conf->mycompany->dir_output.'/logos/thumbs/'.$logofilename;
+	if ($logofilename != '') dol_delete_file($logominifile);
+	dolibarr_del_const($db, $constant."_MINI", $conf->entity);
+	if ($action == 'removelogosquarred') $mysoc->logo_squarred_mini='';
+	else $mysoc->logo_mini='';
 }
 
 
@@ -434,13 +462,30 @@ if ($action == 'edit' || $action == 'updateedit')
 	// Logo
 	print '<tr class="oddeven"><td><label for="logo">'.$langs->trans("Logo").' (png,jpg)</label></td><td>';
 	print '<table width="100%" class="nobordernopadding"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
-	print '<input type="file" class="flat class=minwidth200" name="logo" id="logo" accept="image/*">';
+	print '<input type="file" class="flat minwidth200" name="logo" id="logo" accept="image/*">';
 	print '</td><td class="nocellnopadd right" valign="middle">';
 	if (! empty($mysoc->logo_mini)) {
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a>';
 		if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini)) {
 			print ' &nbsp; ';
 			print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini).'">';
+		}
+	} else {
+		print '<img height="30" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
+	}
+	print '</td></tr></table>';
+	print '</td></tr>';
+
+	// Logo (squarred)
+	print '<tr class="oddeven"><td><label for="logo_squarred">'.$langs->trans("LogoSquarred").' (png,jpg)</label></td><td>';
+	print '<table width="100%" class="nobordernopadding"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
+	print '<input type="file" class="flat minwidth200" name="logo_squarred" id="logo_squarred" accept="image/*">';
+	print '</td><td class="nocellnopadd right" valign="middle">';
+	if (! empty($mysoc->logo_squarred_mini)) {
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=removelogosquarred">'.img_delete($langs->trans("Delete")).'</a>';
+		if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini)) {
+			print ' &nbsp; ';
+			print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini).'">';
 		}
 	} else {
 		print '<img height="30" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
@@ -829,7 +874,7 @@ else
 
 	// Logo
 
-	print '<tr class="oddeven"><td>'.$langs->trans("Logo").'</td><td>';
+	print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("Logo"), $langs->trans("LogoDesc")).'</td><td>';
 
 	$tagtd='tagtd ';
 	if ($conf->browser->layout == 'phone') $tagtd='';
@@ -854,7 +899,34 @@ else
 
 	print '</td></tr>';
 
+	// Logo (squarred)
 
+	print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("LogoSquarred"), $langs->trans("LogoSquarredDesc")).'</td><td>';
+
+	$tagtd='tagtd ';
+	if ($conf->browser->layout == 'phone') $tagtd='';
+	print '<div class="tagtable centpercent"><div class="tagtr inline-block centpercent valignmiddle"><div class="'.$tagtd.'inline-block valignmiddle left">';
+	print $mysoc->logo_squarred;
+	print '</div><div class="'.$tagtd.'inline-block valignmiddle left">';
+
+	// It offers the generation of the thumbnail if it does not exist
+	if (!is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini) && preg_match('/(\.jpg|\.jpeg|\.png)$/i', $mysoc->logo_squarred))
+	{
+		print '<a class="img_logo" href="'.$_SERVER["PHP_SELF"].'?action=addthumbsquarred&amp;file='.urlencode($mysoc->logo_squarred).'">'.img_picto($langs->trans('GenerateThumb'), 'refresh').'</a>&nbsp;&nbsp;';
+	}
+	elseif ($mysoc->logo_squarred_mini && is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini))
+	{
+		print '<img class="img_logo" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini).'">';
+	}
+	else
+	{
+		print '<img class="img_logo" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
+	}
+	print '</div></div></div>';
+
+	print '</td></tr>';
+
+	// Note
 	print '<tr class="oddeven"><td class="tdtop">'.$langs->trans("Note").'</td><td>' . (! empty($conf->global->MAIN_INFO_SOCIETE_NOTE) ? nl2br($conf->global->MAIN_INFO_SOCIETE_NOTE) : '') . '</td></tr>';
 
 	print '</table>';

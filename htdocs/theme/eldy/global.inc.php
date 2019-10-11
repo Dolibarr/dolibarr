@@ -902,6 +902,17 @@ table[summary="list_of_modules"] .fa-cog {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize+3).'px' : $fontsize; ?> !important;
 	}
 
+	div#login_left, div#login_right {
+		min-width: 150px !important;
+		max-width: 200px !important;
+		padding-left: 5px !important;
+		padding-right: 5px !important;
+	}
+
+	div.login_block {
+		height: 64px !important;
+	}
+
 	.divmainbodylarge { margin-left: 20px !important; margin-right: 20px !important; }
 
     .tdoverflowonsmartphone {
@@ -923,11 +934,14 @@ table[summary="list_of_modules"] .fa-cog {
 		padding-bottom: 5px;
 	}
 
+	.login_table .tdinputlogin {
+		min-width: unset !important;
+	}
 	input, input[type=text], input[type=password], select, textarea     {
 		min-width: 20px;
     }
     .trinputlogin input[type=text], input[type=password] {
-		max-width: 180px;
+		max-width: 140px;
 	}
     .vmenu .searchform input {
 		max-width: 138px;	/* length of input text in the quick search box when using a smartphone and without dolidroid */

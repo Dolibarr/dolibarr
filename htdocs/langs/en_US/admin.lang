@@ -1070,6 +1070,9 @@ CompanyCountry=Country
 CompanyCurrency=Main currency
 CompanyObject=Object of the company
 Logo=Logo
+LogoDesc=Main logo of company. Will be used into generated documents (PDF, ...)
+LogoSquarred=Logo (squarred)
+LogoSquarredDesc=Must be a squarred icon (width = height). This logo will be used as the favorite icon or other need like for the top menu bar (if not disabled into disaply setup).
 DoNotSuggestPaymentMode=Do not suggest
 NoActiveBankAccountDefined=No active bank account defined
 OwnerOfBankAccount=Owner of bank account %s
