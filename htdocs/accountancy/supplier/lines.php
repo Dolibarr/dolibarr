@@ -192,11 +192,11 @@ if ($search_lineid) {
 if (strlen(trim($search_invoice))) {
 	$sql .= natural_search("f.ref", $search_invoice);
 }
+if (strlen(trim($search_label))) {
+	$sql .= natural_search("f.libelle", $search_label);
+}
 if (strlen(trim($search_ref))) {
 	$sql .= natural_search("p.ref", $search_ref);
-}
-if (strlen(trim($search_label))) {
-	$sql .= natural_search("p.label", $search_label);
 }
 if (strlen(trim($search_desc))) {
 	$sql .= natural_search("l.description", $search_desc);
@@ -300,14 +300,13 @@ if ($result) {
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth25" name="search_lineid" value="' . dol_escape_htmltag($search_lineid) . '""></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="' . dol_escape_htmltag($search_invoice) . '"></td>';
-	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
 	print '<td class="liste_titre center nowraponall">';
    	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_day" value="'.$search_day.'">';
    	print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month" value="'.$search_month.'">';
    	$formother->select_year($search_year, 'search_year', 1, 20, 5);
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="' . dol_escape_htmltag($search_ref) . '"></td>';
-	//print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
 	print '<td class="liste_titre right"><input type="text" class="right flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
 	print '<td class="liste_titre right"><input type="text" class="right flat maxwidth50" name="search_vat" placeholder="%" size="1" value="' . dol_escape_htmltag($search_vat) . '"></td>';
