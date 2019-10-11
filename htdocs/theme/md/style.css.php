@@ -2253,7 +2253,7 @@ div.blockvmenulogo
 {
 	border-bottom: 0 !important;
 }
-.menu-logo-container {
+.menulogocontainer {
     margin: <?php echo $disableimages?'0':'6'; ?>px;
     margin-left: 12px;
     margin-right: 6px;
@@ -2267,7 +2267,7 @@ div.blockvmenulogo
 	background-color: rgba(255,255,255,0.7);
 	border-radius: 5px;
 }
-.menu-logo-container img.mycompany {
+.menulogocontainer img.mycompany {
     object-fit: contain;
     width: inherit;
     height: inherit;

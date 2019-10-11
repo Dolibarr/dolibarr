@@ -504,7 +504,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		print_start_menu_entry('companylogo', 'class="tmenu tmenucompanylogo"', 1);
 
 
-		print '<div class="center '.$logoContainerAdditionalClass.' menu-logo-container"><img class="mycompany" title="'.dol_escape_htmltag($title).'" alt="" src="'.$urllogo.'" style="max-width: 100px"></div>'."\n";
+		print '<div class="center '.$logoContainerAdditionalClass.' menulogocontainer"><img class="mycompany" title="'.dol_escape_htmltag($title).'" alt="" src="'.$urllogo.'" style="max-width: 100px"></div>'."\n";
 
 		print_end_menu_entry(4);
 	}
