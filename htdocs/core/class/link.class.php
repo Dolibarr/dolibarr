@@ -334,6 +334,7 @@ class Link extends CommonObject
             if($this->db->num_rows($resql) > 0)
             {
                 $obj = $this->db->fetch_object($resql);
+                $this->id = $obj->rowid;
                 $this->entity = $obj->entity;
                 $this->datea = $this->db->jdate($obj->datea);
                 $this->url = $obj->url;
