@@ -224,8 +224,7 @@ print load_fiche_titre($langs->trans("GUISetup"), '', 'title_setup');
 print '<span class="opacitymedium">'.$langs->trans("DisplayDesc")."</span><br>\n";
 print "<br>\n";
 
-
-if ($action == 'edit')	// Edit
+if (1 == 1)	// Edit
 {
 	//WYSIWYG Editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -411,7 +410,7 @@ if ($action == 'edit')	// Edit
 	print '<div class="centpercent inline-block">';
 	print '<input type="file" class="flat class=minwidth200" name="imagebackground" id="imagebackground">';
 	if (! empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
-		print '<a href="'.$_SERVER["PHP_SELF"].'?action=removebackgroundlogin">'.img_delete($langs->trans("Delete")).'</a>';
+		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removebackgroundlogin">'.img_delete($langs->trans("Delete")).'</a>';
 		if (file_exists($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_LOGIN_BACKGROUND)) {
 			print ' &nbsp; ';
 			print '<img class="paddingleft valignmiddle" width="100px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$conf->global->MAIN_LOGIN_BACKGROUND).'">';
@@ -428,157 +427,9 @@ if ($action == 'edit')	// Edit
 	print '<br>';
 	print '<div class="center">';
 	print '<input class="button" type="submit" name="submit" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp;&nbsp;';
-	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
-	print '<br>';
 
 	print '</form>';
-}
-else	// Show
-{
-	// Language
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Language").'</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
-
-	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DefaultLanguage").'</td><td>';
-	$s=picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
-	print ($s?$s.' ':'');
-	print ($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$langs->trans("Language_".$conf->global->MAIN_LANG_DEFAULT));
-	print '</td>';
-	print '<td width="20">';
-	if ($user->admin && $conf->global->MAIN_LANG_DEFAULT!='auto') print info_admin($langs->trans("SubmitTranslation".($conf->global->MAIN_LANG_DEFAULT=='en_US'?'ENUS':''), $conf->global->MAIN_LANG_DEFAULT), 1);
-	print '</td>';
-	print "</tr>";
-
-	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("EnableMultilangInterface").'</td><td>' . yn($conf->global->MAIN_MULTILANGS) . '</td>';
-	print '<td width="20">&nbsp;</td>';
-	print "</tr>";
-
-	print '</table><br>'."\n";
-
-
-	// Themes
-	showSkins(null, 0);
-	print '<br>';
-
-
-	// Other
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Miscellaneous").'</td><td></td></tr>';
-
-	// Disable javascript/ajax
-	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DisableJavascript").'</td><td>';
-	print yn($conf->global->MAIN_DISABLE_JAVASCRIPT);
-	print ' <span class="opacitymedium"> &nbsp; - &nbsp; '.$langs->trans("DisableJavascriptNote").'</span>';
-	print "</td>";
-	print "</tr>";
-
-	// Max size of lists
-	print '<tr class="oddeven"><td>'.$langs->trans("DefaultMaxSizeList").'</td><td>' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '</td>';
-	print "</tr>";
-
-	// Max size of short lists
-	print '<tr class="oddeven"><td>'.$langs->trans("DefaultMaxSizeShortList").'</td><td>' . $conf->global->MAIN_SIZE_SHORTLIST_LIMIT . '</td>';
-	print "</tr>";
-
-	// First day for weeks
-	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("WeekStartOnDay").'</td><td>';
-	print $langs->trans("Day".(isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:'1'));
-	print '</td>';
-	print '</tr>';
-
-	// Default Working Days
-	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DefaultWorkingDays").'</td><td>';
-	print isset($conf->global->MAIN_DEFAULT_WORKING_DAYS)?$conf->global->MAIN_DEFAULT_WORKING_DAYS:'1-5';
-	print '</td>';
-	print '</tr>';
-
-	// Default Working Hours
-	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DefaultWorkingHours").'</td><td>';
-	print isset($conf->global->MAIN_DEFAULT_WORKING_HOURS)?$conf->global->MAIN_DEFAULT_WORKING_HOURS:'9-18';
-	print '</td>';
-	print '</tr>';
-
-	// Firstname / Name position
-	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("FirstnameNamePosition").'</td><td>';
-	if (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)) { print $langs->trans("Firstname").' '.$langs->trans("Lastname"); }
-	else { print $langs->trans("Lastname").' '.$langs->trans("Firstname"); }
-	print '</td>';
-	print '</tr>';
-
-	// Hide unauthorized button
-	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("ButtonHideUnauthorized").'</td><td>';
-	print yn((isset($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)?$conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED:0), 1);
-	print '</td></tr>';
-
-	// Hide version link
-	/*
-	 print '<tr><td class="titlefield">'.$langs->trans("HideVersionLink").'</td><td>';
-	 print yn($conf->global->MAIN_HIDE_VERSION);
-	 print '</td>';
-	 print '</tr>';
-	 */
-
-	// Show bugtrack link
-	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")).'</td><td>';
-	print yn($conf->global->MAIN_BUGTRACK_ENABLELINK)."</td>";
-	print "</tr>";
-
-	// Link to wiki help
-	$pictohelp='<span class="fa fa-question-circle"></span>';
-	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DisableLinkToHelp", $pictohelp).'</td><td>';
-	print yn((isset($conf->global->MAIN_HELP_DISABLELINK)?$conf->global->MAIN_HELP_DISABLELINK:0), 1);
-	print '</td></tr>';
-
-	// Message of the day
-	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("MessageOfDay").'</td><td>';
-	if (isset($conf->global->MAIN_MOTD)) print dol_htmlcleanlastbr($conf->global->MAIN_MOTD);
-	else print '&nbsp;';
-	print '</td></tr>'."\n";
-
-	print '</table>'."\n";
-
-	print '<br>';
-
-	// Login page
-	print '<div class="div-table-responsive">';
-
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("LoginPage").'</td><td></td></tr>';
-
-	// Message login
-	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("MessageLogin").'</td><td>';
-	if (isset($conf->global->MAIN_HOME)) print dol_htmlcleanlastbr($conf->global->MAIN_HOME);
-	else print '&nbsp;';
-	print '</td></tr>'."\n";
-
-	// Link to help center
-	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DisableLinkToHelpCenter").'</td><td>';
-	print yn((isset($conf->global->MAIN_HELPCENTER_DISABLELINK)?$conf->global->MAIN_HELPCENTER_DISABLELINK:0), 1);
-	print '</td></tr>';
-
-	// Background login
-	print '<tr class="oddeven"><td>'.$langs->trans("BackgroundImageLogin").'</td><td>';
-	print '<div class="centpercent inline-block">';
-	print $conf->global->MAIN_LOGIN_BACKGROUND;
-	if ($conf->global->MAIN_LOGIN_BACKGROUND && is_file($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_LOGIN_BACKGROUND))
-	{
-		print '<img class="img_logo paddingleft valignmiddle" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('logos/'.$conf->global->MAIN_LOGIN_BACKGROUND).'">';
-	}
-	else
-	{
-		print '<img class="img_logo paddingleft valignmiddle" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
-	}
-	print '</div>';
-	print '</td></tr>';
-
-	print '</table>'."\n";
-	print '</div>';
-
-	print '<div class="tabsAction tabsActionNoBottom">';
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
-	print '</div>';
 }
 
 // End of page
