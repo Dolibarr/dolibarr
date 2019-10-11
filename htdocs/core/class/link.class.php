@@ -362,8 +362,6 @@ class Link extends CommonObject
      */
     public function delete($user)
     {
-        global $langs, $conf;
-
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $error = 0;
 
