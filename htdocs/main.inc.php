@@ -1234,7 +1234,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="author" title="Dolibarr Development Team" href="https://www.dolibarr.org">'."\n";
 
         // Mobile appli like icon
-        $manifest = DOL_MAIN_URL_ROOT . '/theme/'.$conf->theme.'/manifest.json.php';
+        $manifest = DOL_URL_ROOT . '/theme/'.$conf->theme.'/manifest.json.php';
         if(!empty($manifest)){
             print '<link rel="manifest" href="'.$manifest.'" />'."\n";
         }
