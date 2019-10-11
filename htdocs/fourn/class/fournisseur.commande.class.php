@@ -684,7 +684,7 @@ class CommandeFournisseur extends CommonOrder
             $billedtext = ' - '.$langs->trans("Billed");
         }
 
-        $statusLong = $langs->trans($this->statuts_long[$status]).$billedtext;
+        $statusLong = $langs->trans($this->statuts[$status]).$billedtext;
         $statusShort = $langs->trans($this->statutshort[$status]);
 
         return dolGetStatus($statusLong, $statusShort, '', $statusClass, $mode);
