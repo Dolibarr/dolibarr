@@ -1099,19 +1099,21 @@ div.blockvmenulogo
 {
 	border-bottom: 0 !important;
 }
-.backgroundforcompanylogo {
+.menulogocontainer {
     margin: <?php echo $disableimages?'0':'6'; ?>px;
     margin-left: 8px;
     margin-right: 8px;
-    background-color: rgba(255,255,255,0.7);
     padding: 0;
-    border-radius: 4px;
     height: <?php echo $disableimages?'20':'32'; ?>px;
     /* width: 100px; */
     max-width: 100px;
     vertical-align: middle;
 }
-.backgroundforcompanylogo img.mycompany {
+.backgroundforcompanylogo {
+    background-color: rgba(255,255,255,0.7);
+    border-radius: 4px;
+}
+.menulogocontainer img.mycompany {
     object-fit: contain;
     width: inherit;
     height: inherit;
