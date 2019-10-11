@@ -15,10 +15,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
- require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 /**
  * API class for products
@@ -42,6 +43,11 @@ class Products extends DolibarrApi
     public $product;
 
     /**
+     * @var ProductFournisseur $productsupplier {@type ProductFournisseur}
+     */
+    public $productsupplier;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -49,6 +55,7 @@ class Products extends DolibarrApi
         global $db, $conf;
         $this->db = $db;
         $this->product = new Product($this->db);
+        $this->productsupplier = new ProductFournisseur($this->db);
     }
 
     /**
@@ -467,6 +474,41 @@ class Products extends DolibarrApi
         );
     }
 
+    /**
+     * Delete purchase price for a product
+     *
+     * @param  int $id Product ID
+     * @param  int $priceid purchase price ID
+     *
+     * @url DELETE {id}/purchase_prices/{priceid}
+     *
+     * @return int
+     *
+     * @throws 401
+     * @throws 404
+     *
+     */
+    public function deletePurchasePrice($id, $priceid)
+    {
+        if(! DolibarrApiAccess::$user->rights->produit->supprimer) {
+            throw new RestException(401);
+        }
+        $result = $this->product->fetch($id);
+        if(! $result ) {
+            throw new RestException(404, 'Product not found');
+        }
+
+        if(! DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+        $resultsupplier = 0;
+        if ($result) {
+            $this->productsupplier->fetch($id);
+            $resultsupplier = $this->product->remove_product_fournisseur_price($priceid);
+        }
+
+        return $resultsupplier;
+    }
 
     /**
      * List purchase prices
@@ -565,7 +607,6 @@ class Products extends DolibarrApi
      * @param  string $ref              Ref of element
      * @param  string $ref_ext          Ref ext of element
      * @param  string $barcode          Barcode of element
-     * @param  int    $includestockdata Load also information about stock (slower)
      * @return array|mixed                 Data without useless information
      *
      * @url GET {id}/purchase_prices
@@ -575,7 +616,7 @@ class Products extends DolibarrApi
      * @throws 404
      *
      */
-    public function getPurchasePrices($id, $ref = '', $ref_ext = '', $barcode = '', $includestockdata = 0)
+    public function getPurchasePrices($id, $ref = '', $ref_ext = '', $barcode = '')
     {
         if (empty($id) && empty($ref) && empty($ref_ext) && empty($barcode)) {
             throw new RestException(400, 'bad value for parameter id, ref, ref_ext or barcode');
@@ -596,17 +637,12 @@ class Products extends DolibarrApi
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
-        if ($includestockdata) {
-               $this->product->load_stock();
+        if ($result) {
+            $this->productsupplier->fetch($id, $ref);
+            $this->productsupplier->list_product_fournisseur_price($id, '', '', 0, 0);
         }
 
-        if($result) {
-        $this->product = new ProductFournisseur($this->db);
-        $this->product->fetch($id, $ref);
-        $this->product->list_product_fournisseur_price($id, '', '', 0, 0);
-        }
-
-        return $this->_cleanObjectDatas($this->product);
+        return $this->_cleanObjectDatas($this->productsupplier);
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

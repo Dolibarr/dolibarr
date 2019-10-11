@@ -145,7 +145,7 @@ class UtilsTest extends PHPUnit\Framework\TestCase
         $this->assertEquals($result['error'], '');
         //$this->assertEquals(preg_match('/phpunit/', $result['output']), 1);
 
-        print __METHOD__." result=".$result."\n";
+        print __METHOD__." result=".$result['result']."\n";
         return $result;
     }
 }

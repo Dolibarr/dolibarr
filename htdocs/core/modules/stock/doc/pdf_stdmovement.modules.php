@@ -183,13 +183,13 @@ class pdf_stdmovement extends ModelePDFMovement
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param		Stock		$object				Object source to build document
-	 *	@param		Translate	$outputlangs		Lang output object
-	 * 	@param		string		$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param		int			$hidedetails		Do not show line details
-	 *  @param		int			$hidedesc			Do not show desc
-	 *  @param		int			$hideref			Do not show ref
-	 *	@return		int         					1 if OK, <=0 if KO
+	 *	@param		StockMovements	$object				Object source to build document
+	 *	@param		Translate		$outputlangs		Lang output object
+	 * 	@param		string			$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param		int				$hidedetails		Do not show line details
+	 *  @param		int				$hidedesc			Do not show desc
+	 *  @param		int				$hideref			Do not show ref
+	 *	@return		int         						1 if OK, <=0 if KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -245,7 +245,7 @@ class pdf_stdmovement extends ModelePDFMovement
 		$extrafields = new ExtraFields($db);
 
 		// fetch optionals attributes and labels
-		$extralabels = $extrafields->fetch_name_optionals_label('movement');
+		$extrafields->fetch_name_optionals_label('movement');
 		$search_array_options=$extrafields->getOptionalsFromPost('movement', '', 'search_');
 
 		$productlot=new ProductLot($db);
@@ -270,7 +270,7 @@ class pdf_stdmovement extends ModelePDFMovement
 		$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
 		$sql.= " ".MAIN_DB_PREFIX."product as p,";
 		$sql.= " ".MAIN_DB_PREFIX."stock_mouvement as m";
-		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."movement_extrafields as ef on (m.rowid = ef.fk_object)";
+		if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (m.rowid = ef.fk_object)";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON m.fk_user_author = u.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON m.batch = pl.batch AND m.fk_product = pl.fk_product";
 		$sql.= " WHERE m.fk_product = p.rowid";

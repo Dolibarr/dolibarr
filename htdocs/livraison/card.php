@@ -61,13 +61,12 @@ $result=restrictedArea($user, 'expedition', $id, 'livraison', 'livraison');
 
 $object = new Livraison($db);
 $extrafields = new ExtraFields($db);
-$extrafieldsline = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // fetch optionals attributes lines and labels
-$extralabelslines=$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+$extrafields->fetch_name_optionals_label($object->table_element_line);
 
 // Load object. Make an object->fetch
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
@@ -196,8 +195,7 @@ if ($action == 'update_extras')
 	$object->oldcopy = dol_clone($object);
 
 	// Fill array 'array_options' with data from update form
-	$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-	$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
+	$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
 	if ($ret < 0) $error++;
 
 	if (! $error)
@@ -224,8 +222,8 @@ if ($action == 'update_extras_line')
 	for ($i = 0; $i < $num; $i++)
 	{
 		// Extrafields
-		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options[$i] = $extrafieldsline->getOptionalsFromPost($extralabelsline, $i);
+		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
+		$array_options[$i] = $extrafields->getOptionalsFromPost($extralabelsline, $i);
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -398,7 +396,7 @@ else
 			    $morehtmlref .= '<br>' . $langs->trans('Project') . ' ';
 			    if (0) {    // Do not change on shipment
 			        if ($action != 'classify') {
-			            $morehtmlref .= '<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $expedition->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+			            $morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $expedition->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			        }
 			        if ($action == 'classify') {
 			            // $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $expedition->id, $expedition->socid, $expedition->fk_project, 'projectid', 0, 0, 1, 1);
@@ -496,7 +494,7 @@ else
 			print $langs->trans('DateReceived');
 			print '</td>';
 
-			if ($action != 'editdate_livraison') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
+			if ($action != 'editdate_livraison') print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 			if ($action == 'editdate_livraison')
@@ -522,7 +520,7 @@ else
 		        print '<table width="100%" class="nobordernopadding"><tr><td>';
 		        print $langs->trans('IncotermLabel');
 		        print '<td><td class="right">';
-		        if ($user->rights->expedition->livraison->creer) print '<a href="'.DOL_URL_ROOT.'/livraison/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+		        if ($user->rights->expedition->livraison->creer) print '<a class="editfielda" href="'.DOL_URL_ROOT.'/livraison/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
 		        else print '&nbsp;';
 		        print '</td></tr></table>';
 		        print '</td>';
@@ -676,21 +674,20 @@ else
 					print "</tr>";
 
 					// Display lines extrafields
-					if (is_array($extralabelslines) && count($extralabelslines) > 0) {
+					if (! empty($extrafields)) {
 						$colspan = 2;
 						$mode = ($object->statut == 0) ? 'edit' : 'view';
-						$line = new LivraisonLigne($db);
-						$line->fetch_optionals($object->lines[$i]->id);
+
+						$object->lines[$i]->fetch_optionals($object->lines[$i]->id);
 						if ($action == 'create_delivery') {
 							$srcLine = new ExpeditionLigne($db);
-							$expeditionLineExtrafields = new Extrafields($db);
-							$expeditionLineExtrafieldLabels = $expeditionLineExtrafields->fetch_name_optionals_label($srcLine->table_element);
+
+							$extrafields->fetch_name_optionals_label($srcLine->table_element);
 							$srcLine->fetch_optionals($expedition->lines[$i]->id);
-							$line->array_options = array_merge($line->array_options, $srcLine->array_options);
+
+							$object->lines[$i]->array_options = array_merge($object->lines[$i]->array_options, $srcLine->array_options);
 						}
-						print '<tr class="oddeven">';
-						print $line->showOptionals($extrafieldsline, $mode, array('style' => 'class="oddeven"', 'colspan' => $colspan), $i);
-						print '</tr>';
+						print $object->lines[$i]->showOptionals($extrafields, $mode, array('style' => 'class="oddeven"', 'colspan' => $colspan), $i);
 					}
 				}
 

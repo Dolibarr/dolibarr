@@ -21,7 +21,7 @@
  * @category   PHPExcel
  * @package    PHPExcel_Calculation
  * @copyright  Copyright (c) 2006 - 2014 PHPExcel (http://www.codeplex.com/PHPExcel)
- * @license	https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
+ * @license	http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
  * @version	##VERSION##, ##DATE##
  */
 
@@ -3682,7 +3682,7 @@ class PHPExcel_Calculation {
 			}
 		} else {
 			if ((PHPExcel_Calculation_Functions::getCompatibilityMode() != PHPExcel_Calculation_Functions::COMPATIBILITY_OPENOFFICE) &&
-				((is_string($operand1) && !is_numeric($operand1) && strlen($operand1)>0) ||
+				((is_string($operand1) && !is_numeric($operand1) && strlen($operand1)>0) || 
                  (is_string($operand2) && !is_numeric($operand2) && strlen($operand2)>0))) {
 				$result = PHPExcel_Calculation_Functions::VALUE();
 			} else {

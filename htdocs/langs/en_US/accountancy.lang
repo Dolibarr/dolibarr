@@ -1,4 +1,5 @@
-# Dolibarr language file - en_US - Accounting Expert
+# Dolibarr language file - en_US - Accountancy (Double entries)
+Accountancy=Accountancy
 Accounting=Accounting
 ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
@@ -256,6 +257,7 @@ ListOfProductsWithoutAccountingAccount=List of products not bound to any account
 ChangeBinding=Change the binding
 Accounted=Accounted in ledger
 NotYetAccounted=Not yet accounted in ledger
+ShowTutorial=Show Tutorial
 
 ## Admin
 ApplyMassCategories=Apply mass categories
@@ -264,7 +266,7 @@ CategoryDeleted=Category for the accounting account has been removed
 AccountingJournals=Accounting journals
 AccountingJournal=Accounting journal
 NewAccountingJournal=New accounting journal
-ShowAccoutingJournal=Show accounting journal
+ShowAccountingJournal=Show accounting journal
 NatureOfJournal=Nature of Journal
 AccountingJournalType1=Miscellaneous operations
 AccountingJournalType2=Sales

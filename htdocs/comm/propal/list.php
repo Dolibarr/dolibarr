@@ -129,7 +129,7 @@ $hookmanager->initHooks(array('propallist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
@@ -1013,9 +1013,8 @@ if ($resql)
 		// Author
 		if (! empty($arrayfields['u.login']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center nowraponall">';
 			if ($userstatic->id) print $userstatic->getLoginUrl(1);
-			else print '&nbsp;';
 			print "</td>\n";
 			if (! $i) $totalarray['nbfield']++;
 		}
@@ -1088,7 +1087,7 @@ if ($resql)
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
-    // Date cloture
+    	// Date cloture
 		if (! empty($arrayfields['p.date_cloture']['checked']))
 		{
 			print '<td align="center" class="nowrap">';

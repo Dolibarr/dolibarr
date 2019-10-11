@@ -225,7 +225,7 @@ if (! empty($conf->global->MEMBER_ENABLE_PUBLIC))
 {
 	print '<br>';
 	//print $langs->trans('FollowingLinksArePublic').'<br>';
-	print img_picto('', 'object_globe.png').' '.$langs->trans('BlankSubscriptionForm').':<br>';
+	print img_picto('', 'globe').' '.$langs->trans('BlankSubscriptionForm').':<br>';
 	if ($conf->multicompany->enabled) {
 		$entity_qr='?entity='.$conf->entity;
 	} else {

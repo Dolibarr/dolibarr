@@ -71,7 +71,8 @@ else $morehead='<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/th
 llxHeaderVierge($langs->trans("MemberCard"), $morehead);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('adherent');
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 if ($id > 0)
 {
 	$res=$object->fetch($id);

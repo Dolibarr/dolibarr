@@ -938,34 +938,35 @@ if ($action == 'disable_favorite')
 $form = new Form($db);
 $formadmin=new FormAdmin($db);
 
-llxHeader();
+$title=$langs->trans("DictionarySetup");
 
-$titre=$langs->trans("DictionarySetup");
+llxHeader('', $title);
+
 $linkback='';
 if ($id)
 {
-    $titre.=' - '.$langs->trans($tablib[$id]);
+    $title.=' - '.$langs->trans($tablib[$id]);
     $linkback='<a href="'.$_SERVER['PHP_SELF'].'">'.$langs->trans("BackToDictionaryList").'</a>';
 }
 $titlepicto='title_setup';
 if ($id == 10 && GETPOST('from') == 'accountancy')
 {
-    $titre=$langs->trans("MenuVatAccounts");
-    $titlepicto='title_accountancy';
+    $title=$langs->trans("MenuVatAccounts");
+    $titlepicto='accountancy';
 }
 if ($id == 7 && GETPOST('from') == 'accountancy')
 {
-    $titre=$langs->trans("MenuTaxAccounts");
-    $titlepicto='title_accountancy';
+    $title=$langs->trans("MenuTaxAccounts");
+    $titlepicto='accountancy';
 }
 
-print load_fiche_titre($titre, $linkback, $titlepicto);
+print load_fiche_titre($title, $linkback, $titlepicto);
 
 if (empty($id))
 {
-    print $langs->trans("DictionaryDesc");
+    print '<span class="opacitymedium">'.$langs->trans("DictionaryDesc");
     print " ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
-    print '<br>';
+    print '</span><br>';
 }
 
 
@@ -1509,6 +1510,10 @@ if ($id)
                                 $key=$langs->trans("PaymentType".strtoupper($obj->code));
                                 $valuetoshow=($obj->code && $key != "PaymentType".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
                             }
+                            elseif ($fieldlist[$field]=='type' && $tabname[$id]==MAIN_DB_PREFIX.'c_paiement') {
+                            	$payment_type_list = array(0=>$langs->trans('PaymentTypeCustomer'), 1=>$langs->trans('PaymentTypeSupplier'), 2=>$langs->trans('PaymentTypeBoth'));
+                            	$valuetoshow = $payment_type_list[$valuetoshow];
+                            }
                             elseif ($fieldlist[$field]=='label' && $tabname[$id]==MAIN_DB_PREFIX.'c_input_reason') {
                                 $key=$langs->trans("DemandReasonType".strtoupper($obj->code));
                                 $valuetoshow=($obj->code && $key != "DemandReasonType".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
@@ -1697,7 +1702,6 @@ if ($id)
         dol_print_error($db);
     }
 
-
     print '</form>';
 }
 else
@@ -1711,7 +1715,6 @@ else
 	print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    //print '<td>'.$langs->trans("Module").'</td>';
     print '<td colspan="2">'.$langs->trans("Dictionary").'</td>';
     print '<td>'.$langs->trans("Table").'</td>';
     print '</tr>';
@@ -1726,7 +1729,7 @@ else
         	if ($showemptyline)
         	{
 
-        		print '<tr class="oddeven"><td width="30%">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
+        		print '<tr class="oddeven"><td width="50%">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
         		$showemptyline=0;
         	}
 
@@ -1875,6 +1878,13 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			$type = (! empty($obj->type)?$obj->type:'user'); // Check if type is different of 'user' (external module)
 			print '<td>';
 			print $type.'<input type="hidden" name="type" value="'.$type.'">';
+			print '</td>';
+		}
+		elseif ($fieldlist[$field] == 'type' && $tabname == MAIN_DB_PREFIX.'c_paiement')
+		{
+			print '<td>';
+			$select_list = array(0=>$langs->trans('PaymentTypeCustomer'), 1=>$langs->trans('PaymentTypeSupplier'), 2=>$langs->trans('PaymentTypeBoth'));
+			print $form->selectarray($fieldlist[$field], $select_list, (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'2'));
 			print '</td>';
 		}
 		elseif ($fieldlist[$field] == 'recuperableonly' || $fieldlist[$field] == 'type_cdr' || $fieldlist[$field] == 'deductible' || $fieldlist[$field] == 'category_type') {

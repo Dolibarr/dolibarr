@@ -63,7 +63,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
     }
     ?>
         </td>
-        <td class="linkedcol-name" ><?php echo $objectlink->getNomUrl(1); ?></td>
+        <td class="linkedcol-name nowraponall" ><?php echo $objectlink->getNomUrl(1); ?></td>
     	<td class="linkedcol-ref" ><?php echo $objectlink->ref_client; ?></td>
     	<td class="linkedcol-date center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
     	<td class="linkedcol-amount right"><?php

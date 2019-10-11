@@ -108,6 +108,7 @@ class BankAccountTest extends PHPUnit\Framework\TestCase
 
         print __METHOD__."\n";
     }
+
     /**
      * End phpunit tests
      *

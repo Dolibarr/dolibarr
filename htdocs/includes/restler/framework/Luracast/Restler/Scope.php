@@ -44,7 +44,9 @@ class Scope
 
         //API classes
         'Resources'          => 'Luracast\Restler\Resources',
-        'Explorer'           => 'Luracast\Restler\Explorer',
+        'Explorer'           => 'Luracast\Restler\Explorer\v2\Explorer',
+        'Explorer1'           => 'Luracast\Restler\Explorer\v1\Explorer',
+        'Explorer2'           => 'Luracast\Restler\Explorer\v2\Explorer',
 
         //Cache classes
         'HumanReadableCache' => 'Luracast\Restler\HumanReadableCache',
@@ -52,7 +54,7 @@ class Scope
         'MemcacheCache'      => 'Luracast\Restler\MemcacheCache',
 
         //Utility classes
-        'Obj'                => 'Luracast\Restler\Data\Obj',
+        'Object'             => 'Luracast\Restler\Data\Obj',
         'Text'               => 'Luracast\Restler\Data\Text',
         'Arr'                => 'Luracast\Restler\Data\Arr',
 
