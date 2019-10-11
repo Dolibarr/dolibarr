@@ -1052,12 +1052,12 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     	if (in_array($val['type'], array('date','datetime','timestamp'))) $align.=($align?' ':'').'center';
     	if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
     	if ($key == 'status' || $key == 'statut') $align.=($align?' ':'').'center';
-    	if (! empty($arrayfields['t.'.$key]['checked']))
+    	if (! empty($arrayfields['t.'.$key]['checked']) || ! empty($arrayfields['sc.'.$key]['checked']))
     	{
     		print '<td class="liste_titre'.($align?' '.$align:'').'">';
     		if (in_array($key, array('statut'))){
                 print $form->selectarray('search_status', array('-1'=>'','0'=>$contactstatic->LibStatut(0, 1),'1'=>$contactstatic->LibStatut(1, 1)), $search_status);
-            }elseif (in_array($key, array('role'))) {
+            } elseif (in_array($key, array('role'))) {
 			    print $formcompany->showRoles("search_roles", $contactstatic, 'edit', $search_roles);
 		    } else {
                 print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
