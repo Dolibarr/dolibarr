@@ -321,25 +321,43 @@ if ($action == 'removelogo' || $action == 'removelogosquarred')
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$logofilename = $mysoc->logo;
-	if ($action == 'removelogosquarred') $logofilename = $mysoc->logo_squarred;
+	$logofilenamebis = $mysoc->logo_squarred;
+	if ($action == 'removelogosquarred')
+	{
+		$logofilename = $mysoc->logo_squarred;
+		$logofilenamebis = $mysoc->logo;
+	}
+
 	$logofile=$conf->mycompany->dir_output.'/logos/'.$logofilename;
-	if ($logofilename != '') dol_delete_file($logofile);
+	if ($logofilename != '' && $logofilename != $logofilenamebis) dol_delete_file($logofile);
 	dolibarr_del_const($db, $constant, $conf->entity);
 	if ($action == 'removelogosquarred') $mysoc->logo_squarred='';
 	else $mysoc->logo='';
 
 	$logofilename = $mysoc->logo_small;
-	if ($action == 'removelogosquarred') $logofilename = $mysoc->logo_squarred_small;
+	$logofilenamebis = $mysoc->logo_squarred_small;
+	if ($action == 'removelogosquarred')
+	{
+		$logofilename = $mysoc->logo_squarred_small;
+		$logofilenamebis = $mysoc->logo_small;
+	}
+
 	$logosmallfile=$conf->mycompany->dir_output.'/logos/thumbs/'.$logofilename;
-	if ($logofilename != '') dol_delete_file($logosmallfile);
+	if ($logofilename != '' && $logofilename != $logofilenamebis) dol_delete_file($logosmallfile);
 	dolibarr_del_const($db, $constant."_SMALL", $conf->entity);
 	if ($action == 'removelogosquarred') $mysoc->logo_squarred_small='';
 	else $mysoc->logo_small='';
 
 	$logofilename = $mysoc->logo_mini;
-	if ($action == 'removelogosquarred') $logofilename = $mysoc->logo_squarred_mini;
+	$logofilenamebis = $mysoc->logo_squarred_mini;
+	if ($action == 'removelogosquarred')
+	{
+		$logofilename = $mysoc->logo_squarred_mini;
+		$logofilenamebis = $mysoc->logo_mini;
+	}
+
 	$logominifile=$conf->mycompany->dir_output.'/logos/thumbs/'.$logofilename;
-	if ($logofilename != '') dol_delete_file($logominifile);
+	if ($logofilename != '' && $logofilename != $logofilenamebis) dol_delete_file($logominifile);
 	dolibarr_del_const($db, $constant."_MINI", $conf->entity);
 	if ($action == 'removelogosquarred') $mysoc->logo_squarred_mini='';
 	else $mysoc->logo_mini='';
