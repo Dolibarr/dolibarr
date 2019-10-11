@@ -22,89 +22,126 @@
  * \brief   PHPUnit test for BillOfMaterials class.
  */
 
-namespace test\unit;
+global $conf,$user,$langs,$db;
+//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
+//require_once 'PHPUnit/Autoload.php';
+require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
+require_once dirname(__FILE__).'/../../htdocs/bom/class/bom.class.php';
+
+if (empty($user->id)) {
+	print "Load permissions for admin user nb 1\n";
+	$user->fetch(1);
+	$user->getrights();
+}
+$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+
+$langs->load("main");
+
 
 /**
  * Class BillOfMaterialsTest
  * @package Testbillofmaterials
  */
-class BOMTest extends \PHPUnit\Framework\TestCase
+class BOMTest extends PHPUnit\Framework\TestCase
 {
+	protected $savconf;
+	protected $savuser;
+	protected $savlangs;
+	protected $savdb;
+
 	/**
-	 * Global test setup
-     * @return void
+	 * Constructor
+	 * We save global variables into local variables
+	 *
+	 * @return BOMTest
 	 */
+	public function __construct()
+	{
+		parent::__construct();
+
+		//$this->sharedFixture
+		global $conf,$user,$langs,$db;
+		$this->savconf=$conf;
+		$this->savuser=$user;
+		$this->savlangs=$langs;
+		$this->savdb=$db;
+
+		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+		//print " - db ".$db->db;
+		print "\n";
+	}
+
+	// Static methods
 	public static function setUpBeforeClass()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		global $conf,$user,$langs,$db;
+		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
+		
+		if (! empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)) {
+			print "\n".__METHOD__." Company must be setup to have name-firstname in order 'Firstname Lastname'\n";
+			die();
+		}
+		if (! empty($conf->global->MAIN_MODULE_LDAP)) { print "\n".__METHOD__." module LDAP must be disabled.\n"; die(); }
+		if (! empty($conf->global->MAIN_MODULE_MAILMANSPIP)) { print "\n".__METHOD__." module MailmanSpip must be disabled.\n"; die(); }
+		
+		print __METHOD__."\n";
+	}
+
+	// tear down after class
+	public static function tearDownAfterClass()
+	{
+		global $conf,$user,$langs,$db;
+		$db->rollback();
+
+		print __METHOD__."\n";
 	}
 
 	/**
-	 * Unit test setup
-     * @return void
+	 * Init phpunit tests
+	 *
+	 * @return  void
 	 */
 	protected function setUp()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		print __METHOD__."\n";
 	}
 
 	/**
-	 * Verify pre conditions
-     * @return void
-	 */
-	protected function assertPreConditions()
-	{
-		fwrite(STDOUT, __METHOD__ . "\n");
-	}
-
-	/**
-	 * A sample test
-     * @return bool
-	 */
-	public function testSomething()
-	{
-		fwrite(STDOUT, __METHOD__ . "\n");
-		// TODO: test something
-		$this->assertTrue(true);
-	}
-
-	/**
-	 * Verify post conditions
-     * @return void
-	 */
-	protected function assertPostConditions()
-	{
-		fwrite(STDOUT, __METHOD__ . "\n");
-	}
-
-	/**
-	 * Unit test teardown
-     * @return void
+	 * End phpunit tests
+	 *
+	 * @return  void
 	 */
 	protected function tearDown()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
+		print __METHOD__."\n";
 	}
 
 	/**
-	 * Global test teardown
-     * @return void
-	 */
-	public static function tearDownAfterClass()
-	{
-		fwrite(STDOUT, __METHOD__ . "\n");
-	}
-
-	/**
-	 * Unsuccessful test
+	 * testBOMCreate
 	 *
-	 * @param  Exception $e    Exception
-     * @return void
-	 * @throws Exception
+     * @return int
 	 */
-	protected function onNotSuccessfulTest(Exception $e)
+	public function testBOMCreate()
 	{
-		fwrite(STDOUT, __METHOD__ . "\n");
-		throw $e;
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$localobject=new BOM($this->savdb);
+		$localobject->initAsSpecimen();
+		$result=$localobject->create($user);
+
+		print __METHOD__." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+
+		return $localobject;
 	}
 }
