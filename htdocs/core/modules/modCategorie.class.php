@@ -413,11 +413,12 @@ class modCategorie extends DolibarrModules
 		$this->import_regex_array[$r]=array('ca.type'=>'^[0|1|2|3]');
         $this->import_convertvalue_array[$r] = array(
             'ca.fk_parent' => array(
-                'rule'      => 'fetchidfromcodeorlabel',
-                'classfile' => '/categories/class/categorie.class.php',
-                'class'     => 'Categorie',
-                'method'    => 'fetch',
-                'element'   => 'category'
+                'rule'          => 'fetchidfromcodeandlabel',
+                'classfile'     => '/categories/class/categorie.class.php',
+                'class'         => 'Categorie',
+                'method'        => 'fetch',
+                'element'       => 'category',
+                'codefromfield' => 'ca.type'
             )
         );
 		$typeexample="";
