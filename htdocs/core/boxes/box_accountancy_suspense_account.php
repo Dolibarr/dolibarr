@@ -108,14 +108,14 @@ class box_accountancy_suspense_account extends ModeleBoxes
 				);
 			} else {
 				$this->info_box_contents[0][0] = array(
-					'td' => 'class="nohover opacitymedium left"',
-					'text' => $langs->trans("SuspenseAccountNotDefined")
+					'td' => 'class="nohover"',
+					'text' => '<span class="opacitymedium">'.$langs->trans("SuspenseAccountNotDefined").'</span>'
 				);
 			}
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'class="nohover opacitymedium left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed")
+                'td' => 'class="nohover"',
+            	'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
             );
         }
     }
