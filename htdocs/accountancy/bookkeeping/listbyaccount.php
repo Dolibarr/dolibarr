@@ -397,25 +397,27 @@ while ($i < min($num, $limit))
 	$i++;
 }
 
-// Affiche un Sous-Total du dernier compte comptable affiché
+// Show sub-total of last shown account
 print '<tr class="liste_total">';
 print '<td class="right" colspan="5">'.$langs->trans("SubTotal").':</td><td class="nowrap right">'.price($sous_total_debit).'</td><td class="nowrap right">'.price($sous_total_credit).'</td>';
-print '<td colspan="2" class="nowrap right">';
+print '<td class="nowraponall right">';
 print price($sous_total_debit - $sous_total_credit);
-print '</td>\n';
+print '</td>';
+print '<td></td>';
 print '</tr>';
 
 
-// Affiche le Total
+// Show total
 print '<tr class="liste_total">';
 print '<td class="right" colspan="5">'.$langs->trans("Total").':</td>';
-print '<td class="nowrap right">';
+print '<td class="nowraponall right">';
 print price($total_debit);
 print '</td>';
-print '<td class="nowrap right">';
+print '<td class="nowraponall right">';
 print price($total_credit);
 print '</td>';
-print '<td colspan="2"></td>';
+print '<td></td>';
+print '<td></td>';
 print '</tr>';
 
 print "</table>";
