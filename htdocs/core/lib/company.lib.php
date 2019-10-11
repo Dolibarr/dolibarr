@@ -932,7 +932,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 	    't.name'=>array('label'=>"Name", 'checked'=>1, 'position'=>10),
 	    't.poste'=>array('label'=>"PostOrFunction", 'checked'=>1, 'position'=>20),
 	    't.address'=>array('label'=>(empty($conf->dol_optimize_smallscreen) ? $langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email") : $langs->trans("Address")), 'checked'=>1, 'position'=>30),
-	    'sc.role'=>array('label'=>"Roles", 'checked'=>1, 'position'=>40),
+	    'sc.role'=>array('label'=>"ContactByDefaultFor", 'checked'=>1, 'position'=>40),
 	    't.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>50, 'class'=>'center'),
     );
     // Extra fields
@@ -1091,7 +1091,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     	if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
     	if ($key == 'status' || $key == 'statut') $align.=($align?' ':'').'center';
     	if (! empty($arrayfields['t.'.$key]['checked'])) print getTitleFieldOfList($val['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($align?'class="'.$align.'"':''), $sortfield, $sortorder, $align.' ')."\n";
-    	if ($key == 'role') $align.=($align?' ':'').'center';
+    	if ($key == 'role') $align.=($align?' ':'').'left';
     	if (! empty($arrayfields['sc.'.$key]['checked'])) {
     		print getTitleFieldOfList($arrayfields['sc.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 'sc.'.$key, '', $param, ($align?'class="'.$align.'"':''), $sortfield, $sortorder, $align.' ')."\n";
 	    }
