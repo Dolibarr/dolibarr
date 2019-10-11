@@ -416,7 +416,7 @@ if ($resql)
 		print '<td class="liste_titre nowraponall" align="center">';
 		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
 		print '<input class="flat valignmiddle width25" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
-		$formother->select_year($search_year?$search_year:-1, 'search_year', 1, 20, 5, 0, 0, '', 'witdhauto valignmiddle');
+		$formother->select_year($search_year?$search_year:-1, 'search_year', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
 		print '</td>';
 	}
 	// Date next generation
@@ -425,7 +425,7 @@ if ($resql)
 		print '<td class="liste_titre nowraponall" align="center">';
 		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day_date_when" value="'.$search_day_date_when.'">';
 		print '<input class="flat valignmiddle width25" type="text" size="1" maxlength="2" name="search_month_date_when" value="'.$search_month_date_when.'">';
-		$formother->select_year($search_year_date_when?$search_year_date_when:-1, 'search_year_date_when', 1, 20, 5, 0, 0, '', 'witdhauto valignmiddle');
+		$formother->select_year($search_year_date_when?$search_year_date_when:-1, 'search_year_date_when', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
 		print '</td>';
 	}
 	// Extra fields
