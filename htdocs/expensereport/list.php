@@ -281,7 +281,7 @@ $sql.= " d.date_debut, d.date_fin, d.date_create, d.tms as date_modif, d.date_va
 $sql.= " u.rowid as id_user, u.firstname, u.lastname, u.login, u.email, u.statut, u.photo";
 // Add fields from extrafields
 if (! empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
 }
 // Add fields from hooks
 $parameters=array();
