@@ -174,8 +174,8 @@ llxHeader();
 
 print load_fiche_titre($langs->trans("DelaysOfToleranceBeforeWarning"), '', 'title_setup');
 
-print $langs->transnoentities("DelaysOfToleranceDesc", img_warning());
-print " ".$langs->trans("OnlyActiveElementsAreShown", DOL_URL_ROOT.'/admin/modules.php')."<br>\n";
+print '<span class="opacitymedium">'.$langs->transnoentities("DelaysOfToleranceDesc", img_warning());
+print " ".$langs->trans("OnlyActiveElementsAreShown", DOL_URL_ROOT.'/admin/modules.php')."</span><br>\n";
 print "<br>\n";
 
 $countrynotdefined='<font class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</font>';
