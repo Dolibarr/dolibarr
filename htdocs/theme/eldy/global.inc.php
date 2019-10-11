@@ -794,7 +794,7 @@ table[summary="list_of_modules"] .fa-cog {
 .hideobject { display: none; }
 .minwidth50  { min-width: 50px; }
 /* rule for not too small screen only */
-@media only screen and (min-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 140 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)
+@media only screen and (min-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)
 {
 	.width25  { width: 25px; }
     .width50  { width: 50px; }
@@ -902,6 +902,17 @@ table[summary="list_of_modules"] .fa-cog {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize+3).'px' : $fontsize; ?> !important;
 	}
 
+	div#login_left, div#login_right {
+		min-width: 150px !important;
+		max-width: 200px !important;
+		padding-left: 5px !important;
+		padding-right: 5px !important;
+	}
+
+	div.login_block {
+		height: 64px !important;
+	}
+
 	.divmainbodylarge { margin-left: 20px !important; margin-right: 20px !important; }
 
     .tdoverflowonsmartphone {
@@ -923,11 +934,14 @@ table[summary="list_of_modules"] .fa-cog {
 		padding-bottom: 5px;
 	}
 
+	.login_table .tdinputlogin {
+		min-width: unset !important;
+	}
 	input, input[type=text], input[type=password], select, textarea     {
 		min-width: 20px;
     }
     .trinputlogin input[type=text], input[type=password] {
-		max-width: 180px;
+		max-width: 140px;
 	}
     .vmenu .searchform input {
 		max-width: 138px;	/* length of input text in the quick search box when using a smartphone and without dolidroid */
@@ -1097,7 +1111,7 @@ div.blockvmenulogo
 }
 .backgroundforcompanylogo {
     background-color: rgba(255,255,255,0.7);
-    border-radius: 5px;
+    border-radius: 4px;
 }
 .menulogocontainer img.mycompany {
     object-fit: contain;
@@ -1154,7 +1168,7 @@ div.vmenu, td.vmenu {
 .menuhider { display: none !important; }
 
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
-@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 140 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
+@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
 body.sidebar-collapse .side-nav {
 	display: none;
@@ -5747,7 +5761,7 @@ div.tabsElem a.tab {
 	}
 }
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
-@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 140 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
+@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
 {
 	li.tmenucompanylogo {
 		display: none;
@@ -5774,7 +5788,7 @@ div.tabsElem a.tab {
 	}
 }
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
-@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 140 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
+@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
 	.side-nav {
 		z-index: 200;

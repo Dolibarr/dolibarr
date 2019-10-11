@@ -465,6 +465,9 @@ class Societe extends CommonObject
 	public $logo;
 	public $logo_small;
 	public $logo_mini;
+	public $logo_squarred;
+	public $logo_squarred_small;
+	public $logo_squarred_mini;
 
 	public $array_options;
 
@@ -1072,6 +1075,7 @@ class Societe extends CommonObject
 			$sql .= ",barcode = ".(! empty($this->barcode)?"'".$this->db->escape($this->barcode)."'":"null");
 			$sql .= ",default_lang = ".(! empty($this->default_lang)?"'".$this->db->escape($this->default_lang)."'":"null");
 			$sql .= ",logo = ".(! empty($this->logo)?"'".$this->db->escape($this->logo)."'":"null");
+			$sql .= ",logo_squarred = ".(! empty($this->logo_squarred)?"'".$this->db->escape($this->logo_squarred)."'":"null");
 			$sql .= ",outstanding_limit= ".($this->outstanding_limit!=''?$this->outstanding_limit:'null');
 			$sql .= ",order_min_amount= ".($this->order_min_amount!=''?$this->order_min_amount:'null');
 			$sql .= ",supplier_order_min_amount= ".($this->supplier_order_min_amount!=''?$this->supplier_order_min_amount:'null');
@@ -1266,7 +1270,7 @@ class Societe extends CommonObject
 		$sql .= ', s.webservices_url, s.webservices_key';
 		$sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
 		$sql .= ', s.fk_departement as state_id, s.fk_pays as country_id, s.fk_stcomm, s.remise_supplier, s.mode_reglement, s.cond_reglement, s.fk_account, s.tva_assuj';
-		$sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo';
+		$sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo, s.logo_squarred';
 		$sql .= ', s.fk_shipping_method';
 		$sql .= ', s.outstanding_limit, s.import_key, s.canvas, s.fk_incoterms, s.location_incoterms';
 		$sql .= ', s.order_min_amount, s.supplier_order_min_amount';
@@ -1420,6 +1424,7 @@ class Societe extends CommonObject
 				$this->modelpdf = $obj->model_pdf;
 				$this->default_lang = $obj->default_lang;
 				$this->logo = $obj->logo;
+				$this->logo_squarred = $obj->logo_squarred;
 
 				$this->webservices_url = $obj->webservices_url;
 				$this->webservices_key = $obj->webservices_key;
@@ -2109,6 +2114,12 @@ class Societe extends CommonObject
 			$label.= '<div class="photointooltip">';
 			$label.= Form::showphoto('societe', $this, 0, 40, 0, 'photowithmargin', 'mini', 0);	// Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
 			$label.= '</div><div style="clear: both;"></div>';
+		}
+		elseif (! empty($this->logo_squarred) && class_exists('Form'))
+		{
+			/*$label.= '<div class="photointooltip">';
+			$label.= Form::showphoto('societe', $this, 0, 40, 0, 'photowithmargin', 'mini', 0);	// Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
+			$label.= '</div><div style="clear: both;"></div>';*/
 		}
 
 		$label.= '<div class="centpercent">';
@@ -3522,6 +3533,9 @@ class Societe extends CommonObject
 		$this->logo=empty($conf->global->MAIN_INFO_SOCIETE_LOGO)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO;
 		$this->logo_small=empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL;
 		$this->logo_mini=empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
+		$this->logo_squarred=empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED;
+		$this->logo_squarred_small=empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_SMALL)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_SMALL;
+		$this->logo_squarred_mini=empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI;
 
 		// Define if company use vat or not
 		$this->tva_assuj=$conf->global->FACTURE_TVAOPTION;

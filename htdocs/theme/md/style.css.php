@@ -1061,6 +1061,10 @@ table[summary="list_of_modules"] .fa-cog {
 		font-size: <?php print $fontsize+3; ?>px !important;
 	}
 
+	.login_vertical_align {
+    	padding-left: 0;
+    }
+
 	.divmainbodylarge { margin-left: 20px; margin-right: 20px; }
 
     .tdoverflowonsmartphone {
