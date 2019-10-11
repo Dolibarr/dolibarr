@@ -329,7 +329,7 @@ class Setup extends DolibarrApi
      * @param int       $page       Page number (starting from zero)
      * @param string    $type       To filter on type of event
      * @param string    $module     To filter on module events
-     * @param int       $active     Payment term is active or not {@min 0} {@max 1}
+     * @param int       $active     Event's type is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
      * @return array				List of events types
      *
@@ -383,6 +383,70 @@ class Setup extends DolibarrApi
 
         return $list;
     }
+    
+    /**
+     * Get the list of contacts types.
+     *
+     * @param string    $sortfield  Sort field
+     * @param string    $sortorder  Sort order
+     * @param int       $limit      Number of items per page
+     * @param int       $page       Page number (starting from zero)
+     * @param string    $type       To filter on type of contact
+     * @param string    $module     To filter on module contacts
+     * @param int       $active     Contact's type is active or not {@min 0} {@max 1}
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
+     * @return array	  List of Contacts types
+     *
+     * @url     GET dictionary/contact_types
+     *
+     * @throws RestException
+     */
+    public function getListOfContactTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $module = '', $active = 1, $sqlfilters = '')
+    {
+        $list = array();
+
+        $sql = "SELECT rowid, code, element as type, libelle as label, source, module, position";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as t";
+        $sql.= " WHERE t.active = ".$active;
+        if ($type) $sql.=" AND type LIKE '%" . $this->db->escape($type) . "%'";
+        if ($module)    $sql.=" AND t.module LIKE '%" . $this->db->escape($module) . "%'";
+        // Add sql filters
+        if ($sqlfilters)
+        {
+            if (! DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+        }
+
+
+        $sql.= $this->db->order($sortfield, $sortorder);
+
+        if ($limit) {
+            if ($page < 0) {
+                $page = 0;
+            }
+            $offset = $limit * $page;
+
+            $sql .= $this->db->plimit($limit, $offset);
+        }
+
+        $result = $this->db->query($sql);
+
+        if ($result) {
+            $num = $this->db->num_rows($result);
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            for ($i = 0; $i < $min; $i++) {
+                $list[] = $this->db->fetch_object($result);
+            }
+        } else {
+            throw new RestException(503, 'Error when retrieving list of contacts types : '.$this->db->lasterror());
+        }
+
+        return $list;
+    }
 
     /**
      * Get the list of civilities.
@@ -392,9 +456,9 @@ class Setup extends DolibarrApi
      * @param int       $limit      Number of items per page
      * @param int       $page       Page number (starting from zero)
      * @param string    $module     To filter on module events
-     * @param int       $active     Payment term is active or not {@min 0} {@max 1}
+     * @param int       $active     Civility is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
-     * @return array				List of civility types
+     * @return array		List of civility types
      *
      * @url     GET dictionary/civilities
      *
