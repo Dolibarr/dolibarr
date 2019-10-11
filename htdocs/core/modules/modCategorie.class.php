@@ -427,7 +427,7 @@ class modCategorie extends DolibarrModules
 		if ($conf->societe->enabled)     { $typeexample.=($typeexample?"/":"")."2=Customer-Prospect"; }
 		if ($conf->adherent->enabled)    { $typeexample.=($typeexample?"/":"")."3=Member"; }
         $this->import_examplevalues_array[$r] = array(
-            'ca.label'=>"Supplier Category",'ca.type'=>$typeexample,'ca.description'=>"Imported category",
+            'ca.label'=>"Supplier Category",'ca.type'=>$typeexample,'ca.description'=>"My Category description",
             'ca.fk_parent' => '0'
         );
 
