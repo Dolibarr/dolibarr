@@ -953,6 +953,7 @@ class BOM extends CommonObject
 	public function initAsSpecimen()
 	{
 	    $this->initAsSpecimenCommon();
+	    $this->ref = 'BOM-123';
 	    $this->date = $this->date_creation;
 	}
 

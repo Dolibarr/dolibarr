@@ -1195,7 +1195,7 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
  */
 function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $disablejmobile = 0, $disablenofollow = 0)
 {
-	global $db, $conf, $langs, $user, $hookmanager;
+	global $db, $conf, $langs, $user, $mysoc, $hookmanager;
 
 	top_httphead();
 
@@ -1224,15 +1224,17 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		print '<meta name="author" content="Dolibarr Development Team">'."\n";
 
 		// Favicon
-		$favicon = DOL_MAIN_URL_ROOT . '/theme/'.$conf->theme.'/img/favicon.ico';
+		$favicon = DOL_URL_ROOT.'/theme/common/dolibarr_logo_256x256.png';
+		if (! empty($mysoc->logo_squarred_mini)) $favicon = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
 		if (! empty($conf->global->MAIN_FAVICON_URL)) $favicon=$conf->global->MAIN_FAVICON_URL;
 		if (empty($conf->dol_use_jmobile)) print '<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>'."\n";	// Not required into an Android webview
+
 		//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.(DOL_URL_ROOT?DOL_URL_ROOT:'/').'">'."\n";
 		//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="copyright" title="GNU General Public License" href="https://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
 		//if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="author" title="Dolibarr Development Team" href="https://www.dolibarr.org">'."\n";
 
         // Mobile appli like icon
-        $manifest = DOL_MAIN_URL_ROOT . '/theme/'.$conf->theme.'/manifest.json.php';
+        $manifest = DOL_URL_ROOT . '/theme/'.$conf->theme.'/manifest.json.php';
         if(!empty($manifest)){
             print '<link rel="manifest" href="'.$manifest.'" />'."\n";
         }
@@ -1614,9 +1616,6 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		print '<div class="login_block usedropdown">'."\n";
 
 
-
-
-
 		// Add login user link
 		$toprightmenu.='<div class="login_block_user">';
 
@@ -1624,17 +1623,17 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		$mode=-1;
 		$toprightmenu.='<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
 
-        if(!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)){
+        if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)){
             // Add search dropdown
             $toprightmenu.= top_menu_search($user, $langs);
         }
 
-        if(!empty($conf->global->MAIN_USE_TOP_MENU_BOOKMARK_DROPDOWN)) {
+        if (!empty($conf->global->MAIN_USE_TOP_MENU_BOOKMARK_DROPDOWN)) {
             // Add bookmark dropdown
             $toprightmenu .= top_menu_bookmark($user, $langs);
         }
 
-        // add user dropdown
+        // Add user dropdown
 	    $toprightmenu.= top_menu_user($user, $langs);
 
 		$toprightmenu.='</div></div>';
@@ -1967,10 +1966,10 @@ function top_menu_bookmark(User $user, Translate $langs)
                   if( e.which === 77 && e.ctrlKey && e.shiftKey ){
                      console.log(\'control + shift + m : trigger open bookmark dropdown\');
                      openBookMarkDropDown();
-                  }      
+                  }
             });
-            
-                     
+
+
             var openBookMarkDropDown = function() {
                 event.preventDefault();
                 $("#topmenu-bookmark-dropdown").toggleClass("open");
@@ -2054,26 +2053,26 @@ function top_menu_search(User $user, Translate $langs)
     <!-- Code to show/hide the user drop-down -->
     <script>
     $( document ).ready(function() {
-        
+
         // prevent submiting form on press ENTER
         $("#top-global-search-input").keydown(function (e) {
             if (e.keyCode == 13) {
                 var inputs = $(this).parents("form").eq(0).find(":button");
-                if (inputs[inputs.index(this) + 1] != null) {                    
+                if (inputs[inputs.index(this) + 1] != null) {
                     inputs[inputs.index(this) + 1].focus();
                 }
                 e.preventDefault();
                 return false;
             }
         });
-        
-        
+
+
         // submit form action
         $(".dropdown-global-search-button-list .global-search-item").on("click", function(event) {
             $("#top-menu-action-bookmark").attr("action", $(this).data("target"));
             $("#top-menu-action-bookmark").submit();
         });
-        
+
         // close drop down
         $(document).on("click", function(event) {
             if (!$(event.target).closest("#topmenu-global-search-dropdown").length) {
@@ -2092,10 +2091,10 @@ function top_menu_search(User $user, Translate $langs)
               if( e.which === 70 && e.ctrlKey && e.shiftKey ){
                  console.log(\'control + shift + f : trigger open global-search dropdown\');
                  openGlobalSearchDropDown();
-              }      
+              }
         });
-        
-                 
+
+
         var openGlobalSearchDropDown = function() {
             event.preventDefault();
             $("#topmenu-global-search-dropdown").toggleClass("open");

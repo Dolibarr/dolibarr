@@ -71,7 +71,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if ($sortorder == "") $sortorder = "ASC";
-if ($sortfield == "") $sortfield = "t.rowid";
+if ($sortfield == "") $sortfield = "t.doc_date";
 
 if (empty($search_date_start) && empty($search_date_end)) {
 	$sql = 	"SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
@@ -376,8 +376,8 @@ while ($i < min($num, $limit))
 	print strlen(length_accounta($line->subledger_account)) == 0 ? '<td>' . $line->label_operation . '</td>' : '<td>' . $line->label_operation . '<br><span style="font-size:0.8em">(' . length_accounta($line->subledger_account) . ')</span></td>';
 
 
-	print '<td class="right">' . ($line->debit ? price($line->debit) :''). '</td>';
-	print '<td class="right">' . ($line->credit ? price($line->credit) : '') . '</td>';
+	print '<td class="nowrap right">' . ($line->debit ? price($line->debit) :''). '</td>';
+	print '<td class="nowrap right">' . ($line->credit ? price($line->credit) : '') . '</td>';
 
 	$accountingjournal = new AccountingJournal($db);
 	$result = $accountingjournal->fetch('', $line->code_journal);
@@ -397,24 +397,27 @@ while ($i < min($num, $limit))
 	$i++;
 }
 
-// Affiche un Sous-Total du dernier compte comptable affiché
+// Show sub-total of last shown account
 print '<tr class="liste_total">';
 print '<td class="right" colspan="5">'.$langs->trans("SubTotal").':</td><td class="nowrap right">'.price($sous_total_debit).'</td><td class="nowrap right">'.price($sous_total_credit).'</td>';
-print "<td>&nbsp;</td>\n";
-print "<td>&nbsp;</td>\n";
+print '<td class="nowraponall right">';
+print price($sous_total_debit - $sous_total_credit);
+print '</td>';
+print '<td></td>';
 print '</tr>';
 
 
-// Affiche le Total
+// Show total
 print '<tr class="liste_total">';
 print '<td class="right" colspan="5">'.$langs->trans("Total").':</td>';
-print '<td  class="right">';
+print '<td class="nowraponall right">';
 print price($total_debit);
 print '</td>';
-print '<td  class="right">';
+print '<td class="nowraponall right">';
 print price($total_credit);
 print '</td>';
-print '<td colspan="2"></td>';
+print '<td></td>';
+print '<td></td>';
 print '</tr>';
 
 print "</table>";
