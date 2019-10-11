@@ -7201,7 +7201,7 @@ class Form
 	 */
 	public static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '')
 	{
-		global $conf;
+		global $conf, $langs;
 
 		$entity = (! empty($object->entity) ? $object->entity : $conf->entity);
 		$id = (! empty($object->id) ? $object->id : $object->rowid);
@@ -7332,7 +7332,7 @@ class Form
 			{
 				if ($object->photo) $ret.="<br>\n";
 				$ret.='<table class="nobordernopadding centpercent">';
-				if ($object->photo) $ret.='<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$this->langs->trans("Delete").'<br><br></td></tr>';
+				if ($object->photo) $ret.='<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
 				$ret.='<tr><td class="tdoverflow"><input type="file" class="flat maxwidth200onsmartphone" name="photo" id="photoinput" accept="image/*"'.($capture?' capture="'.$capture.'"':'').'></td></tr>';
 				$ret.='</table>';
 			}
