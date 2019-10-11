@@ -1105,7 +1105,7 @@ div.blockvmenulogo
     margin-right: 8px;
     background-color: rgba(255,255,255,0.7);
     padding: 0;
-    border-radius: 5px;
+    border-radius: 4px;
     height: <?php echo $disableimages?'20':'32'; ?>px;
     /* width: 100px; */
     max-width: 100px;
