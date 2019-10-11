@@ -39,8 +39,11 @@ $langs->load("main");
 
 
 /**
- * Class BillOfMaterialsTest
- * @package Testbillofmaterials
+ * Class for PHPUnit tests
+ *
+ * @backupGlobals disabled
+ * @backupStaticAttributes enabled
+ * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class BOMTest extends PHPUnit\Framework\TestCase
 {
@@ -76,13 +79,6 @@ class BOMTest extends PHPUnit\Framework\TestCase
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
-		
-		if (! empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)) {
-			print "\n".__METHOD__." Company must be setup to have name-firstname in order 'Firstname Lastname'\n";
-			die();
-		}
-		if (! empty($conf->global->MAIN_MODULE_LDAP)) { print "\n".__METHOD__." module LDAP must be disabled.\n"; die(); }
-		if (! empty($conf->global->MAIN_MODULE_MAILMANSPIP)) { print "\n".__METHOD__." module MailmanSpip must be disabled.\n"; die(); }
 		
 		print __METHOD__."\n";
 	}
@@ -142,6 +138,6 @@ class BOMTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 
-		return $localobject;
+		return $result;
 	}
 }
