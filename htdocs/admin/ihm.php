@@ -408,7 +408,13 @@ if (1 == 1)	// Edit
 	// Background
 	print '<tr class="oddeven"><td><label for="imagebackground">'.$langs->trans("BackgroundImageLogin").' (png,jpg)</label></td><td colspan="2">';
 	print '<div class="centpercent inline-block">';
-	print '<input type="file" class="flat class=minwidth200" name="imagebackground" id="imagebackground">';
+	$disabled = '';
+	if (! empty($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND)) $disabled = ' disabled="disabled"';
+	print '<input type="file" class="flat class=minwidth200" name="imagebackground" id="imagebackground"'.$disabled.'>';
+	if ($disabled)
+	{
+		print '('.$langs->trans("DisabledByOptionADD_UNSPLASH_LOGIN_BACKGROUND").') ';
+	}
 	if (! empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
 		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removebackgroundlogin">'.img_delete($langs->trans("Delete")).'</a>';
 		if (file_exists($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_LOGIN_BACKGROUND)) {
