@@ -264,7 +264,7 @@ if ($action == 'edit')	// Edit
 
 	// Other
 	print '<table summary="otherparameters" class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
+	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Miscellaneous").'</td><td></td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
@@ -326,13 +326,6 @@ if ($action == 'edit')	// Edit
 	// Hide unauthorized button
 	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("ButtonHideUnauthorized").'</td><td>';
 	print $form->selectyesno('MAIN_BUTTON_HIDE_UNAUTHORIZED', isset($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)?$conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED:0, 1);
-	print '</td>';
-	print '<td width="20">&nbsp;</td>';
-	print '</tr>';
-
-	// Show logo
-	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("EnableShowLogo").'</td><td>';
-	print $form->selectyesno('MAIN_SHOW_LOGO', $conf->global->MAIN_SHOW_LOGO, 1);
 	print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
@@ -472,7 +465,7 @@ else	// Show
 
 	// Other
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Miscellaneous").'</td><td></td></tr>';
 
 	// Disable javascript/ajax
 	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DisableJavascript").'</td><td>';
@@ -495,13 +488,13 @@ else	// Show
 	print '</td>';
 	print '</tr>';
 
-	// DefaultWorkingDays
+	// Default Working Days
 	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DefaultWorkingDays").'</td><td>';
 	print isset($conf->global->MAIN_DEFAULT_WORKING_DAYS)?$conf->global->MAIN_DEFAULT_WORKING_DAYS:'1-5';
 	print '</td>';
 	print '</tr>';
 
-	// DefaultWorkingHours
+	// Default Working Hours
 	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DefaultWorkingHours").'</td><td>';
 	print isset($conf->global->MAIN_DEFAULT_WORKING_HOURS)?$conf->global->MAIN_DEFAULT_WORKING_HOURS:'9-18';
 	print '</td>';
@@ -518,10 +511,6 @@ else	// Show
 	print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("ButtonHideUnauthorized").'</td><td>';
 	print yn((isset($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)?$conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED:0), 1);
 	print '</td></tr>';
-
-	// Show logo
-	print '<tr class="oddeven"><td>'.$langs->trans("EnableShowLogo").'</td><td>' . yn($conf->global->MAIN_SHOW_LOGO) . '</td>';
-	print "</tr>";
 
 	// Hide version link
 	/*
