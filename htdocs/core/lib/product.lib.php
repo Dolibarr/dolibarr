@@ -527,9 +527,9 @@ function measuring_units_string($unit, $measuring_style = '', $scale = '', $use_
 }
 
 /**
- *	Transform a given unit into the square of that unit, if known
+ *	Transform a given unit scale into the square of that unit, if known.
  *
- *	@param	int		$unit            Unit key (-3,-2,-1,0,98,99...)
+ *	@param	int		$unit            Unit scale key (-3,-2,-1,0,98,99...)
  *	@return	int	   			         Squared unit key (-6,-4,-2,0,98,99...)
  * 	@see	formproduct->selectMeasuringUnits
  */
@@ -547,9 +547,9 @@ function measuring_units_squared($unit)
 
 
 /**
- *	Transform a given unit into the cube of that unit, if known
+ *	Transform a given unit scale into the cube of that unit, if known
  *
- *	@param	int		$unit            Unit key (-3,-2,-1,0,98,99...)
+ *	@param	int		$unit            Unit scale key (-3,-2,-1,0,98,99...)
  *	@return	int	   			         Cubed unit key (-9,-6,-3,0,88,89...)
  * 	@see	formproduct->selectMeasuringUnits
  */

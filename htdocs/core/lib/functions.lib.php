@@ -3032,7 +3032,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
         		'address', 'bank', 'building', 'cash-register', 'close_title', 'cubes', 'delete', 'dolly', 'edit', 'ellipsis-h', 'bookmark', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'note',
         		'object_list','object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
         		'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'stats',
-				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench',
+				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench', 'globe',
 				'jabber','skype','twitter','facebook','linkedin',
 				'chevron-left','chevron-right','chevron-down','chevron-top',
 				'home', 'companies', 'products', 'commercial', 'invoicing', 'accountancy', 'project', 'hrm', 'members', 'ticket', 'generic',
@@ -3130,11 +3130,11 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			    if (preg_match('/selected/', $pictowithouttext)) $facolor = '#888';
 				$marginleftonlyshort = 1;
 			}
-			elseif ($pictowithouttext == 'sign-out')     {
+			elseif ($pictowithouttext == 'sign-out') {
 				$fakey = 'fa-sign-out-alt';
 			    $marginleftonlyshort=0;
 			}
-			elseif ($pictowithouttext == 'unlink')     {
+			elseif ($pictowithouttext == 'unlink') {
 				$fakey = 'fa-chain-broken';
 				$facolor = '#555';
 			}

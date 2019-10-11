@@ -6,6 +6,11 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
  * Component: Info Box
  * -------------------
  */
+
+span.info-box-icon-text {	/* hide box text number due to problems */
+    display: none;
+}
+
 .info-box {
 	display: block;
 	min-height: 90px;

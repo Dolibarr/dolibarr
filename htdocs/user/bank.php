@@ -54,6 +54,7 @@ $ok=false;
 if ($user->id == $id) $ok=true; // A user can always read its own card
 if (! empty($user->rights->salaries->read)) $ok=true;
 if (! empty($user->rights->hrm->read)) $ok=true;
+if (! empty($user->rights->expensereport->lire) && ($user->id == $object->id || $user->rights->expensereport->readall)) $ok=true;
 if (! $ok)
 {
 	accessforbidden();
