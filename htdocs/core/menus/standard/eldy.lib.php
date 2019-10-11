@@ -480,6 +480,12 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	{
 		$mysoc->logo_mini=(empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI);
 		$mysoc->logo_squarred_mini=(empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI);
+
+		$logoContainerAdditionalClass = 'backgroundforcompanylogo';
+		if(!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_NO_BACKGROUND)){
+			$logoContainerAdditionalClass = '';
+		}
+
 		if (! empty($mysoc->logo_squarred_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini))
 		{
 			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
@@ -497,7 +503,8 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		print "\n".'<!-- Show logo on menu -->'."\n";
 		print_start_menu_entry('companylogo', 'class="tmenu tmenucompanylogo"', 1);
 
-		print '<div class="center backgroundforcompanylogo"><img class="mycompany" title="'.dol_escape_htmltag($title).'" alt="" src="'.$urllogo.'" style="max-width: 100px"></div>'."\n";
+
+		print '<div class="center '.$logoContainerAdditionalClass.' menu-logo-container"><img class="mycompany" title="'.dol_escape_htmltag($title).'" alt="" src="'.$urllogo.'" style="max-width: 100px"></div>'."\n";
 
 		print_end_menu_entry(4);
 	}
