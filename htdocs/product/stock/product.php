@@ -764,7 +764,7 @@ if (empty($reshook))
 
 		if ($user->rights->stock->mouvement->creer)
 		{
-			if (! $variants) {
+			if (! $variants || ! empty($conf->global->VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT)) {
 				print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=correction">' . $langs->trans("CorrectStock") . '</a>';
 			}
 			else
@@ -780,7 +780,7 @@ if (empty($reshook))
 		//if (($user->rights->stock->mouvement->creer) && ! $object->hasbatch())
 		if ($user->rights->stock->mouvement->creer)
 		{
-			if (! $variants) {
+			if (! $variants || ! empty($conf->global->VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT)) {
 				print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=transfert">' . $langs->trans("TransferStock") . '</a>';
 			}
 			else
