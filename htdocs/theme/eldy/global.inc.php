@@ -1293,6 +1293,9 @@ div.nopadding {
 .pictowarning {
     vertical-align: text-bottom;
 }
+.pictomodule {
+	width: 14px;
+}
 .fiche .arearef img.pictoedit, .fiche .arearef span.pictoedit,
 .fiche .fichecenter img.pictoedit, .fiche .fichecenter span.pictoedit,
 .tagtdnote span.pictoedit {
