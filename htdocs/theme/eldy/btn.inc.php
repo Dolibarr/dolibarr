@@ -61,7 +61,7 @@ span.butAction, span.butActionDelete {
     cursor: pointer;
 }
 
-.tableforfieldcreate a.butActionNew>span.fa-plus-circle, a.butActionNew>span.fa-plus-circle:hover,
+.tableforfieldcreate a.butActionNew>span.fa-plus-circle, .tableforfieldcreate a.butActionNew>span.fa-plus-circle:hover,
 span.butActionNew>span.fa-plus-circle, span.butActionNew>span.fa-plus-circle:hover,
 a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-circle:hover,
 span.butActionNewRefused>span.fa-plus-circle, span.butActionNewRefused>span.fa-plus-circle:hover,
