@@ -548,7 +548,7 @@ class Mailing extends CommonObject
 		$result = '';
 		$companylink = '';
 
-		$label = '<u>' . $langs->trans("ShowEmailing") . '</u>';
+		$label = '<u>' . $langs->trans("ShowEMailing") . '</u>';
 		$label.= '<br>';
 		$label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
@@ -567,7 +567,7 @@ class Mailing extends CommonObject
 		{
 			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 			{
-				$label=$langs->trans("ShowEmailing");
+				$label=$langs->trans("ShowEMailing");
 				$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
