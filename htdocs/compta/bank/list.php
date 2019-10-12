@@ -505,8 +505,13 @@ foreach ($accounts as $key=>$type)
             if ($result<0) {
                 setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
             } else {
-                print $result->nbtodo;
-                if ($result->nbtodolate) print ' &nbsp; ('.$result->nbtodolate.img_warning($langs->trans("Late")).')';
+                print '<span class="badge badge-info classfortooltip" title="'.dol_htmlentities($langs->trans("TransactionsToConciliate")).'">'.$result->nbtodo.'</span>';
+                if ($result->nbtodolate) {
+                    print '&nbsp;';
+                    print '<span title="'.dol_htmlentities($langs->trans("Late")).'" class="classfortooltip badge badge-danger">';
+                    print '<i class="fa fa-exclamation-triangle"></i> '.$result->nbtodolate;
+                    print '</span>';
+                }
             }
 		}
 		else print $langs->trans("FeatureDisabled");
