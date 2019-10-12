@@ -250,6 +250,7 @@ if (empty($reshook))
     if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->societe->contact->supprimer)
     {
         $result=$object->fetch($id);
+		$object->oldcopy = clone $object;
 
         $object->old_lastname      = GETPOST("old_lastname");
         $object->old_firstname = GETPOST("old_firstname");
