@@ -77,6 +77,19 @@ span.butAction, span.butActionDelete {
 a.butActionNew>span.fa-plus-circle { padding-left: 6px; font-size: 1.5em; }
 a.butActionNewRefused>span.fa-plus-circle { padding-left: 6px; font-size: 1.5em; }
 
+.tableforfieldcreate a.butActionNew>span.fa-plus-circle, .tableforfieldcreate a.butActionNew>span.fa-plus-circle:hover,
+span.butActionNew>span.fa-plus-circle, span.butActionNew>span.fa-plus-circle:hover,
+a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-circle:hover,
+span.butActionNewRefused>span.fa-plus-circle, span.butActionNewRefused>span.fa-plus-circle:hover,
+a.butActionNew>span.fa-list-alt, a.butActionNew>span.fa-list-alt:hover,
+span.butActionNew>span.fa-list-alt, span.butActionNew>span.fa-list-alt:hover,
+a.butActionNewRefused>span.fa-list-alt, a.butActionNewRefused>span.fa-list-alt:hover,
+span.butActionNewRefused>span.fa-list-alt, span.butActionNewRefused>span.fa-list-alt:hover
+{
+	font-size: 1em;
+	padding-left: 0px;
+}
+
 .button, .butAction {
 	color: #ffffff !important;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);

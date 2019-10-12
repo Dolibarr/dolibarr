@@ -63,7 +63,7 @@ abstract class CommonDocGenerator
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     * Define array with couple subtitution key => subtitution value
+     * Define array with couple substitution key => substitution value
      *
      * @param   User		$user           User
      * @param   Translate	$outputlangs    Language object for output
@@ -101,7 +101,7 @@ abstract class CommonDocGenerator
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     * Define array with couple subtitution key => subtitution value
+     * Define array with couple substitution key => substitution value
      *
      * @param   Societe		$mysoc			Object thirdparty
      * @param   Translate	$outputlangs    Language object for output
@@ -161,7 +161,7 @@ abstract class CommonDocGenerator
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     * Define array with couple subtitution key => subtitution value
+     * Define array with couple substitution key => substitution value
      *
      * @param	Societe		$object			Object
      * @param   Translate	$outputlangs    Language object for output
@@ -242,7 +242,7 @@ abstract class CommonDocGenerator
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Define array with couple subtitution key => subtitution value
+	 * Define array with couple substitution key => substitution value
 	 *
 	 * @param	Contact 	$object        	contact
 	 * @param	Translate 	$outputlangs   	object for output
@@ -723,7 +723,7 @@ abstract class CommonDocGenerator
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     * Define array with couple subtitution key => subtitution value
+     * Define array with couple substitution key => substitution value
      *
      * @param   Object		$object    		Dolibarr Object
      * @param   Translate	$outputlangs    Language object for output

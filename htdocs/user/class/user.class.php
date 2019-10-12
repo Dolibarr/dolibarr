@@ -264,9 +264,10 @@ class User extends CommonObject
 	 *	@param  string	$sid				If defined, sid to used for search
 	 * 	@param	int		$loadpersonalconf	1=also load personal conf of user (in $user->conf->xxx), 0=do not load personal conf.
 	 *  @param  int     $entity             If a value is >= 0, we force the search on a specific entity. If -1, means search depens on default setup.
+	 *  @param	int		$email       		If defined, email to used for search
 	 * 	@return	int							<0 if KO, 0 not found, >0 if OK
 	 */
-	public function fetch($id = '', $login = '', $sid = '', $loadpersonalconf = 0, $entity = -1)
+	public function fetch($id = '', $login = '', $sid = '', $loadpersonalconf = 0, $entity = -1, $email = '')
 	{
 		global $conf, $user;
 
@@ -331,6 +332,10 @@ class User extends CommonObject
 		elseif ($login)
 		{
 			$sql.= " AND u.login = '".$this->db->escape($login)."'";
+		}
+		elseif ($email)
+		{
+			$sql.= " AND u.email = '".$this->db->escape($email)."'";
 		}
 		else
 		{

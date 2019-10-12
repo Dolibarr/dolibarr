@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
  */
 
 /**
- *   	\file       htdocs/product/inventory/card.php
+ *   	\file       htdocs/product/inventory/inventory.php
  *		\ingroup    inventory
- *		\brief      Inventory card
+ *		\brief      Tabe to enter counting
  */
 
 require '../../main.inc.php';
@@ -145,80 +145,13 @@ jQuery(document).ready(function() {
 </script>';
 
 
-// Part to create
-if ($action == 'create')
-{
-	print load_fiche_titre($langs->trans("NewInventory"), '', 'products');
-
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="add">';
-	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-
-	dol_fiche_head(array(), '');
-
-	print '<table class="border centpercent tableforfieldcreate">'."\n";
-
-	// Common attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_add.tpl.php';
-
-	// Other attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
-
-	print '</table>'."\n";
-
-	dol_fiche_end();
-
-	print '<div class="center">';
-	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
-	print '&nbsp; ';
-	print '<input type="'.($backtopage?"submit":"button").'" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage?'':' onclick="javascript:history.go(-1)"').'>';	// Cancel for create does not post form if we don't know the backtopage
-	print '</div>';
-
-	print '</form>';
-
-	dol_set_focus('input[name="ref"]');
-}
-
-// Part to edit record
-if (($id || $ref) && $action == 'edit')
-{
-	print load_fiche_titre($langs->trans("Inventory"), '', 'products');
-
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="update">';
-	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-	print '<input type="hidden" name="id" value="'.$object->id.'">';
-
-	dol_fiche_head();
-
-	print '<table class="border centpercent tableforfieldcreate">'."\n";
-
-	// Common attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_edit.tpl.php';
-
-	// Other attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_edit.tpl.php';
-
-	print '</table>';
-
-	dol_fiche_end();
-
-	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
-
-	print '</form>';
-}
-
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
     $res = $object->fetch_optionals();
 
     $head = inventoryPrepareHead($object);
-	dol_fiche_head($head, 'card', $langs->trans("Inventory"), -1, 'stock');
+	dol_fiche_head($head, 'inventory', $langs->trans("Inventory"), -1, 'stock');
 
 	$formconfirm = '';
 
@@ -328,94 +261,36 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
     	if (empty($reshook))
     	{
-    	    // Send
-            print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
-
-        	if ($permissiontoadd)
+    		if ($object->status == Inventory::STATUS_DRAFT)
     		{
-    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
-    		}
-    		else
-    		{
-    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
-    		}
-
-    		if ($permissiontoadd)
-    		{
-    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Validate").'</a>'."\n";
-    		}
-    		else
-    		{
-    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Validate').'</a>'."\n";
+	        	if ($permissiontoadd)
+	    		{
+	    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Validate").'</a>'."\n";
+	    		}
+	    		else
+	    		{
+	    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Validate').'</a>'."\n";
+	    		}
     		}
 
-    		if ($permissiontodelete)
+    		if ($object->status == Inventory::STATUS_VALIDATED)
     		{
-    			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>'."\n";
-    		}
-    		else
-    		{
-    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Delete').'</a>'."\n";
+	    		if ($permissiontoadd)
+	    		{
+	    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("RecordVerb").'</a>'."\n";
+	    		}
+	    		else
+	    		{
+	    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('RecordVerb').'</a>'."\n";
+	    		}
     		}
     	}
     	print '</div>'."\n";
 	}
 
 
-	// Select mail models is same action as presend
-	if (GETPOST('modelselected')) {
-	    $action = 'presend';
-	}
+	include DOL_DOCUMENT_ROOT.'/product/inventory/tpl/inventory.tpl.php';
 
-	if ($action != 'presend')
-	{
-	    print '<div class="fichecenter"><div class="fichehalfleft">';
-	    print '<a name="builddoc"></a>'; // ancre
-
-	    // Documents
-	    /*$objref = dol_sanitizeFileName($object->ref);
-	     $relativepath = $comref . '/' . $comref . '.pdf';
-	     $filedir = $conf->mymodule->dir_output . '/' . $objref;
-	     $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-	     $genallowed = $user->rights->mymodule->read;	// If you can read, you can build the PDF to read content
-	     $delallowed = $user->rights->mymodule->create;	// If you can create/edit, you can remove a file on card
-	     print $formfile->showdocuments('mymodule', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
-	     */
-
-	    // Show links to link elements
-	    $linktoelem = $form->showLinkToObjectBlock($object, null, array('inventory'));
-	    $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-
-
-	    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-
-	    $MAXEVENT = 10;
-
-	    $morehtmlright = '<a href="'.dol_buildpath('/product/inventory/inventory_info.php', 1).'?id='.$object->id.'">';
-	    $morehtmlright.= $langs->trans("SeeAll");
-	    $morehtmlright.= '</a>';
-
-	    // List of actions on element
-	    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
-	    $formactions = new FormActions($db);
-	    $somethingshown = $formactions->showactions($object, 'inventory', $socid, 1, '', $MAXEVENT, '', $morehtmlright);
-
-	    print '</div></div></div>';
-	}
-
-
-	//Select mail models is same action as presend
-	/*
-	if (GETPOST('modelselected')) $action = 'presend';
-
-	// Presend form
-	$modelmail='inventory';
-	$defaulttopic='InformationMessage';
-	$diroutput = $conf->product->dir_output.'/inventory';
-	$trackid = 'stockinv'.$object->id;
-
-	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
-	*/
 }
 
 // End of page
