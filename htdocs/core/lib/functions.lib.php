@@ -3135,7 +3135,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			    $marginleftonlyshort=0;
 			}
 			elseif ($pictowithouttext == 'unlink') {
-				$fakey = 'fa-chain-broken';
+				$fakey = 'fa-unlink';
 				$facolor = '#555';
 			}
 			elseif ($pictowithouttext == 'playdisabled') {
@@ -3169,6 +3169,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				//$facolor = '#444';
 				$marginleftonlyshort=0;
 			}
+
 			//this snippet only needed since function img_edit accepts only one additional parameter: no separate one for css only.
             //class/style need to be extracted to avoid duplicate class/style validation errors when $moreatt is added to the end of the attributes
             $reg=array();
