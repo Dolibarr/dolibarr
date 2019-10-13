@@ -126,7 +126,7 @@ if (GETPOST('clearlist', 'int'))
 
 if (GETPOST('exportcsv', 'int'))
 {
-	$completefilename = 'targets_emailing'.$object->id.'_'.dol_print_date(dol_now(), 'dayhourlog').'csv';
+	$completefilename = 'targets_emailing'.$object->id.'_'.dol_print_date(dol_now(), 'dayhourlog').'.csv';
 	header('Content-Type: text/csv');
 	header('Content-Disposition: attachment;filename=' . $completefilename);
 
