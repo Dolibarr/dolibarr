@@ -817,6 +817,7 @@ if (empty($reshook))
     if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->societe->supprimer)
     {
         $object->fetch($socid);
+        $object->oldcopy = clone $object;
         $result = $object->delete($socid, $user);
 
         if ($result > 0)
