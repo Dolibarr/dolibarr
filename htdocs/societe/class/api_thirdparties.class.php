@@ -488,7 +488,7 @@ class Thirdparties extends DolibarrApi
 		if( ! DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-        $this->company->oldcopy = $this->company;
+        $this->company->oldcopy = clone $this->company;
 		return $this->company->delete($id);
 	}
 
