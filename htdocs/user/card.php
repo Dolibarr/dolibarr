@@ -156,6 +156,7 @@ if (empty($reshook)) {
 
 			$object = new User($db);
 			$object->fetch($id);
+            $object->oldcopy = clone $object;
 
 			$result = $object->delete($user);
 			if ($result < 0) {
