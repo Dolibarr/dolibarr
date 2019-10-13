@@ -418,7 +418,7 @@ class Thirdparties extends DolibarrApi
 		// External modules should update their ones too
 		if (!$errors)
 		{
-$reshook = $hookmanager->executeHooks('replaceThirdparty', array(
+            $reshook = $hookmanager->executeHooks('replaceThirdparty', array(
 				'soc_origin' => $soc_origin->id,
 				'soc_dest' => $object->id
 			), $soc_dest, $action);
@@ -488,6 +488,7 @@ $reshook = $hookmanager->executeHooks('replaceThirdparty', array(
 		if( ! DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+        $this->company->oldcopy = $this->company;
 		return $this->company->delete($id);
 	}
 
