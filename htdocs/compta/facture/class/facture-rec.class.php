@@ -1245,7 +1245,7 @@ class FactureRec extends CommonInvoice
 			$label .= '<br><b>'.$langs->trans('Ref') . ':</b> ' . $this->ref;
 		}
 		if ($this->frequency > 0) {
-			$label .= '<br><b>'.$langs->trans('Frequency') . ':</b> ' . $this->frequency.$this->unit_frequency;
+			$label .= '<br><b>'.$langs->trans('Frequency') . ':</b> ' . $langs->trans('FrequencyPer_'.$this->unit_frequency, $this->frequency);
 		}
 		if (! empty($this->date_last_gen)) {
 			$label .= '<br><b>'.$langs->trans('DateLastGeneration') . ':</b> ' . dol_print_date($this->date_last_gen, 'dayhour');
