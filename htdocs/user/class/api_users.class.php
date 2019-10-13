@@ -350,7 +350,7 @@ class Users extends DolibarrApi
 		{
 			throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
-
+        $this->useraccount->oldcopy = clone $this->useraccount;
 		return $this->useraccount->delete(DolibarrApiAccess::$user);
 	}
 
