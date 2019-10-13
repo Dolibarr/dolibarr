@@ -270,8 +270,6 @@ class modSociete extends DolibarrModules
 			'st.code'=>'ProspectStatus','payterm.libelle'=>'PaymentConditions','paymode.libelle'=>'PaymentMode'
 		);
 		if (! empty($conf->global->SOCIETE_USEPREFIX)) $this->export_fields_array[$r]['s.prefix']='Prefix';
-
-		if (! empty($conf->global->SOCIETE_USEPREFIX)) $this->export_fields_array[$r]['s.prefix']='Prefix';
 		if (! empty($conf->global->PRODUIT_MULTIPRICES)) $this->export_fields_array[$r]['s.price_level']='PriceLevel';
 		// Add multicompany field
 		if (! empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED))
