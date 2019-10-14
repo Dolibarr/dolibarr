@@ -227,10 +227,7 @@ class Conf
             $filesList = explode(":", $this->global->LOCAL_CONSTS_FILES);
             foreach ($filesList as $file) {
                 $file=dol_sanitizeFileName($file);
-                include_once DOL_DOCUMENT_ROOT . "/".$file."/".$file."_consts.php";
-                foreach ($file2bddconsts as $key=>$value) {
-                    $this->global->$key=$value;
-                }
+                include_once DOL_DOCUMENT_ROOT . "/".$file."/".$file."_consts.php";	// This file must set $this->global->XXX vars.
             }
         }
 
@@ -668,6 +665,8 @@ class Conf
 		}
 
 		if (! isset($this->global->MAIN_EXTRAFIELDS_IN_ONE_TD)) $this->global->MAIN_EXTRAFIELDS_IN_ONE_TD = 1;
+
+		if (! isset($this->global->MAIN_USE_OLD_TITLE_BUTTON)) $this->global->MAIN_USE_OLD_TITLE_BUTTON = 1;
 
 		if (empty($this->global->MAIN_MODULE_DOLISTORE_API_SRV)) $this->global->MAIN_MODULE_DOLISTORE_API_SRV='https://www.dolistore.com';
 		if (empty($this->global->MAIN_MODULE_DOLISTORE_API_KEY)) $this->global->MAIN_MODULE_DOLISTORE_API_KEY='dolistorecatalogpublickey1234567';
