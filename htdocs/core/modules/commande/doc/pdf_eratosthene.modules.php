@@ -430,7 +430,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 				    {
 				        $pdf->rollbackTransaction(true);
 
-				        // prepar pages to receive notes
+				        // prepare pages to receive notes
 				        while ($pagenb < $pageposafternote) {
 				            $pdf->AddPage();
 				            $pagenb++;
@@ -464,7 +464,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 				        }
 
 
-				        // apply note frame to previus pages
+				        // apply note frame to previous pages
 				        $i = $pageposbeforenote;
 				        while ($i < $pageposafternote) {
 				            $pdf->setPage($i);
@@ -526,7 +526,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 				}
 
 
-				// Use new auto collum system
+				// Use new auto column system
 				$this->prepareArrayColumnField($object, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
 				// tab simulation to know line height
@@ -636,7 +636,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 					}
 
-					$pdf->SetFont('', '', $default_font_size - 1);   // On repositionne la police par defaut
+					$pdf->SetFont('', '', $default_font_size - 1);   // We reposition the default font
 
 					// VAT Rate
 					if ($this->getColumnStatus('vat'))
@@ -701,7 +701,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 					$reshook=$hookmanager->executeHooks('printPDFline', $parameters, $this);    // Note that $object may have been modified by hook
 
 
-					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
+					// Collection of totals by value of vat in $this->vat["rate"] = total_tva
 					if ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) $tvaligne=$object->lines[$i]->multicurrency_total_tva;
 					else $tvaligne=$object->lines[$i]->total_tva;
 
