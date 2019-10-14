@@ -249,48 +249,55 @@ class Products extends DolibarrApi
 
         $result = $this->product->update($id, DolibarrApiAccess::$user, 1, 'update');
 
-        // If price mode is 1 price per product
-        if ($result > 0 && ! empty($conf->global->PRODUCT_PRICE_UNIQ)) {
-            // We update price only if it was changed
-            $pricemodified = false;
-            if ($this->product->price_base_type != $oldproduct->price_base_type) { $pricemodified = true;
-            } else
-            {
-                if ($this->product->tva_tx != $oldproduct->tva_tx) { $pricemodified = true;
-                }
-                if ($this->product->tva_npr != $oldproduct->tva_npr) { $pricemodified = true;
-                }
-                if ($this->product->default_vat_code != $oldproduct->default_vat_code) { $pricemodified = true;
-                }
+        if ($result > 0) {
+        	// If price mode is 1 price per product
+			if (! empty($conf->global->PRODUCT_PRICE_UNIQ)) {
+				// We update price only if it was changed
+				$pricemodified = false;
+				if ($this->product->price_base_type != $oldproduct->price_base_type) { $pricemodified = true;
+				} else
+				{
+					if ($this->product->tva_tx != $oldproduct->tva_tx) { $pricemodified = true;
+					}
+					if ($this->product->tva_npr != $oldproduct->tva_npr) { $pricemodified = true;
+					}
+					if ($this->product->default_vat_code != $oldproduct->default_vat_code) { $pricemodified = true;
+					}
 
-                if ($this->product->price_base_type == 'TTC') {
-                    if ($this->product->price_ttc != $oldproduct->price_ttc) { $pricemodified = true;
-                    }
-                    if ($this->product->price_min_ttc != $oldproduct->price_min_ttc) { $pricemodified = true;
-                    }
-                }
-                else
-                {
-                    if ($this->product->price != $oldproduct->price) { $pricemodified = true;
-                    }
-                    if ($this->product->price_min != $oldproduct->price_min) { $pricemodified = true;
-                    }
-                }
-            }
+					if ($this->product->price_base_type == 'TTC') {
+						if ($this->product->price_ttc != $oldproduct->price_ttc) { $pricemodified = true;
+						}
+						if ($this->product->price_min_ttc != $oldproduct->price_min_ttc) { $pricemodified = true;
+						}
+					}
+					else
+					{
+						if ($this->product->price != $oldproduct->price) { $pricemodified = true;
+						}
+						if ($this->product->price_min != $oldproduct->price_min) { $pricemodified = true;
+						}
+					}
+				}
 
-            if ($pricemodified) {
-                $newvat = $this->product->tva_tx;
-                $newnpr = $this->product->tva_npr;
-                $newvatsrccode = $this->product->default_vat_code;
+				if ($pricemodified) {
+					$newvat = $this->product->tva_tx;
+					$newnpr = $this->product->tva_npr;
+					$newvatsrccode = $this->product->default_vat_code;
 
-                $newprice = $this->product->price;
-                $newpricemin = $this->product->price_min;
-                if ($this->product->price_base_type == 'TTC') {
-                    $newprice = $this->product->price_ttc;
-                    $newpricemin = $this->product->price_min_ttc;
-                }
+					$newprice = $this->product->price;
+					$newpricemin = $this->product->price_min;
+					if ($this->product->price_base_type == 'TTC') {
+						$newprice = $this->product->price_ttc;
+						$newpricemin = $this->product->price_min_ttc;
+					}
 
-                $result = $this->product->updatePrice($newprice, $this->product->price_base_type, DolibarrApiAccess::$user, $newvat, $newpricemin, 0, $newnpr, 0, 0, array(), $newvatsrccode);
+					$result = $this->product->updatePrice($newprice, $this->product->price_base_type, DolibarrApiAccess::$user, $newvat, $newpricemin, 0, $newnpr, 0, 0, array(), $newvatsrccode);
+				}
+			}
+			
+        	// Update product type
+            if ($this->product->type != $oldproduct->type && is_numeric($this->product->type) && in_array((int) $this->product->type, [0,1])) {
+                $this->product->setValueFrom('fk_product_type', $this->product->type, '', null, 'text', '', DolibarrApiAccess::$user, 'PRODUCT_MODIFY');
             }
         }
 
