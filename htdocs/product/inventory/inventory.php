@@ -288,9 +288,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	print '</div>'."\n";
 	}
 
-
 	include DOL_DOCUMENT_ROOT.'/product/inventory/tpl/inventory.tpl.php';
-
 }
 
 // End of page
