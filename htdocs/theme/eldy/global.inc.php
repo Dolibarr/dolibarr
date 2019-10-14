@@ -785,6 +785,9 @@ table[summary="list_of_modules"] .fa-cog {
     font-size: 1.5em;
 }
 
+.linkedcol-element {
+	min-width: 100px;
+}
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -865,6 +868,10 @@ table[summary="list_of_modules"] .fa-cog {
     .minwidth300imp { min-width: 300px !important; }
     .minwidth400imp { min-width: 300px !important; }
     .minwidth500imp { min-width: 300px !important; }
+
+    .linkedcol-element {
+		min-width: unset;
+	}
 }
 
 /* Force values for small screen 1000 */
