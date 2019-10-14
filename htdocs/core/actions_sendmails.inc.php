@@ -468,7 +468,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					$mesg='<div class="error">';
 					if ($mailfile->error)
 					{
-						$mesg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
+						$mesg.=$langs->transnoentities('ErrorFailedToSendMail',dol_escape_htmltag($from),dol_escape_htmltag($sendto));
 						$mesg.='<br>'.$mailfile->error;
 					}
 					else
