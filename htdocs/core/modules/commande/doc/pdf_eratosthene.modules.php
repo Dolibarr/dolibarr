@@ -701,7 +701,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 					$reshook=$hookmanager->executeHooks('printPDFline', $parameters, $this);    // Note that $object may have been modified by hook
 
 
-					// Collection of totals by value of vat in $this->vat["rate"] = total_tva
+					// Collection of totals by value of vat in $this->tva["rate"] = total_tva
 					if ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) $tvaligne=$object->lines[$i]->multicurrency_total_tva;
 					else $tvaligne=$object->lines[$i]->total_tva;
 
