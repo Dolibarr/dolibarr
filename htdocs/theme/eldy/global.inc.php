@@ -1102,7 +1102,7 @@ div.blockvmenulogo
 .menulogocontainer {
     margin: <?php echo $disableimages?'0':'6'; ?>px;
     margin-left: 8px;
-    margin-right: 2px;
+    margin-right: 4px;
     padding: 0;
     height: <?php echo $disableimages?'20':'32'; ?>px;
     /* width: 100px; */
