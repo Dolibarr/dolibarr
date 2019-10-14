@@ -1073,6 +1073,7 @@ if (! $variants) {
 			print '<tr class="liste_total">';
 			print '<td colspan="4" class="left">'.$langs->trans("Total").'</td>';
 			print '<td class="right">'.$stock_total.'</td>';
+            print '<td></td>';
 			print '</tr>';
 		}
 		else
