@@ -218,7 +218,7 @@ if (empty($user->societe_id))
 	                'askprice',
 	                'projects',
 	                'expensereports',
-                    'holidays',
+                    'holiday',
 					'donations'
 	    );
 	    // Dashboard Icon lines
