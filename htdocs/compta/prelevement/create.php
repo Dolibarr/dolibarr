@@ -142,7 +142,7 @@ if ($nb < 0 || $nb1 < 0 || $nb11 < 0)
 {
 	dol_print_error($bprev->error);
 }
-print '<table class="border" width="100%">';
+print '<table class="border centpercent tableforfield">';
 
 print '<tr><td class="titlefield">'.$langs->trans("NbOfInvoiceToWithdraw").'</td>';
 print '<td>';
@@ -161,6 +161,7 @@ print '</div>';
 if ($mesg) print $mesg;
 
 print "<div class=\"tabsAction\">\n";
+
 print '<form action="' . $_SERVER['PHP_SELF'] . '?action=create" method="POST">';
 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 if ($nb) {
@@ -193,6 +194,7 @@ else
 }
 
 print "</form>\n";
+
 print "</div>\n";
 print '<br>';
 
@@ -245,7 +247,7 @@ if ($resql)
 
     print_barre_liste($langs->trans("InvoiceWaitingWithdraw"), $page, $_SERVER['PHP_SELF'], $param, '', '', '', $num, $nbtotalofrecords, 'invoicing', 0, '', '', $limit);
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Invoice").'</td>';
 	print '<td>'.$langs->trans("ThirdParty").'</td>';
@@ -299,7 +301,10 @@ if ($resql)
 			$i++;
 		}
 	}
-	else print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+	else
+	{
+		print '<tr class="oddeven"><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+	}
 	print "</table>";
 	print "</form>";
 	print "<br>\n";
