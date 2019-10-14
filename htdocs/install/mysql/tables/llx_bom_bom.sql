@@ -26,6 +26,7 @@ CREATE TABLE llx_bom_bom(
 	fk_product integer, 
 	qty double(24,8),
 	efficiency double(8,4) DEFAULT 1,
+	duration double(8,4) DEFAULT NULL,
 	date_creation datetime NOT NULL,
 	date_valid datetime,
 	tms timestamp, 

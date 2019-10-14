@@ -2579,8 +2579,7 @@ abstract class CommonObject
 	public function updateRangOfLine($rowid, $rang)
 	{
 		$fieldposition = 'rang';	// @TODO Rename 'rang' into 'position'
-		if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction'))) $fieldposition = 'position';
-		if (in_array($this->table_element_line, array('bom_bomline'))) $fieldposition = 'position';
+		if (in_array($this->table_element_line, array('bom_bomline', 'ecm_files', 'emailcollector_emailcollectoraction'))) $fieldposition = 'position';
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.$rang;
 		$sql.= ' WHERE rowid = '.$rowid;
@@ -2886,11 +2885,11 @@ abstract class CommonObject
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_PROPOSAL";
 		elseif ($this->element == 'commande' || $this->element == 'order')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_ORDER";
-		elseif ($this->element == 'facture')
+		elseif ($this->element == 'facture' || $this->element == 'invoice')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_INVOICE";
-		elseif ($this->element == 'facture_fourn')
+		elseif ($this->element == 'facture_fourn' || $this->element == 'supplier_invoice')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_SUPPLIER_INVOICE";
-		elseif ($this->element == 'order_supplier')
+		elseif ($this->element == 'order_supplier' || $this->element == 'supplier_order')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_SUPPLIER_ORDER";
 		elseif ($this->element == 'supplier_proposal')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_SUPPLIER_PROPOSAL";
@@ -6278,17 +6277,11 @@ abstract class CommonObject
 				$value='';
 			}
 		}
-		elseif ($type == 'double')
+		elseif ($type == 'double' || $type == 'real')
 		{
 			if (!empty($value)) {
 				$value=price($value);
 			}
-		}
-		elseif ($type == 'real')
-		{
-		    if (!empty($value)) {
-		        $value=price($value);
-		    }
 		}
 		elseif ($type == 'boolean')
 		{
@@ -7122,7 +7115,7 @@ abstract class CommonObject
 	 * Function test if type is array
 	 *
 	 * @param   array   $info   content informations of field
-	 * @return                  bool
+	 * @return  bool			true if array
 	 */
 	protected function isArray($info)
 	{
@@ -7131,42 +7124,26 @@ abstract class CommonObject
 			if(isset($info['type']) && $info['type']=='array') return true;
 			else return false;
 		}
-		else return false;
-	}
-
-	/**
-	 * Function test if type is null
-	 *
-	 * @param   array   $info   content informations of field
-	 * @return                  bool
-	 */
-	protected function isNull($info)
-	{
-		if(is_array($info))
-		{
-			if(isset($info['type']) && $info['type']=='null') return true;
-			else return false;
-		}
-		else return false;
+		return false;
 	}
 
 	/**
 	 * Function test if type is date
 	 *
 	 * @param   array   $info   content informations of field
-	 * @return                  bool
+	 * @return  bool			true if date
 	 */
 	public function isDate($info)
 	{
 		if(isset($info['type']) && ($info['type']=='date' || $info['type']=='datetime' || $info['type']=='timestamp')) return true;
-		else return false;
+		return false;
 	}
 
 	/**
 	 * Function test if type is integer
 	 *
 	 * @param   array   $info   content informations of field
-	 * @return                  bool
+	 * @return  bool			true if integer
 	 */
 	public function isInt($info)
 	{
@@ -7182,7 +7159,7 @@ abstract class CommonObject
 	 * Function test if type is float
 	 *
 	 * @param   array   $info   content informations of field
-	 * @return                  bool
+	 * @return  bool			true if float
 	 */
 	public function isFloat($info)
 	{
@@ -7191,14 +7168,14 @@ abstract class CommonObject
 			if (isset($info['type']) && (preg_match('/^(double|real|price)/i', $info['type']))) return true;
 			else return false;
 		}
-		else return false;
+		return false;
 	}
 
 	/**
 	 * Function test if type is text
 	 *
 	 * @param   array   $info   content informations of field
-	 * @return                  bool
+	 * @return  bool			true if type text
 	 */
 	public function isText($info)
 	{
@@ -7207,7 +7184,39 @@ abstract class CommonObject
 			if(isset($info['type']) && $info['type']=='text') return true;
 			else return false;
 		}
-		else return false;
+		return false;
+	}
+
+	/**
+	 * Function test if field can be null
+	 *
+	 * @param   array   $info   content informations of field
+	 * @return  bool			true if it can be null
+	 */
+	protected function canBeNull($info)
+	{
+		if(is_array($info))
+		{
+			if(isset($info['notnull']) && $info['notnull']!='1') return true;
+			else return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Function test if field is forced to null if zero or empty
+	 *
+	 * @param   array   $info   content informations of field
+	 * @return  bool			true if forced to null
+	 */
+	protected function isForcedToNullIfZero($info)
+	{
+		if(is_array($info))
+		{
+			if(isset($info['notnull']) && $info['notnull']=='-1') return true;
+			else return false;
+		}
+		return false;
 	}
 
 	/**
@@ -7223,7 +7232,7 @@ abstract class CommonObject
 			if(isset($info['index']) && $info['index']==true) return true;
 			else return false;
 		}
-		else return false;
+		return false;
 	}
 
 	/**
@@ -7316,17 +7325,30 @@ abstract class CommonObject
 			elseif($this->isInt($info))
 			{
 				if ($field == 'rowid') $this->id = (int) $obj->{$field};
-				else $this->{$field} = (int) $obj->{$field};
+				else
+				{
+					if ($this->isForcedToNullIfZero($info))
+					{
+						if (empty($obj->{$field})) $this->{$field} = null;
+						else $this->{$field} = (double) $obj->{$field};
+					}
+					else
+					{
+						$this->{$field} = (int) $obj->{$field};
+					}
+				}
 			}
 			elseif($this->isFloat($info))
 			{
-				$this->{$field} = (double) $obj->{$field};
-			}
-			elseif($this->isNull($info))
-			{
-				$val = $obj->{$field};
-				// zero is not null
-				$this->{$field} = (is_null($val) || (empty($val) && $val!==0 && $val!=='0') ? null : $val);
+				if ($this->isForcedToNullIfZero($info))
+				{
+					if (empty($obj->{$field})) $this->{$field} = null;
+					else $this->{$field} = (double) $obj->{$field};
+				}
+				else
+				{
+					$this->{$field} = (double) $obj->{$field};
+				}
 			}
 			else
 			{
@@ -7383,7 +7405,8 @@ abstract class CommonObject
 		if (array_key_exists('date_creation', $fieldvalues) && empty($fieldvalues['date_creation'])) $fieldvalues['date_creation']=$this->db->idate($now);
 		if (array_key_exists('fk_user_creat', $fieldvalues) && ! ($fieldvalues['fk_user_creat'] > 0)) $fieldvalues['fk_user_creat']=$user->id;
 		unset($fieldvalues['rowid']);	// The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
-
+		if (array_key_exists('ref', $fieldvalues)) $fieldvalues['ref']=dol_string_nospecial($fieldvalues['ref']);					// If field is a ref,we sanitize data
+		
 		$keys=array();
 		$values = array();
 		foreach ($fieldvalues as $k => $v) {

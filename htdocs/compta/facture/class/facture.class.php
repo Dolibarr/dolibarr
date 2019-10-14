@@ -1233,7 +1233,7 @@ class Facture extends CommonInvoice
 	 */
     public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $addlinktonotes = 0, $save_lastsearch_value = -1, $target = '')
 	{
-		global $langs, $conf, $user;
+		global $langs, $conf, $user, $mysoc;
 
 		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
@@ -1276,11 +1276,11 @@ class Facture extends CommonInvoice
             if (! empty($this->total_ht))
                 $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
             if (! empty($this->total_tva))
-                $label.= '<br><b>' . $langs->trans('VAT') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+                $label.= '<br><b>' . $langs->trans('AmountVAT') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
             if (! empty($this->total_localtax1) && $this->total_localtax1 != 0)		// We keep test != 0 because $this->total_localtax1 can be '0.00000000'
-                $label.= '<br><b>' . $langs->trans('LT1') . ':</b> ' . price($this->total_localtax1, 0, $langs, 0, -1, -1, $conf->currency);
+            	$label.= '<br><b>' . $langs->transcountry('AmountLT1', $mysoc->country_code) . ':</b> ' . price($this->total_localtax1, 0, $langs, 0, -1, -1, $conf->currency);
             if (! empty($this->total_localtax2) && $this->total_localtax2 != 0)
-                $label.= '<br><b>' . $langs->trans('LT2') . ':</b> ' . price($this->total_localtax2, 0, $langs, 0, -1, -1, $conf->currency);
+            	$label.= '<br><b>' . $langs->transcountry('AmountLT2', $mysoc->country_code) . ':</b> ' . price($this->total_localtax2, 0, $langs, 0, -1, -1, $conf->currency);
             if (! empty($this->total_ttc))
                 $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
     		if ($moretitle) $label.=' - '.$moretitle;
@@ -2136,7 +2136,7 @@ class Facture extends CommonInvoice
 		if ($this->paye != 1)
 		{
 			$this->db->begin();
-			
+
 			$now=dol_now();
 
 			dol_syslog(get_class($this)."::set_paid rowid=".$this->id, LOG_DEBUG);
@@ -3557,7 +3557,7 @@ class Facture extends CommonInvoice
 					$cluser->fetch($obj->fk_user_closing);
 					$this->user_closing  = $cluser;
 				}
-				
+
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
 				$this->date_validation   = $this->db->jdate($obj->datev);
