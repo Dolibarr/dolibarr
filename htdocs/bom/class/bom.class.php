@@ -94,6 +94,7 @@ class BOM extends CommonObject
 		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'help'=>'ProductBOMHelp'),
 	    'qty' => array('type'=>'real', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'default'=>1, 'position'=>55, 'notnull'=>1, 'isameasure'=>'1', 'css'=>'maxwidth75imp'),
 		'efficiency' => array('type'=>'real', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>-1, 'default'=>1, 'position'=>100, 'notnull'=>0, 'css'=>'maxwidth50imp', 'help'=>'ValueOfMeansLoss'),
+		'duration' => array('type'=>'real', 'label'=>'EstimatedDuration', 'enabled'=>1, 'visible'=>-1, 'position'=>101, 'notnull'=>-1, 'css'=>'maxwidth50imp', 'help'=>'EstimatedDurationDesc'),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>-1, 'position'=>161, 'notnull'=>-1,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>-1, 'position'=>162, 'notnull'=>-1,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>300, 'notnull'=>1,),
@@ -202,7 +203,7 @@ class BOM extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
-		if ($this->efficiency < 0 || $this->efficiency > 1) $this->efficiency = 1;
+		if ($this->efficiency <= 0 || $this->efficiency > 1) $this->efficiency = 1;
 
 		return $this->createCommon($user, $notrigger);
 	}
@@ -412,7 +413,7 @@ class BOM extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
-		if ($this->efficiency < 0 || $this->efficiency > 1) $this->efficiency = 1;
+		if ($this->efficiency <= 0 || $this->efficiency > 1) $this->efficiency = 1;
 
 		return $this->updateCommon($user, $notrigger);
 	}

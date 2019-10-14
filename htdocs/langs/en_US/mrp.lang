@@ -22,3 +22,5 @@ QtyToProduce=Qty to produce
 DateStartPlannedMo=Date start planned
 DateEndPlannedMo=Date end planned
 KeepEmptyForAsap=Empty means 'As Soon As Possible'
+EstimatedDuration=Estimated duration
+EstimatedDurationDesc=Estimated duration to manufacture this product using this BOM 
