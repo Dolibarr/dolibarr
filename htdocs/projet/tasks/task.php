@@ -576,11 +576,11 @@ if ($id > 0 || ! empty($ref))
 				// Modify
 				if ($user->rights->projet->creer)
 				{
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit&amp;withproject='.$withproject.'">'.$langs->trans('Modify').'</a>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit&amp;withproject='.$withproject.'">'.$langs->trans('Modify').'</a></div>';
 				}
 				else
 				{
-					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Modify').'</a>';
+					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Modify').'</a></div>';
 				}
 
 				// Delete
@@ -588,16 +588,16 @@ if ($id > 0 || ! empty($ref))
 				{
 				    if (! $object->hasChildren() && ! $object->hasTimeSpent())
 				    {
-					   print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;withproject='.$withproject.'">'.$langs->trans('Delete').'</a>';
+					   print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;withproject='.$withproject.'">'.$langs->trans('Delete').'</a></div>';
 				    }
 				    else
 				    {
-				        print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("TaskHasChild").'">'.$langs->trans('Delete').'</a>';
+				        print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("TaskHasChild").'">'.$langs->trans('Delete').'</a></div>';
 				    }
 				}
 				else
 				{
-					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
+					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a></div>';
 				}
 
 				print '</div>';
