@@ -1287,11 +1287,11 @@ class Propal extends CommonObject
 		$object->datep		= $now;    // deprecated
 		$object->fin_validite	= $object->date + ($object->duree_validite * 24 * 3600);
 		if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) $object->ref_client	= '';
-		if ($conf->global->MAIN_DONT_KEEP_NOTE_ON_CLONING==1) 
+		if ($conf->global->MAIN_DONT_KEEP_NOTE_ON_CLONING==1)
 		{
 				 $object->note_private = '';
                                  $object->note_public = '';
-			}
+        }
 		// Create clone
 		$object->context['createfromclone']='createfromclone';
 		$result=$object->create($user);
