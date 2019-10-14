@@ -1046,6 +1046,11 @@ class Facture extends CommonInvoice
 		$object->close_code         = '';
 		$object->close_note         = '';
 		$object->products = $object->lines;	        // For backward compatibility
+		if ($conf->global->MAIN_DONT_KEEP_NOTE_ON_CLONING==1)
+                {
+                                 $object->note_private = '';
+                                 $object->note_public = '';
+        }
 
 		// Loop on each line of new invoice
 		foreach($object->lines as $i => $line)
