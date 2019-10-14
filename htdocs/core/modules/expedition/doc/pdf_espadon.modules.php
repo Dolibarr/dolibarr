@@ -656,7 +656,7 @@ class pdf_espadon extends ModelePdfExpedition
 	 *	@param	PDF			$pdf            Object PDF
 	 *	@param  Facture		$object         Object invoice
 	 *	@param  int			$deja_regle     Amount already paid
-	 *	@param	int			$posy			Start Position 
+	 *	@param	int         $posy           Start Position
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position for suite
 	 */
