@@ -1061,6 +1061,7 @@ CompanyTown=Town
 CompanyCountry=Country
 CompanyCurrency=Main currency
 CompanyObject=Object of the company
+IDCountry=ID country
 Logo=Logo
 DoNotSuggestPaymentMode=Do not suggest
 NoActiveBankAccountDefined=No active bank account defined
