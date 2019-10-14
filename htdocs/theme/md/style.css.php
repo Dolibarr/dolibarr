@@ -3631,6 +3631,10 @@ div.titre, .secondary {
 	color: rgb(<?php print $colortexttitlenotab; ?>);
 }
 
+table.table-fiche-title .col-title div.titre{
+	line-height: 40px;
+}
+
 #dolpaymenttable { min-width: 320px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
 #tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
