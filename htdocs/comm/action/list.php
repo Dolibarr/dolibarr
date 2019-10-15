@@ -21,7 +21,7 @@
  */
 
 /**
- *	    \file       htdocs/comm/action/list.php
+ *      \file       htdocs/comm/action/list.php
  *      \ingroup    agenda
  *		\brief      Page to list actions
  */
@@ -239,7 +239,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 $sql = "SELECT";
 if ($usergroup > 0) $sql.=" DISTINCT";
 $sql.= " s.nom as societe, s.rowid as socid, s.client, s.email as socemail,";
-$sql.= " a.id, a.label, a.note, a.datep as dp, a.datep2 as dp2,";
+$sql.= " a.id, a.label, a.note, a.datep as dp, a.datep2 as dp2, a.fulldayevent, a.location,";
 $sql.= ' a.fk_user_author,a.fk_user_action,';
 $sql.= " a.fk_contact, a.note, a.percent as percent,";
 $sql.= " a.fk_element, a.elementtype, a.datec, a.tms as datem,";
@@ -286,14 +286,14 @@ if (! empty($actioncode))
         elseif ($actioncode == 'AC_ALL_AUTO') $sql.= " AND c.type = 'systemauto'";
         else
         {
-		if (is_array($actioncode))
- 		{
- 	        	$sql.=" AND c.code IN ('".implode("','", $actioncode)."')";
- 		}
- 		else
- 		{
- 	        	$sql.=" AND c.code IN ('".implode("','", explode(',', $actioncode))."')";
- 		}
+            if (is_array($actioncode))
+            {
+                $sql.=" AND c.code IN ('".implode("','", $actioncode)."')";
+            }
+            else
+            {
+                $sql.=" AND c.code IN ('".implode("','", explode(',', $actioncode))."')";
+            }
         }
     }
 }
@@ -460,7 +460,7 @@ if ($resql)
 		print $form->selectDate($datestart, 'datestart', 0, 0, 1, '', 1, 0);
 		print '</td>';
 	}
-	if (! empty($arrayfields['a.datep2']['checked']))	{
+	if (! empty($arrayfields['a.datep2']['checked'])) {
 		print '<td class="liste_titre nowraponall" align="center">';
 		print $form->selectDate($dateend, 'dateend', 0, 0, 1, '', 1, 0);
 		print '</td>';
@@ -548,6 +548,7 @@ if ($resql)
 		$actionstatic->type_label=$obj->type_label;
 		$actionstatic->type_picto=$obj->type_picto;
 		$actionstatic->label=$obj->label;
+		$actionstatic->location = $obj->location;
 		$actionstatic->note=dol_htmlentitiesbr($obj->note);
 
 		print '<tr class="oddeven">';
@@ -609,11 +610,11 @@ if ($resql)
 			print $form->textwithtooltip(dol_trunc($text, 40), $actionstatic->note);
 			print '</td>';
 		}
-
+		$formatToUse = $obj->fulldayevent?'day':'dayhour';
 		// Start date
 		if (! empty($arrayfields['a.datep']['checked'])) {
 			print '<td align="center">';
-			print dol_print_date($db->jdate($obj->dp), "dayhour");
+			print dol_print_date($db->jdate($obj->dp), $formatToUse);
 			$late=0;
 			if ($obj->percent == 0 && $obj->dp && $db->jdate($obj->dp) < ($now - $delay_warning)) $late=1;
 			if ($obj->percent == 0 && ! $obj->dp && $obj->dp2 && $db->jdate($obj->dp) < ($now - $delay_warning)) $late=1;
@@ -626,7 +627,7 @@ if ($resql)
 		// End date
 		if (! empty($arrayfields['a.datep2']['checked'])) {
 			print '<td align="center">';
-			print dol_print_date($db->jdate($obj->dp2), "dayhour");
+			print dol_print_date($db->jdate($obj->dp2), $formatToUse);
 			print '</td>';
 		}
 
