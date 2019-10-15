@@ -15,6 +15,7 @@
  * Copyright (C) 2016-2018	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2017		Gustavo Novaro
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019       Cedric Ancelin          <icedo.anc@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1264,6 +1265,29 @@ class Product extends CommonObject
             return 0;
         }
     }
+
+    /**
+     *    Update a record into database.
+     *  If batch flag is set to on, we create records into llx_product_batch
+     *
+     * @param  int    $id        Id of product
+     * @param  User   $user      Object user making update
+     * @return int                 1 if OK, -1 if ref already exists, -2 if other error
+     */
+    public function updateType($id, $user)
+    {
+		if ($this->isProduct || $this->isService) {			
+			$sql = "UPDATE ".MAIN_DB_PREFIX."product";
+			$sql.= " SET fk_product_type = '" . $this->type ."'";
+			$sql.= " WHERE rowid = " . $id;
+			if (! $this->db->query($sql)) {
+				$this->error=$this->db->lasterror();
+				return -1;
+			}
+		} else {
+			return -1;
+		}
+	}
 
     /**
      *    Update or add a translation for a product
