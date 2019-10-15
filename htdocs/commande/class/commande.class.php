@@ -647,7 +647,7 @@ class Commande extends CommonOrder
 
 			$now=dol_now();
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql.= ' SET fk_statut = '.self::STATUS_CLOSED.',';
 			$sql.= ' fk_user_cloture = '.$user->id.',';
 			$sql.= " date_cloture = '".$this->db->idate($now)."'";

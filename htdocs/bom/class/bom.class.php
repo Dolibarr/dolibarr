@@ -640,62 +640,75 @@ class BOM extends CommonObject
 	 *	Set draft status
 	 *
 	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	public function setDraft($user)
+	public function setDraft($user, $notrigger = 0)
 	{
-	    global $conf, $langs;
+		// Protection
+		if ($this->status <= self::STATUS_DRAFT)
+		{
+			return 0;
+		}
 
-	    $error=0;
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+		 {
+		 $this->error='Permission denied';
+		 return -1;
+		 }*/
 
-	    // Protection
-	    if ($this->status <= self::STATUS_DRAFT)
-	    {
-	        return 0;
-	    }
+		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'BOM_UNVALIDATE');
+	}
 
-	    /*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
-	        || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
-	    {
-	        $this->error='Permission denied';
-	        return -1;
-	    }*/
+	/**
+	 *	Set cancel status
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 */
+	public function cancel($user, $notrigger = 0)
+	{
+		// Protection
+		if ($this->status != self::STATUS_VALIDATED)
+		{
+			return 0;
+		}
 
-	    $this->db->begin();
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+		 {
+		 $this->error='Permission denied';
+		 return -1;
+		 }*/
 
-	    $sql = "UPDATE ".MAIN_DB_PREFIX."bom";
-	    $sql.= " SET status = ".self::STATUS_DRAFT;
-	    $sql.= " WHERE rowid = ".$this->id;
+		return $this->setStatusCommon($user, self::STATUS_CANCELED, 'BOM_CLOSE');
+	}
 
-	    dol_syslog(get_class($this)."::setDraft", LOG_DEBUG);
-	    if ($this->db->query($sql))
-	    {
-	        if (! $error)
-	        {
-	            $this->oldcopy= clone $this;
-	        }
+	/**
+	 *	Set cancel status
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 */
+	public function reopen($user, $notrigger = 0)
+	{
+		// Protection
+		if ($this->status != self::STATUS_CANCELED)
+		{
+			return 0;
+		}
 
-	        if (!$error) {
-	            // Call trigger
-	            $result=$this->call_trigger('BOM_UNVALIDATE', $user);
-	            if ($result < 0) $error++;
-	        }
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+		 {
+		 $this->error='Permission denied';
+		 return -1;
+		 }*/
 
-	        if (!$error) {
-	            $this->status=self::STATUS_DRAFT;
-	            $this->db->commit();
-	            return 1;
-	        } else {
-	            $this->db->rollback();
-	            return -1;
-	        }
-	    }
-	    else
-	    {
-	        $this->error=$this->db->error();
-	        $this->db->rollback();
-	        return -1;
-	    }
+		return $this->setStatusCommon($user, self::STATUS_VALIDATED, 'BOM_REOPEN');
 	}
 
 	/**
