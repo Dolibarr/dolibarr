@@ -1065,19 +1065,19 @@ td.showDragHandle {
 	table-layout: fixed;
 }
 #id-right, #id-left {
-	padding-top: 20px;
-
 	display: table-cell;			/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
 	float: none;
 	vertical-align: top;
 }
 #id-left {
+	padding-top: 20px;
 	padding-bottom: 5px;
 	<?php if (! empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN) && ! empty($conf->global->MAIN_USE_TOP_MENU_BOOKMARK_DROPDOWN)) { ?>
 	padding-top: 8px;
 	<?php } ?>
 }
 #id-right {	/* This must stay id-right and not be replaced with echo $right */
+	padding-top: 10px;
 	width: 100%;
 	background: rgb(<?php print $colorbackbody; ?>);
 	padding-bottom: 20px;
@@ -2343,6 +2343,7 @@ li.expanded > a.fmdirlia.jqft.ecmjqft {
 /* ============================================================================== */
 div.tabs {
     text-align: <?php print $left; ?>;
+    padding-top: 10px;
     padding-left: 6px !important;
     padding-right: 6px !important;
 	clear:both;
@@ -2796,8 +2797,9 @@ div.pagination li {
   display: inline-block;
   padding-left: 0px;
   padding-right: 0px;
-  padding-top: 6px;
+  padding-top: 10px;
   padding-bottom: 5px;
+  font-size: 1.1em;
 }
 .pagination {
   display: inline-block;
@@ -2899,6 +2901,8 @@ div.pagination li.pagination .active {
 
 div.pagination li.paginationafterarrows {
 	margin-left: 10px;
+	padding-top: 0;
+	/*padding-bottom: 10px;*/
 }
 .paginationatbottom {
 	margin-top: 9px;
@@ -3618,6 +3622,9 @@ div.titre, .secondary {
 
 table.table-fiche-title .col-title div.titre{
 	line-height: 40px;
+}
+table.table-fiche-title {
+	margin-bottom: 5px;
 }
 
 #dolpaymenttable { min-width: 320px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
@@ -5100,6 +5107,11 @@ dl.dropdown {
 }
 .dropdown dd ul li a:hover {
     background-color:#eee;
+}
+dd.dropdowndd ul li {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 

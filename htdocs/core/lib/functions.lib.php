@@ -4125,7 +4125,7 @@ function load_fiche_titre($titre, $morehtmlright = '', $picto = 'generic', $pict
 	if ($picto == 'setup') $picto='generic';
 
 	$return.= "\n";
-	$return.= '<table '.($id?'id="'.$id.'" ':'').'class="centpercent notopnoleftnoright table-fiche-title '.($morecssontable?' '.$morecssontable:'').'" style="margin-bottom: 6px;"><tr>';	// maring bottom must be same than into print_barre_list
+	$return.= '<table '.($id?'id="'.$id.'" ':'').'class="centpercent notopnoleftnoright table-fiche-title '.($morecssontable?' '.$morecssontable:'').'"><tr>';	// maring bottom must be same than into print_barre_list
 	if ($picto) $return.= '<td class="nobordernopadding widthpictotitle opacityhigh valignmiddle col-picto">'.img_picto('', $picto, 'class="valignmiddle widthpictotitle pictotitle"', $pictoisfullpath).'</td>';
 	$return.= '<td class="nobordernopadding valignmiddle col-title">';
 	$return.= '<div class="titre inline-block">'.$titre.'</div>';
@@ -4187,11 +4187,10 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 	print "\n";
 	print "<!-- Begin title '".$titre."' -->\n";
-	print '<table class="centpercent notopnoleftnoright'.($morecss?' '.$morecss:'').'" style="margin-bottom: 6px; border: 0"><tr>';	// maring bottom must be same than into load_fiche_tire
+	print '<table class="centpercent notopnoleftnoright table-fiche-title'.($morecss?' '.$morecss:'').'"><tr>';	// maring bottom must be same than into load_fiche_tire
 
 	// Left
-	//if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone left valignmiddle" style="width: 40px">'.img_picto('', $picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
-	print '<td class="nobordernopadding valignmiddle">';
+	print '<td class="nobordernopadding valignmiddle col-title">';
 	if ($picto && $titre) print img_picto('', $picto, 'class="hideonsmartphone valignmiddle opacityhigh pictotitle widthpictotitle"', $pictoisfullpath);
 	print '<div class="titre inline-block">'.$titre;
 	if (!empty($titre) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '') print ' ('.$totalnboflines.')';

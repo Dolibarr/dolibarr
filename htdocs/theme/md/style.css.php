@@ -5042,6 +5042,11 @@ dl.dropdown {
     background-color: #eee;
 }
 
+dd.dropdowndd ul li {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
 
 
 /* ============================================================================== */
