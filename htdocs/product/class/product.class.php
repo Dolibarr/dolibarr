@@ -1267,28 +1267,37 @@ class Product extends CommonObject
     }
 
     /**
-     *    Update a record into database.
-     *  If batch flag is set to on, we create records into llx_product_batch
+     *    Update product type.
      *
-     * @param  int    $id        Id of product
      * @param  User   $user      Object user making update
      * @return int                 1 if OK, -1 if ref already exists, -2 if other error
      */
-    public function updateType($id, $user)
+    public function updateType($user)
     {
-		if ($this->isProduct || $this->isService) {			
+        dol_syslog(get_class($this)."::updateType", LOG_DEBUG);
+        
+        if (is_numeric($this->type)) {
+            $this->type = (int) $this->type;
+        }
+                
+        if ($this->type == Product::TYPE_PRODUCT || $this->type == Product::TYPE_SERVICE) {
+		 	$this->db->begin();
+            
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product";
-			$sql.= " SET fk_product_type = '" . $this->type ."'";
-			$sql.= " WHERE rowid = " . $id;
-			if (! $this->db->query($sql)) {
+			$sql.= " SET fk_product_type = " . $this->type;
+			$sql.= " WHERE rowid = " . $this->id;
+			
+			$this->error = $sql;
+            
+			if (!$this->db->query($sql)) {
 				$this->error=$this->db->lasterror();
+				$this->db->rollback();
 				return -1;
 			} else {
-				return 1;
+				$this->db->commit();
 			}
-		} else {
-			return -1;
 		}
+		return 1;
 	}
 
     /**
