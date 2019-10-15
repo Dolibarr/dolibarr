@@ -299,7 +299,7 @@ class Products extends DolibarrApi
     
                     $result = $this->product->updatePrice($newprice, $this->product->price_base_type, DolibarrApiAccess::$user, $newvat, $newpricemin, 0, $newnpr, 0, 0, array(), $newvatsrccode);
                 }
-                if ($this->product->type != $oldproduct->type) {
+                if ($result > 0 && $this->product->type != $oldproduct->type) {
                     $result = $this->product->updateType(DolibarrApiAccess::$user);
                 }
             }
