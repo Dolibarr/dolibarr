@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2019   Cedric Ancelin          <icedo.anc@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -250,47 +251,57 @@ class Products extends DolibarrApi
         $result = $this->product->update($id, DolibarrApiAccess::$user, 1, 'update');
 
         // If price mode is 1 price per product
-        if ($result > 0 && ! empty($conf->global->PRODUCT_PRICE_UNIQ)) {
-            // We update price only if it was changed
-            $pricemodified = false;
-            if ($this->product->price_base_type != $oldproduct->price_base_type) { $pricemodified = true;
-            } else
-            {
-                if ($this->product->tva_tx != $oldproduct->tva_tx) { $pricemodified = true;
-                }
-                if ($this->product->tva_npr != $oldproduct->tva_npr) { $pricemodified = true;
-                }
-                if ($this->product->default_vat_code != $oldproduct->default_vat_code) { $pricemodified = true;
-                }
-
-                if ($this->product->price_base_type == 'TTC') {
-                    if ($this->product->price_ttc != $oldproduct->price_ttc) { $pricemodified = true;
+        if ($result > 0) {
+            if (!empty($conf->global->PRODUCT_PRICE_UNIQ)) {
+                // We update price only if it was changed
+                $pricemodified = false;
+                if ($this->product->price_base_type != $oldproduct->price_base_type) {
+                    $pricemodified = true;
+                } else {
+                    if ($this->product->tva_tx != $oldproduct->tva_tx) {
+                        $pricemodified = true;
                     }
-                    if ($this->product->price_min_ttc != $oldproduct->price_min_ttc) { $pricemodified = true;
+                    if ($this->product->tva_npr != $oldproduct->tva_npr) {
+                        $pricemodified = true;
+                    }
+                    if ($this->product->default_vat_code != $oldproduct->default_vat_code) {
+                        $pricemodified = true;
+                    }
+    
+                    if ($this->product->price_base_type == 'TTC') {
+                        if ($this->product->price_ttc != $oldproduct->price_ttc) {
+                            $pricemodified = true;
+                        }
+                        if ($this->product->price_min_ttc != $oldproduct->price_min_ttc) {
+                            $pricemodified = true;
+                        }
+                    } else {
+                        if ($this->product->price != $oldproduct->price) {
+                            $pricemodified = true;
+                        }
+                        if ($this->product->price_min != $oldproduct->price_min) {
+                            $pricemodified = true;
+                        }
                     }
                 }
-                else
-                {
-                    if ($this->product->price != $oldproduct->price) { $pricemodified = true;
+    
+                if ($pricemodified) {
+                    $newvat = $this->product->tva_tx;
+                    $newnpr = $this->product->tva_npr;
+                    $newvatsrccode = $this->product->default_vat_code;
+    
+                    $newprice = $this->product->price;
+                    $newpricemin = $this->product->price_min;
+                    if ($this->product->price_base_type == 'TTC') {
+                        $newprice = $this->product->price_ttc;
+                        $newpricemin = $this->product->price_min_ttc;
                     }
-                    if ($this->product->price_min != $oldproduct->price_min) { $pricemodified = true;
-                    }
+    
+                    $result = $this->product->updatePrice($newprice, $this->product->price_base_type, DolibarrApiAccess::$user, $newvat, $newpricemin, 0, $newnpr, 0, 0, array(), $newvatsrccode);
                 }
-            }
-
-            if ($pricemodified) {
-                $newvat = $this->product->tva_tx;
-                $newnpr = $this->product->tva_npr;
-                $newvatsrccode = $this->product->default_vat_code;
-
-                $newprice = $this->product->price;
-                $newpricemin = $this->product->price_min;
-                if ($this->product->price_base_type == 'TTC') {
-                    $newprice = $this->product->price_ttc;
-                    $newpricemin = $this->product->price_min_ttc;
+                if ($this->product->type != $oldproduct->type) {
+                    $result = $this->product->updateType(DolibarrApiAccess::$user);
                 }
-
-                $result = $this->product->updatePrice($newprice, $this->product->price_base_type, DolibarrApiAccess::$user, $newvat, $newpricemin, 0, $newnpr, 0, 0, array(), $newvatsrccode);
             }
         }
 
