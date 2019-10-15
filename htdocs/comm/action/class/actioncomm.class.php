@@ -1543,6 +1543,19 @@ class ActionComm extends CommonObject
                     $event['uid']='dolibarragenda-'.$this->db->database_name.'-'.$obj->id."@".$_SERVER["SERVER_NAME"];
                     $event['type']=$type;
                     $datestart=$this->db->jdate($obj->datep)-(empty($conf->global->AGENDA_EXPORT_FIX_TZ)?0:($conf->global->AGENDA_EXPORT_FIX_TZ*3600));
+					
+                    // fix for -> Warning: A non-numeric value encountered
+                    if(is_numeric($this->db->jdate($obj->datep2)))
+                    {
+                        $dateend = $this->db->jdate($obj->datep2)
+                                 - (empty($conf->global->AGENDA_EXPORT_FIX_TZ) ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
+                    }
+                    else
+                    {
+                        // use start date as fall-back to avoid import erros on empty end date
+                        $datestart = $dateend;
+                    }
+
                     $dateend=$this->db->jdate($obj->datep2)-(empty($conf->global->AGENDA_EXPORT_FIX_TZ)?0:($conf->global->AGENDA_EXPORT_FIX_TZ*3600));
                     $duration=($datestart && $dateend)?($dateend - $datestart):0;
                     $event['summary']=$obj->label.($obj->socname?" (".$obj->socname.")":"");
