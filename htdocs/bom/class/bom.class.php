@@ -513,7 +513,7 @@ class BOM extends CommonObject
 	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
 	 */
-	public function valid($user, $notrigger = 0)
+	public function validate($user, $notrigger = 0)
 	{
 	    global $conf, $langs;
 
@@ -553,7 +553,7 @@ class BOM extends CommonObject
 	    $this->newref = $num;
 
 	    // Validate
-	    $sql = "UPDATE ".MAIN_DB_PREFIX."bom_bom";
+	    $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 	    $sql.= " SET ref = '".$this->db->escape($num)."',";
 	    $sql.= " status = ".self::STATUS_VALIDATED.",";
 	    $sql.= " date_valid='".$this->db->idate($now)."',";
@@ -683,7 +683,7 @@ class BOM extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_CANCELED, 'BOM_CLOSE');
+		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'BOM_CLOSE');
 	}
 
 	/**
@@ -708,8 +708,9 @@ class BOM extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_VALIDATED, 'BOM_REOPEN');
+		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'BOM_REOPEN');
 	}
+
 
 	/**
 	 *  Return a link to the object card (with optionaly the picto)
