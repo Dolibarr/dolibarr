@@ -1609,7 +1609,7 @@ class Ticket extends CommonObject
 	 * @param array	 $filename_list       List of files to attach (full path of filename on file system)
 	 * @param array	 $mimetype_list       List of MIME type of attached files
 	 * @param array	 $mimefilename_list   List of attached file name in message
-     * @return void
+     * @return int						  <0 if KO, >0 if OK
      */
     public function createTicketMessage($user, $notrigger = 0, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array())
     {
