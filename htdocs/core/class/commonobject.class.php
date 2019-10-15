@@ -7120,8 +7120,11 @@ abstract class CommonObject
 	{
 		if(is_array($info))
 		{
-			if(isset($info['type']) && $info['type']=='array') return true;
-			else return false;
+			if(isset($info['type']) && $info['type']=='array'){
+			    return true;
+            }
+
+			return false;
 		}
 		return false;
 	}
@@ -7405,7 +7408,7 @@ abstract class CommonObject
 		if (array_key_exists('fk_user_creat', $fieldvalues) && ! ($fieldvalues['fk_user_creat'] > 0)) $fieldvalues['fk_user_creat']=$user->id;
 		unset($fieldvalues['rowid']);	// The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
 		if (array_key_exists('ref', $fieldvalues)) $fieldvalues['ref']=dol_string_nospecial($fieldvalues['ref']);					// If field is a ref,we sanitize data
-		
+
 		$keys=array();
 		$values = array();
 		foreach ($fieldvalues as $k => $v) {
