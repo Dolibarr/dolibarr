@@ -85,10 +85,7 @@ if (empty($reshook))
 		$result=$object->fetch($id);
    		$object->code_compta_fournisseur=$_POST["supplieraccountancycode"];
 	    $result=$object->update($object->id, $user, 1, 0, 1);
-	    if ($result < 0)
-	    {
-	        $mesg=join(',', $object->errors);
-	    }
+	    if ($result < 0)	setEventMessages($object->error, $object->errors, 'errors');
 	}
 	// terms of the settlement
 	if ($action == 'setconditions' && $user->rights->societe->creer)
