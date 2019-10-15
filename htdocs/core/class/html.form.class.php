@@ -2175,7 +2175,7 @@ class Form
 		// Multilang : we add translation
 		if (! empty($conf->global->MAIN_MULTILANGS))
 		{
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang='". $this->langs->getDefaultLang() ."'";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang='". $this->db->escape($this->langs->getDefaultLang()) ."'";
 		}
 
 		if (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
