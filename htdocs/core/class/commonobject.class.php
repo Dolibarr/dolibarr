@@ -108,7 +108,6 @@ abstract class CommonObject
 	protected $table_ref_field = '';
 
 
-
 	// Following vars are used by some objects only. We keep this property here in CommonObject to be able to provide common method using them.
 
 	/**
@@ -427,11 +426,45 @@ abstract class CommonObject
 
 	public $next_prev_filter;
 
+    /**
+     * @var string
+     */
+    public $skype;
 
+    /**
+     * @var string
+     */
+    public $jabberid;
 
-	// No constructor as it is an abstract class
+    /**
+     * @var string
+     */
+    public $twitter;
 
-	/**
+    /**
+     * @var string
+     */
+    public $facebook;
+
+    /**
+     * @var string
+     */
+    public $linkedin;
+
+    /**
+     * @var array
+     */
+    public $fields;
+
+    /**
+     * @param DoliDB|null $db the connection to the DB.
+     */
+    public function __construct($db = null)
+    {
+        $this->db = $db;
+    }
+
+    /**
 	 * Check an object id/ref exists
 	 * If you don't need/want to instantiate object and just need to know if object exists, use this method instead of fetch
 	 *
@@ -1959,7 +1992,7 @@ abstract class CommonObject
 	 */
 	public function setMulticurrencyCode($code)
 	{
-		dol_syslog(get_class($this).'::setMulticurrencyCode('.$id.')');
+		dol_syslog(get_class($this).'::setMulticurrencyCode('.$this->id.')');
 		if ($this->statut >= 0 || $this->element == 'societe')
 		{
 			$fieldname = 'multicurrency_code';
@@ -2001,7 +2034,7 @@ abstract class CommonObject
 	 */
 	public function setMulticurrencyRate($rate, $mode = 1)
 	{
-		dol_syslog(get_class($this).'::setMulticurrencyRate('.$id.')');
+		dol_syslog(get_class($this).'::setMulticurrencyRate('.$this->id.')');
 		if ($this->statut >= 0 || $this->element == 'societe')
 		{
 			$fieldname = 'multicurrency_tx';
@@ -2322,16 +2355,15 @@ abstract class CommonObject
 
 		dol_syslog(get_class($this)."::setDocModel", LOG_DEBUG);
 		$resql=$this->db->query($sql);
+
 		if ($resql)
 		{
 			$this->modelpdf=$modelpdf;
 			return 1;
 		}
-		else
-		{
-			dol_print_error($this->db);
-			return 0;
-		}
+
+        dol_print_error($this->db);
+        return 0;
 	}
 
 
@@ -2387,12 +2419,10 @@ abstract class CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-		else
-		{
-			$this->fk_account = ($fk_account=='NULL')?null:$fk_account;
-			$this->db->commit();
-			return 1;
-		}
+
+        $this->fk_account = ($fk_account=='NULL')?null:$fk_account;
+        $this->db->commit();
+        return 1;
 	}
 
 
@@ -2781,11 +2811,9 @@ abstract class CommonObject
 			$this->ref_ext = $ref_ext;
 			return 1;
 		}
-		else
-		{
-			$this->error=$this->db->error();
-			return -1;
-		}
+
+        $this->error=$this->db->error();
+        return -1;
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2834,11 +2862,9 @@ abstract class CommonObject
 			}
 			return 1;
 		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			return -1;
-		}
+
+        $this->error=$this->db->lasterror();
+        return -1;
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -3135,12 +3161,10 @@ abstract class CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			$this->db->rollback();
-			return 0;
-		}
+
+        $this->error=$this->db->lasterror();
+        $this->db->rollback();
+        return 0;
 	}
 
 	/**
@@ -3352,11 +3376,9 @@ abstract class CommonObject
 			}
 			return 1;
 		}
-		else
-		{
-			dol_print_error($this->db);
-			return -1;
-		}
+
+        dol_print_error($this->db);
+        return -1;
 	}
 
 	/**
@@ -3398,11 +3420,9 @@ abstract class CommonObject
 		{
 			return 1;
 		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			return -1;
-		}
+
+        $this->error=$this->db->lasterror();
+        return -1;
 	}
 
 	/**
@@ -3460,12 +3480,10 @@ abstract class CommonObject
 		{
 			return 1;
 		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			$this->errors[]=$this->error;
-			return -1;
-		}
+
+        $this->error=$this->db->lasterror();
+        $this->errors[]=$this->error;
+        return -1;
 	}
 
 	/**
@@ -3549,12 +3567,10 @@ abstract class CommonObject
 				return -1;
 			}
 		}
-		else
-		{
-			$this->error=$this->db->lasterror();
-			$this->db->rollback();
-			return -1;
-		}
+
+        $this->error=$this->db->lasterror();
+        $this->db->rollback();
+        return -1;
 	}
 
 
@@ -3592,11 +3608,9 @@ abstract class CommonObject
 			}
 			else return 0;
 		}
-		else
-		{
-			dol_print_error($this->db);
-			return -1;
-		}
+
+        dol_print_error($this->db);
+        return -1;
 	}
 
 
@@ -3616,6 +3630,8 @@ abstract class CommonObject
 			$row = $this->db->fetch_row($resql);
 			return $row[0];
 		}
+
+		//TODO add a return here
 	}
 
 	/**
@@ -3685,7 +3701,8 @@ abstract class CommonObject
 			$this->errors[]="ErrorRecordHasChildren";
 			return $haschild;
 		}
-		else return 0;
+
+		return 0;
 	}
 
 	/**
@@ -3746,7 +3763,6 @@ abstract class CommonObject
 			}
 		}
 
-		//print $total_discount; exit;
 		return price2num($total_discount);
 	}
 
@@ -3870,11 +3886,9 @@ abstract class CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-		else
-		{
-			$this->db->commit();
-			return 1;
-		}
+
+        $this->db->commit();
+        return 1;
 	}
 
 
@@ -3928,11 +3942,9 @@ abstract class CommonObject
 				return '';
 			}
 		}
-		else
-		{
-			$this->errors[] = $this->db->lasterror();
-			return false;
-		}
+
+        $this->errors[] = $this->db->lasterror();
+        return false;
 	}
 
 	/**
@@ -3966,13 +3978,12 @@ abstract class CommonObject
 				}
 				return 1;
 			}
-			else
-			{
-				$this->errors[] = $this->db->lasterror();
-				return -1;
-			}
+
+            $this->errors[] = $this->db->lasterror();
+            return -1;
 		}
-		else return -1;
+
+		return -1;
 	}
 
 
@@ -7112,12 +7123,18 @@ abstract class CommonObject
 	 */
 	protected function isArray($info)
 	{
-		if(is_array($info))
-		{
-			if(isset($info['type']) && $info['type']=='array') return true;
-			else return false;
-		}
-		return false;
+	    return is_array($info) && isset($info['type']) && $info['type']=='array';
+	}
+
+	/**
+	 * Function test if type is null
+	 *
+	 * @param   array   $info   content informations of field
+	 * @return                  bool
+	 */
+	protected function isNull($info)
+	{
+        return is_array($info) && isset($info['type']) && $info['type']=='null';
 	}
 
 	/**
@@ -7128,8 +7145,7 @@ abstract class CommonObject
 	 */
 	public function isDate($info)
 	{
-		if(isset($info['type']) && ($info['type']=='date' || $info['type']=='datetime' || $info['type']=='timestamp')) return true;
-		return false;
+		return isset($info['type']) && ($info['type']=='date' || $info['type']=='datetime' || $info['type']=='timestamp');
 	}
 
 	/**
@@ -7140,12 +7156,7 @@ abstract class CommonObject
 	 */
 	public function isInt($info)
 	{
-		if(is_array($info))
-		{
-			if(isset($info['type']) && ($info['type']=='int' || preg_match('/^integer/i', $info['type']) ) ) return true;
-			else return false;
-		}
-		else return false;
+	    return is_array($info) && isset($info['type']) && ($info['type']=='int' || preg_match('/^integer/i', $info['type']) );
 	}
 
 	/**
@@ -7156,12 +7167,7 @@ abstract class CommonObject
 	 */
 	public function isFloat($info)
 	{
-		if(is_array($info))
-		{
-			if (isset($info['type']) && (preg_match('/^(double|real|price)/i', $info['type']))) return true;
-			else return false;
-		}
-		return false;
+	    return is_array($info) && isset($info['type']) && (preg_match('/^(double|real|price)/i', $info['type']));
 	}
 
 	/**
@@ -7172,12 +7178,7 @@ abstract class CommonObject
 	 */
 	public function isText($info)
 	{
-		if(is_array($info))
-		{
-			if(isset($info['type']) && $info['type']=='text') return true;
-			else return false;
-		}
-		return false;
+        return is_array($info) && isset($info['type']) && $info['type']=='text';
 	}
 
 	/**
@@ -7220,12 +7221,7 @@ abstract class CommonObject
 	 */
 	protected function isIndex($info)
 	{
-		if(is_array($info))
-		{
-			if(isset($info['index']) && $info['index']==true) return true;
-			else return false;
-		}
-		return false;
+	    return is_array($info) && isset($info['index']) && $info['index']==true;
 	}
 
 	/**
@@ -7373,9 +7369,15 @@ abstract class CommonObject
 	 */
 	protected function quote($value, $fieldsentry)
 	{
-		if (is_null($value)) return 'NULL';
-		elseif (preg_match('/^(int|double|real)/i', $fieldsentry['type'])) return $this->db->escape("$value");
-		else return "'".$this->db->escape($value)."'";
+		if (is_null($value)){
+            return 'NULL';
+        }
+
+		if(preg_match('/^(int|double|real)/i', $fieldsentry['type'])){
+            return $this->db->escape("$value");
+        }
+
+		return "'".$this->db->escape($value)."'";
 	}
 
 
@@ -7399,42 +7401,55 @@ abstract class CommonObject
 		if (array_key_exists('fk_user_creat', $fieldvalues) && ! ($fieldvalues['fk_user_creat'] > 0)) $fieldvalues['fk_user_creat']=$user->id;
 		unset($fieldvalues['rowid']);	// The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
 		if (array_key_exists('ref', $fieldvalues)) $fieldvalues['ref']=dol_string_nospecial($fieldvalues['ref']);					// If field is a ref,we sanitize data
-		
-		$keys=array();
+
+		$fields = array();
 		$values = array();
-		foreach ($fieldvalues as $k => $v) {
-			$keys[$k] = $k;
-			$value = $this->fields[$k];
-			$values[$k] = $this->quote($v, $value);
+
+        foreach ($fieldvalues as $fieldName => $value) {
+			$fields[] = $fieldName;
+			$fieldDescription = $this->fields[$fieldName];
+			$values[$fieldName] = $this->quote($value, $fieldDescription);
 		}
 
 		// Clean and check mandatory
-		foreach($keys as $key)
+		foreach($fields as $fieldName)
 		{
-			// If field is an implicit foreign key field
-			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && $values[$key] == '-1') $values[$key]='';
-			if (! empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') $values[$key]='';
+            $fieldDescription = $this->fields[$fieldName];
 
-			//var_dump($key.'-'.$values[$key].'-'.($this->fields[$key]['notnull'] == 1));
-			if (isset($this->fields[$key]['notnull']) && $this->fields[$key]['notnull'] == 1 && ! isset($values[$key]) && is_null($val['default']))
+			// If field is an implicit foreign key field
+			if ($this->isInt($fieldDescription) && $values[$fieldName] == '-1'){
+			    $values[$fieldName]='';
+            }
+
+			if (! empty($fieldDescription['foreignkey']) && $values[$fieldName] == '-1'){
+			    $values[$fieldName]='';
+            }
+
+			if (isset($fieldDescription['notnull']) && $fieldDescription['notnull'] == 1 && ! isset($values[$fieldName]) && is_null($fieldDescription['default']))
 			{
 				$error++;
-				$this->errors[]=$langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
+				$this->errors[]=$langs->trans("ErrorFieldRequired", $fieldDescription['label']);
 			}
 
 			// If field is an implicit foreign key field
-			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && empty($values[$key])) $values[$key]='null';
-			if (! empty($this->fields[$key]['foreignkey']) && empty($values[$key])) $values[$key]='null';
+			if ($this->isInt($fieldDescription) && empty($values[$fieldName])){
+			    $values[$fieldName]='null';
+            }
+			if (! empty($fieldDescription['foreignkey']) && empty($values[$fieldName])){
+			    $values[$fieldName]='null';
+            }
 		}
 
-		if ($error) return -1;
+		if ($error){
+		    return -1;
+        }
 
 		$this->db->begin();
 
 		if (! $error)
 		{
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element;
-			$sql.= ' ('.implode(", ", $keys).')';
+			$sql.= ' ('.implode(", ", $fields).')';
 			$sql.= ' VALUES ('.implode(", ", $values).')';
 
 			$res = $this->db->query($sql);
@@ -7499,20 +7514,20 @@ abstract class CommonObject
 		// Triggers
 		if (! $error && ! $notrigger)
 		{
-			// Call triggers
 			$result=$this->call_trigger(strtoupper(get_class($this)).'_CREATE', $user);
-			if ($result < 0) { $error++; }
-			// End call triggers
+			if ($result < 0) {
+			    $error++;
+			}
 		}
 
 		// Commit or rollback
 		if ($error) {
 			$this->db->rollback();
 			return -1;
-		} else {
-			$this->db->commit();
-			return $this->id;
 		}
+
+        $this->db->commit();
+        return $this->id;
 	}
 
 
@@ -7552,12 +7567,10 @@ abstract class CommonObject
 				return 0;
 			}
 		}
-		else
-		{
-			$this->error = $this->db->lasterror();
-			$this->errors[] = $this->error;
-			return -1;
-		}
+
+        $this->error = $this->db->lasterror();
+        $this->errors[] = $this->error;
+        return -1;
 	}
 
 	/**
@@ -7602,12 +7615,10 @@ abstract class CommonObject
 
 			return 1;
 		}
-		else
-		{
-			$this->error = $this->db->lasterror();
-			$this->errors[] = $this->error;
-			return -1;
-		}
+
+        $this->error = $this->db->lasterror();
+        $this->errors[] = $this->error;
+        return -1;
 	}
 
 	/**
@@ -7619,7 +7630,7 @@ abstract class CommonObject
 	 */
 	public function updateCommon(User $user, $notrigger = false)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		$error = 0;
 
@@ -7644,14 +7655,6 @@ abstract class CommonObject
 		{
 			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && $values[$key] == '-1') $values[$key]='';		// This is an implicit foreign key field
 			if (! empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') $values[$key]='';					// This is an explicit foreign key field
-
-			//var_dump($key.'-'.$values[$key].'-'.($this->fields[$key]['notnull'] == 1));
-			/*
-			if ($this->fields[$key]['notnull'] == 1 && empty($values[$key]))
-			{
-				$error++;
-				$this->errors[]=$langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
-			}*/
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET '.implode(',', $tmp).' WHERE rowid='.$this->id ;
@@ -7690,10 +7693,10 @@ abstract class CommonObject
 		if ($error) {
 			$this->db->rollback();
 			return -1;
-		} else {
-			$this->db->commit();
-			return $this->id;
 		}
+
+        $this->db->commit();
+        return $this->id;
 	}
 
 	/**
@@ -7791,10 +7794,10 @@ abstract class CommonObject
 		if ($error) {
 			$this->db->rollback();
 			return -1;
-		} else {
-			$this->db->commit();
-			return 1;
 		}
+
+        $this->db->commit();
+        return 1;
 	}
 
 	/**
@@ -7803,6 +7806,7 @@ abstract class CommonObject
 	 *	@param  User	$user       User that delete
 	 *  @param	int		$idline		Id of line to delete
 	 *  @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
+     *
 	 *  @return int         		>0 if OK, <0 if KO
 	 */
 	public function deleteLineCommon(User $user, $idline, $notrigger = false)
@@ -7850,15 +7854,15 @@ abstract class CommonObject
 		if (empty($error)) {
 			$this->db->commit();
 			return 1;
-		} else {
-			dol_syslog(get_class($this)."::deleteLineCommon ERROR:".$this->error, LOG_ERR);
-			$this->db->rollback();
-			return -1;
 		}
+
+        dol_syslog(get_class($this)."::deleteLineCommon ERROR:".$this->error, LOG_ERR);
+        $this->db->rollback();
+        return -1;
 	}
 
 	/**
-	 * Initialise object with example values
+	 * Initialise object with example values.
 	 * Id must be 0 if object instance is a specimen
 	 *
 	 * @return void
@@ -7868,6 +7872,7 @@ abstract class CommonObject
 	    global $user;
 
 		$this->id = 0;
+
 		if (array_key_exists('label', $this->fields)) $this->label='This is label';
 		if (array_key_exists('note_public', $this->fields)) $this->note_public='Public note';
 		if (array_key_exists('note_private', $this->fields)) $this->note_private='Private note';
@@ -7876,15 +7881,15 @@ abstract class CommonObject
 		if (array_key_exists('fk_user_creat', $this->fields)) $this->fk_user_creat=$user->id;
 		if (array_key_exists('fk_user_modif', $this->fields)) $this->fk_user_modif=$user->id;
 		if (array_key_exists('date', $this->fields)) $this->date=dol_now();
-		// ...
 	}
 
 
 	/* Part for comments */
 
 	/**
-	 * Load comments linked with current task
-	 *	@return boolean	1 if ok
+	 * Load comments linked with current task and return the number of comments.
+     *
+	 *	@return int -1 if error
 	 */
 	public function fetchComments()
 	{
@@ -7895,10 +7900,10 @@ abstract class CommonObject
 		if ($result<0) {
 			$this->errors=array_merge($this->errors, $comment->errors);
 			return -1;
-		} else {
-			$this->comments = $comment->comments;
 		}
-		return count($this->comments);
+
+		$this->comments = $comment->comments;
+		return $this->getNbComments();
 	}
 
     /**
@@ -7912,7 +7917,8 @@ abstract class CommonObject
     }
 
     /**
-     * Trim object parameters
+     * Trim object parameters.
+     *
      * @param string[] $parameters array of parameters to trim
      *
      * @return void
@@ -7926,35 +7932,4 @@ abstract class CommonObject
             }
         }
     }
-
-    /**
-     *  copy related categories to another object
-     *
-     * @param  int		$fromId	Id object source
-     * @param  int		$toId	Id object cible
-     * @param  string	$type	Type of category ('product', ...)
-     * @return int      < 0 si erreur, > 0 si ok
-     */
-	public function cloneCategories($fromId, $toId, $type = '')
-	{
-		$this->db->begin();
-
-		if (empty($type)) $type = $this->table_element;
-
-		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-		$categorystatic = new Categorie($this->db);
-
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_" . $categorystatic->MAP_CAT_TABLE[$type] . " (fk_categorie, fk_product)";
-		$sql.= " SELECT fk_categorie, $toId FROM ".MAIN_DB_PREFIX."categorie_" . $categorystatic->MAP_CAT_TABLE[$type];
-		$sql.= " WHERE fk_product = '".$fromId."'";
-
-		if (! $this->db->query($sql))
-		{
-			$this->db->rollback();die($sql);
-			return -1;
-		}
-
-		$this->db->commit();
-		return 1;
-	}
 }

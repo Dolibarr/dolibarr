@@ -118,7 +118,7 @@ class Categorie extends CommonObject
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
-	protected $MAP_CAT_TABLE = array(
+	public $MAP_CAT_TABLE = array(
 		'product'  => 'product',
 		'customer' => 'societe',
 		'supplier' => 'fournisseur',
