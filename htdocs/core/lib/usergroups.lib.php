@@ -397,7 +397,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 						print '<a href="'.$_SERVER["PHP_SELF"].($edit?'?action=edit&theme=':'?theme=').$subdir.(GETPOST('optioncss', 'alpha', 1)?'&optioncss='.GETPOST('optioncss', 'alpha', 1):'').($fuser?'&id='.$fuser->id:'').'" style="font-weight: normal;" alt="'.$langs->trans("Preview").'">';
 						if ($subdir == $conf->global->MAIN_THEME) $title=$langs->trans("ThemeCurrentlyActive");
 						else $title=$langs->trans("ShowPreview");
-						print '<img class="shadow" src="'.$url.'" alt="'.$title.'" title="'.$title.'" style="width: 80px; height: 60px; border: none; margin-bottom: 5px;">';
+						print '<img class="img-skinthumb shadow" src="'.$url.'" alt="'.$title.'" title="'.$title.'" style="border: none; margin-bottom: 5px;">';
 						print '</a><br>';
 						if ($subdir == $selected_theme)
 						{

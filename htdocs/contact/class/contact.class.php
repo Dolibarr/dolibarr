@@ -1557,8 +1557,8 @@ class Contact extends CommonObject
 	/**
 	 * Get Contact roles for a thirdparty
 	 *
-	 * @param string $element element type
-	 * @return array|int
+	 * @param  string 	$element 	Element type
+	 * @return array|int			Array of contact roles or -1
 	 * @throws Exception
 	 */
 	public function getContactRoles($element = '')

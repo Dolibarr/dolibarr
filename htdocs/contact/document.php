@@ -62,6 +62,10 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+
+ if (! empty($conf->global->MAIN_DOC_SORT_FIELD)) { $sortfield=$conf->global->MAIN_DOC_SORT_FIELD; }
+ if (! empty($conf->global->MAIN_DOC_SORT_ORDER)) { $sortorder=$conf->global->MAIN_DOC_SORT_ORDER; }
+
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 

@@ -1070,6 +1070,7 @@ CompanyTown=Town
 CompanyCountry=Country
 CompanyCurrency=Main currency
 CompanyObject=Object of the company
+IDCountry=ID country
 Logo=Logo
 LogoDesc=Main logo of company. Will be used into generated documents (PDF, ...)
 LogoSquarred=Logo (squarred)
