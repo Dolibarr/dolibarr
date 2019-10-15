@@ -225,7 +225,7 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
 
                 print '<tr class="oddeven">';
                 print '<td class="nowraponall">'.$holidaystatic->getNomUrl(1).'</td>';
-                print '<td>'.$userstatic->getNomUrl(-1, 'leave').'</td>';
+                print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
                 print '<td>'.$typeleaves[$obj->fk_type]['label'].'</td>';
 
                 $starthalfday=($obj->halfday == -1 || $obj->halfday == 2)?'afternoon':'morning';
@@ -304,7 +304,7 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">'.$deplacementstatic->getNomUrl(1).'</td>';
-				print '<td>'.$userstatic->getNomUrl(-1).'</td>';
+				print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1).'</td>';
 				print '<td class="right">'.$obj->km.'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
 				print '<td>'.$deplacementstatic->LibStatut($obj->fk_statut, 3).'</td>';
@@ -376,7 +376,7 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">'.$expensereportstatic->getNomUrl(1).'</td>';
-				print '<td>'.$userstatic->getNomUrl(-1).'</td>';
+				print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1).'</td>';
 				print '<td class="right">'.price($obj->total_ttc).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
 				print '<td>'.$expensereportstatic->LibStatut($obj->status, 3).'</td>';
