@@ -1283,6 +1283,8 @@ class Product extends CommonObject
 			if (! $this->db->query($sql)) {
 				$this->error=$this->db->lasterror();
 				return -1;
+			} else {
+				return 1;
 			}
 		} else {
 			return -1;
