@@ -1615,7 +1615,7 @@ elseif (! empty($module))
 				print '</table>';
 				print '<br>';
 
-				print load_fiche_titre($langs->trans("DescriptorFile"));
+				print load_fiche_titre($langs->trans("DescriptorFile"), '', '');
 
 				if (! empty($moduleobj))
 				{
@@ -1675,33 +1675,31 @@ elseif (! empty($module))
 					print '</td></tr>';
 
 					print '</table>';
-
-					print '<br><br>';
-
-					// Readme file
-					print load_fiche_titre($langs->trans("ReadmeFile"));
-
-					print '<div class="underbanner clearboth"></div>';
-					print '<div class="fichecenter">';
-					if (dol_is_file($dirread.'/'.$pathtofilereadme)) print $moduleobj->getDescLong();
-					else print $langs->trans("ErrorFileNotFound", $pathtofilereadme);
-
-					print '<br><br>';
-
-					// ChangeLog
-					print load_fiche_titre($langs->trans("ChangeLog"));
-
-					print '<div class="underbanner clearboth"></div>';
-					print '<div class="fichecenter">';
-
-					if (dol_is_file($dirread.'/'.$pathtochangelog)) print $moduleobj->getChangeLog();
-					else print $langs->trans("ErrorFileNotFound", $pathtochangelog);
-
-					print '</div>';
 				}
 				else
 				{
 					print $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module).'<br>';
+				}
+
+				if (! empty($moduleobj))
+				{
+					print '<br><br>';
+
+					// Readme file
+					print load_fiche_titre($langs->trans("ReadmeFile"), '', '');
+
+					print '<!-- readme file -->';
+					if (dol_is_file($dirread.'/'.$pathtofilereadme)) print '<div class="underbanner clearboth"></div><div class="fichecenter">'.$moduleobj->getDescLong().'</div>';
+					else print '<span class="opacitymedium">'.$langs->trans("ErrorFileNotFound", $pathtofilereadme).'</span>';
+
+					print '<br><br>';
+
+					// ChangeLog
+					print load_fiche_titre($langs->trans("ChangeLog"), '', '');
+
+					print '<!-- changelog file -->';
+					if (dol_is_file($dirread.'/'.$pathtochangelog)) print '<div class="underbanner clearboth"></div><div class="fichecenter">'.$moduleobj->getChangeLog().'</div>';
+					else print '<span class="opacitymedium">'.$langs->trans("ErrorFileNotFound", $pathtochangelog).'</span>';
 				}
 
 				dol_fiche_end();
