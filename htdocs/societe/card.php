@@ -1916,9 +1916,9 @@ else
             }
 
             // EMail / Web
-            print '<tr><td>'.img_picto('', 'object_email').' '.$form->editfieldkey('EMail', 'email', GETPOST('email','alpha'), $object, 0, 'string', '', (! empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';
+            print '<tr><td>'.img_picto('', 'object_email').' '.$form->editfieldkey('EMail', 'email', GETPOST('email', 'alpha'), $object, 0, 'string', '', (! empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';
 	        print '<td colspan="3"><input type="text" name="email" id="email" size="32" value="'.$object->email.'"></td></tr>';
-	        print '<tr><td>'.img_picto('', 'globe').' '.$form->editfieldkey('Web', 'url', GETPOST('url','alpha'), $object, 0).'</td>';
+	        print '<tr><td>'.img_picto('', 'globe').' '.$form->editfieldkey('Web', 'url', GETPOST('url', 'alpha'), $object, 0).'</td>';
 	        print '<td colspan="3"><input type="text" name="url" id="url" size="32" value="'.$object->url.'"></td></tr>';
 
 	        if (! empty($conf->socialnetworks->enabled))
