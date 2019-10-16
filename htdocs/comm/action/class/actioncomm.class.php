@@ -1553,7 +1553,7 @@ class ActionComm extends CommonObject
                     else
                     {
                         // use start date as fall-back to avoid import erros on empty end date
-                        $datestart = $dateend;
+                        $dateend = $datestart;
                     }
 
                     $dateend=$this->db->jdate($obj->datep2)-(empty($conf->global->AGENDA_EXPORT_FIX_TZ)?0:($conf->global->AGENDA_EXPORT_FIX_TZ*3600));
