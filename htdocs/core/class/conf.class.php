@@ -226,10 +226,7 @@ class Conf
             $filesList = explode(":", $this->global->LOCAL_CONSTS_FILES);
             foreach ($filesList as $file) {
                 $file=dol_sanitizeFileName($file);
-                include_once DOL_DOCUMENT_ROOT . "/".$file."/".$file."_consts.php";
-                foreach ($file2bddconsts as $key=>$value) {
-                    $this->global->$key=$value;
-                }
+                include_once DOL_DOCUMENT_ROOT . "/".$file."/".$file."_consts.php";	// This file can run code like setting $this->global->XXX vars.
             }
         }
 
