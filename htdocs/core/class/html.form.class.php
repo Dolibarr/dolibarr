@@ -5323,7 +5323,7 @@ class Form
 	 *	@param	int			$empty			0=Fields required, 1=Empty inputs are allowed, 2=Empty inputs are allowed for hours only
 	 *	@param	string		$form_name 		Not used
 	 *	@param	int			$d				1=Show days, month, years
-	 * 	@param	int			$addnowlink		Add a link "Now"
+	 * 	@param	int			$addnowlink		Add a link "Now", 1 with server time, 2 with local computer time
 	 * 	@param 	int			$disabled		Disable input fields
 	 *  @param  int			$fullday        When a checkbox with this html name is on, hour and day are set with 00:00 or 23:59
 	 *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another selectDate field.
@@ -5605,12 +5605,32 @@ class Form
 		{
 			// Script which will be inserted in the onClick of the "Now" link
 			$reset_scripts = "";
-
+            if ($addnowlink==2) // local computer time
+            {
+                // pad add leading 0 on numbers
+                $reset_scripts.="Number.prototype.pad = function(size) {
+                        var s = String(this);
+                        while (s.length < (size || 2)) {s = '0' + s;}
+                        return s;
+                    };
+                    var d = new Date();";
+            }
+            
 			// Generate the date part, depending on the use or not of the javascript calendar
-			$reset_scripts .= 'jQuery(\'#'.$prefix.'\').val(\''.dol_print_date(dol_now(), 'day', 'tzuser').'\');';
-			$reset_scripts .= 'jQuery(\'#'.$prefix.'day\').val(\''.dol_print_date(dol_now(), '%d', 'tzuser').'\');';
-			$reset_scripts .= 'jQuery(\'#'.$prefix.'month\').val(\''.dol_print_date(dol_now(), '%m', 'tzuser').'\');';
-			$reset_scripts .= 'jQuery(\'#'.$prefix.'year\').val(\''.dol_print_date(dol_now(), '%Y', 'tzuser').'\');';
+            if($addnowlink==1) // server time expressed in user time setup
+            {
+                $reset_scripts .= 'jQuery(\'#'.$prefix.'\').val(\''.dol_print_date(dol_now(), 'day','tzuser').'\');';
+                $reset_scripts .= 'jQuery(\'#'.$prefix.'day\').val(\''.dol_print_date(dol_now(), '%d','tzuser').'\');';
+                $reset_scripts .= 'jQuery(\'#'.$prefix.'month\').val(\''.dol_print_date(dol_now(), '%m','tzuser').'\');';
+                $reset_scripts .= 'jQuery(\'#'.$prefix.'year\').val(\''.dol_print_date(dol_now(), '%Y','tzuser').'\');';
+            }
+            elseif($addnowlink==2)
+            {
+                $reset_scripts .= 'jQuery(\'#'.$prefix.'\').val(d.toLocaleDateString(\''.str_replace('_', '-', $langs->defaultlang).'\'));';
+                $reset_scripts .= 'jQuery(\'#'.$prefix.'day\').val(d.getDate().pad());';
+                $reset_scripts .= 'jQuery(\'#'.$prefix.'month\').val(d.getMonth().pad());';
+                $reset_scripts .= 'jQuery(\'#'.$prefix.'year\').val(d.getFullYear());';
+            }
 			/*if ($usecalendar == "eldy")
             {
                 $base=DOL_URL_ROOT.'/core/';
@@ -5627,7 +5647,15 @@ class Form
 			{
 				if ($fullday) $reset_scripts .= " if (jQuery('#fullday:checked').val() == null) {";
 				//$reset_scripts .= 'this.form.elements[\''.$prefix.'hour\'].value=formatDate(new Date(), \'HH\'); ';
-				$reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').val(\''.dol_print_date(dol_now(), '%H', 'tzuser').'\');';
+                if($addnowlink==1)
+                {
+                    $reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').val(\''.dol_print_date(dol_now(), '%H','tzuser').'\');';
+                }
+                elseif($addnowlink==2)
+                {
+                    $reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').val(d.getHours().pad());';
+                }
+
 				if ($fullday) $reset_scripts .= ' } ';
 			}
 			// Update the minute part
@@ -5635,7 +5663,14 @@ class Form
 			{
 				if ($fullday) $reset_scripts .= " if (jQuery('#fullday:checked').val() == null) {";
 				//$reset_scripts .= 'this.form.elements[\''.$prefix.'min\'].value=formatDate(new Date(), \'mm\'); ';
-				$reset_scripts .= 'jQuery(\'#'.$prefix.'min\').val(\''.dol_print_date(dol_now(), '%M', 'tzuser').'\');';
+                if($addnowlink==1)
+                {
+                    $reset_scripts .= 'jQuery(\'#'.$prefix.'min\').val(\''.dol_print_date(dol_now(), '%M','tzuser').'\');';
+                }
+                elseif($addnowlink==2)
+                {
+                    $reset_scripts .= 'jQuery(\'#'.$prefix.'min\').val(d.getMinutes().pad());';
+                }
 				if ($fullday) $reset_scripts .= ' } ';
 			}
 			// If reset_scripts is not empty, print the link with the reset_scripts in the onClick
