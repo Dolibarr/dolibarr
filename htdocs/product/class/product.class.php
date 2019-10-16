@@ -787,12 +787,12 @@ class Product extends CommonObject
      *    Update a record into database.
      *  If batch flag is set to on, we create records into llx_product_batch
      *
-     * @param  int    $id          Id of product
-     * @param  User   $user        Object user making update
-     * @param  int    $notrigger   Disable triggers
-     * @param  string $action      Current action for hookmanager ('add' or 'update')
-	 * @param  int    $updatetype  Update product type
-     * @return int                 1 if OK, -1 if ref already exists, -2 if other error
+     * @param  int     $id          Id of product
+     * @param  User    $user        Object user making update
+     * @param  int     $notrigger   Disable triggers
+     * @param  string  $action      Current action for hookmanager ('add' or 'update')
+	 * @param  boolean $updatetype  Update product type
+     * @return int                  1 if OK, -1 if ref already exists, -2 if other error
      */
     public function update($id, $user, $notrigger = false, $action = 'update', $updatetype = false)
     {
