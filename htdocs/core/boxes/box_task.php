@@ -201,7 +201,6 @@ class box_task extends ModeleBoxes
                 dol_print_error($this->db);
             }
 		}
-
 	}
 
 	/**

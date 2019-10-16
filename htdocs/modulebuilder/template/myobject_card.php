@@ -114,8 +114,6 @@ $permissiontoadd=$user->rights->mymodule->write; // Used by the include of actio
 
 /*
  * Actions
- *
- * Put here all code to do according to value of "action" parameter
  */
 
 $parameters=array();
@@ -436,6 +434,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	{
     	    // Send
             print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
+
+            // Back to draft
+            if (! empty($user->rights->mymodule->write) && $object->status == BOM::STATUS_VALIDATED)
+            {
+            	print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=setdraft">' . $langs->trans("SetToDraft") . '</a>';
+            }
 
             // Modify
             if (! empty($user->rights->mymodule->write))

@@ -289,6 +289,20 @@ if ($action == 'confirm_close' && $confirm == 'yes' && $permissionedit)
 	}
 }
 
+// Action setdraft object
+if ($action == 'confirm_setdraft' && $confirm == 'yes' && $permissionedit)
+{
+	$result = $object->setDraft($user);
+	if ($result >= 0)
+	{
+		// Nothing else done
+	}
+	else
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+}
+
 // Action reopen object
 if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissionedit)
 {
