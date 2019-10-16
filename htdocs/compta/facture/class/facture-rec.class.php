@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
@@ -518,14 +518,19 @@ class FactureRec extends CommonInvoice
      */
 	public function fetch_lines()
 	{
+		global $extrafields;
+
         // phpcs:enable
 		$this->lines=array();
 
 		// Retreive all extrafield for line
 		// fetch optionals attributes and labels
-		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-		$extrafieldsline=new ExtraFields($this->db);
-		$extrafieldsline=$extrafieldsline->fetch_name_optionals_label('facturedet_rec', true);
+		if (! is_object($extrafields))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+			$extrafields=new ExtraFields($this->db);
+		}
+		$extrafields->fetch_name_optionals_label($this->table_element_line, true);
 
 		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx, ';
 		$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise, l.remise_percent, l.subprice,';
@@ -599,7 +604,7 @@ class FactureRec extends CommonInvoice
 				$line->price            = $objp->price;
 				$line->remise           = $objp->remise;
 
-				$extralabelsline = $line->fetch_optionals($line->id);
+				$line->fetch_optionals($line->id);
 
 				// Multicurrency
 				$line->fk_multicurrency 		= $objp->fk_multicurrency;
@@ -1236,14 +1241,17 @@ class FactureRec extends CommonInvoice
 		$result='';
 
 		$label = '<u>' . $langs->trans("ShowInvoice") . '</u>';
-		if (! empty($this->ref))
+		if (! empty($this->ref)) {
 			$label .= '<br><b>'.$langs->trans('Ref') . ':</b> ' . $this->ref;
-		if (! empty($this->date_last_gen))
+		}
+		if ($this->frequency > 0) {
+			$label .= '<br><b>'.$langs->trans('Frequency') . ':</b> ' . $langs->trans('FrequencyPer_'.$this->unit_frequency, $this->frequency);
+		}
+		if (! empty($this->date_last_gen)) {
 			$label .= '<br><b>'.$langs->trans('DateLastGeneration') . ':</b> ' . dol_print_date($this->date_last_gen, 'dayhour');
-		if ($this->frequency > 0)
-		{
-			if (! empty($this->date_when))
-			{
+		}
+		if ($this->frequency > 0) {
+			if (! empty($this->date_when)) {
 				$label .= '<br><b>'.$langs->trans('NextDateToExecution') . ':</b> ';
 				$label .= (empty($this->suspended)?'':'<strike>'). dol_print_date($this->date_when, 'day').(empty($this->suspended)?'':'</strike>');	// No hour for this property
 				if (! empty($this->suspended)) $label .= ' ('.$langs->trans("Disabled").')';

@@ -639,7 +639,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 					print '<tr class="oddeven">';
 
-					print '<td>';
+					print '<td class="nowraponall">';
                     print $invoice->getNomUrl(1, '');
                     if ($objp->socid != $facture->thirdparty->id) print ' - '.$soc->getNomUrl(1).' ';
                     print "</td>\n";
@@ -650,7 +650,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     // Due date
                     if ($objp->dlr > 0 )
                     {
-                        print '<td align="center">';
+                        print '<td class="nowraponall center">';
                         print dol_print_date($db->jdate($objp->dlr), 'day');
 
                         if ($invoice->hasDelay())

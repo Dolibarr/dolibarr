@@ -84,7 +84,7 @@ $object = new Product($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 if ($id > 0 || ! empty($ref))
 {
@@ -764,7 +764,7 @@ if (empty($reshook))
 
 		if ($user->rights->stock->mouvement->creer)
 		{
-			if (! $variants) {
+			if (! $variants || ! empty($conf->global->VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT)) {
 				print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=correction">' . $langs->trans("CorrectStock") . '</a>';
 			}
 			else
@@ -780,7 +780,7 @@ if (empty($reshook))
 		//if (($user->rights->stock->mouvement->creer) && ! $object->hasbatch())
 		if ($user->rights->stock->mouvement->creer)
 		{
-			if (! $variants) {
+			if (! $variants || ! empty($conf->global->VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT)) {
 				print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=transfert">' . $langs->trans("TransferStock") . '</a>';
 			}
 			else
@@ -804,8 +804,8 @@ if (! $variants) {
 	 */
 
 	print '<div class="div-table-responsive">';
+	print '<table class="noborder centpercent">';
 
-	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="4">' . $langs->trans("Warehouse") . '</td>';
 	print '<td class="right">' . $langs->trans("NumberOfUnit") . '</td>';
@@ -924,7 +924,8 @@ if (! $variants) {
 						print '<td class="center">' . dol_print_date($pdluo->eatby, 'day') . '</td>';
 						print '<td class="center">' . dol_print_date($pdluo->sellby, 'day') . '</td>';
 						print '<td class="right">' . $pdluo->qty . ($pdluo->qty < 0 ? ' ' . img_warning() : '') . '</td>';
-						print '<td colspan="4"></td></tr>';
+						print '<td colspan="4"></td>';
+						print '</tr>';
 					}
 				}
 			}
@@ -932,12 +933,13 @@ if (! $variants) {
 		}
 	} else dol_print_error($db);
 
+	// Total line
 	print '<tr class="liste_total"><td class="right liste_total" colspan="4">' . $langs->trans("Total") . ':</td>';
 	print '<td class="liste_total right">' . price2num($total, 'MS') . '</td>';
 	print '<td class="liste_total right">';
 	print ($totalwithpmp ? price(price2num($totalvalue / $totalwithpmp, 'MU')) : '&nbsp;');    // This value may have rounding errors
 	print '</td>';
-// Value purchase
+	// Value purchase
 	print '<td class="liste_total right">';
 	print $totalvalue ? price(price2num($totalvalue, 'MT'), 1) : '&nbsp;';
 	print '</td>';
@@ -945,12 +947,13 @@ if (! $variants) {
 	if (empty($conf->global->PRODUIT_MULTIPRICES)) print ($total ? price($totalvaluesell / $total, 1) : '&nbsp;');
 	else print $langs->trans("Variable");
 	print '</td>';
-// Value to sell
+	// Value to sell
 	print '<td class="liste_total right">';
 	if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($totalvaluesell, 'MT'), 1);
 	else print $langs->trans("Variable");
 	print '</td>';
 	print "</tr>";
+
 	print "</table>";
 	print '</div>';
 
@@ -1073,6 +1076,7 @@ if (! $variants) {
 			print '<tr class="liste_total">';
 			print '<td colspan="4" class="left">'.$langs->trans("Total").'</td>';
 			print '<td class="right">'.$stock_total.'</td>';
+			print '<td></td>';
 			print '</tr>';
 		}
 		else

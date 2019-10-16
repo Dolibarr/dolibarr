@@ -148,7 +148,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
-		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element, true);
+		$extrafields->fetch_name_optionals_label($object->table_element, true);
 		$object->fetch_optionals();
 
 		$resarray = $this->fill_substitutionarray_with_extrafields($object, $resarray, $extrafields, $array_key, $outputlangs);
@@ -189,8 +189,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
-		$extralabels = $extrafields->fetch_name_optionals_label($task->table_element, true);
-		$task->fetch_optionals($task->id, $extralabels);
+		$extrafields->fetch_name_optionals_label($task->table_element, true);
+		$task->fetch_optionals($task->id);
 
 		$resarray = $this->fill_substitutionarray_with_extrafields($task, $resarray, $extrafields, 'task', $outputlangs);
 
@@ -235,7 +235,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 			// fetch external user extrafields
 			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields=new ExtraFields($this->db);
-			$extralabels=$extrafields->fetch_name_optionals_label($ct->table_element, true);
+			$extrafields->fetch_name_optionals_label($ct->table_element, true);
 			$extrafields_num = $ct->fetch_optionals();
 			//dol_syslog(get_class($this)."::get_substitutionarray_project_contacts: ===== Number of Extrafields found: ".$extrafields_num, LOG_DEBUG);
 			foreach($ct->array_options as $efkey => $efval) {

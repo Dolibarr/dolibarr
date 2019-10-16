@@ -75,7 +75,7 @@ if ($mode == 'supplier')
 	$dir=$conf->fournisseur->facture->dir_temp;
 }
 
-print load_fiche_titre($title, $mesg, 'title_accountancy.png');
+print load_fiche_titre($title, '', 'invoicing');
 
 dol_mkdir($dir);
 

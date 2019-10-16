@@ -537,6 +537,26 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 	}
 	else
 	{
+		/**
+		 *  'type' if the field format ('integer', 'integer:Class:pathtoclass', 'varchar(x)', 'double(24,8)', 'text', 'html', 'datetime', 'timestamp', 'float')
+		 *  'label' the translation key.
+		 *  'enabled' is a condition when the field must be managed.
+		 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). Using a negative value means field is not shown by default on list but can be selected for viewing)
+		 *  'noteditable' says if field is not editable (1 or 0)
+		 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+		 *  'default' is a default value for creation (can still be replaced by the global setup of default values)
+		 *  'index' if we want an index in database.
+		 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+		 *  'position' is the sort order of field.
+		 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
+		 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
+		 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
+		 *  'help' is a string visible as a tooltip on field
+		 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
+		 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
+		 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+		 */
+
 		/*public $fields=array(
 		 'rowid'         =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
 		 'ref'           =>array('type'=>'varchar(128)', 'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
@@ -562,14 +582,31 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 		$i=10;
 		while ($obj = $db->fetch_object($_results))
 		{
+			// fieldname
 			$fieldname = $obj->Field;
+			// type
 			$type = $obj->Type;
 			if ($type == 'int(11)') $type='integer';
+			// notnull
 			$notnull = ($obj->Null == 'YES'?0:1);
+			// label
 			$label = preg_replace('/_/', ' ', ucfirst($fieldname));
 			if ($fieldname == 'rowid') $label='ID';
+			if ($fieldname == 'import_key') $label='ImportKey';
+			// visible
+			$visible = -1;
+			if ($fieldname == 'entity') $visible = -2;
+			if ($fieldname == 'model_pdf') $visible = 0;
+			// enabled
+			$enabled = 1;
+			// default
+			$default = '';
+			if ($fieldname == 'entity') $default=1;
 
-			$string.= "'".$obj->Field."' =>array('type'=>'".$type."', 'label'=>'".$label."', 'enabled'=>1, 'visible'=>-2";
+			$string.= "'".$obj->Field."' =>array('type'=>'".$type."', 'label'=>'".$label."',";
+			if ($default != '') $string.= " 'default'=>".$default.",";
+			$string.= " 'enabled'=>".$enabled.",";
+			$string.= " 'visible'=>".$visible;
 			if ($notnull) $string.= ", 'notnull'=>".$notnull;
 			if ($fieldname == 'ref') $string.= ", 'showoncombobox'=>1";
 			$string.= ", 'position'=>".$i."),\n";
@@ -1243,7 +1280,7 @@ $text=$langs->trans("ModuleBuilder");
 
 print load_fiche_titre($text, '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("ModuleBuilderDesc", 'https://wiki.dolibarr.org/index.php/Module_development#Create_your_module').'</span><br>';
+print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModuleBuilderDesc", 'https://wiki.dolibarr.org/index.php/Module_development#Create_your_module').'</span><br>';
 
 $dirsrootforscan=array($dirread);
 // Add also the core modules into the list of modules to show/edit
@@ -1309,7 +1346,7 @@ foreach($dirsrootforscan as $dirread)
     if (empty($newdircustom)) $newdircustom=img_warning();
     // If dirread was forced to somewhere else, by using URL
     // htdocs/modulebuilder/index.php?module=Inventory@/home/ldestailleur/git/dolibarr/htdocs/product
-    print $langs->trans("DirScanned").' : <strong>'.$dirread.'</strong><br>';
+    print $langs->trans("DirScanned").' : <strong class="wordbreakimp">'.$dirread.'</strong><br>';
 }
 //var_dump($listofmodules);
 
@@ -1578,7 +1615,7 @@ elseif (! empty($module))
 				print '</table>';
 				print '<br>';
 
-				print load_fiche_titre($langs->trans("DescriptorFile"));
+				print load_fiche_titre($langs->trans("DescriptorFile"), '', '');
 
 				if (! empty($moduleobj))
 				{
@@ -1638,33 +1675,31 @@ elseif (! empty($module))
 					print '</td></tr>';
 
 					print '</table>';
-
-					print '<br><br>';
-
-					// Readme file
-					print load_fiche_titre($langs->trans("ReadmeFile"));
-
-					print '<div class="underbanner clearboth"></div>';
-					print '<div class="fichecenter">';
-					if (dol_is_file($dirread.'/'.$pathtofilereadme)) print $moduleobj->getDescLong();
-					else print $langs->trans("ErrorFileNotFound", $pathtofilereadme);
-
-					print '<br><br>';
-
-					// ChangeLog
-					print load_fiche_titre($langs->trans("ChangeLog"));
-
-					print '<div class="underbanner clearboth"></div>';
-					print '<div class="fichecenter">';
-
-					if (dol_is_file($dirread.'/'.$pathtochangelog)) print $moduleobj->getChangeLog();
-					else print $langs->trans("ErrorFileNotFound", $pathtochangelog);
-
-					print '</div>';
 				}
 				else
 				{
 					print $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module).'<br>';
+				}
+
+				if (! empty($moduleobj))
+				{
+					print '<br><br>';
+
+					// Readme file
+					print load_fiche_titre($langs->trans("ReadmeFile"), '', '');
+
+					print '<!-- readme file -->';
+					if (dol_is_file($dirread.'/'.$pathtofilereadme)) print '<div class="underbanner clearboth"></div><div class="fichecenter">'.$moduleobj->getDescLong().'</div>';
+					else print '<span class="opacitymedium">'.$langs->trans("ErrorFileNotFound", $pathtofilereadme).'</span>';
+
+					print '<br><br>';
+
+					// ChangeLog
+					print load_fiche_titre($langs->trans("ChangeLog"), '', '');
+
+					print '<!-- changelog file -->';
+					if (dol_is_file($dirread.'/'.$pathtochangelog)) print '<div class="underbanner clearboth"></div><div class="fichecenter">'.$moduleobj->getChangeLog().'</div>';
+					else print '<span class="opacitymedium">'.$langs->trans("ErrorFileNotFound", $pathtochangelog).'</span>';
 				}
 
 				dol_fiche_end();

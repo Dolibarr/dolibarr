@@ -1012,8 +1012,8 @@ class Website extends CommonObject
 			return -1;
 		}
 
-		dol_delete_dir_recursive(dirname($pathtofile).'/'.$object->ref);
-		dol_mkdir(dirname($pathtofile).'/'.$object->ref);
+		dol_delete_dir_recursive($conf->website->dir_temp.'/'.$object->ref);
+		dol_mkdir($conf->website->dir_temp.'/'.$object->ref);
 
 		$filename = basename($pathtofile);
 		if (! preg_match('/^website_(.*)-(.*)$/', $filename, $reg))
@@ -1023,6 +1023,7 @@ class Website extends CommonObject
 		}
 
 		$result = dol_uncompress($pathtofile, $conf->website->dir_temp.'/'.$object->ref);
+
 		if (! empty($result['error']))
 		{
 			$this->errors[]='Failed to unzip file '.$pathtofile.'.';

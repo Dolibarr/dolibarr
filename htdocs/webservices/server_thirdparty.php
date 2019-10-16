@@ -125,7 +125,7 @@ $elementtype = 'societe';
 // Retrieve all extrafields for thirdsparty
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label('societe', true);
+$extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_array = array();
@@ -362,7 +362,7 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 				// Retrieve all extrafields for thirdsparty
 				// fetch optionals attributes and labels
 				$extrafields=new ExtraFields($db);
-				$extralabels=$extrafields->fetch_name_optionals_label('societe', true);
+				$extrafields->fetch_name_optionals_label($elementtype, true);
 				//Get extrafield values
 				$thirdparty->fetch_optionals();
 
@@ -483,7 +483,7 @@ function createThirdParty($authentication, $thirdparty)
         // Retrieve all extrafields for thirdsparty
         // fetch optionals attributes and labels
         $extrafields=new ExtraFields($db);
-        $extralabels=$extrafields->fetch_name_optionals_label('societe', true);
+        $extrafields->fetch_name_optionals_label($elementtype, true);
         if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
         {
         	foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
@@ -619,7 +619,7 @@ function updateThirdParty($authentication, $thirdparty)
 			// Retrieve all extrafields for thirdsparty
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
-			$extralabels=$extrafields->fetch_name_optionals_label('societe', true);
+			$extrafields->fetch_name_optionals_label($elementtype, true);
 			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 			{
 				foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
@@ -714,7 +714,7 @@ function getListOfThirdParties($authentication, $filterthirdparty)
         $elementtype = 'societe';
 
         $extrafields=new ExtraFields($db);
-        $extralabels=$extrafields->fetch_name_optionals_label('societe', true);
+        $extrafields->fetch_name_optionals_label($elementtype, true);
 
 
         $resql=$db->query($sql);

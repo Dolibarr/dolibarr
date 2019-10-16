@@ -137,7 +137,7 @@ $elementtype = 'product';
 //Retreive all extrafield for product
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label('product', true);
+$extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields) > 0) {
 	$extrafield_array = array();
@@ -433,7 +433,7 @@ function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = ''
                 //Retreive all extrafield for thirdsparty
             	// fetch optionals attributes and labels
             	$extrafields=new ExtraFields($db);
-            	$extralabels=$extrafields->fetch_name_optionals_label('product', true);
+            	$extrafields->fetch_name_optionals_label($elementtype, true);
             	//Get extrafield values
             	$product->fetch_optionals();
 
@@ -565,7 +565,7 @@ function createProductOrService($authentication, $product)
         $elementtype = 'product';
 
         $extrafields=new ExtraFields($db);
-		$extralabels=$extrafields->fetch_name_optionals_label('product', true);
+        $extrafields->fetch_name_optionals_label($elementtype, true);
 		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
 			foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
@@ -739,7 +739,7 @@ function updateProductOrService($authentication, $product)
         $elementtype = 'product';
 
 		$extrafields=new ExtraFields($db);
-		$extralabels=$extrafields->fetch_name_optionals_label('product', true);
+		$extrafields->fetch_name_optionals_label($elementtype, true);
 		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
 			foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
@@ -1119,7 +1119,7 @@ function getProductsForCategory($authentication, $id, $lang = '')
 							//Retreive all extrafield for thirdsparty
 							// fetch optionals attributes and labels
 							$extrafields=new ExtraFields($db);
-							$extralabels=$extrafields->fetch_name_optionals_label('product', true);
+							$extrafields->fetch_name_optionals_label($elementtype, true);
 							//Get extrafield values
 							$tmpproduct->fetch_optionals();
 

@@ -502,9 +502,9 @@ if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&con
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
 print '<form method="POST" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="list">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -518,9 +518,9 @@ else $buttonLabel = $langs->trans("ExportList");
 
 // Button re-export
 if (! empty($conf->global->ACCOUNTING_REEXPORT)) {
-    $newcardbutton ='<a href="'.$_SERVER['PHP_SELF'].'?action=setreexport&value=0'.($param?'&'.$param:'').'">'.img_picto($langs->trans("Activated"), 'switch_on').'</a> ';
+    $newcardbutton ='<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&value=0'.($param?'&'.$param:'').'">'.img_picto($langs->trans("Activated"), 'switch_on').'</a> ';
 } else {
-    $newcardbutton ='<a href="'.$_SERVER['PHP_SELF'].'?action=setreexport&value=1'.($param?'&'.$param:'').'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a> ';
+    $newcardbutton ='<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&value=1'.($param?'&'.$param:'').'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a> ';
 }
 $newcardbutton.= '<span class="valignmiddle marginrightonly">'.$langs->trans("IncludeDocsAlreadyExported").'</span>';
 
@@ -542,7 +542,7 @@ if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
 else $moreforfilter = $hookmanager->resPrint;
 
 print '<div class="div-table-responsive">';
-print '<table class="tagtable liste" width="100%">';
+print '<table class="tagtable liste centpercent">';
 
 // Filters lines
 print '<tr class="liste_titre_filter">';

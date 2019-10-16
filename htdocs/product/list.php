@@ -103,7 +103,7 @@ $extrafields = new ExtraFields($db);
 $form=new Form($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('product');
+$extrafields->fetch_name_optionals_label('product');
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 if (empty($action)) $action='list';
@@ -171,7 +171,7 @@ $arrayfields=array(
 	'p.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
 	'p.fk_product_type'=>array('label'=>$langs->trans("Type"), 'checked'=>0, 'enabled'=>(! empty($conf->product->enabled) && ! empty($conf->service->enabled))),
 	'p.barcode'=>array('label'=>$langs->trans("Gencod"), 'checked'=>1, 'enabled'=>(! empty($conf->barcode->enabled))),
-	'p.duration'=>array('label'=>$langs->trans("Duration"), 'checked'=>($contextpage != 'productlist'), 'enabled'=>(! empty($conf->service->enabled))),
+	'p.duration'=>array('label'=>$langs->trans("Duration"), 'checked'=>($contextpage != 'productlist'), 'enabled'=>(! empty($conf->service->enabled) && (string) $type == '1')),
     'p.weight'=>array('label'=>$langs->trans("Weight"), 'checked'=>0, 'enabled'=>(! empty($conf->product->enabled))),
     'p.length'=>array('label'=>$langs->trans("Length"), 'checked'=>0, 'enabled'=>(! empty($conf->product->enabled)  && ! empty($conf->global->PRODUCT_DISABLE_SIZE))),
     'p.surface'=>array('label'=>$langs->trans("Surface"), 'checked'=>0, 'enabled'=>(! empty($conf->product->enabled) && ! empty($conf->global->PRODUCT_DISABLE_SURFACE))),
@@ -505,7 +505,7 @@ if ($resql)
 	print '<input type="hidden" name="type" value="'.$type.'">';
 	if (empty($arrayfields['p.fk_product_type']['checked'])) print '<input type="hidden" name="search_type" value="'.dol_escape_htmltag($search_type).'">';
 
-	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_products.png', 0, $newcardbutton, '', $limit);
+	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'products', 0, $newcardbutton, '', $limit);
 
 	$topicmail="Information";
 	$modelmail="product";
@@ -537,7 +537,7 @@ if ($resql)
 		$categoriesProductArr = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', '', 64, 0, 1);
         $categoriesProductArr[-2] = '- ' . $langs->trans('NotCategorized') . ' -';
         $moreforfilter.=Form::multiselectarray('search_category_product_list', $categoriesProductArr, $searchCategoryProductList, 0, 0, 'minwidth300');
-        $moreforfilter.='<input type="checkbox" class="valignmiddle" name="search_category_product_operator" value="1"' . ($searchCategoryProductOperator==1 ? ' checked="checked"' : '') . '/> ' . $langs->trans('or');
+        $moreforfilter.=' <input type="checkbox" class="valignmiddle" name="search_category_product_operator" value="1"' . ($searchCategoryProductOperator==1 ? ' checked="checked"' : '') . '/> ' . $langs->trans('UseOrOperatorForCategories');
         $moreforfilter.='</div>';
 	}
 
@@ -604,7 +604,7 @@ if ($resql)
 		print '</td>';
 	}
 	// Duration
-	if ((string) $type == '1' && ! empty($arrayfields['p.duration']['checked']))
+	if (! empty($arrayfields['p.duration']['checked']))
 	{
 		print '<td class="liste_titre">';
 		print '</td>';
@@ -748,7 +748,7 @@ if ($resql)
     if (! empty($arrayfields['p.barcode']['checked'])) {
         print_liste_field_titre($arrayfields['p.barcode']['label'], $_SERVER["PHP_SELF"], "p.barcode", "", $param, "", $sortfield, $sortorder);
     }
-    if ((string) $type == '1' && ! empty($arrayfields['p.duration']['checked'])) {
+    if (! empty($arrayfields['p.duration']['checked'])) {
         print_liste_field_titre($arrayfields['p.duration']['label'], $_SERVER["PHP_SELF"], "p.duration", "", $param, '', $sortfield, $sortorder, 'center ');
     }
 	if (! empty($arrayfields['p.weight']['checked']))  print_liste_field_titre($arrayfields['p.weight']['label'], $_SERVER["PHP_SELF"], "p.weight", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -921,7 +921,7 @@ if ($resql)
 		}
 
 		// Duration
-		if ((string) $type == '1' && ! empty($arrayfields['p.duration']['checked']))
+		if (! empty($arrayfields['p.duration']['checked']))
 		{
 			print '<td class="center nowraponall">';
 
@@ -939,9 +939,9 @@ if ($resql)
 				    $dur=array("i"=>$langs->trans("Minute"),"h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
 				}
 				print $duration_value;
-				print (! empty($duration_unit) && isset($dur[$duration_unit]) ? ' '.$langs->trans($dur[$duration_unit]) : '');
+				print ((! empty($duration_unit) && isset($dur[$duration_unit]) && $duration_value != '') ? ' '.$langs->trans($dur[$duration_unit]) : '');
 			}
-			else
+			elseif (! preg_match('/^[a-z]$/i', $obj->duration))		// If duration is a simple char (like 's' of 'm'), we do not show value
 			{
 				print $obj->duration;
 			}

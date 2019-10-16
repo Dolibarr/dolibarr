@@ -253,25 +253,28 @@ function LoadProducts(position, issubcat) {
 
 	idata=0; //product data counter
 	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&category='+currentcat, function(data) {
-		console.log("Call ajax.php (in LoadProducts) to get Products of category "+currentcat);
+		console.log("Call ajax.php (in LoadProducts) to get Products of category "+currentcat+" then loop on result to fill image thumbs");
 
 		while (ishow < maxproduct) {
 			//console.log("ishow"+ishow+" idata="+idata);
-			//console.log(data[idata]);
+			console.log(data[idata]);
 			if (typeof (data[idata]) == "undefined") {
 				$("#prodivdesc"+ishow).hide();
 				$("#prodesc"+ishow).text("");
+				$("#proimg"+ishow).attr("title","");
 				$("#proimg"+ishow).attr("src","genimg/empty.png");
 				$("#prodiv"+ishow).data("rowid","");
 				$("#prowatermark"+ishow).hide();
 				ishow++; //Next product to show after print data product
 			}
 			else if ((data[idata]['status']) == "1") {		// Only show products with status=1 (for sell)
+				var titlestring = '<?php echo dol_escape_js($langs->transnoentities('Ref').': '); ?>'+data[idata]['ref'];
 				$("#prodivdesc"+ishow).show();
 				$("#prodesc"+ishow).text(data[parseInt(idata)]['label']);
-				$("#proimg"+ishow).attr("src","genimg/index.php?query=pro&id="+data[idata]['id']);
-				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
-				$("#prodiv"+ishow).data("iscat",0);
+				$("#proimg"+ishow).attr("title", titlestring);
+				$("#proimg"+ishow).attr("src", "genimg/index.php?query=pro&id="+data[idata]['id']);
+				$("#prodiv"+ishow).data("rowid", data[idata]['id']);
+				$("#prodiv"+ishow).data("iscat", 0);
 				$("#prowatermark"+ishow).hide();
 				ishow++; //Next product to show after print data product
 			}
@@ -425,11 +428,13 @@ function Search2() {
                 $("#prodiv"+i).data("rowid","");
 				continue;
 			}
-			$("#prodesc"+i).text(data[parseInt(i)]['label']);
+			var titlestring = '<?php echo dol_escape_js($langs->transnoentities('Ref').': '); ?>'+data[i]['ref'];
+			$("#prodesc"+i).text(data[i]['label']);
 			$("#prodivdesc"+i).show();
-			$("#proimg"+i).attr("src","genimg/?query=pro&id="+data[i]['rowid']);
-			$("#prodiv"+i).data("rowid",data[i]['rowid']);
-			$("#prodiv"+i).data("iscat",0);
+			$("#proimg"+i).attr("title", titlestring);
+			$("#proimg"+i).attr("src", "genimg/?query=pro&id="+data[i]['rowid']);
+			$("#prodiv"+i).data("rowid", data[i]['rowid']);
+			$("#prodiv"+i).data("iscat", 0);
 		}
 	});
 }
@@ -647,16 +652,18 @@ if ($resql){
 	while ($obj = $db->fetch_object($resql)){
         $paycode = $obj->code;
         if ($paycode == 'LIQ') $paycode = 'CASH';
-        if ($paycode == 'CB')  $paycode = 'CARD';
         if ($paycode == 'CHQ') $paycode = 'CHEQUE';
 
-		$accountname="CASHDESK_ID_BANKACCOUNT_".$paycode.$_SESSION["takeposterminal"];
-		if (! empty($conf->global->$accountname) && $conf->global->$accountname > 0) array_push($paiementsModes, $obj);
+		$constantforkey="CASHDESK_ID_BANKACCOUNT_".$paycode.$_SESSION["takeposterminal"];
+		//var_dump($constantforkey.' '.$conf->global->$constantforkey);
+		if (! empty($conf->global->$constantforkey) && $conf->global->$constantforkey > 0) array_push($paiementsModes, $obj);
 	}
 }
+
 if (empty($paiementsModes)) {
 	$langs->load('errors');
 	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("TakePOS")), null, 'errors');
+	setEventMessages($langs->trans("ProblemIsInSetupOfTerminal").' '.$_SESSION["takeposterminal"], null, 'errors');
 }
 if (count($maincategories)==0) {
 	setEventMessages($langs->trans("TakeposNeedsCategories"), null, 'errors');
@@ -800,7 +807,7 @@ $menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"><
     				}
     				else
     				{
-    				    echo '<img class="imgwrapper" height="100%" id="proimg'.$count.'" />';
+    				    echo '<img class="imgwrapper" height="100%" title="" id="proimg'.$count.'">';
     				}
     				?>
 					<?php if ($count!=($MAXPRODUCT-2) && $count!=($MAXPRODUCT-1)) { ?>

@@ -140,6 +140,46 @@ function ticket_prepare_head($object)
 }
 
 /**
+ * Return string with full Url. The file qualified is the one defined by relative path in $object->last_main_doc
+ *
+ * @param   Object	$object				Object
+ * @return	string						Url string
+ */
+function showDirectPublicLink($object)
+{
+	global $conf, $langs;
+
+	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+	$email = CMailFile::getValidAddress($object->origin_email, 2);
+	$url = '';
+	if ($email)
+	{
+		$url = dol_buildpath('/public/ticket/view.php', 3).'?track_id='.$object->track_id.'&email='.$email;
+	}
+
+	$out='';
+	if (empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
+	{
+		$out.= '<span class="opacitymedium">'.$langs->trans("PublicInterfaceNotEnabled").'</span>';
+	}
+	else
+	{
+		$out.= img_picto('', 'object_globe.png').' '.$langs->trans("TicketPublicAccess").':<br>';
+		if ($url)
+		{
+			$out.= '<input type="text" id="directpubliclink" class="quatrevingtpercent" value="'.$url.'">';
+			$out.= ajax_autoselect("directpubliclink", 0);
+		}
+		else
+		{
+			$out.= '<span class="opacitymedium">'.$langs->trans("TicketNotCreatedFromPublicInterface").'</span>';
+		}
+	}
+
+	return $out;
+}
+
+/**
  *     Generate a random id
  *
  *    @param  string $car Char to generate key

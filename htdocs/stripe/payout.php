@@ -169,7 +169,7 @@ if (! $rowid) {
 			$url='https://dashboard.stripe.com/'.$connect.'payouts/'.$payout->id;
 		}
 
-        print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." " . $payout->id . "</a></td>\n";
+        print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." " . $payout->id . "</a></td>\n";
 
 
 		// Stripe customer

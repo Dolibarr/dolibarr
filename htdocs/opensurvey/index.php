@@ -42,8 +42,6 @@ $hookmanager->initHooks(array('opensurveyindex'));
  * View
  */
 
-llxHeader();
-
 $nbsondages=0;
 $sql = 'SELECT COUNT(*) as nb';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'opensurvey_sondage';
@@ -56,9 +54,11 @@ if ($resql)
 }
 else dol_print_error($db, '');
 
-llxHeader();
 
-print load_fiche_titre($langs->trans("OpenSurveyArea"));
+$title = $langs->trans("OpenSurveyArea");
+llxHeader('', $title);
+
+print load_fiche_titre($title, '', 'wrench');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';

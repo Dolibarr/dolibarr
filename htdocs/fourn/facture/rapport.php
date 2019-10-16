@@ -91,7 +91,7 @@ $titre=($year?$langs->trans("PaymentsReportsForYear", $year):$langs->trans("Paym
 
 llxHeader('', $titre);
 
-print load_fiche_titre($titre, '', 'title_accountancy.png');
+print load_fiche_titre($titre, '', 'invoicing');
 
 // Formulaire de generation
 print '<form method="post" action="rapport.php?year='.$year.'">';

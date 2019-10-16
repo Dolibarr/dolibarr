@@ -60,7 +60,7 @@ $object = new Contact($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($id);
@@ -206,7 +206,7 @@ if (empty($reshook))
         $object->birthday_alert = GETPOST("birthday_alert", 'alpha');
 
         // Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0)
 		{
 			$error++;
@@ -250,6 +250,7 @@ if (empty($reshook))
     if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->societe->contact->supprimer)
     {
         $result=$object->fetch($id);
+		$object->oldcopy = clone $object;
 
         $object->old_lastname      = GETPOST("old_lastname");
         $object->old_firstname = GETPOST("old_firstname");
@@ -371,9 +372,10 @@ if (empty($reshook))
             $object->priv			= GETPOST("priv", 'int');
             $object->note_public	= GETPOST("note_public", 'none');
        		$object->note_private	= GETPOST("note_private", 'none');
+       		$object->roles			= GETPOST("roles", 'array');
 
             // Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+			$ret = $extrafields->setOptionalsFromPost(null, $object);
 			if ($ret < 0) $error++;
 
 			if (! $error)
@@ -474,9 +476,9 @@ else
         // Si edition contact deja existant
         $object = new Contact($db);
         $res=$object->fetch($id, $user);
-        if ($res < 0) { dol_print_error($db, $object->error); exit; }
-        $res=$object->fetch_optionals();
-        if ($res < 0) { dol_print_error($db, $object->error); exit; }
+        if ($res<0) {
+        	setEventMessages($object->error, $object->errors, 'errors');
+        }
 
         // Show tabs
         $head = contact_prepare_head($object);
@@ -506,7 +508,7 @@ else
 
             $title = $addcontact = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
             $linkback='';
-            print load_fiche_titre($title, $linkback, 'title_companies.png');
+            print load_fiche_titre($title, $linkback, 'address');
 
             // Show errors
             dol_htmloutput_errors(is_numeric($error)?'':$error, $errors);
@@ -723,6 +725,15 @@ else
 				print $form->multiselectarray('contcats', $cate_arbo, GETPOST('contcats', 'array'), null, null, null, null, '90%');
 				print "</td></tr>";
 			}
+
+	        // Contact by default
+	        if (!empty($socid)) {
+		        print '<tr><td>' . $langs->trans("ContactByDefaultFor") . '</td>';
+		        print '<td colspan="3">';
+		        $contactType = $object->listeTypeContacts('external', '', 1);
+		        print $form->multiselectarray('roles', $contactType);
+		        print '</td></tr>';
+	        }
 
             // Other attributes
             $parameters=array('socid' => $socid, 'objsoc' => $objsoc, 'colspan' => ' colspan="3"', 'cols' => 3);
@@ -1040,6 +1051,14 @@ else
 				print "</td></tr>";
 			}
 
+			// Contact by default
+	        if (!empty($object->socid)) {
+		        print '<tr><td>' . $langs->trans("ContactByDefaultFor") . '</td>';
+		        print '<td colspan="3">';
+		        print $formcompany->showRoles("roles", $object, 'edit', $object->roles);
+		        print '</td></tr>';
+	        }
+
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"', 'cols'=>3);
             $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
@@ -1188,7 +1207,7 @@ else
         print $object->getCivilityLabel();
         print '</td></tr>';
 
-        // Role
+        // Job / position
         print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td>'.$object->poste.'</td></tr>';
 
         // Email
@@ -1237,6 +1256,13 @@ else
 			print $form->showCategories($object->id, 'contact', 1);
 			print '</td></tr>';
 		}
+
+	    if (!empty($object->socid)) {
+		    print '<tr><td class="titlefield">' . $langs->trans("ContactByDefaultFor") . '</td>';
+		    print '<td colspan="3">';
+		    print $formcompany->showRoles("roles", $object, 'view');
+		    print '</td></tr>';
+	    }
 
     	// Other attributes
     	$cols = 3;

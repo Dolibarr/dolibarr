@@ -85,8 +85,8 @@ $morehtml.='<option name="mine" value="'.$user->id.'"'.(($search_project_user ==
 $morehtml.='</SELECT>';
 $morehtml.='<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
 
-print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'title_project.png', 0, $morehtml);
-//print load_fiche_titre($title, '', 'title_project');
+print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'project', 0, $morehtml);
+//print load_fiche_titre($title, '', 'project');
 
 if ($mine) print $langs->trans("MyTasksDesc").'<br><br>';
 else

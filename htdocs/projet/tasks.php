@@ -75,9 +75,9 @@ if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($ob
 if ($id > 0 || ! empty($ref))
 {
 	// fetch optionals attributes and labels
-	$extralabels_projet=$extrafields_project->fetch_name_optionals_label($object->table_element);
+	$extrafields_project->fetch_name_optionals_label($object->table_element);
 }
-$extralabels_task=$extrafields_task->fetch_name_optionals_label($taskstatic->table_element);
+$extrafields_task->fetch_name_optionals_label($taskstatic->table_element);
 
 // Security check
 $socid=0;
@@ -260,7 +260,8 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			$task->progress = $progress;
 
 			// Fill array 'array_options' with data from add form
-			$ret = $extrafields_task->setOptionalsFromPost($extralabels_task, $task);
+			$extrafields->fetch_name_optionals_label($task->table_element);
+			$ret = $extrafields_task->setOptionalsFromPost(null, $task);
 
 			$taskid = $task->create($user);
 
@@ -506,7 +507,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 {
 	if ($id > 0 || ! empty($ref)) print '<br>';
 
-	print load_fiche_titre($langs->trans("NewTask"), '', 'title_project');
+	print load_fiche_titre($langs->trans("NewTask"), '', 'project');
 
 	if ($object->statut == Project::STATUS_CLOSED)
 	{

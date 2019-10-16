@@ -48,7 +48,7 @@ $object=new Adherent($db);
 
 $extrafields = new ExtraFields($db);
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 
 /*
@@ -248,7 +248,7 @@ $form=new Form($db);
 
 llxHeader('', $langs->trans("MembersCards"));
 
-print load_fiche_titre($langs->trans("LinkToGeneratedPages"));
+print load_fiche_titre($langs->trans("LinkToGeneratedPages"), '', 'members');
 
 print '<span class="opacitymedium">'.$langs->trans("LinkToGeneratedPagesDesc").'</span><br>';
 print '<br>';

@@ -142,7 +142,8 @@ if ($result)
 			print "<td >".$objp->label."</td>";
 			print '<td style="text-align: center;">';
 			print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=edit">'.img_edit().'</a>&nbsp;&nbsp;';
-			print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=delete">'.img_delete().'</a></td>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=delete">'.img_delete().'</a>';
+			print '</td>';
 		}
 		print "</tr>";
 		$i++;

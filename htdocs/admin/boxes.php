@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'boxes'));
+$langs->loadLangs(array('admin', 'boxes', 'accountancy'));
 
 if (! $user->admin) accessforbidden();
 
@@ -222,7 +222,7 @@ llxHeader('', $langs->trans("Boxes"));
 
 print load_fiche_titre($langs->trans("Boxes"), '', 'title_setup');
 
-print $langs->trans("BoxesDesc")." ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("BoxesDesc")." ".$langs->trans("OnlyActiveElementsAreShown")."</span><br>\n";
 
 /*
  * Search for the default active boxes for each possible position

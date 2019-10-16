@@ -5,7 +5,7 @@
 // Begin       : 2013-05-16
 // Last Update : 2014-12-18
 // Authors     : Nicola Asuni - Tecnick.com LTD - www.tecnick.com - info@tecnick.com
-// License     : GNU-LGPL v3 (https://www.gnu.org/copyleft/lesser.html)
+// License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
 // Copyright (C) 2011-2014 Nicola Asuni - Tecnick.com LTD
 //

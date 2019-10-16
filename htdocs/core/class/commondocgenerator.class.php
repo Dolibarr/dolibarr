@@ -63,7 +63,7 @@ abstract class CommonDocGenerator
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     * Define array with couple subtitution key => subtitution value
+     * Define array with couple substitution key => substitution value
      *
      * @param   User		$user           User
      * @param   Translate	$outputlangs    Language object for output
@@ -101,7 +101,7 @@ abstract class CommonDocGenerator
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     * Define array with couple subtitution key => subtitution value
+     * Define array with couple substitution key => substitution value
      *
      * @param   Societe		$mysoc			Object thirdparty
      * @param   Translate	$outputlangs    Language object for output
@@ -161,9 +161,9 @@ abstract class CommonDocGenerator
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     * Define array with couple subtitution key => subtitution value
+     * Define array with couple substitution key => substitution value
      *
-     * @param	Object		$object			Object
+     * @param	Societe		$object			Object
      * @param   Translate	$outputlangs    Language object for output
      * @return	array						Array of substitution key->code
      */
@@ -221,7 +221,7 @@ abstract class CommonDocGenerator
         {
         	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
         	$extrafields = new ExtraFields($this->db);
-        	$extralabels = $extrafields->fetch_name_optionals_label('societe', true);
+        	$extrafields->fetch_name_optionals_label($object->table_element, true);
         	$object->fetch_optionals();
 
         	foreach($extrafields->attribute_label as $key=>$label)
@@ -242,7 +242,7 @@ abstract class CommonDocGenerator
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Define array with couple subtitution key => subtitution value
+	 * Define array with couple substitution key => substitution value
 	 *
 	 * @param	Contact 	$object        	contact
 	 * @param	Translate 	$outputlangs   	object for output
@@ -295,7 +295,7 @@ abstract class CommonDocGenerator
 		// Retrieve extrafields
 		require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
-		$extralabels = $extrafields->fetch_name_optionals_label('socpeople', true);
+		$extrafields->fetch_name_optionals_label($object->table_element, true);
 		$object->fetch_optionals();
 
 		foreach($extrafields->attribute_label as $key => $label)
@@ -316,7 +316,7 @@ abstract class CommonDocGenerator
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     * Define array with couple subtitution key => subtitution value
+     * Define array with couple substitution key => substitution value
      *
      * @param   Translate	$outputlangs    Language object for output
      * @return	array						Array of substitution key->code
@@ -445,7 +445,7 @@ abstract class CommonDocGenerator
 		$array_key.'_already_payed_all_locale'=>price(price2num($already_payed_all, 'MT'), 0, $outputlangs),
 		$array_key.'_already_payed_all'=> price2num($already_payed_all, 'MT'),
 
-		// Remain to pay with all know infrmation (except open direct debit requests)
+		// Remain to pay with all know information (except open direct debit requests)
 		$array_key.'_remain_to_pay_locale'=>price(price2num($object->total_ttc - $remain_to_pay, 'MT'), 0, $outputlangs),
 		$array_key.'_remain_to_pay'=>price2num($object->total_ttc - $remain_to_pay, 'MT')
 		);
@@ -479,7 +479,7 @@ abstract class CommonDocGenerator
 			$totalUp = 0;
 			foreach ($object->lines as $line)
 			{
-			    // $line->tva_tx format depends on database field accuraty, no reliable. This is kept for backward comaptibility
+			    // $line->tva_tx format depends on database field accuraty, no reliable. This is kept for backward compatibility
 				if (empty($resarray[$array_key.'_total_vat_'.$line->tva_tx])) $resarray[$array_key.'_total_vat_'.$line->tva_tx]=0;
 				$resarray[$array_key.'_total_vat_'.$line->tva_tx]+=$line->total_tva;
 				$resarray[$array_key.'_total_vat_locale_'.$line->tva_tx]=price($resarray[$array_key.'_total_vat_'.$line->tva_tx]);
@@ -517,7 +517,7 @@ abstract class CommonDocGenerator
 
 			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($this->db);
-			$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey, true);
+			$extrafields->fetch_name_optionals_label($extrafieldkey, true);
 			$object->fetch_optionals();
 
 			$resarray = $this->fill_substitutionarray_with_extrafields($object, $resarray, $extrafields, $array_key, $outputlangs);
@@ -592,7 +592,7 @@ abstract class CommonDocGenerator
 		$array_key="line";
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
-		$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey, true);
+		$extrafields->fetch_name_optionals_label($extrafieldkey, true);
 		$line->fetch_optionals();
 
 		$resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);
@@ -662,7 +662,7 @@ abstract class CommonDocGenerator
     	{
     		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
     		$extrafields = new ExtraFields($this->db);
-    		$extralabels = $extrafields->fetch_name_optionals_label('expedition', true);
+    		$extrafields->fetch_name_optionals_label('expedition', true);
     		$object->fetch_optionals();
 
     		$array_shipment = $this->fill_substitutionarray_with_extrafields($object, $array_shipment, $extrafields, $array_key, $outputlangs);
@@ -712,7 +712,7 @@ abstract class CommonDocGenerator
         $array_key = "line";
         require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
         $extrafields = new ExtraFields($this->db);
-        $extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey, true);
+        $extrafields->fetch_name_optionals_label($extrafieldkey, true);
         $line->fetch_optionals();
 
         $resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);
@@ -723,7 +723,7 @@ abstract class CommonDocGenerator
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     * Define array with couple subtitution key => subtitution value
+     * Define array with couple substitution key => substitution value
      *
      * @param   Object		$object    		Dolibarr Object
      * @param   Translate	$outputlangs    Language object for output
@@ -868,7 +868,7 @@ abstract class CommonDocGenerator
 
 
     /**
-     *  uasort callback function to Sort colums fields
+     *  uasort callback function to Sort columns fields
      *
      *  @param	array			$a    			PDF lines array fields configs
      *  @param	array			$b    			PDF lines array fields configs
@@ -907,7 +907,7 @@ abstract class CommonDocGenerator
         // Positionning
         $curX = $this->page_largeur-$this->marge_droite; // start from right
 
-        // Array witdh
+        // Array width
         $arrayWidth = $this->page_largeur-$this->marge_droite-$this->marge_gauche;
 
         // Count flexible column
@@ -915,10 +915,10 @@ abstract class CommonDocGenerator
         $countFlexCol = 0;
         foreach ($this->cols as $colKey =>& $colDef)
         {
-            if(!$this->getColumnStatus($colKey)) continue; // continue if desable
+            if(!$this->getColumnStatus($colKey)) continue; // continue if disabled
 
             if(!empty($colDef['scale'])){
-                // In case of column widht is defined by percentage
+                // In case of column width is defined by percentage
                 $colDef['width'] = abs($arrayWidth * $colDef['scale'] / 100);
             }
 

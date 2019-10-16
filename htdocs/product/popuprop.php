@@ -76,7 +76,7 @@ $title=$langs->trans("Statistics");
 
 llxHeader('', $title, $helpurl);
 
-print load_fiche_titre($title, $mesg, 'title_products.png');
+print load_fiche_titre($title, $mesg, 'products');
 
 
 $param = '';

@@ -37,9 +37,6 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy"));
 
-$page = GETPOST("page");
-$sortorder = GETPOST("sortorder");
-$sortfield = GETPOST("sortfield");
 $action = GETPOST('action', 'alpha');
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
 $search_date_end = dol_mktime(0, 0, 0, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
@@ -71,9 +68,9 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if ($sortorder == "") $sortorder = "ASC";
-if ($sortfield == "") $sortfield = "t.rowid";
+if ($sortfield == "") $sortfield = "t.doc_date,t.rowid";
 
-if (empty($search_date_start) && empty($search_date_end)) {
+if (empty($search_date_start) && empty($search_date_end) && GETPOSTISSET('search_date_startday') && GETPOSTISSET('search_date_startmonth') && GETPOSTISSET('search_date_starthour')) {
 	$sql = 	"SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
 	$sql.= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."'";
 	$sql.= $db->plimit(1);
@@ -255,6 +252,14 @@ if ($action == 'delbookkeepingyear') {
 
 
 print '<form method="POST" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="list">';
+if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
+
 
 $newcardbutton.= dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param);
 $newcardbutton.= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', './card.php?action=create');
@@ -265,12 +270,11 @@ if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($lim
 print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $result, $nbtotalofrecords, 'title_accountancy', 0, $viewflat.$newcardbutton, '', $limit);
 
 // Reverse sort order
-if ( preg_match('/^asc/i', $sortorder) )
-	$sortorder = "asc";
-else
-	$sortorder = "desc";
+if (preg_match('/^asc/i', $sortorder)) $sortorder = "asc";
+else $sortorder = "desc";
 
-print '<table class="noborder" width="100%">';
+print '<div class="div-table-responsive">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td class="liste_titre">';
@@ -300,6 +304,7 @@ print '<td class="liste_titre right" colspan="2">';
 $searchpicto=$form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
 print '</td>';
+print '</tr>';
 
 print '<tr class="liste_titre">';
 print_liste_field_titre("AccountAccountingShort", $_SERVER['PHP_SELF']);
@@ -312,8 +317,6 @@ print_liste_field_titre("Credit", $_SERVER['PHP_SELF'], "t.credit", "", $param, 
 print_liste_field_titre("Codejournal", $_SERVER['PHP_SELF'], "t.code_journal", "", $param, '', $sortfield, $sortorder, 'center ');
 print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $param, "", 'width="60"', $sortfield, $sortorder, 'center ');
 print "</tr>\n";
-
-print '</tr>';
 
 
 $total_debit = 0;
@@ -376,8 +379,8 @@ while ($i < min($num, $limit))
 	print strlen(length_accounta($line->subledger_account)) == 0 ? '<td>' . $line->label_operation . '</td>' : '<td>' . $line->label_operation . '<br><span style="font-size:0.8em">(' . length_accounta($line->subledger_account) . ')</span></td>';
 
 
-	print '<td class="right">' . ($line->debit ? price($line->debit) :''). '</td>';
-	print '<td class="right">' . ($line->credit ? price($line->credit) : '') . '</td>';
+	print '<td class="nowrap right">' . ($line->debit ? price($line->debit) :''). '</td>';
+	print '<td class="nowrap right">' . ($line->credit ? price($line->credit) : '') . '</td>';
 
 	$accountingjournal = new AccountingJournal($db);
 	$result = $accountingjournal->fetch('', $line->code_journal);
@@ -397,27 +400,32 @@ while ($i < min($num, $limit))
 	$i++;
 }
 
-// Affiche un Sous-Total du dernier compte comptable affiché
+// Show sub-total of last shown account
 print '<tr class="liste_total">';
 print '<td class="right" colspan="5">'.$langs->trans("SubTotal").':</td><td class="nowrap right">'.price($sous_total_debit).'</td><td class="nowrap right">'.price($sous_total_credit).'</td>';
-print "<td>&nbsp;</td>\n";
-print "<td>&nbsp;</td>\n";
+print '<td class="nowraponall center">';
+print price($sous_total_debit - $sous_total_credit);
+print '</td>';
+print '<td></td>';
 print '</tr>';
 
 
-// Affiche le Total
+// Show total
 print '<tr class="liste_total">';
 print '<td class="right" colspan="5">'.$langs->trans("Total").':</td>';
-print '<td  class="right">';
+print '<td class="nowraponall right">';
 print price($total_debit);
 print '</td>';
-print '<td  class="right">';
+print '<td class="nowraponall right">';
 print price($total_credit);
 print '</td>';
-print '<td colspan="2"></td>';
+print '<td></td>';
+print '<td></td>';
 print '</tr>';
 
 print "</table>";
+print '</div>';
+
 print '</form>';
 
 // End of page

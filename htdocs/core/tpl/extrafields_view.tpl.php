@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Show extrafields. It also show fields from hook formObjectOptions. Need to have following variables defined:
  * $object (invoice, order, ...)
  * $action
  * $conf
@@ -24,6 +24,7 @@
  * $parameters
  * $cols
  */
+
 // Protection to avoid direct call of template
 if (empty($object) || ! is_object($object))
 {
@@ -109,7 +110,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 		{
             print '<tr class="trextrafields_collapse'.$extrafields_collapse_num.'">';
 			print '<td class="titlefield">';
-			print '<table width="100%" class="nobordernopadding">';
+			print '<table class="nobordernopadding centpercent">';
 			print '<tr>';
 			print '<td class="';
 			//var_dump($action);exit;
@@ -138,7 +139,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			{
 			    $fieldid='id';
 			    if ($object->table_element == 'societe') $fieldid='socid';
-			    print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?'.$fieldid.'=' . $object->id . '&action=edit_extras&attribute=' . $key . '&ignorecollapsesetup=1">' . img_edit().'</a></td>';
+			    print '<td class="right"><a class="reposition editfielda" href="' . $_SERVER['PHP_SELF'] . '?'.$fieldid.'=' . $object->id . '&action=edit_extras&attribute=' . $key . '&ignorecollapsesetup=1">' . img_edit().'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td>';

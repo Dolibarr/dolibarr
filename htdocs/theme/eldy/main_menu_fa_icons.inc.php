@@ -31,7 +31,7 @@ div.mainmenu.home::before{
 }
 
 div.mainmenu.billing::before {
-    content: "\f3d1";
+    content: "\f51e";
 }
 
 div.mainmenu.accountancy::before {

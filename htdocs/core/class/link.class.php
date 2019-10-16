@@ -334,7 +334,8 @@ class Link extends CommonObject
             if($this->db->num_rows($resql) > 0)
             {
                 $obj = $this->db->fetch_object($resql);
-	            $this->id=$obj->rowid;
+
+                $this->id = $obj->rowid;
                 $this->entity = $obj->entity;
                 $this->datea = $this->db->jdate($obj->datea);
                 $this->url = $obj->url;
@@ -361,8 +362,6 @@ class Link extends CommonObject
      */
     public function delete($user)
     {
-        global $langs, $conf;
-
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $error = 0;
 
