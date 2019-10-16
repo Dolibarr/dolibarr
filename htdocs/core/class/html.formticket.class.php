@@ -76,7 +76,6 @@ class FormTicket
     public $withfromsocid;
     public $withfromcontactid;
     public $withnotnotifytiersatcreate;
-    public $withnotifytiersatcreate;
     public $withusercreate; // Show name of creating user in form
     public $withcreatereadonly;
 
