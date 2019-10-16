@@ -85,6 +85,13 @@ class modProduct extends DolibarrModules
 		$this->const[$r][3] = 'Module to control product codes';
 		$this->const[$r][4] = 0;
 		$r++;
+		
+		$this->const[$r][0] = "PRODUCT_PRICE_UNIQ";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "1";
+		$this->const[$r][3] = 'pricing rule by default';
+		$this->const[$r][4] = 0;
+		$r++;
 
 		/*$this->const[$r][0] = "PRODUCT_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
