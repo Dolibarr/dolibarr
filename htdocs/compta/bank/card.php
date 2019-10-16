@@ -627,7 +627,7 @@ else
 		$conciliate=$object->canBeConciliated();
 		if ($conciliate == -2) print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
 		elseif ($conciliate == -3) print $langs->trans("No").' ('.$langs->trans("Closed").')';
-		else print ($object->rappro==1 ? $langs->trans("Yes") : ($langs->trans("No").' ('.$langs->trans("ConciliationDisabled").')'));
+		else print ($object->rappro==1 ? $langs->trans("Yes") : ($langs->trans("No").' <span class="opacitymedium">('.$langs->trans("ConciliationDisabled").')</span>'));
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("BalanceMinimalAllowed").'</td>';

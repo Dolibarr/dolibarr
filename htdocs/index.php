@@ -212,7 +212,7 @@ if (empty($user->societe_id) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTAT
 	                'askprice',
 	                'projects',
 	                'expensereports',
-                    'holidays',
+                    'holiday',
 					'donations'
 	    );
 	    // Dashboard Icon lines

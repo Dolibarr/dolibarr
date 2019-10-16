@@ -190,7 +190,7 @@ if ($action=='install')
                     //var_dump($modulenamedir);
                     if (! dol_is_dir($modulenamedir))
                     {
-						setEventMessages($langs->trans("ErrorModuleFileSeemsToHaveAWrongFormat").'<br>Dir not found: '.$conf->admin->dir_temp.'/'.$tmpdir.'/'.$modulename.'<br>'.$conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulename, null, 'errors');
+                    	setEventMessages($langs->trans("ErrorModuleFileSeemsToHaveAWrongFormat").'<br>'.$langs->trans("ErrorModuleFileSeemsToHaveAWrongFormat2", $modulename, 'htdocs/'.$modulename), null, 'errors');
                         $error++;
                     }
                 }

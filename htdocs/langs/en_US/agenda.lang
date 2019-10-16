@@ -76,6 +76,7 @@ ContractSentByEMail=Contract %s sent by email
 OrderSentByEMail=Sales order %s sent by email
 InvoiceSentByEMail=Customer invoice %s sent by email
 SupplierOrderSentByEMail=Purchase order %s sent by email
+ORDER_SUPPLIER_DELETEInDolibarr=Purchase order %s deleted
 SupplierInvoiceSentByEMail=Vendor invoice %s sent by email
 ShippingSentByEMail=Shipment %s sent by email
 ShippingValidated= Shipment %s validated

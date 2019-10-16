@@ -90,20 +90,23 @@ class InterfaceContactRoles extends DolibarrTriggers
 					if (!empty($cloneFrom->id))	$TContactAlreadyLinked = array_merge($cloneFrom->liste_contact(-1, 'external'), $cloneFrom->liste_contact(-1, 'internal'));
 				}
 
-				foreach($TContact as $i => $infos) {
-					foreach ($TContactAlreadyLinked as $contactData) {
-						if($contactData['id'] == $infos['fk_socpeople'] && $contactData['fk_c_type_contact'] == $infos['type_contact']) unset($TContact[$i]);
+				if (is_array($TContact))
+				{
+					foreach($TContact as $i => $infos) {
+						foreach ($TContactAlreadyLinked as $contactData) {
+							if ($contactData['id'] == $infos['fk_socpeople'] && $contactData['fk_c_type_contact'] == $infos['type_contact']) unset($TContact[$i]);
+						}
 					}
-				}
 
-				$nb = 0;
-				foreach($TContact as $infos) {
-					$res = $object->add_contact($infos['fk_socpeople'], $infos['type_contact']);
-					if($res > 0) $nb++;
-				}
+					$nb = 0;
+					foreach($TContact as $infos) {
+						$res = $object->add_contact($infos['fk_socpeople'], $infos['type_contact']);
+						if ($res > 0) $nb++;
+					}
 
-				if($nb > 0) {
-					setEventMessages($langs->trans('ContactAddedAutomatically', $nb), null, 'mesgs');
+					if($nb > 0) {
+						setEventMessages($langs->trans('ContactAddedAutomatically', $nb), null, 'mesgs');
+					}
 				}
 			}
 		}

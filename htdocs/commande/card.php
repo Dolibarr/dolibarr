@@ -1924,7 +1924,7 @@ if ($action == 'create' && $usercancreate)
 		// Confirmation of validation
 		if ($action == 'validate')
 		{
-			// on verifie si l'objet est en numerotation provisoire
+			// We check that object has a temporary ref
 			$ref = substr($object->ref, 1, 4);
 			if ($ref == 'PROV') {
 				$numref = $object->getNextNumRef($soc);

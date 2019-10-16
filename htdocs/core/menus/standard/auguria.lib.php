@@ -137,7 +137,7 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 		}
 		else
 		{
-			$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo_squarred.png';
+			$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo_squarred_alpha.png';
 		}
 		$title=$langs->trans("GoIntoSetupToChangeLogo");
 

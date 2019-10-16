@@ -129,7 +129,7 @@ if (empty($reshook))
     $permissiontodelete = $user->rights->mymodule->delete || ($permissiontoadd && $object->status == 0);
     $backurlforlist = dol_buildpath('/mymodule/myobject_list.php', 1);
     if (empty($backtopage)) {
-        if (empty($id)) $backtopage = $backurlforlist;
+    	if (empty($id) && $action != 'add' && $action != 'create') $backtopage = $backurlforlist;
         else $backtopage = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
     }
     $triggermodname = 'MYMODULE_MYOBJECT_MODIFY';	// Name of trigger action code to execute when we modify record
@@ -450,7 +450,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		// Clone
     		if (! empty($user->rights->mymodule->write))
     		{
-    			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=order">' . $langs->trans("ToClone") . '</a></div>';
+    			print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=order">' . $langs->trans("ToClone") . '</a>'."\n";
     		}
 
     		/*

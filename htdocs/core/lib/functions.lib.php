@@ -2220,7 +2220,7 @@ function dol_print_socialnetworks($value, $cid, $socid, $type)
 	if (! empty($type))
 	{
 		$newskype ='<div class="divsocialnetwork inline-block valignmiddle">';
-		$newskype.=img_picto($langs->trans(strtoupper($type)), $type.'.png', '', false, 0, 0, '', 'paddingright');
+		$newskype.=img_picto($langs->trans(strtoupper($type)), $type.'.png', '', false, 0, 0, '', 'paddingright', 0);
 		$newskype.=$value;
 		if ($type == 'skype')
 		{
@@ -4125,9 +4125,9 @@ function load_fiche_titre($titre, $morehtmlright = '', $picto = 'generic', $pict
 	if ($picto == 'setup') $picto='generic';
 
 	$return.= "\n";
-	$return.= '<table '.($id?'id="'.$id.'" ':'').'class="centpercent notopnoleftnoright'.($morecssontable?' '.$morecssontable:'').'" style="margin-bottom: 6px;"><tr>';	// maring bottom must be same than into print_barre_list
-	if ($picto) $return.= '<td class="nobordernopadding widthpictotitle opacityhigh valignmiddle">'.img_picto('', $picto, 'class="valignmiddle widthpictotitle pictotitle"', $pictoisfullpath).'</td>';
-	$return.= '<td class="nobordernopadding valignmiddle">';
+	$return.= '<table '.($id?'id="'.$id.'" ':'').'class="centpercent notopnoleftnoright table-fiche-title '.($morecssontable?' '.$morecssontable:'').'"><tr>';	// maring bottom must be same than into print_barre_list
+	if ($picto) $return.= '<td class="nobordernopadding widthpictotitle opacityhigh valignmiddle col-picto">'.img_picto('', $picto, 'class="valignmiddle widthpictotitle pictotitle"', $pictoisfullpath).'</td>';
+	$return.= '<td class="nobordernopadding valignmiddle col-title">';
 	$return.= '<div class="titre inline-block">'.$titre.'</div>';
 	$return.= '</td>';
 	if (dol_strlen($morehtmlcenter))
@@ -4187,11 +4187,10 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 	print "\n";
 	print "<!-- Begin title '".$titre."' -->\n";
-	print '<table class="centpercent notopnoleftnoright'.($morecss?' '.$morecss:'').'" style="margin-bottom: 6px; border: 0"><tr>';	// maring bottom must be same than into load_fiche_tire
+	print '<table class="centpercent notopnoleftnoright table-fiche-title'.($morecss?' '.$morecss:'').'"><tr>';	// maring bottom must be same than into load_fiche_tire
 
 	// Left
-	//if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone left valignmiddle" style="width: 40px">'.img_picto('', $picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
-	print '<td class="nobordernopadding valignmiddle">';
+	print '<td class="nobordernopadding valignmiddle col-title">';
 	if ($picto && $titre) print img_picto('', $picto, 'class="hideonsmartphone valignmiddle opacityhigh pictotitle widthpictotitle"', $pictoisfullpath);
 	print '<div class="titre inline-block">'.$titre;
 	if (!empty($titre) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '') print ' ('.$totalnboflines.')';
@@ -8283,7 +8282,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 
     $class = 'btnTitle';
     // hidden conf keep during button transition TODO: remove this block
-    if (empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)) {
+    if (!empty($conf->global->MAIN_USE_OLD_TITLE_BUTTON)) {
         $class = 'butActionNew';
     }
     if (! empty($params['morecss'])) $class.=' '.$params['morecss'];
@@ -8301,7 +8300,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
         $attr['class'] .= ' refused';
 
         // hidden conf keep during button transition TODO: remove this block
-        if(empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)){
+        if(!empty($conf->global->MAIN_USE_OLD_TITLE_BUTTON)){
             $attr['class'] = 'butActionNewRefused';
         }
 
@@ -8363,7 +8362,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
     $button.= '</'.$tag.'>';
 
     // hidden conf keep during button transition TODO: remove this block
-    if(empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)){
+    if(!empty($conf->global->MAIN_USE_OLD_TITLE_BUTTON)){
         $button='<'.$tag.' '.$compiledAttributes.' ><span class="text-plus-circle">'.$label.'</span>';
         $button.= '<span class="'.$iconClass.' valignmiddle"></span>';
         $button.= '</'.$tag.'>';
