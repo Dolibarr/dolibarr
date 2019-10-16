@@ -11,7 +11,8 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 div.divButAction {
     margin-bottom: 1.4em;
 }
-div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused {
+div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused, div.tabsAction > a.butActionDelete,
+div.tabsAction > span.butAction, div.tabsAction > span.butActionRefused, div.tabsAction > span.butActionDelete {
     margin-bottom: 1.4em !important;
 }
 div.tabsActionNoBottom > a.butAction, div.tabsActionNoBottom > a.butActionRefused {

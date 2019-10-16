@@ -13,7 +13,8 @@ div.divButAction {
 	margin-bottom: 1.4em;
 	vertical-align: top;
 }
-div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused {
+div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused, div.tabsAction > a.butActionDelete,
+div.tabsAction > span.butAction, div.tabsAction > span.butActionRefused, div.tabsAction > span.butActionDelete {
 	margin-bottom: 1.4em !important;
 }
 
