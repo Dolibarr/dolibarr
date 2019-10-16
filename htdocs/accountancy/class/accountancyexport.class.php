@@ -224,22 +224,23 @@ class AccountancyExport
 	/**
 	 * Function who chose which export to use with the default config, and make the export into a file
 	 *
-	 * @param array		$TData 		data
-	 * @return void
+	 * @param 	array	$TData 				Array with data
+	 * @param	int		$formatexportset	Id of export format
+	 * @return 	void
 	 */
-	public function export(&$TData)
+	public function export(&$TData, $formatexportset)
 	{
 		global $conf, $langs;
 		global $search_date_end;	// Used into /accountancy/tpl/export_journal.tpl.php
 
 		// Define name of file to save
-		$filename = 'general_ledger-'.$this->getFormatCode($conf->global->ACCOUNTING_EXPORT_MODELCSV);
+		$filename = 'general_ledger-'.$this->getFormatCode($formatexportset);
 		$type_export = 'general_ledger';
 
 		include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
 
-		switch ($conf->global->ACCOUNTING_EXPORT_MODELCSV) {
+		switch ($formatexportset) {
 			case self::$EXPORT_TYPE_CONFIGURABLE :
 				$this->exportConfigurable($TData);
 				break;
