@@ -234,7 +234,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && ! empty($permissiont
 // Action validate object
 if ($action == 'confirm_validate' && $confirm == 'yes' && $permissionedit)
 {
-	$result = $object->valid($user);
+	$result = $object->validate($user);
 	if ($result >= 0)
 	{
 		// Define output language

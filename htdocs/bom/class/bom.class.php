@@ -524,7 +524,7 @@ class BOM extends CommonObject
 	    // Protection
 	    if ($this->statut == self::STATUS_VALIDATED)
 	    {
-	        dol_syslog(get_class($this)."::valid action abandonned: already validated", LOG_WARNING);
+	        dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
 	        return 0;
 	    }
 
@@ -560,7 +560,7 @@ class BOM extends CommonObject
 	    $sql.= " fk_user_valid = ".$user->id;
 	    $sql.= " WHERE rowid = ".$this->id;
 
-	    dol_syslog(get_class($this)."::valid()", LOG_DEBUG);
+	    dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
 	    $resql=$this->db->query($sql);
 	    if (! $resql)
 	    {
@@ -597,7 +597,7 @@ class BOM extends CommonObject
 	            $dirdest = $conf->bom->dir_output.'/'.$newref;
 	            if (! $error && file_exists($dirsource))
 	            {
-	                dol_syslog(get_class($this)."::valid() rename dir ".$dirsource." into ".$dirdest);
+	                dol_syslog(get_class($this)."::validate() rename dir ".$dirsource." into ".$dirdest);
 
 	                if (@rename($dirsource, $dirdest))
 	                {

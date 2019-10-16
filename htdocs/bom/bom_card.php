@@ -97,8 +97,8 @@ if (empty($reshook))
     $permissiontodelete = $user->rights->bom->delete || ($permissiontoadd && $object->status == 0);
     $backurlforlist = DOL_URL_ROOT.'/bom/bom_list.php';
     if (empty($backtopage)) {
-        if (empty($id)) $backtopage = $backurlforlist;
-        else $backtopage = DOL_URL_ROOT.'/bom/bom_card.php?id='.$id;
+    	if (empty($id) && $action != 'add' && $action != 'create') $backtopage = $backurlforlist;
+    	else $backtopage = DOL_URL_ROOT.'/bom/bom_card.php?id='.($id > 0 ? $id : '__ID__');
     }
 	$triggermodname = 'BOM_MODIFY';	// Name of trigger action code to execute when we modify record
 

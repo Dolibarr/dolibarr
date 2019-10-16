@@ -108,16 +108,16 @@ class mod_bom_standard extends ModeleNumRefboms
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe		$objsoc     Object thirdparty
+	 *  @param	Product		$objprod    Object product
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
-	public function getNextValue($objsoc, $object)
+	public function getNextValue($objprod, $object)
 	{
 		global $db,$conf;
 
 		// D'abord on recupere la valeur max
-		$posindice=8;
+		$posindice=9;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bom_bom";
 		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
@@ -137,9 +137,9 @@ class mod_bom_standard extends ModeleNumRefboms
 		}
 
 		//$date=time();
-		$date=$object->date;
+		$date=$object->date_creation;
 		$yymm = strftime("%y%m", $date);
-
+;
     	if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
     	else $num = sprintf("%04s", $max+1);
 
