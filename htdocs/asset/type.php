@@ -83,7 +83,6 @@ $hookmanager->initHooks(array('assettypecard','globalcard'));
  */
 
 if ($cancel) {
-
 	$action='';
 
 	if (! empty($backtopage))

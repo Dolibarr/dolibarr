@@ -556,7 +556,6 @@ class AdvanceTargetingMailing extends CommonObject
 		$sqlwhere[]= 't.entity IN ('.getEntity('societe').')';
 
 		if (count($arrayquery)>0) {
-
 			if (array_key_exists('cust_saleman', $arrayquery)) {
 				$sql.= " LEFT OUTER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as saleman ON saleman.fk_soc=t.rowid ";
 			}
@@ -565,7 +564,6 @@ class AdvanceTargetingMailing extends CommonObject
 			}
 
 			if (!empty($arrayquery['cust_name'])) {
-
 				$sqlwhere[]= $this->transformToSQL('t.nom', $arrayquery['cust_name']);
 			}
 			if (!empty($arrayquery['cust_code'])) {
@@ -617,13 +615,11 @@ class AdvanceTargetingMailing extends CommonObject
 
 			//Standard Extrafield feature
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
-
 				$elementtype = Societe::$table_element;
 
 				$extrafields->fetch_name_optionals_label($elementtype);
 
 				foreach($extrafields->attributes[$elementtype]['label'] as $key=>$val) {
-
 					if (($extrafields->attributes[$elementtype]['type'][$key] == 'varchar') ||
 						($extrafields->attributes[$elementtype]['type'][$key] == 'text')) {
 						if (!empty($arrayquery['options_'.$key])) {
@@ -713,7 +709,6 @@ class AdvanceTargetingMailing extends CommonObject
 		$sqlwhere[]= 't.entity IN ('.getEntity('socpeople').')';
 
 		if (count($arrayquery)>0) {
-
 			if (array_key_exists('contact_categ', $arrayquery)) {
 				$sql.= " LEFT OUTER JOIN " . MAIN_DB_PREFIX . "categorie_contact as contactcateg ON contactcateg.fk_socpeople=t.rowid ";
 			}
@@ -767,7 +762,6 @@ class AdvanceTargetingMailing extends CommonObject
 				$extrafields->fetch_name_optionals_label($elementtype);
 
 				foreach($extrafields->attributes[$elementtype]['label'] as $key=>$val) {
-
 					if (($extrafields->attributes[$elementtype]['type'][$key] == 'varchar') ||
 					($extrafields->attributes[$elementtype]['type'][$key] == 'text')) {
 						if (!empty($arrayquery['options_'.$key.'_cnct'])) {
@@ -809,7 +803,6 @@ class AdvanceTargetingMailing extends CommonObject
 					}
 
 					if (!empty($arrayquery['cust_name'])) {
-
 						$sqlwhere[]= $this->transformToSQL('ts.nom', $arrayquery['cust_name']);
 					}
 					if (!empty($arrayquery['cust_code'])) {
@@ -870,7 +863,6 @@ class AdvanceTargetingMailing extends CommonObject
 						$extrafields->fetch_name_optionals_label($elementtype);
 
 						foreach($extrafields->attributes[$elementtype]['label'] as $key=>$val) {
-
 							if (($extrafields->attributes[$elementtype]['type'][$key] == 'varchar') ||
 								($extrafields->attributes[$elementtype]['type'][$key] == 'text')) {
 								if (!empty($arrayquery['options_'.$key])) {

@@ -371,7 +371,6 @@ if ($action == 'create')
 
 if ($id)
 {
-
 	$head=salaries_prepare_head($object);
 
 	dol_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'payment');

@@ -295,7 +295,6 @@ if ($dirins && $action == 'initphpunit' && !empty($module))
     }
     else
     {
-
     }
 }
 if ($dirins && $action == 'initsqlextrafields' && !empty($module))
@@ -1369,7 +1368,6 @@ else
 	}
 	else
 	{
-
 		$message=info_admin($langs->trans("NotExistsDirect", $dirins).$langs->trans("InfDirAlt").$langs->trans("InfDirExample"));
 		$allowfromweb=0;
 	}
@@ -2523,7 +2521,6 @@ elseif (! empty($module))
 
 			if ($action != 'editfile' || empty($file))
 			{
-
 			    print '<span class="opacitymedium">';
 			    $htmlhelp=$langs->trans("PermissionsDefDescTooltip", '<a href="'.DOL_URL_ROOT.'/admin/perms.php">'.$langs->trans('DefaultPermissions').'</a>');
 			    print $form->textwithpicto($langs->trans("PermissionsDefDesc"), $htmlhelp, 1, 'help', '', 0, 2, 'helpondesc').'<br>';

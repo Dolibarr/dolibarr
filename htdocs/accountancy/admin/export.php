@@ -114,7 +114,7 @@ if ($action == 'update') {
                 $error ++;
             }
         }
-	}
+    }
 
 	if (! $error) {
         // reload
@@ -203,7 +203,6 @@ print "</tr>\n";
 $num = count($main_option);
 if ($num) {
 	foreach ($main_option as $key) {
-
 		print '<tr class="oddeven value">';
 
 		// Param

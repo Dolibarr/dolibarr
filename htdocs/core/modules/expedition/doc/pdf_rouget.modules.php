@@ -844,7 +844,6 @@ class pdf_rouget extends ModelePdfExpedition
         }
 
 		if (!empty($conf->global->SHIPPING_PDF_DISPLAY_AMOUNT_HT)) {
-
 			$pdf->line($this->posxpuht-1, $tab_top, $this->posxpuht-1, $tab_top + $tab_height);
 			if (empty($hidetop))
 			{

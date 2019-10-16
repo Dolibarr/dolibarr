@@ -2842,7 +2842,6 @@ class Commande extends CommonOrder
 		dol_syslog(get_class($this)."::classifyBilled", LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
-
 			if (! $error)
 			{
 				$this->oldcopy= clone $this;
@@ -2974,7 +2973,6 @@ class Commande extends CommonOrder
 
 		if ($this->statut == Commande::STATUS_DRAFT)
 		{
-
 			// Clean parameters
 			if (empty($qty)) $qty=0;
 			if (empty($info_bits)) $info_bits=0;
@@ -3830,7 +3828,6 @@ class Commande extends CommonOrder
 		$langs->load("orders");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'einstein';
 
 			if ($this->modelpdf) {

@@ -67,7 +67,6 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	        $dataseries[]=array($labelstatus, (isset($valsamount[$status])?(float) $valsamount[$status]:0));
 	        if (! $conf->use_javascript_ajax)
 	        {
-
 	            print '<tr class="oddeven">';
 	            print '<td>'.$labelstatus.'</td>';
 	            print '<td class="right"><a href="list.php?statut='.$status.'">'.price((isset($valsamount[$status])?(float) $valsamount[$status]:0), 0, '', 1, -1, -1, $conf->currency).'</a></td>';

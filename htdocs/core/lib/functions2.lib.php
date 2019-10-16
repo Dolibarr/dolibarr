@@ -1722,7 +1722,6 @@ function is_ip($ip)
 {
 	// First we test if it is a valid IPv4
 	if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
-
 		// Then we test if it is a private range
 		if (! filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) return 2;
 

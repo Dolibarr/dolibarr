@@ -300,7 +300,6 @@ if ($resql)
 		// Logo
 	    if ($result > 0 && empty($rss->error))
 	    {
-
 			print '<tr class="oddeven">';
 			print "<td>".$langs->trans("Logo")."</td>";
 			print '<td>';

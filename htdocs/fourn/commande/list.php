@@ -243,14 +243,12 @@ if (empty($reshook))
 		$db->begin();
 
 		foreach($orders as $id_order) {
-
 			$cmd = new Commande($db);
 			if($cmd->fetch($id_order) <= 0) continue;
 
 			$object = new Facture($db);
 			if(!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) $object = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created order.
 			else {
-
 				$object->socid = $cmd->socid;
 				$object->type = Facture::TYPE_STANDARD;
 				$object->cond_reglement_id	= $cmd->cond_reglement_id;
@@ -406,7 +404,6 @@ if (empty($reshook))
 		$toselect = array();
 
 		if (! $error && $validate_invoices) {
-
 			$massaction = $action = 'builddoc';
 
 			foreach($TAllFact as &$object)

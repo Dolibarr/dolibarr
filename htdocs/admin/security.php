@@ -289,8 +289,6 @@ print '</form>';
 //if($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK == 1)
 // Patter for Password Perso
 if ($conf->global->USER_PASSWORD_GENERATED == "Perso"){
-
-
 	$tabConf = explode(";", $conf->global->USER_PASSWORD_PATTERN);
 	print '<br>';
 	print '<table class="noborder" width="100%">';

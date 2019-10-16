@@ -463,7 +463,6 @@ class FormOther
         {
             while ($obj_usr = $this->db->fetch_object($resql_usr))
             {
-
                 $out.='<option value="'.$obj_usr->rowid.'"';
 
                 if ($obj_usr->rowid == $selected) $out.=' selected';

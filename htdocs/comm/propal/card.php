@@ -818,7 +818,6 @@ if (empty($reshook))
 
 	// Add line
 	elseif ($action == 'addline' && $usercancreate) {
-
 		// Set if we used free entry or predefined product
 		$predef='';
 		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');

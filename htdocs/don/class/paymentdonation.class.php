@@ -441,7 +441,6 @@ class PaymentDonation extends CommonObject
 
 		if (! $error)
 		{
-
 		}
 
 		unset($object->context['createfromclone']);

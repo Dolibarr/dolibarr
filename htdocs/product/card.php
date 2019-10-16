@@ -1809,7 +1809,6 @@ else
 
             //Parent product.
             if (!empty($conf->variants->enabled) && ($object->isProduct() || $object->isService())) {
-
                 $combination = new ProductCombination($db);
 
                 if ($combination->fetchByFkProductChild($object->id) > 0) {

@@ -294,7 +294,6 @@ foreach ($dirmodels as $reldir)
 
 					if ($module->isEnabled())
 					{
-
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
 						print $module->info();
 						print '</td>';
@@ -596,7 +595,6 @@ if (empty($conf->facture->enabled))
 		$i = 0;
 		while ($i < $num)
 		{
-
 			$row = $db->fetch_row($resql);
 
 			print '<option value="'.$row[0].'"';

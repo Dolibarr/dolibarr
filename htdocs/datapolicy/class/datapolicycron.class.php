@@ -474,7 +474,6 @@ class DataPolicyCron
 
                 if ($resql && $db->num_rows($resql) > 0)
                 {
-
                     $num = $db->num_rows($resql);
                     $i = 0;
 

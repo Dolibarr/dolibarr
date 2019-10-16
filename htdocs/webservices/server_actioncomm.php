@@ -534,7 +534,6 @@ function updateActionComm($authentication, $actioncomm)
 		$result=$object->fetch($actioncomm['id']);
 
 		if (!empty($object->id)) {
-
 			$objectfound=true;
 
 			$object->datep=$actioncomm['datep'];

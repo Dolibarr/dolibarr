@@ -92,7 +92,6 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-
 	// Action submit/delete file/link
 	include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 }
@@ -111,7 +110,6 @@ llxHeader('', $langs->trans('ProductLot'), '');
 
 if ($object->id)
 {
-
 	$head = productlot_prepare_head($object);
 	dol_fiche_head($head, 'documents', $langs->trans("Batch"), -1, 'barcode');
 

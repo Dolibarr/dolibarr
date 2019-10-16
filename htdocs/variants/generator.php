@@ -84,7 +84,6 @@ if ($_POST)
 	}
 
 	if ($sanitized_values) {
-
 		require DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		$adapted_values = array();
@@ -106,7 +105,6 @@ if ($_POST)
 
 		//Current combinations will be deleted
 		if ($delete_prev_comb_res > 0) {
-
 			$res = 1;
 
 			$cartesianarray = cartesianArray($adapted_values);

@@ -523,7 +523,6 @@ $parameters=array('listofreferent'=>$listofreferent);
 $resHook = $hookmanager->executeHooks('completeListOfReferent', $parameters, $object, $action);
 
 if(!empty($hookmanager->resArray)) {
-
 	$listofreferent = array_merge($listofreferent, $hookmanager->resArray);
 }
 
@@ -539,7 +538,6 @@ if ($action=="addelement")
 }
 elseif ($action == "unlink")
 {
-
 	$tablename = GETPOST("tablename", "aZ09");
     $projectField = GETPOST("projectfield", "aZ09");
 	$elementselectid = GETPOST("elementselect", "int");

@@ -369,7 +369,6 @@ class DiscountAbsolute
                 }
             }
             elseif($this->fk_invoice_supplier_source) {
-
             	$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
             	$sql.=" set paye=0, fk_statut=1";
             	$sql.=" WHERE (type = 2 or type = 3) AND rowid=".$this->fk_invoice_supplier_source;

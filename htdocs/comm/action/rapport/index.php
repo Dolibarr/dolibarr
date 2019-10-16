@@ -144,7 +144,6 @@ if ($resql)
 
 		if ($obj)
 		{
-
 			print '<tr class="oddeven">';
 
 			// Date

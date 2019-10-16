@@ -77,7 +77,6 @@ class FormCron extends Form
                 $out.='</SELECT>';
             }
         } else {
-
         $out='<SELECT class="flat" name="'.$htmlname.'" id="'.$htmlname.'" />';
 
         if ($selected=='command') {

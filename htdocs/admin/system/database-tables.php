@@ -202,7 +202,6 @@ else
 		if ($resql)
 		{
 			while ($row = $db->fetch_row($resql)) {
-
 				$rescount = $db->query("SELECT COUNT(*) FROM " . $row[0]);
 				if ($rescount) {
 					$row_count = $db->fetch_row($rescount);

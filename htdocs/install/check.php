@@ -470,7 +470,6 @@ else
 		$count=0;
 		foreach ($migrationscript as $migarray)
 		{
-
             $choice = '';
 
 			$count++;
@@ -580,7 +579,6 @@ else
         print '</table>'."\n";
 
         if (count($notavailable_choices)) {
-
             print '<br><div id="AShowChoices" style="opacity: 0.5">';
             print '> '.$langs->trans('ShowNotAvailableOptions').'...';
             print '</div>';

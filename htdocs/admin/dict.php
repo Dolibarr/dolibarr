@@ -1728,7 +1728,6 @@ else
         {
         	if ($showemptyline)
         	{
-
         		print '<tr class="oddeven"><td width="50%">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
         		$showemptyline=0;
         	}

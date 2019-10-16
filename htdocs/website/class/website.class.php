@@ -1204,7 +1204,6 @@ class Website extends CommonObject
 			$pageid = str_replace(array('.tpl.php', 'page'), array('', ''), basename($websitepagefile));
 			if ($pageid > 0)
 			{
-
 				$languagecodeselected=$tmppage->lang;
 				if (! in_array($tmppage->lang, $languagecodes)) $languagecodes[]=$tmppage->lang;	// We add language code of page into combo list
 			}

@@ -950,7 +950,6 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			try {
 				$customerstripe=$stripe->customerStripe($object, $stripeacc, $servicestatus);
 				if ($customerstripe->id) {
-
 					// When using the Charge API architecture
 					if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
 					{
@@ -1387,7 +1386,6 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print '<td>';
 			$string='';
 			foreach ($rib->getFieldsToShow() as $val) {
-
 				if ($val == 'BankCode') {
 					$string .= $rib->code_banque.' ';
 				} elseif ($val == 'BankAccountNumber') {
@@ -1627,7 +1625,6 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 
 	// Show fields of bank account
 	foreach ($companybankaccount->getFieldsToShow(1) as $val) {
-
 		$require=false;
 		if ($val == 'BankCode') {
 			$name = 'code_banque';
@@ -1782,7 +1779,6 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 
 	// Show fields of bank account
 	foreach ($companybankaccount->getFieldsToShow(1) as $val) {
-
 		$require=false;
 		if ($val == 'BankCode') {
 			$name = 'code_banque';

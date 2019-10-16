@@ -268,7 +268,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
             			// Active
             			if (in_array($name, $def))
             			{
-
             			print '<td class="center">'."\n";
             			if ($conf->global->ACTION_EVENT_ADDON_PDF != "$name")
             			{
@@ -363,7 +362,6 @@ print '</td></tr>'."\n";
 
 if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 {
-
     print '<!-- AGENDA_USE_EVENT_TYPE_DEFAULT -->';
     print '<tr class="oddeven">'."\n";
     print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE_DEFAULT").'</td>'."\n";

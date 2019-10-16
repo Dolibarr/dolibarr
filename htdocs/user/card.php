@@ -113,7 +113,6 @@ $reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
-
 	if ($action == 'confirm_disable' && $confirm == "yes" && $candisableuser) {
 		if ($id <> $user->id) {
 			$object->fetch($id);

@@ -203,7 +203,6 @@ if (empty($reshook))
 
 		// Multiprices
 		if (! $error && (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))) {
-
 			$newprice = GETPOST('price', 'array');
 			$newprice_min = GETPOST('price_min', 'array');
 			$newpricebase = GETPOST('multiprices_base_type', 'array');
@@ -336,7 +335,6 @@ if (empty($reshook))
 			$db->begin();
 
 			foreach ($pricestoupdate as $key => $val) {
-
 				$newprice = $val['price'];
 
 				if ($val['price'] < $val['price_min'] && !empty($object->fk_price_expression)) {
@@ -492,7 +490,6 @@ if (empty($reshook))
 	 * ****************************************************
 	 */
 	if ($action == 'add_customer_price_confirm' && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer)) {
-
 		$maxpricesupplier = $object->min_recommended_price();
 
 		$update_child_soc = GETPOST('updatechildprice', 'int');

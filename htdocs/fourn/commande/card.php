@@ -1153,7 +1153,6 @@ if (empty($reshook))
 
 							for($i = 0; $i < $num; $i ++)
 							{
-
 								if (empty($lines[$i]->subprice) || $lines[$i]->qty <= 0)
 									continue;
 
@@ -1669,7 +1668,6 @@ if ($action=='create')
 	print '</tr>';
 
 	if (! empty($origin) && ! empty($originid) && is_object($objectsrc)) {
-
 		print "\n<!-- " . $classname . " info -->";
 		print "\n";
 		print '<input type="hidden" name="amount"         value="' . $objectsrc->total_ht . '">' . "\n";

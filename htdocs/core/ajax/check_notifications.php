@@ -90,7 +90,6 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
 
     $resql = $db->query($sql);
     if ($resql) {
-
         $actionmod = new ActionComm($db);
 
         while ($obj = $db->fetch_object($resql))

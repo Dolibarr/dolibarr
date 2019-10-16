@@ -1637,7 +1637,6 @@ class Categorie extends CommonObject
 			{
 				$nbfile = count($file['name']);
 				for ($i = 0; $i <= $nbfile; $i ++) {
-
 					$originImage = $dir . $file['name'][$i];
 
 					// Cree fichier en taille origine

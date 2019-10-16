@@ -1008,7 +1008,6 @@ class Don extends CommonObject
 		$langs->load("bills");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'html_cerfafr';
 
 			if ($this->modelpdf) {

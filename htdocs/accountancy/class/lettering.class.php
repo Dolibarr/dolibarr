@@ -149,7 +149,6 @@ class Lettering extends BookKeeping
 						}
 					}
 				} elseif ($obj->type == 'payment') {
-
 					$sql = 'SELECT DISTINCT bk.rowid, fac.ref, fac.ref, pay.fk_bank, fac.rowid as fact_id';
 					$sql .= " FROM " . MAIN_DB_PREFIX . "facture fac ";
 					$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "paiement_facture as payfac ON  payfac.fk_facture=fac.rowid";

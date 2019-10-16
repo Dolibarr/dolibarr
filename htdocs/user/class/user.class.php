@@ -1450,7 +1450,6 @@ class User extends CommonObject
 		$i = 0;
 		while ($i < $num)
 		{
-
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$rd[$i]";
 			$result=$this->db->query($sql);
 

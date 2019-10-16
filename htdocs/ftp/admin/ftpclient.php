@@ -151,7 +151,6 @@ if (! function_exists('ftp_connect'))
 }
 else
 {
-
 	// Formulaire ajout
 	print '<form name="ftpconfig" action="ftpclient.php" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

@@ -1938,7 +1938,6 @@ class Task extends CommonObject
 		$langs->load("projects");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'nodefault';
 
 			if ($this->modelpdf) {
@@ -2062,7 +2061,6 @@ class Task extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-
 			// This assignment in condition is not a bug. It allows walking the results.
 			while ($obj=$this->db->fetch_object($resql))
 			{

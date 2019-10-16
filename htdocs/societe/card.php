@@ -776,7 +776,6 @@ if (empty($reshook))
                 // Update linked member
                 if (! $error && $object->fk_soc > 0)
                 {
-
                 	$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
                 	$sql.= " SET fk_soc = NULL WHERE fk_soc = " . $id;
                 	if (! $object->db->query($sql))
@@ -2416,7 +2415,6 @@ else
 			    print '</td></tr>';
 			    if($object->localtax2_assuj=="1" && (! isOnlyOneLocalTax(2)))
 			    {
-
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax2">';
 			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

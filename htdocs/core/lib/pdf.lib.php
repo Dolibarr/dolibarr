@@ -2242,7 +2242,6 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 	}
 	else
 	{
-
 		if (is_object($hookmanager))
 		{
 			$special_code = $object->lines[$i]->special_code;

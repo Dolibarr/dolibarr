@@ -293,7 +293,6 @@ foreach ($dirmodels as $reldir)
 		$handle = opendir($dir);
 		if (is_resource($handle))
 		{
-
 			while (($file = readdir($handle))!==false)
 			{
 				if (preg_match('/^(mod_.*)\.php$/i', $file, $reg))
@@ -433,8 +432,6 @@ foreach ($dirmodels as $reldir)
 		    	{
 		    		if (file_exists($dir.'/'.$file))
 		    		{
-
-
 		    			$name = substr($file, 4, dol_strlen($file) -16);
 		    			$classname = substr($file, 0, dol_strlen($file) -12);
 

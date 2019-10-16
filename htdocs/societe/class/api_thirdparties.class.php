@@ -1454,7 +1454,6 @@ class Thirdparties extends DolibarrApi
 				throw new RestException(500, 'Error creating SocieteAccount entity.');
 		// We found an existing SocieteAccount entity, we are replacing it
 		} else {
-
 			if(isset($request_data['site']) && $request_data['site'] !== $site) {
 				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".$id." AND site = '". $request_data['site']."' ";
 				$result = $db->query($sql);
@@ -1517,7 +1516,6 @@ class Thirdparties extends DolibarrApi
 		if($result->num_rows == 0 ){
 			throw new RestException(404, "This thirdparty does not have $site gateway attached or does not exist.");
 		} else {
-
 			// If the user tries to edit the site member, we check first if
 			if(isset($request_data['site']) && $request_data['site'] !== $site) {
 				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".$id." AND site = '". $request_data['site']."' ";

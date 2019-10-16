@@ -1050,7 +1050,7 @@ if ($resql)
         if (! empty($arrayfields['m.inventorycode']['checked']))
         {
 	        // Inventory code
-	        print '<td>'.'<a href="'
+	        print '<td><a href="'
 								.DOL_URL_ROOT.'/product/stock/movement_card.php'
 								.'?id='.$objp->entrepot_id
 								.'&amp;search_inventorycode='.$objp->inventorycode

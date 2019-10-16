@@ -229,7 +229,6 @@ if ($resql)
 		$donationstatic->firstname=$objp->firstname;
 		print "<td>".$donationstatic->getNomUrl(1)."</td>";
     if (! empty($conf->global->DONATION_USE_THIRDPARTIES)) {
-
     $company=new Societe($db);
     $result=$company->fetch($objp->socid);
     if  (!empty($objp->socid) && $company->id > 0)  {

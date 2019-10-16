@@ -44,9 +44,7 @@ if ($object->fetch($id) < 1) {
 if ($cancel) $action='';
 
 if ($_POST) {
-
 	if ($action == 'edit') {
-
 		$object->ref = $ref;
 		$object->label = $label;
 
@@ -58,9 +56,7 @@ if ($_POST) {
 			exit();
 		}
 	} elseif ($action == 'update') {
-
 		if ($objectval->fetch($valueid) > 0) {
-
 			$objectval->ref = $ref;
 			$objectval->value = GETPOST('value', 'alpha');
 
@@ -92,7 +88,6 @@ if ($_POST) {
 
 if ($confirm == 'yes') {
 	if ($action == 'confirm_delete') {
-
 		$db->begin();
 
 		$res = $objectval->deleteByFkAttribute($object->id);
@@ -111,7 +106,6 @@ if ($confirm == 'yes') {
 	elseif ($action == 'confirm_deletevalue')
 	{
 		if ($objectval->fetch($valueid) > 0) {
-
 			if ($objectval->delete() < 1) {
 				setEventMessages($langs->trans('CoreErrorMessage'), $objectval->errors, 'errors');
 			} else {
@@ -198,7 +192,6 @@ if ($action == 'edit') { ?>
 		</div>
 	</div></form>
 <?php } else {
-
 	if ($action == 'delete') {
 		$form = new Form($db);
 
@@ -212,9 +205,7 @@ print $form->formconfirm(
 			1
 		);
 	} elseif ($action == 'delete_value') {
-
 		if ($objectval->fetch($valueid) > 0) {
-
 			$form = new Form($db);
 
 print $form->formconfirm(

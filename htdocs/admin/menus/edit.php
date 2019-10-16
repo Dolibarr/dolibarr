@@ -323,7 +323,6 @@ if ($action == 'create')
         $res  = $db->query($sql);
         if ($res)
         {
-
             while ($menu = $db->fetch_array($res))
             {
                 $parent_rowid = $menu['rowid'];

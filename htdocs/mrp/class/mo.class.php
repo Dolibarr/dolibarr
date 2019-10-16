@@ -690,7 +690,6 @@ class Mo extends CommonObject
 		$langs->load("mrp");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'standard';
 
 			if ($this->modelpdf) {
