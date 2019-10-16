@@ -1058,7 +1058,7 @@ else
             $statutarray=array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
             print $form->selectarray('finished', $statutarray, GETPOST('finished', 'alpha'), 1);
             print '</td></tr>';
-            
+
             // Net Measure
             print '<tr><td>'.$langs->trans("NetMeasure").'</td><td colspan="3">';
             print '<input name="net_measure" size="4" value="'.GETPOST('net_measure').'">';
@@ -1070,7 +1070,7 @@ else
             print '<input name="weight" size="4" value="'.GETPOST('weight').'">';
             print $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOSTISSET('weight_units')?GETPOST('weight_units', 'alpha'):(empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?0:$conf->global->MAIN_WEIGHT_DEFAULT_UNIT), 0, 2);
             print '</td></tr>';
-            
+
             // Brut Length
             if (empty($conf->global->PRODUCT_DISABLE_SIZE))
             {
@@ -1438,7 +1438,7 @@ else
                 $statutarray=array('-1'=>'&nbsp;', '1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
                 print $form->selectarray('finished', $statutarray, $object->finished);
                 print '</td></tr>';
-                
+
                 // Net Measure
                 print '<tr><td>'.$langs->trans("NetMeasure").'</td><td colspan="3">';
                 print '<input name="net_measure" size="5" value="'.$object->net_measure.'"> ';
@@ -1852,7 +1852,7 @@ else
                 print '<tr><td class="titlefield">'.$langs->trans("Nature").'</td><td colspan="2">';
                 print $object->getLibFinished();
                 print '</td></tr>';
-                
+
                 // Net Measure
                 print '<tr><td class="titlefield">'.$langs->trans("NetMeasure").'</td><td colspan="2">';
                 if ($object->net_measure != '')
@@ -2035,17 +2035,17 @@ if ($action != 'create' && $action != 'edit')
 	{
 		if ($usercancreate)
         {
-            if (! isset($object->no_button_edit) || $object->no_button_edit <> 1) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
+            if (! isset($object->no_button_edit) || $object->no_button_edit <> 1) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a>';
 
             if (! isset($object->no_button_copy) || $object->no_button_copy <> 1)
             {
                 if (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))
                 {
-                    print '<div class="inline-block divButAction"><span id="action-clone" class="butAction">'.$langs->trans('ToClone').'</span></div>'."\n";
+                    print '<span id="action-clone" class="butAction">'.$langs->trans('ToClone').'</span>'."\n";
                 }
                 else
     			{
-                    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
+                    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
                 }
             }
         }
@@ -2057,21 +2057,21 @@ if ($action != 'create' && $action != 'edit')
             {
                 if (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))
                 {
-                    print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
+                    print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>'."\n";
                 }
                 else
     			{
-                    print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("Delete").'</a></div>';
+                    print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("Delete").'</a>';
                 }
             }
             else
     		{
-                print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ProductIsUsed").'">'.$langs->trans("Delete").'</a></div>';
+                print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ProductIsUsed").'">'.$langs->trans("Delete").'</a>';
             }
         }
         else
     	{
-            print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Delete").'</a></div>';
+            print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Delete").'</a>';
         }
     }
 
