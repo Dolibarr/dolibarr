@@ -75,7 +75,7 @@ class FormTicket
     public $withcompany; // affiche liste déroulante company
     public $withfromsocid;
     public $withfromcontactid;
-    public $withnotnotifytiersatcreate;
+    public $withnotifytiersatcreate;
     public $withusercreate; // Show name of creating user in form
     public $withcreatereadonly;
 
@@ -112,7 +112,7 @@ class FormTicket
         $this->withfromcontactid = 0;
         //$this->withthreadid=0;
         //$this->withtitletopic='';
-        $this->withnotnotifytiersatcreate = 0;
+        $this->withnotifytiersatcreate = 0;
         $this->withusercreate = 1;
         $this->withcreatereadonly = 1;
         $this->withemail = 0;
