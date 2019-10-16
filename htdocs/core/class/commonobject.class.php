@@ -7399,7 +7399,7 @@ abstract class CommonObject
 		if (array_key_exists('fk_user_creat', $fieldvalues) && ! ($fieldvalues['fk_user_creat'] > 0)) $fieldvalues['fk_user_creat']=$user->id;
 		unset($fieldvalues['rowid']);	// The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
 		if (array_key_exists('ref', $fieldvalues)) $fieldvalues['ref']=dol_string_nospecial($fieldvalues['ref']);					// If field is a ref,we sanitize data
-		
+
 		$keys=array();
 		$values = array();
 		foreach ($fieldvalues as $k => $v) {
@@ -7856,6 +7856,57 @@ abstract class CommonObject
 			return -1;
 		}
 	}
+
+
+	/**
+	 *	Set draft status
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$status			New status to set (often a constant like self::STATUS_XXX)
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *  @param  string  $triggercode    Trigger code to use
+	 *	@return	int						<0 if KO, >0 if OK
+	 */
+	public function setStatusCommon($user, $status, $notrigger = 0, $triggercode = '')
+	{
+		$error=0;
+
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+		$sql.= " SET status = ".$status;
+		$sql.= " WHERE rowid = ".$this->id;
+
+		if ($this->db->query($sql))
+		{
+			if (! $error)
+			{
+				$this->oldcopy= clone $this;
+			}
+
+			if (! $error && ! $notrigger) {
+				// Call trigger
+				$result=$this->call_trigger($triggercode, $user);
+				if ($result < 0) $error++;
+			}
+
+			if (!$error) {
+				$this->status = $status;
+				$this->db->commit();
+				return 1;
+			} else {
+				$this->db->rollback();
+				return -1;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
 
 	/**
 	 * Initialise object with example values

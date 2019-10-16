@@ -42,6 +42,11 @@ $contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'bomcard
 $backtopage = GETPOST('backtopage', 'alpha');
 $lineid     = GETPOST('lineid', 'int');
 
+// PDF
+$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
+$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
+$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
+
 // Initialize technical objects
 $object=new BOM($db);
 $extrafields = new ExtraFields($db);
@@ -92,8 +97,8 @@ if (empty($reshook))
     $permissiontodelete = $user->rights->bom->delete || ($permissiontoadd && $object->status == 0);
     $backurlforlist = DOL_URL_ROOT.'/bom/bom_list.php';
     if (empty($backtopage)) {
-        if (empty($id)) $backtopage = $backurlforlist;
-        else $backtopage = DOL_URL_ROOT.'/bom/bom_card.php?id='.$id;
+    	if (empty($id) && $action != 'add' && $action != 'create') $backtopage = $backurlforlist;
+    	else $backtopage = DOL_URL_ROOT.'/bom/bom_card.php?id='.($id > 0 ? $id : '__ID__');
     }
 	$triggermodname = 'BOM_MODIFY';	// Name of trigger action code to execute when we modify record
 
@@ -286,6 +291,112 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	{
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
 	}
+	$formconfirm = '';
+
+	// Confirmation to delete
+	if ($action == 'delete') {
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 1);
+	}
+
+	// Confirmation of validation
+	if ($action == 'validate')
+	{
+		// We check that object has a temporary ref
+		$ref = substr($object->ref, 1, 4);
+		if ($ref == 'PROV') {
+			$object->fetch_product();
+			$numref = $object->getNextNumRef($object->product);
+		} else {
+			$numref = $object->ref;
+		}
+
+		$text = $langs->trans('ConfirmValidateBom', $numref);
+		/*if (! empty($conf->notification->enabled))
+		{
+			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
+			$notify = new Notify($db);
+			$text .= '<br>';
+			$text .= $notify->confirmMessage('BOM_VALIDATE', $object->socid, $object);
+		}*/
+
+		$formquestion=array();
+		if (! empty($conf->bom->enabled))
+		{
+			$langs->load("mrp");
+			require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
+			$formproduct = new FormProduct($db);
+			$forcecombo=0;
+			if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
+			$formquestion = array(
+				// 'text' => $langs->trans("ConfirmClone"),
+				// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
+				// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
+			);
+		}
+
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('Validate'), $text, 'confirm_validate', $formquestion, 0, 1, 220);
+	}
+
+	// Confirmation of closing
+	if ($action == 'close')
+	{
+		$text = $langs->trans('ConfirmCloseBom', $object->ref);
+		/*if (! empty($conf->notification->enabled))
+		{
+			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
+			$notify = new Notify($db);
+			$text .= '<br>';
+			$text .= $notify->confirmMessage('BOM_CLOSE', $object->socid, $object);
+		}*/
+
+		$formquestion=array();
+		if (! empty($conf->bom->enabled))
+		{
+			$langs->load("mrp");
+			require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
+			$formproduct = new FormProduct($db);
+			$forcecombo=0;
+			if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
+			$formquestion = array(
+				// 'text' => $langs->trans("ConfirmClone"),
+				// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
+				// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
+			);
+		}
+
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('Close'), $text, 'confirm_close', $formquestion, 0, 1, 220);
+	}
+
+	// Confirmation of reopen
+	if ($action == 'reopen')
+	{
+		$text = $langs->trans('ConfirmReopenBom', $object->ref);
+		/*if (! empty($conf->notification->enabled))
+		 {
+		 require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
+		 $notify = new Notify($db);
+		 $text .= '<br>';
+		 $text .= $notify->confirmMessage('BOM_CLOSE', $object->socid, $object);
+		 }*/
+
+		$formquestion=array();
+		if (! empty($conf->bom->enabled))
+		{
+			$langs->load("mrp");
+			require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
+			$formproduct = new FormProduct($db);
+			$forcecombo=0;
+			if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
+			$formquestion = array(
+				// 'text' => $langs->trans("ConfirmClone"),
+				// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
+				// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
+			);
+		}
+
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ReOpen'), $text, 'confirm_reopen', $formquestion, 0, 1, 220);
+	}
+
 	// Clone confirmation
 	if ($action == 'clone') {
 		// Create an array for form
@@ -467,10 +578,35 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
     		}
 
+    		// Validate
+    		if ($user->rights->bom->write && $object->status == BOM::STATUS_DRAFT)
+    		{
+    			if (is_array($object->lines) && count($object->lines) > 0)
+    			{
+    				print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=validate">' . $langs->trans("Validate") . '</a>';
+    			}
+    			else
+    			{
+    				print '<a class="butActionRefused" href="" title="'.$langs->trans("AddAtLeastOneLineFirst").'">' . $langs->trans("Validate") . '</a>';
+    			}
+    		}
+
+    		// Close / Cancel
+    		if ($user->rights->bom->write && $object->status == BOM::STATUS_VALIDATED)
+    		{
+   				print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=close">' . $langs->trans("Disable") . '</a>';
+    		}
+
+    		// Re-open
+    		if ($user->rights->bom->write && $object->status == BOM::STATUS_CANCELED)
+    		{
+    			print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=reopen">' . $langs->trans("ReOpen") . '</a>';
+    		}
+
     		// Clone
     		if ($user->rights->bom->write)
     		{
-    			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=order">' . $langs->trans("ToClone") . '</a></div>';
+    			print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=clone&object=bom">' . $langs->trans("ToClone") . '</a>';
     		}
 
     		/*

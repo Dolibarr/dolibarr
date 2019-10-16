@@ -166,7 +166,7 @@ class box_last_modified_ticket extends ModeleBoxes
                     // Date creation
                     $this->info_box_contents[$i][$r] = array(
                         'td' => 'class="right"',
-                        'text' => dol_print_date($this->db->idate($objp->datec), 'dayhour')
+                        'text' => dol_print_date($datec, 'dayhour')
                     );
                     $r++;
 

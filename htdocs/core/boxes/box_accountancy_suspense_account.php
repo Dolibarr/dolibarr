@@ -74,7 +74,7 @@ class box_accountancy_suspense_account extends ModeleBoxes
 
         include_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 
-        $bookkeepingstatic = new BookKeeping($this->db);
+        //$bookkeepingstatic = new BookKeeping($this->db);
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleSuspenseAccount"));
 
@@ -103,7 +103,7 @@ class box_accountancy_suspense_account extends ModeleBoxes
 
 				$this->info_box_contents[0][1] = array(
 					'td' => 'class="right"',
-					'text' => '<a href="' . DOL_URL_ROOT . '/accountancy/bookkeeping/list.php?search_accountancy_code_start='.$suspenseAccount.'&search_accountancy_code_end='.$suspenseAccount.'">' . $nbSuspenseAccount . '</a>',
+					'text' => '<a href="' . DOL_URL_ROOT . '/accountancy/bookkeeping/list.php?search_accountancy_code_start='.urlencode($suspenseAccount).'&search_accountancy_code_end='.urlencode($suspenseAccount).'">' . $nbSuspenseAccount . '</a>',
 					'asis' => 1
 				);
 			} else {

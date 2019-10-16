@@ -482,7 +482,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		$mysoc->logo_squarred_mini=(empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI);
 
 		$logoContainerAdditionalClass = 'backgroundforcompanylogo';
-		if(!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_NO_BACKGROUND)){
+		if(! empty($conf->global->MAIN_INFO_SOCIETE_LOGO_NO_BACKGROUND)){
 			$logoContainerAdditionalClass = '';
 		}
 
@@ -496,7 +496,8 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		}*/
 		else
 		{
-			$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo_squarred.png';
+			$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo_squarred_alpha.png';
+			$logoContainerAdditionalClass = '';
 		}
 		$title=$langs->trans("GoIntoSetupToChangeLogo");
 
