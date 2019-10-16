@@ -504,6 +504,9 @@ input[name=weight], input[name=volume], input[name=surface], input[name=sizeheig
 input[name=surface] { margin-right: 4px; }
 fieldset { border: 1px solid #AAAAAA !important; }
 .legendforfieldsetstep { padding-bottom: 10px; }
+input#onlinepaymenturl, input#directdownloadlink {
+	opacity: 0.7;
+}
 
 div#moretabsListaction {
     z-index: 5;
