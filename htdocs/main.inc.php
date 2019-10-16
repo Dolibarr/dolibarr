@@ -1926,8 +1926,6 @@ function top_menu_bookmark(User $user, Translate $langs)
     global $menumanager;
     $html = '';
 
-
-
     // Define $bookmarks
     if (! empty($conf->bookmark->enabled) && $user->rights->bookmark->lire)
     {
@@ -2013,7 +2011,6 @@ function top_menu_search(User $user, Translate $langs)
         $buttonList.='</button>';
     }
     $buttonList.='</div>';
-
 
 
     $searchInput = '<input name="sall" id="top-global-search-input" class="dropdown-search-input" placeholder="'.$langs->trans('Search').'" autocomplete="off" >';
@@ -2104,7 +2101,6 @@ function top_menu_search(User $user, Translate $langs)
     });
     </script>
     ';
-
 
     return $html;
 }
