@@ -67,6 +67,7 @@ class FormTicket
     public $withsubstit;
 
     public $withfile;
+    public $withfilereadonly;
 
     public $ispublic; // To show information or not into public form
 
@@ -374,7 +375,7 @@ class FormTicket
                 $listofmimes = explode(';', $_SESSION["listofmimes"]);
             }
 
-            $out .= '<tr>';
+            $out = '<tr>';
             $out .= '<td width="180">' . $langs->trans("MailFile") . '</td>';
             $out .= '<td colspan="2">';
             // TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
@@ -409,7 +410,8 @@ class FormTicket
         }
 
         // Other attributes
-        $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $ticketstat, $action); // Note that $action and $object may have been modified by hook
+        $parameters = array();
+        $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $ticketstat, $this->action); // Note that $action and $object may have been modified by hook
         if (empty($reshook))
         {
             print $ticketstat->showOptionals($extrafields, 'edit');
@@ -504,23 +506,18 @@ class FormTicket
                 }
 
                 print '>';
+                $value = '&nbsp;';
                 if ($format == 0) {
                     $value = ($maxlength ? dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
-                }
-
-                if ($format == 1) {
+                } elseif ($format == 1) {
                     $value = $arraytypes['code'];
-                }
-
-                if ($format == 2) {
+                } elseif ($format == 2) {
                     $value = ($maxlength ? dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
-                }
-
-                if ($format == 3) {
+                } elseif ($format == 3) {
                     $value = $arraytypes['code'];
                 }
 
-                print $value ? $value : '&nbsp;';
+                print $value;
                 print '</option>';
             }
         }
