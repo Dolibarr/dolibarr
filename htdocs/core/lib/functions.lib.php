@@ -2220,7 +2220,7 @@ function dol_print_socialnetworks($value, $cid, $socid, $type)
 	if (! empty($type))
 	{
 		$newskype ='<div class="divsocialnetwork inline-block valignmiddle">';
-		$newskype.=img_picto($langs->trans(strtoupper($type)), $type.'.png', '', false, 0, 0, '', 'paddingright');
+		$newskype.=img_picto($langs->trans(strtoupper($type)), $type.'.png', '', false, 0, 0, '', 'paddingright', 0);
 		$newskype.=$value;
 		if ($type == 'skype')
 		{
