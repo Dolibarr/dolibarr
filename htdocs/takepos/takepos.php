@@ -63,7 +63,7 @@ if ($conf->browser->layout == 'phone')
 	if ($_SESSION["takeposterminal"]!="" && $conf->global->TAKEPOS_PHONE_BASIC_LAYOUT==1)
 	{
 		$_SESSION["basiclayout"]=1;
-		header("Location: invoice.php?mobilepage=invoice");
+		header("Location: phone.php?mobilepage=invoice");
 		exit;
 	}
 }
