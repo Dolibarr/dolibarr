@@ -1276,18 +1276,14 @@ class Product extends CommonObject
     {
         dol_syslog(get_class($this)."::updateType", LOG_DEBUG);
         
-        if (is_numeric($this->type) && ctype_digit($this->type)) {
-            $this->type = (int) $this->type;
-        }
-                
         if ($this->type === Product::TYPE_PRODUCT || $this->type === Product::TYPE_SERVICE) {
 		 	$this->db->begin();
             
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product";
-			$sql.= " SET fk_product_type = " . $this->type;
+			$sql.= " SET fk_product_type = " . (int) $this->type;
 			$sql.= " WHERE rowid = " . $this->id;
             
-			if (!$this->db->query($sql)) {
+			if (! $this->db->query($sql)) {
 				$this->error=$this->db->lasterror();
 				$this->db->rollback();
 				return -1;
