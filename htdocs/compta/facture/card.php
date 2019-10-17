@@ -3844,15 +3844,18 @@ elseif ($id > 0 || ! empty($ref))
 	// Type
 	print '<tr><td class="titlefield">' . $langs->trans('Type') . '</td><td>';
 	print $object->getLibType();
+	if ($object->module_source) {
+		print ' <span class="opacitymedium">('.$langs->trans("POS").' '.$object->module_source.' - '.$langs->trans("Terminal").' '.$object->pos_source.')</span>';
+	}
 	if ($object->type == Facture::TYPE_REPLACEMENT) {
 		$facreplaced = new Facture($db);
 		$facreplaced->fetch($object->fk_facture_source);
-		print ' (' . $langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)) . ')';
+		print ' <span class="opacitymedium">(' . $langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)) . ')</span>';
 	}
 	if ($object->type == Facture::TYPE_CREDIT_NOTE && !empty($object->fk_facture_source)) {
 		$facusing = new Facture($db);
 		$facusing->fetch($object->fk_facture_source);
-		print ' (' . $langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)) . ')';
+		print ' <span class="opacitymedium">(' . $langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)) . ')</span>';
 	}
 
 	$facidavoir = $object->getListIdAvoirFromInvoice();
