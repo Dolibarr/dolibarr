@@ -3860,7 +3860,7 @@ elseif ($id > 0 || ! empty($ref))
 
 	$facidavoir = $object->getListIdAvoirFromInvoice();
 	if (count($facidavoir) > 0) {
-		print ' (' . $langs->transnoentities("InvoiceHasAvoir");
+		print ' <span class="opacitymedium">(' . $langs->transnoentities("InvoiceHasAvoir");
 		$i = 0;
 		foreach ($facidavoir as $id) {
 			if ($i == 0)
@@ -3871,19 +3871,19 @@ elseif ($id > 0 || ! empty($ref))
 			$facavoir->fetch($id);
 			print $facavoir->getNomUrl(1);
 		}
-		print ')';
+		print ')</span>';
 	}
 	if ($objectidnext > 0) {
 		$facthatreplace = new Facture($db);
 		$facthatreplace->fetch($objectidnext);
-		print ' (' . $langs->transnoentities("ReplacedByInvoice", $facthatreplace->getNomUrl(1)) . ')';
+		print ' <span class="opacitymedium">(' . $langs->transnoentities("ReplacedByInvoice", $facthatreplace->getNomUrl(1)) . ')</span>';
 	}
 
 	if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT) {
 		$discount = new DiscountAbsolute($db);
 		$result = $discount->fetch(0, $object->id);
 		if ($result > 0){
-			print '. '.$langs->trans("CreditNoteConvertedIntoDiscount", $object->getLibType(1), $discount->getNomUrl(1, 'discount')).'<br>';
+			print '. <span class="opacitymedium">'.$langs->trans("CreditNoteConvertedIntoDiscount", $object->getLibType(1), $discount->getNomUrl(1, 'discount')).'</span><br>';
 		}
 	}
 
@@ -3891,7 +3891,7 @@ elseif ($id > 0 || ! empty($ref))
 	{
 	    $tmptemplate = new FactureRec($db);
 	    $result = $tmptemplate->fetch($object->fk_fac_rec_source);
-	    if ($result > 0) print '. '.$langs->trans("GeneratedFromTemplate", $tmptemplate->ref);
+	    if ($result > 0) print '<span class="opacitymedium">. '.$langs->trans("GeneratedFromTemplate", $tmptemplate->ref).'</span>';
 	}
 	print '</td></tr>';
 
