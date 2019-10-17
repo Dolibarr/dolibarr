@@ -111,8 +111,7 @@ $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
 
-	while ( $row = $db->fetch_row($resql)) {
-
+	while ($row = $db->fetch_row($resql)) {
 		print '<tr class="oddeven">';
 		for($i = 1; $i <= 12; $i ++) {
 			print '<td class="right">' . $row[$i] . '</td>';
@@ -120,6 +119,7 @@ if ($resql) {
 		print '<td class="right"><b>' . $row[13] . '</b></td>';
 		print '</tr>';
 	}
+
 	$db->free($resql);
 } else {
 	print $db->lasterror(); // Show last sql error
