@@ -288,7 +288,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
 $sql.= " AND r.entity = " . $entity;
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is disable
-$sql.= " ORDER BY r.module_position, r.module, r.id";
+$sql.= " ORDER BY r.family_position, r.module_position, r.module, r.id";
 
 $result=$db->query($sql);
 if ($result)
@@ -308,12 +308,16 @@ if ($result)
 			continue;
 		}
 
-		// Fix field module_position in database if value is still zero
+		// Save field module_position in database if value is still zero
 		if (empty($obj->module_position))
 		{
 			if (is_object($modules[$obj->module]) && ($modules[$obj->module]->module_position > 0))
 			{
-				$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."rights_def set module_position = ".$modules[$obj->module]->module_position;
+				// TODO Define familyposition
+				$family = $modules[$obj->module]->family_position;
+				$familyposition = 0;
+				$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."rights_def SET module_position = ".$modules[$obj->module]->module_position.",";
+				$sqlupdate.= " family_position = ".$familyposition;
 				$sqlupdate.= " WHERE module_position = 0 AND module = '".$db->escape($obj->module)."'";
 				$db->query($sqlupdate);
 			}
