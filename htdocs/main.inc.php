@@ -1625,16 +1625,16 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 
         if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)){
             // Add search dropdown
-            $toprightmenu.= top_menu_search($user, $langs);
+            $toprightmenu.= top_menu_search();
         }
 
         if (!empty($conf->global->MAIN_USE_TOP_MENU_BOOKMARK_DROPDOWN)) {
             // Add bookmark dropdown
-            $toprightmenu .= top_menu_bookmark($user, $langs);
+            $toprightmenu .= top_menu_bookmark();
         }
 
         // Add user dropdown
-	    $toprightmenu.= top_menu_user($user, $langs);
+	    $toprightmenu.= top_menu_user();
 
 		$toprightmenu.='</div></div>';
 
@@ -1747,11 +1747,9 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 /**
  * Build the tooltip on user login
  *
- * @param   user        $user       User object
- * @param   Translate   $langs      Language object
  * @return  string                  HTML content
  */
-function top_menu_user(User $user, Translate $langs)
+function top_menu_user()
 {
     global $langs, $conf, $db, $hookmanager, $user;
     global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -1916,15 +1914,13 @@ function top_menu_user(User $user, Translate $langs)
 /**
  * Build the tooltip on top menu bookmark
  *
- * @param   user        $user       User object
- * @param   Translate   $langs      Language object
  * @return  string                  HTML content
  */
-function top_menu_bookmark(User $user, Translate $langs)
+function top_menu_bookmark()
 {
-    global $langs, $conf, $db, $hookmanager, $user;
-    global $menumanager;
-    $html = '';
+    global $langs, $conf, $db, $user;
+
+	$html = '';
 
     // Define $bookmarks
     if (! empty($conf->bookmark->enabled) && $user->rights->bookmark->lire)
@@ -1938,7 +1934,7 @@ function top_menu_bookmark(User $user, Translate $langs)
                 <i class="fa fa-star" ></i>
             </a>
             <div class="dropdown-menu">
-                '.printDropdownBookmarksList($db, $langs).'
+                '.printDropdownBookmarksList().'
             </div>
         </div>';
 
@@ -1984,15 +1980,13 @@ function top_menu_bookmark(User $user, Translate $langs)
 /**
  * Build the tooltip on top menu tsearch
  *
- * @param   user        $user       User object
- * @param   Translate   $langs      Language object
  * @return  string                  HTML content
  */
-function top_menu_search(User $user, Translate $langs)
+function top_menu_search()
 {
-    global $langs, $conf, $db, $hookmanager, $user;
-    global $menumanager;
-    $html = '';
+    global $langs, $conf, $db, $user;
+
+	$html = '';
 
     $usedbyinclude=1;
     $arrayresult=null;
@@ -2003,7 +1997,7 @@ function top_menu_search(User $user, Translate $langs)
     // Menu with all bookmarks
     foreach ($arrayresult as $keyItem => $item)
     {
-        if(empty($defaultAction)){
+        if (empty($defaultAction)) {
             $defaultAction= $item['url'];
         }
         $buttonList.='<button class="dropdown-item global-search-item" data-target="'.dol_escape_htmltag($item['url']).'" >';
@@ -2187,7 +2181,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 			include_once DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php';
 			$langs->load("bookmarks");
 
-			$bookmarks=printBookmarksList($db, $langs);
+			$bookmarks=printBookmarksList();
 		}
 
 		// Left column
