@@ -1291,12 +1291,22 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
                 // Accounting
                 $newmenu->add("/accountancy/index.php?leftmenu=accountancy_accountancy", $langs->trans("MenuAccountancy"), 0, $user->rights->accounting->mouvements->lire, '', $mainmenu, 'accountancy', 1);
 
+
                 // General Ledger
 				$newmenu->add("/accountancy/bookkeeping/list.php?mainmenu=accountancy&amp;leftmenu=accountancy_accountancy", $langs->trans("Bookkeeping"), 1, $user->rights->accounting->mouvements->lire);
 
 				// Balance
 				$newmenu->add("/accountancy/bookkeeping/balance.php?mainmenu=accountancy&amp;leftmenu=accountancy_accountancy", $langs->trans("AccountBalance"), 1, $user->rights->accounting->mouvements->lire);
 
+                // Closure
+                if (! empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 2) {
+                    $newmenu->add("/accountancy/closure/index.php?mainmenu=accountancy&amp;leftmenu=accountancy_closure", $langs->trans("MenuAccountancyClosure"), 1, $user->rights->accounting->fiscalyear->closure, '', $mainmenu, 'closure');
+
+                    if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_closure/', $leftmenu)) {
+                        $newmenu->add("/accountancy/closure/validate.php?leftmenu=accountancy_closure", $langs->trans("MenuAccountancyValidationMovements"), 2, $user->rights->accounting->fiscalyear->closure);
+                    }
+                }
+        
 				// Files
 				if ((! empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 1) || ! empty($conf->global->ACCOUNTANCY_SHOW_EXPORT_FILES_MENU))
 				{
@@ -1306,9 +1316,9 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				// Reports
 				$newmenu->add("/compta/resultat/index.php?mainmenu=accountancy&amp;leftmenu=accountancy_report", $langs->trans("Reportings"), 1, $user->rights->accounting->comptarapport->lire, '', $mainmenu, 'ca');
 
-				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/', $leftmenu)) {
+                if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/', $leftmenu)) {
                     $newmenu->add("/compta/resultat/index.php?leftmenu=accountancy_report", $langs->trans("MenuReportInOut"), 2, $user->rights->accounting->comptarapport->lire);
-				    $newmenu->add("/compta/resultat/clientfourn.php?leftmenu=accountancy_report", $langs->trans("ByPredefinedAccountGroups"), 3, $user->rights->accounting->comptarapport->lire);
+                    $newmenu->add("/compta/resultat/clientfourn.php?leftmenu=accountancy_report", $langs->trans("ByPredefinedAccountGroups"), 3, $user->rights->accounting->comptarapport->lire);
                     $newmenu->add("/compta/resultat/result.php?leftmenu=accountancy_report", $langs->trans("ByPersonalizedAccountGroups"), 3, $user->rights->accounting->comptarapport->lire);
                 }
 
