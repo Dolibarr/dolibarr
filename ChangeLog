@@ -67,6 +67,8 @@ FIX: Update of leave request when CSRF with token is on
 FIX: Var not enough sanitized
 FIX: wrong test
 FIX: XSS
+FIX: Can validate invoice with amount including tax of zero for the case of having a final invoice with
+     VAT that includes a deposit without vat. 
 
 ***** ChangeLog for 10.0.2 compared to 10.0.1 *****
 FIX: #10460 compatibility with MariaDB 10.4
