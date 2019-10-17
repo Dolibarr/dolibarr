@@ -500,7 +500,7 @@ if (! empty($id) && $action == 'edit')
 	print '<input type="hidden" name="amount" value="'.$object->amount.'">';
 
 
-	dol_fiche_head($head, $hselected, $langs->trans("Donation"), 0, 'invoicing');
+	dol_fiche_head($head, $hselected, $langs->trans("Donation"), 0, 'generic');
 
 	print '<table class="border" width="100%">';
 
