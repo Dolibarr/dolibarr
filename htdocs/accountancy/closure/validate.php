@@ -134,7 +134,6 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	while ( $row = $db->fetch_row($resql)) {
-
 		for($i = 1; $i <= 12; $i ++) {
 			print '<td class="nowrap center">' . $row[$i] . '<br><br>';
             print '<input id="cb'.$row[$i].'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$row[$i].'"'.($selected?' checked="checked"':'').'>';
