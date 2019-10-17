@@ -1966,6 +1966,7 @@ class BookKeepingLine
 	public $credit;
 	public $montant;
 	public $sens;
+    public $lettering_code;
 
 	/**
      * @var int ID
@@ -1977,4 +1978,6 @@ class BookKeepingLine
 	public $journal_label;
 	public $piece_num;
 	public $date_creation;
+    public $date_modification;
+    public $date_export;
 }
