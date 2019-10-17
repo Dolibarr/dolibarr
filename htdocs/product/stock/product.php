@@ -694,24 +694,27 @@ if ($id > 0 || $ref)
 			print '</tr>';
 
 			// Last movement
-			$sql = "SELECT max(m.datem) as datem";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "stock_mouvement as m";
-			$sql .= " WHERE m.fk_product = '" . $object->id . "'";
-			$resqlbis = $db->query($sql);
-			if ($resqlbis) {
-				$obj = $db->fetch_object($resqlbis);
-				$lastmovementdate = $db->jdate($obj->datem);
-			} else {
-				dol_print_error($db);
+			if (!empty($user->rights->stock->mouvement->lire))
+			{
+				$sql = "SELECT max(m.datem) as datem";
+				$sql .= " FROM " . MAIN_DB_PREFIX . "stock_mouvement as m";
+				$sql .= " WHERE m.fk_product = '" . $object->id . "'";
+				$resqlbis = $db->query($sql);
+				if ($resqlbis) {
+					$obj = $db->fetch_object($resqlbis);
+					$lastmovementdate = $db->jdate($obj->datem);
+				} else {
+					dol_print_error($db);
+				}
+				print '<tr><td class="tdtop">' . $langs->trans("LastMovement") . '</td><td>';
+				if ($lastmovementdate) {
+					print dol_print_date($lastmovementdate, 'dayhour') . ' ';
+					print '(<a href="' . DOL_URL_ROOT . '/product/stock/movement_list.php?idproduct=' . $object->id . '">' . $langs->trans("FullList") . '</a>)';
+				} else {
+					print '<a href="' . DOL_URL_ROOT . '/product/stock/movement_list.php?idproduct=' . $object->id . '">' . $langs->trans("None") . '</a>';
+				}
+				print "</td></tr>";
 			}
-			print '<tr><td class="tdtop">' . $langs->trans("LastMovement") . '</td><td>';
-			if ($lastmovementdate) {
-				print dol_print_date($lastmovementdate, 'dayhour') . ' ';
-				print '(<a href="' . DOL_URL_ROOT . '/product/stock/movement_list.php?idproduct=' . $object->id . '">' . $langs->trans("FullList") . '</a>)';
-			} else {
-				print '<a href="' . DOL_URL_ROOT . '/product/stock/movement_list.php?idproduct=' . $object->id . '">' . $langs->trans("None") . '</a>';
-			}
-			print "</td></tr>";
 		}
 		print "</table>";
 

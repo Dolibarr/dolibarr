@@ -118,6 +118,10 @@ $arrayfields=array(
     //'m.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500)
 );
 
+// Security check
+if (!$user->rights->stock->mouvement->lire) {
+	accessforbidden();
+}
 
 
 /*
