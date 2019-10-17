@@ -112,7 +112,6 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	while ( $row = $db->fetch_row($resql)) {
-
 		print '<tr class="oddeven">';
 		for($i = 1; $i <= 12; $i ++) {
 			print '<td class="right">' . $row[$i] . '</td>';
