@@ -1556,7 +1556,6 @@ class ActionComm extends CommonObject
                         $dateend = $datestart;
                     }
 
-                    $dateend=$this->db->jdate($obj->datep2)-(empty($conf->global->AGENDA_EXPORT_FIX_TZ)?0:($conf->global->AGENDA_EXPORT_FIX_TZ*3600));
                     $duration=($datestart && $dateend)?($dateend - $datestart):0;
                     $event['summary']=$obj->label.($obj->socname?" (".$obj->socname.")":"");
                     $event['desc']=$obj->note;
