@@ -412,7 +412,6 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 		if ($obj)
 		{
-
 			$productlot->id = $obj->rowid;
 			$productlot->batch = $obj->batch;
 

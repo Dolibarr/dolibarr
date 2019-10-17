@@ -38,7 +38,6 @@ function printBookmarksList($aDb, $aLangs)
 	$ret = '<div class="menu_top"></div>'."\n";
 
 	if (! empty($conf->use_javascript_ajax)) {		// Bookmark autosubmit can't work when javascript is off.
-
 		require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 		if (! isset($conf->global->BOOKMARKS_SHOW_IN_MENU)) $conf->global->BOOKMARKS_SHOW_IN_MENU=5;
 

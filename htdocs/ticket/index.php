@@ -312,7 +312,6 @@ if ($result) {
     print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/ticket/list.php?search_fk_statut[]='.Ticket::STATUS_NOT_READ.'">'.$langs->trans("FullList").'</th>';
     print '</tr>';
     if ($num > 0) {
-
         while ($i < $num) {
             $objp = $db->fetch_object($result);
 

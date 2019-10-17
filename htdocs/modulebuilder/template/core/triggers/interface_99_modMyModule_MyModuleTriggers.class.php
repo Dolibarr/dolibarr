@@ -103,7 +103,6 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
         // Data and type of action are stored into $object and $action
 
         switch ($action) {
-
             // Users
             //case 'USER_CREATE':
             //case 'USER_MODIFY':

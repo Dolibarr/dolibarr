@@ -1092,7 +1092,6 @@ class Contact extends CommonObject
 
 		if (! $error)
 		{
-
 			$this->db->commit();
 			return 1;
 		}

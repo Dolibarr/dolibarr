@@ -144,7 +144,6 @@ function getBrowserInfo($user_agent)
 	$tablet = $detectmobile->isTablet();
 
 	if ($detectmobile->isMobile()) {
-
 		$phone = 'unknown';
 
 		// If phone/smartphone, we set phone os name.
@@ -1893,7 +1892,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
 
 
 /**
- *	Return an array with locale date info.
+ *  Return an array with locale date info.
  *  PHP getdate is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
  *  WARNING: This function always use PHP server timezone to return locale informations !!!
  *  Usage must be avoid.
@@ -2039,9 +2038,9 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = false, $
 
 
 /**
- *	Return date for now. In most cases, we use this function without parameters (that means GMT time).
+ *  Return date for now. In most cases, we use this function without parameters (that means GMT time).
  *
- * 	@param	string		$mode	'gmt' => we return GMT timestamp,
+ *  @param	string		$mode	'gmt' => we return GMT timestamp,
  * 								'tzserver' => we add the PHP server timezone
  *  							'tzref' => we add the company timezone
  * 								'tzuser' => we add the user timezone
@@ -2245,9 +2244,9 @@ function dol_print_socialnetworks($value, $cid, $socid, $type)
 
 	if (! empty($type))
 	{
-		$htmllink ='<div class="divsocialnetwork inline-block valignmiddle">';
-		$htmllink.=img_picto($langs->trans(strtoupper($type)), $type.'.png', '', false, 0, 0, '', 'paddingright');
-		$htmllink.=$value;
+		$htmllink = '<div class="divsocialnetwork inline-block valignmiddle">';
+		$htmllink .= img_picto($langs->trans(strtoupper($type)), $type.'.png', '', false, 0, 0, '', 'paddingright', 0);
+		$htmllink .= $value;
 		if ($type == 'skype')
 		{
 			$htmllink.= '&nbsp;';
@@ -2263,7 +2262,8 @@ function dol_print_socialnetworks($value, $cid, $socid, $type)
 		}
 		if (($cid || $socid) && ! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create && $type=='skype')
 		{
-			$addlink='AC_SKYPE'; $link='';
+			$addlink='AC_SKYPE';
+			$link='';
 			if (! empty($conf->global->AGENDA_ADDACTIONFORSKYPE)) $link='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$addlink.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
 			$htmllink.=($link?' '.$link:'');
 		}

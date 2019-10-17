@@ -434,7 +434,6 @@ class PaymentSalary extends CommonObject
         $result = $this->db->query($sql);
         if ($result)
         {
-
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_salary");
 
             if ($this->id > 0)

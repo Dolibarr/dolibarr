@@ -33,7 +33,6 @@
 // Build doc
 if ($action == 'builddoc' && $permissioncreate)
 {
-
     if (is_numeric(GETPOST('model', 'alpha')))
     {
         $error=$langs->trans("ErrorFieldRequired", $langs->transnoentities("Model"));

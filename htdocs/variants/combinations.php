@@ -96,7 +96,6 @@ $prodcomb2val = new ProductCombination2ValuePair($db);
 $productCombination2ValuePairs1 = array();
 
 if ($_POST) {
-
 	if (($action == 'add' || $action == 'create') && empty($massaction) && ! GETPOST('selectvariant', 'alpha'))	// We click on Create all defined combinations
 	{
 		//$features = GETPOST('features', 'array');
@@ -113,7 +112,6 @@ if ($_POST) {
 
 			//First, sanitize
 			foreach ($features as $feature) {
-
 				$explode = explode(':', $feature);
 
 				if ($prodattr->fetch($explode[0]) < 0) {
@@ -173,7 +171,6 @@ if ($_POST) {
 		$db->begin();
 
 		foreach ($toselect as $prodid) {
-
 			if ($prodstatic->fetch($prodid) < 0) {
 				continue;
 			}
@@ -216,7 +213,6 @@ if ($_POST) {
 		}
 	}
 	elseif ($valueid > 0) {
-
 		if ($prodcomb->fetch($valueid) < 0) {
 			dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
 			exit();
@@ -240,9 +236,7 @@ if ($_POST) {
 $productCombinations = $prodcomb->fetchAllByFkProductParent($object->id);
 
 if ($action === 'confirm_deletecombination') {
-
 	if ($prodcomb->fetch($valueid) > 0) {
-
 		$db->begin();
 
 		if ($prodcomb->delete($user) > 0 && $prodstatic->fetch($prodcomb->fk_product_child) > 0 && $prodstatic->delete($user) > 0) {
@@ -257,7 +251,6 @@ if ($action === 'confirm_deletecombination') {
 		$action = '';
 	}
 } elseif ($action === 'edit') {
-
 	if ($prodcomb->fetch($valueid) < 0) {
 		dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
 		exit();
@@ -269,12 +262,10 @@ if ($action === 'confirm_deletecombination') {
 
 	$productCombination2ValuePairs1 = $prodcomb2val->fetchByFkCombination($valueid);
 } elseif ($action === 'confirm_copycombination') {
-
 	//Check destination product
 	$dest_product = GETPOST('dest_product');
 
 	if ($prodstatic->fetch('', $dest_product) > 0) {
-
 		//To prevent from copying to the same product
 		if ($prodstatic->ref != $object->ref) {
 			if ($prodcomb->copyAll($object->id, $prodstatic) > 0) {
@@ -381,7 +372,6 @@ if (! empty($id) || ! empty($ref))
 
 	// Create or edit a varian
 	if ($action == 'add' || ($action == 'edit')) {
-
 		if ($action == 'add') {
 			$title = $langs->trans('NewProductCombination');
 			//print dol_fiche_head();
@@ -390,7 +380,6 @@ if (! empty($id) || ! empty($ref))
 			$listofvariantselected = '<div id="parttoaddvariant">';
 			if (! empty($features)) {
 				foreach ($features as $feature) {
-
 					$explode = explode(':', $feature);
 
 					if ($prodattr->fetch($explode[0]) < 0) {
@@ -634,7 +623,6 @@ if (! empty($id) || ! empty($ref))
 	else
 	{
 		if ($action === 'delete') {
-
 			if ($prodcomb->fetch($valueid) > 0) {
 				$prodstatic->fetch($prodcomb->fk_product_child);
 

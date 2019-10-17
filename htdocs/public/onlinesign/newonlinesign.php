@@ -270,8 +270,6 @@ if ($action != 'dosign')
 {
     if ($found && ! $error)	// We are in a management option and no error
     {
-
-
     }
     else
     {

@@ -300,7 +300,6 @@ if ($result > 0)
 
         while ($i < $num)
         {
-
             $obj = $db->fetch_object($resql);
 
             $userstatic->id=$obj->userid;

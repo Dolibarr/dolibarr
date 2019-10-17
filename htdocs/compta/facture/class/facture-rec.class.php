@@ -1839,7 +1839,6 @@ class FactureLigneRec extends CommonInvoiceLine
     	$result = $this->db->query($sql);
     	if ($result)
     	{
-
     		$objp = $this->db->fetch_object($result);
 
     		$this->id	            = $objp->rowid;

@@ -92,7 +92,6 @@ $entity = GETPOST('entity', 'int')?GETPOST('entity', 'int'):$conf->entity;
 $filesarray=array();
 $result=false;
 if (($action=="searchfiles" || $action=="dl" )) {
-
 	if (empty($date_start))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateStart")), null, 'errors');

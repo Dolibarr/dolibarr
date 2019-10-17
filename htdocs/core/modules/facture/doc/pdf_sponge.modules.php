@@ -574,7 +574,6 @@ class pdf_sponge extends ModelePDFFactures
 	            $pagenb = $pageposbeforeprintlines;
 	            for ($i = 0; $i < $nblines; $i++)
 	            {
-
 	                $curY = $nexY;
 	                $pdf->SetFont('', '', $default_font_size - 1);   // Into loop to work with multipage
 	                $pdf->SetTextColor(0, 0, 0);
@@ -1268,7 +1267,6 @@ class pdf_sponge extends ModelePDFFactures
 		$deja_paye = 0;
 		$i = 1;
 		if(!empty($TPreviousIncoice)){
-
 		    $pdf->setY($tab2_top);
 		    $posy = $pdf->GetY();
 
@@ -1276,7 +1274,6 @@ class pdf_sponge extends ModelePDFFactures
 
 
 		    foreach ($TPreviousIncoice as &$fac){
-
 		        if($posy  > $this->page_hauteur - 4 ) {
 		            $this->_pagefoot($pdf, $object, $outputlangs, 1);
 		            $pdf->addPage();
@@ -1482,7 +1479,6 @@ class pdf_sponge extends ModelePDFFactures
 				// VAT
 				// Situations totals migth be wrong on huge amounts
 				if ($object->situation_cycle_ref && $object->situation_counter > 1) {
-
 					$sum_pdf_tva = 0;
 					foreach($this->tva as $tvakey => $tvaval){
 						$sum_pdf_tva+=$tvaval; // sum VAT amounts to compare to object

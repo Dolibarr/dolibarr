@@ -786,7 +786,6 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 
             // Contact for this action
             if (isset($histo[$key]['socpeopleassigned']) && is_array($histo[$key]['socpeopleassigned']) && count($histo[$key]['socpeopleassigned']) > 0) {
-
                 $contactList = '';
                 foreach ($histo[$key]['socpeopleassigned'] as $cid => $Tab) {
                     $contact = new Contact($db);

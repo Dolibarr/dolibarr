@@ -115,7 +115,6 @@ $sql .= " ORDER BY er.date_debut";
 dol_syslog('accountancy/journal/expensereportsjournal.php', LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
-
 	$taber = array ();
 	$tabht = array ();
 	$tabtva = array ();
@@ -485,7 +484,6 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 }
 
 if (empty($action) || $action == 'view') {
-
 	llxHeader('', $langs->trans("ExpenseReportsJournal"));
 
 	$nom = $langs->trans("ExpenseReportsJournal") . ' | ' . $accountingjournalstatic->getNomUrl(0, 1, 1, '', 1);

@@ -2383,7 +2383,6 @@ function migrate_stocks($db, $langs, $conf)
                 $resql2=$db->query($sql);
                 if ($resql2)
                 {
-
                 }
                 else
                 {
@@ -2460,7 +2459,6 @@ function migrate_menus($db, $langs, $conf)
                     $resql2=$db->query($sql);
                     if ($resql2)
                     {
-
                     }
                     else
                     {

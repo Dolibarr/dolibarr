@@ -385,8 +385,6 @@ function createContact($authentication, $contact)
 
 	if (! $error)
 	{
-
-
 		$newobject=new Contact($db);
 
 		$newobject->id=$contact['id'];
@@ -645,7 +643,6 @@ function updateContact($authentication, $contact)
 		$result=$object->fetch($contact['id'], 0, $contact['ref_ext']);
 
 		if (!empty($object->id)) {
-
 			$objectfound=true;
 
 

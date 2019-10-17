@@ -246,8 +246,13 @@ class Products extends DolibarrApi
             }
             $this->product->$field = $value;
         }
+        
+        $updatetype = false;
+        if ($this->product->type != $oldproduct->type && ($this->product->isProduct() || $this->product->isService())) {
+            $updatetype = true;
+        }
 
-        $result = $this->product->update($id, DolibarrApiAccess::$user, 1, 'update');
+        $result = $this->product->update($id, DolibarrApiAccess::$user, 1, 'update', $updatetype);
 
         // If price mode is 1 price per product
         if ($result > 0 && ! empty($conf->global->PRODUCT_PRICE_UNIQ)) {

@@ -315,7 +315,6 @@ else
 		$act = fetchObjectByElement($element_id, $element, $element_ref);
 		if (is_object($act))
 		{
-
 			$head=actions_prepare_head($act);
 
 			dol_fiche_head($head, 'resources', $langs->trans("Action"), -1, 'action');
@@ -446,7 +445,6 @@ else
 	{
 		$socstatic = fetchObjectByElement($element_id, $element, $element_ref);
 		if (is_object($socstatic)) {
-
 			$savobject = $object;
 			$object = $socstatic;
 
@@ -552,7 +550,6 @@ else
 
 		if (is_object($product))
 		{
-
 			$head = product_prepare_head($product);
 			$titre=$langs->trans("CardProduct".$product->type);
 			$picto=($product->type==Product::TYPE_SERVICE?'service':'product');

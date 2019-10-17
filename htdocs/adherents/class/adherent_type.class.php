@@ -383,7 +383,6 @@ class AdherentType extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-    
                 $this->description = $this->db->escape($this->note);
 
                 // Multilangs

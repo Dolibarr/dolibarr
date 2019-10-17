@@ -158,7 +158,6 @@ if ($resql) {
 
 	// export csv
 	if (GETPOST('action', 'aZ09') == 'export_csv') {
-
 		header('Content-Type: text/csv');
 		header('Content-Disposition: attachment;filename=export_csv.csv');
 

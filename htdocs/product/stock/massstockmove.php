@@ -125,11 +125,9 @@ if ($action == 'addline')
 		// Warning, don't forget lines already added into the $_SESSION['massstockmove']
 		if ($producttmp->hasbatch())
 		{
-
 		}
 		else
 		{
-
 		}
 	}
 

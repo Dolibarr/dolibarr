@@ -125,7 +125,6 @@ print $form->select_company($conf->global->CASHDESK_ID_THIRDPARTY, 'socid', '(s.
 print '</td></tr>';
 if (! empty($conf->banque->enabled))
 {
-
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountForSell").'</td>';
 	print '<td colspan="2">';
 	$form->select_comptes($conf->global->CASHDESK_ID_BANKACCOUNT_CASH, 'CASHDESK_ID_BANKACCOUNT_CASH', 0, "courant=2", 1);
@@ -146,7 +145,6 @@ if (! empty($conf->banque->enabled))
 
 if (! empty($conf->stock->enabled))
 {
-
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskDoNotDecreaseStock").'</td>';	// Force warehouse (this is not a default value)
 	print '<td colspan="2">';
 	if (empty($conf->productbatch->enabled)) {

@@ -647,7 +647,7 @@ class Commande extends CommonOrder
 
 			$now=dol_now();
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql.= ' SET fk_statut = '.self::STATUS_CLOSED.',';
 			$sql.= ' fk_user_cloture = '.$user->id.',';
 			$sql.= " date_cloture = '".$this->db->idate($now)."'";
@@ -2842,7 +2842,6 @@ class Commande extends CommonOrder
 		dol_syslog(get_class($this)."::classifyBilled", LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
-
 			if (! $error)
 			{
 				$this->oldcopy= clone $this;
@@ -2974,7 +2973,6 @@ class Commande extends CommonOrder
 
 		if ($this->statut == Commande::STATUS_DRAFT)
 		{
-
 			// Clean parameters
 			if (empty($qty)) $qty=0;
 			if (empty($info_bits)) $info_bits=0;
@@ -3830,7 +3828,6 @@ class Commande extends CommonOrder
 		$langs->load("orders");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'einstein';
 
 			if ($this->modelpdf) {

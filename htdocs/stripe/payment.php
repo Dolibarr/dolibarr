@@ -242,7 +242,6 @@ if (empty($reshook))
 	 */
 	if ($action == 'confirm_paiement' && $confirm == 'yes')
 	{
-
 		$error=0;
 
 		$datepaye = dol_now();
@@ -306,7 +305,6 @@ if (empty($reshook))
 		}
 		elseif (preg_match('/src_/i', $source))
 		{
-
 			$customer2 = $customerstripe=$stripe->customerStripe($facture->thirdparty, $stripeacc, $servicestatus);
 			$src = $customer2->sources->retrieve("$source");
 			if ($src->type=='card')
@@ -341,7 +339,6 @@ if (empty($reshook))
 
 		if (! $error)
 		{
-
 			$paiement_id = $paiement->create($user, 0);
 			if ($paiement_id < 0)
 			{

@@ -39,7 +39,6 @@ $var=true;
 $total=0;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
-
 ?>
 <tr <?php echo $GLOBALS['bc'][$var]; ?> >
 	<td><?php echo $langs->trans("ExpenseReport"); ?></td>

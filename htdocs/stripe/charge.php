@@ -241,7 +241,6 @@ if (!$rowid)
 	    print "</tr>\n";
 	}
 } else {
-
 }
 
 // End of page

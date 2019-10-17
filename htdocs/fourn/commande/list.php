@@ -243,14 +243,12 @@ if (empty($reshook))
 		$db->begin();
 
 		foreach($orders as $id_order) {
-
 			$cmd = new Commande($db);
 			if($cmd->fetch($id_order) <= 0) continue;
 
 			$object = new Facture($db);
 			if(!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) $object = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created order.
 			else {
-
 				$object->socid = $cmd->socid;
 				$object->type = Facture::TYPE_STANDARD;
 				$object->cond_reglement_id	= $cmd->cond_reglement_id;
@@ -349,7 +347,7 @@ if (empty($reshook))
 							{
 								$fk_parent_line = 0;
 							}
-    $result = $object->addline(
+                            $result = $object->addline(
 								$desc,
 								$lines[$i]->subprice,
 								$lines[$i]->qty,
@@ -406,7 +404,6 @@ if (empty($reshook))
 		$toselect = array();
 
 		if (! $error && $validate_invoices) {
-
 			$massaction = $action = 'builddoc';
 
 			foreach($TAllFact as &$object)
@@ -492,7 +489,9 @@ $sql.= ' cf.date_creation as date_creation, cf.tms as date_update,';
 $sql.= " p.rowid as project_id, p.ref as project_ref, p.title as project_title,";
 $sql.= " u.firstname, u.lastname, u.photo, u.login, u.email as user_email";
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook

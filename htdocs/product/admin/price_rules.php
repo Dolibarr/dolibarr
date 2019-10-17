@@ -35,13 +35,11 @@ if (! $user->admin || (empty($conf->product->enabled) && empty($conf->service->e
  */
 
 if ($_POST) {
-
 	$var_percent = GETPOST('var_percent', 'array');
 	$var_min_percent = GETPOST('var_min_percent', 'array');
 	$fk_level = GETPOST('fk_level', 'array');
 
 	for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
-
 		$check = isset($var_min_percent[$i]);
 
 		if ($i != 1) {
@@ -70,7 +68,6 @@ if ($_POST) {
 		}
 
 		if (!$check1 || !$check2) {
-
 			//If the level is between range but percent fields are empty, then we ensure it does not exist in DB
 			if ($check1) {
 				$db->query("DELETE FROM ".MAIN_DB_PREFIX."product_pricerules WHERE level = ".(int) $i);
@@ -83,7 +80,6 @@ if ($_POST) {
 		".(int) $i.", ".$db->escape($i_fk_level).", ".$i_var_percent.", ".$i_var_min_percent.")";
 
 		if (!$db->query($sql)) {
-
 			//If we could not create, then we try updating
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product_pricerules
 			SET fk_level = ".$db->escape($i_fk_level).", var_percent = ".$i_var_percent.", var_min_percent = ".$i_var_min_percent." WHERE level = ".$i;

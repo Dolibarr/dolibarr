@@ -165,7 +165,6 @@ a.badge-dark:focus, a.badge-dark:hover {
 /* Default Status */
 
 <?php for ($i = 0; $i <= 9; $i++){
-
     print "\n/* STATUS".$i." */\n";
 
     $thisBadgeBackgroundColor = $thisBadgeBorderColor = ${'badgeStatus'.$i};

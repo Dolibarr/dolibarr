@@ -848,7 +848,6 @@ class Facture extends CommonInvoice
 
 			if (! $error)
 			{
-
 				$result=$this->update_price(1);
 				if ($result > 0)
 				{
@@ -1933,7 +1932,6 @@ class Facture extends CommonInvoice
 
 		if (! $error)
 		{
-
 			$this->ref_client = $ref_client;
 
 			$this->db->commit();
@@ -3465,7 +3463,6 @@ class Facture extends CommonInvoice
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 			foreach ($dirmodels as $reldir) {
-
 				$dir = dol_buildpath($reldir."core/modules/facture/");
 
 				// Load file with numbering class (if found)
@@ -5216,7 +5213,6 @@ class FactureLigne extends CommonInvoiceLine
 				$returnPercent = floatval($res['situation_percent']);
 
 				if($include_credit_note) {
-
 				    $sql = 'SELECT fd.situation_percent FROM ' . MAIN_DB_PREFIX . 'facturedet fd';
 				    $sql.= ' JOIN ' . MAIN_DB_PREFIX . 'facture f ON (f.rowid = fd.fk_facture) ';
 				    $sql.= ' WHERE fd.fk_prev_id =' . $this->fk_prev_id;

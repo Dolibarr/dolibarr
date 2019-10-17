@@ -42,14 +42,14 @@ class modZapier extends DolibarrModules
         $this->db = $db;
         // Id for module (must be unique).
         // Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
-        $this->numero = 792000; // TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve id number for your module
+        $this->numero = 50330;
         // Key text used to identify module (for permissions, menus, etc...)
         $this->rights_class = 'zapier';
         // Family can be 'base' (core modules),'crm','financial','hr','projects','products','ecm','technic' (transverse modules),'interface' (link with external tools),'other','...'
         // It is used to group modules by family in module setup page
         $this->family = "interface";
         // Module position in the family on 2 digits ('01', '10', '20', ...)
-        $this->module_position = 100;
+        $this->module_position = '13';
         // Gives the possibility for the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
         //$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
         // Module label (no space allowed), used if translation string 'ModuleZapierName' not found (Zapier is name of module).

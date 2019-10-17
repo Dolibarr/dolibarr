@@ -68,7 +68,6 @@ if ($action == 'update')
 
 
     if (in_array($accounting_mode, $accounting_modes)) {
-
         if (!dolibarr_set_const($db, 'ACCOUNTING_MODE', $accounting_mode, 'chaine', 0, '', $conf->entity)) {
             $error++;
         }

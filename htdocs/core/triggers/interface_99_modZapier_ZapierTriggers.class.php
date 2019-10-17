@@ -111,7 +111,6 @@ class InterfaceZapierTriggers extends DolibarrTriggers
         }
 
         switch ($action) {
-
             // Users
             //case 'USER_CREATE':
             //case 'USER_MODIFY':

@@ -1671,7 +1671,6 @@ class Project extends CommonObject
 		$langs->load("projects");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'baleine';
 
 			if ($this->modelpdf) {

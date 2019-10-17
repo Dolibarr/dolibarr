@@ -1584,9 +1584,7 @@ class BookKeeping extends CommonObject
 		dol_syslog(get_class($this) . "::" . __METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-
 			while ($obj = $this->db->fetch_object($result)) {
-
 				$line = new BookKeepingLine();
 
 				$line->id = $obj->rowid;
@@ -1966,6 +1964,7 @@ class BookKeepingLine
 	public $credit;
 	public $montant;
 	public $sens;
+    public $lettering_code;
 
 	/**
      * @var int ID
@@ -1977,4 +1976,6 @@ class BookKeepingLine
 	public $journal_label;
 	public $piece_num;
 	public $date_creation;
+    public $date_modification;
+    public $date_export;
 }

@@ -97,7 +97,6 @@ $form = new Form($db);
 
 if ($id > 0 || !empty($ref)) {
     if ($object->fetch($id, $ref)) {
-
         $upload_dir = $conf->bank->dir_output . '/' . $object->ref;
 
         // Onglets

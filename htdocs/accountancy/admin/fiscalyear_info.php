@@ -32,7 +32,7 @@ $langs->loadLangs(array("admin","compta"));
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
-if (! $user->rights->accounting->fiscalyear)
+if (! $user->rights->accounting->fiscalyear->write)
 	accessforbidden();
 
 $id = GETPOST('id', 'int');

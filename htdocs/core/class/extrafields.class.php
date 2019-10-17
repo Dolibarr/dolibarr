@@ -1404,7 +1404,6 @@ class ExtraFields
                     $sql = 'SELECT ' . $keyList;
                     $sql .= ' FROM ' . MAIN_DB_PREFIX . $InfoFieldList[0];
                     if (!empty($InfoFieldList[4])) {
-
                         // can use SELECT request
                         if (strpos($InfoFieldList[4], '$SEL$') !== false) {
                             $InfoFieldList[4] = str_replace('$SEL$', 'SELECT', $InfoFieldList[4]);
@@ -1813,7 +1812,6 @@ class ExtraFields
 				$value = ''; // value was used, so now we reste it to use it to build final output
 				$toprint=array();
 				while ( $obj = $this->db->fetch_object($resql) ) {
-
 					// Several field into label (eq table:code|libelle:rowid)
 					$fields_label = explode('|', $InfoFieldList[1]);
 					if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {

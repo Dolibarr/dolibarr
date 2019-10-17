@@ -365,7 +365,6 @@ function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = ''
 
     if (! $error)
     {
-
     	$langcode=($lang?$lang:(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
     	$langs->setDefaultLang($langcode);
 

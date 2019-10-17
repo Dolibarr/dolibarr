@@ -63,8 +63,6 @@ $dolistore            = new Dolistore(false);
 if (! $user->admin)
 	accessforbidden();
 
-$specialtostring=array(0=>'common', 1=>'interfaces', 2=>'other', 3=>'functional', 4=>'marketplace');
-
 $familyinfo=array(
 	'hr'=>array('position'=>'001', 'label'=>$langs->trans("ModuleFamilyHr")),
 	'crm'=>array('position'=>'006', 'label'=>$langs->trans("ModuleFamilyCrm")),
@@ -190,7 +188,7 @@ if ($action=='install')
                     //var_dump($modulenamedir);
                     if (! dol_is_dir($modulenamedir))
                     {
-						setEventMessages($langs->trans("ErrorModuleFileSeemsToHaveAWrongFormat").'<br>Dir not found: '.$conf->admin->dir_temp.'/'.$tmpdir.'/'.$modulename.'<br>'.$conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulename, null, 'errors');
+                    	setEventMessages($langs->trans("ErrorModuleFileSeemsToHaveAWrongFormat").'<br>'.$langs->trans("ErrorModuleFileSeemsToHaveAWrongFormat2", $modulename, 'htdocs/'.$modulename), null, 'errors');
                         $error++;
                     }
                 }
@@ -368,11 +366,8 @@ foreach ($modulesdir as $dir)
 		    					        }
 		    					    }
 		    					    ksort($arrayofnatures);
-		    					}
 
-		    					// Define array $categ with categ with at least one qualified module
-		    					if ($modulequalified > 0)
-		    					{
+			    					// Define array $categ with categ with at least one qualified module
 		    			            $filename[$i]= $modName;
 		    					    $modules[$modName] = $objMod;
 
@@ -400,7 +395,15 @@ foreach ($modulesdir as $dir)
 		    			                $arrayofwarningsext[$modName]=$objMod->warnings_activation_ext;
 		    			            }
 
-		    			            $orders[$i]  = $familyinfo[$familykey]['position']."_".$familykey."_".$moduleposition."_".$j;   // Sort by family, then by module position then number
+		    			            $familyposition = $familyinfo[$familykey]['position'];
+		    			            if ($external)
+		    			            {
+		    			            	// TODO Find a solution so modules with their own family are always at end
+		    			            	//var_dump($familyposition);
+		    			            	//$familyposition += 100;
+		    			            }
+
+		    			            $orders[$i]  = $familyposition."_".$familykey."_".$moduleposition."_".$j;   // Sort by family, then by module position then number
 		    						$dirmod[$i]  = $dir;
 		    						//print $i.'-'.$dirmod[$i].'<br>';
 		    			            // Set categ[$i]
@@ -527,6 +530,7 @@ if ($mode == 'common')
 
     print '<div class="clearboth"></div><br>';
 
+    $object=new stdClass();
     $parameters=array();
     $reshook=$hookmanager->executeHooks('insertExtraHeader', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
     if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -538,14 +542,13 @@ if ($mode == 'common')
     foreach ($orders as $key => $value)
     {
         $tab=explode('_', $value);
-        $familyposition=$tab[0]; $familykey=$tab[1]; $module_position=$tab[2]; $numero=$tab[3];
+        $familykey=$tab[1];
+        $module_position=$tab[2];
 
         $modName = $filename[$key];
     	$objMod  = $modules[$modName];
-    	$dirofmodule = $dirmod[$key];
 
     	//print $objMod->name." - ".$key." - ".$objMod->version."<br>";
-    	//if (($mode != (isset($specialtostring[$special])?$specialtostring[$special]:'unknown') && $mode != 'expdev')
     	if ($mode == 'expdev' && $objMod->version != 'development' && $objMod->version != 'experimental') continue;    // Discard if not for current tab
 
         if (! $objMod->getName())
@@ -729,7 +732,6 @@ if ($mode == 'common')
         			print '</a>';
         		}
         		else {
-
         			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode .'&amp;confirm=yes' . $param . '">';
         			print img_picto($langs->trans("Activated"), 'switch_on');
         			print '</a>';

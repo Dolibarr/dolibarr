@@ -179,7 +179,6 @@ if (! empty($search_credit)) {
 
 
 if ($action == 'delmouvconfirm') {
-
 	$mvt_num = GETPOST('mvt_num', 'int');
 
 	if (! empty($mvt_num)) {
@@ -229,7 +228,6 @@ if ($action == 'delmouv') {
 	print $formconfirm;
 }
 if ($action == 'delbookkeepingyear') {
-
 	$form_question = array ();
 	$delyear = GETPOST('delyear');
 
@@ -338,7 +336,6 @@ while ($i < min($num, $limit))
 
 	// Is it a break ?
 	if ($accountg != $displayed_account_number || ! isset($displayed_account_number)) {
-
 		// Affiche un Sous-Total par compte comptable
 		if (isset($displayed_account_number)) {
 			print '<tr class="liste_total"><td class="right" colspan="5">'.$langs->trans("SubTotal").':</td><td class="nowrap right">'.price($sous_total_debit).'</td><td class="nowrap right">'.price($sous_total_credit).'</td>';

@@ -223,7 +223,6 @@ class Expedition extends CommonObject
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 			foreach ($dirmodels as $reldir) {
-
 				$dir = dol_buildpath($reldir."core/modules/expedition/");
 
 				// Load file with numbering class (if found)
@@ -325,8 +324,8 @@ class Expedition extends CommonObject
 		$sql.= ", ".$this->sizeS;	// TODO Should use this->trueDepth
 		$sql.= ", ".$this->sizeW;	// TODO Should use this->trueWidth
 		$sql.= ", ".$this->sizeH;	// TODO Should use this->trueHeight
-		$sql.= ", ".$this->weight_units;
-		$sql.= ", ".$this->size_units;
+		$sql.= ", ".($this->weight_units>0?$this->weight_units:'NULL');
+		$sql.= ", ".($this->size_units>0?$this->size_units:'NULL');
 		$sql.= ", ".(!empty($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql.= ", ".(!empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql.= ", ".(!empty($this->model_pdf)?"'".$this->db->escape($this->model_pdf)."'":"null");
@@ -2333,7 +2332,6 @@ class Expedition extends CommonObject
 		$langs->load("sendings");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'rouget';
 
 			if ($this->modelpdf) {

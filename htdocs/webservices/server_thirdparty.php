@@ -318,7 +318,6 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 			$result=$thirdparty->fetch($id, $ref, $ref_ext);
 			if ($result > 0)
 			{
-
 				$thirdparty_result_fields=array(
 				    	'id' => $thirdparty->id,
 			   			'ref' => $thirdparty->name,
@@ -570,7 +569,6 @@ function updateThirdParty($authentication, $thirdparty)
 		$result=$object->fetch($thirdparty['id']);
 
 		if (!empty($object->id)) {
-
 			$objectfound=true;
 
 			$object->ref=$thirdparty['ref'];

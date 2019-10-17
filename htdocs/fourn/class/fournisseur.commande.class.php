@@ -776,7 +776,6 @@ class CommandeFournisseur extends CommonOrder
             $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
             foreach ($dirmodels as $reldir) {
-
                 $dir = dol_buildpath($reldir."core/modules/supplier_order/");
 
                 // Load file with numbering class (if found)
@@ -1271,7 +1270,6 @@ class CommandeFournisseur extends CommonOrder
 	            // insert products details into database
 	            for ($i=0;$i<$num;$i++)
 	            {
-
 	                $this->special_code = $this->lines[$i]->special_code; // TODO : remove this in 9.0 and add special_code param to addline()
 
                 $result = $this->addline(              // This include test on qty if option SUPPLIER_ORDER_WITH_NOPRICEDEFINED is not set
@@ -2903,7 +2901,6 @@ class CommandeFournisseur extends CommonOrder
 		$langs->load("suppliers");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'muscadet';
 
 			if ($this->modelpdf) {
@@ -3602,7 +3599,6 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $resql=$this->db->query($sql);
         if ($resql)
         {
-
             if (!$notrigger)
             {
                 // Call trigger

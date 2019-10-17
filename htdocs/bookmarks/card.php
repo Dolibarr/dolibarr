@@ -54,7 +54,6 @@ $object=new Bookmark($db);
 
 if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 {
-
 	if ($action == 'update') {
 		$invertedaction = 'edit';
 	} else {

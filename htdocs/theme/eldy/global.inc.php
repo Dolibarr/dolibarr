@@ -3481,7 +3481,7 @@ div.info {
     padding-left: 10px;
     padding-right: 4px;
     padding-bottom: 8px;
-    margin: 0.5em 0em 0.5em 0em;
+    margin: 1em 0em 1em 0em;
     background: #eff8fc;
 }
 
@@ -3492,7 +3492,7 @@ div.warning {
 	padding-left: 10px;
 	padding-right: 4px;
 	padding-bottom: 8px;
-	margin: 0.5em 0em 0.5em 0em;
+	margin: 1em 0em 1em 0em;
     background: #fcf8e3;
 }
 div.warning a, div.info a, div.error a {
@@ -3506,7 +3506,7 @@ div.error {
 	padding-left: 10px;
 	padding-right: 4px;
 	padding-bottom: 8px;
-	margin: 0.5em 0em 0.5em 0em;
+	margin: 1em 0em 1em 0em;
   background: #EFCFCF;
 }
 

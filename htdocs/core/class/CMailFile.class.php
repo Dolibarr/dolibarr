@@ -1392,7 +1392,6 @@ class CMailFile
 			$i=0;
 			foreach ($matches[1] as $full)
 			{
-
 				if (preg_match('/file=([A-Za-z0-9_\-\/]+[\.]?[A-Za-z0-9]+)?$/i', $full, $regs))   // If xxx is 'file=aaa'
 				{
 					$img = $regs[1];

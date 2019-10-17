@@ -977,7 +977,6 @@ class BlockedLog
 		if (empty($cachedlogs)) $cachedlogs=array();
 
 		if ($element=='all') {
-
 	 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
 	         WHERE entity=".$conf->entity;
 		}
@@ -1006,7 +1005,6 @@ class BlockedLog
 
 		$res = $this->db->query($sql);
 		if($res) {
-
 			$results=array();
 
 			$i = 0;
@@ -1046,7 +1044,6 @@ class BlockedLog
 		global $db,$conf,$mysoc;
 
 		if (empty($conf->global->BLOCKEDLOG_ENTITY_FINGERPRINT)) { // creation of a unique fingerprint
-
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';

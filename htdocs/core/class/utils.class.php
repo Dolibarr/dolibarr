@@ -819,7 +819,6 @@ class Utils
 		$tabfiles[] = array('name' => $mainlog, 'path' => $mainlogdir);
 
 		foreach($tabfiles as $file) {
-
 			$logname = $file['name'];
 			$logpath = $file['path'];
 

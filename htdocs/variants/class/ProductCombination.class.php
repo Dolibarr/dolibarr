@@ -167,7 +167,6 @@ class ProductCombination
 		$return = array();
 
 		while ($result = $this->db->fetch_object($query)) {
-
 			$tmp = new ProductCombination($this->db);
 			$tmp->id = $result->rowid;
 			$tmp->fk_product_parent = $result->fk_product_parent;
@@ -290,7 +289,6 @@ class ProductCombination
 		$this->db->begin();
 
 		foreach ($this->fetchAllByFkProductParent($fk_product_parent) as $prodcomb) {
-
 			$prodstatic = new Product($this->db);
 
 			$res = $prodstatic->fetch($prodcomb->fk_product_child);
@@ -334,7 +332,6 @@ class ProductCombination
 		$child->label = $parent->label.$varlabel;
 
 		if ($child->update($child->id, $user) > 0) {
-
 			$new_vat = $parent->tva_tx;
 			$new_npr = $parent->tva_npr;
 
@@ -420,7 +417,6 @@ class ProductCombination
 		}
 
 		foreach ($prodcomb->fetchAllByFkProductParent($prodid) as $prc) {
-
 			$values = array();
 
 			foreach ($prodcomb2val->fetchByFkCombination($prc->id) as $value) {
@@ -551,7 +547,6 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 		// $combination contains list of attributes pairs key->value. Example: array('id Color'=>id Blue, 'id Size'=>id Small, 'id Option'=>id val a, ...)
 		//var_dump($combinations);
 		foreach ($combinations as $currcombattr => $currcombval) {
-
 			//This was checked earlier, so no need to double check
 			$prodattr->fetch($currcombattr);
 			$prodattrval->fetch($currcombval);
@@ -683,7 +678,6 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 		$combinations = $this->fetchAllByFkProductParent($origProductId);
 
 		foreach ($combinations as $combination) {
-
 			$variations = array();
 
 			foreach ($prodcomb2val->fetchByFkCombination($combination->id) as $tmp_pc2v) {

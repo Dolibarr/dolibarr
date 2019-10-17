@@ -278,7 +278,6 @@ if (empty($reshook) && $action == 'add')
 
 		$taskid = GETPOST('taskid', 'int');
 		if(!empty($taskid)){
-
 		    $taskProject = new Task($db);
 		    if($taskProject->fetch($taskid)>0){
 		        $object->fk_project = $taskProject->fk_project;

@@ -437,7 +437,6 @@ class RemiseCheque extends CommonObject
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 			foreach ($dirmodels as $reldir) {
-
 				$dir = dol_buildpath($reldir."core/modules/cheque/");
 
 				// Load file with numbering class (if found)
@@ -575,7 +574,6 @@ class RemiseCheque extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-
 			while ($obj=$this->db->fetch_object($resql))
 			{
 				$this->nb["cheques"]=$obj->nb;

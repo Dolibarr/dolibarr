@@ -885,7 +885,6 @@ abstract class CommonObject
 		}
 
 		if(!$already_added) {
-
 			$this->db->begin();
 
 			// Insert into database
@@ -5984,7 +5983,6 @@ abstract class CommonObject
 				$sql = 'SELECT ' . $keyList;
 				$sql .= ' FROM ' . MAIN_DB_PREFIX . $InfoFieldList[0];
 				if (! empty($InfoFieldList[4])) {
-
 					// can use SELECT request
 					if (strpos($InfoFieldList[4], '$SEL$')!==false) {
 						$InfoFieldList[4]=str_replace('$SEL$', 'SELECT', $InfoFieldList[4]);
@@ -6440,7 +6438,6 @@ abstract class CommonObject
 				$value = ''; // value was used, so now we reste it to use it to build final output
 				$toprint=array();
 				while ( $obj = $this->db->fetch_object($resql) ) {
-
 					// Several field into label (eq table:code|libelle:rowid)
 					$fields_label = explode('|', $InfoFieldList[1]);
 					if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
@@ -6966,7 +6963,6 @@ abstract class CommonObject
 					$viewfilename = $file;
 
 					if ($size == 1 || $size == 'small') {   // Format vignette
-
 						// Find name of thumb file
 						$photo_vignette=basename(getImageFileNameForSize($dir.$file, '_small'));
 						if (! dol_is_file($dirthumb.$photo_vignette)) $photo_vignette='';
@@ -7406,7 +7402,7 @@ abstract class CommonObject
 		if (array_key_exists('fk_user_creat', $fieldvalues) && ! ($fieldvalues['fk_user_creat'] > 0)) $fieldvalues['fk_user_creat']=$user->id;
 		unset($fieldvalues['rowid']);	// The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
 		if (array_key_exists('ref', $fieldvalues)) $fieldvalues['ref']=dol_string_nospecial($fieldvalues['ref']);					// If field is a ref,we sanitize data
-		
+
 		$keys=array();
 		$values = array();
 		foreach ($fieldvalues as $k => $v) {
@@ -7863,6 +7859,57 @@ abstract class CommonObject
 			return -1;
 		}
 	}
+
+
+	/**
+	 *	Set draft status
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$status			New status to set (often a constant like self::STATUS_XXX)
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *  @param  string  $triggercode    Trigger code to use
+	 *	@return	int						<0 if KO, >0 if OK
+	 */
+	public function setStatusCommon($user, $status, $notrigger = 0, $triggercode = '')
+	{
+		$error=0;
+
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+		$sql.= " SET status = ".$status;
+		$sql.= " WHERE rowid = ".$this->id;
+
+		if ($this->db->query($sql))
+		{
+			if (! $error)
+			{
+				$this->oldcopy= clone $this;
+			}
+
+			if (! $error && ! $notrigger) {
+				// Call trigger
+				$result=$this->call_trigger($triggercode, $user);
+				if ($result < 0) $error++;
+			}
+
+			if (!$error) {
+				$this->status = $status;
+				$this->db->commit();
+				return 1;
+			} else {
+				$this->db->rollback();
+				return -1;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
 
 	/**
 	 * Initialise object with example values

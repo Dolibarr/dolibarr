@@ -108,7 +108,6 @@ if ($action == 'update')
 		}
 		else
 		{
-
 			$db->rollback();
 			if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
@@ -158,7 +157,6 @@ if ($action == 'add')
 		}
 		else
 		{
-
 		    $db->rollback();
 		    if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		    {

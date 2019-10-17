@@ -473,7 +473,9 @@ $sql.= " ba.rowid as bankid, ba.ref as bankref,";
 $sql.= " bu.url_id,";
 $sql.= " s.nom, s.name_alias, s.client, s.fournisseur, s.email, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -1275,19 +1277,15 @@ if ($resql)
     	        }
     	        elseif ($links[$key]['type']=='company')
     	        {
-
     	        }
     	        elseif ($links[$key]['type']=='user')
     	        {
-
     	        }
     	        elseif ($links[$key]['type']=='member')
     	        {
-
     	        }
     	        elseif ($links[$key]['type']=='sc')
     	        {
-
     	        }
     	        else
     	        {
