@@ -146,7 +146,7 @@ class pdf_espadon extends ModelePdfExpedition
 	/**
 	 *	Function to build pdf onto disk
 	 *
-	 *	@param		Object		$object			Object expedition to generate (or id if old method)
+	 *	@param		Object		$object			    Object expedition to generate (or id if old method)
 	 *	@param		Translate	$outputlangs		Lang output object
      *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
      *  @param		int			$hidedetails		Do not show line details
@@ -370,7 +370,7 @@ class pdf_espadon extends ModelePdfExpedition
 					// Notes
 					if (! empty($object->note_public))
 					{
-						$pdf->SetFont('', '', $default_font_size - 1);   // Dans boucle pour gerer multi-page
+					    $pdf->SetFont('', '', $default_font_size - 1);   // In loop to manage multi-page
 						$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top_alt, dol_htmlentitiesbr($object->note_public), 0, 1);
 					}
 
@@ -502,7 +502,7 @@ class pdf_espadon extends ModelePdfExpedition
 						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 					}
 
-					$pdf->SetFont('', '', $default_font_size - 1);   // On repositionne la police par defaut
+					$pdf->SetFont('', '', $default_font_size - 1);   // We reposition the default font
 
 					// weight
 
