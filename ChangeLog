@@ -67,6 +67,7 @@ FIX: Update of leave request when CSRF with token is on
 FIX: Var not enough sanitized
 FIX: wrong test
 FIX: XSS
+FIX: Payment from POS ware not recorded.
 FIX: Can validate invoice with amount including tax of zero for the case of having a final invoice with
      VAT that includes a deposit without vat. 
 
