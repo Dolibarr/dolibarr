@@ -283,7 +283,7 @@ print '<td>'.$langs->trans("Permissions").'</td>';
 print '</tr>'."\n";
 
 //print "xx".$conf->global->MAIN_USE_ADVANCED_PERMS;
-$sql = "SELECT r.id, r.libelle, r.module";
+$sql = "SELECT r.id, r.libelle, r.module, r.module_position";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
 $sql.= " AND r.entity = " . $entity;
@@ -301,12 +301,24 @@ if ($result)
 	{
 		$obj = $db->fetch_object($result);
 
-		// Si la ligne correspond a un module qui n'existe plus (absent de includes/module), on l'ignore
+		// If line is for a module that doe snot existe anymore (absent of includes/module), we ignore it
 		if (empty($modules[$obj->module]))
 		{
 			$i++;
 			continue;
 		}
+
+		// Fix field module_position in database if value is still zero
+		if (empty($obj->module_position))
+		{
+			if (is_object($modules[$obj->module]) && ($modules[$obj->module]->module_position > 0))
+			{
+				$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."rights_def set module_position = ".$modules[$obj->module]->module_position;
+				$sqlupdate.= " WHERE module_position = 0 AND module = '".$db->escape($obj->module)."'";
+				$db->query($sqlupdate);
+			}
+		}
+
 		if (isset($obj->module) && ($oldmod <> $obj->module))
 		{
 			$oldmod = $obj->module;
