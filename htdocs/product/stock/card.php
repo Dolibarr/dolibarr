@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,7 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-
+require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'companies', 'categories'));
 
@@ -56,89 +57,47 @@ $backtopage=GETPOST('backtopage', 'alpha');
 $result=restrictedArea($user, 'stock');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('warehousecard','globalcard'));
+$hookmanager->initHooks(array('warehousecard', 'globalcard'));
 
 $object = new Entrepot($db);
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($object->table_element);
+
+// Load object
+if ($id > 0 || ! empty($ref)) {
+    $ret = $object->fetch($id, $ref);
+//    if ($ret > 0)
+//        $ret = $object->fetch_thirdparty();
+    if ($ret <= 0) {
+        setEventMessages($object->error, $object->errors, 'errors');
+        $action = '';
+    }
+}
 
 
 /*
  * Actions
  */
 
+$error = 0;
+
 $usercanread = (($user->rights->stock->lire));
 $usercancreate = (($user->rights->stock->creer));
 $usercandelete = (($user->rights->stock->supprimer));
 
-// Ajout entrepot
-if ($action == 'add' && $user->rights->stock->creer)
+$parameters=array('id'=>$id, 'ref'=>$ref);
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if (empty($reshook))
 {
-	$object->ref         = GETPOST("ref");
-	$object->fk_parent   = GETPOST("fk_parent");
-	$object->libelle     = GETPOST("libelle");
-	$object->description = GETPOST("desc");
-	$object->statut      = GETPOST("statut");
-	$object->lieu        = GETPOST("lieu");
-	$object->address     = GETPOST("address");
-	$object->zip         = GETPOST("zipcode");
-	$object->town        = GETPOST("town");
-	$object->country_id  = GETPOST("country_id");
-
-	if (! empty($object->libelle))
+	// Ajout entrepot
+	if ($action == 'add' && $user->rights->stock->creer)
 	{
-		$id = $object->create($user);
-		if ($id > 0)
-		{
-			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
-
-			if (! empty($backtopage))
-			{
-				header("Location: ".$backtopage);
-				exit;
-			}
-			else
-			{
-				header("Location: card.php?id=".$id);
-				exit;
-			}
-		}
-		else
-		{
-			$action = 'create';
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
-	}
-	else
-	{
-		setEventMessages($langs->trans("ErrorWarehouseRefRequired"), null, 'errors');
-		$action="create";   // Force retour sur page creation
-	}
-}
-
-// Delete warehouse
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->stock->supprimer)
-{
-	$object->fetch(GETPOST('id', 'int'));
-	$result=$object->delete($user);
-	if ($result > 0)
-	{
-	    setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-		header("Location: ".DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1');
-		exit;
-	}
-	else
-	{
-		setEventMessages($object->error, $object->errors, 'errors');
-		$action='';
-	}
-}
-
-// Modification entrepot
-if ($action == 'update' && $cancel <> $langs->trans("Cancel"))
-{
-	if ($object->fetch($id))
-	{
-		$object->libelle     = GETPOST("libelle");
+		$object->ref         = GETPOST("ref");
 		$object->fk_parent   = GETPOST("fk_parent");
+		$object->libelle     = GETPOST("libelle");
 		$object->description = GETPOST("desc");
 		$object->statut      = GETPOST("statut");
 		$object->lieu        = GETPOST("lieu");
@@ -147,9 +106,92 @@ if ($action == 'update' && $cancel <> $langs->trans("Cancel"))
 		$object->town        = GETPOST("town");
 		$object->country_id  = GETPOST("country_id");
 
-		if ( $object->update($id, $user) > 0)
+		if (! empty($object->libelle))
 		{
-			$action = '';
+	        // Fill array 'array_options' with data from add form
+	        $ret = $extrafields->setOptionalsFromPost(null, $object);
+	        if ($ret < 0) {
+	            $error++;
+	            $action = 'create';
+	        }
+
+	        if (! $error) {
+	            $id = $object->create($user);
+	            if ($id > 0) {
+	                setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+
+					$categories = GETPOST('categories', 'array');
+					$object->setCategories($categories);
+	                if (!empty($backtopage)) {
+	                    header("Location: " . $backtopage);
+	                    exit;
+	                } else {
+	                    header("Location: card.php?id=" . $id);
+	                    exit;
+	                }
+	            } else {
+	                $action = 'create';
+	                setEventMessages($object->error, $object->errors, 'errors');
+	            }
+	        }
+		}
+		else
+		{
+			setEventMessages($langs->trans("ErrorWarehouseRefRequired"), null, 'errors');
+			$action="create";   // Force retour sur page creation
+		}
+	}
+
+	// Delete warehouse
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->stock->supprimer)
+	{
+		$object->fetch(GETPOST('id', 'int'));
+		$result=$object->delete($user);
+		if ($result > 0)
+		{
+		    setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
+			header("Location: ".DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1');
+			exit;
+		}
+		else
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action='';
+		}
+	}
+
+	// Modification entrepot
+	if ($action == 'update' && $cancel <> $langs->trans("Cancel"))
+	{
+		if ($object->fetch($id))
+		{
+			$object->libelle     = GETPOST("libelle");
+			$object->fk_parent   = GETPOST("fk_parent");
+			$object->description = GETPOST("desc");
+			$object->statut      = GETPOST("statut");
+			$object->lieu        = GETPOST("lieu");
+			$object->address     = GETPOST("address");
+			$object->zip         = GETPOST("zipcode");
+			$object->town        = GETPOST("town");
+			$object->country_id  = GETPOST("country_id");
+
+	        // Fill array 'array_options' with data from add form
+	        $ret = $extrafields->setOptionalsFromPost(null, $object);
+	        if ($ret < 0)   $error++;
+
+	        if (! $error) {
+	            $ret = $object->update($id, $user);
+	            if ($ret < 0)   $error++;
+	        }
+
+			if ($error) {
+				$action = 'edit';
+				setEventMessages($object->error, $object->errors, 'errors');
+			} else {
+				$categories = GETPOST('categories', 'array');
+				$object->setCategories($categories);
+	            $action = '';
+	        }
 		}
 		else
 		{
@@ -157,23 +199,33 @@ if ($action == 'update' && $cancel <> $langs->trans("Cancel"))
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-	else
-	{
-		$action = 'edit';
-		setEventMessages($object->error, $object->errors, 'errors');
+	elseif ($action == 'update_extras') {
+	    $object->oldcopy = dol_clone($object);
+
+	    // Fill array 'array_options' with data from update form
+	    $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+	    if ($ret < 0) $error++;
+	    if (! $error) {
+	        $result = $object->insertExtraFields();
+	        if ($result < 0) {
+	            setEventMessages($object->error, $object->errors, 'errors');
+	            $error++;
+	        }
+	    }
+	    if ($error) $action = 'edit_extras';
 	}
+
+	if ($cancel == $langs->trans("Cancel"))
+	{
+		$action = '';
+	}
+
+
+	// Actions to build doc
+	$upload_dir = $conf->stock->dir_output;
+	$permissioncreate = $user->rights->stock->creer;
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
-
-if ($cancel == $langs->trans("Cancel"))
-{
-	$action = '';
-}
-
-
-// Actions to build doc
-$upload_dir = $conf->stock->dir_output;
-$permissioncreate = $user->rights->stock->creer;
-include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
 /*
@@ -257,6 +309,16 @@ if ($action == 'create')
 	print '</select>';
 	print '</td></tr>';
 
+    // Other attributes
+    include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
+
+	if ($conf->categorie->enabled) {
+		// Categories
+		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 1);
+		print $form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), '', 0, '', 0, '100%');
+		print "</td></tr>";
+	}
 	print '</table>';
 
 	dol_fiche_end();
@@ -329,7 +391,6 @@ else
 			// Parent entrepot
 			$e = new Entrepot($db);
 			if(!empty($object->fk_parent) && $e->fetch($object->fk_parent) > 0) {
-
 				print '<tr><td>'.$langs->trans("ParentWarehouse").'</td><td>';
 				print $e->getNomUrl(3);
 				print '</td></tr>';
@@ -367,31 +428,35 @@ else
 			print "</td></tr>";
 
 			// Last movement
-			$sql = "SELECT max(m.datem) as datem";
-			$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
-			$sql .= " WHERE m.fk_entrepot = '".$object->id."'";
-			$resqlbis = $db->query($sql);
-			if ($resqlbis)
-			{
-			    $obj = $db->fetch_object($resqlbis);
-			    $lastmovementdate=$db->jdate($obj->datem);
+			if (!empty($user->rights->stock->mouvement->lire)) {
+				$sql = "SELECT max(m.datem) as datem";
+				$sql .= " FROM " . MAIN_DB_PREFIX . "stock_mouvement as m";
+				$sql .= " WHERE m.fk_entrepot = '" . $object->id . "'";
+				$resqlbis = $db->query($sql);
+				if ($resqlbis) {
+					$obj = $db->fetch_object($resqlbis);
+					$lastmovementdate = $db->jdate($obj->datem);
+				} else {
+					dol_print_error($db);
+				}
+				print '<tr><td>' . $langs->trans("LastMovement") . '</td><td>';
+				if ($lastmovementdate) {
+					print dol_print_date($lastmovementdate, 'dayhour') . ' ';
+					print '(<a href="' . DOL_URL_ROOT . '/product/stock/movement_list.php?id=' . $object->id . '">' . $langs->trans("FullList") . '</a>)';
+				} else {
+					print $langs->trans("None");
+				}
+				print "</td></tr>";
 			}
-			else
-			{
-			    dol_print_error($db);
-			}
-			print '<tr><td>'.$langs->trans("LastMovement").'</td><td>';
-			if ($lastmovementdate)
-			{
-			    print dol_print_date($lastmovementdate, 'dayhour').' ';
-			    print '(<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$object->id.'">'.$langs->trans("FullList").'</a>)';
-			}
-			else
-			{
-			    print $langs->trans("None");
-			}
-			print "</td></tr>";
 
+            // Other attributes
+            include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+			// Categories
+			if($conf->categorie->enabled) {
+				print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
+				print $form->showCategories($object->id, 'warehouse', 1);
+				print "</td></tr>";
+			}
 			print "</table>";
 
 			print '</div>';
@@ -587,7 +652,7 @@ else
 		/*
 		 * Edition fiche
 		 */
-		if (($action == 'edit' || $action == 're-edit') && 1)
+		if ($action == 'edit' || $action == 're-edit')
 		{
 			$langs->trans("WarehouseEdit");
 
@@ -638,6 +703,7 @@ else
 			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			print '</td></tr>';
 
+			// Status
 			print '<tr><td>'.$langs->trans("Status").'</td><td>';
 			print '<select name="statut" class="flat">';
 			foreach ($object->statuts as $key => $value)
@@ -654,6 +720,28 @@ else
 			print '</select>';
 			print '</td></tr>';
 
+            // Other attributes
+            $parameters=array('colspan' => ' colspan="3"', 'cols'=>3);
+            $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+            print $hookmanager->resPrint;
+            if (empty($reshook))
+            {
+                print $object->showOptionals($extrafields, 'edit');
+            }
+			// Tags-Categories
+			if ($conf->categorie->enabled)
+			{
+				print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td colspan="3">';
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 1);
+				$c = new Categorie($db);
+				$cats = $c->containing($object->id, Categorie::TYPE_WAREHOUSE);
+				$arrayselected=array();
+				foreach($cats as $cat) {
+					$arrayselected[] = $cat->id;
+				}
+				print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+				print "</td></tr>";
+			}
 			print '</table>';
 
 			dol_fiche_end();

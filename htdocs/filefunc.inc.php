@@ -21,7 +21,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -31,7 +31,7 @@
  */
 
 if (! defined('DOL_APPLICATION_TITLE')) define('DOL_APPLICATION_TITLE', 'Dolibarr');
-if (! defined('DOL_VERSION')) define('DOL_VERSION', '10.0.0-beta');		// a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
+if (! defined('DOL_VERSION')) define('DOL_VERSION', '11.0.0-alpha');		// a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
 
 if (! defined('EURO')) define('EURO', chr(128));
 
@@ -149,9 +149,10 @@ if (empty($dolibarr_strict_mode)) $dolibarr_strict_mode=0; // For debug in php s
 // This test check if referrer ($_SERVER['HTTP_REFERER']) is same web site than Dolibarr ($_SERVER['HTTP_HOST'])
 // when we post forms (we allow GET to allow direct link to access a particular page).
 // Note about $_SERVER[HTTP_HOST/SERVER_NAME]: http://shiflett.org/blog/2006/mar/server-name-versus-http-host
+// See also option $conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN for a stronger CSRF protection.
 if (! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck))
 {
-	if (! empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] != 'GET' && ! empty($_SERVER['HTTP_HOST']))
+	if (! empty($_SERVER['REQUEST_METHOD']) && ! in_array($_SERVER['REQUEST_METHOD'], array('GET', 'HEAD')) && ! empty($_SERVER['HTTP_HOST']))
     {
     	$csrfattack=false;
     	if (empty($_SERVER['HTTP_REFERER'])) $csrfattack=true;	// An evil browser was used
@@ -164,8 +165,8 @@ if (! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck))
     	if ($csrfattack)
     	{
     		//print 'NOCSRFCHECK='.defined('NOCSRFCHECK').' REQUEST_METHOD='.$_SERVER['REQUEST_METHOD'].' HTTP_HOST='.$_SERVER['HTTP_HOST'].' HTTP_REFERER='.$_SERVER['HTTP_REFERER'];
-    		print "Access refused by CSRF protection in main.inc.php. Referer of form is outside server that serve the POST.\n";
-        	print "If you access your server behind a proxy using url rewriting, you might check that all HTTP header is propagated (or add the line \$dolibarr_nocsrfcheck=1 into your conf.php file).\n";
+    		print "Access refused by CSRF protection in main.inc.php. Referer of form (".$_SERVER['HTTP_REFERER'].") is outside the server that serve this page (with method = ".$_SERVER['REQUEST_METHOD'].").\n";
+        	print "If you access your server behind a proxy using url rewriting, you might check that all HTTP headers are propagated (or add the line \$dolibarr_nocsrfcheck=1 into your conf.php file to remove this security check).\n";
     		die;
     	}
     }

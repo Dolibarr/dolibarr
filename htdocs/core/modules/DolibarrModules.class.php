@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -61,7 +61,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
     /**
      * @var string Family
-     * @see familyinfo
+     * @see $familyinfo
      *
      * Native values: 'crm', 'financial', 'hr', 'projects', 'products', 'ecm', 'technic', 'other'.
      * Use familyinfo to declare a custom value.
@@ -70,7 +70,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
     /**
      * @var array Custom family informations
-     * @see family
+     * @see $family
      *
      * e.g.:
      * array(
@@ -260,26 +260,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     public $core_enabled;
 
     /**
-     * @var        string Relative path to module style sheet
-     * @deprecated
-     * @see        module_parts
-     */
-    public $style_sheet = '';
-
-    /**
-     * @var        0|1|2|3 Where to display the module in setup page
-     * @deprecated @since 4.0.0
-     * @see        family
-     * @see        familyinfo
-     *
-     * 0: common
-     * 1: interface
-     * 2: others
-     * 3: very specific
-     */
-    public $special;
-
-    /**
      * @var string Name of image file used for this module
      *
      * If file is in theme/yourtheme/img directory under name object_pictoname.png use 'pictoname'
@@ -297,20 +277,20 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 
     /**
-     * @var string[] List of module class names that must be enabled if this module is enabled.
-     *
-     * e.g.: array('modAnotherModule', 'FR'=>'modYetAnotherModule')
+     * @var string[] List of module class names that must be enabled if this module is enabled. e.g.: array('modAnotherModule', 'FR'=>'modYetAnotherModule')
+	 * @see $requiredby
      */
     public $depends;
 
     /**
-     * @var int[] List of module ids to disable if this one is disabled.
+     * @var string[] List of module class names to disable if the module is disabled.
+     * @see $depends
      */
     public $requiredby;
 
     /**
      * @var string[] List of module class names as string this module is in conflict with.
-     * @see depends
+     * @see $depends
      */
     public $conflictwith;
 
@@ -915,7 +895,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     /**
      * Gives the last date of activation
      *
-     * @return timestamp|string       Date of last activation
+     * @return 	int|string       	Date of last activation or '' if module was never activated
      */
     public function getLastActivationDate()
     {
@@ -1297,7 +1277,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                 // For the moment, we manage this with hard coded exception
                 //print "Remove box ".$file.'<br>';
                 if ($file == 'box_graph_product_distribution.php') {
-                    if (! empty($conf->produit->enabled) || ! empty($conf->service->enabled)) {
+                    if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) {
                         dol_syslog("We discard disabling of module ".$file." because another module still active require it.");
                         continue;
                     }
@@ -1740,8 +1720,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                     $r_subperms = isset($this->rights[$key][5])?$this->rights[$key][5]:'';
                     $r_modul = empty($this->rights_class)?strtolower($this->name):$this->rights_class;
 
-                    if (empty($r_type)) { $r_type='w';
-                    }
+                    if (empty($r_type)) { $r_type='w'; }
+                    if (empty($r_def)) { $r_def=0; }
 
                     // Search if perm already present
                     $sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."rights_def";
@@ -1938,7 +1918,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
             $menu->type=$this->menu[$key]['type'];
             $menu->mainmenu=isset($this->menu[$key]['mainmenu'])?$this->menu[$key]['mainmenu']:(isset($menu->fk_mainmenu)?$menu->fk_mainmenu:'');
             $menu->leftmenu=isset($this->menu[$key]['leftmenu'])?$this->menu[$key]['leftmenu']:'';
-            $menu->titre=$this->menu[$key]['titre'];
+            $menu->titre=$this->menu[$key]['titre'];	// deprecated
+            $menu->title=$this->menu[$key]['titre'];
             $menu->url=$this->menu[$key]['url'];
             $menu->langs=$this->menu[$key]['langs'];
             $menu->position=$this->menu[$key]['position'];

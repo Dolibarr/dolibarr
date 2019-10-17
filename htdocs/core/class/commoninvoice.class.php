@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -184,6 +184,29 @@ abstract class CommonInvoice extends CommonObject
 
 	    $discountstatic=new DiscountAbsolute($this->db);
 	    $result=$discountstatic->getSumCreditNotesUsed($this, $multicurrency);
+	    if ($result >= 0)
+	    {
+	        return $result;
+	    }
+	    else
+	    {
+	        $this->error=$discountstatic->error;
+	        return -1;
+	    }
+	}
+
+	/**
+	 *    	Return amount (with tax) of all converted amount for this credit note
+	 *
+	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
+	 *		@return		int						<0 if KO, Sum of credit notes and deposits amount otherwise
+	 */
+	public function getSumFromThisCreditNotesNotUsed($multicurrency = 0)
+	{
+	    require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+
+	    $discountstatic=new DiscountAbsolute($this->db);
+	    $result=$discountstatic->getSumFromThisCreditNotesNotUsed($this, $multicurrency);
 	    if ($result >= 0)
 	    {
 	        return $result;

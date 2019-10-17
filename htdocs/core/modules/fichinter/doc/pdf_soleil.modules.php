@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -125,7 +125,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		$this->name = 'soleil';
 		$this->description = $langs->trans("DocumentModelStandardPDF");
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -136,12 +136,12 @@ class pdf_soleil extends ModelePDFFicheinter
 		$this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
 		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 
-		$this->option_logo = 1;                    // Affiche logo
-		$this->option_tva = 0;                     // Gere option tva FACTURE_TVAOPTION
-		$this->option_modereg = 0;                 // Affiche mode reglement
-		$this->option_condreg = 0;                 // Affiche conditions reglement
-		$this->option_codeproduitservice = 0;      // Affiche code produit-service
-		$this->option_multilang = 1;               // Dispo en plusieurs langues
+		$this->option_logo = 1;                    // Display logo
+		$this->option_tva = 0;                     // Manage the vat option FACTURE_TVAOPTION
+		$this->option_modereg = 0;                 // Display payment mode
+		$this->option_condreg = 0;                 // Display payment terms
+		$this->option_codeproduitservice = 0;      // Display product-service code
+		$this->option_multilang = 1;               // Available in several languages
 		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
 
 		// Get source company
@@ -173,7 +173,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "interventions", "dict", "companies"));
 
 		if ($conf->ficheinter->dir_output)
@@ -216,7 +216,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				global $action;
 				$reshook=$hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 
-				$nblignes = count($object->lines);
+				$nblines = count($object->lines);
 
 				// Create pdf instance
 				$pdf=pdf_getInstance($this->format);
@@ -274,7 +274,7 @@ class pdf_soleil extends ModelePDFFicheinter
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
-					
+
 					$tab_top = 88;
 
 					$pdf->SetFont('', '', $default_font_size - 1);
@@ -282,7 +282,7 @@ class pdf_soleil extends ModelePDFFicheinter
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
-					// Rect prend une longueur en 3eme param
+					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
 					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
@@ -483,6 +483,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -495,7 +496,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
+	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
 		global $conf;
 
@@ -528,7 +529,7 @@ class pdf_soleil extends ModelePDFFicheinter
 */
 
 		// Output Rect
-		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height+1, 0, 0);	// Rect prend une longueur en 3eme param et 4eme param
+		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height+1, 0, 0);	// Rect takes a length in 3rd parameter and 4th parameter
 
 		if (empty($hidebottom))
 		{
@@ -546,6 +547,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -555,12 +557,12 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
 	 */
-	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $conf,$langs;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "interventions"));
 
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
@@ -722,6 +724,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   	Show footer of page. Need this->emetteur object
 	 *
@@ -731,7 +734,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	integer
 	 */
-	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;

@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -62,42 +62,52 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
+$hookmanager->initHooks(array('directdebitcard','globalcard'));
+
+
 
 /*
  * Actions
  */
 
-if ($action == "new")
+$parameters = array('socid' => $socid);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+if (empty($reshook))
 {
-    if ($object->id > 0)
+    if ($action == "new")
     {
-    	$db->begin();
-
-        $result = $object->demande_prelevement($user, GETPOST('withdraw_request_amount'));
-        if ($result > 0)
+        if ($object->id > 0)
         {
-        	$db->commit();
+            $db->begin();
 
-            setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+            $result = $object->demande_prelevement($user, GETPOST('withdraw_request_amount'));
+            if ($result > 0)
+            {
+                $db->commit();
+
+                setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+            }
+            else
+            {
+                $db->rollback();
+                setEventMessages($object->error, $object->errors, 'errors');
+            }
         }
-        else
-		{
-        	$db->rollback();
-        	setEventMessages($object->error, $object->errors, 'errors');
-        }
+        $action='';
     }
-    $action='';
-}
 
-if ($action == "delete")
-{
-    if ($object->id > 0)
+    if ($action == "delete")
     {
-        $result = $object->demande_prelevement_delete($user, GETPOST('did'));
-        if ($result == 0)
+        if ($object->id > 0)
         {
-            header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-            exit;
+            $result = $object->demande_prelevement_delete($user, GETPOST('did'));
+            if ($result == 0)
+            {
+                header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+                exit;
+            }
         }
     }
 }
@@ -180,7 +190,7 @@ if ($object->id > 0)
 	    if ($user->rights->facture->creer)
 	    {
 	        if ($action != 'classify')
-	            //$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+	        	//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 	            $morehtmlref.=' : ';
 	        	if ($action == 'classify') {
 	                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -274,7 +284,7 @@ if ($object->id > 0)
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('DateInvoice');
 	print '</td>';
-	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editinvoicedate' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editinvoicedate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
+	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editinvoicedate' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editinvoicedate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 
@@ -301,7 +311,7 @@ if ($object->id > 0)
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentConditionsShort');
 	print '</td>';
-	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editconditions' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
+	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editconditions' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($object->type != Facture::TYPE_CREDIT_NOTE)
@@ -326,7 +336,7 @@ if ($object->id > 0)
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('DateMaxPayment');
 	print '</td>';
-	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editpaymentterm' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editpaymentterm&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
+	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editpaymentterm' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editpaymentterm&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($object->type != Facture::TYPE_CREDIT_NOTE)
@@ -354,7 +364,7 @@ if ($object->id > 0)
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentMode');
 	print '</td>';
-	if ($action != 'editmode' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+	if ($action != 'editmode' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($action == 'editmode')
@@ -373,7 +383,7 @@ if ($object->id > 0)
 	print $langs->trans('BankAccount');
 	print '<td>';
 	if (($action != 'editbankaccount') && $user->rights->commande->creer && ! empty($object->brouillon))
-	    print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+	    print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($action == 'editbankaccount')
@@ -447,7 +457,7 @@ if ($object->id > 0)
 	    print '</td>';
 	    if ($action != 'editrevenuestamp' && ! empty($object->brouillon) && $user->rights->facture->creer)
 	    {
-	        print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editrevenuestamp&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetRevenuStamp'), 1) . '</a></td>';
+	        print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editrevenuestamp&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetRevenuStamp'), 1) . '</a></td>';
 	    }
         print '</tr></table>';
         print '</td><td>';

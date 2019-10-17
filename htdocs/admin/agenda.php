@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -40,7 +40,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $search_event = GETPOST('search_event', 'alpha');
 
 // Get list of triggers available
-$sql = "SELECT a.rowid, a.code, a.label, a.elementtype";
+$sql = "SELECT a.rowid, a.code, a.label, a.elementtype, a.rang as position";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a";
 $sql.= " ORDER BY a.rang ASC";
 $resql=$db->query($sql);
@@ -55,6 +55,7 @@ if ($resql)
 		$triggers[$i]['code'] 		= $obj->code;
 		$triggers[$i]['element'] 	= $obj->elementtype;
 		$triggers[$i]['label']		= ($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
+		$triggers[$i]['position'] 	= $obj->position;
 
 		$i++;
 	}
@@ -64,6 +65,8 @@ else
 {
 	dol_print_error($db);
 }
+
+//$triggers = dol_sort_array($triggers, 'code', 'asc', 0, 0, 1);
 
 
 /*

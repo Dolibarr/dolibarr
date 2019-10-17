@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -139,7 +139,7 @@ class DiscountAbsolute
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as sr";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON sr.fk_facture_source = f.rowid";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fsup ON sr.fk_invoice_supplier_source = fsup.rowid";
-        $sql.= " WHERE sr.entity = " . $conf->entity;
+	$sql.= " WHERE sr.entity IN (".getEntity('invoice').")";
         if ($rowid) $sql.= " AND sr.rowid=".$rowid;
         if ($fk_facture_source) $sql.= " AND sr.fk_facture_source=".$fk_facture_source;
         if ($fk_invoice_supplier_source) $sql.= " AND sr.fk_invoice_supplier_source=".$fk_invoice_supplier_source;
@@ -227,6 +227,15 @@ class DiscountAbsolute
             return -1;
         }
 
+        $userid = $user->id;
+		if (! ($userid > 0))		// For example when record is saved into an anonymous context with a not loaded object $user.
+		{
+			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			$tmpinvoice = new Facture($this->db);
+			$tmpinvoice->fetch($this->fk_facture_source);
+			$userid = $tmpinvoice->fk_user_author;	// We use the author of invoice
+		}
+
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_except";
         $sql.= " (entity, datec, fk_soc, discount_type, fk_user, description,";
@@ -234,7 +243,7 @@ class DiscountAbsolute
         $sql.= " multicurrency_amount_ht, multicurrency_amount_tva, multicurrency_amount_ttc,";
         $sql.= " fk_facture_source, fk_invoice_supplier_source";
         $sql.= ")";
-        $sql.= " VALUES (".$conf->entity.", '".$this->db->idate($this->datec!=''?$this->datec:dol_now())."', ".$this->fk_soc.", ".(empty($this->discount_type)?0:intval($this->discount_type)).", ".$user->id.", '".$this->db->escape($this->description)."',";
+        $sql.= " VALUES (".$conf->entity.", '".$this->db->idate($this->datec!=''?$this->datec:dol_now())."', ".$this->fk_soc.", ".(empty($this->discount_type)?0:intval($this->discount_type)).", ".$userid.", '".$this->db->escape($this->description)."',";
         $sql.= " ".$this->amount_ht.", ".$this->amount_tva.", ".$this->amount_ttc.", ".$this->tva_tx.",";
         $sql.= " ".$this->multicurrency_amount_ht.", ".$this->multicurrency_amount_tva.", ".$this->multicurrency_amount_ttc.", ";
         $sql.= " ".($this->fk_facture_source ? "'".$this->db->escape($this->fk_facture_source)."'":"null").",";
@@ -360,7 +369,6 @@ class DiscountAbsolute
                 }
             }
             elseif($this->fk_invoice_supplier_source) {
-
             	$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
             	$sql.=" set paye=0, fk_statut=1";
             	$sql.=" WHERE (type = 2 or type = 3) AND rowid=".$this->fk_invoice_supplier_source;
@@ -497,8 +505,9 @@ class DiscountAbsolute
     {
         global $conf;
 
+        dol_syslog(get_class($this)."::getAvailableDiscounts discount_type=".$discount_type, LOG_DEBUG);
+
         $sql  = "SELECT SUM(rc.amount_ttc) as amount";
-        //$sql  = "SELECT rc.amount_ttc as amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
         $sql.= " WHERE rc.entity = " . $conf->entity;
         $sql.= " AND rc.discount_type=".intval($discount_type);
@@ -512,7 +521,6 @@ class DiscountAbsolute
         if ($filter)   $sql.=' AND ('.$filter.')';
         if ($maxvalue) $sql.=' AND rc.amount_ttc <= '.price2num($maxvalue);
 
-        dol_syslog(get_class($this)."::getAvailableDiscounts", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -599,6 +607,49 @@ class DiscountAbsolute
             $sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture_fourn as f';
             $sql.= ' WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = '.$invoice->id;
             $sql.= ' AND (f.type = 2 OR f.type = 0)';	// Find discount coming from credit note or excess paid
+        }
+        else
+        {
+            $this->error=get_class($this)."::getSumCreditNotesUsed was called with a bad object as a first parameter";
+            dol_print_error($this->error);
+            return -1;
+        }
+
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $obj = $this->db->fetch_object($resql);
+            if ($multicurrency) return $obj->multicurrency_amount;
+			else return $obj->amount;
+        }
+        else
+        {
+            $this->error = $this->db->lasterror();
+            return -1;
+        }
+    }
+    /**
+     *    	Return amount (with tax) of all converted amount for this credit note
+     *
+     *	@param		CommonInvoice	  $invoice	    	Object invoice
+	 *	@param		int			      $multicurrency	Return multicurrency_amount instead of amount
+     *	@return		int					        		<0 if KO, Sum of credit notes and deposits amount otherwise
+     */
+    public function getSumFromThisCreditNotesNotUsed($invoice, $multicurrency = 0)
+    {
+        dol_syslog(get_class($this)."::getSumCreditNotesUsed", LOG_DEBUG);
+
+        if ($invoice->element == 'facture' || $invoice->element == 'invoice')
+        {
+            $sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
+            $sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc';
+            $sql.= ' WHERE rc.fk_facture IS NULL AND rc.fk_facture_source = '.$invoice->id;
+        }
+        elseif ($invoice->element == 'invoice_supplier')
+        {
+            $sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
+            $sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc';
+            $sql.= ' WHERE rc.fk_invoice_supplier IS NULL AND rc.fk_invoice_supplier_source = '.$invoice->id;
         }
         else
         {

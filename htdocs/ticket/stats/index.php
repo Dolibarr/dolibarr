@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -65,7 +65,7 @@ $dir=$conf->ticket->dir_temp;
 
 llxHeader('', $title);
 
-print load_fiche_titre($title, '', 'title_ticket.png');
+print load_fiche_titre($title, '', 'ticket');
 
 dol_mkdir($dir);
 
@@ -96,7 +96,6 @@ $mesg = $px1->isGraphKo();
 if (! $mesg)
 {
     $px1->SetData($data);
-    $px1->SetPrecisionY(0);
     $i=$startyear;$legend=array();
     while ($i <= $endyear)
     {
@@ -111,7 +110,6 @@ if (! $mesg)
     $px1->SetYLabel($langs->trans("NbOfTicket"));
     $px1->SetShading(3);
     $px1->SetHorizTickIncrement(1);
-    $px1->SetPrecisionY(0);
     $px1->mode='depth';
     $px1->SetTitle($langs->trans("NumberOfTicketsByMonth"));
 
@@ -153,7 +151,6 @@ if (! $mesg)
     $px2->SetYLabel($langs->trans("AmountOfTickets"));
     $px2->SetShading(3);
     $px2->SetHorizTickIncrement(1);
-    $px2->SetPrecisionY(0);
     $px2->mode='depth';
     $px2->SetTitle($langs->trans("AmountOfTicketsByMonthHT"));
 
@@ -193,7 +190,6 @@ if (! $mesg)
     $px3->SetHeight($HEIGHT);
     $px3->SetShading(3);
     $px3->SetHorizTickIncrement(1);
-    $px3->SetPrecisionY(0);
     $px3->mode='depth';
     $px3->SetTitle($langs->trans("AmountAverage"));
 

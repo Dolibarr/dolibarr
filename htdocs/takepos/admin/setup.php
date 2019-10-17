@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -73,11 +73,13 @@ if (GETPOST('action', 'alpha') == 'set')
     $res = dolibarr_set_const($db, "TAKEPOS_PRINT_SERVER", GETPOST('TAKEPOS_PRINT_SERVER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_ORDER_PRINTERS", GETPOST('TAKEPOS_ORDER_PRINTERS', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_ORDER_NOTES", GETPOST('TAKEPOS_ORDER_NOTES', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_PHONE_BASIC_LAYOUT", GETPOST('TAKEPOS_PHONE_BASIC_LAYOUT', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_AUTO_PRINT_TICKETS", GETPOST('TAKEPOS_AUTO_PRINT_TICKETS', 'int'), 'int', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "TAKEPOS_HEADER", GETPOST('TAKEPOS_HEADER', 'alpha'), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "TAKEPOS_FOOTER", GETPOST('TAKEPOS_FOOTER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUMPAD", GETPOST('TAKEPOS_NUMPAD', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUM_TERMINALS", GETPOST('TAKEPOS_NUM_TERMINALS', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_DIRECT_PAYMENT", GETPOST('TAKEPOS_DIRECT_PAYMENT', 'int'), 'int', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_CUSTOM_RECEIPT", GETPOST('TAKEPOS_CUSTOM_RECEIPT', 'int'), 'int', 0, '', $conf->entity);
+  $res = dolibarr_set_const($db, "TAKEPOS_EMAIL_TEMPLATE_INVOICE", GETPOST('TAKEPOS_EMAIL_TEMPLATE_INVOICE', 'alpha'), 'chaine', 0, '', $conf->entity);
 
 	if ($conf->global->TAKEPOS_ORDER_NOTES==1)
 	{
@@ -163,14 +165,14 @@ print "</td></tr>\n";
 
 // Use Takepos printing
 print '<tr class="oddeven"><td>';
-print $langs->trans("DolibarrReceiptPrinter").' (<a href="http://en.takepos.com/connector">'.$langs->trans("TakeposConnectorNecesary").'</a>)';
+print $langs->trans("DolibarrReceiptPrinter").' (<a href="http://en.takepos.com/connector" target="_blank">'.$langs->trans("TakeposConnectorNecesary").'</a>)';
 print '<td colspan="2">';
 print $form->selectyesno("TAKEPOSCONNECTOR", $conf->global->TAKEPOSCONNECTOR, 1);
 print "</td></tr>\n";
 
-if ($conf->global->TAKEPOSCONNECTOR){
+if ($conf->global->TAKEPOSCONNECTOR) {
 	print '<tr class="oddeven value"><td>';
-	print $langs->trans("IPAddress").' (<a href="http://en.takepos.com/connector">'.$langs->trans("TakeposConnectorNecesary").'</a>)';
+	print $langs->trans("IPAddress").' (<a href="http://en.takepos.com/connector" target="_blank">'.$langs->trans("TakeposConnectorNecesary").'</a>)';
 	print '<td colspan="2">';
 	print '<input type="text" size="20" id="TAKEPOS_PRINT_SERVER" name="TAKEPOS_PRINT_SERVER" value="'.$conf->global->TAKEPOS_PRINT_SERVER.'">';
 	print '</td></tr>';
@@ -187,7 +189,7 @@ print "</td></tr>\n";
 
 if ($conf->global->TAKEPOS_BAR_RESTAURANT && $conf->global->TAKEPOSCONNECTOR){
 	print '<tr class="oddeven value"><td>';
-	print $langs->trans("OrderPrinters").' (<a href="orderprinters.php?leftmenu=setup">'.$langs->trans("Setup").'</a>)';
+	print $langs->trans("OrderPrinters").' (<a href="'.DOL_URL_ROOT.'/takepos/admin/orderprinters.php?leftmenu=setup">'.$langs->trans("Setup").'</a>)';
 	print '<td colspan="2">';
 	print $form->selectyesno("TAKEPOS_ORDER_PRINTERS", $conf->global->TAKEPOS_ORDER_PRINTERS, 1);
 	print '</td></tr>';
@@ -196,6 +198,15 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT && $conf->global->TAKEPOSCONNECTOR){
 	print $langs->trans("OrderNotes");
 	print '<td colspan="2">';
 	print $form->selectyesno("TAKEPOS_ORDER_NOTES", $conf->global->TAKEPOS_ORDER_NOTES, 1);
+	print '</td></tr>';
+}
+
+if ($conf->global->TAKEPOS_BAR_RESTAURANT)
+{
+	print '<tr class="oddeven value"><td>';
+	print $langs->trans("BasicPhoneLayout");
+	print '<td colspan="2">';
+	print $form->selectyesno("TAKEPOS_PHONE_BASIC_LAYOUT", $conf->global->TAKEPOS_PHONE_BASIC_LAYOUT, 1);
 	print '</td></tr>';
 }
 
@@ -213,42 +224,42 @@ $array=array(0=>$langs->trans("Numberspad"), 1=>$langs->trans("BillsCoinsPad"));
 print $form->selectarray('TAKEPOS_NUMPAD', $array, (empty($conf->global->TAKEPOS_NUMPAD)?'0':$conf->global->TAKEPOS_NUMPAD), 0);
 print "</td></tr>\n";
 
-$substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
-$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
-$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
-foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
-$htmltext.='</i>';
-
+// Direct Payment
 print '<tr class="oddeven"><td>';
-print $form->textwithpicto($langs->trans("FreeLegalTextOnInvoices")." - ".$langs->trans("Header"), $htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
-print '</td><td>';
-$variablename='TAKEPOS_HEADER';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
-{
-    print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
-}
-else
-{
-    include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
-    print $doleditor->Create();
-}
+print $langs->trans('DirectPaymentButton');
+print '<td colspan="2">';
+print $form->selectyesno("TAKEPOS_DIRECT_PAYMENT", $conf->global->TAKEPOS_DIRECT_PAYMENT, 1);
 print "</td></tr>\n";
 
+// Custom Receipt
 print '<tr class="oddeven"><td>';
-print $form->textwithpicto($langs->trans("FreeLegalTextOnInvoices")." - ".$langs->trans("Footer"), $htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
-print '</td><td>';
-$variablename='TAKEPOS_FOOTER';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
+print $langs->trans('CustomReceipt');
+print '<td colspan="2">';
+print $form->selectyesno("TAKEPOS_CUSTOM RECEIPT", $conf->global->TAKEPOS_CUSTOM_RECEIPT, 1);
+print "</td></tr>\n";
+
+// Email template for send invoice
+print '<tr class="oddeven"><td>';
+print $langs->trans('EmailTemplate');
+print '<td colspan="2">';
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+$formmail = new FormMail($db);
+$nboftemplates = $formmail->fetchAllEMailTemplate('facture_send', $user, null, -1);	// We set lang=null to get in priority record with no lang
+//$arraydefaultmessage = $formmail->getEMailTemplate($db, $tmp[1], $user, null, 0, 1, '');
+$arrayofmessagename=array();
+if (is_array($formmail->lines_model))
 {
-    print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
+	                	foreach($formmail->lines_model as $modelmail)
+	                	{
+	                		//var_dump($modelmail);
+	                		$moreonlabel='';
+	                		if (! empty($arrayofmessagename[$modelmail->label])) $moreonlabel=' <span class="opacitymedium">('.$langs->trans("SeveralLangugeVariatFound").')</span>';
+	                		$arrayofmessagename[$modelmail->label]=$langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)).$moreonlabel;
+	                	}
 }
-else
-{
-    include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
-    print $doleditor->Create();
-}
+//var_dump($arraydefaultmessage);
+//var_dump($arrayofmessagename);
+print $form->selectarray('TAKEPOS_EMAIL_TEMPLATE_INVOICE', $arrayofmessagename, $conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE, 'None', 1, 0, '', 0, 0, 0, '', '', 1);
 print "</td></tr>\n";
 
 print '</table>';

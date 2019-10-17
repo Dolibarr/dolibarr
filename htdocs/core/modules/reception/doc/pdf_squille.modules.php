@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -72,7 +72,6 @@ class pdf_squille extends ModelePdfReception
 		$this->posxpuht=$this->page_largeur - $this->marge_droite;
 
 		if (!empty($conf->global->MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT)) {
-
 			$this->posxweightvol=$this->page_largeur - $this->marge_droite - 118;
 			$this->posxqtyordered=$this->page_largeur - $this->marge_droite - 96;
 			$this->posxqtytoship=$this->page_largeur - $this->marge_droite - 68;
@@ -121,17 +120,9 @@ class pdf_squille extends ModelePdfReception
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("products");
-		$outputlangs->load("propal");
-		$outputlangs->load("deliveries");
-        $outputlangs->load("receptions");
-		$outputlangs->load("productbatch");
+		$outputlangs->loadLangs(array("main","dict","companies","bills","products","propal","deliveries","receptions","productbatch","sendings"));
 
-		$nblignes = count($object->lines);
+		$nblines = count($object->lines);
 
         // Loop on each lines to detect if there is at least one image to show
         $realpatharray=array();
@@ -139,7 +130,7 @@ class pdf_squille extends ModelePdfReception
         {
             $objphoto = new Product($this->db);
 
-            for ($i = 0 ; $i < $nblignes ; $i++)
+            for ($i = 0 ; $i < $nblines ; $i++)
             {
                 if (empty($object->lines[$i]->fk_product)) continue;
 
@@ -216,8 +207,8 @@ class pdf_squille extends ModelePdfReception
 				global $action;
 				$reshook=$hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 
-				// Set nblignes with the new facture lines content after hook
-				$nblignes = count($object->lines);
+				// Set nblines with the new facture lines content after hook
+				$nblines = count($object->lines);
 
 				$pdf=pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -282,7 +273,7 @@ class pdf_squille extends ModelePdfReception
 						$nexY = $pdf->GetY();
 						$height_incoterms=$nexY-$tab_top;
 
-						// Rect prend une longueur en 3eme param
+						// Rect takes a length in 3rd parameter
 						$pdf->SetDrawColor(192, 192, 192);
 						$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_incoterms+1);
 
@@ -339,7 +330,7 @@ class pdf_squille extends ModelePdfReception
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
-					// Rect prend une longueur en 3eme param
+					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
 					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
@@ -357,7 +348,7 @@ class pdf_squille extends ModelePdfReception
 				$fk_commandefourndet=0;
 				$totalOrdered=0;
 				// Loop on each lines
-				for ($i = 0; $i < $nblignes; $i++)
+				for ($i = 0; $i < $nblines; $i++)
 				{
 					$curY = $nexY;
 					$pdf->SetFont('', '', $default_font_size - 1);   // Into loop to work with multipage
@@ -416,7 +407,7 @@ class pdf_squille extends ModelePdfReception
 						//var_dump($posyafter); var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;
 						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
 						{
-							if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
+							if ($i == ($nblines-1))	// No more lines, and no space left to show total, so we create a new page
 							{
 								$pdf->AddPage('', '', true);
 								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
@@ -496,7 +487,7 @@ class pdf_squille extends ModelePdfReception
 					if ($weighttxt && $voltxt) $nexY+=2;
 
 					// Add line
-					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
+					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
 					{
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(80,80,80)));
@@ -592,6 +583,7 @@ class pdf_squille extends ModelePdfReception
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show total to pay
@@ -604,7 +596,7 @@ class pdf_squille extends ModelePdfReception
 	 *  @param	int			$totalOrdered	Total ordered
 	 *	@return int							Position pour suite
 	 */
-	private function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs, $totalOrdered)
+	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs, $totalOrdered)
 	{
 		// phpcs:enable
 		global $conf,$mysoc;
@@ -665,7 +657,6 @@ class pdf_squille extends ModelePdfReception
     	$pdf->MultiCell($this->posxpuht - $this->posxqtytoship, $tab2_hl, $totalToShip, 0, 'C', 1);
 
 		if(!empty($conf->global->MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT)) {
-
 	    	$pdf->SetXY($this->posxpuht, $tab2_top + $tab2_hl * $index);
 	    	$pdf->MultiCell($this->posxtotalht - $this->posxpuht, $tab2_hl, '', 0, 'C', 1);
 
@@ -695,6 +686,7 @@ class pdf_squille extends ModelePdfReception
 		return ($tab2_top + ($tab2_hl * $index));
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -707,7 +699,7 @@ class pdf_squille extends ModelePdfReception
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
-	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
+	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
 		global $conf;
 
@@ -722,7 +714,7 @@ class pdf_squille extends ModelePdfReception
 		$pdf->SetFont('', '', $default_font_size - 2);
 
 		// Output Rect
-		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
+		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect takes a length in 3rd parameter and 4th parameter
 
 		$pdf->SetDrawColor(128, 128, 128);
 		$pdf->SetFont('', '', $default_font_size - 1);
@@ -760,7 +752,6 @@ class pdf_squille extends ModelePdfReception
 		}
 
 		if(!empty($conf->global->MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT)) {
-
 			$pdf->line($this->posxpuht-1, $tab_top, $this->posxpuht-1, $tab_top + $tab_height);
 			if (empty($hidetop))
 			{
@@ -777,6 +768,7 @@ class pdf_squille extends ModelePdfReception
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -786,7 +778,7 @@ class pdf_squille extends ModelePdfReception
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
 	 */
-	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $conf,$langs,$mysoc;
 
@@ -1028,6 +1020,7 @@ class pdf_squille extends ModelePdfReception
 		$pdf->SetTextColor(0, 0, 0);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   	Show footer of page. Need this->emetteur object
      *
@@ -1037,7 +1030,7 @@ class pdf_squille extends ModelePdfReception
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
 	 */
-	private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;

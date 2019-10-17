@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -26,6 +27,11 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT .'/comm/mailing/class/mailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('mailingindex'));
 
 // Load translation files required by the page
 $langs->loadLangs(array('commercial', 'orders'));
@@ -169,13 +175,15 @@ if ($result) {
         while ($i < $num )
 	    {
 	        $obj = $db->fetch_object($result);
+			$mailstatic=new Mailing($db);
+			$mailstatic->id = $obj->rowid;
+			$mailstatic->ref = $obj->rowid;
 
 	        print '<tr class="oddeven">';
-	        print '<td class="nowrap"><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowEMail"), "email").' '.$obj->rowid.'</a></td>';
+	        print '<td class="nowrap">'.$mailstatic->getNomUrl(1).'</td>';
 	        print '<td>'.dol_trunc($obj->titre, 38).'</td>';
 	        print '<td align="center">'.dol_print_date($db->jdate($obj->date_creat), 'day').'</td>';
 	        print '<td align="center">'.($obj->nbemail?$obj->nbemail:"0").'</td>';
-	        $mailstatic=new Mailing($db);
 	        print '<td class="right">'.$mailstatic->LibStatut($obj->statut, 5).'</td>';
             print '</tr>';
 	        $i++;
@@ -206,6 +214,9 @@ if ($langs->file_exists("html/spam.html", 0)) {
 
     print '<br>';
 }
+
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardEmailings', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

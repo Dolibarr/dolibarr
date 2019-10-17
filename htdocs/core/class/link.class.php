@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -135,7 +135,6 @@ class Link extends CommonObject
         {
             if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
             {
-
                 $this->error=$langs->trans("ErrorCompanyNameAlreadyExists", $this->name);
                 $result=-1;
             }
@@ -334,6 +333,8 @@ class Link extends CommonObject
             if($this->db->num_rows($resql) > 0)
             {
                 $obj = $this->db->fetch_object($resql);
+
+                $this->id = $obj->rowid;
                 $this->entity = $obj->entity;
                 $this->datea = $this->db->jdate($obj->datea);
                 $this->url = $obj->url;
@@ -355,21 +356,24 @@ class Link extends CommonObject
     /**
      *    Delete a link from database
      *
-     *    @return	int				<0 if KO, 0 if nothing done, >0 if OK
+     *	  @param	User		$user		Object suer
+     *    @return	int						<0 if KO, 0 if nothing done, >0 if OK
      */
-    public function delete()
+    public function delete($user)
     {
-        global $user, $langs, $conf;
-
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $error = 0;
 
+        $this->db->begin();
+
         // Call trigger
         $result=$this->call_trigger('LINK_DELETE', $user);
-        if ($result < 0) return -1;
+        if ($result < 0)
+        {
+        	$this->db->rollback();
+        	return -1;
+        }
         // End call triggers
-
-        $this->db->begin();
 
         // Remove link
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "links";

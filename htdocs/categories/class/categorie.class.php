@@ -23,7 +23,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -53,6 +53,7 @@ class Categorie extends CommonObject
 	const TYPE_PROJECT   = 'project';
 	const TYPE_ACCOUNT   = 'bank_account';
     const TYPE_BANK_LINE = 'bank_line';
+    const TYPE_WAREHOUSE = 'warehouse';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -75,6 +76,7 @@ class Categorie extends CommonObject
         'project'      => 6,
 		'user'         => 7,
 		'bank_line'    => 8,
+		'warehouse'    => 9,
 	);
 
     /**
@@ -90,12 +92,13 @@ class Categorie extends CommonObject
 		6 => 'project',
 		7 => 'user',
 		8 => 'bank_line',
+		9 => 'warehouse',
 	);
 
 	/**
 	 * @var array Foreign keys mapping from type string
 	 *
-	 * @note Move to const array when PHP 5.6 will be our minimum target
+	 * @TODO Move to const array when PHP 5.6 will be our minimum target
 	 */
 	protected $MAP_CAT_FK = array(
 		'product'  => 'product',
@@ -104,13 +107,14 @@ class Categorie extends CommonObject
 		'member'   => 'member',
 		'contact'  => 'socpeople',
 		'user'     => 'user',
-        'account'  => 'account',		// old for bank_account
+        'account'  => 'account',		// old key for bank_account
         'bank_account' => 'account',
         'project'  => 'project',
+        'warehouse'=> 'warehouse',
     );
 
     /**
-	 * @var array Category tables mapping from type string
+	 * @var array Category tables mapping from type string (llx_categorie_...)
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
@@ -121,9 +125,10 @@ class Categorie extends CommonObject
 		'member'   => 'member',
 		'contact'  => 'contact',
 		'user'     => 'user',
-        'account'  => 'account',		// old for bank_account
+        'account'  => 'account',		// old key for bank_account
         'bank_account'=> 'account',
         'project'  => 'project',
+        'warehouse'=> 'warehouse',
 	);
 
     /**
@@ -141,10 +146,11 @@ class Categorie extends CommonObject
 		'account'  => 'Account',		// old for bank account
 		'bank_account'  => 'Account',
         'project'  => 'Project',
+        'warehouse'=> 'Entrepot',
 	);
 
     /**
-	 * @var array Object table mapping from type string
+	 * @var array Object table mapping from type string (table llx_...)
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
@@ -157,6 +163,7 @@ class Categorie extends CommonObject
 		'user'     => 'user',
         'account'  => 'bank_account',
         'project'  => 'projet',
+        'warehouse'=> 'entrepot',
 	);
 
 	/**
@@ -188,21 +195,25 @@ class Categorie extends CommonObject
 	 * @var string     Color
 	 */
 	public $color;
+
 	/**
-	 * @var ???
+	 * @var int		  Id of thirdparty when CATEGORY_ASSIGNED_TO_A_CUSTOMER is set
 	 */
 	public $socid;
+
 	/**
 	 * @var string	Category type
 	 *
+	 * @see Categorie::TYPE_ACCOUNT
 	 * @see Categorie::TYPE_PRODUCT
 	 * @see Categorie::TYPE_SUPPLIER
 	 * @see Categorie::TYPE_CUSTOMER
 	 * @see Categorie::TYPE_MEMBER
 	 * @see Categorie::TYPE_CONTACT
 	 * @see Categorie::TYPE_USER
-	 * @see Categorie::TYPE_ACCOUNT
 	 * @see Categorie::TYPE_PROJECT
+	 * @see Categorie::TYPE_BANK_LINE
+     * @see Categorie::TYPE_WAREHOUSE
 	 */
 	public $type;
 
@@ -744,13 +755,19 @@ class Categorie extends CommonObject
 	/**
 	 * Return list of fetched instance of elements having this category
 	 *
-	 * @param   string     $type       Type of category ('customer', 'supplier', 'contact', 'product', 'member')
-	 * @param   int        $onlyids    Return only ids of objects (consume less memory)
-	 * @return  array|int              -1 if KO, array of instance of object if OK
+	 * @param   string     	$type       Type of category ('customer', 'supplier', 'contact', 'product', 'member')
+	 * @param   int        	$onlyids    Return only ids of objects (consume less memory)
+	 * @param	int			$limit		Limit
+	 * @param	int			$offset		Offset
+	 * @param	string		$sortfield	Sort fields
+	 * @param	string		$sortorder	Sort order ('ASC' or 'DESC');
+	 * @return  array|int              	-1 if KO, array of instance of object if OK
 	 * @see containsObject()
 	 */
-	public function getObjectsInCateg($type, $onlyids = 0)
+	public function getObjectsInCateg($type, $onlyids = 0, $limit = 0, $offset = 0, $sortfield = '', $sortorder = 'ASC')
 	{
+		global $user;
+
 		$objs = array();
 
 		$obj = new $this->MAP_OBJ_CLASS[$type]( $this->db );
@@ -759,8 +776,15 @@ class Categorie extends CommonObject
 		$sql .= " FROM " . MAIN_DB_PREFIX . "categorie_" . $this->MAP_CAT_TABLE[$type] . " as c";
 		$sql .= ", " . MAIN_DB_PREFIX . $this->MAP_OBJ_TABLE[$type] . " as o";
 		$sql .= " WHERE o.entity IN (" . getEntity($obj->element).")";
-		$sql.= " AND c.fk_categorie = ".$this->id;
+		$sql .= " AND c.fk_categorie = ".$this->id;
 		$sql .= " AND c.fk_" . $this->MAP_CAT_FK[$type] . " = o.rowid";
+		// Protection for external users
+		if (($type == 'customer' || $type == 'supplier') && $user->societe_id > 0)
+		{
+			$sql.= " AND o.rowid = ".$user->societe_id;
+		}
+		if ($limit > 0 || $offset > 0)  $sql .= $this->db->plimit($limit + 1, $offset);
+		$sql .= $this->db->order($sortfield, $sortorder);
 
 		dol_syslog(get_class($this)."::getObjectsInCateg", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -840,11 +864,14 @@ class Categorie extends CommonObject
 		if ($type=="contact") {
 			$subcol_name="fk_socpeople";
 		}
+
+		$idoftype = array_search($type, self::$MAP_ID_TO_CODE);
+
 		$sql = "SELECT s.rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as s";
 		$sql.= " , ".MAIN_DB_PREFIX."categorie_".$sub_type." as sub ";
 		$sql.= ' WHERE s.entity IN ('.getEntity('category').')';
-		$sql.= ' AND s.type='.array_search($type, self::$MAP_ID_TO_CODE);
+		$sql.= ' AND s.type='.$idoftype;
 		$sql.= ' AND s.rowid = sub.fk_categorie';
 		$sql.= ' AND sub.'.$subcol_name.' = '.$id;
 
@@ -863,7 +890,15 @@ class Categorie extends CommonObject
 			}
 		}
 
-		$sql.= $this->db->plimit($limit + 1, $offset);
+		if ($limit) {
+			if ($page < 0)
+			{
+				$page = 0;
+			}
+			$offset = $limit * $page;
+
+			$sql.= $this->db->plimit($limit + 1, $offset);
+		}
 
 		$result = $this->db->query($sql);
 		if ($result)
@@ -1602,7 +1637,6 @@ class Categorie extends CommonObject
 			{
 				$nbfile = count($file['name']);
 				for ($i = 0; $i <= $nbfile; $i ++) {
-
 					$originImage = $dir . $file['name'][$i];
 
 					// Cree fichier en taille origine

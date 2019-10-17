@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -27,6 +27,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -37,12 +38,16 @@ $langs->loadLangs(array("sendings","deliveries",'companies','bills'));
 $contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'shipmentlist';   // To manage different context of search
 
 $socid=GETPOST('socid', 'int');
+
+$action     = GETPOST('action', 'alpha');
+$massaction = GETPOST('massaction', 'alpha');
+$show_files = GETPOST('show_files', 'int');
+$toselect   = GETPOST('toselect', 'array');
+
 // Security check
 $expeditionid = GETPOST('id', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'expedition', $expeditionid, '');
-
-$diroutputmassaction=$conf->expedition->dir_output . '/temp/massgeneration/'.$user->id;
 
 $search_ref_exp = GETPOST("search_ref_exp", 'alpha');
 $search_ref_liv = GETPOST('search_ref_liv', 'alpha');
@@ -63,12 +68,14 @@ $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
 if (! $sortfield) $sortfield="e.ref";
 if (! $sortorder) $sortorder="DESC";
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1 || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $viewstatut=GETPOST('viewstatut');
+
+$diroutputmassaction = $conf->expedition->dir_output.'/sending/temp/massgeneration/'.$user->id;
 
 $object = new Expedition($db);
 
@@ -77,7 +84,8 @@ $hookmanager->initHooks(array('shipmentlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('expedition');
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
@@ -108,21 +116,25 @@ $arrayfields=array(
 );
 
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-	foreach($extrafields->attribute_label as $key => $val)
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
 	{
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
+		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
 	}
 }
+$object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 /*
  * Actions
  */
+$error = 0;
 
 if (GETPOST('cancel', 'alpha')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction', 'alpha')) { $massaction=''; }
+if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
@@ -145,27 +157,20 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_type_thirdparty='';
 	$search_billed='';
 	$viewstatut='';
+    $toselect = '';
 	$search_array_options=array();
 }
 
 if (empty($reshook))
 {
-	// Mass actions. Controls on number of lines checked
-	$maxformassaction=1000;
-	$numtoselect = (is_array($toselect)?count($toselect):0);
-	if (! empty($massaction) && $numtoselect < 1)
-	{
-		$error++;
-		setEventMessages($langs->trans("NoLineChecked"), null, "warnings");
-	}
-	if (! $error && $numtoselect > $maxformassaction)
-	{
-		setEventMessages($langs->trans('TooManyRecordForMassAction', $maxformassaction), null, 'errors');
-		$error++;
-	}
+    $objectclass  = 'Expedition';
+    $objectlabel  = 'Sendings';
+    $permtoread   = $user->rights->expedition->lire;
+    $permtocreate = $user->rights->expedition->creer;
+    $permtodelete = $user->rights->expedition->supprimer;
+    $uploaddir    = $conf->expedition->dir_output . '/sending';
+    include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
-
-
 
 
 /*
@@ -173,6 +178,7 @@ if (empty($reshook))
  */
 
 $form=new Form($db);
+$formfile = new FormFile($db);
 $companystatic=new Societe($db);
 $shipment=new Expedition($db);
 $formcompany=new FormCompany($db);
@@ -186,13 +192,15 @@ $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
 $sql.= ' e.date_creation as date_creation, e.tms as date_update';
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."expedition_extrafields as ef on (e.rowid = ef.fk_object)";
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (e.rowid = ef.fk_object)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
@@ -258,6 +266,8 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 
+    $arrayofselected = is_array($toselect) ? $toselect : array();
+
 	$expedition = new Expedition($db);
 
 	$param='';
@@ -275,13 +285,18 @@ if ($resql)
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-	//$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
+    $arrayofmassactions =  array(
+        'builddoc' => $langs->trans("PDFMerge"),
+        'presend'  => $langs->trans("SendByMail"),
+    );
+    if (in_array($massaction, array('presend'))) $arrayofmassactions=array();
+    $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 	$newcardbutton='';
 	if ($user->rights->expedition->creer)
 	{
         $newcardbutton.= dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expedition/card.php?action=create2');
-    }
+	}
 
 	$i = 0;
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -293,7 +308,13 @@ if ($resql)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-	print_barre_liste($langs->trans('ListOfSendings'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, $newcardbutton, '', $limit);
+	print_barre_liste($langs->trans('ListOfSendings'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, $newcardbutton, '', $limit);
+
+    $topicmail = "SendShippingRef";
+    $modelmail = "shipping_send";
+    $objecttmp = new Expedition($db);
+    $trackid = 'shi'.$object->id;
+    include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 	if ($sall)
 	{
@@ -313,12 +334,13 @@ if ($resql)
 	}
 
 	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);
+	if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);// This also change content of $arrayfields
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-	// Lignes des champs de filtre
+	// Fields title search
 	print '<tr class="liste_titre_filter">';
 	// Ref
 	if (! empty($arrayfields['e.ref']['checked']))
@@ -436,19 +458,7 @@ if ($resql)
 	if (! empty($arrayfields['l.ref']['checked']))            print_liste_field_titre($arrayfields['l.ref']['label'], $_SERVER["PHP_SELF"], "l.ref", "", $param, '', $sortfield, $sortorder);
 	if (! empty($arrayfields['l.date_delivery']['checked']))  print_liste_field_titre($arrayfields['l.date_delivery']['label'], $_SERVER["PHP_SELF"], "l.date_delivery", "", $param, '', $sortfield, $sortorder, 'center ');
 	// Extra fields
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-	{
-		foreach($extrafields->attribute_label as $key => $val)
-		{
-			if (! empty($arrayfields["ef.".$key]['checked']))
-			{
-				$align=$extrafields->getAlignFlag($key);
-				$sortonfield = "ef.".$key;
-				if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-				print_liste_field_titre($extralabels[$key], $_SERVER["PHP_SELF"], $sortonfield, "", $param, ($align?'align="'.$align.'"':''), $sortfield, $sortorder);
-			}
-		}
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
 	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 	$reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
@@ -460,6 +470,7 @@ if ($resql)
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print "</tr>\n";
 
+    $typenArray = $formcompany->typent_array(1);
 	$i=0;
 	$totalarray=array();
 	while ($i < min($num, $limit))
@@ -537,8 +548,7 @@ if ($resql)
 		if (! empty($arrayfields['typent.code']['checked']))
 		{
 			print '<td class="center">';
-			if (count($typenArray)==0) $typenArray = $formcompany->typent_array(1);
-			print $typenArray[$obj->typent_code];
+			if (isset($typenArray[$obj->typent_code]))  print $typenArray[$obj->typent_code];
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
@@ -613,14 +623,22 @@ if ($resql)
 			if (! $i) $totalarray['nbfield']++;
 		}
 
-		// Action column
-		print '<td></td>';
+        // Action column
+        print '<td class="nowrap" align="center">';
+        if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+        {
+            $selected=0;
+            if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+            print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+        }
+        print '</td>';
 		if (! $i) $totalarray['nbfield']++;
 
 		print "</tr>\n";
 
 		$i++;
 	}
+    $db->free($resql);
 
     $parameters=array('arrayfields'=>$arrayfields, 'sql'=>$sql);
     $reshook=$hookmanager->executeHooks('printFieldListFooter', $parameters);    // Note that $action and $object may have been modified by hook
@@ -629,7 +647,20 @@ if ($resql)
 	print "</table>";
 	print "</div>";
 	print '</form>';
-	$db->free($resql);
+
+    $hidegeneratedfilelistifempty = 1;
+    if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)   $hidegeneratedfilelistifempty = 0;
+
+    // Show list of available documents
+    $urlsource  = $_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+    $urlsource .= str_replace('&amp;', '&', $param);
+
+    $filedir    = $diroutputmassaction;
+    $genallowed = $user->rights->expedition->lire;
+    $delallowed = $user->rights->expedition->creer;
+    $title      = '';
+
+    print $formfile->showdocuments('massfilesarea_sendings', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
 else
 {

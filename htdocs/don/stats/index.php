@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -86,7 +86,6 @@ $mesg = $px1->isGraphKo();
 if (! $mesg)
 {
     $px1->SetData($data);
-    $px1->SetPrecisionY(0);
     $i=$startyear;$legend=array();
     while ($i <= $endyear)
     {
@@ -101,7 +100,6 @@ if (! $mesg)
     $px1->SetYLabel($langs->trans("NbOfSendings"));
     $px1->SetShading(3);
     $px1->SetHorizTickIncrement(1);
-    $px1->SetPrecisionY(0);
     $px1->mode='depth';
     $px1->SetTitle($langs->trans("NumberOfShipmentsByMonth"));
 
@@ -142,7 +140,6 @@ if (! $mesg)
     $px2->SetYLabel($langs->trans("AmountOfShipments"));
     $px2->SetShading(3);
     $px2->SetHorizTickIncrement(1);
-    $px2->SetPrecisionY(0);
     $px2->mode='depth';
     $px2->SetTitle($langs->trans("AmountOfShipmentsByMonthHT"));
 
@@ -181,7 +178,6 @@ if (! $mesg)
     $px3->SetHeight($HEIGHT);
     $px3->SetShading(3);
     $px3->SetHorizTickIncrement(1);
-    $px3->SetPrecisionY(0);
     $px3->mode='depth';
     $px3->SetTitle($langs->trans("AmountAverage"));
 

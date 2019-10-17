@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -32,13 +32,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php'
 class mod_codecompta_aquarium extends ModeleAccountancyCode
 {
 	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see name
-	 */
-	public $nom='Aquarium';
-
-	/**
 	 * @var string model name
 	 */
 	public $name='Aquarium';
@@ -49,9 +42,11 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
      */
 	public $version = 'dolibarr';        // 'development', 'experimental', 'dolibarr'
 
-	public	$prefixcustomeraccountancycode;
+	public $prefixcustomeraccountancycode;
 
-	public	$prefixsupplieraccountancycode;
+	public $prefixsupplieraccountancycode;
+
+	public $position = 20;
 
 
 	/**
@@ -93,11 +88,11 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		$texte.=$langs->trans("ModuleCompanyCodeCustomer".$this->name, $s2)."<br>\n";
 		$texte.=$langs->trans("ModuleCompanyCodeSupplier".$this->name, $s1)."<br>\n";
 		$texte.="<br>\n";
-		if (! isset($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL) || ! empty($conf->global->$conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL)) $texte.=$langs->trans('COMPANY_AQUARIUM_REMOVE_SPECIAL').' = '.yn(1)."<br>\n";
+		if (! isset($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL) || ! empty($conf->global->$conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL)) $texte.=$langs->trans('RemoveSpecialChars').' = '.yn(1)."<br>\n";
 		//if (! empty($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA)) $texte.=$langs->trans('COMPANY_AQUARIUM_REMOVE_ALPHA').' = '.yn($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA)."<br>\n";
 		if (! empty($conf->global->COMPANY_AQUARIUM_CLEAN_REGEX))  $texte.=$langs->trans('COMPANY_AQUARIUM_CLEAN_REGEX').' = '.$conf->global->COMPANY_AQUARIUM_CLEAN_REGEX."<br>\n";
 		$texte.= '</td>';
-		$texte.= '<td class="left">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte.= '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
         $texte.= '</tr></table>';
         $texte.= '</form>';
 

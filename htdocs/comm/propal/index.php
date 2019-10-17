@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -26,6 +27,11 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT .'/comm/propal/class/propal.class.php';
+
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('proposalindex'));
 
 // Load translation files required by the page
 $langs->loadLangs(array('propal', 'companies'));
@@ -52,7 +58,7 @@ $help_url="EN:Module_Commercial_Proposals|FR:Module_Propositions_commerciales|ES
 
 llxHeader("", $langs->trans("ProspectionArea"), $help_url);
 
-print load_fiche_titre($langs->trans("ProspectionArea"));
+print load_fiche_titre($langs->trans("ProspectionArea"), '', 'commercial');
 
 //print '<table width="100%" class="notopnoleftnoright">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';
@@ -120,7 +126,6 @@ if ($resql)
     	$dataseries[]=array($propalstatic->LibStatut($status, 1), (isset($vals[$status])?(int) $vals[$status]:0));
         if (! $conf->use_javascript_ajax)
         {
-
             print '<tr class="oddeven">';
             print '<td>'.$propalstatic->LibStatut($status, 0).'</td>';
             print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
@@ -539,6 +544,9 @@ if (! empty($conf->propal->enabled))
 
 //print '</td></tr></table>';
 print '</div></div></div>';
+
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardPropals', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -48,6 +48,17 @@ if (! empty($conf->syslog->enabled))
  */
 if ($action=='purge' && ! preg_match('/^confirm/i', $choice) && ($choice != 'allfiles' || $confirm == 'yes') )
 {
+    // Increase limit of time. Works only if we are not in safe mode
+    $ExecTimeLimit=600;
+    if (!empty($ExecTimeLimit))
+    {
+        $err=error_reporting();
+        error_reporting(0);     // Disable all errors
+        //error_reporting(E_ALL);
+        @set_time_limit($ExecTimeLimit);   // Need more than 240 on Windows 7/64
+        error_reporting($err);
+    }
+
 	require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 	$utils = new Utils($db);
 	$result = $utils->purgeFiles($choice);

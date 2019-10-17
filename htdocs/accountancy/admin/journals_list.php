@@ -12,13 +12,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
 /**
  * \file		htdocs/accountancy/admin/journals_list.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief		Setup page to configure journals
  */
 
@@ -162,7 +162,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 	{
 		if ($fieldnamekey == 'libelle' || ($fieldnamekey == 'label'))  $fieldnamekey='Label';
 		if ($fieldnamekey == 'code') $fieldnamekey = 'Code';
-		if ($fieldnamekey == 'nature') $fieldnamekey = 'Nature';
+		if ($fieldnamekey == 'nature') $fieldnamekey = 'NatureOfJournal';
 	}
 	// Other checks
 	if (isset($_POST["code"]))
@@ -437,7 +437,7 @@ if ($id)
 				$valuetoshow=$langs->trans("Label");
 			}
             if ($fieldlist[$field]=='nature') {
-                $valuetoshow=$langs->trans("Nature");
+                $valuetoshow=$langs->trans("NatureOfJournal");
             }
 
 			if ($valuetoshow != '') {
@@ -516,7 +516,7 @@ if ($id)
 		}
 
 		// Title line with search boxes
-		print '<tr class="liste_titre_filter liste_titre_add">';
+		/*print '<tr class="liste_titre_filter liste_titre_add">';
 		print '<td class="liste_titre"></td>';
 		print '<td class="liste_titre"></td>';
 		print '<td class="liste_titre"></td>';
@@ -524,16 +524,14 @@ if ($id)
 		print '<td class="liste_titre"></td>';
 		print '<td class="liste_titre"></td>';
 		print '<td class="liste_titre center">';
-		if ($filterfound)
-		{
-			$searchpicto=$form->showFilterAndCheckAddButtons(0);
-			print $searchpicto;
-		}
+		$searchpicto=$form->showFilterButtons();
+		print $searchpicto;
 		print '</td>';
 		print '</tr>';
+		*/
 
 		// Title of lines
-		print '<tr class="liste_titre">';
+		print '<tr class="liste_titre liste_titre_add">';
 		foreach ($fieldlist as $field => $value)
 		{
 			// Determine le nom du champ par rapport aux noms possibles
@@ -558,7 +556,7 @@ if ($id)
                 $valuetoshow=$langs->trans("Label");
             }
 			if ($fieldlist[$field]=='nature') {
-                $valuetoshow=$langs->trans("Nature");
+                $valuetoshow=$langs->trans("NatureOfJournal");
             }
 
 			// Affiche nom du champ
@@ -611,7 +609,6 @@ if ($id)
                         $langs->load("accountancy");
 						foreach ($fieldlist as $field => $value)
 						{
-
 							$showfield=1;
 							$class="left";
 							$valuetoshow=$obj->{$fieldlist[$field]};

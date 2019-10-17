@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
  use Luracast\Restler\RestException;
@@ -160,15 +160,15 @@ class Tickets extends DolibarrApi
             $num = count($this->ticket->cache_msgs_ticket);
             $i = 0;
             while ($i < $num) {
-                if ($this->ticket->cache_msgs_ticket[$i]['fk_user_action'] > 0) {
+                if ($this->ticket->cache_msgs_ticket[$i]['fk_user_author'] > 0) {
                     $user_action = new User($this->db);
-                    $user_action->fetch($this->ticket->cache_msgs_ticket[$i]['fk_user_action']);
+                    $user_action->fetch($this->ticket->cache_msgs_ticket[$i]['fk_user_author']);
                 }
 
                 // Now define messages
                 $messages[] = array(
                 'id' => $this->ticket->cache_msgs_ticket[$i]['id'],
-                'fk_user_action' => $this->ticket->cache_msgs_ticket[$i]['fk_user_action'],
+                'fk_user_action' => $this->ticket->cache_msgs_ticket[$i]['fk_user_author'],
                 'fk_user_action_socid' =>  $user_action->socid,
                 'fk_user_action_string' => dolGetFirstLastname($user_action->firstname, $user_action->lastname),
                 'message' => $this->ticket->cache_msgs_ticket[$i]['message'],
@@ -195,6 +195,7 @@ class Tickets extends DolibarrApi
                 // Now define messages
                 $history[] = array(
                 'id' => $this->ticket->cache_logs_ticket[$i]['id'],
+                'fk_user_author' => $this->ticket->cache_msgs_ticket[$i]['fk_user_author'],
                 'fk_user_action' => $this->ticket->cache_logs_ticket[$i]['fk_user_create'],
                 'fk_user_action_string' => dolGetFirstLastname($user_action->firstname, $user_action->lastname),
                 'message' => $this->ticket->cache_logs_ticket[$i]['message'],
@@ -218,24 +219,23 @@ class Tickets extends DolibarrApi
      * Get a list of tickets
      *
      * @param int       $socid      Filter list with thirdparty ID
-     * @param string	$mode		Use this param to filter list
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
-     * @param string	$sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+     * @param string	$sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101') and (t.fk_statut:=:1)"
      *
      * @return array Array of ticket objects
      *
      */
-    public function index($socid = 0, $mode = "", $sortfield = "s.rowid", $sortorder = "ASC", $limit = 0, $page = 0, $sqlfilters = '')
+    public function index($socid = 0, $sortfield = "t.rowid", $sortorder = "ASC", $limit = 100, $page = 0, $sqlfilters = '')
     {
         global $db, $conf;
 
         $obj_ret = array();
 
-        if (!$socid && DolibarrApiAccess::$user->societe_id) {
-            $socid = DolibarrApiAccess::$user->societe_id;
+        if (!$socid && DolibarrApiAccess::$user->socid) {
+            $socid = DolibarrApiAccess::$user->socid;
         }
 
         // If the internal user must only see his customers, force searching by him
@@ -243,51 +243,25 @@ class Tickets extends DolibarrApi
             $search_sale = DolibarrApiAccess::$user->id;
         }
 
-        $sql = "SELECT s.rowid";
+        $sql = "SELECT t.rowid";
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
             $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
         }
-        $sql.= " FROM ".MAIN_DB_PREFIX."ticket as s";
+        $sql.= " FROM ".MAIN_DB_PREFIX."ticket as t";
 
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
             $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
         }
 
-        $sql.= ' WHERE s.entity IN ('.getEntity('ticket', 1).')';
+        $sql.= ' WHERE t.entity IN ('.getEntity('ticket', 1).')';
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
-            $sql.= " AND s.fk_soc = sc.fk_soc";
+            $sql.= " AND t.fk_soc = sc.fk_soc";
         }
         if ($socid > 0) {
-            $sql.= " AND s.fk_soc = ".$socid;
+            $sql.= " AND t.fk_soc = ".$socid;
         }
         if ($search_sale > 0) {
-            $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
-        }
-
-        // Example of use $mode
-        if ($mode == 'new') {
-            $sql.= " AND s.fk_statut IN (0)";
-        }
-        if ($mode == 'read') {
-            $sql.= " AND s.fk_statut IN (1)";
-        }
-        if ($mode == 'answered') {
-            $sql.= " AND s.fk_statut IN (3)";
-        }
-        if ($mode == 'assign') {
-            $sql.= " AND s.fk_statut IN (4)";
-        }
-        if ($mode == 'inprogress') {
-            $sql.= " AND s.fk_statut IN (5)";
-        }
-        if ($mode == 'waiting') {
-            $sql.= " AND s.fk_statut IN (6)";
-        }
-        if ($mode == 'closed') {
-            $sql.= " AND s.fk_statut IN (8)";
-        }
-        if ($mode == 'deleted') {
-            $sql.= " AND s.fk_statut IN (9)";
+            $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
         }
 
         // Insert sale filter
@@ -344,7 +318,6 @@ class Tickets extends DolibarrApi
      *
      * @param array $request_data   Request datas
      * @return int  ID of ticket
-     *
      */
     public function post($request_data = null)
     {
@@ -364,9 +337,11 @@ class Tickets extends DolibarrApi
         if (empty($this->ticket->track_id)) {
             $this->ticket->track_id = generate_random_id(16);
         }
-        if (! $this->ticket->create(DolibarrApiAccess::$user)) {
-            throw new RestException(500);
+
+        if ($this->ticket->create(DolibarrApiAccess::$user) < 0) {
+        	throw new RestException(500, "Error creating ticket", array_merge(array($this->ticket->error), $this->ticket->errors));
         }
+
         return $this->ticket->id;
     }
 
@@ -555,14 +530,18 @@ class Tickets extends DolibarrApi
             "total_localtax2",
             "total_ttc",
             "fk_incoterms",
-            "libelle_incoterms",
+            "label_incoterms",
             "location_incoterms",
             "name",
             "lastname",
             "firstname",
             "civility_id",
+        	"canvas",
             "cache_msgs_ticket",
             "cache_logs_ticket",
+        	"cache_types_tickets",
+        	"cache_category_tickets",
+        	"regeximgext",
             "statuts_short",
             "statuts"
         );

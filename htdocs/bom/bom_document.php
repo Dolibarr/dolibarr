@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -63,7 +63,7 @@ $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->bom->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('bomdocument', 'globalcard'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('bom');
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
@@ -143,7 +143,7 @@ if ($object->id)
 }
 else
 {
-	accessforbidden('', 0, 0);
+	accessforbidden('', 0, 1);
 }
 
 // End of page

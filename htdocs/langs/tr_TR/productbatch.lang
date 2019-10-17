@@ -1,5 +1,5 @@
 # ProductBATCH language file - en_US - ProductBATCH
-ManageLotSerial=Parti/ürün numarası kullan
+ManageLotSerial=Parti/Seri numarası kullan
 ProductStatusOnBatch=Evet (parti/seri gerekli)
 ProductStatusNotOnBatch=Hayır (parti/seri kullanılmaz)
 ProductStatusOnBatchShort=Evet
@@ -12,13 +12,13 @@ EatByDate=Tüketim tarihi
 SellByDate=Satış tarihi
 DetailBatchNumber=Parti/Seri ayrıntısı
 printBatch=Parti/Seri: %s
-printEatby=Son Yenme: %s
+printEatby=Son tüketim: %s
 printSellby=Son satış: %s
-printQty=Mik: %d
+printQty=Miktar: %d
 AddDispatchBatchLine=Dağıtımda bir Raf Ömrü satırı ekle
-WhenProductBatchModuleOnOptionAreForced=When module Lot/Serial is on, automatic stock decrease  is forced to 'Decrease real stocks on shipping validation' and automatic increase mode is forced to 'Increase real stocks on manual dispatching into warehouses' and can't be edited. Other options can be defined as you want.
+WhenProductBatchModuleOnOptionAreForced=Parti/Seri modülü açıkken otomatik stok azalması 'Gönderim doğrulamasında gerçek stokları azalt' şekline, otomatik artış modu ise 'Depolara manuel gönderimde gerçek stokları arttır' şekline zorlanır ve düzenlenemez. Diğer seçenekler istediğiniz gibi tanımlanabilir.
 ProductDoesNotUseBatchSerial=Bu ürün parti/seri numarası kullanmıyor
-ProductLotSetup=Parti/seri modülü ayarları
-ShowCurrentStockOfLot=Çift ürün/lot için mevcut stoğu göster
-ShowLogOfMovementIfLot=Çift ürün/lot için hareketler günlüğünü göster
+ProductLotSetup=Parti/seri modülü kurulumu
+ShowCurrentStockOfLot=Çift ürün/parti için mevcut stoğu göster
+ShowLogOfMovementIfLot=Çift ürün/parti için hareket günlüğünü göster
 StockDetailPerBatch=Parti başına stok detayı

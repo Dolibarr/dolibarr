@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (c) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (c) 2004-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -40,8 +40,8 @@ $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height', 160);
 $langs->loadLangs(array('companies', 'products', 'stocks', 'bills', 'other'));
 
 $id		= GETPOST('id', 'int');         // For this page, id can also be 'all'
-$ref	= GETPOST('ref');
-$mode	= (GETPOST('mode') ? GETPOST('mode') : 'byunit');
+$ref	= GETPOST('ref', 'alpha');
+$mode	= (GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'byunit');
 $search_year   = GETPOST('search_year', 'int');
 $search_categ  = GETPOST('search_categ', 'int');
 
@@ -103,7 +103,7 @@ if (! $id && empty($ref))
         $title=$langs->trans("Statistics");
     }
 
-    print load_fiche_titre($title, $mesg, 'title_products.png');
+    print load_fiche_titre($title, $mesg, 'products');
 }
 else
 {
@@ -269,7 +269,7 @@ if ($result || empty($id))
 		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsCustomerOrders"):$langs->transnoentitiesnoconv("NumberOfCustomerOrders")));
 	}
 
-	if($conf->fournisseur->enabled) {
+	if($conf->supplier_order->enabled) {
 		$graphfiles['orderssuppliers']=array('modulepart'=>'productstats_orderssuppliers',
 		'file' => $object->id.'/orderssuppliers12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year?'_year'.$search_year:'').'.png',
 		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsSupplierOrders"):$langs->transnoentitiesnoconv("NumberOfSupplierOrders")));
@@ -279,10 +279,18 @@ if ($result || empty($id))
 		$graphfiles['invoices']=array('modulepart'=>'productstats_invoices',
 		'file' => $object->id.'/invoices12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year?'_year'.$search_year:'').'.png',
 		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsCustomerInvoices"):$langs->transnoentitiesnoconv("NumberOfCustomerInvoices")));
+	}
 
+	if($conf->supplier_invoice->enabled) {
 		$graphfiles['invoicessuppliers']=array('modulepart'=>'productstats_invoicessuppliers',
 		'file' => $object->id.'/invoicessuppliers12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year?'_year'.$search_year:'').'.png',
 		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsSupplierInvoices"):$langs->transnoentitiesnoconv("NumberOfSupplierInvoices")));
+	}
+
+	if($conf->contrat->enabled) {
+		$graphfiles['contracts']=array('modulepart'=>'productstats_contracts',
+			'file' => $object->id.'/contracts12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year?'_year'.$search_year:'').'.png',
+			'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsContracts"):$langs->transnoentitiesnoconv("NumberOfContracts")));
 	}
 
 	$px = new DolGraph();
@@ -323,6 +331,7 @@ if ($result || empty($id))
 					if ($key == 'proposalssuppliers') $graph_data = $object->get_nb_propalsupplier($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
 					if ($key == 'invoicessuppliers')  $graph_data = $object->get_nb_achat($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
 					if ($key == 'orderssuppliers')    $graph_data = $object->get_nb_ordersupplier($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
+					if ($key == 'contracts')          $graph_data = $object->get_nb_contract($socid, $mode, ((string) $type != '' ? $type : -1), $search_year, $morefilters);
 
 					// TODO Save cachefile $graphfiles[$key]['file']
 				}
@@ -336,7 +345,6 @@ if ($result || empty($id))
 					$px->SetWidth($WIDTH);
 					$px->SetHeight($HEIGHT);
 					$px->SetHorizTickIncrement(1);
-					$px->SetPrecisionY(0);
 					$px->SetShading(3);
 					//print 'x '.$key.' '.$graphfiles[$key]['file'];
 
@@ -350,9 +358,9 @@ if ($result || empty($id))
 					dol_print_error($db, 'Error for calculating graph on key='.$key.' - '.$object->error);
 				}
 			}
-		}
 
-		$mesg = $langs->trans("ChartGenerated");
+			//setEventMessages($langs->trans("ChartGenerated"), null, 'mesgs');
+		}
 	}
 
 	// Show graphs
@@ -388,9 +396,9 @@ if ($result || empty($id))
 			}
 			else
 			{
-			    print $dategenerated=($mesg?'<font class="error">'.$mesg.'</font>':$langs->trans("ChartNotGenerated"));
+			    $dategenerated=($mesg?'<font class="error">'.$mesg.'</font>':$langs->trans("ChartNotGenerated"));
 			}
-			$linktoregenerate='<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).((string) $type != ''?'&type='.$type:'').'&action=recalcul&mode='.$mode.'&search_year='.$search_year.'&search_categ='.$search_categ.'">'.img_picto($langs->trans("ReCalculate").' ('.$dategenerated.')', 'refresh').'</a>';
+			$linktoregenerate='<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).((string) $type != ''?'&type='.$type:'').'&action=recalcul&mode='.$mode.'&search_year='.$search_year.'&search_categ='.$search_categ.'">'.img_picto($langs->trans("ReCalculate").' ('.$dategenerated.')', 'refresh').'</a>';
 
 			// Show graph
 			print '<table class="noborder" width="100%">';

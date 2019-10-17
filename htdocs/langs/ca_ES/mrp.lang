@@ -1,0 +1,17 @@
+MRPArea=Àrea MRP
+MenuBOM=Factures de material
+LatestBOMModified=Últimes %s Factures de materials modificades
+BillOfMaterials=Llista de materials
+BOMsSetup=Configuració del mòdul BOM
+ListOfBOMs=Llista de factures de material - BOM
+NewBOM=Nova factura de material
+ProductBOMHelp=Producte a crear amb aquesta BOM
+BOMsNumberingModules=Plantilles de numeració BOM
+BOMsModelModule=Plantilles de documents BOMS
+FreeLegalTextOnBOMs=Text lliure sobre el document de BOM
+WatermarkOnDraftBOMs=Marca d'aigua en els esborranys BOM
+ConfirmCloneBillOfMaterials=Esteu segur que voleu clonar aquesta factura de material?
+ManufacturingEfficiency=Eficiència en la fabricació
+ValueOfMeansLoss=El valor de 0,95 significa una mitjana de 5%% de pèrdues durant la producció
+DeleteBillOfMaterials=Suprimeix la factura de materials
+ConfirmDeleteBillOfMaterials=Esteu segur que voleu suprimir aquesta factura de material?

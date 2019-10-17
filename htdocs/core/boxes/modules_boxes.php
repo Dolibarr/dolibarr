@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -54,7 +54,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 	public $enabled=1;
 
 	/**
-	 * @var int Condition to have widget visible (in most cases, permissions)
+	 * @var boolean Condition to have widget visible (in most cases, permissions)
 	 */
 	public $hidden=0;
 
@@ -267,7 +267,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
                     $out.=$sublink;
                     // The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
                     $out.= img_picto($langs->trans("MoveBox", $this->box_id), 'grip_title', 'class="opacitymedium boxhandle hideonsmartphone cursormove"');
-                    $out.= img_picto($langs->trans("CloseBox", $this->box_id), 'close_title', 'class="opacitymedium boxclose cursorpointer" rel="x:y" id="imgclose'.$this->box_id.'"');
+                    $out.= img_picto($langs->trans("CloseBox", $this->box_id), 'close_title', 'class="opacitymedium boxclose cursorpointer marginleftonly" rel="x:y" id="imgclose'.$this->box_id.'"');
                     $label=$head['text'];
                     //if (! empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
                     if (! empty($head['graph'])) $label.=' <span class="opacitymedium fa fa-bar-chart"></span>';
@@ -301,6 +301,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
                             $textwithnotags=preg_replace('/<([^>]+)>/i', '', $text);
                             $text2=isset($contents[$i][$j]['text2'])?$contents[$i][$j]['text2']:'';
                             $text2withnotags=preg_replace('/<([^>]+)>/i', '', $text2);
+
                             $textnoformat=isset($contents[$i][$j]['textnoformat'])?$contents[$i][$j]['textnoformat']:'';
                             //$out.= "xxx $textwithnotags y";
                             if (empty($contents[$i][$j]['tooltip'])) $contents[$i][$j]['tooltip']="";
@@ -332,13 +333,13 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
                             if (! empty($contents[$i][$j]['maxlength'])) $maxlength=$contents[$i][$j]['maxlength'];
 
                             if ($maxlength) $textwithnotags=dol_trunc($textwithnotags, $maxlength);
-                            if (preg_match('/^<img/i', $text) || preg_match('/^<div/i', $text) || ! empty($contents[$i][$j]['asis'])) $out.= $text;   // show text with no html cleaning
+                            if (preg_match('/^<(img|div|span)/i', $text) || ! empty($contents[$i][$j]['asis'])) $out.= $text;   // show text with no html cleaning
                             else $out.= $textwithnotags;                // show text with html cleaning
 
                             // End Url
                             if (! empty($contents[$i][$j]['url'])) $out.= '</a>';
 
-                            if (preg_match('/^<img/i', $text2) || preg_match('/^<div/i', $text2) || ! empty($contents[$i][$j]['asis2'])) $out.= $text2; // show text with no html cleaning
+                            if (preg_match('/^<(img|div|span)/i', $text2) || ! empty($contents[$i][$j]['asis2'])) $out.= $text2; // show text with no html cleaning
                             else $out.= $text2withnotags;               // show text with html cleaning
 
                             if (! empty($textnoformat)) $out.= "\n".$textnoformat."\n";

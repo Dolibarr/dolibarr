@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -45,10 +45,8 @@ $head=loan_prepare_head($object);
 dol_fiche_head($head, 'FinancialCommitment', $langs->trans("Loan"), -1, 'bill');
 
 if ($action == 'createecheancier') {
-
     $i=1;
     while($i <$object->nbterm+1){
-
         $date =  GETPOST('hi_date'.$i, 'int');
         $mens = GETPOST('mens'.$i);
         $int = GETPOST('hi_interets'.$i);
@@ -76,10 +74,8 @@ if ($action == 'createecheancier') {
 }
 
 if ($action == 'updateecheancier') {
-
     $i=1;
     while($i <$object->nbterm+1){
-
         $mens = GETPOST('mens'.$i);
         $int = GETPOST('hi_interets'.$i);
         $id = GETPOST('hi_rowid'.$i);

@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
@@ -39,6 +39,8 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 // Load translation files required by the page
 $langs->load("orders");
 
+$linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
+
 $total=0; $ilink=0;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
@@ -51,7 +53,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
         <td class="linkedcol-element" ><?php echo $langs->trans("CustomerOrder"); ?>
         <?php if(!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';  ?>
         </td>
-        <td class="linkedcol-name" ><?php echo $objectlink->getNomUrl(1); ?></td>
+        <td class="linkedcol-name nowraponall" ><?php echo $objectlink->getNomUrl(1); ?></td>
     	<td class="linkedcol-ref" align="center"><?php echo $objectlink->ref_client; ?></td>
     	<td class="linkedcol-date" align="center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
     	<td class="linkedcol-amount right"><?php
@@ -79,8 +81,8 @@ if (count($linkedObjectBlock) > 1)
     <tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter)?'liste_sub_total':''); ?>">
         <td><?php echo $langs->trans("Total"); ?></td>
         <td></td>
-    	<td align="center"></td>
-    	<td align="center"></td>
+    	<td class="center"></td>
+    	<td class="center"></td>
     	<td class="right"><?php echo price($total); ?></td>
     	<td class="right"></td>
     	<td class="right"></td>

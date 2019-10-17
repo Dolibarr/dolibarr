@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -234,8 +234,10 @@ if ($id > 0 || ! empty($ref))
                     while ($i < min($num, $limit))
 					{
                         $objp = $db->fetch_object($result);
+                        
+						if ($objp->type == Facture::TYPE_CREDIT_NOTE) $objp->qty=-($objp->qty);
 
-                        $total_ht+=$objp->total_ht;
+						$total_ht+=$objp->total_ht;
                         $total_qty+=$objp->qty;
 
                         $invoicestatic->id=$objp->facid;

@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -197,6 +197,12 @@ class DoliDBPgsql extends DoliDB
     				$newline=preg_replace('/([\s\t\(]*)([a-zA-Z_0-9]*)[\s\t]+int.*auto_increment[^,]*/i', '\\1 \\2 SERIAL PRIMARY KEY', $line);
                     //$line = "-- ".$line." replaced by --\n".$newline;
                     $line=$newline;
+    			}
+
+    			if (preg_match('/[\s\t\(]*(\w*)[\s\t]+bigint.*auto_increment/i', $line, $reg)) {
+    				$newline=preg_replace('/([\s\t\(]*)([a-zA-Z_0-9]*)[\s\t]+int.*auto_increment[^,]*/i', '\\1 \\2 BIGSERIAL PRIMARY KEY', $line);
+    				//$line = "-- ".$line." replaced by --\n".$newline;
+    				$line=$newline;
     			}
 
     			// tinyint type conversion
@@ -522,7 +528,11 @@ class DoliDBPgsql extends DoliDB
 			@pg_query($this->db, 'SAVEPOINT mysavepoint');
 		}
 
-		if (! in_array($query, array('BEGIN','COMMIT','ROLLBACK'))) dol_syslog('sql='.$query, LOG_DEBUG);
+		if (! in_array($query, array('BEGIN','COMMIT','ROLLBACK')))
+		{
+			$SYSLOG_SQL_LIMIT = 10000;	// limit log to 10kb per line to limit DOS attacks
+			dol_syslog('sql='.substr($query, 0, $SYSLOG_SQL_LIMIT), LOG_DEBUG);
+		}
 
 		$ret = @pg_query($this->db, $query);
 
@@ -603,7 +613,7 @@ class DoliDBPgsql extends DoliDB
     /**
      *	Return number of lines for result of a SELECT
      *
-     *	@param	resourse	$resultset  Resulset of requests
+     *	@param	resource	$resultset  Resulset of requests
      *	@return int		    			Nb of lines, -1 on error
      *	@see    affected_rows()
      */
@@ -617,11 +627,11 @@ class DoliDBPgsql extends DoliDB
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
+	 * Return the number of lines in the result of a request INSERT, DELETE or UPDATE
 	 *
 	 * @param	resource	$resultset  Result set of request
 	 * @return  int		    			Nb of lines
-	 * @see 	num_rows
+	 * @see 	num_rows()
 	 */
     public function affected_rows($resultset)
 	{

@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -72,7 +72,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	}
 
 	/**
-	 *  Renvoi la description du modele de numerotation
+	 *  Returns the description of the numbering model
 	 *
 	 *  @return     string      Texte descripif
 	 */
@@ -84,7 +84,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	}
 
 	/**
-	 *  Renvoi un exemple de numerotation
+	 *  Return an example of numbering
 	 *
 	 *  @return     string      Example
 	 */
@@ -94,10 +94,10 @@ class mod_facture_terre extends ModeleNumRefFactures
 	}
 
 	/**
-	 *  Test si les numeros deja en vigueur dans la base ne provoquent pas de
-	 *  de conflits qui empechera cette numerotation de fonctionner.
+	 *  Checks if the numbers already in force in the data base do not
+	 *  cause conflicts that would prevent this numbering from working.
 	 *
-	 *  @return     boolean     false si conflit, true si ok
+	 *  @return     boolean     false if conflict, true if ok
 	 */
 	public function canBeActivated()
 	{
@@ -184,6 +184,8 @@ class mod_facture_terre extends ModeleNumRefFactures
 	{
 		global $db;
 
+		dol_syslog(get_class($this)."::getNextValue mode=".$mode, LOG_DEBUG);
+
 		if ($invoice->type == 2) $prefix=$this->prefixcreditnote;
 		elseif ($invoice->type == 3) $prefix=$this->prefixdeposit;
 		else $prefix=$this->prefixinvoice;
@@ -195,7 +197,6 @@ class mod_facture_terre extends ModeleNumRefFactures
 		$sql.= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
 
 		$resql=$db->query($sql);
-		dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
 		if ($resql)
 		{
 			$obj = $db->fetch_object($resql);
@@ -219,7 +220,6 @@ class mod_facture_terre extends ModeleNumRefFactures
             $sql.= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
             $sql.= " ORDER BY ref DESC";
 
-            dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
             $resql=$db->query($sql);
             if ($resql)
             {

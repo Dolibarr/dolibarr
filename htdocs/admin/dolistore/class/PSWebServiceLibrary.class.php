@@ -254,6 +254,7 @@ class PrestaShopWebservice
 	public function add($options)
 	{
 		$xml = '';
+		$url = '';
 
 		if (isset($options['resource'], $options['postXml']) || isset($options['url'], $options['postXml']))
 		{
@@ -265,7 +266,9 @@ class PrestaShopWebservice
 				$url .= '&id_group_shop='.$options['id_group_shop'];
 		}
 		else
+		{
 			throw new PrestaShopWebserviceException('Bad parameters given');
+		}
 		$request = self::executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => $xml));
 
 		self::checkStatusCode($request['status_code']);

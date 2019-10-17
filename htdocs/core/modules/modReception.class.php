@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -41,10 +41,10 @@ class modReception extends DolibarrModules
 		global $conf, $user;
 
 		$this->db = $db;
-		$this->numero = 104160;
+		$this->numero = 94160;
 
 		$this->family = "srm";
-		$this->module_position = 40;
+		$this->module_position = '40';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des réceptions fournisseurs";
@@ -58,7 +58,7 @@ class modReception extends DolibarrModules
 		// Data directories to create when module is enabled
 		$this->dirs = array("/reception/receipt",
 		                    "/reception/receipt/temp",
-		                    "/doctemplates/reception"
+		                    "/doctemplates/receptions"
 		                    );
 
 		// Config pages

@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -163,7 +163,6 @@ function bank_admin_prepare_head($object)
  */
 function various_payment_prepare_head($object)
 {
-
 	global $db, $langs, $conf;
 
 	$h = 0;
@@ -277,7 +276,6 @@ function checkBanForAccount($account)
     }
 
     if ($country_code == 'BE') { // Belgium rules
-
     }
 
     if ($country_code == 'ES') { // Spanish rules

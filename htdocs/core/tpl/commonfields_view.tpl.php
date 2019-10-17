@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Need to have following variables defined:
  * $object (invoice, order, ...)
@@ -90,10 +90,10 @@ foreach($object->fields as $key => $val)
 
 	print '<tr><td';
 	print ' class="titlefield fieldname_'.$key;
-	if ($val['notnull'] > 0) print ' fieldrequired';
+	//if ($val['notnull'] > 0) print ' fieldrequired';		// No fieldrequired inthe view output
 	if ($val['type'] == 'text' || $val['type'] == 'html') print ' tdtop';
 	print '">';
-	if (! empty($val['help'])) print $form->textwithpicto($langs->trans($val['label']), $val['help']);
+	if (! empty($val['help'])) print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
 	else print $langs->trans($val['label']);
 	print '</td>';
 	print '<td>';

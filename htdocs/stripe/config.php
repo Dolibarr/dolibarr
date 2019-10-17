@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * Set Stripe environment: set the ApiKey and AppInfo
  */
@@ -55,4 +55,4 @@ else
 
 \Stripe\Stripe::setApiKey($stripearrayofkeys['secret_key']);
 \Stripe\Stripe::setAppInfo("Dolibarr Stripe", DOL_VERSION, "https://www.dolibarr.org"); // add dolibarr version
-\Stripe\Stripe::setApiVersion("2019-03-14"); // force version API
+\Stripe\Stripe::setApiVersion("2019-05-16"); // force version API

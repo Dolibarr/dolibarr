@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -71,14 +71,14 @@ class box_actions extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $db, $conf;
+		global $user, $langs, $conf;
 
 		$this->max=$max;
 
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
         include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-        $societestatic = new Societe($db);
-        $actionstatic = new ActionComm($db);
+        $societestatic = new Societe($this->db);
+        $actionstatic = new ActionComm($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastActionsToDo", $max));
 
@@ -99,20 +99,20 @@ class box_actions extends ModeleBoxes
 			if($user->societe_id)   $sql.= " AND s.rowid = ".$user->societe_id;
 			if (! $user->rights->agenda->allactions->read) $sql.= " AND (a.fk_user_author = ".$user->id . " OR a.fk_user_action = ".$user->id . " OR a.fk_user_done = ".$user->id . ")";
 			$sql.= " ORDER BY a.datec DESC";
-			$sql.= $db->plimit($max, 0);
+			$sql.= $this->db->plimit($max, 0);
 
 			dol_syslog("Box_actions::loadBox", LOG_DEBUG);
-			$result = $db->query($sql);
+			$result = $this->db->query($sql);
             if ($result) {
 				$now=dol_now();
 				$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
 
-				$num = $db->num_rows($result);
+				$num = $this->db->num_rows($result);
 				$line = 0;
                 while ($line < $num) {
 					$late = '';
-					$objp = $db->fetch_object($result);
-					$datelimite = $db->jdate($objp->dp);
+					$objp = $this->db->fetch_object($result);
+					$datelimite = $this->db->jdate($objp->dp);
                     $actionstatic->id = $objp->id;
                     $actionstatic->label = $objp->label;
                     $actionstatic->type_label = $objp->type_label;
@@ -164,12 +164,12 @@ class box_actions extends ModeleBoxes
                         'text'=>$langs->trans("NoActionsToDo"),
                     );
 
-                $db->free($result);
+                $this->db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
             }
         } else {

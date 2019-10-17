@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -48,13 +48,13 @@ class LoanSchedule extends CommonObject
     /**
      * @var string Create date
      */
-    public $datec='';
-	public $tms='';
+    public $datec;
+	public $tms;
 
     /**
      * @var string Payment date
      */
-    public $datep='';
+    public $datep;
 
     public $amounts=array();   // Array of amounts
     public $amount_capital;    // Total amount of payment
@@ -275,17 +275,13 @@ class LoanSchedule extends CommonObject
 		$error=0;
 
 		// Clean parameters
-		if (isset($this->fk_loan)) $this->fk_loan=trim($this->fk_loan);
 		if (isset($this->amount_capital)) $this->amount_capital=trim($this->amount_capital);
 		if (isset($this->amount_insurance)) $this->amount_insurance=trim($this->amount_insurance);
 		if (isset($this->amount_interest)) $this->amount_interest=trim($this->amount_interest);
-		if (isset($this->fk_typepayment)) $this->fk_typepayment=trim($this->fk_typepayment);
 		if (isset($this->num_payment)) $this->num_payment=trim($this->num_payment);
 		if (isset($this->note_private)) $this->note_private=trim($this->note_private);
 		if (isset($this->note_public)) $this->note_public=trim($this->note_public);
 		if (isset($this->fk_bank)) $this->fk_bank=trim($this->fk_bank);
-		if (isset($this->fk_user_creat)) $this->fk_user_creat=trim($this->fk_user_creat);
-		if (isset($this->fk_user_modif)) $this->fk_user_modif=trim($this->fk_user_modif);
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -564,6 +560,9 @@ class LoanSchedule extends CommonObject
 	 */
 	public function paimenttorecord($loanid, $datemax)
 	{
+
+		$result=array();
+
 		$sql = "SELECT p.rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p ";
 		$sql.= " WHERE p.fk_loan = " . $loanid;

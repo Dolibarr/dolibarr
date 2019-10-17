@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -50,33 +50,36 @@ class Utils
 	 *  Purge files into directory of data files.
 	 *  CAN BE A CRON TASK
 	 *
-	 *  @param	string		$choice		Choice of purge mode ('tempfiles', '' or 'tempfilesold' to purge temp older than 24h, 'allfiles', 'logfile')
-	 *  @return	int						0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
+	 *  @param	string      $choice		   Choice of purge mode ('tempfiles', '' or 'tempfilesold' to purge temp older than $nbsecondsold seconds, 'allfiles', 'logfile')
+	 *  @param  int         $nbsecondsold  Nb of seconds old to accept deletion of a directory if $choice is 'tempfilesold'
+	 *  @return	int						   0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function purgeFiles($choice = 'tempfilesold')
+	public function purgeFiles($choice = 'tempfilesold', $nbsecondsold = 86400)
 	{
 		global $conf, $langs, $dolibarr_main_data_root;
 
 		$langs->load("admin");
 
-		dol_syslog("Utils::purgeFiles choice=".$choice, LOG_DEBUG);
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$filesarray=array();
 		if (empty($choice)) $choice='tempfilesold';
+
+		dol_syslog("Utils::purgeFiles choice=".$choice, LOG_DEBUG);
 
 		if ($choice=='tempfiles' || $choice=='tempfilesold')
 		{
 			// Delete temporary files
 			if ($dolibarr_main_data_root)
 			{
-				$filesarray=dol_dir_list($dolibarr_main_data_root, "directories", 1, '^temp$', '', 'name', SORT_ASC, 2, 0, '', 1);	// Do not follow symlinks
-				if ($choice == 'tempfilesold')
+			    $filesarray=dol_dir_list($dolibarr_main_data_root, "directories", 1, '^temp$', '', 'name', SORT_ASC, 2, 0, '', 1);	// Do not follow symlinks
+
+			    if ($choice == 'tempfilesold')
 				{
 					$now = dol_now();
 					foreach($filesarray as $key => $val)
 					{
-						if ($val['date'] > ($now - (24 * 3600))) unset($filesarray[$key]);	// Discard files not older than 24h
+					    if ($val['date'] > ($now - ($nbsecondsold))) unset($filesarray[$key]);	// Discard temp dir not older than $nbsecondsold
 					}
 				}
 			}
@@ -119,13 +122,14 @@ class Utils
 		$counterror=0;
 		if (count($filesarray))
 		{
-			foreach($filesarray as $key => $value)
+		    foreach($filesarray as $key => $value)
 			{
 				//print "x ".$filesarray[$key]['fullname']."-".$filesarray[$key]['type']."<br>\n";
-				if ($filesarray[$key]['type'] == 'dir')
+			    if ($filesarray[$key]['type'] == 'dir')
 				{
 					$startcount=0;
 					$tmpcountdeleted=0;
+
 					$result=dol_delete_dir_recursive($filesarray[$key]['fullname'], $startcount, 1, 0, $tmpcountdeleted);
 					$count+=$result;
 					$countdeleted+=$tmpcountdeleted;
@@ -164,6 +168,13 @@ class Utils
 			if ($count > $countdeleted) $this->output.='<br>'.$langs->trans("PurgeNDirectoriesFailed", ($count - $countdeleted));
 		}
 		else $this->output=$langs->trans("PurgeNothingToDelete").($choice == 'tempfilesold' ? ' (older than 24h)':'');
+
+		// Recreate temp dir that are not automatically recreated by core code for performance purpose, we need them
+		if (! empty($conf->api->enabled))
+		{
+		    dol_mkdir($conf->api->dir_temp);
+		}
+		dol_mkdir($conf->user->dir_temp);
 
 		//return $count;
 		return 0;     // This function can be called by cron so must return 0 if OK
@@ -305,27 +316,29 @@ class Utils
 				// TODO Replace with executeCLI function
 				if ($execmethod == 1)
 				{
-					exec($fullcommandclear, $readt, $retval);
-					$result = $retval;
+					$output_arr = array(); $retval = null;
+					exec($fullcommandclear, $output_arr, $retval);
 
 					if ($retval != 0)
 					{
 						$langs->load("errors");
 						dol_syslog("Datadump retval after exec=".$retval, LOG_ERR);
-						$error = 'Error '.$retval;
+						$errormsg = 'Error '.$retval;
 						$ok=0;
 					}
 					else
 					{
 						$i=0;
-						if (!empty($readt))
-						foreach($readt as $key=>$read)
+						if (!empty($output_arr))
 						{
-							$i++;   // output line number
-							if ($i == 1 && preg_match('/Warning.*Using a password/i', $read)) continue;
-							fwrite($handle, $read.($execmethod == 2 ? '' : "\n"));
-							if (preg_match('/'.preg_quote('-- Dump completed').'/i', $read)) $ok=1;
-							elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i', $read)) $ok=1;
+							foreach($output_arr as $key => $read)
+							{
+								$i++;   // output line number
+								if ($i == 1 && preg_match('/Warning.*Using a password/i', $read)) continue;
+								fwrite($handle, $read.($execmethod == 2 ? '' : "\n"));
+								if (preg_match('/'.preg_quote('-- Dump completed').'/i', $read)) $ok=1;
+								elseif (preg_match('/'.preg_quote('SET SQL_NOTES=@OLD_SQL_NOTES').'/i', $read)) $ok=1;
+							}
 						}
 					}
 				}
@@ -523,6 +536,7 @@ class Utils
 
 		if ($execmethod == 1)
 		{
+			$retval = null;
 			exec($command, $output_arr, $retval);
 			$result = $retval;
 			if ($retval != 0)
@@ -534,7 +548,6 @@ class Utils
 		}
 		if ($execmethod == 2)	// With this method, there is no way to get the return code, only output
 		{
-			$ok=0;
 			$handle = fopen($outputfile, 'w+b');
 			if ($handle)
 			{
@@ -791,7 +804,7 @@ class Utils
 
 		dol_include_once('/core/lib/files.lib.php');
 
-		$nbSaves = ! empty($conf->global->SYSLOG_FILE_SAVES) ? intval($conf->global->SYSLOG_FILE_SAVES) : 14;
+		$nbSaves = empty($conf->global->SYSLOG_FILE_SAVES) ? 10 : intval($conf->global->SYSLOG_FILE_SAVES);
 
 		if (empty($conf->global->SYSLOG_FILE)) {
 			$mainlogdir = DOL_DATA_ROOT;
@@ -806,7 +819,6 @@ class Utils
 		$tabfiles[] = array('name' => $mainlog, 'path' => $mainlogdir);
 
 		foreach($tabfiles as $file) {
-
 			$logname = $file['name'];
 			$logpath = $file['path'];
 

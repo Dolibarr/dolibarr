@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -54,7 +54,7 @@ $sortfield     = GETPOST("sortfield");
 if (!$sortorder) $sortorder="DESC";
 if (!$sortfield) $sortfield="e.rowid";
 
-if ($page == -1) {
+if (empty($page) || $page == -1) {
 	$page = 0 ;
 }
 

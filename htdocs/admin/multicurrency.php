@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -44,6 +44,34 @@ $action = GETPOST('action', 'alpha');
 /*
  * Actions
  */
+
+
+if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
+{
+	$code=$reg[1];
+	$value=GETPOST($code, 'alpha');
+	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
+	{
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
+	else
+	{
+        setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
+if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
+{
+	$code=$reg[1];
+	if (dolibarr_del_const($db, $code, 0) > 0)
+	{
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
+	else
+	{
+        setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
 
 if ($action == 'add_currency')
 {
@@ -91,7 +119,10 @@ elseif ($action == 'update_currency')
 		{
 			if ($currency->fetch($fk_multicurrency) > 0)
 			{
-				$currency->updateRate($rate);
+				$result=$currency->updateRate($rate);
+				if ($result<0) {
+					setEventMessages(null, $currency->errors, 'errors');
+				}
 			}
 		}
 	}

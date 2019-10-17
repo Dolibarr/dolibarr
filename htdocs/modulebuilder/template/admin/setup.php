@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -103,7 +103,8 @@ if ($action == 'edit')
 	foreach($arrayofparameters as $key => $val)
 	{
 		print '<tr class="oddeven"><td>';
-		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
+		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
+		print $form->textwithpicto($langs->trans($key), $tooltiphelp);
 		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css'])?'minwidth200':$val['css']).'" value="' . $conf->global->$key . '"></td></tr>';
 	}
 	print '</table>';
@@ -125,7 +126,8 @@ else
 		foreach($arrayofparameters as $key => $val)
 		{
 			print '<tr class="oddeven"><td>';
-			print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
+			$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
+			print $form->textwithpicto($langs->trans($key), $tooltiphelp);
 			print '</td><td>' . $conf->global->$key . '</td></tr>';
 		}
 

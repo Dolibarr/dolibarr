@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -120,22 +120,27 @@ $thirdparty_fields= array(
     	'vat_used' => array('name'=>'vat_used','type'=>'xsd:string'),
     	'vat_number' => array('name'=>'vat_number','type'=>'xsd:string'));
 
+$elementtype = 'societe';
+
 // Retrieve all extrafields for thirdsparty
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label('societe', true);
+$extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_array = array();
 }
-foreach($extrafields->attribute_label as $key=>$label)
+if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 {
-	//$value=$object->array_options["options_".$key];
-	$type =$extrafields->attribute_type[$key];
-	if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
-	else {$type='xsd:string';}
+	foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	{
+		//$value=$object->array_options["options_".$key];
+		$type =$extrafields->attributes[$elementtype]['type'][$key];
+		if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
+		else {$type='xsd:string';}
 
-	$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+		$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+	}
 }
 
 if (is_array($extrafield_array)) $thirdparty_fields=array_merge($thirdparty_fields, $extrafield_array);
@@ -313,7 +318,6 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 			$result=$thirdparty->fetch($id, $ref, $ref_ext);
 			if ($result > 0)
 			{
-
 				$thirdparty_result_fields=array(
 				    	'id' => $thirdparty->id,
 			   			'ref' => $thirdparty->name,
@@ -352,16 +356,21 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 						'note_private' => $thirdparty->note_private,
 						'note_public' => $thirdparty->note_public);
 
+				$elementtype = 'societe';
+
 				// Retrieve all extrafields for thirdsparty
 				// fetch optionals attributes and labels
 				$extrafields=new ExtraFields($db);
-				$extralabels=$extrafields->fetch_name_optionals_label('societe', true);
+				$extrafields->fetch_name_optionals_label($elementtype, true);
 				//Get extrafield values
 				$thirdparty->fetch_optionals();
 
-				foreach($extrafields->attribute_label as $key=>$label)
+				if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 				{
-					$thirdparty_result_fields=array_merge($thirdparty_result_fields, array('options_'.$key => $thirdparty->array_options['options_'.$key]));
+					foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+					{
+						$thirdparty_result_fields=array_merge($thirdparty_result_fields, array('options_'.$key => $thirdparty->array_options['options_'.$key]));
+					}
 				}
 
 			    // Create
@@ -468,14 +477,19 @@ function createThirdParty($authentication, $thirdparty)
         $newobject->canvas=$thirdparty['canvas'];
         $newobject->particulier=$thirdparty['individual'];
 
+        $elementtype = 'societe';
+
         // Retrieve all extrafields for thirdsparty
         // fetch optionals attributes and labels
         $extrafields=new ExtraFields($db);
-        $extralabels=$extrafields->fetch_name_optionals_label('societe', true);
-        foreach($extrafields->attribute_label as $key=>$label)
+        $extrafields->fetch_name_optionals_label($elementtype, true);
+        if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
         {
-        	$key='options_'.$key;
-        	$newobject->array_options[$key]=$thirdparty[$key];
+        	foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	        {
+	        	$key='options_'.$key;
+	        	$newobject->array_options[$key]=$thirdparty[$key];
+	        }
         }
 
         $db->begin();
@@ -555,7 +569,6 @@ function updateThirdParty($authentication, $thirdparty)
 		$result=$object->fetch($thirdparty['id']);
 
 		if (!empty($object->id)) {
-
 			$objectfound=true;
 
 			$object->ref=$thirdparty['ref'];
@@ -599,14 +612,19 @@ function updateThirdParty($authentication, $thirdparty)
 
 			$object->canvas=$thirdparty['canvas'];
 
+			$elementtype = 'societe';
+
 			// Retrieve all extrafields for thirdsparty
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
-			$extralabels=$extrafields->fetch_name_optionals_label('societe', true);
-			foreach($extrafields->attribute_label as $key=>$label)
+			$extrafields->fetch_name_optionals_label($elementtype, true);
+			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 			{
-				$key='options_'.$key;
-				$object->array_options[$key]=$thirdparty[$key];
+				foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+				{
+					$key='options_'.$key;
+					$object->array_options[$key]=$thirdparty[$key];
+				}
 			}
 
 			$db->begin();
@@ -691,8 +709,10 @@ function getListOfThirdParties($authentication, $filterthirdparty)
         }
         dol_syslog("Function: getListOfThirdParties", LOG_DEBUG);
 
+        $elementtype = 'societe';
+
         $extrafields=new ExtraFields($db);
-        $extralabels=$extrafields->fetch_name_optionals_label('societe', true);
+        $extrafields->fetch_name_optionals_label($elementtype, true);
 
 
         $resql=$db->query($sql);
@@ -705,10 +725,15 @@ function getListOfThirdParties($authentication, $filterthirdparty)
             {
                 $extrafieldsOptions=array();
                 $obj=$db->fetch_object($resql);
-                foreach($extrafields->attribute_label as $key=>$label)
+
+                if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
                 {
-                    $extrafieldsOptions['options_'.$key] = $obj->{$key};
+                	foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	                {
+	                    $extrafieldsOptions['options_'.$key] = $obj->{$key};
+	                }
                 }
+
                 $arraythirdparties[]=array('id'=>$obj->socRowid,
                     'ref'=>$obj->ref,
                     'ref_ext'=>$obj->ref_ext,

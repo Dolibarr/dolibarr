@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -154,7 +154,7 @@ if ($resql)
     print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="type" value="'.$type.'">';
 
-	print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton);
+	print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'invoicing', 0, $newcardbutton);
 
 	if ($search_all)
     {
@@ -229,7 +229,6 @@ if ($resql)
 		$donationstatic->firstname=$objp->firstname;
 		print "<td>".$donationstatic->getNomUrl(1)."</td>";
     if (! empty($conf->global->DONATION_USE_THIRDPARTIES)) {
-
     $company=new Societe($db);
     $result=$company->fetch($objp->socid);
     if  (!empty($objp->socid) && $company->id > 0)  {

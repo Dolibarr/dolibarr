@@ -20,12 +20,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  * \file		htdocs/accountancy/journal/expensereportsjournal.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief		Page with expense reports journal
  */
 require '../../main.inc.php';
@@ -87,15 +87,11 @@ if (! GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end)
 	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
 
-$idpays = $mysoc->country_id;
-
 $sql = "SELECT er.rowid, er.ref, er.date_debut as de,";
 $sql .= " erd.rowid as erdid, erd.comments, erd.total_ht, erd.total_tva, erd.total_localtax1, erd.total_localtax2, erd.tva_tx, erd.total_ttc, erd.fk_code_ventilation, erd.vat_src_code, ";
 $sql .= " u.rowid as uid, u.firstname, u.lastname, u.accountancy_code as user_accountancy_account,";
 $sql .= " f.accountancy_code, aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte";
-//$sql .= " ct.accountancy_code_buy as account_tva";
 $sql .= " FROM " . MAIN_DB_PREFIX . "expensereport_det as erd";
-//$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_tva as ct ON erd.tva_tx = ct.taux AND ct.fk_pays = '" . $idpays . "'";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_type_fees as f ON f.id = erd.fk_c_type_fees";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid = erd.fk_code_ventilation";
 $sql .= " JOIN " . MAIN_DB_PREFIX . "expensereport as er ON er.rowid = erd.fk_expensereport";
@@ -119,7 +115,6 @@ $sql .= " ORDER BY er.date_debut";
 dol_syslog('accountancy/journal/expensereportsjournal.php', LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
-
 	$taber = array ();
 	$tabht = array ();
 	$tabtva = array ();
@@ -205,7 +200,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
 					$bookkeeping->doc_ref = $val["ref"];
-					$bookkeeping->date_create = $now;
+					$bookkeeping->date_creation = $now;
 					$bookkeeping->doc_type = 'expense_report';
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
@@ -258,7 +253,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping = new BookKeeping($db);
 						$bookkeeping->doc_date = $val["date"];
 						$bookkeeping->doc_ref = $val["ref"];
-						$bookkeeping->date_create = $now;
+						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'expense_report';
 						$bookkeeping->fk_doc = $key;
 						$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
@@ -315,7 +310,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
 					$bookkeeping->doc_ref = $val["ref"];
-					$bookkeeping->date_create = $now;
+					$bookkeeping->date_creation = $now;
 					$bookkeeping->doc_type = 'expense_report';
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
@@ -444,10 +439,10 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 
 	foreach ($taber as $key => $val) {
 	  $date = dol_print_date($val["date"], 'day');
-	  
+
 	  $userstatic->id = $tabuser[$key]['id'];
 	  $userstatic->name = $tabuser[$key]['name'];
-	  
+
 	  // Fees
 	  foreach ($tabht[$key] as $k => $mt) {
 	    $accountingaccount = new AccountingAccount($db);
@@ -474,7 +469,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	      print "\n";
 	    }
 	  }
-	  
+
 	  // Third party
 	  foreach ($tabttc[$key] as $k => $mt) {
 	    print '"' . $date . '"' . $sep;
@@ -489,7 +484,6 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 }
 
 if (empty($action) || $action == 'view') {
-
 	llxHeader('', $langs->trans("ExpenseReportsJournal"));
 
 	$nom = $langs->trans("ExpenseReportsJournal") . ' | ' . $accountingjournalstatic->getNomUrl(0, 1, 1, '', 1);
@@ -510,7 +504,7 @@ if (empty($action) || $action == 'view') {
 	// Button to write into Ledger
 	if (empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1') {
 		print '<br>'.img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
-		print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
+		print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
 	}
 	print '<div class="tabsAction tabsActionNoBottom">';
 
@@ -549,14 +543,13 @@ if (empty($action) || $action == 'view') {
 	print '<div class="div-table-responsive">';
 	print "<table class=\"noborder\" width=\"100%\">";
 	print "<tr class=\"liste_titre\">";
-	print "<td></td>";
 	print "<td>" . $langs->trans("Date") . "</td>";
 	print "<td>" . $langs->trans("Piece") . ' (' . $langs->trans("ExpenseReportRef") . ")</td>";
 	print "<td>" . $langs->trans("AccountAccounting") . "</td>";
 	print "<td>" . $langs->trans("SubledgerAccount") . "</td>";
 	print "<td>" . $langs->trans("LabelOperation") . "</td>";
-	print "<td class='right'>" . $langs->trans("Debit") . "</td>";
-	print "<td class='right'>" . $langs->trans("Credit") . "</td>";
+	print '<td class="right">' . $langs->trans("Debit") . "</td>";
+	print '<td class="right">' . $langs->trans("Credit") . "</td>";
 	print "</tr>\n";
 
 	$r = '';
@@ -578,7 +571,7 @@ if (empty($action) || $action == 'view') {
 
 			if ($mt) {
 				print '<tr class="oddeven">';
-				print "<td><!-- Fees --></td>";
+				print "<!-- Fees -->";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $expensereportstatic->getNomUrl(1) . "</td>";
 				$userstatic->id = $tabuser[$key]['id'];
@@ -586,7 +579,7 @@ if (empty($action) || $action == 'view') {
 				// Account
 				print "<td>";
 				$accountoshow = length_accountg($k);
-				if (empty($accountoshow) || $accountoshow == 'NotDefined')
+				if (($accountoshow == "") || $accountoshow == 'NotDefined')
 				{
 					print '<span class="error">'.$langs->trans("FeeAccountNotDefined").'</span>';
 				}
@@ -598,24 +591,25 @@ if (empty($action) || $action == 'view') {
 				$userstatic->id = $tabuser[$key]['id'];
 				$userstatic->name = $tabuser[$key]['name'];
 				print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $accountingaccount->label . "</td>";
-				print '<td class="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
-				print '<td class="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+				print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+				print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "</tr>";
 			}
 		}
 
 		// Third party
 		foreach ($tabttc[$key] as $k => $mt) {
-			print '<tr class="oddeven">';
-			print "<td><!-- Thirdparty --></td>";
-			print "<td>" . $date . "</td>";
-			print "<td>" . $expensereportstatic->getNomUrl(1) . "</td>";
 			$userstatic->id = $tabuser[$key]['id'];
 			$userstatic->name = $tabuser[$key]['name'];
+
+			print '<tr class="oddeven">';
+			print "<!-- Thirdparty -->";
+			print "<td>" . $date . "</td>";
+			print "<td>" . $expensereportstatic->getNomUrl(1) . "</td>";
 			// Account
 			print "<td>";
 			$accountoshow = length_accounta($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT);
-			if (empty($accountoshow) || $accountoshow == 'NotDefined')
+			if (($accountoshow == "") || $accountoshow == 'NotDefined')
 			{
 				print '<span class="error">'.$langs->trans("MainAccountForUsersNotDefined").'</span>';
 			}
@@ -624,15 +618,15 @@ if (empty($action) || $action == 'view') {
 			// Subledger account
 			print "<td>";
 			$accountoshow = length_accounta($k);
-			if (empty($accountoshow) || $accountoshow == 'NotDefined')
+			if (($accountoshow == "") || $accountoshow == 'NotDefined')
 			{
 				print '<span class="error">'.$langs->trans("UserAccountNotDefined").'</span>';
 			}
 			else print $accountoshow;
 			print '</td>';
 			print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $langs->trans("SubledgerAccount") . "</td>";
-			print '<td class="right">' . ($mt < 0 ? - price(- $mt) : '') . "</td>";
-			print '<td class="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+			print '<td class="right nowraponall">' . ($mt < 0 ? - price(- $mt) : '') . "</td>";
+			print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 			print "</tr>";
 		}
 
@@ -646,13 +640,13 @@ if (empty($action) || $action == 'view') {
 			foreach ($arrayofvat[$key] as $k => $mt) {
 			if ($mt) {
 				print '<tr class="oddeven">';
-				print "<td><!-- VAT --></td>";
+				print "<!-- VAT -->";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $expensereportstatic->getNomUrl(1) . "</td>";
 				// Account
 				print "<td>";
 				$accountoshow = length_accountg($k);
-				if (empty($accountoshow) || $accountoshow == 'NotDefined')
+				if (($accountoshow == "") || $accountoshow == 'NotDefined')
 				{
 					print '<span class="error">'.$langs->trans("VATAccountNotDefined").'</span>';
 				}
@@ -663,8 +657,8 @@ if (empty($action) || $action == 'view') {
 				print '</td>';
 				print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $langs->trans("VAT"). ' '.join(', ', $def_tva[$key][$k]).' %'.($numtax?' - Localtax '.$numtax:'');
 				print "</td>";
-				print '<td class="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
-				print '<td class="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+				print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+				print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "</tr>";
 			}
 			}

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -71,7 +71,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm=='yes
 		$error++;
         $action = 'create';
 	}
-    if (! empty($conf->banque->enabled) && ! $_POST["accountid"] > 0)
+    if (! empty($conf->banque->enabled) && ! ($_POST["accountid"] > 0))
     {
         setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
         $error++;
@@ -162,7 +162,6 @@ $form=new Form($db);
 // Formulaire de creation d'un paiement de charge
 if ($action == 'create')
 {
-
 	$charge = new ChargeSociales($db);
 	$charge->fetch($chid);
     $charge->accountid=$charge->fk_account?$charge->fk_account:$charge->accountid;

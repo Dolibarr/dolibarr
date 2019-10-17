@@ -107,7 +107,7 @@ ExpenseReportsVentilation=Bogfør Udgiftsrapport
 CreateMvts=Opret ny transaktion
 UpdateMvts=Rediger en transaktion
 ValidTransaction=Bekræft transaktion
-WriteBookKeeping=Bogfør transaktioner i hovedbogen
+WriteBookKeeping=Register transactions in Ledger
 Bookkeeping=Hovedbog
 AccountBalance=Kontobalance
 ObjectsRef=Objektreference
@@ -158,6 +158,7 @@ ACCOUNTING_RESULT_LOSS=Result accounting account (Loss)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal of closure
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transitional bank transfer
+TransitionalAccount=Transitional bank transfer account
 
 ACCOUNTING_ACCOUNT_SUSPENSE=Regnskabskonto for afventning
 DONATION_ACCOUNTINGACCOUNT=Regnskabskonto til registrering af donationer
@@ -165,8 +166,8 @@ ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Accounting account to register subscript
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Regnskabskonto som standard for købte varer (hvis ikke defineret for varen)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Regnskabskonto som standard for solgte varer (hvis ikke defineret for varen)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT_INTRA=Accounting account by default for the sold products in EEC (used if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT_EXPORT=Accounting account by default for the sold products export out of EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Accounting account by default for the sold products in EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Accounting account by default for the sold products export out of EEC (used if not defined in the product sheet)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Regnskabskonto som standard for købte ydelser (hvis ikke defineret for varen)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Regnskabskonto som standard for solgte ydelser (hvis ikke defineret for varen)
 
@@ -177,6 +178,7 @@ LabelAccount=Kontonavn
 LabelOperation=Bilagstekst
 Sens=Sens
 LetteringCode=Lettering code
+Lettering=Lettering
 Codejournal=Kladde
 JournalLabel=Journal label
 NumPiece=Partsnummer
@@ -215,7 +217,8 @@ DescThirdPartyReport=Consult here the list of third-party customers and vendors 
 ListAccounts=Liste over regnskabskonti
 UnknownAccountForThirdparty=Unknown third-party account. We will use %s
 UnknownAccountForThirdpartyBlocking=Unknown third-party account. Blocking error
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. Blocking error.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Third-party account not defined or third party unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third-party account and waiting account not defined. Blocking error
 PaymentsNotLinkedToProduct=Betaling er ikke knyttet til noget produkt / tjeneste
 
@@ -262,7 +265,7 @@ AccountingJournals=Kontokladder
 AccountingJournal=Kontokladde
 NewAccountingJournal=Ny kontokladde
 ShowAccoutingJournal=Vis kontokladde
-Nature=Natur
+NatureOfJournal=Nature of Journal
 AccountingJournalType1=Diverse operationer
 AccountingJournalType2=Salg
 AccountingJournalType3=Køb
@@ -288,19 +291,26 @@ Modelcsv_quadratus=Export for Quadratus QuadraCompta
 Modelcsv_ebp=Export for EBP
 Modelcsv_cogilog=Export for Cogilog
 Modelcsv_agiris=Export for Agiris
+Modelcsv_LDCompta=Export for LD Compta (v9 & higher) (Test)
+Modelcsv_openconcerto=Export for OpenConcerto (Test)
 Modelcsv_configurable=Eksporter CSV Konfigurerbar
-Modelcsv_FEC=Eksporter FEC (Art. L47 A) (Test)
+Modelcsv_FEC=Export FEC
+Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
 ChartofaccountsId=ID for kontoplan
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Start regnskab
 InitAccountancyDesc=Denne side kan bruges til at initialisere en regnskabskonto for varer og ydelser, der ikke har en regnskabskonto defineret til salg og indkøb.
 DefaultBindingDesc=Denne side kan bruges til at angive en standardkonto, der skal bruges til at forbinde transaktionsoversigt over betaling af lønninger, donationer, afgifter og moms, når der ikke allerede er tilknyttet regnskabskonto.
-DefaultClosureDesc=This page can be used to set parameters to use to enclose a balance sheet.
+DefaultClosureDesc=This page can be used to set parameters used for accounting closures.
 Options=Indstillinger
 OptionModeProductSell=Salg
+OptionModeProductSellIntra=Mode sales exported in EEC
+OptionModeProductSellExport=Mode sales exported in other countries
 OptionModeProductBuy=Køb
 OptionModeProductSellDesc=Vis alle varer med salgskonto.
+OptionModeProductSellIntraDesc=Show all products with accounting account for sales in EEC.
+OptionModeProductSellExportDesc=Show all products with accounting account for other foreign sales.
 OptionModeProductBuyDesc=Vis alle varer med købskonto.
 CleanFixHistory=Fjern regnskabskode fra linjer, der ikke eksisterer som posteringer på konto
 CleanHistory=Nulstil alle bogføringer for det valgte år
@@ -309,6 +319,9 @@ WithoutValidAccount=Uden gyldig tildelt konto
 WithValidAccount=Med gyldig tildelt konto
 ValueNotIntoChartOfAccount=Den angivne regnskabskonto eksisterer ikke i kontoplanen
 AccountRemovedFromGroup=Account removed from group
+SaleLocal=Local sale
+SaleExport=Export sale
+SaleEEC=Sale in EEC
 
 ## Dictionary
 Range=Interval for regnskabskonto
@@ -329,7 +342,7 @@ UseMenuToSetBindindManualy=Linjer endnu ikke bundet, brug menuen <a href="%s"> %
 
 ## Import
 ImportAccountingEntries=Regnskabsposter
-
+DateExport=Date export
 WarningReportNotReliable=Advarsel, denne rapport er ikke baseret på Ledger, så indeholder ikke transaktion ændret manuelt i Ledger. Hvis din journalisering er opdateret, er bogføringsvisningen mere præcis.
 ExpenseReportJournal=Udgifts Journal
 InventoryJournal=Opgørelse Journal

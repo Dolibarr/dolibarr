@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -40,6 +40,7 @@ if (! empty($conf->projet->enabled)) {
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 
 // Load translation files required by the page
@@ -107,7 +108,8 @@ $hookmanager->initHooks(array('invoicereccard','globalcard'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('facture_rec');
+$extrafields->fetch_name_optionals_label('facture_rec');
+
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 $permissionnote = $user->rights->facture->creer; // Used by the include of actions_setnotes.inc.php
@@ -133,13 +135,16 @@ $arrayfields=array(
 	'f.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 );
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-	foreach($extrafields->attribute_label as $key => $val)
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
 	{
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
+		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
 	}
 }
+$object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 /*
@@ -213,11 +218,21 @@ $today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['
 /*
  *  List mode
  */
-$sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre, f.total, f.tva as total_vat, f.total_ttc, f.frequency, f.unit_frequency,";
+$sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre as title, f.total, f.tva as total_vat, f.total_ttc, f.frequency, f.unit_frequency,";
 $sql.= " f.nb_gen_done, f.nb_gen_max, f.date_last_gen, f.date_when, f.suspended,";
 $sql.= " f.datec, f.tms,";
 $sql.= " f.fk_cond_reglement, f.fk_mode_reglement";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
+// Add fields from extrafields
+if (! empty($extrafields->attributes[$object->table_element]['label']))
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+// Add fields from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters, $object);    // Note that $action and $object may have been modified by hook
+$sql.=preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql =preg_replace('/,\s*$/', '', $sql);
+
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_rec as f";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture_rec_extrafields as ef ON ef.fk_object = f.rowid";
 if (! $user->rights->societe->client->voir && ! $socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
@@ -243,32 +258,8 @@ if ($search_status != '' && $search_status >= -1)
 	if ($search_status == 1) $sql.= ' AND frequency != 0 AND suspended = 0';
 	if ($search_status == -1) $sql.= ' AND suspended = 1';
 }
-if ($search_month > 0)
-{
-	if ($search_year > 0 && empty($search_day))
-		$sql.= " AND f.date_last_gen BETWEEN '".$db->idate(dol_get_first_day($search_year, $search_month, false))."' AND '".$db->idate(dol_get_last_day($search_year, $search_month, false))."'";
-	elseif ($search_year > 0 && ! empty($search_day))
-		$sql.= " AND f.date_last_gen BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
-	else
-		$sql.= " AND date_format(f.date_last_gen, '%m') = '".$db->escape($search_month)."'";
-}
-elseif ($search_year > 0)
-{
-	$sql.= " AND f.date_last_gen BETWEEN '".$db->idate(dol_get_first_day($search_year, 1, false))."' AND '".$db->idate(dol_get_last_day($search_year, 12, false))."'";
-}
-if ($search_month_date_when > 0)
-{
-	if ($search_year_date_when > 0 && empty($search_day_date_when))
-		$sql.= " AND f.date_when BETWEEN '".$db->idate(dol_get_first_day($search_year_date_when, $search_month_date_when, false))."' AND '".$db->idate(dol_get_last_day($search_year_date_when, $search_month_date_when, false))."'";
-	elseif ($search_year_date_when > 0 && ! empty($search_day_date_when))
-		$sql.= " AND f.date_date_when_reglement BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month_date_when, $search_day_date_when, $search_year_date_when))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month_date_when, $search_day_date_when, $search_year_date_when))."'";
-	else
-		$sql.= " AND date_format(f.date_when, '%m') = '".$db->escape($search_month_date_when)."'";
-}
-elseif ($search_year_date_when > 0)
-{
-	$sql.= " AND f.date_when BETWEEN '".$db->idate(dol_get_first_day($search_year_date_when, 1, false))."' AND '".$db->idate(dol_get_last_day($search_year_date_when, 12, false))."'";
-}
+$sql.=dolSqlDateFilter('f.date_last_gen', $search_day, $search_month, $search_year);
+$sql.=dolSqlDateFilter('f.date_last_gen', $search_day_date_when, $search_month_date_when, $search_year_date_when);
 
 $sql.= $db->order($sortfield, $sortorder);
 
@@ -334,7 +325,7 @@ if ($resql)
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
-	print_barre_liste($langs->trans("RepeatableInvoices"), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);
+	print_barre_liste($langs->trans("RepeatableInvoices"), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'invoicing', 0, '', '', $limit);
 
 	print $langs->trans("ToCreateAPredefinedInvoice", $langs->transnoentitiesnoconv("ChangeIntoRepeatableInvoice")).'<br><br>';
 
@@ -425,7 +416,7 @@ if ($resql)
 		print '<td class="liste_titre nowraponall" align="center">';
 		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
 		print '<input class="flat valignmiddle width25" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
-		$formother->select_year($search_year?$search_year:-1, 'search_year', 1, 20, 5, 0, 0, '', 'witdhauto valignmiddle');
+		$formother->select_year($search_year?$search_year:-1, 'search_year', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
 		print '</td>';
 	}
 	// Date next generation
@@ -434,7 +425,7 @@ if ($resql)
 		print '<td class="liste_titre nowraponall" align="center">';
 		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day_date_when" value="'.$search_day_date_when.'">';
 		print '<input class="flat valignmiddle width25" type="text" size="1" maxlength="2" name="search_month_date_when" value="'.$search_month_date_when.'">';
-		$formother->select_year($search_year_date_when?$search_year_date_when:-1, 'search_year_date_when', 1, 20, 5, 0, 0, '', 'witdhauto valignmiddle');
+		$formother->select_year($search_year_date_when?$search_year_date_when:-1, 'search_year_date_when', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
 		print '</td>';
 	}
 	// Extra fields
@@ -492,6 +483,8 @@ if ($resql)
 	if (! empty($arrayfields['f.date_when']['checked']))     print_liste_field_titre($arrayfields['f.date_when']['label'], $_SERVER['PHP_SELF'], "f.date_when", "", $param, 'align="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['f.datec']['checked']))         print_liste_field_titre($arrayfields['f.datec']['label'], $_SERVER['PHP_SELF'], "f.datec", "", $param, 'align="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['f.tms']['checked']))           print_liste_field_titre($arrayfields['f.tms']['label'], $_SERVER['PHP_SELF'], "f.tms", "", $param, 'align="center"', $sortfield, $sortorder);
+	// Extra fields
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	if (! empty($arrayfields['status']['checked']))          print_liste_field_titre($arrayfields['status']['label'], $_SERVER['PHP_SELF'], "f.suspended,f.frequency", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'nomaxwidthsearch ')."\n";
 	print "</tr>\n";
@@ -514,7 +507,7 @@ if ($resql)
 			$invoicerectmp->unit_frequency=$objp->unit_frequency;
 			$invoicerectmp->nb_gen_max=$objp->nb_gen_max;
 			$invoicerectmp->nb_gen_done=$objp->nb_gen_done;
-			$invoicerectmp->ref=$objp->titre;
+			$invoicerectmp->ref=$objp->title;
 
 			print '<tr class="oddeven">';
 
@@ -630,6 +623,15 @@ if ($resql)
 			   print '</td>';
 			   if (! $i) $totalarray['nbfield']++;
 			}
+
+			$obj = $objp;
+			// Extra fields
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+			// Fields from hook
+			$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$objp, 'i'=>$i, 'totalarray'=>&$totalarray);
+			$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $object);    // Note that $action and $object may have been modified by hook
+			print $hookmanager->resPrint;
+			// Status
 			if (! empty($arrayfields['status']['checked']))
 			{
 			   print '<td align="center">';

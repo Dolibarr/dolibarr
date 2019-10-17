@@ -22,7 +22,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -63,7 +63,7 @@ $object = new Societe($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartycontact','globalcard'));
@@ -140,7 +140,7 @@ llxHeader('', $title, $help_url);
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
 
-if (!empty($object->id)) $res=$object->fetch_optionals($object->id, $extralabels);
+if (!empty($object->id)) $res=$object->fetch_optionals($object->id, null);
 //if ($res < 0) { dol_print_error($db); exit; }
 
 

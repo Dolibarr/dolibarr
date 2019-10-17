@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
@@ -48,7 +48,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
 ?>
 <tr class="<?php echo $trclass; ?>" >
     <td class="linkedcol-element"><?php echo $langs->trans("RepeatableInvoice"); ?></td>
-    <td class="linkedcol-name"><?php echo $objectlink->getNomUrl(1); ?></td>
+    <td class="linkedcol-name"><!-- nowraponall because ref is a label --><?php echo $objectlink->getNomUrl(1); ?></td>
 	<td class="linkedcol-ref" align="center"></td>
 	<td class="linkedcol-date" align="center"><?php echo dol_print_date($objectlink->date_when, 'day'); ?></td>
 	<td class="linkedcol-amount right"><?php

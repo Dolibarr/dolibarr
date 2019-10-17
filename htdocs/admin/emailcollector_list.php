@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,7 +34,7 @@ dol_include_once('/emailcollector/class/emailcollector.class.php');
 if (!$user->admin) accessforbidden();
 if (empty($conf->emailcollector->enabled)) accessforbidden();
 
-// Load traductions files requiredby by page
+// Load traductions files required by page
 $langs->loadLangs(array("admin", "other"));
 
 $action     = GETPOST('action', 'aZ09')?GETPOST('action', 'aZ09'):'view';				// The action 'add', 'create', 'edit', 'update', 'view', ...
@@ -66,8 +66,10 @@ $object = new EmailCollector($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->emailcollector->dir_output . '/temp/massgeneration/' . $user->id;
 $hookmanager->initHooks(array('emailcollectorlist')); // Note that conf->hooks_modules contains array
+
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('emailcollector');
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Default sort order (if not yet defined by previous GETPOST)

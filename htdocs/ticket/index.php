@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) - 2013-2016     Jean-François FERRY    <hello@librethic.io>
+/* Copyright (C) - 2013-2016    Jean-François FERRY     <hello@librethic.io>
+ * Copyright (C) - 2019         Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -24,6 +25,12 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT . '/ticket/class/ticketstats.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/dolgraph.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('ticketsindex'));
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'other', 'ticket'));
@@ -70,7 +77,7 @@ $tickesupstatic = new Ticket($db);
 llxHeader('', $langs->trans('TicketsIndex'), '');
 
 $linkback='';
-print load_fiche_titre($langs->trans('TicketsIndex'), $linkback, 'title_ticket.png');
+print load_fiche_titre($langs->trans('TicketsIndex'), $linkback, 'ticket');
 
 
 $dir = '';
@@ -102,8 +109,8 @@ if (empty($endyear)) {
 }
 
 $startyear = $endyear - 1;
-$WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '256' : '320';
-$HEIGHT = '192';
+$WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '100%' : '80%';
+$HEIGHT = '228';
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -120,16 +127,15 @@ $tick = array(
     'closed' => 0,
     'deleted' => 0,
 );
-$total = 0;
+
 $sql = "SELECT t.fk_statut, COUNT(t.fk_statut) as nb";
 $sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
 if (!$user->rights->societe->client->voir && !$socid) {
     $sql .= ", " . MAIN_DB_PREFIX . "societe_commerciaux as sc";
 }
+$sql .= ' WHERE t.entity IN (' . getEntity('ticket') . ')';
+$sql .= dolSqlDateFilter('datec', 0, 0, $endyear);
 
-$sql .= ' WHERE t.entity IN (' . getEntity('ticket', 1) . ')';
-$sql .= " AND t.fk_statut IS NOT NULL";
-$sql .= " AND date_format(datec,'%Y') = '" . $endyear . "'";
 if (!$user->rights->societe->client->voir && !$socid) {
     $sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = " . $user->id;
 }
@@ -149,44 +155,41 @@ $result = $db->query($sql);
 if ($result) {
     while ($objp = $db->fetch_object($result)) {
         $found = 0;
-        if ($objp->fk_statut == 0) {
+        if ($objp->fk_statut == Ticket::STATUS_NOT_READ) {
             $tick['unread'] = $objp->nb;
         }
-        if ($objp->fk_statut == 1) {
+        if ($objp->fk_statut == Ticket::STATUS_READ) {
             $tick['read'] = $objp->nb;
         }
-        if ($objp->fk_statut == 3) {
-            $tick['answered'] = $objp->nb;
+        if ($objp->fk_statut == Ticket::STATUS_NEED_MORE_INFO) {
+        	$tick['needmoreinfo'] = $objp->nb;
         }
-        if ($objp->fk_statut == 4) {
+        if ($objp->fk_statut == Ticket::STATUS_ASSIGNED) {
             $tick['assigned'] = $objp->nb;
         }
-        if ($objp->fk_statut == 5) {
+        if ($objp->fk_statut == Ticket::STATUS_IN_PROGRESS) {
             $tick['inprogress'] = $objp->nb;
         }
-        if ($objp->fk_statut == 6) {
+        if ($objp->fk_statut == Ticket::STATUS_WAITING) {
             $tick['waiting'] = $objp->nb;
         }
-        if ($objp->fk_statut == 8) {
+        if ($objp->fk_statut == Ticket::STATUS_CLOSED) {
             $tick['closed'] = $objp->nb;
         }
-        if ($objp->fk_statut == 9) {
-            $tick['deleted'] = $objp->nb;
+        if ($objp->fk_statut == Ticket::STATUS_CANCELED) {
+            $tick['canceled'] = $objp->nb;
         }
     }
 
-    if ((round($tick['unread']) ? 1 : 0) +(round($tick['read']) ? 1 : 0) +(round($tick['answered']) ? 1 : 0) +(round($tick['assigned']) ? 1 : 0) +(round($tick['inprogress']) ? 1 : 0) +(round($tick['waiting']) ? 1 : 0) +(round($tick['closed']) ? 1 : 0) +(round($tick['deleted']) ? 1 : 0) >= 2
-    ) {
-        $dataseries = array();
-        $dataseries[] = array('label' => $langs->trans("Unread"), 'data' => round($tick['unread']));
-        $dataseries[] = array('label' => $langs->trans("Read"), 'data' => round($tick['read']));
-        $dataseries[] = array('label' => $langs->trans("Answered"), 'data' => round($tick['answered']));
-        $dataseries[] = array('label' => $langs->trans("Assigned"), 'data' => round($tick['assigned']));
-        $dataseries[] = array('label' => $langs->trans("InProgress"), 'data' => round($tick['inprogress']));
-        $dataseries[] = array('label' => $langs->trans("Waiting"), 'data' => round($tick['waiting']));
-        $dataseries[] = array('label' => $langs->trans("Closed"), 'data' => round($tick['closed']));
-        $dataseries[] = array('label' => $langs->trans("Deleted"), 'data' => round($tick['deleted']));
-    }
+    $dataseries = array();
+    $dataseries[] = array('label' => $langs->trans("Unread"), 'data' => round($tick['unread']));
+    $dataseries[] = array('label' => $langs->trans("Read"), 'data' => round($tick['read']));
+    $dataseries[] = array('label' => $langs->trans("NeedMoreInformation"), 'data' => round($tick['needmoreinfo']));
+    $dataseries[] = array('label' => $langs->trans("Assigned"), 'data' => round($tick['assigned']));
+    $dataseries[] = array('label' => $langs->trans("InProgress"), 'data' => round($tick['inprogress']));
+    $dataseries[] = array('label' => $langs->trans("Waiting"), 'data' => round($tick['waiting']));
+    $dataseries[] = array('label' => $langs->trans("Closed"), 'data' => round($tick['closed']));
+    $dataseries[] = array('label' => $langs->trans("Canceled"), 'data' => round($tick['canceled']));
 } else {
     dol_print_error($db);
 }
@@ -210,11 +213,17 @@ $stringtoshow .= '</div>';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><th >' . $langs->trans("Statistics") . ' ' . img_picto('', 'filter.png', 'id="idsubimgDOLUSERCOOKIE_ticket_by_status" class="linkobject"') . '</th></tr>';
 
-print '<tr><td>';
+print '<tr><td class="center">';
+print $stringtoshow;
 
 // don't display graph if no series
 if (! empty($dataseries) && count($dataseries) > 1) {
-    $data = array();
+	$totalnb=0;
+	foreach ($dataseries as $key => $value) {
+		$totalnb += $value['data'];
+	}
+
+	$data = array();
     foreach ($dataseries as $key => $value) {
         $data[] = array($value['label'], $value['data']);
     }
@@ -223,7 +232,6 @@ if (! empty($dataseries) && count($dataseries) > 1) {
     if (!$mesg) {
         $px1->SetData($data);
         unset($data1);
-        $px1->SetPrecisionY(0);
         $i = $startyear;
         $legend = array();
         while ($i <= $endyear) {
@@ -238,16 +246,14 @@ if (! empty($dataseries) && count($dataseries) > 1) {
         $px1->SetYLabel($langs->trans("TicketStatByStatus"));
         $px1->SetShading(3);
         $px1->SetHorizTickIncrement(1);
-        $px1->SetPrecisionY(0);
         $px1->SetCssPrefix("cssboxes");
         $px1->mode = 'depth';
         //$px1->SetTitle($langs->trans("TicketStatByStatus"));
 
         $px1->draw($filenamenb, $fileurlnb);
-        print $px1->show();
+        print $px1->show($totalnb?0:1);
     }
 }
-print $stringtoshow;
 print '</td></tr>';
 
 print '</table>';
@@ -259,7 +265,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 /*
- * Last tickets
+ * Latest tickets
  */
 
 $max = 10;
@@ -274,7 +280,7 @@ if (!$user->rights->societe->client->voir && !$socid) {
     $sql .= ", " . MAIN_DB_PREFIX . "societe_commerciaux as sc";
 }
 
-$sql .= ' WHERE t.entity IN (' . getEntity('ticket', 1) . ')';
+$sql .= ' WHERE t.entity IN (' . getEntity('ticket') . ')';
 $sql .= " AND t.fk_statut=0";
 if (!$user->rights->societe->client->voir && !$socid) {
     $sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = " . $user->id;
@@ -302,16 +308,10 @@ if ($result) {
 
     print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><th>' . $transRecordedType . '</th>';
-    print '<th></th>';
-    print '<th></th>';
-    print '<th></th>';
-    print '<th></th>';
-    print '<th class="right"><a href="'.DOL_URL_ROOT.'/ticket/list.php">'.$langs->trans("FullList").'</th>';
-    print '<th></th>';
+    print '<tr class="liste_titre"><th colspan="5">' . $transRecordedType . '</th>';
+    print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/ticket/list.php?search_fk_statut[]='.Ticket::STATUS_NOT_READ.'">'.$langs->trans("FullList").'</th>';
     print '</tr>';
     if ($num > 0) {
-
         while ($i < $num) {
             $objp = $db->fetch_object($result);
 
@@ -364,7 +364,7 @@ if ($result) {
 
         $db->free();
     } else {
-        print '<tr><td colspan="6" class="opacitymedium">' . $langs->trans('NoTicketsFound') . '</td></tr>';
+        print '<tr><td colspan="6" class="opacitymedium">' . $langs->trans('NoUnreadTicketsFound') . '</td></tr>';
     }
 
     print "</table>";
@@ -375,6 +375,9 @@ if ($result) {
 
 print '</div></div></div>';
 print '<div style="clear:both"></div>';
+
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardTickets', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter('');

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -38,13 +38,13 @@ class modExpenseReport extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf;
+		global $conf, $user;   // Required by some include code
 
 		$this->db = $db;
 		$this->numero = 770;
 
 		$this->family = "hr";
-		$this->module_position = '40';
+		$this->module_position = '42';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
@@ -184,18 +184,37 @@ class modExpenseReport extends DolibarrModules
 			'd.rowid'=>"TripId",'d.ref'=>'Ref','d.date_debut'=>'DateStart','d.date_fin'=>'DateEnd','d.date_create'=>'DateCreation','d.date_approve'=>'DateApprove',
 			'd.total_ht'=>"TotalHT",'d.total_tva'=>'TotalVAT','d.total_ttc'=>'TotalTTC','d.note_private'=>'NotePrivate','d.note_public'=>'NotePublic',
 			'u.lastname'=>'Lastname','u.firstname'=>'Firstname','u.login'=>"Login",'ed.rowid'=>'LineId','tf.code'=>'Type','ed.date'=>'Date','ed.tva_tx'=>'VATRate',
-			'ed.total_ht'=>'TotalHT','ed.total_tva'=>'TotalVAT','ed.total_ttc'=>'TotalTTC','ed.comments'=>'Comment','p.rowid'=>'ProjectId','p.ref'=>'Ref'
+			'ed.total_ht'=>'TotalHT','ed.total_tva'=>'TotalVAT','ed.total_ttc'=>'TotalTTC','ed.comments'=>'Comment','p.rowid'=>'ProjectId','p.ref'=>'Ref',
+            'user_rib.iban_prefix' => 'IBAN', 'user_rib.bic' => 'BIC', 'user_rib.code_banque' => 'BankCode', 'user_rib.bank' => 'BankName', 'user_rib.proprio' => 'BankAccountOwner',
+            'user_rib.owner_address' => 'BankAccountOwnerAddress'
 		);
-		$this->export_entities_array[$r]=array(
+        $this->export_TypeFields_array[$r]=array(
+        	'd.rowid'=>"Numeric",'d.ref'=>'Text','d.date_debut'=>'Date','d.date_fin'=>'Date','d.date_create'=>'Date','d.date_approve'=>'Date',
+        	'd.total_ht'=>"Numeric",'d.total_tva'=>'Numeric','d.total_ttc'=>'Numeric','d.note_private'=>'Text','d.note_public'=>'Text',
+        	'u.lastname'=>'Text','u.firstname'=>'Text','u.login'=>"Text",'ed.rowid'=>'Numeric','tf.code'=>'Code','ed.date'=>'Date','ed.tva_tx'=>'Numeric',
+        	'ed.total_ht'=>'Numeric','ed.total_tva'=>'Numeric','ed.total_ttc'=>'Numeric','ed.comments'=>'Text','p.rowid'=>'Numeric','p.ref'=>'Text',
+            'user_rib.iban_prefix' => 'Text', 'user_rib.bic' => 'Text', 'user_rib.code_banque' => 'Text', 'user_rib.bank' => 'Text', 'user_rib.proprio' => 'Text',
+            'user_rib.owner_address' => 'Text'
+        );
+        $this->export_entities_array[$r]=array(
 			'u.lastname'=>'user','u.firstname'=>'user','u.login'=>'user','ed.rowid'=>'expensereport_line','ed.date'=>'expensereport_line',
 			'ed.tva_tx'=>'expensereport_line','ed.total_ht'=>'expensereport_line','ed.total_tva'=>'expensereport_line','ed.total_ttc'=>'expensereport_line',
-			'ed.comments'=>'expensereport_line','tf.code'=>'expensereport_line','p.project_ref'=>'expensereport_line','p.rowid'=>'project','p.ref'=>'project'
+			'ed.comments'=>'expensereport_line','tf.code'=>'expensereport_line','p.project_ref'=>'expensereport_line','p.rowid'=>'project','p.ref'=>'project',
+            'user_rib.iban_prefix' => 'user', 'user_rib.bic' => 'user', 'user_rib.code_banque' => 'user', 'user_rib.bank' => 'user', 'user_rib.proprio' => 'user',
+            'user_rib.owner_address' => 'user'
+
 		);
         $this->export_alias_array[$r]=array('d.rowid'=>"idtrip",'d.type'=>"type",'d.note_private'=>'note_private','d.note_public'=>'note_public','u.lastname'=>'name','u.firstname'=>'firstname','u.login'=>'login');
 		$this->export_dependencies_array[$r]=array('expensereport_line'=>'ed.rowid','type_fees'=>'tf.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 
+		$keyforselect='expensereport'; $keyforelement='expensereport'; $keyforaliasextra='extra';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'expensereport as d, '.MAIN_DB_PREFIX.'user as u,';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'expensereport as d';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'expensereport_extrafields as extra on d.rowid = extra.fk_object';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'user_rib as user_rib ON user_rib.fk_user = d.fk_user_author,';
+		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'user as u,';
 		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'expensereport_det as ed LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as tf ON ed.fk_c_type_fees = tf.id';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'projet as p ON ed.fk_projet = p.rowid';
 		$this->export_sql_end[$r] .=' WHERE ed.fk_expensereport = d.rowid AND d.fk_user_author = u.rowid';

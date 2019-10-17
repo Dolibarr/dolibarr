@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 require '../main.inc.php';
@@ -61,7 +61,6 @@ if ($action == 'add')
 	if (empty($ref) || empty($value)) {
 		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
 	} else {
-
 		$objectval->fk_product_attribute = $object->id;
 		$objectval->ref = $ref;
 		$objectval->value = $value;

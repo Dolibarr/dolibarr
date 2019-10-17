@@ -2,6 +2,7 @@
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2019		Nicolas ZABOURI			<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -28,13 +29,54 @@
 class InfoBox
 {
     /**
-     * Name of positions 0=Home, 1=...
+     * Name of positions (See below)
      *
      * @return	string[]		Array with list of zones
      */
     public static function getListOfPagesForBoxes()
     {
-        return array(0=>'Home');
+		global $conf;
+
+		if (empty($conf->global->MAIN_FEATURES_LEVEL) || $conf->global->MAIN_FEATURES_LEVEL < 2)
+		{
+        	return array(
+        		0 => 'Home',
+        		27 => 'Accountancy Home'
+        	);
+		}
+		else
+		{
+			return array(
+				0 => 'Home',
+				1 => 'userhome',
+				2 => 'membersindex',
+				3 => 'thirdpartiesindex',
+				4 => 'productindex',
+				5 => 'productindex',
+				6 => 'mrpindex',
+				7 => 'commercialindex',
+				8 => 'projectsindex',
+				9 => 'invoiceindex',
+				10 => 'hrmindex',
+				11 => 'ticketsindex',
+				12 => 'stockindex',
+				13 => 'sendingindex',
+				14 => 'receptionindex',
+				15 => 'activityindex',
+				16 => 'proposalindex',
+				17 => 'ordersindex',
+				18 => 'orderssuppliersindex',
+				19 => 'contractindex',
+				20 => 'interventionindex',
+				21 => 'suppliersproposalsindex',
+				22 => 'donationindex',
+				23 => 'specialexpensesindex',
+				24 => 'expensereportindex',
+				25 => 'mailingindex',
+				26 => 'opensurveyindex',
+				27 => 'Accountancy Home'
+			);
+		}
     }
 
     /**
@@ -42,7 +84,7 @@ class InfoBox
      *
      *  @param	DoliDB		$db				Database handler
      *  @param	string		$mode			'available' or 'activated'
-     *  @param	string		$zone			Name or area (-1 for all, 0 for Homepage, 1 for xxx, ...)
+     *  @param	string		$zone			Name or area (-1 for all, 0 for Homepage, 1 for Accountancy, 2 for xxx, ...)
      *  @param  User|null   $user	  		Object user to filter
      *  @param	array		$excludelist	Array of box id (box.box_id = boxes_def.rowid) to exclude
      *  @param  int         $includehidden  Include also hidden boxes
@@ -71,7 +113,7 @@ class InfoBox
         {
             $sql = "SELECT d.rowid as box_id, d.file, d.note, d.tms";
             $sql.= " FROM ".MAIN_DB_PREFIX."boxes_def as d";
-               $sql.= " WHERE d.entity IN (0,".$conf->entity.")";
+            $sql.= " WHERE d.entity IN (0,".$conf->entity.")";
         }
 
         dol_syslog(get_class()."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user)?$user->id:'')."", LOG_DEBUG);
@@ -86,7 +128,6 @@ class InfoBox
 
                 if (! in_array($obj->box_id, $excludelist))
                 {
-
                     if (preg_match('/^([^@]+)@([^@]+)$/i', $obj->file, $regs))
                     {
                         $boxname = preg_replace('/\.php$/i', '', $regs[1]);
@@ -113,7 +154,7 @@ class InfoBox
                         // box properties
                         $box->rowid		= (empty($obj->rowid) ? '' : $obj->rowid);
                         $box->id		= (empty($obj->box_id) ? '' : $obj->box_id);
-                        $box->position	= ($obj->position == '' ? '' : $obj->position);		// '0' must staty '0'
+                        $box->position	= ($obj->position == '' ? '' : $obj->position);		// '0' must stay '0'
                         $box->box_order	= (empty($obj->box_order) ? '' : $obj->box_order);
                         $box->fk_user	= (empty($obj->fk_user) ? 0 : $obj->fk_user);
                         $box->sourcefile= $relsourcefile;

@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -72,8 +72,10 @@ $date_endy = dol_mktime(23, 59, 59, $_REQUEST["date_end_delymonth"], $_REQUEST["
 
 $extrafields = new ExtraFields($db);
 
+$object=new Facture($db);
+
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('facture');
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 if ($action == 'create')
 {
@@ -141,7 +143,6 @@ if (($action == 'create' || $action == 'add') && !$error)
 	$result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid);
 
 	$usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
-	$object=new Facture($db);
 
 	// Insert new invoice in database
 	if ($action == 'add' && $user->rights->facture->creer)
@@ -177,7 +178,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 				$object->remise_absolue		= $_POST['remise_absolue'];
 				$object->remise_percent		= $_POST['remise_percent'];
 
-				$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+				$ret = $extrafields->setOptionalsFromPost(null, $object);
 				if ($ret < 0) $error++;
 
 				if ($_POST['origin'] && $_POST['originid'])
@@ -548,7 +549,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 	</script>
 	<?php
 
-	$sql = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_client,';
+	$sql = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.entity, c.ref, c.total_ht, c.ref_client,';
 	$sql.= ' c.date_valid, c.date_commande, c.date_livraison, c.fk_statut, c.facture as billed';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 	$sql.= ', '.MAIN_DB_PREFIX.'commande as c';
@@ -615,7 +616,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		print_liste_field_titre('GenerateBill', '', '', '', '', 'align="center"');
 		print '</tr>';
 
-		// Lignes des champs de filtre
+		// Fields title search
 		print '<form method="get" action="orderstoinvoice.php">';
 		print '<input type="hidden" name="socid" value="'.$socid.'">';
 		print '<tr class="liste_titre">';
@@ -682,7 +683,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 
 			print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 			$filename=dol_sanitizeFileName($objp->ref);
-			$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($objp->ref);
+			$filedir=$conf->commande->multidir_output[$objp->entity] . '/' . dol_sanitizeFileName($objp->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->rowid;
 			print $formfile->getDocumentsLink($generic_commande->element, $filename, $filedir);
 			print '</td></tr></table>';

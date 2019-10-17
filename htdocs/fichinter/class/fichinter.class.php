@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -574,13 +574,20 @@ class Fichinter extends CommonObject
 				// Rename directory if dir was a temporary ref
 				if (preg_match('/^[\(]?PROV/i', $this->ref))
 				{
-					// Rename of object directory ($this->ref = old ref, $num = new ref)
-					// to  not lose the linked files
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+					// Now we rename also files into index
+					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'ficheinter/".$this->db->escape($this->newref)."'";
+					$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'ficheinter/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$resql = $this->db->query($sql);
+					if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+					// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 					$oldref = dol_sanitizeFileName($this->ref);
 					$newref = dol_sanitizeFileName($num);
 					$dirsource = $conf->ficheinter->dir_output.'/'.$oldref;
 					$dirdest = $conf->ficheinter->dir_output.'/'.$newref;
-					if (file_exists($dirsource))
+					if (! $error && file_exists($dirsource))
 					{
 						dol_syslog(get_class($this)."::setValid rename dir ".$dirsource." into ".$dirdest);
 
@@ -667,7 +674,6 @@ class Fichinter extends CommonObject
 		$langs->load("interventions");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'soleil';
 
 			if ($this->modelpdf) {
@@ -833,7 +839,6 @@ class Fichinter extends CommonObject
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 			foreach ($dirmodels as $reldir) {
-
 				$dir = dol_buildpath($reldir."core/modules/fichinter/");
 
 				// Load file with numbering class (if found)
@@ -1386,7 +1391,7 @@ class Fichinter extends CommonObject
 }
 
 /**
- *	Classe permettant la gestion des lignes d'intervention
+ *	Class to manage intervention lines
  */
 class FichinterLigne extends CommonObjectLine
 {
@@ -1593,7 +1598,6 @@ class FichinterLigne extends CommonObjectLine
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
 				$result=$this->insertExtraFields();
@@ -1606,7 +1610,6 @@ class FichinterLigne extends CommonObjectLine
 			$result=$this->update_total();
 			if ($result > 0)
 			{
-
 				if (! $notrigger)
 				{
 					// Call trigger

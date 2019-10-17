@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -124,7 +124,7 @@ function show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass)
 	}
 	else
 	{
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action='.$testlabel.'">'.$butlabel.'</a>';
+		print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action='.$testlabel.'">'.$butlabel.'</a>';
 	}
 	print '<br><br>';
 }
@@ -163,7 +163,6 @@ function show_ldap_content($result, $level, $count, $var, $hide = 0, $subcount =
 			$hide=0;
 			if (! is_numeric($key))
 			{
-
 				print '<tr '.$bc[$var].' valign="top">';
 				print '<td>';
 				print $key;

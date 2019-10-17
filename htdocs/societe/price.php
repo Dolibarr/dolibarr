@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -73,7 +73,6 @@ if (empty($reshook))
     }
 
     if ($action == 'add_customer_price_confirm' && ! $cancel && ($user->rights->produit->creer || $user->rights->service->creer)) {
-
     	$update_child_soc = GETPOST('updatechildprice');
 
     	// add price by customer
@@ -146,7 +145,6 @@ if (empty($reshook))
     }
 
     if ($action == 'update_customer_price_confirm' && ! $_POST ["cancel"] && ($user->rights->produit->creer || $user->rights->service->creer)) {
-
     	$prodcustprice->fetch(GETPOST('lineid', 'int'));
 
     	$update_child_soc = GETPOST('updatechildprice');
@@ -228,7 +226,6 @@ dol_fiche_end();
 
 
 if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
-
 	$prodcustprice = new Productcustomerprice($db);
 
 	$sortfield = GETPOST("sortfield", 'alpha');
@@ -254,7 +251,6 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	}
 
 	if ($action == 'add_customer_price') {
-
 		// Create mode
 
 		print load_fiche_titre($langs->trans('PriceByCustomer'));
@@ -327,7 +323,6 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		print '<br></form>';
 	} elseif ($action == 'edit_customer_price') {
-
 		// Edit mode
 
 		print load_fiche_titre($langs->trans('PriceByCustomer'));
@@ -407,7 +402,6 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		print '<br></form>';
 	} elseif ($action == 'showlog_customer_price') {
-
 	    print '<!-- showlog_customer_price -->'."\n";
 
 		$filter = array (
@@ -431,7 +425,6 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print_barre_liste($langs->trans('PriceByCustomerLog'), $page, $_SERVER ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords);
 
 		if (count($prodcustprice->lines) > 0) {
-
 			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 			print '<input type="hidden" name="id" value="' . $object->id . '">';
 
@@ -451,7 +444,6 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			print '</tr>';
 
 			foreach ($prodcustprice->lines as $line) {
-
 				print '<tr class="oddeven">';
 				$staticprod = new Product($db);
 				$staticprod->fetch($line->fk_product);

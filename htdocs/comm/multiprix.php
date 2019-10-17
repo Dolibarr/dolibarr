@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -91,15 +91,13 @@ if ($_socid > 0)
 
 	dol_fiche_head($head, $tabchoice, $langs->trans("ThirdParty"), 0, 'company');
 
-	print '<table width="100%" border="0">';
-	print '<tr><td class="tdtop">';
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
-	print '<tr><td colspan="2" width="25%">';
-	print $langs->trans("PriceLevel").'</td><td colspan="2">'.$objsoc->price_level."</td></tr>";
+	print '<tr><td class="titlefieldcreate">';
+	print $langs->trans("PriceLevel").'</td><td>'.$objsoc->price_level."</td></tr>";
 
-	print '<tr><td colspan="2">';
-	print $langs->trans("NewValue").'</td><td colspan="2">';
+	print '<tr><td>';
+	print $langs->trans("NewValue").'</td><td>';
 	print '<select name="price_level" class="flat">';
 	for($i=1;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
 	{
@@ -114,12 +112,6 @@ if ($_socid > 0)
 	print '</select>';
 	print '</td></tr>';
 
-	print "</table>";
-
-	print "</td>\n";
-
-
-	print "</td></tr>";
 	print "</table>";
 
 	dol_fiche_end();
@@ -157,8 +149,8 @@ if ($_socid > 0)
 		while ($i < $num )
 		{
 			$obj = $db->fetch_object($resql);
-			$tag = !$tag;
-			print '<tr '.$bc[$tag].'>';
+
+			print '<tr class="oddeven">';
 			print '<td>'.dol_print_date($db->jdate($obj->dc), "dayhour").'</td>';
 			print '<td>'.$obj->price_level.' </td>';
 			$userstatic->id=$obj->uid;

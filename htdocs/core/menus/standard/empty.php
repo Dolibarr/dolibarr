@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -51,12 +51,15 @@ class MenuManager
 
 
 	/**
-	 * Load this->tabMenu
-	 *
-	 * @return	void
+   	 * Load this->tabMenu
+   	 *
+   	 * @param	string	$forcemainmenu		To force mainmenu to load
+   	 * @param	string	$forceleftmenu		To force leftmenu to load
+   	 * @return	void
 	 */
-	public function loadMenu()
+	public function loadMenu($forcemainmenu = '', $forceleftmenu = '')
 	{
+		// Do nothing
 	}
 
 

@@ -148,4 +148,4 @@ nolimitbyEX_EXP=per línia (sense límits)
 CarCategory=Categoria de cotxe
 ExpenseRangeOffset=Quantitat d'offset: %s
 RangeIk=Rang de quilometratge
-AttachTheNewLineToTheDocument=Attach the new line to an existing document
+AttachTheNewLineToTheDocument=Adjunta la línia a un document carregat

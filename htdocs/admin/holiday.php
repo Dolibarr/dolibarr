@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -201,6 +201,7 @@ dol_fiche_head($head, 'holiday', $langs->trans("Holidays"), -1, 'holiday');
 
 print load_fiche_titre($langs->trans("HolidaysNumberingModules"), '', '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="100">'.$langs->trans("Name").'</td>';
@@ -237,7 +238,6 @@ foreach ($dirmodels as $reldir)
 
 					if ($module->isEnabled())
 					{
-
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
 						print $module->info();
 						print '</td>';
@@ -294,13 +294,14 @@ foreach ($dirmodels as $reldir)
 	}
 }
 
-print '</table><br>';
+print '</table>';
+print '</div>';
 
+print '<br>';
 
 
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
-
 /*
  *  Documents models for Holidays
  */
@@ -331,6 +332,7 @@ else
 }
 
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
@@ -365,7 +367,6 @@ foreach ($dirmodels as $reldir)
                 {
                     if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
                     {
-
                     	if (file_exists($dir.'/'.$file))
                     	{
                     		$name = substr($file, 4, dol_strlen($file) -16);
@@ -457,6 +458,7 @@ foreach ($dirmodels as $reldir)
 }
 
 print '</table>';
+print '</div>';
 print "<br>";
 
 
@@ -469,6 +471,8 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_other">';
 
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
+
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -506,6 +510,8 @@ print '<input size="50" class="flat" type="text" name="HOLIDAY_DRAFT_WATERMARK" 
 print '</td></tr>'."\n";
 
 print '</table>';
+print '</div>';
+
 
 print '<div class="center">';
 print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';

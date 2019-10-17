@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -399,8 +399,7 @@ class Export
 			    $szFilterField='<input type="text" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
 				break;
 			case 'Status':
-				if (! empty($conf->global->MAIN_ACTIVATE_HTML5)) $szFilterField='<input type="number" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
-				else $szFilterField='<input type="text" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
+				$szFilterField='<input type="number" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
 				break;
 			case 'Boolean':
 				$szFilterField='<select name="'.$NameField.'" class="flat">';
@@ -540,7 +539,7 @@ class Export
     public function build_file($user, $model, $datatoexport, $array_selected, $array_filterValue, $sqlquery = '')
     {
         // phpcs:enable
-		global $conf,$langs;
+		global $conf,$langs,$mysoc;
 
 		$indice=0;
 		asort($array_selected);
@@ -633,6 +632,14 @@ class Export
 								//$alias=$this->array_export_alias[$indice][$key];
 								$alias=str_replace(array('.', '-','(',')'), '_', $key);
 								if ($obj->$alias < 0) $obj->$alias='0';
+							}
+							// Operation GETNUMOPENDAYS (for Holiday module)
+							elseif ($this->array_export_special[$indice][$key]=='getNumOpenDays')
+							{
+								include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+								//$alias=$this->array_export_alias[$indice][$key];
+								$alias=str_replace(array('.', '-','(',')'), '_', $key);
+								$obj->$alias=num_open_day(dol_stringtotime($obj->d_date_debut, 1), dol_stringtotime($obj->d_date_fin, 1), 0, 1, $obj->d_halfday, $mysoc->country_code);
 							}
 							// Operation INVOICEREMAINTOPAY
 							elseif ($this->array_export_special[$indice][$key]=='getRemainToPay')

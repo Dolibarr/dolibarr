@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -393,12 +393,10 @@ class Productcustomerprice extends CommonObject
 		dol_syslog(get_class($this) . "::fetch_all", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-
 			$this->lines = array ();
 			$num = $this->db->num_rows($resql);
 
 			while ( $obj = $this->db->fetch_object($resql) ) {
-
 				$line = new PriceByCustomerLine();
 
 				$line->id = $obj->rowid;
@@ -504,12 +502,10 @@ class Productcustomerprice extends CommonObject
 		dol_syslog(get_class($this) . "::fetch_all_log", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-
 			$this->lines = array ();
 			$num = $this->db->num_rows($resql);
 
 			while ( $obj = $this->db->fetch_object($resql) ) {
-
 				$line = new PriceByCustomerLine();
 
 				$line->id = $obj->rowid;
@@ -766,12 +762,10 @@ class Productcustomerprice extends CommonObject
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
-
 			$this->lines = array ();
 			$num = $this->db->num_rows($resql);
 
 			while ( ($obj = $this->db->fetch_object($resql)) && (empty($error)) ) {
-
 				// find if there is an existing line for the product and the subsidiaries
 				$prodsocprice = new Productcustomerprice($this->db);
 
@@ -784,12 +778,10 @@ class Productcustomerprice extends CommonObject
 					$error ++;
 					$this->error = $prodsocprice->error;
 				} else {
-
 					// There is one line
 					if (count($prodsocprice->lines) > 0) {
 						// If force update => Update
 						if (! empty($forceupdateaffiliate)) {
-
 							$prodsocpriceupd = new Productcustomerprice($this->db);
 							$prodsocpriceupd->fetch($prodsocprice->lines [0]->id);
 
@@ -927,7 +919,6 @@ class Productcustomerprice extends CommonObject
 		}
 
 		if (! $error) {
-
 		}
 
 		unset($object->context['createfromclone']);

@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -555,6 +555,7 @@ function dol_count_nb_of_line($file)
  *
  * @param 	string		$pathoffile		Path of file
  * @return 	integer						File size
+ * @see dol_print_size()
  */
 function dol_filesize($pathoffile)
 {
@@ -985,6 +986,7 @@ function dolCheckVirus($src_file)
  *  - This function can be used only into a HTML page context. Use dol_move if you are outside.
  *  - Test on antivirus is always done (if antivirus set).
  *  - Database of files is NOT updated (this is done by dol_add_file_process() that calls this function).
+ *  - Extension .noexe may be added if file is executable and MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED is not set.
  *
  *	@param	string	$src_file			Source full path filename ($_FILES['field']['tmp_name'])
  *	@param	string	$dest_file			Target full path filename  ($_FILES['field']['name'])
@@ -1021,22 +1023,16 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			{
 				case UPLOAD_ERR_INI_SIZE:	// 1
 					return 'ErrorFileSizeTooLarge';
-					break;
 				case UPLOAD_ERR_FORM_SIZE:	// 2
 					return 'ErrorFileSizeTooLarge';
-					break;
 				case UPLOAD_ERR_PARTIAL:	// 3
 					return 'ErrorPartialFile';
-					break;
 				case UPLOAD_ERR_NO_TMP_DIR:	//
 					return 'ErrorNoTmpDir';
-					break;
 				case UPLOAD_ERR_CANT_WRITE:
 					return 'ErrorFailedToWriteInDir';
-					break;
 				case UPLOAD_ERR_EXTENSION:
 					return 'ErrorUploadBlockedByAddon';
-					break;
 				default:
 					break;
 			}
@@ -1063,15 +1059,15 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 
 		// Security:
 		// We refuse cache files/dirs, upload using .. and pipes into filenames.
-		if (preg_match('/^\./', $src_file) || preg_match('/\.\./', $src_file) || preg_match('/[<>|]/', $src_file))
+		if (preg_match('/^\./', basename($src_file)) || preg_match('/\.\./', $src_file) || preg_match('/[<>|]/', $src_file))
 		{
 			dol_syslog("Refused to deliver file ".$src_file, LOG_WARNING);
 			return -1;
 		}
 
 		// Security:
-		// On interdit fichiers caches, remontees de repertoire ainsi que les pipe dans les noms de fichiers.
-		if (preg_match('/^\./', $dest_file) || preg_match('/\.\./', $dest_file) || preg_match('/[<>|]/', $dest_file))
+		// We refuse cache files/dirs, upload using .. and pipes into filenames.
+		if (preg_match('/^\./', basename($dest_file)) || preg_match('/\.\./', $dest_file) || preg_match('/[<>|]/', $dest_file))
 		{
 			dol_syslog("Refused to deliver file ".$dest_file, LOG_WARNING);
 			return -2;
@@ -1220,9 +1216,12 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 							}
 						}
 					}
-					else dol_syslog("Failed to remove file ".$filename, LOG_WARNING);
-					// TODO Failure to remove can be because file was already removed or because of permission
-					// If error because it does not exists, we should return true, and we should return false if this is a permission problem
+					else
+					{
+						dol_syslog("Failed to remove file ".$filename, LOG_WARNING);
+						// TODO Failure to remove can be because file was already removed or because of permission
+						// If error because it does not exists, we should return true, and we should return false if this is a permission problem
+					}
 				}
 			}
 			else dol_syslog("No files to delete found", LOG_DEBUG);
@@ -1435,16 +1434,16 @@ function dol_meta_create($object)
 
 		if (is_dir($dir))
 		{
-			$nblignes = count($object->lines);
+			$nblines = count($object->lines);
 			$client = $object->thirdparty->name . " " . $object->thirdparty->address . " " . $object->thirdparty->zip . " " . $object->thirdparty->town;
 			$meta = "REFERENCE=\"" . $object->ref . "\"
 			DATE=\"" . dol_print_date($object->date, '') . "\"
-			NB_ITEMS=\"" . $nblignes . "\"
+			NB_ITEMS=\"" . $nblines . "\"
 			CLIENT=\"" . $client . "\"
 			AMOUNT_EXCL_TAX=\"" . $object->total_ht . "\"
 			AMOUNT=\"" . $object->total_ttc . "\"\n";
 
-			for ($i = 0 ; $i < $nblignes ; $i++)
+			for ($i = 0 ; $i < $nblines ; $i++)
 			{
 				//Pour les articles
 				$meta .= "ITEM_" . $i . "_QUANTITY=\"" . $object->lines[$i]->qty . "\"
@@ -1559,6 +1558,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 				$info = pathinfo($destfile);
 
 				$destfile = dol_sanitizeFileName($info['filename'].($info['extension']!='' ? ('.'.strtolower($info['extension'])) : ''));
+
 				// We apply dol_string_nohtmltag also to clean file names (this remove duplicate spaces) because
 				// this function is also applied when we make try to download file (by the GETPOST(filename, 'alphanohtml') call).
 				$destfile = dol_string_nohtmltag($destfile);
@@ -1878,33 +1878,106 @@ function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = ''
 
 
 /**
- * Compress a file
+ * Compress a file.
+ * An error string may be returned into parameters.
  *
  * @param 	string	$inputfile		Source file name
  * @param 	string	$outputfile		Target file name
  * @param 	string	$mode			'gz' or 'bz' or 'zip'
+ * @param	string	$errorstring	Error string
  * @return	int						<0 if KO, >0 if OK
  */
-function dol_compress_file($inputfile, $outputfile, $mode = "gz")
+function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring = null)
 {
+	global $conf;
+
 	$foundhandler=0;
 
 	try
 	{
+		dol_syslog("dol_compress_file mode=".$mode." inputfile=".$inputfile." outputfile=".$outputfile);
+
 		$data = implode("", file(dol_osencode($inputfile)));
 		if ($mode == 'gz')     { $foundhandler=1; $compressdata = gzencode($data, 9); }
 		elseif ($mode == 'bz') { $foundhandler=1; $compressdata = bzcompress($data, 9); }
 		elseif ($mode == 'zip')
 		{
+			if (class_exists('ZipArchive') && ! empty($conf->global->MAIN_USE_ZIPARCHIVE_FOR_ZIP_COMPRESS))
+			{
+				$foundhandler=1;
+
+				$rootPath = realpath($inputfile);
+
+				dol_syslog("Class ZipArchive is set so we zip using ZipArchive to zip into ".$outputfile.' rootPath='.$rootPath);
+				$zip = new ZipArchive;
+
+				if ($zip->open($outputfile, ZipArchive::CREATE) !== true) {
+					$errorstring="dol_compress_file failure - Failed to open file ".$outputfile."\n";
+					dol_syslog($errorstring, LOG_ERR);
+
+					global $errormsg;
+					$errormsg = $errorstring;
+
+					return -6;
+				}
+
+				// Create recursive directory iterator
+				/** @var SplFileInfo[] $files */
+				$files = new RecursiveIteratorIterator(
+					new RecursiveDirectoryIterator($rootPath),
+					RecursiveIteratorIterator::LEAVES_ONLY
+					);
+
+				foreach ($files as $name => $file)
+				{
+					// Skip directories (they would be added automatically)
+					if (!$file->isDir())
+					{
+						// Get real and relative path for current file
+						$filePath = $file->getRealPath();
+						$relativePath = substr($filePath, strlen($rootPath) + 1);
+
+						// Add current file to archive
+						$zip->addFile($filePath, $relativePath);
+					}
+				}
+
+				// Zip archive will be created only after closing object
+				$zip->close();
+
+				dol_syslog("dol_compress_file success - ".count($zip->numFiles)." files");
+				return 1;
+			}
+
 			if (defined('ODTPHP_PATHTOPCLZIP'))
 			{
 				$foundhandler=1;
 
 				include_once ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php';
 				$archive = new PclZip($outputfile);
-				$archive->add($inputfile, PCLZIP_OPT_REMOVE_PATH, dirname($inputfile));
-				//$archive->add($inputfile);
-				return 1;
+				$result = $archive->add($inputfile, PCLZIP_OPT_REMOVE_PATH, dirname($inputfile));
+
+				if ($result === 0)
+				{
+					global $errormsg;
+					$errormsg=$archive->errorInfo(true);
+
+					if ($archive->errorCode() == PCLZIP_ERR_WRITE_OPEN_FAIL)
+					{
+						$errorstring = "PCLZIP_ERR_WRITE_OPEN_FAIL";
+						dol_syslog("dol_compress_file error - archive->errorCode() = PCLZIP_ERR_WRITE_OPEN_FAIL", LOG_ERR);
+						return -4;
+					}
+
+					$errorstring = "dol_compress_file error archive->errorCode = ".$archive->errorCode()." errormsg=".$errormsg;
+					dol_syslog("dol_compress_file failure - ".$errormsg, LOG_ERR);
+					return -3;
+				}
+				else
+				{
+					dol_syslog("dol_compress_file success - ".count($result)." files");
+					return 1;
+				}
 			}
 		}
 
@@ -1917,7 +1990,11 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz")
 		}
 		else
 		{
-			dol_syslog("Try to zip with format ".$mode." with no handler for this format", LOG_ERR);
+			$errorstring = "Try to zip with format ".$mode." with no handler for this format";
+			dol_syslog($errorstring, LOG_ERR);
+
+			global $errormsg;
+			$errormsg = $errorstring;
 			return -2;
 		}
 	}
@@ -1925,8 +2002,10 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz")
 	{
 		global $langs, $errormsg;
 		$langs->load("errors");
-		dol_syslog("Failed to open file ".$outputfile, LOG_ERR);
 		$errormsg=$langs->trans("ErrorFailedToWriteInDir");
+
+		$errorstring = "Failed to open file ".$outputfile;
+		dol_syslog($errorstring, LOG_ERR);
 		return -1;
 	}
 }
@@ -1940,9 +2019,9 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz")
  */
 function dol_uncompress($inputfile, $outputdir)
 {
-	global $langs;
+	global $conf, $langs;
 
-	if (defined('ODTPHP_PATHTOPCLZIP'))
+	if (defined('ODTPHP_PATHTOPCLZIP') && empty($conf->global->MAIN_USE_ZIPARCHIVE_FOR_ZIP_UNCOMPRESS))
 	{
 		dol_syslog("Constant ODTPHP_PATHTOPCLZIP for pclzip library is set to ".ODTPHP_PATHTOPCLZIP.", so we use Pclzip to unzip into ".$outputdir);
 		include_once ODTPHP_PATHTOPCLZIP.'/pclzip.lib.php';
@@ -1997,13 +2076,14 @@ function dol_uncompress($inputfile, $outputdir)
  * @param 	string	$inputdir		Source dir name
  * @param 	string	$outputfile		Target file name (output directory must exists and be writable)
  * @param 	string	$mode			'zip'
+ * @param	string	$excludefiles   A regex pattern. For example: '/\.log$|\/temp\//'
  * @return	int						<0 if KO, >0 if OK
  */
-function dol_compress_dir($inputdir, $outputfile, $mode = "zip")
+function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles = '')
 {
 	$foundhandler=0;
 
-	dol_syslog("Try to zip dir ".$inputdir." into ".$outputdir." mode=".$mode);
+	dol_syslog("Try to zip dir ".$inputdir." into ".$outputfile." mode=".$mode);
 
 	if (! dol_is_dir(dirname($outputfile)) || ! is_writable(dirname($outputfile)))
 	{
@@ -2030,6 +2110,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip")
                 return 1;
             }
             else*/
+			//if (class_exists('ZipArchive') && ! empty($conf->global->MAIN_USE_ZIPARCHIVE_FOR_ZIP_COMPRESS))
 			if (class_exists('ZipArchive'))
 			{
 				$foundhandler=1;
@@ -2037,6 +2118,13 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip")
 				// Initialize archive object
 				$zip = new ZipArchive();
 				$result = $zip->open($outputfile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+				if (! $result)
+				{
+					global $langs, $errormsg;
+					$langs->load("errors");
+					$errormsg=$langs->trans("ErrorFailedToWriteInFile", $outputfile);
+					return -4;
+				}
 
 				// Create recursive directory iterator
 				/** @var SplFileInfo[] $files */
@@ -2053,9 +2141,11 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip")
 						// Get real and relative path for current file
 						$filePath = $file->getRealPath();
 						$relativePath = substr($filePath, strlen($inputdir) + 1);
-
-						// Add current file to archive
-						$zip->addFile($filePath, $relativePath);
+						if (empty($excludefiles) || ! preg_match($excludefiles, $filePath))
+						{
+							// Add current file to archive
+							$zip->addFile($filePath, $relativePath);
+						}
 					}
 				}
 
@@ -2163,6 +2253,12 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$accessallowed=($user->admin && basename($original_file) == $original_file && preg_match('/^dolibarr.*\.log$/', basename($original_file)));
 		$original_file=$dolibarr_main_data_root.'/'.$original_file;
 	}
+	// Wrapping for *.log files, like when used with url http://.../document.php?modulepart=logs&file=dolibarr.log
+	elseif ($modulepart == 'doctemplateswebsite' && !empty($dolibarr_main_data_root))
+	{
+		$accessallowed=($fuser->rights->website->write && preg_match('/\.jpg$/i', basename($original_file)));
+		$original_file=$dolibarr_main_data_root.'/doctemplates/websites/'.$original_file;
+	}
 	// Wrapping for *.zip files, like when used with url http://.../document.php?modulepart=packages&file=module_myfile.zip
 	elseif ($modulepart == 'packages' && !empty($dolibarr_main_data_root))
 	{
@@ -2192,10 +2288,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file=$conf->adherent->dir_output.'/'.$original_file;
 	}
 	// Wrapping pour les apercu factures
-	elseif ($modulepart == 'apercufacture' && !empty($conf->facture->dir_output))
+	elseif ($modulepart == 'apercufacture' && !empty($conf->facture->multidir_output[$entity]))
 	{
 		if ($fuser->rights->facture->{$lire}) $accessallowed=1;
-		$original_file=$conf->facture->dir_output.'/'.$original_file;
+		$original_file=$conf->facture->multidir_output[$entity].'/'.$original_file;
 	}
 	// Wrapping pour les apercu propal
 	elseif ($modulepart == 'apercupropal' && !empty($conf->propal->multidir_output[$entity]))
@@ -2204,10 +2300,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file=$conf->propal->multidir_output[$entity].'/'.$original_file;
 	}
 	// Wrapping pour les apercu commande
-	elseif ($modulepart == 'apercucommande' && !empty($conf->commande->dir_output))
+	elseif ($modulepart == 'apercucommande' && !empty($conf->commande->multidir_output[$entity]))
 	{
 		if ($fuser->rights->commande->{$lire}) $accessallowed=1;
-		$original_file=$conf->commande->dir_output.'/'.$original_file;
+		$original_file=$conf->commande->multidir_output[$entity].'/'.$original_file;
 	}
 	// Wrapping pour les apercu intervention
 	elseif (($modulepart == 'apercufichinter' || $modulepart == 'apercuficheinter') && !empty($conf->ficheinter->dir_output))
@@ -2380,7 +2476,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping for third parties
-	elseif (($modulepart == 'company' || $modulepart == 'societe') && !empty($conf->societe->dir_output))
+	elseif (($modulepart == 'company' || $modulepart == 'societe' || $modulepart == 'thirdparty') && !empty($conf->societe->dir_output))
 	{
 		if (empty($entity) || empty($conf->societe->multidir_output[$entity])) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		if ($fuser->rights->societe->{$lire} || preg_match('/^specimen/i', $original_file))
@@ -2403,13 +2499,13 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping for invoices
-	elseif (($modulepart == 'facture' || $modulepart == 'invoice') && !empty($conf->facture->dir_output))
+	elseif (($modulepart == 'facture' || $modulepart == 'invoice') && !empty($conf->facture->multidir_output[$entity]))
 	{
 		if ($fuser->rights->facture->{$lire} || preg_match('/^specimen/i', $original_file))
 		{
 			$accessallowed=1;
 		}
-		$original_file=$conf->facture->dir_output.'/'.$original_file;
+		$original_file=$conf->facture->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 	// Wrapping for mass actions
@@ -2427,15 +2523,23 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		{
 			$accessallowed=1;
 		}
-		$original_file=$conf->commande->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
+		$original_file=$conf->commande->multidir_output[$entity].'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	}
+    elseif ($modulepart == 'massfilesarea_sendings')
+    {
+        if ($fuser->rights->expedition->{$lire} || preg_match('/^specimen/i', $original_file))
+        {
+            $accessallowed=1;
+        }
+        $original_file=$conf->expedition->dir_output.'/sending/temp/massgeneration/'.$user->id.'/'.$original_file;
+    }
 	elseif ($modulepart == 'massfilesarea_invoices')
 	{
 		if ($fuser->rights->facture->{$lire} || preg_match('/^specimen/i', $original_file))
 		{
 			$accessallowed=1;
 		}
-		$original_file=$conf->facture->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
+		$original_file=$conf->facture->multidir_output[$entity].'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	}
 	elseif ($modulepart == 'massfilesarea_expensereport')
 	{
@@ -2519,13 +2623,13 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping pour les commandes
-	elseif (($modulepart == 'commande' || $modulepart == 'order') && !empty($conf->commande->dir_output))
+	elseif (($modulepart == 'commande' || $modulepart == 'order') && !empty($conf->commande->multidir_output[$entity]))
 	{
 		if ($fuser->rights->commande->{$lire} || preg_match('/^specimen/i', $original_file))
 		{
 			$accessallowed=1;
 		}
-		$original_file=$conf->commande->dir_output.'/'.$original_file;
+		$original_file=$conf->commande->multidir_output[$entity].'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 
@@ -2568,7 +2672,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed=1;
 		}
 		$original_file=$conf->fournisseur->facture->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE facnumber='".$db->escape($refname)."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 	// Wrapping pour les rapport de paiements
 	elseif ($modulepart == 'supplier_payment')
@@ -2848,7 +2952,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		{
 			if (empty($conf->$modulepart->dir_output))	// modulepart not supported
 			{
-				dol_print_error('', 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
+				dol_print_error('', 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.'). The module for this modulepart value may not be activated.');
 				exit;
 			}
 

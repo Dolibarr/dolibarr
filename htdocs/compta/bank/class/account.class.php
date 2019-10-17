@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -265,7 +265,6 @@ class Account extends CommonObject
 		$string = '';
 
 		foreach ($this->getFieldsToShow() as $val) {
-
 			if ($val == 'BankCode') {
 				$string .= $this->code_banque.' ';
 			} elseif ($val == 'BankAccountNumber') {
@@ -493,7 +492,6 @@ class Account extends CommonObject
 		}
 
 		if ($accline->insert() > 0) {
-
 			if ($categorie>0) {
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (";
 				$sql .= "lineid, fk_categ";
@@ -749,7 +747,6 @@ class Account extends CommonObject
 		$sql.= ",fk_pays = ".$this->country_id;
 
 		$sql.= " WHERE rowid = ".$this->id;
-		$sql.= " AND entity = ".$conf->entity;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -990,12 +987,12 @@ class Account extends CommonObject
 		// Process
 		foreach($to_del as $del) {
 			if ($c->fetch($del) > 0) {
-				$c->del_type($this, 'account');
+				$c->del_type($this, Categorie::TYPE_ACCOUNT);
 			}
 		}
 		foreach ($to_add as $add) {
 			if ($c->fetch($add) > 0) {
-				$c->add_type($this, 'account');
+				$c->add_type($this, Categorie::TYPE_ACCOUNT);
 			}
 		}
 
@@ -1225,6 +1222,7 @@ class Account extends CommonObject
 			$response = new WorkboardResponse();
 			$response->warning_delay=$conf->bank->rappro->warning_delay/60/60/24;
 			$response->label=$langs->trans("TransactionsToConciliate");
+			$response->labelShort = $langs->trans("TransactionsToConciliateShort");
 			$response->url=DOL_URL_ROOT.'/compta/bank/list.php?leftmenu=bank&amp;mainmenu=bank';
 			$response->img=img_object('', "payment");
 
@@ -1276,7 +1274,6 @@ class Account extends CommonObject
 				$this->nb["banklines"]=$obj->nb;
 			}
 			$this->db->free($resql);
-			return 1;
 		}
 		else
 		{
@@ -2277,7 +2274,7 @@ class AccountLine extends CommonObject
 
 		$result='';
 		$label=$langs->trans("ShowTransaction").': '.$this->rowid;
-		$linkstart = '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$this->rowid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$this->rowid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
 		$result .= $linkstart;

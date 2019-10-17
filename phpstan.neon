@@ -4,6 +4,7 @@ parameters:
 		- %currentWorkingDirectory%/htdocs/includes/restler/framework/Luracast/Restler/AutoLoader.php
 		- %currentWorkingDirectory%/htdocs/includes/*
 		- %currentWorkingDirectory%/htdocs/*/class/api_*
+		- %currentWorkingDirectory%/htdocs/*/canvas/*/tpl/*.tpl.php
 	autoload_directories:
 		- %currentWorkingDirectory%/htdocs/accountancy/class
 		- %currentWorkingDirectory%/htdocs/adherents/class
@@ -23,14 +24,139 @@ parameters:
 		- %currentWorkingDirectory%/htdocs/compta/facture/class
 		- %currentWorkingDirectory%/htdocs/compta/localtax/class
 		- %currentWorkingDirectory%/htdocs/compta/paiement/class
+		- %currentWorkingDirectory%/htdocs/compta/prelevement/class
+		- %currentWorkingDirectory%/htdocs/compta/salaries/class
+		- %currentWorkingDirectory%/htdocs/compta/sociales/class
+		- %currentWorkingDirectory%/htdocs/compta/tva/class
 		- %currentWorkingDirectory%/htdocs/conf
 		- %currentWorkingDirectory%/htdocs/contact/class
 		- %currentWorkingDirectory%/htdocs/contrat/class
 		- %currentWorkingDirectory%/htdocs/core/class
+		- %currentWorkingDirectory%/htdocs/core/lib
+		- %currentWorkingDirectory%/htdocs/core/triggers
+		- %currentWorkingDirectory%/htdocs/core/modules/bank
+		- %currentWorkingDirectory%/htdocs/core/modules/bom
+		- %currentWorkingDirectory%/htdocs/core/modules/commande
+		- %currentWorkingDirectory%/htdocs/core/modules/expedition
+		#- %currentWorkingDirectory%/htdocs/core/modules/expensereport
+		- %currentWorkingDirectory%/htdocs/core/modules/facture
+		- %currentWorkingDirectory%/htdocs/core/modules/fichinter
+		- %currentWorkingDirectory%/htdocs/core/modules/holiday
+		- %currentWorkingDirectory%/htdocs/core/modules/livraison
+		#- %currentWorkingDirectory%/htdocs/core/modules/member
+		- %currentWorkingDirectory%/htdocs/core/modules/payment
+		- %currentWorkingDirectory%/htdocs/core/modules/product
+		- %currentWorkingDirectory%/htdocs/core/modules/propale
+		- %currentWorkingDirectory%/htdocs/core/modules/reception
+		#- %currentWorkingDirectory%/htdocs/core/modules/stock
+		- %currentWorkingDirectory%/htdocs/core/modules/supplier_invoice
+		- %currentWorkingDirectory%/htdocs/core/modules/supplier_order
+		#- %currentWorkingDirectory%/htdocs/core/modules/supplier_payment
+		- %currentWorkingDirectory%/htdocs/core/modules/supplier_proposal
+		- %currentWorkingDirectory%/htdocs/cron/class
+		- %currentWorkingDirectory%/htdocs/datapolicy/class
+		- %currentWorkingDirectory%/htdocs/debugbar/class
+		- %currentWorkingDirectory%/htdocs/don/class
+		- %currentWorkingDirectory%/htdocs/ecm/class
+		- %currentWorkingDirectory%/htdocs/emailcollector/class
+		- %currentWorkingDirectory%/htdocs/expedition/class
+		- %currentWorkingDirectory%/htdocs/expensereport/class
+		- %currentWorkingDirectory%/htdocs/exports/class
+		- %currentWorkingDirectory%/htdocs/fichinter/class
+		- %currentWorkingDirectory%/htdocs/fourn/class
+		- %currentWorkingDirectory%/htdocs/holiday/class
+		- %currentWorkingDirectory%/htdocs/hrm/class
+		- %currentWorkingDirectory%/htdocs/imports/class
+		- %currentWorkingDirectory%/htdocs/livraison/class
+		- %currentWorkingDirectory%/htdocs/loan/class
+		- %currentWorkingDirectory%/htdocs/mailmanspip/class
+		- %currentWorkingDirectory%/htdocs/multicurrency/class
+		- %currentWorkingDirectory%/htdocs/opensurvey/class
 		- %currentWorkingDirectory%/htdocs/product/class
+		- %currentWorkingDirectory%/htdocs/projet/class
+		- %currentWorkingDirectory%/htdocs/reception/class
+		- %currentWorkingDirectory%/htdocs/resource/class
 		- %currentWorkingDirectory%/htdocs/societe/class
+		- %currentWorkingDirectory%/htdocs/stripe/class
+		- %currentWorkingDirectory%/htdocs/supplier_proposal/class
+		- %currentWorkingDirectory%/htdocs/ticket/class
 		- %currentWorkingDirectory%/htdocs/user/class
-	autoload_files: []
+		- %currentWorkingDirectory%/htdocs/variants/class
+		- %currentWorkingDirectory%/htdocs/website/class
+	autoload_files: 
+		- %currentWorkingDirectory%/build/phpstan/bootstrap.php
+		- %currentWorkingDirectory%/htdocs/core/lib/accounting.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/admin.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/agenda.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/ajax.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/asset.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/bank.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/barcode.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/categories.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/company.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/contact.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/contract.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/cron.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/date.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/doc.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/doleditor.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/donation.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/ecm.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/emailing.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/expedition.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/expensereport.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/fichinter.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/files.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/fiscalyear.lib.php
+		#- %currentWorkingDirectory%/htdocs/core/lib/format_cards.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/fourn.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/functions.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/functions2.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/geturl.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/holiday.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/hrm.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/images.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/import.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/invoice.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/invoice2.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/json.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/ldap.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/loan.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/mailmanspip.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/member.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/memory.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/modulebuilder.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/multicurrency.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/oauth.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/order.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/parsemd.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/payments.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/pdf.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/prelevement.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/price.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/product.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/project.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/propal.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/reception.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/report.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/resource.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/salaries.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/security.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/security2.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/sendings.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/signature.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/stock.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/supplier_proposal.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/takepos.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/tax.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/ticket.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/treeview.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/trip.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/usergroups.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/vat.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/website.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/ws.lib.php
+		- %currentWorkingDirectory%/htdocs/core/lib/xcal.lib.php
 	featureToggles:
 		subtractableTypes: false
 		validateParameters: false
@@ -58,14 +184,17 @@ parameters:
 	reportMagicMethods: false
 	reportMagicProperties: false
 	ignoreErrors:
-		- 
-			message: '#Call to an undefined method abcdef#'
-			path: %currentWorkingDirectory%/dirtoignoreerror/*
 		- '#Undefined variable: \$langs#'
 		- '#Undefined variable: \$user#'
 		- '#Undefined variable: \$db#'
 		- '#Undefined variable: \$conf#'
 		- '#Undefined variable: \$hookmanager#'
+		- '#Undefined variable: \$mysoc#'
+		- '#Undefined variable: \$error#'
+		- '#Undefined variable: \$errors#'
+		- '#Undefined variable: \$form#'
+		- message: '#Undefined variable: \$object#'
+		  path: %currentWorkingDirectory%/htdocs/societe/tpl
 	internalErrorsCountLimit: 50
 	cache:
 	    nodesByFileCountMax: 512

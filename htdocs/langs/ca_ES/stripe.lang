@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Configuració del mòdul Stripe
-StripeDesc=Mòdul per oferir una pàgina de pagament en línia que accepti pagaments amb targeta de crèdit/dèbit mitjançant <a href="http://www.stripe.com" target="_blank">Stripe</a>. Això es pot utilitzar per permetre als vostres clients fer pagaments oberts o el pagament d'un objecte particular de Dolibarr (factura, comanda, ...)
+StripeDesc=Ofereix als clients una pàgina de pagament en línia de Stripe per als pagaments amb targetes credit / cebit a través de <a href="http://www.stripe.com" target="_blank"> Stripe </a>. Això es pot utilitzar per permetre als vostres clients fer pagaments ad-hoc o pagaments relacionats amb un objecte particular de Dolibarr (factura, comanda ...)
 StripeOrCBDoPayment=Pagar amb targeta de crèdit o Stripe
 FollowingUrlAreAvailableToMakePayments=Les següents URL estan disponibles per a permetre a un client fer un cobrament en objectes de Dolibarr
 PaymentForm=Formulari de pagament
@@ -9,14 +9,14 @@ ThisScreenAllowsYouToPay=Aquesta pantalla li permet fer el seu pagament en líni
 ThisIsInformationOnPayment=Aquí està la informació sobre el pagament a realitzar
 ToComplete=A completar
 YourEMail=E-mail de confirmació de pagament
-STRIPE_PAYONLINE_SENDEMAIL=E-Mail a avisar en cas de pagament (amb èxit o no)
+STRIPE_PAYONLINE_SENDEMAIL=Notificació de correu electrònic després d'un intent de pagament (èxit o fracàs)
 Creditor=Beneficiari
 PaymentCode=Codi de pagament
-StripeDoPayment=Pagament amb targeta de crèdit o dèbit (Stripe)
+StripeDoPayment=Paga amb Stripe
 YouWillBeRedirectedOnStripe=Se us redirigirà a la pàgina de Stripe assegurada per introduir la informació de la vostra targeta de crèdit
 Continue=Continuar
 ToOfferALinkForOnlinePayment=URL de pagament %s
-ToOfferALinkForOnlinePaymentOnOrder=URL que ofereix una interfície de cobrament en línia %s basada en l'import d'una comanda de client
+ToOfferALinkForOnlinePaymentOnOrder=URL per oferir una interfície d'usuari de pagament en línia %s per a un ordre de venda
 ToOfferALinkForOnlinePaymentOnInvoice=URL que ofereix una interfície de cobrament en línia %s basada en l'import d'una factura a client
 ToOfferALinkForOnlinePaymentOnContractLine=URL que ofereix una interfície de pagament en línia %s basada en l'import d'una línia de contracte
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL que ofereix una interfície de pagament en línia %s basada en un impport llíure
@@ -35,12 +35,12 @@ STRIPE_TEST_SECRET_KEY=Clau secreta de test
 STRIPE_TEST_PUBLISHABLE_KEY=Clau de test publicable
 STRIPE_TEST_WEBHOOK_KEY=Clau de prova de Webhook
 STRIPE_LIVE_SECRET_KEY=Clau secreta
-STRIPE_LIVE_PUBLISHABLE_KEY=Clau pubiclable
+STRIPE_LIVE_PUBLISHABLE_KEY=Clau pubicable
 STRIPE_LIVE_WEBHOOK_KEY=Webhook clau en directe
 ONLINE_PAYMENT_WAREHOUSE=Les existències per utilitzar per disminuir les existències quan es fa el pagament en línia <br> (Pendent de fer Quan es fa una opció per reduir l'estoc en una acció a la factura i es genera la factura el pagament en línia?)
 StripeLiveEnabled=Stripe live activat (del contrari en mode test/sandbox)
 StripeImportPayment=Importar pagaments per Stripe
-ExampleOfTestCreditCard=Exemple de targeta de crèdit per a prova: %s (vàlid), %s (error CVC), %s (vençut), %s (falla de càrrega)
+ExampleOfTestCreditCard=Exemple de targeta de crèdit per a la prova: %s => vàlid, %s => error CVC, %s => caducat, %s => falla la càrrega
 StripeGateways=Passarel·les Stripe
 OAUTH_STRIPE_TEST_ID=Identificador de client de Stripe Connect (ca _...)
 OAUTH_STRIPE_LIVE_ID=Identificador de client de Stripe Connect (ca _...)
@@ -62,3 +62,8 @@ CreateCustomerOnStripe=Crea un client a Stripe
 CreateCardOnStripe=Crea una targeta a Stripe
 ShowInStripe=Mostra a Stripe
 StripeUserAccountForActions=Compte d'usuari per utilitzar en alguns e-mails de notificació d'esdeveniments Stripe (pagaments Stripe)
+StripePayoutList=Llista de pagaments de Stripe
+ToOfferALinkForTestWebhook=Enllaç a la configuració de Stripe WebHook per trucar a l’IPN (mode de prova)
+ToOfferALinkForLiveWebhook=Enllaç a la configuració de Stripe WebHook per trucar a l’IPN (mode en directe)
+PaymentWillBeRecordedForNextPeriod=El pagament es registrarà per al període següent.
+ClickHereToTryAgain=<a href="%s">Feu clic aquí per tornar-ho a provar ...</a>

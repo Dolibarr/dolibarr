@@ -23,7 +23,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -134,7 +134,6 @@ class Reception extends CommonObject
 	        $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 	        foreach ($dirmodels as $reldir) {
-
 		        $dir = dol_buildpath($reldir."core/modules/reception/");
 
 		        // Load file with numbering class (if found)
@@ -259,7 +258,7 @@ class Reception extends CommonObject
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
-				// Insertion des lignes
+				// Insert of lines
 				$num=count($this->lines);
 				for ($i = 0; $i < $num; $i++)
 				{
@@ -372,7 +371,7 @@ class Reception extends CommonObject
 		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
 		$sql.= ", e.note_private, e.note_public";
         $sql.= ', e.fk_incoterms, e.location_incoterms';
-        $sql.= ', i.libelle as libelle_incoterms';
+        $sql.= ', i.libelle as label_incoterms';
 		$sql.= " FROM ".MAIN_DB_PREFIX."reception as e";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
@@ -431,7 +430,7 @@ class Reception extends CommonObject
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
 				$this->location_incoterms = $obj->location_incoterms;
-				$this->libelle_incoterms = $obj->libelle_incoterms;
+				$this->label_incoterms = $obj->label_incoterms;
 
 				$this->db->free($result);
 
@@ -453,8 +452,8 @@ class Reception extends CommonObject
 				// fetch optionals attributes and labels
 				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element, true);
-				$this->fetch_optionals($this->id, $extralabels);
+				$extrafields->fetch_name_optionals_label($this->table_element, true);
+				$this->fetch_optionals($this->id);
 
 				/*
 				 * Lines
@@ -643,13 +642,18 @@ class Reception extends CommonObject
 			// Rename directory if dir was a temporary ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref))
 			{
-				// On renomme repertoire ($this->ref = ancienne ref, $numfa = nouvelle ref)
-				// in order not to lose the attached files
+				// Now we rename also files into index
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'reception/".$this->db->escape($this->newref)."'";
+				$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'reception/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($numref);
 				$dirsource = $conf->reception->dir_output.'/'.$oldref;
 				$dirdest = $conf->reception->dir_output.'/'.$newref;
-				if (file_exists($dirsource))
+				if (! $error && file_exists($dirsource))
 				{
 					dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
 

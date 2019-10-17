@@ -38,6 +38,7 @@ ActionsEvents=Události, pro které Dolibarr vytvoří akci v programu automatic
 EventRemindersByEmailNotEnabled=Připomenutí událostí e-mailem nebyla povolena do %snastavení modulu .
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Subjekt %s vytvořen
+COMPANY_DELETEInDolibarr=Third party %s deleted
 ContractValidatedInDolibarr=Kontrakt %s ověřen
 CONTRACT_DELETEInDolibarr=Smlouva %s byla smazána
 PropalClosedSignedInDolibarr=Nabídka %s podepsána
@@ -95,7 +96,8 @@ PROJECT_MODIFYInDolibarr=Projekt %s modifikované
 PROJECT_DELETEInDolibarr=Projekt %s byl smazán
 TICKET_CREATEInDolibarr=Lístek %s byl vytvořen 
 TICKET_MODIFYInDolibarr=Změna lístku %s
-TICKET_CLOSEInDolibarr=Ticket %s closed
+TICKET_ASSIGNEDInDolibarr=Ticket %s assigned
+TICKET_CLOSEInDolibarr=Lístek %s uzavřen
 TICKET_DELETEInDolibarr=Lístek %s byl smazán
 ##### End agenda events #####
 AgendaModelModule=Šablony dokumentů pro události

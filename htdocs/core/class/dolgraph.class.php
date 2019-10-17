@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -47,13 +47,19 @@ class DolGraph
 	public $data;				// Data of graph: array(array('abs1',valA1,valB1), array('abs2',valA2,valB2), ...)
 	public $title;				// Title of graph
 	public $cssprefix='';		// To add into css styles
+
+	/**
+	 * @var int|string 		Width of graph. It can be a numeric for pixels or a string like '100%'
+	 */
 	public $width=380;
+	/**
+	 * @var int 			Height of graph
+	 */
 	public $height=200;
+
 	public $MaxValue=0;
 	public $MinValue=0;
 	public $SetShading=0;
-
-	public $PrecisionY=-1;
 
 	public $horizTickIncrement=-1;
 	public $SetNumXTicks=-1;
@@ -108,7 +114,6 @@ class DolGraph
 			if (! $isgdinstalled)
 			{
 				$this->error="Error: PHP GD module is not available. It is required to build graphics.";
-				return -1;
 			}
 		}
 
@@ -134,11 +139,11 @@ class DolGraph
 	 *
 	 * @param 	float	$which_prec		Precision
 	 * @return 	boolean
+	 * @deprecated
 	 */
 	public function SetPrecisionY($which_prec)
 	{
         // phpcs:enable
-		$this->PrecisionY = $which_prec;
 		return true;
 	}
 
@@ -229,7 +234,7 @@ class DolGraph
 	/**
 	 * Set width
 	 *
-	 * @param 	int		$w			Width
+	 * @param 	int|string		$w			Width (Example: 320 or '100%')
 	 * @return	boolean|null				True
 	 */
 	public function SetWidth($w)
@@ -883,6 +888,7 @@ class DolGraph
 	private function draw_jflot($file, $fileurl)
 	{
         // phpcs:enable
+		global $langs;
 
 		dol_syslog(get_class($this)."::draw_jflot this->type=".join(',', $this->type)." this->MaxValue=".$this->MaxValue);
 
@@ -935,7 +941,7 @@ class DolGraph
 		$tag=dol_escape_htmltag(dol_string_unaccent(dol_string_nospecial(basename($file), '_', array('-','.'))));
 
 		$this->stringtoshow ='<!-- Build using '.$this->_library.' -->'."\n";
-		if (! empty($this->title)) $this->stringtoshow.='<div class="center" class="dolgraphtitle'.(empty($this->cssprefix)?'':' dolgraphtitle'.$this->cssprefix).'">'.$this->title.'</div>';
+		if (! empty($this->title)) $this->stringtoshow.='<div class="center dolgraphtitle'.(empty($this->cssprefix)?'':' dolgraphtitle'.$this->cssprefix).'">'.$this->title.'</div>';
 		if (! empty($this->shownographyet))
 		{
 		  $this->stringtoshow.='<div style="width:'.$this->width.'px;height:'.$this->height.'px;" class="nographyet"></div>';
@@ -1088,7 +1094,7 @@ class DolGraph
 				$i++;
 			}
 			// shadowSize: 0 -> Drawing is faster without shadows
-			$this->stringtoshow.="\n".' ], { series: { shadowSize: 0, stack: stack, lines: { fill: false, steps: steps }, bars: { barWidth: 0.6 } }'."\n";
+			$this->stringtoshow.="\n".' ], { series: { shadowSize: 0, stack: stack, lines: { fill: false, steps: steps }, bars: { barWidth: 0.6,  fillColor: { colors: [{opacity: 0.9 }, {opacity: 0.85}] }} }'."\n";
 
 			// Xaxis
 			$this->stringtoshow.=', xaxis: { ticks: ['."\n";

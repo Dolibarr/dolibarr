@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -163,7 +163,7 @@ class MouvementStock extends CommonObject
 
 		$this->db->begin();
 
-		$product->load_stock();
+		$product->load_stock('novirtual');
 
 		// Test if product require batch data. If yes, and there is not, we throw an error.
 		if (! empty($conf->productbatch->enabled) && $product->hasbatch() && ! $skip_batch)
@@ -344,17 +344,31 @@ class MouvementStock extends CommonObject
 
 		if ($movestock && $entrepot_id > 0)	// Change stock for current product, change for subproduct is done after
 		{
+			$fk_project = 0;
 			if(!empty($this->origin)) {			// This is set by caller for tracking reason
 				$origintype = $this->origin->element;
 				$fk_origin = $this->origin->id;
+				if($origintype == 'project') $fk_project = $fk_origin;
+				else
+				{
+					$res = $this->origin->fetch($fk_origin);
+					if ($res > 0)
+					{
+						if (!empty($this->origin->fk_project))
+						{
+							$fk_project = $this->origin->fk_project;
+						}
+					}
+				}
 			} else {
 				$origintype = '';
 				$fk_origin = 0;
+				$fk_project = 0;
 			}
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement(";
 			$sql.= " datem, fk_product, batch, eatby, sellby,";
-			$sql.= " fk_entrepot, value, type_mouvement, fk_user_author, label, inventorycode, price, fk_origin, origintype";
+			$sql.= " fk_entrepot, value, type_mouvement, fk_user_author, label, inventorycode, price, fk_origin, origintype, fk_projet";
 			$sql.= ")";
 			$sql.= " VALUES ('".$this->db->idate($now)."', ".$this->product_id.", ";
 			$sql.= " ".($batch?"'".$batch."'":"null").", ";
@@ -366,7 +380,8 @@ class MouvementStock extends CommonObject
 			$sql.= " ".($inventorycode?"'".$this->db->escape($inventorycode)."'":"null").",";
 			$sql.= " '".price2num($price)."',";
 			$sql.= " '".$fk_origin."',";
-			$sql.= " '".$origintype."'";
+			$sql.= " '".$origintype."',";
+			$sql.= " ". $fk_project;
 			$sql.= ")";
 
 			dol_syslog(get_class($this)."::_create insert record into stock_mouvement", LOG_DEBUG);
@@ -569,7 +584,8 @@ class MouvementStock extends CommonObject
 	    $sql .= " t.inventorycode,";
 	    $sql .= " t.batch,";
 	    $sql .= " t.eatby,";
-	    $sql .= " t.sellby";
+	    $sql .= " t.sellby,";
+	    $sql .= " t.fk_projet";
 	    $sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 	    $sql.= ' WHERE 1 = 1';
 	    //if (null !== $ref) {
@@ -1092,7 +1108,6 @@ class MouvementStock extends CommonObject
 		$langs->load("stocks");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'stdmovement';
 
 			if ($this->modelpdf) {

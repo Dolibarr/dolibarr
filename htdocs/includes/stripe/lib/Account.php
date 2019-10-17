@@ -152,8 +152,8 @@ class Account extends ApiResource
 
 
     /**
-     * @param string|null $id The ID of the account to which the capability belongs.
-     * @param string|null $capabilityId The ID of the capability to retrieve.
+     * @param string $id The ID of the account to which the capability belongs.
+     * @param string $capabilityId The ID of the capability to retrieve.
      * @param array|null $params
      * @param array|string|null $opts
      *
@@ -165,8 +165,8 @@ class Account extends ApiResource
     }
 
     /**
-     * @param string|null $id The ID of the account to which the capability belongs.
-     * @param string|null $capabilityId The ID of the capability to update.
+     * @param string $id The ID of the account to which the capability belongs.
+     * @param string $capabilityId The ID of the capability to update.
      * @param array|null $params
      * @param array|string|null $opts
      *
@@ -178,7 +178,7 @@ class Account extends ApiResource
     }
 
     /**
-     * @param string|null $id The ID of the account on which to retrieve the capabilities.
+     * @param string $id The ID of the account on which to retrieve the capabilities.
      * @param array|null $params
      * @param array|string|null $opts
      *
@@ -190,7 +190,7 @@ class Account extends ApiResource
     }
 
     /**
-     * @param string|null $id The ID of the account on which to create the external account.
+     * @param string $id The ID of the account on which to create the external account.
      * @param array|null $params
      * @param array|string|null $opts
      *
@@ -202,8 +202,8 @@ class Account extends ApiResource
     }
 
     /**
-     * @param string|null $id The ID of the account to which the external account belongs.
-     * @param array|null $externalAccountId The ID of the external account to retrieve.
+     * @param string $id The ID of the account to which the external account belongs.
+     * @param string $externalAccountId The ID of the external account to retrieve.
      * @param array|null $params
      * @param array|string|null $opts
      *
@@ -215,8 +215,8 @@ class Account extends ApiResource
     }
 
     /**
-     * @param string|null $id The ID of the account to which the external account belongs.
-     * @param array|null $externalAccountId The ID of the external account to update.
+     * @param string $id The ID of the account to which the external account belongs.
+     * @param string $externalAccountId The ID of the external account to update.
      * @param array|null $params
      * @param array|string|null $opts
      *
@@ -228,8 +228,8 @@ class Account extends ApiResource
     }
 
     /**
-     * @param string|null $id The ID of the account to which the external account belongs.
-     * @param array|null $externalAccountId The ID of the external account to delete.
+     * @param string $id The ID of the account to which the external account belongs.
+     * @param string $externalAccountId The ID of the external account to delete.
      * @param array|null $params
      * @param array|string|null $opts
      *
@@ -241,7 +241,7 @@ class Account extends ApiResource
     }
 
     /**
-     * @param string|null $id The ID of the account on which to retrieve the external accounts.
+     * @param string $id The ID of the account on which to retrieve the external accounts.
      * @param array|null $params
      * @param array|string|null $opts
      *
@@ -253,7 +253,7 @@ class Account extends ApiResource
     }
 
     /**
-     * @param string|null $id The ID of the account on which to create the login link.
+     * @param string $id The ID of the account on which to create the login link.
      * @param array|null $params
      * @param array|string|null $opts
      *
@@ -280,7 +280,7 @@ class Account extends ApiResource
     }
 
     /**
-     * @param string|null $id The ID of the account on which to create the person.
+     * @param string $id The ID of the account on which to create the person.
      * @param array|null $params
      * @param array|string|null $opts
      *
@@ -292,8 +292,8 @@ class Account extends ApiResource
     }
 
     /**
-     * @param string|null $id The ID of the account to which the person belongs.
-     * @param string|null $personId The ID of the person to retrieve.
+     * @param string $id The ID of the account to which the person belongs.
+     * @param string $personId The ID of the person to retrieve.
      * @param array|null $params
      * @param array|string|null $opts
      *
@@ -305,8 +305,8 @@ class Account extends ApiResource
     }
 
     /**
-     * @param string|null $id The ID of the account to which the person belongs.
-     * @param string|null $personId The ID of the person to update.
+     * @param string $id The ID of the account to which the person belongs.
+     * @param string $personId The ID of the person to update.
      * @param array|null $params
      * @param array|string|null $opts
      *
@@ -318,8 +318,8 @@ class Account extends ApiResource
     }
 
     /**
-     * @param string|null $id The ID of the account to which the person belongs.
-     * @param string|null $personId The ID of the person to delete.
+     * @param string $id The ID of the account to which the person belongs.
+     * @param string $personId The ID of the person to delete.
      * @param array|null $params
      * @param array|string|null $opts
      *
@@ -331,7 +331,7 @@ class Account extends ApiResource
     }
 
     /**
-     * @param string|null $id The ID of the account on which to retrieve the persons.
+     * @param string $id The ID of the account on which to retrieve the persons.
      * @param array|null $params
      * @param array|string|null $opts
      *

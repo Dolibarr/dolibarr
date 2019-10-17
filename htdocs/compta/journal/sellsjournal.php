@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -87,7 +87,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 	$date_start=dol_get_first_day($pastmonthyear, $pastmonth, false); $date_end=dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
 
-$nom=$langs->trans("SellsJournal");
+$name=$langs->trans("SellsJournal");
 $periodlink='';
 $exportlink='';
 $builddate=dol_now();
@@ -146,7 +146,7 @@ if ($result)
    	{
    	    $obj = $db->fetch_object($result);
    	    // les variables
-   	    $cptcli = (! empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER)?$conf->global->ACCOUNTING_ACCOUNT_CUSTOMER:$langs->trans("CodeNotDef"));
+   	    $cptcli = (($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER != "")?$conf->global->ACCOUNTING_ACCOUNT_CUSTOMER:$langs->trans("CodeNotDef"));
    	    $compta_soc = (! empty($obj->code_compta)?$obj->code_compta:$cptcli);
 		$compta_prod = $obj->accountancy_code_sell;
 		if (empty($compta_prod))

@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -58,9 +58,9 @@ class box_propales extends ModeleBoxes
     {
         global $user;
 
-        $this->db=$db;
+        $this->db = $db;
 
-        $this->hidden=! ($user->rights->propale->lire);
+        $this->hidden = ! ($user->rights->propale->lire);
     }
 
     /**
@@ -71,14 +71,14 @@ class box_propales extends ModeleBoxes
      */
     public function loadBox($max = 5)
     {
-    	global $user, $langs, $db, $conf;
+    	global $user, $langs, $conf;
 
     	$this->max=$max;
 
     	include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-    	$propalstatic=new Propal($db);
-        $societestatic = new Societe($db);
+    	$propalstatic=new Propal($this->db);
+        $societestatic = new Societe($this->db);
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."Propals", $max));
 
@@ -95,23 +95,23 @@ class box_propales extends ModeleBoxes
     		if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
             if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY p.datep DESC, p.ref DESC ";
             else $sql.= " ORDER BY p.tms DESC, p.ref DESC ";
-    		$sql.= $db->plimit($max, 0);
+    		$sql.= $this->db->plimit($max, 0);
 
-    		$result = $db->query($sql);
+    		$result = $this->db->query($sql);
     		if ($result)
     		{
-    			$num = $db->num_rows($result);
+    			$num = $this->db->num_rows($result);
     			$now=dol_now();
 
     			$line = 0;
 
                 while ($line < $num) {
-    				$objp = $db->fetch_object($result);
-    				$date=$db->jdate($objp->dp);
-    				$datec=$db->jdate($objp->datec);
-    				$datem=$db->jdate($objp->tms);
-    				$dateterm=$db->jdate($objp->fin_validite);
-    				$dateclose=$db->jdate($objp->date_cloture);
+    				$objp = $this->db->fetch_object($result);
+    				$date=$this->db->jdate($objp->dp);
+    				$datec=$this->db->jdate($objp->datec);
+    				$datem=$this->db->jdate($objp->tms);
+    				$dateterm=$this->db->jdate($objp->fin_validite);
+    				$dateclose=$this->db->jdate($objp->date_cloture);
                     $propalstatic->id = $objp->rowid;
                     $propalstatic->ref = $objp->ref;
                     $propalstatic->total_ht = $objp->total_ht;
@@ -164,12 +164,12 @@ class box_propales extends ModeleBoxes
                         'text'=>$langs->trans("NoRecordedProposals"),
                     );
 
-                $db->free($result);
+                $this->db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
             }
         } else {

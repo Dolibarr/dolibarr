@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -360,6 +360,8 @@ print '  <td class="center" width="80">'.$langs->trans("Status").'</td>';
 print '  <td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
+$arrayofmodules = array();
+
 foreach ($dirsociete as $dirroot)
 {
 	$dir = dol_buildpath($dirroot, 0);
@@ -388,38 +390,44 @@ foreach ($dirsociete as $dirroot)
     			if ($modCodeTiers->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
     			if ($modCodeTiers->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-    			print '<tr class="oddeven">'."\n";
-    			print '<td width="140">'.$modCodeTiers->name.'</td>'."\n";
-    			print '<td>'.$modCodeTiers->info($langs).'</td>'."\n";
-    			print '<td class="nowrap">'.$modCodeTiers->getExample($langs).'</td>'."\n";
-
-    			if ($conf->global->SOCIETE_CODECLIENT_ADDON == "$file")
-    			{
-    				print '<td class="center">'."\n";
-    				print img_picto($langs->trans("Activated"), 'switch_on');
-    				print "</td>\n";
-    			}
-    			else
-    			{
-    				$disabled = false;
-    				if (! empty($conf->multicompany->enabled) && (is_object($mc) && ! empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true);
-    				print '<td class="center">';
-    				if (! $disabled) print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&value='.$file.'">';
-    				print img_picto($langs->trans("Disabled"), 'switch_off');
-    				if (! $disabled) print '</a>';
-    				print '</td>';
-    			}
-
-    			print '<td class="center">';
-    			$s=$modCodeTiers->getToolTip($langs, null, -1);
-    			print $form->textwithpicto('', $s, 1);
-    			print '</td>';
-
-    			print '</tr>';
+    			$arrayofmodules[$file] = $modCodeTiers;
     		}
     	}
     	closedir($handle);
     }
+}
+
+$arrayofmodules = dol_sort_array($arrayofmodules, 'position');
+
+foreach($arrayofmodules as $file => $modCodeTiers)
+{
+	print '<tr class="oddeven">'."\n";
+	print '<td width="140">'.$modCodeTiers->name.'</td>'."\n";
+	print '<td>'.$modCodeTiers->info($langs).'</td>'."\n";
+	print '<td class="nowrap">'.$modCodeTiers->getExample($langs).'</td>'."\n";
+
+	if ($conf->global->SOCIETE_CODECLIENT_ADDON == "$file")
+	{
+		print '<td class="center">'."\n";
+		print img_picto($langs->trans("Activated"), 'switch_on');
+		print "</td>\n";
+	}
+	else
+	{
+		$disabled = (! empty($conf->multicompany->enabled) && (is_object($mc) && ! empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true);
+		print '<td class="center">';
+		if (! $disabled) print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&value='.$file.'">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+		if (! $disabled) print '</a>';
+		print '</td>';
+	}
+
+	print '<td class="center">';
+	$s=$modCodeTiers->getToolTip($langs, null, -1);
+	print $form->textwithpicto('', $s, 1);
+	print '</td>';
+
+	print '</tr>';
 }
 print '</table>';
 print '</div>';
@@ -440,6 +448,8 @@ print '<td>'.$langs->trans("Example").'</td>';
 print '<td class="center" width="80">'.$langs->trans("Status").'</td>';
 print '<td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
+
+$arrayofmodules = array();
 
 foreach ($dirsociete as $dirroot)
 {
@@ -464,33 +474,41 @@ foreach ($dirsociete as $dirroot)
 
     			$modCodeCompta = new $file;
 
-    			print '<tr class="oddeven">';
-    			print '<td>'.$modCodeCompta->name."</td><td>\n";
-    			print $modCodeCompta->info($langs);
-    			print '</td>';
-    			print '<td class="nowrap">'.$modCodeCompta->getExample($langs)."</td>\n";
-
-    			if ($conf->global->SOCIETE_CODECOMPTA_ADDON == "$file")
-    			{
-    				print '<td class="center">';
-    				print img_picto($langs->trans("Activated"), 'switch_on');
-    				print '</td>';
-    			}
-    			else
-    			{
-    				print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodecompta&value='.$file.'">';
-    				print img_picto($langs->trans("Disabled"), 'switch_off');
-    				print '</a></td>';
-    			}
-    			print '<td class="center">';
-    			$s=$modCodeCompta->getToolTip($langs, null, -1);
-    			print $form->textwithpicto('', $s, 1);
-    			print '</td>';
-    			print "</tr>\n";
+    			$arrayofmodules[$file] = $modCodeCompta;
     		}
     	}
-    	closedir($handle);
+        closedir($handle);
     }
+}
+
+$arrayofmodules = dol_sort_array($arrayofmodules, 'position');
+
+
+foreach($arrayofmodules as $file => $modCodeCompta)
+{
+    print '<tr class="oddeven">';
+    print '<td>'.$modCodeCompta->name."</td><td>\n";
+    print $modCodeCompta->info($langs);
+    print '</td>';
+    print '<td class="nowrap">'.$modCodeCompta->getExample($langs)."</td>\n";
+
+    if ($conf->global->SOCIETE_CODECOMPTA_ADDON == "$file")
+    {
+    	print '<td class="center">';
+    	print img_picto($langs->trans("Activated"), 'switch_on');
+    	print '</td>';
+    }
+    else
+    {
+    	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodecompta&value='.$file.'">';
+    	print img_picto($langs->trans("Disabled"), 'switch_off');
+    	print '</a></td>';
+    }
+    print '<td class="center">';
+    $s=$modCodeCompta->getToolTip($langs, null, -1);
+    print $form->textwithpicto('', $s, 1);
+    print '</td>';
+    print "</tr>\n";
 }
 print "</table>\n";
 print '</div>';

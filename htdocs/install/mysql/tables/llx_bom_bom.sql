@@ -11,7 +11,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see http://www.gnu.org/licenses/.
+-- along with this program.  If not, see https://www.gnu.org/licenses/.
 
 
 CREATE TABLE llx_bom_bom(
@@ -23,15 +23,17 @@ CREATE TABLE llx_bom_bom(
 	description text, 
 	note_public text, 
 	note_private text, 
-	date_creation datetime NOT NULL, 
+	fk_product integer, 
+	qty double(24,8),
+	efficiency double(8,4) DEFAULT 1,
+	duration double(8,4) DEFAULT NULL,
+	date_creation datetime NOT NULL,
+	date_valid datetime,
 	tms timestamp, 
-	date_valid datetime, 
-	fk_user_creat integer NOT NULL, 
+	fk_user_creat integer NOT NULL,
 	fk_user_modif integer, 
 	fk_user_valid integer, 
 	import_key varchar(14), 
-	status integer NOT NULL, 
-	fk_product integer, 
-	qty double(24,8)
+	status integer NOT NULL 
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

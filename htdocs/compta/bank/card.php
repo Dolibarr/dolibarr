@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -57,8 +57,9 @@ $result=restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', ''
 
 $object = new Account($db);
 $extrafields = new ExtraFields($db);
+
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('bankcard','globalcard'));
@@ -136,7 +137,7 @@ if ($action == 'add')
 	}
 
 	// Fill array 'array_options' with data from add form
-	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	$ret = $extrafields->setOptionalsFromPost(null, $object);
 
 	if (! $error)
 	{
@@ -236,8 +237,13 @@ if ($action == 'update')
 		$error++;
 	}
 
-	// Fill array 'array_options' with data from add form
-	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	$db->begin();
+
+	if (! $error)
+	{
+		// Fill array 'array_options' with data from add form
+		$ret = $extrafields->setOptionalsFromPost(null, $object);
+	}
 
 	if (! $error)
 	{
@@ -252,9 +258,19 @@ if ($action == 'update')
 		}
 		else
 		{
+			$error++;
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action='edit';     // Force chargement page edition
 		}
+	}
+
+	if (! $error)
+	{
+		$db->commit();
+	}
+	else
+	{
+		$db->rollback();
 	}
 }
 
@@ -412,13 +428,13 @@ if ($action == 'create')
 	$doleditor->Create();
 	print '</td></tr>';
 
- 	// Other attributes
+	// Other attributes
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (empty($reshook))
 	{
-		print $object->showOptionals($extrafields, 'edit', $parameters);
+		print $object->showOptionals($extrafields, 'edit');
 	}
 
 	print '</table>';
@@ -611,7 +627,7 @@ else
 		$conciliate=$object->canBeConciliated();
 		if ($conciliate == -2) print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
 		elseif ($conciliate == -3) print $langs->trans("No").' ('.$langs->trans("Closed").')';
-		else print ($object->rappro==1 ? $langs->trans("Yes") : ($langs->trans("No").' ('.$langs->trans("ConciliationDisabled").')'));
+		else print ($object->rappro==1 ? $langs->trans("Yes") : ($langs->trans("No").' <span class="opacitymedium">('.$langs->trans("ConciliationDisabled").')</span>'));
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("BalanceMinimalAllowed").'</td>';
@@ -639,12 +655,12 @@ else
 			print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
 			print '<td>';
 
-            if ($object->fk_accountancy_journal > 0) {
-                $accountingjournal = new AccountingJournal($db);
-                $accountingjournal->fetch($object->fk_accountancy_journal);
+			if ($object->fk_accountancy_journal > 0) {
+				$accountingjournal = new AccountingJournal($db);
+				$accountingjournal->fetch($object->fk_accountancy_journal);
 
-                print $accountingjournal->getNomUrl(0, 1, 1, '', 1);
-            }
+				print $accountingjournal->getNomUrl(0, 1, 1, '', 1);
+			}
 			print '</td></tr>';
 		}
 
@@ -675,7 +691,6 @@ else
 
 		if ($object->type == Account::TYPE_SAVINGS || $object->type == Account::TYPE_CURRENT)
 		{
-
 			print '<div class="underbanner clearboth"></div>';
 
 			print '<table class="border tableforfield centpercent">';

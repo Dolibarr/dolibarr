@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2009       Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2016  Juanjo Menent	       <jmenent@2byte.es>
  * Copyright (C) 2013-2018  Philippe Grand         <philippe.grand@atoo-net.com>
@@ -16,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 
@@ -28,6 +27,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/bank.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
 
@@ -38,6 +38,7 @@ if (!$user->admin)
     accessforbidden();
 
 $action = GETPOST('action', 'alpha');
+$actionsave=GETPOST('save', 'alpha');
 $value = GETPOST('value', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
@@ -48,7 +49,7 @@ $type = 'bankaccount';
  * Actions
  */
 
-//Order display of bank account
+// Order display of bank account
 if ($action == 'setbankorder') {
     if (dolibarr_set_const($db, "BANK_SHOW_ORDER_OPTION", GETPOST('value', 'alpha'), 'chaine', 0, '', $conf->entity) > 0)
     {
@@ -60,7 +61,7 @@ if ($action == 'setbankorder') {
     }
 }
 
-//Auto report last num releve on conciliate
+// Auto report last num releve on conciliate
 if ($action == 'setreportlastnumreleve') {
     if (dolibarr_set_const($db, "BANK_REPORT_LAST_NUM_RELEVE", 1, 'chaine', 0, '', $conf->entity) > 0)
     {
@@ -79,6 +80,58 @@ elseif ($action == 'unsetreportlastnumreleve') {
     }
     else {
         dol_print_error($db);
+    }
+}
+
+// Colorize movements
+if ($action == 'setbankcolorizemovement') {
+    if (dolibarr_set_const($db, "BANK_COLORIZE_MOVEMENT", 1, 'chaine', 0, '', $conf->entity) > 0)
+    {
+        header("Location: " . $_SERVER["PHP_SELF"]);
+        exit;
+    }
+    else {
+        dol_print_error($db);
+    }
+}
+elseif ($action == 'unsetbankcolorizemovement') {
+    if (dolibarr_set_const($db, "BANK_COLORIZE_MOVEMENT", 0, 'chaine', 0, '', $conf->entity) > 0)
+    {
+        header("Location: " . $_SERVER["PHP_SELF"]);
+        exit;
+    }
+    else {
+        dol_print_error($db);
+    }
+}
+
+if ($actionsave)
+{
+    $db->begin();
+
+    $i=1; $errorsaved=0;
+    $error=0;
+
+    // Save colors
+    while ($i <= 2)
+    {
+        $color=trim(GETPOST('BANK_COLORIZE_MOVEMENT_COLOR'.$i, 'alpha'));
+        if ($color=='-1') $color='';
+
+        $res=dolibarr_set_const($db, 'BANK_COLORIZE_MOVEMENT_COLOR'.$i, $color, 'chaine', 0, '', $conf->entity);
+        if (! $res > 0) $error++;
+        $i++;
+    }
+
+    if (! $error)
+    {
+        $db->commit();
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        $db->rollback();
+        if (empty($errorsaved))	setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -157,10 +210,11 @@ elseif ($action == 'setdoc') {
 
 
 /*
- * view
+ * View
  */
 
 $form = new Form($db);
+$formother=new FormOther($db);
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
@@ -168,6 +222,10 @@ llxHeader("", $langs->trans("BankSetupModule"));
 
 $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
 print load_fiche_titre($langs->trans("BankSetupModule"), $linkback, 'title_setup');
+
+print '<form name="bankmovementcolorconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="save">';
 
 $head = bank_admin_prepare_head(null);
 dol_fiche_head($head, 'general', $langs->trans("BankSetupModule"), -1, 'account');
@@ -195,7 +253,6 @@ $i = 0;
 
 $nbofbank = count($bankorder);
 while ($i < $nbofbank) {
-
     print '<tr class="oddeven">';
     print '<td>' . $bankorder[$i][0] . "</td><td>\n";
     print $bankorder[$i][1];
@@ -283,7 +340,6 @@ foreach ($dirmodels as $reldir) {
 
                 foreach ($filelist as $file) {
                     if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
-
                         if (file_exists($dir . '/' . $file)) {
                             $name = substr($file, 4, dol_strlen($file) - 16);
                             $classname = substr($file, 0, dol_strlen($file) - 12);
@@ -372,7 +428,56 @@ foreach ($dirmodels as $reldir) {
 print '</table>';
 //}
 
+print '<br><br>';
 
+print load_fiche_titre($langs->trans("BankColorizeMovement"), '', '');
+print '<table class="noborder" width="100%">';
+print "<tr class=\"liste_titre\">\n";
+print '<td colspan="4">' . $langs->trans("Name") . '</td>';
+print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
+print "</tr>\n";
+
+print '<tr class="oddeven"><td colspan="4" width="100">';
+print $langs->trans('BankColorizeMovementDesc');
+print "</td>";
+// Active
+if ($conf->global->BANK_COLORIZE_MOVEMENT) {
+    print '<td align="center">' . "\n";
+    print '<a href="' . $_SERVER["PHP_SELF"] . '?action=unsetbankcolorizemovement">';
+    print img_picto($langs->trans("Enabled"), 'switch_on');
+    print '</a>';
+    print '</td>';
+}
+else
+{
+    print '<td align="center">' . "\n";
+    print '<a href="' . $_SERVER["PHP_SELF"] . '?action=setbankcolorizemovement">' . img_picto($langs->trans("Disabled"), 'switch_off') . '</a>';
+    print "</td>";
+}
+
+print "</tr>\n";
+
+if(! empty($conf->global->BANK_COLORIZE_MOVEMENT))
+{
+    $i=1;
+    while ($i <= 2)
+    {
+        $key=$i;
+        $color='BANK_COLORIZE_MOVEMENT_COLOR'.$key;
+
+        print '<tr class="oddeven">';
+
+        // Label
+        print '<td colspan="4" width="180" class="nowrap">'.$langs->trans("BankColorizeMovementName".$key)."</td>";
+        // Color
+        print '<td class="nowrap right">';
+        print $formother->selectColor((GETPOST("BANK_COLORIZE_MOVEMENT_COLOR".$key)?GETPOST("BANK_COLORIZE_MOVEMENT_COLOR".$key):$conf->global->$color), "BANK_COLORIZE_MOVEMENT_COLOR".$key, 'bankmovementcolorconfig', 1, '', 'right hideifnotset');
+        print '</td>';
+        print "</tr>";
+        $i++;
+    }
+}
+print '</table>';
 
 print '<br><br>';
 
@@ -383,7 +488,6 @@ print '<br><br>';
 //if (! empty($conf->global->MAIN_FEATURES_LEVEL))
 //{
 print load_fiche_titre($langs->trans("Other"), '', '');
-
 
 print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
@@ -415,6 +519,12 @@ else
 print "</tr>\n";
 print '</table>';
 dol_fiche_end();
+
+print '<div class="center">';
+print '<input type="submit" id="save" name="save" class="button hideifnotset" value="'.$langs->trans("Save").'">';
+print '</div>';
+
+print "</form>\n";
 
 // End of page
 llxFooter();

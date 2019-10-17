@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -158,7 +158,7 @@ class modWebsite extends DolibarrModules
     	// Remove permissions and default values
     	$this->remove($options);
 
-    	// Copy flags and octicons directoru
+    	// Copy flags and octicons directory
     	$dirarray=array('common/flags', 'common/octicons');
     	foreach($dirarray as $dir)
     	{
@@ -177,6 +177,26 @@ class modWebsite extends DolibarrModules
 	    			return 0;
 	    		}
 	    	}
+    	}
+
+    	// Website templates
+    	$srcroot=DOL_DOCUMENT_ROOT.'/install/doctemplates/websites';
+    	$destroot=DOL_DATA_ROOT.'/doctemplates/websites';
+
+    	dol_mkdir($destroot);
+
+    	$docs=dol_dir_list($srcroot, 'files', 0, 'website_.*(\.zip|\.jpg)$');
+    	foreach($docs as $cursorfile)
+    	{
+	    		$src=$srcroot.'/'.$cursorfile['name'];
+	    		$dest=$destroot.'/'.$cursorfile['name'];
+
+	    		$result=dol_copy($src, $dest, 0, 0);
+	    		if ($result < 0)
+	    		{
+	    			$langs->load("errors");
+	    			$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
+	    		}
     	}
 
     	$sql = array();

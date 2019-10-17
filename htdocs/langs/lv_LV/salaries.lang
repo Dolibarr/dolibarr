@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Accounting account used for user third parties
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Grāmatvedības konts, ko izmanto trešām pusēm
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Lietotāja kartē norādītais grāmatvedības konts tiks izmantots tikai pakārtotajam grāmatvedim. Šis viens tiks izmantots General Ledger un noklusējuma vērtība Subledged grāmatvedībai, ja lietotāja definēts lietotāju grāmatvedības konts nav definēts.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accounting account by default for wage payments
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Grāmatvedības konts pēc noklusējuma algu maksājumiem
 Salary=Alga
 Salaries=Algas
 NewSalaryPayment=Jauna algas izmaksa
@@ -12,8 +12,10 @@ ShowSalaryPayment=Rādīt algu maksājumus
 THM=Vidējā stundas cena
 TJM=Vidējā dienas likme
 CurrentSalary=Pašreizējā alga
-THMDescription=This value may be used to calculate cost of time consumed on a project entered by users if module project is used
-TJMDescription=This value is currently as information only and is not used for any calculation
+THMDescription=Šo vērtību var izmantot, lai aprēķinātu laiku, kas patērēts projektā, ko ievadījuši lietotāji, ja tiek izmantots modulis projekts
+TJMDescription=Šī vērtībai ir tikai informatīva un netiek izmantota aprēķiniem
 LastSalaries=Jaunākie %s algu maksājumi
 AllSalaries=Visi algu maksājumi
 SalariesStatistics=Algas statistika
+# Export
+SalariesAndPayments=Algas un maksājumi

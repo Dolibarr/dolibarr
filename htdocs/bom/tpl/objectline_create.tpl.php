@@ -20,16 +20,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Need to have following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
- * $dateSelector
  * $forceall (0 by default, 1 for supplier invoices/orders)
- * $senderissupplier (0 by default, 1 or 2 for supplier invoices/orders)
- * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  */
 
 // Protection to avoid direct call of template
@@ -39,20 +36,13 @@ if (empty($object) || ! is_object($object)) {
 }
 
 
-if (! isset($dateSelector)) global $dateSelector;	// Take global var only if not already defined into function calling (for example formAddObjectLine)
-global $forceall, $forcetoshowtitlelines, $senderissupplier, $inputalsopricewithtax;
+global $forceall, $forcetoshowtitlelines;
 
-if (! isset($dateSelector)) $dateSelector=1;    // For backward compatibility
-elseif (empty($dateSelector)) $dateSelector=0;
 if (empty($forceall)) $forceall=0;
-if (empty($senderissupplier)) $senderissupplier=0;
-if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 
 
 // Define colspan for the button 'Add'
 $colspan = 3;	// Columns: total ht + col edit + col delete
-if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) $colspan++;//Add column for Total (currency) if required
-if (in_array($object->element, array('propal','commande','order','facture','facturerec','invoice','supplier_proposal','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
 //print $object->element;
 
 // Lines for extrafield
@@ -81,7 +71,7 @@ if ($nolinesbefore) {
 		print '</span></td>';
 	}
 	?>
-	<td class="linecollost right"><?php echo $langs->trans('Lost'); ?></td>
+	<td class="linecollost right"><?php echo $form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')); ?></td>
 	<td class="linecoledit" colspan="<?php echo $colspan; ?>">&nbsp;</td>
 </tr>
 <?php
@@ -107,18 +97,18 @@ if ($nolinesbefore) {
 	{
 		if ($forceall >= 0 && $freelines) echo '<br>';
 		echo '<span class="prod_entry_mode_predef">';
-
 		$filtertype='';
 		if (! empty($object->element) && $object->element == 'contrat' && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $filtertype='1';
 
+		$statustoshow = -1;
 		if (! empty($conf->global->ENTREPOT_EXTRA_STATUS))
 		{
 			// hide products in closed warehouse, but show products for internal transfer
-			$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'));
+			$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'));
 		}
 		else
 		{
-			$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, 1, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, '', GETPOST('combinations', 'array'));
+			$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, '', GETPOST('combinations', 'array'));
 		}
 
 		echo '</span>';
@@ -136,15 +126,10 @@ if ($nolinesbefore) {
 		print $form->selectUnits($line->fk_unit, "units");
 		print '</td>';
 	}
-	$remise_percent = $buyer->remise_percent;
-	if($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')
-	{
-		$remise_percent = $seller->remise_supplier_percent;
-	}
 
 	$coldisplay++;
 	?>
-	<td class="nobottom nowrap linecollost right"><input type="text" size="1" name="lost" id="lost" class="flat right" value="<?php echo (isset($_POST["lsot"])?GETPOST("lost", 'alpha', 2):$remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
+	<td class="nobottom nowrap linecollost right"><input type="text" size="1" name="efficiency" id="efficiency" class="flat right" value="<?php echo (GETPOSTISSET("efficiency")?GETPOST("efficiency", 'alpha'):1); ?>"></td>
 	<?php
 
 	$coldisplay+=$colspan;
@@ -156,7 +141,7 @@ if ($nolinesbefore) {
 
 <?php
 if (is_object($objectline)) {
-	print $objectline->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+	print $objectline->showOptionals($extrafields, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
 }
 ?>
 
@@ -165,39 +150,12 @@ if (is_object($objectline)) {
 /* JQuery for product free or predefined select */
 jQuery(document).ready(function() {
 	/* When changing predefined product, we reload list of supplier prices required for margin combo */
-	$("#idprod, #idprodfournprice").change(function()
+	$("#idprod").change(function()
 	{
-		console.log("#idprod, #idprodfournprice change triggered");
-
-		setforpredef();		// TODO Keep vat combo visible and set it to first entry into list that match result of get_default_tva
-
-		jQuery('#trlinefordates').show();
-
-        /* To process customer price per quantity */
-        var pbq = parseInt($('option:selected', this).attr('data-pbq'));
-        var pbqqty = parseFloat($('option:selected', this).attr('data-pbqqty'));
-        var pbqpercent = parseFloat($('option:selected', this).attr('data-pbqpercent'));
-
-        if ((jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val()) && typeof pbq !== "undefined")
-        {
-            console.log("We choose a price by quanty price_by_qty id = "+pbq+" price_by_qty qty = "+pbqqty+" price_by_qty percent = "+pbqpercent);
-            jQuery("#pbq").val(pbq);
-            if (jQuery("#qty").val() < pbqqty)
-            {
-                    jQuery("#qty").val(pbqqty);
-            }
-            if (jQuery("#remise_percent").val() < pbqpercent)
-            {
-                    jQuery("#remise_percent").val(pbqpercent);
-            }
-        }
-        else
-        {
-            jQuery("#pbq").val('');
-        }
+		console.log("#idprod change triggered");
 
   		/* To set focus */
-  		if (jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val() > 0)
+  		if (jQuery('#idprod').val() > 0)
   	  	{
 			/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
 			jQuery('#dp_desc').focus();

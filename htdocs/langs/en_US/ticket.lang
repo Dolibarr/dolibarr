@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -133,9 +133,14 @@ TicketsIndex=Ticket - home
 TicketList=List of tickets
 TicketAssignedToMeInfos=This page display ticket list created by or assigned to current user
 NoTicketsFound=No ticket found
+NoUnreadTicketsFound=No unread ticket found
 TicketViewAllTickets=View all tickets
 TicketViewNonClosedOnly=View only open tickets
 TicketStatByStatus=Tickets by status
+OrderByDateAsc=Sort by ascending date
+OrderByDateDesc=Sort by descending date
+ShowAsConversation=Show as conversation list
+MessageListViewType=Show as table list
 
 #
 # Ticket card
@@ -221,6 +226,8 @@ TicketConfirmChangeStatus=Confirm the status change: %s ?
 TicketLogStatusChanged=Status changed: %s to %s
 TicketNotNotifyTiersAtCreate=Not notify company at create
 Unread=Unread
+TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
+PublicInterfaceNotEnabled=Public interface was not enabled
 
 #
 # Logs
@@ -268,7 +275,8 @@ TicketPublicInterfaceForbidden=The public interface for the tickets was not enab
 ErrorEmailOrTrackingInvalid=Bad value for tracking ID or email
 OldUser=Old user
 NewUser=New user
-
+NumberOfTicketsByMonth=Number of tickets per month
+NbOfTickets=Number of tickets
 # notifications
 TicketNotificationEmailSubject=Ticket %s updated
 TicketNotificationEmailBody=This is an automatic message to notify you that ticket %s has just been updated

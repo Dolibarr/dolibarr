@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -500,6 +500,10 @@ class Dolresource extends CommonObject
     {
         // phpcs:enable
     	global $conf;
+
+    	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+    	$extrafields=new ExtraFields($this->db);
+
     	$sql="SELECT ";
     	$sql.= " t.rowid,";
     	$sql.= " t.entity,";
@@ -507,23 +511,15 @@ class Dolresource extends CommonObject
     	$sql.= " t.description,";
     	$sql.= " t.fk_code_type_resource,";
     	$sql.= " t.tms,";
-
-    	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-    	$extrafields=new ExtraFields($this->db);
-    	$extralabels=$extrafields->fetch_name_optionals_label($this->table_element, true);
-    	if (is_array($extralabels) && count($extralabels)>0) {
-    		foreach($extralabels as $code=>$label) {
-    			$sql.= " ef.".$code." as extra_".$code.",";
-    		}
-    	}
-
+    	// Add fields from extrafields
+    	if (! empty($extrafields->attributes[$this->table_element]['label']))
+    		foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$this->table_element]['type'][$key] != 'separate' ? "ef.".$key.' as options_'.$key.', ' : '');
     	$sql.= " ty.label as type_label";
     	$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$this->table_element."_extrafields as ef ON ef.fk_object=t.rowid";
     	$sql.= " WHERE t.entity IN (".getEntity('resource').")";
-
-    	//Manage filter
+    	// Manage filter
     	if (!empty($filter)){
     		foreach($filter as $key => $value) {
     			if (strpos($key, 'date')) {
@@ -533,7 +529,7 @@ class Dolresource extends CommonObject
     				$sql.= $value;
     			}
     			else {
-    				$sql.= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+    				$sql.= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
     			}
     		}
     	}
@@ -547,13 +543,13 @@ class Dolresource extends CommonObject
     	if ($limit) $sql.= $this->db->plimit($limit, $offset);
     	dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
 
+        $this->lines=array();
     	$resql=$this->db->query($sql);
     	if ($resql)
     	{
     		$num = $this->db->num_rows($resql);
     		if ($num)
     		{
-    			$this->lines=array();
     			while ($obj = $this->db->fetch_object($resql))
     			{
     				$line = new Dolresource($this->db);
@@ -564,7 +560,6 @@ class Dolresource extends CommonObject
     				$line->fk_code_type_resource	=	$obj->fk_code_type_resource;
     				$line->type_label				=	$obj->type_label;
 
-    				// Retreive all extrafield for thirdparty
     				// fetch optionals attributes and labels
 
     				$line->fetch_optionals();
@@ -849,10 +844,12 @@ class Dolresource extends CommonObject
 	    $sql.= ' FROM '.MAIN_DB_PREFIX.'element_resources';
 	    $sql.= " WHERE element_id=".$element_id." AND element_type='".$this->db->escape($element)."'";
 	    if($resource_type)
-	    	$sql.=" AND resource_type LIKE '%".$resource_type."%'";
+	    	$sql.=" AND resource_type LIKE '%".$this->db->escape($resource_type)."%'";
 	    $sql .= ' ORDER BY resource_type';
 
 	    dol_syslog(get_class($this)."::getElementResources", LOG_DEBUG);
+
+        $resources = array();
 	    $resql = $this->db->query($sql);
 	    if ($resql)
 	    {
@@ -897,14 +894,14 @@ class Dolresource extends CommonObject
     /**
      *      Load in cache resource type code (setup in dictionary)
      *
-     *      @return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      @return     int             Number of lines loaded, 0 if already loaded, <0 if KO
      */
     public function load_cache_code_type_resource()
     {
         // phpcs:enable
     	global $langs;
 
-    	if (count($this->cache_code_type_resource)) return 0;    // Cache deja charge
+    	if (is_array($this->cache_code_type_resource) && count($this->cache_code_type_resource)) return 0;    // Cache deja charge
 
     	$sql = "SELECT rowid, code, label, active";
     	$sql.= " FROM ".MAIN_DB_PREFIX."c_type_resource";

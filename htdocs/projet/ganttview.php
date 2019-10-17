@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -132,7 +132,35 @@ if (($id > 0 && is_numeric($id)) || ! empty($ref))
     print '<div class="fichehalfleft">';
     print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border" width="100%">';
+    print '<table class="border tableforfield centpercent">';
+
+    // Usage
+    print '<tr><td class="tdtop">';
+    print $langs->trans("Usage");
+    print '</td>';
+    print '<td>';
+    if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+    {
+    	print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha')!=''?' checked="checked"':'') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+    	$htmltext = $langs->trans("ProjectFollowOpportunity");
+    	print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+    	print '<br>';
+    }
+    if (empty($conf->global->PROJECT_HIDE_TASKS))
+    {
+    	print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha')!=''?' checked="checked"':'') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
+    	$htmltext = $langs->trans("ProjectFollowTasks");
+    	print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+    	print '<br>';
+    }
+    if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+    {
+    	print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha')!=''?' checked="checked"':'') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+    	$htmltext = $langs->trans("ProjectBillTimeDescription");
+    	print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+    	print '<br>';
+    }
+    print '</td></tr>';
 
     // Visibility
     print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
@@ -166,12 +194,20 @@ if (($id > 0 && is_numeric($id)) || ! empty($ref))
     print '<div class="ficheaddleft">';
     print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border" width="100%">';
+    print '<table class="border tableforfield centpercent">';
 
     // Description
     print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
     print nl2br($object->description);
     print '</td></tr>';
+
+    // Bill time
+    if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+    {
+    	print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
+    	print yn($object->usage_bill_time);
+    	print '</td></tr>';
+    }
 
     // Categories
     if($conf->categorie->enabled) {
@@ -204,12 +240,12 @@ if ($user->rights->projet->all->creer || $user->rights->projet->creer) {
 	}
 }
 
-$linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', $linktocreatetaskUserRight, $linktocreatetaskParam);
+$linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', $linktocreatetaskUserRight, $linktocreatetaskParam);
 
-$linktolist = dolGetButtonTitle($langs->trans('GoToListOfTasks'), '', 'fa fa-tasks', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id);
+$linktolist = dolGetButtonTitle($langs->trans('GoToListOfTasks'), '', 'fa fa-list-alt paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id, '', 1, array('morecss'=>'reposition'));
 
-//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
-print load_fiche_titre($title, $linktolist.' &nbsp; '.$linktocreatetask, 'title_generic.png');
+//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'generic', 0, '', '', 0, 1);
+print load_fiche_titre($title, $linktolist.' &nbsp; '.$linktocreatetask, 'generic');
 
 
 // Get list of tasks in tasksarray and taskarrayfiltered
@@ -224,7 +260,6 @@ $tasksarray=$task->getTasksArray(0, 0, ($object->id ? $object->id : $id), $socid
 
 if (count($tasksarray)>0)
 {
-
 	// Show Gant diagram from $taskarray using JSGantt
 
 	$dateformat=$langs->trans("FormatDateShortJQuery");			// Used by include ganttchart.inc.php later

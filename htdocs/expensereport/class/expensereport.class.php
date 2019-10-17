@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -266,7 +266,6 @@ class ExpenseReport extends CommonObject
                 $result=$this->update_price();
                 if ($result > 0)
                 {
-
 					if (!$notrigger)
 					{
 						// Call trigger
@@ -572,8 +571,8 @@ class ExpenseReport extends CommonObject
 		$this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."expensereport";
-        $sql.= " SET fk_statut = 6, paid=1";
-        $sql.= " WHERE rowid = ".$id." AND fk_statut = 5";
+        $sql.= " SET fk_statut = ".self::STATUS_CLOSED.", paid=1";
+        $sql.= " WHERE rowid = ".$id." AND fk_statut = ".self::STATUS_APPROVED;
 
         dol_syslog(get_class($this)."::set_paid sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -819,7 +818,6 @@ class ExpenseReport extends CommonObject
         $langs->load('trips');
 
         if ($user->rights->expensereport->lire) {
-
             $sql = "SELECT de.fk_expensereport, de.date, de.comments, de.total_ht, de.total_ttc";
             $sql.= " FROM ".MAIN_DB_PREFIX."expensereport_det as de";
             $sql.= " WHERE de.fk_projet = ".$projectid;
@@ -835,7 +833,6 @@ class ExpenseReport extends CommonObject
 
                 while ($i < $num)
                 {
-
                     $objp = $db->fetch_object($result);
 
                     $sql2 = "SELECT d.rowid, d.fk_user_author, d.ref, d.fk_statut";
@@ -1132,11 +1129,10 @@ class ExpenseReport extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
-			if (!$notrigger)
+			if (! $error && ! $notrigger)
 			{
 				// Call trigger
 				$result=$this->call_trigger('EXPENSE_REPORT_VALIDATE', $fuser);
-
 				if ($result < 0) {
 					$error++;
 				}
@@ -1152,15 +1148,20 @@ class ExpenseReport extends CommonObject
 			    {
 			    	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-			    	// On renomme repertoire ($this->ref = ancienne ref, $num = nouvelle ref)
-					// in order not to lose the attachments
+			    	// Now we rename also files into index
+			    	$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'expensereport/".$this->db->escape($this->newref)."'";
+			    	$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expensereport/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$resql = $this->db->query($sql);
+					if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+			    	// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 					$oldref = dol_sanitizeFileName($this->ref);
 					$newref = dol_sanitizeFileName($num);
 					$dirsource = $conf->expensereport->dir_output.'/'.$oldref;
 					$dirdest = $conf->expensereport->dir_output.'/'.$newref;
-					if (file_exists($dirsource))
+					if (! $error && file_exists($dirsource))
 					{
-					    dol_syslog(get_class($this)."::valid() rename dir ".$dirsource." into ".$dirdest);
+					    dol_syslog(get_class($this)."::setValidate() rename dir ".$dirsource." into ".$dirdest);
 
 					    if (@rename($dirsource, $dirdest))
 					    {
@@ -1393,12 +1394,12 @@ class ExpenseReport extends CommonObject
         // phpcs:enable
 		$error = 0;
 
-        if ($this->fk_c_deplacement_statuts != 5)
+		if ($this->paid)
         {
 			$this->db->begin();
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET fk_statut = 5";
+            $sql.= " SET paid = 0";
             $sql.= ' WHERE rowid = '.$this->id;
 
             dol_syslog(get_class($this)."::set_unpaid sql=".$sql, LOG_DEBUG);
@@ -2112,16 +2113,16 @@ class ExpenseReport extends CommonObject
         dol_syslog(get_class($this)."::periode_existe sql=".$sql);
         $result = $this->db->query($sql);
         if ($result) {
-            $num_lignes = $this->db->num_rows($result); $i = 0;
+            $num_rows = $this->db->num_rows($result); $i = 0;
 
-            if ($num_lignes>0)
+            if ($num_rows > 0)
             {
                 $date_d_form = $date_debut;
                 $date_f_form = $date_fin;
 
                 $existe = false;
 
-                while ($i < $num_lignes)
+                while ($i < $num_rows)
                 {
                     $objp = $this->db->fetch_object($result);
 
@@ -2175,8 +2176,8 @@ class ExpenseReport extends CommonObject
         $result = $this->db->query($sql);
         if($result)
         {
-            $num_lignes = $this->db->num_rows($result); $i = 0;
-            while ($i < $num_lignes)
+            $num_rows = $this->db->num_rows($result); $i = 0;
+            while ($i < $num_rows)
             {
                 $objp = $this->db->fetch_object($result);
                 array_push($users_validator, $objp->fk_user);
@@ -2210,7 +2211,6 @@ class ExpenseReport extends CommonObject
         $langs->load("trips");
 
 	    if (! dol_strlen($modele)) {
-
 		    $modele = 'standard';
 
 		    if ($this->modelpdf) {
@@ -2329,12 +2329,14 @@ class ExpenseReport extends CommonObject
 	        {
 	           $response->warning_delay=$conf->expensereport->approve->warning_delay/60/60/24;
 	           $response->label=$langs->trans("ExpenseReportsToApprove");
+	           $response->labelShort=$langs->trans("ToApprove");
 	           $response->url=DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut=2';
 	        }
 	        else
 	        {
 	            $response->warning_delay=$conf->expensereport->payment->warning_delay/60/60/24;
 	            $response->label=$langs->trans("ExpenseReportsToPay");
+	            $response->labelShort=$langs->trans("StatusToPay");
 	            $response->url=DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut=5';
 	        }
 	        $response->img=img_object('', "trip");

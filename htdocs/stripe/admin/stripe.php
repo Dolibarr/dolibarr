@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -57,6 +57,9 @@ if ($action == 'setvalue' && $user->admin)
 		$result = dolibarr_set_const($db, "STRIPE_TEST_SECRET_KEY", GETPOST('STRIPE_TEST_SECRET_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
 		if (! $result > 0)
 			$error ++;
+		$result = dolibarr_set_const($db, "STRIPE_TEST_WEBHOOK_ID", GETPOST('STRIPE_TEST_WEBHOOK_ID', 'alpha'), 'chaine', 0, '', $conf->entity);
+		if (! $result > 0)
+			$error ++;
 		$result = dolibarr_set_const($db, "STRIPE_TEST_WEBHOOK_KEY", GETPOST('STRIPE_TEST_WEBHOOK_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
 		if (! $result > 0)
 			$error ++;
@@ -64,6 +67,9 @@ if ($action == 'setvalue' && $user->admin)
 		if (! $result > 0)
 			$error ++;
 		$result = dolibarr_set_const($db, "STRIPE_LIVE_SECRET_KEY", GETPOST('STRIPE_LIVE_SECRET_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
+		if (! $result > 0)
+			$error ++;
+		$result = dolibarr_set_const($db, "STRIPE_LIVE_WEBHOOK_ID", GETPOST('STRIPE_LIVE_WEBHOOK_ID', 'alpha'), 'chaine', 0, '', $conf->entity);
 		if (! $result > 0)
 			$error ++;
 		$result = dolibarr_set_const($db, "STRIPE_LIVE_WEBHOOK_KEY", GETPOST('STRIPE_LIVE_WEBHOOK_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -194,14 +200,14 @@ if (empty($conf->stripeconnect->enabled))
 	print '</td><td></td></tr>';
 
 	print '<tr class="oddeven"><td>';
-	print '<span class="titlefield fieldrequired">'.$langs->trans("STRIPE_TEST_WEBHOOK_KEY").'</span></td><td>';
+	print '<span class="titlefield">'.$langs->trans("STRIPE_TEST_WEBHOOK_KEY").'</span></td><td>';
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	    print '<input class="minwidth300" type="text" name="STRIPE_TEST_WEBHOOK_ID" value="'.$conf->global->STRIPE_TEST_WEBHOOK_ID.'">';
       print ' &nbsp; '.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx<br>';
 	}
 	print '<input class="minwidth300" type="text" name="STRIPE_TEST_WEBHOOK_KEY" value="'.$conf->global->STRIPE_TEST_WEBHOOK_KEY.'">';
 	print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
-	  $out = img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForTestWebhook").' ';
+	  $out = img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForTestWebhook").' ';
     $url = dol_buildpath('/public/stripe/ipn.php?test', 3);
 	$out.= '<input type="text" id="onlinetestwebhookurl" class="minwidth500" value="'.$url.'">';
 	$out.= ajax_autoselect("onlinetestwebhookurl", 0);
@@ -215,7 +221,7 @@ if (empty($conf->stripeconnect->enabled))
             $endpoint = \Stripe\WebhookEndpoint::retrieve($conf->global->STRIPE_TEST_WEBHOOK_ID);
             $endpoint->enabled_events = $stripearrayofwebhookevents;
             if (GETPOST('webhook', 'alpha') == $conf->global->STRIPE_TEST_WEBHOOK_ID) {
-                if (empty(GETPOST('status', 'alpha'))) {
+                if (! GETPOST('status', 'alpha')) {
                     $endpoint->disabled = true;
                 } else {
                     $endpoint->disabled = false;
@@ -248,7 +254,7 @@ if (empty($conf->stripeconnect->enabled))
 	print price($conf->global->STRIPE_APPLICATION_FEE_PERCENT);
 	print '% + ';
 	print price($conf->global->STRIPE_APPLICATION_FEE);
-	print ' '.$langs->getCurrencySymbol($conf->currency).' '.$langs->trans("minimum").' '.price($conf->global->STRIPE_APPLICATION_FEE_MINIMAL).' '.$langs->getCurrencySymbol($conf->currency).' </td></tr>';
+	print ' '.$langs->getCurrencySymbol($conf->currency).' '.$langs->trans("minimum").' '.price($conf->global->STRIPE_APPLICATION_FEE_MINIMAL).' '.$langs->getCurrencySymbol($conf->currency);
 	print '</td><td></td></tr>';
 }
 
@@ -267,14 +273,14 @@ if (empty($conf->stripeconnect->enabled))
 	print '</td><td></td></tr>';
 
 	print '<tr class="oddeven"><td>';
-	print '<span class="titlefield fieldrequired">'.$langs->trans("STRIPE_LIVE_WEBHOOK_KEY").'</span></td><td>';
+	print '<span class="titlefield">'.$langs->trans("STRIPE_LIVE_WEBHOOK_KEY").'</span></td><td>';
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
       print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_ID" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_ID.'">';
       print ' &nbsp; '.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx<br>';
 	}
 	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_KEY" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_KEY.'">';
 	print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
-    $out = img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForLiveWebhook").' ';
+    $out = img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForLiveWebhook").' ';
     $url = dol_buildpath('/public/stripe/ipn.php', 3);
 	$out.= '<input type="text" id="onlinelivewebhookurl" class="minwidth500" value="'.$url.'">';
 	$out.= ajax_autoselect("onlinelivewebhookurl", 0);

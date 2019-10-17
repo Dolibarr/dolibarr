@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -38,7 +38,7 @@ $id = GETPOST('id', 'int');
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 $object = new Contact($db);
 if ($id > 0) $object->fetch($id);
-if(empty($object->thirdparty)) $object->fetch_thirdparty();
+if (empty($object->thirdparty)) $object->fetch_thirdparty();
 $socid = $object->thirdparty->id;
 
 // Sort & Order fields
@@ -69,7 +69,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 // Customer or supplier selected in drop box
 $thirdTypeSelect = GETPOST("third_select_id");
-$type_element = GETPOST('type_element')?GETPOST('type_element'):'';
+$type_element = GETPOSTISSET('type_element')?GETPOST('type_element'):'';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "bills", "orders", "suppliers", "propal", "interventions", "contracts", "products"));
@@ -173,13 +173,13 @@ if ($type_element == 'fichinter')
 	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, \'1\' as doc_type, f.datec as dateprint, f.fk_statut as status, tc.libelle, ';
 	$tables_from = MAIN_DB_PREFIX.'fichinterdet d';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'fichinter as f ON d.fk_fichinter=f.rowid';
-    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=f.rowid';
+    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=f.rowid AND ec.fk_socpeople='.$object->id;
     $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX."c_type_contact tc ON (ec.fk_c_type_contact=tc.rowid and tc.element='fichinter' and tc.source='external' and tc.active=1)";
 	$where = ' WHERE f.entity IN ('.getEntity('ficheinter').')';
 	$dateprint = 'f.datec';
 	$doc_number='f.ref';
 }
-if ($type_element == 'invoice')
+elseif ($type_element == 'invoice')
 { 	// Customer : show products from invoices
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	$documentstatic=new Facture($db);
@@ -187,14 +187,14 @@ if ($type_element == 'invoice')
 	$tables_from = MAIN_DB_PREFIX.'facturedet d';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture as f ON d.fk_facture=f.rowid';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON d.fk_product=p.rowid';
-    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=f.rowid';
+    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=f.rowid AND ec.fk_socpeople='.$object->id;
     $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX."c_type_contact tc ON (ec.fk_c_type_contact=tc.rowid and tc.element='facture' and tc.source='external' and tc.active=1)";
 	$where = " WHERE f.entity IN (".getEntity('invoice').")";
 	$dateprint = 'f.datef';
 	$doc_number='f.ref';
 	$thirdTypeSelect='customer';
 }
-if ($type_element == 'propal')
+elseif ($type_element == 'propal')
 {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 	$documentstatic=new Propal($db);
@@ -202,14 +202,14 @@ if ($type_element == 'propal')
 	$tables_from = MAIN_DB_PREFIX.'propaldet d';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'propal as c ON d.fk_propal=c.rowid';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON d.fk_product=p.rowid';
-    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=c.rowid';
+    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=c.rowid AND ec.fk_socpeople='.$object->id;
     $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX."c_type_contact tc ON (ec.fk_c_type_contact=tc.rowid and tc.element='propal' and tc.source='external' and tc.active=1)";
 	$where = ' WHERE c.entity IN ('.getEntity('propal').')';
 	$datePrint = 'c.datep';
 	$doc_number='c.ref';
 	$thirdTypeSelect='customer';
 }
-if ($type_element == 'order')
+elseif ($type_element == 'order')
 {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 	$documentstatic=new Commande($db);
@@ -217,14 +217,14 @@ if ($type_element == 'order')
 	$tables_from = MAIN_DB_PREFIX.'commandedet d';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'commande as c ON d.fk_commande=c.rowid';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON d.fk_product=p.rowid';
-    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=c.rowid';
+    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=c.rowid AND ec.fk_socpeople='.$object->id;
     $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX."c_type_contact tc ON (ec.fk_c_type_contact=tc.rowid and tc.element='commande' and tc.source='external' and tc.active=1)";
 	$where = ' WHERE c.entity IN ('.getEntity('order').')';
 	$dateprint = 'c.date_commande';
 	$doc_number='c.ref';
 	$thirdTypeSelect='customer';
 }
-if ($type_element == 'supplier_invoice')
+elseif ($type_element == 'supplier_invoice')
 { 	// Supplier : Show products from invoices.
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 	$documentstatic=new FactureFournisseur($db);
@@ -232,14 +232,14 @@ if ($type_element == 'supplier_invoice')
 	$tables_from = MAIN_DB_PREFIX.'facture_fourn_det d';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn as f ON d.fk_facture_fourn=f.rowid';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON d.fk_product=p.rowid';
-    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=f.rowid';
+    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=f.rowid AND ec.fk_socpeople='.$object->id;
     $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX."c_type_contact tc ON (ec.fk_c_type_contact=tc.rowid and tc.element='invoice_supplier' and tc.source='external' and tc.active=1)";
 	$where = ' WHERE f.entity IN ('.getEntity($documentstatic->element).')';
 	$dateprint = 'f.datef';
 	$doc_number='f.ref';
 	$thirdTypeSelect='supplier';
 }
-//if ($type_element == 'supplier_proposal')
+//elseif ($type_element == 'supplier_proposal')
 //{
 //    require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 //    $documentstatic=new SupplierProposal($db);
@@ -252,7 +252,7 @@ if ($type_element == 'supplier_invoice')
 //    $doc_number='c.ref';
 //    $thirdTypeSelect='supplier';
 //}
-if ($type_element == 'supplier_order')
+elseif ($type_element == 'supplier_order')
 { 	// Supplier : Show products from orders.
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 	$documentstatic=new CommandeFournisseur($db);
@@ -260,14 +260,14 @@ if ($type_element == 'supplier_order')
 	$tables_from = MAIN_DB_PREFIX.'commande_fournisseurdet d';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'commande_fournisseur as c ON d.fk_commande=c.rowid';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON d.fk_product=p.rowid';
-    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=c.rowid';
+    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=c.rowid AND ec.fk_socpeople='.$object->id;
     $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX."c_type_contact tc ON (ec.fk_c_type_contact=tc.rowid and tc.element='order_supplier' and tc.source='external' and tc.active=1)";
 	$where = ' WHERE c.entity IN ('.getEntity($documentstatic->element).')';
 	$dateprint = 'c.date_valid';
 	$doc_number='c.ref';
 	$thirdTypeSelect='supplier';
 }
-if ($type_element == 'contract')
+elseif ($type_element == 'contract')
 { 	// Order
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 	$documentstatic=new Contrat($db);
@@ -276,7 +276,7 @@ if ($type_element == 'contract')
 	$tables_from = MAIN_DB_PREFIX.'contratdet d';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'contrat as c ON d.fk_contrat=c.rowid';
     $tables_from.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON d.fk_product=p.rowid';
-    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=c.rowid';
+    $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact ec ON ec.element_id=c.rowid AND ec.fk_socpeople='.$object->id;
     $tables_from.= ' INNER JOIN '.MAIN_DB_PREFIX."c_type_contact tc ON (ec.fk_c_type_contact=tc.rowid and tc.element='contrat' and tc.source='external' and tc.active=1)";
 	$where = ' WHERE c.entity IN ('.getEntity('contrat').')';
 	$dateprint = 'c.date_valid';
@@ -300,19 +300,7 @@ if (!empty($sql_select))
 	$sql.= " FROM "/*.MAIN_DB_PREFIX."societe as s, "*/.$tables_from;
 //	if ($type_element != 'fichinter') $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON d.fk_product = p.rowid ';
 	$sql.= $where;
-	if ($month > 0) {
-		if ($year > 0) {
-			$start = dol_mktime(0, 0, 0, $month, 1, $year);
-			$end = dol_time_plus_duree($start, 1, 'm') - 1;
-			$sql.= " AND ".$dateprint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
-		} else {
-			$sql.= " AND date_format(".$dateprint.", '%m') = '".sprintf('%02d', $month)."'";
-		}
-	} elseif ($year > 0) {
-		$start = dol_mktime(0, 0, 0, 1, 1, $year);
-		$end = dol_time_plus_duree($start, 1, 'y') - 1;
-		$sql.= " AND ".$dateprint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
-	}
+	$sql.= dolSqlDateFilter($dateprint, 0, $month, $year);
 	if ($sref) $sql.= " AND ".$doc_number." LIKE '%".$db->escape($sref)."%'";
 	if ($sprod_fulldescr)
 	{
@@ -536,7 +524,6 @@ if ($sql_select)
 		else
 		{
 			if ($objp->fk_product > 0) {
-
 				echo $form->textwithtooltip($text, $description, 3, '', '', $i, 0, '');
 
 				// Show range
@@ -548,7 +535,6 @@ if ($sql_select)
 					print (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 				}
 			} else {
-
 				if (! empty($objp->label) || ! empty($objp->description))
 				{
 					if ($type==1) $text = img_object($langs->trans('Service'), 'service');

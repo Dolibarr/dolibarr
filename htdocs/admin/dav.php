@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,7 +35,10 @@ if (!$user->admin)
 $action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
+
+
 $arrayofparameters=array(
+	'DAV_RESTICT_ON_IP'=>array('css'=>'minwidth200', 'enabled'=>1),
     'DAV_ALLOW_PRIVATE_DIR'=>array('css'=>'minwidth200', 'enabled'=>2),
     'DAV_ALLOW_PUBLIC_DIR'=>array('css'=>'minwidth200', 'enabled'=>1),
 	'DAV_ALLOW_ECM_DIR'=>array('css'=>'minwidth200', 'enabled'=>$conf->ecm->enabled)
@@ -68,7 +71,6 @@ $head=dav_admin_prepare_head();
 
 dol_fiche_head($head, 'webdav', '', -1, 'action');
 
-
 if ($action == 'edit')
 {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -76,14 +78,17 @@ if ($action == 'edit')
 	print '<input type="hidden" name="action" value="update">';
 
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	foreach($arrayofparameters as $key => $val)
 	{
 		if (isset($val['enabled']) && empty($val['enabled'])) continue;
 
 		print '<tr class="oddeven"><td>';
-		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
+		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
+		$label = $langs->trans($key);
+		if ($key == 'DAV_RESTICT_ON_IP') $label = $langs->trans("RESTRICT_ON_IP");
+		print $form->textwithpicto($label, $tooltiphelp);
 		print '</td><td>';
 		if ($key == 'DAV_ALLOW_PRIVATE_DIR')
 		{
@@ -112,12 +117,15 @@ if ($action == 'edit')
 else
 {
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	foreach($arrayofparameters as $key => $val)
 	{
 		print '<tr class="oddeven"><td>';
-		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
+		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
+		$label = $langs->trans($key);
+		if ($key == 'DAV_RESTICT_ON_IP') $label = $langs->trans("RESTRICT_ON_IP");
+		print $form->textwithpicto($label, $tooltiphelp);
 		print '</td><td>';
 		if ($key == 'DAV_ALLOW_PRIVATE_DIR')
 		{
@@ -166,16 +174,23 @@ $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain
 // Show message
 $message='';
 $url='<a href="'.$urlwithroot.'/dav/fileserver.php" target="_blank">'.$urlwithroot.'/dav/fileserver.php</a>';
-$message.=img_picto('', 'object_globe.png').' '.$langs->trans("WebDavServer", 'WebDAV', $url);
+$message.=img_picto('', 'globe').' '.$langs->trans("WebDavServer", 'WebDAV', $url);
 $message.='<br>';
 if (! empty($conf->global->DAV_ALLOW_PUBLIC_DIR))
 {
 	$urlEntity = (! empty($conf->multicompany->enabled)?'?entity='.$conf->entity:'');
 	$url='<a href="'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'" target="_blank">'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'</a>';
-	$message.=img_picto('', 'object_globe.png').' '.$langs->trans("WebDavServer", 'WebDAV public', $url);
+	$message.=img_picto('', 'globe').' '.$langs->trans("WebDavServer", 'WebDAV public', $url);
 	$message.='<br>';
 }
 print $message;
+
+print '<br><br><br>';
+
+require_once DOL_DOCUMENT_ROOT.'/includes/sabre/autoload.php';
+$version = Sabre\DAV\Version::VERSION;
+print '<span class="opacitymedium">'.$langs->trans("BaseOnSabeDavVersion").' : '.$version.'</span>';
+
 
 // End of page
 llxFooter();

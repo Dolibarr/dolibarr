@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -68,7 +68,7 @@ $extrafields = new ExtraFields($db);
 $adht = new AdherentType($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 $errmsg='';
 $errmsgs=array();
@@ -360,7 +360,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
             	// Set output language
             	$outputlangs = new Translate('', $conf);
             	$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-            	// Load traductions files requiredby by page
+            	// Load traductions files required by page
             	$outputlangs->loadLangs(array("main", "members"));
 
             	// Get email content from template
@@ -478,7 +478,7 @@ if ($rowid > 0)
     print '<div class="fichehalfleft">';
 
     print '<div class="underbanner clearboth"></div>';
-    print '<table class="border" width="100%">';
+    print '<table class="border centpercent tableforfield">';
 
 	// Login
 	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
@@ -490,11 +490,11 @@ if ($rowid > 0)
 	print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
 	// Morphy
-	print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
+	print '<tr><td>'.$langs->trans("MemberNature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
 	print '</tr>';
 
 	// Company
-	print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'</td></tr>';
+	print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->company.'</td></tr>';
 
 	// Civility
 	print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
@@ -571,7 +571,7 @@ if ($rowid > 0)
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans("LinkedToDolibarrThirdParty");
 		print '</td>';
-		if ($action != 'editthirdparty' && $user->rights->adherent->creer) print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editthirdparty&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToThirdParty'), 1).'</a></td>';
+		if ($action != 'editthirdparty' && $user->rights->adherent->creer) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editthirdparty&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToThirdParty'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2" class="valeur">';
 		if ($action == 'editthirdparty')
@@ -614,7 +614,7 @@ if ($rowid > 0)
 		print '<td class="right">';
 		if ($user->rights->user->user->creer)
 		{
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=editlogin&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToUser'), 1).'</a>';
+			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editlogin&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToUser'), 1).'</a>';
 		}
 		print '</td>';
 	}
@@ -667,7 +667,7 @@ if ($rowid > 0)
      */
     if ($action != 'addsubscription' && $action != 'create_thirdparty')
     {
-        $sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe,";
+        $sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe, d.fk_adherent_type as type,";
         $sql.= " c.rowid as crowid, c.subscription,";
         $sql.= " c.datec, c.fk_type as cfk_type,";
         $sql.= " c.dateadh as dateh,";
@@ -705,26 +705,30 @@ if ($rowid > 0)
             print "</tr>\n";
 
             $accountstatic=new Account($db);
+            $adh = new Adherent($db);
             $adht = new AdherentType($db);
 
             while ($i < $num)
             {
                 $objp = $db->fetch_object($result);
 
+                $adh->id = $objp->rowid;
+                $adh->typeid = $objp->type;
+
                 $subscriptionstatic->ref=$objp->crowid;
                 $subscriptionstatic->id=$objp->crowid;
 
-                if ($objp->cfk_type > 0)
+                $typeid = ($objp->cfk_type > 0 ? $objp->cfk_type : $adh->typeid);
+                if ($typeid > 0)
                 {
-                    $adht->fetch($objp->cfk_type);
+                    $adht->fetch($typeid);
                 }
 
                 print '<tr class="oddeven">';
                 print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
                 print '<td class="center">'.dol_print_date($db->jdate($objp->datec), 'dayhour')."</td>\n";
                 print '<td class="center">';
-                if ($objp->cfk_type > 0)
-                {
+                if ($typeid > 0) {
                     print $adht->getNomUrl(1);
                 }
                 print '</td>';
@@ -858,13 +862,13 @@ if ($rowid > 0)
 
 			if ($object->morphy == 'mor')
 			{
-				$companyname=$object->societe;
+				$companyname=$object->company;
 				if (! empty($fullname)) $companyalias=$fullname;
 			}
 			else
 			{
 				$companyname=$fullname;
-				if (! empty($object->societe)) $companyalias=$object->societe;
+				if (! empty($object->company)) $companyalias=$object->company;
 			}
 
 			// Create a form array
@@ -899,7 +903,7 @@ if ($rowid > 0)
         print '<input type="hidden" name="action" value="subscription">';
         print '<input type="hidden" name="rowid" value="'.$rowid.'">';
         print '<input type="hidden" name="memberlabel" id="memberlabel" value="'.dol_escape_htmltag($object->getFullName($langs)).'">';
-        print '<input type="hidden" name="thirdpartylabel" id="thirdpartylabel" value="'.dol_escape_htmltag($object->societe).'">';
+        print '<input type="hidden" name="thirdpartylabel" id="thirdpartylabel" value="'.dol_escape_htmltag($object->company).'">';
 
 		dol_fiche_head('');
 
@@ -1089,7 +1093,7 @@ if ($rowid > 0)
             // Set output language
             $outputlangs = new Translate('', $conf);
             $outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-            // Load traductions files requiredby by page
+            // Load traductions files required by page
             $outputlangs->loadLangs(array("main", "members"));
             // Get email content from template
             $arraydefaultmessage=null;

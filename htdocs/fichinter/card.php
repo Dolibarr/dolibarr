@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -82,7 +82,8 @@ $hookmanager->initHooks(array('interventioncard','globalcard'));
 
 $object = new Fichinter($db);
 $extrafields = new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 if ($id > 0 || ! empty($ref))
@@ -258,7 +259,6 @@ if (empty($reshook))
 
 				// Extrafields
 				$extrafields = new ExtraFields($db);
-				$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 				$array_options = $extrafields->getOptionalsFromPost($object->table_element);
 
 		        $object->array_options = $array_options;
@@ -361,11 +361,10 @@ if (empty($reshook))
 								$predef = '';
 
 								// Extrafields
-								$extrafieldsline = new ExtraFields($db);
-								$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-								$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $predef);
+								$extrafields->fetch_name_optionals_label($object->table_element_line);
+								$array_options = $extrafields->getOptionalsFromPost($object->table_element_line, $predef);
 
-                    $result = $object->addline(
+								$result = $object->addline(
 									$user,
 			                        $id,
 			                        $desc,
@@ -397,7 +396,7 @@ if (empty($reshook))
 		    else
 		    {
 		    	// Fill array 'array_options' with data from add form
-		    	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+		    	$ret = $extrafields->setOptionalsFromPost(null, $object);
 		    	if ($ret < 0) {
 		    		$error ++;
 		    		$action = 'create';
@@ -406,7 +405,6 @@ if (empty($reshook))
 		    	if (! $error)
 		    	{
 		    		// Extrafields
-		    		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 		    		$array_options = $extrafields->getOptionalsFromPost($object->table_element);
 
 		    		$object->array_options = $array_options;
@@ -427,7 +425,7 @@ if (empty($reshook))
 	    }
 	    else
 	    {
-	        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired", $langs->trans("ThirdParty")).'</div>';
+	    	$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")).'</div>';
 	        $action = 'create';
 	    }
 	}
@@ -506,11 +504,10 @@ if (empty($reshook))
 
 
 			// Extrafields
-			$extrafieldsline = new ExtraFields($db);
-			$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-			$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line);
+			$extrafields->fetch_name_optionals_label($object->table_element_line);
+			$array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
 
-        $result=$object->addline(
+        	$result=$object->addline(
 				$user,
 	            $id,
 	            $desc,
@@ -618,9 +615,8 @@ if (empty($reshook))
 	    $objectline->duration	= $duration;
 
 		// Extrafields
-		$extrafieldsline = new ExtraFields($db);
-		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line);
+		$extrafields->fetch_name_optionals_label($object->table_element_line);
+		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
 		$objectline->array_options = $array_options;
 
 		$result = $objectline->update($user);
@@ -679,9 +675,8 @@ if (empty($reshook))
 	}
 
 	/*
-	 * Ordonnancement des lignes
-	*/
-
+	 * Set position of lines
+	 */
 	elseif ($action == 'up' && $user->rights->ficheinter->creer)
 	{
 		$object->line_up($lineid);
@@ -741,8 +736,7 @@ if (empty($reshook))
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
-		$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
 		if ($ret < 0) $error++;
 
 		if (! $error)
@@ -1203,7 +1197,7 @@ elseif ($id > 0 || ! empty($ref))
 	    if ($user->rights->ficheinter->creer)
 	    {
 	        if ($action != 'classify')
-	            $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+	            $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 	            if ($action == 'classify') {
 	                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 	                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -1462,12 +1456,11 @@ elseif ($id > 0 || ! empty($ref))
 					$line = new FichinterLigne($db);
 					$line->fetch($objp->rowid);
 
-					$extrafieldsline = new ExtraFields($db);
-					$extralabelslines=$extrafieldsline->fetch_name_optionals_label($line->table_element);
+					$extrafields->fetch_name_optionals_label($line->table_element);
 
 					$line->fetch_optionals();
 
-					print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bc[$var], 'colspan'=>5));
+					print $line->showOptionals($extrafields, 'view', array('colspan'=>5));
 				}
 
 				// Line in update mode
@@ -1509,11 +1502,10 @@ elseif ($id > 0 || ! empty($ref))
 					$line = new FichinterLigne($db);
 					$line->fetch($objp->rowid);
 
-					$extrafieldsline = new ExtraFields($db);
-					$extralabelslines=$extrafieldsline->fetch_name_optionals_label($line->table_element);
+					$extrafields->fetch_name_optionals_label($line->table_element);
 					$line->fetch_optionals();
 
-					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>5));
+					print $line->showOptionals($extrafields, 'edit', array('colspan'=>5));
 				}
 
 				$i++;
@@ -1582,10 +1574,9 @@ elseif ($id > 0 || ! empty($ref))
 
 				$lineadd = new FichinterLigne($db);
 
-				$extrafieldsline = new ExtraFields($db);
-				$extralabelslines=$extrafieldsline->fetch_name_optionals_label($lineadd->table_element);
+				$extrafields->fetch_name_optionals_label($lineadd->table_element);
 
-				print $lineadd->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>5));
+				print $lineadd->showOptionals($extrafields, 'edit', array('colspan'=>5));
 
 				if (! $num) print '</table>';
 			}
@@ -1646,12 +1637,10 @@ elseif ($id > 0 || ! empty($ref))
 					else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a></div>';
 				}
 
-		    	// create intervention model
-				if ($object->statut == Fichinter::STATUS_DRAFT && $user->rights->ficheinter->creer && (count($object->lines) > 0)) {
+				// create intervention model
+				if ($conf->global->MAIN_FEATURES_LEVEL >=2 && $object->statut == Fichinter::STATUS_DRAFT && $user->rights->ficheinter->creer && (count($object->lines) > 0)) {
 					print '<div class="inline-block divButAction">';
-					// This feature is not yet implemented
-					//print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card-rec.php?id='.$object->id.'&action=create">'.$langs->trans("ChangeIntoRepeatableIntervention").'</a>';
-					print '<a class="butAction" title="'.$langs->trans("ChangeIntoRepeatableIntervention").'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">'.$langs->trans("not yet implemented").'</a>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card-rec.php?id='.$object->id.'&action=create">'.$langs->trans("ChangeIntoRepeatableIntervention").'</a>';
 					print '</div>';
 				}
 

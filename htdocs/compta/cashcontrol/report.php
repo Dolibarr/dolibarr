@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -196,10 +196,18 @@ if ($resql)
     	// Bank account
         print '<td class="nowrap right">';
 		print $bankaccount->getNomUrl(1);
-		if ($conf->global->CASHDESK_ID_BANKACCOUNT_CASH==$bankaccount->id) $cash+=$objp->amount;
-		elseif ($conf->global->CASHDESK_ID_BANKACCOUNT_CB==$bankaccount->id) $bank+=$objp->amount;
-		elseif ($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE==$bankaccount->id) $cheque+=$objp->amount;
-		else $other+=$objp->amount;
+		if ($cashcontrol->posmodule=="takepos"){
+			if ($conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$cashcontrol->posnumber}==$bankaccount->id) $cash+=$objp->amount;
+			elseif ($conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$cashcontrol->posnumber}==$bankaccount->id) $bank+=$objp->amount;
+			elseif ($conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$cashcontrol->posnumber}==$bankaccount->id) $cheque+=$objp->amount;
+			else $other+=$objp->amount;
+		}
+		else{
+			if ($conf->global->CASHDESK_ID_BANKACCOUNT_CASH==$bankaccount->id) $cash+=$objp->amount;
+			elseif ($conf->global->CASHDESK_ID_BANKACCOUNT_CB==$bankaccount->id) $bank+=$objp->amount;
+			elseif ($conf->global->CASHDESK_ID_BANKACCOUNT_CHEQUE==$bankaccount->id) $cheque+=$objp->amount;
+			else $other+=$objp->amount;
+		}
 		print "</td>\n";
         if (! $i) $totalarray['nbfield']++;
 

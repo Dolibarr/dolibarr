@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -63,28 +63,28 @@ class Fiscalyear extends CommonObject
 	 * @var string fiscal year label
 	 */
 	public $label;
-    
+
 	/**
      * Date start (date_start)
      *
      * @var integer
      */
 	public $date_start;
-	
+
 	/**
      * Date end (date_end)
      *
      * @var integer
      */
 	public $date_end;
-	
+
 	/**
      * Date creation record (datec)
      *
      * @var integer
      */
     public $datec;
-    
+
 	public $statut;		// 0=open, 1=closed
 
 	/**

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -123,7 +123,8 @@ class FactureRec extends CommonInvoice
 		$now=dol_now();
 
 		// Clean parameters
-		$this->titre=trim($this->titre);
+		$this->titre=trim($this->titre);	// deprecated
+		$this->title=trim($this->title);
 		$this->usenewprice=empty($this->usenewprice)?0:$this->usenewprice;
 		if (empty($this->suspended)) $this->suspended=0;
 
@@ -180,7 +181,7 @@ class FactureRec extends CommonInvoice
 			$sql.= ", multicurrency_tx";
 			$sql.= ", suspended";
 			$sql.= ") VALUES (";
-			$sql.= "'".$this->db->escape($this->titre)."'";
+			$sql.= "'".$this->db->escape($this->titre ? $this->titre : $this->title)."'";
 			$sql.= ", ".$facsrc->socid;
 			$sql.= ", ".$conf->entity;
 			$sql.= ", '".$this->db->idate($now)."'";
@@ -376,7 +377,7 @@ class FactureRec extends CommonInvoice
 	 */
 	public function fetch($rowid, $ref = '', $ref_ext = '', $ref_int = '')
 	{
-		$sql = 'SELECT f.rowid, f.entity, f.titre, f.suspended, f.fk_soc, f.amount, f.tva, f.localtax1, f.localtax2, f.total, f.total_ttc';
+		$sql = 'SELECT f.rowid, f.entity, f.titre as title, f.suspended, f.fk_soc, f.amount, f.tva, f.localtax1, f.localtax2, f.total, f.total_ttc';
 		$sql.= ', f.remise_percent, f.remise_absolue, f.remise';
 		$sql.= ', f.date_lim_reglement as dlr';
 		$sql.= ', f.note_private, f.note_public, f.fk_user_author';
@@ -410,8 +411,9 @@ class FactureRec extends CommonInvoice
 
 				$this->id                     = $obj->rowid;
 				$this->entity                 = $obj->entity;
-				$this->titre                  = $obj->titre;
-				$this->ref                    = $obj->titre;
+				$this->titre                  = $obj->title;	// deprecated
+				$this->title                  = $obj->title;
+				$this->ref                    = $obj->title;
 				$this->ref_client             = $obj->ref_client;
 				$this->suspended              = $obj->suspended;
 				$this->type                   = $obj->type;
@@ -510,20 +512,25 @@ class FactureRec extends CommonInvoice
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Recupere les lignes de factures predefinies dans this->lines
+	 *	Get lines of template invoices into this->lines
 	 *
 	 *  @return     int         1 if OK, < 0 if KO
      */
 	public function fetch_lines()
 	{
+		global $extrafields;
+
         // phpcs:enable
 		$this->lines=array();
 
 		// Retreive all extrafield for line
 		// fetch optionals attributes and labels
-		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-		$extrafieldsline=new ExtraFields($this->db);
-		$extrafieldsline=$extrafieldsline->fetch_name_optionals_label('facturedet_rec', true);
+		if (! is_object($extrafields))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+			$extrafields=new ExtraFields($this->db);
+		}
+		$extrafields->fetch_name_optionals_label($this->table_element_line, true);
 
 		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx, ';
 		$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise, l.remise_percent, l.subprice,';
@@ -597,7 +604,7 @@ class FactureRec extends CommonInvoice
 				$line->price            = $objp->price;
 				$line->remise           = $objp->remise;
 
-				$extralabelsline = $line->fetch_optionals($line->id);
+				$line->fetch_optionals($line->id);
 
 				// Multicurrency
 				$line->fk_multicurrency 		= $objp->fk_multicurrency;
@@ -876,7 +883,7 @@ class FactureRec extends CommonInvoice
 	 *	@param    	int			$fk_product      	Product/Service ID predefined
 	 *	@param    	double		$remise_percent  	Percentage discount of the line
 	 *	@param		string		$price_base_type	HT or TTC
-	 *	@param    	int			$info_bits			Bits de type de lignes
+	 *	@param    	int			$info_bits			Bits of type of lines
 	 *	@param    	int			$fk_remise_except	Id remise
 	 *	@param    	double		$pu_ttc             Prix unitaire TTC (> 0 even for credit note)
 	 *	@param		int			$type				Type of line (0=product, 1=service)
@@ -1234,14 +1241,17 @@ class FactureRec extends CommonInvoice
 		$result='';
 
 		$label = '<u>' . $langs->trans("ShowInvoice") . '</u>';
-		if (! empty($this->ref))
+		if (! empty($this->ref)) {
 			$label .= '<br><b>'.$langs->trans('Ref') . ':</b> ' . $this->ref;
-		if (! empty($this->date_last_gen))
+		}
+		if ($this->frequency > 0) {
+			$label .= '<br><b>'.$langs->trans('Frequency') . ':</b> ' . $langs->trans('FrequencyPer_'.$this->unit_frequency, $this->frequency);
+		}
+		if (! empty($this->date_last_gen)) {
 			$label .= '<br><b>'.$langs->trans('DateLastGeneration') . ':</b> ' . dol_print_date($this->date_last_gen, 'dayhour');
-		if ($this->frequency > 0)
-		{
-			if (! empty($this->date_when))
-			{
+		}
+		if ($this->frequency > 0) {
+			if (! empty($this->date_when)) {
 				$label .= '<br><b>'.$langs->trans('NextDateToExecution') . ':</b> ';
 				$label .= (empty($this->suspended)?'':'<strike>'). dol_print_date($this->date_when, 'day').(empty($this->suspended)?'':'</strike>');	// No hour for this property
 				if (! empty($this->suspended)) $label .= ' ('.$langs->trans("Disabled").')';
@@ -1807,7 +1817,7 @@ class FactureLigneRec extends CommonInvoiceLine
 
 
     /**
-     *	Recupere les lignes de factures predefinies dans this->lines
+     *	Get line of template invoice
      *
      *	@param		int 	$rowid		Id of invoice
      *	@return     int         		1 if OK, < 0 if KO
@@ -1829,7 +1839,6 @@ class FactureLigneRec extends CommonInvoiceLine
     	$result = $this->db->query($sql);
     	if ($result)
     	{
-
     		$objp = $this->db->fetch_object($result);
 
     		$this->id	            = $objp->rowid;

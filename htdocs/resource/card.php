@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -59,7 +59,7 @@ $object = new Dolresource($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 
 
@@ -108,7 +108,7 @@ if (empty($reshook))
 				$object->country_id             = $country_id;
 
 				// Fill array 'array_options' with data from add form
-				$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+				$ret = $extrafields->setOptionalsFromPost(null, $object);
 				if ($ret < 0) $error++;
 
 				$result=$object->create($user);
@@ -155,7 +155,7 @@ if (empty($reshook))
 				$object->country_id             = $country_id;
 
 				// Fill array 'array_options' with data from add form
-				$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+				$ret = $extrafields->setOptionalsFromPost(null, $object);
 				if ($ret < 0) {
 					$error ++;
 				}
@@ -226,7 +226,7 @@ if ($action == 'create' || $object->fetch($id) > 0)
 {
 	if ($action == 'create')
 	{
-		print load_fiche_titre($title, '', 'title_generic');
+		print load_fiche_titre($title, '', 'generic');
 		dol_fiche_head('');
 	}
 	else
@@ -237,8 +237,7 @@ if ($action == 'create' || $object->fetch($id) > 0)
 
 	if ($action == 'create' || $action == 'edit')
 	{
-		if ( ! $user->rights->resource->write )
-			accessforbidden('', 0);
+		if (! $user->rights->resource->write) accessforbidden('', 0, 1);
 
 		// Create/Edit object
 
@@ -324,7 +323,7 @@ if ($action == 'create' || $object->fetch($id) > 0)
 		/*---------------------------------------
 		 * View object
 		 */
-		print '<table width="100%" class="border">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Resource type
 		print '<tr>';

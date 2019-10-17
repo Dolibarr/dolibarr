@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -75,7 +75,7 @@ $socid=GETPOST('socid', 'int');
 $result = restrictedArea($user, 'projet', $object->id, 'projet&project');
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 $date_start=dol_mktime(0, 0, 0, GETPOST('projectstartmonth', 'int'), GETPOST('projectstartday', 'int'), GETPOST('projectstartyear', 'int'));
 $date_end=dol_mktime(0, 0, 0, GETPOST('projectendmonth', 'int'), GETPOST('projectendday', 'int'), GETPOST('projectendyear', 'int'));
@@ -156,16 +156,19 @@ if (empty($reshook))
 			$object->public          = GETPOST('public', 'alpha');
 			$object->opp_amount      = price2num(GETPOST('opp_amount', 'alpha'));
 			$object->budget_amount   = price2num(GETPOST('budget_amount', 'alpha'));
-			$object->datec           = dol_now();
+			$object->date_c           = dol_now();
 			$object->date_start      = $date_start;
 			$object->date_end        = $date_end;
 			$object->statut          = $status;
 			$object->opp_status      = $opp_status;
 			$object->opp_percent     = $opp_percent;
-			$object->bill_time       = (GETPOST('bill_time', 'alpha')=='on'?1:0);
+			$object->usage_opportunity    = (GETPOST('usage_opportunity', 'alpha')=='on'?1:0);
+			$object->usage_task           = (GETPOST('usage_task', 'alpha')=='on'?1:0);
+			$object->usage_bill_time      = (GETPOST('usage_bill_time', 'alpha')=='on'?1:0);
+			$object->usage_organize_event = (GETPOST('usage_organize_event', 'alpha')=='on'?1:0);
 
 			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+			$ret = $extrafields->setOptionalsFromPost(null, $object);
 			if ($ret < 0) $error++;
 
 			$result = $object->create($user);
@@ -263,10 +266,13 @@ if (empty($reshook))
 			if (isset($_POST['budget_amount'])) $object->budget_amount= price2num(GETPOST('budget_amount', 'alpha'));
 			if (isset($_POST['opp_status']))    $object->opp_status   = $opp_status;
 			if (isset($_POST['opp_percent']))   $object->opp_percent  = $opp_percent;
-			$object->bill_time       = (GETPOST('bill_time', 'alpha')=='on'?1:0);
+			$object->usage_opportunity    = (GETPOST('usage_opportunity', 'alpha')=='on'?1:0);
+			$object->usage_task           = (GETPOST('usage_task', 'alpha')=='on'?1:0);
+			$object->usage_bill_time      = (GETPOST('usage_bill_time', 'alpha')=='on'?1:0);
+			$object->usage_organize_event = (GETPOST('usage_organize_event', 'alpha')=='on'?1:0);
 
 			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+			$ret = $extrafields->setOptionalsFromPost(null, $object);
 			if ($ret < 0) $error++;
 		}
 
@@ -492,7 +498,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	$thirdparty=new Societe($db);
 	if ($socid > 0) $thirdparty->fetch($socid);
 
-	print load_fiche_titre($titlenew, '', 'title_project');
+	print load_fiche_titre($titlenew, '', 'project');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -538,6 +544,39 @@ if ($action == 'create' && $user->rights->projet->creer)
 
 	// Label
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="80" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title", 'none')).'" autofocus></td></tr>';
+
+	// Usage (opp, task, bill time, ...)
+	print '<tr><td class="tdtop">';
+	print $langs->trans("Usage");
+	print '</td>';
+	print '<td>';
+	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+	{
+		print '<input type="checkbox" name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha')!=''?' checked="checked"':'') : ' checked="checked"').'"> ';
+		$htmltext = $langs->trans("ProjectFollowOpportunity");
+		print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+		print '<br>';
+	}
+	if (empty($conf->global->PROJECT_HIDE_TASKS))
+	{
+		print '<input type="checkbox" name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha')!=''?' checked="checked"':'') : ' checked="checked"').'"> ';
+		$htmltext = $langs->trans("ProjectFollowTasks");
+		print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+		print '<br>';
+	}
+	if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+	{
+		print '<input type="checkbox" name="usage_bill_time"'.(GETPOST('usage_bill_time', 'alpha')!=''?' checked="checked"':'').'"> ';
+		$htmltext = $langs->trans("ProjectBillTimeDescription");
+		print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+		print '<br>';
+	}
+	/*
+	print '<input type="checkbox" name="usage_organize_event"'.(GETPOST('usage_organize_event', 'alpha')!=''?' checked="checked"':'').'"> ';
+	$htmltext = $langs->trans("OrganizeEvent");
+	print $form->textwithpicto($langs->trans("OrganizeEvent"), $htmltext);*/
+	print '</td>';
+	print '</tr>';
 
 	// Thirdparty
 	if ($conf->societe->enabled)
@@ -618,17 +657,6 @@ if ($action == 'create' && $user->rights->projet->creer)
 	print '<td>';
 	print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST("description", 'none'), 0, 1).'</textarea>';
 	print '</td></tr>';
-
-	// Bill time
-	if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
-	{
-		print '<tr><td>';
-		$htmltext = $langs->trans("ProjectBillTimeDescription");
-		print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
-		print '</td>';
-		print '<td><input type="checkbox" name="bill_time"'.(GETPOST('bill_time', 'alpha')!=''?' checked="checked"':'').'"></td>';
-		print '</tr>';
-	}
 
 	if ($conf->categorie->enabled) {
 		// Categories
@@ -769,6 +797,7 @@ elseif ($object->id > 0)
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
 		print '<td><input class="quatrevingtpercent" name="title" value="'.dol_escape_htmltag($object->title).'"></td></tr>';
 
+
 		// Status
 		print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td><td>';
 		print '<select class="flat" name="status">';
@@ -777,6 +806,34 @@ elseif ($object->id > 0)
 			print '<option value="'.$key.'"'.((GETPOSTISSET('status')?GETPOST('status'):$object->statut) == $key ? ' selected="selected"':'').'>'.$langs->trans($val).'</option>';
 		}
 		print '</select>';
+		print '</td></tr>';
+
+		// Usage
+		print '<tr><td class="tdtop">';
+		print $langs->trans("Usage");
+		print '</td>';
+		print '<td>';
+		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+		{
+			print '<input type="checkbox" name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha')!=''?' checked="checked"':'') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+			$htmltext = $langs->trans("ProjectFollowOpportunity");
+			print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+			print '<br>';
+		}
+		if (empty($conf->global->PROJECT_HIDE_TASKS))
+		{
+			print '<input type="checkbox" name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha')!=''?' checked="checked"':'') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
+			$htmltext = $langs->trans("ProjectFollowTasks");
+			print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+			print '<br>';
+		}
+		if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+		{
+			print '<input type="checkbox" name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha')!=''?' checked="checked"':'') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+			$htmltext = $langs->trans("ProjectBillTimeDescription");
+			print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+			print '<br>';
+		}
 		print '</td></tr>';
 
 		// Thirdparty
@@ -857,17 +914,6 @@ elseif ($object->id > 0)
 		print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.$object->description.'</textarea>';
 		print '</td></tr>';
 
-		// Bill time
-		if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
-		{
-			print '<tr><td>';
-			$htmltext = $langs->trans("ProjectBillTimeDescription");
-			print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
-			print '</td>';
-			print '<td><input type="checkbox" name="bill_time"'.((GETPOSTISSET('bill_time')?GETPOST('bill_time', 'alpha'):$object->bill_time) ? ' checked="checked"' : '').'"></td>';
-			print '</tr>';
-		}
-
 		// Tags-Categories
 		if ($conf->categorie->enabled)
 		{
@@ -928,13 +974,41 @@ elseif ($object->id > 0)
 
 		print '<table class="border tableforfield" width="100%">';
 
+		// Usage
+		print '<tr><td class="tdtop">';
+		print $langs->trans("Usage");
+		print '</td>';
+		print '<td>';
+		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+		{
+			print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha')!=''?' checked="checked"':'') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+			$htmltext = $langs->trans("ProjectFollowOpportunity");
+			print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+			print '<br>';
+		}
+		if (empty($conf->global->PROJECT_HIDE_TASKS))
+		{
+			print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha')!=''?' checked="checked"':'') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
+			$htmltext = $langs->trans("ProjectFollowTasks");
+			print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+			print '<br>';
+		}
+		if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+		{
+			print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha')!=''?' checked="checked"':'') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+			$htmltext = $langs->trans("ProjectBillTimeDescription");
+			print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+			print '<br>';
+		}
+		print '</td></tr>';
+
 		// Visibility
 		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 		if ($object->public) print $langs->trans('SharedProject');
 		else print $langs->trans('PrivateProject');
 		print '</td></tr>';
 
-		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES) && ! empty($object->usage_opportunity))
 		{
 			// Opportunity status
 			print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
@@ -989,17 +1063,6 @@ elseif ($object->id > 0)
 		print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
 		print nl2br($object->description);
 		print '</td></tr>';
-
-		// Bill time
-		if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
-		{
-			print '<tr><td>';
-			$htmltext = $langs->trans("ProjectBillTimeDescription");
-			print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
-			print '</td>';
-			print '<td>'.yn($object->bill_time).'</td>';
-			print '</tr>';
-		}
 
 		// Categories
 		if($conf->categorie->enabled) {
@@ -1103,31 +1166,30 @@ elseif ($object->id > 0)
 	{
 		if ($action != "edit" && $action != 'presend' )
 		{
-
 			// Create event
 			/*if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 				// Add hidden condition because this is not a
 				// "workflow" action so should appears somewhere else on
 				// page.
 			{
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '&amp;projectid=' . $object->id . '">' . $langs->trans("AddAction") . '</a></div>';
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '&amp;projectid=' . $object->id . '">' . $langs->trans("AddAction") . '</a>';
 			}*/
 
 			// Send
 			if ($object->statut != 2)
 			{
-				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail').'</a></div>';
+				print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail').'</a>';
 			}
 
-		// Modify
+			// Modify
 			if ($object->statut != 2 && $user->rights->projet->creer)
 			{
 				if ($userWrite > 0)
 				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>';
+					print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
 				}
 				else
 				{
-					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Modify').'</a></div>';
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Modify').'</a>';
 				}
 			}
 
@@ -1136,11 +1198,11 @@ elseif ($object->id > 0)
 			{
 				if ($userWrite > 0)
 				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a></div>';
+					print '<a class="butAction" href="card.php?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
 				}
 				else
 				{
-					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Validate').'</a></div>';
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Validate').'</a>';
 				}
 			}
 
@@ -1149,11 +1211,11 @@ elseif ($object->id > 0)
 			{
 				if ($userWrite > 0)
 				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=close">'.$langs->trans("Close").'</a></div>';
+					print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=close">'.$langs->trans("Close").'</a>';
 				}
 				else
 				{
-					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Close').'</a></div>';
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Close').'</a>';
 				}
 			}
 
@@ -1162,11 +1224,11 @@ elseif ($object->id > 0)
 			{
 				if ($userWrite > 0)
 				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a></div>';
+					print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
 				}
 				else
 				{
-					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ReOpen').'</a></div>';
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ReOpen').'</a>';
 				}
 			}
 
@@ -1176,52 +1238,52 @@ elseif ($object->id > 0)
 				if (! empty($conf->propal->enabled) && $user->rights->propal->creer)
 				{
 					$langs->load("propal");
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddProp").'</a></div>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddProp").'</a>';
 				}
 				if (! empty($conf->commande->enabled) && $user->rights->commande->creer)
 				{
 					$langs->load("orders");
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("CreateOrder").'</a></div>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("CreateOrder").'</a>';
 				}
 				if (! empty($conf->facture->enabled) && $user->rights->facture->creer)
 				{
 					$langs->load("bills");
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a></div>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
 				}
 				if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->creer)
 				{
 					$langs->load("supplier_proposal");
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddSupplierProposal").'</a></div>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddSupplierProposal").'</a>';
 				}
 				if (! empty($conf->supplier_order->enabled) && $user->rights->fournisseur->commande->creer)
 				{
 					$langs->load("suppliers");
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddSupplierOrder").'</a></div>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddSupplierOrder").'</a>';
 				}
 				if (! empty($conf->supplier_invoice->enabled) && $user->rights->fournisseur->facture->creer)
 				{
 					$langs->load("suppliers");
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddSupplierInvoice").'</a></div>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddSupplierInvoice").'</a>';
 				}
 				if (! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->creer)
 				{
 					$langs->load("interventions");
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddIntervention").'</a></div>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddIntervention").'</a>';
 				}
 				if (! empty($conf->contrat->enabled) && $user->rights->contrat->creer)
 				{
 					$langs->load("contracts");
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddContract").'</a></div>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddContract").'</a>';
 				}
 				if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->creer)
 				{
 					$langs->load("trips");
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddTrip").'</a></div>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddTrip").'</a>';
 				}
 				if (! empty($conf->don->enabled) && $user->rights->don->creer)
 				{
 					$langs->load("donations");
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/don/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddDonation").'</a></div>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/don/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddDonation").'</a>';
 				}
 			}
 
@@ -1230,11 +1292,11 @@ elseif ($object->id > 0)
 			{
 				if ($userWrite > 0)
 				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=clone">'.$langs->trans('ToClone').'</a></div>';
+					print '<a class="butAction" href="card.php?id='.$object->id.'&action=clone">'.$langs->trans('ToClone').'</a>';
 				}
 				else
 				{
-					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ToClone').'</a></div>';
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ToClone').'</a>';
 				}
 			}
 
@@ -1243,11 +1305,11 @@ elseif ($object->id > 0)
 			{
 				if ($userDelete > 0 || ($object->statut == 0 && $user->rights->projet->creer))
 				{
-					print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
+					print '<a class="butActionDelete" href="card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 				}
 				else
 				{
-					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Delete').'</a></div>';
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Delete').'</a>';
 				}
 			}
 		}

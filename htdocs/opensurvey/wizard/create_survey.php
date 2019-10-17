@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -194,7 +194,7 @@ if (GETPOST('choix_sondage'))
 }
 else
 {
-	// affichage des boutons pour choisir sondage date ou autre
+	// Show image to selecte between date survey or other survey
 	print '<br><table>'."\n";
 	print '<tr><td>'. $langs->trans("CreateSurveyDate") .'</td><td></td> '."\n";
 	print '<td><input type="image" name="creation_sondage_date" value="'.$langs->trans('CreateSurveyDate').'" src="../img/calendar-32.png"></td></tr>'."\n";

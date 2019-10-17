@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -63,9 +63,9 @@ function dav_admin_prepare_head()
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'admindav');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'admindav');
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'admindav', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'admindav', 'remove');
 
 	return $head;
 }

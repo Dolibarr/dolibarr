@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -256,8 +256,8 @@ class mailing_fraise extends MailingTargets
         $sql.= " AND a.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$this->db->escape($mailing_id).")";
         // Filter on status
         if (isset($_POST["filter"]) && $_POST["filter"] == '-1') $sql.= " AND a.statut=-1";
-        if (isset($_POST["filter"]) && $_POST["filter"] == '1a') $sql.= " AND a.statut=1 AND a.datefin >= '".$this->db->idate($now)."'";
-        if (isset($_POST["filter"]) && $_POST["filter"] == '1b') $sql.= " AND a.statut=1 AND (a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."')";
+	if (isset($_POST["filter"]) && $_POST["filter"] == '1a') $sql.= " AND a.statut=1 AND (a.datefin >= '".$this->db->idate($now)."' OR ta.subscription = 0)";
+	if (isset($_POST["filter"]) && $_POST["filter"] == '1b') $sql.= " AND a.statut=1 AND ((a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."') AND ta.subscription = 1)";
         if (isset($_POST["filter"]) && $_POST["filter"] == '0')  $sql.= " AND a.statut=0";
         // Filter on date
         if ($dateendsubscriptionafter > 0)  $sql.=" AND datefin > '".$this->db->idate($dateendsubscriptionafter)."'";
@@ -315,6 +315,6 @@ class mailing_fraise extends MailingTargets
             return -1;
         }
 
-        return parent::add_to_target($mailing_id, $cibles);
+        return parent::addTargetsToDatabase($mailing_id, $cibles);
     }
 }

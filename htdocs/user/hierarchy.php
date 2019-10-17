@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -150,7 +150,7 @@ if ($canadduser)
     $newcardbutton.= dolGetButtonTitle($langs->trans('NewUser'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1': '').'&leftmenu=');
 }
 
-$morehtmlright.= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list', DOL_URL_ROOT.'/user/list.php'.(($search_statut != '' && $search_statut >= 0) ?'?search_statut='.$search_statut:''));
+$morehtmlright.= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list paddingleft', DOL_URL_ROOT.'/user/list.php'.(($search_statut != '' && $search_statut >= 0) ?'?search_statut='.$search_statut:''));
 
 print load_fiche_titre($title, $morehtmlright.' '.$newcardbutton);
 

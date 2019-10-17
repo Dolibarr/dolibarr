@@ -23,7 +23,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -36,6 +36,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "suppliers", "categories"));
@@ -84,6 +85,7 @@ $search_zip=GETPOST('search_zip', 'alpha');
 $search_town=GETPOST('search_town', 'alpha');
 $search_import_key=GETPOST("search_import_key", "alpha");
 $search_country=GETPOST("search_country", 'intcomma');
+$search_roles=GETPOST("search_roles", 'array');
 
 if ($search_status=='') $search_status=1; // always display active customer first
 
@@ -136,7 +138,8 @@ $hookmanager->initHooks(array('contactlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('contact');
+$extrafields->fetch_name_optionals_label('contact');
+
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
@@ -165,8 +168,8 @@ $arrayfields=array(
 	'p.fax'=>array('label'=>"Fax", 'checked'=>0),
 	'p.email'=>array('label'=>"EMail", 'checked'=>1),
 	'p.no_email'=>array('label'=>"No_Email", 'checked'=>0, 'enabled'=>(! empty($conf->mailing->enabled))),
-	'p.jabberid'=>array('label'=>"Jabber", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
 	'p.skype'=>array('label'=>"Skype", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
+	'p.jabberid'=>array('label'=>"Jabber", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
 	'p.twitter'=>array('label'=>"Twitter", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
 	'p.facebook'=>array('label'=>"Facebook", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
     'p.linkedin'=>array('label'=>"LinkedIn", 'checked'=>1, 'enabled'=>(! empty($conf->socialnetworks->enabled))),
@@ -242,6 +245,7 @@ if (empty($reshook))
 		$search_import_key='';
 		$toselect='';
 		$search_array_options=array();
+		$search_roles=array();
 	}
 
 	// Mass actions
@@ -262,6 +266,7 @@ if ($search_priv < 0) $search_priv='';
 
 $form=new Form($db);
 $formother=new FormOther($db);
+$formcompany=new FormCompany($db);
 $contactstatic=new Contact($db);
 
 $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
@@ -271,13 +276,15 @@ $sql.= " p.rowid, p.lastname as lastname, p.statut, p.firstname, p.zip, p.town, 
 $sql.= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.datec as date_creation, p.tms as date_update,";
 $sql.= " co.code as country_code";
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (p.rowid = ef.fk_object)";
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (p.rowid = ef.fk_object)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = p.fk_pays";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 if (! empty($search_categ)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_contact as cc ON p.rowid = cc.fk_socpeople"; // We need this table joined to the select in order to filter by categ
@@ -334,6 +341,9 @@ if (strlen($search_linkedin))       $sql.= natural_search('p.linkedin', $search_
 if (strlen($search_email))          $sql.= natural_search('p.email', $search_email);
 if (strlen($search_zip))   			$sql.= natural_search("p.zip", $search_zip);
 if (strlen($search_town))   		$sql.= natural_search("p.town", $search_town);
+if (count($search_roles)>0) {
+	$sql .= " AND p.rowid IN (SELECT sc.fk_socpeople FROM ".MAIN_DB_PREFIX."societe_contacts as sc WHERE sc.fk_c_type_contact IN (".implode(',', $search_roles)."))";
+}
 
 if ($search_no_email != '' && $search_no_email >= 0) $sql.= " AND p.no_email = ".$db->escape($search_no_email);
 if ($search_status != '' && $search_status >= 0) $sql.= " AND p.statut = ".$db->escape($search_status);
@@ -427,7 +437,7 @@ if ($search_societe != '') $param.='&amp;search_societe='.urlencode($search_soci
 if ($search_zip != '') $param.='&amp;search_zip='.urlencode($search_zip);
 if ($search_town != '') $param.='&amp;search_town='.urlencode($search_town);
 if ($search_country != '') $param.= "&search_country=".urlencode($search_country);
-if ($search_job != '') $param.='&amp;search_job='.urlencode($search_job);
+if ($search_poste != '') $param.='&amp;search_poste='.urlencode($search_poste);
 if ($search_phone_pro != '') $param.='&amp;search_phone_pro='.urlencode($search_phone_pro);
 if ($search_phone_perso != '') $param.='&amp;search_phone_perso='.urlencode($search_phone_perso);
 if ($search_phone_mobile != '') $param.='&amp;search_phone_mobile='.urlencode($search_phone_mobile);
@@ -438,6 +448,7 @@ if ($search_status != '') $param.='&amp;search_status='.urlencode($search_status
 if ($search_priv == '0' || $search_priv == '1') $param.="&amp;search_priv=".urlencode($search_priv);
 if ($search_import_key != '') $param.='&amp;search_import_key='.urlencode($search_import_key);
 if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
+if (count($search_roles)>0) $param.=implode('&search_roles[]=', $search_roles);
 
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -468,7 +479,7 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
 
-print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies.png', 0, $newcardbutton, '', $limit);
+print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'address', 0, $newcardbutton, '', $limit);
 
 $topicmail="Information";
 $modelmail="contact";
@@ -510,6 +521,10 @@ if (! empty($conf->categorie->enabled))
 		$moreforfilter.=$formother->select_categories(Categorie::TYPE_SUPPLIER, $search_categ_supplier, 'search_categ_supplier', 1);
 		$moreforfilter.='</div>';
 	}
+	$moreforfilter.='<div class="divsearchfield">';
+	$moreforfilter.=$langs->trans('Roles'). ': ';
+	$moreforfilter.=$formcompany->showRoles("search_roles", $objecttmp, 'edit', $search_roles);
+	$moreforfilter.='</div>';
 }
 if ($moreforfilter)
 {
@@ -629,6 +644,12 @@ if (! empty($arrayfields['p.skype']['checked']))
 	print '<input class="flat" type="text" name="search_skype" size="6" value="'.dol_escape_htmltag($search_skype).'">';
 	print '</td>';
 }
+if (! empty($arrayfields['p.jabberid']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '<input class="flat" type="text" name="search_jabberid" size="6" value="'.dol_escape_htmltag($search_jabberid).'">';
+	print '</td>';
+}
 if (! empty($arrayfields['p.twitter']['checked']))
 {
 	print '<td class="liste_titre">';
@@ -720,6 +741,7 @@ if (! empty($arrayfields['p.fax']['checked']))                 print_liste_field
 if (! empty($arrayfields['p.email']['checked']))               print_liste_field_titre($arrayfields['p.email']['label'], $_SERVER["PHP_SELF"], "p.email", $begin, $param, '', $sortfield, $sortorder);
 if (! empty($arrayfields['p.no_email']['checked']))            print_liste_field_titre($arrayfields['p.no_email']['label'], $_SERVER["PHP_SELF"], "p.no_email", $begin, $param, '', $sortfield, $sortorder, 'center ');
 if (! empty($arrayfields['p.skype']['checked']))               print_liste_field_titre($arrayfields['p.skype']['label'], $_SERVER["PHP_SELF"], "p.skype", $begin, $param, '', $sortfield, $sortorder);
+if (! empty($arrayfields['p.jabberid']['checked']))            print_liste_field_titre($arrayfields['p.jabberid']['label'], $_SERVER["PHP_SELF"], "p.jabberid", $begin, $param, '', $sortfield, $sortorder);
 if (! empty($arrayfields['p.twitter']['checked']))             print_liste_field_titre($arrayfields['p.twitter']['label'], $_SERVER["PHP_SELF"], "p.twitter", $begin, $param, '', $sortfield, $sortorder);
 if (! empty($arrayfields['p.facebook']['checked']))            print_liste_field_titre($arrayfields['p.facebook']['label'], $_SERVER["PHP_SELF"], "p.facebook", $begin, $param, '', $sortfield, $sortorder);
 if (! empty($arrayfields['p.linkedin']['checked']))            print_liste_field_titre($arrayfields['p.linkedin']['label'], $_SERVER["PHP_SELF"], "p.linkedin", $begin, $param, '', $sortfield, $sortorder);

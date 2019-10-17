@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Need to have following variables defined:
  * $object (invoice, order, ...)
@@ -30,6 +30,7 @@
  * $permtoedit  (used to replace test $user->rights->$element->creer)
  * $senderissupplier (0 by default, 1 for supplier invoices/orders)
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
+ * $outputalsopricetotalwithtax
  * $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
  * $object_rights->creer initialized from = $object->getRights()
  * $disableedit, $disablemove, $disableremove
@@ -161,6 +162,23 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 		{
 			print (! empty($line->description) && $line->description!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->description):'';
 		}
+	}
+
+	if ($user->rights->fournisseur->lire && $line->fk_fournprice > 0)
+	{
+    require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+		$productfourn = new ProductFournisseur($this->db);
+		$productfourn->fetch_product_fournisseur_price($line->fk_fournprice);
+		echo '<div class="clearboth"></div><span class="opacitymedium">' . $langs->trans('Supplier') . ' : </span>' . $productfourn->getSocNomUrl(1, 'supplier') . ' - <span class="opacitymedium">' . $langs->trans('Ref') . ' : </span>';
+						// Supplier ref
+						if ($user->rights->produit->creer || $user->rights->service->creer) // change required right here
+						{
+							echo $productfourn->getNomUrl();
+						}
+						else
+						{
+							echo $productfourn->ref_supplier;
+						}
 	}
 
 	if (! empty($conf->accounting->enabled) && $line->fk_accounting_account > 0)
@@ -341,7 +359,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 	<?php
     }
 
-    if($action == 'selectlines'){ ?>
+    if ($action == 'selectlines') { ?>
 		<td class="linecolcheck center"><input type="checkbox" class="linecheckbox" name="line_checkbox[<?php echo $i+1; ?>]" value="<?php echo $line->id; ?>" ></td>
 	<?php } ?>
 
@@ -349,9 +367,9 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 
 <?php
 //Line extrafield
-if (!empty($extrafieldsline))
+if (!empty($extrafields))
 {
-	print $line->showOptionals($extrafieldsline, 'view', array('style'=>'class="drag drop oddeven"','colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+	print $line->showOptionals($extrafields, 'view', array('style'=>'class="drag drop oddeven"','colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
 }
 ?>
 

@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * ATTENTION DE PAS EXECUTER CE SCRIPT SUR UNE INSTALLATION DE PRODUCTION
  */
@@ -116,7 +116,6 @@ for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
             $contact->firstname = $listoflastname[mt_rand(0, count($listoflastname)-1)];
             if ( $contact->create($user) )
             {
-
             }
         }
 

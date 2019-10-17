@@ -38,6 +38,7 @@ ActionsEvents=Dolibarr 會在待辦中自動建立行動的事件
 EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into %s module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=合作方 %s 已建立
+COMPANY_DELETEInDolibarr=Third party %s deleted
 ContractValidatedInDolibarr=合約 %s 已驗證
 CONTRACT_DELETEInDolibarr=Contract %s deleted
 PropalClosedSignedInDolibarr=提案/建議書 %s 已簽署
@@ -95,6 +96,7 @@ PROJECT_MODIFYInDolibarr=專案 %s 已修改
 PROJECT_DELETEInDolibarr=專案 %s 已刪除
 TICKET_CREATEInDolibarr=Ticket %s created
 TICKET_MODIFYInDolibarr=Ticket %s modified
+TICKET_ASSIGNEDInDolibarr=Ticket %s assigned
 TICKET_CLOSEInDolibarr=Ticket %s closed
 TICKET_DELETEInDolibarr=Ticket %s deleted
 ##### End agenda events #####

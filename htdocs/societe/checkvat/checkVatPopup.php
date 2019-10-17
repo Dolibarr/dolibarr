@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -163,7 +163,7 @@ else
 }
 
 print '<br>';
-print $langs->trans("VATIntraManualCheck", $langs->trans("VATIntraCheckURL"), $langs->trans("VATIntraCheckURL")).'<br>';
+print $langs->trans("VATIntraManualCheck", $langs->trans("VATIntraCheckURL"), $langs->transnoentitiesnoconv("VATIntraCheckURL")).'<br>';
 print '<br>';
 print '<div class="center"><input type="button" class="button" value="'.$langs->trans("CloseWindow").'" onclick="javascript: window.close()"></div>';
 

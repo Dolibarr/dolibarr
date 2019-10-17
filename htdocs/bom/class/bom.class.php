@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -57,9 +57,6 @@ class BOM extends CommonObject
 	public $picto = 'bom';
 
 
-	public $table_element_line = 'bom_bomline';
-
-
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_CANCELED = 9;
@@ -94,18 +91,20 @@ class BOM extends CommonObject
 	    'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'noteditable'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of BOM", 'showoncombobox'=>'1',),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'notnull'=>1, 'searchall'=>1, 'showoncombobox'=>'1',),
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'notnull'=>-1,),
-		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>-1, 'position'=>61, 'notnull'=>-1,),
-		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>-1, 'position'=>62, 'notnull'=>-1,),
-		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>500, 'notnull'=>1,),
-		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'position'=>501, 'notnull'=>1,),
-	    'date_valid' => array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-2, 'position'=>502, 'notnull'=>0,),
-	    'fk_user_creat' => array('type'=>'integer', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-2, 'position'=>510, 'notnull'=>1, 'foreignkey'=>'llx_user.rowid',),
-		'fk_user_modif' => array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'position'=>511, 'notnull'=>-1,),
-	    'fk_user_valid' => array('type'=>'integer', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-2, 'position'=>512, 'notnull'=>0,),
-	    'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
-		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>50, 'notnull'=>1, 'index'=>1, 'help'=>'ProductBOMHelp'),
+		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'help'=>'ProductBOMHelp'),
 	    'qty' => array('type'=>'real', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'default'=>1, 'position'=>55, 'notnull'=>1, 'isameasure'=>'1', 'css'=>'maxwidth75imp'),
-	    'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'position'=>1000, 'notnull'=>1, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Enabled', 9=>'Disabled')),
+		'efficiency' => array('type'=>'real', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>-1, 'default'=>1, 'position'=>100, 'notnull'=>0, 'css'=>'maxwidth50imp', 'help'=>'ValueOfMeansLoss'),
+		'duration' => array('type'=>'real', 'label'=>'EstimatedDuration', 'enabled'=>1, 'visible'=>-1, 'position'=>101, 'notnull'=>-1, 'css'=>'maxwidth50imp', 'help'=>'EstimatedDurationDesc'),
+		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>-2, 'position'=>161, 'notnull'=>-1,),
+		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>-2, 'position'=>162, 'notnull'=>-1,),
+		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>300, 'notnull'=>1,),
+		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'position'=>501, 'notnull'=>1,),
+		'date_valid' => array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-2, 'position'=>502, 'notnull'=>0,),
+		'fk_user_creat' => array('type'=>'integer', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-2, 'position'=>510, 'notnull'=>1, 'foreignkey'=>'llx_user.rowid',),
+		'fk_user_modif' => array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'position'=>511, 'notnull'=>-1,),
+		'fk_user_valid' => array('type'=>'integer', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-2, 'position'=>512, 'notnull'=>0,),
+		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900, 'notnull'=>-1,),
+		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>2, 'position'=>1000, 'notnull'=>1, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Enabled', 9=>'Disabled')),
 	);
 	public $rowid;
 	public $ref;
@@ -121,6 +120,7 @@ class BOM extends CommonObject
 	public $status;
 	public $fk_product;
 	public $qty;
+	public $efficiency;
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -129,27 +129,32 @@ class BOM extends CommonObject
 	/**
 	 * @var int    Name of subtable line
 	 */
-	//public $table_element_line = 'bomdet';
+	public $table_element_line = 'bom_bomline';
 
 	/**
 	 * @var int    Field with ID of parent key if this field has a parent
 	 */
-	//public $fk_element = 'fk_bom';
+	public $fk_element = 'fk_bom';
 
 	/**
 	 * @var int    Name of subtable class that manage subtable lines
 	 */
-	//public $class_element_line = 'BillOfMaterialsline';
+	public $class_element_line = 'BOMLine';
 
 	/**
-	 * @var array  Array of child tables (child tables to delete before deleting a record)
+	 * @var array	List of child tables. To test if we can delete object.
 	 */
-	//protected $childtables=array('bomdet');
+	//protected $childtables=array();
 
 	/**
-	 * @var BillOfMaterialsLine[]     Array of subtable lines
+	 * @var array	List of child tables. To know object to delete on cascade.
 	 */
-	//public $lines = array();
+	protected $childtablesoncascade=array('bom_bomline');
+
+	/**
+	 * @var BOMLine[]     Array of subtable lines
+	 */
+	public $lines = array();
 
 
 
@@ -160,7 +165,7 @@ class BOM extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs;
 
 		$this->db = $db;
 
@@ -179,11 +184,11 @@ class BOM extends CommonObject
 		// Translate some data of arrayofkeyval
 		foreach($this->fields as $key => $val)
 		{
-			if (is_array($this->fields['status']['arrayofkeyval']))
+			if (is_array($val['arrayofkeyval']))
 			{
-				foreach($this->fields['status']['arrayofkeyval'] as $key2 => $val2)
+				foreach($val['arrayofkeyval'] as $key2 => $val2)
 				{
-					$this->fields['status']['arrayofkeyval'][$key2]=$langs->trans($val2);
+					$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
 				}
 			}
 		}
@@ -198,6 +203,8 @@ class BOM extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
+		if ($this->efficiency <= 0 || $this->efficiency > 1) $this->efficiency = 1;
+
 		return $this->createCommon($user, $notrigger);
 	}
 
@@ -220,7 +227,13 @@ class BOM extends CommonObject
 	    $this->db->begin();
 
 	    // Load source object
-	    $object->fetchCommon($fromid);
+	    $result = $object->fetchCommon($fromid);
+	    if ($result > 0 && ! empty($object->table_element_line)) $object->fetchLines();
+
+	    // Get lines so they will be clone
+	    //foreach($object->lines as $line)
+	    //	$line->fetch_optionals();
+
 	    // Reset some properties
 	    unset($object->id);
 	    unset($object->fk_user_creat);
@@ -229,11 +242,11 @@ class BOM extends CommonObject
 	    // Clear fields
 	    $object->ref = "copy_of_".$object->ref;
 	    $object->title = $langs->trans("CopyOf")." ".$object->title;
-	    // ...
+
 	    // Clear extrafields that are unique
 	    if (is_array($object->array_options) && count($object->array_options) > 0)
 	    {
-	    	$extrafields->fetch_name_optionals_label($this->element);
+	    	$extrafields->fetch_name_optionals_label($object->table_element);
 	    	foreach($object->array_options as $key => $option)
 	    	{
 	    		$shortkey = preg_replace('/options_/', '', $key);
@@ -253,6 +266,29 @@ class BOM extends CommonObject
 	        $this->error = $object->error;
 	        $this->errors = $object->errors;
 	    }
+
+	    if (! $error)
+	    {
+	    	// copy internal contacts
+	    	if ($this->copy_linked_contact($object, 'internal') < 0)
+	    	{
+	    		$error++;
+	    	}
+	    }
+
+	    if (! $error)
+	    {
+	    	// copy external contacts if same company
+	    	if (property_exists($this, 'socid') && $this->socid == $object->socid)
+	    	{
+	    		if ($this->copy_linked_contact($object, 'external') < 0)
+	    			$error++;
+	    	}
+	    }
+
+	    // If there is lines, create lines too
+
+
 
 	    unset($object->context['createfromclone']);
 
@@ -289,27 +325,8 @@ class BOM extends CommonObject
 	{
 		$this->lines=array();
 
-		// Load lines with object BOMLine
-        $sql = 'SELECT rowid, fk_product, description, qty, rank WHERE fk_bom = '.$this->id;
-
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            $obj = $this->db->fetch_object($resql);
-            if ($obj)
-            {
-                $newline = new BOMLine($this->db);
-                $newline->id = $obj->rowid;
-                $newline->fk_product = $obj->fk_product;
-                $newline->description = $obj->description;
-                $newline->qty = $obj->qty;
-                $newline->rank = $obj->rank;
-
-                $this->lines[] = $newline;
-            }
-        }
-
-		return count($this->lines)?1:0;
+		$result = $this->fetchLinesCommon();
+		return $result;
 	}
 
 	/**
@@ -331,11 +348,11 @@ class BOM extends CommonObject
 
 		$records=array();
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid';
-		// TODO Get all fields
+		$sql = 'SELECT ';
+		$sql .= $this->getFieldList();
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
-		$sql .= ' WHERE t.entity = '.$conf->entity;
+		if ($this->ismultientitymanaged) $sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+		else $sql .= ' WHERE 1 = 1';
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
@@ -372,11 +389,8 @@ class BOM extends CommonObject
 			while ($obj = $this->db->fetch_object($resql))
 			{
 				$record = new self($this->db);
+				$record->setVarsFromFetchObj($obj);
 
-				$record->id = $obj->rowid;
-				// TODO Get other fields
-
-				//var_dump($record->id);
 				$records[$record->id] = $record;
 			}
 			$this->db->free($resql);
@@ -399,6 +413,8 @@ class BOM extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
+		if ($this->efficiency <= 0 || $this->efficiency > 1) $this->efficiency = 1;
+
 		return $this->updateCommon($user, $notrigger);
 	}
 
@@ -415,6 +431,24 @@ class BOM extends CommonObject
 		//return $this->deleteCommon($user, $notrigger, 1);
 	}
 
+	/**
+	 *  Delete a line of object in database
+	 *
+	 *	@param  User	$user       User that delete
+	 *  @param	int		$idline		Id of line to delete
+	 *  @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
+	 *  @return int         		>0 if OK, <0 if KO
+	 */
+	public function deleteLine(User $user, $idline, $notrigger = false)
+	{
+		if ($this->status < 0)
+		{
+			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
+			return -2;
+		}
+
+		return $this->deleteLineCommon($user, $idline, $notrigger);
+	}
 
 	/**
 	 *  Returns the reference to the following non used BOM depending on the active numbering module
@@ -479,9 +513,10 @@ class BOM extends CommonObject
 	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
 	 */
-	public function valid($user, $notrigger = 0)
+	public function validate($user, $notrigger = 0)
 	{
 	    global $conf, $langs;
+
 	    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	    $error=0;
@@ -489,7 +524,7 @@ class BOM extends CommonObject
 	    // Protection
 	    if ($this->statut == self::STATUS_VALIDATED)
 	    {
-	        dol_syslog(get_class($this)."::valid action abandonned: already validated", LOG_WARNING);
+	        dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
 	        return 0;
 	    }
 
@@ -518,14 +553,14 @@ class BOM extends CommonObject
 	    $this->newref = $num;
 
 	    // Validate
-	    $sql = "UPDATE ".MAIN_DB_PREFIX."bom_bom";
+	    $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 	    $sql.= " SET ref = '".$this->db->escape($num)."',";
 	    $sql.= " status = ".self::STATUS_VALIDATED.",";
 	    $sql.= " date_valid='".$this->db->idate($now)."',";
 	    $sql.= " fk_user_valid = ".$user->id;
 	    $sql.= " WHERE rowid = ".$this->id;
 
-	    dol_syslog(get_class($this)."::valid()", LOG_DEBUG);
+	    dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
 	    $resql=$this->db->query($sql);
 	    if (! $resql)
 	    {
@@ -549,15 +584,20 @@ class BOM extends CommonObject
 	        // Rename directory if dir was a temporary ref
 	        if (preg_match('/^[\(]?PROV/i', $this->ref))
 	        {
-	            // On renomme repertoire ($this->ref = ancienne ref, $num = nouvelle ref)
-	            // in order not to lose the attachments
-	            $oldref = dol_sanitizeFileName($this->ref);
+	        	// Now we rename also files into index
+	        	$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'bom/".$this->db->escape($this->newref)."'";
+	        	$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'bom/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+	        	$resql = $this->db->query($sql);
+	        	if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+	        	// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
+	        	$oldref = dol_sanitizeFileName($this->ref);
 	            $newref = dol_sanitizeFileName($num);
 	            $dirsource = $conf->bom->dir_output.'/'.$oldref;
 	            $dirdest = $conf->bom->dir_output.'/'.$newref;
-	            if (file_exists($dirsource))
+	            if (! $error && file_exists($dirsource))
 	            {
-	                dol_syslog(get_class($this)."::valid() rename dir ".$dirsource." into ".$dirdest);
+	                dol_syslog(get_class($this)."::validate() rename dir ".$dirsource." into ".$dirdest);
 
 	                if (@rename($dirsource, $dirdest))
 	                {
@@ -600,63 +640,77 @@ class BOM extends CommonObject
 	 *	Set draft status
 	 *
 	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	public function setDraft($user)
+	public function setDraft($user, $notrigger = 0)
 	{
-	    global $conf, $langs;
+		// Protection
+		if ($this->status <= self::STATUS_DRAFT)
+		{
+			return 0;
+		}
 
-	    $error=0;
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+		 {
+		 $this->error='Permission denied';
+		 return -1;
+		 }*/
 
-	    // Protection
-	    if ($this->status <= self::STATUS_DRAFT)
-	    {
-	        return 0;
-	    }
-
-	    /*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
-	        || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
-	    {
-	        $this->error='Permission denied';
-	        return -1;
-	    }*/
-
-	    $this->db->begin();
-
-	    $sql = "UPDATE ".MAIN_DB_PREFIX."bom";
-	    $sql.= " SET status = ".self::STATUS_DRAFT;
-	    $sql.= " WHERE rowid = ".$this->id;
-
-	    dol_syslog(get_class($this)."::setDraft", LOG_DEBUG);
-	    if ($this->db->query($sql))
-	    {
-	        if (! $error)
-	        {
-	            $this->oldcopy= clone $this;
-	        }
-
-	        if (!$error) {
-	            // Call trigger
-	            $result=$this->call_trigger('BOM_UNVALIDATE', $user);
-	            if ($result < 0) $error++;
-	        }
-
-	        if (!$error) {
-	            $this->status=self::STATUS_DRAFT;
-	            $this->db->commit();
-	            return 1;
-	        } else {
-	            $this->db->rollback();
-	            return -1;
-	        }
-	    }
-	    else
-	    {
-	        $this->error=$this->db->error();
-	        $this->db->rollback();
-	        return -1;
-	    }
+		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'BOM_UNVALIDATE');
 	}
+
+	/**
+	 *	Set cancel status
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 */
+	public function cancel($user, $notrigger = 0)
+	{
+		// Protection
+		if ($this->status != self::STATUS_VALIDATED)
+		{
+			return 0;
+		}
+
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+		 {
+		 $this->error='Permission denied';
+		 return -1;
+		 }*/
+
+		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'BOM_CLOSE');
+	}
+
+	/**
+	 *	Set cancel status
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 */
+	public function reopen($user, $notrigger = 0)
+	{
+		// Protection
+		if ($this->status != self::STATUS_CANCELED)
+		{
+			return 0;
+		}
+
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+		 {
+		 $this->error='Permission denied';
+		 return -1;
+		 }*/
+
+		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'BOM_REOPEN');
+	}
+
 
 	/**
 	 *  Return a link to the object card (with optionaly the picto)
@@ -773,23 +827,23 @@ class BOM extends CommonObject
 		}
 		elseif ($mode == 2)
 		{
-			return img_picto($this->labelstatus[$status], 'statut'.$status, '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+			return img_picto($this->labelstatus[$status], 'statut'.($status == self::STATUS_VALIDATED ? 4 : $status), '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
 		}
 		elseif ($mode == 3)
 		{
-			return img_picto($this->labelstatus[$status], 'statut'.$status, '', false, 0, 0, '', 'valignmiddle');
+			return img_picto($this->labelstatus[$status], 'statut'.($status == self::STATUS_VALIDATED ? 4 : $status), '', false, 0, 0, '', 'valignmiddle');
 		}
 		elseif ($mode == 4)
 		{
-			return img_picto($this->labelstatus[$status], 'statut'.$status, '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
+			return img_picto($this->labelstatus[$status], 'statut'.($status == self::STATUS_VALIDATED ? 4 : $status), '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
 		}
 		elseif ($mode == 5)
 		{
-			return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut'.$status, '', false, 0, 0, '', 'valignmiddle');
+			return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut'.($status == self::STATUS_VALIDATED ? 4 : $status), '', false, 0, 0, '', 'valignmiddle');
 		}
 		elseif ($mode == 6)
 		{
-			return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut'.$status, '', false, 0, 0, '', 'valignmiddle');
+			return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut'.($status == self::STATUS_VALIDATED ? 4 : $status), '', false, 0, 0, '', 'valignmiddle');
 		}
 	}
 
@@ -856,7 +910,7 @@ class BOM extends CommonObject
 	    $this->lines=array();
 
 	    $objectline = new BOMLine($this->db);
-	    $result = $objectline->fetchAll('', '', 0, 0, array('fk_bom'=>$this->id));
+	    $result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_bom = '.$this->id));
 
 	    if (is_numeric($result))
 	    {
@@ -867,8 +921,41 @@ class BOM extends CommonObject
 	    else
 	    {
 	        $this->lines = $result;
-	        return $this->lines();
+	        return $this->lines;
 	    }
+	}
+
+	/**
+	 *  Create a document onto disk according to template module.
+	 *
+	 *  @param	    string		$modele			Force template to use ('' to not force)
+	 *  @param		Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @return     int         				0 if KO, 1 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
+	{
+		global $conf,$langs;
+
+		$langs->load("mrp");
+
+		if (! dol_strlen($modele)) {
+			$modele = 'standard';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->BOM_ADDON_PDF)) {
+				$modele = $conf->global->BOM_ADDON_PDF;
+			}
+		}
+
+		$modelpath = "core/modules/bom/doc/";
+
+		//return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		return 1;
 	}
 
 	/**
@@ -880,6 +967,7 @@ class BOM extends CommonObject
 	public function initAsSpecimen()
 	{
 	    $this->initAsSpecimenCommon();
+	    $this->ref = 'BOM-123';
 	    $this->date = $this->date_creation;
 	}
 
@@ -944,7 +1032,7 @@ class BOMLine extends CommonObject
 	/**
 	 * @var string String with name of icon for bomline. Must be the part after the 'object_' into object_bomline.png
 	 */
-	public $picto = 'bomline@bom';
+	public $picto = 'bomline';
 
 
 	/**
@@ -972,20 +1060,22 @@ class BOMLine extends CommonObject
 	 */
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
+		'fk_bom' => array('type'=>'integer:BillOfMaterials:societe/class/bom.class.php', 'label'=>'BillOfMaterials', 'enabled'=>1, 'visible'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1,),
+		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>20, 'notnull'=>1, 'index'=>1,),
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'notnull'=>-1,),
+		'qty' => array('type'=>'double(24,8)', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'position'=>100, 'notnull'=>1, 'isameasure'=>'1',),
+		'efficiency' => array('type'=>'double(8,4)', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>1, 'default'=>1, 'position'=>110, 'notnull'=>1, 'css'=>'maxwidth50imp', 'help'=>'ValueOfMeansLoss'),
+		'position' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>1, 'visible'=>0, 'default'=>0, 'position'=>200, 'notnull'=>1,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
-		'qty' => array('type'=>'double(24,8)', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'notnull'=>-1, 'isameasure'=>'1',),
-		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>20, 'notnull'=>-1, 'index'=>1,),
-		'fk_bom' => array('type'=>'integer:BillOfMaterials:societe/class/bom.class.php', 'label'=>'BillOfMaterials', 'enabled'=>1, 'visible'=>1, 'position'=>10, 'notnull'=>-1, 'index'=>1,),
-		'rank' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>1, 'visible'=>0, 'position'=>40, 'notnull'=>1,),
 	);
 	public $rowid;
-	public $description;
-	public $import_key;
-	public $qty;
-	public $fk_product;
 	public $fk_bom;
-	public $rank;
+	public $fk_product;
+	public $description;
+	public $qty;
+	public $efficiency;
+	public $position;
+	public $import_key;
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -996,7 +1086,7 @@ class BOMLine extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs;
 
 		$this->db = $db;
 
@@ -1015,11 +1105,11 @@ class BOMLine extends CommonObject
 		// Translate some data of arrayofkeyval
 		foreach($this->fields as $key => $val)
 		{
-			if (is_array($this->fields['status']['arrayofkeyval']))
+			if (is_array($val['arrayofkeyval']))
 			{
-				foreach($this->fields['status']['arrayofkeyval'] as $key2 => $val2)
+				foreach($val['arrayofkeyval'] as $key2 => $val2)
 				{
-					$this->fields['status']['arrayofkeyval'][$key2]=$langs->trans($val2);
+					$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
 				}
 			}
 		}
@@ -1034,72 +1124,9 @@ class BOMLine extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
+		if ($this->efficiency < 0 || $this->efficiency > 1) $this->efficiency = 1;
+
 		return $this->createCommon($user, $notrigger);
-	}
-
-	/**
-	 * Clone an object into another one
-	 *
-	 * @param  	User 	$user      	User that creates
-	 * @param  	int 	$fromid     Id of object to clone
-	 * @return 	mixed 				New object created, <0 if KO
-	 */
-	public function createFromClone(User $user, $fromid)
-	{
-		global $langs, $hookmanager, $extrafields;
-	    $error = 0;
-
-	    dol_syslog(__METHOD__, LOG_DEBUG);
-
-	    $object = new self($this->db);
-
-	    $this->db->begin();
-
-	    // Load source object
-	    $object->fetchCommon($fromid);
-	    // Reset some properties
-	    unset($object->id);
-	    unset($object->fk_user_creat);
-	    unset($object->import_key);
-
-	    // Clear fields
-	    $object->ref = "copy_of_".$object->ref;
-	    $object->title = $langs->trans("CopyOf")." ".$object->title;
-	    // ...
-	    // Clear extrafields that are unique
-	    if (is_array($object->array_options) && count($object->array_options) > 0)
-	    {
-	    	$extrafields->fetch_name_optionals_label($this->element);
-	    	foreach($object->array_options as $key => $option)
-	    	{
-	    		$shortkey = preg_replace('/options_/', '', $key);
-	    		if (! empty($extrafields->attributes[$this->element]['unique'][$shortkey]))
-	    		{
-	    			//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
-	    			unset($object->array_options[$key]);
-	    		}
-	    	}
-	    }
-
-	    // Create clone
-		$object->context['createfromclone'] = 'createfromclone';
-	    $result = $object->createCommon($user);
-	    if ($result < 0) {
-	        $error++;
-	        $this->error = $object->error;
-	        $this->errors = $object->errors;
-	    }
-
-	    unset($object->context['createfromclone']);
-
-	    // End
-	    if (!$error) {
-	        $this->db->commit();
-	        return $object;
-	    } else {
-	        $this->db->rollback();
-	        return -1;
-	    }
 	}
 
 	/**
@@ -1135,11 +1162,11 @@ class BOMLine extends CommonObject
 
 		$records=array();
 
-		$sql = 'SELECT';
-		$sql .= ' t.rowid';
-		// TODO Get all fields
+		$sql = 'SELECT ';
+		$sql .= $this->getFieldList();
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
-		$sql .= ' WHERE t.entity = '.$conf->entity;
+		if ($this->ismultientitymanaged) $sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+		else $sql .= ' WHERE 1 = 1';
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
@@ -1176,11 +1203,8 @@ class BOMLine extends CommonObject
 			while ($obj = $this->db->fetch_object($resql))
 			{
 				$record = new self($this->db);
+				$record->setVarsFromFetchObj($obj);
 
-				$record->id = $obj->rowid;
-				// TODO Get other fields
-
-				//var_dump($record->id);
 				$records[$record->id] = $record;
 			}
 			$this->db->free($resql);
@@ -1203,6 +1227,8 @@ class BOMLine extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
+		if ($this->efficiency < 0 || $this->efficiency > 1) $this->efficiency = 1;
+
 		return $this->updateCommon($user, $notrigger);
 	}
 
@@ -1232,8 +1258,6 @@ class BOMLine extends CommonObject
     public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
     {
         global $db, $conf, $langs, $hookmanager;
-        global $dolibarr_main_authentication, $dolibarr_main_demo;
-        global $menumanager;
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 

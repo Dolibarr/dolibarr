@@ -38,6 +38,7 @@ ActionsEvents=Evenimente pentru care Dolibarr va crea o acţiune în agendă în
 EventRemindersByEmailNotEnabled=Evenimentul pentru mementouri prin e-mail nu a fost activat în configurarea modulului %s.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Terța parte %s a fost creată
+COMPANY_DELETEInDolibarr=Third party %s deleted
 ContractValidatedInDolibarr=Contract %s validat
 CONTRACT_DELETEInDolibarr=Contractul %s a fost șters
 PropalClosedSignedInDolibarr=Oferta  %s semnată
@@ -95,6 +96,7 @@ PROJECT_MODIFYInDolibarr=Proiect %s modificat
 PROJECT_DELETEInDolibarr=Proiect %s sters
 TICKET_CREATEInDolibarr=Tichetul%s a fost creat
 TICKET_MODIFYInDolibarr=Tichetul %s a fost modificat
+TICKET_ASSIGNEDInDolibarr=Ticket %s assigned
 TICKET_CLOSEInDolibarr=Ticket %s closed
 TICKET_DELETEInDolibarr=Tichetul %s a fost șters
 ##### End agenda events #####

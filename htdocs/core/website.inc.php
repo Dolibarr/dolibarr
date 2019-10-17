@@ -12,8 +12,8 @@
 * GNU General Public License for more details.
 *
 * You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-* or see http://www.gnu.org/
+* along with this program. If not, see <https://www.gnu.org/licenses/>.
+* or see https://www.gnu.org/
 */
 
 /**
@@ -94,5 +94,11 @@ if ($_SERVER['PHP_SELF'] != DOL_URL_ROOT.'/website/index.php')	// If we browsing
 	}
 }
 
-// Load websitepage class
-include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
+// Show off line message
+if (! defined('USEDOLIBARREDITOR') && empty($website->status))
+{
+	$weblangs->load("website");
+	http_response_code(503);
+	print '<center><br><br>'.$weblangs->trans("SorryWebsiteIsCurrentlyOffLine").'</center>';
+	exit;
+}

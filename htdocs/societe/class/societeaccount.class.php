@@ -3,7 +3,6 @@
  * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -80,7 +79,7 @@ class SocieteAccount extends CommonObject
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-2, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>'Id',),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>5, 'default'=>1),
-		'key_account' => array('type'=>'varchar(128)', 'label'=>'KeyAccount', 'visible'=>-1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>'Key account',),
+		'key_account' => array('type'=>'varchar(128)', 'label'=>'KeyAccount', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>'Key account',),
 		'login' => array('type'=>'varchar(64)', 'label'=>'Login', 'visible'=>1, 'enabled'=>1, 'position'=>10),
 		'pass_encoding' => array('type'=>'varchar(24)', 'label'=>'PassEncoding', 'visible'=>0, 'enabled'=>1, 'position'=>30),
 		'pass_crypted' => array('type'=>'varchar(128)', 'label'=>'Password', 'visible'=>1, 'enabled'=>1, 'position'=>31, 'notnull'=>1),
@@ -165,9 +164,9 @@ class SocieteAccount extends CommonObject
 	 */
 	//public $class_element_line = 'societeAccountline';
 	/**
-	 * @var array  Array of child tables (child tables to delete before deleting a record)
+     * @var array	List of child tables. To test if we can delete object.
 	 */
-	//protected $childtables=array('societe_accountdet');
+	//protected $childtables=array();
 	/**
 	 * @var societeAccountLine[]     Array of subtable lines
 	 */
@@ -281,12 +280,13 @@ class SocieteAccount extends CommonObject
 	}
 
 	/**
-	 * Try to find the external customer id of a thirdparty for an another site/system.
+	 * Try to find the external customer id of a thirdparty for another site/system.
 	 *
 	 * @param	int		$id			Id of third party
 	 * @param	string	$site		Site (example: 'stripe', '...')
 	 * @param	int		$status		Status (0=test, 1=live)
 	 * @return	string				Stripe customer ref 'cu_xxxxxxxxxxxxx' or ''
+	 * @see getThirdPartyID()
 	 */
 	public function getCustomerAccount($id, $site, $status = 0)
 	{
@@ -312,6 +312,38 @@ class SocieteAccount extends CommonObject
 		}
 
 		return $key;
+	}
+
+	/**
+	* Try to find the thirdparty id for an another site/system external id.
+	*
+	* @param	string	$id			Id of customer in external system (example: 'cu_xxxxxxxxxxxxx', ...)
+	* @param	string	$site		Site (example: 'stripe', '...')
+	* @param	int		$status		Status (0=test, 1=live)
+	* @return	int					Id of third party
+	* @see getCustomerAccount()
+	*/
+	public function getThirdPartyID($id, $site, $status = 0)
+	{
+		$socid = 0;
+
+		$sql = "SELECT sa.fk_soc as fk_soc, sa.key_account, sa.entity";
+		$sql.= " FROM " . MAIN_DB_PREFIX . "societe_account as sa";
+		$sql.= " WHERE sa.key_account = '".$this->db->escape($id)."'";
+		$sql.= " AND sa.entity IN (".getEntity('societe').")";
+		$sql.= " AND sa.site = '".$this->db->escape($site)."' AND sa.status = ".((int) $status);
+		$sql.= " AND sa.fk_soc > 0";
+
+		dol_syslog(get_class($this) . "::getCustomerAccount Try to find the first thirdparty id for ".$site." for external id=".$id, LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result) {
+			if ($this->db->num_rows($result)) {
+				$obj = $this->db->fetch_object($result);
+				$socid = $obj->fk_soc;
+			}
+		}
+
+		return $socid;
 	}
 
 	/**

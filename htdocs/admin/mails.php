@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -364,7 +364,6 @@ if ($action == 'edit')
 	// ID
 	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer'))))
 	{
-
 		$mainstmpid=(! empty($conf->global->MAIN_MAIL_SMTPS_ID)?$conf->global->MAIN_MAIL_SMTPS_ID:'');
 		print '<tr class="drag drop oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>';
 		// SuperAdministrator access only
@@ -384,7 +383,6 @@ if ($action == 'edit')
 	// PW
 	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer'))))
 	{
-
 		$mainsmtppw=(! empty($conf->global->MAIN_MAIL_SMTPS_PW)?$conf->global->MAIN_MAIL_SMTPS_PW:'');
 		print '<tr class="drag drop oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>';
 		// SuperAdministrator access only
@@ -526,11 +524,17 @@ else
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	// Disable
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>'.yn($conf->global->MAIN_DISABLE_ALL_MAILS).'</td></tr>';
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>'.yn($conf->global->MAIN_DISABLE_ALL_MAILS);
+	if (! empty($conf->global->MAIN_DISABLE_ALL_MAILS)) print img_warning($langs->trans("Disabled"));
+	print '</td></tr>';
 
 	// Force e-mail recipient
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_FORCE_SENDTO").'</td><td>'.$conf->global->MAIN_MAIL_FORCE_SENDTO;
-	if (! empty($conf->global->MAIN_MAIL_FORCE_SENDTO) && ! isValidEmail($conf->global->MAIN_MAIL_FORCE_SENDTO)) print img_warning($langs->trans("ErrorBadEMail"));
+	if (! empty($conf->global->MAIN_MAIL_FORCE_SENDTO))
+	{
+		if (! isValidEmail($conf->global->MAIN_MAIL_FORCE_SENDTO)) print img_warning($langs->trans("ErrorBadEMail"));
+		else print img_warning($langs->trans("RecipientEmailsWillBeReplacedWithThisValue"));
+	}
 	print '</td></tr>';
 
 	//Add user to select destinaries list

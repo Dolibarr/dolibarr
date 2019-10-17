@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 // Load translation files required by the page
-$langs->loadlangs(array('exports', 'other', 'users', 'companies', 'projects'));
+$langs->loadlangs(array('admin', 'exports', 'other', 'users', 'companies', 'projects', 'suppliers', 'products', 'bank'));
 
 // Everybody should be able to go on this page
 //if (! $user->admin)
@@ -361,7 +361,7 @@ if ($action == 'add_export_model')
 	}
 }
 
-// Reload an predefined export model
+// Reload a predefined export model
 if ($step == 2 && $action == 'select_model')
 {
     $_SESSION["export_selected_fields"]=array();
@@ -448,13 +448,13 @@ if ($step == 1 || ! $datatoexport)
     print '<td>'.$langs->trans("ExportableDatas").'</td>';
     print '<td>&nbsp;</td>';
     print '</tr>';
-    $val=true;
-    if (count($objexport->array_export_code))
+
+    if (count($objexport->array_export_module))
     {
-        foreach ($objexport->array_export_code as $key => $value)
+    	$sortedarrayofmodules = dol_sort_array($objexport->array_export_module, 'module_position', 'asc', 0, 0, 1);
+    	foreach ($sortedarrayofmodules as $key => $value)
         {
-            $val=!$val;
-            print '<tr '.$bc[$val].'><td nospan="nospan">';
+            print '<tr class="oddeven"><td nospan="nospan">';
 	        //print img_object($objexport->array_export_module[$key]->getName(),$export->array_export_module[$key]->picto).' ';
             print $objexport->array_export_module[$key]->getName();
             print '</td><td>';
@@ -466,7 +466,7 @@ if ($step == 1 || ! $datatoexport)
             print '</td><td class="right">';
             if ($objexport->array_export_perms[$key])
             {
-            	print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$objexport->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"), 'filenew').'</a>';
+            	print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&module_position='.$objexport->array_export_module[$key]->module_position.'&datatoexport='.$objexport->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"), 'filenew').'</a>';
             }
             else
             {
@@ -477,7 +477,7 @@ if ($step == 1 || ! $datatoexport)
     }
     else
     {
-        print '<tr><td '.$bc[false].' colspan="3">'.$langs->trans("NoExportableData").'</td></tr>';
+        print '<tr><td class="oddeven" colspan="3">'.$langs->trans("NoExportableData").'</td></tr>';
     }
     print '</table>';
     print '</div>';
@@ -1009,7 +1009,7 @@ if ($step == 4 && $datatoexport)
 
         print '<td class="right" width="100">';
         print $value.' ';
-        print '</td><td class="center" width="20">';
+        print '</td><td class="center nowraponall" width="40">';
         if ($value < count($array_selected)) print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=downfield&field='.$code.'">'.img_down().'</a>';
         if ($value > 1) print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=upfield&field='.$code.'">'.img_up().'</a>';
         print '</td>';

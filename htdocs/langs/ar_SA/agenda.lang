@@ -38,6 +38,7 @@ ActionsEvents=الأحداث التي سيقوم دوليبار بإنشاء أ�
 EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into %s module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=تم إنشاء الطرف الثالث %s
+COMPANY_DELETEInDolibarr=Third party %s deleted
 ContractValidatedInDolibarr=العقد%s  تم التأكد من صلاحيته
 CONTRACT_DELETEInDolibarr=Contract %s deleted
 PropalClosedSignedInDolibarr=الإقتراح%sتم توقعية
@@ -95,6 +96,7 @@ PROJECT_MODIFYInDolibarr=المشروع %s تم تعديلة
 PROJECT_DELETEInDolibarr=المشروع %s تم حذفة
 TICKET_CREATEInDolibarr=Ticket %s created
 TICKET_MODIFYInDolibarr=Ticket %s modified
+TICKET_ASSIGNEDInDolibarr=Ticket %s assigned
 TICKET_CLOSEInDolibarr=Ticket %s closed
 TICKET_DELETEInDolibarr=Ticket %s deleted
 ##### End agenda events #####

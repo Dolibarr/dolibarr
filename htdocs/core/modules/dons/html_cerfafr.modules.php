@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -83,7 +83,7 @@ class html_cerfafr extends ModeleDon
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "donations"));
 
 		$currency = !empty($currency) ? $currency : $conf->currency;

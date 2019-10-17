@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
@@ -39,7 +39,6 @@ $langs->load("members");
 $total=0;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
-
 ?>
 <tr class="oddeven" >
     <td><?php echo $langs->trans("Subscription"); ?></td>
@@ -47,10 +46,10 @@ foreach($linkedObjectBlock as $key => $objectlink)
 	<td class="center"></td>
 	<td class="center"><?php echo dol_print_date($objectlink->dateh, 'day'); ?></td>
 	<td class="right"><?php
-		if ($user->rights->adherent->lire) {
-			$total = $total + $objectlink->amount;
-			echo price($objectlink->amount);
-		} ?></td>
+	if ($user->rights->adherent->lire) {
+		$total = $total + $objectlink->amount;
+		echo price($objectlink->amount);
+	} ?></td>
 	<td class="right"></td>
 	<td class="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
 </tr>

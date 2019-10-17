@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -346,7 +346,7 @@ function project_admin_prepare_head()
  * @param   int         $projectidfortotallink  0 or Id of project to use on total line (link to see all time consumed for project)
  * @param   string      $filterprogresscalc     filter text
  * @param   string      $showbilltime           Add the column 'TimeToBill' and 'TimeBilled'
- * @return	void
+ * @return	int									Nb of tasks shown
  */
 function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId = '', $addordertick = 0, $projectidfortotallink = 0, $filterprogresscalc = '', $showbilltime = 0)
 {
@@ -371,12 +371,14 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 	$numlines=count($lines);
 
 	// We declare counter as global because we want to edit them into recursive call
-	global $total_projectlinesa_spent,$total_projectlinesa_planned,$total_projectlinesa_spent_if_planned,$total_projectlinesa_tobill,$total_projectlinesa_billed;
+	global $total_projectlinesa_spent, $total_projectlinesa_planned, $total_projectlinesa_spent_if_planned, $total_projectlinesa_declared_if_planned, $total_projectlinesa_tobill, $total_projectlinesa_billed;
+
 	if ($level == 0)
 	{
 		$total_projectlinesa_spent=0;
 		$total_projectlinesa_planned=0;
 		$total_projectlinesa_spent_if_planned=0;
+        $total_projectlinesa_declared_if_planned=0;
 		$total_projectlinesa_tobill=0;
 		$total_projectlinesa_billed=0;
 	}
@@ -446,7 +448,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				$projectstatic->ref=$lines[$i]->projectref;
 				$projectstatic->public=$lines[$i]->public;
 				$projectstatic->title=$lines[$i]->projectlabel;
-				$projectstatic->bill_time=$lines[$i]->bill_time;
+				$projectstatic->usage_bill_time=$lines[$i]->usage_bill_time;
 
 				$taskstatic->id=$lines[$i]->id;
 				$taskstatic->ref=$lines[$i]->ref;
@@ -455,6 +457,9 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				$taskstatic->progress = $lines[$i]->progress;
 				$taskstatic->fk_statut = $lines[$i]->status;
 				$taskstatic->datee = $lines[$i]->date_end;
+                $taskstatic->planned_workload= $lines[$i]->planned_workload;
+                $taskstatic->duration_effective= $lines[$i]->duration;
+
 
 				if ($showproject)
 				{
@@ -491,9 +496,13 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				//else print '<a href="'.DOL_URL_ROOT.'/projet/tasks/task.php?id='.$lines[$i]->id.'&withproject=1">';
 				for ($k = 0 ; $k < $level ; $k++)
 				{
-					print "&nbsp; &nbsp; &nbsp;";
+					print '<div class="marginleftonly">';
 				}
 				print $lines[$i]->label;
+				for ($k = 0 ; $k < $level ; $k++)
+				{
+					print '</div>';
+				}
 				if ($showlineingray) print '</i>';
 				//else print '</a>';
 				print "</td>\n";
@@ -550,15 +559,22 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print '<td class="right">';
 				if ($lines[$i]->progress != '')
 				{
-					print $lines[$i]->progress.' %';
+					print getTaskProgressBadge($taskstatic);
 				}
 				print '</td>';
+
+				// resume
+                print '<td class="right">';
+                if ($lines[$i]->progress != '' && $lines[$i]->duration) {
+                    print getTaskProgressView($taskstatic, false, false);
+                }
+                print '</td>';
 
 				if ($showbilltime)
 				{
     				// Time not billed
     				print '<td class="right">';
-    				if ($lines[$i]->bill_time)
+    				if ($lines[$i]->usage_bill_time)
     				{
     				    print convertSecondToTime($lines[$i]->tobill, 'allhourmin');
     				    $total_projectlinesa_tobill += $lines[$i]->tobill;
@@ -571,7 +587,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
     				// Time billed
     				print '<td class="right">';
-    				if ($lines[$i]->bill_time)
+    				if ($lines[$i]->usage_bill_time)
     				{
     				    print convertSecondToTime($lines[$i]->billed, 'allhourmin');
     				    $total_projectlinesa_billed += $lines[$i]->billed;
@@ -624,6 +640,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				$total_projectlinesa_spent += $lines[$i]->duration;
 				$total_projectlinesa_planned += $lines[$i]->planned_workload;
 				if ($lines[$i]->planned_workload) $total_projectlinesa_spent_if_planned += $lines[$i]->duration;
+                if ($lines[$i]->planned_workload) $total_projectlinesa_declared_if_planned += $lines[$i]->planned_workload * $lines[$i]->progress / 100;
 			}
 		}
 		else
@@ -649,10 +666,48 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		print convertSecondToTime($total_projectlinesa_spent, 'allhourmin');
 		if ($projectidfortotallink > 0) print '</a>';
 		print '</td>';
+
+        if ($total_projectlinesa_planned) {
+            $totalAverageDeclaredProgress = round(100 * $total_projectlinesa_declared_if_planned / $total_projectlinesa_planned, 2);
+            $totalCalculatedProgress = round(100 * $total_projectlinesa_spent / $total_projectlinesa_planned, 2);
+            // this conf is actually hidden, by default we use 1% for "be carefull or warning"
+            $warningRatio = !empty($conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT) ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.01;
+
+            // define progress color according to time spend vs workload
+            $progressBarClass = 'progress-bar-info';
+            $badgeClass = 'badge ';
+
+            if ($totalCalculatedProgress > $totalAverageDeclaredProgress) {
+                $progressBarClass = 'progress-bar-danger';
+                $badgeClass.= 'badge-danger';
+            } elseif ($totalCalculatedProgress * $warningRatio >= $totalAverageDeclaredProgress) { // warning if close at 1%
+                $progressBarClass = 'progress-bar-warning';
+                $badgeClass.= 'badge-warning';
+            } else {
+                $progressBarClass = 'progress-bar-success';
+                $badgeClass.= 'badge-success';
+            }
+        }
+
 		print '<td class="nowrap liste_total right">';
-		if ($total_projectlinesa_planned) print round(100 * $total_projectlinesa_spent / $total_projectlinesa_planned, 2).' %';
+		if ($total_projectlinesa_planned) print $totalCalculatedProgress.' %';
 		print '</td>';
-		print '<td></td>';
+		print '<td class="nowrap liste_total right">';
+        if ($total_projectlinesa_planned) print '<span class="'.$badgeClass.'" >'.$totalAverageDeclaredProgress.' %</span>';
+		print '</td>';
+
+
+        // resume
+        print '<td class="right">';
+        if ($total_projectlinesa_planned) {
+            print '</span>';
+            print '    <div class="progress sm" title="'.$totalAverageDeclaredProgress.'%" >';
+            print '        <div class="progress-bar '.$progressBarClass.'" style="width: '.$totalAverageDeclaredProgress.'%"></div>';
+            print '    </div>';
+            print '</div>';
+        }
+        print '</td>';
+
 		if ($showbilltime)
 		{
     		print '<td class="nowrap liste_total right">';
@@ -917,11 +972,10 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
  * @param   array       $isavailable			Array with data that say if user is available for several days for morning and afternoon
  * @param	int			$oldprojectforbreak		Old project id of last project break
  * @param	array		$arrayfields		    Array of additional column
- * @param	array		$extrafields		    Array of additional column
- * @param	array		$extralabels		    Array of additional column
+ * @param	Extrafields	$extrafields		    Object extrafields
  * @return  array								Array with time spent for $fuser for each day of week on tasks in $lines and substasks
  */
-function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, $preselectedday, &$isavailable, $oldprojectforbreak = 0, $arrayfields = array(), $extrafields = '', $extralabels = array())
+function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, $preselectedday, &$isavailable, $oldprojectforbreak = 0, $arrayfields = array(), $extrafields = null)
 {
 	global $conf, $db, $user, $bc, $langs;
 	global $form, $formother, $projectstatic, $taskstatic, $thirdpartystatic;
@@ -1030,7 +1084,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
                     if (! empty($arrayfields['p.opp_amount']['checked']))    print_liste_field_titre($arrayfields['p.opp_amount']['label'], $_SERVER["PHP_SELF"], 'p.opp_amount', "", $param, '', $sortfield, $sortorder, 'right ');
                     if (! empty($arrayfields['p.opp_percent']['checked']))   print_liste_field_titre($arrayfields['p.opp_percent']['label'], $_SERVER["PHP_SELF"], 'p.opp_percent', "", $param, '', $sortfield, $sortorder, 'right ');
                     if (! empty($arrayfields['p.budget_amount']['checked'])) print_liste_field_titre($arrayfields['p.budget_amount']['label'], $_SERVER["PHP_SELF"], 'p.budget_amount', "", $param, '', $sortfield, $sortorder, 'right ');
-                    if (! empty($arrayfields['p.bill_time']['checked']))     print_liste_field_titre($arrayfields['p.bill_time']['label'], $_SERVER["PHP_SELF"], 'p.bill_time', "", $param, '', $sortfield, $sortorder, 'right ');
+                    if (! empty($arrayfields['p.usage_bill_time']['checked']))     print_liste_field_titre($arrayfields['p.usage_bill_time']['label'], $_SERVER["PHP_SELF"], 'p.usage_bill_time', "", $param, '', $sortfield, $sortorder, 'right ');
 
                     $extrafieldsobjectkey='projet';
                     $extrafieldsobjectprefix='efp.';
@@ -1065,10 +1119,10 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
                         print price($lines[$i]->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
                         print "</td>\n";
                     }
-                    if (! empty($arrayfields['p.bill_time']['checked']))
+                    if (! empty($arrayfields['p.usage_bill_time']['checked']))
                     {
                         print '<td class="nowrap">';
-                        print yn($lines[$i]->bill_time);
+                        print yn($lines[$i]->usage_bill_time);
                         print "</td>\n";
                     }
 
@@ -1259,7 +1313,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 			{
 				//var_dump('totalforeachday after taskid='.$lines[$i]->id.' and previous one on level '.$level);
 				//var_dump($totalforeachday);
-				$ret = projectLinesPerDay($inc, $lines[$i]->id, $fuser, ($parent == 0 ? $lineswithoutlevel0 : $lines), $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $preselectedday, $isavailable, $oldprojectforbreak, $arrayfields, $extrafields, $extralabels);
+				$ret = projectLinesPerDay($inc, $lines[$i]->id, $fuser, ($parent == 0 ? $lineswithoutlevel0 : $lines), $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $preselectedday, $isavailable, $oldprojectforbreak, $arrayfields, $extrafields);
 				//var_dump('ret with parent='.$lines[$i]->id.' level='.$level);
 				//var_dump($ret);
 				foreach($ret as $key => $val)
@@ -1297,11 +1351,10 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
  * @param   array       $isavailable			Array with data that say if user is available for several days for morning and afternoon
  * @param	int			$oldprojectforbreak		Old project id of last project break
  * @param	array		$arrayfields		    Array of additional column
- * @param	array		$extrafields		    Array of additional column
- * @param	array		$extralabels		    Array of additional column
+ * @param	Extrafields	$extrafields		    Object extrafields
  * @return  array								Array with time spent for $fuser for each day of week on tasks in $lines and substasks
  */
-function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, &$isavailable, $oldprojectforbreak = 0, $arrayfields = array(), $extrafields = '', $extralabels = array())
+function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, &$isavailable, $oldprojectforbreak = 0, $arrayfields = array(), $extrafields = null)
 {
 	global $conf, $db, $user, $bc, $langs;
 	global $form, $formother, $projectstatic, $taskstatic, $thirdpartystatic;
@@ -1410,7 +1463,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
                     if (! empty($arrayfields['p.opp_amount']['checked']))    print_liste_field_titre($arrayfields['p.opp_amount']['label'], $_SERVER["PHP_SELF"], 'p.opp_amount', "", $param, '', $sortfield, $sortorder, 'right ');
                     if (! empty($arrayfields['p.opp_percent']['checked']))   print_liste_field_titre($arrayfields['p.opp_percent']['label'], $_SERVER["PHP_SELF"], 'p.opp_percent', "", $param, '', $sortfield, $sortorder, 'right ');
                     if (! empty($arrayfields['p.budget_amount']['checked'])) print_liste_field_titre($arrayfields['p.budget_amount']['label'], $_SERVER["PHP_SELF"], 'p.budget_amount', "", $param, '', $sortfield, $sortorder, 'right ');
-                    if (! empty($arrayfields['p.bill_time']['checked']))     print_liste_field_titre($arrayfields['p.bill_time']['label'], $_SERVER["PHP_SELF"], 'p.bill_time', "", $param, '', $sortfield, $sortorder, 'right ');
+                    if (! empty($arrayfields['p.usage_bill_time']['checked']))     print_liste_field_titre($arrayfields['p.usage_bill_time']['label'], $_SERVER["PHP_SELF"], 'p.usage_bill_time', "", $param, '', $sortfield, $sortorder, 'right ');
 
                     $extrafieldsobjectkey='projet';
                     $extrafieldsobjectprefix='efp.';
@@ -1445,10 +1498,10 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
                         print price($lines[$i]->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
                         print "</td>\n";
                     }
-                    if (! empty($arrayfields['p.bill_time']['checked']))
+                    if (! empty($arrayfields['p.usage_bill_time']['checked']))
                     {
                         print '<td class="nowrap">';
-                        print yn($lines[$i]->bill_time);
+                        print yn($lines[$i]->usage_bill_time);
                         print "</td>\n";
                     }
 
@@ -1629,7 +1682,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 			{
 				//var_dump('totalforeachday after taskid='.$lines[$i]->id.' and previous one on level '.$level);
 				//var_dump($totalforeachday);
-				$ret = projectLinesPerWeek($inc, $firstdaytoshow, $fuser, $lines[$i]->id, ($parent == 0 ? $lineswithoutlevel0 : $lines), $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $isavailable, $oldprojectforbreak, $arrayfields, $extrafields, $extralabels);
+				$ret = projectLinesPerWeek($inc, $firstdaytoshow, $fuser, $lines[$i]->id, ($parent == 0 ? $lineswithoutlevel0 : $lines), $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $isavailable, $oldprojectforbreak, $arrayfields, $extrafields);
 				//var_dump('ret with parent='.$lines[$i]->id.' level='.$level);
 				//var_dump($ret);
 				foreach($ret as $key => $val)
@@ -1933,4 +1986,165 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		print "</tr>\n";
 		print '</table></form>';
 	}
+}
+
+/**
+ * @param   task                $task               Task            the task object
+ * @param   label               $label              bool|string     true = auto, false = dont display, string = replace output
+ * @param   progressNumber      $progressNumber     bool|string     true = auto, false = dont display, string = replace output
+ * @param   hideOnProgressNull  $hideOnProgressNull bool            hide if progress is null
+ * @param   spaced              $spaced             bool            used to add space at bottom (made by css)
+ * @return string
+ */
+function getTaskProgressView($task, $label = true, $progressNumber = true, $hideOnProgressNull = false, $spaced = false)
+{
+    global $langs, $conf;
+
+    $out = '';
+
+    $plannedworkloadoutputformat='allhourmin';
+    $timespentoutputformat='allhourmin';
+    if (! empty($conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT)) $plannedworkloadoutputformat=$conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT;
+    if (! empty($conf->global->PROJECT_TIMES_SPENT_FORMAT)) $timespentoutputformat=$conf->global->PROJECT_TIME_SPENT_FORMAT;
+
+    if(empty($task->progress) && !empty($hideOnProgressNull)){
+        return '';
+    }
+
+    $spaced = !empty($spaced)?'spaced':'';
+
+    $diff = '';
+
+    // define progress color according to time spend vs workload
+    $progressBarClass = 'progress-bar-info';
+    if ($task->planned_workload){
+        $progressCalculated =  round(100 * doubleval($task->duration_effective) / doubleval($task->planned_workload), 2);
+
+        // this conf is actually hidden, by default we use 1% for "be carefull or warning"
+        $warningRatio = !empty($conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT) ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.01;
+
+        $diffTitle = '<br/>'.$langs->trans('ProgressDeclared').' : '.$task->progress.'%';
+        $diffTitle.= '<br/>'.$langs->trans('ProgressCalculated').' : '.$progressCalculated.'%';
+
+        if($progressCalculated > doubleval($task->progress)){
+            $progressBarClass = 'progress-bar-danger';
+            $title = $langs->trans('TheReportedProgressIsLessThanTheCalculatedProgressionByX', abs($task->progress-$progressCalculated).'%');
+            $diff = '<span class="text-danger classfortooltip"" title="'.dol_htmlentities($title.$diffTitle).'" ><i class="fa fa-caret-down"></i> '.($task->progress-$progressCalculated).'%</span>';
+        }
+        elseif($progressCalculated * $warningRatio >= doubleval($task->progress)){ // warning if close at 1%
+            $progressBarClass = 'progress-bar-warning';
+            $title = $langs->trans('TheReportedProgressIsLessThanTheCalculatedProgressionByX', abs($task->progress-$progressCalculated).'%');
+            $diff = '<span class="text-warning classfortooltip" title="'.dol_htmlentities($title.$diffTitle).'" ><i class="fa fa-caret-left"></i> '.($task->progress-$progressCalculated).'%</span>';
+        }
+        else{
+            $progressBarClass = 'progress-bar-success';
+            $title = $langs->trans('TheReportedProgressIsMoreThanTheCalculatedProgressionByX', ($task->progress-$progressCalculated).'%');
+            $diff = '<span class="text-success classfortooltip" title="'.dol_htmlentities($title.$diffTitle).'" ><i class="fa fa-caret-up"></i> '.($task->progress-$progressCalculated).'%</span>';
+        }
+    }
+
+    $out.= '<div class="progress-group">';
+
+    if($label !== false)
+    {
+        $out.= '    <span class="progress-text">';
+
+        if($label!==true){
+            $out.= $label; // replace label by param
+        }
+        else{
+            $out.= $task->getNomUrl(1).' '.dol_htmlentities($task->label);
+        }
+        $out.= '    </span>';
+    }
+
+
+    if($progressNumber !== false)
+    {
+        $out.= '    <span class="progress-number">';
+        if($progressNumber!==true){
+            $out.= $progressNumber; // replace label by param
+        }
+        else{
+            if ($task->hasDelay()) $out.= img_warning($langs->trans("Late")).' ';
+
+            $out.= !empty($diff) ? $diff.' ':'';
+
+            $out.= '<b title="'.$langs->trans('TimeSpent').'" >';
+            if ($task->duration_effective) $out.= convertSecondToTime($task->duration_effective, $timespentoutputformat);
+            else $out.= '--:--';
+            $out.= '</b>';
+
+            $out.= '/';
+
+            $out.= '<span title="'.$langs->trans('PlannedWorkload').'" >';
+            if ($task->planned_workload) $out.= convertSecondToTime($task->planned_workload, $plannedworkloadoutputformat);
+            else $out.= '--:--';
+        }
+        $out.= '    </span>';
+    }
+
+
+
+    $out.= '</span>';
+    $out.= '    <div class="progress sm '.$spaced.'" title="'.doubleval($task->progress).'%" >';
+    $out.= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.doubleval($task->progress).'%"></div>';
+    $out.= '    </div>';
+    $out.= '</div>';
+
+
+
+    return $out;
+}
+/**
+ * @param task      $task      Task     the task object
+ * @param label     $label     string   empty = auto (progress), string = replace output
+ * @param tooltip   $tooltip   string   empty = auto , string = replace output
+ * @return string
+ */
+function getTaskProgressBadge($task, $label = '', $tooltip = '')
+{
+    global $conf;
+
+    $out = '';
+    $badgeClass = '';
+    if ($task->progress != '')
+    {
+        // TODO : manage 100%
+
+        // define color according to time spend vs workload
+        $badgeClass = 'badge ';
+        if ($task->planned_workload){
+            $progressCalculated =  round(100 * doubleval($task->duration_effective) / doubleval($task->planned_workload), 2);
+
+            // this conf is actually hidden, by default we use 1% for "be carefull or warning"
+            $warningRatio = !empty($conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT) ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.01;
+
+            if($progressCalculated > doubleval($task->progress)){
+                $badgeClass.= 'badge-danger';
+            }
+            elseif($progressCalculated * $warningRatio >= doubleval($task->progress)){ // warning if close at 1%
+                $badgeClass.= 'badge-warning';
+            }
+            else{
+                $badgeClass.= 'badge-success';
+            }
+        }
+    }
+
+    $title = '';
+    if(!empty($tooltip)){
+        $badgeClass.= ' classfortooltip';
+        $title = 'title="'.dol_htmlentities($tooltip).'"';
+    }
+
+    if(empty($label)){
+        $label = $task->progress.' %';
+    }
+
+    if(!empty($label)){
+        $out = '<span class="'.$badgeClass.'" '.$title.' >'.$label.'</span>';
+    }
+
+    return $out;
 }

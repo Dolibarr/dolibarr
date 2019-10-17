@@ -11,7 +11,7 @@
  * Copyright (C) 2015		Claudio Aschieri		<c.aschieri@19.coop>
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Yasser Carreón			<yacasia@gmail.com>
- * Copyright (C) 2018	   Quentin Vial-Gouteyron    <quentin.vial-gouteyron@atm-consulting.fr>
+ * Copyright (C) 2018	    Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -56,7 +56,7 @@ if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
-$langs->loadLangs(array("receptions","companies","bills",'deliveries','orders','stocks','other','propal'));
+$langs->loadLangs(array("receptions","companies","bills",'deliveries','orders','stocks','other','propal','sendings'));
 
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 if (! empty($conf->productbatch->enabled)) $langs->load('productbatch');
@@ -97,13 +97,10 @@ $hideref 	 = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($
 
 $object = new Reception($db);
 $extrafields = new ExtraFields($db);
-$extrafieldsline = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-
-// fetch optionals attributes lines and labels
-$extralabelslines=$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element_line);
 
 
 // Load object. Make an object->fetch
@@ -191,8 +188,7 @@ if (empty($reshook))
 	if ($action == 'update_extras')
 	{
 	    // Fill array 'array_options' with data from update form
-	    $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-	    $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+	    $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute'));
 	    if ($ret < 0) $error++;
 
 	    if (! $error)
@@ -220,7 +216,6 @@ if (empty($reshook))
 	// Create reception
 	if ($action == 'add' && $user->rights->reception->creer)
 	{
-
 		$error = 0;
 		$predef = '';
 
@@ -302,8 +297,7 @@ if (empty($reshook))
 
 
 			// Extrafields
-			$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-			$array_options[$i] = $extrafieldsline->getOptionalsFromPost($extralabelsline, $i);
+			$array_options[$i] = $extrafields->getOptionalsFromPost($object->table_element_line, $i);
 		}
 
 
@@ -355,7 +349,7 @@ if (empty($reshook))
 
 
 	        // Fill array 'array_options' with data from add form
-	        $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	        $ret = $extrafields->setOptionalsFromPost(null, $object);
 	        if ($ret < 0) $error++;
 	        if (! $error)
 	        {
@@ -606,9 +600,8 @@ if (empty($reshook))
 				$line = new CommandeFournisseurDispatch($db);
 				$line->fetch($line_id);
 				// Extrafields Lines
-				$extrafieldsline = new ExtraFields($db);
-				$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-				$line->array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+				$extrafields->fetch_name_optionals_label($object->table_element_line);
+				$line->array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
 
 
 				$line->fk_product = $lines[$i]->fk_product;
@@ -780,9 +773,10 @@ if ($action == 'create')
             }
             print '</a></td>';
             print "</tr>\n";
+
             // Ref client
             print '<tr><td>';
-            if ($origin == 'supplier_order') print $langs->trans('RefSupplierOrder');
+            if ($origin == 'supplier_order') print $langs->trans('SupplierOrder');
             else print $langs->trans('RefSupplier');
             print '</td><td colspan="3">';
             print '<input type="text" name="ref_supplier" value="'.$object->ref_supplier.'" />';
@@ -815,7 +809,7 @@ if ($action == 'create')
             print '<td colspan="3">';
             //print dol_print_date($object->date_livraison,"day");	// date_livraison come from order and will be stored into date_delivery planed.
             $date_delivery = ($date_delivery?$date_delivery:$object->date_livraison); // $date_delivery comes from GETPOST
-            print $form->select_date($date_delivery?$date_delivery:-1, 'date_delivery', 1, 1, 1);
+            print $form->selectDate($date_delivery?$date_delivery:-1, 'date_delivery', 1, 1, 1);
             print "</td>\n";
             print '</tr>';
 
@@ -890,7 +884,7 @@ if ($action == 'create')
 			if (!empty($conf->incoterm->enabled))
 			{
 				print '<tr>';
-				print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $object->libelle_incoterms, 1).'</label></td>';
+				print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $object->label_incoterms, 1).'</label></td>';
 		        print '<td colspan="3" class="maxwidthonsmartphone">';
 		        print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''));
 				print '</td></tr>';
@@ -1163,10 +1157,10 @@ if ($action == 'create')
 							{
 								print '<td><input name="batch'.$indiceAsked.'" value="'.$dispatchLines[$indiceAsked]['lot'].'"></td>';
 								print '<td>';
-								print $form->select_date($dispatchLines[$indiceAsked]['DLC'], 'dlc' . $indiceAsked, '', '', 1, "");
+								print $form->selectDate($dispatchLines[$indiceAsked]['DLC'], 'dlc' . $indiceAsked, '', '', 1, "");
 								print '</td>';
 								print '<td>';
-								print $form->select_date($dispatchLines[$indiceAsked]['DLUO'], 'dluo' . $indiceAsked, '', '', 1, "");
+								print $form->selectDate($dispatchLines[$indiceAsked]['DLUO'], 'dluo' . $indiceAsked, '', '', 1, "");
 								print '</td>';
 							}
 							else {
@@ -1180,16 +1174,21 @@ if ($action == 'create')
 				if (is_array($extralabelslines) && count($extralabelslines)>0)
 				{
 					$colspan=5;
-					if($conf->productbatch->enabled)$colspan+=3;
-					$orderLineExtrafields = new Extrafields($db);
-					$orderLineExtrafieldLabels = $orderLineExtrafields->fetch_name_optionals_label($object->table_element_line);
+					if ($conf->productbatch->enabled) $colspan+=3;
+
 					$srcLine = new CommandeFournisseurLigne($db);
-					$srcLine->fetch_optionals($line->id, $orderLineExtrafieldLabels); // fetch extrafields also available in orderline
 					$line = new CommandeFournisseurDispatch($db);
-					$line->fetch_optionals($object->id, $extralabelslines);
+
+					$extrafields->fetch_name_optionals_label($srcLine->table_element);
+					$extrafields->fetch_name_optionals_label($line->table_element);
+
+					$srcLine->fetch_optionals($line->id); // fetch extrafields also available in orderline
+					$line->fetch_optionals($object->id);
+
 					$line->array_options = array_merge($line->array_options, $srcLine->array_options);
+
 					print '<tr class="oddeven">';
-					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan), $indiceAsked);
+					print $line->showOptionals($extrafields, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan), $indiceAsked);
 					print '</tr>';
 				}
 
@@ -1241,7 +1240,7 @@ elseif ($id || $ref)
 		$soc = new Societe($db);
 		$soc->fetch($object->socid);
 
-		$res = $object->fetch_optionals($object->id, $extralabels);
+		$res = $object->fetch_optionals($object->id);
 
 		$head=reception_prepare_head($object);
 		dol_fiche_head($head, 'reception', $langs->trans("Reception"), -1, 'reception');
@@ -1336,7 +1335,7 @@ elseif ($id || $ref)
             $morehtmlref .= '<br>' . $langs->trans('Project') . ' ';
             if (0) {    // Do not change on reception
                 if ($action != 'classify') {
-                    $morehtmlref .= '<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+                    $morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
                 }
                 if ($action == 'classify') {
                     // $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -1398,7 +1397,7 @@ elseif ($id || $ref)
 		if ($typeobject == 'CommandeFournisseur' && $object->$typeobject->id && ! empty($conf->propal->enabled))
 		{
 			print '<tr><td>';
-			print $langs->trans("RefSupplierOrder").'</td>';
+			print $langs->trans("SupplierOrder").'</td>';
 			print '<td colspan="3">';
 			print $objectsrc->getNomUrl(1, 'reception');
 			print "</td>\n";
@@ -1416,7 +1415,7 @@ elseif ($id || $ref)
 		print $langs->trans('DateDeliveryPlanned');
 		print '</td>';
 
-		if ($action != 'editdate_livraison') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
+		if ($action != 'editdate_livraison') print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editdate_livraison')
@@ -1424,7 +1423,7 @@ elseif ($id || $ref)
 			print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="setdate_livraison">';
-			print $form->select_date($object->date_delivery?$object->date_delivery:-1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0, 1);
+			print $form->selectDate($object->date_delivery?$object->date_delivery:-1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
 			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		}
@@ -1556,7 +1555,7 @@ elseif ($id || $ref)
 		print $langs->trans('ReceptionMethod');
 		print '</td>';
 
-		if ($action != 'editshipping_method_id') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshipping_method_id&amp;id='.$object->id.'">'.img_edit($langs->trans('SetReceptionMethod'), 1).'</a></td>';
+		if ($action != 'editshipping_method_id') print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshipping_method_id&amp;id='.$object->id.'">'.img_edit($langs->trans('SetReceptionMethod'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editshipping_method_id')
@@ -1595,14 +1594,14 @@ elseif ($id || $ref)
 	        print '<table width="100%" class="nobordernopadding"><tr><td>';
 	        print $langs->trans('IncotermLabel');
 	        print '<td><td class="right">';
-	        if ($user->rights->reception->creer) print '<a href="'.DOL_URL_ROOT.'/reception/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+	        if ($user->rights->reception->creer) print '<a class="editfielda" href="'.DOL_URL_ROOT.'/reception/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
 	        else print '&nbsp;';
 	        print '</td></tr></table>';
 	        print '</td>';
 	        print '<td colspan="3">';
 			if ($action != 'editincoterm')
 			{
-				print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+				print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 			}
 			else
 			{
@@ -1887,9 +1886,9 @@ elseif ($id || $ref)
 						{
 							print '<td>  <input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"> </br>';
 							print $langs->trans('EatByDate').' : ';
-							print $form->select_date($lines[$i]->eatby, 'dlc' .$line_id, '', '', 1, ""). '</br>';
+							print $form->selectDate($lines[$i]->eatby, 'dlc' .$line_id, '', '', 1, ""). '</br>';
 							print $langs->trans('SellByDate').' : ';
-							print $form->select_date($lines[$i]->sellby, 'dluo' .$line_id, '', '', 1, "");
+							print $form->selectDate($lines[$i]->sellby, 'dluo' .$line_id, '', '', 1, "");
 							print '</td>';
 						}
 						print '</tr>';
@@ -1998,18 +1997,19 @@ elseif ($id || $ref)
 			print "</tr>";
 
 			// Display lines extrafields
-			if (is_array($extralabelslines) && count($extralabelslines)>0) {
+			if (is_array($extralabelslines) && count($extralabelslines)>0)
+			{
 				$colspan= empty($conf->productbatch->enabled) ? 8 : 9;
 				$line = new CommandeFournisseurDispatch($db);
-				$line->fetch_optionals($lines[$i]->id, $extralabelslines);
+				$line->fetch_optionals($lines[$i]->id);
 				print '<tr class="oddeven">';
 				if ($action == 'editline' && $lines[$i]->id == $line_id)
 				{
-					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan), $indiceAsked);
+					print $line->showOptionals($extrafields, 'edit', array('colspan'=>$colspan), $indiceAsked);
 				}
 				else
 				{
-					print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bc[$var], 'colspan'=>$colspan), $indiceAsked);
+					print $line->showOptionals($extrafields, 'view', array('colspan'=>$colspan), $indiceAsked);
 				}
 				print '</tr>';
 			}
@@ -2040,7 +2040,6 @@ elseif ($id || $ref)
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook))
 		{
-
 			if ($object->statut == Reception::STATUS_DRAFT && $num_prod > 0)
 			{
 				if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->reception->creer))

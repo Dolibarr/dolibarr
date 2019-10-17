@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * This template needs:
  * $object
@@ -69,7 +69,7 @@ $userstatic=new User($db);
 if ($permission) {
 ?>
 	<form class="tagtr liste_titre">
-		<div class="tagtd liste_titre"><?php echo $langs->trans("Nature"); ?></div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("NatureOfContact"); ?></div>
 		<div class="tagtd liste_titre"><?php echo $langs->trans("ThirdParty"); ?></div>
 		<div class="tagtd liste_titre"><?php echo $langs->trans("Users").'/'.$langs->trans("Contacts"); ?></div>
 		<div class="tagtd liste_titre"><?php echo $langs->trans("ContactType"); ?></div>
@@ -81,7 +81,6 @@ if ($permission) {
 
 	if (empty($hideaddcontactforuser))
 	{
-
 	?>
 	<form class="tagtr impair" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
 	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
@@ -107,7 +106,6 @@ if ($permission) {
 
 	if (empty($hideaddcontactforthirdparty))
 	{
-
 	?>
 
 	<form class="tagtr pair" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
@@ -129,7 +127,7 @@ if ($permission) {
 			<?php $selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', '', 0, '', 'minwidth300imp'); ?>
 		</div>
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
-			<?php $nbofcontacts=$form->select_contacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 0, 'minwidth100imp'); ?>
+			<?php $nbofcontacts=$form->select_contacts(($selectedCompany > 0 ? $selectedCompany : -1), '', 'contactid', 3, '', '', 1, 'minwidth100imp'); ?>
 		</div>
 		<div class="tagtd maxwidthonsmartphone noborderbottom">
 			<?php
@@ -149,7 +147,7 @@ if ($permission) {
 ?>
 
 	<form class="tagtr liste_titre liste_titre_add formnoborder">
-		<div class="tagtd liste_titre"><?php echo $langs->trans("Nature"); ?></div>
+		<div class="tagtd liste_titre"><?php echo $langs->trans("NatureOfContact"); ?></div>
 		<div class="tagtd liste_titre"><?php echo $langs->trans("ThirdParty"); ?></div>
 		<div class="tagtd liste_titre"><?php echo $langs->trans("Users").'/'.$langs->trans("Contacts"); ?></div>
 		<div class="tagtd liste_titre"><?php echo $langs->trans("ContactType"); ?></div>
@@ -162,7 +160,6 @@ if ($permission) {
 
 	$arrayofsource=array('internal','external');	// Show both link to user and thirdparties contacts
 	foreach($arrayofsource as $source) {
-
 		$tmpobject=$object;
 		if (($object->element == 'shipping'|| $object->element == 'reception') && is_object($objectsrc)) $tmpobject=$objectsrc;
 
@@ -208,7 +205,7 @@ if ($permission) {
 			if ($tab[$i]['source']=='external')
 			{
 				$contactstatic->fetch($tab[$i]['id']);
-				echo $contactstatic->getNomUrl(1, '', 0, '', 0, 0, '', 'valignmiddle');
+				echo $contactstatic->getNomUrl(1, '', 0, '', 0, 0);
 			}
 			?>
 		</div>

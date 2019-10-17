@@ -22,7 +22,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -83,14 +83,16 @@ if ($user->societe_id > 0)
     $socid = $user->societe_id;
 }
 
+$object = new PaiementFourn($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('paymentsupplierlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('paymentsupplier');
-$search_array_options=$extrafields->getOptionalsFromPost('paymentsupplier', '', 'search_');
+$extrafields->fetch_name_optionals_label($object->table_element);
+
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 $arrayfields=array();
 
@@ -799,7 +801,7 @@ if (empty($action) || $action == 'list')
     $sortfield = GETPOST("sortfield", 'alpha');
     $sortorder = GETPOST("sortorder", 'alpha');
     $page=GETPOST("page", 'int');
-    if ($page == -1 || $page == null) { $page = 0 ; }
+    if (empty($page) || $page == -1) { $page = 0; }
     $offset = $limit * $page ;
     $pageprev = $page - 1;
     $pagenext = $page + 1;
@@ -823,19 +825,7 @@ if (empty($action) || $action == 'list')
     $sql.= " WHERE f.entity = ".$conf->entity;
     if (!$user->rights->societe->client->voir) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
     if ($socid > 0) $sql .= ' AND f.fk_soc = '.$socid;
-    // Search criteria
-    if ($month > 0) {
-        if ($year > 0 && empty($day))
-        $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year, $month, false))."' AND '".$db->idate(dol_get_last_day($year, $month, false))."'";
-        elseif ($year > 0 && ! empty($day))
-        $sql.= " AND p.datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
-        else
-        $sql.= " AND date_format(p.datep, '%m') = '".$month."'";
-    }
-    elseif ($year > 0)
-    {
-        $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
-    }
+    $sql.= dolSqlDateFilter('p.datep', $day, $month, $year);
     if ($search_ref)       		    $sql .= natural_search('p.rowid', $search_ref);
     if ($search_account > 0)      	$sql .=" AND b.fk_account=".$search_account;
     if ($search_paymenttype != "")  $sql .=" AND c.code='".$db->escape($search_paymenttype)."'";
@@ -885,7 +875,7 @@ if (empty($action) || $action == 'list')
 
     	$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
 
-        print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);
+        print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'invoicing', 0, '', '', $limit);
 
         print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
         if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';

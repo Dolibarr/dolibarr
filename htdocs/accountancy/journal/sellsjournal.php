@@ -21,12 +21,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  * \file		htdocs/accountancy/journal/sellsjournal.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief		Page with sells journal
  */
 
@@ -95,8 +95,6 @@ if (! GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end)
 	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
 
-$idpays = $mysoc->country_id;
-
 $sql = "SELECT f.rowid, f.ref, f.type, f.datef as df, f.ref_client, f.date_lim_reglement as dlr, f.close_code,";
 $sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.situation_percent, fd.vat_src_code,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
@@ -146,7 +144,7 @@ if ($result) {
 	$num = $db->num_rows($result);
 
 	// Variables
-	$cptcli = (! empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER)) ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : 'NotDefined';
+	$cptcli = (($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER != "")) ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : 'NotDefined';
 	$cpttva = (! empty($conf->global->ACCOUNTING_VAT_SOLD_ACCOUNT)) ? $conf->global->ACCOUNTING_VAT_SOLD_ACCOUNT : 'NotDefined';
 
 	$i = 0;
@@ -257,7 +255,6 @@ if ($action == 'writebookkeeping') {
 	$invoicestatic = new Facture($db);
 
 	foreach ($tabfac as $key => $val) {		// Loop on each invoice
-
 		$errorforline = 0;
 
 		$totalcredit = 0;
@@ -313,7 +310,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->doc_date = $val["date"];
 					$bookkeeping->date_lim_reglement = $val["datereg"];
 					$bookkeeping->doc_ref = $val["ref"];
-					$bookkeeping->date_create = $now;
+					$bookkeeping->date_creation = $now;
 					$bookkeeping->doc_type = 'customer_invoice';
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = 0;	// Useless, can be several lines that are source of this record to add
@@ -370,7 +367,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->doc_date = $val["date"];
 						$bookkeeping->date_lim_reglement = $val["datereg"];
 						$bookkeeping->doc_ref = $val["ref"];
-						$bookkeeping->date_create = $now;
+						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'customer_invoice';
 						$bookkeeping->fk_doc = $key;
 						$bookkeeping->fk_docdet = 0;	// Useless, can be several lines that are source of this record to add
@@ -430,7 +427,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->doc_date = $val["date"];
 						$bookkeeping->date_lim_reglement = $val["datereg"];
 						$bookkeeping->doc_ref = $val["ref"];
-						$bookkeeping->date_create = $now;
+						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'customer_invoice';
 						$bookkeeping->fk_doc = $key;
 						$bookkeeping->fk_docdet = 0;	// Useless, can be several lines that are source of this record to add
@@ -656,7 +653,6 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 
 
 if (empty($action) || $action == 'view') {
-
 	llxHeader('', $langs->trans("SellsJournal"));
 
 	$nom = $langs->trans("SellsJournal") . ' | ' . $accountingjournalstatic->getNomUrl(0, 1, 1, '', 1);
@@ -679,13 +675,14 @@ if (empty($action) || $action == 'view') {
 	journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
 
 	// Button to write into Ledger
-	if (empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1') {
+	if (($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "") || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1') {
+		print '<br>';
 		print img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
-		print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
+		print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
 	}
 	print '<div class="tabsAction tabsActionNoBottom">';
 	if (! empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL)) print '<input type="button" class="butAction" name="exportcsv" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
-	if (empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1') {
+	if (($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "") || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1') {
 		print '<input type="button" class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="' . $langs->trans("WriteBookKeeping") . '" />';
 	}
 	else {
@@ -719,14 +716,13 @@ if (empty($action) || $action == 'view') {
 	print '<div class="div-table-responsive">';
 	print "<table class=\"noborder\" width=\"100%\">";
 	print "<tr class=\"liste_titre\">";
-	print "<td></td>";
 	print "<td>" . $langs->trans("Date") . "</td>";
 	print "<td>" . $langs->trans("Piece") . ' (' . $langs->trans("InvoiceRef") . ")</td>";
 	print "<td>" . $langs->trans("AccountAccounting") . "</td>";
 	print "<td>" . $langs->trans("SubledgerAccount") . "</td>";
 	print "<td>" . $langs->trans("LabelOperation") . "</td>";
-	print "<td class='right'>" . $langs->trans("Debit") . "</td>";
-	print "<td class='right'>" . $langs->trans("Credit") . "</td>";
+	print '<td class="center">' . $langs->trans("Debit") . "</td>";
+	print '<td class="center">' . $langs->trans("Credit") . "</td>";
 	print "</tr>\n";
 
 	$r = '';
@@ -764,7 +760,7 @@ if (empty($action) || $action == 'view') {
 		if ($replacedinvoice == 1)
 		{
 			print '<tr class="oddeven">';
-			print "<td><!-- Replaced invoice --></td>";
+			print "<!-- Replaced invoice -->";
 			print "<td>" . $date . "</td>";
 			print "<td><strike>" . $invoicestatic->getNomUrl(1) . "</strike></td>";
 			// Account
@@ -785,7 +781,7 @@ if (empty($action) || $action == 'view') {
 		if ($errorforinvoice[$key] == 'somelinesarenotbound')
 		{
 			print '<tr class="oddeven">';
-			print "<td><!-- Some lines are not bound --></td>";
+			print "<!-- Some lines are not bound -->";
 			print "<td>" . $date . "</td>";
 			print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 			// Account
@@ -807,13 +803,13 @@ if (empty($action) || $action == 'view') {
 		{
 			//if ($mt) {
 				print '<tr class="oddeven">';
-				print "<td><!-- Thirdparty --></td>";
+				print "<!-- Thirdparty -->";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 				// Account
 				print "<td>";
 				$accountoshow = length_accounta($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER);
-				if (empty($accountoshow) || $accountoshow == 'NotDefined')
+				if (($accountoshow == "") || $accountoshow == 'NotDefined')
 				{
 					print '<span class="error">'.$langs->trans("MainAccountForCustomersNotDefined").'</span>';
 				}
@@ -822,15 +818,15 @@ if (empty($action) || $action == 'view') {
 				// Subledger account
 				print "<td>";
 				$accountoshow = length_accounta($k);
-				if (empty($accountoshow) || $accountoshow == 'NotDefined')
+				if (($accountoshow == "") || $accountoshow == 'NotDefined')
 				{
 					print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
 				}
 				else print $accountoshow;
 				print '</td>';
 				print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("SubledgerAccount") . "</td>";
-				print '<td class="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
-				print '<td class="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+				print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+				print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "</tr>";
 			//}
 		}
@@ -843,13 +839,13 @@ if (empty($action) || $action == 'view') {
 
 			//if ($mt) {
 				print '<tr class="oddeven">';
-				print "<td><!-- Product --></td>";
+				print "<!-- Product -->";
 				print "<td>" . $date . "</td>";
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 				// Account
 				print "<td>";
 				$accountoshow = length_accountg($k);
-				if (empty($accountoshow) || $accountoshow == 'NotDefined')
+				if (($accountoshow == "") || $accountoshow == 'NotDefined')
 				{
 					print '<span class="error">'.$langs->trans("ProductNotDefined").'</span>';
 				}
@@ -861,8 +857,8 @@ if (empty($action) || $action == 'view') {
 				$companystatic->id = $tabcompany[$key]['id'];
 				$companystatic->name = $tabcompany[$key]['name'];
 				print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $accountingaccount->label . "</td>";
-				print "<td class='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
-				print "<td class='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
+				print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+				print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 				print "</tr>";
 			//}
 		}
@@ -878,13 +874,13 @@ if (empty($action) || $action == 'view') {
 			foreach ($arrayofvat[$key] as $k => $mt) {
 				if ($mt) {
 					print '<tr class="oddeven">';
-					print "<td><!-- VAT --></td>";
+					print "<!-- VAT -->";
 					print "<td>" . $date . "</td>";
 					print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 					// Account
 					print "<td>";
 					$accountoshow = length_accountg($k);
-					if (empty($accountoshow) || $accountoshow == 'NotDefined')
+					if (($accountoshow == "") || $accountoshow == 'NotDefined')
 					{
 						print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("Sale").')'.'</span>';
 					}
@@ -895,8 +891,8 @@ if (empty($action) || $action == 'view') {
 					print '</td>';
 					print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("VAT"). ' '.join(', ', $def_tva[$key][$k]).' %'.($numtax?' - Localtax '.$numtax:'');
 					print "</td>";
-					print '<td class="right">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
-					print '<td class="right">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+					print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+					print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
 					print "</tr>";
 				}
 			}

@@ -45,7 +45,6 @@ MenuProductsAccounts=Comptes de produits
 CustomersVentilation=Contrat de facture client
 ExpenseReportsVentilation=Rapport de dépenses liant
 CreateMvts=Créer une nouvelle transaction
-WriteBookKeeping=Journalize les transactions dans Ledger
 AccountBalance=Solde du compte
 TotalExpenseReport=Rapport de dépenses totales
 InvoiceLines=Lignes des factures pour lier

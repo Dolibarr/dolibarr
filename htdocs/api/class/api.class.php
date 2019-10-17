@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\Restler;
@@ -32,7 +32,7 @@ class DolibarrApi
     /**
      * @var DoliDb        $db Database object
      */
-    static protected $db;
+    protected static $db;
 
     /**
      * @var Restler     $r	Restler object
@@ -106,8 +106,6 @@ class DolibarrApi
         // Remove linkedObjects. We should already have linkedObjectIds that avoid huge responses
         unset($object->linkedObjects);
 
-        unset($object->lignes); // we don't want lignes, we want only ->lines
-
         unset($object->fields);
         unset($object->oldline);
 
@@ -145,7 +143,6 @@ class DolibarrApi
         unset($object->picto);
 
         unset($object->fieldsforcombobox);
-		unset($object->comments);
 
         unset($object->skip_update_total);
         unset($object->context);
@@ -188,7 +185,7 @@ class DolibarrApi
                 unset($object->lines[$i]->note_public);
                 unset($object->lines[$i]->note_private);
                 unset($object->lines[$i]->fk_incoterms);
-                unset($object->lines[$i]->libelle_incoterms);
+                unset($object->lines[$i]->label_incoterms);
                 unset($object->lines[$i]->location_incoterms);
                 unset($object->lines[$i]->name);
                 unset($object->lines[$i]->lastname);

@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -80,6 +80,7 @@ if (session_status() === PHP_SESSION_ACTIVE)
 // Not sure this is required
 unset($_SESSION['dol_login']);
 unset($_SESSION['dol_entity']);
+unset($_SESSION['urlfrom']);
 
 if (GETPOST('noredirect')) return;
 header("Location: ".$url);		// Default behaviour is redirect to index.php page

@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -63,78 +63,86 @@ $object = new BonPrelevement($db, "");
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
+$hookmanager->initHooks(array('directdebitprevcard','globalcard'));
 
 /*
  * Actions
  */
 
-if ( $action == 'confirm_delete' )
+$parameters = array('socid' => $socid);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+if (empty($reshook))
 {
-	$res=$object->delete($user);
-	if ($res > 0)
+    if ( $action == 'confirm_delete' )
+    {
+        $res=$object->delete($user);
+        if ($res > 0)
+        {
+            header("Location: index.php");
+            exit;
+        }
+    }
+
+    // Seems to no be used and replaced with $action == 'infocredit'
+    if ( $action == 'confirm_credite' && GETPOST('confirm', 'alpha') == 'yes')
+    {
+        $res=$object->set_credite();
+        if ($res >= 0)
+        {
+            header("Location: card.php?id=".$id);
+            exit;
+        }
+    }
+
+    if ($action == 'infotrans' && $user->rights->prelevement->bons->send)
+    {
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+		$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+
+        /*
+        if ($_FILES['userfile']['name'] && basename($_FILES['userfile']['name'],".ps") == $object->ref)
+        {
+            $dir = $conf->prelevement->dir_output.'/receipts';
+
+            if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $dir . "/" . dol_unescapefile($_FILES['userfile']['name']),1) > 0)
+            {
+                $object->set_infotrans($user, $dt, GETPOST('methode','alpha'));
+            }
+
+            header("Location: card.php?id=".$id);
+            exit;
+        }
+        else
+        {
+            dol_syslog("Fichier invalide",LOG_WARNING);
+            $mesg='BadFile';
+        }*/
+
+		$error = $object->set_infotrans($user, $dt, GETPOST('methode', 'alpha'));
+
+        if ($error)
+        {
+            header("Location: card.php?id=".$id."&error=$error");
+            exit;
+        }
+    }
+
+	// Set direct debit order to credited, create payment and close invoices
+	if ($action == 'infocredit' && $user->rights->prelevement->bons->credit)
 	{
-		header("Location: index.php");
-		exit;
-	}
-}
+		$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
-// Seems to no be used and replaced with $action == 'infocredit
-if ( $action == 'confirm_credite' && GETPOST('confirm', 'alpha') == 'yes')
-{
-	$res=$object->set_credite();
-	if ($res >= 0)
-	{
-    	header("Location: card.php?id=".$id);
-	    exit;
-	}
-}
+        $error = $object->set_infocredit($user, $dt);
 
-if ($action == 'infotrans' && $user->rights->prelevement->bons->send)
-{
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-	$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-
-	/*
-	if ($_FILES['userfile']['name'] && basename($_FILES['userfile']['name'],".ps") == $object->ref)
-	{
-		$dir = $conf->prelevement->dir_output.'/receipts';
-
-		if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $dir . "/" . dol_unescapefile($_FILES['userfile']['name']),1) > 0)
-		{
-			$object->set_infotrans($user, $dt, GETPOST('methode','alpha'));
-		}
-
-		header("Location: card.php?id=".$id);
-        exit;
-	}
-	else
-	{
-		dol_syslog("Fichier invalide",LOG_WARNING);
-		$mesg='BadFile';
-	}*/
-
-	$error = $object->set_infotrans($user, $dt, GETPOST('methode', 'alpha'));
-
-	if ($error)
-	{
-		header("Location: card.php?id=".$id."&error=$error");
-		exit;
-	}
-}
-
-// Set direct debit order to credited, create payment and close invoices
-if ($action == 'infocredit' && $user->rights->prelevement->bons->credit)
-{
-	$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-
-	$error = $object->set_infocredit($user, $dt);
-
-	if ($error)
-	{
-		header("Location: card.php?id=".$id."&error=$error");
-		exit;
-	}
+        if ($error)
+        {
+            header("Location: card.php?id=".$id."&error=$error");
+            exit;
+        }
+    }
 }
 
 
@@ -231,6 +239,23 @@ if ($id > 0 || $ref)
 	dol_fiche_end();
 
 
+	$formconfirm = '';
+
+	// Confirmation to delete
+	if ($action == 'delete')
+	{
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('Delete'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 1);
+	}
+
+	// Call Hook formConfirm
+	/*$parameters = array();
+	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
+	elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;*/
+
+	// Print form confirm
+	print $formconfirm;
+
 
 	if (empty($object->date_trans) && $user->rights->prelevement->bons->send && $action=='settransmitted')
 	{
@@ -290,7 +315,7 @@ if ($id > 0 || $ref)
 			print "<a class=\"butAction\" href=\"card.php?action=setcredited&id=".$object->id."\">".$langs->trans("ClassCredited")."</a>";
 		}
 
-		print "<a class=\"butActionDelete\" href=\"card.php?action=confirm_delete&id=".$object->id."\">".$langs->trans("Delete")."</a>";
+		print "<a class=\"butActionDelete\" href=\"card.php?action=delete&id=".$object->id."\">".$langs->trans("Delete")."</a>";
 
 		print "</div>";
 	}
@@ -348,8 +373,6 @@ if ($id > 0 || $ref)
 		print_liste_field_titre('');
 		print "</tr>\n";
 
-		$var=false;
-
 		$total = 0;
 
 		while ($i < min($num, $conf->liste_limit))
@@ -362,7 +385,7 @@ if ($id > 0 || $ref)
 			print "<td>";
 			print $ligne->LibStatut($obj->statut, 2);
 			print "&nbsp;";
-			print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
+			print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'">';
 			print sprintf("%06s", $obj->rowid);
 			print '</a></td>';
 
@@ -398,7 +421,10 @@ if ($id > 0 || $ref)
 			print '<td>'.$langs->trans("Total").'</td>';
 			print '<td>&nbsp;</td>';
 			print '<td class="right">';
-			if ($total != $object->amount) print img_warning("AmountOfFileDiffersFromSumOfInvoices");
+			if (empty($offset) && $num <= $limit)	// If we have all record on same page, then the following test/warning can be done
+			{
+				if ($total != $object->amount) print img_warning("TotalAmountOfdirectDebitOrderDiffersFromSumOfLines");
+			}
 			print price($total);
 			print "</td>\n";
 			print '<td>&nbsp;</td>';

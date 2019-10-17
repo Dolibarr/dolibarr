@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -86,7 +86,7 @@ class Categories extends DolibarrApi
             throw new RestException(404, 'category not found');
         }
 
-        if ( ! DolibarrApi::_checkAccessToResource('category', $this->category->id)) {
+        if ( ! DolibarrApi::_checkAccessToResource('categorie', $this->category->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -290,7 +290,7 @@ class Categories extends DolibarrApi
         unset($object->total_tva);
         unset($object->lines);
         unset($object->fk_incoterms);
-        unset($object->libelle_incoterms);
+        unset($object->label_incoterms);
         unset($object->location_incoterms);
         unset($object->civility_id);
         unset($object->name);

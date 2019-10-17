@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -244,13 +244,13 @@ print "<br>\n";
 // Confirmation for remove menu entry
 if ($action == 'delete')
 {
-	$sql = "SELECT m.titre";
+	$sql = "SELECT m.titre as title";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
 	$sql.= " WHERE m.rowid = ".GETPOST('menuId', 'int');
 	$result = $db->query($sql);
 	$obj = $db->fetch_object($result);
 
-    print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOST('menuId', 'int'), $langs->trans("DeleteMenu"), $langs->trans("ConfirmDeleteMenu", $obj->titre), "confirm_delete");
+    print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOST('menuId', 'int'), $langs->trans("DeleteMenu"), $langs->trans("ConfirmDeleteMenu", $obj->title), "confirm_delete");
 }
 
 $newcardbutton='';

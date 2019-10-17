@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -438,7 +438,7 @@ $head[1][1] = $langs->trans("ReplenishmentOrders");
 $head[1][2] = 'replenishorders';
 
 
-print load_fiche_titre($langs->trans('Replenishment'), '', 'title_generic.png');
+print load_fiche_titre($langs->trans('Replenishment'), '', 'generic');
 
 dol_fiche_head($head, 'replenish', '', -1, '');
 
@@ -551,7 +551,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">'
 	'<input type="hidden" name="action" value="order">'.
 	'<input type="hidden" name="mode" value="' . $mode . '">';
 
-// Lignes des champs de filtre
+// Fields title search
 print '<tr class="liste_titre_filter">';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre"><input class="flat" type="text" name="sref" size="8" value="'.dol_escape_htmltag($sref).'"></td>';

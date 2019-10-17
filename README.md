@@ -1,11 +1,10 @@
 # DOLIBARR ERP & CRM
 
 ![Downloads per day](https://img.shields.io/sourceforge/dw/dolibarr.svg)
-[![Reviewed by Hound](https://img.shields.io/badge/Reviewed_by-Hound-8E64B0.svg)](https://houndci.com)
 
-|6|7|8|9|develop|
+|7|8|9|10|develop|
 |----------|----------|----------|----------|----------|
-|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/6.0.svg)|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/7.0.svg)|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/8.0.svg)|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/9.0.svg)|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/develop.svg)|
+|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/7.0.svg)|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/8.0.svg)|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/9.0.svg)|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/10.0.svg)|![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/develop.svg)|
 
 Dolibarr ERP & CRM is a modern software package to manage your organization's activity (contacts, suppliers, invoices, orders, stocks, agenda…).
 
@@ -75,6 +74,7 @@ If you don't have time to install it yourself, you can try some commercial 'read
 
 ## UPGRADING
 
+- At first make a backup of your Dolibarr files & than see https://wiki.dolibarr.org/index.php/Installation_-_Upgrade#Upgrade_Dolibarr 
 - Overwrite all old files from 'dolibarr' directory with files provided into the new version's package.
 - At first next access, Dolibarr will redirect your to the "install/" page to follow the upgrade process.
   If an `install.lock` file exists to lock any other upgrade process, the application will ask you to remove the file manually (you should find the `install.lock` file into the directory used to store generated and uploaded documents, in most cases, it is the directory called "*documents*").
@@ -91,18 +91,19 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 
 ### Main application/modules (all optional)
 
-- Customers, Prospects and/or Suppliers directory
+- Customers, Prospects (Leads) and/or Suppliers directory
 - Products and/or Services catalog
 - Commercial proposals management
 - Customer and Supplier Orders management
 - Invoices and payment management
 - Standing orders management (European SEPA)
 - Bank accounts management
+- Accounting management
 - Shared calendar/agenda (with ical and vcal export for third party tools integration)
 - Opportunities and/or project management
 - Projects management
 - Contracts management
-- Stock management
+- Warehouse/Stock management
 - Shipping management
 - Interventions management
 - Employee's leave requests management
@@ -112,7 +113,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Foundations members management
 - Mass emailing
 - Surveys
-- Point of Sale
+- Point of Sale (POS) 
 - …
 
 ### Other application/modules
@@ -132,15 +133,15 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 
 ### Other general features
 
-- Localization in most major languages.
-- Multi-Users and groups with finely grained rights.
-- Multi-currency.
-- Multi-company by adding of an external module.
-- Very user friendly and easy to use.
+- Localization in most major languages
+- Multi-Users and groups with finely grained rights
+- Multi-currency
+- Multi-company by adding of an external module
+- Very user friendly and easy to use
+- customizable Dashboard
 - Highly customizable: enable only the modules you need, add user personalized fields, choose your skin, several menu managers (can be used by internal users as a back-office with a particular menu, or by external users as a front-office with another one)
-- Works with PHP 5.3+ and MariaDB 5.0.3+, MySQL 5.0.3+ or PostgreSQL 8.1.4+ (See requirements on the [Wiki](https://wiki.dolibarr.org/index.php/Prerequisite))
-- Compatible with all Cloud solutions that match MySQL, PHP or PostgreSQL prerequisites.
-- APIs.
+
+- APIs
 - An easy to understand, maintain and develop code (PHP with no heavy framework; trigger and hook architecture)
 - Support a lot of country specific features:
     - Spanish Tax RE and ISPF
@@ -153,6 +154,12 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
     - ...
 - PDF or ODT generation for invoice, proposals, orders...
 - …
+
+### System Environment / Requirements
+
+- Works with PHP 5.5+ and MariaDB 5.0.3+, MySQL 5.0.3+ or PostgreSQL 8.1.4+ (See requirements on the [Wiki](https://wiki.dolibarr.org/index.php/Prerequisite))
+- Compatible with all Cloud solutions that match MySQL, PHP or PostgreSQL prerequisites.
+
 
 ### Extending
 

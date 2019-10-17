@@ -1,5 +1,16 @@
 # Dolibarr language file - Source file is en_US - deliveries
-DeliveryRef=Ref. Lieferung
+DeliveryRef=Lieferungsnummer
+DeliveryCard=Lieferschein
+DeliveryOrder=Lieferauftrag
+CreateDeliveryOrder=Erzeuge Lieferschein
 DeliveryStateSaved=Lieferstatus gespeichert
+ValidateDeliveryReceiptConfirm=Bist du sicher, dass du diesen Lieferschein frei geben willst?
+DeleteDeliveryReceiptConfirm=Bist du sicher, dass du den Lieferschein <b>%s</b> löschen willst?
+TrackingNumber=Sendungsverfolgungsnummer
+DeliveryNotValidated=Die Lieferung ist nicht freigegeben
 StatusDeliveryValidated=Erhalten
+NameAndSignature=Name / Unterschrift
+Deliverer=Lieferant
+ErrorStockIsNotEnough=Der Lagerbestand ist zu klein
 ShowReceiving=Lieferschein anzeigen
+NonExistentOrder=Nicht vorhandene Bestellung

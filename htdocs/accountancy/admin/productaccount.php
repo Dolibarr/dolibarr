@@ -16,12 +16,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  * \file		htdocs/accountancy/admin/productaccount.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief		To define accounting account on product / service
  */
 require '../../main.inc.php';
@@ -117,7 +117,6 @@ if ($action == 'update') {
 		);
 
 		if (in_array($accounting_product_mode, $accounting_product_modes)) {
-
 			if (! dolibarr_set_const($db, 'ACCOUNTING_PRODUCT_MODE', $accounting_product_mode, 'chaine', 0, '', $conf->entity)) {
 				$error ++;
 			}
@@ -129,7 +128,6 @@ if ($action == 'update') {
 	if (! empty($btn_changeaccount)) {
 		//$msg = '<div><span class="accountingprocessing">' . $langs->trans("Processing") . '...</span></div>';
 		if (! empty($chk_prod)) {
-
 			$accounting = new AccountingAccount($db);
 
 			//$msg .= '<div><span  class="accountingprocessing">' . count($chk_prod) . ' ' . $langs->trans("SelectedLines") . '</span></div>';
@@ -323,7 +321,7 @@ if ($result)
     print load_fiche_titre($langs->trans("ProductsBinding"), '', 'title_accountancy');
 	print '<br>';
 
-	print $langs->trans("InitAccountancyDesc") . '<br>';
+	print '<span class="opacitymedium">'.$langs->trans("InitAccountancyDesc") . '</span><br>';
 	print '<br>';
 
     // Select mode
@@ -462,7 +460,7 @@ if ($result)
     		// print '<td class="left">' . $obj->description . '</td>';
     		// TODO: we shoul set a user defined value to adjust user square / wide screen size
     		$trunclengh = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
-    		print '<td style="' . $code_sell_p_l_differ . '">' . nl2br(dol_trunc($obj->description, $trunclengh)) . '</td>';
+    		print '<td>' . nl2br(dol_trunc($obj->description, $trunclengh)) . '</td>';
 		}
 
 		if ($accounting_product_mode == 'ACCOUNTANCY_SELL' || $accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA' || $accounting_product_mode == 'ACCOUNTANCY_SELL_EXPORT')

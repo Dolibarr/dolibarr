@@ -107,7 +107,7 @@ ExpenseReportsVentilation=Utgiftsrapport-binding
 CreateMvts=Opprett ny transaksjon
 UpdateMvts=Endre en transaksjon
 ValidTransaction=Valider transaksjonen
-WriteBookKeeping=Før transaksjoner inn i hovedboken
+WriteBookKeeping=Registrer transaksjoner i Hovedboken
 Bookkeeping=Hovedbok
 AccountBalance=Kontobalanse
 ObjectsRef=Kildeobjekt ref
@@ -155,9 +155,10 @@ ACCOUNTING_HAS_NEW_JOURNAL=Har ny journal
 
 ACCOUNTING_RESULT_PROFIT=Resultatregnskapskonto (fortjeneste)
 ACCOUNTING_RESULT_LOSS=Resultatregnskapskonto (tap)
-ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal of closure
+ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Avslutningsjournal
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transitional bank transfer
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Regnskapkonto for overgangsbasert overføring
+TransitionalAccount=Overgangsbasert bankoverføringskonto
 
 ACCOUNTING_ACCOUNT_SUSPENSE=Regnskapskonto for vent
 DONATION_ACCOUNTINGACCOUNT=Regnskapskonto for registrering av donasjoner
@@ -165,8 +166,8 @@ ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Regnskapskonto for å registrere abonnem
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Standard regnskapskonto for kjøpte varer (brukt hvis ikke definert på varekortet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Standard regnskapskonto for solgte varer (brukt hvis ikke definert på varekortet)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT_INTRA=Standard regnskapskonto for solgte varer i EU (brukt hvis ikke definert på varekortet)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT_EXPORT=Standard regnskapskonto for solgte varer eksportert ut av EU (brukt hvis ikke definert på varekortet)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Standard regnskapskonto for solgte varer i EU (brukt hvis ikke definert på varekortet)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Standard regnskapskonto for solgte varer eksportert ut av EU (brukt hvis ikke definert på varekortet)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Standard regnskapskonto for kjøpte tjenester (brukt hvis ikke definert på tjenestekortet)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Standard regnskapskonto for solgte tjenester (brukt hvis ikke definert på tjenestekortet)
 
@@ -176,7 +177,8 @@ Docref=Referanse
 LabelAccount=Kontoetikett
 LabelOperation=Etikettoperasjon
 Sens=som betyr
-LetteringCode=Brevkode
+LetteringCode=Korrespondansekode
+Lettering=Korrespondanse
 Codejournal=Journal
 JournalLabel=Journaletikett
 NumPiece=Del nummer
@@ -215,7 +217,8 @@ DescThirdPartyReport=Liste over tredjeparts kunder og leverandører og deres reg
 ListAccounts=Liste over regnskapskontoer
 UnknownAccountForThirdparty=Ukjent tredjepartskonto. Vi vil bruke %s
 UnknownAccountForThirdpartyBlocking=Ukjent tredjepartskonto. Blokkeringsfeil
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Tredjepartskonto ikke definert eller tredjepart ukjent. Blokkeringsfeil.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Tredjepartskonto ikke definert eller tredjepart ukjent. Vi bruker %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Tredjepartskonto ikke definert eller tredjepart ukjent. Blokkeringsfeil.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Ukjent tredjepartskonto og ventekonto ikke definert. Blokkeringsfeil
 PaymentsNotLinkedToProduct=Betaling ikke knyttet til noen vare/tjeneste
 
@@ -262,7 +265,7 @@ AccountingJournals=Regnskapsjournaler
 AccountingJournal=Regnskapsjournal
 NewAccountingJournal=Ny regnskapsjourna
 ShowAccoutingJournal=Vis regnskapsjournal
-Nature=Natur
+NatureOfJournal=Nature of Journal
 AccountingJournalType1=Diverse operasjoner
 AccountingJournalType2=Salg
 AccountingJournalType3=Innkjøp
@@ -288,19 +291,26 @@ Modelcsv_quadratus=Eksport til Quadratus QuadraCompta
 Modelcsv_ebp=Eksport tilEBP
 Modelcsv_cogilog=Eksport til Cogilog
 Modelcsv_agiris=Eksport til Agiris
+Modelcsv_LDCompta=Export for LD Compta (v9 & higher) (Test)
+Modelcsv_openconcerto=Eksport for OpenConcerto (Test)
 Modelcsv_configurable=Eksport CSV Konfigurerbar
-Modelcsv_FEC=Eksport FEC (Art. L47 A) (Test)
+Modelcsv_FEC=Eksporter FEC
+Modelcsv_Sage50_Swiss=Eksport for Sage 50 Switzerland
 ChartofaccountsId=Kontoplan ID
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Initier regnskap
 InitAccountancyDesc=Denne siden kan brukes til å initialisere en regnskapskonto for produkter og tjenester som ikke har en regnskapskonto definert for salg og kjøp.
 DefaultBindingDesc=Denne siden kan brukes til å sette en standardkonto til bruk for å for å koble transaksjonsposter om lønnsutbetaling, donasjon, skatter og MVA når ingen bestemt regnskapskonto er satt.
-DefaultClosureDesc=Denne siden kan brukes til å angi parametere som skal brukes til å legge inn en balanse.
+DefaultClosureDesc=This page can be used to set parameters used for accounting closures.
 Options=Innstillinger
 OptionModeProductSell=Salgsmodus
+OptionModeProductSellIntra=Modussalg eksportert i EU
+OptionModeProductSellExport=Modussalg eksportert i andre land
 OptionModeProductBuy=Innkjøpsmodus
 OptionModeProductSellDesc=Vis alle varer for salg, med regnskapskonto
+OptionModeProductSellIntraDesc=Vis alle varer med regnskapskonto for salg innen EU
+OptionModeProductSellExportDesc=Vis alle varer med regnskapskonto for andre internasjonale salg.
 OptionModeProductBuyDesc=Vis alle varer for kjøp, med regnskapskonto
 CleanFixHistory=Fjern regnskapskode fra linjer som ikke finnes i kontooversikt
 CleanHistory=Nullstill alle bindinger for valgt år
@@ -309,6 +319,9 @@ WithoutValidAccount=Uten gyldig dedikert konto
 WithValidAccount=Med gyldig dedikert konto
 ValueNotIntoChartOfAccount=Denne verdien av regnskapskonto eksisterer ikke i kontoplanen
 AccountRemovedFromGroup=Kontoen er fjernet fra gruppen
+SaleLocal=Lokalt salg
+SaleExport=Eksportsalg
+SaleEEC=Salg i EU
 
 ## Dictionary
 Range= Oversikt over regnskapskonto
@@ -329,7 +342,7 @@ UseMenuToSetBindindManualy=Linjer som ennå ikke er bundet, bruk menyen <a href=
 
 ## Import
 ImportAccountingEntries=Regnskapsposter
-
+DateExport=Dato eksport
 WarningReportNotReliable=Advarsel, denne rapporten er ikke basert på hovedboken, så den inneholder ikke transaksjoner endret manuelt i hovedboken. Hvis journaliseringen din er oppdatert, er bokføringsvisningen mer nøyaktig.
 ExpenseReportJournal=Utgiftsrapport-journal
 InventoryJournal=Inventar-journal

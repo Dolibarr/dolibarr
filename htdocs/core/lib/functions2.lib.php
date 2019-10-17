@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -576,6 +576,7 @@ function isValidVATID($company)
     {
         $vatprefix = $company->country_code;
         if ($vatprefix == 'GR') $vatprefix = '(EL|GR)';
+        elseif ($vatprefix == 'MC') $vatprefix = 'FR';	// Monaco is using french VAT numbers
         else $vatprefix = preg_quote($vatprefix, '/');
         if (! preg_match('/^'.$vatprefix.'[a-zA-Z0-9\-\.]{5,14}$/i', str_replace(' ', '', $company->tva_intra)))
         {
@@ -739,8 +740,8 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
     global $conf,$user;
 
     if (! is_object($objsoc)) $valueforccc=$objsoc;
-    elseif ($table == "commande_fournisseur" || $table == "facture_fourn" ) $valueforccc=$objsoc->code_fournisseur;
-    else $valueforccc=$objsoc->code_client;
+    elseif ($table == "commande_fournisseur" || $table == "facture_fourn" ) $valueforccc=dol_string_unaccent($objsoc->code_fournisseur);
+    else $valueforccc=dol_string_unaccent($objsoc->code_client);
 
     $sharetable = $table;
     if ($table == 'facture' || $table == 'invoice') $sharetable = 'invoicenumber'; // for getEntity function
@@ -988,6 +989,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
     // Define $maskLike
     $maskLike = dol_string_nospecial($mask);
     $maskLike = str_replace("%", "_", $maskLike);
+
     // Replace protected special codes with matching number of _ as wild card caracter
     $maskLike = preg_replace('/\{yyyy\}/i', '____', $maskLike);
     $maskLike = preg_replace('/\{yy\}/i', '__', $maskLike);
@@ -1163,7 +1165,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
         // Now we replace the refclient
         if ($maskrefclient)
         {
-            //print "maskrefclient=".$maskrefclient." maskwithonlyymcode=".$maskwithonlyymcode." maskwithnocode=".$maskwithnocode."\n<br>";
+            //print "maskrefclient=".$maskrefclient." maskwithonlyymcode=".$maskwithonlyymcode." maskwithnocode=".$maskwithnocode." maskrefclient_clientcode=".$maskrefclient_clientcode."\n<br>";exit;
             $maskrefclient_maskbefore='{'.$maskrefclient.'}';
             $maskrefclient_maskafter=$maskrefclient_clientcode.str_pad($maskrefclient_counter, dol_strlen($maskrefclient_maskcounter), "0", STR_PAD_LEFT);
             $numFinal = str_replace($maskrefclient_maskbefore, $maskrefclient_maskafter, $numFinal);
@@ -1720,7 +1722,6 @@ function is_ip($ip)
 {
 	// First we test if it is a valid IPv4
 	if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
-
 		// Then we test if it is a private range
 		if (! filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) return 2;
 
@@ -1818,69 +1819,76 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$subelement = $regs[2];
 	}
 
+	// Generic case for $classpath
 	$classpath = $element.'/class';
 
-	// To work with non standard path
+	// Special cases, to work with non standard path
 	if ($objecttype == 'facture' || $objecttype == 'invoice') {
 		$classpath = 'compta/facture/class';
 		$module='facture';
 		$subelement='facture';
 	}
-	if ($objecttype == 'commande' || $objecttype == 'order') {
+	elseif ($objecttype == 'commande' || $objecttype == 'order') {
 		$classpath = 'commande/class';
 		$module='commande';
 		$subelement='commande';
 	}
-	if ($objecttype == 'propal')  {
+	elseif ($objecttype == 'propal')  {
 		$classpath = 'comm/propal/class';
 	}
-	if ($objecttype == 'supplier_proposal')  {
+	elseif ($objecttype == 'supplier_proposal')  {
 		$classpath = 'supplier_proposal/class';
 	}
-	if ($objecttype == 'shipping') {
+	elseif ($objecttype == 'shipping') {
 		$classpath = 'expedition/class';
 		$subelement = 'expedition';
 		$module = 'expedition_bon';
 	}
-	if ($objecttype == 'delivery') {
+	elseif ($objecttype == 'delivery') {
 		$classpath = 'livraison/class';
 		$subelement = 'livraison';
 		$module = 'livraison_bon';
 	}
-	if ($objecttype == 'contract') {
+	elseif ($objecttype == 'contract') {
 		$classpath = 'contrat/class';
 		$module='contrat';
 		$subelement='contrat';
 	}
-	if ($objecttype == 'member') {
+	elseif ($objecttype == 'member') {
 		$classpath = 'adherents/class';
 		$module='adherent';
 		$subelement='adherent';
 	}
-	if ($objecttype == 'cabinetmed_cons') {
+	elseif ($objecttype == 'cabinetmed_cons') {
 		$classpath = 'cabinetmed/class';
 		$module='cabinetmed';
 		$subelement='cabinetmedcons';
 	}
-	if ($objecttype == 'fichinter') {
+	elseif ($objecttype == 'fichinter') {
 		$classpath = 'fichinter/class';
 		$module='ficheinter';
 		$subelement='fichinter';
 	}
-	if ($objecttype == 'task') {
+	elseif ($objecttype == 'task') {
 		$classpath = 'projet/class';
 		$module='projet';
 		$subelement='task';
 	}
-	if ($objecttype == 'stock') {
+	elseif ($objecttype == 'stock') {
 		$classpath = 'product/stock/class';
 		$module='stock';
 		$subelement='stock';
 	}
+	elseif ($objecttype == 'inventory') {
+		$classpath = 'product/inventory/class';
+		$module='stock';
+		$subelement='inventory';
+	}
 
-	//print "objecttype=".$objecttype." module=".$module." subelement=".$subelement;
-
+	// Generic case for $classfile and $classname
 	$classfile = strtolower($subelement); $classname = ucfirst($subelement);
+	//print "objecttype=".$objecttype." module=".$module." subelement=".$subelement." classfile=".$classfile." classname=".$classname;
+
 	if ($objecttype == 'invoice_supplier') {
 		$classfile = 'fournisseur.facture';
 		$classname='FactureFournisseur';
@@ -2197,7 +2205,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '')
  *  @param	array	$arraycolor			Array
  *  @param	string	$colorifnotfound	Color code to return if entry not defined or not a RGB format
  *  @return	string						RGB hex value (without # before). For example: 'FF00FF', '01FF02'
- *  @see	colorStringToArray()
+ *  @see	colorStringToArray(), colorHexToRgb()
  */
 function colorArrayToHex($arraycolor, $colorifnotfound = '888888')
 {
@@ -2214,7 +2222,7 @@ function colorArrayToHex($arraycolor, $colorifnotfound = '888888')
  *  @param	string	$stringcolor		String with hex (FFFFFF) or comma RGB ('255,255,255')
  *  @param	array	$colorifnotfound	Color code array to return if entry not defined
  *  @return	array   					RGB hex value (without # before). For example: FF00FF
- *  @see	colorArrayToHex()
+ *  @see	colorArrayToHex(), colorHexToRgb()
  */
 function colorStringToArray($stringcolor, $colorifnotfound = array(88,88,88))
 {
@@ -2231,13 +2239,12 @@ function colorStringToArray($stringcolor, $colorifnotfound = array(88,88,88))
 }
 
 /**
- * @param string $color the color you need to valid
- * @param boolean $allow_white in case of white isn't valid
+ * @param string 	$color 			the color you need to valid
+ * @param boolean 	$allow_white 	in case of white isn't valid
  * @return boolean
  */
 function colorValidateHex($color, $allow_white = true)
 {
-
     if(!$allow_white && ($color === '#fff' || $color === '#ffffff') ) return false;
 
     if(preg_match('/^#[a-f0-9]{6}$/i', $color)) //hex color is valid
@@ -2247,11 +2254,54 @@ function colorValidateHex($color, $allow_white = true)
     return false;
 }
 
+/**
+ * Change color to make it less aggressive (ratio is negative) or more aggressive (ratio is positive)
+ *
+ * @param string 		$hex		Color in hex ('#AA1122' or 'AA1122' or '#a12' or 'a12')
+ * @param integer		$ratio		Default=-50. Note: 0=Component color is unchanged, -100=Component color become 88, +100=Component color become 00 or FF
+ * @return string		New string of color
+ * @see colorAdjustBrightness()
+ */
+function colorAgressivity($hex, $ratio = -50)
+{
+	// Steps should be between -255 and 255. Negative = darker, positive = lighter
+	$ratio = max(-100, min(100, $ratio));
+
+	// Normalize into a six character long hex string
+	$hex = str_replace('#', '', $hex);
+	if (strlen($hex) == 3) {
+		$hex = str_repeat(substr($hex, 0, 1), 2).str_repeat(substr($hex, 1, 1), 2).str_repeat(substr($hex, 2, 1), 2);
+	}
+
+	// Split into three parts: R, G and B
+	$color_parts = str_split($hex, 2);
+	$return = '#';
+
+	foreach ($color_parts as $color) {
+		$color   = hexdec($color); // Convert to decimal
+		if ($ratio > 0)	// We increase aggressivity
+		{
+			if ($color > 127) $color += ((255 - $color) * ($ratio / 100));
+			if ($color < 128) $color -= ($color * ($ratio / 100));
+		}
+		else			// We decrease agressivity
+		{
+			if ($color > 128) $color -= (($color - 128) * (abs($ratio) / 100));
+			if ($color < 127) $color += ((128 - $color) * (abs($ratio) / 100));
+		}
+		$color   = max(0, min(255, $color)); // Adjust color
+		$return .= str_pad(dechex($color), 2, '0', STR_PAD_LEFT); // Make two char hex code
+	}
+
+	//var_dump($hex.' '.$ratio.' -> '.$return);
+	return $return;
+}
 
 /**
- * @param string $hex color in hex
- * @param integer $steps Steps should be between -255 and 255. Negative = darker, positive = lighter
- * @return string
+ * @param string 	$hex 		Color in hex ('#AA1122' or 'AA1122' or '#a12' or 'a12')
+ * @param integer 	$steps 		Step/offset added to each color component. It should be between -255 and 255. Negative = darker, positive = lighter
+ * @return string				New color with format '#AA1122'
+ * @see colorAgressivity()
  */
 function colorAdjustBrightness($hex, $steps)
 {
@@ -2301,10 +2351,10 @@ function colorLighten($hex, $percent)
 
 
 /**
- * @param string $hex color in hex
- * @param float $alpha 0 to 1
- * @param bool $returnArray set to 1 to return an array instead of string
- * @return string|array
+ * @param string 	$hex 			color in hex
+ * @param float 	$alpha 			0 to 1 to add alpha channel
+ * @param bool 		$returnArray	Array set to 1 to return an array instead of string
+ * @return string|array				String or array
  */
 function colorHexToRgb($hex, $alpha = false, $returnArray = false)
 {

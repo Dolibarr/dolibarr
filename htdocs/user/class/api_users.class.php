@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -76,7 +76,7 @@ class Users extends DolibarrApi
 	    }
 
 	    // case of external user, $societe param is ignored and replaced by user's socid
-	    //$socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $societe;
+	    //$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $societe;
 
 	    $sql = "SELECT t.rowid";
 	    $sql.= " FROM ".MAIN_DB_PREFIX."user as t";
@@ -350,7 +350,7 @@ class Users extends DolibarrApi
 		{
 			throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
 		}
-
+        $this->useraccount->oldcopy = clone $this->useraccount;
 		return $this->useraccount->delete(DolibarrApiAccess::$user);
 	}
 
@@ -378,7 +378,7 @@ class Users extends DolibarrApi
 	    unset($object->total_localtax2);
 	    unset($object->total_ttc);
 
-	    unset($object->libelle_incoterms);
+	    unset($object->label_incoterms);
 	    unset($object->location_incoterms);
 
 	    unset($object->fk_delivery_address);

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -44,7 +44,6 @@ $result = $db->query($req);
 $num = $db->num_rows($result);
 
 if($num < 1) {
-
    $insert = "INSERT INTO ".MAIN_DB_PREFIX."rights_def (";
    $insert.= "`id` ,";
    $insert.= "`libelle` ,";
@@ -184,7 +183,6 @@ if (isset($_POST['action']))
 
 			print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=expensereport&file=export%2Fexpensereport-'.$dateselected.'.csv" target="_blank">Télécharger le fichier expensereport-'.$dateselected.'.csv</a>';
 		} else {
-
 			print '<b>'.$langs->trans('NoTripsToExportCSV').'</b>';
 		}
 	}

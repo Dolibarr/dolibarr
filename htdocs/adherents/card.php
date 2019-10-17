@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -68,7 +68,7 @@ $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($id);
@@ -273,7 +273,7 @@ if (empty($reshook))
 		{
 			if (empty($login)) {
 				$error++;
-				setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Login")), null, 'errors');
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login")), null, 'errors');
 			}
 		}
 		// Create new object
@@ -289,7 +289,7 @@ if (empty($reshook))
 			$object->login       = trim(GETPOST("login", 'alpha'));
 			$object->pass        = trim(GETPOST("pass", 'alpha'));
 
-			$object->societe     = trim(GETPOST("societe", 'alpha'));
+			$object->societe     = trim(GETPOST("societe", 'alpha'));	// deprecated
 			$object->company     = trim(GETPOST("societe", 'alpha'));
 
 			$object->address     = trim(GETPOST("address", 'alpha'));
@@ -320,7 +320,7 @@ if (empty($reshook))
 			$object->public      = GETPOST("public", 'alpha');
 
 			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+			$ret = $extrafields->setOptionalsFromPost(null, $object);
 			if ($ret < 0) $error++;
 
 			// Check if we need to also synchronize user information
@@ -468,7 +468,8 @@ if (empty($reshook))
 		$object->firstname   = $firstname;
 		$object->lastname    = $lastname;
 		$object->gender      = $gender;
-		$object->societe     = $societe;
+		$object->societe     = $societe;	// deprecated
+		$object->company     = $societe;
 		$object->address     = $address;
 		$object->zip         = $zip;
 		$object->town        = $town;
@@ -496,20 +497,20 @@ if (empty($reshook))
 		$object->public      = $public;
 
 		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) $error++;
 
 		// Check parameters
 		if (empty($morphy) || $morphy == "-1") {
 			$error++;
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Nature")), null, 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("MemberNature")), null, 'errors');
 		}
 		// Tests if the login already exists
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{
 			if (empty($login)) {
 				$error++;
-				setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Login")), null, 'errors');
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login")), null, 'errors');
 			}
 			else {
 				$sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='".$db->escape($login)."'";
@@ -637,7 +638,7 @@ if (empty($reshook))
 				// Set output language
 				$outputlangs = new Translate('', $conf);
 				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-				// Load traductions files requiredby by page
+				// Load traductions files required by page
 				$outputlangs->loadLangs(array("main", "members"));
 				// Get email content from template
 				$arraydefaultmessage=null;
@@ -653,7 +654,7 @@ if (empty($reshook))
 
 				if (empty($labeltouse) || (int) $labeltouse === -1) {
 					//fallback on the old configuration.
-					setEventMessages('WarningMandatorySetupNotComplete', [], 'errors');
+					setEventMessages('WarningMandatorySetupNotComplete', null, 'errors');
 					$error++;
 				}
 				else {
@@ -718,7 +719,7 @@ if (empty($reshook))
 					// Set output language
 					$outputlangs = new Translate('', $conf);
 					$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-					// Load traductions files requiredby by page
+					// Load traductions files required by page
 					$outputlangs->loadLangs(array("main", "members"));
 					// Get email content from template
 					$arraydefaultmessage=null;
@@ -734,7 +735,7 @@ if (empty($reshook))
 
 					if (empty($labeltouse) || (int) $labeltouse === -1) {
 						//fallback on the old configuration.
-						setEventMessages('WarningMandatorySetupNotComplete', [], 'errors');
+						setEventMessages('WarningMandatorySetupNotComplete', null, 'errors');
 						$error++;
 					}
 					else {
@@ -865,10 +866,22 @@ else
 			$object->country_code=$tmparray['code'];
 			$object->country=$tmparray['label'];
 		}
+		
+    if (!empty($socid)) {
+$object = new Societe($db);
+if ($socid > 0) $object->fetch($socid);
+
+if (! ($object->id > 0))
+{
+	$langs->load("errors");
+	print($langs->trans('ErrorRecordNotFound'));
+	exit;
+}
+    }
 
 		$adht = new AdherentType($db);
 
-		print load_fiche_titre($langs->trans("NewMember"));
+		print load_fiche_titre($langs->trans("NewMember"), '', 'members');
 
 		if ($conf->use_javascript_ajax)
 		{
@@ -904,6 +917,7 @@ else
 		print '<form name="formsoc" action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
+		print '<input type="hidden" name="socid" value="'.$socid.'">';
 		if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 
         dol_fiche_head('');
@@ -941,12 +955,12 @@ else
 		// Morphy
 		$morphys["phy"] = $langs->trans("Physical");
 		$morphys["mor"] = $langs->trans("Moral");
-		print '<tr><td class="fieldrequired">'.$langs->trans("Nature")."</td><td>\n";
+		print '<tr><td class="fieldrequired">'.$langs->trans("MemberNature")."</td><td>\n";
 		print $form->selectarray("morphy", $morphys, GETPOST('morphy', 'alpha')?GETPOST('morphy', 'alpha'):$object->morphy, 1);
 		print "</td>\n";
 
 		// Company
-		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOST('societe', 'alpha')?GETPOST('societe', 'alpha'):$object->societe).'"></td></tr>';
+		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOST('societe', 'alpha')?GETPOST('societe', 'alpha'):$object->company).'"></td></tr>';
 
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
@@ -1038,8 +1052,8 @@ else
             print '<tr><td>'.$langs->trans("LinkedIn").'</td><td><input type="text" name="member_linkedin" size="40" value="'.(GETPOST('member_linkedin', 'alpha')?GETPOST('member_linkedin', 'alpha'):$object->linkedin).'"></td></tr>';
         }
 
-	    // Birthday
-		print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
+	    // Birth Date
+		print "<tr><td>".$langs->trans("DateToBirth")."</td><td>\n";
 		print $form->selectDate(($object->birth ? $object->birth : -1), 'birth', '', '', 1, 'formsoc');
 		print "</td></tr>\n";
 
@@ -1059,11 +1073,17 @@ else
 
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+		//Hooks here
+		$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+		if (empty($reshook))
+		{
+      	    print $object->showOptionals($extrafields, 'edit');
+		}
 
-        print '<tbody>';
+		print '<tbody>';
 		print "</table>\n";
-
-        dol_fiche_end();
+		dol_fiche_end();
 
 		print '<div class="center">';
 		print '<input type="submit" name="button" class="button" value="'.$langs->trans("AddMember").'">';
@@ -1181,8 +1201,8 @@ else
 		}
 		// Morphy
 		$morphys["phy"] = $langs->trans("Physical");
-		$morphys["mor"] = $langs->trans("Morale");
-		print '<tr><td><span class="fieldrequired">'.$langs->trans("Nature").'</span></td><td>';
+		$morphys["mor"] = $langs->trans("Moral");
+		print '<tr><td><span class="fieldrequired">'.$langs->trans("MemberNature").'</span></td><td>';
 		print $form->selectarray("morphy", $morphys, (GETPOSTISSET("morphy")?GETPOST("morphy", 'alpha'):$object->morphy));
 		print "</td></tr>";
 
@@ -1200,7 +1220,7 @@ else
 		print "</td></tr>";
 
 		// Company
-		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(isset($_POST["societe"])?GETPOST("societe", '', 2):$object->societe).'"></td></tr>';
+		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(isset($_POST["societe"])?GETPOST("societe", '', 2):$object->company).'"></td></tr>';
 
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
@@ -1301,8 +1321,8 @@ else
             print '<tr><td>'.$langs->trans("LinkedIn").'</td><td><input type="text" name="linkedin" class="minwidth100" value="'.(isset($_POST["linkedin"])?GETPOST("linkedin"):$object->linkedin).'"></td></tr>';
         }
 
-	    // Birthday
-		print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
+	    // Birth Date
+		print "<tr><td>".$langs->trans("DateToBirth")."</td><td>\n";
 		print $form->selectDate(($object->birth ? $object->birth : -1), 'birth', '', '', 1, 'formsoc');
 		print "</td></tr>\n";
 
@@ -1355,11 +1375,10 @@ else
 		else print $langs->trans("NoDolibarrAccess");
 		print '</td></tr>';
 
-		// Other attributes
+		// Other attributes. Fields from hook formObjectOptions and Extrafields.
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
 		print '</table>';
-
 		dol_fiche_end();
 
 		print '<div class="center">';
@@ -1435,13 +1454,13 @@ else
 
 			if ($object->morphy == 'mor')
 			{
-				$companyname=$object->societe;
+				$companyname=$object->company;
 				if (! empty($fullname)) $companyalias=$fullname;
 			}
 			else
 			{
 				$companyname=$fullname;
-				if (! empty($object->societe)) $companyalias=$object->societe;
+				if (! empty($object->company)) $companyalias=$object->company;
 			}
 
 			// Create a form array
@@ -1470,7 +1489,7 @@ else
 			// Set output language
 			$outputlangs = new Translate('', $conf);
 			$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-			// Load traductions files requiredby by page
+			// Load traductions files required by page
 			$outputlangs->loadLangs(array("main", "members"));
 			// Get email content from template
 			$arraydefaultmessage=null;
@@ -1531,7 +1550,7 @@ else
 			// Set output language
 			$outputlangs = new Translate('', $conf);
 			$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-			// Load traductions files requiredby by page
+			// Load traductions files required by page
 			$outputlangs->loadLangs(array("main", "members"));
 			// Get email content from template
 			$arraydefaultmessage=null;
@@ -1613,7 +1632,7 @@ else
 		print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
 		// Morphy
-		print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
+		print '<tr><td>'.$langs->trans("MemberNature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
 		print '</tr>';
 
 		// Gender
@@ -1623,7 +1642,7 @@ else
 		print '</td></tr>';
 
 		// Company
-		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'</td></tr>';
+		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->company.'</td></tr>';
 
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
@@ -1659,11 +1678,15 @@ else
 		}
 		else
 		{
-			if (! $adht->subscription)
+			if ($object->need_subscription == 0)
+                        {
+                                print $langs->trans("SubscriptionNotNeeded");
+            }
+                        elseif (! $adht->subscription)
 			{
 				print $langs->trans("SubscriptionNotRecorded");
 				if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
-			}
+			            }
 			else
 			{
 				print $langs->trans("SubscriptionNotReceived");
@@ -1737,8 +1760,8 @@ else
 
         print '<table class="border tableforfield tableforfield" width="100%">';
 
-		// Birthday
-		print '<tr><td class="titlefield">'.$langs->trans("Birthday").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
+		// Birth Date
+		print '<tr><td class="titlefield">'.$langs->trans("DateToBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
 
 		// Public
 		print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';

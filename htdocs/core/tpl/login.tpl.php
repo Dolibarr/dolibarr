@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Need global variable $title to be defined by caller (like dol_loginfunction)
@@ -209,7 +209,10 @@ if ($captcha) {
 <div id="login_line2" style="clear: both">
 
 <!-- Button Connection -->
-<br><input type="submit" class="button" value="&nbsp; <?php echo $langs->trans('Connection'); ?> &nbsp;" tabindex="5" />
+<br>
+<div id="login-submit-wrapper">
+<input type="submit" class="button" value="&nbsp; <?php echo $langs->trans('Connection'); ?> &nbsp;" tabindex="5" />
+</div>
 
 <?php
 if ($forgetpasslink || $helpcenterlink)
@@ -221,7 +224,7 @@ if ($forgetpasslink || $helpcenterlink)
 	if ($dol_use_jmobile)    $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_use_jmobile='.$dol_use_jmobile;
 
 	echo '<br>';
-	echo '<div class="center" style="margin-top: 15px;">';
+	echo '<div class="center" style="margin-top: 5px;">';
 	if ($forgetpasslink) {
 		$url=DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam;
 		if (! empty($conf->global->MAIN_PASSWORD_FORGOTLINK)) $url=$conf->global->MAIN_PASSWORD_FORGOTLINK;

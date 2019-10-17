@@ -22,13 +22,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/stripe/payment.php
  *	\ingroup    stripe
- *	\brief      Payment page for customers invoices
+ *	\brief      Payment page for customers invoices. @TODO Seems deprecated and bugged and not used (no link to this page) !
  */
 
 // Load Dolibarr environment
@@ -71,6 +71,7 @@ if ($user->societe_id > 0)
 }
 
 $object=new Facture($db);
+$stripe=new Stripe($db);
 
 // Load object
 if ($facid > 0)
@@ -78,9 +79,9 @@ if ($facid > 0)
 	$ret=$object->fetch($facid);
 }
 
-if (! empty($conf->stripe->enabled))
+if (empty($conf->stripe->enabled))
 {
-    access_forbidden();
+    accessforbidden();
 }
 
 if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
@@ -241,7 +242,6 @@ if (empty($reshook))
 	 */
 	if ($action == 'confirm_paiement' && $confirm == 'yes')
 	{
-
 		$error=0;
 
 		$datepaye = dol_now();
@@ -305,8 +305,7 @@ if (empty($reshook))
 		}
 		elseif (preg_match('/src_/i', $source))
 		{
-
-		        $customer2 = $customerstripe=$stripe->customerStripe($facture->thirdparty, $stripeacc, $servicestatus);
+			$customer2 = $customerstripe=$stripe->customerStripe($facture->thirdparty, $stripeacc, $servicestatus);
 			$src = $customer2->sources->retrieve("$source");
 			if ($src->type=='card')
 			{
@@ -340,7 +339,6 @@ if (empty($reshook))
 
 		if (! $error)
 		{
-
 			$paiement_id = $paiement->create($user, 0);
 			if ($paiement_id < 0)
 			{
@@ -817,9 +815,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				if ($facture->type == 2) { $remaindertopay=$langs->trans("RemainderToPayBack"); $multicurrencyremaindertopay=$langs->trans("MulticurrencyRemainderToPayBack"); }
 
                 $i = 0;
-                //print '<tr><td colspan="3">';
+
                 print '<br>';
+
                 print_barre_liste($langs->trans('StripeInvoiceList').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
+
                 print '<table class="noborder" width="100%">';
                 print '<tr class="liste_titre">';
                 print '<td>'.$arraytitle.'</td>';
@@ -837,7 +837,12 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 if (!empty($conf->multicurrency->enabled)) {
                     print '<td class="right">'.$langs->trans('MulticurrencyPaymentAmount').'</td>';
                 }
-                print '<td class="right">&nbsp;</td>';
+
+                $tmpinvoice =new Facture($db);
+                $parameters=array();
+                $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $tmpinvoice, $action); // Note that $action and $object may have been modified by hook
+
+                print '<td align="right">&nbsp;</td>';
                 print "</tr>\n";
 
                 $total=0;
@@ -967,6 +972,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                    print "</td>";
 					}
 
+					$parameters=array();
+					$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $objp, $action); // Note that $action and $object may have been modified by hook
+
                     // Warning
                     print '<td class="center" width="16">';
                     //print "xx".$amounts[$invoice->id]."-".$amountsresttopay[$invoice->id]."<br>";
@@ -976,9 +984,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                         print ' '.img_warning($langs->trans("PaymentHigherThanReminderToPay"));
                     }
                     print '</td>';
-
-					$parameters=array();
-					$reshook=$hookmanager->executeHooks('printObjectLine', $parameters, $objp, $action); // Note that $action and $object may have been modified by hook
 
                     print "</tr>\n";
 
@@ -991,7 +996,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 }
                 if ($i > 1)
                 {
-                $amount=round(price($sign * price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits, 'MT'))*100);
+            	    $amount=round(price($sign * price2num($total_ttc - $totalrecu - $totalrecucreditnote - $totalrecudeposits, 'MT'))*100);
+
                     // Print total
                     print '<tr class="liste_total">';
                     print '<td colspan="2" class="left">'.$langs->trans('TotalTTC').'</td>';
@@ -1010,6 +1016,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     if (!empty($conf->multicurrency->enabled)) {
                         print '<td class="right" id="multicurrency_result" style="font-weight: bold;"></td>';
                     }
+                    print '<td></td>';
                     print "</tr>\n";
                 }
                 print "</table>";
@@ -1073,7 +1080,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 if (! GETPOST('action'))
 {
-    if ($page == -1) $page = 0 ;
+    if ($page == -1 || empty($page)) $page = 0 ;
     $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
     $offset = $limit * $page ;
 
@@ -1106,22 +1113,29 @@ if (! GETPOST('action'))
         print_liste_field_titre('Date', $_SERVER["PHP_SELF"], 'dp', '', '', '', $sortfield, $sortorder);
         print_liste_field_titre('Type', $_SERVER["PHP_SELF"], 'libelle', '', '', '', $sortfield, $sortorder);
         print_liste_field_titre('Amount', $_SERVER["PHP_SELF"], 'fa_amount', '', '', '', $sortfield, $sortorder, 'right ');
+
+		$tmpobject = new Paiement($db);
+		$parameters=array();
+		$reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $tmpobject, $action); // Note that $action and $object may have been modified by hook
+
 		print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
-        print "</tr>\n";
+		print "</tr>\n";
 
         while ($i < min($num, $limit))
         {
             $objp = $db->fetch_object($resql);
+
             print '<tr class="oddeven">';
             print '<td><a href="'.DOL_URL_ROOT.'compta/facture/card.php?facid='.$objp->facid.'">'.$objp->ref."</a></td>\n";
             print '<td>'.dol_print_date($db->jdate($objp->dp))."</td>\n";
             print '<td>'.$objp->paiement_type.' '.$objp->num_paiement."</td>\n";
-            print '<td class="right">'.price($objp->amount).'</td><td>&nbsp;</td>';
+            print '<td class="right">'.price($objp->amount).'</td>';
 
 			$parameters=array();
-			$reshook=$hookmanager->executeHooks('printObjectLine', $parameters, $objp, $action); // Note that $action and $object may have been modified by hook
+			$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $objp, $action); // Note that $action and $object may have been modified by hook
 
-            print '</tr>';
+			print '<td>&nbsp;</td>';
+			print '</tr>';
             $i++;
         }
         print '</table>';

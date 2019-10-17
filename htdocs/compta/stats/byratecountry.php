@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.
 // Load translation files required by the page
 $langs->loadLangs(array("other","compta","banks","bills","companies","product","trips","admin","accountancy"));
 
-$modecompta = GETPOST('modecompta', 'alpha');
+$modecompta = (GETPOST('modecompta', 'alpha') ? GETPOST('modecompta', 'alpha') : $conf->global->ACCOUNTING_MODE);
 
 // Date range
 $year=GETPOST("year", 'int');
@@ -223,13 +223,9 @@ elseif ($modecompta=="RECETTES-DEPENSES")
 }
 elseif ($modecompta=="BOOKKEEPING")
 {
-
-
 }
 elseif ($modecompta=="BOOKKEEPINGCOLLECTED")
 {
-
-
 }
 $period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) $periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
@@ -247,7 +243,6 @@ if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 
 if ($modecompta == 'CREANCES-DETTES')
 {
-
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="6%" class="right">' . $langs->trans("TurnoverbyVatrate") . '</td>';
 print '<td class="left">' . $langs->trans("ProductOrService") . '</td>';

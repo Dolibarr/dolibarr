@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -37,7 +37,7 @@ if (! empty($conf->projet->enabled))
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta", "banks", "bills", "users", "accountancy"));
+$langs->loadLangs(array("compta", "banks", "bills", "users", "accountancy", "categories"));
 
 // Get parameters
 $id			= GETPOST('id', 'int');
@@ -45,14 +45,15 @@ $action		= GETPOST('action', 'alpha');
 $cancel		= GETPOST('cancel', 'aZ09');
 $backtopage	= GETPOST('backtopage', 'alpha');
 
-$accountid=GETPOST("accountid") > 0 ? GETPOST("accountid", "int") : 0;
-$label=GETPOST("label", "alpha");
-$sens=GETPOST("sens", "int");
-$amount=GETPOST("amount", "alpha");
-$paymenttype=GETPOST("paymenttype", "int");
-$accountancy_code=GETPOST("accountancy_code", "alpha");
-$subledger_account=GETPOST("subledger_account", "alpha");
-$projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
+$accountid =            GETPOST("accountid") > 0 ? GETPOST("accountid", "int") : 0;
+$label =                GETPOST("label", "alpha");
+$sens =                 GETPOST("sens", "int");
+$amount =               GETPOST("amount", "alpha");
+$paymenttype =          GETPOST("paymenttype", "int");
+$accountancy_code =     GETPOST("accountancy_code", "alpha");
+$subledger_account =    GETPOST("subledger_account", "alpha");
+$projectid =            (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
+$category_transaction = GETPOST("category_transaction", 'alpha');
 
 // Security check
 $socid = GETPOST("socid", "int");
@@ -63,8 +64,6 @@ $object = new PaymentVarious($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('variouscard','globalcard'));
-
-
 
 /**
  * Actions
@@ -113,6 +112,7 @@ if (empty($reshook))
 		$object->type_payment=GETPOST("paymenttype", 'int') > 0 ? GETPOST("paymenttype", "int") : 0;
 		$object->num_payment=GETPOST("num_payment", 'alpha');
 		$object->fk_user_author=$user->id;
+		$object->category_transaction=GETPOST("category_transaction", 'alpha');
 
 		$object->accountancy_code=GETPOST("accountancy_code") > 0 ? GETPOST("accountancy_code", "alpha") : "";
         $object->subledger_account=GETPOST("subledger_account") > 0 ? GETPOST("subledger_account", "alpha") : "";
@@ -144,6 +144,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
 			$error++;
 		}
+		// TODO Remove this and allow instead to edit a various payment to enter accounting code
 		if (! empty($conf->accounting->enabled) && ! $object->accountancy_code)
 		{
 			$langs->load('errors');
@@ -240,6 +241,16 @@ if ($id)
 	}
 }
 
+$options = array();
+
+// Load bank groups
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
+$bankcateg = new BankCateg($db);
+
+foreach ($bankcateg->fetchAll() as $bankcategory) {
+    $options[$bankcategory->id] = $bankcategory->label;
+}
+
 /* ************************************************************************** */
 /*                                                                            */
 /* Create mode                                                                */
@@ -252,14 +263,14 @@ if ($action == 'create')
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	print load_fiche_titre($langs->trans("NewVariousPayment"), '', 'title_accountancy.png');
+	print load_fiche_titre($langs->trans("NewVariousPayment"), '', 'invoicing');
 
 	dol_fiche_head('', '');
 
 	print '<table class="border" width="100%">';
 
 	// Date payment
-	print '<tr><td>';
+	print '<tr><td class="titlefieldcreate">';
 	print $form->editfieldkey('DatePayment', 'datep', '', $object, 0, 'string', '', 1).'</td><td>';
 	print $form->selectDate((empty($datep)?-1:$datep), "datep", '', '', '', 'add', 1, 1);
 	print '</td></tr>';
@@ -314,17 +325,48 @@ if ($action == 'create')
 		print '<td><input name="num_payment" id="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
 	}
 
+    // Project
+    if (! empty($conf->projet->enabled))
+    {
+        $formproject=new FormProjets($db);
+
+        // Associated project
+        $langs->load("projects");
+
+        print '<tr><td>'.$langs->trans("Project").'</td><td>';
+
+        $numproject=$formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
+
+        print '</td></tr>';
+    }
+
+    // Other attributes
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
+
+    print '</td></tr>';
+
+    // Category
+    if (is_array($options) && count($options) && $conf->categorie->enabled)
+    {
+    	print '<tr><td>'.$langs->trans("RubriquesTransactions").'</td><td>';
+    	print Form::selectarray('category_transaction', $options, GETPOST('category_transaction'), 1);
+    	print '</td></tr>';
+    }
+
 	// Accountancy account
 	if (! empty($conf->accounting->enabled))
 	{
-		print '<tr><td class="fieldrequired">'.$langs->trans("AccountAccounting").'</td>';
+		// TODO Remove the fieldrequired and allow instead to edit a various payment to enter accounting code
+		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("AccountAccounting").'</td>';
         print '<td>';
 		print $formaccounting->select_account($accountancy_code, 'accountancy_code', 1, null, 1, 1, '');
         print '</td></tr>';
 	}
 	else // For external software
 	{
-		print '<tr><td>'.$langs->trans("AccountAccounting").'</td>';
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("AccountAccounting").'</td>';
 		print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="accountancy_code" value="'.$accountancy_code.'">';
 		print '</td></tr>';
 	}
@@ -340,7 +382,7 @@ if ($action == 'create')
         }
         else
         {
-            print '<input type="text" name="subledger_account" value="'.$subledger_account.'">';
+            print '<input type="text" class="maxwidth200" name="subledger_account" value="'.$subledger_account.'">';
         }
         print '</td></tr>';
     }
@@ -350,26 +392,6 @@ if ($action == 'create')
         print '<td class="maxwidthonsmartphone"><input class="minwidth100" name="subledger_account" value="'.$subledger_account.'">';
         print '</td></tr>';
     }
-
-	// Project
-	if (! empty($conf->projet->enabled))
-	{
-		$formproject=new FormProjets($db);
-
-		// Associated project
-		$langs->load("projects");
-
-		print '<tr><td>'.$langs->trans("Project").'</td><td>';
-
-		$numproject=$formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1);
-
-		print '</td></tr>';
-	}
-
-	// Other attributes
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 
 	print '</table>';
 
@@ -395,7 +417,7 @@ if ($id)
 {
 	$head=various_payment_prepare_head($object);
 
-	dol_fiche_head($head, 'card', $langs->trans("VariousPayment"), -1, 'payment');
+	dol_fiche_head($head, 'card', $langs->trans("VariousPayment"), -1, $object->picto);
 
 	$morehtmlref='<div class="refidno">';
 	// Project
@@ -406,7 +428,7 @@ if ($id)
 		if ($user->rights->banque->modifier)
 		{
 			if ($action != 'classify')
-				$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				if ($action == 'classify') {
 					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 					$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -479,7 +501,7 @@ if ($id)
     print '</td><td>';
     print $object->subledger_account;
     print '</td></tr>';
-    
+
 	if (! empty($conf->banque->enabled))
 	{
 		if ($object->fk_account > 0)
@@ -503,7 +525,6 @@ if ($id)
 	print '</table>';
 
 	print '</div>';
-	print '</div>';
 
 	print '<div class="clearboth"></div>';
 
@@ -514,21 +535,27 @@ if ($id)
 	 * Action buttons
 	 */
 	print '<div class="tabsAction">'."\n";
-	if ($object->rappro == 0)
+
+	// TODO
+	// Add button modify
+
+	// Delete
+	if (empty($object->rappro))
 	{
 		if (! empty($user->rights->banque->modifier))
 		{
-			print '<a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a>';
+			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a></div>';
 		}
 		else
 		{
-			print '<a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a>';
+			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a></div>';
 		}
 	}
 	else
 	{
-		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a>';
+		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a></div>';
 	}
+
 	print "</div>";
 }
 

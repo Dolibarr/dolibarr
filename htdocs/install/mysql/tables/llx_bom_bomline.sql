@@ -11,17 +11,18 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see http://www.gnu.org/licenses/.
-
+-- along with this program.  If not, see https://www.gnu.org/licenses/.
 
 CREATE TABLE llx_bom_bomline(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	fk_bom integer NOT NULL, 
+	fk_product integer NOT NULL,
+	fk_bom_child integer NULL,
 	description text, 
 	import_key varchar(14), 
-	qty double(24,8), 
-	fk_product integer, 
-	fk_bom integer, 
-	rank integer NOT NULL
+	qty double(24,8) NOT NULL, 
+	efficiency double(8,4) NOT NULL DEFAULT 1,
+	position integer NOT NULL DEFAULT 0
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
