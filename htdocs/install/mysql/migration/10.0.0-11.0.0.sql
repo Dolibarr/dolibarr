@@ -49,6 +49,8 @@ UPDATE llx_c_units SET label = 'SurfaceUnitm2' WHERE code IN ('M2');
 
 -- For v11
 
+ALTER TABLE llx_rights_def ADD COLUMN module_position INTEGER NOT NULL DEFAULT 0;
+
 ALTER TABLE llx_bom_bom ADD COLUMN duration double(8,4) DEFAULT NULL;
 ALTER TABLE llx_bom_bomline ADD COLUMN position integer NOT NULL DEFAULT 0;
 ALTER TABLE llx_bom_bomline DROP COLUMN rank;

@@ -288,7 +288,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
 $sql.= " AND r.entity = " . $entity;
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is disable
-$sql.= " ORDER BY r.module, r.id";
+$sql.= " ORDER BY r.module_position, r.module, r.id";
 
 $result=$db->query($sql);
 if ($result)
@@ -331,11 +331,15 @@ if ($result)
     				print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module='.$obj->module.'">'.$langs->trans("None")."</a>";
     				print '</td>';
     			}
-    			print '<td></td>';
-    		}else {
-			    print '<td></td><td></td>';
+    			print '<td>&nbsp;</td>';
+    		} else {
+    			if ($caneditperms)
+    			{
+			    	print '<td>&nbsp;</td>';
+    			}
+    			print '<td>&nbsp;</td>';
 		    }
-    		print '<td></td>';
+    		print '<td>&nbsp;</td>';
     		print '</tr>'."\n";
         }
 

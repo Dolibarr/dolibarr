@@ -181,14 +181,6 @@ class modAccounting extends DolibarrModules
         $this->rights[$r][5] = '';
         $r++;
 
-		$this->rights[$r][0] = 50430;
-		$this->rights[$r][1] = 'Define and close a fiscal year';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'fiscalyear';
-		$this->rights[$r][5] = '';
-		$r++;
-
         $this->rights[$r][0] = 50401;
 		$this->rights[$r][1] = 'Bind products and invoices with accounting accounts';
 		$this->rights[$r][2] = 'r';
@@ -196,16 +188,6 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][4] = 'bind';
 		$this->rights[$r][5] = 'write';
 		$r++;
-
-		/*
-		$this->rights[$r][0] = 50402;
-		$this->rights[$r][1] = 'Make binding with products and invoices';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'ventilation';
-		$this->rights[$r][5] = 'dispatch_advanced';
-		$r++;
-        */
 
 		$this->rights[$r][0] = 50411;
 		$this->rights[$r][1] = 'Read operations in Ledger';

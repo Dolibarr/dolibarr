@@ -36,7 +36,7 @@ if (empty($conf->accounting->enabled)) {
 }
 if ($user->societe_id > 0)
 	accessforbidden();
-if (! $user->rights->accounting->fiscalyear->closure)
+if (! $user->rights->accounting->fiscalyear->write)
 	accessforbidden();
 
 
