@@ -94,7 +94,6 @@ $hookmanager->initHooks(array('membertypecard','globalcard'));
  */
 
 if ($cancel) {
-
 	$action='';
 
 	if (! empty($backtopage)) {

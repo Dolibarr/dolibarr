@@ -2370,7 +2370,6 @@ class Adherent extends CommonObject
 		$langs->load("orders");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'standard';
 
 			if ($this->modelpdf) {

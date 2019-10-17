@@ -505,7 +505,6 @@ class CommandeFournisseurDispatch extends CommonObject
 
 		if (! $error)
 		{
-
 		}
 
 		unset($object->context['createfromclone']);

@@ -338,7 +338,6 @@ class pdf_stdmovement extends ModelePDFMovement
 
 		if ($conf->stock->dir_output)
 		{
-
 			if ($resql)
 			{
 				$product = new Product($db);

@@ -1277,19 +1277,15 @@ if ($resql)
     	        }
     	        elseif ($links[$key]['type']=='company')
     	        {
-
     	        }
     	        elseif ($links[$key]['type']=='user')
     	        {
-
     	        }
     	        elseif ($links[$key]['type']=='member')
     	        {
-
     	        }
     	        elseif ($links[$key]['type']=='sc')
     	        {
-
     	        }
     	        else
     	        {

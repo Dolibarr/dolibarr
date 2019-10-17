@@ -692,7 +692,6 @@ if ($action == 'create') {
 			$num = count($object->lines);
 			$i = 0;
 			while ($i < $num) {
-
 				// Show product and description
 				if (isset($object->lines[$i]->product_type))
 					$type=$object->lines[$i]->product_type;

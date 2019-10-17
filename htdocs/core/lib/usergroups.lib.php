@@ -638,8 +638,6 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	// TextTitleColor for title of Pages
 	if ($foruserprofile)
 	{
-
-
 	}
 	else
 	{
@@ -665,8 +663,6 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	// BackgroundTableTitleColor
 	if ($foruserprofile)
 	{
-
-
 	}
 	else
 	{
@@ -692,8 +688,6 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	// TextTitleColor
 	if ($foruserprofile)
 	{
-
-
 	}
 	else
 	{
@@ -719,7 +713,6 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	// BackgroundTableLineOddColor
 	if ($foruserprofile)
 	{
-
 	}
 	else
 	{
@@ -749,7 +742,6 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	// BackgroundTableLineEvenColor
 	if ($foruserprofile)
 	{
-
 	}
 	else
 	{
@@ -1005,7 +997,6 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	}
 	else
 	{
-
 	}
 	print '</table>';
 }

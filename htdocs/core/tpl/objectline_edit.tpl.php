@@ -78,7 +78,6 @@ $coldisplay=0;
 	<input type="hidden" id="fk_parent_line" name="fk_parent_line" value="<?php echo $line->fk_parent_line; ?>">
 
 	<?php if ($line->fk_product > 0) { ?>
-
 		<?php
 		if ($line->fk_parent_line > 0) echo img_picto('', 'rightarrow');
 		?>

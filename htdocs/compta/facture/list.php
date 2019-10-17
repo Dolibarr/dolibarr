@@ -356,7 +356,6 @@ if ($massaction == 'withdrawrequest')
 				}
 				else
 				{
-
 					$db->rollback();
 					setEventMessages($aBill->error, $aBill->errors, 'errors');
 				}

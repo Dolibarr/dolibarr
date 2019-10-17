@@ -223,7 +223,6 @@ class Expedition extends CommonObject
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 			foreach ($dirmodels as $reldir) {
-
 				$dir = dol_buildpath($reldir."core/modules/expedition/");
 
 				// Load file with numbering class (if found)
@@ -2333,7 +2332,6 @@ class Expedition extends CommonObject
 		$langs->load("sendings");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'rouget';
 
 			if ($this->modelpdf) {

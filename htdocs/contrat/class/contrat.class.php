@@ -221,7 +221,6 @@ class Contrat extends CommonObject
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 			foreach ($dirmodels as $reldir) {
-
 				$dir = dol_buildpath($reldir."core/modules/contract/");
 
 				// Load file with numbering class (if found)
@@ -1412,7 +1411,6 @@ class Contrat extends CommonObject
 
 		if ($this->statut >= 0)
 		{
-
 			// Clean parameters
 			$pu_ht=price2num($pu_ht);
 			$pu_ttc=price2num($pu_ttc);
@@ -1731,7 +1729,6 @@ class Contrat extends CommonObject
 			$result=$this->update_statut($user);
 			if ($result >= 0)
 			{
-
 				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options)>0) // For avoid conflicts if trigger used
 				{
 					$contractline = new ContratLigne($this->db);
@@ -2422,7 +2419,6 @@ class Contrat extends CommonObject
 		$langs->load("contracts");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'strato';
 
 			if ($this->modelpdf) {

@@ -97,7 +97,6 @@ if ($action == 'clean' || $action == 'validatehistory')
 }
 
 if ($action == 'validatehistory') {
-
 	$error = 0;
 	$db->begin();
 
@@ -195,7 +194,6 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	while ( $row = $db->fetch_row($resql)) {
-
 		print '<tr class="oddeven"><td>';
 		if ($row[0] == 'tobind')
 		{
@@ -271,7 +269,6 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	while ( $row = $db->fetch_row($resql)) {
-
 		print '<tr class="oddeven"><td>';
 		if ($row[0] == 'tobind')
 		{
@@ -398,7 +395,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 			$num = $db->num_rows($resql);
 
 			while ($row = $db->fetch_row($resql)) {
-
 				print '<tr><td>' . $row[0] . '</td>';
 				for($i = 1; $i <= 12; $i ++) {
 					print '<td class="nowrap right">' . price(price2num($row[$i])) . '</td>';

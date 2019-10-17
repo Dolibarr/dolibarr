@@ -312,7 +312,6 @@ if ($socid && ! $projectid && ! $project_ref && $user->rights->societe->lire) {
     $socstat = new Societe($db);
     $res = $socstat->fetch($socid);
     if ($res > 0) {
-
     	$tmpobject = $object;
     	$object = $socstat;		// $object must be of type Societe when calling societe_prepare_head
         $head = societe_prepare_head($socstat);

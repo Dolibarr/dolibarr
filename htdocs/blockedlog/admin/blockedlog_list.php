@@ -92,7 +92,6 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 if ($action === 'downloadblockchain') {
-
 	$auth = new BlockedLogAuthority($db);
 
 	$bc = $auth->getLocalBlockChain();

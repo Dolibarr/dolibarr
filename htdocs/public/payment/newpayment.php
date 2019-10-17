@@ -1799,7 +1799,6 @@ print '<br>';
 // Add more content on page for some services
 if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment mode
 {
-
 	// Stripe
 	if (GETPOST('dopayment_stripe', 'alpha'))
 	{

@@ -893,7 +893,6 @@ if (empty($reshook))
 	{
 		$cancelbutton = GETPOST('cancel', 'alpha');
 		if (!$cancelbutton) {
-
 			$object->oldcopy = dol_clone($object);
 
 			$result = $object->setValueFrom('ref_supplier', GETPOST('ref_supplier', 'alpha'), '', null, 'text', '', $user, 'CONTRACT_MODIFY');

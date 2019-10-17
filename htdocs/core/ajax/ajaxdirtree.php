@@ -217,7 +217,6 @@ if (empty($conf->use_javascript_ajax) || ! empty($conf->global->MAIN_ECM_DISABLE
 	$oldvallevel=0;
 	foreach($sqltree as $key => $val)
 	{
-
 		$ecmdirstatic->id=$val['id'];
 		$ecmdirstatic->ref=$val['label'];
 

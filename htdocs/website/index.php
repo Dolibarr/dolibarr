@@ -3028,7 +3028,6 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 			$result = $sourcepage->fetch($objectpage->fk_page);
 			if ($result == 0)	// not found, we can reset value
 			{
-
 			}
 			elseif ($result > 0)
 			{

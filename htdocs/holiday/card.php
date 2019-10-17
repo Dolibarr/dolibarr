@@ -103,7 +103,6 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-
 	if ($cancel)
 	{
 		if (! empty($backtopage))
@@ -117,7 +116,6 @@ if (empty($reshook))
 	// If create a request
 	if ($action == 'create')
 	{
-
 	    // If no right to create a request
 	    if (! $cancreate)
 	    {
@@ -912,7 +910,6 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 
         // Si il y a une erreur
         if (GETPOST('error')) {
-
             switch(GETPOST('error')) {
                 case 'datefin' :
                     $errors[] = $langs->trans('ErrorEndDateCP');

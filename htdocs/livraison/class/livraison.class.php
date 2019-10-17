@@ -1051,7 +1051,6 @@ class Livraison extends CommonObject
 		$langs->load("deliveries");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'typhon';
 
 			if ($this->modelpdf) {

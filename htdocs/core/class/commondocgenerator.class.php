@@ -1103,7 +1103,6 @@ abstract class CommonDocGenerator
         global $hookmanager;
 
         foreach ($this->cols as $colKey => $colDef) {
-
             $parameters = array(
                 'colKey' => $colKey,
                 'pdf' => $pdf,

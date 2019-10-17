@@ -846,7 +846,6 @@ if ($resql)
 
             //If invoice has been converted and the conversion has been used, we dont have remain to pay on invoice
             if($facturestatic->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
-
                 if($facturestatic->isCreditNoteUsed()){
                     $remaintopay=-$facturestatic->getSumFromThisCreditNotesNotUsed();
                 }

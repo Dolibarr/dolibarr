@@ -316,7 +316,6 @@ if (empty($reshook))
 }
 
 if ($action == 'delbookkeeping' && $user->rights->accounting->mouvements->supprimer) {
-
 	$import_key = GETPOST('importkey', 'alpha');
 
 	if (! empty($import_key)) {
@@ -331,7 +330,6 @@ if ($action == 'delbookkeeping' && $user->rights->accounting->mouvements->suppri
 	}
 }
 if ($action == 'delbookkeepingyearconfirm' && $user->rights->accounting->mouvements->supprimer_tous) {
-
 	$delyear = GETPOST('delyear', 'int');
 	if ($delyear==-1) {
 		$delyear=0;
@@ -362,7 +360,6 @@ if ($action == 'delbookkeepingyearconfirm' && $user->rights->accounting->mouveme
 	}
 }
 if ($action == 'delmouvconfirm' && $user->rights->accounting->mouvements->supprimer) {
-
 	$mvt_num = GETPOST('mvt_num', 'int');
 
 	if (! empty($mvt_num)) {
@@ -468,7 +465,6 @@ if (! empty($sortfield)) {
 // Export into a file with format defined into setup (FEC, CSV, ...)
 // Must be after definition of $sql
 if ($action == 'export_file' && $user->rights->accounting->mouvements->export) {
-
 	// TODO Replace the fetchAll + ->export later that consume too much memory on large export with the query($sql) and loop on each line to export them.
 	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', $conf->global->ACCOUNTING_REEXPORT);
 
@@ -578,7 +574,6 @@ if ($action == 'delmouv') {
 	print $formconfirm;
 }
 if ($action == 'delbookkeepingyear') {
-
 	$form_question = array ();
 	$delyear = GETPOST('delyear');
 	$deljournal = GETPOST('deljournal');

@@ -474,7 +474,6 @@ print '</tr>';
 
 // Activate FileCache - Developement
 if ($conf->global->MAIN_FEATURES_LEVEL == 2 || ! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
-
     print '<tr class="oddeven"><td width="35%">'.$langs->trans("EnableFileCache").'</td><td>';
     print $form->selectyesno('MAIN_ACTIVATE_FILECACHE', $conf->global->MAIN_ACTIVATE_FILECACHE, 1);
     print '</td>';

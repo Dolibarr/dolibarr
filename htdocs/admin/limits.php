@@ -172,7 +172,6 @@ if (empty($mysoc->country_code))
 }
 else
 {
-
 	// Show examples
 	print '<b>'.$langs->trans("ExamplesWithCurrentSetup").":</b><br>\n";
 

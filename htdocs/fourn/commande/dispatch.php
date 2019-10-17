@@ -733,7 +733,6 @@ if ($id > 0 || ! empty($ref)) {
 							print '</td>';
 							print '<td colspan="3">&nbsp</td>'; // Supplier ref + Qty ordered + qty already dispatched
 						} else {
-
 							$type = 'dispatch';
 							print '<td class="right">';
 							print '</td>';     // Qty to dispatch
@@ -960,7 +959,6 @@ if ($id > 0 || ! empty($ref)) {
 				if(!empty($conf->reception->enabled) ){
 					print '<td>';
 					if (!empty($objp->fk_reception)){
-
 						$reception = new Reception($db);
 						$reception->fetch($objp->fk_reception);
 						print $reception->getNomUrl(1);

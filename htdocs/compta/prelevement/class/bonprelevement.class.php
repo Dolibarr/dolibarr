@@ -441,7 +441,6 @@ class BonPrelevement extends CommonObject
 
 					if ($this->db->query($sql))
 					{
-
 						$langs->load('withdrawals');
 						$subject = $langs->trans("InfoCreditSubject", $this->ref);
 						$message = $langs->trans("InfoCreditMessage", $this->ref, dol_print_date($date, 'dayhour'));
@@ -618,7 +617,6 @@ class BonPrelevement extends CommonObject
 		}
 		else
 		{
-
 			dol_syslog(get_class($this)."::set_infotrans Ouverture transaction SQL impossible", LOG_CRIT);
 			return -2;
 		}

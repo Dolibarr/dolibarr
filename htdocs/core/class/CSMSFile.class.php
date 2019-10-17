@@ -112,7 +112,6 @@ class CSMSFile
 
 		if (empty($conf->global->MAIN_DISABLE_ALL_SMS))
 		{
-
 		    // Action according to choosed sending method
 		    if ($conf->global->MAIN_SMS_SENDMODE == 'ovh')    // Backward compatibility    @deprecated
 			{

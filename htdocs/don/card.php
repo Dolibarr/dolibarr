@@ -533,13 +533,11 @@ if (! empty($id) && $action == 'edit')
 	print "</tr>\n";
 
 if ( $object->socid && ! empty($conf->societe->enabled) && ! empty($conf->global->DONATION_USE_THIRDPARTIES) ) {
-
 	$company=new Societe($db);
 	$result=$company->fetch($object->socid);
 
 	print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td colspan="2">'.$company->getNomUrl(1).'</td></tr>';
 } else {
-
 	$langs->load("companies");
 	print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="maxwidth200" value="'.dol_escape_htmltag($object->societe).'"></td></tr>';
 	print '<tr><td>'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" class="maxwidth200" value="'.dol_escape_htmltag($object->lastname).'"></td></tr>';
@@ -695,13 +693,11 @@ if (! empty($id) && $action != 'edit')
 	print '</td></tr>';
 
 if ($object->socid) {
-
 	$company=new Societe($db);
 	$result=$company->fetch($object->socid);
 
 	print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td colspan="2">'.$company->getNomUrl(1).'</td></tr>';
 } else {
-
 	print '<tr><td>'.$langs->trans("Company").'</td><td colspan="2">'.$object->societe.'</td></tr>';
 	print '<tr><td>'.$langs->trans("Lastname").'</td><td colspan="2">'.$object->lastname.'</td></tr>';
 	print '<tr><td>'.$langs->trans("Firstname").'</td><td colspan="2">'.$object->firstname.'</td></tr>';

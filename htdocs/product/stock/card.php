@@ -391,7 +391,6 @@ else
 			// Parent entrepot
 			$e = new Entrepot($db);
 			if(!empty($object->fk_parent) && $e->fetch($object->fk_parent) > 0) {
-
 				print '<tr><td>'.$langs->trans("ParentWarehouse").'</td><td>';
 				print $e->getNomUrl(3);
 				print '</td></tr>';

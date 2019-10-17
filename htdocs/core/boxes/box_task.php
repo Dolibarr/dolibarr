@@ -173,7 +173,6 @@ class box_task extends ModeleBoxes
 			if ($result) {
 				$num = $this->db->num_rows($result);
                 while ($objp = $this->db->fetch_object($result)) {
-
                     $taskstatic->id=$objp->rowid;
                     $taskstatic->ref=$objp->ref;
                     $taskstatic->label=$objp->label;

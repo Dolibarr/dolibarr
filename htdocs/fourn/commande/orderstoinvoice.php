@@ -109,7 +109,6 @@ $hookmanager->initHooks(array('orderstoinvoicesupplier'));
  */
 
 if (($action == 'create' || $action == 'add') && ! $error) {
-
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/fourn.lib.php';
 	if (! empty($conf->projet->enabled))
 		require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
@@ -255,7 +254,6 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 
 		// End of object creation, we show it
 		if ($id > 0 && ! $error) {
-
 			foreach($orders_id as $fk_supplier_order) {
 				$supplier_order = new CommandeFournisseur($db);
 				if ($supplier_order->fetch($fk_supplier_order)>0 && $supplier_order->statut == 5)
@@ -299,7 +297,6 @@ $formfile = new FormFile($db);
 
 // Mode creation
 if ($action == 'create' && !$error) {
-
 	llxHeader();
 	print load_fiche_titre($langs->trans('NewBill'));
 

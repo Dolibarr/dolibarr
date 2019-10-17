@@ -1080,7 +1080,6 @@ if (empty($reshook))
 		}
 
 		if (! $error) {
-
 			if (empty($user->rights->margins->creer))
 			{
 				foreach ($object->lines as &$line)

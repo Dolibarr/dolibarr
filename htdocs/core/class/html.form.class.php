@@ -3913,7 +3913,6 @@ class Form
 			if ($nbaccountfound > 0) print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 			print '</form>';
 		} else {
-
 			$langs->load('banks');
 
 			if ($selected) {

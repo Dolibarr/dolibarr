@@ -470,7 +470,6 @@ print '</td></tr>'."\n";
 
 // Barcode
 if (! empty($conf->barcode->enabled)) {
-
 	print '<tr class="oddeven"><td><label for="barcode">'.$langs->trans("Gencod").'</label></td><td>';
 	print '<input name="barcode" id="barcode" class="minwidth150" value="'. dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_GENCOD) . '"></td></tr>';
 	print '</td></tr>';
@@ -555,7 +554,6 @@ print '</td></tr>';
 // ProfID1
 if ($langs->transcountry("ProfId1", $mysoc->country_code) != '-')
 {
-
 	print '<tr class="oddeven"><td><label for="profid1">'.$langs->transcountry("ProfId1", $mysoc->country_code).'</label></td><td>';
 	if (! empty($mysoc->country_code))
 	{
@@ -571,7 +569,6 @@ if ($langs->transcountry("ProfId1", $mysoc->country_code) != '-')
 // ProfId2
 if ($langs->transcountry("ProfId2", $mysoc->country_code) != '-')
 {
-
 	print '<tr class="oddeven"><td><label for="profid2">'.$langs->transcountry("ProfId2", $mysoc->country_code).'</label></td><td>';
 	if (! empty($mysoc->country_code))
 	{
@@ -587,7 +584,6 @@ if ($langs->transcountry("ProfId2", $mysoc->country_code) != '-')
 // ProfId3
 if ($langs->transcountry("ProfId3", $mysoc->country_code) != '-')
 {
-
 	print '<tr class="oddeven"><td><label for="profid3">'.$langs->transcountry("ProfId3", $mysoc->country_code).'</label></td><td>';
 	if (! empty($mysoc->country_code))
 	{
@@ -603,7 +599,6 @@ if ($langs->transcountry("ProfId3", $mysoc->country_code) != '-')
 // ProfId4
 if ($langs->transcountry("ProfId4", $mysoc->country_code) != '-')
 {
-
 	print '<tr class="oddeven"><td><label for="profid4">'.$langs->transcountry("ProfId4", $mysoc->country_code).'</label></td><td>';
 	if (! empty($mysoc->country_code))
 	{
@@ -619,7 +614,6 @@ if ($langs->transcountry("ProfId4", $mysoc->country_code) != '-')
 // ProfId5
 if ($langs->transcountry("ProfId5", $mysoc->country_code) != '-')
 {
-
 	print '<tr class="oddeven"><td><label for="profid5">'.$langs->transcountry("ProfId5", $mysoc->country_code).'</label></td><td>';
 	if (! empty($mysoc->country_code))
 	{
@@ -635,7 +629,6 @@ if ($langs->transcountry("ProfId5", $mysoc->country_code) != '-')
 // ProfId6
 if ($langs->transcountry("ProfId6", $mysoc->country_code) != '-')
 {
-
 	print '<tr class="oddeven"><td><label for="profid6">'.$langs->transcountry("ProfId6", $mysoc->country_code).'</label></td><td>';
 	if (! empty($mysoc->country_code))
 	{

@@ -1108,7 +1108,6 @@ class MouvementStock extends CommonObject
 		$langs->load("stocks");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'stdmovement';
 
 			if ($this->modelpdf) {

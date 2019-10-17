@@ -729,7 +729,6 @@ if ($mode == 'common')
         			print '</a>';
         		}
         		else {
-
         			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode .'&amp;confirm=yes' . $param . '">';
         			print img_picto($langs->trans("Activated"), 'switch_on');
         			print '</a>';

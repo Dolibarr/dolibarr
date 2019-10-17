@@ -118,7 +118,6 @@ if (! empty($consts) && $action == 'update')
 // Mass delete
 if (! empty($consts) && $action == 'delete')
 {
-
 	$nbdeleted=0;
 	foreach($consts as $const)
 	{

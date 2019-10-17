@@ -1584,9 +1584,7 @@ class BookKeeping extends CommonObject
 		dol_syslog(get_class($this) . "::" . __METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-
 			while ($obj = $this->db->fetch_object($result)) {
-
 				$line = new BookKeepingLine();
 
 				$line->id = $obj->rowid;

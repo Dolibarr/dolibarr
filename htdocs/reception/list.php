@@ -156,7 +156,6 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 if (empty($reshook))
 {
 	if ($massaction == 'confirm_createbills') {
-
     	$receptions = GETPOST('toselect', 'array');
     	$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
     	$validate_invoices = GETPOST('validate_invoices', 'int');
@@ -395,7 +394,6 @@ if (empty($reshook))
     	}
     	else
     	{
-
     		$db->rollback();
     		$action='create';
     		$_GET["origin"]=$_POST["origin"];

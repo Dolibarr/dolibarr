@@ -134,7 +134,6 @@ class Reception extends CommonObject
 	        $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 	        foreach ($dirmodels as $reldir) {
-
 		        $dir = dol_buildpath($reldir."core/modules/reception/");
 
 		        // Load file with numbering class (if found)

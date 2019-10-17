@@ -91,7 +91,6 @@ $reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
-
 	if ($cancel)
 	{
 		if (! empty($backtopage))

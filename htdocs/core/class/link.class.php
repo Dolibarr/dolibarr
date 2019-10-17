@@ -135,7 +135,6 @@ class Link extends CommonObject
         {
             if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
             {
-
                 $this->error=$langs->trans("ErrorCompanyNameAlreadyExists", $this->name);
                 $result=-1;
             }

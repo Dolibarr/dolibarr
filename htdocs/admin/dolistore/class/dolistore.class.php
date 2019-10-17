@@ -226,7 +226,6 @@ class Dolistore
 						$html   .= self::get_categories($cat->id);
 						$html   .= "</li>\n";
 			} else {
-
 			}
 		}
 

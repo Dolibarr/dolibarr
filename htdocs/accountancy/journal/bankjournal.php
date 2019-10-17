@@ -167,7 +167,6 @@ $journal_label = $accountingjournalstatic->label;
 dol_syslog("accountancy/journal/bankjournal.php", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
-
 	$num = $db->num_rows($result);
 	//print $sql;
 
@@ -268,10 +267,8 @@ if ($result) {
 
 		// get_url may return -1 which is not traversable
 		if (is_array($links) && count($links) > 0) {
-
 			// Now loop on each link of record in bank.
 			foreach ($links as $key => $val) {
-
 				if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation', 'member', 'payment_loan', 'payment_salary', 'payment_various')))
 				{
 					// So we excluded 'company' and 'user' here. We want only payment lines

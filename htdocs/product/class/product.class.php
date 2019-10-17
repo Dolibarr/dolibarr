@@ -1051,7 +1051,6 @@ class Product extends CommonObject
 
                 if (! $error) {
                     if ($conf->variants->enabled) {
-
                         include_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 
                         $comb = new ProductCombination($this->db);
@@ -1181,7 +1180,6 @@ class Product extends CommonObject
             }
 
             if (!$error) {
-
                 include_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
                 include_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
 
@@ -5202,7 +5200,6 @@ class Product extends CommonObject
         );
 
         for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
-
             $price = $baseprice;
             $price_min = $baseprice;
 

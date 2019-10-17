@@ -853,7 +853,6 @@ class Entrepot extends CommonObject
 		$langs->load("stocks");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'standard';
 
 			if ($this->modelpdf) {

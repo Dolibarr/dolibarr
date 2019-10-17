@@ -202,7 +202,6 @@ print '</tr>';
 
 for ($mois = 1 ; $mois < 13 ; $mois++)
 {
-
 	print '<tr class="oddeven">';
 	print "<td>".dol_print_date(dol_mktime(1, 1, 1, $mois, 1, 2000), "%B")."</td>";
 	for ($annee = $year_start ; $annee <= $year_end ; $annee++)

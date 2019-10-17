@@ -549,7 +549,6 @@ class AccountancyExport
 		$end_line = "\n";
 
 		foreach ($objectLines as $line) {
-
 			$date = dol_print_date($line->doc_date, '%d%m%Y');
 
 			print $line->id . $separator;
@@ -585,7 +584,6 @@ class AccountancyExport
 		$end_line = "\n";
 
 		foreach ($objectLines as $line) {
-
 			$date = dol_print_date($line->doc_date, '%d%m%Y');
 
 			print $line->piece_num . $separator;
@@ -625,7 +623,6 @@ class AccountancyExport
         $end_line = "\n";
 
         foreach ($objectLines as $line) {
-
             $date = dol_print_date($line->doc_date, '%d/%m/%Y');
 
             print $date . $separator;
@@ -934,7 +931,6 @@ class AccountancyExport
 		$end_line = "\r\n";
 
 		foreach ($objectLines as $line) {
-
 			$date_document = dol_print_date($line->doc_date, '%Y%m%d');
 			$date_creation = dol_print_date($line->date_creation,  '%Y%m%d');
 
@@ -1087,7 +1083,6 @@ class AccountancyExport
 		print $end_line;
 
 		foreach($objectLines as $line) {
-
 			$date = dol_print_date($line->doc_date, '%Y%m%d');
 			print $date . $separator; //Date
 

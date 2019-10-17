@@ -1822,7 +1822,6 @@ if (empty($reshook))
 		}
 
 		if (! $error && ($qty >= 0) && (! empty($product_desc) || ! empty($idprod))) {
-
 			$ret = $object->fetch($id);
 			if ($ret < 0) {
 				dol_print_error($db, $object->error);
@@ -2327,7 +2326,6 @@ if (empty($reshook))
 	                    // Change each progression persent on each lines
 	                    foreach($object->lines as $line)
 	                    {
-
 	                        // no traitement for special product
 	                        if ($line->product_type == 9 )  continue;
 
@@ -3185,7 +3183,6 @@ if ($action == 'create')
 	if (! empty($conf->global->INVOICE_USE_SITUATION))
 	{
 	    if($conf->global->INVOICE_USE_SITUATION_RETAINED_WARRANTY){
-
 	        $rwStyle = 'display:none;';
 	        if(GETPOST('type', 'int') == Facture::TYPE_SITUATION){
 	            $rwStyle = '';
@@ -4350,7 +4347,6 @@ elseif ($id > 0 || ! empty($ref))
 	// List of previous situation invoices
 	if (($object->situation_cycle_ref > 0) && ! empty($conf->global->INVOICE_USE_SITUATION))
 	{
-
 	    print '<table class="noborder situationstable" width="100%">';
 
 
@@ -4663,7 +4659,6 @@ elseif ($id > 0 || ! empty($ref))
 
 		// Retained warranty : usualy use on construction industry
 		if(!empty($object->situation_final) && !empty($object->retained_warranty) && $displayWarranty){
-
 		    // Billed - retained warranty
 		    if($object->type == Facture::TYPE_SITUATION)
 		    {

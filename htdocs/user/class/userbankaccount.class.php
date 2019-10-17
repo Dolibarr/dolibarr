@@ -206,7 +206,6 @@ class UserBankAccount extends Account
         $rib = '';
 
         if ($this->code_banque || $this->code_guichet || $this->number || $this->cle_rib) {
-
             if ($this->label && $displayriblabel) {
                 $rib = $this->label." : ";
             }

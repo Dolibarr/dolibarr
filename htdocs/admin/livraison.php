@@ -356,8 +356,6 @@ foreach ($dirmodels as $reldir)
                 {
                 	if (file_exists($dir.'/'.$file))
                 	{
-
-
 		    			$name = substr($file, 4, dol_strlen($file) -16);
 		    			$classname = substr($file, 0, dol_strlen($file) -12);
 

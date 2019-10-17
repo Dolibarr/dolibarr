@@ -407,7 +407,6 @@ class AccountingAccount extends CommonObject
 		$result = $this->checkUsage();
 
 		if ($result > 0) {
-
 			$this->db->begin();
 
 			// if (! $error) {

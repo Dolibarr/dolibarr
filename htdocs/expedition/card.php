@@ -2501,7 +2501,6 @@ elseif ($id || $ref)
 		                                                                                               // modified by hook
 		if (empty($reshook))
 		{
-
 			if ($object->statut == Expedition::STATUS_DRAFT && $num_prod > 0)
 			{
 				if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->creer))

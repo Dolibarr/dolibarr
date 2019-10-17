@@ -344,7 +344,6 @@ if (! empty($usedolheader))
 {
 	llxFooter();
 } else { ?>
-
 </body>
 <?php } ?>
 

@@ -118,7 +118,6 @@ function _val($val)
 	     * escaping with a slash or encoding to UTF-8 where necessary
 	     */
 	    for ($c = 0; $c < $strlen_var; ++$c) {
-
 	        $ord_var_c = ord($val[$c]);
 
 	        switch (true) {

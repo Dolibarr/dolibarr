@@ -144,7 +144,6 @@ function getBrowserInfo($user_agent)
 	$tablet = $detectmobile->isTablet();
 
 	if ($detectmobile->isMobile()) {
-
 		$phone = 'unknown';
 
 		// If phone/smartphone, we set phone os name.
