@@ -75,7 +75,7 @@ $textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_cur
 
 print load_fiche_titre($langs->trans("Closure") . " " . $textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear, '', 'title_accountancy');
 
-print $langs->trans("DescClosure") . '<br>';
+print '<span class="opacitymedium">'.$langs->trans("DescClosure") . '</span><br>';
 print '<br>';
 
 
