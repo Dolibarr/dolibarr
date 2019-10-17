@@ -524,15 +524,15 @@ foreach($object->fields as $key => $val)
 	if (! empty($arrayfields['t.'.$key]['checked'])) {
 		if ($key == 'type_code') {
 			print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
-			$formTicket->selectTypesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 0, 1, 1, 0, ($val['css']?$val['css']:'maxwidth150'));
+			$formTicket->selectTypesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css']?$val['css']:'maxwidth150'));
 			print '</td>';
 		} elseif ($key == 'category_code') {
 			print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
-			$formTicket->selectGroupTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 0, 1, 1, 0, ($val['css']?$val['css']:'maxwidth150'));
+			$formTicket->selectGroupTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css']?$val['css']:'maxwidth150'));
 			print '</td>';
 		} elseif ($key == 'severity_code') {
 			print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
-			$formTicket->selectSeveritiesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 0, 1, 1, 0, ($val['css']?$val['css']:'maxwidth150'));
+			$formTicket->selectSeveritiesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css']?$val['css']:'maxwidth150'));
 			print '</td>';
 		} elseif ($key == 'fk_user_assign') {
 		    print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
