@@ -845,7 +845,7 @@ class pdf_sponge extends ModelePDFFactures
 	            // Display infos area
 	            $posy=$this->drawInfoTable($pdf, $object, $bottomlasttab, $outputlangs);
 
-	            // Display total zone 
+	            // Display total zone
 	            $posy=$this->drawTotalTable($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
 
 	            // Display payment area
