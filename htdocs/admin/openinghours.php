@@ -134,13 +134,13 @@ else
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Day").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	print '<tr class="oddeven"><td>'.$langs->trans("Monday").'</td><td>' . (empty($conf->global->MAIN_INFO_OPENINGHOURS_MONDAY)?'':$conf->global->MAIN_INFO_OPENINGHOURS_MONDAY) . '</td></tr>';
-	print '<tr class="oddeven"><td>'.$langs->trans("Tuesday").'</td><td>' . (empty($conf->global->MAIN_INFO_OPENINGHOURS_TUESDAY)?'':$conf->global->MAIN_INFO_OPENINGHOURS_TUESDAY) . '</td></tr>';
-	print '<tr class="oddeven"><td>'.$langs->trans("Wednesday").'</td><td>' . (empty($conf->global->MAIN_INFO_OPENINGHOURS_WEDNESDAY)?'':$conf->global->MAIN_INFO_OPENINGHOURS_WEDNESDAY) . '</td></tr>';
-	print '<tr class="oddeven"><td>'.$langs->trans("Thursday").'</td><td>' . (empty($conf->global->MAIN_INFO_OPENINGHOURS_THURSDAY)?'':$conf->global->MAIN_INFO_OPENINGHOURS_THURSDAY) . '</td></tr>';
-	print '<tr class="oddeven"><td>'.$langs->trans("Friday").'</td><td>' . (empty($conf->global->MAIN_INFO_OPENINGHOURS_FRIDAY)?'':$conf->global->MAIN_INFO_OPENINGHOURS_FRIDAY) . '</td></tr>';
-	print '<tr class="oddeven"><td>'.$langs->trans("Saturday").'</td><td>' . (empty($conf->global->MAIN_INFO_OPENINGHOURS_SATURDAY)?'':$conf->global->MAIN_INFO_OPENINGHOURS_SATURDAY) . '</td></tr>';
-	print '<tr class="oddeven"><td>'.$langs->trans("Sunday").'</td><td>' . (empty($conf->global->MAIN_INFO_OPENINGHOURS_SUNDAY)?'':$conf->global->MAIN_INFO_OPENINGHOURS_SUNDAY) . '</td></tr>';
+	print '<tr class="oddeven"><td>'.$langs->trans("Monday").'</td><td>' . (empty($conf->global->MAIN_INFO_OPENINGHOURS_MONDAY)?$langs->trans("Closed"):$conf->global->MAIN_INFO_OPENINGHOURS_MONDAY) . '</td></tr>';
+	print '<tr class="oddeven"><td>'.$langs->trans("Tuesday").'</td><td>' . (empty($conf->global->MAIN_INFO_OPENINGHOURS_TUESDAY)?$langs->trans("Closed"):$conf->global->MAIN_INFO_OPENINGHOURS_TUESDAY) . '</td></tr>';
+	print '<tr class="oddeven"><td>'.$langs->trans("Wednesday").'</td><td>' . (empty($conf->global->MAIN_INFO_OPENINGHOURS_WEDNESDAY)?$langs->trans("Closed"):$conf->global->MAIN_INFO_OPENINGHOURS_WEDNESDAY) . '</td></tr>';
+	print '<tr class="oddeven"><td>'.$langs->trans("Thursday").'</td><td>' . (empty($conf->global->MAIN_INFO_OPENINGHOURS_THURSDAY)?$langs->trans("Closed"):$conf->global->MAIN_INFO_OPENINGHOURS_THURSDAY) . '</td></tr>';
+	print '<tr class="oddeven"><td>'.$langs->trans("Friday").'</td><td>' . (empty($conf->global->MAIN_INFO_OPENINGHOURS_FRIDAY)?$langs->trans("Closed"):$conf->global->MAIN_INFO_OPENINGHOURS_FRIDAY) . '</td></tr>';
+	print '<tr class="oddeven"><td>'.$langs->trans("Saturday").'</td><td>' . (empty($conf->global->MAIN_INFO_OPENINGHOURS_SATURDAY)?$langs->trans("Closed"):$conf->global->MAIN_INFO_OPENINGHOURS_SATURDAY) . '</td></tr>';
+	print '<tr class="oddeven"><td>'.$langs->trans("Sunday").'</td><td>' . (empty($conf->global->MAIN_INFO_OPENINGHOURS_SUNDAY)?$langs->trans("Closed"):$conf->global->MAIN_INFO_OPENINGHOURS_SUNDAY) . '</td></tr>';
 
 	print '</table>';
 	print "</div>";
