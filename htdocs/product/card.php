@@ -540,6 +540,17 @@ if (empty($reshook))
                             }
                         }
 
+                        if (GETPOST('clone_prices')) {
+                            $result = $object->clone_price($originalId, $id);
+
+                            if ($result < 1) {
+                                $db->rollback();
+                                setEventMessages($langs->trans('ErrorProductClone'), null, 'errors');
+                                header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $originalId);
+                                exit();
+                            }
+                        }
+
                         // $object->clone_fournisseurs($originalId, $id);
 
                         $db->commit();
@@ -1997,8 +2008,10 @@ $formquestionclone=array(
     array('type' => 'text', 'name' => 'clone_ref','label' => $langs->trans("NewRefForClone"), 'value' => empty($tmpcode) ? $langs->trans("CopyOf").' '.$object->ref : $tmpcode, 'size'=>24),
     array('type' => 'checkbox', 'name' => 'clone_content','label' => $langs->trans("CloneContentProduct"), 'value' => 1),
     array('type' => 'checkbox', 'name' => 'clone_categories', 'label' => $langs->trans("CloneCategoriesProduct"), 'value' => 1),
-    array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("FeatureNotYetAvailable").')', 'value' => 0, 'disabled' => true),
 );
+if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+    $formquestionclone[] =  array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("CustomerPrices").')', 'value' => 0);
+}
 if (! empty($conf->global->PRODUIT_SOUSPRODUITS))
 {
     $formquestionclone[]=array('type' => 'checkbox', 'name' => 'clone_composition', 'label' => $langs->trans('CloneCompositionProduct'), 'value' => 1);
