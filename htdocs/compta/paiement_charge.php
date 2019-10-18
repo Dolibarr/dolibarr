@@ -162,7 +162,6 @@ $form=new Form($db);
 // Formulaire de creation d'un paiement de charge
 if ($action == 'create')
 {
-
 	$charge = new ChargeSociales($db);
 	$charge->fetch($chid);
     $charge->accountid=$charge->fk_account?$charge->fk_account:$charge->accountid;

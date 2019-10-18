@@ -201,7 +201,6 @@ $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-
 	dol_syslog(__FILE__, LOG_DEBUG);
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);

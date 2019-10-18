@@ -581,6 +581,7 @@ class Adherent extends CommonObject
 		$sql.= ", fk_adherent_type = ".$this->db->escape($this->typeid);
 		$sql.= ", morphy = '".$this->db->escape($this->morphy)."'";
 		$sql.= ", birth = ".($this->birth?"'".$this->db->idate($this->birth)."'":"null");
+		if ($this->socid)   $sql.= ", fk_soc = '".$this->db->escape($this->socid)."'";			// Must be modified only when creating from a third-party
 		if ($this->datefin)   $sql.= ", datefin = '".$this->db->idate($this->datefin)."'";		// Must be modified only when deleting a subscription
 		if ($this->datevalid) $sql.= ", datevalid = '".$this->db->idate($this->datevalid)."'";	// Must be modified only when validating a member
 		$sql.= ", fk_user_mod = ".($user->id>0?$user->id:'null');	// Can be null because member can be create by a guest
@@ -1281,7 +1282,7 @@ class Adherent extends CommonObject
 				$this->societe			= $obj->company;
 				$this->company			= $obj->company;
 				$this->socid			= $obj->fk_soc;
-				$this->fk_soc			= $obj->fk_soc;     // For backward comaptibility
+				$this->fk_soc			= $obj->fk_soc;     // For backward compatibility
 				$this->address			= $obj->address;
 				$this->zip				= $obj->zip;
 				$this->town				= $obj->town;
@@ -2369,7 +2370,6 @@ class Adherent extends CommonObject
 		$langs->load("orders");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'standard';
 
 			if ($this->modelpdf) {

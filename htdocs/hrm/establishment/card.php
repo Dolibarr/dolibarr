@@ -124,7 +124,6 @@ elseif ($action == 'update')
 	$error = 0;
 
 	if (! $cancel) {
-
 		$name = GETPOST('name', 'alpha');
 		if (empty($name)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Name')), null, 'errors');

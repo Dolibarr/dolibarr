@@ -139,7 +139,7 @@ TicketViewNonClosedOnly=View only open tickets
 TicketStatByStatus=Tickets by status
 OrderByDateAsc=Sort by ascending date
 OrderByDateDesc=Sort by descending date
-MessagingViewType=Show as messaging list
+ShowAsConversation=Show as conversation list
 MessageListViewType=Show as table list
 
 #
@@ -226,6 +226,8 @@ TicketConfirmChangeStatus=Confirm the status change: %s ?
 TicketLogStatusChanged=Status changed: %s to %s
 TicketNotNotifyTiersAtCreate=Not notify company at create
 Unread=Unread
+TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
+PublicInterfaceNotEnabled=Public interface was not enabled
 
 #
 # Logs

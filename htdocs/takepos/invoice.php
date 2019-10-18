@@ -570,13 +570,19 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT)
         $label = $obj->label;
         $floor = $obj->floor;
     }
-    print $langs->trans('Place')." <b>".$label."</b> - ";
-    print $langs->trans('Floor')." <b>".$floor."</b> - ";
+	// In phone version only show when is invoice page
+	if ($mobilepage=="invoice" || $mobilepage=="") {
+		print $langs->trans('Place') . " <b>" . $label . "</b> - ";
+		print $langs->trans('Floor') . " <b>" . $floor . "</b> - ";
+	}
 }
-print $langs->trans('TotalTTC');
-print ' : <b>'.price($invoice->total_ttc, 1, '', 1, - 1, - 1, $conf->currency).'</b></span>';
-print '<br>'.$sectionwithinvoicelink;
-print '</td>';
+// In phone version only show when is invoice page
+if ($mobilepage=="invoice" || $mobilepage=="") {
+	print $langs->trans('TotalTTC');
+	print ' : <b>' . price($invoice->total_ttc, 1, '', 1, -1, -1, $conf->currency) . '</b></span>';
+	print '<br>' . $sectionwithinvoicelink;
+	print '</td>';
+}
 if ($_SESSION["basiclayout"]!=1)
 {
 	print '<td class="linecolqty right">' . $langs->trans('ReductionShort') . '</td>';
@@ -595,16 +601,14 @@ if ($_SESSION["basiclayout"]==1)
 		$htmlforlines = '';
         foreach ($categories as $row){
 			$htmlforlines.= '<tr class="drag drop oddeven posinvoiceline';
-			$htmlforlines.= '" onclick="location.href=\'invoice.php?mobilepage=products&place=' . $place . '&catid=' . $row['id'] . '\'">';
+			$htmlforlines.= '" onclick="LoadProducts(' . $row['id'] . ');">';
 			$htmlforlines.= '<td class="left">';
 			$htmlforlines.= $row['label'];
 			$htmlforlines.= '</td>';
 			$htmlforlines.= '</tr>'."\n";
 		}
 		$htmlforlines.= '</table>';
-		$htmlforlines.= '<div class="tabsAction">';
-		$htmlforlines.= '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?mobilepage=places&place=' . $place. '">'.$langs->trans("Floors").'</a>';
-		$htmlforlines.= '</div>';
+		$htmlforlines.= '</table>';
 		print $htmlforlines;
 	}
 
@@ -618,17 +622,13 @@ if ($_SESSION["basiclayout"]==1)
 		$htmlforlines = '';
 		foreach ($prods as $row) {
 			$htmlforlines.= '<tr class="drag drop oddeven posinvoiceline';
-			$htmlforlines.= '" onclick="location.href=\'invoice.php?mobilepage=invoice&action=addline&place=' . $place . '&idproduct=' . $row->id . '\'">';
+			$htmlforlines.= '" onclick="AddProduct(\'' . $place . '\', ' . $row->id . ')">';
 			$htmlforlines.= '<td class="left">';
 			$htmlforlines.= $row->label;
 			$htmlforlines.= '</td>';
 			$htmlforlines.= '</tr>'."\n";
 		}
 		$htmlforlines.= '</table>';
-		$htmlforlines.= '<div class="tabsAction">';
-		$htmlforlines.= '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?mobilepage=cats&place=' . $place. '">'.$langs->trans("Categories").'</a>';
-		$htmlforlines.= '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?mobilepage=places&place=' . $place. '">'.$langs->trans("Floors").'</a>';
-		$htmlforlines.= '</div>';
 		print $htmlforlines;
 	}
 
@@ -641,24 +641,22 @@ if ($_SESSION["basiclayout"]==1)
 		while($row = $db->fetch_array($resql)){
 			$rows[] = $row;
 			$htmlforlines.= '<tr class="drag drop oddeven posinvoiceline';
-			$htmlforlines.= '" onclick="location.href=\'invoice.php?mobilepage=invoice&place=' . $row['label'] . '\'">';
+			$htmlforlines.= '" onclick="LoadPlace(\'' . $row['label'] . '\')">';
 			$htmlforlines.= '<td class="left">';
 			$htmlforlines.= $row['label'];
 			$htmlforlines.= '</td>';
 			$htmlforlines.= '</tr>'."\n";
 		}
 		$htmlforlines.= '</table>';
-		$htmlforlines.= '<div class="tabsAction">';
-		$htmlforlines.= '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?mobilepage=cats&place=' . $place. '">'.$langs->trans("Categories").'</a>';
-		$htmlforlines.= '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?mobilepage=places&place=' . $place. '">'.$langs->trans("Floors").'</a>';
-		$htmlforlines.= '</div>';
 		print $htmlforlines;
 	}
 }
 
 if ($placeid > 0)
 {
-	if ($_SESSION["basiclayout"]==1 && $mobilepage!="invoice") return;
+	//In Phone basic layout hide some content depends situation
+	if ($_SESSION["basiclayout"]==1 && $mobilepage!="invoice" && $action!="order") return;
+	
     if (is_array($invoice->lines) && count($invoice->lines))
     {
         $tmplines = array_reverse($invoice->lines);
@@ -716,14 +714,6 @@ else {      // No invoice generated yet
 
 print '</table>';
 
-if ($_SESSION["basiclayout"]==1 && $mobilepage=="invoice")
-{
-	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?mobilepage=cats&place=' . $place. '">'.$langs->trans("Categories").'</a>';
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?mobilepage=places&place=' . $place. '">'.$langs->trans("Floors").'</a>';
-	print '</div>';
-}
-
 if ($invoice->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]})
 {
     $soc = new Societe($db);
@@ -742,39 +732,39 @@ if ($invoice->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takep
 	}
     print '</p>';
 
-        // Module Adherent
-        if (! empty($conf->adherent->enabled))
+    // Module Adherent
+    if (! empty($conf->adherent->enabled))
+    {
+    	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+    	$langs->load("members");
+    	print '<p style="font-size:120%;" class="right">';
+    	print $langs->trans("Member").': ';
+    	$adh=new Adherent($db);
+    	$result=$adh->fetch('', '', $invoice->socid);
+    	if ($result > 0)
 		{
-    require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-    $langs->load("members");
-    print '<p style="font-size:120%;" class="right">';
-    print $langs->trans("Member").': ';
-    $adh=new Adherent($db);
-    $result=$adh->fetch('', '', $invoice->socid);
-            if ($result > 0)
+		    $adh->ref=$adh->getFullName($langs);
+		    print $adh->getFullName($langs);
+		    print '<br>'.$langs->trans("Type").': '.$adh->type;
+			if ($adh->datefin)
 			{
-    $adh->ref=$adh->getFullName($langs);
-    print $adh->getFullName($langs);
-    print '<br>'.$langs->trans("Type").': '.$adh->type;
-		if ($adh->datefin)
-		{
-			print '<br>'.$langs->trans("SubscriptionEndDate").': '.dol_print_date($adh->datefin, 'day');
-			if ($adh->hasDelay()) {
-				print " ".img_warning($langs->trans("Late"));
+				print '<br>'.$langs->trans("SubscriptionEndDate").': '.dol_print_date($adh->datefin, 'day');
+				if ($adh->hasDelay()) {
+					print " ".img_warning($langs->trans("Late"));
+				}
+			}
+			else
+			{
+				print '<br>'.$langs->trans("SubscriptionNotReceived");
+				if ($adh->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
 			}
 		}
 		else
 		{
-				print $langs->trans("SubscriptionNotReceived");
-				if ($adh->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
+   			print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
 		}
-			}
-			else
-			{
-    print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
-			}
-    print '</p>';
-		}
+	    print '</p>';
+	}
 }
 
 if ($action == "search")

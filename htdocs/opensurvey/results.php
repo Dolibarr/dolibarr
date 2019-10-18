@@ -180,7 +180,6 @@ if (GETPOST("ajoutercolonne") && GETPOST('nouvellecolonne') && $object->format =
 // Add column (with format date)
 if (isset($_POST["ajoutercolonne"]) && $object->format == "D")
 {
-
 	// Security check
 	if (!$user->rights->opensurvey->write) accessforbidden();
 
@@ -189,7 +188,6 @@ if (isset($_POST["ajoutercolonne"]) && $object->format == "D")
 	if (isset($_POST["nouveaujour"]) && $_POST["nouveaujour"] != "vide" &&
 		isset($_POST["nouveaumois"]) && $_POST["nouveaumois"] != "vide" &&
 		isset($_POST["nouvelleannee"]) && $_POST["nouvelleannee"] != "vide") {
-
 		$nouvelledate=dol_mktime(0, 0, 0, $_POST["nouveaumois"], $_POST["nouveaujour"], $_POST["nouvelleannee"]);
 
 		if (isset($_POST["nouvelleheuredebut"]) && $_POST["nouvelleheuredebut"]!="vide"){
@@ -474,7 +472,7 @@ if ($object->fk_user_creat) {
 print '</td></tr>';
 
 // Link
-print '<tr><td>'.img_picto('', 'object_globe.png').' '.$langs->trans("UrlForSurvey", '').'</td><td colspan="2">';
+print '<tr><td>'.img_picto('', 'globe').' '.$langs->trans("UrlForSurvey", '').'</td><td colspan="2">';
 
 // Define $urlwithroot
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -622,7 +620,6 @@ print '<td></td>'."\n";
 // loop to show the delete link
 if ($user->rights->opensurvey->write) {
 	for ($i = 0; isset($toutsujet[$i]); $i++) {
-
 		print '<td class=somme><input type="image" name="effacecolonne'.$i.'" src="'.img_picto('', 'delete.png', '', false, 1).'"></td>'."\n";
 	}
 }

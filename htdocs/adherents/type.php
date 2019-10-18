@@ -73,7 +73,7 @@ $object = new AdherentType($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
@@ -94,7 +94,6 @@ $hookmanager->initHooks(array('membertypecard','globalcard'));
  */
 
 if ($cancel) {
-
 	$action='';
 
 	if (! empty($backtopage)) {
@@ -113,7 +112,7 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 	$object->vote			= (int) $vote;
 
 	// Fill array 'array_options' with data from add form
-	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	$ret = $extrafields->setOptionalsFromPost(null, $object);
 	if ($ret < 0) $error++;
 
 	if (empty($object->label)) {
@@ -168,7 +167,7 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 	$object->vote			= (boolean) trim($vote);
 
 	// Fill array 'array_options' with data from add form
-	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	$ret = $extrafields->setOptionalsFromPost(null, $object);
 	if ($ret < 0) $error++;
 
 	$ret=$object->update($user);
@@ -713,7 +712,7 @@ if ($rowid > 0)
 		        print '<td class="center">';
 				if ($user->rights->adherent->creer)
 				{
-					print '<a href="card.php?rowid='.$objp->rowid.'&action=edit&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
+					print '<a class="editfielda" href="card.php?rowid='.$objp->rowid.'&action=edit&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
 				}
 				print '&nbsp;';
 				if ($user->rights->adherent->supprimer)

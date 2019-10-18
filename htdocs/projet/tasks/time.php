@@ -91,8 +91,8 @@ $projectstatic = new Project($db);
 $extrafields_project = new ExtraFields($db);
 $extrafields_task = new ExtraFields($db);
 
-$extralabels_projet=$extrafields_project->fetch_name_optionals_label($projectstatic->table_element);
-$extralabels_task=$extrafields_task->fetch_name_optionals_label($object->table_element);
+$extrafields_project->fetch_name_optionals_label($projectstatic->table_element);
+$extrafields_task->fetch_name_optionals_label($object->table_element);
 
 
 /*

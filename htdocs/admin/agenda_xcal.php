@@ -161,13 +161,13 @@ $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain
 // Show message
 $message='';
 $urlvcal='<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=vcal&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY):'...').'" target="_blank">'.$urlwithroot.'/public/agenda/agendaexport.php?format=vcal&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY):'KEYNOTDEFINED').'</a>';
-$message.=img_picto('', 'object_globe.png').' '.$langs->trans("WebCalUrlForVCalExport", 'vcal', $urlvcal);
+$message.=img_picto('', 'globe').' '.$langs->trans("WebCalUrlForVCalExport", 'vcal', $urlvcal);
 $message.='<br>';
 $urlical='<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical&type=event&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY):'...').'" target="_blank">'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical&type=event&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY):'KEYNOTDEFINED').'</a>';
-$message.=img_picto('', 'object_globe.png').' '.$langs->trans("WebCalUrlForVCalExport", 'ical/ics', $urlical);
+$message.=img_picto('', 'globe').' '.$langs->trans("WebCalUrlForVCalExport", 'ical/ics', $urlical);
 $message.='<br>';
 $urlrss='<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=rss&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY):'...').'" target="_blank">'.$urlwithroot.'/public/agenda/agendaexport.php?format=rss&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY):'KEYNOTDEFINED').'</a>';
-$message.=img_picto('', 'object_globe.png').' '.$langs->trans("WebCalUrlForVCalExport", 'rss', $urlrss);
+$message.=img_picto('', 'globe').' '.$langs->trans("WebCalUrlForVCalExport", 'rss', $urlrss);
 $message.='<br>';
 $message.='<br>';
 print $message;

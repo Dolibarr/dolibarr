@@ -447,6 +447,9 @@ textarea.centpercent {
 .wordwrap {
 	word-wrap: break-word;
 }
+.wordbreakimp {
+	word-break: break-word;
+}
 .wordbreak {
 	word-break: break-all;
 }
@@ -782,6 +785,15 @@ table[summary="list_of_modules"] .fa-cog {
     font-size: 1.5em;
 }
 
+.linkedcol-element {
+	min-width: 100px;
+}
+
+.img-skinthumb {
+	width: 160px;
+	height: 120px;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -791,7 +803,7 @@ table[summary="list_of_modules"] .fa-cog {
 .hideobject { display: none; }
 .minwidth50  { min-width: 50px; }
 /* rule for not too small screen only */
-@media only screen and (min-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 140 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)
+@media only screen and (min-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)
 {
 	.width25  { width: 25px; }
     .width50  { width: 50px; }
@@ -834,7 +846,7 @@ table[summary="list_of_modules"] .fa-cog {
 .minheight20 { min-height: 20px; }
 .minheight40 { min-height: 40px; }
 .titlefieldcreate { width: 20%; }
-.titlefield       { width: 25%; }
+.titlefield       { /* width: 25%; */ width: 250px; }
 .titlefieldmiddle { width: 50%; }
 .imgmaxwidth180 { max-width: 180px; }
 .imgmaxheight50 { max-height: 50px; }
@@ -852,7 +864,7 @@ table[summary="list_of_modules"] .fa-cog {
 /* Force values for small screen 1400 */
 @media only screen and (max-width: 1400px)
 {
-	.titlefield { width: 30% !important; }
+	.titlefield { /* width: 30% !important; */ }
 	.titlefieldcreate { width: 30% !important; }
 	.minwidth50imp  { min-width: 50px !important; }
     .minwidth75imp  { min-width: 75px !important; }
@@ -862,6 +874,10 @@ table[summary="list_of_modules"] .fa-cog {
     .minwidth300imp { min-width: 300px !important; }
     .minwidth400imp { min-width: 300px !important; }
     .minwidth500imp { min-width: 300px !important; }
+
+    .linkedcol-element {
+		min-width: unset;
+	}
 }
 
 /* Force values for small screen 1000 */
@@ -899,6 +915,17 @@ table[summary="list_of_modules"] .fa-cog {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize+3).'px' : $fontsize; ?> !important;
 	}
 
+	div#login_left, div#login_right {
+		min-width: 150px !important;
+		max-width: 200px !important;
+		padding-left: 5px !important;
+		padding-right: 5px !important;
+	}
+
+	div.login_block {
+		height: 64px !important;
+	}
+
 	.divmainbodylarge { margin-left: 20px !important; margin-right: 20px !important; }
 
     .tdoverflowonsmartphone {
@@ -920,11 +947,14 @@ table[summary="list_of_modules"] .fa-cog {
 		padding-bottom: 5px;
 	}
 
+	.login_table .tdinputlogin {
+		min-width: unset !important;
+	}
 	input, input[type=text], input[type=password], select, textarea     {
 		min-width: 20px;
     }
     .trinputlogin input[type=text], input[type=password] {
-		max-width: 180px;
+		max-width: 140px;
 	}
     .vmenu .searchform input {
 		max-width: 138px;	/* length of input text in the quick search box when using a smartphone and without dolidroid */
@@ -1035,16 +1065,22 @@ td.showDragHandle {
 	table-layout: fixed;
 }
 #id-right, #id-left {
-	padding-top: 20px;
-	padding-bottom: 20px;
-
 	display: table-cell;			/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
 	float: none;
 	vertical-align: top;
 }
+#id-left {
+	padding-top: 20px;
+	padding-bottom: 5px;
+	<?php if (! empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN) && ! empty($conf->global->MAIN_USE_TOP_MENU_BOOKMARK_DROPDOWN)) { ?>
+	padding-top: 8px;
+	<?php } ?>
+}
 #id-right {	/* This must stay id-right and not be replaced with echo $right */
+	padding-top: 10px;
 	width: 100%;
 	background: rgb(<?php print $colorbackbody; ?>);
+	padding-bottom: 20px;
 }
 #id-left {
 /*	background-color: #fff;
@@ -1076,19 +1112,21 @@ div.blockvmenulogo
 {
 	border-bottom: 0 !important;
 }
-.backgroundforcompanylogo {
+.menulogocontainer {
     margin: <?php echo $disableimages?'0':'6'; ?>px;
-    margin-left: 8px;
-    margin-right: 8px;
-    background-color: rgba(255,255,255,0.7);
+    margin-left: 11px;
+    margin-right: 9px;
     padding: 0;
-    border-radius: 5px;
     height: <?php echo $disableimages?'20':'32'; ?>px;
     /* width: 100px; */
     max-width: 100px;
     vertical-align: middle;
 }
-.backgroundforcompanylogo img.mycompany {
+.backgroundforcompanylogo {
+    background-color: rgba(255,255,255,0.7);
+    border-radius: 4px;
+}
+.menulogocontainer img.mycompany {
     object-fit: contain;
     width: inherit;
     height: inherit;
@@ -1127,7 +1165,7 @@ div.vmenu, td.vmenu {
 }
 .blockvmenu .menu_titre {
     margin-top: 4px;
-    margin-bottom: 3px;
+    margin-bottom: 1px;
 }
 
 /* Try responsive even not on smartphone
@@ -1143,7 +1181,7 @@ div.vmenu, td.vmenu {
 .menuhider { display: none !important; }
 
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
-@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 140 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
+@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
 body.sidebar-collapse .side-nav {
 	display: none;
@@ -1340,7 +1378,11 @@ div.nopadding {
     padding-<?php echo $left; ?>: 3px;
 }
 .pictowarning {
-    vertical-align: text-bottom;
+    /* vertical-align: text-bottom; */
+    color: #9f4705;
+}
+.pictomodule {
+	width: 14px;
 }
 .pictomodule {
 	width: 14px;
@@ -1442,7 +1484,7 @@ img.photorefnoborder {
 }
 .trextrafieldseparator td {
     /* border-bottom: 2px solid rgb(<?php echo $colorbackhmenu1 ?>) !important; */
-    border-bottom: 2px dashed rgb(<?php echo $colortopbordertitle1 ?>) !important;
+    border-bottom: 2px solid rgb(<?php echo $colortopbordertitle1 ?>) !important;
 }
 
 .tdhrthin {
@@ -1660,7 +1702,7 @@ a.tmenuimage:hover{
 /* Do not load menu img for other if hidden to save bandwidth */
 
 <?php if (empty($dol_hide_topmenu)) { ?>
-    <?php if (! defined('DISABLE_FONT_AWSOME') && empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) { ?>
+    <?php if (! defined('DISABLE_FONT_AWSOME')) { ?>
         <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
     <?php } else { ?>
         div.mainmenu.home{
@@ -1794,7 +1836,7 @@ a.tmenuimage:hover{
         // Img file not found
         if (! $found)
         {
-            if (! defined('DISABLE_FONT_AWSOME') && empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) {
+            if (! defined('DISABLE_FONT_AWSOME')) {
                 print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
                 print 'div.mainmenu.'.$val.'::before {
                     content: "\f249";
@@ -2060,16 +2102,16 @@ img.login, img.printer, img.entity {
     background-size: contain;
 }
 img.userphoto {			/* size for user photo in lists */
-	border-radius: 9px;
-	width: 18px;
-    height: 18px;
+	border-radius: 0.75em;
+	width: 1.5em;
+    height: 1.5em;
     background-size: contain;
     vertical-align: middle;
 }
 img.userphotosmall {			/* size for user photo in lists */
-	border-radius: 6px;
-	width: 12px;
-    height: 12px;
+	border-radius: 0.6em;
+	width: 1.2em;
+    height: 1.2em;
     background-size: contain;
     vertical-align: middle;
     background-color: #FFF;
@@ -2180,8 +2222,8 @@ div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmen
 	text-decoration: none;
     padding-left: 5px;
     padding-right: 1px;
-    padding-top: 3px;
-    padding-bottom: 3px;
+    padding-top: 4px;
+    padding-bottom: 7px;
     margin: 0 0 0 2px;
 
 	background: rgb(<?php echo $colorbackvmenu1; ?>);
@@ -2304,6 +2346,7 @@ li.expanded > a.fmdirlia.jqft.ecmjqft {
 /* ============================================================================== */
 div.tabs {
     text-align: <?php print $left; ?>;
+    padding-top: 10px;
     padding-left: 6px !important;
     padding-right: 6px !important;
 	clear:both;
@@ -2757,8 +2800,9 @@ div.pagination li {
   display: inline-block;
   padding-left: 0px;
   padding-right: 0px;
-  padding-top: 6px;
+  padding-top: 10px;
   padding-bottom: 5px;
+  font-size: 1.1em;
 }
 .pagination {
   display: inline-block;
@@ -2860,6 +2904,8 @@ div.pagination li.pagination .active {
 
 div.pagination li.paginationafterarrows {
 	margin-left: 10px;
+	padding-top: 0;
+	/*padding-bottom: 10px;*/
 }
 .paginationatbottom {
 	margin-top: 9px;
@@ -2932,7 +2978,9 @@ td.evenodd, tr.nohoverpair td, #trlinefordates td {
 	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
 }
 .trforbreak td {
-	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinebreak)); ?> !important;
+	font-weight: bold;
+    border-bottom: 1pt solid black !important;
+	/* background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinebreak)); ?> !important; */
 }
 
 table.dataTable td {
@@ -3420,6 +3468,7 @@ img.boxhandle, img.boxclose {
 .ok      { color: #114466; }
 .warning { color: #887711 !important; }
 .error   { color: #550000 !important; font-weight: bold; }
+.green   { color: #118822; }
 
 div.ok {
   color: #114466;
@@ -3432,7 +3481,7 @@ div.info {
     padding-left: 10px;
     padding-right: 4px;
     padding-bottom: 8px;
-    margin: 0.5em 0em 0.5em 0em;
+    margin: 1em 0em 1em 0em;
     background: #eff8fc;
 }
 
@@ -3443,7 +3492,7 @@ div.warning {
 	padding-left: 10px;
 	padding-right: 4px;
 	padding-bottom: 8px;
-	margin: 0.5em 0em 0.5em 0em;
+	margin: 1em 0em 1em 0em;
     background: #fcf8e3;
 }
 div.warning a, div.info a, div.error a {
@@ -3457,7 +3506,7 @@ div.error {
 	padding-left: 10px;
 	padding-right: 4px;
 	padding-bottom: 8px;
-	margin: 0.5em 0em 0.5em 0em;
+	margin: 1em 0em 1em 0em;
   background: #EFCFCF;
 }
 
@@ -3572,6 +3621,13 @@ div.titre {
 div.titre, .secondary {
 	font-family: <?php print $fontlist ?>;
 	color: rgb(<?php print $colortexttitlenotab; ?>);
+}
+
+table.table-fiche-title .col-title div.titre{
+	line-height: 40px;
+}
+table.table-fiche-title {
+	margin-bottom: 5px;
 }
 
 #dolpaymenttable { min-width: 320px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
@@ -5055,6 +5111,11 @@ dl.dropdown {
 .dropdown dd ul li a:hover {
     background-color:#eee;
 }
+dd.dropdowndd ul li {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
 
 
 /* ============================================================================== */
@@ -5732,7 +5793,7 @@ div.tabsElem a.tab {
 	}
 }
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
-@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 140 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
+@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
 {
 	li.tmenucompanylogo {
 		display: none;
@@ -5759,7 +5820,7 @@ div.tabsElem a.tab {
 	}
 }
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
-@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 140 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
+@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
 	.side-nav {
 		z-index: 200;

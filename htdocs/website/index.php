@@ -1836,6 +1836,9 @@ if ($action == 'importsiteconfirm')
 				}
 				else
 				{
+					// Force mode dynamic on
+					dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 1, 'chaine', 0, '', $conf->entity);
+
 					header("Location: ".$_SERVER["PHP_SELF"].'?website='.$object->ref);
 					exit();
 				}
@@ -2064,7 +2067,7 @@ if (! GETPOST('hide_websitemenu'))
 
 		print '<span class="websiteinputurl valignmiddle" id="websiteinputurl">';
 		$linktotestonwebserver = '<a href="'.($virtualurl?$virtualurl:'#').'" class="valignmiddle">';
-		$linktotestonwebserver.= $langs->trans("TestDeployOnWeb", $virtualurl).' '.img_picto('', 'object_globe');
+		$linktotestonwebserver.= $langs->trans("TestDeployOnWeb", $virtualurl).' '.img_picto('', 'globe');
 		$linktotestonwebserver.= '</a>';
 		$htmltext = '';
 		if (empty($object->fk_default_home))
@@ -3025,7 +3028,6 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 			$result = $sourcepage->fetch($objectpage->fk_page);
 			if ($result == 0)	// not found, we can reset value
 			{
-
 			}
 			elseif ($result > 0)
 			{
@@ -3489,12 +3491,12 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 	{
 		if (empty($websitekey) || $websitekey == '-1')
 		{
-			print '<br><br><div class="center">'.$langs->trans("NoWebSiteCreateOneFirst").'</center><br><br><br>';
+			print '<br><br><div class="center previewnotyetavailable"><span class="">'.$langs->trans("NoWebSiteCreateOneFirst").'</span></div><br><br><br>';
 			print '<div class="center"><div class="logo_setup"></div></div>';
 		}
 		else
 		{
-			print '<br><br><div class="center">'.$langs->trans("PreviewOfSiteNotYetAvailable", $object->ref).'</center><br><br><br>';
+			print '<br><br><div class="center previewnotyetavailable"><span class="">'.$langs->trans("PreviewOfSiteNotYetAvailable", $object->ref).'</span></div><br><br><br>';
 			print '<div class="center"><div class="logo_setup"></div></div>';
 		}
 	}

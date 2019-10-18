@@ -328,7 +328,6 @@ class Mailing extends CommonObject
 		{
 			//Clone target
 			if (!empty($option2)) {
-
 				require_once DOL_DOCUMENT_ROOT .'/core/modules/mailings/modules_mailings.php';
 
 				$mailing_target = new MailingTargets($this->db);
@@ -352,7 +351,6 @@ class Mailing extends CommonObject
 					if ($this->db->num_rows($result))
 					{
 						while ($obj = $this->db->fetch_object($result)) {
-
 							$target_array[]=array(
 								'fk_contact'=>$obj->fk_contact,
 								'lastname'=>$obj->lastname,
@@ -551,7 +549,7 @@ class Mailing extends CommonObject
 		$result = '';
 		$companylink = '';
 
-		$label = '<u>' . $langs->trans("ShowEmailing") . '</u>';
+		$label = '<u>' . $langs->trans("ShowEMailing") . '</u>';
 		$label.= '<br>';
 		$label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
@@ -570,7 +568,7 @@ class Mailing extends CommonObject
 		{
 			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 			{
-				$label=$langs->trans("ShowEmailing");
+				$label=$langs->trans("ShowEMailing");
 				$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';

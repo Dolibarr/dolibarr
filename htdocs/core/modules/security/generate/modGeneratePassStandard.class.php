@@ -107,7 +107,6 @@ class modGeneratePassStandard extends ModeleGenPassword
 		// add random characters to $password until $length is reached
 		while ($i < $this->length)
 		{
-
 			// pick a random character from the possible ones
 			$char = substr($possible, mt_rand(0, dol_strlen($possible)-1), 1);
 

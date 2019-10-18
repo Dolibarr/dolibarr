@@ -95,10 +95,10 @@ function dol_print_cron_urls()
 	print '<div class="div-table-responsive-no-min">';
 	print $langs->trans("URLToLaunchCronJobs").':<br>';
 	$url=$urlwithroot.'/public/cron/cron_run_jobs.php?'.(empty($conf->global->CRON_KEY)?'':'securitykey='.$conf->global->CRON_KEY.'&').'userlogin='.$user->login;
-	print img_picto('', 'object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+	print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 	print ' '.$langs->trans("OrToLaunchASpecificJob").'<br>';
 	$url=$urlwithroot.'/public/cron/cron_run_jobs.php?'.(empty($conf->global->CRON_KEY)?'':'securitykey='.$conf->global->CRON_KEY.'&').'userlogin='.$user->login.'&id=cronjobid';
-	print img_picto('', 'object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+	print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
     print '</div>';
     print '<br>';
 

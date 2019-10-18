@@ -63,7 +63,7 @@ $object = new Entrepot($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('entrepot');
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 if ($id > 0 || ! empty($ref)) {
@@ -109,7 +109,7 @@ if (empty($reshook))
 		if (! empty($object->libelle))
 		{
 	        // Fill array 'array_options' with data from add form
-	        $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	        $ret = $extrafields->setOptionalsFromPost(null, $object);
 	        if ($ret < 0) {
 	            $error++;
 	            $action = 'create';
@@ -176,7 +176,7 @@ if (empty($reshook))
 			$object->country_id  = GETPOST("country_id");
 
 	        // Fill array 'array_options' with data from add form
-	        $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	        $ret = $extrafields->setOptionalsFromPost(null, $object);
 	        if ($ret < 0)   $error++;
 
 	        if (! $error) {
@@ -203,8 +203,7 @@ if (empty($reshook))
 	    $object->oldcopy = dol_clone($object);
 
 	    // Fill array 'array_options' with data from update form
-	    $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-	    $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
+	    $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
 	    if ($ret < 0) $error++;
 	    if (! $error) {
 	        $result = $object->insertExtraFields();
@@ -392,7 +391,6 @@ else
 			// Parent entrepot
 			$e = new Entrepot($db);
 			if(!empty($object->fk_parent) && $e->fetch($object->fk_parent) > 0) {
-
 				print '<tr><td>'.$langs->trans("ParentWarehouse").'</td><td>';
 				print $e->getNomUrl(3);
 				print '</td></tr>';
@@ -430,30 +428,26 @@ else
 			print "</td></tr>";
 
 			// Last movement
-			$sql = "SELECT max(m.datem) as datem";
-			$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
-			$sql .= " WHERE m.fk_entrepot = '".$object->id."'";
-			$resqlbis = $db->query($sql);
-			if ($resqlbis)
-			{
-			    $obj = $db->fetch_object($resqlbis);
-			    $lastmovementdate=$db->jdate($obj->datem);
+			if (!empty($user->rights->stock->mouvement->lire)) {
+				$sql = "SELECT max(m.datem) as datem";
+				$sql .= " FROM " . MAIN_DB_PREFIX . "stock_mouvement as m";
+				$sql .= " WHERE m.fk_entrepot = '" . $object->id . "'";
+				$resqlbis = $db->query($sql);
+				if ($resqlbis) {
+					$obj = $db->fetch_object($resqlbis);
+					$lastmovementdate = $db->jdate($obj->datem);
+				} else {
+					dol_print_error($db);
+				}
+				print '<tr><td>' . $langs->trans("LastMovement") . '</td><td>';
+				if ($lastmovementdate) {
+					print dol_print_date($lastmovementdate, 'dayhour') . ' ';
+					print '(<a href="' . DOL_URL_ROOT . '/product/stock/movement_list.php?id=' . $object->id . '">' . $langs->trans("FullList") . '</a>)';
+				} else {
+					print $langs->trans("None");
+				}
+				print "</td></tr>";
 			}
-			else
-			{
-			    dol_print_error($db);
-			}
-			print '<tr><td>'.$langs->trans("LastMovement").'</td><td>';
-			if ($lastmovementdate)
-			{
-			    print dol_print_date($lastmovementdate, 'dayhour').' ';
-			    print '(<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$object->id.'">'.$langs->trans("FullList").'</a>)';
-			}
-			else
-			{
-			    print $langs->trans("None");
-			}
-			print "</td></tr>";
 
             // Other attributes
             include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';

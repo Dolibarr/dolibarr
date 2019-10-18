@@ -126,7 +126,6 @@ if ($resql)
     	$dataseries[]=array($propalstatic->LibStatut($status, 1), (isset($vals[$status])?(int) $vals[$status]:0));
         if (! $conf->use_javascript_ajax)
         {
-
             print '<tr class="oddeven">';
             print '<td>'.$propalstatic->LibStatut($status, 0).'</td>';
             print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';

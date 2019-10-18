@@ -77,7 +77,7 @@ if ($socid > 0)       $hookmanager->initHooks(array('thirdpartyticket'));
 elseif ($project > 0) $hookmanager->initHooks(array('projectticket'));
 else $hookmanager->initHooks(array('ticketlist'));
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('ticket');
+$extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Default sort order (if not yet defined by previous GETPOST)
@@ -229,8 +229,8 @@ foreach($search as $key => $val)
     if ($key == 'fk_statut')
 	{
 	    $tmpstatus='';
-	    if ($search['fk_statut'] == 'openall' || in_array('openall', $search['fk_statut'])) $tmpstatus.=($tmpstatus?',':'')."'0', '1', '3', '4', '5', '6'";
-	    if ($search['fk_statut'] == 'closeall' || in_array('closeall', $search['fk_statut'])) $tmpstatus.=($tmpstatus?',':'')."'8', '9'";
+	    if ($search['fk_statut'] == 'openall' || in_array('openall', $search['fk_statut'])) $tmpstatus.=($tmpstatus?',':'')."'".Ticket::STATUS_NOT_READ."', '".Ticket::STATUS_READ."', '".Ticket::STATUS_ASSIGNED."', '".Ticket::STATUS_IN_PROGRESS."', '".Ticket::STATUS_NEED_MORE_INFO."', '".Ticket::STATUS_WAITING."'";
+	    if ($search['fk_statut'] == 'closeall' || in_array('closeall', $search['fk_statut'])) $tmpstatus.=($tmpstatus?',':'')."'".Ticket::STATUS_CLOSED."', '".Ticket::STATUS_CANCELED."'";
 	    if ($tmpstatus) $sql.=" AND fk_statut IN (".$tmpstatus.")";
 	    elseif (is_array($search[$key]) && count($search[$key])) $sql.=natural_search($key, join(',', $search[$key]), 2);
 	    continue;
@@ -312,7 +312,6 @@ if ($socid && ! $projectid && ! $project_ref && $user->rights->societe->lire) {
     $socstat = new Societe($db);
     $res = $socstat->fetch($socid);
     if ($res > 0) {
-
     	$tmpobject = $object;
     	$object = $socstat;		// $object must be of type Societe when calling societe_prepare_head
         $head = societe_prepare_head($socstat);
@@ -524,15 +523,15 @@ foreach($object->fields as $key => $val)
 	if (! empty($arrayfields['t.'.$key]['checked'])) {
 		if ($key == 'type_code') {
 			print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
-			$formTicket->selectTypesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 0, 1, 1, 0, ($val['css']?$val['css']:'maxwidth150'));
+			$formTicket->selectTypesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css']?$val['css']:'maxwidth150'));
 			print '</td>';
 		} elseif ($key == 'category_code') {
 			print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
-			$formTicket->selectGroupTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 0, 1, 1, 0, ($val['css']?$val['css']:'maxwidth150'));
+			$formTicket->selectGroupTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css']?$val['css']:'maxwidth150'));
 			print '</td>';
 		} elseif ($key == 'severity_code') {
 			print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
-			$formTicket->selectSeveritiesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 0, 1, 1, 0, ($val['css']?$val['css']:'maxwidth150'));
+			$formTicket->selectSeveritiesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css']?$val['css']:'maxwidth150'));
 			print '</td>';
 		} elseif ($key == 'fk_user_assign') {
 		    print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';

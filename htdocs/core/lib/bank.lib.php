@@ -276,7 +276,6 @@ function checkBanForAccount($account)
     }
 
     if ($country_code == 'BE') { // Belgium rules
-
     }
 
     if ($country_code == 'ES') { // Spanish rules

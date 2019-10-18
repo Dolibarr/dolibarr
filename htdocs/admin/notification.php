@@ -164,7 +164,6 @@ print '<td>';
 $i=0;
 foreach($listofnotifiedevents as $notifiedevent)
 {
-
     $label=$langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
     $elementLabel = $langs->trans(ucfirst($notifiedevent['elementtype']));
 
@@ -209,7 +208,6 @@ $listofnotifiedevents=$notificationtrigger->getListOfManagedEvents();
 
 foreach($listofnotifiedevents as $notifiedevent)
 {
-
     $label=$langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
 
     $elementLabel = $langs->trans(ucfirst($notifiedevent['elementtype']));

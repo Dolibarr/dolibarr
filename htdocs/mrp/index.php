@@ -175,7 +175,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
  */
 $max=5;
 
-$sql = "SELECT a.rowid, a.status, a.ref, a.tms as datem";
+$sql = "SELECT a.rowid, a.status, a.ref, a.tms as datem, a.status";
 $sql.= " FROM ".MAIN_DB_PREFIX."bom_bom as a";
 $sql.= " WHERE a.entity IN (".getEntity('bom').")";
 $sql.= $db->order("a.tms", "DESC");
@@ -200,6 +200,7 @@ if ($resql)
 			$staticbom->id=$obj->rowid;
 			$staticbom->ref=$obj->ref;
 			$staticbom->date_modification=$obj->datem;
+			$staticbom->status=$obj->status;
 
 			print '<tr class="oddeven">';
 			print '<td>'.$staticbom->getNomUrl(1, 32).'</td>';

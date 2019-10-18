@@ -84,7 +84,7 @@ $type=$object->type;
 if (is_numeric($type)) $type=Categorie::$MAP_ID_TO_CODE[$type];	// For backward compatibility
 
 $extrafields = new ExtraFields($db);
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categorycard','globalcard'));
@@ -125,7 +125,6 @@ if ($id > 0 && $removeelem > 0)
 		$elementtype = 'member';
 	}
 	elseif ($type == Categorie::TYPE_CONTACT && $user->rights->societe->creer) {
-
 		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 		$tmpobject = new Contact($db);
 		$result = $tmpobject->fetch($removeelem);
@@ -644,7 +643,6 @@ if ($type == Categorie::TYPE_CONTACT)
 	}
 	else
 	{
-
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';

@@ -42,7 +42,7 @@ class mod_codeproduct_leopard extends ModeleProductCode
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Leopard';
 
@@ -111,15 +111,15 @@ class mod_codeproduct_leopard extends ModeleProductCode
 	/**
 	 *  Check validity of code according to its rules
 	 *
-	 *  @param	DoliDB		$db		Database handler
-	 *  @param	string		$code	Code to check/correct
+	 *  @param	DoliDB		$db			Database handler
+	 *  @param	string		$code		Code to check/correct
 	 *  @param	Product		$product	Object product
-	 *  @param  int		  	$type   0 = product , 1 = service
-	 *  @return int                 0 if OK
-	 *                              -1 ErrorBadProductCodeSyntax
-	 *                              -2 ErrorProductCodeRequired
-	 *                              -3 ErrorProductCodeAlreadyUsed
-	 *                              -4 ErrorPrefixRequired
+	 *  @param  int		  	$type   	0 = product , 1 = service
+	 *  @return int                 	0 if OK
+	 *                              	-1 ErrorBadProductCodeSyntax
+	 *                              	-2 ErrorProductCodeRequired
+	 *                              	-3 ErrorProductCodeAlreadyUsed
+	 *                              	-4 ErrorPrefixRequired
 	 */
 	public function verif($db, &$code, $product, $type)
 	{

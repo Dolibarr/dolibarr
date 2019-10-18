@@ -267,7 +267,6 @@ foreach ($dirmodels as $reldir)
         $handle = opendir($dir);
         if (is_resource($handle))
         {
-
             while (($file = readdir($handle))!==false)
             {
                 if (substr($file, 0, 25) == 'mod_commande_fournisseur_' && substr($file, dol_strlen($file)-3, 3) == 'php')

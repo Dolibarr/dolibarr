@@ -129,7 +129,6 @@ class ProductAttributeValue
 		$query = $this->db->query($sql);
 
 		while ($result = $this->db->fetch_object($query)) {
-
 			$tmp = new ProductAttributeValue($this->db);
 			$tmp->fk_product_attribute = $result->fk_product_attribute;
 			$tmp->id = $result->rowid;

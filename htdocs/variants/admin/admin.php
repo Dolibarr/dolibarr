@@ -27,7 +27,6 @@ if (! $user->admin || (empty($conf->product->enabled) && empty($conf->service->e
 	accessforbidden();
 
 if ($_POST) {
-
 	$value = GETPOST('PRODUIT_ATTRIBUTES_HIDECHILD');
 
 	if (dolibarr_set_const($db, 'PRODUIT_ATTRIBUTES_HIDECHILD', $value, 'chaine', 0, '', $conf->entity)) {

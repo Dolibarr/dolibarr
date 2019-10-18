@@ -70,7 +70,7 @@ function showPaypalPaymentUrl($type, $ref)
     $langs->load("paybox");
     $servicename='PayPal';
     $out='<br><br>';
-    $out.=img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'<br>';
+    $out.=img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'<br>';
     $url=getPaypalPaymentUrl(0, $type, $ref);
     $out.='<input type="text" id="paypalurl" class="quatrevingtpercent" value="'.$url.'">';
     $out.=ajax_autoselect("paypalurl", 0);

@@ -116,7 +116,6 @@ for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
             $contact->firstname = $listoflastname[mt_rand(0, count($listoflastname)-1)];
             if ( $contact->create($user) )
             {
-
             }
         }
 

@@ -212,7 +212,7 @@ if (empty($user->societe_id) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTAT
 	                'askprice',
 	                'projects',
 	                'expensereports',
-                    'holidays',
+                    'holiday',
 					'donations'
 	    );
 	    // Dashboard Icon lines
@@ -301,7 +301,7 @@ if (empty($user->societe_id) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTAT
 	                    "supplier_proposal",
 	                    "projects",
 						"trips",
-                        "holidays",
+                        "holiday",
 						"donations"
 	    );
 
@@ -656,7 +656,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
         foreach ($dashboardgroup as $groupKey => $groupElement) {
             $boards = array();
 
-            if (!empty($conf->global->MAIN_DISPLAY_NEW_OPENED_DASH_BOARD) || !empty($conf->global->MAIN_FEATURES_LEVEL)) {
+            if (empty($conf->global->MAIN_DISABLE_NEW_OPENED_DASH_BOARD)) {
                 foreach ($groupElement['stats'] as $infoKey) {
                     if (!empty($valid_dashboardlines[$infoKey])) {
                         $boards[] = $valid_dashboardlines[$infoKey];

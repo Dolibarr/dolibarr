@@ -70,6 +70,7 @@ $action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $lineid = GETPOST('lineid', 'int');
+$contactid = GETPOST('contactid', 'int');
 $projectid = GETPOST('projectid', 'int');
 $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
@@ -88,7 +89,7 @@ $object = new Commande($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
@@ -284,7 +285,7 @@ if (empty($reshook))
 			// Fill array 'array_options' with data from add form
 			if (! $error)
 			{
-				$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+				$ret = $extrafields->setOptionalsFromPost(null, $object);
 				if ($ret < 0) $error++;
 			}
 
@@ -673,9 +674,8 @@ if (empty($reshook))
 		$remise_percent = (GETPOST('remise_percent'.$predef) != '' ? GETPOST('remise_percent'.$predef) : 0);
 
 		// Extrafields
-		$extrafieldsline = new ExtraFields($db);
-		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $predef);
+		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
+		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line, $predef);
 		// Unset extrafield
 		if (is_array($extralabelsline)) {
 			// Get extra fields
@@ -1037,9 +1037,8 @@ if (empty($reshook))
 		$buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : '');    // If buying_price is '0', we muste keep this value
 
 		// Extrafields Lines
-		$extrafieldsline = new ExtraFields($db);
-		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line);
+		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
+		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
 		// Unset extrafield POST Data
 		if (is_array($extralabelsline)) {
 			foreach ($extralabelsline as $key => $value) {
@@ -1081,7 +1080,6 @@ if (empty($reshook))
 		}
 
 		if (! $error) {
-
 			if (empty($user->rights->margins->creer))
 			{
 				foreach ($object->lines as &$line)
@@ -1297,8 +1295,7 @@ if (empty($reshook))
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
-		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
 		if ($ret < 0) $error++;
 
 		if (! $error)
@@ -1649,8 +1646,9 @@ if ($action == 'create' && $usercancreate)
 
 	// Contact of order
 	if ($socid > 0) {
+		// Contacts (ask contact only if thirdparty already defined).
 		print "<tr><td>" . $langs->trans("DefaultContact") . '</td><td>';
-		$form->select_contacts($soc->id, $setcontact, 'contactid', 1, $srccontactslist, '', 1);
+		$form->select_contacts($soc->id, $contactid, 'contactid', 1, $srccontactslist, '', 1);
 		print '</td></tr>';
 
 		// Ligne info remises tiers
@@ -1925,7 +1923,7 @@ if ($action == 'create' && $usercancreate)
 		// Confirmation of validation
 		if ($action == 'validate')
 		{
-			// on verifie si l'objet est en numerotation provisoire
+			// We check that object has a temporary ref
 			$ref = substr($object->ref, 1, 4);
 			if ($ref == 'PROV') {
 				$numref = $object->getNextNumRef($soc);
@@ -2096,7 +2094,7 @@ if ($action == 'create' && $usercancreate)
 			if ($usercancreate)
 			{
 				if ($action != 'classify')
-					$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+					$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				if ($action == 'classify') {
 					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 					$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -2544,19 +2542,19 @@ if ($action == 'create' && $usercancreate)
 				// Send
 				if ($object->statut > Commande::STATUS_DRAFT || !empty($conf->global->COMMANDE_SENDBYEMAIL_FOR_ALL_STATUS)) {
 					if ($usercansend) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a></div>';
+						print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>';
 					} else
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">' . $langs->trans('SendMail') . '</a></div>';
+						print '<a class="butActionRefused classfortooltip" href="#">' . $langs->trans('SendMail') . '</a>';
 				}
 
 				// Valid
 				if ($object->statut == Commande::STATUS_DRAFT && $object->total_ttc >= 0 && $numlines > 0 && $usercanvalidate)
 				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=validate">' . $langs->trans('Validate') . '</a></div>';
+					print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=validate">' . $langs->trans('Validate') . '</a>';
 				}
 				// Edit
 				if ($object->statut == Commande::STATUS_VALIDATED && $usercancreate) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id=' . $object->id . '&amp;action=modif">' . $langs->trans('Modify') . '</a></div>';
+					print '<a class="butAction" href="card.php?id=' . $object->id . '&amp;action=modif">' . $langs->trans('Modify') . '</a>';
 				}
 				// Create event
 				/*if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD))
@@ -2573,9 +2571,9 @@ if ($action == 'create' && $usercancreate)
 
 					if ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && $object->getNbOfServicesLines() > 0) {
 						if ($user->rights->ficheinter->creer) {
-							print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/fichinter/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans('AddIntervention') . '</a></div>';
+							print '<a class="butAction" href="' . DOL_URL_ROOT . '/fichinter/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans('AddIntervention') . '</a>';
 						} else {
-							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("NotAllowed")) . '">' . $langs->trans('AddIntervention') . '</a></div>';
+							print '<a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("NotAllowed")) . '">' . $langs->trans('AddIntervention') . '</a>';
 						}
 					}
 				}
@@ -2585,7 +2583,7 @@ if ($action == 'create' && $usercancreate)
 					$langs->load("contracts");
 
 					if ($user->rights->contrat->creer) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/contrat/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans('AddContract') . '</a></div>';
+						print '<a class="butAction" href="' . DOL_URL_ROOT . '/contrat/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans('AddContract') . '</a>';
 					}
 				}
 
@@ -2597,13 +2595,13 @@ if ($action == 'create' && $usercancreate)
 					if ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
 						if (($conf->expedition_bon->enabled && $user->rights->expedition->creer) || ($conf->livraison_bon->enabled && $user->rights->expedition->livraison->creer)) {
 							if ($user->rights->expedition->creer) {
-								print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/expedition/shipment.php?id=' . $object->id . '">' . $langs->trans('CreateShipment') . '</a></div>';
+								print '<a class="butAction" href="' . DOL_URL_ROOT . '/expedition/shipment.php?id=' . $object->id . '">' . $langs->trans('CreateShipment') . '</a>';
 							} else {
-								print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("NotAllowed")) . '">' . $langs->trans('CreateShipment') . '</a></div>';
+								print '<a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("NotAllowed")) . '">' . $langs->trans('CreateShipment') . '</a>';
 							}
 						} else {
 							$langs->load("errors");
-							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Shipment"))) . '">' . $langs->trans('CreateShipment') . '</a></div>';
+							print '<a class="butActionRefused classfortooltip" href="#" title="' . dol_escape_htmltag($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Shipment"))) . '">' . $langs->trans('CreateShipment') . '</a>';
 						}
 					}
 				}

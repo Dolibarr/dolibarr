@@ -96,7 +96,6 @@ $prodcomb2val = new ProductCombination2ValuePair($db);
 $productCombination2ValuePairs1 = array();
 
 if ($_POST) {
-
 	if (($action == 'add' || $action == 'create') && empty($massaction) && ! GETPOST('selectvariant', 'alpha'))	// We click on Create all defined combinations
 	{
 		//$features = GETPOST('features', 'array');
@@ -113,7 +112,6 @@ if ($_POST) {
 
 			//First, sanitize
 			foreach ($features as $feature) {
-
 				$explode = explode(':', $feature);
 
 				if ($prodattr->fetch($explode[0]) < 0) {
@@ -173,7 +171,6 @@ if ($_POST) {
 		$db->begin();
 
 		foreach ($toselect as $prodid) {
-
 			if ($prodstatic->fetch($prodid) < 0) {
 				continue;
 			}
@@ -216,7 +213,6 @@ if ($_POST) {
 		}
 	}
 	elseif ($valueid > 0) {
-
 		if ($prodcomb->fetch($valueid) < 0) {
 			dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
 			exit();
@@ -240,9 +236,7 @@ if ($_POST) {
 $productCombinations = $prodcomb->fetchAllByFkProductParent($object->id);
 
 if ($action === 'confirm_deletecombination') {
-
 	if ($prodcomb->fetch($valueid) > 0) {
-
 		$db->begin();
 
 		if ($prodcomb->delete($user) > 0 && $prodstatic->fetch($prodcomb->fk_product_child) > 0 && $prodstatic->delete($user) > 0) {
@@ -257,7 +251,6 @@ if ($action === 'confirm_deletecombination') {
 		$action = '';
 	}
 } elseif ($action === 'edit') {
-
 	if ($prodcomb->fetch($valueid) < 0) {
 		dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
 		exit();
@@ -269,12 +262,10 @@ if ($action === 'confirm_deletecombination') {
 
 	$productCombination2ValuePairs1 = $prodcomb2val->fetchByFkCombination($valueid);
 } elseif ($action === 'confirm_copycombination') {
-
 	//Check destination product
 	$dest_product = GETPOST('dest_product');
 
 	if ($prodstatic->fetch('', $dest_product) > 0) {
-
 		//To prevent from copying to the same product
 		if ($prodstatic->ref != $object->ref) {
 			if ($prodcomb->copyAll($object->id, $prodstatic) > 0) {
@@ -377,19 +368,18 @@ if (! empty($id) || ! empty($ref))
 
 	dol_fiche_end();
 
+	$listofvariantselected = '';
 
 	// Create or edit a varian
 	if ($action == 'add' || ($action == 'edit')) {
-
 		if ($action == 'add') {
 			$title = $langs->trans('NewProductCombination');
 			//print dol_fiche_head();
 			$features = $_SESSION['addvariant_'.$object->id];
 			//First, sanitize
-			print '<div id="parttoaddvariant">';
+			$listofvariantselected = '<div id="parttoaddvariant">';
 			if (! empty($features)) {
 				foreach ($features as $feature) {
-
 					$explode = explode(':', $feature);
 
 					if ($prodattr->fetch($explode[0]) < 0) {
@@ -400,16 +390,14 @@ if (! empty($id) || ! empty($ref))
 						continue;
 					}
 
-					print '<i>' . $prodattr->label . '</i>:'. $prodattr_val->value . ' ';
+					$listofvariantselected .= '<i>' . $prodattr->label . '</i>:'. $prodattr_val->value . ' ';
 				}
 			}
-			print '</div>';
-			print '<br><br>';
+			$listofvariantselected .= '</div>';
 			//print dol_fiche_end();
 		} else {
 			$title = $langs->trans('EditProductCombination');
 		}
-		print load_fiche_titre($title);
 
 		if ($action == 'add') {
 			$prodattr_all = $prodattr->fetchAll();
@@ -499,6 +487,10 @@ if (! empty($id) || ! empty($ref))
 		<?php
 		}
 
+		print '<br>';
+
+		print load_fiche_titre($title);
+
 		print '<form method="post" id="combinationform" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="id" value="'.dol_escape_htmltag($id).'">'."\n";
@@ -507,9 +499,9 @@ if (! empty($id) || ! empty($ref))
             print '<input type="hidden" name="valueid" value="' . $valueid .'">'."\n";
         }
 
-		print dol_fiche_head();
+        print dol_fiche_head();
 
-		?>
+        ?>
 
 		<table class="border" style="width: 100%">
 			<?php if ($action == 'add') { ?>
@@ -524,6 +516,7 @@ if (! empty($id) || ! empty($ref))
 					print '<option value="-1">&nbsp;</option>';
 					foreach ($prodattr_all as $attr)
 					{
+						//print '<option value="'.$attr->id.'"'.($attr->id == GETPOST('attribute', 'int') ? ' selected="selected"' : '').'>'.$attr->label.'</option>';
 						print '<option value="'.$attr->id.'">'.$attr->label.'</option>';
 					}
 					print '</select>';
@@ -559,6 +552,10 @@ if (! empty($id) || ! empty($ref))
 			<tr>
 				<td></td><td>
 					<input type="submit" class="button" name="selectvariant" id="selectvariant" value="<?php echo dol_escape_htmltag($langs->trans("SelectCombination")); ?>">
+				</td>
+			</tr>
+			<tr><td></td><td>
+					<?php echo $listofvariantselected; ?>
 				</td>
 			</tr>
 		</table>
@@ -626,7 +623,6 @@ if (! empty($id) || ! empty($ref))
 	else
 	{
 		if ($action === 'delete') {
-
 			if ($prodcomb->fetch($valueid) > 0) {
 				$prodstatic->fetch($prodcomb->fk_product_child);
 
@@ -781,8 +777,8 @@ if (! empty($id) || ! empty($ref))
     				</td>
     				<td class="right"><?php echo ($currcomb->variation_price >= 0 ? '+' : '').price($currcomb->variation_price).($currcomb->variation_price_percentage ? ' %' : '') ?></td>
                     <?php if ($object->isProduct()) print '<td class="right">'.($currcomb->variation_weight >= 0 ? '+' : '').price($currcomb->variation_weight).' '.measuring_units_string($prodstatic->weight_units, 'weight').'</td>'; ?>
-    				<td class="center;"><?php echo $prodstatic->getLibStatut(2, 0) ?></td>
-    				<td class="center;"><?php echo $prodstatic->getLibStatut(2, 1) ?></td>
+    				<td class="center"><?php echo $prodstatic->getLibStatut(2, 0) ?></td>
+    				<td class="center"><?php echo $prodstatic->getLibStatut(2, 1) ?></td>
     				<td class="right">
     					<a class="paddingleft paddingright" href="<?php echo dol_buildpath('/variants/combinations.php?id='.$id.'&action=edit&valueid='.$currcomb->id, 2) ?>"><?php echo img_edit() ?></a>
     					<a class="paddingleft paddingright" href="<?php echo dol_buildpath('/variants/combinations.php?id='.$id.'&action=delete&valueid='.$currcomb->id, 2) ?>"><?php echo img_delete() ?></a>

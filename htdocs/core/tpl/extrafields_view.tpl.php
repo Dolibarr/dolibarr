@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Show extrafields. It also show fields from hook formObjectOptions. Need to have following variables defined:
  * $object (invoice, order, ...)
  * $action
  * $conf
@@ -24,6 +24,7 @@
  * $parameters
  * $cols
  */
+
 // Protection to avoid direct call of template
 if (empty($object) || ! is_object($object))
 {

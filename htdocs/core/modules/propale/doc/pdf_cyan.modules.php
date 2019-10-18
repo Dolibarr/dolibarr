@@ -198,13 +198,9 @@ class pdf_cyan extends ModelePDFPropales
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("propal");
-		$outputlangs->load("products");
+		
+		// Translations
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "propal"));
 
 		$nblines = count($object->lines);
 
@@ -871,8 +867,6 @@ class pdf_cyan extends ModelePDFPropales
 							if (count($filetomerge->lines) > 0) {
 								foreach ($filetomerge->lines as $linefile) {
 									if (! empty($linefile->id) && ! empty($linefile->file_name)) {
-
-
 										if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
 										{
 											if (! empty($conf->product->enabled)) {

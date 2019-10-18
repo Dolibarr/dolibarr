@@ -276,7 +276,6 @@ class ProductStockEntrepot extends CommonObject
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-
 			while ($obj = $this->db->fetch_object($resql)) {
 				$lines[$obj->rowid] = array(
 										'id'=>$obj->rowid

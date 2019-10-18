@@ -67,7 +67,7 @@ $object = new Ticket($db);
 $object->fetch($id, $ref, $track_id);
 
 $extrafields = new ExtraFields($db);
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 if (!$action) {
 	$action = 'view';
@@ -172,7 +172,7 @@ if (! empty($conf->societe->enabled))
 {
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty');
 	/*if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->societe_id && $user->rights->ticket->write) {
-		$morehtmlref.='<a href="' . $url_page_current . '?action=editcustomer&amp;track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
+		$morehtmlref.='<a class="editfielda" href="' . $url_page_current . '?action=editcustomer&amp;track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
 	}*/
 	$morehtmlref.=' : ';
 	if ($action == 'editcustomer') {
@@ -190,7 +190,7 @@ if (! empty($conf->projet->enabled))
 	if ($user->rights->ticket->write)
 	{
 		if ($action != 'classify')
-			//$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
+			//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
 			$morehtmlref.=' : ';
 			if ($action == 'classify') {
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);

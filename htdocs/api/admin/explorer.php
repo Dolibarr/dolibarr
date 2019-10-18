@@ -179,7 +179,7 @@ print '<br>';
 $message='';
 $url='<a href="'.$urlwithroot.'/api/index.php/login?login='.urlencode($user->login).'&password=yourpassword" target="_blank">'.$urlwithroot.'/api/index.php/login?login='.urlencode($user->login).'&password=yourpassword[&reset=1]</a>';
 $message.=$langs->trans("UrlToGetKeyToUseAPIs").':<br>';
-$message.=img_picto('', 'object_globe.png').' '.$url;
+$message.=img_picto('', 'globe').' '.$url;
 print $message;
 print '<br>';
 print '<br>';
@@ -208,7 +208,7 @@ foreach($listofapis['v1'] as $key => $val)
             //print $key.' - '.$val['classname'].' - '.$val['fullpath']." - ".DOL_MAIN_URL_ROOT.'/api/index.php/'.strtolower(preg_replace('/Api$/','',$val['classname']))."/xxx<br>\n";
             $url=$urlwithroot.'/api/index.php/'.$key;
             $url.='?api_key=token';
-            print img_picto('', 'object_globe.png').' '.$method.' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+            print img_picto('', 'globe').' '.$method.' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
         }
     }
 }

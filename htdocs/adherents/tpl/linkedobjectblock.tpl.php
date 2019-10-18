@@ -39,7 +39,6 @@ $langs->load("members");
 $total=0;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
-
 ?>
 <tr class="oddeven" >
     <td><?php echo $langs->trans("Subscription"); ?></td>

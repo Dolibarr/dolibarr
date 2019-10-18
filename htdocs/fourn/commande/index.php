@@ -122,7 +122,6 @@ if ($resql)
 		$dataseries[]=array($commandestatic->LibStatut($statut, 1), (isset($vals[$statut])?(int) $vals[$statut]:0));
 		if (! $conf->use_javascript_ajax)
 		{
-
 			print '<tr class="oddeven">';
 			print '<td>'.$commandestatic->LibStatut($statut, 0).'</td>';
 			print '<td class="right"><a href="list.php?statut='.$statut.'">'.(isset($vals[$statut])?$vals[$statut]:0).'</a></td>';

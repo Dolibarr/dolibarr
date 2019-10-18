@@ -848,7 +848,6 @@ class Facture extends CommonInvoice
 
 			if (! $error)
 			{
-
 				$result=$this->update_price(1);
 				if ($result > 0)
 				{
@@ -1046,6 +1045,11 @@ class Facture extends CommonInvoice
 		$object->close_code         = '';
 		$object->close_note         = '';
 		$object->products = $object->lines;	        // For backward compatibility
+		if ($conf->global->MAIN_DONT_KEEP_NOTE_ON_CLONING==1)
+                {
+                                 $object->note_private = '';
+                                 $object->note_public = '';
+        }
 
 		// Loop on each line of new invoice
 		foreach($object->lines as $i => $line)
@@ -1233,7 +1237,7 @@ class Facture extends CommonInvoice
 	 */
     public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $addlinktonotes = 0, $save_lastsearch_value = -1, $target = '')
 	{
-		global $langs, $conf, $user;
+		global $langs, $conf, $user, $mysoc;
 
 		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
@@ -1276,11 +1280,11 @@ class Facture extends CommonInvoice
             if (! empty($this->total_ht))
                 $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
             if (! empty($this->total_tva))
-                $label.= '<br><b>' . $langs->trans('VAT') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+                $label.= '<br><b>' . $langs->trans('AmountVAT') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
             if (! empty($this->total_localtax1) && $this->total_localtax1 != 0)		// We keep test != 0 because $this->total_localtax1 can be '0.00000000'
-                $label.= '<br><b>' . $langs->trans('LT1') . ':</b> ' . price($this->total_localtax1, 0, $langs, 0, -1, -1, $conf->currency);
+            	$label.= '<br><b>' . $langs->transcountry('AmountLT1', $mysoc->country_code) . ':</b> ' . price($this->total_localtax1, 0, $langs, 0, -1, -1, $conf->currency);
             if (! empty($this->total_localtax2) && $this->total_localtax2 != 0)
-                $label.= '<br><b>' . $langs->trans('LT2') . ':</b> ' . price($this->total_localtax2, 0, $langs, 0, -1, -1, $conf->currency);
+            	$label.= '<br><b>' . $langs->transcountry('AmountLT2', $mysoc->country_code) . ':</b> ' . price($this->total_localtax2, 0, $langs, 0, -1, -1, $conf->currency);
             if (! empty($this->total_ttc))
                 $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
     		if ($moretitle) $label.=' - '.$moretitle;
@@ -1928,7 +1932,6 @@ class Facture extends CommonInvoice
 
 		if (! $error)
 		{
-
 			$this->ref_client = $ref_client;
 
 			$this->db->commit();
@@ -2137,6 +2140,8 @@ class Facture extends CommonInvoice
 		{
 			$this->db->begin();
 
+			$now=dol_now();
+
 			dol_syslog(get_class($this)."::set_paid rowid=".$this->id, LOG_DEBUG);
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET';
@@ -2144,6 +2149,8 @@ class Facture extends CommonInvoice
 			if (! $close_code) $sql.= ', paye=1';
 			if ($close_code) $sql.= ", close_code='".$this->db->escape($close_code)."'";
 			if ($close_note) $sql.= ", close_note='".$this->db->escape($close_note)."'";
+			$sql.= ', fk_user_closing = '.$user->id;
+			$sql.= ", date_closing = '".$this->db->idate($now)."'";
 			$sql.= ' WHERE rowid = '.$this->id;
 
 			$resql = $this->db->query($sql);
@@ -2195,7 +2202,9 @@ class Facture extends CommonInvoice
 		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-		$sql.= ' SET paye=0, fk_statut='.self::STATUS_VALIDATED.', close_code=null, close_note=null';
+		$sql.= ' SET paye=0, fk_statut='.self::STATUS_VALIDATED.', close_code=null, close_note=null,';
+		$sql.= ' date_closing=null,';
+		$sql.= ' fk_user_closing=null';
 		$sql.= ' WHERE rowid = '.$this->id;
 
 		dol_syslog(get_class($this)."::set_unpaid", LOG_DEBUG);
@@ -3454,7 +3463,6 @@ class Facture extends CommonInvoice
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 			foreach ($dirmodels as $reldir) {
-
 				$dir = dol_buildpath($reldir."core/modules/facture/");
 
 				// Load file with numbering class (if found)
@@ -3521,7 +3529,8 @@ class Facture extends CommonInvoice
     public function info($id)
 	{
 		$sql = 'SELECT c.rowid, datec, date_valid as datev, tms as datem,';
-		$sql.= ' fk_user_author, fk_user_valid';
+		$sql.= ' date_closing as dateclosing,';
+		$sql.= ' fk_user_author, fk_user_valid, fk_user_closing';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as c';
 		$sql.= ' WHERE c.rowid = '.$id;
 
@@ -3536,7 +3545,7 @@ class Facture extends CommonInvoice
 				{
 					$cuser = new User($this->db);
 					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation     = $cuser;
+					$this->user_creation  = $cuser;
 				}
 				if ($obj->fk_user_valid)
 				{
@@ -3544,9 +3553,17 @@ class Facture extends CommonInvoice
 					$vuser->fetch($obj->fk_user_valid);
 					$this->user_validation = $vuser;
 				}
+				if ($obj->fk_user_closing)
+				{
+					$cluser = new User($this->db);
+					$cluser->fetch($obj->fk_user_closing);
+					$this->user_closing  = $cluser;
+				}
+
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
-				$this->date_validation   = $this->db->jdate($obj->datev);	// Should be in log table
+				$this->date_validation   = $this->db->jdate($obj->datev);
+				$this->date_closing      = $this->db->jdate($obj->dateclosing);
 			}
 			$this->db->free($result);
 		}
@@ -3569,7 +3586,7 @@ class Facture extends CommonInvoice
 	 *  @param    	int		$offset			For pagination
 	 *  @param    	string	$sortfield		Sort criteria
 	 *  @param    	string	$sortorder		Sort order
-	 *  @return     int             		-1 if KO, array with result if OK
+	 *  @return     array|int             	-1 if KO, array with result if OK
 	 */
     public function liste_array($shortlist = 0, $draft = 0, $excluser = '', $socid = 0, $limit = 0, $offset = 0, $sortfield = 'f.datef,f.rowid', $sortorder = 'DESC')
 	{
@@ -3640,7 +3657,7 @@ class Facture extends CommonInvoice
 	 *	(Status validated or abandonned for a reason 'other') + not payed + no payment at all + not already replaced
 	 *
 	 *	@param		int		$socid		Id thirdparty
-	 *	@return    	array				Array of invoices ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
+	 *	@return    	array|int			Array of invoices ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
 	 */
     public function list_replacable_invoices($socid = 0)
 	{
@@ -5196,7 +5213,6 @@ class FactureLigne extends CommonInvoiceLine
 				$returnPercent = floatval($res['situation_percent']);
 
 				if($include_credit_note) {
-
 				    $sql = 'SELECT fd.situation_percent FROM ' . MAIN_DB_PREFIX . 'facturedet fd';
 				    $sql.= ' JOIN ' . MAIN_DB_PREFIX . 'facture f ON (f.rowid = fd.fk_facture) ';
 				    $sql.= ' WHERE fd.fk_prev_id =' . $this->fk_prev_id;

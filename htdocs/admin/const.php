@@ -118,7 +118,6 @@ if (! empty($consts) && $action == 'update')
 // Mass delete
 if (! empty($consts) && $action == 'delete')
 {
-
 	$nbdeleted=0;
 	foreach($consts as $const)
 	{
@@ -195,6 +194,8 @@ $param = '';
 print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug)?'?debug=1':'').'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" id="action" name="action" value="">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';

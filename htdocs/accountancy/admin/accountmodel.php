@@ -677,7 +677,6 @@ if ($id)
 					{
 						foreach ($fieldlist as $field => $value)
 						{
-
 							$showfield=1;
 							$class="left";
 							$valuetoshow=$obj->{$fieldlist[$field]};

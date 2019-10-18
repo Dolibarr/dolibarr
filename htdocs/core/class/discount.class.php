@@ -139,7 +139,7 @@ class DiscountAbsolute
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as sr";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON sr.fk_facture_source = f.rowid";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fsup ON sr.fk_invoice_supplier_source = fsup.rowid";
-        $sql.= " WHERE sr.entity = " . $conf->entity;
+	$sql.= " WHERE sr.entity IN (".getEntity('invoice').")";
         if ($rowid) $sql.= " AND sr.rowid=".$rowid;
         if ($fk_facture_source) $sql.= " AND sr.fk_facture_source=".$fk_facture_source;
         if ($fk_invoice_supplier_source) $sql.= " AND sr.fk_invoice_supplier_source=".$fk_invoice_supplier_source;
@@ -369,7 +369,6 @@ class DiscountAbsolute
                 }
             }
             elseif($this->fk_invoice_supplier_source) {
-
             	$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
             	$sql.=" set paye=0, fk_statut=1";
             	$sql.=" WHERE (type = 2 or type = 3) AND rowid=".$this->fk_invoice_supplier_source;

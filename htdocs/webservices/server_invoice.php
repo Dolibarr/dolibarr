@@ -697,7 +697,6 @@ dol_syslog("Function: createInvoiceFromOrder login=".$authentication['login']." 
 
 				if(!$error)
 				{
-
 					$newobject=new Facture($db);
 					$result = $newobject->createFromOrder($order, $fuser);
 
@@ -768,7 +767,6 @@ dol_syslog("Function: updateInvoice login=".$authentication['login']." id=".$inv
 		$result=$object->fetch($invoice['id'], $invoice['ref'], $invoice['ref_ext'], '');
 
 		if (!empty($object->id)) {
-
 			$objectfound=true;
 
 			$db->begin();

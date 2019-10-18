@@ -224,22 +224,23 @@ class AccountancyExport
 	/**
 	 * Function who chose which export to use with the default config, and make the export into a file
 	 *
-	 * @param array		$TData 		data
-	 * @return void
+	 * @param 	array	$TData 				Array with data
+	 * @param	int		$formatexportset	Id of export format
+	 * @return 	void
 	 */
-	public function export(&$TData)
+	public function export(&$TData, $formatexportset)
 	{
 		global $conf, $langs;
 		global $search_date_end;	// Used into /accountancy/tpl/export_journal.tpl.php
 
 		// Define name of file to save
-		$filename = 'general_ledger-'.$this->getFormatCode($conf->global->ACCOUNTING_EXPORT_MODELCSV);
+		$filename = 'general_ledger-'.$this->getFormatCode($formatexportset);
 		$type_export = 'general_ledger';
 
 		include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
 
-		switch ($conf->global->ACCOUNTING_EXPORT_MODELCSV) {
+		switch ($formatexportset) {
 			case self::$EXPORT_TYPE_CONFIGURABLE :
 				$this->exportConfigurable($TData);
 				break;
@@ -548,7 +549,6 @@ class AccountancyExport
 		$end_line = "\n";
 
 		foreach ($objectLines as $line) {
-
 			$date = dol_print_date($line->doc_date, '%d%m%Y');
 
 			print $line->id . $separator;
@@ -584,7 +584,6 @@ class AccountancyExport
 		$end_line = "\n";
 
 		foreach ($objectLines as $line) {
-
 			$date = dol_print_date($line->doc_date, '%d%m%Y');
 
 			print $line->piece_num . $separator;
@@ -624,7 +623,6 @@ class AccountancyExport
         $end_line = "\n";
 
         foreach ($objectLines as $line) {
-
             $date = dol_print_date($line->doc_date, '%d/%m/%Y');
 
             print $date . $separator;
@@ -926,91 +924,130 @@ class AccountancyExport
      *
      * @return void
      */
-    public function exportLDCompta($objectLines)
-    {
+	public function exportLDCompta($objectLines)
+	{
 
-        $separator = ';';
-        $end_line = "\n";
+		$separator = ';';
+		$end_line = "\r\n";
 
-        foreach ($objectLines as $line) {
+		foreach ($objectLines as $line) {
+			$date_document = dol_print_date($line->doc_date, '%Y%m%d');
+			$date_creation = dol_print_date($line->date_creation,  '%Y%m%d');
 
-            $date_document = dol_print_date($line->doc_date, '%Y%m%d');
-            $date_creation = dol_print_date($line->date_creation,  '%Y%m%d');
+			// TYPE
+			$type_enregistrement = 'E'; // For write movement
+			print $type_enregistrement . $separator;
+			// JNAL
+			print substr($line->code_journal, 0, 2) . $separator;
+			// NECR
+			print $line->id . $separator;
+			// NPIE
+			print $line->piece_num . $separator;
+			// DATP
+			print $date_document . $separator;
+			// LIBE
+			print $line->label_operation . $separator;
+			// DATH
+			print $line->date_lim_reglement . $separator;
+			// CNPI
+			if ($line->doc_type == 'supplier_invoice') {
+				if ($line->montant < 0) {
+					$nature_piece = 'AF';
+				} else {
+					$nature_piece = 'FF';
+				}
+			} elseif ($line->doc_type == 'customer_invoice') {
+				if ($line->montant < 0) {
+					$nature_piece = 'AC';
+				} else {
+					$nature_piece = 'FC';
+				}
+			} else {
+				$nature_piece = '';
+			}
+			print $nature_piece . $separator;
+			// RACI
+			/*
+			if (! empty($line->subledger_account)) {
+				if ($line->doc_type == 'supplier_invoice') {
+					$racine_subledger_account = '40';
+				} elseif ($line->doc_type == 'customer_invoice') {
+					$racine_subledger_account = '41';
+				} else {
+					$nature_piece = '';
+				}
+				print $racine_subledger_account . $separator;
+			} else {
+				print $separator;
+			}
+			*/
+			print $separator; // deprecated CPTG & CPTA use instead
+			// MONT
+			print price(abs($line->montant), 0, '', 1, 2) . $separator;
+			// CODC
+			print $line->sens . $separator;
+			// CPTG
+			print length_accountg($line->numero_compte) . $separator;
+			// DATE
+			print $date_creation . $separator;
+			// CLET
+			print $line->lettering_code . $separator;
+			// DATL
+			print $line->date_lettering . $separator;
+			// CPTA
+			if (! empty($line->subledger_account)) {
+				print length_accounta($line->subledger_account) . $separator;
+			} else {
+				print $separator;
+			}
+			// CNAT
+			if ($line->doc_type == 'supplier_invoice' && ! empty($line->subledger_account)) {
+				print 'F' . $separator;
+			} elseif ($line->doc_type == 'customer_invoice' && ! empty($line->subledger_account)) {
+				print 'C' . $separator;
+			} else {
+				print $separator;
+			}
+			// SECT
+			print $separator;
+			// CTRE
+			print $separator;
+			// NORL
+			print $separator;
+			// DATV
+			print $separator;
+			// REFD
+			print $line->doc_ref . $separator;
+			// CODH
+			print $separator;
+			// NSEQ
+			print $separator;
+			// MTDV
+			print '0' . $separator;
+			// CODV
+			print $separator;
+			// TXDV
+			print '0' . $separator;
+			// MOPM
+			print $separator;
+			// BONP
+			print $separator;
+			// BQAF
+			print $separator;
+			// ECES
+			print $separator;
+			// TXTL
+			print $separator;
+			// ECRM
+			print $separator;
+			// DATK
+			print $separator;
+			// HEUK
+			print $separator;
 
-            // TYPE
-            $type_enregistrement = 'E'; // For write movement
-            print $type_enregistrement . $separator;
-            // JNAL
-            print substr($line->code_journal, 0, 2) . $separator;
-            // NECR
-            print $line->id . $separator;
-            // NPIE
-            print $line->piece_num . $separator;
-            // DATP
-            print $date_document . $separator;
-            // LIBE
-            print $line->label_operation . $separator;
-            // DATH
-            print $line->date_lim_reglement . $separator;
-            // CNPI
-            if ($line->doc_type == 'supplier_invoice') {
-                if ($line->montant < 0) {
-                    $nature_piece = 'AF';
-                } else {
-                    $nature_piece = 'FF';
-                }
-            } elseif ($line->doc_type == 'customer_invoice') {
-                if ($line->montant < 0) {
-                    $nature_piece = 'AC';
-                } else {
-                    $nature_piece = 'FC';
-                }
-            } else {
-                $nature_piece = '';
-            }
-            print $nature_piece . $separator;
-            // RACI
-            /*
-            if (! empty($line->subledger_account)) {
-                if ($line->doc_type == 'supplier_invoice') {
-                    $racine_subledger_account = '40';
-                } elseif ($line->doc_type == 'customer_invoice') {
-                    $racine_subledger_account = '41';
-                } else {
-                    $nature_piece = '';
-                }
-                print $racine_subledger_account . $separator;
-            } else {
-                print $separator;
-            }
-            */
-            // MONT
-            print price(abs($line->montant)) . $separator;
-            // CODC
-            print $line->sens . $separator;
-            // CPTG
-            print length_accountg($line->numero_compte) . $separator;
-            // DATE
-            print $date_creation . $separator;
-            // CLET
-            print $line->lettering_code . $separator;
-            // DATL
-            print $line->date_lettering . $separator;
-            // CPTA
-            if (! empty($line->subledger_account)) {
-                print length_accounta($line->subledger_account) . $separator;
-            }
-            // CNAT
-            if ($line->doc_type == 'supplier_invoice' && ! empty($line->subledger_account)) {
-                print 'F';
-            } elseif ($line->doc_type == 'customer_invoice' && ! empty($line->subledger_account)) {
-                print 'C';
-            } else {
-                print '';
-            }
-            print $end_line;
-        }
-    }
+			print $end_line;
+		}
+	}
 
 	/**
 	 * Export format : Charlemagne
@@ -1046,7 +1083,6 @@ class AccountancyExport
 		print $end_line;
 
 		foreach($objectLines as $line) {
-
 			$date = dol_print_date($line->doc_date, '%Y%m%d');
 			print $date . $separator; //Date
 

@@ -241,7 +241,7 @@ class FormActions
 	        		// Ref
 					print '<td class="nowraponall">'.$ref.'</td>';
 					// Onwer
-	        		print '<td>';
+	        		print '<td class="tdoverflowmax150">';
 	        		if (! empty($action->userownerid))
 	        		{
 	        			if (is_object($cacheusers[$action->userownerid]))

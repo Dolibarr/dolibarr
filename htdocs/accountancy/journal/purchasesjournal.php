@@ -242,7 +242,6 @@ if ($action == 'writebookkeeping') {
 	$invoicestatic = new FactureFournisseur($db);
 
 	foreach ($tabfac as $key => $val) {		// Loop on each invoice
-
 		$errorforline = 0;
 
 		$totalcredit = 0;
@@ -716,7 +715,6 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 }
 
 if (empty($action) || $action == 'view') {
-
 	llxHeader('', $langs->trans("PurchasesJournal"));
 
 	$nom = $langs->trans("PurchasesJournal") . ' | ' . $accountingjournalstatic->getNomUrl(0, 1, 1, '', 1);

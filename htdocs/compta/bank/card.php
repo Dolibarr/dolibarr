@@ -57,8 +57,9 @@ $result=restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', ''
 
 $object = new Account($db);
 $extrafields = new ExtraFields($db);
+
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('bankcard','globalcard'));
@@ -136,7 +137,7 @@ if ($action == 'add')
 	}
 
 	// Fill array 'array_options' with data from add form
-	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	$ret = $extrafields->setOptionalsFromPost(null, $object);
 
 	if (! $error)
 	{
@@ -241,7 +242,7 @@ if ($action == 'update')
 	if (! $error)
 	{
 		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object);
 	}
 
 	if (! $error)
@@ -433,7 +434,7 @@ if ($action == 'create')
 	print $hookmanager->resPrint;
 	if (empty($reshook))
 	{
-		print $object->showOptionals($extrafields, 'edit', $parameters);
+		print $object->showOptionals($extrafields, 'edit');
 	}
 
 	print '</table>';
@@ -626,7 +627,7 @@ else
 		$conciliate=$object->canBeConciliated();
 		if ($conciliate == -2) print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
 		elseif ($conciliate == -3) print $langs->trans("No").' ('.$langs->trans("Closed").')';
-		else print ($object->rappro==1 ? $langs->trans("Yes") : ($langs->trans("No").' ('.$langs->trans("ConciliationDisabled").')'));
+		else print ($object->rappro==1 ? $langs->trans("Yes") : ($langs->trans("No").' <span class="opacitymedium">('.$langs->trans("ConciliationDisabled").')</span>'));
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("BalanceMinimalAllowed").'</td>';
@@ -690,7 +691,6 @@ else
 
 		if ($object->type == Account::TYPE_SAVINGS || $object->type == Account::TYPE_CURRENT)
 		{
-
 			print '<div class="underbanner clearboth"></div>';
 
 			print '<table class="border tableforfield centpercent">';

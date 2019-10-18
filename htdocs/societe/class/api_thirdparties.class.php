@@ -117,6 +117,7 @@ class Thirdparties extends DolibarrApi
 	 * @param   int     $mode       Set to 1 to show only customers
 	 *                              Set to 2 to show only prospects
 	 *                              Set to 3 to show only those are not customer neither prospect
+	 *								Set to 4 to show only suppliers
 	 * @param   string  $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.nom:like:'TheCompany%') and (t.date_creation:<:'20160101')"
 	 * @return  array               Array of thirdparty objects
 	 */
@@ -143,6 +144,7 @@ class Thirdparties extends DolibarrApi
 		if ($mode == 1) $sql.= " AND t.client IN (1, 3)";
 		if ($mode == 2) $sql.= " AND t.client IN (2, 3)";
 		if ($mode == 3) $sql.= " AND t.client IN (0)";
+		if ($mode == 4) $sql.= " AND t.fournisseur IN (1)";
 		$sql.= ' AND t.entity IN ('.getEntity('societe').')';
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";
 		//if ($email != NULL) $sql.= " AND s.email = \"".$email."\"";
@@ -418,7 +420,7 @@ class Thirdparties extends DolibarrApi
 		// External modules should update their ones too
 		if (!$errors)
 		{
-$reshook = $hookmanager->executeHooks('replaceThirdparty', array(
+            $reshook = $hookmanager->executeHooks('replaceThirdparty', array(
 				'soc_origin' => $soc_origin->id,
 				'soc_dest' => $object->id
 			), $soc_dest, $action);
@@ -488,6 +490,7 @@ $reshook = $hookmanager->executeHooks('replaceThirdparty', array(
 		if( ! DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+        $this->company->oldcopy = clone $this->company;
 		return $this->company->delete($id);
 	}
 
@@ -1451,7 +1454,6 @@ $reshook = $hookmanager->executeHooks('replaceThirdparty', array(
 				throw new RestException(500, 'Error creating SocieteAccount entity.');
 		// We found an existing SocieteAccount entity, we are replacing it
 		} else {
-
 			if(isset($request_data['site']) && $request_data['site'] !== $site) {
 				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".$id." AND site = '". $request_data['site']."' ";
 				$result = $db->query($sql);
@@ -1514,7 +1516,6 @@ $reshook = $hookmanager->executeHooks('replaceThirdparty', array(
 		if($result->num_rows == 0 ){
 			throw new RestException(404, "This thirdparty does not have $site gateway attached or does not exist.");
 		} else {
-
 			// If the user tries to edit the site member, we check first if
 			if(isset($request_data['site']) && $request_data['site'] !== $site) {
 				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".$id." AND site = '". $request_data['site']."' ";

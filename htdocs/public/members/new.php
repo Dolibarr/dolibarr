@@ -257,8 +257,8 @@ if ($action == 'add')
 
 
         // Fill array 'array_options' with data from add form
-        $extralabels=$extrafields->fetch_name_optionals_label($adh->table_element);
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $adh);
+        $extrafields->fetch_name_optionals_label($adh->table_element);
+        $ret = $extrafields->setOptionalsFromPost(null, $adh);
 		if ($ret < 0) $error++;
 
         $result=$adh->create($user);

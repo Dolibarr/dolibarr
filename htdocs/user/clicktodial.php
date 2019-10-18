@@ -149,8 +149,7 @@ if ($id > 0)
     }
     else	// View mode
     {
-
-        print '<table class="border centpercent">';
+        print '<table class="border centpercent tableforfield">';
 
         if (! empty($user->admin))
         {

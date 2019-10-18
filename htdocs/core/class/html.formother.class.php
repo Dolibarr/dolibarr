@@ -463,7 +463,6 @@ class FormOther
         {
             while ($obj_usr = $this->db->fetch_object($resql_usr))
             {
-
                 $out.='<option value="'.$obj_usr->rowid.'"';
 
                 if ($obj_usr->rowid == $selected) $out.=' selected';
@@ -989,8 +988,8 @@ class FormOther
      *  Class 'Form' must be known.
      *
      * 	@param	   User         $user		 Object User
-     * 	@param	   String       $areacode    Code of area for pages ('0'=value for Home page)
-     * 	@return    array                     array('selectboxlist'=>, 'boxactivated'=>, 'boxlista'=>, 'boxlistb'=>)
+     * 	@param	   String       $areacode    Code of area for pages - 0 = Home page ... See getListOfPagesForBoxes()
+	 *	@return    array                     array('selectboxlist'=>, 'boxactivated'=>, 'boxlista'=>, 'boxlistb'=>)
      */
     public static function getBoxesArea($user, $areacode)
     {

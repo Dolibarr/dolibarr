@@ -972,11 +972,10 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
  * @param   array       $isavailable			Array with data that say if user is available for several days for morning and afternoon
  * @param	int			$oldprojectforbreak		Old project id of last project break
  * @param	array		$arrayfields		    Array of additional column
- * @param	array		$extrafields		    Array of additional column
- * @param	array		$extralabels		    Array of additional column
+ * @param	Extrafields	$extrafields		    Object extrafields
  * @return  array								Array with time spent for $fuser for each day of week on tasks in $lines and substasks
  */
-function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, $preselectedday, &$isavailable, $oldprojectforbreak = 0, $arrayfields = array(), $extrafields = '', $extralabels = array())
+function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, $preselectedday, &$isavailable, $oldprojectforbreak = 0, $arrayfields = array(), $extrafields = null)
 {
 	global $conf, $db, $user, $bc, $langs;
 	global $form, $formother, $projectstatic, $taskstatic, $thirdpartystatic;
@@ -1314,7 +1313,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 			{
 				//var_dump('totalforeachday after taskid='.$lines[$i]->id.' and previous one on level '.$level);
 				//var_dump($totalforeachday);
-				$ret = projectLinesPerDay($inc, $lines[$i]->id, $fuser, ($parent == 0 ? $lineswithoutlevel0 : $lines), $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $preselectedday, $isavailable, $oldprojectforbreak, $arrayfields, $extrafields, $extralabels);
+				$ret = projectLinesPerDay($inc, $lines[$i]->id, $fuser, ($parent == 0 ? $lineswithoutlevel0 : $lines), $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $preselectedday, $isavailable, $oldprojectforbreak, $arrayfields, $extrafields);
 				//var_dump('ret with parent='.$lines[$i]->id.' level='.$level);
 				//var_dump($ret);
 				foreach($ret as $key => $val)
@@ -1352,11 +1351,10 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
  * @param   array       $isavailable			Array with data that say if user is available for several days for morning and afternoon
  * @param	int			$oldprojectforbreak		Old project id of last project break
  * @param	array		$arrayfields		    Array of additional column
- * @param	array		$extrafields		    Array of additional column
- * @param	array		$extralabels		    Array of additional column
+ * @param	Extrafields	$extrafields		    Object extrafields
  * @return  array								Array with time spent for $fuser for each day of week on tasks in $lines and substasks
  */
-function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, &$isavailable, $oldprojectforbreak = 0, $arrayfields = array(), $extrafields = '', $extralabels = array())
+function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, &$isavailable, $oldprojectforbreak = 0, $arrayfields = array(), $extrafields = null)
 {
 	global $conf, $db, $user, $bc, $langs;
 	global $form, $formother, $projectstatic, $taskstatic, $thirdpartystatic;
@@ -1684,7 +1682,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 			{
 				//var_dump('totalforeachday after taskid='.$lines[$i]->id.' and previous one on level '.$level);
 				//var_dump($totalforeachday);
-				$ret = projectLinesPerWeek($inc, $firstdaytoshow, $fuser, $lines[$i]->id, ($parent == 0 ? $lineswithoutlevel0 : $lines), $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $isavailable, $oldprojectforbreak, $arrayfields, $extrafields, $extralabels);
+				$ret = projectLinesPerWeek($inc, $firstdaytoshow, $fuser, $lines[$i]->id, ($parent == 0 ? $lineswithoutlevel0 : $lines), $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $isavailable, $oldprojectforbreak, $arrayfields, $extrafields);
 				//var_dump('ret with parent='.$lines[$i]->id.' level='.$level);
 				//var_dump($ret);
 				foreach($ret as $key => $val)

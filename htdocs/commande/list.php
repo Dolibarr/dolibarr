@@ -111,7 +111,7 @@ $hookmanager->initHooks(array('orderlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('commande');
+$extrafields->fetch_name_optionals_label('commande');
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
@@ -255,7 +255,8 @@ $sql.= ' c.date_creation as date_creation, c.tms as date_update, c.date_cloture 
 $sql.= " p.rowid as project_id, p.ref as project_ref, p.title as project_label";
 if ($search_categ_cus) $sql .= ", cc.fk_categorie, cc.fk_soc";
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label']))
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -813,10 +814,7 @@ if ($resql)
 			$generic_commande->lines=array();
 			$generic_commande->getLinesArray();
 
-			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-			print '<td class="nobordernopadding nowrap">';
 			print $generic_commande->getNomUrl(1, ($viewstatut != 2?0:$obj->fk_statut), 0, 0, 0, 1);
-			print '</td>';
 
 			// Show shippable Icon (create subloop, so may be slow)
 			if ($conf->stock->enabled)
@@ -902,16 +900,15 @@ if ($resql)
 							}
 						}
 					}
-					if ($notshippable==0) {
-						$text_icon = img_picto('', 'object_sending');
+					if ($notshippable == 0) {
+						$text_icon = img_picto('', 'dolly', '', false, 0, 0, '', 'green paddingleft');
 						$text_info = $langs->trans('Shippable').'<br>'.$text_info;
 					} else {
-						$text_icon = img_picto('', 'error');
+						$text_icon = img_picto('', 'dolly', '', false, 0, 0, '', 'error paddingleft');
 						$text_info = $langs->trans('NonShippable').'<br>'.$text_info;
 					}
 				}
 
-				print '<td>';
 				if ($nbprod)
 				{
 					print $form->textwithtooltip('', $text_info, 2, 1, $text_icon, '', 2);
@@ -919,11 +916,9 @@ if ($resql)
 				if ($warning) {     // Always false in default mode
 					print $form->textwithtooltip('', $langs->trans('NotEnoughForAllOrders').'<br>'.$text_warning, 2, 1, img_picto('', 'error'), '', 2);
 				}
-				print '</td>';
 			}
 
 			// Warning late icon and note
-			print '<td class="nobordernopadding nowrap">';
 			if ($generic_commande->hasDelay()) {
 				print img_picto($langs->trans("Late").' : '.$generic_commande->showDelay(), "warning");
 			}
@@ -933,15 +928,11 @@ if ($resql)
 				print '<a href="'.DOL_URL_ROOT.'/commande/note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"), 'object_generic').'</a>';
 				print '</span>';
 			}
-			print '</td>';
 
-			print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 			$filename=dol_sanitizeFileName($obj->ref);
 			$filedir=$conf->commande->multidir_output[$conf->entity] . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 			print $formfile->getDocumentsLink($generic_commande->element, $filename, $filedir);
-			print '</td>';
-			print '</tr></table>';
 
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;

@@ -71,7 +71,6 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	if ($num)
 	{
-
 		print "<table border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 
 		print '<tr>';

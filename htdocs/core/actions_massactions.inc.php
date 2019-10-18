@@ -851,7 +851,6 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 
 if (!$error && $massaction == 'cancelorders')
 {
-
 	$db->begin();
 
 	$nbok = 0;
@@ -860,7 +859,6 @@ if (!$error && $massaction == 'cancelorders')
 	$orders = GETPOST('toselect', 'array');
 	foreach ($orders as $id_order)
 	{
-
 		$cmd = new Commande($db);
 		if ($cmd->fetch($id_order) <= 0)
 			continue;

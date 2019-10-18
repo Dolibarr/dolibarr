@@ -609,7 +609,6 @@ if ($id)
                         $langs->load("accountancy");
 						foreach ($fieldlist as $field => $value)
 						{
-
 							$showfield=1;
 							$class="left";
 							$valuetoshow=$obj->{$fieldlist[$field]};

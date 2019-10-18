@@ -44,7 +44,6 @@ $result = $db->query($req);
 $num = $db->num_rows($result);
 
 if($num < 1) {
-
    $insert = "INSERT INTO ".MAIN_DB_PREFIX."rights_def (";
    $insert.= "`id` ,";
    $insert.= "`libelle` ,";
@@ -184,7 +183,6 @@ if (isset($_POST['action']))
 
 			print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=expensereport&file=export%2Fexpensereport-'.$dateselected.'.csv" target="_blank">Télécharger le fichier expensereport-'.$dateselected.'.csv</a>';
 		} else {
-
 			print '<b>'.$langs->trans('NoTripsToExportCSV').'</b>';
 		}
 	}

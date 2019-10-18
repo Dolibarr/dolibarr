@@ -94,14 +94,15 @@ class BOM extends CommonObject
 		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'help'=>'ProductBOMHelp'),
 	    'qty' => array('type'=>'real', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'default'=>1, 'position'=>55, 'notnull'=>1, 'isameasure'=>'1', 'css'=>'maxwidth75imp'),
 		'efficiency' => array('type'=>'real', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>-1, 'default'=>1, 'position'=>100, 'notnull'=>0, 'css'=>'maxwidth50imp', 'help'=>'ValueOfMeansLoss'),
-		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>-1, 'position'=>161, 'notnull'=>-1,),
-		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>-1, 'position'=>162, 'notnull'=>-1,),
+		'duration' => array('type'=>'real', 'label'=>'EstimatedDuration', 'enabled'=>1, 'visible'=>-1, 'position'=>101, 'notnull'=>-1, 'css'=>'maxwidth50imp', 'help'=>'EstimatedDurationDesc'),
+		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>-2, 'position'=>161, 'notnull'=>-1,),
+		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>-2, 'position'=>162, 'notnull'=>-1,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>300, 'notnull'=>1,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'position'=>501, 'notnull'=>1,),
 		'date_valid' => array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-2, 'position'=>502, 'notnull'=>0,),
-		'fk_user_creat' => array('type'=>'integer', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-2, 'position'=>510, 'notnull'=>1, 'foreignkey'=>'llx_user.rowid',),
-		'fk_user_modif' => array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'position'=>511, 'notnull'=>-1,),
-		'fk_user_valid' => array('type'=>'integer', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-2, 'position'=>512, 'notnull'=>0,),
+		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>510, 'notnull'=>1, 'foreignkey'=>'user.rowid',),
+		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'position'=>511, 'notnull'=>-1,),
+		'fk_user_valid' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-2, 'position'=>512, 'notnull'=>0,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>900, 'notnull'=>-1,),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>2, 'position'=>1000, 'notnull'=>1, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Enabled', 9=>'Disabled')),
 	);
@@ -202,7 +203,7 @@ class BOM extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
-		if ($this->efficiency < 0 || $this->efficiency > 1) $this->efficiency = 1;
+		if ($this->efficiency <= 0 || $this->efficiency > 1) $this->efficiency = 1;
 
 		return $this->createCommon($user, $notrigger);
 	}
@@ -412,7 +413,7 @@ class BOM extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
-		if ($this->efficiency < 0 || $this->efficiency > 1) $this->efficiency = 1;
+		if ($this->efficiency <= 0 || $this->efficiency > 1) $this->efficiency = 1;
 
 		return $this->updateCommon($user, $notrigger);
 	}
@@ -512,7 +513,7 @@ class BOM extends CommonObject
 	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
 	 */
-	public function valid($user, $notrigger = 0)
+	public function validate($user, $notrigger = 0)
 	{
 	    global $conf, $langs;
 
@@ -523,7 +524,7 @@ class BOM extends CommonObject
 	    // Protection
 	    if ($this->statut == self::STATUS_VALIDATED)
 	    {
-	        dol_syslog(get_class($this)."::valid action abandonned: already validated", LOG_WARNING);
+	        dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
 	        return 0;
 	    }
 
@@ -552,14 +553,14 @@ class BOM extends CommonObject
 	    $this->newref = $num;
 
 	    // Validate
-	    $sql = "UPDATE ".MAIN_DB_PREFIX."bom_bom";
+	    $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 	    $sql.= " SET ref = '".$this->db->escape($num)."',";
 	    $sql.= " status = ".self::STATUS_VALIDATED.",";
 	    $sql.= " date_valid='".$this->db->idate($now)."',";
 	    $sql.= " fk_user_valid = ".$user->id;
 	    $sql.= " WHERE rowid = ".$this->id;
 
-	    dol_syslog(get_class($this)."::valid()", LOG_DEBUG);
+	    dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
 	    $resql=$this->db->query($sql);
 	    if (! $resql)
 	    {
@@ -596,7 +597,7 @@ class BOM extends CommonObject
 	            $dirdest = $conf->bom->dir_output.'/'.$newref;
 	            if (! $error && file_exists($dirsource))
 	            {
-	                dol_syslog(get_class($this)."::valid() rename dir ".$dirsource." into ".$dirdest);
+	                dol_syslog(get_class($this)."::validate() rename dir ".$dirsource." into ".$dirdest);
 
 	                if (@rename($dirsource, $dirdest))
 	                {
@@ -639,63 +640,77 @@ class BOM extends CommonObject
 	 *	Set draft status
 	 *
 	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	public function setDraft($user)
+	public function setDraft($user, $notrigger = 0)
 	{
-	    global $conf, $langs;
+		// Protection
+		if ($this->status <= self::STATUS_DRAFT)
+		{
+			return 0;
+		}
 
-	    $error=0;
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+		 {
+		 $this->error='Permission denied';
+		 return -1;
+		 }*/
 
-	    // Protection
-	    if ($this->status <= self::STATUS_DRAFT)
-	    {
-	        return 0;
-	    }
-
-	    /*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
-	        || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
-	    {
-	        $this->error='Permission denied';
-	        return -1;
-	    }*/
-
-	    $this->db->begin();
-
-	    $sql = "UPDATE ".MAIN_DB_PREFIX."bom";
-	    $sql.= " SET status = ".self::STATUS_DRAFT;
-	    $sql.= " WHERE rowid = ".$this->id;
-
-	    dol_syslog(get_class($this)."::setDraft", LOG_DEBUG);
-	    if ($this->db->query($sql))
-	    {
-	        if (! $error)
-	        {
-	            $this->oldcopy= clone $this;
-	        }
-
-	        if (!$error) {
-	            // Call trigger
-	            $result=$this->call_trigger('BOM_UNVALIDATE', $user);
-	            if ($result < 0) $error++;
-	        }
-
-	        if (!$error) {
-	            $this->status=self::STATUS_DRAFT;
-	            $this->db->commit();
-	            return 1;
-	        } else {
-	            $this->db->rollback();
-	            return -1;
-	        }
-	    }
-	    else
-	    {
-	        $this->error=$this->db->error();
-	        $this->db->rollback();
-	        return -1;
-	    }
+		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'BOM_UNVALIDATE');
 	}
+
+	/**
+	 *	Set cancel status
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 */
+	public function cancel($user, $notrigger = 0)
+	{
+		// Protection
+		if ($this->status != self::STATUS_VALIDATED)
+		{
+			return 0;
+		}
+
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+		 {
+		 $this->error='Permission denied';
+		 return -1;
+		 }*/
+
+		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'BOM_CLOSE');
+	}
+
+	/**
+	 *	Set cancel status
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 */
+	public function reopen($user, $notrigger = 0)
+	{
+		// Protection
+		if ($this->status != self::STATUS_CANCELED)
+		{
+			return 0;
+		}
+
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+		 {
+		 $this->error='Permission denied';
+		 return -1;
+		 }*/
+
+		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'BOM_REOPEN');
+	}
+
 
 	/**
 	 *  Return a link to the object card (with optionaly the picto)
@@ -928,7 +943,6 @@ class BOM extends CommonObject
 		$langs->load("mrp");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'standard';
 
 			if ($this->modelpdf) {
@@ -953,6 +967,7 @@ class BOM extends CommonObject
 	public function initAsSpecimen()
 	{
 	    $this->initAsSpecimenCommon();
+	    $this->ref = 'BOM-123';
 	    $this->date = $this->date_creation;
 	}
 
@@ -1050,7 +1065,7 @@ class BOMLine extends CommonObject
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'notnull'=>-1,),
 		'qty' => array('type'=>'double(24,8)', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'position'=>100, 'notnull'=>1, 'isameasure'=>'1',),
 		'efficiency' => array('type'=>'double(8,4)', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>1, 'default'=>1, 'position'=>110, 'notnull'=>1, 'css'=>'maxwidth50imp', 'help'=>'ValueOfMeansLoss'),
-		'position' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>1, 'visible'=>0, 'position'=>200, 'notnull'=>1,),
+		'position' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>1, 'visible'=>0, 'default'=>0, 'position'=>200, 'notnull'=>1,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
 	);
 	public $rowid;

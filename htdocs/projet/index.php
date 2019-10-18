@@ -195,7 +195,6 @@ if ($resql)
 		$var = true;
 		while ($i < $num)
 		{
-
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';

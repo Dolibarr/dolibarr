@@ -246,7 +246,6 @@ foreach ($dirmodels as $reldir)
 		$handle = opendir($dir);
 		if (is_resource($handle))
 		{
-
 			while (($file = readdir($handle))!==false)
 			{
 				if (substr($file, 0, 22) == 'mod_supplier_proposal_' && substr($file, dol_strlen($file)-3, 3) == 'php')
@@ -263,7 +262,6 @@ foreach ($dirmodels as $reldir)
 
 					if ($module->isEnabled())
 					{
-
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
 						print $module->info();
 						print '</td>';
@@ -537,7 +535,6 @@ print '</form>';
 
 if ($conf->banque->enabled)
 {
-
     print '<tr class="oddeven"><td>';
     print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL").'</td><td>&nbsp</td><td class="right">';
     if (! empty($conf->use_javascript_ajax))
@@ -559,7 +556,6 @@ if ($conf->banque->enabled)
 }
 else
 {
-
     print '<tr class="oddeven"><td>';
     print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }

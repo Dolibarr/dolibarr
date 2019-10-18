@@ -124,6 +124,8 @@ class Contact extends CommonObject
 
 	public $oldcopy;				// To contains a clone of this when we need to save old properties of object
 
+	public $roles=array();
+
 
 	/**
 	 *	Constructor
@@ -381,6 +383,14 @@ class Contact extends CommonObject
 		    		$error++;
 		    	}
 		    }
+
+			if (! $error) {
+				$result=$this->updateRoles();
+				if ($result < 0)
+				{
+					$error++;
+				}
+			}
 
 			if (! $error && $this->user_id > 0)
 			{
@@ -844,6 +854,11 @@ class Contact extends CommonObject
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
+				$resultRole=$this->fetchRoles();
+				if ($resultRole<0) {
+					return $resultRole;
+				}
+
 				return 1;
 			}
 			else
@@ -980,6 +995,20 @@ class Contact extends CommonObject
 
 		if (! $error)
 		{
+			// Remove Roles
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_contacts WHERE fk_socpeople = ".$this->id;
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			$resql=$this->db->query($sql);
+			if (! $resql)
+			{
+				$error++;
+				$this->error .= $this->db->lasterror();
+				$errorflag=-1;
+			}
+		}
+
+		if (! $error)
+		{
 			// Remove category
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_contact WHERE fk_socpeople = ".$this->id;
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
@@ -1022,7 +1051,6 @@ class Contact extends CommonObject
 
 		if (! $error)
 		{
-
 			$this->db->commit();
 			return 1;
 		}
@@ -1434,5 +1462,151 @@ class Contact extends CommonObject
 		);
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 * Fetch Role for a contact
+	 *
+	 * @return float|int
+	 * @throws Exception
+	 */
+	public function fetchRoles()
+	{
+		global $langs;
+		$error= 0;
+		$num=0;
+
+		$sql ="SELECT tc.rowid, tc.element, tc.source, tc.code, tc.libelle, sc.rowid as contactroleid";
+		$sql.=" FROM ".MAIN_DB_PREFIX."societe_contacts as sc ";
+		$sql.=" INNER JOIN ".MAIN_DB_PREFIX."c_type_contact as tc";
+		$sql.=" ON tc.rowid = sc.fk_c_type_contact";
+		$sql.=" AND sc.fk_socpeople = ". $this->id;
+		$sql.=" AND tc.source = 'external' AND tc.active=1";
+		$sql.=" AND sc.entity IN (".getEntity('societe').')';
+
+		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+
+		$this->roles=array();
+		$resql=$this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			if ($num > 0) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$transkey="TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
+					$libelle_element = $langs->trans('ContactDefault_'.$obj->element);
+					$this->roles[$obj->contactroleid]=array('id'=>$obj->rowid,'element'=>$obj->element,'source'=>$obj->source,'code'=>$obj->code,'label'=>$libelle_element. ' - '.($langs->trans($transkey)!=$transkey ? $langs->trans($transkey) : $obj->libelle));
+				}
+			}
+		} else {
+			$error++;
+			$this->error=$this->db->lasterror();
+			$this->errors[]=$this->db->lasterror();
+		}
+
+		if (empty($error)) {
+			return $num;
+		} else {
+			return $error * -1;
+		}
+	}
+
+	/**
+	 * Get Contact roles for a thirdparty
+	 *
+	 * @param  string 	$element 	Element type
+	 * @return array|int			Array of contact roles or -1
+	 * @throws Exception
+	 */
+	public function getContactRoles($element = '')
+	{
+		$tab=array();
+
+		$sql = "SELECT sc.fk_socpeople as id, sc.fk_c_type_contact";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact tc";
+		$sql.= ", ".MAIN_DB_PREFIX."societe_contacts sc";
+		$sql.= " WHERE sc.fk_soc =".$this->socid;
+		$sql.= " AND sc.fk_c_type_contact=tc.rowid";
+		$sql.= " AND tc.element='".$element."'";
+		$sql.= " AND tc.active=1";
+
+		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$num=$this->db->num_rows($resql);
+			$i=0;
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($resql);
+				$tab[]=array('fk_socpeople'=>$obj->id, 'type_contact'=>$obj->fk_c_type_contact);
+
+				$i++;
+			}
+
+			return $tab;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
+	/**
+	 * Updates Roles
+	 *
+	 * @return float|int
+	 * @throws Exception
+	 */
+	public function updateRoles()
+	{
+		global $conf;
+
+		$error=0;
+
+		$this->db->begin();
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_contacts WHERE fk_soc=".$this->socid;
+
+		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if (!$result) {
+			$this->errors[]=$this->db->lasterror().' sql='.$sql;
+			$error++;
+		} else {
+			if (count($this->roles)>0) {
+				foreach ($this->roles as $keyRoles => $valRoles) {
+					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_contacts";
+					$sql .= " (entity,";
+					$sql .= "date_creation,";
+					$sql .= "fk_soc,";
+					$sql .= "fk_c_type_contact,";
+					$sql .= "fk_socpeople) ";
+					$sql .= " VALUES (" . $conf->entity . ",";
+					$sql .= "'" . $this->db->idate(dol_now()) . "',";
+					$sql .= $this->socid . ", ";
+					$sql .=  $valRoles . " , " ;
+					$sql .= $this->id;
+					$sql .= ")";
+					dol_syslog(get_class($this) . "::".__METHOD__, LOG_DEBUG);
+
+					$result = $this->db->query($sql);
+					if (!$result)
+					{
+						$this->errors[]=$this->db->lasterror().' sql='.$sql;
+						$error++;
+					}
+				}
+			}
+		}
+		if (empty($error)) {
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->error=implode(' ', $this->errors);
+			$this->db->rollback();
+			return $error*-1;
+		}
 	}
 }

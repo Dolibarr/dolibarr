@@ -61,7 +61,7 @@ $diroutputmassaction=$conf->admin->dir_output . '/temp/massgeneration/'.$user->i
 $hookmanager->initHooks(array('emailsenderprofilelist'));     // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
@@ -189,14 +189,15 @@ foreach($object->fields as $key => $val)
 	$sql.='t.'.$key.', ';
 }
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label']))
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.' as options_'.$key.', ' : '');
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters, $object);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
-$sql=preg_replace('/, $/', '', $sql);
+$sql=preg_replace('/,\s*$/', '', $sql);
 $sql.= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."myobject_extrafields as ef on (t.rowid = ef.fk_object)";
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 if ($object->ismultientitymanaged == 1) $sql.= " WHERE t.entity IN (".getEntity('emailsenderprofile').")";
 else $sql.=" WHERE 1 = 1";
 foreach($search as $key => $val)
@@ -219,7 +220,8 @@ foreach($object->fields as $key => $val)
     $sql.='t.'.$key.', ';
 }
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $object may have been modified by hook

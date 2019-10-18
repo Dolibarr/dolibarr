@@ -61,7 +61,6 @@ if ($_POST["cancel"] == $langs->trans("Cancel") && ! $id)
 
 if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
-
     $db->begin();
 
     $datev=dol_mktime(12, 0, 0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
