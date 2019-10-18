@@ -45,9 +45,9 @@ include_once DOL_DOCUMENT_ROOT .'/core/lib/json.lib.php';
  *
  * @param   string	$type		Type of database (mysql, pgsql...)
  * @param	string	$host		Address of database server
- * @param	string	$user		Nom de l'utilisateur autorise
- * @param	string	$pass		Mot de passe
- * @param	string	$name		Nom de la database
+ * @param	string	$user		Authorized username
+ * @param	string	$pass		Password
+ * @param	string	$name		Name of database
  * @param	int		$port		Port of database server
  * @return	DoliDB				A DoliDB instance
  */
@@ -3390,7 +3390,7 @@ function img_edit_remove($titlealt = 'default', $other = '')
  *	Show logo editer/modifier fiche
  *
  *	@param  string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *	@param  integer	$float      Si il faut y mettre le style "float: right"
+ *	@param  integer	$float      If you have to put the style "float: right"
  *	@param  string	$other		Add more attributes on img
  *	@return string      		Return tag img
  */
@@ -3407,7 +3407,7 @@ function img_edit($titlealt = 'default', $float = 0, $other = '')
  *	Show logo view card
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *	@param  integer	$float      Si il faut y mettre le style "float: right"
+ *	@param  integer	$float      If you have to put the style "float: right"
  *	@param  string	$other		Add more attributes on img
  *	@return string      		Return tag img
  */
@@ -3765,10 +3765,9 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
 
 
 /**
- *	Affiche message erreur system avec toutes les informations pour faciliter le diagnostic et la remontee des bugs.
- *	On doit appeler cette fonction quand une erreur technique bloquante est rencontree.
- *	Toutefois, il faut essayer de ne l'appeler qu'au sein de pages php, les classes devant
- *	renvoyer leur erreur par l'intermediaire de leur propriete "error".
+ *  Displays error message system with all the information to facilitate the diagnosis and the escalation of the bugs.
+ *  This function must be called when a blocking technical error is encountered.
+ *  However, one must try to call it only within php pages, classes must return their error through their property "error".
  *
  *	@param	 	DoliDB	$db      	Database handler
  *	@param  	mixed	$error		String or array of errors strings to show
