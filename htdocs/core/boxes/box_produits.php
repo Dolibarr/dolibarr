@@ -144,7 +144,8 @@ class box_produits extends ModeleBoxes
                         'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
                         'text' => $objp->label,
                     );
-
+                    $price = '';
+                    $price_base_type = '';
                     if (empty($conf->dynamicprices->enabled) || empty($objp->fk_price_expression)) {
                         $price_base_type=$langs->trans($objp->price_base_type);
                         $price=($objp->price_base_type == 'HT')?price($objp->price):$price=price($objp->price_ttc);
