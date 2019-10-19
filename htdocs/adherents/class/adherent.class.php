@@ -2471,7 +2471,7 @@ class Adherent extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
-   /**
+    /**
 	 *	Initialise tableau info (tableau des attributs LDAP)
 	 *
 	 *	@return		array		Tableau info des attributs

@@ -37,8 +37,8 @@ $confirm=GETPOST('confirm', 'alpha');
 // Security check
 if ($user->societe_id > 0)
 {
-  $action = '';
-  $socid = $user->societe_id;
+    $action = '';
+    $socid = $user->societe_id;
 }
 
 $sortfield = GETPOST("sortfield", 'alpha');

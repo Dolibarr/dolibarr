@@ -207,8 +207,7 @@ elseif ($action == 'set_FICHINTER_PRINT_PRODUCTS')
     }
 } elseif ($action == 'set_FICHINTER_USE_SERVICE_DURATION') {
 	$val = GETPOST('FICHINTER_USE_SERVICE_DURATION', 'alpha');
-$res = dolibarr_set_const($db, "FICHINTER_USE_SERVICE_DURATION", ($val == 'on' ? 1 : 0), 'bool', 0, '',
-		$conf->entity);
+    $res = dolibarr_set_const($db, "FICHINTER_USE_SERVICE_DURATION", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
 
 	if (!$res > 0) {
 		$error++;
@@ -220,33 +219,31 @@ $res = dolibarr_set_const($db, "FICHINTER_USE_SERVICE_DURATION", ($val == 'on' ?
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 } elseif ($action == 'set_FICHINTER_WITHOUT_DURATION') {
-        $val = GETPOST('FICHINTER_WITHOUT_DURATION', 'alpha');
-        $res = dolibarr_set_const($db, "FICHINTER_WITHOUT_DURATION", ($val == 'on' ? 1 : 0), 'bool', 0, '',
-                $conf->entity);
+    $val = GETPOST('FICHINTER_WITHOUT_DURATION', 'alpha');
+    $res = dolibarr_set_const($db, "FICHINTER_WITHOUT_DURATION", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
 
-        if (!$res > 0) {
-                $error++;
-        }
+    if (!$res > 0) {
+        $error++;
+    }
 
-        if (!$error) {
-                setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-        } else {
-                setEventMessages($langs->trans("Error"), null, 'errors');
-        }
+    if (!$error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 } elseif ($action == 'set_FICHINTER_DATE_WITHOUT_HOUR') {
-        $val = GETPOST('FICHINTER_DATE_WITHOUT_HOUR', 'alpha');
-        $res = dolibarr_set_const($db, "FICHINTER_DATE_WITHOUT_HOUR", ($val == 'on' ? 1 : 0), 'bool', 0, '',
-                $conf->entity);
+    $val = GETPOST('FICHINTER_DATE_WITHOUT_HOUR', 'alpha');
+    $res = dolibarr_set_const($db, "FICHINTER_DATE_WITHOUT_HOUR", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
 
-        if (!$res > 0) {
-                $error++;
-        }
+    if (!$res > 0) {
+        $error++;
+    }
 
-        if (!$error) {
-                setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-        } else {
-                setEventMessages($langs->trans("Error"), null, 'errors');
-        }
+    if (!$error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 
 

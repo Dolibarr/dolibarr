@@ -295,7 +295,7 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 
 	print '<table class="border" width="100%">';
 	print '<tr><td class="tdtop titlefieldcreate fieldrequired">'.$langs->trans('Language').'</td><td>';
-  print $formadmin->select_language('', 'forcelangprod', 0, $object->multilangs, 1);
+    print $formadmin->select_language('', 'forcelangprod', 0, $object->multilangs, 1);
 	print '</td></tr>';
 	print '<tr><td class="tdtop fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle" size="40"></td></tr>';
 	print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';

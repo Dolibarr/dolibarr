@@ -79,7 +79,7 @@ if ($action == 'add' || GETPOST("modify"))
 		if ($_POST["modify"])
 		{
 			// Supprime boite box_external_rss de definition des boites
-/*	        $sql = "UPDATE ".MAIN_DB_PREFIX."boxes_def";
+            /* $sql = "UPDATE ".MAIN_DB_PREFIX."boxes_def";
 			$sql.= " SET name = '".$boxlabel."'";
 	        $sql.= " WHERE file ='box_external_rss.php' AND note like '".$_POST["norss"]." %'";
 
@@ -89,7 +89,7 @@ if ($action == 'add' || GETPOST("modify"))
 				dol_print_error($db,"sql=$sql");
 				exit;
 	        }
-*/
+            */
 		}
 		else
 		{
