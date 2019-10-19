@@ -82,7 +82,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * Return an array with thirdparty informations
 	 *
-	 * @param string    $sortfield  Sort field
+	 * @param string    $email  Sort field
 	 * @return array|mixed data without useless information
 	 *
 	 * @url     GET byEmail/{email}
