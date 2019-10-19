@@ -133,8 +133,7 @@ $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
 
-	while ( $row = $db->fetch_row($resql)) {
-
+	while ($row = $db->fetch_row($resql)) {
 		for($i = 1; $i <= 12; $i ++) {
 			print '<td class="nowrap center">' . $row[$i] . '<br><br>';
             print '<input id="cb'.$row[$i].'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$row[$i].'"'.($selected?' checked="checked"':'').'>';
@@ -142,7 +141,7 @@ if ($resql) {
 		}
 		print '<td class="valigntop"><b>' . $row[13] . '</b></td>';
 	}
-	print
+
 	$db->free($resql);
 } else {
 	print $db->lasterror(); // Show last sql error
