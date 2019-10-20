@@ -505,14 +505,7 @@ function dolAddEmailTrackId($email, $trackingid)
 function isValidMailDomain($mail)
 {
     list($user, $domain) = explode("@", $mail, 2);
-    if (checkdnsrr($domain, "MX"))
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return checkdnsrr($domain, "MX");
 }
 
 /**
