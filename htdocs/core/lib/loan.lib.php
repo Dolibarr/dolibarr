@@ -40,7 +40,7 @@ function loan_prepare_head($object)
 	$head[$tab][1] = $langs->trans('Card');
 	$head[$tab][2] = 'card';
 	$tab++;
-	
+
 	$head[$tab][0] = DOL_URL_ROOT.'/loan/schedule.php?loanid='.$object->id;
 	$head[$tab][1] = $langs->trans('FinancialCommitment');
 	$head[$tab][2] = 'FinancialCommitment';

@@ -50,7 +50,7 @@ if (! empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_
 					$value = dol_eval($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key], 1);
 					//var_dump($value);
 				}
-				
+
 				print $extrafields->showOutputField($key, $value, '', $extrafieldsobjectkey);
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;

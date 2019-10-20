@@ -234,7 +234,7 @@ if ($id > 0 || ! empty($ref))
                     while ($i < min($num, $limit))
 					{
                         $objp = $db->fetch_object($result);
-                        
+
 						if ($objp->type == Facture::TYPE_CREDIT_NOTE) $objp->qty=-($objp->qty);
 
 						$total_ht+=$objp->total_ht;

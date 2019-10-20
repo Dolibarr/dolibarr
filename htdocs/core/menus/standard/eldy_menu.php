@@ -65,7 +65,7 @@ class MenuManager
     public function loadMenu($forcemainmenu = '', $forceleftmenu = '')
     {
     	global $conf, $user, $langs;
-    	
+
 		// On sauve en session le menu principal choisi
 		if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
 		if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];

@@ -5614,7 +5614,7 @@ class Form
                     };
                     var d = new Date();";
             }
-            
+
 			// Generate the date part, depending on the use or not of the javascript calendar
             if($addnowlink==1) // server time expressed in user time setup
             {

@@ -127,7 +127,7 @@ function member_type_prepare_head(AdherentType $object)
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
-	
+
 	// Multilangs
 	if (! empty($conf->global->MAIN_MULTILANGS))
 	{
