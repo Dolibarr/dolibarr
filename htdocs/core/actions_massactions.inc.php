@@ -71,7 +71,9 @@ if (! $error && $massaction == 'confirm_presend')
 
 	$listofobjectid=array();
 	$listofobjectthirdparties=array();
+	$listofobjectcontacts = array();
 	$listofobjectref=array();
+	$contactidtosend=array();
 	$attachedfilesThirdpartyObj=array();
 	$oneemailperrecipient=(GETPOST('oneemailperrecipient')=='on'?1:0);
 
@@ -97,11 +99,21 @@ if (! $error && $massaction == 'confirm_presend')
 				if ($objecttmp->element == 'holiday')       $thirdpartyid=$objecttmp->fk_user;
 				if (empty($thirdpartyid)) $thirdpartyid=0;
 
-				$listofobjectthirdparties[$thirdpartyid]=$thirdpartyid;
-				$listofobjectref[$thirdpartyid][$toselectid]=$objecttmp;
-			}
-		}
-	}
+				if ($objectclass == 'Facture') {
+					$tmparraycontact = array();
+					$tmparraycontact = $objecttmp->liste_contact(-1, 'external', 0, 'BILLING');
+					if (is_array($tmparraycontact) && count($tmparraycontact) > 0) {
+						foreach ($tmparraycontact as $data_email) {
+							$listofobjectcontacts[$toselectid][$data_email['id']] = $data_email['email'];
+						}
+					}
+				}
+
+                $listofobjectthirdparties[$thirdpartyid]=$thirdpartyid;
+                $listofobjectref[$thirdpartyid][$toselectid]=$objecttmp;
+            }
+        }
+    }
 
 	// Check mandatory parameters
 	if (GETPOST('fromtype', 'alpha') === 'user' && empty($user->email))
@@ -247,6 +259,22 @@ if (! $error && $massaction == 'confirm_presend')
 					    $fuser = new User($db);
 					    $fuser->fetch($objectobj->fk_user);
 					    $sendto = $fuser->email;
+					}
+					elseif ($objectobj->element == 'facture' && !empty($listofobjectcontacts[$objectid]))
+					{
+						$emails_to_sends = array();
+						$objectobj->fetch_thirdparty();
+						$contactidtosend=array();
+						foreach ($listofobjectcontacts[$objectid] as $contactemailid => $contactemailemail) {
+
+							$emails_to_sends[] = $objectobj->thirdparty->contact_get_property($contactemailid, 'email');
+							if (!in_array($contactemailid, $contactidtosend)) {
+								$contactidtosend[] = $contactemailid;
+							}
+						}
+						if (count($emails_to_sends) > 0) {
+							$sendto = implode(',', $emails_to_sends);
+						}
 					}
 					else
 					{
@@ -498,8 +526,8 @@ if (! $error && $massaction == 'confirm_presend')
 								}
 								$actionmsg2='';
 
-								// Initialisation donnees
-                                $objectobj2->sendtoid		= 0;
+                                // Initialisation donnees
+                                $objectobj2->sendtoid		= (empty($contactidtosend)?0:$contactidtosend);
                                 $objectobj2->actionmsg		= $actionmsg;  // Long text
                                 $objectobj2->actionmsg2		= $actionmsg2; // Short text
                                 $objectobj2->fk_element		= $objid2;
