@@ -212,7 +212,7 @@ if ($resql)
 		}
 	} else {
 		print '<tr class="oddeven">';
-		print '<td>' . $langs->trans("None") . '</td>';
+		print '<td><span class="opacitymedium">' . $langs->trans("None") . '</span></td>';
 		print '</tr>';
 	}
 	print "</table></div>";
