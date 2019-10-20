@@ -1461,7 +1461,7 @@ class ActionComm extends CommonObject
             $sql.= " a.fk_contact, a.percent as percentage,";
             $sql.= " a.fk_element, a.elementtype,";
             $sql.= " a.priority, a.fulldayevent, a.location, a.punctual, a.transparency,";
-            $sql.= " u.firstname, u.lastname,";
+            $sql.= " u.firstname, u.lastname, u.email,";
             $sql.= " s.nom as socname,";
             $sql.= " c.id as type_id, c.code as type_code, c.libelle";
             $sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."actioncomm as a)";
@@ -1569,6 +1569,7 @@ class ActionComm extends CommonObject
                     $event['transparency']=(($obj->transparency > 0)?'OPAQUE':'TRANSPARENT');		// OPAQUE (busy) or TRANSPARENT (not busy)
                     $event['punctual']=$obj->punctual;
                     $event['category']=$obj->libelle;	// libelle type action
+                    $event['email']=$obj->email;
 					// Define $urlwithroot
 					$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 					$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;			// This is to use external domain name found into config file

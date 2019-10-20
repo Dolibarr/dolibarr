@@ -3725,21 +3725,80 @@ class Product extends CommonObject
      */
     public function clone_price($fromId, $toId)
     {
-        // phpcs:enable
+        global $conf, $user;
+
+        $now = dol_now();
+
         $this->db->begin();
 
-        // les prix
-        $sql = "INSERT ".MAIN_DB_PREFIX."product_price (";
-        $sql.= " fk_product, date_price, price, tva_tx, localtax1_tx, localtax2_tx, fk_user_author, tosell)";
-        $sql.= " SELECT ".$toId . ", date_price, price, tva_tx, localtax1_tx, localtax2_tx, fk_user_author, tosell";
-        $sql.= " FROM ".MAIN_DB_PREFIX."product_price ";
-        $sql.= " WHERE fk_product = ". $fromId;
+        // prices
+        $sql  = "INSERT INTO " . MAIN_DB_PREFIX . "product_price (";
+        $sql .= " entity";
+        $sql .= ", fk_product";
+        $sql .= ", date_price";
+        $sql .= ", price_level";
+        $sql .= ", price";
+        $sql .= ", price_ttc";
+        $sql .= ", price_min";
+        $sql .= ", price_min_ttc";
+        $sql .= ", price_base_type";
+        $sql .= ", default_vat_code";
+        $sql .= ", tva_tx";
+        $sql .= ", recuperableonly";
+        $sql .= ", localtax1_tx";
+        $sql .= ", localtax1_type";
+        $sql .= ", localtax2_tx";
+        $sql .= ", localtax2_type";
+        $sql .= ", fk_user_author";
+        $sql .= ", tosell";
+        $sql .= ", price_by_qty";
+        $sql .= ", fk_price_expression";
+        $sql .= ", fk_multicurrency";
+        $sql .= ", multicurrency_code";
+        $sql .= ", multicurrency_tx";
+        $sql .= ", multicurrency_price";
+        $sql .= ", multicurrency_price_ttc";
+        $sql .= ")";
+        $sql .= " SELECT";
+        $sql .= " entity";
+        $sql .= ", " . $toId;
+        $sql .= ", '" . $this->db->idate($now) . "'";
+        $sql .= ", price_level";
+        $sql .= ", price";
+        $sql .= ", price_ttc";
+        $sql .= ", price_min";
+        $sql .= ", price_min_ttc";
+        $sql .= ", price_base_type";
+        $sql .= ", default_vat_code";
+        $sql .= ", tva_tx";
+        $sql .= ", recuperableonly";
+        $sql .= ", localtax1_tx";
+        $sql .= ", localtax1_type";
+        $sql .= ", localtax2_tx";
+        $sql .= ", localtax2_type";
+        $sql .= ", " . $user->id;
+        $sql .= ", tosell";
+        $sql .= ", price_by_qty";
+        $sql .= ", fk_price_expression";
+        $sql .= ", fk_multicurrency";
+        $sql .= ", multicurrency_code";
+        $sql .= ", multicurrency_tx";
+        $sql .= ", multicurrency_price";
+        $sql .= ", multicurrency_price_ttc";
+        $sql .= " FROM " . MAIN_DB_PREFIX . "product_price";
+        $sql .= " WHERE fk_product = ". $fromId;
+        $sql .= " ORDER BY date_price DESC";
+        if ($conf->global->PRODUIT_MULTIPRICES_LIMIT>0) {
+            $sql .= " LIMIT " . $conf->global->PRODUIT_MULTIPRICES_LIMIT;
+        }
 
-        dol_syslog(get_class($this).'::clone_price', LOG_DEBUG);
-        if (! $this->db->query($sql)) {
+        dol_syslog(__METHOD__, LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if (!$resql) {
             $this->db->rollback();
             return -1;
         }
+
         $this->db->commit();
         return 1;
     }
