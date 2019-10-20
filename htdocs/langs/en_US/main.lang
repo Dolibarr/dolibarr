@@ -169,6 +169,7 @@ ToValidate=To validate
 NotValidated=Not validated
 Save=Save
 SaveAs=Save As
+SaveAndStay=Save and stay
 TestConnection=Test connection
 ToClone=Clone
 ConfirmClone=Choose data you want to clone:
