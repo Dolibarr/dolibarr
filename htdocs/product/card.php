@@ -1453,13 +1453,13 @@ else
                 print '</td></tr>';
                 if (empty($conf->global->PRODUCT_DISABLE_SIZE))
                 {
-                  // Brut Length
-                  print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td colspan="3">';
-                  print '<input name="size" size="5" value="'.$object->length.'">x';
-                  print '<input name="sizewidth" size="5" value="'.$object->width.'">x';
-                  print '<input name="sizeheight" size="5" value="'.$object->height.'"> ';
-                  print $formproduct->selectMeasuringUnits("size_units", "size", $object->length_units, 0, 2);
-                  print '</td></tr>';
+					// Brut Length
+					print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td colspan="3">';
+					print '<input name="size" size="5" value="'.$object->length.'">x';
+					print '<input name="sizewidth" size="5" value="'.$object->width.'">x';
+					print '<input name="sizeheight" size="5" value="'.$object->height.'"> ';
+					print $formproduct->selectMeasuringUnits("size_units", "size", $object->length_units, 0, 2);
+					print '</td></tr>';
                 }
                 if (empty($conf->global->PRODUCT_DISABLE_SURFACE))
                 {
@@ -2104,7 +2104,7 @@ if (! empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action =
         	$html .= '</td></tr>';
         }
         else
-       {
+		{
         	$html .= '<tr><td style="width: 200px;">';
         	$html .= $langs->trans("AddToDraftProposals").'</td><td>';
         	$html .= $langs->trans("NoDraftProposals");

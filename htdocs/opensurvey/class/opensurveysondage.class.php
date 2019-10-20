@@ -267,7 +267,7 @@ class Opensurveysondage extends CommonObject
             $this->db->free($resql);
         }
         else
-       {
+        {
               $this->error="Error ".$this->db->lasterror();
             $ret=-1;
         }

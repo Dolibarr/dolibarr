@@ -239,7 +239,7 @@ class PropalTest extends PHPUnit\Framework\TestCase
     	return $localobject;
     }
 
-   /**
+    /**
      * testPropalOther
      *
      * @param	Propal	$localobject	Proposal

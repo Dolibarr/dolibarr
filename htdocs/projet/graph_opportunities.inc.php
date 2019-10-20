@@ -35,11 +35,11 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	                $valsamount[$obj->opp_status]=$obj->opp_amount;
 	                $totalnb+=$obj->nb;
 	                if ($obj->opp_status) $totaloppnb+=$obj->nb;
-	                if (! in_array($obj->code, array('WON', 'LOST')))
+				if (! in_array($obj->code, array('WON', 'LOST')))
 	                {
-	                   $totalamount+=$obj->opp_amount;
-	                   $ponderated_opp_amount+=$obj->ponderated_opp_amount;
-	                }
+					$totalamount+=$obj->opp_amount;
+					$ponderated_opp_amount+=$obj->ponderated_opp_amount;
+				}
 	            }
 	            $total+=$row[0];
 	        }

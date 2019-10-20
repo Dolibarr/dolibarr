@@ -169,7 +169,7 @@ class BankAccountTest extends PHPUnit\Framework\TestCase
         return $localobject;
     }
 
-   /**
+    /**
      * testBankAccountOther
      *
      * @param   Object  $localobject    Object contract

@@ -214,7 +214,7 @@ class FactureFournisseurTest extends PHPUnit\Framework\TestCase
     	return $localobject;
     }
 
-   /**
+    /**
      * testFactureFournisseurOther
      *
      * @param	Object	$localobject		Supplier invoice
