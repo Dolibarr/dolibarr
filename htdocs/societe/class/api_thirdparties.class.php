@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018   Pierre Chéné            <pierre.chene44@gmail.com>
+ * Copyright (C) 2019   Cedric Ancelin          <icedo.anc@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,38 +72,26 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @throws 	RestException
 	 */
-    public function get($id)
+  public function get($id)
 	{
-		if(! DolibarrApiAccess::$user->rights->societe->lire) {
-			throw new RestException(401);
-		}
-		if ($id ==0) {
-			$result = $this->company->initAsSpecimen();
-		} else {
-			$result = $this->company->fetch($id);
-		}
-		if( ! $result ) {
-			throw new RestException(404, 'Thirdparty not found');
-		}
+    return $this->_fetch($id);
+  }
 
-		if( ! DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
-
-		if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-			$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
-			$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
-		} else {
-			$filterabsolutediscount = "fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')";
-			$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
-		}
-
-		$absolute_discount = $this->company->getAvailableDiscounts('', $filterabsolutediscount);
-		$absolute_creditnote = $this->company->getAvailableDiscounts('', $filtercreditnote);
-		$this->company->absolute_discount = price2num($absolute_discount, 'MT');
-		$this->company->absolute_creditnote = price2num($absolute_creditnote, 'MT');
-
-		return $this->_cleanObjectDatas($this->company);
+	/**
+	 * Get properties of a thirdparty object by email.
+	 *
+	 * Return an array with thirdparty informations
+	 *
+	 * @param string    $email  Sort field
+	 * @return array|mixed data without useless information
+	 *
+	 * @url     GET byEmail/{email}
+	 *
+	 * @throws RestException
+	 */
+	public function getByEmail($email)
+	{
+	    return $this->_fetch('', '', '', '', '', '', '', '', '', '', $email);
 	}
 
 	/**
@@ -1674,4 +1663,56 @@ class Thirdparties extends DolibarrApi
         }
         return $thirdparty;
     }
+
+  /**
+   * Fetch properties of a thirdparty object.
+   *
+   * Return an array with thirdparty informations
+   *
+   * @param	   int		$rowid      Id of third party to load
+	 * @param    string	$ref        Reference of third party, name (Warning, this can return several records)
+	 * @param    string	$ref_ext    External reference of third party (Warning, this information is a free field not provided by Dolibarr)
+	 * @param    string	$ref_int    Internal reference of third party (not used by dolibarr)
+	 * @param    string	$idprof1		Prof id 1 of third party (Warning, this can return several records)
+	 * @param    string	$idprof2		Prof id 2 of third party (Warning, this can return several records)
+	 * @param    string	$idprof3		Prof id 3 of third party (Warning, this can return several records)
+	 * @param    string	$idprof4		Prof id 4 of third party (Warning, this can return several records)
+	 * @param    string	$idprof5		Prof id 5 of third party (Warning, this can return several records)
+	 * @param    string	$idprof6		Prof id 6 of third party (Warning, this can return several records)
+	 * @param    string	$email   		Email of third party (Warning, this can return several records)
+	 * @param    string	$ref_alias  Name_alias of third party (Warning, this can return several records)
+   * @return array|mixed data without useless information
+   *
+   * @throws RestException
+   */
+  private function _fetch($rowid, $ref = '', $ref_ext = '', $ref_int = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '')
+  {
+      if(! DolibarrApiAccess::$user->rights->societe->lire) {
+          throw new RestException(401);
+      }
+
+      $result = $this->company->fetch($rowid, $ref, $ref_ext, $ref_int, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email, $ref_alias);
+      if( ! $result ) {
+          throw new RestException(404, 'Thirdparty not found');
+      }
+
+      if( ! DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
+          throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+      }
+
+      if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+          $filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+          $filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+      } else {
+          $filterabsolutediscount = "fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')";
+          $filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
+      }
+
+      $absolute_discount = $this->company->getAvailableDiscounts('', $filterabsolutediscount);
+      $absolute_creditnote = $this->company->getAvailableDiscounts('', $filtercreditnote);
+      $this->company->absolute_discount = price2num($absolute_discount, 'MT');
+      $this->company->absolute_creditnote = price2num($absolute_creditnote, 'MT');
+
+      return $this->_cleanObjectDatas($this->company);
+  }
 }
