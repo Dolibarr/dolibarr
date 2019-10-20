@@ -574,7 +574,7 @@ jQuery(document).ready(function () {
 
 if(!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->global->BLOCKEDLOG_AUTHORITY_URL))
 {
-?>
+    ?>
 		<script type="text/javascript">
 
 			$.ajax({
@@ -592,7 +592,7 @@ if(!empty($conf->global->BLOCKEDLOG_USE_REMOTE_AUTHORITY) && !empty($conf->globa
 			});
 
 		</script>
-<?php
+    <?php
 }
 
 if (GETPOST('withtab', 'alpha'))

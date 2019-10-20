@@ -923,19 +923,17 @@ if ($mode == 'marketplace')
 	                    &nbsp;
 					</div>
 	                <div class="divsearchfield right">
-	                <?php
-	                print $previouslink;
-	                print $nextlink;
-	                ?>
-	                </div>
-	            </form>
+	    <?php
+	    print $previouslink;
+	    print $nextlink;
+	    print '</div>';
+	    print '</form>';
 
-	   <?php
 
-	   print '</div></div>';
-	   print '<div class="clearboth"></div>';
+	    print '</div></div>';
+	    print '<div class="clearboth"></div>';
 
-	   ?>
+	    ?>
 
 	        <div id="category-tree-left">
 	            <ul class="tree">

@@ -180,7 +180,7 @@ if (empty($reshook))
 			{
 				// Creation KO
 				if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-				else  setEventMessages($object->error, null, 'errors');
+			else  setEventMessages($object->error, null, 'errors');
 				$action='create';
 			}
 		}
@@ -369,7 +369,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	if (empty($reshook))
 	{
-/*TODO 		if ($user->rights->stock->lire)
+		/*TODO      if ($user->rights->stock->lire)
 		{
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
 		}
@@ -378,7 +378,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		{
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
 		}
-*/
+		*/
 	}
 	print '</div>'."\n";
 

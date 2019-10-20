@@ -47,13 +47,13 @@ function bank_prepare_head(Account $object)
     $head[$h][2] = 'journal';
     $h++;
 
-//    if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
-//	{
+    //    if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
+    //    {
     $head[$h][0] = DOL_URL_ROOT . "/compta/bank/treso.php?account=" . $object->id;
     $head[$h][1] = $langs->trans("PlannedTransactions");
     $head[$h][2] = 'cash';
     $h++;
-//	}
+    //    }
 
     $head[$h][0] = DOL_URL_ROOT . "/compta/bank/annuel.php?account=" . $object->id;
     $head[$h][1] = $langs->trans("IOMonthlyReporting");

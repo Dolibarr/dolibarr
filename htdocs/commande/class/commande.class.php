@@ -1995,9 +1995,9 @@ class Commande extends CommonOrder
 
 				// multilangs
         		if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($objp->fk_product) && ! empty($loadalsotranslation)) {
-        		$line = new Product($this->db);
-        		$line->fetch($objp->fk_product);
-        		$line->getMultiLangs();
+            		$line = new Product($this->db);
+            		$line->fetch($objp->fk_product);
+            		$line->getMultiLangs();
         		}
 
                 $this->lines[$i] = $line;

@@ -513,7 +513,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$noparam=array();
 	foreach($arrayoftypes as $key => $value)
 	{
-	   if ($value['noparam']) $noparam[]=$key;
+	    if ($value['noparam']) $noparam[]=$key;
 	}
 	print '})';
 	print '</script>'."\n";

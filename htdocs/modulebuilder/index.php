@@ -660,20 +660,20 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 	{
 		// Copy some files
 		$filetogenerate = array(
-		'myobject_card.php'=>strtolower($objectname).'_card.php',
-		'myobject_note.php'=>strtolower($objectname).'_note.php',
-		'myobject_document.php'=>strtolower($objectname).'_document.php',
-		'myobject_agenda.php'=>strtolower($objectname).'_agenda.php',
-		'myobject_list.php'=>strtolower($objectname).'_list.php',
-		'lib/mymodule_myobject.lib.php'=>'lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php',
-		//'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.strtolower($objectname).'Test.php',
-		'sql/llx_mymodule_myobject.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
-		'sql/llx_mymodule_myobject_extrafields.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql',
-		'sql/llx_mymodule_myobject.key.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql',
-		//'scripts/mymodule.php'=>'scripts/'.strtolower($objectname).'.php',
-		'img/object_myobject.png'=>'img/object_'.strtolower($objectname).'.png',
-		'class/myobject.class.php'=>'class/'.strtolower($objectname).'.class.php',
-		//'class/api_mymodule.class.php'=>'class/api_'.strtolower($module).'.class.php'
+			'myobject_card.php'=>strtolower($objectname).'_card.php',
+			'myobject_note.php'=>strtolower($objectname).'_note.php',
+			'myobject_document.php'=>strtolower($objectname).'_document.php',
+			'myobject_agenda.php'=>strtolower($objectname).'_agenda.php',
+			'myobject_list.php'=>strtolower($objectname).'_list.php',
+			'lib/mymodule_myobject.lib.php'=>'lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php',
+			//'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.strtolower($objectname).'Test.php',
+			'sql/llx_mymodule_myobject.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
+			'sql/llx_mymodule_myobject_extrafields.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql',
+			'sql/llx_mymodule_myobject.key.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql',
+			//'scripts/mymodule.php'=>'scripts/'.strtolower($objectname).'.php',
+			'img/object_myobject.png'=>'img/object_'.strtolower($objectname).'.png',
+			'class/myobject.class.php'=>'class/'.strtolower($objectname).'.class.php',
+			//'class/api_mymodule.class.php'=>'class/api_'.strtolower($module).'.class.php',
 		);
 
 		foreach($filetogenerate as $srcfile => $destfile)
@@ -696,68 +696,81 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 
 		//if (! $error)     // If there is error copying 1 file, we still have to make the replacement
 		//{
-			// Scan for object class files
-			$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
+		// Scan for object class files
+		$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
 
-			$firstobjectname='';
-			foreach($listofobject as $fileobj)
+		$firstobjectname='';
+		foreach($listofobject as $fileobj)
+		{
+			if (preg_match('/^api_/', $fileobj['name'])) continue;
+			if (preg_match('/^actions_/', $fileobj['name'])) continue;
+
+			$tmpcontent=file_get_contents($fileobj['fullname']);
+			$reg=array();
+			if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims', $tmpcontent, $reg))
 			{
-				if (preg_match('/^api_/', $fileobj['name'])) continue;
-				if (preg_match('/^actions_/', $fileobj['name'])) continue;
-
-				$tmpcontent=file_get_contents($fileobj['fullname']);
-				$reg=array();
-				if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims', $tmpcontent, $reg))
-				{
-					$objectnameloop = $reg[1];
-					if (empty($firstobjectname)) $firstobjectname = $objectnameloop;
-				}
-
-				// Regenerate left menu entry in descriptor for $objectname
-				$stringtoadd="
-\t\t\$this->menu[\$r++]=array(
-                				'fk_menu'=>'fk_mainmenu=mymodule',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-								'type'=>'left',			                // This is a Left menu entry
-								'titre'=>'List MyObject',
-								'mainmenu'=>'mymodule',
-								'leftmenu'=>'mymodule_myobject',
-								'url'=>'/mymodule/myobject_list.php',
-								'langs'=>'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-								'position'=>1100+\$r,
-								'enabled'=>'\$conf->mymodule->enabled',  // Define condition to show or hide menu entry. Use '\$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '\$leftmenu==\'system\'' to show if leftmenu system is selected.
-								'perms'=>'1',			                // Use 'perms'=>'\$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-								'target'=>'',
-								'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
-\t\t\$this->menu[\$r++]=array(
-                				'fk_menu'=>'fk_mainmenu=mymodule,fk_leftmenu=mymodule_myobject',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-								'type'=>'left',			                // This is a Left menu entry
-								'titre'=>'New MyObject',
-								'mainmenu'=>'mymodule',
-								'leftmenu'=>'mymodule_myobject',
-								'url'=>'/mymodule/myobject_card.php?action=create',
-								'langs'=>'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-								'position'=>1100+\$r,
-								'enabled'=>'\$conf->mymodule->enabled',  // Define condition to show or hide menu entry. Use '\$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '\$leftmenu==\'system\'' to show if leftmenu system is selected.
-								'perms'=>'1',			                // Use 'perms'=>'\$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-								'target'=>'',
-								'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
-               		";
-				$stringtoadd = preg_replace('/MyObject/', $objectnameloop, $stringtoadd);
-				$stringtoadd = preg_replace('/mymodule/', strtolower($module), $stringtoadd);
-				$stringtoadd = preg_replace('/myobject/', strtolower($objectnameloop), $stringtoadd);
-
-				$moduledescriptorfile=$destdir.'/core/modules/mod'.$module.'.class.php';
-
-				// TODO Allow a replace with regex using dolReplaceInFile with param arryreplacementisregex to 1
-				// TODO Avoid duplicate addition
-
-				dolReplaceInFile($moduledescriptorfile, array('END MODULEBUILDER LEFTMENU MYOBJECT */' => '*/'."\n".$stringtoadd."\n\t\t/* END MODULEBUILDER LEFTMENU MYOBJECT */"));
-
-				// Add module descriptor to list of files to replace "MyObject' string with real name of object.
-				$filetogenerate[]='core/modules/mod'.$module.'.class.php';
-
-				// TODO
+				$objectnameloop = $reg[1];
+				if (empty($firstobjectname)) $firstobjectname = $objectnameloop;
 			}
+
+			// Regenerate left menu entry in descriptor for $objectname
+			$stringtoadd = "
+        \$this->menu[\$r++]=array(
+            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'fk_menu'=>'fk_mainmenu=mymodule',
+            // This is a Left menu entry
+            'type'=>'left',
+            'titre'=>'List MyObject',
+            'mainmenu'=>'mymodule',
+            'leftmenu'=>'mymodule_myobject',
+            'url'=>'/mymodule/myobject_list.php',
+            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+            'langs'=>'mymodule@mymodule',
+            'position'=>1100+\$r,
+            // Define condition to show or hide menu entry. Use '\$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '\$leftmenu==\'system\'' to show if leftmenu system is selected.
+            'enabled'=>'\$conf->mymodule->enabled',
+            // Use 'perms'=>'\$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+            'perms'=>'1',
+            'target'=>'',
+            // 0=Menu for internal users, 1=external users, 2=both
+            'user'=>2,
+        );
+        \$this->menu[\$r++]=array(
+            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'fk_menu'=>'fk_mainmenu=mymodule,fk_leftmenu=mymodule_myobject',
+            // This is a Left menu entry
+            'type'=>'left',
+            'titre'=>'New MyObject',
+            'mainmenu'=>'mymodule',
+            'leftmenu'=>'mymodule_myobject',
+            'url'=>'/mymodule/myobject_card.php?action=create',
+            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+            'langs'=>'mymodule@mymodule',
+            'position'=>1100+\$r,
+            // Define condition to show or hide menu entry. Use '\$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '\$leftmenu==\'system\'' to show if leftmenu system is selected.
+            'enabled'=>'\$conf->mymodule->enabled',
+            // Use 'perms'=>'\$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+            'perms'=>'1',
+            'target'=>'',
+            // 0=Menu for internal users, 1=external users, 2=both
+            'user'=>2
+        );\n";
+			$stringtoadd = preg_replace('/MyObject/', $objectnameloop, $stringtoadd);
+			$stringtoadd = preg_replace('/mymodule/', strtolower($module), $stringtoadd);
+			$stringtoadd = preg_replace('/myobject/', strtolower($objectnameloop), $stringtoadd);
+
+			$moduledescriptorfile=$destdir.'/core/modules/mod'.$module.'.class.php';
+
+			// TODO Allow a replace with regex using dolReplaceInFile with param arryreplacementisregex to 1
+			// TODO Avoid duplicate addition
+
+			dolReplaceInFile($moduledescriptorfile, array('END MODULEBUILDER LEFTMENU MYOBJECT */' => '*/'."\n".$stringtoadd."\n\t\t/* END MODULEBUILDER LEFTMENU MYOBJECT */"));
+
+			// Add module descriptor to list of files to replace "MyObject' string with real name of object.
+			$filetogenerate[]='core/modules/mod'.$module.'.class.php';
+
+			// TODO
+		}
 		//}
 	}
 
@@ -888,11 +901,12 @@ if ($dirins && $action == 'addproperty' && !empty($module) && ! empty($tabobj))
 		if (! $error)
 		{
 			$addfieldentry = array(
-			'name'=>GETPOST('propname', 'aZ09'),'label'=>GETPOST('proplabel', 'alpha'),'type'=>GETPOST('proptype', 'alpha'),
-			'arrayofkeyval'=>GETPOST('proparrayofkeyval', 'none'),		// Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
-			'visible'=>GETPOST('propvisible', 'int'),'enabled'=>GETPOST('propenabled', 'int'),
-			'position'=>GETPOST('propposition', 'int'),'notnull'=>GETPOST('propnotnull', 'int'),'index'=>GETPOST('propindex', 'int'),'searchall'=>GETPOST('propsearchall', 'int'),
-			'isameasure'=>GETPOST('propisameasure', 'int'), 'comment'=>GETPOST('propcomment', 'alpha'),'help'=>GETPOST('prophelp', 'alpha'));
+				'name'=>GETPOST('propname', 'aZ09'),'label'=>GETPOST('proplabel', 'alpha'),'type'=>GETPOST('proptype', 'alpha'),
+				'arrayofkeyval'=>GETPOST('proparrayofkeyval', 'none'),		// Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
+				'visible'=>GETPOST('propvisible', 'int'),'enabled'=>GETPOST('propenabled', 'int'),
+				'position'=>GETPOST('propposition', 'int'),'notnull'=>GETPOST('propnotnull', 'int'),'index'=>GETPOST('propindex', 'int'),'searchall'=>GETPOST('propsearchall', 'int'),
+				'isameasure'=>GETPOST('propisameasure', 'int'), 'comment'=>GETPOST('propcomment', 'alpha'),'help'=>GETPOST('prophelp', 'alpha')
+			);
 
 			if (! empty($addfieldentry['arrayofkeyval']) && ! is_array($addfieldentry['arrayofkeyval']))
 			{
