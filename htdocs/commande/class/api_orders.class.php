@@ -104,24 +104,6 @@ class Orders extends DolibarrApi
     }
 
     /**
-     * Get properties of an order object by ref_int
-     *
-     * Return an array with order informations
-     *
-     * @param       string		$ref_int			Internal reference of object
-     * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
-     * @return 	array|mixed data without useless information
-     *
-     * @url GET    byRefInt/{ref_int}
-     *
-     * @throws 	RestException
-     */
-    public function getByRefInt($ref_int, $contact_list = 1)
-    {
-        return $this->_fetch('', '', '', $ref_int, $contact_list);
-    }
-
-    /**
      * Get properties of an order object
      *
      * Return an array with order informations
