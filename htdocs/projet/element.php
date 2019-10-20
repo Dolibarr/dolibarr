@@ -863,8 +863,8 @@ foreach ($listofreferent as $key => $value)
 
 			if (canApplySubtotalOn($tablename))
 			{
-			   // Sort
-			   $elementarray = sortElementsByClientName($elementarray);
+				// Sort
+				$elementarray = sortElementsByClientName($elementarray);
 			}
 
 			$num=count($elementarray);
@@ -1077,9 +1077,9 @@ foreach ($listofreferent as $key => $value)
 					if ($othermessage) print $othermessage;
 					if (isset($total_ht_by_line))
 					{
-					   if (! $qualifiedfortotal) print '<strike>';
-					   print price($total_ht_by_line);
-					   if (! $qualifiedfortotal) print '</strike>';
+						if (! $qualifiedfortotal) print '<strike>';
+						print price($total_ht_by_line);
+						if (! $qualifiedfortotal) print '</strike>';
 					}
 					if ($warning) print ' '.img_warning($warning);
 					print '</td>';
@@ -1124,9 +1124,9 @@ foreach ($listofreferent as $key => $value)
 					if ($othermessage) print $othermessage;
 					if (isset($total_ttc_by_line))
 					{
-					   if (! $qualifiedfortotal) print '<strike>';
-					   print price($total_ttc_by_line);
-					   if (! $qualifiedfortotal) print '</strike>';
+						if (! $qualifiedfortotal) print '<strike>';
+						print price($total_ttc_by_line);
+						if (! $qualifiedfortotal) print '</strike>';
 					}
 					if ($warning) print ' '.img_warning($warning);
 					print '</td>';

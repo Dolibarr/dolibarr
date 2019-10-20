@@ -32,8 +32,8 @@ class Dolistore
      * beginning of pagination
      * @var int
      */
+    public $start;
 
-     public $start;
     /**
      * end of pagination
      * @var int

@@ -68,8 +68,8 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 if ($id > 0 || ! empty($ref)) {
     $ret = $object->fetch($id, $ref);
-//    if ($ret > 0)
-//        $ret = $object->fetch_thirdparty();
+	//    if ($ret > 0)
+	//        $ret = $object->fetch_thirdparty();
     if ($ret <= 0) {
         setEventMessages($object->error, $object->errors, 'errors');
         $action = '';

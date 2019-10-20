@@ -202,7 +202,7 @@ if ($action == "correct_stock")
         	$eatby=dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
         	$sellby=dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
 
-        $result=$product->correct_stock_batch(
+			$result=$product->correct_stock_batch(
 	            $user,
 	            $id,
 	            GETPOST("nbpiece", 'int'),
@@ -217,7 +217,7 @@ if ($action == "correct_stock")
         }
         else
 		{
-        $result=$product->correct_stock(
+			$result=$product->correct_stock(
 	            $user,
 	            $id,
 	            GETPOST("nbpiece", 'int'),

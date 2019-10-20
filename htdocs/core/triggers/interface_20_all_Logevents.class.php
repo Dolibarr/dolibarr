@@ -177,13 +177,13 @@ class InterfaceLogevents extends DolibarrTriggers
 		}
 
 		// If not found
-/*
+        /*
         else
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
 			return 0;
         }
-*/
+        */
 
 		// Add more information into desc from the context property
 		if (! empty($desc) && ! empty($object->context['audit'])) $desc.=' - '.$object->context['audit'];

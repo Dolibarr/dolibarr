@@ -180,8 +180,6 @@ if ($massaction == 'ventil') {
         }
         $msg.='</div>';
         $msg.= '<div>' . $langs->trans("EndProcessing") . '</div>';
-    //} else {
-    //    setEventMessages($langs->trans("NoRecordSelected"), null, 'warnings');
     }
 }
 

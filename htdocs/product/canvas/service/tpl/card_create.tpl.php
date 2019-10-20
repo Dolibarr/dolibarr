@@ -85,7 +85,7 @@ dol_fiche_head('');
 
 <tr><td><?php echo $langs->trans("SellingPrice"); ?></td>
 <td><input name="price" size="10" value="<?php echo $object->price; ?>">
-<?php echo $object->price_base_type; ?>
+	<?php echo $object->price_base_type; ?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("MinPrice"); ?></td>
@@ -93,7 +93,7 @@ dol_fiche_head('');
 </td></tr>
 
 <tr><td width="20%"><?php echo $langs->trans("VATRate"); ?></td><td>
-<?php echo $object->tva_tx; ?>
+	<?php echo $object->tva_tx; ?>
 </td></tr>
 
 </table>

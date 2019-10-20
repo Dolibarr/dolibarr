@@ -430,7 +430,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
     	                            }
     	                            print '</td>';
 
-    	                           // Info
+    	                            // Info
     		    					$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
     					    		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
     			                    if ($module->type == 'pdf')

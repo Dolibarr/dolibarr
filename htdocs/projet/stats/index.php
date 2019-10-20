@@ -108,7 +108,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		unset($data1);
 
 		if ($nocolor)
-$px->SetDataColor(array (
+		$px->SetDataColor(array (
 					array (
 							220,
 							220,
@@ -130,9 +130,9 @@ $px->SetDataColor(array (
 			));
 			$px->SetTitle($langs->trans('OpportunitiesStatusForProjects'));
 			$result=$px->draw($filenamenb, $fileurlnb);
-			if ($result<0) {
-				setEventMessages($px->error, null, 'errors');
-			}
+		if ($result<0) {
+			setEventMessages($px->error, null, 'errors');
+		}
 	} else {
 		setEventMessages(null, $mesgs, 'errors');
 	}
