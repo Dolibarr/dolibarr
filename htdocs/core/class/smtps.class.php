@@ -514,8 +514,9 @@ class SMTPs
                     $_retVal = $this->socket_send_str(base64_encode($this->_smtpsPW), '235');
                     break;
             }
-            if(!$_retVal)
+            if (! $_retVal) {
                 $this->_setErr(130, 'Invalid Authentication Credentials.');
+			}
         }
         else
         {
