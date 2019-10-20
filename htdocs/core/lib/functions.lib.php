@@ -7928,7 +7928,7 @@ function getDictvalue($tablename, $field, $id, $checkentity = false, $rowidfield
 	if (!isset($dictvalues[$tablename]))
 	{
 		$dictvalues[$tablename] = array();
-		$sql = 'SELECT * FROM '.$tablename.' WHERE 1';
+		$sql = 'SELECT * FROM '.$tablename.' WHERE 1';		// Here select * is allowed as it is generic code and we don't have list of fields
 		if ($checkentity) $sql.= ' AND entity IN (0,'.getEntity($tablename).')';
 
 		$resql = $db->query($sql);

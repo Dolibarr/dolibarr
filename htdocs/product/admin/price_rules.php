@@ -97,7 +97,8 @@ if ($_POST) {
  * View
  */
 
-$sql = "SELECT * FROM ".MAIN_DB_PREFIX."product_pricerules";
+$sql = "SELECT rowid, level, fk_level, var_percent, var_min_percent";
+$sql.= " FROM ".MAIN_DB_PREFIX."product_pricerules";
 $query = $db->query($sql);
 
 $rules = array();

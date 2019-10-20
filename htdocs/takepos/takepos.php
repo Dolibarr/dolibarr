@@ -254,7 +254,7 @@ function LoadProducts(position, issubcat) {
 	idata=0; //product data counter
 	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&category='+currentcat, function(data) {
 		console.log("Call ajax.php (in LoadProducts) to get Products of category "+currentcat+" then loop on result to fill image thumbs");
-
+		console.log(data);
 		while (ishow < maxproduct) {
 			//console.log("ishow"+ishow+" idata="+idata);
 			console.log(data[idata]);
