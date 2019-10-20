@@ -163,22 +163,24 @@ class Ccountry // extends CommonObject
     /**
      *  Load object in memory from database
      *
-     *  @param      int		$id    	Id object
-     *  @param		string	$code	Code
+     *  @param      int		$id    	  Id object
+     *  @param		string	$code	    Code
+     *  @param		string	$code_iso	Code ISO
      *  @return     int          	>0 if OK, 0 if not found, <0 if KO
      */
-    public function fetch($id, $code = '')
+    public function fetch($id, $code = '', $code_iso = '')
     {
     	global $langs;
-        $sql = "SELECT";
-		$sql.= " t.rowid,";
-		$sql.= " t.code,";
-		$sql.= " t.code_iso,";
-		$sql.= " t.label,";
-		$sql.= " t.active";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_country as t";
-        if ($id)   $sql.= " WHERE t.rowid = ".$id;
-        elseif ($code) $sql.= " WHERE t.code = '".$this->db->escape($code)."'";
+      $sql = "SELECT";
+  		$sql.= " t.rowid,";
+  		$sql.= " t.code,";
+  		$sql.= " t.code_iso,";
+  		$sql.= " t.label,";
+  		$sql.= " t.active";
+      $sql.= " FROM ".MAIN_DB_PREFIX."c_country as t";
+      if ($id) $sql.= " WHERE t.rowid = ".$id;
+      elseif ($code) $sql.= " WHERE t.code = '".$this->db->escape($code)."'";
+      elseif ($code_iso) $sql.= " WHERE t.code_iso = '".$this->db->escape($code_iso)."'";
 
     	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);

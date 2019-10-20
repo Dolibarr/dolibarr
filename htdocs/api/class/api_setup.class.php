@@ -198,12 +198,63 @@ class Setup extends DolibarrApi
      */
     public function getCountryByID($id, $lang = '')
     {
+        return $this->_fetchCcountry($id, '', '', $lang);
+    }
+
+    /**
+     * Get country by Code.
+     *
+     * @param string    $code      Code of country
+     * @param string    $lang      Code of the language the name of the
+     *                             country must be translated to
+     * @return array 			   Array of cleaned object properties
+     *
+     * @url     GET dictionary/countries/byCode/{code}
+     *
+     * @throws RestException
+     */
+    public function getCountryByCode($code, $lang = '')
+    {
+        return $this->_fetchCcountry('', $code, '', $lang);
+    }
+
+    /**
+     * Get country by Iso.
+     *
+     * @param string    $iso       ISO of country
+     * @param string    $lang      Code of the language the name of the
+     *                             country must be translated to
+     * @return array 			   Array of cleaned object properties
+     *
+     * @url     GET dictionary/countries/byISO/{iso}
+     *
+     * @throws RestException
+     */
+    public function getCountryByISO($iso, $lang = '')
+    {
+        return $this->_fetchCcountry('', '', $iso, $lang);
+    }
+
+    /**
+    * Get country.
+    *
+    * @param int       $id        ID of country
+    * @param string    $code      Code of country
+    * @param string    $iso       ISO of country
+    * @param string    $lang      Code of the language the name of the
+    *                             country must be translated to
+    * @return array 			   Array of cleaned object properties
+    *
+    * @throws RestException
+    */
+    private function _fetchCcountry($id, $code = '', $iso = '', $lang = '')
+    {
         $country = new Ccountry($this->db);
 
-        if ($country->fetch($id) < 0) {
+        $result = $country->fetch($id, $code, $iso);
+        if ($result < 0) {
             throw new RestException(503, 'Error when retrieving country : '.$country->error);
-        }
-        elseif ($country->fetch($id) == 0) {
+        } elseif ($result == 0) {
             throw new RestException(404, 'country not found');
         }
 
