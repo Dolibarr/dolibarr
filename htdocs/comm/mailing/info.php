@@ -58,11 +58,11 @@ if ($object->fetch($id) >= 0)
 
 	$morehtmlright='';
 	if ($object->statut == 2) $morehtmlright.=' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.') ';
-	
+
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', $morehtmlright);
-	
+
 	print '<div class="underbanner clearboth"></div><br>';
-	
+
 	//print '<table width="100%"><tr><td>';
 	$object->user_creation=$object->user_creat;
 	$object->date_creation=$object->date_creat;
@@ -70,7 +70,7 @@ if ($object->fetch($id) >= 0)
 	$object->date_validation=$object->date_valid;
 	dol_print_object_info($object, 0);
 	//print '</td></tr></table>';
-	
+
 
 	dol_fiche_end();
 }

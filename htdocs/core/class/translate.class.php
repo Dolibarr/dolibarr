@@ -781,7 +781,7 @@ class Translate
 			if (preg_match('/^[a-z]+_[A-Z]+/i', $dir))
 			{
 				$this->load("languages");
-				
+
 				if (! empty($conf->global->MAIN_LANGUAGES_ALLOWED) && ! in_array($dir, explode(',', $conf->global->MAIN_LANGUAGES_ALLOWED)) ) continue;
 
 				if ($usecode == 2)

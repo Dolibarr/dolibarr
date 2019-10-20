@@ -34,7 +34,7 @@ class Cpaiement
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'cpaiement';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */

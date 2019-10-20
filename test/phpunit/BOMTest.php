@@ -79,7 +79,7 @@ class BOMTest extends PHPUnit\Framework\TestCase
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
-		
+
 		print __METHOD__."\n";
 	}
 
