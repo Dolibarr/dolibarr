@@ -114,7 +114,7 @@ print '<tr class="oddeven liste_titre"><th class="titlefield wordbreak">'.$langs
 
 // Name
 print '<tr><td class="fieldrequired"><label for="name">'.$langs->trans("CompanyName").'</label></td><td>';
-print '<input name="nom" id="name" class="minwidth200" value="'. ($conf->global->MAIN_INFO_ACCOUNTANT_NAME?$conf->global->MAIN_INFO_ACCOUNTANT_NAME: GETPOST("nom", 'nohtml')) . '" autofocus="autofocus"></td></tr>'."\n";
+print '<input name="nom" id="name" class="minwidth200" value="'. ($conf->global->MAIN_INFO_ACCOUNTANT_NAME?$conf->global->MAIN_INFO_ACCOUNTANT_NAME: GETPOST("nom", 'nohtml')) . '"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '' : ' autofocus="autofocus"').'></td></tr>'."\n";
 
 // Address
 print '<tr><td><label for="address">'.$langs->trans("CompanyAddress").'</label></td><td>';
@@ -156,7 +156,7 @@ print '</td></tr>'."\n";
 
 // Code
 print '<tr><td><label for="code">'.$langs->trans("AccountantFileNumber").'</label></td><td>';
-print '<input name="code" id="code" class="minwidth100" value="'. ($conf->global->MAIN_INFO_ACCOUNTANT_CODE?$conf->global->MAIN_INFO_ACCOUNTANT_CODE: GETPOST("code", 'nohtml')) . '" autofocus="autofocus"></td></tr>'."\n";
+print '<input name="code" id="code" class="minwidth100" value="'. ($conf->global->MAIN_INFO_ACCOUNTANT_CODE?$conf->global->MAIN_INFO_ACCOUNTANT_CODE: GETPOST("code", 'nohtml')) . '"></td></tr>'."\n";
 
 // Note
 print '<tr><td class="tdtop"><label for="note">'.$langs->trans("Note").'</label></td><td>';
