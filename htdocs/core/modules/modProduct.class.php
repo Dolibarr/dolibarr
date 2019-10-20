@@ -390,7 +390,7 @@ class modProduct extends DolibarrModules
             'p.length' => "Length",
 			'p.length_units' => "LengthUnit",
             'p.width' => "Width",
-			'p.width_units' => "VolumeUnits",
+			'p.width_units' => "WidthUnits",
             'p.height' => "Height",
             'p.height_units' => "HeightUnit",
             'p.surface' => "Surface",

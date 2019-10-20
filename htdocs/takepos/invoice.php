@@ -141,7 +141,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 
 	$invoice = new Facture($db);
 	$invoice->fetch($placeid);
-	if($invoice->total_ttc<0){
+	if ($invoice->total_ttc < 0) {
 		$invoice->type= $invoice::TYPE_CREDIT_NOTE;
 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE ";
 		$sql.="fk_soc = '".$invoice->socid."' ";
@@ -189,8 +189,10 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	    $res = $invoice->validate($user);
 	}
 
+	$remaintopay = $invoice->getRemainToPay();
+
 	// Add the payment
-    if ($res > 0) {
+	if ($res >= 0 && $remaintopay > 0) {
 		$payment = new Paiement($db);
 		$payment->datepaye = $now;
 		$payment->fk_account = $bankaccount;
@@ -205,9 +207,9 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		$payment->create($user);
 		$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
 
-		$remaintopay = $invoice->getRemainToPay();
+		$remaintopay = $invoice->getRemainToPay();	// Recalculate remain to pay after the payment is recorded
 		if ($remaintopay == 0) {
-			dol_syslog("Invoice is paid, so we set it to pay");
+			dol_syslog("Invoice is paid, so we set it to status Paid");
 			$result = $invoice->set_paid($user);
 			if ($result > 0) $invoice->paye = 1;
 		} else {
