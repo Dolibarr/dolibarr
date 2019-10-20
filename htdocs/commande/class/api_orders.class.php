@@ -437,7 +437,7 @@ class Orders extends DolibarrApi
         return $this->commande;
     }
 
-   /**
+    /**
 	 * Delete a contact type of given order
 	 *
 	 * @param int    $id             Id of order to update
