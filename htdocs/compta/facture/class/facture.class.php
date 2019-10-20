@@ -2702,45 +2702,74 @@ class Facture extends CommonInvoice
 
 
 	/**
-	 * 		Add an invoice line into database (linked to product/service or not).
-	 * 		Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
-	 *		de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
-	 *		par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
-	 *		et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
+	 *  Add an invoice line into database (linked to product/service or not).
+	 *  Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
+	 *  de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
+	 *  par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
+	 *  et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	 *
-	 * 		@param    	string		$desc            	Description of line
-	 * 		@param    	double		$pu_ht              Unit price without tax (> 0 even for credit note)
-	 * 		@param    	double		$qty             	Quantity
-	 * 		@param    	double		$txtva           	Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
-	 * 		@param		double		$txlocaltax1		Local tax 1 rate (deprecated, use instead txtva with code inside)
-	 *  	@param		double		$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
-	 *		@param    	int			$fk_product      	Id of predefined product/service
-	 * 		@param    	double		$remise_percent  	Percent of discount on line
-	 * 		@param    	int			$date_start      	Date start of service
-	 * 		@param    	int			$date_end        	Date end of service
-	 * 		@param    	int			$ventil          	Code of dispatching into accountancy
-	 * 		@param    	int			$info_bits			Bits of type of lines
-	 *		@param    	int			$fk_remise_except	Id discount used
-	 *		@param		string		$price_base_type	'HT' or 'TTC'
-	 * 		@param    	double		$pu_ttc             Unit price with tax (> 0 even for credit note)
-	 * 		@param		int			$type				Type of line (0=product, 1=service). Not used if fk_product is defined, the type of product is used.
-	 *      @param      int			$rang               Position of line
-	 *      @param		int			$special_code		Special code (also used by externals modules!)
-	 *      @param		string		$origin				'order', ...
-	 *      @param		int			$origin_id			Id of origin object
-	 *      @param		int			$fk_parent_line		Id of parent line
-	 * 		@param		int			$fk_fournprice		Supplier price id (to calculate margin) or ''
-	 * 		@param		int			$pa_ht				Buying price of line (to calculate margin) or ''
-	 * 		@param		string		$label				Label of the line (deprecated, do not use)
-	 *		@param		array		$array_options		extrafields array
-	 *      @param      int         $situation_percent  Situation advance percentage
-	 *      @param      int         $fk_prev_id         Previous situation line id reference
-	 * 		@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
-	 * 		@param		double		$pu_ht_devise		Unit price in currency
-	 *    	@return    	int             				<0 if KO, Id of line if OK
+	 *  @param    	string		$desc            	Description of line
+	 *  @param    	double		$pu_ht              Unit price without tax (> 0 even for credit note)
+	 *  @param    	double		$qty             	Quantity
+	 *  @param    	double		$txtva           	Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
+	 *  @param		double		$txlocaltax1		Local tax 1 rate (deprecated, use instead txtva with code inside)
+	 *  @param		double		$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
+	 *  @param    	int			$fk_product      	Id of predefined product/service
+	 *  @param    	double		$remise_percent  	Percent of discount on line
+	 *  @param    	int			$date_start      	Date start of service
+	 *  @param    	int			$date_end        	Date end of service
+	 *  @param    	int			$ventil          	Code of dispatching into accountancy
+	 *  @param    	int			$info_bits			Bits of type of lines
+	 *  @param    	int			$fk_remise_except	Id discount used
+	 *  @param		string		$price_base_type	'HT' or 'TTC'
+	 *  @param    	double		$pu_ttc             Unit price with tax (> 0 even for credit note)
+	 *  @param		int			$type				Type of line (0=product, 1=service). Not used if fk_product is defined, the type of product is used.
+	 *  @param      int			$rang               Position of line
+	 *  @param		int			$special_code		Special code (also used by externals modules!)
+	 *  @param		string		$origin				'order', ...
+	 *  @param		int			$origin_id			Id of origin object
+	 *  @param		int			$fk_parent_line		Id of parent line
+	 *  @param		int			$fk_fournprice		Supplier price id (to calculate margin) or ''
+	 *  @param		int			$pa_ht				Buying price of line (to calculate margin) or ''
+	 *  @param		string		$label				Label of the line (deprecated, do not use)
+	 *  @param		array		$array_options		extrafields array
+	 *  @param      int         $situation_percent  Situation advance percentage
+	 *  @param      int         $fk_prev_id         Previous situation line id reference
+	 *  @param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
+	 *  @param		double		$pu_ht_devise		Unit price in currency
+	 *  @return    	int             				<0 if KO, Id of line if OK
 	 */
-    public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $date_start = '', $date_end = '', $ventil = 0, $info_bits = 0, $fk_remise_except = '', $price_base_type = 'HT', $pu_ttc = 0, $type = self::TYPE_STANDARD, $rang = -1, $special_code = 0, $origin = '', $origin_id = 0, $fk_parent_line = 0, $fk_fournprice = null, $pa_ht = 0, $label = '', $array_options = 0, $situation_percent = 100, $fk_prev_id = 0, $fk_unit = null, $pu_ht_devise = 0)
-    {
+    public function addline(
+        $desc,
+        $pu_ht,
+        $qty,
+        $txtva,
+        $txlocaltax1 = 0,
+        $txlocaltax2 = 0,
+        $fk_product = 0,
+        $remise_percent = 0,
+        $date_start = '',
+        $date_end = '',
+        $ventil = 0,
+        $info_bits = 0,
+        $fk_remise_except = '',
+        $price_base_type = 'HT',
+        $pu_ttc = 0,
+        $type = self::TYPE_STANDARD,
+        $rang = -1,
+        $special_code = 0,
+        $origin = '',
+        $origin_id = 0,
+        $fk_parent_line = 0,
+        $fk_fournprice = null,
+        $pa_ht = 0,
+        $label = '',
+        $array_options = 0,
+        $situation_percent = 100,
+        $fk_prev_id = 0,
+        $fk_unit = null,
+        $pu_ht_devise = 0
+    ) {
 		// Deprecation warning
 		if ($label) {
 			dol_syslog(__METHOD__ . ": using line label is deprecated", LOG_WARNING);
