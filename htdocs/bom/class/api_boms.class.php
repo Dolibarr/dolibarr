@@ -100,7 +100,7 @@ class Boms extends DolibarrApi
 
         $obj_ret = array();
         $tmpobject = new BOM($db);
-        
+
         $socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
 
         $restrictonsocid = 0;	// Set to 1 if there is a field socid in table of object

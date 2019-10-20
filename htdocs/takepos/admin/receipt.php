@@ -41,12 +41,12 @@ $langs->loadLangs(array("admin", "cashdesk", "commercial"));
 if (GETPOST('action', 'alpha') == 'set')
 {
 	$db->begin();
-	
+
 	$res = dolibarr_set_const($db, "TAKEPOS_HEADER", GETPOST('TAKEPOS_HEADER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_FOOTER", GETPOST('TAKEPOS_FOOTER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_RECEIPT_NAME", GETPOST('TAKEPOS_RECEIPT_NAME', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_SHOW_CUSTOMER", GETPOST('TAKEPOS_SHOW_CUSTOMER', 'alpha'), 'chaine', 0, '', $conf->entity);
-	
+
 	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
 
 	if (! $res > 0) $error++;

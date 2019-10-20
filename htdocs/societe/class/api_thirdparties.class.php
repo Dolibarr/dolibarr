@@ -72,10 +72,10 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @throws 	RestException
 	 */
-  public function get($id)
+    public function get($id)
 	{
-    return $this->_fetch($id);
-  }
+        return $this->_fetch($id);
+    }
 
 	/**
 	 * Get properties of a thirdparty object by email.
