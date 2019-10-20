@@ -1081,7 +1081,7 @@ function price2numjs(amount) {
 
 <?php
 if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && ! defined('DISABLE_JQUERY_JNOTIFY')) {
-?>
+	?>
 // Defined properties for JNotify
 $(document).ready(function() {
 	if (typeof $.jnotify == 'function')
