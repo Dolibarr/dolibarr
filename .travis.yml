@@ -296,7 +296,9 @@ script:
   # Exclusions are defined in the ruleset.xml file
   #phpcs -s -n -p -d memory_limit=-1 --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 .
   if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .; fi
-  if [ ! "$TRAVIS_PULL_REQUEST" = "false" ]; then phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true $(git diff-tree --no-commit-id --name-only -r `git log --format="%H" -n 1` | grep .php); fi
+  CHANGES=$(git diff-tree --no-commit-id --name-only -r `git log --format="%H" -n 1` | grep .php);
+  echo $CHANGES;
+  if [ ! "$TRAVIS_PULL_REQUEST" = "false" && -n "$CHANGES"]; then phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true "$CHANGES"; fi
   set +e
   echo
 
