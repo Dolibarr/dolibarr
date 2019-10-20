@@ -383,7 +383,7 @@ class Setup extends DolibarrApi
 
         return $list;
     }
-    
+
     /**
      * Get the list of contacts types.
      *
@@ -533,13 +533,15 @@ class Setup extends DolibarrApi
         if (!empty($multicurrency)) $sql.= " , cr.date_sync, cr.rate ";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_currencies as t";
         if (!empty($multicurrency)) {
-        $sql.= " JOIN ".MAIN_DB_PREFIX."multicurrency as m ON m.code=t.code_iso";
-        $sql.= " JOIN ".MAIN_DB_PREFIX."multicurrency_rate as cr ON (m.rowid = cr.fk_multicurrency)";
+            $sql.= " JOIN ".MAIN_DB_PREFIX."multicurrency as m ON m.code=t.code_iso";
+            $sql.= " JOIN ".MAIN_DB_PREFIX."multicurrency_rate as cr ON (m.rowid = cr.fk_multicurrency)";
         }
         $sql.= " WHERE t.active = ".$active;
         if (!empty($multicurrency)) {
-        $sql.= " AND m.entity IN (".getEntity('multicurrency').")";
-        if (!empty($multicurrency) && $multicurrency != 2) $sql.= " AND cr.date_sync = (SELECT MAX(cr2.date_sync) FROM ".MAIN_DB_PREFIX."multicurrency_rate AS cr2 WHERE cr2.fk_multicurrency = m.rowid)";
+            $sql.= " AND m.entity IN (".getEntity('multicurrency').")";
+            if (!empty($multicurrency) && $multicurrency != 2) {
+                $sql.= " AND cr.date_sync = (SELECT MAX(cr2.date_sync) FROM ".MAIN_DB_PREFIX."multicurrency_rate AS cr2 WHERE cr2.fk_multicurrency = m.rowid)";
+            }
         }
 
         // Add sql filters
@@ -924,7 +926,7 @@ class Setup extends DolibarrApi
 
     	$sql = "SELECT rowid, code, pos,  label, use_default, description";
     	$sql.= " FROM ".MAIN_DB_PREFIX."c_ticket_category as t";
-      $sql.= " WHERE t.active = ".$active;
+        $sql.= " WHERE t.active = ".$active;
     	// Add sql filters
     	if ($sqlfilters)
     	{

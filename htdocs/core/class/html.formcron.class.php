@@ -77,23 +77,23 @@ class FormCron extends Form
                 $out.='</SELECT>';
             }
         } else {
-        $out='<SELECT class="flat" name="'.$htmlname.'" id="'.$htmlname.'" />';
+            $out='<SELECT class="flat" name="'.$htmlname.'" id="'.$htmlname.'" />';
 
-        if ($selected=='command') {
-            $selected_attr=' selected ';
-        } else {
-            $selected_attr='';
-        }
-        $out.= '<OPTION value="command" '.$selected_attr.'>'.$langs->trans('CronType_command').'</OPTION>';
+            if ($selected=='command') {
+                $selected_attr=' selected ';
+            } else {
+                $selected_attr='';
+            }
+            $out.= '<OPTION value="command" '.$selected_attr.'>'.$langs->trans('CronType_command').'</OPTION>';
 
-        if ($selected=='method') {
-            $selected_attr=' selected ';
-        } else {
-            $selected_attr='';
-        }
-        $out.= '<OPTION value="method" '.$selected_attr.'>'.$langs->trans('CronType_method').'</OPTION>';
+            if ($selected=='method') {
+                $selected_attr=' selected ';
+            } else {
+                $selected_attr='';
+            }
+            $out.= '<OPTION value="method" '.$selected_attr.'>'.$langs->trans('CronType_method').'</OPTION>';
 
-        $out.='</SELECT>';
+            $out.='</SELECT>';
         }
 
         return $out;

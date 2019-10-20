@@ -262,9 +262,9 @@ class DolibarrApi
 	        if ($tmp[$i]==')') $counter--;
             if ($counter < 0)
             {
-	           $error="Bad sqlfilters=".$sqlfilters;
-	           dol_syslog($error, LOG_WARNING);
-	           return false;
+	            $error="Bad sqlfilters=".$sqlfilters;
+	            dol_syslog($error, LOG_WARNING);
+	            return false;
             }
             $i++;
 	    }

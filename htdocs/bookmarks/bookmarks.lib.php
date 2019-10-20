@@ -24,16 +24,11 @@
 /**
  * Add area with bookmarks in menu
  *
- * @param 	DoliDb  	$aDb		Database handler
- * @param 	Translate	$aLangs		Object lang
  * @return	string
  */
-function printBookmarksList($aDb, $aLangs)
+function printBookmarksList()
 {
-	global $conf, $user;
-
-	$db = $aDb;
-	$langs = $aLangs;
+	global $conf, $user, $db, $langs;
 
 	$ret = '<div class="menu_top"></div>'."\n";
 
@@ -155,16 +150,11 @@ function printBookmarksList($aDb, $aLangs)
 /**
  * Add area with bookmarks in top menu
  *
- * @param 	DoliDb  	$aDb		Database handler
- * @param 	Translate	$aLangs		Object lang
  * @return	string
  */
-function printDropdownBookmarksList($aDb, $aLangs)
+function printDropdownBookmarksList()
 {
-    global $conf, $user;
-
-    $db = $aDb;
-    $langs = $aLangs;
+    global $conf, $user, $db, $langs;
 
     require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
     if (! isset($conf->global->BOOKMARKS_SHOW_IN_MENU)) $conf->global->BOOKMARKS_SHOW_IN_MENU=5;
@@ -271,7 +261,7 @@ function printDropdownBookmarksList($aDb, $aLangs)
 
                 var filter = $(this).val(), count = 0;
                 $("#dropdown-bookmarks-list .bookmark-item").each(function () {
-        
+
                     if ($(this).text().search(new RegExp(filter, "i")) < 0) {
                         $(this).addClass("hidden-search-result");
                     } else {

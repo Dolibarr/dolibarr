@@ -181,7 +181,7 @@ class InterfaceZapierTriggers extends DolibarrTriggers
             case 'CONTACT_MODIFY':
             case 'CONTACT_DELETE':
             case 'CONTACT_ENABLEDISABLE':
-
+                break;
             // Products
             // case 'PRODUCT_CREATE':
             // case 'PRODUCT_MODIFY':
@@ -221,7 +221,7 @@ class InterfaceZapierTriggers extends DolibarrTriggers
             case 'LINEORDER_INSERT':
             case 'LINEORDER_UPDATE':
             case 'LINEORDER_DELETE':
-
+                break;
             // Supplier orders
             // case 'ORDER_SUPPLIER_CREATE':
             // case 'ORDER_SUPPLIER_CLONE':

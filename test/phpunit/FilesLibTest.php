@@ -150,11 +150,11 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
     }
 
 
-   /**
-    * testDolCountNbOfLine
-    *
-    * @return	int
-    */
+    /**
+     * testDolCountNbOfLine
+     *
+     * @return	int
+     */
     public function testDolCountNbOfLine()
     {
     	global $conf,$user,$langs,$db;
@@ -171,11 +171,11 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 		return $result;
     }
 
-   /**
-    * testDolIsFileDir
-    *
-    * @return	int
-    */
+    /**
+     * testDolIsFileDir
+     *
+     * @return	int
+     */
     public function testDolIsFileDir()
     {
     	global $conf,$user,$langs,$db;

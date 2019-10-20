@@ -97,7 +97,8 @@ if ($_POST) {
  * View
  */
 
-$sql = "SELECT * FROM ".MAIN_DB_PREFIX."product_pricerules";
+$sql = "SELECT rowid, level, fk_level, var_percent, var_min_percent";
+$sql.= " FROM ".MAIN_DB_PREFIX."product_pricerules";
 $query = $db->query($sql);
 
 $rules = array();
@@ -168,10 +169,10 @@ $genPriceOptions = function ($level) use ($price_options) {
 					echo $langs->trans('SellingPrice').' '.$i;
 					// Label of price
 					$keyforlabel='PRODUIT_MULTIPRICES_LABEL'.$i;
-					if (! empty($conf->global->$keyforlabel)) {
-						print ' - '.$langs->trans($conf->global->$keyforlabel);
-					}
-					?>
+				if (! empty($conf->global->$keyforlabel)) {
+					print ' - '.$langs->trans($conf->global->$keyforlabel);
+				}
+				?>
 					</td>
 				<td style="text-align: center">
 					<input type="text" style="text-align: right" name="var_percent[<?php echo $i ?>]" size="5" value="<?php echo price(isset($rules[$i]) ? $rules[$i]->var_percent : 0, 2) ?>">

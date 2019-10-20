@@ -475,10 +475,10 @@ if (empty($reshook))
 	{
 		$priceid = GETPOST('priceid', 'int');
 		if (!empty($rowid)) {
-		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "product_price_by_qty";
-		$sql .= " WHERE fk_product_price = " . $priceid;
+			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "product_price_by_qty";
+			$sql .= " WHERE fk_product_price = " . $priceid;
 
-		$result = $db->query($sql);
+			$result = $db->query($sql);
 		} else {
 			setEventMessages(('delete_price_by_qty'.$langs->transnoentities(MissingIds)), null, 'errors');
 		}
@@ -755,17 +755,17 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUI
 
 		if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
 		{
-    	   // TVA
-	       print '<tr><td>' . $langs->trans("DefaultTaxRate") . '</td><td colspan="2">';
+			// TVA
+			print '<tr><td>' . $langs->trans("DefaultTaxRate") . '</td><td colspan="2">';
 
-	       $positiverates='';
-	       if (price2num($object->multiprices_tva_tx[$soc->price_level])) $positiverates.=($positiverates?'/':'').price2num($object->multiprices_tva_tx[$soc->price_level]);
-	       if (price2num($object->multiprices_localtax1_type[$soc->price_level])) $positiverates.=($positiverates?'/':'').price2num($object->multiprices_localtax1_tx[$soc->price_level]);
-	       if (price2num($object->multiprices_localtax2_type[$soc->price_level])) $positiverates.=($positiverates?'/':'').price2num($object->multiprices_localtax2_tx[$soc->price_level]);
-	       if (empty($positiverates)) $positiverates='0';
-	       echo vatrate($positiverates.($object->default_vat_code?' ('.$object->default_vat_code.')':''), '%', $object->tva_npr);
-	       //print vatrate($object->multiprices_tva_tx[$soc->price_level], true);
-	       print '</td></tr>';
+			$positiverates='';
+			if (price2num($object->multiprices_tva_tx[$soc->price_level])) $positiverates.=($positiverates?'/':'').price2num($object->multiprices_tva_tx[$soc->price_level]);
+			if (price2num($object->multiprices_localtax1_type[$soc->price_level])) $positiverates.=($positiverates?'/':'').price2num($object->multiprices_localtax1_tx[$soc->price_level]);
+			if (price2num($object->multiprices_localtax2_type[$soc->price_level])) $positiverates.=($positiverates?'/':'').price2num($object->multiprices_localtax2_tx[$soc->price_level]);
+			if (empty($positiverates)) $positiverates='0';
+			echo vatrate($positiverates.($object->default_vat_code?' ('.$object->default_vat_code.')':''), '%', $object->tva_npr);
+			//print vatrate($object->multiprices_tva_tx[$soc->price_level], true);
+			print '</td></tr>';
 		}
 		else
 		{
@@ -791,10 +791,10 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUI
 	{
 		if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
 		{
-    	   // We show only vat for level 1
-	       print '<tr><td class="titlefield">' . $langs->trans("DefaultTaxRate") . '</td>';
-	       print '<td colspan="2">' . vatrate($object->multiprices_tva_tx[1], true) . '</td>';
-	       print '</tr>';
+			// We show only vat for level 1
+			print '<tr><td class="titlefield">' . $langs->trans("DefaultTaxRate") . '</td>';
+			print '<td colspan="2">' . vatrate($object->multiprices_tva_tx[1], true) . '</td>';
+			print '</tr>';
 		}
 		else
 		{

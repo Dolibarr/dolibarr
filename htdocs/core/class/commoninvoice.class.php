@@ -219,9 +219,9 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
-	 *	Renvoie tableau des ids de facture avoir issus de la facture
+	 *	Returns array of credit note ids from the invoice
 	 *
-	 *	@return		array		Tableau d'id de factures avoirs
+	 *	@return		array		Array of credit note ids
 	 */
 	public function getListIdAvoirFromInvoice()
 	{
@@ -251,10 +251,10 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
-	 *	Renvoie l'id de la facture qui la remplace
+	 *	Returns the id of the invoice that replaces it
 	 *
-	 *	@param		string	$option		filtre sur statut ('', 'validated', ...)
-	 *	@return		int					<0 si KO, 0 si aucune facture ne remplace, id facture sinon
+	 *	@param		string	$option		status filter ('', 'validated', ...)
+	 *	@return		int					<0 si KO, 0 if no invoice replaces it, id of invoice otherwise
 	 */
 	public function getIdReplacingInvoice($option = '')
 	{
@@ -264,10 +264,10 @@ abstract class CommonInvoice extends CommonObject
 		$sql.= ' AND type < 2';
 		if ($option == 'validated') $sql.= ' AND fk_statut = 1';
 		// PROTECTION BAD DATA
-		// Au cas ou base corrompue et qu'il y a une facture de remplacement validee
-		// et une autre non, on donne priorite a la validee.
-		// Ne devrait pas arriver (sauf si acces concurrentiel et que 2 personnes
-		// ont cree en meme temps une facture de remplacement pour la meme facture)
+		// In case the database is corrupted and there is a valid replectement invoice
+		// and another no, priority is given to the valid one.
+		// Should not happen (unless concurrent access and 2 people have created a
+		// replacement invoice for the same invoice at the same time)
 		$sql.= ' ORDER BY fk_statut DESC';
 
 		$resql=$this->db->query($sql);
@@ -276,12 +276,12 @@ abstract class CommonInvoice extends CommonObject
 			$obj = $this->db->fetch_object($resql);
 			if ($obj)
 			{
-				// Si il y en a
+				// If there is any
 				return $obj->rowid;
 			}
 			else
 			{
-				// Si aucune facture ne remplace
+				// If no invoice replaces it
 				return 0;
 			}
 		}
@@ -544,8 +544,8 @@ abstract class CommonInvoice extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Renvoi une date limite de reglement de facture en fonction des
-	 *	conditions de reglements de la facture et date de facturation.
+	 *  Returns an invoice payment deadline based on the invoice settlement
+	 *  conditions and billing date.
 	 *
 	 *	@param      integer	$cond_reglement   	Condition of payment (code or id) to use. If 0, we use current condition.
 	 *  @return     integer    			       	Date limite de reglement si ok, <0 si ko
@@ -589,14 +589,14 @@ abstract class CommonInvoice extends CommonObject
 
 		/* Definition de la date limite */
 
-		// 0 : ajout du nombre de jours
+		// 0 : adding the number of days
 		if ($cdr_type == 0)
 		{
 			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
 
 			$datelim += ($cdr_decalage * 3600 * 24);
 		}
-		// 1 : application de la regle "fin de mois"
+		// 1 : application of the "end of the month" rule
 		elseif ($cdr_type == 1)
 		{
 			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
@@ -612,13 +612,13 @@ abstract class CommonInvoice extends CommonObject
 			{
 				$mois += 1;
 			}
-			// On se deplace au debut du mois suivant, et on retire un jour
+			// We move at the beginning of the next month, and we take a day off
 			$datelim=dol_mktime(12, 0, 0, $mois, 1, $annee);
 			$datelim -= (3600 * 24);
 
 			$datelim += ($cdr_decalage * 3600 * 24);
 		}
-		// 2 : application de la règle, le N du mois courant ou suivant
+		// 2 : application of the rule, the N of the current or next month
 		elseif ($cdr_type == 2 && !empty($cdr_decalage))
 		{
 		    include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -733,7 +733,7 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	public $total_ttc;
 
 	/**
-	 * Liste d'options cumulables:
+	 * List of cumulative options:
 	 * Bit 0:	0 si TVA normal - 1 si TVA NPR
 	 * Bit 1:	0 si ligne normal - 1 si bit discount (link to line into llx_remise_except)
 	 * @var int

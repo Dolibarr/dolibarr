@@ -882,18 +882,18 @@ else
 			$object->country_code=$tmparray['code'];
 			$object->country=$tmparray['label'];
 		}
-		
-    if (!empty($socid)) {
-$object = new Societe($db);
-if ($socid > 0) $object->fetch($socid);
 
-if (! ($object->id > 0))
-{
-	$langs->load("errors");
-	print($langs->trans('ErrorRecordNotFound'));
-	exit;
-}
-    }
+        if (!empty($socid)) {
+            $object = new Societe($db);
+            if ($socid > 0) $object->fetch($socid);
+
+            if (! ($object->id > 0))
+            {
+                $langs->load("errors");
+                print($langs->trans('ErrorRecordNotFound'));
+                exit;
+            }
+        }
 
 		$adht = new AdherentType($db);
 
@@ -1661,14 +1661,14 @@ if (! ($object->id > 0))
 		else
 		{
 			if ($object->need_subscription == 0)
-                        {
-                                print $langs->trans("SubscriptionNotNeeded");
+            {
+                print $langs->trans("SubscriptionNotNeeded");
             }
-                        elseif (! $adht->subscription)
+            elseif (! $adht->subscription)
 			{
 				print $langs->trans("SubscriptionNotRecorded");
 				if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
-			            }
+			}
 			else
 			{
 				print $langs->trans("SubscriptionNotReceived");

@@ -300,8 +300,14 @@ print '</div>';
 print '<br>';
 
 
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-{
+if ($conf->global->MAIN_FEATURES_LEVEL < 2) {
+    dol_fiche_end();
+    // End of page
+    llxFooter();
+    $db->close();
+    exit;
+}
+
 /*
  *  Documents models for Holidays
  */
@@ -317,8 +323,8 @@ $sql.= " AND entity = ".$conf->entity;
 $resql=$db->query($sql);
 if ($resql)
 {
-	$i = 0;
-	$num_rows=$db->num_rows($resql);
+    $i = 0;
+    $num_rows=$db->num_rows($resql);
 	while ($i < $num_rows)
 	{
 		$array = $db->fetch_array($resql);
@@ -416,7 +422,7 @@ foreach ($dirmodels as $reldir)
 	                            }
 	                            print '</td>';
 
-	                           // Info
+	                            // Info
 		    					$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
 					    		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
 			                    if ($module->type == 'pdf')
@@ -518,7 +524,7 @@ print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';
-}
+
 
 
 dol_fiche_end();
