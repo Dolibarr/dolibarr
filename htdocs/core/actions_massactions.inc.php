@@ -266,7 +266,6 @@ if (! $error && $massaction == 'confirm_presend')
 						$objectobj->fetch_thirdparty();
 						$contactidtosend=array();
 						foreach ($listofobjectcontacts[$objectid] as $contactemailid => $contactemailemail) {
-
 							$emails_to_sends[] = $objectobj->thirdparty->contact_get_property($contactemailid, 'email');
 							if (!in_array($contactemailid, $contactidtosend)) {
 								$contactidtosend[] = $contactemailid;
