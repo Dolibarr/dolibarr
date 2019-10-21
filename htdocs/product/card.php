@@ -73,6 +73,7 @@ $ref=GETPOST('ref', 'alpha');
 $type=GETPOST('type', 'int');
 $action=(GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $cancel=GETPOST('cancel', 'alpha');
+$backtopage	= GETPOST('backtopage', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
 $socid=GETPOST('socid', 'int');
 $duration_value = GETPOST('duration_value', 'int');
@@ -357,8 +358,18 @@ if (empty($reshook))
 				$categories = GETPOST('categories', 'array');
 				$object->setCategories($categories);
 
-                header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
-                exit;
+				if (! empty($backtopage))
+				{
+					$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $backtopage);		// New method to autoselect project after a New on another form object creation
+					if (preg_match('/\?/', $backtopage)) $backtopage.='&socid='.$object->id;	// Old method
+					header("Location: ".$backtopage);
+					exit;
+				}
+				else
+				{
+                	header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+                	exit;
+				}
             }
             else
 			{
@@ -950,6 +961,7 @@ else
 			print '<input type="hidden" name="code_auto" value="1">';
 		if (! empty($modBarCodeProduct->code_auto))
 			print '<input type="hidden" name="barcode_auto" value="1">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
         if ($type==1) $title=$langs->trans("NewService");
         else $title=$langs->trans("NewProduct");
@@ -1070,12 +1082,6 @@ else
             print $form->selectarray('finished', $statutarray, GETPOST('finished', 'alpha'), 1);
             print '</td></tr>';
 
-            // Net Measure
-            print '<tr><td>'.$langs->trans("NetMeasure").'</td><td colspan="3">';
-            print '<input name="net_measure" size="4" value="'.GETPOST('net_measure').'">';
-            print $formproduct->selectMeasuringUnits("net_measure_units", "net_measure", GETPOSTISSET('net_measure_units')?GETPOST('net_measure_units', 'alpha'):(empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?0:$conf->global->MAIN_WEIGHT_DEFAULT_UNIT), 0, 2);
-            print '</td></tr>';
-
             // Brut Weight
             print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="3">';
             print '<input name="weight" size="4" value="'.GETPOST('weight').'">';
@@ -1107,6 +1113,15 @@ else
                 print '<input name="volume" size="4" value="'.GETPOST('volume').'">';
                 print $formproduct->selectMeasuringUnits("volume_units", "volume", GETPOSTISSET('volume_units')?GETPOST('volume_units', 'alpha'):'0', 0, 2);
                 print '</td></tr>';
+            }
+
+            if (! empty($conf->global->PRODUCT_ADD_NET_MEASURE))
+            {
+	            // Net Measure
+	            print '<tr><td>'.$langs->trans("NetMeasure").'</td><td colspan="3">';
+	            print '<input name="net_measure" size="4" value="'.GETPOST('net_measure').'">';
+	            print $formproduct->selectMeasuringUnits("net_measure_units", '', GETPOSTISSET('net_measure_units')?GETPOST('net_measure_units', 'alpha'):(empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?0:$conf->global->MAIN_WEIGHT_DEFAULT_UNIT), '');
+	            print '</td></tr>';
             }
         }
 
@@ -1450,18 +1465,12 @@ else
                 print $form->selectarray('finished', $statutarray, $object->finished);
                 print '</td></tr>';
 
-                // Net Measure
-                print '<tr><td>'.$langs->trans("NetMeasure").'</td><td colspan="3">';
-                print '<input name="net_measure" size="5" value="'.$object->net_measure.'"> ';
-                print $form->selectUnits($object->net_measure_units, 'units');
-                //print $formproduct->selectMeasuringUnits("net_measure_units", "weight", $object->net_measure_units, 0, 2);
-                print '</td></tr>';
-
                 // Brut Weight
                 print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="3">';
                 print '<input name="weight" size="5" value="'.$object->weight.'"> ';
                 print $formproduct->selectMeasuringUnits("weight_units", "weight", $object->weight_units, 0, 2);
                 print '</td></tr>';
+
                 if (empty($conf->global->PRODUCT_DISABLE_SIZE))
                 {
 					// Brut Length
@@ -1487,6 +1496,15 @@ else
                     print '<input name="volume" size="5" value="'.$object->volume.'"> ';
                     print $formproduct->selectMeasuringUnits("volume_units", "volume", $object->volume_units, 0, 2);
                     print '</td></tr>';
+                }
+
+                if (! empty($conf->global->PRODUCT_ADD_NET_MEASURE))
+                {
+                	// Net Measure
+	                print '<tr><td>'.$langs->trans("NetMeasure").'</td><td colspan="3">';
+	                print '<input name="net_measure" size="5" value="'.$object->net_measure.'"> ';
+	                print $formproduct->selectMeasuringUnits($object->net_measure_units, '');
+	                print '</td></tr>';
                 }
             }
         	// Units
@@ -1863,17 +1881,6 @@ else
                 print $object->getLibFinished();
                 print '</td></tr>';
 
-                // Net Measure
-                print '<tr><td class="titlefield">'.$langs->trans("NetMeasure").'</td><td colspan="2">';
-                if ($object->net_measure != '')
-                {
-                	print $object->net_measure." ".measuring_units_string(0, "weight", $object->net_measure_units);
-                }
-                else
-                {
-                    print '&nbsp;';
-                }
-
                 // Brut Weight
                 print '<tr><td class="titlefield">'.$langs->trans("Weight").'</td><td colspan="2">';
                 if ($object->weight != '')
@@ -1885,6 +1892,7 @@ else
                     print '&nbsp;';
                 }
                 print "</td></tr>\n";
+
                 if (empty($conf->global->PRODUCT_DISABLE_SIZE))
                 {
                     // Brut Length
@@ -1929,6 +1937,20 @@ else
                         print '&nbsp;';
                     }
                     print "</td></tr>\n";
+                }
+
+                if (! empty($conf->global->PRODUCT_ADD_NET_MEASURE))
+                {
+                	// Net Measure
+                	print '<tr><td class="titlefield">'.$langs->trans("NetMeasure").'</td><td colspan="2">';
+                	if ($object->net_measure != '')
+                	{
+                		print $object->net_measure." ".measuring_units_string(0, "weight", $object->net_measure_units);
+                	}
+                	else
+                	{
+                		print '&nbsp;';
+                	}
                 }
             }
 
