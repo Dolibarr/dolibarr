@@ -35,6 +35,7 @@ $langs->loadLangs(array("compta","bills","other","accountancy","loans","banks","
 if ($user->societe_id > 0) {
 	accessforbidden();
 
+
 }
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
