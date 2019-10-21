@@ -27,6 +27,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 
 // Load translation files required by the page
@@ -63,6 +64,7 @@ $year_current = $year_start;
 // Validate History
 $action = GETPOST('action', 'aZ09');
 
+$chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
 
 
 /*
@@ -99,7 +101,7 @@ if ($action == 'validatehistory') {
 	$db->begin();
 
 	// Now make the binding. Bind automatically only for product with a dedicated account that exists into chart of account, others need a manual bind
-	if ($db->type == 'pgsql') {
+	/*if ($db->type == 'pgsql') {
 		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det";
 		$sql1 .= " SET fk_code_ventilation = accnt.rowid";
 		$sql1 .= " FROM " . MAIN_DB_PREFIX . "product as p, " . MAIN_DB_PREFIX . "accounting_account as accnt , " . MAIN_DB_PREFIX . "accounting_system as syst";
@@ -112,16 +114,85 @@ if ($action == 'validatehistory') {
 		$sql1 .= " WHERE fd.fk_product = p.rowid AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . $conf->global->CHARTOFACCOUNTS.' AND accnt.entity = '.$conf->entity;
 		$sql1 .= " AND accnt.active = 1 AND p.accountancy_code_buy=accnt.account_number";
 		$sql1 .= " AND fd.fk_code_ventilation = 0";
-	}
+	}*/
+
+	// Supplier Invoice Lines (must be same request than into page list.php for manual binding)
+	$sql = "SELECT f.rowid as facid, f.ref, f.ref_supplier, f.libelle as invoice_label, f.datef, f.type as ftype,";
+	$sql.= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
+	$sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_buy as code_buy, p.tva_tx as tva_tx_prod,";
+	$sql.= " aa.rowid as aarowid,";
+	$sql.= " co.code as country_code, co.label as country_label,";
+	$sql.= " s.tva_intra";
+	$sql.= " FROM " . MAIN_DB_PREFIX . "facture_fourn as f";
+	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_country as co ON co.rowid = s.fk_pays ";
+	$sql.= " INNER JOIN " . MAIN_DB_PREFIX . "facture_fourn_det as l ON f.rowid = l.fk_facture_fourn";
+	$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
+	$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON p.accountancy_code_buy = aa.account_number AND aa.active = 1 AND aa.fk_pcg_version = '" . $chartaccountcode."' AND aa.entity = " . $conf->entity;
+	$sql.= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
+	$sql.= " AND l.product_type <= 2";
 
 	dol_syslog('htdocs/accountancy/supplier/index.php');
 
-	$resql1 = $db->query($sql1);
-	if (! $resql1) {
-		$error ++;
-		$db->rollback();
+	$result = $db->query($sql);
+	if (! $result) {
+		$error++;
 		setEventMessages($db->lasterror(), null, 'errors');
 	} else {
+		$num_lines = $db->num_rows($result);
+		
+		$isSellerInEEC = isInEEC($mysoc);
+		
+		$i = 0;
+		while ($i < min($num_lines, 10000)) {	// No more than 10000 at once
+			$objp = $db->fetch_object($result);
+			
+			// Search suggested account for product/service
+			$suggestedaccountingaccountfor = '';
+			if (($objp->country_code == $mysoc->country_code) || empty($objp->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
+				$objp->code_buy_p = $objp->code_buy;
+				$objp->aarowid_suggest = $objp->aarowid;
+				$suggestedaccountingaccountfor = '';
+			} else {
+				if ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale
+					//$objp->code_buy_p = $objp->code_buy_intra;
+					$objp->code_buy_p = $objp->code_buy;
+					//$objp->aarowid_suggest = $objp->aarowid_intra;
+					$objp->aarowid_suggest = $objp->aarowid;
+					$suggestedaccountingaccountfor = 'eec';
+				} else {                                        // Foreign sale
+					//$objp->code_buy_p = $objp->code_buy_export;
+					$objp->code_buy_p = $objp->code_buy;
+					//$objp->aarowid_suggest = $objp->aarowid_export;
+					$objp->aarowid_suggest = $objp->aarowid;
+					$suggestedaccountingaccountfor = 'export';
+				}
+			}
+			
+			if ($objp->aarowid_suggest > 0)
+			{
+				$sqlupdate = "UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det";
+				$sqlupdate.= " SET fk_code_ventilation = ".$objp->aarowid_suggest;
+				$sqlupdate.= " WHERE fk_code_ventilation <= 0 AND product_type <= 2 AND rowid = ".$objp->rowid;
+				
+				$resqlupdate = $db->query($sqlupdate);
+				if (! $resqlupdate)
+				{
+					$error++;
+					setEventMessages($db->lasterror(), null, 'errors');
+					break;
+				}
+			}
+			
+			$i++;
+		}
+	}
+	
+	if ($error)
+	{
+		$db->rollback();
+	}
+	else {
 		$db->commit();
 		setEventMessages($langs->trans('AutomaticBindingDone'), null, 'mesgs');
 	}
