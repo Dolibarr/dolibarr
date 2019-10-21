@@ -79,6 +79,7 @@ a.butActionNew>span.fa-plus-circle { padding-left: 6px; font-size: 1.5em; }
 a.butActionNewRefused>span.fa-plus-circle { padding-left: 6px; font-size: 1.5em; }
 
 .tableforfieldcreate a.butActionNew>span.fa-plus-circle, .tableforfieldcreate a.butActionNew>span.fa-plus-circle:hover,
+.tableforfieldedit a.butActionNew>span.fa-plus-circle, .tableforfieldedit a.butActionNew>span.fa-plus-circle:hover,
 span.butActionNew>span.fa-plus-circle, span.butActionNew>span.fa-plus-circle:hover,
 a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-circle:hover,
 span.butActionNewRefused>span.fa-plus-circle, span.butActionNewRefused>span.fa-plus-circle:hover,

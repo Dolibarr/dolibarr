@@ -64,7 +64,7 @@ class MyObject extends CommonObject
 
 
 	/**
-	 *  'type' if the field format ('integer', 'integer:Class:pathtoclass', 'varchar(x)', 'double(24,8)', 'text', 'html', 'datetime', 'timestamp', 'float')
+	 *  'type' if the field format ('integer', 'integer:Class:pathtoclass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'text', 'html', 'datetime', 'timestamp', 'float')
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed.
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). Using a negative value means field is not shown by default on list but can be selected for viewing)
@@ -81,6 +81,7 @@ class MyObject extends CommonObject
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
 	 */
 
 	// BEGIN MODULEBUILDER PROPERTIES
@@ -94,7 +95,7 @@ class MyObject extends CommonObject
 	    'label'         =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30, 'searchall'=>1, 'css'=>'minwidth200', 'help'=>'Help text', 'showoncombobox'=>1),
 	    'amount'        =>array('type'=>'double(24,8)', 'label'=>'Amount',           'enabled'=>1, 'visible'=>1,  'default'=>'null', 'position'=>40,  'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text for amount'),
 	    'qty'           =>array('type'=>'real',         'label'=>'Qty',              'enabled'=>1, 'visible'=>1,  'default'=>'0', 'position'=>45,  'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text for quantity', 'css'=>'maxwidth75imp'),
-	    'fk_soc' 		=>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=> 1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'help'=>'LinkToThirparty'),
+	    'fk_soc' 		=>array('type'=>'integer:Societe:societe/class/societe.class.php:1', 'label'=>'ThirdParty', 'visible'=> 1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'help'=>'LinkToThirparty'),
 		'description'   =>array('type'=>'text',			'label'=>'Description',		 'enabled'=>1, 'visible'=>0,  'position'=>60),
 		'note_public'   =>array('type'=>'html',			'label'=>'NotePublic',		 'enabled'=>1, 'visible'=>0,  'position'=>61),
 		'note_private'  =>array('type'=>'html',			'label'=>'NotePrivate',		 'enabled'=>1, 'visible'=>0,  'position'=>62),

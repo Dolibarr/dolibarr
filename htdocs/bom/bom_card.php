@@ -79,6 +79,7 @@ $permissionnote=$user->rights->bom->write;	// Used by the include of actions_set
 $permissiondellink=$user->rights->bom->write;	// Used by the include of actions_dellink.inc.php
 $permissionedit=$user->rights->bom->write; // Used by the include of actions_lineupdown.inc.php
 $permissiontoadd=$user->rights->bom->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontodelete = $user->rights->bom->delete || ($permissiontoadd && $object->status == 0);
 
 
 /*
@@ -93,11 +94,11 @@ if (empty($reshook))
 {
     $error=0;
 
-    $permissiontoadd = $user->rights->bom->write;
-    $permissiontodelete = $user->rights->bom->delete || ($permissiontoadd && $object->status == 0);
     $backurlforlist = DOL_URL_ROOT.'/bom/bom_list.php';
-    if (empty($backtopage)) {
-    	if (empty($id) && $action != 'add' && $action != 'create') $backtopage = $backurlforlist;
+
+    if (empty($backtopage) || ($cancel && empty($id))) {
+    	//var_dump($backurlforlist);exit;
+    	if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) $backtopage = $backurlforlist;
     	else $backtopage = DOL_URL_ROOT.'/bom/bom_card.php?id='.($id > 0 ? $id : '__ID__');
     }
 	$triggermodname = 'BOM_MODIFY';	// Name of trigger action code to execute when we modify record
@@ -218,7 +219,7 @@ if ($action == 'create')
 
 	dol_fiche_head(array(), '');
 
-	print '<table class="border centpercent">'."\n";
+	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
 	// Common attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_add.tpl.php';
@@ -252,7 +253,9 @@ if (($id || $ref) && $action == 'edit')
 
 	dol_fiche_head();
 
-	print '<table class="border centpercent">'."\n";
+	//$object->fields['keyfield']['disabled'] = 1;
+
+	print '<table class="border centpercent tableforfieldedit">'."\n";
 
 	// Common attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_edit.tpl.php';

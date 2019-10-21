@@ -108,7 +108,7 @@ $permissionnote=$user->rights->mrp->write;	// Used by the include of actions_set
 $permissiondellink=$user->rights->mrp->write;	// Used by the include of actions_dellink.inc.php
 $permissionedit=$user->rights->mrp->write; // Used by the include of actions_lineupdown.inc.php
 $permissiontoadd=$user->rights->mrp->write; // Used by the include of actions_addupdatedelete.inc.php
-
+$permissiontodelete = $user->rights->mrp->delete || ($permissiontoadd && $object->status == 0);
 
 
 /*
@@ -125,11 +125,12 @@ if (empty($reshook))
 {
     $error=0;
 
-    $permissiontodelete = $user->rights->mrp->delete || ($permissiontoadd && $object->status == 0);
     $backurlforlist = dol_buildpath('/mrp/mo_list.php', 1);
-    if (empty($backtopage)) {
-        if (empty($id)) $backtopage = $backurlforlist;
-        else $backtopage = dol_buildpath('/mrp/mo_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+
+    if (empty($backtopage) || ($cancel && empty($id))) {
+    	//var_dump($backurlforlist);exit;
+    	if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) $backtopage = $backurlforlist;
+    	else $backtopage = DOL_URL_ROOT.'/mrp/mo_card.php?id='.($id > 0 ? $id : '__ID__');
     }
     $triggermodname = 'MRP_MO_MODIFY';	// Name of trigger action code to execute when we modify record
 
@@ -257,7 +258,9 @@ if (($id || $ref) && $action == 'edit')
 
 	dol_fiche_head();
 
-	print '<table class="border centpercent tableforfield">'."\n";
+	$object->fields['fk_bom']['disabled'] = 1;
+
+	print '<table class="border centpercent tableforfieldedit">'."\n";
 
 	// Common attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_edit.tpl.php';

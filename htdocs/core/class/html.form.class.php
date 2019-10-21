@@ -5824,10 +5824,11 @@ class Form
 	 * @param	string			$morecss			More CSS
 	 * @param	string			$moreparams			More params provided to ajax call
 	 * @param	int				$forcecombo			Force to load all values and output a standard combobox (with no beautification)
+	 * @param	int				$disabled			1=Html component is disabled
 	 * @return	string								Return HTML string
 	 * @see selectForFormsList() select_thirdparty
 	 */
-    public function selectForForms($objectdesc, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0)
+    public function selectForForms($objectdesc, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0)
 	{
 		global $conf, $user;
 
@@ -5868,12 +5869,12 @@ class Form
 			$out.=  ajax_autocompleter($preselectedvalue, $htmlname, $urlforajaxcall, $urloption, $conf->global->$confkeyforautocompletemode, 0, array());
 			$out.= '<style type="text/css">.ui-autocomplete { z-index: 250; }</style>';
 			if ($placeholder) $placeholder=' placeholder="'.$placeholder.'"';
-			$out.= '<input type="text" class="'.$morecss.'" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$preselectedvalue.'"'.$placeholder.' />';
+			$out.= '<input type="text" class="'.$morecss.'"'.($disabled?' disabled="disabled"':'').' name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$preselectedvalue.'"'.$placeholder.' />';
 		}
 		else
 		{
 			// Immediate load of all database
-			$out.=$this->selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty, $searchkey, $placeholder, $morecss, $moreparams, $forcecombo);
+			$out.=$this->selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty, $searchkey, $placeholder, $morecss, $moreparams, $forcecombo, 0, $disabled);
 		}
 
 		return $out;
@@ -5893,10 +5894,11 @@ class Form
 	 * @param	string			$moreparams			More params provided to ajax call
 	 * @param	int				$forcecombo			Force to load all values and output a standard combobox (with no beautification)
 	 * @param	int				$outputmode			0=HTML select string, 1=Array
+	 * @param	int				$disabled			1=Html component is disabled
 	 * @return	string								Return HTML string
 	 * @see selectForForms()
 	 */
-    public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0)
+    public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled = 0)
 	{
 		global $conf, $langs, $user;
 
@@ -5948,7 +5950,7 @@ class Form
 			}
 
 			// Construct $out and $outarray
-			$out.= '<select id="'.$htmlname.'" class="flat'.($morecss?' '.$morecss:'').'"'.($moreparams?' '.$moreparams:'').' name="'.$htmlname.'">'."\n";
+			$out.= '<select id="'.$htmlname.'" class="flat'.($morecss?' '.$morecss:'').'"'.($disabled?' disabled="disabled"':'').($moreparams?' '.$moreparams:'').' name="'.$htmlname.'">'."\n";
 
 			// Warning: Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'. Seems it is no more true with selec2 v4
 			$textifempty='&nbsp;';
