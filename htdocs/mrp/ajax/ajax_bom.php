@@ -43,9 +43,12 @@ $action = GETPOST('action', 'alpha');
 
 $object = new BOM($db);
 $result=$object->fetch($idbom);
-if ($result)
+if ($result > 0)
 {
- 	echo json_encode($result);
+	// We remove properties we don't need in answer
+	unset ($object->fields);
+	unset ($object->db);
+	echo json_encode($object);
 }
 else
 {
