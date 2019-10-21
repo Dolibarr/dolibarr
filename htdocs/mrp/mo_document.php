@@ -110,7 +110,7 @@ if ($object->id)
 	 */
 	$head = moPrepareHead($object);
 
-	dol_fiche_head($head, 'document', $langs->trans("Mo"), -1, $object->picto);
+	dol_fiche_head($head, 'document', $langs->trans("MO"), -1, $object->picto);
 
 
 	// Build file list

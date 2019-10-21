@@ -285,7 +285,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     $res = $object->fetch_optionals();
 
 	$head = moPrepareHead($object);
-	dol_fiche_head($head, 'card', $langs->trans("Mo"), -1, $object->picto);
+	dol_fiche_head($head, 'card', $langs->trans("MO"), -1, $object->picto);
 
 	$formconfirm = '';
 
