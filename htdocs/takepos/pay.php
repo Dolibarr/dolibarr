@@ -172,9 +172,8 @@ else print "var received=0;";
 		}
 		console.log("We click on the payment mode to pay amount = "+amountpayed);
 		parent.$("#poslines").load("invoice.php?place=<?php echo $place;?>&action=valid&pay="+payment+"&amount="+amountpayed+"&invoiceid="+invoiceid, function() {
-			//parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
-			parent.$.colorbox.close();
-			//parent.setFocusOnSearchField();	// This does not have effect
+		    if (amountpayed > <?php echo $remaintopay; ?> || amountpayed == <?php echo $remaintopay; ?> || amountpayed==0 ) parent.$.colorbox.close();
+			else location.reload();
 		});
 	}
 </script>
