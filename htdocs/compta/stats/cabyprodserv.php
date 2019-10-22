@@ -476,6 +476,13 @@ print_liste_field_titre(
 llxFooter();
 $db->close();
 
+/**
+ *  Retourne un tableau d'ID des sous-categories de l'ID catégorie donnée
+ *
+ *  @param	int		$rootCatID	(ID catégorie racine)
+ *  @param	mysqli	$db	(SQL DB object)
+ *  @return array	IDs sous-catégories de $rootCatID
+ */
 function getNestedChildrenCats($rootCatID, $db)
 {
     $childrenCategoriesSQL =  'SELECT * FROM llx_categorie c WHERE c.fk_parent = '.$rootCatID;
