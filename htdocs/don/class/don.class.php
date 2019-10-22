@@ -6,7 +6,7 @@
  * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2019      Thibault FOUCART     <support@ptibogxiv.net>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019      Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,8 +61,16 @@ class Don extends CommonObject
 	 * @var string String with name of icon for object don. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'generic';
-
+    
+	/**
+	 * @var string Date of the donation
+	 */
     public $date;
+    
+    /**
+     * amount of donation
+     * @var double
+     */
     public $amount;
 
     /**
@@ -133,7 +141,7 @@ class Don extends CommonObject
 
 
     /**
-     * 	Retourne le libelle du statut d'un don (brouillon, validee, abandonnee, payee)
+     * 	Returns the donation status label (draft, valid, abandoned, paid)
      *
      *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
      *  @return string        		Libelle
@@ -145,7 +153,7 @@ class Don extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     *  Renvoi le libelle d'un statut donne
+     *  Return the label of a given status
      *
      *  @param	int		$statut        	Id statut
      *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
