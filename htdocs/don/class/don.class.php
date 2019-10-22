@@ -61,12 +61,12 @@ class Don extends CommonObject
 	 * @var string String with name of icon for object don. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'generic';
-    
+
 	/**
 	 * @var string Date of the donation
 	 */
     public $date;
-    
+
     /**
      * amount of donation
      * @var double
