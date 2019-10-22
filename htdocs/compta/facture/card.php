@@ -2566,6 +2566,7 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $formmargin = new FormMargin($db);
+$soc = new Societe($db);
 $paymentstatic=new Paiement($db);
 $bankaccountstatic = new Account($db);
 if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
@@ -2586,7 +2587,6 @@ if ($action == 'create')
 
 	print load_fiche_titre($langs->trans('NewBill'), '', 'invoicing');
 
-	$soc = new Societe($db);
 	if ($socid > 0)
 		$res = $soc->fetch($socid);
 
@@ -3465,7 +3465,6 @@ elseif ($id > 0 || ! empty($ref))
 
 	$result = $object->fetch_thirdparty();
 
-	$soc = new Societe($db);
 	$result=$soc->fetch($object->socid);
 	if ($result < 0) dol_print_error($db);
 	$selleruserevenustamp = $mysoc->useRevenueStamp();
