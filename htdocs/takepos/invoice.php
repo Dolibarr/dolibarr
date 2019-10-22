@@ -165,8 +165,12 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
 	if ($invoice->statut != Facture::STATUS_DRAFT)
 	{
-		dol_syslog("Sale already validated");
-		dol_htmloutput_errors($langs->trans("InvoiceIsAlreadyValidated", "TakePos"), null, 1);
+		//If invoice is validated but it is not fully paid is not error and make the payment
+		if ($invoice->getRemainToPay()>0) $res=1;
+		else{
+			dol_syslog("Sale already validated");
+			dol_htmloutput_errors($langs->trans("InvoiceIsAlreadyValidated", "TakePos"), null, 1);
+		}
 	}
 	elseif (count($invoice->lines)==0)
 	{
@@ -199,7 +203,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		$payment->amounts[$invoice->id] = $amountofpayment;
 
 		// If user has not used change control, add total invoice payment
-		if ($amountofpayment == 0) $payment->amounts[$invoice->id] = $invoice->total_ttc;
+		if ($amountofpayment == 0) $payment->amounts[$invoice->id] = $remaintopay;
 
 		$payment->paiementid=$paiementid;
 		$payment->num_payment=$invoice->ref;
@@ -427,7 +431,6 @@ $sectionwithinvoicelink='';
 if ($action=="valid" || $action=="history")
 {
     $sectionwithinvoicelink.='<!-- Section with invoice link -->'."\n";
-    $sectionwithinvoicelink.='<input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">';
     $sectionwithinvoicelink.='<span style="font-size:120%;" class="center">';
     $sectionwithinvoicelink.=$invoice->getNomUrl(1, '', 0, 0, '', 0, 0, -1, '_backoffice')." - ";
     $remaintopay = $invoice->getRemainToPay();
@@ -582,7 +585,7 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 if ($mobilepage=="invoice" || $mobilepage=="") {
 	print $langs->trans('TotalTTC');
 	print ' : <b>' . price($invoice->total_ttc, 1, '', 1, -1, -1, $conf->currency) . '</b></span>';
-	print '<br>' . $sectionwithinvoicelink;
+	print '<br><input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">' . $sectionwithinvoicelink;
 	print '</td>';
 }
 if ($_SESSION["basiclayout"]!=1)
