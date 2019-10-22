@@ -211,7 +211,7 @@ if ($resql)
 	if (! empty($conf->projet->enabled))
 	{
 	    $langs->load("projects");
-	    print_liste_field_titre("Project", $_SERVER["PHP_SELF"], "fk_projet", "", $param, "", $sortfield, $sortorder);
+	    print_liste_field_titre("Project", $_SERVER["PHP_SELF"], "d.fk_projet", "", $param, "", $sortfield, $sortorder);
 	}
 	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "d.amount", "", $param, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');

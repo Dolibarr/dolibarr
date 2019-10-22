@@ -1882,13 +1882,19 @@ abstract class CommonObject
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		if ($this->table_element == 'actioncomm')
+		if (! empty($this->fields['fk_project']))		// Common case
+		{
+			if ($projectid) $sql.= ' SET fk_project = '.$projectid;
+			else $sql.= ' SET fk_project = NULL';
+			$sql.= ' WHERE rowid = '.$this->id;
+		}
+		elseif ($this->table_element == 'actioncomm')	// Special case for actioncomm
 		{
 			if ($projectid) $sql.= ' SET fk_project = '.$projectid;
 			else $sql.= ' SET fk_project = NULL';
 			$sql.= ' WHERE id = '.$this->id;
 		}
-		else
+		else											// Special case for old architecture objects
 		{
 			if ($projectid) $sql.= ' SET fk_projet = '.$projectid;
 			else $sql.= ' SET fk_projet = NULL';

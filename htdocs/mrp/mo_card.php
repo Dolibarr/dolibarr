@@ -58,6 +58,7 @@ if (! $res) die("Include of main fails");
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 dol_include_once('/mrp/class/mo.class.php');
 dol_include_once('/mrp/lib/mrp_mo.lib.php');
 
@@ -143,6 +144,18 @@ if (empty($reshook))
     // Actions when printing a doc from card
     include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
+    // Action to move up and down lines of object
+    //include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
+
+    if ($action == 'set_thirdparty' && $permissiontoadd)
+    {
+    	$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, 'MO_MODIFY');
+    }
+    if ($action == 'classin' && $permissiontoadd)
+    {
+    	$object->setProject(GETPOST('projectid', 'int'));
+    }
+
     // Actions to send emails
     $trigger_name='MO_SENTBYMAIL';
     $autocopy='MAIN_MAIL_AUTOCOPY_MO_TO';
@@ -160,7 +173,7 @@ if (empty($reshook))
  */
 
 $form=new Form($db);
-$formfile=new FormFile($db);
+$formproject=new FormProjets($db);
 
 llxHeader('', $langs->trans('Mo'), '');
 
@@ -248,7 +261,7 @@ if ($action == 'create')
 // Part to edit record
 if (($id || $ref) && $action == 'edit')
 {
-	print load_fiche_titre($langs->trans("Mo"), '', 'cubes');
+	print load_fiche_titre($langs->trans("MO"), '', 'cubes');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -341,9 +354,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	/*
 	// Ref bis
 	$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->mrp->creer, 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->mrp->creer, 'string', '', null, null, '', 1);
+	$morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->mrp->creer, 'string', '', null, null, '', 1);*/
 	// Thirdparty
-	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
+	$morehtmlref.=$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
@@ -374,7 +387,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	        }
 	    }
 	}
-	*/
 	$morehtmlref.='</div>';
 
 
@@ -387,7 +399,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<table class="border centpercent">'."\n";
 
 	// Common attributes
-	//$keyforbreak='fieldkeytoswitchonsecondcolumn';
+	$keyforbreak='qty';
+	unset($object->fields['fk_project']);
+	unset($object->fields['fk_soc']);
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes

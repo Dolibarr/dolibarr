@@ -5788,7 +5788,7 @@ div.tabsElem a.tab {
 	}
 
 	.dropdown dd ul {
-		max-width: 300px;
+		max-width: 350px;
 	}
 }
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
@@ -5816,6 +5816,10 @@ div.tabsElem a.tab {
     	background-size: 20px auto;
     	margin-top: 2px;
     	left: 4px;
+	}
+
+	.dropdown dd ul {
+		max-width: 300px;
 	}
 }
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */

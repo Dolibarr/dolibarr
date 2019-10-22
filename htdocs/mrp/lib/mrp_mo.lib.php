@@ -36,9 +36,14 @@ function moPrepareHead($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/mrp/mo_card.php", 1).'?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/mrp/mo_card.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/mrp/mo_production.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Production");
+	$head[$h][2] = 'production';
 	$h++;
 
 	if (isset($object->fields['note_public']) || isset($object->fields['note_private']))

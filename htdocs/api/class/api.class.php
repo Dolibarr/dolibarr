@@ -178,6 +178,7 @@ class DolibarrApi
                 unset($object->lines[$i]->cond_reglement);
                 unset($object->lines[$i]->fk_delivery_address);
                 unset($object->lines[$i]->fk_projet);
+                unset($object->lines[$i]->fk_project);
                 unset($object->lines[$i]->thirdparty);
                 unset($object->lines[$i]->user);
                 unset($object->lines[$i]->model_pdf);
