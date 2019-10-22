@@ -2663,7 +2663,7 @@ else
 
 		        if ($user->rights->societe->creer)
 		        {
-		            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
+		            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
 		        }
 
 		        if (! empty($conf->adherent->enabled))
