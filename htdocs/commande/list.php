@@ -770,7 +770,7 @@ if ($resql)
 
 	$generic_commande = new Commande($db);
 	$generic_product = new Product($db);
-	
+
 	$companystatic = array();
 	$getNomUrl = array();
 
@@ -785,7 +785,7 @@ if ($resql)
 		$text_info='';
 		$text_warning='';
 		$nbprod=0;
-		
+
         if (!isset($companystatic[$obj->socid])) {
 		    $companystatic[$obj->socid] = new Societe($db);
 		    $companystatic[$obj->socid]->id = $obj->socid;
