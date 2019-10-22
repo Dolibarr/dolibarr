@@ -758,7 +758,8 @@ SCRIPT;
     				print '</tr>';
 				}
 
-				$extralabels=$extrafields->fetch_name_optionals_label("product_fournisseur_price");
+				$extrafields->fetch_name_optionals_label("product_fournisseur_price");
+				$extralabels=$extrafields->attributes["product_fournisseur_price"]['label'];
 				// Extrafields
 				$resql = $db->query("SELECT * FROM " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields WHERE fk_object = " . $rowid);
 				if ($db->num_rows($resql) != 1) {
@@ -865,7 +866,8 @@ SCRIPT;
 				print_liste_field_titre("DateModification", $_SERVER["PHP_SELF"], "pfp.tms", "", $param, '', $sortfield, $sortorder, 'right ');
 
 				// fetch optionals attributes and labels
-				$extralabels=$extrafields->fetch_name_optionals_label("product_fournisseur_price");
+				$extrafields->fetch_name_optionals_label("product_fournisseur_price");
+				$extralabels=$extrafields->attributes["product_fournisseur_price"]['label'];
 				foreach ($extralabels as $key => $value) {
 					// Show field if not hidden
 					if (! empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
