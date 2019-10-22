@@ -80,7 +80,7 @@ class Contact extends CommonObject
 		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>1,  'position'=>1000),
 	);
 
-	public $civility_id;      // In fact we store civility_code
+	public $civility_id;      	// In fact we store civility_code
 	public $civility_code;
 	public $civility;
 	public $address;
@@ -88,16 +88,17 @@ class Contact extends CommonObject
 	public $town;
 
 	public $state_id;	        	// Id of department
-	public $state_code;		    // Code of department
+	public $state_code;		    	// Code of department
 	public $state;			        // Label of department
 
     public $poste;                 // Position
 
 	public $socid;					// fk_soc
-	public $statut;				// 0=inactif, 1=actif
+	public $statut;					// 0=inactif, 1=actif
 
 	public $code;
 	public $email;
+	public $no_email;			  // 1 = contact has globaly unsubscribe of all mass emailings
 	public $skype;
 	public $photo;
 	public $jabberid;
@@ -394,6 +395,7 @@ class Contact extends CommonObject
 
 			if (! $error && $this->user_id > 0)
 			{
+				// If contact is linked to a user
 				$tmpobj = new User($this->db);
 				$tmpobj->fetch($this->user_id);
 				$usermustbemodified = 0;
