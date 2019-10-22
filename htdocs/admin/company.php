@@ -476,7 +476,7 @@ if (! empty($conf->barcode->enabled)) {
 }
 
 // Logo
-print '<tr class="oddeven"><td><label for="logo">'.$langs->trans("Logo").' (png,jpg)</label></td><td>';
+print '<tr class="oddeven"><td><label for="logo">'.$form->textwithpicto($langs->trans("Logo"), 'png, jpg').'</label></td><td>';
 print '<table width="100%" class="nobordernopadding"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
 print '<input type="file" class="flat minwidth200" name="logo" id="logo" accept="image/*">';
 print '</td><td class="nocellnopadd right" valign="middle">';
@@ -493,7 +493,7 @@ print '</td></tr></table>';
 print '</td></tr>';
 
 // Logo (squarred)
-print '<tr class="oddeven"><td><label for="logo_squarred">'.$langs->trans("LogoSquarred").' (png,jpg)</label></td><td>';
+print '<tr class="oddeven"><td><label for="logo_squarred">'.$form->textwithpicto($langs->trans("LogoSquarred"), 'png, jpg').'</label></td><td>';
 print '<table width="100%" class="nobordernopadding"><tr class="nocellnopadd"><td valign="middle" class="nocellnopadd">';
 print '<input type="file" class="flat minwidth200" name="logo_squarred" id="logo_squarred" accept="image/*">';
 print '</td><td class="nocellnopadd right" valign="middle">';

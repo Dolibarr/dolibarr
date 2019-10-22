@@ -628,7 +628,7 @@ class Contact extends CommonObject
 		if ($this->birthday_alert)
 		{
 			//check existing
-			$sql_check = "SELECT * FROM ".MAIN_DB_PREFIX."user_alert WHERE type=1 AND fk_contact=".$this->db->escape($id)." AND fk_user=".$user->id;
+			$sql_check = "SELECT rowid FROM ".MAIN_DB_PREFIX."user_alert WHERE type=1 AND fk_contact=".$this->db->escape($id)." AND fk_user=".$user->id;
 			$result_check = $this->db->query($sql_check);
 			if (! $result_check || ($this->db->num_rows($result_check)<1))
 			{

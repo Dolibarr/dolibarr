@@ -142,7 +142,7 @@ if ($object->id > 0)
 	$head = moPrepareHead($object);
 
 
-	dol_fiche_head($head, 'agenda', $langs->trans("Mo"), -1, $object->picto);
+	dol_fiche_head($head, 'agenda', $langs->trans("MO"), -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------

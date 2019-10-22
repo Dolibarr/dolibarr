@@ -940,11 +940,11 @@ class Product extends CommonObject
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."product";
             $sql.= " SET label = '" . $this->db->escape($this->label) ."'";
-            
+
             if ($updatetype && ($this->isProduct() || $this->isService())) {
                 $sql.= ", fk_product_type = " . $this->type;
             }
-            
+
             $sql.= ", ref = '" . $this->db->escape($this->ref) ."'";
             $sql.= ", ref_ext = ".(! empty($this->ref_ext)?"'".$this->db->escape($this->ref_ext)."'":"null");
             $sql.= ", default_vat_code = ".($this->default_vat_code ? "'".$this->db->escape($this->default_vat_code)."'" : "null");

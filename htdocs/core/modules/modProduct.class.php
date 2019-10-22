@@ -85,7 +85,7 @@ class modProduct extends DolibarrModules
 		$this->const[$r][3] = 'Module to control product codes';
 		$this->const[$r][4] = 0;
 		$r++;
-		
+
 		$this->const[$r][0] = "PRODUCT_PRICE_UNIQ";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "1";
@@ -390,7 +390,7 @@ class modProduct extends DolibarrModules
             'p.length' => "Length",
 			'p.length_units' => "LengthUnit",
             'p.width' => "Width",
-			'p.width_units' => "VolumeUnits",
+			'p.width_units' => "WidthUnits",
             'p.height' => "Height",
             'p.height_units' => "HeightUnit",
             'p.surface' => "Surface",

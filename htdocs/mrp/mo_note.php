@@ -1,6 +1,5 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,7 +95,7 @@ if ($id > 0 || ! empty($ref))
 
 	$head = moPrepareHead($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("Mo"), -1, $object->picto);
+	dol_fiche_head($head, 'note', $langs->trans("MO"), -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004	Andreu Bisquerra	<jove@bisquerra.com>
+/* Copyright (C) 2019	Laurent Destailleur (eldy)	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
  */
 
 /**
- *	\file       htdocs/takepos/ajax/ajax.php
- *	\brief      Ajax search component for TakePos. It search products of a category.
+ *	\file       htdocs/mrp/ajax/ajax.php
+ *	\brief      Ajax search component for Mrp. It get BOM content.
  */
 
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -31,54 +31,26 @@ if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
 if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
 require '../../main.inc.php';	// Load $user and permissions
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 
-$category = GETPOST('category', 'alpha');
+$idbom = GETPOST('idbom', 'alpha');
 $action = GETPOST('action', 'alpha');
-$term = GETPOST('term', 'alpha');
 
 
 /*
  * View
  */
 
-if ($action=="getProducts") {
-    $object = new Categorie($db);
-    $result=$object->fetch($category);
-    if ($result > 0)
-    {
-	    $prods = $object->getObjectsInCateg("product");
-	    // Removed properties we don't need
-	    if (is_array($prods) && count($prods) > 0)
-	    {
-	    	foreach($prods as $prod)
-	    	{
-	    		unset($prod->fields);
-	    		unset($prod->db);
-	    	}
-	    }
-    	echo json_encode($prods);
-    }
-    else
-    {
-    	echo 'Failed to load category with id='.$category;
-    }
+$object = new BOM($db);
+$result=$object->fetch($idbom);
+if ($result > 0)
+{
+	// We remove properties we don't need in answer
+	unset($object->fields);
+	unset($object->db);
+	echo json_encode($object);
 }
-elseif ($action=="search" && $term != '') {
-    $sql = 'SELECT rowid, ref, label, tosell, tobuy FROM '.MAIN_DB_PREFIX.'product';
-    $sql.= ' WHERE entity IN ('.getEntity('product').')';
-    $sql.= ' AND tosell = 1';
-    $sql.= natural_search(array('ref','label','barcode'), $term);
-    $resql = $db->query($sql);
-	if ($resql)
-	{
-	    $rows = array();
-	    while ($row = $db->fetch_object($resql)) {
-	        $rows[] = $row;
-	    }
-	    echo json_encode($rows);
-	}
-	else {
-		echo 'Failed to search product : '.$db->lasterror();
-	}
+else
+{
+   	echo 'Failed to load category with id='.$idbom;
 }

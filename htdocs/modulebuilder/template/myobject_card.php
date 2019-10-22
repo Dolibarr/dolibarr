@@ -105,10 +105,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 //$isdraft = (($object->statut == MyObject::STATUS_DRAFT) ? 1 : 0);
 //$result = restrictedArea($user, 'mymodule', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
-$permissionnote=$user->rights->mymodule->write;	// Used by the include of actions_setnotes.inc.php
-$permissiondellink=$user->rights->mymodule->write;	// Used by the include of actions_dellink.inc.php
-$permissionedit=$user->rights->mymodule->write; // Used by the include of actions_lineupdown.inc.php
-$permissiontoadd=$user->rights->mymodule->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissionnote = $user->rights->mymodule->write;		// Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->rights->mymodule->write;	// Used by the include of actions_dellink.inc.php
+$permissionedit = $user->rights->mymodule->write; 		// Used by the include of actions_lineupdown.inc.php
+$permissiontoadd = $user->rights->mymodule->write; 		// Used by the include of actions_addupdatedelete.inc.php
+$permissiontodelete = $user->rights->mymodule->delete || ($permissiontoadd && $object->status == 0);
 
 
 
@@ -124,11 +125,11 @@ if (empty($reshook))
 {
     $error=0;
 
-    $permissiontodelete = $user->rights->mymodule->delete || ($permissiontoadd && $object->status == 0);
     $backurlforlist = dol_buildpath('/mymodule/myobject_list.php', 1);
-    if (empty($backtopage)) {
-    	if (empty($id) && $action != 'add' && $action != 'create') $backtopage = $backurlforlist;
-        else $backtopage = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+
+    if (empty($backtopage) || ($cancel && empty($id))) {
+    	if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) $backtopage = $backurlforlist;
+    	else $backtopage = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
     }
     $triggermodname = 'MYMODULE_MYOBJECT_MODIFY';	// Name of trigger action code to execute when we modify record
 
@@ -226,7 +227,7 @@ if (($id || $ref) && $action == 'edit')
 
 	dol_fiche_head();
 
-	print '<table class="border centpercent tableforfieldcreate">'."\n";
+	print '<table class="border centpercent tableforfieldedit">'."\n";
 
 	// Common attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_edit.tpl.php';

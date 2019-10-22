@@ -205,9 +205,11 @@ if (empty($reshook))
 			{
 				$db->commit();
 
-				if ($backtopage)
+				if (! empty($backtopage))
 				{
-					header("Location: ".$backtopage.'&projectid='.$object->id);
+					$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $backtopage);	// New method to autoselect project after a New on another form object creation
+					$backtopage = $backtopage.'&projectid='.$object->id;	// Old method
+					header("Location: ".$backtopage);
 					exit;
 				}
 				else
@@ -595,7 +597,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 			print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1);
 		}
 		else print $text;
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+		if (! GETPOSTISSET('backtopage')) print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 		print '</td></tr>';
 	}
 

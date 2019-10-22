@@ -496,10 +496,10 @@ class SMTPs
                     return $_retVal;
                 }
             }
-			
+
 			// Default authentication method is LOGIN
 			if (empty($conf->global->MAIL_SMTP_AUTH_TYPE)) $conf->global->MAIL_SMTP_AUTH_TYPE = 'LOGIN';
-			
+
             // Send Authentication to Server
             // Check for errors along the way
             switch ($conf->global->MAIL_SMTP_AUTH_TYPE) {

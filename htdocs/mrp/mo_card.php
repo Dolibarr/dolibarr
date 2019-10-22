@@ -1,6 +1,5 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,7 +108,7 @@ $permissionnote=$user->rights->mrp->write;	// Used by the include of actions_set
 $permissiondellink=$user->rights->mrp->write;	// Used by the include of actions_dellink.inc.php
 $permissionedit=$user->rights->mrp->write; // Used by the include of actions_lineupdown.inc.php
 $permissiontoadd=$user->rights->mrp->write; // Used by the include of actions_addupdatedelete.inc.php
-
+$permissiontodelete = $user->rights->mrp->delete || ($permissiontoadd && $object->status == 0);
 
 
 /*
@@ -126,11 +125,12 @@ if (empty($reshook))
 {
     $error=0;
 
-    $permissiontodelete = $user->rights->mrp->delete || ($permissiontoadd && $object->status == 0);
     $backurlforlist = dol_buildpath('/mrp/mo_list.php', 1);
-    if (empty($backtopage)) {
-        if (empty($id)) $backtopage = $backurlforlist;
-        else $backtopage = dol_buildpath('/mrp/mo_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+
+    if (empty($backtopage) || ($cancel && empty($id))) {
+    	//var_dump($backurlforlist);exit;
+    	if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) $backtopage = $backurlforlist;
+    	else $backtopage = DOL_URL_ROOT.'/mrp/mo_card.php?id='.($id > 0 ? $id : '__ID__');
     }
     $triggermodname = 'MRP_MO_MODIFY';	// Name of trigger action code to execute when we modify record
 
@@ -204,16 +204,37 @@ if ($action == 'create')
 
 	dol_fiche_end();
 
-	print '
+	?>
 	<script>
      	$(document).ready(function () {
-			jQuery("#fk_bom").change(function() {
-				console.log("We change value of BOM");
-				/* TODO */
+			jQuery('#fk_bom').change(function() {
+				console.log('We change value of BOM with BOM of id '+jQuery('#fk_bom').val());
+
+				$.getJSON('<?php echo DOL_URL_ROOT ?>/mrp/ajax/ajax_bom.php?action=getBoms&idbom='+jQuery('#fk_bom').val(), function(data) {
+					console.log(data);
+					if (typeof data.rowid != "undefined") {
+						console.log("New BOM loaded, we set values in form");
+						$('#qty').val(data.qty);
+						$("#fk_product").val(data.fk_product);
+						$('#fk_product').trigger('change'); // Notify any JS components that the value changed
+						$('#note_private').val(data.description);
+						$('#note_private').trigger('change'); // Notify any JS components that the value changed
+						if (typeof CKEDITOR != "undefined") {
+							if (typeof CKEDITOR.instances != "undefined") {
+								if (typeof CKEDITOR.instances.note_private != "undefined") {
+									console.log(CKEDITOR.instances.note_private);
+									CKEDITOR.instances.note_private.setData(data.description);
+								}
+							}
+						}
+					} else {
+						console.log("Failed to get BOM");
+					}
+				});
  	        });
 		})
 	</script>
-	';
+	<?php
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
@@ -237,7 +258,9 @@ if (($id || $ref) && $action == 'edit')
 
 	dol_fiche_head();
 
-	print '<table class="border centpercent tableforfield">'."\n";
+	$object->fields['fk_bom']['disabled'] = 1;
+
+	print '<table class="border centpercent tableforfieldedit">'."\n";
 
 	// Common attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_edit.tpl.php';
@@ -262,7 +285,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     $res = $object->fetch_optionals();
 
 	$head = moPrepareHead($object);
-	dol_fiche_head($head, 'card', $langs->trans("Mo"), -1, $object->picto);
+	dol_fiche_head($head, 'card', $langs->trans("MO"), -1, $object->picto);
 
 	$formconfirm = '';
 

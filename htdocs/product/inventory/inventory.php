@@ -102,6 +102,13 @@ if (empty($reshook))
 
 	$backurlforlist = DOL_URL_ROOT.'/product/inventory/list.php';
 
+	if (empty($backtopage) || ($cancel && empty($id))) {
+		//var_dump($backurlforlist);exit;
+		if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) $backtopage = $backurlforlist;
+		else $backtopage = DOL_URL_ROOT.'/bom/bom_card.php?id='.($id > 0 ? $id : '__ID__');
+	}
+
+
 	// Actions cancel, add, update, delete or clone
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 

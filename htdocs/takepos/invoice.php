@@ -141,7 +141,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 
 	$invoice = new Facture($db);
 	$invoice->fetch($placeid);
-	if($invoice->total_ttc<0){
+	if ($invoice->total_ttc < 0) {
 		$invoice->type= $invoice::TYPE_CREDIT_NOTE;
 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE ";
 		$sql.="fk_soc = '".$invoice->socid."' ";
@@ -165,8 +165,12 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
 	if ($invoice->statut != Facture::STATUS_DRAFT)
 	{
-		dol_syslog("Sale already validated");
-		dol_htmloutput_errors($langs->trans("InvoiceIsAlreadyValidated", "TakePos"), null, 1);
+		//If invoice is validated but it is not fully paid is not error and make the payment
+		if ($invoice->getRemainToPay()>0) $res=1;
+		else{
+			dol_syslog("Sale already validated");
+			dol_htmloutput_errors($langs->trans("InvoiceIsAlreadyValidated", "TakePos"), null, 1);
+		}
 	}
 	elseif (count($invoice->lines)==0)
 	{
@@ -189,15 +193,17 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	    $res = $invoice->validate($user);
 	}
 
+	$remaintopay = $invoice->getRemainToPay();
+
 	// Add the payment
-    if ($res > 0) {
+	if ($res >= 0 && $remaintopay > 0) {
 		$payment = new Paiement($db);
 		$payment->datepaye = $now;
 		$payment->fk_account = $bankaccount;
 		$payment->amounts[$invoice->id] = $amountofpayment;
 
 		// If user has not used change control, add total invoice payment
-		if ($amountofpayment == 0) $payment->amounts[$invoice->id] = $invoice->total_ttc;
+		if ($amountofpayment == 0) $payment->amounts[$invoice->id] = $remaintopay;
 
 		$payment->paiementid=$paiementid;
 		$payment->num_payment=$invoice->ref;
@@ -205,9 +211,9 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		$payment->create($user);
 		$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
 
-		$remaintopay = $invoice->getRemainToPay();
+		$remaintopay = $invoice->getRemainToPay();	// Recalculate remain to pay after the payment is recorded
 		if ($remaintopay == 0) {
-			dol_syslog("Invoice is paid, so we set it to pay");
+			dol_syslog("Invoice is paid, so we set it to status Paid");
 			$result = $invoice->set_paid($user);
 			if ($result > 0) $invoice->paye = 1;
 		} else {
@@ -425,7 +431,6 @@ $sectionwithinvoicelink='';
 if ($action=="valid" || $action=="history")
 {
     $sectionwithinvoicelink.='<!-- Section with invoice link -->'."\n";
-    $sectionwithinvoicelink.='<input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">';
     $sectionwithinvoicelink.='<span style="font-size:120%;" class="center">';
     $sectionwithinvoicelink.=$invoice->getNomUrl(1, '', 0, 0, '', 0, 0, -1, '_backoffice')." - ";
     $remaintopay = $invoice->getRemainToPay();
@@ -580,7 +585,7 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 if ($mobilepage=="invoice" || $mobilepage=="") {
 	print $langs->trans('TotalTTC');
 	print ' : <b>' . price($invoice->total_ttc, 1, '', 1, -1, -1, $conf->currency) . '</b></span>';
-	print '<br>' . $sectionwithinvoicelink;
+	print '<br><input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">' . $sectionwithinvoicelink;
 	print '</td>';
 }
 if ($_SESSION["basiclayout"]!=1)
@@ -656,7 +661,7 @@ if ($placeid > 0)
 {
 	//In Phone basic layout hide some content depends situation
 	if ($_SESSION["basiclayout"]==1 && $mobilepage!="invoice" && $action!="order") return;
-	
+
     if (is_array($invoice->lines) && count($invoice->lines))
     {
         $tmplines = array_reverse($invoice->lines);
@@ -716,10 +721,12 @@ print '</table>';
 
 if ($invoice->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]})
 {
-    $soc = new Societe($db);
+	$constforcompanyid='CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
+	$soc = new Societe($db);
     if ($invoice->socid > 0) $soc->fetch($invoice->socid);
-    else $soc->fetch($conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]});
-    print '<!-- Show customer --><p style="font-size:120%;" class="right">';
+    else $soc->fetch($conf->global->$constforcompanyid);
+    print '<!-- Show customer -->';
+    print '<p class="right">';
     print $langs->trans("Customer").': '.$soc->name;
 
 	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
@@ -730,15 +737,13 @@ if ($invoice->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takep
 		$warehouse->fetch($conf->global->$constantforkey);
 		print '<br>'.$langs->trans("Warehouse").': '.$warehouse->ref;
 	}
-    print '</p>';
 
     // Module Adherent
     if (! empty($conf->adherent->enabled))
     {
     	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
     	$langs->load("members");
-    	print '<p style="font-size:120%;" class="right">';
-    	print $langs->trans("Member").': ';
+    	print '<br>'.$langs->trans("Member").': ';
     	$adh=new Adherent($db);
     	$result=$adh->fetch('', '', $invoice->socid);
     	if ($result > 0)
@@ -763,8 +768,8 @@ if ($invoice->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takep
 		{
    			print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
 		}
-	    print '</p>';
 	}
+	print '</p>';
 }
 
 if ($action == "search")

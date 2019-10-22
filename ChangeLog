@@ -30,7 +30,7 @@ Following changes may create regressions for some external modules, but were nec
 ***** ChangeLog for 10.0.3 compared to 10.0.2 *****
 IMPORTANT : This version fixes a serious bug in saving the units of weight, size, surface and volume on product card.
 The unit were not saved correctly in database making calculation on shipments wrong. 
-Update to this version must be done if you use them and have installed version 10.0.0, 10.0.1 or 10.0.2 and set some products after installing or upgrading to this version.
+Update to this version must be done if you use them and have installed version 10.0.0, 10.0.1 or 10.0.2 and set some products after installing or upgrading to one of this version.
 Once update is done you must then edit (manually) the product that has bad unit to set the correct unit to have features restored.
 
 FIX: #11702 
@@ -42,6 +42,7 @@ FIX: #12041
 FIX: #12054
 FIX: #12083
 FIX: #12088
+FIX: Clean the + of categories on the product view only in POS module
 FIX: access to public interface when origin email has an alias.
 FIX: Alias name is not into the email recipient label.
 FIX: allow standalone credit note even if no invoice
@@ -92,6 +93,9 @@ FIX: Update of leave request when CSRF with token is on
 FIX: Var not enough sanitized
 FIX: wrong test
 FIX: XSS
+FIX: Payment from POS ware not recorded.
+FIX: Can validate invoice with amount including tax of zero for the case of having a final invoice with
+     VAT that includes a deposit without vat. 
 
 ***** ChangeLog for 10.0.2 compared to 10.0.1 *****
 FIX: #10460 compatibility with MariaDB 10.4

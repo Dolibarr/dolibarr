@@ -66,6 +66,7 @@ NoContractedProducts=No products/services contracted
 NoRecordedContracts=No recorded contracts
 NoRecordedInterventions=No recorded interventions
 BoxLatestSupplierOrders=Latest purchase orders
+BoxLatestSupplierOrdersAwaitingReception=Latest Purchase Orders (with a pending reception)
 NoSupplierOrder=No recorded purchase order
 BoxCustomersInvoicesPerMonth=Customer Invoices per month
 BoxSuppliersInvoicesPerMonth=Vendor Invoices per month

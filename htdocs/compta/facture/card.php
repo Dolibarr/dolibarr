@@ -278,8 +278,11 @@ if (empty($reshook))
 				$action = '';
 			}
 		} else {
-			// Si non avoir, le signe doit etre positif
-			if (empty($conf->global->FACTURE_ENABLE_NEGATIVE) && $object->total_ht < 0) {
+			// If not a credit note, amount with tax must be positive or nul.
+			// Note that amount excluding tax can be negative because you can have a invoice of 100 with vat of 20 that
+			// consumes a credit note of 100 with vat 0 (total with tax is 0 but without tax is -20).
+			// For some cases, credit notes can have a vat of 0 (for example when selling goods in France).
+			if (empty($conf->global->FACTURE_ENABLE_NEGATIVE) && $object->total_ttc < 0) {
 				setEventMessages($langs->trans("ErrorInvoiceOfThisTypeMustBePositive"), null, 'errors');
 				$action = '';
 			}
@@ -2563,6 +2566,7 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $formmargin = new FormMargin($db);
+$soc = new Societe($db);
 $paymentstatic=new Paiement($db);
 $bankaccountstatic = new Account($db);
 if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
@@ -2583,7 +2587,6 @@ if ($action == 'create')
 
 	print load_fiche_titre($langs->trans('NewBill'), '', 'invoicing');
 
-	$soc = new Societe($db);
 	if ($socid > 0)
 		$res = $soc->fetch($socid);
 
@@ -3462,7 +3465,6 @@ elseif ($id > 0 || ! empty($ref))
 
 	$result = $object->fetch_thirdparty();
 
-	$soc = new Societe($db);
 	$result=$soc->fetch($object->socid);
 	if ($result < 0) dol_print_error($db);
 	$selleruserevenustamp = $mysoc->useRevenueStamp();

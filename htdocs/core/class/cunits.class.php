@@ -234,8 +234,6 @@ class CUnits // extends CommonObject
 
     	dol_syslog(__METHOD__, LOG_DEBUG);
 
-    	$records=array();
-
     	$sql = 'SELECT';
     	$sql.= " t.rowid,";
     	$sql.= " t.code,";
@@ -273,6 +271,7 @@ class CUnits // extends CommonObject
     	if (!empty($limit)) {
     		$sql .=  ' ' . $this->db->plimit($limit, $offset);
     	}
+
     	$resql = $this->db->query($sql);
     	if ($resql) {
     		$this->records=array();
