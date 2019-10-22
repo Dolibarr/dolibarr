@@ -102,7 +102,6 @@ $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 $extrafields->fetch_name_optionals_label($object->table_element_line);
 
-
 // Load object. Make an object->fetch
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
 
@@ -869,16 +868,15 @@ if ($action == 'create')
             $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $recept, $action);    // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
 
-			if (empty($reshook) && ! empty($extrafields->attribute_label)) {
+            // Here $object can be of an object Order
+            $extrafields->fetch_name_optionals_label($object->table_element);
+            if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element]['label'])) {
 				// copy from order
-				$orderExtrafields = new Extrafields($db);
-				$orderExtrafieldLabels = $orderExtrafields->fetch_name_optionals_label($object->table_element);
-				if ($object->fetch_optionals($object->id, $orderExtrafieldLabels) > 0) {
+				if ($object->fetch_optionals() > 0) {
 					$recept->array_options = array_merge($recept->array_options, $object->array_options);
 				}
 				print $object->showOptionals($extrafields, 'edit');
 			}
-
 
             // Incoterms
 			if (!empty($conf->incoterm->enabled))

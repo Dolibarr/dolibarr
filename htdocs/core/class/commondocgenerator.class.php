@@ -224,15 +224,15 @@ abstract class CommonDocGenerator
         	$extrafields->fetch_name_optionals_label($object->table_element, true);
         	$object->fetch_optionals();
 
-        	foreach($extrafields->attribute_label as $key=>$label)
+        	foreach($extrafields->attributes[$object->table_element]['label'] as $key=>$label)
         	{
-        		if($extrafields->attribute_type[$key] == 'price')
+        		if($extrafields->attributes[$object->table_element]['type'][$key] == 'price')
         		{
         			$object->array_options['options_'.$key] = price($object->array_options['options_'.$key], 0, $outputlangs, 0, 0, -1, $conf->currency);
         		}
-        		elseif($extrafields->attribute_type[$key] == 'select' || $extrafields->attribute_type[$key] == 'checkbox')
+        		elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'select' || $extrafields->attributes[$object->table_element]['type'][$key] == 'checkbox')
         		{
-        			$object->array_options['options_'.$key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_'.$key]];
+        			$object->array_options['options_'.$key] = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$object->array_options['options_'.$key]];
         		}
         		$array_thirdparty = array_merge($array_thirdparty, array ('company_options_'.$key => $object->array_options ['options_' . $key]));
 			}
@@ -298,15 +298,15 @@ abstract class CommonDocGenerator
 		$extrafields->fetch_name_optionals_label($object->table_element, true);
 		$object->fetch_optionals();
 
-		foreach($extrafields->attribute_label as $key => $label)
+		foreach($extrafields->attributes[$object->table_element]['label'] as $key => $label)
 		{
-			if ($extrafields->attribute_type[$key] == 'price')
+			if ($extrafields->attributes[$object->table_element]['type'][$key] == 'price')
 			{
 				$object->array_options['options_' . $key] = price($object->array_options ['options_' . $key], 0, $outputlangs, 0, 0, - 1, $conf->currency);
 			}
-			elseif($extrafields->attribute_type[$key] == 'select' || $extrafields->attribute_type[$key] == 'checkbox')
+			elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'select' || $extrafields->attributes[$object->table_element]['type'][$key] == 'checkbox')
 			{
-				$object->array_options['options_' . $key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_' . $key]];
+				$object->array_options['options_' . $key] = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$object->array_options['options_' . $key]];
 			}
 			$array_contact = array_merge($array_contact, array($array_key.'_options_' . $key => $object->array_options['options_'. $key]));
 		}
@@ -765,30 +765,30 @@ abstract class CommonDocGenerator
     {
         // phpcs:enable
 		global $conf;
-		foreach($extrafields->attribute_label as $key=>$label)
+		foreach($extrafields->attributes[$object->table_element]['label'] as $key=>$label)
 		{
-			if($extrafields->attribute_type[$key] == 'price')
+			if($extrafields->attributes[$object->table_element]['type'][$key] == 'price')
 			{
 				$object->array_options['options_'.$key] = price2num($object->array_options['options_'.$key]);
 				$object->array_options['options_'.$key.'_currency'] = price($object->array_options['options_'.$key], 0, $outputlangs, 0, 0, -1, $conf->currency);
 				//Add value to store price with currency
 				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_currency' => $object->array_options['options_'.$key.'_currency']));
 			}
-			elseif($extrafields->attribute_type[$key] == 'select')
+			elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'select')
 			{
-				$object->array_options['options_'.$key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_'.$key]];
+				$object->array_options['options_'.$key] = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$object->array_options['options_'.$key]];
 			}
-			elseif($extrafields->attribute_type[$key] == 'checkbox') {
+			elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'checkbox') {
 				$valArray=explode(',', $object->array_options['options_'.$key]);
 				$output=array();
-				foreach($extrafields->attribute_param[$key]['options'] as $keyopt=>$valopt) {
+				foreach($extrafields->attributes[$object->table_element]['param'][$key]['options'] as $keyopt=>$valopt) {
 					if  (in_array($keyopt, $valArray)) {
 						$output[]=$valopt;
 					}
 				}
 				$object->array_options['options_'.$key] = implode(', ', $output);
 			}
-			elseif($extrafields->attribute_type[$key] == 'date')
+			elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'date')
 			{
 				if (strlen($object->array_options['options_'.$key])>0)
 				{
@@ -806,7 +806,7 @@ abstract class CommonDocGenerator
 				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
 				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
 			}
-			elseif($extrafields->attribute_type[$key] == 'datetime')
+			elseif($extrafields->attributes[$object->table_element]['label'][$key] == 'datetime')
 			{
 				$datetime = $object->array_options['options_'.$key];
 				$object->array_options['options_'.$key] = ($datetime!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key], 'dayhour'):'');                            // using company output language
@@ -815,7 +815,7 @@ abstract class CommonDocGenerator
 				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
 				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
 			}
-			elseif($extrafields->attribute_type[$key] == 'link')
+			elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'link')
 			{
 				$id = $object->array_options['options_'.$key];
 				if ($id != "")
