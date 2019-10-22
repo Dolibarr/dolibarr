@@ -2194,6 +2194,16 @@ elseif ($id || $ref)
 					$product_static->id=$lines[$i]->fk_product;
 					$product_static->ref=$lines[$i]->ref;
 					$product_static->status_batch=$lines[$i]->product_tobatch;
+
+					$product_static->weight=$lines[$i]->weight;
+					$product_static->weight_units=$lines[$i]->weight_units;
+					$product_static->length=$lines[$i]->length;
+					$product_static->length_units=$lines[$i]->length_units;
+					$product_static->surface=$lines[$i]->surface;
+					$product_static->surface_units=$lines[$i]->surface_units;
+					$product_static->volume=$lines[$i]->volume;
+					$product_static->volume_units=$lines[$i]->volume_units;
+
 					$text=$product_static->getNomUrl(1);
 					$text.= ' - '.$label;
 					$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($lines[$i]->description));
