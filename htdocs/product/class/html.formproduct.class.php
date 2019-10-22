@@ -327,7 +327,7 @@ class FormProduct
 
 	/**
 	 *  Return a combo box with list of units
-	 *  For the moment, units labels are defined in measuring_units_string
+	 *  Units labels are defined in llx_c_units
 	 *
 	 *  @param  string		$name                Name of HTML field
 	 *  @param  string		$measuring_style     Unit to show: weight, size, surface, volume, time

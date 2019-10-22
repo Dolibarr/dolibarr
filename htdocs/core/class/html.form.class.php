@@ -2425,7 +2425,7 @@ class Form
                 $outvalUnits .= ' - ' . $unitToShow;
             }
             if ((!empty($objp->length) || !empty($objp->width) || !empty($objp->height)) && $objp->length_units!==null) {
-                $unitToShow = $objp->length . ' x ' . $objp->width . ' x ' . $objp->height . ' ' . measuring_units_string($objp->length_units, 'size');
+            	$unitToShow = $objp->length . ' x ' . $objp->width . ' x ' . $objp->height . ' ' . measuringUnitString(0, 'size', $objp->length_units);
                 $outvalUnits .= ' - ' . $unitToShow;
             }
             if (!empty($objp->surface) && $objp->surface_units!==null) {
@@ -2802,7 +2802,7 @@ class Form
                         $outvalUnits .= ' - ' . $unitToShow;
                     }
                     if ((!empty($objp->length) || !empty($objp->width) || !empty($objp->height)) && $objp->length_units!==null) {
-                        $unitToShow = $objp->length . ' x ' . $objp->width . ' x ' . $objp->height . ' ' . measuring_units_string($objp->length_units, 'size');
+                    	$unitToShow = $objp->length . ' x ' . $objp->width . ' x ' . $objp->height . ' ' . measuringUnitString(0, 'size', $objp->length_units);
                         $outvalUnits .= ' - ' . $unitToShow;
                     }
                     if (!empty($objp->surface) && $objp->surface_units!==null) {

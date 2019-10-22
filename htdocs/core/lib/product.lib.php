@@ -480,6 +480,22 @@ function show_stats_for_company($product, $socid)
 }
 
 /**
+ *	Return translation label of a unit key.
+ *  Function kept for backward compatibility.
+ *
+ *  @param	string  $scale				 Scale of unit: '0', '-3', '6', ...
+ *	@param  string	$measuring_style     Style of unit: weight, volume,...
+ *	@param	int		$unit                ID of unit (rowid in llx_c_units table)
+ *  @param	int		$use_short_label	 1=Use short label ('g' instead of 'gram'). Short labels are not translated.
+ *	@return	string	   			         Unit string
+ * 	@see	formproduct->selectMeasuringUnits
+ */
+function measuring_units_string($scale = '', $measuring_style = '', $unit = 0, $use_short_label = 0)
+{
+	return measuringUnitString($unit, $measuring_style, $scale, $use_short_label);
+}
+
+/**
  *	Return translation label of a unit key
  *
  *	@param	int		$unit                ID of unit (rowid in llx_c_units table)
@@ -489,7 +505,7 @@ function show_stats_for_company($product, $socid)
  *	@return	string	   			         Unit string
  * 	@see	formproduct->selectMeasuringUnits
  */
-function measuring_units_string($unit, $measuring_style = '', $scale = '', $use_short_label = 0)
+function measuringUnitString($unit, $measuring_style = '', $scale = '', $use_short_label = 0)
 {
 	global $langs, $db;
 	require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';

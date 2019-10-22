@@ -643,11 +643,11 @@ abstract class CommonDocGenerator
 	    	$array_key.'_tracking_number'=>$object->tracking_number,
 	    	$array_key.'_tracking_url'=>$object->tracking_url,
 	    	$array_key.'_shipping_method'=>$object->listmeths[0]['libelle'],
-	    	$array_key.'_weight'=>$object->trueWeight.' '.measuring_units_string($object->weight_units, 'weight'),
-	    	$array_key.'_width'=>$object->trueWidth.' '.measuring_units_string($object->width_units, 'size'),
-	    	$array_key.'_height'=>$object->trueHeight.' '.measuring_units_string($object->height_units, 'size'),
-	    	$array_key.'_depth'=>$object->trueDepth.' '.measuring_units_string($object->depth_units, 'size'),
-	    	$array_key.'_size'=>$calculatedVolume.' '.measuring_units_string(0, 'volume'),
+    		$array_key.'_weight'=>$object->trueWeight.' '.measuringUnitString(0, 'weight', $object->weight_units),
+    		$array_key.'_width'=>$object->trueWidth.' '.measuringUnitString(0, 'size', $object->width_units),
+    		$array_key.'_height'=>$object->trueHeight.' '.measuringUnitString(0, 'size', $object->height_units),
+    		$array_key.'_depth'=>$object->trueDepth.' '.measuringUnitString(0, 'size', $object->depth_units),
+	    	$array_key.'_size'=>$calculatedVolume.' '.measuringUnitString(0, 'volume'),
     	);
 
     	// Add vat by rates
@@ -701,10 +701,10 @@ abstract class CommonDocGenerator
 	    	'line_price_ht'=>price($line->total_ht),
 	    	'line_price_ttc'=>price($line->total_ttc),
 	    	'line_price_vat'=>price($line->total_tva),
-	    	'line_weight'=>empty($line->weight) ? '' : $line->weight*$line->qty_shipped.' '.measuring_units_string($line->weight_units, 'weight'),
-	    	'line_length'=>empty($line->length) ? '' : $line->length*$line->qty_shipped.' '.measuring_units_string($line->length_units, 'size'),
-	    	'line_surface'=>empty($line->surface) ? '' : $line->surface*$line->qty_shipped.' '.measuring_units_string($line->surface_units, 'surface'),
-	    	'line_volume'=>empty($line->volume) ? '' : $line->volume*$line->qty_shipped.' '.measuring_units_string($line->volume_units, 'volume'),
+        	'line_weight'=>empty($line->weight) ? '' : $line->weight*$line->qty_shipped.' '.measuringUnitString(0, 'weight', $line->weight_units),
+        	'line_length'=>empty($line->length) ? '' : $line->length*$line->qty_shipped.' '.measuringUnitString(0, 'size', $line->length_units),
+        	'line_surface'=>empty($line->surface) ? '' : $line->surface*$line->qty_shipped.' '.measuringUnitString(0, 'surface', $line->surface_units),
+        	'line_volume'=>empty($line->volume) ? '' : $line->volume*$line->qty_shipped.' '.measuringUnitString(0, 'volume', $line->volume_units),
     	);
 
         // Retrieve extrafields
