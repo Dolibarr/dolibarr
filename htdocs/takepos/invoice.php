@@ -203,7 +203,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		$payment->amounts[$invoice->id] = $amountofpayment;
 
 		// If user has not used change control, add total invoice payment
-		if ($amountofpayment == 0) $payment->amounts[$invoice->id] = $invoice->getRemainToPay();
+		if ($amountofpayment == 0) $payment->amounts[$invoice->id] = $remaintopay;
 
 		$payment->paiementid=$paiementid;
 		$payment->num_payment=$invoice->ref;
