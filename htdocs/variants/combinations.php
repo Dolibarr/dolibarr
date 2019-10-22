@@ -359,7 +359,7 @@ if (! empty($id) || ! empty($ref))
 	print '<tr><td>'.$langs->trans("Weight").'</td><td>';
 	if ($object->weight != '')
 	{
-		print $object->weight." ".measuring_units_string($object->weight_units, "weight");
+		print $object->weight." ".measuringUnitString(0, "weight", $object->weight_units);
 	}
 	else
 	{
@@ -788,7 +788,7 @@ if (! empty($id) || ! empty($ref))
     					} ?>
     				</td>
     				<td class="right"><?php echo ($currcomb->variation_price >= 0 ? '+' : '').price($currcomb->variation_price).($currcomb->variation_price_percentage ? ' %' : '') ?></td>
-                    <?php if ($object->isProduct()) print '<td class="right">'.($currcomb->variation_weight >= 0 ? '+' : '').price($currcomb->variation_weight).' '.measuring_units_string($prodstatic->weight_units, 'weight').'</td>'; ?>
+                    <?php if ($object->isProduct()) print '<td class="right">'.($currcomb->variation_weight >= 0 ? '+' : '').price($currcomb->variation_weight).' '.measuringUnitString(0, 'weight', $prodstatic->weight_units).'</td>'; ?>
     				<td class="center"><?php echo $prodstatic->getLibStatut(2, 0) ?></td>
     				<td class="center"><?php echo $prodstatic->getLibStatut(2, 1) ?></td>
     				<td class="right">

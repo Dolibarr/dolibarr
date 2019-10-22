@@ -244,8 +244,8 @@ class CUnits // extends CommonObject
     	$sqlwhere = array();
     	if (count($filter) > 0) {
     		foreach ($filter as $key => $value) {
-    			if ($key=='t.rowid' || $key=='t.active') {
-    				$sqlwhere[] = $key . '='. $value;
+    			if ($key=='t.rowid' || $key=='t.active' || $key=='t.scale') {
+    				$sqlwhere[] = $key . '='. (int) $value;
     			}
     			elseif (strpos($key, 'date') !== false) {
     				$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
