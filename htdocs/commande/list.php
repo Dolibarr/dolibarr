@@ -236,7 +236,6 @@ $now=dol_now();
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
-$companystatic = new Societe($db);
 $formcompany=new FormCompany($db);
 $projectstatic=new Project($db);
 
@@ -771,6 +770,9 @@ if ($resql)
 
 	$generic_commande = new Commande($db);
 	$generic_product = new Product($db);
+	
+	$companystatic = array();
+	$getNomUrl = array();
 
 	$i=0;
 	$totalarray=array();
@@ -783,12 +785,16 @@ if ($resql)
 		$text_info='';
 		$text_warning='';
 		$nbprod=0;
-
-		$companystatic->id=$obj->socid;
-		$companystatic->code_client = $obj->code_client;
-		$companystatic->name=$obj->name;
-		$companystatic->client=$obj->client;
-		$companystatic->email=$obj->email;
+		
+        if (!isset($companystatic[$obj->socid])) {
+		    $companystatic[$obj->socid] = new Societe($db);
+		    $companystatic[$obj->socid]->id = $obj->socid;
+		    $companystatic[$obj->socid]->code_client = $obj->code_client;
+		    $companystatic[$obj->socid]->name = $obj->name;
+		    $companystatic[$obj->socid]->client = $obj->client;
+		    $companystatic[$obj->socid]->email = $obj->email;
+			$getNomUrl[$obj->socid] = $companystatic[$obj->socid]->getNomUrl(1, 'customer');
+		}
 
 		$generic_commande->id=$obj->rowid;
 		$generic_commande->ref=$obj->ref;
@@ -973,7 +979,7 @@ if ($resql)
 		if (! empty($arrayfields['s.nom']['checked']))
 		{
 			print '<td class="tdoverflowmax200">';
-			print $companystatic->getNomUrl(1, 'customer');
+			print $getNomUrl[$obj->socid];
 
 			// If module invoices enabled and user with invoice creation permissions
 			if (! empty($conf->facture->enabled) && ! empty($conf->global->ORDER_BILLING_ALL_CUSTOMER))
@@ -982,8 +988,8 @@ if ($resql)
 				{
 					if (($obj->fk_statut > 0 && $obj->fk_statut < 3) || ($obj->fk_statut == 3 && $obj->billed == 0))
 					{
-						print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/orderstoinvoice.php?socid='.$companystatic->id.'">';
-						print img_picto($langs->trans("CreateInvoiceForThisCustomer").' : '.$companystatic->name, 'object_bill', 'hideonsmartphone').'</a>';
+						print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/orderstoinvoice.php?socid='.$companystatic[$obj->socid]->id.'">';
+						print img_picto($langs->trans("CreateInvoiceForThisCustomer").' : '.$companystatic[$obj->socid]->name, 'object_bill', 'hideonsmartphone').'</a>';
 					}
 				}
 			}
