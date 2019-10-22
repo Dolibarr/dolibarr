@@ -255,7 +255,13 @@ if ($modecompta == 'CREANCES-DETTES')
 	}
 	elseif ($selected_cat) {	// Into a specific category
 		$sql.= " AND (c.rowid = ".$selected_cat;
-		if ($subcat) $sql.=" OR c.fk_parent = " . $selected_cat;
+		if ($subcat) {
+            // Get all subcat of selected
+            $childrenCatIDS = getNestedChildrenCats($selected_cat, $db);
+            if (count($childrenCatIDS)) {
+                $sql.=" OR c.fk_parent IN (" . implode(',', $childrenCatIDS).')';
+            }
+        }
 		$sql.= ")";
 		$sql.= " AND cp.fk_categorie = c.rowid AND cp.fk_product = p.rowid";
 	}
@@ -469,3 +475,23 @@ print_liste_field_titre(
 // End of page
 llxFooter();
 $db->close();
+
+function getNestedChildrenCats($rootCatID, $db) {
+    $childrenCategoriesSQL =  'SELECT * FROM llx_categorie c WHERE c.fk_parent = '.$rootCatID;
+    $childrenCategories = $db->query($childrenCategoriesSQL)->fetch_all(MYSQLI_ASSOC);
+    $idsArray = array();
+
+    foreach ($childrenCategories as $childrenCategory) {
+        $childrenIDs = getNestedChildrenCats(
+            (int)$childrenCategory['rowid'],
+            $db
+        );
+        $idsArray = array_merge(
+            $idsArray,
+            array((int)$childrenCategory['rowid']),
+            $childrenIDs
+        );
+    }
+
+    return $idsArray;
+}
