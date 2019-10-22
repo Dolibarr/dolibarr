@@ -140,7 +140,6 @@ if ($action == 'order' && isset($_POST['valid']))
                 	if ($qty)
                 	{
 	                    //might need some value checks
-	                    $obj = $db->fetch_object($resql);
 	                    $line = new CommandeFournisseurLigne($db);
 	                    $line->qty = $qty;
 	                    $line->fk_product = $idprod;
@@ -179,7 +178,7 @@ if ($action == 'order' && isset($_POST['valid']))
                     $error=$db->lasterror();
                     dol_print_error($db);
                 }
-                $db->free($resql);
+
                 unset($_POST['fourn' . $i]);
             }
             unset($_POST[$i]);
