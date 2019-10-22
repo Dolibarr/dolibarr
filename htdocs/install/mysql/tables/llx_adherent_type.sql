@@ -30,7 +30,7 @@ create table llx_adherent_type
   statut           smallint NOT NULL DEFAULT 0,
   libelle          varchar(50) NOT NULL,
   morphy           varchar(3) NOT NULL,
-  duration         varchar(6) NOT NULL DEFAULT '1y',
+  duration         varchar(6) NOT NULL DEFAULT null,
   subscription     varchar(3) NOT NULL DEFAULT 'yes',
   vote             varchar(3) NOT NULL DEFAULT 'yes',
   note             text,
