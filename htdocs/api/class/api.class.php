@@ -290,6 +290,7 @@ class DolibarrApi
         if (count($tmp) < 3) return '';
 
 	    $tmpescaped=$tmp[2];
+	    $regbis = array();
 	    if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis))
 	    {
 	        $tmpescaped = "'".$db->escape($regbis[1])."'";
