@@ -2257,7 +2257,7 @@ elseif ($id || $ref)
 	    			            if (! empty($conf->stock->enabled) && $shipmentline_var['warehouse'] > 0)
 	    			            {
 	    			                $warehousestatic->fetch($shipmentline_var['warehouse']);
-	    			                $htmltext .= '<br>'.$langs->trans("From").' : '.$warehousestatic->getNomUrl(1);
+	    			                $htmltext .= '<br>'.$langs->trans("FromLocation").' : '.$warehousestatic->getNomUrl(1, '', 0, 1);
 	    			            }
 	    			            print ' '.$form->textwithpicto('', $htmltext, 1);
 	    			        }

@@ -476,6 +476,7 @@ Categories=Tags/categories
 Category=Tag/category
 By=By
 From=From
+FromLocation=From
 to=to
 and=and
 or=or
