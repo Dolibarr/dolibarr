@@ -6096,8 +6096,8 @@ abstract class CommonObject
 		   			if (file_exists(dol_buildpath(dirname(dirname($classfile)).'/card.php'))) $url_path=dol_buildpath(dirname(dirname($classfile)).'/card.php', 1);
 		   			else $url_path=dol_buildpath(dirname(dirname($classfile)).'/'.strtolower($class).'_card.php', 1);
 		   			$paramforthenewlink = '';
-		   			$paramforthenewlink .= (GETPOSTISSET('action')?'&action='.GETPOST('action','aZ09'):'');
-		   			$paramforthenewlink .= (GETPOSTISSET('id')?'&id='.GETPOST('id','int'):'');
+		   			$paramforthenewlink .= (GETPOSTISSET('action')?'&action='.GETPOST('action', 'aZ09'):'');
+		   			$paramforthenewlink .= (GETPOSTISSET('id')?'&id='.GETPOST('id', 'int'):'');
 		   			$paramforthenewlink .= '&fk_'.strtolower($class).'=--IDFORBACKTOPAGE--';
 		   			// TODO Add Javascript code to add input fields already filled into $paramforthenewlink so we won't loose them when going back to main page
 		   			$out.='<a class="butActionNew" title="'.$langs->trans("New").'" href="'.$url_path.'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].($paramforthenewlink ? '?'.$paramforthenewlink : '')).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';

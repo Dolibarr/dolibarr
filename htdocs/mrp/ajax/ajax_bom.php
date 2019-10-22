@@ -46,8 +46,8 @@ $result=$object->fetch($idbom);
 if ($result > 0)
 {
 	// We remove properties we don't need in answer
-	unset ($object->fields);
-	unset ($object->db);
+	unset($object->fields);
+	unset($object->db);
 	echo json_encode($object);
 }
 else
