@@ -476,19 +476,20 @@ print_liste_field_titre(
 llxFooter();
 $db->close();
 
-function getNestedChildrenCats($rootCatID, $db) {
+function getNestedChildrenCats($rootCatID, $db)
+{
     $childrenCategoriesSQL =  'SELECT * FROM llx_categorie c WHERE c.fk_parent = '.$rootCatID;
     $childrenCategories = $db->query($childrenCategoriesSQL)->fetch_all(MYSQLI_ASSOC);
     $idsArray = array();
 
     foreach ($childrenCategories as $childrenCategory) {
         $childrenIDs = getNestedChildrenCats(
-            (int)$childrenCategory['rowid'],
+            (int) $childrenCategory['rowid'],
             $db
         );
         $idsArray = array_merge(
             $idsArray,
-            array((int)$childrenCategory['rowid']),
+            array((int) $childrenCategory['rowid']),
             $childrenIDs
         );
     }
