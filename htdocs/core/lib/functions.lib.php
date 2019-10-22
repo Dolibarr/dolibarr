@@ -5936,7 +5936,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_SIRET__'] = '__THIRDPARTY_SIRET__';
 				$substitutionarray['__THIRDPARTY_APE__'] = '__THIRDPARTY_APE__';
 				$substitutionarray['__THIRDPARTY_RCSRM__'] = '__THIRDPARTY_RCSRM__';
-				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = '__THIRDPARTY_TVAINTRA__';				
+				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = '__THIRDPARTY_TVAINTRA__';
 			}
 			if (! empty($conf->adherent->enabled))
 			{
@@ -6046,7 +6046,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (is_object($object->thirdparty)?$object->thirdparty->name_alias:'');
 				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = (is_object($object->thirdparty)?$object->thirdparty->code_client:'');
 				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = (is_object($object->thirdparty)?$object->thirdparty->code_fournisseur:'');
-				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object->thirdparty)?$object->thirdparty->email:'');			
+				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object->thirdparty)?$object->thirdparty->email:'');
 				$substitutionarray['__THIRDPARTY_PHONE__'] = (is_object($object->thirdparty)?$object->phone:'');
 				$substitutionarray['__THIRDPARTY_FAX__'] = (is_object($object->thirdparty)?$object->name_fax:'');
 				$substitutionarray['__THIRDPARTY_ADRESSE__'] = (is_object($object->thirdparty)?$object->address:'');
@@ -6056,7 +6056,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_SIRET__'] = (is_object($object->thirdparty)?$object->idprof2:'');
 				$substitutionarray['__THIRDPARTY_APE__'] = (is_object($object->thirdparty)?$object->idprof3:'');
 				$substitutionarray['__THIRDPARTY_RCSRM__'] = (is_object($object->thirdparty)?$object->idprof4:'');
-				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = (is_object($object->thirdparty)?$object->tva_intra:'');			
+				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = (is_object($object->thirdparty)?$object->tva_intra:'');
 			}
 
 			if (is_object($object->project) && $object->project->id > 0)
