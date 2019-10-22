@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -247,7 +247,6 @@ foreach ($dirmodels as $reldir)
 
 					if ($module->isEnabled())
 					{
-
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
 						print $module->info();
 						print '</td>';
@@ -367,10 +366,8 @@ foreach ($dirmodels as $reldir)
 			{
 				if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
 		    	{
-
 		    		if (file_exists($dir.'/'.$file))
 		    		{
-
 		    			$name = substr($file, 4, dol_strlen($file) -16);
 		    			$classname = substr($file, 0, dol_strlen($file) -12);
 

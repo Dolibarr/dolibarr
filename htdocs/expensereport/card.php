@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -97,7 +97,7 @@ $object=new ExpenseReport($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
@@ -238,7 +238,7 @@ if (empty($reshook))
     	// Fill array 'array_options' with data from add form
     	if (! $error)
     	{
-    	    $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+    	    $ret = $extrafields->setOptionalsFromPost(null, $object);
     	    if ($ret < 0) $error++;
     	}
 
@@ -309,8 +309,7 @@ if (empty($reshook))
     	$object->oldcopy = dol_clone($object);
 
     	// Fill array 'array_options' with data from update form
-        $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
+        $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
         if ($ret < 0) $error++;
 
         if (! $error)
@@ -1492,7 +1491,7 @@ if ($action == 'create')
 	if (empty($include_users)) print img_warning().' '.$langs->trans("NobodyHasPermissionToValidateExpenseReport");
 	else
 	{
-    	$defaultselectuser=$user->fk_user;	// Will work only if supervisor has permission to approve so is inside include_users
+    	$defaultselectuser=(empty($user->fk_user_expense_validator) ? $user->fk_user : $user->fk_user_expense_validator);	// Will work only if supervisor has permission to approve so is inside include_users
     	if (! empty($conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR)) $defaultselectuser=$conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR;   // Can force default approver
     	if (GETPOST('fk_user_validator', 'int') > 0) $defaultselectuser=GETPOST('fk_user_validator', 'int');
     	$s=$form->select_dolusers($defaultselectuser, "fk_user_validator", 1, "", ((empty($defaultselectuser) || empty($conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR_UNCHANGEABLE))?0:1), $include_users);
@@ -1776,7 +1775,7 @@ else
 				    if ($user->rights->commande->creer)
 				    {
 				        if ($action != 'classify')
-				            $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				            $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				            if ($action == 'classify') {
 				                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 				                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -2062,7 +2061,7 @@ else
 					{
 				        $totalpaid = price2num($totalpaid);		// Round $totalpaid to fix floating problem after addition into loop
 					}
-					
+
 				    $remaintopay = price2num($object->total_ttc - $totalpaid);
 				    $resteapayeraffiche = $remaintopay;
 

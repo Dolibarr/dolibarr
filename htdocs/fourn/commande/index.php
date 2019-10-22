@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -54,7 +54,7 @@ $commandestatic = new CommandeFournisseur($db);
 $userstatic=new User($db);
 $formfile = new FormFile($db);
 
-print load_fiche_titre($langs->trans("SuppliersOrdersArea"));
+print load_fiche_titre($langs->trans("SuppliersOrdersArea"), '', 'commercial');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -122,7 +122,6 @@ if ($resql)
 		$dataseries[]=array($commandestatic->LibStatut($statut, 1), (isset($vals[$statut])?(int) $vals[$statut]:0));
 		if (! $conf->use_javascript_ajax)
 		{
-
 			print '<tr class="oddeven">';
 			print '<td>'.$commandestatic->LibStatut($statut, 0).'</td>';
 			print '<td class="right"><a href="list.php?statut='.$statut.'">'.(isset($vals[$statut])?$vals[$statut]:0).'</a></td>';

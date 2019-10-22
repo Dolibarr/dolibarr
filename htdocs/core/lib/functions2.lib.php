@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -505,14 +505,7 @@ function dolAddEmailTrackId($email, $trackingid)
 function isValidMailDomain($mail)
 {
     list($user, $domain) = explode("@", $mail, 2);
-    if (checkdnsrr($domain, "MX"))
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return checkdnsrr($domain, "MX");
 }
 
 /**
@@ -1722,7 +1715,6 @@ function is_ip($ip)
 {
 	// First we test if it is a valid IPv4
 	if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
-
 		// Then we test if it is a private range
 		if (! filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) return 2;
 
@@ -1820,69 +1812,76 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$subelement = $regs[2];
 	}
 
+	// Generic case for $classpath
 	$classpath = $element.'/class';
 
-	// To work with non standard path
+	// Special cases, to work with non standard path
 	if ($objecttype == 'facture' || $objecttype == 'invoice') {
 		$classpath = 'compta/facture/class';
 		$module='facture';
 		$subelement='facture';
 	}
-	if ($objecttype == 'commande' || $objecttype == 'order') {
+	elseif ($objecttype == 'commande' || $objecttype == 'order') {
 		$classpath = 'commande/class';
 		$module='commande';
 		$subelement='commande';
 	}
-	if ($objecttype == 'propal')  {
+	elseif ($objecttype == 'propal')  {
 		$classpath = 'comm/propal/class';
 	}
-	if ($objecttype == 'supplier_proposal')  {
+	elseif ($objecttype == 'supplier_proposal')  {
 		$classpath = 'supplier_proposal/class';
 	}
-	if ($objecttype == 'shipping') {
+	elseif ($objecttype == 'shipping') {
 		$classpath = 'expedition/class';
 		$subelement = 'expedition';
 		$module = 'expedition_bon';
 	}
-	if ($objecttype == 'delivery') {
+	elseif ($objecttype == 'delivery') {
 		$classpath = 'livraison/class';
 		$subelement = 'livraison';
 		$module = 'livraison_bon';
 	}
-	if ($objecttype == 'contract') {
+	elseif ($objecttype == 'contract') {
 		$classpath = 'contrat/class';
 		$module='contrat';
 		$subelement='contrat';
 	}
-	if ($objecttype == 'member') {
+	elseif ($objecttype == 'member') {
 		$classpath = 'adherents/class';
 		$module='adherent';
 		$subelement='adherent';
 	}
-	if ($objecttype == 'cabinetmed_cons') {
+	elseif ($objecttype == 'cabinetmed_cons') {
 		$classpath = 'cabinetmed/class';
 		$module='cabinetmed';
 		$subelement='cabinetmedcons';
 	}
-	if ($objecttype == 'fichinter') {
+	elseif ($objecttype == 'fichinter') {
 		$classpath = 'fichinter/class';
 		$module='ficheinter';
 		$subelement='fichinter';
 	}
-	if ($objecttype == 'task') {
+	elseif ($objecttype == 'task') {
 		$classpath = 'projet/class';
 		$module='projet';
 		$subelement='task';
 	}
-	if ($objecttype == 'stock') {
+	elseif ($objecttype == 'stock') {
 		$classpath = 'product/stock/class';
 		$module='stock';
 		$subelement='stock';
 	}
+	elseif ($objecttype == 'inventory') {
+		$classpath = 'product/inventory/class';
+		$module='stock';
+		$subelement='inventory';
+	}
 
-	//print "objecttype=".$objecttype." module=".$module." subelement=".$subelement;
-
+	// Generic case for $classfile and $classname
 	$classfile = strtolower($subelement); $classname = ucfirst($subelement);
+	//print "objecttype=".$objecttype." module=".$module." subelement=".$subelement." classfile=".$classfile." classname=".$classname;
+
 	if ($objecttype == 'invoice_supplier') {
 		$classfile = 'fournisseur.facture';
 		$classname='FactureFournisseur';

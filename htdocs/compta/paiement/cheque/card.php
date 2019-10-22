@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -444,7 +444,6 @@ if ($action == 'new')
 
 	foreach ($accounts as $bid => $account_label)
 	{
-
         print '
         <script language="javascript" type="text/javascript">
         jQuery(document).ready(function()
@@ -576,7 +575,7 @@ else
     print '<table class="nobordernopadding" width="100%"><tr><td>';
     print $langs->trans('Date');
     print '</td>';
-    if ($action != 'editdate') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
+    if ($action != 'editdate') print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
     print '</tr></table>';
     print '</td><td colspan="2">';
     if ($action == 'editdate')
@@ -603,7 +602,7 @@ else
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
     print $langs->trans('RefExt');
     print '</td>';
-    if ($action != 'editrefext') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editrefext&amp;id='.$object->id.'">'.img_edit($langs->trans('SetRefExt'),1).'</a></td>';
+    if ($action != 'editrefext') print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editrefext&amp;id='.$object->id.'">'.img_edit($langs->trans('SetRefExt'),1).'</a></td>';
     print '</tr></table>';
     print '</td><td colspan="2">';
     if ($action == 'editrefext')

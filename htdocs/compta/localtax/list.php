@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -48,7 +48,7 @@ if ($user->rights->tax->charges->creer)
     $newcardbutton.= dolGetButtonTitle($langs->trans('NewLocalTaxPayment', ($ltt+1)), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/localtax/card.php?action=create&localTaxType='.$ltt);
 }
 
-print load_fiche_titre($langs->transcountry($ltt==2?"LT2Payments":"LT1Payments", $mysoc->country_code), $newcardbutton);
+print load_fiche_titre($langs->transcountry($ltt==2?"LT2Payments":"LT1Payments", $mysoc->country_code), $newcardbutton, 'invoicing');
 
 $sql = "SELECT rowid, amount, label, f.datev, f.datep";
 $sql.= " FROM ".MAIN_DB_PREFIX."localtax as f ";

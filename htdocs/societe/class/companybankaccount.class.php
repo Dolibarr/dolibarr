@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -174,8 +174,6 @@ class CompanyBankAccount extends Account
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-
-
 		if (! $notrigger)
 		{
 			// Call trigger
@@ -328,7 +326,6 @@ class CompanyBankAccount extends Account
 		$rib = '';
 
 		if ($this->code_banque || $this->code_guichet || $this->number || $this->cle_rib || $this->iban || $this->bic ) {
-
 			if ($this->label && $displayriblabel) {
 				$rib = $this->label." : ";
 			}

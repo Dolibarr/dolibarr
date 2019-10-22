@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -100,7 +100,7 @@ class Boms extends DolibarrApi
 
         $obj_ret = array();
         $tmpobject = new BOM($db);
-        
+
         $socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
 
         $restrictonsocid = 0;	// Set to 1 if there is a field socid in table of object
@@ -302,7 +302,7 @@ class Boms extends DolibarrApi
     private function _validate($data)
     {
         $myobject = array();
-        foreach ($this->myobject->fields as $field => $propfield) {
+        foreach ($this->bom->fields as $field => $propfield) {
             if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat')) || $propfield['notnull'] != 1) continue;   // Not a mandatory field
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");

@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -63,7 +63,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
     }
     ?>
         </td>
-        <td class="linkedcol-name" ><?php echo $objectlink->getNomUrl(1); ?></td>
+        <td class="linkedcol-name nowraponall" ><?php echo $objectlink->getNomUrl(1); ?></td>
     	<td class="linkedcol-ref" ><?php echo $objectlink->ref_client; ?></td>
     	<td class="linkedcol-date center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
     	<td class="linkedcol-amount right"><?php

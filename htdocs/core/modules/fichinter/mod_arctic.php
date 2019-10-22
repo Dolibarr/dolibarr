@@ -16,8 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -82,7 +82,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("InterventionCard"), $langs->transnoentities("InterventionCard"));
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
-		// Parametrage du prefix
+		// Setting the prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskvalue" value="'.$conf->global->FICHINTER_ARTIC_MASK.'">', $tooltip, 1, 1).'</td>';
 
@@ -130,7 +130,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 
 		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
-		// On défini critere recherche compteur
+		// We define the search criteria of the counter
 		$mask=$conf->global->FICHINTER_ARTIC_MASK;
 
 		if (! $mask)

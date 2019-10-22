@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -156,7 +156,6 @@ $form=new Form($db);
 // Form to create donation payment
 if (GETPOST('action', 'aZ09') == 'create')
 {
-
 	$don = new Don($db);
 	$don->fetch($chid);
 

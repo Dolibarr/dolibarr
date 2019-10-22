@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -163,7 +163,6 @@ if (! empty($conf->banque->enabled))
 
 if (! empty($conf->stock->enabled))
 {
-
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskDoNotDecreaseStock").'</td>';	// Force warehouse (this is not a default value)
 	print '<td>';
 	if (empty($conf->productbatch->enabled)) {

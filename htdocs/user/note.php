@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -104,7 +104,7 @@ if ($id)
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 	print '<div class="fichecenter">';
-    print '<table class="border" width="100%">';
+    print '<table class="border centpercent tableforfield">';
 
     // Login
     print '<tr><td class="titlefield">'.$langs->trans("Login").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';

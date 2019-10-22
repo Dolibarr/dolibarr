@@ -7,6 +7,7 @@
  * Copyright (C) 2018       Ferran Marcet	     <fmarcet@2byte.es>
  * Copyright (C) 2018       Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2019       Juanjo Menent		 <jmenent@2byte.es>
+ * Copyright (C) 2019       Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -108,7 +109,8 @@ $hookmanager->initHooks(array('expensereportlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('expensereport');
+$extrafields->fetch_name_optionals_label('expensereport');
+
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 
@@ -278,13 +280,15 @@ $sql = "SELECT d.rowid, d.ref, d.fk_user_author, d.total_ht, d.total_tva, d.tota
 $sql.= " d.date_debut, d.date_fin, d.date_create, d.tms as date_modif, d.date_valid, d.date_approve, d.note_private, d.note_public,";
 $sql.= " u.rowid as id_user, u.firstname, u.lastname, u.login, u.email, u.statut, u.photo";
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d";
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."expensereport_extrafields as ef on (d.rowid = ef.fk_object)";
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (d.rowid = ef.fk_object)";
 $sql.= ", ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE d.fk_user_author = u.rowid AND d.entity IN (".getEntity('expensereport').")";
 // Search all

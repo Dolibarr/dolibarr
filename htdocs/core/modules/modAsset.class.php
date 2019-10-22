@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -202,7 +202,7 @@ class modAsset extends DolibarrModules
         $this->rights[$r][3] = 0;                   // Permission by default for new user (0/1)
         $this->rights[$r][4] = 'advanced_configurer';        // In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
         $this->rights[$r][5] = '';					// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
-        
+
         // Menus
         //-------
         $this->menu = 1;        // This module add menu entries. They are coded into menu manager.

@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -212,7 +212,7 @@ class FormMail extends Form
 	/**
 	 * Remove a file from the list of attached files (stored in SECTION array)
 	 *
-	 * @param  	string	$keytodelete     Key in file array (0, 1, 2, ...)
+	 * @param  	string	$keytodelete     Key index in file array (0, 1, 2, ...)
 	 * @return	void
 	 */
 	public function remove_attached_files($keytodelete)

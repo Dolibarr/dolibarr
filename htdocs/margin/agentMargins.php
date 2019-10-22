@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -109,7 +109,7 @@ dol_fiche_head($head, 'agentMargins', $titre, 0, $picto);
 
 print '<table class="border" width="100%">';
 
-print '<tr><td class="titlefield">'.$langs->trans('SalesRepresentative').'</td>';
+print '<tr><td class="titlefield">'.$langs->trans('ContactOfInvoice').'</td>';
 print '<td class="maxwidthonsmartphone" colspan="4">';
 print $form->select_dolusers($agentid, 'agentid', 1, '', $user->rights->margins->read->all ? 0 : 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 print '</td></tr>';

@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -90,7 +90,7 @@ llxHeader();
 print load_fiche_titre($langs->trans("LimitsSetup"), '', 'title_setup');
 
 
-print $langs->trans("LimitsDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("LimitsDesc")."</span><br>\n";
 print "<br>\n";
 
 if ($action == 'edit')
@@ -172,7 +172,6 @@ if (empty($mysoc->country_code))
 }
 else
 {
-
 	// Show examples
 	print '<b>'.$langs->trans("ExamplesWithCurrentSetup").":</b><br>\n";
 

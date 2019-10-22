@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -42,8 +42,6 @@ $hookmanager->initHooks(array('opensurveyindex'));
  * View
  */
 
-llxHeader();
-
 $nbsondages=0;
 $sql = 'SELECT COUNT(*) as nb';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'opensurvey_sondage';
@@ -56,9 +54,11 @@ if ($resql)
 }
 else dol_print_error($db, '');
 
-llxHeader();
 
-print load_fiche_titre($langs->trans("OpenSurveyArea"));
+$title = $langs->trans("OpenSurveyArea");
+llxHeader('', $title);
+
+print load_fiche_titre($title, '', 'wrench');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';

@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -136,14 +136,14 @@ function invoice_admin_prepare_head()
 	$head[$h][1] = $langs->trans("Payments");
 	$head[$h][2] = 'payment';
 	$h++;
-	
+
 	if($conf->global->INVOICE_USE_SITUATION){
 	   $head[$h][0] = DOL_URL_ROOT.'/admin/facture_situation.php';
 	   $head[$h][1] = $langs->trans("InvoiceSituation");
 	   $head[$h][2] = 'situation';
 	   $h++;
 	}
-	
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to add new tab

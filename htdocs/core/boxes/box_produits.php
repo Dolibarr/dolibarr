@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -144,7 +144,8 @@ class box_produits extends ModeleBoxes
                         'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
                         'text' => $objp->label,
                     );
-
+                    $price = '';
+                    $price_base_type = '';
                     if (empty($conf->dynamicprices->enabled) || empty($objp->fk_price_expression)) {
                         $price_base_type=$langs->trans($objp->price_base_type);
                         $price=($objp->price_base_type == 'HT')?price($objp->price):$price=price($objp->price_ttc);

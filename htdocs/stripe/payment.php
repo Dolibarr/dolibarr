@@ -22,13 +22,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/stripe/payment.php
  *	\ingroup    stripe
- *	\brief      Payment page for customers invoices. TODO Seems deprecated and bugged !
+ *	\brief      Payment page for customers invoices. @TODO Seems deprecated and bugged and not used (no link to this page) !
  */
 
 // Load Dolibarr environment
@@ -242,7 +242,6 @@ if (empty($reshook))
 	 */
 	if ($action == 'confirm_paiement' && $confirm == 'yes')
 	{
-
 		$error=0;
 
 		$datepaye = dol_now();
@@ -306,7 +305,6 @@ if (empty($reshook))
 		}
 		elseif (preg_match('/src_/i', $source))
 		{
-
 			$customer2 = $customerstripe=$stripe->customerStripe($facture->thirdparty, $stripeacc, $servicestatus);
 			$src = $customer2->sources->retrieve("$source");
 			if ($src->type=='card')
@@ -341,7 +339,6 @@ if (empty($reshook))
 
 		if (! $error)
 		{
-
 			$paiement_id = $paiement->create($user, 0);
 			if ($paiement_id < 0)
 			{

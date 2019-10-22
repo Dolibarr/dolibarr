@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -492,7 +492,7 @@ if ($sref || $snom || $sall || $salert || $draftorder || GETPOST('search', 'alph
 	$filters .= '&mode=' . $mode;
 	$filters .= '&fk_supplier=' . $fk_supplier;
 	$filters .= '&fk_entrepot=' . $fk_entrepot;
-print_barre_liste(
+	print_barre_liste(
 		$texte,
 		$page,
 		'replenish.php',
@@ -511,7 +511,7 @@ print_barre_liste(
 	$filters .= '&mode=' . $mode;
 	$filters .= '&fk_supplier=' . $fk_supplier;
 	$filters .= '&fk_entrepot=' . $fk_entrepot;
-print_barre_liste(
+	print_barre_liste(
 		$texte,
 		$page,
 		'replenish.php',

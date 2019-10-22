@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -197,6 +197,12 @@ class DoliDBPgsql extends DoliDB
     				$newline=preg_replace('/([\s\t\(]*)([a-zA-Z_0-9]*)[\s\t]+int.*auto_increment[^,]*/i', '\\1 \\2 SERIAL PRIMARY KEY', $line);
                     //$line = "-- ".$line." replaced by --\n".$newline;
                     $line=$newline;
+    			}
+
+    			if (preg_match('/[\s\t\(]*(\w*)[\s\t]+bigint.*auto_increment/i', $line, $reg)) {
+    				$newline=preg_replace('/([\s\t\(]*)([a-zA-Z_0-9]*)[\s\t]+int.*auto_increment[^,]*/i', '\\1 \\2 BIGSERIAL PRIMARY KEY', $line);
+    				//$line = "-- ".$line." replaced by --\n".$newline;
+    				$line=$newline;
     			}
 
     			// tinyint type conversion

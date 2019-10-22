@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 require '../main.inc.php';
@@ -84,7 +84,6 @@ if ($_POST)
 	}
 
 	if ($sanitized_values) {
-
 		require DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		$adapted_values = array();
@@ -106,7 +105,6 @@ if ($_POST)
 
 		//Current combinations will be deleted
 		if ($delete_prev_comb_res > 0) {
-
 			$res = 1;
 
 			$cartesianarray = cartesianArray($adapted_values);

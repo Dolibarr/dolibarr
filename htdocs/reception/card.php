@@ -24,7 +24,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -97,13 +97,10 @@ $hideref 	 = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($
 
 $object = new Reception($db);
 $extrafields = new ExtraFields($db);
-$extrafieldsline = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-
-// fetch optionals attributes lines and labels
-$extralabelslines=$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element_line);
 
 
 // Load object. Make an object->fetch
@@ -191,8 +188,7 @@ if (empty($reshook))
 	if ($action == 'update_extras')
 	{
 	    // Fill array 'array_options' with data from update form
-	    $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-	    $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+	    $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute'));
 	    if ($ret < 0) $error++;
 
 	    if (! $error)
@@ -220,7 +216,6 @@ if (empty($reshook))
 	// Create reception
 	if ($action == 'add' && $user->rights->reception->creer)
 	{
-
 		$error = 0;
 		$predef = '';
 
@@ -302,8 +297,7 @@ if (empty($reshook))
 
 
 			// Extrafields
-			$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-			$array_options[$i] = $extrafieldsline->getOptionalsFromPost($extralabelsline, $i);
+			$array_options[$i] = $extrafields->getOptionalsFromPost($object->table_element_line, $i);
 		}
 
 
@@ -355,7 +349,7 @@ if (empty($reshook))
 
 
 	        // Fill array 'array_options' with data from add form
-	        $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	        $ret = $extrafields->setOptionalsFromPost(null, $object);
 	        if ($ret < 0) $error++;
 	        if (! $error)
 	        {
@@ -606,9 +600,8 @@ if (empty($reshook))
 				$line = new CommandeFournisseurDispatch($db);
 				$line->fetch($line_id);
 				// Extrafields Lines
-				$extrafieldsline = new ExtraFields($db);
-				$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-				$line->array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+				$extrafields->fetch_name_optionals_label($object->table_element_line);
+				$line->array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
 
 
 				$line->fk_product = $lines[$i]->fk_product;
@@ -1181,16 +1174,21 @@ if ($action == 'create')
 				if (is_array($extralabelslines) && count($extralabelslines)>0)
 				{
 					$colspan=5;
-					if($conf->productbatch->enabled)$colspan+=3;
-					$orderLineExtrafields = new Extrafields($db);
-					$orderLineExtrafieldLabels = $orderLineExtrafields->fetch_name_optionals_label($object->table_element_line);
+					if ($conf->productbatch->enabled) $colspan+=3;
+
 					$srcLine = new CommandeFournisseurLigne($db);
-					$srcLine->fetch_optionals($line->id, $orderLineExtrafieldLabels); // fetch extrafields also available in orderline
 					$line = new CommandeFournisseurDispatch($db);
-					$line->fetch_optionals($object->id, $extralabelslines);
+
+					$extrafields->fetch_name_optionals_label($srcLine->table_element);
+					$extrafields->fetch_name_optionals_label($line->table_element);
+
+					$srcLine->fetch_optionals($line->id); // fetch extrafields also available in orderline
+					$line->fetch_optionals($object->id);
+
 					$line->array_options = array_merge($line->array_options, $srcLine->array_options);
+
 					print '<tr class="oddeven">';
-					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan), $indiceAsked);
+					print $line->showOptionals($extrafields, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan), $indiceAsked);
 					print '</tr>';
 				}
 
@@ -1242,7 +1240,7 @@ elseif ($id || $ref)
 		$soc = new Societe($db);
 		$soc->fetch($object->socid);
 
-		$res = $object->fetch_optionals($object->id, $extralabels);
+		$res = $object->fetch_optionals($object->id);
 
 		$head=reception_prepare_head($object);
 		dol_fiche_head($head, 'reception', $langs->trans("Reception"), -1, 'reception');
@@ -1337,7 +1335,7 @@ elseif ($id || $ref)
             $morehtmlref .= '<br>' . $langs->trans('Project') . ' ';
             if (0) {    // Do not change on reception
                 if ($action != 'classify') {
-                    $morehtmlref .= '<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+                    $morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
                 }
                 if ($action == 'classify') {
                     // $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -1417,7 +1415,7 @@ elseif ($id || $ref)
 		print $langs->trans('DateDeliveryPlanned');
 		print '</td>';
 
-		if ($action != 'editdate_livraison') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
+		if ($action != 'editdate_livraison') print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editdate_livraison')
@@ -1557,7 +1555,7 @@ elseif ($id || $ref)
 		print $langs->trans('ReceptionMethod');
 		print '</td>';
 
-		if ($action != 'editshipping_method_id') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshipping_method_id&amp;id='.$object->id.'">'.img_edit($langs->trans('SetReceptionMethod'), 1).'</a></td>';
+		if ($action != 'editshipping_method_id') print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshipping_method_id&amp;id='.$object->id.'">'.img_edit($langs->trans('SetReceptionMethod'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editshipping_method_id')
@@ -1596,7 +1594,7 @@ elseif ($id || $ref)
 	        print '<table width="100%" class="nobordernopadding"><tr><td>';
 	        print $langs->trans('IncotermLabel');
 	        print '<td><td class="right">';
-	        if ($user->rights->reception->creer) print '<a href="'.DOL_URL_ROOT.'/reception/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+	        if ($user->rights->reception->creer) print '<a class="editfielda" href="'.DOL_URL_ROOT.'/reception/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
 	        else print '&nbsp;';
 	        print '</td></tr></table>';
 	        print '</td>';
@@ -1999,18 +1997,19 @@ elseif ($id || $ref)
 			print "</tr>";
 
 			// Display lines extrafields
-			if (is_array($extralabelslines) && count($extralabelslines)>0) {
+			if (is_array($extralabelslines) && count($extralabelslines)>0)
+			{
 				$colspan= empty($conf->productbatch->enabled) ? 8 : 9;
 				$line = new CommandeFournisseurDispatch($db);
-				$line->fetch_optionals($lines[$i]->id, $extralabelslines);
+				$line->fetch_optionals($lines[$i]->id);
 				print '<tr class="oddeven">';
 				if ($action == 'editline' && $lines[$i]->id == $line_id)
 				{
-					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan), $indiceAsked);
+					print $line->showOptionals($extrafields, 'edit', array('colspan'=>$colspan), $indiceAsked);
 				}
 				else
 				{
-					print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bc[$var], 'colspan'=>$colspan), $indiceAsked);
+					print $line->showOptionals($extrafields, 'view', array('colspan'=>$colspan), $indiceAsked);
 				}
 				print '</tr>';
 			}
@@ -2041,7 +2040,6 @@ elseif ($id || $ref)
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook))
 		{
-
 			if ($object->statut == Reception::STATUS_DRAFT && $num_prod > 0)
 			{
 				if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->reception->creer))

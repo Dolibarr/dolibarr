@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -119,25 +119,7 @@ if ($socid)
 	dol_fiche_end();
 
 
-    /*
-     * Barre d'action
-     */
-
-    /*print '<div class="tabsAction">';
-
-    if (! empty($conf->projet->enabled))
-    {
-    	if (! empty($conf->projet->enabled) && ! empty($user->rights->projet->creer))
-    	{*/
-        	$addbutton = '<a href="'.DOL_URL_ROOT.'/projet/card.php?action=create&socid='.$object->id.'&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
-    /*	}
-    	else
-    	{
-        	print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddProject").'</a>';
-    	}
-    }
-
-    print '</div>'; */
+   	$addbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/projet/card.php?action=create&socid='.$object->id.'&amp;backtopage='.urlencode($backtopage).'"><span class="text-plus-circle">'.$langs->trans("AddProject").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 
     print '<br>';
 

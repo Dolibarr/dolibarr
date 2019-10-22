@@ -21,7 +21,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -84,7 +84,7 @@ $object = new Product($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 if ($id > 0 || ! empty($ref))
 {
@@ -121,7 +121,6 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if ($action == 'addlimitstockwarehouse' && !empty($user->rights->produit->creer))
 {
-
 	$seuil_stock_alerte = GETPOST('seuil_stock_alerte');
 	$desiredstock = GETPOST('desiredstock');
 
@@ -136,7 +135,6 @@ if ($action == 'addlimitstockwarehouse' && !empty($user->rights->produit->creer)
 	}
 
 	if($maj_ok) {
-
 		$pse = new ProductStockEntrepot($db);
 		if ($pse->fetch(0, $id, GETPOST('fk_entrepot', 'int')) > 0) {
 			// Update
@@ -159,7 +157,6 @@ if ($action == 'addlimitstockwarehouse' && !empty($user->rights->produit->creer)
 
 if($action == 'delete_productstockwarehouse' && !empty($user->rights->produit->creer))
 {
-
 	$pse = new ProductStockEntrepot($db);
 
 	$pse->fetch(GETPOST('fk_productstockwarehouse', 'int'));
@@ -377,7 +374,7 @@ if ($action == "transfert_stock" && ! $cancel)
 				if (! $error)
 				{
 					// Remove stock
-    $result1=$object->correct_stock_batch(
+					$result1=$object->correct_stock_batch(
 						$user,
 						$srcwarehouseid,
 						GETPOST("nbpiece", 'int'),
@@ -392,7 +389,7 @@ if ($action == "transfert_stock" && ! $cancel)
 				if (! $error)
 				{
 					// Add stock
-    $result2=$object->correct_stock_batch(
+					$result2=$object->correct_stock_batch(
 						$user,
 						GETPOST("id_entrepot_destination", 'int'),
 						GETPOST("nbpiece", 'int'),
@@ -466,7 +463,6 @@ if ($action == "transfert_stock" && ! $cancel)
 // Update batch information
 if ($action == 'updateline' && GETPOST('save') == $langs->trans('Save'))
 {
-
     $pdluo = new Productbatch($db);
     $result=$pdluo->fetch(GETPOST('pdluoid', 'int'));
 
@@ -562,7 +558,6 @@ if ($id > 0 || $ref)
         print '<table class="border tableforfield" width="100%">';
 
 		if (! $variants) {
-
 			if ($conf->productbatch->enabled) {
 				print '<tr><td class="titlefield">' . $langs->trans("ManageLotSerial") . '</td><td>';
 				print $object->getLibStatut(0, 2);
@@ -699,24 +694,27 @@ if ($id > 0 || $ref)
 			print '</tr>';
 
 			// Last movement
-			$sql = "SELECT max(m.datem) as datem";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "stock_mouvement as m";
-			$sql .= " WHERE m.fk_product = '" . $object->id . "'";
-			$resqlbis = $db->query($sql);
-			if ($resqlbis) {
-				$obj = $db->fetch_object($resqlbis);
-				$lastmovementdate = $db->jdate($obj->datem);
-			} else {
-				dol_print_error($db);
+			if (!empty($user->rights->stock->mouvement->lire))
+			{
+				$sql = "SELECT max(m.datem) as datem";
+				$sql .= " FROM " . MAIN_DB_PREFIX . "stock_mouvement as m";
+				$sql .= " WHERE m.fk_product = '" . $object->id . "'";
+				$resqlbis = $db->query($sql);
+				if ($resqlbis) {
+					$obj = $db->fetch_object($resqlbis);
+					$lastmovementdate = $db->jdate($obj->datem);
+				} else {
+					dol_print_error($db);
+				}
+				print '<tr><td class="tdtop">' . $langs->trans("LastMovement") . '</td><td>';
+				if ($lastmovementdate) {
+					print dol_print_date($lastmovementdate, 'dayhour') . ' ';
+					print '(<a href="' . DOL_URL_ROOT . '/product/stock/movement_list.php?idproduct=' . $object->id . '">' . $langs->trans("FullList") . '</a>)';
+				} else {
+					print '<a href="' . DOL_URL_ROOT . '/product/stock/movement_list.php?idproduct=' . $object->id . '">' . $langs->trans("None") . '</a>';
+				}
+				print "</td></tr>";
 			}
-			print '<tr><td class="tdtop">' . $langs->trans("LastMovement") . '</td><td>';
-			if ($lastmovementdate) {
-				print dol_print_date($lastmovementdate, 'dayhour') . ' ';
-				print '(<a href="' . DOL_URL_ROOT . '/product/stock/movement_list.php?idproduct=' . $object->id . '">' . $langs->trans("FullList") . '</a>)';
-			} else {
-				print '<a href="' . DOL_URL_ROOT . '/product/stock/movement_list.php?idproduct=' . $object->id . '">' . $langs->trans("None") . '</a>';
-			}
-			print "</td></tr>";
 		}
 		print "</table>";
 
@@ -757,14 +755,13 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
 if (empty($reshook))
 {
-
 	if (empty($action) && $object->id)
 	{
 	    print "<div class=\"tabsAction\">\n";
 
 		if ($user->rights->stock->mouvement->creer)
 		{
-			if (! $variants) {
+			if (! $variants || ! empty($conf->global->VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT)) {
 				print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=correction">' . $langs->trans("CorrectStock") . '</a>';
 			}
 			else
@@ -780,7 +777,7 @@ if (empty($reshook))
 		//if (($user->rights->stock->mouvement->creer) && ! $object->hasbatch())
 		if ($user->rights->stock->mouvement->creer)
 		{
-			if (! $variants) {
+			if (! $variants || ! empty($conf->global->VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT)) {
 				print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=transfert">' . $langs->trans("TransferStock") . '</a>';
 			}
 			else
@@ -804,8 +801,8 @@ if (! $variants) {
 	 */
 
 	print '<div class="div-table-responsive">';
+	print '<table class="noborder centpercent">';
 
-	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="4">' . $langs->trans("Warehouse") . '</td>';
 	print '<td class="right">' . $langs->trans("NumberOfUnit") . '</td>';
@@ -924,7 +921,8 @@ if (! $variants) {
 						print '<td class="center">' . dol_print_date($pdluo->eatby, 'day') . '</td>';
 						print '<td class="center">' . dol_print_date($pdluo->sellby, 'day') . '</td>';
 						print '<td class="right">' . $pdluo->qty . ($pdluo->qty < 0 ? ' ' . img_warning() : '') . '</td>';
-						print '<td colspan="4"></td></tr>';
+						print '<td colspan="4"></td>';
+						print '</tr>';
 					}
 				}
 			}
@@ -932,12 +930,13 @@ if (! $variants) {
 		}
 	} else dol_print_error($db);
 
+	// Total line
 	print '<tr class="liste_total"><td class="right liste_total" colspan="4">' . $langs->trans("Total") . ':</td>';
 	print '<td class="liste_total right">' . price2num($total, 'MS') . '</td>';
 	print '<td class="liste_total right">';
 	print ($totalwithpmp ? price(price2num($totalvalue / $totalwithpmp, 'MU')) : '&nbsp;');    // This value may have rounding errors
 	print '</td>';
-// Value purchase
+	// Value purchase
 	print '<td class="liste_total right">';
 	print $totalvalue ? price(price2num($totalvalue, 'MT'), 1) : '&nbsp;';
 	print '</td>';
@@ -945,12 +944,13 @@ if (! $variants) {
 	if (empty($conf->global->PRODUIT_MULTIPRICES)) print ($total ? price($totalvaluesell / $total, 1) : '&nbsp;');
 	else print $langs->trans("Variable");
 	print '</td>';
-// Value to sell
+	// Value to sell
 	print '<td class="liste_total right">';
 	if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($totalvaluesell, 'MT'), 1);
 	else print $langs->trans("Variable");
 	print '</td>';
 	print "</tr>";
+
 	print "</table>";
 	print '</div>';
 
@@ -1073,6 +1073,7 @@ if (! $variants) {
 			print '<tr class="liste_total">';
 			print '<td colspan="4" class="left">'.$langs->trans("Total").'</td>';
 			print '<td class="right">'.$stock_total.'</td>';
+			print '<td></td>';
 			print '</tr>';
 		}
 		else

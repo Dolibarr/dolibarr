@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -947,8 +947,8 @@ class MouvementStock extends CommonObject
 					$result=dol_include_once('/'.$origintype.'/class/'.$origintype.'.class.php');
 					if ($result)
 					{
-					   $classname = ucfirst($origintype);
-					   $origin = new $classname($this->db);
+						$classname = ucfirst($origintype);
+						$origin = new $classname($this->db);
 					}
 				}
 				break;
@@ -1108,7 +1108,6 @@ class MouvementStock extends CommonObject
 		$langs->load("stocks");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'stdmovement';
 
 			if ($this->modelpdf) {

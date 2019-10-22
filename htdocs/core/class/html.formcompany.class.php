@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,28 +29,11 @@
  *	Class to build HTML component for third parties management
  *	Only common components are here.
  */
-class FormCompany
+
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+
+class FormCompany extends Form
 {
-	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
-
-	/**
-	 *	Constructor
-	 *
-	 *	@param	DoliDB	$db		Database handler
-	 */
-	public function __construct($db)
-	{
-		$this->db = $db;
-	}
-
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -761,6 +744,45 @@ class FormCompany
 
 			print "\n";
 		}
+	}
+
+	/**
+	 * showContactRoles on view and edit mode
+	 *
+	 * @param string $htmlname Html component name and id
+	 * @param Contact $contact Contact Obejct
+	 * @param string $rendermode view, edit
+	 * @param array $selected $key=>$val $val is selected Roles for input mode
+	 * @return string   String with contacts roles
+	 */
+	public function showRoles($htmlname, Contact $contact, $rendermode = 'view', $selected = array())
+	{
+		if ($rendermode === 'view') {
+			$toprint = array();
+			foreach ($contact->roles as $key => $val) {
+				$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa;">' . $val['label'] . '</li>';
+			}
+			return '<div class="select2-container-multi-dolibarr" style="width: 90%;" id="'.$htmlname.'"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
+		}
+
+		if ($rendermode === 'edit')
+		{
+			$contactType=$contact->listeTypeContacts('external', '', 1);
+			if (count($selected)>0) {
+				$newselected=array();
+				foreach($selected as $key=>$val) {
+					if (is_array($val) && array_key_exists('id', $val) && in_array($val['id'], array_keys($contactType))) {
+						$newselected[]=$val['id'];
+					} else {
+						break;
+					}
+				}
+				if (count($newselected)>0) $selected=$newselected;
+			}
+			return $this->multiselectarray($htmlname, $contactType, $selected);
+		}
+
+		return 'ErrorBadValueForParameterRenderMode';	// Should not happened
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

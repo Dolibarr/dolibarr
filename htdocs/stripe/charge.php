@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Put here all includes required by your class file
@@ -131,7 +131,7 @@ if (!$rowid)
 	    	$label.="Statut: ".$langs->trans("".$charge->outcome->seller_message."");
 	    	$status = $form->textwithpicto(img_picto($langs->trans("".$charge->status.""), 'statut8'), $label, 1);
 	  }
-    
+
       if ($charge->payment_method_details->type=='card')
 	  {
 		    $type = $langs->trans("card");
@@ -140,7 +140,7 @@ if (!$rowid)
 	  } elseif ($charge->payment_method_details->type=='three_d_secure'){
 			$type = $langs->trans("card3DS");
 	  }
-  
+
     if (! empty($charge->payment_intent)) {
     $charge = \Stripe\PaymentIntent::retrieve($charge->payment_intent);
     }
@@ -183,7 +183,7 @@ if (!$rowid)
         	$url='https://dashboard.stripe.com/'.$connect.'payments/'.$charge->id;
         }
 		print "<td>";
-        print "<a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." ".$charge->id."</a>";
+        print "<a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." ".$charge->id."</a>";
 		print "</td>\n";
 		// Stripe customer
 		print "<td>";
@@ -195,7 +195,7 @@ if (!$rowid)
 		}
 		if (! empty($charge->customer))
 		{
-    		print '<a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').' '.$charge->customer.'</a>';
+    		print '<a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'globe').' '.$charge->customer.'</a>';
 		}
         print "</td>\n";
 		// Link
@@ -241,7 +241,6 @@ if (!$rowid)
 	    print "</tr>\n";
 	}
 } else {
-
 }
 
 // End of page

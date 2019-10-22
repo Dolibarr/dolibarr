@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -566,7 +566,6 @@ if (! is_array($x_coll) || ! is_array($x_paye))
         $subtot_paye_vat = 0;
 
         if ($min == 0 || ($min > 0 && $x_both[$thirdparty_id]['paye']['totalht'] > $min)) {
-
             if (is_array($x_both[$thirdparty_id]['paye']['detail'])) {
                 print "<tr>";
                 print '<td class="tax_rate">';

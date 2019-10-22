@@ -14,7 +14,7 @@
 * GNU General Public License for more details.
 *
 * You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
+* along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
 /**
@@ -115,7 +115,7 @@ $elementtype = 'commandedet';
 //Retreive all extrafield for thirdsparty
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label('commandedet', true);
+$extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_line_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_line_array = array();
@@ -209,7 +209,6 @@ $order_fields = array(
 	'cond_reglement_doc' => array('name'=>'cond_reglement_doc','type'=>'xsd:string'),
 
 	'date_livraison' => array('name'=>'date_livraison','type'=>'xsd:date'),
-	'fk_delivery_address' => array('name'=>'fk_delivery_address','type'=>'xsd:int'),
 	'demand_reason_id' => array('name'=>'demand_reason_id','type'=>'xsd:string'),
 
 	'lines' => array('name'=>'lines','type'=>'tns:LinesArray2')
@@ -220,7 +219,7 @@ $elementtype = 'commande';
 //Retreive all extrafield for thirdsparty
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label('commande', true);
+$extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_array = array();
@@ -396,7 +395,6 @@ function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 
 				if(!$error)
 				{
-
 					$linesresp=array();
 					$i=0;
 					foreach($order->lines as $line)
@@ -467,7 +465,6 @@ function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 					'mode_reglement' => $order->mode_reglement,
 
 					'date_livraison' => $order->date_livraison,
-					'fk_delivery_address' => $order->fk_delivery_address,
 
 					'demand_reason_id' => $order->demand_reason_id,
 					'demand_reason_code' => $order->demand_reason_code,
@@ -560,7 +557,6 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 
 				if(!$error)
 				{
-
 					// Define lines of invoice
 					$linesresp=array();
 					foreach($order->lines as $line)
@@ -698,7 +694,6 @@ function createOrder($authentication, $order)
 		$newobject->statut=Commande::STATUS_DRAFT;	// We start with status draft
 		$newobject->billed=$order['billed'];
 		$newobject->fk_project=$order['project_id'];
-		$newobject->fk_delivery_address=$order['fk_delivery_address'];
 		$newobject->cond_reglement_id=$order['cond_reglement_id'];
 		$newobject->demand_reason_id=$order['demand_reason_id'];
 		$newobject->date_creation=$now;
@@ -708,7 +703,7 @@ function createOrder($authentication, $order)
 		// Retrieve all extrafield for order
 		// fetch optionals attributes and labels
 		$extrafields=new ExtraFields($db);
-		$extralabels=$extrafields->fetch_name_optionals_label('commande', true);
+		$extrafields->fetch_name_optionals_label($elementtype, true);
 		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
 			foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
@@ -746,7 +741,7 @@ function createOrder($authentication, $order)
 			// Retrieve all extrafield for lines
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
-			$extralabels=$extrafields->fetch_name_optionals_label('commandedet', true);
+			$extrafields->fetch_name_optionals_label($elementtype, true);
 			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 			{
 				foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
@@ -840,7 +835,6 @@ function validOrder($authentication, $id = '', $id_warehouse = 0)
 			$db->begin();
 			if ($result > 0)
 			{
-
 				$result=$order->valid($fuser, $id_warehouse);
 
 				if ($result	>= 0)
@@ -924,7 +918,6 @@ function updateOrder($authentication, $order)
 		$result=$object->fetch($order['id'], (empty($order['id'])?$order['ref']:''), (empty($order['id']) && empty($order['ref'])?$order['ref_ext']:''));
 
 		if (!empty($object->id)) {
-
 			$objectfound=true;
 
 			$db->begin();
@@ -957,7 +950,7 @@ function updateOrder($authentication, $order)
 			//Retreive all extrafield for object
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
-			$extralabels=$extrafields->fetch_name_optionals_label('commande', true);
+			$extrafields->fetch_name_optionals_label($elementtype, true);
 			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 			{
 				foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -57,10 +57,8 @@ else
         echo ('<p><a href="facturation_verif.php?action=suppr_article&suppr_id='.$tab[$i]['id'].'" title="'.$langs->trans("DeleteArticle").'">'.$tab[$i]['ref'].' - '.$tab[$i]['label'].'</a></p>'."\n");
 
         if ( $tab[$i]['remise_percent'] > 0 ) {
-
             $remise_percent = ' -'.$tab[$i]['remise_percent'].'%';
         } else {
-
             $remise_percent = '';
         }
 

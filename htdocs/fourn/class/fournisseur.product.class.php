@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -180,7 +180,6 @@ class ProductFournisseur extends Product
 
         if (empty($error))
         {
-
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
             $sql.= " WHERE rowid = ".$rowid;
 
@@ -300,7 +299,6 @@ class ProductFournisseur extends Product
 		// Check parameters
 		if ($buyprice != '' && ! is_numeric($buyprice))
 		{
-
 		}
 
         $this->db->begin();

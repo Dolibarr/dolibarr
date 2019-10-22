@@ -12,13 +12,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
  *	\file			htdocs/core/actions_addupdatedelete.inc.php
- *  \brief			Code for common actions cancel / add / update / delete / clone
+ *  \brief			Code for common actions cancel / add / update / update_extras / delete / deleteline / validate / cancel / reopen / clone
  */
 
 
@@ -32,6 +32,8 @@
 
 if ($cancel)
 {
+	/*var_dump($cancel);
+	var_dump($backtopage);exit;*/
 	if (! empty($backtopage))
 	{
 		header("Location: ".$backtopage);
@@ -80,7 +82,8 @@ if ($action == 'add' && ! empty($permissiontoadd))
 		if ($result > 0)
 		{
 		    // Creation OK
-			$urltogo=$backtopage?str_replace('__ID__', $result, $backtopage):$backurlforlist;
+			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
+			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo);		// New method to autoselect project after a New on another form object creation
 			header("Location: ".$urltogo);
 			exit;
 		}
@@ -231,6 +234,106 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && ! empty($permissiont
 	}
 }
 
+// Action validate object
+if ($action == 'confirm_validate' && $confirm == 'yes' && $permissionedit)
+{
+	$result = $object->validate($user);
+	if ($result >= 0)
+	{
+		// Define output language
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		{
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+			if (! empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+			$model=$object->modelpdf;
+			$ret = $object->fetch($id); // Reload to get new records
+
+			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
+	}
+	else
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+}
+
+// Action close object
+if ($action == 'confirm_close' && $confirm == 'yes' && $permissionedit)
+{
+	$result = $object->cancel($user);
+	if ($result >= 0)
+	{
+		// Define output language
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		{
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+			if (! empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+			$model=$object->modelpdf;
+			$ret = $object->fetch($id); // Reload to get new records
+
+			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
+	}
+	else
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+}
+
+// Action setdraft object
+if ($action == 'confirm_setdraft' && $confirm == 'yes' && $permissionedit)
+{
+	$result = $object->setDraft($user);
+	if ($result >= 0)
+	{
+		// Nothing else done
+	}
+	else
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+}
+
+// Action reopen object
+if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissionedit)
+{
+	$result = $object->reopen($user);
+	if ($result >= 0)
+	{
+		// Define output language
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		{
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+			if (! empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+			$model=$object->modelpdf;
+			$ret = $object->fetch($id); // Reload to get new records
+
+			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
+	}
+	else
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+}
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes' && ! empty($permissiontoadd))

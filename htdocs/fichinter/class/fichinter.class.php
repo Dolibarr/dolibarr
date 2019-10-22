@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -674,7 +674,6 @@ class Fichinter extends CommonObject
 		$langs->load("interventions");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'soleil';
 
 			if ($this->modelpdf) {
@@ -840,7 +839,6 @@ class Fichinter extends CommonObject
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 			foreach ($dirmodels as $reldir) {
-
 				$dir = dol_buildpath($reldir."core/modules/fichinter/");
 
 				// Load file with numbering class (if found)
@@ -1600,7 +1598,6 @@ class FichinterLigne extends CommonObjectLine
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
 				$result=$this->insertExtraFields();
@@ -1613,7 +1610,6 @@ class FichinterLigne extends CommonObjectLine
 			$result=$this->update_total();
 			if ($result > 0)
 			{
-
 				if (! $notrigger)
 				{
 					// Call trigger

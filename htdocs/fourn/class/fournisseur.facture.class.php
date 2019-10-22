@@ -25,7 +25,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -2341,7 +2341,6 @@ class FactureFournisseur extends CommonInvoice
         $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
         foreach ($dirmodels as $reldir) {
-
             $dir = dol_buildpath($reldir."core/modules/supplier_invoice/");
 
             // Load file with numbering class (if found)
@@ -2575,7 +2574,6 @@ class FactureFournisseur extends CommonInvoice
 
         if (! $error)
         {
-
         }
 
         unset($object->context['createfromclone']);

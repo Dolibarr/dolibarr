@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
@@ -57,7 +57,7 @@ dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
 <?php if ($object->photos) { ?>
 <td valign="middle" align="center" width="30%" rowspan="<?php echo $object->nblines; ?>">
-<?php echo $object->photos; ?>
+	<?php echo $object->photos; ?>
 </td>
 <?php } ?>
 

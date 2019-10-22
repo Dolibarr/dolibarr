@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -21,7 +21,9 @@
  *  \brief      Page to activate/disable all modules
  */
 
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');			// If there is no need to load and show top and left menu
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');	// If there is no need to load and show top and left menu
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');	// Disabled because this page is into a popup on module search page and we want to avoid to have an Anti CSRF token error (done if MAIN_SECURITY_CSRF_WITH_TOKEN is on) when we make a second search after closing popup.
+
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';

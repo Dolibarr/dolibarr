@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -36,6 +36,7 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
+$massaction = GETPOST('massaction', 'aZ09');
 $contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'accountingaccountlist';   // To manage different context of search
 
 $search_account = GETPOST('search_account', 'alpha');
@@ -100,7 +101,7 @@ if (empty($reshook))
 		$search_array_options=array();
     }
 
-    if (GETPOST('change_chart', 'alpha'))
+    if (GETPOST('change_chart', 'alpha') && (GETPOST('valid_change_chart', 'int') || empty($conf->use_javascript_ajax)))
     {
         $chartofaccounts = GETPOST('chartofaccounts', 'int');
 
@@ -236,6 +237,24 @@ if ($resql)
 	if ($search_pcgsubtype) $param.= '&search_pcgsubtype='.urlencode($search_pcgsubtype);
     if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
+    if (! empty($conf->use_javascript_ajax))
+    {
+	    print '<!-- Add javascript to update a flag when we select "Change plan" -->
+			<script type="text/javascript">
+			$(document).ready(function () {
+		    	$("#searchFormList").on("submit", function (e) {
+					console.log("chartofaccounts focus = "+$("#chartofaccounts").is(":focus"));
+					console.log("change_chart focus = "+$("#change_chart").is(":focus"));
+					if ($("#change_chart").is(":focus"))
+					{
+						console.log("We set valid_change_chart to 1");
+						$("#valid_change_chart").val(1);
+					}
+					return true;
+			    });
+			});
+	    	</script>';
+    }
 
 	print '<form method="POST" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -278,13 +297,17 @@ if ($resql)
     else dol_print_error($db);
     print "</select>";
     print ajax_combobox("chartofaccounts");
-    print '<input type="submit" class="button" name="change_chart" tabindex="-1" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
+    print '<input type="submit" class="button" name="change_chart" id="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
+    print '<input type="hidden" name="valid_change_chart" id="valid_change_chart" value="0">';
 
     print '<br>';
 	print '<br>';
 
 	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+
+    $moreforfilter = '';
+    $massactionbutton = '';
 
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";

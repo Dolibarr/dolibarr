@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -51,7 +51,7 @@ $result=$object->fetch($id);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('mailingcard','globalcard'));
@@ -73,7 +73,6 @@ $object->substitutionarrayfortest = $substitutionarray;
 // List of sending methods
 $listofmethods=array();
 $listofmethods['mail']='PHP mail function';
-//$listofmethods['simplemail']='Simplemail class';
 $listofmethods['smtps']='SMTP/SMTPS socket library';
 
 
@@ -896,17 +895,23 @@ else
 			print '<table class="border centpercent tableforfield">';
 
 			// Description
-			print '<tr><td class="titlefield">'.$form->editfieldkey("MailTitle", 'titre', $object->titre, $object, $user->rights->mailing->creer && $object->statut < 3, 'string').'</td><td colspan="3">';
+			print '<tr><td class="titlefield">';
+			print $form->editfieldkey("MailTitle", 'titre', $object->titre, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			print '</td><td>';
 			print $form->editfieldval("MailTitle", 'titre', $object->titre, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
 			print '</td></tr>';
 
 			// From
-			print '<tr><td>'.$form->editfieldkey("MailFrom", 'email_from', $object->email_from, $object, $user->rights->mailing->creer && $object->statut < 3, 'string').'</td><td colspan="3">';
+			print '<tr><td>';
+			print $form->editfieldkey("MailFrom", 'email_from', $object->email_from, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			print '</td><td>';
 			print $form->editfieldval("MailFrom", 'email_from', $object->email_from, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
 			print '</td></tr>';
 
 			// Errors to
-			print '<tr><td>'.$form->editfieldkey("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->rights->mailing->creer && $object->statut < 3, 'string').'</td><td colspan="3">';
+			print '<tr><td>';
+			print $form->editfieldkey("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			print '</td><td>';
 			print $form->editfieldval("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
 			print '</td></tr>';
 
@@ -1117,7 +1122,7 @@ else
 			$htmltext.='</i>';
 
 			// Print mail content
-			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto('<span class="hideonsmartphone">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'help', '', 0, 2, 'emailsubstitionhelp'), 'generic');
+			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto('<span class="opacitymedium hideonsmartphone">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'helpclickable', '', 0, 2, 'emailsubstitionhelp'), 'generic');
 
 			dol_fiche_head('', '', '', -1);
 

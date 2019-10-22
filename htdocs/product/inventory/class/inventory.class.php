@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -54,22 +54,29 @@ class Inventory extends CommonObject
 	 */
 	public $picto = 'stock';
 
+	const STATUS_DRAFT = 0;
+	const STATUS_VALIDATED = 1;
+	const STATUS_RECORDED = 2;
+	const STATUS_CANCELED = 9;
 
 	/**
-	 *  'type' if the field format.
+	 *  'type' if the field format ('integer', 'integer:Class:pathtoclass', 'varchar(x)', 'double(24,8)', 'text', 'html', 'datetime', 'timestamp', 'float')
 	 *  'label' the translation key.
 	 *  'enabled' is a condition when the field must be managed.
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+	 *  'default' is a default value for creation (can still be replaced by the global setup of default values)
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
 	 *  'position' is the sort order of field.
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
+	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
 	 *  'help' is a string visible as a tooltip on field
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
-	 *  'default' is a default value for creation (can still be replaced by the global setup of default values)
-	 *  'showoncombobox' if field must be shown into the label of combobox
+	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
+	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 	 */
 
 	// BEGIN MODULEBUILDER PROPERTIES
@@ -85,18 +92,15 @@ class Inventory extends CommonObject
 		'fk_product'     => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'visible'=>1, 'enabled'=>1, 'position'=>32, 'index'=>1, 'help'=>'InventoryForASpecificProduct'),
 		'date_inventory' => array('type'=>'date', 'label'=>'DateValue', 'visible'=>1, 'enabled'=>1, 'position'=>35),
 
-		'date_validation' => array('type'=>'datetime', 'label'=>'DateValidation', 'visible'=>-2, 'enabled'=>1, 'position'=>502,),
-		'fk_user_valid' => array('type'=>'integer', 'label'=>'UserValidation', 'visible'=>-2, 'enabled'=>1, 'position'=>512,),
-
 		'date_creation' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>500),
 		'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>501),
-		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
+		'date_validation' => array('type'=>'datetime',  'label'=>'DateValidation',   'visible'=>-2, 'enabled'=>1, 'position'=>502),
 		'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>510),
 		'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
-		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
+		'fk_user_valid' => array('type'=>'integer',     'label'=>'UserValidation',   'visible'=>-2, 'enabled'=>1, 'position'=>512),
 		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0,  'position'=>1000),
 
-		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>4, 'enabled'=>1, 'position'=>1000, 'default'=>0, 'arrayofkeyval'=>array(0=>'ToDo', 1=>'Done', -1=>'Cancel')),
+		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>4, 'enabled'=>1, 'position'=>1000, 'default'=>0, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 2=>'Recorded', -1=>'Canceled')),
 	);
 
 	/**

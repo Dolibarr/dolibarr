@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -94,10 +94,10 @@ if ($db->type == 'pgsql')
 {
 	// Check option standard_conforming_strings is on
 	$paramarray=$db->getServerParametersValues('standard_conforming_strings');
-//	if ($paramarray['standard_conforming_strings'] != 'on' && $paramarray['standard_conforming_strings'] != 1)
-//	{
-//		$langs->load("errors");
-//	}
+    //	if ($paramarray['standard_conforming_strings'] != 'on' && $paramarray['standard_conforming_strings'] != 1)
+    //	{
+    //		$langs->load("errors");
+    //	}
 }
 print '<br>';
 

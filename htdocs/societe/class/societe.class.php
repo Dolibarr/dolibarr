@@ -27,7 +27,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -465,6 +465,9 @@ class Societe extends CommonObject
 	public $logo;
 	public $logo_small;
 	public $logo_mini;
+	public $logo_squarred;
+	public $logo_squarred_small;
+	public $logo_squarred_mini;
 
 	public $array_options;
 
@@ -818,7 +821,7 @@ class Societe extends CommonObject
 	 *      Update parameters of third party
 	 *
 	 *      @param	int		$id              			Id of company (deprecated, use 0 here and call update on an object loaded by a fetch)
-	 *      @param  User	$user            			Utilisateur qui demande la mise a jour
+	 *      @param  User	$user            			User who requests the update
 	 *      @param  int		$call_trigger    			0=no, 1=yes
 	 *		@param	int		$allowmodcodeclient			Inclut modif code client et code compta
 	 *		@param	int		$allowmodcodefournisseur	Inclut modif code fournisseur et code compta fournisseur
@@ -1072,6 +1075,7 @@ class Societe extends CommonObject
 			$sql .= ",barcode = ".(! empty($this->barcode)?"'".$this->db->escape($this->barcode)."'":"null");
 			$sql .= ",default_lang = ".(! empty($this->default_lang)?"'".$this->db->escape($this->default_lang)."'":"null");
 			$sql .= ",logo = ".(! empty($this->logo)?"'".$this->db->escape($this->logo)."'":"null");
+			$sql .= ",logo_squarred = ".(! empty($this->logo_squarred)?"'".$this->db->escape($this->logo_squarred)."'":"null");
 			$sql .= ",outstanding_limit= ".($this->outstanding_limit!=''?$this->outstanding_limit:'null');
 			$sql .= ",order_min_amount= ".($this->order_min_amount!=''?$this->order_min_amount:'null');
 			$sql .= ",supplier_order_min_amount= ".($this->supplier_order_min_amount!=''?$this->supplier_order_min_amount:'null');
@@ -1266,7 +1270,7 @@ class Societe extends CommonObject
 		$sql .= ', s.webservices_url, s.webservices_key';
 		$sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
 		$sql .= ', s.fk_departement as state_id, s.fk_pays as country_id, s.fk_stcomm, s.remise_supplier, s.mode_reglement, s.cond_reglement, s.fk_account, s.tva_assuj';
-		$sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo';
+		$sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo, s.logo_squarred';
 		$sql .= ', s.fk_shipping_method';
 		$sql .= ', s.outstanding_limit, s.import_key, s.canvas, s.fk_incoterms, s.location_incoterms';
 		$sql .= ', s.order_min_amount, s.supplier_order_min_amount';
@@ -1420,6 +1424,7 @@ class Societe extends CommonObject
 				$this->modelpdf = $obj->model_pdf;
 				$this->default_lang = $obj->default_lang;
 				$this->logo = $obj->logo;
+				$this->logo_squarred = $obj->logo_squarred;
 
 				$this->webservices_url = $obj->webservices_url;
 				$this->webservices_key = $obj->webservices_key;
@@ -1633,13 +1638,13 @@ class Societe extends CommonObject
 		return 0;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Definit la societe comme un client
+	 *  Defines the company as a customer
 	 *
-	 *  @param	float	$remise		Valeur en % de la remise
-	 *  @param  string	$note		Note/Motif de modification de la remise
-	 *  @param  User	$user		Utilisateur qui definie la remise
+	 *  @param	float	$remise		Value in % of the discount
+	 *  @param  string	$note		Note/Reason for changing the discount
+	 *  @param  User	$user		User who sets the discount
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
     public function set_remise_client($remise, $note, User $user)
@@ -1647,7 +1652,7 @@ class Societe extends CommonObject
         // phpcs:enable
 		global $conf, $langs;
 
-		// Nettoyage parametres
+		// Parameter cleaning
 		$note=trim($note);
 		if (! $note)
 		{
@@ -1663,7 +1668,7 @@ class Societe extends CommonObject
 
 			$now=dol_now();
 
-			// Positionne remise courante
+			// Position current discount
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
 			$sql.= " SET remise_client = '".$this->db->escape($remise)."'";
 			$sql.= " WHERE rowid = " . $this->id;
@@ -1675,7 +1680,7 @@ class Societe extends CommonObject
 				return -1;
 			}
 
-			// Ecrit trace dans historique des remises
+			// Writes trace in discount history
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise";
 			$sql.= " (entity, datec, fk_soc, remise_client, note, fk_user_author)";
 			$sql.= " VALUES (".$conf->entity.", '".$this->db->idate($now)."', ".$this->id.", '".$this->db->escape($remise)."',";
@@ -1696,13 +1701,13 @@ class Societe extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Definit la societe comme un client
+	 *  Defines the company as a customer
 	 *
-	 *  @param	float	$remise		Valeur en % de la remise
-	 *  @param  string	$note		Note/Motif de modification de la remise
-	 *  @param  User	$user		Utilisateur qui definie la remise
+	 *  @param	float	$remise		Value in % of the discount
+	 *  @param  string	$note		Note/Reason for changing the discount
+	 *  @param  User	$user		User who sets the discount
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
     public function set_remise_supplier($remise, $note, User $user)
@@ -1710,7 +1715,7 @@ class Societe extends CommonObject
         // phpcs:enable
 		global $conf, $langs;
 
-		// Nettoyage parametres
+		// Parameter cleaning
 		$note=trim($note);
 		if (! $note)
 		{
@@ -1726,7 +1731,7 @@ class Societe extends CommonObject
 
 			$now=dol_now();
 
-			// Positionne remise courante
+			// Position current discount
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
 			$sql.= " SET remise_supplier = '".$this->db->escape($remise)."'";
 			$sql.= " WHERE rowid = " . $this->id;
@@ -1738,7 +1743,7 @@ class Societe extends CommonObject
 				return -1;
 			}
 
-			// Ecrit trace dans historique des remises
+			// Writes trace in discount history
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_supplier";
 			$sql.= " (entity, datec, fk_soc, remise_supplier, note, fk_user_author)";
 			$sql.= " VALUES (".$conf->entity.", '".$this->db->idate($now)."', ".$this->id.", '".$this->db->escape($remise)."',";
@@ -1822,10 +1827,10 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *  Renvoie montant TTC des reductions/avoirs en cours disponibles de la societe
+	 * 	Returns amount of included taxes of the current discounts/credits available from the company
 	 *
-	 *	@param	User	$user			Filtre sur un user auteur des remises
-	 * 	@param	string	$filter			Filtre autre
+	 *	@param	User	$user			Filter on a user author of discounts
+	 * 	@param	string	$filter			Other filter
 	 * 	@param	integer	$maxvalue		Filter on max value for discount
 	 * 	@param	int		$discount_type	0 => customer discount, 1 => supplier discount
 	 *	@return	int					<0 if KO, Credit note amount otherwise
@@ -2070,13 +2075,11 @@ class Societe extends CommonObject
             if (empty($option) && $this->fournisseur > 0) $option = 'supplier';
         }
 
-
 		if (! empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto)))
 		{
 			$code = '';
 			if (($this->client) && (! empty($this->code_client))
-				&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
-				|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 2
+				&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1 || $conf->global->SOCIETE_ADD_REF_IN_LIST == 2
 				)
 			)
 			{
@@ -2084,8 +2087,7 @@ class Societe extends CommonObject
 			}
 
 			if (($this->fournisseur) && (! empty($this->code_fournisseur))
-				&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1
-				|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 3
+				&& ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1	|| $conf->global->SOCIETE_ADD_REF_IN_LIST == 3
 				)
 			)
 			{
@@ -2112,6 +2114,12 @@ class Societe extends CommonObject
 			$label.= '<div class="photointooltip">';
 			$label.= Form::showphoto('societe', $this, 0, 40, 0, 'photowithmargin', 'mini', 0);	// Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
 			$label.= '</div><div style="clear: both;"></div>';
+		}
+		elseif (! empty($this->logo_squarred) && class_exists('Form'))
+		{
+			/*$label.= '<div class="photointooltip">';
+			$label.= Form::showphoto('societe', $this, 0, 40, 0, 'photowithmargin', 'mini', 0);	// Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
+			$label.= '</div><div style="clear: both;"></div>';*/
 		}
 
 		$label.= '<div class="centpercent">';
@@ -2256,13 +2264,13 @@ class Societe extends CommonObject
 		return $this->LibStatut($this->status, $mode);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status
 	 *
-	 *  @param	int		$statut         Id statut
+	 *  @param	int		$statut         Status id
 	 *  @param	int		$mode           0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return	string          		Libelle du statut
+	 *  @return	string          		Status label
 	 */
     public function LibStatut($statut, $mode = 0)
 	{
@@ -2421,11 +2429,11 @@ class Societe extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Renvoie la liste des contacts de cette societe
+	 *    Returns the contact list of this company
 	 *
-	 *    @return     array      tableau des contacts
+	 *    @return     array      array of contacts
 	 */
     public function contact_array()
 	{
@@ -2455,11 +2463,11 @@ class Societe extends CommonObject
 		return $contacts;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Renvoie la liste des contacts de cette societe
+	 *    Returns the contact list of this company
 	 *
-	 *    @return    array    $contacts    tableau des contacts
+	 *    @return    array    $contacts    array of contacts
 	 */
     public function contact_array_objects()
 	{
@@ -2600,9 +2608,9 @@ class Societe extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Attribut un code client a partir du module de controle des codes.
+	 *  Assigns a customer code from the code control module.
 	 *  Return value is stored into this->code_client
 	 *
 	 *	@param	Societe		$objsoc		Object thirdparty
@@ -2632,9 +2640,9 @@ class Societe extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Attribut un code fournisseur a partir du module de controle des codes.
+	 *  Assigns a vendor code from the code control module.
 	 *  Return value is stored into this->code_fournisseur
 	 *
 	 *	@param	Societe		$objsoc		Object thirdparty
@@ -2663,10 +2671,10 @@ class Societe extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Verifie si un code client est modifiable en fonction des parametres
-	 *    du module de controle des codes.
+	 *    Check if a client code is editable based on the parameters of the
+	 *    code control module.
 	 *
 	 *    @return     int		0=No, 1=Yes
 	 */
@@ -2700,9 +2708,9 @@ class Societe extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Verifie si un code fournisseur est modifiable dans configuration du module de controle des codes
+	 *    Check if a vendor code is editable in the code control module configuration
 	 *
 	 *    @return     int		0=No, 1=Yes
 	 */
@@ -2810,11 +2818,11 @@ class Societe extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    	Renvoie un code compta, suivant le module de code compta.
-	 *      Peut etre identique a celui saisit ou genere automatiquement.
-	 *      A ce jour seule la generation automatique est implementee
+	 *    	Returns an accounting code, following the accounting code module.
+	 *      May be identical to the one entered or generated automatically.
+	 *      To date only the automatic generation is implemented
 	 *
 	 *    	@param	string	$type		Type of thirdparty ('customer' or 'supplier')
 	 *		@return	string				Code compta si ok, 0 si aucun, <0 si ko
@@ -2839,7 +2847,7 @@ class Societe extends CommonObject
 				$classname = $conf->global->SOCIETE_CODECOMPTA_ADDON;
 				$mod = new $classname;
 
-				// Defini code compta dans $mod->code
+				// Set code count in $mod->code
 				$result = $mod->get_code($this->db, $this, $type);
 
 				if ($type == 'customer') $this->code_compta = $mod->code;
@@ -2991,9 +2999,9 @@ class Societe extends CommonObject
 		else return false;
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Verifie la validite d'un identifiant professionnel en fonction du pays de la societe (siren, siret, ...)
+	 *  Check the validity of a professional identifier according to the country of the company (siren, siret, ...)
 	 *
 	 *  @param	int			$idprof         1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
 	 *  @param  Societe		$soc            Objet societe
@@ -3009,7 +3017,7 @@ class Societe extends CommonObject
 
 		if (! empty($conf->global->MAIN_DISABLEPROFIDRULES)) return 1;
 
-		// Verifie SIREN si pays FR
+		// Check SIREN if country FR
 		if ($idprof == 1 && $soc->country_code == 'FR')
 		{
 			$chaine=trim($this->idprof1);
@@ -3199,11 +3207,11 @@ class Societe extends CommonObject
 		return '';
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *   Indique si la societe a des projets
+	 *   Indicates if the company has projects
 	 *
-	 *   @return     bool	   true si la societe a des projets, false sinon
+	 *   @return     bool	   true if the company has projects, false otherwise
 	 */
     public function has_projects()
 	{
@@ -3305,9 +3313,9 @@ class Societe extends CommonObject
 		return isInEEC($this);
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Charge la liste des categories fournisseurs
+	 *  Load the list of provider categories
 	 *
 	 *  @return    int      0 if success, <> 0 if error
 	 */
@@ -3525,6 +3533,9 @@ class Societe extends CommonObject
 		$this->logo=empty($conf->global->MAIN_INFO_SOCIETE_LOGO)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO;
 		$this->logo_small=empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL;
 		$this->logo_mini=empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
+		$this->logo_squarred=empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED;
+		$this->logo_squarred_small=empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_SMALL)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_SMALL;
+		$this->logo_squarred_mini=empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI;
 
 		// Define if company use vat or not
 		$this->tva_assuj=$conf->global->FACTURE_TVAOPTION;
@@ -3539,7 +3550,7 @@ class Societe extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return	int >0 if ok
 	 */
     public function initAsSpecimen()
 	{
@@ -3586,6 +3597,7 @@ class Societe extends CommonObject
 		$this->idprof4='idprof4';
 		$this->idprof5='idprof5';
 		$this->idprof6='idprof6';
+		return 1;
 	}
 
 	/**
@@ -3692,11 +3704,11 @@ class Societe extends CommonObject
 	}
 
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Set prospect level
 	 *
-	 *  @param  User	$user		Utilisateur qui definie la remise
+	 *  @param  User	$user		User who sets the discount
 	 *	@return	int					<0 if KO, >0 if OK
 	 * @deprecated Use update function instead
 	 */

@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -260,7 +260,6 @@ $tasksarray=$task->getTasksArray(0, 0, ($object->id ? $object->id : $id), $socid
 
 if (count($tasksarray)>0)
 {
-
 	// Show Gant diagram from $taskarray using JSGantt
 
 	$dateformat=$langs->trans("FormatDateShortJQuery");			// Used by include ganttchart.inc.php later

@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -1625,7 +1625,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	 */
 
 	/**
-	 *   	uasort callback function to Sort colums fields
+	 *   	uasort callback function to Sort columns fields
 	 *
 	 *   	@param	array			$a    			PDF lines array fields configs
 	 *   	@param	array			$b    			PDF lines array fields configs
@@ -1663,7 +1663,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	    // Positionning
 	    $curX = $this->page_largeur-$this->marge_droite; // start from right
 
-	    // Array witdh
+	    // Array width
 	    $arrayWidth = $this->page_largeur-$this->marge_droite-$this->marge_gauche;
 
 	    // Count flexible column
@@ -1671,7 +1671,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	    $countFlexCol = 0;
 	    foreach ($this->cols as $colKey => &$colDef)
 	    {
-	        if (!$this->getColumnStatus($colKey)) continue; // continue if desable
+	        if (!$this->getColumnStatus($colKey)) continue; // continue if disabled
 
 	        if (!empty($colDef['scale'])){
 	            // In case of column widht is defined by percentage

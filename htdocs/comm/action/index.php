@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 
@@ -1562,7 +1562,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                         	$savlabel=$event->label?$event->label:$event->libelle;
                         	$event->label=$titletoshow;
                         	$event->libelle=$titletoshow;
-                        	print $event->getNomUrl(0, $maxnbofchar, 'cal_event', '', 0, 1);
+                        	print $event->getNomUrl(0, $maxnbofchar, 'cal_event', '', 0, 0);
                         	$event->label=$savlabel;
                         	$event->libelle=$savlabel;
                         }

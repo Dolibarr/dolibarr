@@ -27,7 +27,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -172,6 +172,7 @@ class Propal extends CommonObject
 
 	/**
      * @var int ID
+     * @deprecated
      */
 	public $fk_address;
 
@@ -1124,7 +1125,7 @@ class Propal extends CommonObject
 				}
 
 				// Set delivery address
-				if (! $error && $this->fk_delivery_address)
+				/*if (! $error && $this->fk_delivery_address)
 				{
 					$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
 					$sql.= " SET fk_delivery_address = ".$this->fk_delivery_address;
@@ -1132,7 +1133,7 @@ class Propal extends CommonObject
 					$sql.= " AND entity = ".setEntity($this);
 
 					$result=$this->db->query($sql);
-				}
+				}*/
 
 				if (! $error)
 				{
@@ -1286,7 +1287,11 @@ class Propal extends CommonObject
 		$object->datep		= $now;    // deprecated
 		$object->fin_validite	= $object->date + ($object->duree_validite * 24 * 3600);
 		if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) $object->ref_client	= '';
-
+		if ($conf->global->MAIN_DONT_KEEP_NOTE_ON_CLONING==1)
+		{
+				 $object->note_private = '';
+                                 $object->note_public = '';
+        }
 		// Create clone
 		$object->context['createfromclone']='createfromclone';
 		$result=$object->create($user);
@@ -3479,7 +3484,6 @@ class Propal extends CommonObject
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 			foreach ($dirmodels as $reldir) {
-
 				$dir = dol_buildpath($reldir."core/modules/propale/");
 
 				// Load file with numbering class (if found)
@@ -3622,7 +3626,6 @@ class Propal extends CommonObject
 		$langs->load("propale");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'azur';
 
 			if ($this->modelpdf) {
@@ -4038,7 +4041,6 @@ class PropaleLigne extends CommonObjectLine
 		dol_syslog("PropaleLigne::delete", LOG_DEBUG);
 		if ($this->db->query($sql) )
 		{
-
 			// Remove extrafields
 			if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
 			{

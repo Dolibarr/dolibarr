@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -226,7 +226,6 @@ if ($id > 0)
 		if(empty($TData)) {
 			print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
 		} else {
-
 			// Sort array by date ASC to calucalte balance
 			$TData = dol_sort_array($TData, 'datefieldforsort', 'ASC');
 
@@ -245,7 +244,6 @@ if ($id > 0)
 
 			// Display array
 			foreach($TData as $data) {
-
 				$html_class = '';
 				if (!empty($data['fk_facture'])) $html_class = 'facid-'.$data['fk_facture'];
 				elseif (!empty($data['fk_paiement'])) $html_class = 'payid-'.$data['fk_paiement'];

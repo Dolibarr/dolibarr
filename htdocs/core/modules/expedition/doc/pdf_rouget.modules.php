@@ -16,8 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -844,7 +844,6 @@ class pdf_rouget extends ModelePdfExpedition
         }
 
 		if (!empty($conf->global->SHIPPING_PDF_DISPLAY_AMOUNT_HT)) {
-
 			$pdf->line($this->posxpuht-1, $tab_top, $this->posxpuht-1, $tab_top + $tab_height);
 			if (empty($hidetop))
 			{

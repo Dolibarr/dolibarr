@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -66,9 +66,19 @@ class ChargeSociales extends CommonObject
     public $date_validation;
 
     /**
-     * @var int ID
+     * @var int account ID
      */
     public $fk_account;
+
+	/**
+     * @var int account ID (identical to fk_account)
+     */
+    public $accountid;
+
+    /**
+     * @var int payment type (identical to mode_reglement_id in commonobject class)
+     */
+    public $paiementtype;
 
     /**
      * @var int ID

@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 // Load translation files required by the page
-$langs->loadlangs(array('exports', 'other', 'users', 'companies', 'projects'));
+$langs->loadlangs(array('admin', 'exports', 'other', 'users', 'companies', 'projects', 'suppliers', 'products', 'bank'));
 
 // Everybody should be able to go on this page
 //if (! $user->admin)

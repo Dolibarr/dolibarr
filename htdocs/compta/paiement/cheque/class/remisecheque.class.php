@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -437,7 +437,6 @@ class RemiseCheque extends CommonObject
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 			foreach ($dirmodels as $reldir) {
-
 				$dir = dol_buildpath($reldir."core/modules/cheque/");
 
 				// Load file with numbering class (if found)
@@ -575,7 +574,6 @@ class RemiseCheque extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-
 			while ($obj=$this->db->fetch_object($resql))
 			{
 				$this->nb["cheques"]=$obj->nb;

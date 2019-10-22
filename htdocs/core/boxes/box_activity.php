@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -200,7 +200,6 @@ class box_activity extends ModeleBoxes
             $data = array();
 
             if ($refresh) {
-
                 $sql = "SELECT c.fk_statut, sum(c.total_ttc) as Mnttot, count(*) as nb";
                 $sql.= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
                 if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";

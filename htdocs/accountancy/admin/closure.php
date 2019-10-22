@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -99,7 +99,6 @@ print '<input type="hidden" name="action" value="update">';
 print '<table class="noborder" width="100%">';
 
 foreach ($list_account_main as $key) {
-
     print '<tr class="oddeven value">';
     // Param
     $label = $langs->trans($key);

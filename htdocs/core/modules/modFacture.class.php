@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -232,9 +232,9 @@ class modFacture extends DolibarrModules
 		    $this->export_fields_array[$r]['f.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
 		    $this->export_fields_array[$r]['f.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
 		}
-		if (! empty($conf->cashdesk->enabled) || ! empty($conf->takepos->enabled) || ! empty($conf->global->INVOICE_SHOW_POS_IN_EXPORT))
+		if (! empty($conf->cashdesk->enabled) || ! empty($conf->takepos->enabled) || ! empty($conf->global->INVOICE_SHOW_POS))
 		{
-			$this->export_fields_array[$r]['f.module_source']='POSModule';
+			$this->export_fields_array[$r]['f.module_source']='Module';
 			$this->export_fields_array[$r]['f.pos_source']='POSTerminal';
 		}
 		$this->export_TypeFields_array[$r] = array(
@@ -248,7 +248,7 @@ class modFacture extends DolibarrModules
 			'fd.special_code'=>'Numeric', 'fd.product_type'=>"Numeric", 'fd.fk_product'=>'List:product:label', 'p.ref'=>'Text', 'p.label'=>'Text',
 			'p.accountancy_code_sell'=>'Text'
 		);
-		if (! empty($conf->cashdesk->enabled) || ! empty($conf->takepos->enabled) || ! empty($conf->global->INVOICE_SHOW_POS_IN_EXPORT))
+		if (! empty($conf->cashdesk->enabled) || ! empty($conf->takepos->enabled) || ! empty($conf->global->INVOICE_SHOW_POS))
 		{
 			$this->export_TypeFields_array[$r]['f.module_source']='Text';
 			$this->export_TypeFields_array[$r]['f.pos_source']='Text';
@@ -314,7 +314,7 @@ class modFacture extends DolibarrModules
 		    $this->export_fields_array[$r]['f.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
 		    $this->export_fields_array[$r]['f.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
 		}
-		if (! empty($conf->cashdesk->enabled) || ! empty($conf->takepos->enabled) || ! empty($conf->global->INVOICE_SHOW_POS_IN_EXPORT))
+		if (! empty($conf->cashdesk->enabled) || ! empty($conf->takepos->enabled) || ! empty($conf->global->INVOICE_SHOW_POS))
 		{
 			$this->export_fields_array[$r]['f.module_source']='POSModule';
 			$this->export_fields_array[$r]['f.pos_source']='POSTerminal';
@@ -328,7 +328,7 @@ class modFacture extends DolibarrModules
 			'pj.ref'=>'Text', 'p.amount'=>'Numeric', 'pf.amount'=>'Numeric', 'p.rowid'=>'Numeric', 'p.ref'=>'Text', 'p.title'=>'Text', 'p.datep'=>'Date', 'p.num_paiement'=>'Numeric',
 			'p.fk_bank'=>'Numeric', 'p.note'=>'Text', 'pt.code'=>'Text', 'pt.libelle'=>'text', 'ba.ref'=>'Text'
 		);
-		if (! empty($conf->cashdesk->enabled) || ! empty($conf->takepos->enabled) || ! empty($conf->global->INVOICE_SHOW_POS_IN_EXPORT))
+		if (! empty($conf->cashdesk->enabled) || ! empty($conf->takepos->enabled) || ! empty($conf->global->INVOICE_SHOW_POS))
 		{
 			$this->export_fields_array[$r]['f.module_source']='POSModule';
 			$this->export_fields_array[$r]['f.pos_source']='POSTerminal';

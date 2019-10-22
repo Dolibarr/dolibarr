@@ -26,7 +26,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -2461,7 +2461,6 @@ class SupplierProposal extends CommonObject
             // Include file with class
             $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
             foreach ($dirmodels as $reldir) {
-
                 $dir = dol_buildpath($reldir."core/modules/supplier_proposal/");
 
                 // Load file with numbering class (if found)
@@ -2671,7 +2670,6 @@ class SupplierProposal extends CommonObject
         $langs->load("supplier_proposal");
 
         if (! dol_strlen($modele)) {
-
             $modele = 'aurore';
 
             if ($this->modelpdf) {
@@ -3102,7 +3100,6 @@ class SupplierProposalLine extends CommonObjectLine
         dol_syslog("SupplierProposalLine::delete", LOG_DEBUG);
         if ($this->db->query($sql) )
         {
-
             // Remove extrafields
             if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
             {

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -137,6 +137,46 @@ function ticket_prepare_head($object)
 
 
     return $head;
+}
+
+/**
+ * Return string with full Url. The file qualified is the one defined by relative path in $object->last_main_doc
+ *
+ * @param   Object	$object				Object
+ * @return	string						Url string
+ */
+function showDirectPublicLink($object)
+{
+	global $conf, $langs;
+
+	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+	$email = CMailFile::getValidAddress($object->origin_email, 2);
+	$url = '';
+	if ($email)
+	{
+		$url = dol_buildpath('/public/ticket/view.php', 3).'?track_id='.$object->track_id.'&email='.$email;
+	}
+
+	$out='';
+	if (empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
+	{
+		$out.= '<span class="opacitymedium">'.$langs->trans("PublicInterfaceNotEnabled").'</span>';
+	}
+	else
+	{
+		$out.= img_picto('', 'object_globe.png').' '.$langs->trans("TicketPublicAccess").':<br>';
+		if ($url)
+		{
+			$out.= '<input type="text" id="directpubliclink" class="quatrevingtpercent" value="'.$url.'">';
+			$out.= ajax_autoselect("directpubliclink", 0);
+		}
+		else
+		{
+			$out.= '<span class="opacitymedium">'.$langs->trans("TicketNotCreatedFromPublicInterface").'</span>';
+		}
+	}
+
+	return $out;
 }
 
 /**
@@ -502,38 +542,31 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 		$out.="\n";
 
 		$out.='<div class="div-table-responsive-no-min">';
-		$out.='<table class="noborder" width="100%">';
+		$out.='<table class="noborder borderbottom centpercent">';
 
 		$out.='<tr class="liste_titre">';
 
-		$out.='<td class="liste_titre">';
-		if($sortorder === 'desc') {
-			$sortUrl = $_SERVER["PHP_SELF"] . '?sortfield=a.datep&sortorder=asc' . $param;
-			$out .= dolGetButtonTitle($langs->trans('Date'), $langs->trans('OrderByDateAsc'), 'fa fa-sort-numeric-down', $sortUrl, '', 1);
-		}
-		else{
-			$sortUrl = $_SERVER["PHP_SELF"] . '?sortfield=a.datep&sortorder=desc' . $param;
-			$out .= dolGetButtonTitle($langs->trans('Date'), $langs->trans('OrderByDateDesc'), 'fa fa-sort-numeric-down-alt', $sortUrl, '', 1);
-		}
-		$out.='</td>';
+		//$out.='<td class="liste_titre">';
+		$out .= getTitleFieldOfList('Date', 0, $_SERVER["PHP_SELF"], 'a.datep', '', $param, '', $sortfield, $sortorder, '')."\n";
+		//$out.='</td>';
 
-		$out.='<td class="liste_titre"><strong>'.$langs->trans("Search").' : </strong></td>';
+		$out.='<th class="liste_titre"><strong>'.$langs->trans("Search").' : </strong></th>';
 		if ($donetodo)
 		{
-			$out.='<td class="liste_titre"></td>';
+			$out.='<th class="liste_titre"></th>';
 		}
-		$out.='<td class="liste_titre">'.$langs->trans("Type").' ';
+		$out.='<th class="liste_titre">'.$langs->trans("Type").' ';
 		$out.=$formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:-1, 0, 0, 1);
-		$out.='</td>';
-		$out.='<td class="liste_titre maxwidth100onsmartphone">';
+		$out.='</th>';
+		$out.='<th class="liste_titre maxwidth100onsmartphone">';
 		$out.=$langs->trans("Label").' ';
 		$out.='<input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'">';
-		$out.='</td>';
+		$out.='</th>';
 
-		$out.='<td class="liste_titre" align="middle">';
+		$out.='<th class="liste_titre width50 middle">';
 		$searchpicto=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
 		$out.=$searchpicto;
-		$out.='</td>';
+		$out.='</th>';
 		$out.='</tr>';
 
 
@@ -753,7 +786,6 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 
             // Contact for this action
             if (isset($histo[$key]['socpeopleassigned']) && is_array($histo[$key]['socpeopleassigned']) && count($histo[$key]['socpeopleassigned']) > 0) {
-
                 $contactList = '';
                 foreach ($histo[$key]['socpeopleassigned'] as $cid => $Tab) {
                     $contact = new Contact($db);

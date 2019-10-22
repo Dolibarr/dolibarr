@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -58,12 +58,16 @@ class Don extends CommonObject
 	public $ismultientitymanaged = 1;
 
     /**
-	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 * @var string String with name of icon for object don. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'generic';
 
     public $date;
     public $amount;
+
+    /**
+	 * @var string Thirdparty name
+	 */
     public $societe;
 
     /**
@@ -71,18 +75,29 @@ class Don extends CommonObject
 	 */
 	public $address;
 
+    /**
+	 * @var string Zipcode
+	 */
     public $zip;
+
+    /**
+	 * @var string Town
+	 */
     public $town;
+
+    /**
+	 * @var string Email
+	 */
     public $email;
     public $public;
 
     /**
-     * @var int ID
+     * @var int project ID
      */
     public $fk_project;
 
     /**
-     * @var int ID
+     * @var int type payment ID
      */
     public $fk_typepayment;
 
@@ -90,7 +105,14 @@ class Don extends CommonObject
 	public $date_valid;
 	public $modepaymentid = 0;
 
+    /**
+	 * @var array Array of status label
+	 */
 	public $labelstatut;
+
+    /**
+	 * @var array Array of status label short
+	 */
 	public $labelstatutshort;
 
 	/**
@@ -1008,7 +1030,6 @@ class Don extends CommonObject
 		$langs->load("bills");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'html_cerfafr';
 
 			if ($this->modelpdf) {

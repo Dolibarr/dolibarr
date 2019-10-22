@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -67,7 +67,7 @@ llxHeader('', $langs->trans('Projects'));
 $title=$langs->trans("ProjectsStatistics");
 $dir=$conf->projet->dir_output.'/temp';
 
-print load_fiche_titre($title, '', 'title_project.png');
+print load_fiche_titre($title, '', 'project');
 
 dol_mkdir($dir);
 
@@ -108,7 +108,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		unset($data1);
 
 		if ($nocolor)
-$px->SetDataColor(array (
+		$px->SetDataColor(array (
 					array (
 							220,
 							220,
@@ -130,9 +130,9 @@ $px->SetDataColor(array (
 			));
 			$px->SetTitle($langs->trans('OpportunitiesStatusForProjects'));
 			$result=$px->draw($filenamenb, $fileurlnb);
-			if ($result<0) {
-				setEventMessages($px->error, null, 'errors');
-			}
+		if ($result<0) {
+			setEventMessages($px->error, null, 'errors');
+		}
 	} else {
 		setEventMessages(null, $mesgs, 'errors');
 	}

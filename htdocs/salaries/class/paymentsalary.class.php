@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -434,7 +434,6 @@ class PaymentSalary extends CommonObject
         $result = $this->db->query($sql);
         if ($result)
         {
-
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_salary");
 
             if ($this->id > 0)

@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -358,6 +358,7 @@ if ($result) {
 		// Ref Invoice
 		print '<td class="nowraponall">' . $facture_static->getNomUrl(1) . '</td>';
 
+		// Date invoice
 		print '<td class="center">' . dol_print_date($db->jdate($objp->datef), 'day') . '</td>';
 
 		// Ref Product
@@ -377,7 +378,13 @@ if ($result) {
 
 		print '<td class="right">' . vatrate($objp->tva_tx.($objp->vat_src_code?' ('.$objp->vat_src_code.')':'')) . '</td>';
 
-		print '<td>' . $langs->trans("Country".$objp->country_code) .' ('.$objp->country_code.')</td>';
+		// Country
+		print '<td>';
+		if ($objp->country_code)
+		{
+			print $langs->trans("Country".$objp->country_code) .' ('.$objp->country_code.')';
+		}
+		print '</td>';
 
 		print '<td>' . $objp->tva_intra . '</td>';
 

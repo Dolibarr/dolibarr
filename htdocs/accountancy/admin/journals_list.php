@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -529,7 +529,7 @@ if ($id)
 		print '</td>';
 		print '</tr>';
 		*/
-		
+
 		// Title of lines
 		print '<tr class="liste_titre liste_titre_add">';
 		foreach ($fieldlist as $field => $value)
@@ -609,7 +609,6 @@ if ($id)
                         $langs->load("accountancy");
 						foreach ($fieldlist as $field => $value)
 						{
-
 							$showfield=1;
 							$class="left";
 							$valuetoshow=$obj->{$fieldlist[$field]};

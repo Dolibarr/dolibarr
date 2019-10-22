@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -83,7 +83,6 @@ $object = new BookKeeping($db);
  */
 
 if ($action == "confirm_update") {
-
 	$error = 0;
 
 	if ((floatval($debit) != 0.0) && (floatval($credit) != 0.0)) {
@@ -439,7 +438,7 @@ if ($action == 'create')
 		print $langs->trans('Docdate');
 		print '</td>';
 		if ($action != 'editdate')
-		print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;piece_num='. $object->piece_num .'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('SetDate'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;piece_num='. $object->piece_num .'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('SetDate'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
 		if ($action == 'editdate') {
@@ -463,7 +462,7 @@ if ($action == 'create')
 		print $langs->trans('Codejournal');
 		print '</td>';
 		if ($action != 'editjournal')
-		print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editjournal&amp;piece_num='.$object->piece_num.'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editjournal&amp;piece_num='.$object->piece_num.'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editjournal') {
@@ -487,7 +486,7 @@ if ($action == 'create')
 		print $langs->trans('Piece');
 		print '</td>';
 		if ($action != 'editdocref')
-		print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdocref&amp;piece_num='.$object->piece_num.'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdocref&amp;piece_num='.$object->piece_num.'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editdocref') {
@@ -585,7 +584,6 @@ if ($action == 'create')
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
-
 			print load_fiche_titre($langs->trans("ListeMvts"), '', '');
 
 			print '<form action="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $object->piece_num . '" method="post">';
@@ -601,7 +599,6 @@ if ($action == 'create')
 
 			print "<table class=\"noborder\" width=\"100%\">";
 			if (count($object->linesmvt) > 0) {
-
 				$total_debit = 0;
 				$total_credit = 0;
 

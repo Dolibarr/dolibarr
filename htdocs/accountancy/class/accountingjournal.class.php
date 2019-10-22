@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -235,7 +235,7 @@ class AccountingJournal extends CommonObject
 		{
 			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 			{
-				$label=$langs->trans("ShowAccoutingJournal");
+				$label=$langs->trans("ShowAccountingJournal");
 				$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';

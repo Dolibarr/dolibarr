@@ -16,8 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -98,7 +98,6 @@ function product_prepare_head($object)
 	$h++;
 
 	if (!empty($conf->variants->enabled) && ($object->isProduct() || $object->isService())) {
-
 		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
@@ -486,10 +485,11 @@ function show_stats_for_company($product, $socid)
  *	@param	int		$unit                ID of unit (rowid in llx_c_units table)
  *	@param  string	$measuring_style     Style of unit: weight, volume,...
  *  @param	string  $scale				 Scale of unit: '0', '-3', '6', ...
+ *  @param	int		$use_short_label	 1=Use short label ('g' instead of 'gram'). Short labels are not translated.
  *	@return	string	   			         Unit string
  * 	@see	formproduct->selectMeasuringUnits
  */
-function measuring_units_string($unit, $measuring_style = '', $scale = '')
+function measuring_units_string($unit, $measuring_style = '', $scale = '', $use_short_label = 0)
 {
 	global $langs, $db;
 	require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
@@ -517,7 +517,8 @@ function measuring_units_string($unit, $measuring_style = '', $scale = '')
 		return -1;
 	} else {
 		if (is_array($measuringUnits->records) && count($measuringUnits->records)>0) {
-			return $langs->transnoentitiesnoconv($measuringUnits->records[key($measuringUnits->records)]->label);
+			if ($use_short_label) return $measuringUnits->records[key($measuringUnits->records)]->short_label;
+			else return $langs->transnoentitiesnoconv($measuringUnits->records[key($measuringUnits->records)]->label);
 		} else {
 			return '';
 		}
@@ -525,9 +526,9 @@ function measuring_units_string($unit, $measuring_style = '', $scale = '')
 }
 
 /**
- *	Transform a given unit into the square of that unit, if known
+ *	Transform a given unit scale into the square of that unit, if known.
  *
- *	@param	int		$unit            Unit key (-3,-2,-1,0,98,99...)
+ *	@param	int		$unit            Unit scale key (-3,-2,-1,0,98,99...)
  *	@return	int	   			         Squared unit key (-6,-4,-2,0,98,99...)
  * 	@see	formproduct->selectMeasuringUnits
  */
@@ -545,9 +546,9 @@ function measuring_units_squared($unit)
 
 
 /**
- *	Transform a given unit into the cube of that unit, if known
+ *	Transform a given unit scale into the cube of that unit, if known
  *
- *	@param	int		$unit            Unit key (-3,-2,-1,0,98,99...)
+ *	@param	int		$unit            Unit scale key (-3,-2,-1,0,98,99...)
  *	@return	int	   			         Cubed unit key (-9,-6,-3,0,88,89...)
  * 	@see	formproduct->selectMeasuringUnits
  */

@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -75,7 +75,7 @@ if ($mode == 'supplier')
 	$dir=$conf->fournisseur->facture->dir_temp;
 }
 
-print load_fiche_titre($title, $mesg, 'title_accountancy.png');
+print load_fiche_titre($title, '', 'invoicing');
 
 dol_mkdir($dir);
 

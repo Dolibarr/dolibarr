@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -68,7 +68,7 @@ $object = new Holiday($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 if ($id > 0)
 {
@@ -103,7 +103,6 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-
 	if ($cancel)
 	{
 		if (! empty($backtopage))
@@ -117,7 +116,6 @@ if (empty($reshook))
 	// If create a request
 	if ($action == 'create')
 	{
-
 	    // If no right to create a request
 	    if (! $cancreate)
 	    {
@@ -505,8 +503,7 @@ if (empty($reshook))
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
-		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
 		if ($ret < 0) $error++;
 
 		if (! $error)
@@ -913,7 +910,6 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 
         // Si il y a une erreur
         if (GETPOST('error')) {
-
             switch(GETPOST('error')) {
                 case 'datefin' :
                     $errors[] = $langs->trans('ErrorEndDateCP');
@@ -1092,7 +1088,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
         if (empty($include_users)) print img_warning().' '.$langs->trans("NobodyHasPermissionToValidateHolidays");
         else
         {
-        	$defaultselectuser=$user->fk_user;	// Will work only if supervisor has permission to approve so is inside include_users
+        	$defaultselectuser=(empty($user->fk_user_holiday_validator) ? $user->fk_user : $user->fk_user_holiday_validator);	// Will work only if supervisor has permission to approve so is inside include_users
         	if (! empty($conf->global->HOLIDAY_DEFAULT_VALIDATOR)) $defaultselectuser=$conf->global->HOLIDAY_DEFAULT_VALIDATOR;   // Can force default approver
         	if (GETPOST('valideur', 'int') > 0) $defaultselectuser=GETPOST('valideur', 'int');
         	$s=$form->select_dolusers($defaultselectuser, "valideur", 1, "", 0, $include_users);
@@ -1350,7 +1346,7 @@ else
                     $include_users = $object->fetch_users_approver_holiday();
                     if (is_array($include_users) && in_array($user->id, $include_users) && $object->statut == Holiday::STATUS_VALIDATED)
                     {
-                        print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editvalidator">'.img_edit($langs->trans("Edit")).'</a>';
+                        print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editvalidator">'.img_edit($langs->trans("Edit")).'</a>';
                     }
                     print '</td>';
                     print '</tr>';

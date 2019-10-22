@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -266,7 +266,6 @@ class ExpenseReport extends CommonObject
                 $result=$this->update_price();
                 if ($result > 0)
                 {
-
 					if (!$notrigger)
 					{
 						// Call trigger
@@ -819,7 +818,6 @@ class ExpenseReport extends CommonObject
         $langs->load('trips');
 
         if ($user->rights->expensereport->lire) {
-
             $sql = "SELECT de.fk_expensereport, de.date, de.comments, de.total_ht, de.total_ttc";
             $sql.= " FROM ".MAIN_DB_PREFIX."expensereport_det as de";
             $sql.= " WHERE de.fk_projet = ".$projectid;
@@ -835,7 +833,6 @@ class ExpenseReport extends CommonObject
 
                 while ($i < $num)
                 {
-
                     $objp = $db->fetch_object($result);
 
                     $sql2 = "SELECT d.rowid, d.fk_user_author, d.ref, d.fk_statut";
@@ -2214,7 +2211,6 @@ class ExpenseReport extends CommonObject
         $langs->load("trips");
 
 	    if (! dol_strlen($modele)) {
-
 		    $modele = 'standard';
 
 		    if ($this->modelpdf) {

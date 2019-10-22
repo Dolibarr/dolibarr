@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -75,9 +75,9 @@ if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($ob
 if ($id > 0 || ! empty($ref))
 {
 	// fetch optionals attributes and labels
-	$extralabels_projet=$extrafields_project->fetch_name_optionals_label($object->table_element);
+	$extrafields_project->fetch_name_optionals_label($object->table_element);
 }
-$extralabels_task=$extrafields_task->fetch_name_optionals_label($taskstatic->table_element);
+$extrafields_task->fetch_name_optionals_label($taskstatic->table_element);
 
 // Security check
 $socid=0;
@@ -260,7 +260,8 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			$task->progress = $progress;
 
 			// Fill array 'array_options' with data from add form
-			$ret = $extrafields_task->setOptionalsFromPost($extralabels_task, $task);
+			$extrafields->fetch_name_optionals_label($task->table_element);
+			$ret = $extrafields_task->setOptionalsFromPost(null, $task);
 
 			$taskid = $task->create($user);
 
@@ -506,7 +507,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 {
 	if ($id > 0 || ! empty($ref)) print '<br>';
 
-	print load_fiche_titre($langs->trans("NewTask"), '', 'title_project');
+	print load_fiche_titre($langs->trans("NewTask"), '', 'project');
 
 	if ($object->statut == Project::STATUS_CLOSED)
 	{
@@ -644,7 +645,7 @@ elseif ($id > 0 || ! empty($ref))
 
 	print '<br>';
 
-// Link to create task
+	// Link to create task
     $linktocreatetaskParam = array();
     $linktocreatetaskUserRight = false;
     if ($user->rights->projet->all->creer || $user->rights->projet->creer) {
@@ -677,7 +678,7 @@ elseif ($id > 0 || ! empty($ref))
 	// Get list of tasks in tasksarray and taskarrayfiltered
 	// We need all tasks (even not limited to a user because a task to user can have a parent that is not affected to him).
 	$filteronthirdpartyid = $socid;
-	$tasksarray=$taskstatic->getTasksArray(0, 0, $object->id, $filteronthirdpartyid, 0, '', -1, $morewherefilter, 0, 0, 1);
+	$tasksarray=$taskstatic->getTasksArray(0, 0, $object->id, $filteronthirdpartyid, 0, '', -1, $morewherefilter, 0, 0, array(), 1);
 	// We load also tasks limited to a particular user
 	$tmpuser=new User($db);
 	if ($search_user_id > 0) $tmpuser->fetch($search_user_id);
@@ -786,8 +787,8 @@ elseif ($id > 0 || ! empty($ref))
 	print_liste_field_titre("TaskProgressSummary", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center ');
 	if ($object->usage_bill_time)
 	{
-	   print_liste_field_titre("TimeToBill", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
-	   print_liste_field_titre("TimeBilled", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre("TimeToBill", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre("TimeBilled", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
 	}
 	if (! empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) print_liste_field_titre("TaskRessourceLinks", $_SERVER["PHP_SELF"], '', '', '', $sortfield, $sortorder);
 	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', 'width="80"', $sortfield, $sortorder, 'center maxwidthsearch ');

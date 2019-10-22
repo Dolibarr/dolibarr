@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('other', 'holidays', 'companies'));
+$langs->loadLangs(array('other', 'holiday', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -47,8 +47,6 @@ $confirm = GETPOST('confirm', 'alpha');
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'holiday', $id, 'holiday');
-
-$langs->load("holiday");
 
 // Get parameters
 $sortfield = GETPOST('sortfield', 'alpha');

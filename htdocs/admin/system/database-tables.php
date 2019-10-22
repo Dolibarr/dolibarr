@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -189,8 +189,8 @@ else
 	if ($base == 4)
 	{
 		// Sqlite by PDO or by Sqlite3
-    print '<div class="div-table-responsive-no-min">';
-	  print '<table class="noborder">';
+        print '<div class="div-table-responsive-no-min">';
+	    print '<table class="noborder">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("TableName").'</td>';
 		print '<td>'.$langs->trans("NbOfRecord").'</td>';
@@ -202,7 +202,6 @@ else
 		if ($resql)
 		{
 			while ($row = $db->fetch_row($resql)) {
-
 				$rescount = $db->query("SELECT COUNT(*) FROM " . $row[0]);
 				if ($rescount) {
 					$row_count = $db->fetch_row($rescount);

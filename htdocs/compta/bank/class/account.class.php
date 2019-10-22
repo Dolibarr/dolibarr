@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -265,7 +265,6 @@ class Account extends CommonObject
 		$string = '';
 
 		foreach ($this->getFieldsToShow() as $val) {
-
 			if ($val == 'BankCode') {
 				$string .= $this->code_banque.' ';
 			} elseif ($val == 'BankAccountNumber') {
@@ -493,7 +492,6 @@ class Account extends CommonObject
 		}
 
 		if ($accline->insert() > 0) {
-
 			if ($categorie>0) {
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (";
 				$sql .= "lineid, fk_categ";

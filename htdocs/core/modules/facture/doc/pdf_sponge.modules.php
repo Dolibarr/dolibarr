@@ -21,8 +21,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -149,7 +149,7 @@ class pdf_sponge extends ModelePDFFactures
 		$this->description = $langs->trans('PDFSpongeDescription');
 		$this->update_main_doc_field = 1;		// Save the name of generated file as the main doc when generating a doc with this template
 
-		// Dimensiont page
+		// Dimension page
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -423,7 +423,7 @@ class pdf_sponge extends ModelePDFFactures
 	                }
 	            }
 
-	            // Affiche notes
+	            // Display notes
 	            $notetoshow=empty($object->note_public)?'':$object->note_public;
 	            if (! empty($conf->global->MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE))
 	            {
@@ -462,7 +462,7 @@ class pdf_sponge extends ModelePDFFactures
 	                {
 	                    $pdf->rollbackTransaction(true);
 
-	                    // prepar pages to receive notes
+	                    // prepare pages to receive notes
 	                    while ($pagenb < $pageposafternote) {
 	                        $pdf->AddPage();
 	                        $pagenb++;
@@ -496,7 +496,7 @@ class pdf_sponge extends ModelePDFFactures
 	                    }
 
 
-	                    // apply note frame to previus pages
+	                    // apply note frame to previous pages
 	                    $i = $pageposbeforenote;
 	                    while ($i < $pageposafternote) {
 	                        $pdf->setPage($i);
@@ -557,24 +557,23 @@ class pdf_sponge extends ModelePDFFactures
 	                $height_note=0;
 	            }
 
-	            // Use new auto collum system
+	            // Use new auto column system
 	            $this->prepareArrayColumnField($object, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
-			// Simulation de tableau pour connaitre la hauteur de la ligne de titre
-			$pdf->startTransaction();
-			$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
-			$pdf->rollbackTransaction(true);
+	            // Table simulation to know the height of the title line
+			    $pdf->startTransaction();
+			    $this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
+			    $pdf->rollbackTransaction(true);
 
-			$iniY = $tab_top + $this->tabTitleHeight + 2;
-			$curY = $tab_top + $this->tabTitleHeight + 2;
-			$nexY = $tab_top + $this->tabTitleHeight + 2;
+			    $iniY = $tab_top + $this->tabTitleHeight + 2;
+			    $curY = $tab_top + $this->tabTitleHeight + 2;
+			    $nexY = $tab_top + $this->tabTitleHeight + 2;
 
 	            // Loop on each lines
 	            $pageposbeforeprintlines=$pdf->getPage();
 	            $pagenb = $pageposbeforeprintlines;
 	            for ($i = 0; $i < $nblines; $i++)
 	            {
-
 	                $curY = $nexY;
 	                $pdf->SetFont('', '', $default_font_size - 1);   // Into loop to work with multipage
 	                $pdf->SetTextColor(0, 0, 0);
@@ -843,19 +842,19 @@ class pdf_sponge extends ModelePDFFactures
 	                $bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 	            }
 
-	            // Affiche zone infos
+	            // Display infos area
 	            $posy=$this->drawInfoTable($pdf, $object, $bottomlasttab, $outputlangs);
 
-	            // Affiche zone totaux
+	            // Display total zone
 	            $posy=$this->drawTotalTable($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
 
-	            // Affiche zone versements
+	            // Display payment area
 	            if (($deja_regle || $amount_credit_notes_included || $amount_deposits_included) && empty($conf->global->INVOICE_NO_PAYMENT_DETAILS))
 	            {
 	                $posy=$this->drawPaymentsTable($pdf, $object, $posy, $outputlangs);
 	            }
 
-	            // Pied de page
+	            // Pagefoot
 	            $this->_pagefoot($pdf, $object, $outputlangs);
 	            if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
 
@@ -1126,7 +1125,7 @@ class pdf_sponge extends ModelePDFFactures
 			// Show payment mode CHQ
 			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CHQ')
 			{
-				// Si mode reglement non force ou si force a CHQ
+			    // If payment mode not forced or forced to CHQ
 				if (! empty($conf->global->FACTURE_CHQ_NUMBER))
 				{
 					$diffsizetitle=(empty($conf->global->PDF_DIFFSIZE_TITLE)?3:$conf->global->PDF_DIFFSIZE_TITLE);
@@ -1214,7 +1213,7 @@ class pdf_sponge extends ModelePDFFactures
 		$tab2_hl = 4;
 		$pdf->SetFont('', '', $default_font_size - 1);
 
-		// Tableau total
+		// Total table
 		$col1x = 120; $col2x = 170;
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
@@ -1227,7 +1226,7 @@ class pdf_sponge extends ModelePDFFactures
 
 
 
-		// pourcentage global d'avancement
+		// overall percentage of advancement
 		$percent = 0;
 		$i=0;
 		foreach ($object->lines as $line)
@@ -1268,7 +1267,6 @@ class pdf_sponge extends ModelePDFFactures
 		$deja_paye = 0;
 		$i = 1;
 		if(!empty($TPreviousIncoice)){
-
 		    $pdf->setY($tab2_top);
 		    $posy = $pdf->GetY();
 
@@ -1276,7 +1274,6 @@ class pdf_sponge extends ModelePDFFactures
 
 
 		    foreach ($TPreviousIncoice as &$fac){
-
 		        if($posy  > $this->page_hauteur - 4 ) {
 		            $this->_pagefoot($pdf, $object, $outputlangs, 1);
 		            $pdf->addPage();
@@ -1308,7 +1305,7 @@ class pdf_sponge extends ModelePDFFactures
 		        $pdf->setY($posy);
 		    }
 
-		    // Display curent total
+		    // Display current total
 		    $pdf->SetFillColor(255, 255, 255);
 		    $pdf->SetXY($col1x, $posy);
 		    $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("PDFSituationTitle", $object->situation_counter).' '.$outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
@@ -1316,7 +1313,7 @@ class pdf_sponge extends ModelePDFFactures
 		    $pdf->SetXY($col2x, $posy);
 		    $facSign = '';
 		    if($i>1){
-		        $facSign = $object->total_ht>=0?'+':''; // gestion d'un cas particulier client
+		        $facSign = $object->total_ht>=0?'+':''; // management of a particular customer case
 		    }
 
 		    if($fac->type === facture::TYPE_CREDIT_NOTE){
@@ -1482,7 +1479,6 @@ class pdf_sponge extends ModelePDFFactures
 				// VAT
 				// Situations totals migth be wrong on huge amounts
 				if ($object->situation_cycle_ref && $object->situation_counter > 1) {
-
 					$sum_pdf_tva = 0;
 					foreach($this->tva as $tvakey => $tvaval){
 						$sum_pdf_tva+=$tvaval; // sum VAT amounts to compare to object

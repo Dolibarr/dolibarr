@@ -19,8 +19,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  *
  * Lots of code inspired from Dan Potter's CMailFile class
  */
@@ -136,12 +136,25 @@ class CMailFile
 	{
 		global $conf, $dolibarr_main_data_root;
 
+        $this->subject = $subject;
+		$this->addr_to = $to;
+		$this->addr_from = $from;
+		$this->msg = $msg;
+		$this->filename_list = $filename_list;
+		$this->mimetype_list = $mimetype_list;
+		$this->mimefilename_list = $mimefilename_list;
+		$this->addr_cc = $addr_cc;
+		$this->addr_bcc = $addr_bcc;
+		$this->deliveryreceipt = $deliveryreceipt;
+		if (empty($replyto)) $replyto = $from;
+		$this->reply_to = $replyto;
+		$this->errors_to = $errors_to;
+		$this->trackid = $trackid;
 		$this->sendcontext = $sendcontext;
 		$this->filename_list = $filename_list;
 		$this->mimetype_list = $mimetype_list;
 		$this->mimefilename_list = $mimefilename_list;
 
-		if (empty($replyto)) $replyto=$from;
 
 		// Define this->sendmode
 		$this->sendmode = '';
@@ -262,16 +275,6 @@ class CMailFile
 			$files_encoded = "";
 
 			// Define smtp_headers
-			$this->subject = $subject;
-			$this->addr_from = $from;
-			$this->reply_to = $replyto;
-			$this->errors_to = $errors_to;
-			$this->addr_to = $to;
-			$this->addr_cc = $addr_cc;
-			$this->addr_bcc = $addr_bcc;
-			$this->deliveryreceipt = $deliveryreceipt;
-			$this->trackid = $trackid;
-
 			$smtp_headers = $this->write_smtpheaders();
 			if (! empty($moreinheader)) $smtp_headers.=$moreinheader;   // $moreinheader contains the \r\n
 
@@ -1389,7 +1392,6 @@ class CMailFile
 			$i=0;
 			foreach ($matches[1] as $full)
 			{
-
 				if (preg_match('/file=([A-Za-z0-9_\-\/]+[\.]?[A-Za-z0-9]+)?$/i', $full, $regs))   // If xxx is 'file=aaa'
 				{
 					$img = $regs[1];

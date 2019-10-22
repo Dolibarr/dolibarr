@@ -18,14 +18,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
  *	\file       htdocs/core/modules/fichinter/doc/pdf_soleil.modules.php
  *	\ingroup    ficheinter
- *	\brief      Fichier de la classe permettant de generer les fiches d'intervention au modele Soleil
+ *	\brief      File of Class to build interventions documents with model Soleil
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -142,7 +142,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		$this->option_condreg = 0;                 // Display payment terms
 		$this->option_codeproduitservice = 0;      // Display product-service code
 		$this->option_multilang = 1;               // Available in several languages
-		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
+		$this->option_draft_watermark = 1;		   // Support add of a watermark on drafts
 
 		// Get source company
 		$this->emetteur=$mysoc;
@@ -266,7 +266,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$tab_height = 130;
 				$tab_height_newpage = 150;
 
-				// Affiche notes
+				// Display notes
 				$notetoshow=empty($object->note_public)?'':$object->note_public;
 				if ($notetoshow)
 				{
@@ -394,7 +394,7 @@ class pdf_soleil extends ModelePDFFicheinter
 							$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 						}
 
-						$pdf->SetFont('', '', $default_font_size - 1);   // On repositionne la police par defaut
+						$pdf->SetFont('', '', $default_font_size - 1);   // We reposition the default font
 
 						// Detect if some page were added automatically and output _tableau for past pages
 						while ($pagenb < $pageposafter)
@@ -573,7 +573,7 @@ class pdf_soleil extends ModelePDFFicheinter
 			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->FICHINTER_DRAFT_WATERMARK);
 		}
 
-		//Prepare la suite
+		//Prepare next
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 

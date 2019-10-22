@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Upgrade2 scripts can be ran from command line with syntax:
  *
@@ -2373,7 +2373,6 @@ function migrate_stocks($db, $langs, $conf)
                 $resql2=$db->query($sql);
                 if ($resql2)
                 {
-
                 }
                 else
                 {
@@ -2450,7 +2449,6 @@ function migrate_menus($db, $langs, $conf)
                     $resql2=$db->query($sql);
                     if ($resql2)
                     {
-
                     }
                     else
                     {

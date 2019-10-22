@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -316,7 +316,7 @@ class Invoices extends DolibarrApi
      *
      * @url	PUT {id}/lines/{lineid}
      *
-     * @return object
+     * @return array
      *
      * @throws 200
      * @throws 304
@@ -423,7 +423,7 @@ class Invoices extends DolibarrApi
 	 *
 	 * @url	DELETE {id}/contact/{rowid}
 	 *
-	 * @return int
+	 * @return array
      * @throws 401
      * @throws 404
      * @throws 500

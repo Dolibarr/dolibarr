@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -523,7 +523,6 @@ $parameters=array('listofreferent'=>$listofreferent);
 $resHook = $hookmanager->executeHooks('completeListOfReferent', $parameters, $object, $action);
 
 if(!empty($hookmanager->resArray)) {
-
 	$listofreferent = array_merge($listofreferent, $hookmanager->resArray);
 }
 
@@ -539,7 +538,6 @@ if ($action=="addelement")
 }
 elseif ($action == "unlink")
 {
-
 	$tablename = GETPOST("tablename", "aZ09");
     $projectField = GETPOST("projectfield", "aZ09");
 	$elementselectid = GETPOST("elementselect", "int");
@@ -865,8 +863,8 @@ foreach ($listofreferent as $key => $value)
 
 			if (canApplySubtotalOn($tablename))
 			{
-			   // Sort
-			   $elementarray = sortElementsByClientName($elementarray);
+				// Sort
+				$elementarray = sortElementsByClientName($elementarray);
 			}
 
 			$num=count($elementarray);
@@ -1079,9 +1077,9 @@ foreach ($listofreferent as $key => $value)
 					if ($othermessage) print $othermessage;
 					if (isset($total_ht_by_line))
 					{
-					   if (! $qualifiedfortotal) print '<strike>';
-					   print price($total_ht_by_line);
-					   if (! $qualifiedfortotal) print '</strike>';
+						if (! $qualifiedfortotal) print '<strike>';
+						print price($total_ht_by_line);
+						if (! $qualifiedfortotal) print '</strike>';
 					}
 					if ($warning) print ' '.img_warning($warning);
 					print '</td>';
@@ -1126,9 +1124,9 @@ foreach ($listofreferent as $key => $value)
 					if ($othermessage) print $othermessage;
 					if (isset($total_ttc_by_line))
 					{
-					   if (! $qualifiedfortotal) print '<strike>';
-					   print price($total_ttc_by_line);
-					   if (! $qualifiedfortotal) print '</strike>';
+						if (! $qualifiedfortotal) print '<strike>';
+						print price($total_ttc_by_line);
+						if (! $qualifiedfortotal) print '</strike>';
 					}
 					if ($warning) print ' '.img_warning($warning);
 					print '</td>';

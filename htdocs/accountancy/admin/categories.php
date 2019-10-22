@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -130,7 +130,6 @@ if (! empty($cat_id))
 	}
 
 	if (is_array($accountingcategory->lines_cptbk) && count($accountingcategory->lines_cptbk) > 0) {
-
 		print $form->multiselectarray('cpt_bk', $arraykeyvalue, GETPOST('cpt_bk', 'array'), null, null, null, null, "90%");
 		print '<br>';
 		/*print '<select class="flat minwidth200" size="8" name="cpt_bk[]" multiple>';
@@ -153,7 +152,6 @@ print '</form>';
 
 
 if ($action == 'display' || $action == 'delete') {
-
     print "<table class='noborder' width='100%'>\n";
     print '<tr class="liste_titre">';
 	print '<td class="liste_titre">'.$langs->trans("AccountAccounting")."</td>";

@@ -20,8 +20,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -408,7 +408,7 @@ if ($id > 0 || ! empty($ref)) {
 	    if ($user->rights->fournisseur->commande->creer)
 	    {
 	        if ($action != 'classify')
-	            //$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+	        	//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 	            $morehtmlref.=' : ';
 	        	if ($action == 'classify') {
 	                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -733,7 +733,6 @@ if ($id > 0 || ! empty($ref)) {
 							print '</td>';
 							print '<td colspan="3">&nbsp</td>'; // Supplier ref + Qty ordered + qty already dispatched
 						} else {
-
 							$type = 'dispatch';
 							print '<td class="right">';
 							print '</td>';     // Qty to dispatch
@@ -960,7 +959,6 @@ if ($id > 0 || ! empty($ref)) {
 				if(!empty($conf->reception->enabled) ){
 					print '<td>';
 					if (!empty($objp->fk_reception)){
-
 						$reception = new Reception($db);
 						$reception->fetch($objp->fk_reception);
 						print $reception->getNomUrl(1);

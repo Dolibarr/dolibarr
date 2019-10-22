@@ -21,7 +21,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -373,8 +373,6 @@ class Paiement extends CommonObject
 									$discount = new DiscountAbsolute($this->db);
 									$discount->fetch('', $invoice->id);
 									if (empty($discount->id)) {	// If the invoice was not yet converted into a discount (this may have been done manually before we come here)
-
-
 										$discount->description = '(DEPOSIT)';
 										$discount->fk_soc = $invoice->socid;
 										$discount->fk_facture_source = $invoice->id;
@@ -848,7 +846,6 @@ class Paiement extends CommonObject
 
             if (! $error)
             {
-
             }
 
             if (! $error)
@@ -1090,7 +1087,6 @@ class Paiement extends CommonObject
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 			foreach ($dirmodels as $reldir) {
-
 				$dir = dol_buildpath($reldir."core/modules/payment/");
 
 				// Load file with numbering class (if found)

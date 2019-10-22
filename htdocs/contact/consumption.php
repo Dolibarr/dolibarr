@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -524,7 +524,6 @@ if ($sql_select)
 		else
 		{
 			if ($objp->fk_product > 0) {
-
 				echo $form->textwithtooltip($text, $description, 3, '', '', $i, 0, '');
 
 				// Show range
@@ -536,7 +535,6 @@ if ($sql_select)
 					print (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 				}
 			} else {
-
 				if (! empty($objp->label) || ! empty($objp->description))
 				{
 					if ($type==1) $text = img_object($langs->trans('Service'), 'service');

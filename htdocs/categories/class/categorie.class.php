@@ -23,7 +23,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -864,11 +864,14 @@ class Categorie extends CommonObject
 		if ($type=="contact") {
 			$subcol_name="fk_socpeople";
 		}
+
+		$idoftype = array_search($type, self::$MAP_ID_TO_CODE);
+
 		$sql = "SELECT s.rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as s";
 		$sql.= " , ".MAIN_DB_PREFIX."categorie_".$sub_type." as sub ";
 		$sql.= ' WHERE s.entity IN ('.getEntity('category').')';
-		$sql.= ' AND s.type='.array_search($type, self::$MAP_ID_TO_CODE);
+		$sql.= ' AND s.type='.$idoftype;
 		$sql.= ' AND s.rowid = sub.fk_categorie';
 		$sql.= ' AND sub.'.$subcol_name.' = '.$id;
 
@@ -887,7 +890,15 @@ class Categorie extends CommonObject
 			}
 		}
 
-		$sql.= $this->db->plimit($limit + 1, $offset);
+		if ($limit) {
+			if ($page < 0)
+			{
+				$page = 0;
+			}
+			$offset = $limit * $page;
+
+			$sql.= $this->db->plimit($limit + 1, $offset);
+		}
 
 		$result = $this->db->query($sql);
 		if ($result)
@@ -1626,7 +1637,6 @@ class Categorie extends CommonObject
 			{
 				$nbfile = count($file['name']);
 				for ($i = 0; $i <= $nbfile; $i ++) {
-
 					$originImage = $dir . $file['name'][$i];
 
 					// Cree fichier en taille origine
@@ -1825,13 +1835,13 @@ class Categorie extends CommonObject
 	        }
 	    }
 
-			// Call trigger
-			$result = $this->call_trigger('CATEGORY_SET_MULTILANGS', $user);
-			if ($result < 0) {
-				$this->error = $this->db->lasterror();
-				return -1;
-			}
-			// End call triggers
+		// Call trigger
+		$result = $this->call_trigger('CATEGORY_SET_MULTILANGS', $user);
+		if ($result < 0) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		// End call triggers
 
 	    return 1;
 	}

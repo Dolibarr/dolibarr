@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -624,7 +624,7 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask 
 
 	if (empty($arrayreplacementisregex))
 	{
-	   $content = make_substitutions($content, $arrayreplacement, null);
+	    $content = make_substitutions($content, $arrayreplacement, null);
 	}
 	else
 	{
@@ -1044,8 +1044,8 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			$checkvirusarray=dolCheckVirus($src_file);
 			if (count($checkvirusarray))
 			{
-			   dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: errors='.join(',', $checkvirusarray), LOG_WARNING);
-			   return 'ErrorFileIsInfectedWithAVirus: '.join(',', $checkvirusarray);
+			    dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: errors='.join(',', $checkvirusarray), LOG_WARNING);
+			    return 'ErrorFileIsInfectedWithAVirus: '.join(',', $checkvirusarray);
 			}
 		}
 

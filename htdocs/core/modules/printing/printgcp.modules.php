@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -88,7 +88,6 @@ class printing_printgcp extends PrintingDriver
                 'type'=>'info',
             );
         } else {
-
             $this->google_id = $conf->global->OAUTH_GOOGLE_ID;
             $this->google_secret = $conf->global->OAUTH_GOOGLE_SECRET;
             // Token storage

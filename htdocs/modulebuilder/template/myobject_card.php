@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -80,8 +80,10 @@ $object=new MyObject($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('myobjectcard','globalcard'));     // Note that conf->hooks_modules contains array
+
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Initialize array of search criterias
@@ -103,17 +105,16 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 //$isdraft = (($object->statut == MyObject::STATUS_DRAFT) ? 1 : 0);
 //$result = restrictedArea($user, 'mymodule', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
-$permissionnote=$user->rights->mymodule->write;	// Used by the include of actions_setnotes.inc.php
-$permissiondellink=$user->rights->mymodule->write;	// Used by the include of actions_dellink.inc.php
-$permissionedit=$user->rights->mymodule->write; // Used by the include of actions_lineupdown.inc.php
-$permissiontoadd=$user->rights->mymodule->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissionnote = $user->rights->mymodule->write;		// Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->rights->mymodule->write;	// Used by the include of actions_dellink.inc.php
+$permissionedit = $user->rights->mymodule->write; 		// Used by the include of actions_lineupdown.inc.php
+$permissiontoadd = $user->rights->mymodule->write; 		// Used by the include of actions_addupdatedelete.inc.php
+$permissiontodelete = $user->rights->mymodule->delete || ($permissiontoadd && $object->status == 0);
 
 
 
 /*
  * Actions
- *
- * Put here all code to do according to value of "action" parameter
  */
 
 $parameters=array();
@@ -124,11 +125,11 @@ if (empty($reshook))
 {
     $error=0;
 
-    $permissiontodelete = $user->rights->mymodule->delete || ($permissiontoadd && $object->status == 0);
     $backurlforlist = dol_buildpath('/mymodule/myobject_list.php', 1);
-    if (empty($backtopage)) {
-        if (empty($id)) $backtopage = $backurlforlist;
-        else $backtopage = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+
+    if (empty($backtopage) || ($cancel && empty($id))) {
+    	if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) $backtopage = $backurlforlist;
+    	else $backtopage = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
     }
     $triggermodname = 'MYMODULE_MYOBJECT_MODIFY';	// Name of trigger action code to execute when we modify record
 
@@ -209,6 +210,8 @@ if ($action == 'create')
 	print '</div>';
 
 	print '</form>';
+
+	//dol_set_focus('input[name="ref"]');
 }
 
 // Part to edit record
@@ -224,7 +227,7 @@ if (($id || $ref) && $action == 'edit')
 
 	dol_fiche_head();
 
-	print '<table class="border centpercent tableforfield">'."\n";
+	print '<table class="border centpercent tableforfieldedit">'."\n";
 
 	// Common attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_edit.tpl.php';
@@ -316,7 +319,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    if ($user->rights->mymodule->write)
 	    {
 	        if ($action != 'classify')
-	            $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+	            $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
             if ($action == 'classify') {
                 //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
                 $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -354,7 +357,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	//$keyforbreak='fieldkeytoswitchonsecondcolumn';
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
 
-	// Other attributes
+	// Other attributes. Fields from hook formObjectOptions and Extrafields.
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
@@ -433,6 +436,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    // Send
             print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
 
+            // Back to draft
+            if (! empty($user->rights->mymodule->write) && $object->status == BOM::STATUS_VALIDATED)
+            {
+            	print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=setdraft">' . $langs->trans("SetToDraft") . '</a>';
+            }
+
             // Modify
             if (! empty($user->rights->mymodule->write))
     		{
@@ -446,7 +455,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		// Clone
     		if (! empty($user->rights->mymodule->write))
     		{
-    			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=order">' . $langs->trans("ToClone") . '</a></div>';
+    			print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=order">' . $langs->trans("ToClone") . '</a>'."\n";
     		}
 
     		/*

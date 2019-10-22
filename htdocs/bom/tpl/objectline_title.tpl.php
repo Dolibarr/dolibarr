@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Need to have following variables defined:
  * $object (invoice, order, ...)
@@ -39,9 +39,7 @@ if (empty($object) || ! is_object($object))
 	print "Error, template page can't be called as URL";
 	exit;
 }
-?>
-<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->
-<?php
+print "<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->\n";
 // Title line
 print "<thead>\n";
 
@@ -79,6 +77,5 @@ if ($action == 'selectlines')
 
 print "</tr>\n";
 print "</thead>\n";
-?>
 
-<!-- END PHP TEMPLATE objectline_title.tpl.php -->
+print "<!-- END PHP TEMPLATE objectline_title.tpl.php -->\n";

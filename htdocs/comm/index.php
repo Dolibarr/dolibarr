@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -208,7 +208,6 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 		}
 		else
 		{
-
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
 		}
 		print "</table></div><br>";
@@ -379,7 +378,6 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 		}
 		else
 		{
-
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoOrder").'</td></tr>';
 		}
 		print "</table>";
@@ -430,7 +428,6 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
 			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
 			while ($i < $nbofloop)
             {
-
                 $obj = $db->fetch_object($resql);
                 print '<tr class="oddeven"><td class="nowrap">';
                 $supplierorderstatic->id=$obj->rowid;
@@ -470,7 +467,6 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
         }
         else
         {
-
             print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoSupplierOrder").'</td></tr>';
         }
         print "</table>";

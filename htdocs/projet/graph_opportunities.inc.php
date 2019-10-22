@@ -35,11 +35,11 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	                $valsamount[$obj->opp_status]=$obj->opp_amount;
 	                $totalnb+=$obj->nb;
 	                if ($obj->opp_status) $totaloppnb+=$obj->nb;
-	                if (! in_array($obj->code, array('WON', 'LOST')))
+				if (! in_array($obj->code, array('WON', 'LOST')))
 	                {
-	                   $totalamount+=$obj->opp_amount;
-	                   $ponderated_opp_amount+=$obj->ponderated_opp_amount;
-	                }
+					$totalamount+=$obj->opp_amount;
+					$ponderated_opp_amount+=$obj->ponderated_opp_amount;
+				}
 	            }
 	            $total+=$row[0];
 	        }
@@ -67,7 +67,6 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	        $dataseries[]=array($labelstatus, (isset($valsamount[$status])?(float) $valsamount[$status]:0));
 	        if (! $conf->use_javascript_ajax)
 	        {
-
 	            print '<tr class="oddeven">';
 	            print '<td>'.$labelstatus.'</td>';
 	            print '<td class="right"><a href="list.php?statut='.$status.'">'.price((isset($valsamount[$status])?(float) $valsamount[$status]:0), 0, '', 1, -1, -1, $conf->currency).'</a></td>';

@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -119,7 +119,6 @@ if ($action=='filemerge')
 {
 	$is_refresh = GETPOST('refresh');
 	if (empty($is_refresh)) {
-
 		$filetomerge_file_array = GETPOST('filetoadd');
 
 		$filetomerge_file_array = GETPOST('filetoadd');
@@ -258,7 +257,6 @@ if ($object->id)
 
     	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
     	{
-
     		$filearray = array_merge($filearray, dol_dir_list($upload_dirold, "files", 0, '', '\.meta$', 'name', SORT_ASC, 1));
     	}
 
@@ -282,7 +280,6 @@ if ($object->id)
 
     		// Get language
     		if ($conf->global->MAIN_MULTILANGS) {
-
     			$langs->load("languages");
 
     			print  '<tr class="liste_titre"><td>';

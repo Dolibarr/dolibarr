@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -73,7 +73,7 @@ $hookmanager->initHooks(array('bankaccountlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('bank_account');
+$extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
@@ -144,13 +144,15 @@ $accounts = array();
 
 $sql = "SELECT b.rowid, b.label, b.courant, b.rappro, b.account_number, b.fk_accountancy_journal, b.currency_code, b.datec as date_creation, b.tms as date_update";
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as b";
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account_extrafields as ef on (b.rowid = ef.fk_object)";
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (b.rowid = ef.fk_object)";
 $sql.= " WHERE b.entity IN (".getEntity('bank_account').")";
 if ($search_status == 'opened')  $sql.= " AND clos = 0";
 if ($search_status == 'closed')  $sql.= " AND clos = 1";
@@ -242,7 +244,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_bank.png', 0, $newcardbutton, '', $limit, 1);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bank', 0, $newcardbutton, '', $limit, 1);
 
 $topicmail="Information";
 //$modelmail="subscription";
@@ -454,7 +456,7 @@ foreach ($accounts as $key=>$type)
     if (! empty($arrayfields['b.account_number']['checked']))
     {
     	print '<td>';
-    	if (! empty($conf->accounting->enabled))
+    	if (! empty($conf->accounting->enabled) && ! empty($objecttmp->account_number))
     	{
     		$accountingaccount = new AccountingAccount($db);
     		$accountingaccount->fetch('', $objecttmp->account_number, 1);
@@ -472,7 +474,7 @@ foreach ($accounts as $key=>$type)
     if (! empty($arrayfields['b.fk_accountancy_journal']['checked']))
     {
     	print '<td>';
-    	if (! empty($conf->accounting->enabled))
+    	if (! empty($conf->accounting->enabled) && ! empty($objecttmp->fk_accountancy_journal))
     	{
     		$accountingjournal = new AccountingJournal($db);
     		$accountingjournal->fetch($objecttmp->fk_accountancy_journal);
@@ -505,11 +507,19 @@ foreach ($accounts as $key=>$type)
             if ($result<0) {
                 setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
             } else {
-                print $result->nbtodo;
-                if ($result->nbtodolate) print ' &nbsp; ('.$result->nbtodolate.img_warning($langs->trans("Late")).')';
+                print '<span class="badge badge-info classfortooltip" title="'.dol_htmlentities($langs->trans("TransactionsToConciliate")).'">'.$result->nbtodo.'</span>';
+                if ($result->nbtodolate) {
+                    print '&nbsp;';
+                    print '<span title="'.dol_htmlentities($langs->trans("Late")).'" class="classfortooltip badge badge-danger">';
+                    print '<i class="fa fa-exclamation-triangle"></i> '.$result->nbtodolate;
+                    print '</span>';
+                }
             }
 		}
-		else print $langs->trans("FeatureDisabled");
+		else
+		{
+			print '<span class="opacitymedium">'.$langs->trans("FeatureDisabled").'</span>';
+		}
 	    print '</td>';
 	    if (! $i) $totalarray['nbfield']++;
     }

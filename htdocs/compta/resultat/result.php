@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -256,7 +256,6 @@ elseif ($modecompta=="RECETTES-DEPENSES")
 }
 elseif ($modecompta=="BOOKKEEPING")
 {
-
 	// Get array of all report groups that are active
 	$cats = $AccCat->getCats();		// WARNING: Computed groups must be after group they include
 

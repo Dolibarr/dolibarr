@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -399,8 +399,7 @@ class Export
 			    $szFilterField='<input type="text" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
 				break;
 			case 'Status':
-				if (! empty($conf->global->MAIN_ACTIVATE_HTML5)) $szFilterField='<input type="number" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
-				else $szFilterField='<input type="text" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
+				$szFilterField='<input type="number" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
 				break;
 			case 'Boolean':
 				$szFilterField='<select name="'.$NameField.'" class="flat">';

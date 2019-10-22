@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2019 Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -88,7 +88,7 @@ class box_prospect extends ModeleBoxes
 		{
 			$sql = "SELECT s.nom as name, s.rowid as socid";
 			$sql.= ", s.code_client";
-            $sql.= ", s.client";
+            $sql.= ", s.client, s.email";
             $sql.= ", s.code_fournisseur";
             $sql.= ", s.fournisseur";
             $sql.= ", s.logo";
@@ -116,6 +116,7 @@ class box_prospect extends ModeleBoxes
 					$datem=$this->db->jdate($objp->tms);
 					$thirdpartystatic->id = $objp->socid;
                     $thirdpartystatic->name = $objp->name;
+                    $thirdpartystatic->email = $objp->email;
                     $thirdpartystatic->code_client = $objp->code_client;
                     $thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
                     $thirdpartystatic->client = $objp->client;

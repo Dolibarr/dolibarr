@@ -16,8 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -74,7 +74,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
         $tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Invoice"), $langs->transnoentities("Invoice"));
         $tooltip.=$langs->trans("GenericMaskCodes5");
 
-        // Parametrage du prefix
+        // Setting the prefix
         $texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceStandard").'):</td>';
         $texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskinvoice" value="'.$conf->global->FACTURE_MERCURE_MASK_INVOICE.'">', $tooltip, 1, 1).'</td>';
 
@@ -82,17 +82,17 @@ class mod_facture_mercure extends ModeleNumRefFactures
 
         $texte.= '</tr>';
 
-        // Parametrage du prefix des replacement
+        // Prefix setting of replacement invoices
         $texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceReplacement").'):</td>';
         $texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskreplacement" value="'.$conf->global->FACTURE_MERCURE_MASK_REPLACEMENT.'">', $tooltip, 1, 1).'</td>';
         $texte.= '</tr>';
 
-        // Parametrage du prefix des avoirs
+        // Prefix setting of credit note
         $texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceAvoir").'):</td>';
         $texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskcredit" value="'.$conf->global->FACTURE_MERCURE_MASK_CREDIT.'">', $tooltip, 1, 1).'</td>';
         $texte.= '</tr>';
 
-        // Parametrage du prefix des acomptes
+        // Prefix setting of deposit
         $texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceDeposit").'):</td>';
         $texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskdeposit" value="'.$conf->global->FACTURE_MERCURE_MASK_DEPOSIT.'">', $tooltip, 1, 1).'</td>';
         $texte.= '</tr>';

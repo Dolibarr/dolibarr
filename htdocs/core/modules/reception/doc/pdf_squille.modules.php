@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -72,7 +72,6 @@ class pdf_squille extends ModelePdfReception
 		$this->posxpuht=$this->page_largeur - $this->marge_droite;
 
 		if (!empty($conf->global->MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT)) {
-
 			$this->posxweightvol=$this->page_largeur - $this->marge_droite - 118;
 			$this->posxqtyordered=$this->page_largeur - $this->marge_droite - 96;
 			$this->posxqtytoship=$this->page_largeur - $this->marge_droite - 68;
@@ -658,7 +657,6 @@ class pdf_squille extends ModelePdfReception
     	$pdf->MultiCell($this->posxpuht - $this->posxqtytoship, $tab2_hl, $totalToShip, 0, 'C', 1);
 
 		if(!empty($conf->global->MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT)) {
-
 	    	$pdf->SetXY($this->posxpuht, $tab2_top + $tab2_hl * $index);
 	    	$pdf->MultiCell($this->posxtotalht - $this->posxpuht, $tab2_hl, '', 0, 'C', 1);
 
@@ -754,7 +752,6 @@ class pdf_squille extends ModelePdfReception
 		}
 
 		if(!empty($conf->global->MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT)) {
-
 			$pdf->line($this->posxpuht-1, $tab_top, $this->posxpuht-1, $tab_top + $tab_height);
 			if (empty($hidetop))
 			{

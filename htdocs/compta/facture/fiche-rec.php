@@ -21,7 +21,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -93,7 +93,8 @@ $hookmanager->initHooks(array('invoicereccard','globalcard'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('facture_rec');
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 $permissionnote = $user->rights->facture->creer; // Used by the include of actions_setnotes.inc.php
@@ -153,7 +154,7 @@ if (empty($reshook))
 	// Create predefined invoice
 	if ($action == 'add')
 	{
-		if (! GETPOST('titre'))
+		if (! GETPOST('titre', 'nohtml'))
 		{
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Title")), null, 'errors');
 			$action = "create";
@@ -161,15 +162,15 @@ if (empty($reshook))
 		}
 
 		$frequency=GETPOST('frequency', 'int');
-		$reyear=GETPOST('reyear');
-		$remonth=GETPOST('remonth');
-		$reday=GETPOST('reday');
-		$rehour=GETPOST('rehour');
-		$remin=GETPOST('remin');
+		$reyear=GETPOST('reyear', 'int');
+		$remonth=GETPOST('remonth', 'int');
+		$reday=GETPOST('reday', 'int');
+		$rehour=GETPOST('rehour', 'int');
+		$remin=GETPOST('remin', 'int');
 		$nb_gen_max=GETPOST('nb_gen_max', 'int');
 		//if (empty($nb_gen_max)) $nb_gen_max =0;
 
-		if (GETPOST('frequency'))
+		if (GETPOST('frequency', 'int'))
 		{
 			if (empty($reyear) || empty($remonth) || empty($reday))
 			{
@@ -187,12 +188,12 @@ if (empty($reshook))
 
 		if (! $error)
 		{
-			$object->titre = GETPOST('titre', 'alpha');	// deprecated
-			$object->title = GETPOST('titre', 'alpha');
+			$object->titre = GETPOST('titre', 'nohtml');	// deprecated
+			$object->title = GETPOST('titre', 'nohtml');
 			$object->note_private = GETPOST('note_private', 'none');
             $object->note_public  = GETPOST('note_public', 'none');
             $object->modelpdf = GETPOST('modelpdf', 'alpha');
-			$object->usenewprice = GETPOST('usenewprice');
+			$object->usenewprice = GETPOST('usenewprice', 'alpha');
 
 			$object->frequency = $frequency;
 			$object->unit_frequency = GETPOST('unit_frequency', 'alpha');
@@ -426,8 +427,7 @@ if (empty($reshook))
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
-		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
 		if ($ret < 0) $error++;
 
 		if (! $error)
@@ -468,9 +468,8 @@ if (empty($reshook))
 		$remise_percent = GETPOST('remise_percent' . $predef);
 
 		// Extrafields
-		$extrafieldsline = new ExtraFields($db);
-		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $predef);
+		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
+		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line, $predef);
 		// Unset extrafield
 		if (is_array($extralabelsline))
 		{
@@ -771,9 +770,8 @@ if (empty($reshook))
 		$buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : '');       // If buying_price is '0', we muste keep this value
 
 		// Extrafields
-		$extrafieldsline = new ExtraFields($db);
-		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line);
+		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
+		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
 
 		$objectline = new FactureLigneRec($db);
 		if ($objectline->fetch(GETPOST('lineid', 'int')))
@@ -972,7 +970,7 @@ $today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['
  */
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("CreateRepeatableInvoice"), '', 'title_accountancy.png');
+	print load_fiche_titre($langs->trans("CreateRepeatableInvoice"), '', 'invoicing');
 
 	$object = new Facture($db);   // Source invoice
 	$product_static = new Product($db);
@@ -1245,7 +1243,7 @@ else
 			if ($user->rights->facture->creer)
 			{
 				if ($action != 'classify')
-					$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+					$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 					if ($action == 'classify') {
 						//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 						$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -1310,7 +1308,7 @@ else
 		print $langs->trans('PaymentConditionsShort');
 		print '</td>';
 		if ($action != 'editconditions' && $user->rights->facture->creer)
-			print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editconditions&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetConditions'), 1) . '</a></td>';
+			print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editconditions&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetConditions'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($object->type != Facture::TYPE_CREDIT_NOTE)
@@ -1334,7 +1332,7 @@ else
 		print $langs->trans('PaymentMode');
 		print '</td>';
 		if ($action != 'editmode' && $user->rights->facture->creer)
-			print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetMode'), 1) . '</a></td>';
+			print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetMode'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editmode')
@@ -1397,7 +1395,7 @@ else
 		print $langs->trans('BankAccount');
 		print '<td>';
 		if (($action != 'editbankaccount') && $user->rights->facture->creer && $object->statut == FactureRec::STATUS_DRAFT)
-			print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editbankaccount')
@@ -1419,7 +1417,7 @@ else
         print $langs->trans('Model');
         print '<td>';
         if (($action != 'editmodelpdf') && $user->rights->facture->creer && $object->statut == FactureRec::STATUS_DRAFT)
-            print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmodelpdf&amp;id='.$object->id.'">'.img_edit($langs->trans('SetModel'), 1).'</a></td>';
+            print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmodelpdf&amp;id='.$object->id.'">'.img_edit($langs->trans('SetModel'), 1).'</a></td>';
         print '</tr></table>';
         print '</td><td>';
         if ($action == 'editmodelpdf')
@@ -1468,7 +1466,7 @@ else
 		print $langs->trans('Frequency');
 		print '</td>';
 		if ($action != 'editfrequency' && $user->rights->facture->creer)
-			print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editfrequency&amp;facid=' . $object->id . '">' . img_edit($langs->trans('Edit'), 1) . '</a></td>';
+			print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editfrequency&amp;facid=' . $object->id . '">' . img_edit($langs->trans('Edit'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editfrequency')

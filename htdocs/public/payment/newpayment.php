@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * For Paypal test: https://developer.paypal.com/
  * For Paybox test: ???
@@ -1042,7 +1042,7 @@ if ($source == 'invoice')
 
 	if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
 	{
-		$amount=price2num($invoice->total_ttc - ($invoice->getSommePaiement() + $invoice->getSumCreditNotesUsed()));
+		$amount=price2num($invoice->total_ttc - ($invoice->getSommePaiement() + $invoice->getSumCreditNotesUsed() + $invoice->getSumDepositsUsed()));
 		if (GETPOST("amount", 'int')) $amount=GETPOST("amount", 'int');
 		$amount=price2num($amount);
 	}
@@ -1799,7 +1799,6 @@ print '<br>';
 // Add more content on page for some services
 if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment mode
 {
-
 	// Stripe
 	if (GETPOST('dopayment_stripe', 'alpha'))
 	{

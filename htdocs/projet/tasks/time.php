@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -91,8 +91,8 @@ $projectstatic = new Project($db);
 $extrafields_project = new ExtraFields($db);
 $extrafields_task = new ExtraFields($db);
 
-$extralabels_projet=$extrafields_project->fetch_name_optionals_label($projectstatic->table_element);
-$extralabels_task=$extrafields_task->fetch_name_optionals_label($object->table_element);
+$extrafields_project->fetch_name_optionals_label($projectstatic->table_element);
+$extrafields_task->fetch_name_optionals_label($object->table_element);
 
 
 /*

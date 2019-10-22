@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -63,7 +63,7 @@ $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->opensurvey->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('surveylist'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('survey');	// Load $extrafields->attributes['myobject']
+$extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Default sort order (if not yet defined by previous GETPOST)
@@ -85,8 +85,14 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 {
     foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
     {
-        if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
-            $arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+        if (! empty($extrafields->attributes[$object->table_element]['list'][$key])) {
+			$arrayfields["ef.".$key] = array(
+				'label'=>$extrafields->attributes[$object->table_element]['label'][$key],
+				'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1),
+				'position'=>$extrafields->attributes[$object->table_element]['pos'][$key],
+				'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key])
+			);
+		}
     }
 }
 $object->fields = dol_sort_array($object->fields, 'position');

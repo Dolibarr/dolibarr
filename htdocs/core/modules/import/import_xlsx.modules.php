@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -408,6 +408,11 @@ class ImportXlsx extends ModeleImports
 					//dol_syslog("Table ".$tablename." check for entity into cache is ".$tablewithentity_cache[$tablename]);
 				}
 
+                // array of fields to column index
+                $arrayfield = array();
+                foreach($sort_array_match_file_to_database as $key => $val) {
+                    $arrayfield[$val] = ($key-1);
+                }
 
 				// Loop on each fields in the match array: $key = 1..n, $val=alias of field (s.nom)
 				foreach($sort_array_match_file_to_database as $key => $val)
@@ -512,11 +517,49 @@ class ImportXlsx extends ModeleImports
                                         }
                                     }
                                 }
+                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeandlabel')
+                                {
+                                    $isidorref='id';
+                                    if (! is_numeric($newval) && $newval != '' && ! preg_match('/^id:/i', $newval)) $isidorref='ref';
+                                    $newval=preg_replace('/^(id|ref):/i', '', $newval);
+
+                                    if ($isidorref == 'ref') {
+                                        $file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
+                                        $class = $objimport->array_import_convertvalue[0][$val]['class'];
+                                        $method = $objimport->array_import_convertvalue[0][$val]['method'];
+                                        $codefromfield = $objimport->array_import_convertvalue[0][$val]['codefromfield'];
+                                        $code = $arrayrecord[$arrayfield[$codefromfield]]['val'];
+                                        if ($this->cacheconvert[$file . '_' . $class . '_' . $method . '_' . $code][$newval] != '') {
+                                            $newval = $this->cacheconvert[$file . '_' . $class . '_' . $method . '_' . $code][$newval];
+                                        } else {
+                                            $resultload = dol_include_once($file);
+                                            if (empty($resultload)) {
+                                                dol_print_error('', 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method . ', code=' . $code);
+                                                break;
+                                            }
+                                            $classinstance = new $class($this->db);
+                                            // Try the fetch from code and ref
+                                            $param_array = array('', $newval, $code);
+                                            call_user_func_array(array($classinstance, $method), $param_array);
+                                            $this->cacheconvert[$file . '_' . $class . '_' . $method . '_' . $code][$newval] = $classinstance->id;
+                                            if ($classinstance->id > 0)    // we found record
+                                            {
+                                                $newval = $classinstance->id;
+                                            } else {
+                                                if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'scale', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
+                                                else $this->errors[$error]['lib'] = 'ErrorFieldValueNotIn';
+                                                $this->errors[$error]['type'] = 'FOREIGNKEY';
+                                                $errorforthistable++;
+                                                $error++;
+                                            }
+                                        }
+                                    }
+                                }
                                 elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='zeroifnull')
                                 {
                                     if (empty($newval)) $newval='0';
                                 }
-                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeunits')
+                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeunits' || $objimport->array_import_convertvalue[0][$val]['rule']=='fetchscalefromcodeunits')
                                 {
                                 	$file=(empty($objimport->array_import_convertvalue[0][$val]['classfile'])?$objimport->array_import_convertvalue[0][$val]['file']:$objimport->array_import_convertvalue[0][$val]['classfile']);
                                 	$class=$objimport->array_import_convertvalue[0][$val]['class'];
@@ -536,17 +579,18 @@ class ImportXlsx extends ModeleImports
                                 		}
                                 		$classinstance=new $class($this->db);
                                 		// Try the fetch from code or ref
-                                		call_user_func_array(array($classinstance, $method), array('', $units, '', $newval));
-                                		$this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval]=$classinstance->code;
-                                		//print 'We have made a '.$class.'->'.$method.' to get id from code '.$newval.'. ';
-                                		if ($classinstance->code != '')	// id may be 0, it is a found value
-                                		{
-                                			$newval=$classinstance->code;
-                                		}
-                                		else
-                                		{
-                                			if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
-                                			else $this->errors[$error]['lib']='ErrorFieldValueNotIn';
+                                        call_user_func_array(array($classinstance, $method), array('', '', $newval, $units));
+                                        $scaleorid = (($objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeunits') ? $classinstance->id : $classinstance->scale);
+                                        $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval]=$scaleorid;
+                                        //print 'We have made a '.$class.'->'.$method." to get a value from key '".$newval."' and we got '".$scaleorid."'.";exit;
+                                        if ($classinstance->id > 0)	// we found record
+                                        {
+                                        	$newval = $scaleorid ? $scaleorid : 0;
+                                        }
+                                        else
+                                        {
+                                        	if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldValueNotIn', $key, $newval, 'scale', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
+                                        	else $this->errors[$error]['lib']='ErrorFieldValueNotIn';
                                 			$this->errors[$error]['type']='FOREIGNKEY';
                                 			$errorforthistable++;
                                 			$error++;
@@ -687,8 +731,9 @@ class ImportXlsx extends ModeleImports
 									    $errorforthistable++;
 										$error++;
 									}
-								} elseif (! preg_match('/'.$objimport->array_import_regex[0][$val].'/i', $newval)) {
-								    // If test is just a static regex
+								}
+								// If test is just a static regex
+								elseif (! preg_match('/'.$objimport->array_import_regex[0][$val].'/i', $newval)) {
 								    //if ($key == 19) print "xxx".$newval."zzz".$objimport->array_import_regex[0][$val]."<br>";
 									$this->errors[$error]['lib']=$langs->transnoentitiesnoconv('ErrorWrongValueForField', $key, $newval, $objimport->array_import_regex[0][$val]);
 									$this->errors[$error]['type']='REGEX';
@@ -797,7 +842,7 @@ class ImportXlsx extends ModeleImports
 									$error++;
 								}
 							} else {
-								// We have a last INSERT ID. Check if we have a row referencing this foreign key.
+								// We have a last INSERT ID (got by previous pass), so we check if we have a row referencing this foreign key.
 								// This is required when updating table with some extrafields. When inserting a record in parent table, we can make
 								// a direct insert into subtable extrafields, but when me wake an update, the insertid is defined and the child record
 								// may already exists. So we rescan the extrafield table to know if record exists or not for the rowid.

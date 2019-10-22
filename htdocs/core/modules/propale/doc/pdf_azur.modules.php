@@ -20,14 +20,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
  *	\file       htdocs/core/modules/propale/doc/pdf_azur.modules.php
  *	\ingroup    propale
- *	\brief      Fichier de la classe permettant de generer les propales au modele Azur
+ *	\brief      File of Class to generate PDF proposal with Azur template
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/propale/modules_propale.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -148,16 +148,16 @@ class pdf_azur extends ModelePDFPropales
 		$this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
 		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 
-		$this->option_logo = 1;                    // Affiche logo
-		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
-		$this->option_modereg = 1;                 // Affiche mode reglement
-		$this->option_condreg = 1;                 // Affiche conditions reglement
-		$this->option_codeproduitservice = 1;      // Affiche code produit-service
-		$this->option_multilang = 1;               // Dispo en plusieurs langues
-		$this->option_escompte = 0;                // Affiche si il y a eu escompte
+		$this->option_logo = 1;                    // Display logo
+		$this->option_tva = 1;                     // Manage the vat option FACTURE_TVAOPTION
+		$this->option_modereg = 1;                 // Display payment mode
+		$this->option_condreg = 1;                 // Display payment terms
+		$this->option_codeproduitservice = 1;      // Display product-service code
+		$this->option_multilang = 1;               // Available in several languages
+		$this->option_escompte = 0;                // Displays if there has been a discount
 		$this->option_credit_note = 0;             // Support credit notes
 		$this->option_freetext = 1;				   // Support add of a personalised text
-		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
+		$this->option_draft_watermark = 1;		   // Support add of a watermark on drafts
 
 		$this->franchise=!$mysoc->tva_assuj;
 
@@ -756,8 +756,6 @@ class pdf_azur extends ModelePDFPropales
 							if (count($filetomerge->lines) > 0) {
 								foreach ($filetomerge->lines as $linefile) {
 									if (! empty($linefile->id) && ! empty($linefile->file_name)) {
-
-
 										if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
 										{
 											if (! empty($conf->product->enabled)) {

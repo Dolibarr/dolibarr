@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -441,7 +441,6 @@ class BonPrelevement extends CommonObject
 
 					if ($this->db->query($sql))
 					{
-
 						$langs->load('withdrawals');
 						$subject = $langs->trans("InfoCreditSubject", $this->ref);
 						$message = $langs->trans("InfoCreditMessage", $this->ref, dol_print_date($date, 'dayhour'));
@@ -618,7 +617,6 @@ class BonPrelevement extends CommonObject
 		}
 		else
 		{
-
 			dol_syslog(get_class($this)."::set_infotrans Ouverture transaction SQL impossible", LOG_CRIT);
 			return -2;
 		}
@@ -772,17 +770,18 @@ class BonPrelevement extends CommonObject
 	 *	Create a withdraw
 	 *  TODO delete params banque and agence when not necesary
 	 *
-	 *	@param 	int		$banque		dolibarr mysoc bank
-	 *	@param	int		$agence		dolibarr mysoc bank office (guichet)
+	 *	@param 	int		  $banque		dolibarr mysoc bank
+	 *	@param	int		  $agence		dolibarr mysoc bank office (guichet)
 	 *	@param	string	$mode		real=do action, simu=test only
 	 *  @param	string	$format		FRST, RCUR or ALL
-         * @param       string  $executiondate	Date to execute the transfer
+	 *  @param  string  $executiondate	Date to execute the transfer
+	 *  @param	int	    $notrigger		Disable triggers
 	 *	@return	int					<0 if KO, nbre of invoice withdrawed if OK
 	 */
-	public function Create($banque = 0, $agence = 0, $mode = 'real', $format = 'ALL', $executiondate = '')
+	public function Create($banque = 0, $agence = 0, $mode = 'real', $format = 'ALL', $executiondate = '', $notrigger = 0)
 	{
         // phpcs:enable
-		global $conf,$langs;
+		global $conf, $langs, $user;
 
 		dol_syslog(__METHOD__."::Bank=".$banque." Office=".$agence." mode=".$mode." format=".$format, LOG_DEBUG);
 
@@ -1091,6 +1090,7 @@ class BonPrelevement extends CommonObject
 					}
 
 					$this->factures = $factures_prev_id;
+					$this->context['factures_prev'] = $factures_prev;
 
 					// Generation of SEPA file $this->filename
 					$this->generate($format, $executiondate);
@@ -1113,6 +1113,14 @@ class BonPrelevement extends CommonObject
 				$error++;
 				dol_syslog(__METHOD__."::Error update total: ".$this->db->error(), LOG_ERR);
 			}
+
+            if (! $error && ! $notrigger)
+            {
+                // Call trigger
+                $result=$this->call_trigger('DIRECT_DEBIT_ORDER_CREATE', $user);
+                if ($result < 0) $error++;
+                // End call triggers
+            }
 
 			if (!$error)
 			{
@@ -1149,7 +1157,7 @@ class BonPrelevement extends CommonObject
 		if (! $notrigger)
 		{
 		    // Call trigger
-		    $result=$this->call_trigger('BON_PRELEVEMENT_DELETE', $user);
+		    $result=$this->call_trigger('DIRECT_DEBIT_ORDER_DELETE', $user);
 		    if ($result < 0) $error++;
 		    // End call triggers
 		}

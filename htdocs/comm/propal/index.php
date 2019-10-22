@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -58,7 +58,7 @@ $help_url="EN:Module_Commercial_Proposals|FR:Module_Propositions_commerciales|ES
 
 llxHeader("", $langs->trans("ProspectionArea"), $help_url);
 
-print load_fiche_titre($langs->trans("ProspectionArea"));
+print load_fiche_titre($langs->trans("ProspectionArea"), '', 'commercial');
 
 //print '<table width="100%" class="notopnoleftnoright">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';
@@ -126,7 +126,6 @@ if ($resql)
     	$dataseries[]=array($propalstatic->LibStatut($status, 1), (isset($vals[$status])?(int) $vals[$status]:0));
         if (! $conf->use_javascript_ajax)
         {
-
             print '<tr class="oddeven">';
             print '<td>'.$propalstatic->LibStatut($status, 0).'</td>';
             print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';

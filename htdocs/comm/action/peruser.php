@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 
@@ -631,7 +631,6 @@ $currentdaytoshow = $firstdaytoshow;
 echo '<div class="div-table-responsive">';
 
 while($currentdaytoshow<$lastdaytoshow) {
-
 	echo '<table width="100%" class="noborder nocellnopadd cal_month">';
 
 	echo '<tr class="liste_titre">';
@@ -779,7 +778,6 @@ while($currentdaytoshow<$lastdaytoshow) {
 		$i = 0;
 		for ($iter_day = 0; $iter_day < 8; $iter_day++)
 		{
-
 			if (($i + 1) < $begin_d || ($i + 1) > $end_d)
 			{
 				$i++;

@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -88,7 +88,7 @@ $formother=new FormOther($db);
 llxHeader();
 
 $titre=($year?$langs->trans("PaymentsReportsForYear", $year):$langs->trans("PaymentsReports"));
-print load_fiche_titre($titre, '', 'title_accountancy.png');
+print load_fiche_titre($titre, '', 'invoicing');
 
 // Formulaire de generation
 print '<form method="post" action="rapport.php?year='.$year.'">';
@@ -152,7 +152,6 @@ if ($year)
             {
                 if (preg_match('/^payment/i', $file))
                 {
-                    
                     $tfile = $dir . '/'.$year.'/'.$file;
                     $relativepath = $year.'/'.$file;
                     print '<tr class="oddeven">'.'<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';

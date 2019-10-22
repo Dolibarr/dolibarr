@@ -5,7 +5,7 @@ License
 Dolibarr is released under the terms of the GNU General Public License as 
 published by the Free Software Foundation; either version 3 of the License,
 or (at your option) any later version (GPL-3+).
-More information: http://www.gnu.org/licenses/gpl-3.0.txt
+More information: https://www.gnu.org/licenses/gpl-3.0.txt
 
 Dolibarr uses some external libraries released under different licenses. This is compatibility summary:
 
@@ -17,7 +17,7 @@ CKEditor               4.12.1        LGPL-2.1+                   Yes            
 EvalMath               1.0           BSD                         Yes             Safe math expressions evaluation
 Escpos-php             ?             MIT License                 Yes             Thermal receipt printer library, for use with ESC/POS compatible printers
 GeoIP                  1.4           LGPL-2.1+                   Yes             Sample code to make geoip convert (not into deb package)
-Mobiledetect           2.8.83        MIT License                 Yes             Detect mobile devices browsers
+Mobiledetect           2.8.33        MIT License                 Yes             Detect mobile devices browsers
 NuSoap                 0.9.5         LGPL 2.1+                   Yes             Library to develop SOAP Web services (not into rpm and deb package)
 PEAR Mail_MIME         1.8.9         BSD                         Yes             NuSoap dependency
 ParseDown              1.6           MIT License                 Yes             Markdown parser
@@ -33,7 +33,7 @@ Restler                3.0.0RC6      LGPL-3+                     Yes            
 Sabre                  3.2.2         BSD                         Yes             DAV support
 Swift Mailer           5.4.2-DEV     MIT license                 Yes             Comprehensive mailing tools for PHP
 Stripe                 6.41          MIT licence                 Yes             Library for Stripe module
-TCPDF                  6.2.25        LGPL-3+                     Yes             PDF generation
+TCPDF                  6.3.2         LGPL-3+                     Yes             PDF generation
 TCPDI                  1.0.0         LGPL-3+ / Apache 2.0        Yes             FPDI replacement
 
 JS libraries:
@@ -64,7 +64,7 @@ Fontawesome            5.7.2         Font Awesome Free licence   Yes
 
 
 For licenses compatibility informations:
-http://www.gnu.org/licenses/licenses.en.html
+https://www.gnu.org/licenses/licenses.en.html
 
 
 Copyright / Authors

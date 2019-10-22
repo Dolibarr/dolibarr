@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -175,13 +175,15 @@ if ($result) {
         while ($i < $num )
 	    {
 	        $obj = $db->fetch_object($result);
+			$mailstatic=new Mailing($db);
+			$mailstatic->id = $obj->rowid;
+			$mailstatic->ref = $obj->rowid;
 
 	        print '<tr class="oddeven">';
-	        print '<td class="nowrap"><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowEMail"), "email").' '.$obj->rowid.'</a></td>';
+	        print '<td class="nowrap">'.$mailstatic->getNomUrl(1).'</td>';
 	        print '<td>'.dol_trunc($obj->titre, 38).'</td>';
 	        print '<td align="center">'.dol_print_date($db->jdate($obj->date_creat), 'day').'</td>';
 	        print '<td align="center">'.($obj->nbemail?$obj->nbemail:"0").'</td>';
-	        $mailstatic=new Mailing($db);
 	        print '<td class="right">'.$mailstatic->LibStatut($obj->statut, 5).'</td>';
             print '</tr>';
 	        $i++;

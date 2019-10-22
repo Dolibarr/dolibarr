@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 // Protection to avoid direct call of template
 if (empty($conf) || ! is_object($conf))
@@ -50,7 +50,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
         <td class="linkedcol-element" ><?php echo $langs->trans("Ticket"); ?>
         <?php if(!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';  ?>
         </td>
-        <td class="linkedcol-name" ><?php echo $objectlink->getNomUrl(1); ?></td>
+        <td class="linkedcol-name nowraponall" ><?php echo $objectlink->getNomUrl(1); ?></td>
     	<td class="linkedcol-ref" align="center"><?php echo $objectlink->ref_client; ?></td>
     	<td class="linkedcol-date" align="center"><?php echo dol_print_date($objectlink->datec, 'day'); ?></td>
 	    <?php

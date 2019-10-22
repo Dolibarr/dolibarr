@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -227,10 +227,7 @@ class Conf
             $filesList = explode(":", $this->global->LOCAL_CONSTS_FILES);
             foreach ($filesList as $file) {
                 $file=dol_sanitizeFileName($file);
-                include_once DOL_DOCUMENT_ROOT . "/".$file."/".$file."_consts.php";
-                foreach ($file2bddconsts as $key=>$value) {
-                    $this->global->$key=$value;
-                }
+                include_once DOL_DOCUMENT_ROOT . "/".$file."/".$file."_consts.php";	// This file can run code like setting $this->global->XXX vars.
             }
         }
 
@@ -442,7 +439,6 @@ class Conf
 
 		// Set some default values
 		//$this->global->MAIN_LIST_FILTER_ON_DAY=1;		// On filter that show date, we must show input field for day before or after month
-		$this->global->MAIN_ACTIVATE_HTML5=1;
         $this->global->MAIN_MAIL_USE_MULTI_PART=1;
 
 		// societe
@@ -668,6 +664,8 @@ class Conf
 		}
 
 		if (! isset($this->global->MAIN_EXTRAFIELDS_IN_ONE_TD)) $this->global->MAIN_EXTRAFIELDS_IN_ONE_TD = 1;
+
+		if (! isset($this->global->MAIN_USE_OLD_TITLE_BUTTON)) $this->global->MAIN_USE_OLD_TITLE_BUTTON = 0;
 
 		if (empty($this->global->MAIN_MODULE_DOLISTORE_API_SRV)) $this->global->MAIN_MODULE_DOLISTORE_API_SRV='https://www.dolistore.com';
 		if (empty($this->global->MAIN_MODULE_DOLISTORE_API_KEY)) $this->global->MAIN_MODULE_DOLISTORE_API_KEY='dolistorecatalogpublickey1234567';

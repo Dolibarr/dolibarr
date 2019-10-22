@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -192,7 +192,6 @@ foreach($listofstatus as $status)
     $dataseries[]=array($staticcontratligne->LibStatut($status, 1, ($bool?1:0)),(isset($nb[$status.$bool])?(int) $nb[$status.$bool]:0));
     if (empty($conf->use_javascript_ajax))
     {
-
         print '<tr class="oddeven">';
         print '<td>'.$staticcontratligne->LibStatut($status, 0, ($bool?1:0)).'</td>';
         print '<td class="right"><a href="services_list.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status, 3, ($bool?1:0)).'</a></td>';

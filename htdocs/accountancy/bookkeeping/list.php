@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -154,6 +154,12 @@ $arrayfields=array(
 );
 
 if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) unset($arrayfields['t.lettering_code']);
+
+$listofformat=AccountancyExport::getType();
+$formatexportset = $conf->global->ACCOUNTING_EXPORT_MODELCSV;
+if (empty($listofformat[$formatexportset])) $formatexportset = 1;
+
+$error = 0;
 
 
 /*
@@ -310,7 +316,6 @@ if (empty($reshook))
 }
 
 if ($action == 'delbookkeeping' && $user->rights->accounting->mouvements->supprimer) {
-
 	$import_key = GETPOST('importkey', 'alpha');
 
 	if (! empty($import_key)) {
@@ -325,7 +330,6 @@ if ($action == 'delbookkeeping' && $user->rights->accounting->mouvements->suppri
 	}
 }
 if ($action == 'delbookkeepingyearconfirm' && $user->rights->accounting->mouvements->supprimer_tous) {
-
 	$delyear = GETPOST('delyear', 'int');
 	if ($delyear==-1) {
 		$delyear=0;
@@ -356,7 +360,6 @@ if ($action == 'delbookkeepingyearconfirm' && $user->rights->accounting->mouveme
 	}
 }
 if ($action == 'delmouvconfirm' && $user->rights->accounting->mouvements->supprimer) {
-
 	$mvt_num = GETPOST('mvt_num', 'int');
 
 	if (! empty($mvt_num)) {
@@ -373,10 +376,96 @@ if ($action == 'delmouvconfirm' && $user->rights->accounting->mouvements->suppri
 		exit;
 	}
 }
+if ($action == 'setreexport') {
+	$setreexport = GETPOST('value', 'int');
+	if (! dolibarr_set_const($db, "ACCOUNTING_REEXPORT", $setreexport, 'yesno', 0, '', $conf->entity)) $error++;
+
+	if (! $error) {
+		if ($conf->global->ACCOUNTING_REEXPORT == 1) {
+			setEventMessages($langs->trans("ExportOfPiecesAlreadyExportedIsEnable"), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("ExportOfPiecesAlreadyExportedIsDisable"), null, 'mesgs');
+		}
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
+// Build and execute select (used by page and export action)
+// must de set after the action that set $filter
+// --------------------------------------------------------------------
+
+$sql = 'SELECT';
+$sql .= ' t.rowid,';
+$sql .= " t.doc_date,";
+$sql .= " t.doc_type,";
+$sql .= " t.doc_ref,";
+$sql .= " t.fk_doc,";
+$sql .= " t.fk_docdet,";
+$sql .= " t.thirdparty_code,";
+$sql .= " t.subledger_account,";
+$sql .= " t.subledger_label,";
+$sql .= " t.numero_compte,";
+$sql .= " t.label_compte,";
+$sql .= " t.label_operation,";
+$sql .= " t.debit,";
+$sql .= " t.credit,";
+$sql .= " t.lettering_code,";
+$sql .= " t.montant,";
+$sql .= " t.sens,";
+$sql .= " t.fk_user_author,";
+$sql .= " t.import_key,";
+$sql .= " t.code_journal,";
+$sql .= " t.journal_label,";
+$sql .= " t.piece_num,";
+$sql .= " t.date_creation,";
+$sql .= " t.tms as date_modification,";
+$sql .= " t.date_export";
+$sql .= ' FROM ' . MAIN_DB_PREFIX . $object->table_element . ' as t';
+// Manage filter
+$sqlwhere = array ();
+if (count($filter) > 0) {
+	foreach ($filter as $key => $value) {
+		if ($key == 't.doc_date') {
+			$sqlwhere[] = $key . '=\'' . $db->idate($value) . '\'';
+		} elseif ($key == 't.doc_date>=' || $key == 't.doc_date<=') {
+			$sqlwhere[] = $key . '\'' . $db->idate($value) . '\'';
+		} elseif ($key == 't.numero_compte>=' || $key == 't.numero_compte<=' || $key == 't.subledger_account>=' || $key == 't.subledger_account<=') {
+			$sqlwhere[] = $key . '\'' . $db->escape($value) . '\'';
+		} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
+			$sqlwhere[] = $key . '=' . $value;
+		} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
+			$sqlwhere[] = $key . ' LIKE \'' . $db->escape($value) . '%\'';
+		} elseif ($key == 't.date_creation>=' || $key == 't.date_creation<=') {
+			$sqlwhere[] = $key . '\'' . $db->idate($value) . '\'';
+		} elseif ($key == 't.tms>=' || $key == 't.tms<=') {
+			$sqlwhere[] = $key . '\'' . $db->idate($value) . '\'';
+		} elseif ($key == 't.date_export>=' || $key == 't.date_export<=') {
+			$sqlwhere[] = $key . '\'' . $db->idate($value) . '\'';
+		} elseif ($key == 't.credit' || $key == 't.debit') {
+			$sqlwhere[] = natural_search($key, $value, 1, 1);
+		} else {
+			$sqlwhere[] = natural_search($key, $value, 0, 1);
+		}
+	}
+}
+$sql.= ' WHERE t.entity IN (' . getEntity('accountancy') . ')';
+if ($conf->global->ACCOUNTING_REEXPORT == 0) {
+	$sql .= " AND t.date_export IS NULL";
+}
+if (count($sqlwhere) > 0) {
+	$sql .= ' AND ' . implode(' AND ', $sqlwhere);
+}
+if (! empty($sortfield)) {
+	$sql .= $db->order($sortfield, $sortorder);
+}
+//print $sql;
+
 
 // Export into a file with format defined into setup (FEC, CSV, ...)
+// Must be after definition of $sql
 if ($action == 'export_file' && $user->rights->accounting->mouvements->export) {
-
+	// TODO Replace the fetchAll + ->export later that consume too much memory on large export with the query($sql) and loop on each line to export them.
 	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', $conf->global->ACCOUNTING_REEXPORT);
 
 	if ($result < 0)
@@ -387,55 +476,54 @@ if ($action == 'export_file' && $user->rights->accounting->mouvements->export) {
 	{
 	    // Export files
 		$accountancyexport = new AccountancyExport($db);
-		$accountancyexport->export($object->lines);
+		$accountancyexport->export($object->lines, $formatexportset);
 
         if (! empty($accountancyexport->errors))
         {
             setEventMessages('', $accountancyexport->errors, 'errors');
-        } else {
+        }
+        else
+        {
             // Specify as export : update field date_export
-            // TODO Move in class bookKeeping
             $error=0;
             $db->begin();
 
-            if (is_array($object->lines)) {
-                foreach ($object->lines as $movement) {
+            if (is_array($object->lines))
+            {
+                foreach ($object->lines as $movement)
+                {
                     $now = dol_now();
+
                     $sql = " UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping";
                     $sql .= " SET date_export = '" . $db->idate($now) . "'";
                     $sql .= " WHERE rowid = " . $movement->id;
 
                     dol_syslog("/accountancy/bookeeping/list.php Function export_file Specify movements as exported sql=" . $sql, LOG_DEBUG);
                     $result = $db->query($sql);
-                    if ($result) {
-                        $db->commit();
-                        // setEventMessages($langs->trans("AllExportedMovementsWereRecordedAsExported"), null, 'mesgs');
-                    } else {
-                        $db->rollback();
-                        // setEventMessages($langs->trans("NotAllExportedMovementsCouldBeRecordedAsExported"), null, 'errors');
+                    if (! $result)
+                    {
+                    	$error++;
+                        break;
                     }
                 }
+            }
+
+            if (! $error)
+            {
+            	$db->commit();
+            	// setEventMessages($langs->trans("AllExportedMovementsWereRecordedAsExported"), null, 'mesgs');
+            }
+            else
+            {
+            	$error++;
+            	$db->rollback();
+            	setEventMessages($langs->trans("NotAllExportedMovementsCouldBeRecordedAsExported"), null, 'errors');
             }
         }
 		exit;
 	}
 }
 
-if ($action == 'setreexport') {
-    $export = 0;
-    $setreexport = GETPOST('value', 'int');
-    if (! dolibarr_set_const($db, "ACCOUNTING_REEXPORT", $setreexport, 'yesno', 0, '', $conf->entity)) $error++;
-
-    if (! $error) {
-        if ($conf->global->ACCOUNTING_REEXPORT == 1) {
-            setEventMessages($langs->trans("ExportOfPiecesAlreadyExportedIsEnable"), null, 'mesgs');
-        } else {
-            setEventMessages($langs->trans("ExportOfPiecesAlreadyExportedIsDisable"), null, 'mesgs');
-        }
-    } else {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
-}
 
 /*
  * View
@@ -443,31 +531,49 @@ if ($action == 'setreexport') {
 
 $title_page = $langs->trans("Bookkeeping");
 
-llxHeader('', $title_page);
-
-// List
+// Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$nbtotalofrecords = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', $conf->global->ACCOUNTING_REEXPORT);
-	if ($nbtotalofrecords < 0) {
-		setEventMessages($object->error, $object->errors, 'errors');
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$resql = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($resql);
+	if (($page * $limit) > $nbtotalofrecords)	// if total of record found is smaller than page * limit, goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
 	}
 }
+// if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
+if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
+{
+	$num = $nbtotalofrecords;
+}
+else
+{
+	$sql.= $db->plimit($limit+1, $offset);
 
-// TODO Do not use this
-$result = $object->fetchAll($sortorder, $sortfield, $limit, $offset, $filter, 'AND', $conf->global->ACCOUNTING_REEXPORT);
-if ($result < 0) {
-	setEventMessages($object->error, $object->errors, 'errors');
+	$resql=$db->query($sql);
+	if (! $resql)
+	{
+		dol_print_error($db);
+		exit;
+	}
+
+	$num = $db->num_rows($resql);
 }
 
-$num=count($object->lines);
+
+// Output page
+// --------------------------------------------------------------------
+
+llxHeader('', $title_page);
+
 
 if ($action == 'delmouv') {
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?mvt_num='.GETPOST('mvt_num').$param, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvtPartial'), 'delmouvconfirm', '', 0, 1);
 	print $formconfirm;
 }
 if ($action == 'delbookkeepingyear') {
-
 	$form_question = array ();
 	$delyear = GETPOST('delyear');
 	$deljournal = GETPOST('deljournal');
@@ -502,35 +608,32 @@ if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&con
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
 print '<form method="POST" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="list">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 
-$button .= '<a class="butAction" title="" name="button_export_file" href="'.$_SERVER["PHP_SELF"].'?action=export_file'.($param?'&'.$param:'').'">';
-
-$listofformat=AccountancyExport::getType();
 if (count($filter)) $buttonLabel = $langs->trans("ExportFilteredList");
 else $buttonLabel = $langs->trans("ExportList");
 
 // Button re-export
 if (! empty($conf->global->ACCOUNTING_REEXPORT)) {
-    $newcardbutton ='<a href="'.$_SERVER['PHP_SELF'].'?action=setreexport&value=0'.($param?'&'.$param:'').'">'.img_picto($langs->trans("Activated"), 'switch_on').'</a> ';
+    $newcardbutton ='<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&value=0'.($param?'&'.$param:'').'">'.img_picto($langs->trans("Activated"), 'switch_on').'</a> ';
 } else {
-    $newcardbutton ='<a href="'.$_SERVER['PHP_SELF'].'?action=setreexport&value=1'.($param?'&'.$param:'').'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a> ';
+    $newcardbutton ='<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&value=1'.($param?'&'.$param:'').'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a> ';
 }
 $newcardbutton.= '<span class="valignmiddle marginrightonly">'.$langs->trans("IncludeDocsAlreadyExported").'</span>';
 
-$newcardbutton.= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList").' ('.$listofformat[$conf->global->ACCOUNTING_EXPORT_MODELCSV].')', 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file'.($param?'&'.$param:''), $user->rights->accounting->mouvements->export);
+$newcardbutton.= dolGetButtonTitle($buttonLabel, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', 'fa fa-file-export paddingleft', $_SERVER["PHP_SELF"].'?action=export_file'.($param?'&'.$param:''), $user->rights->accounting->mouvements->export);
 
 $newcardbutton.= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param);
 
 $newcardbutton.= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', './card.php?action=create', '', $user->rights->accounting->mouvements->creer);
 
-print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $result, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit);
+print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit);
 
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
@@ -542,7 +645,7 @@ if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
 else $moreforfilter = $hookmanager->resPrint;
 
 print '<div class="div-table-responsive">';
-print '<table class="tagtable liste" width="100%">';
+print '<table class="tagtable liste centpercent">';
 
 // Filters lines
 print '<tr class="liste_titre_filter">';
@@ -650,7 +753,6 @@ if (! empty($arrayfields['t.code_journal']['checked']))
 	print '<td class="liste_titre center"><input type="text" name="search_ledger_code" size="3" value="' . $search_ledger_code . '"></td>';
 }
 
-
 // Fields from hook
 $parameters=array('arrayfields'=>$arrayfields);
 $reshook=$hookmanager->executeHooks('printFieldListOption', $parameters);    // Note that $action and $object may have been modified by hook
@@ -727,169 +829,198 @@ print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $
 print "</tr>\n";
 
 
-if ($num > 0)
+$line = new BookKeepingLine();
+
+// Loop on record
+// --------------------------------------------------------------------
+$i=0;
+$totalarray=array();
+while ($i < min($num, $limit))
+{
+	$obj = $db->fetch_object($resql);
+	if (empty($obj)) break;		// Should not happen
+
+	$line->id = $obj->rowid;
+	$line->doc_date = $db->jdate($obj->doc_date);
+	$line->doc_type = $obj->doc_type;
+	$line->doc_ref = $obj->doc_ref;
+	$line->fk_doc = $obj->fk_doc;
+	$line->fk_docdet = $obj->fk_docdet;
+	$line->thirdparty_code = $obj->thirdparty_code;
+	$line->subledger_account = $obj->subledger_account;
+	$line->subledger_label = $obj->subledger_label;
+	$line->numero_compte = $obj->numero_compte;
+	$line->label_compte = $obj->label_compte;
+	$line->label_operation = $obj->label_operation;
+	$line->debit = $obj->debit;
+	$line->credit = $obj->credit;
+	$line->montant = $obj->montant;
+	$line->sens = $obj->sens;
+	$line->lettering_code = $obj->lettering_code;
+	$line->fk_user_author = $obj->fk_user_author;
+	$line->import_key = $obj->import_key;
+	$line->code_journal = $obj->code_journal;
+	$line->journal_label = $obj->journal_label;
+	$line->piece_num = $obj->piece_num;
+	$line->date_creation = $db->jdate($obj->date_creation);
+	$line->date_modification = $db->jdate($obj->date_modification);
+	$line->date_export = $db->jdate($obj->date_export);
+
+	$total_debit += $line->debit;
+	$total_credit += $line->credit;
+
+	print '<tr class="oddeven">';
+
+	// Piece number
+	if (! empty($arrayfields['t.piece_num']['checked']))
+	{
+		print '<td>';
+		$object->id = $line->id;
+		$object->piece_num = $line->piece_num;
+		print $object->getNomUrl(1, '', 0, '', 1);
+		print '</td>';
+		if (! $i) $totalarray['nbfield']++;
+	}
+
+	// Document date
+	if (! empty($arrayfields['t.doc_date']['checked']))
+	{
+		print '<td class="center">' . dol_print_date($line->doc_date, 'day') . '</td>';
+		if (! $i) $totalarray['nbfield']++;
+	}
+
+	// Document ref
+	if (! empty($arrayfields['t.doc_ref']['checked']))
+	{
+		print '<td class="nowrap">' . $line->doc_ref . '</td>';
+		if (! $i) $totalarray['nbfield']++;
+	}
+
+	// Account number
+	if (! empty($arrayfields['t.numero_compte']['checked']))
+	{
+		print '<td>' . length_accountg($line->numero_compte) . '</td>';
+		if (! $i) $totalarray['nbfield']++;
+	}
+
+	// Subledger account
+	if (! empty($arrayfields['t.subledger_account']['checked']))
+	{
+		print '<td>' . length_accounta($line->subledger_account) . '</td>';
+		if (! $i) $totalarray['nbfield']++;
+	}
+
+	// Label operation
+	if (! empty($arrayfields['t.label_operation']['checked']))
+	{
+		print '<td>' . $line->label_operation . '</td>';
+		if (! $i) $totalarray['nbfield']++;
+	}
+
+	// Amount debit
+	if (! empty($arrayfields['t.debit']['checked']))
+	{
+		print '<td class="nowrap right">' . ($line->debit ? price($line->debit) : ''). '</td>';
+		if (! $i) $totalarray['nbfield']++;
+		if (! $i) $totalarray['totaldebitfield']=$totalarray['nbfield'];
+		$totalarray['totaldebit'] += $line->debit;
+	}
+
+	// Amount credit
+	if (! empty($arrayfields['t.credit']['checked']))
+	{
+		print '<td class="nowrap right">' . ($line->credit ? price($line->credit) : '') . '</td>';
+		if (! $i) $totalarray['nbfield']++;
+		if (! $i) $totalarray['totalcreditfield']=$totalarray['nbfield'];
+		$totalarray['totalcredit'] += $line->credit;
+	}
+
+	// Lettering code
+	if (! empty($arrayfields['t.lettering_code']['checked']))
+	{
+		print '<td class="center">' . $line->lettering_code . '</td>';
+		if (! $i) $totalarray['nbfield']++;
+	}
+
+	// Journal code
+	if (! empty($arrayfields['t.code_journal']['checked']))
+	{
+		$accountingjournal = new AccountingJournal($db);
+		$result = $accountingjournal->fetch('', $line->code_journal);
+		$journaltoshow = (($result > 0)?$accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
+		print '<td class="center">' . $journaltoshow . '</td>';
+		if (! $i) $totalarray['nbfield']++;
+	}
+
+	// Fields from hook
+	$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+	$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+
+	// Creation operation date
+	if (! empty($arrayfields['t.date_creation']['checked']))
+	{
+		print '<td class="center">' . dol_print_date($line->date_creation, 'dayhour') . '</td>';
+		if (! $i) $totalarray['nbfield']++;
+	}
+
+	// Modification operation date
+	if (! empty($arrayfields['t.tms']['checked']))
+	{
+		print '<td class="center">' . dol_print_date($line->date_modification, 'dayhour') . '</td>';
+		if (! $i) $totalarray['nbfield']++;
+	}
+
+	// Exported operation date
+	if (! empty($arrayfields['t.date_export']['checked']))
+	{
+		print '<td align="center">' . dol_print_date($line->date_export, 'dayhour') . '</td>';
+		if (! $i) $totalarray['nbfield']++;
+	}
+
+	// Action column
+	print '<td class="nowraponall center">';
+	if (empty($line->date_export)) {
+		if ($user->rights->accounting->mouvements->creer) {
+			print '<a href="' . DOL_URL_ROOT . '/accountancy/bookkeeping/card.php?piece_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield=' . $sortfield : '') . ($sortorder ? '&sortorder=' . $sortorder : '') . '">' . img_edit() . '</a>';
+		}
+		if ($user->rights->accounting->mouvements->supprimer) {
+			print '&nbsp;<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield=' . $sortfield : '') . ($sortorder ? '&sortorder=' . $sortorder : '') . '">' . img_delete() . '</a>';
+		}
+	}
+	print '</td>';
+
+	if (! $i) $totalarray['nbfield']++;
+
+	print "</tr>\n";
+
+	$i++;
+}
+
+// Show total line
+if (isset($totalarray['totaldebitfield']) || isset($totalarray['totalcreditfield']))
 {
 	$i=0;
-	$totalarray=array();
-	while ($i < min($num, $limit))
+	print '<tr class="liste_total">';
+	while ($i < $totalarray['nbfield'])
 	{
-		$line = $object->lines[$i];
-
-		$total_debit += $line->debit;
-		$total_credit += $line->credit;
-
-		print '<tr class="oddeven">';
-
-		// Piece number
-		if (! empty($arrayfields['t.piece_num']['checked']))
-		{
-			print '<td>';
-			$object->id = $line->id;
-			$object->piece_num = $line->piece_num;
-			print $object->getNomUrl(1, '', 0, '', 1);
-			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
-		}
-
-		// Document date
-		if (! empty($arrayfields['t.doc_date']['checked']))
-		{
-			print '<td class="center">' . dol_print_date($line->doc_date, 'day') . '</td>';
-			if (! $i) $totalarray['nbfield']++;
-		}
-
-		// Document ref
-		if (! empty($arrayfields['t.doc_ref']['checked']))
-		{
-			print '<td class="nowrap">' . $line->doc_ref . '</td>';
-			if (! $i) $totalarray['nbfield']++;
-		}
-
-		// Account number
-		if (! empty($arrayfields['t.numero_compte']['checked']))
-		{
-			print '<td>' . length_accountg($line->numero_compte) . '</td>';
-			if (! $i) $totalarray['nbfield']++;
-		}
-
-		// Subledger account
-		if (! empty($arrayfields['t.subledger_account']['checked']))
-		{
-			print '<td>' . length_accounta($line->subledger_account) . '</td>';
-			if (! $i) $totalarray['nbfield']++;
-		}
-
-		// Label operation
-		if (! empty($arrayfields['t.label_operation']['checked']))
-		{
-			print '<td>' . $line->label_operation . '</td>';
-			if (! $i) $totalarray['nbfield']++;
-		}
-
-		// Amount debit
-		if (! empty($arrayfields['t.debit']['checked']))
-		{
-			print '<td class="nowrap right">' . ($line->debit ? price($line->debit) : ''). '</td>';
-			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['totaldebitfield']=$totalarray['nbfield'];
-			$totalarray['totaldebit'] += $line->debit;
-		}
-
-		// Amount credit
-		if (! empty($arrayfields['t.credit']['checked']))
-		{
-			print '<td class="nowrap right">' . ($line->credit ? price($line->credit) : '') . '</td>';
-			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['totalcreditfield']=$totalarray['nbfield'];
-			$totalarray['totalcredit'] += $line->credit;
-		}
-
-		// Lettering code
-		if (! empty($arrayfields['t.lettering_code']['checked']))
-		{
-			print '<td class="center">' . $line->lettering_code . '</td>';
-			if (! $i) $totalarray['nbfield']++;
-		}
-
-		// Journal code
-		if (! empty($arrayfields['t.code_journal']['checked']))
-		{
-			$accountingjournal = new AccountingJournal($db);
-			$result = $accountingjournal->fetch('', $line->code_journal);
-			$journaltoshow = (($result > 0)?$accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
-			print '<td class="center">' . $journaltoshow . '</td>';
-			if (! $i) $totalarray['nbfield']++;
-		}
-
-        // Fields from hook
-        $parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
-        $reshook=$hookmanager->executeHooks('printFieldListValue', $parameters);    // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
-
-		// Creation operation date
-		if (! empty($arrayfields['t.date_creation']['checked']))
-		{
-			print '<td class="center">' . dol_print_date($line->date_creation, 'dayhour') . '</td>';
-			if (! $i) $totalarray['nbfield']++;
-		}
-
-		// Modification operation date
-		if (! empty($arrayfields['t.tms']['checked']))
-		{
-			print '<td class="center">' . dol_print_date($line->date_modification, 'dayhour') . '</td>';
-			if (! $i) $totalarray['nbfield']++;
-		}
-
-        // Exported operation date
-        if (! empty($arrayfields['t.date_export']['checked']))
-        {
-            print '<td align="center">' . dol_print_date($line->date_export, 'dayhour') . '</td>';
-            if (! $i) $totalarray['nbfield']++;
-        }
-
-		// Action column
-		print '<td class="nowraponall center">';
-        if (empty($line->date_export)) {
-          if ($user->rights->accounting->mouvements->creer) {
-              print '<a href="' . DOL_URL_ROOT . '/accountancy/bookkeeping/card.php?piece_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield=' . $sortfield : '') . ($sortorder ? '&sortorder=' . $sortorder : '') . '">' . img_edit() . '</a>';
-          }
-          if ($user->rights->accounting->mouvements->supprimer) {
-              print '&nbsp;<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield=' . $sortfield : '') . ($sortorder ? '&sortorder=' . $sortorder : '') . '">' . img_delete() . '</a>';
-          }
-        }
-		print '</td>';
-
-    if (! $i) $totalarray['nbfield']++;
-
-		print "</tr>\n";
-
 		$i++;
-	}
-
-	// Show total line
-	if (isset($totalarray['totaldebitfield']) || isset($totalarray['totalcreditfield']))
-	{
-		$i=0;
-		print '<tr class="liste_total">';
-		while ($i < $totalarray['nbfield'])
+		if ($i == 1)
 		{
-			$i++;
-				if ($i == 1)
-				{
-					if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
-					else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-				}
-				elseif ($totalarray['totaldebitfield'] == $i)  print '<td class="nowrap right">'.price($totalarray['totaldebit']).'</td>';
-				elseif ($totalarray['totalcreditfield'] == $i) print '<td class="nowrap right">'.price($totalarray['totalcredit']).'</td>';
-				else print '<td></td>';
+			if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
+			else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 		}
-        $parameters=array('arrayfields'=>$arrayfields, 'sql'=>$sql);
-        $reshook=$hookmanager->executeHooks('printFieldListFooter', $parameters);    // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
-
-		print '</tr>';
+		elseif ($totalarray['totaldebitfield'] == $i)  print '<td class="nowrap right">'.price($totalarray['totaldebit']).'</td>';
+		elseif ($totalarray['totalcreditfield'] == $i) print '<td class="nowrap right">'.price($totalarray['totalcredit']).'</td>';
+		else print '<td></td>';
 	}
+	$parameters=array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+	$reshook=$hookmanager->executeHooks('printFieldListFooter', $parameters);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+
+	print '</tr>';
 }
+
 
 
 print "</table>";

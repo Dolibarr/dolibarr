@@ -17,11 +17,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *	    \file       htdocs/comm/action/list.php
+ *      \file       htdocs/comm/action/list.php
  *      \ingroup    agenda
  *		\brief      Page to list actions
  */
@@ -82,7 +82,7 @@ $hookmanager->initHooks(array('agendalist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 // If not choice done on calendar owner, we filter on user.
@@ -239,7 +239,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 $sql = "SELECT";
 if ($usergroup > 0) $sql.=" DISTINCT";
 $sql.= " s.nom as societe, s.rowid as socid, s.client, s.email as socemail,";
-$sql.= " a.id, a.label, a.note, a.datep as dp, a.datep2 as dp2,";
+$sql.= " a.id, a.label, a.note, a.datep as dp, a.datep2 as dp2, a.fulldayevent, a.location,";
 $sql.= ' a.fk_user_author,a.fk_user_action,';
 $sql.= " a.fk_contact, a.note, a.percent as percent,";
 $sql.= " a.fk_element, a.elementtype, a.datec, a.tms as datem,";
@@ -247,7 +247,9 @@ $sql.= " c.code as type_code, c.libelle as type_label,";
 $sql.= " sp.lastname, sp.firstname, sp.email, sp.phone, sp.address, sp.phone as phone_pro, sp.phone_mobile, sp.phone_perso, sp.fk_pays as country_id";
 
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 
 // Add fields from hooks
 $parameters=array();
@@ -286,14 +288,14 @@ if (! empty($actioncode))
         elseif ($actioncode == 'AC_ALL_AUTO') $sql.= " AND c.type = 'systemauto'";
         else
         {
-		if (is_array($actioncode))
- 		{
- 	        	$sql.=" AND c.code IN ('".implode("','", $actioncode)."')";
- 		}
- 		else
- 		{
- 	        	$sql.=" AND c.code IN ('".implode("','", explode(',', $actioncode))."')";
- 		}
+            if (is_array($actioncode))
+            {
+                $sql.=" AND c.code IN ('".implode("','", $actioncode)."')";
+            }
+            else
+            {
+                $sql.=" AND c.code IN ('".implode("','", explode(',', $actioncode))."')";
+            }
         }
     }
 }
@@ -460,7 +462,7 @@ if ($resql)
 		print $form->selectDate($datestart, 'datestart', 0, 0, 1, '', 1, 0);
 		print '</td>';
 	}
-	if (! empty($arrayfields['a.datep2']['checked']))	{
+	if (! empty($arrayfields['a.datep2']['checked'])) {
 		print '<td class="liste_titre nowraponall" align="center">';
 		print $form->selectDate($dateend, 'dateend', 0, 0, 1, '', 1, 0);
 		print '</td>';
@@ -504,8 +506,8 @@ if ($resql)
 	if (! empty($arrayfields['a.datep']['checked']))	  print_liste_field_titre($arrayfields['a.datep']['label'], $_SERVER["PHP_SELF"], "a.datep,a.id", $param, '', 'align="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['a.datep2']['checked']))	  print_liste_field_titre($arrayfields['a.datep2']['label'], $_SERVER["PHP_SELF"], "a.datep2", $param, '', 'align="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['s.nom']['checked']))	      print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", $param, "", "", $sortfield, $sortorder);
-	if (! empty($arrayfields['a.fk_contact']['checked'])) print_liste_field_titre($arrayfields['a.fk_contact']['label'], $_SERVER["PHP_SELF"], "a.fk_contact", $param, "", "", $sortfield, $sortorder);
-    if (! empty($arrayfields['a.fk_element']['checked'])) print_liste_field_titre($arrayfields['a.fk_element']['label'], $_SERVER["PHP_SELF"], "a.fk_element", $param, "", "", $sortfield, $sortorder);
+	if (! empty($arrayfields['a.fk_contact']['checked'])) print_liste_field_titre($arrayfields['a.fk_contact']['label'], $_SERVER["PHP_SELF"], "", $param, "", "", $sortfield, $sortorder);
+    if (! empty($arrayfields['a.fk_element']['checked'])) print_liste_field_titre($arrayfields['a.fk_element']['label'], $_SERVER["PHP_SELF"], "", $param, "", "", $sortfield, $sortorder);
 
 	// Extra fields
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -548,6 +550,7 @@ if ($resql)
 		$actionstatic->type_label=$obj->type_label;
 		$actionstatic->type_picto=$obj->type_picto;
 		$actionstatic->label=$obj->label;
+		$actionstatic->location = $obj->location;
 		$actionstatic->note=dol_htmlentitiesbr($obj->note);
 
 		print '<tr class="oddeven">';
@@ -562,7 +565,7 @@ if ($resql)
 		// User owner
 		if (! empty($arrayfields['owner']['checked']))
 		{
-			print '<td class="'.($conf->browser->name != 'chrome'?'':'tdoverflowmax100').'">';	// With edge and chrom the td overflow is not supported correctly when content is not full text.
+			print '<td class="tdoverflowmax150">';	// With edge and chrome the td overflow is not supported correctly when content is not full text.
 			if ($obj->fk_user_action > 0)
 			{
 				$userstatic->fetch($obj->fk_user_action);
@@ -609,11 +612,11 @@ if ($resql)
 			print $form->textwithtooltip(dol_trunc($text, 40), $actionstatic->note);
 			print '</td>';
 		}
-
+		$formatToUse = $obj->fulldayevent?'day':'dayhour';
 		// Start date
 		if (! empty($arrayfields['a.datep']['checked'])) {
 			print '<td align="center">';
-			print dol_print_date($db->jdate($obj->dp), "dayhour");
+			print dol_print_date($db->jdate($obj->dp), $formatToUse);
 			$late=0;
 			if ($obj->percent == 0 && $obj->dp && $db->jdate($obj->dp) < ($now - $delay_warning)) $late=1;
 			if ($obj->percent == 0 && ! $obj->dp && $obj->dp2 && $db->jdate($obj->dp) < ($now - $delay_warning)) $late=1;
@@ -626,13 +629,13 @@ if ($resql)
 		// End date
 		if (! empty($arrayfields['a.datep2']['checked'])) {
 			print '<td align="center">';
-			print dol_print_date($db->jdate($obj->dp2), "dayhour");
+			print dol_print_date($db->jdate($obj->dp2), $formatToUse);
 			print '</td>';
 		}
 
 		// Third party
 		if (! empty($arrayfields['s.nom']['checked'])) {
-			print '<td class="tdoverflowmax100">';
+			print '<td class="tdoverflowmax150">';
 			if ($obj->socid > 0)
 			{
 				$societestatic->id=$obj->socid;
@@ -650,12 +653,11 @@ if ($resql)
 		if (! empty($arrayfields['a.fk_contact']['checked'])) {
 			print '<td>';
 
-
             $actionstatic->fetchResources();
             if(!empty($actionstatic->socpeopleassigned))
             {
                 $contactList = array();
-                foreach ($actionstatic->socpeopleassigned as $socpeopleId => $socpeopleassigned)
+                foreach ($actionstatic->socpeopleassigned as $socpeopleassigned)
                 {
                     if(!isset($contactListCache[$socpeopleassigned['id']]))
                     {
@@ -663,8 +665,8 @@ if ($resql)
                         $contact = new Contact($db);
                         if($contact->fetch($socpeopleassigned['id'])>0)
                         {
-                            $contactListCache[$socpeopleassigned['id']] = $contact->getNomUrl(1, '', 28);
-                            $contactList[] = $contact->getNomUrl(1, '', 28);
+                            $contactListCache[$socpeopleassigned['id']] = $contact->getNomUrl(1, '', 0);
+                            $contactList[] = $contact->getNomUrl(1, '', 0);
                         }
                     }
                     else{
@@ -686,7 +688,7 @@ if ($resql)
 				$contactstatic->phone_mobile=$obj->phone_mobile;
 				$contactstatic->phone_perso=$obj->phone_perso;
 				$contactstatic->country_id=$obj->country_id;
-				print $contactstatic->getNomUrl(1, '', 28);
+				print $contactstatic->getNomUrl(1, '', 0);
 			}
 			else
 			{

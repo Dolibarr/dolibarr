@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * This template needs:
  * $object
@@ -81,7 +81,6 @@ if ($permission) {
 
 	if (empty($hideaddcontactforuser))
 	{
-
 	?>
 	<form class="tagtr impair" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
 	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
@@ -107,7 +106,6 @@ if ($permission) {
 
 	if (empty($hideaddcontactforthirdparty))
 	{
-
 	?>
 
 	<form class="tagtr pair" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
@@ -162,7 +160,6 @@ if ($permission) {
 
 	$arrayofsource=array('internal','external');	// Show both link to user and thirdparties contacts
 	foreach($arrayofsource as $source) {
-
 		$tmpobject=$object;
 		if (($object->element == 'shipping'|| $object->element == 'reception') && is_object($objectsrc)) $tmpobject=$objectsrc;
 

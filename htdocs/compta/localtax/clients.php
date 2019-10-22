@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -195,7 +195,6 @@ if($calc ==0 || $calc == 2)
 		{
 			if(($min == 0 || ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) !=0)
 			{
-
 				$intra = str_replace($find, $replace, $coll->tva_intra);
 				if(empty($intra))
 				{
@@ -269,7 +268,6 @@ if($calc ==0 || $calc == 1){
 		{
 			if(($min == 0 || ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) != 0)
 			{
-
 				$intra = str_replace($find, $replace, $coll->tva_intra);
 				if(empty($intra))
 				{

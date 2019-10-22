@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -141,7 +141,7 @@ if (! empty($conf->holiday->enabled))
         print '<div class="div-table-responsive-no-min">';
 	    print '<table class="noborder nohover" width="100%">';
 	    print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("Holidays").'</th></tr>';
-	    print "<tr ".$bc[0].">";
+	    print '<tr class="oddeven">';
 	    print '<td colspan="3">';
 
 	    $out='';
@@ -197,8 +197,8 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
 
         $i = 0;
 
-        print '<div class="div-table-responsive">';
-        print '<table class="noborder" width="100%">';
+        print '<div class="div-table-responsive-no-min">';
+        print '<table class="noborder centpercent">';
         print '<tr class="liste_titre">';
         print '<th colspan="3">'.$langs->trans("BoxTitleLastLeaveRequests", min($max, $num)).'</th>';
         print '<th>'.$langs->trans("from").'</th>';
@@ -225,7 +225,7 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
 
                 print '<tr class="oddeven">';
                 print '<td class="nowraponall">'.$holidaystatic->getNomUrl(1).'</td>';
-                print '<td>'.$userstatic->getNomUrl(-1, 'leave').'</td>';
+                print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
                 print '<td>'.$typeleaves[$obj->fk_type]['label'].'</td>';
 
                 $starthalfday=($obj->halfday == -1 || $obj->halfday == 2)?'afternoon':'morning';
@@ -244,7 +244,8 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
         {
             print '<tr class="oddeven"><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
-        print '</table></div><br>';
+        print '</table>';
+        print '</div>';
     }
     else dol_print_error($db);
 }
@@ -272,8 +273,8 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 
 		$i = 0;
 
-		print '<div class="div-table-responsive">';
-		print '<table class="noborder" width="100%">';
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num)).'</th>';
 		print '<th class="right">'.$langs->trans("FeesKilometersOrAmout").'</th>';
@@ -303,7 +304,7 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">'.$deplacementstatic->getNomUrl(1).'</td>';
-				print '<td>'.$userstatic->getNomUrl(-1).'</td>';
+				print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1).'</td>';
 				print '<td class="right">'.$obj->km.'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
 				print '<td>'.$deplacementstatic->LibStatut($obj->fk_statut, 3).'</td>';
@@ -344,8 +345,8 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 
 		$i = 0;
 
-		print '<div class="div-table-responsive">';
-		print '<table class="noborder" width="100%">';
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num)).'</th>';
 		print '<th class="right">'.$langs->trans("TotalTTC").'</th>';
@@ -375,7 +376,7 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">'.$expensereportstatic->getNomUrl(1).'</td>';
-				print '<td>'.$userstatic->getNomUrl(-1).'</td>';
+				print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1).'</td>';
 				print '<td class="right">'.price($obj->total_ttc).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
 				print '<td>'.$expensereportstatic->LibStatut($obj->status, 3).'</td>';

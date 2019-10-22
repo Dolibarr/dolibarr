@@ -17,7 +17,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ========================================================================
 
@@ -107,6 +107,7 @@ create table llx_societe
   supplier_order_min_amount	       double(24,8)   DEFAULT NULL,			-- min amount for supplier orders
   default_lang             varchar(6),									-- default language
   logo                     varchar(255)   DEFAULT NULL,
+  logo_squarred            varchar(255)   DEFAULT NULL,
   canvas				   varchar(32)    DEFAULT NULL,	                -- type of canvas if used (null by default)
   fk_entrepot 			   integer DEFAULT 0,							-- if we need a link between third party and warehouse
   webservices_url          varchar(255),                            	-- supplier webservice url

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
@@ -39,12 +39,10 @@ $langs->loadLangs(array("main","bills","banks"));
 		<?php
 			// Affichage de la tva par taux
 			if ( $obj_facturation->montantTva() ) {
-
 				echo ('<tr><td class="resume_label">'.$langs->trans("VAT").'</td><td>'.price(price2num($obj_facturation->montantTva(), 'MT'), 0, $langs, 0, 0, -1, $conf->currency).'</td></tr>');
 			}
 			else
 			{
-
 				echo ('<tr><td class="resume_label">'.$langs->trans("VAT").'</td><td>'.$langs->trans("NoVAT").'</td></tr>');
 			}
 		?>
@@ -87,16 +85,13 @@ $langs->loadLangs(array("main","bills","banks"));
 		<?php
 			// Affichage des infos en fonction du mode de paiement
 			if ( $obj_facturation->getsetPaymentMode() == 'DIF' ) {
-
 				echo ('<tr><td class="resume_label">'.$langs->trans("DateDue").'</td><td>'.$obj_facturation->paiementLe().'</td></tr>');
 			} else {
-
 				echo ('<tr><td class="resume_label">'.$langs->trans("Received").'</td><td>'.price(price2num($obj_facturation->montantEncaisse(), 'MT'), 0, $langs, 0, 0, -1, $conf->currency).'</td></tr>');
 			}
 
 			// Affichage du montant rendu (reglement en especes)
 			if ( $obj_facturation->montantRendu() ) {
-
 				echo ('<tr><td class="resume_label">'.$langs->trans("Change").'</td><td>'.price(price2num($obj_facturation->montantRendu(), 'MT'), 0, $langs, 0, 0, -1, $conf->currency).'</td></tr>');
 			}
 

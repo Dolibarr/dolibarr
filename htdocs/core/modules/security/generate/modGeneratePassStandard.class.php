@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -107,7 +107,6 @@ class modGeneratePassStandard extends ModeleGenPassword
 		// add random characters to $password until $length is reached
 		while ($i < $this->length)
 		{
-
 			// pick a random character from the possible ones
 			$char = substr($possible, mt_rand(0, dol_strlen($possible)-1), 1);
 

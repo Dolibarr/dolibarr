@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 
@@ -253,7 +253,6 @@ $i = 0;
 
 $nbofbank = count($bankorder);
 while ($i < $nbofbank) {
-
     print '<tr class="oddeven">';
     print '<td>' . $bankorder[$i][0] . "</td><td>\n";
     print $bankorder[$i][1];
@@ -341,7 +340,6 @@ foreach ($dirmodels as $reldir) {
 
                 foreach ($filelist as $file) {
                     if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
-
                         if (file_exists($dir . '/' . $file)) {
                             $name = substr($file, 4, dol_strlen($file) - 16);
                             $classname = substr($file, 0, dol_strlen($file) - 12);

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -37,6 +37,7 @@ if (!defined("NOLOGIN")) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -95,7 +96,7 @@ if ($action == "view_ticketlist") {
     	$ret = $object->fetch('', '', $track_id);
 
         if ($ret && $object->id > 0) {
-            // vérifie si l'adresse email est bien dans les contacts du ticket
+        	// vérifie si l'adresse email est bien dans les contacts du ticket
             $contacts = $object->liste_contact(-1, 'external');
             foreach ($contacts as $contact) {
                 if ($contact['email'] == $email) {
@@ -124,7 +125,9 @@ if ($action == "view_ticketlist") {
                     $_SESSION['track_id_customer'] = $track_id;
                 }
             }
-            if ($email == $object->origin_email) {
+
+            $emailorigin = CMailFile::getValidAddress($object->origin_email, 2);
+            if ($email == $emailorigin) {
                 $display_ticket_list = true;
                 $_SESSION['email_customer'] = $email;
                 $_SESSION['track_id_customer'] = $track_id;
@@ -198,8 +201,9 @@ if ($action == "view_ticketlist")
 
         // fetch optionals attributes and labels
         $extrafields = new ExtraFields($db);
-        $extralabels = $extrafields->fetch_name_optionals_label('ticket');
-        $search_array_options = $extrafields->getOptionalsFromPost('ticket', '', 'search_');
+        $extrafields->fetch_name_optionals_label('ticket');
+
+        $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
         $filter = array();
         $param = 'action=view_ticketlist';
@@ -447,13 +451,12 @@ if ($action == "view_ticketlist")
                 }
 
                 // Extra fields
-                if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-                	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-                        if (!empty($arrayfields["ef." . $key]['checked'])) {
-                            print '<td class="liste_titre"></td>';
-                        }
-                    }
-                }
+                include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
+                // Fields from hook
+                $parameters=array('arrayfields'=>$arrayfields);
+                $reshook=$hookmanager->executeHooks('printFieldListOption', $parameters, $object);    // Note that $action and $object may have been modified by hook
+                print $hookmanager->resPrint;
 
                 // Status
                 if (!empty($arrayfields['t.fk_statut']['checked'])) {
@@ -463,9 +466,10 @@ if ($action == "view_ticketlist")
                     print '</td>';
                 }
 
-                print '<td class="liste_titre nowraponall right">';
-                print '<input type="image" class="liste_titre" name="button_search" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
-                print '<input type="image" class="liste_titre" name="button_removefilter" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
+                // Action column
+                print '<td class="liste_titre maxwidthsearch">';
+                $searchpicto=$form->showFilterButtons();
+                print $searchpicto;
                 print '</td>';
                 print '</tr>';
 
@@ -507,19 +511,19 @@ if ($action == "view_ticketlist")
                 if (!empty($arrayfields['t.tms']['checked'])) {
                 	print_liste_field_titre($arrayfields['t.tms']['label'], $url_page_current, 't.tms', '', $param, '', $sortfield, $sortorder);
                 }
+
                 // Extra fields
-                if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-                	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-                		if (!empty($arrayfields["ef." . $key]['checked'])) {
-                			$align = $extrafields->getAlignFlag($key);
-                			print_liste_field_titre($extralabels[$key], $url_page_current, "ef." . $key, "", $param, ($align ? 'align="' . $align . '"' : ''), $sortfield, $sortorder);
-                		}
-                	}
-                }
+                include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+
+                // Hook fields
+                $parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
+                $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $object);    // Note that $action and $object may have been modified by hook
+                print $hookmanager->resPrint;
+
                 if (!empty($arrayfields['t.fk_statut']['checked'])) {
                 	print_liste_field_titre($arrayfields['t.fk_statut']['label'], $url_page_current, 't.fk_statut', '', $param, '', $sortfield, $sortorder);
                 }
-                print_liste_field_titre($selectedfields, $url_page_current, "", '', '', 'align="right"', $sortfield, $sortorder, 'maxwidthsearch ');
+                print_liste_field_titre($selectedfields, $url_page_current, "", '', '', 'align="right"', $sortfield, $sortorder, 'center maxwidthsearch ');
                 print '</tr>';
 
                 while ($obj = $db->fetch_object($resql))
@@ -638,7 +642,7 @@ if ($action == "view_ticketlist")
 
                     // Statut
                     if (!empty($arrayfields['t.fk_statut']['checked'])) {
-                        print '<td>';
+                        print '<td class="nowraponall">';
                         $object->fk_statut = $obj->fk_statut;
                         print $object->getLibStatut(2);
                         print '</td>';

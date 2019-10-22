@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -181,7 +181,7 @@ if ($resql)
 		print '<td class="nowrap right">';
 		if ($user->rights->bookmark->creer)
 		{
-			print "<a href=\"".DOL_URL_ROOT."/bookmarks/card.php?action=edit&id=".$obj->rowid."&backtopage=".urlencode($_SERVER["PHP_SELF"])."\">".img_edit()."</a> ";
+			print '<a href="'.DOL_URL_ROOT."/bookmarks/card.php?action=edit&id=".$obj->rowid."&backtopage=".urlencode($_SERVER["PHP_SELF"]).'">'.img_edit()."</a>";
 		}
 		if ($user->rights->bookmark->supprimer)
 		{

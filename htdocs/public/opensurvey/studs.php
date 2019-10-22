@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -294,7 +294,6 @@ print '</div>'."\n";
 
 //The survey has expired, users can't vote or do any action
 if (!$canbemodified) {
-
 	print '<div style="text-align: center"><p>'.$langs->trans('SurveyExpiredInfo').'</p></div>';
 	llxFooterSurvey();
 

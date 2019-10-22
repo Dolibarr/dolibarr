@@ -21,7 +21,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -99,7 +99,7 @@ if ($id > 0 && $action!='add') {
 }
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 //var_dump($_POST);
 
@@ -278,7 +278,6 @@ if (empty($reshook) && $action == 'add')
 
 		$taskid = GETPOST('taskid', 'int');
 		if(!empty($taskid)){
-
 		    $taskProject = new Task($db);
 		    if($taskProject->fetch($taskid)>0){
 		        $object->fk_project = $taskProject->fk_project;
@@ -361,7 +360,7 @@ if (empty($reshook) && $action == 'add')
 	}
 
 	// Fill array 'array_options' with data from add form
-	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	$ret = $extrafields->setOptionalsFromPost(null, $object);
 	if ($ret < 0) $error++;
 
 	if (! $error)
@@ -526,7 +525,7 @@ if (empty($reshook) && $action == 'update')
 		}
 
 		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) $error++;
 
         if (!$error) {
@@ -1080,6 +1079,8 @@ if ($action == 'create')
 		$formproject->selectTasks((! empty($societe->id)?$societe->id:-1), $tid, 'taskid', 24, 0, '1', 1, 0, 0, 'maxwidth500', $projectsListId);
 		print '</td></tr>';
 	}
+
+	// Object linked
 	if (!empty($origin) && !empty($originid))
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -1582,7 +1583,7 @@ if ($id > 0)
 	       	    (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create))
 		    {
 		        if ($action != 'classify')
-		            $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+		            $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 		            if ($action == 'classify') {
 		                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 		                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -1622,7 +1623,7 @@ if ($id > 0)
 		// Type
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 		{
-			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td colspan="3">'.$object->type.'</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td colspan="3">'.$langs->trans($object->type).'</td></tr>';
 		}
 
         // Full day event

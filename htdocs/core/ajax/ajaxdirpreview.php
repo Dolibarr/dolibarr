@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -155,8 +155,8 @@ $type='directory';
 // This test if file exists should be useless. We keep it to find bug more easily
 if (! dol_is_dir($upload_dir))
 {
-//	dol_mkdir($upload_dir);
-/*    $langs->load("install");
+    //dol_mkdir($upload_dir);
+    /*$langs->load("install");
     dol_print_error(0,$langs->trans("ErrorDirDoesNotExists",$upload_dir));
     exit;*/
 }

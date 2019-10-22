@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -118,7 +118,6 @@ function _val($val)
 	     * escaping with a slash or encoding to UTF-8 where necessary
 	     */
 	    for ($c = 0; $c < $strlen_var; ++$c) {
-
 	        $ord_var_c = ord($val[$c]);
 
 	        switch (true) {
@@ -318,19 +317,19 @@ function utf162utf8($utf16)
 
 	switch(true) {
     	case ((0x7F & $bytes) == $bytes):
-    	// this case should never be reached, because we are in ASCII range
-    	// see: http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
+			// this case should never be reached, because we are in ASCII range
+			// see: http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
     	return chr($bytes);
 
     	case (0x07FF & $bytes) == $bytes:
-    	// return a 2-byte UTF-8 character
-    	// see: http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
+			// return a 2-byte UTF-8 character
+			// see: http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
     	return chr(0xC0 | (($bytes >> 6) & 0x1F))
     	. chr(0x80 | ($bytes & 0x3F));
 
     	case (0xFFFF & $bytes) == $bytes:
-    	// return a 3-byte UTF-8 character
-    	// see: http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
+			// return a 3-byte UTF-8 character
+			// see: http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
     	return chr(0xE0 | (($bytes >> 12) & 0x0F))
     	. chr(0x80 | (($bytes >> 6) & 0x3F))
     	. chr(0x80 | ($bytes & 0x3F));

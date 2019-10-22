@@ -21,8 +21,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -149,7 +149,7 @@ class pdf_crabe extends ModelePDFFactures
 		$this->description = $langs->trans('PDFCrabeDescription');
 		$this->update_main_doc_field = 1;		// Save the name of generated file as the main doc when generating a doc with this template
 
-		// Dimensiont page
+		// Dimension page
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -359,7 +359,7 @@ class pdf_crabe extends ModelePDFFactures
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 
-				// Positionne $this->atleastonediscount si on a au moins une remise
+				// Set $this->atleastonediscount if you have at least one discount
 				for ($i = 0 ; $i < $nblines ; $i++)
 				{
 					if ($object->lines[$i]->remise_percent)
@@ -428,7 +428,7 @@ class pdf_crabe extends ModelePDFFactures
 					}
 				}
 
-				// Affiche notes
+				// Display notes
 				$notetoshow=empty($object->note_public)?'':$object->note_public;
 				if (! empty($conf->global->MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE))
 				{
@@ -554,7 +554,7 @@ class pdf_crabe extends ModelePDFFactures
 						$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 					}
 
-					$pdf->SetFont('', '', $default_font_size - 1);   // On repositionne la police par defaut
+					$pdf->SetFont('', '', $default_font_size - 1);   // We reposition the default font
 
 					// VAT Rate
 					if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) && empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN))
@@ -606,7 +606,7 @@ class pdf_crabe extends ModelePDFFactures
 
 					$sign=1;
 					if (isset($object->type) && $object->type == 2 && ! empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE)) $sign=-1;
-					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
+					// Collection of totals by value of VAT in $this->tva["taux"]=total_tva
 					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
 					if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) // Compute progress from previous situation
 					{
@@ -712,19 +712,19 @@ class pdf_crabe extends ModelePDFFactures
 					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
 
-				// Affiche zone infos
+				// Display info area
 				$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
 
-				// Affiche zone totaux
+				// Display total area
 				$posy=$this->_tableau_tot($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
 
-				// Affiche zone versements
+				// Display Payments area
 				if (($deja_regle || $amount_credit_notes_included || $amount_deposits_included) && empty($conf->global->INVOICE_NO_PAYMENT_DETAILS))
 				{
 					$posy=$this->_tableau_versements($pdf, $object, $posy, $outputlangs, $heightforfooter);
 				}
 
-				// Pied de page
+				// Pagefoot
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
 
@@ -1046,7 +1046,7 @@ class pdf_crabe extends ModelePDFFactures
 			// Show payment mode CHQ
 			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CHQ')
 			{
-				// Si mode reglement non force ou si force a CHQ
+			    // If unregulated or forced payment mode to CHQ
 				if (! empty($conf->global->FACTURE_CHQ_NUMBER))
 				{
 					$diffsizetitle=(empty($conf->global->PDF_DIFFSIZE_TITLE)?3:$conf->global->PDF_DIFFSIZE_TITLE);
@@ -1137,7 +1137,7 @@ class pdf_crabe extends ModelePDFFactures
 		$tab2_hl = 4;
 		$pdf->SetFont('', '', $default_font_size - 1);
 
-		// Tableau total
+		// Total table
 		$col1x = 120; $col2x = 170;
 		if ($this->page_largeur < 210) // To work with US executive format
 		{

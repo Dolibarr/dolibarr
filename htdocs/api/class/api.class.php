@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\Restler;
@@ -262,9 +262,9 @@ class DolibarrApi
 	        if ($tmp[$i]==')') $counter--;
             if ($counter < 0)
             {
-	           $error="Bad sqlfilters=".$sqlfilters;
-	           dol_syslog($error, LOG_WARNING);
-	           return false;
+	            $error="Bad sqlfilters=".$sqlfilters;
+	            dol_syslog($error, LOG_WARNING);
+	            return false;
             }
             $i++;
 	    }
@@ -290,6 +290,7 @@ class DolibarrApi
         if (count($tmp) < 3) return '';
 
 	    $tmpescaped=$tmp[2];
+	    $regbis = array();
 	    if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis))
 	    {
 	        $tmpescaped = "'".$db->escape($regbis[1])."'";

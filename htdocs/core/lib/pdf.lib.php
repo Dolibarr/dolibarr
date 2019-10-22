@@ -22,8 +22,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -240,14 +240,18 @@ function pdf_getPDFFont($outputlangs)
  */
 function pdf_getPDFFontSize($outputlangs)
 {
+	global $conf;
+
 	$size=10;                   // By default, for FPDI or ISO language on TCPDF
-	if (class_exists('TCPDF'))  // If TCPDF on, we can use an UTF8 one like DejaVuSans if required (slower)
+	if (class_exists('TCPDF'))  // If TCPDF on, we can use an UTF8 font like DejaVuSans if required (slower)
 	{
-		if ($outputlangs->trans('FONTSIZEFORPDF')!='FONTSIZEFORPDF')
+		if ($outputlangs->trans('FONTSIZEFORPDF') != 'FONTSIZEFORPDF')
 		{
 			$size = (int) $outputlangs->trans('FONTSIZEFORPDF');
 		}
 	}
+	if (! empty($conf->global->MAIN_PDF_FORCE_FONT_SIZE)) $size = $conf->global->MAIN_PDF_FORCE_FONT_SIZE;
+
 	return $size;
 }
 
@@ -934,6 +938,11 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		if ($fromcompany->town)
 		{
 			$line1.=($line1?" ":"").$fromcompany->town;
+		}
+		// Country
+		if ($fromcompany->country)
+		{
+			$line1.=($line1?", ":"").$fromcompany->country;
 		}
 		// Phone
 		if ($fromcompany->phone)
@@ -2233,7 +2242,6 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 	}
 	else
 	{
-
 		if (is_object($hookmanager))
 		{
 			$special_code = $object->lines[$i]->special_code;

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -697,7 +697,6 @@ dol_syslog("Function: createInvoiceFromOrder login=".$authentication['login']." 
 
 				if(!$error)
 				{
-
 					$newobject=new Facture($db);
 					$result = $newobject->createFromOrder($order, $fuser);
 
@@ -768,7 +767,6 @@ dol_syslog("Function: updateInvoice login=".$authentication['login']." id=".$inv
 		$result=$object->fetch($invoice['id'], $invoice['ref'], $invoice['ref_ext'], '');
 
 		if (!empty($object->id)) {
-
 			$objectfound=true;
 
 			$db->begin();

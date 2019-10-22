@@ -25,7 +25,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -47,7 +47,8 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
-$langs->loadLangs(array("companies","commercial","bills","banks","users"));
+$langs->loadLangs(array("companies", "commercial", "bills", "banks", "users"));
+if (! empty($conf->adherent->enabled)) $langs->load("members");
 if (! empty($conf->categorie->enabled)) $langs->load("categories");
 if (! empty($conf->incoterm->enabled)) $langs->load("incoterm");
 if (! empty($conf->notification->enabled)) $langs->load("mails");
@@ -67,7 +68,7 @@ $object = new Societe($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartycard','globalcard'));
@@ -336,8 +337,9 @@ if (empty($reshook))
         $object->oldcopy = dol_clone($object);
 
         // Fill array 'array_options' with data from update form
-        $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
+        $extrafields->fetch_name_optionals_label($object->table_element);
+
+        $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
         if ($ret < 0) $error++;
 
         if (! $error)
@@ -466,7 +468,7 @@ if (empty($reshook))
 			}
 
 	        // Fill array 'array_options' with data from add form
-	        $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	        $ret = $extrafields->setOptionalsFromPost(null, $object);
 			if ($ret < 0)
 			{
 				 $error++;
@@ -623,15 +625,16 @@ if (empty($reshook))
                 {
                     $db->commit();
 
-                	if (! empty($backtopage))
+                    if (! empty($backtopage))
                 	{
-                	    if (preg_match('/\?/', $backtopage)) $backtopage.='&socid='.$object->id;
+                		$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $backtopage);		// New method to autoselect project after a New on another form object creation
+                		if (preg_match('/\?/', $backtopage)) $backtopage.='&socid='.$object->id;	// Old method
                		    header("Location: ".$backtopage);
                     	exit;
                 	}
                 	else
                 	{
-                    	$url=$_SERVER["PHP_SELF"]."?socid=".$object->id;
+                		$url=$_SERVER["PHP_SELF"]."?socid=".$object->id;							// Old method
                     	if (($object->client == 1 || $object->client == 3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $url=DOL_URL_ROOT."/comm/card.php?socid=".$object->id;
                     	elseif ($object->fournisseur == 1) $url=DOL_URL_ROOT."/fourn/card.php?socid=".$object->id;
 
@@ -774,7 +777,6 @@ if (empty($reshook))
                 // Update linked member
                 if (! $error && $object->fk_soc > 0)
                 {
-
                 	$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
                 	$sql.= " SET fk_soc = NULL WHERE fk_soc = " . $id;
                 	if (! $object->db->query($sql))
@@ -815,6 +817,7 @@ if (empty($reshook))
     if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->societe->supprimer)
     {
         $object->fetch($socid);
+        $object->oldcopy = clone $object;
         $result = $object->delete($socid, $user);
 
         if ($result > 0)
@@ -1047,7 +1050,7 @@ else
         /* Show create form */
 
         $linkback="";
-        print load_fiche_titre($langs->trans("NewThirdParty"), $linkback, 'title_companies.png');
+        print load_fiche_titre($langs->trans("NewThirdParty"), $linkback, 'building');
 
         if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION))
         {
@@ -1289,10 +1292,16 @@ else
             print '</td></tr>';
         }
 
+        // Phone / Fax
+        print '<tr><td>'.img_picto('', 'object_phoning').' '.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
+        print '<td><input type="text" name="phone" id="phone" class="maxwidth200" value="'.(GETPOSTISSET('phone')?GETPOST('phone', 'alpha'):$object->phone).'"></td>';
+        print '<td>'.img_picto('', 'object_phoning_fax').' '.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
+        print '<td><input type="text" name="fax" id="fax" class="maxwidth200" value="'.(GETPOSTISSET('fax')?GETPOST('fax', 'alpha'):$object->fax).'"></td></tr>';
+
         // Email / Web
-        print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', $conf->global->SOCIETE_EMAIL_MANDATORY).'</td>';
+        print '<tr><td>'.img_picto('', 'object_email').' '.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', $conf->global->SOCIETE_EMAIL_MANDATORY).'</td>';
 	    print '<td colspan="3"><input type="text" name="email" id="email" value="'.$object->email.'"></td></tr>';
-        print '<tr><td>'.$form->editfieldkey('Web', 'url', '', $object, 0).'</td>';
+        print '<tr><td>'.img_picto('', 'globe').' '.$form->editfieldkey('Web', 'url', '', $object, 0).'</td>';
 	    print '<td colspan="3"><input type="text" name="url" id="url" value="'.$object->url.'"></td></tr>';
 
         if (! empty($conf->socialnetworks->enabled))
@@ -1330,12 +1339,6 @@ else
                 print '</td></tr>';
             }
         }
-
-        // Phone / Fax
-        print '<tr><td>'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
-	    print '<td><input type="text" name="phone" id="phone" class="maxwidth100onsmartphone quatrevingtpercent" value="'.$object->phone.'"></td>';
-        print '<td>'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
-	    print '<td><input type="text" name="fax" id="fax" class="maxwidth100onsmartphone quatrevingtpercent" value="'.$object->fax.'"></td></tr>';
 
         // Prof ids
         $i=1; $j=0;
@@ -1912,11 +1915,17 @@ else
                 print '</td></tr>';
             }
 
+            // Phone / Fax
+            print '<tr><td>'.img_picto('', 'object_phoning').' '.$form->editfieldkey('Phone', 'phone', GETPOST('phone', 'alpha'), $object, 0).'</td>';
+            print '<td><input type="text" name="phone" id="phone" class="maxwidth200" value="'.(GETPOSTISSET('phone')?GETPOST('phone', 'alpha'):$object->phone).'"></td>';
+            print '<td>'.img_picto('', 'object_phoning_fax').' '.$form->editfieldkey('Fax', 'fax', GETPOST('fax', 'alpha'), $object, 0).'</td>';
+            print '<td><input type="text" name="fax" id="fax" class="maxwidth200" value="'.(GETPOSTISSET('fax')?GETPOST('fax', 'alpha'):$object->fax).'"></td></tr>';
+
             // EMail / Web
-            print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', (! empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';
-	        print '<td colspan="3"><input type="text" name="email" id="email" size="32" value="'.$object->email.'"></td></tr>';
-            print '<tr><td>'.$form->editfieldkey('Web', 'url', '', $object, 0).'</td>';
-	        print '<td colspan="3"><input type="text" name="url" id="url" size="32" value="'.$object->url.'"></td></tr>';
+            print '<tr><td>'.img_picto('', 'object_email').' '.$form->editfieldkey('EMail', 'email', GETPOST('email', 'alpha'), $object, 0, 'string', '', (! empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';
+            print '<td colspan="3"><input type="text" name="email" id="email" class="maxwidth100onsmartphone quatrevingtpercent" value="'.(GETPOSTISSET('email')?GETPOST('email', 'alpha'):$object->email).'"></td></tr>';
+	        print '<tr><td>'.img_picto('', 'globe').' '.$form->editfieldkey('Web', 'url', GETPOST('url', 'alpha'), $object, 0).'</td>';
+	        print '<td colspan="3"><input type="text" name="url" id="url" class="maxwidth100onsmartphone quatrevingtpercent" value="'.(GETPOSTISSET('url')?GETPOST('url', 'alpha'):$object->irl).'"></td></tr>';
 
 	        if (! empty($conf->socialnetworks->enabled))
 	        {
@@ -1945,12 +1954,6 @@ else
                     print '<td colspan="3"><input type="text" name="linkedin" id="linkedin" value="'.$object->linkedin.'"></td></tr>';
                 }
 	        }
-
-            // Phone / Fax
-            print '<tr><td>'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
-	        print '<td><input type="text" name="phone" id="phone" class="maxwidth100onsmartphone quatrevingtpercent" value="'.$object->phone.'"></td>';
-            print '<td>'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
-	        print '<td><input type="text" name="fax" id="fax" class="maxwidth100onsmartphone quatrevingtpercent" value="'.$object->fax.'"></td></tr>';
 
             // Prof ids
             $i=1; $j=0;
@@ -2356,7 +2359,7 @@ else
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax1">';
 			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			        print '<tr><td>'.$langs->transcountry("Localtax1", $mysoc->country_code).' <a href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
+			        print '<tr><td>'.$langs->transcountry("Localtax1", $mysoc->country_code).' <a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if($action == 'editRE')
 			        {
 			            print '<td class="left">';
@@ -2374,7 +2377,7 @@ else
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax2">';
 			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			        print '<tr><td>'.$langs->transcountry("Localtax2", $mysoc->country_code).'<a href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
+			        print '<tr><td>'.$langs->transcountry("Localtax2", $mysoc->country_code).'<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if($action == 'editIRPF'){
 			            print '<td class="left">';
 			            $formcompany->select_localtax(2, $object->localtax2_value, "lt2");
@@ -2395,7 +2398,7 @@ else
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax1">';
 			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			        print '<tr><td> '.$langs->transcountry("Localtax1", $mysoc->country_code).'<a href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
+			        print '<tr><td> '.$langs->transcountry("Localtax1", $mysoc->country_code).'<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if($action == 'editRE'){
 			            print '<td class="left">';
 			            $formcompany->select_localtax(1, $object->localtax1_value, "lt1");
@@ -2413,11 +2416,10 @@ else
 			    print '</td></tr>';
 			    if($object->localtax2_assuj=="1" && (! isOnlyOneLocalTax(2)))
 			    {
-
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax2">';
 			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			        print '<tr><td> '.$langs->transcountry("Localtax2", $mysoc->country_code).' <a href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
+			        print '<tr><td> '.$langs->transcountry("Localtax2", $mysoc->country_code).' <a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if($action == 'editIRPF'){
 			            print '<td class="left">';
 			            $formcompany->select_localtax(2, $object->localtax2_value, "lt2");
@@ -2535,7 +2537,7 @@ else
         	print '<table width="100%" class="nobordernopadding"><tr><td>';
         	print $langs->trans('IncotermLabel');
         	print '<td><td class="right">';
-        	if ($user->rights->societe->creer) print '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$object->id.'&action=editincoterm">'.img_edit('', 1).'</a>';
+        	if ($user->rights->societe->creer) print '<a class="editfielda" href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$object->id.'&action=editincoterm">'.img_edit('', 1).'</a>';
         	else print '&nbsp;';
         	print '</td></tr></table>';
         	print '</td>';
@@ -2568,14 +2570,13 @@ else
         // Parent company
         if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY))
         {
-        	// Payment term
         	print '<tr><td>';
         	print '<table class="nobordernopadding" width="100%"><tr><td>';
         	print $langs->trans('ParentCompany');
         	print '</td>';
-        	if ($action != 'editparentcompany') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editparentcompany&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+        	if ($action != 'editparentcompany') print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editparentcompany&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
         	print '</tr></table>';
-        	print '</td><td colspan="3">';
+        	print '</td><td>';
         	if ($action == 'editparentcompany')
         	{
         		$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->parent, 'editparentcompany', 's.rowid <> '.$object->id, 1);
@@ -2596,7 +2597,7 @@ else
         {
             $langs->load("members");
             print '<tr><td>'.$langs->trans("LinkedToDolibarrMember").'</td>';
-            print '<td colspan="3">';
+            print '<td>';
             $adh=new Adherent($db);
             $result=$adh->fetch('', '', $object->id);
             if ($result > 0)
@@ -2652,33 +2653,43 @@ else
 		        if (! empty($object->email) || $at_least_one_email_contact)
 		        {
 		        	$langs->load("mails");
-		        	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&amp;action=presend&amp;mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
+		        	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&amp;action=presend&amp;mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
 		        }
 		        else
 				{
 		        	$langs->load("mails");
-		       		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a></div>';
+		       		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a>';
 		        }
 
 		        if ($user->rights->societe->creer)
 		        {
-		            print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
+		            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
 		        }
+
+		        if (! empty($conf->adherent->enabled))
+		        {
+					$adh = new Adherent($db);
+					$result=$adh->fetch('', '', $object->id);
+					if ($result == 0 && ($object->client == 1 || $object->client == 3) && ! empty($conf->global->MEMBER_CAN_CONVERT_CUSTOMERS_TO_MEMBERS))
+            		{
+            			print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/card.php?&action=create&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("NewMember")).'">'.$langs->trans("NewMember").'</a>';
+            		}
+            	}
 
 		        if ($user->rights->societe->supprimer)
 		        {
-		        	print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MergeThirdparties")).'">'.$langs->trans('Merge').'</a></div>';
+		        	print '<a class="butActionDelete" href="card.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MergeThirdparties")).'">'.$langs->trans('Merge').'</a>';
 		        }
 
 		        if ($user->rights->societe->supprimer)
 		        {
 		            if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))	// We can't use preloaded confirm form with jmobile
 		            {
-		                print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
+		                print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>'."\n";
 		            }
 		            else
 					{
-		                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
+		                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>'."\n";
 		            }
 		        }
 			}

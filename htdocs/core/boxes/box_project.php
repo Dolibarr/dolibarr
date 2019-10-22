@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -85,7 +85,6 @@ class box_project extends ModeleBoxes
 
         // list the summary of the orders
         if ($user->rights->projet->lire) {
-
             include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
             $projectstatic = new Project($this->db);
 

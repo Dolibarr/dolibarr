@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Path to WSDL is: http://localhost/dolibarr/webservices/server_actioncomm.php?wsdl
  */
@@ -117,7 +117,7 @@ $elementtype = 'actioncomm';
 //Retreive all extrafield for actioncomm
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label('actioncomm', true);
+$extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_array = array();
@@ -311,7 +311,7 @@ function getActionComm($authentication, $id)
 	        	// Retreive all extrafield for actioncomm
 	        	// fetch optionals attributes and labels
 	        	$extrafields=new ExtraFields($db);
-	        	$extralabels=$extrafields->fetch_name_optionals_label('actioncomm', true);
+	        	$extrafields->fetch_name_optionals_label($elementtype, true);
 	        	//Get extrafield values
 	        	$actioncomm->fetch_optionals();
 
@@ -459,7 +459,7 @@ function createActionComm($authentication, $actioncomm)
 		//Retreive all extrafield for actioncomm
 		// fetch optionals attributes and labels
 		$extrafields=new ExtraFields($db);
-		$extralabels=$extrafields->fetch_name_optionals_label('actioncomm', true);
+		$extrafields->fetch_name_optionals_label($elementtype, true);
 		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
 			foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
@@ -534,7 +534,6 @@ function updateActionComm($authentication, $actioncomm)
 		$result=$object->fetch($actioncomm['id']);
 
 		if (!empty($object->id)) {
-
 			$objectfound=true;
 
 			$object->datep=$actioncomm['datep'];
@@ -558,7 +557,7 @@ function updateActionComm($authentication, $actioncomm)
 			//Retreive all extrafield for actioncomm
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
-			$extralabels=$extrafields->fetch_name_optionals_label('actioncomm', true);
+			$extrafields->fetch_name_optionals_label($elementtype, true);
 			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 			{
 				foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)

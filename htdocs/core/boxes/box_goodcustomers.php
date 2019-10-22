@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -88,7 +88,6 @@ class box_goodcustomers extends ModeleBoxes
 
 		if ($user->rights->societe->lire)
 		{
-
 			$sql = "SELECT s.rowid, s.nom as name, s.logo, s.code_client, s.code_fournisseur, s.client, s.fournisseur, s.tms as datem, s.status as status,";
 			$sql.= " count(*) as nbfact, sum(". $this->db->ifsql('f.paye=1', '1', '0').") as nbfactpaye";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
