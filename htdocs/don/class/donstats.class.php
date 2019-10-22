@@ -41,17 +41,17 @@ class DonationStats extends Stats
 
 	public $socid;
     public $userid;
-    
+
     /**
-     * @var string FROM 
+     * @var string FROM
      */
     public $from;
-    
+
     /**
      * @var string field
      */
 	public $field;
-	
+
 	/**
 	 * @var string WHERE
 	 */
