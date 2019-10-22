@@ -208,8 +208,8 @@ UseMultipriceRules=Use price segment rules (defined into product module setup) t
 PercentVariationOver=%% variation over %s
 PercentDiscountOver=%% discount over %s
 KeepEmptyForAutoCalculation=Keep empty to have this calculated automatically from weight or volume of products
-VariantRefExample=Example: COL
-VariantLabelExample=Example: Color
+VariantRefExample=Examples: COL, SIZE
+VariantLabelExample=Examples: Color, Size
 ### composition fabrication
 Build=Produce
 ProductsMultiPrice=Products and prices for each price segment

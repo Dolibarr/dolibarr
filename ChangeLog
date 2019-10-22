@@ -2,8 +2,78 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
-***** ChangeLog for 10.0.2 compared to 10.0.1 *****
+***** ChangeLog for 10.0.3 compared to 10.0.2 *****
+IMPORTANT : This version fixes a serious bug in saving the units of weight, size, surface and volume on product card.
+The unit were not saved correctly in database making calculation on shipments wrong. 
+Update to this version must be done if you use them and have installed version 10.0.0, 10.0.1 or 10.0.2 and set some products after installing or upgrading to one of this version.
+Once update is done you must then edit (manually) the product that has bad unit to set the correct unit to have features restored.
 
+FIX: #11702 
+FIX: #11861 No consistent code to manage measuring units
+FIX: #11942
+FIX: #12026
+FIX: #12040
+FIX: #12041
+FIX: #12054
+FIX: #12083
+FIX: #12088
+FIX: CVE-2019-17578 CVE-2019-17577 CVE-2019-17576
+FIX: Clean the + of categories on the product view only in POS module
+FIX: access to public interface when origin email has an alias.
+FIX: Alias name is not into the email recipient label.
+FIX: allow standalone credit note even if no invoice
+FIX: an admin can not access his own permissions after enabling advanced
+FIX: an admin can not access his own permissions after enabling advanced permissions
+FIX: Attachement of linked files on ticket when sending a message
+FIX: avoid non numeric warning
+FIX: Bad currency var used in stripe for connect
+FIX: Bad list of ticket on public interface for ticket emailcollector
+FIX: Can't modify vendor invoice if transfered into accountancy
+FIX: change product type must be allowed if we activate hidden conf
+FIX: colspan on VAT quadri report
+FIX: CSS
+FIX: Debug feature orderstoinvoice for suppliers
+FIX: do not output return code on screen after a select of bank account
+FIX: Edit of ticket module parameters erased others
+FIX: empty cache when we want to load specific warehouses in select
+FIX: escape email alias
+FIX:  expedition.class.php
+FIX: Export of leave request show the number of open days
+FIX: Filtering the HTTP Header "Accept-Language".
+FIX: Filter on project on ticket list
+FIX: Filter "Open all" of ticket was ko.
+FIX: Force downlaod of file with .noexe as octet-stream mime type
+FIX: form not closed.
+FIX: hidden conf to prevent from changing product_type
+FIX: If product account not suggested during bind, it is not preselected
+FIX: If we share invoice, we need to see discount created from a deposit on each entity
+FIX: Import of product using units
+FIX: label of thirdparty is wrong on open project list
+FIX: Look and feel v10
+FIX: missing begin()
+FIX: missing "$this->id" in "fetch" function
+FIX: navigation on ticket tab of projects
+FIX: new invoice with generic thirdparty in takepos
+FIX: Pb in units of shipments
+FIX: regression with option to hide picto on top menu
+FIX: selection of project i am contact of.
+FIX: Send email from expense report card.
+FIX: shipping card: missing user error messages when classifying closed or billed
+FIX: SQL injection on qty
+FIX: stripe payment when there is a quote into address
+FIX: Substitution of __PROJECT_XXX__ not done
+FIX: TakePOS no invoice validation control and good payment translate
+FIX: the access of the bank account of one user
+FIX: top menu right padding
+FIX: Update of leave request when CSRF with token is on
+FIX: Var not enough sanitized
+FIX: wrong test
+FIX: XSS
+FIX: Payment from POS ware not recorded.
+FIX: Can validate invoice with amount including tax of zero for the case of having a final invoice with
+     VAT that includes a deposit without vat. 
+
+***** ChangeLog for 10.0.2 compared to 10.0.1 *****
 FIX: #10460 compatibility with MariaDB 10.4
 FIX: #11401 Adherent unknown language key
 FIX: #11422 Can't edit his own events with standard rights

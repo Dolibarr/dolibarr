@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2007       Franky Van Liedekerke   <franky.van.liedekerke@telenet.be>
@@ -191,6 +191,7 @@ if (empty($reshook))
         $object->facebook		= GETPOST("facebook", 'alpha');
         $object->linkedin		= GETPOST("linkedin", 'alpha');
         $object->email			= GETPOST("email", 'alpha');
+        $object->no_email       = GETPOST("no_email", "int");
         $object->phone_pro		= GETPOST("phone_pro", 'alpha');
         $object->phone_perso	= GETPOST("phone_perso", 'alpha');
         $object->phone_mobile	= GETPOST("phone_mobile", 'alpha');
@@ -230,6 +231,22 @@ if (empty($reshook))
 				// Categories association
 				$contcats = GETPOST('contcats', 'array');
 				$object->setCategories($contcats);
+
+				// Add mass emailing flag into table mailing_unsubscribe
+				if (GETPOST('no_email', 'int') && $object->email)
+				{
+					$sql="SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing', 0).") AND email = '".$db->escape($object->email)."'";
+					$resql=$db->query($sql);
+					if ($resql)
+					{
+						$obj=$db->fetch_object($resql);
+						if (empty($obj->nb))
+						{
+							$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creat) VALUES ('".$db->escape($object->email)."', ".$db->escape(getEntity('mailing', 0)).", '".$db->idate(dol_now())."')";
+							$resql=$db->query($sql);
+						}
+					}
+				}
 			}
         }
 
@@ -359,6 +376,7 @@ if (empty($reshook))
             $object->country_id		= GETPOST("country_id", 'int');
 
             $object->email			= GETPOST("email", 'alpha');
+            $object->no_email       = GETPOST("no_email", "int");
             $object->skype			= GETPOST("skype", 'alpha');
             $object->twitter		= GETPOST("twitter", 'alpha');
             $object->facebook		= GETPOST("facebook", 'alpha');
@@ -384,6 +402,35 @@ if (empty($reshook))
     				// Categories association
     				$categories = GETPOST('contcats', 'array');
     				$object->setCategories($categories);
+
+    				$no_email = GETPOST('no_email', 'int');
+
+    				// Update mass emailing flag into table mailing_unsubscribe
+    				if (GETPOSTISSET('no_email') && $object->email)
+    				{
+    					if ($no_email)
+	    				{
+	    					$sql="SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing', 0).") AND email = '".$db->escape($object->email)."'";
+	    					$resql=$db->query($sql);
+	    					if ($resql)
+	    					{
+	    						$obj=$db->fetch_object($resql);
+	    						$noemail = $obj->nb;
+	    						if (empty($noemail))
+	    						{
+	    							$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creat) VALUES ('".$db->escape($object->email)."', ".$db->escape(getEntity('mailing', 0)).", '".$db->idate(dol_now())."')";
+	    							$resql=$db->query($sql);
+	    						}
+	    					}
+	    				}
+	    				else
+	    				{
+	    					$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = '".$db->escape($object->email)."' AND entity = ".$db->escape(getEntity('mailing', 0));
+	    					$resql=$db->query($sql);
+	    				}
+
+	    				$object->no_email = $no_email;
+    				}
 
     				$object->old_lastname='';
     				$object->old_firstname='';

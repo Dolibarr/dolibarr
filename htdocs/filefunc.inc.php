@@ -31,7 +31,7 @@
  */
 
 if (! defined('DOL_APPLICATION_TITLE')) define('DOL_APPLICATION_TITLE', 'Dolibarr');
-if (! defined('DOL_VERSION')) define('DOL_VERSION', '10.0.2');		// a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
+if (! defined('DOL_VERSION')) define('DOL_VERSION', '10.0.3');		// a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
 
 if (! defined('EURO')) define('EURO', chr(128));
 
@@ -165,7 +165,7 @@ if (! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck))
     	if ($csrfattack)
     	{
     		//print 'NOCSRFCHECK='.defined('NOCSRFCHECK').' REQUEST_METHOD='.$_SERVER['REQUEST_METHOD'].' HTTP_HOST='.$_SERVER['HTTP_HOST'].' HTTP_REFERER='.$_SERVER['HTTP_REFERER'];
-    		print "Access refused by CSRF protection in main.inc.php. Referer of form is outside server that serve the POST.\n";
+    		print "Access refused by CSRF protection in main.inc.php. Referer of form (".$_SERVER['HTTP_REFERER'].") is outside server that serve the POST.\n";
         	print "If you access your server behind a proxy using url rewriting, you might check that all HTTP header is propagated (or add the line \$dolibarr_nocsrfcheck=1 into your conf.php file).\n";
     		die;
     	}

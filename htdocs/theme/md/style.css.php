@@ -1483,6 +1483,9 @@ table.noborder tr.liste_titre td {
 .pictowarning {
     vertical-align: text-bottom;
 }
+.pictomodule {
+	width: 14px;
+}
 .fiche .arearef img.pictoedit, .fiche .arearef span.pictoedit,
 .fiche .fichecenter img.pictoedit, .fiche .fichecenter span.pictoedit,
 .tagtdnote span.pictoedit {
@@ -2568,7 +2571,9 @@ div.divButAction {
 	margin-bottom: 1.4em;
 	vertical-align: top;
 }
-div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused {
+
+div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused, div.tabsAction > a.butActionDelete,
+div.tabsAction > span.butAction, div.tabsAction > span.butActionRefused, div.tabsAction > span.butActionDelete {
 	margin-bottom: 1.4em !important;
 }
 
