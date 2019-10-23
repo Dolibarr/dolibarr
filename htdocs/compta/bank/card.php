@@ -47,12 +47,9 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 
 // Security check
-if (isset($_GET["id"]) || isset($_GET["ref"]))
-{
-	$id = isset($_GET["id"])?GETPOST("id"):(isset($_GET["ref"])?GETPOST("ref"):'');
-}
-$fieldid = isset($_GET["ref"])?'ref':'rowid';
-if ($user->societe_id) $socid=$user->societe_id;
+$id = GETPOST("id", 'int') ? GETPOST("id", 'int'): GETPOST('ref', 'alpha');
+$fieldid = GETPOSTISSET("ref") ? 'ref' : 'rowid';
+
 $result=restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
 
 $object = new Account($db);
@@ -289,7 +286,7 @@ if ($action == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->
 	}
 	else
 	{
-		setEventMessages($account->error, $account->errors, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 		$action='';
 	}
 }
@@ -410,10 +407,15 @@ if ($action == 'create')
 	{
 		print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td>';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 1);
+
+		$arrayselected = array();
 		$c = new Categorie($db);
 		$cats = $c->containing($object->id, Categorie::TYPE_ACCOUNT);
-		foreach($cats as $cat) {
-			$arrayselected[] = $cat->id;
+		if (is_array($cats))
+		{
+			foreach($cats as $cat) {
+				$arrayselected[] = $cat->id;
+			}
 		}
 		print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
 		print "</td></tr>";
