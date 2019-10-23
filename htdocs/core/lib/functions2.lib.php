@@ -2250,13 +2250,16 @@ function colorValidateHex($color, $allow_white = true)
 /**
  * Change color to make it less aggressive (ratio is negative) or more aggressive (ratio is positive)
  *
- * @param string 		$hex		Color in hex ('#AA1122' or 'AA1122' or '#a12' or 'a12')
- * @param integer		$ratio		Default=-50. Note: 0=Component color is unchanged, -100=Component color become 88, +100=Component color become 00 or FF
+ * @param 	string 		$hex			Color in hex ('#AA1122' or 'AA1122' or '#a12' or 'a12')
+ * @param 	integer		$ratio			Default=-50. Note: 0=Component color is unchanged, -100=Component color become 88, +100=Component color become 00 or FF
+ * @param	integer		$brigthness 	Default=0. Adjust brightness. -100=Decrease brightness by 100%, +100=Increase of 100%.
  * @return string		New string of color
  * @see colorAdjustBrightness()
  */
-function colorAgressiveness($hex, $ratio = -50)
+function colorAgressiveness($hex, $ratio = -50, $brightness = 0)
 {
+	if (empty($ratio)) $ratio = 0;	// To avoid null
+
 	// Steps should be between -255 and 255. Negative = darker, positive = lighter
 	$ratio = max(-100, min(100, $ratio));
 
@@ -2282,7 +2285,16 @@ function colorAgressiveness($hex, $ratio = -50)
 			if ($color > 128) $color -= (($color - 128) * (abs($ratio) / 100));
 			if ($color < 127) $color += ((128 - $color) * (abs($ratio) / 100));
 		}
-		$color   = max(0, min(255, $color)); // Adjust color
+		if ($brightness > 0)
+		{
+			$color = ($color * (100 + abs($brightness)) / 100);
+		}
+		else
+		{
+			$color = ($color * (100 - abs($brightness)) / 100);
+		}
+
+		$color   = max(0, min(255, $color)); // Adjust color to stay into valid range
 		$return .= str_pad(dechex($color), 2, '0', STR_PAD_LEFT); // Make two char hex code
 	}
 
