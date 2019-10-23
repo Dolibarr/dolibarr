@@ -1078,10 +1078,11 @@ class FormFile
 	 *  @param   string $sortorder          Sort order ('ASC' or 'DESC')
 	 *  @param   int    $disablemove        1=Disable move button, 0=Position move is possible.
 	 *  @param	 int	$addfilterfields	Add line with filters
+	 *  @param	 int	$disablecrop		Disable crop feature on images (-1 = auto, prefer to set it explicitely to 0 or 1)
 	 * 	@return	 int						<0 if KO, nb of files shown if OK
 	 *  @see list_of_autoecmfiles()
 	 */
-	public function list_of_documents($filearray, $object, $modulepart, $param = '', $forcedownload = 0, $relativepath = '', $permonobject = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $title = '', $url = '', $showrelpart = 0, $permtoeditline = -1, $upload_dir = '', $sortfield = '', $sortorder = 'ASC', $disablemove = 1, $addfilterfields = 0)
+	public function list_of_documents($filearray, $object, $modulepart, $param = '', $forcedownload = 0, $relativepath = '', $permonobject = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $title = '', $url = '', $showrelpart = 0, $permtoeditline = -1, $upload_dir = '', $sortfield = '', $sortorder = 'ASC', $disablemove = 1, $addfilterfields = 0, $disablecrop = -1)
 	{
         // phpcs:enable
 		global $user, $conf, $langs, $hookmanager;
@@ -1089,8 +1090,11 @@ class FormFile
 		global $dolibarr_main_url_root;
 		global $form;
 
-		$disablecrop=1;
-		if (in_array($modulepart, array('bom','expensereport','holiday','member','project','product','produit','service','societe','tax','ticket','user'))) $disablecrop=0;
+		if ($disablecrop == -1)
+		{
+			$disablecrop=1;
+			if (in_array($modulepart, array('bank','bom','expensereport','holiday','member','project','product','produit','service','societe','tax','ticket','user'))) $disablecrop=0;
+		}
 
 		// Define relative path used to store the file
 		if (empty($relativepath))
