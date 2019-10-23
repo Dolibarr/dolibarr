@@ -2088,6 +2088,7 @@ class ExtraFields
 				else
 				{
 					$value_key=GETPOST("options_".$key);
+					if (in_array($key_type, array('link')) && $value_key == '-1') $value_key = '';
 				}
 
 				$object->array_options["options_".$key]=$value_key;
