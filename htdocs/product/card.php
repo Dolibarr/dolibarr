@@ -1825,7 +1825,7 @@ else
                 print '<tr><td class="titlefield">'.$langs->trans("Weight").'</td><td colspan="2">';
                 if ($object->weight != '')
                 {
-                	print $object->weight." ".measuring_units_string(0, "weight", $object->weight_units);
+                	print $object->weight." ".measuringUnitString(0, "weight", $object->weight_units);
                 }
                 else
                 {
@@ -1841,7 +1841,7 @@ else
                         print $object->length;
                         if ($object->width) print " x ".$object->width;
                         if ($object->height) print " x ".$object->height;
-                        print ' '.measuring_units_string(0, "size", $object->length_units);
+                        print ' '.measuringUnitString(0, "size", $object->length_units);
                     }
                     else
                     {
@@ -1855,7 +1855,7 @@ else
                     print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="2">';
                     if ($object->surface != '')
                     {
-                    	print $object->surface." ".measuring_units_string(0, "surface", $object->surface_units);
+                    	print $object->surface." ".measuringUnitString(0, "surface", $object->surface_units);
                     }
                     else
                     {
@@ -1869,7 +1869,7 @@ else
                     print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="2">';
                     if ($object->volume != '')
                     {
-                    	print $object->volume." ".measuring_units_string(0, "volume", $object->volume_units);
+                    	print $object->volume." ".measuringUnitString(0, "volume", $object->volume_units);
                     }
                     else
                     {

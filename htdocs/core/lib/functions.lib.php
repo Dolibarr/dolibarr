@@ -4569,7 +4569,7 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
 	    $unit = $forceunitoutput;
 	}*/
 
-	$ret=price($dimension, 0, $outputlangs, 0, 0, $round).' '.measuring_units_string(0, $type, $unit);
+	$ret=price($dimension, 0, $outputlangs, 0, 0, $round).' '.measuringUnitString(0, $type, $unit);
 
 	return $ret;
 }

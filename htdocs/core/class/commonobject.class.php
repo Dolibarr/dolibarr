@@ -3699,17 +3699,18 @@ abstract class CommonObject
 				$totalWeight += $weight * $qty * $trueWeightUnit;
 			}
 			else {
-		if ($weight_units == 99) {
-			// conversion 1 Pound = 0.45359237 KG
-			$trueWeightUnit = 0.45359237;
-			$totalWeight += $weight * $qty * $trueWeightUnit;
-		} elseif ($weight_units == 98) {
-			// conversion 1 Ounce = 0.0283495 KG
-			$trueWeightUnit = 0.0283495;
-			$totalWeight += $weight * $qty * $trueWeightUnit;
-		}
-		else
+				if ($weight_units == 99) {
+					// conversion 1 Pound = 0.45359237 KG
+					$trueWeightUnit = 0.45359237;
+					$totalWeight += $weight * $qty * $trueWeightUnit;
+				} elseif ($weight_units == 98) {
+					// conversion 1 Ounce = 0.0283495 KG
+					$trueWeightUnit = 0.0283495;
+					$totalWeight += $weight * $qty * $trueWeightUnit;
+				}
+				else {
 					$totalWeight += $weight * $qty;   // This may be wrong if we mix different units
+				}
 			}
 			if ($volume_units < 50)   // >50 means a standard unit (power of 10 of official unit), > 50 means an exotic unit (like inch)
 			{

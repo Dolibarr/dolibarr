@@ -383,7 +383,7 @@ if (empty($reshook))
 
 	        if (! $error)
 	        {
-	            $ret=$object->create($user);		// This create shipment (like Odoo picking) and line of shipments. Stock movement will when validating shipment.
+	            $ret=$object->create($user);		// This create shipment (like Odoo picking) and lines of shipments. Stock movement will be done when validating shipment.
 	            if ($ret <= 0)
 	            {
 	                setEventMessages($object->error, $object->errors, 'errors');
@@ -998,7 +998,7 @@ if ($action == 'create')
             print '<tr><td>';
             print $langs->trans("Weight");
             print '</td><td colspan="3"><input name="weight" size="4" value="'.GETPOST('weight', 'int').'"> ';
-            $text=$formproduct->selectMeasuringUnits("weight_units", "weight", GETPOST('weight_units', 'int'));
+            $text=$formproduct->selectMeasuringUnits("weight_units", "weight", GETPOST('weight_units', 'int'), 0, 2);
             $htmltext=$langs->trans("KeepEmptyForAutoCalculation");
             print $form->textwithpicto($text, $htmltext);
             print '</td></tr>';
@@ -1009,7 +1009,7 @@ if ($action == 'create')
             print ' x <input name="sizeH" size="4" value="'.GETPOST('sizeH', 'int').'">';
             print ' x <input name="sizeS" size="4" value="'.GETPOST('sizeS', 'int').'">';
             print ' ';
-            $text=$formproduct->selectMeasuringUnits("size_units", "size");
+            $text=$formproduct->selectMeasuringUnits("size_units", "size", GETPOST('size_units', 'int'), 0, 2);
             $htmltext=$langs->trans("KeepEmptyForAutoCalculation");
             print $form->textwithpicto($text, $htmltext);
             print '</td></tr>';
@@ -1706,7 +1706,6 @@ elseif ($id || $ref)
 		// Print form confirm
 		print $formconfirm;
 
-
 		// Calculate totalWeight and totalVolume for all products
 		// by adding weight and volume of each product line.
 		$tmparray=$object->getTotalWeightVolume();
@@ -1849,16 +1848,14 @@ elseif ($id || $ref)
 		else
 		{
 			print $object->trueWeight;
-			print ($object->trueWeight && $object->weight_units!='')?' '.measuring_units_string(0, "weight", $object->weight_units):'';
+			print ($object->trueWeight && $object->weight_units!='')?' '.measuringUnitString(0, "weight", $object->weight_units):'';
 		}
 
         // Calculated
 		if ($totalWeight > 0)
 		{
 			if (!empty($object->trueWeight)) print ' ('.$langs->trans("SumOfProductWeights").': ';
-			//print $totalWeight.' '.measuring_units_string(0, "weight");
 			print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND)?$conf->global->MAIN_WEIGHT_DEFAULT_ROUND:-1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?$conf->global->MAIN_WEIGHT_DEFAULT_UNIT:'no');
-			//if (empty($object->trueWeight)) print ' ('.$langs->trans("Calculated").')';
 			if (!empty($object->trueWeight)) print ')';
 		}
 		print '</td></tr>';
@@ -1866,7 +1863,7 @@ elseif ($id || $ref)
 		// Width
 		print '<tr><td>'.$form->editfieldkey("Width", 'trueWidth', $object->trueWidth, $object, $user->rights->expedition->creer).'</td><td colspan="3">';
 		print $form->editfieldval("Width", 'trueWidth', $object->trueWidth, $object, $user->rights->expedition->creer);
-		print ($object->trueWidth && $object->width_units!='')?' '.measuring_units_string(0, "size", $object->width_units):'';
+		print ($object->trueWidth && $object->width_units!='')?' '.measuringUnitString(0, "size", $object->width_units):'';
 		print '</td></tr>';
 
 		// Height
@@ -1886,7 +1883,7 @@ elseif ($id || $ref)
 		else
 		{
 			print $object->trueHeight;
-			print ($object->trueHeight && $object->height_units!='')?' '.measuring_units_string(0, "size", $object->height_units):'';
+			print ($object->trueHeight && $object->height_units!='')?' '.measuringUnitString(0, "size", $object->height_units):'';
 		}
 
 		print '</td></tr>';
@@ -1894,7 +1891,7 @@ elseif ($id || $ref)
 		// Depth
 		print '<tr><td>'.$form->editfieldkey("Depth", 'trueDepth', $object->trueDepth, $object, $user->rights->expedition->creer).'</td><td colspan="3">';
 		print $form->editfieldval("Depth", 'trueDepth', $object->trueDepth, $object, $user->rights->expedition->creer);
-		print ($object->trueDepth && $object->depth_units!='')?' '.measuring_units_string(0, "size", $object->depth_units):'';
+		print ($object->trueDepth && $object->depth_units!='')?' '.measuringUnitString(0, "size", $object->depth_units):'';
 		print '</td></tr>';
 
 		// Volume
@@ -1914,15 +1911,13 @@ elseif ($id || $ref)
 		{
 			if ($volumeUnit < 50)
 			{
-			    //print $calculatedVolume.' '.measuring_units_string($volumeUnit, "volume");
 			    print showDimensionInBestUnit($calculatedVolume, $volumeUnit, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND)?$conf->global->MAIN_VOLUME_DEFAULT_ROUND:-1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT)?$conf->global->MAIN_VOLUME_DEFAULT_UNIT:'no');
 			}
-			else print $calculatedVolume.' '.measuring_units_string($volumeUnit, "volume");
+			else print $calculatedVolume.' '.measuringUnitString(0, "volume", $volumeUnit);
 		}
 		if ($totalVolume > 0)
 		{
 			if ($calculatedVolume) print ' ('.$langs->trans("SumOfProductVolumes").': ';
-			//print $totalVolume.' '.measuring_units_string(0, "volume");
 			print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND)?$conf->global->MAIN_VOLUME_DEFAULT_ROUND:-1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT)?$conf->global->MAIN_VOLUME_DEFAULT_UNIT:'no');
 			//if (empty($calculatedVolume)) print ' ('.$langs->trans("Calculated").')';
 			if ($calculatedVolume) print ')';
@@ -2195,6 +2190,7 @@ elseif ($id || $ref)
 					$product_static->id=$lines[$i]->fk_product;
 					$product_static->ref=$lines[$i]->ref;
 					$product_static->status_batch=$lines[$i]->product_tobatch;
+
 					$text=$product_static->getNomUrl(1);
 					$text.= ' - '.$label;
 					$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($lines[$i]->description));
@@ -2405,18 +2401,18 @@ elseif ($id || $ref)
 
 				// Weight
 				print '<td class="center linecolweight">';
-				if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->weight*$lines[$i]->qty_shipped.' '.measuring_units_string(0, "weight", $lines[$i]->weight_units);
+				if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->weight*$lines[$i]->qty_shipped.' '.measuringUnitString(0, "weight", $lines[$i]->weight_units);
 				else print '&nbsp;';
 				print '</td>';
 
 				// Volume
 				print '<td class="center linecolvolume">';
-				if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuring_units_string(0, "volume", $lines[$i]->volume_units);
+				if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuringUnitString(0, "volume", $lines[$i]->volume_units);
 				else print '&nbsp;';
 				print '</td>';
 
 				// Size
-				//print '<td class="center">'.$lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuring_units_string($lines[$i]->volume_units, "volume").'</td>';
+				//print '<td class="center">'.$lines[$i]->volume*$lines[$i]->qty_shipped.' '.measuringUnitString(0, "volume", $lines[$i]->volume_units).'</td>';
 
 				if ($action == 'editline' && $lines[$i]->id == $line_id)
 				{
@@ -2428,10 +2424,10 @@ elseif ($id || $ref)
 				{
 					// edit-delete buttons
 					print '<td class="linecoledit center">';
-					print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=editline&amp;lineid=' . $lines[$i]->id . '">' . img_edit() . '</a>';
+					print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=editline&amp;lineid=' . $lines[$i]->id . '">' . img_edit() . '</a>';
 					print '</td>';
 					print '<td class="linecoldelete" width="10">';
-					print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=deleteline&amp;lineid=' . $lines[$i]->id . '">' . img_delete() . '</a>';
+					print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=deleteline&amp;lineid=' . $lines[$i]->id . '">' . img_delete() . '</a>';
 					print '</td>';
 
 					// Display lines extrafields
