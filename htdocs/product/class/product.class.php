@@ -256,11 +256,15 @@ class Product extends CommonObject
      */
     public $url;
 
-    //! Unites de mesure
+    //! Metric of products
     public $weight;
     public $weight_units;
     public $length;
     public $length_units;
+    public $width;
+    public $width_units;
+    public $height;
+    public $height_units;
     public $surface;
     public $surface_units;
     public $volume;
