@@ -1277,7 +1277,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		if (GETPOSTISSET('dol_optimize_smallscreen'))   { $themeparam.='&amp;dol_optimize_smallscreen='.GETPOST('dol_optimize_smallscreen', 'int'); }
 		if (GETPOSTISSET('dol_no_mouse_hover'))         { $themeparam.='&amp;dol_no_mouse_hover='.GETPOST('dol_no_mouse_hover', 'int'); }
 		if (GETPOSTISSET('dol_use_jmobile'))            { $themeparam.='&amp;dol_use_jmobile='.GETPOST('dol_use_jmobile', 'int'); $conf->dol_use_jmobile=GETPOST('dol_use_jmobile', 'int'); }
-		if (GETPOSTISSET('THEME_AGRESSIVITY_RATIO'))    { $themeparam.='&amp;THEME_AGRESSIVITY_RATIO='.GETPOST('THEME_AGRESSIVITY_RATIO', 'int'); }
+		if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO'))    { $themeparam.='&amp;THEME_AGRESSIVENESS_RATIO='.GETPOST('THEME_AGRESSIVENESS_RATIO', 'int'); }
 
 		if (! defined('DISABLE_JQUERY') && ! $disablejs && $conf->use_javascript_ajax)
 		{

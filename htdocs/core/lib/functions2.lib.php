@@ -2255,7 +2255,7 @@ function colorValidateHex($color, $allow_white = true)
  * @return string		New string of color
  * @see colorAdjustBrightness()
  */
-function colorAgressivity($hex, $ratio = -50)
+function colorAgressiveness($hex, $ratio = -50)
 {
 	// Steps should be between -255 and 255. Negative = darker, positive = lighter
 	$ratio = max(-100, min(100, $ratio));
@@ -2277,7 +2277,7 @@ function colorAgressivity($hex, $ratio = -50)
 			if ($color > 127) $color += ((255 - $color) * ($ratio / 100));
 			if ($color < 128) $color -= ($color * ($ratio / 100));
 		}
-		else			// We decrease agressivity
+		else			// We decrease agressiveness
 		{
 			if ($color > 128) $color -= (($color - 128) * (abs($ratio) / 100));
 			if ($color < 127) $color += ((128 - $color) * (abs($ratio) / 100));
@@ -2294,7 +2294,7 @@ function colorAgressivity($hex, $ratio = -50)
  * @param string 	$hex 		Color in hex ('#AA1122' or 'AA1122' or '#a12' or 'a12')
  * @param integer 	$steps 		Step/offset added to each color component. It should be between -255 and 255. Negative = darker, positive = lighter
  * @return string				New color with format '#AA1122'
- * @see colorAgressivity()
+ * @see colorAgressiveness()
  */
 function colorAdjustBrightness($hex, $steps)
 {
