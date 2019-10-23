@@ -1030,7 +1030,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	}
 
 	// Tel
-	print '<tr><td>'.$langs->trans("PhonePro").'</td>';
+	print '<tr><td>'.img_picto('', 'object_phoning').' '.$langs->trans("PhonePro").'</td>';
 	print '<td>';
 	if (! empty($ldap_phone))
 	{
@@ -1044,7 +1044,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '</td></tr>';
 
 	// Tel portable
-	print '<tr><td>'.$langs->trans("PhoneMobile").'</td>';
+	print '<tr><td>'.img_picto('', 'object_phoning_mobile').' '.$langs->trans("PhoneMobile").'</td>';
 	print '<td>';
 	if (! empty($ldap_mobile))
 	{
@@ -1058,7 +1058,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '</td></tr>';
 
 	// Fax
-	print '<tr><td>'.$langs->trans("Fax").'</td>';
+	print '<tr><td>'.img_picto('', 'object_phoning_fax').' '.$langs->trans("Fax").'</td>';
 	print '<td>';
 	if (! empty($ldap_fax))
 	{
@@ -1068,6 +1068,20 @@ if ($action == 'create' || $action == 'adduserldap')
 	else
 	{
 		print '<input size="20" type="text" name="office_fax" value="'.GETPOST('office_fax').'">';
+	}
+	print '</td></tr>';
+
+	// EMail
+	print '<tr><td'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.img_picto('', 'object_email').' '.$langs->trans("EMail").'</td>';
+	print '<td>';
+	if (! empty($ldap_mail))
+	{
+		print '<input type="hidden" name="email" value="'.$ldap_mail.'">';
+		print $ldap_mail;
+	}
+	else
+	{
+		print '<input size="40" type="text" name="email" value="'.GETPOST('email').'">';
 	}
 	print '</td></tr>';
 
@@ -1138,20 +1152,6 @@ if ($action == 'create' || $action == 'adduserldap')
         }
         print '</td></tr>';
     }
-
-	// EMail
-	print '<tr><td'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.$langs->trans("EMail").'</td>';
-	print '<td>';
-	if (! empty($ldap_mail))
-	{
-		print '<input type="hidden" name="email" value="'.$ldap_mail.'">';
-		print $ldap_mail;
-	}
-	else
-	{
-		print '<input size="40" type="text" name="email" value="'.GETPOST('email').'">';
-	}
-	print '</td></tr>';
 
 	// Accountancy code
 	if ($conf->accounting->enabled)
@@ -2376,7 +2376,7 @@ else
 			}
 
 			// Tel pro
-			print "<tr>".'<td>'.$langs->trans("PhonePro").'</td>';
+			print "<tr>".'<td>'.img_picto('', 'object_phoning').' '.$langs->trans("PhonePro").'</td>';
 			print '<td>';
 			if ($caneditfield  && empty($object->ldap_sid))
 			{
@@ -2390,7 +2390,7 @@ else
 			print '</td></tr>';
 
 			// Tel mobile
-			print "<tr>".'<td>'.$langs->trans("PhoneMobile").'</td>';
+			print "<tr>".'<td>'.img_picto('', 'object_phoning_mobile').' '.$langs->trans("PhoneMobile").'</td>';
 			print '<td>';
 			if ($caneditfield && empty($object->ldap_sid))
 			{
@@ -2404,7 +2404,7 @@ else
 			print '</td></tr>';
 
 			// Fax
-			print "<tr>".'<td>'.$langs->trans("Fax").'</td>';
+			print "<tr>".'<td>'.img_picto('', 'object_phoning_fax').' '.$langs->trans("Fax").'</td>';
 			print '<td>';
 			if ($caneditfield  && empty($object->ldap_sid))
 			{
@@ -2414,6 +2414,20 @@ else
 			{
 				print '<input type="hidden" name="office_fax" value="'.$object->office_fax.'">';
 				print $object->office_fax;
+			}
+			print '</td></tr>';
+
+			// EMail
+			print "<tr>".'<td'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.img_picto('', 'object_email').' '.$langs->trans("EMail").'</td>';
+			print '<td>';
+			if ($caneditfield  && empty($object->ldap_sid))
+			{
+				print '<input class="minwidth100" type="text" name="email" class="flat" value="'.$object->email.'">';
+			}
+			else
+			{
+				print '<input type="hidden" name="email" value="'.$object->email.'">';
+				print $object->email;
 			}
 			print '</td></tr>';
 
@@ -2484,20 +2498,6 @@ else
                 }
                 print '</td></tr>';
             }
-
-			// EMail
-			print "<tr>".'<td'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.$langs->trans("EMail").'</td>';
-			print '<td>';
-			if ($caneditfield  && empty($object->ldap_sid))
-			{
-				print '<input class="minwidth100" type="text" name="email" class="flat" value="'.$object->email.'">';
-			}
-			else
-			{
-				print '<input type="hidden" name="email" value="'.$object->email.'">';
-				print $object->email;
-			}
-			print '</td></tr>';
 
 			// OpenID url
 			if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER))
