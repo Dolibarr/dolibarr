@@ -177,7 +177,8 @@ a.badge-dark:focus, a.badge-dark:hover {
 /*
  * STATUS BADGES
  */
-<?php for ($i = 0; $i <= 9; $i++){
+<?php
+for ($i = 0; $i <= 9; $i++){
 	/* Default Status */
 	_createStatusBadgeCss($i, '', "STATUS".$i);
 
@@ -202,7 +203,6 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 	if(!empty(${$statusVarNamePrefix.'badgeStatus'.$statusName})) {
 		print "\n/* " . strtoupper($commentLabel) . " */\n";
 		$thisBadgeBackgroundColor = $thisBadgeBorderColor = ${$statusVarNamePrefix . 'badgeStatus' . $statusName};
-
 
 		$TBadgeBorderOnly = array(0, 3, 5, 7);
 		$thisBadgeTextColor = colorIsLight(${$statusVarNamePrefix . 'badgeStatus' . $statusName}) ? '#212529' : '#ffffff';
@@ -236,7 +236,7 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 
 		print $cssPrefix . ".badge-status" . $statusName . ":focus, " . $cssPrefix . ".badge-status" . $statusName . ":hover {\n";
 		print "    color: " . $thisBadgeTextColor . " !important;\n";
-		print "    background-color: " . colorDarker($thisBadgeBackgroundColor, 10) . ";\n";
+		//print "    background-color: " . colorDarker($thisBadgeBackgroundColor, 10) . ";\n";
 		if (in_array($statusName, $TBadgeBorderOnly)) {
 			print "        border-color: " . colorDarker($thisBadgeBorderColor, 10) . ";\n";
 		}

@@ -2209,7 +2209,7 @@ class Adherent extends CommonObject
 		}
 		elseif ($statut == 0)
 		{
-			$statusType = 'status0';
+			$statusType = 'status6';
 			$labelstatut = $langs->trans("MemberStatusResiliated");
 			$labelstatutShort = $langs->trans("MemberStatusResiliatedShort");
 		}
