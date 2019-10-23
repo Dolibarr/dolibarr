@@ -444,9 +444,9 @@ if ($action=="valid" || $action=="history")
     else $sectionwithinvoicelink.=' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
     $sectionwithinvoicelink.=' <button id="buttonprintsend" type="button" onclick="PrintSend('.$placeid.');">'.$langs->trans('PrintSendTicket').'</button>';
     if ($invoice->paye) $sectionwithinvoicelink.='<script language="javascript">$("#buttonprint").click();</script>';
-    } else { $sectionwithinvoicelink.=' <button id="buttonprintsend" type="button" onclick="PrintSend('.$placeid.');">'.$langs->trans('PrintSendTicket').'</button>';
+} else { $sectionwithinvoicelink.=' <button id="buttonprintsend" type="button" onclick="PrintSend('.$placeid.');">'.$langs->trans('PrintSendTicket').'</button>';
     if ($invoice->paye) $sectionwithinvoicelink.='<script language="javascript">$("#buttonprintsend").click();</script>';
-    }
+}
 
 /*
  * View
