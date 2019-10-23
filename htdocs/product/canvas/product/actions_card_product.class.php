@@ -181,19 +181,19 @@ class ActionsCardProduct
 
 			// Weight
 			$this->tpl['weight'] = $this->object->weight;
-			$this->tpl['weight_units'] = $formproduct->selectMeasuringUnits("weight_units", "weight", $this->object->weight_units);
+			$this->tpl['weight_units'] = $formproduct->selectMeasuringUnits("weight_units", "weight", $this->object->weight_units, 0, 2);
 
 			// Length
 			$this->tpl['length'] = $this->object->length;
-			$this->tpl['length_units'] = $formproduct->selectMeasuringUnits("length_units", "size", $this->object->length_units);
+			$this->tpl['length_units'] = $formproduct->selectMeasuringUnits("length_units", "size", $this->object->length_units, 0, 2);
 
 			// Surface
 			$this->tpl['surface'] = $this->object->surface;
-			$this->tpl['surface_units'] = $formproduct->selectMeasuringUnits("surface_units", "surface", $this->object->surface_units);
+			$this->tpl['surface_units'] = $formproduct->selectMeasuringUnits("surface_units", "surface", $this->object->surface_units, 0, 2);
 
 			// Volume
 			$this->tpl['volume'] = $this->object->volume;
-			$this->tpl['volume_units'] = $formproduct->selectMeasuringUnits("volume_units", "volume", $this->object->volume_units);
+			$this->tpl['volume_units'] = $formproduct->selectMeasuringUnits("volume_units", "volume", $this->object->volume_units, 0, 2);
 		}
 
 		if ($action == 'view')

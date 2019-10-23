@@ -1120,7 +1120,7 @@ else
 	            // Net Measure
 	            print '<tr><td>'.$langs->trans("NetMeasure").'</td><td colspan="3">';
 	            print '<input name="net_measure" size="4" value="'.GETPOST('net_measure').'">';
-	            print $formproduct->selectMeasuringUnits("net_measure_units", '', GETPOSTISSET('net_measure_units')?GETPOST('net_measure_units', 'alpha'):(empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?0:$conf->global->MAIN_WEIGHT_DEFAULT_UNIT), '');
+	            print $formproduct->selectMeasuringUnits("net_measure_units", '', GETPOSTISSET('net_measure_units')?GETPOST('net_measure_units', 'alpha'):(empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?0:$conf->global->MAIN_WEIGHT_DEFAULT_UNIT), 0, 0);
 	            print '</td></tr>';
             }
         }
@@ -1503,7 +1503,7 @@ else
                 	// Net Measure
 	                print '<tr><td>'.$langs->trans("NetMeasure").'</td><td colspan="3">';
 	                print '<input name="net_measure" size="5" value="'.$object->net_measure.'"> ';
-	                print $formproduct->selectMeasuringUnits($object->net_measure_units, '');
+	                print $formproduct->selectMeasuringUnits($object->net_measure_units, '', 0, 0, 0);
 	                print '</td></tr>';
                 }
             }

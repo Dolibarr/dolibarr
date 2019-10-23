@@ -379,7 +379,7 @@ if (empty($reshook))
 
 	        if (! $error)
 	        {
-	            $ret=$object->create($user);		// This create shipment (like Odoo picking) and line of shipments. Stock movement will when validating shipment.
+	            $ret=$object->create($user);		// This create shipment (like Odoo picking) and lines of shipments. Stock movement will be done when validating shipment.
 	            if ($ret <= 0)
 	            {
 	                setEventMessages($object->error, $object->errors, 'errors');
@@ -994,7 +994,7 @@ if ($action == 'create')
             print '<tr><td>';
             print $langs->trans("Weight");
             print '</td><td colspan="3"><input name="weight" size="4" value="'.GETPOST('weight', 'int').'"> ';
-            $text=$formproduct->selectMeasuringUnits("weight_units", "weight", GETPOST('weight_units', 'int'));
+            $text=$formproduct->selectMeasuringUnits("weight_units", "weight", GETPOST('weight_units', 'int'), 0, 2);
             $htmltext=$langs->trans("KeepEmptyForAutoCalculation");
             print $form->textwithpicto($text, $htmltext);
             print '</td></tr>';
@@ -1005,7 +1005,7 @@ if ($action == 'create')
             print ' x <input name="sizeH" size="4" value="'.GETPOST('sizeH', 'int').'">';
             print ' x <input name="sizeS" size="4" value="'.GETPOST('sizeS', 'int').'">';
             print ' ';
-            $text=$formproduct->selectMeasuringUnits("size_units", "size");
+            $text=$formproduct->selectMeasuringUnits("size_units", "size", GETPOST('size_units', 'int'), 0, 2);
             $htmltext=$langs->trans("KeepEmptyForAutoCalculation");
             print $form->textwithpicto($text, $htmltext);
             print '</td></tr>';
@@ -2199,6 +2199,10 @@ elseif ($id || $ref)
 					$product_static->weight_units=$lines[$i]->weight_units;
 					$product_static->length=$lines[$i]->length;
 					$product_static->length_units=$lines[$i]->length_units;
+					$product_static->width=$lines[$i]->width;
+					$product_static->width_units=$lines[$i]->width_units;
+					$product_static->height=$lines[$i]->height;
+					$product_static->height_units=$lines[$i]->height_units;
 					$product_static->surface=$lines[$i]->surface;
 					$product_static->surface_units=$lines[$i]->surface_units;
 					$product_static->volume=$lines[$i]->volume;

@@ -833,7 +833,7 @@ if ($action == 'create')
             print '<tr><td>';
             print $langs->trans("Weight");
             print '</td><td colspan="3"><input name="weight" size="4" value="'.GETPOST('weight', 'int').'"> ';
-            $text=$formproduct->selectMeasuringUnits("weight_units", "weight", GETPOST('weight_units', 'int'));
+            $text=$formproduct->selectMeasuringUnits("weight_units", "weight", GETPOST('weight_units', 'int'), 0, 2);
             $htmltext=$langs->trans("KeepEmptyForAutoCalculation");
             print $form->textwithpicto($text, $htmltext);
             print '</td></tr>';
@@ -844,7 +844,7 @@ if ($action == 'create')
             print ' x <input name="sizeH" size="4" value="'.GETPOST('sizeH', 'int').'">';
             print ' x <input name="sizeS" size="4" value="'.GETPOST('sizeS', 'int').'">';
             print ' ';
-            $text=$formproduct->selectMeasuringUnits("size_units", "size");
+            $text=$formproduct->selectMeasuringUnits("size_units", "size", GETPOST('size_units', 'int'), 0, 2);
             $htmltext=$langs->trans("KeepEmptyForAutoCalculation");
             print $form->textwithpicto($text, $htmltext);
             print '</td></tr>';
@@ -1444,7 +1444,7 @@ elseif ($id || $ref)
 			print '<input name="id" value="'.$object->id.'" type="hidden">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input id="trueWeight" name="trueWeight" value="'.$object->trueWeight.'" type="text">';
-			print $formproduct->selectMeasuringUnits("weight_units", "weight", $object->weight_units);
+			print $formproduct->selectMeasuringUnits("weight_units", "weight", $object->weight_units, 0, 2);
 			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
 			print ' <input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 			print '</form>';
@@ -1472,14 +1472,14 @@ elseif ($id || $ref)
 
 		// Height
 		print '<tr><td>'.$form->editfieldkey("Height", 'trueHeight', $object->trueHeight, $object, $user->rights->reception->creer).'</td><td colspan="3">';
-		if($action=='edittrueHeight')
+		if ($action=='edittrueHeight')
 		{
 			print '<form name="settrueHeight" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input name="action" value="settrueHeight" type="hidden">';
 			print '<input name="id" value="'.$object->id.'" type="hidden">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input id="trueHeight" name="trueHeight" value="'.$object->trueHeight.'" type="text">';
-			print $formproduct->selectMeasuringUnits("size_units", "size", $object->size_units);
+			print $formproduct->selectMeasuringUnits("size_units", "size", $object->size_units, 0, 2);
 			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
 			print ' <input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 			print '</form>';
@@ -1785,8 +1785,6 @@ elseif ($id || $ref)
 					$label = (! empty($lines[$i]->product->label)?$lines[$i]->product->label:$lines[$i]->product->product_label);
 
 				print '<td>';
-
-
 
 				$text=$lines[$i]->product->getNomUrl(1);
 				$text.= ' - '.$label;
