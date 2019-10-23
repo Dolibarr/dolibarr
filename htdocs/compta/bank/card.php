@@ -76,12 +76,12 @@ if ($action == 'add')
 	// Create account
 	$object = new Account($db);
 
-	$object->ref           = dol_sanitizeFileName(trim($_POST["ref"]));
-	$object->label         = trim($_POST["label"]);
-	$object->courant       = $_POST["type"];
-	$object->clos          = $_POST["clos"];
-	$object->rappro        = (isset($_POST["norappro"]) && $_POST["norappro"])?0:1;
-	$object->url           = $_POST["url"];
+	$object->ref             = dol_string_nospecial(trim(GETPOST('ref', 'alpha')));
+	$object->label           = trim(GETPOST("label", 'alphanohtml'));
+	$object->courant         = $_POST["type"];
+	$object->clos            = $_POST["clos"];
+	$object->rappro          = (GETPOST("norappro", 'alpha') ? 0 : 1);
+	$object->url             = trim(GETPOST("url", 'alpha'));
 
 	$object->bank            = trim($_POST["bank"]);
 	$object->code_banque     = trim($_POST["code_banque"]);
@@ -90,27 +90,34 @@ if ($action == 'add')
 	$object->cle_rib         = trim($_POST["cle_rib"]);
 	$object->bic             = trim($_POST["bic"]);
 	$object->iban            = trim($_POST["iban"]);
-	$object->domiciliation   = trim($_POST["domiciliation"]);
+	$object->domiciliation   = trim(GETPOST("domiciliation", "nohtml"));
 
-	$object->proprio 	     = trim($_POST["proprio"]);
-	$object->owner_address   = trim($_POST["owner_address"]);
+	$object->proprio 	     = trim(GETPOST("proprio", 'alphanohtml'));
+	$object->owner_address   = trim(GETPOST("owner_address", 'nohtml'));
 
-	$account_number 		 = GETPOST('account_number', 'alpha');
-	if (empty($account_number) || $account_number == '-1') { $object->account_number = ''; } else { $object->account_number = $account_number; }
+	$account_number 		 = GETPOST('account_number', 'alphanohtml');
+	if (empty($account_number) || $account_number == '-1')
+	{
+		$object->account_number = '';
+	}
+	else
+	{
+		$object->account_number = $account_number;
+	}
 	$fk_accountancy_journal  = GETPOST('fk_accountancy_journal', 'int');
 	if ($fk_accountancy_journal <= 0) { $object->fk_accountancy_journal = ''; } else { $object->fk_accountancy_journal = $fk_accountancy_journal; }
 
 	$object->solde           = $_POST["solde"];
-	$object->date_solde      = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+	$object->date_solde      = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST('reday', 'int'), GETPOST("reyear", 'int'));
 
 	$object->currency_code   = trim($_POST["account_currency_code"]);
 
-	$object->state_id  	     = $_POST["account_state_id"];
-	$object->country_id      = $_POST["account_country_id"];
+	$object->state_id        = GETPOST("account_state_id", 'int');
+	$object->country_id      = GETPOST("account_country_id", 'int');
 
 	$object->min_allowed     = GETPOST("account_min_allowed", 'int');
 	$object->min_desired     = GETPOST("account_min_desired", 'int');
-	$object->comment         = trim(GETPOST("account_comment"));
+	$object->comment         = trim(GETPOST("account_comment", 'none'));
 
 	$object->fk_user_author  = $user->id;
 
@@ -173,14 +180,14 @@ if ($action == 'update')
 
 	// Update account
 	$object = new Account($db);
-	$object->fetch(GETPOST("id"));
+	$object->fetch(GETPOST("id", 'int'));
 
-	$object->ref             = dol_string_nospecial(trim($_POST["ref"]));
-	$object->label           = trim($_POST["label"]);
+	$object->ref             = dol_string_nospecial(trim(GETPOST('ref', 'alpha')));
+	$object->label           = trim(GETPOST("label", 'alphanohtml'));
 	$object->courant         = $_POST["type"];
 	$object->clos            = $_POST["clos"];
-	$object->rappro          = (isset($_POST["norappro"]) && $_POST["norappro"])?0:1;
-	$object->url             = trim($_POST["url"]);
+	$object->rappro          = (GETPOST("norappro", 'alpha') ? 0 : 1);
+	$object->url             = trim(GETPOST("url", 'alpha'));
 
 	$object->bank            = trim($_POST["bank"]);
 	$object->code_banque     = trim($_POST["code_banque"]);
@@ -189,10 +196,10 @@ if ($action == 'update')
 	$object->cle_rib         = trim($_POST["cle_rib"]);
 	$object->bic             = trim($_POST["bic"]);
 	$object->iban            = trim($_POST["iban"]);
-	$object->domiciliation   = trim($_POST["domiciliation"]);
+	$object->domiciliation   = trim(GETPOST("domiciliation", "nohtml"));
 
-	$object->proprio 	     = trim($_POST["proprio"]);
-	$object->owner_address   = trim($_POST["owner_address"]);
+	$object->proprio 	     = trim(GETPOST("proprio", 'alphanohtml'));
+	$object->owner_address   = trim(GETPOST("owner_address", 'nohtml'));
 
 	$account_number 		 = GETPOST('account_number', 'alpha');
 	if (empty($account_number) || $account_number == '-1')
@@ -208,12 +215,12 @@ if ($action == 'update')
 
 	$object->currency_code   = trim($_POST["account_currency_code"]);
 
-	$object->state_id        = $_POST["account_state_id"];
-	$object->country_id      = $_POST["account_country_id"];
+	$object->state_id        = GETPOST("account_state_id", 'int');
+	$object->country_id      = GETPOST("account_country_id", 'int');
 
 	$object->min_allowed     = GETPOST("account_min_allowed", 'int');
 	$object->min_desired     = GETPOST("account_min_desired", 'int');
-	$object->comment         = trim(GETPOST("account_comment"));
+	$object->comment         = trim(GETPOST("account_comment", 'none'));
 
 	if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($object->account_number))
 	{
