@@ -8094,7 +8094,7 @@ function roundUpToNextMultiple($n, $x = 5)
 function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '', $params = array())
 {
     $attr=array(
-        'class'=>'badge'.(!empty($mode)?' badge-'.$mode:'').(!empty($type)?' badge-'.$type:'')
+        'class'=>'badge badge-status'.(!empty($mode)?' badge-'.$mode:'').(!empty($type)?' badge-'.$type:'')
     );
 
     if(empty($html)){
@@ -8155,25 +8155,11 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
     global $conf;
 
     $return = '';
-
     $dolGetBadgeParams = array();
-    if(!empty($params['badgeParams'])){
+
+    if (!empty($params['badgeParams'])){
         $dolGetBadgeParams = $params['badgeParams'];
     }
-
-    // image's filename are still in French
-    $statusImg=array(
-        'status0' => 'statut0'
-        ,'status1' => 'statut1'
-        ,'status2' => 'statut2'
-        ,'status3' => 'statut3'
-        ,'status4' => 'statut4'
-        ,'status5' => 'statut5'
-        ,'status6' => 'statut6'
-        ,'status7' => 'statut7'
-        ,'status8' => 'statut8'
-        ,'status9' => 'statut9'
-    );
 
     // TODO : add a hook
 
@@ -8184,12 +8170,34 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         $return = !empty($html)?$html:(!empty($statusLabelShort)?$statusLabelShort:$statusLabel);
     }
     // use status with images
-    elseif (empty($conf->global->MAIN_STATUS_USES_CSS)){
+    elseif (empty($conf->global->MAIN_STATUS_USES_CSS)) {
         $return = '';
         $htmlLabel      = (in_array($displayMode, array(1,2,5))?'<span class="hideonsmartphone">':'').(!empty($html)?$html:$statusLabel).(in_array($displayMode, array(1,2,5))?'</span>':'');
         $htmlLabelShort = (in_array($displayMode, array(1,2,5))?'<span class="hideonsmartphone">':'').(!empty($html)?$html:(!empty($statusLabelShort)?$statusLabelShort:$statusLabel)).(in_array($displayMode, array(1,2,5))?'</span>':'');
 
-        if(!empty($statusImg[$statusType])){
+        // For small screen, we use the short label instead of long label.
+        if (! empty($conf->dol_optimize_smallscreen))
+        {
+        	if ($displayMode == 0) $displayMode = 1;
+        	elseif ($displayMode == 4) $displayMode = 2;
+        	elseif ($displayMode == 6) $displayMode = 5;
+        }
+
+        // image's filename are still in French, so we use this array to convert
+        $statusImg=array(
+        	'status0' => 'statut0'
+        	,'status1' => 'statut1'
+        	,'status2' => 'statut2'
+        	,'status3' => 'statut3'
+        	,'status4' => 'statut4'
+        	,'status5' => 'statut5'
+        	,'status6' => 'statut6'
+        	,'status7' => 'statut7'
+        	,'status8' => 'statut8'
+        	,'status9' => 'statut9'
+        );
+
+        if (!empty($statusImg[$statusType])){
             $htmlImg = img_picto($statusLabel, $statusImg[$statusType]);
         }else{
             $htmlImg = img_picto($statusLabel, $statusType);
