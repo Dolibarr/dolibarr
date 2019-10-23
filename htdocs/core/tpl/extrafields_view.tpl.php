@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Show extrafields. It also show fields from hook formObjectOptions. Need to have following variables defined:
  * $object (invoice, order, ...)
  * $action
  * $conf
@@ -24,6 +24,7 @@
  * $parameters
  * $cols
  */
+
 // Protection to avoid direct call of template
 if (empty($object) || ! is_object($object))
 {
@@ -84,6 +85,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 		else
 		{
 			$value = $object->array_options["options_" . $key];
+			//var_dump($key.' - '.$value);
 		}
 		if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate')
 		{
@@ -177,7 +179,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			}
 			else
 			{
-				//print $key.'-'.$value.'-'.$object->table_element;
+				//var_dump($key.'-'.$value.'-'.$object->table_element);
 				print $extrafields->showOutputField($key, $value, '', $object->table_element);
 			}
 

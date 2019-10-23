@@ -327,13 +327,13 @@ class FormProduct
 
 	/**
 	 *  Return a combo box with list of units
-	 *  For the moment, units labels are defined in measuring_units_string
+	 *  Units labels are defined in llx_c_units
 	 *
 	 *  @param  string		$name                Name of HTML field
 	 *  @param  string		$measuring_style     Unit to show: weight, size, surface, volume, time
 	 *  @param  string		$default             Preselected value
-	 *  @param  int			$adddefault			 Add empty unit called "Default"
-	 *  @param  int         $mode                1=Use short label as value, 0=Use rowid
+	 *  @param  int|string	$adddefault			 1=Add empty unit called "Default", ''=Add empty value
+	 *  @param  int         $mode                1=Use short label as value, 0=Use rowid, 2=Use scale (power)
 	 *  @return string
 	 */
 	public function selectMeasuringUnits($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0, $mode = 0)
@@ -346,34 +346,38 @@ class FormProduct
 		// TODO Use a cache
 		require_once DOL_DOCUMENT_ROOT . '/core/class/cunits.class.php';
 		$measuringUnits = new CUnits($db);
+
+		$filter = array();
+		$filter['t.active'] = 1;
+		if ($measuring_style) $filter['t.unit_type'] = $measuring_style;
+
         $result = $measuringUnits->fetchAll(
             '',
             '',
             0,
             0,
-            array(
-                't.unit_type' => $measuring_style,
-                't.active' => 1,
-            )
+        	$filter
         );
 		if ($result < 0) {
 			dol_print_error($db);
 			return -1;
 		} else {
 			$return .= '<select class="flat" name="' . $name . '">';
-			if ($adddefault)
+			if ($adddefault || $adddefault === '')
 			{
-				$return .= '<option value="0">' . $langs->trans("Default") . '</option>';
+				$return .= '<option value="0">' . ($adddefault ? $langs->trans("Default") : ''). '</option>';
 			}
 
 			foreach ($measuringUnits->records as $lines)
 			{
 				$return .= '<option value="';
 				if ($mode == 1) $return .= $lines->short_label;
+				elseif ($mode == 2) $return .= $lines->scale;
 				else $return .= $lines->id;
 				$return .= '"';
 				if ($mode == 1 && $lines->short_label == $default) $return .= ' selected';
-				if ($mode == 0 && $lines->id == $default) $return .= ' selected';
+				elseif ($mode == 2 && $lines->scale == $default) $return .= ' selected';
+				elseif ($mode == 0 && $lines->id == $default) $return .= ' selected';
 				$return .= '>';
 				if ($measuring_style == 'time') $return.= $langs->trans(ucfirst($lines->label));
 				else $return .= $langs->trans($lines->label);

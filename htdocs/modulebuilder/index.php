@@ -295,7 +295,6 @@ if ($dirins && $action == 'initphpunit' && !empty($module))
     }
     else
     {
-
     }
 }
 if ($dirins && $action == 'initsqlextrafields' && !empty($module))
@@ -537,6 +536,26 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 	}
 	else
 	{
+		/**
+		 *  'type' if the field format ('integer', 'integer:Class:pathtoclass', 'varchar(x)', 'double(24,8)', 'text', 'html', 'datetime', 'timestamp', 'float')
+		 *  'label' the translation key.
+		 *  'enabled' is a condition when the field must be managed.
+		 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). Using a negative value means field is not shown by default on list but can be selected for viewing)
+		 *  'noteditable' says if field is not editable (1 or 0)
+		 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+		 *  'default' is a default value for creation (can still be replaced by the global setup of default values)
+		 *  'index' if we want an index in database.
+		 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+		 *  'position' is the sort order of field.
+		 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
+		 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
+		 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
+		 *  'help' is a string visible as a tooltip on field
+		 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
+		 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
+		 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+		 */
+
 		/*public $fields=array(
 		 'rowid'         =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
 		 'ref'           =>array('type'=>'varchar(128)', 'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
@@ -562,14 +581,31 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 		$i=10;
 		while ($obj = $db->fetch_object($_results))
 		{
+			// fieldname
 			$fieldname = $obj->Field;
+			// type
 			$type = $obj->Type;
 			if ($type == 'int(11)') $type='integer';
+			// notnull
 			$notnull = ($obj->Null == 'YES'?0:1);
+			// label
 			$label = preg_replace('/_/', ' ', ucfirst($fieldname));
 			if ($fieldname == 'rowid') $label='ID';
+			if ($fieldname == 'import_key') $label='ImportKey';
+			// visible
+			$visible = -1;
+			if ($fieldname == 'entity') $visible = -2;
+			if ($fieldname == 'model_pdf') $visible = 0;
+			// enabled
+			$enabled = 1;
+			// default
+			$default = '';
+			if ($fieldname == 'entity') $default=1;
 
-			$string.= "'".$obj->Field."' =>array('type'=>'".$type."', 'label'=>'".$label."', 'enabled'=>1, 'visible'=>-2";
+			$string.= "'".$obj->Field."' =>array('type'=>'".$type."', 'label'=>'".$label."',";
+			if ($default != '') $string.= " 'default'=>".$default.",";
+			$string.= " 'enabled'=>".$enabled.",";
+			$string.= " 'visible'=>".$visible;
 			if ($notnull) $string.= ", 'notnull'=>".$notnull;
 			if ($fieldname == 'ref') $string.= ", 'showoncombobox'=>1";
 			$string.= ", 'position'=>".$i."),\n";
@@ -624,20 +660,20 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 	{
 		// Copy some files
 		$filetogenerate = array(
-		'myobject_card.php'=>strtolower($objectname).'_card.php',
-		'myobject_note.php'=>strtolower($objectname).'_note.php',
-		'myobject_document.php'=>strtolower($objectname).'_document.php',
-		'myobject_agenda.php'=>strtolower($objectname).'_agenda.php',
-		'myobject_list.php'=>strtolower($objectname).'_list.php',
-		'lib/mymodule_myobject.lib.php'=>'lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php',
-		//'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.strtolower($objectname).'Test.php',
-		'sql/llx_mymodule_myobject.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
-		'sql/llx_mymodule_myobject_extrafields.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql',
-		'sql/llx_mymodule_myobject.key.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql',
-		//'scripts/mymodule.php'=>'scripts/'.strtolower($objectname).'.php',
-		'img/object_myobject.png'=>'img/object_'.strtolower($objectname).'.png',
-		'class/myobject.class.php'=>'class/'.strtolower($objectname).'.class.php',
-		//'class/api_mymodule.class.php'=>'class/api_'.strtolower($module).'.class.php'
+			'myobject_card.php'=>strtolower($objectname).'_card.php',
+			'myobject_note.php'=>strtolower($objectname).'_note.php',
+			'myobject_document.php'=>strtolower($objectname).'_document.php',
+			'myobject_agenda.php'=>strtolower($objectname).'_agenda.php',
+			'myobject_list.php'=>strtolower($objectname).'_list.php',
+			'lib/mymodule_myobject.lib.php'=>'lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php',
+			//'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.strtolower($objectname).'Test.php',
+			'sql/llx_mymodule_myobject.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
+			'sql/llx_mymodule_myobject_extrafields.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql',
+			'sql/llx_mymodule_myobject.key.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql',
+			//'scripts/mymodule.php'=>'scripts/'.strtolower($objectname).'.php',
+			'img/object_myobject.png'=>'img/object_'.strtolower($objectname).'.png',
+			'class/myobject.class.php'=>'class/'.strtolower($objectname).'.class.php',
+			//'class/api_mymodule.class.php'=>'class/api_'.strtolower($module).'.class.php',
 		);
 
 		foreach($filetogenerate as $srcfile => $destfile)
@@ -660,68 +696,81 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 
 		//if (! $error)     // If there is error copying 1 file, we still have to make the replacement
 		//{
-			// Scan for object class files
-			$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
+		// Scan for object class files
+		$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
 
-			$firstobjectname='';
-			foreach($listofobject as $fileobj)
+		$firstobjectname='';
+		foreach($listofobject as $fileobj)
+		{
+			if (preg_match('/^api_/', $fileobj['name'])) continue;
+			if (preg_match('/^actions_/', $fileobj['name'])) continue;
+
+			$tmpcontent=file_get_contents($fileobj['fullname']);
+			$reg=array();
+			if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims', $tmpcontent, $reg))
 			{
-				if (preg_match('/^api_/', $fileobj['name'])) continue;
-				if (preg_match('/^actions_/', $fileobj['name'])) continue;
-
-				$tmpcontent=file_get_contents($fileobj['fullname']);
-				$reg=array();
-				if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims', $tmpcontent, $reg))
-				{
-					$objectnameloop = $reg[1];
-					if (empty($firstobjectname)) $firstobjectname = $objectnameloop;
-				}
-
-				// Regenerate left menu entry in descriptor for $objectname
-				$stringtoadd="
-\t\t\$this->menu[\$r++]=array(
-                				'fk_menu'=>'fk_mainmenu=mymodule',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-								'type'=>'left',			                // This is a Left menu entry
-								'titre'=>'List MyObject',
-								'mainmenu'=>'mymodule',
-								'leftmenu'=>'mymodule_myobject',
-								'url'=>'/mymodule/myobject_list.php',
-								'langs'=>'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-								'position'=>1100+\$r,
-								'enabled'=>'\$conf->mymodule->enabled',  // Define condition to show or hide menu entry. Use '\$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '\$leftmenu==\'system\'' to show if leftmenu system is selected.
-								'perms'=>'1',			                // Use 'perms'=>'\$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-								'target'=>'',
-								'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
-\t\t\$this->menu[\$r++]=array(
-                				'fk_menu'=>'fk_mainmenu=mymodule,fk_leftmenu=mymodule_myobject',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-								'type'=>'left',			                // This is a Left menu entry
-								'titre'=>'New MyObject',
-								'mainmenu'=>'mymodule',
-								'leftmenu'=>'mymodule_myobject',
-								'url'=>'/mymodule/myobject_card.php?action=create',
-								'langs'=>'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-								'position'=>1100+\$r,
-								'enabled'=>'\$conf->mymodule->enabled',  // Define condition to show or hide menu entry. Use '\$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '\$leftmenu==\'system\'' to show if leftmenu system is selected.
-								'perms'=>'1',			                // Use 'perms'=>'\$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-								'target'=>'',
-								'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
-               		";
-				$stringtoadd = preg_replace('/MyObject/', $objectnameloop, $stringtoadd);
-				$stringtoadd = preg_replace('/mymodule/', strtolower($module), $stringtoadd);
-				$stringtoadd = preg_replace('/myobject/', strtolower($objectnameloop), $stringtoadd);
-
-				$moduledescriptorfile=$destdir.'/core/modules/mod'.$module.'.class.php';
-
-				// TODO Allow a replace with regex using dolReplaceInFile with param arryreplacementisregex to 1
-				// TODO Avoid duplicate addition
-
-				dolReplaceInFile($moduledescriptorfile, array('END MODULEBUILDER LEFTMENU MYOBJECT */' => '*/'."\n".$stringtoadd."\n\t\t/* END MODULEBUILDER LEFTMENU MYOBJECT */"));
-
-				// Add module descriptor to list of files to replace "MyObject' string with real name of object.
-				$filetogenerate[]='core/modules/mod'.$module.'.class.php';
-
-				// TODO
+				$objectnameloop = $reg[1];
+				if (empty($firstobjectname)) $firstobjectname = $objectnameloop;
 			}
+
+			// Regenerate left menu entry in descriptor for $objectname
+			$stringtoadd = "
+        \$this->menu[\$r++]=array(
+            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'fk_menu'=>'fk_mainmenu=mymodule',
+            // This is a Left menu entry
+            'type'=>'left',
+            'titre'=>'List MyObject',
+            'mainmenu'=>'mymodule',
+            'leftmenu'=>'mymodule_myobject',
+            'url'=>'/mymodule/myobject_list.php',
+            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+            'langs'=>'mymodule@mymodule',
+            'position'=>1100+\$r,
+            // Define condition to show or hide menu entry. Use '\$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '\$leftmenu==\'system\'' to show if leftmenu system is selected.
+            'enabled'=>'\$conf->mymodule->enabled',
+            // Use 'perms'=>'\$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+            'perms'=>'1',
+            'target'=>'',
+            // 0=Menu for internal users, 1=external users, 2=both
+            'user'=>2,
+        );
+        \$this->menu[\$r++]=array(
+            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'fk_menu'=>'fk_mainmenu=mymodule,fk_leftmenu=mymodule_myobject',
+            // This is a Left menu entry
+            'type'=>'left',
+            'titre'=>'New MyObject',
+            'mainmenu'=>'mymodule',
+            'leftmenu'=>'mymodule_myobject',
+            'url'=>'/mymodule/myobject_card.php?action=create',
+            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+            'langs'=>'mymodule@mymodule',
+            'position'=>1100+\$r,
+            // Define condition to show or hide menu entry. Use '\$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '\$leftmenu==\'system\'' to show if leftmenu system is selected.
+            'enabled'=>'\$conf->mymodule->enabled',
+            // Use 'perms'=>'\$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+            'perms'=>'1',
+            'target'=>'',
+            // 0=Menu for internal users, 1=external users, 2=both
+            'user'=>2
+        );\n";
+			$stringtoadd = preg_replace('/MyObject/', $objectnameloop, $stringtoadd);
+			$stringtoadd = preg_replace('/mymodule/', strtolower($module), $stringtoadd);
+			$stringtoadd = preg_replace('/myobject/', strtolower($objectnameloop), $stringtoadd);
+
+			$moduledescriptorfile=$destdir.'/core/modules/mod'.$module.'.class.php';
+
+			// TODO Allow a replace with regex using dolReplaceInFile with param arryreplacementisregex to 1
+			// TODO Avoid duplicate addition
+
+			dolReplaceInFile($moduledescriptorfile, array('END MODULEBUILDER LEFTMENU MYOBJECT */' => '*/'."\n".$stringtoadd."\n\t\t/* END MODULEBUILDER LEFTMENU MYOBJECT */"));
+
+			// Add module descriptor to list of files to replace "MyObject' string with real name of object.
+			$filetogenerate[]='core/modules/mod'.$module.'.class.php';
+
+			// TODO
+		}
 		//}
 	}
 
@@ -852,11 +901,12 @@ if ($dirins && $action == 'addproperty' && !empty($module) && ! empty($tabobj))
 		if (! $error)
 		{
 			$addfieldentry = array(
-			'name'=>GETPOST('propname', 'aZ09'),'label'=>GETPOST('proplabel', 'alpha'),'type'=>GETPOST('proptype', 'alpha'),
-			'arrayofkeyval'=>GETPOST('proparrayofkeyval', 'none'),		// Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
-			'visible'=>GETPOST('propvisible', 'int'),'enabled'=>GETPOST('propenabled', 'int'),
-			'position'=>GETPOST('propposition', 'int'),'notnull'=>GETPOST('propnotnull', 'int'),'index'=>GETPOST('propindex', 'int'),'searchall'=>GETPOST('propsearchall', 'int'),
-			'isameasure'=>GETPOST('propisameasure', 'int'), 'comment'=>GETPOST('propcomment', 'alpha'),'help'=>GETPOST('prophelp', 'alpha'));
+				'name'=>GETPOST('propname', 'aZ09'),'label'=>GETPOST('proplabel', 'alpha'),'type'=>GETPOST('proptype', 'alpha'),
+				'arrayofkeyval'=>GETPOST('proparrayofkeyval', 'none'),		// Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
+				'visible'=>GETPOST('propvisible', 'int'),'enabled'=>GETPOST('propenabled', 'int'),
+				'position'=>GETPOST('propposition', 'int'),'notnull'=>GETPOST('propnotnull', 'int'),'index'=>GETPOST('propindex', 'int'),'searchall'=>GETPOST('propsearchall', 'int'),
+				'isameasure'=>GETPOST('propisameasure', 'int'), 'comment'=>GETPOST('propcomment', 'alpha'),'help'=>GETPOST('prophelp', 'alpha')
+			);
 
 			if (! empty($addfieldentry['arrayofkeyval']) && ! is_array($addfieldentry['arrayofkeyval']))
 			{
@@ -1243,7 +1293,7 @@ $text=$langs->trans("ModuleBuilder");
 
 print load_fiche_titre($text, '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("ModuleBuilderDesc", 'https://wiki.dolibarr.org/index.php/Module_development#Create_your_module').'</span><br>';
+print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModuleBuilderDesc", 'https://wiki.dolibarr.org/index.php/Module_development#Create_your_module').'</span><br>';
 
 $dirsrootforscan=array($dirread);
 // Add also the core modules into the list of modules to show/edit
@@ -1309,7 +1359,7 @@ foreach($dirsrootforscan as $dirread)
     if (empty($newdircustom)) $newdircustom=img_warning();
     // If dirread was forced to somewhere else, by using URL
     // htdocs/modulebuilder/index.php?module=Inventory@/home/ldestailleur/git/dolibarr/htdocs/product
-    print $langs->trans("DirScanned").' : <strong>'.$dirread.'</strong><br>';
+    print $langs->trans("DirScanned").' : <strong class="wordbreakimp">'.$dirread.'</strong><br>';
 }
 //var_dump($listofmodules);
 
@@ -1332,7 +1382,6 @@ else
 	}
 	else
 	{
-
 		$message=info_admin($langs->trans("NotExistsDirect", $dirins).$langs->trans("InfDirAlt").$langs->trans("InfDirExample"));
 		$allowfromweb=0;
 	}
@@ -1578,7 +1627,7 @@ elseif (! empty($module))
 				print '</table>';
 				print '<br>';
 
-				print load_fiche_titre($langs->trans("DescriptorFile"));
+				print load_fiche_titre($langs->trans("DescriptorFile"), '', '');
 
 				if (! empty($moduleobj))
 				{
@@ -1638,33 +1687,31 @@ elseif (! empty($module))
 					print '</td></tr>';
 
 					print '</table>';
-
-					print '<br><br>';
-
-					// Readme file
-					print load_fiche_titre($langs->trans("ReadmeFile"));
-
-					print '<div class="underbanner clearboth"></div>';
-					print '<div class="fichecenter">';
-					if (dol_is_file($dirread.'/'.$pathtofilereadme)) print $moduleobj->getDescLong();
-					else print $langs->trans("ErrorFileNotFound", $pathtofilereadme);
-
-					print '<br><br>';
-
-					// ChangeLog
-					print load_fiche_titre($langs->trans("ChangeLog"));
-
-					print '<div class="underbanner clearboth"></div>';
-					print '<div class="fichecenter">';
-
-					if (dol_is_file($dirread.'/'.$pathtochangelog)) print $moduleobj->getChangeLog();
-					else print $langs->trans("ErrorFileNotFound", $pathtochangelog);
-
-					print '</div>';
 				}
 				else
 				{
 					print $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module).'<br>';
+				}
+
+				if (! empty($moduleobj))
+				{
+					print '<br><br>';
+
+					// Readme file
+					print load_fiche_titre($langs->trans("ReadmeFile"), '', '');
+
+					print '<!-- readme file -->';
+					if (dol_is_file($dirread.'/'.$pathtofilereadme)) print '<div class="underbanner clearboth"></div><div class="fichecenter">'.$moduleobj->getDescLong().'</div>';
+					else print '<span class="opacitymedium">'.$langs->trans("ErrorFileNotFound", $pathtofilereadme).'</span>';
+
+					print '<br><br>';
+
+					// ChangeLog
+					print load_fiche_titre($langs->trans("ChangeLog"), '', '');
+
+					print '<!-- changelog file -->';
+					if (dol_is_file($dirread.'/'.$pathtochangelog)) print '<div class="underbanner clearboth"></div><div class="fichecenter">'.$moduleobj->getChangeLog().'</div>';
+					else print '<span class="opacitymedium">'.$langs->trans("ErrorFileNotFound", $pathtochangelog).'</span>';
 				}
 
 				dol_fiche_end();
@@ -2488,7 +2535,6 @@ elseif (! empty($module))
 
 			if ($action != 'editfile' || empty($file))
 			{
-
 			    print '<span class="opacitymedium">';
 			    $htmlhelp=$langs->trans("PermissionsDefDescTooltip", '<a href="'.DOL_URL_ROOT.'/admin/perms.php">'.$langs->trans('DefaultPermissions').'</a>');
 			    print $form->textwithpicto($langs->trans("PermissionsDefDesc"), $htmlhelp, 1, 'help', '', 0, 2, 'helpondesc').'<br>';

@@ -260,7 +260,7 @@ function show_array_actions_to_do($max = 5)
             $staticaction->id=$obj->id;
             print '<td>'.$staticaction->getNomUrl(1, 34).'</td>';
 
-           // print '<td>'.dol_trunc($obj->label,22).'</td>';
+            // print '<td>'.dol_trunc($obj->label,22).'</td>';
 
             print '<td>';
             if ($obj->rowid > 0)
@@ -414,10 +414,10 @@ function agenda_prepare_head()
 
 	if ($conf->global->MAIN_FEATURES_LEVEL > 0)
 	{
-	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_reminder.php";
-	$head[$h][1] = $langs->trans("Reminders");
-	$head[$h][2] = 'reminders';
-	$h++;
+	    $head[$h][0] = DOL_URL_ROOT."/admin/agenda_reminder.php";
+	    $head[$h][1] = $langs->trans("Reminders");
+	    $head[$h][2] = 'reminders';
+	    $h++;
 	}
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_xcal.php";

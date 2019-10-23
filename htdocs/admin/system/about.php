@@ -160,7 +160,6 @@ print '<ul>';
 
 print '<li><a href="https://facebook.com/dolibarr" target="_blank" rel="external">FaceBook</a></li>';
 print '<li><a href="https://twitter.com/dolibarr" target="_blank" rel="external">Twitter</a></li>';
-print '<li><a href="https://plus.google.com/+DolibarrOrg" target="_blank" rel="external">Google Plus page</a></li>';
 
 print '</ul>';
 

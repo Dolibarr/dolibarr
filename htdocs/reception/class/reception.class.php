@@ -134,7 +134,6 @@ class Reception extends CommonObject
 	        $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 	        foreach ($dirmodels as $reldir) {
-
 		        $dir = dol_buildpath($reldir."core/modules/reception/");
 
 		        // Load file with numbering class (if found)
@@ -453,8 +452,8 @@ class Reception extends CommonObject
 				// fetch optionals attributes and labels
 				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element, true);
-				$this->fetch_optionals($this->id, $extralabels);
+				$extrafields->fetch_name_optionals_label($this->table_element, true);
+				$this->fetch_optionals($this->id);
 
 				/*
 				 * Lines

@@ -59,7 +59,7 @@ $object = new Dolresource($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 
 
@@ -108,7 +108,7 @@ if (empty($reshook))
 				$object->country_id             = $country_id;
 
 				// Fill array 'array_options' with data from add form
-				$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+				$ret = $extrafields->setOptionalsFromPost(null, $object);
 				if ($ret < 0) $error++;
 
 				$result=$object->create($user);
@@ -155,7 +155,7 @@ if (empty($reshook))
 				$object->country_id             = $country_id;
 
 				// Fill array 'array_options' with data from add form
-				$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+				$ret = $extrafields->setOptionalsFromPost(null, $object);
 				if ($ret < 0) {
 					$error ++;
 				}

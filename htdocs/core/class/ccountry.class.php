@@ -163,22 +163,24 @@ class Ccountry // extends CommonObject
     /**
      *  Load object in memory from database
      *
-     *  @param      int		$id    	Id object
-     *  @param		string	$code	Code
+     *  @param      int		$id    	  Id object
+     *  @param		string	$code	    Code
+     *  @param		string	$code_iso	Code ISO
      *  @return     int          	>0 if OK, 0 if not found, <0 if KO
      */
-    public function fetch($id, $code = '')
+    public function fetch($id, $code = '', $code_iso = '')
     {
     	global $langs;
-        $sql = "SELECT";
-		$sql.= " t.rowid,";
-		$sql.= " t.code,";
-		$sql.= " t.code_iso,";
-		$sql.= " t.label,";
-		$sql.= " t.active";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_country as t";
-        if ($id)   $sql.= " WHERE t.rowid = ".$id;
-        elseif ($code) $sql.= " WHERE t.code = '".$this->db->escape($code)."'";
+      $sql = "SELECT";
+  		$sql.= " t.rowid,";
+  		$sql.= " t.code,";
+  		$sql.= " t.code_iso,";
+  		$sql.= " t.label,";
+  		$sql.= " t.active";
+      $sql.= " FROM ".MAIN_DB_PREFIX."c_country as t";
+      if ($id) $sql.= " WHERE t.rowid = ".$id;
+      elseif ($code) $sql.= " WHERE t.code = '".$this->db->escape($code)."'";
+      elseif ($code_iso) $sql.= " WHERE t.code_iso = '".$this->db->escape($code_iso)."'";
 
     	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -334,4 +336,20 @@ class Ccountry // extends CommonObject
 			return 1;
 		}
 	}
+
+    /**
+     *  Return a link to the object card (with optionaly the picto)
+     *
+     *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+     *	@param	string	$option						On what the link point to ('nolink', ...)
+     *  @param	int  	$notooltip					1=Disable tooltip
+     *  @param  string  $morecss            		Add more css on link
+     *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *	@return	string								String with URL
+     */
+    public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+    {
+    	global $langs;
+        return $langs->trans($this->label);
+    }
 }

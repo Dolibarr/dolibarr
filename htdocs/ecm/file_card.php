@@ -318,7 +318,7 @@ if ($forcedownload) $rellink.='&attachment=1';
 if (! empty($object->entity)) $rellink.='&entity='.$object->entity;
 $rellink.='&file='.urlencode($filepath);
 $fulllink=$urlwithroot.$rellink;
-print img_picto('', 'object_globe.png').' ';
+print img_picto('', 'globe').' ';
 if ($action != 'edit') print '<input type="text" class="quatrevingtpercent" id="downloadinternallink" name="downloadinternellink" value="'.dol_escape_htmltag($fulllink).'">';
 else print $fulllink;
 if ($action != 'edit') print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>';		// No target here.
@@ -343,7 +343,7 @@ if (! empty($object->share))
 		//if (! empty($object->ref))       $fulllink.='&hashn='.$object->ref;		// Hash of file path
 		//elseif (! empty($object->label)) $fulllink.='&hashc='.$object->label;		// Hash of file content
 
-		print img_picto('', 'object_globe.png').' ';
+		print img_picto('', 'globe').' ';
 		if ($action != 'edit') print '<input type="text" class="quatrevingtpercent" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
 		else print $fulllink;
 		if ($action != 'edit') print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>';	// No target here

@@ -294,7 +294,6 @@ foreach ($dirmodels as $reldir)
 
 					if ($module->isEnabled())
 					{
-
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
 						print $module->info();
 						print '</td>';
@@ -468,7 +467,7 @@ foreach ($dirmodels as $reldir)
 	                            }
 	                            print '</td>';
 
-	                           // Info
+	                            // Info
 	                            $htmltooltip = $langs->trans("Name").': '.$module->name;
 	                            $htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
 	                            if ($module->type == 'pdf')
@@ -596,7 +595,6 @@ if (empty($conf->facture->enabled))
 		$i = 0;
 		while ($i < $num)
 		{
-
 			$row = $db->fetch_row($resql);
 
 			print '<option value="'.$row[0].'"';

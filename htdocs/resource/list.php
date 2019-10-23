@@ -49,7 +49,7 @@ $object = new Dolresource($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 if (! is_array($search_array_options)) $search_array_options = array();
 $search_ref=GETPOST("search_ref");
@@ -113,19 +113,17 @@ $arrayfields = array(
 		),
 );
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) {
-	foreach ($extrafields->attribute_label as $key => $val) {
-		$typeofextrafield=$extrafields->attribute_type[$key];
-		if ($typeofextrafield!='separate') {
-			$arrayfields["ef." . $key] = array(
-					'label' => $extrafields->attribute_label[$key],
-					'checked' => $extrafields->attribute_list[$key],
-					'position' => $extrafields->attribute_pos[$key],
-					'enabled' => $extrafields->attribute_perms[$key]
-			);
-		}
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
+{
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+	{
+		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
 	}
 }
+$object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = dol_sort_array($arrayfields, 'position');
+
 
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 

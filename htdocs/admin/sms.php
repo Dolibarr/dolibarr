@@ -147,7 +147,7 @@ llxHeader('', $langs->trans("Setup"), $wikihelp);
 
 print load_fiche_titre($langs->trans("SmsSetup"), '', 'title_setup');
 
-print $langs->trans("SmsDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("SmsDesc")."</span><br>\n";
 print "<br>\n";
 
 // List of sending methods
@@ -207,7 +207,6 @@ if ($action == 'edit')
 }
 else
 {
-
 	if (! count($listofmethods)) print '<div class="warning">'.$langs->trans("NoSmsEngine", '<a target="_blank" href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>').'</div>';
 
 	print '<table class="noborder" width="100%">';
@@ -263,11 +262,11 @@ else
 
 	if (count($listofmethods) && ! empty($conf->global->MAIN_SMS_SENDMODE))
 	{
-	   print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
+	    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
 	}
 	else
 	{
-       print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("DoTestSend").'</a>';
+        print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("DoTestSend").'</a>';
 	}
 	print '</div>';
 

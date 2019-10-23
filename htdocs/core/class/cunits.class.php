@@ -160,11 +160,11 @@ class CUnits // extends CommonObject
     /**
      *  Load object in memory from database
      *
-     *  @param      int		$id    	Id object
-     *  @param		string	$code	Code
-     *  @param		string	$short_label	Short Label
-     *  @param		string	$unit_type	unit type
-     *  @return     int		<0 if KO, >0 if OK
+     *  @param      int		$id    			Id object
+     *  @param		string	$code			Code
+     *  @param		string	$short_label	Short Label ('g', 'kg', ...)
+     *  @param		string	$unit_type		Unit type ('size', 'surface', 'volume', 'weight', ...)
+     *  @return     int						<0 if KO, >0 if OK
      */
     public function fetch($id, $code = '', $short_label = '', $unit_type = '')
     {
@@ -175,6 +175,7 @@ class CUnits // extends CommonObject
 		$sql.= " t.code,";
 		$sql.= " t.label,";
 		$sql.= " t.short_label,";
+		$sql.= " t.scale,";
 		$sql.= " t.unit_type,";
 		$sql.= " t.scale,";
 		$sql.= " t.active";
@@ -199,6 +200,7 @@ class CUnits // extends CommonObject
 				$this->code = $obj->code;
 				$this->label = $obj->label;
 				$this->short_label = $obj->short_label;
+				$this->scale = $obj->scale;
 				$this->unit_type = $obj->unit_type;
 				$this->scale = $obj->scale;
 				$this->active = $obj->active;
@@ -232,8 +234,6 @@ class CUnits // extends CommonObject
 
     	dol_syslog(__METHOD__, LOG_DEBUG);
 
-    	$records=array();
-
     	$sql = 'SELECT';
     	$sql.= " t.rowid,";
     	$sql.= " t.code,";
@@ -247,8 +247,8 @@ class CUnits // extends CommonObject
     	$sqlwhere = array();
     	if (count($filter) > 0) {
     		foreach ($filter as $key => $value) {
-    			if ($key=='t.rowid' || $key=='t.active') {
-    				$sqlwhere[] = $key . '='. $value;
+    			if ($key=='t.rowid' || $key=='t.active' || $key=='t.scale') {
+    				$sqlwhere[] = $key . '='. (int) $value;
     			}
     			elseif (strpos($key, 'date') !== false) {
     				$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
@@ -271,6 +271,7 @@ class CUnits // extends CommonObject
     	if (!empty($limit)) {
     		$sql .=  ' ' . $this->db->plimit($limit, $offset);
     	}
+
     	$resql = $this->db->query($sql);
     	if ($resql) {
     		$this->records=array();

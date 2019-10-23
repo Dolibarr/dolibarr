@@ -78,7 +78,6 @@ $stripeacc = $stripe->getStripeAccount($service);
 }*/
 
 if (! $rowid) {
-
 	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
 	if ($optioncss != '') {
         print '<input type="hidden" name="optioncss" value="' . $optioncss . '">';
@@ -169,7 +168,7 @@ if (! $rowid) {
 			$url='https://dashboard.stripe.com/'.$connect.'payouts/'.$payout->id;
 		}
 
-        print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." " . $payout->id . "</a></td>\n";
+        print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." " . $payout->id . "</a></td>\n";
 
 
 		// Stripe customer

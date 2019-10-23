@@ -99,9 +99,10 @@ $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
 // Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('hooklist'));
+
 // Fetch optionals attributes and labels
-// Load $extrafields->attributes['hook']
-$extralabels = $extrafields->fetch_name_optionals_label('hook');
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Default sort order (if not yet defined by previous GETPOST)

@@ -260,7 +260,6 @@ $tasksarray=$task->getTasksArray(0, 0, ($object->id ? $object->id : $id), $socid
 
 if (count($tasksarray)>0)
 {
-
 	// Show Gant diagram from $taskarray using JSGantt
 
 	$dateformat=$langs->trans("FormatDateShortJQuery");			// Used by include ganttchart.inc.php later
@@ -377,6 +376,8 @@ if (count($tasksarray)>0)
 	    $dateformatinput2='standard';
 	    //var_dump($dateformatinput);
   		//var_dump($dateformatinput2);
+
+	    print '<br>';
 
 	    print '<div class="div-table-responsive">';
 

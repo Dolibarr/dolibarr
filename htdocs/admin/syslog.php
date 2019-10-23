@@ -50,7 +50,6 @@ foreach ($dirsyslogs as $reldir) {
 		$handle = opendir($newdir);
 
 		if (is_resource($handle)) {
-
 			while (($file = readdir($handle)) !== false) {
 				if (substr($file, 0, 11) == 'mod_syslog_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
 					$file = substr($file, 0, dol_strlen($file) - 4);

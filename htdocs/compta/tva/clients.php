@@ -566,7 +566,6 @@ if (! is_array($x_coll) || ! is_array($x_paye))
         $subtot_paye_vat = 0;
 
         if ($min == 0 || ($min > 0 && $x_both[$thirdparty_id]['paye']['totalht'] > $min)) {
-
             if (is_array($x_both[$thirdparty_id]['paye']['detail'])) {
                 print "<tr>";
                 print '<td class="tax_rate">';

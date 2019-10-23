@@ -221,7 +221,6 @@ class Contrat extends CommonObject
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 			foreach ($dirmodels as $reldir) {
-
 				$dir = dol_buildpath($reldir."core/modules/contract/");
 
 				// Load file with numbering class (if found)
@@ -745,8 +744,9 @@ class Contrat extends CommonObject
 	 */
 	public function fetch_lines($only_product = 0, $loadalsotranslation = 0)
 	{
-		global $langs, $conf;
-        // phpcs:enable
+		// phpcs:enable
+		global $langs, $conf, $extrafields;
+
 		$this->nbofserviceswait=0;
 		$this->nbofservicesopened=0;
 		$this->nbofservicesexpired=0;
@@ -758,10 +758,14 @@ class Contrat extends CommonObject
 
 		$now=dol_now();
 
-		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-		$extrafieldsline=new ExtraFields($this->db);
+		if (! is_object($extrafields))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+			$extrafields=new ExtraFields($this->db);
+		}
+
 		$line = new ContratLigne($this->db);
-		$extralabelsline=$extrafieldsline->fetch_name_optionals_label($line->table_element, true);
+		$extrafields->fetch_name_optionals_label($line->table_element, true);
 
 		$this->lines=array();
         $pos = 0;
@@ -1407,7 +1411,6 @@ class Contrat extends CommonObject
 
 		if ($this->statut >= 0)
 		{
-
 			// Clean parameters
 			$pu_ht=price2num($pu_ht);
 			$pu_ttc=price2num($pu_ttc);
@@ -1726,7 +1729,6 @@ class Contrat extends CommonObject
 			$result=$this->update_statut($user);
 			if ($result >= 0)
 			{
-
 				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options)>0) // For avoid conflicts if trigger used
 				{
 					$contractline = new ContratLigne($this->db);
@@ -2072,7 +2074,7 @@ class Contrat extends CommonObject
 	 *  Return list of line rowid
 	 *
 	 *  @param	int		$statut     Status of lines to get
-	 *  @return array       		Array of line's rowid
+	 *  @return array|int       	Array of line's rowid or <0 if error
 	 */
 	public function array_detail($statut = -1)
 	{
@@ -2109,7 +2111,7 @@ class Contrat extends CommonObject
 	 *  Return list of other contracts for same company than current contract
 	 *
 	 *	@param	string		$option		'all' or 'others'
-	 *  @return array   				Array of contracts id
+	 *  @return array|int   			Array of contracts id or <0 if error
 	 */
 	public function getListOfContracts($option = 'all')
 	{
@@ -2417,7 +2419,6 @@ class Contrat extends CommonObject
 		$langs->load("contracts");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'strato';
 
 			if ($this->modelpdf) {

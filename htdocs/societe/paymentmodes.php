@@ -63,7 +63,7 @@ $prelevement = new BonPrelevement($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartybancard','globalcard'));
@@ -857,7 +857,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				{
 					$url='https://dashboard.stripe.com/'.$connect.'customers/'.$stripecu;
 				}
-				print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').'</a>';
+				print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'globe').'</a>';
 			}
 			print '</td><td class="right">';
 			if (empty($stripecu))
@@ -911,7 +911,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			{
 				$url='https://dashboard.stripe.com/connect/accounts/'.$stripesupplieracc;
 			}
-			print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').'</a>';
+			print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'globe').'</a>';
 		}
 		print '</td><td class="right">';
 		if (empty($stripesupplieracc))
@@ -950,7 +950,6 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			try {
 				$customerstripe=$stripe->customerStripe($object, $stripeacc, $servicestatus);
 				if ($customerstripe->id) {
-
 					// When using the Charge API architecture
 					if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
 					{
@@ -1064,7 +1063,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 								{
 									$url='https://dashboard.stripe.com/'.$connect.'search?query='.$companypaymentmodetemp->stripe_card_ref;
 								}
-								print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'object_globe').'</a>';
+								print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'globe').'</a>';
 							}
 							print '</td>';
 							print '<td>';
@@ -1159,7 +1158,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				    //$url='https://dashboard.stripe.com/'.$connect.'sources/'.$src->id;
 				    $url='https://dashboard.stripe.com/'.$connect.'search?query='.$src->id;
 				}
-				print " <a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')."</a>";
+				print " <a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')."</a>";
 				print '</td>';
 				// Img of credit card
 				print '<td>';
@@ -1334,7 +1333,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		else $currencybalance[$cpt->currency]->pending=$currencybalance[$cpt->currency]->available+$cpt->amount;
 			}
     }
-    
+
 		if (is_array($currencybalance))
 		{
 			foreach ($currencybalance as $cpt)
@@ -1342,7 +1341,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
       print '<tr><td>'.$langs->trans("Currency".strtoupper($cpt->currency)).'</td><td>'.price($cpt->available, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).'</td><td>'.price($cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).'</td><td>'.price($cpt->available+$cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).'</td></tr>';
 			}
 		}
-     
+
     print '</table>';
     print '<br>';
 	}
@@ -1387,7 +1386,6 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print '<td>';
 			$string='';
 			foreach ($rib->getFieldsToShow() as $val) {
-
 				if ($val == 'BankCode') {
 					$string .= $rib->code_banque.' ';
 				} elseif ($val == 'BankAccountNumber') {
@@ -1627,7 +1625,6 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 
 	// Show fields of bank account
 	foreach ($companybankaccount->getFieldsToShow(1) as $val) {
-
 		$require=false;
 		if ($val == 'BankCode') {
 			$name = 'code_banque';
@@ -1782,7 +1779,6 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 
 	// Show fields of bank account
 	foreach ($companybankaccount->getFieldsToShow(1) as $val) {
-
 		$require=false;
 		if ($val == 'BankCode') {
 			$name = 'code_banque';

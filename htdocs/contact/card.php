@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2007       Franky Van Liedekerke   <franky.van.liedekerke@telenet.be>
@@ -60,7 +60,7 @@ $object = new Contact($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($id);
@@ -191,6 +191,7 @@ if (empty($reshook))
         $object->facebook		= GETPOST("facebook", 'alpha');
         $object->linkedin		= GETPOST("linkedin", 'alpha');
         $object->email			= GETPOST("email", 'alpha');
+        $object->no_email       = GETPOST("no_email", "int");
         $object->phone_pro		= GETPOST("phone_pro", 'alpha');
         $object->phone_perso	= GETPOST("phone_perso", 'alpha');
         $object->phone_mobile	= GETPOST("phone_mobile", 'alpha');
@@ -206,7 +207,7 @@ if (empty($reshook))
         $object->birthday_alert = GETPOST("birthday_alert", 'alpha');
 
         // Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0)
 		{
 			$error++;
@@ -230,6 +231,22 @@ if (empty($reshook))
 				// Categories association
 				$contcats = GETPOST('contcats', 'array');
 				$object->setCategories($contcats);
+
+				// Add mass emailing flag into table mailing_unsubscribe
+				if (GETPOST('no_email', 'int') && $object->email)
+				{
+					$sql="SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing', 0).") AND email = '".$db->escape($object->email)."'";
+					$resql=$db->query($sql);
+					if ($resql)
+					{
+						$obj=$db->fetch_object($resql);
+						if (empty($obj->nb))
+						{
+							$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creat) VALUES ('".$db->escape($object->email)."', ".$db->escape(getEntity('mailing', 0)).", '".$db->idate(dol_now())."')";
+							$resql=$db->query($sql);
+						}
+					}
+				}
 			}
         }
 
@@ -250,6 +267,7 @@ if (empty($reshook))
     if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->societe->contact->supprimer)
     {
         $result=$object->fetch($id);
+		$object->oldcopy = clone $object;
 
         $object->old_lastname      = GETPOST("old_lastname");
         $object->old_firstname = GETPOST("old_firstname");
@@ -359,6 +377,7 @@ if (empty($reshook))
             $object->country_id		= GETPOST("country_id", 'int');
 
             $object->email			= GETPOST("email", 'alpha');
+            $object->no_email       = GETPOST("no_email", "int");
             $object->skype			= GETPOST("skype", 'alpha');
             $object->twitter		= GETPOST("twitter", 'alpha');
             $object->facebook		= GETPOST("facebook", 'alpha');
@@ -371,9 +390,10 @@ if (empty($reshook))
             $object->priv			= GETPOST("priv", 'int');
             $object->note_public	= GETPOST("note_public", 'none');
        		$object->note_private	= GETPOST("note_private", 'none');
+       		$object->roles			= GETPOST("roles", 'array');
 
             // Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+			$ret = $extrafields->setOptionalsFromPost(null, $object);
 			if ($ret < 0) $error++;
 
 			if (! $error)
@@ -384,6 +404,35 @@ if (empty($reshook))
     				// Categories association
     				$categories = GETPOST('contcats', 'array');
     				$object->setCategories($categories);
+
+    				$no_email = GETPOST('no_email', 'int');
+
+    				// Update mass emailing flag into table mailing_unsubscribe
+    				if (GETPOSTISSET('no_email') && $object->email)
+    				{
+    					if ($no_email)
+	    				{
+	    					$sql="SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing', 0).") AND email = '".$db->escape($object->email)."'";
+	    					$resql=$db->query($sql);
+	    					if ($resql)
+	    					{
+	    						$obj=$db->fetch_object($resql);
+	    						$noemail = $obj->nb;
+	    						if (empty($noemail))
+	    						{
+	    							$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creat) VALUES ('".$db->escape($object->email)."', ".$db->escape(getEntity('mailing', 0)).", '".$db->idate(dol_now())."')";
+	    							$resql=$db->query($sql);
+	    						}
+	    					}
+	    				}
+	    				else
+	    				{
+	    					$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = '".$db->escape($object->email)."' AND entity = ".$db->escape(getEntity('mailing', 0));
+	    					$resql=$db->query($sql);
+	    				}
+
+	    				$object->no_email = $no_email;
+    				}
 
     				$object->old_lastname='';
     				$object->old_firstname='';
@@ -474,9 +523,9 @@ else
         // Si edition contact deja existant
         $object = new Contact($db);
         $res=$object->fetch($id, $user);
-        if ($res < 0) { dol_print_error($db, $object->error); exit; }
-        $res=$object->fetch_optionals();
-        if ($res < 0) { dol_print_error($db, $object->error); exit; }
+        if ($res<0) {
+        	setEventMessages($object->error, $object->errors, 'errors');
+        }
 
         // Show tabs
         $head = contact_prepare_head($object);
@@ -635,23 +684,25 @@ else
                 print '</td></tr>';
             }
 
-            // Phone / Fax
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->phone_pro)) == 0) $object->phone_pro = $objsoc->phone;	// Predefined with third party
-            print '<tr><td><label for="phone_pro">'.$langs->trans("PhonePro").'</label></td>';
-	        print '<td><input name="phone_pro" id="phone_pro" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("phone_pro")?GETPOST("phone_pro"):$object->phone_pro).'"></td>';
-            print '<td><label for="phone_perso">'.$langs->trans("PhonePerso").'</label></td>';
-	        print '<td><input name="phone_perso" id="phone_perso" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("phone_perso")?GETPOST("phone_perso"):$object->phone_perso).'"></td></tr>';
-
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->fax)) == 0) $object->fax = $objsoc->fax;	// Predefined with third party
-            print '<tr><td><label for="phone_mobile">'.$langs->trans("PhoneMobile").'</label></td>';
-	        print '<td><input name="phone_mobile" id="phone_mobile" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("phone_mobile")?GETPOST("phone_mobile"):$object->phone_mobile).'"></td>';
-            print '<td><label for="fax">'.$langs->trans("Fax").'</label></td>';
-	        print '<td><input name="fax" id="fax" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("fax", 'alpha')?GETPOST("fax", 'alpha'):$object->fax).'"></td></tr>';
 
-            // EMail
+            // Phone / Fax
+            print '<tr><td>'.img_picto('', 'object_phoning').' '.$form->editfieldkey('PhonePro', 'phone_pro', '', $object, 0).'</td>';
+            print '<td><input type="text" name="phone_pro" id="phone_pro" class="maxwidth200" value="'.(GETPOSTISSET('phone_pro')?GETPOST('phone_pro', 'alpha'):$object->phone_pro).'"></td>';
+            print '<td>'.img_picto('', 'object_phoning').' '.$form->editfieldkey('PhonePerso', 'phone_perso', '', $object, 0).'</td>';
+            print '<td><input type="text" name="phone_perso" id="phone_perso" class="maxwidth200" value="'.(GETPOSTISSET('phone_perso')?GETPOST('phone_perso', 'alpha'):$object->phone_perso).'"></td></tr>';
+
+            print '<tr><td>'.img_picto('', 'object_phoning_mobile').' '.$form->editfieldkey('PhoneMobile', 'phone_mobile', '', $object, 0).'</td>';
+            print '<td><input type="text" name="phone_mobile" id="phone_mobile" class="maxwidth200" value="'.(GETPOSTISSET('phone_mobile')?GETPOST('phone_mobile', 'alpha'):$object->phone_mobile).'"></td>';
+            print '<td>'.img_picto('', 'object_phoning_fax').' '.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
+            print '<td><input type="text" name="fax" id="fax" class="maxwidth200" value="'.(GETPOSTISSET('fax')?GETPOST('fax', 'alpha'):$object->fax).'"></td></tr>';
+
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->email)) == 0) $object->email = $objsoc->email;	// Predefined with third party
-            print '<tr><td><label for="email">'.$langs->trans("Email").'</label></td>';
-	        print '<td><input name="email" id="email" type="text" class="maxwidth100onsmartphone" value="'.dol_escape_htmltag(GETPOST("email", 'alpha')?GETPOST("email", 'alpha'):$object->email).'"></td>';
+
+            // Email
+            print '<tr><td>'.img_picto('', 'object_email').' '.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '').'</td>';
+            print '<td><input type="text" name="email" id="email" value="'.(GETPOSTISSET('email')?GETPOST('email', 'alpha'):$object->email).'"></td>';
             if (! empty($conf->mailing->enabled))
             {
             	$noemail = '';
@@ -723,6 +774,15 @@ else
 				print $form->multiselectarray('contcats', $cate_arbo, GETPOST('contcats', 'array'), null, null, null, null, '90%');
 				print "</td></tr>";
 			}
+
+	        // Contact by default
+	        if (!empty($socid)) {
+		        print '<tr><td>' . $langs->trans("ContactByDefaultFor") . '</td>';
+		        print '<td colspan="3">';
+		        $contactType = $object->listeTypeContacts('external', '', 1);
+		        print $form->multiselectarray('roles', $contactType);
+		        print '</td></tr>';
+	        }
 
             // Other attributes
             $parameters=array('socid' => $socid, 'objsoc' => $objsoc, 'colspan' => ' colspan="3"', 'cols' => 3);
@@ -917,19 +977,19 @@ else
             }
 
             // Phone
-            print '<tr><td><label for="phone_pro">'.$langs->trans("PhonePro").'</label></td>';
-	        print '<td><input name="phone_pro" id="phone_pro" type="text" class="flat maxwidthonsmartphone" maxlength="80" value="'.(isset($_POST["phone_pro"])?GETPOST("phone_pro"):$object->phone_pro).'"></td>';
-            print '<td><label for="phone_perso">'.$langs->trans("PhonePerso").'</label></td>';
-	        print '<td><input name="phone_perso" id="phone_perso" type="text" class="flat maxwidthonsmartphone" maxlength="80" value="'.(isset($_POST["phone_perso"])?GETPOST("phone_perso"):$object->phone_perso).'"></td></tr>';
+            print '<tr><td>'.img_picto('', 'object_phoning').' '.$form->editfieldkey('PhonePro', 'phone_pro', GETPOST('phone_pro', 'alpha'), $object, 0).'</td>';
+            print '<td><input type="text" name="phone_pro" id="phone_pro" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_pro')?GETPOST('phone_pro', 'alpha'):$object->phone_pro).'"></td>';
+            print '<td>'.img_picto('', 'object_phoning').' '.$form->editfieldkey('PhonePerso', 'fax', GETPOST('phone_perso', 'alpha'), $object, 0).'</td>';
+            print '<td><input type="text" name="phone_perso" id="phone_perso" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_perso')?GETPOST('phone_perso', 'alpha'):$object->phone_perso).'"></td></tr>';
 
-            print '<tr><td><label for="phone_mobile">'.$langs->trans("PhoneMobile").'</label></td>';
-	        print '<td><input name="phone_mobile" id="phone_mobile" class="flat maxwidthonsmartphone" type="text" maxlength="80" value="'.(isset($_POST["phone_mobile"])?GETPOST("phone_mobile"):$object->phone_mobile).'"></td>';
-            print '<td><label for="fax">'.$langs->trans("Fax").'</label></td>';
-	        print '<td><input name="fax" id="fax" type="text" class="flat maxwidthonsmartphone" maxlength="80" value="'.(isset($_POST["fax"])?GETPOST("fax"):$object->fax).'"></td></tr>';
+            print '<tr><td>'.img_picto('', 'object_phoning_mobile').' '.$form->editfieldkey('PhoneMobile', 'phone_mobile', GETPOST('phone_mobile', 'alpha'), $object, 0, 'string', '').'</td>';
+            print '<td><input type="text" name="phone_mobile" id="phone_mobile" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_mobile')?GETPOST('phone_mobile', 'alpha'):$object->phone_mobile).'"></td>';
+            print '<td>'.img_picto('', 'object_phoning_fax').' '.$form->editfieldkey('Fax', 'fax', GETPOST('fax', 'alpha'), $object, 0).'</td>';
+            print '<td><input type="text" name="fax" id="fax" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_fax')?GETPOST('phone_fax', 'alpha'):$object->fax).'"></td></tr>';
 
             // EMail
-            print '<tr><td><label for="email">'.$langs->trans("EMail").'</label></td>';
-	        print '<td><input name="email" id="email" type="text" class="flat maxwidthonsmartphone" value="'.(isset($_POST["email"])?GETPOST("email"):$object->email).'"></td>';
+            print '<tr><td>'.img_picto('', 'object_email').' '.$form->editfieldkey('EMail', 'email', GETPOST('email', 'alpha'), $object, 0, 'string', '', (! empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';
+            print '<td><input type="text" name="email" id="email" class="maxwidth100onsmartphone quatrevingtpercent" value="'.(GETPOSTISSET('email')?GETPOST('email', 'alpha'):$object->email).'"></td>';
             if (! empty($conf->mailing->enabled))
             {
                 $langs->load("mails");
@@ -938,7 +998,7 @@ else
             }
             else
 			{
-				print '<td colspan="2">&nbsp;</td>';
+				print '<td colspan="2"></td>';
             }
             print '</tr>';
 
@@ -964,7 +1024,7 @@ else
             }
             else
 			{
-				print '<td colspan="2">&nbsp;</td>';
+				print '<td colspan="2"></td>';
 			}
             print '</tr>';
 
@@ -1039,6 +1099,14 @@ else
 				print $form->multiselectarray('contcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
 				print "</td></tr>";
 			}
+
+			// Contact by default
+	        if (!empty($object->socid)) {
+		        print '<tr><td>' . $langs->trans("ContactByDefaultFor") . '</td>';
+		        print '<td colspan="3">';
+		        print $formcompany->showRoles("roles", $object, 'edit', $object->roles);
+		        print '</td></tr>';
+	        }
 
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"', 'cols'=>3);
@@ -1188,7 +1256,7 @@ else
         print $object->getCivilityLabel();
         print '</td></tr>';
 
-        // Role
+        // Job / position
         print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td>'.$object->poste.'</td></tr>';
 
         // Email
@@ -1237,6 +1305,13 @@ else
 			print $form->showCategories($object->id, 'contact', 1);
 			print '</td></tr>';
 		}
+
+	    if (!empty($object->socid)) {
+		    print '<tr><td class="titlefield">' . $langs->trans("ContactByDefaultFor") . '</td>';
+		    print '<td colspan="3">';
+		    print $formcompany->showRoles("roles", $object, 'view');
+		    print '</td></tr>';
+	    }
 
     	// Other attributes
     	$cols = 3;

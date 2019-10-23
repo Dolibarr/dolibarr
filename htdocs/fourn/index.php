@@ -145,7 +145,6 @@ if (! empty($conf->fournisseur->enabled))
 			}
 			if ($total>0)
 			{
-
 				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
 			}
 			print "</table>";

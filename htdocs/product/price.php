@@ -203,7 +203,6 @@ if (empty($reshook))
 
 		// Multiprices
 		if (! $error && (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))) {
-
 			$newprice = GETPOST('price', 'array');
 			$newprice_min = GETPOST('price_min', 'array');
 			$newpricebase = GETPOST('multiprices_base_type', 'array');
@@ -336,7 +335,6 @@ if (empty($reshook))
 			$db->begin();
 
 			foreach ($pricestoupdate as $key => $val) {
-
 				$newprice = $val['price'];
 
 				if ($val['price'] < $val['price_min'] && !empty($object->fk_price_expression)) {
@@ -477,10 +475,10 @@ if (empty($reshook))
 	{
 		$priceid = GETPOST('priceid', 'int');
 		if (!empty($rowid)) {
-		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "product_price_by_qty";
-		$sql .= " WHERE fk_product_price = " . $priceid;
+			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "product_price_by_qty";
+			$sql .= " WHERE fk_product_price = " . $priceid;
 
-		$result = $db->query($sql);
+			$result = $db->query($sql);
 		} else {
 			setEventMessages(('delete_price_by_qty'.$langs->transnoentities(MissingIds)), null, 'errors');
 		}
@@ -492,7 +490,6 @@ if (empty($reshook))
 	 * ****************************************************
 	 */
 	if ($action == 'add_customer_price_confirm' && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer)) {
-
 		$maxpricesupplier = $object->min_recommended_price();
 
 		$update_child_soc = GETPOST('updatechildprice', 'int');
@@ -758,17 +755,17 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUI
 
 		if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
 		{
-    	   // TVA
-	       print '<tr><td>' . $langs->trans("DefaultTaxRate") . '</td><td colspan="2">';
+			// TVA
+			print '<tr><td>' . $langs->trans("DefaultTaxRate") . '</td><td colspan="2">';
 
-	       $positiverates='';
-	       if (price2num($object->multiprices_tva_tx[$soc->price_level])) $positiverates.=($positiverates?'/':'').price2num($object->multiprices_tva_tx[$soc->price_level]);
-	       if (price2num($object->multiprices_localtax1_type[$soc->price_level])) $positiverates.=($positiverates?'/':'').price2num($object->multiprices_localtax1_tx[$soc->price_level]);
-	       if (price2num($object->multiprices_localtax2_type[$soc->price_level])) $positiverates.=($positiverates?'/':'').price2num($object->multiprices_localtax2_tx[$soc->price_level]);
-	       if (empty($positiverates)) $positiverates='0';
-	       echo vatrate($positiverates.($object->default_vat_code?' ('.$object->default_vat_code.')':''), '%', $object->tva_npr);
-	       //print vatrate($object->multiprices_tva_tx[$soc->price_level], true);
-	       print '</td></tr>';
+			$positiverates='';
+			if (price2num($object->multiprices_tva_tx[$soc->price_level])) $positiverates.=($positiverates?'/':'').price2num($object->multiprices_tva_tx[$soc->price_level]);
+			if (price2num($object->multiprices_localtax1_type[$soc->price_level])) $positiverates.=($positiverates?'/':'').price2num($object->multiprices_localtax1_tx[$soc->price_level]);
+			if (price2num($object->multiprices_localtax2_type[$soc->price_level])) $positiverates.=($positiverates?'/':'').price2num($object->multiprices_localtax2_tx[$soc->price_level]);
+			if (empty($positiverates)) $positiverates='0';
+			echo vatrate($positiverates.($object->default_vat_code?' ('.$object->default_vat_code.')':''), '%', $object->tva_npr);
+			//print vatrate($object->multiprices_tva_tx[$soc->price_level], true);
+			print '</td></tr>';
 		}
 		else
 		{
@@ -794,10 +791,10 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUI
 	{
 		if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
 		{
-    	   // We show only vat for level 1
-	       print '<tr><td class="titlefield">' . $langs->trans("DefaultTaxRate") . '</td>';
-	       print '<td colspan="2">' . vatrate($object->multiprices_tva_tx[1], true) . '</td>';
-	       print '</tr>';
+			// We show only vat for level 1
+			print '<tr><td class="titlefield">' . $langs->trans("DefaultTaxRate") . '</td>';
+			print '<td colspan="2">' . vatrate($object->multiprices_tva_tx[1], true) . '</td>';
+			print '</tr>';
 		}
 		else
 		{
@@ -825,7 +822,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUI
 	    print '<table class="noborder tableforfield" width="100%">';
 		print '<tr class="liste_titre"><td>';
 		print $langs->trans("PriceLevel");
-		if ($user->admin) print ' <a href="'.$_SERVER["PHP_SELF"].'?action=editlabelsellingprice&amp;pricelevel='.$i.'&amp;id='.$object->id.'">'.img_edit($langs->trans('EditSellingPriceLabel'), 0).'</a>';
+		if ($user->admin) print ' <a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editlabelsellingprice&amp;pricelevel='.$i.'&amp;id='.$object->id.'">'.img_edit($langs->trans('EditSellingPriceLabel'), 0).'</a>';
 		print '</td>';
 		print '<td style="text-align: right">'.$langs->trans("SellingPrice").'</td>';
 		print '<td style="text-align: right">'.$langs->trans("MinPrice").'</td>';

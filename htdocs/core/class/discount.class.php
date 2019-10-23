@@ -91,13 +91,15 @@ class DiscountAbsolute
     public $fk_facture;
 
     /**
-     * @var int ID credit note having caused the discount
+     * @var int ID credit note or deposit used to create the discount
      */
     public $fk_facture_source;
+    public $ref_facture_source;	    		// Ref credit note or deposit used to create the discount
+	public $type_facture_source;
 
-    public $ref_facture_source;	    // Ref credit note having caused the discount
-
-    public $ref_invoice_supplier_source;
+    public $fk_invoice_supplier_source;
+    public $ref_invoice_supplier_source;	// Ref credit note or deposit used to create the discount
+    public $type_invoice_supplier_source;
 
     /**
      *	Constructor
@@ -135,11 +137,12 @@ class DiscountAbsolute
         $sql.= " sr.multicurrency_amount_ht, sr.multicurrency_amount_tva, sr.multicurrency_amount_ttc,";
         $sql.= " sr.fk_facture_line, sr.fk_facture, sr.fk_facture_source, sr.fk_invoice_supplier_line, sr.fk_invoice_supplier, sr.fk_invoice_supplier_source, sr.description,";
         $sql.= " sr.datec,";
-        $sql.= " f.ref as ref_facture_source, fsup.ref as ref_invoice_supplier_source";
+        $sql.= " f.ref as ref_facture_source, f.type as type_facture_source,";
+        $sql.= " fsup.ref as ref_invoice_supplier_source, fsup.type as type_invoice_supplier_source";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as sr";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON sr.fk_facture_source = f.rowid";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fsup ON sr.fk_invoice_supplier_source = fsup.rowid";
-        $sql.= " WHERE sr.entity = " . $conf->entity;
+        $sql.= " WHERE sr.entity IN (".getEntity('invoice').")";
         if ($rowid) $sql.= " AND sr.rowid=".$rowid;
         if ($fk_facture_source) $sql.= " AND sr.fk_facture_source=".$fk_facture_source;
         if ($fk_invoice_supplier_source) $sql.= " AND sr.fk_invoice_supplier_source=".$fk_invoice_supplier_source;
@@ -168,12 +171,14 @@ class DiscountAbsolute
                 $this->fk_user = $obj->fk_user;
                 $this->fk_facture_line = $obj->fk_facture_line;
                 $this->fk_facture = $obj->fk_facture;
-                $this->fk_facture_source = $obj->fk_facture_source;		// Id avoir source
-                $this->ref_facture_source = $obj->ref_facture_source;	// Ref avoir source
+                $this->fk_facture_source = $obj->fk_facture_source;		// Id credit note or deposit source
+                $this->ref_facture_source = $obj->ref_facture_source;	// Ref credit note or deposit  source
+                $this->type_facture_source = $obj->type_facture_source;	// Type credit note or deposit  source
                 $this->fk_invoice_supplier_line = $obj->fk_invoice_supplier_line;
                 $this->fk_invoice_supplier = $obj->fk_invoice_supplier;
-                $this->fk_invoice_supplier_source = $obj->fk_invoice_supplier_source;		// Id avoir source
-                $this->ref_invoice_supplier_source = $obj->ref_invoice_supplier_source;	// Ref avoir source
+                $this->fk_invoice_supplier_source = $obj->fk_invoice_supplier_source;		// Id credit note or deposit source
+                $this->ref_invoice_supplier_source = $obj->ref_invoice_supplier_source;		// Ref credit note or deposit  source
+                $this->type_invoice_supplier_source = $obj->type_invoice_supplier_source;	// Type credit note or deposit  source
                 $this->description = $obj->description;
                 $this->datec = $this->db->jdate($obj->datec);
 
@@ -369,7 +374,6 @@ class DiscountAbsolute
                 }
             }
             elseif($this->fk_invoice_supplier_source) {
-
             	$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
             	$sql.=" set paye=0, fk_statut=1";
             	$sql.=" WHERE (type = 2 or type = 3) AND rowid=".$this->fk_invoice_supplier_source;
@@ -689,7 +693,7 @@ class DiscountAbsolute
         if ($option == 'invoice') {
             $facid=! empty($this->discount_type)?$this->fk_invoice_supplier_source:$this->fk_facture_source;
             $link=! empty($this->discount_type)?'/fourn/facture/card.php':'/compta/facture/card.php';
-            $label=$langs->trans("ShowDiscount").': '.$this->ref_facture_source;
+            $label=$langs->trans("ShowSourceInvoice").': '.$this->ref_facture_source;
             $link = '<a href="'.DOL_URL_ROOT.$link.'?facid='.$facid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
             $linkend='</a>';
             $ref=! empty($this->discount_type)?$this->ref_invoice_supplier_source:$this->ref_facture_source;

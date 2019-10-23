@@ -180,7 +180,6 @@ class ProductFournisseur extends Product
 
         if (empty($error))
         {
-
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
             $sql.= " WHERE rowid = ".$rowid;
 
@@ -300,7 +299,6 @@ class ProductFournisseur extends Product
 		// Check parameters
 		if ($buyprice != '' && ! is_numeric($buyprice))
 		{
-
 		}
 
         $this->db->begin();

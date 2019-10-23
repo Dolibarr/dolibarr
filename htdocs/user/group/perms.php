@@ -201,7 +201,7 @@ if ($object->id > 0)
      * Ecran ajout/suppression permission
      */
 
-    print '<table class="border centpercent">';
+    print '<table class="border centpercent tableforfield">';
 
     // Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
     if (! empty($conf->mutlicompany->enabled))

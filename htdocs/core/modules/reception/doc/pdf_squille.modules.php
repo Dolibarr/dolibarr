@@ -72,7 +72,6 @@ class pdf_squille extends ModelePdfReception
 		$this->posxpuht=$this->page_largeur - $this->marge_droite;
 
 		if (!empty($conf->global->MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT)) {
-
 			$this->posxweightvol=$this->page_largeur - $this->marge_droite - 118;
 			$this->posxqtyordered=$this->page_largeur - $this->marge_droite - 96;
 			$this->posxqtytoship=$this->page_largeur - $this->marge_droite - 68;
@@ -451,12 +450,12 @@ class pdf_squille extends ModelePdfReception
 					$weighttxt='';
 					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->product->weight)
 					{
-					    $weighttxt=round($object->lines[$i]->product->weight * $object->lines[$i]->qty, 5).' '.measuring_units_string($object->lines[$i]->product->weight_units, "weight");
+						$weighttxt=round($object->lines[$i]->product->weight * $object->lines[$i]->qty, 5).' '.measuringUnitString(0, "weight", $object->lines[$i]->product->weight_units);
 					}
 					$voltxt='';
 					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->product->volume)
 					{
-					    $voltxt=round($object->lines[$i]->product->volume * $object->lines[$i]->qty, 5).' '.measuring_units_string($object->lines[$i]->product->volume_units?$object->lines[$i]->product->volume_units:0, "volume");
+						$voltxt=round($object->lines[$i]->product->volume * $object->lines[$i]->qty, 5).' '.measuringUnitString(0, "volume", $object->lines[$i]->product->volume_units?$object->lines[$i]->product->volume_units:0);
 					}
 
 					$pdf->writeHTMLCell($this->posxqtyordered - $this->posxweightvol + 2, 3, $this->posxweightvol - 1, $curY, $weighttxt.(($weighttxt && $voltxt)?'<br>':'').$voltxt, 0, 0, false, true, 'C');
@@ -658,7 +657,6 @@ class pdf_squille extends ModelePdfReception
     	$pdf->MultiCell($this->posxpuht - $this->posxqtytoship, $tab2_hl, $totalToShip, 0, 'C', 1);
 
 		if(!empty($conf->global->MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT)) {
-
 	    	$pdf->SetXY($this->posxpuht, $tab2_top + $tab2_hl * $index);
 	    	$pdf->MultiCell($this->posxtotalht - $this->posxpuht, $tab2_hl, '', 0, 'C', 1);
 
@@ -754,7 +752,6 @@ class pdf_squille extends ModelePdfReception
 		}
 
 		if(!empty($conf->global->MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT)) {
-
 			$pdf->line($this->posxpuht-1, $tab_top, $this->posxpuht-1, $tab_top + $tab_height);
 			if (empty($hidetop))
 			{

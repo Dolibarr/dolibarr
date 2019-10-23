@@ -97,7 +97,6 @@ $form = new Form($db);
 
 if ($id > 0 || ! empty($ref))
 {
-
 	$head=reception_prepare_head($object);
 	dol_fiche_head($head, 'note', $langs->trans("Reception"), -1, 'sending');
 
@@ -117,7 +116,7 @@ if ($id > 0 || ! empty($ref))
         $morehtmlref .= '<br>' . $langs->trans('Project') . ' ';
         if (0) {    // Do not change on reception
             if ($action != 'classify') {
-                $morehtmlref .= '<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+                $morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
             }
             if ($action == 'classify') {
                 // $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);

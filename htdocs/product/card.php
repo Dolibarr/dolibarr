@@ -1,22 +1,23 @@
 <?php
-/* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005		Eric Seigne		<eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2015	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2006		Andre Cianfarani	<acianfa@free.fr>
- * Copyright (C) 2006		Auguria SARL		<info@auguria.org>
- * Copyright (C) 2010-2015	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2013-2016	Marcos García		<marcosgdf@gmail.com>
- * Copyright (C) 2012-2013	Cédric Salvador		<csalvador@gpcsolutions.fr>
- * Copyright (C) 2011-2017	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2014		Cédric Gross		<c.gross@kreiz-it.fr>
- * Copyright (C) 2014-2015	Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2015		Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2015		Raphaël Doursenaud	<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2016		Meziane Sof		<virtualsof@yahoo.fr>
- * Copyright (C) 2017		Josep Lluís Amador	<joseplluis@lliuretic.cat>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2001-2007	Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016	Laurent Destailleur	 <eldy@users.sourceforge.net>
+ * Copyright (C) 2005		Eric Seigne		     <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2015	Regis Houssin		 <regis.houssin@capnetworks.com>
+ * Copyright (C) 2006		Andre Cianfarani	 <acianfa@free.fr>
+ * Copyright (C) 2006		Auguria SARL		 <info@auguria.org>
+ * Copyright (C) 2010-2015	Juanjo Menent		 <jmenent@2byte.es>
+ * Copyright (C) 2013-2016	Marcos García		 <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2013	Cédric Salvador		 <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2011-2017	Alexandre Spangaro	 <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2014		Cédric Gross		 <c.gross@kreiz-it.fr>
+ * Copyright (C) 2014-2015	Ferran Marcet		 <fmarcet@2byte.es>
+ * Copyright (C) 2015		Jean-François Ferry	 <jfefe@aternatik.fr>
+ * Copyright (C) 2015		Raphaël Doursenaud	 <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2016		Charlie Benke		 <charlie@patas-monkey.com>
+ * Copyright (C) 2016		Meziane Sof		     <virtualsof@yahoo.fr>
+ * Copyright (C) 2017		Josep Lluís Amador	 <joseplluis@lliuretic.cat>
+ * Copyright (C) 2019       Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2019       Thibault FOUCART     <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,6 +73,7 @@ $ref=GETPOST('ref', 'alpha');
 $type=GETPOST('type', 'int');
 $action=(GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $cancel=GETPOST('cancel', 'alpha');
+$backtopage	= GETPOST('backtopage', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
 $socid=GETPOST('socid', 'int');
 $duration_value = GETPOST('duration_value', 'int');
@@ -83,7 +85,7 @@ $object->type = $type;	// so test later to fill $usercancxxx is correct
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 if ($id > 0 || ! empty($ref))
 {
@@ -297,20 +299,22 @@ if (empty($reshook))
             $object->duration_unit      	 = $duration_unit;
             $object->fk_default_warehouse	 = GETPOST('fk_default_warehouse');
             $object->seuil_stock_alerte 	 = GETPOST('seuil_stock_alerte')?GETPOST('seuil_stock_alerte'):0;
-            $object->desiredstock            = GETPOST('desiredstock')?GETPOST('desiredstock'):0;
+            $object->desiredstock          = GETPOST('desiredstock')?GETPOST('desiredstock'):0;
             $object->canvas             	 = GETPOST('canvas');
+            $object->net_measure           = GETPOST('net_measure');
+            $object->net_measure_units     = GETPOST('net_measure_units');		// This is not the fk_unit but the power of unit
             $object->weight             	 = GETPOST('weight');
-            $object->weight_units       	 = GETPOST('weight_units');
+            $object->weight_units       	 = GETPOST('weight_units');		// This is not the fk_unit but the power of unit
             $object->length             	 = GETPOST('size');
-            $object->length_units       	 = GETPOST('size_units');
+            $object->length_units       	 = GETPOST('size_units');		// This is not the fk_unit but the power of unit
             $object->width               	 = GETPOST('sizewidth');
             $object->height             	 = GETPOST('sizeheight');
-	        $object->surface            	 = GETPOST('surface');
-            $object->surface_units      	 = GETPOST('surface_units');
+            $object->surface            	 = GETPOST('surface');
+            $object->surface_units      	 = GETPOST('surface_units');	// This is not the fk_unit but the power of unit
             $object->volume             	 = GETPOST('volume');
-            $object->volume_units       	 = GETPOST('volume_units');
+            $object->volume_units       	 = GETPOST('volume_units');		// This is not the fk_unit but the power of unit
             $object->finished           	 = GETPOST('finished', 'alpha');
-            $object->fk_unit                 = GETPOST('units', 'alpha');
+            $object->fk_unit                 = GETPOST('units', 'alpha');	// This is the fk_unit of sale
 
 	        $accountancy_code_sell 			 = GETPOST('accountancy_code_sell', 'alpha');
 	        $accountancy_code_sell_intra	 = GETPOST('accountancy_code_sell_intra', 'alpha');
@@ -340,7 +344,7 @@ if (empty($reshook))
             }
 
             // Fill array 'array_options' with data from add form
-        	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+        	$ret = $extrafields->setOptionalsFromPost(null, $object);
 			if ($ret < 0) $error++;
 
 			if (! $error)
@@ -354,8 +358,18 @@ if (empty($reshook))
 				$categories = GETPOST('categories', 'array');
 				$object->setCategories($categories);
 
-                header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
-                exit;
+				if (! empty($backtopage))
+				{
+					$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $backtopage);		// New method to autoselect project after a New on another form object creation
+					if (preg_match('/\?/', $backtopage)) $backtopage.='&socid='.$object->id;	// Old method
+					header("Location: ".$backtopage);
+					exit;
+				}
+				else
+				{
+                	header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+                	exit;
+				}
             }
             else
 			{
@@ -403,17 +417,19 @@ if (empty($reshook))
                 $object->duration_unit          = GETPOST('duration_unit', 'alpha');
 
                 $object->canvas                 = GETPOST('canvas');
+                $object->net_measure            = GETPOST('net_measure');
+                $object->net_measure_units      = GETPOST('net_measure_units');	// This is not the fk_unit but the power of unit
                 $object->weight                 = GETPOST('weight');
-                $object->weight_units           = GETPOST('weight_units');
+                $object->weight_units           = GETPOST('weight_units');	// This is not the fk_unit but the power of unit
                 $object->length                 = GETPOST('size');
-                $object->length_units           = GETPOST('size_units');
-                $object->width               	 = GETPOST('sizewidth');
-                $object->height             	 = GETPOST('sizeheight');
+                $object->length_units           = GETPOST('size_units');	// This is not the fk_unit but the power of unit
+                $object->width               	= GETPOST('sizewidth');
+                $object->height             	= GETPOST('sizeheight');
 
                 $object->surface                = GETPOST('surface');
-                $object->surface_units          = GETPOST('surface_units');
+                $object->surface_units          = GETPOST('surface_units');	// This is not the fk_unit but the power of unit
                 $object->volume                 = GETPOST('volume');
-                $object->volume_units           = GETPOST('volume_units');
+                $object->volume_units           = GETPOST('volume_units');	// This is not the fk_unit but the power of unit
                 $object->finished               = GETPOST('finished', 'alpha');
 
 	            $units = GETPOST('units', 'int');
@@ -452,7 +468,7 @@ if (empty($reshook))
 				if ($accountancy_code_buy <= 0) { $object->accountancy_code_buy = ''; } else { $object->accountancy_code_buy = $accountancy_code_buy; }
 
                 // Fill array 'array_options' with data from add form
-        		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+        		$ret = $extrafields->setOptionalsFromPost(null, $object);
 				if ($ret < 0) $error++;
 
                 if (! $error && $object->check())
@@ -532,6 +548,17 @@ if (empty($reshook))
                                 setEventMessage($langs->trans('ErrorProductClone'), null, 'errors');
                                 header("Location: ".$_SERVER["PHP_SELF"]."?id=".$originalId);
                                 exit;
+                            }
+                        }
+
+                        if (GETPOST('clone_prices')) {
+                            $result = $object->clone_price($originalId, $id);
+
+                            if ($result < 1) {
+                                $db->rollback();
+                                setEventMessages($langs->trans('ErrorProductClone'), null, 'errors');
+                                header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $originalId);
+                                exit();
                             }
                         }
 
@@ -934,6 +961,7 @@ else
 			print '<input type="hidden" name="code_auto" value="1">';
 		if (! empty($modBarCodeProduct->code_auto))
 			print '<input type="hidden" name="barcode_auto" value="1">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
         if ($type==1) $title=$langs->trans("NewService");
         else $title=$langs->trans("NewProduct");
@@ -1054,36 +1082,46 @@ else
             print $form->selectarray('finished', $statutarray, GETPOST('finished', 'alpha'), 1);
             print '</td></tr>';
 
-            // Weight
+            // Brut Weight
             print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="3">';
             print '<input name="weight" size="4" value="'.GETPOST('weight').'">';
-            print $formproduct->selectMeasuringUnits("weight_units", "weight", (empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?0:$conf->global->MAIN_WEIGHT_DEFAULT_UNIT));
+            print $formproduct->selectMeasuringUnits("weight_units", "weight", GETPOSTISSET('weight_units')?GETPOST('weight_units', 'alpha'):(empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?0:$conf->global->MAIN_WEIGHT_DEFAULT_UNIT), 0, 2);
             print '</td></tr>';
-            // Length
+
+            // Brut Length
             if (empty($conf->global->PRODUCT_DISABLE_SIZE))
             {
                 print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td colspan="3">';
                 print '<input name="size" size="4" value="'.GETPOST('size').'"> x ';
                 print '<input name="sizewidth" size="4" value="'.GETPOST('sizewidth').'"> x ';
                 print '<input name="sizeheight" size="4" value="'.GETPOST('sizeheight').'">';
-                print $formproduct->selectMeasuringUnits("size_units", "size");
+                print $formproduct->selectMeasuringUnits("size_units", "size", GETPOSTISSET('size_units')?GETPOST('size_units', 'alpha'):'0', 0, 2);
                 print '</td></tr>';
             }
             if (empty($conf->global->PRODUCT_DISABLE_SURFACE))
             {
-                // Surface
+                // Brut Surface
                 print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="3">';
                 print '<input name="surface" size="4" value="'.GETPOST('surface').'">';
-                print $formproduct->selectMeasuringUnits("surface_units", "surface");
+                print $formproduct->selectMeasuringUnits("surface_units", "surface", GETPOSTISSET('surface_units')?GETPOST('surface_units', 'alpha'):'0', 0, 2);
                 print '</td></tr>';
             }
             if (empty($conf->global->PRODUCT_DISABLE_VOLUME))
             {
-                // Volume
+                // Brut Volume
                 print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="3">';
                 print '<input name="volume" size="4" value="'.GETPOST('volume').'">';
-                print $formproduct->selectMeasuringUnits("volume_units", "volume");
+                print $formproduct->selectMeasuringUnits("volume_units", "volume", GETPOSTISSET('volume_units')?GETPOST('volume_units', 'alpha'):'0', 0, 2);
                 print '</td></tr>';
+            }
+
+            if (! empty($conf->global->PRODUCT_ADD_NET_MEASURE))
+            {
+	            // Net Measure
+	            print '<tr><td>'.$langs->trans("NetMeasure").'</td><td colspan="3">';
+	            print '<input name="net_measure" size="4" value="'.GETPOST('net_measure').'">';
+	            print $formproduct->selectMeasuringUnits("net_measure_units", '', GETPOSTISSET('net_measure_units')?GETPOST('net_measure_units', 'alpha'):(empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?0:$conf->global->MAIN_WEIGHT_DEFAULT_UNIT), 0, 0);
+	            print '</td></tr>';
             }
         }
 
@@ -1427,36 +1465,46 @@ else
                 print $form->selectarray('finished', $statutarray, $object->finished);
                 print '</td></tr>';
 
-                // Weight
+                // Brut Weight
                 print '<tr><td>'.$langs->trans("Weight").'</td><td colspan="3">';
                 print '<input name="weight" size="5" value="'.$object->weight.'"> ';
-                print $formproduct->selectMeasuringUnits("weight_units", "weight", $object->weight_units);
+                print $formproduct->selectMeasuringUnits("weight_units", "weight", $object->weight_units, 0, 2);
                 print '</td></tr>';
+
                 if (empty($conf->global->PRODUCT_DISABLE_SIZE))
                 {
-                  // Length
-                  print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td colspan="3">';
-                  print '<input name="size" size="5" value="'.$object->length.'">x';
-                  print '<input name="sizewidth" size="5" value="'.$object->width.'">x';
-                  print '<input name="sizeheight" size="5" value="'.$object->height.'"> ';
-                  print $formproduct->selectMeasuringUnits("size_units", "size", $object->length_units);
-                  print '</td></tr>';
+					// Brut Length
+					print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td colspan="3">';
+					print '<input name="size" size="5" value="'.$object->length.'">x';
+					print '<input name="sizewidth" size="5" value="'.$object->width.'">x';
+					print '<input name="sizeheight" size="5" value="'.$object->height.'"> ';
+					print $formproduct->selectMeasuringUnits("size_units", "size", $object->length_units, 0, 2);
+					print '</td></tr>';
                 }
                 if (empty($conf->global->PRODUCT_DISABLE_SURFACE))
                 {
-                    // Surface
+                    // Brut Surface
                     print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="3">';
                     print '<input name="surface" size="5" value="'.$object->surface.'"> ';
-                    print $formproduct->selectMeasuringUnits("surface_units", "surface", $object->surface_units);
+                    print $formproduct->selectMeasuringUnits("surface_units", "surface", $object->surface_units, 0, 2);
                     print '</td></tr>';
                 }
                 if (empty($conf->global->PRODUCT_DISABLE_VOLUME))
                 {
-                    // Volume
+                    // Brut Volume
                     print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="3">';
                     print '<input name="volume" size="5" value="'.$object->volume.'"> ';
-                    print $formproduct->selectMeasuringUnits("volume_units", "volume", $object->volume_units);
+                    print $formproduct->selectMeasuringUnits("volume_units", "volume", $object->volume_units, 0, 2);
                     print '</td></tr>';
+                }
+
+                if (! empty($conf->global->PRODUCT_ADD_NET_MEASURE))
+                {
+                	// Net Measure
+	                print '<tr><td>'.$langs->trans("NetMeasure").'</td><td colspan="3">';
+	                print '<input name="net_measure" size="5" value="'.$object->net_measure.'"> ';
+	                print $formproduct->selectMeasuringUnits($object->net_measure_units, '', 0, 0, 0);
+	                print '</td></tr>';
                 }
             }
         	// Units
@@ -1618,7 +1666,9 @@ else
 			{
 				// TODO change for compatibility with edit in place
 				$typeformat='select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
-				print '<tr><td class="titlefield">'.$form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat).'</td><td colspan="2">';
+				print '<tr><td class="titlefield">';
+				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
+				print '</td><td colspan="2">';
 				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat);
 				print '</td></tr>';
 			}
@@ -1630,7 +1680,7 @@ else
                 print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
                 print $langs->trans("BarcodeType");
                 print '</td>';
-                if (($action != 'editbarcodetype') && $usercancreate && $createbarcode) print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'), 1).'</a></td>';
+                if (($action != 'editbarcodetype') && $usercancreate && $createbarcode) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'), 1).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="2">';
                 if ($action == 'editbarcodetype' || $action == 'editbarcode')
@@ -1654,7 +1704,7 @@ else
                 print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
                 print $langs->trans("BarcodeValue");
                 print '</td>';
-                if (($action != 'editbarcode') && $usercancreate && $createbarcode) print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'), 1).'</a></td>';
+                if (($action != 'editbarcode') && $usercancreate && $createbarcode) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'), 1).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="2">';
                 if ($action == 'editbarcode')
@@ -1788,7 +1838,6 @@ else
 
             //Parent product.
             if (!empty($conf->variants->enabled) && ($object->isProduct() || $object->isService())) {
-
                 $combination = new ProductCombination($db);
 
                 if ($combination->fetchByFkProductChild($object->id) > 0) {
@@ -1831,27 +1880,29 @@ else
                 print '<tr><td class="titlefield">'.$langs->trans("Nature").'</td><td colspan="2">';
                 print $object->getLibFinished();
                 print '</td></tr>';
-                // Weight
+
+                // Brut Weight
                 print '<tr><td class="titlefield">'.$langs->trans("Weight").'</td><td colspan="2">';
                 if ($object->weight != '')
                 {
-                    print $object->weight." ".measuring_units_string($object->weight_units, "weight");
+                	print $object->weight." ".measuringUnitString(0, "weight", $object->weight_units);
                 }
                 else
                 {
                     print '&nbsp;';
                 }
                 print "</td></tr>\n";
+
                 if (empty($conf->global->PRODUCT_DISABLE_SIZE))
                 {
-                    // Length
+                    // Brut Length
                     print '<tr><td>'.$langs->trans("Length").' x '.$langs->trans("Width").' x '.$langs->trans("Height").'</td><td colspan="2">';
                     if ($object->length != '' || $object->width != '' || $object->height != '')
                     {
                         print $object->length;
                         if ($object->width) print " x ".$object->width;
                         if ($object->height) print " x ".$object->height;
-                        print ' '.measuring_units_string($object->length_units, "size");
+                        print ' '.measuringUnitString(0, "size", $object->length_units);
                     }
                     else
                     {
@@ -1861,11 +1912,11 @@ else
                 }
                 if (empty($conf->global->PRODUCT_DISABLE_SURFACE))
                 {
-                    // Surface
+                    // Brut Surface
                     print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="2">';
                     if ($object->surface != '')
                     {
-                        print $object->surface." ".measuring_units_string($object->surface_units, "surface");
+                    	print $object->surface." ".measuringUnitString(0, "surface", $object->surface_units);
                     }
                     else
                     {
@@ -1875,17 +1926,31 @@ else
                 }
                 if (empty($conf->global->PRODUCT_DISABLE_VOLUME))
                 {
-                    // Volume
+                    // Brut Volume
                     print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="2">';
                     if ($object->volume != '')
                     {
-                        print $object->volume." ".measuring_units_string($object->volume_units, "volume");
+                    	print $object->volume." ".measuringUnitString(0, "volume", $object->volume_units);
                     }
                     else
                     {
                         print '&nbsp;';
                     }
                     print "</td></tr>\n";
+                }
+
+                if (! empty($conf->global->PRODUCT_ADD_NET_MEASURE))
+                {
+                	// Net Measure
+                	print '<tr><td class="titlefield">'.$langs->trans("NetMeasure").'</td><td colspan="2">';
+                	if ($object->net_measure != '')
+                	{
+                		print $object->net_measure." ".measuringUnitString(0, "weight", $object->net_measure_units);
+                	}
+                	else
+                	{
+                		print '&nbsp;';
+                	}
                 }
             }
 
@@ -1965,8 +2030,10 @@ $formquestionclone=array(
     array('type' => 'text', 'name' => 'clone_ref','label' => $langs->trans("NewRefForClone"), 'value' => empty($tmpcode) ? $langs->trans("CopyOf").' '.$object->ref : $tmpcode, 'size'=>24),
     array('type' => 'checkbox', 'name' => 'clone_content','label' => $langs->trans("CloneContentProduct"), 'value' => 1),
     array('type' => 'checkbox', 'name' => 'clone_categories', 'label' => $langs->trans("CloneCategoriesProduct"), 'value' => 1),
-    array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("FeatureNotYetAvailable").')', 'value' => 0, 'disabled' => true),
 );
+if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+    $formquestionclone[] =  array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("CustomerPrices").')', 'value' => 0);
+}
 if (! empty($conf->global->PRODUIT_SOUSPRODUITS))
 {
     $formquestionclone[]=array('type' => 'checkbox', 'name' => 'clone_composition', 'label' => $langs->trans('CloneCompositionProduct'), 'value' => 1);
@@ -2002,17 +2069,17 @@ if ($action != 'create' && $action != 'edit')
 	{
 		if ($usercancreate)
         {
-            if (! isset($object->no_button_edit) || $object->no_button_edit <> 1) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
+            if (! isset($object->no_button_edit) || $object->no_button_edit <> 1) print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a>';
 
             if (! isset($object->no_button_copy) || $object->no_button_copy <> 1)
             {
                 if (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))
                 {
-                    print '<div class="inline-block divButAction"><span id="action-clone" class="butAction">'.$langs->trans('ToClone').'</span></div>'."\n";
+                    print '<span id="action-clone" class="butAction">'.$langs->trans('ToClone').'</span>'."\n";
                 }
                 else
     			{
-                    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
+                    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
                 }
             }
         }
@@ -2024,21 +2091,21 @@ if ($action != 'create' && $action != 'edit')
             {
                 if (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))
                 {
-                    print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
+                    print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>'."\n";
                 }
                 else
     			{
-                    print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("Delete").'</a></div>';
+                    print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("Delete").'</a>';
                 }
             }
             else
     		{
-                print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ProductIsUsed").'">'.$langs->trans("Delete").'</a></div>';
+                print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ProductIsUsed").'">'.$langs->trans("Delete").'</a>';
             }
         }
         else
     	{
-            print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Delete").'</a></div>';
+            print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Delete").'</a>';
         }
     }
 
@@ -2072,7 +2139,7 @@ if (! empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action =
         	$html .= '</td></tr>';
         }
         else
-       {
+		{
         	$html .= '<tr><td style="width: 200px;">';
         	$html .= $langs->trans("AddToDraftProposals").'</td><td>';
         	$html .= $langs->trans("NoDraftProposals");

@@ -21,7 +21,7 @@
  */
 
 /**
- *	    \file       htdocs/comm/action/list.php
+ *      \file       htdocs/comm/action/list.php
  *      \ingroup    agenda
  *		\brief      Page to list actions
  */
@@ -82,7 +82,7 @@ $hookmanager->initHooks(array('agendalist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 // If not choice done on calendar owner, we filter on user.
@@ -138,13 +138,16 @@ $arrayfields=array(
 	'a.tms'=>array('label'=>'DateModification', 'checked'=>0)
 );
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-   foreach($extrafields->attribute_label as $key => $val)
-   {
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
-   }
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+	{
+		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+	}
 }
+$object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 /*
@@ -239,7 +242,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 $sql = "SELECT";
 if ($usergroup > 0) $sql.=" DISTINCT";
 $sql.= " s.nom as societe, s.rowid as socid, s.client, s.email as socemail,";
-$sql.= " a.id, a.label, a.note, a.datep as dp, a.datep2 as dp2,";
+$sql.= " a.id, a.label, a.note, a.datep as dp, a.datep2 as dp2, a.fulldayevent, a.location,";
 $sql.= ' a.fk_user_author,a.fk_user_action,';
 $sql.= " a.fk_contact, a.note, a.percent as percent,";
 $sql.= " a.fk_element, a.elementtype, a.datec, a.tms as datem,";
@@ -247,7 +250,9 @@ $sql.= " c.code as type_code, c.libelle as type_label,";
 $sql.= " sp.lastname, sp.firstname, sp.email, sp.phone, sp.address, sp.phone as phone_pro, sp.phone_mobile, sp.phone_perso, sp.fk_pays as country_id";
 
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 
 // Add fields from hooks
 $parameters=array();
@@ -286,14 +291,14 @@ if (! empty($actioncode))
         elseif ($actioncode == 'AC_ALL_AUTO') $sql.= " AND c.type = 'systemauto'";
         else
         {
-		if (is_array($actioncode))
- 		{
- 	        	$sql.=" AND c.code IN ('".implode("','", $actioncode)."')";
- 		}
- 		else
- 		{
- 	        	$sql.=" AND c.code IN ('".implode("','", explode(',', $actioncode))."')";
- 		}
+            if (is_array($actioncode))
+            {
+                $sql.=" AND c.code IN ('".implode("','", $actioncode)."')";
+            }
+            else
+            {
+                $sql.=" AND c.code IN ('".implode("','", explode(',', $actioncode))."')";
+            }
         }
     }
 }
@@ -460,7 +465,7 @@ if ($resql)
 		print $form->selectDate($datestart, 'datestart', 0, 0, 1, '', 1, 0);
 		print '</td>';
 	}
-	if (! empty($arrayfields['a.datep2']['checked']))	{
+	if (! empty($arrayfields['a.datep2']['checked'])) {
 		print '<td class="liste_titre nowraponall" align="center">';
 		print $form->selectDate($dateend, 'dateend', 0, 0, 1, '', 1, 0);
 		print '</td>';
@@ -548,6 +553,7 @@ if ($resql)
 		$actionstatic->type_label=$obj->type_label;
 		$actionstatic->type_picto=$obj->type_picto;
 		$actionstatic->label=$obj->label;
+		$actionstatic->location = $obj->location;
 		$actionstatic->note=dol_htmlentitiesbr($obj->note);
 
 		print '<tr class="oddeven">';
@@ -609,11 +615,11 @@ if ($resql)
 			print $form->textwithtooltip(dol_trunc($text, 40), $actionstatic->note);
 			print '</td>';
 		}
-
+		$formatToUse = $obj->fulldayevent?'day':'dayhour';
 		// Start date
 		if (! empty($arrayfields['a.datep']['checked'])) {
 			print '<td align="center">';
-			print dol_print_date($db->jdate($obj->dp), "dayhour");
+			print dol_print_date($db->jdate($obj->dp), $formatToUse);
 			$late=0;
 			if ($obj->percent == 0 && $obj->dp && $db->jdate($obj->dp) < ($now - $delay_warning)) $late=1;
 			if ($obj->percent == 0 && ! $obj->dp && $obj->dp2 && $db->jdate($obj->dp) < ($now - $delay_warning)) $late=1;
@@ -626,7 +632,7 @@ if ($resql)
 		// End date
 		if (! empty($arrayfields['a.datep2']['checked'])) {
 			print '<td align="center">';
-			print dol_print_date($db->jdate($obj->dp2), "dayhour");
+			print dol_print_date($db->jdate($obj->dp2), $formatToUse);
 			print '</td>';
 		}
 

@@ -88,7 +88,6 @@ class printing_printgcp extends PrintingDriver
                 'type'=>'info',
             );
         } else {
-
             $this->google_id = $conf->global->OAUTH_GOOGLE_ID;
             $this->google_secret = $conf->global->OAUTH_GOOGLE_SECRET;
             // Token storage

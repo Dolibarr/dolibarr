@@ -235,7 +235,7 @@ class AccountingJournal extends CommonObject
 		{
 			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 			{
-				$label=$langs->trans("ShowAccoutingJournal");
+				$label=$langs->trans("ShowAccountingJournal");
 				$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';

@@ -86,7 +86,6 @@ if (isset($_POST["confirmecreation"]))
 	if ($testremplissage != "ok" || (!$toutchoix)) {
 		setEventMessages($langs->trans("ErrorOpenSurveyOneChoice"), null, 'errors');
 	} else {
-
 		//format du sondage AUTRE
 		$_SESSION["formatsondage"]="A";
 

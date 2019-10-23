@@ -163,7 +163,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 			print (! empty($line->description) && $line->description!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->description):'';
 		}
 	}
-		
+
 	if ($user->rights->fournisseur->lire && $line->fk_fournprice > 0)
 	{
     require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
@@ -359,7 +359,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 	<?php
     }
 
-    if($action == 'selectlines'){ ?>
+    if ($action == 'selectlines') { ?>
 		<td class="linecolcheck center"><input type="checkbox" class="linecheckbox" name="line_checkbox[<?php echo $i+1; ?>]" value="<?php echo $line->id; ?>" ></td>
 	<?php } ?>
 
@@ -367,9 +367,9 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 
 <?php
 //Line extrafield
-if (!empty($extrafieldsline))
+if (!empty($extrafields))
 {
-	print $line->showOptionals($extrafieldsline, 'view', array('style'=>'class="drag drop oddeven"','colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+	print $line->showOptionals($extrafields, 'view', array('style'=>'class="drag drop oddeven"','colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
 }
 ?>
 

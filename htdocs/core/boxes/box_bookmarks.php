@@ -29,7 +29,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 class box_bookmarks extends ModeleBoxes
 {
     public $boxcode="bookmarks";
-    public $boximg="object_bookmark";
+    public $boximg="bookmark";
     public $boxlabel="BoxMyLastBookmarks";
     public $depends = array("bookmark");
 
@@ -77,12 +77,12 @@ class box_bookmarks extends ModeleBoxes
             'sublink' => DOL_URL_ROOT.'/bookmarks/list.php',
         );
         if ($user->rights->bookmark->creer) {
-			$this->info_box_head['subpicto']='object_bookmark';
+			$this->info_box_head['subpicto']='bookmark';
 			$this->info_box_head['subtext']=$langs->trans("BookmarksManagement");
 		}
 		else
 		{
-			$this->info_box_head['subpicto']='object_bookmark';
+			$this->info_box_head['subpicto']='bookmark';
 			$this->info_box_head['subtext']=$langs->trans("ListOfBookmark");
 		}
 

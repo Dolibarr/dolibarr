@@ -45,11 +45,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("errors","admin","mails","languages"));
 
-$action     = GETPOST('action', 'alpha')?GETPOST('action', 'alpha'):'view';
-$confirm    = GETPOST('confirm', 'alpha');												// Result of a confirmation
+$action = GETPOST('action', 'alpha')?GETPOST('action', 'alpha'):'view';
+$confirm = GETPOST('confirm', 'alpha');												// Result of a confirmation
 
-$id			= GETPOST('id', 'int');
-$rowid		= GETPOST('rowid', 'alpha');
+$id = GETPOST('id', 'int');
+$rowid = GETPOST('rowid', 'alpha');
 $search_label=GETPOST('search_label', 'alphanohtml');									// Must allow value like 'Abc Def' or '(MyTemplateName)'
 $search_type_template=GETPOST('search_type_template', 'alpha');
 $search_lang=GETPOST('search_lang', 'alpha');
@@ -327,7 +327,7 @@ if (empty($reshook))
                 $i++;
             }
             $sql.= " WHERE ".$rowidcol." = '".$rowid."'";
-//print $sql;exit;
+            //print $sql;exit;
             dol_syslog("actionmodify", LOG_DEBUG);
             //print $sql;
             $resql = $db->query($sql);

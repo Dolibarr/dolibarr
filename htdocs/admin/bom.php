@@ -255,7 +255,6 @@ foreach ($dirmodels as $reldir)
 
 					if ($module->isEnabled())
 					{
-
 						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
 						print $module->info();
 						print '</td>';
@@ -381,7 +380,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
                     {
                         if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
                         {
-
                         	if (file_exists($dir.'/'.$file))
                         	{
                         		$name = substr($file, 4, dol_strlen($file) -16);
@@ -432,7 +430,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
     	                            }
     	                            print '</td>';
 
-    	                           // Info
+    	                            // Info
     		    					$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
     					    		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
     			                    if ($module->type == 'pdf')

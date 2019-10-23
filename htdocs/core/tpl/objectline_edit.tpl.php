@@ -78,7 +78,6 @@ $coldisplay=0;
 	<input type="hidden" id="fk_parent_line" name="fk_parent_line" value="<?php echo $line->fk_parent_line; ?>">
 
 	<?php if ($line->fk_product > 0) { ?>
-
 		<?php
 		if ($line->fk_parent_line > 0) echo img_picto('', 'rightarrow');
 		?>
@@ -218,10 +217,10 @@ $coldisplay=0;
         <td class="margininfos right">
 			<!-- For predef product -->
 			<?php if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) { ?>
-			<select id="fournprice_predef" name="fournprice_predef" class="flat right" style="display: none;"></select>
+			<select id="fournprice_predef" name="fournprice_predef" class="flat minwidth75imp right" style="display: none;"></select>
 			<?php } ?>
 			<!-- For free product -->
-			<input class="flat right" type="text" size="5" id="buying_price" name="buying_price" class="hideobject" value="<?php echo price($line->pa_ht, 0, '', 0); ?>">
+			<input class="flat maxwidth75 right" type="text" id="buying_price" name="buying_price" class="hideobject" value="<?php echo price($line->pa_ht, 0, '', 0); ?>">
 		</td>
 		<?php }
 
@@ -233,7 +232,7 @@ $coldisplay=0;
 				if ($line->subprice < 0)
 					echo '<td class="right nowrap margininfos">'.$margin_rate.'<span class="hideonsmartphone">%</span></td>';
 				else
-					echo '<td class="right nowrap margininfos"><input class="right" type="text" size="2" name="np_marginRate" value="'.$margin_rate.'"><span class="hideonsmartphone">%</span></td>';
+					echo '<td class="right nowrap margininfos"><input class="right maxwidth75" type="text" name="np_marginRate" value="'.$margin_rate.'"><span class="hideonsmartphone">%</span></td>';
 				$coldisplay++;
 			}
 			elseif (! empty($conf->global->DISPLAY_MARK_RATES))
@@ -243,7 +242,7 @@ $coldisplay=0;
 				if ($line->subprice < 0)
 					echo '<td class="right nowrap margininfos">'.$mark_rate.'<span class="hideonsmartphone">%</span></td>';
 				else
-					echo '<td class="right nowrap margininfos"><input class="right" type="text" size="2" name="np_markRate" value="'.$mark_rate.'"><span class="hideonsmartphone">%</span></td>';
+					echo '<td class="right nowrap margininfos"><input class="right maxwidth75" type="text" name="np_markRate" value="'.$mark_rate.'"><span class="hideonsmartphone">%</span></td>';
 				$coldisplay++;
 			}
 		}
@@ -259,9 +258,9 @@ $coldisplay=0;
 
 <?php
 //Line extrafield
-if (!empty($extrafieldsline))
+if (!empty($extrafields))
 {
-	print $line->showOptionals($extrafieldsline, 'edit', array('class'=>'tredited', 'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+	print $line->showOptionals($extrafields, 'edit', array('class'=>'tredited', 'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
 }
 ?>
 

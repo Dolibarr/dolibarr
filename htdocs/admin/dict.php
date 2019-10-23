@@ -551,27 +551,27 @@ $elementList = array();
 $sourceList=array();
 if ($id == 11)
 {
-	$elementList = array(
-			''				    => '',
-            'societe'           => $langs->trans('ThirdParty'),
-//			'proposal'          => $langs->trans('Proposal'),
-//			'order'             => $langs->trans('Order'),
-//			'invoice'           => $langs->trans('Bill'),
-			'supplier_proposal' => $langs->trans('SupplierProposal'),
-			'order_supplier'    => $langs->trans('SupplierOrder'),
-			'invoice_supplier'  => $langs->trans('SupplierBill'),
-//			'intervention'      => $langs->trans('InterventionCard'),
-//			'contract'          => $langs->trans('Contract'),
-			'project'           => $langs->trans('Project'),
-			'project_task'      => $langs->trans('Task'),
-			'agenda'			=> $langs->trans('Agenda'),
-			'dolresource'       => $langs->trans('Resource'),
-			// old deprecated
-			'propal'            => $langs->trans('Proposal'),
-			'commande'          => $langs->trans('Order'),
-			'facture'           => $langs->trans('Bill'),
-			'fichinter'         => $langs->trans('InterventionCard'),
-			'contrat'           => $langs->trans('Contract')
+    $elementList = array(
+        '' => '',
+        'societe' => $langs->trans('ThirdParty'),
+        // 'proposal' => $langs->trans('Proposal'),
+        // 'order' => $langs->trans('Order'),
+        // 'invoice' => $langs->trans('Bill'),
+        'supplier_proposal' => $langs->trans('SupplierProposal'),
+        'order_supplier' => $langs->trans('SupplierOrder'),
+        'invoice_supplier' => $langs->trans('SupplierBill'),
+        // 'intervention' => $langs->trans('InterventionCard'),
+        // 'contract' => $langs->trans('Contract'),
+        'project' => $langs->trans('Project'),
+        'project_task' => $langs->trans('Task'),
+        'agenda' => $langs->trans('Agenda'),
+        'dolresource' => $langs->trans('Resource'),
+        // old deprecated
+        'propal' => $langs->trans('Proposal'),
+        'commande' => $langs->trans('Order'),
+        'facture' => $langs->trans('Bill'),
+        'fichinter' => $langs->trans('InterventionCard'),
+        'contrat' => $langs->trans('Contract'),
 	);
 	if (! empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) $elementList["societe"] = $langs->trans('ThirdParty');
 
@@ -589,13 +589,13 @@ $localtax_typeList = array();
 if ($id == 10)
 {
 	$localtax_typeList = array(
-			"0" => $langs->trans("No"),
-			"1" => $langs->trans("Yes").' ('.$langs->trans("Type")." 1)",	//$langs->trans("%ageOnAllWithoutVAT"),
-			"2" => $langs->trans("Yes").' ('.$langs->trans("Type")." 2)",	//$langs->trans("%ageOnAllBeforeVAT"),
-			"3" => $langs->trans("Yes").' ('.$langs->trans("Type")." 3)",	//$langs->trans("%ageOnProductsWithoutVAT"),
-			"4" => $langs->trans("Yes").' ('.$langs->trans("Type")." 4)",	//$langs->trans("%ageOnProductsBeforeVAT"),
-			"5" => $langs->trans("Yes").' ('.$langs->trans("Type")." 5)",	//$langs->trans("%ageOnServiceWithoutVAT"),
-			"6" => $langs->trans("Yes").' ('.$langs->trans("Type")." 6)"	//$langs->trans("%ageOnServiceBeforeVAT"),
+		"0" => $langs->trans("No"),
+		"1" => $langs->trans("Yes").' ('.$langs->trans("Type")." 1)",	//$langs->trans("%ageOnAllWithoutVAT"),
+		"2" => $langs->trans("Yes").' ('.$langs->trans("Type")." 2)",	//$langs->trans("%ageOnAllBeforeVAT"),
+		"3" => $langs->trans("Yes").' ('.$langs->trans("Type")." 3)",	//$langs->trans("%ageOnProductsWithoutVAT"),
+		"4" => $langs->trans("Yes").' ('.$langs->trans("Type")." 4)",	//$langs->trans("%ageOnProductsBeforeVAT"),
+		"5" => $langs->trans("Yes").' ('.$langs->trans("Type")." 5)",	//$langs->trans("%ageOnServiceWithoutVAT"),
+		"6" => $langs->trans("Yes").' ('.$langs->trans("Type")." 6)"	//$langs->trans("%ageOnServiceBeforeVAT"),
 	);
 }
 
@@ -636,8 +636,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         	&& (! in_array($listfield[$f], array('decalage','module','accountancy_code','accountancy_code_sell','accountancy_code_buy','tracking'))  // Fields that are not mandatory
         	&& (! ($id == 10 && $listfield[$f] == 'code')) // Code is mandatory fir table 10
         	)
-		)
-        {
+		) {
             $ok=0;
             $fieldnamekey=$listfield[$f];
             // We take translate key of field
@@ -1510,6 +1509,10 @@ if ($id)
                                 $key=$langs->trans("PaymentType".strtoupper($obj->code));
                                 $valuetoshow=($obj->code && $key != "PaymentType".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
                             }
+                            elseif ($fieldlist[$field]=='type' && $tabname[$id]==MAIN_DB_PREFIX.'c_paiement') {
+                            	$payment_type_list = array(0=>$langs->trans('PaymentTypeCustomer'), 1=>$langs->trans('PaymentTypeSupplier'), 2=>$langs->trans('PaymentTypeBoth'));
+                            	$valuetoshow = $payment_type_list[$valuetoshow];
+                            }
                             elseif ($fieldlist[$field]=='label' && $tabname[$id]==MAIN_DB_PREFIX.'c_input_reason') {
                                 $key=$langs->trans("DemandReasonType".strtoupper($obj->code));
                                 $valuetoshow=($obj->code && $key != "DemandReasonType".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
@@ -1558,18 +1561,18 @@ if ($id)
 							    $class="center";
 							}
 							elseif ($fieldlist[$field]=='localtax1_type') {
-                              if ($obj->localtax1 != 0)
-							    $valuetoshow=$localtax_typeList[$valuetoshow];
-							  else
-							    $valuetoshow = '';
-							  $align="center";
+                                if ($obj->localtax1 != 0)
+							        $valuetoshow=$localtax_typeList[$valuetoshow];
+							    else
+							        $valuetoshow = '';
+							    $align="center";
 							}
 							elseif ($fieldlist[$field]=='localtax2_type') {
-							 if ($obj->localtax2 != 0)
-							    $valuetoshow=$localtax_typeList[$valuetoshow];
-							  else
-							    $valuetoshow = '';
-							  $align="center";
+							    if ($obj->localtax2 != 0)
+							        $valuetoshow=$localtax_typeList[$valuetoshow];
+							    else
+							        $valuetoshow = '';
+							    $align="center";
 							}
 							elseif ($fieldlist[$field]=='taux') {
                                 $valuetoshow = price($valuetoshow, 0, $langs, 0, 0);
@@ -1724,7 +1727,6 @@ else
         {
         	if ($showemptyline)
         	{
-
         		print '<tr class="oddeven"><td width="50%">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
         		$showemptyline=0;
         	}
@@ -1874,6 +1876,13 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			$type = (! empty($obj->type)?$obj->type:'user'); // Check if type is different of 'user' (external module)
 			print '<td>';
 			print $type.'<input type="hidden" name="type" value="'.$type.'">';
+			print '</td>';
+		}
+		elseif ($fieldlist[$field] == 'type' && $tabname == MAIN_DB_PREFIX.'c_paiement')
+		{
+			print '<td>';
+			$select_list = array(0=>$langs->trans('PaymentTypeCustomer'), 1=>$langs->trans('PaymentTypeSupplier'), 2=>$langs->trans('PaymentTypeBoth'));
+			print $form->selectarray($fieldlist[$field], $select_list, (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'2'));
 			print '</td>';
 		}
 		elseif ($fieldlist[$field] == 'recuperableonly' || $fieldlist[$field] == 'type_cdr' || $fieldlist[$field] == 'deductible' || $fieldlist[$field] == 'category_type') {

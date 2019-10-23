@@ -163,7 +163,6 @@ if (! empty($conf->banque->enabled))
 
 if (! empty($conf->stock->enabled))
 {
-
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskDoNotDecreaseStock").'</td>';	// Force warehouse (this is not a default value)
 	print '<td>';
 	if (empty($conf->productbatch->enabled)) {

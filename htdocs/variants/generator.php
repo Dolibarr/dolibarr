@@ -84,7 +84,6 @@ if ($_POST)
 	}
 
 	if ($sanitized_values) {
-
 		require DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		$adapted_values = array();
@@ -106,7 +105,6 @@ if ($_POST)
 
 		//Current combinations will be deleted
 		if ($delete_prev_comb_res > 0) {
-
 			$res = 1;
 
 			$cartesianarray = cartesianArray($adapted_values);
@@ -181,7 +179,7 @@ if (! empty($id) || ! empty($ref)) {
 	<script>
 
 		dictionary_attr = <?php echo json_encode($dictionary_attr) ?>;
-		weight_units = '<?php echo measuring_units_string($object->weight_units, 'weight') ?>';
+		weight_units = '<?php echo measuringUnitString(0, 'weight', $object->weight_units) ?>';
 		attr_selected = {};
 		percentage_variation = jQuery('input#price_var_percent').prop('checked');
 

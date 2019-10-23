@@ -45,7 +45,7 @@ $diroutputmassaction=$conf->asset->dir_output . '/temp/massgeneration/'.$user->i
 $hookmanager->initHooks(array('assetcard'));     // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
@@ -63,9 +63,6 @@ if (empty($action) && empty($id) && empty($ref)) $action='view';
 //if ($user->societe_id > 0) access_forbidden();
 //if ($user->societe_id > 0) $socid = $user->societe_id;
 //$result = restrictedArea($user, 'asset', $id);
-
-// fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once.
@@ -207,7 +204,7 @@ if (($id || $ref) && $action == 'edit')
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
-	$res = $object->fetch_optionals($object->id, $extralabels);
+	$res = $object->fetch_optionals($object->id);
 
 	$head = asset_prepare_head($object);
 	dol_fiche_head($head, 'card', $langs->trans("Asset"), -1, 'generic');

@@ -5,7 +5,7 @@
 // Begin       : 2002-08-03
 // Last Update : 2015-04-28
 // Author      : Nicola Asuni - Tecnick.com LTD - www.tecnick.com - info@tecnick.com
-// License     : GNU-LGPL v3 (https://www.gnu.org/copyleft/lesser.html)
+// License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
 // Copyright (C) 2002-2015 Nicola Asuni - Tecnick.com LTD
 //
@@ -55,7 +55,7 @@ class TCPDF_STATIC {
 	 * Current TCPDF version.
 	 * @private static
 	 */
-	private static $tcpdf_version = '6.2.26';
+	private static $tcpdf_version = '6.3.2';
 
 	/**
 	 * String alias for total number of pages.
@@ -1808,8 +1808,8 @@ class TCPDF_STATIC {
 	/**
 	 * Wrapper to use fopen only with local files
 	 * @param filename (string) Name of the file to open
-	 * @param $mode (string)
-	 * @return Returns a file pointer resource on success, or FALSE on error.
+	 * @param $mode (string) 
+	 * @return Returns a file pointer resource on success, or FALSE on error.  
 	 * @public static
 	 */
 	public static function fopenLocal($filename, $mode) {
@@ -1850,8 +1850,8 @@ class TCPDF_STATIC {
 	 * Wrapper for file_exists.
 	 * Checks whether a file or directory exists.
 	 * Only allows some protocols and local files.
-	 * @param filename (string) Path to the file or directory.
-	 * @return Returns TRUE if the file or directory specified by filename exists; FALSE otherwise.
+	 * @param filename (string) Path to the file or directory. 
+	 * @return Returns TRUE if the file or directory specified by filename exists; FALSE otherwise.  
 	 * @public static
 	 */
 	public static function file_exists($filename) {
@@ -1868,7 +1868,7 @@ class TCPDF_STATIC {
 	 * Reads entire file into a string.
 	 * The file can be also an URL.
 	 * @param $file (string) Name of the file or URL to read.
-	 * @return The function returns the read data or FALSE on failure.
+	 * @return The function returns the read data or FALSE on failure. 
 	 * @author Nicola Asuni
 	 * @since 6.0.025
 	 * @public static
@@ -1926,10 +1926,10 @@ class TCPDF_STATIC {
 		$alt = array_unique($alt);
 		foreach ($alt as $path) {
 			if (!self::file_exists($path)) {
-				return false;
+				continue;
 			}
 			$ret = @file_get_contents($path);
-			if ($ret !== false) {
+			if ( $ret != false ) {
 			    return $ret;
 			}
 			// try to use CURL for URLs
@@ -2098,7 +2098,7 @@ class TCPDF_STATIC {
 		return $a['i'];
 	}
 
-
+	
 	/**
 	 * Array of page formats
 	 * measures are calculated in this way: (inches * 72) or (millimeters * 72 / 25.4)

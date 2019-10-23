@@ -70,6 +70,7 @@ if ($sortfield == "")
 	$sortfield="f.datec";
 
 $object = new FichinterRec($db);
+$extrafields = new ExtraFields($db);
 
 
 $arrayfields=array(
@@ -157,12 +158,10 @@ if ($action == 'add') {
 	// on récupère les enregistrements
 	$object->fetch($id);
 
-
 	// on transfert les données de l'un vers l'autre
 	if ($object->socid > 0) {
 		$newinter->socid=$object->socid;
-		$newinter->fk_projet=$object->fk_projet;
-		$newinter->fk_project=$object->fk_projet;
+		$newinter->fk_project=$object->fk_project;
 		$newinter->fk_contrat=$object->fk_contrat;
 	} else {
 		$newinter->socid=GETPOST("socid");
@@ -176,8 +175,8 @@ if ($action == 'add') {
 	$newinter->note_public=$object->note_public;
 
 	// on créer un nouvelle intervention
-	$extrafields = new ExtraFields($db);
-	$extralabels = $extrafields->fetch_name_optionals_label($newinter->table_element);
+	$extrafields->fetch_name_optionals_label($newinter->table_element);
+
 	$array_options = $extrafields->getOptionalsFromPost($newinter->table_element);
 	$newinter->array_options = $array_options;
 
@@ -479,7 +478,7 @@ if ($action == 'create') {
 				$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 				if ($user->rights->ficheinter->creer) {
 					if ($action != 'classify') {
-						$morehtmlref.='<a href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">';
+						$morehtmlref.='<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">';
 						$morehtmlref.=img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 					}
 					if ($action == 'classify') {
@@ -691,7 +690,6 @@ if ($action == 'create') {
 			$num = count($object->lines);
 			$i = 0;
 			while ($i < $num) {
-
 				// Show product and description
 				if (isset($object->lines[$i]->product_type))
 					$type=$object->lines[$i]->product_type;

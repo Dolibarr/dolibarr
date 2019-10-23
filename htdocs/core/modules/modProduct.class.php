@@ -86,6 +86,13 @@ class modProduct extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
+		$this->const[$r][0] = "PRODUCT_PRICE_UNIQ";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "1";
+		$this->const[$r][3] = 'pricing rule by default';
+		$this->const[$r][4] = 0;
+		$r++;
+
 		/*$this->const[$r][0] = "PRODUCT_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "standard";
@@ -168,16 +175,25 @@ class modProduct extends DolibarrModules
 		$this->export_label[$r]="Products";	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_permission[$r]=array(array("produit","export"));
 		$this->export_fields_array[$r]=array(
-			'p.rowid'=>"Id",'p.ref'=>"Ref",'p.label'=>"Label",'p.description'=>"Description",'p.url'=>"PublicUrl",'p.accountancy_code_sell'=>"ProductAccountancySellCode",
-            'p.accountancy_code_sell_intra'=>"ProductAccountancySellIntraCode", 'p.accountancy_code_sell_export'=>"ProductAccountancySellExportCode",
-			'p.accountancy_code_buy'=>"ProductAccountancyBuyCode",'p.note'=>"Note",'p.length'=>"Length",'p.width'=>"Width",'p.height'=>"Height",'p.surface'=>"Surface",
-			'p.volume'=>"Volume",'p.weight'=>"Weight",'p.customcode'=>'CustomCode','p.price_base_type'=>"PriceBase",'p.price'=>"UnitPriceHT",'p.price_ttc'=>"UnitPriceTTC",
-			'p.tva_tx'=>'VATRate','p.tosell'=>"OnSell",'p.tobuy'=>"OnBuy",'p.datec'=>'DateCreation','p.tms'=>'DateModification'
+			'p.rowid'=>"Id",'p.ref'=>"Ref",'p.label'=>"Label",
+			'p.fk_product_type'=>'Type','p.tosell'=>"OnSell",'p.tobuy'=>"OnBuy",
+			'p.description'=>"Description",'p.url'=>"PublicUrl",
+			'p.customcode'=>'CustomCode','p.fk_country'=>'IDCountry',
+			'p.accountancy_code_sell'=>"ProductAccountancySellCode", 'p.accountancy_code_sell_intra'=>"ProductAccountancySellIntraCode",
+			'p.accountancy_code_sell_export'=>"ProductAccountancySellExportCode", 'p.accountancy_code_buy'=>"ProductAccountancyBuyCode",
+			'p.note'=>"NotePrivate",'p.note_public'=>'NotePublic',
+			'p.weight'=>"Weight", 'p.weight_units'=>"WeightUnits", 'p.length'=>"Length", 'p.width'=>"Width", 'p.height'=>"Height", 'p.length_units'=>"SizeUnits",
+			'p.surface'=>"Surface", 'p.surface_units'=>"SurfaceUnits", 'p.volume'=>"Volume", 'p.volume_units'=>"VolumeUnits",
+			'p.duration'=>"Duration",
+			'p.finished' => 'Nature',
+			'p.price_base_type'=>"PriceBase",'p.price'=>"UnitPriceHT",'p.price_ttc'=>"UnitPriceTTC",
+			'p.tva_tx'=>'VATRate',
+			'p.datec'=>'DateCreation','p.tms'=>'DateModification'
 		);
 		if (is_object($mysoc) && $mysoc->useNPR()) $this->export_fields_array[$r]['p.recuperableonly']='NPR';
+		if (! empty($conf->fournisseur->enabled) || !empty($conf->margin->enabled)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r], array('p.cost_price'=>'CostPrice'));
 		if (! empty($conf->stock->enabled)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r], array('p.stock'=>'Stock','p.seuil_stock_alerte'=>'StockLimit','p.desiredstock'=>'DesiredStock','p.pmp'=>'PMPValue'));
 		if (! empty($conf->barcode->enabled)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r], array('p.barcode'=>'BarCode'));
-		if (! empty($conf->fournisseur->enabled) || !empty($conf->margin->enabled)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r], array('p.cost_price'=>'CostPrice'));
 		$keyforselect='product'; $keyforelement='product'; $keyforaliasextra='extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		if (! empty($conf->fournisseur->enabled)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r], array('s.nom'=>'Supplier','pf.ref_fourn'=>'SupplierRef','pf.quantity'=>'QtyMin','pf.remise_percent'=>'DiscountQtyMin','pf.unitprice'=>'BuyingPrice','pf.delivery_time_days'=>'NbDaysToDelivery'));
@@ -185,11 +201,17 @@ class modProduct extends DolibarrModules
 		if (! empty($conf->global->MAIN_MULTILANGS)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r], array('l.lang'=>'Language', 'l.label'=>'TranslatedLabel','l.description'=>'TranslatedDescription','l.note'=>'TranslatedNote'));
 		if (! empty($conf->global->PRODUCT_USE_UNITS)) $this->export_fields_array[$r]['p.fk_unit'] = 'Unit';
 		$this->export_TypeFields_array[$r]=array(
-			'p.ref'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.url'=>"Text",'p.accountancy_code_sell'=>"Text",
+			'p.ref'=>"Text",'p.label'=>"Text",
+			'p.fk_product_type'=>'Numeric','p.tosell'=>"Boolean",'p.tobuy'=>"Boolean",
+			'p.description'=>"Text",'p.url'=>"Text",'p.accountancy_code_sell'=>"Text",
             'p.accountancy_code_sell_intra'=>"Text",'p.accountancy_code_sell_export'=>"Text",'p.accountancy_code_buy'=>"Text",
-			'p.note'=>"Text",'p.length'=>"Numeric",'p.width'=>"Numeric",'p.height'=>"Numeric",'p.surface'=>"Numeric",'p.volume'=>"Numeric",'p.weight'=>"Numeric",
-			'p.customcode'=>'Text','p.price_base_type'=>"Text",'p.price'=>"Numeric",'p.price_ttc'=>"Numeric",'p.tva_tx'=>'Numeric','p.tosell'=>"Boolean",
-			'p.tobuy'=>"Boolean",'p.datec'=>'Date','p.tms'=>'Date'
+			'p.note'=>"Text",'p.note_public'=>"Text",
+			'p.weight'=>"Numeric",'p.length'=>"Numeric",'p.width'=>"Numeric",'p.height'=>"Numeric",'p.surface'=>"Numeric",'p.volume'=>"Numeric",
+			'p.customcode'=>'Text',
+			'p.duration'=>"Text",
+			'p.finished' => 'Numeric',
+			'p.price_base_type'=>"Text",'p.price'=>"Numeric",'p.price_ttc'=>"Numeric",'p.tva_tx'=>'Numeric',
+			'p.datec'=>'Date','p.tms'=>'Date'
 		);
 		if (! empty($conf->stock->enabled)) $this->export_TypeFields_array[$r]=array_merge($this->export_TypeFields_array[$r], array('p.stock'=>'Numeric','p.seuil_stock_alerte'=>'Numeric','p.desiredstock'=>'Numeric','p.pmp'=>'Numeric','p.cost_price'=>'Numeric'));
 		if (! empty($conf->barcode->enabled)) $this->export_TypeFields_array[$r]=array_merge($this->export_TypeFields_array[$r], array('p.barcode'=>'Text'));
@@ -292,8 +314,9 @@ class modProduct extends DolibarrModules
     		$this->export_fields_array[$r]=array(
 				'p.rowid'=>"Id",'p.ref'=>"Ref",'p.label'=>"Label",'p.description'=>"Description",'p.url'=>"PublicUrl",
 				'p.accountancy_code_sell'=>"ProductAccountancySellCode",'p.accountancy_code_sell_intra'=>"ProductAccountancySellIntraCode",
-                'p.accountancy_code_sell_export'=>"ProductAccountancySellExportCode",'p.accountancy_code_buy'=>"ProductAccountancyBuyCode",'p.note'=>"Note",
-				'p.length'=>"Length",'p.surface'=>"Surface",'p.volume'=>"Volume",'p.weight'=>"Weight",'p.customcode'=>'CustomCode',
+                'p.accountancy_code_sell_export'=>"ProductAccountancySellExportCode",'p.accountancy_code_buy'=>"ProductAccountancyBuyCode",
+    			'p.note'=>"NotePrivate",'p.note_public'=>'NotePublic',
+    			'p.weight'=>"Weight",'p.length'=>"Length",'p.surface'=>"Surface",'p.volume'=>"Volume",'p.customcode'=>'CustomCode',
 				'p.price_base_type'=>"PriceBase",'p.price'=>"UnitPriceHT",'p.price_ttc'=>"UnitPriceTTC",'p.tva_tx'=>'VATRate','p.tosell'=>"OnSell",
 				'p.tobuy'=>"OnBuy",'p.datec'=>'DateCreation','p.tms'=>'DateModification'
 			);
@@ -301,9 +324,10 @@ class modProduct extends DolibarrModules
     		if (! empty($conf->barcode->enabled)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r], array('p.barcode'=>'BarCode'));
     		$this->export_fields_array[$r]=array_merge($this->export_fields_array[$r], array('pa.qty'=>'Qty','pa.incdec'=>'ComposedProductIncDecStock'));
     		$this->export_TypeFields_array[$r]=array(
-				'p.ref'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.url'=>"Text",'p.accountancy_code_sell'=>"Text",
-                'p.accountancy_code_sell_intra'=>"Text",'p.accountancy_code_sell_export'=>"Text",'p.accountancy_code_buy'=>"Text",
-				'p.note'=>"Text",'p.length'=>"Numeric",'p.surface'=>"Numeric",'p.volume'=>"Numeric",'p.weight'=>"Numeric",'p.customcode'=>'Text',
+				'p.ref'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.url'=>"Text",
+    			'p.accountancy_code_sell'=>"Text",'p.accountancy_code_sell_intra'=>"Text",'p.accountancy_code_sell_export'=>"Text",'p.accountancy_code_buy'=>"Text",
+    			'p.note'=>"Text",'p.note_public'=>"Text",
+    			'p.weight'=>"Numeric",'p.length'=>"Numeric",'p.surface'=>"Numeric",'p.volume'=>"Numeric",'p.customcode'=>'Text',
 				'p.price_base_type'=>"Text",'p.price'=>"Numeric",'p.price_ttc'=>"Numeric",'p.tva_tx'=>'Numeric','p.tosell'=>"Boolean",'p.tobuy'=>"Boolean",
 				'p.datec'=>'Date','p.tms'=>'Date'
 			);
@@ -346,43 +370,44 @@ class modProduct extends DolibarrModules
 		$this->import_entities_array[$r]=array();		// We define here only fields that use a different icon from the one defined in import_icon
 		$this->import_tables_array[$r]=array('p'=>MAIN_DB_PREFIX.'product','extra'=>MAIN_DB_PREFIX.'product_extrafields');
 		$this->import_tables_creator_array[$r]=array('p'=>'fk_user_author');	// Fields to store import user id
-		$this->import_fields_array[$r]=array(//field order as per structure of table llx_product
+		$this->import_fields_array[$r]=array(
 	        'p.ref' => "Ref*",
-            'p.datec' => 'DateCreation',
             'p.label' => "Label*",
-            'p.description' => "Description",
-            'p.note_public' => "PublicNote",//public note
-            'p.note' => "PrivateNote",//private note
-            'p.customcode' => 'CustomCode',
-            'p.price' => "SellingPriceHT",//without
-            'p.price_min' => "MinPrice",
-            'p.price_ttc' => "SellingPriceTTC",//with tax
-            'p.price_min_ttc' => "SellingMinPriceTTC",
-            'p.price_base_type' => "PriceBaseType",//price base: with-tax (TTC) or without (HT) tax. Displays accordingly in Product card
-            'p.cost_price' => "CostPrice",
-            'p.tva_tx' => 'VATRate',
-            'p.tosell' => "OnSell*",
-            'p.tobuy' => "OnBuy*",
-            'p.fk_product_type' => "Type*",
-            'p.duration' => "Duration",///duration of service
-            'p.url' => "PublicUrl",
+			'p.fk_product_type' => "Type*",
+			'p.tosell' => "OnSell*",
+			'p.tobuy' => "OnBuy*",
+			'p.description' => "Description",
+			'p.url' => "PublicUrl",
+			'p.customcode' => 'CustomCode',
+            'p.fk_country' => 'CountryCode',
             'p.accountancy_code_sell' => "ProductAccountancySellCode",
             'p.accountancy_code_sell_intra' => "ProductAccountancySellIntraCode",
             'p.accountancy_code_sell_export' => "ProductAccountancySellExportCode",
             'p.accountancy_code_buy' => "ProductAccountancyBuyCode",
-            'p.weight' => "Weight",
+			'p.note_public' => "NotePublic",
+			'p.note' => "NotePrivate",
+			'p.weight' => "Weight",
             'p.weight_units' => "WeightUnits",
             'p.length' => "Length",
 			'p.length_units' => "LengthUnit",
             'p.width' => "Width",
-			'p.width_units' => "VolumeUnits",
+			'p.width_units' => "WidthUnits",
             'p.height' => "Height",
             'p.height_units' => "HeightUnit",
             'p.surface' => "Surface",
             'p.surface_units' => "SurfaceUnit",
             'p.volume' => "Volume",
 			'p.volume_units' => "VolumeUnits",
-            'p.finished' => 'Nature',
+			'p.duration' => "Duration",//duration of service
+			'p.finished' => 'Nature',
+			'p.price' => "SellingPriceHT",//without
+			'p.price_min' => "MinPrice",
+			'p.price_ttc' => "SellingPriceTTC",//with tax
+			'p.price_min_ttc' => "SellingMinPriceTTC",
+			'p.price_base_type' => "PriceBaseType",//price base: with-tax (TTC) or without (HT) tax. Displays accordingly in Product card
+			'p.tva_tx' => 'VATRate',
+			'p.datec' => 'DateCreation',
+			'p.cost_price' => "CostPrice",
 		);
         if (!empty($conf->stock->enabled)) {//if Stock module enabled
             $this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array(
@@ -393,8 +418,8 @@ class modProduct extends DolibarrModules
         }
 
         $this->import_convertvalue_array[$r] = array(
-				'p.weight_units' => array(
-						'rule' => 'fetchidfromcodeunits',
+        	    'p.weight_units' => array(
+	        	    	'rule' => 'fetchscalefromcodeunits',			// Switch this to fetchidfromcodeunits when we will store id instead of scale in product table
 						'classfile' => '/core/class/cunits.class.php',
 						'class' => 'CUnits',
 						'method' => 'fetch',
@@ -402,7 +427,7 @@ class modProduct extends DolibarrModules
 						'dict' => 'DictionaryMeasuringUnits'
 				),
 				'p.length_units' => array(
-						'rule' => 'fetchidfromcodeunits',
+					'rule' => 'fetchscalefromcodeunits',				// Switch this to fetchidfromcodeunits when we will store id instead of scale in product table
 						'classfile' => '/core/class/cunits.class.php',
 						'class' => 'CUnits',
 						'method' => 'fetch',
@@ -410,7 +435,7 @@ class modProduct extends DolibarrModules
 						'dict' => 'DictionaryMeasuringUnits'
 				),
 				'p.width_units' => array(
-						'rule' => 'fetchidfromcodeunits',
+						'rule' => 'fetchscalefromcodeunits',			// Switch this to fetchidfromcodeunits when we will store id instead of scale in product table
 						'classfile' => '/core/class/cunits.class.php',
 						'class' => 'CUnits',
 						'method' => 'fetch',
@@ -418,7 +443,7 @@ class modProduct extends DolibarrModules
 						'dict' => 'DictionaryMeasuringUnits'
 				),
 				'p.height_units' => array(
-						'rule' => 'fetchidfromcodeunits',
+						'rule' => 'fetchscalefromcodeunits',			// Switch this to fetchidfromcodeunits when we will store id instead of scale in product table
 						'classfile' => '/core/class/cunits.class.php',
 						'class' => 'CUnits',
 						'method' => 'fetch',
@@ -426,7 +451,7 @@ class modProduct extends DolibarrModules
 						'dict' => 'DictionaryMeasuringUnits'
 				),
 				'p.surface_units' => array(
-						'rule' => 'fetchidfromcodeunits',
+						'rule' => 'fetchscalefromcodeunits',			// Switch this to fetchidfromcodeunits when we will store id instead of scale in product table
 						'classfile' => '/core/class/cunits.class.php',
 						'class' => 'CUnits',
 						'method' => 'fetch',
@@ -434,13 +459,20 @@ class modProduct extends DolibarrModules
 						'dict' => 'DictionaryMeasuringUnits'
 				),
 				'p.volume_units' => array(
-						'rule' => 'fetchidfromcodeunits',
+						'rule' => 'fetchscalefromcodeunits',			// Switch this to fetchidfromcodeunits when we will store id instead of scale in product table
 						'classfile' => '/core/class/cunits.class.php',
 						'class' => 'CUnits',
 						'method' => 'fetch',
 						'units' => 'volume',
 						'dict' => 'DictionaryMeasuringUnits'
-				)
+				),
+                'p.fk_country' => array(
+                    'rule' => 'fetchidfromcodeid',
+                    'classfile' => '/core/class/ccountry.class.php',
+                    'class' => 'Ccountry',
+                    'method' => 'fetch',
+                    'dict' => 'DictionaryCountry'
+                )
 		);
 
 		if (! empty($conf->fournisseur->enabled) || !empty($conf->margin->enabled)) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r], array('p.cost_price'=>'CostPrice'));
@@ -479,18 +511,19 @@ class modProduct extends DolibarrModules
 		// field order as per structure of table llx_product
 		$import_sample = array(
             'p.ref' => "PREF123456",
-            'p.datec' => 'formatted as '.dol_print_date(dol_now(), '%Y-%m-%d'),
+            'p.datec' => dol_print_date(dol_now(), '%Y-%m-%d'),
             'p.label' => "Product name in default language",
             'p.description' => "Product description in default language",
             'p.note_public' => "a public note (free text)",
             'p.note' => "a private note (free text)",
             'p.customcode' => 'customs code',
-            'p.price' => "price ex-vat eg. 100",
-			'p.price_min' => "price ex-vat eg. 100",
-            'p.price_ttc' => "price inc-vat eg. 110",
-			'p.price_min_ttc' => "price inc-vat eg. 110",
+            'p.fk_country' => 'FR',
+            'p.price' => "100",
+			'p.price_min' => "100",
+            'p.price_ttc' => "110",
+			'p.price_min_ttc' => "110",
             'p.price_base_type' => "HT (show/use price excl. tax) / TTC (show/use price incl. tax)",
-            'p.tva_tx' => 'tax rate eg: 10. Must match numerically one of the tax rates defined for your country',
+            'p.tva_tx' => '10',	// tax rate eg: 10. Must match numerically one of the tax rates defined for your country'
             'p.tosell' => "0 (not for sale to customer, eg. raw material) / 1 (for sale)",
             'p.tobuy' => "0 (not for purchase from supplier, eg. virtual product) / 1 (for purchase)",
             'p.fk_product_type' => "0 (product) / 1 (service)",
@@ -501,27 +534,27 @@ class modProduct extends DolibarrModules
             'p.accountancy_code_sell_export' => "",
             'p.accountancy_code_buy' => "",
             'p.weight' => "",
-			'p.weight_units' => 'use a unit of measure from the dictionary. g/Kg/T etc....matches field "Short Label" for unit type "weight" in table "' . MAIN_DB_PREFIX . 'c_units',
+			'p.weight_units' => 'kg',	// Use a unit of measure from the dictionary. g/Kg/T etc....matches field "Short label" for unit type "weight" in table "' . MAIN_DB_PREFIX . 'c_units',
             'p.length' => "",
-			'p.length_units' => 'use a unit of measure from the dictionary. m/cm/mm etc....matches field "Short Label" for unit type "size" in table "' . MAIN_DB_PREFIX . 'c_units',
+			'p.length_units' => 'm', 	// Use a unit of measure from the dictionary. m/cm/mm etc....matches field "Short label" for unit type "size" in table "' . MAIN_DB_PREFIX . 'c_units',
             'p.width' => "",
-			'p.width_units' => 'use a unit of measure from the dictionary. m/cm/mm etc....matches field "Short Label" for unit type "size" in table "' . MAIN_DB_PREFIX . 'c_units',
+			'p.width_units' => 'm',		// Use a unit of measure from the dictionary. m/cm/mm etc....matches field "Short label" for unit type "size" in table "' . MAIN_DB_PREFIX . 'c_units',
             'p.height' => "",
-			'p.height_units' => 'use a unit of measure from the dictionary. m/cm/mm etc....matches field "Short Label" for unit type "size" in table "' . MAIN_DB_PREFIX . 'c_units',
+			'p.height_units' => 'm',	// Use a unit of measure from the dictionary. m/cm/mm etc....matches field "Short label" for unit type "size" in table "' . MAIN_DB_PREFIX . 'c_units',
             'p.surface' => "",
-			'p.surface_units' => 'use a unit of measure from the dictionary. m2/cm2/mm2 etc....matches field "Short Label" for unit type "surface" in table "' . MAIN_DB_PREFIX . 'c_units',
+			'p.surface_units' => 'm2',	// Use a unit of measure from the dictionary. m2/cm2/mm2 etc....matches field "Short label" for unit type "surface" in table "' . MAIN_DB_PREFIX . 'c_units',
             'p.volume' => "",
-			'p.volume_units' => 'use a unit of measure from the dictionary. m3/cm3/mm3 etc....matches field "Short Label" for unit type "volume" in table "' . MAIN_DB_PREFIX . 'c_units',
+			'p.volume_units' => 'm3',	//Use a unit of measure from the dictionary. m3/cm3/mm3 etc....matches field "Short label" for unit type "volume" in table "' . MAIN_DB_PREFIX . 'c_units',
             'p.finished' => '0 (raw material) / 1 (finished goods)'
         );
         //clauses copied from import_fields_array
         if (!empty($conf->stock->enabled)) $import_sample = array_merge($import_sample, array(
-                'p.seuil_stock_alerte' => 'quantity for low-stock warning (empty for no warning)',
-                'p.pmp' => '0 (default)',
-                'p.desiredstock' => 'target quantity to maintain in stock (for replenishment feature)'
+                'p.seuil_stock_alerte' => '',
+                'p.pmp' => '0',
+                'p.desiredstock' => ''
             ));
-        if (! empty($conf->fournisseur->enabled) || !empty($conf->margin->enabled)) $import_sample=array_merge($import_sample, array('p.cost_price'=>'user-editable, used for margin calculations only'));
-        if (is_object($mysoc) && $mysoc->useNPR()) $import_sample=array_merge($import_sample, array('p.recuperableonly'=>'0 / 1 (French VAT NPR yes/no'));
+        if (! empty($conf->fournisseur->enabled) || !empty($conf->margin->enabled)) $import_sample=array_merge($import_sample, array('p.cost_price'=>'90'));
+        if (is_object($mysoc) && $mysoc->useNPR()) $import_sample=array_merge($import_sample, array('p.recuperableonly'=>'0'));
         if (is_object($mysoc) && $mysoc->useLocalTax(1)) $import_sample=array_merge($import_sample, array('p.localtax1_tx'=>'', 'p.localtax1_type'=>''));
         if (is_object($mysoc) && $mysoc->useLocalTax(2)) $import_sample=array_merge($import_sample, array('p.localtax2_tx'=>'', 'p.localtax2_type'=>''));
         if (! empty($conf->barcode->enabled)) $import_sample=array_merge($import_sample, array('p.barcode'=>''));
@@ -533,6 +566,7 @@ class modProduct extends DolibarrModules
                 )
             );
 
+            if (! is_array($this->import_convertvalue_array[$r])) $this->import_convertvalue_array[$r] = array();
 			$this->import_convertvalue_array[$r] = array_merge($this->import_convertvalue_array[$r], array(
 				'p.fk_unit' => array(
 					'rule' => 'fetchidfromcodeorlabel',
@@ -595,34 +629,34 @@ class modProduct extends DolibarrModules
 			$this->import_examplevalues_array[$r]=array(
                 'sp.fk_product' => "PRODUCT_REF or id:123456",
                 'sp.fk_soc' => "My Supplier",
-                'sp.ref_fourn' => "eg: XYZ-F123456",
+                'sp.ref_fourn' => "XYZ-F123456",
                 'sp.quantity' => "5",
-                'sp.tva_tx' => 'one of the defined rates eg. 21',
+                'sp.tva_tx' => '10',
 			    'sp.price'=>"50",
 			    'sp.unitprice'=>'50',
 			    'sp.remise_percent'=>'0',
 			    'sp.default_vat_code' => '',
-                'sp.delivery_time_days' => 'eg. 5',
+                'sp.delivery_time_days' => '5',
                 'sp.supplier_reputation' => 'FAVORITE / NOTTHGOOD / DONOTORDER'
 			);
             if (is_object($mysoc) && $mysoc->useNPR()) $this->import_examplevalues_array[$r]=array_merge($this->import_examplevalues_array[$r], array('sp.recuperableonly'=>''));
             if (is_object($mysoc) && $mysoc->useLocalTax(1)) $this->import_examplevalues_array[$r]=array_merge($this->import_examplevalues_array[$r], array('sp.localtax1_tx'=>'LT1', 'sp.localtax1_type'=>'LT1Type'));
             if (is_object($mysoc) && $mysoc->useLocalTax(2)) $this->import_examplevalues_array[$r]=array_merge($this->import_examplevalues_array[$r], array('sp.localtax2_tx'=>'LT2', 'sp.localtax2_type'=>'LT2Type'));
             $this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array(
-                'sp.price' => "eg. 50.00",
-                'sp.unitprice' => 'eg. 10',
+                'sp.price' => "50.00",
+                'sp.unitprice' => '10',
                 // TODO Make this field not required and calculate it from price and qty
-                'sp.remise_percent' => 'eg: 20'
+                'sp.remise_percent' => '20'
             ));
             if ($conf->multicurrency->enabled)
             {
                 $this->import_examplevalues_array[$r]=array_merge($this->import_examplevalues_array[$r], array(
                     'sp.fk_multicurrency'=>'eg: 2, rowid for code of multicurrency currency',
-                    'sp.multicurrency_code'=>'eg: GBP',
-                    'sp.multicurrency_tx'=>'currency rate eg: 1.12345',
-                    'sp.multicurrency_unitprice'=>'cost per unit in supplier currency',
+                    'sp.multicurrency_code'=>'GBP',
+                    'sp.multicurrency_tx'=>'1.12345',
+                    'sp.multicurrency_unitprice'=>'',
                     // TODO Make this field not required and calculate it from price and qty
-                    'sp.multicurrency_price'=>'cost for min quantity in supplier currency'
+                    'sp.multicurrency_price'=>''
                 ));
             }
 
@@ -652,8 +686,8 @@ class modProduct extends DolibarrModules
 			);
 			$this->import_examplevalues_array[$r]=array('pr.fk_product'=>"PRODUCT_REF or id:123456",
 				'pr.price_base_type'=>"HT (for excl tax) or TTC (for inc tax)",'pr.price_level'=>"1",
-				'pr.price'=>"100",'pr.price_ttc'=>"110",
-				'pr.price_min'=>"100",'pr.price_min_ttc'=>"110",
+				'pr.price'=>"100", 'pr.price_ttc'=>"110",
+				'pr.price_min'=>"100", 'pr.price_min_ttc'=>"110",
 				'pr.tva_tx'=>'20',
 			    'pr.recuperableonly'=>'0',
 				'pr.date_price'=>'2013-04-10');

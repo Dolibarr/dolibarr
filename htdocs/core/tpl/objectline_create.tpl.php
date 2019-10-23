@@ -38,7 +38,6 @@ if (empty($object) || ! is_object($object)) {
     exit;
 }
 
-
 $usemargins=0;
 if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element, array('facture','facturerec','propal','commande')))
 {
@@ -63,7 +62,7 @@ if (in_array($object->element, array('propal','commande','order','facture','fact
 
 // Lines for extrafield
 $objectline = null;
-if (!empty($extrafieldsline))
+if (!empty($extrafields))
 {
 	if ($this->table_element_line=='commandedet') {
 		$objectline = new OrderLine($this->db);
@@ -139,22 +138,20 @@ if ($nolinesbefore) {
 		print '<td class="linecolcycleref2 right"></td>';
 	}
     if (! empty($usemargins))
-
 	{
-		if (!empty($user->rights->margins->creer)) {
-		?>
-		<td class="margininfos linecolmargin1 right">
-		<?php
+		if (empty($user->rights->margins->creer)) {
+			$colspan++;
 		}
-		else $colspan++;
-
-		if ($conf->global->MARGIN_TYPE == "1")
-			echo $langs->trans('BuyingPrice');
-		else
-			echo $langs->trans('CostPrice');
-		echo '</td>';
-		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARGIN_RATES)) echo '<td class="margininfos linecolmargin2 right"><span class="np_marginRate">'.$langs->trans('MarginRate').'</span></td>';
-		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARK_RATES)) echo '<td class="margininfos linecolmargin2 right"><span class="np_markRate">'.$langs->trans('MarkRate').'</span></td>';
+		else {
+			print '<td class="margininfos linecolmargin1 right">';
+			if ($conf->global->MARGIN_TYPE == "1")
+				echo $langs->trans('BuyingPrice');
+			else
+				echo $langs->trans('CostPrice');
+			echo '</td>';
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES)) echo '<td class="margininfos linecolmargin2 right"><span class="np_marginRate">'.$langs->trans('MarginRate').'</span></td>';
+			if (! empty($conf->global->DISPLAY_MARK_RATES)) echo '<td class="margininfos linecolmargin2 right"><span class="np_markRate">'.$langs->trans('MarkRate').'</span></td>';
+		}
 	}
 	?>
 	<td class="linecoledit" colspan="<?php echo $colspan; ?>">&nbsp;</td>
@@ -248,14 +245,15 @@ if ($nolinesbefore) {
 
 		if (empty($senderissupplier))
 		{
+			$statustoshow = 1;
 			if (! empty($conf->global->ENTREPOT_EXTRA_STATUS))
 			{
 				// hide products in closed warehouse, but show products for internal transfer
-				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, -1, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth300', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'));
+				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth300', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'));
 			}
 			else
 			{
-				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, -1, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth300', 0, '', GETPOST('combinations', 'array'));
+				$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth300', 0, '', GETPOST('combinations', 'array'));
 			}
 
 			if (! empty($conf->global->MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_CUSTOMER_PRODUCTS))
@@ -340,7 +338,6 @@ if ($nolinesbefore) {
 
 
 	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) {
-
 		if (!empty($conf->variants->enabled)) {
 			echo '<div id="attributes_box"></div>';
 		}
@@ -439,20 +436,16 @@ if ($nolinesbefore) {
 	{
 		if (!empty($user->rights->margins->creer)) {
 		    $coldisplay++;
-		?>
-		<td class="nobottom margininfos linecolmargin right">
-			<!-- For predef product -->
-			<?php if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) { ?>
-			<select id="fournprice_predef" name="fournprice_predef" class="flat" style="display: none;"></select>
-			<?php } ?>
-			<!-- For free product -->
-			<input type="text" size="5" id="buying_price" name="buying_price" class="flat right" value="<?php echo (isset($_POST["buying_price"])?GETPOST("buying_price", 'alpha', 2):''); ?>">
-		</td>
-		<?php
-		}
-
-		if ($user->rights->margins->creer)
-		{
+			?>
+			<td class="nobottom margininfos linecolmargin right">
+				<!-- For predef product -->
+				<?php if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) { ?>
+				<select id="fournprice_predef" name="fournprice_predef" class="flat minwidth75imp" style="display: none;"></select>
+				<?php } ?>
+				<!-- For free product -->
+				<input type="text" id="buying_price" name="buying_price" class="flat maxwidth75 right" value="<?php echo (isset($_POST["buying_price"])?GETPOST("buying_price", 'alpha', 2):''); ?>">
+			</td>
+			<?php
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 			{
 				echo '<td class="nobottom nowrap margininfos right"><input class="flat right" type="text" size="2" id="np_marginRate" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?GETPOST("np_marginRate", 'alpha', 2):'').'"><span class="np_marginRate hideonsmartphone">%</span></td>';
@@ -475,7 +468,7 @@ if ($nolinesbefore) {
 
 <?php
 if (is_object($objectline)) {
-	print $objectline->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+	print $objectline->showOptionals($extrafields, 'edit', array('colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
 }
 
 if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $dateSelector && GETPOST('type') != '0')	// We show date field if required
@@ -677,7 +670,7 @@ jQuery(document).ready(function() {
 
 		jQuery('#trlinefordates').show();
 		<?php
-		if (!empty($conf->global->MAIN_EDIT_PREDEF_PRICEHT))
+		if (empty($conf->global->MAIN_DISABLE_EDIT_PREDEF_PRICEHT))
 		{
 		?>
 			// get the HT price for the product and display it
@@ -850,12 +843,16 @@ function setforpredef() {
 	console.log("Call setforpredef. We hide some fields and show dates");
 	jQuery("#select_type").val(-1);
 	jQuery("#prod_entry_mode_free").prop('checked',false).change();
-	jQuery("#prod_entry_mode_predef").prop('checked',true).change(
-	<?php if (empty($conf->global->MAIN_EDIT_PREDEF_PRICEHT)) { ?>
+	jQuery("#prod_entry_mode_predef").prop('checked',true).change();
+	<?php if (empty($conf->global->MAIN_DISABLE_EDIT_PREDEF_PRICEHT)) { ?>
+		jQuery("#price_ht").val('').show();
+		jQuery("#multicurrency_price_ht").val('').show();
+	<?php } else { ?>
 		jQuery("#price_ht").val('').hide();
+		jQuery("#multicurrency_price_ht").val('').hide();
 	<?php } ?>
-	jQuery("#price_ht").val('')
-	jQuery("#price_ht, #multicurrency_price_ht, #price_ttc, #fourn_ref, #tva_tx, #title_vat, #title_up_ht, #title_up_ht_currency, #title_up_ttc, #title_up_ttc_currency").hide();
+	jQuery("#price_ht").val('');
+	jQuery("#price_ttc, #fourn_ref, #tva_tx, #title_vat, #title_up_ht, #title_up_ht_currency, #title_up_ttc, #title_up_ttc_currency").hide();
 	jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").hide();
 	jQuery("#buying_price").show();
 	jQuery('#trlinefordates, .divlinefordates').show();

@@ -236,7 +236,6 @@ print '<script type="text/javascript" language="javascript">
 
 		// Customer Default Langauge
 		if (! empty($conf->global->MAIN_MULTILANGS)) {
-
 			print '<tr><td>' . $langs->trans("DefaultLang");
 			if (count($array_query['cust_language']) > 0) {
 				print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
@@ -261,27 +260,27 @@ print '<script type="text/javascript" language="javascript">
 
 		// Standard Extrafield feature
 		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
+			$elementtype = Societe::$table_element;
 			// fetch optionals attributes and labels
 			dol_include_once('/core/class/extrafields.class.php');
 			$extrafields = new ExtraFields($db);
-			$extralabels = $extrafields->fetch_name_optionals_label('societe');
-			foreach ($extralabels as $key => $val) {
+			$extrafields->fetch_name_optionals_label($elementtype);
+			foreach ($extrafields->attributes[$elementtype]['label'] as $key => $val) {
 				if ($key != 'ts_nameextra' && $key != 'ts_payeur') {
-					print '<tr><td>' . $extrafields->attribute_label[$key];
+					print '<tr><td>' . $extrafields->attributes[$elementtype]['label'][$key];
 					if (! empty($array_query['options_' . $key]) || (is_array($array_query['options_' . $key]) && count($array_query['options_' . $key]) > 0)) {
 						print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 					}
 					print '</td><td>';
-					if (($extrafields->attribute_type[$key] == 'varchar') || ($extrafields->attribute_type[$key] == 'text')) {
+					if (($extrafields->attributes[$elementtype]['type'][$key] == 'varchar') || ($extrafields->attributes[$elementtype]['type'][$key] == 'text')) {
 						print '<input type="text" name="options_' . $key . '"/></td><td>' . "\n";
 						print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
-					} elseif (($extrafields->attribute_type[$key] == 'int') || ($extrafields->attribute_type[$key] == 'double')) {
+					} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'int') || ($extrafields->attributes[$elementtype]['type'][$key] == 'double')) {
 						print $langs->trans("AdvTgtMinVal") . '<input type="text" name="options' . $key . '_min"/>';
 						print $langs->trans("AdvTgtMaxVal") . '<input type="text" name="options' . $key . '_max"/>';
 						print '</td><td>' . "\n";
 						print $form->textwithpicto('', $langs->trans("AdvTgtSearchIntHelp"), 1, 'help');
-					} elseif (($extrafields->attribute_type[$key] == 'date') || ($extrafields->attribute_type[$key] == 'datetime')) {
-
+					} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'date') || ($extrafields->attributes[$elementtype]['type'][$key] == 'datetime')) {
 						print '<table class="nobordernopadding"><tr>';
 						print '<td>' . $langs->trans("AdvTgtStartDt") . '</td><td>';
 						print $form->selectDate('', 'options_' . $key . '_st_dt');
@@ -291,7 +290,7 @@ print '<script type="text/javascript" language="javascript">
 
 						print '</td><td>' . "\n";
 						print $form->textwithpicto('', $langs->trans("AdvTgtSearchDtHelp"), 1, 'help');
-					} elseif (($extrafields->attribute_type[$key] == 'boolean')) {
+					} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'boolean')) {
                         print $form->selectarray(
                             'options_' . $key,
                             array (
@@ -302,10 +301,10 @@ print '<script type="text/javascript" language="javascript">
                             $array_query['options_' . $key]
                         );
 						print '</td><td>' . "\n";
-					} elseif (($extrafields->attribute_type[$key] == 'select')) {
+					} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'select')) {
 						print $formadvtargetemaling->advMultiselectarray('options_' . $key, $extrafields->attribute_param[$key]['options'], $array_query['options_' . $key]);
 						print '</td><td>' . "\n";
-					} elseif (($extrafields->attribute_type[$key] == 'sellist')) {
+					} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'sellist')) {
 						print $formadvtargetemaling->advMultiselectarraySelllist('options_' . $key, $extrafields->attribute_param[$key]['options'], $array_query['options_' . $key]);
 						print '</td><td>' . "\n";
 					} else {
@@ -456,32 +455,31 @@ print '<script type="text/javascript" language="javascript">
 
 		// Standard Extrafield feature
 		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
+			$elementype=Contact::$table_element;
 			// fetch optionals attributes and labels
 			dol_include_once('/core/class/extrafields.class.php');
 			$extrafields = new ExtraFields($db);
-			$extralabels = $extrafields->fetch_name_optionals_label('socpeople');
-            foreach($extrafields->attribute_type as $key=>&$value) {
+			$extrafields->fetch_name_optionals_label($elementype);
+            foreach($extrafields->attributes[$elementtype]['type'] as $key=>&$value) {
                 if($value == 'radio')$value = 'select';
             }
 
-
-			foreach ($extralabels as $key => $val) {
-
-				print '<tr><td>' . $extrafields->attribute_label[$key];
+            foreach ($extrafields->attributes[$elementtype]['label'] as $key => $val)
+            {
+				print '<tr><td>' . $extrafields->attributes[$elementtype]['label'][$key];
 				if ($array_query['options_' . $key . '_cnct'] != '' || (is_array($array_query['options_' . $key . '_cnct']) && count($array_query['options_' . $key . '_cnct']) > 0)) {
 					print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 				}
 				print '</td><td>';
-				if (($extrafields->attribute_type[$key] == 'varchar') || ($extrafields->attribute_type[$key] == 'text')) {
+				if (($extrafields->attributes[$elementtype]['type'][$key] == 'varchar') || ($extrafields->attributes[$elementtype]['type'][$key] == 'text')) {
 					print '<input type="text" name="options_' . $key . '_cnct"/></td><td>' . "\n";
 					print $form->textwithpicto('', $langs->trans("AdvTgtSearchTextHelp"), 1, 'help');
-				} elseif (($extrafields->attribute_type[$key] == 'int') || ($extrafields->attribute_type[$key] == 'double')) {
+				} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'int') || ($extrafields->attributes[$elementtype]['type'][$key] == 'double')) {
 					print $langs->trans("AdvTgtMinVal") . '<input type="text" name="options_' . $key . '_min_cnct"/>';
 					print $langs->trans("AdvTgtMaxVal") . '<input type="text" name="options_' . $key . '_max_cnct"/>';
 					print '</td><td>' . "\n";
 					print $form->textwithpicto('', $langs->trans("AdvTgtSearchIntHelp"), 1, 'help');
-				} elseif (($extrafields->attribute_type[$key] == 'date') || ($extrafields->attribute_type[$key] == 'datetime')) {
-
+				} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'date') || ($extrafields->attributes[$elementtype]['type'][$key] == 'datetime')) {
 					print '<table class="nobordernopadding"><tr>';
 					print '<td>' . $langs->trans("AdvTgtStartDt") . '</td><td>';
 					print $form->selectDate('', 'options_' . $key . '_st_dt' . '_cnct');
@@ -491,7 +489,7 @@ print '<script type="text/javascript" language="javascript">
 
 					print '</td><td>' . "\n";
 					print $form->textwithpicto('', $langs->trans("AdvTgtSearchDtHelp"), 1, 'help');
-				} elseif (($extrafields->attribute_type[$key] == 'boolean')) {
+				} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'boolean')) {
                     print $form->selectarray(
                         'options_' . $key . '_cnct',
                         array (
@@ -502,14 +500,13 @@ print '<script type="text/javascript" language="javascript">
                         $array_query['options_' . $key . '_cnct']
                     );
 					print '</td><td>' . "\n";
-				} elseif (($extrafields->attribute_type[$key] == 'select')) {
+				} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'select')) {
 					print $formadvtargetemaling->advMultiselectarray('options_' . $key . '_cnct', $extrafields->attribute_param[$key]['options'], $array_query['options_' . $key . '_cnct']);
 					print '</td><td>' . "\n";
-				} elseif (($extrafields->attribute_type[$key] == 'sellist')) {
+				} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'sellist')) {
 					print $formadvtargetemaling->advMultiselectarraySelllist('options_' . $key . '_cnct', $extrafields->attribute_param[$key]['options'], $array_query['options_' . $key . '_cnct']);
 					print '</td><td>' . "\n";
 				} else {
-
 					print '<table class="nobordernopadding"><tr>';
 					print '<td></td><td>';
 					if (is_array($array_query['options_' . $key . '_cnct'])) {

@@ -128,6 +128,15 @@ function member_type_prepare_head(AdherentType $object)
 	$head[$h][2] = 'card';
 	$h++;
 
+	// Multilangs
+	if (! empty($conf->global->MAIN_MULTILANGS))
+	{
+		$head[$h][0] = DOL_URL_ROOT."/adherents/type_translation.php?rowid=".$object->id;
+		$head[$h][1] = $langs->trans("Translation");
+		$head[$h][2] = 'translation';
+		$h++;
+	}
+
 	if ((! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE))
 		&& (empty($conf->global->MAIN_DISABLE_LDAP_TAB) || ! empty($user->admin)))
 	{

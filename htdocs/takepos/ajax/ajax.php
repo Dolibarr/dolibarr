@@ -45,18 +45,40 @@ $term = GETPOST('term', 'alpha');
 if ($action=="getProducts") {
     $object = new Categorie($db);
     $result=$object->fetch($category);
-    $prods = $object->getObjectsInCateg("product");
-    echo json_encode($prods);
+    if ($result > 0)
+    {
+	    $prods = $object->getObjectsInCateg("product");
+	    // Removed properties we don't need
+	    if (is_array($prods) && count($prods) > 0)
+	    {
+	    	foreach($prods as $prod)
+	    	{
+	    		unset($prod->fields);
+	    		unset($prod->db);
+	    	}
+	    }
+    	echo json_encode($prods);
+    }
+    else
+    {
+    	echo 'Failed to load category with id='.$category;
+    }
 }
 elseif ($action=="search" && $term != '') {
-    $sql = 'SELECT * FROM '.MAIN_DB_PREFIX.'product';
+    $sql = 'SELECT rowid, ref, label, tosell, tobuy FROM '.MAIN_DB_PREFIX.'product';
     $sql.= ' WHERE entity IN ('.getEntity('product').')';
     $sql.= ' AND tosell = 1';
     $sql.= natural_search(array('ref','label','barcode'), $term);
     $resql = $db->query($sql);
-    $rows = array();
-    while ($row = $db->fetch_array($resql)) {
-        $rows[] = $row;
-    }
-    echo json_encode($rows);
+	if ($resql)
+	{
+	    $rows = array();
+	    while ($row = $db->fetch_object($resql)) {
+	        $rows[] = $row;
+	    }
+	    echo json_encode($rows);
+	}
+	else {
+		echo 'Failed to search product : '.$db->lasterror();
+	}
 }

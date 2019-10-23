@@ -55,20 +55,8 @@ elseif ($modulepart == 'project')
 }
 elseif ($modulepart == 'bom')
 {
-	$result=restrictedArea($user, 'bom', $id, 'bom_bom');
+	$result=restrictedArea($user, $modulepart, $id, 'bom_bom');
 	if (! $user->rights->bom->read) accessforbidden();
-	$accessallowed=1;
-}
-elseif ($modulepart == 'expensereport')
-{
-	$result=restrictedArea($user, 'expensereport', $id, 'expensereport');
-	if (! $user->rights->expensereport->lire) accessforbidden();
-	$accessallowed=1;
-}
-elseif ($modulepart == 'holiday')
-{
-	$result=restrictedArea($user, 'holiday', $id, 'holiday');
-	if (! $user->rights->holiday->read) accessforbidden();
 	$accessallowed=1;
 }
 elseif ($modulepart == 'member')
@@ -79,26 +67,26 @@ elseif ($modulepart == 'member')
 }
 elseif ($modulepart == 'user')
 {
-	$result=restrictedArea($user, 'user', $id, 'user');
+	$result=restrictedArea($user, $modulepart, $id, $modulepart);
 	if (! $user->rights->user->user->lire) accessforbidden();
-	$accessallowed=1;
-}
-elseif ($modulepart == 'societe')
-{
-	$result=restrictedArea($user, 'societe', $id, 'societe');
-	if (! $user->rights->societe->lire) accessforbidden();
 	$accessallowed=1;
 }
 elseif ($modulepart == 'tax')
 {
-	$result=restrictedArea($user, 'tax', $id, 'chargesociales', 'charges');
+	$result=restrictedArea($user, $modulepart, $id, 'chargesociales', 'charges');
 	if (! $user->rights->tax->charges->lire) accessforbidden();
 	$accessallowed=1;
 }
-elseif ($modulepart == 'ticket')
+elseif ($modulepart == 'bank')
 {
-	$result=restrictedArea($user, 'ticket', $id, 'ticket');
-	if (! $user->rights->ticket->read) accessforbidden();
+	$result=restrictedArea($user, 'banque', $id, 'bank_account');
+	if (! $user->rights->banque->lire) accessforbidden();
+	$accessallowed=1;
+}
+else	// ticket, holiday, expensereport, societe...
+{
+	$result=restrictedArea($user, $modulepart, $id, $modulepart);
+	if (empty($user->rights->$modulepart->read) && empty($user->rights->$modulepart->lire)) accessforbidden();
 	$accessallowed=1;
 }
 
@@ -142,7 +130,7 @@ elseif ($modulepart == 'holiday')
 	{
 		$result = $object->fetch($id);
 		if ($result <= 0) dol_print_error($db, 'Failed to load object');
-		$dir=$conf->holiday->dir_output;	// By default
+		$dir=$conf->$modulepart->dir_output;	// By default
 	}
 }
 elseif ($modulepart == 'member')
@@ -164,7 +152,7 @@ elseif ($modulepart == 'societe')
     {
         $result = $object->fetch($id);
         if ($result <= 0) dol_print_error($db, 'Failed to load object');
-        $dir=$conf->societe->dir_output;
+        $dir=$conf->$modulepart->dir_output;
     }
 }
 elseif ($modulepart == 'user')
@@ -175,7 +163,7 @@ elseif ($modulepart == 'user')
     {
         $result = $object->fetch($id);
         if ($result <= 0) dol_print_error($db, 'Failed to load object');
-        $dir=$conf->user->dir_output;	// By default
+        $dir=$conf->$modulepart->dir_output;	// By default
     }
 }
 elseif ($modulepart == 'expensereport')
@@ -197,7 +185,7 @@ elseif ($modulepart == 'tax')
 	{
 		$result = $object->fetch($id);
 		if ($result <= 0) dol_print_error($db, 'Failed to load object');
-		$dir=$conf->tax->dir_output;	// By default
+		$dir=$conf->$modulepart->dir_output;	// By default
 	}
 }
 elseif ($modulepart == 'ticket')
@@ -208,7 +196,7 @@ elseif ($modulepart == 'ticket')
 	{
 		$result = $object->fetch($id);
 		if ($result <= 0) dol_print_error($db, 'Failed to load object');
-		$dir=$conf->ticket->dir_output;	// By default
+		$dir=$conf->$modulepart->dir_output;	// By default
 	}
 }
 elseif ($modulepart == 'bom')
@@ -219,7 +207,18 @@ elseif ($modulepart == 'bom')
 	{
 		$result = $object->fetch($id);
 		if ($result <= 0) dol_print_error($db, 'Failed to load object');
-		$dir=$conf->bom->dir_output;	// By default
+		$dir=$conf->$modulepart->dir_output;	// By default
+	}
+}
+elseif ($modulepart == 'bank')
+{
+	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+	$object = new Account($db);
+	if ($id > 0)
+	{
+		$result = $object->fetch($id);
+		if ($result <= 0) dol_print_error($db, 'Failed to load object');
+		$dir=$conf->banque->dir_output;	// By default
 	}
 }
 else {
@@ -237,6 +236,7 @@ if (empty($backtourl))
     elseif (in_array($modulepart, array('tax')))           $backtourl=DOL_URL_ROOT."/compta/sociales/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
     elseif (in_array($modulepart, array('ticket')))        $backtourl=DOL_URL_ROOT."/ticket/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
     elseif (in_array($modulepart, array('user')))          $backtourl=DOL_URL_ROOT."/user/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
+    elseif (in_array($modulepart, array('bank')))          $backtourl=DOL_URL_ROOT."/compta/bank/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
     else $backtourl=DOL_URL_ROOT."/".$modulepart."/".$modulepart."_document.php?id=".$id.'&file='.urldecode($_POST["file"]);
 }
 
@@ -422,6 +422,7 @@ print '<br>'."\n";
 
 print '<!-- Form to resize -->'."\n";
 print '<form name="redim_file" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 print '<fieldset id="redim_file">';
 print '<legend>'.$langs->trans("Resize").'</legend>';
@@ -472,7 +473,9 @@ if (! empty($conf->use_javascript_ajax))
 	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$object->entity.'&file='.urlencode($original_file).'" alt="" id="cropbox" width="'.$widthforcrop.'px"/>';
 	print '</div>';
 	print '</div><br>';
-	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">
+	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '
 	      <div class="jc_coords">
 	         '.$langs->trans("NewSizeAfterCropping").':
 	         <label>X1 <input type="number" class="flat maxwidth50" id="x" name="x" /></label>

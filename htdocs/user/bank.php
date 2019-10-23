@@ -54,6 +54,7 @@ $ok=false;
 if ($user->id == $id) $ok=true; // A user can always read its own card
 if (! empty($user->rights->salaries->read)) $ok=true;
 if (! empty($user->rights->hrm->read)) $ok=true;
+if (! empty($user->rights->expensereport->lire) && ($user->id == $object->id || $user->rights->expensereport->readall)) $ok=true;
 if (! $ok)
 {
 	accessforbidden();
@@ -199,7 +200,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 
     print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border centpercent">';
+    print '<table class="border centpercent tableforfield">';
 
     print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
     print '<td>'.$object->login.'</td>';
@@ -212,7 +213,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
     print load_fiche_titre($langs->trans("BAN"));
 
     print '<div class="underbanner clearboth"></div>';
-    print '<table class="border centpercent">';
+    print '<table class="border centpercent tableforfield">';
 
     print '<tr><td class="titlefield">'.$langs->trans("LabelRIB").'</td>';
     print '<td>'.$account->label.'</td></tr>';

@@ -190,7 +190,7 @@ class FichinterTest extends PHPUnit\Framework\TestCase
     	return $localobject;
     }
 
-   /**
+    /**
      * testFichinterValid
      *
      * @param	Object	$localobject	Object intervention

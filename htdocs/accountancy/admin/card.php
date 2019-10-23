@@ -273,7 +273,6 @@ if ($action == 'create') {
 	print '</form>';
 }
 elseif ($id > 0 || $ref) {
-
 	$result = $object->fetch($id, $ref, 1);
 
 	if ($result > 0) {

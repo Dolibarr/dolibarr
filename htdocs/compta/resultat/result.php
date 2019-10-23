@@ -256,7 +256,6 @@ elseif ($modecompta=="RECETTES-DEPENSES")
 }
 elseif ($modecompta=="BOOKKEEPING")
 {
-
 	// Get array of all report groups that are active
 	$cats = $AccCat->getCats();		// WARNING: Computed groups must be after group they include
 

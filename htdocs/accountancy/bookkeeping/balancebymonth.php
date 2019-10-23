@@ -105,7 +105,6 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	while ( $i < $num ) {
-
 		$row = $db->fetch_row($resql);
 
 		print '<tr class="oddeven"><td width="14%">' . length_accountg($row[0]) . '</td>';

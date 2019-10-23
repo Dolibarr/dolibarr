@@ -117,7 +117,6 @@ if ($action == 'update') {
 		);
 
 		if (in_array($accounting_product_mode, $accounting_product_modes)) {
-
 			if (! dolibarr_set_const($db, 'ACCOUNTING_PRODUCT_MODE', $accounting_product_mode, 'chaine', 0, '', $conf->entity)) {
 				$error ++;
 			}
@@ -129,7 +128,6 @@ if ($action == 'update') {
 	if (! empty($btn_changeaccount)) {
 		//$msg = '<div><span class="accountingprocessing">' . $langs->trans("Processing") . '...</span></div>';
 		if (! empty($chk_prod)) {
-
 			$accounting = new AccountingAccount($db);
 
 			//$msg .= '<div><span  class="accountingprocessing">' . count($chk_prod) . ' ' . $langs->trans("SelectedLines") . '</span></div>';

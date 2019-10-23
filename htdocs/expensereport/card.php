@@ -57,7 +57,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $date_start = dol_mktime(0, 0, 0, GETPOST('date_debutmonth', 'int'), GETPOST('date_debutday', 'int'), GETPOST('date_debutyear', 'int'));
 $date_end = dol_mktime(0, 0, 0, GETPOST('date_finmonth', 'int'), GETPOST('date_finday', 'int'), GETPOST('date_finyear', 'int'));
 $date = dol_mktime(0, 0, 0, GETPOST('datemonth', 'int'), GETPOST('dateday', 'int'), GETPOST('dateyear', 'int'));
-$fk_projet=GETPOST('fk_projet', 'int');
+$fk_project=GETPOST('fk_project', 'int');
 $vatrate=GETPOST('vatrate', 'alpha');
 $ref=GETPOST("ref", 'alpha');
 $comments=GETPOST('comments', 'none');
@@ -97,7 +97,7 @@ $object=new ExpenseReport($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
@@ -145,7 +145,7 @@ if (empty($reshook))
 		}
 		$action='';
 
-    	$fk_projet='';
+    	$fk_project='';
     	$date_start='';
     	$date_end='';
     	$date='';
@@ -238,7 +238,7 @@ if (empty($reshook))
     	// Fill array 'array_options' with data from add form
     	if (! $error)
     	{
-    	    $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+    	    $ret = $extrafields->setOptionalsFromPost(null, $object);
     	    if ($ret < 0) $error++;
     	}
 
@@ -309,8 +309,7 @@ if (empty($reshook))
     	$object->oldcopy = dol_clone($object);
 
     	// Fill array 'array_options' with data from update form
-        $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
+        $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
         if ($ret < 0) $error++;
 
         if (! $error)
@@ -1233,7 +1232,7 @@ if (empty($reshook))
     		$type = 0;	// TODO What if service ? We should take the type product/service from the type of expense report llx_c_type_fees
 
 			// Insert line
-    		$result = $object->addline($qty, $value_unit, $fk_c_type_fees, $vatrate, $date, $comments, $fk_projet, $fk_c_exp_tax_cat, $type, $fk_ecm_files);
+    		$result = $object->addline($qty, $value_unit, $fk_c_type_fees, $vatrate, $date, $comments, $fk_project, $fk_c_exp_tax_cat, $type, $fk_ecm_files);
 			if ($result > 0)
 			{
 				$ret = $object->fetch($object->id); // Reload to get new records
@@ -1258,7 +1257,7 @@ if (empty($reshook))
 				unset($vatrate);
 				unset($comments);
 				unset($fk_c_type_fees);
-				unset($fk_projet);
+				unset($fk_project);
 
 				unset($date);
 			} else {
@@ -1335,7 +1334,7 @@ if (empty($reshook))
     	$rowid = $_POST['rowid'];
     	$type_fees_id = GETPOST('fk_c_type_fees', 'int');
 		$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat', 'int');
-    	$projet_id = $fk_projet;
+    	$projet_id = $fk_project;
     	$comments = GETPOST('comments', 'none');
     	$qty = GETPOST('qty', 'int');
     	$vatrate = GETPOST('vatrate', 'alpha');
@@ -1492,7 +1491,7 @@ if ($action == 'create')
 	if (empty($include_users)) print img_warning().' '.$langs->trans("NobodyHasPermissionToValidateExpenseReport");
 	else
 	{
-    	$defaultselectuser=$user->fk_user;	// Will work only if supervisor has permission to approve so is inside include_users
+    	$defaultselectuser=(empty($user->fk_user_expense_validator) ? $user->fk_user : $user->fk_user_expense_validator);	// Will work only if supervisor has permission to approve so is inside include_users
     	if (! empty($conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR)) $defaultselectuser=$conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR;   // Can force default approver
     	if (GETPOST('fk_user_validator', 'int') > 0) $defaultselectuser=GETPOST('fk_user_validator', 'int');
     	$s=$form->select_dolusers($defaultselectuser, "fk_user_validator", 1, "", ((empty($defaultselectuser) || empty($conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR_UNCHANGEABLE))?0:1), $include_users);
@@ -1776,7 +1775,7 @@ else
 				    if ($user->rights->commande->creer)
 				    {
 				        if ($action != 'classify')
-				            $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				            $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				            if ($action == 'classify') {
 				                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 				                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -2373,7 +2372,7 @@ else
 							if (! empty($conf->projet->enabled))
 							{
 								print '<td>';
-								$formproject->select_projects(-1, $line->fk_project, 'fk_projet', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
+								$formproject->select_projects(-1, $line->fk_project, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 								print '</td>';
 							}
 
@@ -2528,7 +2527,7 @@ else
 					if (! empty($conf->projet->enabled))
 					{
 						print '<td>';
-						$formproject->select_projects(-1, $fk_projet, 'fk_projet', 0, 0, 1, -1, 0, 0, 0, '', 0, 0, 'maxwidth300');
+						$formproject->select_projects(-1, $fk_project, 'fk_project', 0, 0, 1, -1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 						print '</td>';
 					}
 

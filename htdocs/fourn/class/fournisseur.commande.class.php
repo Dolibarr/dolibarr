@@ -625,18 +625,17 @@ class CommandeFournisseur extends CommonOrder
     /**
      *  Return label of a status
      *
-     * 	@param  int		$statut		Id statut
+     * 	@param  int		$status		Id statut
      *  @param  int		$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
      *  @param  int     $billed     1=Billed
      *  @return string				Label of status
      */
-    public function LibStatut($statut, $mode = 0, $billed = 0)
+    public function LibStatut($status, $mode = 0, $billed = 0)
     {
         // phpcs:enable
     	global $conf, $langs;
 
-    	if (empty($this->statuts) || empty($this->statutshort))
-    	{
+    	if (empty($this->statuts) || empty($this->statutshort)){
 	        $langs->load('orders');
 
 	        $this->statuts[0] = 'StatusSupplierOrderDraft';
@@ -662,55 +661,33 @@ class CommandeFournisseur extends CommonOrder
 	        $this->statutshort[9] = 'StatusSupplierOrderRefusedShort';
     	}
 
-        $billedtext='';
-		//if ($statut==5 && $this->billed == 1) $statut = 8;
-        if ($billed == 1) $billedtext=$langs->trans("Billed");
+        $statustrans = array(
+            0 => 'status0',
+            1 => 'status1',
+            2 => 'status3',
+            3 => 'status3',
+            4 => 'status3',
+            5 => 'status6',
+            6 => 'status5',
+            7 => 'status5',
 
-        if ($mode == 0)
-        {
-            return $langs->trans($this->statuts[$statut]);
+            9 => 'status5',
+        );
+
+        $statusClass = 'status0';
+        if(!empty($statustrans[$status])){
+            $statusClass = $statustrans[$status];
         }
-        elseif ($mode == 1)
-        {
-        	return $langs->trans($this->statutshort[$statut]);
+
+        $billedtext = '';
+        if($mode == 4 && $billed){
+            $billedtext = ' - '.$langs->trans("Billed");
         }
-        elseif ($mode == 2)
-        {
-            return $langs->trans($this->statuts[$statut]);
-        }
-        elseif ($mode == 3)
-        {
-            if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut0');
-            elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]), 'statut1');
-            elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]), 'statut3');
-            elseif ($statut==3) return img_picto($langs->trans($this->statuts[$statut]), 'statut3');
-            elseif ($statut==4) return img_picto($langs->trans($this->statuts[$statut]), 'statut3');
-            elseif ($statut==5) return img_picto($langs->trans($this->statuts[$statut]), 'statut6');
-            elseif ($statut==6 || $statut==7) return img_picto($langs->trans($this->statuts[$statut]), 'statut5');
-            elseif ($statut==9) return img_picto($langs->trans($this->statuts[$statut]), 'statut5');
-        }
-        elseif ($mode == 4)
-        {
-            if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut0').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]), 'statut1').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]), 'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==3) return img_picto($langs->trans($this->statuts[$statut]), 'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==4) return img_picto($langs->trans($this->statuts[$statut]), 'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==5) return img_picto($langs->trans($this->statuts[$statut]), 'statut6').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==6 || $statut==7) return img_picto($langs->trans($this->statuts[$statut]), 'statut5').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==9) return img_picto($langs->trans($this->statuts[$statut]), 'statut5').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-        }
-        elseif ($mode == 5)
-        {
-        	if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut0');
-        	elseif ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut1');
-        	elseif ($statut==2) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut3');
-        	elseif ($statut==3) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut3');
-        	elseif ($statut==4) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut3');
-        	elseif ($statut==5) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut6');
-        	elseif ($statut==6 || $statut==7) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut5');
-        	elseif ($statut==9) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut5');
-        }
+
+        $statusLong = $langs->trans($this->statuts[$status]).$billedtext;
+        $statusShort = $langs->trans($this->statutshort[$status]);
+
+        return dolGetStatus($statusLong, $statusShort, '', $statusClass, $mode);
     }
 
 
@@ -799,7 +776,6 @@ class CommandeFournisseur extends CommonOrder
             $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
             foreach ($dirmodels as $reldir) {
-
                 $dir = dol_buildpath($reldir."core/modules/supplier_order/");
 
                 // Load file with numbering class (if found)
@@ -1294,7 +1270,6 @@ class CommandeFournisseur extends CommonOrder
 	            // insert products details into database
 	            for ($i=0;$i<$num;$i++)
 	            {
-
 	                $this->special_code = $this->lines[$i]->special_code; // TODO : remove this in 9.0 and add special_code param to addline()
 
                 $result = $this->addline(              // This include test on qty if option SUPPLIER_ORDER_WITH_NOPRICEDEFINED is not set
@@ -2926,7 +2901,6 @@ class CommandeFournisseur extends CommonOrder
 		$langs->load("suppliers");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'muscadet';
 
 			if ($this->modelpdf) {
@@ -3523,6 +3497,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
 
         $error=0;
 
+        $this->db->begin();
+
         // Mise a jour ligne en base
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
         $sql.= "  description='".$this->db->escape($this->desc)."'";
@@ -3623,7 +3599,6 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $resql=$this->db->query($sql);
         if ($resql)
         {
-
             if (!$notrigger)
             {
                 // Call trigger

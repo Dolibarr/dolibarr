@@ -67,9 +67,11 @@ $objectwebsiteaccount=new SocieteAccount($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->website->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('websitethirdpartylist'));     // Note that conf->hooks_modules contains array
+
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('thirdpartyaccount');
-$search_array_options=$extrafields->getOptionalsFromPost('thirdpartyaccount', '', 'search_');
+$extrafields->fetch_name_optionals_label($objectwebsiteaccount->table_element);
+
+$search_array_options=$extrafields->getOptionalsFromPost($objectwebsiteaccount->table_element, '', 'search_');
 
 unset($objectwebsiteaccount->fields['fk_soc']);		// Remove this field, we are already on the thirdparty
 
@@ -278,18 +280,19 @@ $reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters, $objectw
 $sql.=$hookmanager->resPrint;
 
 /* If a group by is required
- $sql.= " GROUP BY "
- foreach($objectwebsiteaccount->fields as $key => $val)
- {
- $sql.='t.'.$key.', ';
- }
- // Add fields from extrafields
- foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key : '');
- // Add where from hooks
- $parameters=array();
- $reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $objectwebsiteaccount may have been modified by hook
- $sql.=$hookmanager->resPrint;
- */
+$sql.= " GROUP BY "
+foreach($objectwebsiteaccount->fields as $key => $val)
+{
+	$sql.='t.'.$key.', ';
+}
+// Add fields from extrafields
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
+// Add where from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $objectwebsiteaccount may have been modified by hook
+$sql.=$hookmanager->resPrint;
+*/
 
 $sql.=$db->order($sortfield, $sortorder);
 

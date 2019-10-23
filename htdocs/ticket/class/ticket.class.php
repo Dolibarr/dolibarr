@@ -573,7 +573,7 @@ class Ticket extends CommonObject
         $extrafields = new ExtraFields($this->db);
 
         // fetch optionals attributes and labels
-        $extralabels = $extrafields->fetch_name_optionals_label($this->table_element);
+        $extrafields->fetch_name_optionals_label($this->table_element);
 
         $sql = "SELECT";
         $sql .= " t.rowid,";
@@ -1602,13 +1602,16 @@ class Ticket extends CommonObject
     }
 
     /**
-     *  Add message into database
+     * Add message into database
      *
-     *  @param  User $user      	User that creates
-     *  @param  int  $notrigger 	0=launch triggers after, 1=disable triggers
-     *  @return int                 <0 if KO, Id of created object if OK
+     * @param User 	 $user      		  User that creates
+     * @param int  	 $notrigger 		  0=launch triggers after, 1=disable triggers
+	 * @param array	 $filename_list       List of files to attach (full path of filename on file system)
+	 * @param array	 $mimetype_list       List of MIME type of attached files
+	 * @param array	 $mimefilename_list   List of attached file name in message
+     * @return int						  <0 if KO, >0 if OK
      */
-    public function createTicketMessage($user, $notrigger = 0)
+    public function createTicketMessage($user, $notrigger = 0, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array())
     {
         global $conf, $langs;
         $error = 0;
@@ -1643,6 +1646,19 @@ class Ticket extends CommonObject
         $actioncomm->percentage = 100;
         $actioncomm->elementtype = 'ticket';
         $actioncomm->fk_element = $this->id;
+
+        $attachedfiles = array();
+        $attachedfiles['paths'] = $filename_list;
+        $attachedfiles['names'] = $mimefilename_list;
+        $attachedfiles['mimes'] = $mimetype_list;
+        if (is_array($attachedfiles) && count($attachedfiles)>0) {
+        	$actioncomm->attachedfiles	= $attachedfiles;
+        }
+
+        if (! empty($mimefilename_list) && is_array($mimefilename_list))
+        {
+        	$actioncomm->note_private=dol_concatdesc($actioncomm->note_private, "\n".$langs->transnoentities("AttachedFiles").': '.join(';', $mimefilename_list));
+        }
 
         $actionid = $actioncomm->create($user);
         if ($actionid <= 0)
@@ -2392,10 +2408,11 @@ class Ticket extends CommonObject
 
 
     /**
-     * Copy files into ticket directory
-     * Used for files linked into messages
+     * Copy files defined into $_SESSION array into the ticket directory of attached files.
+     * Used for files linked into messages.
+     * Files may be renamed during copy to avoid overwriting existing files.
      *
-     * @return	void
+     * @return	array		Array with final path/name/mime of files.
      */
     public function copyFilesForTicket()
     {
@@ -2425,23 +2442,42 @@ class Ticket extends CommonObject
         if (!dol_is_dir($destdir)) {
             dol_mkdir($destdir);
         }
+
+        $listofpaths = array();
+        $listofnames = array();
         foreach ($filename as $i => $val) {
-            $res = dol_move($filepath[$i], $destdir . '/' . $filename[$i]);
-            if (image_format_supported($destdir . '/' . $filename[$i]) == 1) {
+        	$destfile = $destdir . '/' . $filename[$i];
+        	// If destination file already exists, we add a suffix to avoid to overwrite
+        	if (is_file($destfile))
+        	{
+        		$now = dol_now();
+        		$destfile.='.'.dol_print_date($now, 'dayhourlog');
+        	}
+
+        	$res = dol_move($filepath[$i], $destfile, 0, 1);
+
+        	if (image_format_supported($destfile) == 1) {
                 // Create small thumbs for image (Ratio is near 16/9)
                 // Used on logon for example
-                $imgThumbSmall = vignette($destdir . '/' . $filename[$i], $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
+        		$imgThumbSmall = vignette($destfile, $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
                 // Create mini thumbs for image (Ratio is near 16/9)
                 // Used on menu or for setup page for example
-                $imgThumbMini = vignette($destdir . '/' . $filename[$i], $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
+        		$imgThumbMini = vignette($destfile, $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
             }
+
             $formmail->remove_attached_files($i);
+
+            // Fill array with new names
+            $listofpaths[$i] = $destfile;
+            $listofnames[$i] = basename($destfile);
         }
+
+        return array('listofpaths'=>$listofpaths, 'listofnames'=>$listofnames, 'listofmimes'=>$mimetype);
     }
 
 
     /**
-     * Add new message on a ticket (private area)
+     * Add new message on a ticket (private area). Can also send it be email if GETPOST('send_email', 'int') is set.
      *
      * @param   User    $user       User for action
      * @param   string  $action     Action string
@@ -2452,19 +2488,15 @@ class Ticket extends CommonObject
     {
         global $mysoc, $conf, $langs;
 
-        if (!class_exists('Contact')) {
-            include_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
-        }
-
-        $contactstatic = new Contact($this->db);
-        $object = new Ticket($this->db);
-
         $error = 0;
+
+        $object = new Ticket($this->db);
 
         $ret = $object->fetch('', '', GETPOST('track_id', 'alpha'));
 
         $object->socid = $object->fk_soc;
         $object->fetch_thirdparty();
+
         if ($ret < 0) {
             $error++;
             array_push($this->errors, $langs->trans("ErrorTicketIsNotValid"));
@@ -2481,9 +2513,17 @@ class Ticket extends CommonObject
             $object->subject = GETPOST('subject', 'alphanohtml');
             $object->message = GETPOST("message", "none");
             $object->private = GETPOST("private_message", "alpha");
+
             $send_email = GETPOST('send_email', 'int');
 
-            $id = $object->createTicketMessage($user);
+            // Copy attached files (saved into $_SESSION) as linked files to ticket. Return array with final name used.
+            $resarray = $object->copyFilesForTicket();
+
+            $listofpaths = $resarray['listofpaths'];
+            $listofnames = $resarray['listofnames'];
+            $listofmimes = $resarray['listofmimes'];
+
+            $id = $object->createTicketMessage($user, 0, $listofpaths, $listofmimes, $listofnames);
             if ($id <= 0) {
                 $error++;
                 $this->errors = $object->error;
@@ -2494,24 +2534,27 @@ class Ticket extends CommonObject
             if (!$error && $id > 0) {
                 setEventMessages($langs->trans('TicketMessageSuccessfullyAdded'), null, 'mesgs');
 
+                //var_dump($_SESSION); var_dump($listofpaths);exit;
+
                 /*
-                 * Send email to linked contacts
+                 * Send emails to internal users (linked contacts)
                  */
                 if ($send_email > 0) {
                     // Retrieve internal contact datas
                     $internal_contacts = $object->getInfosTicketInternalContact();
+
                     $sendto = array();
                     if (is_array($internal_contacts) && count($internal_contacts) > 0) {
                         // altairis: set default subject
                         $label_title = empty($conf->global->MAIN_APPLICATION_TITLE) ? $mysoc->name : $conf->global->MAIN_APPLICATION_TITLE;
-                        $subject = GETPOST('subject') ? GETPOST('subject') : '[' . $label_title . '- ticket #' . $object->track_id . '] ' . $langs->trans('TicketNewMessage');
+                        $subject = GETPOST('subject', 'nohtml') ? GETPOST('subject', 'nohtml') : '[' . $label_title . '- ticket #' . $object->track_id . '] ' . $langs->trans('TicketNewMessage');
 
                         $message_intro = $langs->trans('TicketNotificationEmailBody', "#" . $object->id);
                         $message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
 
                         $message = $langs->trans('TicketMessageMailIntroText');
                         $message .= "\n\n";
-                        $message .= GETPOST('message');
+                        $message .= GETPOST('message', 'restricthtml');
 
                         //  Coordonnées client
                         $message .= "\n\n";
@@ -2550,12 +2593,12 @@ class Ticket extends CommonObject
 
                         // altairis: dont try to send email if no recipient
                         if (!empty($sendto)) {
-                            $this->sendTicketMessageByEmail($subject, $message, '', $sendto);
+                        	$this->sendTicketMessageByEmail($subject, $message, '', $sendto, $listofpaths, $listofmimes, $listofnames);
                         }
                     }
 
                     /*
-                     * Email for externals users if not private
+                     * Send emails for externals users if not private (linked contacts)
                      */
                     if (empty($object->private)) {
                         // Retrieve email of all contacts (external)
@@ -2602,47 +2645,42 @@ class Ticket extends CommonObject
 
                             // If public interface is not enable, use link to internal page into mail
                             $url_public_ticket = (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) ?
-                                (!empty($conf->global->TICKET_URL_PUBLIC_INTERFACE) ?
-                                    $conf->global->TICKET_URL_PUBLIC_INTERFACE . '/view.php' :
-                                    dol_buildpath('/public/ticket/view.php', 2)
-                                    ) :
-                                dol_buildpath('/ticket/card.php', 2)
-                                ) . '?track_id=' . $object->track_id;
-                                $message .= "\n" . $langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer') . ' : ' . '<a href="' . $url_public_ticket . '">' . $object->track_id . '</a>' . "\n";
+                                (!empty($conf->global->TICKET_URL_PUBLIC_INTERFACE) ? $conf->global->TICKET_URL_PUBLIC_INTERFACE . '/view.php' : dol_buildpath('/public/ticket/view.php', 2)) :
+                                dol_buildpath('/ticket/card.php', 2)) . '?track_id=' . $object->track_id;
+                            $message .= "\n" . $langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer') . ' : ' . '<a href="' . $url_public_ticket . '">' . $object->track_id . '</a>' . "\n";
 
-                                // Build final message
-                                $message = $message_intro . $message;
+                            // Build final message
+                            $message = $message_intro . $message;
 
-                                // Add signature
-                                $message .= '<br>' . $message_signature;
+                            // Add signature
+                            $message .= '<br>' . $message_signature;
 
-                                if (!empty($object->origin_email)) {
-                                    $sendto[] = $object->origin_email;
-                                }
+                            if (!empty($object->origin_email)) {
+                            	$sendto[] = $object->origin_email;
+                            }
 
-                                if ($object->fk_soc > 0 && ! in_array($object->origin_email, $sendto)) {
-                                    $object->socid = $object->fk_soc;
-                                    $object->fetch_thirdparty();
-                                    if(!empty($object->thirdparty->email)) $sendto[] = $object->thirdparty->email;
-                                }
+                            if ($object->fk_soc > 0 && ! in_array($object->origin_email, $sendto)) {
+                            	$object->socid = $object->fk_soc;
+                            	$object->fetch_thirdparty();
+                            	if(!empty($object->thirdparty->email)) $sendto[] = $object->thirdparty->email;
+                            }
 
-                                // altairis: Add global email address reciepient
-                                if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS && !in_array($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)) {
-                                    if(!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO)) $sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
-                                }
+                            // altairis: Add global email address reciepient
+                            if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS && !in_array($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)) {
+                            	if(!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO)) $sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+                            }
 
-                                // altairis: dont try to send email when no recipient
-                                if (!empty($sendto)) {
-                                    $this->sendTicketMessageByEmail($subject, $message, '', $sendto);
-                                }
+                            // altairis: dont try to send email when no recipient
+                            if (!empty($sendto)) {
+                            	$this->sendTicketMessageByEmail($subject, $message, '', $sendto, $listofpaths, $listofmimes, $listofnames);
+                            }
                         }
                     }
                 }
 
-                $object->copyFilesForTicket();
-
-                // Set status to "answered" if not set yet, only for internal users
-                if ($object->fk_statut < 3 && !$user->societe_id) {
+                // Set status to "answered" if not set yet, but only if internal user
+                if ($object->fk_statut < 3 && ! $user->socid)
+                {
                     $object->setStatut(3);
                 }
 
@@ -2661,13 +2699,16 @@ class Ticket extends CommonObject
     /**
      * Send ticket by email to linked contacts
      *
-     * @param string $subject          Email subject
-     * @param string $message          Email message
-     * @param int    $send_internal_cc Receive a copy on internal email ($conf->global->TICKET_NOTIFICATION_EMAIL_FROM)
-     * @param array  $array_receiver   Array of receiver. exemple array('name' => 'John Doe', 'email' => 'john@doe.com', etc...)
+     * @param string $subject          	  Email subject
+     * @param string $message          	  Email message
+     * @param int    $send_internal_cc 	  Receive a copy on internal email ($conf->global->TICKET_NOTIFICATION_EMAIL_FROM)
+     * @param array  $array_receiver   	  Array of receiver. exemple array('name' => 'John Doe', 'email' => 'john@doe.com', etc...)
+	 * @param array	 $filename_list       List of files to attach (full path of filename on file system)
+	 * @param array	 $mimetype_list       List of MIME type of attached files
+	 * @param array	 $mimefilename_list   List of attached file name in message
      * @return void
      */
-    public function sendTicketMessageByEmail($subject, $message, $send_internal_cc = 0, $array_receiver = array())
+    public function sendTicketMessageByEmail($subject, $message, $send_internal_cc = 0, $array_receiver = array(), $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array())
     {
         global $conf, $langs;
 
@@ -2693,15 +2734,12 @@ class Ticket extends CommonObject
 
         $from = $conf->global->TICKET_NOTIFICATION_EMAIL_FROM;
         if (is_array($array_receiver) && count($array_receiver) > 0) {
-            foreach ($array_receiver as $key => $receiver) {
-                // Create form object
-                include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
-                $formmail = new FormMail($this->db);
-
-                $attachedfiles = $formmail->get_attached_files();
-                $filepath = $attachedfiles['paths'];
-                $filename = $attachedfiles['names'];
-                $mimetype = $attachedfiles['mimes'];
+            foreach ($array_receiver as $key => $receiver)
+            {
+                $deliveryreceipt = 0;
+                $filepath = $filename_list;
+                $filename = $mimefilename_list;
+                $mimetype = $mimetype_list;
 
                 $message_to_send = dol_nl2br($message);
 

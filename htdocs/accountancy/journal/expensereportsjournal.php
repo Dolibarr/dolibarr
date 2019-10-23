@@ -115,7 +115,6 @@ $sql .= " ORDER BY er.date_debut";
 dol_syslog('accountancy/journal/expensereportsjournal.php', LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
-
 	$taber = array ();
 	$tabht = array ();
 	$tabtva = array ();
@@ -307,49 +306,49 @@ if ($action == 'writebookkeeping') {
 
 				foreach ($arrayofvat[$key] as $k => $mt) {
 					if ($mt) {
-					// get compte id and label
-					$bookkeeping = new BookKeeping($db);
-					$bookkeeping->doc_date = $val["date"];
-					$bookkeeping->doc_ref = $val["ref"];
-					$bookkeeping->date_creation = $now;
-					$bookkeeping->doc_type = 'expense_report';
-					$bookkeeping->fk_doc = $key;
-					$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
-					$bookkeeping->subledger_account = '';
-					$bookkeeping->subledger_label = '';
-					$bookkeeping->numero_compte = $k;
+						// get compte id and label
+						$bookkeeping = new BookKeeping($db);
+						$bookkeeping->doc_date = $val["date"];
+						$bookkeeping->doc_ref = $val["ref"];
+						$bookkeeping->date_creation = $now;
+						$bookkeeping->doc_type = 'expense_report';
+						$bookkeeping->fk_doc = $key;
+						$bookkeeping->fk_docdet = $val["fk_expensereportdet"];
+						$bookkeeping->subledger_account = '';
+						$bookkeeping->subledger_label = '';
+						$bookkeeping->numero_compte = $k;
 
-					$accountingaccount->fetch($k, null, true);
-					$bookkeeping->label_compte = $accountingaccount->label;
+						$accountingaccount->fetch($k, null, true);
+						$bookkeeping->label_compte = $accountingaccount->label;
 
-					$bookkeeping->label_operation = $langs->trans("VAT"). ' '.join(', ', $def_tva[$key][$k]).' %';
-					$bookkeeping->montant = $mt;
-					$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
-					$bookkeeping->debit = ($mt > 0) ? $mt : 0;
-					$bookkeeping->credit = ($mt <= 0) ? $mt : 0;
-					$bookkeeping->code_journal = $journal;
-					$bookkeeping->journal_label = $journal_label;
-					$bookkeeping->fk_user_author = $user->id;
-					$bookkeeping->entity = $conf->entity;
+						$bookkeeping->label_operation = $langs->trans("VAT"). ' '.join(', ', $def_tva[$key][$k]).' %';
+						$bookkeeping->montant = $mt;
+						$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
+						$bookkeeping->debit = ($mt > 0) ? $mt : 0;
+						$bookkeeping->credit = ($mt <= 0) ? $mt : 0;
+						$bookkeeping->code_journal = $journal;
+						$bookkeeping->journal_label = $journal_label;
+						$bookkeeping->fk_user_author = $user->id;
+						$bookkeeping->entity = $conf->entity;
 
-					$totaldebit += $bookkeeping->debit;
-					$totalcredit += $bookkeeping->credit;
+						$totaldebit += $bookkeeping->debit;
+						$totalcredit += $bookkeeping->credit;
 
-					$result = $bookkeeping->create($user);
-					if ($result < 0) {
-						if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
-						{
-							$error++;
-							$errorforline++;
-							//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
+						$result = $bookkeeping->create($user);
+						if ($result < 0) {
+							if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
+							{
+								$error++;
+								$errorforline++;
+								//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
+							}
+							else
+							{
+								$error++;
+								$errorforline++;
+								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+							}
 						}
-						else
-						{
-							$error++;
-							$errorforline++;
-							setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
-						}
-					}
 					}
 				}
 			}
@@ -439,53 +438,52 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	print "\n";
 
 	foreach ($taber as $key => $val) {
-	  $date = dol_print_date($val["date"], 'day');
+	    $date = dol_print_date($val["date"], 'day');
 
-	  $userstatic->id = $tabuser[$key]['id'];
-	  $userstatic->name = $tabuser[$key]['name'];
+	    $userstatic->id = $tabuser[$key]['id'];
+	    $userstatic->name = $tabuser[$key]['name'];
 
-	  // Fees
-	  foreach ($tabht[$key] as $k => $mt) {
-	    $accountingaccount = new AccountingAccount($db);
-	    $accountingaccount->fetch(null, $k, true);
-	    if ($mt) {
-	      print '"' . $date . '"' . $sep;
-	      print '"' . $val["ref"] . '"' . $sep;
-	      print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
-	      print '"' . dol_trunc($accountingaccount->label, 32) . '"' . $sep;
-	      print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
-	      print '"' . ($mt < 0 ? price(- $mt) : '') . '"';
-	      print "\n";
+	    // Fees
+	    foreach ($tabht[$key] as $k => $mt) {
+	        $accountingaccount = new AccountingAccount($db);
+	        $accountingaccount->fetch(null, $k, true);
+	        if ($mt) {
+	            print '"' . $date . '"' . $sep;
+	            print '"' . $val["ref"] . '"' . $sep;
+	            print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
+	            print '"' . dol_trunc($accountingaccount->label, 32) . '"' . $sep;
+	            print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
+	            print '"' . ($mt < 0 ? price(- $mt) : '') . '"';
+	            print "\n";
+	        }
 	    }
-	  }
-	  // VAT
-	  foreach ($tabtva[$key] as $k => $mt) {
-	    if ($mt) {
-	      print '"' . $date . '"' . $sep;
-	      print '"' . $val["ref"] . '"' . $sep;
-	      print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
-	      print '"' . dol_trunc($langs->trans("VAT")) . '"' . $sep;
-	      print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
-	      print '"' . ($mt < 0 ? price(- $mt) : '') . '"';
-	      print "\n";
+	    // VAT
+	    foreach ($tabtva[$key] as $k => $mt) {
+	        if ($mt) {
+	            print '"' . $date . '"' . $sep;
+	            print '"' . $val["ref"] . '"' . $sep;
+	            print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
+	            print '"' . dol_trunc($langs->trans("VAT")) . '"' . $sep;
+	            print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
+	            print '"' . ($mt < 0 ? price(- $mt) : '') . '"';
+	            print "\n";
+	        }
 	    }
-	  }
 
-	  // Third party
-	  foreach ($tabttc[$key] as $k => $mt) {
-	    print '"' . $date . '"' . $sep;
-	    print '"' . $val["ref"] . '"' . $sep;
-	    print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
-	    print '"' . dol_trunc($userstatic->name) . '"' . $sep;
-	    print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
-	    print '"' . ($mt >= 0 ? price($mt) : '') . '"';
-	  }
-	  print "\n";
+	    // Third party
+	    foreach ($tabttc[$key] as $k => $mt) {
+	        print '"' . $date . '"' . $sep;
+	        print '"' . $val["ref"] . '"' . $sep;
+	        print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
+	        print '"' . dol_trunc($userstatic->name) . '"' . $sep;
+	        print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
+	        print '"' . ($mt >= 0 ? price($mt) : '') . '"';
+	    }
+	    print "\n";
 	}
 }
 
 if (empty($action) || $action == 'view') {
-
 	llxHeader('', $langs->trans("ExpenseReportsJournal"));
 
 	$nom = $langs->trans("ExpenseReportsJournal") . ' | ' . $accountingjournalstatic->getNomUrl(0, 1, 1, '', 1);
@@ -640,29 +638,29 @@ if (empty($action) || $action == 'view') {
 			if ($numtax == 2) $arrayofvat = $tablocaltax2;
 
 			foreach ($arrayofvat[$key] as $k => $mt) {
-			if ($mt) {
-				print '<tr class="oddeven">';
-				print "<!-- VAT -->";
-				print "<td>" . $date . "</td>";
-				print "<td>" . $expensereportstatic->getNomUrl(1) . "</td>";
-				// Account
-				print "<td>";
-				$accountoshow = length_accountg($k);
-				if (($accountoshow == "") || $accountoshow == 'NotDefined')
-				{
-					print '<span class="error">'.$langs->trans("VATAccountNotDefined").'</span>';
+				if ($mt) {
+					print '<tr class="oddeven">';
+					print "<!-- VAT -->";
+					print "<td>" . $date . "</td>";
+					print "<td>" . $expensereportstatic->getNomUrl(1) . "</td>";
+					// Account
+					print "<td>";
+					$accountoshow = length_accountg($k);
+					if (($accountoshow == "") || $accountoshow == 'NotDefined')
+					{
+						print '<span class="error">'.$langs->trans("VATAccountNotDefined").'</span>';
+					}
+					else print $accountoshow;
+					print "</td>";
+					// Subledger account
+					print "<td>";
+					print '</td>';
+					print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $langs->trans("VAT"). ' '.join(', ', $def_tva[$key][$k]).' %'.($numtax?' - Localtax '.$numtax:'');
+					print "</td>";
+					print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+					print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+					print "</tr>";
 				}
-				else print $accountoshow;
-				print "</td>";
-				// Subledger account
-				print "<td>";
-				print '</td>';
-				print "<td>" . $userstatic->getNomUrl(0, 'user', 16) . ' - ' . $langs->trans("VAT"). ' '.join(', ', $def_tva[$key][$k]).' %'.($numtax?' - Localtax '.$numtax:'');
-				print "</td>";
-				print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
-				print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
-				print "</tr>";
-			}
 			}
 		}
 	}

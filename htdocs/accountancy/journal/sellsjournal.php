@@ -124,7 +124,7 @@ if ($in_bookkeeping == 'already')
 if ($in_bookkeeping == 'notyet')
 {
 	$sql .= " AND f.rowid NOT IN (SELECT fk_doc FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";
-//	$sql .= " AND fd.rowid NOT IN (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";		// Useless, we save one line for all products with same account
+    // $sql .= " AND fd.rowid NOT IN (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab WHERE ab.doc_type='customer_invoice')";		// Useless, we save one line for all products with same account
 }
 $sql .= " ORDER BY f.datef";
 //print $sql;
@@ -255,7 +255,6 @@ if ($action == 'writebookkeeping') {
 	$invoicestatic = new Facture($db);
 
 	foreach ($tabfac as $key => $val) {		// Loop on each invoice
-
 		$errorforline = 0;
 
 		$totalcredit = 0;
@@ -306,7 +305,61 @@ if ($action == 'writebookkeeping') {
 		if (! $errorforline)
 		{
 			foreach ($tabttc[$key] as $k => $mt) {
-				//if ($mt) {
+				$bookkeeping = new BookKeeping($db);
+				$bookkeeping->doc_date = $val["date"];
+				$bookkeeping->date_lim_reglement = $val["datereg"];
+				$bookkeeping->doc_ref = $val["ref"];
+				$bookkeeping->date_creation = $now;
+				$bookkeeping->doc_type = 'customer_invoice';
+				$bookkeeping->fk_doc = $key;
+				$bookkeeping->fk_docdet = 0;	// Useless, can be several lines that are source of this record to add
+				$bookkeeping->thirdparty_code = $companystatic->code_client;
+				$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
+				$bookkeeping->subledger_label = $tabcompany[$key]['name'];
+				$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
+
+				$accountingaccount->fetch(null, $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER, true);
+				$bookkeeping->label_compte = $accountingaccount->label;
+
+				$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("SubledgerAccount");
+				$bookkeeping->montant = $mt;
+				$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
+				$bookkeeping->debit = ($mt >= 0) ? $mt : 0;
+				$bookkeeping->credit = ($mt < 0) ? -$mt : 0;
+				$bookkeeping->code_journal = $journal;
+				$bookkeeping->journal_label = $journal_label;
+				$bookkeeping->fk_user_author = $user->id;
+				$bookkeeping->entity = $conf->entity;
+
+				$totaldebit += $bookkeeping->debit;
+				$totalcredit += $bookkeeping->credit;
+
+				$result = $bookkeeping->create($user);
+				if ($result < 0) {
+					if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
+					{
+						$error++;
+						$errorforline++;
+						$errorforinvoice[$key]='alreadyjournalized';
+						//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
+					}
+					else
+					{
+						$error++;
+						$errorforline++;
+						$errorforinvoice[$key]='other';
+						setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+					}
+				}
+			}
+		}
+
+		// Product / Service
+		if (! $errorforline)
+		{
+			foreach ($tabht[$key] as $k => $mt) {
+				// get compte id and label
+				if ($accountingaccount->fetch(null, $k, true)) {
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
 					$bookkeeping->date_lim_reglement = $val["datereg"];
@@ -316,18 +369,15 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = 0;	// Useless, can be several lines that are source of this record to add
 					$bookkeeping->thirdparty_code = $companystatic->code_client;
-					$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
-					$bookkeeping->subledger_label = $tabcompany[$key]['name'];
-					$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
-
-					$accountingaccount->fetch(null, $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER, true);
+					$bookkeeping->subledger_account = '';
+					$bookkeeping->subledger_label = '';
+					$bookkeeping->numero_compte = $k;
 					$bookkeeping->label_compte = $accountingaccount->label;
-
-					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("SubledgerAccount");
+					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $accountingaccount->label;
 					$bookkeeping->montant = $mt;
-					$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
-					$bookkeeping->debit = ($mt >= 0) ? $mt : 0;
-					$bookkeeping->credit = ($mt < 0) ? -$mt : 0;
+					$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
+					$bookkeeping->debit = ($mt < 0) ? -$mt : 0;
+					$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
 					$bookkeeping->code_journal = $journal;
 					$bookkeeping->journal_label = $journal_label;
 					$bookkeeping->fk_user_author = $user->id;
@@ -353,62 +403,7 @@ if ($action == 'writebookkeeping') {
 							setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 						}
 					}
-				//}
-			}
-		}
-
-		// Product / Service
-		if (! $errorforline)
-		{
-			foreach ($tabht[$key] as $k => $mt) {
-				//if ($mt) {
-					// get compte id and label
-					if ($accountingaccount->fetch(null, $k, true)) {
-						$bookkeeping = new BookKeeping($db);
-						$bookkeeping->doc_date = $val["date"];
-						$bookkeeping->date_lim_reglement = $val["datereg"];
-						$bookkeeping->doc_ref = $val["ref"];
-						$bookkeeping->date_creation = $now;
-						$bookkeeping->doc_type = 'customer_invoice';
-						$bookkeeping->fk_doc = $key;
-						$bookkeeping->fk_docdet = 0;	// Useless, can be several lines that are source of this record to add
-						$bookkeeping->thirdparty_code = $companystatic->code_client;
-						$bookkeeping->subledger_account = '';
-						$bookkeeping->subledger_label = '';
-						$bookkeeping->numero_compte = $k;
-						$bookkeeping->label_compte = $accountingaccount->label;
-						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref . ' - ' . $accountingaccount->label;
-						$bookkeeping->montant = $mt;
-						$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
-						$bookkeeping->debit = ($mt < 0) ? -$mt : 0;
-						$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
-						$bookkeeping->code_journal = $journal;
-						$bookkeeping->journal_label = $journal_label;
-						$bookkeeping->fk_user_author = $user->id;
-						$bookkeeping->entity = $conf->entity;
-
-						$totaldebit += $bookkeeping->debit;
-						$totalcredit += $bookkeeping->credit;
-
-						$result = $bookkeeping->create($user);
-						if ($result < 0) {
-							if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
-							{
-								$error++;
-								$errorforline++;
-								$errorforinvoice[$key]='alreadyjournalized';
-								//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
-							}
-							else
-							{
-								$error++;
-								$errorforline++;
-								$errorforinvoice[$key]='other';
-								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
-							}
-						}
-					}
-				//}
+				}
 			}
 		}
 
@@ -654,7 +649,6 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 
 
 if (empty($action) || $action == 'view') {
-
 	llxHeader('', $langs->trans("SellsJournal"));
 
 	$nom = $langs->trans("SellsJournal") . ' | ' . $accountingjournalstatic->getNomUrl(0, 1, 1, '', 1);
@@ -803,34 +797,32 @@ if (empty($action) || $action == 'view') {
 		// Third party
 		foreach ($tabttc[$key] as $k => $mt)
 		{
-			//if ($mt) {
-				print '<tr class="oddeven">';
-				print "<!-- Thirdparty -->";
-				print "<td>" . $date . "</td>";
-				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
-				// Account
-				print "<td>";
-				$accountoshow = length_accounta($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER);
-				if (($accountoshow == "") || $accountoshow == 'NotDefined')
-				{
-					print '<span class="error">'.$langs->trans("MainAccountForCustomersNotDefined").'</span>';
-				}
-				else print $accountoshow;
-				print '</td>';
-				// Subledger account
-				print "<td>";
-				$accountoshow = length_accounta($k);
-				if (($accountoshow == "") || $accountoshow == 'NotDefined')
-				{
-					print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
-				}
-				else print $accountoshow;
-				print '</td>';
-				print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("SubledgerAccount") . "</td>";
-				print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
-				print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
-				print "</tr>";
-			//}
+			print '<tr class="oddeven">';
+			print "<!-- Thirdparty -->";
+			print "<td>" . $date . "</td>";
+			print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
+			// Account
+			print "<td>";
+			$accountoshow = length_accounta($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER);
+			if (($accountoshow == "") || $accountoshow == 'NotDefined')
+			{
+				print '<span class="error">'.$langs->trans("MainAccountForCustomersNotDefined").'</span>';
+			}
+			else print $accountoshow;
+			print '</td>';
+			// Subledger account
+			print "<td>";
+			$accountoshow = length_accounta($k);
+			if (($accountoshow == "") || $accountoshow == 'NotDefined')
+			{
+				print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
+			}
+			else print $accountoshow;
+			print '</td>';
+			print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("SubledgerAccount") . "</td>";
+			print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+			print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+			print "</tr>";
 		}
 
 		// Product / Service
@@ -839,30 +831,28 @@ if (empty($action) || $action == 'view') {
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch(null, $k, true);
 
-			//if ($mt) {
-				print '<tr class="oddeven">';
-				print "<!-- Product -->";
-				print "<td>" . $date . "</td>";
-				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
-				// Account
-				print "<td>";
-				$accountoshow = length_accountg($k);
-				if (($accountoshow == "") || $accountoshow == 'NotDefined')
-				{
-					print '<span class="error">'.$langs->trans("ProductNotDefined").'</span>';
-				}
-				else print $accountoshow;
-				print "</td>";
-				// Subledger account
-				print "<td>";
-				print '</td>';
-				$companystatic->id = $tabcompany[$key]['id'];
-				$companystatic->name = $tabcompany[$key]['name'];
-				print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $accountingaccount->label . "</td>";
-				print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
-				print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
-				print "</tr>";
-			//}
+			print '<tr class="oddeven">';
+			print "<!-- Product -->";
+			print "<td>" . $date . "</td>";
+			print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
+			// Account
+			print "<td>";
+			$accountoshow = length_accountg($k);
+			if (($accountoshow == "") || $accountoshow == 'NotDefined')
+			{
+				print '<span class="error">'.$langs->trans("ProductNotDefined").'</span>';
+			}
+			else print $accountoshow;
+			print "</td>";
+			// Subledger account
+			print "<td>";
+			print '</td>';
+			$companystatic->id = $tabcompany[$key]['id'];
+			$companystatic->name = $tabcompany[$key]['name'];
+			print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $accountingaccount->label . "</td>";
+			print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+			print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+			print "</tr>";
 		}
 
 		// VAT
