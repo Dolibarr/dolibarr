@@ -784,15 +784,15 @@ if ($resql)
 		$text_info='';
 		$text_warning='';
 		$nbprod=0;
-		
+
         $companystatic->id = $obj->socid;
 		$companystatic->code_client = $obj->code_client;
 		$companystatic->name = $obj->name;
 		$companystatic->client = $obj->client;
 		$companystatic->email = $obj->email;
 		if (!isset($cacheGetNomUrl[$obj->socid])) {
-		    $getNomUrl_cache[$obj->socid] = $companystatic->getNomUrl(1, 'customer');	
-		}	    
+		    $getNomUrl_cache[$obj->socid] = $companystatic->getNomUrl(1, 'customer');
+		}
 
 		$generic_commande->id=$obj->rowid;
 		$generic_commande->ref=$obj->ref;
