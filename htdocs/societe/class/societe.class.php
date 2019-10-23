@@ -2378,6 +2378,7 @@ class Societe extends CommonObject
 		$sql = "SELECT rowid, email, statut, phone_mobile, lastname, poste, firstname";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople";
 		$sql.= " WHERE fk_soc = ".$this->id;
+		$sql.= " ORDER BY lastname, firstname";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
