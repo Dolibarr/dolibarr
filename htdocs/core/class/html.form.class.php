@@ -7376,11 +7376,16 @@ class Form
 			else
 			{
 				$nophoto='/public/theme/common/nophoto.png';
-				if (in_array($modulepart, array('userphoto','contact')))	// For module that are "physical" users
+				if (in_array($modulepart, array('userphoto','contact','memberphoto')))	// For module that are "physical" users
 				{
-					$nophoto='/public/theme/common/user_anonymous.png';
-					if ($object->gender == 'man') $nophoto='/public/theme/common/user_man.png';
-					if ($object->gender == 'woman') $nophoto='/public/theme/common/user_woman.png';
+					if ($modulepart == 'memberphoto' && strpos($object->morphy, 'mor') !== false) {
+						$nophoto='/public/theme/common/company.png';
+					}
+					else {
+						$nophoto='/public/theme/common/user_anonymous.png';
+						if ($object->gender == 'man') $nophoto='/public/theme/common/user_man.png';
+						if ($object->gender == 'woman') $nophoto='/public/theme/common/user_woman.png';
+					}
 				}
 
 				if (! empty($conf->gravatar->enabled) && $email)

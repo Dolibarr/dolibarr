@@ -681,6 +681,7 @@ while ($i < min($num, $limit))
 	$memberstatic->datefin= $datefin;
 	$memberstatic->socid = $obj->fk_soc;
 	$memberstatic->photo = $obj->photo;
+	$memberstatic->morphy = $obj->morphy;
 
 	if (! empty($obj->fk_soc)) {
 		$memberstatic->fetch_thirdparty();
