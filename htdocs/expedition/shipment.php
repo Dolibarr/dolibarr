@@ -618,7 +618,9 @@ if ($id > 0 || ! empty($ref))
 		$sql.= ' cd.date_start,';
 		$sql.= ' cd.date_end,';
 		$sql.= ' cd.special_code,';
-		$sql.= ' p.rowid as prodid, p.label as product_label, p.entity, p.ref, p.fk_product_type as product_type, p.description as product_desc';
+		$sql.= ' p.rowid as prodid, p.label as product_label, p.entity, p.ref, p.fk_product_type as product_type, p.description as product_desc,';
+		$sql.= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units,';
+		$sql.= ' p.surface, p.surface_units, p.volume, p.volume_units';
 		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 		$sql.= " WHERE cd.fk_commande = ".$object->id;
@@ -705,6 +707,20 @@ if ($id > 0 || ! empty($ref))
 						$product_static->id=$objp->fk_product;
 						$product_static->ref=$objp->ref;
 	                    $product_static->entity = $objp->entity;
+
+	                    $product_static->weight=$objp->weight;
+	                    $product_static->weight_units=$objp->weight_units;
+	                    $product_static->length=$objp->length;
+	                    $product_static->length_units=$objp->length_units;
+	                    $product_static->width=$objp->width;
+	                    $product_static->width_units=$objp->width_units;
+	                    $product_static->height=$objp->height;
+	                    $product_static->height_units=$objp->height_units;
+	                    $product_static->surface=$objp->surface;
+	                    $product_static->surface_units=$objp->surface_units;
+	                    $product_static->volume=$objp->volume;
+	                    $product_static->volume_units=$objp->volume_units;
+
 						$text=$product_static->getNomUrl(1);
 						$text.= ' - '.$label;
 						$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description)).'<br>';
