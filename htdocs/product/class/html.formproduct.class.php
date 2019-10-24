@@ -455,12 +455,20 @@ class FormProduct
 			{
 				if (empty($fk_entrepot) || $fk_entrepot == $arraytypes['entrepot_id'])
 				{
+					$label=$arraytypes['entrepot_label'].' - ';
+					$label.=$arraytypes['batch'];
+					if ($arraytypes['qty'] <= 0) {
+						$label.=' <span class=\'text-warning\'>('.$langs->trans("Stock").' '.$arraytypes['qty'].')</span>';
+					}
+					else {
+						$label.=' <span class=\'opacitymedium\'>('.$langs->trans("Stock").' '.$arraytypes['qty'].')</span>';
+					}
+
 					$out.='<option value="'.$id.'"';
 					if ($selected == $id || ($selected == 'ifone' && $nboflot == 1)) $out.=' selected';
+					$out.=' data-html="'.$label.'"';
 					$out.='>';
-					$out.=$arraytypes['entrepot_label'].' - ';
-					$out.=$arraytypes['batch'];
-					$out.=' ('.$langs->trans("Stock").':'.$arraytypes['qty'].')';
+					$out.=$label;
 					$out.='</option>';
 				}
 			}
