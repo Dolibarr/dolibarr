@@ -52,7 +52,10 @@ class mod_contract_magre extends ModelNumRefContracts
 	 * @var string name
 	 */
 	public $name='Magre';
-
+    
+	/**
+	 * @var int Automatic numbering
+	 */
 	public $code_auto=1;
 
 	/**

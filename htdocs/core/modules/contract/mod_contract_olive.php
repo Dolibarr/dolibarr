@@ -57,8 +57,11 @@ class mod_contract_olive extends ModelNumRefContracts
      * @var string
      */
 	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
-
-	public $code_auto = 0; 	                // Numerotation automatique
+    
+	/**
+	 * @var int Automatic numbering
+	 */
+	public $code_auto = 0; 	                
 
 
 	/**
