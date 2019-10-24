@@ -861,11 +861,11 @@ if ($action == 'create')
 	if (GETPOST('datep', 'int', 1)) $datep=dol_stringtotime(GETPOST('datep', 'int', 1), 0);
 	print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td>';
 	if (GETPOST("afaire") == 1) {
-        print $form->selectDate($datep, 'ap', 1, 1, 0, "action", 1, 1, 0, 'fulldayend');
+        print $form->selectDate($datep, 'ap', 1, 1, 0, "action", 1, 2, 0, 'fulldayend');
     } elseif (GETPOST("afaire") == 2) {
-        print $form->selectDate($datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
+        print $form->selectDate($datep, 'ap', 1, 1, 1, "action", 1, 2, 0, 'fulldayend');
     } else {
-        print $form->selectDate($datep, 'ap', 1, 1, 1, "action", 1, 1, 0, 'fulldaystart');
+        print $form->selectDate($datep, 'ap', 1, 1, 1, "action", 1, 2, 0, 'fulldaystart');
     }
 	print '</td></tr>';
 
