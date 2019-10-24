@@ -817,7 +817,10 @@ class BOM extends CommonObject
 			$this->labelstatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
 		}
 
-		return dolGetStatus($this->labelstatus[$status], $this->labelstatus[$status], '', 'status'.$status, $mode);
+		$statusType = 'status'.$status;
+		if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
+
+		return dolGetStatus($this->labelstatus[$status], $this->labelstatus[$status], '', $statusType, $mode);
 	}
 
 	/**
