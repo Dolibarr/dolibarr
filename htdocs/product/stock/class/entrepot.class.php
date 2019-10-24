@@ -642,7 +642,7 @@ class Entrepot extends CommonObject
 	/**
 	 *	Return label of a given status
 	 *
-	 *	@param	int		$statut     Status
+	 *	@param	int		$status     Id status
 	 *	@param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *	@return string      		Label of status
 	 */
