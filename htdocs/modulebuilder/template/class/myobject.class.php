@@ -655,7 +655,7 @@ class MyObject extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		if (empty($this->labelstatus))
+		if (empty($this->labelstatus) || empty($this->labelstatusshort))
 		{
 			global $langs;
 			//$langs->load("mymodule");
