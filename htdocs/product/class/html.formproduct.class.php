@@ -258,12 +258,25 @@ class FormProduct
 		if ($empty) $out.='<option value="-1">'.($empty_label?$empty_label:'&nbsp;').'</option>';
 		foreach($this->cache_warehouses as $id => $arraytypes)
 		{
+			$label='';
+			if ($showfullpath) $label.=$arraytypes['full_label'];
+			else $label.=$arraytypes['label'];
+			if (($fk_product || ($showstock > 0)) && ($arraytypes['stock'] != 0 || ($showstock > 0)))
+			{
+				if ($arraytypes['stock'] <= 0) {
+					$label.=' <span class= \'text-warning\'>('.$langs->trans("Stock").':'.$arraytypes['stock'].')</span>';
+				}
+				else
+				{
+					$label.=' <span class=\'opacitymedium\'>('.$langs->trans("Stock").':'.$arraytypes['stock'].')</span>';
+				}
+			}
+
 			$out.='<option value="'.$id.'"';
 			if ($selected == $id || ($selected == 'ifone' && $nbofwarehouses == 1)) $out.=' selected';
+			$out.=' data-html="'.$label.'"';
 			$out.='>';
-			if ($showfullpath) $out.=$arraytypes['full_label'];
-			else $out.=$arraytypes['label'];
-			if (($fk_product || ($showstock > 0)) && ($arraytypes['stock'] != 0 || ($showstock > 0))) $out.=' ('.$langs->trans("Stock").':'.$arraytypes['stock'].')';
+			$out.=$label;
 			$out.='</option>';
 		}
 		$out.='</select>';
