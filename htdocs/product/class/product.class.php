@@ -91,11 +91,18 @@ class Product extends CommonObject
     public $label;
 
     /**
-     * Product descripion
+     * Product other fields PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION
      *
      * @var string
      */
     public $description;
+
+	/**
+     * Product descripion
+     *
+     * @var string
+     */
+    public $other;
 
     /**
      * Check TYPE constants
