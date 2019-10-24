@@ -599,12 +599,15 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 			// visible
 			$visible = -1;
 			if ($fieldname == 'entity') $visible = -2;
-			if ($fieldname == 'model_pdf') $visible = 0;
+			if (in_array($fieldname, array('model_pdf', 'note_public', 'note_private'))) $visible = 0;
 			// enabled
 			$enabled = 1;
 			// default
 			$default = '';
 			if ($fieldname == 'entity') $default=1;
+			// position
+			$position = $i;
+			if (in_array($fieldname, array('status', 'statut', 'fk_status', 'fk_statut'))) $position = 500;
 
 			$string.= "'".$obj->Field."' =>array('type'=>'".$type."', 'label'=>'".$label."',";
 			if ($default != '') $string.= " 'default'=>".$default.",";
@@ -612,7 +615,7 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 			$string.= " 'visible'=>".$visible;
 			if ($notnull) $string.= ", 'notnull'=>".$notnull;
 			if ($fieldname == 'ref') $string.= ", 'showoncombobox'=>1";
-			$string.= ", 'position'=>".$i."),\n";
+			$string.= ", 'position'=>".$position."),\n";
 			$string.="<br>";
 			$i+=5;
 		}

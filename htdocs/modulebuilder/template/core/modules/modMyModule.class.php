@@ -246,18 +246,18 @@ class modMyModule extends DolibarrModules
         /* BEGIN MODULEBUILDER PERMISSIONS */
         $this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
         $this->rights[$r][1] = 'Read objects of MyModule';	// Permission label
-        $this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
-        $this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
+        $this->rights[$r][4] = 'myobject';				// In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
+        $this->rights[$r][5] = 'read';				    // In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
         $r++;
         $this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
         $this->rights[$r][1] = 'Create/Update objects of MyModule';	// Permission label
-        $this->rights[$r][4] = 'write';				// In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
-        $this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
+        $this->rights[$r][4] = 'myobject';				// In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
+        $this->rights[$r][5] = 'write';				    // In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
         $r++;
         $this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
         $this->rights[$r][1] = 'Delete objects of MyModule';	// Permission label
-        $this->rights[$r][4] = 'delete';				// In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
-        $this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
+        $this->rights[$r][4] = 'myobject';				// In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
+        $this->rights[$r][5] = 'delete';				// In php code, permission will be checked by test if ($user->rights->mymodule->level1->level2)
         $r++;
         /* END MODULEBUILDER PERMISSIONS */
 
@@ -276,7 +276,7 @@ class modMyModule extends DolibarrModules
             'langs'=>'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
             'position'=>1000+$r,
             'enabled'=>'$conf->mymodule->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-            'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+            'perms'=>'$user->rights->mymodule->myobject->read',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
             'target'=>'',
             'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
         );
@@ -292,7 +292,7 @@ class modMyModule extends DolibarrModules
             'langs'=>'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
             'position'=>1000+$r,
             'enabled'=>'$conf->mymodule->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled.
-            'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+            'perms'=>'$user->rights->mymodule->myobject->read',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
             'target'=>'',
             'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
         );
@@ -306,7 +306,7 @@ class modMyModule extends DolibarrModules
             'langs'=>'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
             'position'=>1000+$r,
             'enabled'=>'$conf->mymodule->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-            'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+            'perms'=>'$user->rights->mymodule->myobject->read',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
             'target'=>'',
             'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
         );
@@ -320,7 +320,7 @@ class modMyModule extends DolibarrModules
             'langs'=>'mymodule@mymodule',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
             'position'=>1000+$r,
             'enabled'=>'$conf->mymodule->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-            'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+            'perms'=>'$user->rights->mymodule->myobject->write',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
             'target'=>'',
             'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
         );
