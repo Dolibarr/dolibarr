@@ -668,8 +668,9 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 			'lib/mymodule_myobject.lib.php'=>'lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php',
 			//'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.strtolower($objectname).'Test.php',
 			'sql/llx_mymodule_myobject.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
-			'sql/llx_mymodule_myobject_extrafields.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql',
 			'sql/llx_mymodule_myobject.key.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql',
+			'sql/llx_mymodule_myobject_extrafields.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql',
+			'sql/llx_mymodule_myobject_extrafields.key.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.key.sql',
 			//'scripts/mymodule.php'=>'scripts/'.strtolower($objectname).'.php',
 			'img/object_myobject.png'=>'img/object_'.strtolower($objectname).'.png',
 			'class/myobject.class.php'=>'class/'.strtolower($objectname).'.class.php',
@@ -2031,6 +2032,10 @@ elseif (! empty($module))
 						print ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=droptable">'.$langs->trans("DropTableIfEmpty").'</a>';
 						//print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
 						print '<br>';
+						print '<span class="fa fa-file-o"></span> '.$langs->trans("SqlFileKey").' : <strong>'.($realpathtosqlkey?'':'<strike>').$pathtosqlkey.($realpathtosqlkey?'':'</strike>').'</strong>';
+						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=sql&file='.urlencode($pathtosqlkey).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+						//print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
+						print '<br>';
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("SqlFileExtraFields").' : <strong>'.($realpathtosqlextra?'':'<strike>').$pathtosqlextra.($realpathtosqlextra?'':'</strike>').'</strong>';
 						if ($realpathtosqlextra)
 						{
@@ -2043,10 +2048,6 @@ elseif (! empty($module))
 						else {
 							print '<a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=initsqlextrafields&format=sql&file='.urlencode($pathtosqlextra).'"><input type="button" class="button" value="'.$langs->trans("Generate").'"></a>';
 						}
-						//print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
-						print '<br>';
-						print '<span class="fa fa-file-o"></span> '.$langs->trans("SqlFileKey").' : <strong>'.($realpathtosqlkey?'':'<strike>').$pathtosqlkey.($realpathtosqlkey?'':'</strike>').'</strong>';
-						print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=sql&file='.urlencode($pathtosqlkey).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 						//print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
 						print '<br>';
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("SqlFileKeyExtraFields").' : <strong>'.($realpathtosqlextrakey?'':'<strike>').$pathtosqlextrakey.($realpathtosqlextrakey?'':'</strike>').'</strong>';
