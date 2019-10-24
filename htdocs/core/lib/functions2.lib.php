@@ -2252,7 +2252,7 @@ function colorValidateHex($color, $allow_white = true)
  *
  * @param 	string 		$hex			Color in hex ('#AA1122' or 'AA1122' or '#a12' or 'a12')
  * @param 	integer		$ratio			Default=-50. Note: 0=Component color is unchanged, -100=Component color become 88, +100=Component color become 00 or FF
- * @param	integer		$brigthness 	Default=0. Adjust brightness. -100=Decrease brightness by 100%, +100=Increase of 100%.
+ * @param	integer		$brightness 	Default=0. Adjust brightness. -100=Decrease brightness by 100%, +100=Increase of 100%.
  * @return string		New string of color
  * @see colorAdjustBrightness()
  */
