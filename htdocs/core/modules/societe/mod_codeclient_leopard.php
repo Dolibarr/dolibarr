@@ -57,7 +57,10 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
      */
 	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
 
-	public $code_auto; 	                // Numerotation automatique
+	/**
+	 * @var int Automatic numbering
+	 */
+	public $code_auto;
 
 
 	/**
