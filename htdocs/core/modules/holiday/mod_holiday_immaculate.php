@@ -52,7 +52,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	 * @var string model name
 	 */
 	public $name='Immaculate';
-    
+
 	/**
 	 * @var int Automatic numbering
 	 */
