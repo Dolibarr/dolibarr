@@ -1652,6 +1652,11 @@ elseif (! empty($module))
 		$head2[$h][2] = 'languages';
 		$h++;
 
+		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=dictionaries&module='.$module.($forceddirread?'@'.$dirread:'');
+		$head2[$h][1] = $langs->trans("Dictionaries");
+		$head2[$h][2] = 'dictionaries';
+		$h++;
+
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=objects&module='.$module.($forceddirread?'@'.$dirread:'');
 		$head2[$h][1] = $langs->trans("Objects");
 		$head2[$h][2] = 'objects';
@@ -1934,6 +1939,139 @@ elseif (! empty($module))
 
 				$doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09')?GETPOST('format', 'aZ09'):'text'));
+				print '<br>';
+				print '<center>';
+				print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+				print ' &nbsp; ';
+				print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+				print '</center>';
+
+				print '</form>';
+			}
+		}
+
+		if ($tab == 'dictionaries')
+		{
+			$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+
+			$dicts = $moduleobj->dictionaries;
+
+			if ($action != 'editfile' || empty($file))
+			{
+				print '<span class="opacitymedium">';
+				$htmlhelp=$langs->trans("DictionariesDefDescTooltip", '<a href="'.DOL_URL_ROOT.'/admin/dict.php">'.$langs->trans('Setup').' - '.$langs->trans('Dictionaries').'</a>');
+				print $form->textwithpicto($langs->trans("DictionariesDefDesc"), $htmlhelp, 1, 'help', '', 0, 2, 'helpondesc').'<br>';
+				print '</span>';
+				print '<br>';
+
+				print '<span class="fa fa-file-o"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
+				print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+				print '<br>';
+				print '<span class="fa fa-file-o"></span> '.$langs->trans("LanguageFile").' :</span> <strong>'.$dicts['langs'].'</strong><br>';
+
+				print load_fiche_titre($langs->trans("ListOfDictionariesEntries"), '', '');
+
+				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="action" value="addproperty">';
+				print '<input type="hidden" name="tab" value="objects">';
+				print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
+				print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
+
+				print '<div class="div-table-responsive">';
+				print '<table class="noborder">';
+
+				print '<tr class="liste_titre">';
+				print_liste_field_titre("#", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Table", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Label", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("SQL", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("SQLSort", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("FieldsView", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("FieldsEdit", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("FieldsInsert", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Rowid", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Condition", $_SERVER["PHP_SELF"], '', "", $param, '', $sortfield, $sortorder);
+				print "</tr>\n";
+
+				if (is_array($dicts))
+				{
+					$i = 0;
+					$maxi = count($dicts['tabname']);
+					while ($i < $maxi)
+					{
+						print '<tr class="oddeven">';
+
+						print '<td>';
+						print ($i + 1);
+						print '</td>';
+
+						print '<td>';
+						print $dicts['tabname'][$i];
+						print '</td>';
+
+						print '<td>';
+						print $dicts['tablib'][$i];
+						print '</td>';
+
+						print '<td>';
+						print $dicts['tabsql'][$i];
+						print '</td>';
+
+						print '<td>';
+						print $dicts['tabsqlsort'][$i];
+						print '</td>';
+
+						print '<td>';
+						print $dicts['tabfield'][$i];
+						print '</td>';
+
+						print '<td>';
+						print $dicts['tabfieldvalue'][$i];
+						print '</td>';
+
+						print '<td>';
+						print $dicts['tabfieldinsert'][$i];
+						print '</td>';
+
+						print '<td class="right">';
+						print $dicts['tabrowid'][$i];
+						print '</td>';
+
+						print '<td class="right">';
+						print $dicts['tabcond'][$i];
+						print '</td>';
+
+						print '</tr>';
+						$i++;
+					}
+				}
+				else
+				{
+					print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("None").'</td></tr>';
+				}
+
+				print '</table>';
+				print '</div>';
+
+				print '</form>';
+			}
+			else
+			{
+				$fullpathoffile=dol_buildpath($file, 0);
+
+				$content = file_get_contents($fullpathoffile);
+
+				// New module
+				print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				print '<input type="hidden" name="action" value="savefile">';
+				print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'">';
+				print '<input type="hidden" name="tab" value="'.$tab.'">';
+				print '<input type="hidden" name="module" value="'.$module.'">';
+
+				$doleditor=new DolEditor('editfilecontent', $content, '', '300', 'Full', 'In', true, false, 'ace', 0, '99%');
+				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09')?GETPOST('format', 'aZ09'):'html'));
 				print '<br>';
 				print '<center>';
 				print '<input type="submit" class="button buttonforacesave" id="savefile" name="savefile" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
