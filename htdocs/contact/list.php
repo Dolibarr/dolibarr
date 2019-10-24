@@ -972,7 +972,7 @@ while ($i < min($num, $limit))
 	// Status
 	if (! empty($arrayfields['p.statut']['checked']))
 	{
-		print '<td class="center">'.$contactstatic->getLibStatut(3).'</td>';
+		print '<td class="center">'.$contactstatic->getLibStatut(5).'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['p.import_key']['checked']))

@@ -1279,7 +1279,7 @@ while ($i < min($num, $limit))
 	// Status
 	if (! empty($arrayfields['s.status']['checked']))
 	{
-		print '<td class="center nowrap">'.$companystatic->getLibStatut(3).'</td>';
+		print '<td class="center nowrap">'.$companystatic->getLibStatut(5).'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['s.import_key']['checked']))

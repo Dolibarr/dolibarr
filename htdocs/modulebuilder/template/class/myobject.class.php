@@ -662,12 +662,15 @@ class MyObject extends CommonObject
 			$this->labelstatus[self::STATUS_DRAFT] = $langs->trans('Draft');
 			$this->labelstatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
 			$this->labelstatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
+			$this->labelstatusshort[self::STATUS_DRAFT] = $langs->trans('Draft');
+			$this->labelstatusshort[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+			$this->labelstatusshort[self::STATUS_CANCELED] = $langs->trans('Disabled');
 		}
 
 		$statusType = 'status'.$status;
 		if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
 
-		return dolGetStatus($this->labelstatus[$status], $this->labelstatus[$status], '', $statusType, $mode);
+		return dolGetStatus($this->labelstatus[$status], $this->labelstatusshort[$status], '', $statusType, $mode);
 	}
 
 	/**
