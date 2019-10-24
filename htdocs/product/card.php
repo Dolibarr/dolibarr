@@ -1836,7 +1836,7 @@ else
                 print '</td>';
             }
 
-            //Parent product.
+            // Parent product.
             if (!empty($conf->variants->enabled) && ($object->isProduct() || $object->isService())) {
                 $combination = new ProductCombination($db);
 

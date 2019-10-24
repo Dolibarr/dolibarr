@@ -274,7 +274,7 @@ class FormProduct
 
 			$out.='<option value="'.$id.'"';
 			if ($selected == $id || ($selected == 'ifone' && $nbofwarehouses == 1)) $out.=' selected';
-			$out.=' data-html="'.$label.'"';
+			$out.=' data-html="'.dol_escape_htmltag($label).'"';
 			$out.='>';
 			$out.=$label;
 			$out.='</option>';
@@ -479,7 +479,7 @@ class FormProduct
 
 					$out.='<option value="'.$id.'"';
 					if ($selected == $id || ($selected == 'ifone' && $nboflot == 1)) $out.=' selected';
-					$out.=' data-html="'.$label.'"';
+					$out.=' data-html="'.dol_escape_htmltag($label).'"';
 					$out.='>';
 					$out.=$label;
 					$out.='</option>';

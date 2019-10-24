@@ -2827,15 +2827,6 @@ class Form
                     }
                 }
 
-				$opt = '<option value="'.$outkey.'"';
-				if ($selected && $selected == $objp->idprodfournprice) $opt.= ' selected';
-				if (empty($objp->idprodfournprice) && empty($alsoproductwithnosupplierprice)) $opt.=' disabled';
-				if (!empty($objp->idprodfournprice) && $objp->idprodfournprice > 0)
-				{
-					$opt.= ' pbq="'.$objp->idprodfournprice.'" data-pbq="'.$objp->idprodfournprice.'" data-pbqqty="'.$objp->quantity.'" data-pbqpercent="'.$objp->remise_percent.'"';
-				}
-				$opt.= '>';
-
 				$objRef = $objp->ref;
 				if ($filterkey && $filterkey != '') $objRef=preg_replace('/('.preg_quote($filterkey).')/i', '<strong>$1</strong>', $objRef, 1);
 				$objRefFourn = $objp->ref_fourn;
@@ -2843,19 +2834,17 @@ class Form
 				$label = $objp->label;
 				if ($filterkey && $filterkey != '') $label=preg_replace('/('.preg_quote($filterkey).')/i', '<strong>$1</strong>', $label, 1);
 
-				$opt.=$objp->ref;
+				$optlabel = $objp->ref;
 				if (! empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn))
-					$opt.=' ('.$objp->ref_fourn.')';
-				$opt.=' - ';
-				$outval.=$objRef;
+					$optlabel.=' <span class=\'opacitymedium\'>('.$objp->ref_fourn.')</span>';
+
+				$outvallabel = $objRef;
 				if (! empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn))
-					$outval.=' ('.$objRefFourn.')';
-				$outval.=' - ';
-				$opt.=dol_trunc($label, 72);
-				$outval.=dol_trunc($label, 72);
+					$outvallabel.=' ('.$objRefFourn.')';
+
                 // Units
-                $opt .= $outvalUnits;
-                $outval .= $outvalUnits;
+				$optlabel .= $outvalUnits;
+				$outvallabel .= $outvalUnits;
 
 				if (! empty($objp->idprodfournprice))
 				{
@@ -2880,66 +2869,81 @@ class Form
 					}
 					if ($objp->quantity == 1)
 					{
-						$opt.= ' - '.price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 1, $langs, 0, 0, -1, $conf->currency)."/";
-						$outval.= ' - '.price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 0, $langs, 0, 0, -1, $conf->currency)."/";
-						$opt.= $langs->trans("Unit");	// Do not use strtolower because it breaks utf8 encoding
-						$outval.=$langs->transnoentities("Unit");
+						$optlabel.= ' - '.price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 1, $langs, 0, 0, -1, $conf->currency)."/";
+						$outvallabel.= ' - '.price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 0, $langs, 0, 0, -1, $conf->currency)."/";
+						$optlabel.= $langs->trans("Unit");	// Do not use strtolower because it breaks utf8 encoding
+						$outvallabel.=$langs->transnoentities("Unit");
 					}
 					else
 					{
-						$opt.= ' - '.price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 1, $langs, 0, 0, -1, $conf->currency)."/".$objp->quantity;
-						$outval.= ' - '.price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 0, $langs, 0, 0, -1, $conf->currency)."/".$objp->quantity;
-						$opt.= ' '.$langs->trans("Units");	// Do not use strtolower because it breaks utf8 encoding
-						$outval.= ' '.$langs->transnoentities("Units");
+						$optlabel.= ' - '.price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 1, $langs, 0, 0, -1, $conf->currency)."/".$objp->quantity;
+						$outvallabel.= ' - '.price($objp->fprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 0, $langs, 0, 0, -1, $conf->currency)."/".$objp->quantity;
+						$optlabel.= ' '.$langs->trans("Units");	// Do not use strtolower because it breaks utf8 encoding
+						$outvallabel.= ' '.$langs->transnoentities("Units");
 					}
 
-					if ($objp->quantity >= 1)
+					if ($objp->quantity > 1)
 					{
-						$opt.=" (".price($objp->unitprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 1, $langs, 0, 0, -1, $conf->currency)."/".$langs->trans("Unit").")";	// Do not use strtolower because it breaks utf8 encoding
-						$outval.=" (".price($objp->unitprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 0, $langs, 0, 0, -1, $conf->currency)."/".$langs->transnoentities("Unit").")";	// Do not use strtolower because it breaks utf8 encoding
+						$optlabel.=" (".price($objp->unitprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 1, $langs, 0, 0, -1, $conf->currency)."/".$langs->trans("Unit").")";	// Do not use strtolower because it breaks utf8 encoding
+						$outvallabel.=" (".price($objp->unitprice * (!empty($conf->global->DISPLAY_DISCOUNTED_SUPPLIER_PRICE)?(1 - $objp->remise_percent / 100):1), 0, $langs, 0, 0, -1, $conf->currency)."/".$langs->transnoentities("Unit").")";	// Do not use strtolower because it breaks utf8 encoding
 					}
 					if ($objp->remise_percent >= 1)
 					{
-						$opt.=" - ".$langs->trans("Discount")." : ".vatrate($objp->remise_percent).' %';
-						$outval.=" - ".$langs->transnoentities("Discount")." : ".vatrate($objp->remise_percent).' %';
+						$optlabel.=" - ".$langs->trans("Discount")." : ".vatrate($objp->remise_percent).' %';
+						$outvallabel.=" - ".$langs->transnoentities("Discount")." : ".vatrate($objp->remise_percent).' %';
 					}
 					if ($objp->duration)
 					{
-						$opt .= " - ".$objp->duration;
-						$outval.=" - ".$objp->duration;
+						$optlabel .= " - ".$objp->duration;
+						$outvallabel.=" - ".$objp->duration;
 					}
 					if (! $socid)
 					{
-						$opt .= " - ".dol_trunc($objp->name, 8);
-						$outval.=" - ".dol_trunc($objp->name, 8);
+						$optlabel .= " - ".dol_trunc($objp->name, 8);
+						$outvallabel.=" - ".dol_trunc($objp->name, 8);
 					}
                     if (! empty($conf->barcode->enabled) && !empty($objp->barcode))
                     {
-                        $opt .= " - ".$objp->barcode;
-                        $outval.=" - ".$objp->barcode;
+                    	//$optlabel .= " - <span class='fa fa-barcode'></span>".$objp->barcode;
+                    	$optlabel .= " - ".$objp->barcode;
+                    	$outvallabel.=" - ".$objp->barcode;
                     }
 					if ($objp->supplier_reputation)
 					{
 						//TODO dictionary
 						$reputations=array(''=>$langs->trans('Standard'),'FAVORITE'=>$langs->trans('Favorite'),'NOTTHGOOD'=>$langs->trans('NotTheGoodQualitySupplier'), 'DONOTORDER'=>$langs->trans('DoNotOrderThisProductToThisSupplier'));
 
-						$opt .= " - ".$reputations[$objp->supplier_reputation];
-						$outval.=" - ".$reputations[$objp->supplier_reputation];
+						$optlabel .= " - ".$reputations[$objp->supplier_reputation];
+						$outvallabel.=" - ".$reputations[$objp->supplier_reputation];
 					}
 				}
 				else
 				{
 					if (empty($alsoproductwithnosupplierprice))     // No supplier price defined for couple product/supplier
 					{
-						$opt.= ' - '.$langs->trans("NoPriceDefinedForThisSupplier");
-						$outval.=' - '.$langs->transnoentities("NoPriceDefinedForThisSupplier");
+						$optlabel.= " - <span class='opacitymedium'>".$langs->trans("NoPriceDefinedForThisSupplier").'</span>';
+						$outvallabel.=' - '.$langs->transnoentities("NoPriceDefinedForThisSupplier");
 					}
 					else                                            // No supplier price defined for product, even on other suppliers
 					{
-						$opt.= ' - '.$langs->trans("NoPriceDefinedForThisSupplier");
-						$outval.=' - '.$langs->transnoentities("NoPriceDefinedForThisSupplier");
+						$optlabel.= " - <span class='opacitymedium'>".$langs->trans("NoPriceDefinedForThisSupplier").'</span>';
+						$outvallabel.=' - '.$langs->transnoentities("NoPriceDefinedForThisSupplier");
 					}
 				}
+
+				$opt = '<option value="'.$outkey.'"';
+				if ($selected && $selected == $objp->idprodfournprice) $opt.= ' selected';
+				if (empty($objp->idprodfournprice) && empty($alsoproductwithnosupplierprice)) $opt.=' disabled';
+				if (!empty($objp->idprodfournprice) && $objp->idprodfournprice > 0)
+				{
+					$opt.= ' pbq="'.$objp->idprodfournprice.'" data-pbq="'.$objp->idprodfournprice.'" data-pbqqty="'.$objp->quantity.'" data-pbqpercent="'.$objp->remise_percent.'"';
+				}
+				$opt.= ' data-html="'.dol_escape_htmltag($optlabel).'"';
+				$opt.= '>';
+
+				$opt.=$optlabel;
+				$outval.=$outvallabel;
+
 				$opt .= "</option>\n";
 
 
