@@ -205,7 +205,7 @@ class Translate
 		}
 
         // Check cache
-		if (! empty($this->_tab_loaded[$newdomain]))	// File already loaded for this domain
+		if (! empty($this->_tab_loaded[$newdomain]) && $this->_tab_loaded[$newdomain] != 2 )	// File already loaded for this domain
 		{
 			//dol_syslog("Translate::Load already loaded for newdomain=".$newdomain);
 			return 0;
@@ -270,7 +270,6 @@ class Translate
 						$found=true;						// Found in dolibarr PHP cache
 					}
 				}
-
 				if (! $found)
 				{
 					if ($fp = @fopen($file_lang, "rt"))
