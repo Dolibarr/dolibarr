@@ -507,7 +507,7 @@ input#onlinepaymenturl, input#directdownloadlink {
 	opacity: 0.7;
 }
 
-div#moretabsListaction {
+div#moretabsList, div#moretabsListaction {
     z-index: 5;
 }
 
