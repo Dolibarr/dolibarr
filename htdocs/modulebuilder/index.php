@@ -327,6 +327,10 @@ if ($dirins && $action == 'initsqlextrafields' && !empty($module))
 			'Mon module'=>$modulename,
 			'mon module'=>$modulename,
 			'htdocs/modulebuilder/template'=>strtolower($modulename),
+			'My Object'=>$objectname,
+			'MyObject'=>$objectname,
+			'my object'=>strtolower($objectname),
+			'myobject'=>strtolower($objectname),
 			'---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email?' <'.$user->email.'>':'')
 		);
 
