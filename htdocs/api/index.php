@@ -39,7 +39,7 @@ if (! empty($_SERVER['HTTP_DOLAPIENTITY'])) define("DOLENTITY", (int) $_SERVER['
 
 
 // Fix for NGINX
-$url = $_SERVER["SCRIPT_URI"] !== null ? $_SERVER["SCRIPT_URI"] : $_SERVER['PHP_SELF'];
+$url = (isset($_SERVER['SCRIPT_URI']) && $_SERVER["SCRIPT_URI"] !== null) ? $_SERVER["SCRIPT_URI"] : $_SERVER['PHP_SELF'];
 
 $res=0;
 if (! $res && file_exists("../main.inc.php")) $res=include '../main.inc.php';
