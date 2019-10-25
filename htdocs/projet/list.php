@@ -65,6 +65,10 @@ $sortorder = GETPOST("sortorder");
 $page = GETPOST("page");
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
+
+if (isset($conf->global->MAIN_PROJECT_SORT_FIELD)){$sortfield=$conf->global->MAIN_PROJECT_SORT_FIELD;}
+if (isset($conf->global->MAIN_PROJECT_SORT_ORDER)){$sortorder=$conf->global->MAIN_PROJECT_SORT_ORDER;}
+
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="ASC";
 $offset = $limit * $page ;
