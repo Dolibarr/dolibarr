@@ -181,15 +181,18 @@ $arrayfields=array(
 	'p.import_key'=>array('label'=>"ImportId", 'checked'=>0, 'position'=>1100),
 );
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-   foreach($extrafields->attribute_label as $key => $val)
-   {
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
-   }
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+	{
+		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+	}
 }
+$object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
-$object=new Contact($db);
+
 if (($id > 0 || ! empty($ref)) && $action != 'add')
 {
 	$result=$object->fetch($id, $ref);
@@ -276,7 +279,9 @@ $sql.= " p.rowid, p.lastname as lastname, p.statut, p.firstname, p.zip, p.town, 
 $sql.= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.datec as date_creation, p.tms as date_update,";
 $sql.= " co.code as country_code";
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -967,7 +972,7 @@ while ($i < min($num, $limit))
 	// Status
 	if (! empty($arrayfields['p.statut']['checked']))
 	{
-		print '<td class="center">'.$contactstatic->getLibStatut(3).'</td>';
+		print '<td class="center">'.$contactstatic->getLibStatut(5).'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['p.import_key']['checked']))

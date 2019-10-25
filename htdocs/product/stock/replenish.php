@@ -140,7 +140,6 @@ if ($action == 'order' && isset($_POST['valid']))
                 	if ($qty)
                 	{
 	                    //might need some value checks
-	                    $obj = $db->fetch_object($resql);
 	                    $line = new CommandeFournisseurLigne($db);
 	                    $line->qty = $qty;
 	                    $line->fk_product = $idprod;
@@ -179,7 +178,7 @@ if ($action == 'order' && isset($_POST['valid']))
                     $error=$db->lasterror();
                     dol_print_error($db);
                 }
-                $db->free($resql);
+
                 unset($_POST['fourn' . $i]);
             }
             unset($_POST[$i]);
@@ -492,7 +491,7 @@ if ($sref || $snom || $sall || $salert || $draftorder || GETPOST('search', 'alph
 	$filters .= '&mode=' . $mode;
 	$filters .= '&fk_supplier=' . $fk_supplier;
 	$filters .= '&fk_entrepot=' . $fk_entrepot;
-print_barre_liste(
+	print_barre_liste(
 		$texte,
 		$page,
 		'replenish.php',
@@ -511,7 +510,7 @@ print_barre_liste(
 	$filters .= '&mode=' . $mode;
 	$filters .= '&fk_supplier=' . $fk_supplier;
 	$filters .= '&fk_entrepot=' . $fk_entrepot;
-print_barre_liste(
+	print_barre_liste(
 		$texte,
 		$page,
 		'replenish.php',

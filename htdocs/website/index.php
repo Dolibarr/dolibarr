@@ -1236,12 +1236,18 @@ if ($action == 'updatecss')
     			setEventMessages($langs->trans("Saved"), null, 'mesgs');
     		}
 
-    		$action='preview';
-
-    		if ($backtopage)
+    		if (! GETPOSTISSET('updateandstay'))	// If we click on "Save And Stay", we don not make the redirect
     		{
-    			header("Location: ".$backtopage);
-    			exit;
+    			$action='preview';
+    			if ($backtopage)
+	    		{
+	    			header("Location: ".$backtopage);
+	    			exit;
+	    		}
+    		}
+    		else
+    		{
+    			$action = 'editcss';
     		}
 		}
 	}
@@ -2105,6 +2111,7 @@ if (! GETPOST('hide_websitemenu'))
 
 	if (in_array($action, array('editcss','editmenu','file_manager','replacesite','replacesiteconfirm')))
 	{
+		if ($action == 'editcss' && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') print '<input type="submit" id="savefilean stay" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
 		if (preg_match('/^create/', $action) && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 		if (preg_match('/^edit/', $action) && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 		if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="cancel">';
@@ -3028,7 +3035,6 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 			$result = $sourcepage->fetch($objectpage->fk_page);
 			if ($result == 0)	// not found, we can reset value
 			{
-
 			}
 			elseif ($result > 0)
 			{

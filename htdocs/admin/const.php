@@ -118,7 +118,6 @@ if (! empty($consts) && $action == 'update')
 // Mass delete
 if (! empty($consts) && $action == 'delete')
 {
-
 	$nbdeleted=0;
 	foreach($consts as $const)
 	{
@@ -164,7 +163,7 @@ llxHeader('', $langs->trans("Setup"), $wikihelp);
 // Add logic to show/hide buttons
 if ($conf->use_javascript_ajax)
 {
-?>
+    ?>
 <script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery("#updateconst").hide();
@@ -182,7 +181,7 @@ jQuery(document).ready(function() {
 	});
 });
 </script>
-<?php
+    <?php
 }
 
 print load_fiche_titre($langs->trans("OtherSetup"), '', 'title_setup');

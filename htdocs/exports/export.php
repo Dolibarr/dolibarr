@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 // Load translation files required by the page
-$langs->loadlangs(array('exports', 'other', 'users', 'companies', 'projects', 'banks'));
+$langs->loadlangs(array('admin', 'exports', 'other', 'users', 'companies', 'projects', 'suppliers', 'products', 'bank'));
 
 // Everybody should be able to go on this page
 //if (! $user->admin)
@@ -1198,7 +1198,7 @@ if ($step == 5 && $datatoexport)
     			}
     		}
     	}
-    	print '<td>'.(! empty($list)?$list:$langs->trans("None")).'</td>';
+    	print '<td>'.(! empty($list)?$list:'<span class="opacitymedium">'.$langs->trans("None").'</span>').'</td>';
     	print '</tr>';
     }
 

@@ -151,6 +151,7 @@ function showDirectPublicLink($object)
 
 	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 	$email = CMailFile::getValidAddress($object->origin_email, 2);
+	$url = '';
 	if ($email)
 	{
 		$url = dol_buildpath('/public/ticket/view.php', 3).'?track_id='.$object->track_id.'&email='.$email;
@@ -785,7 +786,6 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 
             // Contact for this action
             if (isset($histo[$key]['socpeopleassigned']) && is_array($histo[$key]['socpeopleassigned']) && count($histo[$key]['socpeopleassigned']) > 0) {
-
                 $contactList = '';
                 foreach ($histo[$key]['socpeopleassigned'] as $cid => $Tab) {
                     $contact = new Contact($db);

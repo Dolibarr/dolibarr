@@ -674,7 +674,6 @@ class Fichinter extends CommonObject
 		$langs->load("interventions");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'soleil';
 
 			if ($this->modelpdf) {
@@ -702,51 +701,36 @@ class Fichinter extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Returns the label of a statut
+	 *	Returns the label of a status
 	 *
-	 *	@param      int		$statut     id statut
+	 *	@param      int		$status     Id status
 	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *	@return     string      		Label
 	 */
-	public function LibStatut($statut, $mode = 0)
+	public function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
 		// Init/load array of translation of status
-		if (empty($this->statuts) || empty($this->statuts_short))
+		if (empty($this->statuts) || empty($this->statuts_short) || empty($this->statuts_logo))
 		{
 			global $langs;
 			$langs->load("fichinter");
 
-			$this->statuts[0]=$langs->trans('Draft');
-			$this->statuts[1]=$langs->trans('Validated');
-			$this->statuts[2]=$langs->trans('StatusInterInvoiced');
-			$this->statuts[3]=$langs->trans('Done');
-			$this->statuts_short[0]=$langs->trans('Draft');
-			$this->statuts_short[1]=$langs->trans('Validated');
-			$this->statuts_short[2]=$langs->trans('StatusInterInvoiced');
-			$this->statuts_short[3]=$langs->trans('Done');
-			$this->statuts_logo[0]='statut0';
-			$this->statuts_logo[1]='statut1';
-			$this->statuts_logo[2]='statut6';
-			$this->statuts_logo[3]='statut6';
+			$this->statuts[self::STATUS_DRAFT]=$langs->trans('Draft');
+			$this->statuts[self::STATUS_VALIDATED]=$langs->trans('Validated');
+			$this->statuts[self::STATUS_BILLED]=$langs->trans('StatusInterInvoiced');
+			$this->statuts[self::STATUS_CLOSED]=$langs->trans('Done');
+			$this->statuts_short[self::STATUS_DRAFT]=$langs->trans('Draft');
+			$this->statuts_short[self::STATUS_VALIDATED]=$langs->trans('Validated');
+			$this->statuts_short[self::STATUS_BILLED]=$langs->trans('StatusInterInvoiced');
+			$this->statuts_short[self::STATUS_CLOSED]=$langs->trans('Done');
+			$this->statuts_logo[self::STATUS_DRAFT]='status0';
+			$this->statuts_logo[self::STATUS_VALIDATED]='status1';
+			$this->statuts_logo[self::STATUS_BILLED]='status6';
+			$this->statuts_logo[self::STATUS_CLOSED]='status6';
 		}
 
-		if ($mode == 0)
-			return $this->statuts[$statut];
-		elseif ($mode == 1)
-			return $this->statuts_short[$statut];
-		elseif ($mode == 2)
-			return img_picto($this->statuts_short[$statut], $this->statuts_logo[$statut]).' '.$this->statuts_short[$statut];
-		elseif ($mode == 3)
-			return img_picto($this->statuts_short[$statut], $this->statuts_logo[$statut]);
-		elseif ($mode == 4)
-			return img_picto($this->statuts_short[$statut], $this->statuts_logo[$statut]).' '.$this->statuts[$statut];
-		elseif ($mode == 5)
-			return '<span class="hideonsmartphone">'.$this->statuts_short[$statut].' </span>'.img_picto($this->statuts[$statut], $this->statuts_logo[$statut]);
-		elseif ($mode == 6)
-			return '<span class="hideonsmartphone">'.$this->statuts[$statut].' </span>'.img_picto($this->statuts[$statut], $this->statuts_logo[$statut]);
-
-		return '';
+		return dolGetStatus($this->statuts[$status], $this->statuts_short[$status], '', $this->statuts_logo[$status], $mode);
 	}
 
 	/**
@@ -840,7 +824,6 @@ class Fichinter extends CommonObject
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 			foreach ($dirmodels as $reldir) {
-
 				$dir = dol_buildpath($reldir."core/modules/fichinter/");
 
 				// Load file with numbering class (if found)
@@ -1600,7 +1583,6 @@ class FichinterLigne extends CommonObjectLine
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
 				$result=$this->insertExtraFields();
@@ -1613,7 +1595,6 @@ class FichinterLigne extends CommonObjectLine
 			$result=$this->update_total();
 			if ($result > 0)
 			{
-
 				if (! $notrigger)
 				{
 					// Call trigger

@@ -401,7 +401,7 @@ class Project extends CommonObject
                     $result = 1;
                 }
                 else
-              {
+				{
                     $this->db->rollback();
                     $result = -1;
                 }
@@ -1222,7 +1222,7 @@ class Project extends CommonObject
             // No filter. Use this if user has permission to see all project
         }
 
-	$sql.= $filter;
+		$sql.= $filter;
         //print $sql;
 
         $resql = $this->db->query($sql);
@@ -1671,7 +1671,6 @@ class Project extends CommonObject
 		$langs->load("projects");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'baleine';
 
 			if ($this->modelpdf) {
@@ -1723,23 +1722,23 @@ class Project extends CommonObject
                 $num = $this->db->num_rows($resql);
                 $i = 0;
                 // Loop on each record found, so each couple (project id, task id)
-                while ($i < $num)
+			while ($i < $num)
                 {
-                        $obj=$this->db->fetch_object($resql);
-                        $day=$this->db->jdate($obj->task_date);		// task_date is date without hours
-                        if (empty($daylareadyfound[$day]))
-                        {
-                        	$this->weekWorkLoad[$day] = $obj->task_duration;
-                        	$this->weekWorkLoadPerTask[$day][$obj->fk_task] = $obj->task_duration;
-                        }
-                        else
-                        {
-                        	$this->weekWorkLoad[$day] += $obj->task_duration;
-                        	$this->weekWorkLoadPerTask[$day][$obj->fk_task] += $obj->task_duration;
-                        }
-                        $daylareadyfound[$day]=1;
-                        $i++;
-                }
+					$obj=$this->db->fetch_object($resql);
+					$day=$this->db->jdate($obj->task_date);		// task_date is date without hours
+				if (empty($daylareadyfound[$day]))
+					{
+					$this->weekWorkLoad[$day] = $obj->task_duration;
+					$this->weekWorkLoadPerTask[$day][$obj->fk_task] = $obj->task_duration;
+				}
+				else
+					{
+					$this->weekWorkLoad[$day] += $obj->task_duration;
+					$this->weekWorkLoadPerTask[$day][$obj->fk_task] += $obj->task_duration;
+				}
+					$daylareadyfound[$day]=1;
+					$i++;
+			}
                 $this->db->free($resql);
                 return 1;
         }

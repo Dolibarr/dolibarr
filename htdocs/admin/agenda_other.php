@@ -268,18 +268,17 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
             			// Active
             			if (in_array($name, $def))
             			{
-
-            			print '<td class="center">'."\n";
-            			if ($conf->global->ACTION_EVENT_ADDON_PDF != "$name")
-            			{
-            				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=action">';
-            				print img_picto($langs->trans("Enabled"), 'switch_on');
-            				print '</a>';
-            			}
-            			else
-            			{
-            				print img_picto($langs->trans("Enabled"), 'switch_on');
-            			}
+            			    print '<td class="center">'."\n";
+            			    if ($conf->global->ACTION_EVENT_ADDON_PDF != "$name")
+            			    {
+            				    print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=action">';
+            				    print img_picto($langs->trans("Enabled"), 'switch_on');
+            				    print '</a>';
+            			    }
+            			    else
+            			    {
+            				    print img_picto($langs->trans("Enabled"), 'switch_on');
+            			    }
             				print "</td>";
             			}
             			else
@@ -363,7 +362,6 @@ print '</td></tr>'."\n";
 
 if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 {
-
     print '<!-- AGENDA_USE_EVENT_TYPE_DEFAULT -->';
     print '<tr class="oddeven">'."\n";
     print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE_DEFAULT").'</td>'."\n";

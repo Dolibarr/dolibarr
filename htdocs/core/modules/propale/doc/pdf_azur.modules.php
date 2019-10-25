@@ -756,8 +756,6 @@ class pdf_azur extends ModelePDFPropales
 							if (count($filetomerge->lines) > 0) {
 								foreach ($filetomerge->lines as $linefile) {
 									if (! empty($linefile->id) && ! empty($linefile->file_name)) {
-
-
 										if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
 										{
 											if (! empty($conf->product->enabled)) {

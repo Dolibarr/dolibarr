@@ -111,7 +111,6 @@ class ProductAttribute
 		if ($query)
 		{
     		while ($result = $this->db->fetch_object($query)) {
-
     			$tmp = new ProductAttribute($this->db);
     			$tmp->id = $result->rowid;
     			$tmp->ref = $result->ref;

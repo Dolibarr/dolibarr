@@ -212,3 +212,6 @@ StockIncreaseAfterCorrectTransfer=Increase by correction/transfer
 StockDecreaseAfterCorrectTransfer=Decrease by correction/transfer
 StockIncrease=Stock increase
 StockDecrease=Stock decrease
+InventoryForASpecificWarehouse=Inventory for a specific warehouse
+InventoryForASpecificProduct=Inventory for a specific product
+

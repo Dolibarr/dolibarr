@@ -86,6 +86,13 @@ class modProduct extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
+		$this->const[$r][0] = "PRODUCT_PRICE_UNIQ";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "1";
+		$this->const[$r][3] = 'pricing rule by default';
+		$this->const[$r][4] = 0;
+		$r++;
+
 		/*$this->const[$r][0] = "PRODUCT_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "standard";
@@ -175,7 +182,8 @@ class modProduct extends DolibarrModules
 			'p.accountancy_code_sell'=>"ProductAccountancySellCode", 'p.accountancy_code_sell_intra'=>"ProductAccountancySellIntraCode",
 			'p.accountancy_code_sell_export'=>"ProductAccountancySellExportCode", 'p.accountancy_code_buy'=>"ProductAccountancyBuyCode",
 			'p.note'=>"NotePrivate",'p.note_public'=>'NotePublic',
-			'p.weight'=>"Weight",'p.length'=>"Length",'p.width'=>"Width",'p.height'=>"Height",'p.surface'=>"Surface",'p.volume'=>"Volume",
+			'p.weight'=>"Weight", 'p.weight_units'=>"WeightUnits", 'p.length'=>"Length", 'p.width'=>"Width", 'p.height'=>"Height", 'p.length_units'=>"SizeUnits",
+			'p.surface'=>"Surface", 'p.surface_units'=>"SurfaceUnits", 'p.volume'=>"Volume", 'p.volume_units'=>"VolumeUnits",
 			'p.duration'=>"Duration",
 			'p.finished' => 'Nature',
 			'p.price_base_type'=>"PriceBase",'p.price'=>"UnitPriceHT",'p.price_ttc'=>"UnitPriceTTC",
@@ -383,7 +391,7 @@ class modProduct extends DolibarrModules
             'p.length' => "Length",
 			'p.length_units' => "LengthUnit",
             'p.width' => "Width",
-			'p.width_units' => "VolumeUnits",
+			'p.width_units' => "WidthUnits",
             'p.height' => "Height",
             'p.height_units' => "HeightUnit",
             'p.surface' => "Surface",

@@ -236,7 +236,6 @@ print '<script type="text/javascript" language="javascript">
 
 		// Customer Default Langauge
 		if (! empty($conf->global->MAIN_MULTILANGS)) {
-
 			print '<tr><td>' . $langs->trans("DefaultLang");
 			if (count($array_query['cust_language']) > 0) {
 				print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
@@ -282,7 +281,6 @@ print '<script type="text/javascript" language="javascript">
 						print '</td><td>' . "\n";
 						print $form->textwithpicto('', $langs->trans("AdvTgtSearchIntHelp"), 1, 'help');
 					} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'date') || ($extrafields->attributes[$elementtype]['type'][$key] == 'datetime')) {
-
 						print '<table class="nobordernopadding"><tr>';
 						print '<td>' . $langs->trans("AdvTgtStartDt") . '</td><td>';
 						print $form->selectDate('', 'options_' . $key . '_st_dt');
@@ -482,7 +480,6 @@ print '<script type="text/javascript" language="javascript">
 					print '</td><td>' . "\n";
 					print $form->textwithpicto('', $langs->trans("AdvTgtSearchIntHelp"), 1, 'help');
 				} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'date') || ($extrafields->attributes[$elementtype]['type'][$key] == 'datetime')) {
-
 					print '<table class="nobordernopadding"><tr>';
 					print '<td>' . $langs->trans("AdvTgtStartDt") . '</td><td>';
 					print $form->selectDate('', 'options_' . $key . '_st_dt' . '_cnct');
@@ -510,7 +507,6 @@ print '<script type="text/javascript" language="javascript">
 					print $formadvtargetemaling->advMultiselectarraySelllist('options_' . $key . '_cnct', $extrafields->attribute_param[$key]['options'], $array_query['options_' . $key . '_cnct']);
 					print '</td><td>' . "\n";
 				} else {
-
 					print '<table class="nobordernopadding"><tr>';
 					print '<td></td><td>';
 					if (is_array($array_query['options_' . $key . '_cnct'])) {

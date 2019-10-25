@@ -267,7 +267,7 @@ class Opensurveysondage extends CommonObject
             $this->db->free($resql);
         }
         else
-       {
+        {
               $this->error="Error ".$this->db->lasterror();
             $ret=-1;
         }
@@ -381,7 +381,6 @@ class Opensurveysondage extends CommonObject
 
         if (! $error)
         {
-
             $sql='DELETE FROM '.MAIN_DB_PREFIX."opensurvey_comments WHERE id_sondage = '".$this->db->escape($numsondage)."'";
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql=$this->db->query($sql);

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
@@ -1241,14 +1241,17 @@ class FactureRec extends CommonInvoice
 		$result='';
 
 		$label = '<u>' . $langs->trans("ShowInvoice") . '</u>';
-		if (! empty($this->ref))
+		if (! empty($this->ref)) {
 			$label .= '<br><b>'.$langs->trans('Ref') . ':</b> ' . $this->ref;
-		if (! empty($this->date_last_gen))
+		}
+		if ($this->frequency > 0) {
+			$label .= '<br><b>'.$langs->trans('Frequency') . ':</b> ' . $langs->trans('FrequencyPer_'.$this->unit_frequency, $this->frequency);
+		}
+		if (! empty($this->date_last_gen)) {
 			$label .= '<br><b>'.$langs->trans('DateLastGeneration') . ':</b> ' . dol_print_date($this->date_last_gen, 'dayhour');
-		if ($this->frequency > 0)
-		{
-			if (! empty($this->date_when))
-			{
+		}
+		if ($this->frequency > 0) {
+			if (! empty($this->date_when)) {
 				$label .= '<br><b>'.$langs->trans('NextDateToExecution') . ':</b> ';
 				$label .= (empty($this->suspended)?'':'<strike>'). dol_print_date($this->date_when, 'day').(empty($this->suspended)?'':'</strike>');	// No hour for this property
 				if (! empty($this->suspended)) $label .= ' ('.$langs->trans("Disabled").')';
@@ -1836,7 +1839,6 @@ class FactureLigneRec extends CommonInvoiceLine
     	$result = $this->db->query($sql);
     	if ($result)
     	{
-
     		$objp = $this->db->fetch_object($result);
 
     		$this->id	            = $objp->rowid;

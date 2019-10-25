@@ -878,7 +878,6 @@ abstract class CommonObject
 		}
 
 		if(!$already_added) {
-
 			$this->db->begin();
 
 			// Insert into database
@@ -1883,13 +1882,19 @@ abstract class CommonObject
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		if ($this->table_element == 'actioncomm')
+		if (! empty($this->fields['fk_project']))		// Common case
+		{
+			if ($projectid) $sql.= ' SET fk_project = '.$projectid;
+			else $sql.= ' SET fk_project = NULL';
+			$sql.= ' WHERE rowid = '.$this->id;
+		}
+		elseif ($this->table_element == 'actioncomm')	// Special case for actioncomm
 		{
 			if ($projectid) $sql.= ' SET fk_project = '.$projectid;
 			else $sql.= ' SET fk_project = NULL';
 			$sql.= ' WHERE id = '.$this->id;
 		}
-		else
+		else											// Special case for old architecture objects
 		{
 			if ($projectid) $sql.= ' SET fk_projet = '.$projectid;
 			else $sql.= ' SET fk_projet = NULL';
@@ -2572,8 +2577,7 @@ abstract class CommonObject
 	public function updateRangOfLine($rowid, $rang)
 	{
 		$fieldposition = 'rang';	// @TODO Rename 'rang' into 'position'
-		if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction'))) $fieldposition = 'position';
-		if (in_array($this->table_element_line, array('bom_bomline'))) $fieldposition = 'position';
+		if (in_array($this->table_element_line, array('bom_bomline', 'ecm_files', 'emailcollector_emailcollectoraction'))) $fieldposition = 'position';
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET '.$fieldposition.' = '.$rang;
 		$sql.= ' WHERE rowid = '.$rowid;
@@ -2879,11 +2883,11 @@ abstract class CommonObject
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_PROPOSAL";
 		elseif ($this->element == 'commande' || $this->element == 'order')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_ORDER";
-		elseif ($this->element == 'facture')
+		elseif ($this->element == 'facture' || $this->element == 'invoice')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_INVOICE";
-		elseif ($this->element == 'facture_fourn')
+		elseif ($this->element == 'facture_fourn' || $this->element == 'supplier_invoice')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_SUPPLIER_INVOICE";
-		elseif ($this->element == 'order_supplier')
+		elseif ($this->element == 'order_supplier' || $this->element == 'supplier_order')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_SUPPLIER_ORDER";
 		elseif ($this->element == 'supplier_proposal')
 			$MODULE = "MODULE_DISALLOW_UPDATE_PRICE_SUPPLIER_PROPOSAL";
@@ -3819,17 +3823,18 @@ abstract class CommonObject
 				$totalWeight += $weight * $qty * $trueWeightUnit;
 			}
 			else {
-		if ($weight_units == 99) {
-			// conversion 1 Pound = 0.45359237 KG
-			$trueWeightUnit = 0.45359237;
-			$totalWeight += $weight * $qty * $trueWeightUnit;
-		} elseif ($weight_units == 98) {
-			// conversion 1 Ounce = 0.0283495 KG
-			$trueWeightUnit = 0.0283495;
-			$totalWeight += $weight * $qty * $trueWeightUnit;
-		}
-		else
+				if ($weight_units == 99) {
+					// conversion 1 Pound = 0.45359237 KG
+					$trueWeightUnit = 0.45359237;
+					$totalWeight += $weight * $qty * $trueWeightUnit;
+				} elseif ($weight_units == 98) {
+					// conversion 1 Ounce = 0.0283495 KG
+					$trueWeightUnit = 0.0283495;
+					$totalWeight += $weight * $qty * $trueWeightUnit;
+				}
+				else {
 					$totalWeight += $weight * $qty;   // This may be wrong if we mix different units
+				}
 			}
 			if ($volume_units < 50)   // >50 means a standard unit (power of 10 of official unit), > 50 means an exotic unit (like inch)
 			{
@@ -5558,16 +5563,20 @@ abstract class CommonObject
         $type='';
         $param = array();
         $param['options']=array();
-        $size =$this->fields[$key]['size'];
+        $reg=array();
+        $size = $this->fields[$key]['size'];
         // Because we work on extrafields
-        if(preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)){
-            $param['options']=array($reg[1].':'.$reg[2]=>'N');
-            $type ='link';
-        } elseif(preg_match('/^link:(.*):(.*)/i', $val['type'], $reg)) {
-            $param['options']=array($reg[1].':'.$reg[2]=>'N');
+        if (preg_match('/^(integer|link):(.*):(.*):(.*):(.*)/i', $val['type'], $reg)){
+        	$param['options']=array($reg[2].':'.$reg[3].':'.$reg[4].':'.$reg[5] => 'N');
+        	$type ='link';
+        } elseif (preg_match('/^(integer|link):(.*):(.*):(.*)/i', $val['type'], $reg)){
+        	$param['options']=array($reg[2].':'.$reg[3].':'.$reg[4] => 'N');
+        	$type ='link';
+        } elseif (preg_match('/^(integer|link):(.*):(.*)/i', $val['type'], $reg)){
+            $param['options']=array($reg[2].':'.$reg[3] => 'N');
             $type ='link';
         } elseif(preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
-            $param['options']=array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4]=>'N');
+            $param['options']=array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4] => 'N');
             $type ='sellist';
         } elseif(preg_match('/varchar\((\d+)\)/', $val['type'], $reg)) {
             $param['options']=array();
@@ -5978,7 +5987,6 @@ abstract class CommonObject
 				$sql = 'SELECT ' . $keyList;
 				$sql .= ' FROM ' . MAIN_DB_PREFIX . $InfoFieldList[0];
 				if (! empty($InfoFieldList[4])) {
-
 					// can use SELECT request
 					if (strpos($InfoFieldList[4], '$SEL$')!==false) {
 						$InfoFieldList[4]=str_replace('$SEL$', 'SELECT', $InfoFieldList[4]);
@@ -6081,16 +6089,26 @@ abstract class CommonObject
 		}
 		elseif ($type == 'link')
 		{
-			$param_list=array_keys($param['options']);				// $param_list='ObjectName:classPath'
+			$param_list=array_keys($param['options']);				// $param_list='ObjectName:classPath[:AddCreateButtonOrNot[:Filter]]'
+			$param_list_array = explode(':', $param_list[0]);
 			$showempty=(($required && $default != '')?0:1);
-			$out=$form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty);
-			if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+
+			$out=$form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', '', '', 0, empty($val['disabled'])?0:1);
+
+			if (! empty($param_list_array[2]))		// If we set to add a create button
 			{
-            			list($class,$classfile)=explode(':', $param_list[0]);
-            			if (file_exists(dol_buildpath(dirname(dirname($classfile)).'/card.php'))) $url_path=dol_buildpath(dirname(dirname($classfile)).'/card.php', 1);
-            			else $url_path=dol_buildpath(dirname(dirname($classfile)).'/'.$class.'_card.php', 1);
-            			$out.='<a class="butActionNew" href="'.$url_path.'?action=create&backtopage='.$_SERVER['PHP_SELF'].'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
-            			// TODO Add Javascript code to add input fields contents to new elements urls
+				if (! GETPOSTISSET('backtopage') && empty($val['disabled']))	// To avoid to open several infinitely the 'Create Object' button and to avoid to have button if field is protected by a "disabled".
+				{
+		   			list($class,$classfile)=explode(':', $param_list[0]);
+		   			if (file_exists(dol_buildpath(dirname(dirname($classfile)).'/card.php'))) $url_path=dol_buildpath(dirname(dirname($classfile)).'/card.php', 1);
+		   			else $url_path=dol_buildpath(dirname(dirname($classfile)).'/'.strtolower($class).'_card.php', 1);
+		   			$paramforthenewlink = '';
+		   			$paramforthenewlink .= (GETPOSTISSET('action')?'&action='.GETPOST('action', 'aZ09'):'');
+		   			$paramforthenewlink .= (GETPOSTISSET('id')?'&id='.GETPOST('id', 'int'):'');
+		   			$paramforthenewlink .= '&fk_'.strtolower($class).'=--IDFORBACKTOPAGE--';
+		   			// TODO Add Javascript code to add input fields already filled into $paramforthenewlink so we won't loose them when going back to main page
+		   			$out.='<a class="butActionNew" title="'.$langs->trans("New").'" href="'.$url_path.'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].($paramforthenewlink ? '?'.$paramforthenewlink : '')).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
+				}
 			}
 		}
 		elseif ($type == 'password')
@@ -6170,6 +6188,7 @@ abstract class CommonObject
 		$label = $val['label'];
 		$type  = $val['type'];
 		$size  = $val['css'];
+		$reg = array();
 
 		// Convert var to be able to share same code than showOutputField of extrafields
 		if (preg_match('/varchar\((\d+)\)/', $type, $reg))
@@ -6185,7 +6204,9 @@ abstract class CommonObject
 		$computed=$val['computed'];
 		$unique=$val['unique'];
 		$required=$val['required'];
-		$param=$val['param'];
+		$param=array();
+		$param['options']=array();
+
 		if (is_array($val['arrayofkeyval'])) $param['options'] = $val['arrayofkeyval'];
 		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg))
 		{
@@ -6271,17 +6292,11 @@ abstract class CommonObject
 				$value='';
 			}
 		}
-		elseif ($type == 'double')
+		elseif ($type == 'double' || $type == 'real')
 		{
 			if (!empty($value)) {
 				$value=price($value);
 			}
-		}
-		elseif ($type == 'real')
-		{
-		    if (!empty($value)) {
-		        $value=price($value);
-		    }
 		}
 		elseif ($type == 'boolean')
 		{
@@ -6440,7 +6455,6 @@ abstract class CommonObject
 				$value = ''; // value was used, so now we reste it to use it to build final output
 				$toprint=array();
 				while ( $obj = $this->db->fetch_object($resql) ) {
-
 					// Several field into label (eq table:code|libelle:rowid)
 					$fields_label = explode('|', $InfoFieldList[1]);
 					if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
@@ -6966,7 +6980,6 @@ abstract class CommonObject
 					$viewfilename = $file;
 
 					if ($size == 1 || $size == 'small') {   // Format vignette
-
 						// Find name of thumb file
 						$photo_vignette=basename(getImageFileNameForSize($dir.$file, '_small'));
 						if (! dol_is_file($dirthumb.$photo_vignette)) $photo_vignette='';
@@ -7115,7 +7128,7 @@ abstract class CommonObject
 	 * Function test if type is array
 	 *
 	 * @param   array   $info   content informations of field
-	 * @return                  bool
+	 * @return  bool			true if array
 	 */
 	protected function isArray($info)
 	{
@@ -7124,42 +7137,26 @@ abstract class CommonObject
 			if(isset($info['type']) && $info['type']=='array') return true;
 			else return false;
 		}
-		else return false;
-	}
-
-	/**
-	 * Function test if type is null
-	 *
-	 * @param   array   $info   content informations of field
-	 * @return                  bool
-	 */
-	protected function isNull($info)
-	{
-		if(is_array($info))
-		{
-			if(isset($info['type']) && $info['type']=='null') return true;
-			else return false;
-		}
-		else return false;
+		return false;
 	}
 
 	/**
 	 * Function test if type is date
 	 *
 	 * @param   array   $info   content informations of field
-	 * @return                  bool
+	 * @return  bool			true if date
 	 */
 	public function isDate($info)
 	{
 		if(isset($info['type']) && ($info['type']=='date' || $info['type']=='datetime' || $info['type']=='timestamp')) return true;
-		else return false;
+		return false;
 	}
 
 	/**
 	 * Function test if type is integer
 	 *
 	 * @param   array   $info   content informations of field
-	 * @return                  bool
+	 * @return  bool			true if integer
 	 */
 	public function isInt($info)
 	{
@@ -7175,7 +7172,7 @@ abstract class CommonObject
 	 * Function test if type is float
 	 *
 	 * @param   array   $info   content informations of field
-	 * @return                  bool
+	 * @return  bool			true if float
 	 */
 	public function isFloat($info)
 	{
@@ -7184,14 +7181,14 @@ abstract class CommonObject
 			if (isset($info['type']) && (preg_match('/^(double|real|price)/i', $info['type']))) return true;
 			else return false;
 		}
-		else return false;
+		return false;
 	}
 
 	/**
 	 * Function test if type is text
 	 *
 	 * @param   array   $info   content informations of field
-	 * @return                  bool
+	 * @return  bool			true if type text
 	 */
 	public function isText($info)
 	{
@@ -7200,7 +7197,39 @@ abstract class CommonObject
 			if(isset($info['type']) && $info['type']=='text') return true;
 			else return false;
 		}
-		else return false;
+		return false;
+	}
+
+	/**
+	 * Function test if field can be null
+	 *
+	 * @param   array   $info   content informations of field
+	 * @return  bool			true if it can be null
+	 */
+	protected function canBeNull($info)
+	{
+		if(is_array($info))
+		{
+			if(isset($info['notnull']) && $info['notnull']!='1') return true;
+			else return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Function test if field is forced to null if zero or empty
+	 *
+	 * @param   array   $info   content informations of field
+	 * @return  bool			true if forced to null
+	 */
+	protected function isForcedToNullIfZero($info)
+	{
+		if(is_array($info))
+		{
+			if(isset($info['notnull']) && $info['notnull']=='-1') return true;
+			else return false;
+		}
+		return false;
 	}
 
 	/**
@@ -7216,7 +7245,7 @@ abstract class CommonObject
 			if(isset($info['index']) && $info['index']==true) return true;
 			else return false;
 		}
-		else return false;
+		return false;
 	}
 
 	/**
@@ -7309,17 +7338,30 @@ abstract class CommonObject
 			elseif($this->isInt($info))
 			{
 				if ($field == 'rowid') $this->id = (int) $obj->{$field};
-				else $this->{$field} = (int) $obj->{$field};
+				else
+				{
+					if ($this->isForcedToNullIfZero($info))
+					{
+						if (empty($obj->{$field})) $this->{$field} = null;
+						else $this->{$field} = (double) $obj->{$field};
+					}
+					else
+					{
+						$this->{$field} = (int) $obj->{$field};
+					}
+				}
 			}
 			elseif($this->isFloat($info))
 			{
-				$this->{$field} = (double) $obj->{$field};
-			}
-			elseif($this->isNull($info))
-			{
-				$val = $obj->{$field};
-				// zero is not null
-				$this->{$field} = (is_null($val) || (empty($val) && $val!==0 && $val!=='0') ? null : $val);
+				if ($this->isForcedToNullIfZero($info))
+				{
+					if (empty($obj->{$field})) $this->{$field} = null;
+					else $this->{$field} = (double) $obj->{$field};
+				}
+				else
+				{
+					$this->{$field} = (double) $obj->{$field};
+				}
 			}
 			else
 			{
@@ -7376,6 +7418,7 @@ abstract class CommonObject
 		if (array_key_exists('date_creation', $fieldvalues) && empty($fieldvalues['date_creation'])) $fieldvalues['date_creation']=$this->db->idate($now);
 		if (array_key_exists('fk_user_creat', $fieldvalues) && ! ($fieldvalues['fk_user_creat'] > 0)) $fieldvalues['fk_user_creat']=$user->id;
 		unset($fieldvalues['rowid']);	// The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
+		if (array_key_exists('ref', $fieldvalues)) $fieldvalues['ref']=dol_string_nospecial($fieldvalues['ref']);					// If field is a ref,we sanitize data
 
 		$keys=array();
 		$values = array();
@@ -7833,6 +7876,57 @@ abstract class CommonObject
 			return -1;
 		}
 	}
+
+
+	/**
+	 *	Set draft status
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$status			New status to set (often a constant like self::STATUS_XXX)
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *  @param  string  $triggercode    Trigger code to use
+	 *	@return	int						<0 if KO, >0 if OK
+	 */
+	public function setStatusCommon($user, $status, $notrigger = 0, $triggercode = '')
+	{
+		$error=0;
+
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+		$sql.= " SET status = ".$status;
+		$sql.= " WHERE rowid = ".$this->id;
+
+		if ($this->db->query($sql))
+		{
+			if (! $error)
+			{
+				$this->oldcopy= clone $this;
+			}
+
+			if (! $error && ! $notrigger) {
+				// Call trigger
+				$result=$this->call_trigger($triggercode, $user);
+				if ($result < 0) $error++;
+			}
+
+			if (!$error) {
+				$this->status = $status;
+				$this->db->commit();
+				return 1;
+			} else {
+				$this->db->rollback();
+				return -1;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
 
 	/**
 	 * Initialise object with example values

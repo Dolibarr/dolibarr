@@ -114,7 +114,7 @@ if ($object->id)
 	$morehtmlref.=$form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
 	$morehtmlref.='</div>';
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/compta/tva/index.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="' . DOL_URL_ROOT . '/compta/tva/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
 	$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 

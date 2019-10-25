@@ -171,7 +171,6 @@ if (empty($reshook))
     }
 
     if ($action == 'edit') {
-
     	// Security check
     	if (!$user->rights->opensurvey->write) accessforbidden();
     }
@@ -365,7 +364,6 @@ print '</form>'."\n";
 print '<div class="tabsAction">';
 
 if ($action != 'edit' && $user->rights->opensurvey->write) {
-
     //Modify button
     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id=' . $numsondage . '">'.$langs->trans("Modify") . '</a>';
 

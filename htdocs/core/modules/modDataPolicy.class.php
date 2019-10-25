@@ -59,7 +59,7 @@ class modDataPolicy extends DolibarrModules {
         // It is used to group modules by family in module setup page
         $this->family = "technic";
         // Module position in the family on 2 digits ('01', '10', '20', ...)
-        $this->module_position = '81';
+        $this->module_position = '78';
         // Gives the possibility to the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
         //$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
         // Module label (no space allowed), used if translation string 'ModuledatapolicyName' not found (MyModue is name of module).

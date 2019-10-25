@@ -444,7 +444,6 @@ if ($action == 'new')
 
 	foreach ($accounts as $bid => $account_label)
 	{
-
         print '
         <script language="javascript" type="text/javascript">
         jQuery(document).ready(function()

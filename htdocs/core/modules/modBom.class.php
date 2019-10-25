@@ -54,14 +54,14 @@ class modBom extends DolibarrModules
 		// It is used to group modules by family in module setup page
 		$this->family = "products";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
-		$this->module_position = '90';
+		$this->module_position = '60';
 		// Gives the possibility for the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
 
 		// Module label (no space allowed), used if translation string 'ModuleBomName' not found (Bom is name of module).
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description, used if translation string 'ModuleBomDesc' not found (Bom is name of module).
-		$this->description = "Bill of Materials (BOM) definitions for Manufacturing Resource Planning";
+		$this->description = "Module to define your Bills Of Materials (BOM). Can be used for Manufacturing Resource Planning by the module Manufacturing Orders (MO)";
 		// Used only if file README.md and README-LL.md not found.
 		$this->descriptionlong = "Bill of Materials definitions. They can be used to make Manufacturing Resource Planning";
 
@@ -75,7 +75,7 @@ class modBom extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto='generic';
+		$this->picto='bom';
 
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(

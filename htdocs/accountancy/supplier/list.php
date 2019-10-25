@@ -184,8 +184,6 @@ if ($massaction == 'ventil') {
         }
         $msg.='</div>';
         $msg.= '<div>' . $langs->trans("EndProcessing") . '</div>';
-    //} else {
-    //    setEventMessages($langs->trans("NoRecordSelected"), null, 'warnings');
     }
 }
 
@@ -224,7 +222,7 @@ $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_country as co ON co.rowid = s.fk_pays ";
 $sql.= " INNER JOIN " . MAIN_DB_PREFIX . "facture_fourn_det as l ON f.rowid = l.fk_facture_fourn";
 $sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
-$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON p.accountancy_code_buy = aa.account_number AND aa.fk_pcg_version = '" . $chartaccountcode."' AND aa.entity = " . $conf->entity;
+$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON p.accountancy_code_buy = aa.account_number AND aa.active = 1 AND aa.fk_pcg_version = '" . $chartaccountcode."' AND aa.entity = " . $conf->entity;
 $sql.= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 $sql.= " AND l.product_type <= 2";
 // Add search filter like
@@ -234,11 +232,11 @@ if ($search_lineid) {
 if (strlen(trim($search_invoice))) {
     $sql .= natural_search("f.ref", $search_invoice);
 }
+if (strlen(trim($search_label))) {
+	$sql .= natural_search("f.libelle", $search_label);
+}
 if (strlen(trim($search_ref))) {
     $sql .= natural_search("p.ref", $search_ref);
-}
-if (strlen(trim($search_label))) {
-    $sql .= natural_search("p.label", $search_label);
 }
 if (strlen(trim($search_desc))) {
     $sql .= natural_search("l.description", $search_desc);
@@ -309,14 +307,15 @@ if ($result) {
 	$arrayofselected=is_array($toselect)?$toselect:array();
 
 	$param='';
-	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 	if ($search_lineid)      $param.='&search_lineid='.urlencode($search_lineid);
 	if ($search_day)         $param.='&search_day='.urlencode($search_day);
 	if ($search_month)       $param.='&search_month='.urlencode($search_month);
 	if ($search_year)        $param.='&search_year='.urlencode($search_year);
 	if ($search_invoice)     $param.='&search_invoice='.urlencode($search_invoice);
 	if ($search_ref)         $param.='&search_ref='.urlencode($search_ref);
+	if ($search_label)       $param.='&search_label='.urlencode($search_label);
 	if ($search_desc)        $param.='&search_desc='.urlencode($search_desc);
 	if ($search_amount)      $param.='&search_amount='.urlencode($search_amount);
 	if ($search_vat)         $param.='&search_vat='.urlencode($search_vat);
@@ -362,14 +361,13 @@ if ($result) {
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth25" name="search_lineid" value="' . dol_escape_htmltag($search_lineid) . '""></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="' . dol_escape_htmltag($search_invoice) . '"></td>';
-	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
 	print '<td class="liste_titre center nowraponall">';
    	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_day" value="'.$search_day.'">';
    	print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month" value="'.$search_month.'">';
    	$formother->select_year($search_year, 'search_year', 1, 20, 5);
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="' . dol_escape_htmltag($search_ref) . '"></td>';
-	//print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
 	print '<td class="liste_titre right"><input type="text" class="right flat maxwidth50" name="search_amount" value="' . dol_escape_htmltag($search_amount) . '"></td>';
 	print '<td class="liste_titre right"><input type="text" class="right flat maxwidth50" name="search_vat" placeholder="%" size="1" value="' . dol_escape_htmltag($search_vat) . '"></td>';
@@ -465,7 +463,7 @@ if ($result) {
 
 		print '<td class="center">' . dol_print_date($db->jdate($objp->datef), 'day') . '</td>';
 
-		// Ref product
+		// Ref Product
 		print '<td>';
 		if ($product_static->id > 0)
 			print $product_static->getNomUrl(1);
@@ -473,7 +471,7 @@ if ($result) {
 		print '</td>';
 
 		// Description
-		print '<td>';
+		print '<td class="tdoverflowonsmartphone">';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description));
 		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->description);

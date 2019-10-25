@@ -94,7 +94,6 @@ if ($action == 'clean' || $action == 'validatehistory')
 }
 
 if ($action == 'validatehistory') {
-
 	$error = 0;
 	$db->begin();
 
@@ -187,7 +186,6 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	while ( $row = $db->fetch_row($resql)) {
-
 		print '<tr class="oddeven"><td>';
 		if ($row[0] == 'tobind')
 		{
@@ -259,7 +257,6 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	while ( $row = $db->fetch_row($resql)) {
-
 		print '<tr class="oddeven"><td>';
 		if ($row[0] == 'tobind')
 		{

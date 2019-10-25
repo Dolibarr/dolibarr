@@ -231,7 +231,7 @@ class SupplierProposalTest extends PHPUnit\Framework\TestCase
     	return $localobject;
     }
 
-   /**
+    /**
      * testSupplierProposalOther
      *
      * @param	SupplierProposal	$localobject	Proposal

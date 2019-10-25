@@ -654,7 +654,6 @@ if ($id > 0)
 			}
 			else
 			{
-
 				print '<tr class="oddeven"><td><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
 				print '<td></td><td></td><td></td><td></td>';
 				print '</tr>';

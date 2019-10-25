@@ -36,7 +36,6 @@ $form=new Form($db);
 
 // Get list of articles (in warehouse '$conf_fkentrepot' if defined and stock module enabled)
 if ( GETPOST('filtre', 'alpha') ) {
-
 	// Avec filtre
 	$ret=array(); $i=0;
 
@@ -88,7 +87,6 @@ if ( GETPOST('filtre', 'alpha') ) {
 	}
 	$tab_designations=$ret;
 } else {
-
 	// Sans filtre
 	$ret=array();
 	$i=0;

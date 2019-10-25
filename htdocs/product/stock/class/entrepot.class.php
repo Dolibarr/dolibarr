@@ -96,6 +96,30 @@ class Entrepot extends CommonObject
 	public $statuts = array();
 
 	/**
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields=array(
+		'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>10),
+		'ref' =>array('type'=>'varchar(255)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-2, 'showoncombobox'=>1, 'position'=>25),
+		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>30),
+		'description' =>array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-2, 'position'=>35),
+		'lieu' =>array('type'=>'varchar(64)', 'label'=>'LocationSummary', 'enabled'=>1, 'visible'=>-2, 'position'=>40),
+		'fk_parent' =>array('type'=>'integer', 'label'=>'ParentWarehouse', 'enabled'=>1, 'visible'=>-2, 'position'=>41),
+		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>-2, 'position'=>45),
+		'zip' =>array('type'=>'varchar(10)', 'label'=>'Zip', 'enabled'=>1, 'visible'=>-2, 'position'=>50),
+		'town' =>array('type'=>'varchar(50)', 'label'=>'Town', 'enabled'=>1, 'visible'=>-2, 'position'=>55),
+		'fk_departement' =>array('type'=>'integer', 'label'=>'State', 'enabled'=>1, 'visible'=>0, 'position'=>60),
+		'fk_pays' =>array('type'=>'integer', 'label'=>'Country', 'enabled'=>1, 'visible'=>-2, 'position'=>65),
+		//'fk_user_author' =>array('type'=>'integer', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-2, 'position'=>82),
+		//'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'ModelPDF', 'enabled'=>1, 'visible'=>-2, 'position'=>84),
+		//'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportKey', 'enabled'=>1, 'visible'=>-2, 'position'=>85),
+		'statut' =>array('type'=>'tinyint(4)', 'label'=>'Status', 'enabled'=>1, 'visible'=>-2, 'position'=>200),
+		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>500),
+		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>501),
+	);
+
+
+	/**
 	 *  Constructor
 	 *
 	 *  @param      DoliDB		$db      Database handler
@@ -618,49 +642,23 @@ class Entrepot extends CommonObject
 	/**
 	 *	Return label of a given status
 	 *
-	 *	@param	int		$statut     Status
+	 *	@param	int		$status     Id status
 	 *	@param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *	@return string      		Label of status
 	 */
-	public function LibStatut($statut, $mode = 0)
+	public function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
 
+		$statusType = 'status5';
+		if ($status > 0) $statusType = 'status4';
+
 		$langs->load('stocks');
+		$label = $langs->trans($this->statuts[$status]);
+		$labelshort = $langs->trans($this->statuts[$status]);
 
-		$picto = 'statut5';
-		$label = $langs->trans($this->statuts[$statut]);
-
-
-		if ($mode == 0)
-		{
-			return $label;
-		}
-		elseif ($mode == 1)
-		{
-			return $label;
-		}
-		elseif ($mode == 2)
-		{
-			if ($statut > 0) $picto = 'statut4';
-			return img_picto($label, $picto).' '.$label;
-		}
-		elseif ($mode == 3)
-		{
-			if ($statut > 0) $picto = 'statut4';
-			return img_picto($label, $picto).' '.$label;
-		}
-		elseif ($mode == 4)
-		{
-			if ($statut > 0) $picto = 'statut4';
-			return img_picto($label, $picto).' '.$label;
-		}
-		elseif ($mode == 5)
-		{
-			if ($statut > 0) $picto = 'statut4';
-			return $label.' '.img_picto($label, $picto);
-		}
+		return dolGetStatus($label, $labelshort, '', $statusType, $mode);
 	}
 
 
@@ -829,7 +827,6 @@ class Entrepot extends CommonObject
 		$langs->load("stocks");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'standard';
 
 			if ($this->modelpdf) {

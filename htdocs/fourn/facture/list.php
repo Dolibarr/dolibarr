@@ -277,7 +277,9 @@ $sql.= " p.rowid as project_id, p.ref as project_ref, p.title as project_label";
 // TODO Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
 if (! $search_all) $sql.= ', SUM(pf.amount) as dynamount_payed';
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -374,9 +376,9 @@ if (! $search_all)
 	$sql.= ' country.code,';
 	$sql.= " p.rowid, p.ref, p.title";
 
-	foreach ($extrafields->attribute_label as $key => $val) //prevent error with sql_mode=only_full_group_by
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) //prevent error with sql_mode=only_full_group_by
 	{
-		$sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key : '');
+		$sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ",ef.".$key : '');
 	}
 }
 else
@@ -785,7 +787,7 @@ if ($resql)
 	if (! empty($arrayfields['country.code_iso']['checked']))     print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "country.code_iso", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (! empty($arrayfields['typent.code']['checked']))          print_liste_field_titre($arrayfields['typent.code']['label'], $_SERVER["PHP_SELF"], "typent.code", "", $param, '', $sortfield, $sortorder, 'center ');
 	if (! empty($arrayfields['f.fk_mode_reglement']['checked']))  print_liste_field_titre($arrayfields['f.fk_mode_reglement']['label'], $_SERVER["PHP_SELF"], "f.fk_mode_reglement", "", $param, "", $sortfield, $sortorder);
-	if (! empty($arrayfields['f.total_ht']['checked']))           print_liste_field_titre($arrayfields['f.total_ht']['label'], $_SERVER['PHP_SELF'], 'f.total', '', $param, '', $sortfield, $sortorder, 'right ');
+	if (! empty($arrayfields['f.total_ht']['checked']))           print_liste_field_titre($arrayfields['f.total_ht']['label'], $_SERVER['PHP_SELF'], 'f.total_ht', '', $param, '', $sortfield, $sortorder, 'right ');
 	if (! empty($arrayfields['f.total_vat']['checked']))          print_liste_field_titre($arrayfields['f.total_vat']['label'], $_SERVER['PHP_SELF'], 'f.tva', '', $param, '', $sortfield, $sortorder, 'right ');
 	if (! empty($arrayfields['f.total_localtax1']['checked']))    print_liste_field_titre($arrayfields['f.total_localtax1']['label'], $_SERVER['PHP_SELF'], 'f.localtax1', '', $param, '', $sortfield, $sortorder, 'right ');
 	if (! empty($arrayfields['f.total_localtax2']['checked']))    print_liste_field_titre($arrayfields['f.total_localtax2']['label'], $_SERVER['PHP_SELF'], 'f.localtax2', '', $param, '', $sortfield, $sortorder, 'right ');
@@ -844,7 +846,6 @@ if ($resql)
 
             //If invoice has been converted and the conversion has been used, we dont have remain to pay on invoice
             if($facturestatic->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
-
                 if($facturestatic->isCreditNoteUsed()){
                     $remaintopay=-$facturestatic->getSumFromThisCreditNotesNotUsed();
                 }

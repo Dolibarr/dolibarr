@@ -105,17 +105,16 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 //$isdraft = (($object->statut == MyObject::STATUS_DRAFT) ? 1 : 0);
 //$result = restrictedArea($user, 'mymodule', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
-$permissionnote=$user->rights->mymodule->write;	// Used by the include of actions_setnotes.inc.php
-$permissiondellink=$user->rights->mymodule->write;	// Used by the include of actions_dellink.inc.php
-$permissionedit=$user->rights->mymodule->write; // Used by the include of actions_lineupdown.inc.php
-$permissiontoadd=$user->rights->mymodule->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissionnote = $user->rights->mymodule->write;		// Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->rights->mymodule->write;	// Used by the include of actions_dellink.inc.php
+$permissionedit = $user->rights->mymodule->write; 		// Used by the include of actions_lineupdown.inc.php
+$permissiontoadd = $user->rights->mymodule->write; 		// Used by the include of actions_addupdatedelete.inc.php
+$permissiontodelete = $user->rights->mymodule->delete || ($permissiontoadd && $object->status == 0);
 
 
 
 /*
  * Actions
- *
- * Put here all code to do according to value of "action" parameter
  */
 
 $parameters=array();
@@ -126,11 +125,11 @@ if (empty($reshook))
 {
     $error=0;
 
-    $permissiontodelete = $user->rights->mymodule->delete || ($permissiontoadd && $object->status == 0);
     $backurlforlist = dol_buildpath('/mymodule/myobject_list.php', 1);
-    if (empty($backtopage)) {
-        if (empty($id)) $backtopage = $backurlforlist;
-        else $backtopage = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+
+    if (empty($backtopage) || ($cancel && empty($id))) {
+    	if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) $backtopage = $backurlforlist;
+    	else $backtopage = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
     }
     $triggermodname = 'MYMODULE_MYOBJECT_MODIFY';	// Name of trigger action code to execute when we modify record
 
@@ -142,6 +141,18 @@ if (empty($reshook))
 
     // Actions when printing a doc from card
     include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+
+    // Action to move up and down lines of object
+    //include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
+
+    if ($action == 'set_thirdparty' && $permissiontoadd)
+    {
+    	$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, 'MYOBJECT_MODIFY');
+    }
+    if ($action == 'classin' && $permissiontoadd)
+    {
+    	$object->setProject(GETPOST('projectid', 'int'));
+    }
 
     // Actions to send emails
     $trigger_name='MYOBJECT_SENTBYMAIL';
@@ -228,7 +239,7 @@ if (($id || $ref) && $action == 'edit')
 
 	dol_fiche_head();
 
-	print '<table class="border centpercent tableforfield">'."\n";
+	print '<table class="border centpercent tableforfieldedit">'."\n";
 
 	// Common attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_edit.tpl.php';
@@ -311,7 +322,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->mymodule->creer, 'string', '', 0, 1);
 	$morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->mymodule->creer, 'string', '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
+	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
@@ -356,6 +367,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Common attributes
 	//$keyforbreak='fieldkeytoswitchonsecondcolumn';
+	//unset($object->fields['fk_project']);				// Hide field already shown in banner
+	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes. Fields from hook formObjectOptions and Extrafields.
@@ -437,6 +450,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    // Send
             print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
 
+            // Back to draft
+            if (! empty($user->rights->mymodule->write) && $object->status == BOM::STATUS_VALIDATED)
+            {
+            	print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=setdraft">' . $langs->trans("SetToDraft") . '</a>';
+            }
+
             // Modify
             if (! empty($user->rights->mymodule->write))
     		{
@@ -450,7 +469,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		// Clone
     		if (! empty($user->rights->mymodule->write))
     		{
-    			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=order">' . $langs->trans("ToClone") . '</a></div>';
+    			print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=order">' . $langs->trans("ToClone") . '</a>'."\n";
     		}
 
     		/*

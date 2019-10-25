@@ -214,7 +214,6 @@ foreach ($dirmodels as $reldir) {
     if (is_dir($dir)) {
         $handle = opendir($dir);
         if (is_resource($handle)) {
-
             while (($file = readdir($handle)) !== false) {
                 if (preg_match('/^(mod_.*)\.php$/i', $file, $reg)) {
                     $file = $reg[1];

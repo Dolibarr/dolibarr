@@ -123,7 +123,6 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 
         if (count($object->fields))
         {
-
             foreach($object->fields as $key => $val)
             {
                 $i++;

@@ -197,7 +197,6 @@ if ($action == 'builddoc')
 		// For labels
 		if ($mode == 'label')
 		{
-
 			$txtforsticker="%PHOTO%"; // Photo will be barcode image, %BARCODE% posible when using TCPDF generator
 			$textleft=make_substitutions((empty($conf->global->BARCODE_LABEL_LEFT_TEXT)?$txtforsticker:$conf->global->BARCODE_LABEL_LEFT_TEXT), $substitutionarray);
 			$textheader=make_substitutions((empty($conf->global->BARCODE_LABEL_HEADER_TEXT)?'':$conf->global->BARCODE_LABEL_HEADER_TEXT), $substitutionarray);

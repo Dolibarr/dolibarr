@@ -256,17 +256,22 @@ class Product extends CommonObject
      */
     public $url;
 
-    //! Unites de mesure
-    public $net_measure;
-    public $net_measure_units;
+    //! Metric of products
     public $weight;
     public $weight_units;
     public $length;
     public $length_units;
+    public $width;
+    public $width_units;
+    public $height;
+    public $height_units;
     public $surface;
     public $surface_units;
     public $volume;
     public $volume_units;
+
+    public $net_measure;
+    public $net_measure_units;
 
     public $accountancy_code_sell;
     public $accountancy_code_sell_intra;
@@ -787,13 +792,14 @@ class Product extends CommonObject
      *    Update a record into database.
      *  If batch flag is set to on, we create records into llx_product_batch
      *
-     * @param  int    $id        Id of product
-     * @param  User   $user      Object user making update
-     * @param  int    $notrigger Disable triggers
-     * @param  string $action    Current action for hookmanager ('add' or 'update')
-     * @return int                 1 if OK, -1 if ref already exists, -2 if other error
+     * @param  int     $id          Id of product
+     * @param  User    $user        Object user making update
+     * @param  int     $notrigger   Disable triggers
+     * @param  string  $action      Current action for hookmanager ('add' or 'update')
+	 * @param  boolean $updatetype  Update product type
+     * @return int                  1 if OK, -1 if ref already exists, -2 if other error
      */
-    public function update($id, $user, $notrigger = false, $action = 'update')
+    public function update($id, $user, $notrigger = false, $action = 'update', $updatetype = false)
     {
         global $langs, $conf, $hookmanager;
 
@@ -939,6 +945,11 @@ class Product extends CommonObject
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."product";
             $sql.= " SET label = '" . $this->db->escape($this->label) ."'";
+
+            if ($updatetype && ($this->isProduct() || $this->isService())) {
+                $sql.= ", fk_product_type = " . $this->type;
+            }
+
             $sql.= ", ref = '" . $this->db->escape($this->ref) ."'";
             $sql.= ", ref_ext = ".(! empty($this->ref_ext)?"'".$this->db->escape($this->ref_ext)."'":"null");
             $sql.= ", default_vat_code = ".($this->default_vat_code ? "'".$this->db->escape($this->default_vat_code)."'" : "null");
@@ -1045,7 +1056,6 @@ class Product extends CommonObject
 
                 if (! $error) {
                     if ($conf->variants->enabled) {
-
                         include_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 
                         $comb = new ProductCombination($this->db);
@@ -1175,7 +1185,6 @@ class Product extends CommonObject
             }
 
             if (!$error) {
-
                 include_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
                 include_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
 
@@ -1599,85 +1608,85 @@ class Product extends CommonObject
 				$price_base_type = $this->price_base_type;
 
 				// If price per segment
-				if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($thirdparty_buyer->price_level))
+		if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($thirdparty_buyer->price_level))
 				{
-					$pu_ht = $this->multiprices[$thirdparty_buyer->price_level];
-					$pu_ttc = $this->multiprices_ttc[$thirdparty_buyer->price_level];
-					$price_min = $this->multiprices_min[$thirdparty_buyer->price_level];
-					$price_base_type = $this->multiprices_base_type[$thirdparty_buyer->price_level];
-					if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
-					{
-						if (isset($this->multiprices_tva_tx[$thirdparty_buyer->price_level])) $tva_tx=$this->multiprices_tva_tx[$thirdparty_buyer->price_level];
-						if (isset($this->multiprices_recuperableonly[$thirdparty_buyer->price_level])) $tva_npr=$this->multiprices_recuperableonly[$thirdparty_buyer->price_level];
-						if (empty($tva_tx)) $tva_npr=0;
-					}
-				}
+			$pu_ht = $this->multiprices[$thirdparty_buyer->price_level];
+			$pu_ttc = $this->multiprices_ttc[$thirdparty_buyer->price_level];
+			$price_min = $this->multiprices_min[$thirdparty_buyer->price_level];
+			$price_base_type = $this->multiprices_base_type[$thirdparty_buyer->price_level];
+			if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
+			{
+				if (isset($this->multiprices_tva_tx[$thirdparty_buyer->price_level])) $tva_tx=$this->multiprices_tva_tx[$thirdparty_buyer->price_level];
+				if (isset($this->multiprices_recuperableonly[$thirdparty_buyer->price_level])) $tva_npr=$this->multiprices_recuperableonly[$thirdparty_buyer->price_level];
+				if (empty($tva_tx)) $tva_npr=0;
+			}
+		}
 				// If price per customer
-				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+		elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				{
-					require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
+			require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
 
-					$prodcustprice = new Productcustomerprice($db);
+			$prodcustprice = new Productcustomerprice($db);
 
-					$filter = array('t.fk_product' => $this->id,'t.fk_soc' => $thirdparty_buyer->id);
+			$filter = array('t.fk_product' => $this->id,'t.fk_soc' => $thirdparty_buyer->id);
 
-					$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
-					if ($result) {
-						if (count($prodcustprice->lines) > 0) {
-							$pu_ht = price($prodcustprice->lines[0]->price);
-							$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
-							$price_base_type = $prodcustprice->lines[0]->price_base_type;
-							$tva_tx = $prodcustprice->lines[0]->tva_tx;
-							if ($prodcustprice->lines[0]->default_vat_code && ! preg_match('/\(.*\)/', $tva_tx)) $tva_tx.= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
-							$tva_npr = $prodcustprice->lines[0]->recuperableonly;
-							if (empty($tva_tx)) $tva_npr=0;
-						}
-					}
+			$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+			if ($result) {
+				if (count($prodcustprice->lines) > 0) {
+					$pu_ht = price($prodcustprice->lines[0]->price);
+					$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
+					$price_base_type = $prodcustprice->lines[0]->price_base_type;
+					$tva_tx = $prodcustprice->lines[0]->tva_tx;
+					if ($prodcustprice->lines[0]->default_vat_code && ! preg_match('/\(.*\)/', $tva_tx)) $tva_tx.= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
+					$tva_npr = $prodcustprice->lines[0]->recuperableonly;
+					if (empty($tva_tx)) $tva_npr=0;
 				}
+			}
+		}
 				// If price per quantity
-				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
+		elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
 				{
-					if ($this->prices_by_qty[0])	// yes, this product has some prices per quantity
+			if ($this->prices_by_qty[0])	// yes, this product has some prices per quantity
+			{
+				// Search price into product_price_by_qty from $this->id
+				foreach($this->prices_by_qty_list[0] as $priceforthequantityarray)
+				{
+					if ($priceforthequantityarray['rowid'] != $pqp) continue;
+					// We found the price
+					if ($priceforthequantityarray['price_base_type'] == 'HT')
 					{
-						// Search price into product_price_by_qty from $this->id
-						foreach($this->prices_by_qty_list[0] as $priceforthequantityarray)
-						{
-							if ($priceforthequantityarray['rowid'] != $pqp) continue;
-							// We found the price
-							if ($priceforthequantityarray['price_base_type'] == 'HT')
-							{
-								$pu_ht = $priceforthequantityarray['unitprice'];
-							}
-							else
-							{
-								$pu_ttc = $priceforthequantityarray['unitprice'];
-							}
-							break;
-						}
+						$pu_ht = $priceforthequantityarray['unitprice'];
 					}
+					else
+					{
+						$pu_ttc = $priceforthequantityarray['unitprice'];
+					}
+					break;
 				}
+			}
+		}
 				// If price per quantity and customer
-				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
+		elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
 				{
-					if ($this->prices_by_qty[$thirdparty_buyer->price_level]) // yes, this product has some prices per quantity
+			if ($this->prices_by_qty[$thirdparty_buyer->price_level]) // yes, this product has some prices per quantity
+			{
+				// Search price into product_price_by_qty from $this->id
+				foreach($this->prices_by_qty_list[$thirdparty_buyer->price_level] as $priceforthequantityarray)
+				{
+					if ($priceforthequantityarray['rowid'] != $pqp) continue;
+					// We found the price
+					if ($priceforthequantityarray['price_base_type'] == 'HT')
 					{
-						// Search price into product_price_by_qty from $this->id
-						foreach($this->prices_by_qty_list[$thirdparty_buyer->price_level] as $priceforthequantityarray)
-						{
-							if ($priceforthequantityarray['rowid'] != $pqp) continue;
-							// We found the price
-							if ($priceforthequantityarray['price_base_type'] == 'HT')
-							{
-								$pu_ht = $priceforthequantityarray['unitprice'];
-							}
-							else
-							{
-								$pu_ttc = $priceforthequantityarray['unitprice'];
-							}
-							break;
-						}
+						$pu_ht = $priceforthequantityarray['unitprice'];
 					}
+					else
+					{
+						$pu_ttc = $priceforthequantityarray['unitprice'];
+					}
+					break;
 				}
+			}
+		}
 
     	return array('pu_ht'=>$pu_ht, 'pu_ttc'=>$pu_ttc, 'price_min'=>$price_min, 'price_base_type'=>$price_base_type, 'tva_tx'=>$tva_tx, 'tva_npr'=>$tva_npr);
     }
@@ -3721,21 +3730,80 @@ class Product extends CommonObject
      */
     public function clone_price($fromId, $toId)
     {
-        // phpcs:enable
+        global $conf, $user;
+
+        $now = dol_now();
+
         $this->db->begin();
 
-        // les prix
-        $sql = "INSERT ".MAIN_DB_PREFIX."product_price (";
-        $sql.= " fk_product, date_price, price, tva_tx, localtax1_tx, localtax2_tx, fk_user_author, tosell)";
-        $sql.= " SELECT ".$toId . ", date_price, price, tva_tx, localtax1_tx, localtax2_tx, fk_user_author, tosell";
-        $sql.= " FROM ".MAIN_DB_PREFIX."product_price ";
-        $sql.= " WHERE fk_product = ". $fromId;
+        // prices
+        $sql  = "INSERT INTO " . MAIN_DB_PREFIX . "product_price (";
+        $sql .= " entity";
+        $sql .= ", fk_product";
+        $sql .= ", date_price";
+        $sql .= ", price_level";
+        $sql .= ", price";
+        $sql .= ", price_ttc";
+        $sql .= ", price_min";
+        $sql .= ", price_min_ttc";
+        $sql .= ", price_base_type";
+        $sql .= ", default_vat_code";
+        $sql .= ", tva_tx";
+        $sql .= ", recuperableonly";
+        $sql .= ", localtax1_tx";
+        $sql .= ", localtax1_type";
+        $sql .= ", localtax2_tx";
+        $sql .= ", localtax2_type";
+        $sql .= ", fk_user_author";
+        $sql .= ", tosell";
+        $sql .= ", price_by_qty";
+        $sql .= ", fk_price_expression";
+        $sql .= ", fk_multicurrency";
+        $sql .= ", multicurrency_code";
+        $sql .= ", multicurrency_tx";
+        $sql .= ", multicurrency_price";
+        $sql .= ", multicurrency_price_ttc";
+        $sql .= ")";
+        $sql .= " SELECT";
+        $sql .= " entity";
+        $sql .= ", " . $toId;
+        $sql .= ", '" . $this->db->idate($now) . "'";
+        $sql .= ", price_level";
+        $sql .= ", price";
+        $sql .= ", price_ttc";
+        $sql .= ", price_min";
+        $sql .= ", price_min_ttc";
+        $sql .= ", price_base_type";
+        $sql .= ", default_vat_code";
+        $sql .= ", tva_tx";
+        $sql .= ", recuperableonly";
+        $sql .= ", localtax1_tx";
+        $sql .= ", localtax1_type";
+        $sql .= ", localtax2_tx";
+        $sql .= ", localtax2_type";
+        $sql .= ", " . $user->id;
+        $sql .= ", tosell";
+        $sql .= ", price_by_qty";
+        $sql .= ", fk_price_expression";
+        $sql .= ", fk_multicurrency";
+        $sql .= ", multicurrency_code";
+        $sql .= ", multicurrency_tx";
+        $sql .= ", multicurrency_price";
+        $sql .= ", multicurrency_price_ttc";
+        $sql .= " FROM " . MAIN_DB_PREFIX . "product_price";
+        $sql .= " WHERE fk_product = ". $fromId;
+        $sql .= " ORDER BY date_price DESC";
+        if ($conf->global->PRODUIT_MULTIPRICES_LIMIT>0) {
+            $sql .= " LIMIT " . $conf->global->PRODUIT_MULTIPRICES_LIMIT;
+        }
 
-        dol_syslog(get_class($this).'::clone_price', LOG_DEBUG);
-        if (! $this->db->query($sql)) {
+        dol_syslog(__METHOD__, LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if (!$resql) {
             $this->db->rollback();
             return -1;
         }
+
         $this->db->commit();
         return 1;
     }
@@ -4134,22 +4202,22 @@ class Product extends CommonObject
         if ($this->type == Product::TYPE_PRODUCT)
         {
             if ($this->weight) {
-                $label.="<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuring_units_string($this->weight_units, "weight");
+            	$label.="<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuringUnitString(0, "weight", $this->weight_units);
             }
             if ($this->length) {
-                $label.="<br><b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuring_units_string($this->length_units, 'size');
+            	$label.="<br><b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuringUnitString(0, 'size', $this->length_units);
             }
             if ($this->width) {
-                $label.="<br><b>".$langs->trans("Width").'</b>: '.$this->width.' '.measuring_units_string($this->width_units, 'size');
+            	$label.="<br><b>".$langs->trans("Width").'</b>: '.$this->width.' '.measuringUnitString(0, 'size', $this->width_units);
             }
             if ($this->height) {
-                $label.="<br><b>".$langs->trans("Height").'</b>: '.$this->height.' '.measuring_units_string($this->height_units, 'size');
+            	$label.="<br><b>".$langs->trans("Height").'</b>: '.$this->height.' '.measuringUnitString(0, 'size', $this->height_units);
             }
             if ($this->surface) {
-                $label.="<br><b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuring_units_string($this->surface_units, 'surface');
+            	$label.="<br><b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuringUnitString(0, 'surface', $this->surface_units);
             }
             if ($this->volume) {
-                $label.="<br><b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuring_units_string($this->volume_units, 'volume');
+            	$label.="<br><b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuringUnitString(0, 'volume', $this->volume_units);
             }
         }
 
@@ -4289,14 +4357,14 @@ class Product extends CommonObject
     {
         switch ($type)
         {
-        case 0:
+			case 0:
             return $this->LibStatut($this->status, $mode, $type);
-        case 1:
+			case 1:
             return $this->LibStatut($this->status_buy, $mode, $type);
-        case 2:
+			case 2:
             return $this->LibStatut($this->status_batch, $mode, $type);
-        default:
-            //Simulate previous behavior but should return an error string
+			default:
+				//Simulate previous behavior but should return an error string
             return $this->LibStatut($this->status_buy, $mode, $type);
         }
     }
@@ -5196,7 +5264,6 @@ class Product extends CommonObject
         );
 
         for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
-
             $price = $baseprice;
             $price_min = $baseprice;
 

@@ -134,7 +134,13 @@ class box_task extends ModeleBoxes
 						});
 					});
 					</script>';
-
+            // set cookie by js
+            $boxcontent.='<script>date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "'.$cookie_name.'='.$filterValue.'; expires= " + date.toGMTString() + "; path=/ "; </script>';
+            $this->info_box_contents[0][] = array(
+                'tr'=>'class="nohover"',
+                'td' => 'class="nohover"',
+                'textnoformat' => $boxcontent,
+            );
 
 
             $sql = "SELECT pt.rowid, pt.ref, pt.fk_projet, pt.fk_task_parent, pt.datec, pt.dateo, pt.datee, pt.datev, pt.label, pt.description, pt.duration_effective, pt.planned_workload, pt.progress";
@@ -163,11 +169,10 @@ class box_task extends ModeleBoxes
 			$sql.= $this->db->plimit($max, 0);
 
 			$result = $this->db->query($sql);
-			$i = 0;
+			$i = 1;
 			if ($result) {
 				$num = $this->db->num_rows($result);
                 while ($objp = $this->db->fetch_object($result)) {
-
                     $taskstatic->id=$objp->rowid;
                     $taskstatic->ref=$objp->ref;
                     $taskstatic->label=$objp->label;
@@ -183,24 +188,18 @@ class box_task extends ModeleBoxes
 
                     $label = $projectstatic->getNomUrl(1).' '.$taskstatic->getNomUrl(1).' '.dol_htmlentities($taskstatic->label);
 
-                    $boxcontent.= getTaskProgressView($taskstatic, $label, true, false, true);
+                    $boxcontent = getTaskProgressView($taskstatic, $label, true, false, true);
 
+                    $this->info_box_contents[$i][] = array(
+                        'td' => '',
+                        'text' => $boxcontent,
+                    );
 					$i++;
 				}
 			} else {
                 dol_print_error($this->db);
             }
 		}
-
-        // set cookie by js
-        if(empty($i)){
-            $boxcontent.='<script >date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "'.$cookie_name.'='.$filterValue.'; expires= " + date.toGMTString() + "; path=/ "; </script>';
-        }
-
-        $this->info_box_contents[0][] = array(
-            'td' => '',
-            'text' => $boxcontent,
-        );
 	}
 
 	/**

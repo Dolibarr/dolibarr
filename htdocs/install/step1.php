@@ -586,7 +586,6 @@ if (! $error && $db->connected && $action == "set")
 
                     if ($result > 0 && $resultbis > 0)
                     {
-
                         print '<tr><td>';
                         print $langs->trans("UserCreation").' : ';
                         print $dolibarr_main_db_user;

@@ -47,12 +47,9 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 
 // Security check
-if (isset($_GET["id"]) || isset($_GET["ref"]))
-{
-	$id = isset($_GET["id"])?GETPOST("id"):(isset($_GET["ref"])?GETPOST("ref"):'');
-}
-$fieldid = isset($_GET["ref"])?'ref':'rowid';
-if ($user->societe_id) $socid=$user->societe_id;
+$id = GETPOST("id", 'int') ? GETPOST("id", 'int'): GETPOST('ref', 'alpha');
+$fieldid = GETPOSTISSET("ref") ? 'ref' : 'rowid';
+
 $result=restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
 
 $object = new Account($db);
@@ -79,12 +76,12 @@ if ($action == 'add')
 	// Create account
 	$object = new Account($db);
 
-	$object->ref           = dol_sanitizeFileName(trim($_POST["ref"]));
-	$object->label         = trim($_POST["label"]);
-	$object->courant       = $_POST["type"];
-	$object->clos          = $_POST["clos"];
-	$object->rappro        = (isset($_POST["norappro"]) && $_POST["norappro"])?0:1;
-	$object->url           = $_POST["url"];
+	$object->ref             = dol_string_nospecial(trim(GETPOST('ref', 'alpha')));
+	$object->label           = trim(GETPOST("label", 'alphanohtml'));
+	$object->courant         = $_POST["type"];
+	$object->clos            = $_POST["clos"];
+	$object->rappro          = (GETPOST("norappro", 'alpha') ? 0 : 1);
+	$object->url             = trim(GETPOST("url", 'alpha'));
 
 	$object->bank            = trim($_POST["bank"]);
 	$object->code_banque     = trim($_POST["code_banque"]);
@@ -93,27 +90,34 @@ if ($action == 'add')
 	$object->cle_rib         = trim($_POST["cle_rib"]);
 	$object->bic             = trim($_POST["bic"]);
 	$object->iban            = trim($_POST["iban"]);
-	$object->domiciliation   = trim($_POST["domiciliation"]);
+	$object->domiciliation   = trim(GETPOST("domiciliation", "nohtml"));
 
-	$object->proprio 	     = trim($_POST["proprio"]);
-	$object->owner_address   = trim($_POST["owner_address"]);
+	$object->proprio 	     = trim(GETPOST("proprio", 'alphanohtml'));
+	$object->owner_address   = trim(GETPOST("owner_address", 'nohtml'));
 
-	$account_number 		 = GETPOST('account_number', 'alpha');
-	if (empty($account_number) || $account_number == '-1') { $object->account_number = ''; } else { $object->account_number = $account_number; }
+	$account_number 		 = GETPOST('account_number', 'alphanohtml');
+	if (empty($account_number) || $account_number == '-1')
+	{
+		$object->account_number = '';
+	}
+	else
+	{
+		$object->account_number = $account_number;
+	}
 	$fk_accountancy_journal  = GETPOST('fk_accountancy_journal', 'int');
 	if ($fk_accountancy_journal <= 0) { $object->fk_accountancy_journal = ''; } else { $object->fk_accountancy_journal = $fk_accountancy_journal; }
 
 	$object->solde           = $_POST["solde"];
-	$object->date_solde      = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+	$object->date_solde      = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST('reday', 'int'), GETPOST("reyear", 'int'));
 
 	$object->currency_code   = trim($_POST["account_currency_code"]);
 
-	$object->state_id  	     = $_POST["account_state_id"];
-	$object->country_id      = $_POST["account_country_id"];
+	$object->state_id        = GETPOST("account_state_id", 'int');
+	$object->country_id      = GETPOST("account_country_id", 'int');
 
 	$object->min_allowed     = GETPOST("account_min_allowed", 'int');
 	$object->min_desired     = GETPOST("account_min_desired", 'int');
-	$object->comment         = trim(GETPOST("account_comment"));
+	$object->comment         = trim(GETPOST("account_comment", 'none'));
 
 	$object->fk_user_author  = $user->id;
 
@@ -176,14 +180,14 @@ if ($action == 'update')
 
 	// Update account
 	$object = new Account($db);
-	$object->fetch(GETPOST("id"));
+	$object->fetch(GETPOST("id", 'int'));
 
-	$object->ref             = dol_string_nospecial(trim($_POST["ref"]));
-	$object->label           = trim($_POST["label"]);
+	$object->ref             = dol_string_nospecial(trim(GETPOST('ref', 'alpha')));
+	$object->label           = trim(GETPOST("label", 'alphanohtml'));
 	$object->courant         = $_POST["type"];
 	$object->clos            = $_POST["clos"];
-	$object->rappro          = (isset($_POST["norappro"]) && $_POST["norappro"])?0:1;
-	$object->url             = trim($_POST["url"]);
+	$object->rappro          = (GETPOST("norappro", 'alpha') ? 0 : 1);
+	$object->url             = trim(GETPOST("url", 'alpha'));
 
 	$object->bank            = trim($_POST["bank"]);
 	$object->code_banque     = trim($_POST["code_banque"]);
@@ -192,10 +196,10 @@ if ($action == 'update')
 	$object->cle_rib         = trim($_POST["cle_rib"]);
 	$object->bic             = trim($_POST["bic"]);
 	$object->iban            = trim($_POST["iban"]);
-	$object->domiciliation   = trim($_POST["domiciliation"]);
+	$object->domiciliation   = trim(GETPOST("domiciliation", "nohtml"));
 
-	$object->proprio 	     = trim($_POST["proprio"]);
-	$object->owner_address   = trim($_POST["owner_address"]);
+	$object->proprio 	     = trim(GETPOST("proprio", 'alphanohtml'));
+	$object->owner_address   = trim(GETPOST("owner_address", 'nohtml'));
 
 	$account_number 		 = GETPOST('account_number', 'alpha');
 	if (empty($account_number) || $account_number == '-1')
@@ -211,12 +215,12 @@ if ($action == 'update')
 
 	$object->currency_code   = trim($_POST["account_currency_code"]);
 
-	$object->state_id        = $_POST["account_state_id"];
-	$object->country_id      = $_POST["account_country_id"];
+	$object->state_id        = GETPOST("account_state_id", 'int');
+	$object->country_id      = GETPOST("account_country_id", 'int');
 
 	$object->min_allowed     = GETPOST("account_min_allowed", 'int');
 	$object->min_desired     = GETPOST("account_min_desired", 'int');
-	$object->comment         = trim(GETPOST("account_comment"));
+	$object->comment         = trim(GETPOST("account_comment", 'none'));
 
 	if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($object->account_number))
 	{
@@ -289,7 +293,7 @@ if ($action == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->
 	}
 	else
 	{
-		setEventMessages($account->error, $account->errors, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 		$action='';
 	}
 }
@@ -410,10 +414,15 @@ if ($action == 'create')
 	{
 		print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td>';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 1);
+
+		$arrayselected = array();
 		$c = new Categorie($db);
 		$cats = $c->containing($object->id, Categorie::TYPE_ACCOUNT);
-		foreach($cats as $cat) {
-			$arrayselected[] = $cat->id;
+		if (is_array($cats))
+		{
+			foreach($cats as $cat) {
+				$arrayselected[] = $cat->id;
+			}
 		}
 		print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
 		print "</td></tr>";
@@ -625,9 +634,9 @@ else
 		print '<tr><td>'.$langs->trans("Conciliable").'</td>';
 		print '<td>';
 		$conciliate=$object->canBeConciliated();
-		if ($conciliate == -2) print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
-		elseif ($conciliate == -3) print $langs->trans("No").' ('.$langs->trans("Closed").')';
-		else print ($object->rappro==1 ? $langs->trans("Yes") : ($langs->trans("No").' ('.$langs->trans("ConciliationDisabled").')'));
+		if ($conciliate == -2) print $langs->trans("No").' <span class="opacitymedium">('.$langs->trans("CashAccount").')</span>';
+		elseif ($conciliate == -3) print $langs->trans("No").' <span class="opacitymedium">('.$langs->trans("Closed").')</span>';
+		else print ($object->rappro==1 ? $langs->trans("Yes") : ($langs->trans("No").' <span class="opacitymedium">('.$langs->trans("ConciliationDisabled").')</span>'));
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("BalanceMinimalAllowed").'</td>';
@@ -691,7 +700,6 @@ else
 
 		if ($object->type == Account::TYPE_SAVINGS || $object->type == Account::TYPE_CURRENT)
 		{
-
 			print '<div class="underbanner clearboth"></div>';
 
 			print '<table class="border tableforfield centpercent">';

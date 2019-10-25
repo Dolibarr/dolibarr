@@ -267,7 +267,6 @@ foreach ($dirmodels as $reldir)
         $handle = opendir($dir);
         if (is_resource($handle))
         {
-
             while (($file = readdir($handle))!==false)
             {
                 if (substr($file, 0, 25) == 'mod_commande_fournisseur_' && substr($file, dol_strlen($file)-3, 3) == 'php')
@@ -414,8 +413,8 @@ foreach ($dirmodels as $reldir)
                     print "<td>\n";
                     require_once $dir.$file;
                     $module = new $classname($db, $specimenthirdparty);
-		    if (method_exists($module, 'info')) print $module->info($langs);
-	            else print $module->description;
+                    if (method_exists($module, 'info')) print $module->info($langs);
+                    else print $module->description;
                     print "</td>\n";
 
                     // Active

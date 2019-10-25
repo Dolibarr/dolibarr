@@ -59,10 +59,8 @@ if ($categid) {
 	$bankcateg = new BankCateg($db);
 
 	if ($bankcateg->fetch($categid) > 0) {
-
 		//Update category
 		if (GETPOST('update') && $label) {
-
 			$bankcateg->label = $label;
 			$bankcateg->update($user);
 		}
@@ -103,7 +101,6 @@ print "</tr>\n";
 // Line to add category
 if ($action != 'edit')
 {
-
 	print '<tr class="oddeven">';
 	print '<td>&nbsp;</td><td><input name="label" type="text" size="45"></td>';
 	print '<td class="center"><input type="submit" name="add" class="button" value="'.$langs->trans("Add").'"></td>';

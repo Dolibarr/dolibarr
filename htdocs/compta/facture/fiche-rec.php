@@ -154,7 +154,7 @@ if (empty($reshook))
 	// Create predefined invoice
 	if ($action == 'add')
 	{
-		if (! GETPOST('titre'))
+		if (! GETPOST('titre', 'nohtml'))
 		{
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Title")), null, 'errors');
 			$action = "create";
@@ -162,15 +162,15 @@ if (empty($reshook))
 		}
 
 		$frequency=GETPOST('frequency', 'int');
-		$reyear=GETPOST('reyear');
-		$remonth=GETPOST('remonth');
-		$reday=GETPOST('reday');
-		$rehour=GETPOST('rehour');
-		$remin=GETPOST('remin');
+		$reyear=GETPOST('reyear', 'int');
+		$remonth=GETPOST('remonth', 'int');
+		$reday=GETPOST('reday', 'int');
+		$rehour=GETPOST('rehour', 'int');
+		$remin=GETPOST('remin', 'int');
 		$nb_gen_max=GETPOST('nb_gen_max', 'int');
 		//if (empty($nb_gen_max)) $nb_gen_max =0;
 
-		if (GETPOST('frequency'))
+		if (GETPOST('frequency', 'int'))
 		{
 			if (empty($reyear) || empty($remonth) || empty($reday))
 			{
@@ -188,12 +188,12 @@ if (empty($reshook))
 
 		if (! $error)
 		{
-			$object->titre = GETPOST('titre', 'alpha');	// deprecated
-			$object->title = GETPOST('titre', 'alpha');
+			$object->titre = GETPOST('titre', 'nohtml');	// deprecated
+			$object->title = GETPOST('titre', 'nohtml');
 			$object->note_private = GETPOST('note_private', 'none');
             $object->note_public  = GETPOST('note_public', 'none');
             $object->modelpdf = GETPOST('modelpdf', 'alpha');
-			$object->usenewprice = GETPOST('usenewprice');
+			$object->usenewprice = GETPOST('usenewprice', 'alpha');
 
 			$object->frequency = $frequency;
 			$object->unit_frequency = GETPOST('unit_frequency', 'alpha');

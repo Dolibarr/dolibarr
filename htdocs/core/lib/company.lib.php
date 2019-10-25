@@ -932,7 +932,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 	    't.name'=>array('label'=>"Name", 'checked'=>1, 'position'=>10),
 	    't.poste'=>array('label'=>"PostOrFunction", 'checked'=>1, 'position'=>20),
 	    't.address'=>array('label'=>(empty($conf->dol_optimize_smallscreen) ? $langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email") : $langs->trans("Address")), 'checked'=>1, 'position'=>30),
-	    'sc.role'=>array('label'=>"Roles", 'checked'=>1, 'position'=>40),
+	    'sc.role'=>array('label'=>"ContactByDefaultFor", 'checked'=>1, 'position'=>40),
 	    't.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>50, 'class'=>'center'),
     );
     // Extra fields
@@ -993,7 +993,8 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ContactsForCompany") : $langs->trans("ContactsAddressesForCompany"));
     print load_fiche_titre($title, $newcardbutton, '');
 
-    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
+    print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="socid" value="'.$object->id.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -1052,12 +1053,12 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     	if (in_array($val['type'], array('date','datetime','timestamp'))) $align.=($align?' ':'').'center';
     	if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
     	if ($key == 'status' || $key == 'statut') $align.=($align?' ':'').'center';
-    	if (! empty($arrayfields['t.'.$key]['checked']))
+    	if (! empty($arrayfields['t.'.$key]['checked']) || ! empty($arrayfields['sc.'.$key]['checked']))
     	{
     		print '<td class="liste_titre'.($align?' '.$align:'').'">';
     		if (in_array($key, array('statut'))){
                 print $form->selectarray('search_status', array('-1'=>'','0'=>$contactstatic->LibStatut(0, 1),'1'=>$contactstatic->LibStatut(1, 1)), $search_status);
-            }elseif (in_array($key, array('role'))) {
+            } elseif (in_array($key, array('role'))) {
 			    print $formcompany->showRoles("search_roles", $contactstatic, 'edit', $search_roles);
 		    } else {
                 print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
@@ -1090,7 +1091,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     	if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
     	if ($key == 'status' || $key == 'statut') $align.=($align?' ':'').'center';
     	if (! empty($arrayfields['t.'.$key]['checked'])) print getTitleFieldOfList($val['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($align?'class="'.$align.'"':''), $sortfield, $sortorder, $align.' ')."\n";
-    	if ($key == 'role') $align.=($align?' ':'').'center';
+    	if ($key == 'role') $align.=($align?' ':'').'left';
     	if (! empty($arrayfields['sc.'.$key]['checked'])) {
     		print getTitleFieldOfList($arrayfields['sc.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 'sc.'.$key, '', $param, ($align?'class="'.$align.'"':''), $sortfield, $sortorder, $align.' ')."\n";
 	    }

@@ -669,7 +669,6 @@ if ($conn_id)
 {
     if (! empty($conf->global->FTP_CONNECT_WITH_SFTP))
     {
-
     }
     elseif (! empty($conf->global->FTP_CONNECT_WITH_SSL))
     {

@@ -852,15 +852,15 @@ class Task extends CommonObject
     		$sql.=" t.rowid, t.ref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut,";
     		$sql.=" t.dateo, t.datee, t.planned_workload, t.rang,";
     		$sql.=" s.rowid, s.nom, s.email,";
-        $sql.=" p.fk_opp_status, p.opp_amount, p.opp_percent, p.budget_amount";
-        if (!empty($extrafields->attributes['projet']['label']))
-        {
-            foreach ($extrafields->attributes['projet']['label'] as $key => $val) $sql.=($extrafields->attributes['projet']['type'][$key] != 'separate' ? ",efp.".$key : '');
-        }
-        if (!empty($extrafields->attributes['projet_task']['label']))
-        {
-            foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) $sql.=($extrafields->attributes['projet_task']['type'][$key] != 'separate' ? ",efpt.".$key : '');
-        }
+			$sql.=" p.fk_opp_status, p.opp_amount, p.opp_percent, p.budget_amount";
+			if (!empty($extrafields->attributes['projet']['label']))
+			{
+				foreach ($extrafields->attributes['projet']['label'] as $key => $val) $sql.=($extrafields->attributes['projet']['type'][$key] != 'separate' ? ",efp.".$key : '');
+			}
+			if (!empty($extrafields->attributes['projet_task']['label']))
+			{
+				foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) $sql.=($extrafields->attributes['projet_task']['type'][$key] != 'separate' ? ",efpt.".$key : '');
+			}
 		}
 
 		$sql.= " ORDER BY p.ref, t.rang, t.dateo";
@@ -1938,7 +1938,6 @@ class Task extends CommonObject
 		$langs->load("projects");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'nodefault';
 
 			if ($this->modelpdf) {
@@ -2062,7 +2061,6 @@ class Task extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-
 			// This assignment in condition is not a bug. It allows walking the results.
 			while ($obj=$this->db->fetch_object($resql))
 			{

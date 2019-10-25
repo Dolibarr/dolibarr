@@ -90,7 +90,6 @@ $form = new Form($db);
 
 if ($id > 0 || ! empty($ref))
 {
-
 	$head=shipping_prepare_head($object);
 	dol_fiche_head($head, 'note', $langs->trans("Shipment"), -1, 'sending');
 

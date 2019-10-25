@@ -52,8 +52,6 @@ if ($user->societe_id) {
 }
 if ($user->societe_id)
     $socid = $user->societe_id;
-$result = restrictedArea($user, 'banque', $fieldvalue, 'bank_account', '', '',
-        $fieldtype);
 
 // Get parameters
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -69,8 +67,10 @@ if (!$sortfield)
     $sortfield = "name";
 
 $object = new Account($db);
-if ($id)
-    $object->fetch($id);
+if ($id > 0 || ! empty($ref)) $object->fetch($id, $ref);
+
+$result = restrictedArea($user, 'banque', $object->id, 'bank_account', '', '');
+
 
 /*
  * Actions
@@ -97,7 +97,6 @@ $form = new Form($db);
 
 if ($id > 0 || !empty($ref)) {
     if ($object->fetch($id, $ref)) {
-
         $upload_dir = $conf->bank->dir_output . '/' . $object->ref;
 
         // Onglets
@@ -106,13 +105,13 @@ if ($id > 0 || !empty($ref)) {
 
 
         // Build file list
-        $filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$',
-                $sortfield,
-                (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
+        $filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
         $totalsize = 0;
         foreach ($filearray as $key => $file) {
             $totalsize+=$file['size'];
         }
+
+        $morehtmlref = '';
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

@@ -807,7 +807,6 @@ if (empty($reshook))
 
 	// Mise a jour d'une ligne dans la demande de prix
 	elseif ($action == 'updateline' && $user->rights->supplier_proposal->creer && GETPOST('save') == $langs->trans("Save")) {
-
 		$vat_rate=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
 
 		// Define info_bits
@@ -865,7 +864,6 @@ if (empty($reshook))
 		// Check minimum price
 		$productid = GETPOST('productid', 'int');
 		if (! empty($productid)) {
-
 			$productsupplier = new ProductFournisseur($db);
 			if (! empty($conf->global->SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY))
 			{

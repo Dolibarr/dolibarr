@@ -73,7 +73,7 @@ $hookmanager->initHooks(array('bankaccountlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extrafields->fetch_name_optionals_label('bank_account');
+$extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
@@ -98,13 +98,16 @@ $arrayfields=array(
     'balance'=>array('label'=>$langs->trans("Balance"), 'checked'=>1, 'position'=>1010),
 );
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-    foreach($extrafields->attribute_label as $key => $val)
-    {
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
-    }
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+	{
+		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+	}
 }
+$object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 /*
@@ -144,7 +147,9 @@ $accounts = array();
 
 $sql = "SELECT b.rowid, b.label, b.courant, b.rappro, b.account_number, b.fk_accountancy_journal, b.currency_code, b.datec as date_creation, b.tms as date_update";
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -454,7 +459,7 @@ foreach ($accounts as $key=>$type)
     if (! empty($arrayfields['b.account_number']['checked']))
     {
     	print '<td>';
-    	if (! empty($conf->accounting->enabled))
+    	if (! empty($conf->accounting->enabled) && ! empty($objecttmp->account_number))
     	{
     		$accountingaccount = new AccountingAccount($db);
     		$accountingaccount->fetch('', $objecttmp->account_number, 1);
@@ -472,7 +477,7 @@ foreach ($accounts as $key=>$type)
     if (! empty($arrayfields['b.fk_accountancy_journal']['checked']))
     {
     	print '<td>';
-    	if (! empty($conf->accounting->enabled))
+    	if (! empty($conf->accounting->enabled) && ! empty($objecttmp->fk_accountancy_journal))
     	{
     		$accountingjournal = new AccountingJournal($db);
     		$accountingjournal->fetch($objecttmp->fk_accountancy_journal);
@@ -505,11 +510,19 @@ foreach ($accounts as $key=>$type)
             if ($result<0) {
                 setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
             } else {
-                print $result->nbtodo;
-                if ($result->nbtodolate) print ' &nbsp; ('.$result->nbtodolate.img_warning($langs->trans("Late")).')';
+                print '<span class="badge badge-info classfortooltip" title="'.dol_htmlentities($langs->trans("TransactionsToConciliate")).'">'.$result->nbtodo.'</span>';
+                if ($result->nbtodolate) {
+                    print '&nbsp;';
+                    print '<span title="'.dol_htmlentities($langs->trans("Late")).'" class="classfortooltip badge badge-danger">';
+                    print '<i class="fa fa-exclamation-triangle"></i> '.$result->nbtodolate;
+                    print '</span>';
+                }
             }
 		}
-		else print $langs->trans("FeatureDisabled");
+		else
+		{
+			print '<span class="opacitymedium">'.$langs->trans("FeatureDisabled").'</span>';
+		}
 	    print '</td>';
 	    if (! $i) $totalarray['nbfield']++;
     }

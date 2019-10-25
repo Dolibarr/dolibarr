@@ -234,8 +234,6 @@ class CUnits // extends CommonObject
 
     	dol_syslog(__METHOD__, LOG_DEBUG);
 
-    	$records=array();
-
     	$sql = 'SELECT';
     	$sql.= " t.rowid,";
     	$sql.= " t.code,";
@@ -249,8 +247,8 @@ class CUnits // extends CommonObject
     	$sqlwhere = array();
     	if (count($filter) > 0) {
     		foreach ($filter as $key => $value) {
-    			if ($key=='t.rowid' || $key=='t.active') {
-    				$sqlwhere[] = $key . '='. $value;
+    			if ($key=='t.rowid' || $key=='t.active' || $key=='t.scale') {
+    				$sqlwhere[] = $key . '='. (int) $value;
     			}
     			elseif (strpos($key, 'date') !== false) {
     				$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
@@ -273,6 +271,7 @@ class CUnits // extends CommonObject
     	if (!empty($limit)) {
     		$sql .=  ' ' . $this->db->plimit($limit, $offset);
     	}
+
     	$resql = $this->db->query($sql);
     	if ($resql) {
     		$this->records=array();

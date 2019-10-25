@@ -54,6 +54,19 @@ class Productlot extends CommonObject
     public $ismultientitymanaged = 1;
 
 	/**
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields=array(
+		'rowid' 		=> array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
+		'batch'         =>array('type'=>'varchar(30)', 'label'=>'Batch',           'enabled'=>1, 'visible'=>1,  'notnull'=>0,  'showoncombobox'=>1, 'index'=>1, 'position'=>10,  'comment'=>'Batch'),
+		'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1,  'notnull'=>1,  'index'=>1, 'position'=>20),
+		'datec'         =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>500),
+		'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>501),
+		'fk_user_author'=>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>510, 'foreignkey'=>'llx_user.rowid'),
+		'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511)
+	);
+
+	/**
 	 * @var int Entity
 	 */
 	public $entity;

@@ -259,7 +259,6 @@ class Propalmergepdfproduct extends CommonObject
     		if ($this->db->num_rows($resql))
     		{
     			while($obj = $this->db->fetch_object($resql)) {
-
     				$line = new PropalmergepdfproductLine();
 
 	    			$line->id    = $obj->rowid;
@@ -594,7 +593,6 @@ class Propalmergepdfproduct extends CommonObject
 
 		if (! $error)
 		{
-
 		}
 
 		unset($object->context['createfromclone']);

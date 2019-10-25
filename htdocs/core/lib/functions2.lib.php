@@ -505,14 +505,7 @@ function dolAddEmailTrackId($email, $trackingid)
 function isValidMailDomain($mail)
 {
     list($user, $domain) = explode("@", $mail, 2);
-    if (checkdnsrr($domain, "MX"))
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return checkdnsrr($domain, "MX");
 }
 
 /**
@@ -1722,7 +1715,6 @@ function is_ip($ip)
 {
 	// First we test if it is a valid IPv4
 	if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
-
 		// Then we test if it is a private range
 		if (! filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) return 2;
 
@@ -1820,69 +1812,76 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$subelement = $regs[2];
 	}
 
+	// Generic case for $classpath
 	$classpath = $element.'/class';
 
-	// To work with non standard path
+	// Special cases, to work with non standard path
 	if ($objecttype == 'facture' || $objecttype == 'invoice') {
 		$classpath = 'compta/facture/class';
 		$module='facture';
 		$subelement='facture';
 	}
-	if ($objecttype == 'commande' || $objecttype == 'order') {
+	elseif ($objecttype == 'commande' || $objecttype == 'order') {
 		$classpath = 'commande/class';
 		$module='commande';
 		$subelement='commande';
 	}
-	if ($objecttype == 'propal')  {
+	elseif ($objecttype == 'propal')  {
 		$classpath = 'comm/propal/class';
 	}
-	if ($objecttype == 'supplier_proposal')  {
+	elseif ($objecttype == 'supplier_proposal')  {
 		$classpath = 'supplier_proposal/class';
 	}
-	if ($objecttype == 'shipping') {
+	elseif ($objecttype == 'shipping') {
 		$classpath = 'expedition/class';
 		$subelement = 'expedition';
 		$module = 'expedition_bon';
 	}
-	if ($objecttype == 'delivery') {
+	elseif ($objecttype == 'delivery') {
 		$classpath = 'livraison/class';
 		$subelement = 'livraison';
 		$module = 'livraison_bon';
 	}
-	if ($objecttype == 'contract') {
+	elseif ($objecttype == 'contract') {
 		$classpath = 'contrat/class';
 		$module='contrat';
 		$subelement='contrat';
 	}
-	if ($objecttype == 'member') {
+	elseif ($objecttype == 'member') {
 		$classpath = 'adherents/class';
 		$module='adherent';
 		$subelement='adherent';
 	}
-	if ($objecttype == 'cabinetmed_cons') {
+	elseif ($objecttype == 'cabinetmed_cons') {
 		$classpath = 'cabinetmed/class';
 		$module='cabinetmed';
 		$subelement='cabinetmedcons';
 	}
-	if ($objecttype == 'fichinter') {
+	elseif ($objecttype == 'fichinter') {
 		$classpath = 'fichinter/class';
 		$module='ficheinter';
 		$subelement='fichinter';
 	}
-	if ($objecttype == 'task') {
+	elseif ($objecttype == 'task') {
 		$classpath = 'projet/class';
 		$module='projet';
 		$subelement='task';
 	}
-	if ($objecttype == 'stock') {
+	elseif ($objecttype == 'stock') {
 		$classpath = 'product/stock/class';
 		$module='stock';
 		$subelement='stock';
 	}
+	elseif ($objecttype == 'inventory') {
+		$classpath = 'product/inventory/class';
+		$module='stock';
+		$subelement='inventory';
+	}
 
-	//print "objecttype=".$objecttype." module=".$module." subelement=".$subelement;
-
+	// Generic case for $classfile and $classname
 	$classfile = strtolower($subelement); $classname = ucfirst($subelement);
+	//print "objecttype=".$objecttype." module=".$module." subelement=".$subelement." classfile=".$classfile." classname=".$classname;
+
 	if ($objecttype == 'invoice_supplier') {
 		$classfile = 'fournisseur.facture';
 		$classname='FactureFournisseur';
@@ -2251,13 +2250,16 @@ function colorValidateHex($color, $allow_white = true)
 /**
  * Change color to make it less aggressive (ratio is negative) or more aggressive (ratio is positive)
  *
- * @param string 		$hex		Color in hex ('#AA1122' or 'AA1122' or '#a12' or 'a12')
- * @param integer		$ratio		Default=-50. Note: 0=Component color is unchanged, -100=Component color become 88, +100=Component color become 00 or FF
+ * @param 	string 		$hex			Color in hex ('#AA1122' or 'AA1122' or '#a12' or 'a12')
+ * @param 	integer		$ratio			Default=-50. Note: 0=Component color is unchanged, -100=Component color become 88, +100=Component color become 00 or FF
+ * @param	integer		$brightness 	Default=0. Adjust brightness. -100=Decrease brightness by 100%, +100=Increase of 100%.
  * @return string		New string of color
  * @see colorAdjustBrightness()
  */
-function colorAgressivity($hex, $ratio = -50)
+function colorAgressiveness($hex, $ratio = -50, $brightness = 0)
 {
+	if (empty($ratio)) $ratio = 0;	// To avoid null
+
 	// Steps should be between -255 and 255. Negative = darker, positive = lighter
 	$ratio = max(-100, min(100, $ratio));
 
@@ -2278,12 +2280,21 @@ function colorAgressivity($hex, $ratio = -50)
 			if ($color > 127) $color += ((255 - $color) * ($ratio / 100));
 			if ($color < 128) $color -= ($color * ($ratio / 100));
 		}
-		else			// We decrease agressivity
+		else			// We decrease agressiveness
 		{
 			if ($color > 128) $color -= (($color - 128) * (abs($ratio) / 100));
 			if ($color < 127) $color += ((128 - $color) * (abs($ratio) / 100));
 		}
-		$color   = max(0, min(255, $color)); // Adjust color
+		if ($brightness > 0)
+		{
+			$color = ($color * (100 + abs($brightness)) / 100);
+		}
+		else
+		{
+			$color = ($color * (100 - abs($brightness)) / 100);
+		}
+
+		$color   = max(0, min(255, $color)); // Adjust color to stay into valid range
 		$return .= str_pad(dechex($color), 2, '0', STR_PAD_LEFT); // Make two char hex code
 	}
 
@@ -2295,7 +2306,7 @@ function colorAgressivity($hex, $ratio = -50)
  * @param string 	$hex 		Color in hex ('#AA1122' or 'AA1122' or '#a12' or 'a12')
  * @param integer 	$steps 		Step/offset added to each color component. It should be between -255 and 255. Negative = darker, positive = lighter
  * @return string				New color with format '#AA1122'
- * @see colorAgressivity()
+ * @see colorAgressiveness()
  */
 function colorAdjustBrightness($hex, $steps)
 {

@@ -88,8 +88,8 @@ class AdherentType extends CommonObject
 
 	/** @var array Array of members */
 	public $members=array();
-  
-  public $multilangs=array();
+
+    public $multilangs=array();
 
 
 	/**
@@ -129,9 +129,9 @@ class AdherentType extends CommonObject
                     $this->description    = $obj->description;
                     $this->email        = $obj->email;
                 }
-                $this->multilangs["$obj->lang"]["label"]        = $obj->label;
-                $this->multilangs["$obj->lang"]["description"]    = $obj->description;
-                $this->multilangs["$obj->lang"]["email"]        = $obj->email;
+                $this->multilangs["$obj->lang"]["label"] = $obj->label;
+                $this->multilangs["$obj->lang"]["description"] = $obj->description;
+                $this->multilangs["$obj->lang"]["email"] = $obj->email;
             }
             return 1;
         }
@@ -141,7 +141,7 @@ class AdherentType extends CommonObject
             return -1;
         }
     }
-  
+
     /**
      *    Update or add a translation for a product
      *
@@ -248,7 +248,7 @@ class AdherentType extends CommonObject
 
         return 1;
     }
-  
+
        /**
      *    Delete a language for this product
      *
@@ -361,7 +361,7 @@ class AdherentType extends CommonObject
 	 */
 	public function update($user, $notrigger = 0)
 	{
-    global $langs, $conf, $hookmanager;
+        global $langs, $conf, $hookmanager;
 
 		$error=0;
 
@@ -383,17 +383,16 @@ class AdherentType extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-    
-                $this->description = $this->db->escape($this->note);
+            $this->description = $this->db->escape($this->note);
 
-                // Multilangs
-                if (! empty($conf->global->MAIN_MULTILANGS)) {
-                    if ($this->setMultiLangs($user) < 0) {
-                           $this->error=$langs->trans("Error")." : ".$this->db->error()." - ".$sql;
-                           return -2;
-                    }
+            // Multilangs
+            if (! empty($conf->global->MAIN_MULTILANGS)) {
+                if ($this->setMultiLangs($user) < 0) {
+                    $this->error=$langs->trans("Error")." : ".$this->db->error()." - ".$sql;
+                    return -2;
                 }
-    
+            }
+
 			$action='update';
 
 			// Actions on extra fields
@@ -475,8 +474,8 @@ class AdherentType extends CommonObject
 	 */
 	public function fetch($rowid)
 	{
-    global $langs, $conf;
-  
+        global $langs, $conf;
+
 		$sql = "SELECT d.rowid, d.libelle as label, d.morphy, d.statut, d.subscription, d.mail_valid, d.note, d.vote";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 		$sql .= " WHERE d.rowid = ".(int) $rowid;
@@ -499,11 +498,11 @@ class AdherentType extends CommonObject
 				$this->mail_valid     = $obj->mail_valid;
 				$this->note           = $obj->note;
 				$this->vote           = $obj->vote;
-        
-        // multilangs
-        if (! empty($conf->global->MAIN_MULTILANGS)) {
-        $this->getMultiLangs();
-        }
+
+                // multilangs
+                if (! empty($conf->global->MAIN_MULTILANGS)) {
+                    $this->getMultiLangs();
+                }
 			}
 
 			return 1;

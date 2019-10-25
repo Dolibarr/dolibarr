@@ -118,6 +118,10 @@ $arrayfields=array(
     //'m.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500)
 );
 
+// Security check
+if (!$user->rights->stock->mouvement->lire) {
+	accessforbidden();
+}
 
 
 /*
@@ -198,7 +202,7 @@ if ($action == "correct_stock")
         	$eatby=dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
         	$sellby=dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
 
-        $result=$product->correct_stock_batch(
+			$result=$product->correct_stock_batch(
 	            $user,
 	            $id,
 	            GETPOST("nbpiece", 'int'),
@@ -213,7 +217,7 @@ if ($action == "correct_stock")
         }
         else
 		{
-        $result=$product->correct_stock(
+			$result=$product->correct_stock(
 	            $user,
 	            $id,
 	            GETPOST("nbpiece", 'int'),
@@ -425,11 +429,13 @@ $sql.= " e.ref as warehouse_ref, e.rowid as entrepot_id, e.lieu, e.fk_parent, e.
 $sql.= " m.rowid as mid, m.value as qty, m.datem, m.fk_user_author, m.label, m.inventorycode, m.fk_origin, m.origintype,";
 $sql.= " m.batch, m.price,";
 $sql.= " m.type_mouvement,";
-$sql.= " m.fk_projet,";
+$sql.= " m.fk_projet as fk_project,";
 $sql.= " pl.rowid as lotid, pl.eatby, pl.sellby,";
 $sql.= " u.login, u.photo, u.lastname, u.firstname";
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -853,7 +859,7 @@ if ($resql)
     }
     if (! empty($arrayfields['m.fk_projet']['checked']))
     {
-    	// fk_projet
+    	// fk_project
     	print '<td class="liste_titre" align="left">';
     	print '&nbsp; ';
     	print '</td>';
@@ -1109,9 +1115,9 @@ if ($resql)
         }
         if (! empty($arrayfields['m.fk_projet']['checked']))
         {
-        	// fk_projet
+        	// fk_project
         	print '<td align="right">';
-        	if ($objp->fk_projet != 0) print $movement->get_origin($objp->fk_projet, 'project');
+        	if ($objp->fk_project != 0) print $movement->get_origin($objp->fk_project, 'project');
         	print '</td>';
         }
         // Action column

@@ -238,7 +238,6 @@ foreach ($dirmodels as $reldir)
 
 					if ($module->isEnabled())
 					{
-
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
 						print $module->info();
 						print '</td>';
@@ -301,8 +300,13 @@ print '</div>';
 print '<br>';
 
 
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-{
+if ($conf->global->MAIN_FEATURES_LEVEL < 2) {
+    dol_fiche_end();
+    // End of page
+    llxFooter();
+    $db->close();
+    exit;
+}
 
 /*
  *  Documents models for Holidays
@@ -319,8 +323,8 @@ $sql.= " AND entity = ".$conf->entity;
 $resql=$db->query($sql);
 if ($resql)
 {
-	$i = 0;
-	$num_rows=$db->num_rows($resql);
+    $i = 0;
+    $num_rows=$db->num_rows($resql);
 	while ($i < $num_rows)
 	{
 		$array = $db->fetch_array($resql);
@@ -369,7 +373,6 @@ foreach ($dirmodels as $reldir)
                 {
                     if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
                     {
-
                     	if (file_exists($dir.'/'.$file))
                     	{
                     		$name = substr($file, 4, dol_strlen($file) -16);
@@ -419,7 +422,7 @@ foreach ($dirmodels as $reldir)
 	                            }
 	                            print '</td>';
 
-	                           // Info
+	                            // Info
 		    					$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
 					    		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
 			                    if ($module->type == 'pdf')
@@ -521,7 +524,7 @@ print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
 print '</div>';
 
 print '</form>';
-}
+
 
 
 dol_fiche_end();

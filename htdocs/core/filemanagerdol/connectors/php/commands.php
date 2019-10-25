@@ -318,7 +318,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
     else
 	{
 	    //issue the CKEditor Callback
-SendCKEditorResults(
+        SendCKEditorResults(
 			$CKEcallback,
 			$sFileUrl,
 			($sErrorNumber != 0 ? 'Error '. $sErrorNumber. ' upload failed.' : 'Upload Successful')

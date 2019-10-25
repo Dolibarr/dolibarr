@@ -193,13 +193,9 @@ elseif ($modecompta=="RECETTES-DEPENSES")
 }
 elseif ($modecompta=="BOOKKEEPING")
 {
-
-
 }
 elseif ($modecompta=="BOOKKEEPINGCOLLECTED")
 {
-
-
 }
 
 $period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
@@ -394,7 +390,6 @@ print_liste_field_titre(
 
 	if (count($name)) {
 		foreach($name as $key=>$value) {
-
 			print '<tr class="oddeven">';
 
 			// Product

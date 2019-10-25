@@ -38,10 +38,8 @@ $object->fetch($loanid);
 $langs->loadLangs(array("compta","bills","loan"));
 
 if ($action == 'createecheancier') {
-
 	$i=1;
 	while($i <$object->nbterm+1){
-
 		$date =  GETPOST('hi_date'.$i, 'int');
 		$mens = GETPOST('mens'.$i);
 		$int = GETPOST('hi_interets'.$i);
@@ -69,10 +67,8 @@ if ($action == 'createecheancier') {
 }
 
 if ($action == 'updateecheancier') {
-
 	$i=1;
 	while($i <$object->nbterm+1){
-
 		$mens = GETPOST('mens'.$i);
 		$int = GETPOST('hi_interets'.$i);
 		$id = GETPOST('hi_rowid'.$i);

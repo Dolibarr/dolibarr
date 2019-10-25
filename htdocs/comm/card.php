@@ -403,7 +403,7 @@ if ($object->id > 0)
     	print '<td><td class="right">';
     	if ($user->rights->societe->creer && !$user->societe_id > 0)
     	{
-    		print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.img_edit($langs->trans("Modify")).'</a>';
+    		print '<a class="editfielda" href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.img_edit($langs->trans("Modify")).'</a>';
     	}
     	print '</td></tr></table>';
     	print '</td>';
@@ -425,8 +425,6 @@ if ($object->id > 0)
 	    print '</td><td>';
 	    $limit_field_type = (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) ? 'numeric' : 'amount';
 	    print $form->editfieldval("OutstandingBill", 'outstanding_limit', $object->outstanding_limit, $object, $user->rights->societe->creer, $limit_field_type, ($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
-	    //if (empty($object->outstanding_limit)) print $langs->trans("NoLimit");
-
 	    print '</td>';
 	    print '</tr>';
 	}

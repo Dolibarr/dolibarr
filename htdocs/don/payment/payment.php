@@ -156,7 +156,6 @@ $form=new Form($db);
 // Form to create donation payment
 if (GETPOST('action', 'aZ09') == 'create')
 {
-
 	$don = new Don($db);
 	$don->fetch($chid);
 

@@ -24,21 +24,15 @@
 /**
  * Add area with bookmarks in menu
  *
- * @param 	DoliDb  	$aDb		Database handler
- * @param 	Translate	$aLangs		Object lang
  * @return	string
  */
-function printBookmarksList($aDb, $aLangs)
+function printBookmarksList()
 {
-	global $conf, $user;
-
-	$db = $aDb;
-	$langs = $aLangs;
+	global $conf, $user, $db, $langs;
 
 	$ret = '<div class="menu_top"></div>'."\n";
 
 	if (! empty($conf->use_javascript_ajax)) {		// Bookmark autosubmit can't work when javascript is off.
-
 		require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 		if (! isset($conf->global->BOOKMARKS_SHOW_IN_MENU)) $conf->global->BOOKMARKS_SHOW_IN_MENU=5;
 
@@ -72,6 +66,7 @@ function printBookmarksList($aDb, $aLangs)
 
 		$ret.= '<!-- form with POST method by default, will be replaced with GET for external link by js -->'."\n";
 		$ret.= '<form id="actionbookmark" name="actionbookmark" method="POST" action="">';
+        $ret.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		$ret.= '<select name="bookmark" id="boxbookmark" class="flat boxcombo vmenusearchselectcombo" alt="Bookmarks">';
 		$ret.= '<option hidden value="listbookmarks" class="optiongrey" selected rel="'.DOL_URL_ROOT.'/bookmarks/list.php">'.$langs->trans('Bookmarks').'</option>';
 	    $ret.= '<option value="listbookmark" class="optionblue" rel="'.dol_escape_htmltag(DOL_URL_ROOT.'/bookmarks/list.php').'" ';
@@ -156,16 +151,11 @@ function printBookmarksList($aDb, $aLangs)
 /**
  * Add area with bookmarks in top menu
  *
- * @param 	DoliDb  	$aDb		Database handler
- * @param 	Translate	$aLangs		Object lang
  * @return	string
  */
-function printDropdownBookmarksList($aDb, $aLangs)
+function printDropdownBookmarksList()
 {
-    global $conf, $user;
-
-    $db = $aDb;
-    $langs = $aLangs;
+    global $conf, $user, $db, $langs;
 
     require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
     if (! isset($conf->global->BOOKMARKS_SHOW_IN_MENU)) $conf->global->BOOKMARKS_SHOW_IN_MENU=5;
@@ -272,7 +262,7 @@ function printDropdownBookmarksList($aDb, $aLangs)
 
                 var filter = $(this).val(), count = 0;
                 $("#dropdown-bookmarks-list .bookmark-item").each(function () {
-        
+
                     if ($(this).text().search(new RegExp(filter, "i")) < 0) {
                         $(this).addClass("hidden-search-result");
                     } else {

@@ -1637,7 +1637,6 @@ class Categorie extends CommonObject
 			{
 				$nbfile = count($file['name']);
 				for ($i = 0; $i <= $nbfile; $i ++) {
-
 					$originImage = $dir . $file['name'][$i];
 
 					// Cree fichier en taille origine
@@ -1836,13 +1835,13 @@ class Categorie extends CommonObject
 	        }
 	    }
 
-			// Call trigger
-			$result = $this->call_trigger('CATEGORY_SET_MULTILANGS', $user);
-			if ($result < 0) {
-				$this->error = $this->db->lasterror();
-				return -1;
-			}
-			// End call triggers
+		// Call trigger
+		$result = $this->call_trigger('CATEGORY_SET_MULTILANGS', $user);
+		if ($result < 0) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		// End call triggers
 
 	    return 1;
 	}

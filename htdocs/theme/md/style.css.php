@@ -108,12 +108,12 @@ if (! isset($conf->global->THEME_ELDY_TEXTLINK)) $conf->global->THEME_ELDY_TEXTL
 // Case of option editable only if option THEME_ELDY_ENABLE_PERSONALIZED is on
 if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
 {
-    // 90A4AE, 607D8B, 455A64, 37474F
-    $conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';     // card
-    $conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
-    $conf->global->THEME_ELDY_TEXT='0,0,0';
-    $conf->global->THEME_ELDY_FONT_SIZE1='14';
-    $conf->global->THEME_ELDY_FONT_SIZE2='11';
+	// 90A4AE, 607D8B, 455A64, 37474F
+	$conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';     // card
+	$conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
+	$conf->global->THEME_ELDY_TEXT='0,0,0';
+	$conf->global->THEME_ELDY_FONT_SIZE1='14';
+	$conf->global->THEME_ELDY_FONT_SIZE2='11';
 }
 
 // Case of option availables only if THEME_ELDY_ENABLE_PERSONALIZED is on
@@ -141,8 +141,8 @@ $colorbacklinepairhover=((! isset($conf->global->THEME_ELDY_USE_HOVER) || (strin
 $colorbacklinepairchecked=((! isset($conf->global->THEME_ELDY_USE_CHECKED) || (string) $conf->global->THEME_ELDY_USE_CHECKED === '255,255,255')?'':($conf->global->THEME_ELDY_USE_CHECKED === '1'?'edf4fb':$conf->global->THEME_ELDY_USE_CHECKED));
 if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
 {
-    $colorbacklinepairhover=((! isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '255,255,255')?'':($user->conf->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_HOVER));
-    $colorbacklinepairchecked=((! isset($user->conf->THEME_ELDY_USE_CHECKED) || $user->conf->THEME_ELDY_USE_CHECKED === '255,255,255')?'':($user->conf->THEME_ELDY_USE_CHECKED === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_CHECKED));
+	$colorbacklinepairhover=((! isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '255,255,255')?'':($user->conf->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_HOVER));
+	$colorbacklinepairchecked=((! isset($user->conf->THEME_ELDY_USE_CHECKED) || $user->conf->THEME_ELDY_USE_CHECKED === '255,255,255')?'':($user->conf->THEME_ELDY_USE_CHECKED === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_CHECKED));
 }
 
 if (empty($colortopbordertitle1)) $colortopbordertitle1=$colorbackhmenu1;
@@ -500,12 +500,14 @@ input:-webkit-autofill {
 ::-moz-placeholder { color:#bbb; } 			/* firefox 19+ */
 :-ms-input-placeholder { color:#ccc; } 		/* ie */
 input:-moz-placeholder { color:#ccc; }
-input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], select[name=incoterm_id] { margin-right: 6px; }
-input[name=surface] { margin-right: 4px; }
+input[name=price], input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], input[name=net_measure], select[name=incoterm_id] { margin-right: 6px; }
 fieldset { border: 1px solid #AAAAAA !important; }
 .legendforfieldsetstep { padding-bottom: 10px; }
+input#onlinepaymenturl, input#directdownloadlink {
+	opacity: 0.7;
+}
 
-div#moretabsListaction {
+div#moretabsList, div#moretabsListaction {
     z-index: 5;
 }
 
@@ -1061,6 +1063,10 @@ table[summary="list_of_modules"] .fa-cog {
 		font-size: <?php print $fontsize+3; ?>px !important;
 	}
 
+	.login_vertical_align {
+    	padding-left: 0;
+    }
+
 	.divmainbodylarge { margin-left: 20px; margin-right: 20px; }
 
     .tdoverflowonsmartphone {
@@ -1500,7 +1506,8 @@ table.noborder tr.liste_titre td {
     padding-<?php echo $left; ?>: 3px;
 }
 .pictowarning {
-    vertical-align: text-bottom;
+    /* vertical-align: text-bottom; */
+    color: #9f4705;
 }
 .pictomodule {
 	width: 14px;
@@ -1782,7 +1789,7 @@ div.mainmenu {
 	position : relative;
 	background-repeat:no-repeat;
 	background-position:center top;
-	height: <?php echo ($heightmenu-19); ?>px;
+	height: <?php echo ($heightmenu-22); ?>px;
 	margin-left: 0px;
 	min-width: 40px;
 }
@@ -2253,19 +2260,21 @@ div.blockvmenulogo
 {
 	border-bottom: 0 !important;
 }
-.backgroundforcompanylogo {
+.menulogocontainer {
     margin: <?php echo $disableimages?'0':'6'; ?>px;
     margin-left: 12px;
     margin-right: 6px;
-    background-color: rgba(255,255,255,0.7);
     padding: 0;
-    border-radius: 5px;
     height: <?php echo $disableimages?'20':'32'; ?>px;
     /* width: 100px; */
     max-width: 100px;
     vertical-align: middle;
 }
-.backgroundforcompanylogo img.mycompany {
+.backgroundforcompanylogo {
+	background-color: rgba(255,255,255,0.7);
+	border-radius: 5px;
+}
+.menulogocontainer img.mycompany {
     object-fit: contain;
     width: inherit;
     height: inherit;
@@ -3046,7 +3055,9 @@ td.evenodd, tr.nohoverpair td {
 	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
 }
 .trforbreak td {
-	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinebreak)); ?> !important;
+	font-weight: bold;
+    border-bottom: 1pt solid black !important;
+	/* background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinebreak)); ?> !important; */
 }
 
 table.dataTable td {
@@ -3212,6 +3223,10 @@ tr.liste_sub_total, tr.liste_sub_total td {
 .noshadow {
 	-webkit-box-shadow: 0px 0px 0px #f4f4f4 !important;
 	box-shadow: 0px 0px 0px #f4f4f4 !important;
+}
+.shadow {
+	-webkit-box-shadow: 2px 2px 5px #CCC !important;
+	box-shadow: 2px 2px 5px #CCC !important;
 }
 
 div.tabBar .noborder {
@@ -3619,6 +3634,10 @@ div.titre, .secondary {
 	color: rgb(<?php print $colortexttitlenotab; ?>);
 }
 
+table.table-fiche-title .col-title div.titre{
+	line-height: 40px;
+}
+
 #dolpaymenttable { min-width: 320px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
 #tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
@@ -3971,7 +3990,7 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 .cal_peruserviewname { max-width: 140px; height: 22px; }
 
 .topmenuimage {
-	background-size: 28px auto;
+	background-size: 24px auto;
 }
 
 /* ============================================================================== */
@@ -5026,6 +5045,11 @@ dl.dropdown {
     background-color: #eee;
 }
 
+dd.dropdowndd ul li {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
 
 
 /* ============================================================================== */
@@ -5682,7 +5706,7 @@ border-top-right-radius: 6px;
 }
 
 .menuhider {
-	width: <?php echo $disableimages ? 'auto' : '40'; ?>px;
+	width: <?php echo $disableimages ? 'auto' : '44'; ?>px;
 }
 
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo $fontsize ?> */
@@ -5701,7 +5725,7 @@ border-top-right-radius: 6px;
   		font-size: 12px;
     }
     .topmenuimage {
-    	background-size: 26px auto;
+    	background-size: 24px auto;
     	margin-top: 0px;
 	}
     li.tmenu, li.tmenusel {

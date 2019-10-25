@@ -572,7 +572,6 @@ if ($id)
             // Lines with values
             while ($i < $num)
             {
-
                 $obj = $db->fetch_object($resql);
                 //print_r($obj);
                 print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';

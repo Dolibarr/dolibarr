@@ -148,7 +148,7 @@ jQuery(document).ready(function() {
 // Part to create
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("NewInventory", $langs->transnoentitiesnoconv("MyInventory")), '', 'products');
+	print load_fiche_titre($langs->trans("NewInventory"), '', 'products');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -183,7 +183,7 @@ if ($action == 'create')
 // Part to edit record
 if (($id || $ref) && $action == 'edit')
 {
-	print load_fiche_titre($langs->trans("Inventory"));
+	print load_fiche_titre($langs->trans("Inventory"), '', 'products');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -193,7 +193,7 @@ if (($id || $ref) && $action == 'edit')
 
 	dol_fiche_head();
 
-	print '<table class="border centpercent tableforfield">'."\n";
+	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
 	// Common attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_edit.tpl.php';
@@ -218,7 +218,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     $res = $object->fetch_optionals();
 
     $head = inventoryPrepareHead($object);
-	dol_fiche_head($head, 'inventory', $langs->trans("Inventory"), -1, 'inventory');
+	dol_fiche_head($head, 'card', $langs->trans("Inventory"), -1, 'stock');
 
 	$formconfirm = '';
 
@@ -340,6 +340,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
     		}
 
+    		if ($permissiontoadd)
+    		{
+    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Validate").'</a>'."\n";
+    		}
+    		else
+    		{
+    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Validate').'</a>'."\n";
+    		}
+
     		if ($permissiontodelete)
     		{
     			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>'."\n";
@@ -382,7 +391,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	    $MAXEVENT = 10;
 
-	    $morehtmlright = '<a href="'.dol_buildpath('/mymodule/myobject_info.php', 1).'?id='.$object->id.'">';
+	    $morehtmlright = '<a href="'.dol_buildpath('/product/inventory/inventory_info.php', 1).'?id='.$object->id.'">';
 	    $morehtmlright.= $langs->trans("SeeAll");
 	    $morehtmlright.= '</a>';
 

@@ -61,7 +61,6 @@ if ($action == 'add')
 	if (empty($ref) || empty($value)) {
 		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
 	} else {
-
 		$objectval->fk_product_attribute = $object->id;
 		$objectval->ref = $ref;
 		$objectval->value = $value;
