@@ -849,6 +849,46 @@ class Thirdparties extends DolibarrApi
 
 		return $result;
 	}
+	
+	/**
+	 * Get representatives of thirdparty
+	 *
+	 * @param 	int 	$id			ID of the thirdparty
+	 * @param 	string 	$mode		0=Array with properties, 1=Array of id.
+	 *
+	 * @url     GET {id}/representatives
+	 *
+	 * @return array  				List of representatives of thirdparty
+	 *
+	 * @throws 400
+	 * @throws 401
+	 * @throws 404
+	 */
+    public function getSalesRepresentatives($id, $mode = 0)
+	{
+		$obj_ret = array();
+
+		if(! DolibarrApiAccess::$user->rights->societe->lire) {
+			throw new RestException(401);
+		}
+
+		if(empty($id)) {
+			throw new RestException(400, 'Thirdparty ID is mandatory');
+		}
+
+		if( ! DolibarrApi::_checkAccessToResource('societe', $id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->company->fetch($id);
+		if( ! $result ) {
+			throw new RestException(404, 'Thirdparty not found');
+		}
+
+		$result = $this->company->getSalesRepresentatives(DolibarrApiAccess::$user, $mode);
+
+		return $result;
+	}
 
 	/**
 	 * Get fixed amount discount of a thirdparty (all sources: deposit, credit note, commercial offers...)
