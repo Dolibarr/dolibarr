@@ -88,11 +88,9 @@ $hookmanager->initHooks(array('projecttasktime','globalcard'));
 
 $object = new Task($db);
 $projectstatic = new Project($db);
-$extrafields_project = new ExtraFields($db);
-$extrafields_task = new ExtraFields($db);
-
-$extrafields_project->fetch_name_optionals_label($projectstatic->table_element);
-$extrafields_task->fetch_name_optionals_label($object->table_element);
+$extrafields = new ExtraFields($db);
+$extrafields->fetch_name_optionals_label($projectstatic->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 
 /*
@@ -761,7 +759,6 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 	    // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 	    $hookmanager->initHooks(array('tasktimelist'));
-	    $extrafields = new ExtraFields($db);
 
 	    // Definition of fields for list
 	    $arrayfields=array();
@@ -777,13 +774,15 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	    $arrayfields['value'] =array('label'=>$langs->trans("Value"), 'checked'=>1, 'enabled'=>(empty($conf->salaries->enabled)?0:1));
 	    $arrayfields['valuebilled'] =array('label'=>$langs->trans("Billed"), 'checked'=>1, 'enabled'=>(((! empty($conf->global->PROJECT_HIDE_TASKS) || empty($conf->global->PROJECT_BILL_TIME_SPENT))?0:1) && $projectstatic->usage_bill_time));
 	    // Extra fields
-	    if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+	    if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 	    {
-	        foreach($extrafields->attribute_label as $key => $val)
-	        {
-				if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
-	        }
+	    	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+	    	{
+	    		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+	    			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+	    	}
 	    }
+	    $arrayfields = dol_sort_array($arrayfields, 'position');
 
 	    $param='';
 	    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);

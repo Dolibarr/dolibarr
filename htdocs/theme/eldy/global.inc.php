@@ -273,15 +273,14 @@ input:-webkit-autofill {
 }
 ::-webkit-input-placeholder { color:#ccc; }
 input:-moz-placeholder { color:#ccc; }
-input[name=price], input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], select[name=incoterm_id] { margin-right: 6px; }
-input[name=surface] { margin-right: 4px; }
+input[name=price], input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], input[name=net_measure], select[name=incoterm_id] { margin-right: 6px; }
 fieldset { border: 1px solid #AAAAAA !important; }
 .legendforfieldsetstep { padding-bottom: 10px; }
 input#onlinepaymenturl, input#directdownloadlink {
 	opacity: 0.7;
 }
 
-div#moretabsListaction {
+div#moretabsList, div#moretabsListaction {
     z-index: 5;
 }
 
@@ -511,10 +510,10 @@ body[class*="colorblind-"] .text-success{
     color : <?php print $textDanger ; ?>
 }
 
-.editfielda span.fa-pencil-alt {
+.editfielda span.fa-pencil-alt, .editfielda span.fa-trash {
     color: #ccc !important;
 }
-.editfielda span.fa-pencil-alt:hover {
+.editfielda span.fa-pencil-alt:hover, .editfielda span.fa-trash:hover {
     color: rgb(<?php echo $colortexttitle; ?>) !important;
 }
 
@@ -5789,7 +5788,7 @@ div.tabsElem a.tab {
 	}
 
 	.dropdown dd ul {
-		max-width: 300px;
+		max-width: 350px;
 	}
 }
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
@@ -5817,6 +5816,10 @@ div.tabsElem a.tab {
     	background-size: 20px auto;
     	margin-top: 2px;
     	left: 4px;
+	}
+
+	.dropdown dd ul {
+		max-width: 300px;
 	}
 }
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */

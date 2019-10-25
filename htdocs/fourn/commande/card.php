@@ -1106,12 +1106,19 @@ if (empty($reshook))
 	   			// If creation from another object of another module (Example: origin=propal, originid=1)
 				if (! empty($origin) && ! empty($originid))
 				{
-					if ($origin == 'order' || $origin == 'commande')
+					if ($origin == 'propal' || $origin == 'proposal')
 					{
+						$classname = 'Propal';
+						$element = 'comm/propal'; $subelement = 'propal';
+					}
+					elseif ($origin == 'order' || $origin == 'commande')
+					{
+						$classname = 'Commande';
 						$element = $subelement = 'commande';
 					}
 					else
 					{
+						$classname = 'SupplierProposal';
 						$element = 'supplier_proposal';
 						$subelement = 'supplier_proposal';
 					}
@@ -1131,7 +1138,6 @@ if (empty($reshook))
 					{
 						dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
 
-						$classname = 'SupplierProposal';
 						$srcobject = new $classname($db);
 
 						dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines");
@@ -1167,7 +1173,6 @@ if (empty($reshook))
 
 								// Extrafields
 								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) 							// For avoid conflicts if
-																																	  // trigger used
 								{
 									$lines[$i]->fetch_optionals($lines[$i]->rowid);
 									$array_option = $lines[$i]->array_options;
@@ -1442,7 +1447,7 @@ llxHeader('', $langs->trans("Order"), $help_url);
 $now=dol_now();
 if ($action=='create')
 {
-	print load_fiche_titre($langs->trans('NewOrder'));
+	print load_fiche_titre($langs->trans('NewOrderSupplier'));
 
 	dol_htmloutput_events();
 
@@ -1459,17 +1464,31 @@ if ($action=='create')
 	{
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
+		$regs=array();
 		if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
-			$element = $regs [1];
-			$subelement = $regs [2];
+			$element = $regs[1];
+			$subelement = $regs[2];
 		}
 
-		$element = 'supplier_proposal';
-		$subelement = 'supplier_proposal';
+		if ($origin == 'propal' || $origin == 'proposal')
+		{
+			$classname = 'Propal';
+			$element = 'comm/propal'; $subelement = 'propal';
+		}
+		elseif ($origin == 'order' || $origin == 'commande')
+		{
+			$classname = 'Commande';
+			$element = $subelement = 'commande';
+		}
+		else
+		{
+			$classname = 'SupplierProposal';
+			$element = 'supplier_proposal';
+			$subelement = 'supplier_proposal';
+		}
 
 		dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
 
-		$classname = 'SupplierProposal';
 		$objectsrc = new $classname($db);
 		$objectsrc->fetch($originid);
 		if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines'))

@@ -2188,44 +2188,39 @@ class SupplierProposal extends CommonObject
     /**
      *  Return label of a status (draft, validated, ...)
      *
-     *  @param      int			$statut		id statut
-     *  @param      int			$mode      	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+     *  @param      int			$status		Id status
+	 *  @param  	int			$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
      *  @return     string      Label
      */
-    public function LibStatut($statut, $mode = 1)
+    public function LibStatut($status, $mode = 1)
     {
         // phpcs:enable
-        // Init/load array of translation of status
-        if (empty($this->labelstatut) || empty($this->labelstatut_short))
-        {
-            global $langs;
-            $langs->load("supplier_proposal");
-            $this->labelstatut[0]=$langs->trans("SupplierProposalStatusDraft");
-            $this->labelstatut[1]=$langs->trans("SupplierProposalStatusValidated");
-            $this->labelstatut[2]=$langs->trans("SupplierProposalStatusSigned");
-            $this->labelstatut[3]=$langs->trans("SupplierProposalStatusNotSigned");
-            $this->labelstatut[4]=$langs->trans("SupplierProposalStatusClosed");
-            $this->labelstatut_short[0]=$langs->trans("SupplierProposalStatusDraftShort");
-            $this->labelstatut_short[1]=$langs->trans("Opened");
-            $this->labelstatut_short[2]=$langs->trans("SupplierProposalStatusSignedShort");
-            $this->labelstatut_short[3]=$langs->trans("SupplierProposalStatusNotSignedShort");
-            $this->labelstatut_short[4]=$langs->trans("SupplierProposalStatusClosedShort");
-        }
 
-        $statuttrans='';
-        if ($statut==0) $statuttrans='statut0';
-        elseif ($statut==1) $statuttrans='statut1';
-        elseif ($statut==2) $statuttrans='statut3';
-        elseif ($statut==3) $statuttrans='statut5';
-        elseif ($statut==4) $statuttrans='statut6';
+    	// Init/load array of translation of status
+    	if (empty($this->labelstatut) || empty($this->labelstatut_short))
+    	{
+    		global $langs;
+    		$langs->load("supplier_proposal");
+    		$this->labelstatut[self::STATUS_DRAFT]=$langs->trans("SupplierProposalStatusDraft");
+    		$this->labelstatut[self::STATUS_VALIDATED]=$langs->trans("SupplierProposalStatusValidated");
+    		$this->labelstatut[self::STATUS_SIGNED]=$langs->trans("SupplierProposalStatusSigned");
+    		$this->labelstatut[self::STATUS_NOTSIGNED]=$langs->trans("SupplierProposalStatusNotSigned");
+    		$this->labelstatut[self::STATUS_CLOSE]=$langs->trans("SupplierProposalStatusClosed");
+    		$this->labelstatut_short[self::STATUS_DRAFT]=$langs->trans("SupplierProposalStatusDraftShort");
+    		$this->labelstatut_short[self::STATUS_VALIDATED]=$langs->trans("Opened");
+    		$this->labelstatut_short[self::STATUS_SIGNED]=$langs->trans("SupplierProposalStatusSignedShort");
+    		$this->labelstatut_short[self::STATUS_NOTSIGNED]=$langs->trans("SupplierProposalStatusNotSignedShort");
+    		$this->labelstatut_short[self::STATUS_CLOSE]=$langs->trans("SupplierProposalStatusClosedShort");
+    	}
 
-        if ($mode == 0)	return $this->labelstatut[$statut];
-        elseif ($mode == 1)	return $this->labelstatut_short[$statut];
-        elseif ($mode == 2)	return img_picto($this->labelstatut[$statut], $statuttrans).' '.$this->labelstatut_short[$statut];
-        elseif ($mode == 3)	return img_picto($this->labelstatut[$statut], $statuttrans);
-        elseif ($mode == 4)	return img_picto($this->labelstatut[$statut], $statuttrans).' '.$this->labelstatut[$statut];
-        elseif ($mode == 5)	return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($this->labelstatut[$statut], $statuttrans);
-        elseif ($mode == 6)	return '<span class="hideonsmartphone">'.$this->labelstatut[$statut].' </span>'.img_picto($this->labelstatut[$statut], $statuttrans);
+    	$statusnew='';
+    	if ($status==self::STATUS_DRAFT) $statusnew='status0';
+    	elseif ($status==self::STATUS_VALIDATED) $statusnew='status1';
+    	elseif ($status==self::STATUS_SIGNED) $statusnew='status3';
+    	elseif ($status==self::STATUS_NOTSIGNED) $statusnew='status5';
+    	elseif ($status==self::STATUS_CLOSE) $statusnew='status6';
+
+    	return dolGetStatus($this->labelstatut[$status], $this->labelstatut_short[$status], '', $statusnew, $mode);
     }
 
 

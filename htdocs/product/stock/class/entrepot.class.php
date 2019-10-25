@@ -642,49 +642,23 @@ class Entrepot extends CommonObject
 	/**
 	 *	Return label of a given status
 	 *
-	 *	@param	int		$statut     Status
+	 *	@param	int		$status     Id status
 	 *	@param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *	@return string      		Label of status
 	 */
-	public function LibStatut($statut, $mode = 0)
+	public function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
 
+		$statusType = 'status5';
+		if ($status > 0) $statusType = 'status4';
+
 		$langs->load('stocks');
+		$label = $langs->trans($this->statuts[$status]);
+		$labelshort = $langs->trans($this->statuts[$status]);
 
-		$picto = 'statut5';
-		$label = $langs->trans($this->statuts[$statut]);
-
-
-		if ($mode == 0)
-		{
-			return $label;
-		}
-		elseif ($mode == 1)
-		{
-			return $label;
-		}
-		elseif ($mode == 2)
-		{
-			if ($statut > 0) $picto = 'statut4';
-			return img_picto($label, $picto).' '.$label;
-		}
-		elseif ($mode == 3)
-		{
-			if ($statut > 0) $picto = 'statut4';
-			return img_picto($label, $picto).' '.$label;
-		}
-		elseif ($mode == 4)
-		{
-			if ($statut > 0) $picto = 'statut4';
-			return img_picto($label, $picto).' '.$label;
-		}
-		elseif ($mode == 5)
-		{
-			if ($statut > 0) $picto = 'statut4';
-			return $label.' '.img_picto($label, $picto);
-		}
+		return dolGetStatus($label, $labelshort, '', $statusType, $mode);
 	}
 
 

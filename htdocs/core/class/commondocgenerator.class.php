@@ -224,15 +224,15 @@ abstract class CommonDocGenerator
         	$extrafields->fetch_name_optionals_label($object->table_element, true);
         	$object->fetch_optionals();
 
-        	foreach($extrafields->attribute_label as $key=>$label)
+        	foreach($extrafields->attributes[$object->table_element]['label'] as $key=>$label)
         	{
-        		if($extrafields->attribute_type[$key] == 'price')
+        		if($extrafields->attributes[$object->table_element]['type'][$key] == 'price')
         		{
         			$object->array_options['options_'.$key] = price($object->array_options['options_'.$key], 0, $outputlangs, 0, 0, -1, $conf->currency);
         		}
-        		elseif($extrafields->attribute_type[$key] == 'select' || $extrafields->attribute_type[$key] == 'checkbox')
+        		elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'select' || $extrafields->attributes[$object->table_element]['type'][$key] == 'checkbox')
         		{
-        			$object->array_options['options_'.$key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_'.$key]];
+        			$object->array_options['options_'.$key] = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$object->array_options['options_'.$key]];
         		}
         		$array_thirdparty = array_merge($array_thirdparty, array ('company_options_'.$key => $object->array_options ['options_' . $key]));
 			}
@@ -298,15 +298,15 @@ abstract class CommonDocGenerator
 		$extrafields->fetch_name_optionals_label($object->table_element, true);
 		$object->fetch_optionals();
 
-		foreach($extrafields->attribute_label as $key => $label)
+		foreach($extrafields->attributes[$object->table_element]['label'] as $key => $label)
 		{
-			if ($extrafields->attribute_type[$key] == 'price')
+			if ($extrafields->attributes[$object->table_element]['type'][$key] == 'price')
 			{
 				$object->array_options['options_' . $key] = price($object->array_options ['options_' . $key], 0, $outputlangs, 0, 0, - 1, $conf->currency);
 			}
-			elseif($extrafields->attribute_type[$key] == 'select' || $extrafields->attribute_type[$key] == 'checkbox')
+			elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'select' || $extrafields->attributes[$object->table_element]['type'][$key] == 'checkbox')
 			{
-				$object->array_options['options_' . $key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_' . $key]];
+				$object->array_options['options_' . $key] = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$object->array_options['options_' . $key]];
 			}
 			$array_contact = array_merge($array_contact, array($array_key.'_options_' . $key => $object->array_options['options_'. $key]));
 		}
@@ -643,11 +643,11 @@ abstract class CommonDocGenerator
 	    	$array_key.'_tracking_number'=>$object->tracking_number,
 	    	$array_key.'_tracking_url'=>$object->tracking_url,
 	    	$array_key.'_shipping_method'=>$object->listmeths[0]['libelle'],
-	    	$array_key.'_weight'=>$object->trueWeight.' '.measuring_units_string($object->weight_units, 'weight'),
-	    	$array_key.'_width'=>$object->trueWidth.' '.measuring_units_string($object->width_units, 'size'),
-	    	$array_key.'_height'=>$object->trueHeight.' '.measuring_units_string($object->height_units, 'size'),
-	    	$array_key.'_depth'=>$object->trueDepth.' '.measuring_units_string($object->depth_units, 'size'),
-	    	$array_key.'_size'=>$calculatedVolume.' '.measuring_units_string(0, 'volume'),
+    		$array_key.'_weight'=>$object->trueWeight.' '.measuringUnitString(0, 'weight', $object->weight_units),
+    		$array_key.'_width'=>$object->trueWidth.' '.measuringUnitString(0, 'size', $object->width_units),
+    		$array_key.'_height'=>$object->trueHeight.' '.measuringUnitString(0, 'size', $object->height_units),
+    		$array_key.'_depth'=>$object->trueDepth.' '.measuringUnitString(0, 'size', $object->depth_units),
+	    	$array_key.'_size'=>$calculatedVolume.' '.measuringUnitString(0, 'volume'),
     	);
 
     	// Add vat by rates
@@ -701,10 +701,10 @@ abstract class CommonDocGenerator
 	    	'line_price_ht'=>price($line->total_ht),
 	    	'line_price_ttc'=>price($line->total_ttc),
 	    	'line_price_vat'=>price($line->total_tva),
-	    	'line_weight'=>empty($line->weight) ? '' : $line->weight*$line->qty_shipped.' '.measuring_units_string($line->weight_units, 'weight'),
-	    	'line_length'=>empty($line->length) ? '' : $line->length*$line->qty_shipped.' '.measuring_units_string($line->length_units, 'size'),
-	    	'line_surface'=>empty($line->surface) ? '' : $line->surface*$line->qty_shipped.' '.measuring_units_string($line->surface_units, 'surface'),
-	    	'line_volume'=>empty($line->volume) ? '' : $line->volume*$line->qty_shipped.' '.measuring_units_string($line->volume_units, 'volume'),
+        	'line_weight'=>empty($line->weight) ? '' : $line->weight*$line->qty_shipped.' '.measuringUnitString(0, 'weight', $line->weight_units),
+        	'line_length'=>empty($line->length) ? '' : $line->length*$line->qty_shipped.' '.measuringUnitString(0, 'size', $line->length_units),
+        	'line_surface'=>empty($line->surface) ? '' : $line->surface*$line->qty_shipped.' '.measuringUnitString(0, 'surface', $line->surface_units),
+        	'line_volume'=>empty($line->volume) ? '' : $line->volume*$line->qty_shipped.' '.measuringUnitString(0, 'volume', $line->volume_units),
     	);
 
         // Retrieve extrafields
@@ -765,30 +765,30 @@ abstract class CommonDocGenerator
     {
         // phpcs:enable
 		global $conf;
-		foreach($extrafields->attribute_label as $key=>$label)
+		foreach($extrafields->attributes[$object->table_element]['label'] as $key=>$label)
 		{
-			if($extrafields->attribute_type[$key] == 'price')
+			if($extrafields->attributes[$object->table_element]['type'][$key] == 'price')
 			{
 				$object->array_options['options_'.$key] = price2num($object->array_options['options_'.$key]);
 				$object->array_options['options_'.$key.'_currency'] = price($object->array_options['options_'.$key], 0, $outputlangs, 0, 0, -1, $conf->currency);
 				//Add value to store price with currency
 				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_currency' => $object->array_options['options_'.$key.'_currency']));
 			}
-			elseif($extrafields->attribute_type[$key] == 'select')
+			elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'select')
 			{
-				$object->array_options['options_'.$key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_'.$key]];
+				$object->array_options['options_'.$key] = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$object->array_options['options_'.$key]];
 			}
-			elseif($extrafields->attribute_type[$key] == 'checkbox') {
+			elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'checkbox') {
 				$valArray=explode(',', $object->array_options['options_'.$key]);
 				$output=array();
-				foreach($extrafields->attribute_param[$key]['options'] as $keyopt=>$valopt) {
+				foreach($extrafields->attributes[$object->table_element]['param'][$key]['options'] as $keyopt=>$valopt) {
 					if  (in_array($keyopt, $valArray)) {
 						$output[]=$valopt;
 					}
 				}
 				$object->array_options['options_'.$key] = implode(', ', $output);
 			}
-			elseif($extrafields->attribute_type[$key] == 'date')
+			elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'date')
 			{
 				if (strlen($object->array_options['options_'.$key])>0)
 				{
@@ -806,7 +806,7 @@ abstract class CommonDocGenerator
 				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
 				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
 			}
-			elseif($extrafields->attribute_type[$key] == 'datetime')
+			elseif($extrafields->attributes[$object->table_element]['label'][$key] == 'datetime')
 			{
 				$datetime = $object->array_options['options_'.$key];
 				$object->array_options['options_'.$key] = ($datetime!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key], 'dayhour'):'');                            // using company output language
@@ -815,7 +815,7 @@ abstract class CommonDocGenerator
 				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
 				$array_to_fill=array_merge($array_to_fill, array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
 			}
-			elseif($extrafields->attribute_type[$key] == 'link')
+			elseif($extrafields->attributes[$object->table_element]['type'][$key] == 'link')
 			{
 				$id = $object->array_options['options_'.$key];
 				if ($id != "")

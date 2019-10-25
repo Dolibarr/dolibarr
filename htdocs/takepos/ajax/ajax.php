@@ -45,9 +45,18 @@ $term = GETPOST('term', 'alpha');
 if ($action=="getProducts") {
     $object = new Categorie($db);
     $result=$object->fetch($category);
-    if ($result)
+    if ($result > 0)
     {
 	    $prods = $object->getObjectsInCateg("product");
+	    // Removed properties we don't need
+	    if (is_array($prods) && count($prods) > 0)
+	    {
+	    	foreach($prods as $prod)
+	    	{
+	    		unset($prod->fields);
+	    		unset($prod->db);
+	    	}
+	    }
     	echo json_encode($prods);
     }
     else

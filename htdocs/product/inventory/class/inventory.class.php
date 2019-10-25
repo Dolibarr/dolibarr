@@ -57,7 +57,7 @@ class Inventory extends CommonObject
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_RECORDED = 2;
-	const STATUS_CANCELED = 9;
+	const STATUS_CANCELED = -1;
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:Class:pathtoclass', 'varchar(x)', 'double(24,8)', 'text', 'html', 'datetime', 'timestamp', 'float')
@@ -396,49 +396,16 @@ class Inventory extends CommonObject
         // phpcs:enable
 		global $langs;
 
-		if ($mode == 0)
+		if (empty($this->labelstatus))
 		{
-			$prefix='';
-			if ($status == 0) return $langs->trans('Draft');
-			elseif ($status == 1) return $langs->trans('Enabled');
-			elseif ($status == -1) return $langs->trans('Canceled');
+			global $langs;
+			//$langs->load("mrp");
+			$this->labelstatus[self::STATUS_DRAFT] = $langs->trans('Draft');
+			$this->labelstatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+			$this->labelstatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
 		}
-		elseif ($mode == 1)
-		{
-			if ($status == 0) return $langs->trans('Draft');
-			elseif ($status == 1) return $langs->trans('Enabled');
-			elseif ($status == -1) return $langs->trans('Canceled');
-		}
-		elseif ($mode == 2)
-		{
-			if ($status == 0) return img_picto($langs->trans('Draft'), 'statut0').' '.$langs->trans('Draft');
-			elseif ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			elseif ($status == -1) return img_picto($langs->trans('Canceled'), 'statut6').' '.$langs->trans('Canceled');
-		}
-		elseif ($mode == 3)
-		{
-			if ($status == 0) return img_picto($langs->trans('Draft'), 'statut0');
-			elseif ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($status == -1) return img_picto($langs->trans('Canceled'), 'statut6');
-		}
-		elseif ($mode == 4)
-		{
-			if ($status == 0) return img_picto($langs->trans('Draft'), 'statut0').' '.$langs->trans('Draft');
-			elseif ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			elseif ($status == -1) return img_picto($langs->trans('Canceled'), 'statut6').' '.$langs->trans('Canceled');
-		}
-		elseif ($mode == 5)
-		{
-			if ($status == 0) return $langs->trans('Draft').' '.img_picto($langs->trans('Draft'), 'statut0');
-			elseif ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($status == -1) return $langs->trans('Canceled').' '.img_picto($langs->trans('Canceled'), 'statut6');
-		}
-		elseif ($mode == 6)
-		{
-			if ($status == 0) return $langs->trans('Draft').' '.img_picto($langs->trans('Draft'), 'statut0');
-			elseif ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($status == -1) return $langs->trans('Canceled').' '.img_picto($langs->trans('Canceled'), 'statut6');
-		}
+
+		return dolGetStatus($this->labelstatus[$status], $this->labelstatus[$status], '', 'status'.$status, $mode);
 	}
 
 	/**

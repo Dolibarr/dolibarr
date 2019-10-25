@@ -92,9 +92,9 @@ $coldisplay++;
 echo $line->efficiency;
 print '</td>';
 
-if ($this->statut == 0  && ($object_rights->write) && $action != 'selectlines' ) {
-    print '<td class="linecoledit center">';
-    $coldisplay++;
+if ($this->status == 0  && ($object_rights->write) && $action != 'selectlines' ) {
+	print '<td class="linecoledit center">';
+	$coldisplay++;
     if (($line->info_bits & 2) == 2 || ! empty($disableedit)) {
     } else {
         print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'#line_'.$line->id.'">'.img_edit().'</a>';

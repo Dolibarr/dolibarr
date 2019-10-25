@@ -42,6 +42,8 @@ FIX: #12041
 FIX: #12054
 FIX: #12083
 FIX: #12088
+FIX: CVE-2019-17578 CVE-2019-17577 CVE-2019-17576
+FIX: Clean the + of categories on the product view only in POS module
 FIX: access to public interface when origin email has an alias.
 FIX: Alias name is not into the email recipient label.
 FIX: allow standalone credit note even if no invoice

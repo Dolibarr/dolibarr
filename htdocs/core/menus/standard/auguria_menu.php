@@ -113,7 +113,7 @@ class MenuManager
     	$menuArbo->menuLoad($mainmenu, $leftmenu, $this->type_user, 'auguria', $tabMenu);
     	$this->tabMenu=$tabMenu;
     	//var_dump($tabMenu);
-    	
+
     	//if ($forcemainmenu == 'all') { var_dump($this->tabMenu); exit; }
    	}
 
@@ -152,7 +152,7 @@ class MenuManager
         	if ($mode == 'top')  print_left_auguria_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $this->menu, 0);
         	if ($mode == 'left') print_auguria_menu($this->db, $this->atarget, $this->type_user, $this->tabMenu, $this->menu, 0, $mode);
         }
-        
+
 		if ($mode == 'topnb')
 		{
 		    print_auguria_menu($this->db, $this->atarget, $this->type_user, $this->tabMenu, $this->menu, 1, $mode);
@@ -327,7 +327,7 @@ class MenuManager
         }
 
         unset($this->menu);
-        
+
         //print 'xx'.$mode;
         return 0;
     }

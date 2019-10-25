@@ -4652,7 +4652,7 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
 	    $unit = $forceunitoutput;
 	}*/
 
-	$ret=price($dimension, 0, $outputlangs, 0, 0, $round).' '.measuring_units_string(0, $type, $unit);
+	$ret=price($dimension, 0, $outputlangs, 0, 0, $round).' '.measuringUnitString(0, $type, $unit);
 
 	return $ret;
 }
@@ -5945,6 +5945,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__REF__'] = '__REF__';
 			$substitutionarray['__REF_CLIENT__'] = '__REF_CLIENT__';
 			$substitutionarray['__REF_SUPPLIER__'] = '__REF_SUPPLIER__';
+			$substitutionarray['__NOTE_PUBLIC__'] = '__NOTE_PUBLIC__';
+			$substitutionarray['__NOTE_PRIVATE__'] = '__NOTE_PRIVATE__';
 			$substitutionarray['__EXTRAFIELD_XXX__'] = '__EXTRAFIELD_XXX__';
 
 			if (! empty($conf->societe->enabled))
@@ -5952,7 +5954,21 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_ID__'] = '__THIRDPARTY_ID__';
 				$substitutionarray['__THIRDPARTY_NAME__'] = '__THIRDPARTY_NAME__';
 				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = '__THIRDPARTY_NAME_ALIAS__';
+				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = '__THIRDPARTY_CODE_CLIENT__';
+				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = '__THIRDPARTY_CODE_FOURNISSEUR__';
 				$substitutionarray['__THIRDPARTY_EMAIL__'] = '__THIRDPARTY_EMAIL__';
+				$substitutionarray['__THIRDPARTY_PHONE__'] = '__THIRDPARTY_PHONE__';
+				$substitutionarray['__THIRDPARTY_FAX__'] = '__THIRDPARTY_FAX__';
+				$substitutionarray['__THIRDPARTY_ADRESSE__'] = '__THIRDPARTY_ADRESSE__';
+				$substitutionarray['__THIRDPARTY_ZIP__'] = '__THIRDPARTY_ZIP__';
+				$substitutionarray['__THIRDPARTY_TOWN__'] = '__THIRDPARTY_TOWN__';
+				$substitutionarray['__THIRDPARTY_SIREN__'] = '__THIRDPARTY_SIREN__';
+				$substitutionarray['__THIRDPARTY_SIRET__'] = '__THIRDPARTY_SIRET__';
+				$substitutionarray['__THIRDPARTY_APE__'] = '__THIRDPARTY_APE__';
+				$substitutionarray['__THIRDPARTY_RCSRM__'] = '__THIRDPARTY_RCSRM__';
+				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = '__THIRDPARTY_TVAINTRA__';
+				/*$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = '__THIRDPARTY_NOTE_PUBLIC__';
+				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = '__THIRDPARTY_NOTE_PRIVATE__';*/
 			}
 			if (! empty($conf->adherent->enabled))
 			{
@@ -5960,12 +5976,16 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__MEMBER_CIVILITY__'] = '__MEMBER_CIVILITY__';
 				$substitutionarray['__MEMBER_FIRSTNAME__'] = '__MEMBER_FIRSTNAME__';
 				$substitutionarray['__MEMBER_LASTNAME__'] = '__MEMBER_LASTNAME__';
+				/*$substitutionarray['__MEMBER_NOTE_PUBLIC__'] = '__MEMBER_NOTE_PUBLIC__';
+				$substitutionarray['__MEMBER_NOTE_PRIVATE__'] = '__MEMBER_NOTE_PRIVATE__';*/
 			}
 			if (! empty($conf->projet->enabled))
 			{
 				$substitutionarray['__PROJECT_ID__'] = '__PROJECT_ID__';
 				$substitutionarray['__PROJECT_REF__'] = '__PROJECT_REF__';
 				$substitutionarray['__PROJECT_NAME__'] = '__PROJECT_NAME__';
+				/*$substitutionarray['__PROJECT_NOTE_PUBLIC__'] = '__PROJECT_NOTE_PUBLIC__';
+				$substitutionarray['__PROJECT_NOTE_PRIVATE__'] = '__PROJECT_NOTE_PRIVATE__';*/
 			}
 			if (! empty($conf->contrat->enabled))
 			{
@@ -5998,13 +6018,17 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__REF__'] = $object->ref;
 			$substitutionarray['__REF_CLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
 			$substitutionarray['__REF_SUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
-			$substitutionarray['__SUPPLIER_ORDER_DATE_DELIVERY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, 'day', 0, $outputlangs): '');
+			$substitutionarray['__NOTE_PUBLIC__'] = (isset($object->note_public) ? $object->note_public : null);
+			$substitutionarray['__NOTE_PRIVATE__'] = (isset($object->note_private) ? $object->note_private : null);
+
+			$substitutionarray['__DATE_DELIVERY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, 'day', 0, $outputlangs): '');
+
 			// For backward compatibility
 			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
 			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
-
-			// TODO Remove this
-			$msgishtml = 0;
+			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
+			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
+			$substitutionarray['__SUPPLIER_ORDER_DATE_DELIVERY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, 'day', 0, $outputlangs): '');
 
 			$birthday = dol_print_date($object->birth, 'day');
 
@@ -6012,22 +6036,22 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			{
 				$substitutionarray['__MEMBER_ID__']=$object->id;
 				if (method_exists($object, 'getCivilityLabel')) $substitutionarray['__MEMBER_CIVILITY__'] = $object->getCivilityLabel();
-				$substitutionarray['__MEMBER_FIRSTNAME__']=$msgishtml?dol_htmlentitiesbr($object->firstname):$object->firstname;
-				$substitutionarray['__MEMBER_LASTNAME__']=$msgishtml?dol_htmlentitiesbr($object->lastname):$object->lastname;
-				if (method_exists($object, 'getFullName')) $substitutionarray['__MEMBER_FULLNAME__']=$msgishtml?dol_htmlentitiesbr($object->getFullName($outputlangs)):$object->getFullName($outputlangs);
-				$substitutionarray['__MEMBER_COMPANY__']=$msgishtml?dol_htmlentitiesbr($object->societe):$object->societe;
-				$substitutionarray['__MEMBER_ADDRESS__']=$msgishtml?dol_htmlentitiesbr($object->address):$object->address;
-				$substitutionarray['__MEMBER_ZIP__']=$msgishtml?dol_htmlentitiesbr($object->zip):$object->zip;
-				$substitutionarray['__MEMBER_TOWN__']=$msgishtml?dol_htmlentitiesbr($object->town):$object->town;
-				$substitutionarray['__MEMBER_COUNTRY__']=$msgishtml?dol_htmlentitiesbr($object->country):$object->country;
-				$substitutionarray['__MEMBER_EMAIL__']=$msgishtml?dol_htmlentitiesbr($object->email):$object->email;
-				$substitutionarray['__MEMBER_BIRTH__']=$msgishtml?dol_htmlentitiesbr($birthday):$birthday;
-				$substitutionarray['__MEMBER_PHOTO__']=$msgishtml?dol_htmlentitiesbr($object->photo):$object->photo;
-				$substitutionarray['__MEMBER_LOGIN__']=$msgishtml?dol_htmlentitiesbr($object->login):$object->login;
-				$substitutionarray['__MEMBER_PASSWORD__']=$msgishtml?dol_htmlentitiesbr($object->pass):$object->pass;
-				$substitutionarray['__MEMBER_PHONE__']=$msgishtml?dol_htmlentitiesbr($object->phone):$object->phone;
-				$substitutionarray['__MEMBER_PHONEPRO__']=$msgishtml?dol_htmlentitiesbr($object->phone_perso):$object->phone_perso;
-				$substitutionarray['__MEMBER_PHONEMOBILE__']=$msgishtml?dol_htmlentitiesbr($object->phone_mobile):$object->phone_mobile;
+				$substitutionarray['__MEMBER_FIRSTNAME__']=$object->firstname;
+				$substitutionarray['__MEMBER_LASTNAME__']=$object->lastname;
+				if (method_exists($object, 'getFullName')) $substitutionarray['__MEMBER_FULLNAME__']=$object->getFullName($outputlangs);
+				$substitutionarray['__MEMBER_COMPANY__']=$object->societe;
+				$substitutionarray['__MEMBER_ADDRESS__']=$object->address;
+				$substitutionarray['__MEMBER_ZIP__']=$object->zip;
+				$substitutionarray['__MEMBER_TOWN__']=$object->town;
+				$substitutionarray['__MEMBER_COUNTRY__']=$object->country;
+				$substitutionarray['__MEMBER_EMAIL__']=$object->email;
+				$substitutionarray['__MEMBER_BIRTH__']=$birthday;
+				$substitutionarray['__MEMBER_PHOTO__']=$object->photo;
+				$substitutionarray['__MEMBER_LOGIN__']=$object->login;
+				$substitutionarray['__MEMBER_PASSWORD__']=$object->pass;
+				$substitutionarray['__MEMBER_PHONE__']=$object->phone;
+				$substitutionarray['__MEMBER_PHONEPRO__']=$object->phone_perso;
+				$substitutionarray['__MEMBER_PHONEMOBILE__']=$object->phone_mobile;
 				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE__']       = dol_print_date($object->first_subscription_date, 'dayrfc');
 				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE_START__'] = dol_print_date($object->first_subscription_date_start, 'dayrfc');
 				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE_END__']   = dol_print_date($object->first_subscription_date_end, 'dayrfc');
@@ -6041,14 +6065,38 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object)?$object->id:'');
 				$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object)?$object->name:'');
 				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (is_object($object)?$object->name_alias:'');
+				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = (is_object($object)?$object->code_client:'');
+				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = (is_object($object)?$object->code_fournisseur:'');
 				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object)?$object->email:'');
+				$substitutionarray['__THIRDPARTY_PHONE__'] = (is_object($object)?$object->phone:'');
+				$substitutionarray['__THIRDPARTY_FAX__'] = (is_object($object)?$object->name_fax:'');
+				$substitutionarray['__THIRDPARTY_ADRESSE__'] = (is_object($object)?$object->address:'');
+				$substitutionarray['__THIRDPARTY_ZIP__'] = (is_object($object)?$object->zip:'');
+				$substitutionarray['__THIRDPARTY_TOWN__'] = (is_object($object)?$object->town:'');
+				$substitutionarray['__THIRDPARTY_SIREN__'] = (is_object($object)?$object->idprof1:'');
+				$substitutionarray['__THIRDPARTY_SIRET__'] = (is_object($object)?$object->idprof2:'');
+				$substitutionarray['__THIRDPARTY_APE__'] = (is_object($object)?$object->idprof3:'');
+				$substitutionarray['__THIRDPARTY_RCSRM__'] = (is_object($object)?$object->idprof4:'');
+				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = (is_object($object)?$object->tva_intra:'');
 			}
 			elseif (is_object($object->thirdparty) && $object->thirdparty->id > 0)
 			{
 				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object->thirdparty)?$object->thirdparty->id:'');
 				$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object->thirdparty)?$object->thirdparty->name:'');
 				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (is_object($object->thirdparty)?$object->thirdparty->name_alias:'');
+				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = (is_object($object->thirdparty)?$object->thirdparty->code_client:'');
+				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = (is_object($object->thirdparty)?$object->thirdparty->code_fournisseur:'');
 				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object->thirdparty)?$object->thirdparty->email:'');
+				$substitutionarray['__THIRDPARTY_PHONE__'] = (is_object($object->thirdparty)?$object->phone:'');
+				$substitutionarray['__THIRDPARTY_FAX__'] = (is_object($object->thirdparty)?$object->name_fax:'');
+				$substitutionarray['__THIRDPARTY_ADRESSE__'] = (is_object($object->thirdparty)?$object->address:'');
+				$substitutionarray['__THIRDPARTY_ZIP__'] = (is_object($object->thirdparty)?$object->zip:'');
+				$substitutionarray['__THIRDPARTY_TOWN__'] = (is_object($object->thirdparty)?$object->town:'');
+				$substitutionarray['__THIRDPARTY_SIREN__'] = (is_object($object->thirdparty)?$object->idprof1:'');
+				$substitutionarray['__THIRDPARTY_SIRET__'] = (is_object($object->thirdparty)?$object->idprof2:'');
+				$substitutionarray['__THIRDPARTY_APE__'] = (is_object($object->thirdparty)?$object->idprof3:'');
+				$substitutionarray['__THIRDPARTY_RCSRM__'] = (is_object($object->thirdparty)?$object->idprof4:'');
+				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = (is_object($object->thirdparty)?$object->tva_intra:'');
 			}
 
 			if (is_object($object->project) && $object->project->id > 0)
@@ -8074,7 +8122,7 @@ function roundUpToNextMultiple($n, $x = 5)
 function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '', $params = array())
 {
     $attr=array(
-        'class'=>'badge'.(!empty($mode)?' badge-'.$mode:'').(!empty($type)?' badge-'.$type:'')
+        'class'=>'badge badge-status'.(!empty($mode)?' badge-'.$mode:'').(!empty($type)?' badge-'.$type:'')
     );
 
     if(empty($html)){
@@ -8135,25 +8183,11 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
     global $conf;
 
     $return = '';
-
     $dolGetBadgeParams = array();
-    if(!empty($params['badgeParams'])){
+
+    if (!empty($params['badgeParams'])){
         $dolGetBadgeParams = $params['badgeParams'];
     }
-
-    // image's filename are still in French
-    $statusImg=array(
-        'status0' => 'statut0'
-        ,'status1' => 'statut1'
-        ,'status2' => 'statut2'
-        ,'status3' => 'statut3'
-        ,'status4' => 'statut4'
-        ,'status5' => 'statut5'
-        ,'status6' => 'statut6'
-        ,'status7' => 'statut7'
-        ,'status8' => 'statut8'
-        ,'status9' => 'statut9'
-    );
 
     // TODO : add a hook
 
@@ -8164,12 +8198,34 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         $return = !empty($html)?$html:(!empty($statusLabelShort)?$statusLabelShort:$statusLabel);
     }
     // use status with images
-    elseif (empty($conf->global->MAIN_STATUS_USES_CSS)){
+    elseif (empty($conf->global->MAIN_STATUS_USES_CSS)) {
         $return = '';
         $htmlLabel      = (in_array($displayMode, array(1,2,5))?'<span class="hideonsmartphone">':'').(!empty($html)?$html:$statusLabel).(in_array($displayMode, array(1,2,5))?'</span>':'');
         $htmlLabelShort = (in_array($displayMode, array(1,2,5))?'<span class="hideonsmartphone">':'').(!empty($html)?$html:(!empty($statusLabelShort)?$statusLabelShort:$statusLabel)).(in_array($displayMode, array(1,2,5))?'</span>':'');
 
-        if(!empty($statusImg[$statusType])){
+        // For small screen, we use the short label instead of long label.
+        if (! empty($conf->dol_optimize_smallscreen))
+        {
+        	if ($displayMode == 0) $displayMode = 1;
+        	elseif ($displayMode == 4) $displayMode = 2;
+        	elseif ($displayMode == 6) $displayMode = 5;
+        }
+
+        // image's filename are still in French, so we use this array to convert
+        $statusImg=array(
+        	'status0' => 'statut0'
+        	,'status1' => 'statut1'
+        	,'status2' => 'statut2'
+        	,'status3' => 'statut3'
+        	,'status4' => 'statut4'
+        	,'status5' => 'statut5'
+        	,'status6' => 'statut6'
+        	,'status7' => 'statut7'
+        	,'status8' => 'statut8'
+        	,'status9' => 'statut9'
+        );
+
+        if (!empty($statusImg[$statusType])){
             $htmlImg = img_picto($statusLabel, $statusImg[$statusType]);
         }else{
             $htmlImg = img_picto($statusLabel, $statusType);

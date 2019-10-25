@@ -32,6 +32,8 @@
 
 if ($cancel)
 {
+	/*var_dump($cancel);
+	var_dump($backtopage);exit;*/
 	if (! empty($backtopage))
 	{
 		header("Location: ".$backtopage);
@@ -80,7 +82,8 @@ if ($action == 'add' && ! empty($permissiontoadd))
 		if ($result > 0)
 		{
 		    // Creation OK
-			$urltogo=$backtopage?str_replace('__ID__', $result, $backtopage):$backurlforlist;
+			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
+			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo);		// New method to autoselect project after a New on another form object creation
 			header("Location: ".$urltogo);
 			exit;
 		}

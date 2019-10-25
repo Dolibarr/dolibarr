@@ -106,6 +106,8 @@ $usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancr
 $usercancancel = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->commande->order_advance->annuler)));
 $usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->commande->order_advance->send);
 
+$usercancreatepurchaseorder = $user->rights->fournisseur->commande->creer;
+
 $permissionnote = $usercancreate; 		// Used by the include of actions_setnotes.inc.php
 $permissiondellink = $usercancreate; 	// Used by the include of actions_dellink.inc.php
 $permissionedit = $usercancreate; 		// Used by the include of actions_lineupdown.inc.php
@@ -2565,6 +2567,16 @@ if ($action == 'create' && $usercancreate)
 					// page.
 					print '<a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddAction") . '</a>';
 				}*/
+
+				// Create a purchase order
+				if (! empty($conf->global->WORKFLOW_CAN_CREATE_PURCHASE_ORDER_FROM_SALE_ORDER))
+				{
+					if (! empty($conf->fournisseur->enabled) && $object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && $object->getNbOfServicesLines() > 0) {
+						if ($usercancreatepurchaseorder) {
+							print '<a class="butAction" href="' . DOL_URL_ROOT . '/fourn/commande/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddPurchaseOrder") . '</a>';
+						}
+					}
+				}
 
 				// Create intervention
 				if ($conf->ficheinter->enabled) {

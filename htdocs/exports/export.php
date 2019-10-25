@@ -1198,7 +1198,7 @@ if ($step == 5 && $datatoexport)
     			}
     		}
     	}
-    	print '<td>'.(! empty($list)?$list:$langs->trans("None")).'</td>';
+    	print '<td>'.(! empty($list)?$list:'<span class="opacitymedium">'.$langs->trans("None").'</span>').'</td>';
     	print '</tr>';
     }
 

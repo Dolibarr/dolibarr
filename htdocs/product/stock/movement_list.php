@@ -429,7 +429,7 @@ $sql.= " e.ref as warehouse_ref, e.rowid as entrepot_id, e.lieu, e.fk_parent, e.
 $sql.= " m.rowid as mid, m.value as qty, m.datem, m.fk_user_author, m.label, m.inventorycode, m.fk_origin, m.origintype,";
 $sql.= " m.batch, m.price,";
 $sql.= " m.type_mouvement,";
-$sql.= " m.fk_projet,";
+$sql.= " m.fk_projet as fk_project,";
 $sql.= " pl.rowid as lotid, pl.eatby, pl.sellby,";
 $sql.= " u.login, u.photo, u.lastname, u.firstname";
 // Add fields from extrafields
@@ -859,7 +859,7 @@ if ($resql)
     }
     if (! empty($arrayfields['m.fk_projet']['checked']))
     {
-    	// fk_projet
+    	// fk_project
     	print '<td class="liste_titre" align="left">';
     	print '&nbsp; ';
     	print '</td>';
@@ -1115,9 +1115,9 @@ if ($resql)
         }
         if (! empty($arrayfields['m.fk_projet']['checked']))
         {
-        	// fk_projet
+        	// fk_project
         	print '<td align="right">';
-        	if ($objp->fk_projet != 0) print $movement->get_origin($objp->fk_projet, 'project');
+        	if ($objp->fk_project != 0) print $movement->get_origin($objp->fk_project, 'project');
         	print '</td>';
         }
         // Action column

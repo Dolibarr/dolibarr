@@ -258,12 +258,25 @@ class FormProduct
 		if ($empty) $out.='<option value="-1">'.($empty_label?$empty_label:'&nbsp;').'</option>';
 		foreach($this->cache_warehouses as $id => $arraytypes)
 		{
+			$label='';
+			if ($showfullpath) $label.=$arraytypes['full_label'];
+			else $label.=$arraytypes['label'];
+			if (($fk_product || ($showstock > 0)) && ($arraytypes['stock'] != 0 || ($showstock > 0)))
+			{
+				if ($arraytypes['stock'] <= 0) {
+					$label.=' <span class= \'text-warning\'>('.$langs->trans("Stock").':'.$arraytypes['stock'].')</span>';
+				}
+				else
+				{
+					$label.=' <span class=\'opacitymedium\'>('.$langs->trans("Stock").':'.$arraytypes['stock'].')</span>';
+				}
+			}
+
 			$out.='<option value="'.$id.'"';
 			if ($selected == $id || ($selected == 'ifone' && $nbofwarehouses == 1)) $out.=' selected';
+			$out.=' data-html="'.dol_escape_htmltag($label).'"';
 			$out.='>';
-			if ($showfullpath) $out.=$arraytypes['full_label'];
-			else $out.=$arraytypes['label'];
-			if (($fk_product || ($showstock > 0)) && ($arraytypes['stock'] != 0 || ($showstock > 0))) $out.=' ('.$langs->trans("Stock").':'.$arraytypes['stock'].')';
+			$out.=$label;
 			$out.='</option>';
 		}
 		$out.='</select>';
@@ -327,12 +340,12 @@ class FormProduct
 
 	/**
 	 *  Return a combo box with list of units
-	 *  For the moment, units labels are defined in measuring_units_string
+	 *  Units labels are defined in llx_c_units
 	 *
 	 *  @param  string		$name                Name of HTML field
 	 *  @param  string		$measuring_style     Unit to show: weight, size, surface, volume, time
 	 *  @param  string		$default             Preselected value
-	 *  @param  int			$adddefault			 Add empty unit called "Default"
+	 *  @param  int|string	$adddefault			 1=Add empty unit called "Default", ''=Add empty value
 	 *  @param  int         $mode                1=Use short label as value, 0=Use rowid, 2=Use scale (power)
 	 *  @return string
 	 */
@@ -346,24 +359,26 @@ class FormProduct
 		// TODO Use a cache
 		require_once DOL_DOCUMENT_ROOT . '/core/class/cunits.class.php';
 		$measuringUnits = new CUnits($db);
+
+		$filter = array();
+		$filter['t.active'] = 1;
+		if ($measuring_style) $filter['t.unit_type'] = $measuring_style;
+
         $result = $measuringUnits->fetchAll(
             '',
             '',
             0,
             0,
-            array(
-                't.unit_type' => $measuring_style,
-                't.active' => 1,
-            )
+        	$filter
         );
 		if ($result < 0) {
 			dol_print_error($db);
 			return -1;
 		} else {
 			$return .= '<select class="flat" name="' . $name . '">';
-			if ($adddefault)
+			if ($adddefault || $adddefault === '')
 			{
-				$return .= '<option value="0">' . $langs->trans("Default") . '</option>';
+				$return .= '<option value="0">' . ($adddefault ? $langs->trans("Default") : ''). '</option>';
 			}
 
 			foreach ($measuringUnits->records as $lines)
@@ -453,12 +468,20 @@ class FormProduct
 			{
 				if (empty($fk_entrepot) || $fk_entrepot == $arraytypes['entrepot_id'])
 				{
+					$label=$arraytypes['entrepot_label'].' - ';
+					$label.=$arraytypes['batch'];
+					if ($arraytypes['qty'] <= 0) {
+						$label.=' <span class=\'text-warning\'>('.$langs->trans("Stock").' '.$arraytypes['qty'].')</span>';
+					}
+					else {
+						$label.=' <span class=\'opacitymedium\'>('.$langs->trans("Stock").' '.$arraytypes['qty'].')</span>';
+					}
+
 					$out.='<option value="'.$id.'"';
 					if ($selected == $id || ($selected == 'ifone' && $nboflot == 1)) $out.=' selected';
+					$out.=' data-html="'.dol_escape_htmltag($label).'"';
 					$out.='>';
-					$out.=$arraytypes['entrepot_label'].' - ';
-					$out.=$arraytypes['batch'];
-					$out.=' ('.$langs->trans("Stock").':'.$arraytypes['qty'].')';
+					$out.=$label;
 					$out.='</option>';
 				}
 			}

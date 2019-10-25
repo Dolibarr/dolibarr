@@ -377,6 +377,8 @@ if (count($tasksarray)>0)
 	    //var_dump($dateformatinput);
   		//var_dump($dateformatinput2);
 
+	    print '<br>';
+
 	    print '<div class="div-table-responsive">';
 
 	    print '<div id="tabs" class="gantt" style="width: 80vw;">'."\n";

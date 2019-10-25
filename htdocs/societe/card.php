@@ -635,15 +635,16 @@ if (empty($reshook))
                 {
                     $db->commit();
 
-                	if (! empty($backtopage))
+                    if (! empty($backtopage))
                 	{
-                	    if (preg_match('/\?/', $backtopage)) $backtopage.='&socid='.$object->id;
+                		$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $backtopage);		// New method to autoselect project after a New on another form object creation
+                		if (preg_match('/\?/', $backtopage)) $backtopage.='&socid='.$object->id;	// Old method
                		    header("Location: ".$backtopage);
                     	exit;
                 	}
                 	else
                 	{
-                    	$url=$_SERVER["PHP_SELF"]."?socid=".$object->id;
+                		$url=$_SERVER["PHP_SELF"]."?socid=".$object->id;							// Old method
                     	if (($object->client == 1 || $object->client == 3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $url=DOL_URL_ROOT."/comm/card.php?socid=".$object->id;
                     	elseif ($object->fournisseur == 1) $url=DOL_URL_ROOT."/fourn/card.php?socid=".$object->id;
 
@@ -2717,7 +2718,7 @@ else
 
 		        if ($user->rights->societe->creer)
 		        {
-		            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
+		            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
 		        }
 
 		        if (! empty($conf->adherent->enabled))

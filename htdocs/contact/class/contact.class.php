@@ -80,24 +80,40 @@ class Contact extends CommonObject
 		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>1,  'position'=>1000),
 	);
 
-	public $civility_id;      // In fact we store civility_code
+	public $civility_id;      	// In fact we store civility_code
 	public $civility_code;
 	public $civility;
+
+	/**
+	 * Address
+	 * @var string
+	 */
 	public $address;
 	public $zip;
 	public $town;
 
 	public $state_id;	        	// Id of department
-	public $state_code;		    // Code of department
+	public $state_code;		    	// Code of department
 	public $state;			        // Label of department
 
     public $poste;                 // Position
 
 	public $socid;					// fk_soc
-	public $statut;				// 0=inactif, 1=actif
+	public $statut;					// 0=inactif, 1=actif
 
 	public $code;
+
+    /**
+     * Email
+     * @var string
+     */
 	public $email;
+
+    /**
+     * Unsuscribe all : 1 = contact has globaly unsubscribe of all mass emailings
+	 * @var int
+     */
+	public $no_email;
 
     /**
      * @var array array of socialnetworks
@@ -433,6 +449,7 @@ class Contact extends CommonObject
 
 			if (! $error && $this->user_id > 0)
 			{
+				// If contact is linked to a user
 				$tmpobj = new User($this->db);
 				$tmpobj->fetch($this->user_id);
 				$usermustbemodified = 0;
@@ -1294,45 +1311,34 @@ class Contact extends CommonObject
 	/**
 	 *	Renvoi le libelle d'un statut donne
 	 *
-	 *  @param      int			$statut     Id statut
+	 *  @param      int			$status     Id statut
 	 *  @param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return     string					Libelle
 	 */
-	public function LibStatut($statut, $mode)
+	public function LibStatut($status, $mode)
 	{
         // phpcs:enable
 		global $langs;
 
-		if ($mode == 0)
+		if (empty($this->status) || empty($this->statusshort))
 		{
-			if ($statut==0 || $statut==5) return $langs->trans('Disabled');
-			elseif ($statut==1 || $statut==4) return $langs->trans('Enabled');
+			$this->labelstatus[0] = 'ActivityCeased';
+			$this->labelstatusshort[0] = 'ActivityCeased';
+			$this->labelstatus[5] = 'ActivityCeased';
+			$this->labelstatusshort[5] = 'ActivityCeased';
+			$this->labelstatus[1] = 'InActivity';
+			$this->labelstatusshort[1] = 'InActivity';
+			$this->labelstatus[4] = 'InActivity';
+			$this->labelstatusshort[4] = 'InActivity';
 		}
-		elseif ($mode == 1)
-		{
-			if ($statut==0 || $statut==5) return $langs->trans('Disabled');
-			elseif ($statut==1 || $statut==4) return $langs->trans('Enabled');
-		}
-		elseif ($mode == 2)
-		{
-			if ($statut==0 || $statut==5) return img_picto($langs->trans('Disabled'), 'statut5', 'class="pictostatus"').' '.$langs->trans('Disabled');
-			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'), 'statut4', 'class="pictostatus"').' '.$langs->trans('Enabled');
-		}
-		elseif ($mode == 3)
-		{
-			if ($statut==0 || $statut==5) return img_picto($langs->trans('Disabled'), 'statut5', 'class="pictostatus"');
-			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'), 'statut4', 'class="pictostatus"');
-		}
-		elseif ($mode == 4)
-		{
-			if ($statut==0) return img_picto($langs->trans('Disabled'), 'statut5', 'class="pictostatus"').' '.$langs->trans('Disabled');
-			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'), 'statut4', 'class="pictostatus"').' '.$langs->trans('Enabled');
-		}
-		elseif ($mode == 5)
-		{
-			if ($statut==0 || $statut==5) return '<span class="hideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('Disabled'), 'statut5', 'class="pictostatus"');
-			elseif ($statut==1 || $statut==4) return '<span class="hideonsmartphone">'.$langs->trans('Enabled').' </span>'.img_picto($langs->trans('Enabled'), 'statut4', 'class="pictostatus"');
-		}
+
+		$statusType = 'status4';
+		if ($status==0 || $status==5) $statusType = 'status5';
+
+		$label = $langs->trans($this->labelstatus[$status]);
+		$labelshort = $langs->trans($this->labelstatusshort[$status]);
+
+		return dolGetStatus($label, $labelshort, '', $statusType, $mode);
 	}
 
 
@@ -1340,14 +1346,14 @@ class Contact extends CommonObject
 	/**
 	 *	Return translated label of Public or Private
 	 *
-	 * 	@param      int			$statut		Type (0 = public, 1 = private)
+	 * 	@param      int			$status		Type (0 = public, 1 = private)
 	 *  @return     string					Label translated
 	 */
-	public function LibPubPriv($statut)
+	public function LibPubPriv($status)
 	{
         // phpcs:enable
 		global $langs;
-		if ($statut=='1') return $langs->trans('ContactPrivate');
+		if ($status=='1') return $langs->trans('ContactPrivate');
 		else return $langs->trans('ContactPublic');
 	}
 
@@ -1402,18 +1408,18 @@ class Contact extends CommonObject
 	/**
 	 *  Change status of a user
 	 *
-	 *	@param	int		$statut		Status to set
+	 *	@param	int		$status		Status to set
 	 *  @return int     			<0 if KO, 0 if nothing is done, >0 if OK
 	 */
-	public function setstatus($statut)
+	public function setstatus($status)
 	{
 		global $conf,$langs,$user;
 
 		$error=0;
 
 		// Check parameters
-		if ($this->statut == $statut) return 0;
-		else $this->statut = $statut;
+		if ($this->statut == $status) return 0;
+		else $this->statut = $status;
 
 		$this->db->begin();
 

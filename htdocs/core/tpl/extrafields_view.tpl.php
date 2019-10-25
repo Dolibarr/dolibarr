@@ -85,6 +85,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 		else
 		{
 			$value = $object->array_options["options_" . $key];
+			//var_dump($key.' - '.$value);
 		}
 		if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate')
 		{
@@ -178,7 +179,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			}
 			else
 			{
-				//print $key.'-'.$value.'-'.$object->table_element;
+				//var_dump($key.'-'.$value.'-'.$object->table_element);
 				print $extrafields->showOutputField($key, $value, '', $object->table_element);
 			}
 

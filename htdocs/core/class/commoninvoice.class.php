@@ -538,7 +538,6 @@ abstract class CommonInvoice extends CommonObject
 		    }
 		}
 
-
 		return dolGetStatus($labelstatut, $labelstatutShort, '', $statusType, $mode);
 	}
 

@@ -2129,7 +2129,11 @@ class Adherent extends CommonObject
 			// Only picto
 			if ($withpictoimg > 0) $picto='<span class="nopadding'.($morecss?' userimg'.$morecss:'').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).'</span>';
 			// Picto must be a photo
-			else $picto='<span class="nopadding'.($morecss?' userimg'.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>'.Form::showphoto('memberphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg==-3?'small':''), 'mini', 0, 1).'</span>';
+			else {
+				$picto='<span class="nopadding'.($morecss?' userimg'.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>';
+				$picto.=Form::showphoto('memberphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg==-3?'small':''), 'mini', 0, 1);
+				$picto.='</span>';
+			}
 			$result.=$picto;
 		}
 		if ($withpictoimg > -2 && $withpictoimg != 2)
@@ -2172,83 +2176,46 @@ class Adherent extends CommonObject
         // phpcs:enable
 		global $langs;
 		$langs->load("members");
-		if ($mode == 0)
+
+		if ($statut == -1)
 		{
-			if ($statut == -1) return $langs->trans("MemberStatusDraft");
-			elseif ($statut >= 1) {
-				if ($need_subscription == 0)		 return $langs->trans("MemberStatusNoSubscription");
-				elseif (! $date_end_subscription)        return $langs->trans("MemberStatusActive");
-				elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLate");
-				else                                     return $langs->trans("MemberStatusPaid");
-			}
-			elseif ($statut == 0)  return $langs->trans("MemberStatusResiliated");
+			$statusType = 'status0';
+			$labelstatut = $langs->trans("MemberStatusDraft");
+			$labelstatutShort = $langs->trans("MemberStatusDraftShort");
 		}
-		elseif ($mode == 1)
+		elseif ($statut >= 1) {
+			if ($need_subscription == 0)
+			{
+				$statusType = 'status4';
+				$labelstatut = $langs->trans("MemberStatusNoSubscription");
+				$labelstatutShort = $langs->trans("MemberStatusNoSubscriptionShort");
+			}
+			elseif (! $date_end_subscription)
+			{
+				$statusType = 'status1';
+				$labelstatut = $langs->trans("MemberStatusActive");
+				$labelstatutShort = $langs->trans("MemberStatusActiveShort");
+			}
+			elseif ($date_end_subscription < time())
+			{
+				$statusType = 'status3';
+				$labelstatut = $langs->trans("MemberStatusActiveLate");
+				$labelstatutShort = $langs->trans("MemberStatusActiveLateShort");
+			}
+			else {
+				$statusType = 'status4';
+				$labelstatut = $langs->trans("MemberStatusPaid");
+				$labelstatutShort = $langs->trans("MemberStatusPaidShort");
+			}
+		}
+		elseif ($statut == 0)
 		{
-			if ($statut == -1) return $langs->trans("MemberStatusDraftShort");
-			elseif ($statut >= 1) {
-				if ($need_subscription == 0)		 return $langs->trans("MemberStatusNoSubscription");
-				elseif (! $date_end_subscription)        return $langs->trans("MemberStatusActiveShort");
-				elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLateShort");
-				else                                     return $langs->trans("MemberStatusPaidShort");
-			}
-			elseif ($statut == 0)  return $langs->trans("MemberStatusResiliatedShort");
+			$statusType = 'status6';
+			$labelstatut = $langs->trans("MemberStatusResiliated");
+			$labelstatutShort = $langs->trans("MemberStatusResiliatedShort");
 		}
-		elseif ($mode == 2)
-		{
-			if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'), 'statut0').' '.$langs->trans("MemberStatusDraftShort");
-			elseif ($statut >= 1) {
-				if ($need_subscription == 0)		 return img_picto($langs->trans('MemberStatusNoSubscription'), 'statut4').' '.$langs->trans("MemberStatusNoSubscriptionShort");
-				elseif (! $date_end_subscription)        return img_picto($langs->trans('MemberStatusActive'), 'statut1').' '.$langs->trans("MemberStatusActiveShort");
-				elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'), 'statut3').' '.$langs->trans("MemberStatusActiveLateShort");
-				else                                     return img_picto($langs->trans('MemberStatusPaid'), 'statut4').' '.$langs->trans("MemberStatusPaidShort");
-			}
-			elseif ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'), 'statut5').' '.$langs->trans("MemberStatusResiliatedShort");
-		}
-		elseif ($mode == 3)
-		{
-			if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'), 'statut0');
-			elseif ($statut >= 1) {
-				if ($need_subscription == 0)		 return img_picto($langs->trans('MemberStatusNoSubscription'), 'statut4');
-				elseif (! $date_end_subscription)        return img_picto($langs->trans('MemberStatusActive'), 'statut1');
-				elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'), 'statut3');
-				else                                     return img_picto($langs->trans('MemberStatusPaid'), 'statut4');
-			}
-			elseif ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'), 'statut5');
-		}
-		elseif ($mode == 4)
-		{
-			if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'), 'statut0').' '.$langs->trans("MemberStatusDraft");
-			elseif ($statut >= 1) {
-				if ($need_subscription == 0)		 return img_picto($langs->trans('MemberStatusNoSubscription'), 'statut4').' '.$langs->trans("MemberStatusNoSubscription");
-				elseif (! $date_end_subscription)        return img_picto($langs->trans('MemberStatusActive'), 'statut1').' '.$langs->trans("MemberStatusActive");
-				elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'), 'statut3').' '.$langs->trans("MemberStatusActiveLate");
-				else                                     return img_picto($langs->trans('MemberStatusPaid'), 'statut4').' '.$langs->trans("MemberStatusPaid");
-			}
-			if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'), 'statut5').' '.$langs->trans("MemberStatusResiliated");
-		}
-		elseif ($mode == 5)
-		{
-		    if ($statut == -1) return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusDraftShort").'</span> '.img_picto($langs->trans('MemberStatusDraft'), 'statut0');
-			elseif ($statut >= 1) {
-				if ($need_subscription == 0)		 return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusNoSubscriptionShort").' </span>'.img_picto($langs->trans('MemberStatusNoSubscription'), 'statut4');
-				elseif (! $date_end_subscription)        return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveShort").' </span>'.img_picto($langs->trans('MemberStatusActive'), 'statut1');
-				elseif ($date_end_subscription < time()) return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveLateShort").' </span>'.img_picto($langs->trans('MemberStatusActiveLate'), 'statut3');
-				else                                     return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusPaidShort").' </span>'.img_picto($langs->trans('MemberStatusPaid'), 'statut4');
-			}
-			if ($statut == 0)  return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusResiliated").' </span>'.img_picto($langs->trans('MemberStatusResiliated'), 'statut5');
-		}
-		elseif ($mode == 6)
-		{
-		    if ($statut == -1) return $langs->trans("MemberStatusDraft").' '.img_picto($langs->trans('MemberStatusDraft'), 'statut0');
-			if ($statut >= 1) {
-				if ($need_subscription == 0)		 return $langs->trans("MemberStatusNoSubscription").' '.img_picto($langs->trans('MemberStatusNoSubscription'), 'statut4');
-				elseif (! $date_end_subscription)        return $langs->trans("MemberStatusActive").' '.img_picto($langs->trans('MemberStatusActive'), 'statut1');
-				elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLate").' '.img_picto($langs->trans('MemberStatusActiveLate'), 'statut3');
-				else                                     return $langs->trans("MemberStatusPaid").' '.img_picto($langs->trans('MemberStatusPaid'), 'statut4');
-			}
-			if ($statut == 0)  return $langs->trans("MemberStatusResiliated").' '.img_picto($langs->trans('MemberStatusResiliated'), 'statut5');
-		}
+
+		return dolGetStatus($labelstatut, $labelstatutShort, '', $statusType, $mode);
 	}
 
 

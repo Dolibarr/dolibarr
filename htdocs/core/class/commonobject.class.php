@@ -1889,13 +1889,19 @@ abstract class CommonObject
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		if ($this->table_element == 'actioncomm')
+		if (! empty($this->fields['fk_project']))		// Common case
+		{
+			if ($projectid) $sql.= ' SET fk_project = '.$projectid;
+			else $sql.= ' SET fk_project = NULL';
+			$sql.= ' WHERE rowid = '.$this->id;
+		}
+		elseif ($this->table_element == 'actioncomm')	// Special case for actioncomm
 		{
 			if ($projectid) $sql.= ' SET fk_project = '.$projectid;
 			else $sql.= ' SET fk_project = NULL';
 			$sql.= ' WHERE id = '.$this->id;
 		}
-		else
+		else											// Special case for old architecture objects
 		{
 			if ($projectid) $sql.= ' SET fk_projet = '.$projectid;
 			else $sql.= ' SET fk_projet = NULL';
@@ -3824,17 +3830,18 @@ abstract class CommonObject
 				$totalWeight += $weight * $qty * $trueWeightUnit;
 			}
 			else {
-		if ($weight_units == 99) {
-			// conversion 1 Pound = 0.45359237 KG
-			$trueWeightUnit = 0.45359237;
-			$totalWeight += $weight * $qty * $trueWeightUnit;
-		} elseif ($weight_units == 98) {
-			// conversion 1 Ounce = 0.0283495 KG
-			$trueWeightUnit = 0.0283495;
-			$totalWeight += $weight * $qty * $trueWeightUnit;
-		}
-		else
+				if ($weight_units == 99) {
+					// conversion 1 Pound = 0.45359237 KG
+					$trueWeightUnit = 0.45359237;
+					$totalWeight += $weight * $qty * $trueWeightUnit;
+				} elseif ($weight_units == 98) {
+					// conversion 1 Ounce = 0.0283495 KG
+					$trueWeightUnit = 0.0283495;
+					$totalWeight += $weight * $qty * $trueWeightUnit;
+				}
+				else {
 					$totalWeight += $weight * $qty;   // This may be wrong if we mix different units
+				}
 			}
 			if ($volume_units < 50)   // >50 means a standard unit (power of 10 of official unit), > 50 means an exotic unit (like inch)
 			{
@@ -5563,16 +5570,20 @@ abstract class CommonObject
         $type='';
         $param = array();
         $param['options']=array();
-        $size =$this->fields[$key]['size'];
+        $reg=array();
+        $size = $this->fields[$key]['size'];
         // Because we work on extrafields
-        if(preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)){
-            $param['options']=array($reg[1].':'.$reg[2]=>'N');
-            $type ='link';
-        } elseif(preg_match('/^link:(.*):(.*)/i', $val['type'], $reg)) {
-            $param['options']=array($reg[1].':'.$reg[2]=>'N');
+        if (preg_match('/^(integer|link):(.*):(.*):(.*):(.*)/i', $val['type'], $reg)){
+        	$param['options']=array($reg[2].':'.$reg[3].':'.$reg[4].':'.$reg[5] => 'N');
+        	$type ='link';
+        } elseif (preg_match('/^(integer|link):(.*):(.*):(.*)/i', $val['type'], $reg)){
+        	$param['options']=array($reg[2].':'.$reg[3].':'.$reg[4] => 'N');
+        	$type ='link';
+        } elseif (preg_match('/^(integer|link):(.*):(.*)/i', $val['type'], $reg)){
+            $param['options']=array($reg[2].':'.$reg[3] => 'N');
             $type ='link';
         } elseif(preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
-            $param['options']=array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4]=>'N');
+            $param['options']=array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4] => 'N');
             $type ='sellist';
         } elseif(preg_match('/varchar\((\d+)\)/', $val['type'], $reg)) {
             $param['options']=array();
@@ -6085,16 +6096,26 @@ abstract class CommonObject
 		}
 		elseif ($type == 'link')
 		{
-			$param_list=array_keys($param['options']);				// $param_list='ObjectName:classPath'
+			$param_list=array_keys($param['options']);				// $param_list='ObjectName:classPath[:AddCreateButtonOrNot[:Filter]]'
+			$param_list_array = explode(':', $param_list[0]);
 			$showempty=(($required && $default != '')?0:1);
-			$out=$form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty);
-			if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+
+			$out=$form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', '', '', 0, empty($val['disabled'])?0:1);
+
+			if (! empty($param_list_array[2]))		// If we set to add a create button
 			{
-            			list($class,$classfile)=explode(':', $param_list[0]);
-            			if (file_exists(dol_buildpath(dirname(dirname($classfile)).'/card.php'))) $url_path=dol_buildpath(dirname(dirname($classfile)).'/card.php', 1);
-            			else $url_path=dol_buildpath(dirname(dirname($classfile)).'/'.$class.'_card.php', 1);
-            			$out.='<a class="butActionNew" href="'.$url_path.'?action=create&backtopage='.$_SERVER['PHP_SELF'].'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
-            			// TODO Add Javascript code to add input fields contents to new elements urls
+				if (! GETPOSTISSET('backtopage') && empty($val['disabled']))	// To avoid to open several infinitely the 'Create Object' button and to avoid to have button if field is protected by a "disabled".
+				{
+		   			list($class,$classfile)=explode(':', $param_list[0]);
+		   			if (file_exists(dol_buildpath(dirname(dirname($classfile)).'/card.php'))) $url_path=dol_buildpath(dirname(dirname($classfile)).'/card.php', 1);
+		   			else $url_path=dol_buildpath(dirname(dirname($classfile)).'/'.strtolower($class).'_card.php', 1);
+		   			$paramforthenewlink = '';
+		   			$paramforthenewlink .= (GETPOSTISSET('action')?'&action='.GETPOST('action', 'aZ09'):'');
+		   			$paramforthenewlink .= (GETPOSTISSET('id')?'&id='.GETPOST('id', 'int'):'');
+		   			$paramforthenewlink .= '&fk_'.strtolower($class).'=--IDFORBACKTOPAGE--';
+		   			// TODO Add Javascript code to add input fields already filled into $paramforthenewlink so we won't loose them when going back to main page
+		   			$out.='<a class="butActionNew" title="'.$langs->trans("New").'" href="'.$url_path.'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].($paramforthenewlink ? '?'.$paramforthenewlink : '')).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
+				}
 			}
 		}
 		elseif ($type == 'password')
@@ -6174,6 +6195,7 @@ abstract class CommonObject
 		$label = $val['label'];
 		$type  = $val['type'];
 		$size  = $val['css'];
+		$reg = array();
 
 		// Convert var to be able to share same code than showOutputField of extrafields
 		if (preg_match('/varchar\((\d+)\)/', $type, $reg))
@@ -6189,7 +6211,9 @@ abstract class CommonObject
 		$computed=$val['computed'];
 		$unique=$val['unique'];
 		$required=$val['required'];
-		$param=$val['param'];
+		$param=array();
+		$param['options']=array();
+
 		if (is_array($val['arrayofkeyval'])) $param['options'] = $val['arrayofkeyval'];
 		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg))
 		{
