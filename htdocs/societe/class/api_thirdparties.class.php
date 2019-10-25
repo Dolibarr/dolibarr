@@ -849,7 +849,7 @@ class Thirdparties extends DolibarrApi
 
 		return $result;
 	}
-	
+
 	/**
 	 * Get representatives of thirdparty
 	 *
