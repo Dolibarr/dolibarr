@@ -2323,7 +2323,7 @@ class User extends CommonObject
 		if (! empty($this->login))
 			$label.= '<br><b>' . $langs->trans('Login') . ':</b> ' . $this->login;
 		$label.= '<br><b>' . $langs->trans("Email").':</b> '.$this->email;
-		$label.= '<br><b>' . $langs->trans("Phone").':</b> '.$this->phone;
+		if (! empty($this->phone)) $label.= '<br><b>' . $langs->trans("Phone").':</b> '.$this->phone;
 		if (! empty($this->admin))
 			$label.= '<br><b>' . $langs->trans("Administrator").'</b>: '.yn($this->admin);
 		if (! empty($this->socid) )	// Add thirdparty for external users
