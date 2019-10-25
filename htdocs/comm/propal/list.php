@@ -105,6 +105,10 @@ if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+
+if (isset($conf->global->MAIN_PROPAL_SORT_FIELD)){$sortfield=$conf->global->MAIN_PROPAL_SORT_FIELD;}
+if (isset($conf->global->MAIN_PROPAL_SORT_ORDER)){$sortorder=$conf->global->MAIN_PROPAL_SORT_ORDER;}
+
 if (! $sortfield) $sortfield='p.ref';
 if (! $sortorder) $sortorder='DESC';
 
