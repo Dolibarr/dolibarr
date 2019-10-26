@@ -33,3 +33,7 @@ ConfirmValidateBom=Are you sure you want to validate the BOM with the reference 
 ConfirmCloseBom=Are you sure you want to cancel this BOM (you won't be able to use it to build new Manufacturing Orders anymore) ?
 ConfirmReopenBom=Are you sure you want to re-open this BOM (you will be able to use it to build new Manufacturing Orders)
 StatusMOProduced=Produced
+QtyFrozen=Frozen Qty
+QuantityConsumedInvariable=When this flag is set, the quantity consumed is always the value defined and is not relative to the quantity produced.
+DisableStockChange=Disable stock change
+DisableStockChangeHelp=When this flag is set, there is no stock change on this product, whatever is the quantity produced

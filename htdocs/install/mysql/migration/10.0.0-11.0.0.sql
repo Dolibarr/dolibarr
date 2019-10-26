@@ -58,6 +58,9 @@ UPDATE llx_rights_def SET subperms = 'write' WHERE perms = 'fiscalyear' AND modu
 
 ALTER TABLE llx_bom_bom ADD COLUMN duration double(8,4) DEFAULT NULL;
 ALTER TABLE llx_bom_bomline ADD COLUMN position integer NOT NULL DEFAULT 0;
+ALTER TABLE llx_bom_bomline ADD COLUMN qty_frozen smallint DEFAULT 0;
+ALTER TABLE llx_bom_bomline ADD COLUMN disable_stock_change smallint DEFAULT 0; 
+
 ALTER TABLE llx_bom_bomline DROP COLUMN rank;
 
 create table llx_categorie_warehouse

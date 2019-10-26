@@ -125,9 +125,11 @@ if (empty($reshook))
 		$error = 0;
 
 		// Set if we used free entry or predefined product
-		$idprod=GETPOST('idprod', 'int');
-		$qty=GETPOST('qty', 'int');
-		$efficiency=GETPOST('efficiency', 'int');
+		$idprod = GETPOST('idprod', 'int');
+		$qty = GETPOST('qty', 'int');
+		$qty_frozen = GETPOST('qty_frozen', 'int');
+		$disable_stock_change = GETPOST('disable_stock_change', 'int');
+		$efficiency = GETPOST('efficiency', 'int');
 
 		if ($qty == '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
@@ -138,17 +140,27 @@ if (empty($reshook))
 			$error++;
 		}
 
-		$bomline = new BOMLine($db);
-		$bomline->fk_bom = $id;
-		$bomline->fk_product = $idprod;
-		$bomline->qty = $qty;
-		$bomline->efficiency = $efficiency;
-
-		$result = $bomline->create($user);
-		if ($result <= 0)
+		if (! $error)
 		{
-			setEventMessages($bomline->error, $bomline->errors, 'errors');
-			$action = '';
+    		$bomline = new BOMLine($db);
+    		$bomline->fk_bom = $id;
+    		$bomline->fk_product = $idprod;
+    		$bomline->qty = $qty;
+    		$bomline->qty_frozen = $qty_frozen;
+    		$bomline->disable_stock_change = $disable_stock_change;
+    		$bomline->efficiency = $efficiency;
+
+    		$result = $bomline->create($user);
+    		if ($result <= 0)
+    		{
+    			setEventMessages($bomline->error, $bomline->errors, 'errors');
+    			$action = '';
+    		}
+    		else
+    		{
+    		    unset($_POST['qty_frozen']);
+    		    unset($_POST['disable_stock_change']);
+    		}
 		}
 	}
 
@@ -160,6 +172,8 @@ if (empty($reshook))
 
 		// Set if we used free entry or predefined product
 		$qty=GETPOST('qty', 'int');
+		$qty_frozen = GETPOST('qty_frozen', 'int');
+		$disable_stock_change = GETPOST('disable_stock_change', 'int');
 		$efficiency=GETPOST('efficiency', 'int');
 
 		if ($qty == '') {
@@ -170,6 +184,8 @@ if (empty($reshook))
 		$bomline = new BOMLine($db);
 		$bomline->fetch($lineid);
 		$bomline->qty = $qty;
+		$bomline->qty_frozen = $qty_frozen;
+		$bomline->disable_stock_change = $disable_stock_change;
 		$bomline->efficiency = $efficiency;
 
 		$result = $bomline->update($user);
@@ -177,6 +193,11 @@ if (empty($reshook))
 		{
 			setEventMessages($bomline->error, $bomline->errors, 'errors');
 			$action = '';
+		}
+		else
+		{
+		    unset($_POST['qty_frozen']);
+		    unset($_POST['disable_stock_change']);
 		}
 	}
 }
