@@ -400,8 +400,9 @@ $sql.= " p.rowid as project_id, p.ref as project_ref, p.title as project_label";
 if (! $sall) $sql.= ', SUM(pf.amount) as dynamount_payed';
 if ($search_categ_cus) $sql .= ", cc.fk_categorie, cc.fk_soc";
 // Add fields from extrafields
-if (! empty($extrafields->attributes[$object->table_element]['label']))
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -1346,32 +1347,31 @@ if ($resql)
 
 		// Show total line
 		if (isset($totalarray['totalhtfield'])
-	   || isset($totalarray['totalvatfield'])
-	   || isset($totalarray['totallocaltax1field'])
-	   || isset($totalarray['totallocaltax2field'])
-	   || isset($totalarray['totalttcfield'])
-	   || isset($totalarray['totalamfield'])
-	   || isset($totalarray['totalrtpfield'])
-	   )
-		{
+	    || isset($totalarray['totalvatfield'])
+	    || isset($totalarray['totallocaltax1field'])
+	    || isset($totalarray['totallocaltax2field'])
+	    || isset($totalarray['totalttcfield'])
+	    || isset($totalarray['totalamfield'])
+	    || isset($totalarray['totalrtpfield'])
+	    ) {
 			print '<tr class="liste_total">';
 			$i=0;
 			while ($i < $totalarray['nbfield'])
 			{
-			   $i++;
-			   if ($i == 1)
-			   {
+			    $i++;
+			    if ($i == 1)
+			    {
 					if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
 					else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-			   }
-			   elseif ($totalarray['totalhtfield'] == $i)  print '<td class="right">'.price($totalarray['totalht']).'</td>';
-			   elseif ($totalarray['totalvatfield'] == $i) print '<td class="right">'.price($totalarray['totalvat']).'</td>';
-			   elseif ($totalarray['totallocaltax1field'] == $i) print '<td class="right">'.price($totalarray['totallocaltax1']).'</td>';
-			   elseif ($totalarray['totallocaltax2field'] == $i) print '<td class="right">'.price($totalarray['totallocaltax2']).'</td>';
-			   elseif ($totalarray['totalttcfield'] == $i) print '<td class="right">'.price($totalarray['totalttc']).'</td>';
-			   elseif ($totalarray['totalamfield'] == $i)  print '<td class="right">'.price($totalarray['totalam']).'</td>';
-			   elseif ($totalarray['totalrtpfield'] == $i)  print '<td class="right">'.price($totalarray['totalrtp']).'</td>';
-			   else print '<td></td>';
+			    }
+			    elseif ($totalarray['totalhtfield'] == $i)  print '<td class="right">'.price($totalarray['totalht']).'</td>';
+			    elseif ($totalarray['totalvatfield'] == $i) print '<td class="right">'.price($totalarray['totalvat']).'</td>';
+			    elseif ($totalarray['totallocaltax1field'] == $i) print '<td class="right">'.price($totalarray['totallocaltax1']).'</td>';
+			    elseif ($totalarray['totallocaltax2field'] == $i) print '<td class="right">'.price($totalarray['totallocaltax2']).'</td>';
+			    elseif ($totalarray['totalttcfield'] == $i) print '<td class="right">'.price($totalarray['totalttc']).'</td>';
+			    elseif ($totalarray['totalamfield'] == $i)  print '<td class="right">'.price($totalarray['totalam']).'</td>';
+			    elseif ($totalarray['totalrtpfield'] == $i)  print '<td class="right">'.price($totalarray['totalrtp']).'</td>';
+			    else print '<td></td>';
 			}
 			print '</tr>';
 		}
