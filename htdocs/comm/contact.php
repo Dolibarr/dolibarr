@@ -109,7 +109,8 @@ if (! empty($search_company))
 if (! empty($contactname)) // acces a partir du module de recherche
 {
     $sql.= " AND (p.name LIKE '%".$db->escape($contactname)."%' OR lower(p.firstname) LIKE '%".$db->escape($contactname)."%') ";
-    $sortf$sortorder = "ASC";
+    $sortfield = "p.name";
+    $sortorder = "ASC";
 }
 
 $sql.= $db->order($sortfield, $sortorder);
