@@ -11,7 +11,7 @@
  * Copyright (C) 2015-2016 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2017      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2018      Charlene Benke       <charlie@patas-monkey.com>
- * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019 Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -375,10 +375,11 @@ if (! $search_all)
 	$sql.= " state.code_departement, state.nom,";
 	$sql.= ' country.code,';
 	$sql.= " p.rowid, p.ref, p.title";
-
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) //prevent error with sql_mode=only_full_group_by
-	{
-		$sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ",ef.".$key : '');
+	if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+			//prevent error with sql_mode=only_full_group_by
+			$sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ",ef.".$key : '');
+		}
 	}
 }
 else
