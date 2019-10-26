@@ -418,14 +418,14 @@ if (! empty($actioncode))
         elseif ($actioncode == 'AC_ALL_AUTO') $sql.= " AND ca.type = 'systemauto'";
         else
         {
-		if (is_array($actioncode))
-  		{
+            if (is_array($actioncode))
+            {
   	        	$sql.=" AND ca.code IN ('".implode("','", $actioncode)."')";
-  		}
-  		else
-  		{
+            }
+            else
+            {
   	        	$sql.=" AND ca.code IN ('".implode("','", explode(',', $actioncode))."')";
-  		}
+            }
         }
     }
 }
@@ -683,16 +683,16 @@ while($currentdaytoshow<$lastdaytoshow) {
 	{
 		foreach ($eventarray as $daykey => $notused)
 		{
-		   // Get all assigned users for each event
-		   foreach ($eventarray[$daykey] as $index => $event)
-		   {
-			   	$event->fetch_userassigned();
+		    // Get all assigned users for each event
+		    foreach ($eventarray[$daykey] as $index => $event)
+		    {
+			    $event->fetch_userassigned();
 				$listofuserid=$event->userassigned;
 				foreach($listofuserid as $userid => $tmp)
 				{
 				   	if (! in_array($userid, $usernamesid)) $usernamesid[$userid] = $userid;
 				}
-		   }
+		    }
 		}
 	}
 	/* Use this list to have for all users */

@@ -34,8 +34,8 @@ if (! empty($conf->facture->enabled)) $langs->load("bills");
 $socid = $_GET["socid"];
 if ($user->societe_id > 0)
 {
-  $action = '';
-  $socid = $user->societe_id;
+    $action = '';
+    $socid = $user->societe_id;
 }
 
 

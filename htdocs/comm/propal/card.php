@@ -9,10 +9,10 @@
  * Copyright (C) 2010-2018 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2013 Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cedric Salvador       <csalvador@gpcsolutions.fr>
- * Copyright (C) 2013-2014 Florian Henry		 <florian.henry@open-concept.pro>
- * Copyright (C) 2014       Ferran Marcet		 <fmarcet@2byte.es>
- * Copyright (C) 2016       Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,7 +166,7 @@ if (empty($reshook))
 			if ($object->id > 0) {
 				if (!empty($conf->global->PROPAL_CLONE_DATE_DELIVERY)) {
 					//Get difference between old and new delivery date and change lines according to difference
-    $date_delivery = dol_mktime(12, 0, 0,
+                    $date_delivery = dol_mktime(12, 0, 0,
 						GETPOST('date_deliverymonth', 'int'),
 						GETPOST('date_deliveryday', 'int'),
 						GETPOST('date_deliveryyear', 'int')
@@ -174,7 +174,7 @@ if (empty($reshook))
 					if (!empty($object->date_livraison) && !empty($date_delivery))
 					{
 						//Attempt to get the date without possible hour rounding errors
-    $old_date_delivery = dol_mktime(12, 0, 0,
+                        $old_date_delivery = dol_mktime(12, 0, 0,
 							dol_print_date($object->date_livraison, '%m'),
 							dol_print_date($object->date_livraison, '%d'),
 							dol_print_date($object->date_livraison, '%Y')
@@ -459,91 +459,91 @@ if (empty($reshook))
 					$id = $object->create($user);
 					if ($id > 0)
 					{
-							dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
+						dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
 
-							$classname = ucfirst($subelement);
-							$srcobject = new $classname($db);
+						$classname = ucfirst($subelement);
+						$srcobject = new $classname($db);
 
-							dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines");
-							$result = $srcobject->fetch($object->origin_id);
+						dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines");
+						$result = $srcobject->fetch($object->origin_id);
 
-							if ($result > 0)
+						if ($result > 0)
+						{
+							$lines = $srcobject->lines;
+							if (empty($lines) && method_exists($srcobject, 'fetch_lines'))
 							{
+								$srcobject->fetch_lines();
 								$lines = $srcobject->lines;
-								if (empty($lines) && method_exists($srcobject, 'fetch_lines'))
-								{
-									$srcobject->fetch_lines();
-									$lines = $srcobject->lines;
-								}
-
-								$fk_parent_line=0;
-								$num=count($lines);
-								for ($i=0;$i<$num;$i++)
-								{
-									$label=(! empty($lines[$i]->label)?$lines[$i]->label:'');
-									$desc=(! empty($lines[$i]->desc)?$lines[$i]->desc:$lines[$i]->libelle);
-
-										// Positive line
-										$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
-
-										// Date start
-										$date_start = false;
-										if ($lines[$i]->date_debut_prevue)
-											$date_start = $lines[$i]->date_debut_prevue;
-										if ($lines[$i]->date_debut_reel)
-											$date_start = $lines[$i]->date_debut_reel;
-										if ($lines[$i]->date_start)
-											$date_start = $lines[$i]->date_start;
-
-											// Date end
-										$date_end = false;
-										if ($lines[$i]->date_fin_prevue)
-											$date_end = $lines[$i]->date_fin_prevue;
-										if ($lines[$i]->date_fin_reel)
-											$date_end = $lines[$i]->date_fin_reel;
-										if ($lines[$i]->date_end)
-											$date_end = $lines[$i]->date_end;
-
-											// Reset fk_parent_line for no child products and special product
-										if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
-											$fk_parent_line = 0;
-										}
-
-										// Extrafields
-										if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
-											$lines[$i]->fetch_optionals();
-											$array_options = $lines[$i]->array_options;
-										}
-
-										$tva_tx = $lines[$i]->tva_tx;
-										if (! empty($lines[$i]->vat_src_code) && ! preg_match('/\(/', $tva_tx)) $tva_tx .= ' ('.$lines[$i]->vat_src_code.')';
-
-										$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, 'HT', 0, $lines[$i]->info_bits, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $date_start, $date_end, $array_options, $lines[$i]->fk_unit);
-
-										if ($result > 0) {
-											$lineid = $result;
-										} else {
-											$lineid = 0;
-											$error ++;
-											break;
-										}
-
-										// Defined the new fk_parent_line
-										if ($result > 0 && $lines[$i]->product_type == 9) {
-											$fk_parent_line = $result;
-										}
-								}
-
-								// Hooks
-								$parameters = array('objFrom' => $srcobject);
-								$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
-																											   // modified by hook
-								if ($reshook < 0)
-									$error ++;
-							} else {
-								setEventMessages($srcobject->error, $srcobject->errors, 'errors');
-								$error ++;
 							}
+
+							$fk_parent_line=0;
+							$num=count($lines);
+							for ($i=0;$i<$num;$i++)
+							{
+								$label=(! empty($lines[$i]->label)?$lines[$i]->label:'');
+								$desc=(! empty($lines[$i]->desc)?$lines[$i]->desc:$lines[$i]->libelle);
+
+								// Positive line
+								$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
+
+								// Date start
+								$date_start = false;
+								if ($lines[$i]->date_debut_prevue)
+									$date_start = $lines[$i]->date_debut_prevue;
+								if ($lines[$i]->date_debut_reel)
+									$date_start = $lines[$i]->date_debut_reel;
+								if ($lines[$i]->date_start)
+									$date_start = $lines[$i]->date_start;
+
+								// Date end
+								$date_end = false;
+								if ($lines[$i]->date_fin_prevue)
+									$date_end = $lines[$i]->date_fin_prevue;
+								if ($lines[$i]->date_fin_reel)
+									$date_end = $lines[$i]->date_fin_reel;
+								if ($lines[$i]->date_end)
+									$date_end = $lines[$i]->date_end;
+
+								// Reset fk_parent_line for no child products and special product
+								if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
+									$fk_parent_line = 0;
+								}
+
+								// Extrafields
+								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
+									$lines[$i]->fetch_optionals();
+									$array_options = $lines[$i]->array_options;
+								}
+
+								$tva_tx = $lines[$i]->tva_tx;
+								if (! empty($lines[$i]->vat_src_code) && ! preg_match('/\(/', $tva_tx)) $tva_tx .= ' ('.$lines[$i]->vat_src_code.')';
+
+								$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, 'HT', 0, $lines[$i]->info_bits, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $date_start, $date_end, $array_options, $lines[$i]->fk_unit);
+
+								if ($result > 0) {
+									$lineid = $result;
+								} else {
+									$lineid = 0;
+									$error ++;
+									break;
+								}
+
+								// Defined the new fk_parent_line
+								if ($result > 0 && $lines[$i]->product_type == 9) {
+									$fk_parent_line = $result;
+								}
+							}
+
+							// Hooks
+							$parameters = array('objFrom' => $srcobject);
+							$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
+																											   // modified by hook
+							if ($reshook < 0)
+								$error ++;
+						} else {
+							setEventMessages($srcobject->error, $srcobject->errors, 'errors');
+							$error ++;
+						}
 					} else {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error ++;
@@ -920,8 +920,8 @@ if (empty($reshook))
 					$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
 					if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
 					{
-					  if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) $tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
-					  if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) $tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
+					    if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) $tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
+					    if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) $tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
 					}
 				}
 				// If price per customer

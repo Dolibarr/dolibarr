@@ -131,7 +131,7 @@ if (is_resource($handle))
                         }
                         else
                         {
-                          dol_print_error($db);
+                            dol_print_error($db);
                         }
                         print '</tr>';
                     }
