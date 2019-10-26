@@ -64,7 +64,7 @@ $error = 0;
 // Ne fonctionne que si on est pas en safe_mode.
 $err=error_reporting();
 error_reporting(0);
-@set_time_limit(300);
+//@set_time_limit(300);
 error_reporting($err);
 
 $setuplang=GETPOST("selectlang", 'aZ09', 3)?GETPOST("selectlang", 'aZ09', 3):'auto';
