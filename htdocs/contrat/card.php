@@ -331,9 +331,8 @@ if (empty($reshook))
 
 								// Extrafields
 								$array_options = array();
-								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) 							// For avoid conflicts if
-								// trigger used
-								{
+								// For avoid conflicts if trigger used
+								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
 									$lines[$i]->fetch_optionals($lines[$i]->rowid);
 									$array_options = $lines[$i]->array_options;
 								}
