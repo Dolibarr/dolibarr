@@ -410,7 +410,9 @@ print load_fiche_titre($titre, $linkback, $titlepicto);
 
 $head = email_admin_prepare_head();
 
-dol_fiche_head($head, 'templates', '', -1);
+if (count($head) > 1) {
+    dol_fiche_head($head, 'templates', '', -1);
+}
 
 // Confirmation de la suppression de la ligne
 if ($action == 'delete')
@@ -934,8 +936,9 @@ print '</div>';
 
 print '</form>';
 
-
-dol_fiche_end();
+if (count($head) > 1) {
+    dol_fiche_end();
+}
 
 // End of page
 llxFooter();
