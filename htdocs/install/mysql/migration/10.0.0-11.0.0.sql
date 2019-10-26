@@ -358,3 +358,51 @@ create table llx_c_shipment_package_type
     entity       integer DEFAULT 1 NOT NULL -- Multi company id 
 )ENGINE=innodb;
 
+
+CREATE TABLE llx_mrp_mo(
+    -- BEGIN MODULEBUILDER FIELDS
+    rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+    ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
+    entity integer DEFAULT 1 NOT NULL, 
+    label varchar(255), 
+    qty real NOT NULL, 
+    fk_soc integer, 
+    note_public text, 
+    note_private text, 
+    date_creation datetime NOT NULL, 
+    tms timestamp, 
+    fk_user_creat integer NOT NULL, 
+    fk_user_modif integer, 
+    import_key varchar(14), 
+    status integer NOT NULL, 
+    fk_product integer NOT NULL, 
+    date_start_planned datetime, 
+    date_end_planned datetime, 
+    fk_bom integer, 
+    fk_project integer
+    -- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+
+ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_ref (ref);
+ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_entity (entity);
+ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_fk_soc (fk_soc);
+ALTER TABLE llx_mrp_mo ADD CONSTRAINT llx_mrp_mo_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES user(rowid);
+ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_status (status);
+ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_fk_product (fk_product);
+ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_date_start_planned (date_start_planned);
+ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_date_end_planned (date_end_planned);
+ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_fk_bom (fk_bom);
+ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_fk_project (fk_project);
+
+
+create table llx_mrp_myobject_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                                 -- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_mrp_myobject_extrafields ADD INDEX idx_fk_object(fk_object);
+
