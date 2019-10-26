@@ -32,3 +32,4 @@ EstimatedDurationDesc=Estimated duration to manufacture this product using this 
 ConfirmValidateBom=Are you sure you want to validate the BOM with the reference <strong>%s</strong> (you will be able to use it to build new Manufacturing Orders)
 ConfirmCloseBom=Are you sure you want to cancel this BOM (you won't be able to use it to build new Manufacturing Orders anymore) ?
 ConfirmReopenBom=Are you sure you want to re-open this BOM (you will be able to use it to build new Manufacturing Orders)
+StatusMOProduced=Produced
