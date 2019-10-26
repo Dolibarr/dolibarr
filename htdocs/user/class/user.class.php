@@ -2320,8 +2320,8 @@ class User extends CommonObject
 		$label.= '<div class="centpercent">';
 		$label.= '<u>' . $langs->trans("User") . '</u><br>';
 		$label.= '<b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs, '');
-		if (! empty($this->login))
-			$label.= '<br><b>' . $langs->trans('Login') . ':</b> ' . $this->login;
+		if (! empty($this->login)) $label.= '<br><b>' . $langs->trans('Login') . ':</b> ' . $this->login;
+		if (! empty($this->job)) $label.= '<br><b>' . $langs->trans("Job").':</b> '.$this->job;
 		$label.= '<br><b>' . $langs->trans("Email").':</b> '.$this->email;
 		if (! empty($this->phone)) $label.= '<br><b>' . $langs->trans("Phone").':</b> '.$this->phone;
 		if (! empty($this->admin))
