@@ -217,9 +217,9 @@ class ImportCsv extends ModeleImports
 	 * 	@return		int		<0 if KO, >=0 if OK
 	 */
     public function import_get_nb_of_lines($file)
-	{
+    {
         // phpcs:enable
-       return dol_count_nb_of_line($file);
+        return dol_count_nb_of_line($file);
     }
 
 

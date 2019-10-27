@@ -515,7 +515,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				}
 				else {
 					try {
-					$odfHandler->saveToDisk($file);
+					    $odfHandler->saveToDisk($file);
 					} catch (Exception $e) {
 						$this->error=$e->getMessage();
                         dol_syslog($e->getMessage(), LOG_INFO);

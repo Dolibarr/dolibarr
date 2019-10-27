@@ -307,10 +307,12 @@ class MenuManager
 		                    print $val2['titre'];
 		                    if ($relurl2)
 		                    {
-		                        if ($val2['enabled'])	// Allowed
-		                            print '</a>';
-		                            else
-		                                print '</a>';
+		                        if ($val2['enabled']) {
+                                    // Allowed
+                                    print '</a>';
+                                } else {
+                                    print '</a>';
+                                }
 		                    }
 		                    print '</li>'."\n";
 		                }
@@ -448,7 +450,7 @@ class MenuManager
 				unset($this->menu->liste);
 			}
 		}
-/*
+        /*
 		if ($mode == 'jmobile')
 		{
 			foreach($this->menu->liste as $key => $val)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
@@ -506,7 +508,7 @@ class MenuManager
 				break;	// Only first menu entry (so home)
 			}
 		}
-*/
+        */
 		unset($this->menu);
 
 		return $res;

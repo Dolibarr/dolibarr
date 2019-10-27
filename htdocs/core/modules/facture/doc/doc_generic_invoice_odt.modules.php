@@ -344,7 +344,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
 				try {
-    $odfHandler = new odf(
+                    $odfHandler = new odf(
 						$srctemplatepath,
 						array(
 						'PATH_TO_TMP'	  => $conf->facture->dir_temp,

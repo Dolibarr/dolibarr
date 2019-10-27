@@ -972,10 +972,10 @@ class ExpenseReport extends CommonObject
             $num = $this->db->num_rows($result);
             $i = 0;
             while ($i < $num):
-            $objp = $this->db->fetch_object($result);
-            $total_ht+=$objp->total_ht;
-            $total_tva+=$objp->total_tva;
-            $i++;
+                $objp = $this->db->fetch_object($result);
+                $total_ht+=$objp->total_ht;
+                $total_tva+=$objp->total_tva;
+                $i++;
             endwhile;
 
             $total_ttc = $total_ht + $total_tva;
@@ -985,13 +985,13 @@ class ExpenseReport extends CommonObject
             $sql.= " , total_tva = ".$total_tva;
             $sql.= " WHERE rowid = ".$id;
             $result = $this->db->query($sql);
-            if($result):
-            $this->db->free($result);
-            return 1;
+            if ($result):
+                $this->db->free($result);
+                return 1;
             else:
-            $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::recalculer: Error ".$this->error, LOG_ERR);
-            return -3;
+                $this->error=$this->db->lasterror();
+                dol_syslog(get_class($this)."::recalculer: Error ".$this->error, LOG_ERR);
+                return -3;
             endif;
         }
         else
@@ -1695,10 +1695,10 @@ class ExpenseReport extends CommonObject
 
         $result = $this->db->query($sql);
         if ($result):
-        return 1;
+            return 1;
         else:
-        $this->error=$this->db->error();
-        return -1;
+            $this->error=$this->db->error();
+            return -1;
         endif;
     }
 
@@ -1725,10 +1725,10 @@ class ExpenseReport extends CommonObject
 
         $result = $this->db->query($sql);
         if ($result):
-        return 1;
+            return 1;
         else:
-        $this->error=$this->db->error();
-        return -1;
+            $this->error=$this->db->error();
+            return -1;
         endif;
     }
 
@@ -2372,10 +2372,10 @@ class ExpenseReport extends CommonObject
 	        $response = new WorkboardResponse();
 	        if ($option == 'toapprove')
 	        {
-	           $response->warning_delay=$conf->expensereport->approve->warning_delay/60/60/24;
-	           $response->label=$langs->trans("ExpenseReportsToApprove");
-	           $response->labelShort=$langs->trans("ToApprove");
-	           $response->url=DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut=2';
+	            $response->warning_delay=$conf->expensereport->approve->warning_delay/60/60/24;
+	            $response->label=$langs->trans("ExpenseReportsToApprove");
+	            $response->labelShort=$langs->trans("ToApprove");
+	            $response->url=DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut=2';
 	        }
 	        else
 	        {

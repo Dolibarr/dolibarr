@@ -502,7 +502,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
-/*
+        /*
 		$pdf->SetXY($this->marge_gauche, $tab_top);
 		$pdf->MultiCell(190,8,$outputlangs->transnoentities("Description"),0,'L',0);
 		$pdf->line($this->marge_gauche, $tab_top + 8, $this->page_largeur-$this->marge_droite, $tab_top + 8);
@@ -526,7 +526,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		$pdf->line($this->marge_gauche, $nexY, $this->page_largeur-$this->marge_droite, $nexY);
 
 		$pdf->MultiCell(0, 3, '');		// Set interline to 3. Then writeMultiCell must use 3 also.
-*/
+        */
 
 		// Output Rect
 		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height+1, 0, 0);	// Rect takes a length in 3rd parameter and 4th parameter

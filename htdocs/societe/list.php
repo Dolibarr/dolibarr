@@ -234,7 +234,7 @@ if ($action=="change")	// Change customer for TakePOS
     // @TODO Check if draft invoice already exists, if not create it or return a warning to ask to enter at least one line to have it created automatically
     $sql="UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$idcustomer." where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
     $resql = $db->query($sql);
-	    ?>
+    ?>
 	    <script>
 	    parent.$("#poslines").load("invoice.php?place="+<?php print $place;?>, function() {
 	        //parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
@@ -244,7 +244,7 @@ if ($action=="change")	// Change customer for TakePOS
 	        parent.$.colorbox.close(); /* Close the popup */
 	    });
 	    </script>
-	    <?php
+    <?php
     exit;
 }
 
@@ -1248,8 +1248,8 @@ while ($i < min($num, $limit))
 	    print '<td class="center">';
 	    if ($companystatic->fk_parent > 0)
 	    {
-	       $companyparent->fetch($companystatic->fk_parent);
-	       print $companyparent->getNomUrl(1);
+	        $companyparent->fetch($companystatic->fk_parent);
+	        print $companyparent->getNomUrl(1);
 	    }
 	    print "</td>";
 	    if (! $i) $totalarray['nbfield']++;

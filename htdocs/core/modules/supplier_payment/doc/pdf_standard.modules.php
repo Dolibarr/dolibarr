@@ -674,7 +674,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 			$text=$this->emetteur->name;
 			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
-/*
+        /*
 		$pdf->SetFont('','B', $default_font_size + 3);
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
@@ -734,7 +734,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 		// Show list of linked objects
 		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 100, 3, 'R', $default_font_size);
-*/
+        */
 		if ($showaddress)
 		{
 			// Sender properties
