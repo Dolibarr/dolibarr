@@ -444,13 +444,13 @@ if (empty($reshook))
 			$error++;
 		}
 
-	  $date_start = dol_mktime(GETPOST('date_start' . $predef . 'hour'), GETPOST('date_start' . $predef . 'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start' . $predef . 'month'), GETPOST('date_start' . $predef . 'day'), GETPOST('date_start' . $predef . 'year'));
-	  $date_end = dol_mktime(GETPOST('date_end' . $predef . 'hour'), GETPOST('date_end' . $predef . 'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end' . $predef . 'month'), GETPOST('date_end' . $predef . 'day'), GETPOST('date_end' . $predef . 'year'));
-	  if (!empty($date_start) && !empty($date_end) && $date_start > $date_end)
-	  {
-		  setEventMessages($langs->trans("Error").': '.$langs->trans("DateStartPlanned").' > '.$langs->trans("DateEndPlanned"), null, 'errors');
-		  $error++;
-	  }
+	    $date_start = dol_mktime(GETPOST('date_start' . $predef . 'hour'), GETPOST('date_start' . $predef . 'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start' . $predef . 'month'), GETPOST('date_start' . $predef . 'day'), GETPOST('date_start' . $predef . 'year'));
+	    $date_end = dol_mktime(GETPOST('date_end' . $predef . 'hour'), GETPOST('date_end' . $predef . 'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end' . $predef . 'month'), GETPOST('date_end' . $predef . 'day'), GETPOST('date_end' . $predef . 'year'));
+	    if (!empty($date_start) && !empty($date_end) && $date_start > $date_end)
+	    {
+		    setEventMessages($langs->trans("Error").': '.$langs->trans("DateStartPlanned").' > '.$langs->trans("DateEndPlanned"), null, 'errors');
+		    $error++;
+	    }
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -531,7 +531,7 @@ if (empty($reshook))
 						$pu_ht = price2num($pu_ttc / (1 + ($tmpvat/100)), 'MU');
 					}
 					else
-				  {
+				    {
 						$pu_ttc = price2num($pu_ht * (1 + ($tmpvat/100)), 'MU');
 					}
 				}
@@ -727,9 +727,9 @@ if (empty($reshook))
 			$objectline->pa_ht=$pa_ht;
 
 			if ($fk_unit > 0) {
-			  $objectline->fk_unit = GETPOST('unit');
+			    $objectline->fk_unit = GETPOST('unit');
 			} else {
-			  $objectline->fk_unit = null;
+			    $objectline->fk_unit = null;
 			}
 
 			// Extrafields
@@ -1418,19 +1418,20 @@ else
 			$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 			if ($user->rights->contrat->creer)
 			{
-				if ($action != 'classify')
+				if ($action != 'classify') {
 					$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-					if ($action == 'classify') {
-						//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-						$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-						$morehtmlref.='<input type="hidden" name="action" value="classin">';
-						$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-						$morehtmlref.=$formproject->select_projects($object->thirdparty->id, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-						$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-						$morehtmlref.='</form>';
-					} else {
-						$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->thirdparty->id, $object->fk_project, 'none', 0, 0, 0, 1);
-					}
+				}
+				if ($action == 'classify') {
+					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+					$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+					$morehtmlref.='<input type="hidden" name="action" value="classin">';
+					$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					$morehtmlref.=$formproject->select_projects($object->thirdparty->id, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+					$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+					$morehtmlref.='</form>';
+				} else {
+					$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->thirdparty->id, $object->fk_project, 'none', 0, 0, 0, 1);
+				}
 			} else {
 				if (! empty($object->fk_project)) {
 					$proj = new Project($db);
@@ -2253,7 +2254,7 @@ $db->close();
 if (! empty($conf->margin->enabled) && $action == 'editline')
 {
 		// TODO Why this ? To manage margin on contracts ?
-?>
+	?>
 <script type="text/javascript">
 $(document).ready(function() {
   var idprod = $("input[name='idprod']").val();
@@ -2308,5 +2309,5 @@ $(document).ready(function() {
     }
 });
 </script>
-<?php
+	<?php
 }
