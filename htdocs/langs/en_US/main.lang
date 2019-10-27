@@ -114,6 +114,7 @@ InformationToHelpDiagnose=This information can be useful for diagnostic purposes
 MoreInformation=More information
 TechnicalInformation=Technical information
 TechnicalID=Technical ID
+LineID=Line ID
 NotePublic=Note (public)
 NotePrivate=Note (private)
 PrecisionUnitIsLimitedToXDecimals=Dolibarr was setup to limit precision of unit prices to <b>%s</b> decimals.
