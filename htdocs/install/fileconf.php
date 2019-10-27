@@ -492,7 +492,7 @@ if (!empty($force_install_noedit)) {
 			        }    // Do not autofill password for remote access
 			        print dol_escape_htmltag($autofill);
 			        ?>"
-				<?php if ($force_install_noedit > 0 && ! empty($force_install_databaserootpass)) { print ' disabled'; // May be removed by javascript } ?>
+				<?php if ($force_install_noedit > 0 && ! empty($force_install_databaserootpass)) { print ' disabled'; /* May be removed by javascript*/ } ?>
 			>
 		</td>
 		<td class="comment"><?php echo $langs->trans("KeepEmptyIfNoPassword"); ?>
