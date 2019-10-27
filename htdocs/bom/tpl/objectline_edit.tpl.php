@@ -117,6 +117,14 @@ if ($conf->global->PRODUCT_USE_UNITS)
 }
 
 $coldisplay++;
+print '<td class="nobottom linecolqtyfrozen right"><input type="checkbox" name="qty_frozen" id="qty_frozen" class="flat right" value="1"'.(GETPOSTISSET("qty_frozen")?(GETPOST('qty_frozen', 'int')?' checked="checked"':''):($line->qty_frozen?' checked="checked"':'')).'>';
+print '</td>';
+
+$coldisplay++;
+print '<td class="nobottom linecoldisablestockchange right"><input type="checkbox" name="disable_stock_change" id="disable_stock_change" class="flat right" value="1"'.(GETPOSTISSET('disablestockchange')?(GETPOST("disable_stock_change", 'int')?' checked="checked"':''):($line->disable_stock_change?' checked="checked"':'')).'">';
+print '</td>';
+
+$coldisplay++;
 print '<td class="nobottom nowrap linecollost right">';
 print '<input type="text" size="1" name="efficiency" id="efficiency" class="flat right" value="'.$line->efficiency.'"></td>';
 

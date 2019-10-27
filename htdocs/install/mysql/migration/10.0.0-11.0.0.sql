@@ -58,6 +58,9 @@ UPDATE llx_rights_def SET subperms = 'write' WHERE perms = 'fiscalyear' AND modu
 
 ALTER TABLE llx_bom_bom ADD COLUMN duration double(8,4) DEFAULT NULL;
 ALTER TABLE llx_bom_bomline ADD COLUMN position integer NOT NULL DEFAULT 0;
+ALTER TABLE llx_bom_bomline ADD COLUMN qty_frozen smallint DEFAULT 0;
+ALTER TABLE llx_bom_bomline ADD COLUMN disable_stock_change smallint DEFAULT 0; 
+
 ALTER TABLE llx_bom_bomline DROP COLUMN rank;
 
 create table llx_categorie_warehouse
@@ -410,3 +413,62 @@ create table llx_c_shipment_package_type
     entity       integer DEFAULT 1 NOT NULL -- Multi company id 
 )ENGINE=innodb;
 
+
+CREATE TABLE llx_mrp_mo(
+    -- BEGIN MODULEBUILDER FIELDS
+    rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+    ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
+    entity integer DEFAULT 1 NOT NULL, 
+    label varchar(255), 
+    qty real NOT NULL,
+    fk_warehouse integer, 
+    fk_soc integer, 
+    note_public text, 
+    note_private text, 
+    date_creation datetime NOT NULL, 
+    tms timestamp, 
+    fk_user_creat integer NOT NULL, 
+    fk_user_modif integer, 
+    import_key varchar(14), 
+    status integer NOT NULL, 
+    fk_product integer NOT NULL, 
+    date_start_planned datetime, 
+    date_end_planned datetime, 
+    fk_bom integer, 
+    fk_project integer
+    -- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+
+ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_ref (ref);
+ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_entity (entity);
+ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_fk_soc (fk_soc);
+ALTER TABLE llx_mrp_mo ADD CONSTRAINT llx_mrp_mo_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES user(rowid);
+ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_status (status);
+ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_fk_product (fk_product);
+ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_date_start_planned (date_start_planned);
+ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_date_end_planned (date_end_planned);
+ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_fk_bom (fk_bom);
+ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_fk_project (fk_project);
+
+
+create table llx_mrp_myobject_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                                 -- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_mrp_myobject_extrafields ADD INDEX idx_fk_object(fk_object);
+
+
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_VALIDATE','BOM validated','Executed when a BOM is validated','bom',400);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_UNVALIDATE','BOM unvalidated','Executed when a BOM is unvalidated','bom',401);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_CLOSE','BOM disabled','Executed when a BOM is disabled','bom',402);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_REOPEN','BOM reopen','Executed when a BOM is re-open','bom',403);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_DELETE','BOM deleted','Executed when a BOM deleted','bom',404);
+
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_VALIDATE','MO validated','Executed when a MO is validated','bom',410);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_PRODUCED','MO disabled','Executed when a MO is produced','bom',411);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_DELETE','MO deleted','Executed when a MO is deleted','bom',412);

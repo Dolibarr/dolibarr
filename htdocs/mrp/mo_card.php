@@ -369,7 +369,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<table class="border centpercent">'."\n";
 
 	// Common attributes
-	$keyforbreak='qty';
+	$keyforbreak='fk_warehouse';
 	unset($object->fields['fk_project']);
 	unset($object->fields['fk_soc']);
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';

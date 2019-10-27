@@ -28,6 +28,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
+require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 
 $hookmanager = new HookManager($db);
 
@@ -46,6 +47,7 @@ $result=restrictedArea($user, 'bom|mrp');
  */
 
 $staticbom = new BOM($db);
+$staticmo = new Mo($db);
 
 llxHeader('', $langs->trans("MRP"), '');
 
@@ -81,7 +83,7 @@ if ($conf->use_javascript_ajax)
     		{
     			//if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
     			{
-    				$dataseries[$obj->status]=$obj->nb;
+    				$dataseries[$obj->status]=array(0=>$staticmo->LibStatut($obj->status), $obj->nb);
     				$totalnb+=$obj->nb;
     			}
     		}

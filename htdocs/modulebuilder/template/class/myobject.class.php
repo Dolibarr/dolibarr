@@ -71,7 +71,7 @@ class MyObject extends CommonObject
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
-	 *  'default' is a default value for creation (can still be replaced by the global setup of default values)
+	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
 	 *  'position' is the sort order of field.
@@ -283,8 +283,9 @@ class MyObject extends CommonObject
 
 
 	    // Clear fields
-	    $object->ref = "copy_of_".$object->ref;
-	    $object->title = $langs->trans("CopyOf")." ".$object->title;
+	    $object->ref = empty($this->fields['ref']['default']) ? "copy_of_".$object->ref: $this->fields['ref']['default'];
+	    $object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label: $this->fields['label']['default'];
+	    $object->status = self::STATUS_DRAFT;
 	    // ...
 	    // Clear extrafields that are unique
 	    if (is_array($object->array_options) && count($object->array_options) > 0)

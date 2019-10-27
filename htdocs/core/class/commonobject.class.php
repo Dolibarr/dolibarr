@@ -7483,6 +7483,7 @@ abstract class CommonObject
 		    {
 		        $sql="UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ref = '(PROV".$this->id.")' WHERE ref = '(PROV)' AND rowid = ".$this->id;
 		        $resqlupdate = $this->db->query($sql);
+
 		        if ($resqlupdate===false)
 		        {
 		            $error++;
