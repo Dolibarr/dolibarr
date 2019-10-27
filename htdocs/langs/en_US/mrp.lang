@@ -40,3 +40,4 @@ DisableStockChange=Disable stock change
 DisableStockChangeHelp=When this flag is set, there is no stock change on this product, whatever is the quantity produced
 BomAndBomLines=Bills Of Material and lines
 BOMLine=Line of BOM
+WarehouseForProduction=Warehouse for production
