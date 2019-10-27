@@ -72,7 +72,7 @@ class Users extends DolibarrApi
 	    $obj_ret = array();
 
 		if(! DolibarrApiAccess::$user->rights->user->user->lire) {
-	       throw new RestException(401, "You are not allowed to read list of users");
+	        throw new RestException(401, "You are not allowed to read list of users");
 	    }
 
 	    // case of external user, $societe param is ignored and replaced by user's socid
@@ -226,10 +226,10 @@ class Users extends DolibarrApi
 			if ($field == 'statut') {
 				$result = $this->useraccount->setstatus($value);
 				if ($result < 0) {
-				   throw new RestException(500, 'Error when updating status of user: '.$this->useraccount->error);
+				    throw new RestException(500, 'Error when updating status of user: '.$this->useraccount->error);
 				}
 			} else {
-			   $this->useraccount->$field = $value;
+			    $this->useraccount->$field = $value;
 			}
 		}
 
