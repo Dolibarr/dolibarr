@@ -832,12 +832,12 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 
     if (strstr($mask, 'user_extra_'))
     {
-			$start = "{user_extra_";
-			$end = "\}";
-			$extra= get_string_between($mask, "user_extra_", "}");
-			if(!empty($user->array_options['options_'.$extra])){
-				$mask =  preg_replace('#('.$start.')(.*?)('.$end.')#si', $user->array_options['options_'.$extra], $mask);
-			}
+		$start = "{user_extra_";
+		$end = "\}";
+		$extra= get_string_between($mask, "user_extra_", "}");
+		if (!empty($user->array_options['options_'.$extra])) {
+			$mask =  preg_replace('#('.$start.')(.*?)('.$end.')#si', $user->array_options['options_'.$extra], $mask);
+		}
     }
     $maskwithonlyymcode=$mask;
     $maskwithonlyymcode=preg_replace('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i', $maskcounter, $maskwithonlyymcode);
@@ -1645,7 +1645,7 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
                 //irtoscan.=($dirtoscan?',':'').preg_replace('/[\r\n]+/',',',trim($conf->global->$const));
                 $dirtoscan= preg_replace('/[\r\n]+/', ',', trim($conf->global->$const));
 
-		$listoffiles=array();
+                $listoffiles=array();
 
                 // Now we add models found in directories scanned
                 $listofdir=explode(',', $dirtoscan);
@@ -1656,8 +1656,8 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
                     if (! $tmpdir) { unset($listofdir[$key]); continue; }
                     if (is_dir($tmpdir))
                     {
-			// all type of template is allowed
-			$tmpfiles=dol_dir_list($tmpdir, 'files', 0, '', '', 'name', SORT_ASC, 0);
+                        // all type of template is allowed
+                        $tmpfiles=dol_dir_list($tmpdir, 'files', 0, '', '', 'name', SORT_ASC, 0);
                         if (count($tmpfiles)) $listoffiles=array_merge($listoffiles, $tmpfiles);
                     }
                 }
