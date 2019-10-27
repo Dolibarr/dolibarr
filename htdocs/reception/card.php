@@ -560,12 +560,12 @@ if (empty($reshook))
 		{
 			if ($lines[$i]->id == $line_id)
 			{
-					// delete single warehouse line
-					$line->id = $line_id;
-					if (! $error && $line->delete($user) < 0)
-					{
-						$error++;
-					}
+				// delete single warehouse line
+				$line->id = $line_id;
+				if (! $error && $line->delete($user) < 0)
+				{
+					$error++;
+				}
 			}
 			unset($_POST["lineid"]);
 		}
@@ -949,30 +949,27 @@ if ($action == 'create')
             print '<script type="text/javascript" language="javascript">
             jQuery(document).ready(function() {
 	            jQuery("#autofill").click(function() {';
-    	    	$i=1;
-    	    	while($i <= $numAsked)
-    	    	{
-    	    		print 'jQuery("#qtyl'.$i.'").val(jQuery("#qtyasked'.$i.'").val() - jQuery("#qtydelivered'.$i.'").val());'."\n";
-    	    		$i++;
-    	    	}
-        		print '});
+    	    $i=1;
+    	    while($i <= $numAsked)
+    	    {
+    	    	print 'jQuery("#qtyl'.$i.'").val(jQuery("#qtyasked'.$i.'").val() - jQuery("#qtydelivered'.$i.'").val());'."\n";
+    	    	$i++;
+    	    }
+        	print '});
 	            jQuery("#autoreset").click(function() {';
-    	    	$i=1;
-    	    	while($i <= $numAsked)
-    	    	{
-    	    		print 'jQuery("#qtyl'.$i.'").val(0);'."\n";
-    	    		$i++;
-    	    	}
-        		print '});
+    	    $i=1;
+    	    while($i <= $numAsked)
+    	    {
+    	    	print 'jQuery("#qtyl'.$i.'").val(0);'."\n";
+    	    	$i++;
+    	    }
+        	print '});
         	});
             </script>';
 
-
             print '<br>';
 
-
             print '<table class="noborder" width="100%">';
-
 
             // Load receptions already done for same order
             $object->loadReceptions();
@@ -1113,59 +1110,57 @@ if ($action == 'create')
 					$stock = + $product->stock_warehouse[$dispatchLines[$indiceAsked]['ent']]->real; // Convert to number
 					$deliverableQty=$dispatchLines[$indiceAsked]['qty'];
 
+					// Quantity to send
+					print '<td class="center">';
+					if ($line->product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+					{
+                        if (GETPOST('qtyl'.$indiceAsked, 'int')) $defaultqty=GETPOST('qtyl'.$indiceAsked, 'int');
+                        print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
+						print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
+					}
+					else print $langs->trans("NA");
+					print '</td>';
 
-
-						// Quantity to send
-						print '<td class="center">';
-						if ($line->product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+					// Stock
+					if (! empty($conf->stock->enabled))
+					{
+						print '<td class="left">';
+						if ($line->product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))   // Type of product need stock change ?
 						{
-                            if (GETPOST('qtyl'.$indiceAsked, 'int')) $defaultqty=GETPOST('qtyl'.$indiceAsked, 'int');
-                            print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-							print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
+							// Show warehouse combo list
+							$ent = "entl".$indiceAsked;
+							$idl = "idl".$indiceAsked;
+							$tmpentrepot_id = is_numeric(GETPOST($ent, 'int'))?GETPOST($ent, 'int'):$warehouse_id;
+							if ($line->fk_product > 0)
+							{
+								print '<!-- Show warehouse selection -->';
+								print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 0, 0, $line->fk_product, '', 1);
+							}
 						}
-						else print $langs->trans("NA");
-						print '</td>';
-
-						// Stock
-						if (! empty($conf->stock->enabled))
+						else
 						{
-							print '<td class="left">';
-							if ($line->product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))   // Type of product need stock change ?
-							{
-								// Show warehouse combo list
-								$ent = "entl".$indiceAsked;
-								$idl = "idl".$indiceAsked;
-								$tmpentrepot_id = is_numeric(GETPOST($ent, 'int'))?GETPOST($ent, 'int'):$warehouse_id;
-								if ($line->fk_product > 0)
-								{
-									print '<!-- Show warehouse selection -->';
-									print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 0, 0, $line->fk_product, '', 1);
-								}
-							}
-							else
-							{
-								print $langs->trans("Service");
-							}
+							print $langs->trans("Service");
+						}
+						print '</td>';
+					}
+
+					if (!empty($conf->productbatch->enabled))
+					{
+						if (!empty($product->status_batch))
+						{
+							print '<td><input name="batch'.$indiceAsked.'" value="'.$dispatchLines[$indiceAsked]['lot'].'"></td>';
+							print '<td>';
+							print $form->selectDate($dispatchLines[$indiceAsked]['DLC'], 'dlc' . $indiceAsked, '', '', 1, "");
+							print '</td>';
+							print '<td>';
+							print $form->selectDate($dispatchLines[$indiceAsked]['DLUO'], 'dluo' . $indiceAsked, '', '', 1, "");
 							print '</td>';
 						}
-
-						if (!empty($conf->productbatch->enabled))
-						{
-							if (!empty($product->status_batch))
-							{
-								print '<td><input name="batch'.$indiceAsked.'" value="'.$dispatchLines[$indiceAsked]['lot'].'"></td>';
-								print '<td>';
-								print $form->selectDate($dispatchLines[$indiceAsked]['DLC'], 'dlc' . $indiceAsked, '', '', 1, "");
-								print '</td>';
-								print '<td>';
-								print $form->selectDate($dispatchLines[$indiceAsked]['DLUO'], 'dluo' . $indiceAsked, '', '', 1, "");
-								print '</td>';
-							}
-							else {
-								print '<td colspan="3"></td>';
-							}
+						else {
+							print '<td colspan="3"></td>';
 						}
-						print "</tr>\n";
+					}
+					print "</tr>\n";
 				}
 
 				//Display lines extrafields

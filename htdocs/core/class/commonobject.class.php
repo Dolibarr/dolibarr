@@ -12,7 +12,7 @@
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
  * Copyright (C) 2017-2019 Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2017      Rui Strecht		    <rui.strecht@aliartalentos.com>
- * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -4612,252 +4612,251 @@ abstract class CommonObject
 		$parameters = array('modelspath'=>$modelspath,'modele'=>$modele,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'hidedesc'=>$hidedesc,'hideref'=>$hideref, 'moreparams'=>$moreparams);
 		$reshook = $hookmanager->executeHooks('commonGenerateDocument', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
-		if(empty($reshook))
+		if (empty($reshook))
 		{
-		dol_syslog("commonGenerateDocument modele=".$modele." outputlangs->defaultlang=".(is_object($outputlangs)?$outputlangs->defaultlang:'null'));
+		    dol_syslog("commonGenerateDocument modele=".$modele." outputlangs->defaultlang=".(is_object($outputlangs)?$outputlangs->defaultlang:'null'));
 
-		// Increase limit for PDF build
-		$err=error_reporting();
-		error_reporting(0);
-		@set_time_limit(120);
-		error_reporting($err);
+		    // Increase limit for PDF build
+		    $err=error_reporting();
+		    error_reporting(0);
+		    @set_time_limit(120);
+		    error_reporting($err);
 
-		// If selected model is a filename template (then $modele="modelname" or "modelname:filename")
-		$tmp=explode(':', $modele, 2);
-		if (! empty($tmp[1]))
-		{
-			$modele=$tmp[0];
-			$srctemplatepath=$tmp[1];
-		}
+		    // If selected model is a filename template (then $modele="modelname" or "modelname:filename")
+		    $tmp=explode(':', $modele, 2);
+		    if (! empty($tmp[1]))
+		    {
+			    $modele=$tmp[0];
+			    $srctemplatepath=$tmp[1];
+		    }
 
-		// Search template files
-		$file=''; $classname=''; $filefound=0;
-		$dirmodels=array('/');
-		if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels, $conf->modules_parts['models']);
-		foreach($dirmodels as $reldir)
-		{
-			foreach(array('doc','pdf') as $prefix)
-			{
-				if (in_array(get_class($this), array('Adherent'))) $file = $prefix."_".$modele.".class.php";     // Member module use prefix_module.class.php
-				else $file = $prefix."_".$modele.".modules.php";
+		    // Search template files
+			$file='';
+			$classname='';
+			$filefound=0;
+		    $dirmodels=array('/');
+		    if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels, $conf->modules_parts['models']);
+		    foreach($dirmodels as $reldir)
+		    {
+			    foreach(array('doc','pdf') as $prefix)
+			    {
+				    if (in_array(get_class($this), array('Adherent'))) $file = $prefix."_".$modele.".class.php";     // Member module use prefix_module.class.php
+				    else $file = $prefix."_".$modele.".modules.php";
 
-				// On verifie l'emplacement du modele
-				$file=dol_buildpath($reldir.$modelspath.$file, 0);
-				if (file_exists($file))
-				{
-					$filefound=1;
-					$classname=$prefix.'_'.$modele;
-					break;
-				}
-			}
-			if ($filefound) break;
-		}
+				    // On verifie l'emplacement du modele
+				    $file=dol_buildpath($reldir.$modelspath.$file, 0);
+				    if (file_exists($file))
+				    {
+					    $filefound=1;
+					    $classname=$prefix.'_'.$modele;
+					    break;
+				    }
+			    }
+			    if ($filefound) break;
+		    }
 
-		// If generator was found
-		if ($filefound)
-		{
-			global $db;  // Required to solve a conception default making an include of code using $db instead of $this->db just after.
+		    // If generator was found
+		    if ($filefound)
+		    {
+			    global $db;  // Required to solve a conception default making an include of code using $db instead of $this->db just after.
 
-			require_once $file;
+			    require_once $file;
 
-			$obj = new $classname($this->db);
+			    $obj = new $classname($this->db);
 
-			// If generator is ODT, we must have srctemplatepath defined, if not we set it.
-			if ($obj->type == 'odt' && empty($srctemplatepath))
-			{
-				$varfortemplatedir=$obj->scandir;
-				if ($varfortemplatedir && ! empty($conf->global->$varfortemplatedir))
-				{
-					$dirtoscan=$conf->global->$varfortemplatedir;
+			    // If generator is ODT, we must have srctemplatepath defined, if not we set it.
+			    if ($obj->type == 'odt' && empty($srctemplatepath))
+			    {
+				    $varfortemplatedir=$obj->scandir;
+				    if ($varfortemplatedir && ! empty($conf->global->$varfortemplatedir))
+				    {
+					    $dirtoscan=$conf->global->$varfortemplatedir;
 
-					$listoffiles=array();
+					    $listoffiles=array();
 
-					// Now we add first model found in directories scanned
-					$listofdir=explode(',', $dirtoscan);
-					foreach($listofdir as $key => $tmpdir)
-					{
-						$tmpdir=trim($tmpdir);
-						$tmpdir=preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
-						if (! $tmpdir) { unset($listofdir[$key]); continue; }
-						if (is_dir($tmpdir))
-						{
-							$tmpfiles=dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0);
-							if (count($tmpfiles)) $listoffiles=array_merge($listoffiles, $tmpfiles);
-						}
-					}
+					    // Now we add first model found in directories scanned
+					    $listofdir=explode(',', $dirtoscan);
+					    foreach($listofdir as $key => $tmpdir)
+					    {
+						    $tmpdir=trim($tmpdir);
+						    $tmpdir=preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
+						    if (! $tmpdir) { unset($listofdir[$key]); continue; }
+						    if (is_dir($tmpdir))
+						    {
+							    $tmpfiles=dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0);
+							    if (count($tmpfiles)) $listoffiles=array_merge($listoffiles, $tmpfiles);
+						    }
+					    }
 
-					if (count($listoffiles))
-					{
-						foreach($listoffiles as $record)
-						{
-							$srctemplatepath=$record['fullname'];
-							break;
-						}
-					}
-				}
+					    if (count($listoffiles))
+					    {
+						    foreach($listoffiles as $record)
+						    {
+							    $srctemplatepath=$record['fullname'];
+							    break;
+						    }
+					    }
+				    }
 
-				if (empty($srctemplatepath))
-				{
-					$this->error='ErrorGenerationAskedForOdtTemplateWithSrcFileNotDefined';
-					return -1;
-				}
-			}
+				    if (empty($srctemplatepath))
+				    {
+					    $this->error='ErrorGenerationAskedForOdtTemplateWithSrcFileNotDefined';
+					    return -1;
+				    }
+			    }
 
-			if ($obj->type == 'odt' && ! empty($srctemplatepath))
-			{
-				if (! dol_is_file($srctemplatepath))
-				{
-					$this->error='ErrorGenerationAskedForOdtTemplateWithSrcFileNotFound';
-					return -1;
-				}
-			}
+			    if ($obj->type == 'odt' && ! empty($srctemplatepath))
+			    {
+				    if (! dol_is_file($srctemplatepath))
+				    {
+					    $this->error='ErrorGenerationAskedForOdtTemplateWithSrcFileNotFound';
+					    return -1;
+				    }
+			    }
 
-			// We save charset_output to restore it because write_file can change it if needed for
-			// output format that does not support UTF8.
-			$sav_charset_output=$outputlangs->charset_output;
+			    // We save charset_output to restore it because write_file can change it if needed for
+			    // output format that does not support UTF8.
+			    $sav_charset_output=$outputlangs->charset_output;
 
-			if (in_array(get_class($this), array('Adherent')))
-			{
-				$arrayofrecords = array();   // The write_file of templates of adherent class need this var
-				$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, $moreparams);
-			}
-			else
-			{
-				$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
-			}
-			// After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
+			    if (in_array(get_class($this), array('Adherent')))
+			    {
+				    $arrayofrecords = array();   // The write_file of templates of adherent class need this var
+				    $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, $moreparams);
+			    }
+			    else
+			    {
+				     $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
+			    }
+			    // After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
 
-			if ($resultwritefile > 0)
-			{
-				$outputlangs->charset_output=$sav_charset_output;
+			    if ($resultwritefile > 0)
+			    {
+				    $outputlangs->charset_output=$sav_charset_output;
 
-				// We delete old preview
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-				dol_delete_preview($this);
+				    // We delete old preview
+				    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+				    dol_delete_preview($this);
 
-				// Index file in database
-				if (! empty($obj->result['fullpath']))
-				{
-					$destfull = $obj->result['fullpath'];
-					$upload_dir = dirname($destfull);
-					$destfile = basename($destfull);
-					$rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $upload_dir);
+				    // Index file in database
+				    if (! empty($obj->result['fullpath']))
+				    {
+					    $destfull = $obj->result['fullpath'];
+					    $upload_dir = dirname($destfull);
+					    $destfile = basename($destfull);
+					    $rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $upload_dir);
 
-					if (! preg_match('/[\\/]temp[\\/]|[\\/]thumbs|\.meta$/', $rel_dir))     // If not a tmp dir
-					{
-						$filename = basename($destfile);
-						$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
-						$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+					    if (! preg_match('/[\\/]temp[\\/]|[\\/]thumbs|\.meta$/', $rel_dir))     // If not a tmp dir
+					    {
+						    $filename = basename($destfile);
+						    $rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+						    $rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
 
-						include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
-						$ecmfile=new EcmFiles($this->db);
-						$result = $ecmfile->fetch(0, '', ($rel_dir?$rel_dir.'/':'').$filename);
+						    include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+						    $ecmfile=new EcmFiles($this->db);
+						    $result = $ecmfile->fetch(0, '', ($rel_dir?$rel_dir.'/':'').$filename);
 
-						// Set the public "share" key
-						$setsharekey = false;
-						if ($this->element == 'propal')
-						{
-							$useonlinesignature = $conf->global->MAIN_FEATURES_LEVEL;	// Replace this with 1 when feature to make online signature is ok
-							if ($useonlinesignature) $setsharekey=true;
-							if (! empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD)) $setsharekey=true;
-						}
-						if ($this->element == 'commande' && ! empty($conf->global->ORDER_ALLOW_EXTERNAL_DOWNLOAD)) {
-							$setsharekey=true;
-						}
-						if ($this->element == 'facture' && ! empty($conf->global->INVOICE_ALLOW_EXTERNAL_DOWNLOAD)) {
-							$setsharekey=true;
-						}
-						if ($this->element == 'bank_account' && ! empty($conf->global->BANK_ACCOUNT_ALLOW_EXTERNAL_DOWNLOAD)) {
-							$setsharekey=true;
-						}
+						     // Set the public "share" key
+						    $setsharekey = false;
+						    if ($this->element == 'propal')
+						    {
+							    $useonlinesignature = $conf->global->MAIN_FEATURES_LEVEL;	// Replace this with 1 when feature to make online signature is ok
+							    if ($useonlinesignature) $setsharekey=true;
+							    if (! empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD)) $setsharekey=true;
+						    }
+						    if ($this->element == 'commande' && ! empty($conf->global->ORDER_ALLOW_EXTERNAL_DOWNLOAD)) {
+							    $setsharekey=true;
+						    }
+						    if ($this->element == 'facture' && ! empty($conf->global->INVOICE_ALLOW_EXTERNAL_DOWNLOAD)) {
+							    $setsharekey=true;
+						    }
+						    if ($this->element == 'bank_account' && ! empty($conf->global->BANK_ACCOUNT_ALLOW_EXTERNAL_DOWNLOAD)) {
+							    $setsharekey=true;
+						    }
 
-						if ($setsharekey)
-						{
-							if (empty($ecmfile->share))	// Because object not found or share not set yet
-							{
-								require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-								$ecmfile->share = getRandomPassword(true);
-							}
-						}
+						    if ($setsharekey) {
+							    if (empty($ecmfile->share))	// Because object not found or share not set yet
+							    {
+								    require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+								    $ecmfile->share = getRandomPassword(true);
+							    }
+						    }
 
-						if ($result > 0)
-						{
-							$ecmfile->label = md5_file(dol_osencode($destfull));	// hash of file content
-							$ecmfile->fullpath_orig = '';
-							$ecmfile->gen_or_uploaded = 'generated';
-							$ecmfile->description = '';    // indexed content
-							$ecmfile->keyword = '';        // keyword content
-							$result = $ecmfile->update($user);
-							if ($result < 0)
-							{
-								setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
-							}
-						}
-						else
-						{
-							$ecmfile->entity = $conf->entity;
-							$ecmfile->filepath = $rel_dir;
-							$ecmfile->filename = $filename;
-							$ecmfile->label = md5_file(dol_osencode($destfull));	// hash of file content
-							$ecmfile->fullpath_orig = '';
-							$ecmfile->gen_or_uploaded = 'generated';
-							$ecmfile->description = '';    // indexed content
-							$ecmfile->keyword = '';        // keyword content
-							$ecmfile->src_object_type = $this->table_element;
-							$ecmfile->src_object_id   = $this->id;
+						    if ($result > 0)
+						     {
+							    $ecmfile->label = md5_file(dol_osencode($destfull));	// hash of file content
+							    $ecmfile->fullpath_orig = '';
+							    $ecmfile->gen_or_uploaded = 'generated';
+							    $ecmfile->description = '';    // indexed content
+							    $ecmfile->keyword = '';        // keyword content
+							    $result = $ecmfile->update($user);
+							    if ($result < 0) {
+								    setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+							    }
+						    }
+						    else
+						    {
+							    $ecmfile->entity = $conf->entity;
+							    $ecmfile->filepath = $rel_dir;
+							    $ecmfile->filename = $filename;
+							    $ecmfile->label = md5_file(dol_osencode($destfull));	// hash of file content
+							    $ecmfile->fullpath_orig = '';
+							    $ecmfile->gen_or_uploaded = 'generated';
+							    $ecmfile->description = '';    // indexed content
+							    $ecmfile->keyword = '';        // keyword content
+							    $ecmfile->src_object_type = $this->table_element;
+							    $ecmfile->src_object_id   = $this->id;
 
-							$result = $ecmfile->create($user);
-							if ($result < 0)
-							{
-								setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
-							}
-						}
+							    $result = $ecmfile->create($user);
+							    if ($result < 0) {
+								    setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+							    }
+						    }
 
-						/*$this->result['fullname']=$destfull;
-						$this->result['filepath']=$ecmfile->filepath;
-						$this->result['filename']=$ecmfile->filename;*/
-						//var_dump($obj->update_main_doc_field);exit;
+						    /*$this->result['fullname']=$destfull;
+						    $this->result['filepath']=$ecmfile->filepath;
+						    $this->result['filename']=$ecmfile->filename;*/
+						    //var_dump($obj->update_main_doc_field);exit;
 
-						// Update the last_main_doc field into main object (if documenent generator has property ->update_main_doc_field set)
-						$update_main_doc_field=0;
-						if (! empty($obj->update_main_doc_field)) $update_main_doc_field=1;
-						if ($update_main_doc_field && ! empty($this->table_element))
-						{
-							$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET last_main_doc = '".$this->db->escape($ecmfile->filepath.'/'.$ecmfile->filename)."'";
-							$sql.= ' WHERE rowid = '.$this->id;
+						    // Update the last_main_doc field into main object (if documenent generator has property ->update_main_doc_field set)
+						    $update_main_doc_field=0;
+						    if (! empty($obj->update_main_doc_field)) $update_main_doc_field=1;
+						    if ($update_main_doc_field && ! empty($this->table_element))
+						    {
+							    $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET last_main_doc = '".$this->db->escape($ecmfile->filepath.'/'.$ecmfile->filename)."'";
+							    $sql.= ' WHERE rowid = '.$this->id;
 
-							$resql = $this->db->query($sql);
-							if (! $resql) dol_print_error($this->db);
-							else
-							{
-							    $this->last_main_doc = $ecmfile->filepath.'/'.$ecmfile->filename;
-							}
-						}
-					}
-				}
-				else
-				{
-					dol_syslog('Method ->write_file was called on object '.get_class($obj).' and return a success but the return array ->result["fullpath"] was not set.', LOG_WARNING);
-				}
+							    $resql = $this->db->query($sql);
+							    if (! $resql) {
+									dol_print_error($this->db);
+								} else {
+							        $this->last_main_doc = $ecmfile->filepath.'/'.$ecmfile->filename;
+							    }
+						    }
+					    }
+				    }
+				    else
+				    {
+					    dol_syslog('Method ->write_file was called on object '.get_class($obj).' and return a success but the return array ->result["fullpath"] was not set.', LOG_WARNING);
+				    }
 
-				// Success in building document. We build meta file.
-				dol_meta_create($this);
+				    // Success in building document. We build meta file.
+				    dol_meta_create($this);
 
-				return 1;
-			}
-			else
-			{
-				$outputlangs->charset_output=$sav_charset_output;
-				dol_print_error($this->db, "Error generating document for ".__CLASS__.". Error: ".$obj->error, $obj->errors);
-				return -1;
-			}
-		}
-		else
-		{
-			$this->error=$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file);
-			dol_print_error('', $this->error);
-			return -1;
-		}
+				    return 1;
+			    }
+			    else
+			    {
+				    $outputlangs->charset_output=$sav_charset_output;
+				    dol_print_error($this->db, "Error generating document for ".__CLASS__.". Error: ".$obj->error, $obj->errors);
+				    return -1;
+			    }
+		    }
+		    else
+		    {
+			    $this->error=$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file);
+			    dol_print_error('', $this->error);
+			    return -1;
+		    }
 		}
 		else return $reshook;
 	}
@@ -6063,18 +6062,19 @@ abstract class CommonObject
 									$labeltoshow = dol_trunc($obj->{$InfoFieldList[1]}, 18);
 								}
 							}
-							if (empty($labeltoshow))
+							if (empty($labeltoshow)) {
 								$labeltoshow = '(not defined)';
+							}
 
-								if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
-									$data[$obj->rowid]=$labeltoshow;
-								}
-
-								if (! empty($InfoFieldList[3]) && $parentField) {
-									$parent = $parentName . ':' . $obj->{$parentField};
-								}
-
+							if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
 								$data[$obj->rowid]=$labeltoshow;
+							}
+
+							if (! empty($InfoFieldList[3]) && $parentField) {
+								$parent = $parentName . ':' . $obj->{$parentField};
+							}
+
+							$data[$obj->rowid]=$labeltoshow;
 						}
 
 						$i ++;
