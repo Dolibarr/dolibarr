@@ -41,9 +41,21 @@ class FormMail extends Form
      */
     public $db;
 
-	public $withform;				// 1=Include HTML form tag and show submit button, 0=Do not include form tag and submit button, -1=Do not include form tag but include submit button
+    /**
+     * @var int 1 = Include HTML form tag and show submit button
+     *          0 = Do not include form tag and submit button
+     *          -1 = Do not include form tag but include submit button
+     */
+	public $withform;
 
+    /**
+     * @var string name from
+     */
 	public $fromname;
+
+    /**
+     * @var string email from
+     */
 	public $frommail;
 
     /**
@@ -52,9 +64,14 @@ class FormMail extends Form
     public $fromtype;
 
     /**
-     * @var int ID
+     * @var int from ID
      */
     public $fromid;
+
+    /**
+     * @var int also from robot
+     */
+    public $fromalsorobot;
 
     /**
      * @var string thirdparty etc
@@ -66,10 +83,29 @@ class FormMail extends Form
      */
     public $toid;
 
+    /**
+     * @var string replyto name
+     */
     public $replytoname;
+
+    /**
+     * @var string replyto email
+     */
 	public $replytomail;
+
+    /**
+     * @var string to name
+     */
 	public $toname;
+
+    /**
+     * @var string to email
+     */
 	public $tomail;
+
+    /**
+     * @var string trackid
+     */
 	public $trackid;
 
 	public $withsubstit;			// Show substitution array
