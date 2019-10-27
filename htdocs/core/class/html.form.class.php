@@ -2416,10 +2416,12 @@ class Form
 
         // Units
         $outvalUnits = '';
-        if ($conf->global->PRODUCT_USE_UNITS) {
+        if (! empty($conf->global->PRODUCT_USE_UNITS)) {
             if (!empty($objp->unit_short)) {
                 $outvalUnits .= ' - ' . $objp->unit_short;
             }
+        }
+        if (! empty($conf->global->PRODUCT_SHOW_DIMENSIONS_IN_COMBO)) {
             if (!empty($objp->weight) && $objp->weight_units!==null) {
                 $unitToShow = showDimensionInBestUnit($objp->weight, $objp->weight_units, 'weight', $langs);
                 $outvalUnits .= ' - ' . $unitToShow;
@@ -2436,17 +2438,17 @@ class Form
                 $unitToShow = showDimensionInBestUnit($objp->volume, $objp->volume_units, 'volume', $langs);
                 $outvalUnits .= ' - ' . $unitToShow;
             }
-            if ($outdurationvalue && $outdurationunit) {
-                $da = array(
-                    'h' => $langs->trans('Hour'),
-                    'd' => $langs->trans('Day'),
-                    'w' => $langs->trans('Week'),
-                    'm' => $langs->trans('Month'),
-                    'y' => $langs->trans('Year')
-                );
-                if (isset($da[$outdurationunit])) {
-                    $outvalUnits .= ' - ' . $outdurationvalue . ' ' . $langs->transnoentities($da[$outdurationunit].($outdurationvalue > 1 ? 's' : ''));
-                }
+        }
+        if ($outdurationvalue && $outdurationunit) {
+            $da = array(
+                'h' => $langs->trans('Hour'),
+                'd' => $langs->trans('Day'),
+                'w' => $langs->trans('Week'),
+                'm' => $langs->trans('Month'),
+                'y' => $langs->trans('Year')
+            );
+            if (isset($da[$outdurationunit])) {
+                $outvalUnits .= ' - ' . $outdurationvalue . ' ' . $langs->transnoentities($da[$outdurationunit].($outdurationvalue > 1 ? 's' : ''));
             }
         }
 
@@ -2458,8 +2460,10 @@ class Form
 		}
 		if (! empty($conf->stock->enabled) && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)))
 		{
-			if ($objp->stock > 0) $opt.= ' class="product_line_stock_ok"';
-			elseif ($objp->stock <= 0) $opt.= ' class="product_line_stock_too_low"';
+		    if (! empty($user->rights->stock->lire)) {
+    			if ($objp->stock > 0) $opt.= ' class="product_line_stock_ok"';
+	       		elseif ($objp->stock <= 0) $opt.= ' class="product_line_stock_too_low"';
+		    }
 		}
 		$opt.= '>';
 		$opt.= $objp->ref;
@@ -2602,37 +2606,39 @@ class Form
 
 		if (! empty($conf->stock->enabled) && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)))
 		{
-			$opt.= ' - '.$langs->trans("Stock").':'.$objp->stock;
+	        if (! empty($user->rights->stock->lire)) {
+                $opt.= ' - '.$langs->trans("Stock").':'.$objp->stock;
 
-			if ($objp->stock > 0) {
-				$outval.= ' - <span class="product_line_stock_ok">';
-			}elseif ($objp->stock <= 0) {
-				$outval.= ' - <span class="product_line_stock_too_low">';
-			}
-			$outval.= $langs->transnoentities("Stock").':'.$objp->stock;
-			$outval.= '</span>';
-			if (! empty($conf->global->STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO))  // Warning, this option may slow down combo list generation
-			{
-			    $langs->load("stocks");
+    			if ($objp->stock > 0) {
+    				$outval.= ' - <span class="product_line_stock_ok">';
+    			}elseif ($objp->stock <= 0) {
+    				$outval.= ' - <span class="product_line_stock_too_low">';
+    			}
+    			$outval.= $langs->transnoentities("Stock").':'.$objp->stock;
+    			$outval.= '</span>';
+    			if (! empty($conf->global->STOCK_SHOW_VIRTUAL_STOCK_IN_PRODUCTS_COMBO))  // Warning, this option may slow down combo list generation
+    			{
+    			    $langs->load("stocks");
 
-			    $tmpproduct=new Product($this->db);
-			    $tmpproduct->fetch($objp->rowid);
-			    $tmpproduct->load_virtual_stock();
-			    $virtualstock = $tmpproduct->stock_theorique;
+    			    $tmpproduct=new Product($this->db);
+    			    $tmpproduct->fetch($objp->rowid);
+    			    $tmpproduct->load_virtual_stock();
+    			    $virtualstock = $tmpproduct->stock_theorique;
 
-			    $opt.= ' - '.$langs->trans("VirtualStock").':'.$virtualstock;
+    			    $opt.= ' - '.$langs->trans("VirtualStock").':'.$virtualstock;
 
-			    $outval.=' - '.$langs->transnoentities("VirtualStock").':';
-			    if ($virtualstock > 0) {
-			        $outval.= ' - <span class="product_line_stock_ok">';
-			    }elseif ($virtualstock <= 0) {
-			        $outval.= ' - <span class="product_line_stock_too_low">';
-			    }
-			    $outval.=$virtualstock;
-			    $outval.='</span>';
+    			    $outval.=' - '.$langs->transnoentities("VirtualStock").':';
+    			    if ($virtualstock > 0) {
+    			        $outval.= ' - <span class="product_line_stock_ok">';
+    			    }elseif ($virtualstock <= 0) {
+    			        $outval.= ' - <span class="product_line_stock_too_low">';
+    			    }
+    			    $outval.=$virtualstock;
+    			    $outval.='</span>';
 
-			    unset($tmpproduct);
-			}
+    			    unset($tmpproduct);
+    			}
+	        }
 		}
 
 		$opt.= "</option>\n";

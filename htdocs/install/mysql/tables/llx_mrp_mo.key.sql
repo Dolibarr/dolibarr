@@ -15,10 +15,8 @@
 
 
 -- BEGIN MODULEBUILDER INDEXES
-ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_rowid (rowid);
 ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_ref (ref);
 ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_entity (entity);
-ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_qty (qty);
 ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_fk_soc (fk_soc);
 ALTER TABLE llx_mrp_mo ADD CONSTRAINT llx_mrp_mo_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES user(rowid);
 ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_status (status);

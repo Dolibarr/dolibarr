@@ -56,7 +56,7 @@ if ($action == 'add' && ! empty($permissiontoadd))
 			$value = dol_mktime(12, 0, 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
 		} elseif ($object->fields[$key]['type']=='datetime') {
 			$value = dol_mktime(GETPOST($key.'hour'), GETPOST($key.'min'), 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
-		} elseif ($object->fields[$key]['type']=='price') {
+		} elseif (in_array($object->fields[$key]['type'], array('price', 'real'))) {
 			$value = price2num(GETPOST($key));
 		} else {
 			$value = GETPOST($key, 'alpha');
@@ -108,7 +108,7 @@ if ($action == 'update' && ! empty($permissiontoadd))
 	{
 		if (! GETPOSTISSET($key)) continue;		// The field was not submited to be edited
 		if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;	// Ignore special fields
-
+		var_dump($object->fields[$key]['type']);
 		// Set value to update
 		if (in_array($object->fields[$key]['type'], array('text', 'html'))) {
 			$value = GETPOST($key, 'none');
@@ -116,7 +116,7 @@ if ($action == 'update' && ! empty($permissiontoadd))
 			$value = dol_mktime(12, 0, 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
 		} elseif ($object->fields[$key]['type']=='datetime') {
 			$value = dol_mktime(GETPOST($key.'hour'), GETPOST($key.'min'), 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
-		} elseif ($object->fields[$key]['type']=='price') {
+		} elseif (in_array($object->fields[$key]['type'], array('price', 'real'))) {
 			$value = price2num(GETPOST($key));
 		} else {
 			$value = GETPOST($key, 'alpha');
