@@ -400,7 +400,7 @@ ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_fk_bom (fk_bom);
 ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_fk_project (fk_project);
 
 
-create table llx_mrp_myobject_extrafields
+create table llx_mrp_mo_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
   tms                       timestamp,
@@ -408,7 +408,7 @@ create table llx_mrp_myobject_extrafields
   import_key                varchar(14)                                 -- import key
 ) ENGINE=innodb;
 
-ALTER TABLE llx_mrp_myobject_extrafields ADD INDEX idx_fk_object(fk_object);
+ALTER TABLE llx_mrp_mo_extrafields ADD INDEX idx_fk_object(fk_object);
 
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_VALIDATE','BOM validated','Executed when a BOM is validated','bom',400);
