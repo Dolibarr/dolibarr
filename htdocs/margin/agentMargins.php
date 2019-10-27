@@ -68,9 +68,9 @@ if (!empty($enddatemonth))
 
 // Security check
 if ($user->rights->margins->read->all) {
-  $agentid = GETPOST('agentid', 'int');
+    $agentid = GETPOST('agentid', 'int');
 } else {
-  $agentid = $user->id;
+    $agentid = $user->id;
 }
 $result=restrictedArea($user, 'margins');
 

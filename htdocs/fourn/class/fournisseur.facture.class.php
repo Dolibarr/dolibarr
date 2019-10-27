@@ -2361,10 +2361,10 @@ class FactureFournisseur extends CommonInvoice
         	return $numref;
         }
         else
-       {
-       		$this->error=$obj->error;
-        	//dol_print_error($db,get_class($this)."::getNextNumRef ".$obj->error);
-        	return false;
+        {
+            $this->error=$obj->error;
+            //dol_print_error($db,get_class($this)."::getNextNumRef ".$obj->error);
+            return false;
         }
     }
 

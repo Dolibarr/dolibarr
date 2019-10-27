@@ -213,7 +213,7 @@ if ($object->id)
 
     print '</tbody>';
     print '</table>'."\n";
-/*
+    /*
     print '</div>';
     print '<div class="fichehalfright">';
     print '<div class="ficheaddleft">';

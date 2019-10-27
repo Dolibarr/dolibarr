@@ -103,13 +103,13 @@ dol_fiche_head($head, 'productMargins', $titre, 0, $picto);
 print '<table class="border" width="100%">';
 
 if ($id > 0) {
-  print '<tr><td class="titlefield">'.$langs->trans('ChooseProduct/Service').'</td>';
-  print '<td class="maxwidthonsmartpone" colspan="4">';
-  print $form->select_produits($id, 'id', '', 20, 0, 1, 2, '', 1, array(), 0, 'All');
-  print '</td></tr>';
+    print '<tr><td class="titlefield">'.$langs->trans('ChooseProduct/Service').'</td>';
+    print '<td class="maxwidthonsmartpone" colspan="4">';
+    print $form->select_produits($id, 'id', '', 20, 0, 1, 2, '', 1, array(), 0, 'All');
+    print '</td></tr>';
 
-  if (! $sortorder) $sortorder="DESC";
-  if (! $sortfield) $sortfield="f.datef";
+    if (! $sortorder) $sortorder="DESC";
+    if (! $sortfield) $sortfield="f.datef";
 }
 else {
 	print '<tr><td class="titlefield">'.$langs->trans('ChooseProduct/Service').'</td>';

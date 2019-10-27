@@ -265,12 +265,12 @@ class Establishment extends CommonObject
 		}
 	}
 
-   /**
-	*	Delete record
-	*
-	*	@param	int		$id		Id of record to delete
-	*	@return	int				<0 if KO, >0 if OK
-	*/
+    /**
+	 *	Delete record
+	 *
+	 *	@param	int		$id		Id of record to delete
+	 *	@return	int				<0 if KO, >0 if OK
+	 */
 	public function delete($id)
 	{
 		$this->db->begin();
