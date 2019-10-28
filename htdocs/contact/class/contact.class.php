@@ -1264,7 +1264,7 @@ class Contact extends CommonObject
         // phpcs:enable
 		global $langs;
 
-		if (empty($this->status) || empty($this->statusshort))
+		if (empty($this->labelstatus) || empty($this->labelstatusshort))
 		{
 			$this->labelstatus[0] = 'ActivityCeased';
 			$this->labelstatusshort[0] = 'ActivityCeased';
