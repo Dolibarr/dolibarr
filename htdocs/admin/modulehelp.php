@@ -233,7 +233,7 @@ $familyposition=$tab[0]; $familykey=$tab[1]; $module_position=$tab[2]; $numero=$
 
 
 
-$head = modulehelp_prepare_head($objMod); 
+$head = modulehelp_prepare_head($objMod);
 
 // Check filters
 $modulename=$objMod->getName();
