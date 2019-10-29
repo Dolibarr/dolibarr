@@ -206,12 +206,7 @@ class modMrp extends DolibarrModules
         // Boxes/Widgets
         // Add here list of php file(s) stored in mrp/core/boxes that contains a class to show a widget.
         $this->boxes = array(
-            //  0 => array(
-            //      'file' => 'mrpwidget1.php@mrp',
-            //      'note' => 'Widget provided by Mrp',
-            //      'enabledbydefaulton' => 'Home',
-            //  ),
-            //  ...
+            0 => array('file' => 'box_mos.php', 'note' => '', 'enabledbydefaulton' => 'Home')
         );
 
         // Cronjobs (List of cron jobs entries to add when module is enabled)
