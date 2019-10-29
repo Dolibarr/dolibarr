@@ -129,7 +129,7 @@ foreach ($modulesdir as $dir)
 								if (preg_match('/deprecated/', $objMod->version) && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL >= 0))) $modulequalified=0;
 
 		    					// We discard modules according to property disabled
-		    					if (! empty($objMod->hidden)) $modulequalified=0;
+		    					//if (! empty($objMod->hidden)) $modulequalified=0;
 
 		    					if ($modulequalified > 0)
 		    					{
