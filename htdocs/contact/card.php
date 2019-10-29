@@ -620,7 +620,7 @@ else
 
             // Civility
             print '<tr><td><label for="civility_id">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
-            print $formcompany->select_civility(GETPOST("civility", 'alpha')?GETPOST("civility", 'alpha'):$object->civility_code);
+            print $formcompany->select_civility(GETPOST("civility_id", 'alpha')?GETPOST("civility_id", 'alpha'):$object->civility_code);
             print '</td></tr>';
 
             print '<tr><td><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';
