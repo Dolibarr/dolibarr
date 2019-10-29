@@ -1132,11 +1132,11 @@ else
 		            while ($i < $num) {
 		                $obj = $db->fetch_object($result);
 
-		                $amount += $obj->amount;
-		                $total_ht += $obj->amount;
-		                $total_ttc += $obj->amount;
-		                $subtotal_ht += $obj->amount;
-		                $subtotal_ttc += $obj->amount;
+		                $amount += -$obj->amount;
+		                $total_ht += -$obj->amount;
+		                $total_ttc += -$obj->amount;
+		                $subtotal_ht += -$obj->amount;
+		                $subtotal_ttc += -$obj->amount;
 
 		                $i++;
 		            }

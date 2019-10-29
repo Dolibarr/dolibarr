@@ -480,10 +480,10 @@ if (! empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
 					$obj = $db->fetch_object($result);
 
 					if (! isset($encaiss[$obj->dm])) $encaiss[$obj->dm]=0;
-					$encaiss[$obj->dm] += $obj->amount;
+					$encaiss[$obj->dm] += -$obj->amount;
 
 					if (! isset($encaiss_ttc[$obj->dm])) $encaiss_ttc[$obj->dm]=0;
-					$encaiss_ttc[$obj->dm] += $obj->amount;
+					$encaiss_ttc[$obj->dm] +=-$obj->amount;
 
 					$i++;
 				}
