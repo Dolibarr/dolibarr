@@ -113,6 +113,7 @@ if ($action == 'add_payment')
                 if ($paymentid < 0)
                 {
                     $errmsg=$payment->error;
+                    setEventMessages($errmsg, null, 'errors');
                     $error++;
                 }
     		}
@@ -123,6 +124,7 @@ if ($action == 'add_payment')
                 if (! $result > 0)
                 {
                     $errmsg=$payment->error;
+                    setEventMessages($errmsg, null, 'errors');
                     $error++;
                 }
             }
