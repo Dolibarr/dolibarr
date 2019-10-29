@@ -672,7 +672,7 @@ function security_prepare_head()
 
 /**
  * Prepare array with list of tabs
- * @param object $object descriptor class 
+ * @param object $object descriptor class
  * @return  array				Array of tabs to show
  */
 function modulehelp_prepare_head($object)
@@ -680,9 +680,9 @@ function modulehelp_prepare_head($object)
     global $langs, $conf, $user;
     $h = 0;
     $head = array();
-    
-    // FIX for compatibity habitual tabs 
-    $object->id = $object->numero; 
+
+    // FIX for compatibity habitual tabs
+    $object->id = $object->numero;
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$object->id.'&mode=desc';
 	$head[$h][1] = $langs->trans("Description");
@@ -702,9 +702,9 @@ function modulehelp_prepare_head($object)
 		$h++;
 	}
 
-    complete_head_from_modules($conf,$langs,null,$head,$h,'modulehelp_admin');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'modulehelp_admin');
 
-    complete_head_from_modules($conf,$langs,null,$head,$h,'modulehelp_admin','remove');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'modulehelp_admin', 'remove');
 
 
     return $head;
