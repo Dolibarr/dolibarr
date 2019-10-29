@@ -91,6 +91,7 @@ if ($action == 'add_payment')
         {
             $error++;
             $errmsg='ErrorNoPaymentDefined';
+            setEventMessages($errmsg, null, 'errors');
         }
 
         if (! $error)
