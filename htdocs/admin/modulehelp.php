@@ -214,7 +214,7 @@ asort($orders);
 //var_dump($modules);
 
 
-unset($objMod); 
+unset($objMod);
 $i=0;
 foreach($orders as $tmpkey => $tmpvalue)
 {
@@ -224,7 +224,7 @@ foreach($orders as $tmpkey => $tmpvalue)
         $key = $i;
         $modName = $filename[$tmpkey];
         $dirofmodule = $dirmod[$tmpkey];
-        $objMod = $tmpMod; 
+        $objMod = $tmpMod;
         break;
     }
     $i++;
