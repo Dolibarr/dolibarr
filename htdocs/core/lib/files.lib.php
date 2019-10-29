@@ -1843,10 +1843,15 @@ function dol_convert_file($fileinput, $ext='png', $fileoutput='')
 				if (empty($fileoutput)) $fileoutput=$fileinput.".".$ext;
 
 				$count = $image->getNumberImages();
-
 				if (! dol_is_file($fileoutput) || is_writeable($fileoutput))
 				{
-					$ret = $image->writeImages($fileoutput, true);
+				    try {
+					   $ret = $image->writeImages($fileoutput, true);
+				    }
+				    catch(Exception $e)
+				    {
+				        dol_syslog($e->getMessage(), LOG_WARNING);
+				    }
 				}
 				else
 				{
