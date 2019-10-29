@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo	    <jlb@j1b.org>
- * Copyright (C) 2004-2017	Laurent Destailleur	    <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019	Laurent Destailleur	    <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		    <regis.houssin@inodbox.com>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
@@ -130,6 +130,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 /*
  * Last modified BOM
  */
+
 $max=5;
 
 $sql = "SELECT a.rowid, a.status, a.ref, a.tms as datem, a.status";
@@ -179,12 +180,63 @@ else
 	dol_print_error($db);
 }
 
+/*
+ * Last modified MOs
+ */
 
+$max=5;
+
+$sql = "SELECT a.rowid, a.status, a.ref, a.tms as datem, a.status";
+$sql.= " FROM ".MAIN_DB_PREFIX."mrp_mo as a";
+$sql.= " WHERE a.entity IN (".getEntity('mo').")";
+$sql.= $db->order("a.tms", "DESC");
+$sql.= $db->plimit($max, 0);
+
+$resql=$db->query($sql);
+if ($resql)
+{
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<th colspan="4">'.$langs->trans("LatestMOModified", $max).'</th></tr>';
+
+    $num = $db->num_rows($resql);
+    if ($num)
+    {
+        $i = 0;
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($resql);
+
+            $staticmo->id=$obj->rowid;
+            $staticmo->ref=$obj->ref;
+            $staticmo->date_modification=$obj->datem;
+            $staticmo->status=$obj->status;
+
+            print '<tr class="oddeven">';
+            print '<td>'.$staticmo->getNomUrl(1, 32).'</td>';
+            print '<td>'.dol_print_date($db->jdate($obj->datem), 'dayhour').'</td>';
+            print '<td class="right">'.$staticmo->getLibStatut(5).'</td>';
+            print '</tr>';
+            $i++;
+        }
+    } else {
+        print '<tr class="oddeven">';
+        print '<td><span class="opacitymedium">' . $langs->trans("None") . '</span></td>';
+        print '</tr>';
+    }
+    print "</table></div>";
+    print "<br>";
+}
+else
+{
+    dol_print_error($db);
+}
 
 print '</div></div></div>';
 
 $parameters = array('type' => $type, 'user' => $user);
-$reshook = $hookmanager->executeHooks('dashboardMRP', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('dashboardMRP', $parameters, null); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

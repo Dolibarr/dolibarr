@@ -463,6 +463,19 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
     		}
 
+    		// Validate
+    		if ($user->rights->mrp->write && $object->status == MO::STATUS_DRAFT)
+    		{
+    		    if (is_array($object->lines) && count($object->lines) > 0)
+    		    {
+    		        print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=validate">' . $langs->trans("Validate") . '</a>';
+    		    }
+    		    else
+    		    {
+    		        print '<a class="butActionRefused" href="" title="'.$langs->trans("AddAtLeastOneLineFirst").'">' . $langs->trans("Validate") . '</a>';
+    		    }
+    		}
+
     		// Clone
     		if (! empty($user->rights->mrp->write))
     		{

@@ -5,6 +5,7 @@ MRPArea=MRP Area
 MrpSetupPage=Setup of module MO
 MenuBOM=Bills of material
 LatestBOMModified=Latest %s Bills of materials modified
+LatestMOModified=Latest %s Manufacturing Orders modified 
 Bom=Bills of Material
 BillOfMaterials=Bill of Material
 BOMsSetup=Setup of module BOM
