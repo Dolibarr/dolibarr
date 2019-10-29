@@ -272,7 +272,7 @@ if ($resql)
 
     $userstatic = new User($db);
 
-	while ($i < min($num, $sproduct?$num:$conf->liste_limit))
+	while ($i < min($num,$sproduct?$num:$conf->liste_limit))
     {
         $obj = $db->fetch_object($resql);
 
