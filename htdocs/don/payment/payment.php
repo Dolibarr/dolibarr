@@ -235,8 +235,9 @@ if (GETPOST('action', 'aZ09') == 'create')
     dol_fiche_end();
 
 	/*
- 	 * Autres charges impayees
+ 	 * List of payments on donation
 	 */
+	
 	$num = 1;
 	$i = 0;
 
