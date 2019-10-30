@@ -35,7 +35,7 @@ class mailing_xinputuser extends MailingTargets
 	public $desc='EMails input by user';        // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
 	public $require_module=array();            // Module mailing actif si modules require_module actifs
 	public $require_admin=0;                    // Module mailing actif pour user admin ou non
-	
+
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
