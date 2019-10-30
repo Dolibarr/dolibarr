@@ -519,14 +519,14 @@ if (! empty($actioncode))
         elseif ($actioncode == 'AC_ALL_AUTO') $sql.= " AND ca.type = 'systemauto'";
         else
         {
-		if (is_array($actioncode))
-		{
+            if (is_array($actioncode))
+            {
 	        	$sql.=" AND ca.code IN ('".implode("','", $actioncode)."')";
-		}
-		else
-		{
+            }
+            else
+            {
 	        	$sql.=" AND ca.code IN ('".implode("','", explode(',', $actioncode))."')";
-		}
+            }
         }
     }
 }
@@ -1729,11 +1729,24 @@ function dol_color_minus($color, $minus, $minusunit = 16)
  */
 function sort_events_by_date($a, $b)
 {
-	if($a->datep != $b->datep)
-	{
-		return $a->datep - $b->datep;
-	}
+    if($a->datep != $b->datep)
+    {
+        return $a->datep - $b->datep;
+    }
 
-	// If both events have the same start time, longest first
-	return $b->datef - $a->datef;
+    // If both events have the same start time, longest first
+    
+    if(! is_numeric($b->datef))
+    {
+        // when event B have no end timestamp, event B should sort be before event A (All day events on top)
+        return 1;
+    }
+
+    if(! is_numeric($a->datef))
+    {
+        // when event A have no end timestamp , event A should sort be before event B (All day events on top)
+        return -1;
+    }
+
+    return $b->datef - $a->datef;
 }

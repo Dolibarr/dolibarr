@@ -228,7 +228,7 @@ if ($action == 'refreshmanual')
                 }
             }
             else
-           {
+            {
                 dol_syslog("Parent is root");
                 $fk_parent=0;   // Parent is root
             }

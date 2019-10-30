@@ -1886,12 +1886,13 @@ class EmailCollector extends CommonObject
         // BODY
         $s = imap_fetchstructure($mbox, $mid);
 
-        if (!$s->parts)  // simple
+        if (!$s->parts) {
+            // simple
             $this->getpart($mbox, $mid, $s, 0);  // pass 0 as part-number
-        else {  // multipart: cycle through each part
-            foreach ($s->parts as $partno0=>$p)
-            {
-               $this->getpart($mbox, $mid, $p, $partno0+1);
+        } else {
+            // multipart: cycle through each part
+            foreach ($s->parts as $partno0 => $p) {
+                $this->getpart($mbox, $mid, $p, $partno0+1);
             }
         }
     }
@@ -1949,7 +1950,7 @@ class EmailCollector extends CommonObject
         {
             foreach ($p->dparameters as $x)
             {
-               $params[strtolower($x->attribute)] = $x->value;
+                $params[strtolower($x->attribute)] = $x->value;
             }
         }
 

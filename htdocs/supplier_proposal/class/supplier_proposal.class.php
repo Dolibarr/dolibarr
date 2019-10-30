@@ -1739,16 +1739,15 @@ class SupplierProposal extends CommonObject
 
             if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
             {
-                 // Define output language
-                  $outputlangs = $langs;
-                   if (! empty($conf->global->MAIN_MULTILANGS))
-                   {
-                       $outputlangs = new Translate("", $conf);
-                       $newlang=(GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $this->thirdparty->default_lang);
-                       $outputlangs->setDefaultLang($newlang);
-                   }
-                   //$ret=$object->fetch($id);    // Reload to get new records
-                   $this->generateDocument($modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+                // Define output language
+                $outputlangs = $langs;
+                if (! empty($conf->global->MAIN_MULTILANGS)) {
+                    $outputlangs = new Translate("", $conf);
+                    $newlang=(GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $this->thirdparty->default_lang);
+                    $outputlangs->setDefaultLang($newlang);
+                }
+                //$ret=$object->fetch($id);    // Reload to get new records
+                $this->generateDocument($modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
             }
 
             // Call trigger

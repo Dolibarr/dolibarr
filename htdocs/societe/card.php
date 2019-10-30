@@ -609,11 +609,11 @@ if (empty($reshook))
 						{
 						    case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
 						    case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
-						      $errors[] = "ErrorFileSizeTooLarge";
-						      break;
+						        $errors[] = "ErrorFileSizeTooLarge";
+						        break;
 	      					case 3: //uploaded file was only partially uploaded
-						      $errors[] = "ErrorFilePartiallyUploaded";
-						      break;
+						        $errors[] = "ErrorFilePartiallyUploaded";
+						        break;
 						}
 	                }
                     // Gestion du logo de la société
@@ -774,11 +774,11 @@ if (empty($reshook))
 					{
 					    case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
 					    case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
-					      $errors[] = "ErrorFileSizeTooLarge";
-					      break;
+					        $errors[] = "ErrorFileSizeTooLarge";
+					        break;
       					case 3: //uploaded file was only partially uploaded
-					      $errors[] = "ErrorFilePartiallyUploaded";
-					      break;
+					        $errors[] = "ErrorFilePartiallyUploaded";
+					        break;
 					}
                 }
                 // Gestion du logo de la société
@@ -1896,7 +1896,7 @@ else
 	                    print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.$object->code_fournisseur.'" maxlength="15">';
 	                }
 	                else
-	              {
+	                {
 	                    print $object->code_fournisseur;
 	                    print '<input type="hidden" name="supplier_code" value="'.$object->code_fournisseur.'">';
 	                }

@@ -56,7 +56,7 @@ if (empty($conf) || ! is_object($conf))
 	<td colspan="3">
 	<?php if (($this->control->tpl['prefix_customercode'] || $this->control->tpl['prefix_suppliercode']) && $this->control->tpl['prefix_comm']) { ?>
 	<input type="hidden" name="prefix_comm" value="<?php echo $this->control->tpl['prefix_comm']; ?>">
-	<?php echo $this->control->tpl['prefix_comm']; ?>
+		<?php echo $this->control->tpl['prefix_comm']; ?>
 	<?php } else { ?>
 	<input type="text" size="5" maxlength="5" name="prefix_comm" value="<?php echo $this->control->tpl['prefix_comm']; ?>">
 	<?php } ?>
@@ -113,7 +113,7 @@ if ($this->control->tpl['fournisseur']) {
 	<td><?php echo $langs->trans('SupplierCategory'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_suppliercategory']; ?></td>
 </tr>
-<?php
+		<?php
     }
 }
 ?>

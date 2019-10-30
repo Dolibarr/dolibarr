@@ -1371,7 +1371,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 	{
 		for ($i = 0 ; $i < $numlines ; $i++)
 		{
-		   if ($lines[$i]->fk_task_parent) $lineswithoutlevel0[]=$lines[$i];
+		    if ($lines[$i]->fk_task_parent) $lineswithoutlevel0[]=$lines[$i];
 		}
 	}
 
@@ -1848,7 +1848,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	$resql = $db->query($sql2);
 	if ($resql)
 	{
-	   $total_task = 0;
+	    $total_task = 0;
 		$total_opp_amount = 0;
 		$ponderated_opp_amount = 0;
 

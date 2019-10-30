@@ -1878,42 +1878,37 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 
 		//if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) || ! empty($paymentintent))
 		//{
-    		print '
-            <table id="dolpaymenttable" summary="Payment form" class="center">
-    	    <tbody><tr><td class="textpublicpayment">';
+    	print '
+        <table id="dolpaymenttable" summary="Payment form" class="center">
+        <tbody><tr><td class="textpublicpayment">';
 
-    		if (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
-    		{
-                print '<div id="payment-request-button"><!-- A Stripe Element will be inserted here. --></div>';
-    		}
+    	if (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
+    	{
+            print '<div id="payment-request-button"><!-- A Stripe Element will be inserted here. --></div>';
+    	}
 
-            print '
-            <div class="form-row left">
+        print '<div class="form-row left">';
+    	print '<label for="card-element">'.$langs->trans("CreditOrDebitCard").'</label>';
 
-    	    <label for="card-element">'.$langs->trans("CreditOrDebitCard").'</label>';
+        if (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
+        {
+            print '<br><input id="cardholder-name" class="marginbottomonly" name="cardholder-name" value="" type="text" placeholder="'.$langs->trans("CardOwner").'" autocomplete="off" autofocus required>';
+        }
 
-            if (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
-            {
-                print '<br><input id="cardholder-name" class="marginbottomonly" name="cardholder-name" value="" type="text" placeholder="'.$langs->trans("CardOwner").'" autocomplete="off" autofocus required>';
-            }
+        print '<div id="card-element">
+        <!-- a Stripe Element will be inserted here. -->
+        </div>';
 
-    	    print '<div id="card-element">
-    	    <!-- a Stripe Element will be inserted here. -->
-    	    </div>
+        print '<!-- Used to display form errors -->
+        <div id="card-errors" role="alert"></div>
+        </div>';
 
-    	    <!-- Used to display form errors -->
-    	    <div id="card-errors" role="alert"></div>
+        print '<br>';
+        print '<button class="button buttonpayment" style="text-align: center; padding-left: 0; padding-right: 0;" id="buttontopay" data-secret="'.(is_object($paymentintent) ? $paymentintent->client_secret : '').'">'.$langs->trans("ValidatePayment").'</button>';
+        print '<img id="hourglasstopay" class="hidden" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/working.gif'.'">';
 
-    	    </div>
-
-            <br>';
-
-       	    print '<button class="button buttonpayment" style="text-align: center; padding-left: 0; padding-right: 0;" id="buttontopay" data-secret="'.(is_object($paymentintent) ? $paymentintent->client_secret : '').'">'.$langs->trans("ValidatePayment").'</button>';
-            print '<img id="hourglasstopay" class="hidden" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/working.gif'.'">';
-
-    	    print '
-    	    </td></tr></tbody>
-            </table>';
+        print '</td></tr></tbody>';
+        print '</table>';
 		//}
 
 		if (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
@@ -2006,7 +2001,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     			{
     				print $e->getMessage();
     			}
-    		?>
+    			?>
    			// Code for payment with option STRIPE_USE_NEW_CHECKOUT set
 
     	    // Create a Stripe client.
@@ -2049,11 +2044,11 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 			});
 
 
-    		<?php
+    			<?php
     		}
     		elseif (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
     		{
-            ?>
+            	?>
     		// Code for payment with option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION set
 
     	    // Create a Stripe client.
@@ -2153,11 +2148,11 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
                 }
             });
 
-    		<?php
+    			<?php
     		}
     		else		// Old method (not SCA ready)
     		{
-    		?>
+    			?>
     		// Old code for payment with option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION off and STRIPE_USE_NEW_CHECKOUT off
 
     	    // Create a Stripe client.
@@ -2209,7 +2204,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     			<?php
     			if (empty($conf->global->STRIPE_USE_3DSECURE))	// Ask credit card directly, no 3DS test
     			{
-    			?>
+    				?>
     				/* Use token */
     				stripe.createToken(card).then(function(result) {
     			        if (result.error) {
@@ -2221,11 +2216,11 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     			          stripeTokenHandler(result.token);
     			        }
     				});
-    			<?php
+    				<?php
     			}
     			else											// Ask credit card with 3DS test
     			{
-    			?>
+    				?>
     				/* Use 3DS source */
     				stripe.createSource(card).then(function(result) {
     				    if (result.error) {
@@ -2237,7 +2232,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     				      stripeSourceHandler(result.source);
     				    }
     				});
-    			<?php
+    				<?php
     			}
     			?>
     	    });
@@ -2291,7 +2286,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     		  form.submit();
     		}
 
-    	    <?php
+    	    	<?php
     		}
 
     		print '</script>';

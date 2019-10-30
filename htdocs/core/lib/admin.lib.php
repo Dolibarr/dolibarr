@@ -670,7 +670,45 @@ function security_prepare_head()
     return $head;
 }
 
+/**
+ * Prepare array with list of tabs
+ * @param object $object descriptor class
+ * @return  array				Array of tabs to show
+ */
+function modulehelp_prepare_head($object)
+{
+    global $langs, $conf, $user;
+    $h = 0;
+    $head = array();
 
+    // FIX for compatibity habitual tabs
+    $object->id = $object->numero;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$object->id.'&mode=desc';
+	$head[$h][1] = $langs->trans("Description");
+	$head[$h][2] = 'desc';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$object->id.'&mode=feature';
+	$head[$h][1] = $langs->trans("TechnicalServicesProvided");
+	$head[$h][2] = 'feature';
+	$h++;
+
+	if ($object->isCoreOrExternalModule() == 'external')
+	{
+		$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$object->id.'&mode=changelog';
+		$head[$h][1] = $langs->trans("ChangeLog");
+		$head[$h][2] = 'changelog';
+		$h++;
+	}
+
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'modulehelp_admin');
+
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'modulehelp_admin', 'remove');
+
+
+    return $head;
+}
 /**
  * Prepare array with list of tabs
  *

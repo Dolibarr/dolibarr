@@ -52,7 +52,7 @@ abstract class ModelePDFBoms extends CommonDocGenerator
         // phpcs:enable
 		global $conf;
 
-		$type = 'order';
+		$type = 'bom';
 		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';

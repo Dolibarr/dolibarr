@@ -54,12 +54,12 @@ class Canvas
     public $control;           	// Initialized by getCanvas with controller instance
 
 
-   /**
-	*   Constructor
-	*
-	*   @param     DoliDB	$db          	Database handler
-	*   @param     string   $actiontype		Action type ('create', 'view', 'edit', 'list')
-	*/
+    /**
+	 *   Constructor
+	 *
+	 *   @param     DoliDB	$db          	Database handler
+	 *   @param     string   $actiontype		Action type ('create', 'view', 'edit', 'list')
+	 */
 	public function __construct($db, $actiontype = 'view')
 	{
 		$this->db = $db;

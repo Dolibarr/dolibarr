@@ -45,11 +45,11 @@ class FormAccounting extends Form
 	 */
 	public $error='';
 
-   /**
-	* Constructor
-	*
-	* @param		DoliDB		$db      Database handler
-	*/
+    /**
+	 * Constructor
+	 *
+	 * @param		DoliDB		$db      Database handler
+	 */
 	public function __construct($db)
 	{
 	    $this->db = $db;

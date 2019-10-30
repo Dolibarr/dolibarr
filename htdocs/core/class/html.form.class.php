@@ -227,14 +227,14 @@ class Form
 				}
 				elseif (preg_match('/^select;/', $typeofdata))
 				{
-					 $arraydata=explode(',', preg_replace('/^select;/', '', $typeofdata));
-					 foreach($arraydata as $val)
-					 {
-						 $tmp=explode(':', $val);
-						 $tmpkey=str_replace('|', ':', $tmp[0]);
-						 $arraylist[$tmpkey]=$tmp[1];
-					 }
-					 $ret.=$this->selectarray($htmlname, $arraylist, $value);
+					$arraydata=explode(',', preg_replace('/^select;/', '', $typeofdata));
+					foreach($arraydata as $val)
+					{
+						$tmp=explode(':', $val);
+						$tmpkey=str_replace('|', ':', $tmp[0]);
+						$arraylist[$tmpkey]=$tmp[1];
+					}
+					$ret.=$this->selectarray($htmlname, $arraylist, $value);
 				}
 				elseif (preg_match('/^ckeditor/', $typeofdata))
 				{
@@ -5458,9 +5458,9 @@ class Form
 							dateFormat: '".$langs->trans("FormatDateShortJQueryInput")."',
 							autoclose: true,
 							todayHighlight: true,";
-							if (! empty($conf->dol_use_jmobile))
-							{
-								$retstring.="
+						if (! empty($conf->dol_use_jmobile))
+						{
+							$retstring.="
 								beforeShow: function (input, datePicker) {
 									input.disabled = true;
 								},
@@ -5468,16 +5468,16 @@ class Form
 									this.disabled = false;
 								},
 								";
-							}
-							// Note: We don't need monthNames, monthNamesShort, dayNames, dayNamesShort, dayNamesMin, they are set globally on datepicker component in lib_head.js.php
-							if (empty($conf->global->MAIN_POPUP_CALENDAR_ON_FOCUS))
-							{
+						}
+						// Note: We don't need monthNames, monthNamesShort, dayNames, dayNamesShort, dayNamesMin, they are set globally on datepicker component in lib_head.js.php
+						if (empty($conf->global->MAIN_POPUP_CALENDAR_ON_FOCUS))
+						{
 							$retstring.="
 								showOn: 'button',
 								buttonImage: '".DOL_URL_ROOT."/theme/".$conf->theme."/img/object_calendarday.png',
 								buttonImageOnly: true";
-							}
-							$retstring.="
+						}
+						$retstring.="
 							}) });";
 						$retstring.="</script>";
 					}
@@ -5835,10 +5835,11 @@ class Form
 	 * @param	string			$moreparams			More params provided to ajax call
 	 * @param	int				$forcecombo			Force to load all values and output a standard combobox (with no beautification)
 	 * @param	int				$disabled			1=Html component is disabled
+	 * @param	string	        $selected_input_value	Value of preselected input text (for use with ajax)
 	 * @return	string								Return HTML string
 	 * @see selectForFormsList() select_thirdparty
 	 */
-    public function selectForForms($objectdesc, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0)
+	public function selectForForms($objectdesc, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0, $selected_input_value = '')
 	{
 		global $conf, $user;
 
@@ -5870,20 +5871,28 @@ class Form
 		$confkeyforautocompletemode=strtoupper($prefixforautocompletemode).'_USE_SEARCH_TO_SELECT';	// For example COMPANY_USE_SEARCH_TO_SELECT
 
 		dol_syslog(get_class($this)."::selectForForms object->filter=".$objecttmp->filter, LOG_DEBUG);
-
 		$out='';
 		if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->$confkeyforautocompletemode) && ! $forcecombo)
 		{
-			$objectdesc=$classname.':'.$classpath.':'.$addcreatebuttonornot.':'.$filter;
+		    // No immediate load of all database
+		    $placeholder='';
+		    if ($preselectedvalue && empty($selected_input_value))
+		    {
+		        $objecttmp->fetch($preselectedvalue);
+		        $selected_input_value=($prefixforautocompletemode == 'company' ? $objecttmp->name : $objecttmp->ref);
+		        //unset($objecttmp);
+		    }
+
+		    $objectdesc=$classname.':'.$classpath.':'.$addcreatebuttonornot.':'.$filter;
 			$urlforajaxcall = DOL_URL_ROOT.'/core/ajax/selectobject.php';
 
 			// No immediate load of all database
-			$urloption='htmlname='.$htmlname.'&outjson=1&objectdesc='.$objectdesc.($moreparams?$moreparams:'');
+			$urloption='htmlname='.$htmlname.'&outjson=1&objectdesc='.$objectdesc.'&filter='.urlencode($objecttmp->filter).($moreparams?$moreparams:'');
 			// Activate the auto complete using ajax call.
 			$out.=  ajax_autocompleter($preselectedvalue, $htmlname, $urlforajaxcall, $urloption, $conf->global->$confkeyforautocompletemode, 0, array());
 			$out.= '<style type="text/css">.ui-autocomplete { z-index: 250; }</style>';
 			if ($placeholder) $placeholder=' placeholder="'.$placeholder.'"';
-			$out.= '<input type="text" class="'.$morecss.'"'.($disabled?' disabled="disabled"':'').' name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$preselectedvalue.'"'.$placeholder.' />';
+			$out.= '<input type="text" class="'.$morecss.'"'.($disabled?' disabled="disabled"':'').' name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' />';
 		}
 		else
 		{
@@ -6563,19 +6572,19 @@ class Form
 
 		foreach($array as $key => $val)
 		{
-		   /* var_dump($val);
+		    /* var_dump($val);
             var_dump(array_key_exists('enabled', $val));
             var_dump(!$val['enabled']);*/
-		   if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled'])
-		   {
-			   unset($array[$key]);     // We don't want this field
-			   continue;
-		   }
-		   if ($val['label'])
-		   {
-		   	$lis.='<li><input type="checkbox" id="checkbox'.$key.'" value="'.$key.'"'.(empty($val['checked'])?'':' checked="checked"').'/><label for="checkbox'.$key.'">'.dol_escape_htmltag($langs->trans($val['label'])).'</label></li>';
-			   $listcheckedstring.=(empty($val['checked'])?'':$key.',');
-		   }
+		    if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled'])
+		    {
+			    unset($array[$key]);     // We don't want this field
+			    continue;
+		    }
+		    if ($val['label'])
+		    {
+		        $lis.='<li><input type="checkbox" id="checkbox'.$key.'" value="'.$key.'"'.(empty($val['checked'])?'':' checked="checked"').'/><label for="checkbox'.$key.'">'.dol_escape_htmltag($langs->trans($val['label'])).'</label></li>';
+			    $listcheckedstring.=(empty($val['checked'])?'':$key.',');
+		    }
 		}
 
 		$out ='<!-- Component multiSelectArrayWithCheckbox '.$htmlname.' -->
@@ -6970,7 +6979,7 @@ class Form
 
 		if (! empty($conf->use_javascript_ajax))
 		{
-		  print '<!-- Add js to show linkto box -->
+		    print '<!-- Add js to show linkto box -->
 				<script>
 				jQuery(document).ready(function() {
 					jQuery(".linkto").click(function() {
@@ -6980,7 +6989,7 @@ class Form
 					});
 				});
 				</script>
-		  ';
+		    ';
 		}
 
 		return $linktoelem;
@@ -7017,7 +7026,7 @@ class Form
 			$resultyesno .= '<option value="'.$no.'">'.$langs->trans("No").'</option>'."\n";
 		}
 		else
-	   {
+	    {
 	   		$selected=(($useempty && $value != '0' && $value != 'no')?'':' selected');
 			$resultyesno .= '<option value="'.$yes.'">'.$langs->trans("Yes").'</option>'."\n";
 			$resultyesno .= '<option value="'.$no.'"'.$selected.'>'.$langs->trans("No").'</option>'."\n";

@@ -53,6 +53,9 @@ class mod_contract_serpis extends ModelNumRefContracts
 	 */
 	public $name='Serpis';
 
+	/**
+	 * @var int Automatic numbering
+	 */
 	public $code_auto=1;
 
 

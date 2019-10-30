@@ -113,7 +113,7 @@ if (GETPOST("sendit", 'none') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 		$res = dol_add_file_process($upload_dir, 0, 1, 'userfile', '', null, '', $generatethumbs);
 	    if ($res > 0)
 	    {
-	       $result=$ecmdir->changeNbOfFiles('+');
+	        $result=$ecmdir->changeNbOfFiles('+');
 	    }
 	}
 }
@@ -253,7 +253,7 @@ if ($action == 'refreshmanual')
                 }
             }
             else
-           {
+            {
                 dol_syslog("Parent is root");
                 $fk_parent=0;   // Parent is root
             }

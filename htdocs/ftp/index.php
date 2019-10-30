@@ -359,7 +359,7 @@ llxHeader();
 // Add logic to shoow/hide buttons
 if ($conf->use_javascript_ajax)
 {
-?>
+	?>
 <script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery("#delconst").hide();
@@ -381,7 +381,7 @@ jQuery(document).ready(function() {
 
 </script>
 
-<?php
+	<?php
 }
 
 $form=new Form($db);

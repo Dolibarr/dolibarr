@@ -171,16 +171,16 @@ class Ccountry // extends CommonObject
     public function fetch($id, $code = '', $code_iso = '')
     {
     	global $langs;
-      $sql = "SELECT";
+        $sql = "SELECT";
   		$sql.= " t.rowid,";
   		$sql.= " t.code,";
   		$sql.= " t.code_iso,";
   		$sql.= " t.label,";
   		$sql.= " t.active";
-      $sql.= " FROM ".MAIN_DB_PREFIX."c_country as t";
-      if ($id) $sql.= " WHERE t.rowid = ".$id;
-      elseif ($code) $sql.= " WHERE t.code = '".$this->db->escape($code)."'";
-      elseif ($code_iso) $sql.= " WHERE t.code_iso = '".$this->db->escape($code_iso)."'";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_country as t";
+        if ($id) $sql.= " WHERE t.rowid = ".$id;
+        elseif ($code) $sql.= " WHERE t.code = '".$this->db->escape($code)."'";
+        elseif ($code_iso) $sql.= " WHERE t.code_iso = '".$this->db->escape($code_iso)."'";
 
     	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);

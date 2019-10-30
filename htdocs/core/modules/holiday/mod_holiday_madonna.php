@@ -54,6 +54,9 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 	 */
 	public $name='Madonna';
 
+	/**
+	 * @var int Automatic numbering
+	 */
 	public $code_auto=1;
 
 

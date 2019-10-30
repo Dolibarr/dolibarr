@@ -53,7 +53,10 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
      */
 	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
 
-	public $code_auto;                     // Numerotation automatique
+	/**
+	 * @var int Automatic numbering
+	 */
+	public $code_auto;
 
 	public $searchcode; // String de recherche
 

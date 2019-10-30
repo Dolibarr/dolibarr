@@ -69,8 +69,8 @@ if (GETPOST('fk_projet') != '')
 		{
 		    $label=$row['ref'].' - '.$row['title'];
 		    $row_array['label'] = $label;
-			 $row_array['value'] = $label;
-	       $row_array['key'] = $row['rowid'];
+			$row_array['value'] = $label;
+	        $row_array['key'] = $row['rowid'];
 
 	        array_push($return_arr, $row_array);
 	    }

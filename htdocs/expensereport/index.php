@@ -3,8 +3,9 @@
  * Copyright (C) 2004-2015	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015           Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2019           Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2015       Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2019       Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2019       Frédéric FRANCE      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,6 +134,8 @@ if ($conf->use_javascript_ajax)
     include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
     $dolgraph = new DolGraph();
     $dolgraph->SetData($dataseries);
+    $dolgraph->setHeight(350);
+    $dolgraph->combine = empty($conf->global->MAIN_EXPENSEREPORT_COMBINE_GRAPH_STAT)?0.05:$conf->global->MAIN_EXPENSEREPORT_COMBINE_GRAPH_STAT;
     $dolgraph->setShowLegend(1);
     $dolgraph->setShowPercent(1);
     $dolgraph->SetType(array('pie'));

@@ -292,7 +292,7 @@ $sql.= " p.rowid, p.lastname as lastname, p.statut, p.firstname, p.zip, p.town, 
 // socialnetworks->>'$.facebook' as facebook
 $sql.= " p.socialnetworks,";
 $sql.= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.datec as date_creation, p.tms as date_update,";
-$sql.= " co.code as country_code";
+$sql.= " co.label as country, co.code as country_code";
 // Add fields from extrafields
 if (! empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
@@ -680,9 +680,9 @@ if (! empty($arrayfields['p.thirdparty']['checked']))
 if (! empty($arrayfields['p.priv']['checked']))
 {
 	print '<td class="liste_titre center">';
-   $selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
-   print $form->selectarray('search_priv', $selectarray, $search_priv, 1);
-   print '</td>';
+    $selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
+    print $form->selectarray('search_priv', $selectarray, $search_priv, 1);
+    print '</td>';
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
@@ -799,6 +799,8 @@ while ($i < min($num, $limit))
 	$contactstatic->zip=$obj->zip;
 	$contactstatic->town=$obj->town;
 	$contactstatic->socialnetworks = $arraysocialnetworks;
+	$contactstatic->country = $obj->country;
+	$contactstatic->country_code = $obj->country_code;
 
 	// ID
 	if (! empty($arrayfields['p.rowid']['checked']))
@@ -911,9 +913,9 @@ while ($i < min($num, $limit))
 		print '<td>';
 		if ($obj->socid)
 		{
-		$objsoc = new Societe($db);
-		$objsoc->fetch($obj->socid);
-		print $objsoc->getNomUrl(1);
+		    $objsoc = new Societe($db);
+		    $objsoc->fetch($obj->socid);
+		    print $objsoc->getNomUrl(1);
 		}
 		else
 			print '&nbsp;';

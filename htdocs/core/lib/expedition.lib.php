@@ -94,18 +94,18 @@ function expedition_admin_prepare_head()
 
 	if (! empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
 	{
-	$head[$h][0] = DOL_URL_ROOT.'/admin/expedition_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFields");
-	$head[$h][2] = 'attributes_shipment';
-	$h++;
+	    $head[$h][0] = DOL_URL_ROOT.'/admin/expedition_extrafields.php';
+	    $head[$h][1] = $langs->trans("ExtraFields");
+	    $head[$h][2] = 'attributes_shipment';
+	    $h++;
 	}
 
 	if (! empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
 	{
-	$head[$h][0] = DOL_URL_ROOT.'/admin/expeditiondet_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFieldsLines");
-	$head[$h][2] = 'attributeslines_shipment';
-	$h++;
+	    $head[$h][0] = DOL_URL_ROOT.'/admin/expeditiondet_extrafields.php';
+	    $head[$h][1] = $langs->trans("ExtraFieldsLines");
+	    $head[$h][2] = 'attributeslines_shipment';
+	    $h++;
 	}
 
 	if (! empty($conf->global->MAIN_SUBMODULE_LIVRAISON))

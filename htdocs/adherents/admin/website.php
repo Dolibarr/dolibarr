@@ -178,7 +178,7 @@ if (! empty($conf->global->MEMBER_ENABLE_PUBLIC))
 	$listofval = array(-1 => $langs->trans("Undefined"));
 	$listofval += $adht->liste_array();
 	$forcetype = $conf->global->MEMBER_NEWFORM_FORCETYPE ?: -1;
-	print $form->selectarray("MEMBER_NEWFORM_FORCETYPE", $listofval, $forcetype, count($listetype)>1?1:0);
+	print $form->selectarray("MEMBER_NEWFORM_FORCETYPE", $listofval, $forcetype, count($listofval)>1?1:0);
 	print "</td></tr>\n";
 
 	// Amount

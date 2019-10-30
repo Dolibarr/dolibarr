@@ -120,6 +120,7 @@ $fieldstosearchall = array(
 	'c.ref_client'=>'RefCustomerOrder',
 	'pd.description'=>'Description',
 	's.nom'=>"ThirdParty",
+	's.name_alias'=>"AliasNameShort",
 	'c.note_public'=>'NotePublic',
 );
 if (empty($user->socid)) $fieldstosearchall["c.note_private"]="NotePrivate";

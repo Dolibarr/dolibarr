@@ -154,7 +154,7 @@ abstract class CommonInvoice extends CommonObject
 		if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
 	    {
 	        // TODO
-	       return 0;
+	        return 0;
 	    }
 
 	    require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';

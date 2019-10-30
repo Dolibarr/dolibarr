@@ -755,7 +755,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                $db->free($resql);
 	            }
 	            else
-	           {
+	            {
 	                dol_print_error($db);
 	            }
 			}

@@ -1177,69 +1177,69 @@ class pdf_crabe extends ModelePDFFactures
 				//Local tax 1 before VAT
 				//if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 				//{
-					foreach($this->localtax1 as $localtax_type => $localtax_rate)
+				foreach($this->localtax1 as $localtax_type => $localtax_rate)
+				{
+					if (in_array((string) $localtax_type, array('1','3','5'))) continue;
+
+					foreach($localtax_rate as $tvakey => $tvaval)
 					{
-						if (in_array((string) $localtax_type, array('1','3','5'))) continue;
-
-						foreach($localtax_rate as $tvakey => $tvaval)
+						if ($tvakey!=0)    // On affiche pas taux 0
 						{
-							if ($tvakey!=0)    // On affiche pas taux 0
+							//$this->atleastoneratenotnull++;
+
+							$index++;
+							$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+
+							$tvacompl='';
+							if (preg_match('/\*/', $tvakey))
 							{
-								//$this->atleastoneratenotnull++;
-
-								$index++;
-								$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-
-								$tvacompl='';
-								if (preg_match('/\*/', $tvakey))
-								{
-									$tvakey=str_replace('*', '', $tvakey);
-									$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
-								}
-
-								$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).' ';
-								$totalvat.=vatrate(abs($tvakey), 1).$tvacompl;
-								$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
-
-								$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
+								$tvakey=str_replace('*', '', $tvakey);
+								$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 							}
+
+							$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).' ';
+							$totalvat.=vatrate(abs($tvakey), 1).$tvacompl;
+							$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
+
+							$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+							$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
 						}
 					}
+				}
 	      		//}
 				//Local tax 2 before VAT
 				//if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
 				//{
-					foreach($this->localtax2 as $localtax_type => $localtax_rate)
+				foreach($this->localtax2 as $localtax_type => $localtax_rate)
+				{
+					if (in_array((string) $localtax_type, array('1','3','5'))) continue;
+
+					foreach($localtax_rate as $tvakey => $tvaval)
 					{
-						if (in_array((string) $localtax_type, array('1','3','5'))) continue;
-
-						foreach($localtax_rate as $tvakey => $tvaval)
+						if ($tvakey!=0)    // On affiche pas taux 0
 						{
-							if ($tvakey!=0)    // On affiche pas taux 0
+							//$this->atleastoneratenotnull++;
+
+
+
+							$index++;
+							$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+
+							$tvacompl='';
+							if (preg_match('/\*/', $tvakey))
 							{
-								//$this->atleastoneratenotnull++;
-
-
-
-								$index++;
-								$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-
-								$tvacompl='';
-								if (preg_match('/\*/', $tvakey))
-								{
-									$tvakey=str_replace('*', '', $tvakey);
-									$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
-								}
-								$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).' ';
-								$totalvat.=vatrate(abs($tvakey), 1).$tvacompl;
-								$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
-
-								$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
+								$tvakey=str_replace('*', '', $tvakey);
+								$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 							}
+							$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).' ';
+							$totalvat.=vatrate(abs($tvakey), 1).$tvacompl;
+							$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
+
+							$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+							$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
 						}
 					}
+				}
 
                 //}
 
@@ -1271,43 +1271,12 @@ class pdf_crabe extends ModelePDFFactures
 				//Local tax 1 after VAT
 				//if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 				//{
-					foreach($this->localtax1 as $localtax_type => $localtax_rate)
+				foreach ($this->localtax1 as $localtax_type => $localtax_rate) {
+					if (in_array((string) $localtax_type, array('2','4','6'))) continue;
+
+					foreach($localtax_rate as $tvakey => $tvaval)
 					{
-						if (in_array((string) $localtax_type, array('2','4','6'))) continue;
-
-						foreach($localtax_rate as $tvakey => $tvaval)
-						{
-							if ($tvakey != 0)    // On affiche pas taux 0
-							{
-								//$this->atleastoneratenotnull++;
-
-								$index++;
-								$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-
-								$tvacompl='';
-								if (preg_match('/\*/', $tvakey))
-								{
-									$tvakey=str_replace('*', '', $tvakey);
-									$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
-								}
-								$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).' ';
-								$totalvat.=vatrate(abs($tvakey), 1).$tvacompl;
-
-								$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
-								$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
-							}
-						}
-					}
-	      		//}
-				//Local tax 2 after VAT
-				//if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
-				//{
-					foreach($this->localtax2 as $localtax_type => $localtax_rate)
-					{
-						if (in_array((string) $localtax_type, array('2','4','6'))) continue;
-
-						foreach($localtax_rate as $tvakey => $tvaval)
+						if ($tvakey != 0)    // On affiche pas taux 0
 						{
 							//$this->atleastoneratenotnull++;
 
@@ -1320,15 +1289,45 @@ class pdf_crabe extends ModelePDFFactures
 								$tvakey=str_replace('*', '', $tvakey);
 								$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 							}
-							$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).' ';
-
+							$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).' ';
 							$totalvat.=vatrate(abs($tvakey), 1).$tvacompl;
-							$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
+							$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 							$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 							$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
 						}
 					}
+				}
+	      		//}
+				//Local tax 2 after VAT
+				//if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
+				//{
+				foreach($this->localtax2 as $localtax_type => $localtax_rate)
+				{
+					if (in_array((string) $localtax_type, array('2','4','6'))) continue;
+
+					foreach($localtax_rate as $tvakey => $tvaval)
+					{
+						//$this->atleastoneratenotnull++;
+
+						$index++;
+						$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+
+						$tvacompl='';
+						if (preg_match('/\*/', $tvakey))
+						{
+							$tvakey=str_replace('*', '', $tvakey);
+							$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
+						}
+						$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).' ';
+
+						$totalvat.=vatrate(abs($tvakey), 1).$tvacompl;
+						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
+
+						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+						$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
+					}
+				}
 				//}
 
 				// Revenue stamp

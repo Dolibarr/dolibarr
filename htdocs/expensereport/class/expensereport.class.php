@@ -972,10 +972,10 @@ class ExpenseReport extends CommonObject
             $num = $this->db->num_rows($result);
             $i = 0;
             while ($i < $num):
-            $objp = $this->db->fetch_object($result);
-            $total_ht+=$objp->total_ht;
-            $total_tva+=$objp->total_tva;
-            $i++;
+                $objp = $this->db->fetch_object($result);
+                $total_ht+=$objp->total_ht;
+                $total_tva+=$objp->total_tva;
+                $i++;
             endwhile;
 
             $total_ttc = $total_ht + $total_tva;
@@ -985,13 +985,13 @@ class ExpenseReport extends CommonObject
             $sql.= " , total_tva = ".$total_tva;
             $sql.= " WHERE rowid = ".$id;
             $result = $this->db->query($sql);
-            if($result):
-            $this->db->free($result);
-            return 1;
+            if ($result):
+                $this->db->free($result);
+                return 1;
             else:
-            $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::recalculer: Error ".$this->error, LOG_ERR);
-            return -3;
+                $this->error=$this->db->lasterror();
+                dol_syslog(get_class($this)."::recalculer: Error ".$this->error, LOG_ERR);
+                return -3;
             endif;
         }
         else
@@ -1276,10 +1276,10 @@ class ExpenseReport extends CommonObject
 
         $this->date_debut = $this->db->jdate($objp->date_debut);
 
-        if ($this->fk_statut != 2)
+        if ($this->fk_statut != self::STATUS_VALIDATED)
         {
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET fk_statut = 2";
+            $sql.= " SET fk_statut = ".self::STATUS_VALIDATED;
             $sql.= ' WHERE rowid = '.$this->id;
 
             dol_syslog(get_class($this)."::set_save_from_refuse sql=".$sql, LOG_DEBUG);
@@ -1314,11 +1314,12 @@ class ExpenseReport extends CommonObject
 
         // date approval
         $this->date_approve = $now;
-        if ($this->fk_statut != 5) {
-            $this->db->begin();
+        if ($this->fk_statut != self::STATUS_APPROVED)
+        {
+			$this->db->begin();
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = 5, fk_user_approve = ".$fuser->id.",";
+            $sql.= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = ".self::STATUS_APPROVED.", fk_user_approve = ".$fuser->id.",";
             $sql.= " date_approve='".$this->db->idate($this->date_approve)."'";
             $sql.= ' WHERE rowid = '.$this->id;
             if ($this->db->query($sql))
@@ -1375,10 +1376,10 @@ class ExpenseReport extends CommonObject
 		$error = 0;
 
         // date de refus
-        if ($this->fk_statut != 99)
+		if ($this->fk_statut != self::STATUS_REFUSED)
         {
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = 99, fk_user_refuse = ".$fuser->id.",";
+            $sql.= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = ".self::STATUS_REFUSED.", fk_user_refuse = ".$fuser->id.",";
             $sql.= " date_refuse='".$this->db->idate($now)."',";
             $sql.= " detail_refuse='".$this->db->escape($details)."',";
             $sql.= " fk_user_approve = NULL";
@@ -1444,7 +1445,7 @@ class ExpenseReport extends CommonObject
 			$this->db->begin();
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET paid = 0";
+            $sql.= " SET paid = 0, fk_statut = ".self::STATUS_APPROVED;
             $sql.= ' WHERE rowid = '.$this->id;
 
             dol_syslog(get_class($this)."::set_unpaid sql=".$sql, LOG_DEBUG);
@@ -1501,12 +1502,12 @@ class ExpenseReport extends CommonObject
         // phpcs:enable
 		$error = 0;
         $this->date_cancel = $this->db->idate(gmmktime());
-        if ($this->fk_statut != ExpenseReport::STATUS_CANCELED)
+        if ($this->fk_statut != self::STATUS_CANCELED)
         {
 			$this->db->begin();
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET fk_statut = ".ExpenseReport::STATUS_CANCELED.", fk_user_cancel = ".$fuser->id;
+            $sql.= " SET fk_statut = ".self::STATUS_CANCELED.", fk_user_cancel = ".$fuser->id;
             $sql.= ", date_cancel='".$this->db->idate($this->date_cancel)."'";
             $sql.= " ,detail_cancel='".$this->db->escape($detail)."'";
             $sql.= ' WHERE rowid = '.$this->id;
@@ -1695,10 +1696,10 @@ class ExpenseReport extends CommonObject
 
         $result = $this->db->query($sql);
         if ($result):
-        return 1;
+            return 1;
         else:
-        $this->error=$this->db->error();
-        return -1;
+            $this->error=$this->db->error();
+            return -1;
         endif;
     }
 
@@ -1725,10 +1726,10 @@ class ExpenseReport extends CommonObject
 
         $result = $this->db->query($sql);
         if ($result):
-        return 1;
+            return 1;
         else:
-        $this->error=$this->db->error();
-        return -1;
+            $this->error=$this->db->error();
+            return -1;
         endif;
     }
 
@@ -2372,10 +2373,10 @@ class ExpenseReport extends CommonObject
 	        $response = new WorkboardResponse();
 	        if ($option == 'toapprove')
 	        {
-	           $response->warning_delay=$conf->expensereport->approve->warning_delay/60/60/24;
-	           $response->label=$langs->trans("ExpenseReportsToApprove");
-	           $response->labelShort=$langs->trans("ToApprove");
-	           $response->url=DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut=2';
+	            $response->warning_delay=$conf->expensereport->approve->warning_delay/60/60/24;
+	            $response->label=$langs->trans("ExpenseReportsToApprove");
+	            $response->labelShort=$langs->trans("ToApprove");
+	            $response->url=DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut=2';
 	        }
 	        else
 	        {

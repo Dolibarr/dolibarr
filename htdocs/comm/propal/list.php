@@ -139,6 +139,7 @@ $fieldstosearchall = array(
 	'p.ref_client'=>'CustomerRef',
 	'pd.description'=>'Description',
 	's.nom'=>"ThirdParty",
+	's.name_alias'=>"AliasNameShort",
 	'p.note_public'=>'NotePublic',
 );
 if (empty($user->socid)) $fieldstosearchall["p.note_private"]="NotePrivate";
@@ -279,8 +280,9 @@ $sql.= ' u.login';
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user";
 if ($search_categ_cus) $sql .= ", cc.fk_categorie, cc.fk_soc";
 // Add fields from extrafields
-if (! empty($extrafields->attributes[$object->table_element]['label']))
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -693,7 +695,7 @@ if ($resql)
 		print '<td class="liste_titre">';
 		print '</td>';
 	}
-  // Date cloture
+    // Date cloture
 	if (! empty($arrayfields['p.date_cloture']['checked']))
 	{
 		print '<td class="liste_titre">';

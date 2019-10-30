@@ -59,7 +59,7 @@ UPDATE llx_rights_def SET subperms = 'write' WHERE perms = 'fiscalyear' AND modu
 ALTER TABLE llx_bom_bom ADD COLUMN duration double(8,4) DEFAULT NULL;
 ALTER TABLE llx_bom_bomline ADD COLUMN position integer NOT NULL DEFAULT 0;
 ALTER TABLE llx_bom_bomline ADD COLUMN qty_frozen smallint DEFAULT 0;
-ALTER TABLE llx_bom_bomline ADD COLUMN disable_stock_change smallint DEFAULT 0; 
+ALTER TABLE llx_bom_bomline ADD COLUMN disable_stock_change smallint DEFAULT 0;
 
 ALTER TABLE llx_bom_bomline DROP COLUMN rank;
 
@@ -409,32 +409,32 @@ create table llx_c_shipment_package_type
     rowid        integer  AUTO_INCREMENT PRIMARY KEY,
     label        varchar(50) NOT NULL,  -- Short name
     description	 varchar(255), -- Description
-    active       integer DEFAULT 1 NOT NULL, -- Active or not	
-    entity       integer DEFAULT 1 NOT NULL -- Multi company id 
+    active       integer DEFAULT 1 NOT NULL, -- Active or not
+    entity       integer DEFAULT 1 NOT NULL -- Multi company id
 )ENGINE=innodb;
 
 
 CREATE TABLE llx_mrp_mo(
     -- BEGIN MODULEBUILDER FIELDS
-    rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-    ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
-    entity integer DEFAULT 1 NOT NULL, 
-    label varchar(255), 
+    rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    ref varchar(128) DEFAULT '(PROV)' NOT NULL,
+    entity integer DEFAULT 1 NOT NULL,
+    label varchar(255),
     qty real NOT NULL,
-    fk_warehouse integer, 
-    fk_soc integer, 
-    note_public text, 
-    note_private text, 
-    date_creation datetime NOT NULL, 
-    tms timestamp, 
-    fk_user_creat integer NOT NULL, 
-    fk_user_modif integer, 
-    import_key varchar(14), 
-    status integer NOT NULL, 
-    fk_product integer NOT NULL, 
-    date_start_planned datetime, 
-    date_end_planned datetime, 
-    fk_bom integer, 
+    fk_warehouse integer,
+    fk_soc integer,
+    note_public text,
+    note_private text,
+    date_creation datetime NOT NULL,
+    tms timestamp,
+    fk_user_creat integer NOT NULL,
+    fk_user_modif integer,
+    import_key varchar(14),
+    status integer NOT NULL,
+    fk_product integer NOT NULL,
+    date_start_planned datetime,
+    date_end_planned datetime,
+    fk_bom integer,
     fk_project integer
     -- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
@@ -443,7 +443,7 @@ CREATE TABLE llx_mrp_mo(
 ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_ref (ref);
 ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_entity (entity);
 ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_fk_soc (fk_soc);
-ALTER TABLE llx_mrp_mo ADD CONSTRAINT llx_mrp_mo_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES user(rowid);
+ALTER TABLE llx_mrp_mo ADD CONSTRAINT fk_mrp_mo_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
 ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_status (status);
 ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_fk_product (fk_product);
 ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_date_start_planned (date_start_planned);
@@ -452,7 +452,7 @@ ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_fk_bom (fk_bom);
 ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_fk_project (fk_project);
 
 
-create table llx_mrp_myobject_extrafields
+create table llx_mrp_mo_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
   tms                       timestamp,
@@ -460,7 +460,7 @@ create table llx_mrp_myobject_extrafields
   import_key                varchar(14)                                 -- import key
 ) ENGINE=innodb;
 
-ALTER TABLE llx_mrp_myobject_extrafields ADD INDEX idx_fk_object(fk_object);
+ALTER TABLE llx_mrp_mo_extrafields ADD INDEX idx_fk_object(fk_object);
 
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_VALIDATE','BOM validated','Executed when a BOM is validated','bom',400);

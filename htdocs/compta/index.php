@@ -115,6 +115,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
     	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<div class="div-table-responsive-no-min">';
     	print '<table class="noborder nohover centpercent">';
     	$i=0;
     	foreach($listofsearchfields as $key => $value)
@@ -127,6 +128,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     		$i++;
     	}
     	print '</table>';
+        print '</div>';
     	print '</form>';
     	print '<br>';
     }
@@ -165,6 +167,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
 		$num = $db->num_rows($resql);
 
+        print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("CustomersDraftInvoices").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
@@ -216,7 +219,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 		{
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
-		print "</table><br>";
+		print "</table></div><br>";
 		$db->free($resql);
 	}
 	else
@@ -251,6 +254,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	{
 		$num = $db->num_rows($resql);
 
+        print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("SuppliersDraftInvoices").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
@@ -303,7 +307,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 		{
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
-		print "</table><br>";
+		print "</table></div><br>";
 		$db->free($resql);
 	}
 	else

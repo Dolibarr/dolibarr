@@ -495,7 +495,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 				}
 				else {
 					try {
-					$odfHandler->saveToDisk($file);
+					    $odfHandler->saveToDisk($file);
 					} catch (Exception $e) {
 						$this->error=$e->getMessage();
                         dol_syslog($e->getMessage(), LOG_INFO);

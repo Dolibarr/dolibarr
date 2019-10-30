@@ -305,29 +305,28 @@ if (empty($reshook))
 	    					{
 	    						$fk_parent_line = 0;
 	    					}
-        $result = $object->addline(
-	    							$desc,
-	    							$lines[$i]->subprice,
-	    							$lines[$i]->tva_tx,
-	    							$lines[$i]->localtax1_tx,
-	    							$lines[$i]->localtax2_tx,
-									$lines[$i]->qty,
-	    							$lines[$i]->fk_product,
-	    							$lines[$i]->remise_percent,
-	    							$date_start,
-	    							$date_end,
-	    							0,
-	    							$lines[$i]->info_bits,
-	    							'HT',
-	    							$product_type,
-	    							$i,
-	    							false,
-									0,
-									null,
-	    							$lines[$i]->rowid,
-									0,
-									$lines[$i]->ref_supplier
-
+                            $result = $object->addline(
+	    						$desc,
+	    						$lines[$i]->subprice,
+	    						$lines[$i]->tva_tx,
+	    						$lines[$i]->localtax1_tx,
+	    						$lines[$i]->localtax2_tx,
+								$lines[$i]->qty,
+	    						$lines[$i]->fk_product,
+	    						$lines[$i]->remise_percent,
+	    						$date_start,
+	    						$date_end,
+	    						0,
+	    						$lines[$i]->info_bits,
+	    						'HT',
+	    						$product_type,
+	    						$i,
+	    						false,
+								0,
+								null,
+	    						$lines[$i]->rowid,
+								0,
+								$lines[$i]->ref_supplier
 	    					);
 
 							$rcp->add_object_linked('facture_fourn_det', $result);
@@ -533,9 +532,9 @@ if ($resql)
 	}
 
 
-	$arrayofmassactions =  array(
-//    'presend'=>$langs->trans("SendByMail"),
-);
+    $arrayofmassactions =  array(
+    // 'presend'=>$langs->trans("SendByMail"),
+    );
 
 	if($user->rights->fournisseur->facture->creer)$arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisSupplier");
 	if($massaction == 'createbills') $arrayofmassactions=array();

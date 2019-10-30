@@ -1085,7 +1085,7 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 		}
 		else
 		{
-		setEventMessages($langs->trans('NoPDFAvailableForDocGenAmongChecked'), null, 'errors');
+            setEventMessages($langs->trans('NoPDFAvailableForDocGenAmongChecked'), null, 'errors');
 		}
 	}
 }

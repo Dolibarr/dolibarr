@@ -186,12 +186,12 @@ if (empty($reshook))
 			}
 	    }
 
-	    // Check parameters
-//	    if (! GETPOST('paiementcode'))
-//	    {
-//	        setEventMessages($langs->transnoentities('ErrorFieldRequired',$langs->transnoentities('PaymentMode')), null, 'errors');
-//	        $error++;
-//	    }
+        // Check parameters
+        /*if (! GETPOST('paiementcode'))
+        {
+            setEventMessages($langs->transnoentities('ErrorFieldRequired',$langs->transnoentities('PaymentMode')), null, 'errors');
+            $error++;
+        }*/
 
 	    if (! empty($conf->banque->enabled))
 	    {
@@ -209,11 +209,11 @@ if (empty($reshook))
 	        $error++;
 	    }
 
-//	    if (empty($datepaye))
-//	    {
-//	        setEventMessages($langs->transnoentities('ErrorFieldRequired',$langs->transnoentities('Date')), null, 'errors');
-//	        $error++;
-//	    }
+        /*if (empty($datepaye))
+        {
+            setEventMessages($langs->transnoentities('ErrorFieldRequired',$langs->transnoentities('Date')), null, 'errors');
+            $error++;
+        }*/
 
 		// Check if payments in both currency
 		if ($totalpayment > 0 && $multicurrency_totalpayment > 0)

@@ -747,7 +747,7 @@ $menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"><
 		print '<input type="text" id="search" name="search" onkeyup="Search2();" style="width:80%;font-size: 150%;" placeholder="'.$langs->trans("Search").'" autofocus> ';
 		print '<a class="marginleftonly hideonsmartphone" onclick="ClearSearch();">'.img_picto('', 'searchclear').'</a>';
 		print '</div>';
-?>
+        ?>
 		</div>
 	</div>
 
@@ -759,7 +759,7 @@ $menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"><
 	$count=0;
 	while ($count < $MAXCATEG)
 	{
-	?>
+	    ?>
 			<div class="wrapper" <?php if ($count==($MAXCATEG-2)) echo 'onclick="MoreCategories(\'less\');"'; elseif ($count==($MAXCATEG-1)) echo 'onclick="MoreCategories(\'more\');"'; else echo 'onclick="LoadProducts('.$count.');"';?> id="catdiv<?php echo $count;?>">
 				<?php
 				if ($count==($MAXCATEG-2)) {
@@ -782,8 +782,8 @@ $menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"><
 				<?php } ?>
 				<div class="catwatermark" id='catwatermark<?php echo $count;?>'>+</div>
 			</div>
-	<?php
-    $count++;
+	    <?php
+        $count++;
 	}
 	?>
 		</div>
@@ -794,7 +794,7 @@ $menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"><
     $count=0;
     while ($count < $MAXPRODUCT)
     {
-    ?>
+        ?>
     			<div class="wrapper2" id='prodiv<?php echo $count;?>' <?php if ($count==($MAXPRODUCT-2)) {?> onclick="MoreProducts('less');" <?php } if ($count==($MAXPRODUCT-1)) {?> onclick="MoreProducts('more');" <?php } else echo 'onclick="ClickProduct('.$count.');"';?>>
     				<?php
     				if ($count==($MAXPRODUCT-2)) {
@@ -817,7 +817,7 @@ $menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"><
     				<?php } ?>
     				<div class="catwatermark" id='prowatermark<?php echo $count;?>'>+</div>
     			</div>
-    <?php
+        <?php
         $count++;
     }
     ?>

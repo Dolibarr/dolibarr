@@ -463,6 +463,19 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
     		}
 
+    		// Validate
+    		if ($user->rights->mrp->write && $object->status == MO::STATUS_DRAFT)
+    		{
+    		    if (is_array($object->lines) && count($object->lines) > 0)
+    		    {
+    		        print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=validate">' . $langs->trans("Validate") . '</a>';
+    		    }
+    		    else
+    		    {
+    		        print '<a class="butActionRefused" href="" title="'.$langs->trans("AddAtLeastOneLineFirst").'">' . $langs->trans("Validate") . '</a>';
+    		    }
+    		}
+
     		// Clone
     		if (! empty($user->rights->mrp->write))
     		{
@@ -525,17 +538,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	//Select mail models is same action as presend
-	/*
-	 if (GETPOST('modelselected')) $action = 'presend';
+	if (GETPOST('modelselected')) $action = 'presend';
 
-	 // Presend form
-	 $modelmail='inventory';
-	 $defaulttopic='InformationMessage';
-	 $diroutput = $conf->product->dir_output.'/inventory';
-	 $trackid = 'stockinv'.$object->id;
+	// Presend form
+	$modelmail='mo';
+	$defaulttopic='InformationMessage';
+	$diroutput = $conf->mrp->dir_output;
+	$trackid = 'mo'.$object->id;
 
-	 include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
-	 */
+	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
 
 // End of page

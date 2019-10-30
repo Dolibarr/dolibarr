@@ -189,9 +189,7 @@ class modBom extends DolibarrModules
         // Boxes/Widgets
 		// Add here list of php file(s) stored in bom/core/boxes that contains class to show a widget.
         $this->boxes = array(
-        	//0=>array('file'=>'bomwidget1.php@bom','note'=>'Widget provided by Bom','enabledbydefaulton'=>'Home'),
-        	//1=>array('file'=>'bomwidget2.php@bom','note'=>'Widget provided by Bom'),
-        	//2=>array('file'=>'bomwidget3.php@bom','note'=>'Widget provided by Bom')
+        	0=>array('file'=>'box_boms.php','note'=>'','enabledbydefaulton'=>'Home')
         );
 
 

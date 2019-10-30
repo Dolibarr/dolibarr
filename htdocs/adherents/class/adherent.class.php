@@ -2177,6 +2177,10 @@ class Adherent extends CommonObject
 		global $langs;
 		$langs->load("members");
 
+        $statusType = '';
+        $labelstatut = '';
+        $labelstatutShort = '';
+
 		if ($statut == -1)
 		{
 			$statusType = 'status0';

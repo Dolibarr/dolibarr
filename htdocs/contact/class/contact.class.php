@@ -1218,11 +1218,11 @@ class Contact extends CommonObject
         //if ($this->civility_id) $label.= '<br><b>' . $langs->trans("Civility") . ':</b> '.$this->civility_id;		// TODO Translate cibilty_id code
         if (! empty($this->poste)) $label.= '<br><b>' . $langs->trans("Poste") . ':</b> '.$this->poste;
         $label.= '<br><b>' . $langs->trans("EMail") . ':</b> '.$this->email;
-        $phonelist=array();
-        if ($this->phone_pro) $phonelist[]=$this->phone_pro;
-        if ($this->phone_mobile) $phonelist[]=$this->phone_mobile;
-        if ($this->phone_perso) $phonelist[]=$this->phone_perso;
-        $label.= '<br><b>' . $langs->trans("Phone") . ':</b> '.join(', ', $phonelist);
+        $phonelist = array();
+        if ($this->phone_pro) $phonelist[] = dol_print_phone($this->phone_pro, $this->country_code, $this->id, 0, '', '&nbsp;', 'phone');
+        if ($this->phone_mobile) $phonelist[] = dol_print_phone($this->phone_mobile, $this->country_code, $this->id, 0, '', '&nbsp;', 'mobile');
+        if ($this->phone_perso) $phonelist[] = dol_print_phone($this->phone_perso, $this->country_code, $this->id, 0, '', '&nbsp;', 'phone');
+        $label.= '<br><b>' . $langs->trans("Phone") . ':</b> '.implode('&nbsp;', $phonelist);
         $label.= '<br><b>' . $langs->trans("Address") . ':</b> '.dol_format_address($this, 1, ' ', $langs);
 
         $url = DOL_URL_ROOT.'/contact/card.php?id='.$this->id;
@@ -1320,23 +1320,24 @@ class Contact extends CommonObject
         // phpcs:enable
 		global $langs;
 
-		if (empty($this->status) || empty($this->statusshort))
-		{
-			$this->labelstatus[0] = 'ActivityCeased';
-			$this->labelstatusshort[0] = 'ActivityCeased';
-			$this->labelstatus[5] = 'ActivityCeased';
-			$this->labelstatusshort[5] = 'ActivityCeased';
-			$this->labelstatus[1] = 'InActivity';
-			$this->labelstatusshort[1] = 'InActivity';
-			$this->labelstatus[4] = 'InActivity';
-			$this->labelstatusshort[4] = 'InActivity';
-		}
+		$labelstatus = array(
+			0 => 'ActivityCeased',
+			1 => 'InActivity',
+			4 => 'InActivity',
+			5 => 'ActivityCeased',
+		);
+		$labelstatusshort = array(
+			0 => 'ActivityCeased',
+			1 => 'InActivity',
+			4 => 'InActivity',
+			5 => 'ActivityCeased',
+		);
 
 		$statusType = 'status4';
 		if ($status==0 || $status==5) $statusType = 'status5';
 
-		$label = $langs->trans($this->labelstatus[$status]);
-		$labelshort = $langs->trans($this->labelstatusshort[$status]);
+		$label = $langs->trans($labelstatus[$status]);
+		$labelshort = $langs->trans($labelstatusshort[$status]);
 
 		return dolGetStatus($label, $labelshort, '', $statusType, $mode);
 	}

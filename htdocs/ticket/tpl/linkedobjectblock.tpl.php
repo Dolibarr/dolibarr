@@ -21,11 +21,9 @@ if (empty($conf) || ! is_object($conf))
 	print "Error, template page can't be called as URL";
 	exit;
 }
-?>
 
-<!-- BEGIN PHP TEMPLATE -->
+print "<!-- BEGIN PHP TEMPLATE -->\n";
 
-<?php
 
 global $user;
 global $noMoreLinkedObjectBlockAfter;
@@ -38,14 +36,15 @@ $langs->load('ticket');
 
 $linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'datec', 'desc', 0, 0, 1);
 
-$total=0; $ilink=0;
+$total=0;
+$ilink=0;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
 	$ilink++;
 
 	$trclass='oddeven';
 	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
-?>
+	?>
     <tr class="<?php echo $trclass; ?>" >
         <td class="linkedcol-element" ><?php echo $langs->trans("Ticket"); ?>
         <?php if(!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';  ?>
@@ -70,7 +69,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
     		?>
     	</td>
 </tr>
-<?php
+	<?php
 }
 if (count($linkedObjectBlock) > 1)
 {
@@ -86,6 +85,5 @@ if (count($linkedObjectBlock) > 1)
     </tr>
     <?php
 }
-?>
 
-<!-- END PHP TEMPLATE -->
+print "<!-- END PHP TEMPLATE -->\n";
