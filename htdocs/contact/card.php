@@ -972,7 +972,7 @@ else
                     print '<tr><td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
                 }
 
-                print $formcompany->select_state(GETPOST('state_id', 'alpha')?GETPOST('state_id', 'alpha'):$object->state_id, $object->country_code, 'state_id');
+                print $formcompany->select_state(GETPOSTISSET('state_id')?GETPOST('state_id', 'alpha'):$object->state_id, $object->country_code, 'state_id');
                 print '</td></tr>';
             }
 
