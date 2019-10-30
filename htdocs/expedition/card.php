@@ -306,7 +306,7 @@ if (empty($reshook))
 
 			// Extrafields
 			$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-            $array_options[$i] = $extrafieldsline->getOptionalsFromPost($extralabelsline, $i);
+            $array_options[$i] = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $i);
 			// Unset extrafield
 			if (is_array($extralabelsline)) {
 				// Get extra fields
@@ -632,7 +632,7 @@ if (empty($reshook))
 				// Extrafields Lines
 				$extrafieldsline = new ExtraFields($db);
 				$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-				$line->array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+				$line->array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line);
 				// Unset extrafield POST Data
 				if (is_array($extralabelsline)) {
 					foreach ($extralabelsline as $key => $value) {
