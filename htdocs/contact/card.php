@@ -78,6 +78,14 @@ $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'ro
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('contactcard','globalcard'));
 
+if ($id > 0) $object->fetch($id);
+
+if (! ($object->id > 0) && $action == 'view')
+{
+	$langs->load("errors");
+	print($langs->trans('ErrorRecordNotFound'));
+	exit;
+}
 
 /*
  *	Actions
