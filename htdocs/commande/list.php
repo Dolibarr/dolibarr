@@ -790,7 +790,7 @@ if ($resql)
 		$companystatic->name = $obj->name;
 		$companystatic->client = $obj->client;
 		$companystatic->email = $obj->email;
-		if (!isset($cacheGetNomUrl[$obj->socid])) {
+		if (!isset($getNomUrl_cache[$obj->socid])) {
 		    $getNomUrl_cache[$obj->socid] = $companystatic->getNomUrl(1, 'customer');
 		}
 
