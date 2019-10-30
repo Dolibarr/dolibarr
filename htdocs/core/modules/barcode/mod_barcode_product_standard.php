@@ -49,7 +49,10 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
      */
 	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
 
-	public $code_auto;                     // Automatic Numbering
+	/**
+	 * @var int Automatic numbering
+	 */
+	public $code_auto;
 
 	public $searchcode; // Search string
 
