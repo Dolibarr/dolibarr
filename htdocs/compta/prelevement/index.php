@@ -71,7 +71,7 @@ $thirdpartystatic=new Societe($db);
 $invoicestatic=new Facture($db);
 $bprev = new BonPrelevement($db);
 
-
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
 
@@ -85,7 +85,7 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("AmountToWithdraw").'</td>';
 print '<td class="right">';
 print price($bprev->SommeAPrelever(), '', '', 1, -1, -1, 'auto');
-print '</td></tr></table><br>';
+print '</td></tr></table></div><br>';
 
 
 
@@ -116,6 +116,7 @@ if ($resql)
     $num = $db->num_rows($resql);
     $i = 0;
 
+    print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<th colspan="5">'.$langs->trans("InvoiceWaitingWithdraw").' ('.$num.')</th></tr>';
@@ -162,7 +163,7 @@ if ($resql)
     {
         print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("NoInvoiceToWithdraw", $langs->transnoentitiesnoconv("StandingOrders")).'</td></tr>';
     }
-    print "</table><br>";
+    print "</table></div><br>";
 }
 else
 {
@@ -189,6 +190,7 @@ if ($result)
     $i = 0;
 
     print"\n<!-- debut table -->\n";
+    print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><th>'.$langs->trans("LastWithdrawalReceipt", $limit).'</th>';
     print '<th>'.$langs->trans("Date").'</th>';
@@ -216,7 +218,7 @@ if ($result)
         print "</tr>\n";
         $i++;
     }
-    print "</table><br>";
+    print "</table></div><br>";
     $db->free($result);
 }
 else
