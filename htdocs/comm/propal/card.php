@@ -1325,17 +1325,17 @@ if (empty($reshook))
         $object->setProject(GETPOST('projectid', 'int'));
 	}
 
-	// Delai de livraison
+	// Delivery time
 	elseif ($action == 'setavailability' && $usercancreate) {
 		$result = $object->set_availability($user, GETPOST('availability_id', 'int'));
 	}
 
-	// Origine de la propale
+	// Origin of the commercial proposal
 	elseif ($action == 'setdemandreason' && $usercancreate) {
 		$result = $object->set_demand_reason($user, GETPOST('demand_reason_id', 'int'));
 	}
 
-	// Conditions de reglement
+	// Terms of payment
 	elseif ($action == 'setconditions' && $usercancreate) {
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
 	}
@@ -1348,7 +1348,7 @@ if (empty($reshook))
 		$result = $object->set_remise_absolue($user, $_POST['remise_absolue']);
 	}
 
-	// Mode de reglement
+	// Payment choice
 	elseif ($action == 'setmode' && $usercancreate) {
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
 	}
@@ -1413,7 +1413,7 @@ if (empty($reshook))
 			}
 		}
 
-		// Bascule du statut d'un contact
+		// Toggle the status of a contact
 		elseif ($action == 'swapstatut') {
 			if ($object->fetch($id) > 0) {
 				$result = $object->swapContactStatus(GETPOST('ligne'));
@@ -1422,7 +1422,7 @@ if (empty($reshook))
 			}
 		}
 
-		// Efface un contact
+		// Delete a contact
 		elseif ($action == 'deletecontact') {
 			$object->fetch($id);
 			$result = $object->delete_contact($lineid);
@@ -1600,7 +1600,7 @@ if ($action == 'create')
 		$form->select_contacts($soc->id, $contactid, 'contactid', 1, $srccontactslist);
 		print '</td></tr>';
 
-		// Ligne info remises tiers
+		// Third party discounts info line
 		print '<tr><td>' . $langs->trans('Discounts') . '</td><td>';
 
 		$absolute_discount = $soc->getAvailableDiscounts();
@@ -1787,7 +1787,7 @@ if ($action == 'create')
 
 
 	/*
-	 * Combobox pour la fonction de copie
+	 * Combobox for copy function
  	 */
 
 	if (empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE)) print '<input type="hidden" name="createmode" value="empty">';
@@ -1884,7 +1884,7 @@ if ($action == 'create')
 		if (!empty($conf->global->PROPAL_CLONE_DATE_DELIVERY) && !empty($object->date_livraison)) {
 			$formquestion[] = array('type' => 'date','name' => 'date_delivery','label' => $langs->trans("DeliveryDate"),'value' => $object->date_livraison);
 		}
-		// Paiement incomplet. On demande si motif = escompte ou autre
+		// Incomplete payment. We ask if reason = discount or other
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ToClone'), $langs->trans('ConfirmClonePropal', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
@@ -1927,7 +1927,7 @@ if ($action == 'create')
 	elseif ($action == 'validate') {
 		$error = 0;
 
-		// We verifie whether the object is provisionally numbering
+		// We verify whether the object is provisionally numbering
 		$ref = substr($object->ref, 1, 4);
 		if ($ref == 'PROV') {
 			$numref = $object->getNextNumRef($soc);
