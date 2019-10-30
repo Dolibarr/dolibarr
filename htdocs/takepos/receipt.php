@@ -100,7 +100,8 @@ if ($conf->global->TAKEPOS_CUSTOM_RECEIPT)
 <?php
 print $langs->trans('Date')." ".dol_print_date($object->date, 'day').'<br>';
 if ($conf->global->TAKEPOS_CUSTOM_RECEIPT) print $conf->global->TAKEPOS_RECEIPT_NAME." ";
-print $object->ref;
+if ($object->statut == Facture::STATUS_DRAFT) print str_replace(")", "", str_replace("-", " ".$langs->trans('Place')." ", str_replace("(PROV-POS", $langs->trans("Terminal")." ", $object->ref)));
+else print $object->ref;
 if ($conf->global->TAKEPOS_CUSTOM_RECEIPT && $conf->global->TAKEPOS_SHOW_CUSTOMER)
 {
 	$soc = new Societe($db);
