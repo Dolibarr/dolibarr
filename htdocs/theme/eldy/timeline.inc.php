@@ -209,16 +209,3 @@ a.timeline-btn:hover
 	margin-right: 5px;
 }
 
-.btn-file{
-	margin-right: 5px;
-	border: 1px solid #ddd;
-	color: #333;
-	padding: 5px 10px;
-	border-radius:1em;
-	text-decoration: none !important;
-}
-
-.btn-file:hover{
-	background-color: #ddd;
-	border: 1px solid #ddd;
-}
