@@ -151,6 +151,8 @@ class Interfaces
                         $i++;
                     }
                 }
+
+		closedir($handle);
             }
         }
 
