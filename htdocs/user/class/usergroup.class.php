@@ -52,7 +52,10 @@ class UserGroup extends CommonObject
 	 */
 	public $ismultientitymanaged = 1;
 
-    public $picto='group';
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto='group';
 
 	/**
 	 * @var int Entity of group
