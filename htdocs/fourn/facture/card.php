@@ -2085,12 +2085,21 @@ if ($action == 'create')
 		print '<tr><td>'.$txt.'</td><td>'.$objectsrc->getNomUrl(1);
 		// We check if Origin document (id and type is known) has already at least one invoice attached to it
 		$objectsrc->fetchObjectLinked($originid, $origin, '', 'invoice_supplier');
-		$cntinvoice=count($objectsrc->linkedObjects['invoice_supplier']);
-		if ($cntinvoice>=1)
+
+		$invoice_supplier = $objectsrc->linkedObjects['invoice_supplier'];
+
+		// count function need a array as argument (Note: the array must implement Countable too)
+		if(is_array($invoice_supplier))
 		{
-			setEventMessages('WarningBillExist', null, 'warnings');
-			echo ' ('.$langs->trans('LatestRelatedBill').end($objectsrc->linkedObjects['invoice_supplier'])->getNomUrl(1).')';
+			$cntinvoice = count($invoice_supplier);
+
+			if ($cntinvoice >= 1)
+			{
+				setEventMessages('WarningBillExist', null, 'warnings');
+				echo ' ('.$langs->trans('LatestRelatedBill').end($invoice_supplier)->getNomUrl(1).')';
+			}
 		}
+
 		echo '</td></tr>';
 		print '<tr><td>'.$langs->trans('AmountHT').'</td><td>'.price($objectsrc->total_ht).'</td></tr>';
 		print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($objectsrc->total_tva)."</td></tr>";
