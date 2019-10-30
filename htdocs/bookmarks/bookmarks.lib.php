@@ -70,7 +70,7 @@ function printBookmarksList()
 		$ret.= '<select name="bookmark" id="boxbookmark" class="flat boxcombo vmenusearchselectcombo" alt="Bookmarks">';
 		$ret.= '<option hidden value="listbookmarks" class="optiongrey" selected rel="'.DOL_URL_ROOT.'/bookmarks/list.php">'.$langs->trans('Bookmarks').'</option>';
 	    $ret.= '<option value="listbookmark" class="optionblue" rel="'.dol_escape_htmltag(DOL_URL_ROOT.'/bookmarks/list.php').'" ';
-	    $ret.= ' data-html="'.dol_escape_htmltag('<span class="fa fa-star-o"></span> '.dol_escape_htmltag($user->rights->bookmark->creer ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...').'">';
+	    $ret.= ' data-html="'.dol_escape_htmltag('<span class="fas fa-star"></span> '.dol_escape_htmltag($user->rights->bookmark->creer ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...').'">';
 	    $ret.= dol_escape_htmltag($user->rights->bookmark->creer ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...</option>';
 		// Url to go on create new bookmark page
 		if (! empty($user->rights->bookmark->creer))
@@ -78,7 +78,7 @@ function printBookmarksList()
 	    	//$urltoadd=DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url);
 		    $urltoadd=DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;url='.urlencode($url);
 	    	$ret.= '<option value="newbookmark" class="optionblue" rel="'.dol_escape_htmltag($urltoadd).'"';
-	    	$ret.= ' data-html="'.dol_escape_htmltag('<span class="fa fa-star-o"></span> '.$langs->trans('AddThisPageToBookmarks').'...').'">'.dol_escape_htmltag($langs->trans('AddThisPageToBookmarks').'...').'</option>';
+	    	$ret.= ' data-html="'.dol_escape_htmltag('<span class="fas fa-star"></span> '.$langs->trans('AddThisPageToBookmarks').'...').'">'.dol_escape_htmltag($langs->trans('AddThisPageToBookmarks').'...').'</option>';
 		}
 		// Menu with all bookmarks
 		if (! empty($conf->global->BOOKMARKS_SHOW_IN_MENU))
@@ -201,7 +201,7 @@ function printDropdownBookmarksList()
         //$urltoadd=DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;urlsource='.urlencode($url).'&amp;url='.urlencode($url);
         $urltoadd=DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;url='.urlencode($url);
         $newbtn.= '<a class="top-menu-dropdown-link" title="'.$langs->trans('AddThisPageToBookmarks').'" href="'.dol_escape_htmltag($urltoadd).'" >';
-        $newbtn.= '<span class="fa fa-star-o"></span> '.dol_escape_htmltag($langs->trans('AddThisPageToBookmarks')).'</a>';
+        $newbtn.= '<span class="fas fa-star"></span> '.dol_escape_htmltag($langs->trans('AddThisPageToBookmarks')).'</a>';
     }
 
 
