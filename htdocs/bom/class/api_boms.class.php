@@ -260,7 +260,7 @@ class Boms extends DolibarrApi
             throw new RestException(500, 'Error when deleting BOM : '.$this->bom->error);
         }
 
-         return array(
+        return array(
             'success' => array(
                 'code' => 200,
                 'message' => 'BOM deleted'

@@ -74,8 +74,8 @@ if (empty($conf) || ! is_object($conf))
 				<td>
 				<?php if ($this->control->tpl['ismodifiable_customercode']) { ?>
 				<input type="text" name="code_client" size="16" value="<?php echo $this->control->tpl['customercode']; ?>" maxlength="15">
-				<?php } else { ?>
-				<?php  echo $this->control->tpl['customercode']; ?>
+				<?php } else {
+					echo $this->control->tpl['customercode']; ?>
 				<input type="hidden" name="code_client" value="<?php echo $this->control->tpl['customercode']; ?>">
 				<?php } ?>
 				</td>
@@ -95,8 +95,8 @@ if (empty($conf) || ! is_object($conf))
 				<td>
 				<?php if ($this->control->tpl['ismodifiable_suppliercode']) { ?>
 				<input type="text" name="code_fournisseur" size="16" value="<?php echo $this->control->tpl['suppliercode']; ?>" maxlength="15">
-				<?php } else { ?>
-				<?php  echo $this->control->tpl['suppliercode']; ?>
+				<?php } else {
+					echo $this->control->tpl['suppliercode']; ?>
 				<input type="hidden" name="code_fournisseur" value="<?php echo $this->control->tpl['suppliercode']; ?>">
 				<?php } ?>
 				</td>
