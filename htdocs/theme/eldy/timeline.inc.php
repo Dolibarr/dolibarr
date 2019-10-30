@@ -125,7 +125,12 @@ a.timeline-btn:hover
     font-weight: normal;
     line-height: 1.1;
 }
-.timeline > li.timeline-code-ticket_msg_private  > .timeline-item > .timeline-header {
+
+.timeline > li > .timeline-item > .timeline-footer {
+	border-top: 1px solid #f4f4f4;
+}
+
+.timeline > li.timeline-code-ticket_msg_private  > .timeline-item > .timeline-header, .timeline > li.timeline-code-ticket_msg_private  > .timeline-item > .timeline-footer {
     border-color: #ecebda;
 }
 
@@ -194,4 +199,26 @@ a.timeline-btn:hover
 .timeline-badge-date{
     background-color: #0073b7 !important;
     color: #fff !important;
+}
+
+.timeline-documents-container{
+
+}
+
+.timeline-documents{
+	margin-right: 5px;
+}
+
+.btn-file{
+	margin-right: 5px;
+	border: 1px solid #ddd;
+	color: #333;
+	padding: 5px 10px;
+	border-radius:1em;
+	text-decoration: none !important;
+}
+
+.btn-file:hover{
+	background-color: #ddd;
+	border: 1px solid #ddd;
 }
