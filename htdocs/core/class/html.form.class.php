@@ -5835,10 +5835,11 @@ class Form
 	 * @param	string			$moreparams			More params provided to ajax call
 	 * @param	int				$forcecombo			Force to load all values and output a standard combobox (with no beautification)
 	 * @param	int				$disabled			1=Html component is disabled
+	 * @param	string	        $selected_input_value	Value of preselected input text (for use with ajax)
 	 * @return	string								Return HTML string
 	 * @see selectForFormsList() select_thirdparty
 	 */
-    public function selectForForms($objectdesc, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0)
+	public function selectForForms($objectdesc, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0, $selected_input_value = '')
 	{
 		global $conf, $user;
 
@@ -5870,20 +5871,28 @@ class Form
 		$confkeyforautocompletemode=strtoupper($prefixforautocompletemode).'_USE_SEARCH_TO_SELECT';	// For example COMPANY_USE_SEARCH_TO_SELECT
 
 		dol_syslog(get_class($this)."::selectForForms object->filter=".$objecttmp->filter, LOG_DEBUG);
-
 		$out='';
 		if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->$confkeyforautocompletemode) && ! $forcecombo)
 		{
-			$objectdesc=$classname.':'.$classpath.':'.$addcreatebuttonornot.':'.$filter;
+		    // No immediate load of all database
+		    $placeholder='';
+		    if ($preselectedvalue && empty($selected_input_value))
+		    {
+		        $objecttmp->fetch($preselectedvalue);
+		        $selected_input_value=($prefixforautocompletemode == 'company' ? $objecttmp->name : $objecttmp->ref);
+		        //unset($objecttmp);
+		    }
+
+		    $objectdesc=$classname.':'.$classpath.':'.$addcreatebuttonornot.':'.$filter;
 			$urlforajaxcall = DOL_URL_ROOT.'/core/ajax/selectobject.php';
 
 			// No immediate load of all database
-			$urloption='htmlname='.$htmlname.'&outjson=1&objectdesc='.$objectdesc.($moreparams?$moreparams:'');
+			$urloption='htmlname='.$htmlname.'&outjson=1&objectdesc='.$objectdesc.'&filter='.urlencode($objecttmp->filter).($moreparams?$moreparams:'');
 			// Activate the auto complete using ajax call.
 			$out.=  ajax_autocompleter($preselectedvalue, $htmlname, $urlforajaxcall, $urloption, $conf->global->$confkeyforautocompletemode, 0, array());
 			$out.= '<style type="text/css">.ui-autocomplete { z-index: 250; }</style>';
 			if ($placeholder) $placeholder=' placeholder="'.$placeholder.'"';
-			$out.= '<input type="text" class="'.$morecss.'"'.($disabled?' disabled="disabled"':'').' name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$preselectedvalue.'"'.$placeholder.' />';
+			$out.= '<input type="text" class="'.$morecss.'"'.($disabled?' disabled="disabled"':'').' name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' />';
 		}
 		else
 		{
