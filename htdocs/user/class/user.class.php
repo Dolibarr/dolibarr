@@ -2320,9 +2320,10 @@ class User extends CommonObject
 		$label.= '<div class="centpercent">';
 		$label.= '<u>' . $langs->trans("User") . '</u><br>';
 		$label.= '<b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs, '');
-		if (! empty($this->login))
-			$label.= '<br><b>' . $langs->trans('Login') . ':</b> ' . $this->login;
-		$label.= '<br><b>' . $langs->trans("EMail").':</b> '.$this->email;
+		if (! empty($this->login)) $label.= '<br><b>' . $langs->trans('Login') . ':</b> ' . $this->login;
+		if (! empty($this->job)) $label.= '<br><b>' . $langs->trans("Job").':</b> '.$this->job;
+		$label.= '<br><b>' . $langs->trans("Email").':</b> '.$this->email;
+		if (! empty($this->phone)) $label.= '<br><b>' . $langs->trans("Phone").':</b> '.$this->phone;
 		if (! empty($this->admin))
 			$label.= '<br><b>' . $langs->trans("Administrator").'</b>: '.yn($this->admin);
 		if (! empty($this->socid) )	// Add thirdparty for external users
