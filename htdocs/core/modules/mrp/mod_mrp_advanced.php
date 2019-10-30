@@ -21,18 +21,18 @@
  */
 
 /**
- * \file       htdocs/core/modules/bom/mod_bom_advanced.php
- * \ingroup    bom
- * \brief      File containing class for numbering model of BOMs advanced
+ * \file       htdocs/core/modules/mrp/mod_mrp_advanced.php
+ * \ingroup    mrp
+ * \brief      File containing class for numbering model of MOs advanced
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/modules/bom/modules_bom.php';
+require_once DOL_DOCUMENT_ROOT .'/core/modules/mrp/modules_mrp.php';
 
 
 /**
  *	Class to manage customer Bom numbering rules advanced
  */
-class mod_bom_advanced extends ModeleNumRefboms
+class mod_mrp_advanced extends ModeleNumRefMos
 {
 	/**
      * Dolibarr version of the loaded document
@@ -68,18 +68,18 @@ class mod_bom_advanced extends ModeleNumRefboms
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		$texte.= '<input type="hidden" name="action" value="updateMask">';
-		$texte.= '<input type="hidden" name="maskconstBom" value="BOM_ADVANCED_MASK">';
+		$texte.= '<input type="hidden" name="maskconstBom" value="MRP_ADVANCED_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Bom"), $langs->transnoentities("Bom"));
+		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Mo"), $langs->transnoentities("Mo"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Bom"), $langs->transnoentities("Bom"));
+		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Mo"), $langs->transnoentities("Mo"));
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskBom" value="'.$conf->global->BOM_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskMo" value="'.$conf->global->MRP_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
 
 		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
@@ -129,7 +129,7 @@ class mod_bom_advanced extends ModeleNumRefboms
 		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask=$conf->global->BOM_ADVANCED_MASK;
+		$mask=$conf->global->MRP_ADVANCED_MASK;
 
 		if (! $mask)
 		{
@@ -137,9 +137,9 @@ class mod_bom_advanced extends ModeleNumRefboms
 			return 0;
 		}
 
-		$date = ($object->date_bom ? $object->date_bom : $object->date);
+		$date = ($object->date_mo ? $object->date_mo : $object->date);
 
-		$numFinal=get_next_value($db, $mask, 'bom_bom', 'ref', '', null, $date);
+		$numFinal=get_next_value($db, $mask, 'mrp_mo', 'ref', '', null, $date);
 
 		return  $numFinal;
 	}

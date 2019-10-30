@@ -20,14 +20,14 @@
 /**
  *  \file       htdocs/core/modules/bom/mod_bom_standard.php
  *  \ingroup    bom
- *  \brief      File of class to manage BOMs numbering rules standard
+ *  \brief      File of class to manage MyObject numbering rules standard
  */
 require_once DOL_DOCUMENT_ROOT .'/core/modules/bom/modules_bom.php';
 
 /**
  *	Class to manage customer order numbering rules standard
  */
-class mod_bom_standard extends ModeleNumRefboms
+class mod_myobject_standard extends ModeleNumRefMyObject
 {
 	/**
      * Dolibarr version of the loaded document
@@ -35,7 +35,7 @@ class mod_bom_standard extends ModeleNumRefboms
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
-	public $prefix='BOM';
+	public $prefix='MYOBJECT';
 
 	/**
 	 * @var string Error code (or message)

@@ -23,7 +23,7 @@
 /**
  * \file       htdocs/core/modules/bom/mod_bom_advanced.php
  * \ingroup    bom
- * \brief      File containing class for numbering model of BOMs advanced
+ * \brief      File containing class for advanced numbering model of MyObject
  */
 
 require_once DOL_DOCUMENT_ROOT .'/core/modules/bom/modules_bom.php';
@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/bom/modules_bom.php';
 /**
  *	Class to manage customer Bom numbering rules advanced
  */
-class mod_bom_advanced extends ModeleNumRefboms
+class mod_myobject_advanced extends ModeleNumRefMyObject
 {
 	/**
      * Dolibarr version of the loaded document
@@ -68,7 +68,7 @@ class mod_bom_advanced extends ModeleNumRefboms
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		$texte.= '<input type="hidden" name="action" value="updateMask">';
-		$texte.= '<input type="hidden" name="maskconstBom" value="BOM_ADVANCED_MASK">';
+		$texte.= '<input type="hidden" name="maskconstBom" value="MYMODULE_MYOBJECT_ADVANCED_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
 		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Bom"), $langs->transnoentities("Bom"));
@@ -79,7 +79,7 @@ class mod_bom_advanced extends ModeleNumRefboms
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskBom" value="'.$conf->global->BOM_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskBom" value="'.$conf->global->MYMODULE_MYOBJECT_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
 
 		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
@@ -129,7 +129,7 @@ class mod_bom_advanced extends ModeleNumRefboms
 		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask=$conf->global->BOM_ADVANCED_MASK;
+		$mask=$conf->global->MYMODULE_MYOBJECT_ADVANCED_MASK;
 
 		if (! $mask)
 		{

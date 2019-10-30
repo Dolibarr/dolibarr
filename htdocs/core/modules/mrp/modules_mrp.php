@@ -23,10 +23,10 @@
  */
 
 /**
- *  \file			htdocs/core/modules/bom/modules_bom.php
+ *  \file			htdocs/core/modules/mrp/modules_mrp.php
  *  \ingroup		bom
- *  \brief			File that contains parent class for boms models
- *                  and parent class for boms numbering models
+ *  \brief			File that contains parent class for mos models
+ *                  and parent class for mos numbering models
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
@@ -34,9 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';	// requir
 
 
 /**
- *	Parent class for boms models
+ *	Parent class for mos models
  */
-abstract class ModelePDFBoms extends CommonDocGenerator
+abstract class ModelePDFMos extends CommonDocGenerator
 {
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -52,7 +52,7 @@ abstract class ModelePDFBoms extends CommonDocGenerator
         // phpcs:enable
 		global $conf;
 
-		$type = 'bom';
+		$type = 'mo';
 		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -65,9 +65,9 @@ abstract class ModelePDFBoms extends CommonDocGenerator
 
 
 /**
- *  Parent class to manage numbering of BOMs
+ *  Parent class to manage numbering of MOs
  */
-abstract class ModeleNumRefBoms
+abstract class ModeleNumRefMos
 {
 	/**
 	 * @var string Error code (or message)
