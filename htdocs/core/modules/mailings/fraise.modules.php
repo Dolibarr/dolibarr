@@ -40,6 +40,10 @@ class mailing_fraise extends MailingTargets
     public $require_admin=0;
 
     public $require_module=array('adherent');
+    
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
     public $picto='user';
 
     /**

@@ -37,6 +37,10 @@ class mailing_contacts1 extends MailingTargets
 	public $desc='Contacts of thirdparties (prospects, customers, suppliers...)';
 	public $require_module=array("societe");               // Module mailing actif si modules require_module actifs
 	public $require_admin=0;                               // Module mailing actif pour user admin ou non
+	
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto='contact';
 
 	/**
