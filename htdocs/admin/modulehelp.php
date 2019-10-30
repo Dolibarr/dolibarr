@@ -214,15 +214,17 @@ asort($orders);
 //var_dump($modules);
 
 
+unset($objMod);
 $i=0;
 foreach($orders as $tmpkey => $tmpvalue)
 {
-    $objMod  = $modules[$tmpkey];
-    if ($objMod->numero == $id)
+    $tmpMod  = $modules[$tmpkey];
+    if ($tmpMod->numero == $id)
     {
         $key = $i;
         $modName = $filename[$tmpkey];
         $dirofmodule = $dirmod[$tmpkey];
+        $objMod = $tmpMod;
         break;
     }
     $i++;
