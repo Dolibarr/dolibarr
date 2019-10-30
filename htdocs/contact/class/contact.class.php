@@ -132,14 +132,14 @@ class Contact extends CommonObject
      * @var string
      * @deprecated
      */
-	 public $twitter;
+	public $twitter;
 
 	 /**
      * Facebook username
      * @var string
      * @deprecated
      */
-	 public $facebook;
+	public $facebook;
 
 	 /**
      * Linkedin username
