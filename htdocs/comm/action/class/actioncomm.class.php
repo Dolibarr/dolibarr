@@ -484,9 +484,9 @@ class ActionComm extends CommonObject
             	return $this->id;
             }
             else
-           {
-	           	$this->db->rollback();
-	           	return -1;
+            {
+                $this->db->rollback();
+                return -1;
             }
         }
         else
@@ -1043,7 +1043,7 @@ class ActionComm extends CommonObject
             return $resarray;
         }
         else
-       {
+        {
             return $db->lasterror();
         }
     }

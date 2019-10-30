@@ -678,7 +678,7 @@ else
                     print $formcompany->select_state(GETPOST("state_id", 'alpha')?GETPOST("state_id", 'alpha'):$object->state_id, $object->country_code, 'state_id');
                 }
                 else
-              {
+                {
                     print $countrynotdefined;
                 }
                 print '</td></tr>';

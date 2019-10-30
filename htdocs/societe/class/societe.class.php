@@ -1226,7 +1226,7 @@ class Societe extends CommonObject
 			}
 		}
 		else
-	   {
+	    {
 			$this->db->rollback();
 			dol_syslog(get_class($this)."::Update fails verify ".join(',', $this->errors), LOG_WARNING);
 			return -3;
@@ -2126,8 +2126,8 @@ class Societe extends CommonObject
 
 		if ($option == 'customer' || $option == 'compta' || $option == 'category' || $option == 'category_supplier')
 		{
-		   $label.= '<u>' . $langs->trans("ShowCustomer") . '</u>';
-		   $linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
+		    $label.= '<u>' . $langs->trans("ShowCustomer") . '</u>';
+		    $linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
 		}
 		elseif ($option == 'prospect' && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
 		{
@@ -3065,8 +3065,8 @@ class Societe extends CommonObject
 			//Check NIF
 			if (preg_match('/(^[0-9]{8}[A-Z]{1}$)/', $string))
 				if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr($string, 0, 8) % 23, 1))
-				return 1;
-				else
+					return 1;
+			else
 				return -1;
 
 			//algorithm checking type code CIF
@@ -3078,29 +3078,29 @@ class Societe extends CommonObject
 			//Chek special NIF
 			if (preg_match('/^[KLM]{1}/', $string))
 				if ($num[8] == chr(64 + $n) || $num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr($string, 1, 8) % 23, 1))
-				return 1;
-				else
+					return 1;
+			else
 				return -1;
 
 			//Check CIF
 			if (preg_match('/^[ABCDEFGHJNPQRSUVW]{1}/', $string))
 				if ($num[8] == chr(64 + $n) || $num[8] == substr($n, strlen($n) - 1, 1))
-				return 2;
-				else
+					return 2;
+			else
 				return -2;
 
 			//Check NIE T
 			if (preg_match('/^[T]{1}/', $string))
 				if ($num[8] == preg_match('/^[T]{1}[A-Z0-9]{8}$/', $string))
-				return 3;
-				else
+					return 3;
+			else
 				return -3;
 
 			//Check NIE XYZ
 			if (preg_match('/^[XYZ]{1}/', $string))
 				if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr(str_replace(array('X','Y','Z'), array('0','1','2'), $string), 0, 8) % 23, 1))
-				return 3;
-				else
+					return 3;
+			else
 				return -3;
 
 			//Can not be verified

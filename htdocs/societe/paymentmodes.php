@@ -564,13 +564,13 @@ if (empty($reshook))
 
 			$db->begin();
 
-                if (empty($newcu)) {
-                        $sql  = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE site = 'stripe' AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity;
-                } else {
-			$sql = 'UPDATE '.MAIN_DB_PREFIX."societe_account";
-			$sql.= " SET key_account = '".$db->escape(GETPOST('key_account', 'alpha'))."'";
-			$sql.= " WHERE site = 'stripe' AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity;	// Keep = here for entity. Only 1 record must be modified !
-                }
+            if (empty($newcu)) {
+                $sql  = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE site = 'stripe' AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity;
+            } else {
+                $sql = 'UPDATE '.MAIN_DB_PREFIX."societe_account";
+                $sql.= " SET key_account = '".$db->escape(GETPOST('key_account', 'alpha'))."'";
+                $sql.= " WHERE site = 'stripe' AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity;	// Keep = here for entity. Only 1 record must be modified !
+            }
 
 			$resql = $db->query($sql);
 			$num = $db->num_rows($resql);
@@ -609,37 +609,33 @@ if (empty($reshook))
 
 			$db->begin();
 
-                if (empty($newsup)) {
-                        $sql  = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE fk_soc = ".$object->id." AND service = '".$service."' AND entity = ".$conf->entity;
-                } else {
-      try {
-      $stripesup = \Stripe\Account::retrieve($db->escape(GETPOST('key_account_supplier', 'alpha')));
-      $tokenstring['stripe_user_id'] = $stripesup->id;
-      $tokenstring['type'] = $stripesup->type;
-			$sql = "UPDATE ".MAIN_DB_PREFIX."oauth_token";
-			$sql.= " SET tokenstring = '".dol_json_encode($tokenstring)."'";
-			$sql.= " WHERE fk_soc = ".$object->id." AND service = '".$service."' AND entity = ".$conf->entity;	// Keep = here for entity. Only 1 record must be modified !
-	  }
-					catch(Exception $e)
-					{
-						$error++;
-						setEventMessages($e->getMessage(), null, 'errors');
-					}
+            if (empty($newsup)) {
+                $sql  = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE fk_soc = ".$object->id." AND service = '".$service."' AND entity = ".$conf->entity;
+            } else {
+                try {
+                    $stripesup = \Stripe\Account::retrieve($db->escape(GETPOST('key_account_supplier', 'alpha')));
+                    $tokenstring['stripe_user_id'] = $stripesup->id;
+                    $tokenstring['type'] = $stripesup->type;
+                    $sql = "UPDATE ".MAIN_DB_PREFIX."oauth_token";
+                    $sql.= " SET tokenstring = '".dol_json_encode($tokenstring)."'";
+                    $sql.= " WHERE fk_soc = ".$object->id." AND service = '".$service."' AND entity = ".$conf->entity;	// Keep = here for entity. Only 1 record must be modified !
+                } catch(Exception $e) {
+					$error++;
+					setEventMessages($e->getMessage(), null, 'errors');
 				}
+			}
 
 			$resql = $db->query($sql);
 			$num = $db->num_rows($resql);
 			if (empty($num) && !empty($newsup))
 			{
-      try {
-      $stripesup = \Stripe\Account::retrieve($db->escape(GETPOST('key_account_supplier', 'alpha')));
-      $tokenstring['stripe_user_id'] = $stripesup->id;
-      $tokenstring['type'] = $stripesup->type;
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, fk_soc, entity, tokenstring)";
-			$sql .= " VALUES ('".$service."', ".$object->id.", ".$conf->entity.", '".dol_json_encode($tokenstring)."')";
-	  }
-				catch(Exception $e)
-				{
+                try {
+                    $stripesup = \Stripe\Account::retrieve($db->escape(GETPOST('key_account_supplier', 'alpha')));
+                    $tokenstring['stripe_user_id'] = $stripesup->id;
+                    $tokenstring['type'] = $stripesup->type;
+                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, fk_soc, entity, tokenstring)";
+                    $sql .= " VALUES ('".$service."', ".$object->id.", ".$conf->entity.", '".dol_json_encode($tokenstring)."')";
+                } catch(Exception $e) {
 					$error++;
 					setEventMessages($e->getMessage(), null, 'errors');
 				}
@@ -700,23 +696,25 @@ if (empty($reshook))
 		{
 			try {
 				if (preg_match('/pm_/', $source))
-					{
-            		$payment_method = \Stripe\PaymentMethod::retrieve($source, array("stripe_account" => $stripeacc));
-					if ($payment_method)
-				    {
-					  $payment_method->detach();
+				{
+                    $payment_method = \Stripe\PaymentMethod::retrieve($source, array("stripe_account" => $stripeacc));
+                    if ($payment_method)
+			        {
+					    $payment_method->detach();
 				    }
 				}
 				else
 				{
-				$cu=$stripe->customerStripe($object, $stripeacc, $servicestatus);
-				$card=$cu->sources->retrieve("$source");
-				if ($card)
-				{
-					// $card->detach();  Does not work with card_, only with src_
-					if (method_exists($card, 'detach')) $card->detach();
-					else $card->delete();
-				}
+				    $cu = $stripe->customerStripe($object, $stripeacc, $servicestatus);
+				    $card = $cu->sources->retrieve("$source");
+				    if ($card) {
+					    // $card->detach();  Does not work with card_, only with src_
+					    if (method_exists($card, 'detach')) {
+							$card->detach();
+						} else {
+							$card->delete();
+						}
+				    }
 				}
 
 				$url=DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
@@ -1296,54 +1294,60 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		}
 		print "</table>";
 		print "</div>";
-   	print '<br>';
+        print '<br>';
 	}
 
   	// List of Stripe payment modes
 	if (! empty($conf->stripe->enabled) && ! empty($conf->stripeconnect->enabled) && $object->fournisseur && ! empty($stripesupplieracc))
 	{
-  print load_fiche_titre($langs->trans('StripeBalance').($stripesupplieracc?' (Stripe connection with StripeConnect account '.$stripesupplieracc.')':' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, '');
-  $balance = \Stripe\Balance::retrieve(array("stripe_account" => $stripesupplieracc));
+        print load_fiche_titre($langs->trans('StripeBalance').($stripesupplieracc?' (Stripe connection with StripeConnect account '.$stripesupplieracc.')':' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, '');
+        $balance = \Stripe\Balance::retrieve(array("stripe_account" => $stripesupplieracc));
 		print '<table class="liste" width="100%">'."\n";
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Currency').'</td>';
 		print '<td>'.$langs->trans('Available').'</td>';
 		print '<td>'.$langs->trans('Pending').'</td>';
-    print '<td>'.$langs->trans('Total').'</td>';
-    print '</tr>';
+        print '<td>'.$langs->trans('Total').'</td>';
+        print '</tr>';
 
-    $currencybalance = array();
+        $currencybalance = array();
 		if (is_array($balance->available) && count($balance->available))
 		{
 			foreach ($balance->available as $cpt)
 			{
-		$arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
-		if (! in_array($cpt->currency, $arrayzerounitcurrency)) $currencybalance[$cpt->currency]->available=$cpt->amount / 100;
-		else $currencybalance[$cpt->currency]->available=$cpt->amount;
-    $currencybalance[$cpt->currency]->currency=$cpt->currency;
+		        $arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+		        if (! in_array($cpt->currency, $arrayzerounitcurrency)) {
+					$currencybalance[$cpt->currency]->available=$cpt->amount / 100;
+				} else {
+					$currencybalance[$cpt->currency]->available=$cpt->amount;
+				}
+                $currencybalance[$cpt->currency]->currency=$cpt->currency;
 			}
 		}
 
-    if (is_array($balance->pending) && count($balance->pending))
+        if (is_array($balance->pending) && count($balance->pending))
 		{
 			foreach ($balance->pending as $cpt)
 			{
-		$arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
-		if (! in_array($cpt->currency, $arrayzerounitcurrency))  $currencybalance[$cpt->currency]->pending=$currencybalance[$cpt->currency]->available+$cpt->amount / 100;
-		else $currencybalance[$cpt->currency]->pending=$currencybalance[$cpt->currency]->available+$cpt->amount;
+		        $arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+		        if (! in_array($cpt->currency, $arrayzerounitcurrency)) {
+					$currencybalance[$cpt->currency]->pending=$currencybalance[$cpt->currency]->available+$cpt->amount / 100;
+				} else {
+					$currencybalance[$cpt->currency]->pending=$currencybalance[$cpt->currency]->available+$cpt->amount;
+				}
 			}
-    }
+        }
 
 		if (is_array($currencybalance))
 		{
 			foreach ($currencybalance as $cpt)
 			{
-      print '<tr><td>'.$langs->trans("Currency".strtoupper($cpt->currency)).'</td><td>'.price($cpt->available, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).'</td><td>'.price($cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).'</td><td>'.price($cpt->available+$cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).'</td></tr>';
+                print '<tr><td>'.$langs->trans("Currency".strtoupper($cpt->currency)).'</td><td>'.price($cpt->available, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).'</td><td>'.price($cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).'</td><td>'.price($cpt->available+$cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).'</td></tr>';
 			}
 		}
 
-    print '</table>';
-    print '<br>';
+        print '</table>';
+        print '<br>';
 	}
 
 	// List of bank accounts
@@ -1394,12 +1398,13 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					$string .= $rib->code_guichet.' ';
 				} elseif ($val == 'BankAccountNumberKey') {
 					$string .= $rib->cle_rib.' ';
-				/* Already output after
-                }elseif ($val == 'BIC') {
-                    $string .= $rib->bic.' ';
-                }elseif ($val == 'IBAN') {
-                    $string .= $rib->iban.' ';*/
 				}
+                // Already output after
+                // } elseif ($val == 'BIC') {
+                //     $string .= $rib->bic.' ';
+                // } elseif ($val == 'IBAN') {
+                //     $string .= $rib->iban.' ';*/
+				//}
 			}
 			if (! empty($rib->label) && $rib->number) {
 				if (! checkBanForAccount($rib)) {

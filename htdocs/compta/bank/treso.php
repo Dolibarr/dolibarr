@@ -322,7 +322,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	print '</tr>';
 
 	print "</table>";
-  print "</div>";
+    print "</div>";
 }
 else
 {

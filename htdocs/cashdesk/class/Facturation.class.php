@@ -194,9 +194,9 @@ class Facturation
         {
             if ($poscart[$key]['id'] != $aArticle)
             {
-               $newposcart[$j]=$poscart[$key];
-               $newposcart[$j]['id']=$j;
-               $j++;
+                $newposcart[$j]=$poscart[$key];
+                $newposcart[$j]['id']=$j;
+                $j++;
             }
         }
         unset($poscart);

@@ -234,7 +234,7 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
         }
         if (! empty($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC))
         {
-    	   print '<strong>' . ($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC ? $conf->global->TICKET_PUBLIC_INTERFACE_TOPIC : $langs->trans("TicketSystem")) . '</strong>';
+            print '<strong>' . ($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC ? $conf->global->TICKET_PUBLIC_INTERFACE_TOPIC : $langs->trans("TicketSystem")) . '</strong>';
         }
     	print '</center><br>';
     }
@@ -690,10 +690,10 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 				$out.=$actionstatic->getNomUrl(1, -1).' ';
 			}
 
-//			if ($user->rights->agenda->allactions->read || $actionstatic->authorid == $user->id)
-//			{
-//				$out.='<a href="'.$url.'" class="timeline-btn" title="'.$langs->trans('Show').'" ><i class="fa fa-calendar" ></i>'.$langs->trans('Show').'</a>';
-//			}
+            //if ($user->rights->agenda->allactions->read || $actionstatic->authorid == $user->id)
+            //{
+            //	$out.='<a href="'.$url.'" class="timeline-btn" title="'.$langs->trans('Show').'" ><i class="fa fa-calendar" ></i>'.$langs->trans('Show').'</a>';
+            //}
 
 
             if ($user->rights->agenda->allactions->create ||
@@ -723,9 +723,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
             $out.="</span>\n";
 
             // Ref
-
-           $out.='<h3 class="timeline-header">';
-
+            $out.='<h3 class="timeline-header">';
 
             // Author of event
             $out.='<span class="messaging-author">';
@@ -739,10 +737,8 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
             }
             $out.='</span>';
 
-
             // Title
             $out .= ' <span class="messaging-title">';
-
 
 			if($actionstatic->code == 'TICKET_MSG') {
 				$out .= $langs->trans('TicketNewMessage');

@@ -218,26 +218,25 @@ class pdf_rouget extends ModelePdfExpedition
 
 				$realpath='';
 
-                foreach ($objphoto->liste_photos($dir, 1) as $key => $obj)
+                foreach ($objphoto->liste_photos($dir, 1) as $key => $obj) {
+                    if (empty($conf->global->CAT_HIGH_QUALITY_IMAGES)) {
+                        // If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
+                        if ($obj['photo_vignette'])
                         {
-                            if (empty($conf->global->CAT_HIGH_QUALITY_IMAGES))		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
-                            {
-                                if ($obj['photo_vignette'])
-                                {
-                                    $filename= $obj['photo_vignette'];
-                                }
-                                else
-                                {
-                                    $filename=$obj['photo'];
-                                }
-                            }
-                            else
-                            {
-                                $filename=$obj['photo'];
-                            }
+                            $filename= $obj['photo_vignette'];
+                        }
+                        else
+                        {
+                            $filename=$obj['photo'];
+                        }
+                    }
+                    else
+                    {
+                        $filename=$obj['photo'];
+                    }
 
-                            $realpath = $dir.$filename;
-                            break;
+                    $realpath = $dir.$filename;
+                    break;
                 }
 
                 if ($realpath) $realpatharray[$i]=$realpath;
@@ -541,8 +540,8 @@ class pdf_rouget extends ModelePdfExpedition
 
 					if (empty($conf->global->SHIPPING_PDF_HIDE_ORDERED))
 					{
-					   $pdf->SetXY($this->posxqtyordered, $curY);
-					   $pdf->MultiCell(($this->posxqtytoship - $this->posxqtyordered), 3, $object->lines[$i]->qty_asked, '', 'C');
+					    $pdf->SetXY($this->posxqtyordered, $curY);
+					    $pdf->MultiCell(($this->posxqtytoship - $this->posxqtyordered), 3, $object->lines[$i]->qty_asked, '', 'C');
 					}
 
 					if (empty($conf->global->SHIPPING_PDF_HIDE_QTYTOSHIP))

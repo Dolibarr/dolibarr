@@ -312,17 +312,26 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				foreach($feature2 as $subfeature)
 				{
 					if (empty($user->rights->$feature->$subfeature->creer)
-						&& empty($user->rights->$feature->$subfeature->write)
-						&& empty($user->rights->$feature->$subfeature->create)) { $createok=0; $nbko++; }
-						else { $createok=1; break; } // Break to bypass second test if the first is ok
+					&& empty($user->rights->$feature->$subfeature->write)
+					&& empty($user->rights->$feature->$subfeature->create)) {
+						$createok=0;
+						$nbko++;
+					} else {
+						$createok=1;
+						// Break to bypass second test if the first is ok
+						break;
+					}
 				}
 			}
 			elseif (! empty($feature))														// This is for permissions on 2 levels ('creer' or 'write')
 			{
 				//print '<br>feature='.$feature.' creer='.$user->rights->$feature->creer.' write='.$user->rights->$feature->write;
 				if (empty($user->rights->$feature->creer)
-					&& empty($user->rights->$feature->write)
-					&& empty($user->rights->$feature->create)) { $createok=0; $nbko++; }
+				&& empty($user->rights->$feature->write)
+				&& empty($user->rights->$feature->create)) {
+					$createok=0;
+					$nbko++;
+				}
 			}
 		}
 

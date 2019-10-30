@@ -379,7 +379,7 @@ class MailmanSpip
 	            return count($lists);
 	        }
 	        else
-	       {
+	        {
 	            $this->error="ADHERENT_MAILMAN_URL not defined";
 	            return -1;
 	        }

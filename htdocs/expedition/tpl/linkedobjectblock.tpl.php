@@ -23,11 +23,9 @@ if (empty($conf) || ! is_object($conf))
 	exit;
 }
 
-?>
 
-<!-- BEGIN PHP TEMPLATE -->
+print "<!-- BEGIN PHP TEMPLATE -->\n";
 
-<?php
 
 global $user;
 
@@ -37,24 +35,25 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 // Load translation files required by the page
 $langs->load("sendings");
 
-$total=0; $ilink=0;
+$total=0;
+$ilink=0;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
     $ilink++;
 
     $trclass='oddeven';
     if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
-?>
+    ?>
     <tr class="<?php echo $trclass; ?>">
         <td><?php echo $langs->trans("Shipment"); ?></td>
         <td><?php echo $objectlink->getNomUrl(1); ?></td>
         <td></td>
     	<td class="center"><?php echo dol_print_date($objectlink->date_delivery, 'day'); ?></td>
     	<td class="right"><?php
-    		if ($user->rights->expedition->lire) {
-    			$total = $total + $objectlink->total_ht;
-    			echo price($objectlink->total_ht);
-    		} ?></td>
+    	if ($user->rights->expedition->lire) {
+    		$total = $total + $objectlink->total_ht;
+    		echo price($objectlink->total_ht);
+    	} ?></td>
     	<td class="right"><?php echo $objectlink->getLibStatut(3); ?></td>
     	<td class="right">
     		<?php
@@ -66,7 +65,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
     		}
     		?>
     </tr>
-<?php
+    <?php
 }
 if (count($linkedObjectBlock) > 1) {
     ?>
@@ -81,6 +80,5 @@ if (count($linkedObjectBlock) > 1) {
     </tr>
     <?php
 }
-?>
 
-<!-- END PHP TEMPLATE -->
+print "<!-- END PHP TEMPLATE -->\n";

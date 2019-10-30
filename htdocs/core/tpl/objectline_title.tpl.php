@@ -39,9 +39,9 @@ if (empty($object) || ! is_object($object))
 	print "Error, template page can't be called as URL";
 	exit;
 }
-?>
-<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->
-<?php
+
+print "<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->\n";
+
 // Title line
 print "<thead>\n";
 
@@ -90,16 +90,19 @@ if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
 {
 	if (!empty($user->rights->margins->creer))
 	{
-		if ($conf->global->MARGIN_TYPE == "1")
+		if ($conf->global->MARGIN_TYPE == "1") {
 			print '<td class="linecolmargin1 margininfos right" style="width: 80px">'.$langs->trans('BuyingPrice').'</td>';
-			else
-				print '<td class="linecolmargin1 margininfos right" style="width: 80px">'.$langs->trans('CostPrice').'</td>';
+		} else {
+			print '<td class="linecolmargin1 margininfos right" style="width: 80px">'.$langs->trans('CostPrice').'</td>';
+		}
 	}
 
-	if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous)
+	if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) {
 		print '<td class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarginRate').'</td>';
-		if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous)
-			print '<td class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarkRate').'</td>';
+	}
+	if (! empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {
+		print '<td class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarkRate').'</td>';
+	}
 }
 
 // Total HT
@@ -126,6 +129,5 @@ if($action == 'selectlines')
 
 print "</tr>\n";
 print "</thead>\n";
-?>
 
-<!-- END PHP TEMPLATE objectline_title.tpl.php -->
+print "<!-- END PHP TEMPLATE objectline_title.tpl.php -->\n";

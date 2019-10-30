@@ -1060,12 +1060,13 @@ class Thirdparties extends DolibarrApi
 
 		$returnAccounts = array();
 
-		foreach($accounts as $account){
-			$object= array();
-			foreach($account as $key => $value)
-				if(in_array($key, $fields)){
+		foreach ($accounts as $account) {
+			$object = array();
+			foreach ($account as $key => $value) {
+				if (in_array($key, $fields)) {
 					$object[$key] = $value;
 				}
+			}
 			$returnAccounts[] = $object;
 		}
 
@@ -1264,7 +1265,7 @@ class Thirdparties extends DolibarrApi
 		}
     }
 
-  /**
+    /**
 	 * Get a specific gateway attached to a thirdparty (by specifying the site key)
 	 *
 	 * @param int $id ID of thirdparty
@@ -1321,12 +1322,13 @@ class Thirdparties extends DolibarrApi
 
 		$returnAccounts = array();
 
-		foreach($accounts as $account){
-			$object= array();
-			foreach($account as $key => $value)
-				if(in_array($key, $fields)){
+		foreach ($accounts as $account) {
+			$object = array();
+			foreach ($account as $key => $value) {
+				if(in_array($key, $fields)) {
 					$object[$key] = $value;
 				}
+			}
 			$returnAccounts[] = $object;
 		}
 
@@ -1439,16 +1441,18 @@ class Thirdparties extends DolibarrApi
 			$account->fk_soc = $id;
 			$account->site = $site;
 
-			if ($account->create(DolibarrApiAccess::$user) < 0)
+			if ($account->create(DolibarrApiAccess::$user) < 0) {
 				throw new RestException(500, 'Error creating SocieteAccount entity.');
-		// We found an existing SocieteAccount entity, we are replacing it
+			}
+			// We found an existing SocieteAccount entity, we are replacing it
 		} else {
-			if(isset($request_data['site']) && $request_data['site'] !== $site) {
+			if (isset($request_data['site']) && $request_data['site'] !== $site) {
 				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_account WHERE fk_soc  = ".$id." AND site = '". $request_data['site']."' ";
 				$result = $db->query($sql);
 
-				if($result->num_rows !== 0)
+				if ($result->num_rows !== 0) {
 					throw new RestException(409, "You are trying to update this thirdparty SocieteAccount (gateway record) from $site to ".$request_data['site'] . " but another SocieteAccount entity already exists with this site key.");
+				}
 			}
 
 			$obj = $db->fetch_object($result);
@@ -1664,12 +1668,12 @@ class Thirdparties extends DolibarrApi
         return $thirdparty;
     }
 
-  /**
-   * Fetch properties of a thirdparty object.
-   *
-   * Return an array with thirdparty informations
-   *
-   * @param	   int		$rowid      Id of third party to load
+    /**
+     * Fetch properties of a thirdparty object.
+     *
+     * Return an array with thirdparty informations
+     *
+     * @param	   int		$rowid      Id of third party to load
 	 * @param    string	$ref        Reference of third party, name (Warning, this can return several records)
 	 * @param    string	$ref_ext    External reference of third party (Warning, this information is a free field not provided by Dolibarr)
 	 * @param    string	$ref_int    Internal reference of third party (not used by dolibarr)
@@ -1681,38 +1685,38 @@ class Thirdparties extends DolibarrApi
 	 * @param    string	$idprof6		Prof id 6 of third party (Warning, this can return several records)
 	 * @param    string	$email   		Email of third party (Warning, this can return several records)
 	 * @param    string	$ref_alias  Name_alias of third party (Warning, this can return several records)
-   * @return array|mixed data without useless information
-   *
-   * @throws RestException
-   */
-  private function _fetch($rowid, $ref = '', $ref_ext = '', $ref_int = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '')
-  {
-      if(! DolibarrApiAccess::$user->rights->societe->lire) {
-          throw new RestException(401);
-      }
+     * @return array|mixed data without useless information
+     *
+     * @throws RestException
+    */
+    private function _fetch($rowid, $ref = '', $ref_ext = '', $ref_int = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '')
+    {
+        if(! DolibarrApiAccess::$user->rights->societe->lire) {
+            throw new RestException(401);
+        }
 
-      $result = $this->company->fetch($rowid, $ref, $ref_ext, $ref_int, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email, $ref_alias);
-      if( ! $result ) {
-          throw new RestException(404, 'Thirdparty not found');
-      }
+        $result = $this->company->fetch($rowid, $ref, $ref_ext, $ref_int, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email, $ref_alias);
+        if( ! $result ) {
+            throw new RestException(404, 'Thirdparty not found');
+        }
 
-      if( ! DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
-          throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-      }
+        if( ! DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
-      if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-          $filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
-          $filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
-      } else {
-          $filterabsolutediscount = "fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')";
-          $filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
-      }
+        if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+            $filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+            $filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+        } else {
+            $filterabsolutediscount = "fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')";
+            $filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
+        }
 
-      $absolute_discount = $this->company->getAvailableDiscounts('', $filterabsolutediscount);
-      $absolute_creditnote = $this->company->getAvailableDiscounts('', $filtercreditnote);
-      $this->company->absolute_discount = price2num($absolute_discount, 'MT');
-      $this->company->absolute_creditnote = price2num($absolute_creditnote, 'MT');
+        $absolute_discount = $this->company->getAvailableDiscounts('', $filterabsolutediscount);
+        $absolute_creditnote = $this->company->getAvailableDiscounts('', $filtercreditnote);
+        $this->company->absolute_discount = price2num($absolute_discount, 'MT');
+        $this->company->absolute_creditnote = price2num($absolute_creditnote, 'MT');
 
-      return $this->_cleanObjectDatas($this->company);
-  }
+        return $this->_cleanObjectDatas($this->company);
+    }
 }

@@ -76,13 +76,12 @@ class FormContract
 		if ($socid > 0)
 		{
 			// CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY is 'all' or a list of ids separated by coma.
-		    	if (empty($conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY))
-			    $sql.= " AND (c.fk_soc=".$socid." OR c.fk_soc IS NULL)";
-		    	elseif ($conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY != 'all')
-			{
-		        	$sql.= " AND (c.fk_soc IN (".$socid.", ".$conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY.") ";
+		    if (empty($conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY)) {
+		        $sql.= " AND (c.fk_soc=".$socid." OR c.fk_soc IS NULL)";
+			} elseif ($conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY != 'all') {
+		        $sql.= " AND (c.fk_soc IN (".$socid.", ".$conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY.") ";
 				$sql.= " OR c.fk_soc IS NULL)";
-		    	}
+		    }
 		}
 		if ($socid == 0) $sql.= " AND (c.fk_soc = 0 OR c.fk_soc IS NULL)";
 		$sql.= " ORDER BY c.ref ";

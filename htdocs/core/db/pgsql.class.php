@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
 class DoliDBPgsql extends DoliDB
 {
     //! Database type
-	public $type='pgsql';            // Name of manager
+    public $type='pgsql';            // Name of manager
     //! Database label
 	const LABEL='PostgreSQL';      // Label of manager
 	//! Charset
@@ -174,9 +174,9 @@ class DoliDBPgsql extends DoliDB
 
 		    if ($type == 'auto')
 		    {
-              if (preg_match('/ALTER TABLE/i', $line)) $type='dml';
-              elseif (preg_match('/CREATE TABLE/i', $line)) $type='dml';
-              elseif (preg_match('/DROP TABLE/i', $line)) $type='dml';
+                if (preg_match('/ALTER TABLE/i', $line)) $type='dml';
+                elseif (preg_match('/CREATE TABLE/i', $line)) $type='dml';
+                elseif (preg_match('/DROP TABLE/i', $line)) $type='dml';
 		    }
 
     		$line=preg_replace('/ as signed\)/i', ' as integer)', $line);
@@ -457,8 +457,8 @@ class DoliDBPgsql extends DoliDB
 		$resql=$this->query('SHOW server_version');
 		if ($resql)
 		{
-		  $liste=$this->fetch_array($resql);
-		  return $liste['server_version'];
+		    $liste=$this->fetch_array($resql);
+		    return $liste['server_version'];
 		}
 		return '';
 	}
@@ -483,9 +483,9 @@ class DoliDBPgsql extends DoliDB
     {
         if ($this->db)
         {
-          if ($this->transaction_opened > 0) dol_syslog(get_class($this)."::close Closing a connection with an opened transaction depth=".$this->transaction_opened, LOG_ERR);
-          $this->connected=false;
-          return pg_close($this->db);
+            if ($this->transaction_opened > 0) dol_syslog(get_class($this)."::close Closing a connection with an opened transaction depth=".$this->transaction_opened, LOG_ERR);
+            $this->connected=false;
+            return pg_close($this->db);
         }
         return false;
     }
@@ -955,10 +955,10 @@ class DoliDBPgsql extends DoliDB
 		$result = $this->query($sql);
 		if ($result)
 		{
-    		 while($row = $this->fetch_row($result))
-    		 {
+    		while($row = $this->fetch_row($result))
+    		{
     			$infotables[] = $row;
-    		 }
+    		}
 		}
         return $infotables;
 	}
@@ -1127,21 +1127,24 @@ class DoliDBPgsql extends DoliDB
 		$sql= "ALTER TABLE ".$table." ADD ".$field_name." ";
 		$sql .= $field_desc['type'];
 		if (preg_match("/^[^\s]/i", $field_desc['value']))
-		    if (! in_array($field_desc['type'], array('int','date','datetime')))
-		    {
-		        $sql.= "(".$field_desc['value'].")";
-		    }
+	    if (! in_array($field_desc['type'], array('int','date','datetime')))
+	    {
+	        $sql.= "(".$field_desc['value'].")";
+	    }
 		if (preg_match("/^[^\s]/i", $field_desc['attribute']))
             $sql .= " ".$field_desc['attribute'];
 		if (preg_match("/^[^\s]/i", $field_desc['null']))
             $sql .= " ".$field_desc['null'];
-		if (preg_match("/^[^\s]/i", $field_desc['default']))
-            if (preg_match("/null/i", $field_desc['default']))
+		if (preg_match("/^[^\s]/i", $field_desc['default'])) {
+            if (preg_match("/null/i", $field_desc['default'])) {
                 $sql .= " default ".$field_desc['default'];
-		    else
-                $sql .= " default '".$field_desc['default']."'";
-		if (preg_match("/^[^\s]/i", $field_desc['extra']))
-            $sql .= " ".$field_desc['extra'];
+			} else {
+				$sql .= " default '".$field_desc['default']."'";
+			}
+		}
+		if (preg_match("/^[^\s]/i", $field_desc['extra'])) {
+			$sql .= " ".$field_desc['extra'];
+		}
 		$sql .= " ".$field_position;
 
 		dol_syslog($sql, LOG_DEBUG);

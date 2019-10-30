@@ -702,15 +702,15 @@ if ($resql)
 
 		// Linked object
 		if (! empty($arrayfields['a.fk_element']['checked'])) {
-		        print '<td>';
-		        //var_dump($obj->fkelement.' '.$obj->elementtype);
-		        if ($obj->fk_element > 0 && ! empty($obj->elementtype)) {
-              		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		            print dolGetElementUrl($obj->fk_element, $obj->elementtype, 1);
-		        } else {
-              		print "&nbsp;";
-		        }
-		        print '</td>';
+            print '<td>';
+            //var_dump($obj->fkelement.' '.$obj->elementtype);
+            if ($obj->fk_element > 0 && ! empty($obj->elementtype)) {
+                include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+                print dolGetElementUrl($obj->fk_element, $obj->elementtype, 1);
+            } else {
+                print "&nbsp;";
+            }
+            print '</td>';
 		}
 
 		// Extra fields

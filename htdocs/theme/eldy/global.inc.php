@@ -555,7 +555,7 @@ div.divsearchfield {
 <?php
 // Add a nowrap on smartphone, so long list of field used for filter are overflowed with clip
 if ($conf->browser->layout == 'phone') {
-?>
+	?>
 .divsearchfieldfilter {
    	white-space: nowrap;
 }

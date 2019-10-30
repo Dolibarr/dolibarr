@@ -1417,8 +1417,8 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		//print '>'.$outputlangs->charset_output.','.$period;
 		if(!empty($conf->global->ADD_HTML_FORMATING_INTO_DESC_DOC)){
 		    $libelleproduitservice.= '<b style="color:#333666;" ><em>'."__N__</b> ".$period.'</em>';
-		}else{
-		$libelleproduitservice.="__N__".$period;
+		} else {
+		    $libelleproduitservice.="__N__".$period;
 		}
 		//print $libelleproduitservice;
 	}
@@ -1705,8 +1705,8 @@ function pdf_getlineqty($object, $i, $outputlangs, $hidedetails = 0)
 	}
     if (empty($reshook))
 	{
-	   if ($object->lines[$i]->special_code == 3) return '';
-	   if (empty($hidedetails) || $hidedetails > 1) $result.=$object->lines[$i]->qty;
+	    if ($object->lines[$i]->special_code == 3) return '';
+	    if (empty($hidedetails) || $hidedetails > 1) $result.=$object->lines[$i]->qty;
 	}
 	return $result;
 }
@@ -2108,7 +2108,7 @@ function pdf_getLinkedObjects($object, $outputlangs)
 	{
 	    if ($objecttype == 'facture')
 	    {
-	       // For invoice, we don't want to have a reference line on document. Image we are using recuring invoice, we will have a line longer than document width.
+	        // For invoice, we don't want to have a reference line on document. Image we are using recuring invoice, we will have a line longer than document width.
 	    }
 	    elseif ($objecttype == 'propal' || $objecttype == 'supplier_proposal')
 		{

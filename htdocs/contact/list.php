@@ -680,9 +680,9 @@ if (! empty($arrayfields['p.thirdparty']['checked']))
 if (! empty($arrayfields['p.priv']['checked']))
 {
 	print '<td class="liste_titre center">';
-   $selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
-   print $form->selectarray('search_priv', $selectarray, $search_priv, 1);
-   print '</td>';
+    $selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
+    print $form->selectarray('search_priv', $selectarray, $search_priv, 1);
+    print '</td>';
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
@@ -932,9 +932,9 @@ while ($i < min($num, $limit))
 		print '<td>';
 		if ($obj->socid)
 		{
-		$objsoc = new Societe($db);
-		$objsoc->fetch($obj->socid);
-		print $objsoc->getNomUrl(1);
+		    $objsoc = new Societe($db);
+		    $objsoc->fetch($obj->socid);
+		    print $objsoc->getNomUrl(1);
 		}
 		else
 			print '&nbsp;';

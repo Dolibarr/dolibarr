@@ -85,7 +85,7 @@ $object->fetch($facid);
     for($i=0;$i < $tab_size;$i++)
     {
         $remise = $tab[$i]['remise'];
-    ?>
+        ?>
     <tr>
         <td><?php echo $tab[$i]['ref'];?></td>
         <td><?php echo $tab[$i]['label'];?></td>
@@ -93,7 +93,7 @@ $object->fetch($facid);
         <td><?php echo $tab[$i]['remise_percent'];?></td>
         <td class="total"><?php echo price(price2num($tab[$i]['total_ht'], 'MT'), 0, $langs, 0, 0, -1, $conf->currency);?></td>
     </tr>
-    <?php
+        <?php
     }
     ?>
     </tbody>
