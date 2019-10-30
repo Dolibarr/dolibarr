@@ -53,7 +53,10 @@ class Holiday extends CommonObject
 	 * @var int Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_holiday';
-
+    
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto = 'holiday';
 
 	/**
