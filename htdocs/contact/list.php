@@ -277,7 +277,7 @@ $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("
 $sql = "SELECT s.rowid as socid, s.nom as name,";
 $sql.= " p.rowid, p.lastname as lastname, p.statut, p.firstname, p.zip, p.town, p.poste, p.email, p.no_email, p.skype,";
 $sql.= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.datec as date_creation, p.tms as date_update,";
-$sql.= " co.code as country_code";
+$sql.= " co.label as country, co.code as country_code";
 // Add fields from extrafields
 if (! empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
@@ -796,6 +796,8 @@ while ($i < min($num, $limit))
 	$contactstatic->phone_mobile=$obj->phone_mobile;
 	$contactstatic->zip=$obj->zip;
 	$contactstatic->town=$obj->town;
+	$contactstatic->country = $obj->country;
+	$contactstatic->country_code = $obj->country_code;
 
 	// ID
 	if (! empty($arrayfields['p.rowid']['checked']))
