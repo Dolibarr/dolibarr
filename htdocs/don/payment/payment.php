@@ -238,8 +238,9 @@ if (GETPOST('action', 'aZ09') == 'create')
     dol_fiche_end();
 
 	/*
- 	 * Autres charges impayees
+ 	 * List of payments on donation
 	 */
+	
 	$num = 1;
 	$i = 0;
 
@@ -279,12 +280,12 @@ if (GETPOST('action', 'aZ09') == 'create')
 		print "</td>";
 
 		print "</tr>\n";
-		$total+=$objp->total;
+		/*$total+=$objp->total;
 		$total_ttc+=$objp->total_ttc;
-		$totalrecu+=$objp->am;
+		$totalrecu+=$objp->am;*/    //Useless code ?
 		$i++;
 	}
-	if ($i > 1)
+	/*if ($i > 1)
 	{
 		// Print total
 		print '<tr class="oddeven">';
@@ -294,7 +295,7 @@ if (GETPOST('action', 'aZ09') == 'create')
 		print "<td class=\"right\"><b>".price($total_ttc - $totalrecu)."</b></td>";
 		print '<td class="center">&nbsp;</td>';
 		print "</tr>\n";
-	}
+	}*/    //Useless code ?
 
 	print "</table>";
 
