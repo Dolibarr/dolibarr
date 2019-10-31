@@ -395,7 +395,6 @@ function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 
 				if(!$error)
 				{
-
 					$linesresp=array();
 					$i=0;
 					foreach($order->lines as $line)
@@ -558,7 +557,6 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 
 				if(!$error)
 				{
-
 					// Define lines of invoice
 					$linesresp=array();
 					foreach($order->lines as $line)
@@ -837,7 +835,6 @@ function validOrder($authentication, $id = '', $id_warehouse = 0)
 			$db->begin();
 			if ($result > 0)
 			{
-
 				$result=$order->valid($fuser, $id_warehouse);
 
 				if ($result	>= 0)
@@ -921,7 +918,6 @@ function updateOrder($authentication, $order)
 		$result=$object->fetch($order['id'], (empty($order['id'])?$order['ref']:''), (empty($order['id']) && empty($order['ref'])?$order['ref_ext']:''));
 
 		if (!empty($object->id)) {
-
 			$objectfound=true;
 
 			$db->begin();

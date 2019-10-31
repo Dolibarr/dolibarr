@@ -599,11 +599,11 @@ if (empty($reshook))
 						{
 						    case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
 						    case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
-						      $errors[] = "ErrorFileSizeTooLarge";
-						      break;
+						        $errors[] = "ErrorFileSizeTooLarge";
+						        break;
 	      					case 3: //uploaded file was only partially uploaded
-						      $errors[] = "ErrorFilePartiallyUploaded";
-						      break;
+						        $errors[] = "ErrorFilePartiallyUploaded";
+						        break;
 						}
 	                }
                     // Gestion du logo de la société
@@ -625,15 +625,16 @@ if (empty($reshook))
                 {
                     $db->commit();
 
-                	if (! empty($backtopage))
+                    if (! empty($backtopage))
                 	{
-                	    if (preg_match('/\?/', $backtopage)) $backtopage.='&socid='.$object->id;
+                		$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $backtopage);		// New method to autoselect project after a New on another form object creation
+                		if (preg_match('/\?/', $backtopage)) $backtopage.='&socid='.$object->id;	// Old method
                		    header("Location: ".$backtopage);
                     	exit;
                 	}
                 	else
                 	{
-                    	$url=$_SERVER["PHP_SELF"]."?socid=".$object->id;
+                		$url=$_SERVER["PHP_SELF"]."?socid=".$object->id;							// Old method
                     	if (($object->client == 1 || $object->client == 3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $url=DOL_URL_ROOT."/comm/card.php?socid=".$object->id;
                     	elseif ($object->fournisseur == 1) $url=DOL_URL_ROOT."/fourn/card.php?socid=".$object->id;
 
@@ -763,11 +764,11 @@ if (empty($reshook))
 					{
 					    case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
 					    case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
-					      $errors[] = "ErrorFileSizeTooLarge";
-					      break;
+					        $errors[] = "ErrorFileSizeTooLarge";
+					        break;
       					case 3: //uploaded file was only partially uploaded
-					      $errors[] = "ErrorFilePartiallyUploaded";
-					      break;
+					        $errors[] = "ErrorFilePartiallyUploaded";
+					        break;
 					}
                 }
                 // Gestion du logo de la société
@@ -776,7 +777,6 @@ if (empty($reshook))
                 // Update linked member
                 if (! $error && $object->fk_soc > 0)
                 {
-
                 	$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
                 	$sql.= " SET fk_soc = NULL WHERE fk_soc = " . $id;
                 	if (! $object->db->query($sql))
@@ -817,6 +817,7 @@ if (empty($reshook))
     if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->societe->supprimer)
     {
         $object->fetch($socid);
+        $object->oldcopy = clone $object;
         $result = $object->delete($socid, $user);
 
         if ($result > 0)
@@ -1291,10 +1292,16 @@ else
             print '</td></tr>';
         }
 
+        // Phone / Fax
+        print '<tr><td>'.img_picto('', 'object_phoning').' '.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
+        print '<td><input type="text" name="phone" id="phone" class="maxwidth200" value="'.(GETPOSTISSET('phone')?GETPOST('phone', 'alpha'):$object->phone).'"></td>';
+        print '<td>'.img_picto('', 'object_phoning_fax').' '.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
+        print '<td><input type="text" name="fax" id="fax" class="maxwidth200" value="'.(GETPOSTISSET('fax')?GETPOST('fax', 'alpha'):$object->fax).'"></td></tr>';
+
         // Email / Web
-        print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', $conf->global->SOCIETE_EMAIL_MANDATORY).'</td>';
+        print '<tr><td>'.img_picto('', 'object_email').' '.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', $conf->global->SOCIETE_EMAIL_MANDATORY).'</td>';
 	    print '<td colspan="3"><input type="text" name="email" id="email" value="'.$object->email.'"></td></tr>';
-        print '<tr><td>'.$form->editfieldkey('Web', 'url', '', $object, 0).'</td>';
+        print '<tr><td>'.img_picto('', 'globe').' '.$form->editfieldkey('Web', 'url', '', $object, 0).'</td>';
 	    print '<td colspan="3"><input type="text" name="url" id="url" value="'.$object->url.'"></td></tr>';
 
         if (! empty($conf->socialnetworks->enabled))
@@ -1332,12 +1339,6 @@ else
                 print '</td></tr>';
             }
         }
-
-        // Phone / Fax
-        print '<tr><td>'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
-	    print '<td><input type="text" name="phone" id="phone" class="maxwidth100onsmartphone quatrevingtpercent" value="'.$object->phone.'"></td>';
-        print '<td>'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
-	    print '<td><input type="text" name="fax" id="fax" class="maxwidth100onsmartphone quatrevingtpercent" value="'.$object->fax.'"></td></tr>';
 
         // Prof ids
         $i=1; $j=0;
@@ -1854,7 +1855,7 @@ else
 	                    print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.$object->code_fournisseur.'" maxlength="15">';
 	                }
 	                else
-	              {
+	                {
 	                    print $object->code_fournisseur;
 	                    print '<input type="hidden" name="supplier_code" value="'.$object->code_fournisseur.'">';
 	                }
@@ -1914,11 +1915,17 @@ else
                 print '</td></tr>';
             }
 
+            // Phone / Fax
+            print '<tr><td>'.img_picto('', 'object_phoning').' '.$form->editfieldkey('Phone', 'phone', GETPOST('phone', 'alpha'), $object, 0).'</td>';
+            print '<td><input type="text" name="phone" id="phone" class="maxwidth200" value="'.(GETPOSTISSET('phone')?GETPOST('phone', 'alpha'):$object->phone).'"></td>';
+            print '<td>'.img_picto('', 'object_phoning_fax').' '.$form->editfieldkey('Fax', 'fax', GETPOST('fax', 'alpha'), $object, 0).'</td>';
+            print '<td><input type="text" name="fax" id="fax" class="maxwidth200" value="'.(GETPOSTISSET('fax')?GETPOST('fax', 'alpha'):$object->fax).'"></td></tr>';
+
             // EMail / Web
-            print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', (! empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';
-	        print '<td colspan="3"><input type="text" name="email" id="email" size="32" value="'.$object->email.'"></td></tr>';
-            print '<tr><td>'.$form->editfieldkey('Web', 'url', '', $object, 0).'</td>';
-	        print '<td colspan="3"><input type="text" name="url" id="url" size="32" value="'.$object->url.'"></td></tr>';
+            print '<tr><td>'.img_picto('', 'object_email').' '.$form->editfieldkey('EMail', 'email', GETPOST('email', 'alpha'), $object, 0, 'string', '', (! empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';
+            print '<td colspan="3"><input type="text" name="email" id="email" class="maxwidth100onsmartphone quatrevingtpercent" value="'.(GETPOSTISSET('email')?GETPOST('email', 'alpha'):$object->email).'"></td></tr>';
+	        print '<tr><td>'.img_picto('', 'globe').' '.$form->editfieldkey('Web', 'url', GETPOST('url', 'alpha'), $object, 0).'</td>';
+	        print '<td colspan="3"><input type="text" name="url" id="url" class="maxwidth100onsmartphone quatrevingtpercent" value="'.(GETPOSTISSET('url')?GETPOST('url', 'alpha'):$object->irl).'"></td></tr>';
 
 	        if (! empty($conf->socialnetworks->enabled))
 	        {
@@ -1947,12 +1954,6 @@ else
                     print '<td colspan="3"><input type="text" name="linkedin" id="linkedin" value="'.$object->linkedin.'"></td></tr>';
                 }
 	        }
-
-            // Phone / Fax
-            print '<tr><td>'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
-	        print '<td><input type="text" name="phone" id="phone" class="maxwidth100onsmartphone quatrevingtpercent" value="'.$object->phone.'"></td>';
-            print '<td>'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
-	        print '<td><input type="text" name="fax" id="fax" class="maxwidth100onsmartphone quatrevingtpercent" value="'.$object->fax.'"></td></tr>';
 
             // Prof ids
             $i=1; $j=0;
@@ -2415,7 +2416,6 @@ else
 			    print '</td></tr>';
 			    if($object->localtax2_assuj=="1" && (! isOnlyOneLocalTax(2)))
 			    {
-
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax2">';
 			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -2653,19 +2653,19 @@ else
 		        if (! empty($object->email) || $at_least_one_email_contact)
 		        {
 		        	$langs->load("mails");
-		        	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&amp;action=presend&amp;mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
+		        	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&amp;action=presend&amp;mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
 		        }
 		        else
 				{
 		        	$langs->load("mails");
-		       		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a></div>';
+		       		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a>';
 		        }
 
 		        if ($user->rights->societe->creer)
 		        {
-		            print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
+		            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
 		        }
-				
+
 		        if (! empty($conf->adherent->enabled))
 		        {
 					$adh = new Adherent($db);
@@ -2678,18 +2678,18 @@ else
 
 		        if ($user->rights->societe->supprimer)
 		        {
-		        	print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MergeThirdparties")).'">'.$langs->trans('Merge').'</a></div>';
+		        	print '<a class="butActionDelete" href="card.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MergeThirdparties")).'">'.$langs->trans('Merge').'</a>';
 		        }
 
 		        if ($user->rights->societe->supprimer)
 		        {
 		            if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))	// We can't use preloaded confirm form with jmobile
 		            {
-		                print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
+		                print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>'."\n";
 		            }
 		            else
 					{
-		                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
+		                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>'."\n";
 		            }
 		        }
 			}

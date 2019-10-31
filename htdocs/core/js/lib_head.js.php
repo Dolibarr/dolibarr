@@ -1039,16 +1039,16 @@ function price2numjs(amount) {
 	if (amount == '') return '';
 
 	<?php
-		$dec = ',';
-		$thousand = ' ';
-		if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
-			$dec = $langs->transnoentitiesnoconv("SeparatorDecimal");
-		}
-		if ($langs->transnoentitiesnoconv("SeparatorThousand") != "SeparatorThousand") {
-			$thousand = $langs->transnoentitiesnoconv("SeparatorThousand");
-		}
-		if ($thousand == 'Space') $thousand=' ';
-		print "var dec='" . dol_escape_js($dec) . "'; var thousand='" . dol_escape_js($thousand) . "';\n";    // Set var in javascript
+	$dec = ',';
+	$thousand = ' ';
+	if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal") {
+		$dec = $langs->transnoentitiesnoconv("SeparatorDecimal");
+	}
+	if ($langs->transnoentitiesnoconv("SeparatorThousand") != "SeparatorThousand") {
+		$thousand = $langs->transnoentitiesnoconv("SeparatorThousand");
+	}
+	if ($thousand == 'Space') $thousand=' ';
+	print "var dec='" . dol_escape_js($dec) . "'; var thousand='" . dol_escape_js($thousand) . "';\n";    // Set var in javascript
 	?>
 
 	var main_max_dec_shown = <?php echo (int) str_replace('.', '', $conf->global->MAIN_MAX_DECIMALS_SHOWN); ?>;
@@ -1081,7 +1081,7 @@ function price2numjs(amount) {
 
 <?php
 if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && ! defined('DISABLE_JQUERY_JNOTIFY')) {
-?>
+    ?>
 // Defined properties for JNotify
 $(document).ready(function() {
 	if (typeof $.jnotify == 'function')

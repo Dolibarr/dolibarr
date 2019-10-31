@@ -369,7 +369,6 @@ if ($resql)
 		{
 			if($nb_warehouse>1) {
 				foreach($warehouses_list as &$wh) {
-
 					print '<td class="right">';
 					print empty($product->stock_warehouse[$wh['id']]->real) ? '0' : $product->stock_warehouse[$wh['id']]->real;
 					print '</td>';

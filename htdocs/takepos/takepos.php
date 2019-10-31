@@ -63,7 +63,7 @@ if ($conf->browser->layout == 'phone')
 	if ($_SESSION["takeposterminal"]!="" && $conf->global->TAKEPOS_PHONE_BASIC_LAYOUT==1)
 	{
 		$_SESSION["basiclayout"]=1;
-		header("Location: invoice.php?mobilepage=invoice");
+		header("Location: phone.php?mobilepage=invoice");
 		exit;
 	}
 }
@@ -254,7 +254,7 @@ function LoadProducts(position, issubcat) {
 	idata=0; //product data counter
 	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&category='+currentcat, function(data) {
 		console.log("Call ajax.php (in LoadProducts) to get Products of category "+currentcat+" then loop on result to fill image thumbs");
-
+		console.log(data);
 		while (ishow < maxproduct) {
 			//console.log("ishow"+ishow+" idata="+idata);
 			console.log(data[idata]);
@@ -407,7 +407,7 @@ function Refresh() {
 function New() {
 	// If we go here,it means $conf->global->TAKEPOS_BAR_RESTAURANT is not defined
 	console.log("New with place = <?php echo $place; ?>, js place="+place);
-	var r = confirm('<?php echo ($place > 0 ? $langs->trans("ConfirmDeletionOfThisPOSSale") : $langs->trans("ConfirmDiscardOfThisPOSSale")); ?>');
+	var r = confirm('<?php echo ($place > 0 ? $langs->transnoentitiesnoconv("ConfirmDeletionOfThisPOSSale") : $langs->transnoentitiesnoconv("ConfirmDiscardOfThisPOSSale")); ?>');
 	if (r == true) {
     	$("#poslines").load("invoice.php?action=delete&place="+place, function() {
     		//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
@@ -419,7 +419,7 @@ function New() {
 function Search2() {
 	console.log("Search2 Call ajax search to replace products");
 	pageproducts=0;
-	jQuery(".catwatermark").hide();
+	jQuery(".wrapper2 .catwatermark").hide();
 	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&term='+$('#search').val(), function(data) {
 		for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
 			if (typeof (data[i]) == "undefined"){
@@ -747,7 +747,7 @@ $menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"><
 		print '<input type="text" id="search" name="search" onkeyup="Search2();" style="width:80%;font-size: 150%;" placeholder="'.$langs->trans("Search").'" autofocus> ';
 		print '<a class="marginleftonly hideonsmartphone" onclick="ClearSearch();">'.img_picto('', 'searchclear').'</a>';
 		print '</div>';
-?>
+        ?>
 		</div>
 	</div>
 
@@ -759,7 +759,7 @@ $menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"><
 	$count=0;
 	while ($count < $MAXCATEG)
 	{
-	?>
+	    ?>
 			<div class="wrapper" <?php if ($count==($MAXCATEG-2)) echo 'onclick="MoreCategories(\'less\');"'; elseif ($count==($MAXCATEG-1)) echo 'onclick="MoreCategories(\'more\');"'; else echo 'onclick="LoadProducts('.$count.');"';?> id="catdiv<?php echo $count;?>">
 				<?php
 				if ($count==($MAXCATEG-2)) {
@@ -782,8 +782,8 @@ $menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"><
 				<?php } ?>
 				<div class="catwatermark" id='catwatermark<?php echo $count;?>'>+</div>
 			</div>
-	<?php
-    $count++;
+	    <?php
+        $count++;
 	}
 	?>
 		</div>
@@ -794,7 +794,7 @@ $menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"><
     $count=0;
     while ($count < $MAXPRODUCT)
     {
-    ?>
+        ?>
     			<div class="wrapper2" id='prodiv<?php echo $count;?>' <?php if ($count==($MAXPRODUCT-2)) {?> onclick="MoreProducts('less');" <?php } if ($count==($MAXPRODUCT-1)) {?> onclick="MoreProducts('more');" <?php } else echo 'onclick="ClickProduct('.$count.');"';?>>
     				<?php
     				if ($count==($MAXPRODUCT-2)) {
@@ -817,7 +817,7 @@ $menus[$r++]=array('title'=>'<span class="fa fa-sign-out-alt paddingrightonly"><
     				<?php } ?>
     				<div class="catwatermark" id='prowatermark<?php echo $count;?>'>+</div>
     			</div>
-    <?php
+        <?php
         $count++;
     }
     ?>

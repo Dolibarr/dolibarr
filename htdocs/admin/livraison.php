@@ -139,7 +139,7 @@ if ($action == 'set')
 
 if ($action == 'del')
 {
-   $ret = delDocumentModel($value, $type);
+    $ret = delDocumentModel($value, $type);
     if ($ret > 0)
     {
         if ($conf->global->LIVRAISON_ADDON_PDF == "$value") dolibarr_del_const($db, 'LIVRAISON_ADDON_PDF', $conf->entity);
@@ -356,8 +356,6 @@ foreach ($dirmodels as $reldir)
                 {
                 	if (file_exists($dir.'/'.$file))
                 	{
-
-
 		    			$name = substr($file, 4, dol_strlen($file) -16);
 		    			$classname = substr($file, 0, dol_strlen($file) -12);
 

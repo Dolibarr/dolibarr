@@ -873,7 +873,14 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
         print '</td></tr>';
 
         // User assigned
-        print '<tr><td>' . $langs->trans("AssignedTo") . '</td><td>';
+        print '<tr><td>';
+        print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
+        print $langs->trans("AssignedTo");
+        if ($object->fk_statut < 8 && GETPOST('set', 'alpha') != "assign_ticket" && $user->rights->ticket->manage) {
+        	print '<td class="right"><a class="editfielda" href="' . $url_page_current . '?track_id=' . $object->track_id . '&action=view&set=assign_ticket">' . img_edit($langs->trans('Modify'), '') . '</a></td>';
+        }
+        print '</tr></table>';
+        print '</td><td>';
         if ($object->fk_user_assign > 0) {
             $userstat->fetch($object->fk_user_assign);
             print $userstat->getNomUrl(1);
@@ -891,9 +898,6 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
             print $form->select_dolusers($user->id, 'fk_user_assign', 1);
             print ' <input class="button" type="submit" name="btn_assign_user" value="' . $langs->trans("Validate") . '" />';
             print '</form>';
-        }
-        if ($object->fk_statut < 8 && GETPOST('set', 'alpha') != "assign_ticket" && $user->rights->ticket->manage) {
-            print '<a href="' . $url_page_current . '?track_id=' . $object->track_id . '&action=view&set=assign_ticket">' . img_picto('', 'edit') . ' ' . $langs->trans('Modify') . '</a>';
         }
         print '</td></tr>';
 

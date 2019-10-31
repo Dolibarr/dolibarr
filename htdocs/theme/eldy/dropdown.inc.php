@@ -2,7 +2,7 @@
 if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 /* <style type="text/css" > dont remove this line it's an ide hack */
 /*
- * Dropdown
+ * Dropdown of user popup
  */
 
 .open>.dropdown-menu{
@@ -109,6 +109,13 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 #topmenu-global-search-dropdown .dropdown-menu{
     width: 300px;
     max-width: 100%;
+}
+
+div#topmenu-global-search-dropdown, div#topmenu-bookmark-dropdown {
+    line-height: 46px;
+}
+a.top-menu-dropdown-link {
+    padding: 8px;
 }
 
 .dropdown-user-image {

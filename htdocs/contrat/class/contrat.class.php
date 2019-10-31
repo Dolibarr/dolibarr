@@ -9,7 +9,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2018   	Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2015-2018	Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -221,7 +221,6 @@ class Contrat extends CommonObject
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 			foreach ($dirmodels as $reldir) {
-
 				$dir = dol_buildpath($reldir."core/modules/contract/");
 
 				// Load file with numbering class (if found)
@@ -862,9 +861,9 @@ class Contrat extends CommonObject
 
 				// multilangs
         		if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($objp->fk_product) && ! empty($loadalsotranslation)) {
-        		$line = new Product($this->db);
-        		$line->fetch($objp->fk_product);
-        		$line->getMultiLangs();
+                    $line = new Product($this->db);
+                    $line->fetch($objp->fk_product);
+                    $line->getMultiLangs();
         		}
 
 				$this->lines[$pos] = $line;
@@ -1412,7 +1411,6 @@ class Contrat extends CommonObject
 
 		if ($this->statut >= 0)
 		{
-
 			// Clean parameters
 			$pu_ht=price2num($pu_ht);
 			$pu_ttc=price2num($pu_ttc);
@@ -1731,7 +1729,6 @@ class Contrat extends CommonObject
 			$result=$this->update_statut($user);
 			if ($result >= 0)
 			{
-
 				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options)>0) // For avoid conflicts if trigger used
 				{
 					$contractline = new ContratLigne($this->db);
@@ -2422,7 +2419,6 @@ class Contrat extends CommonObject
 		$langs->load("contracts");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'strato';
 
 			if ($this->modelpdf) {

@@ -585,7 +585,7 @@ class MouvementStock extends CommonObject
 	    $sql .= " t.batch,";
 	    $sql .= " t.eatby,";
 	    $sql .= " t.sellby,";
-	    $sql .= " t.fk_projet";
+	    $sql .= " t.fk_projet as fk_project";
 	    $sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 	    $sql.= ' WHERE 1 = 1';
 	    //if (null !== $ref) {
@@ -618,6 +618,7 @@ class MouvementStock extends CommonObject
 	            $this->batch = $obj->batch;
 	            $this->eatby = $this->db->jdate($obj->eatby);
 	            $this->sellby = $this->db->jdate($obj->sellby);
+	            $this->fk_project = $obj->fk_project;
 	        }
 
 	        // Retreive all extrafield
@@ -947,8 +948,8 @@ class MouvementStock extends CommonObject
 					$result=dol_include_once('/'.$origintype.'/class/'.$origintype.'.class.php');
 					if ($result)
 					{
-					   $classname = ucfirst($origintype);
-					   $origin = new $classname($this->db);
+						$classname = ucfirst($origintype);
+						$origin = new $classname($this->db);
 					}
 				}
 				break;
@@ -1108,7 +1109,6 @@ class MouvementStock extends CommonObject
 		$langs->load("stocks");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'stdmovement';
 
 			if ($this->modelpdf) {

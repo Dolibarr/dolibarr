@@ -85,10 +85,7 @@ if (empty($reshook))
 		$result=$object->fetch($id);
    		$object->code_compta_fournisseur=$_POST["supplieraccountancycode"];
 	    $result=$object->update($object->id, $user, 1, 0, 1);
-	    if ($result < 0)
-	    {
-	        $mesg=join(',', $object->errors);
-	    }
+	    if ($result < 0)	setEventMessages($object->error, $object->errors, 'errors');
 	}
 	// terms of the settlement
 	if ($action == 'setconditions' && $user->rights->societe->creer)
@@ -793,48 +790,40 @@ if ($object->id > 0)
 		if ($conf->supplier_proposal->enabled && $user->rights->supplier_proposal->creer)
 		{
 			$langs->load("supplier_proposal");
-	      if ($object->status == 1)
-	      {
-	        print '<a class="butAction" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddSupplierProposal").'</a>';
-	      }
-	      else
-	      {
-	        print '<a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddSupplierProposal").'</a>';
-	      }
+	        if ($object->status == 1) {
+	            print '<a class="butAction" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddSupplierProposal").'</a>';
+	        } else {
+	            print '<a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddSupplierProposal").'</a>';
+	        }
 		}
 
 	    if ($user->rights->fournisseur->commande->creer)
 		{
 			$langs->load("orders");
-	      if ($object->status == 1)
-	      {
-	        print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddOrder").'</a>';
-	      }
-	      else
-	      {
-	        print '<a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddOrder").'</a>';
-	      }
+	        if ($object->status == 1) {
+	            print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddOrder").'</a>';
+	        } else {
+	            print '<a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddOrder").'</a>';
+	        }
 		}
 
 		if ($user->rights->fournisseur->facture->creer)
 		{
 			$langs->load("bills");
-	      if ($object->status == 1)
-	      {
-	        print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';
-	      }
-	      else
-	      {
-	        print '<a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddBill").'</a>';
-	      }
+	        if ($object->status == 1) {
+	            print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';
+	        } else {
+	            print '<a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddBill").'</a>';
+	        }
 		}
 
 		if ($user->rights->fournisseur->facture->creer)
 		{
 			if (! empty($orders2invoice) && $orders2invoice > 0)
 			{
-				if ($object->status == 1)		// Company is open
+				if ($object->status == 1)
 				{
+					// Company is open
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/orderstoinvoice.php?socid='.$object->id.'">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
 				}
 				else

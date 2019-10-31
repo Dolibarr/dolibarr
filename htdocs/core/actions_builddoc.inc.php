@@ -33,7 +33,6 @@
 // Build doc
 if ($action == 'builddoc' && $permissioncreate)
 {
-
     if (is_numeric(GETPOST('model', 'alpha')))
     {
         $error=$langs->trans("ErrorFieldRequired", $langs->transnoentities("Model"));
@@ -58,12 +57,12 @@ if ($action == 'builddoc' && $permissioncreate)
         // Special case to force bank account
         //if (property_exists($object, 'fk_bank'))
         //{
-            if (GETPOST('fk_bank', 'int')) {
-                // this field may come from an external module
-                $object->fk_bank = GETPOST('fk_bank', 'int');
-            } elseif (! empty($object->fk_account)) {
-                $object->fk_bank = $object->fk_account;
-            }
+        if (GETPOST('fk_bank', 'int')) {
+            // this field may come from an external module
+            $object->fk_bank = GETPOST('fk_bank', 'int');
+        } elseif (! empty($object->fk_account)) {
+            $object->fk_bank = $object->fk_account;
+        }
         //}
 
         $outputlangs = $langs;

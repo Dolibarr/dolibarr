@@ -238,9 +238,10 @@ class User extends CommonObject
 	 *	@param  string	$sid				If defined, sid to used for search
 	 * 	@param	int		$loadpersonalconf	1=also load personal conf of user (in $user->conf->xxx), 0=do not load personal conf.
 	 *  @param  int     $entity             If a value is >= 0, we force the search on a specific entity. If -1, means search depens on default setup.
+	 *  @param	int		$email       		If defined, email to used for search
 	 * 	@return	int							<0 if KO, 0 not found, >0 if OK
 	 */
-	public function fetch($id = '', $login = '', $sid = '', $loadpersonalconf = 0, $entity = -1)
+	public function fetch($id = '', $login = '', $sid = '', $loadpersonalconf = 0, $entity = -1, $email = '')
 	{
 		global $conf, $user;
 
@@ -304,6 +305,10 @@ class User extends CommonObject
 		elseif ($login)
 		{
 			$sql.= " AND u.login = '".$this->db->escape($login)."'";
+		}
+		elseif ($email)
+		{
+			$sql.= " AND u.email = '".$this->db->escape($email)."'";
 		}
 		else
 		{
@@ -1297,7 +1302,7 @@ class User extends CommonObject
 
 		$this->db->begin();
 
-		// Cree et positionne $this->id
+		// Create user and set $this->id. Trigger is disabled because executed later.
 		$result=$this->create($user, 1);
 		if ($result > 0)
 		{
@@ -1445,7 +1450,6 @@ class User extends CommonObject
 		$i = 0;
 		while ($i < $num)
 		{
-
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$rd[$i]";
 			$result=$this->db->query($sql);
 
@@ -2316,9 +2320,10 @@ class User extends CommonObject
 		$label.= '<div class="centpercent">';
 		$label.= '<u>' . $langs->trans("User") . '</u><br>';
 		$label.= '<b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs, '');
-		if (! empty($this->login))
-			$label.= '<br><b>' . $langs->trans('Login') . ':</b> ' . $this->login;
-		$label.= '<br><b>' . $langs->trans("EMail").':</b> '.$this->email;
+		if (! empty($this->login)) $label.= '<br><b>' . $langs->trans('Login') . ':</b> ' . $this->login;
+		if (! empty($this->job)) $label.= '<br><b>' . $langs->trans("Job").':</b> '.$this->job;
+		$label.= '<br><b>' . $langs->trans("Email").':</b> '.$this->email;
+		if (! empty($this->phone)) $label.= '<br><b>' . $langs->trans("Phone").':</b> '.$this->phone;
 		if (! empty($this->admin))
 			$label.= '<br><b>' . $langs->trans("Administrator").'</b>: '.yn($this->admin);
 		if (! empty($this->socid) )	// Add thirdparty for external users

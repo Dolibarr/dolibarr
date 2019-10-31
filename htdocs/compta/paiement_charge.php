@@ -162,27 +162,26 @@ $form=new Form($db);
 // Formulaire de creation d'un paiement de charge
 if ($action == 'create')
 {
-
 	$charge = new ChargeSociales($db);
 	$charge->fetch($chid);
     $charge->accountid=$charge->fk_account?$charge->fk_account:$charge->accountid;
     $charge->paiementtype=$charge->mode_reglement_id?$charge->mode_reglement_id:$charge->paiementtype;
 
 	$total = $charge->amount;
-		if (! empty($conf->use_javascript_ajax))
-		{
-			print "\n".'<script type="text/javascript" language="javascript">';
+	if (! empty($conf->use_javascript_ajax))
+	{
+		print "\n".'<script type="text/javascript" language="javascript">';
 
-			//Add js for AutoFill
-			print ' $(document).ready(function () {';
-			print ' 	$(".AutoFillAmount").on(\'click touchstart\', function(){
-                            var amount = $(this).data("value");
-							document.getElementById($(this).data(\'rowid\')).value = amount ;
-						});';
-			print '	});'."\n";
+		//Add js for AutoFill
+		print ' $(document).ready(function () {';
+		print ' 	$(".AutoFillAmount").on(\'click touchstart\', function(){
+                        var amount = $(this).data("value");
+						document.getElementById($(this).data(\'rowid\')).value = amount ;
+					});';
+		print '	});'."\n";
 
-			print '	</script>'."\n";
-		}
+		print '	</script>'."\n";
+	}
 
 	print load_fiche_titre($langs->trans("DoPayment"));
 	print "<br>\n";

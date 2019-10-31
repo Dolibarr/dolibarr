@@ -279,8 +279,8 @@ if ($action != 'export_csv')
 				print '</tr>';
 			}
 
-			// Affiche le compte comptable en debut de ligne
-			print "<tr>";
+			// Show first line of a break
+			print '<tr class="trforbreak">';
 			print '<td colspan="6" style="font-weight:bold; border-bottom: 1pt solid black;">' . $line->numero_compte . ($root_account_description ? ' - ' . $root_account_description : '') . '</td>';
 			print '</tr>';
 

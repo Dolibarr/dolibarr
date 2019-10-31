@@ -42,7 +42,7 @@ if (! empty($conf->propal->enabled)) require_once DOL_DOCUMENT_ROOT.'/comm/propa
 if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('orders',"companies","bills",'propal','deliveries','stocks',"productbatch",'incoterm'));
+$langs->loadLangs(array('orders',"companies","bills",'propal','deliveries','stocks',"productbatch",'incoterm','other'));
 
 $id     = GETPOST('id', 'int');			// id of order
 $ref    = GETPOST('ref', 'alpha');
@@ -288,19 +288,20 @@ if ($id > 0 || ! empty($ref))
 	        $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 	        if ($user->rights->commande->creer)
 	        {
-	            if ($action != 'classify')
-	                $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-	                if ($action == 'classify') {
-	                    //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-	                    $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-	                    $morehtmlref.='<input type="hidden" name="action" value="classin">';
-	                    $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	                    $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-	                    $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-	                    $morehtmlref.='</form>';
-	                } else {
-	                    $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-	                }
+	            if ($action != 'classify') {
+					$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+                }
+                if ($action == 'classify') {
+                    //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+                    $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+                    $morehtmlref.='<input type="hidden" name="action" value="classin">';
+                    $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                    $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+                    $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+                    $morehtmlref.='</form>';
+                } else {
+                    $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+                }
 	        } else {
 	            if (! empty($object->fk_project)) {
 	                $proj = new Project($db);
@@ -618,7 +619,9 @@ if ($id > 0 || ! empty($ref))
 		$sql.= ' cd.date_start,';
 		$sql.= ' cd.date_end,';
 		$sql.= ' cd.special_code,';
-		$sql.= ' p.rowid as prodid, p.label as product_label, p.entity, p.ref, p.fk_product_type as product_type, p.description as product_desc';
+		$sql.= ' p.rowid as prodid, p.label as product_label, p.entity, p.ref, p.fk_product_type as product_type, p.description as product_desc,';
+		$sql.= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units,';
+		$sql.= ' p.surface, p.surface_units, p.volume, p.volume_units';
 		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 		$sql.= " WHERE cd.fk_commande = ".$object->id;
@@ -705,6 +708,20 @@ if ($id > 0 || ! empty($ref))
 						$product_static->id=$objp->fk_product;
 						$product_static->ref=$objp->ref;
 	                    $product_static->entity = $objp->entity;
+
+	                    $product_static->weight=$objp->weight;
+	                    $product_static->weight_units=$objp->weight_units;
+	                    $product_static->length=$objp->length;
+	                    $product_static->length_units=$objp->length_units;
+	                    $product_static->width=$objp->width;
+	                    $product_static->width_units=$objp->width_units;
+	                    $product_static->height=$objp->height;
+	                    $product_static->height_units=$objp->height_units;
+	                    $product_static->surface=$objp->surface;
+	                    $product_static->surface_units=$objp->surface_units;
+	                    $product_static->volume=$objp->volume;
+	                    $product_static->volume_units=$objp->volume_units;
+
 						$text=$product_static->getNomUrl(1);
 						$text.= ' - '.$label;
 						$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description)).'<br>';

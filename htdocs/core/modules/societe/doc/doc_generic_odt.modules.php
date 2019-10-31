@@ -197,14 +197,13 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			return -1;
 		}
 
-                // Add odtgeneration hook
-                if (! is_object($hookmanager))
-                {
-                        include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-                        $hookmanager=new HookManager($this->db);
-                }
-                $hookmanager->initHooks(array('odtgeneration'));
-                global $action;
+        // Add odtgeneration hook
+        if (! is_object($hookmanager)) {
+            include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+            $hookmanager=new HookManager($this->db);
+        }
+        $hookmanager->initHooks(array('odtgeneration'));
+        global $action;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$sav_charset_output=$outputlangs->charset_output;
@@ -408,17 +407,16 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				}
 				else {
 				    try {
-					   $odfHandler->creator = $user->getFullName($outputlangs);
-					   $odfHandler->title = $object->builddoc_filename;
-					   $odfHandler->subject = $object->builddoc_filename;
+                        $odfHandler->creator = $user->getFullName($outputlangs);
+                        $odfHandler->title = $object->builddoc_filename;
+                        $odfHandler->subject = $object->builddoc_filename;
 
-					   if (! empty($conf->global->ODT_ADD_DOLIBARR_ID))
-					   {
-    					  $odfHandler->userdefined['dol_id'] = $object->id;
-	   		  		      $odfHandler->userdefined['dol_element'] = $object->element;
-					   }
+                        if (! empty($conf->global->ODT_ADD_DOLIBARR_ID)) {
+                            $odfHandler->userdefined['dol_id'] = $object->id;
+                            $odfHandler->userdefined['dol_element'] = $object->element;
+                        }
 
-					   $odfHandler->saveToDisk($file);
+                        $odfHandler->saveToDisk($file);
 					} catch (Exception $e){
 						$this->error=$e->getMessage();
                         dol_syslog($e->getMessage(), LOG_INFO);

@@ -110,7 +110,7 @@ if ($id > 0)
     // Edit mode
     if ($action == 'edit')
     {
-       print '<table class="border centpercent">';
+        print '<table class="border centpercent">';
 
         if ($user->admin)
         {
@@ -149,7 +149,6 @@ if ($id > 0)
     }
     else	// View mode
     {
-
         print '<table class="border centpercent tableforfield">';
 
         if (! empty($user->admin))

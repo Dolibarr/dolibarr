@@ -180,7 +180,9 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 
                     if (! empty($location)) fwrite($calfileh, "LOCATION:".$encoding.$location."\n");
 					if ($fulldayevent) fwrite($calfileh, "X-FUNAMBOL-ALLDAY:1\n");
-                    if ($fulldayevent) fwrite($calfileh, "X-MICROSOFT-CDO-ALLDAYEVENT:1\n");
+
+					// see https://docs.microsoft.com/en-us/openspecs/exchange_server_protocols/ms-oxcical/0f262da6-c5fd-459e-9f18-145eba86b5d2
+                    if ($fulldayevent) fwrite($calfileh, "X-MICROSOFT-CDO-ALLDAYEVENT:TRUE\n");
 
 					// Date must be GMT dates
 					// Current date
@@ -318,7 +320,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 		fwrite($fichier, $form);
 
 		$form='<description><![CDATA['.$desc.'.]]></description>'."\n".
-//		'<language>fr</language>'."\n".
+        // '<language>fr</language>'."\n".
 		'<copyright>Dolibarr</copyright>'."\n".
 		'<lastBuildDate>'.$date.'</lastBuildDate>'."\n".
 		'<generator>Dolibarr</generator>'."\n";

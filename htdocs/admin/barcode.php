@@ -96,29 +96,29 @@ elseif ($action == 'updateengine')
     $resql=$db->query($sql);
     if ($resql)
     {
-	   $num = $db->num_rows($resql);
-	   $i = 0;
+	    $num = $db->num_rows($resql);
+	    $i = 0;
 
-	   while ($i <	$num)
-	   {
-	       $obj = $db->fetch_object($resql);
+	    while ($i <	$num)
+	    {
+	        $obj = $db->fetch_object($resql);
 
-	       if (GETPOST('coder'.$obj->rowid, 'alpha'))
-	       {
-	           $coder = GETPOST('coder'.$obj->rowid, 'alpha');
-	           $code_id = $obj->rowid;
+	        if (GETPOST('coder'.$obj->rowid, 'alpha'))
+	        {
+	            $coder = GETPOST('coder'.$obj->rowid, 'alpha');
+	            $code_id = $obj->rowid;
 
-	           $sqlp = "UPDATE ".MAIN_DB_PREFIX."c_barcode_type";
-	           $sqlp.= " SET coder = '" . $coder."'";
-	           $sqlp.= " WHERE rowid = ". $code_id;
-	           $sqlp.= " AND entity = ".$conf->entity;
+	            $sqlp = "UPDATE ".MAIN_DB_PREFIX."c_barcode_type";
+	            $sqlp.= " SET coder = '" . $coder."'";
+	            $sqlp.= " WHERE rowid = ". $code_id;
+	            $sqlp.= " AND entity = ".$conf->entity;
 
-	           $upsql=$db->query($sqlp);
-	           if (! $upsql) dol_print_error($db);
-	       }
+	            $upsql=$db->query($sqlp);
+	            if (! $upsql) dol_print_error($db);
+	        }
 
-	       $i++;
-	   }
+	        $i++;
+	    }
     }
 }
 
@@ -319,7 +319,6 @@ print '</tr>';
 // Chemin du binaire genbarcode sous linux
 if (! isset($_SERVER['WINDIR']))
 {
-
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("GenbarcodeLocation").'</td>';
 	print '<td width="60" class="center">';
@@ -335,7 +334,6 @@ if (! isset($_SERVER['WINDIR']))
 // Module products
 if (! empty($conf->product->enabled))
 {
-
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeProducts").'</td>';
 	print '<td width="60" class="right">';
@@ -346,7 +344,6 @@ if (! empty($conf->product->enabled))
 // Module thirdparty
 if (! empty($conf->societe->enabled))
 {
-
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeThirdParties").'</td>';
 	print '<td width="60" class="right">';

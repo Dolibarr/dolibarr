@@ -253,6 +253,7 @@ class pdf_stdmovement extends ModelePDFMovement
 		$warehousestatic=new Entrepot($db);
 		$movement=new MouvementStock($db);
 		$userstatic=new User($db);
+		$element = 'movement';
 
 		$sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.entity,";
 		$sql.= " e.ref as stock, e.rowid as entrepot_id, e.lieu,";
@@ -262,7 +263,9 @@ class pdf_stdmovement extends ModelePDFMovement
 		$sql.= " pl.rowid as lotid, pl.eatby, pl.sellby,";
 		$sql.= " u.login, u.photo, u.lastname, u.firstname";
 		// Add fields from extrafields
-		foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+		if (! empty($extrafields->attributes[$element]['label'])) {
+			foreach ($extrafields->attributes[$element]['label'] as $key => $val) $sql.=($extrafields->attributes[$element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		}
 		// Add fields from hooks
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -335,7 +338,6 @@ class pdf_stdmovement extends ModelePDFMovement
 
 		if ($conf->stock->dir_output)
 		{
-
 			if ($resql)
 			{
 				$product = new Product($db);

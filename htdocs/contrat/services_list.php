@@ -219,7 +219,9 @@ $sql.= " cd.subprice,";
 //$sql.= " cd.date_c as date_creation,";
 $sql.= " cd.tms as date_update";
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -703,17 +705,18 @@ while ($i < min($num, $limit))
 	// Status
 	if (! empty($arrayfields['status']['checked']))
 	{
-	   print '<td class="right">';
-	   if ($obj->cstatut == 0)	// If contract is draft, we say line is also draft
-	   {
-		   print $contractstatic->LibStatut(0, 5);
-	   }
-	   else
-	   {
-		   print $staticcontratligne->LibStatut($obj->statut, 5, ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < $now)?1:0);
-	   }
-	   print '</td>';
-       if (! $i) $totalarray['nbfield']++;
+	    print '<td class="right">';
+	    if ($obj->cstatut == 0)
+	    {
+			// If contract is draft, we say line is also draft
+		    print $contractstatic->LibStatut(0, 5);
+	    }
+	    else
+	    {
+		    print $staticcontratligne->LibStatut($obj->statut, 5, ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < $now)?1:0);
+	    }
+	    print '</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
 	// Action column
 	print '<td class="nowrap center">';

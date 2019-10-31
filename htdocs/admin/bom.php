@@ -183,16 +183,6 @@ elseif ($action == 'set_BOM_FREE_TEXT')
     {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
-} elseif ($action=="setshippableiconinlist") {
-    // Activate Set Shippable Icon In List
-    $setshippableiconinlist = GETPOST('value', 'int');
-    $res = dolibarr_set_const($db, "SHIPPABLE_BOM_ICON_IN_LIST", $setshippableiconinlist, 'yesno', 0, '', $conf->entity);
-    if (! $res > 0) $error++;
-    if (! $error) {
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-        setEventMessages($langs->trans("Error"), null, 'errors');
-    }
 }
 
 
@@ -255,7 +245,6 @@ foreach ($dirmodels as $reldir)
 
 					if ($module->isEnabled())
 					{
-
 						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
 						print $module->info();
 						print '</td>';
@@ -315,245 +304,217 @@ foreach ($dirmodels as $reldir)
 print "</table><br>\n";
 
 
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+/*
+ * Document templates generators
+ */
+
+print load_fiche_titre($langs->trans("BOMsModelModule"), '', '');
+
+// Load array def with activated templates
+$def = array();
+$sql = "SELECT nom";
+$sql.= " FROM ".MAIN_DB_PREFIX."document_model";
+$sql.= " WHERE type = '".$type."'";
+$sql.= " AND entity = ".$conf->entity;
+$resql=$db->query($sql);
+if ($resql)
 {
-    /*
-     * Document templates generators
-     */
+	$i = 0;
+	$num_rows=$db->num_rows($resql);
+	while ($i < $num_rows)
+	{
+		$array = $db->fetch_array($resql);
+		array_push($def, $array[0]);
+		$i++;
+	}
+}
+else
+{
+	dol_print_error($db);
+}
 
-    print load_fiche_titre($langs->trans("BOMsModelModule"), '', '');
 
-    // Load array def with activated templates
-    $def = array();
-    $sql = "SELECT nom";
-    $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
-    $sql.= " WHERE type = '".$type."'";
-    $sql.= " AND entity = ".$conf->entity;
-    $resql=$db->query($sql);
-    if ($resql)
+print "<table class=\"noborder\" width=\"100%\">\n";
+print "<tr class=\"liste_titre\">\n";
+print '<td>'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td class="center" width="60">'.$langs->trans("Status")."</td>\n";
+print '<td class="center" width="60">'.$langs->trans("Default")."</td>\n";
+print '<td class="center" width="38">'.$langs->trans("ShortInfo").'</td>';
+print '<td class="center" width="38">'.$langs->trans("Preview").'</td>';
+print "</tr>\n";
+
+clearstatcache();
+
+foreach ($dirmodels as $reldir)
+{
+    foreach (array('','/doc') as $valdir)
     {
-    	$i = 0;
-    	$num_rows=$db->num_rows($resql);
-    	while ($i < $num_rows)
-    	{
-    		$array = $db->fetch_array($resql);
-    		array_push($def, $array[0]);
-    		$i++;
-    	}
-    }
-    else
-    {
-    	dol_print_error($db);
-    }
+    	$dir = dol_buildpath($reldir."core/modules/bom".$valdir);
 
-
-    print "<table class=\"noborder\" width=\"100%\">\n";
-    print "<tr class=\"liste_titre\">\n";
-    print '<td>'.$langs->trans("Name").'</td>';
-    print '<td>'.$langs->trans("Description").'</td>';
-    print '<td class="center" width="60">'.$langs->trans("Status")."</td>\n";
-    print '<td class="center" width="60">'.$langs->trans("Default")."</td>\n";
-    print '<td class="center" width="38">'.$langs->trans("ShortInfo").'</td>';
-    print '<td class="center" width="38">'.$langs->trans("Preview").'</td>';
-    print "</tr>\n";
-
-    clearstatcache();
-
-    foreach ($dirmodels as $reldir)
-    {
-        foreach (array('','/doc') as $valdir)
+        if (is_dir($dir))
         {
-        	$dir = dol_buildpath($reldir."core/modules/bom".$valdir);
-
-            if (is_dir($dir))
+            $handle=opendir($dir);
+            if (is_resource($handle))
             {
-                $handle=opendir($dir);
-                if (is_resource($handle))
+                while (($file = readdir($handle))!==false)
                 {
-                    while (($file = readdir($handle))!==false)
+                    $filelist[]=$file;
+                }
+                closedir($handle);
+                arsort($filelist);
+
+                foreach($filelist as $file)
+                {
+                    if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
                     {
-                        $filelist[]=$file;
-                    }
-                    closedir($handle);
-                    arsort($filelist);
+                    	if (file_exists($dir.'/'.$file))
+                    	{
+                    		$name = substr($file, 4, dol_strlen($file) -16);
+	                        $classname = substr($file, 0, dol_strlen($file) -12);
 
-                    foreach($filelist as $file)
-                    {
-                        if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
-                        {
+	                        require_once $dir.'/'.$file;
+	                        $module = new $classname($db);
 
-                        	if (file_exists($dir.'/'.$file))
-                        	{
-                        		$name = substr($file, 4, dol_strlen($file) -16);
-    	                        $classname = substr($file, 0, dol_strlen($file) -12);
+	                        $modulequalified=1;
+	                        if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
+	                        if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
 
-    	                        require_once $dir.'/'.$file;
-    	                        $module = new $classname($db);
+	                        if ($modulequalified)
+	                        {
+	                            $var = !$var;
+	                            print '<tr class="oddeven"><td width="100">';
+	                            print (empty($module->name)?$name:$module->name);
+	                            print "</td><td>\n";
+	                            if (method_exists($module, 'info')) print $module->info($langs);
+	                            else print $module->description;
+	                            print '</td>';
 
-    	                        $modulequalified=1;
-    	                        if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
-    	                        if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
+	                            // Active
+	                            if (in_array($name, $def))
+	                            {
+	                            	print '<td class="center">'."\n";
+	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
+	                            	print img_picto($langs->trans("Enabled"), 'switch_on');
+	                            	print '</a>';
+	                            	print '</td>';
+	                            }
+	                            else
+	                            {
+	                                print '<td class="center">'."\n";
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+	                                print "</td>";
+	                            }
 
-    	                        if ($modulequalified)
-    	                        {
-    	                            $var = !$var;
-    	                            print '<tr class="oddeven"><td width="100">';
-    	                            print (empty($module->name)?$name:$module->name);
-    	                            print "</td><td>\n";
-    	                            if (method_exists($module, 'info')) print $module->info($langs);
-    	                            else print $module->description;
-    	                            print '</td>';
+	                            // Default
+	                            print '<td class="center">';
+	                            if ($conf->global->BOM_ADDON_PDF == $name)
+	                            {
+	                                print img_picto($langs->trans("Default"), 'on');
+	                            }
+	                            else
+	                            {
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+	                            }
+	                            print '</td>';
 
-    	                            // Active
-    	                            if (in_array($name, $def))
-    	                            {
-    	                            	print '<td class="center">'."\n";
-    	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
-    	                            	print img_picto($langs->trans("Enabled"), 'switch_on');
-    	                            	print '</a>';
-    	                            	print '</td>';
-    	                            }
-    	                            else
-    	                            {
-    	                                print '<td class="center">'."\n";
-    	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-    	                                print "</td>";
-    	                            }
-
-    	                            // Default
-    	                            print '<td class="center">';
-    	                            if ($conf->global->BOM_ADDON_PDF == $name)
-    	                            {
-    	                                print img_picto($langs->trans("Default"), 'on');
-    	                            }
-    	                            else
-    	                            {
-    	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-    	                            }
-    	                            print '</td>';
-
-    	                           // Info
-    		    					$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
-    					    		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
-    			                    if ($module->type == 'pdf')
-    			                    {
-    			                        $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
-    			                    }
-    					    		$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-    					    		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
-    					    		$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
-    					    		$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
-    					    		$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
-    					    		//$htmltooltip.='<br>'.$langs->trans("Discounts").': '.yn($module->option_escompte,1,1);
-    					    		//$htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
-    					    		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftBOMs").': '.yn($module->option_draft_watermark, 1, 1);
+	                            // Info
+		    					$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+					    		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+			                    if ($module->type == 'pdf')
+			                    {
+			                        $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+			                    }
+					    		$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+					    		$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
+					    		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftBOMs").': '.yn($module->option_draft_watermark, 1, 1);
 
 
-    	                            print '<td class="center">';
-    	                            print $form->textwithpicto('', $htmltooltip, 1, 0);
-    	                            print '</td>';
+	                            print '<td class="center">';
+	                            print $form->textwithpicto('', $htmltooltip, 1, 0);
+	                            print '</td>';
 
-    	                            // Preview
-    	                            print '<td class="center">';
-    	                            if ($module->type == 'pdf')
-    	                            {
-    	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
-    	                            }
-    	                            else
-    	                            {
-    	                                print img_object($langs->trans("PreviewNotAvailable"), 'generic');
-    	                            }
-    	                            print '</td>';
+	                            // Preview
+	                            print '<td class="center">';
+	                            if ($module->type == 'pdf')
+	                            {
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
+	                            }
+	                            else
+	                            {
+	                                print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+	                            }
+	                            print '</td>';
 
-    	                            print "</tr>\n";
-    	                        }
-                        	}
-                        }
+	                            print "</tr>\n";
+	                        }
+                    	}
                     }
                 }
             }
         }
     }
-
-    print '</table>';
-    print "<br>";
-
-    /*
-     * Other options
-     */
-
-    print load_fiche_titre($langs->trans("OtherOptions"), '', '');
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre">';
-    print '<td>'.$langs->trans("Parameter").'</td>';
-    print '<td class="center" width="60">'.$langs->trans("Value").'</td>';
-    print "<td>&nbsp;</td>\n";
-    print "</tr>\n";
-
-    $substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
-    $substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
-    $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
-    foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
-    $htmltext.='</i>';
-
-    print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<input type="hidden" name="action" value="set_BOM_FREE_TEXT">';
-    print '<tr class="oddeven"><td colspan="2">';
-    print $form->textwithpicto($langs->trans("FreeLegalTextOnBOMs"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
-    $variablename='BOM_FREE_TEXT';
-    if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
-    {
-        print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
-    }
-    else
-    {
-        include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-        $doleditor=new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
-        print $doleditor->Create();
-    }
-    print '</td><td class="right">';
-    print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-    print "</td></tr>\n";
-    print '</form>';
-
-    //Use draft Watermark
-
-    print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print "<input type=\"hidden\" name=\"action\" value=\"set_BOM_DRAFT_WATERMARK\">";
-    print '<tr class="oddeven"><td>';
-    print $form->textwithpicto($langs->trans("WatermarkOnDraftBOMs"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
-    print '</td><td>';
-    print '<input class="flat minwidth200" type="text" name="BOM_DRAFT_WATERMARK" value="'.$conf->global->BOM_DRAFT_WATERMARK.'">';
-    print '</td><td class="right">';
-    print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-    print "</td></tr>\n";
-    print '</form>';
-
-    print '</table>';
-    print '<br>';
 }
 
+print '</table>';
+print "<br>";
+
 /*
- * Notifications
+ * Other options
  */
-/*
-print load_fiche_titre($langs->trans("Notifications"), '', '');
+
+print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td class="center" width="60"></td>';
-print '<td width="80">&nbsp;</td>';
+print '<td class="center" width="60">'.$langs->trans("Value").'</td>';
+print "<td>&nbsp;</td>\n";
 print "</tr>\n";
 
+$substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
+$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
+$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
+foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
+$htmltext.='</i>';
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_BOM_FREE_TEXT">';
 print '<tr class="oddeven"><td colspan="2">';
-print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification").'<br>';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnBOMs"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
+$variablename='BOM_FREE_TEXT';
+if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
+{
+    print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
+}
+else
+{
+    include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+    $doleditor=new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
+    print $doleditor->Create();
+}
 print '</td><td class="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
+print '</form>';
+
+//Use draft Watermark
+
+print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print "<input type=\"hidden\" name=\"action\" value=\"set_BOM_DRAFT_WATERMARK\">";
+print '<tr class="oddeven"><td>';
+print $form->textwithpicto($langs->trans("WatermarkOnDraftBOMs"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
+print '</td><td>';
+print '<input class="flat minwidth200" type="text" name="BOM_DRAFT_WATERMARK" value="'.$conf->global->BOM_DRAFT_WATERMARK.'">';
+print '</td><td class="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
+print '</form>';
 
 print '</table>';
-*/
+print '<br>';
+
 
 // End of page
 llxFooter();

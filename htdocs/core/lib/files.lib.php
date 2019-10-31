@@ -624,7 +624,7 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask 
 
 	if (empty($arrayreplacementisregex))
 	{
-	   $content = make_substitutions($content, $arrayreplacement, null);
+	    $content = make_substitutions($content, $arrayreplacement, null);
 	}
 	else
 	{
@@ -1044,8 +1044,8 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			$checkvirusarray=dolCheckVirus($src_file);
 			if (count($checkvirusarray))
 			{
-			   dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: errors='.join(',', $checkvirusarray), LOG_WARNING);
-			   return 'ErrorFileIsInfectedWithAVirus: '.join(',', $checkvirusarray);
+			    dol_syslog('Files.lib::dol_move_uploaded_file File "'.$src_file.'" (target name "'.$dest_file.'") KO with antivirus: errors='.join(',', $checkvirusarray), LOG_WARNING);
+			    return 'ErrorFileIsInfectedWithAVirus: '.join(',', $checkvirusarray);
 			}
 		}
 
@@ -1848,10 +1848,15 @@ function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = ''
 				if (empty($fileoutput)) $fileoutput=$fileinput.".".$ext;
 
 				$count = $image->getNumberImages();
-
 				if (! dol_is_file($fileoutput) || is_writeable($fileoutput))
 				{
-					$ret = $image->writeImages($fileoutput, true);
+				    try {
+					   $ret = $image->writeImages($fileoutput, true);
+				    }
+				    catch(Exception $e)
+				    {
+				        dol_syslog($e->getMessage(), LOG_WARNING);
+				    }
 				}
 				else
 				{

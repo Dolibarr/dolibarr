@@ -2341,7 +2341,6 @@ class FactureFournisseur extends CommonInvoice
         $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
         foreach ($dirmodels as $reldir) {
-
             $dir = dol_buildpath($reldir."core/modules/supplier_invoice/");
 
             // Load file with numbering class (if found)
@@ -2362,10 +2361,10 @@ class FactureFournisseur extends CommonInvoice
         	return $numref;
         }
         else
-       {
-       		$this->error=$obj->error;
-        	//dol_print_error($db,get_class($this)."::getNextNumRef ".$obj->error);
-        	return false;
+        {
+            $this->error=$obj->error;
+            //dol_print_error($db,get_class($this)."::getNextNumRef ".$obj->error);
+            return false;
         }
     }
 
@@ -2575,7 +2574,6 @@ class FactureFournisseur extends CommonInvoice
 
         if (! $error)
         {
-
         }
 
         unset($object->context['createfromclone']);

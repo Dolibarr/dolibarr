@@ -171,7 +171,7 @@ $arrayfields=array(
 	'p.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
 	'p.fk_product_type'=>array('label'=>$langs->trans("Type"), 'checked'=>0, 'enabled'=>(! empty($conf->product->enabled) && ! empty($conf->service->enabled))),
 	'p.barcode'=>array('label'=>$langs->trans("Gencod"), 'checked'=>1, 'enabled'=>(! empty($conf->barcode->enabled))),
-	'p.duration'=>array('label'=>$langs->trans("Duration"), 'checked'=>($contextpage != 'productlist'), 'enabled'=>(! empty($conf->service->enabled))),
+	'p.duration'=>array('label'=>$langs->trans("Duration"), 'checked'=>($contextpage != 'productlist'), 'enabled'=>(! empty($conf->service->enabled) && (string) $type == '1')),
     'p.weight'=>array('label'=>$langs->trans("Weight"), 'checked'=>0, 'enabled'=>(! empty($conf->product->enabled))),
     'p.length'=>array('label'=>$langs->trans("Length"), 'checked'=>0, 'enabled'=>(! empty($conf->product->enabled)  && ! empty($conf->global->PRODUCT_DISABLE_SIZE))),
     'p.surface'=>array('label'=>$langs->trans("Surface"), 'checked'=>0, 'enabled'=>(! empty($conf->product->enabled) && ! empty($conf->global->PRODUCT_DISABLE_SURFACE))),
@@ -485,6 +485,8 @@ if ($resql)
 	if($type == Product::TYPE_SERVICE) $rightskey='service';
 	if($user->rights->{$rightskey}->creer)
 	{
+		$oldtype=$type;
+
 		if ($type === "") {
 			$newcardbutton.= dolGetButtonTitle($langs->trans('NewProduct'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&amp;type=0');
 			$type = Product::TYPE_SERVICE;
@@ -492,7 +494,9 @@ if ($resql)
 		$label='NewProduct';
 		if($type == Product::TYPE_SERVICE) $label='NewService';
         $newcardbutton.= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&amp;type='.$type);
-	}
+
+        $type=$oldtype;
+    }
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -605,7 +609,7 @@ if ($resql)
 		print '</td>';
 	}
 	// Duration
-	if ((string) $type == '1' && ! empty($arrayfields['p.duration']['checked']))
+	if (! empty($arrayfields['p.duration']['checked']))
 	{
 		print '<td class="liste_titre">';
 		print '</td>';
@@ -750,7 +754,7 @@ if ($resql)
     if (! empty($arrayfields['p.barcode']['checked'])) {
         print_liste_field_titre($arrayfields['p.barcode']['label'], $_SERVER["PHP_SELF"], "p.barcode", "", $param, "", $sortfield, $sortorder);
     }
-    if ((string) $type == '1' && ! empty($arrayfields['p.duration']['checked'])) {
+    if (! empty($arrayfields['p.duration']['checked'])) {
         print_liste_field_titre($arrayfields['p.duration']['label'], $_SERVER["PHP_SELF"], "p.duration", "", $param, '', $sortfield, $sortorder, 'center ');
     }
 	if (! empty($arrayfields['p.weight']['checked']))  print_liste_field_titre($arrayfields['p.weight']['label'], $_SERVER["PHP_SELF"], "p.weight", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -933,7 +937,7 @@ if ($resql)
 		}
 
 		// Duration
-		if ((string) $type == '1' && ! empty($arrayfields['p.duration']['checked']))
+		if (! empty($arrayfields['p.duration']['checked']))
 		{
 			print '<td class="center nowraponall">';
 
@@ -951,9 +955,9 @@ if ($resql)
 				    $dur=array("i"=>$langs->trans("Minute"),"h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
 				}
 				print $duration_value;
-				print (! empty($duration_unit) && isset($dur[$duration_unit]) ? ' '.$langs->trans($dur[$duration_unit]) : '');
+				print ((! empty($duration_unit) && isset($dur[$duration_unit]) && $duration_value != '') ? ' '.$langs->trans($dur[$duration_unit]) : '');
 			}
-			else
+			elseif (! preg_match('/^[a-z]$/i', $obj->duration))		// If duration is a simple char (like 's' of 'm'), we do not show value
 			{
 				print $obj->duration;
 			}

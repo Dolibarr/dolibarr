@@ -163,7 +163,6 @@ function show_ldap_content($result, $level, $count, $var, $hide = 0, $subcount =
 			$hide=0;
 			if (! is_numeric($key))
 			{
-
 				print '<tr '.$bc[$var].' valign="top">';
 				print '<td>';
 				print $key;

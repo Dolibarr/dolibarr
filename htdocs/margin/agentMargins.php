@@ -68,9 +68,9 @@ if (!empty($enddatemonth))
 
 // Security check
 if ($user->rights->margins->read->all) {
-  $agentid = GETPOST('agentid', 'int');
+    $agentid = GETPOST('agentid', 'int');
 } else {
-  $agentid = $user->id;
+    $agentid = $user->id;
 }
 $result=restrictedArea($user, 'margins');
 
@@ -109,7 +109,7 @@ dol_fiche_head($head, 'agentMargins', $titre, 0, $picto);
 
 print '<table class="border" width="100%">';
 
-print '<tr><td class="titlefield">'.$langs->trans('SalesRepresentative').'</td>';
+print '<tr><td class="titlefield">'.$langs->trans('ContactOfInvoice').'</td>';
 print '<td class="maxwidthonsmartphone" colspan="4">';
 print $form->select_dolusers($agentid, 'agentid', 1, '', $user->rights->margins->read->all ? 0 : 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 print '</td></tr>';

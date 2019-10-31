@@ -29,6 +29,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
 // Load translation files required by the page
@@ -65,6 +66,8 @@ $year_current = $year_start;
 // Validate History
 $action = GETPOST('action', 'aZ09');
 
+$chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
+
 
 /*
  * Actions
@@ -97,12 +100,11 @@ if ($action == 'clean' || $action == 'validatehistory')
 }
 
 if ($action == 'validatehistory') {
-
 	$error = 0;
 	$db->begin();
 
 	// Now make the binding. Bind automatically only for product with a dedicated account that exists into chart of account, others need a manual bind
-	if ($db->type == 'pgsql') {
+	/*if ($db->type == 'pgsql') {
 		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet";
 		$sql1 .= " SET fk_code_ventilation = accnt.rowid";
 		$sql1 .= " FROM " . MAIN_DB_PREFIX . "product as p, " . MAIN_DB_PREFIX . "accounting_account as accnt , " . MAIN_DB_PREFIX . "accounting_system as syst";
@@ -115,16 +117,83 @@ if ($action == 'validatehistory') {
 		$sql1 .= " WHERE fd.fk_product = p.rowid  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . $conf->global->CHARTOFACCOUNTS.' AND accnt.entity = '.$conf->entity;
 		$sql1 .= " AND accnt.active = 1 AND p.accountancy_code_sell=accnt.account_number";
 		$sql1 .= " AND fd.fk_code_ventilation = 0";
-	}
+	}*/
+
+	// Customer Invoice lines (must be same request than into page list.php for manual binding)
+	$sql = "SELECT f.rowid as facid, f.ref as ref, f.datef, f.type as ftype,";
+	$sql.= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
+	$sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_sell as code_sell, p.tva_tx as tva_tx_prod,";
+	$sql.= " p.accountancy_code_sell_intra as code_sell_intra, p.accountancy_code_sell_export as code_sell_export,";
+	$sql.= " aa.rowid as aarowid, aa2.rowid as aarowid_intra, aa3.rowid as aarowid_export,";
+	$sql.= " co.code as country_code, co.label as country_label,";
+	$sql.= " s.tva_intra";
+	$sql.= " FROM " . MAIN_DB_PREFIX . "facture as f";
+	$sql.= " INNER JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
+	$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "c_country as co ON co.rowid = s.fk_pays ";
+	$sql.= " INNER JOIN " . MAIN_DB_PREFIX . "facturedet as l ON f.rowid = l.fk_facture";
+	$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
+	$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa  ON p.accountancy_code_sell = aa.account_number         AND aa.active = 1  AND aa.fk_pcg_version = '" . $chartaccountcode."' AND aa.entity = " . $conf->entity;
+	$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa2 ON p.accountancy_code_sell_intra = aa2.account_number  AND aa2.active = 1 AND aa2.fk_pcg_version = '" . $chartaccountcode."' AND aa2.entity = " . $conf->entity;
+	$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa3 ON p.accountancy_code_sell_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '" . $chartaccountcode."' AND aa3.entity = " . $conf->entity;
+	$sql.= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
+	$sql.= " AND l.product_type <= 2";
 
 	dol_syslog('htdocs/accountancy/customer/index.php');
-
-	$resql1 = $db->query($sql1);
-	if (! $resql1) {
-		$error ++;
-		$db->rollback();
+	$result = $db->query($sql);
+	if (! $result) {
+		$error++;
 		setEventMessages($db->lasterror(), null, 'errors');
 	} else {
+		$num_lines = $db->num_rows($result);
+
+		$isSellerInEEC = isInEEC($mysoc);
+
+		$i = 0;
+		while ($i < min($num_lines, 10000)) {	// No more than 10000 at once
+			$objp = $db->fetch_object($result);
+
+			// Search suggested account for product/service
+			$suggestedaccountingaccountfor = '';
+			if (($objp->country_code == $mysoc->country_code) || empty($objp->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
+				$objp->code_sell_p = $objp->code_sell;
+				$objp->aarowid_suggest = $objp->aarowid;
+				$suggestedaccountingaccountfor = '';
+			} else {
+				if ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale
+					$objp->code_sell_p = $objp->code_sell_intra;
+					$objp->aarowid_suggest = $objp->aarowid_intra;
+					$suggestedaccountingaccountfor = 'eec';
+				} else {                                        // Foreign sale
+					$objp->code_sell_p = $objp->code_sell_export;
+					$objp->aarowid_suggest = $objp->aarowid_export;
+					$suggestedaccountingaccountfor = 'export';
+				}
+			}
+
+			if ($objp->aarowid_suggest > 0)
+			{
+				$sqlupdate = "UPDATE " . MAIN_DB_PREFIX . "facturedet";
+				$sqlupdate.= " SET fk_code_ventilation = ".$objp->aarowid_suggest;
+				$sqlupdate.= " WHERE fk_code_ventilation <= 0 AND product_type <= 2 AND rowid = ".$objp->rowid;
+
+				$resqlupdate = $db->query($sqlupdate);
+				if (! $resqlupdate)
+				{
+					$error++;
+					setEventMessages($db->lasterror(), null, 'errors');
+					break;
+				}
+			}
+
+			$i++;
+		}
+	}
+
+	if ($error)
+	{
+		$db->rollback();
+	}
+	else {
 		$db->commit();
 		setEventMessages($langs->trans('AutomaticBindingDone'), null, 'mesgs');
 	}
@@ -195,7 +264,6 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	while ( $row = $db->fetch_row($resql)) {
-
 		print '<tr class="oddeven"><td>';
 		if ($row[0] == 'tobind')
 		{
@@ -271,7 +339,6 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	while ( $row = $db->fetch_row($resql)) {
-
 		print '<tr class="oddeven"><td>';
 		if ($row[0] == 'tobind')
 		{
@@ -398,7 +465,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 			$num = $db->num_rows($resql);
 
 			while ($row = $db->fetch_row($resql)) {
-
 				print '<tr><td>' . $row[0] . '</td>';
 				for($i = 1; $i <= 12; $i ++) {
 					print '<td class="nowrap right">' . price(price2num($row[$i])) . '</td>';

@@ -148,9 +148,9 @@ class Tickets extends DolibarrApi
 
         // String for user assigned
         if ($this->ticket->fk_user_assign > 0) {
-          $userStatic = new User($this->db);
-          $userStatic->fetch($this->ticket->fk_user_assign);
-          $this->ticket->fk_user_assign_string = $userStatic->firstname.' '.$userStatic->lastname;
+            $userStatic = new User($this->db);
+            $userStatic->fetch($this->ticket->fk_user_assign);
+            $this->ticket->fk_user_assign_string = $userStatic->firstname.' '.$userStatic->lastname;
         }
 
         // Messages of ticket
@@ -296,9 +296,9 @@ class Tickets extends DolibarrApi
                 $ticket_static = new Ticket($db);
                 if ($ticket_static->fetch($obj->rowid)) {
                     if ($ticket_static->fk_user_assign > 0) {
-                      $userStatic = new User($this->db);
-                      $userStatic->fetch($ticket_static->fk_user_assign);
-                      $ticket_static->fk_user_assign_string = $userStatic->firstname.' '.$userStatic->lastname;
+                        $userStatic = new User($this->db);
+                        $userStatic->fetch($ticket_static->fk_user_assign);
+                        $ticket_static->fk_user_assign_string = $userStatic->firstname.' '.$userStatic->lastname;
                     }
                     $obj_ret[] = $this->_cleanObjectDatas($ticket_static);
                 }

@@ -81,78 +81,79 @@ elseif (GETPOST('linkit', 'none') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 // Delete file/link
 if ($action == 'confirm_deletefile' && $confirm == 'yes')
 {
-        $urlfile = GETPOST('urlfile', 'alpha', 0, null, null, 1);				// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-        if (GETPOST('section', 'alpha')) 	// For a delete from the ECM module, upload_dir is ECM root dir and urlfile contains relative path from upload_dir
+    $urlfile = GETPOST('urlfile', 'alpha', 0, null, null, 1);				// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+    if (GETPOST('section', 'alpha')) {
+        // For a delete from the ECM module, upload_dir is ECM root dir and urlfile contains relative path from upload_dir
+        $file = $upload_dir . (preg_match('/\/$/', $upload_dir) ? '' : '/') . $urlfile;
+    }
+    else								// For a delete from the file manager into another module, or from documents pages, upload_dir contains already path to file from module dir, so we clean path into urlfile.
+	{
+       	$urlfile=basename($urlfile);
+       	$file = $upload_dir . (preg_match('/\/$/', $upload_dir) ? '' : '/') . $urlfile;
+		if (! empty($upload_dirold)) $fileold = $upload_dirold . "/" . $urlfile;
+	}
+    $linkid = GETPOST('linkid', 'int');
+
+    if ($urlfile) {
+        // delete of a file
+	    $dir = dirname($file).'/';		// Chemin du dossier contenant l'image d'origine
+        $dirthumb = $dir.'/thumbs/';	// Chemin du dossier contenant la vignette (if file is an image)
+
+        $ret = dol_delete_file($file, 0, 0, 0, (is_object($object)?$object:null));
+        if (! empty($fileold)) dol_delete_file($fileold, 0, 0, 0, (is_object($object)?$object:null));     // Delete file using old path
+
+        // Si elle existe, on efface la vignette
+        if (preg_match('/(\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff)$/i', $file, $regs))
         {
-        	$file = $upload_dir . (preg_match('/\/$/', $upload_dir) ? '' : '/') . $urlfile;
-        }
-        else								// For a delete from the file manager into another module, or from documents pages, upload_dir contains already path to file from module dir, so we clean path into urlfile.
-		{
-       		$urlfile=basename($urlfile);
-       		$file = $upload_dir . (preg_match('/\/$/', $upload_dir) ? '' : '/') . $urlfile;
-			if (! empty($upload_dirold)) $fileold = $upload_dirold . "/" . $urlfile;
-		}
-        $linkid = GETPOST('linkid', 'int');
-
-        if ($urlfile)		// delete of a file
-        {
-	        $dir = dirname($file).'/';		// Chemin du dossier contenant l'image d'origine
-	        $dirthumb = $dir.'/thumbs/';	// Chemin du dossier contenant la vignette (if file is an image)
-
-	        $ret = dol_delete_file($file, 0, 0, 0, (is_object($object)?$object:null));
-            if (! empty($fileold)) dol_delete_file($fileold, 0, 0, 0, (is_object($object)?$object:null));     // Delete file using old path
-
-	        // Si elle existe, on efface la vignette
-	        if (preg_match('/(\.jpg|\.jpeg|\.bmp|\.gif|\.png|\.tiff)$/i', $file, $regs))
+	        $photo_vignette=basename(preg_replace('/'.$regs[0].'/i', '', $file).'_small'.$regs[0]);
+	        if (file_exists(dol_osencode($dirthumb.$photo_vignette)))
 	        {
-		        $photo_vignette=basename(preg_replace('/'.$regs[0].'/i', '', $file).'_small'.$regs[0]);
-		        if (file_exists(dol_osencode($dirthumb.$photo_vignette)))
-		        {
-			        dol_delete_file($dirthumb.$photo_vignette);
-		        }
-
-		        $photo_vignette=basename(preg_replace('/'.$regs[0].'/i', '', $file).'_mini'.$regs[0]);
-		        if (file_exists(dol_osencode($dirthumb.$photo_vignette)))
-		        {
-			        dol_delete_file($dirthumb.$photo_vignette);
-		        }
+		        dol_delete_file($dirthumb.$photo_vignette);
 	        }
 
-            if ($ret) setEventMessages($langs->trans("FileWasRemoved", $urlfile), null, 'mesgs');
-            else setEventMessages($langs->trans("ErrorFailToDeleteFile", $urlfile), null, 'errors');
+	        $photo_vignette=basename(preg_replace('/'.$regs[0].'/i', '', $file).'_mini'.$regs[0]);
+	        if (file_exists(dol_osencode($dirthumb.$photo_vignette)))
+	        {
+		        dol_delete_file($dirthumb.$photo_vignette);
+	        }
         }
-        elseif ($linkid)	// delete of external link
-        {
-            require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
-            $link = new Link($db);
-            $link->fetch($linkid);
-            $res = $link->delete($user);
 
-            $langs->load('link');
-            if ($res > 0) {
-                setEventMessages($langs->trans("LinkRemoved", $link->label), null, 'mesgs');
+        if ($ret) {
+            setEventMessages($langs->trans("FileWasRemoved", $urlfile), null, 'mesgs');
+        } else {
+            setEventMessages($langs->trans("ErrorFailToDeleteFile", $urlfile), null, 'errors');
+        }
+    }
+    elseif ($linkid)	// delete of external link
+    {
+        require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
+        $link = new Link($db);
+        $link->fetch($linkid);
+        $res = $link->delete($user);
+
+        $langs->load('link');
+        if ($res > 0) {
+            setEventMessages($langs->trans("LinkRemoved", $link->label), null, 'mesgs');
+        } else {
+            if (count($link->errors)) {
+                setEventMessages('', $link->errors, 'errors');
             } else {
-                if (count($link->errors)) {
-                    setEventMessages('', $link->errors, 'errors');
-                } else {
-                    setEventMessages($langs->trans("ErrorFailedToDeleteLink", $link->label), null, 'errors');
-                }
+                setEventMessages($langs->trans("ErrorFailedToDeleteLink", $link->label), null, 'errors');
             }
         }
+    }
 
-        if (is_object($object) && $object->id > 0)
-        {
-        	if ($backtopage)
-        	{
-        		header('Location: ' . $backtopage);
-        		exit;
-        	}
-        	else
-        	{
-        		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(GETPOST('section_dir', 'alpha')?'&section_dir='.urlencode(GETPOST('section_dir', 'alpha')):'').(!empty($withproject)?'&withproject=1':''));
-        		exit;
-        	}
+    if (is_object($object) && $object->id > 0) {
+        if ($backtopage) {
+            header('Location: ' . $backtopage);
+            exit;
         }
+        else
+        {
+            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(GETPOST('section_dir', 'alpha')?'&section_dir='.urlencode(GETPOST('section_dir', 'alpha')):'').(!empty($withproject)?'&withproject=1':''));
+            exit;
+        }
+    }
 }
 elseif ($action == 'confirm_updateline' && GETPOST('save', 'alpha') && GETPOST('link', 'alpha'))
 {

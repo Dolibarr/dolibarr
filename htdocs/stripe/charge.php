@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2018 	Thibault FOUCART        <support@ptibogxiv.net>
+/* Copyright (C) 2018       Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,29 +122,28 @@ if (!$rowid)
 	//print $list;
 	foreach ($list->data as $charge)
 	{
-	  if ($charge->refunded=='1'){
+	    if ($charge->refunded=='1') {
 	    	$status = img_picto($langs->trans("refunded"), 'statut6');
-	  } elseif ($charge->paid=='1'){
-        $status = img_picto($langs->trans("".$charge->status.""), 'statut4');
-	  } else {
+	    } elseif ($charge->paid=='1') {
+            $status = img_picto($langs->trans("".$charge->status.""), 'statut4');
+	    } else {
 	    	$label="Message: ".$charge->failure_message."<br>";
 	    	$label.="Réseau: ".$charge->outcome->network_status."<br>";
 	    	$label.="Statut: ".$langs->trans("".$charge->outcome->seller_message."");
 	    	$status = $form->textwithpicto(img_picto($langs->trans("".$charge->status.""), 'statut8'), $label, 1);
-	  }
+	    }
 
-      if ($charge->payment_method_details->type=='card')
-	  {
+        if ($charge->payment_method_details->type=='card') {
 		    $type = $langs->trans("card");
-	  } elseif ($charge->source->type=='card'){
+	    } elseif ($charge->source->type=='card'){
 			$type = $langs->trans("card");
-	  } elseif ($charge->payment_method_details->type=='three_d_secure'){
+	    } elseif ($charge->payment_method_details->type=='three_d_secure'){
 			$type = $langs->trans("card3DS");
-	  }
+	    }
 
-    if (! empty($charge->payment_intent)) {
-    $charge = \Stripe\PaymentIntent::retrieve($charge->payment_intent);
-    }
+        if (! empty($charge->payment_intent)) {
+            $charge = \Stripe\PaymentIntent::retrieve($charge->payment_intent);
+        }
 
 		// The metadata FULLTAG is defined by the online payment page
 		$FULLTAG=$charge->metadata->FULLTAG;
@@ -211,19 +211,25 @@ if (!$rowid)
 		print "</td>\n";
 		// Origine
 		print "<td>";
-		if ($charge->metadata->dol_type=="order"){
+		if ($charge->metadata->dol_type=="order") {
 			$object = new Commande($db);
 			$object->fetch($charge->metadata->dol_id);
-      if ($object->id > 0) {
-			print "<a href='".DOL_URL_ROOT."/commande/card.php?id=".$object->id."'>".img_picto('', 'object_order')." ".$object->ref."</a>";
-      } else print $FULLTAG;
-		} elseif ($charge->metadata->dol_type=="invoice"){
+            if ($object->id > 0) {
+                print "<a href='".DOL_URL_ROOT."/commande/card.php?id=".$object->id."'>".img_picto('', 'object_order')." ".$object->ref."</a>";
+            } else {
+                print $FULLTAG;
+            }
+		} elseif ($charge->metadata->dol_type=="invoice") {
 			$object = new Facture($db);
 			$object->fetch($charge->metadata->dol_id);
-      if ($object->id > 0) {
-		  print "<a href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->dol_id."'>".img_picto('', 'object_invoice')." ".$object->ref."</a>";
-      } else print $FULLTAG;
-		} else print $FULLTAG;
+            if ($object->id > 0) {
+		        print "<a href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->dol_id."'>".img_picto('', 'object_invoice')." ".$object->ref."</a>";
+            } else {
+				print $FULLTAG;
+			}
+		} else {
+			print $FULLTAG;
+		}
 	    print "</td>\n";
 		// Date payment
 	    print '<td class="center">'.dol_print_date($charge->created, '%d/%m/%Y %H:%M')."</td>\n";
@@ -241,7 +247,6 @@ if (!$rowid)
 	    print "</tr>\n";
 	}
 } else {
-
 }
 
 // End of page

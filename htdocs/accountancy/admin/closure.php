@@ -99,7 +99,6 @@ print '<input type="hidden" name="action" value="update">';
 print '<table class="noborder" width="100%">';
 
 foreach ($list_account_main as $key) {
-
     print '<tr class="oddeven value">';
     // Param
     $label = $langs->trans($key);

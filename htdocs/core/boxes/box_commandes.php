@@ -21,7 +21,7 @@
 /**
  *		\file       htdocs/core/boxes/box_commandes.php
  *		\ingroup    commande
- *		\brief      Module de generation de l'affichage de la box commandes
+ *		\brief      Widget for latest sale orders
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';

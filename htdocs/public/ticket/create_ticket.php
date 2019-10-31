@@ -78,7 +78,6 @@ if (GETPOST('addfile', 'alpha') && ! GETPOST('add', 'alpha')) {
 
 // Remove file
 if (GETPOST('removedfile', 'alpha') && !GETPOST('add', 'alpha')) {
-
     include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
     // Set tmp directory

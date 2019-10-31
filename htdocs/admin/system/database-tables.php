@@ -189,8 +189,8 @@ else
 	if ($base == 4)
 	{
 		// Sqlite by PDO or by Sqlite3
-    print '<div class="div-table-responsive-no-min">';
-	  print '<table class="noborder">';
+        print '<div class="div-table-responsive-no-min">';
+	    print '<table class="noborder">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("TableName").'</td>';
 		print '<td>'.$langs->trans("NbOfRecord").'</td>';
@@ -202,7 +202,6 @@ else
 		if ($resql)
 		{
 			while ($row = $db->fetch_row($resql)) {
-
 				$rescount = $db->query("SELECT COUNT(*) FROM " . $row[0]);
 				if ($rescount) {
 					$row_count = $db->fetch_row($rescount);

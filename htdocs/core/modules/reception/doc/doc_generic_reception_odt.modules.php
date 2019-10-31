@@ -497,7 +497,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 				}
 				else {
 					try {
-					$odfHandler->saveToDisk($file);
+					    $odfHandler->saveToDisk($file);
 					} catch (Exception $e){
 						$this->error=$e->getMessage();
 						return -1;

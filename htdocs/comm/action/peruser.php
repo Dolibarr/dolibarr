@@ -418,14 +418,14 @@ if (! empty($actioncode))
         elseif ($actioncode == 'AC_ALL_AUTO') $sql.= " AND ca.type = 'systemauto'";
         else
         {
-		if (is_array($actioncode))
-  		{
+            if (is_array($actioncode))
+            {
   	        	$sql.=" AND ca.code IN ('".implode("','", $actioncode)."')";
-  		}
-  		else
-  		{
+            }
+            else
+            {
   	        	$sql.=" AND ca.code IN ('".implode("','", explode(',', $actioncode))."')";
-  		}
+            }
         }
     }
 }
@@ -631,7 +631,6 @@ $currentdaytoshow = $firstdaytoshow;
 echo '<div class="div-table-responsive">';
 
 while($currentdaytoshow<$lastdaytoshow) {
-
 	echo '<table width="100%" class="noborder nocellnopadd cal_month">';
 
 	echo '<tr class="liste_titre">';
@@ -684,16 +683,16 @@ while($currentdaytoshow<$lastdaytoshow) {
 	{
 		foreach ($eventarray as $daykey => $notused)
 		{
-		   // Get all assigned users for each event
-		   foreach ($eventarray[$daykey] as $index => $event)
-		   {
-			   	$event->fetch_userassigned();
+		    // Get all assigned users for each event
+		    foreach ($eventarray[$daykey] as $index => $event)
+		    {
+			    $event->fetch_userassigned();
 				$listofuserid=$event->userassigned;
 				foreach($listofuserid as $userid => $tmp)
 				{
 				   	if (! in_array($userid, $usernamesid)) $usernamesid[$userid] = $userid;
 				}
-		   }
+		    }
 		}
 	}
 	/* Use this list to have for all users */
@@ -779,7 +778,6 @@ while($currentdaytoshow<$lastdaytoshow) {
 		$i = 0;
 		for ($iter_day = 0; $iter_day < 8; $iter_day++)
 		{
-
 			if (($i + 1) < $begin_d || ($i + 1) > $end_d)
 			{
 				$i++;

@@ -478,7 +478,7 @@ if (function_exists("ldap_connect"))
 				}
 			}
 			else
-		   {
+		    {
 				setEventMessages($ldap->error, $ldap->errors, 'errors');
 			}
 

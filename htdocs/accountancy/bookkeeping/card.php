@@ -83,7 +83,6 @@ $object = new BookKeeping($db);
  */
 
 if ($action == "confirm_update") {
-
 	$error = 0;
 
 	if ((floatval($debit) != 0.0) && (floatval($credit) != 0.0)) {
@@ -585,7 +584,6 @@ if ($action == 'create')
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
-
 			print load_fiche_titre($langs->trans("ListeMvts"), '', '');
 
 			print '<form action="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $object->piece_num . '" method="post">';
@@ -601,7 +599,6 @@ if ($action == 'create')
 
 			print "<table class=\"noborder\" width=\"100%\">";
 			if (count($object->linesmvt) > 0) {
-
 				$total_debit = 0;
 				$total_credit = 0;
 

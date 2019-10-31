@@ -112,7 +112,6 @@ if (! empty($id)) {
 		$i = 0;
 
 		if ($num_lines) {
-
 			$objp = $db->fetch_object($result);
 
 			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '" method="post">' . "\n";

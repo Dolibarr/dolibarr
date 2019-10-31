@@ -210,6 +210,7 @@ $stringtoshow .= '<input type="image" alt="' . $langs->trans("Refresh") . '" src
 $stringtoshow .= '</form>';
 $stringtoshow .= '</div>';
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><th >' . $langs->trans("Statistics") . ' ' . img_picto('', 'filter.png', 'id="idsubimgDOLUSERCOOKIE_ticket_by_status" class="linkobject"') . '</th></tr>';
 
@@ -257,6 +258,7 @@ if (! empty($dataseries) && count($dataseries) > 1) {
 print '</td></tr>';
 
 print '</table>';
+print '</div>';
 
 // Build graphic number of object
 $data = $stats->getNbByMonth($endyear, $startyear);
@@ -312,7 +314,6 @@ if ($result) {
     print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/ticket/list.php?search_fk_statut[]='.Ticket::STATUS_NOT_READ.'">'.$langs->trans("FullList").'</th>';
     print '</tr>';
     if ($num > 0) {
-
         while ($i < $num) {
             $objp = $db->fetch_object($result);
 

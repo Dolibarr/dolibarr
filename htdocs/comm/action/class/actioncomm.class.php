@@ -484,9 +484,9 @@ class ActionComm extends CommonObject
             	return $this->id;
             }
             else
-           {
-	           	$this->db->rollback();
-	           	return -1;
+            {
+                $this->db->rollback();
+                return -1;
             }
         }
         else
@@ -1043,7 +1043,7 @@ class ActionComm extends CommonObject
             return $resarray;
         }
         else
-       {
+        {
             return $db->lasterror();
         }
     }
@@ -1461,7 +1461,7 @@ class ActionComm extends CommonObject
             $sql.= " a.fk_contact, a.percent as percentage,";
             $sql.= " a.fk_element, a.elementtype,";
             $sql.= " a.priority, a.fulldayevent, a.location, a.punctual, a.transparency,";
-            $sql.= " u.firstname, u.lastname,";
+            $sql.= " u.firstname, u.lastname, u.email,";
             $sql.= " s.nom as socname,";
             $sql.= " c.id as type_id, c.code as type_code, c.libelle";
             $sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."actioncomm as a)";
@@ -1543,7 +1543,19 @@ class ActionComm extends CommonObject
                     $event['uid']='dolibarragenda-'.$this->db->database_name.'-'.$obj->id."@".$_SERVER["SERVER_NAME"];
                     $event['type']=$type;
                     $datestart=$this->db->jdate($obj->datep)-(empty($conf->global->AGENDA_EXPORT_FIX_TZ)?0:($conf->global->AGENDA_EXPORT_FIX_TZ*3600));
-                    $dateend=$this->db->jdate($obj->datep2)-(empty($conf->global->AGENDA_EXPORT_FIX_TZ)?0:($conf->global->AGENDA_EXPORT_FIX_TZ*3600));
+
+                    // fix for -> Warning: A non-numeric value encountered
+                    if(is_numeric($this->db->jdate($obj->datep2)))
+                    {
+                        $dateend = $this->db->jdate($obj->datep2)
+                                 - (empty($conf->global->AGENDA_EXPORT_FIX_TZ) ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
+                    }
+                    else
+                    {
+                        // use start date as fall-back to avoid import erros on empty end date
+                        $dateend = $datestart;
+                    }
+
                     $duration=($datestart && $dateend)?($dateend - $datestart):0;
                     $event['summary']=$obj->label.($obj->socname?" (".$obj->socname.")":"");
                     $event['desc']=$obj->note;
@@ -1557,6 +1569,7 @@ class ActionComm extends CommonObject
                     $event['transparency']=(($obj->transparency > 0)?'OPAQUE':'TRANSPARENT');		// OPAQUE (busy) or TRANSPARENT (not busy)
                     $event['punctual']=$obj->punctual;
                     $event['category']=$obj->libelle;	// libelle type action
+                    $event['email']=$obj->email;
 					// Define $urlwithroot
 					$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 					$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;			// This is to use external domain name found into config file

@@ -195,7 +195,6 @@ if($calc ==0 || $calc == 2)
 		{
 			if(($min == 0 || ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) !=0)
 			{
-
 				$intra = str_replace($find, $replace, $coll->tva_intra);
 				if(empty($intra))
 				{
@@ -269,7 +268,6 @@ if($calc ==0 || $calc == 1){
 		{
 			if(($min == 0 || ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) != 0)
 			{
-
 				$intra = str_replace($find, $replace, $coll->tva_intra);
 				if(empty($intra))
 				{

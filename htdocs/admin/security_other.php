@@ -88,7 +88,7 @@ llxHeader('', $langs->trans("Miscellaneous"), $wikihelp);
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-print $langs->trans("MiscellaneousDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("MiscellaneousDesc")."</span><br>\n";
 print "<br>\n";
 
 

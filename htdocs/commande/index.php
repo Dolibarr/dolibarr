@@ -201,7 +201,6 @@ if (! empty($conf->commande->enabled))
 			$var = true;
 			while ($i < $num)
 			{
-
 				$obj = $db->fetch_object($resql);
 
                 $commandestatic->id=$obj->rowid;
@@ -225,7 +224,6 @@ if (! empty($conf->commande->enabled))
 		}
 		else
 		{
-
 			print '<tr class="oddeven"><td colspan="3">'.$langs->trans("NoOrder").'</td></tr>';
 		}
 		print "</table><br>";
@@ -272,7 +270,6 @@ if ($resql)
 		$var = true;
 		while ($i < $num)
 		{
-
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
@@ -353,7 +350,6 @@ if (! empty($conf->commande->enabled))
 			$var = true;
 			while ($i < $num)
 			{
-
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
 				print '<td class="nowrap" width="20%">';
@@ -435,7 +431,6 @@ if (! empty($conf->commande->enabled))
 			$var = true;
 			while ($i < $num)
 			{
-
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
 				print '<td width="20%" class="nowrap">';

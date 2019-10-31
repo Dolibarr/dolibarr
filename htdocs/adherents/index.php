@@ -140,6 +140,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
     	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<div class="div-table-responsive-no-min">';
     	print '<table class="noborder nohover centpercent">';
     	$i=0;
     	foreach($listofsearchfields as $key => $value)
@@ -152,6 +153,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     		$i++;
     	}
     	print '</table>';
+        print '</div>';
     	print '</form>';
     	print '<br>';
     }
@@ -227,10 +229,8 @@ $sql = "SELECT c.subscription, c.dateadh as dateh";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."subscription as c";
 $sql.= " WHERE d.entity IN (".getEntity('adherent').")";
 $sql.= " AND d.rowid = c.fk_adherent";
-if(isset($date_select) && $date_select != '')
-{
-    $sql .= " AND c.dateadh LIKE '".$date_select."%'";
-}
+
+
 $result = $db->query($sql);
 if ($result)
 {
@@ -251,21 +251,33 @@ if ($result)
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<th>'.$langs->trans("Subscriptions").'</th>';
-print '<th class="right">'.$langs->trans("Number").'</th>';
+print '<th>'.$langs->trans("Year").'</th>';
+print '<th class="right">'.$langs->trans("Subscriptions").'</th>';
 print '<th class="right">'.$langs->trans("AmountTotal").'</th>';
 print '<th class="right">'.$langs->trans("AmountAverage").'</th>';
 print "</tr>\n";
 
 krsort($Total);
+$i = 0;
 foreach ($Total as $key=>$value)
 {
-    print '<tr class="oddeven">';
+	if ($i >= 8)
+	{
+		print '<tr class="oddeven">';
+		print "<td>...</td>";
+		print "<td class=\"right\"></td>";
+		print "<td class=\"right\"></td>";
+		print "<td class=\"right\"></td>";
+		print "</tr>\n";
+		break;
+	}
+	print '<tr class="oddeven">';
     print "<td><a href=\"./subscription/list.php?date_select=$key\">$key</a></td>";
     print "<td class=\"right\">".$Number[$key]."</td>";
     print "<td class=\"right\">".price($value)."</td>";
     print "<td class=\"right\">".price(price2num($value/$Number[$key], 'MT'))."</td>";
     print "</tr>\n";
+    $i++;
 }
 
 // Total

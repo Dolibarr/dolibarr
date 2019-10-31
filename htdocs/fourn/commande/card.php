@@ -8,7 +8,7 @@
  * Copyright (C) 2012-2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under	the	terms of the GNU General Public	License	as published by
@@ -647,95 +647,96 @@ if (empty($reshook))
 
 		// Define info_bits
 		$info_bits = 0;
-		if (preg_match('/\*/', $vat_rate))
-				$info_bits |= 0x01;
+		if (preg_match('/\*/', $vat_rate)) {
+			$info_bits |= 0x01;
+		}
 
-	   	// Define vat_rate
-			$vat_rate = str_replace('*', '', $vat_rate);
-			$localtax1_rate = get_localtax($vat_rate, 1, $mysoc, $object->thirdparty);
-			$localtax2_rate = get_localtax($vat_rate, 2, $mysoc, $object->thirdparty);
+	    // Define vat_rate
+		$vat_rate = str_replace('*', '', $vat_rate);
+		$localtax1_rate = get_localtax($vat_rate, 1, $mysoc, $object->thirdparty);
+		$localtax2_rate = get_localtax($vat_rate, 2, $mysoc, $object->thirdparty);
 
-			if (GETPOST('price_ht') != '')
+		if (GETPOST('price_ht') != '')
+		{
+			$price_base_type = 'HT';
+			$ht = price2num(GETPOST('price_ht'));
+		}
+		else
+		{
+			$vatratecleaned = $vat_rate;
+			if (preg_match('/^(.*)\s*\((.*)\)$/', $vat_rate, $reg))      // If vat is "xx (yy)"
 			{
-				$price_base_type = 'HT';
-				$ht = price2num(GETPOST('price_ht'));
-			}
-			else
-			{
-				$vatratecleaned = $vat_rate;
-				if (preg_match('/^(.*)\s*\((.*)\)$/', $vat_rate, $reg))      // If vat is "xx (yy)"
-				{
-					$vatratecleaned = trim($reg[1]);
-					$vatratecode = $reg[2];
-				}
-
-				$ttc = price2num(GETPOST('price_ttc'));
-				$ht = $ttc / (1 + ($vatratecleaned / 100));
-				$price_base_type = 'HT';
+				$vatratecleaned = trim($reg[1]);
+				$vatratecode = $reg[2];
 			}
 
-			$pu_ht_devise = GETPOST('multicurrency_subprice');
+			$ttc = price2num(GETPOST('price_ttc'));
+			$ht = $ttc / (1 + ($vatratecleaned / 100));
+			$price_base_type = 'HT';
+		}
 
-			// Extrafields Lines
-			$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
-			$array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
-			// Unset extrafield POST Data
-			if (is_array($extralabelsline)) {
-				foreach ($extralabelsline as $key => $value) {
-					unset($_POST["options_" . $key]);
-				}
+		$pu_ht_devise = GETPOST('multicurrency_subprice');
+
+		// Extrafields Lines
+		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
+		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
+		// Unset extrafield POST Data
+		if (is_array($extralabelsline)) {
+			foreach ($extralabelsline as $key => $value) {
+				unset($_POST["options_" . $key]);
 			}
+		}
 
-			$result	= $object->updateline(
-				$lineid,
-				$_POST['product_desc'],
-				$ht,
-				$_POST['qty'],
-				$_POST['remise_percent'],
-				$vat_rate,
-				$localtax1_rate,
-				$localtax2_rate,
-				$price_base_type,
-				0,
-				isset($_POST["type"])?$_POST["type"]:$line->product_type,
-				false,
-				$date_start,
-				$date_end,
-				$array_options,
-				$_POST['units'],
-				$pu_ht_devise,
-				GETPOST('fourn_ref', 'alpha')
-			);
-			unset($_POST['qty']);
-			unset($_POST['type']);
-			unset($_POST['idprodfournprice']);
-			unset($_POST['remmise_percent']);
-			unset($_POST['dp_desc']);
-			unset($_POST['np_desc']);
-			unset($_POST['pu']);
-			unset($_POST['fourn_ref']);
-			unset($_POST['tva_tx']);
-			unset($_POST['date_start']);
-			unset($_POST['date_end']);
-			unset($_POST['units']);
-			unset($localtax1_tx);
-			unset($localtax2_tx);
+		$result	= $object->updateline(
+			$lineid,
+			$_POST['product_desc'],
+			$ht,
+			$_POST['qty'],
+			$_POST['remise_percent'],
+			$vat_rate,
+			$localtax1_rate,
+			$localtax2_rate,
+			$price_base_type,
+			0,
+			isset($_POST["type"])?$_POST["type"]:$line->product_type,
+			false,
+			$date_start,
+			$date_end,
+			$array_options,
+			$_POST['units'],
+			$pu_ht_devise,
+			GETPOST('fourn_ref', 'alpha')
+		);
+		unset($_POST['qty']);
+		unset($_POST['type']);
+		unset($_POST['idprodfournprice']);
+		unset($_POST['remmise_percent']);
+		unset($_POST['dp_desc']);
+		unset($_POST['np_desc']);
+		unset($_POST['pu']);
+		unset($_POST['fourn_ref']);
+		unset($_POST['tva_tx']);
+		unset($_POST['date_start']);
+		unset($_POST['date_end']);
+		unset($_POST['units']);
+		unset($localtax1_tx);
+		unset($localtax2_tx);
 
-			unset($_POST['date_starthour']);
-			unset($_POST['date_startmin']);
-			unset($_POST['date_startsec']);
-			unset($_POST['date_startday']);
-			unset($_POST['date_startmonth']);
-			unset($_POST['date_startyear']);
-			unset($_POST['date_endhour']);
-			unset($_POST['date_endmin']);
-			unset($_POST['date_endsec']);
-			unset($_POST['date_endday']);
-			unset($_POST['date_endmonth']);
-			unset($_POST['date_endyear']);
+		unset($_POST['date_starthour']);
+		unset($_POST['date_startmin']);
+		unset($_POST['date_startsec']);
+		unset($_POST['date_startday']);
+		unset($_POST['date_startmonth']);
+		unset($_POST['date_startyear']);
+		unset($_POST['date_endhour']);
+		unset($_POST['date_endmin']);
+		unset($_POST['date_endsec']);
+		unset($_POST['date_endday']);
+		unset($_POST['date_endmonth']);
+		unset($_POST['date_endyear']);
 
-			if ($result	>= 0)
-			{
+		if ($result	>= 0)
+		{
 			// Define output language
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 			{
@@ -753,12 +754,12 @@ if (empty($reshook))
 				$result=$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				if ($result < 0) dol_print_error($db, $result);
 			}
-			}
-			else
-			{
+		}
+		else
+		{
 			dol_print_error($db, $object->error);
 			exit;
-			}
+		}
 	}
 
 	// Remove a product line
@@ -1106,12 +1107,19 @@ if (empty($reshook))
 	   			// If creation from another object of another module (Example: origin=propal, originid=1)
 				if (! empty($origin) && ! empty($originid))
 				{
-					if ($origin == 'order' || $origin == 'commande')
+					if ($origin == 'propal' || $origin == 'proposal')
 					{
+						$classname = 'Propal';
+						$element = 'comm/propal'; $subelement = 'propal';
+					}
+					elseif ($origin == 'order' || $origin == 'commande')
+					{
+						$classname = 'Commande';
 						$element = $subelement = 'commande';
 					}
 					else
 					{
+						$classname = 'SupplierProposal';
 						$element = 'supplier_proposal';
 						$subelement = 'supplier_proposal';
 					}
@@ -1131,7 +1139,6 @@ if (empty($reshook))
 					{
 						dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
 
-						$classname = 'SupplierProposal';
 						$srcobject = new $classname($db);
 
 						dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines");
@@ -1153,7 +1160,6 @@ if (empty($reshook))
 
 							for($i = 0; $i < $num; $i ++)
 							{
-
 								if (empty($lines[$i]->subprice) || $lines[$i]->qty <= 0)
 									continue;
 
@@ -1168,7 +1174,6 @@ if (empty($reshook))
 
 								// Extrafields
 								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) 							// For avoid conflicts if
-																																	  // trigger used
 								{
 									$lines[$i]->fetch_optionals($lines[$i]->rowid);
 									$array_option = $lines[$i]->array_options;
@@ -1443,7 +1448,7 @@ llxHeader('', $langs->trans("Order"), $help_url);
 $now=dol_now();
 if ($action=='create')
 {
-	print load_fiche_titre($langs->trans('NewOrder'));
+	print load_fiche_titre($langs->trans('NewOrderSupplier'));
 
 	dol_htmloutput_events();
 
@@ -1460,17 +1465,31 @@ if ($action=='create')
 	{
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
+		$regs=array();
 		if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
-			$element = $regs [1];
-			$subelement = $regs [2];
+			$element = $regs[1];
+			$subelement = $regs[2];
 		}
 
-		$element = 'supplier_proposal';
-		$subelement = 'supplier_proposal';
+		if ($origin == 'propal' || $origin == 'proposal')
+		{
+			$classname = 'Propal';
+			$element = 'comm/propal'; $subelement = 'propal';
+		}
+		elseif ($origin == 'order' || $origin == 'commande')
+		{
+			$classname = 'Commande';
+			$element = $subelement = 'commande';
+		}
+		else
+		{
+			$classname = 'SupplierProposal';
+			$element = 'supplier_proposal';
+			$subelement = 'supplier_proposal';
+		}
 
 		dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
 
-		$classname = 'SupplierProposal';
 		$objectsrc = new $classname($db);
 		$objectsrc->fetch($originid);
 		if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines'))
@@ -1669,7 +1688,6 @@ if ($action=='create')
 	print '</tr>';
 
 	if (! empty($origin) && ! empty($originid) && is_object($objectsrc)) {
-
 		print "\n<!-- " . $classname . " info -->";
 		print "\n";
 		print '<input type="hidden" name="amount"         value="' . $objectsrc->total_ht . '">' . "\n";
@@ -2483,13 +2501,13 @@ elseif (! empty($object->id))
 			// Create bill
 			//if (! empty($conf->facture->enabled))
 			//{
-				if (! empty($conf->fournisseur->enabled) && ($object->statut >= 2 && $object->statut != 7 && $object->billed != 1))  // statut 2 means approved, 7 means canceled
+			if (! empty($conf->fournisseur->enabled) && ($object->statut >= 2 && $object->statut != 7 && $object->billed != 1))  // statut 2 means approved, 7 means canceled
+			{
+				if ($user->rights->fournisseur->facture->creer)
 				{
-					if ($user->rights->fournisseur->facture->creer)
-					{
-						print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
-					}
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
 				}
+			}
 			//}
 
 			// Classify billed manually (need one invoice if module invoice is on, no condition on invoice if not)

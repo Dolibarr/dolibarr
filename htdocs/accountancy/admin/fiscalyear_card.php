@@ -33,7 +33,7 @@ $langs->loadLangs(array("admin","compta"));
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
-if (empty($user->rights->accounting->fiscalyear))
+if (empty($user->rights->accounting->fiscalyear->write))
 	accessforbidden();
 
 $error = 0;
@@ -300,7 +300,7 @@ if ($action == 'create')
 
 			dol_fiche_end();
 
-			if (! empty($user->rights->accounting->fiscalyear))
+			if (! empty($user->rights->accounting->fiscalyear->write))
 			{
     			/*
     			 * Barre d'actions

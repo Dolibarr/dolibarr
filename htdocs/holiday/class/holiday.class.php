@@ -478,7 +478,6 @@ class Holiday extends CommonObject
 
 		// If no SQL error
 		if ($resql) {
-
 			$i = 0;
 			$tab_result = $this->holiday;
 			$num = $this->db->num_rows($resql);
@@ -490,7 +489,6 @@ class Holiday extends CommonObject
 
 			// List the records and add them to the table
 			while($i < $num) {
-
 				$obj = $this->db->fetch_object($resql);
 
 				$tab_result[$i]['rowid'] = $obj->rowid;
@@ -606,7 +604,6 @@ class Holiday extends CommonObject
 
 		// If no SQL error
 		if ($resql) {
-
 			$i = 0;
 			$tab_result = $this->holiday;
 			$num = $this->db->num_rows($resql);
@@ -618,7 +615,6 @@ class Holiday extends CommonObject
 
 			// List the records and add them to the table
 			while($i < $num) {
-
 				$obj = $this->db->fetch_object($resql);
 
 				$tab_result[$i]['rowid'] = $obj->rowid;
@@ -1361,7 +1357,6 @@ class Holiday extends CommonObject
 		$result = $this->db->query($sql);
 
 		if($result) {
-
 			$obj = $this->db->fetch_object($result);
 			// Return value
 			if (empty($obj))
@@ -1391,7 +1386,6 @@ class Holiday extends CommonObject
 				return $obj->value;
 			}
 		} else {
-
 			// Erreur SQL
 			$this->error=$this->db->lasterror();
 			return -1;
@@ -1682,7 +1676,6 @@ class Holiday extends CommonObject
 
 				// Si pas d'erreur SQL
 				if ($resql) {
-
 					$i = 0;
 					$num = $this->db->num_rows($resql);
 					$stringlist = '';
@@ -1722,7 +1715,6 @@ class Holiday extends CommonObject
 
 				// Si pas d'erreur SQL
 				if ($resql) {
-
 					$i = 0;
 					$num = $this->db->num_rows($resql);
 					$stringlist = '';
@@ -1752,8 +1744,8 @@ class Holiday extends CommonObject
 			}
 		}
 		else
-		{ // Si faux donc return array
-
+		{
+			// Si faux donc return array
 			// List for Dolibarr users
 			if ($type)
 			{
@@ -1766,50 +1758,47 @@ class Holiday extends CommonObject
 					$sql.= " WHERE (ug.fk_user = u.rowid";
 					$sql.= " AND ug.entity = ".$conf->entity.")";
 					$sql.= " OR u.admin = 1";
-				}
-				else
+				} else {
 					$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+				}
 
-					$sql.= " AND u.statut > 0";
-					if ($filters) $sql.=$filters;
+				$sql.= " AND u.statut > 0";
+				if ($filters) $sql.=$filters;
 
-					$resql=$this->db->query($sql);
+				$resql=$this->db->query($sql);
 
-					// Si pas d'erreur SQL
-					if ($resql)
-					{
-						$i = 0;
-						$tab_result = $this->holiday;
-						$num = $this->db->num_rows($resql);
+				// Si pas d'erreur SQL
+				if ($resql)
+				{
+					$i = 0;
+					$tab_result = $this->holiday;
+					$num = $this->db->num_rows($resql);
 
-						// Boucles du listage des utilisateurs
-						while($i < $num) {
+					// Boucles du listage des utilisateurs
+					while($i < $num) {
+						$obj = $this->db->fetch_object($resql);
 
-							$obj = $this->db->fetch_object($resql);
+						$tab_result[$i]['rowid'] = $obj->rowid;		// rowid of user
+						$tab_result[$i]['name'] = $obj->lastname;       // deprecated
+						$tab_result[$i]['lastname'] = $obj->lastname;
+						$tab_result[$i]['firstname'] = $obj->firstname;
+						$tab_result[$i]['gender'] = $obj->gender;
+						$tab_result[$i]['status'] = $obj->statut;
+						$tab_result[$i]['employee'] = $obj->employee;
+						$tab_result[$i]['photo'] = $obj->photo;
+						$tab_result[$i]['fk_user'] = $obj->fk_user;	// rowid of manager
+						//$tab_result[$i]['type'] = $obj->type;
+						//$tab_result[$i]['nb_holiday'] = $obj->nb_holiday;
 
-							$tab_result[$i]['rowid'] = $obj->rowid;		// rowid of user
-							$tab_result[$i]['name'] = $obj->lastname;       // deprecated
-							$tab_result[$i]['lastname'] = $obj->lastname;
-							$tab_result[$i]['firstname'] = $obj->firstname;
-							$tab_result[$i]['gender'] = $obj->gender;
-							$tab_result[$i]['status'] = $obj->statut;
-							$tab_result[$i]['employee'] = $obj->employee;
-							$tab_result[$i]['photo'] = $obj->photo;
-							$tab_result[$i]['fk_user'] = $obj->fk_user;	// rowid of manager
-							//$tab_result[$i]['type'] = $obj->type;
-							//$tab_result[$i]['nb_holiday'] = $obj->nb_holiday;
-
-							$i++;
-						}
-						// Retoune le tableau des utilisateurs
-						return $tab_result;
+						$i++;
 					}
-					else
-					{
-						// Erreur SQL
-						$this->errors[]="Error ".$this->db->lasterror();
-						return -1;
-					}
+					// Retoune le tableau des utilisateurs
+					return $tab_result;
+				} else {
+					// Erreur SQL
+					$this->errors[]="Error ".$this->db->lasterror();
+					return -1;
+				}
 			}
 			else
 			{
@@ -2064,7 +2053,6 @@ class Holiday extends CommonObject
 
 		// Si pas d'erreur SQL
 		if ($resql) {
-
 			$i = 0;
 			$tab_result = $this->logs;
 			$num = $this->db->num_rows($resql);
@@ -2076,7 +2064,6 @@ class Holiday extends CommonObject
 
 			// On liste les résultats et on les ajoutent dans le tableau
 			while($i < $num) {
-
 				$obj = $this->db->fetch_object($resql);
 
 				$tab_result[$i]['rowid'] = $obj->rowid;

@@ -334,7 +334,7 @@ class Website extends CommonObject
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-		 $sql .=  ' ' . $this->db->plimit($limit, $offset);
+		    $sql .=  ' ' . $this->db->plimit($limit, $offset);
 		}
 		$this->records = array();
 
@@ -1012,8 +1012,8 @@ class Website extends CommonObject
 			return -1;
 		}
 
-		dol_delete_dir_recursive(dirname($pathtofile).'/'.$object->ref);
-		dol_mkdir(dirname($pathtofile).'/'.$object->ref);
+		dol_delete_dir_recursive($conf->website->dir_temp.'/'.$object->ref);
+		dol_mkdir($conf->website->dir_temp.'/'.$object->ref);
 
 		$filename = basename($pathtofile);
 		if (! preg_match('/^website_(.*)-(.*)$/', $filename, $reg))
@@ -1023,6 +1023,7 @@ class Website extends CommonObject
 		}
 
 		$result = dol_uncompress($pathtofile, $conf->website->dir_temp.'/'.$object->ref);
+
 		if (! empty($result['error']))
 		{
 			$this->errors[]='Failed to unzip file '.$pathtofile.'.';
@@ -1203,7 +1204,6 @@ class Website extends CommonObject
 			$pageid = str_replace(array('.tpl.php', 'page'), array('', ''), basename($websitepagefile));
 			if ($pageid > 0)
 			{
-
 				$languagecodeselected=$tmppage->lang;
 				if (! in_array($tmppage->lang, $languagecodes)) $languagecodes[]=$tmppage->lang;	// We add language code of page into combo list
 			}

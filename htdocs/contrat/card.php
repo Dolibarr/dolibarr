@@ -331,9 +331,8 @@ if (empty($reshook))
 
 								// Extrafields
 								$array_options = array();
-								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) 							// For avoid conflicts if
-								// trigger used
-								{
+								// For avoid conflicts if trigger used
+								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
 									$lines[$i]->fetch_optionals($lines[$i]->rowid);
 									$array_options = $lines[$i]->array_options;
 								}
@@ -445,13 +444,13 @@ if (empty($reshook))
 			$error++;
 		}
 
-	  $date_start = dol_mktime(GETPOST('date_start' . $predef . 'hour'), GETPOST('date_start' . $predef . 'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start' . $predef . 'month'), GETPOST('date_start' . $predef . 'day'), GETPOST('date_start' . $predef . 'year'));
-	  $date_end = dol_mktime(GETPOST('date_end' . $predef . 'hour'), GETPOST('date_end' . $predef . 'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end' . $predef . 'month'), GETPOST('date_end' . $predef . 'day'), GETPOST('date_end' . $predef . 'year'));
-	  if (!empty($date_start) && !empty($date_end) && $date_start > $date_end)
-	  {
-		  setEventMessages($langs->trans("Error").': '.$langs->trans("DateStartPlanned").' > '.$langs->trans("DateEndPlanned"), null, 'errors');
-		  $error++;
-	  }
+	    $date_start = dol_mktime(GETPOST('date_start' . $predef . 'hour'), GETPOST('date_start' . $predef . 'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start' . $predef . 'month'), GETPOST('date_start' . $predef . 'day'), GETPOST('date_start' . $predef . 'year'));
+	    $date_end = dol_mktime(GETPOST('date_end' . $predef . 'hour'), GETPOST('date_end' . $predef . 'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end' . $predef . 'month'), GETPOST('date_end' . $predef . 'day'), GETPOST('date_end' . $predef . 'year'));
+	    if (!empty($date_start) && !empty($date_end) && $date_start > $date_end)
+	    {
+		    setEventMessages($langs->trans("Error").': '.$langs->trans("DateStartPlanned").' > '.$langs->trans("DateEndPlanned"), null, 'errors');
+		    $error++;
+	    }
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -532,7 +531,7 @@ if (empty($reshook))
 						$pu_ht = price2num($pu_ttc / (1 + ($tmpvat/100)), 'MU');
 					}
 					else
-				  {
+				    {
 						$pu_ttc = price2num($pu_ht * (1 + ($tmpvat/100)), 'MU');
 					}
 				}
@@ -728,9 +727,9 @@ if (empty($reshook))
 			$objectline->pa_ht=$pa_ht;
 
 			if ($fk_unit > 0) {
-			  $objectline->fk_unit = GETPOST('unit');
+			    $objectline->fk_unit = GETPOST('unit');
 			} else {
-			  $objectline->fk_unit = null;
+			    $objectline->fk_unit = null;
 			}
 
 			// Extrafields
@@ -893,7 +892,6 @@ if (empty($reshook))
 	{
 		$cancelbutton = GETPOST('cancel', 'alpha');
 		if (!$cancelbutton) {
-
 			$object->oldcopy = dol_clone($object);
 
 			$result = $object->setValueFrom('ref_supplier', GETPOST('ref_supplier', 'alpha'), '', null, 'text', '', $user, 'CONTRACT_MODIFY');
@@ -1420,19 +1418,20 @@ else
 			$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 			if ($user->rights->contrat->creer)
 			{
-				if ($action != 'classify')
+				if ($action != 'classify') {
 					$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-					if ($action == 'classify') {
-						//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-						$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-						$morehtmlref.='<input type="hidden" name="action" value="classin">';
-						$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-						$morehtmlref.=$formproject->select_projects($object->thirdparty->id, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-						$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-						$morehtmlref.='</form>';
-					} else {
-						$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->thirdparty->id, $object->fk_project, 'none', 0, 0, 0, 1);
-					}
+				}
+				if ($action == 'classify') {
+					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+					$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+					$morehtmlref.='<input type="hidden" name="action" value="classin">';
+					$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					$morehtmlref.=$formproject->select_projects($object->thirdparty->id, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+					$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+					$morehtmlref.='</form>';
+				} else {
+					$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->thirdparty->id, $object->fk_project, 'none', 0, 0, 0, 1);
+				}
 			} else {
 				if (! empty($object->fk_project)) {
 					$proj = new Project($db);
@@ -1559,9 +1558,9 @@ else
 				print '<td>'.$langs->trans("ServiceNb", $cursorline).'</td>';
 				print '<td width="80" class="center">'.$langs->trans("VAT").'</td>';
 				print '<td width="80" class="right">'.$langs->trans("PriceUHT").'</td>';
-				if (!empty($conf->multicurrency->enabled)) {
-					print '<td width="80" class="right">'.$langs->trans("PriceUHTCurrency").'</td>';
-				}
+				//if (!empty($conf->multicurrency->enabled)) {
+				//	print '<td width="80" class="right">'.$langs->trans("PriceUHTCurrency").'</td>';
+				//}
 				print '<td width="30" class="center">'.$langs->trans("Qty").'</td>';
 				if ($conf->global->PRODUCT_USE_UNITS) print '<td width="30" class="left">'.$langs->trans("Unit").'</td>';
 				print '<td width="50" class="right">'.$langs->trans("ReductionShort").'</td>';
@@ -1571,8 +1570,7 @@ else
 
 				$objp = $db->fetch_object($result);
 
-				//
-
+				// Line in view mode
 				if ($action != 'editline' || GETPOST('rowid') != $objp->rowid)
 				{
 					print '<tr class="tdtop oddeven">';
@@ -1608,21 +1606,21 @@ else
 					{
 						print '<td>'.img_object($langs->trans("ShowProductOrService"), ($objp->product_type ? 'service' : 'product')).' '.dol_htmlentitiesbr($objp->description)."</td>\n";
 					}
-					// TVA
+					// VAT
 					print '<td class="center">';
 					print vatrate($objp->tva_tx.($objp->vat_src_code?(' ('.$objp->vat_src_code.')'):''), '%', $objp->info_bits);
 					print '</td>';
 					// Price
 					print '<td class="right">'.($objp->subprice != '' ? price($objp->subprice) : '')."</td>\n";
 					// Price multicurrency
-					if (!empty($conf->multicurrency->enabled)) {
+					/*if (!empty($conf->multicurrency->enabled)) {
 						print '<td class="linecoluht_currency nowrap right">'.price($objp->multicurrency_subprice).'</td>';
-					}
-					// Quantite
+					}*/
+					// Quantity
 					print '<td class="center">'.$objp->qty.'</td>';
 					// Unit
 					if($conf->global->PRODUCT_USE_UNITS) print '<td class="left">'.$langs->trans($object->lines[$cursorline-1]->getLabelOfUnit()).'</td>';
-					// Remise
+					// Discount
 					if ($objp->remise_percent > 0)
 					{
 						print '<td class="right">'.$objp->remise_percent."%</td>\n";
@@ -1711,7 +1709,7 @@ else
 						print $line->showOptionals($extrafields, 'view', array('style'=>'class="oddeven"', 'colspan'=>$colspan), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
 					}
 				}
-				// Ligne en mode update
+				// Line in mode update
 				else
 				{
 					// Ligne carac
@@ -1741,18 +1739,34 @@ else
 					$doleditor->Create();
 
 					print '</td>';
+
+					// VAT
 					print '<td class="right">';
 					print $form->load_tva("eltva_tx", $objp->tva_tx.($objp->vat_src_code?(' ('.$objp->vat_src_code.')'):''), $mysoc, $object->thirdparty, $objp->fk_product, $objp->info_bits, $objp->product_type, 0, 1);
 					print '</td>';
+
+					// Price
 					print '<td class="right"><input size="5" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
+
+					// Price multicurrency
+					/*if (!empty($conf->multicurrency->enabled)) {
+					 print '<td class="linecoluht_currency nowrap right">'.price($objp->multicurrency_subprice).'</td>';
+					 }*/
+
+					// Quantity
 					print '<td class="center"><input size="2" type="text" name="elqty" value="'.$objp->qty.'"></td>';
+
+					// Unit
 					if ($conf->global->PRODUCT_USE_UNITS)
 					{
 						print '<td class="left">';
 						print $form->selectUnits($objp->fk_unit, "unit");
 						print '</td>';
 					}
+
+					// Discount
 					print '<td class="nowrap right"><input size="1" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
+
 					if (! empty($usemargins))
 					{
 						print '<td class="right">';
@@ -2063,6 +2077,7 @@ else
 	   		if ($action != 'editline')
 			{
 				$forcetoshowtitlelines=1;
+				if (empty($object->multicurrency_code)) $object->multicurrency_code = $conf->currency;	// TODO Remove this when multicurrency supported on contracts
 
 				// Add free products/services
 				$object->formAddObjectLine(1, $mysoc, $soc);
@@ -2239,7 +2254,7 @@ $db->close();
 if (! empty($conf->margin->enabled) && $action == 'editline')
 {
 		// TODO Why this ? To manage margin on contracts ?
-?>
+	?>
 <script type="text/javascript">
 $(document).ready(function() {
   var idprod = $("input[name='idprod']").val();
@@ -2294,5 +2309,5 @@ $(document).ready(function() {
     }
 });
 </script>
-<?php
+	<?php
 }

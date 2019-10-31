@@ -45,9 +45,9 @@ include_once DOL_DOCUMENT_ROOT .'/core/lib/json.lib.php';
  *
  * @param   string	$type		Type of database (mysql, pgsql...)
  * @param	string	$host		Address of database server
- * @param	string	$user		Nom de l'utilisateur autorise
- * @param	string	$pass		Mot de passe
- * @param	string	$name		Nom de la database
+ * @param	string	$user		Authorized username
+ * @param	string	$pass		Password
+ * @param	string	$name		Name of database
  * @param	int		$port		Port of database server
  * @return	DoliDB				A DoliDB instance
  */
@@ -144,7 +144,6 @@ function getBrowserInfo($user_agent)
 	$tablet = $detectmobile->isTablet();
 
 	if ($detectmobile->isMobile()) {
-
 		$phone = 'unknown';
 
 		// If phone/smartphone, we set phone os name.
@@ -465,36 +464,36 @@ function GETPOST($paramname, $check = 'none', $method = 0, $filter = null, $opti
 		$maxloop=20; $loopnb=0;    // Protection against infinite loop
 		while (preg_match('/__([A-Z0-9]+_?[A-Z0-9]+)__/i', $out, $reg) && ($loopnb < $maxloop))    // Detect '__ABCDEF__' as key 'ABCDEF' and '__ABC_DEF__' as key 'ABC_DEF'. Detection is also correct when 2 vars are side by side.
 		{
-				$loopnb++; $newout = '';
+			$loopnb++; $newout = '';
 
-				if ($reg[1] == 'DAY')                { $tmp=dol_getdate(dol_now(), true); $newout = $tmp['mday']; }
-				elseif ($reg[1] == 'MONTH')          { $tmp=dol_getdate(dol_now(), true); $newout = $tmp['mon'];  }
-				elseif ($reg[1] == 'YEAR')           { $tmp=dol_getdate(dol_now(), true); $newout = $tmp['year']; }
-				elseif ($reg[1] == 'PREVIOUS_DAY')   { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['day']; }
-				elseif ($reg[1] == 'PREVIOUS_MONTH') { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_prev_month($tmp['mon'], $tmp['year']); $newout = $tmp2['month']; }
-				elseif ($reg[1] == 'PREVIOUS_YEAR')  { $tmp=dol_getdate(dol_now(), true); $newout = ($tmp['year'] - 1); }
-				elseif ($reg[1] == 'NEXT_DAY')       { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['day']; }
-				elseif ($reg[1] == 'NEXT_MONTH')     { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_next_month($tmp['mon'], $tmp['year']); $newout = $tmp2['month']; }
-				elseif ($reg[1] == 'NEXT_YEAR')      { $tmp=dol_getdate(dol_now(), true); $newout = ($tmp['year'] + 1); }
-				elseif ($reg[1] == 'MYCOMPANY_COUNTRY_ID' || $reg[1] == 'MYCOUNTRY_ID' || $reg[1] == 'MYCOUNTRYID')
-				{
-					$newout = $mysoc->country_id;
-				}
-				elseif ($reg[1] == 'USER_ID' || $reg[1] == 'USERID')
-				{
-					$newout = $user->id;
-				}
-				elseif ($reg[1] == 'USER_SUPERVISOR_ID' || $reg[1] == 'SUPERVISOR_ID' || $reg[1] == 'SUPERVISORID')
-				{
-					$newout = $user->fk_user;
-				}
-				elseif ($reg[1] == 'ENTITY_ID' || $reg[1] == 'ENTITYID')
-				{
-					$newout = $conf->entity;
-				}
-				else $newout = '';     // Key not found, we replace with empty string
-				//var_dump('__'.$reg[1].'__ -> '.$newout);
-				$out = preg_replace('/__'.preg_quote($reg[1], '/').'__/', $newout, $out);
+			if ($reg[1] == 'DAY')                { $tmp=dol_getdate(dol_now(), true); $newout = $tmp['mday']; }
+			elseif ($reg[1] == 'MONTH')          { $tmp=dol_getdate(dol_now(), true); $newout = $tmp['mon'];  }
+			elseif ($reg[1] == 'YEAR')           { $tmp=dol_getdate(dol_now(), true); $newout = $tmp['year']; }
+			elseif ($reg[1] == 'PREVIOUS_DAY')   { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['day']; }
+			elseif ($reg[1] == 'PREVIOUS_MONTH') { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_prev_month($tmp['mon'], $tmp['year']); $newout = $tmp2['month']; }
+			elseif ($reg[1] == 'PREVIOUS_YEAR')  { $tmp=dol_getdate(dol_now(), true); $newout = ($tmp['year'] - 1); }
+			elseif ($reg[1] == 'NEXT_DAY')       { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['day']; }
+			elseif ($reg[1] == 'NEXT_MONTH')     { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_next_month($tmp['mon'], $tmp['year']); $newout = $tmp2['month']; }
+			elseif ($reg[1] == 'NEXT_YEAR')      { $tmp=dol_getdate(dol_now(), true); $newout = ($tmp['year'] + 1); }
+			elseif ($reg[1] == 'MYCOMPANY_COUNTRY_ID' || $reg[1] == 'MYCOUNTRY_ID' || $reg[1] == 'MYCOUNTRYID')
+			{
+				$newout = $mysoc->country_id;
+			}
+			elseif ($reg[1] == 'USER_ID' || $reg[1] == 'USERID')
+			{
+				$newout = $user->id;
+			}
+			elseif ($reg[1] == 'USER_SUPERVISOR_ID' || $reg[1] == 'SUPERVISOR_ID' || $reg[1] == 'SUPERVISORID')
+			{
+				$newout = $user->fk_user;
+			}
+			elseif ($reg[1] == 'ENTITY_ID' || $reg[1] == 'ENTITYID')
+			{
+				$newout = $conf->entity;
+			}
+			else $newout = '';     // Key not found, we replace with empty string
+			//var_dump('__'.$reg[1].'__ -> '.$newout);
+			$out = preg_replace('/__'.preg_quote($reg[1], '/').'__/', $newout, $out);
 		}
 	}
 
@@ -877,7 +876,7 @@ function dol_string_unaccent($str)
 	else
 	{
 		// See http://www.ascii-code.com/
-$string = strtr(
+        $string = strtr(
 			$str,
 			"\xC0\xC1\xC2\xC3\xC4\xC5\xC7
 			\xC8\xC9\xCA\xCB\xCC\xCD\xCE\xCF\xD0\xD1
@@ -2220,7 +2219,7 @@ function dol_print_socialnetworks($value, $cid, $socid, $type)
 	if (! empty($type))
 	{
 		$newskype ='<div class="divsocialnetwork inline-block valignmiddle">';
-		$newskype.=img_picto($langs->trans(strtoupper($type)), $type.'.png', '', false, 0, 0, '', 'paddingright');
+		$newskype.=img_picto($langs->trans(strtoupper($type)), $type.'.png', '', false, 0, 0, '', 'paddingright', 0);
 		$newskype.=$value;
 		if ($type == 'skype')
 		{
@@ -3029,30 +3028,35 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
         if (empty($srconly) && in_array($pictowithouttext, array(
         		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
-        		'address', 'bank', 'building', 'cash-register', 'close_title', 'cubes', 'delete', 'edit', 'ellipsis-h', 'bookmark', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'note',
+        		'address', 'bank', 'building', 'cash-register', 'close_title', 'cubes', 'delete', 'dolly', 'edit', 'ellipsis-h', 'bookmark', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'note',
         		'object_list','object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
-        		'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
-				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench',
+        		'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'stats',
+				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench', 'globe',
 				'jabber','skype','twitter','facebook','linkedin',
 				'chevron-left','chevron-right','chevron-down','chevron-top',
 				'home', 'companies', 'products', 'commercial', 'invoicing', 'accountancy', 'project', 'hrm', 'members', 'ticket', 'generic',
+        		'error','warning',
         		'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda'
 			)
 		)) {
 			$fa='fas';
 		    $fakey = $pictowithouttext;
 		    $facolor = ''; $fasize = '';
-
 		    $arrayconvpictotofa = array(
 		    	'address'=> 'address-book', 'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins', 'accountancy'=>'money-check-alt', 'project'=>'sitemap',
 		    	'hrm'=>'umbrella-beach', 'members'=>'users', 'ticket'=>'ticket-alt', 'generic'=>'folder-open',
-		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'bookmark'=>'star',
+		    	'switch_off'=>'toggle-off', 'switch_on'=>'toggle-on', 'bookmark'=>'star', 'stats' => 'chart-bar',
 		    	'bank'=>'university', 'close_title'=>'window-close', 'delete'=>'trash', 'edit'=>'pencil', 'filter'=>'filter', 'split'=>'code-fork',
 		    	'object_list'=>'list-alt','object_calendar'=>'calendar-alt', 'object_calendarweek'=>'calendar-week', 'object_calendarmonth'=>'calendar-alt', 'object_calendarday'=>'calendar-day', 'object_calendarperuser'=>'table',
+		    	'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
 		    	'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach', 'title_agenda'=>'calendar-alt'
 		    );
-
-		    if ($pictowithouttext == 'switch_off') {
+		    if ($pictowithouttext == 'error' || $pictowithouttext == 'warning') {
+		    	$facolor = '';
+		    	$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
+		    	$marginleftonlyshort = 0;
+		    	$morecss .= ($morecss ? ' ' : '').('picto'.$pictowithouttext);
+		    } elseif ($pictowithouttext == 'switch_off') {
 				$facolor = '#999';
 				$fasize = '2em';
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
@@ -3073,6 +3077,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fasize = '1.3em';
 			}
 			elseif ($pictowithouttext == 'bank') {
+				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
+				$facolor = '#444';
+			}
+			elseif ($pictowithouttext == 'stats') {
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 				$facolor = '#444';
 			}
@@ -3121,12 +3129,12 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			    if (preg_match('/selected/', $pictowithouttext)) $facolor = '#888';
 				$marginleftonlyshort = 1;
 			}
-			elseif ($pictowithouttext == 'sign-out')     {
+			elseif ($pictowithouttext == 'sign-out') {
 				$fakey = 'fa-sign-out-alt';
 			    $marginleftonlyshort=0;
 			}
-			elseif ($pictowithouttext == 'unlink')     {
-				$fakey = 'fa-chain-broken';
+			elseif ($pictowithouttext == 'unlink') {
+				$fakey = 'fa-unlink';
 				$facolor = '#555';
 			}
 			elseif ($pictowithouttext == 'playdisabled') {
@@ -3152,14 +3160,15 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif (! empty($arrayconvpictotofa[$pictowithouttext]))
 			{
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
-				$facolor = '#444';
+				//$facolor = '#444';
 				$marginleftonlyshort=0;
 			}
 			else {
 				$fakey = 'fa-'.$pictowithouttext;
-				$facolor = '#444';
+				//$facolor = '#444';
 				$marginleftonlyshort=0;
 			}
+
 			//this snippet only needed since function img_edit accepts only one additional parameter: no separate one for css only.
             //class/style need to be extracted to avoid duplicate class/style validation errors when $moreatt is added to the end of the attributes
             $reg=array();
@@ -3174,7 +3183,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
             $moreatt=trim($moreatt);
 
             $enabledisablehtml = '<span class="' . $fa . ' ' . $fakey . ($marginleftonlyshort ? ($marginleftonlyshort == 1 ? ' marginleftonlyshort' : ' marginleftonly') : '');
-            $enabledisablehtml .= ' valignmiddle' . ($morecss ? ' ' . $morecss : '') . '" style="' . ($fasize ? ('font-size: ' . $fasize . ';') : '') . ($facolor ? (' color: ' . $facolor . ';') : '') . ($morestyle ? ' ' . $morestyle : '') . '"' . (($notitle || empty($titlealt)) ? '' : ' title="' . dol_escape_htmltag($titlealt) . '"') . ($moreatt ? ' ' . $moreatt : '') . '>';
+            $enabledisablehtml .= ($morecss ? ' ' . $morecss : '') . '" style="' . ($fasize ? ('font-size: ' . $fasize . ';') : '') . ($facolor ? (' color: ' . $facolor . ';') : '') . ($morestyle ? ' ' . $morestyle : '') . '"' . (($notitle || empty($titlealt)) ? '' : ' title="' . dol_escape_htmltag($titlealt) . '"') . ($moreatt ? ' ' . $moreatt : '') . '>';
 			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$enabledisablehtml.= $titlealt;
 			}
@@ -3381,7 +3390,7 @@ function img_edit_remove($titlealt = 'default', $other = '')
  *	Show logo editer/modifier fiche
  *
  *	@param  string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *	@param  integer	$float      Si il faut y mettre le style "float: right"
+ *	@param  integer	$float      If you have to put the style "float: right"
  *	@param  string	$other		Add more attributes on img
  *	@return string      		Return tag img
  */
@@ -3398,7 +3407,7 @@ function img_edit($titlealt = 'default', $float = 0, $other = '')
  *	Show logo view card
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *	@param  integer	$float      Si il faut y mettre le style "float: right"
+ *	@param  integer	$float      If you have to put the style "float: right"
  *	@param  string	$other		Add more attributes on img
  *	@return string      		Return tag img
  */
@@ -3510,7 +3519,7 @@ function img_warning($titlealt = 'default', $moreatt = '', $morecss = 'pictowarn
 	if ($titlealt == 'default') $titlealt = $langs->trans('Warning');
 
 	//return '<div class="imglatecoin">'.img_picto($titlealt, 'warning_white.png', 'class="pictowarning valignmiddle"'.($moreatt ? ($moreatt == '1' ? ' style="float: right"' : ' '.$moreatt): '')).'</div>';
-	return img_picto($titlealt, 'warning.png', 'class="valignmiddle'.($morecss?' '.$morecss:'').'"'.($moreatt ? ($moreatt == '1' ? ' style="float: right"' : ' '.$moreatt): ''));
+	return img_picto($titlealt, 'warning.png', 'class="'.$morecss.'"'.($moreatt ? ($moreatt == '1' ? ' style="float: right"' : ' '.$moreatt): ''));
 }
 
 /**
@@ -3756,10 +3765,9 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
 
 
 /**
- *	Affiche message erreur system avec toutes les informations pour faciliter le diagnostic et la remontee des bugs.
- *	On doit appeler cette fonction quand une erreur technique bloquante est rencontree.
- *	Toutefois, il faut essayer de ne l'appeler qu'au sein de pages php, les classes devant
- *	renvoyer leur erreur par l'intermediaire de leur propriete "error".
+ *  Displays error message system with all the information to facilitate the diagnosis and the escalation of the bugs.
+ *  This function must be called when a blocking technical error is encountered.
+ *  However, one must try to call it only within php pages, classes must return their error through their property "error".
  *
  *	@param	 	DoliDB	$db      	Database handler
  *	@param  	mixed	$error		String or array of errors strings to show
@@ -3820,7 +3828,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 
 	if (! empty($conf->modules))
 	{
-	   $out.="<b>".$langs->trans("Modules").":</b> ".join(', ', $conf->modules)."<br>\n";
+	    $out.="<b>".$langs->trans("Modules").":</b> ".join(', ', $conf->modules)."<br>\n";
 	}
 
 	if (is_object($db))
@@ -4115,9 +4123,9 @@ function load_fiche_titre($titre, $morehtmlright = '', $picto = 'generic', $pict
 	if ($picto == 'setup') $picto='generic';
 
 	$return.= "\n";
-	$return.= '<table '.($id?'id="'.$id.'" ':'').'class="centpercent notopnoleftnoright'.($morecssontable?' '.$morecssontable:'').'" style="margin-bottom: 6px;"><tr>';	// maring bottom must be same than into print_barre_list
-	if ($picto) $return.= '<td class="nobordernopadding widthpictotitle opacityhigh valignmiddle">'.img_picto('', $picto, 'class="valignmiddle widthpictotitle pictotitle"', $pictoisfullpath).'</td>';
-	$return.= '<td class="nobordernopadding valignmiddle">';
+	$return.= '<table '.($id?'id="'.$id.'" ':'').'class="centpercent notopnoleftnoright table-fiche-title '.($morecssontable?' '.$morecssontable:'').'"><tr>';	// maring bottom must be same than into print_barre_list
+	if ($picto) $return.= '<td class="nobordernopadding widthpictotitle opacityhigh valignmiddle col-picto">'.img_picto('', $picto, 'class="valignmiddle widthpictotitle pictotitle"', $pictoisfullpath).'</td>';
+	$return.= '<td class="nobordernopadding valignmiddle col-title">';
 	$return.= '<div class="titre inline-block">'.$titre.'</div>';
 	$return.= '</td>';
 	if (dol_strlen($morehtmlcenter))
@@ -4126,7 +4134,7 @@ function load_fiche_titre($titre, $morehtmlright = '', $picto = 'generic', $pict
 	}
 	if (dol_strlen($morehtmlright))
 	{
-		$return.= '<td class="nobordernopadding titre_right wordbreak right valignmiddle">'.$morehtmlright.'</td>';
+		$return.= '<td class="nobordernopadding titre_right wordbreakimp right valignmiddle">'.$morehtmlright.'</td>';
 	}
 	$return.= '</tr></table>'."\n";
 
@@ -4177,11 +4185,10 @@ function print_barre_liste($titre, $page, $file, $options = '', $sortfield = '',
 
 	print "\n";
 	print "<!-- Begin title '".$titre."' -->\n";
-	print '<table class="centpercent notopnoleftnoright'.($morecss?' '.$morecss:'').'" style="margin-bottom: 6px; border: 0"><tr>';	// maring bottom must be same than into load_fiche_tire
+	print '<table class="centpercent notopnoleftnoright table-fiche-title'.($morecss?' '.$morecss:'').'"><tr>';	// maring bottom must be same than into load_fiche_tire
 
 	// Left
-	//if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone left valignmiddle" style="width: 40px">'.img_picto('', $picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
-	print '<td class="nobordernopadding valignmiddle">';
+	print '<td class="nobordernopadding valignmiddle col-title">';
 	if ($picto && $titre) print img_picto('', $picto, 'class="hideonsmartphone valignmiddle opacityhigh pictotitle widthpictotitle"', $pictoisfullpath);
 	print '<div class="titre inline-block">'.$titre;
 	if (!empty($titre) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '') print ' ('.$totalnboflines.')';
@@ -4617,7 +4624,7 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
 	    $unit = $forceunitoutput;
 	}*/
 
-	$ret=price($dimension, 0, $outputlangs, 0, 0, $round).' '.measuring_units_string(0, $type, $unit);
+	$ret=price($dimension, 0, $outputlangs, 0, 0, $round).' '.measuringUnitString(0, $type, $unit);
 
 	return $ret;
 }
@@ -5859,7 +5866,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		// Add SIGNATURE into substitutionarray first, so, when we will make the substitution,
 		// this will include signature content first and then replace var found into content of signature
 		$signature = $user->signature;
-$substitutionarray=array_merge($substitutionarray, array(
+        $substitutionarray=array_merge($substitutionarray, array(
 		'__USER_SIGNATURE__' => (string) (($signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($signature), 30) : $signature) : '')
 		)
 			);
@@ -5869,7 +5876,7 @@ $substitutionarray=array_merge($substitutionarray, array(
 			$substitutionarray['__SIGNATURE__'] = (string) (($signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($signature), 30) : $signature) : '');
 		}
 
-$substitutionarray=array_merge($substitutionarray, array(
+        $substitutionarray=array_merge($substitutionarray, array(
 		'__USER_ID__' => (string) $user->id,
 		'__USER_LOGIN__' => (string) $user->login,
 		'__USER_LASTNAME__' => (string) $user->lastname,
@@ -5882,7 +5889,7 @@ $substitutionarray=array_merge($substitutionarray, array(
 	}
 	if ((empty($exclude) || ! in_array('mycompany', $exclude)) && is_object($mysoc))
 	{
-$substitutionarray=array_merge($substitutionarray, array(
+        $substitutionarray=array_merge($substitutionarray, array(
 			'__MYCOMPANY_NAME__'    => $mysoc->name,
 			'__MYCOMPANY_EMAIL__'   => $mysoc->email,
 			'__MYCOMPANY_PROFID1__' => $mysoc->idprof1,
@@ -5910,6 +5917,8 @@ $substitutionarray=array_merge($substitutionarray, array(
 			$substitutionarray['__REF__'] = '__REF__';
 			$substitutionarray['__REF_CLIENT__'] = '__REF_CLIENT__';
 			$substitutionarray['__REF_SUPPLIER__'] = '__REF_SUPPLIER__';
+			$substitutionarray['__NOTE_PUBLIC__'] = '__NOTE_PUBLIC__';
+			$substitutionarray['__NOTE_PRIVATE__'] = '__NOTE_PRIVATE__';
 			$substitutionarray['__EXTRAFIELD_XXX__'] = '__EXTRAFIELD_XXX__';
 
 			if (! empty($conf->societe->enabled))
@@ -5917,7 +5926,21 @@ $substitutionarray=array_merge($substitutionarray, array(
 				$substitutionarray['__THIRDPARTY_ID__'] = '__THIRDPARTY_ID__';
 				$substitutionarray['__THIRDPARTY_NAME__'] = '__THIRDPARTY_NAME__';
 				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = '__THIRDPARTY_NAME_ALIAS__';
+				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = '__THIRDPARTY_CODE_CLIENT__';
+				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = '__THIRDPARTY_CODE_FOURNISSEUR__';
 				$substitutionarray['__THIRDPARTY_EMAIL__'] = '__THIRDPARTY_EMAIL__';
+				$substitutionarray['__THIRDPARTY_PHONE__'] = '__THIRDPARTY_PHONE__';
+				$substitutionarray['__THIRDPARTY_FAX__'] = '__THIRDPARTY_FAX__';
+				$substitutionarray['__THIRDPARTY_ADRESSE__'] = '__THIRDPARTY_ADRESSE__';
+				$substitutionarray['__THIRDPARTY_ZIP__'] = '__THIRDPARTY_ZIP__';
+				$substitutionarray['__THIRDPARTY_TOWN__'] = '__THIRDPARTY_TOWN__';
+				$substitutionarray['__THIRDPARTY_SIREN__'] = '__THIRDPARTY_SIREN__';
+				$substitutionarray['__THIRDPARTY_SIRET__'] = '__THIRDPARTY_SIRET__';
+				$substitutionarray['__THIRDPARTY_APE__'] = '__THIRDPARTY_APE__';
+				$substitutionarray['__THIRDPARTY_RCSRM__'] = '__THIRDPARTY_RCSRM__';
+				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = '__THIRDPARTY_TVAINTRA__';
+				/*$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = '__THIRDPARTY_NOTE_PUBLIC__';
+				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = '__THIRDPARTY_NOTE_PRIVATE__';*/
 			}
 			if (! empty($conf->adherent->enabled))
 			{
@@ -5925,12 +5948,16 @@ $substitutionarray=array_merge($substitutionarray, array(
 				$substitutionarray['__MEMBER_CIVILITY__'] = '__MEMBER_CIVILITY__';
 				$substitutionarray['__MEMBER_FIRSTNAME__'] = '__MEMBER_FIRSTNAME__';
 				$substitutionarray['__MEMBER_LASTNAME__'] = '__MEMBER_LASTNAME__';
+				/*$substitutionarray['__MEMBER_NOTE_PUBLIC__'] = '__MEMBER_NOTE_PUBLIC__';
+				$substitutionarray['__MEMBER_NOTE_PRIVATE__'] = '__MEMBER_NOTE_PRIVATE__';*/
 			}
 			if (! empty($conf->projet->enabled))
 			{
 				$substitutionarray['__PROJECT_ID__'] = '__PROJECT_ID__';
 				$substitutionarray['__PROJECT_REF__'] = '__PROJECT_REF__';
 				$substitutionarray['__PROJECT_NAME__'] = '__PROJECT_NAME__';
+				/*$substitutionarray['__PROJECT_NOTE_PUBLIC__'] = '__PROJECT_NOTE_PUBLIC__';
+				$substitutionarray['__PROJECT_NOTE_PRIVATE__'] = '__PROJECT_NOTE_PRIVATE__';*/
 			}
 			if (! empty($conf->contrat->enabled))
 			{
@@ -5963,13 +5990,17 @@ $substitutionarray=array_merge($substitutionarray, array(
 			$substitutionarray['__REF__'] = $object->ref;
 			$substitutionarray['__REF_CLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
 			$substitutionarray['__REF_SUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
-			$substitutionarray['__SUPPLIER_ORDER_DATE_DELIVERY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, 'day', 0, $outputlangs): '');
+			$substitutionarray['__NOTE_PUBLIC__'] = (isset($object->note_public) ? $object->note_public : null);
+			$substitutionarray['__NOTE_PRIVATE__'] = (isset($object->note_private) ? $object->note_private : null);
+
+			$substitutionarray['__DATE_DELIVERY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, 'day', 0, $outputlangs): '');
+
 			// For backward compatibility
 			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
 			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
-
-			// TODO Remove this
-			$msgishtml = 0;
+			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
+			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
+			$substitutionarray['__SUPPLIER_ORDER_DATE_DELIVERY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, 'day', 0, $outputlangs): '');
 
 			$birthday = dol_print_date($object->birth, 'day');
 
@@ -5977,22 +6008,22 @@ $substitutionarray=array_merge($substitutionarray, array(
 			{
 				$substitutionarray['__MEMBER_ID__']=$object->id;
 				if (method_exists($object, 'getCivilityLabel')) $substitutionarray['__MEMBER_CIVILITY__'] = $object->getCivilityLabel();
-				$substitutionarray['__MEMBER_FIRSTNAME__']=$msgishtml?dol_htmlentitiesbr($object->firstname):$object->firstname;
-				$substitutionarray['__MEMBER_LASTNAME__']=$msgishtml?dol_htmlentitiesbr($object->lastname):$object->lastname;
-				if (method_exists($object, 'getFullName')) $substitutionarray['__MEMBER_FULLNAME__']=$msgishtml?dol_htmlentitiesbr($object->getFullName($outputlangs)):$object->getFullName($outputlangs);
-				$substitutionarray['__MEMBER_COMPANY__']=$msgishtml?dol_htmlentitiesbr($object->societe):$object->societe;
-				$substitutionarray['__MEMBER_ADDRESS__']=$msgishtml?dol_htmlentitiesbr($object->address):$object->address;
-				$substitutionarray['__MEMBER_ZIP__']=$msgishtml?dol_htmlentitiesbr($object->zip):$object->zip;
-				$substitutionarray['__MEMBER_TOWN__']=$msgishtml?dol_htmlentitiesbr($object->town):$object->town;
-				$substitutionarray['__MEMBER_COUNTRY__']=$msgishtml?dol_htmlentitiesbr($object->country):$object->country;
-				$substitutionarray['__MEMBER_EMAIL__']=$msgishtml?dol_htmlentitiesbr($object->email):$object->email;
-				$substitutionarray['__MEMBER_BIRTH__']=$msgishtml?dol_htmlentitiesbr($birthday):$birthday;
-				$substitutionarray['__MEMBER_PHOTO__']=$msgishtml?dol_htmlentitiesbr($object->photo):$object->photo;
-				$substitutionarray['__MEMBER_LOGIN__']=$msgishtml?dol_htmlentitiesbr($object->login):$object->login;
-				$substitutionarray['__MEMBER_PASSWORD__']=$msgishtml?dol_htmlentitiesbr($object->pass):$object->pass;
-				$substitutionarray['__MEMBER_PHONE__']=$msgishtml?dol_htmlentitiesbr($object->phone):$object->phone;
-				$substitutionarray['__MEMBER_PHONEPRO__']=$msgishtml?dol_htmlentitiesbr($object->phone_perso):$object->phone_perso;
-				$substitutionarray['__MEMBER_PHONEMOBILE__']=$msgishtml?dol_htmlentitiesbr($object->phone_mobile):$object->phone_mobile;
+				$substitutionarray['__MEMBER_FIRSTNAME__']=$object->firstname;
+				$substitutionarray['__MEMBER_LASTNAME__']=$object->lastname;
+				if (method_exists($object, 'getFullName')) $substitutionarray['__MEMBER_FULLNAME__']=$object->getFullName($outputlangs);
+				$substitutionarray['__MEMBER_COMPANY__']=$object->societe;
+				$substitutionarray['__MEMBER_ADDRESS__']=$object->address;
+				$substitutionarray['__MEMBER_ZIP__']=$object->zip;
+				$substitutionarray['__MEMBER_TOWN__']=$object->town;
+				$substitutionarray['__MEMBER_COUNTRY__']=$object->country;
+				$substitutionarray['__MEMBER_EMAIL__']=$object->email;
+				$substitutionarray['__MEMBER_BIRTH__']=$birthday;
+				$substitutionarray['__MEMBER_PHOTO__']=$object->photo;
+				$substitutionarray['__MEMBER_LOGIN__']=$object->login;
+				$substitutionarray['__MEMBER_PASSWORD__']=$object->pass;
+				$substitutionarray['__MEMBER_PHONE__']=$object->phone;
+				$substitutionarray['__MEMBER_PHONEPRO__']=$object->phone_perso;
+				$substitutionarray['__MEMBER_PHONEMOBILE__']=$object->phone_mobile;
 				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE__']       = dol_print_date($object->first_subscription_date, 'dayrfc');
 				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE_START__'] = dol_print_date($object->first_subscription_date_start, 'dayrfc');
 				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE_END__']   = dol_print_date($object->first_subscription_date_end, 'dayrfc');
@@ -6006,14 +6037,38 @@ $substitutionarray=array_merge($substitutionarray, array(
 				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object)?$object->id:'');
 				$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object)?$object->name:'');
 				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (is_object($object)?$object->name_alias:'');
+				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = (is_object($object)?$object->code_client:'');
+				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = (is_object($object)?$object->code_fournisseur:'');
 				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object)?$object->email:'');
+				$substitutionarray['__THIRDPARTY_PHONE__'] = (is_object($object)?$object->phone:'');
+				$substitutionarray['__THIRDPARTY_FAX__'] = (is_object($object)?$object->name_fax:'');
+				$substitutionarray['__THIRDPARTY_ADRESSE__'] = (is_object($object)?$object->address:'');
+				$substitutionarray['__THIRDPARTY_ZIP__'] = (is_object($object)?$object->zip:'');
+				$substitutionarray['__THIRDPARTY_TOWN__'] = (is_object($object)?$object->town:'');
+				$substitutionarray['__THIRDPARTY_SIREN__'] = (is_object($object)?$object->idprof1:'');
+				$substitutionarray['__THIRDPARTY_SIRET__'] = (is_object($object)?$object->idprof2:'');
+				$substitutionarray['__THIRDPARTY_APE__'] = (is_object($object)?$object->idprof3:'');
+				$substitutionarray['__THIRDPARTY_RCSRM__'] = (is_object($object)?$object->idprof4:'');
+				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = (is_object($object)?$object->tva_intra:'');
 			}
 			elseif (is_object($object->thirdparty) && $object->thirdparty->id > 0)
 			{
 				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object->thirdparty)?$object->thirdparty->id:'');
 				$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object->thirdparty)?$object->thirdparty->name:'');
 				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (is_object($object->thirdparty)?$object->thirdparty->name_alias:'');
+				$substitutionarray['__THIRDPARTY_CODE_CLIENT__'] = (is_object($object->thirdparty)?$object->thirdparty->code_client:'');
+				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = (is_object($object->thirdparty)?$object->thirdparty->code_fournisseur:'');
 				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object->thirdparty)?$object->thirdparty->email:'');
+				$substitutionarray['__THIRDPARTY_PHONE__'] = (is_object($object->thirdparty)?$object->phone:'');
+				$substitutionarray['__THIRDPARTY_FAX__'] = (is_object($object->thirdparty)?$object->name_fax:'');
+				$substitutionarray['__THIRDPARTY_ADRESSE__'] = (is_object($object->thirdparty)?$object->address:'');
+				$substitutionarray['__THIRDPARTY_ZIP__'] = (is_object($object->thirdparty)?$object->zip:'');
+				$substitutionarray['__THIRDPARTY_TOWN__'] = (is_object($object->thirdparty)?$object->town:'');
+				$substitutionarray['__THIRDPARTY_SIREN__'] = (is_object($object->thirdparty)?$object->idprof1:'');
+				$substitutionarray['__THIRDPARTY_SIRET__'] = (is_object($object->thirdparty)?$object->idprof2:'');
+				$substitutionarray['__THIRDPARTY_APE__'] = (is_object($object->thirdparty)?$object->idprof3:'');
+				$substitutionarray['__THIRDPARTY_RCSRM__'] = (is_object($object->thirdparty)?$object->idprof4:'');
+				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = (is_object($object->thirdparty)?$object->tva_intra:'');
 			}
 
 			if (is_object($object->project) && $object->project->id > 0)
@@ -6380,11 +6435,11 @@ function dolGetFirstLastname($firstname, $lastname, $nameorder = -1)
 	}
 	elseif ($nameorder == 2 || $nameorder == 3)
 	{
-	   $ret.=$firstname;
-	   if (empty($ret) && $nameorder == 3)
-	   {
-	   		$ret.=$lastname;
-	   }
+	    $ret.=$firstname;
+	    if (empty($ret) && $nameorder == 3)
+	    {
+	    	$ret.=$lastname;
+	    }
 	}
 	else
 	{
@@ -7920,7 +7975,7 @@ function getDictvalue($tablename, $field, $id, $checkentity = false, $rowidfield
 	if (!isset($dictvalues[$tablename]))
 	{
 		$dictvalues[$tablename] = array();
-		$sql = 'SELECT * FROM '.$tablename.' WHERE 1';
+		$sql = 'SELECT * FROM '.$tablename.' WHERE 1';		// Here select * is allowed as it is generic code and we don't have list of fields
 		if ($checkentity) $sql.= ' AND entity IN (0,'.getEntity($tablename).')';
 
 		$resql = $db->query($sql);
@@ -8039,7 +8094,7 @@ function roundUpToNextMultiple($n, $x = 5)
 function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '', $params = array())
 {
     $attr=array(
-        'class'=>'badge'.(!empty($mode)?' badge-'.$mode:'').(!empty($type)?' badge-'.$type:'')
+        'class'=>'badge badge-status'.(!empty($mode)?' badge-'.$mode:'').(!empty($type)?' badge-'.$type:'')
     );
 
     if(empty($html)){
@@ -8100,25 +8155,11 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
     global $conf;
 
     $return = '';
-
     $dolGetBadgeParams = array();
-    if(!empty($params['badgeParams'])){
+
+    if (!empty($params['badgeParams'])){
         $dolGetBadgeParams = $params['badgeParams'];
     }
-
-    // image's filename are still in French
-    $statusImg=array(
-        'status0' => 'statut0'
-        ,'status1' => 'statut1'
-        ,'status2' => 'statut2'
-        ,'status3' => 'statut3'
-        ,'status4' => 'statut4'
-        ,'status5' => 'statut5'
-        ,'status6' => 'statut6'
-        ,'status7' => 'statut7'
-        ,'status8' => 'statut8'
-        ,'status9' => 'statut9'
-    );
 
     // TODO : add a hook
 
@@ -8129,12 +8170,34 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         $return = !empty($html)?$html:(!empty($statusLabelShort)?$statusLabelShort:$statusLabel);
     }
     // use status with images
-    elseif (empty($conf->global->MAIN_STATUS_USES_CSS)){
+    elseif (empty($conf->global->MAIN_STATUS_USES_CSS)) {
         $return = '';
         $htmlLabel      = (in_array($displayMode, array(1,2,5))?'<span class="hideonsmartphone">':'').(!empty($html)?$html:$statusLabel).(in_array($displayMode, array(1,2,5))?'</span>':'');
         $htmlLabelShort = (in_array($displayMode, array(1,2,5))?'<span class="hideonsmartphone">':'').(!empty($html)?$html:(!empty($statusLabelShort)?$statusLabelShort:$statusLabel)).(in_array($displayMode, array(1,2,5))?'</span>':'');
 
-        if(!empty($statusImg[$statusType])){
+        // For small screen, we use the short label instead of long label.
+        if (! empty($conf->dol_optimize_smallscreen))
+        {
+        	if ($displayMode == 0) $displayMode = 1;
+        	elseif ($displayMode == 4) $displayMode = 2;
+        	elseif ($displayMode == 6) $displayMode = 5;
+        }
+
+        // image's filename are still in French, so we use this array to convert
+        $statusImg=array(
+        	'status0' => 'statut0'
+        	,'status1' => 'statut1'
+        	,'status2' => 'statut2'
+        	,'status3' => 'statut3'
+        	,'status4' => 'statut4'
+        	,'status5' => 'statut5'
+        	,'status6' => 'statut6'
+        	,'status7' => 'statut7'
+        	,'status8' => 'statut8'
+        	,'status9' => 'statut9'
+        );
+
+        if (!empty($statusImg[$statusType])){
             $htmlImg = img_picto($statusLabel, $statusImg[$statusType]);
         }else{
             $htmlImg = img_picto($statusLabel, $statusType);
@@ -8273,7 +8336,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 
     $class = 'btnTitle';
     // hidden conf keep during button transition TODO: remove this block
-    if (empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)) {
+    if (!empty($conf->global->MAIN_USE_OLD_TITLE_BUTTON)) {
         $class = 'butActionNew';
     }
     if (! empty($params['morecss'])) $class.=' '.$params['morecss'];
@@ -8291,7 +8354,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
         $attr['class'] .= ' refused';
 
         // hidden conf keep during button transition TODO: remove this block
-        if(empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)){
+        if(!empty($conf->global->MAIN_USE_OLD_TITLE_BUTTON)){
             $attr['class'] = 'butActionNewRefused';
         }
 
@@ -8353,7 +8416,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
     $button.= '</'.$tag.'>';
 
     // hidden conf keep during button transition TODO: remove this block
-    if(empty($conf->global->MAIN_USE_NEW_TITLE_BUTTON)){
+    if(!empty($conf->global->MAIN_USE_OLD_TITLE_BUTTON)){
         $button='<'.$tag.' '.$compiledAttributes.' ><span class="text-plus-circle">'.$label.'</span>';
         $button.= '<span class="'.$iconClass.' valignmiddle"></span>';
         $button.= '</'.$tag.'>';

@@ -32,7 +32,6 @@ if ($_POST) {
 	if (empty($ref) || empty($label)) {
 		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
 	} else {
-
 		$prodattr = new ProductAttribute($db);
 		$prodattr->label = $label;
 		$prodattr->ref = $ref;

@@ -100,7 +100,6 @@ if ($result < 0)
  */
 
 if ($action == 'lettering') {
-
 	$result = $lettering->updateLettering($toselect);
 
 	if ($result < 0) {
@@ -251,7 +250,6 @@ if ($resql) {
 	$tmp = '';
 
     while ( $obj = $db->fetch_object($resql) ) {
-
 		if ($tmp != $obj->lettering_code || empty($tmp))						$tmp = $obj->lettering_code;
 		/*if ($tmp != $obj->lettering_code || empty($obj->lettering_code))*/	$solde += ($obj->credit - $obj->debit);
 

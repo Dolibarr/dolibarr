@@ -27,21 +27,24 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-if (! empty($conf->categorie->enabled))
+if (! empty($conf->categorie->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+}
 
-if (! $user->rights->user->user->lire && ! $user->admin)
+if (! $user->rights->user->user->lire && ! $user->admin) {
 	accessforbidden();
+}
 
-	// Load translation files required by page
+// Load translation files required by page
 $langs->loadLangs(array('users', 'companies', 'hrm'));
 
 $contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'userlist';   // To manage different context of search
 
 // Security check (for external users)
 $socid=0;
-if ($user->societe_id > 0)
+if ($user->societe_id > 0) {
 	$socid = $user->societe_id;
+}
 
 // Load mode employee
 $mode = GETPOST("mode", 'alpha');
@@ -108,13 +111,16 @@ $arrayfields=array(
 	'u.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-   foreach($extrafields->attribute_label as $key => $val)
-   {
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
-   }
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+	{
+		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+	}
 }
+$object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Init search fields
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
@@ -198,7 +204,9 @@ $sql.= " u.tms as date_update, u.datec as date_creation,";
 $sql.= " u2.rowid as id2, u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2, u2.admin as admin2, u2.fk_soc as fk_soc2, u2.email as email2, u2.gender as gender2, u2.photo as photo2, u2.entity as entity2,";
 $sql.= " s.nom as name, s.canvas";
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -530,29 +538,29 @@ while ($i < min($num, $limit))
 	}
 	if (! empty($arrayfields['u.firstname']['checked']))
 	{
-	  print '<td>'.$obj->firstname.'</td>';
+	    print '<td>'.$obj->firstname.'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['u.gender']['checked']))
 	{
-	  print '<td>';
-	  if ($obj->gender) print $langs->trans("Gender".$obj->gender);
-	  print '</td>';
+	    print '<td>';
+	    if ($obj->gender) print $langs->trans("Gender".$obj->gender);
+	    print '</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['u.employee']['checked']))
 	{
-	  print '<td>'.yn($obj->employee).'</td>';
+	    print '<td>'.yn($obj->employee).'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['u.accountancy_code']['checked']))
 	{
-	  print '<td>'.$obj->accountancy_code.'</td>';
+	    print '<td>'.$obj->accountancy_code.'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['u.email']['checked']))
 	{
-	  print '<td>'.$obj->email.'</td>';
+	    print '<td>'.$obj->email.'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['u.api_key']['checked']))
@@ -575,7 +583,7 @@ while ($i < min($num, $limit))
 			print $langs->trans("DomainUser");
 		}
 		else
-	   {
+	    {
 			print $langs->trans("InternalUser");
 		}
 		print '</td>';
@@ -668,9 +676,9 @@ while ($i < min($num, $limit))
 	// Status
 	if (! empty($arrayfields['u.statut']['checked']))
 	{
-	   $userstatic->statut=$obj->statut;
-	   print '<td class="center">'.$userstatic->getLibStatut(3).'</td>';
-	   if (! $i) $totalarray['nbfield']++;
+	    $userstatic->statut=$obj->statut;
+	    print '<td class="center">'.$userstatic->getLibStatut(3).'</td>';
+	    if (! $i) $totalarray['nbfield']++;
 	}
 	// Action column
 	print '<td></td>';

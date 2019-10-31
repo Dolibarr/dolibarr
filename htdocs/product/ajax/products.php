@@ -99,7 +99,7 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 		}
 
 		// Multiprice
-		if (! $found && isset($price_level) && $price_level >= 1 && (! empty($conf->global->PRODUIT_MULTIPRICES))) 		// If we need a particular price
+		if (! $found && isset($price_level) && $price_level >= 1 && (! empty($conf->global->PRODUIT_MULTIPRICES))) // If we need a particular price
 		                                                                                                           // level (from 1 to 6)
 		{
 			$sql = "SELECT price, price_ttc, price_base_type, tva_tx";
@@ -125,7 +125,6 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 
 		// Price by customer
 		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && ! empty($socid)) {
-
 			require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
 
 			$prodcustprice = new Productcustomerprice($db);

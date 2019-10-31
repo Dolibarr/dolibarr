@@ -348,23 +348,21 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	}
 	else
 	{
-		print '<tr class="liste_titre"><th class="titlefield">'.$langs->trans("DefaultSkin").'</th>';
+		$dirthemestring = '';
+		foreach($dirthemes as $dirtheme)
+		{
+			$dirthemestring .= '"'.$dirtheme.'" ';
+		}
+
+		print '<tr class="liste_titre"><th class="titlefield">';
+		print $form->textwithpicto($langs->trans("DefaultSkin"), $langs->trans("ThemeDir").' : '.$dirthemestring);
+		print '</th>';
 		print '<th class="right">';
 		$url='https://www.dolistore.com/4-skins';
 		print '<a href="'.$url.'" target="_blank">';
 		print $langs->trans('DownloadMoreSkins');
 		print '</a>';
 		print '</th></tr>';
-
-		print '<tr>';
-		print '<td>'.$langs->trans("ThemeDir").'</td>';
-		print '<td>';
-		foreach($dirthemes as $dirtheme)
-		{
-			echo '"'.$dirtheme.'" ';
-		}
-		print '</td>';
-		print '</tr>';
 	}
 
 	print '<tr><td colspan="'.$colspan.'">';
@@ -399,7 +397,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 						print '<a href="'.$_SERVER["PHP_SELF"].($edit?'?action=edit&theme=':'?theme=').$subdir.(GETPOST('optioncss', 'alpha', 1)?'&optioncss='.GETPOST('optioncss', 'alpha', 1):'').($fuser?'&id='.$fuser->id:'').'" style="font-weight: normal;" alt="'.$langs->trans("Preview").'">';
 						if ($subdir == $conf->global->MAIN_THEME) $title=$langs->trans("ThemeCurrentlyActive");
 						else $title=$langs->trans("ShowPreview");
-						print '<img src="'.$url.'" border="0" width="80" height="60" alt="'.$title.'" title="'.$title.'" style="margin-bottom: 5px;">';
+						print '<img class="img-skinthumb shadow" src="'.$url.'" alt="'.$title.'" title="'.$title.'" style="border: none; margin-bottom: 5px;">';
 						print '</a><br>';
 						if ($subdir == $selected_theme)
 						{
@@ -421,6 +419,31 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	print '</div></td></tr></table>';
 
 	print '</td></tr>';
+
+	// Show logo
+	if ($foruserprofile)
+	{
+		// Nothing
+	}
+	else
+	{
+		// Show logo
+		print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("EnableShowLogo").'</td><td>';
+		if ($edit)
+		{
+			print $form->selectyesno('MAIN_SHOW_LOGO', $conf->global->MAIN_SHOW_LOGO, 1);
+		}
+		else
+		{
+			print  yn($conf->global->MAIN_SHOW_LOGO);
+		}
+		print '</td>';
+		print '</tr>';
+		/*
+		print '<tr class="oddeven"><td>'.$langs->trans("EnableShowLogo").'</td><td>' . yn($conf->global->MAIN_SHOW_LOGO) . '</td>';
+		print "</tr>";*/
+	}
+
 
 	// TopMenuDisableImages
 	if ($foruserprofile)
@@ -615,8 +638,6 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	// TextTitleColor for title of Pages
 	if ($foruserprofile)
 	{
-
-
 	}
 	else
 	{
@@ -642,8 +663,6 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	// BackgroundTableTitleColor
 	if ($foruserprofile)
 	{
-
-
 	}
 	else
 	{
@@ -669,8 +688,6 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	// TextTitleColor
 	if ($foruserprofile)
 	{
-
-
 	}
 	else
 	{
@@ -696,7 +713,6 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	// BackgroundTableLineOddColor
 	if ($foruserprofile)
 	{
-
 	}
 	else
 	{
@@ -726,7 +742,6 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	// BackgroundTableLineEvenColor
 	if ($foruserprofile)
 	{
-
 	}
 	else
 	{
@@ -982,7 +997,6 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	}
 	else
 	{
-
 	}
 	print '</table>';
 }

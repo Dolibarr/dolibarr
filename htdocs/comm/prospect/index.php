@@ -147,7 +147,6 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 				$total += $obj->price;
 			}
 			if ($total>0) {
-
 				print '<tr class="liste_total"><td>'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td></tr>";
 			}
 			print "</table><br>";

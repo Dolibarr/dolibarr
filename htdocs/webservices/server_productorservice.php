@@ -365,7 +365,6 @@ function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = ''
 
     if (! $error)
     {
-
     	$langcode=($lang?$lang:(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
     	$langs->setDefaultLang($langcode);
 
@@ -506,7 +505,7 @@ function createProductOrService($authentication, $product)
 
     if ($product['barcode'] && !$product['barcode_type'])
     {
-	$errror++; $errorcode='KO' ; $errorlabel="You must set a barcode type when setting a barcode.";
+        $errror++; $errorcode='KO' ; $errorlabel="You must set a barcode type when setting a barcode.";
     }
 
 
@@ -968,9 +967,9 @@ function getListOfProductsOrServices($authentication, $filterproduct)
         $sql.=" WHERE entity=".$conf->entity;
         foreach($filterproduct as $key => $val)
         {
-		if ($key == 'type' && $val >= 0)   	$sql.=" AND fk_product_type = ".$db->escape($val);
-		if ($key == 'status_tosell') 				$sql.=" AND tosell = ".$db->escape($val);
-		if ($key == 'status_tobuy')  				$sql.=" AND tobuy = ".$db->escape($val);
+		    if ($key == 'type' && $val >= 0) $sql.=" AND fk_product_type = ".$db->escape($val);
+		    if ($key == 'status_tosell') $sql.=" AND tosell = ".$db->escape($val);
+		    if ($key == 'status_tobuy') $sql.=" AND tobuy = ".$db->escape($val);
         }
 		$resql=$db->query($sql);
         if ($resql)

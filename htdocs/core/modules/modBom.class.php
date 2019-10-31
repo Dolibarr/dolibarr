@@ -54,14 +54,14 @@ class modBom extends DolibarrModules
 		// It is used to group modules by family in module setup page
 		$this->family = "products";
 		// Module position in the family on 2 digits ('01', '10', '20', ...)
-		$this->module_position = '90';
+		$this->module_position = '60';
 		// Gives the possibility for the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
 		//$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
 
 		// Module label (no space allowed), used if translation string 'ModuleBomName' not found (Bom is name of module).
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description, used if translation string 'ModuleBomDesc' not found (Bom is name of module).
-		$this->description = "Bill of Materials (BOM) definitions for Manufacturing Resource Planning";
+		$this->description = "Module to define your Bills Of Materials (BOM). Can be used for Manufacturing Resource Planning by the module Manufacturing Orders (MO)";
 		// Used only if file README.md and README-LL.md not found.
 		$this->descriptionlong = "Bill of Materials definitions. They can be used to make Manufacturing Resource Planning";
 
@@ -75,7 +75,7 @@ class modBom extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto='generic';
+		$this->picto='bom';
 
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(
@@ -121,7 +121,7 @@ class modBom extends DolibarrModules
 		//                             1=>array('BILLOFMATERIALS_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
 		// );
 		$this->const = array(
-			1=>array('BOM_ADDON_PDF', 'chaine', 'avalue', 'Name of PDF model of BOM', 0),
+			1=>array('BOM_ADDON_PDF', 'chaine', 'alpha', 'Name of PDF model of BOM', 0),
 		    2=>array('BOM_ADDON', 'chaine', 'mod_bom_standard', 'Name of numbering rules of BOM', 0),
 		    3=>array('BOM_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT/doctemplates/boms', '', 0)
 		);
@@ -189,9 +189,7 @@ class modBom extends DolibarrModules
         // Boxes/Widgets
 		// Add here list of php file(s) stored in bom/core/boxes that contains class to show a widget.
         $this->boxes = array(
-        	//0=>array('file'=>'bomwidget1.php@bom','note'=>'Widget provided by Bom','enabledbydefaulton'=>'Home'),
-        	//1=>array('file'=>'bomwidget2.php@bom','note'=>'Widget provided by Bom'),
-        	//2=>array('file'=>'bomwidget3.php@bom','note'=>'Widget provided by Bom')
+        	0=>array('file'=>'box_boms.php','note'=>'','enabledbydefaulton'=>'Home')
         );
 
 
@@ -286,21 +284,26 @@ class modBom extends DolibarrModules
 		$r=1;
 
 		/* BEGIN MODULEBUILDER EXPORT BILLOFMATERIALS */
-		/*
-		$langs->load("mrp@mrp");
+		$langs->load("mrp");
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='BomLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_label[$r]='BomAndBomLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_icon[$r]='bom';
-		$keyforclass = 'Bom'; $keyforclassfile='/mymobule/class/bom.class.php'; $keyforelement='bom';
+		$keyforclass = 'BOM'; $keyforclassfile='/bom/class/bom.class.php'; $keyforelement='bom';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-		$keyforselect='bom'; $keyforaliasextra='extra'; $keyforelement='bom';
+		$keyforclass = 'BOMLine'; $keyforclassfile='/bom/class/bom.class.php'; $keyforelement='bomline'; $keyforalias='tl';
+		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
+		unset($this->export_fields_array[$r]['tl.fk_bom']);
+		$keyforselect ='bom_bom'; $keyforaliasextra='extra'; $keyforelement='bom';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		//$this->export_dependencies_array[$r]=array('mysubobject'=>'ts.rowid', 't.myfield'=>array('t.myfield2','t.myfield3')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
+		$keyforselect ='bom_bomline'; $keyforaliasextra='extraline'; $keyforelement='bomline';
+		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+		$this->export_dependencies_array[$r]=array('bomline'=>'tl.rowid'); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'bom as t';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'bom_bom as t';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'bom_bomline as tl ON tl.fk_bom = t.rowid';
 		$this->export_sql_end[$r] .=' WHERE 1 = 1';
 		$this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('bom').')';
-		$r++; */
+		$r++;
 		/* END MODULEBUILDER EXPORT BILLOFMATERIALS */
 	}
 
@@ -314,6 +317,8 @@ class modBom extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
+	    global $conf, $langs;
+
 		$result=$this->_load_tables('/bom/sql/');
 		if ($result < 0) return -1; // Do not activate module if not allowed errors found on module SQL queries (the _load_table run sql with run_sql with error allowed parameter to 'default')
 
@@ -327,7 +332,34 @@ class modBom extends DolibarrModules
 		//$result4=$extrafields->addExtraField('myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', 0, 0, '', '', 'mrp', '$conf->bom->enabled');
 		//$result5=$extrafields->addExtraField('myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'mrp', '$conf->bom->enabled');
 
+
+		// Permissions
+		$this->remove($options);
+
 		$sql = array();
+
+		// ODT template
+		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/boms/template_bom.odt';
+		$dirodt=DOL_DATA_ROOT.'/doctemplates/boms';
+		$dest=$dirodt.'/template_bom.odt';
+
+		if (file_exists($src) && ! file_exists($dest))
+		{
+		    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		    dol_mkdir($dirodt);
+		    $result=dol_copy($src, $dest, 0, 0);
+		    if ($result < 0)
+		    {
+		        $langs->load("errors");
+		        $this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
+		        return 0;
+		    }
+		}
+
+		$sql = array(
+		    "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape('alpha')."' AND type = 'bom' AND entity = ".$conf->entity,
+		    "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape('alpha')."', 'bom', ".$conf->entity.")"
+		);
 
 		return $this->_init($sql, $options);
 	}

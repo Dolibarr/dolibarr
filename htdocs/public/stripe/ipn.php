@@ -156,7 +156,6 @@ if ($event->type == 'payout.created') {
 
 	if ($result > 0)
 	{
-
 	    $subject = $societeName.' - [NOTIFICATION] Stripe payout scheduled';
         if (!empty($user->email)) {
             $sendto = dolGetFirstLastname($user->firstname, $user->lastname) . " <".$user->email.">";
@@ -279,15 +278,12 @@ elseif ($event->type == 'payout.paid') {
 	}
 }
 elseif ($event->type == 'customer.source.created') {
-
 	//TODO: save customer's source
 }
 elseif ($event->type == 'customer.source.updated') {
-
 	//TODO: update customer's source
 }
 elseif ($event->type == 'customer.source.delete') {
-
 	//TODO: delete customer's source
 }
 elseif ($event->type == 'customer.deleted') {

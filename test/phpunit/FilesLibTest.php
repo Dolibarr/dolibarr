@@ -150,11 +150,11 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
     }
 
 
-   /**
-    * testDolCountNbOfLine
-    *
-    * @return	int
-    */
+    /**
+     * testDolCountNbOfLine
+     *
+     * @return	int
+     */
     public function testDolCountNbOfLine()
     {
     	global $conf,$user,$langs,$db;
@@ -171,11 +171,11 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 		return $result;
     }
 
-   /**
-    * testDolIsFileDir
-    *
-    * @return	int
-    */
+    /**
+     * testDolIsFileDir
+     *
+     * @return	int
+     */
     public function testDolIsFileDir()
     {
     	global $conf,$user,$langs,$db;
@@ -413,11 +413,11 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 
         $result=dol_compress_file($filein, $fileout, $format, $errorstring);
         print __METHOD__." result=".$result."\n";
-        $this->assertGreaterThanOrEqual(1, $result, "Pb with dol_compress_file on ".$filein." : ".$errorstring);
+        $this->assertGreaterThanOrEqual(1, $result, "Pb with dol_compress_file on ".$filein." into ".$fileout." : ".$errorstring);
 
         $result=dol_uncompress($fileout, $dirout);
         print __METHOD__." result=".join(',', $result)."\n";
-        $this->assertEquals(0, count($result), "Pb with dol_uncompress_file");
+        $this->assertEquals(0, count($result), "Pb with dol_uncompress_file of file ".$fileout);
     }
 
     /**

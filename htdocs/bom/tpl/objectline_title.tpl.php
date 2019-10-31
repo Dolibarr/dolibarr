@@ -39,9 +39,7 @@ if (empty($object) || ! is_object($object))
 	print "Error, template page can't be called as URL";
 	exit;
 }
-?>
-<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->
-<?php
+print "<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->\n";
 // Title line
 print "<thead>\n";
 
@@ -61,6 +59,13 @@ if ($conf->global->PRODUCT_USE_UNITS)
 	print '<td class="linecoluseunit left">'.$langs->trans('Unit').'</td>';
 }
 
+// Qty frozen
+print '<td class="linecolqty right">'.$form->textwithpicto($langs->trans('QtyFrozen'), $langs->trans("QuantityConsumedInvariable")).'</td>';
+
+// Disable stock change
+print '<td class="linecolqty right">'.$form->textwithpicto($langs->trans('DisableStockChange'), $langs->trans('DisableStockChangeHelp')).'</td>';
+
+// Efficiency
 print '<td class="linecollost right">'.$form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')).'</td>';
 
 print '<td class="linecoledit"></td>';  // No width to allow autodim
@@ -79,6 +84,5 @@ if ($action == 'selectlines')
 
 print "</tr>\n";
 print "</thead>\n";
-?>
 
-<!-- END PHP TEMPLATE objectline_title.tpl.php -->
+print "<!-- END PHP TEMPLATE objectline_title.tpl.php -->\n";

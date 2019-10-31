@@ -1287,7 +1287,11 @@ class Propal extends CommonObject
 		$object->datep		= $now;    // deprecated
 		$object->fin_validite	= $object->date + ($object->duree_validite * 24 * 3600);
 		if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) $object->ref_client	= '';
-
+		if ($conf->global->MAIN_DONT_KEEP_NOTE_ON_CLONING==1)
+		{
+				 $object->note_private = '';
+                                 $object->note_public = '';
+        }
 		// Create clone
 		$object->context['createfromclone']='createfromclone';
 		$result=$object->create($user);
@@ -1710,9 +1714,9 @@ class Propal extends CommonObject
 
 				// multilangs
         		if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($objp->fk_product) && ! empty($loadalsotranslation)) {
-        		$line = new Product($this->db);
-        		$line->fetch($objp->fk_product);
-        		$line->getMultiLangs();
+                    $line = new Product($this->db);
+                    $line->fetch($objp->fk_product);
+                    $line->getMultiLangs();
         		}
 
 				$this->lines[$i]        = $line;
@@ -3399,7 +3403,7 @@ class Propal extends CommonObject
 			{
 				$prodid = mt_rand(1, $num_prods);
 				$line->fk_product=$prodids[$prodid];
-		$line->product_ref='SPECIMEN';
+		        $line->product_ref='SPECIMEN';
 			}
 
 			$this->lines[$xnbp]=$line;
@@ -3480,7 +3484,6 @@ class Propal extends CommonObject
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 			foreach ($dirmodels as $reldir) {
-
 				$dir = dol_buildpath($reldir."core/modules/propale/");
 
 				// Load file with numbering class (if found)
@@ -3623,7 +3626,6 @@ class Propal extends CommonObject
 		$langs->load("propale");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'azur';
 
 			if ($this->modelpdf) {
@@ -3917,7 +3919,7 @@ class PropaleLigne extends CommonObjectLine
 		if (empty($this->multicurrency_total_tva)) $this->multicurrency_total_tva=0;
 		if (empty($this->multicurrency_total_ttc)) $this->multicurrency_total_ttc=0;
 
-	   // if buy price not defined, define buyprice as configured in margin admin
+	    // if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0 && $pa_ht_isemptystring)
 		{
 			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0)
@@ -4039,7 +4041,6 @@ class PropaleLigne extends CommonObjectLine
 		dol_syslog("PropaleLigne::delete", LOG_DEBUG);
 		if ($this->db->query($sql) )
 		{
-
 			// Remove extrafields
 			if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
 			{

@@ -218,26 +218,25 @@ class pdf_rouget extends ModelePdfExpedition
 
 				$realpath='';
 
-                foreach ($objphoto->liste_photos($dir, 1) as $key => $obj)
+                foreach ($objphoto->liste_photos($dir, 1) as $key => $obj) {
+                    if (empty($conf->global->CAT_HIGH_QUALITY_IMAGES)) {
+                        // If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
+                        if ($obj['photo_vignette'])
                         {
-                            if (empty($conf->global->CAT_HIGH_QUALITY_IMAGES))		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
-                            {
-                                if ($obj['photo_vignette'])
-                                {
-                                    $filename= $obj['photo_vignette'];
-                                }
-                                else
-                                {
-                                    $filename=$obj['photo'];
-                                }
-                            }
-                            else
-                            {
-                                $filename=$obj['photo'];
-                            }
+                            $filename= $obj['photo_vignette'];
+                        }
+                        else
+                        {
+                            $filename=$obj['photo'];
+                        }
+                    }
+                    else
+                    {
+                        $filename=$obj['photo'];
+                    }
 
-                            $realpath = $dir.$filename;
-                            break;
+                    $realpath = $dir.$filename;
+                    break;
                 }
 
                 if ($realpath) $realpatharray[$i]=$realpath;
@@ -525,12 +524,12 @@ class pdf_rouget extends ModelePdfExpedition
 					$weighttxt='';
 					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->weight)
 					{
-					    $weighttxt=round($object->lines[$i]->weight * $object->lines[$i]->qty_shipped, 5).' '.measuring_units_string($object->lines[$i]->weight_units, "weight");
+						$weighttxt=round($object->lines[$i]->weight * $object->lines[$i]->qty_shipped, 5).' '.measuringUnitString(0, "weight", $object->lines[$i]->weight_units);
 					}
 					$voltxt='';
 					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->volume)
 					{
-					    $voltxt=round($object->lines[$i]->volume * $object->lines[$i]->qty_shipped, 5).' '.measuring_units_string($object->lines[$i]->volume_units?$object->lines[$i]->volume_units:0, "volume");
+						$voltxt=round($object->lines[$i]->volume * $object->lines[$i]->qty_shipped, 5).' '.measuringUnitString(0, "volume", $object->lines[$i]->volume_units?$object->lines[$i]->volume_units:0);
 					}
 
 					if (empty($conf->global->SHIPPING_PDF_HIDE_WEIGHT_AND_VOLUME))
@@ -541,8 +540,8 @@ class pdf_rouget extends ModelePdfExpedition
 
 					if (empty($conf->global->SHIPPING_PDF_HIDE_ORDERED))
 					{
-					   $pdf->SetXY($this->posxqtyordered, $curY);
-					   $pdf->MultiCell(($this->posxqtytoship - $this->posxqtyordered), 3, $object->lines[$i]->qty_asked, '', 'C');
+					    $pdf->SetXY($this->posxqtyordered, $curY);
+					    $pdf->MultiCell(($this->posxqtytoship - $this->posxqtyordered), 3, $object->lines[$i]->qty_asked, '', 'C');
 					}
 
 					if (empty($conf->global->SHIPPING_PDF_HIDE_QTYTOSHIP))
@@ -844,7 +843,6 @@ class pdf_rouget extends ModelePdfExpedition
         }
 
 		if (!empty($conf->global->SHIPPING_PDF_DISPLAY_AMOUNT_HT)) {
-
 			$pdf->line($this->posxpuht-1, $tab_top, $this->posxpuht-1, $tab_top + $tab_height);
 			if (empty($hidetop))
 			{

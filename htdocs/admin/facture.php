@@ -720,7 +720,6 @@ if ($resql)
     $i = 0;
     while ($i < $num)
     {
-
         $row = $db->fetch_row($resql);
 
         print '<option value="'.$row[0].'"';

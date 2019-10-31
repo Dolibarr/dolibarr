@@ -83,7 +83,6 @@ $hookmanager->initHooks(array('assettypecard','globalcard'));
  */
 
 if ($cancel) {
-
 	$action='';
 
 	if (! empty($backtopage))
@@ -616,7 +615,7 @@ if ($rowid > 0)
 		if (empty($reshook))
 		{
 			print '<br><br><table class="border" width="100%">';
-			foreach($extrafields->attribute_label as $key=>$label)
+			foreach($extrafields->attributes[$object->element]['label'] as $key=>$label)
 			{
 				if (isset($_POST["options_" . $key])) {
 					if (is_array($_POST["options_" . $key])) {
