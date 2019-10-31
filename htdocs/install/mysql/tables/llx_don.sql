@@ -47,6 +47,7 @@ create table llx_don
   fk_projet       integer NULL,                 -- Donation is given for a project ?
   datec           datetime,                     -- Create date
   fk_user_author  integer NOT NULL,
+  fk_user_modif   integer,
   date_valid      datetime,						-- date de validation
   fk_user_valid   integer NULL,
   note_private    text,
