@@ -1481,6 +1481,8 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
             print '<!-- Includes JS of Dolibarr -->'."\n";
             print '<script src="'.DOL_URL_ROOT.'/core/js/lib_head.js.php?lang='.$langs->defaultlang.($ext?'&'.$ext:'').'"></script>'."\n";
 
+            if (!empty($conf->global->MAIN_EASTER_EGG)) print '<script src="'.DOL_URL_ROOT.'/core/js/easter_egg.js.php"></script>'."\n";
+
             // JS forced by modules (relative url starting with /)
             if (! empty($conf->modules_parts['js']))		// $conf->modules_parts['js'] is array('module'=>array('file1','file2'))
         	{
