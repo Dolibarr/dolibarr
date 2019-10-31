@@ -189,7 +189,7 @@ class modBom extends DolibarrModules
         // Boxes/Widgets
 		// Add here list of php file(s) stored in bom/core/boxes that contains class to show a widget.
         $this->boxes = array(
-        	0=>array('file'=>'box_boms.php','note'=>'','enabledbydefaulton'=>'Home')
+        	0=>array('file' => 'box_boms.php', 'note' => '', 'enabledbydefaulton' => 'Home')
         );
 
 
@@ -203,7 +203,7 @@ class modBom extends DolibarrModules
 		// );
 
 
-		// Permissions
+		// Permissions provided by this module
 		$this->rights = array();		// Permission array used by this module
 
 		$r=0;
@@ -228,7 +228,7 @@ class modBom extends DolibarrModules
 		$this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->bom->level1->level2)
 
 
-		// Main menu entries
+		// Main menu entries to add
 		$this->menu = array();			// List of menus to add
 		$r=0;
 
@@ -323,9 +323,8 @@ class modBom extends DolibarrModules
 		if ($result < 0) return -1; // Do not activate module if not allowed errors found on module SQL queries (the _load_table run sql with run_sql with error allowed parameter to 'default')
 
 		// Create extrafields
-		include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-		$extrafields = new ExtraFields($this->db);
-
+		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		//$extrafields = new ExtraFields($this->db);
 		//$result1=$extrafields->addExtraField('myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', 0, 0, '', '', 'mrp', '$conf->bom->enabled');
 		//$result2=$extrafields->addExtraField('myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', 0, 0, '', '', 'mrp', '$conf->bom->enabled');
 		//$result3=$extrafields->addExtraField('myattr3', "New Attr 3 label", 'varchar', 1, 10, 'bank_account', 0, 0, '', '', 1, '', 0, 0, '', '', 'mrp', '$conf->bom->enabled');
@@ -357,8 +356,8 @@ class modBom extends DolibarrModules
 		}
 
 		$sql = array(
-		    "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape('alpha')."' AND type = 'bom' AND entity = ".$conf->entity,
-		    "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape('alpha')."', 'bom', ".$conf->entity.")"
+		    "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape('standard')."' AND type = 'bom' AND entity = ".$conf->entity,
+		    "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape('standard')."', 'bom', ".$conf->entity.")"
 		);
 
 		return $this->_init($sql, $options);
