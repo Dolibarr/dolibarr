@@ -84,7 +84,7 @@ if (! $sortorder) $sortorder='DESC';
 
 // Security check
 $id=GETPOST('id', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'contrat', $id);
 
 $diroutputmassaction=$conf->contrat->dir_output . '/temp/massgeneration/'.$user->id;

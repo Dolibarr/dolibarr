@@ -3254,7 +3254,7 @@ class Propal extends CommonObject
 
 		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.fin_validite as datefin, p.total_ht";
 		$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
-		if (!$user->rights->societe->client->voir && !$user->societe_id)
+		if (!$user->rights->societe->client->voir && !$user->socid)
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;
@@ -3263,7 +3263,7 @@ class Propal extends CommonObject
 		$sql.= $clause." p.entity IN (".getEntity('propal').")";
 		if ($mode == 'opened') $sql.= " AND p.fk_statut = ".self::STATUS_VALIDATED;
 		if ($mode == 'signed') $sql.= " AND p.fk_statut = ".self::STATUS_SIGNED;
-		if ($user->societe_id) $sql.= " AND p.fk_soc = ".$user->societe_id;
+		if ($user->socid) $sql.= " AND p.fk_soc = ".$user->socid;
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -3433,7 +3433,7 @@ class Propal extends CommonObject
 		$sql = "SELECT count(p.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
-		if (!$user->rights->societe->client->voir && !$user->societe_id)
+		if (!$user->rights->societe->client->voir && !$user->socid)
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;

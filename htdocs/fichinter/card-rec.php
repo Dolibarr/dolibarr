@@ -52,7 +52,7 @@ $langs->loadLangs(array("interventions","admin","compta","bills"));
 // Security check
 $id=(GETPOST('fichinterid', 'int')?GETPOST('fichinterid', 'int'):GETPOST('id', 'int'));
 $action=GETPOST('action', 'alpha');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $objecttype = 'fichinter_rec';
 if ($action == "create" || $action == "add") $objecttype = '';
 $result = restrictedArea($user, 'ficheinter', $id, $objecttype);

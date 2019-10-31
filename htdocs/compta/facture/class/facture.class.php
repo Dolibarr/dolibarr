@@ -3961,7 +3961,7 @@ class Facture extends CommonInvoice
 
 		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin,f.fk_statut, f.total";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
-		if (!$user->rights->societe->client->voir && !$user->societe_id)
+		if (!$user->rights->societe->client->voir && !$user->socid)
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON f.fk_soc = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;
@@ -3970,7 +3970,7 @@ class Facture extends CommonInvoice
 		$sql.= $clause." f.paye=0";
 		$sql.= " AND f.entity IN (".getEntity('invoice').")";
 		$sql.= " AND f.fk_statut = ".self::STATUS_VALIDATED;
-		if ($user->societe_id) $sql.= " AND f.fk_soc = ".$user->societe_id;
+		if ($user->socid) $sql.= " AND f.fk_soc = ".$user->socid;
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -4211,7 +4211,7 @@ class Facture extends CommonInvoice
 		$sql = "SELECT count(f.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
-		if (!$user->rights->societe->client->voir && !$user->societe_id)
+		if (!$user->rights->societe->client->voir && !$user->socid)
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;

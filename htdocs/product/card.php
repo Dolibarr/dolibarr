@@ -78,7 +78,7 @@ $confirm=GETPOST('confirm', 'alpha');
 $socid=GETPOST('socid', 'int');
 $duration_value = GETPOST('duration_value', 'int');
 $duration_unit = GETPOST('duration_unit', 'alpha');
-if (! empty($user->societe_id)) $socid=$user->societe_id;
+if (! empty($user->socid)) $socid=$user->socid;
 
 $object = new Product($db);
 $object->type = $type;	// so test later to fill $usercancxxx is correct
@@ -1650,7 +1650,7 @@ else
             $object->next_prev_filter=" fk_product_type = ".$object->type;
 
             $shownav = 1;
-            if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+            if ($user->socid && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
             dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 

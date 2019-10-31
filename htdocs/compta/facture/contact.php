@@ -45,7 +45,7 @@ $socid  = GETPOST('socid', 'int');
 $action = GETPOST('action', 'alpha');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'facture', $id);
 
 $object = new Facture($db);

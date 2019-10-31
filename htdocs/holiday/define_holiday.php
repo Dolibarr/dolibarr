@@ -53,7 +53,7 @@ if (! $sortorder) $sortorder="ASC";
 
 
 // Protection if external user
-if ($user->societe_id > 0) accessforbidden();
+if ($user->socid > 0) accessforbidden();
 
 // If the user does not have perm to read the page
 if (!$user->rights->holiday->read) accessforbidden();

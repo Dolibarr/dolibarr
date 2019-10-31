@@ -94,7 +94,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 		$dir=''; 	// We don't need a path because image file will not be saved into disk
 		$prefix='';
 		$socid=0;
-		if ($user->societe_id) $socid=$user->societe_id;
+		if ($user->socid) $socid=$user->socid;
 		if (! $user->rights->societe->client->voir || $socid) $prefix.='private-'.$user->id.'-';	// If user has no permission to see all, output dir is specific to user
 
 		if ($user->rights->propale->lire)

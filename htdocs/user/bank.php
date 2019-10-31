@@ -46,7 +46,7 @@ $cancel = GETPOST('cancel', 'alpha');
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0) $socid = $user->societe_id;
+if ($user->socid > 0) $socid = $user->socid;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
 // Ok if user->rights->salaries->read or user->rights->hrm->read
 //$result = restrictedArea($user, 'salaries|hrm', $id, 'user&user', $feature2);

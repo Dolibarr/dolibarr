@@ -3393,7 +3393,7 @@ class Commande extends CommonOrder
 
 		$sql = "SELECT c.rowid, c.date_creation as datec, c.date_commande, c.date_livraison as delivery_date, c.fk_statut, c.total_ht";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
-		if (!$user->rights->societe->client->voir && !$user->societe_id)
+		if (!$user->rights->societe->client->voir && !$user->socid)
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;
@@ -3402,7 +3402,7 @@ class Commande extends CommonOrder
 		$sql.= $clause." c.entity IN (".getEntity('commande').")";
 		//$sql.= " AND c.fk_statut IN (1,2,3) AND c.facture = 0";
 		$sql.= " AND ((c.fk_statut IN (".self::STATUS_VALIDATED.",".self::STATUS_SHIPMENTONPROCESS.")) OR (c.fk_statut = ".self::STATUS_CLOSED." AND c.facture = 0))";    // If status is 2 and facture=1, it must be selected
-		if ($user->societe_id) $sql.=" AND c.fk_soc = ".$user->societe_id;
+		if ($user->socid) $sql.=" AND c.fk_soc = ".$user->socid;
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -3774,7 +3774,7 @@ class Commande extends CommonOrder
 		$sql = "SELECT count(co.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande as co";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON co.fk_soc = s.rowid";
-		if (!$user->rights->societe->client->voir && !$user->societe_id)
+		if (!$user->rights->societe->client->voir && !$user->socid)
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;

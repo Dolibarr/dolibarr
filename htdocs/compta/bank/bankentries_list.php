@@ -66,12 +66,12 @@ $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref :''));
 $fieldtype = (! empty($ref) ? 'ref' :'rowid');
 if ($fielvalue)
 {
-	if ($user->societe_id) $socid=$user->societe_id;
+	if ($user->socid) $socid=$user->socid;
 	$result=restrictedArea($user, 'banque', $fieldvalue, 'bank_account&bank_account', '', '', $fieldtype);
 }
 else
 {
-	if ($user->societe_id) $socid=$user->societe_id;
+	if ($user->socid) $socid=$user->socid;
 	$result=restrictedArea($user, 'banque');
 }
 

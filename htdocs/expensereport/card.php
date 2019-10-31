@@ -68,7 +68,7 @@ $childids = $user->getAllChildIds(1);
 
 // Security check
 $id=GETPOST("id", 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 
 
@@ -1521,7 +1521,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Private note
-	if (empty($user->societe_id)) {
+	if (empty($user->socid)) {
 		print '<tr>';
 		print '<td class="tdtop">' . $langs->trans('NotePrivate') . '</td>';
 		print '<td>';

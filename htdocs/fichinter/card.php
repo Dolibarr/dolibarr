@@ -74,7 +74,7 @@ $hidedesc 	 = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (! empt
 $hideref 	 = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -978,7 +978,7 @@ if ($action == 'create')
         print '</td></tr>';
 
         // Private note
-        if (empty($user->societe_id))
+        if (empty($user->socid))
         {
         	print '<tr>';
         	print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
@@ -1608,7 +1608,7 @@ elseif ($id > 0 || ! empty($ref))
 		                                                                                          // modified by hook
 	if (empty($reshook))
 	{
-		if ($user->societe_id == 0)
+		if ($user->socid == 0)
 		{
             if ($action != 'editdescription' && ($action != 'presend')) {
                 // Validate

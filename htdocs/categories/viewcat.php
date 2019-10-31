@@ -226,7 +226,7 @@ foreach ($ways as $way)
 }
 $morehtmlref.='</div>';
 
-dol_banner_tab($object, 'label', $linkback, ($user->societe_id?0:1), 'label', 'label', $morehtmlref, '', 0, '', '', 1);
+dol_banner_tab($object, 'label', $linkback, ($user->socid?0:1), 'label', 'label', $morehtmlref, '', 0, '', '', 1);
 
 
 /*

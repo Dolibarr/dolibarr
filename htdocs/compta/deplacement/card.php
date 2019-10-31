@@ -40,7 +40,7 @@ $langs->load("trips");
 
 // Security check
 $id = GETPOST('id', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'deplacement', $id, '');
 
 $action = GETPOST('action', 'alpha');
@@ -287,7 +287,7 @@ if ($action == 'create')
     print '</td></tr>';
 
     // Private note
-    if (empty($user->societe_id))
+    if (empty($user->socid))
     {
         print '<tr>';
         print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
@@ -385,7 +385,7 @@ elseif ($id)
             print "</td></tr>";
 
             // Private note
-            if (empty($user->societe_id))
+            if (empty($user->socid))
             {
                 print '<tr><td class="tdtop">'.$langs->trans("NotePrivate").'</td>';
                 print '<td>';

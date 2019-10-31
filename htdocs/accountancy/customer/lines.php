@@ -72,7 +72,7 @@ if (! $sortorder) {
 }
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 	accessforbidden();
 if (! $user->rights->accounting->bind->write)
 	accessforbidden();

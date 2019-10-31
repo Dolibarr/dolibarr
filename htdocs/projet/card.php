@@ -71,7 +71,7 @@ if ($id > 0 || ! empty($ref))
 
 // Security check
 $socid=GETPOST('socid', 'int');
-//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result = restrictedArea($user, 'projet', $object->id, 'projet&project');
 
 // fetch optionals attributes and labels

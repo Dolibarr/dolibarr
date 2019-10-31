@@ -86,7 +86,7 @@ if ($this->situation_cycle_ref) {
 	print '<td class="linecolcycleref2 right">' . $langs->trans('TotalHT100Short') . '</td>';
 }
 
-if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
+if ($usemargins && ! empty($conf->margin->enabled) && empty($user->socid))
 {
 	if (!empty($user->rights->margins->creer))
 	{

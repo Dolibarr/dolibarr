@@ -549,7 +549,7 @@ if ($resql)
         $morehtmlref.='</div>';
 
         $shownav = 1;
-        if ($user->societe_id && ! in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+        if ($user->socid && ! in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
         dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
 

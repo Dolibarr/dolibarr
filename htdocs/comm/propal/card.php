@@ -86,7 +86,7 @@ $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($co
 $NBLINES = 4;
 
 // Security check
-if (! empty($user->societe_id)) $socid = $user->societe_id;
+if (! empty($user->socid)) $socid = $user->socid;
 $result = restrictedArea($user, 'propal', $id);
 
 $object = new Propal($db);
@@ -1717,7 +1717,7 @@ if ($action == 'create')
 	print $doleditor->Create(1);
 
 	// Private note
-	if (empty($user->societe_id))
+	if (empty($user->socid))
 	{
 		print '<tr>';
 		print '<td class="tdtop">' . $langs->trans('NotePrivate') . '</td>';

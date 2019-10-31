@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $langs->loadLangs(array('products', 'stocks', 'orders'));
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, 'produit|service');
 
 $sall = GETPOST('search_all', 'alphanohtml');

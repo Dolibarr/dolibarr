@@ -69,7 +69,7 @@ $line_id = GETPOST('lineid', 'int')?GETPOST('lineid', 'int'):'';
 
 // Security check
 $socid='';
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 
 if ($origin == 'expedition') $result=restrictedArea($user, $origin, $id);
 else {
@@ -981,7 +981,7 @@ if ($action == 'create')
             print "</td></tr>";
 
             // Note Private
-            if ($object->note_private && ! $user->societe_id)
+            if ($object->note_private && ! $user->socid)
             {
                 print '<tr><td>'.$langs->trans("NotePrivate").'</td>';
                 print '<td colspan="3">';
@@ -2498,7 +2498,7 @@ elseif ($id || $ref)
 	 *    Boutons actions
 	 */
 
-	if (($user->societe_id == 0) && ($action!='presend'))
+	if (($user->socid == 0) && ($action!='presend'))
 	{
 		print '<div class="tabsAction">';
 

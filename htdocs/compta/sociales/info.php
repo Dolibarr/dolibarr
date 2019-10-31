@@ -39,7 +39,7 @@ $action=GETPOST('action', 'aZ09');
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'tax', $id, 'chargesociales', 'charges');
 
 $object = new ChargeSociales($db);

@@ -80,7 +80,7 @@ $now = dol_now();
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-if ($user->societe_id > 0 && empty($id_journal))
+if ($user->socid > 0 && empty($id_journal))
 	accessforbidden();
 
 

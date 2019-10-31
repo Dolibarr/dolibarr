@@ -257,7 +257,7 @@ if ($this->situation_cycle_ref)
 	print '<td align="right" class="linecolcycleref2 nowrap">' . price($tmp[0]) . '</td>';
 }
 
-if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
+if ($usemargins && ! empty($conf->margin->enabled) && empty($user->socid))
 {
 	if (!empty($user->rights->margins->creer)) { ?>
 		<td class="linecolmargin1 nowrap margininfos right"><?php $coldisplay++; ?><?php echo price($line->pa_ht); ?></td>

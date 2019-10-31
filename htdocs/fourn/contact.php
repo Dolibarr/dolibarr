@@ -35,10 +35,10 @@ $langs->load("companies");
 llxHeader();
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
     $action = '';
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 
 $sortfield = GETPOST("sortfield", 'alpha');

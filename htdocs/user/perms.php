@@ -56,7 +56,7 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 
 // Security check
 $socid=0;
-if (isset($user->societe_id) && $user->societe_id > 0) $socid = $user->societe_id;
+if (isset($user->socid) && $user->socid > 0) $socid = $user->socid;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
 // A user can always read its own card if not advanced perms enabled, or if he has advanced perms, except for admin
 if ($user->id == $id && (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->user->self_advance->readperms) && empty($user->admin)))
@@ -255,7 +255,7 @@ print '<div class="underbanner clearboth"></div>';
 
 if ($user->admin) print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
 // Show warning about external users
-if (empty($user->societe_id)) print info_admin(showModulesExludedForExternal($modules))."\n";
+if (empty($user->socid)) print info_admin(showModulesExludedForExternal($modules))."\n";
 
 $parameters=array('permsgroupbyentity'=>$permsgroupbyentity);
 $reshook=$hookmanager->executeHooks('insertExtraHeader', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks

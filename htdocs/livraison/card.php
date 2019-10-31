@@ -56,7 +56,7 @@ $backtopage=GETPOST('backtopage', 'alpha');
 
 // Security check
 $id = GETPOST('id', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, 'expedition', $id, 'livraison', 'livraison');
 
 $object = new Livraison($db);
@@ -706,7 +706,7 @@ else
 			 *    Boutons actions
 			 */
 
-			if ($user->societe_id == 0)
+			if ($user->socid == 0)
 			{
 				print '<div class="tabsAction">';
 

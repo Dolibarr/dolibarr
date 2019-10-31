@@ -43,7 +43,7 @@ $confirm=GETPOST('confirm', 'alpha');
 
 // Security check
 $fieldname = (! empty($ref)?'ref':'rowid');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'cheque', $id, 'bordereau_cheque', '', 'fk_user_author', $fieldname);
 
 $sortfield=GETPOST('sortfield', 'alpha');
@@ -770,12 +770,12 @@ else
 
 print '<div class="tabsAction">';
 
-if ($user->societe_id == 0 && ! empty($object->id) && $object->statut == 0 && $user->rights->banque->cheque)
+if ($user->socid == 0 && ! empty($object->id) && $object->statut == 0 && $user->rights->banque->cheque)
 {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valide&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.$langs->trans('Validate').'</a>';
 }
 
-if ($user->societe_id == 0 && ! empty($object->id) && $user->rights->banque->cheque)
+if ($user->socid == 0 && ! empty($object->id) && $user->rights->banque->cheque)
 {
 	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.$langs->trans('Delete').'</a>';
 }

@@ -59,7 +59,7 @@ if (! empty($conf->notification->enabled)) $langs->load("mails");
 
 // Security check
 $id = (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
-if ($user->societe_id > 0) $id=$user->societe_id;
+if ($user->socid > 0) $id=$user->socid;
 $result = restrictedArea($user, 'societe', $id, '&societe');
 
 $action		= GETPOST('action', 'aZ09');
@@ -240,7 +240,7 @@ if ($object->id > 0)
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+    dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom');
 
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
@@ -387,7 +387,7 @@ if ($object->id > 0)
     	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
     	print $langs->trans("CustomerRelativeDiscountShort");
     	print '<td><td class="right">';
-    	if ($user->rights->societe->creer && !$user->societe_id > 0)
+    	if ($user->rights->societe->creer && !$user->socid > 0)
     	{
     		print '<a class="editfielda" href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.img_edit($langs->trans("Modify")).'</a>';
     	}
@@ -401,7 +401,7 @@ if ($object->id > 0)
     	print '<tr><td class="nowrap">';
     	print $langs->trans("CustomerAbsoluteDiscountShort");
     	print '<td><td class="right">';
-    	if ($user->rights->societe->creer && !$user->societe_id > 0)
+    	if ($user->rights->societe->creer && !$user->socid > 0)
     	{
     		print '<a class="editfielda" href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.img_edit($langs->trans("Modify")).'</a>';
     	}
@@ -1274,7 +1274,7 @@ if ($object->id > 0)
     	}
 
     	// Add invoice
-    	if ($user->societe_id == 0)
+    	if ($user->socid == 0)
     	{
     		if (! empty($conf->deplacement->enabled) && $object->status==1)
     		{

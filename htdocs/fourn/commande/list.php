@@ -91,7 +91,7 @@ $viewstatut=GETPOST('viewstatut');
 
 // Security check
 $orderid = GETPOST('orderid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'fournisseur', $orderid, '', 'commande');
 
 $diroutputmassaction=$conf->fournisseur->commande->dir_output . '/temp/massgeneration/'.$user->id;

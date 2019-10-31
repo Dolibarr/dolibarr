@@ -42,7 +42,7 @@ $contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'sclist';
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 $search_ref = GETPOST('search_ref', 'int');

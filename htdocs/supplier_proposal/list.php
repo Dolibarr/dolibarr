@@ -103,7 +103,7 @@ $NBLINES=4;
 $module='supplier_proposal';
 $dbtable='';
 $objectid='';
-if (! empty($user->societe_id))	$socid=$user->societe_id;
+if (! empty($user->socid))	$socid=$user->socid;
 if (! empty($socid))
 {
 	$objectid=$socid;

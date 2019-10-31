@@ -67,7 +67,7 @@ if (! $sortfield) $sortfield="a.datec";
 
 // Security check
 $socid = GETPOST("search_socid", "int")?GETPOST("search_socid", "int"):GETPOST("socid", "int");
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'agenda', 0, '', 'myactions');
 if ($socid < 0) $socid='';
 
@@ -1735,7 +1735,7 @@ function sort_events_by_date($a, $b)
     }
 
     // If both events have the same start time, longest first
-    
+
     if(! is_numeric($b->datef))
     {
         // when event B have no end timestamp, event B should sort be before event A (All day events on top)

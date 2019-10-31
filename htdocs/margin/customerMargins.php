@@ -36,7 +36,7 @@ $socid = GETPOST('socid', 'int');
 $TSelectedProducts = GETPOST('products', 'array');
 $TSelectedCats = GETPOST('categories', 'array');
 
-if (! empty($user->societe_id)) $socid=$user->societe_id;
+if (! empty($user->socid)) $socid=$user->socid;
 $result = restrictedArea($user, 'societe', '', '');
 $result = restrictedArea($user, 'margins');
 

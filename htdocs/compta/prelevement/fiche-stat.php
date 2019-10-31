@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array("banks","categories",'withdrawals','bills'));
 
 // Security check
-if ($user->societe_id > 0) accessforbidden();
+if ($user->socid > 0) accessforbidden();
 
 // Get supervariables
 $prev_id = GETPOST('id', 'int');

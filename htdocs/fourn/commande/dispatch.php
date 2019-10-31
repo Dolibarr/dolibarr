@@ -51,8 +51,8 @@ $id = GETPOST("id", 'int');
 $ref = GETPOST('ref');
 $lineid = GETPOST('lineid', 'int');
 $action = GETPOST('action', 'aZ09');
-if ($user->societe_id)
-	$socid = $user->societe_id;
+if ($user->socid)
+	$socid = $user->socid;
 $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 if (empty($conf->stock->enabled)) {

@@ -128,7 +128,7 @@ $pagenext = $page + 1;
 
 // Security check
 $fieldid = (! empty($ref)?'ref':'rowid');
-if (! empty($user->societe_id)) $socid=$user->societe_id;
+if (! empty($user->socid)) $socid=$user->socid;
 $result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid);
 
 $diroutputmassaction=$conf->facture->dir_output . '/temp/massgeneration/'.$user->id;

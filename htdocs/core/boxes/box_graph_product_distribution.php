@@ -128,7 +128,7 @@ class box_graph_product_distribution extends ModeleBoxes
 		);
 
 
-		$socid=empty($user->societe_id)?0:$user->societe_id;
+		$socid=empty($user->socid)?0:$user->socid;
 		$userid=0;	// No filter on user creation
 
 		$WIDTH=($nbofgraph >= 2 || ! empty($conf->dol_optimize_smallscreen))?'160':'320';

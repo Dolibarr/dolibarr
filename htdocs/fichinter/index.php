@@ -42,10 +42,10 @@ $langs->load("interventions");
 
 // Security check
 $socid=GETPOST('socid', 'int');
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
 	$action = '';
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 
@@ -89,7 +89,7 @@ $sql.= ", ".MAIN_DB_PREFIX."fichinter as f";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE f.entity IN (".getEntity('intervention').")";
 $sql.= " AND f.fk_soc = s.rowid";
-if ($user->societe_id) $sql.=' AND f.fk_soc = '.$user->societe_id;
+if ($user->socid) $sql.=' AND f.fk_soc = '.$user->socid;
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " GROUP BY f.fk_statut";
 $resql = $db->query($sql);

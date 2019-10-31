@@ -53,7 +53,7 @@ $search_agenda_label=GETPOST('search_agenda_label');
 
 // Security check
 $socid=0;
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 if (!$user->rights->fournisseur->commande->lire)	accessforbidden();

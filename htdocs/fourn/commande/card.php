@@ -81,7 +81,7 @@ $datelivraison=dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'),
 
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -2329,7 +2329,7 @@ elseif (! empty($object->id))
 	 * Boutons actions
 	 */
 
-	if ($user->societe_id == 0 && $action != 'editline' && $action != 'delete')
+	if ($user->socid == 0 && $action != 'editline' && $action != 'delete')
 	{
 		print '<div	class="tabsAction">';
 

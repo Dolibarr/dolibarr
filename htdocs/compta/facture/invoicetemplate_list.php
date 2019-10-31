@@ -58,7 +58,7 @@ $contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'invoice
 $id=(GETPOST('facid', 'int')?GETPOST('facid', 'int'):GETPOST('id', 'int'));
 $lineid=GETPOST('lineid', 'int');
 $ref=GETPOST('ref', 'alpha');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $objecttype = 'facture_rec';
 if ($action == "create" || $action == "add") $objecttype = '';
 $result = restrictedArea($user, 'facture', $id, $objecttype);

@@ -49,7 +49,7 @@ $ref=GETPOST('ref', 'alpha');
 $fuserid = (GETPOST('fuserid', 'int')?GETPOST('fuserid', 'int'):$user->id);
 
 // Protection if external user
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'holiday', $id, 'holiday');
 
 // Load translation files required by the page

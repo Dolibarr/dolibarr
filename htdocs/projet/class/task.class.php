@@ -1966,7 +1966,7 @@ class Task extends CommonObject
 		global $conf, $langs;
 
 		// For external user, no check is done on company because readability is managed by public status of project and assignement.
-		//$socid=$user->societe_id;
+		//$socid=$user->socid;
 
 		$projectstatic = new Project($this->db);
 		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
@@ -2039,7 +2039,7 @@ class Task extends CommonObject
         // phpcs:enable
 		global $user;
 
-		$mine=0; $socid=$user->societe_id;
+		$mine=0; $socid=$user->socid;
 
 		$projectstatic = new Project($this->db);
 		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $mine, 1, $socid);

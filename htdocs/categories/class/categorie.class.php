@@ -779,9 +779,9 @@ class Categorie extends CommonObject
 		$sql .= " AND c.fk_categorie = ".$this->id;
 		$sql .= " AND c.fk_" . $this->MAP_CAT_FK[$type] . " = o.rowid";
 		// Protection for external users
-		if (($type == 'customer' || $type == 'supplier') && $user->societe_id > 0)
+		if (($type == 'customer' || $type == 'supplier') && $user->socid > 0)
 		{
-			$sql.= " AND o.rowid = ".$user->societe_id;
+			$sql.= " AND o.rowid = ".$user->socid;
 		}
 		if ($limit > 0 || $offset > 0)  $sql .= $this->db->plimit($limit + 1, $offset);
 		$sql .= $this->db->order($sortfield, $sortorder);

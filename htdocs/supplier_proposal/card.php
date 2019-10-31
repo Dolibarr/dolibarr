@@ -74,7 +74,7 @@ $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($co
 $NBLINES = 4;
 
 // Security check
-if (! empty($user->societe_id)) $socid = $user->societe_id;
+if (! empty($user->socid)) $socid = $user->socid;
 $result = restrictedArea($user, 'supplier_proposal', $id);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context

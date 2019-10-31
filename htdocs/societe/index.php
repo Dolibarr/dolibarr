@@ -38,7 +38,7 @@ $hookmanager->initHooks(array('thirdpartiesindex'));
 $langs->load("companies");
 
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 
 // Security check
 $result=restrictedArea($user, 'societe', 0, '', '', '', '');

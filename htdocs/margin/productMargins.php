@@ -40,7 +40,7 @@ $TSelectedCats=GETPOST('categories', 'array');
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
-if (! empty($user->societe_id)) $socid=$user->societe_id;
+if (! empty($user->socid)) $socid=$user->socid;
 $result=restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 $result=restrictedArea($user, 'margins');
 

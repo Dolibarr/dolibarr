@@ -36,7 +36,7 @@ $action=GETPOST('action', 'aZ09');
 $confirm=GETPOST('confirm');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 // TODO Add rule to restrict access payment
 //$result = restrictedArea($user, 'facture', $id,'');
 

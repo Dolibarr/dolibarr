@@ -45,7 +45,7 @@ $mode = GETPOST('mode', 'aZ09');		 		// '' or 'tmp'
 $piece_num = GETPOST("piece_num", 'int');	// id of transaction (several lines share the same transaction id)
 
 // Security check
-if ($user->societe_id > 0) {
+if ($user->socid > 0) {
 	accessforbidden();
 }
 

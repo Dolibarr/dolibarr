@@ -45,7 +45,7 @@ $hookmanager->initHooks(array('specialexpensesindex'));
 $langs->loadLangs(array('compta', 'bills'));
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'tax|salaries', '', '', 'charges|');
 
 $mode=GETPOST("mode", 'alpha');
