@@ -168,12 +168,11 @@ if ($_POST) {
 		$bulkaction = $massaction;
 		$error = 0;
 
-		$prodstatic = new Product($db);
-
 		$db->begin();
 
 		foreach ($toselect as $prodid) {
-
+			$prodstatic = new Product($db);
+			
 			if ($prodstatic->fetch($prodid) < 0) {
 				continue;
 			}
