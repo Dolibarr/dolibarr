@@ -2756,6 +2756,7 @@ table.listwithfilterbefore {
 .tagtable, .table-border { display: table; }
 .tagtr, .table-border-row  { display: table-row; }
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
+.confirmquestions .tagtr .tagtd:not(:first-child)  { padding-left: 10px; }
 
 
 /* Pagination */
