@@ -121,7 +121,7 @@ class modBom extends DolibarrModules
 		//                             1=>array('BILLOFMATERIALS_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
 		// );
 		$this->const = array(
-			1=>array('BOM_ADDON_PDF', 'chaine', 'avalue', 'Name of PDF model of BOM', 0),
+			1=>array('BOM_ADDON_PDF', 'chaine', 'alpha', 'Name of PDF model of BOM', 0),
 		    2=>array('BOM_ADDON', 'chaine', 'mod_bom_standard', 'Name of numbering rules of BOM', 0),
 		    3=>array('BOM_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT/doctemplates/boms', '', 0)
 		);
@@ -317,6 +317,8 @@ class modBom extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
+	    global $conf, $langs;
+
 		$result=$this->_load_tables('/bom/sql/');
 		if ($result < 0) return -1; // Do not activate module if not allowed errors found on module SQL queries (the _load_table run sql with run_sql with error allowed parameter to 'default')
 
@@ -330,7 +332,34 @@ class modBom extends DolibarrModules
 		//$result4=$extrafields->addExtraField('myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', 0, 0, '', '', 'mrp', '$conf->bom->enabled');
 		//$result5=$extrafields->addExtraField('myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'mrp', '$conf->bom->enabled');
 
+
+		// Permissions
+		$this->remove($options);
+
 		$sql = array();
+
+		// ODT template
+		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/boms/template_bom.odt';
+		$dirodt=DOL_DATA_ROOT.'/doctemplates/boms';
+		$dest=$dirodt.'/template_bom.odt';
+
+		if (file_exists($src) && ! file_exists($dest))
+		{
+		    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		    dol_mkdir($dirodt);
+		    $result=dol_copy($src, $dest, 0, 0);
+		    if ($result < 0)
+		    {
+		        $langs->load("errors");
+		        $this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
+		        return 0;
+		    }
+		}
+
+		$sql = array(
+		    "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape('alpha')."' AND type = 'bom' AND entity = ".$conf->entity,
+		    "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape('alpha')."', 'bom', ".$conf->entity.")"
+		);
 
 		return $this->_init($sql, $options);
 	}
