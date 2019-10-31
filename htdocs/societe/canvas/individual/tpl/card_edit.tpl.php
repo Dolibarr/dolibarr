@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
@@ -56,7 +56,7 @@ if (empty($conf) || ! is_object($conf))
 	<td colspan="3">
 	<?php if (($this->control->tpl['prefix_customercode'] || $this->control->tpl['prefix_suppliercode']) && $this->control->tpl['prefix_comm']) { ?>
 	<input type="hidden" name="prefix_comm" value="<?php echo $this->control->tpl['prefix_comm']; ?>">
-	<?php echo $this->control->tpl['prefix_comm']; ?>
+		<?php echo $this->control->tpl['prefix_comm']; ?>
 	<?php } else { ?>
 	<input type="text" size="5" maxlength="5" name="prefix_comm" value="<?php echo $this->control->tpl['prefix_comm']; ?>">
 	<?php } ?>
@@ -113,7 +113,7 @@ if ($this->control->tpl['fournisseur']) {
 	<td><?php echo $langs->trans('SupplierCategory'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_suppliercategory']; ?></td>
 </tr>
-<?php
+		<?php
     }
 }
 ?>

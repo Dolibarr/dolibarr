@@ -21,7 +21,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -93,12 +93,27 @@ $hookmanager->initHooks(array('invoicereccard','globalcard'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('facture_rec');
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 $permissionnote = $user->rights->facture->creer; // Used by the include of actions_setnotes.inc.php
 $permissiondellink=$user->rights->facture->creer;	// Used by the include of actions_dellink.inc.php
 $permissiontoedit = $user->rights->facture->creer; // Used by the include of actions_lineupdonw.inc.php
+
+$usercanread = $user->rights->facture->lire;
+$usercancreate = $user->rights->facture->creer;
+$usercanissuepayment = $user->rights->facture->paiement;
+$usercandelete = $user->rights->facture->supprimer;
+$usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->invoice_advance->validate)));
+$usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->facture->invoice_advance->send);
+$usercanreopen = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->facture->invoice_advance->reopen);
+$usercanunvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($usercancreate)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->invoice_advance->unvalidate)));
+
+$usercanproductignorepricemin = ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS));
+$usercancreatemargin = $user->rights->margins->creer;
+$usercanreadallmargin = $user->rights->margins->liretous;
+$usercancreatewithdrarequest = $user->rights->prelevement->bons->creer;
 
 $now = dol_now();
 
@@ -139,7 +154,7 @@ if (empty($reshook))
 	// Create predefined invoice
 	if ($action == 'add')
 	{
-		if (! GETPOST('titre'))
+		if (! GETPOST('titre', 'nohtml'))
 		{
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Title")), null, 'errors');
 			$action = "create";
@@ -147,15 +162,15 @@ if (empty($reshook))
 		}
 
 		$frequency=GETPOST('frequency', 'int');
-		$reyear=GETPOST('reyear');
-		$remonth=GETPOST('remonth');
-		$reday=GETPOST('reday');
-		$rehour=GETPOST('rehour');
-		$remin=GETPOST('remin');
+		$reyear=GETPOST('reyear', 'int');
+		$remonth=GETPOST('remonth', 'int');
+		$reday=GETPOST('reday', 'int');
+		$rehour=GETPOST('rehour', 'int');
+		$remin=GETPOST('remin', 'int');
 		$nb_gen_max=GETPOST('nb_gen_max', 'int');
 		//if (empty($nb_gen_max)) $nb_gen_max =0;
 
-		if (GETPOST('frequency'))
+		if (GETPOST('frequency', 'int'))
 		{
 			if (empty($reyear) || empty($remonth) || empty($reday))
 			{
@@ -173,11 +188,12 @@ if (empty($reshook))
 
 		if (! $error)
 		{
-			$object->titre = GETPOST('titre', 'alpha');
+			$object->titre = GETPOST('titre', 'nohtml');	// deprecated
+			$object->title = GETPOST('titre', 'nohtml');
 			$object->note_private = GETPOST('note_private', 'none');
             $object->note_public  = GETPOST('note_public', 'none');
             $object->modelpdf = GETPOST('modelpdf', 'alpha');
-			$object->usenewprice = GETPOST('usenewprice');
+			$object->usenewprice = GETPOST('usenewprice', 'alpha');
 
 			$object->frequency = $frequency;
 			$object->unit_frequency = GETPOST('unit_frequency', 'alpha');
@@ -281,8 +297,9 @@ if (empty($reshook))
 		$result=$object->setValueFrom('titre', GETPOST('ref', 'alpha'), '', null, 'text', '', $user, 'BILLREC_MODIFY');
 		if ($result > 0)
 		{
-			$object->titre = GETPOST('ref', 'alpha');
-			$object->ref = $object->titre;
+			$object->titre = GETPOST('ref', 'alpha');	// deprecated
+			$object->title = GETPOST('ref', 'alpha');
+			$object->ref = $object->title;
 		}
 		else dol_print_error($db, $object->error, $object->errors);
 	}
@@ -410,8 +427,7 @@ if (empty($reshook))
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
-		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
 		if ($ret < 0) $error++;
 
 		if (! $error)
@@ -435,10 +451,12 @@ if (empty($reshook))
 		$predef='';
 		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
 		$price_ht = GETPOST('price_ht');
-		if (GETPOST('prod_entry_mode') == 'free')
+		$price_ht_devise = GETPOST('multicurrency_price_ht');
+		$prod_entry_mode = GETPOST('prod_entry_mode', 'alpha');
+		if ($prod_entry_mode == 'free')
 		{
 			$idprod=0;
-			$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
+			$tva_tx = (GETPOST('tva_tx', 'alpha') ? GETPOST('tva_tx', 'alpha') : 0);
 		}
 		else
 		{
@@ -450,9 +468,8 @@ if (empty($reshook))
 		$remise_percent = GETPOST('remise_percent' . $predef);
 
 		// Extrafields
-		$extrafieldsline = new ExtraFields($db);
-		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line, $predef);
+		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
+		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line, $predef);
 		// Unset extrafield
 		if (is_array($extralabelsline))
 		{
@@ -466,11 +483,11 @@ if (empty($reshook))
 			setEventMessages($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error ++;
 		}
-		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && GETPOST('type') < 0) {
+		if ($prod_entry_mode == 'free' && empty($idprod) && GETPOST('type') < 0) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
 			$error ++;
 		}
-		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && (! ($price_ht >= 0) || $price_ht == '')) 	// Unit price can be 0 but not ''
+		if ($prod_entry_mode == 'free' && empty($idprod) && (! ($price_ht >= 0) || $price_ht == '')) 	// Unit price can be 0 but not ''
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
 			$error ++;
@@ -479,7 +496,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error ++;
 		}
-		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && empty($product_desc)) {
+		if ($prod_entry_mode == 'free' && empty($idprod) && empty($product_desc)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), null, 'errors');
 			$error ++;
 		}
@@ -491,257 +508,239 @@ if (empty($reshook))
 
 		if (! $error && ($qty >= 0) && (! empty($product_desc) || ! empty($idprod)))
 		{
-		$ret = $object->fetch($id);
-		if ($ret < 0) {
-			dol_print_error($db, $object->error);
-			exit();
-		}
-		$ret = $object->fetch_thirdparty();
-
-		// Clean parameters
-		$date_start = dol_mktime(GETPOST('date_start' . $predef . 'hour'), GETPOST('date_start' . $predef . 'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start' . $predef . 'month'), GETPOST('date_start' . $predef . 'day'), GETPOST('date_start' . $predef . 'year'));
-		$date_end = dol_mktime(GETPOST('date_end' . $predef . 'hour'), GETPOST('date_end' . $predef . 'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end' . $predef . 'month'), GETPOST('date_end' . $predef . 'day'), GETPOST('date_end' . $predef . 'year'));
-		$price_base_type = (GETPOST('price_base_type', 'alpha') ? GETPOST('price_base_type', 'alpha') : 'HT');
-
-		// Define special_code for special lines
-		$special_code = 0;
-		// if (empty($_POST['qty'])) $special_code=3; // Options should not exists on invoices
-
-		// Ecrase $pu par celui du produit
-		// Ecrase $desc par celui du produit
-		// Ecrase $tva_tx par celui du produit
-		// Ecrase $base_price_type par celui du produit
-		// Replaces $fk_unit with the product's
-		if (! empty($idprod))
-			{
-			$prod = new Product($db);
-			$prod->fetch($idprod);
-
-			$label = ((GETPOST('product_label') && GETPOST('product_label') != $prod->label) ? GETPOST('product_label') : '');
-
-			// Update if prices fields are defined
-			$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
-			$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
-			if (empty($tva_tx)) $tva_npr=0;
-
-			$pu_ht = $prod->price;
-			$pu_ttc = $prod->price_ttc;
-			$price_min = $prod->price_min;
-			$price_base_type = $prod->price_base_type;
-
-			// We define price for product
-			if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->thirdparty->price_level))
-			{
-				$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
-				$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
-				$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
-				$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
-				if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
-				{
-					if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) $tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
-					if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) $tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
-					if (empty($tva_tx)) $tva_npr=0;
-				}
+			$ret = $object->fetch($id);
+			if ($ret < 0) {
+				dol_print_error($db, $object->error);
+				exit();
 			}
-			elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+			$ret = $object->fetch_thirdparty();
+
+			// Clean parameters
+			$date_start = dol_mktime(GETPOST('date_start' . $predef . 'hour'), GETPOST('date_start' . $predef . 'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start' . $predef . 'month'), GETPOST('date_start' . $predef . 'day'), GETPOST('date_start' . $predef . 'year'));
+			$date_end = dol_mktime(GETPOST('date_end' . $predef . 'hour'), GETPOST('date_end' . $predef . 'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end' . $predef . 'month'), GETPOST('date_end' . $predef . 'day'), GETPOST('date_end' . $predef . 'year'));
+			$price_base_type = (GETPOST('price_base_type', 'alpha') ? GETPOST('price_base_type', 'alpha') : 'HT');
+
+			// Define special_code for special lines
+			$special_code = 0;
+			// if (empty($_POST['qty'])) $special_code=3; // Options should not exists on invoices
+
+			// Ecrase $pu par celui du produit
+			// Ecrase $desc par celui du produit
+			// Ecrase $tva_tx par celui du produit
+			// Ecrase $base_price_type par celui du produit
+			// Replaces $fk_unit with the product's
+			if (! empty($idprod))
 			{
-				include_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
+				$prod = new Product($db);
+				$prod->fetch($idprod);
 
-				$prodcustprice = new Productcustomerprice($db);
+				$label = ((GETPOST('product_label') && GETPOST('product_label') != $prod->label) ? GETPOST('product_label') : '');
 
-				$filter = array('t.fk_product' => $prod->id,'t.fk_soc' => $object->thirdparty->id);
+				// Update if prices fields are defined
+				$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
+				$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
+				if (empty($tva_tx)) $tva_npr=0;
 
-				$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
-				if ($result)
+				// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
+				$pqp = (GETPOST('pbq', 'int') ? GETPOST('pbq', 'int') : 0);
+
+				$datapriceofproduct = $prod->getSellPrice($mysoc, $object->thirdparty, $pqp);
+
+				$pu_ht = $datapriceofproduct['pu_ht'];
+				$pu_ttc = $datapriceofproduct['pu_ttc'];
+				$price_min = $datapriceofproduct['price_min'];
+				$price_base_type = $datapriceofproduct['price_base_type'];
+				$tva_tx = $datapriceofproduct['tva_tx'];
+				$tva_npr = $datapriceofproduct['tva_npr'];
+
+				$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
+				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
+
+				// if price ht was forced (ie: from gui when calculated by margin rate and cost price). TODO Why this ?
+				if (! empty($price_ht))
 				{
-					if (count($prodcustprice->lines) > 0)
+					$pu_ht = price2num($price_ht, 'MU');
+					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
+				}
+				// On reevalue prix selon taux tva car taux tva transaction peut etre different
+				// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
+				elseif ($tmpvat != $tmpprodvat)
+				{
+					if ($price_base_type != 'HT')
 					{
-						$pu_ht = price($prodcustprice->lines[0]->price);
-						$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
-						$price_base_type = $prodcustprice->lines[0]->price_base_type;
-						$tva_tx = $prodcustprice->lines[0]->tva_tx;
-						if ($prodcustprice->lines[0]->default_vat_code && ! preg_match('/\(.*\)/', $tva_tx)) $tva_tx.= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
-						$tva_npr = $prodcustprice->lines[0]->recuperableonly;
-						if (empty($tva_tx)) $tva_npr=0;
+						$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
+					}
+					else
+					{
+						$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
 					}
 				}
-			}
 
-			$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
-			$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
+				$desc = '';
 
-			// if price ht was forced (ie: from gui when calculated by margin rate and cost price). TODO Why this ?
-			if (! empty($price_ht))
-			{
-				$pu_ht = price2num($price_ht, 'MU');
-				$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
-			}
-			// On reevalue prix selon taux tva car taux tva transaction peut etre different
-			// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-			elseif ($tmpvat != $tmpprodvat)
-			{
-				if ($price_base_type != 'HT')
+				// Define output language
+				if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
 				{
-					$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
+					$outputlangs = $langs;
+					$newlang = '';
+					if (empty($newlang) && GETPOST('lang_id', 'aZ09'))
+						$newlang = GETPOST('lang_id', 'aZ09');
+					if (empty($newlang))
+						$newlang = $object->thirdparty->default_lang;
+					if (! empty($newlang))
+					{
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+					}
+
+					$desc = (! empty($prod->multilangs [$outputlangs->defaultlang] ["description"])) ? $prod->multilangs [$outputlangs->defaultlang] ["description"] : $prod->description;
 				}
 				else
 				{
-					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
+					$desc = $prod->description;
 				}
-			}
 
-			$desc = '';
+				$desc = dol_concatdesc($desc, $product_desc);
 
-			// Define output language
-			if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
-			{
-				$outputlangs = $langs;
-				$newlang = '';
-				if (empty($newlang) && GETPOST('lang_id', 'aZ09'))
-					$newlang = GETPOST('lang_id', 'aZ09');
-				if (empty($newlang))
-					$newlang = $object->thirdparty->default_lang;
-				if (! empty($newlang))
+				// Add custom code and origin country into description
+				if (empty($conf->global->MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE) && (! empty($prod->customcode) || ! empty($prod->country_code)))
 				{
-					$outputlangs = new Translate("", $conf);
-					$outputlangs->setDefaultLang($newlang);
+					$tmptxt = '(';
+					// Define output language
+					if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+						$outputlangs = $langs;
+						$newlang = '';
+						if (empty($newlang) && GETPOST('lang_id', 'alpha')) $newlang = GETPOST('lang_id', 'alpha');
+						if (empty($newlang)) $newlang = $object->thirdparty->default_lang;
+						if (! empty($newlang)) {
+							$outputlangs = new Translate("", $conf);
+							$outputlangs->setDefaultLang($newlang);
+							$outputlangs->load('products');
+						}
+						if (! empty($prod->customcode)) $tmptxt .= $outputlangs->transnoentitiesnoconv("CustomCode") . ': ' . $prod->customcode;
+						if (! empty($prod->customcode) && ! empty($prod->country_code)) $tmptxt .= ' - ';
+						if (! empty($prod->country_code)) $tmptxt .= $outputlangs->transnoentitiesnoconv("CountryOrigin") . ': ' . getCountry($prod->country_code, 0, $db, $outputlangs, 0);
+					} else {
+						if (! empty($prod->customcode)) $tmptxt .= $langs->transnoentitiesnoconv("CustomCode") . ': ' . $prod->customcode;
+						if (! empty($prod->customcode) && ! empty($prod->country_code))	$tmptxt .= ' - ';
+						if (! empty($prod->country_code)) $tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin") . ': ' . getCountry($prod->country_code, 0, $db, $langs, 0);
+					}
+					$tmptxt .= ')';
+					$desc = dol_concatdesc($desc, $tmptxt);
 				}
 
-				$desc = (! empty($prod->multilangs [$outputlangs->defaultlang] ["description"])) ? $prod->multilangs [$outputlangs->defaultlang] ["description"] : $prod->description;
+				$type = $prod->type;
+				$fk_unit = $prod->fk_unit;
 			}
 			else
 			{
-				$desc = $prod->description;
+				$pu_ht = price2num($price_ht, 'MU');
+				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
+				$tva_npr = (preg_match('/\*/', $tva_tx) ? 1 : 0);
+				$tva_tx = str_replace('*', '', $tva_tx);
+				if (empty($tva_tx)) $tva_npr=0;
+				$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
+				$desc = $product_desc;
+				$type = GETPOST('type');
+				$fk_unit= GETPOST('units', 'alpha');
 			}
 
-					$desc = dol_concatdesc($desc, $product_desc);
+			$date_start_fill = GETPOST('date_start_fill', 'int');
+			$date_end_fill = GETPOST('date_end_fill', 'int');
 
-			// Add custom code and origin country into description
-			if (empty($conf->global->MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE) && (! empty($prod->customcode) || ! empty($prod->country_code)))
-			{
-				$tmptxt = '(';
-				if (! empty($prod->customcode))
-					$tmptxt .= $langs->transnoentitiesnoconv("CustomCode") . ': ' . $prod->customcode;
-				if (! empty($prod->customcode) && ! empty($prod->country_code))
-					$tmptxt .= ' - ';
-				if (! empty($prod->country_code))
-					$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin") . ': ' . getCountry($prod->country_code, 0, $db, $langs, 0);
-				$tmptxt .= ')';
-				$desc = dol_concatdesc($desc, $tmptxt);
-			}
+			// Margin
+			$fournprice = price2num(GETPOST('fournprice' . $predef) ? GETPOST('fournprice' . $predef) : '');
+			$buyingprice = price2num(GETPOST('buying_price' . $predef) != '' ? GETPOST('buying_price' . $predef) : '');    // If buying_price is '0', we must keep this value
 
-			$type = $prod->type;
-			$fk_unit = $prod->fk_unit;
-		}
-		else
-		{
-			$pu_ht = price2num($price_ht, 'MU');
-			$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
-			$tva_npr = (preg_match('/\*/', $tva_tx) ? 1 : 0);
-			$tva_tx = str_replace('*', '', $tva_tx);
-			if (empty($tva_tx)) $tva_npr=0;
-			$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
-			$desc = $product_desc;
-			$type = GETPOST('type');
-			$fk_unit= GETPOST('units', 'alpha');
-		}
+			// Local Taxes
+			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty, $mysoc, $tva_npr);
+			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $mysoc, $tva_npr);
 
-		$date_start_fill = GETPOST('date_start_fill', 'int');
-		$date_end_fill = GETPOST('date_end_fill', 'int');
+			$info_bits = 0;
+			if ($tva_npr)
+				$info_bits |= 0x01;
 
-		// Margin
-		$fournprice = price2num(GETPOST('fournprice' . $predef) ? GETPOST('fournprice' . $predef) : '');
-		$buyingprice = price2num(GETPOST('buying_price' . $predef) != '' ? GETPOST('buying_price' . $predef) : '');    // If buying_price is '0', we must keep this value
-
-		// Local Taxes
-		$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty, $mysoc, $tva_npr);
-		$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $mysoc, $tva_npr);
-
-		$info_bits = 0;
-		if ($tva_npr)
-			$info_bits |= 0x01;
-
-		if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS) )&& (! empty($price_min) && (price2num($pu_ht) * (1 - price2num($remise_percent) / 100) < price2num($price_min))))
-		{
-			$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency));
-			setEventMessages($mesg, null, 'errors');
-		}
-		else
-		{
-			// Insert line
-			$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, '', $pu_ttc, $type, - 1, $special_code, $label, $fk_unit, 0, $date_start_fill, $date_end_fill);
-
-			if ($result > 0)
-			{
-				/*if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-    			{
-    			    // Define output language
-    			    $outputlangs = $langs;
-    			    $newlang = '';
-    			    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
-    			    if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
-    			    if (! empty($newlang)) {
-    				$outputlangs = new Translate("", $conf);
-    				$outputlangs->setDefaultLang($newlang);
-    			    }
-    			    $model=$object->modelpdf;
-    			    $ret = $object->fetch($id); // Reload to get new records
-
-    			    $result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
-    			    if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
-    			}*/
-				$object->fetch($object->id);    // Reload lines
-
-				unset($_POST['prod_entry_mode']);
-
-				unset($_POST['qty']);
-				unset($_POST['type']);
-				unset($_POST['remise_percent']);
-				unset($_POST['price_ht']);
-				unset($_POST['multicurrency_price_ht']);
-				unset($_POST['price_ttc']);
-				unset($_POST['tva_tx']);
-				unset($_POST['product_ref']);
-				unset($_POST['product_label']);
-				unset($_POST['product_desc']);
-				unset($_POST['fournprice']);
-				unset($_POST['buying_price']);
-				unset($_POST['np_marginRate']);
-				unset($_POST['np_markRate']);
-				unset($_POST['dp_desc']);
-				unset($_POST['idprod']);
-				unset($_POST['units']);
-
-				unset($_POST['date_starthour']);
-				unset($_POST['date_startmin']);
-				unset($_POST['date_startsec']);
-				unset($_POST['date_startday']);
-				unset($_POST['date_startmonth']);
-				unset($_POST['date_startyear']);
-				unset($_POST['date_endhour']);
-				unset($_POST['date_endmin']);
-				unset($_POST['date_endsec']);
-				unset($_POST['date_endday']);
-				unset($_POST['date_endmonth']);
-				unset($_POST['date_endyear']);
-
-				unset($_POST['date_start_fill']);
-				unset($_POST['date_end_fill']);
-
-				unset($_POST['situations']);
-				unset($_POST['progress']);
+			if ($usercanproductignorepricemin && (! empty($price_min) && (price2num($pu_ht) * (1 - price2num($remise_percent) / 100) < price2num($price_min)))) {
+				$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency));
+				setEventMessages($mesg, null, 'errors');
 			}
 			else
 			{
-				setEventMessages($object->error, $object->errors, 'errors');
-			}
+				// Insert line
+				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, '', $pu_ttc, $type, - 1, $special_code, $label, $fk_unit, 0, $date_start_fill, $date_end_fill, $fournprice, $buyingprice);
 
-			$action = '';
-		}
+				if ($result > 0)
+				{
+					// Define output language and generate document
+					/*if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+	    			{
+	    			    // Define output language
+	    			    $outputlangs = $langs;
+	    			    $newlang = '';
+	    			    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+	    			    if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+	    			    if (! empty($newlang)) {
+	    				$outputlangs = new Translate("", $conf);
+	    				$outputlangs->setDefaultLang($newlang);
+	    			    }
+	    			    $model=$object->modelpdf;
+	    			    $ret = $object->fetch($id); // Reload to get new records
+
+	    			    $result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	    			    if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+	    			}*/
+					$object->fetch($object->id);    // Reload lines
+
+					unset($_POST['prod_entry_mode']);
+
+					unset($_POST['qty']);
+					unset($_POST['type']);
+					unset($_POST['remise_percent']);
+					unset($_POST['price_ht']);
+					unset($_POST['multicurrency_price_ht']);
+					unset($_POST['price_ttc']);
+					unset($_POST['tva_tx']);
+					unset($_POST['product_ref']);
+					unset($_POST['product_label']);
+					unset($_POST['product_desc']);
+					unset($_POST['fournprice']);
+					unset($_POST['buying_price']);
+					unset($_POST['np_marginRate']);
+					unset($_POST['np_markRate']);
+					unset($_POST['dp_desc']);
+					unset($_POST['idprod']);
+					unset($_POST['units']);
+
+					unset($_POST['date_starthour']);
+					unset($_POST['date_startmin']);
+					unset($_POST['date_startsec']);
+					unset($_POST['date_startday']);
+					unset($_POST['date_startmonth']);
+					unset($_POST['date_startyear']);
+					unset($_POST['date_endhour']);
+					unset($_POST['date_endmin']);
+					unset($_POST['date_endsec']);
+					unset($_POST['date_endday']);
+					unset($_POST['date_endmonth']);
+					unset($_POST['date_endyear']);
+
+					unset($_POST['date_start_fill']);
+					unset($_POST['date_end_fill']);
+
+					unset($_POST['situations']);
+					unset($_POST['progress']);
+				}
+				else
+				{
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+
+				$action = '';
+			}
 		}
 	}
 
-	elseif ($action == 'updateline' && $user->rights->facture->creer && ! GETPOST('cancel', 'alpha'))
+	elseif ($action == 'updateline' && $usercancreate && ! GETPOST('cancel', 'alpha'))
 	{
 		if (! $object->fetch($id) > 0)	dol_print_error($db);
 		$object->fetch_thirdparty();
@@ -771,12 +770,11 @@ if (empty($reshook))
 		$buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : '');       // If buying_price is '0', we muste keep this value
 
 		// Extrafields
-		$extrafieldsline = new ExtraFields($db);
-		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-		$array_options = $extrafieldsline->getOptionalsFromPost($object->table_element_line);
+		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
+		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
 
 		$objectline = new FactureLigneRec($db);
-		if ($objectline->fetch(GETPOST('lineid')))
+		if ($objectline->fetch(GETPOST('lineid', 'int')))
 		{
 			$objectline->array_options=$array_options;
 			$result=$objectline->insertExtraFields();
@@ -785,6 +783,8 @@ if (empty($reshook))
 				setEventMessages($langs->trans('Error').$result, null, 'errors');
 			}
 		}
+
+		$position = ($objectline->rang >= 0 ? $objectline->rang : 0);
 
 		// Unset extrafield
 		if (is_array($extralabelsline))
@@ -797,8 +797,8 @@ if (empty($reshook))
 		}
 
 		// Define special_code for special lines
-		$special_code=GETPOST('special_code');
-		if (! GETPOST('qty')) $special_code=3;
+		$special_code=GETPOST('special_code', 'int');
+		if (! GETPOST('qty', 'alpha')) $special_code=3;
 
 		/*$line = new FactureLigne($db);
         $line->fetch(GETPOST('lineid'));
@@ -834,11 +834,11 @@ if (empty($reshook))
 				$error ++;
 			}
 		} else {
-			$type = GETPOST('type');
+			$type = GETPOST('type', 'int');
 			$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
 
 			// Check parameters
-			if (GETPOST('type') < 0) {
+			if (GETPOST('type', 'int') < 0) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 				$error ++;
 			}
@@ -855,7 +855,7 @@ if (empty($reshook))
 		// Update line
 		if (! $error)
 		{
-$result = $object->updateline(
+			$result = $object->updateline(
 				GETPOST('lineid'),
 				$description,
 				$pu_ht,
@@ -870,14 +870,16 @@ $result = $object->updateline(
 				0,
 				0,
 				$type,
-				0,
+				$position,
 				$special_code,
 				$label,
 				GETPOST('units'),
 				$pu_ht_devise,
 				0,
 				$date_start_fill,
-				$date_end_fill
+				$date_end_fill,
+				$fournprice,
+				$buyingprice
 			);
 
 			if ($result >= 0)
@@ -968,7 +970,7 @@ $today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['
  */
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("CreateRepeatableInvoice"), '', 'title_accountancy.png');
+	print load_fiche_titre($langs->trans("CreateRepeatableInvoice"), '', 'invoicing');
 
 	$object = new Facture($db);   // Source invoice
 	$product_static = new Product($db);
@@ -1013,8 +1015,8 @@ if ($action == 'create')
 		$substitutionarray['__INVOICE_PREVIOUS_MONTH_TEXT__'] = $langs->trans("TextPreviousMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, -1, 'm'), '%B').')';
 		$substitutionarray['__INVOICE_MONTH_TEXT__'] = $langs->trans("TextMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($object->date, '%B').')';
 		$substitutionarray['__INVOICE_NEXT_MONTH_TEXT__'] = $langs->trans("TextNextMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, 1, 'm'), '%B').')';
-		$substitutionarray['__INVOICE_PREVIOUS_YEAR__'] = $langs->trans("YearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, -1, 'y'), '%Y').')';
-		$substitutionarray['__INVOICE_YEAR__'] =  $langs->trans("PreviousYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($object->date, '%Y').')';
+		$substitutionarray['__INVOICE_PREVIOUS_YEAR__'] = $langs->trans("PreviousYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, -1, 'y'), '%Y').')';
+		$substitutionarray['__INVOICE_YEAR__'] =  $langs->trans("YearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($object->date, '%Y').')';
 		$substitutionarray['__INVOICE_NEXT_YEAR__'] = $langs->trans("NextYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($object->date, 1, 'y'), '%Y').')';
 		// Only on template invoices
 		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__'] = $langs->trans("DateNextInvoiceBeforeGen").' ('.$langs->trans("Example").': '.dol_print_date($object->date_when, 'dayhour').')';
@@ -1240,19 +1242,20 @@ else
 			$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 			if ($user->rights->facture->creer)
 			{
-				if ($action != 'classify')
-					$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-					if ($action == 'classify') {
-						//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-						$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-						$morehtmlref.='<input type="hidden" name="action" value="classin">';
-						$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-						$morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-						$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-						$morehtmlref.='</form>';
-					} else {
-						$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-					}
+				if ($action != 'classify') {
+					$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				}
+				if ($action == 'classify') {
+					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+					$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+					$morehtmlref.='<input type="hidden" name="action" value="classin">';
+					$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					$morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+					$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+					$morehtmlref.='</form>';
+				} else {
+					$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+				}
 			} else {
 				if (! empty($object->fk_project)) {
 					$proj = new Project($db);
@@ -1306,7 +1309,7 @@ else
 		print $langs->trans('PaymentConditionsShort');
 		print '</td>';
 		if ($action != 'editconditions' && $user->rights->facture->creer)
-			print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editconditions&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetConditions'), 1) . '</a></td>';
+			print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editconditions&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetConditions'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($object->type != Facture::TYPE_CREDIT_NOTE)
@@ -1330,7 +1333,7 @@ else
 		print $langs->trans('PaymentMode');
 		print '</td>';
 		if ($action != 'editmode' && $user->rights->facture->creer)
-			print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetMode'), 1) . '</a></td>';
+			print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetMode'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editmode')
@@ -1355,8 +1358,8 @@ else
 		$substitutionarray['__INVOICE_PREVIOUS_MONTH_TEXT__'] = $langs->trans("TextPreviousMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, -1, 'm'), '%B').')';
 		$substitutionarray['__INVOICE_MONTH_TEXT__'] = $langs->trans("TextMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($dateexample, '%B').')';
 		$substitutionarray['__INVOICE_NEXT_MONTH_TEXT__'] = $langs->trans("TextNextMonthOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, 1, 'm'), '%B').')';
-		$substitutionarray['__INVOICE_PREVIOUS_YEAR__'] = $langs->trans("YearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, -1, 'y'), '%Y').')';
-		$substitutionarray['__INVOICE_YEAR__'] =  $langs->trans("PreviousYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($dateexample, '%Y').')';
+		$substitutionarray['__INVOICE_PREVIOUS_YEAR__'] = $langs->trans("PreviousYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, -1, 'y'), '%Y').')';
+		$substitutionarray['__INVOICE_YEAR__'] =  $langs->trans("YearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date($dateexample, '%Y').')';
 		$substitutionarray['__INVOICE_NEXT_YEAR__'] = $langs->trans("NextYearOfInvoice").' ('.$langs->trans("Example").': '.dol_print_date(dol_time_plus_duree($dateexample, 1, 'y'), '%Y').')';
 		// Only on template invoices
 		$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__'] = $langs->trans("DateNextInvoiceBeforeGen").' ('.$langs->trans("Example").': '.dol_print_date(($object->date_when?$object->date_when:dol_now()), 'dayhour').')';
@@ -1393,7 +1396,7 @@ else
 		print $langs->trans('BankAccount');
 		print '<td>';
 		if (($action != 'editbankaccount') && $user->rights->facture->creer && $object->statut == FactureRec::STATUS_DRAFT)
-			print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editbankaccount')
@@ -1415,7 +1418,7 @@ else
         print $langs->trans('Model');
         print '<td>';
         if (($action != 'editmodelpdf') && $user->rights->facture->creer && $object->statut == FactureRec::STATUS_DRAFT)
-            print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmodelpdf&amp;id='.$object->id.'">'.img_edit($langs->trans('SetModel'), 1).'</a></td>';
+            print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmodelpdf&amp;id='.$object->id.'">'.img_edit($langs->trans('SetModel'), 1).'</a></td>';
         print '</tr></table>';
         print '</td><td>';
         if ($action == 'editmodelpdf')
@@ -1423,8 +1426,8 @@ else
             include_once DOL_DOCUMENT_ROOT . '/core/modules/facture/modules_facture.php';
             $list = array();
             $models = ModelePDFFactures::liste_modeles($db);
-            foreach ($models as $model) {
-                $list[] = $model . ':' . $model;
+            foreach ($models as $k => $model) {
+                $list[] = str_replace(':', '|', $k) . ':' . $model;
             }
             $select = 'select;'.implode(',', $list);
             print $form->editfieldval($langs->trans("Model"), 'modelpdf', $object->modelpdf, $object, $user->rights->facture->creer, $select);
@@ -1464,7 +1467,7 @@ else
 		print $langs->trans('Frequency');
 		print '</td>';
 		if ($action != 'editfrequency' && $user->rights->facture->creer)
-			print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editfrequency&amp;facid=' . $object->id . '">' . img_edit($langs->trans('Edit'), 1) . '</a></td>';
+			print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editfrequency&amp;facid=' . $object->id . '">' . img_edit($langs->trans('Edit'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editfrequency')

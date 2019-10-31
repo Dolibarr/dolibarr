@@ -5,6 +5,7 @@ SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Regnskapskonto som standard for lønnsutbetal
 Salary=Lønn
 Salaries=Lønn
 NewSalaryPayment=Ny lønnsutbetaling
+AddSalaryPayment=Legg til lønnsutbetaling
 SalaryPayment=Lønnsutbetaling
 SalariesPayments=Lønnsutbetalinger
 ShowSalaryPayment=Vis lønnsutbetaling
@@ -16,3 +17,5 @@ TJMDescription=Dene verdien er foreløpig brukt til informasjon, og er ikke bruk
 LastSalaries=Siste %s lønnsutbetalinger
 AllSalaries=Alle lønnsutbetalinger
 SalariesStatistics=Lønnsstatistikk
+# Export
+SalariesAndPayments=Lønn og utbetalinger

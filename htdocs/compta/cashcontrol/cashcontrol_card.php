@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -72,7 +72,7 @@ $object= new CashControl($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('cashcontrolcard','globalcard'));
@@ -88,7 +88,7 @@ if (empty($backtopage)) $backtopage = dol_buildpath('/compta/cashcontrol/cashcon
 $backurlforlist = dol_buildpath('/compta/cashcontrol/cashcontrol_list.php', 1);
 $triggermodname = 'CACHCONTROL_MODIFY';	// Name of trigger action code to execute when we modify record
 
-if (empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH))
+if (empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH) && empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH1))
 {
 	setEventMessages($langs->trans("CashDesk")." - ".$langs->trans("NotConfigured"), null, 'errors');
 }
@@ -132,16 +132,7 @@ elseif ($action=="add")
 	$error=0;
 	foreach($arrayofpaymentmode as $key=>$val)
 	{
-		if (GETPOST($key.'_amount', 'alpha') == '')
-		{
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val)), null, 'errors');
-			$action='start';
-			$error++;
-		}
-		else
-		{
-			$object->$key = price2num(GETPOST($key.'_amount', 'alpha'));
-		}
+		$object->$key = price2num(GETPOST($key.'_amount', 'alpha'));
 	}
 
 	if (! $error)
@@ -200,7 +191,7 @@ if ($action == 'confirm_delete' && ! empty($permissiontodelete))
     }
 
     $result=$object->delete($user);
-    var_dump($result);
+    //var_dump($result);
     if ($result > 0)
     {
         // Delete OK
@@ -234,6 +225,15 @@ if ($action=="create" || $action=="start")
 	{
 		$posmodule = GETPOST('posmodule', 'alpha');
 		$terminalid = GETPOST('posnumber', 'alpha');
+		$terminaltouse = $terminalid;
+
+		if ($terminaltouse == '1' && $posmodule=='cashdesk') $terminaltouse = '';
+
+		if ($posmodule=='cashdesk' && $terminaltouse != '' && $terminaltouse != '1') {
+			$terminaltouse = '';
+			setEventMessages($langs->trans("OnlyTerminal1IsAvailableForCashDeskModule"), null, 'errors');
+			$error++;
+		}
 
 		// Calculate $initialbalanceforterminal for terminal 0
 		foreach($arrayofpaymentmode as $key => $val)
@@ -245,24 +245,33 @@ if ($action=="create" || $action=="start")
 			}
 
 			// Get the bank account dedicated to this point of sale module/terminal
-			$bankid = $conf->global->CASHDESK_ID_BANKACCOUNT_CASH;			// This value is ok for 'Terminal 0' for module 'CashDesk' and 'TakePos' (they manage only 1 terminal)
+			$vartouse='CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse;
+			$bankid = $conf->global->$vartouse;			// This value is ok for 'Terminal 0' for module 'CashDesk' and 'TakePos' (they manage only 1 terminal)
 			// Hook to get the good bank id according to posmodule and posnumber.
 			// @TODO add hook here
 
-			$sql = "SELECT SUM(amount) as total FROM ".MAIN_DB_PREFIX."bank";
-			$sql.= " WHERE fk_account = ".$bankid;
-			if ($syear && ! $smonth)              $sql.= " AND dateo < '".$db->idate(dol_get_first_day($syear, 1))."'";
-			elseif ($syear && $smonth && ! $sday) $sql.= " AND dateo < '".$db->idate(dol_get_first_day($syear, $smonth))."'";
-			elseif ($syear && $smonth && $sday)   $sql.= " AND dateo < '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."'";
-			else dol_print_error('', 'Year not defined');
-
-			$resql = $db->query($sql);
-			if ($resql)
+			if ($bankid > 0)
 			{
-				$obj = $db->fetch_object($resql);
-				if ($obj) $initialbalanceforterminal[$terminalid][$key] = $obj->total;
+    			$sql = "SELECT SUM(amount) as total FROM ".MAIN_DB_PREFIX."bank";
+    			$sql.= " WHERE fk_account = ".$bankid;
+    			if ($syear && ! $smonth)              $sql.= " AND dateo < '".$db->idate(dol_get_first_day($syear, 1))."'";
+    			elseif ($syear && $smonth && ! $sday) $sql.= " AND dateo < '".$db->idate(dol_get_first_day($syear, $smonth))."'";
+    			elseif ($syear && $smonth && $sday)   $sql.= " AND dateo < '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."'";
+    			else dol_print_error('', 'Year not defined');
+
+    			$resql = $db->query($sql);
+    			if ($resql)
+    			{
+    				$obj = $db->fetch_object($resql);
+    				if ($obj) $initialbalanceforterminal[$terminalid][$key] = $obj->total;
+    			}
+    			else dol_print_error($db);
 			}
-			else dol_print_error($db);
+			else
+			{
+				setEventMessages($langs->trans("SetupOfTerminalNotComplete", $terminaltouse), null, 'errors');
+			    $error++;
+			}
 		}
 
 		// Calculate $theoricalamountforterminal for terminal 0
@@ -306,7 +315,7 @@ if ($action=="create" || $action=="start")
 		}
 	}
 
-	print load_fiche_titre($langs->trans("CashControl")." - ".$langs->trans("New"), '', 'title_bank.png');
+	print load_fiche_titre($langs->trans("CashControl")." - ".$langs->trans("New"), '', 'cash-register');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     if ($action == 'start' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '-1')
@@ -332,7 +341,16 @@ if ($action=="create" || $action=="start")
 
     print '<tr class="oddeven">';
     print '<td>'.$form->selectarray('posmodule', $arrayofposavailable, GETPOST('posmodule', 'alpha'), (count($arrayofposavailable)>1?1:0)).'</td>';
-    print '<td><input name="posnumber" type="text" class="maxwidth50" value="'.(GETPOSTISSET('posnumber')?GETPOST('posnumber', 'alpha'):'0').'"></td>';
+    print '<td>';
+    $array=array(1=>"1", 2=>"2", 3=>"3", 4=>"4", 5=>"5", 6=>"6", 7=>"7", 8=>"8", 9=>"9");
+    $selectedposnumber=0; $showempty=1;
+    if ($conf->global->TAKEPOS_NUM_TERMINALS == '1')
+    {
+        $selectedposnumber=1; $showempty=0;
+    }
+    print $form->selectarray('posnumber', $array, GETPOSTISSET('posnumber')?GETPOST('posnumber', 'int'):$selectedposnumber, $showempty);
+    //print '<input name="posnumber" type="text" class="maxwidth50" value="'.(GETPOSTISSET('posnumber')?GETPOST('posnumber', 'alpha'):'0').'">';
+    print '</td>';
 	// Year
 	print '<td>';
 	$retstring='<select'.($disabled?' disabled':'').' class="flat valignmiddle maxwidth75imp" id="'.$prefix.'year" name="'.$prefix.'year">';
@@ -380,6 +398,7 @@ if ($action=="create" || $action=="start")
 	print '</td>';
 	print '</table>';
 
+	// Table to see/enter balance
 	if ($action == 'start' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '-1')
 	{
 		$posmodule = GETPOST('posmodule', 'alpha');
@@ -561,7 +580,7 @@ if (empty($action) || $action=="view")
 	print '<div class="inline-block divButAction"><a target="_blank" class="butAction" href="report.php?id='.$id.'">' . $langs->trans('PrintTicket') . '</a></div>';
 	if ($object->status == CashControl::STATUS_DRAFT)
 	{
-		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '&amp;action=close">' . $langs->trans('Close') . '</a></div>';
+		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '&amp;action=close">' . $langs->trans('ValidateAndClose') . '</a></div>';
 
 		print '<div class="inline-block divButAction"><a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '&amp;action=confirm_delete">' . $langs->trans('Delete') . '</a></div>';
 	}

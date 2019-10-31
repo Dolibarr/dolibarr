@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -144,7 +144,7 @@ if ($result > 0)
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
-    print '<table class="border centpercent">';
+    print '<table class="border centpercent tableforfield">';
 
     // Login
     print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
@@ -179,10 +179,12 @@ if ($result > 0)
     print "\n";
 
     // Help
+    print '<span class="opacitymedium">';
     print '<br>'.$langs->trans("NotificationsDesc");
     print '<br>'.$langs->trans("NotificationsDescUser");
     print '<br>'.$langs->trans("NotificationsDescContact");
     print '<br>'.$langs->trans("NotificationsDescGlobal");
+    print '</span>';
 
     print '<br><br><br>'."\n";
 
@@ -206,7 +208,7 @@ if ($result > 0)
 	print "</tr>\n";
 
 
-//    $listofemails=$object->thirdparty_and_contact_email_array();
+    // $listofemails=$object->thirdparty_and_contact_email_array();
     if ($object->email)
     {
         $actions=array();
@@ -292,13 +294,12 @@ if ($result > 0)
 
     if ($num)
     {
-	   $i = 0;
+        $i = 0;
 
         $userstatic=new user($db);
 
         while ($i < $num)
         {
-
             $obj = $db->fetch_object($resql);
 
             $userstatic->id=$obj->userid;

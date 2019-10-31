@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 
@@ -91,7 +91,7 @@ if ($action == 'set_BANK_CHEQUERECEIPT_FREE_TEXT')
 }
 
 /*
- * view
+ * View
  */
 
 $dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -184,7 +184,7 @@ foreach ($dirmodels as $reldir)
 							}
 							else
 							{
-								print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 							}
 							print '</td>';
 
@@ -233,7 +233,6 @@ print '<br>';
 
 /*
  * Other options
- *
  */
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 

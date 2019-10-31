@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -43,7 +43,6 @@ $left = GETPOST('left', 'alpha');
 $top = GETPOST('top', 'alpha');
 
 $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
-$posnb = (GETPOST('posnb', 'int') > 0 ? GETPOST('posnb', 'int') : 0);   // $posnb is id of POS
 
 $newname = GETPOST('newname', 'alpha');
 $mode = GETPOST('mode', 'alpha');
@@ -158,8 +157,7 @@ $( document ).ready(function() {
 			$('#'+val.label).draggable().bind('click', function(){
 				$(this).focus();
 			})
-			<?php }
-			else {?>
+			<?php } else {?>
 			$('body').append('<div class="tablediv" onclick="LoadPlace('+val.rowid+');" style="position: absolute; left: '+val.leftpos+'%; top: '+val.toppos+'%;" id="tablename'+val.rowid+'">'+val.label+'</div>');
 			<?php } ?>
 		});
@@ -169,13 +167,13 @@ $( document ).ready(function() {
 </script>
 </head>
 <body style="overflow: hidden">
-<?php if ($user->admin){?>
+<?php if ($user->admin) {?>
 <div style="position: absolute; left: 0.1%; top: 0.8%; width:8%; height:11%;">
-<?php if ($mode=="edit"){?>
+    <?php if ($mode=="edit"){?>
 <a id="add" onclick="window.location.href='floors.php?mode=edit&action=add&floor=<?php echo $floor;?>';"><?php echo $langs->trans("AddTable"); ?></a>
-<?php } else { ?>
+    <?php } else { ?>
 <a onclick="window.location.href='floors.php?mode=edit&floor=<?php echo $floor;?>';"><?php echo $langs->trans("Edit"); ?></a>
-<?php } ?>
+    <?php } ?>
 </div>
 <?php }
 ?>

@@ -19,8 +19,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  *
  * Lots of code inspired from Dan Potter's CMailFile class
  */
@@ -80,6 +80,18 @@ class CMailFile
 
     public $headers;
     public $message;
+    /**
+	 * @var array fullfilenames list
+	 */
+	public $filename_list = array();
+	/**
+	 * @var array mimetypes of files list
+	 */
+	public $mimetype_list = array();
+	/**
+	 * @var array filenames list
+	 */
+	public $mimefilename_list = array();
 
 	// Image
     public $html;
@@ -117,16 +129,32 @@ class CMailFile
 	 *	@param	string	$css                 Css option
 	 *	@param	string	$trackid             Tracking string (contains type and id of related element)
 	 *  @param  string  $moreinheader        More in header. $moreinheader must contains the "\r\n" (TODO not supported for other MAIL_SEND_MODE different than 'phpmail' and 'smtps' for the moment)
-	 *  @param  string  $sendcontext      	 'standard', 'emailing', ... (used to define with sending mode and parameters to use)
+	 *  @param  string  $sendcontext      	 'standard', 'emailing', ... (used to define which sending mode and parameters to use)
 	 *  @param	string	$replyto			 Reply-to email (will be set to same value than From by default if not provided)
 	 */
 	public function __construct($subject, $to, $from, $msg, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = 0, $errors_to = '', $css = '', $trackid = '', $moreinheader = '', $sendcontext = 'standard', $replyto = '')
 	{
 		global $conf, $dolibarr_main_data_root;
 
+        $this->subject = $subject;
+		$this->addr_to = $to;
+		$this->addr_from = $from;
+		$this->msg = $msg;
+		$this->filename_list = $filename_list;
+		$this->mimetype_list = $mimetype_list;
+		$this->mimefilename_list = $mimefilename_list;
+		$this->addr_cc = $addr_cc;
+		$this->addr_bcc = $addr_bcc;
+		$this->deliveryreceipt = $deliveryreceipt;
+		if (empty($replyto)) $replyto = $from;
+		$this->reply_to = $replyto;
+		$this->errors_to = $errors_to;
+		$this->trackid = $trackid;
 		$this->sendcontext = $sendcontext;
+		$this->filename_list = $filename_list;
+		$this->mimetype_list = $mimetype_list;
+		$this->mimefilename_list = $mimefilename_list;
 
-		if (empty($replyto)) $replyto=$from;
 
 		// Define this->sendmode
 		$this->sendmode = '';
@@ -247,16 +275,6 @@ class CMailFile
 			$files_encoded = "";
 
 			// Define smtp_headers
-			$this->subject = $subject;
-			$this->addr_from = $from;
-			$this->reply_to = $replyto;
-			$this->errors_to = $errors_to;
-			$this->addr_to = $to;
-			$this->addr_cc = $addr_cc;
-			$this->addr_bcc = $addr_bcc;
-			$this->deliveryreceipt = $deliveryreceipt;
-			$this->trackid = $trackid;
-
 			$smtp_headers = $this->write_smtpheaders();
 			if (! empty($moreinheader)) $smtp_headers.=$moreinheader;   // $moreinheader contains the \r\n
 
@@ -286,8 +304,7 @@ class CMailFile
 			// We now define $this->headers and $this->message
 			$this->headers = $smtp_headers . $mime_headers;
 			// On nettoie le header pour qu'il ne se termine pas par un retour chariot.
-			// Ceci evite aussi les lignes vides en fin qui peuvent etre interpretees
-			// comme des injections mail par les serveurs de messagerie.
+			// This avoid also empty lines at end that can be interpreted as mail injection by email servers.
 			$this->headers = preg_replace("/([\r\n]+)$/i", "", $this->headers);
 
 			//$this->message = $this->eol.'This is a message with multiple parts in MIME format.'.$this->eol;
@@ -429,7 +446,7 @@ class CMailFile
 				foreach ($this->images_encoded as $img)
 				{
 					//$img['fullpath'],$img['image_encoded'],$img['name'],$img['content_type'],$img['cid']
-					$attachment = Swift_Image::fromPath($img['fullpath'], $img['content_type']);
+					$attachment = Swift_Image::fromPath($img['fullpath']);
 					// embed image
 					$imgcid = $this->message->embed($attachment);
 					// replace cid by the one created by swiftmail in html message
@@ -503,6 +520,31 @@ class CMailFile
 			if ($reshook == 1)	// Hook replace standard code
 			{
 				return true;
+			}
+
+			$sendingmode = $this->sendmode;
+			if ($this->context == 'emailing' && ! empty($conf->global->MAILING_NO_USING_PHPMAIL) && $sendingmode == 'mail')
+			{
+			    // List of sending methods
+			    $listofmethods=array();
+			    $listofmethods['mail']='PHP mail function';
+			    //$listofmethods['simplemail']='Simplemail class';
+			    $listofmethods['smtps']='SMTP/SMTPS socket library';
+
+			    // EMailing feature may be a spam problem, so when you host several users/instance, having this option may force each user to use their own SMTP agent.
+			    // You ensure that every user is using its own SMTP server when using the mass emailing module.
+			    $linktoadminemailbefore='<a href="'.DOL_URL_ROOT.'/admin/mails.php">';
+			    $linktoadminemailend='</a>';
+			    $this->error = $langs->trans("MailSendSetupIs", $listofmethods[$sendingmode]);
+			    $this->errors[] = $langs->trans("MailSendSetupIs", $listofmethods[$sendingmode]);
+			    $this->error .= '<br>'.$langs->trans("MailSendSetupIs2", $linktoadminemailbefore, $linktoadminemailend, $langs->transnoentitiesnoconv("MAIN_MAIL_SENDMODE"), $listofmethods['smtps']);
+			    $this->errors[] = $langs->trans("MailSendSetupIs2", $linktoadminemailbefore, $linktoadminemailend, $langs->transnoentitiesnoconv("MAIN_MAIL_SENDMODE"), $listofmethods['smtps']);
+			    if (! empty($conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS))
+			    {
+			        $this->error .= '<br>'.$langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS);
+			        $this->errors[] = $langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS);
+			    }
+                return false;
 			}
 
 			// Check number of recipient is lower or equal than MAIL_MAX_NB_OF_RECIPIENTS_IN_SAME_EMAIL
@@ -1350,7 +1392,6 @@ class CMailFile
 			$i=0;
 			foreach ($matches[1] as $full)
 			{
-
 				if (preg_match('/file=([A-Za-z0-9_\-\/]+[\.]?[A-Za-z0-9]+)?$/i', $full, $regs))   // If xxx is 'file=aaa'
 				{
 					$img = $regs[1];

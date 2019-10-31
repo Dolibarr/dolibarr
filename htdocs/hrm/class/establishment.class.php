@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -265,12 +265,12 @@ class Establishment extends CommonObject
 		}
 	}
 
-   /**
-	*	Delete record
-	*
-	*	@param	int		$id		Id of record to delete
-	*	@return	int				<0 if KO, >0 if OK
-	*/
+    /**
+	 *	Delete record
+	 *
+	 *	@param	int		$id		Id of record to delete
+	 *	@return	int				<0 if KO, >0 if OK
+	 */
 	public function delete($id)
 	{
 		$this->db->begin();

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -66,8 +66,7 @@ $search_progressdeclare=GETPOST('search_progressdeclare');
 
 $object = new Project($db);
 $taskstatic = new Task($db);
-$extrafields_project = new ExtraFields($db);
-$extrafields_task = new ExtraFields($db);
+$extrafields = new ExtraFields($db);
 
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
 if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
@@ -75,9 +74,9 @@ if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($ob
 if ($id > 0 || ! empty($ref))
 {
 	// fetch optionals attributes and labels
-	$extralabels_projet=$extrafields_project->fetch_name_optionals_label($object->table_element);
+	$extrafields->fetch_name_optionals_label($object->table_element);
 }
-$extralabels_task=$extrafields_task->fetch_name_optionals_label($taskstatic->table_element);
+$extrafields->fetch_name_optionals_label($taskstatic->table_element);
 
 // Security check
 $socid=0;
@@ -95,8 +94,6 @@ $description=GETPOST('description');
 $planned_workloadhour=(GETPOST('planned_workloadhour', 'int')?GETPOST('planned_workloadhour', 'int'):0);
 $planned_workloadmin=(GETPOST('planned_workloadmin', 'int')?GETPOST('planned_workloadmin', 'int'):0);
 $planned_workload=$planned_workloadhour*3600+$planned_workloadmin*60;
-
-$userAccess=0;
 
 $arrayfields=array(
     't.ref'=>array('label'=>$langs->trans("RefTask"), 'checked'=>1, 'position'=>80),
@@ -117,14 +114,17 @@ $arrayfields=array(
     't.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
     //'t.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
-// Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+// Extra fields project
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-    foreach($extrafields->attribute_label as $key => $val)
-    {
-        if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
-    }
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+	{
+		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+	}
 }
+$object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 /*
@@ -179,35 +179,11 @@ if (!empty($search_tasklabel)) {
 	$morewherefilterarray[]= natural_search('t.label', $search_tasklabel, 0, 1);
 }
 
-if ($search_dtstartmonth > 0)
-{
-	if ($search_dtstartyear > 0 && empty($search_dtstartday)) {
-		$morewherefilterarray[]= " (t.dateo BETWEEN '".$db->idate(dol_get_first_day($search_dtstartyear, $search_dtstartmonth, false))."' AND '".$db->idate(dol_get_last_day($search_dtstartyear, $search_dtstartmonth, false))."')";
-	} elseif ($search_dtstartyear > 0 && ! empty($search_dtstartday)) {
-		$morewherefilterarray[]= " (t.dateo BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_dtstartmonth, $search_dtstartday, $search_dtstartyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_dtstartmonth, $search_dtstartday, $search_dtstartyear))."')";
-	} else {
-		$morewherefilterarray[]= " date_format(t.dateo, '%m') = '".$search_dtstartmonth."'";
-	}
-}
-elseif ($search_dtstartyear > 0)
-{
-	$morewherefilterarray[]= " (t.dateo BETWEEN '".$db->idate(dol_get_first_day($search_dtstartyear, 1, false))."' AND '".$db->idate(dol_get_last_day($search_dtstartyear, 12, false))."')";
-}
+$moresql = dolSqlDateFilter('t.dateo', $search_dtstartday, $search_dtstartmonth, $search_dtstartyear, 1);
+if ($moresql) $morewherefilterarray[] = $moresql;
 
-if ($search_dtendmonth > 0)
-{
-	if ($search_dtendyear > 0 && empty($search_dtendday)) {
-		$morewherefilterarray[]= " (t.datee BETWEEN '".$db->idate(dol_get_first_day($search_dtendyear, $search_dtendmonth, false))."' AND '".$db->idate(dol_get_last_day($search_dtendyear, $search_dtendmonth, false))."')";
-	}elseif ($search_dtendyear > 0 && ! empty($search_dtendday)) {
-		$morewherefilterarray[]= " (t.datee BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_dtendmonth, $search_dtendday, $search_dtendyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_dtendmonth, $search_dtendday, $search_dtendyear))."')";
-	}else {
-		$morewherefilterarray[]= " date_format(t.datee, '%m') = '".$search_dtendmonth."'";
-	}
-}
-elseif ($search_dtendyear > 0)
-{
-	$morewherefilterarray[]= " (t.datee BETWEEN '".$db->idate(dol_get_first_day($search_dtendyear, 1, false))."' AND '".$db->idate(dol_get_last_day($search_dtendyear, 12, false))."')";
-}
+$moresql = dolSqlDateFilter('t.datee', $search_dtendday, $search_dtendmonth, $search_dtendyear, 1);
+if ($moresql) $morewherefilterarray[] = $moresql;
 
 if (!empty($search_planedworkload)) {
 	$morewherefilterarray[]= natural_search('t.planned_workload', $search_planedworkload, 1, 1);
@@ -286,7 +262,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			$task->progress = $progress;
 
 			// Fill array 'array_options' with data from add form
-			$ret = $extrafields_task->setOptionalsFromPost($extralabels_task, $task);
+			$ret = $extrafields->setOptionalsFromPost(null, $task);
 
 			$taskid = $task->create($user);
 
@@ -414,6 +390,34 @@ if ($id > 0 || ! empty($ref))
 
     print '<table class="border tableforfield" width="100%">';
 
+    // Usage
+    print '<tr><td class="tdtop">';
+    print $langs->trans("Usage");
+    print '</td>';
+    print '<td>';
+    if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+    {
+    	print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha')!=''?' checked="checked"':'') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+    	$htmltext = $langs->trans("ProjectFollowOpportunity");
+    	print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+    	print '<br>';
+    }
+    if (empty($conf->global->PROJECT_HIDE_TASKS))
+    {
+    	print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha')!=''?' checked="checked"':'') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
+    	$htmltext = $langs->trans("ProjectFollowTasks");
+    	print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+    	print '<br>';
+    }
+    if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+    {
+    	print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha')!=''?' checked="checked"':'') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+    	$htmltext = $langs->trans("ProjectBillTimeDescription");
+    	print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+    	print '<br>';
+    }
+    print '</td></tr>';
+
     // Visibility
     print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
     if ($object->public) print $langs->trans('SharedProject');
@@ -476,12 +480,12 @@ if ($id > 0 || ! empty($ref))
     if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
     {
     	print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
-    	print yn($object->bill_time);
+    	print yn($object->usage_bill_time);
     	print '</td></tr>';
     }
 
     // Categories
-    if($conf->categorie->enabled) {
+    if ($conf->categorie->enabled) {
         print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
         print $form->showCategories($object->id, 'project', 1);
         print "</td></tr>";
@@ -504,7 +508,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 {
 	if ($id > 0 || ! empty($ref)) print '<br>';
 
-	print load_fiche_titre($langs->trans("NewTask"), '', 'title_project');
+	print load_fiche_titre($langs->trans("NewTask"), '', 'project');
 
 	if ($object->statut == Project::STATUS_CLOSED)
 	{
@@ -523,7 +527,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 		dol_fiche_head('');
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		$defaultref='';
 		$obj = empty($conf->global->PROJECT_TASK_ADDON)?'mod_task_simple':$conf->global->PROJECT_TASK_ADDON;
@@ -601,9 +605,9 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $taskstatic, $action); // Note that $action and $object may have been modified by hook
 	    print $hookmanager->resPrint;
 
-	    if (empty($reshook) && ! empty($extrafields_task->attribute_label))
+	    if (empty($reshook) && ! empty($extrafields[$taskstatic->table_element]['label']))
 		{
-			print $taskstatic->showOptionals($extrafields_task, 'edit');		// Do not use $object here that is object of project
+			print $taskstatic->showOptionals($extrafields, 'edit');		// Do not use $object here that is object of project but use $taskstatic
 		}
 
 		print '</table>';
@@ -632,33 +636,30 @@ elseif ($id > 0 || ! empty($ref))
 	$arrayfields['t.task_date_start']=array('label'=>$langs->trans("DateStart"), 'checked'=>1);
 	$arrayfields['t.task_date_end']=array('label'=>$langs->trans("DateEnd"), 'checked'=>1);
 	// Extra fields
-	if (is_array($extrafields_task->attribute_label) && count($extrafields_task->attribute_label))
+	if (is_array($extrafields->attributes[$taskstatic->table_element]['label']) && count($extrafields->attributes[$taskstatic->table_element]['label']) > 0)
 	{
-		foreach($extrafields_task->attribute_label as $key => $val)
+		foreach($extrafields->attributes[$taskstatic->table_element]['label'] as $key => $val)
 		{
-			if (! empty($extrafields_task->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields_task->attribute_label[$key], 'checked'=>(($extrafields_task->attribute_list[$key]<0)?0:1), 'position'=>$extrafields_task->attribute_pos[$key], 'enabled'=>(abs($extrafields_task->attribute_list[$key])!=3 && $extrafields_task->attribute_perms[$key]));
+			if (! empty($extrafields->attributes[$taskstatic->table_element]['list'][$key]))
+				$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$taskstatic->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$taskstatic->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$taskstatic->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$taskstatic->table_element]['list'][$key])!=3 && $extrafields->attributes[$taskstatic->table_element]['perms'][$key]));
 		}
 	}
+	$arrayfields = dol_sort_array($arrayfields, 'position');
 
 	print '<br>';
 
 	// Link to create task
-	if ($user->rights->projet->all->creer || $user->rights->projet->creer)
-	{
-		if ($object->public || $userWrite > 0)
-		{
-			$linktocreatetask = '<a class="butActionNew" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTask').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
-		}
-		else
-		{
-			$linktocreatetask = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTask').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
-		}
-	}
-	else
-	{
-		$linktocreatetask = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'"><span class="valignmiddle text-plus-circle">'.$langs->trans('AddTask').'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
-	}
+    $linktocreatetaskParam = array();
+    $linktocreatetaskUserRight = false;
+    if ($user->rights->projet->all->creer || $user->rights->projet->creer) {
+        if ($object->public || $userWrite > 0){
+            $linktocreatetaskUserRight = true;
+        }else{
+            $linktocreatetaskParam['attr']['title'] = $langs->trans("NotOwnerOfProject");
+        }
+    }
 
+    $linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', $linktocreatetaskUserRight, $linktocreatetaskParam);
 
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
@@ -672,15 +673,15 @@ elseif ($id > 0 || ! empty($ref))
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 	$title=$langs->trans("ListOfTasks");
-	$linktotasks='<a href="'.DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1">'.$langs->trans("GoToGanttView").'<span class="paddingleft fa fa-calendar-minus-o valignmiddle"></span></a>';
+	$linktotasks = dolGetButtonTitle($langs->trans('GoToGanttView'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1', '', 1, array('morecss'=>'reposition'));
 
-	//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
-	print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'title_generic.png');
+	//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'generic', 0, '', '', 0, 1);
+	print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'generic');
 
 	// Get list of tasks in tasksarray and taskarrayfiltered
 	// We need all tasks (even not limited to a user because a task to user can have a parent that is not affected to him).
 	$filteronthirdpartyid = $socid;
-	$tasksarray=$taskstatic->getTasksArray(0, 0, $object->id, $filteronthirdpartyid, 0, '', -1, $morewherefilter, 0, 0, 1);
+	$tasksarray=$taskstatic->getTasksArray(0, 0, $object->id, $filteronthirdpartyid, 0, '', -1, $morewherefilter, 0, 0, array(), 1);
 	// We load also tasks limited to a particular user
 	$tmpuser=new User($db);
 	if ($search_user_id > 0) $tmpuser->fetch($search_user_id);
@@ -714,7 +715,7 @@ elseif ($id > 0 || ! empty($ref))
 	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 
 	print '<div class="div-table-responsive">';
-	print '<table id="tablelines" class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'"">';
+	print '<table id="tablelines" class="tagtable nobottomiftotal liste'.($moreforfilter?" listwithfilterbefore":"").'">';
 
 	// Fields title search
 	print '<tr class="liste_titre_filter">';
@@ -751,11 +752,14 @@ elseif ($id > 0 || ! empty($ref))
 	print '<input class="flat" type="text" size="4" name="search_progresscalc" value="'.$search_progresscalc.'">';
 	print '</td>';
 
-	print '<td class="liste_titre right">';
-	print '<input class="flat" type="text" size="4" name="search_progressdeclare" value="'.$search_progressdeclare.'">';
-	print '</td>';
+    print '<td class="liste_titre right">';
+    print '<input class="flat" type="text" size="4" name="search_progressdeclare" value="'.$search_progressdeclare.'">';
+    print '</td>';
 
-	if ($object->bill_time)
+    // progress resume not searchable
+    print '<td class="liste_titre right"></td>';
+
+	if ($object->usage_bill_time)
 	{
     	print '<td class="liste_titre right">';
     	print '</td>';
@@ -767,7 +771,7 @@ elseif ($id > 0 || ! empty($ref))
 	if (! empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) print '<td></td>';
 
 	// Action column
-	print '<td class="liste_titre right">';
+	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto=$form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
@@ -783,10 +787,11 @@ elseif ($id > 0 || ! empty($ref))
 	print_liste_field_titre("TimeSpent", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("ProgressCalculated", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("ProgressDeclared", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
-	if ($object->bill_time)
+	print_liste_field_titre("TaskProgressSummary", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center ');
+	if ($object->usage_bill_time)
 	{
-	   print_liste_field_titre("TimeToBill", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
-	   print_liste_field_titre("TimeBilled", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre("TimeToBill", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre("TimeBilled", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
 	}
 	if (! empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) print_liste_field_titre("TaskRessourceLinks", $_SERVER["PHP_SELF"], '', '', '', $sortfield, $sortorder);
 	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', 'width="80"', $sortfield, $sortorder, 'center maxwidthsearch ');
@@ -796,13 +801,13 @@ elseif ($id > 0 || ! empty($ref))
 	{
 	    // Show all lines in taskarray (recursive function to go down on tree)
 		$j=0; $level=0;
-		$nboftaskshown=projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $object->id, 1, $object->id, $filterprogresscalc, ($object->bill_time?1:0));
+		$nboftaskshown=projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $object->id, 1, $object->id, $filterprogresscalc, ($object->usage_bill_time?1:0));
 	}
 	else
 	{
 	    $colspan=10;
-	    if ($object->bill_time) $colspan+=2;
-		print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoTasks").'</td></tr>';
+	    if ($object->usage_bill_time) $colspan+=2;
+		print '<tr class="oddeven nobottom"><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoTasks").'</span></td></tr>';
 	}
 
 	print "</table>";

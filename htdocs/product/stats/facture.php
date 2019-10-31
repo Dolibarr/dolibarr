@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -142,7 +142,7 @@ if ($id > 0 || ! empty($ref))
 
 		if ($showmessage && $nboflines > 1)
 		{
-			print $langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers"));
+			print '<span class="opacitymedium">'.$langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")).'</span>';
 		}
         elseif ($user->rights->facture->lire)
         {
@@ -235,7 +235,9 @@ if ($id > 0 || ! empty($ref))
 					{
                         $objp = $db->fetch_object($result);
 
-                        $total_ht+=$objp->total_ht;
+						if ($objp->type == Facture::TYPE_CREDIT_NOTE) $objp->qty=-($objp->qty);
+
+						$total_ht+=$objp->total_ht;
                         $total_qty+=$objp->qty;
 
                         $invoicestatic->id=$objp->facid;

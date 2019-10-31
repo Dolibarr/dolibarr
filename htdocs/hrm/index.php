@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2014	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2019           Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,6 +36,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 if ($conf->deplacement->enabled) require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 if ($conf->expensereport->enabled) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+
+$hookmanager = new HookManager($db);
+$hookmanager->initHooks('hrmindex');
 
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'holidays', 'trips', 'boxes'));
@@ -73,7 +77,7 @@ $childids[]=$user->id;
 
 llxHeader('', $langs->trans('HRMArea'));
 
-print load_fiche_titre($langs->trans("HRMArea"), '', 'title_hrm.png');
+print load_fiche_titre($langs->trans("HRMArea"), '', 'hrm');
 
 
 if (! empty($setupcompanynotcomplete))
@@ -110,6 +114,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
     	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<div class="div-table-responsive-no-min">';
     	print '<table class="noborder nohover centpercent">';
     	$i=0;
     	foreach($listofsearchfields as $key => $value)
@@ -122,6 +127,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     		$i++;
     	}
     	print '</table>';
+        print '</div>';
     	print '</form>';
     	print '<br>';
     }
@@ -134,9 +140,10 @@ if (! empty($conf->holiday->enabled))
 	{
 		$user_id = $user->id;
 
+        print '<div class="div-table-responsive-no-min">';
 	    print '<table class="noborder nohover" width="100%">';
 	    print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("Holidays").'</th></tr>';
-	    print "<tr ".$bc[0].">";
+	    print '<tr class="oddeven">';
 	    print '<td colspan="3">';
 
 	    $out='';
@@ -152,7 +159,7 @@ if (! empty($conf->holiday->enabled))
 
 	    print '</td>';
 	    print '</tr>';
-	    print '</table><br>';
+	    print '</table></div><br>';
 	}
 	elseif (! is_numeric($conf->global->HOLIDAY_HIDE_BALANCE))
 	{
@@ -192,8 +199,8 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
 
         $i = 0;
 
-        print '<div class="div-table-responsive">';
-        print '<table class="noborder" width="100%">';
+        print '<div class="div-table-responsive-no-min">';
+        print '<table class="noborder centpercent">';
         print '<tr class="liste_titre">';
         print '<th colspan="3">'.$langs->trans("BoxTitleLastLeaveRequests", min($max, $num)).'</th>';
         print '<th>'.$langs->trans("from").'</th>';
@@ -220,7 +227,7 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
 
                 print '<tr class="oddeven">';
                 print '<td class="nowraponall">'.$holidaystatic->getNomUrl(1).'</td>';
-                print '<td>'.$userstatic->getNomUrl(-1, 'leave').'</td>';
+                print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
                 print '<td>'.$typeleaves[$obj->fk_type]['label'].'</td>';
 
                 $starthalfday=($obj->halfday == -1 || $obj->halfday == 2)?'afternoon':'morning';
@@ -239,7 +246,8 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
         {
             print '<tr class="oddeven"><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
-        print '</table></div><br>';
+        print '</table>';
+        print '</div>';
     }
     else dol_print_error($db);
 }
@@ -267,8 +275,8 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 
 		$i = 0;
 
-		print '<div class="div-table-responsive">';
-		print '<table class="noborder" width="100%">';
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num)).'</th>';
 		print '<th class="right">'.$langs->trans("FeesKilometersOrAmout").'</th>';
@@ -298,7 +306,7 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">'.$deplacementstatic->getNomUrl(1).'</td>';
-				print '<td>'.$userstatic->getNomUrl(-1).'</td>';
+				print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1).'</td>';
 				print '<td class="right">'.$obj->km.'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
 				print '<td>'.$deplacementstatic->LibStatut($obj->fk_statut, 3).'</td>';
@@ -339,8 +347,8 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 
 		$i = 0;
 
-		print '<div class="div-table-responsive">';
-		print '<table class="noborder" width="100%">';
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num)).'</th>';
 		print '<th class="right">'.$langs->trans("TotalTTC").'</th>';
@@ -370,7 +378,7 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">'.$expensereportstatic->getNomUrl(1).'</td>';
-				print '<td>'.$userstatic->getNomUrl(-1).'</td>';
+				print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1).'</td>';
 				print '<td class="right">'.price($obj->total_ttc).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
 				print '<td>'.$expensereportstatic->LibStatut($obj->status, 3).'</td>';
@@ -391,6 +399,10 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 
 
 print '</div></div></div>';
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardHRM', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

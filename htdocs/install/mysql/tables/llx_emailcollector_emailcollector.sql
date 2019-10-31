@@ -11,7 +11,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see http://www.gnu.org/licenses/.
+-- along with this program.  If not, see https://www.gnu.org/licenses/.
 
 
 CREATE TABLE llx_emailcollector_emailcollector(
@@ -26,6 +26,7 @@ CREATE TABLE llx_emailcollector_emailcollector(
         password varchar(128),
         source_directory varchar(255) NOT NULL,
         target_directory varchar(255),
+        maxemailpercollect integer DEFAULT 100,
         datelastresult datetime, 
         codelastresult varchar(16), 
         lastresult varchar(255),
@@ -33,7 +34,7 @@ CREATE TABLE llx_emailcollector_emailcollector(
         note_public text, 
         note_private text, 
         date_creation datetime NOT NULL, 
-        tms timestamp NOT NULL, 
+        tms timestamp, 
         fk_user_creat integer NOT NULL, 
         fk_user_modif integer, 
         import_key varchar(14), 

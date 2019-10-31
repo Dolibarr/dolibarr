@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -45,8 +45,8 @@ $action=GETPOST('action', 'alpha');
 $mode=$dolibarr_main_authentication;
 if (! $mode) $mode='http';
 
-$username = GETPOST('username', 'alpha');
-$passwordhash = GETPOST('passwordhash', 'alpha');
+$username = trim(GETPOST('username', 'alpha'));
+$passwordhash = trim(GETPOST('passwordhash', 'alpha'));
 $conf->entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : 1);
 
 // Instantiate hooks of thirdparty module only if not already define
@@ -104,6 +104,11 @@ if ($action == 'buildnewpassword' && $username)
     {
         $edituser = new User($db);
         $result=$edituser->fetch('', $username, '', 1);
+        if ($result == 0 && preg_match('/@/', $username))
+        {
+        	$result=$edituser->fetch('', '', '', 1, -1, $username);
+        }
+
         if ($result <= 0 && $edituser->error == 'USERNOTFOUND')
         {
             $message = '<div class="error">'.$langs->trans("ErrorLoginDoesNotExists", $username).'</div>';
@@ -126,9 +131,8 @@ if ($action == 'buildnewpassword' && $username)
                 else
                 {
                     // Success
-                    if ($edituser->send_password($user, $newpassword, 1) > 0)
+                    if ($edituser->send_password($edituser, $newpassword, 1) > 0)
                     {
-
                         $message = '<div class="ok">'.$langs->trans("PasswordChangeRequestSent", $edituser->login, dolObfuscateEmail($edituser->email)).'</div>';
                         $username='';
                     }

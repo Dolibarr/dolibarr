@@ -18,13 +18,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
 /**
  * \file		htdocs/accountancy/admin/defaultaccounts.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief		Setup page to configure accounting expert module
  */
 require '../../main.inc.php';
@@ -78,13 +78,11 @@ $list_account = array (
 
 $accounting_mode = empty($conf->global->ACCOUNTING_MODE) ? 'RECETTES-DEPENSES' : $conf->global->ACCOUNTING_MODE;
 
-
 if (GETPOST('change_chart', 'alpha'))
 {
     $chartofaccounts = GETPOST('chartofaccounts', 'int');
 
     if (! empty($chartofaccounts)) {
-
         if (! dolibarr_set_const($db, 'CHARTOFACCOUNTS', $chartofaccounts, 'chaine', 0, '', $conf->entity)) {
             $error ++;
         }
@@ -132,7 +130,7 @@ llxHeader();
 $linkback = '';
 print load_fiche_titre($langs->trans('MenuDefaultAccounts'), $linkback, 'title_accountancy');
 
-print $langs->trans("DefaultBindingDesc").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("DefaultBindingDesc").'</span><br>';
 print '<br>';
 
 print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
@@ -145,7 +143,6 @@ print '<input type="hidden" name="action" value="update">';
 print '<table class="noborder" width="100%">';
 
 foreach ($list_account_main as $key) {
-
     print '<tr class="oddeven value">';
     // Param
     $label = $langs->trans($key);
@@ -173,7 +170,6 @@ print '<br>';
 print '<table class="noborder" width="100%">';
 
 foreach ($list_account as $key) {
-
 	print '<tr class="oddeven value">';
 	// Param
 	$label = $langs->trans($key);

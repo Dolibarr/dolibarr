@@ -11,7 +11,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see http://www.gnu.org/licenses/.
+-- along with this program.  If not, see https://www.gnu.org/licenses/.
 
 
 -- BEGIN MODULEBUILDER INDEXES
@@ -22,7 +22,7 @@ ALTER TABLE llx_bom_bom ADD INDEX idx_bom_bom_status (status);
 ALTER TABLE llx_bom_bom ADD INDEX idx_bom_bom_fk_product (fk_product);
 -- END MODULEBUILDER INDEXES
 
---ALTER TABLE llx_bom_bom ADD UNIQUE INDEX uk_bom_bom_fieldxy(fieldx, fieldy);
+ALTER TABLE llx_bom_bom ADD UNIQUE INDEX uk_bom_bom_ref(ref, entity);
 
 --ALTER TABLE llx_bom_bom ADD CONSTRAINT llx_bom_bom_fk_field FOREIGN KEY (fk_field) REFERENCES llx_bom_myotherobject(rowid);
 

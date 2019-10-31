@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -80,6 +80,8 @@ function emailcollectorPrepareHead($object)
 	//	'entity:-tabname:Title:@emailcollector:/emailcollector/mypage.php?id=__ID__'
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'emailcollector');
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'emailcollector', 'remove');
 
 	return $head;
 }

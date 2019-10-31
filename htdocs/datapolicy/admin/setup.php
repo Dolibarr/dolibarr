@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -122,7 +122,7 @@ llxHeader('', $langs->trans($page_name));
 // Subheader
 $linkback = '<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
 
-print load_fiche_titre($langs->trans($page_name), $linkback, 'object_datapolicy@datapolicy');
+print load_fiche_titre($langs->trans($page_name), $linkback, 'object_generic');
 
 // Configuration header
 $head = datapolicyAdminPrepareHead();

@@ -1,6 +1,6 @@
 <?php
 // Add line to select existing file
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES))
 {
     print '<!-- expensereport_linktofile.tpl.php -->'."\n";
 
@@ -17,35 +17,41 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
         print '<tr class="trattachnewfilenow'.(empty($tredited)?' oddeven nohover':' '.$tredited).'"'.(! GETPOSTISSET('sendit') && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display: none"':'').'>';
         print '<td colspan="'.$colspan.'">';
         //print '<span class="opacitymedium">'.$langs->trans("AttachTheNewLineToTheDocument").'</span><br>';
-        $modulepart='expensereport';$maxheightmini=48;
+        $modulepart='expensereport'; $maxheightmini=48;
         $relativepath=(! empty($object->ref)?dol_sanitizeFileName($object->ref):'').'/';
+        $filei=0;
         foreach($arrayoffiles as $file)
         {
-            print '<div class="inline-block margintoponly marginleftonly marginrightonly center">';
-            $fileinfo = pathinfo($file['name']);
+            $urlforhref=array();
+            $filei++;
+
+            print '<div class="inline-block margintoponly marginleftonly marginrightonly center valigntop">';
+            $fileinfo = pathinfo($file['fullname']);
             if (image_format_supported($file['name']) > 0)
             {
                 $minifile=getImageFileNameForSize($file['name'], '_mini'); // For new thumbs using same ext (in lower case however) than original
                 //print $file['path'].'/'.$minifile.'<br>';
-                $urlforhref=getAdvancedPreviewUrl($modulepart, $fileinfo['relativename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(!empty($object->entity)?$object->entity:$conf->entity));
+                $urlforhref=getAdvancedPreviewUrl($modulepart, $relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(!empty($object->entity)?$object->entity:$conf->entity));
                 if (empty($urlforhref)) {
                     $urlforhref=DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($fileinfo['relativename'].'.'.strtolower($fileinfo['extension']));
                     print '<a href="'.$urlforhref.'" class="aphoto" target="_blank">';
                 } else {
                     print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
                 }
-                print '<div class="photoref">';
+                print '<div class="photoref backgroundblank">';
                 print '<img class="photoexpensereport photorefcenter" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity)?$object->entity:$conf->entity).'&file='.urlencode($relativepath.$minifile).'" title="">';
                 print '</div>';
                 print '</a>';
             }
             else
             {
-                $modulepart='expensereport';
-                print '<a href=""><div class="photoref">';
-                $thumbshown=0;
+                $error=0;
+                $thumbshown='';
+
                 if (preg_match('/\.pdf$/i', $file['name']))
                 {
+                    $urlforhref = getAdvancedPreviewUrl($modulepart, $relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(!empty($object->entity)?$object->entity:$conf->entity));
+
                     $filepdf = $conf->expensereport->dir_output.'/'.$relativepath.$file['name'];
                     $fileimage = $conf->expensereport->dir_output.'/'.$relativepath.$file['name'].'_preview.png';
                     $relativepathimage = $relativepath.$file['name'].'_preview.png';
@@ -73,16 +79,20 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
                         // If the preview file is found
                         if (file_exists($fileimage))
                         {
-                            $thumbshown=1;
-                            print '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
+                            $thumbshown='<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
                         }
                     }
                 }
 
-                if (! $thumbshown)
-                {
-                    print img_mime($minifile);
+                if (empty($urlforhref) || empty($thumbshown)) {
+                    print '<a href="#" class="aphoto" target="_blank">';
+                } else {
+                    print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
                 }
+                print '<div class="photoref backgroundblank">';
+
+                print $thumbshown ? $thumbshown : img_mime($minifile);
+
                 print '</div></a>';
             }
             print '<br>';
@@ -106,9 +116,19 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
             {
                 $checked=' checked';
             }
-            print '<div class="margintoponly"><input type="radio"'.$checked.' name="attachfile[]" value="'.$file['relativename'].'"> '.$file['relativename'].'</div>';
+            print '<div class="margintoponly maxwidth150"><input type="checkbox"'.$checked.' id="radio'.$filei.'" name="attachfile[]" class="checkboxattachfile" value="'.$file['relativename'].'">';
+            print '<label class="wordbreak checkboxattachfilelabel" for="radio'.$filei.'"> '.$file['relativename'].'</label>';
+            print '</div>';
+
             print '</div>';
         }
+
+        print '<script>';
+        print '$(document).ready(function() {';
+        print "$('.checkboxattachfile').on('change', function() { $('.checkboxattachfile').not(this).prop('checked', false); });";
+        print '});';
+        print '</script>';
+
         print '</td></tr>';
     }
     else

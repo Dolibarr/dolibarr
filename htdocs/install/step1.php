@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -80,6 +80,7 @@ if (@file_exists($forcedfile)) {
 	// If forced install is enabled, replace the post values. These are empty because form fields are disabled.
 	if ($force_install_noedit) {
 		$main_dir = detect_dolibarr_main_document_root();
+		if (!empty($argv[1])) $main_dir = $argv[1]; // override when executing the script in command line
 		if (!empty($force_install_main_data_root)) {
 			$main_data_dir = $force_install_main_data_root;
 		} else {
@@ -366,7 +367,7 @@ if (! $error && $db->connected && $action == "set")
 
             print "<tr><td>";
             print $langs->trans("ErrorDirDoesNotExists", $main_dir).'<br>';
-            print $langs->trans("ErrorWrongValueForParameter", $langs->trans("WebPagesDirectory")).'<br>';
+            print $langs->trans("ErrorWrongValueForParameter", $langs->transnoentitiesnoconv("WebPagesDirectory")).'<br>';
             print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
             print '</td><td>';
             print $langs->trans("Error");
@@ -573,6 +574,7 @@ if (! $error && $db->connected && $action == "set")
 
                     // Create user
                     $result=$db->DDLCreateUser($dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name);
+
                     // Create user bis
                     if ($databasefortest == 'mysql')
                     {
@@ -584,7 +586,6 @@ if (! $error && $db->connected && $action == "set")
 
                     if ($result > 0 && $resultbis > 0)
                     {
-
                         print '<tr><td>';
                         print $langs->trans("UserCreation").' : ';
                         print $dolibarr_main_db_user;
@@ -611,7 +612,7 @@ if (! $error && $db->connected && $action == "set")
                             print $langs->trans("UserCreation").' : ';
                             print $dolibarr_main_db_user;
                             print '</td>';
-                            print '<td>'.$langs->trans("Error").': '.$db->errno().' '.$db->error()."</td></tr>";
+                            print '<td>'.$langs->trans("Error").': '.$db->errno().' '.$db->error().($db->error ? '. '.$db->error : '')."</td></tr>";
                         }
                     }
 

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Path to WSDL is: http://localhost/dolibarr/webservices/server_productorservice.php?wsdl
  */
@@ -130,21 +130,28 @@ $productorservice_fields = array(
     'images' => array('name'=>'images','type'=>'tns:ImagesArray')
 );
 
+
+$elementtype = 'product';
+
+
 //Retreive all extrafield for product
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label('product', true);
+$extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields) > 0) {
 	$extrafield_array = array();
 }
-foreach($extrafields->attribute_label as $key=>$label)
+if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 {
-	$type =$extrafields->attribute_type[$key];
-	if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
-	else {$type='xsd:string';}
+	foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	{
+		$type =$extrafields->attributes[$elementtype]['type'][$key];
+		if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
+		else {$type='xsd:string';}
 
-	$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+		$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+	}
 }
 
 if (is_array($extrafield_array)) $productorservice_fields=array_merge($productorservice_fields, $extrafield_array);
@@ -358,7 +365,6 @@ function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = ''
 
     if (! $error)
     {
-
     	$langcode=($lang?$lang:(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
     	$langs->setDefaultLang($langcode);
 
@@ -421,16 +427,21 @@ function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = ''
             		'images' => $product->liste_photos($dir, $nbmax)
             	);
 
+            	$elementtype = 'product';
+
                 //Retreive all extrafield for thirdsparty
             	// fetch optionals attributes and labels
             	$extrafields=new ExtraFields($db);
-            	$extralabels=$extrafields->fetch_name_optionals_label('product', true);
+            	$extrafields->fetch_name_optionals_label($elementtype, true);
             	//Get extrafield values
             	$product->fetch_optionals();
 
-            	foreach($extrafields->attribute_label as $key=>$label)
+            	if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
             	{
-            		$productorservice_result_fields=array_merge($productorservice_result_fields, array('options_'.$key => $product->array_options['options_'.$key]));
+            		foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	            	{
+	            		$productorservice_result_fields=array_merge($productorservice_result_fields, array('options_'.$key => $product->array_options['options_'.$key]));
+	            	}
             	}
 
                 // Create
@@ -494,7 +505,7 @@ function createProductOrService($authentication, $product)
 
     if ($product['barcode'] && !$product['barcode_type'])
     {
-	$errror++; $errorcode='KO' ; $errorlabel="You must set a barcode type when setting a barcode.";
+        $errror++; $errorcode='KO' ; $errorlabel="You must set a barcode type when setting a barcode.";
     }
 
 
@@ -550,12 +561,17 @@ function createProductOrService($authentication, $product)
         //var_dump($product['ref_ext']);
         //var_dump($product['lines'][0]['type']);
 
+        $elementtype = 'product';
+
         $extrafields=new ExtraFields($db);
-		$extralabels=$extrafields->fetch_name_optionals_label('product', true);
-		foreach($extrafields->attribute_label as $key=>$label)
+        $extrafields->fetch_name_optionals_label($elementtype, true);
+		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
-			$key='options_'.$key;
-			$newobject->array_options[$key]=$product[$key];
+			foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+			{
+				$key='options_'.$key;
+				$newobject->array_options[$key]=$product[$key];
+			}
 		}
 
         $db->begin();
@@ -719,12 +735,17 @@ function updateProductOrService($authentication, $product)
         //var_dump($product['ref_ext']);
         //var_dump($product['lines'][0]['type']);
 
+        $elementtype = 'product';
+
 		$extrafields=new ExtraFields($db);
-		$extralabels=$extrafields->fetch_name_optionals_label('product', true);
-		foreach($extrafields->attribute_label as $key=>$label)
+		$extrafields->fetch_name_optionals_label($elementtype, true);
+		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
-			$key='options_'.$key;
-			$newobject->array_options[$key]=$product[$key];
+			foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+			{
+				$key='options_'.$key;
+				$newobject->array_options[$key]=$product[$key];
+			}
 		}
 
         $db->begin();
@@ -946,9 +967,9 @@ function getListOfProductsOrServices($authentication, $filterproduct)
         $sql.=" WHERE entity=".$conf->entity;
         foreach($filterproduct as $key => $val)
         {
-		if ($key == 'type' && $val >= 0)   	$sql.=" AND fk_product_type = ".$db->escape($val);
-		if ($key == 'status_tosell') 				$sql.=" AND tosell = ".$db->escape($val);
-		if ($key == 'status_tobuy')  				$sql.=" AND tobuy = ".$db->escape($val);
+		    if ($key == 'type' && $val >= 0) $sql.=" AND fk_product_type = ".$db->escape($val);
+		    if ($key == 'status_tosell') $sql.=" AND tosell = ".$db->escape($val);
+		    if ($key == 'status_tobuy') $sql.=" AND tobuy = ".$db->escape($val);
         }
 		$resql=$db->query($sql);
         if ($resql)
@@ -1092,16 +1113,21 @@ function getProductsForCategory($authentication, $id, $lang = '')
 								'images' => $tmpproduct->liste_photos($dir, $nbmax)
 							);
 
+							$elementtype = 'product';
+
 							//Retreive all extrafield for thirdsparty
 							// fetch optionals attributes and labels
 							$extrafields=new ExtraFields($db);
-							$extralabels=$extrafields->fetch_name_optionals_label('product', true);
+							$extrafields->fetch_name_optionals_label($elementtype, true);
 							//Get extrafield values
 							$tmpproduct->fetch_optionals();
 
-							foreach($extrafields->attribute_label as $key=>$label)
+							if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 							{
-								$products[$iProduct]=array_merge($products[$iProduct], array('options_'.$key => $tmpproduct->array_options['options_'.$key]));
+								foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+								{
+									$products[$iProduct]=array_merge($products[$iProduct], array('options_'.$key => $tmpproduct->array_options['options_'.$key]));
+								}
 							}
 
 							$iProduct++;

@@ -159,7 +159,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 
         // ----- Your code end here -----
 
-        return parent::add_to_target($mailing_id, $cibles);
+        return parent::addTargetsToDatabase($mailing_id, $cibles);
     }
 
 

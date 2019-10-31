@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -43,7 +43,7 @@ llxHeader("", $langs->trans("Tools"), "");
 
 $text=$langs->trans("Tools");
 
-print load_fiche_titre($text);
+print load_fiche_titre($text, '', 'wrench');
 
 // Show description of content
 print '<div class="justify">'.$langs->trans("ToolsDesc").'</div><br><br>';

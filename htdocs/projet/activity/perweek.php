@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -121,10 +121,9 @@ $object=new Task($db);
 // Extra fields
 $extrafields = new ExtraFields($db);
 
-$extralabels = array();
 // fetch optionals attributes and labels
-//$extralabels += $extrafields->fetch_name_optionals_label('projet');
-$extralabels += $extrafields->fetch_name_optionals_label('projet_task');
+//$extrafields->fetch_name_optionals_label('projet');
+$extrafields->fetch_name_optionals_label('projet_task');
 
 $arrayfields=array();
 /*$arrayfields=array(
@@ -133,7 +132,7 @@ $arrayfields=array();
     'p.fk_opp_status'=>array('label'=>$langs->trans("OpportunityStatusShort"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>104),
     'p.opp_percent'=>array('label'=>$langs->trans("OpportunityProbabilityShort"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>105),
     'p.budget_amount'=>array('label'=>$langs->trans("Budget"), 'checked'=>0, 'position'=>110),
-    'p.bill_time'=>array('label'=>$langs->trans("BillTimeShort"), 'checked'=>0, 'position'=>115),
+    'p.usage_bill_time'=>array('label'=>$langs->trans("BillTimeShort"), 'checked'=>0, 'position'=>115),
 );*/
 $arrayfields['t.planned_workload']=array('label'=>'PlannedWorkload', 'checked'=>1, 'enabled'=>1, 'position'=>0);
 $arrayfields['t.progress']=array('label'=>'ProgressDeclared', 'checked'=>1, 'enabled'=>1, 'position'=>0);
@@ -435,7 +434,7 @@ $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0, $usertoprocess, ($proj
 
 llxHeader("", $title, "", '', '', '', array('/core/js/timesheet.js'));
 
-//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'title_project');
+//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'project');
 
 $param='';
 $param.=($mode?'&mode='.urlencode($mode):'');
@@ -564,7 +563,7 @@ if (! empty($conf->categorie->enabled))
 // If the user can view user other than himself
 $moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.='<div class="inline-block hideonsmartphone">'.$langs->trans('User'). ' </div>';
-$includeonly='hierachyme';
+$includeonly='hierarchyme';
 if (empty($user->rights->user->user->lire)) $includeonly=array($user->id);
 $moreforfilter.=$form->select_dolusers($search_usertoprocessid?$search_usertoprocessid:$usertoprocess->id, 'search_usertoprocessid', $user->rights->user->user->lire?0:0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200');
 $moreforfilter.='</div>';
@@ -640,26 +639,26 @@ print '</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td>'.$langs->trans("Project").'</td>';
-if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td>'.$langs->trans("ThirdParty").'</td>';
-print '<td>'.$langs->trans("Task").'</td>';
+if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<th>'.$langs->trans("Project").'</th>';
+if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<th>'.$langs->trans("ThirdParty").'</th>';
+print '<th>'.$langs->trans("Task").'</th>';
 // TASK fields
 $extrafieldsobjectkey='projet_task';
 $extrafieldsobjectprefix='efpt.';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 if (! empty($arrayfields['t.planned_workload']['checked']))
 {
-    print '<td class="leftborder plannedworkload maxwidth75 right">'.$langs->trans("PlannedWorkload").'</td>';
+    print '<th class="leftborder plannedworkload maxwidth75 right">'.$langs->trans("PlannedWorkload").'</th>';
 }
 if (! empty($arrayfields['t.progress']['checked']))
 {
-    print '<td class="maxwidth75 right">'.$langs->trans("ProgressDeclared").'</td>';
+    print '<th class="maxwidth75 right">'.$langs->trans("ProgressDeclared").'</th>';
 }
 /*print '<td class="maxwidth75 right">'.$langs->trans("TimeSpent").'</td>';
  if ($usertoprocess->id == $user->id) print '<td class="maxwidth75 right">'.$langs->trans("TimeSpentByYou").'</td>';
  else print '<td class="maxwidth75 right">'.$langs->trans("TimeSpentByUser").'</td>';*/
-print '<td class="maxwidth75 right">'.$langs->trans("TimeSpent").'<br>('.$langs->trans("Everybody").')</td>';
-print '<td class="maxwidth75 right">'.$langs->trans("TimeSpent").($usertoprocess->firstname?'<br>('.dol_trunc($usertoprocess->firstname, 10).')':'').'</td>';
+print '<th class="maxwidth75 right">'.$langs->trans("TimeSpent").'<br>('.$langs->trans("Everybody").')</th>';
+print '<th class="maxwidth75 right">'.$langs->trans("TimeSpent").($usertoprocess->firstname?'<br>('.dol_trunc($usertoprocess->firstname, 10).')':'').'</th>';
 
 for ($idw=0; $idw<7; $idw++)
 {
@@ -679,7 +678,7 @@ for ($idw=0; $idw<7; $idw++)
 	elseif (! $isavailable[$tmpday]['morning'])   $cssonholiday.='onholidaymorning ';
 	elseif (! $isavailable[$tmpday]['afternoon']) $cssonholiday.='onholidayafternoon ';
 
-	print '<td width="6%" align="center" class="bold hide'.$idw.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'">'.dol_print_date($dayinloopfromfirstdaytoshow, '%a').'<br>'.dol_print_date($dayinloopfromfirstdaytoshow, 'dayreduceformat').'</td>';
+	print '<th width="6%" align="center" class="bold hide'.$idw.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'">'.dol_print_date($dayinloopfromfirstdaytoshow, '%a').'<br>'.dol_print_date($dayinloopfromfirstdaytoshow, 'dayreduceformat').'</th>';
 }
 //print '<td></td>';
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
@@ -730,7 +729,7 @@ if (count($tasksarray) > 0)
 
 	$j=0;
 	$level=0;
-	$totalforvisibletasks = projectLinesPerWeek($j, $firstdaytoshow, $usertoprocess, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask, $isavailable, 0, $arrayfields, $extrafields, $extralabels);
+	$totalforvisibletasks = projectLinesPerWeek($j, $firstdaytoshow, $usertoprocess, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask, $isavailable, 0, $arrayfields, $extrafields);
 	//var_dump($totalforvisibletasks);
 
 	// Show total for all other tasks
@@ -814,23 +813,23 @@ if (count($tasksarray) > 0)
 				print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
 				print '</td>';
 
-				for ($idw = 0; $idw < 7; $idw++)
+		for ($idw = 0; $idw < 7; $idw++)
 				{
-					$cssweekend='';
-					if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
-					{
-						$cssweekend='weekend';
-					}
+			$cssweekend='';
+			if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+			{
+				$cssweekend='weekend';
+			}
 
-					$tmpday=dol_time_plus_duree($firstdaytoshow, $idw, 'd');
+			$tmpday=dol_time_plus_duree($firstdaytoshow, $idw, 'd');
 
-					$cssonholiday='';
-					if (! $isavailable[$tmpday]['morning'] && ! $isavailable[$tmpday]['afternoon'])   $cssonholiday.='onholidayallday ';
-					elseif (! $isavailable[$tmpday]['morning'])   $cssonholiday.='onholidaymorning ';
-					elseif (! $isavailable[$tmpday]['afternoon']) $cssonholiday.='onholidayafternoon ';
+			$cssonholiday='';
+			if (! $isavailable[$tmpday]['morning'] && ! $isavailable[$tmpday]['afternoon'])   $cssonholiday.='onholidayallday ';
+			elseif (! $isavailable[$tmpday]['morning'])   $cssonholiday.='onholidaymorning ';
+			elseif (! $isavailable[$tmpday]['afternoon']) $cssonholiday.='onholidayafternoon ';
 
-					print '<td class="liste_total hide'.$idw.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'" align="center"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
-				}
+			print '<td class="liste_total hide'.$idw.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'" align="center"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
+		}
                 print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>
     	</tr>';
 	}

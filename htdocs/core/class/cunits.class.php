@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -92,6 +92,7 @@ class CUnits // extends CommonObject
 		if (isset($this->short_label)) $this->libelle=trim($this->short_label);
 		if (isset($this->unit_type)) $this->active=trim($this->unit_type);
 		if (isset($this->active)) $this->active=trim($this->active);
+		if (isset($this->scale)) $this->scale=trim($this->scale);
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -103,12 +104,14 @@ class CUnits // extends CommonObject
 		$sql.= "label,";
 		$sql.= "short_label,";
 		$sql.= "unit_type";
+		$sql.= "scale";
         $sql.= ") VALUES (";
 		$sql.= " ".(! isset($this->id)?'NULL':"'".$this->db->escape($this->id)."'").",";
 		$sql.= " ".(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").",";
 		$sql.= " ".(! isset($this->label)?'NULL':"'".$this->db->escape($this->label)."'").",";
 		$sql.= " ".(! isset($this->short_label)?'NULL':"'".$this->db->escape($this->short_label)."'").",";
 		$sql.= " ".(! isset($this->unit_type)?'NULL':"'".$this->db->escape($this->unit_type)."'");
+		$sql.= " ".(! isset($this->scale)?'NULL':"'".$this->db->escape($this->scale)."'");
 		$sql.= ")";
 
 		$this->db->begin();
@@ -157,11 +160,11 @@ class CUnits // extends CommonObject
     /**
      *  Load object in memory from database
      *
-     *  @param      int		$id    	Id object
-     *  @param		string	$code	Code
-     *  @param		string	$short_label	Short Label
-     *  @param		string	$unit_type	unit type
-     *  @return     int		<0 if KO, >0 if OK
+     *  @param      int		$id    			Id object
+     *  @param		string	$code			Code
+     *  @param		string	$short_label	Short Label ('g', 'kg', ...)
+     *  @param		string	$unit_type		Unit type ('size', 'surface', 'volume', 'weight', ...)
+     *  @return     int						<0 if KO, >0 if OK
      */
     public function fetch($id, $code = '', $short_label = '', $unit_type = '')
     {
@@ -172,7 +175,9 @@ class CUnits // extends CommonObject
 		$sql.= " t.code,";
 		$sql.= " t.label,";
 		$sql.= " t.short_label,";
+		$sql.= " t.scale,";
 		$sql.= " t.unit_type,";
+		$sql.= " t.scale,";
 		$sql.= " t.active";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_units as t";
         $sql_where=array();
@@ -195,7 +200,9 @@ class CUnits // extends CommonObject
 				$this->code = $obj->code;
 				$this->label = $obj->label;
 				$this->short_label = $obj->short_label;
+				$this->scale = $obj->scale;
 				$this->unit_type = $obj->unit_type;
+				$this->scale = $obj->scale;
 				$this->active = $obj->active;
             }
             $this->db->free($resql);
@@ -227,22 +234,21 @@ class CUnits // extends CommonObject
 
     	dol_syslog(__METHOD__, LOG_DEBUG);
 
-    	$records=array();
-
     	$sql = 'SELECT';
     	$sql.= " t.rowid,";
     	$sql.= " t.code,";
     	$sql.= " t.label,";
     	$sql.= " t.short_label,";
     	$sql.= " t.unit_type,";
+    	$sql.= " t.scale,";
     	$sql.= " t.active";
     	$sql .= ' FROM ' . MAIN_DB_PREFIX . 'c_units as t';
     	// Manage filter
     	$sqlwhere = array();
     	if (count($filter) > 0) {
     		foreach ($filter as $key => $value) {
-    			if ($key=='t.rowid' || $key=='t.active') {
-    				$sqlwhere[] = $key . '='. $value;
+    			if ($key=='t.rowid' || $key=='t.active' || $key=='t.scale') {
+    				$sqlwhere[] = $key . '='. (int) $value;
     			}
     			elseif (strpos($key, 'date') !== false) {
     				$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
@@ -265,6 +271,7 @@ class CUnits // extends CommonObject
     	if (!empty($limit)) {
     		$sql .=  ' ' . $this->db->plimit($limit, $offset);
     	}
+
     	$resql = $this->db->query($sql);
     	if ($resql) {
     		$this->records=array();
@@ -279,6 +286,7 @@ class CUnits // extends CommonObject
 	    			$record->label = $obj->label;
 	    			$record->short_label = $obj->short_label;
 	    			$record->unit_type = $obj->unit_type;
+	    			$record->scale = $obj->scale;
 	    			$record->active = $obj->active;
 	    			$this->records[$record->id] = $record;
 	    		}
@@ -312,6 +320,7 @@ class CUnits // extends CommonObject
 		if (isset($this->label)) $this->libelle=trim($this->label);
 		if (isset($this->short_label)) $this->libelle=trim($this->short_label);
 		if (isset($this->unit_type)) $this->libelle=trim($this->unit_type);
+		if (isset($this->scale)) $this->scale=trim($this->scale);
 		if (isset($this->active)) $this->active=trim($this->active);
 
 		// Check parameters
@@ -323,6 +332,7 @@ class CUnits // extends CommonObject
 		$sql.= " label=".(isset($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
 		$sql.= " short_label=".(isset($this->short_label)?"'".$this->db->escape($this->short_label)."'":"null").",";
 		$sql.= " unit_type=".(isset($this->unit_type)?"'".$this->db->escape($this->unit_type)."'":"null").",";
+		$sql.= " scale=".(isset($this->scale)?"'".$this->db->escape($this->scale)."'":"null").",";
 		$sql.= " active=".(isset($this->active)?$this->active:"null");
         $sql.= " WHERE rowid=".$this->id;
 

@@ -16,13 +16,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/societe/consumption.php
  *  \ingroup    societe
- *	\brief      Add a tab on thirpdarty view to list all products/services bought or sells by thirdparty
+ *	\brief      Add a tab on thirdparty view to list all products/services bought or sells by thirdparty
  */
 
 require "../main.inc.php";
@@ -114,7 +114,7 @@ dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'n
 print '<div class="fichecenter">';
 
 print '<div class="underbanner clearboth"></div>';
-print '<table class="border" width="100%">';
+print '<table class="border centpercent tableforfield">';
 
 if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 {
@@ -305,19 +305,7 @@ if (!empty($sql_select))
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".$tables_from;
 	if ($type_element != 'fichinter') $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON d.fk_product = p.rowid ';
 	$sql.= $where;
-	if ($month > 0) {
-		if ($year > 0) {
-			$start = dol_mktime(0, 0, 0, $month, 1, $year);
-			$end = dol_time_plus_duree($start, 1, 'm') - 1;
-			$sql.= " AND ".$dateprint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
-		} else {
-			$sql.= " AND date_format(".$dateprint.", '%m') = '".sprintf('%02d', $month)."'";
-		}
-	} elseif ($year > 0) {
-		$start = dol_mktime(0, 0, 0, 1, 1, $year);
-		$end = dol_time_plus_duree($start, 1, 'y') - 1;
-		$sql.= " AND ".$dateprint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
-	}
+	$sql.= dolSqlDateFilter($dateprint, 0, $month, $year);
 	if ($sref) $sql.= " AND ".$doc_number." LIKE '%".$db->escape($sref)."%'";
 	if ($sprod_fulldescr)
 	{
@@ -396,7 +384,7 @@ if ($sql_select)
     print '</td>';
     print '<td class="liste_titre center">';
     print '</td>';
-    print '<td class="liste_titre right">';
+    print '<td class="liste_titre maxwidthsearch">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';
@@ -543,7 +531,6 @@ if ($sql_select)
 		else
 		{
 			if ($objp->fk_product > 0) {
-
 				echo $form->textwithtooltip($text, $description, 3, '', '', $i, 0, '');
 
 				// Show range
@@ -555,7 +542,6 @@ if ($sql_select)
 					print (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 				}
 			} else {
-
 				if (! empty($objp->label) || ! empty($objp->description))
 				{
 					if ($type==1) $text = img_object($langs->trans('Service'), 'service');
@@ -595,7 +581,7 @@ if ($sql_select)
 		print '</td>';
 
 		//print '<td class="left">'.$prodreftxt.'</td>';
-
+		if ($type_element == 'invoice' && $objp->doc_type == Facture::TYPE_CREDIT_NOTE) $objp->prod_qty=-($objp->prod_qty);
 		print '<td class="right">'.$objp->prod_qty.'</td>';
 		$total_qty+=$objp->prod_qty;
 

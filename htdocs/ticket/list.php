@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2018	Jean-François FERRY	<hello@librethic.io>
  * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
  * Copyright (C) 2018		Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2019		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,7 +35,7 @@ include_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 include_once DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("ticket","companies","other","projects"));
+$langs->loadLangs(array("ticket", "companies", "other", "projects"));
 
 
 // Get parameters
@@ -52,7 +53,8 @@ $id			= GETPOST('id', 'int');
 $msg_id     = GETPOST('msg_id', 'int');
 $socid      = GETPOST('socid', 'int');
 $projectid  = GETPOST('projectid', 'int');
-$search_fk_soc=GETPOST('$search_fk_soc', 'int')?GETPOST('$search_fk_soc', 'int'):GETPOST('socid', 'int');
+$project_ref= GETPOST('project_ref', 'alpha');
+$search_societe = GETPOST('search_societe', 'alpha');
 $search_fk_project=GETPOST('search_fk_project', 'int')?GETPOST('search_fk_project', 'int'):GETPOST('projectid', 'int');
 $search_fk_status = GETPOST('search_fk_statut', 'array');
 $mode       = GETPOST('mode', 'alpha');
@@ -75,7 +77,7 @@ if ($socid > 0)       $hookmanager->initHooks(array('thirdpartyticket'));
 elseif ($project > 0) $hookmanager->initHooks(array('projectticket'));
 else $hookmanager->initHooks(array('ticketlist'));
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('ticket');
+$extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Default sort order (if not yet defined by previous GETPOST)
@@ -129,6 +131,13 @@ if (!$user->rights->ticket->read) {
 // Store current page url
 $url_page_current = dol_buildpath('/ticket/list.php', 1);
 
+if ($project_ref)
+{
+	$tmpproject = new Project($db);
+	$tmpproject->fetch(0, $project_ref);
+	$projectid = $tmpproject->id;
+	$search_fk_project = $projectid;
+}
 
 
 /*
@@ -208,16 +217,20 @@ $sql.=$hookmanager->resPrint;
 $sql=preg_replace('/, $/', '', $sql);
 $sql.= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
-if ($object->ismultientitymanaged == 1) $sql.= " WHERE t.entity IN (".getEntity($object->element).")";
-else $sql.=" WHERE 1 = 1";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (t.fk_soc = s.rowid)";
+$sql.= " WHERE t.entity IN (".getEntity($object->element).")";
+if ($socid > 0)
+{
+	$sql.= " AND t.fk_soc = ".$socid;
+}
 
 foreach($search as $key => $val)
 {
     if ($key == 'fk_statut')
 	{
 	    $tmpstatus='';
-	    if ($search['fk_statut'] == 'openall' || in_array('openall', $search['fk_statut'])) $tmpstatus.=($tmpstatus?',':'')."'0', '1', '3', '4', '5', '6'";
-	    if ($search['fk_statut'] == 'closeall' || in_array('closeall', $search['fk_statut'])) $tmpstatus.=($tmpstatus?',':'')."'8', '9'";
+	    if ($search['fk_statut'] == 'openall' || in_array('openall', $search['fk_statut'])) $tmpstatus.=($tmpstatus?',':'')."'".Ticket::STATUS_NOT_READ."', '".Ticket::STATUS_READ."', '".Ticket::STATUS_ASSIGNED."', '".Ticket::STATUS_IN_PROGRESS."', '".Ticket::STATUS_NEED_MORE_INFO."', '".Ticket::STATUS_WAITING."'";
+	    if ($search['fk_statut'] == 'closeall' || in_array('closeall', $search['fk_statut'])) $tmpstatus.=($tmpstatus?',':'')."'".Ticket::STATUS_CLOSED."', '".Ticket::STATUS_CANCELED."'";
 	    if ($tmpstatus) $sql.=" AND fk_statut IN (".$tmpstatus.")";
 	    elseif (is_array($search[$key]) && count($search[$key])) $sql.=natural_search($key, join(',', $search[$key]), 2);
 	    continue;
@@ -231,7 +244,7 @@ foreach($search as $key => $val)
     if ($search[$key] != '') $sql.=natural_search($key, $search[$key], $mode_search);
 }
 if ($search_all) $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
-if ($search_fk_soc)     $sql.= natural_search('fk_soc', $search_fk_soc, 2);
+if ($search_societe)     $sql .= natural_search('s.nom', $search_societe);
 if ($search_fk_project) $sql.= natural_search('fk_project', $search_fk_project, 2);
 if (! $user->societe_id && ($mode == "mine" || (!$user->admin && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY))) {
     $sql.= " AND (t.fk_user_assign = ".$user->id;
@@ -295,11 +308,10 @@ if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && 
 llxHeader('', $title, $help_url);
 
 
-if ($socid && !$projectid && $user->rights->societe->lire) {
+if ($socid && ! $projectid && ! $project_ref && $user->rights->societe->lire) {
     $socstat = new Societe($db);
     $res = $socstat->fetch($socid);
     if ($res > 0) {
-
     	$tmpobject = $object;
     	$object = $socstat;		// $object must be of type Societe when calling societe_prepare_head
         $head = societe_prepare_head($socstat);
@@ -312,7 +324,7 @@ if ($socid && !$projectid && $user->rights->societe->lire) {
         print '<div class="fichecenter">';
 
         print '<div class="underbanner clearboth"></div>';
-        print '<table class="border centpercent">';
+        print '<table class="border centpercent tableforfield">';
 
         // Customer code
         if ($socstat->client && !empty($socstat->code_client)) {
@@ -345,9 +357,10 @@ if ($socid && !$projectid && $user->rights->societe->lire) {
     }
 }
 
-if ($projectid > 0) {
+if ($projectid > 0 || $project_ref) {
     $projectstat = new Project($db);
-    if ($projectstat->fetch($projectid) > 0) {
+    if ($projectstat->fetch($projectid, $project_ref) > 0) {
+    	$projectid = $projectstat->id;
         $projectstat->fetch_thirdparty();
 
         $savobject = $object;
@@ -383,7 +396,7 @@ if ($projectid > 0) {
         	$object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',', array_keys($objectsListId)):'0').")";
         }
 
-        dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+        dol_banner_tab($object, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
         print '<div class="fichecenter">';
         print '<div class="underbanner clearboth"></div>';
@@ -449,14 +462,12 @@ if ($socid)     print '<input type="hidden" name="socid" value="' . $socid . '" 
 if ($projectid) print '<input type="hidden" name="projectid" value="' . $projectid . '" >';
 
 $newcardbutton='';
-if ($user->rights->ticket->write)
-{
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/ticket/card.php?action=create' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : '') . '"><span class="valignmiddle text-plus-circle">' . $langs->trans('NewTicket').'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
-}
+$newcardbutton.= dolGetButtonTitle($langs->trans('NewTicket'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/ticket/card.php?action=create' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : ''), '', !empty($user->rights->ticket->write));
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_ticket', 0, $newcardbutton, '', $limit);
+$picto = 'ticket';
+if ($socid > 0) $picto = '';
+
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit);
 
 if ($mode == 'mine') {
     print '<div class="opacitymedium">' . $langs->trans('TicketAssignedToMeInfos') . '</div><br>';
@@ -504,22 +515,23 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 print '<tr class="liste_titre">';
 foreach($object->fields as $key => $val)
 {
-	$cssforfield='';
-	if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
-	if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
-	if ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
+	$cssforfield=(empty($val['css'])?'':$val['css']);
+	if ($key == 'fk_statut') $cssforfield.=($cssforfield?' ':'').'center';
+	elseif (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
+	elseif (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
+	elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $val['label'] != 'TechnicalID') $cssforfield.=($cssforfield?' ':'').'right';
 	if (! empty($arrayfields['t.'.$key]['checked'])) {
 		if ($key == 'type_code') {
 			print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
-			$formTicket->selectTypesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 0, 1, 1, 0, ($val['css']?$val['css']:'maxwidth150'));
+			$formTicket->selectTypesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css']?$val['css']:'maxwidth150'));
 			print '</td>';
 		} elseif ($key == 'category_code') {
 			print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
-			$formTicket->selectGroupTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 0, 1, 1, 0, ($val['css']?$val['css']:'maxwidth150'));
+			$formTicket->selectGroupTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css']?$val['css']:'maxwidth150'));
 			print '</td>';
 		} elseif ($key == 'severity_code') {
 			print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
-			$formTicket->selectSeveritiesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 0, 1, 1, 0, ($val['css']?$val['css']:'maxwidth150'));
+			$formTicket->selectSeveritiesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css']?$val['css']:'maxwidth150'));
 			print '</td>';
 		} elseif ($key == 'fk_user_assign') {
 		    print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
@@ -535,8 +547,14 @@ foreach($object->fields as $key => $val)
 		    }
 		    print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
 		    //var_dump($arrayofstatus);var_dump($search['fk_statut']);var_dump(array_values($search[$key]));
-			print Form::multiselectarray('search_fk_statut', $arrayofstatus, array_values($search[$key]), 0, 0, 'minwidth150', 1, 0, '', '', '');
+		    $selectedarray = null;
+		    if ($search[$key]) $selectedarray = array_values($search[$key]);
+			print Form::multiselectarray('search_fk_statut', $arrayofstatus, $selectedarray, 0, 0, 'minwidth150', 1, 0, '', '', '');
 			print '</td>';
+		}
+		elseif ($key == "fk_soc")
+		{
+			print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'"><input type="text" class="flat maxwidth75" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 		}
 		else {
 			print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
@@ -551,7 +569,7 @@ $parameters=array('arrayfields'=>$arrayfields);
 $reshook=$hookmanager->executeHooks('printFieldListOption', $parameters, $object);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-print '<td class="liste_titre right">';
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -563,10 +581,11 @@ print '</tr>'."\n";
 print '<tr class="liste_titre">';
 foreach($object->fields as $key => $val)
 {
-	$cssforfield='';
-	if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
-	if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
+	$cssforfield=(empty($val['css'])?'':$val['css']);
 	if ($key == 'fk_statut') $cssforfield.=($cssforfield?' ':'').'center';
+	elseif (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
+	elseif (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
+	elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $val['label'] != 'TechnicalID') $cssforfield.=($cssforfield?' ':'').'right';
 	if (! empty($arrayfields['t.'.$key]['checked']))
 	{
         print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, '', $sortfield, $sortorder, ($cssforfield?$cssforfield.' ':''))."\n";
@@ -606,7 +625,7 @@ while ($i < min($num, $limit))
 	$object->id = $obj->rowid;
 	foreach($object->fields as $key => $val)
 	{
-		if (isset($obj->$key)) $object->$key = $obj->$key;
+		if (property_exists($obj, $key)) $object->$key = $obj->$key;
 	}
 	$langs->load("ticket");
 
@@ -629,6 +648,10 @@ while ($i < min($num, $limit))
 			if ($cssforfield || $val['css']) print '"';
 			print '>';
 			if ($key == 'fk_statut') print $object->getLibStatut(5);
+			elseif ($key == 'category_code') print $langs->getLabelFromKey($db, $object->category_code, 'c_ticket_category', 'code', 'label');
+			elseif ($key == 'severity_code') print $langs->getLabelFromKey($db, $object->severity_code, 'c_ticket_severity', 'code', 'label');
+			elseif ($key == 'type_code') print $langs->getLabelFromKey($db, $object->type_code, 'c_ticket_type', 'code', 'label');
+			elseif ($key == 'tms') print dol_print_date($db->jdate($obj->$key), 'dayhour', 'tzuser');
 			elseif (in_array($val['type'], array('date','datetime','timestamp'))) print $object->showOutputField($val, $key, $db->jdate($obj->$key), '');
 			else print $object->showOutputField($val, $key, $obj->$key, '');
 			print '</td>';

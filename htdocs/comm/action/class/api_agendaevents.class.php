@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
  use Luracast\Restler\RestException;
@@ -64,25 +64,28 @@ class AgendaEvents extends DolibarrApi
     public function get($id)
     {
         if (! DolibarrApiAccess::$user->rights->agenda->myactions->read) {
-            throw new RestException(401, "Insuffisant rights to read an event");
+            throw new RestException(401, "Insufficient rights to read an event");
         }
-
-        $result = $this->actioncomm->fetch($id);
+        if ($id == 0) {
+            $result = $this->actioncomm->initAsSpecimen();
+        } else {
+            $result = $this->actioncomm->fetch($id);
+            if ($result) {
+                $this->actioncomm->fetch_optionals();
+                $this->actioncomm->fetchObjectLinked();
+            }
+        }
         if ( ! $result ) {
             throw new RestException(404, 'Agenda Events not found');
         }
 
         if (! DolibarrApiAccess::$user->rights->agenda->allactions->read && $this->actioncomm->ownerid != DolibarrApiAccess::$user->id) {
-            throw new RestException(401, "Insuffisant rights to read event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
+            throw new RestException(401, "Insufficient rights to read event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
         }
 
         if ( ! DolibarrApi::_checkAccessToResource('agenda', $this->actioncomm->id, 'actioncomm', '', 'fk_soc', 'id')) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
-
-        $result = $this->actioncomm->fetch_optionals();
-
-        $this->actioncomm->fetchObjectLinked();
         return $this->_cleanObjectDatas($this->actioncomm);
     }
 
@@ -106,7 +109,7 @@ class AgendaEvents extends DolibarrApi
         $obj_ret = array();
 
         if (! DolibarrApiAccess::$user->rights->agenda->myactions->read) {
-            throw new RestException(401, "Insuffisant rights to read events");
+            throw new RestException(401, "Insufficient rights to read events");
         }
 
         // case of external user
@@ -191,10 +194,10 @@ class AgendaEvents extends DolibarrApi
     public function post($request_data = null)
     {
         if (! DolibarrApiAccess::$user->rights->agenda->myactions->create) {
-            throw new RestException(401, "Insuffisant rights to create your Agenda Event");
+            throw new RestException(401, "Insufficient rights to create your Agenda Event");
         }
         if (! DolibarrApiAccess::$user->rights->agenda->allactions->create && DolibarrApiAccess::$user->id != $request_data['userownerid']) {
-            throw new RestException(401, "Insuffisant rights to create an Agenda Event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
+            throw new RestException(401, "Insufficient rights to create an Agenda Event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
         }
 
         // Check mandatory fields
@@ -230,13 +233,18 @@ class AgendaEvents extends DolibarrApi
     public function put($id, $request_data = null)
     {
         if (! DolibarrApiAccess::$user->rights->agenda->myactions->create) {
-            throw new RestException(401, "Insuffisant rights to create your Agenda Event");
+            throw new RestException(401, "Insufficient rights to create your Agenda Event");
         }
         if (! DolibarrApiAccess::$user->rights->agenda->allactions->create && DolibarrApiAccess::$user->id != $request_data['userownerid']) {
-            throw new RestException(401, "Insuffisant rights to create an Agenda Event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
+            throw new RestException(401, "Insufficient rights to create an Agenda Event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
         }
 
         $result = $this->actioncomm->fetch($id);
+        if ($result) {
+            $this->actioncomm->fetch_optionals();
+            $this->actioncomm->fetch_userassigned();
+            $this->actioncomm->oldcopy = clone $this->actioncomm;
+        }
         if ( ! $result ) {
             throw new RestException(404, 'actioncomm not found');
         }
@@ -266,13 +274,18 @@ class AgendaEvents extends DolibarrApi
     public function delete($id)
     {
         if(! DolibarrApiAccess::$user->rights->agenda->myactions->delete) {
-            throw new RestException(401, "Insuffisant rights to delete your Agenda Event");
+            throw new RestException(401, "Insufficient rights to delete your Agenda Event");
         }
 
         $result = $this->actioncomm->fetch($id);
+        if ($result) {
+            $this->actioncomm->fetch_optionals();
+            $this->actioncomm->fetch_userassigned();
+            $this->actioncomm->oldcopy = clone $this->actioncomm;
+        }
 
         if(! DolibarrApiAccess::$user->rights->agenda->allactions->delete && DolibarrApiAccess::$user->id != $this->actioncomm->userownerid) {
-            throw new RestException(401, "Insuffisant rights to delete an Agenda Event of owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
+            throw new RestException(401, "Insufficient rights to delete an Agenda Event of owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
         }
 
         if( ! $result ) {
@@ -356,7 +369,7 @@ class AgendaEvents extends DolibarrApi
         unset($object->total_localtax2);
         unset($object->total_ttc);
         unset($object->fk_incoterms);
-        unset($object->libelle_incoterms);
+        unset($object->label_incoterms);
         unset($object->location_incoterms);
         unset($object->name);
         unset($object->lastname);

@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -39,10 +39,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  */
 function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 0, $mode = '')
 {
-	global $user,$conf,$langs,$dolibarr_main_db_name;
+	global $user,$conf,$langs,$mysoc;
+	global $dolibarr_main_db_name;
 
-	$mainmenu=$_SESSION["mainmenu"];
-	$leftmenu=$_SESSION["leftmenu"];
+	$mainmenu=(empty($_SESSION["mainmenu"])?'':$_SESSION["mainmenu"]);
+	$leftmenu=(empty($_SESSION["leftmenu"])?'':$_SESSION["leftmenu"]);
 
 	$id='mainmenu';
 	$listofmodulesforexternal=explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
@@ -53,17 +54,17 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 
 	if (empty($noout)) print_start_menu_array_auguria();
 
-    $usemenuhider = 1;
-    global $usemenuhider;
+	global $usemenuhider;
+	$usemenuhider = 1;
 
-	// Show/Hide vertical menu
-	if ($mode != 'jmobile' && $mode != 'topnb' && $usemenuhider && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+    // Show/Hide vertical menu. The hamburger icon for .menuhider action.
+    if ($mode != 'jmobile' && $mode != 'topnb' && $usemenuhider && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 	{
 	    $showmode=1;
 	    $classname = 'class="tmenu menuhider"';
 	    $idsel='menu';
 
-	    $menu->add('#', '', 0, $showmode, $atarget, "xxx", '', 0, $id, $idsel, $classname);
+	    $menu->add('#', (! empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE) ? '<span class="fa fa-bars"></span>' : ''), 0, $showmode, $atarget, "xxx", '', 0, $id, $idsel, $classname);
 	}
 
 	$num = count($newTabMenu);
@@ -125,20 +126,44 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 	$menu->liste = dol_sort_array($menu->liste, 'position');
 
 	// Output menu entries
-	foreach($menu->liste as $menkey => $menuval)
+	// Show logo company
+	if (empty($conf->global->MAIN_MENU_INVERT) && empty($noout) && ! empty($conf->global->MAIN_SHOW_LOGO) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 	{
-        if (empty($noout)) print_start_menu_entry_auguria($menuval['idsel'], $menuval['classname'], $menuval['enabled']);
-	    if (empty($noout)) print_text_menu_entry_auguria($menuval['titre'], $menuval['enabled'], ($menuval['url']!='#'?DOL_URL_ROOT:'').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target']?$menuval['target']:$atarget));
-	    if (empty($noout)) print_end_menu_entry_auguria($menuval['enabled']);
+		//$mysoc->logo_mini=(empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI);
+		$mysoc->logo_squarred_mini=(empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI);
+		if (! empty($mysoc->logo_squarred_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini))
+		{
+			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
+		}
+		else
+		{
+			$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo_squarred_alpha.png';
+		}
+		$title=$langs->trans("GoIntoSetupToChangeLogo");
+
+		print "\n".'<!-- Show logo on menu -->'."\n";
+		print_start_menu_entry_auguria('companylogo', 'class="tmenu tmenucompanylogo"', 1);
+
+		print '<div class="center backgroundforcompanylogo"><img class="mycompany" title="'.dol_escape_htmltag($title).'" alt="" src="'.$urllogo.'" style="max-width: 100px"></div>'."\n";
+
+		print_end_menu_entry_auguria(4);
+	}
+
+	if (empty($noout)) {
+		foreach($menu->liste as $menuval)
+		{
+			print_start_menu_entry_auguria($menuval['idsel'], $menuval['classname'], $menuval['enabled']);
+	    	print_text_menu_entry_auguria($menuval['titre'], $menuval['enabled'], ($menuval['url']!='#'?DOL_URL_ROOT:'').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target']?$menuval['target']:$atarget));
+		    print_end_menu_entry_auguria($menuval['enabled']);
+		}
 	}
 
 	$showmode=1;
-	if (empty($noout)) print_start_menu_entry_auguria('', 'class="tmenuend"', $showmode);
-	if (empty($noout)) print_end_menu_entry_auguria($showmode);
-
-	if (empty($noout)) print_end_menu_array_auguria();
-
-	print "\n";
+	if (empty($noout)) {
+		print_start_menu_entry_auguria('', 'class="tmenuend"', $showmode);
+		print_end_menu_entry_auguria($showmode);
+		print_end_menu_array_auguria();
+	}
 
 	return 0;
 }
@@ -193,16 +218,16 @@ function print_text_menu_entry_auguria($text, $showmode, $url, $id, $idsel, $cla
 
 	if ($showmode == 1)
 	{
-		print '<a class="tmenuimage" tabindex="-1" href="'.$url.'"'.($atarget?' target="'.$atarget.'"':'').'>';
+		print '<a class="tmenuimage" tabindex="-1" href="'.$url.'"'.($atarget?' target="'.$atarget.'"':'').' title="'.dol_escape_htmltag($text).'">';
 		print '<div class="'.$id.' '.$idsel.' topmenuimage"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
 		print '</a>';
-		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget?' target="'.$atarget.'"':'').'>';
+		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget?' target="'.$atarget.'"':'').' title="'.dol_escape_htmltag($text).'">';
 		print '<span class="mainmenuaspan">';
 		print $text;
 		print '</span>';
 		print '</a>';
 	}
-	if ($showmode == 2)
+	elseif ($showmode == 2)
 	{
 		print '<div class="'.$id.' '.$idsel.' topmenuimage tmenudisabled"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
 		print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
@@ -244,17 +269,18 @@ function print_end_menu_array_auguria()
 
 /**
  * Core function to output left menu auguria
+ * Fill &$menu (example with $forcemainmenu='home' $forceleftmenu='all', return left menu tree of Home)
  *
  * @param	DoliDB		$db                 Database handler
- * @param 	array		$menu_array_before  Table of menu entries to show before entries of menu handler
- * @param   array		$menu_array_after   Table of menu entries to show after entries of menu handler
+ * @param 	array		$menu_array_before  Table of menu entries to show before entries of menu handler (menu->liste filled with menu->add)
+ * @param   array		$menu_array_after   Table of menu entries to show after entries of menu handler (menu->liste filled with menu->add)
  * @param  	array		$tabMenu       		If array with menu entries already loaded, we put this array here (in most cases, it's empty)
  * @param	Menu		$menu				Object Menu to return back list of menu entries
  * @param	int			$noout				Disable output (Initialise &$menu only).
  * @param	string		$forcemainmenu		'x'=Force mainmenu to mainmenu='x'
- * @param	string		$forceleftmenu		'all'=Force leftmenu to '' (= all)
+ * @param	string		$forceleftmenu		'all'=Force leftmenu to '' (= all). If value come being '', we change it to value in session and 'none' if not defined in session.
  * @param	array		$moredata			An array with more data to output
- * @return	int								Nb of entries
+ * @return	int								Nb of menu entries
  */
 function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$tabMenu, &$menu, $noout = 0, $forcemainmenu = '', $forceleftmenu = '', $moredata = null)
 {
@@ -265,32 +291,8 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 	$mainmenu=($forcemainmenu?$forcemainmenu:$_SESSION["mainmenu"]);
 	$leftmenu=($forceleftmenu?'':(empty($_SESSION["leftmenu"])?'none':$_SESSION["leftmenu"]));
 
-	$usemenuhider = 0;
 	global $usemenuhider;
-
-	// Show logo company
-	if (empty($noout) && ! empty($conf->global->MAIN_SHOW_LOGO) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-	{
-		$mysoc->logo_mini=$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
-		if (! empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
-		{
-			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini);
-		}
-		else
-		{
-			$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
-		}
-		$title=$langs->trans("GoIntoSetupToChangeLogo");
-		print "\n".'<!-- Show logo on menu -->'."\n";
-		print '<div class="blockvmenuimpair blockvmenulogo">'."\n";
-		print '<div class="menu_titre" id="menu_titre_logo"></div>';
-		print '<div class="menu_top" id="menu_top_logo"></div>';
-		print '<div class="menu_contenu" id="menu_contenu_logo">';
-		print '<div class="center"><img title="'.dol_escape_htmltag($title).'" alt="" src="'.$urllogo.'" style="max-width: 70%"></div>'."\n";
-		print '</div>';
-		print '<div class="menu_end" id="menu_end_logo"></div>';
-		print '</div>'."\n";
-	}
+	$usemenuhider = 0;
 
 	if (is_array($moredata) && ! empty($moredata['searchform']))	// searchform can contains select2 code or link to show old search form or link to switch on search page
 	{
@@ -350,9 +352,9 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 		$db->free($resql);
 	}
 
-	if (! empty($conf->accounting->enabled) && !empty($user->rights->accounting->mouvements->lire) && $mainmenu == 'accountancy') 	// Entry in accountancy journal for each bank account
+	if (! empty($conf->accounting->enabled) && !empty($user->rights->accounting->comptarapport->lire) && $mainmenu == 'accountancy') 	// Entry in accountancy journal for each bank account
 	{
-		$newmenu->add('', $langs->trans("Journalization"), 0, $user->rights->accounting->comptarapport->lire, '', 'accountancy', 'accountancy');
+		$newmenu->add('', $langs->trans("RegistrationInAccounting"), 1, $user->rights->accounting->comptarapport->lire, '', 'accountancy', 'accountancy');
 
 		// Multi journal
 		$sql = "SELECT rowid, code, label, nature";
@@ -385,7 +387,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					if ($objp->nature == 9) $nature="hasnew";
 
 					// To enable when page exists
-					if (! empty($conf->global->ACCOUNTANCY_SHOW_DEVELOP_JOURNAL))
+					if (empty($conf->global->ACCOUNTANCY_SHOW_DEVELOP_JOURNAL))
 					{
 						if ($nature == 'various' || $nature == 'hasnew' || $nature == 'inventory') $nature='';
 					}
@@ -394,7 +396,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					{
                         $langs->load('accountancy');
                         $journallabel=$langs->transnoentities($objp->label);	// Labels in this table are set by loading llx_accounting_abc.sql. Label can be 'ACCOUNTING_SELL_JOURNAL', 'InventoryJournal', ...
-                        if (empty($leftmenu) || preg_match('/accountancy/', $leftmenu)) $newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid, $journallabel, 2, $user->rights->accounting->comptarapport->lire);
+                        $newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid, $journallabel, 2, $user->rights->accounting->comptarapport->lire);
 					}
 					$i++;
 				}
@@ -439,7 +441,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 		*/
 	}
 
-	if ($conf->ftp->enabled && $mainmenu == 'ftp')	// Entry for FTP
+	if (! empty($conf->ftp->enabled) && $mainmenu == 'ftp')	// Entry for FTP
 	{
 		$MAXFTP=20;
 		$i=1;

@@ -41,7 +41,6 @@ CustomersVentilation=Linked Customer invoice
 SuppliersVentilation=Vendor invoice linking
 ExpenseReportsVentilation=Expense report links
 UpdateMvts=Modify a transaction
-WriteBookKeeping=Journalise transactions in Ledger
 InvoiceLines=Lines of invoices to link
 InvoiceLinesDone=Linked lines of invoices
 ExpenseReportLines=Lines of expense reports to link

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -114,7 +114,7 @@ class EmailCollectorFilter extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs;
 
 		$this->db = $db;
 
@@ -133,11 +133,11 @@ class EmailCollectorFilter extends CommonObject
 		// Translate some data of arrayofkeyval
 		foreach($this->fields as $key => $val)
 		{
-			if (is_array($this->fields['status']['arrayofkeyval']))
+			if (is_array($val['arrayofkeyval']))
 			{
-				foreach($this->fields['status']['arrayofkeyval'] as $key2 => $val2)
+				foreach($val['arrayofkeyval'] as $key2 => $val2)
 				{
-					$this->fields['status']['arrayofkeyval'][$key2]=$langs->trans($val2);
+					$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
 				}
 			}
 		}
@@ -159,7 +159,7 @@ class EmailCollectorFilter extends CommonObject
 			$this->errors[]=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"));
 			return -1;
 		}
-		if (! in_array($this->type, array('seen','unseen','withtrackingid','withouttrackingid')) && empty($this->rulevalue))
+		if (! in_array($this->type, array('seen', 'unseen', 'unanswered', 'answered', 'withtrackingid', 'withouttrackingid')) && empty($this->rulevalue))
 		{
 			$langs->load("errors");
 			$this->errors[]=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("SearchString"));
@@ -201,7 +201,7 @@ class EmailCollectorFilter extends CommonObject
 	    // Clear extrafields that are unique
 	    if (is_array($object->array_options) && count($object->array_options) > 0)
 	    {
-	    	$extrafields->fetch_name_optionals_label($this->element);
+	    	$extrafields->fetch_name_optionals_label($this->table_element);
 	    	foreach($object->array_options as $key => $option)
 	    	{
 	    		$shortkey = preg_replace('/options_/', '', $key);

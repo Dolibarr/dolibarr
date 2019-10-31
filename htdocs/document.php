@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -55,6 +55,7 @@ if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias'))
 /**
  * Header empty
  *
+ * @ignore
  * @return	void
  */
 function llxHeader()
@@ -63,6 +64,7 @@ function llxHeader()
 /**
  * Footer empty
  *
+ * @ignore
  * @return	void
  */
 function llxFooter()
@@ -159,6 +161,8 @@ if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
 $type = 'application/octet-stream';
 if (GETPOST('type', 'alpha')) $type=GETPOST('type', 'alpha');
 else $type=dol_mimetype($original_file);
+// Security: Force to octet-stream if file is a dangerous file
+if (preg_match('/\.noexe$/i', $original_file)) $type = 'application/octet-stream';
 
 // Security: Delete string ../ into $original_file
 $original_file = str_replace("../", "/", $original_file);
@@ -169,6 +173,7 @@ $refname=basename(dirname($original_file)."/");
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
 
+// Check security and set return info with full path of file
 $check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $refname);
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
@@ -214,7 +219,7 @@ if (! $accessallowed)
 }
 
 // Security:
-// On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
+// We refuse directory transversal change and pipes in file names
 if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $fullpath_original_file))
 {
 	dol_syslog("Refused to deliver file ".$fullpath_original_file);
@@ -226,6 +231,7 @@ if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $full
 clearstatcache();
 
 $filename = basename($fullpath_original_file);
+$filename = preg_replace('/\.noexe$/i', '', $filename);
 
 // Output file on browser
 dol_syslog("document.php download $fullpath_original_file filename=$filename content-type=$type");

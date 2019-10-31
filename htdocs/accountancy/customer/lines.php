@@ -16,12 +16,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  * \file 		htdocs/accountancy/customer/lines.php
- * \ingroup 	Advanced accountancy
+ * \ingroup 	Accountancy (Double entries)
  * \brief 		Page of detail of the lines of ventilation of invoices customers
  */
 require '../../main.inc.php';
@@ -215,19 +215,7 @@ if (strlen(trim($search_account))) {
 if (strlen(trim($search_vat))) {
 	$sql .= natural_search("fd.tva_tx", price2num($search_vat), 1);
 }
-if ($search_month > 0)
-{
-	if ($search_year > 0 && empty($search_day))
-		$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($search_year, $search_month, false))."' AND '".$db->idate(dol_get_last_day($search_year, $search_month, false))."'";
-		elseif ($search_year > 0 && ! empty($search_day))
-			$sql.= " AND f.datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
-			else
-				$sql.= " AND date_format(f.datef, '%m') = '".$db->escape($search_month)."'";
-}
-elseif ($search_year > 0)
-{
-	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($search_year, 1, false))."' AND '".$db->idate(dol_get_last_day($search_year, 12, false))."'";
-}
+$sql.=dolSqlDateFilter('f.datef', $search_day, $search_month, $search_year);
 if (strlen(trim($search_country))) {
 	$arrayofcode = getCountriesInEEC();
 	$country_code_in_EEC = $country_code_in_EEC_without_me = '';
@@ -294,7 +282,7 @@ if ($result) {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
 	print_barre_liste($langs->trans("InvoiceLinesDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
-	print $langs->trans("DescVentilDoneCustomer") . '<br>';
+	print '<span class="opacitymedium">'.$langs->trans("DescVentilDoneCustomer") . '</span><br>';
 
 	print '<br><div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br>';
 	print $formaccounting->select_account($account_parent, 'account_parent', 2, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone valignmiddle');
@@ -310,9 +298,9 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="' . dol_escape_htmltag($search_invoice) . '"></td>';
 	print '<td class="liste_titre center nowraponall">';
     if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-        print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day" value="'.dol_escape_htmltag($search_day).'">';
+        print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_day" value="'.dol_escape_htmltag($search_day).'">';
     }
-   	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_month" value="'.dol_escape_htmltag($search_month).'">';
+   	print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month" value="'.dol_escape_htmltag($search_month).'">';
    	$formother->select_year($search_year, 'search_year', 1, 20, 5);
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="' . dol_escape_htmltag($search_ref) . '"></td>';
@@ -370,13 +358,14 @@ if ($result) {
 		// Ref Invoice
 		print '<td class="nowraponall">' . $facture_static->getNomUrl(1) . '</td>';
 
+		// Date invoice
 		print '<td class="center">' . dol_print_date($db->jdate($objp->datef), 'day') . '</td>';
 
 		// Ref Product
 		print '<td>';
-		if ($product_static->id)
-			print $product_static->getNomUrl(1);
-		if ($objp->product_label) print '<br>'.$objp->product_label;
+		if ($product_static->id > 0) print $product_static->getNomUrl(1);
+		if ($product_static->id > 0 && $objp->product_label) print '<br>';
+		if ($objp->product_label) print $objp->product_label;
 		print '</td>';
 
 		print '<td class="tdoverflowonsmartphone">';
@@ -385,11 +374,17 @@ if ($result) {
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->description);
 		print '</td>';
 
-		print '<td class="right">' . price($objp->total_ht) . '</td>';
+		print '<td class="nowrap right">' . price($objp->total_ht) . '</td>';
 
 		print '<td class="right">' . vatrate($objp->tva_tx.($objp->vat_src_code?' ('.$objp->vat_src_code.')':'')) . '</td>';
 
-		print '<td>' . $langs->trans("Country".$objp->country_code) .' ('.$objp->country_code.')</td>';
+		// Country
+		print '<td>';
+		if ($objp->country_code)
+		{
+			print $langs->trans("Country".$objp->country_code) .' ('.$objp->country_code.')';
+		}
+		print '</td>';
 
 		print '<td>' . $objp->tva_intra . '</td>';
 

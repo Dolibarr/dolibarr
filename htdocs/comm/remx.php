@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2019 Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2019      Frédéric France             <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -127,6 +128,8 @@ if ($action == 'confirm_split' && GETPOST("confirm") == 'yes')
 
 		$db->begin();
 		$discount->fk_facture_source=0;	// This is to delete only the require record (that we will recreate with two records) and not all family with same fk_facture_source
+        // This is to delete only the require record (that we will recreate with two records) and not all family with same fk_invoice_supplier_source
+        $discount->fk_invoice_supplier_source=0;
 		$res=$discount->delete($user);
 		$newid1=$newdiscount1->create($user);
 		$newid2=$newdiscount2->create($user);
@@ -158,7 +161,7 @@ if ($action == 'setremise' && $user->rights->societe->creer)
 		$error=0;
 		if (empty($desc))
 		{
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("ReasonDiscount")), null, 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ReasonDiscount")), null, 'errors');
 			$error++;
 		}
 
@@ -190,7 +193,7 @@ if ($action == 'setremise' && $user->rights->societe->creer)
 	}
 	else
 	{
-		setEventMessages($langs->trans("ErrorFieldFormat", $langs->trans("NewGlobalDiscount")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldFormat", $langs->transnoentitiesnoconv("NewGlobalDiscount")), null, 'errors');
 	}
 }
 
@@ -731,7 +734,7 @@ if ($socid > 0)
 			print load_fiche_titre($langs->trans("CustomerDiscounts"), '', '');
 		}
 
-		// Remises liees a lignes de factures
+		// Discount linked to invoice lines
 		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
 		$sql.= " rc.datec as dc, rc.description, rc.fk_facture_line, rc.fk_facture,";
 		$sql.= " rc.fk_facture_source,";
@@ -901,7 +904,7 @@ if ($socid > 0)
 			print load_fiche_titre($langs->trans("SupplierDiscounts"), '', '');
 		}
 
-		// Remises liees a lignes de factures
+		// Discount linked to invoice lines
 		$sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx, rc.multicurrency_amount_ht, rc.multicurrency_amount_tva, rc.multicurrency_amount_ttc,";
 		$sql.= " rc.datec as dc, rc.description, rc.fk_invoice_supplier_line, rc.fk_invoice_supplier,";
 		$sql.= " rc.fk_invoice_supplier_source,";

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -44,7 +44,7 @@ class PaymentVarious extends CommonObject
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'bill';
+	public $picto = 'payment';
 
 	/**
 	 * @var int ID
@@ -63,6 +63,7 @@ class PaymentVarious extends CommonObject
 	public $amount;
 	public $type_payment;
 	public $num_payment;
+    public $category_transaction;
 
 	/**
      * @var string various payments label
@@ -414,13 +415,13 @@ class PaymentVarious extends CommonObject
 					$sign=1;
 					if ($this->sens == '0') $sign=-1;
 
-    $bank_line_id = $acc->addline(
+                    $bank_line_id = $acc->addline(
 						$this->datep,
 						$this->type_payment,
 						$this->label,
 						$sign * abs($this->amount),
 						$this->num_payment,
-						'',
+                        ($this->category_transaction > 0 ? $this->category_transaction : 0),
 						$user
 					);
 

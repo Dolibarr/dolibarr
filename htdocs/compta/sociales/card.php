@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -454,19 +454,20 @@ if ($id > 0)
 			$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 			if ($user->rights->tax->charges->creer)
 			{
-				if ($action != 'classify')
-					$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-					if ($action == 'classify') {
-						//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-						$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-						$morehtmlref.='<input type="hidden" name="action" value="classin">';
-						$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-						$morehtmlref.=$formproject->select_projects(0, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-						$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-						$morehtmlref.='</form>';
-					} else {
-						$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-					}
+				if ($action != 'classify') {
+					$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				}
+				if ($action == 'classify') {
+					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+					$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+					$morehtmlref.='<input type="hidden" name="action" value="classin">';
+					$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					$morehtmlref.=$formproject->select_projects(0, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+					$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+					$morehtmlref.='</form>';
+				} else {
+					$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+				}
 			} else {
 				if (! empty($object->fk_project)) {
 					$proj = new Project($db);
@@ -537,7 +538,7 @@ if ($id > 0)
 		print $langs->trans('PaymentMode');
 		print '</td>';
 		if ($action != 'editmode')
-			print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetMode'), 1) . '</a></td>';
+			print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetMode'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editmode') {
@@ -555,7 +556,7 @@ if ($id > 0)
 			print $langs->trans('BankAccount');
 			print '<td>';
 			if ($action != 'editbankaccount' && $user->rights->tax->charges->creer)
-				print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 			print '</tr></table>';
 			print '</td><td>';
 			if ($action == 'editbankaccount') {
@@ -602,6 +603,8 @@ if ($id > 0)
 
 			$num = $db->num_rows($resql);
 			$i = 0; $total = 0;
+
+			print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 			print '<table class="noborder paymenttable">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("RefPayment").'</td>';
@@ -652,8 +655,7 @@ if ($id > 0)
 			}
 			else
 			{
-
-				print '<tr class="oddeven"><td class="opacitymedium">'.$langs->trans("None").'</td>';
+				print '<tr class="oddeven"><td><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
 				print '<td></td><td></td><td></td><td></td>';
 				print '</tr>';
 			}
@@ -668,6 +670,8 @@ if ($id > 0)
 			print '<td class="right'.($resteapayer?' amountremaintopay':(' '.$cssforamountpaymentcomplete)).'">'.price($resteapayer)."</td></tr>\n";
 
 			print "</table>";
+			print '</div>';
+
 			$db->free($resql);
 		}
 		else
@@ -706,37 +710,37 @@ if ($id > 0)
 			// Reopen
 			if ($object->paye && $user->rights->tax->charges->creer)
 			{
-				print "<a class=\"butAction\" href=\"".dol_buildpath("/compta/sociales/card.php", 1). "?id=$object->id&amp;action=reopen\">".$langs->trans("ReOpen")."</a>";
+				print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".dol_buildpath("/compta/sociales/card.php", 1). "?id=$object->id&amp;action=reopen\">".$langs->trans("ReOpen")."</a></div>";
 			}
 
 			// Edit
 			if ($object->paye == 0 && $user->rights->tax->charges->creer)
 			{
-				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/card.php?id=$object->id&amp;action=edit\">".$langs->trans("Modify")."</a>";
+				print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/card.php?id=$object->id&amp;action=edit\">".$langs->trans("Modify")."</a></div>";
 			}
 
 			// Emit payment
 			if ($object->paye == 0 && ((price2num($object->amount) < 0 && price2num($resteapayer, 'MT') < 0) || (price2num($object->amount) > 0 && price2num($resteapayer, 'MT') > 0)) && $user->rights->tax->charges->creer)
 			{
-				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/paiement_charge.php?id=$object->id&amp;action=create\">".$langs->trans("DoPayment")."</a>";
+				print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/paiement_charge.php?id=$object->id&amp;action=create\">".$langs->trans("DoPayment")."</a></div>";
 			}
 
 			// Classify 'paid'
 			if ($object->paye == 0 && round($resteapayer) <=0 && $user->rights->tax->charges->creer)
 			{
-				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/card.php?id=$object->id&amp;action=paid\">".$langs->trans("ClassifyPaid")."</a>";
+				print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/card.php?id=$object->id&amp;action=paid\">".$langs->trans("ClassifyPaid")."</a></div>";
 			}
 
 			// Clone
 			if ($user->rights->tax->charges->creer)
 			{
-				print "<a class=\"butAction\" href=\"".dol_buildpath("/compta/sociales/card.php", 1). "?id=$object->id&amp;action=clone\">".$langs->trans("ToClone")."</a>";
+				print "<div class=\"inline-block divButAction\"><a class=\"butAction\" href=\"".dol_buildpath("/compta/sociales/card.php", 1). "?id=$object->id&amp;action=clone\">".$langs->trans("ToClone")."</a></div>";
 			}
 
 			// Delete
 			if ($user->rights->tax->charges->supprimer)
 			{
-				print "<a class=\"butActionDelete\" href=\"".DOL_URL_ROOT."/compta/sociales/card.php?id=$object->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
+				print "<div class=\"inline-block divButAction\"><a class=\"butActionDelete\" href=\"".DOL_URL_ROOT."/compta/sociales/card.php?id=$object->id&amp;action=delete\">".$langs->trans("Delete")."</a></div>";
 			}
 
 			print "</div>";

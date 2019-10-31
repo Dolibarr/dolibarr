@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -119,7 +119,7 @@ print '</form>';
 
 print '<br><br><br>';
 
-print $langs->trans("UseMenuModuleToolsToAddCronJobs").'<br>';
+print $langs->trans("UseMenuModuleToolsToAddCronJobs", dol_buildpath('/cron/list.php?leftmenu=admintools', 1)).'<br>';
 if (! empty($conf->global->CRON_WARNING_DELAY_HOURS)) print info_admin($langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS)).'<br>';
 
 print '<br>';

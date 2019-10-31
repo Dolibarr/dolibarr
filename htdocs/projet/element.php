@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -52,7 +52,7 @@ if (! empty($conf->loan->enabled))			require_once DOL_DOCUMENT_ROOT.'/loan/class
 if (! empty($conf->stock->enabled))			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 if (! empty($conf->tax->enabled))			require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 if (! empty($conf->banque->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
-if (! empty($conf->salaries->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
+if (! empty($conf->salaries->enabled))		require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies', 'suppliers', 'compta'));
@@ -83,16 +83,15 @@ if (! isset($_POST['datesrfc']) && ! isset($_POST['datesday']) && ! empty($conf-
 	//$dates=dol_time_plus_duree($datee, -1, 'y');
 	$dates=dol_get_first_day($tmp['year'], 1);
 }
-if ($id == '' && $projectid == '' && $ref == '')
+if ($id == '' && $ref == '')
 {
-	dol_print_error('', 'Bad parameter');
-	exit;
+	setEventMessage($langs->trans('ErrorBadParameters'), 'errors');
+	header('Location: list.php');
+	exit();
 }
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
-
-$projectid=$id;	// For backward compatibility
 
 $object = new Project($db);
 
@@ -102,7 +101,7 @@ if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($ob
 // Security check
 $socid=$object->socid;
 //if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-$result = restrictedArea($user, 'projet', $projectid, 'projet&project');
+$result = restrictedArea($user, 'projet',  $object->id, 'projet&project');
 
 $hookmanager->initHooks(array('projectOverview'));
 
@@ -157,7 +156,35 @@ print '<div class="fichecenter">';
 print '<div class="fichehalfleft">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border tableforfield" width="100%">';
+print '<table class="border tableforfield centpercent">';
+
+// Usage
+print '<tr><td class="tdtop">';
+print $langs->trans("Usage");
+print '</td>';
+print '<td>';
+if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+{
+	print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha')!=''?' checked="checked"':'') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+	$htmltext = $langs->trans("ProjectFollowOpportunity");
+	print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+	print '<br>';
+}
+if (empty($conf->global->PROJECT_HIDE_TASKS))
+{
+	print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha')!=''?' checked="checked"':'') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
+	$htmltext = $langs->trans("ProjectFollowTasks");
+	print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+	print '<br>';
+}
+if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+{
+	print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha')!=''?' checked="checked"':'') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+	$htmltext = $langs->trans("ProjectBillTimeDescription");
+	print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+	print '<br>';
+}
+print '</td></tr>';
 
 // Visibility
 print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
@@ -221,7 +248,7 @@ print '</td></tr>';
 if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
 {
 	print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
-	print yn($object->bill_time);
+	print yn($object->usage_bill_time);
 	print '</td></tr>';
 }
 
@@ -457,7 +484,7 @@ $listofreferent=array(
 	'datefieldname'=>'datev',
 	'margin'=>'minus',
 	'disableamount'=>0,
-	'urlnew'=>DOL_URL_ROOT.'/compta/salaries/card.php?action=create&projectid='.$id,
+	'urlnew'=>DOL_URL_ROOT.'/salaries/card.php?action=create&projectid='.$id,
 	'lang'=>'salaries',
 	'buttonnew'=>'AddSalaryPayment',
 	'testnew'=>$user->rights->salaries->write,
@@ -474,7 +501,7 @@ $listofreferent=array(
     'lang'=>'banks',
     'buttonnew'=>'AddVariousPayment',
     'testnew'=>$user->rights->banque->modifier,
-    'test'=>$conf->banque->enabled && $user->rights->banque->lire),
+    'test'=>$conf->banque->enabled && $user->rights->banque->lire && empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT)),
 /* No need for this, available on dedicated tab "Agenda/Events"
 'agenda'=>array(
 	'name'=>"Agenda",
@@ -495,7 +522,6 @@ $parameters=array('listofreferent'=>$listofreferent);
 $resHook = $hookmanager->executeHooks('completeListOfReferent', $parameters, $object, $action);
 
 if(!empty($hookmanager->resArray)) {
-
 	$listofreferent = array_merge($listofreferent, $hookmanager->resArray);
 }
 
@@ -511,11 +537,11 @@ if ($action=="addelement")
 }
 elseif ($action == "unlink")
 {
+	$tablename = GETPOST("tablename", "aZ09");
+    $projectField = GETPOST('projectfield', 'aZ09') ? GETPOST('projectfield', 'aZ09') : 'fk_projet';
+	$elementselectid = GETPOST("elementselect", "int");
 
-	$tablename = GETPOST("tablename");
-	$elementselectid = GETPOST("elementselect");
-
-	$result = $object->remove_element($tablename, $elementselectid);
+	$result = $object->remove_element($tablename, $elementselectid, $projectField);
 	if ($result < 0)
 	{
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -531,8 +557,9 @@ $showdatefilter=0;
 if (! $showdatefilter)
 {
 	print '<div class="center centpercent">';
-    print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
-	print '<input type="hidden" name="tablename" value="'.$tablename.'">';
+    print '<form action="'.$_SERVER["PHP_SELF"].'?id=' . $object->id . '" method="post">';
+    print '<input type="hidden" name="token" value="'.$_SESSION["newtoken"].'">';
+    print '<input type="hidden" name="tablename" value="'.$tablename.'">';
 	print '<input type="hidden" name="action" value="view">';
 	print '<table class="center"><tr>';
 	print '<td>'.$langs->trans("From").' ';
@@ -605,6 +632,7 @@ foreach ($listofreferent as $key => $value)
 				if ($key == 'invoice')
 				{
 				    if (! empty($element->close_code) && $element->close_code == 'replaced') $qualifiedfortotal=false;	// Replacement invoice, do not include into total
+				    if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS) && $element->type == Facture::TYPE_DEPOSIT) $qualifiedfortotal=false;	// If hidden option to use deposits as payment (deprecated, not recommended to use this), deposits are not included
 				}
 				if ($key == 'propal')
 				{
@@ -752,7 +780,7 @@ foreach ($listofreferent as $key => $value)
        	if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty && !in_array($tablename, $exclude_select_element))
        	{
 			$selectList=$formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300', -2, !empty($project_field)?$project_field:'fk_projet');
-			if (! $selectList || ($selectList<0))
+			if ($selectList<0)
 			{
 				setEventMessages($formproject->error, $formproject->errors, 'errors');
 			}
@@ -760,8 +788,9 @@ foreach ($listofreferent as $key => $value)
 			{
 				// Define form with the combo list of elements to link
 			    $addform.='<div class="inline-block valignmiddle">';
-			    $addform.='<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
-				$addform.='<input type="hidden" name="tablename" value="'.$tablename.'">';
+			    $addform.='<form action="'.$_SERVER["PHP_SELF"].'?id=' . $object->id . '" method="post">';
+			    $addform.='<input type="hidden" name="token" value="'.$_SESSION["newtoken"].'">';
+			    $addform.='<input type="hidden" name="tablename" value="'.$tablename.'">';
 				$addform.='<input type="hidden" name="action" value="addelement">';
 				$addform.='<input type="hidden" name="datesrfc" value="'.dol_print_date($dates, 'dayhourrfc').'">';
 				$addform.='<input type="hidden" name="dateerfc" value="'.dol_print_date($datee, 'dayhourrfc').'">';
@@ -776,7 +805,7 @@ foreach ($listofreferent as $key => $value)
 		if (empty($conf->global->PROJECT_CREATE_ON_OVERVIEW_DISABLED) && $urlnew)
 		{
 			$addform.='<div class="inline-block valignmiddle">';
-			if ($testnew) $addform.='<a class="buttonxxx" href="'.$urlnew.'"><span class="valignmiddle text-plus-circle">'.($buttonnew?$langs->trans($buttonnew):$langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+			if ($testnew) $addform.='<a class="buttonxxx" href="'.$urlnew.'"><span class="valignmiddle text-plus-circle">'.($buttonnew?$langs->trans($buttonnew):$langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			elseif (empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
 				$addform.='<a class="buttonxxx buttonRefused" disabled="disabled" href="#"><span class="valignmiddle text-plus-circle">'.($buttonnew?$langs->trans($buttonnew):$langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
 			}
@@ -833,8 +862,8 @@ foreach ($listofreferent as $key => $value)
 
 			if (canApplySubtotalOn($tablename))
 			{
-			   // Sort
-			   $elementarray = sortElementsByClientName($elementarray);
+				// Sort
+				$elementarray = sortElementsByClientName($elementarray);
 			}
 
 			$num=count($elementarray);
@@ -886,7 +915,7 @@ foreach ($listofreferent as $key => $value)
 				{
 					if (empty($conf->global->PROJECT_DISABLE_UNLINK_FROM_OVERVIEW) || $user->admin)		// PROJECT_DISABLE_UNLINK_FROM_OVERVIEW is empty by defaut, so this test true
 					{
-						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $projectid . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . '" class="reposition">';
+						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' .  $object->id . '&action=unlink&tablename=' . $tablename . '&elementselect=' . $element->id . ($project_field ? '&projectfield=' . $project_field : '') . '" class="reposition">';
 						print img_picto($langs->trans('Unlink'), 'unlink');
 						print '</a>';
 					}
@@ -1047,9 +1076,9 @@ foreach ($listofreferent as $key => $value)
 					if ($othermessage) print $othermessage;
 					if (isset($total_ht_by_line))
 					{
-					   if (! $qualifiedfortotal) print '<strike>';
-					   print price($total_ht_by_line);
-					   if (! $qualifiedfortotal) print '</strike>';
+						if (! $qualifiedfortotal) print '<strike>';
+						print price($total_ht_by_line);
+						if (! $qualifiedfortotal) print '</strike>';
 					}
 					if ($warning) print ' '.img_warning($warning);
 					print '</td>';
@@ -1094,9 +1123,9 @@ foreach ($listofreferent as $key => $value)
 					if ($othermessage) print $othermessage;
 					if (isset($total_ttc_by_line))
 					{
-					   if (! $qualifiedfortotal) print '<strike>';
-					   print price($total_ttc_by_line);
-					   if (! $qualifiedfortotal) print '</strike>';
+						if (! $qualifiedfortotal) print '<strike>';
+						print price($total_ttc_by_line);
+						if (! $qualifiedfortotal) print '</strike>';
 					}
 					if ($warning) print ' '.img_warning($warning);
 					print '</td>';

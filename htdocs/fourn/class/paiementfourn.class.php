@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -88,7 +88,7 @@ class PaiementFourn extends Paiement
 
 		$sql = 'SELECT p.rowid, p.ref, p.entity, p.datep as dp, p.amount, p.statut, p.fk_bank,';
 		$sql.= ' c.code as paiement_code, c.libelle as paiement_type,';
-		$sql.= ' p.num_paiement, p.note, b.fk_account';
+		$sql.= ' p.num_paiement as num_payment, p.note, b.fk_account';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid ';
@@ -113,12 +113,15 @@ class PaiementFourn extends Paiement
 				$this->entity         = $obj->entity;
 				$this->date           = $this->db->jdate($obj->dp);
 				$this->datepaye       = $this->db->jdate($obj->dp);
-				$this->numero         = $obj->num_paiement;
-				$this->num_paiement   = $obj->num_paiement;
+				$this->num_paiement   = $obj->num_payment;
+				$this->num_payment    = $obj->num_payment;
 				$this->bank_account   = $obj->fk_account;
+				$this->fk_account     = $obj->fk_account;
 				$this->bank_line      = $obj->fk_bank;
 				$this->montant        = $obj->amount;
+				$this->amount         = $obj->amount;
 				$this->note           = $obj->note;
+				$this->note_private   = $obj->note;
 				$this->type_code      = $obj->paiement_code;
 				$this->type_libelle   = $obj->paiement_type;
 				$this->statut         = $obj->statut;
@@ -312,7 +315,7 @@ class PaiementFourn extends Paiement
 
 
 	/**
-	 *	Supprime un paiement ainsi que les lignes qu'il a genere dans comptes
+	 *	Delete a payment and lines generated into accounts
 	 *	Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
 	 *	Si le paiement porte sur au moins une facture a "payee", on refuse
 	 *
@@ -652,7 +655,6 @@ class PaiementFourn extends Paiement
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 			foreach ($dirmodels as $reldir) {
-
 				$dir = dol_buildpath($reldir."core/modules/supplier_payment/");
 
 				// Load file with numbering class (if found)
@@ -701,7 +703,7 @@ class PaiementFourn extends Paiement
 		else
 		{
 			$langs->load("errors");
-			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete");
+			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Supplier"));
 			return "";
 		}
 	}

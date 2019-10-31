@@ -19,6 +19,7 @@ DolibarrSetup=تثبيت أو ترقية البرنامج
 InternalUsers=مستخدمون داخليون
 ExternalUsers=مستخدمون خارجيون
 FormToTestFileUploadForm=نموذج تجربة رفع الملفات (تبعا للتنصيب)
+FeatureAvailableOnlyOnStable=الميزة متوفرة فقط في الإصدارات الثابتة الرسمية
 Module700Name=تبرعات
 Module1780Name=الأوسمة/التصنيفات
 Permission81=قراءة أوامر الشراء

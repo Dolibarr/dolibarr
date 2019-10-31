@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -87,7 +87,7 @@ $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('myobjectagenda','globalcard'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('myobject');
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
@@ -141,7 +141,7 @@ if ($object->id > 0)
 	$head = myobjectPrepareHead($object);
 
 
-	dol_fiche_head($head, 'agenda', $langs->trans("MyObject"), -1, 'myobject@mymodule');
+	dol_fiche_head($head, 'agenda', $langs->trans("MyObject"), -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------
@@ -162,7 +162,7 @@ if ($object->id > 0)
 	 if ($user->rights->mymodule->creer)
 	 {
 	 if ($action != 'classify')
-	 	//$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+	 	//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 	 	$morehtmlref.=' : ';
 	 	if ($action == 'classify') {
 	 	//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -196,7 +196,7 @@ if ($object->id > 0)
     print '<div class="underbanner clearboth"></div>';
 
     $object->info($object->id);
-	print dol_print_object_info($object, 1);
+	dol_print_object_info($object, 1);
 
 	print '</div>';
 
@@ -209,7 +209,7 @@ if ($object->id > 0)
     $objthirdparty=$object;
     $objcon=new stdClass();
 
-    $out='';
+    $out='&origin='.$object->element.'&originid='.$object->id;
     $permok=$user->rights->agenda->myactions->create;
     if ((! empty($objthirdparty->id) || ! empty($objcon->id)) && $permok)
     {
@@ -240,19 +240,19 @@ if ($object->id > 0)
 
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
     {
-        $param='&socid='.$socid;
-        if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-        if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+        $param='&id='.$object->id.'&socid='.$socid;
+        if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+        if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 
 
-		print load_fiche_titre($langs->trans("ActionsOnMyObject"), '', '');
+		//print load_fiche_titre($langs->trans("ActionsOnMyObject"), '', '');
 
         // List of all actions
 		$filters=array();
         $filters['search_agenda_label']=$search_agenda_label;
 
         // TODO Replace this with same code than into list.php
-        //show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
+        //show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
     }
 }
 

@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -164,7 +164,6 @@ print '<td>';
 $i=0;
 foreach($listofnotifiedevents as $notifiedevent)
 {
-
     $label=$langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
     $elementLabel = $langs->trans(ucfirst($notifiedevent['elementtype']));
 
@@ -209,7 +208,6 @@ $listofnotifiedevents=$notificationtrigger->getListOfManagedEvents();
 
 foreach($listofnotifiedevents as $notifiedevent)
 {
-
     $label=$langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
 
     $elementLabel = $langs->trans(ucfirst($notifiedevent['elementtype']));

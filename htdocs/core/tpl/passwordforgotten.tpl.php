@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
@@ -128,10 +128,10 @@ if (! empty($morelogincontent)) {
 ?>
 
 <?php if ($captcha) {
-		// Add a variable param to force not using cache (jmobile)
-		$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self);	// Remove param time
-		if (preg_match('/\?/', $php_self)) $php_self.='&time='.dol_print_date(dol_now(), 'dayhourlog');
-		else $php_self.='?time='.dol_print_date(dol_now(), 'dayhourlog');
+	// Add a variable param to force not using cache (jmobile)
+	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self);	// Remove param time
+	if (preg_match('/\?/', $php_self)) $php_self.='&time='.dol_print_date(dol_now(), 'dayhourlog');
+	else $php_self.='?time='.dol_print_date(dol_now(), 'dayhourlog');
 	?>
 	<!-- Captcha -->
 	<div class="trinputlogin">

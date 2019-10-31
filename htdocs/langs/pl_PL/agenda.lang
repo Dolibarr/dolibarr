@@ -38,6 +38,7 @@ ActionsEvents=Zdarzenia, dla których Dolibarr stworzy automatycznie zadania w a
 EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into %s module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Kontrahent %s utworzony
+COMPANY_DELETEInDolibarr=Third party %s deleted
 ContractValidatedInDolibarr=Umowa  %s potwierdzona
 CONTRACT_DELETEInDolibarr=Kontrakt %s usunięty
 PropalClosedSignedInDolibarr=Propozycja %s podpisana
@@ -95,6 +96,7 @@ PROJECT_MODIFYInDolibarr=Projekt %s zmodyfikowany
 PROJECT_DELETEInDolibarr=Projekt %s usunięty
 TICKET_CREATEInDolibarr=Ticket %s created
 TICKET_MODIFYInDolibarr=Ticket %s modified
+TICKET_ASSIGNEDInDolibarr=Ticket %s assigned
 TICKET_CLOSEInDolibarr=Ticket %s closed
 TICKET_DELETEInDolibarr=Ticket %s deleted
 ##### End agenda events #####

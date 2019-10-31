@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
@@ -59,7 +59,7 @@ $contact = $GLOBALS['objcanvas']->control->object;
 	<td colspan="3">
 	<?php if (($this->control->tpl['prefix_customercode'] || $this->control->tpl['prefix_suppliercode']) && $this->control->tpl['prefix_comm']) { ?>
 	<input type="hidden" name="prefix_comm" value="<?php echo $this->control->tpl['prefix_comm']; ?>">
-	<?php echo $this->control->tpl['prefix_comm']; ?>
+		<?php echo $this->control->tpl['prefix_comm']; ?>
 	<?php } else { ?>
 	<input type="text" size="5" maxlength="5" name="prefix_comm" value="<?php echo $this->control->tpl['prefix_comm']; ?>">
 	<?php } ?>
@@ -116,12 +116,11 @@ if ($this->control->tpl['fournisseur']) {
 	<td><?php echo $langs->trans('SupplierCategory'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_suppliercategory']; ?></td>
 </tr>
-<?php
+		<?php
     }
 }
-?>
 
-<?php if (! empty($conf->barcode->enabled)) { ?>
+if (! empty($conf->barcode->enabled)) { ?>
 <tr>
 	<td><?php echo $langs->trans('Gencod'); ?></td>
 	<td colspan="3"><input type="text" name="barcode" value="<?php echo $this->control->tpl['barcode']; ?>"></td>
@@ -209,9 +208,9 @@ for ($i=1; $i<=4; $i++) {
 	<td><?php echo $langs->trans("DefaultLang"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_lang']; ?></td>
 </tr>
-<?php } ?>
+<?php }
 
-<?php if(!empty($this->control->tpl['localtax'])) echo $this->control->tpl['localtax']; ?>
+if(!empty($this->control->tpl['localtax'])) echo $this->control->tpl['localtax']; ?>
 
 </table>
 <br>

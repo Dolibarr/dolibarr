@@ -38,6 +38,7 @@ ActionsEvents=Veranstaltungen zur automatischen Übernahme in die Agenda
 EventRemindersByEmailNotEnabled=Aufgaben-/Terminerinnerungen via E-Mail sind in den Einstellungen des Moduls %s nicht aktiviert.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Partner %s erstellt
+COMPANY_DELETEInDolibarr=Geschäftspartner %s gelöscht
 ContractValidatedInDolibarr=Vertrag %s freigegeben
 CONTRACT_DELETEInDolibarr=Vertrag %s gelöscht
 PropalClosedSignedInDolibarr=Angebot %s unterschrieben
@@ -95,7 +96,8 @@ PROJECT_MODIFYInDolibarr=Projekt %s geändert
 PROJECT_DELETEInDolibarr=Projekt %s gelöscht
 TICKET_CREATEInDolibarr=Ticket %s erstellt
 TICKET_MODIFYInDolibarr=Ticket %s geändert
-TICKET_CLOSEInDolibarr=Ticket %s closed
+TICKET_ASSIGNEDInDolibarr=Ticket %s zugewiesen
+TICKET_CLOSEInDolibarr=Ticket %s geschlossen
 TICKET_DELETEInDolibarr=Ticket %s wurde gelöscht
 ##### End agenda events #####
 AgendaModelModule=Dokumentvorlagen für Ereignisse

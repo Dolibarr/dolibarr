@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -170,7 +170,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
     }
     if (isset($_POST["code"]))
     {
-    	if ($_POST["code"]=='0')
+        if ($_POST["code"]=='0')
     	{
         	$ok=0;
     		setEventMessages($langs->transnoentities('ErrorCodeCantContainZero'), null, 'errors');
@@ -412,7 +412,7 @@ $titlepicto='title_setup';
 
 print load_fiche_titre($titre, $linkback, $titlepicto);
 
-print $langs->trans("AccountingAccountGroupsDesc", $langs->transnoentitiesnoconv("ByPersonalizedAccountGroups")).'<br><br>';
+print '<span class="opacitymedium">'.$langs->trans("AccountingAccountGroupsDesc", $langs->transnoentitiesnoconv("ByPersonalizedAccountGroups")).'</span><br><br>';
 
 // Confirmation de la suppression de la ligne
 if ($action == 'delete')
@@ -468,7 +468,7 @@ if ($id)
             $valuetoshow=$langs->trans($valuetoshow);   // try to translate
             $class="left";
             if ($fieldlist[$field]=='type') {
-				if ($tabname[$id] == MAIN_DB_PREFIX."c_paiement") {
+                if ($tabname[$id] == MAIN_DB_PREFIX."c_paiement") {
                     $valuetoshow=$form->textwithtooltip($langs->trans("Type"), $langs->trans("TypePaymentDesc"), 2, 1, img_help(1, ''));
                 } else {
                     $valuetoshow=$langs->trans("Type");
@@ -501,7 +501,7 @@ if ($id)
             if ($fieldlist[$field]=='range_account') {
                 $valuetoshow=$langs->trans("Comment");
             }
-			if ($fieldlist[$field]=='category_type') {
+            if ($fieldlist[$field]=='category_type') {
                 $valuetoshow=$langs->trans("Calculated");
             }
 
@@ -742,7 +742,6 @@ if ($id)
                     {
                         foreach ($fieldlist as $field => $value)
                         {
-
                             $showfield=1;
                         	$class="left";
                             $valuetoshow=$obj->{$fieldlist[$field]};

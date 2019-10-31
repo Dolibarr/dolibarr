@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -251,6 +251,7 @@ print '<tr class="liste_titre">';
 $texthelp=$langs->trans("PageUrlForDefaultValues");
 if ($mode == 'createform') $texthelp.=$langs->trans("PageUrlForDefaultValuesCreate", 'societe/card.php', 'societe/card.php?abc=val1&def=val2');
 else $texthelp.=$langs->trans("PageUrlForDefaultValuesList", 'societe/list.php', 'societe/list.php?abc=val1&def=val2');
+$texthelp.='<br><br>'.$langs->trans("AlsoDefaultValuesAreEffectiveForActionCreate");
 $texturl=$form->textwithpicto($langs->trans("Url"), $texthelp);
 print_liste_field_titre($texturl, $_SERVER["PHP_SELF"], 'page,param', '', $param, '', $sortfield, $sortorder);
 // Field

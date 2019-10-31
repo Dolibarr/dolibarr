@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -63,28 +63,28 @@ class Fiscalyear extends CommonObject
 	 * @var string fiscal year label
 	 */
 	public $label;
-    
+
 	/**
      * Date start (date_start)
      *
      * @var integer
      */
 	public $date_start;
-	
+
 	/**
      * Date end (date_end)
      *
      * @var integer
      */
 	public $date_end;
-	
+
 	/**
      * Date creation record (datec)
      *
      * @var integer
      */
     public $datec;
-    
+
 	public $statut;		// 0=open, 1=closed
 
 	/**
@@ -195,7 +195,6 @@ class Fiscalyear extends CommonObject
 		$sql .= ", date_start = '".$this->db->idate($this->date_start)."'";
 		$sql .= ", date_end = ".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : "null");
 		$sql .= ", statut = '".$this->db->escape($this->statut?$this->statut:0)."'";
-		$sql .= ", datec = " . ($this->datec != '' ? "'".$this->db->idate($this->datec)."'" : 'null');
 		$sql .= ", fk_user_modif = " . $user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
@@ -249,12 +248,12 @@ class Fiscalyear extends CommonObject
 		}
 	}
 
-   /**
-	*	Delete record
-	*
-	*	@param	int		$id		Id of record to delete
-	*	@return	int				<0 if KO, >0 if OK
-	*/
+    /**
+	 *	Delete record
+	 *
+	 *	@param	int		$id		Id of record to delete
+	 *	@return	int				<0 if KO, >0 if OK
+	 */
 	public function delete($id)
 	{
 		$this->db->begin();

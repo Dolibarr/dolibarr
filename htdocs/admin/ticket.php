@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -41,6 +41,12 @@ $action = GETPOST('action', 'alpha');
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scandir', 'alpha');
 $type = 'ticket';
+
+$error = 0;
+
+/*
+ * Actions
+ */
 
 if ($action == 'updateMask') {
     $maskconstticket = GETPOST('maskconstticket', 'alpha');
@@ -91,7 +97,7 @@ if ($action == 'updateMask') {
         $error++;
     }
 
-    $mail_intro = GETPOST('TICKET_MESSAGE_MAIL_INTRO', 'alpha');
+    $mail_intro = GETPOST('TICKET_MESSAGE_MAIL_INTRO', 'restricthtml');
     if (!empty($mail_intro)) {
         $res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_INTRO', $mail_intro, 'chaine', 0, '', $conf->entity);
     } else {
@@ -101,21 +107,11 @@ if ($action == 'updateMask') {
         $error++;
     }
 
-    $mail_signature = GETPOST('TICKET_MESSAGE_MAIL_SIGNATURE', 'alpha');
+    $mail_signature = GETPOST('TICKET_MESSAGE_MAIL_SIGNATURE', 'restricthtml');
     if (!empty($mail_signature)) {
         $res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_SIGNATURE', $mail_signature, 'chaine', 0, '', $conf->entity);
     } else {
         $res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_SIGNATURE', $langs->trans('TicketMessageMailSignatureText'), 'chaine', 0, '', $conf->entity);
-    }
-    if (!$res > 0) {
-        $error++;
-    }
-
-    $text_help = GETPOST('TICKET_PUBLIC_TEXT_HELP_MESSAGE', 'alpha');
-    if (!empty($text_help)) {
-        $res = dolibarr_set_const($db, 'TICKET_PUBLIC_TEXT_HELP_MESSAGE', $text_help, 'chaine', 0, '', $conf->entity);
-    } else {
-        $res = dolibarr_set_const($db, 'TICKET_PUBLIC_TEXT_HELP_MESSAGE', $langs->trans('TicketPublicPleaseBeAccuratelyDescribe'), 'chaine', 0, '', $conf->entity);
     }
     if (!$res > 0) {
         $error++;
@@ -190,7 +186,7 @@ $head = ticketAdminPrepareHead();
 
 dol_fiche_head($head, 'settings', $langs->trans("Module56000Name"), -1, "ticket");
 
-print '<span class="opacitymedium">'.$langs->trans("TicketSetupDictionaries") . '</span> : <a href="' . dol_buildpath('/admin/dict.php', 1) . '" >' . dol_buildpath('/admin/dict.php', 2) . '</a><br>';
+print '<span class="opacitymedium">'.$langs->trans("TicketSetupDictionaries") . '</span> : <a href="'.DOL_URL_ROOT.'/admin/dict.php">'.$langs->trans("ClickHereToGoTo", $langs->transnoentitiesnoconv("DictionarySetup")).'</a><br>';
 
 dol_fiche_end();
 
@@ -218,7 +214,6 @@ foreach ($dirmodels as $reldir) {
     if (is_dir($dir)) {
         $handle = opendir($dir);
         if (is_resource($handle)) {
-
             while (($file = readdir($handle)) !== false) {
                 if (preg_match('/^(mod_.*)\.php$/i', $file, $reg)) {
                     $file = $reg[1];
@@ -259,7 +254,7 @@ foreach ($dirmodels as $reldir) {
                         if ($conf->global->TICKET_ADDON == 'mod_' . $classname) {
                             print img_picto($langs->trans("Activated"), 'switch_on');
                         } else {
-                            print '<a href="' . $_SERVER["PHP_SELF"] . '?action=setmod&amp;value=mod_' . $classname . '" alt="' . $langs->trans("Default") . '">' . img_picto($langs->trans("Disabled"), 'switch_off') . '</a>';
+                            print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?action=setmod&amp;value=mod_' . $classname . '" alt="' . $langs->trans("Default") . '">' . img_picto($langs->trans("Disabled"), 'switch_off') . '</a>';
                         }
                         print '</td>';
 

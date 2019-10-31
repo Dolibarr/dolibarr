@@ -13,14 +13,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
 /**
  *		\file       htdocs/core/modules/export/export_csv.modules.php
  *		\ingroup    export
  *		\brief      File of class to build export files with format TSV
- *		\author	    Laurent Destailleur
  */
 
 require_once DOL_DOCUMENT_ROOT .'/core/modules/export/modules_export.php';
@@ -32,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/export/modules_export.php';
 class ExportTsv extends ModeleExports
 {
     /**
-	 * @var int ID
+	 * @var string ID
 	 */
 	public $id;
 
@@ -45,7 +44,7 @@ class ExportTsv extends ModeleExports
 
     /**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 

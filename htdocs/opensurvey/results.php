@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -42,7 +42,7 @@ $object=new Opensurveysondage($db);
 $result=$object->fetch(0, $numsondage);
 if ($result <= 0) dol_print_error('', 'Failed to get survey id '.$numsondage);
 
-$nblignes=$object->fetch_lines();
+$nblines=$object->fetch_lines();
 
 
 /*
@@ -108,7 +108,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 $testmodifier = false;
 $testligneamodifier = false;
 $ligneamodifier = -1;
-for ($i=0; $i<$nblignes; $i++)
+for ($i=0; $i<$nblines; $i++)
 {
 	if (isset($_POST['modifierligne'.$i]))
 	{
@@ -180,7 +180,6 @@ if (GETPOST("ajoutercolonne") && GETPOST('nouvellecolonne') && $object->format =
 // Add column (with format date)
 if (isset($_POST["ajoutercolonne"]) && $object->format == "D")
 {
-
 	// Security check
 	if (!$user->rights->opensurvey->write) accessforbidden();
 
@@ -189,7 +188,6 @@ if (isset($_POST["ajoutercolonne"]) && $object->format == "D")
 	if (isset($_POST["nouveaujour"]) && $_POST["nouveaujour"] != "vide" &&
 		isset($_POST["nouveaumois"]) && $_POST["nouveaumois"] != "vide" &&
 		isset($_POST["nouvelleannee"]) && $_POST["nouvelleannee"] != "vide") {
-
 		$nouvelledate=dol_mktime(0, 0, 0, $_POST["nouveaumois"], $_POST["nouveaujour"], $_POST["nouvelleannee"]);
 
 		if (isset($_POST["nouvelleheuredebut"]) && $_POST["nouvelleheuredebut"]!="vide"){
@@ -249,8 +247,8 @@ if (isset($_POST["ajoutercolonne"]) && $object->format == "D")
 
 		$dateinsertion = substr("$dateinsertion", 1);
 
-		//mise a jour avec les nouveaux sujets dans la base
-		if (isset($erreur_ajout_date) && !$erreur_ajout_date)
+		// update with new topics into database
+		if (isset($erreur_ajout_date) && empty($erreur_ajout_date))
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."opensurvey_sondage";
 			$sql.= " SET sujet = '".$db->escape($dateinsertion)."'";
@@ -271,7 +269,7 @@ if (isset($_POST["ajoutercolonne"]) && $object->format == "D")
 }
 
 // Delete line
-for ($i = 0; $i < $nblignes; $i++)
+for ($i = 0; $i < $nblines; $i++)
 {
 	if (GETPOST("effaceligne".$i) || GETPOST("effaceligne".$i."_x") || GETPOST("effaceligne".$i.".x"))	// effacelignei for chrome, effacelignei_x for firefox
 	{
@@ -438,7 +436,7 @@ dol_banner_tab($object, 'id', $linkback, 1, 'id_sondage', 'id_sondage', $morehtm
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border" width="100%">';
+print '<table class="border tableforfield centpercent">';
 
 // Type
 $type=($object->format=="A")?'classic':'date';
@@ -474,7 +472,7 @@ if ($object->fk_user_creat) {
 print '</td></tr>';
 
 // Link
-print '<tr><td>'.img_picto('', 'object_globe.png').' '.$langs->trans("UrlForSurvey", '').'</td><td colspan="2">';
+print '<tr><td>'.img_picto('', 'globe').' '.$langs->trans("UrlForSurvey", '').'</td><td colspan="2">';
 
 // Define $urlwithroot
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -619,10 +617,9 @@ print '<tr>'."\n";
 print '<td></td>'."\n";
 print '<td></td>'."\n";
 
-//boucle pour l'affichage des boutons de suppression de colonne
+// loop to show the delete link
 if ($user->rights->opensurvey->write) {
 	for ($i = 0; isset($toutsujet[$i]); $i++) {
-
 		print '<td class=somme><input type="image" name="effacecolonne'.$i.'" src="'.img_picto('', 'delete.png', '', false, 1).'"></td>'."\n";
 	}
 }
@@ -916,7 +913,7 @@ while ($compteur < $num)
 	}
 
 	//demande de confirmation pour modification de ligne
-	for ($i=0; $i<$nblignes; $i++)
+	for ($i=0; $i<$nblines; $i++)
 	{
 		if (isset($_POST["modifierligne".$i]))
 		{

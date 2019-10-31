@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 
@@ -109,6 +109,7 @@ if ($dateselect > 0)
 }
 
 $tmp=empty($conf->global->MAIN_DEFAULT_WORKING_HOURS)?'9-18':$conf->global->MAIN_DEFAULT_WORKING_HOURS;
+$tmp=str_replace(' ', '', $tmp);	// FIX 7533
 $tmparray=explode('-', $tmp);
 $begin_h = GETPOST('begin_h', 'int')!=''?GETPOST('begin_h', 'int'):($tmparray[0] != '' ? $tmparray[0] : 9);
 $end_h   = GETPOST('end_h', 'int')?GETPOST('end_h', 'int'):($tmparray[1] != '' ? $tmparray[1] : 18);
@@ -117,6 +118,7 @@ if ($end_h < 1 || $end_h > 24) $end_h = 18;
 if ($end_h <= $begin_h) $end_h = $begin_h + 1;
 
 $tmp=empty($conf->global->MAIN_DEFAULT_WORKING_DAYS)?'1-5':$conf->global->MAIN_DEFAULT_WORKING_DAYS;
+$tmp=str_replace(' ', '', $tmp);	// FIX 7533
 $tmparray=explode('-', $tmp);
 $begin_d = GETPOST('begin_d', 'int')?GETPOST('begin_d', 'int'):($tmparray[0] != '' ? $tmparray[0] : 1);
 $end_d   = GETPOST('end_d', 'int')?GETPOST('end_d', 'int'):($tmparray[1] != '' ? $tmparray[1] : 5);
@@ -367,9 +369,7 @@ if ($user->rights->agenda->myactions->create || $user->rights->agenda->allaction
 
 	//$param='month='.$monthshown.'&year='.$year;
 	$hourminsec='100000';
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam?'?'.$newparam:'')).'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddAction").'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
+    $newcardbutton.= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam?'?'.$newparam:'')));
 }
 
 $link='';
@@ -418,14 +418,14 @@ if (! empty($actioncode))
         elseif ($actioncode == 'AC_ALL_AUTO') $sql.= " AND ca.type = 'systemauto'";
         else
         {
-		if (is_array($actioncode))
-  		{
+            if (is_array($actioncode))
+            {
   	        	$sql.=" AND ca.code IN ('".implode("','", $actioncode)."')";
-  		}
-  		else
-  		{
+            }
+            else
+            {
   	        	$sql.=" AND ca.code IN ('".implode("','", explode(',', $actioncode))."')";
-  		}
+            }
         }
     }
 }
@@ -631,7 +631,6 @@ $currentdaytoshow = $firstdaytoshow;
 echo '<div class="div-table-responsive">';
 
 while($currentdaytoshow<$lastdaytoshow) {
-
 	echo '<table width="100%" class="noborder nocellnopadd cal_month">';
 
 	echo '<tr class="liste_titre">';
@@ -684,16 +683,16 @@ while($currentdaytoshow<$lastdaytoshow) {
 	{
 		foreach ($eventarray as $daykey => $notused)
 		{
-		   // Get all assigned users for each event
-		   foreach ($eventarray[$daykey] as $index => $event)
-		   {
-			   	$event->fetch_userassigned();
+		    // Get all assigned users for each event
+		    foreach ($eventarray[$daykey] as $index => $event)
+		    {
+			    $event->fetch_userassigned();
 				$listofuserid=$event->userassigned;
 				foreach($listofuserid as $userid => $tmp)
 				{
 				   	if (! in_array($userid, $usernamesid)) $usernamesid[$userid] = $userid;
 				}
-		   }
+		    }
 		}
 	}
 	/* Use this list to have for all users */
@@ -779,7 +778,6 @@ while($currentdaytoshow<$lastdaytoshow) {
 		$i = 0;
 		for ($iter_day = 0; $iter_day < 8; $iter_day++)
 		{
-
 			if (($i + 1) < $begin_d || ($i + 1) > $end_d)
 			{
 				$i++;
@@ -1188,33 +1186,34 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			}
 		}
 
-		$ids1='';$ids2='';
-		if (count($cases1[$h]) && array_keys($cases1[$h])) $ids1=join(',', array_keys($cases1[$h]));
-		if (count($cases2[$h]) && array_keys($cases2[$h])) $ids2=join(',', array_keys($cases2[$h]));
+		$ids1='';
+        $ids2='';
+		if (is_array($cases1[$h]) && count($cases1[$h]) && array_keys($cases1[$h])) $ids1=join(',', array_keys($cases1[$h]));
+		if (is_array($cases2[$h]) && count($cases2[$h]) && array_keys($cases2[$h])) $ids2=join(',', array_keys($cases2[$h]));
 
 		if ($h == $begin_h) echo '<td class="'.$style.'_peruserleft cal_peruser'.($var?' cal_impair '.$style.'_impair':'').'">';
 		else echo '<td class="'.$style.' cal_peruser'.($var?' cal_impair '.$style.'_impair':'').'">';
-		if (count($cases1[$h]) == 1)	// only 1 event
+		if (is_array($cases1[$h]) && count($cases1[$h]) == 1)	// only 1 event
 		{
 			$output = array_slice($cases1[$h], 0, 1);
 			$title1=$langs->trans("Ref").' '.$ids1.($title1?' - '.$title1:'');
 			if ($output[0]['string']) $title1.=($title1?' - ':'').$output[0]['string'];
 			if ($output[0]['color']) $color1 = $output[0]['color'];
 		}
-		elseif (count($cases1[$h]) > 1)
+		elseif (is_array($cases1[$h]) && count($cases1[$h]) > 1)
 		{
 			$title1=$langs->trans("Ref").' '.$ids1.($title1?' - '.$title1:'');
 			$color1='222222';
 		}
 
-		if (count($cases2[$h]) == 1)	// only 1 event
+		if (is_array($cases2[$h]) && count($cases2[$h]) == 1)	// only 1 event
 		{
 			$output = array_slice($cases2[$h], 0, 1);
 			$title2=$langs->trans("Ref").' '.$ids2.($title2?' - '.$title2:'');
 			if ($output[0]['string']) $title2.=($title2?' - ':'').$output[0]['string'];
 			if ($output[0]['color']) $color2 = $output[0]['color'];
 		}
-		elseif (count($cases2[$h]) > 1)
+		elseif (is_array($cases2[$h]) && count($cases2[$h]) > 1)
 		{
 			$title2=$langs->trans("Ref").' '.$ids2.($title2?' - '.$title2:'');
 			$color2='222222';

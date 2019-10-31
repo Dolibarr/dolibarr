@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -28,21 +28,13 @@ require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
  */
 
 /**
- * API class for bom bom
+ * API class for bom
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
-class BOMs extends DolibarrApi
+class Boms extends DolibarrApi
 {
-    /**
-     * @var array   $FIELDS     Mandatory fields, checked when create and update object
-     */
-    static $FIELDS = array(
-        'label'
-    );
-
-
     /**
      * @var BOM $bom {@type BOM}
      */
@@ -71,16 +63,16 @@ class BOMs extends DolibarrApi
      */
     public function get($id)
     {
-		if(! DolibarrApiAccess::$user->rights->bom->read) {
+		if (! DolibarrApiAccess::$user->rights->bom->read) {
 			throw new RestException(401);
 		}
 
         $result = $this->bom->fetch($id);
-        if( ! $result ) {
+        if (! $result) {
             throw new RestException(404, 'BOM not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('bom', $this->bom->id)) {
+        if (! DolibarrApi::_checkAccessToResource('bom', $this->bom->id, 'bom_bom')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -107,33 +99,33 @@ class BOMs extends DolibarrApi
         global $db, $conf;
 
         $obj_ret = array();
+        $tmpobject = new BOM($db);
 
-        $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
+        $socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
 
-        $restictonsocid = 0;	// Set to 1 if there is a field socid in table of object
+        $restrictonsocid = 0;	// Set to 1 if there is a field socid in table of object
 
         // If the internal user must only see his customers, force searching by him
         $search_sale = 0;
-        if ($restictonsocid && ! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
+        if ($restrictonsocid && ! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
 
         $sql = "SELECT t.rowid";
-        if ($restictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
-        $sql.= " FROM ".MAIN_DB_PREFIX."bom_mytable as t";
+        if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
+        $sql.= " FROM ".MAIN_DB_PREFIX.$tmpobject->table_element." as t";
 
-        if ($restictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+        if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
         $sql.= " WHERE 1 = 1";
 
         // Example of use $mode
         //if ($mode == 1) $sql.= " AND s.client IN (1, 3)";
         //if ($mode == 2) $sql.= " AND s.client IN (2, 3)";
 
-        $tmpobject = new BOM($db);
         if ($tmpobject->ismultientitymanaged) $sql.= ' AND t.entity IN ('.getEntity('bom').')';
-        if ($restictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
-        if ($restictonsocid && $socid) $sql.= " AND t.fk_soc = ".$socid;
-        if ($restictonsocid && $search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
+        if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
+        if ($restrictonsocid && $socid) $sql.= " AND t.fk_soc = ".$socid;
+        if ($restrictonsocid && $search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
         // Insert sale filter
-        if ($restictonsocid && $search_sale > 0)
+        if ($restrictonsocid && $search_sale > 0)
         {
             $sql .= " AND sc.fk_user = ".$search_sale;
         }
@@ -190,7 +182,7 @@ class BOMs extends DolibarrApi
      */
     public function post($request_data = null)
     {
-        if(! DolibarrApiAccess::$user->rights->bom->create) {
+        if(! DolibarrApiAccess::$user->rights->bom->write) {
             throw new RestException(401);
         }
         // Check mandatory fields
@@ -215,7 +207,7 @@ class BOMs extends DolibarrApi
      */
     public function put($id, $request_data = null)
     {
-        if(! DolibarrApiAccess::$user->rights->bom->create) {
+        if(! DolibarrApiAccess::$user->rights->bom->write) {
             throw new RestException(401);
         }
 
@@ -224,7 +216,7 @@ class BOMs extends DolibarrApi
             throw new RestException(404, 'BOM not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('bom', $this->bom->id)) {
+        if( ! DolibarrApi::_checkAccessToResource('bom', $this->bom->id, 'bom_bom')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -239,7 +231,7 @@ class BOMs extends DolibarrApi
         }
         else
         {
-            throw new RestException(500, $this->commande->error);
+            throw new RestException(500, $this->bom->error);
         }
     }
 
@@ -259,7 +251,7 @@ class BOMs extends DolibarrApi
             throw new RestException(404, 'BOM not found');
         }
 
-        if (! DolibarrApi::_checkAccessToResource('bom', $this->bom->id)) {
+        if (! DolibarrApi::_checkAccessToResource('bom', $this->bom->id, 'bom_bom')) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -309,12 +301,13 @@ class BOMs extends DolibarrApi
      */
     private function _validate($data)
     {
-        $bom = array();
-        foreach (BOMs::$FIELDS as $field) {
+        $myobject = array();
+        foreach ($this->bom->fields as $field => $propfield) {
+            if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat')) || $propfield['notnull'] != 1) continue;   // Not a mandatory field
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
-            $bom[$field] = $data[$field];
+                $myobject[$field] = $data[$field];
         }
-        return $bom;
+        return $myobject;
     }
 }

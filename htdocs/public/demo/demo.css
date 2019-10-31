@@ -23,13 +23,14 @@ a:hover {
 	font-weight: normal;
 	color: #444444 !important;
 
-	margin: 8px 0px 8px 2px;
+	margin: 8px 2px 8px 2px;
 
 	/*border: 1px solid #bbb;
 	border-radius: 8px;
 	-moz-border-radius: 8px;*/
-
 	background: -webkit-linear-gradient(bottom, rgb(255,255,255) 85%, rgb(255,255,255) 100%);
+
+	max-width: 346px;
 }
 .csscolumns {
     margin-top: 6px;
@@ -99,7 +100,7 @@ img.demothumb {
     width: 110px;
 }
 .demobackground {
-    background-image: url('dolibarr_demo_ban.jpg');
+    background-image: linear-gradient(to bottom, rgba(250,250,255,0.5), rgba(250,250,255,0.4)), url('dolibarr_demo_ban.jpg');
     background-size: cover;
     object-fit: contain;
     height: 140px;

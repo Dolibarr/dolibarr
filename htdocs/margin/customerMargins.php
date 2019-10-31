@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -91,7 +91,6 @@ print '<table class="border" width="100%">';
 
 $client = false;
 if ($socid > 0) {
-
 	$soc = new Societe($db);
 	$soc->fetch($socid);
 
@@ -99,8 +98,7 @@ if ($socid > 0) {
 	{
 		print '<tr><td class="titlefield">'.$langs->trans('ThirdPartyName').'</td>';
 		print '<td class="maxwidthonsmartphone" colspan="4">';
-		print $form->select_company($socid, 'socid', 'client=1 OR client=3', 1, 0, 0);
-		//$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$socid,$socid,'socid','client=1 OR client=3',1,0,1);
+		print $form->select_company($socid, 'socid', '(client=1 OR client=3)', 1, 0, 0);
 		print '</td></tr>';
 
 		$client = true;
@@ -111,8 +109,7 @@ if ($socid > 0) {
 else {
 	print '<tr><td class="titlefield">'.$langs->trans('ThirdPartyName').'</td>';
 	print '<td class="maxwidthonsmartphone" colspan="4">';
-	print $form->select_company(null, 'socid', 'client=1 OR client=3', 1, 0, 0);
-	//$form->form_thirdparty($_SERVER['PHP_SELF'],null,'socid','client=1 OR client=3',1,0,1);
+	print $form->select_company(null, 'socid', '(client=1 OR client=3)', 1, 0, 0);
 	print '</td></tr>';
 }
 
@@ -363,7 +360,7 @@ if ($result)
 		print "<td class=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
 	print "</tr>\n";
 
-  print "</table>";
+    print "</table>";
 }
 else
 {

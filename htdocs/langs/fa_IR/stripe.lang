@@ -12,7 +12,7 @@ YourEMail=ایمیل برای دریافت تاییدیه پرداخت
 STRIPE_PAYONLINE_SENDEMAIL=Email notification after a payment attempt (success or fail)
 Creditor=بستانکار
 PaymentCode=کد های پرداخت
-StripeDoPayment=Pay with Credit or Debit Card (Stripe)
+StripeDoPayment=Pay with Stripe
 YouWillBeRedirectedOnStripe=You will be redirected on secured Stripe page to input you credit card information
 Continue=بعد
 ToOfferALinkForOnlinePayment=URL برای٪ s پرداخت
@@ -40,7 +40,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook live key
 ONLINE_PAYMENT_WAREHOUSE=Stock to use for stock decrease when online payment is done<br>(TODO When option to decrease stock is done on an action on invoice and the online payment generate itself the invoice ?)
 StripeLiveEnabled=Stripe live enabled (otherwise test/sandbox mode)
 StripeImportPayment=Import Stripe payments
-ExampleOfTestCreditCard=Example of credit card for test: %s (valid), %s (error CVC), %s (expired), %s (charge fails)
+ExampleOfTestCreditCard=Example of credit card for test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
 StripeGateways=Stripe gateways
 OAUTH_STRIPE_TEST_ID=Stripe Connect Client ID (ca_...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect Client ID (ca_...)
@@ -63,3 +63,7 @@ CreateCardOnStripe=Create card on Stripe
 ShowInStripe=Show in Stripe
 StripeUserAccountForActions=User account to use for email notification of some Stripe events (Stripe payouts)
 StripePayoutList=List of Stripe payouts
+ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mode)
+ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
+PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
+ClickHereToTryAgain=<a href="%s">Click here to try again...</a>

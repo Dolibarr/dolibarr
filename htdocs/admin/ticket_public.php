@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -42,6 +42,12 @@ $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scandir', 'alpha');
 $type = 'ticket';
 
+$error = 0;
+
+/*
+ * Actions
+ */
+
 if ($action == 'setTICKET_ENABLE_PUBLIC_INTERFACE')
 {
     if (GETPOST('value')) dolibarr_set_const($db, 'TICKET_ENABLE_PUBLIC_INTERFACE', 1, 'chaine', 0, '', $conf->entity);
@@ -51,95 +57,54 @@ if ($action == 'setTICKET_ENABLE_PUBLIC_INTERFACE')
 if ($action == 'setvar') {
     include_once DOL_DOCUMENT_ROOT . "/core/lib/files.lib.php";
 
-    $notification_email = GETPOST('TICKET_NOTIFICATION_EMAIL_FROM', 'alpha');
-    if (!empty($notification_email)) {
-        $res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_FROM', $notification_email, 'chaine', 0, '', $conf->entity);
+    $topic_interface = GETPOST('TICKET_PUBLIC_INTERFACE_TOPIC', 'nohtml');
+    if (!empty($topic_interface)) {
+    	$res = dolibarr_set_const($db, 'TICKET_PUBLIC_INTERFACE_TOPIC', $topic_interface, 'chaine', 0, '', $conf->entity);
     } else {
-        $res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_FROM', '', 'chaine', 0, '', $conf->entity);
+    	$res = dolibarr_set_const($db, 'TICKET_PUBLIC_INTERFACE_TOPIC', '', 'chaine', 0, '', $conf->entity);
     }
     if (!$res > 0) {
-        $error++;
+    	$error++;
     }
 
-    // altairis : differentiate notification email FROM and TO
-    $notification_email_to = GETPOST('TICKET_NOTIFICATION_EMAIL_TO', 'alpha');
-    if (!empty($notification_email_to)) {
-        $res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TO', $notification_email_to, 'chaine', 0, '', $conf->entity);
+    $text_home = GETPOST('TICKET_PUBLIC_TEXT_HOME', 'restricthtml');
+    if (!empty($text_home)) {
+    	$res = dolibarr_set_const($db, 'TICKET_PUBLIC_TEXT_HOME', $text_home, 'chaine', 0, '', $conf->entity);
     } else {
-        $res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TO', '', 'chaine', 0, '', $conf->entity);
+    	$res = dolibarr_set_const($db, 'TICKET_PUBLIC_TEXT_HOME', $langs->trans('TicketPublicInterfaceTextHome'), 'chaine', 0, '', $conf->entity);
     }
     if (!$res > 0) {
-        $error++;
+    	$error++;
     }
 
-    $mail_new_ticket = GETPOST('TICKET_MESSAGE_MAIL_NEW', 'alpha');
+    $text_help = GETPOST('TICKET_PUBLIC_TEXT_HELP_MESSAGE', 'restricthtml');
+    if (!empty($text_help)) {
+    	$res = dolibarr_set_const($db, 'TICKET_PUBLIC_TEXT_HELP_MESSAGE', $text_help, 'chaine', 0, '', $conf->entity);
+    } else {
+    	$res = dolibarr_set_const($db, 'TICKET_PUBLIC_TEXT_HELP_MESSAGE', $langs->trans('TicketPublicPleaseBeAccuratelyDescribe'), 'chaine', 0, '', $conf->entity);
+    }
+    if (!$res > 0) {
+    	$error++;
+    }
+
+    $mail_new_ticket = GETPOST('TICKET_MESSAGE_MAIL_NEW', 'restricthtml');
     if (!empty($mail_new_ticket)) {
-        $res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_NEW', $mail_new_ticket, 'chaine', 0, '', $conf->entity);
+    	$res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_NEW', $mail_new_ticket, 'chaine', 0, '', $conf->entity);
     } else {
-        $res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_NEW', $langs->trans('TicketMessageMailNewText'), 'chaine', 0, '', $conf->entity);
+    	$res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_NEW', $langs->trans('TicketMessageMailNewText'), 'chaine', 0, '', $conf->entity);
     }
     if (!$res > 0) {
-        $error++;
-    }
-
-    $mail_intro = GETPOST('TICKET_MESSAGE_MAIL_INTRO', 'alpha');
-    if (!empty($mail_intro)) {
-        $res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_INTRO', $mail_intro, 'chaine', 0, '', $conf->entity);
-    } else {
-        $res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_INTRO', $langs->trans('TicketMessageMailIntroText'), 'chaine', 0, '', $conf->entity);
-    }
-    if (!$res > 0) {
-        $error++;
-    }
-
-    $mail_signature = GETPOST('TICKET_MESSAGE_MAIL_SIGNATURE', 'alpha');
-    if (!empty($mail_signature)) {
-        $res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_SIGNATURE', $mail_signature, 'chaine', 0, '', $conf->entity);
-    } else {
-        $res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_SIGNATURE', $langs->trans('TicketMessageMailSignatureText'), 'chaine', 0, '', $conf->entity);
-    }
-    if (!$res > 0) {
-        $error++;
+    	$error++;
     }
 
     $url_interface = GETPOST('TICKET_URL_PUBLIC_INTERFACE', 'alpha');
     if (!empty($url_interface)) {
-        $res = dolibarr_set_const($db, 'TICKET_URL_PUBLIC_INTERFACE', $url_interface, 'chaine', 0, '', $conf->entity);
+    	$res = dolibarr_set_const($db, 'TICKET_URL_PUBLIC_INTERFACE', $url_interface, 'chaine', 0, '', $conf->entity);
     } else {
-        $res = dolibarr_set_const($db, 'TICKET_URL_PUBLIC_INTERFACE', '', 'chaine', 0, '', $conf->entity);
+    	$res = dolibarr_set_const($db, 'TICKET_URL_PUBLIC_INTERFACE', '', 'chaine', 0, '', $conf->entity);
     }
     if (!$res > 0) {
-        $error++;
-    }
-
-    $topic_interface = GETPOST('TICKET_PUBLIC_INTERFACE_TOPIC', 'alpha');
-    if (!empty($topic_interface)) {
-        $res = dolibarr_set_const($db, 'TICKET_PUBLIC_INTERFACE_TOPIC', $topic_interface, 'chaine', 0, '', $conf->entity);
-    } else {
-        $res = dolibarr_set_const($db, 'TICKET_PUBLIC_INTERFACE_TOPIC', '', 'chaine', 0, '', $conf->entity);
-    }
-    if (!$res > 0) {
-        $error++;
-    }
-
-    $text_home = GETPOST('TICKET_PUBLIC_TEXT_HOME', 'alpha');
-    if (!empty($text_home)) {
-        $res = dolibarr_set_const($db, 'TICKET_PUBLIC_TEXT_HOME', $text_home, 'chaine', 0, '', $conf->entity);
-    } else {
-        $res = dolibarr_set_const($db, 'TICKET_PUBLIC_TEXT_HOME', $langs->trans('TicketPublicInterfaceTextHome'), 'chaine', 0, '', $conf->entity);
-    }
-    if (!$res > 0) {
-        $error++;
-    }
-
-    $text_help = GETPOST('TICKET_PUBLIC_TEXT_HELP_MESSAGE', 'alpha');
-    if (!empty($text_help)) {
-        $res = dolibarr_set_const($db, 'TICKET_PUBLIC_TEXT_HELP_MESSAGE', $text_help, 'chaine', 0, '', $conf->entity);
-    } else {
-        $res = dolibarr_set_const($db, 'TICKET_PUBLIC_TEXT_HELP_MESSAGE', $langs->trans('TicketPublicPleaseBeAccuratelyDescribe'), 'chaine', 0, '', $conf->entity);
-    }
-    if (!$res > 0) {
-        $error++;
+    	$error++;
     }
 }
 
@@ -162,14 +127,11 @@ if ($action == 'setvarother') {
         $error++;
     }
 
-    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-    {
-    	$param_show_module_logo = GETPOST('TICKET_SHOW_MODULE_LOGO', 'alpha');
-    	$res = dolibarr_set_const($db, 'TICKET_SHOW_MODULE_LOGO', $param_show_module_logo, 'chaine', 0, '', $conf->entity);
-    	if (!$res > 0) {
-        	$error++;
-    	}
-    }
+   	$param_show_module_logo = GETPOST('TICKET_SHOW_COMPANY_LOGO', 'alpha');
+   	$res = dolibarr_set_const($db, 'TICKET_SHOW_COMPANY_LOGO', $param_show_module_logo, 'chaine', 0, '', $conf->entity);
+   	if (!$res > 0) {
+       	$error++;
+   	}
 
     if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
     {
@@ -178,18 +140,6 @@ if ($action == 'setvarother') {
 	    if (!$res > 0) {
 	        $error++;
 	    }
-    }
-
-    $param_limit_view = GETPOST('TICKET_LIMIT_VIEW_ASSIGNED_ONLY', 'alpha');
-    $res = dolibarr_set_const($db, 'TICKET_LIMIT_VIEW_ASSIGNED_ONLY', $param_limit_view, 'chaine', 0, '', $conf->entity);
-    if (!$res > 0) {
-        $error++;
-    }
-
-    $param_auto_assign = GETPOST('TICKET_AUTO_ASSIGN_USER_CREATE', 'alpha');
-    $res = dolibarr_set_const($db, 'TICKET_AUTO_ASSIGN_USER_CREATE', $param_auto_assign, 'chaine', 0, '', $conf->entity);
-    if (!$res > 0) {
-        $error++;
     }
 }
 
@@ -244,8 +194,7 @@ print '<br><br>';
 
 if (! empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
 {
-
-    if (!$conf->use_javascript_ajax) {
+    if (empty($conf->use_javascript_ajax)) {
         print '<form method="post" action="' . $_SERVER['PHP_SELF'] . '" enctype="multipart/form-data" >';
         print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
         print '<input type="hidden" name="action" value="setvarother">';
@@ -260,7 +209,7 @@ if (! empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
     print '</tr>';
 
     // Check if email exists
-    print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsEmailMustExist") . '</td>';
+    print '<tr class="oddeven"><td>' . $langs->trans("TicketsEmailMustExist") . '</td>';
     print '<td class="left">';
     if ($conf->use_javascript_ajax) {
         print ajax_constantonoff('TICKET_EMAIL_MUST_EXISTS');
@@ -277,7 +226,7 @@ if (! empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
     /*if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
     {
     	// Show logo for module
-    	print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsShowModuleLogo") . '</td>';
+    	print '<tr class="oddeven"><td>' . $langs->trans("TicketsShowModuleLogo") . '</td>';
     	print '<td class="left">';
     	if ($conf->use_javascript_ajax) {
     	    print ajax_constantonoff('TICKET_SHOW_MODULE_LOGO');
@@ -293,7 +242,7 @@ if (! empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
     }*/
 
     // Show logo for company
-    print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsShowCompanyLogo") . '</td>';
+    print '<tr class="oddeven"><td>' . $langs->trans("TicketsShowCompanyLogo") . '</td>';
     print '<td class="left">';
     if ($conf->use_javascript_ajax) {
     	print ajax_constantonoff('TICKET_SHOW_COMPANY_LOGO');
@@ -310,7 +259,7 @@ if (! empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
     // Also send to main email address
     if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
     {
-    	print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsEmailAlsoSendToMainAddress") . '</td>';
+    	print '<tr class="oddeven"><td>' . $langs->trans("TicketsEmailAlsoSendToMainAddress") . '</td>';
     	print '<td class="left">';
     	if ($conf->use_javascript_ajax) {
     	    print ajax_constantonoff('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS');
@@ -329,21 +278,6 @@ if (! empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
         print '<tr class="impair"><td colspan="3" align="center"><input type="submit" class="button" value="' . $langs->trans("Save") . '"></td>';
         print '</tr>';
     }
-
-    // Auto assign ticket at user who created it
-    print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsAutoAssignTicket") . '</td>';
-    print '<td class="left">';
-    if ($conf->use_javascript_ajax) {
-        print ajax_constantonoff('TICKET_AUTO_ASSIGN_USER_CREATE');
-    } else {
-        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-        print $form->selectarray("TICKET_AUTO_ASSIGN_USER_CREATE", $arrval, $conf->global->TICKET_AUTO_ASSIGN_USER_CREATE);
-    }
-    print '</td>';
-    print '<td align="center">';
-    print $form->textwithpicto('', $langs->trans("TicketsAutoAssignTicketHelp"), 1, 'help');
-    print '</td>';
-    print '</tr>';
 
     print '</table><br>';
 
@@ -369,16 +303,6 @@ if (! empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
         print '<td colspan="3"><div class="info">' . $langs->trans("TicketCkEditorEmailNotActivated") . '</div></td>';
         print "</tr>\n";
     }
-
-    // Url public interface
-    $url_interface = $conf->global->TICKET_URL_PUBLIC_INTERFACE;
-    print '<tr><td>' . $langs->trans("TicketUrlPublicInterfaceLabelAdmin") . '</label>';
-    print '</td><td>';
-    print '<input type="text" name="TICKET_URL_PUBLIC_INTERFACE" value="' . $conf->global->TICKET_URL_PUBLIC_INTERFACE . '" size="40" ></td>';
-    print '</td>';
-    print '<td align="center">';
-    print $form->textwithpicto('', $langs->trans("TicketUrlPublicInterfaceHelpAdmin"), 1, 'help');
-    print '</td></tr>';
 
     // Interface topic
     $url_interface = $conf->global->TICKET_PUBLIC_INTERFACE_TOPIC;
@@ -439,6 +363,16 @@ if (! empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
     print '</td>';
     print '<td align="center">';
     print $form->textwithpicto('', $langs->trans("TicketNewEmailBodyHelp"), 1, 'help');
+    print '</td></tr>';
+
+    // Url public interface
+    $url_interface = $conf->global->TICKET_URL_PUBLIC_INTERFACE;
+    print '<tr><td>' . $langs->trans("TicketUrlPublicInterfaceLabelAdmin") . '</label>';
+    print '</td><td>';
+    print '<input type="text" name="TICKET_URL_PUBLIC_INTERFACE" value="' . $conf->global->TICKET_URL_PUBLIC_INTERFACE . '" size="40" ></td>';
+    print '</td>';
+    print '<td align="center">';
+    print $form->textwithpicto('', $langs->trans("TicketUrlPublicInterfaceHelpAdmin"), 1, 'help');
     print '</td></tr>';
 
     print '</table>';

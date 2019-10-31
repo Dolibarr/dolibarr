@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -99,7 +99,7 @@ class WebsitePage extends CommonObject
 		'type_container' =>array('type'=>'varchar(16)',  'label'=>'Type',             'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'index'=>0, 'position'=>12, 'comment'=>'Type of container'),
 		'title'          =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1),
 	    'description'    =>array('type'=>'varchar(255)', 'label'=>'Description',      'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1),
-		'image'          =>array('type'=>'varchar(255)', 'label'=>'Image',            'enabled'=>1, 'visible'=>1,  'position'=>32,  'searchall'=>0, 'help'=>'Relative path of media. Used if Type is "blog_post"'),
+		'image'          =>array('type'=>'varchar(255)', 'label'=>'Image',            'enabled'=>1, 'visible'=>1,  'position'=>32,  'searchall'=>0, 'help'=>'Relative path of media. Used if Type is "blogpost"'),
 		'keywords'       =>array('type'=>'varchar(255)', 'label'=>'Keywords',         'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
 		'lang'           =>array('type'=>'varchar(6)',   'label'=>'Lang',             'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
 		//'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'index'=>true,   'position'=>1000),
@@ -340,7 +340,8 @@ class WebsitePage extends CommonObject
 
 			return $records;
 		} else {
-			$this->errors[] = 'Error ' . $this->db->lasterror();
+			$this->error = 'Error ' . $this->db->lasterror();
+			$this->errors[] = $this->error;
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 
 			return -1;
@@ -527,7 +528,6 @@ class WebsitePage extends CommonObject
 
 		if ($mode == 0)
 		{
-			$prefix='';
 			if ($status == 1) return $langs->trans('Enabled');
 			elseif ($status == 0) return $langs->trans('Disabled');
 		}

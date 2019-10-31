@@ -12,12 +12,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-include_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/PSWebServiceLibrary.class.php';
+if (! class_exists('PrestaShopWebservice')) // We keep this because some modules add this lib too into a different path. This is to avoid "Cannot declare class PrestaShopWebservice" errors.
+{
+    include_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/PSWebServiceLibrary.class.php';
+}
 
 
 /**
@@ -29,8 +32,8 @@ class Dolistore
      * beginning of pagination
      * @var int
      */
+    public $start;
 
-     public $start;
     /**
      * end of pagination
      * @var int
@@ -223,7 +226,6 @@ class Dolistore
 						$html   .= self::get_categories($cat->id);
 						$html   .= "</li>\n";
 			} else {
-
 			}
 		}
 

@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -63,11 +63,10 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
     		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Label")), null, 'errors');
     		return -2;
     	}
-
-    	if (! preg_match('/^(price|boolean|sellist|integer|date|timestamp|varchar|double|text|html)/', $addfieldentry['type']))
-
+    	if (! preg_match('/^(integer|price|sellist|date|varchar|double|text|html)/', $addfieldentry['type'])
+    		&& ! preg_match('/^(boolean|real|timestamp)$/', $addfieldentry['type']))
     	{
-    		setEventMessages($langs->trans('BadFormatForType', $objectname), null, 'errors');
+    		setEventMessages($langs->trans('BadValueForType', $objectname), null, 'errors');
     		return -2;
     	}
     }
@@ -124,7 +123,6 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 
         if (count($object->fields))
         {
-
             foreach($object->fields as $key => $val)
             {
                 $i++;

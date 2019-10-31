@@ -23,7 +23,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -321,6 +321,7 @@ class Commande extends CommonOrder
 	public function valid($user, $idwarehouse = 0, $notrigger = 0)
 	{
 		global $conf,$langs;
+
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error=0;
@@ -364,7 +365,7 @@ class Commande extends CommonOrder
 
 		// Validate
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
-		$sql.= " SET ref = '".$num."',";
+		$sql.= " SET ref = '".$this->db->escape($num)."',";
 		$sql.= " fk_statut = ".self::STATUS_VALIDATED.",";
 		$sql.= " date_valid='".$this->db->idate($now)."',";
 		$sql.= " fk_user_valid = ".$user->id;
@@ -423,13 +424,18 @@ class Commande extends CommonOrder
 			// Rename directory if dir was a temporary ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref))
 			{
-				// On renomme repertoire ($this->ref = ancienne ref, $num = nouvelle ref)
-				// in order not to lose the attachments
+				// Now we rename also files into index
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'commande/".$this->db->escape($this->newref)."'";
+				$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'commande/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($num);
-				$dirsource = $conf->commande->dir_output.'/'.$oldref;
-				$dirdest = $conf->commande->dir_output.'/'.$newref;
-				if (file_exists($dirsource))
+				$dirsource = $conf->commande->multidir_output[$this->entity].'/'.$oldref;
+				$dirdest = $conf->commande->multidir_output[$this->entity].'/'.$newref;
+				if (! $error && file_exists($dirsource))
 				{
 					dol_syslog(get_class($this)."::valid() rename dir ".$dirsource." into ".$dirdest);
 
@@ -437,7 +443,7 @@ class Commande extends CommonOrder
 					{
 						dol_syslog("Rename ok");
 						// Rename docs starting with $oldref with $newref
-						$listoffiles=dol_dir_list($conf->commande->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
+						$listoffiles=dol_dir_list($conf->commande->multidir_output[$this->entity].'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
 						foreach($listoffiles as $fileentry)
 						{
 							$dirsource=$fileentry['name'];
@@ -499,7 +505,7 @@ class Commande extends CommonOrder
 			return -1;
 		}
 
-		dol_syslog(get_class($this)."::set_draft", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$this->db->begin();
 
@@ -641,7 +647,7 @@ class Commande extends CommonOrder
 
 			$now=dol_now();
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql.= ' SET fk_statut = '.self::STATUS_CLOSED.',';
 			$sql.= ' fk_user_cloture = '.$user->id.',';
 			$sql.= " date_cloture = '".$this->db->idate($now)."'";
@@ -815,7 +821,7 @@ class Commande extends CommonOrder
 		}
 		if (! empty($conf->global->COMMANDE_REQUIRE_SOURCE) && $this->source < 0)
 		{
-			$this->error=$langs->trans("ErrorFieldRequired", $langs->trans("Source"));
+			$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Source"));
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
 		}
@@ -859,7 +865,7 @@ class Commande extends CommonOrder
 		$sql.= ", ".($this->remise_percent>0?$this->db->escape($this->remise_percent):0);
 		$sql.= ", ".(int) $this->fk_incoterms;
 		$sql.= ", '".$this->db->escape($this->location_incoterms)."'";
-		$sql.= ", ".$conf->entity;
+		$sql.= ", ".setEntity($this);
         $sql.= ", ".($this->module_source ? "'".$this->db->escape($this->module_source)."'" : "null");
 		$sql.= ", ".($this->pos_source != '' ? "'".$this->db->escape($this->pos_source)."'" : "null");
 		$sql.= ", ".(int) $this->fk_multicurrency;
@@ -1070,10 +1076,11 @@ class Commande extends CommonOrder
 	/**
 	 *	Load an object from its id and create a new one in database
 	 *
-	 *	@param		int			$socid			Id of thirdparty
-	 *	@return		int							New id of clone
+	 *  @param	    User	$user		User making the clone
+	 *	@param		int		$socid		Id of thirdparty
+	 *	@return		int					New id of clone
 	 */
-	public function createFromClone($socid = 0)
+	public function createFromClone(User $user, $socid = 0)
 	{
 		global $conf, $user,$hookmanager;
 
@@ -1231,6 +1238,7 @@ class Commande extends CommonOrder
 				$this->lines[$i] = $line;
 		}
 
+		$this->entity               = $object->entity;
 		$this->socid                = $object->socid;
 		$this->fk_project           = $object->fk_project;
 		$this->cond_reglement_id    = $object->cond_reglement_id;
@@ -1258,7 +1266,7 @@ class Commande extends CommonOrder
 		$object->fetch_optionals($object->id);
 
 		$e = new ExtraFields($this->db);
-		$element_extrafields = $e->fetch_name_optionals_label($this->element);
+		$element_extrafields = $e->fetch_name_optionals_label($this->table_element);
 
 		foreach($object->array_options as $options_key => $value) {
 			if(array_key_exists(str_replace('options_', '', $options_key), $element_extrafields)){
@@ -1311,7 +1319,7 @@ class Commande extends CommonOrder
 	 * 	@param		float			$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
 	 *	@param      int				$fk_product      	Id of product
 	 *	@param      float			$remise_percent  	Percentage discount of the line
-	 *	@param      int				$info_bits			Bits de type de lignes
+	 *	@param      int				$info_bits			Bits of type of lines
 	 *	@param      int				$fk_remise_except	Id remise
 	 *	@param      string			$price_base_type	HT or TTC
 	 *	@param      float			$pu_ttc    		    Prix unitaire TTC
@@ -1450,11 +1458,11 @@ class Commande extends CommonOrder
 			$pu_ht_devise = $tabprice[19];
 
 			// Rang to use
-			$rangtouse = $rang;
-			if ($rangtouse == -1)
+			$ranktouse = $rang;
+			if ($ranktouse == -1)
 			{
 				$rangmax = $this->line_max($fk_parent_line);
-				$rangtouse = $rangmax + 1;
+				$ranktouse = $rangmax + 1;
 			}
 
 			// TODO A virer
@@ -1488,7 +1496,7 @@ class Commande extends CommonOrder
 			$this->line->fk_remise_except=$fk_remise_except;
 			$this->line->remise_percent=$remise_percent;
 			$this->line->subprice=$pu_ht;
-			$this->line->rang=$rangtouse;
+			$this->line->rang=$ranktouse;
 			$this->line->info_bits=$info_bits;
 			$this->line->total_ht=$total_ht;
 			$this->line->total_tva=$total_tva;
@@ -1675,7 +1683,7 @@ class Commande extends CommonOrder
 		$sql.= ', c.fk_incoterms, c.location_incoterms';
 		$sql.= ", c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva, c.multicurrency_total_ttc";
 		$sql.= ", c.module_source, c.pos_source";
-        $sql.= ", i.libelle as libelle_incoterms";
+        $sql.= ", i.libelle as label_incoterms";
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql.= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc';
 		$sql.= ', ca.code as availability_code, ca.label as availability_label';
@@ -1684,7 +1692,7 @@ class Commande extends CommonOrder
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON c.fk_cond_reglement = cr.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON c.fk_mode_reglement = p.id';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON c.fk_availability = ca.rowid';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON c.fk_input_reason = ca.rowid';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON c.fk_input_reason = dr.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON c.fk_incoterms = i.rowid';
 
 		if ($id) $sql.= " WHERE c.rowid=".$id;
@@ -1757,7 +1765,7 @@ class Commande extends CommonOrder
 				//Incoterms
 				$this->fk_incoterms         = $obj->fk_incoterms;
 				$this->location_incoterms   = $obj->location_incoterms;
-				$this->libelle_incoterms    = $obj->libelle_incoterms;
+				$this->label_incoterms    = $obj->label_incoterms;
 
 				// Multicurrency
 				$this->fk_multicurrency 		= $obj->fk_multicurrency;
@@ -1887,10 +1895,12 @@ class Commande extends CommonOrder
 	 *	Load array lines
 	 *
 	 *	@param		int		$only_product	Return only physical products
+	 *	@param		int		$loadalsotranslation	Return translation for products
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	public function fetch_lines($only_product = 0)
+	public function fetch_lines($only_product = 0, $loadalsotranslation = 0)
 	{
+		global $langs, $conf;
         // phpcs:enable
 		$this->lines=array();
 
@@ -1982,6 +1992,13 @@ class Commande extends CommonOrder
 				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 
 				$line->fetch_optionals();
+
+				// multilangs
+        		if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($objp->fk_product) && ! empty($loadalsotranslation)) {
+            		$line = new Product($this->db);
+            		$line->fetch($objp->fk_product);
+            		$line->getMultiLangs();
+        		}
 
                 $this->lines[$i] = $line;
 
@@ -2825,7 +2842,6 @@ class Commande extends CommonOrder
 		dol_syslog(get_class($this)."::classifyBilled", LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
-
 			if (! $error)
 			{
 				$this->oldcopy= clone $this;
@@ -2957,7 +2973,6 @@ class Commande extends CommonOrder
 
 		if ($this->statut == Commande::STATUS_DRAFT)
 		{
-
 			// Clean parameters
 			if (empty($qty)) $qty=0;
 			if (empty($info_bits)) $info_bits=0;
@@ -3319,10 +3334,10 @@ class Commande extends CommonOrder
 		{
 			// Remove directory with files
 			$comref = dol_sanitizeFileName($this->ref);
-			if ($conf->commande->dir_output && !empty($this->ref))
+			if ($conf->commande->multidir_output[$this->entity] && !empty($this->ref))
 			{
-				$dir = $conf->commande->dir_output . "/" . $comref ;
-				$file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
+				$dir = $conf->commande->multidir_output[$this->entity] . "/" . $comref ;
+				$file = $conf->commande->multidir_output[$this->entity] . "/" . $comref . "/" . $comref . ".pdf";
 				if (file_exists($file))	// We must delete all files before deleting directory
 				{
 					dol_delete_preview($this);
@@ -3395,6 +3410,7 @@ class Commande extends CommonOrder
 			$response = new WorkboardResponse();
 			$response->warning_delay=$conf->commande->client->warning_delay/60/60/24;
 			$response->label=$langs->trans("OrdersToProcess");
+			$response->labelShort = $langs->trans("Opened");
 			$response->url=DOL_URL_ROOT.'/commande/list.php?viewstatut=-3&mainmenu=commercial&leftmenu=orders';
 			$response->img=img_object('', "order");
 
@@ -3812,7 +3828,6 @@ class Commande extends CommonOrder
 		$langs->load("orders");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'einstein';
 
 			if ($this->modelpdf) {
@@ -4049,6 +4064,33 @@ class OrderLine extends CommonOrderLine
 		global $conf, $langs;
 
 		$error=0;
+
+        // check if order line is not in a shipment line before deleting
+        $sqlCheckShipmentLine  = "SELECT";
+        $sqlCheckShipmentLine .= " ed.rowid";
+        $sqlCheckShipmentLine .= " FROM " . MAIN_DB_PREFIX . "expeditiondet ed";
+        $sqlCheckShipmentLine .= " WHERE ed.fk_origin_line = " . $this->rowid;
+
+        $resqlCheckShipmentLine = $this->db->query($sqlCheckShipmentLine);
+        if (!$resqlCheckShipmentLine) {
+            $error++;
+            $this->error    = $this->db->lasterror();
+            $this->errors[] = $this->error;
+        } else {
+            $langs->load('errors');
+            $num = $this->db->num_rows($resqlCheckShipmentLine);
+            if ($num > 0) {
+                $error++;
+                $objCheckShipmentLine = $this->db->fetch_object($resqlCheckShipmentLine);
+                $this->error = $langs->trans('ErrorRecordAlreadyExists') . ' : ' . $langs->trans('ShipmentLine') . ' ' . $objCheckShipmentLine->rowid;
+                $this->errors[] = $this->error;
+            }
+            $this->db->free($resqlCheckShipmentLine);
+        }
+        if ($error) {
+            dol_syslog(__METHOD__ . 'Error ; ' . $this->error, LOG_ERR);
+            return -1;
+        }
 
 		$this->db->begin();
 

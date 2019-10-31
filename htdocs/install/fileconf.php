@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -118,19 +118,21 @@ if (! empty($force_install_message))
 	<tr>
         <td class="label"><label for="main_dir"><b><?php print $langs->trans("WebPagesDirectory"); ?></b></label></td>
 <?php
-	if (empty($dolibarr_main_url_root)) {
-		$dolibarr_main_document_root = detect_dolibarr_main_document_root();
-	}
-	?>
+if (empty($dolibarr_main_url_root)) {
+	$dolibarr_main_document_root = detect_dolibarr_main_document_root();
+}
+?>
 		<td class="label">
 			<input type="text"
 			       class="minwidth300"
                    id="main_dir"
                    name="main_dir"
                    value="<?php print $dolibarr_main_document_root ?>"
-				<?php if (!empty($force_install_noedit)) {
-					print ' disabled';
-				} ?>
+<?php
+if (!empty($force_install_noedit)) {
+	print ' disabled';
+}
+?>
 			>
 		</td>
 		<td class="comment"><?php
@@ -159,9 +161,9 @@ if (! empty($force_install_message))
                    id="main_data_dir"
                    name="main_data_dir"
                    value="<?php print $dolibarr_main_data_root ?>"
-				<?php if (!empty($force_install_noedit)) {
-					print ' disabled';
-				} ?>
+<?php if (!empty($force_install_noedit)) {
+	print ' disabled';
+} ?>
 			>
 		</td>
 		<td class="comment"><?php
@@ -191,9 +193,10 @@ if (! empty($force_install_message))
 			       id="main_url"
                    name="main_url"
 			       value="<?php print $dolibarr_main_url_root; ?> "
-				<?php if (!empty($force_install_noedit)) {
-					print ' disabled';
-				} ?>
+<?php if (!empty($force_install_noedit)) {
+	print ' disabled';
+}
+?>
 			>
 		</td>
 		<td class="comment"><?php print $langs->trans("Examples").":<br>"; ?>
@@ -214,19 +217,15 @@ if (! empty($force_install_message))
                         <input type="checkbox"
                                id="main_force_https"
                                name="main_force_https"
-				<?php if (!empty($force_install_mainforcehttps)) {
-					print ' checked';
-				} ?>
-				<?php if ($force_install_noedit == 2 && $force_install_mainforcehttps !== null) {
-					print ' disabled';
-				} ?>
+				<?php if (!empty($force_install_mainforcehttps)) { print ' checked'; } ?>
+				<?php if ($force_install_noedit == 2 && $force_install_mainforcehttps !== null) { print ' disabled'; } ?>
 			>
 		</td>
 		<td class="comment"><?php echo $langs->trans("CheckToForceHttps"); ?>
 		</td>
 
 	</tr>
-	<?php
+		<?php
 	}
 	?>
 
@@ -245,9 +244,7 @@ if (! empty($force_install_message))
 			       id="db_name"
                    name="db_name"
 			       value="<?php echo (!empty($dolibarr_main_db_name)) ? $dolibarr_main_db_name : ($force_install_database ? $force_install_database : 'dolibarr'); ?>"
-				<?php if ($force_install_noedit == 2 && $force_install_database !== null) {
-					print ' disabled';
-				} ?>
+				<?php if ($force_install_noedit == 2 && $force_install_database !== null) { print ' disabled'; } ?>
 			>
 		</td>
 		<td class="comment"><?php echo $langs->trans("DatabaseName"); ?></td>
@@ -324,9 +321,7 @@ if (! empty($force_install_message))
 		?>
 			<select id="db_type"
 			        name="db_type"
-				<?php if ($force_install_noedit == 2 && $force_install_type !== null) {
-					print ' disabled';
-				} ?>
+				<?php if ($force_install_noedit == 2 && $force_install_type !== null) { print ' disabled'; } ?>
 			>
 				<?php print $option; ?>
 			</select>
@@ -343,9 +338,7 @@ if (! empty($force_install_message))
                    id="db_host"
 			       name="db_host"
 			       value="<?php print (!empty($force_install_dbserver) ? $force_install_dbserver : (!empty($dolibarr_main_db_host) ? $dolibarr_main_db_host : 'localhost')); ?>"
-				<?php if ($force_install_noedit == 2 && $force_install_dbserver !== null) {
-					print ' disabled';
-				} ?>
+				<?php if ($force_install_noedit == 2 && $force_install_dbserver !== null) { print ' disabled'; } ?>
 			>
 		</td>
 		<td class="comment"><?php echo $langs->trans("ServerAddressDescription"); ?>
@@ -360,9 +353,7 @@ if (! empty($force_install_message))
 			       name="db_port"
 			       id="db_port"
 			       value="<?php print (!empty($force_install_port)) ? $force_install_port : $dolibarr_main_db_port; ?>"
-				<?php if ($force_install_noedit == 2 && $force_install_port !== null) {
-					print ' disabled';
-				} ?>
+				<?php if ($force_install_noedit == 2 && $force_install_port !== null) { print ' disabled'; } ?>
 			>
 		</td>
 		<td class="comment"><?php echo $langs->trans("ServerPortDescription"); ?>
@@ -377,9 +368,7 @@ if (! empty($force_install_message))
                    id="db_prefix"
 			       name="db_prefix"
 			       value="<?php echo(!empty($force_install_prefix) ? $force_install_prefix : (!empty($dolibarr_main_db_prefix) ? $dolibarr_main_db_prefix : 'llx_')); ?>"
-				<?php if ($force_install_noedit == 2 && $force_install_prefix !== null) {
-					print ' disabled';
-				} ?>
+				<?php if ($force_install_noedit == 2 && $force_install_prefix !== null) { print ' disabled'; } ?>
 			>
 		</td>
 		<td class="comment"><?php echo $langs->trans("DatabasePrefixDescription"); ?></td>
@@ -391,12 +380,8 @@ if (! empty($force_install_message))
 			<input type="checkbox"
 			       id="db_create_database"
 			       name="db_create_database"
-				<?php if ($force_install_createdatabase) {
-					print ' checked';
-				} ?>
-				<?php if ($force_install_noedit == 2 && $force_install_createdatabase !== null) {
-					print ' disabled';
-				} ?>
+				<?php if ($force_install_createdatabase) { print ' checked'; } ?>
+				<?php if ($force_install_noedit == 2 && $force_install_createdatabase !== null) { print ' disabled'; } ?>
 			>
 		</td>
 		<td class="comment"><?php echo $langs->trans("CheckToCreateDatabase"); ?>
@@ -410,9 +395,7 @@ if (! empty($force_install_message))
                    id="db_user"
 			       name="db_user"
 			       value="<?php print (!empty($force_install_databaselogin)) ? $force_install_databaselogin : $dolibarr_main_db_user; ?>"
-				<?php if ($force_install_noedit == 2 && $force_install_databaselogin !== null) {
-					print ' disabled';
-				} ?>
+				<?php if ($force_install_noedit == 2 && $force_install_databaselogin !== null) { print ' disabled'; } ?>
 			>
 		</td>
 		<td class="comment"><?php echo $langs->trans("AdminLogin"); ?></td>
@@ -424,17 +407,16 @@ if (! empty($force_install_message))
 			<input type="password"
                    id="db_pass" autocomplete="off"
 			       name="db_pass"
-			       value="<?php
-			       // If $force_install_databasepass is on, we don't want to set password, we just show '***'. Real value will be extracted from the forced install file at step1.
-			       $autofill = ((!empty($_SESSION['dol_save_pass'])) ? $_SESSION['dol_save_pass'] : str_pad('', strlen($force_install_databasepass), '*'));
-			       if (!empty($dolibarr_main_prod)) {
-				       $autofill = '';
-			       }
-			       print dol_escape_htmltag($autofill);
-			       ?>"
-				<?php if ($force_install_noedit == 2 && $force_install_databasepass !== null) {
-					print ' disabled';
-				} ?>
+			       value="
+				<?php
+			    // If $force_install_databasepass is on, we don't want to set password, we just show '***'. Real value will be extracted from the forced install file at step1.
+			    $autofill = ((!empty($_SESSION['dol_save_pass'])) ? $_SESSION['dol_save_pass'] : str_pad('', strlen($force_install_databasepass), '*'));
+			    if (!empty($dolibarr_main_prod)) {
+				    $autofill = '';
+			    }
+			    print dol_escape_htmltag($autofill);
+			    ?>"
+				<?php if ($force_install_noedit == 2 && $force_install_databasepass !== null) { print ' disabled'; } ?>
 			>
 		</td>
 		<td class="comment"><?php echo $langs->trans("AdminPassword"); ?></td>
@@ -446,12 +428,8 @@ if (! empty($force_install_message))
 			<input type="checkbox"
 			       id="db_create_user"
                    name="db_create_user"
-				<?php if (!empty($force_install_createuser)) {
-					print ' checked';
-				} ?>
-				<?php if ($force_install_noedit == 2 && $force_install_createuser !== null) {
-					print ' disabled';
-				} ?>
+				<?php if (!empty($force_install_createuser)) { print ' checked'; } ?>
+				<?php if ($force_install_noedit == 2 && $force_install_createuser !== null) { print ' disabled'; } ?>
 			>
 		</td>
 		<td class="comment"><?php echo $langs->trans("CheckToCreateUser"); ?>
@@ -478,9 +456,7 @@ if (! empty($force_install_message))
 			       name="db_user_root"
 			       class="needroot"
 			       value="<?php print (!empty($force_install_databaserootlogin)) ? $force_install_databaserootlogin : @$db_user_root; ?>"
-				<?php if ($force_install_noedit > 0 && ! empty($force_install_databaserootlogin)) {
-					print ' disabled';
-				} ?>
+				<?php if ($force_install_noedit > 0 && ! empty($force_install_databaserootlogin)) { print ' disabled'; } ?>
 			>
 		</td>
 		<td class="comment"><?php echo $langs->trans("DatabaseRootLoginDescription"); ?>
@@ -516,9 +492,7 @@ if (! empty($force_install_message))
 			        }    // Do not autofill password for remote access
 			        print dol_escape_htmltag($autofill);
 			        ?>"
-				<?php if ($force_install_noedit > 0 && ! empty($force_install_databaserootpass)) {
-					print ' disabled';     // May be removed by javascript
-				} ?>
+				<?php if ($force_install_noedit > 0 && ! empty($force_install_databaserootpass)) { print ' disabled'; /* May be removed by javascript*/ } ?>
 			>
 		</td>
 		<td class="comment"><?php echo $langs->trans("KeepEmptyIfNoPassword"); ?>

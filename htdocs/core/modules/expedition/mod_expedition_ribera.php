@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
+/* Copyright (C) 2011       Juanjo Menent	        <jmenent@2byte.es>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -31,7 +32,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 
@@ -59,11 +60,11 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 	 */
     public function info()
     {
-    	global $conf, $langs;
+    	global $conf, $langs, $db;
 
 		$langs->load("bills");
 
-		$form = new Form($this->db);
+		$form = new Form($db);
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';

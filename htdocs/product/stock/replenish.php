@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -140,7 +140,6 @@ if ($action == 'order' && isset($_POST['valid']))
                 	if ($qty)
                 	{
 	                    //might need some value checks
-	                    $obj = $db->fetch_object($resql);
 	                    $line = new CommandeFournisseurLigne($db);
 	                    $line->qty = $qty;
 	                    $line->fk_product = $idprod;
@@ -179,7 +178,7 @@ if ($action == 'order' && isset($_POST['valid']))
                     $error=$db->lasterror();
                     dol_print_error($db);
                 }
-                $db->free($resql);
+
                 unset($_POST['fourn' . $i]);
             }
             unset($_POST[$i]);
@@ -438,7 +437,7 @@ $head[1][1] = $langs->trans("ReplenishmentOrders");
 $head[1][2] = 'replenishorders';
 
 
-print load_fiche_titre($langs->trans('Replenishment'), '', 'title_generic.png');
+print load_fiche_titre($langs->trans('Replenishment'), '', 'generic');
 
 dol_fiche_head($head, 'replenish', '', -1, '');
 
@@ -492,7 +491,7 @@ if ($sref || $snom || $sall || $salert || $draftorder || GETPOST('search', 'alph
 	$filters .= '&mode=' . $mode;
 	$filters .= '&fk_supplier=' . $fk_supplier;
 	$filters .= '&fk_entrepot=' . $fk_entrepot;
-print_barre_liste(
+	print_barre_liste(
 		$texte,
 		$page,
 		'replenish.php',
@@ -511,7 +510,7 @@ print_barre_liste(
 	$filters .= '&mode=' . $mode;
 	$filters .= '&fk_supplier=' . $fk_supplier;
 	$filters .= '&fk_entrepot=' . $fk_entrepot;
-print_barre_liste(
+	print_barre_liste(
 		$texte,
 		$page,
 		'replenish.php',
@@ -551,7 +550,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">'
 	'<input type="hidden" name="action" value="order">'.
 	'<input type="hidden" name="mode" value="' . $mode . '">';
 
-// Lignes des champs de filtre
+// Fields title search
 print '<tr class="liste_titre_filter">';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre"><input class="flat" type="text" name="sref" size="8" value="'.dol_escape_htmltag($sref).'"></td>';
@@ -562,12 +561,12 @@ print '<td class="liste_titre right">&nbsp;</td>';
 print '<td class="liste_titre right">' . $langs->trans('AlertOnly') . '&nbsp;<input type="checkbox" id="salert" name="salert" ' . (!empty($alertchecked)?$alertchecked:'') . '></td>';
 print '<td class="liste_titre right">' . $langs->trans('IncludeAlsoDraftOrders') . '&nbsp;<input type="checkbox" id="draftorder" name="draftorder" ' . (!empty($draftchecked)?$draftchecked:'') . '></td>';
 print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre right">';
 // Fields from hook
 $parameters=array('param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 $reshook=$hookmanager->executeHooks('printFieldListOption', $parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
 print '</td>';

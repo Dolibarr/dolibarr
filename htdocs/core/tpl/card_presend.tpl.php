@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /*
@@ -76,7 +76,7 @@ if ($action == 'presend')
 	{
 		$outputlangs = new Translate('', $conf);
 		$outputlangs->setDefaultLang($newlang);
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array('commercial','bills','orders','contracts','members','propal','products','supplier_proposal','interventions'));
 	}
 
@@ -174,7 +174,7 @@ if ($action == 'presend')
 		$listeuser=array();
 		$fuserdest = new User($db);
 
-		$result= $fuserdest->fetchAll('ASC', 't.lastname', 0, 0, array('customsql'=>'t.statut=1 AND t.employee=1 AND t.email IS NOT NULL AND t.email<>\'\''));
+		$result= $fuserdest->fetchAll('ASC', 't.lastname', 0, 0, array('customsql'=>'t.statut=1 AND t.employee=1 AND t.email IS NOT NULL AND t.email<>\'\''), 'AND', true);
 		if ($result>0 && is_array($fuserdest->users) && count($fuserdest->users)>0) {
 			foreach($fuserdest->users as $uuserdest) {
 				$listeuser[$uuserdest->id] = $uuserdest->user_get_property($uuserdest->id, 'email');
@@ -210,10 +210,55 @@ if ($action == 'presend')
 	);
 	complete_substitutions_array($substitutionarray, $outputlangs, $object, $parameters);
 
-	// Find the good contact adress
+	// Find the good contact address
+    $tmpobject = $object;
+    if (($object->element == 'shipping'|| $object->element == 'reception')) {
+        $origin = $object->origin;
+        $origin_id = $object->origin_id;
+
+        if (!empty($origin) && !empty($origin_id)) {
+            $element = $subelement = $origin;
+            if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
+                $element = $regs[1];
+                $subelement = $regs[2];
+            }
+            // For compatibility
+            if ($element == 'order')    {
+                $element = $subelement = 'commande';
+            }
+            if ($element == 'propal')   {
+                $element = 'comm/propal';
+                $subelement = 'propal';
+            }
+            if ($element == 'contract') {
+                $element = $subelement = 'contrat';
+            }
+            if ($element == 'inter') {
+                $element = $subelement = 'ficheinter';
+            }
+            if ($element == 'shipping') {
+                $element = $subelement = 'expedition';
+            }
+            if ($element == 'order_supplier') {
+                $element = 'fourn';
+                $subelement = 'fournisseur.commande';
+            }
+            if ($element == 'project') {
+                $element = 'projet';
+            }
+
+            dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
+            $classname = ucfirst($origin);
+            $objectsrc = new $classname($db);
+            $objectsrc->fetch($origin_id);
+
+            $tmpobject = $objectsrc;
+        }
+    }
+
 	$custcontact = '';
 	$contactarr = array();
-	$contactarr = $object->liste_contact(- 1, 'external');
+	$contactarr = $tmpobject->liste_contact(- 1, 'external');
 
 	if (is_array($contactarr) && count($contactarr) > 0) {
 		require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';

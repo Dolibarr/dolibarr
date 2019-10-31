@@ -40,6 +40,16 @@ if (! empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_
 				{
 					$value = $obj->$tmpkey;
 				}
+				// If field is a computed field, we make computation to get value
+				if ($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key])
+				{
+					//global $obj, $object;
+					//var_dump($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]);
+					//var_dump($obj);
+					//var_dump($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]);
+					$value = dol_eval($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key], 1);
+					//var_dump($value);
+				}
 
 				print $extrafields->showOutputField($key, $value, '', $extrafieldsobjectkey);
 				print '</td>';

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -70,7 +70,7 @@ function showStripePaymentUrl($type, $ref)
 
     $servicename='Stripe';
     $out='<br><br>';
-    $out.=img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'<br>';
+    $out.=img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'<br>';
     $url=getStripePaymentUrl(0, $type, $ref);
     $out.='<input type="text" id="stripeurl" class="quatrevingtpercent" value="'.$url.'"><br>';
     $out.=ajax_autoselect("stripeurl", 0);
@@ -87,12 +87,12 @@ function showStripePaymentUrl($type, $ref)
  * @param	string	$freetag	Free tag
  * @return	string				Url string
  */
-function getStripePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag = 'your_free_tag')
+function getStripePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag = 'your_tag')
 {
 	global $conf;
 
 	$ref=str_replace(' ', '', $ref);
-	
+
     if ($type == 'free')
     {
 	    $out=DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?amount='.($mode?'<font color="#666666">':'').$amount.($mode?'</font>':'').'&tag='.($mode?'<font color="#666666">':'').$freetag.($mode?'</font>':'');

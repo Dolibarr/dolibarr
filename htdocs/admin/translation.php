@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -108,7 +108,6 @@ if ($action == 'update')
 		}
 		else
 		{
-
 			$db->rollback();
 			if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
@@ -158,7 +157,6 @@ if ($action == 'add')
 		}
 		else
 		{
-
 		    $db->rollback();
 		    if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		    {
@@ -229,7 +227,7 @@ print load_fiche_titre($langs->trans("Translation"), $enabledisablehtml, 'title_
 
 $current_language_code=$langs->defaultlang;
 $s=picto_from_langcode($current_language_code);
-print $form->textwithpicto($langs->trans("CurrentUserLanguage").': <strong>'.$s.' '.$current_language_code.'</strong>', $langs->trans("TranslationDesc")).'<br>';
+print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("CurrentUserLanguage").': <strong>'.$s.' '.$current_language_code.'</strong>', $langs->trans("TranslationDesc")).'</span><br>';
 
 print '<br>';
 
@@ -553,7 +551,7 @@ if ($mode == 'searchkey')
             	//$transifexurl = 'https://www.transifex.com/dolibarr-association/dolibarr/translate/#'.$langcode.'/'.$transifexlangfile.'?key='.$key;
             	$transifexurl = 'https://www.transifex.com/dolibarr-association/dolibarr/translate/#'.$langcode.'/'.$transifexlangfile.'?q=key%3A'.$key;
 
-            	print ' &nbsp; <a href="'.$transifexurl.'" target="transifex">'.img_picto('FixOnTransifex', 'object_globe').'</a>';
+            	print ' &nbsp; <a href="'.$transifexurl.'" target="transifex">'.img_picto('FixOnTransifex', 'globe').'</a>';
             }
         }
         else

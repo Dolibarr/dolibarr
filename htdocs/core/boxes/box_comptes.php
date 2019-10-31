@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -77,7 +77,7 @@ class box_comptes extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $db, $conf;
+		global $user, $langs, $conf;
 
 		$this->max=$max;
 
@@ -97,19 +97,19 @@ class box_comptes extends ModeleBoxes
 			$sql.= " AND clos = 0";
 			//$sql.= " AND courant = 1";
 			$sql.= " ORDER BY label";
-			$sql.= $db->plimit($max, 0);
+			$sql.= $this->db->plimit($max, 0);
 
             dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
-            $result = $db->query($sql);
+            $result = $this->db->query($sql);
             if ($result) {
-                $num = $db->num_rows($result);
+                $num = $this->db->num_rows($result);
 
                 $line = 0;
                 $solde_total = array();
 
-                $account_static = new Account($db);
+                $account_static = new Account($this->db);
                 while ($line < $num) {
-                    $objp = $db->fetch_object($result);
+                    $objp = $this->db->fetch_object($result);
 
                     $account_static->id = $objp->rowid;
 					$account_static->ref = $objp->ref;
@@ -134,7 +134,7 @@ class box_comptes extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right"',
+                        'td' => 'class="right nowraponall"',
                         'text' => price($solde, 0, $langs, 0, -1, -1, $objp->currency_code)
                     );
 
@@ -160,12 +160,12 @@ class box_comptes extends ModeleBoxes
                     $line++;
                 }
 
-                $db->free($result);
+                $this->db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
             }
         } else {

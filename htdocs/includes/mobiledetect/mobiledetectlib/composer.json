@@ -17,14 +17,15 @@
         "php": ">=5.0.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "*",
-        "johnkary/phpunit-speedtrap": "~1.0@dev",
-        "codeclimate/php-test-reporter": "dev-master"
+        "phpunit/phpunit": "~4.8.35||~5.7"
     },
     "autoload": {
         "classmap": ["Mobile_Detect.php"],
         "psr-0": {
             "Detection": "namespaced/"
         }
+    },
+    "archive": {
+      "exclude": ["docs", "examples", "export"]
     }
 }

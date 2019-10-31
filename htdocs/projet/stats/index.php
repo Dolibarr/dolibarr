@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -67,7 +67,7 @@ llxHeader('', $langs->trans('Projects'));
 $title=$langs->trans("ProjectsStatistics");
 $dir=$conf->projet->dir_output.'/temp';
 
-print load_fiche_titre($title, '', 'title_project.png');
+print load_fiche_titre($title, '', 'project');
 
 dol_mkdir($dir);
 
@@ -108,14 +108,13 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		unset($data1);
 
 		if ($nocolor)
-$px->SetDataColor(array (
+		$px->SetDataColor(array (
 					array (
 							220,
 							220,
 							220
 					)
 			));
-			$px->SetPrecisionY(0);
 			$px->SetLegend($legend);
 			$px->setShowLegend(0);
 			$px->setShowPointValue($showpointvalue);
@@ -126,14 +125,14 @@ $px->SetDataColor(array (
 			$px->SetShading(3);
 			$px->SetHorizTickIncrement(1);
 			$px->SetCssPrefix("cssboxes");
-$px->SetType(array (
+			$px->SetType(array (
 					'pie'
 			));
 			$px->SetTitle($langs->trans('OpportunitiesStatusForProjects'));
 			$result=$px->draw($filenamenb, $fileurlnb);
-			if ($result<0) {
-				setEventMessages($px->error, null, 'errors');
-			}
+		if ($result<0) {
+			setEventMessages($px->error, null, 'errors');
+		}
 	} else {
 		setEventMessages(null, $mesgs, 'errors');
 	}
@@ -153,7 +152,6 @@ $mesg = $px1->isGraphKo();
 if (! $mesg)
 {
 	$px1->SetData($data);
-	$px1->SetPrecisionY(0);
 	$i=$startyear;$legend=array();
 	while ($i <= $endyear)
 	{
@@ -167,7 +165,6 @@ if (! $mesg)
 	$px1->SetYLabel($langs->trans("ProjectNbProject"));
 	$px1->SetShading(3);
 	$px1->SetHorizTickIncrement(1);
-	$px1->SetPrecisionY(0);
 	$px1->mode='depth';
 	$px1->SetTitle($langs->trans("ProjectNbProjectByMonth"));
 
@@ -204,7 +201,6 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		$px2->SetYLabel($langs->trans("ProjectOppAmountOfProjectsByMonth"));
 		$px2->SetShading(3);
 		$px2->SetHorizTickIncrement(1);
-		$px2->SetPrecisionY(0);
 		$px2->mode='depth';
 		$px2->SetTitle($langs->trans("ProjectOppAmountOfProjectsByMonth"));
 
@@ -241,7 +237,6 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		$px3->SetYLabel($langs->trans("ProjectWeightedOppAmountOfProjectsByMonth"));
 		$px3->SetShading(3);
 		$px3->SetHorizTickIncrement(1);
-		$px3->SetPrecisionY(0);
 		$px3->mode='depth';
 		$px3->SetTitle($langs->trans("ProjectWeightedOppAmountOfProjectsByMonth"));
 
@@ -264,7 +259,7 @@ if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
 
 $h=0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT . '/projet/stats/index.php?mode='.$mode;
+$head[$h][0] = DOL_URL_ROOT . '/projet/stats/index.php';
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
@@ -282,9 +277,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
 print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-if ($mode == 'customer') $filter='s.client in (1,2,3)';
-if ($mode == 'supplier') $filter='s.fournisseur = 1';
-print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, '', 'style="width: 95%"');
+print $form->select_company($socid, 'socid', '', 1, 0, 0, array(), 0, '', 'style="width: 95%"');
 print '</td></tr>';
 // User
 /*print '<tr><td>'.$langs->trans("ProjectCommercial").'</td><td>';
@@ -324,7 +317,7 @@ foreach ($data_all_year as $val)
 		$oldyear--;
 
 		print '<tr class="oddeven" height="24">';
-		print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
+		print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
 		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		{
 			print '<td class="right">0</td>';
@@ -336,7 +329,7 @@ foreach ($data_all_year as $val)
 	}
 
 	print '<tr class="oddeven" height="24">';
-	print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
+	print '<td class="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
 	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	{

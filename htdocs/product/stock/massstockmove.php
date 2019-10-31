@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -125,11 +125,9 @@ if ($action == 'addline')
 		// Warning, don't forget lines already added into the $_SESSION['massstockmove']
 		if ($producttmp->hasbatch())
 		{
-
 		}
 		else
 		{
-
 		}
 	}
 
@@ -197,7 +195,7 @@ if ($action == 'createmovements')
 				if (empty($conf->productbatch->enabled) || ! $product->hasbatch())		// If product does not need lot/serial
 				{
 					// Remove stock
-    $result1=$product->correct_stock(
+					$result1=$product->correct_stock(
 		    			$user,
 		    			$id_sw,
 		    			$qty,
@@ -213,7 +211,7 @@ if ($action == 'createmovements')
 					}
 
 					// Add stock
-    $result2=$product->correct_stock(
+					$result2=$product->correct_stock(
 		    			$user,
 		    			$id_tw,
 		    			$qty,
@@ -245,7 +243,7 @@ if ($action == 'createmovements')
 					}
 
 					// Remove stock
-    $result1=$product->correct_stock_batch(
+					$result1=$product->correct_stock_batch(
 		    			$user,
 		    			$id_sw,
 		    			$qty,
@@ -264,7 +262,7 @@ if ($action == 'createmovements')
 					}
 
 					// Add stock
-    $result2=$product->correct_stock_batch(
+					$result2=$product->correct_stock_batch(
 		    			$user,
 		    			$id_tw,
 		    			$qty,

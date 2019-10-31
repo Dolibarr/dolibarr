@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -123,6 +123,15 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans('DisabledResourceLinkContact').'</td>';
 print '<td>';
 echo ajax_constantonoff('RESOURCE_HIDE_ADD_CONTACT_THIPARTY');
+print '</td>';
+print '<td></td>';
+print '</tr>';
+
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans('EnableResourceUsedInEventCheck').'</td>';
+print '<td>';
+echo ajax_constantonoff('RESOURCE_USED_IN_EVENT_CHECK');
 print '</td>';
 print '<td></td>';
 print '</tr>';

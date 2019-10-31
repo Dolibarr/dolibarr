@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -437,7 +437,6 @@ class RemiseCheque extends CommonObject
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 			foreach ($dirmodels as $reldir) {
-
 				$dir = dol_buildpath($reldir."core/modules/cheque/");
 
 				// Load file with numbering class (if found)
@@ -489,7 +488,7 @@ class RemiseCheque extends CommonObject
 		else
 		{
 			$langs->load("errors");
-			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete");
+			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Bank"));
 			return "";
 		}
     }
@@ -527,6 +526,7 @@ class RemiseCheque extends CommonObject
 			$response = new WorkboardResponse();
 			$response->warning_delay=$conf->bank->cheque->warning_delay/60/60/24;
 			$response->label=$langs->trans("BankChecksToReceipt");
+			$response->labelShort=$langs->trans("BankChecksToReceiptShort");
 			$response->url=DOL_URL_ROOT.'/compta/paiement/cheque/index.php?leftmenu=checks&amp;mainmenu=bank';
 			$response->img=img_object('', "payment");
 
@@ -574,7 +574,6 @@ class RemiseCheque extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-
 			while ($obj=$this->db->fetch_object($resql))
 			{
 				$this->nb["cheques"]=$obj->nb;
@@ -812,7 +811,7 @@ class RemiseCheque extends CommonObject
 			$rejectedPayment->amounts = array();
 			$rejectedPayment->datepaye = $rejection_date;
 			$rejectedPayment->paiementid = dol_getIdFromCode($this->db, 'CHQ', 'c_paiement', 'code', 'id', 1);
-			$rejectedPayment->num_paiement = $payment->numero;
+			$rejectedPayment->num_payment = $payment->num_payment;
 
 			while($obj = $db->fetch_object($resql))
 			{

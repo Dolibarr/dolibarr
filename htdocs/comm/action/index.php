@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 
@@ -87,7 +87,7 @@ $week=GETPOST("week", "int")?GETPOST("week", "int"):date("W");
 $day=GETPOST("day", "int")?GETPOST("day", "int"):date("d");
 $pid=GETPOST("search_projectid", "int", 3)?GETPOST("search_projectid", "int", 3):GETPOST("projectid", "int", 3);
 $status=GETPOST("search_status", 'aZ09')?GETPOST("search_status", 'aZ09'):GETPOST("status", 'aZ09');		// status may be 0, 50, 100, 'todo'
-$type=GETPOST("search_type", 'az09')?GETPOST("search_type", 'az09'):GETPOST("type", 'az09');
+$type=GETPOST("search_type", 'aZ09')?GETPOST("search_type", 'aZ09'):GETPOST("type", 'aZ09');
 $maxprint=(isset($_GET["maxprint"])?GETPOST("maxprint"):$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
 if (GETPOST('search_actioncode', 'array'))
@@ -174,6 +174,26 @@ if ($action =='delete_action')
 /*
  * View
  */
+$parameters = array(
+	'socid' => $socid,
+	'status' => $status,
+	'year' => $year,
+	'month' => $month,
+	'day' => $day,
+	'type' => $type,
+	'maxprint' => $maxprint,
+	'filter' => $filter,
+	'filtert' => $filtert,
+	'showbirthday' => $showbirthday,
+	'canedit' => $canedit,
+	'optioncss' => $optioncss,
+	'actioncode' => $actioncode,
+	'pid' => $pid,
+	'resourceid' => $resourceid,
+	'usergroup' => $usergroup,
+);
+$reshook = $hookmanager->executeHooks('beforeAgenda', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 $help_url='EN:Module_Agenda_En|FR:Module_Agenda|ES:M&oacute;dulo_Agenda';
 llxHeader('', $langs->trans("Agenda"), $help_url);
@@ -499,14 +519,14 @@ if (! empty($actioncode))
         elseif ($actioncode == 'AC_ALL_AUTO') $sql.= " AND ca.type = 'systemauto'";
         else
         {
-		if (is_array($actioncode))
-		{
+            if (is_array($actioncode))
+            {
 	        	$sql.=" AND ca.code IN ('".implode("','", $actioncode)."')";
-		}
-		else
-		{
+            }
+            else
+            {
 	        	$sql.=" AND ca.code IN ('".implode("','", explode(',', $actioncode))."')";
-		}
+            }
         }
     }
 }
@@ -607,25 +627,14 @@ if ($resql)
         $event->fk_element=$obj->fk_element;
         $event->elementtype=$obj->elementtype;
 
-        $event->societe->id=$obj->fk_soc;
         $event->thirdparty_id=$obj->fk_soc;
-        $event->contact->id=$obj->fk_contact;
         $event->contact_id=$obj->fk_contact;
 
         // Defined date_start_in_calendar and date_end_in_calendar property
         // They are date start and end of action but modified to not be outside calendar view.
-        if ($event->percentage <= 0)
-        {
-            $event->date_start_in_calendar=$event->datep;
-            if ($event->datef != '' && $event->datef >= $event->datep) $event->date_end_in_calendar=$event->datef;
-            else $event->date_end_in_calendar=$event->datep;
-        }
-        else
-        {
-            $event->date_start_in_calendar=$event->datep;
-            if ($event->datef != '' && $event->datef >= $event->datep) $event->date_end_in_calendar=$event->datef;
-            else $event->date_end_in_calendar=$event->datep;
-        }
+        $event->date_start_in_calendar=$event->datep;
+        if ($event->datef != '' && $event->datef >= $event->datep) $event->date_end_in_calendar=$event->datef;
+        else $event->date_end_in_calendar=$event->datep;
         // Define ponctual property
         if ($event->date_start_in_calendar == $event->date_end_in_calendar)
         {
@@ -1553,7 +1562,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                         	$savlabel=$event->label?$event->label:$event->libelle;
                         	$event->label=$titletoshow;
                         	$event->libelle=$titletoshow;
-                        	print $event->getNomUrl(0, $maxnbofchar, 'cal_event', '', 0, 1);
+                        	print $event->getNomUrl(0, $maxnbofchar, 'cal_event', '', 0, 0);
                         	$event->label=$savlabel;
                         	$event->libelle=$savlabel;
                         }
@@ -1578,28 +1587,31 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
                         if ($event->type_code == 'ICALEVENT') print '<br>('.dol_trunc($event->icalname, $maxnbofchar).')';
 
+                        $thirdparty_id = ($event->thirdparty_id > 0 ? $event->thirdparty_id : ((is_object($event->societe) && $event->societe->id > 0) ? $event->societe->id : 0));
+                        $contact_id = ($event->contact_id > 0 ? $event->contact_id : ((is_object($event->contact) && $event->cotact->id > 0) ? $event->contact->id : 0));
+
                         // If action related to company / contact
                         $linerelatedto='';
-                        if (! empty($event->societe->id) && $event->societe->id > 0)
+                        if ($thirdparty_id > 0)
                         {
-                            if (! isset($cachethirdparties[$event->societe->id]) || ! is_object($cachethirdparties[$event->societe->id]))
+                        	if (! isset($cachethirdparties[$thirdparty_id]) || ! is_object($cachethirdparties[$thirdparty_id]))
                             {
                                 $thirdparty=new Societe($db);
-                                $thirdparty->fetch($event->societe->id);
-                                $cachethirdparties[$event->societe->id]=$thirdparty;
+                                $thirdparty->fetch($thirdparty_id);
+                                $cachethirdparties[$thirdparty_id]=$thirdparty;
                             }
-                            else $thirdparty=$cachethirdparties[$event->societe->id];
+                            else $thirdparty=$cachethirdparties[$thirdparty_id];
                             if (! empty($thirdparty->id)) $linerelatedto.=$thirdparty->getNomUrl(1, '', 0);
                         }
-                        if (! empty($event->contact->id) && $event->contact->id > 0)
+                        if (! empty($contact_id) && $contact_id > 0)
                         {
-                            if (! is_object($cachecontacts[$event->contact->id]))
+                        	if (! is_object($cachecontacts[$contact_id]))
                             {
                                 $contact=new Contact($db);
-                                $contact->fetch($event->contact->id);
-                                $cachecontacts[$event->contact->id]=$contact;
+                                $contact->fetch($contact_id);
+                                $cachecontacts[$contact_id]=$contact;
                             }
-                            else $contact=$cachecontacts[$event->contact->id];
+                            else $contact=$cachecontacts[$contact_id];
                             if ($linerelatedto) $linerelatedto.='&nbsp;';
                             if (! empty($contact->id)) $linerelatedto.=$contact->getNomUrl(1, '', 0);
                         }
@@ -1717,11 +1729,24 @@ function dol_color_minus($color, $minus, $minusunit = 16)
  */
 function sort_events_by_date($a, $b)
 {
-	if($a->datep != $b->datep)
-	{
-		return $a->datep - $b->datep;
-	}
+    if($a->datep != $b->datep)
+    {
+        return $a->datep - $b->datep;
+    }
 
-	// If both events have the same start time, longest first
-	return $b->datef - $a->datef;
+    // If both events have the same start time, longest first
+    
+    if(! is_numeric($b->datef))
+    {
+        // when event B have no end timestamp, event B should sort be before event A (All day events on top)
+        return 1;
+    }
+
+    if(! is_numeric($a->datef))
+    {
+        // when event A have no end timestamp , event A should sort be before event B (All day events on top)
+        return -1;
+    }
+
+    return $b->datef - $a->datef;
 }
