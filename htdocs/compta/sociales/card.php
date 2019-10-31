@@ -438,7 +438,7 @@ if ($id > 0)
 				$formquestion[]=array('type' => 'date', 'name' => 'clone_date_ech', 'label' => $langs->trans("DateDue"), 'value' => -1);
 			}
 
-			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneTax', $object->ref), 'confirm_clone', $formquestion, 'yes', 2);
+			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneTax', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 		}
 
 		// Confirmation de la suppression de la charge
