@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -58,9 +58,10 @@ Notify_TICKET_SENTBYMAIL=Envoi d'un message du ticket par e-mail
 # Status
 NotRead=Non lu
 Read=Lu
-Answered=Répondu
 Assigned=Assigné
 InProgress=En cours
+NeedMoreInformation=En attente d'information
+Answered=Répondu
 Waiting=En attente
 Closed=Fermé
 Deleted=Supprimé
@@ -115,7 +116,7 @@ TicketsShowCompanyLogo=Afficher le logo de la société dans l'interface publiqu
 TicketsShowCompanyLogoHelp=Activez cette option pour masquer le logo de la société dans les pages de l'interface publique
 TicketsEmailAlsoSendToMainAddress=Envoyer également une notification à l'adresse e-mail principale
 TicketsEmailAlsoSendToMainAddressHelp=Activer cette option pour envoyer un email à "Email de notification de" adresse (voir configuration ci-dessous)
-TicketsLimitViewAssignedOnly=Restreindre l'affichage aux tickets attribués à l'utilisateur actuel (non efficace pour les utilisateurs externes, toujours se limiter au tiers dont ils dépendent)
+TicketsLimitViewAssignedOnly=Limiter l'afficher des tickets assignés à l'utilisateur courant (non valable pour les utilisateurs externes, toujours limité par le tiers dont ils dépendent)
 TicketsLimitViewAssignedOnlyHelp=Seuls les tickets affectés à l'utilisateur actuel seront visibles. Ne s'applique pas à un utilisateur disposant de droits de gestion des tickets.
 TicketsActivatePublicInterface=Activer l'interface publique
 TicketsActivatePublicInterfaceHelp=L'interface publique permet à tous les visiteurs de créer des tickets.
@@ -132,6 +133,7 @@ TicketsIndex=Espace tickets
 TicketList=Liste des tickets
 TicketAssignedToMeInfos=Cette page affiche la liste de tickets créés par ou attribuées à l'utilisateur actuel.
 NoTicketsFound=Aucun ticket trouvé
+NoUnreadTicketsFound=Aucun ticket non lu trouvé
 TicketViewAllTickets=Voir tous les tickets
 TicketViewNonClosedOnly=Voir seulement les tickets ouverts
 TicketStatByStatus=Tickets par statut
@@ -187,7 +189,7 @@ ErrorMailRecipientIsEmptyForSendTicketMessage=Le destinataire est vide. Aucun e-
 TicketGoIntoContactTab=Rendez-vous dans le tableau "Contacts" pour les sélectionner
 TicketMessageMailIntro=Introduction
 TicketMessageMailIntroHelp=Ce texte est ajouté seulement au début de l'email et ne sera pas sauvegardé.
-TicketMessageMailIntroLabelAdmin=Introduction au message lors de l'envoi d'un e-mail
+TicketMessageMailIntroLabelAdmin=Introduction du message lors de l'envoi d'un e-mail
 TicketMessageMailIntroText=Bonjour <br> Une nouvelle réponse a été ajoutée à un ticket que vous suivez. Voici le message :<br>
 TicketMessageMailIntroHelpAdmin=Ce texte sera inséré après le message de réponse.
 TicketMessageMailSignature=Signature
@@ -216,7 +218,7 @@ TicketMailExchanges=Échanges de courrier
 TicketInitialMessageModified=Message initial modifié
 TicketMessageSuccesfullyUpdated=Message mis à jour avec succès
 TicketChangeStatus=Changer l'état
-TicketConfirmChangeStatus=Confirmez le changement de statut: %s?
+TicketConfirmChangeStatus=Confirmez le changement d'état: %s?
 TicketLogStatusChanged=Statut modifié: %s à %s
 TicketNotNotifyTiersAtCreate=Ne pas notifier l'entreprise à la création
 Unread=Non lu
@@ -261,11 +263,14 @@ ViewTicket=Voir le ticket
 ViewMyTicketList=Voir la liste de mes tickets
 ErrorEmailMustExistToCreateTicket=Erreur: adresse email introuvable dans notre base de données
 TicketNewEmailSubjectAdmin=Nouveau ticket créé
-TicketNewEmailBodyAdmin=<p> Le ticket vient d'être créé sous l'ID n ° %s, voir informations: </ p>
+TicketNewEmailBodyAdmin=<p> Le ticket vient d'être créé avec l'ID # %s, voir les informations: </p>
 SeeThisTicketIntomanagementInterface=Voir ticket dans l'interface de gestion
 TicketPublicInterfaceForbidden=L'interface publique pour les tickets n'a pas été activée
 ErrorEmailOrTrackingInvalid=Mauvaise valeur pour l'ID de suivi ou l'e-mail
-
+OldUser=Ancien utilisateur
+NewUser=Nouvel utilisateur
+NumberOfTicketsByMonth=Nombre de tickets par mois
+NbOfTickets=Nombre de tickets
 # notifications
 TicketNotificationEmailSubject=Ticket %s mis à jour
 TicketNotificationEmailBody=Ceci est un message automatique pour vous informer que le ticket %s vient d'être mis à jour

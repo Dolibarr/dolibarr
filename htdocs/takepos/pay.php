@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,7 +35,6 @@ require '../main.inc.php';	// Load $user and permissions
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
 $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
-$posnb = (GETPOST('posnb', 'int') > 0 ? GETPOST('posnb', 'int') : 0);   // $posnb is id of POS
 
 $invoiceid = GETPOST('invoiceid', 'int');
 
@@ -51,7 +50,7 @@ if ($invoiceid > 0)
 }
 else
 {
-    $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS-".$place.")'";
+    $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
     $resql = $db->query($sql);
     $obj = $db->fetch_object($resql);
     if ($obj)
@@ -85,7 +84,7 @@ if ($resql) {
         if ($paycode == 'CB')  $paycode = 'CB';
         if ($paycode == 'CHQ') $paycode = 'CHEQUE';
 
-        $accountname="CASHDESK_ID_BANKACCOUNT_".$paycode;
+        $accountname="CASHDESK_ID_BANKACCOUNT_".$paycode.$_SESSION["takeposterminal"];
 		if (! empty($conf->global->$accountname) && $conf->global->$accountname > 0) array_push($paiements, $obj);
 	}
 }
@@ -173,27 +172,26 @@ else print "var received=0;";
 		}
 		console.log("We click on the payment mode to pay amount = "+amountpayed);
 		parent.$("#poslines").load("invoice.php?place=<?php echo $place;?>&action=valid&pay="+payment+"&amount="+amountpayed+"&invoiceid="+invoiceid, function() {
-			//parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
-			parent.$.colorbox.close();
-			//parent.setFocusOnSearchField();	// This does not have effect
+		    if (amountpayed > <?php echo $remaintopay; ?> || amountpayed == <?php echo $remaintopay; ?> || amountpayed==0 ) parent.$.colorbox.close();
+			else location.reload();
 		});
 	}
 </script>
 
 <div style="position:absolute; top:2%; left:5%; height:30%; width:91%;">
 <center>
-<div style="width:40%; background-color:#222222; border-radius:8px; margin-bottom: 4px;">
+<div class="paymentbordline paymentbordlinetotal">
 <center><span style='font-family: verdana,arial,helvetica; font-size: 200%;'><font color="white"><?php echo $langs->trans('TotalTTC');?>: </font><span id="totaldisplay" class="colorwhite"><?php echo price($invoice->total_ttc, 1, '', 1, -1, -1) ?></span></font></span></center>
 </div>
 <?php if ($remaintopay != $invoice->total_ttc) { ?>
-<div style="width:40%; background-color:#222222; border-radius:8px; margin-bottom: 4px;">
+<div class="paymentbordline paymentbordlineremain">
 <center><span style='font-family: verdana,arial,helvetica; font-size: 200%;'><font color="white"><?php echo $langs->trans('RemainToPay');?>: </font><span id="remaintopaydisplay" class="colorwhite"><?php echo price($remaintopay, 1, '', 1, -1, -1) ?></span></font></span></center>
 </div>
 <?php } ?>
-<div style="width:40%; background-color:#333333; border-radius:8px; margin-bottom: 4px;">
-<center><span style='font-family: verdana,arial,helvetica; font-size: 200%;'><font color="white"><?php echo $langs->trans("Received"); ?>: </font><span class="change1 colorred"><?php echo price(0) ?></span><input type="hidden" id="change1" class="change1" value="0"></font></center>
+<div class="paymentbordline paymentbordlinereceived">
+    <center><span style='font-family: verdana,arial,helvetica; font-size: 200%;'><font color="white"><?php echo $langs->trans("Received"); ?>: </font><span class="change1 colorred"><?php echo price(0) ?></span><input type="hidden" id="change1" class="change1" value="0"></font></span></center>
 </div>
-<div style="width:40%; background-color:#333333; border-radius:8px; margin-bottom: 4px;">
+<div class="paymentbordline paymentbordlinechange">
 <center><span style='font-family: verdana,arial,helvetica; font-size: 200%;'><font color="white"><?php echo $langs->trans("Change"); ?>: </font><span class="change2 colorwhite"><?php echo price(0) ?></span><input type="hidden" id="change2" class="change2" value="0"></font></span></center>
 </div>
 </center>
@@ -225,8 +223,8 @@ $numpad=$conf->global->TAKEPOS_NUMPAD;
     if ($paycode == 'LIQ') $paycode = 'cash';
     if ($paycode == 'CB')  $paycode = 'card';
     if ($paycode == 'CHQ') $paycode = 'cheque';
-?>
-<button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paycode); ?>');"><?php echo $langs->trans($paiements[0]->label); ?></button>
+    ?>
+<button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paycode); ?>');"><?php echo $langs->trans("PaymentTypeShort".$paiements[0]->code); ?></button>
 <?php } else { ?>
 <button type="button" class="calcbutton2"><?php echo $langs->trans("NoPaimementModesDefined");?></button>
 <?php } ?>
@@ -238,11 +236,11 @@ $numpad=$conf->global->TAKEPOS_NUMPAD;
     if ($paycode == 'LIQ') $paycode = 'cash';
     if ($paycode == 'CB')  $paycode = 'card';
     if ($paycode == 'CHQ') $paycode = 'cheque';
-?>
-<button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paycode); ?>');"><?php echo $langs->trans($paiements[1]->label); ?></button>
+    ?>
+<button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paycode); ?>');"><?php echo $langs->trans("PaymentTypeShort".$paiements[1]->code); ?></button>
 <?php } else {
-$button = array_pop($action_buttons);
-?>
+    $button = array_pop($action_buttons);
+    ?>
 	<button type="button" class="calcbutton2" onclick="<?php echo $button["function"];?>"><span <?php echo $button["span"];?>><?php echo $button["text"];?></span></button>
 <?php } ?>
 <button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "1"; else print "0.10";?>);"><?php if ($numpad==0) print "1"; else print "0.10";?></button>
@@ -253,12 +251,11 @@ $button = array_pop($action_buttons);
     if ($paycode == 'LIQ') $paycode = 'cash';
     if ($paycode == 'CB')  $paycode = 'card';
     if ($paycode == 'CHQ') $paycode = 'cheque';
-?>
-<button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paycode); ?>');"><?php echo $langs->trans($paiements[2]->label); ?></button>
-<?php } else { ?>
-<?php
-$button = array_pop($action_buttons);
-?>
+    ?>
+<button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paycode); ?>');"><?php echo $langs->trans("PaymentTypeShort".$paiements[2]->code); ?></button>
+<?php } else {
+    $button = array_pop($action_buttons);
+    ?>
 	<button type="button" class="calcbutton2" onclick="<?php echo $button["function"];?>"><span <?php echo $button["span"];?>><?php echo $button["text"];?></span></button>
 <?php } ?>
 <button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "0"; else print "0.01";?>);"><?php if ($numpad==0) print "0"; else print "0.01";?></button>
@@ -267,17 +264,17 @@ $button = array_pop($action_buttons);
 <?php
 $i=3;
 while($i < count($paiements)){
-?>
-<button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paiements[$i]->code); ?>');"><?php echo $langs->trans($paiements[$i]->label); ?></button>
-<?php
+    ?>
+<button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paiements[$i]->code); ?>');"><?php echo $langs->trans("PaymentTypeShort".$paiements[$i]->code); ?></button>
+    <?php
 	$i=$i+1;
 }
 $class=($i==3)?"calcbutton3":"calcbutton2";
 foreach($action_buttons as $button){
     $newclass = $class.($button["class"]?" ".$button["class"]:"");
-?>
+    ?>
 	<button type="button" class="<?php echo $newclass;?>" onclick="<?php echo $button["function"];?>"><span <?php echo $button["span"];?>><?php echo $button["text"];?></span></button>
-<?php
+    <?php
 }
 ?>
 </div>

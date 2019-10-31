@@ -13,14 +13,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/core/modules/export/export_excel2007.modules.php
  *	\ingroup    export
  *	\brief      File of class to generate export file with Excel format
- *	\author	    Laurent Destailleur
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
@@ -34,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 class ExportExcel2007 extends ExportExcel
 {
 	/**
-	 * @var int ID
+	 * @var string ID
 	 */
 	public $id;
 
@@ -47,7 +46,7 @@ class ExportExcel2007 extends ExportExcel
 
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 
@@ -76,7 +75,7 @@ class ExportExcel2007 extends ExportExcel
 		$this->db = $db;
 
 		$this->id='excel2007';                  // Same value then xxx in file name export_xxx.modules.php
-		$this->label='Excel 2007';               // Label of driver
+		$this->label='Excel 2007 (old library)';               // Label of driver
 		$this->desc = $langs->trans('Excel2007FormatDesc');
 		$this->extension='xlsx';             // Extension for generated file by this driver
         $this->picto='mime/xls';			// Picto

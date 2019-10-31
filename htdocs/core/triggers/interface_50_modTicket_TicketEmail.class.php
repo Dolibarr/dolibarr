@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -121,6 +121,8 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	                $res = $userstat->fetch($object->fk_user_assign);
 	                if ($res > 0)
 	                {
+	                    // Send email to notification email
+
 	                	if (empty($conf->global->TICKET_DISABLE_ALL_MAILS))
 	                	{
 	                		// Init to avoid errors

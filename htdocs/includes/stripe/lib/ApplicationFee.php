@@ -24,22 +24,14 @@ namespace Stripe;
  */
 class ApplicationFee extends ApiResource
 {
+
+    const OBJECT_NAME = "application_fee";
+
     use ApiOperations\All;
     use ApiOperations\NestedResource;
     use ApiOperations\Retrieve;
 
     const PATH_REFUNDS = '/refunds';
-
-    /**
-     * This is a special case because the application fee endpoint has an
-     *    underscore in it. The parent `className` function strips underscores.
-     *
-     * @return string The name of the class.
-     */
-    public static function className()
-    {
-        return 'application_fee';
-    }
 
     /**
      * @param array|null $params
@@ -55,7 +47,7 @@ class ApplicationFee extends ApiResource
     }
 
     /**
-     * @param array|null $id The ID of the application fee on which to create the refund.
+     * @param string|null $id The ID of the application fee on which to create the refund.
      * @param array|null $params
      * @param array|string|null $opts
      *
@@ -67,7 +59,7 @@ class ApplicationFee extends ApiResource
     }
 
     /**
-     * @param array|null $id The ID of the application fee to which the refund belongs.
+     * @param string|null $id The ID of the application fee to which the refund belongs.
      * @param array|null $refundId The ID of the refund to retrieve.
      * @param array|null $params
      * @param array|string|null $opts
@@ -80,7 +72,7 @@ class ApplicationFee extends ApiResource
     }
 
     /**
-     * @param array|null $id The ID of the application fee to which the refund belongs.
+     * @param string|null $id The ID of the application fee to which the refund belongs.
      * @param array|null $refundId The ID of the refund to update.
      * @param array|null $params
      * @param array|string|null $opts
@@ -93,11 +85,11 @@ class ApplicationFee extends ApiResource
     }
 
     /**
-     * @param array|null $id The ID of the application fee on which to retrieve the refunds.
+     * @param string|null $id The ID of the application fee on which to retrieve the refunds.
      * @param array|null $params
      * @param array|string|null $opts
      *
-     * @return ApplicationFeeRefund
+     * @return Collection The list of refunds.
      */
     public static function allRefunds($id, $params = null, $opts = null)
     {

@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -228,7 +228,7 @@ if ($action == 'refreshmanual')
                 }
             }
             else
-           {
+            {
                 dol_syslog("Parent is root");
                 $fk_parent=0;   // Parent is root
             }
@@ -332,6 +332,7 @@ if (! empty($conf->global->ECM_AUTO_TREE_ENABLED))
 	if (! empty($conf->ficheinter->enabled))	{ $langs->load("interventions"); $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'fichinter', 'test'=>$conf->ficheinter->enabled, 'label'=>$langs->trans("Interventions"), 'desc'=>$langs->trans("ECMDocsByInterventions")); }
 	if (! empty($conf->expensereport->enabled))	{ $langs->load("trips"); $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'expensereport', 'test'=>$conf->expensereport->enabled, 'label'=>$langs->trans("ExpenseReports"), 'desc'=>$langs->trans("ECMDocsByExpenseReports")); }
 	if (! empty($conf->holiday->enabled))		{ $langs->load("holiday"); $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'holiday', 'test'=>$conf->holiday->enabled, 'label'=>$langs->trans("Holidays"), 'desc'=>$langs->trans("ECMDocsByHolidays")); }
+	if (! empty($conf->banque->enabled))		{ $langs->load("banks"); $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'banque', 'test'=>$conf->banque->enabled, 'label'=>$langs->trans("BankAccount"), 'desc'=>$langs->trans("ECMDocsByBankAccount")); }
 	$rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'user', 'test'=>1, 'label'=>$langs->trans("Users"), 'desc'=>$langs->trans("ECMDocsByUsers"));
 }
 

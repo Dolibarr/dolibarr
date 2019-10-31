@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -47,9 +47,10 @@ function dol_getwebuser($mode)
  *	@param		string	$passwordtotest		Password value to test
  *	@param		string	$entitytotest		Instance of data we must check
  *	@param		array	$authmode			Array list of selected authentication mode array('http', 'dolibarr', 'xxx'...)
+ *	@param		string	$context			Context checkLoginPassEntity was created for ('api', 'dav', 'ws', '')
  *  @return		string						Login or ''
  */
-function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode)
+function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode, $context = '')
 {
 	global $conf,$langs;
     //global $dolauthmode;    // To return authentication finally used
@@ -90,7 +91,7 @@ function checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $auth
     			{
     				// Call function to check user/password
     				$function='check_user_password_'.$mode;
-    				$login=call_user_func($function, $usertotest, $passwordtotest, $entitytotest);
+    				$login=call_user_func($function, $usertotest, $passwordtotest, $entitytotest, $context);
     				if ($login)	// Login is successfull
     				{
     					$test=false;            // To stop once at first login success
@@ -131,8 +132,8 @@ if (! function_exists('dol_loginfunction'))
      */
     function dol_loginfunction($langs, $conf, $mysoc)
 	{
-		global $dolibarr_main_demo,$db;
-		global $smartphone,$hookmanager;
+		global $dolibarr_main_demo, $db;
+		global $hookmanager;
 
 		$langs->loadLangs(array("main","other","help","admin"));
 
@@ -207,11 +208,7 @@ if (! function_exists('dol_loginfunction'))
 		// Execute hook getLoginPageOptions (for table)
 		$parameters=array('entity' => GETPOST('entity', 'int'));
 		$reshook = $hookmanager->executeHooks('getLoginPageOptions', $parameters);    // Note that $action and $object may have been modified by some hooks.
-		if (is_array($hookmanager->resArray) && ! empty($hookmanager->resArray)) {
-			$morelogincontent = $hookmanager->resArray; // (deprecated) For compatibility
-		} else {
-			$morelogincontent = $hookmanager->resPrint;
-		}
+		$morelogincontent = $hookmanager->resPrint;
 
 		// Execute hook getLoginPageExtraOptions (eg for js)
 		$parameters=array('entity' => GETPOST('entity', 'int'));
@@ -285,8 +282,11 @@ if (! function_exists('dol_loginfunction'))
 
 		// Set jquery theme
 		$dol_loginmesg = (! empty($_SESSION["dol_loginmesg"])?$_SESSION["dol_loginmesg"]:'');
-		$favicon=dol_buildpath('/theme/'.$conf->theme.'/img/favicon.ico', 1);
+
+		$favicon = DOL_URL_ROOT.'/theme/common/dolibarr_logo_256x256.png';
+		if (! empty($mysoc->logo_squarred_mini)) $favicon = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
 		if (! empty($conf->global->MAIN_FAVICON_URL)) $favicon=$conf->global->MAIN_FAVICON_URL;
+
 		$jquerytheme = 'base';
 		if (! empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
 
@@ -445,17 +445,17 @@ function encodedecode_dbpassconf($level = 0)
  *
  * @param		boolean		$generic				true=Create generic password (32 chars/numbers), false=Use the configured password generation module
  * @param		array		$replaceambiguouschars	Discard ambigous characters. For example array('I').
- * @return		string								New value for password
+ * @param       int         $length                 Length of random string (Used only if $generic is true)
+ * @return		string		    					New value for password
  * @see dol_hash()
  */
-function getRandomPassword($generic = false, $replaceambiguouschars = null)
+function getRandomPassword($generic = false, $replaceambiguouschars = null, $length = 32)
 {
 	global $db,$conf,$langs,$user;
 
 	$generated_password='';
 	if ($generic)
 	{
-		$length = 32;
 		$lowercase = "qwertyuiopasdfghjklzxcvbnm";
 		$uppercase = "ASDFGHJKLZXCVBNMQWERTYUIOP";
 		$numbers = "1234567890";

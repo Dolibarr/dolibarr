@@ -21,7 +21,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -102,6 +102,9 @@ if (! $sortorder) $sortorder="ASC";
 
 if ($cancel) $action='';
 
+$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
+
 $parameters=array('socid'=>$socid, 'id_prod'=>$id);
 $reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -149,7 +152,9 @@ if (empty($reshook))
 		if (empty($id_fourn)) $id_fourn=GETPOST("search_id_fourn");
 		$ref_fourn=GETPOST("ref_fourn");
 		if (empty($ref_fourn)) $ref_fourn=GETPOST("search_ref_fourn");
-		$quantity=GETPOST("qty");
+		$ref_fourn_old=GETPOST("ref_fourn_old");
+		if (empty($ref_fourn_old)) $ref_fourn_old = $ref_fourn;
+		$quantity=price2num(GETPOST("qty", 'nohtml'), 'MS');
 		$remise_percent=price2num(GETPOST('remise_percent', 'alpha'));
 		$npr = preg_match('/\*/', $_POST['tva_tx']) ? 1 : 0 ;
 		$tva_tx = str_replace('*', '', GETPOST('tva_tx', 'alpha'));
@@ -191,7 +196,7 @@ if (empty($reshook))
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Supplier")), null, 'errors');
 		}
-		if ($_POST["price"] < 0 || $_POST["price"] == '')
+		if (price2num($_POST["price"]) < 0 || $_POST["price"] == '')
 		{
 			if ($price_expression === '')	// Return error of missing price only if price_expression not set
 			{
@@ -210,12 +215,12 @@ if (empty($reshook))
                 $langs->load("errors");
                 setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Currency")), null, 'errors');
             }
-            if ($_POST["multicurrency_tx"] <= 0 || $_POST["multicurrency_tx"] == '') {
+            if (price2num($_POST["multicurrency_tx"]) <= 0 || $_POST["multicurrency_tx"] == '') {
                 $error++;
                 $langs->load("errors");
                 setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("CurrencyRate")), null, 'errors');
             }
-            if ($_POST["multicurrency_price"] < 0 || $_POST["multicurrency_price"] == '') {
+            if (price2num($_POST["multicurrency_price"]) < 0 || $_POST["multicurrency_price"] == '') {
                 $error++;
                 $langs->load("errors");
                 setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("PriceCurrency")), null, 'errors');
@@ -228,7 +233,7 @@ if (empty($reshook))
 
 			if (! $error)
 			{
-				$ret=$object->add_fournisseur($user, $id_fourn, $ref_fourn, $quantity);    // This insert record with no value for price. Values are update later with update_buyprice
+				$ret=$object->add_fournisseur($user, $id_fourn, $ref_fourn_old, $quantity);    // This insert record with no value for price. Values are update later with update_buyprice
 				if ($ret == -3)
 				{
 					$error++;
@@ -383,9 +388,9 @@ if ($id > 0 || $ref)
 			$textdesc =$langs->trans("CostPriceDescription");
 			$textdesc.="<br>".$langs->trans("CostPriceUsage");
 			$text=$form->textwithpicto($langs->trans("CostPrice"), $textdesc, 1, 'help', '');
-            print $form->editfieldkey($text, 'cost_price', $object->cost_price, $object, $user->rights->produit->creer||$user->rights->service->creer, 'amount:6');
+			print $form->editfieldkey($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
             print '</td><td colspan="2">';
-            print $form->editfieldval($text, 'cost_price', $object->cost_price, $object, $user->rights->produit->creer||$user->rights->service->creer, 'amount:6');
+            print $form->editfieldval($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
             print '</td></tr>';
 
 			print '</table>';
@@ -397,7 +402,7 @@ if ($id > 0 || $ref)
 
 
 			// Form to add or update a price
-			if (($action == 'add_price' || $action == 'updateprice' ) && ($user->rights->produit->creer || $user->rights->service->creer))
+			if (($action == 'add_price' || $action == 'updateprice' ) && $usercancreate)
 			{
 				$langs->load("suppliers");
 
@@ -427,7 +432,6 @@ if ($id > 0 || $ref)
 					$supplier->fetch($socid);
 					print $supplier->getNomUrl(1);
 					print '<input type="hidden" name="id_fourn" value="'.$socid.'">';
-					print '<input type="hidden" name="ref_fourn" value="'.$object->fourn_ref.'">';
 					print '<input type="hidden" name="ref_fourn_price_id" value="'.$rowid.'">';
 					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 					print '<input type="hidden" name="socid" value="'.$socid.'">';
@@ -436,7 +440,7 @@ if ($id > 0 || $ref)
 				{
 					$events=array();
 					$events[]=array('method' => 'getVatRates', 'url' => dol_buildpath('/core/ajax/vatrates.php', 1), 'htmlname' => 'tva_tx', 'params' => array());
-					print $form->select_company(GETPOST("id_fourn"), 'id_fourn', 'fournisseur=1', 'SelectThirdParty', 0, 0, $events);
+					print $form->select_company(GETPOST("id_fourn", 'alpha'), 'id_fourn', 'fournisseur=1', 'SelectThirdParty', 0, 0, $events);
 
 					$parameters=array('filtre'=>"fournisseur=1",'html_name'=>'id_fourn','selected'=>GETPOST("id_fourn"),'showempty'=>1,'prod_id'=>$object->id);
 				    $reshook=$hookmanager->executeHooks('formCreateThirdpartyOptions', $parameters, $object, $action);
@@ -454,7 +458,8 @@ if ($id > 0 || $ref)
 				print '<tr><td class="fieldrequired">'.$langs->trans("SupplierRef").'</td><td>';
 				if ($rowid)
 				{
-					print $object->fourn_ref;
+                    print '<input type="hidden" name="ref_fourn_old" value="'.$object->ref_supplier.'">';
+                    print '<input class="flat" name="ref_fourn" size="12" value="'.$object->ref_supplier.'">';
 				}
 				else
 				{
@@ -476,7 +481,7 @@ if ($id > 0 || $ref)
 				print '<tr>';
 				print '<td class="fieldrequired">'.$langs->trans("QtyMin").'</td>';
 				print '<td>';
-				$quantity = GETPOST('qty') ? GETPOST('qty') : "1";
+				$quantity = GETPOSTISSET('qty') ? price2num(GETPOST('qty', 'nohtml'), 'MS') : "1";
 				if ($rowid)
 				{
 					print '<input type="hidden" name="qty" value="'.$object->fourn_qty.'">';
@@ -486,6 +491,13 @@ if ($id > 0 || $ref)
 				{
 					print '<input class="flat" name="qty" size="5" value="'.$quantity.'">';
 				}
+                // Units
+                if ($conf->global->PRODUCT_USE_UNITS) {
+                    $unit = $object->getLabelOfUnit();
+                    if ($unit !== '') {
+                        print '&nbsp;&nbsp;' . $langs->trans($unit);
+                    }
+                }
 				print '</td></tr>';
 
 				// Vat rate
@@ -668,9 +680,11 @@ SCRIPT;
 				print '<tr><td>'.$langs->trans("SupplierReputation").'</td><td>';
 				echo $form->selectarray('supplier_reputation', $object->reputations, $supplier_reputation?$supplier_reputation:$object->supplier_reputation);
 				print '</td></tr>';
-                if(!empty($conf->barcode->enabled)) {
 
-				// Option to define a transport cost on supplier price
+				// Barcode
+                if (! empty($conf->barcode->enabled))
+                {
+				    // Option to define a transport cost on supplier price
                     print '<tr>';
                     print '<td>' . $langs->trans('BarcodeValue') . '</td>';
                     print '<td><input class="flat" name="barcode"  value="'.($rowid ? $object->fourn_barcode : '').'"></td>';
@@ -681,10 +695,11 @@ SCRIPT;
                     print '<tr>';
                     print '<td>' . $langs->trans('BarcodeType') . '</td>';
                     print '<td>';
-                    print $formbarcode->selectBarcodeType(($rowid ? $object->fourn_fk_barcode_type : ''), 'fk_barcode_type', 1);
+                    print $formbarcode->selectBarcodeType(($rowid ? $object->fourn_fk_barcode_type : $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE), 'fk_barcode_type', 1);
                     print '</td>';
                     print '</tr>';
                 }
+
 				// Option to define a transport cost on supplier price
 				if ($conf->global->PRODUCT_CHARGES)
 				{
@@ -745,7 +760,7 @@ SCRIPT;
 				$reshook=$hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
 				if (empty($reshook))
 				{
-					if ($user->rights->produit->creer || $user->rights->service->creer)
+					if ($usercancreate)
 					{
 						print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$object->id.'&amp;action=add_price">';
 						print $langs->trans("AddSupplierPrice").'</a>';
@@ -756,7 +771,7 @@ SCRIPT;
 			print "\n</div>\n";
 			print '<br>';
 
-			if ($user->rights->fournisseur->lire)
+			if ($user->rights->fournisseur->lire) // Duplicate ? this check is already in the head of this file
 			{
 				$param='';
 				if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
@@ -770,15 +785,14 @@ SCRIPT;
 				$num = count($product_fourn_list);
 				if (($num + ($offset * $limit)) < $nbtotalofrecords) $num++;
 
-				print_barre_liste($langs->trans('SupplierPrices'), $page, $_SERVEUR ['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit, 1);
+				print_barre_liste($langs->trans('SupplierPrices'), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit, 1);
 
 				// Suppliers list title
 				print '<div class="div-table-responsive">';
-				print '<table class="noborder" width="100%">';
-				if ($object->isProduct()) $nblignefour=4;
-				else $nblignefour=4;
+				print '<table class="liste" width="100%">';
 
 				$param="&id=".$object->id;
+
 				print '<tr class="liste_titre">';
 				print_liste_field_titre("AppliedPricesFrom", $_SERVER["PHP_SELF"], "pfp.datec", "", $param, "", $sortfield, $sortorder);
 				print_liste_field_titre("Suppliers", $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
@@ -803,24 +817,28 @@ SCRIPT;
                     print_liste_field_titre("BarcodeType", $_SERVER["PHP_SELF"], "pfp.fk_barcode_type", "", $param, '', $sortfield, $sortorder, 'center ');
                 }
 				print_liste_field_titre("DateModification", $_SERVER["PHP_SELF"], "pfp.tms", "", $param, '', $sortfield, $sortorder, 'right ');
+				if (is_object($hookmanager))
+				{
+				    $parameters=array('id_fourn'=>$id_fourn, 'prod_id'=>$object->id);
+				    $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action);
+				}
 				print_liste_field_titre('');
 				print "</tr>\n";
 
 				if (is_array($product_fourn_list))
 				{
-
 					foreach($product_fourn_list as $productfourn)
 					{
 						print '<tr class="oddeven">';
 
 						// Date from
-						print '<td>'.dol_print_date($productfourn->date_creation, 'dayhour').'</td>';
+						print '<td>'.dol_print_date(($productfourn->fourn_date_creation ? $productfourn->fourn_date_creation: $productfourn->date_creation), 'dayhour').'</td>';
 
 						// Supplier
 						print '<td>'.$productfourn->getSocNomUrl(1, 'supplier').'</td>';
 
 						// Supplier ref
-						if ($user->rights->produit->creer || $user->rights->service->creer) // change required right here
+						if ($usercancreate) // change required right here
 						{
 							print '<td class="left">'.$productfourn->getNomUrl().'</td>';
 						}
@@ -840,6 +858,13 @@ SCRIPT;
 						// Quantity
 						print '<td class="right">';
 						print $productfourn->fourn_qty;
+                        // Units
+                        if ($conf->global->PRODUCT_USE_UNITS) {
+                            $unit = $object->getLabelOfUnit();
+                            if ($unit !== '') {
+                                print '&nbsp;&nbsp;' . $langs->trans($unit);
+                            }
+                        }
 						print '</td>';
 
 						// VAT rate
@@ -902,7 +927,6 @@ SCRIPT;
 
                             // Barcode type
                             print '<td align="center">';
-
                             $productfourn->barcode_type = !empty($productfourn->fk_barcode_type) ? $productfourn->fk_barcode_type:0;
                             $productfourn->fetch_barcode();
                             print $productfourn->barcode_type_label?$productfourn->barcode_type_label:($productfourn->barcode?'<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>':'');
@@ -911,18 +935,18 @@ SCRIPT;
 
 						// Date
 						print '<td align="right">';
-						print dol_print_date($productfourn->date_modification, "dayhour");
+						print dol_print_date(($productfourn->fourn_date_modification ? $productfourn->fourn_date_modification : $productfourn->date_modification), "dayhour");
 						print '</td>';
 
 						if (is_object($hookmanager))
 						{
 							$parameters=array('id_pfp'=>$productfourn->product_fourn_price_id,'id_fourn'=>$id_fourn,'prod_id'=>$object->id);
-						    $reshook=$hookmanager->executeHooks('printObjectLine', $parameters, $object, $action);
+						    $reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action);
 						}
 
 						// Modify-Remove
 						print '<td class="center nowraponall">';
-						if ($user->rights->produit->creer || $user->rights->service->creer)
+						if ($usercancreate)
 						{
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=add_price&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_edit()."</a>";
 							print ' &nbsp; ';

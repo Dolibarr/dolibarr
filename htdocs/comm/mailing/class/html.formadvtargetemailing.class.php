@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -114,7 +114,6 @@ class FormAdvTargetEmailing extends Form
 		dol_syslog(get_class($this) . "::select_country sql=" . $sql);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num) {
@@ -175,7 +174,6 @@ class FormAdvTargetEmailing extends Form
 		$resql_usr = $this->db->query($sql_usr);
 		if ($resql_usr) {
 			while ( $obj_usr = $this->db->fetch_object($resql_usr) ) {
-
 				$label = $obj_usr->firstname . " " . $obj_usr->name . " (" . $obj_usr->login . ')';
 
 				$options_array [$obj_usr->rowid] = $label;
@@ -249,7 +247,6 @@ class FormAdvTargetEmailing extends Form
 			$sql = 'SELECT ' . $keyList . ', ' . $InfoFieldList [1];
 			$sql .= ' FROM ' . MAIN_DB_PREFIX . $InfoFieldList [0];
 			if (! empty($InfoFieldList [3])) {
-
 				// We have to join on extrafield table
 				if (strpos($InfoFieldList [3], 'extra') !== false) {
 					$sql .= ' as main, ' . MAIN_DB_PREFIX . $InfoFieldList [0] . '_extrafields as extra';
@@ -266,7 +263,6 @@ class FormAdvTargetEmailing extends Form
 			dol_syslog(get_class($this) . "::".__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-
 				$num = $this->db->num_rows($resql);
 				$i = 0;
 				if ($num) {
@@ -306,7 +302,6 @@ class FormAdvTargetEmailing extends Form
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num)
@@ -396,7 +391,6 @@ class FormAdvTargetEmailing extends Form
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num)
@@ -442,8 +436,6 @@ class FormAdvTargetEmailing extends Form
 		dol_syslog(get_class($this) . "::".__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-
-
 			$out .= '<select id="' . $htmlname . '" class="flat" name="' . $htmlname . '">';
 			if ($showempty)
 				$out .= '<option value=""></option>';

@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -125,14 +125,14 @@ function getValidOnlinePaymentMethods($paymentmethod = '')
  */
 function showOnlinePaymentUrl($type, $ref)
 {
-	global $conf, $langs;
+	global $langs;
 
 	// Load translation files required by the page
     $langs->loadLangs(array('payment', 'paybox'));
 
-	$servicename='Online';
+	$servicename=$langs->transnoentitiesnoconv('Online');
 
-	$out = img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'<br>';
+	$out = img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'<br>';
 	$url = getOnlinePaymentUrl(0, $type, $ref);
 	$out.= '<input type="text" id="onlinepaymenturl" class="quatrevingtpercent" value="'.$url.'">';
 	$out.= ajax_autoselect("onlinepaymenturl", 0);
@@ -142,23 +142,32 @@ function showOnlinePaymentUrl($type, $ref)
 /**
  * Return string with full Url
  *
- * @param   int		$mode		0=True url, 1=Url formated with colors
- * @param   string	$type		Type of URL ('free', 'order', 'invoice', 'contractline', 'membersubscription' ...)
- * @param	string	$ref		Ref of object
- * @param	int		$amount		Amount (required for $type='free' only)
- * @param	string	$freetag	Free tag
- * @return	string				Url string
+ * @param   int		$mode		      0=True url, 1=Url formated with colors
+ * @param   string	$type		      Type of URL ('free', 'order', 'invoice', 'contractline', 'membersubscription' ...)
+ * @param	string	$ref		      Ref of object
+ * @param	int		$amount		      Amount (required for $type='free' only)
+ * @param	string	$freetag	      Free tag
+ * @param   string  $localorexternal  0=Url for browser, 1=Url for external access
+ * @return	string				      Url string
  */
-function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag = 'your_free_tag')
+function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag = 'your_tag', $localorexternal = 0)
 {
-	global $conf;
+    global $conf, $dolibarr_main_url_root;
 
 	$ref=str_replace(' ', '', $ref);
 	$out='';
 
+	// Define $urlwithroot
+	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+	$urltouse = DOL_MAIN_URL_ROOT;
+	if ($localorexternal) $urltouse = $urlwithroot;
+
 	if ($type == 'free')
 	{
-		$out=DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?amount='.($mode?'<font color="#666666">':'').$amount.($mode?'</font>':'').'&tag='.($mode?'<font color="#666666">':'').$freetag.($mode?'</font>':'');
+	    $out=$urltouse.'/public/payment/newpayment.php?amount='.($mode?'<font color="#666666">':'').$amount.($mode?'</font>':'').'&tag='.($mode?'<font color="#666666">':'').$freetag.($mode?'</font>':'');
 		if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
 		{
 			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) $out.='&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
@@ -167,7 +176,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 	}
 	elseif ($type == 'order')
 	{
-		$out=DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?source=order&ref='.($mode?'<font color="#666666">':'');
+	    $out=$urltouse.'/public/payment/newpayment.php?source=order&ref='.($mode?'<font color="#666666">':'');
 		if ($mode == 1) $out.='order_ref';
 		if ($mode == 0) $out.=urlencode($ref);
 		$out.=($mode?'</font>':'');
@@ -185,7 +194,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 	}
 	elseif ($type == 'invoice')
 	{
-		$out=DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?source=invoice&ref='.($mode?'<font color="#666666">':'');
+	    $out=$urltouse.'/public/payment/newpayment.php?source=invoice&ref='.($mode?'<font color="#666666">':'');
 		if ($mode == 1) $out.='invoice_ref';
 		if ($mode == 0) $out.=urlencode($ref);
 		$out.=($mode?'</font>':'');
@@ -203,7 +212,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 	}
 	elseif ($type == 'contractline')
 	{
-		$out=DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?source=contractline&ref='.($mode?'<font color="#666666">':'');
+	    $out=$urltouse.'/public/payment/newpayment.php?source=contractline&ref='.($mode?'<font color="#666666">':'');
 		if ($mode == 1) $out.='contractline_ref';
 		if ($mode == 0) $out.=urlencode($ref);
 		$out.=($mode?'</font>':'');
@@ -221,7 +230,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 	}
 	elseif ($type == 'member' || $type == 'membersubscription')
 	{
-		$out=DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?source=membersubscription&ref='.($mode?'<font color="#666666">':'');
+	    $out=$urltouse.'/public/payment/newpayment.php?source=membersubscription&ref='.($mode?'<font color="#666666">':'');
 		if ($mode == 1) $out.='member_ref';
 		if ($mode == 0) $out.=urlencode($ref);
 		$out.=($mode?'</font>':'');
@@ -239,7 +248,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 	}
 	if ($type == 'donation')
 	{
-		$out=DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?source=donation&ref='.($mode?'<font color="#666666">':'');
+	    $out=$urltouse.'/public/payment/newpayment.php?source=donation&ref='.($mode?'<font color="#666666">':'');
 		if ($mode == 1) $out.='donation_ref';
 		if ($mode == 0) $out.=urlencode($ref);
 		$out.=($mode?'</font>':'');

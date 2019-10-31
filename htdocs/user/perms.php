@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -58,7 +58,8 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 $socid=0;
 if (isset($user->societe_id) && $user->societe_id > 0) $socid = $user->societe_id;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
-if ($user->id == $id && (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->user->self_advance->readperms)))	// A user can always read its own card if not advanced perms enabled, or if he has advanced perms
+// A user can always read its own card if not advanced perms enabled, or if he has advanced perms, except for admin
+if ($user->id == $id && (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->user->self_advance->readperms) && empty($user->admin)))
 {
 	accessforbidden();
 }
@@ -272,7 +273,7 @@ if (($caneditperms && empty($objMod->rights_admin_allowed)) || empty($object->ad
 	{
 		print '<td class="center nowrap">';
 		print '<a class="reposition commonlink" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module=allmodules">'.$langs->trans("All")."</a>";
-		print '/';
+		print ' / ';
 		print '<a class="reposition commonlink" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module=allmodules">'.$langs->trans("None")."</a>";
 		print '</td>';
 	}
@@ -282,12 +283,12 @@ print '<td>'.$langs->trans("Permissions").'</td>';
 print '</tr>'."\n";
 
 //print "xx".$conf->global->MAIN_USE_ADVANCED_PERMS;
-$sql = "SELECT r.id, r.libelle, r.module";
+$sql = "SELECT r.id, r.libelle, r.module, r.module_position";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
 $sql.= " AND r.entity = " . $entity;
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is disable
-$sql.= " ORDER BY r.module, r.id";
+$sql.= " ORDER BY r.family_position, r.module_position, r.module, r.id";
 
 $result=$db->query($sql);
 if ($result)
@@ -300,12 +301,28 @@ if ($result)
 	{
 		$obj = $db->fetch_object($result);
 
-		// Si la ligne correspond a un module qui n'existe plus (absent de includes/module), on l'ignore
+		// If line is for a module that doe snot existe anymore (absent of includes/module), we ignore it
 		if (empty($modules[$obj->module]))
 		{
 			$i++;
 			continue;
 		}
+
+		// Save field module_position in database if value is still zero
+		if (empty($obj->module_position))
+		{
+			if (is_object($modules[$obj->module]) && ($modules[$obj->module]->module_position > 0))
+			{
+				// TODO Define familyposition
+				$family = $modules[$obj->module]->family_position;
+				$familyposition = 0;
+				$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."rights_def SET module_position = ".$modules[$obj->module]->module_position.",";
+				$sqlupdate.= " family_position = ".$familyposition;
+				$sqlupdate.= " WHERE module_position = 0 AND module = '".$db->escape($obj->module)."'";
+				$db->query($sqlupdate);
+			}
+		}
+
 		if (isset($obj->module) && ($oldmod <> $obj->module))
 		{
 			$oldmod = $obj->module;
@@ -316,27 +333,29 @@ if ($result)
 
     		// Show break line
     		print '<tr class="oddeven trforbreak">';
-    		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">'.img_object('', $picto, 'class="pictoobjectwidth"').' '.$objMod->getName();
-    		print '<a name="'.$objMod->getName().'"></a></td>';
+    		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
+    		print img_object('', $picto, 'class="pictoobjectwidth"').' '.$objMod->getName();
+    		print '<a name="'.$objMod->getName().'"></a>';
+    		print '</td>';
     		if (($caneditperms && empty($objMod->rights_admin_allowed)) || empty($object->admin))
     		{
     			if ($caneditperms)
     			{
     				print '<td class="center nowrap">';
     				print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module='.$obj->module.'">'.$langs->trans("All")."</a>";
-    				print '/';
+    				print ' / ';
     				print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module='.$obj->module.'">'.$langs->trans("None")."</a>";
     				print '</td>';
     			}
-    		}
-    		else
-    		{
+    			print '<td>&nbsp;</td>';
+    		} else {
     			if ($caneditperms)
     			{
-    				print '<td></td>';
+			    	print '<td>&nbsp;</td>';
     			}
-    		}
-    		print '<td colspan="2">&nbsp;</td>';
+    			print '<td>&nbsp;</td>';
+		    }
+    		print '<td>&nbsp;</td>';
     		print '</tr>'."\n";
         }
 

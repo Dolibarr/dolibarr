@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -749,17 +749,17 @@ if (! empty($conf->don->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
         $sql.= " AND fk_statut in (1,2)";
 		if (! empty($date_start) && ! empty($date_end))
 			$sql.= " AND p.datedon >= '".$db->idate($date_start)."' AND p.datedon <= '".$db->idate($date_end)."'";
-    }
-     elseif ($modecompta == 'RECETTES-DEPENSES') {
+    } elseif ($modecompta == 'RECETTES-DEPENSES') {
         $sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(pe.datep,'%Y-%m') as dm, sum(p.amount) as amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as p";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_donation as pe ON pe.fk_donation = p.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
 		$sql.= " WHERE p.entity IN (".getEntity('donation').")";
    	    $sql.= " AND fk_statut >= 2";
-		if (! empty($date_start) && ! empty($date_end))
-			$sql.= " AND pe.datep >= '".$db->idate($date_start)."' AND pe.datep <= '".$db->idate($date_end)."'";
-     }
+        if (! empty($date_start) && ! empty($date_end)) {
+            $sql.= " AND pe.datep >= '".$db->idate($date_start)."' AND pe.datep <= '".$db->idate($date_end)."'";
+        }
+    }
 
     $sql.= " GROUP BY p.societe, p.firstname, p.lastname, dm";
 
@@ -943,7 +943,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 		}
 		print "</td>";
 
-		print '<td class="borderrightlight right">&nbsp;';
+		print '<td class="borderrightlight nowrap right">&nbsp;';
 		if ($modecompta == 'BOOKKEEPING')
 		{
 			if (isset($encaiss[$case]))
@@ -978,8 +978,8 @@ print '</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
 	$nbcols+=2;
-	print '<td class="right">'.(isset($totsorties[$annee])?price(price2num($totsorties[$annee], 'MT')):'&nbsp;').'</td>';
-	print '<td class="right" style="border-right: 1px solid #DDD">'.(isset($totentrees[$annee])?price(price2num($totentrees[$annee], 'MT')):'&nbsp;').'</td>';
+	print '<td class="nowrap right">'.(isset($totsorties[$annee])?price(price2num($totsorties[$annee], 'MT')):'&nbsp;').'</td>';
+	print '<td class="nowrap right" style="border-right: 1px solid #DDD">'.(isset($totentrees[$annee])?price(price2num($totentrees[$annee], 'MT')):'&nbsp;').'</td>';
 }
 print "</tr>\n";
 

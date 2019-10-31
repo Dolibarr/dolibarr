@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -180,10 +180,10 @@ class Ticket extends CommonObject
         'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'position'=>1, 'visible'=>-2, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id"),
     	'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>5, 'notnull'=>1, 'index'=>1),
     	'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'css'=>''),
-	    'track_id' => array('type'=>'varchar(255)', 'label'=>'TrackID', 'visible'=>0, 'enabled'=>1, 'position'=>11, 'notnull'=>-1, 'searchall'=>1, 'help'=>"Help text"),
+	    'track_id' => array('type'=>'varchar(255)', 'label'=>'TicketTrackId', 'visible'=>-2, 'enabled'=>1, 'position'=>11, 'notnull'=>-1, 'searchall'=>1, 'help'=>"Help text"),
 	    'fk_user_create' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Author', 'visible'=>1, 'enabled'=>1, 'position'=>15, 'notnull'=>1, 'css'=>'nowraponall'),
     	'origin_email' => array('type'=>'mail', 'label'=>'OriginEmail', 'visible'=>-2, 'enabled'=>1, 'position'=>16, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object"),
-    	'subject' => array('type'=>'varchar(255)', 'label'=>'Subject', 'visible'=>1, 'enabled'=>1, 'position'=>18, 'notnull'=>-1, 'searchall'=>1, 'help'=>""),
+    	'subject' => array('type'=>'varchar(255)', 'label'=>'Subject', 'visible'=>1, 'enabled'=>1, 'position'=>18, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth75'),
     	'type_code' => array('type'=>'varchar(32)', 'label'=>'Type', 'visible'=>1, 'enabled'=>1, 'position'=>20, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth100'),
     	'category_code' => array('type'=>'varchar(32)', 'label'=>'TicketGroup', 'visible'=>-1, 'enabled'=>1, 'position'=>21, 'notnull'=>-1, 'help'=>"", 'css'=>'maxwidth100'),
 	    'severity_code' => array('type'=>'varchar(32)', 'label'=>'Severity', 'visible'=>1, 'enabled'=>1, 'position'=>22, 'notnull'=>-1, 'help'=>"", 'css'=>'maxwidth100'),
@@ -194,7 +194,7 @@ class Ticket extends CommonObject
         'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>1, 'enabled'=>1, 'position'=>500, 'notnull'=>1),
         'date_read' => array('type'=>'datetime', 'label'=>'TicketReadOn', 'visible'=>1, 'enabled'=>1, 'position'=>500, 'notnull'=>1),
         'fk_user_assign' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'AssignedTo', 'visible'=>1, 'enabled'=>1, 'position'=>505, 'notnull'=>1),
-        'date_close' => array('type'=>'datetime', 'label'=>'TicketCloseOn', 'visible'=>1, 'enabled'=>1, 'position'=>510, 'notnull'=>1),
+        'date_close' => array('type'=>'datetime', 'label'=>'TicketCloseOn', 'visible'=>-1, 'enabled'=>1, 'position'=>510, 'notnull'=>1),
         'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-1, 'enabled'=>1, 'position'=>520, 'notnull'=>1),
         'message' => array('type'=>'text', 'label'=>'Message', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1,),
         'progress' => array('type'=>'varchar(100)', 'label'=>'Progression', 'visible'=>-1, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'css'=>'right', 'help'=>""),
@@ -207,10 +207,10 @@ class Ticket extends CommonObject
      */
     const STATUS_NOT_READ = 0;
     const STATUS_READ = 1;
-    const STATUS_ANSWERED = 3;
-    const STATUS_ASSIGNED = 4;
-    const STATUS_IN_PROGRESS = 5;
-    const STATUS_WAITING = 6;
+    const STATUS_ASSIGNED = 2;
+    const STATUS_IN_PROGRESS = 3;
+    const STATUS_NEED_MORE_INFO = 5;
+    const STATUS_WAITING = 7;
     const STATUS_CLOSED = 8;
     const STATUS_CANCELED = 9;
 
@@ -224,8 +224,8 @@ class Ticket extends CommonObject
     {
         $this->db = $db;
 
-        $this->statuts_short = array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted');
-        $this->statuts = array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted');
+        $this->statuts_short = array(self::STATUS_NOT_READ => 'Unread', self::STATUS_READ => 'Read', self::STATUS_ASSIGNED => 'Assigned', self::STATUS_IN_PROGRESS => 'InProgress', self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation', self::STATUS_WAITING => 'Suspended', self::STATUS_CLOSED => 'Closed', self::STATUS_CANCELED => 'Canceled');
+        $this->statuts       = array(self::STATUS_NOT_READ => 'Unread', self::STATUS_READ => 'Read', self::STATUS_ASSIGNED => 'Assigned', self::STATUS_IN_PROGRESS => 'InProgress', self::STATUS_NEED_MORE_INFO => 'NeedMoreInformation', self::STATUS_WAITING => 'Suspended', self::STATUS_CLOSED => 'Closed', self::STATUS_CANCELED => 'Canceled');
     }
 
     /**
@@ -573,7 +573,7 @@ class Ticket extends CommonObject
         $extrafields = new ExtraFields($this->db);
 
         // fetch optionals attributes and labels
-        $extralabels = $extrafields->fetch_name_optionals_label($this->element);
+        $extrafields->fetch_name_optionals_label($this->table_element);
 
         $sql = "SELECT";
         $sql .= " t.rowid,";
@@ -906,12 +906,6 @@ class Ticket extends CommonObject
             if ($res < 0) $error++;
         }
 
-        if (!$error) {
-            $sql = "DELETE FROM " . MAIN_DB_PREFIX . "ticket_msg";
-            $sql .= " WHERE fk_track_id = '" . $this->db->escape($this->track_id) . "'";
-            $resql = $this->db->query($sql);
-        }
-
         // Removed extrafields
         if (!$error) {
             $result = $this->deleteExtraFields();
@@ -950,13 +944,12 @@ class Ticket extends CommonObject
     /**
      *     Load an object from its id and create a new one in database
      *
-     *     @param  int $fromid Id of object to clone
-     *     @return int                    New id of clone
+     *     @param   User    $user       User that clone
+     *     @param   int     $fromid     Id of object to clone
+     *     @return  int                 New id of clone
      */
-    public function createFromClone($fromid)
+    public function createFromClone(User $user, $fromid)
     {
-        global $user, $langs;
-
         $error = 0;
 
         $object = new Ticket($this->db);
@@ -1041,7 +1034,7 @@ class Ticket extends CommonObject
     /**
      *      Charge dans cache la liste des types de tickets (paramétrable dans dictionnaire)
      *
-     *      @return int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      @return int             Number of lines loaded, 0 if already loaded, <0 if KO
      */
     public function loadCacheTypesTickets()
     {
@@ -1081,7 +1074,7 @@ class Ticket extends CommonObject
     /**
      *      Charge dans cache la liste des catégories de tickets (paramétrable dans dictionnaire)
      *
-     *      @return int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      @return int             Number of lines loaded, 0 if already loaded, <0 if KO
      */
     public function loadCacheCategoriesTickets()
     {
@@ -1121,7 +1114,7 @@ class Ticket extends CommonObject
     /**
      *      Charge dans cache la liste des sévérité de tickets (paramétrable dans dictionnaire)
      *
-     *      @return int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      @return int             Number of lines loaded, 0 if already loaded, <0 if KO
      */
     public function loadCacheSeveritiesTickets()
     {
@@ -1177,7 +1170,7 @@ class Ticket extends CommonObject
      *    Return status label of object
      *
      *    @param      string 	$statut      id statut
-     *    @param      int		$mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+     *    @param      int		$mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
      *    @return     string     			 Label
      */
     public function LibStatut($statut, $mode = 0)
@@ -1192,134 +1185,106 @@ class Ticket extends CommonObject
             return $langs->trans($this->statuts_short[$statut]);
         }
         elseif ($mode == 2) {
-            if ($statut == 0) {
+            if ($statut == self::STATUS_NOT_READ) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut0.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
-
-            elseif ($statut == 1) {
+            elseif ($statut == self::STATUS_READ) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut1.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
-
-            elseif ($statut == 3) {
+            elseif ($statut == self::STATUS_ASSIGNED) {
+                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut2.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
+            }
+            elseif ($statut == self::STATUS_IN_PROGRESS) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut3.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
-
-            elseif ($statut == 4) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut4.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
-            }
-
-            elseif ($statut == 5) {
+            elseif ($statut == self::STATUS_NEED_MORE_INFO) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut5.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
-
-            elseif ($statut == 6) {
+            elseif ($statut == self::STATUS_WAITING) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut6.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
-
-            elseif ($statut == 8) {
+            elseif ($statut == self::STATUS_CLOSED) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut8.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
-
-            elseif ($statut == 9) {
+            elseif ($statut == self::STATUS_CANCELED) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut9.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
         }
         elseif ($mode == 3) {
-            if ($statut == 0) {
+            if ($statut == self::STATUS_NOT_READ) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut0.png@ticket');
             }
-
-            elseif ($statut == 1) {
+            elseif ($statut == self::STATUS_READ) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut1.png@ticket');
             }
-
-            elseif ($statut == 3) {
+            elseif ($statut == self::STATUS_ASSIGNED) {
+                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut2.png@ticket');
+            }
+            elseif ($statut == self::STATUS_IN_PROGRESS) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut3.png@ticket');
             }
-
-            elseif ($statut == 4) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut4.png@ticket');
-            }
-
-            elseif ($statut == 5) {
+            elseif ($statut == self::STATUS_NEED_MORE_INFO) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut5.png@ticket');
             }
-
-            elseif ($statut == 6) {
+            elseif ($statut == self::STATUS_WAITING) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut6.png@ticket');
             }
-
-            elseif ($statut == 8) {
+            elseif ($statut == self::STATUS_CLOSED) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut8.png@ticket');
             }
-
-            elseif ($statut == 9) {
+            elseif ($statut == self::STATUS_CANCELED) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut9.png@ticket');
             }
         }
         elseif ($mode == 4) {
-            if ($statut == 0) {
+            if ($statut == self::STATUS_NOT_READ) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut0.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
-
-            elseif ($statut == 1) {
+            elseif ($statut == self::STATUS_READ) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut1.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
-
-            elseif ($statut == 3) {
+            elseif ($statut == self::STATUS_ASSIGNED) {
+                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut2.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
+            }
+            elseif ($statut == self::STATUS_IN_PROGRESS) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut3.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
-
-            elseif ($statut == 4) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut4.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
-            }
-
-            elseif ($statut == 5) {
+            elseif ($statut == self::STATUS_NEED_MORE_INFO) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut5.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
-
-            elseif ($statut == 6) {
+            elseif ($statut == self::STATUS_WAITING) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut6.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
-
-            elseif ($statut == 8) {
+            elseif ($statut == self::STATUS_CLOSED) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut8.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
-
-            elseif ($statut == 9) {
+            elseif ($statut == self::STATUS_CANCELED) {
                 return img_picto($langs->trans($this->statuts_short[$statut]), 'statut9.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
             }
         }
-        elseif ($mode == 5) {
-            if ($statut == 0) {
+        elseif ($mode == 5 || $mode == 6) {
+            if ($statut == self::STATUS_NOT_READ) {
                 return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut0.png@ticket');
             }
-
-            elseif ($statut == 1) {
+            elseif ($statut == self::STATUS_READ) {
                 return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut1.png@ticket');
             }
-
-            elseif ($statut == 3) {
+            elseif ($statut == self::STATUS_ASSIGNED) {
+                return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut2.png@ticket');
+            }
+            elseif ($statut == self::STATUS_IN_PROGRESS) {
                 return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut3.png@ticket');
             }
-
-            elseif ($statut == 4) {
-                return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut4.png@ticket');
-            }
-
-            elseif ($statut == 5) {
+            elseif ($statut == self::STATUS_NEED_MORE_INFO) {
                 return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut5.png@ticket');
             }
-
-            elseif ($statut == 6) {
+            elseif ($statut == self::STATUS_WAITING) {
                 return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut6.png@ticket');
             }
-
-            elseif ($statut == 8) {
+            elseif ($statut == self::STATUS_CLOSED) {
                 return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut8.png@ticket');
             }
-
-            elseif ($statut == 9) {
+            elseif ($statut == self::STATUS_CANCELED) {
                 return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut9.png@ticket');
             }
         }
@@ -1405,7 +1370,7 @@ class Ticket extends CommonObject
             $this->db->begin();
 
             $sql = "UPDATE " . MAIN_DB_PREFIX . "ticket";
-            $sql .= " SET fk_statut = 1, date_read='" . $this->db->idate(dol_now()) . "'";
+            $sql .= " SET fk_statut = ".Ticket::STATUS_READ.", date_read='" . $this->db->idate(dol_now()) . "'";
             $sql .= " WHERE rowid = " . $this->id;
 
             dol_syslog(get_class($this) . "::markAsRead");
@@ -1422,7 +1387,6 @@ class Ticket extends CommonObject
                     }
                     // End call triggers
                 }
-
 
                 if (!$error) {
                     $this->db->commit();
@@ -1456,20 +1420,23 @@ class Ticket extends CommonObject
 
         $this->db->begin();
 
+        $this->oldcopy = dol_clone($this);
+
         $sql = "UPDATE " . MAIN_DB_PREFIX . "ticket";
         if ($id_assign_user > 0)
         {
-            $sql .= " SET fk_user_assign=".$id_assign_user.", fk_statut=4";
+            $sql .= " SET fk_user_assign=".$id_assign_user.", fk_statut = ".Ticket::STATUS_ASSIGNED;
         }
         else
         {
-            $sql .= " SET fk_user_assign=null, fk_statut=1";
+            $sql .= " SET fk_user_assign=null, fk_statut = ".Ticket::STATUS_READ;
         }
         $sql .= " WHERE rowid = " . $this->id;
 
         dol_syslog(get_class($this) . "::assignUser sql=" . $sql);
         $resql = $this->db->query($sql);
-        if ($resql) {
+        if ($resql)
+        {
             $this->fk_user_assign = $id_assign_user; // May be used by trigger
 
             if (! $notrigger) {
@@ -1594,7 +1561,7 @@ class Ticket extends CommonObject
     /**
      *      Charge la liste des actions sur le ticket
      *
-     *      @return int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      @return int             Number of lines loaded, 0 if already loaded, <0 if KO
      */
     public function loadCacheLogsTicket()
     {
@@ -1635,16 +1602,21 @@ class Ticket extends CommonObject
     }
 
     /**
-     *  Add message into database
+     * Add message into database
      *
-     *  @param  User $user      	User that creates
-     *  @param  int  $notrigger 	0=launch triggers after, 1=disable triggers
-     *  @return int                 <0 if KO, Id of created object if OK
+     * @param User 	 $user      		  User that creates
+     * @param int  	 $notrigger 		  0=launch triggers after, 1=disable triggers
+	 * @param array	 $filename_list       List of files to attach (full path of filename on file system)
+	 * @param array	 $mimetype_list       List of MIME type of attached files
+	 * @param array	 $mimefilename_list   List of attached file name in message
+     * @return int						  <0 if KO, >0 if OK
      */
-    public function createTicketMessage($user, $notrigger = 0)
+    public function createTicketMessage($user, $notrigger = 0, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array())
     {
         global $conf, $langs;
         $error = 0;
+
+        $now = dol_now();
 
         // Clean parameters
         if (isset($this->fk_track_id)) {
@@ -1655,50 +1627,49 @@ class Ticket extends CommonObject
             $this->message = trim($this->message);
         }
 
-        // Insert request
-        $sql = "INSERT INTO " . MAIN_DB_PREFIX . "ticket_msg(";
-
-        $sql .= "fk_track_id,";
-        $sql .= "fk_user_action,";
-        $sql .= "datec,";
-        $sql .= "message,";
-        $sql .= "private";
-        $sql .= ") VALUES (";
-        $sql .= " " . (!isset($this->fk_track_id) ? "'" . $this->db->escape($this->track_id) . "'" : "'" . $this->db->escape($this->fk_track_id) . "'") . ",";
-        $sql .= " " . ($this->fk_user_action > 0 ? $this->fk_user_action : $user->id) . ",";
-        $sql .= " '" . $this->db->idate(dol_now()) . "',";
-        $sql .= " " . (!isset($this->message) ? 'NULL' : "'" . $this->db->escape($this->message) . "'") . ",";
-        $sql .= " " . (empty($this->private) ? '0' : "'" . $this->db->escape($this->private) . "'") . "";
-        $sql .= ")";
-
         $this->db->begin();
 
-        dol_syslog(get_class($this) . "::create_ticket_message sql=" . $sql, LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if (!$resql) {
-            $error++;
-            $this->errors[] = "Error " . $this->db->lasterror();
+        // Insert entry into agenda with code 'TICKET_MSG'
+        include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+        $actioncomm=new ActionComm($this->db);
+        $actioncomm->type_code = 'AC_OTH_AUTO';
+        $actioncomm->code = 'TICKET_MSG';
+		if($this->private){
+			$actioncomm->code = 'TICKET_MSG_PRIVATE';
+		}
+        $actioncomm->socid = $this->socid;
+        $actioncomm->label = $this->subject;
+        $actioncomm->note_private = $this->message;
+        $actioncomm->userassigned = array($user->id);
+        $actioncomm->userownerid = $user->id;
+        $actioncomm->datep = $now;
+        $actioncomm->percentage = 100;
+        $actioncomm->elementtype = 'ticket';
+        $actioncomm->fk_element = $this->id;
+
+        $attachedfiles = array();
+        $attachedfiles['paths'] = $filename_list;
+        $attachedfiles['names'] = $mimefilename_list;
+        $attachedfiles['mimes'] = $mimetype_list;
+        if (is_array($attachedfiles) && count($attachedfiles)>0) {
+        	$actioncomm->attachedfiles	= $attachedfiles;
         }
 
-        if (!$error) {
-            if (!$notrigger) {
-                // Uncomment this and change MYOBJECT to your own tag if you
-                // want this action calls a trigger.
-                //// Call triggers
-                //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                //$interface=new Interfaces($this->db);
-                //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-                //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                //// End call triggers
-            }
+        if (! empty($mimefilename_list) && is_array($mimefilename_list))
+        {
+        	$actioncomm->note_private=dol_concatdesc($actioncomm->note_private, "\n".$langs->transnoentities("AttachedFiles").': '.join(';', $mimefilename_list));
+        }
+
+        $actionid = $actioncomm->create($user);
+        if ($actionid <= 0)
+        {
+            $error++;
+            $this->error = $actioncomm->error;
+            $this->errors = $actioncomm->errors;
         }
 
         // Commit or rollback
         if ($error) {
-            foreach ($this->errors as $errmsg) {
-                dol_syslog(get_class($this) . "::create_ticket_message " . $errmsg, LOG_ERR);
-                $this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
-            }
             $this->db->rollback();
             return -1 * $error;
         } else {
@@ -1708,25 +1679,25 @@ class Ticket extends CommonObject
     }
 
     /**
-     *      Charge la liste des messages sur le ticket
+     *      Load the list of event on ticket into ->cache_msgs_ticket
      *
-     *      @return int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     *      @return int             Number of lines loaded, 0 if already loaded, <0 if KO
      */
     public function loadCacheMsgsTicket()
     {
-        global $langs;
-
         if (is_array($this->cache_msgs_ticket) && count($this->cache_msgs_ticket)) {
             return 0;
         }
-        // Cache deja charge
 
-        $sql = "SELECT rowid, fk_user_action, datec, message, private";
-        $sql .= " FROM " . MAIN_DB_PREFIX . "ticket_msg";
-        $sql .= " WHERE fk_track_id ='" . $this->db->escape($this->track_id) . "'";
+        // Cache already loaded
+
+        $sql = "SELECT id as rowid, fk_user_author, datec, label, note as message, visibility";
+        $sql .= " FROM " . MAIN_DB_PREFIX . "actioncomm";
+        $sql .= " WHERE fk_element = " . (int) $this->id;
+        $sql .= " AND elementtype = 'ticket'";
         $sql .= " ORDER BY datec DESC";
-        dol_syslog(get_class($this) . "::load_cache_actions_ticket sql=" . $sql, LOG_DEBUG);
 
+        dol_syslog(get_class($this) . "::load_cache_actions_ticket sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql) {
             $num = $this->db->num_rows($resql);
@@ -1734,10 +1705,11 @@ class Ticket extends CommonObject
             while ($i < $num) {
                 $obj = $this->db->fetch_object($resql);
                 $this->cache_msgs_ticket[$i]['id'] = $obj->rowid;
-                $this->cache_msgs_ticket[$i]['fk_user_action'] = $obj->fk_user_action;
+                $this->cache_msgs_ticket[$i]['fk_user_author'] = $obj->fk_user_author;
                 $this->cache_msgs_ticket[$i]['datec'] = $this->db->jdate($obj->datec);
+                $this->cache_msgs_ticket[$i]['subject'] = $obj->label;
                 $this->cache_msgs_ticket[$i]['message'] = $obj->message;
-                $this->cache_msgs_ticket[$i]['private'] = $obj->private;
+                $this->cache_msgs_ticket[$i]['private'] = ($obj->visibility == 'private' ? 1 : 0);
                 $i++;
             }
             return $num;
@@ -1758,11 +1730,11 @@ class Ticket extends CommonObject
     {
         global $conf, $langs;
 
-        if ($this->fk_statut != 9) { // not closed
+        if ($this->fk_statut != Ticket::STATUS_CLOSED) { // not closed
             $this->db->begin();
 
             $sql = "UPDATE " . MAIN_DB_PREFIX . "ticket";
-            $sql .= " SET fk_statut=8, progress=100, date_close='" . $this->db->idate(dol_now()) . "'";
+            $sql .= " SET fk_statut=".Ticket::STATUS_CLOSED.", progress=100, date_close='" . $this->db->idate(dol_now()) . "'";
             $sql .= " WHERE rowid = " . $this->id;
 
             dol_syslog(get_class($this) . "::close sql=" . $sql);
@@ -2420,7 +2392,7 @@ class Ticket extends CommonObject
         if (file_exists($dir_osencoded)) {
             $handle = opendir($dir_osencoded);
             if (is_resource($handle)) {
-                while (($file = readdir($handle)) != false) {
+                while (($file = readdir($handle)) !== false) {
                     if (!utf8_check($file)) {
                         $file = utf8_encode($file);
                     }
@@ -2436,10 +2408,11 @@ class Ticket extends CommonObject
 
 
     /**
-     * Copy files into ticket directory
-     * Used for files linked into messages
+     * Copy files defined into $_SESSION array into the ticket directory of attached files.
+     * Used for files linked into messages.
+     * Files may be renamed during copy to avoid overwriting existing files.
      *
-     * @return	void
+     * @return	array		Array with final path/name/mime of files.
      */
     public function copyFilesForTicket()
     {
@@ -2469,44 +2442,61 @@ class Ticket extends CommonObject
         if (!dol_is_dir($destdir)) {
             dol_mkdir($destdir);
         }
+
+        $listofpaths = array();
+        $listofnames = array();
         foreach ($filename as $i => $val) {
-            $res = dol_move($filepath[$i], $destdir . '/' . $filename[$i]);
-            if (image_format_supported($destdir . '/' . $filename[$i]) == 1) {
+        	$destfile = $destdir . '/' . $filename[$i];
+        	// If destination file already exists, we add a suffix to avoid to overwrite
+        	if (is_file($destfile))
+        	{
+        		$now = dol_now();
+        		$destfile.='.'.dol_print_date($now, 'dayhourlog');
+        	}
+
+        	$res = dol_move($filepath[$i], $destfile, 0, 1);
+
+        	if (image_format_supported($destfile) == 1) {
                 // Create small thumbs for image (Ratio is near 16/9)
                 // Used on logon for example
-                $imgThumbSmall = vignette($destdir . '/' . $filename[$i], $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
+        		$imgThumbSmall = vignette($destfile, $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
                 // Create mini thumbs for image (Ratio is near 16/9)
                 // Used on menu or for setup page for example
-                $imgThumbMini = vignette($destdir . '/' . $filename[$i], $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
+        		$imgThumbMini = vignette($destfile, $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");
             }
+
             $formmail->remove_attached_files($i);
+
+            // Fill array with new names
+            $listofpaths[$i] = $destfile;
+            $listofnames[$i] = basename($destfile);
         }
+
+        return array('listofpaths'=>$listofpaths, 'listofnames'=>$listofnames, 'listofmimes'=>$mimetype);
     }
 
 
     /**
-     * Add new message on a ticket (private area)
+     * Add new message on a ticket (private area). Can also send it be email if GETPOST('send_email', 'int') is set.
      *
-     * @param User $user        User for action
-     * @param string $action    Action string
-     * @return int
+     * @param   User    $user       User for action
+     * @param   string  $action     Action string
+     * @param   int     $private    1=Message is private. TODO Implement this. What does this means ?
+     * @return  int
      */
-    public function newMessage($user, &$action)
+    public function newMessage($user, &$action, $private = 1)
     {
         global $mysoc, $conf, $langs;
 
-        if (!class_exists('Contact')) {
-            include_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
-        }
-
-        $contactstatic = new Contact($this->db);
-        $object = new Ticket($this->db);
-
         $error = 0;
 
+        $object = new Ticket($this->db);
+
         $ret = $object->fetch('', '', GETPOST('track_id', 'alpha'));
+
         $object->socid = $object->fk_soc;
         $object->fetch_thirdparty();
+
         if ($ret < 0) {
             $error++;
             array_push($this->errors, $langs->trans("ErrorTicketIsNotValid"));
@@ -2520,11 +2510,20 @@ class Ticket extends CommonObject
         }
 
         if (!$error) {
-            $object->message = GETPOST("message");
-            $object->private = GETPOST("private_message");
+            $object->subject = GETPOST('subject', 'alphanohtml');
+            $object->message = GETPOST("message", "none");
+            $object->private = GETPOST("private_message", "alpha");
+
             $send_email = GETPOST('send_email', 'int');
 
-            $id = $object->createTicketMessage($user);
+            // Copy attached files (saved into $_SESSION) as linked files to ticket. Return array with final name used.
+            $resarray = $object->copyFilesForTicket();
+
+            $listofpaths = $resarray['listofpaths'];
+            $listofnames = $resarray['listofnames'];
+            $listofmimes = $resarray['listofmimes'];
+
+            $id = $object->createTicketMessage($user, 0, $listofpaths, $listofmimes, $listofnames);
             if ($id <= 0) {
                 $error++;
                 $this->errors = $object->error;
@@ -2535,24 +2534,27 @@ class Ticket extends CommonObject
             if (!$error && $id > 0) {
                 setEventMessages($langs->trans('TicketMessageSuccessfullyAdded'), null, 'mesgs');
 
+                //var_dump($_SESSION); var_dump($listofpaths);exit;
+
                 /*
-                 * Send email to linked contacts
+                 * Send emails to internal users (linked contacts)
                  */
                 if ($send_email > 0) {
                     // Retrieve internal contact datas
                     $internal_contacts = $object->getInfosTicketInternalContact();
+
                     $sendto = array();
                     if (is_array($internal_contacts) && count($internal_contacts) > 0) {
                         // altairis: set default subject
                         $label_title = empty($conf->global->MAIN_APPLICATION_TITLE) ? $mysoc->name : $conf->global->MAIN_APPLICATION_TITLE;
-                        $subject = GETPOST('subject') ? GETPOST('subject') : '[' . $label_title . '- ticket #' . $object->track_id . '] ' . $langs->trans('TicketNewMessage');
+                        $subject = GETPOST('subject', 'nohtml') ? GETPOST('subject', 'nohtml') : '[' . $label_title . '- ticket #' . $object->track_id . '] ' . $langs->trans('TicketNewMessage');
 
                         $message_intro = $langs->trans('TicketNotificationEmailBody', "#" . $object->id);
                         $message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
 
                         $message = $langs->trans('TicketMessageMailIntroText');
                         $message .= "\n\n";
-                        $message .= GETPOST('message');
+                        $message .= GETPOST('message', 'restricthtml');
 
                         //  Coordonnées client
                         $message .= "\n\n";
@@ -2591,12 +2593,12 @@ class Ticket extends CommonObject
 
                         // altairis: dont try to send email if no recipient
                         if (!empty($sendto)) {
-                            $this->sendTicketMessageByEmail($subject, $message, '', $sendto);
+                        	$this->sendTicketMessageByEmail($subject, $message, '', $sendto, $listofpaths, $listofmimes, $listofnames);
                         }
                     }
 
                     /*
-                     * Email for externals users if not private
+                     * Send emails for externals users if not private (linked contacts)
                      */
                     if (empty($object->private)) {
                         // Retrieve email of all contacts (external)
@@ -2643,47 +2645,42 @@ class Ticket extends CommonObject
 
                             // If public interface is not enable, use link to internal page into mail
                             $url_public_ticket = (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) ?
-                                (!empty($conf->global->TICKET_URL_PUBLIC_INTERFACE) ?
-                                    $conf->global->TICKET_URL_PUBLIC_INTERFACE . '/view.php' :
-                                    dol_buildpath('/public/ticket/view.php', 2)
-                                    ) :
-                                dol_buildpath('/ticket/card.php', 2)
-                                ) . '?track_id=' . $object->track_id;
-                                $message .= "\n" . $langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer') . ' : ' . '<a href="' . $url_public_ticket . '">' . $object->track_id . '</a>' . "\n";
+                                (!empty($conf->global->TICKET_URL_PUBLIC_INTERFACE) ? $conf->global->TICKET_URL_PUBLIC_INTERFACE . '/view.php' : dol_buildpath('/public/ticket/view.php', 2)) :
+                                dol_buildpath('/ticket/card.php', 2)) . '?track_id=' . $object->track_id;
+                            $message .= "\n" . $langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer') . ' : ' . '<a href="' . $url_public_ticket . '">' . $object->track_id . '</a>' . "\n";
 
-                                // Build final message
-                                $message = $message_intro . $message;
+                            // Build final message
+                            $message = $message_intro . $message;
 
-                                // Add signature
-                                $message .= '<br>' . $message_signature;
+                            // Add signature
+                            $message .= '<br>' . $message_signature;
 
-                                if (!empty($object->origin_email)) {
-                                    $sendto[] = $object->origin_email;
-                                }
+                            if (!empty($object->origin_email)) {
+                            	$sendto[] = $object->origin_email;
+                            }
 
-                                if ($object->fk_soc > 0 && ! in_array($object->origin_email, $sendto)) {
-                                    $object->socid = $object->fk_soc;
-                                    $object->fetch_thirdparty();
-                                    if(!empty($object->thirdparty->email)) $sendto[] = $object->thirdparty->email;
-                                }
+                            if ($object->fk_soc > 0 && ! in_array($object->origin_email, $sendto)) {
+                            	$object->socid = $object->fk_soc;
+                            	$object->fetch_thirdparty();
+                            	if(!empty($object->thirdparty->email)) $sendto[] = $object->thirdparty->email;
+                            }
 
-                                // altairis: Add global email address reciepient
-                                if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS && !in_array($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)) {
-                                    if(!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO)) $sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
-                                }
+                            // altairis: Add global email address reciepient
+                            if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS && !in_array($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)) {
+                            	if(!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO)) $sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+                            }
 
-                                // altairis: dont try to send email when no recipient
-                                if (!empty($sendto)) {
-                                    $this->sendTicketMessageByEmail($subject, $message, '', $sendto);
-                                }
+                            // altairis: dont try to send email when no recipient
+                            if (!empty($sendto)) {
+                            	$this->sendTicketMessageByEmail($subject, $message, '', $sendto, $listofpaths, $listofmimes, $listofnames);
+                            }
                         }
                     }
                 }
 
-                $object->copyFilesForTicket();
-
-                // Set status to "answered" if not set yet, only for internal users
-                if ($object->fk_statut < 3 && !$user->societe_id) {
+                // Set status to "answered" if not set yet, but only if internal user
+                if ($object->fk_statut < 3 && ! $user->socid)
+                {
                     $object->setStatut(3);
                 }
 
@@ -2702,18 +2699,21 @@ class Ticket extends CommonObject
     /**
      * Send ticket by email to linked contacts
      *
-     * @param string $subject          Email subject
-     * @param string $message          Email message
-     * @param int    $send_internal_cc Receive a copy on internal email ($conf->global->TICKET_NOTIFICATION_EMAIL_FROM)
-     * @param array  $array_receiver   Array of receiver. exemple array('name' => 'John Doe', 'email' => 'john@doe.com', etc...)
+     * @param string $subject          	  Email subject
+     * @param string $message          	  Email message
+     * @param int    $send_internal_cc 	  Receive a copy on internal email ($conf->global->TICKET_NOTIFICATION_EMAIL_FROM)
+     * @param array  $array_receiver   	  Array of receiver. exemple array('name' => 'John Doe', 'email' => 'john@doe.com', etc...)
+	 * @param array	 $filename_list       List of files to attach (full path of filename on file system)
+	 * @param array	 $mimetype_list       List of MIME type of attached files
+	 * @param array	 $mimefilename_list   List of attached file name in message
      * @return void
      */
-    public function sendTicketMessageByEmail($subject, $message, $send_internal_cc = 0, $array_receiver = array())
+    public function sendTicketMessageByEmail($subject, $message, $send_internal_cc = 0, $array_receiver = array(), $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array())
     {
         global $conf, $langs;
 
         if ($conf->global->TICKET_DISABLE_ALL_MAILS) {
-            dol_syslog(get_class($this) . '::sendTicketMessageByEmail: Emails are disable into ticket setup by option TICKETSUP_DISABLE_ALL_MAILS', LOG_WARNING);
+            dol_syslog(get_class($this) . '::sendTicketMessageByEmail: Emails are disable into ticket setup by option TICKET_DISABLE_ALL_MAILS', LOG_WARNING);
             return '';
         }
 
@@ -2734,15 +2734,12 @@ class Ticket extends CommonObject
 
         $from = $conf->global->TICKET_NOTIFICATION_EMAIL_FROM;
         if (is_array($array_receiver) && count($array_receiver) > 0) {
-            foreach ($array_receiver as $key => $receiver) {
-                // Create form object
-                include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
-                $formmail = new FormMail($this->db);
-
-                $attachedfiles = $formmail->get_attached_files();
-                $filepath = $attachedfiles['paths'];
-                $filename = $attachedfiles['names'];
-                $mimetype = $attachedfiles['mimes'];
+            foreach ($array_receiver as $key => $receiver)
+            {
+                $deliveryreceipt = 0;
+                $filepath = $filename_list;
+                $filename = $mimefilename_list;
+                $mimetype = $mimetype_list;
 
                 $message_to_send = dol_nl2br($message);
 
@@ -2776,152 +2773,6 @@ class Ticket extends CommonObject
         } else {
             $langs->load("other");
             setEventMessages($langs->trans('ErrorMailRecipientIsEmptyForSendTicketMessage'), null, 'warnings');
-        }
-    }
-
-    /**
-     * Add new message on a ticket (public area)
-     *
-     * @param User $user        User for action
-     * @param string $action    Action string
-     * @return void
-     */
-    public function newMessagePublic($user, &$action)
-    {
-        global $mysoc, $conf, $langs;
-
-        $object = new Ticket($this->db);
-
-        $error = 0;
-        $ret = $object->fetch('', '', GETPOST('track_id', 'alpha'));
-        $object->socid = $object->fk_soc;
-        $object->fetch_thirdparty();
-        if ($ret < 0) {
-            $error++;
-            array_push($this->errors, $langs->trans("ErrorTicketIsNotValid"));
-            $action = '';
-        }
-
-        if (!GETPOST("message")) {
-            $error++;
-            array_push($this->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("message")));
-            $action = 'add_message';
-        }
-
-        if (!$error) {
-            $object->message = (string) GETPOST("message");
-            $id = $object->createTicketMessage($user);
-            if ($id <= 0) {
-                $error++;
-                $this->error = $object->error;
-                $this->errors = $object->errors;
-                $action = 'add_message';
-            }
-
-            if (!$error && $id > 0) {
-                setEventMessages($langs->trans('TicketMessageSuccessfullyAdded'), null, 'mesgs');
-
-                // Retrieve internal contact datas
-                $internal_contacts = $object->getInfosTicketInternalContact();
-                $sendto = array();
-                if (is_array($internal_contacts) && count($internal_contacts) > 0) {
-                    $subject = '[' . $mysoc->name . '- ticket #' . $object->track_id . '] ' . $langs->trans('TicketNewMessage');
-
-                    $message = $langs->trans('TicketMessageMailIntroAutoNewPublicMessage', $object->subject);
-                    $message .= "\n";
-                    $message .= GETPOST('message');
-                    $message .= "\n";
-
-                    //  Coordonnées client
-                    if ($object->thirdparty->id > 0) {
-                        $message .= "\n\n";
-                        $message .= "==============================================\n";
-                        $message .= $langs->trans('Thirparty') . " : " . $object->thirdparty->name;
-                        $message .= !empty($object->thirdparty->town) ? $langs->trans('Town') . " : " . $object->thirdparty->town : '';
-                        $message .= "\n";
-                        $message .= !empty($object->thirdparty->phone) ? $langs->trans('Phone') . " : " . $object->thirdparty->phone : '';
-                        $message .= "\n";
-                    }
-
-                    // Build array to display recipient list
-                    foreach ($internal_contacts as $key => $info_sendto) {
-                        if ($info_sendto['email'] != '') {
-                            $sendto[] = trim($info_sendto['firstname'] . " " . $info_sendto['lastname']) . " <" . $info_sendto['email'] . ">";
-                        }
-
-                        // Contact type
-                        $recipient = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], '-1') . ' (' . strtolower($info_sendto['libelle']) . ')';
-                        $message .= (!empty($recipient) ? $langs->trans('TicketNotificationRecipient') . ' : ' . $recipient . "\n" : '');
-                        $message .= "\n";
-                    }
-
-                    // URL ticket
-                    $url_internal_ticket = dol_buildpath('/ticket/card.php', 2) . '?track_id=' . $object->track_id;
-                    $message .= "\n" . $langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal') . ' : ' . $url_internal_ticket . "\n";
-
-                    $message .= "\n\n";
-
-                    $message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
-
-                    // Add global email address reciepient
-                    if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS && !in_array($conf->global->TICKET_NOTIFICATION_EMAIL_FROM, $sendto)) {
-                        $sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_FROM;
-                    }
-
-                    $this->sendTicketMessageByEmail($subject, $message, '', $sendto);
-                }
-
-                /*
-                 * Email for externals users if not private
-                 */
-
-                // Retrieve email of all contacts external
-                $external_contacts = $object->getInfosTicketExternalContact();
-                $sendto = array();
-                if (is_array($external_contacts) && count($external_contacts) > 0) {
-                    $subject = '[' . $mysoc->name . '- ticket #' . $object->track_id . '] ' . $langs->trans('TicketNewMessage');
-
-                    $message = $langs->trans('TicketMessageMailIntroAutoNewPublicMessage', $object->subject);
-                    $message .= "\n";
-
-                    $message .= GETPOST('message');
-                    $message .= "\n\n";
-
-                    $message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
-                    foreach ($external_contacts as $key => $info_sendto) {
-                        if ($info_sendto['email'] != '') {
-                            $sendto[] = trim($info_sendto['firstname'] . " " . $info_sendto['lastname']) . " <" . $info_sendto['email'] . ">";
-                        }
-                        $recipient = '';
-                        $recipient = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], '-1') . ' (' . strtolower($info_sendto['libelle']) . ')';
-                        $message .= (!empty($recipient) ? $langs->trans('TicketNotificationRecipient') . ' : ' . $recipient . "\n" : '');
-                    }
-
-                    $url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE . '/view.php' : dol_buildpath('/public/ticket/view.php', 2)) . '?track_id=' . $object->track_id;
-                    $message .= "\n\n" . $langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer') . ' : ' . $url_public_ticket . "\n";
-
-                    // Add signature
-                    $message .= '\n\n' . $message_signature;
-
-                    if (!empty($object->origin_email) && !in_array($object->origin_email, $sendto)) {
-                        $sendto[] = $object->origin_email;
-                    }
-                    if ($object->fk_soc > 0 && !in_array($object->origin_email, $sendto)) {
-                        $sendto[] = $object->thirdparty->email;
-                    }
-                    $this->sendTicketMessageByEmail($subject, $message, '', $sendto);
-                }
-
-                $object->copyFilesForTicket();
-
-                $url = 'view.php?action=view_ticket&track_id=' . $object->track_id;
-                header("Location: " . $url);
-                exit;
-            } else {
-                setEventMessages($object->error, $object->errors, 'errors');
-            }
-        } else {
-            setEventMessages($this->error, $this->errors, 'errors');
         }
     }
 }

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -51,7 +51,7 @@ function shipping_prepare_head($object)
 	{
 		// delivery link
 		$object->fetchObjectLinked($object->id, $object->element);
-		if (count($object->linkedObjectsIds['delivery']) >  0)		// If there is a delivery
+		if (is_array($object->linkedObjectsIds['delivery']) && count($object->linkedObjectsIds['delivery']) > 0)        // If there is a delivery
 		{
 		    // Take first one element of array
 		    $tmp = reset($object->linkedObjectsIds['delivery']);
@@ -176,7 +176,7 @@ function delivery_prepare_head($object)
  */
 function show_list_sending_receive($origin, $origin_id, $filter = '')
 {
-	global $db, $conf, $langs, $bc;
+	global $db, $conf, $langs;
 	global $form;
 
 	$product_static=new Product($db);
@@ -218,8 +218,8 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 			print '<table class="liste" width="100%">';
 			print '<tr class="liste_titre">';
 			//print '<td class="left">'.$langs->trans("QtyOrdered").'</td>';
-			print '<td class="left">'.$langs->trans("SendingSheet").'</td>';
-			print '<td class="left">'.$langs->trans("Description").'</td>';
+			print '<td>'.$langs->trans("SendingSheet").'</td>';
+			print '<td>'.$langs->trans("Description").'</td>';
 			print '<td class="center">'.$langs->trans("DateCreation").'</td>';
 			print '<td class="center">'.$langs->trans("DateDeliveryPlanned").'</td>';
 			print '<td class="center">'.$langs->trans("QtyPreparedOrShipped").'</td>';

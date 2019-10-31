@@ -22,27 +22,27 @@ if (! empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_
 			if (! empty($arrayfields[$extrafieldsobjectprefix.$key]['checked'])) {
 				$align=$extrafields->getAlignFlag($key);
 				$typeofextrafield=$extrafields->attributes[$extrafieldsobjectkey]['type'][$key];
+
 				print '<td class="liste_titre'.($align?' '.$align:'').'">';
 				$tmpkey=preg_replace('/'.$search_options_pattern.'/', '', $key);
 				if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')) && empty($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]))
 				{
-					$crit=$val;
 					$searchclass='';
 					if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
 					if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
 					print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="'.$search_options_pattern.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options[$search_options_pattern.$tmpkey]).'">';
 				}
-				elseif (! in_array($typeofextrafield, array('datetime','timestamp')))
-				{
-					// for the type as 'checkbox', 'chkbxlst', 'sellist' we should use code instead of id (example: I declare a 'chkbxlst' to have a link with dictionnairy, I have to extend it with the 'code' instead 'rowid')
-					$morecss='';
-					if ($typeofextrafield == 'sellist') $morecss='maxwidth200';
-					echo $extrafields->showInputField($key, $search_array_options[$search_options_pattern.$tmpkey], '', '', $search_options_pattern, $morecss);
-				}
 				elseif (in_array($typeofextrafield, array('datetime','timestamp')))
 				{
 					// TODO
 					// Use showInputField in a particular manner to have input with a comparison operator, not input for a specific value date-hour-minutes
+				}
+				else
+				{
+					// for the type as 'checkbox', 'chkbxlst', 'sellist' we should use code instead of id (example: I declare a 'chkbxlst' to have a link with dictionnairy, I have to extend it with the 'code' instead 'rowid')
+					$morecss='';
+					if (in_array($typeofextrafield, array('link', 'sellist'))) $morecss='maxwidth200';
+					echo $extrafields->showInputField($key, $search_array_options[$search_options_pattern.$tmpkey], '', '', $search_options_pattern, $morecss, 0, $extrafieldsobjectkey, 1);
 				}
 				print '</td>';
 			}

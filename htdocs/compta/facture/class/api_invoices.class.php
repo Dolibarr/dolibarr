@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -73,10 +73,10 @@ class Invoices extends DolibarrApi
 		}
 
 		// Get payment details
-		$this->invoice->totalpaye = $this->invoice->getSommePaiement();
+		$this->invoice->totalpaid = $this->invoice->getSommePaiement();
 		$this->invoice->totalcreditnotes = $this->invoice->getSumCreditNotesUsed();
 		$this->invoice->totaldeposits = $this->invoice->getSumDepositsUsed();
-		$this->invoice->resteapayer = price2num($this->invoice->total_ttc - $this->invoice->totalpaye - $this->invoice->totalcreditnotes - $this->invoice->totaldeposits, 'MT');
+		$this->invoice->remaintopay = price2num($this->invoice->total_ttc - $this->invoice->totalpaid - $this->invoice->totalcreditnotes - $this->invoice->totaldeposits, 'MT');
 
 		if (! DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
@@ -98,7 +98,7 @@ class Invoices extends DolibarrApi
      * @param string	$sortorder	      Sort order
      * @param int		$limit		      Limit for list
      * @param int		$page		      Page number
-     * @param string   	$thirdparty_ids	  Thirdparty ids to filter orders of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
+     * @param string   	$thirdparty_ids	  Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
      * @param string	$status		      Filter by invoice status : draft | unpaid | paid | cancelled
      * @param string    $sqlfilters       Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return array                      Array of invoice objects
@@ -112,7 +112,7 @@ class Invoices extends DolibarrApi
         $obj_ret = array();
 
         // case of external user, $thirdparty_ids param is ignored and replaced by user's socid
-        $socids = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $thirdparty_ids;
+        $socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $thirdparty_ids;
 
         // If the internal user must only see his customers, force searching by him
         $search_sale = 0;
@@ -316,7 +316,7 @@ class Invoices extends DolibarrApi
      *
      * @url	PUT {id}/lines/{lineid}
      *
-     * @return object
+     * @return array
      *
      * @throws 200
      * @throws 304
@@ -415,7 +415,7 @@ class Invoices extends DolibarrApi
         return $this->_cleanObjectDatas($this->invoice);
     }
 
-   /**
+    /**
 	 * Delete a contact type of given invoice
 	 *
 	 * @param int    $id             Id of invoice to update
@@ -423,7 +423,7 @@ class Invoices extends DolibarrApi
 	 *
 	 * @url	DELETE {id}/contact/{rowid}
 	 *
-	 * @return int
+	 * @return array
      * @throws 401
      * @throws 404
      * @throws 500
@@ -529,10 +529,9 @@ class Invoices extends DolibarrApi
         // update bank account
         if (!empty($this->invoice->fk_account))
         {
-             if($this->invoice->setBankAccount($this->invoice->fk_account) == 0)
-             {
-                 throw new RestException(400, $this->invoice->error);
-             }
+            if ($this->invoice->setBankAccount($this->invoice->fk_account) == 0) {
+                throw new RestException(400, $this->invoice->error);
+            }
         }
 
         if($this->invoice->update(DolibarrApiAccess::$user))
@@ -909,18 +908,18 @@ class Invoices extends DolibarrApi
 
 
         $result = $this->invoice->fetch($id);
-        if( ! $result ) {
+        if (! $result) {
             throw new RestException(404, 'Invoice not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
+        if (! DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
         return $this->_cleanObjectDatas($this->invoice);
     }
 
-   /**
+    /**
      * Create a discount (credit available) for a credit note or a deposit.
      *
      * @param   int 	$id            Invoice ID

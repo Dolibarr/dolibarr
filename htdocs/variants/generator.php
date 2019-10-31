@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 require '../main.inc.php';
@@ -41,6 +41,13 @@ $product = new Product($db);
 
 $product->fetch($id);
 
+$error = 0;
+
+
+/*
+ * Actions
+ */
+
 if (!$product->isProduct()) {
 	header('Location: '.dol_buildpath('/product/card.php?id='.$product->id, 2));
 	exit();
@@ -59,8 +66,8 @@ $combinations = GETPOST('combinations', 'array');
 $price_var_percent = (bool) GETPOST('price_var_percent');
 $donotremove = true;
 
-if ($_POST) {
-
+if ($_POST)
+{
 	$donotremove = (bool) GETPOST('donotremove');
 
 	//We must check if all those given combinations actually exist
@@ -77,7 +84,6 @@ if ($_POST) {
 	}
 
 	if ($sanitized_values) {
-
 		require DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		$adapted_values = array();
@@ -99,10 +105,10 @@ if ($_POST) {
 
 		//Current combinations will be deleted
 		if ($delete_prev_comb_res > 0) {
-
 			$res = 1;
 
-			foreach (cartesianArray($adapted_values) as $currcomb)
+			$cartesianarray = cartesianArray($adapted_values);
+			foreach ($cartesianarray as $currcomb)
 			{
 				$res = $combination->createProductCombination($product, $currcomb, $sanitized_values, $price_var_percent);
 				if ($res < 0) {
@@ -173,7 +179,7 @@ if (! empty($id) || ! empty($ref)) {
 	<script>
 
 		dictionary_attr = <?php echo json_encode($dictionary_attr) ?>;
-		weight_units = '<?php echo measuring_units_string($object->weight_units, 'weight') ?>';
+		weight_units = '<?php echo measuringUnitString(0, 'weight', $object->weight_units) ?>';
 		attr_selected = {};
 		percentage_variation = jQuery('input#price_var_percent').prop('checked');
 
@@ -323,7 +329,7 @@ if (! empty($id) || ! empty($ref)) {
 
 			<form method="post" id="combinationsform">
 
-					<p><?php echo $langs->trans('TooMuchCombinationsWarning', $langs->trans('DoNotRemovePreviousCombinations')) ?></p>
+					<p><?php echo $langs->trans('TooMuchCombinationsWarning', $langs->transnoentitiesnoconv('DoNotRemovePreviousCombinations')) ?></p>
 					<input type="checkbox" name="price_var_percent"
 					       id="price_var_percent"<?php echo $price_var_percent ? ' checked' : '' ?>> <label
 						for="price_var_percent"><?php echo $langs->trans('UsePercentageVariations') ?></label>
@@ -372,8 +378,8 @@ if (! empty($id) || ! empty($ref)) {
 
 	<?php
 
-  // End of page
-  llxFooter();
+    // End of page
+    llxFooter();
 }
 
 $db->close();

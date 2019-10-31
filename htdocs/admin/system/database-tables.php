@@ -16,12 +16,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/admin/system/database-tables.php
- *	\brief      Page d'infos des tables de la base
+ *	\brief      Page with information on database tables
  */
 
 require '../../main.inc.php';
@@ -36,7 +36,13 @@ $action=GETPOST('action', 'alpha');
 
 if ($action == 'convert')
 {
-	$db->query("alter table ".$_GET["table"]." ENGINE=INNODB");
+    $sql="ALTER TABLE ".$db->escape(GETPOST("table", "aZ09"))." ENGINE=INNODB";
+	$db->query($sql);
+}
+if ($action == 'convertutf8')
+{
+    $sql="ALTER TABLE ".$db->escape(GETPOST("table", "aZ09"))." CHARACTER SET utf8 COLLATE utf8_unicode_ci";
+    $db->query($sql);
 }
 
 
@@ -111,23 +117,28 @@ else
 
 				print '<td><a href="dbtable.php?table='.$obj->Name.'">'.$obj->Name.'</a></td>';
 				print '<td>'.$obj->Engine.'</td>';
-				if (isset($row[1]) && $row[1] == "MyISAM")
+				if (isset($obj->Engine) && $obj->Engine == "MyISAM")
 				{
-					print '<td><a href="database-tables.php?action=convert&amp;table='.$row[0].'">'.$langs->trans("Convert").'</a></td>';
+				    print '<td><a class="reposition" href="database-tables.php?action=convert&amp;table='.$obj->Name.'">'.$langs->trans("Convert").' InnoDB</a></td>';
 				}
 				else
 				{
 					print '<td>&nbsp;</td>';
 				}
 				print '<td>'.$obj->Row_format.'</td>';
-				print '<td class="right">'.$obj->Rows.'</td>';
-				print '<td class="right">'.$obj->Avg_row_length.'</td>';
-				print '<td class="right">'.$obj->Data_length.'</td>';
-				print '<td class="right">'.$obj->Max_data_length.'</td>';
-				print '<td class="right">'.$obj->Index_length.'</td>';
-				print '<td class="right">'.$obj->Auto_increment.'</td>';
-				print '<td class="right">'.$obj->Check_time.'</td>';
-				print '<td class="right">'.$obj->Collation.'</td>';
+				print '<td align="right">'.$obj->Rows.'</td>';
+				print '<td align="right">'.$obj->Avg_row_length.'</td>';
+				print '<td align="right">'.$obj->Data_length.'</td>';
+				print '<td align="right">'.$obj->Max_data_length.'</td>';
+				print '<td align="right">'.$obj->Index_length.'</td>';
+				print '<td align="right">'.$obj->Auto_increment.'</td>';
+				print '<td align="right">'.$obj->Check_time.'</td>';
+				print '<td align="right">'.$obj->Collation;
+				if (isset($obj->Collation) && (in_array($obj->Collation, array("utf8mb4_general_ci", "utf8mb4_unicode_ci", "latin1_swedish_ci"))))
+				{
+				    print '<br><a class="reposition" href="database-tables.php?action=convertutf8&amp;table='.$obj->Name.'">'.$langs->trans("Convert").' UTF8</a>';
+				}
+				print '</td>';
 				print '</tr>';
 				$i++;
 			}
@@ -178,8 +189,8 @@ else
 	if ($base == 4)
 	{
 		// Sqlite by PDO or by Sqlite3
-    print '<div class="div-table-responsive-no-min">';
-	  print '<table class="noborder">';
+        print '<div class="div-table-responsive-no-min">';
+	    print '<table class="noborder">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("TableName").'</td>';
 		print '<td>'.$langs->trans("NbOfRecord").'</td>';
@@ -191,7 +202,6 @@ else
 		if ($resql)
 		{
 			while ($row = $db->fetch_row($resql)) {
-
 				$rescount = $db->query("SELECT COUNT(*) FROM " . $row[0]);
 				if ($rescount) {
 					$row_count = $db->fetch_row($rescount);

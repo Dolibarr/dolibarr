@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'boxes'));
+$langs->loadLangs(array('admin', 'boxes', 'accountancy'));
 
 if (! $user->admin) accessforbidden();
 
@@ -63,7 +63,7 @@ if ($action == 'add') {
             {
                 $pos = $boxid['pos'];
 
-                // Initialize distinct fkuser with all already existing values of fk_user (user that use a personalized view of boxes for page "pos")
+                // Initialize distinct fk_user with all already existing values of fk_user (user that use a personalized view of boxes for page "pos")
                 $distinctfkuser=array();
                 if (! $error)
                 {
@@ -169,7 +169,7 @@ if ($action == 'delete')
 
 if ($action == 'switch')
 {
-	// On permute les valeur du champ box_order des 2 lignes de la table boxes
+	// We switch values of field box_order for the 2 lines of table boxes
 	$db->begin();
 
 	$objfrom=new ModeleBoxes($db);
@@ -222,11 +222,11 @@ llxHeader('', $langs->trans("Boxes"));
 
 print load_fiche_titre($langs->trans("Boxes"), '', 'title_setup');
 
-print $langs->trans("BoxesDesc")." ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("BoxesDesc")." ".$langs->trans("OnlyActiveElementsAreShown")."</span><br>\n";
 
 /*
- * Recherche des boites actives par defaut pour chaque position possible
- * On stocke les boites actives par defaut dans $boxes[position][id_boite]=1
+ * Search for the default active boxes for each possible position
+ * We store the active boxes by default in $boxes[position][id_boite]=1
  */
 
 $actives = array();
@@ -257,7 +257,7 @@ if ($resql)
 		array_push($actives, $obj->box_id);
 
 		if ($obj->box_order == '' || $obj->box_order == '0' || $decalage) $decalage++;
-		// On renumerote l'ordre des boites si l'une d'elle est a ''
+		// We renumber the order of the boxes if one of them is in ''
 		// This occurs just after an insert.
 		if ($decalage)
 		{
@@ -268,7 +268,7 @@ if ($resql)
 
 	if ($decalage)
 	{
-	    // Si on a renumerote, on corrige champ box_order
+	    // If we have renumbered, we correct the field box_order
 		// This occurs just after an insert.
 		$sql = "SELECT box_order";
 		$sql.= " FROM ".MAIN_DB_PREFIX."boxes";
@@ -366,7 +366,7 @@ foreach($boxtoadd as $box)
     print '</td>'."\n";
     print '<td>' . $box->sourcefile . '</td>'."\n";
 
-    // Pour chaque position possible, on affiche un lien d'activation si boite non deja active pour cette position
+    // For each possible position, an activation link is displayed if the box is not already active for that position
     print '<td class="center">';
     print $form->selectarray("boxid[".$box->box_id."][pos]", $pos_name, 0, 1, 0, 0, '', 1)."\n";
     print '<input type="hidden" name="boxid['.$box->box_id.'][value]" value="'.$box->box_id.'">'."\n";
@@ -474,7 +474,6 @@ print '</tr>';
 
 // Activate FileCache - Developement
 if ($conf->global->MAIN_FEATURES_LEVEL == 2 || ! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
-
     print '<tr class="oddeven"><td width="35%">'.$langs->trans("EnableFileCache").'</td><td>';
     print $form->selectyesno('MAIN_ACTIVATE_FILECACHE', $conf->global->MAIN_ACTIVATE_FILECACHE, 1);
     print '</td>';
@@ -483,7 +482,9 @@ if ($conf->global->MAIN_FEATURES_LEVEL == 2 || ! empty($conf->global->MAIN_ACTIV
 
 print '</table>';
 
+print '<br>';
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'" name="Button"></div>';
+print '<br>';
 
 print '</form>';
 print "\n".'<!-- End Other Const -->'."\n";

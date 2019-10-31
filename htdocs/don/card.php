@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -60,7 +60,7 @@ $extrafields = new ExtraFields($db);
 $result = restrictedArea($user, 'don', $id);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('doncard','globalcard'));
@@ -84,14 +84,14 @@ if ($action == 'update')
 
     if (empty($donation_date))
     {
-	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
+    	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
         $action = "create";
         $error++;
     }
 
 	if (empty($amount))
 	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Amount")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
 		$action = "create";
 		$error++;
 	}
@@ -117,7 +117,7 @@ if ($action == 'update')
 		$object->modepaymentid = GETPOST('modepayment', 'int');
 
 		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) $error++;
 
 		if ($object->update($user) > 0)
@@ -140,21 +140,21 @@ if ($action == 'add')
 
     if (empty($donation_date))
     {
-	    setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
+    	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
         $action = "create";
         $error++;
     }
 
 	if (empty($amount))
 	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Amount")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
 		$action = "create";
 		$error++;
 	}
 
 	if (! $error)
 	{
-    $object->socid = GETPOST("socid", 'int');
+        $object->socid = GETPOST("socid", 'int');
 		$object->firstname = GETPOST("firstname", 'alpha');
 		$object->lastname = GETPOST("lastname", 'alpha');
 		$object->societe = GETPOST("societe", 'alpha');
@@ -164,7 +164,7 @@ if ($action == 'add')
 		$object->town = GETPOST("town", 'alpha');
 		$object->country_id = GETPOST('country_id', 'int');
 		$object->email = GETPOST('email', 'alpha');
-    $object->date = $donation_date;
+        $object->date = $donation_date;
 		$object->note_private = GETPOST("note_private", 'none');
 		$object->note_public = GETPOST("note_public", 'none');
 		$object->public = GETPOST("public", 'alpha');
@@ -172,7 +172,7 @@ if ($action == 'add')
 		$object->modepaymentid = GETPOST('modepayment', 'int');
 
 		// Fill array 'array_options' with data from add form
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+        $ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) $error++;
 
 		$res = $object->create($user);
@@ -318,7 +318,7 @@ if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("AddDonation"));
+	print load_fiche_titre($langs->trans("AddDonation"), '', 'invoicing');
 
 	print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -343,7 +343,8 @@ if ($action == 'create')
 			print $soc->getNomUrl(1);
 			print '<input type="hidden" name="socid" value="' . $soc->id . '">';
 			// Outstanding Bill
-			$outstandingBills = $soc->get_OutstandingBill();
+			$arrayoutstandingbills = $soc->getOutstandingBills();
+			$outstandingBills = $arrayoutstandingbills['opened'];
 			print ' (' . $langs->trans('CurrentOutstandingBill') . ': ';
 			print price($outstandingBills, '', $langs, 0, 0, -1, $conf->currency);
 			if ($soc->outstanding_limit != '')
@@ -454,7 +455,7 @@ if ($action == 'create')
     print $hookmanager->resPrint;
     if (empty($reshook))
     {
-		print $object->showOptionals($extrafields, 'edit', $parameters);
+		print $object->showOptionals($extrafields, 'edit');
     }
 
     print '</tbody>';
@@ -531,37 +532,37 @@ if (! empty($id) && $action == 'edit')
 	print "</td>";
 	print "</tr>\n";
 
-if ( $object->socid && ! empty($conf->societe->enabled) && ! empty($conf->global->DONATION_USE_THIRDPARTIES) ) {
+    if ( $object->socid && ! empty($conf->societe->enabled) && ! empty($conf->global->DONATION_USE_THIRDPARTIES) ) {
+        $company=new Societe($db);
+        $result=$company->fetch($object->socid);
 
-	$company=new Societe($db);
-	$result=$company->fetch($object->socid);
+        print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td colspan="2">'.$company->getNomUrl(1).'</td></tr>';
+    } else {
+        $langs->load("companies");
+        print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="maxwidth200" value="'.dol_escape_htmltag($object->societe).'"></td></tr>';
+        print '<tr><td>'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" class="maxwidth200" value="'.dol_escape_htmltag($object->lastname).'"></td></tr>';
+        print '<tr><td>'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" class="maxwidth200" value="'.dol_escape_htmltag($object->firstname).'"></td></tr>';
+        print '<tr><td>'.$langs->trans("Address").'</td><td>';
+        print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag($object->address, 0, 1).'</textarea></td></tr>';
 
-	print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td colspan="2">'.$company->getNomUrl(1).'</td></tr>';
-} else {
+        // Zip / Town
+        print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
+        print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip), 'zipcode', array('town','selectcountry_id','state_id'), 6);
+        print ' ';
+        print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town), 'town', array('zipcode','selectcountry_id','state_id'));
+        print '</tr>';
 
-	$langs->load("companies");
-	print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="maxwidth200" value="'.dol_escape_htmltag($object->societe).'"></td></tr>';
-	print '<tr><td>'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" class="maxwidth200" value="'.dol_escape_htmltag($object->lastname).'"></td></tr>';
-	print '<tr><td>'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" class="maxwidth200" value="'.dol_escape_htmltag($object->firstname).'"></td></tr>';
-	print '<tr><td>'.$langs->trans("Address").'</td><td>';
-	print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag($object->address, 0, 1).'</textarea></td></tr>';
+        // Country
+        print '<tr><td class="titlefieldcreate">'.$langs->trans('Country').'</td><td>';
+        print $form->select_country((!empty($object->country_id)?$object->country_id:$mysoc->country_code), 'country_id');
+        if ($user->admin) {
+            print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+        }
+        print '</td></tr>';
 
-    // Zip / Town
-    print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
-	print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip), 'zipcode', array('town','selectcountry_id','state_id'), 6);
-    print ' ';
-	print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town), 'town', array('zipcode','selectcountry_id','state_id'));
-	print '</tr>';
-
-	// Country
-	print '<tr><td class="titlefieldcreate">'.$langs->trans('Country').'</td><td>';
-	print $form->select_country((!empty($object->country_id)?$object->country_id:$mysoc->country_code), 'country_id');
-	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-	print '</td></tr>';
-
-	print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" class="maxwidth200" value="'.dol_escape_htmltag($object->email).'"></td></tr>';
-}
-	// Payment mode
+        print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" class="maxwidth200" value="'.dol_escape_htmltag($object->email).'"></td></tr>';
+    }
+    // Payment mode
     print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
     if ($object->modepaymentid) $selected = $object->modepaymentid;
     else $selected = '';
@@ -643,19 +644,20 @@ if (! empty($id) && $action != 'edit')
 	    $morehtmlref.=$langs->trans('Project') . ' ';
 	    if ($user->rights->don->creer)
 	    {
-	        if ($action != 'classify')
-	            $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-	            if ($action == 'classify') {
-	                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-	                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-	                $morehtmlref.='<input type="hidden" name="action" value="classin">';
-	                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-	                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-	                $morehtmlref.='</form>';
-	            } else {
-	                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-	            }
+	        if ($action != 'classify') {
+                $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+            }
+            if ($action == 'classify') {
+                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+                $morehtmlref.='<input type="hidden" name="action" value="classin">';
+                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+                $morehtmlref.='</form>';
+            } else {
+                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+            }
 	    } else {
 	        if (! empty($object->fk_project)) {
 	            $proj = new Project($db);
@@ -693,18 +695,16 @@ if (! empty($id) && $action != 'edit')
 	print yn($object->public);
 	print '</td></tr>';
 
-if ($object->socid) {
+    if ($object->socid) {
+        $company=new Societe($db);
+        $result=$company->fetch($object->socid);
 
-	$company=new Societe($db);
-	$result=$company->fetch($object->socid);
-
-	print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td colspan="2">'.$company->getNomUrl(1).'</td></tr>';
-} else {
-
-	print '<tr><td>'.$langs->trans("Company").'</td><td colspan="2">'.$object->societe.'</td></tr>';
-	print '<tr><td>'.$langs->trans("Lastname").'</td><td colspan="2">'.$object->lastname.'</td></tr>';
-	print '<tr><td>'.$langs->trans("Firstname").'</td><td colspan="2">'.$object->firstname.'</td></tr>';
-}
+        print '<tr><td>'.$langs->trans("LinkedToDolibarrThirdParty").'</td><td colspan="2">'.$company->getNomUrl(1).'</td></tr>';
+    } else {
+        print '<tr><td>'.$langs->trans("Company").'</td><td colspan="2">'.$object->societe.'</td></tr>';
+        print '<tr><td>'.$langs->trans("Lastname").'</td><td colspan="2">'.$object->lastname.'</td></tr>';
+        print '<tr><td>'.$langs->trans("Firstname").'</td><td colspan="2">'.$object->firstname.'</td></tr>';
+    }
 
 	// Payment mode
 	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>";
@@ -864,15 +864,15 @@ if ($object->socid) {
 	$linktoelem = $form->showLinkToObjectBlock($object, null, array('don'));
 	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
-		// Show online payment link
-		$useonlinepayment = (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled));
+	// Show online payment link
+	$useonlinepayment = (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled));
 
-		if ($useonlinepayment) //$object->statut != Facture::STATUS_DRAFT &&
-		{
-			print '<br><!-- Link to pay -->'."\n";
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-			print showOnlinePaymentUrl('donation', $object->ref).'<br>';
-		}
+	if ($useonlinepayment) //$object->statut != Facture::STATUS_DRAFT &&
+	{
+		print '<br><!-- Link to pay -->'."\n";
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+		print showOnlinePaymentUrl('donation', $object->ref).'<br>';
+	}
 
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

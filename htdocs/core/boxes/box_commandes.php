@@ -15,13 +15,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *		\file       htdocs/core/boxes/box_commandes.php
  *		\ingroup    commande
- *		\brief      Module de generation de l'affichage de la box commandes
+ *		\brief      Widget for latest sale orders
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
@@ -58,9 +58,9 @@ class box_commandes extends ModeleBoxes
     {
         global $user;
 
-        $this->db=$db;
+        $this->db = $db;
 
-        $this->hidden=! ($user->rights->commande->lire);
+        $this->hidden = ! ($user->rights->commande->lire);
     }
 
     /**
@@ -71,16 +71,16 @@ class box_commandes extends ModeleBoxes
      */
     public function loadBox($max = 5)
     {
-        global $user, $langs, $db, $conf;
+        global $user, $langs, $conf;
 
         $this->max = $max;
 
         include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-        $commandestatic = new Commande($db);
-        $societestatic = new Societe($db);
-        $userstatic = new User($db);
+        $commandestatic = new Commande($this->db);
+        $societestatic = new Societe($this->db);
+        $userstatic = new User($this->db);
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."CustomerOrders", $max));
 
@@ -89,7 +89,7 @@ class box_commandes extends ModeleBoxes
             $sql = "SELECT s.nom as name";
             $sql.= ", s.rowid as socid";
             $sql.= ", s.code_client";
-            $sql.= ", s.logo";
+            $sql.= ", s.logo, s.email";
             $sql.= ", c.ref, c.tms";
             $sql.= ", c.rowid";
             $sql.= ", c.date_commande";
@@ -110,18 +110,18 @@ class box_commandes extends ModeleBoxes
             if ($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
             if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY c.date_commande DESC, c.ref DESC ";
             else $sql.= " ORDER BY c.tms DESC, c.ref DESC ";
-            $sql.= $db->plimit($max, 0);
+            $sql.= $this->db->plimit($max, 0);
 
-            $result = $db->query($sql);
+            $result = $this->db->query($sql);
             if ($result) {
-                $num = $db->num_rows($result);
+                $num = $this->db->num_rows($result);
 
                 $line = 0;
 
                 while ($line < $num) {
-                    $objp = $db->fetch_object($result);
-                    $date=$db->jdate($objp->date_commande);
-                    $datem=$db->jdate($objp->tms);
+                    $objp = $this->db->fetch_object($result);
+                    $date=$this->db->jdate($objp->date_commande);
+                    $datem=$this->db->jdate($objp->tms);
                     $commandestatic->id = $objp->rowid;
                     $commandestatic->ref = $objp->ref;
                     $commandestatic->ref_client = $objp->ref_client;
@@ -130,6 +130,7 @@ class box_commandes extends ModeleBoxes
                     $commandestatic->total_ttc = $objp->total_ttc;
                     $societestatic->id = $objp->socid;
                     $societestatic->name = $objp->name;
+                    $societestatic->email = $objp->email;
                     $societestatic->code_client = $objp->code_client;
                     $societestatic->logo = $objp->logo;
 
@@ -146,7 +147,7 @@ class box_commandes extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="right"',
+                        'td' => 'class="nowrap right"',
                         'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
                     );
 
@@ -174,12 +175,12 @@ class box_commandes extends ModeleBoxes
 
                 if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedOrders"));
 
-                $db->free($result);
+                $this->db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
             }
         } else {

@@ -14,12 +14,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *  \file       htdocs/accountancy/admin/card.php
- *  \ingroup    Advanced accountancy
+ *  \ingroup    Accountancy (Double entries)
  *  \brief      Card of accounting account
  */
 
@@ -273,7 +273,6 @@ if ($action == 'create') {
 	print '</form>';
 }
 elseif ($id > 0 || $ref) {
-
 	$result = $object->fetch($id, $ref, 1);
 
 	if ($result > 0) {

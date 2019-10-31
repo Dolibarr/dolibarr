@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -123,7 +123,8 @@ class FactureRec extends CommonInvoice
 		$now=dol_now();
 
 		// Clean parameters
-		$this->titre=trim($this->titre);
+		$this->titre=trim($this->titre);	// deprecated
+		$this->title=trim($this->title);
 		$this->usenewprice=empty($this->usenewprice)?0:$this->usenewprice;
 		if (empty($this->suspended)) $this->suspended=0;
 
@@ -180,7 +181,7 @@ class FactureRec extends CommonInvoice
 			$sql.= ", multicurrency_tx";
 			$sql.= ", suspended";
 			$sql.= ") VALUES (";
-			$sql.= "'".$this->db->escape($this->titre)."'";
+			$sql.= "'".$this->db->escape($this->titre ? $this->titre : $this->title)."'";
 			$sql.= ", ".$facsrc->socid;
 			$sql.= ", ".$conf->entity;
 			$sql.= ", '".$this->db->idate($now)."'";
@@ -376,7 +377,7 @@ class FactureRec extends CommonInvoice
 	 */
 	public function fetch($rowid, $ref = '', $ref_ext = '', $ref_int = '')
 	{
-		$sql = 'SELECT f.rowid, f.entity, f.titre, f.suspended, f.fk_soc, f.amount, f.tva, f.localtax1, f.localtax2, f.total, f.total_ttc';
+		$sql = 'SELECT f.rowid, f.entity, f.titre as title, f.suspended, f.fk_soc, f.amount, f.tva, f.localtax1, f.localtax2, f.total, f.total_ttc';
 		$sql.= ', f.remise_percent, f.remise_absolue, f.remise';
 		$sql.= ', f.date_lim_reglement as dlr';
 		$sql.= ', f.note_private, f.note_public, f.fk_user_author';
@@ -410,8 +411,9 @@ class FactureRec extends CommonInvoice
 
 				$this->id                     = $obj->rowid;
 				$this->entity                 = $obj->entity;
-				$this->titre                  = $obj->titre;
-				$this->ref                    = $obj->titre;
+				$this->titre                  = $obj->title;	// deprecated
+				$this->title                  = $obj->title;
+				$this->ref                    = $obj->title;
 				$this->ref_client             = $obj->ref_client;
 				$this->suspended              = $obj->suspended;
 				$this->type                   = $obj->type;
@@ -510,24 +512,29 @@ class FactureRec extends CommonInvoice
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Recupere les lignes de factures predefinies dans this->lines
+	 *	Get lines of template invoices into this->lines
 	 *
 	 *  @return     int         1 if OK, < 0 if KO
      */
 	public function fetch_lines()
 	{
+		global $extrafields;
+
         // phpcs:enable
 		$this->lines=array();
 
 		// Retreive all extrafield for line
 		// fetch optionals attributes and labels
-		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-		$extrafieldsline=new ExtraFields($this->db);
-		$extrafieldsline=$extrafieldsline->fetch_name_optionals_label('facturedet_rec', true);
+		if (! is_object($extrafields))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+			$extrafields=new ExtraFields($this->db);
+		}
+		$extrafields->fetch_name_optionals_label($this->table_element_line, true);
 
 		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx, ';
 		$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise, l.remise_percent, l.subprice,';
-		$sql.= ' l.info_bits, l.date_start_fill, l.date_end_fill, l.total_ht, l.total_tva, l.total_ttc,';
+		$sql.= ' l.info_bits, l.date_start_fill, l.date_end_fill, l.total_ht, l.total_tva, l.total_ttc, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht,';
 		//$sql.= ' l.situation_percent, l.fk_prev_id,';
 		//$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise_percent, l.fk_remise_except, l.subprice,';
 		$sql.= ' l.rang, l.special_code,';
@@ -583,6 +590,11 @@ class FactureRec extends CommonInvoice
 				$line->total_tva        = $objp->total_tva;
 				$line->total_ttc        = $objp->total_ttc;
 				$line->code_ventilation = $objp->fk_code_ventilation;
+				$line->fk_fournprice 	= $objp->fk_fournprice;
+				$marginInfos			= getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $line->fk_fournprice, $objp->pa_ht);
+				$line->pa_ht 			= $marginInfos[0];
+				$line->marge_tx			= $marginInfos[1];
+				$line->marque_tx		= $marginInfos[2];
 				$line->rang 			= $objp->rang;
 				$line->special_code 	= $objp->special_code;
 				$line->fk_unit          = $objp->fk_unit;
@@ -592,7 +604,7 @@ class FactureRec extends CommonInvoice
 				$line->price            = $objp->price;
 				$line->remise           = $objp->remise;
 
-				$extralabelsline = $line->fetch_optionals($line->id);
+				$line->fetch_optionals($line->id);
 
 				// Multicurrency
 				$line->fk_multicurrency 		= $objp->fk_multicurrency;
@@ -695,15 +707,17 @@ class FactureRec extends CommonInvoice
 	 * 	@param		double		$pu_ht_devise		Unit price in currency
 	 *  @param		int			$date_start_fill	1=Flag to fill start date when generating invoice
 	 *  @param		int			$date_end_fill		1=Flag to fill end date when generating invoice
+	 * 	@param		int			$fk_fournprice		Supplier price id (to calculate margin) or ''
+	 * 	@param		int			$pa_ht				Buying price of line (to calculate margin) or ''
      *	@return    	int             				<0 if KO, Id of line if OK
 	 */
-	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = '', $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $date_start_fill = 0, $date_end_fill = 0)
+	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = '', $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $date_start_fill = 0, $date_end_fill = 0, $fk_fournprice = null, $pa_ht = 0)
 	{
 	    global $mysoc;
 
 		$facid=$this->id;
 
-		dol_syslog(get_class($this)."::addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,txlocaltax1=$txlocaltax1,txlocaltax2=$txlocaltax2,fk_product=$fk_product,remise_percent=$remise_percent,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type,fk_unit=$fk_unit,pu_ht_devise=$pu_ht_devise,date_start_fill=$date_start_fill,date_end_fill=$date_end_fill", LOG_DEBUG);
+		dol_syslog(get_class($this)."::addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,txlocaltax1=$txlocaltax1,txlocaltax2=$txlocaltax2,fk_product=$fk_product,remise_percent=$remise_percent,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type,fk_unit=$fk_unit,pu_ht_devise=$pu_ht_devise,date_start_fill=$date_start_fill,date_end_fill=$date_end_fill,pa_ht=$pa_ht", LOG_DEBUG);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 		// Check parameters
@@ -795,6 +809,8 @@ class FactureRec extends CommonInvoice
 			$sql.= ", total_ttc";
 			$sql.= ", date_start_fill";
 			$sql.= ", date_end_fill";
+			$sql.= ", fk_product_fournisseur_price";
+			$sql.= ", buy_price_ht";
 			$sql.= ", info_bits";
 			$sql.= ", rang";
 			$sql.= ", special_code";
@@ -824,6 +840,8 @@ class FactureRec extends CommonInvoice
 			$sql.= ", ".price2num($total_ttc);
 			$sql.= ", ".(int) $date_start_fill;
 			$sql.= ", ".(int) $date_end_fill;
+			$sql.= ", ".($fk_fournprice > 0 ? $fk_fournprice : 'null');
+			$sql.= ", ".($pa_ht ? price2num($pa_ht) : 0);
 			$sql.= ", ".$info_bits;
 			$sql.= ", ".$rang;
 			$sql.= ", ".$special_code;
@@ -865,7 +883,7 @@ class FactureRec extends CommonInvoice
 	 *	@param    	int			$fk_product      	Product/Service ID predefined
 	 *	@param    	double		$remise_percent  	Percentage discount of the line
 	 *	@param		string		$price_base_type	HT or TTC
-	 *	@param    	int			$info_bits			Bits de type de lignes
+	 *	@param    	int			$info_bits			Bits of type of lines
 	 *	@param    	int			$fk_remise_except	Id remise
 	 *	@param    	double		$pu_ttc             Prix unitaire TTC (> 0 even for credit note)
 	 *	@param		int			$type				Type of line (0=product, 1=service)
@@ -877,9 +895,11 @@ class FactureRec extends CommonInvoice
 	 * 	@param		int			$notrigger			disable line update trigger
 	 *  @param		int			$date_start_fill	1=Flag to fill start date when generating invoice
 	 *  @param		int			$date_end_fill		1=Flag to fill end date when generating invoice
+	 * 	@param		int			$fk_fournprice		Id of origin supplier price
+	 * 	@param		int			$pa_ht				Price (without tax) of product when it was bought
 	 *	@return    	int             				<0 if KO, Id of line if OK
 	 */
-	public function updateline($rowid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = '', $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $date_start_fill = 0, $date_end_fill = 0)
+	public function updateline($rowid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = '', $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $date_start_fill = 0, $date_end_fill = 0, $fk_fournprice = null, $pa_ht = 0)
 	{
 	    global $mysoc;
 
@@ -893,16 +913,6 @@ class FactureRec extends CommonInvoice
 
 	    // Check parameters
 	    if ($type < 0) return -1;
-
-		$localtaxes_type=getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
-
-		// Clean vat code
-		$vat_src_code='';
-		if (preg_match('/\((.*)\)/', $txtva, $reg))
-		{
-			$vat_src_code = $reg[1];
-			$txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
-		}
 
 	    if ($this->brouillon)
 	    {
@@ -932,10 +942,20 @@ class FactureRec extends CommonInvoice
 	            $pu=$pu_ttc;
 	        }
 
-	        // Calcul du total TTC et de la TVA pour la ligne a partir de
-	        // qty, pu, remise_percent et txtva
+	        // Calculate total with, without tax and tax from qty, pu, remise_percent and txtva
 	        // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 	        // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+
+	        $localtaxes_type=getLocalTaxesFromRate($txtva, 0, $this->thirdparty, $mysoc);
+
+	        // Clean vat code
+	        $vat_src_code='';
+	        if (preg_match('/\((.*)\)/', $txtva, $reg))
+	        {
+	        	$vat_src_code = $reg[1];
+	        	$txtva = preg_replace('/\s*\(.*\)/', '', $txtva);    // Remove code into vatrate.
+	        }
+
 	        $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
 
 	        $total_ht  = $tabprice[0];
@@ -984,6 +1004,8 @@ class FactureRec extends CommonInvoice
 	        $sql.= ", total_ttc='".price2num($total_ttc)."'";
 	        $sql.= ", date_start_fill=".((int) $date_start_fill);
 	        $sql.= ", date_end_fill=".((int) $date_end_fill);
+	        $sql.= ", fk_product_fournisseur_price=".($fk_fournprice > 0 ? $fk_fournprice : 'null');
+	        $sql.= ", buy_price_ht=".($pa_ht ? price2num($pa_ht) : 0);
 	        $sql.= ", info_bits=".$info_bits;
 	        $sql.= ", rang=".$rang;
 	        $sql.= ", special_code=".$special_code;
@@ -1219,14 +1241,17 @@ class FactureRec extends CommonInvoice
 		$result='';
 
 		$label = '<u>' . $langs->trans("ShowInvoice") . '</u>';
-		if (! empty($this->ref))
+		if (! empty($this->ref)) {
 			$label .= '<br><b>'.$langs->trans('Ref') . ':</b> ' . $this->ref;
-		if (! empty($this->date_last_gen))
+		}
+		if ($this->frequency > 0) {
+			$label .= '<br><b>'.$langs->trans('Frequency') . ':</b> ' . $langs->trans('FrequencyPer_'.$this->unit_frequency, $this->frequency);
+		}
+		if (! empty($this->date_last_gen)) {
 			$label .= '<br><b>'.$langs->trans('DateLastGeneration') . ':</b> ' . dol_print_date($this->date_last_gen, 'dayhour');
-		if ($this->frequency > 0)
-		{
-			if (! empty($this->date_when))
-			{
+		}
+		if ($this->frequency > 0) {
+			if (! empty($this->date_when)) {
 				$label .= '<br><b>'.$langs->trans('NextDateToExecution') . ':</b> ';
 				$label .= (empty($this->suspended)?'':'<strike>'). dol_print_date($this->date_when, 'day').(empty($this->suspended)?'':'</strike>');	// No hour for this property
 				if (! empty($this->suspended)) $label .= ' ('.$langs->trans("Disabled").')';
@@ -1792,7 +1817,7 @@ class FactureLigneRec extends CommonInvoiceLine
 
 
     /**
-     *	Recupere les lignes de factures predefinies dans this->lines
+     *	Get line of template invoice
      *
      *	@param		int 	$rowid		Id of invoice
      *	@return     int         		1 if OK, < 0 if KO
@@ -1814,7 +1839,6 @@ class FactureLigneRec extends CommonInvoiceLine
     	$result = $this->db->query($sql);
     	if ($result)
     	{
-
     		$objp = $this->db->fetch_object($result);
 
     		$this->id	            = $objp->rowid;

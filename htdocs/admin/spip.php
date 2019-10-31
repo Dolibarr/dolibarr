@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -64,10 +64,10 @@ if ($action == 'update' || $action == 'add')
     		$constnote=$_POST["constnote"][$key];
 
         	$res=dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
-    		
+
     		if (! $res > 0) $error++;
     	}
-    
+
      	if (! $error)
         {
             setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -123,9 +123,11 @@ $head = mailmanspip_admin_prepare_head();
 if (! empty($conf->global->ADHERENT_USE_SPIP))
 {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	
-	dol_fiche_head($head, 'spip', $langs->trans("Setup"), 0, 'user');
-    
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="update">';
+
+	dol_fiche_head($head, 'spip', $langs->trans("Setup"), -1, 'user');
+
     //$link=img_picto($langs->trans("Active"),'tick').' ';
     $link='<a href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_SPIP">';
     //$link.=$langs->trans("Disable");
@@ -141,25 +143,25 @@ if (! empty($conf->global->ADHERENT_USE_SPIP))
 
     print load_fiche_titre($langs->trans('SPIPTitle'), $link, '');
 	print '<br>';
-    
+
 	form_constantes($constantes, 2);
-	
+
     dol_fiche_end();
 
     print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
-    
+
     print '</form>';
 }
 else
 {
     dol_fiche_head($head, 'spip', $langs->trans("Setup"), 0, 'user');
-    
-    $link='<a href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_SPIP">';
+
+    $link='<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_SPIP">';
     //$link.=$langs->trans("Activate");
     $link.=img_picto($langs->trans("Disabled"), 'switch_off');
     $link.='</a>';
     print load_fiche_titre($langs->trans('SPIPTitle'), $link, '');
-    
+
     dol_fiche_end();
 }
 

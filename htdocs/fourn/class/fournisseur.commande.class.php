@@ -23,7 +23,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -154,7 +154,7 @@ class CommandeFournisseur extends CommonOrder
 	//Incoterms
     public $fk_incoterms;
     public $location_incoterms;
-    public $libelle_incoterms;  //Used into tooltip
+    public $label_incoterms;  //Used into tooltip
 
     public $extraparams=array();
 
@@ -264,10 +264,10 @@ class CommandeFournisseur extends CommonOrder
         $sql.= " c.note_private, c.note_public, c.model_pdf, c.extraparams, c.billed,";
         $sql.= " c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva, c.multicurrency_total_ttc,";
         $sql.= " cm.libelle as methode_commande,";
-        $sql.= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle,";
+        $sql.= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc,";
         $sql.= " p.code as mode_reglement_code, p.libelle as mode_reglement_libelle";
         $sql.= ', c.fk_incoterms, c.location_incoterms';
-        $sql.= ', i.libelle as libelle_incoterms';
+        $sql.= ', i.libelle as label_incoterms';
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON c.fk_cond_reglement = cr.rowid";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON c.fk_mode_reglement = p.id";
@@ -322,7 +322,7 @@ class CommandeFournisseur extends CommonOrder
             $this->cond_reglement_id	= $obj->fk_cond_reglement;
             $this->cond_reglement_code	= $obj->cond_reglement_code;
             $this->cond_reglement		= $obj->cond_reglement_libelle;
-            $this->cond_reglement_doc	= $obj->cond_reglement_libelle;
+            $this->cond_reglement_doc	= $obj->cond_reglement_libelle_doc;
             $this->fk_account           = $obj->fk_account;
             $this->mode_reglement_id	= $obj->fk_mode_reglement;
             $this->mode_reglement_code	= $obj->mode_reglement_code;
@@ -335,7 +335,7 @@ class CommandeFournisseur extends CommonOrder
 			//Incoterms
 			$this->fk_incoterms = $obj->fk_incoterms;
 			$this->location_incoterms = $obj->location_incoterms;
-			$this->libelle_incoterms = $obj->libelle_incoterms;
+			$this->label_incoterms = $obj->label_incoterms;
 
 			// Multicurrency
 			$this->fk_multicurrency 		= $obj->fk_multicurrency;
@@ -551,13 +551,18 @@ class CommandeFournisseur extends CommonOrder
                 // Rename directory if dir was a temporary ref
                 if (preg_match('/^[\(]?PROV/i', $this->ref))
                 {
-                    // We rename directory ($this->ref = ancienne ref, $num = nouvelle ref)
-                    // in order not to lose the attached files
+                	// Now we rename also files into index
+                	$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'fournisseur/commande/".$this->db->escape($this->newref)."'";
+                	$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'fournisseur/commande/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+                	$resql = $this->db->query($sql);
+                	if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+                	// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
                     $oldref = dol_sanitizeFileName($this->ref);
                     $newref = dol_sanitizeFileName($num);
                     $dirsource = $conf->fournisseur->commande->dir_output.'/'.$oldref;
                     $dirdest = $conf->fournisseur->commande->dir_output.'/'.$newref;
-                    if (file_exists($dirsource))
+                    if (! $error && file_exists($dirsource))
                     {
                         dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
 
@@ -620,93 +625,69 @@ class CommandeFournisseur extends CommonOrder
     /**
      *  Return label of a status
      *
-     * 	@param  int		$statut		Id statut
+     * 	@param  int		$status		Id statut
      *  @param  int		$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
      *  @param  int     $billed     1=Billed
      *  @return string				Label of status
      */
-    public function LibStatut($statut, $mode = 0, $billed = 0)
+    public function LibStatut($status, $mode = 0, $billed = 0)
     {
         // phpcs:enable
     	global $conf, $langs;
 
-    	if (empty($this->statuts) || empty($this->statutshort))
-    	{
+    	if (empty($this->statuts) || empty($this->statutshort)){
 	        $langs->load('orders');
 
-	        $this->statuts[0] = 'StatusOrderDraft';
-	        $this->statuts[1] = 'StatusOrderValidated';
-	        $this->statuts[2] = 'StatusOrderApproved';
-	        if (empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) $this->statuts[3] = 'StatusOrderOnProcess';
-	        else $this->statuts[3] = 'StatusOrderOnProcessWithValidation';
-	        $this->statuts[4] = 'StatusOrderReceivedPartially';
-	        $this->statuts[5] = 'StatusOrderReceivedAll';
-	        $this->statuts[6] = 'StatusOrderCanceled';	// Approved->Canceled
-	        $this->statuts[7] = 'StatusOrderCanceled';	// Process running->canceled
-	        //$this->statuts[8] = 'StatusOrderBilled';	// Everything is finished, order received totally and bill received
-	        $this->statuts[9] = 'StatusOrderRefused';
+	        $this->statuts[0] = 'StatusSupplierOrderDraft';
+	        $this->statuts[1] = 'StatusSupplierOrderValidated';
+	        $this->statuts[2] = 'StatusSupplierOrderApproved';
+	        if (empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) $this->statuts[3] = 'StatusSupplierOrderOnProcess';
+	        else $this->statuts[3] = 'StatusSupplierOrderOnProcessWithValidation';
+	        $this->statuts[4] = 'StatusSupplierOrderReceivedPartially';
+	        $this->statuts[5] = 'StatusSupplierOrderReceivedAll';
+	        $this->statuts[6] = 'StatusSupplierOrderCanceled';	// Approved->Canceled
+	        $this->statuts[7] = 'StatusSupplierOrderCanceled';	// Process running->canceled
+	        $this->statuts[9] = 'StatusSupplierOrderRefused';
 
 	        // List of language codes for status
-	        $this->statutshort[0] = 'StatusOrderDraftShort';
-	        $this->statutshort[1] = 'StatusOrderValidatedShort';
-	        $this->statutshort[2] = 'StatusOrderApprovedShort';
-	        $this->statutshort[3] = 'StatusOrderOnProcessShort';
-	        $this->statutshort[4] = 'StatusOrderReceivedPartiallyShort';
-	        $this->statutshort[5] = 'StatusOrderReceivedAllShort';
-	        $this->statutshort[6] = 'StatusOrderCanceledShort';
-	        $this->statutshort[7] = 'StatusOrderCanceledShort';
-	        $this->statutshort[9] = 'StatusOrderRefusedShort';
+	        $this->statutshort[0] = 'StatusSupplierOrderDraftShort';
+	        $this->statutshort[1] = 'StatusSupplierOrderValidatedShort';
+	        $this->statutshort[2] = 'StatusSupplierOrderApprovedShort';
+	        $this->statutshort[3] = 'StatusSupplierOrderOnProcessShort';
+	        $this->statutshort[4] = 'StatusSupplierOrderReceivedPartiallyShort';
+	        $this->statutshort[5] = 'StatusSupplierOrderReceivedAllShort';
+	        $this->statutshort[6] = 'StatusSupplierOrderCanceledShort';
+	        $this->statutshort[7] = 'StatusSupplierOrderCanceledShort';
+	        $this->statutshort[9] = 'StatusSupplierOrderRefusedShort';
     	}
 
-        $billedtext='';
-		//if ($statut==5 && $this->billed == 1) $statut = 8;
-        if ($billed == 1) $billedtext=$langs->trans("Billed");
+        $statustrans = array(
+            0 => 'status0',
+            1 => 'status1',
+            2 => 'status3',
+            3 => 'status3',
+            4 => 'status3',
+            5 => 'status6',
+            6 => 'status5',
+            7 => 'status5',
 
-        if ($mode == 0)
-        {
-            return $langs->trans($this->statuts[$statut]);
+            9 => 'status5',
+        );
+
+        $statusClass = 'status0';
+        if(!empty($statustrans[$status])){
+            $statusClass = $statustrans[$status];
         }
-        elseif ($mode == 1)
-        {
-        	return $langs->trans($this->statutshort[$statut]);
+
+        $billedtext = '';
+        if($mode == 4 && $billed){
+            $billedtext = ' - '.$langs->trans("Billed");
         }
-        elseif ($mode == 2)
-        {
-            return $langs->trans($this->statuts[$statut]);
-        }
-        elseif ($mode == 3)
-        {
-            if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut0');
-            elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]), 'statut1');
-            elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]), 'statut3');
-            elseif ($statut==3) return img_picto($langs->trans($this->statuts[$statut]), 'statut3');
-            elseif ($statut==4) return img_picto($langs->trans($this->statuts[$statut]), 'statut3');
-            elseif ($statut==5) return img_picto($langs->trans($this->statuts[$statut]), 'statut6');
-            elseif ($statut==6 || $statut==7) return img_picto($langs->trans($this->statuts[$statut]), 'statut5');
-            elseif ($statut==9) return img_picto($langs->trans($this->statuts[$statut]), 'statut5');
-        }
-        elseif ($mode == 4)
-        {
-            if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut0').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]), 'statut1').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]), 'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==3) return img_picto($langs->trans($this->statuts[$statut]), 'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==4) return img_picto($langs->trans($this->statuts[$statut]), 'statut3').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==5) return img_picto($langs->trans($this->statuts[$statut]), 'statut6').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==6 || $statut==7) return img_picto($langs->trans($this->statuts[$statut]), 'statut5').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-            elseif ($statut==9) return img_picto($langs->trans($this->statuts[$statut]), 'statut5').' '.$langs->trans($this->statuts[$statut]).($billedtext?' - '.$billedtext:'');
-        }
-        elseif ($mode == 5)
-        {
-        	if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut0');
-        	elseif ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut1');
-        	elseif ($statut==2) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut3');
-        	elseif ($statut==3) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut3');
-        	elseif ($statut==4) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut3');
-        	elseif ($statut==5) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut6');
-        	elseif ($statut==6 || $statut==7) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut5');
-        	elseif ($statut==9) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]), 'statut5');
-        }
+
+        $statusLong = $langs->trans($this->statuts[$status]).$billedtext;
+        $statusShort = $langs->trans($this->statutshort[$status]);
+
+        return dolGetStatus($statusLong, $statusShort, '', $statusClass, $mode);
     }
 
 
@@ -795,7 +776,6 @@ class CommandeFournisseur extends CommonOrder
             $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
             foreach ($dirmodels as $reldir) {
-
                 $dir = dol_buildpath($reldir."core/modules/supplier_order/");
 
                 // Load file with numbering class (if found)
@@ -1290,10 +1270,10 @@ class CommandeFournisseur extends CommonOrder
 	            // insert products details into database
 	            for ($i=0;$i<$num;$i++)
 	            {
-
 	                $this->special_code = $this->lines[$i]->special_code; // TODO : remove this in 9.0 and add special_code param to addline()
 
-                $result = $this->addline(              // This include test on qty if option SUPPLIER_ORDER_WITH_NOPRICEDEFINED is not set
+                    // This include test on qty if option SUPPLIER_ORDER_WITH_NOPRICEDEFINED is not set
+                    $result = $this->addline(
 	                    $this->lines[$i]->desc,
 	                    $this->lines[$i]->subprice,
 	                    $this->lines[$i]->qty,
@@ -1409,11 +1389,12 @@ class CommandeFournisseur extends CommonOrder
     /**
      *	Load an object from its id and create a new one in database
      *
-     *	@return		int							New id of clone
+	 *  @param	    User	$user		User making the clone
+     *	@return		int					New id of clone
      */
-    public function createFromClone()
+    public function createFromClone(User $user)
     {
-        global $conf,$user,$langs,$hookmanager;
+        global $hookmanager;
 
         $error=0;
 
@@ -1537,9 +1518,9 @@ class CommandeFournisseur extends CommonOrder
 			$desc=trim($desc);
 
 			// Check parameters
-			if ($qty < 1 && ! $fk_product)
+			if ($qty < 0 && ! $fk_product)
 			{
-				$this->error=$langs->trans("ErrorFieldRequired", $langs->trans("Product"));
+				$this->error=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product"));
 				return -1;
 			}
 			if ($type < 0) return -1;
@@ -1816,10 +1797,9 @@ class CommandeFournisseur extends CommonOrder
                 $error++;
             }
 
-            // Si module stock gere et que incrementation faite depuis un dispatching en stock
+            // If module stock is enabled and the stock increase is done on purchase order dispatching
             if (! $error && $entrepot > 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
             {
-
                 $mouv = new MouvementStock($this->db);
                 if ($product > 0)
                 {
@@ -2638,6 +2618,8 @@ class CommandeFournisseur extends CommonOrder
     {
         global $user,$langs,$conf;
 
+        include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+
         dol_syslog(get_class($this)."::initAsSpecimen");
 
         $now=dol_now();
@@ -2798,9 +2780,10 @@ class CommandeFournisseur extends CommonOrder
      *	Load indicators for dashboard (this->nbtodo and this->nbtodolate)
      *
      *	@param          User	$user   Objet user
+     *  @param          int		$mode   "opened", "awaiting" for orders awaiting reception
      *	@return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
      */
-    public function load_board($user)
+    public function load_board($user, $mode = 'opened')
     {
         // phpcs:enable
         global $conf, $langs;
@@ -2816,7 +2799,12 @@ class CommandeFournisseur extends CommonOrder
             $clause = " AND";
         }
         $sql.= $clause." c.entity = ".$conf->entity;
-        $sql.= " AND c.fk_statut IN (".self::STATUS_VALIDATED.", ".self::STATUS_ACCEPTED.")";
+        if($mode==='awaiting'){
+            $sql.= " AND c.fk_statut = ".self::STATUS_ORDERSENT;
+        }
+        else{
+            $sql.= " AND c.fk_statut IN (".self::STATUS_VALIDATED.", ".self::STATUS_ACCEPTED.")";
+        }
         if ($user->societe_id) $sql.=" AND c.fk_soc = ".$user->societe_id;
 
         $resql=$this->db->query($sql);
@@ -2827,8 +2815,15 @@ class CommandeFournisseur extends CommonOrder
 	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->commande->fournisseur->warning_delay/60/60/24;
 	        $response->label=$langs->trans("SuppliersOrdersToProcess");
-	        $response->url=DOL_URL_ROOT.'/fourn/commande/list.php?statut=1,2,3&mainmenu=commercial&leftmenu=orders_suppliers';
+	        $response->labelShort=$langs->trans("Opened");
+	        $response->url=DOL_URL_ROOT.'/fourn/commande/list.php?statut=1,2&mainmenu=commercial&leftmenu=orders_suppliers';
 	        $response->img=img_object('', "order");
+
+            if($mode==='awaiting'){
+                $response->label=$langs->trans("SuppliersOrdersAwaitingReception");
+                $response->labelShort=$langs->trans("AwaitingReception");
+                $response->url=DOL_URL_ROOT.'/fourn/commande/list.php?statut=3&mainmenu=commercial&leftmenu=orders_suppliers';
+            }
 
             while ($obj=$this->db->fetch_object($resql))
             {
@@ -2907,7 +2902,6 @@ class CommandeFournisseur extends CommonOrder
 		$langs->load("suppliers");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'muscadet';
 
 			if ($this->modelpdf) {
@@ -3504,6 +3498,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
 
         $error=0;
 
+        $this->db->begin();
+
         // Mise a jour ligne en base
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
         $sql.= "  description='".$this->db->escape($this->desc)."'";
@@ -3604,7 +3600,6 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $resql=$this->db->query($sql);
         if ($resql)
         {
-
             if (!$notrigger)
             {
                 // Call trigger

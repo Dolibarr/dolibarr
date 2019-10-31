@@ -52,7 +52,8 @@ trait Request
     protected static function _staticRequest($method, $url, $params, $options)
     {
         $opts = \Stripe\Util\RequestOptions::parse($options);
-        $requestor = new \Stripe\ApiRequestor($opts->apiKey, static::baseUrl());
+        $baseUrl = isset($opts->apiBase) ? $opts->apiBase : static::baseUrl();
+        $requestor = new \Stripe\ApiRequestor($opts->apiKey, $baseUrl);
         list($response, $opts->apiKey) = $requestor->request($method, $url, $params, $opts->headers);
         $opts->discardNonPersistentHeaders();
         return [$response, $opts];

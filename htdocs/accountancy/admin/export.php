@@ -18,12 +18,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  * \file 		htdocs/accountancy/admin/export.php
- * \ingroup 	Advanced accountancy
+ * \ingroup 	Accountancy (Double entries)
  * \brief 		Setup page to configure accounting expert module
  */
 require '../../main.inc.php';
@@ -76,6 +76,7 @@ $model_option = array (
     ),
 );
 
+
 /*
  * Actions
  */
@@ -113,7 +114,7 @@ if ($action == 'update') {
                 $error ++;
             }
         }
-	}
+    }
 
 	if (! $error) {
         // reload
@@ -131,12 +132,16 @@ if ($action == 'update') {
  * View
  */
 
-llxHeader();
-
 $form = new Form($db);
 
+$title = $langs->trans('ConfigAccountingExpert');
+llxHeader('', $title);
+
+
+$linkback='';
 // $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
-print load_fiche_titre($langs->trans('ConfigAccountingExpert'), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans('ConfigAccountingExpert'), $linkback, 'accountancy');
+
 
 print "\n".'<script type="text/javascript" language="javascript">'."\n";
 print 'jQuery(document).ready(function () {'."\n";
@@ -195,11 +200,9 @@ print '<tr class="liste_titre">';
 print '<td colspan="3">' . $langs->trans('Options') . '</td>';
 print "</tr>\n";
 
-
 $num = count($main_option);
 if ($num) {
 	foreach ($main_option as $key) {
-
 		print '<tr class="oddeven value">';
 
 		// Param
@@ -236,7 +239,7 @@ if (! $conf->use_javascript_ajax) {
 } else {
 	print '<td>';
 	$listmodelcsv = AccountancyExport::getType();
-	print $form->selectarray("ACCOUNTING_EXPORT_MODELCSV", $listmodelcsv, $conf->global->ACCOUNTING_EXPORT_MODELCSV, 0);
+	print $form->selectarray("ACCOUNTING_EXPORT_MODELCSV", $listmodelcsv, $conf->global->ACCOUNTING_EXPORT_MODELCSV, 0, 0, 0, '', 0, 0, 0, '', '', 1);
 
 	print '</td>';
 }

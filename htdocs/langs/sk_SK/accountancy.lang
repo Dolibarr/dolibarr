@@ -107,7 +107,7 @@ ExpenseReportsVentilation=Expense report binding
 CreateMvts=Vytvorte novú transakciu
 UpdateMvts=Úprava transakcie
 ValidTransaction=Validate transaction
-WriteBookKeeping=Zmeniť transakcie v knihe Ledger
+WriteBookKeeping=Register transactions in Ledger
 Bookkeeping=Hlavná kniha
 AccountBalance=Stav účtu
 ObjectsRef=Source object ref
@@ -158,6 +158,7 @@ ACCOUNTING_RESULT_LOSS=Result accounting account (Loss)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal of closure
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transitional bank transfer
+TransitionalAccount=Transitional bank transfer account
 
 ACCOUNTING_ACCOUNT_SUSPENSE=Účtovný účet čakania
 DONATION_ACCOUNTINGACCOUNT=Účtovný účet na registráciu darov
@@ -165,8 +166,8 @@ ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Accounting account to register subscript
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Účtovný účet štandardne pre zakúpené produkty (používa sa, ak nie je definovaný v produktovom liste)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Účtovný účet štandardne pre predané produkty (použité, ak nie sú definované v produktovom liste)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT_INTRA=Accounting account by default for the sold products in EEC (used if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT_EXPORT=Accounting account by default for the sold products export out of EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Accounting account by default for the sold products in EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Accounting account by default for the sold products export out of EEC (used if not defined in the product sheet)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Účtovný účet predvolene pre zakúpené služby (používa sa, ak nie je definovaný v služobnom liste)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Účtovný účet predvolene pre predané služby (používa sa, ak nie je definovaný v služobnom liste)
 
@@ -177,6 +178,7 @@ LabelAccount=Značkový účet
 LabelOperation=Label operation
 Sens=sens
 LetteringCode=Lettering code
+Lettering=Lettering
 Codejournal=časopis
 JournalLabel=Journal label
 NumPiece=Číslo kusu
@@ -215,7 +217,8 @@ DescThirdPartyReport=Consult here the list of third-party customers and vendors 
 ListAccounts=Zoznam účtovných účtov
 UnknownAccountForThirdparty=Unknown third-party account. We will use %s
 UnknownAccountForThirdpartyBlocking=Unknown third-party account. Blocking error
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. Blocking error.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Third-party account not defined or third party unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third-party account and waiting account not defined. Blocking error
 PaymentsNotLinkedToProduct=Payment not linked to any product / service
 
@@ -262,7 +265,7 @@ AccountingJournals=Accounting journals
 AccountingJournal=Accounting journal
 NewAccountingJournal=New accounting journal
 ShowAccoutingJournal=Show accounting journal
-Nature=Príroda
+NatureOfJournal=Nature of Journal
 AccountingJournalType1=Miscellaneous operations
 AccountingJournalType2=Predaje
 AccountingJournalType3=Platby
@@ -288,19 +291,26 @@ Modelcsv_quadratus=Export for Quadratus QuadraCompta
 Modelcsv_ebp=Export for EBP
 Modelcsv_cogilog=Export for Cogilog
 Modelcsv_agiris=Export for Agiris
+Modelcsv_LDCompta=Export for LD Compta (v9 & higher) (Test)
+Modelcsv_openconcerto=Export for OpenConcerto (Test)
 Modelcsv_configurable=Export CSV Configurable
-Modelcsv_FEC=Export FEC (Art. L47 A) (Test)
+Modelcsv_FEC=Export FEC
+Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
 ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Načítať účtovníctvo
 InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accounting account defined for sales and purchases.
 DefaultBindingDesc=Táto stránka môže byť použitá na nastavenie predvoleného účtu, ktorý sa používa na prepojenie transakčných záznamov o platobných platoch, darcovstve, daniach a DPH, ak už nie je stanovený žiadny konkrétny účtovný účet.
-DefaultClosureDesc=This page can be used to set parameters to use to enclose a balance sheet.
+DefaultClosureDesc=This page can be used to set parameters used for accounting closures.
 Options=Možnosti
 OptionModeProductSell=Mód predaja
+OptionModeProductSellIntra=Mode sales exported in EEC
+OptionModeProductSellExport=Mode sales exported in other countries
 OptionModeProductBuy=Mód nákupu
 OptionModeProductSellDesc=Zobraziť všetky produkty s účtovným účtom pre predaj.
+OptionModeProductSellIntraDesc=Show all products with accounting account for sales in EEC.
+OptionModeProductSellExportDesc=Show all products with accounting account for other foreign sales.
 OptionModeProductBuyDesc=Zobraziť všetky produkty s účtovným účtom pre nákupy.
 CleanFixHistory=Remove accounting code from lines that not exists into charts of account
 CleanHistory=Resetovať všetky priradenia pre zvolený rok
@@ -309,6 +319,9 @@ WithoutValidAccount=Without valid dedicated account
 WithValidAccount=With valid dedicated account
 ValueNotIntoChartOfAccount=This value of accounting account does not exist into chart of account
 AccountRemovedFromGroup=Account removed from group
+SaleLocal=Local sale
+SaleExport=Export sale
+SaleEEC=Sale in EEC
 
 ## Dictionary
 Range=Rozsah účtovného účtu
@@ -329,7 +342,7 @@ UseMenuToSetBindindManualy=Lines not yet bound, use menu <a href="%s">%s</a> to 
 
 ## Import
 ImportAccountingEntries=Accounting entries
-
+DateExport=Date export
 WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Expense Report Journal
 InventoryJournal=Inventory Journal

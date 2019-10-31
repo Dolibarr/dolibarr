@@ -18,7 +18,6 @@ CustomersVentilation=Agregar factura de cliente
 CreateMvts=Crear nueva transaccion
 UpdateMvts=Modificación de una transacción
 ValidTransaction=Validar transacción
-WriteBookKeeping=Journalize transacciones en Ledger
 Bookkeeping=Libro mayor
 InvoiceLines=Líneas de facturas para enlazar
 InvoiceLinesDone=Líneas de facturas vinculadas

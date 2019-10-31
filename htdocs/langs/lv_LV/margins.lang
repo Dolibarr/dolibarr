@@ -31,14 +31,14 @@ MARGIN_TYPE=Buying/Cost price suggested by default for margin calculation
 MargeType1=Marža par labāko pārdevēja cenu
 MargeType2=Margin on Weighted Average Price (WAP)
 MargeType3=Ienesīguma cena
-MarginTypeDesc=* Marka par labāko pirkšanas cenu = Pārdošanas cena - Labākā pārdevēju cena, kas noteikta produkta kartē <br> * Vidējā svērtā vidējā cena (WAP) = pārdošanas cena - produkta vidējā svērtā cena (WAP) vai labākā piegādātāja cena, ja WAP vēl nav definēts < br> * Marža par izmaksu cenu = Pārdošanas cena - Izmaksu cena, kas noteikta produkta kartē vai WAP, ja nav noteikta izmaksu cena, vai labākā piegādātāja cena, ja WAP vēl nav definēts
+MarginTypeDesc=* Marža par labāko iepirkuma cenu = Pārdošanas cena - Labākā pārdevēja cena, kas noteikta uz produkta kartes <br> * Maržināmais vidējais cena (WAP) = Pārdošanas cena - Produkta vidējā cena (WAP) vai labākā pārdevēja cena, ja WAP vēl nav definēts < br> * Marža par izmaksām = Pārdošanas cena - Izmaksas, kas noteiktas uz produkta kartes vai WAP, ja nav noteikta izmaksu cena vai labākā pārdevēja cena, ja WAP vēl nav definēts
 CostPrice=Pašizmaksa
 UnitCharges=Vienības izmaksas
 Charges=Maksas
 AgentContactType=Commercial agent contact type
 AgentContactTypeDetails=Define what contact type (linked on invoices) will be used for margin report per sale representative
 rateMustBeNumeric=Likmei jābūt skaitliskai vērtībai
-markRateShouldBeLesserThan100=Mark rate should be lower than 100
+markRateShouldBeLesserThan100=Likmei jābūt zemākai par 100
 ShowMarginInfos=Show margin infos
 CheckMargins=Margins detail
-MarginPerSaleRepresentativeWarning=Atskaites par starpību katram lietotājam izmanto saiti starp trešajām personām un tirdzniecības pārstāvjiem, lai aprēķinātu katra pārdošanas pārstāvja rezervi. Tā kā dažām trešām pusēm var nebūt tirdzniecības pārstāvniecības, un dažas trešās puses var būt saistītas ar vairākām, dažas summas var neiekļaut šajā pārskatā (ja pārdošanas pārstāvis nav pieejams), un daži var parādīties dažādās pozīcijās (katram pārdošanas pārstāvim).
+MarginPerSaleRepresentativeWarning=Atskaites par starpību katram lietotājam izmanto saiti starp trešajām personām un tirdzniecības pārstāvjiem, lai aprēķinātu katra pārdošanas pārstāvja rezervi. Tā kā dažām trešajām pusēm var nebūt īpaša pārdošanas pārstāvja, un dažas trešās personas var būt saistītas ar vairākām, dažas summas var neiekļaut šajā pārskatā (ja nav pārdošanas pārstāvja), un daži var parādīties dažādās pozīcijās (par katru pārdošanas pārstāvi) .

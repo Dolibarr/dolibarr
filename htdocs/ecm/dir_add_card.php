@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -141,10 +141,10 @@ if ($action == 'add' && $permtoadd)
 	{
 		if ($module == 'ecm')
 		{
-			$ecmdir->ref                = $ref;
-			$ecmdir->label              = $label;
-			$ecmdir->description        = $desc;
-			$ecmdir->fk_parent          = (int) $catParent;
+			$ecmdir->ref            = $ref;
+			$ecmdir->label          = $label;
+			$ecmdir->description    = $desc;
+			$ecmdir->fk_parent      = (int) $catParent;
 
 			$id = $ecmdir->create($user);
 			if ($id <= 0)
@@ -277,14 +277,14 @@ if (empty($action) || $action == 'delete_section')
 	print load_fiche_titre($langs->trans("ECMSectionOfDocuments"));
 	print '<br>';
 
-/*
+    /*
 	$ecmdir->ref=$ecmdir->label;
 	print $langs->trans("ECMSection").': ';
 	print img_picto('','object_dir').' ';
 	print '<a href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php">'.$langs->trans("ECMRoot").'</a>';
 	//print ' -> <b>'.$ecmdir->getNomUrl(1).'</b><br>';
 	print "<br><br>";
-*/
+    */
 
 	// Confirmation de la suppression d'une ligne categorie
 	if ($action == 'delete_section')

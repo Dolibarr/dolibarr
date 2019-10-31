@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -92,7 +92,6 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-
 	// Action submit/delete file/link
 	include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 }
@@ -111,7 +110,6 @@ llxHeader('', $langs->trans('ProductLot'), '');
 
 if ($object->id)
 {
-
 	$head = productlot_prepare_head($object);
 	dol_fiche_head($head, 'documents', $langs->trans("Batch"), -1, 'barcode');
 

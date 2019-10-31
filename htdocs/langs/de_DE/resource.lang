@@ -1,14 +1,14 @@
 # Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Ressourcen
-MenuResourceAdd=Neue Ressource
+MenuResourceAdd=neue Ressource
 DeleteResource=Ressource löschen
-ConfirmDeleteResourceElement=Bitte Löschung der Ressource dieses Elements bestätigen
-NoResourceInDatabase=Keine Ressource in Datenbank
-NoResourceLinked=Keine Ressource verknüpft
-
+ConfirmDeleteResourceElement=Löschung der Ressource zu diesem Element bestätigen
+NoResourceInDatabase=Keine Ressource in der Datenbank
+NoResourceLinked=keine Ressource verknüpft
+ActionsOnResource=Ereignisse zu dieser Ressource
 ResourcePageIndex=Liste der Ressourcen
 ResourceSingular=Ressource
-ResourceCard=Ressource - Karte
+ResourceCard=Ressource - Übersicht
 AddResource=Ressource erstellen
 ResourceFormLabel_ref=Ressourcen-Name
 ResourceType=Ressourcen-Typ
@@ -18,7 +18,7 @@ ResourcesLinkedToElement=mit Element verknüpfte Ressourcen
 
 ShowResource=Ressource anzeigen
 
-ResourceElementPage=Element-Ressourcen
+ResourceElementPage=Ressourcen-Element
 ResourceCreatedWithSuccess=Ressource erfolgreich erstellt
 RessourceLineSuccessfullyDeleted=Ressourcen-Zeile erfolgreich gelöscht
 RessourceLineSuccessfullyUpdated=Ressourcen-Zeile erfolgreich aktualisiert
@@ -30,7 +30,7 @@ DictionaryResourceType=Ressourcen-Typ
 
 SelectResource=Ressource wählen
 
-IdResource=Resourcen ID
+IdResource=Ressourcen ID
 AssetNumber=Seriennummer
 ResourceTypeCode=Ressourcen-Typ Code
 ImportDataset_resource_1=Ressourcen

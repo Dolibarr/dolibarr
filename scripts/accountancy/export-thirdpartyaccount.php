@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -158,7 +158,6 @@ if ($resql) {
 
 	// export csv
 	if (GETPOST('action', 'aZ09') == 'export_csv') {
-
 		header('Content-Type: text/csv');
 		header('Content-Disposition: attachment;filename=export_csv.csv');
 

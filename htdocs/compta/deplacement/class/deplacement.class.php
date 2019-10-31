@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -89,11 +89,11 @@ class Deplacement extends CommonObject
 	public $statuts=array();
 	public $statuts_short=array();
 
-   /**
-	* Constructor
-	*
-	* @param	DoliDB		$db		Database handler
-	*/
+    /**
+	 * Constructor
+	 *
+	 * @param	DoliDB		$db		Database handler
+	 */
 	public function __construct($db)
 	{
 		$this->db = $db;
@@ -249,13 +249,13 @@ class Deplacement extends CommonObject
 		}
 	}
 
-   /**
-	* Load an object from database
-	*
-	* @param	int		$id		Id of record to load
-	* @param	string	$ref	Ref of record
-	* @return	int				<0 if KO, >0 if OK
-	*/
+    /**
+	 * Load an object from database
+	 *
+	 * @param	int		$id		Id of record to load
+	 * @param	string	$ref	Ref of record
+	 * @return	int				<0 if KO, >0 if OK
+	 */
 	public function fetch($id, $ref = '')
 	{
 		$sql = "SELECT rowid, fk_user, type, fk_statut, km, fk_soc, dated, note_private, note_public, fk_projet as fk_project, extraparams";
@@ -293,12 +293,12 @@ class Deplacement extends CommonObject
 		}
 	}
 
-   /**
-	*	Delete record
-	*
-	*	@param	int		$id		Id of record to delete
-	*	@return	int				<0 if KO, >0 if OK
-	*/
+    /**
+	 *	Delete record
+	 *
+	 *	@param	int		$id		Id of record to delete
+	 *	@return	int				<0 if KO, >0 if OK
+	 */
 	public function delete($id)
 	{
 		$this->db->begin();
@@ -413,9 +413,9 @@ class Deplacement extends CommonObject
 	 */
 	public function listOfTypes($active = 1)
 	{
-	   global $langs;
+	    global $langs;
 
-	   $ret=array();
+	    $ret=array();
 
         $sql = "SELECT id, code, label";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_fees";

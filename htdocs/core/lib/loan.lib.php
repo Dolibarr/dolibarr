@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -40,7 +40,7 @@ function loan_prepare_head($object)
 	$head[$tab][1] = $langs->trans('Card');
 	$head[$tab][2] = 'card';
 	$tab++;
-	
+
 	$head[$tab][0] = DOL_URL_ROOT.'/loan/schedule.php?loanid='.$object->id;
 	$head[$tab][1] = $langs->trans('FinancialCommitment');
 	$head[$tab][2] = 'FinancialCommitment';

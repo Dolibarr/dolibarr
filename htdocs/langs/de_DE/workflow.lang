@@ -1,20 +1,20 @@
 # Dolibarr language file - Source file is en_US - workflow
 WorkflowSetup=Workflow Moduleinstellungen
-WorkflowDesc=Dieses Modul ermöglicht, das Verhalten von automatischen Aktionen in den Anwendungen zu verändern. Standardmäßig wird der Prozess offen sein (Sie können die Dinge in der gewünschten Reihenfolge tun). Sie können automatische Aktionen aktivieren, die Sie interessieren.
+WorkflowDesc=Dieses Modul liefert verschiedene, automatisierte Aktionen. Standardmäßig ist der Workflow flexibel (d.h. Sie sind frei in der Reihenfolge der Abarbeitung) aber über diesen Modul können Sie einige Aktionen automatisiert ablaufen lassen.
 ThereIsNoWorkflowToModify=Es sind keine Workflow-Änderungen möglich mit den aktivierten Modulen.
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Erstellen Sie automatisch einen Kundenauftrag, nachdem ein kommerzielles Angebot unterschrieben wurde (neue Bestellung hat denselben Betrag wie Angebot)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Erstellen Sie automatisch eine Kundenrechnung, nachdem ein kommerzielles Angebot unterzeichnet wurde (die neue Rechnung hat den gleichen Betrag wie das Angebot)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Erstellt automatisch eine Bestellung, nachdem ein Angebot als "unterzeichnet" markiert wurde. Die neue Bestellung hat dann den selben Wert wie das Angebot.
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Erstellt automatisch eine Kundenrechnung, nachdem ein Angebot als "unterzeichnet" markiert wurde. Diese neue Kundenrechnung lautet über den selben Betrag wie das Angebot.
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Erstelle automatisch eine Kundenrechnung, nachdem der Vertrag bestätigt wurde.
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Erstellen Sie automatisch eine Kundenrechnung, nachdem eine Kundenbestellung geschlossen wurde (die neue Rechnung hat den gleichen Betrag wie die Bestellung)
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Erstellt automatisch eine Kundenrechnung, nachdem eine Bestellung geschlossen wurde. Die neue Kundenrechnung lautet über den selben Betrag wie die Bestellung.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Die verbundenen Quellangebote auf abgerechnet setzen, wenn die Kunden-Bestellung als abgerechnet gesetzt wurde (und der Betrag der Bestellung gleich mit dem der gezeichneten verbundenen Angebote ist)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of signed linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of linked orders)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid (and if amount of the invoice is same than total amount of linked orders)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source customer order to shipped when a shipment is validated (and if quantity shipped by all shipments is the same as in the order to update)
-# Autoclassify supplier order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked orders)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Setzt das  entsprechende Angebot auf "abgerechnet", sofern die Kundenbestellung auf "abgerechnet" gesetzt wurde und sofern der Betrag in der Bestellung gleich dem dem Betrag im Angebot ist.
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Setzt das verknüpfte Angebot auf "abgerechnet", sofern die Kundenrechnung erstellt wurde und sofern der Rechnungsbetrag identisch zur Angebotsumme ist.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Kennzeichne die verknüpfte Kundenbestellung(en) als fakturiert ( = in Rechnung gestellt) sofern die Kundenrechnung als geprüft markiert wurde und die Beträge übereinstimmen.
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Kennzeichne die verknüpfte Kundenbestellung(en) als fakturiert ( = in Rechnung gestellt) sofern die Kundenrechnung als bezahlt markiert wurde und die Beträge übereinstimmen.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Kennzeichne die verknüpften Aufträge als geliefert wenn die Lieferung erfolgt ist (und die Liefermenge der Bestellmenge entspricht).
+# Autoclassify purchase order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Setzt das verknüpfte Lieferantenangebot auf "abgerechnet", sofern die Lieferanrenrechnung erstellt wurde und sofern der Rechnungsbetrag identisch zur Angebotsumme ist. 
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Kennzeichne die verknüpfte Einkaufsbestellung als abgerechnet wenn die Lieferantenrechnung erstellt wurde und wenn die Beträge überein stimmen.
 AutomaticCreation=automatische Erstellung
 AutomaticClassification=Automatische Klassifikation

@@ -27,7 +27,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -54,7 +54,6 @@ $id			= GETPOST('id', 'int');
 $action		= GETPOST('action', 'aZ09');
 $mode		= GETPOST('mode', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
-$subaction	= GETPOST('subaction', 'alpha');
 $group		= GETPOST("group", "int", 3);
 $cancel		= GETPOST('cancel', 'alpha');
 $contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'useracard';   // To manage different context of search
@@ -98,10 +97,10 @@ $object = new User($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager->initHooks(array('usercard','globalcard'));
+$hookmanager->initHooks(array('usercard', 'globalcard'));
 
 
 
@@ -114,7 +113,6 @@ $reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
-
 	if ($action == 'confirm_disable' && $confirm == "yes" && $candisableuser) {
 		if ($id <> $user->id) {
 			$object->fetch($id);
@@ -157,6 +155,7 @@ if (empty($reshook)) {
 
 			$object = new User($db);
 			$object->fetch($id);
+            $object->oldcopy = clone $object;
 
 			$result = $object->delete($user);
 			if ($result < 0) {
@@ -195,14 +194,14 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$object->lastname = GETPOST("lastname", 'alpha');
-			$object->firstname = GETPOST("firstname", 'alpha');
-			$object->login = GETPOST("login", 'alpha');
-			$object->api_key = GETPOST("api_key", 'alpha');
-			$object->gender = GETPOST("gender", 'alpha');
-			$birth = dol_mktime(0, 0, 0, GETPOST('birthmonth'), GETPOST('birthday'), GETPOST('birthyear'));
+			$object->lastname = GETPOST("lastname", 'alphanohtml');
+			$object->firstname = GETPOST("firstname", 'alphanohtml');
+			$object->login = GETPOST("login", 'alphanohtml');
+			$object->api_key = GETPOST("api_key", 'alphanohtml');
+			$object->gender = GETPOST("gender", 'aZ09');
+			$birth = dol_mktime(0, 0, 0, GETPOST('birthmonth', 'int'), GETPOST('birthday', 'int'), GETPOST('birthyear', 'int'));
 			$object->birth = $birth;
-			$object->admin = GETPOST("admin", 'alpha');
+			$object->admin = GETPOST("admin", 'int');
 			$object->address = GETPOST('address', 'alphanohtml');
 			$object->zip = GETPOST('zipcode', 'alphanohtml');
 			$object->town = GETPOST('town', 'alphanohtml');
@@ -217,13 +216,15 @@ if (empty($reshook)) {
 			$object->facebook = GETPOST("facebook", 'alphanohtml');
 			$object->linkedin = GETPOST("linkedin", 'alphanohtml');
 
-			$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
-			$object->job = GETPOST("job", 'alpha');
+			$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alphanohtml'));
+			$object->job = GETPOST("job", 'nohtml');
 			$object->signature = GETPOST("signature", 'none');
 			$object->accountancy_code = GETPOST("accountancy_code", 'alphanohtml');
 			$object->note = GETPOST("note", 'none');
 			$object->ldap_sid = GETPOST("ldap_sid", 'alphanohtml');
 			$object->fk_user = GETPOST("fk_user", 'int') > 0 ? GETPOST("fk_user", 'int') : 0;
+			$object->fk_user_expense_validator = GETPOST("fk_user_expense_validator", 'int') > 0 ? GETPOST("fk_user_expense_validator", 'int') : 0;
+			$object->fk_user_holiday_validator = GETPOST("fk_user_holiday_validator", 'int') > 0 ? GETPOST("fk_user_holiday_validator", 'int') : 0;
 			$object->employee = GETPOST('employee', 'alphanohtml');
 
 			$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
@@ -233,16 +234,16 @@ if (empty($reshook)) {
 			$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
 
 			$object->color = GETPOST("color", 'alphanohtml') != '' ? GETPOST("color", 'alphanohtml') : '';
-			$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth'), GETPOST('dateemploymentday'), GETPOST('dateemploymentyear'));
+			$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth', 'int'), GETPOST('dateemploymentday', 'int'), GETPOST('dateemploymentyear', 'int'));
 			$object->dateemployment = $dateemployment;
 
-			$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth'), GETPOST('dateemploymentendday'), GETPOST('dateemploymentendyear'));
+			$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth', 'int'), GETPOST('dateemploymentendday', 'int'), GETPOST('dateemploymentendyear', 'int'));
 			$object->dateemploymentend = $dateemploymentend;
 
 			$object->fk_warehouse = GETPOST('fk_warehouse', 'int');
 
 			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+			$ret = $extrafields->setOptionalsFromPost(null, $object);
 			if ($ret < 0) {
 				$error ++;
 			}
@@ -329,12 +330,12 @@ if (empty($reshook)) {
 		{
 			$error = 0;
 
-			if (!$_POST["lastname"]) {
+			if (! GETPOST("lastname", 'alpha')) {
 				setEventMessages($langs->trans("NameNotDefined"), null, 'errors');
 				$action = "edit";       // Go back to create page
 				$error ++;
 			}
-			if (!$_POST["login"]) {
+			if (! GETPOST("login", 'alpha')) {
 				setEventMessages($langs->trans("LoginNotDefined"), null, 'errors');
 				$action = "edit";       // Go back to create page
 				$error ++;
@@ -348,15 +349,15 @@ if (empty($reshook)) {
 
 				$db->begin();
 
-				$object->lastname = GETPOST("lastname", 'alpha');
-				$object->firstname = GETPOST("firstname", 'alpha');
-				$object->login = GETPOST("login", 'alpha');
-				$object->gender = GETPOST("gender", 'alpha');
-				$birth = dol_mktime(0, 0, 0, GETPOST('birthmonth'), GETPOST('birthday'), GETPOST('birthyear'));
+				$object->lastname = GETPOST("lastname", 'alphanohtml');
+				$object->firstname = GETPOST("firstname", 'alphanohtml');
+				$object->login = GETPOST("login", 'alphanohtml');
+				$object->gender = GETPOST("gender", 'aZ09');
+				$birth = dol_mktime(0, 0, 0, GETPOST('birthmonth', 'int'), GETPOST('birthday', 'int'), GETPOST('birthyear', 'int'));
 				$object->birth = $birth;
 				$object->pass = GETPOST("password", 'none');
-				$object->api_key = (GETPOST("api_key", 'alpha')) ? GETPOST("api_key", 'alpha') : $object->api_key;
-				if (! empty($user->admin)) $object->admin = GETPOST("admin"); 	// admin flag can only be set/unset by an admin user. A test is also done later when forging sql request
+				$object->api_key = (GETPOST("api_key", 'alphanohtml')) ? GETPOST("api_key", 'alphanohtml') : $object->api_key;
+				if (! empty($user->admin)) $object->admin = GETPOST("admin", "int"); 	// admin flag can only be set/unset by an admin user. A test is also done later when forging sql request
 				$object->address = GETPOST('address', 'alphanohtml');
 				$object->zip = GETPOST('zipcode', 'alphanohtml');
 				$object->town = GETPOST('town', 'alphanohtml');
@@ -365,16 +366,20 @@ if (empty($reshook)) {
 				$object->office_phone = GETPOST("office_phone", 'alphanohtml');
 				$object->office_fax = GETPOST("office_fax", 'alphanohtml');
 				$object->user_mobile = GETPOST("user_mobile", 'alphanohtml');
-				$object->skype = GETPOST("skype", 'alpha');
-				$object->twitter = GETPOST("twitter", 'alpha');
-				$object->facebook = GETPOST("facebook", 'alpha');
-				$object->linkedin = GETPOST("linkedin", 'alpha');
-				$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
-				$object->job = GETPOST("job", 'alpha');
+
+				$object->skype = GETPOST("skype", 'alphanohtml');
+				$object->twitter = GETPOST("twitter", 'alphanohtml');
+				$object->facebook = GETPOST("facebook", 'alphanohtml');
+				$object->linkedin = GETPOST("linkedin", 'alphanohtml');
+
+				$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alphanohtml'));
+				$object->job = GETPOST("job", 'nohtml');
 				$object->signature = GETPOST("signature", 'none');
-				$object->accountancy_code = GETPOST("accountancy_code", 'alpha');
-				$object->openid = GETPOST("openid", 'alpha');
+				$object->accountancy_code = GETPOST("accountancy_code", 'alphanohtml');
+				$object->openid = GETPOST("openid", 'alphanohtml');
 				$object->fk_user = GETPOST("fk_user", 'int') > 0 ? GETPOST("fk_user", 'int') : 0;
+				$object->fk_user_expense_validator = GETPOST("fk_user_expense_validator", 'int') > 0 ? GETPOST("fk_user_expense_validator", 'int') : 0;
+				$object->fk_user_holiday_validator = GETPOST("fk_user_holiday_validator", 'int') > 0 ? GETPOST("fk_user_holiday_validator", 'int') : 0;
 				$object->employee = GETPOST('employee', 'int');
 
 				$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
@@ -383,7 +388,7 @@ if (empty($reshook)) {
 				$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOST("salaryextra", 'alphanohtml') : '';
 				$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
 
-				$object->color = GETPOST("color", 'alpha') != '' ? GETPOST("color", 'alpha') : '';
+				$object->color = GETPOST("color", 'alphanohtml') != '' ? GETPOST("color", 'alphanohtml') : '';
 				$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth', 'int'), GETPOST('dateemploymentday', 'int'), GETPOST('dateemploymentyear', 'int'));
 				$object->dateemployment = $dateemployment;
 				$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth', 'int'), GETPOST('dateemploymentendday', 'int'), GETPOST('dateemploymentendyear', 'int'));
@@ -415,7 +420,7 @@ if (empty($reshook)) {
 				}
 
 				// Fill array 'array_options' with data from add form
-				$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+				$ret = $extrafields->setOptionalsFromPost(null, $object);
 				if ($ret < 0) {
 					$error ++;
 				}
@@ -423,8 +428,20 @@ if (empty($reshook)) {
 				if (GETPOST('deletephoto')) {
 					$object->photo = '';
 				}
-				if (!empty($_FILES['photo']['name'])) {
-					$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
+				if (!empty($_FILES['photo']['name']))
+				{
+				    $isimage=image_format_supported($_FILES['photo']['name']);
+				    if ($isimage > 0)
+				    {
+    					$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
+				    }
+				    else
+				    {
+				        $error++;
+				        $langs->load("errors");
+				        setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
+				        dol_syslog($langs->transnoentities("ErrorBadImageFormat"), LOG_INFO);
+				    }
 				}
 
 				if (!$error) {
@@ -662,9 +679,9 @@ if ($action == 'create' || $action == 'adduserldap')
 	/*                                                                            */
 	/* ************************************************************************** */
 
-	print load_fiche_titre($langs->trans("NewUser"));
+	print load_fiche_titre($langs->trans("NewUser"), '', 'user');
 
-	print $langs->trans("CreateInternalUserDesc")."<br>\n";
+	print '<span class="opacitymedium">'.$langs->trans("CreateInternalUserDesc")."</span><br>\n";
 	print "<br>";
 
 
@@ -952,6 +969,32 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '</td>';
 	print "</tr>\n";
 
+	// Expense report validator
+	if(!empty($conf->expensereport->enabled))
+	{
+		print '<tr><td class="titlefieldcreate">';
+		$text = $langs->trans("ForceUserExpenseValidator");
+		print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+		print '</td>';
+		print '<td>';
+		print $form->select_dolusers($object->fk_user_expense_validator, 'fk_user_expense_validator', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
+		print '</td>';
+		print "</tr>\n";
+	}
+
+	// Holiday request validator
+	if(!empty($conf->holiday->enabled))
+	{
+		print '<tr><td class="titlefieldcreate">';
+		$text = $langs->trans("ForceUserHolidayValidator");
+		print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+		print '</td>';
+		print '<td>';
+		print $form->select_dolusers($object->fk_user_holiday_validator, 'fk_user_holiday_validator', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
+		print '</td>';
+		print "</tr>\n";
+	}
+
 
 	print '</table><hr><table class="border centpercent">';
 
@@ -987,7 +1030,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	}
 
 	// Tel
-	print '<tr><td>'.$langs->trans("PhonePro").'</td>';
+	print '<tr><td>'.img_picto('', 'object_phoning').' '.$langs->trans("PhonePro").'</td>';
 	print '<td>';
 	if (! empty($ldap_phone))
 	{
@@ -1001,7 +1044,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '</td></tr>';
 
 	// Tel portable
-	print '<tr><td>'.$langs->trans("PhoneMobile").'</td>';
+	print '<tr><td>'.img_picto('', 'object_phoning_mobile').' '.$langs->trans("PhoneMobile").'</td>';
 	print '<td>';
 	if (! empty($ldap_mobile))
 	{
@@ -1015,7 +1058,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '</td></tr>';
 
 	// Fax
-	print '<tr><td>'.$langs->trans("Fax").'</td>';
+	print '<tr><td>'.img_picto('', 'object_phoning_fax').' '.$langs->trans("Fax").'</td>';
 	print '<td>';
 	if (! empty($ldap_fax))
 	{
@@ -1025,6 +1068,20 @@ if ($action == 'create' || $action == 'adduserldap')
 	else
 	{
 		print '<input size="20" type="text" name="office_fax" value="'.GETPOST('office_fax').'">';
+	}
+	print '</td></tr>';
+
+	// EMail
+	print '<tr><td'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.img_picto('', 'object_email').' '.$langs->trans("EMail").'</td>';
+	print '<td>';
+	if (! empty($ldap_mail))
+	{
+		print '<input type="hidden" name="email" value="'.$ldap_mail.'">';
+		print $ldap_mail;
+	}
+	else
+	{
+		print '<input size="40" type="text" name="email" value="'.GETPOST('email').'">';
 	}
 	print '</td></tr>';
 
@@ -1095,20 +1152,6 @@ if ($action == 'create' || $action == 'adduserldap')
         }
         print '</td></tr>';
     }
-
-	// EMail
-	print '<tr><td'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.$langs->trans("EMail").'</td>';
-	print '<td>';
-	if (! empty($ldap_mail))
-	{
-		print '<input type="hidden" name="email" value="'.$ldap_mail.'">';
-		print $ldap_mail;
-	}
-	else
-	{
-		print '<input size="40" type="text" name="email" value="'.GETPOST('email').'">';
-	}
-	print '</td></tr>';
 
 	// Accountancy code
 	if ($conf->accounting->enabled)
@@ -1188,19 +1231,19 @@ if ($action == 'create' || $action == 'adduserldap')
 
 	// TODO Move this into tab RH (HierarchicalResponsible must be on both tab)
 
-	// Position/Job
-	print '<tr><td class="titlefieldcreate">'.$langs->trans("PostOrFunction").'</td>';
-	print '<td>';
-	print '<input class="maxwidth200" type="text" name="job" value="'.GETPOST('job').'">';
-	print '</td></tr>';
-
 	// Default warehouse
-    if (! empty($conf->stock->enabled))
+	if (! empty($conf->stock->enabled) && ! empty($conf->global->USER_DEFAULT_WAREHOUSE))	// TODO What is goal of this. How it is used ?
     {
 		print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 		print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
 		print '</td></tr>';
 	}
+
+	// Position/Job
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("PostOrFunction").'</td>';
+	print '<td>';
+	print '<input class="maxwidth200" type="text" name="job" value="'.GETPOST('job', 'nohtml').'">';
+	print '</td></tr>';
 
 	if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
 		|| (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
@@ -1549,13 +1592,36 @@ else
 			print '</td>';
 			print "</tr>\n";
 
-			// Position/Job
-			print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
-			print '<td>'.$object->job.'</td>';
-			print '</tr>'."\n";
+			// Expense report validator
+			print '<tr><td>';
+			$text = $langs->trans("ForceUserExpenseValidator");
+			print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+			print '</td>';
+			print '<td>';
+			if (! empty($object->fk_user_expense_validator)) {
+				$evuser=new User($db);
+				$evuser->fetch($object->fk_user_expense_validator);
+				print $evuser->getNomUrl(1);
+			}
+			print '</td>';
+			print "</tr>\n";
+
+			// Holiday request validator
+			print '<tr><td>';
+			$text = $langs->trans("ForceUserHolidayValidator");
+			print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+			print '</td>';
+			print '<td>';
+			if (! empty($object->fk_user_holiday_validator)) {
+				$hvuser=new User($db);
+				$hvuser->fetch($object->fk_user_holiday_validator);
+				print $hvuser->getNomUrl(1);
+			}
+			print '</td>';
+			print "</tr>\n";
 
 			// Default warehouse
-            if (! empty($conf->stock->enabled))
+			if (! empty($conf->stock->enabled) && ! empty($conf->global->USER_DEFAULT_WAREHOUSE))	// TODO What is goal of this. How it is used ?
             {
 				require_once DOL_DOCUMENT_ROOT .'/product/stock/class/entrepot.class.php';
 				$warehousestatic=new Entrepot($db);
@@ -1565,7 +1631,12 @@ else
 				print '</td></tr>';
             }
 
-			//$childids = $user->getAllChildIds(1);
+            // Position/Job
+            print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
+            print '<td>'.$object->job.'</td>';
+            print '</tr>'."\n";
+
+            //$childids = $user->getAllChildIds(1);
 
 			if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
 				|| (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
@@ -1778,7 +1849,7 @@ else
 				if (! empty($object->email))
 				{
 					$langs->load("mails");
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=presend&amp;mode=init#presend">'.$langs->trans('SendMail').'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=presend&amp;mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
 				}
 				else
 				{
@@ -2111,7 +2182,7 @@ else
 				&& ($user->id != $object->id)                   // Don't downgrade ourself
 				&& (
 					(empty($conf->multicompany->enabled) && $nbAdmin >= 1)
-					|| (! empty($conf->multicompany->enabled) && ($object->entity > 0 || $nbSuperAdmin > 1))    // Don't downgrade a superadmin if alone
+					|| (! empty($conf->multicompany->enabled) && (($object->entity > 0 || ($user->entity == 0 && $object->entity == 0)) || $nbSuperAdmin > 1))    // Don't downgrade a superadmin if alone
 					)
 				)
 				{
@@ -2230,6 +2301,46 @@ else
 		   	print '</td>';
 		   	print "</tr>\n";
 
+			// Expense report validator
+			print '<tr><td class="titlefield">';
+			$text = $langs->trans("ForceUserExpenseValidator");
+			print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+			print '</td>';
+			print '<td>';
+			if ($caneditfield)
+			{
+				print $form->select_dolusers($object->fk_user_expense_validator, 'fk_user_expense_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'maxwidth300');
+			}
+			else
+			{
+				print '<input type="hidden" name="fk_user_expense_validator" value="'.$object->fk_user_expense_validator.'">';
+				$evuser=new User($db);
+				$evuser->fetch($object->fk_user_expense_validator);
+				print $evuser->getNomUrl(1);
+			}
+			print '</td>';
+			print "</tr>\n";
+
+			// Holiday request validator
+			print '<tr><td class="titlefield">';
+			$text = $langs->trans("ForceUserHolidayValidator");
+			print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+			print '</td>';
+			print '<td>';
+			if ($caneditfield)
+			{
+				print $form->select_dolusers($object->fk_user_holiday_validator, 'fk_user_holiday_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'maxwidth300');
+			}
+			else
+			{
+				print '<input type="hidden" name="fk_user_holiday_validator" value="'.$object->fk_user_holiday_validator.'">';
+				$hvuser=new User($db);
+				$hvuser->fetch($object->fk_user_holiday_validator);
+				print $hvuser->getNomUrl(1);
+			}
+			print '</td>';
+			print "</tr>\n";
+
 
 		   	print '</table><hr><table class="border centpercent">';
 
@@ -2265,7 +2376,7 @@ else
 			}
 
 			// Tel pro
-			print "<tr>".'<td>'.$langs->trans("PhonePro").'</td>';
+			print "<tr>".'<td>'.img_picto('', 'object_phoning').' '.$langs->trans("PhonePro").'</td>';
 			print '<td>';
 			if ($caneditfield  && empty($object->ldap_sid))
 			{
@@ -2279,7 +2390,7 @@ else
 			print '</td></tr>';
 
 			// Tel mobile
-			print "<tr>".'<td>'.$langs->trans("PhoneMobile").'</td>';
+			print "<tr>".'<td>'.img_picto('', 'object_phoning_mobile').' '.$langs->trans("PhoneMobile").'</td>';
 			print '<td>';
 			if ($caneditfield && empty($object->ldap_sid))
 			{
@@ -2293,7 +2404,7 @@ else
 			print '</td></tr>';
 
 			// Fax
-			print "<tr>".'<td>'.$langs->trans("Fax").'</td>';
+			print "<tr>".'<td>'.img_picto('', 'object_phoning_fax').' '.$langs->trans("Fax").'</td>';
 			print '<td>';
 			if ($caneditfield  && empty($object->ldap_sid))
 			{
@@ -2303,6 +2414,20 @@ else
 			{
 				print '<input type="hidden" name="office_fax" value="'.$object->office_fax.'">';
 				print $object->office_fax;
+			}
+			print '</td></tr>';
+
+			// EMail
+			print "<tr>".'<td'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.img_picto('', 'object_email').' '.$langs->trans("EMail").'</td>';
+			print '<td>';
+			if ($caneditfield  && empty($object->ldap_sid))
+			{
+				print '<input class="minwidth100" type="text" name="email" class="flat" value="'.$object->email.'">';
+			}
+			else
+			{
+				print '<input type="hidden" name="email" value="'.$object->email.'">';
+				print $object->email;
 			}
 			print '</td></tr>';
 
@@ -2373,20 +2498,6 @@ else
                 }
                 print '</td></tr>';
             }
-
-			// EMail
-			print "<tr>".'<td'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.$langs->trans("EMail").'</td>';
-			print '<td>';
-			if ($caneditfield  && empty($object->ldap_sid))
-			{
-				print '<input class="minwidth100" type="text" name="email" class="flat" value="'.$object->email.'">';
-			}
-			else
-			{
-				print '<input type="hidden" name="email" value="'.$object->email.'">';
-				print $object->email;
-			}
-			print '</td></tr>';
 
 			// OpenID url
 			if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER))
@@ -2531,7 +2642,7 @@ else
             		if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
 	            	{
 	            		print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
-	            		print "<td>".$mc->select_entities($object->entity, 'entity', '', 0, 1);		// last parameter 1 means, show also a choice 0=>'all entities'
+	            		print "<td>".$mc->select_entities($object->entity, 'entity', '', 0, 1, false, false, 1);		// last parameter 1 means, show also a choice 0=>'all entities'
 	            		print "</td></tr>\n";
 	            	}
 	            	else
@@ -2576,22 +2687,8 @@ else
 
 			// TODO Move this into tab RH (HierarchicalResponsible must be on both tab)
 
-			// Position/Job
-			print '<tr><td class="titlefield">'.$langs->trans("PostOrFunction").'</td>';
-			print '<td>';
-			if ($caneditfield)
-			{
-				print '<input size="30" type="text" name="job" value="'.$object->job.'">';
-			}
-			else
-			{
-				print '<input type="hidden" name="job" value="'.$object->job.'">';
-				print $object->job;
-			}
-			print '</td></tr>';
-
 			// Default warehouse
-            if (! empty($conf->stock->enabled))
+            if (! empty($conf->stock->enabled) && ! empty($conf->global->USER_DEFAULT_WAREHOUSE))	// TODO What is goal of this. How it is used ?
             {
                 print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
                 print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
@@ -2599,7 +2696,21 @@ else
                 print '</td></tr>';
             }
 
-			if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
+            // Position/Job
+            print '<tr><td class="titlefield">'.$langs->trans("PostOrFunction").'</td>';
+            print '<td>';
+            if ($caneditfield)
+            {
+            	print '<input size="30" type="text" name="job" value="'.$object->job.'">';
+            }
+            else
+            {
+            	print '<input type="hidden" name="job" value="'.$object->job.'">';
+            	print $object->job;
+            }
+            print '</td></tr>';
+
+            if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
 				|| (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
 			{
 				$langs->load("salaries");

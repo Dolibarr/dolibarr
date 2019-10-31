@@ -12,13 +12,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
- require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
+
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/api_members.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/api_products.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/api_contacts.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/api_thirdparties.class.php';
 
 /**
  * API class for categories
@@ -81,7 +86,7 @@ class Categories extends DolibarrApi
             throw new RestException(404, 'category not found');
         }
 
-        if ( ! DolibarrApi::_checkAccessToResource('category', $this->category->id)) {
+        if ( ! DolibarrApi::_checkAccessToResource('categorie', $this->category->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -285,7 +290,7 @@ class Categories extends DolibarrApi
         unset($object->total_tva);
         unset($object->lines);
         unset($object->fk_incoterms);
-        unset($object->libelle_incoterms);
+        unset($object->label_incoterms);
         unset($object->location_incoterms);
         unset($object->civility_id);
         unset($object->name);
@@ -334,5 +339,65 @@ class Categories extends DolibarrApi
             $category[$field] = $data[$field];
         }
         return $category;
+    }
+
+    /**
+     * Get the list of objects in a category.
+     *
+     * @param int        $id         ID of category
+     * @param string     $type       Type of category ('member', 'customer', 'supplier', 'product', 'contact')
+     * @param int        $onlyids    Return only ids of objects (consume less memory)
+     *
+     * @return mixed
+     *
+     * @url GET {id}/objects
+     */
+    public function getObjects($id, $type, $onlyids = 0)
+    {
+		dol_syslog("getObjects($id, $type, $onlyids)", LOG_DEBUG);
+
+		if (! DolibarrApiAccess::$user->rights->categorie->lire) {
+			throw new RestException(401);
+		}
+
+        if (empty($type))
+        {
+			throw new RestException(500, 'The "type" parameter is required.');
+        }
+
+        $result = $this->category->fetch($id);
+        if (! $result) {
+            throw new RestException(404, 'category not found');
+        }
+
+		if (! DolibarrApi::_checkAccessToResource('category', $this->category->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->category->getObjectsInCateg($type, $onlyids);
+
+		if ($result < 0) {
+			throw new RestException(503, 'Error when retrieving objects list : '.$this->category->error);
+		}
+
+		$objects = $result;
+        $cleaned_objects = array();
+        if ($type == 'member') {
+			$objects_api = new Members();
+		} elseif ($type == 'customer' || $type == 'supplier') {
+			$objects_api = new Thirdparties();
+		} elseif ($type == 'product') {
+			$objects_api = new Products();
+		} elseif ($type == 'contact') {
+			$objects_api = new Contacts();
+		}
+		if (is_object($objects_api))
+		{
+    		foreach ($objects as $obj) {
+    			$cleaned_objects[] = $objects_api->_cleanObjectDatas($obj);
+    		}
+		}
+
+		return $cleaned_objects;
     }
 }

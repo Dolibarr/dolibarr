@@ -1,19 +1,14 @@
 # Dolibarr language file - Source file is en_US - holiday
-Holidays=Licencias
-CPTitreMenu=Licencias
 MenuAddCP=Nueva solicitud de licencia
-NotActiveModCP=Debe activar el módulo de licencias para ver esta página.
 AddCP=Hacer una solicitud de licencia
 DateDebCP=Fecha de inicio
 DateFinCP=Fecha de finalización
 ApprovedCP=Aprobado
 CancelCP=Cancelado
 RefuseCP=Rechazado
-ListeCP=Lista de licencias
 ReviewedByCP=Será aprobado por
 SendRequestCP=Crear solicitud de licencia
 DelayToRequestCP=Las solicitudes de permiso deben ser hechas al menos <b> %s día(s) </b> antes.
-MenuConfCP=Balance de licencias
 EditCP=Editar
 ActionCancelCP=Cancelar
 MotifCP=Razón

@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2012      Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013      Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2016 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2013-2019 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2019      Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -55,8 +55,7 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield='t.status,t.priority';
 if (! $sortorder) $sortorder='DESC,ASC';
 
-$search_status=GETPOST('search_status', 'int')?GETPOST('search_status', 'int'):GETPOST('status', 'int');
-if ($search_status == '') $search_status=-2;
+$search_status=(GETPOSTISSET('search_status')?GETPOST('search_status', 'int'):GETPOST('status', 'int'));
 
 //Search criteria
 $search_label=GETPOST("search_label", 'alpha');
@@ -71,7 +70,8 @@ $hookmanager->initHooks(array('cronjoblist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('cronjob');
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 
@@ -252,8 +252,7 @@ $sql.= " t.libname,";
 $sql.= " t.test";
 $sql.= " FROM ".MAIN_DB_PREFIX."cronjob as t";
 $sql.= " WHERE entity IN (0,".$conf->entity.")";
-if ($search_status >= 0 && $search_status < 2) $sql.= " AND t.status = ".(empty($search_status)?'0':'1');
-if ($search_status == 2) $sql.= " AND t.status = 2";
+if ($search_status >= 0 && $search_status < 2 && $search_status != '') $sql.= " AND t.status = ".(empty($search_status)?'0':'1');
 //Manage filter
 if (is_array($filter) && count($filter)>0) {
 	foreach($filter as $key => $value) {
@@ -299,11 +298,11 @@ $num = $db->num_rows($result);
 $arrayofselected=is_array($toselect)?$toselect:array();
 
 $param = '';
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-if ($search_status)   $param.='&search_status='.$search_status;
-if ($search_label)	  $param.='&search_label='.$search_label;
-if ($optioncss != '') $param.='&optioncss='.$optioncss;
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+if ($search_status)   $param.='&search_status='.urlencode($search_status);
+if ($search_label)	  $param.='&search_label='.urlencode($search_label);
+if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -339,23 +338,10 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-print '<input type="hidden" name="search_status" value="'.$search_status.'" >';
-print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
-// Line with explanation and button new job
-$newcardbutton='';
-if ($user->rights->cron->create)
-{
-	$newcardbutton.='<a class="butActionNew" style="margin-right: 0px;margin-left: 0px;" href="'.DOL_URL_ROOT.'/cron/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans("CronCreateJob").'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
-}
-else
-{
-	$newcardbutton.='<a class="butActionNewRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'"><span class="valignmiddle text-plus-circle">'.$langs->trans("CronCreateJob").'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
-}
+// Line with explanation and button new
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), $langs->trans('CronCreateJob'), 'fa fa-plus-circle', DOL_URL_ROOT.'/cron/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $user->rights->cron->create);
+
 
 print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_setup', 0, $newcardbutton, '', $limit);
 
@@ -393,7 +379,7 @@ print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre" align="center">';
-print $form->selectarray('search_status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Enabled"), '-2'=>$langs->trans("EnabledAndDisabled"), '2'=>$langs->trans("Archived")), $search_status, 1);
+print $form->selectarray('search_status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Enabled")), $search_status, 1);
 print '</td><td class="liste_titre right">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
@@ -568,15 +554,22 @@ if ($num > 0)
 		}
 		if ($user->rights->cron->delete)
 		{
-			print "<a href=\"".$_SERVER["PHP_SELF"]."?id=".$obj->rowid."&action=delete".($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param;
+			print "<a href=\"".$_SERVER["PHP_SELF"]."?id=".$obj->rowid."&action=delete".($page?'&page='.$page:'').($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param;
 			print "\" title=\"".dol_escape_htmltag($langs->trans('CronDelete'))."\">".img_picto($langs->trans('CronDelete'), 'delete')."</a> &nbsp;";
 		} else {
 			print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('NotEnoughPermissions'))."\">".img_picto($langs->trans('NotEnoughPermissions'), 'delete')."</a> &nbsp; ";
 		}
 		if ($user->rights->cron->execute)
 		{
-		    if (!empty($obj->status)) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=execute'.(empty($conf->global->CRON_KEY)?'':'&securitykey='.$conf->global->CRON_KEY).($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param."\" title=\"".dol_escape_htmltag($langs->trans('CronExecute'))."\">".img_picto($langs->trans('CronExecute'), "play").'</a>';
-		    else print '<a href="#" class="cursordefault" title="'.dol_escape_htmltag($langs->trans('JobDisabled')).'">'.img_picto($langs->trans('JobDisabled'), "playdisabled").'</a>';
+			if (!empty($obj->status)) {
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=execute';
+				print (empty($conf->global->CRON_KEY)?'':'&securitykey='.$conf->global->CRON_KEY);
+				print ($sortfield?'&sortfield='.$sortfield:'');
+				print ($sortorder?'&sortorder='.$sortorder:'');
+				print $param."\" title=\"".dol_escape_htmltag($langs->trans('CronExecute'))."\">".img_picto($langs->trans('CronExecute'), "play").'</a>';
+			} else {
+				print '<a href="#" class="cursordefault" title="'.dol_escape_htmltag($langs->trans('JobDisabled')).'">'.img_picto($langs->trans('JobDisabled'), "playdisabled").'</a>';
+			}
 		} else {
 			print '<a href="#" class="cursornotallowed" title="'.dol_escape_htmltag($langs->trans('NotEnoughPermissions')).'">'.img_picto($langs->trans('NotEnoughPermissions'), "playdisabled").'</a>';
 		}

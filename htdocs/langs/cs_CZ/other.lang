@@ -184,12 +184,14 @@ NumberOfCustomerInvoices=Počet zákaznických faktur
 NumberOfSupplierProposals=Počet návrhů prodejců
 NumberOfSupplierOrders=Počet objednávek
 NumberOfSupplierInvoices=Počet faktur dodavatelů
+NumberOfContracts=Number of contracts
 NumberOfUnitsProposals=Počet jednotek na návrh
 NumberOfUnitsCustomerOrders=Počet jednotek na objednávkách prodeje
 NumberOfUnitsCustomerInvoices=Počet jednotek na fakturách zákazníků
 NumberOfUnitsSupplierProposals=Počet jednotek v návrzích prodejců
 NumberOfUnitsSupplierOrders=Počet jednotek na objednávkách
 NumberOfUnitsSupplierInvoices=Počet jednotek na faktorech dodavatelů
+NumberOfUnitsContracts=Number of units on contracts
 EMailTextInterventionAddedContact=Byla přiřazena%s nová intervence .
 EMailTextInterventionValidated=Zásah %s byl ověřen.
 EMailTextInvoiceValidated=Faktura %s byla ověřena.
@@ -246,10 +248,10 @@ YourPasswordHasBeenReset=Vaše heslo bylo úspěšně obnoveno
 ApplicantIpAddress=IP adresa žadatele
 SMSSentTo=SMS odeslaná na %s
 MissingIds=Chybějící ID
-ThirdPartyCreatedByEmailCollector=Third party created by email collector from email MSGID %s
-ContactCreatedByEmailCollector=Contact/address created by email collector from email MSGID %s
-ProjectCreatedByEmailCollector=Project created by email collector from email MSGID %s
-TicketCreatedByEmailCollector=Ticket created by email collector from email MSGID %s
+ThirdPartyCreatedByEmailCollector=Subjekt vytvořený sběratelem e-mailů z e-mailu MSGID %s
+ContactCreatedByEmailCollector=Kontakt/adresa vytvořená sběratelem e-mailů z e-mailu MSGID %s
+ProjectCreatedByEmailCollector=Projekt vytvořený sběratelem e-mailů z e-mailu MSGID %s
+TicketCreatedByEmailCollector=Lístek vytvořený sběratelem e-mailů z e-mailu MSGID %s
 
 ##### Export #####
 ExportsArea=Exportní plocha
@@ -268,5 +270,5 @@ WEBSITE_IMAGEDesc=Relativní cesta obrazového média. Můžete si to nechat pr�
 WEBSITE_KEYWORDS=Klíčová slova
 LinesToImport=Řádky, které chcete importovat
 
-MemoryUsage=Memory usage
-RequestDuration=Duration of request
+MemoryUsage=Využití paměti
+RequestDuration=Doba trvání žádosti

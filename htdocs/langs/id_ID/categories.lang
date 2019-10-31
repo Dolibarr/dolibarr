@@ -1,14 +1,14 @@
 # Dolibarr language file - Source file is en_US - categories
-Rubrique=Tag/Category
-Rubriques=Tags/Categories
-RubriquesTransactions=Tags/Categories of transactions
-categories=tags/categories
-NoCategoryYet=No tag/category of this type created
-In=In
-AddIn=Add in
-modify=modify
-Classify=Classify
-CategoriesArea=Tags/Categories area
+Rubrique=Kategori
+Rubriques=Kategori
+RubriquesTransactions=Kategori Transaksi
+categories=Kategori
+NoCategoryYet=Tidak ada kategori jenis ini yang dibuat
+In=Di/Pada
+AddIn=Tambahan
+modify=Modifikasi
+Classify=Klasifikasi
+CategoriesArea=Kategori area
 ProductsCategoriesArea=Products/Services tags/categories area
 SuppliersCategoriesArea=Vendors tags/categories area
 CustomersCategoriesArea=Customers tags/categories area

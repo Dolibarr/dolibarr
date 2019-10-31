@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -70,7 +70,7 @@ function showPaypalPaymentUrl($type, $ref)
     $langs->load("paybox");
     $servicename='PayPal';
     $out='<br><br>';
-    $out.=img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'<br>';
+    $out.=img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'<br>';
     $url=getPaypalPaymentUrl(0, $type, $ref);
     $out.='<input type="text" id="paypalurl" class="quatrevingtpercent" value="'.$url.'">';
     $out.=ajax_autoselect("paypalurl", 0);
@@ -88,7 +88,7 @@ function showPaypalPaymentUrl($type, $ref)
  * @param	string	$freetag	Free tag
  * @return	string				Url string
  */
-function getPaypalPaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag = 'your_free_tag')
+function getPaypalPaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag = 'your_tag')
 {
 	global $conf;
 

@@ -1,18 +1,21 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Accounting account used for user third parties
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated accounting account defined on user card will be used for Subledger accouting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accouting account on user is not defined.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accounting account by default for wage payments
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Účtovací účet používaný pro třetí strany
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Účelový účet určený na uživatelské kartě bude použit pouze pro účetnictví společnosti Subledger. Ten bude použit pro hlavní knihu a jako výchozí hodnota účtování společnosti Subledger, pokud není určen uživatelský účtovací účet pro uživatele.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Účtovací účet je výchozí pro mzdové platby
 Salary=Mzda
 Salaries=Mzdy
 NewSalaryPayment=Nová platba mzdy
+AddSalaryPayment=Přidat platbu
 SalaryPayment=Platba mzdy
 SalariesPayments=Platby mezd
 ShowSalaryPayment=Ukázat platbu mzdy
 THM=Průměrná hodinová sazba
 TJM=Průměrná denní sazba
 CurrentSalary=Současná mzda
-THMDescription=Tato hodnota může být použita pro výpočet nákladů času spotřebovaného na projektu zadaného uživatele, pokud je použit modul projektu
-TJMDescription=Tato hodnota je v současné době pouze jako informace a nebyla využita k výpočtu
-LastSalaries=Latest %s salary payments
-AllSalaries=All salary payments
-SalariesStatistics=Statistiques salaires
+THMDescription=Tato hodnota může být použita pro výpočet nákladů na čas strávený na projektu zadaný uživateli, pokud je použit modul projektu
+TJMDescription=Tato hodnota je momentálně pouze informativní a nepoužívá se pro výpočet
+LastSalaries=Posledních %s plateb
+AllSalaries=Všechny mzdové platby
+SalariesStatistics=Statistika platů
+# Export
+SalariesAndPayments=Salaries and payments

@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -105,14 +105,15 @@ else
 	$usertoprocess=new User($db);
 }
 
-$object=new Task($db);
+$object = new Task($db);
+$project = new Project($db);
 
 // Extra fields
 $extrafields = new ExtraFields($db);
 
 $extralabels = array();
 // fetch optionals attributes and labels
-//$extralabels += $extrafields->fetch_name_optionals_label('projet');
+//$extralabels += $extrafields->fetch_name_optionals_label($object->table_element);
 $extralabels += $extrafields->fetch_name_optionals_label('projet_task');
 
 // Definition of fields for list
@@ -125,16 +126,16 @@ $arrayfields['t.progress']=array('label'=>'ProgressDeclared', 'checked'=>1, 'ena
  'p.fk_opp_status'=>array('label'=>$langs->trans("OpportunityStatusShort"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>104),
  'p.opp_percent'=>array('label'=>$langs->trans("OpportunityProbabilityShort"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>105),
  'p.budget_amount'=>array('label'=>$langs->trans("Budget"), 'checked'=>0, 'position'=>110),
- 'p.bill_time'=>array('label'=>$langs->trans("BillTimeShort"), 'checked'=>0, 'position'=>115),
+ 'p.usage_bill_time'=>array('label'=>$langs->trans("BillTimeShort"), 'checked'=>0, 'position'=>115),
  );
  */
 // Extra fields
-if (is_array($extrafields->attributes['projet_task']['label']) && count($extrafields->attributes['projet_task']['label']) > 0)
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-    foreach($extrafields->attributes['projet_task']['label'] as $key => $val)
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
     {
-        if (! empty($extrafields->attributes['projet_task']['list'][$key]))
-            $arrayfields["efpt.".$key]=array('label'=>$extrafields->attributes['projet_task']['label'][$key], 'checked'=>(($extrafields->attributes['projet_task']['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes['projet_task']['pos'][$key], 'enabled'=>(abs($extrafields->attributes['projet_task']['list'][$key])!=3 && $extrafields->attributes['projet_task']['perms'][$key]));
+    	if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+    		$arrayfields["efpt.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
     }
 }
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -312,7 +313,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 		{
 			$object->fetch($key);
 
-			if (GETPOSTISSET($key . 'progress')) $object->progress = GETPOST($key . 'progress', 'int');
+			if (GETPOSTISSET($taskid . 'progress')) $object->progress = GETPOST($taskid . 'progress', 'int');
 			else unset($object->progress);
 
 			$object->timespent_duration = $val;
@@ -435,7 +436,7 @@ $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0, $usertoprocess, ($proj
 
 llxHeader("", $title, "", '', '', '', array('/core/js/timesheet.js'));
 
-//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'title_project');
+//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'project');
 
 $param='';
 $param.=($mode?'&mode='.urlencode($mode):'');
@@ -533,7 +534,7 @@ $moreforfilter='';
 // If the user can view user other than himself
 $moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.='<div class="inline-block hideonsmartphone">'.$langs->trans('User'). ' </div>';
-$includeonly='hierachyme';
+$includeonly='hierarchyme';
 if (empty($user->rights->user->user->lire)) $includeonly=array($user->id);
 $moreforfilter.=$form->select_dolusers($search_usertoprocessid?$search_usertoprocessid:$usertoprocess->id, 'search_usertoprocessid', $user->rights->user->user->lire?0:0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200 marginleftonly');
 $moreforfilter.='</div>';
@@ -606,27 +607,27 @@ print '</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td>'.$langs->trans("Project").'</td>';
-if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td>'.$langs->trans("ThirdParty").'</td>';
-print '<td>'.$langs->trans("Task").'</td>';
+if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<th>'.$langs->trans("Project").'</th>';
+if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<th>'.$langs->trans("ThirdParty").'</th>';
+print '<th>'.$langs->trans("Task").'</th>';
 // TASK fields
 $extrafieldsobjectkey='projet_task';
 $extrafieldsobjectprefix='efpt.';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 if (! empty($arrayfields['t.planned_workload']['checked']))
 {
-    print '<td class="right leftborder plannedworkload maxwidth100">'.$langs->trans("PlannedWorkload").'</td>';
+    print '<th class="right leftborder plannedworkload maxwidth100">'.$langs->trans("PlannedWorkload").'</th>';
 }
 if (! empty($arrayfields['t.progress']['checked']))
 {
-    print '<td class="right maxwidth100">'.$langs->trans("ProgressDeclared").'</td>';
+    print '<th class="right maxwidth100">'.$langs->trans("ProgressDeclared").'</th>';
 }
 /*print '<td class="right maxwidth100">'.$langs->trans("TimeSpent").'</td>';
 if ($usertoprocess->id == $user->id) print '<td class="right maxwidth100">'.$langs->trans("TimeSpentByYou").'</td>';
 else print '<td class="right maxwidth100">'.$langs->trans("TimeSpentByUser").'</td>';*/
-print '<td class="right maxwidth100">'.$langs->trans("TimeSpent").'<br>('.$langs->trans("Everybody").')</td>';
-print '<td class="right maxwidth100">'.$langs->trans("TimeSpent").($usertoprocess->firstname?'<br>('.dol_trunc($usertoprocess->firstname, 10).')':'').'</td>';
-if (empty($conf->global->PROJECT_USE_DECIMAL_DAY)) print '<td class="center leftborder">'.$langs->trans("HourStart").'</td>';
+print '<th class="right maxwidth100">'.$langs->trans("TimeSpent").'<br>('.$langs->trans("Everybody").')</th>';
+print '<th class="right maxwidth100">'.$langs->trans("TimeSpent").($usertoprocess->firstname?'<br>('.dol_trunc($usertoprocess->firstname, 10).')':'').'</th>';
+if (empty($conf->global->PROJECT_USE_DECIMAL_DAY)) print '<th class="center leftborder">'.$langs->trans("HourStart").'</td>';
 
 // By default, we can edit only tasks we are assigned to
 $restrictviewformytask=((! isset($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED)) ? 2 : $conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED);
@@ -663,8 +664,8 @@ if (! $isavailable[$daytoparse]['morning'] && ! $isavailable[$daytoparse]['after
 elseif (! $isavailable[$daytoparse]['morning'])   $cssonholiday.='onholidaymorning ';
 elseif (! $isavailable[$daytoparse]['afternoon']) $cssonholiday.='onholidayafternoon ';
 
-print '<td class="center'.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'">'.$langs->trans("Duration").'</td>';
-print '<td class="center">'.$langs->trans("Note").'</td>';
+print '<th class="center'.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'">'.$langs->trans("Duration").'</th>';
+print '<th class="center">'.$langs->trans("Note").'</th>';
 //print '<td class="center"></td>';
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 
@@ -766,19 +767,19 @@ if (count($tasksarray) > 0)
 		//{
 			print '<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center" size="2" disabled="" id="timespent[-1][0]" name="task[-1][0]" value="';
 			if ($timeonothertasks)
-            {
-                $fullhour = convertSecondToTime($timeonothertasks, $timespentoutputformat);
-                print $fullhour;
-                if (!empty($conf->global->PROJECT_ENABLE_WORKING_TIME))
-                {
-                    $workingdelay=convertSecondToTime($timeonothertasks, $working_timespentoutputformat, $working_hours_per_day_in_seconds, $working_days_per_weeks);
-                    if ($workingdelay != $fullhour)
-                    {
-                        if (!empty($fullhour)) print '<br>';
-                        print '('.$workingdelay.')';
-                    }
-                }
-            }
+			{
+				$fullhour = convertSecondToTime($timeonothertasks, $timespentoutputformat);
+				print $fullhour;
+				if (!empty($conf->global->PROJECT_ENABLE_WORKING_TIME))
+				{
+				    $workingdelay=convertSecondToTime($timeonothertasks, $working_timespentoutputformat, $working_hours_per_day_in_seconds, $working_days_per_weeks);
+				    if ($workingdelay != $fullhour)
+				    {
+					if (!empty($fullhour)) print '<br>';
+					print '('.$workingdelay.')';
+				    }
+				}
+			}
 			print '"></span>';
 		//}
 		print '</td>';

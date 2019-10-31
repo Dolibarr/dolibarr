@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2013 Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2006      Andre Cianfarani			<acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2014 Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2019 Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2010-2017 Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2014 Christophe Battarel  	<christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cedric Salvador          <csalvador@gpcsolutions.fr>
@@ -27,7 +27,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -172,6 +172,7 @@ class Propal extends CommonObject
 
 	/**
      * @var int ID
+     * @deprecated
      */
 	public $fk_address;
 
@@ -415,7 +416,7 @@ class Propal extends CommonObject
      * 		@param    	float		$remise_percent  	Pourcentage de remise de la ligne
      * 		@param    	string		$price_base_type	HT or TTC
      * 		@param    	float		$pu_ttc             Prix unitaire TTC
-     * 		@param    	int			$info_bits			Bits de type de lignes
+     * 		@param    	int			$info_bits			Bits for type of lines
      *      @param      int			$type               Type of line (0=product, 1=service). Not used if fk_product is defined, the type of product is used.
      *      @param      int			$rang               Position of line
      *      @param		int			$special_code		Special code (also used by externals modules!)
@@ -473,7 +474,7 @@ class Propal extends CommonObject
 
 			// Check parameters
 			if ($type < 0) return -1;
-			
+
 			if ($date_start && $date_end && $date_start > $date_end) {
 				$langs->load("errors");
 				$this->error=$langs->trans('ErrorStartDateGreaterEnd');
@@ -530,11 +531,11 @@ class Propal extends CommonObject
 			$pu_ht_devise = $tabprice[19];
 
 			// Rang to use
-			$rangtouse = $rang;
-			if ($rangtouse == -1)
+			$ranktouse = $rang;
+			if ($ranktouse == -1)
 			{
 				$rangmax = $this->line_max($fk_parent_line);
-				$rangtouse = $rangmax + 1;
+				$ranktouse = $rangmax + 1;
 			}
 
 			// TODO A virer
@@ -568,7 +569,7 @@ class Propal extends CommonObject
 			$this->line->fk_remise_except=$fk_remise_except;
 			$this->line->remise_percent=$remise_percent;
 			$this->line->subprice=$pu_ht;
-			$this->line->rang=$rangtouse;
+			$this->line->rang=$ranktouse;
 			$this->line->info_bits=$info_bits;
 			$this->line->total_ht=$total_ht;
 			$this->line->total_tva=$total_tva;
@@ -690,7 +691,7 @@ class Propal extends CommonObject
 		if (empty($qty) && empty($special_code)) $special_code=3;    // Set option tag
 		if (! empty($qty) && $special_code == 3) $special_code=0;    // Remove option tag
 		if (empty($type)) $type=0;
-			
+
         if ($date_start && $date_end && $date_start > $date_end) {
             $langs->load("errors");
             $this->error=$langs->trans('ErrorStartDateGreaterEnd');
@@ -890,7 +891,6 @@ class Propal extends CommonObject
 		$now=dol_now();
 
 		// Clean parameters
-		if (empty($this->entity)) $this->entity = $conf->entity;
 		if (empty($this->date)) $this->date=$this->datep;
 		$this->fin_validite = $this->date + ($this->duree_validite * 24 * 3600);
 		if (empty($this->availability_id)) $this->availability_id=0;
@@ -1000,7 +1000,7 @@ class Propal extends CommonObject
 		$sql.= ", ".($this->fk_project?$this->fk_project:"null");
 		$sql.= ", ".(int) $this->fk_incoterms;
 		$sql.= ", '".$this->db->escape($this->location_incoterms)."'";
-		$sql.= ", ".$this->entity;
+		$sql.= ", ".setEntity($this);
 		$sql.= ", ".(int) $this->fk_multicurrency;
 		$sql.= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql.= ", ".(double) $this->multicurrency_tx;
@@ -1056,14 +1056,6 @@ class Propal extends CommonObject
                 	}
                 }
 
-                // Add linked object (deprecated, use ->linkedObjectsIds instead)
-                if (! $error && $this->origin && $this->origin_id)
-                {
-                    dol_syslog('Deprecated use of linked object, use ->linkedObjectsIds instead', LOG_WARNING);
-                	$ret = $this->add_object_linked();
-                	if (! $ret)	dol_print_error($this->db);
-                }
-
                 /*
                  *  Insertion du detail des produits dans la base
                  *  Insert products detail in database
@@ -1091,7 +1083,7 @@ class Propal extends CommonObject
 						$vatrate = $line->tva_tx;
 						if ($line->vat_src_code && ! preg_match('/\(.*\)/', $vatrate)) $vatrate.=' ('.$line->vat_src_code.')';
 
-    $result = $this->addline(
+						$result = $this->addline(
 							$line->desc,
 							$line->subprice,
 							$line->qty,
@@ -1133,15 +1125,15 @@ class Propal extends CommonObject
 				}
 
 				// Set delivery address
-				if (! $error && $this->fk_delivery_address)
+				/*if (! $error && $this->fk_delivery_address)
 				{
 					$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
 					$sql.= " SET fk_delivery_address = ".$this->fk_delivery_address;
 					$sql.= " WHERE ref = '".$this->db->escape($this->ref)."'";
-					$sql.= " AND entity = ".$conf->entity;
+					$sql.= " AND entity = ".setEntity($this);
 
 					$result=$this->db->query($sql);
-				}
+				}*/
 
 				if (! $error)
 				{
@@ -1226,12 +1218,13 @@ class Propal extends CommonObject
 	/**
 	 *		Load an object from its id and create a new one in database
 	 *
-	 *		@param		int				$socid			Id of thirdparty
-	 * 	 	@return		int								New id of clone
+	 *      @param	    User	$user		    User making the clone
+	 *		@param		int		$socid			Id of thirdparty
+	 * 	 	@return		int						New id of clone
 	 */
-    public function createFromClone($socid = 0)
+    public function createFromClone(User $user, $socid = 0)
 	{
-		global $user,$conf,$hookmanager;
+		global $conf,$hookmanager;
 
 		dol_include_once('/projet/class/project.class.php');
 
@@ -1294,7 +1287,11 @@ class Propal extends CommonObject
 		$object->datep		= $now;    // deprecated
 		$object->fin_validite	= $object->date + ($object->duree_validite * 24 * 3600);
 		if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) $object->ref_client	= '';
-
+		if ($conf->global->MAIN_DONT_KEEP_NOTE_ON_CLONING==1)
+		{
+				 $object->note_private = '';
+                                 $object->note_public = '';
+        }
 		// Create clone
 		$object->context['createfromclone']='createfromclone';
 		$result=$object->create($user);
@@ -1329,9 +1326,9 @@ class Propal extends CommonObject
 			// Hook of thirdparty module
 			if (is_object($hookmanager))
 			{
-				$parameters=array('objFrom'=>$this,'clonedObj'=>$clonedObj);
+				$parameters=array('objFrom'=>$this,'clonedObj'=>$object);
 				$action='';
-				$reshook=$hookmanager->executeHooks('createFrom', $parameters, $clonedObj, $action);    // Note that $action and $object may have been modified by some hooks
+				$reshook=$hookmanager->executeHooks('createFrom', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) $error++;
 			}
 		}
@@ -1382,7 +1379,7 @@ class Propal extends CommonObject
 		$sql.= ", p.fk_incoterms, p.location_incoterms";
 		$sql.= ", p.fk_multicurrency, p.multicurrency_code, p.multicurrency_tx, p.multicurrency_total_ht, p.multicurrency_total_tva, p.multicurrency_total_ttc";
 		$sql.= ", p.tms as date_modification";
-		$sql.= ", i.libelle as libelle_incoterms";
+		$sql.= ", i.libelle as label_incoterms";
 		$sql.= ", c.label as statut_label";
 		$sql.= ", ca.code as availability_code, ca.label as availability";
 		$sql.= ", dr.code as demand_reason_code, dr.label as demand_reason";
@@ -1470,7 +1467,7 @@ class Propal extends CommonObject
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
 				$this->location_incoterms = $obj->location_incoterms;
-				$this->libelle_incoterms = $obj->libelle_incoterms;
+				$this->label_incoterms = $obj->label_incoterms;
 
 				// Multicurrency
 				$this->fk_multicurrency 		= $obj->fk_multicurrency;
@@ -1614,11 +1611,14 @@ class Propal extends CommonObject
 	/**
 	 * Load array lines
 	 *
-	 * @param		int		$only_product	Return only physical products
+	 *	@param		int		$only_product	Return only physical products
+	 *	@param		int		$loadalsotranslation	Return translation for products
+	 *
 	 * @return		int						<0 if KO, >0 if OK
 	 */
-    public function fetch_lines($only_product = 0)
+	public function fetch_lines($only_product = 0, $loadalsotranslation = 0)
 	{
+		global $langs, $conf;
         // phpcs:enable
 		$this->lines=array();
 
@@ -1712,6 +1712,13 @@ class Propal extends CommonObject
 
 				$line->fetch_optionals();
 
+				// multilangs
+        		if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($objp->fk_product) && ! empty($loadalsotranslation)) {
+                    $line = new Product($this->db);
+                    $line->fetch($objp->fk_product);
+                    $line->getMultiLangs();
+        		}
+
 				$this->lines[$i]        = $line;
 				//dol_syslog("1 ".$line->fk_product);
 				//print "xx $i ".$this->lines[$i]->fk_product;
@@ -1738,9 +1745,9 @@ class Propal extends CommonObject
 	 */
     public function valid($user, $notrigger = 0)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
 		global $conf;
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error=0;
 
@@ -1807,14 +1814,18 @@ class Propal extends CommonObject
 			// Rename directory if dir was a temporary ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref))
 			{
-				// Rename of propal directory ($this->ref = old ref, $num = new ref)
-				// to  not lose the linked files
+				// Now we rename also files into index
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'propale/".$this->db->escape($this->newref)."'";
+				$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'propale/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$resql = $this->db->query($sql);
+				if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($num);
 				$dirsource = $conf->propal->multidir_output[$this->entity].'/'.$oldref;
 				$dirdest = $conf->propal->multidir_output[$this->entity].'/'.$newref;
-
-				if (file_exists($dirsource))
+				if (! $error && file_exists($dirsource))
 				{
 					dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
 					if (@rename($dirsource, $dirdest))
@@ -3262,21 +3273,24 @@ class Propal extends CommonObject
 
 			$delay_warning = 0;
 			$statut = 0;
-			$label = '';
+			$label = $labelShort = '';
 			if ($mode == 'opened') {
 				$delay_warning=$conf->propal->cloture->warning_delay;
 				$statut = self::STATUS_VALIDATED;
 				$label = $langs->trans("PropalsToClose");
+				$labelShort = $langs->trans("ToAcceptRefuse");
 			}
 			if ($mode == 'signed') {
 				$delay_warning=$conf->propal->facturation->warning_delay;
 				$statut = self::STATUS_SIGNED;
 				$label = $langs->trans("PropalsToBill");         // We set here bill but may be billed or ordered
+				$labelShort = $langs->trans("ToBill");
 			}
 
 			$response = new WorkboardResponse();
 			$response->warning_delay = $delay_warning/60/60/24;
 			$response->label = $label;
+			$response->labelShort = $labelShort;
 			$response->url = DOL_URL_ROOT.'/comm/propal/list.php?viewstatut='.$statut.'&mainmenu=commercial&leftmenu=propals';
 			$response->url_late = DOL_URL_ROOT.'/comm/propal/list.php?viewstatut='.$statut.'&mainmenu=commercial&leftmenu=propals&sortfield=p.datep&sortorder=asc';
 			$response->img = img_object('', "propal");
@@ -3389,7 +3403,7 @@ class Propal extends CommonObject
 			{
 				$prodid = mt_rand(1, $num_prods);
 				$line->fk_product=$prodids[$prodid];
-		$line->product_ref='SPECIMEN';
+		        $line->product_ref='SPECIMEN';
 			}
 
 			$this->lines[$xnbp]=$line;
@@ -3470,7 +3484,6 @@ class Propal extends CommonObject
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 			foreach ($dirmodels as $reldir) {
-
 				$dir = dol_buildpath($reldir."core/modules/propale/");
 
 				// Load file with numbering class (if found)
@@ -3501,7 +3514,7 @@ class Propal extends CommonObject
 		else
 		{
 			$langs->load("errors");
-			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete");
+			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Proposal"));
 			return "";
 		}
 	}
@@ -3613,7 +3626,6 @@ class Propal extends CommonObject
 		$langs->load("propale");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'azur';
 
 			if ($this->modelpdf) {
@@ -3907,7 +3919,7 @@ class PropaleLigne extends CommonObjectLine
 		if (empty($this->multicurrency_total_tva)) $this->multicurrency_total_tva=0;
 		if (empty($this->multicurrency_total_ttc)) $this->multicurrency_total_ttc=0;
 
-	   // if buy price not defined, define buyprice as configured in margin admin
+	    // if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0 && $pa_ht_isemptystring)
 		{
 			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0)
@@ -4029,7 +4041,6 @@ class PropaleLigne extends CommonObjectLine
 		dol_syslog("PropaleLigne::delete", LOG_DEBUG);
 		if ($this->db->query($sql) )
 		{
-
 			// Remove extrafields
 			if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
 			{

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Create the autoloader for Luracast
@@ -169,9 +169,6 @@ class DolibarrApiAccess implements iAuthenticate
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName
 	/**
 	 * @return string string to be used with WWW-Authenticate header
-	 * @example Basic
-	 * @example Digest
-	 * @example OAuth
 	 */
     public function __getWWWAuthenticateString()
     {

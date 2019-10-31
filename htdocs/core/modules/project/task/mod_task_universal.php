@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -32,7 +32,7 @@ class mod_task_universal extends ModeleNumRefTask
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
@@ -55,7 +55,7 @@ class mod_task_universal extends ModeleNumRefTask
 
 
     /**
-     *  Renvoi la description du modele de numerotation
+     *  Returns the description of the numbering model
      *
      *  @return     string      Texte descripif
      */
@@ -96,7 +96,7 @@ class mod_task_universal extends ModeleNumRefTask
     }
 
     /**
-     *  Renvoi un exemple de numerotation
+     *  Return an example of numbering
      *
      *  @return     string      Example
      */
@@ -116,13 +116,13 @@ class mod_task_universal extends ModeleNumRefTask
 		return $numExample;
     }
 
-   /**
-	*  Return next value
-	*
-	*  @param	Societe		$objsoc		Object third party
-	*  @param   Task		$object	    Object task
-	*  @return  string					Value if OK, 0 if KO
-	*/
+    /**
+     *  Return next value
+     *
+     *  @param	Societe		$objsoc		Object third party
+     *  @param   Task		$object	    Object task
+     *  @return  string					Value if OK, 0 if KO
+     */
     public function getNextValue($objsoc, $object)
     {
 		global $db,$conf;

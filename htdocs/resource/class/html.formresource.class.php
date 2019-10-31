@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -93,8 +93,6 @@ class FormResource
     	    $out = '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     	    $out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     	}
-    	//$out.= '<input type="hidden" name="action" value="search">';
-    	//$out.= '<input type="hidden" name="id" value="'.$theme->id.'">';
 
     	if ($resourcestat)
     	{
@@ -142,7 +140,6 @@ class FormResource
 
     		if ($outputmode != 2)
     		{
-
         		$out.= '<input type="submit" class="button" value="'.$langs->trans("Search").'"> &nbsp; &nbsp; ';
 
         		$out.= '</form>';
@@ -190,7 +187,6 @@ class FormResource
     	{
     		foreach($resourcestat->cache_code_type_resource as $id => $arraytypes)
     		{
-
     			// We discard empty line if showempty is on because an empty line has already been output.
     			if ($empty && empty($arraytypes['code'])) continue;
 

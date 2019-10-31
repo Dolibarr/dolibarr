@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -58,9 +58,9 @@ class box_services_contracts extends ModeleBoxes
 	{
 	    global $user;
 
-	    $this->db=$db;
+	    $this->db = $db;
 
-	    $this->hidden=! ($user->rights->service->lire && $user->rights->contrat->lire);
+	    $this->hidden = ! ($user->rights->service->lire && $user->rights->contrat->lire);
 	}
 
 	/**
@@ -71,22 +71,22 @@ class box_services_contracts extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $db, $conf;
+		global $user, $langs, $conf;
 
 		$this->max=$max;
 
 		include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
-		$form = new Form($db);
+		$form = new Form($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxLastProductsInContract", $max));
 
 		if ($user->rights->service->lire && $user->rights->contrat->lire)
 		{
-		    $contractstatic=new Contrat($db);
-		    $contratlignestatic=new ContratLigne($db);
-		    $thirdpartytmp = new Societe($db);
-		    $productstatic = new Product($db);
+		    $contractstatic=new Contrat($this->db);
+		    $contractlinestatic=new ContratLigne($this->db);
+		    $thirdpartytmp = new Societe($this->db);
+		    $productstatic = new Product($this->db);
 
 			$sql = "SELECT s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
 			$sql.= " c.rowid, c.ref, c.statut as contract_status, c.ref_customer, c.ref_supplier,";
@@ -100,29 +100,29 @@ class box_services_contracts extends ModeleBoxes
 			$sql.= ")";
 			$sql.= " WHERE c.entity = ".$conf->entity;
 			if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
-			$sql.= $db->order("c.tms", "DESC");
-			$sql.= $db->plimit($max, 0);
+			$sql.= $this->db->order("c.tms", "DESC");
+			$sql.= $this->db->plimit($max, 0);
 
-			$result = $db->query($sql);
+			$result = $this->db->query($sql);
 			if ($result)
 			{
-				$num = $db->num_rows($result);
+				$num = $this->db->num_rows($result);
 				$now=dol_now();
 
 				$i = 0;
 
 				while ($i < $num)
 				{
-					$objp = $db->fetch_object($result);
-					$datem=$db->jdate($objp->datem);
+					$objp = $this->db->fetch_object($result);
+					$datem=$this->db->jdate($objp->datem);
 
-					$contratlignestatic->id=$objp->cdid;
-					$contratlignestatic->fk_contrat=$objp->rowid;
-					$contratlignestatic->label=$objp->label;
-					$contratlignestatic->description=$objp->description;
-					$contratlignestatic->type=$objp->type;
-					$contratlignestatic->product_id=$objp->product_id;
-					$contratlignestatic->product_ref=$objp->product_ref;
+					$contractlinestatic->id=$objp->cdid;
+					$contractlinestatic->fk_contrat=$objp->rowid;
+					$contractlinestatic->label=$objp->label;
+					$contractlinestatic->description=$objp->description;
+					$contractlinestatic->type=$objp->type;
+					$contractlinestatic->product_id=$objp->product_id;
+					$contractlinestatic->product_ref=$objp->product_ref;
 
                     $contractstatic->statut=$objp->contract_status;
 					$contractstatic->id=$objp->rowid;
@@ -149,11 +149,11 @@ class box_services_contracts extends ModeleBoxes
 						$sqld.= " AND lang='". $langs->getDefaultLang() ."'";
 						$sqld.= " LIMIT 1";
 
-						$resultd = $db->query($sqld);
+						$resultd = $this->db->query($sqld);
 						if ($resultd)
 						{
-							$objtp = $db->fetch_object($resultd);
-							if ($objtp->label != '') $contratlignestatic->label = $objtp->label;
+							$objtp = $this->db->fetch_object($resultd);
+							if ($objtp->label != '') $contractlinestatic->label = $objtp->label;
 						}
 					}
 
@@ -191,19 +191,19 @@ class box_services_contracts extends ModeleBoxes
 
 
 					$this->info_box_contents[$i][] = array(
-                        'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
+                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
                         'text' => $s,
                         'asis' => 1
                     );
 
 					$this->info_box_contents[$i][] = array(
-                        'td' => '',
+                        'td' => 'class="nowraponall"',
                         'text' => $contractstatic->getNomUrl(1),
                         'asis' => 1
                     );
 
 					$this->info_box_contents[$i][] = array(
-                        'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
+                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
                         'text' => $thirdpartytmp->getNomUrl(1),
                         'asis' => 1
                     );
@@ -215,21 +215,21 @@ class box_services_contracts extends ModeleBoxes
 
 					$this->info_box_contents[$i][] = array(
                         'td' => 'class="right" width="18"',
-                        'text' => $contratlignestatic->LibStatut($objp->statut, 3)
+                        'text' => $contractlinestatic->LibStatut($objp->statut, 3)
 					);
 
 					$i++;
 				}
 				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'class="center"','text'=>$langs->trans("NoContractedProducts"));
 
-				$db->free($result);
+				$this->db->free($result);
 			}
 			else
 			{
 				$this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength' => 500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
 			}
 		}

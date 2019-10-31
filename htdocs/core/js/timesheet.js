@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 
@@ -90,24 +90,20 @@ function pad(n) {
 
 
 /* function from http://www.timlabonne.com/2013/07/parsing-a-time-string-with-javascript/ */
+/* timeStr must be a duration with format XX:YY (AM/PM not supported) */
 function parseTime(timeStr, dt)
 {
     if (!dt) {
         dt = new Date();
     }
 
-    var time = timeStr.match(/(\d+)(?::(\d\d))?\s*(p?)/i);
+    //var time = timeStr.match(/(\d+)(?::(\d\d))?\s*(p?)/i);
+    var time = timeStr.match(/(\d+)(?::(\d\d))?/i);
     if (!time) {
         return -1;
     }
     var hours = parseInt(time[1], 10);
-    if (hours == 12 && !time[3]) {
-        hours = 0;
-    }
-    else {
-        hours += (hours < 12 && time[3]) ? 12 : 0;
-    }
-
+ 
     dt.setHours(hours);
     dt.setMinutes(parseInt(time[2], 10) || 0);
     dt.setSeconds(0, 0);

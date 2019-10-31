@@ -25,7 +25,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -47,7 +47,8 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
-$langs->loadLangs(array("companies","commercial","bills","banks","users"));
+$langs->loadLangs(array("companies", "commercial", "bills", "banks", "users"));
+if (! empty($conf->adherent->enabled)) $langs->load("members");
 if (! empty($conf->categorie->enabled)) $langs->load("categories");
 if (! empty($conf->incoterm->enabled)) $langs->load("incoterm");
 if (! empty($conf->notification->enabled)) $langs->load("mails");
@@ -67,7 +68,7 @@ $object = new Societe($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartycard','globalcard'));
@@ -126,7 +127,7 @@ if (empty($reshook))
 		{
 			$langs->load('errors');
 			$langs->load('companies');
-			setEventMessages($langs->trans('ErrorThirdPartyIdIsMandatory', $langs->trans('MergeOriginThirdparty')), null, 'errors');
+			setEventMessages($langs->trans('ErrorThirdPartyIdIsMandatory', $langs->transnoentitiesnoconv('MergeOriginThirdparty')), null, 'errors');
 		}
 		else
 		{
@@ -202,9 +203,10 @@ if (empty($reshook))
 				}
 
 				// Update
-				$object->update($object->id, $user, 0, 1, 1, 'merge');
+				$result = $object->update($object->id, $user, 0, 1, 1, 'merge');
 				if ($result < 0)
 				{
+					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
 				}
 
@@ -251,10 +253,10 @@ if (empty($reshook))
 				// External modules should update their ones too
 				if (! $error)
 				{
-    $reshook = $hookmanager->executeHooks('replaceThirdparty', array(
+					$reshook = $hookmanager->executeHooks('replaceThirdparty', array(
 						'soc_origin' => $soc_origin->id,
 						'soc_dest' => $object->id
-					), $soc_dest, $action);
+					), $object, $action);
 
 					if ($reshook < 0)
 					{
@@ -335,8 +337,9 @@ if (empty($reshook))
         $object->oldcopy = dol_clone($object);
 
         // Fill array 'array_options' with data from update form
-        $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
+        $extrafields->fetch_name_optionals_label($object->table_element);
+
+        $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
         if ($ret < 0) $error++;
 
         if (! $error)
@@ -383,7 +386,7 @@ if (empty($reshook))
 	        }
 			else $object->canvas=$canvas;
 
-	        if (GETPOST("private") == 1)	// Ask to create a contact
+	        if (GETPOST("private", 'int') == 1)	// Ask to create a contact
 	        {
 	            $object->particulier		= GETPOST("private");
 
@@ -465,7 +468,7 @@ if (empty($reshook))
 			}
 
 	        // Fill array 'array_options' with data from add form
-	        $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	        $ret = $extrafields->setOptionalsFromPost(null, $object);
 			if ($ret < 0)
 			{
 				 $error++;
@@ -596,11 +599,11 @@ if (empty($reshook))
 						{
 						    case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
 						    case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
-						      $errors[] = "ErrorFileSizeTooLarge";
-						      break;
+						        $errors[] = "ErrorFileSizeTooLarge";
+						        break;
 	      					case 3: //uploaded file was only partially uploaded
-						      $errors[] = "ErrorFilePartiallyUploaded";
-						      break;
+						        $errors[] = "ErrorFilePartiallyUploaded";
+						        break;
 						}
 	                }
                     // Gestion du logo de la société
@@ -622,15 +625,16 @@ if (empty($reshook))
                 {
                     $db->commit();
 
-                	if (! empty($backtopage))
+                    if (! empty($backtopage))
                 	{
-                	    if (preg_match('/\?/', $backtopage)) $backtopage.='&socid='.$object->id;
+                		$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $backtopage);		// New method to autoselect project after a New on another form object creation
+                		if (preg_match('/\?/', $backtopage)) $backtopage.='&socid='.$object->id;	// Old method
                		    header("Location: ".$backtopage);
                     	exit;
                 	}
                 	else
                 	{
-                    	$url=$_SERVER["PHP_SELF"]."?socid=".$object->id;
+                		$url=$_SERVER["PHP_SELF"]."?socid=".$object->id;							// Old method
                     	if (($object->client == 1 || $object->client == 3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $url=DOL_URL_ROOT."/comm/card.php?socid=".$object->id;
                     	elseif ($object->fournisseur == 1) $url=DOL_URL_ROOT."/fourn/card.php?socid=".$object->id;
 
@@ -669,6 +673,7 @@ if (empty($reshook))
                 //var_dump($object);exit;
 
                 $result = $object->update($socid, $user, 1, $object->oldcopy->codeclient_modifiable(), $object->oldcopy->codefournisseur_modifiable(), 'update', 0);
+
                 if ($result <=  0)
                 {
                     setEventMessages($object->error, $object->errors, 'errors');
@@ -741,7 +746,7 @@ if (empty($reshook))
                                 {
                                 	require_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
                                 	// the dir dirname($newfile) is directory of logo, so we should have only one file at once into index, so we delete indexes for the dir
-                                	deleteFilesIntoDatabaseIndex(dirname($newfile), '', '', 'uploaded', 1);
+                                	deleteFilesIntoDatabaseIndex(dirname($newfile), '', '');
                                 	// now we index the uploaded logo file
                                 	addFileIntoDatabaseIndex(dirname($newfile), basename($newfile), '', 'uploaded', 1);
                                 }
@@ -759,11 +764,11 @@ if (empty($reshook))
 					{
 					    case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
 					    case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
-					      $errors[] = "ErrorFileSizeTooLarge";
-					      break;
+					        $errors[] = "ErrorFileSizeTooLarge";
+					        break;
       					case 3: //uploaded file was only partially uploaded
-					      $errors[] = "ErrorFilePartiallyUploaded";
-					      break;
+					        $errors[] = "ErrorFilePartiallyUploaded";
+					        break;
 					}
                 }
                 // Gestion du logo de la société
@@ -772,7 +777,6 @@ if (empty($reshook))
                 // Update linked member
                 if (! $error && $object->fk_soc > 0)
                 {
-
                 	$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
                 	$sql.= " SET fk_soc = NULL WHERE fk_soc = " . $id;
                 	if (! $object->db->query($sql))
@@ -813,6 +817,7 @@ if (empty($reshook))
     if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->societe->supprimer)
     {
         $object->fetch($socid);
+        $object->oldcopy = clone $object;
         $result = $object->delete($socid, $user);
 
         if ($result > 0)
@@ -952,18 +957,19 @@ else
         $object->name				= GETPOST('name', 'alpha');
         $object->firstname			= GETPOST('firstname', 'alpha');
         $object->particulier		= $private;
-        $object->prefix_comm		= GETPOST('prefix_comm');
-        $object->client				= GETPOST('client')?GETPOST('client'):$object->client;
+        $object->prefix_comm		= GETPOST('prefix_comm', 'alpha');
+        $object->client				= GETPOST('client', 'int')?GETPOST('client', 'int'):$object->client;
 
-        if(empty($duplicate_code_error)) {
+        if (empty($duplicate_code_error)) {
 	        $object->code_client		= GETPOST('customer_code', 'alpha');
 	        $object->fournisseur		= GETPOST('fournisseur')?GETPOST('fournisseur'):$object->fournisseur;
+            $object->code_fournisseur	= GETPOST('supplier_code', 'alpha');
         }
 		else {
 			setEventMessages($langs->trans('NewCustomerSupplierCodeProposed'), '', 'warnings');
 		}
 
-        $object->code_fournisseur	= GETPOST('supplier_code', 'alpha');
+
         $object->address			= GETPOST('address', 'alpha');
         $object->zip				= GETPOST('zipcode', 'alpha');
         $object->town				= GETPOST('town', 'alpha');
@@ -1044,7 +1050,7 @@ else
         /* Show create form */
 
         $linkback="";
-        print load_fiche_titre($langs->trans("NewThirdParty"), $linkback, 'title_companies.png');
+        print load_fiche_titre($langs->trans("NewThirdParty"), $linkback, 'building');
 
         if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION))
         {
@@ -1171,13 +1177,18 @@ else
         // If javascript on, we show option individual
         if ($conf->use_javascript_ajax)
         {
-            print '<tr class="individualline"><td>'.$form->editfieldkey('FirstName', 'firstname', '', $object, 0).'</td>';
-	        print '<td colspan="3"><input type="text" class="minwidth300" maxlength="128" name="firstname" id="firstname" value="'.$object->firstname.'"></td>';
-            print '</tr>';
-            // Title
-            print '<tr class="individualline"><td>'.$form->editfieldkey('UserTitle', 'civility_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
-            print $formcompany->select_civility($object->civility_id, 'civility_id', 'maxwidth100').'</td>';
-            print '</tr>';
+        	if (! empty($conf->global->THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION))
+        	{
+        		// Firstname
+	            print '<tr class="individualline"><td>'.$form->editfieldkey('FirstName', 'firstname', '', $object, 0).'</td>';
+		        print '<td colspan="3"><input type="text" class="minwidth300" maxlength="128" name="firstname" id="firstname" value="'.$object->firstname.'"></td>';
+	            print '</tr>';
+
+	            // Title
+	            print '<tr class="individualline"><td>'.$form->editfieldkey('UserTitle', 'civility_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
+	            print $formcompany->select_civility($object->civility_id, 'civility_id', 'maxwidth100').'</td>';
+	            print '</tr>';
+        	}
         }
 
         // Alias names (commercial, trademark or alias names)
@@ -1187,7 +1198,7 @@ else
         // Prospect/Customer
         print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('ProspectCustomer', 'customerprospect', '', $object, 0, 'string', '', 1).'</td>';
 	    print '<td class="maxwidthonsmartphone">';
-	    $selected=GETPOST('client', 'int')!=''?GETPOST('client', 'int'):$object->client;
+	    $selected=(GETPOSTISSET('client')?GETPOST('client', 'int'):$object->client);
 	    print $formcompany->selectProspectCustomerType($selected);
 	    print '</td>';
 
@@ -1207,7 +1218,7 @@ else
         {
             // Supplier
             print '<tr>';
-            print '<td>'.$form->editfieldkey('Supplier', 'fournisseur', '', $object, 0, 'string', '', 1).'</td><td>';
+            print '<td>'.$form->editfieldkey('Vendor', 'fournisseur', '', $object, 0, 'string', '', 1).'</td><td>';
             $default = -1;
             if (! empty($conf->global->THIRDPARTY_SUPPLIER_BY_DEFAULT)) $default=1;
             print $form->selectyesno("fournisseur", (GETPOST('fournisseur', 'int')!=''?GETPOST('fournisseur', 'int'):(GETPOST("type", 'alpha') == '' ? $default : $object->fournisseur)), 1, 0, (GETPOST("type", 'alpha') == '' ? 1 : 0));
@@ -1281,10 +1292,16 @@ else
             print '</td></tr>';
         }
 
+        // Phone / Fax
+        print '<tr><td>'.img_picto('', 'object_phoning').' '.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
+        print '<td><input type="text" name="phone" id="phone" class="maxwidth200" value="'.(GETPOSTISSET('phone')?GETPOST('phone', 'alpha'):$object->phone).'"></td>';
+        print '<td>'.img_picto('', 'object_phoning_fax').' '.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
+        print '<td><input type="text" name="fax" id="fax" class="maxwidth200" value="'.(GETPOSTISSET('fax')?GETPOST('fax', 'alpha'):$object->fax).'"></td></tr>';
+
         // Email / Web
-        print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', $conf->global->SOCIETE_EMAIL_MANDATORY).'</td>';
+        print '<tr><td>'.img_picto('', 'object_email').' '.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', $conf->global->SOCIETE_EMAIL_MANDATORY).'</td>';
 	    print '<td colspan="3"><input type="text" name="email" id="email" value="'.$object->email.'"></td></tr>';
-        print '<tr><td>'.$form->editfieldkey('Web', 'url', '', $object, 0).'</td>';
+        print '<tr><td>'.img_picto('', 'globe').' '.$form->editfieldkey('Web', 'url', '', $object, 0).'</td>';
 	    print '<td colspan="3"><input type="text" name="url" id="url" value="'.$object->url.'"></td></tr>';
 
         if (! empty($conf->socialnetworks->enabled))
@@ -1322,12 +1339,6 @@ else
                 print '</td></tr>';
             }
         }
-
-        // Phone / Fax
-        print '<tr><td>'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
-	    print '<td><input type="text" name="phone" id="phone" class="maxwidth100onsmartphone quatrevingtpercent" value="'.$object->phone.'"></td>';
-        print '<td>'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
-	    print '<td><input type="text" name="fax" id="fax" class="maxwidth100onsmartphone quatrevingtpercent" value="'.$object->fax.'"></td></tr>';
 
         // Prof ids
         $i=1; $j=0;
@@ -1367,15 +1378,18 @@ else
 
             if (! empty($conf->use_javascript_ajax))
             {
+            	$widthpopup = 600;
+            	if (! empty($conf->dol_use_jmobile)) $widthpopup = 350;
+            	$heightpopup = 400;
                 print "\n";
                 print '<script language="JavaScript" type="text/javascript">';
                 print "function CheckVAT(a) {\n";
-                print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,300);\n";
+                print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
                 print "}\n";
                 print '</script>';
                 print "\n";
                 $s.='<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-                $s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->trans("VATIntraCheck")), 1);
+                $s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
             }
             else
             {
@@ -1502,7 +1516,7 @@ else
 		print '<td>'.$form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0).'</td>';
 		print '<td colspan="3" class="maxwidthonsmartphone">';
 		$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, '', 0, '', '', 0, 1);
-		// Note: If user has no right to "see all thirdparties", we for selection of sale representative to him, so after creation he can see the record.
+		// Note: If user has no right to "see all thirdparties", we force selection of sale representative to him, so after creation he can see the record.
 		$selected = (count(GETPOST('commercial', 'array')) > 0 ? GETPOST('commercial', 'array') : (GETPOST('commercial', 'int') > 0 ? array(GETPOST('commercial', 'int')) : (empty($user->rights->societe->client->voir)?array($user->id):array())));
 		print $form->multiselectarray('commercial', $userlist, $selected, null, null, null, null, "90%");
 		print '</td></tr>';
@@ -1841,7 +1855,7 @@ else
 	                    print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.$object->code_fournisseur.'" maxlength="15">';
 	                }
 	                else
-	              {
+	                {
 	                    print $object->code_fournisseur;
 	                    print '<input type="hidden" name="supplier_code" value="'.$object->code_fournisseur.'">';
 	                }
@@ -1901,11 +1915,17 @@ else
                 print '</td></tr>';
             }
 
+            // Phone / Fax
+            print '<tr><td>'.img_picto('', 'object_phoning').' '.$form->editfieldkey('Phone', 'phone', GETPOST('phone', 'alpha'), $object, 0).'</td>';
+            print '<td><input type="text" name="phone" id="phone" class="maxwidth200" value="'.(GETPOSTISSET('phone')?GETPOST('phone', 'alpha'):$object->phone).'"></td>';
+            print '<td>'.img_picto('', 'object_phoning_fax').' '.$form->editfieldkey('Fax', 'fax', GETPOST('fax', 'alpha'), $object, 0).'</td>';
+            print '<td><input type="text" name="fax" id="fax" class="maxwidth200" value="'.(GETPOSTISSET('fax')?GETPOST('fax', 'alpha'):$object->fax).'"></td></tr>';
+
             // EMail / Web
-            print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', (! empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';
-	        print '<td colspan="3"><input type="text" name="email" id="email" size="32" value="'.$object->email.'"></td></tr>';
-            print '<tr><td>'.$form->editfieldkey('Web', 'url', '', $object, 0).'</td>';
-	        print '<td colspan="3"><input type="text" name="url" id="url" size="32" value="'.$object->url.'"></td></tr>';
+            print '<tr><td>'.img_picto('', 'object_email').' '.$form->editfieldkey('EMail', 'email', GETPOST('email', 'alpha'), $object, 0, 'string', '', (! empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';
+            print '<td colspan="3"><input type="text" name="email" id="email" class="maxwidth100onsmartphone quatrevingtpercent" value="'.(GETPOSTISSET('email')?GETPOST('email', 'alpha'):$object->email).'"></td></tr>';
+	        print '<tr><td>'.img_picto('', 'globe').' '.$form->editfieldkey('Web', 'url', GETPOST('url', 'alpha'), $object, 0).'</td>';
+	        print '<td colspan="3"><input type="text" name="url" id="url" class="maxwidth100onsmartphone quatrevingtpercent" value="'.(GETPOSTISSET('url')?GETPOST('url', 'alpha'):$object->irl).'"></td></tr>';
 
 	        if (! empty($conf->socialnetworks->enabled))
 	        {
@@ -1934,12 +1954,6 @@ else
                     print '<td colspan="3"><input type="text" name="linkedin" id="linkedin" value="'.$object->linkedin.'"></td></tr>';
                 }
 	        }
-
-            // Phone / Fax
-            print '<tr><td>'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
-	        print '<td><input type="text" name="phone" id="phone" class="maxwidth100onsmartphone quatrevingtpercent" value="'.$object->phone.'"></td>';
-            print '<td>'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
-	        print '<td><input type="text" name="fax" id="fax" class="maxwidth100onsmartphone quatrevingtpercent" value="'.$object->fax.'"></td></tr>';
 
             // Prof ids
             $i=1; $j=0;
@@ -2028,15 +2042,18 @@ else
 
                 if ($conf->use_javascript_ajax)
                 {
-                    print "\n";
+                	$widthpopup = 600;
+                	if (! empty($conf->dol_use_jmobile)) $widthpopup = 350;
+                	$heightpopup = 400;
+                	print "\n";
                     print '<script language="JavaScript" type="text/javascript">';
                     print "function CheckVAT(a) {\n";
-                    print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,285);\n";
+                    print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
                     print "}\n";
                     print '</script>';
                     print "\n";
                     $s.='<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-                    $s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->trans("VATIntraCheck")), 1);
+                    $s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
                 }
                 else
                 {
@@ -2213,7 +2230,7 @@ else
 				    'name' => 'soc_origin',
 			    	'label' => $langs->trans('MergeOriginThirdparty'),
 				    'type' => 'other',
-				    'value' => $form->select_company('', 'soc_origin', 's.rowid != '.$object->id, 'SelectThirdParty', 0, 0, array(), 0, 'minwidth200')
+				    'value' => $form->select_company('', 'soc_origin', 's.rowid <> '.$object->id, 'SelectThirdParty', 0, 0, array(), 0, 'minwidth200')
 			    )
 		    );
 
@@ -2250,7 +2267,6 @@ else
         if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
         {
             print '<tr><td>'.$langs->trans('Prefix').'</td><td>'.$object->prefix_comm.'</td>';
-            print $htmllogobar; $htmllogobar='';
             print '</tr>';
         }
 
@@ -2262,7 +2278,6 @@ else
             print $object->code_client;
             if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
             print '</td>';
-            print $htmllogobar; $htmllogobar='';
             print '</tr>';
         }
 
@@ -2274,7 +2289,6 @@ else
             print $object->code_fournisseur;
             if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
             print '</td>';
-            print $htmllogobar; $htmllogobar='';
             print '</tr>';
         }
 
@@ -2284,9 +2298,6 @@ else
             print '<tr><td>';
             print $langs->trans('Gencod').'</td><td>'.$object->barcode;
             print '</td>';
-			if ($htmllogobar) $htmllogobar.=$form->showbarcode($object);
-            print $htmllogobar;
-			$htmllogobar='';
             print '</tr>';
         }
 
@@ -2348,7 +2359,7 @@ else
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax1">';
 			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			        print '<tr><td>'.$langs->transcountry("Localtax1", $mysoc->country_code).' <a href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
+			        print '<tr><td>'.$langs->transcountry("Localtax1", $mysoc->country_code).' <a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if($action == 'editRE')
 			        {
 			            print '<td class="left">';
@@ -2366,7 +2377,7 @@ else
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax2">';
 			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			        print '<tr><td>'.$langs->transcountry("Localtax2", $mysoc->country_code).'<a href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
+			        print '<tr><td>'.$langs->transcountry("Localtax2", $mysoc->country_code).'<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if($action == 'editIRPF'){
 			            print '<td class="left">';
 			            $formcompany->select_localtax(2, $object->localtax2_value, "lt2");
@@ -2387,7 +2398,7 @@ else
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax1">';
 			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			        print '<tr><td> '.$langs->transcountry("Localtax1", $mysoc->country_code).'<a href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
+			        print '<tr><td> '.$langs->transcountry("Localtax1", $mysoc->country_code).'<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editRE&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if($action == 'editRE'){
 			            print '<td class="left">';
 			            $formcompany->select_localtax(1, $object->localtax1_value, "lt1");
@@ -2405,11 +2416,10 @@ else
 			    print '</td></tr>';
 			    if($object->localtax2_assuj=="1" && (! isOnlyOneLocalTax(2)))
 			    {
-
 			        print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
 			        print '<input type="hidden" name="action" value="set_localtax2">';
 			        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			        print '<tr><td> '.$langs->transcountry("Localtax2", $mysoc->country_code).' <a href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
+			        print '<tr><td> '.$langs->transcountry("Localtax2", $mysoc->country_code).' <a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editIRPF&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</td>';
 			        if($action == 'editIRPF'){
 			            print '<td class="left">';
 			            $formcompany->select_localtax(2, $object->localtax2_value, "lt2");
@@ -2437,15 +2447,18 @@ else
 
                 if ($conf->use_javascript_ajax)
                 {
+                	$widthpopup = 600;
+                	if (! empty($conf->dol_use_jmobile)) $widthpopup = 350;
+                	$heightpopup = 400;
                     print "\n";
                     print '<script language="JavaScript" type="text/javascript">';
                     print "function CheckVAT(a) {\n";
-                    print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a,'".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."',500,285);\n";
+                    print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?vatNumber='+a, '".dol_escape_js($langs->trans("VATIntraCheckableOnEUSite"))."', ".$widthpopup.", ".$heightpopup.");\n";
                     print "}\n";
                     print '</script>';
                     print "\n";
                     $s.='<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT( $(\'#tva_intra\').val() );">'.$langs->trans("VATIntraCheck").'</a>';
-                    $s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->trans("VATIntraCheck")), 1);
+                    $s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
                 }
                 else
                 {
@@ -2524,14 +2537,14 @@ else
         	print '<table width="100%" class="nobordernopadding"><tr><td>';
         	print $langs->trans('IncotermLabel');
         	print '<td><td class="right">';
-        	if ($user->rights->societe->creer) print '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$object->id.'&action=editincoterm">'.img_edit('', 1).'</a>';
+        	if ($user->rights->societe->creer) print '<a class="editfielda" href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$object->id.'&action=editincoterm">'.img_edit('', 1).'</a>';
         	else print '&nbsp;';
         	print '</td></tr></table>';
         	print '</td>';
         	print '<td colspan="3">';
         	if ($action != 'editincoterm')
         	{
-        		print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+        		print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
         	}
         	else
         	{
@@ -2557,14 +2570,13 @@ else
         // Parent company
         if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY))
         {
-        	// Payment term
         	print '<tr><td>';
         	print '<table class="nobordernopadding" width="100%"><tr><td>';
         	print $langs->trans('ParentCompany');
         	print '</td>';
-        	if ($action != 'editparentcompany') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editparentcompany&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+        	if ($action != 'editparentcompany') print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editparentcompany&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
         	print '</tr></table>';
-        	print '</td><td colspan="3">';
+        	print '</td><td>';
         	if ($action == 'editparentcompany')
         	{
         		$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->parent, 'editparentcompany', 's.rowid <> '.$object->id, 1);
@@ -2585,7 +2597,7 @@ else
         {
             $langs->load("members");
             print '<tr><td>'.$langs->trans("LinkedToDolibarrMember").'</td>';
-            print '<td colspan="3">';
+            print '<td>';
             $adh=new Adherent($db);
             $result=$adh->fetch('', '', $object->id);
             if ($result > 0)
@@ -2641,33 +2653,43 @@ else
 		        if (! empty($object->email) || $at_least_one_email_contact)
 		        {
 		        	$langs->load("mails");
-		        	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&amp;action=presend&amp;mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
+		        	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&amp;action=presend&amp;mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
 		        }
 		        else
 				{
 		        	$langs->load("mails");
-		       		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a></div>';
+		       		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a>';
 		        }
 
 		        if ($user->rights->societe->creer)
 		        {
-		            print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
+		            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
 		        }
+
+		        if (! empty($conf->adherent->enabled))
+		        {
+					$adh = new Adherent($db);
+					$result=$adh->fetch('', '', $object->id);
+					if ($result == 0 && ($object->client == 1 || $object->client == 3) && ! empty($conf->global->MEMBER_CAN_CONVERT_CUSTOMERS_TO_MEMBERS))
+            		{
+            			print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/card.php?&action=create&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("NewMember")).'">'.$langs->trans("NewMember").'</a>';
+            		}
+            	}
 
 		        if ($user->rights->societe->supprimer)
 		        {
-		        	print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MergeThirdparties")).'">'.$langs->trans('Merge').'</a></div>';
+		        	print '<a class="butActionDelete" href="card.php?action=merge&socid='.$object->id.'" title="'.dol_escape_htmltag($langs->trans("MergeThirdparties")).'">'.$langs->trans('Merge').'</a>';
 		        }
 
 		        if ($user->rights->societe->supprimer)
 		        {
 		            if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))	// We can't use preloaded confirm form with jmobile
 		            {
-		                print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
+		                print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>'."\n";
 		            }
 		            else
 					{
-		                print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
+		                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>'."\n";
 		            }
 		        }
 			}
@@ -2709,9 +2731,7 @@ else
 
 			$MAXEVENT = 10;
 
-			$morehtmlright = '<a href="'.DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id.'">';
-			$morehtmlright.= $langs->trans("SeeAll");
-			$morehtmlright.= '</a>';
+            $morehtmlright = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt', DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id);
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';

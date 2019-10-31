@@ -1,0 +1,17 @@
+MRPArea=Espace MRP
+MenuBOM=Nomenclatures BOM
+LatestBOMModified=Le %s dernières BOMs modifiées
+BillOfMaterials=Nomenclature BOM
+BOMsSetup=Configuration du module BOM
+ListOfBOMs=Liste des BOMs
+NewBOM=Nouveau BOM
+ProductBOMHelp=Produit à créer avec cette BOM
+BOMsNumberingModules=Modèles de numérotation de BOMs
+BOMsModelModule=Modèles de documents de BOMs
+FreeLegalTextOnBOMs=Texte libre sur documents BOMs
+WatermarkOnDraftBOMs=Filigrane sur les brouillons de BOMs
+ConfirmCloneBillOfMaterials=Êtes-vous sûr de vouloir cloner cette nomenclature ?
+ManufacturingEfficiency=Efficacité de fabrication
+ValueOfMeansLoss=Une valeur de 0,95 signifie une perte moyenne de 5%% pendant la production
+DeleteBillOfMaterials=Supprimer la nomenclature
+ConfirmDeleteBillOfMaterials=Êtes-vous sûr de vouloir supprimer cette nomenclature?

@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,7 +35,7 @@ $allowinstall = 0;
 $allowupgrade = false;
 $checksok = 1;
 
-$setuplang=GETPOST("selectlang", 'az09', 3)?GETPOST("selectlang", 'az09', 3):$langs->getDefaultLang();
+$setuplang=GETPOST("selectlang", 'aZ09', 3)?GETPOST("selectlang", 'aZ09', 3):$langs->getDefaultLang();
 $langs->setDefaultLang($setuplang);
 
 $langs->load("install");
@@ -127,7 +127,7 @@ if (! function_exists("imagecreate"))
 {
 	$langs->load("errors");
 	print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportGD")."<br>\n";
-	// $checksok=0;		// If image ko, just warning. So check must still be 1 (otherwise no way to install)
+	// $checksok=0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
 }
 else
 {
@@ -140,11 +140,21 @@ if (! function_exists("curl_init"))
 {
     $langs->load("errors");
     print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportCurl")."<br>\n";
-    // $checksok=0;		// If image ko, just warning. So check must still be 1 (otherwise no way to install)
+    // $checksok=0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
 }
 else
 {
     print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportCurl")."<br>\n";
+}
+
+// Check if PHP calendar extension is available
+if (! function_exists("easter_date"))
+{
+    print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportCalendar")."<br>\n";
+}
+else
+{
+    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportCalendar")."<br>\n";
 }
 
 
@@ -153,7 +163,7 @@ if (! function_exists("utf8_encode"))
 {
 	$langs->load("errors");
 	print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportUTF8")."<br>\n";
-	// $checksok=0;		// If image ko, just warning. So check must still be 1 (otherwise no way to install)
+	// $checksok=0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
 }
 else
 {
@@ -161,18 +171,20 @@ else
 }
 
 
-// Check if UTF8 supported
-if (! function_exists("locale_get_primary_language"))
+// Check if intl methods are supported
+if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@localhost')
 {
-    $langs->load("errors");
-    print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportIntl")."<br>\n";
-    // $checksok=0;		// If image ko, just warning. So check must still be 1 (otherwise no way to install)
+	if (! function_exists("locale_get_primary_language") || ! function_exists("locale_get_region"))
+	{
+	    $langs->load("errors");
+	    print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportIntl")."<br>\n";
+	    // $checksok=0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
+	}
+	else
+	{
+	    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportIntl")."<br>\n";
+	}
 }
-else
-{
-    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportIntl")."<br>\n";
-}
-
 
 
 // Check memory
@@ -451,13 +463,13 @@ else
 								array('from'=>'6.0.0', 'to'=>'7.0.0'),
 								array('from'=>'7.0.0', 'to'=>'8.0.0'),
 								array('from'=>'8.0.0', 'to'=>'9.0.0'),
-								array('from'=>'9.0.0', 'to'=>'10.0.0')
+								array('from'=>'9.0.0', 'to'=>'10.0.0'),
+								array('from'=>'10.0.0', 'to'=>'11.0.0')
 		);
 
 		$count=0;
 		foreach ($migrationscript as $migarray)
 		{
-
             $choice = '';
 
 			$count++;
@@ -567,9 +579,8 @@ else
         print '</table>'."\n";
 
         if (count($notavailable_choices)) {
-
             print '<br><div id="AShowChoices" style="opacity: 0.5">';
-            print '<img id="availchoice" src="../theme/eldy/img/1downarrow.png"> '.$langs->trans('ShowNotAvailableOptions').'...';
+            print '> '.$langs->trans('ShowNotAvailableOptions').'...';
             print '</div>';
 
             print '<div id="navail_choices" style="display:none">';
@@ -592,7 +603,7 @@ $("div#AShowChoices").click(function() {
     $("div#navail_choices").toggle();
 
     if ($("div#navail_choices").css("display") == "none") {
-        $(this).text("'.$langs->trans('ShowNotAvailableOptions').'...");
+        $(this).text("> '.$langs->trans('ShowNotAvailableOptions').'...");
     } else {
         $(this).text("'.$langs->trans('HideNotAvailableOptions').'...");
     }

@@ -49,7 +49,6 @@ $output[$echance]=array('cap_rest'=>$cap_rest,'cap_rest_str'=>price($cap_rest),'
 $echance++;
 $capital=$cap_rest;
 while ($echance<=$nbterm) {
-
 	$mens = round($object->calcMonthlyPayments($capital, $rate, $nbterm-$echance+1), 2, PHP_ROUND_HALF_UP);
 
 	$int = ($capital*($rate/12));

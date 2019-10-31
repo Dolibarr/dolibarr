@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -124,7 +124,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
     	$invoicefieldref='ref';
     }
 
-    if ( strpos($type, 'localtax') === 0 ) {
+    if (strpos($type, 'localtax') === 0) {
     	$f_rate = $type . '_tx';
     } else {
     	$f_rate = 'tva_tx';

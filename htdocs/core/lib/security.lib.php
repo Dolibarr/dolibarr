@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -109,7 +109,7 @@ function dol_decode($chain, $key = '1')
  * 	@param 		string		$chain		String to hash
  * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO else md5, '1':sha1, '2':sha1+md5, '3':md5, '4':md5 for OpenLdap, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
  * 	@return		string					Hash of string
- *  @getRandomPassword
+ *  @see getRandomPassword()
  */
 function dol_hash($chain, $type = '0')
 {
@@ -247,7 +247,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 		{
 			if (! $user->rights->projet->lire && ! $user->rights->projet->all->lire) { $readok=0; $nbko++; }
 		}
-		elseif (! empty($feature2))	// This should be used for future changes
+		elseif (! empty($feature2))														// This is for permissions on 2 levels
 		{
 			$tmpreadok=1;
 			foreach($feature2 as $subfeature)
@@ -263,7 +263,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				$nbko++;
 			}
 		}
-		elseif (! empty($feature) && ($feature!='user' && $feature!='usergroup'))		// This is for old permissions
+		elseif (! empty($feature) && ($feature!='user' && $feature!='usergroup'))		// This is permissions on 1 level
 		{
 			if (empty($user->rights->$feature->lire)
 				&& empty($user->rights->$feature->read)
@@ -279,7 +279,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 
 	// Check write permission from module (we need to know write permission to create but also to delete drafts record)
 	$createok=1; $nbko=0;
-	if (GETPOST('action', 'aZ09')  == 'create' || ((GETPOST("action", "aZ09")  == 'confirm_delete' && GETPOST("confirm", "aZ09") == 'yes') || GETPOST("action", "aZ09")  == 'delete'))
+	if (GETPOST('action', 'aZ09')  == 'create' || GETPOST('action', 'aZ09')  == 'update' || ((GETPOST("action", "aZ09")  == 'confirm_delete' && GETPOST("confirm", "aZ09") == 'yes') || GETPOST("action", "aZ09")  == 'delete'))
 	{
 		foreach ($featuresarray as $feature)
 		{
@@ -307,29 +307,38 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 			{
 				if (! $user->rights->banque->cheque) { $createok=0; $nbko++; }
 			}
-			elseif (! empty($feature2))	// This should be used
+			elseif (! empty($feature2))														// This is for permissions on one level
 			{
 				foreach($feature2 as $subfeature)
 				{
 					if (empty($user->rights->$feature->$subfeature->creer)
-						&& empty($user->rights->$feature->$subfeature->write)
-						&& empty($user->rights->$feature->$subfeature->create)) { $createok=0; $nbko++; }
-						else { $createok=1; break; } // Break to bypass second test if the first is ok
+					&& empty($user->rights->$feature->$subfeature->write)
+					&& empty($user->rights->$feature->$subfeature->create)) {
+						$createok=0;
+						$nbko++;
+					} else {
+						$createok=1;
+						// Break to bypass second test if the first is ok
+						break;
+					}
 				}
 			}
-			elseif (! empty($feature))		// This is for old permissions ('creer' or 'write')
+			elseif (! empty($feature))														// This is for permissions on 2 levels ('creer' or 'write')
 			{
 				//print '<br>feature='.$feature.' creer='.$user->rights->$feature->creer.' write='.$user->rights->$feature->write;
 				if (empty($user->rights->$feature->creer)
-					&& empty($user->rights->$feature->write)
-					&& empty($user->rights->$feature->create)) { $createok=0; $nbko++; }
+				&& empty($user->rights->$feature->write)
+				&& empty($user->rights->$feature->create)) {
+					$createok=0;
+					$nbko++;
+				}
 			}
 		}
 
 		// If a or and at least one ok
 		if (preg_match('/\|/', $features) && $nbko < count($featuresarray)) $createok=1;
 
-		if (GETPOST('action', 'aZ09') == 'create' && ! $createok) accessforbidden();
+		if ((GETPOST('action', 'aZ09') == 'create' || GETPOST('action', 'aZ09') == 'update') && ! $createok) accessforbidden();
 		//print "Write access is ok";
 	}
 
@@ -384,7 +393,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 			{
 				if (! $user->rights->salaries->delete) $deleteok=0;
 			}
-			elseif (! empty($feature2))	// This should be used for permissions on 2 levels
+			elseif (! empty($feature2))							// This is for permissions on 2 levels
 			{
 				foreach($feature2 as $subfeature)
 				{
@@ -392,7 +401,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 					else { $deleteok=1; break; } // For bypass the second test if the first is ok
 				}
 			}
-			elseif (! empty($feature))		// This is used for permissions on 1 level
+			elseif (! empty($feature))							// This is used for permissions on 1 level
 			{
 				//print '<br>feature='.$feature.' creer='.$user->rights->$feature->supprimer.' write='.$user->rights->$feature->delete;
 				if (empty($user->rights->$feature->supprimer)
@@ -451,7 +460,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 		if ($feature == 'project') $feature='projet';
 		if ($feature == 'task')    $feature='projet_task';
 
-		$check = array('adherent','banque','don','user','usergroup','product','produit','service','produit|service','categorie','resource','expensereport','holiday'); // Test on entity only (Objects with no link to company)
+		$check = array('adherent','banque','bom','don','user','usergroup','product','produit','service','produit|service','categorie','resource','expensereport','holiday'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe');	 // Test for societe object
 		$checkother = array('contact','agenda');	 // Test on entity and link to third party. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet','project'); // Test for project object
@@ -659,7 +668,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
  */
 function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $showonlymessage = 0)
 {
-    global $conf, $db, $user, $langs;
+    global $conf, $db, $user, $langs, $hookmanager;
     if (! is_object($langs))
     {
         include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
@@ -681,14 +690,27 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 	print '<br>';
 	if (empty($showonlymessage))
 	{
-		if ($user->login)
+		global $action, $object;
+		if (empty($hookmanager))
 		{
-			print $langs->trans("CurrentLogin").': <font class="error">'.$user->login.'</font><br>';
-			print $langs->trans("ErrorForbidden2", $langs->trans("Home"), $langs->trans("Users"));
+			$hookmanager = new HookManager($db);
+			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+			$hookmanager->initHooks(array('main'));
 		}
-		else
+		$parameters = array('message'=>$message);
+		$reshook=$hookmanager->executeHooks('getAccessForbiddenMessage', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+		print $hookmanager->resPrint;
+		if (empty($reshook))
 		{
-			print $langs->trans("ErrorForbidden3");
+			if ($user->login)
+			{
+				print $langs->trans("CurrentLogin").': <font class="error">'.$user->login.'</font><br>';
+				print $langs->trans("ErrorForbidden2", $langs->transnoentitiesnoconv("Home"), $langs->transnoentitiesnoconv("Users"));
+			}
+			else
+			{
+				print $langs->trans("ErrorForbidden3");
+			}
 		}
 	}
 	if ($printfooter && function_exists("llxFooter")) llxFooter();

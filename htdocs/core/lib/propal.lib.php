@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -42,8 +42,8 @@ function propal_prepare_head($object)
 	$head[$h][2] = 'comm';
 	$h++;
 
-	if ((empty($conf->commande->enabled) &&	((! empty($conf->expedition_bon->enabled) && $user->rights->expedition->lire)
-	|| (! empty($conf->livraison_bon->enabled) && $user->rights->expedition->livraison->lire))))
+	if ((empty($conf->commande->enabled) &&	((! empty($conf->expedition->enabled) && ! empty($conf->expedition_bon->enabled) && $user->rights->expedition->lire)
+	    || (! empty($conf->expedition->enabled) && ! empty($conf->livraison_bon->enabled) && $user->rights->expedition->livraison->lire))))
 	{
 		$langs->load("sendings");
 		$text = '';
