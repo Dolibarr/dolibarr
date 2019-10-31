@@ -28,7 +28,7 @@
 require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/stripe/lib/Stripe.php';
 
-global $stripe;
+//global $stripe;
 global $conf;
 global $stripearrayofkeysbyenv;
 
