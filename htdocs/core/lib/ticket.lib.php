@@ -844,7 +844,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 						$class.= ' documentpreview';
 					}
 
-					$footer.= '<a href="'.$doclink.'" class="btn-file '.$class.'" target="_blank"  '.$mimeAttr.' >';
+					$footer.= '<a href="'.$doclink.'" class="btn-link '.$class.'" target="_blank"  '.$mimeAttr.' >';
 					$footer.= img_mime($filePath).' '.$doc->filename;
 					$footer.= '</a>';
 

@@ -264,10 +264,10 @@ div.pagination li:first-child a.btnTitle{
 
 
 /*
- * BTN FILE doc
+ * BTN LINK
  */
 
-.btn-file{
+.btn-link{
 	margin-right: 5px;
 	border: 1px solid #ddd;
 	color: #333;
@@ -276,7 +276,7 @@ div.pagination li:first-child a.btnTitle{
 	text-decoration: none !important;
 }
 
-.btn-file:hover{
+.btn-link:hover{
 	background-color: #ddd;
 	border: 1px solid #ddd;
 }
