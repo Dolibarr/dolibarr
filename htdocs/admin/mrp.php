@@ -232,7 +232,7 @@ foreach ($dirmodels as $reldir)
 		{
 			while (($file = readdir($handle))!==false)
 			{
-			    if (substr($file, 0, 8) == 'mod_mo_' && substr($file, dol_strlen($file)-3, 3) == 'php')
+			    if (substr($file, 0, 7) == 'mod_mo_' && substr($file, dol_strlen($file)-3, 3) == 'php')
 				{
 					$file = substr($file, 0, dol_strlen($file)-4);
 
