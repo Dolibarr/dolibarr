@@ -316,7 +316,7 @@ if ($result)
             print dol_print_date($thirdparty_static->datem, 'day');
             print "</td>";
             print '<td class="right nowrap">';
-            print $thirdparty_static->getLibStatut(3);
+            print $thirdparty_static->getLibStatut(5);
             print "</td>";
             print "</tr>\n";
             $i++;

@@ -360,10 +360,10 @@ if ($result)
     			print '</td>';
 			}
 			print '<td class="right nowrap"><span class="statusrefsell">';
-			print $product_static->LibStatut($objp->tosell, 3, 0);
+			print $product_static->LibStatut($objp->tosell, 5, 0);
 			print "</span></td>";
             print '<td class="right nowrap"><span class="statusrefbuy">';
-            print $product_static->LibStatut($objp->tobuy, 3, 1);
+            print $product_static->LibStatut($objp->tobuy, 5, 1);
             print "</span></td>";
 			print "</tr>\n";
 			$i++;
