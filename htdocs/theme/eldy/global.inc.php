@@ -488,6 +488,9 @@ textarea.centpercent {
 .backgroundblank {
     background-color: #fff;
 }
+.nobackground, .nobackground tr {
+	background: unset !important;
+}
 .checkboxattachfilelabel {
     font-size: 0.85em;
     opacity: 0.7;
@@ -517,6 +520,8 @@ body[class*="colorblind-"] .text-success{
     color: rgb(<?php echo $colortexttitle; ?>) !important;
 }
 
+.fa-toggle-on, .fa-toggle-off { font-size: 2em; }
+.websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off { font-size: 1.5em; vertical-align: text-bottom; }
 
 /* Themes for badges */
 <?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
@@ -2529,6 +2534,9 @@ span.tabspan {
 	margin: 0px !important;
 	padding: 0px !important;
 }
+.noborderspacing {
+	border-spacing: 0;
+}
 tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 {
 	border: 0px;
@@ -2753,6 +2761,7 @@ table.listwithfilterbefore {
 .tagtable, .table-border { display: table; }
 .tagtr, .table-border-row  { display: table-row; }
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
+.confirmquestions .tagtr .tagtd:not(:first-child)  { padding-left: 10px; }
 
 
 /* Pagination */
