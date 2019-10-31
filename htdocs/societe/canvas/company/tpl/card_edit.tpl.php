@@ -23,7 +23,6 @@ if (empty($conf) || ! is_object($conf))
 	exit;
 }
 
-
 $contact = $GLOBALS['objcanvas']->control->object;
 
 ?>

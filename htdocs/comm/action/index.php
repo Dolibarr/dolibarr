@@ -1735,7 +1735,7 @@ function sort_events_by_date($a, $b)
     }
 
     // If both events have the same start time, longest first
-    
+
     if(! is_numeric($b->datef))
     {
         // when event B have no end timestamp, event B should sort be before event A (All day events on top)
