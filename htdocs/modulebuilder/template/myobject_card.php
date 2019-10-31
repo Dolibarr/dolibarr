@@ -512,7 +512,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	    // Documents
 	    /*$objref = dol_sanitizeFileName($object->ref);
-	    $relativepath = $comref . '/' . $comref . '.pdf';
+	    $relativepath = $objref . '/' . $objref . '.pdf';
 	    $filedir = $conf->mymodule->dir_output . '/' . $objref;
 	    $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
 	    $genallowed = $user->rights->mymodule->read;	// If you can read, you can build the PDF to read content
@@ -536,23 +536,23 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    // List of actions on element
 	    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 	    $formactions = new FormActions($db);
-	    $somethingshown = $formactions->showactions($object, 'myobject', $socid, 1, '', $MAXEVENT, '', $morehtmlright);
+	    $somethingshown = $formactions->showactions($object, 'myobject', (is_object($object->thirdparty)?$object->thirdparty->id:0), 1, '', $MAXEVENT, '', $morehtmlright);
 
 	    print '</div></div></div>';
 	}
 
 	//Select mail models is same action as presend
 	/*
-	 if (GETPOST('modelselected')) $action = 'presend';
+	if (GETPOST('modelselected')) $action = 'presend';
 
-	 // Presend form
-	 $modelmail='inventory';
-	 $defaulttopic='InformationMessage';
-	 $diroutput = $conf->product->dir_output.'/inventory';
-	 $trackid = 'stockinv'.$object->id;
+	// Presend form
+	$modelmail='myobject';
+	$defaulttopic='InformationMessage';
+	$diroutput = $conf->mymodule->dir_output;
+	$trackid = 'myobject'.$object->id;
 
-	 include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
-	 */
+	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
+	*/
 }
 
 // End of page

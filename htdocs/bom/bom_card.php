@@ -662,14 +662,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    print '<a name="builddoc"></a>'; // ancre
 
 	    // Documents
-	    /*$objref = dol_sanitizeFileName($object->ref);
-	    $relativepath = $comref . '/' . $comref . '.pdf';
+	    $objref = dol_sanitizeFileName($object->ref);
+	    $relativepath = $objref . '/' . $objref . '.pdf';
 	    $filedir = $conf->bom->dir_output . '/' . $objref;
 	    $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
 	    $genallowed = $user->rights->bom->read;	// If you can read, you can build the PDF to read content
-	    $delallowed = $user->rights->bom->create;	// If you can create/edit, you can remove a file on card
-	    print $formfile->showdocuments('bom', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
-		*/
+	    $delallowed = $user->rights->bom->write;	// If you can create/edit, you can remove a file on card
+	    print $formfile->showdocuments('bom', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $mysoc->default_lang);
 
 	    // Show links to link elements
 	    $linktoelem = $form->showLinkToObjectBlock($object, null, array('bom'));
@@ -693,17 +692,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	//Select mail models is same action as presend
-	/*
-	 if (GETPOST('modelselected')) $action = 'presend';
+    if (GETPOST('modelselected')) $action = 'presend';
 
-	 // Presend form
-	 $modelmail='inventory';
-	 $defaulttopic='InformationMessage';
-	 $diroutput = $conf->product->dir_output.'/inventory';
-	 $trackid = 'stockinv'.$object->id;
+	// Presend form
+	$modelmail='bom';
+	$defaulttopic='InformationMessage';
+	$diroutput = $conf->bom->dir_output;
+	$trackid = 'bom'.$object->id;
 
-	 include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
-	 */
+	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
 
 // End of page
