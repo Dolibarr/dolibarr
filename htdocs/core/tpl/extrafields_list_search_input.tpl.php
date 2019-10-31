@@ -38,9 +38,8 @@ if (! empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_
                     $morecss='';
                     if ($typeofextrafield == 'sellist') $morecss='maxwidth200';
                     $keyprefix=$search_options_pattern;
-                    if (substr($search_options_pattern, -8) === 'options_') $keyprefix = substr($search_options_pattern, 0,-8);
+                    if (substr($search_options_pattern, -8) === 'options_') $keyprefix = substr($search_options_pattern, 0, -8);
                     echo $extrafields->showInputField($key, $search_array_options[$search_options_pattern.$tmpkey], '', '', $keyprefix, $morecss);
-
                 }
                 else
                 {
