@@ -2529,6 +2529,9 @@ span.tabspan {
 	margin: 0px !important;
 	padding: 0px !important;
 }
+.noborderspacing {
+	border-spacing: 0;
+}
 tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 {
 	border: 0px;

@@ -4070,13 +4070,13 @@ class Form
 	 *	   @param  	array		$formquestion	   	An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , ))
 	 *												type can be 'hidden', 'text', 'password', 'checkbox', 'radio', 'date', 'morecss', ...
 	 * 	   @param  	string		$selectedchoice  	'' or 'no', or 'yes' or '1' or '0'
-	 * 	   @param  	int			$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
-	 *     @param  	int			$height          	Force height of box
+	 * 	   @param  	int|string	$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
+	 *     @param  	int			$height          	Force height of box (0 = auto)
 	 *     @param	int			$width				Force width of box ('999' or '90%'). Ignored and forced to 90% on smartphones.
 	 *     @param	int			$disableformtag		1=Disable form tag. Can be used if we are already inside a <form> section.
 	 *     @return 	string      	    			HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
 	 */
-    public function formconfirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = '', $useajax = 0, $height = 210, $width = 500, $disableformtag = 0)
+    public function formconfirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = '', $useajax = 0, $height = 0, $width = 500, $disableformtag = 0)
 	{
 		global $langs,$conf;
 		global $useglobalvars;
@@ -4089,6 +4089,14 @@ class Form
 		// Clean parameters
 		$newselectedchoice=empty($selectedchoice)?"no":$selectedchoice;
 		if ($conf->browser->layout == 'phone') $width='95%';
+
+		// Set height automatically if not defined
+		if (empty($height)) {
+			$height = 210;
+			if (is_array($formquestion) && count($formquestion) > 2) {
+				$height += ((count($formquestion) - 2) * 24);
+			}
+		}
 
 		if (is_array($formquestion) && ! empty($formquestion))
 		{
@@ -4105,7 +4113,7 @@ class Form
 			}
 
 			// Now add questions
-			$more.='<table class="paddingtopbottomonly centpercent">'."\n";
+			$more.='<div class="tagtable paddingtopbottomonly centpercent noborderspacing">'."\n";
 			if (! empty($formquestion['text'])) $more.='<tr><td colspan="2">'.$formquestion['text'].'</td></tr>'."\n";
 			foreach ($formquestion as $key => $input)
 			{
@@ -4117,52 +4125,52 @@ class Form
 
 					if ($input['type'] == 'text')
 					{
-						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>'.$input['label'].'</td><td class="left"><input type="text" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></td></tr>'."\n";
+						$more.='<div class="tagtr"><div class="tagtd'.(empty($input['tdclass'])?'':(' '.$input['tdclass'])).'">'.$input['label'].'</div><div class="tagtd"><input type="text" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></div></div>'."\n";
 					}
 					elseif ($input['type'] == 'password')
 					{
-						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>'.$input['label'].'</td><td class="left"><input type="password" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></td></tr>'."\n";
+						$more.='<div class="tagtr"><div class="tagtd'.(empty($input['tdclass'])?'':(' '.$input['tdclass'])).'">'.$input['label'].'</div><div class="tagtd"><input type="password" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></div></div>'."\n";
 					}
 					elseif ($input['type'] == 'select')
 					{
-						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>';
-						if (! empty($input['label'])) $more.=$input['label'].'</td><td class="tdtop left">';
+						$more.='<div class="tagtr"><div class="tagtd'.(empty($input['tdclass'])?'':(' '.$input['tdclass'])).'">';
+						if (! empty($input['label'])) $more.=$input['label'].'</div><div class="tagtd tdtop left">';
 						$more.=$this->selectarray($input['name'], $input['values'], $input['default'], 1, 0, 0, $moreattr, 0, 0, 0, '', $morecss);
-						$more.='</td></tr>'."\n";
+						$more.='</div></div>'."\n";
 					}
 					elseif ($input['type'] == 'checkbox')
 					{
-						$more.='<tr>';
-						$more.='<td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>'.$input['label'].' </td><td class="left">';
+						$more.='<div class="tagtr">';
+						$more.='<div class="tagtd'.(empty($input['tdclass'])?'':(' '.$input['tdclass'])).'">'.$input['label'].' </div><div class="tagtd">';
 						$more.='<input type="checkbox" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$moreattr;
 						if (! is_bool($input['value']) && $input['value'] != 'false' && $input['value'] != '0') $more.=' checked';
 						if (is_bool($input['value']) && $input['value']) $more.=' checked';
 						if (isset($input['disabled'])) $more.=' disabled';
-						$more.=' /></td>';
-						$more.='</tr>'."\n";
+						$more.=' /></div>';
+						$more.='</div>'."\n";
 					}
 					elseif ($input['type'] == 'radio')
 					{
 						$i=0;
 						foreach($input['values'] as $selkey => $selval)
 						{
-							$more.='<tr>';
-							if ($i==0) $more.='<td'.(empty($input['tdclass'])?' class="tdtop"':(' class="tdtop '.$input['tdclass'].'"')).'>'.$input['label'].'</td>';
-							else $more.='<td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>&nbsp;</td>';
-							$more.='<td><input type="radio" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"'.$moreattr;
+							$more.='<div class="tagtr">';
+							if ($i==0) $more.='<div class="tagtd'.(empty($input['tdclass'])?' tdtop':(' tdtop '.$input['tdclass'])).'">'.$input['label'].'</div>';
+							else $more.='<div clas="tagtd'.(empty($input['tdclass'])?'':(' "'.$input['tdclass'])).'">&nbsp;</div>';
+							$more.='<div class="tagtd"><input type="radio" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"'.$moreattr;
 							if ($input['disabled']) $more.=' disabled';
 							$more.=' /> ';
 							$more.=$selval;
-							$more.='</td></tr>'."\n";
+							$more.='</div></div>'."\n";
 							$i++;
 						}
 					}
 					elseif ($input['type'] == 'date')
 					{
-						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>'.$input['label'].'</td>';
-						$more.='<td class="left">';
+						$more.='<div class="tagtr"><div class="tagtd'.(empty($input['tdclass'])?'':(' '.$input['tdclass'])).'">'.$input['label'].'</div>';
+						$more.='<div class="tagtd">';
 						$more.=$this->selectDate($input['value'], $input['name'], 0, 0, 0, '', 1, 0);
-						$more.='</td></tr>'."\n";
+						$more.='</div></div>'."\n";
 						$formquestion[] = array('name'=>$input['name'].'day');
 						$formquestion[] = array('name'=>$input['name'].'month');
 						$formquestion[] = array('name'=>$input['name'].'year');
@@ -4171,21 +4179,21 @@ class Form
 					}
 					elseif ($input['type'] == 'other')
 					{
-						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>';
-						if (! empty($input['label'])) $more.=$input['label'].'</td><td class="left">';
+						$more.='<div class="tagtr"><div class="tagtd'.(empty($input['tdclass'])?'':(' '.$input['tdclass'])).'">';
+						if (! empty($input['label'])) $more.=$input['label'].'</div><div class="tagtd">';
 						$more.=$input['value'];
-						$more.='</td></tr>'."\n";
+						$more.='</div></div>'."\n";
 					}
 
 					elseif ($input['type'] == 'onecolumn')
 					{
-						$more.='<tr><td colspan="2" class="left">';
+						$more.='<div class="tagtr"><div class="tagtd">';
 						$more.=$input['value'];
-						$more.='</td></tr>'."\n";
+						$more.='</div></div>'."\n";
 					}
 				}
 			}
-			$more.='</table>'."\n";
+			$more.='</div>'."\n";
 		}
 
 		// JQUI method dialog is broken with jmobile, we use standard HTML.

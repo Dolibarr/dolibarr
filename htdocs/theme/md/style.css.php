@@ -2620,7 +2620,6 @@ span.tabspan {
 	margin-top: <?php echo ($dol_hide_topmenu?'6':'0'); ?>px;
 }
 
-
 .paddingrightonly {
 	border-collapse: collapse;
 	border: 0px;
@@ -2632,6 +2631,9 @@ span.tabspan {
 	list-style-type:none;
 	margin: 0px !important;
 	padding: 0px !important;
+}
+.noborderspacing {
+	border-spacing: 0;
 }
 tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 {
