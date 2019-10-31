@@ -171,13 +171,13 @@ if ($resql)
     print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'">';
     print '</td>';
     if (! empty($conf->global->DONATION_USE_THIRDPARTIES)) {
-    print '<td class="liste_titre">';
-    print '<input class="flat" size="10" type="text" name="search_thirdparty" value="'.$search_thirdparty.'">';
-    print '</td>';
+        print '<td class="liste_titre">';
+        print '<input class="flat" size="10" type="text" name="search_thirdparty" value="'.$search_thirdparty.'">';
+        print '</td>';
     } else {
-    print '<td class="liste_titre">';
-    print '<input class="flat" size="10" type="text" name="search_company" value="'.$search_company.'">';
-    print '</td>';
+        print '<td class="liste_titre">';
+        print '<input class="flat" size="10" type="text" name="search_company" value="'.$search_company.'">';
+        print '</td>';
     }
     print '<td class="liste_titre">';
     print '<input class="flat" size="10" type="text" name="search_name" value="'.$search_name.'">';
@@ -202,9 +202,9 @@ if ($resql)
     print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", "", $param, "", $sortfield, $sortorder);
     if (! empty($conf->global->DONATION_USE_THIRDPARTIES)) {
-	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "d.fk_soc", "", $param, "", $sortfield, $sortorder);
+        print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "d.fk_soc", "", $param, "", $sortfield, $sortorder);
     } else {
-	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "d.societe", "", $param, "", $sortfield, $sortorder);
+        print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "d.societe", "", $param, "", $sortfield, $sortorder);
     }
 	print_liste_field_titre("Name", $_SERVER["PHP_SELF"], "d.lastname", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "d.datedon", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -228,17 +228,17 @@ if ($resql)
 		$donationstatic->lastname=$objp->lastname;
 		$donationstatic->firstname=$objp->firstname;
 		print "<td>".$donationstatic->getNomUrl(1)."</td>";
-    if (! empty($conf->global->DONATION_USE_THIRDPARTIES)) {
-    $company=new Societe($db);
-    $result=$company->fetch($objp->socid);
-    if  (!empty($objp->socid) && $company->id > 0)  {
-        print "<td>".$company->getNomUrl(1)."</td>";
-    } else {
-        print "<td>".$objp->societe."</td>";
-    }
-    } else {
-        print "<td>".$objp->societe."</td>";
-    }
+        if (! empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+            $company=new Societe($db);
+            $result=$company->fetch($objp->socid);
+            if  (!empty($objp->socid) && $company->id > 0)  {
+                print "<td>".$company->getNomUrl(1)."</td>";
+            } else {
+                print "<td>".$objp->societe."</td>";
+            }
+        } else {
+            print "<td>".$objp->societe."</td>";
+        }
 		print "<td>".$donationstatic->getFullName($langs)."</td>";
 		print '<td class="center">'.dol_print_date($db->jdate($objp->datedon), 'day').'</td>';
 		if (! empty($conf->projet->enabled))

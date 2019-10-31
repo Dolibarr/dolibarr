@@ -227,14 +227,14 @@ class Form
 				}
 				elseif (preg_match('/^select;/', $typeofdata))
 				{
-					 $arraydata=explode(',', preg_replace('/^select;/', '', $typeofdata));
-					 foreach($arraydata as $val)
-					 {
-						 $tmp=explode(':', $val);
-						 $tmpkey=str_replace('|', ':', $tmp[0]);
-						 $arraylist[$tmpkey]=$tmp[1];
-					 }
-					 $ret.=$this->selectarray($htmlname, $arraylist, $value);
+					$arraydata=explode(',', preg_replace('/^select;/', '', $typeofdata));
+					foreach($arraydata as $val)
+					{
+						$tmp=explode(':', $val);
+						$tmpkey=str_replace('|', ':', $tmp[0]);
+						$arraylist[$tmpkey]=$tmp[1];
+					}
+					$ret.=$this->selectarray($htmlname, $arraylist, $value);
 				}
 				elseif (preg_match('/^ckeditor/', $typeofdata))
 				{
@@ -5458,9 +5458,9 @@ class Form
 							dateFormat: '".$langs->trans("FormatDateShortJQueryInput")."',
 							autoclose: true,
 							todayHighlight: true,";
-							if (! empty($conf->dol_use_jmobile))
-							{
-								$retstring.="
+						if (! empty($conf->dol_use_jmobile))
+						{
+							$retstring.="
 								beforeShow: function (input, datePicker) {
 									input.disabled = true;
 								},
@@ -5468,16 +5468,16 @@ class Form
 									this.disabled = false;
 								},
 								";
-							}
-							// Note: We don't need monthNames, monthNamesShort, dayNames, dayNamesShort, dayNamesMin, they are set globally on datepicker component in lib_head.js.php
-							if (empty($conf->global->MAIN_POPUP_CALENDAR_ON_FOCUS))
-							{
+						}
+						// Note: We don't need monthNames, monthNamesShort, dayNames, dayNamesShort, dayNamesMin, they are set globally on datepicker component in lib_head.js.php
+						if (empty($conf->global->MAIN_POPUP_CALENDAR_ON_FOCUS))
+						{
 							$retstring.="
 								showOn: 'button',
 								buttonImage: '".DOL_URL_ROOT."/theme/".$conf->theme."/img/object_calendarday.png',
 								buttonImageOnly: true";
-							}
-							$retstring.="
+						}
+						$retstring.="
 							}) });";
 						$retstring.="</script>";
 					}
@@ -6572,19 +6572,19 @@ class Form
 
 		foreach($array as $key => $val)
 		{
-		   /* var_dump($val);
+		    /* var_dump($val);
             var_dump(array_key_exists('enabled', $val));
             var_dump(!$val['enabled']);*/
-		   if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled'])
-		   {
-			   unset($array[$key]);     // We don't want this field
-			   continue;
-		   }
-		   if ($val['label'])
-		   {
-		   	$lis.='<li><input type="checkbox" id="checkbox'.$key.'" value="'.$key.'"'.(empty($val['checked'])?'':' checked="checked"').'/><label for="checkbox'.$key.'">'.dol_escape_htmltag($langs->trans($val['label'])).'</label></li>';
-			   $listcheckedstring.=(empty($val['checked'])?'':$key.',');
-		   }
+		    if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled'])
+		    {
+			    unset($array[$key]);     // We don't want this field
+			    continue;
+		    }
+		    if ($val['label'])
+		    {
+		        $lis.='<li><input type="checkbox" id="checkbox'.$key.'" value="'.$key.'"'.(empty($val['checked'])?'':' checked="checked"').'/><label for="checkbox'.$key.'">'.dol_escape_htmltag($langs->trans($val['label'])).'</label></li>';
+			    $listcheckedstring.=(empty($val['checked'])?'':$key.',');
+		    }
 		}
 
 		$out ='<!-- Component multiSelectArrayWithCheckbox '.$htmlname.' -->
@@ -6979,7 +6979,7 @@ class Form
 
 		if (! empty($conf->use_javascript_ajax))
 		{
-		  print '<!-- Add js to show linkto box -->
+		    print '<!-- Add js to show linkto box -->
 				<script>
 				jQuery(document).ready(function() {
 					jQuery(".linkto").click(function() {
@@ -6989,7 +6989,7 @@ class Form
 					});
 				});
 				</script>
-		  ';
+		    ';
 		}
 
 		return $linktoelem;
@@ -7026,7 +7026,7 @@ class Form
 			$resultyesno .= '<option value="'.$no.'">'.$langs->trans("No").'</option>'."\n";
 		}
 		else
-	   {
+	    {
 	   		$selected=(($useempty && $value != '0' && $value != 'no')?'':' selected');
 			$resultyesno .= '<option value="'.$yes.'">'.$langs->trans("Yes").'</option>'."\n";
 			$resultyesno .= '<option value="'.$no.'"'.$selected.'>'.$langs->trans("No").'</option>'."\n";

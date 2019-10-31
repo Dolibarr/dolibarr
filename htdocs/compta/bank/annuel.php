@@ -306,7 +306,7 @@ else
 	$log="graph.php: min=".$min." max=".$max;
 	dol_syslog($log);
 
-// CRED PART
+	// CRED PART
 	// Chargement du tableau des années
 	$tblyear[0] = array();
 	$tblyear[1] = array();
@@ -393,7 +393,7 @@ else
 	unset($tblyear[1]);
 	unset($tblyear[2]);
 
-// DEDBT PART
+	// DEDBT PART
 	// Chargement du tableau des années
 	$tblyear[0] = array();
 	$tblyear[1] = array();

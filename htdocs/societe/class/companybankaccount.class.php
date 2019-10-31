@@ -20,9 +20,9 @@
  */
 
 /**
- * 		\file		htdocs/societe/class/companybankaccount.class.php
- *		\ingroup    societe
- *		\brief      File of class to manage bank accounts description of third parties
+ *  \file		htdocs/societe/class/companybankaccount.class.php
+ *  \ingroup    societe
+ *  \brief      File of class to manage bank accounts description of third parties
  */
 
 require_once DOL_DOCUMENT_ROOT .'/compta/bank/class/account.class.php';
@@ -174,25 +174,25 @@ class CompanyBankAccount extends Account
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-		if (! $notrigger)
-		{
-			// Call trigger
-			$result=$this->call_trigger('COMPANY_RIB_MODIFY', $user);
-			if ($result < 0) $error++;
-			// End call triggers
-			if(! $error )
+			if (! $notrigger)
 			{
-				return 1;
+				// Call trigger
+				$result=$this->call_trigger('COMPANY_RIB_MODIFY', $user);
+				if ($result < 0) $error++;
+				// End call triggers
+				if(! $error )
+				{
+					return 1;
+				}
+				else
+				{
+					return -1;
+				}
 			}
 			else
 			{
-				return -1;
+				return 1;
 			}
-		}
-		else
-		{
-			return 1;
-		}
 		}
 		else
 		{

@@ -862,10 +862,10 @@ class Facture extends CommonInvoice
 
 			        if (! $error && ! $notrigger)
 			        {
-			           // Call trigger
-			           $result=$this->call_trigger('BILL_CREATE', $user);
-			           if ($result < 0) $error++;
-			           // End call triggers
+			            // Call trigger
+			            $result=$this->call_trigger('BILL_CREATE', $user);
+			            if ($result < 0) $error++;
+			            // End call triggers
 			        }
 
 					if (! $error)
@@ -1605,9 +1605,9 @@ class Facture extends CommonInvoice
 
 				// multilangs
         		if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($objp->fk_product) && ! empty($loadalsotranslation)) {
-        		$line = new Product($this->db);
-        		$line->fetch($objp->fk_product);
-        		$line->getMultiLangs();
+        		    $line = new Product($this->db);
+        		    $line->fetch($objp->fk_product);
+        		    $line->getMultiLangs();
         		}
 
 				$this->lines[$i] = $line;
@@ -2545,7 +2545,7 @@ class Facture extends CommonInvoice
     				if (empty($final)) $this->situation_final = 0;
     				else $this->situation_final = 1;
 
-				$this->setFinal($user);
+				    $this->setFinal($user);
                 }
 			}
 		}
@@ -2587,10 +2587,12 @@ class Facture extends CommonInvoice
 			$next_invoice->brouillon = 1;
 			foreach ($next_invoice->lines as $line)
 			{
-				$result = $next_invoice->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent,
-														$line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type,
-														$line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent,
-														$line->fk_unit);
+				$result = $next_invoice->updateline(
+					$line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent,
+					$line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type,
+					$line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent,
+					$line->fk_unit
+				);
 
 				if ($result < 0)
 				{

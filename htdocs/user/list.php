@@ -27,21 +27,24 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-if (! empty($conf->categorie->enabled))
+if (! empty($conf->categorie->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+}
 
-if (! $user->rights->user->user->lire && ! $user->admin)
+if (! $user->rights->user->user->lire && ! $user->admin) {
 	accessforbidden();
+}
 
-	// Load translation files required by page
+// Load translation files required by page
 $langs->loadLangs(array('users', 'companies', 'hrm'));
 
 $contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'userlist';   // To manage different context of search
 
 // Security check (for external users)
 $socid=0;
-if ($user->societe_id > 0)
+if ($user->societe_id > 0) {
 	$socid = $user->societe_id;
+}
 
 // Load mode employee
 $mode = GETPOST("mode", 'alpha');
@@ -535,29 +538,29 @@ while ($i < min($num, $limit))
 	}
 	if (! empty($arrayfields['u.firstname']['checked']))
 	{
-	  print '<td>'.$obj->firstname.'</td>';
+	    print '<td>'.$obj->firstname.'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['u.gender']['checked']))
 	{
-	  print '<td>';
-	  if ($obj->gender) print $langs->trans("Gender".$obj->gender);
-	  print '</td>';
+	    print '<td>';
+	    if ($obj->gender) print $langs->trans("Gender".$obj->gender);
+	    print '</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['u.employee']['checked']))
 	{
-	  print '<td>'.yn($obj->employee).'</td>';
+	    print '<td>'.yn($obj->employee).'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['u.accountancy_code']['checked']))
 	{
-	  print '<td>'.$obj->accountancy_code.'</td>';
+	    print '<td>'.$obj->accountancy_code.'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['u.email']['checked']))
 	{
-	  print '<td>'.$obj->email.'</td>';
+	    print '<td>'.$obj->email.'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['u.api_key']['checked']))
@@ -580,7 +583,7 @@ while ($i < min($num, $limit))
 			print $langs->trans("DomainUser");
 		}
 		else
-	   {
+	    {
 			print $langs->trans("InternalUser");
 		}
 		print '</td>';
@@ -673,9 +676,9 @@ while ($i < min($num, $limit))
 	// Status
 	if (! empty($arrayfields['u.statut']['checked']))
 	{
-	   $userstatic->statut=$obj->statut;
-	   print '<td class="center">'.$userstatic->getLibStatut(3).'</td>';
-	   if (! $i) $totalarray['nbfield']++;
+	    $userstatic->statut=$obj->statut;
+	    print '<td class="center">'.$userstatic->getLibStatut(3).'</td>';
+	    if (! $i) $totalarray['nbfield']++;
 	}
 	// Action column
 	print '<td></td>';

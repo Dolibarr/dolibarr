@@ -651,7 +651,7 @@ class Don extends CommonObject
             return 1;
         }
         else
-       {
+        {
         	foreach($this->errors as $errmsg)
         	{
 				dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);

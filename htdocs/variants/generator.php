@@ -378,8 +378,8 @@ if (! empty($id) || ! empty($ref)) {
 
 	<?php
 
-  // End of page
-  llxFooter();
+    // End of page
+    llxFooter();
 }
 
 $db->close();

@@ -185,17 +185,15 @@ class modWebsite extends DolibarrModules
     	dol_mkdir($destroot);
 
     	$docs=dol_dir_list($srcroot, 'files', 0, 'website_.*(\.zip|\.jpg)$');
-    	foreach($docs as $cursorfile)
-    	{
-	    		$src=$srcroot.'/'.$cursorfile['name'];
-	    		$dest=$destroot.'/'.$cursorfile['name'];
+    	foreach($docs as $cursorfile) {
+	    	$src=$srcroot.'/'.$cursorfile['name'];
+	    	$dest=$destroot.'/'.$cursorfile['name'];
 
-	    		$result=dol_copy($src, $dest, 0, 0);
-	    		if ($result < 0)
-	    		{
-	    			$langs->load("errors");
-	    			$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
-	    		}
+	    	$result=dol_copy($src, $dest, 0, 0);
+	    	if ($result < 0) {
+	    		$langs->load("errors");
+	    		$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
+	    	}
     	}
 
     	$sql = array();

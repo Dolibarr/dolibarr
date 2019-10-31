@@ -1360,10 +1360,10 @@ class Account extends CommonObject
 		$linkstart = '<a href="'.$url.$linkclose;
 		$linkend = '</a>';
 
-                if ($option == 'nolink') {
-                    $linkstart = '';
-                    $linkend = '';
-                }
+        if ($option == 'nolink') {
+            $linkstart = '';
+            $linkend = '';
+        }
 
 		$result .= $linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
@@ -1600,8 +1600,8 @@ class Account extends CommonObject
 				//Replace the old AccountNumber key with the new BankAccountNumber key
 				$fieldlists = explode(
 					' ',
-    preg_replace('/ ?[^Bank]AccountNumber ?/', 'BankAccountNumber',
-						$conf->global->BANK_SHOW_ORDER_OPTION)
+                    preg_replace('/ ?[^Bank]AccountNumber ?/', 'BankAccountNumber',
+					$conf->global->BANK_SHOW_ORDER_OPTION)
 				);
 			}
 		}

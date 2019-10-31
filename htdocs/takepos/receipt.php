@@ -100,7 +100,8 @@ if ($conf->global->TAKEPOS_CUSTOM_RECEIPT)
 <?php
 print $langs->trans('Date')." ".dol_print_date($object->date, 'day').'<br>';
 if ($conf->global->TAKEPOS_CUSTOM_RECEIPT) print $conf->global->TAKEPOS_RECEIPT_NAME." ";
-print $object->ref;
+if ($object->statut == Facture::STATUS_DRAFT) print str_replace(")", "", str_replace("-", " ".$langs->trans('Place')." ", str_replace("(PROV-POS", $langs->trans("Terminal")." ", $object->ref)));
+else print $object->ref;
 if ($conf->global->TAKEPOS_CUSTOM_RECEIPT && $conf->global->TAKEPOS_SHOW_CUSTOMER)
 {
 	$soc = new Societe($db);
@@ -130,16 +131,17 @@ if ($conf->global->TAKEPOS_CUSTOM_RECEIPT && $conf->global->TAKEPOS_SHOW_CUSTOME
     <?php
     foreach ($object->lines as $line)
     {
-    ?>
+        ?>
     <tr>
-        <td><?php if (!empty($line->product_label)) echo $line->product_label;
-                  else echo $line->description;?>
+        <td>
+		<?php if (!empty($line->product_label)) echo $line->product_label;
+        else echo $line->description;?>
         </td>
         <td class="right"><?php echo $line->qty;?></td>
         <td class="right"><?php echo $line->total_ttc/$line->qty;?></td>
         <td class="right"><?php echo price($line->total_ttc);?></td>
     </tr>
-    <?php
+        <?php
     }
     ?>
     </tbody>
@@ -150,30 +152,28 @@ if ($conf->global->TAKEPOS_CUSTOM_RECEIPT && $conf->global->TAKEPOS_SHOW_CUSTOME
     <th class="right"><?php echo $langs->trans("TotalHT");?></th>
     <td class="right"><?php echo price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
 </tr>
-<?php if($conf->global->TAKEPOS_TICKET_VAT_GROUPPED):?>
-<?php
+<?php if($conf->global->TAKEPOS_TICKET_VAT_GROUPPED) {
 	$vat_groups = array();
 	foreach ($object->lines as $line)
 	{
-		if(!array_key_exists($line->tva_tx, $vat_groups)){
+		if(!array_key_exists($line->tva_tx, $vat_groups)) {
 			$vat_groups[$line->tva_tx] = 0;
 		}
 		$vat_groups[$line->tva_tx] += $line->total_tva;
 	}
-	foreach($vat_groups as $key => $val){
-	?>
+	foreach($vat_groups as $key => $val) {
+	    ?>
 	<tr>
 		<th align="right"><?php echo $langs->trans("VAT").' '.vatrate($key, 1);?></th>
 		<td align="right"><?php echo price($val, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
 	</tr>
-<?php
+        <?php
 	}
-?>
-<?php else: ?>
+} else { ?>
 <tr>
 	<th class="right"><?php echo $langs->trans("TotalVAT").'</th><td class="right">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
 </tr>
-<?php endif ?>
+<?php } ?>
 <tr>
 	<th class="right"><?php echo ''.$langs->trans("TotalTTC").'</th><td class="right">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency)."\n";?></td>
 </tr>

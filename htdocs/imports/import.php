@@ -1962,15 +1962,16 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 
 	$height='24px';
 
-    if ($key == 'none') {//stop multiple duplicate ids with no number
+    if ($key == 'none') {
+        //stop multiple duplicate ids with no number
         print "\n\n<!-- Box_no-key start-->\n";
         print '<div class="box boximport" style="padding:0;">' . "\n";
         print '<table summary="boxtable_no-key" width="100%" class="nobordernopadding">' . "\n";
     } else {
-	print "\n\n<!-- Box ".$pos." start -->\n";
+        print "\n\n<!-- Box ".$pos." start -->\n";
         print '<div class="box boximport" style="padding: 0;" id="boxto_' . $pos . '">' . "\n";
 
-	print '<table summary="boxtable'.$pos.'" width="100%" class="nobordernopadding">'."\n";
+        print '<table summary="boxtable'.$pos.'" width="100%" class="nobordernopadding">'."\n";
     }
 
 	if ($pos && $pos > count($fieldssource))	// No fields

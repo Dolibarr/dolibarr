@@ -311,17 +311,17 @@ if ($action == 'sethideinactivethirdparty')
 	}
 }
 if($action=='setonsearchandlistgooncustomerorsuppliercard'){
-       $setonsearchandlistgooncustomerorsuppliercard = GETPOST('value', 'int');
-       $res = dolibarr_set_const($db, "SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD", $setonsearchandlistgooncustomerorsuppliercard, 'yesno', 0, '', $conf->entity);
-       if (! $res > 0) $error++;
-       if (! $error)
-       {
-               setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-       }
-       else
-       {
-               setEventMessages($langs->trans("Error"), null, 'errors');
-       }
+    $setonsearchandlistgooncustomerorsuppliercard = GETPOST('value', 'int');
+    $res = dolibarr_set_const($db, "SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD", $setonsearchandlistgooncustomerorsuppliercard, 'yesno', 0, '', $conf->entity);
+    if (! $res > 0) $error++;
+    if (! $error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 
 /*

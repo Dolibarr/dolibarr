@@ -571,7 +571,7 @@ class Notify
 						}
 					}
 					else
-				  {
+				    {
 						dol_syslog("No notification sent for ".$sendto." because email is empty");
 					}
 					$i++;

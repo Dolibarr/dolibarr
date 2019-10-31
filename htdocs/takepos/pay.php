@@ -223,7 +223,7 @@ $numpad=$conf->global->TAKEPOS_NUMPAD;
     if ($paycode == 'LIQ') $paycode = 'cash';
     if ($paycode == 'CB')  $paycode = 'card';
     if ($paycode == 'CHQ') $paycode = 'cheque';
-?>
+    ?>
 <button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paycode); ?>');"><?php echo $langs->trans("PaymentTypeShort".$paiements[0]->code); ?></button>
 <?php } else { ?>
 <button type="button" class="calcbutton2"><?php echo $langs->trans("NoPaimementModesDefined");?></button>
@@ -236,11 +236,11 @@ $numpad=$conf->global->TAKEPOS_NUMPAD;
     if ($paycode == 'LIQ') $paycode = 'cash';
     if ($paycode == 'CB')  $paycode = 'card';
     if ($paycode == 'CHQ') $paycode = 'cheque';
-?>
+    ?>
 <button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paycode); ?>');"><?php echo $langs->trans("PaymentTypeShort".$paiements[1]->code); ?></button>
 <?php } else {
-$button = array_pop($action_buttons);
-?>
+    $button = array_pop($action_buttons);
+    ?>
 	<button type="button" class="calcbutton2" onclick="<?php echo $button["function"];?>"><span <?php echo $button["span"];?>><?php echo $button["text"];?></span></button>
 <?php } ?>
 <button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "1"; else print "0.10";?>);"><?php if ($numpad==0) print "1"; else print "0.10";?></button>
@@ -251,12 +251,11 @@ $button = array_pop($action_buttons);
     if ($paycode == 'LIQ') $paycode = 'cash';
     if ($paycode == 'CB')  $paycode = 'card';
     if ($paycode == 'CHQ') $paycode = 'cheque';
-?>
+    ?>
 <button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paycode); ?>');"><?php echo $langs->trans("PaymentTypeShort".$paiements[2]->code); ?></button>
-<?php } else { ?>
-<?php
-$button = array_pop($action_buttons);
-?>
+<?php } else {
+    $button = array_pop($action_buttons);
+    ?>
 	<button type="button" class="calcbutton2" onclick="<?php echo $button["function"];?>"><span <?php echo $button["span"];?>><?php echo $button["text"];?></span></button>
 <?php } ?>
 <button type="button" class="calcbutton" onclick="addreceived(<?php if ($numpad==0) print "0"; else print "0.01";?>);"><?php if ($numpad==0) print "0"; else print "0.01";?></button>
@@ -265,17 +264,17 @@ $button = array_pop($action_buttons);
 <?php
 $i=3;
 while($i < count($paiements)){
-?>
+    ?>
 <button type="button" class="calcbutton2" onclick="Validate('<?php echo $langs->trans($paiements[$i]->code); ?>');"><?php echo $langs->trans("PaymentTypeShort".$paiements[$i]->code); ?></button>
-<?php
+    <?php
 	$i=$i+1;
 }
 $class=($i==3)?"calcbutton3":"calcbutton2";
 foreach($action_buttons as $button){
     $newclass = $class.($button["class"]?" ".$button["class"]:"");
-?>
+    ?>
 	<button type="button" class="<?php echo $newclass;?>" onclick="<?php echo $button["function"];?>"><span <?php echo $button["span"];?>><?php echo $button["text"];?></span></button>
-<?php
+    <?php
 }
 ?>
 </div>

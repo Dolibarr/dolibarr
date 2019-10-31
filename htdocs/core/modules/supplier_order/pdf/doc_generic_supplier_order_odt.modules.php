@@ -4,7 +4,7 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2018-2019  Philippe Grand      <philippe.grand@atoo-net.com>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Tim Otte		    <otte@meuser.it>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -485,7 +485,7 @@ class doc_generic_supplier_order_odt extends ModelePDFSuppliersOrders
 				}
 				else {
 					try {
-					$odfHandler->saveToDisk($file);
+					    $odfHandler->saveToDisk($file);
 					} catch (Exception $e) {
                         $this->error=$e->getMessage();
                         dol_syslog($e->getMessage(), LOG_INFO);

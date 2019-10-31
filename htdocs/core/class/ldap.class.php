@@ -1362,12 +1362,12 @@ class Ldap
 		}
 	}
 
-   /**
-    * 	UserAccountControl Flgs to more human understandable form...
-    *
-    *	@param	string		$uacf		UACF
-    *	@return	void
-    */
+    /**
+     * 	UserAccountControl Flgs to more human understandable form...
+     *
+     *	@param	string		$uacf		UACF
+     *	@return	void
+     */
     public function parseUACF($uacf)
 	{
 		//All flags array
@@ -1408,12 +1408,12 @@ class Ldap
 		return($retval);
 	}
 
-   /**
-    * 	SamAccountType value to text
-    *
-    *	@param	string	$samtype	SamType
-    *	@return	string				Sam string
-    */
+    /**
+     * 	SamAccountType value to text
+     *
+     *	@param	string	$samtype	SamType
+     *	@return	string				Sam string
+     */
     public function parseSAT($samtype)
 	{
 		$stypes = array(

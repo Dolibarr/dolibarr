@@ -175,6 +175,7 @@ DraftBills=Draft invoices
 CustomersDraftInvoices=Customer draft invoices
 SuppliersDraftInvoices=Vendor draft invoices
 Unpaid=Unpaid
+ErrorNoPaymentDefined=Error No payment defined
 ConfirmDeleteBill=Are you sure you want to delete this invoice?
 ConfirmValidateBill=Are you sure you want to validate this invoice with reference <b>%s</b>?
 ConfirmUnvalidateBill=Are you sure you want to change invoice <b>%s</b> to draft status?

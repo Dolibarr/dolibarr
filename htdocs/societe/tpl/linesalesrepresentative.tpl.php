@@ -42,6 +42,8 @@ if ($nbofsalesrepresentative > 0)
 		$userstatic->statut=$val['statut'];
 		$userstatic->photo=$val['photo'];
 		$userstatic->email=$val['email'];
+		$userstatic->phone=$val['phone'];
+		$userstatic->job=$val['job'];
 		$userstatic->entity=$val['entity'];
 		print $userstatic->getNomUrl(-1);
 		print ' ';

@@ -149,9 +149,9 @@ class DoliDBSqlite3 extends DoliDB
         {
             if ($type == 'auto')
             {
-              if (preg_match('/ALTER TABLE/i', $line)) $type='dml';
-              elseif (preg_match('/CREATE TABLE/i', $line)) $type='dml';
-              elseif (preg_match('/DROP TABLE/i', $line)) $type='dml';
+                if (preg_match('/ALTER TABLE/i', $line)) $type='dml';
+                elseif (preg_match('/CREATE TABLE/i', $line)) $type='dml';
+                elseif (preg_match('/DROP TABLE/i', $line)) $type='dml';
             }
 
             if ($type == 'dml')

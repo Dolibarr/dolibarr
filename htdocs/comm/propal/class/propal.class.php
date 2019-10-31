@@ -1714,9 +1714,9 @@ class Propal extends CommonObject
 
 				// multilangs
         		if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($objp->fk_product) && ! empty($loadalsotranslation)) {
-        		$line = new Product($this->db);
-        		$line->fetch($objp->fk_product);
-        		$line->getMultiLangs();
+                    $line = new Product($this->db);
+                    $line->fetch($objp->fk_product);
+                    $line->getMultiLangs();
         		}
 
 				$this->lines[$i]        = $line;
@@ -3403,7 +3403,7 @@ class Propal extends CommonObject
 			{
 				$prodid = mt_rand(1, $num_prods);
 				$line->fk_product=$prodids[$prodid];
-		$line->product_ref='SPECIMEN';
+		        $line->product_ref='SPECIMEN';
 			}
 
 			$this->lines[$xnbp]=$line;
@@ -3919,7 +3919,7 @@ class PropaleLigne extends CommonObjectLine
 		if (empty($this->multicurrency_total_tva)) $this->multicurrency_total_tva=0;
 		if (empty($this->multicurrency_total_ttc)) $this->multicurrency_total_ttc=0;
 
-	   // if buy price not defined, define buyprice as configured in margin admin
+	    // if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0 && $pa_ht_isemptystring)
 		{
 			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0)

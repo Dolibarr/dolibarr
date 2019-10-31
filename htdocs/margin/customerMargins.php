@@ -360,7 +360,7 @@ if ($result)
 		print "<td class=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
 	print "</tr>\n";
 
-  print "</table>";
+    print "</table>";
 }
 else
 {

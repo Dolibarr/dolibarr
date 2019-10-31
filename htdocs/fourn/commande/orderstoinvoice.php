@@ -436,7 +436,7 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		});
 	});
 	</script>
-<?php
+	<?php
 
 	$sql = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_supplier,';
 	$sql .= ' c.date_valid, c.date_commande, c.date_livraison, c.fk_statut';

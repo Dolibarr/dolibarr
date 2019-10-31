@@ -1072,30 +1072,27 @@ if ($action == 'create')
             print '<script type="text/javascript" language="javascript">
             jQuery(document).ready(function() {
 	            jQuery("#autofill").click(function() {';
-    	    	$i=0;
-    	    	while($i < $numAsked)
-    	    	{
-    	    		print 'jQuery("#qtyl'.$i.'").val(jQuery("#qtyasked'.$i.'").val() - jQuery("#qtydelivered'.$i.'").val());'."\n";
-    	    		$i++;
-    	    	}
-        		print '});
+    	    $i=0;
+    	    while($i < $numAsked)
+    	    {
+    	    	print 'jQuery("#qtyl'.$i.'").val(jQuery("#qtyasked'.$i.'").val() - jQuery("#qtydelivered'.$i.'").val());'."\n";
+    	    	$i++;
+    	    }
+        	print '});
 	            jQuery("#autoreset").click(function() {';
-    	    	$i=0;
-    	    	while($i < $numAsked)
-    	    	{
-    	    		print 'jQuery("#qtyl'.$i.'").val(0);'."\n";
-    	    		$i++;
-    	    	}
-        		print '});
+    	    $i=0;
+    	    while($i < $numAsked)
+    	    {
+    	    	print 'jQuery("#qtyl'.$i.'").val(0);'."\n";
+    	    	$i++;
+    	    }
+        	print '});
         	});
             </script>';
 
-
             print '<br>';
 
-
             print '<table class="noborder" width="100%">';
-
 
             // Load shipments already done for same order
             $object->loadExpeditions();
