@@ -3000,10 +3000,36 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 
 	// Translation of
 	$translationof=0;
+	$translatedby=0;
 	print '<!-- Translation of --><tr><td>';
 	print $langs->trans('TranslationLinks');
 	print '</td><td>';
-	if ($action == 'editmeta' || $action == 'createcontainer' || $objectpage->fk_page > 0)
+	if ($action != 'createcontainer')
+	{
+		// Has translation pages
+		$sql='SELECT rowid, lang from '.MAIN_DB_PREFIX.'website_page where fk_page = '.$objectpage->id;
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$num_rows = $db->num_rows($resql);
+			if ($num_rows > 0)
+			{
+				print '<span class="opacitymedium">'.$langs->trans('ThisPageHasTranslationPages').':</span><br>';
+				$i=0;
+				while ($obj = $db->fetch_object($resql))
+				{
+					$tmppage=new WebsitePage($db);
+					$tmppage->fetch($obj->rowid);
+					if ($i > 0) print ' - ';
+					print $tmppage->getNomUrl(1).' ('.$tmppage->lang.')<br>';
+					$translatedby++;
+					$i++;
+				}
+			}
+		}
+		else dol_print_error($db);
+	}
+	if (empty($translatedby) && ($action == 'editmeta' || $action == 'createcontainer' || $objectpage->fk_page > 0))
 	{
 		$sourcepage=new WebsitePage($db);
 		$result = $sourcepage->fetch($objectpage->fk_page);
@@ -3017,31 +3043,6 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 			print '<span class="opacitymedium">'.$langs->trans('ThisPageIsTranslationOf').'</span> ';
 			print $formwebsite->selectContainer($website, 'pageidfortranslation', $sourcepage->id, 1, $action);
 		}
-	}
-	if ($action != 'createcontainer')
-	{
-		// Has translation pages
-		$sql='SELECT rowid, lang from '.MAIN_DB_PREFIX.'website_page where fk_page = '.$objectpage->id;
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$num_rows = $db->num_rows($resql);
-			if ($num_rows > 0)
-			{
-				if ($translationof) print '<br>';
-				print '<span class="opacitymedium">'.$langs->trans('ThisPageHasTranslationPages').':</span><br>';
-				$i=0;
-				while ($obj = $db->fetch_object($resql))
-				{
-					$tmppage=new WebsitePage($db);
-					$tmppage->fetch($obj->rowid);
-					if ($i > 0) print ' - ';
-					print $tmppage->getNomUrl(1).' ('.$tmppage->lang.')';
-					$i++;
-				}
-			}
-		}
-		else dol_print_error($db);
 	}
 	print '</td></tr>';
 
