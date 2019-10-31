@@ -467,7 +467,7 @@ while ($i < min($num, $limit))
     $adht->fetch($typeid);
 
 	print '<tr class="oddeven">';
-	
+
 	// Action column
 	print '<td class="center">';
 	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
@@ -477,7 +477,7 @@ while ($i < min($num, $limit))
 		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
 	}
 	print '</td>';
-	
+
 	// Ref
 	if (! empty($arrayfields['d.ref']['checked']))
 	{

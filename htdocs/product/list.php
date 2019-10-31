@@ -888,7 +888,7 @@ if ($resql)
 
 
 		print '<tr class="oddeven">';
-		
+
 		// Action column
 		print '<td class="center">';
 		if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined

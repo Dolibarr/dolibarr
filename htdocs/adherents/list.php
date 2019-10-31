@@ -700,7 +700,7 @@ while ($i < min($num, $limit))
 		print '<td class="center">'.$obj->rowid.'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
-	
+
 	// Action column
 	print '<td class="center">';
 	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
@@ -917,7 +917,7 @@ while ($i < min($num, $limit))
 	}
 	// Empty line (former Action column)
 	print '<td>&nbsp;</td>';
-	
+
 	if (! $i) $totalarray['nbfield']++;
 
 	print "</tr>\n";

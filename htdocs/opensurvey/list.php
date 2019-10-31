@@ -366,7 +366,7 @@ while ($i < min($num, $limit))
 
 	// Show here line of result
 	print '<tr class="oddeven">';
-	
+
 	// Action column
 	print '<td class="center">';
 	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
@@ -422,7 +422,7 @@ while ($i < min($num, $limit))
 	$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
 	$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $object);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	
+
 	// Empty column (former action column)
 	print '<td>&nbsp;</td>';
 
