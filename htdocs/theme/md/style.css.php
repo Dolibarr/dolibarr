@@ -691,6 +691,9 @@ textarea.centpercent {
 .backgroundblank {
     background-color: #fff;
 }
+.nobackground, .nobackground tr {
+	background: unset !important;
+}
 .checkboxattachfilelabel {
     font-size: 0.85em;
     opacity: 0.7;
@@ -719,6 +722,9 @@ body[class*="colorblind-"] .text-success{
 .editfielda span.fa-pencil-alt:hover {
     color: rgb(<?php echo $colortexttitle; ?>) !important;
 }
+
+.fa-toggle-on, .fa-toggle-off { font-size: 2em; }
+.websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off { font-size: 1.5em; vertical-align: text-bottom; }
 
 
 /* Themes for badges */

@@ -421,7 +421,7 @@ $h++;
 dol_fiche_head($head, 'website', '', -1);
 
 
-print $langs->trans("WebsiteSetupDesc").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("WebsiteSetupDesc").'</span><br>';
 print "<br>\n";
 
 
