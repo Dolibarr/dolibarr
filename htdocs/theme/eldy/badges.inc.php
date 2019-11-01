@@ -37,7 +37,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     padding: 0;
     border-radius: 50%;
     padding: 0.45em;
-    vertical-align: middle;
+    vertical-align: text-top;
 }
 
 a.badge:focus, a.badge:hover {

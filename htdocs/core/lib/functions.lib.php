@@ -8093,19 +8093,18 @@ function roundUpToNextMultiple($n, $x = 5)
 function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '', $params = array())
 {
     $attr=array(
-        'class'=>'badge badge-status'.(!empty($mode)?' badge-'.$mode:'').(!empty($type)?' badge-'.$type:'')
+    	'class'=>'badge badge-status'.(!empty($mode)?' badge-'.$mode:'').(!empty($type)?' badge-'.$type:'').(empty($params['css'])?'':' '.$params['css'])
     );
 
-    if(empty($html)){
+    if (empty($html)) {
         $html = $label;
     }
 
-    if(!empty($url)){
+    if (!empty($url)) {
         $attr['href'] = $url;
     }
 
-    if($mode==='dot')
-    {
+    if ($mode==='dot') {
         $attr['class'].= ' classfortooltip';
         $attr['title'] = $html;
         $attr['aria-label'] = $label;
@@ -8113,8 +8112,8 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
     }
 
     // Override attr
-    if(!empty($params['attr']) && is_array($params['attr'])){
-        foreach($params['attr']as $key => $value){
+    if (!empty($params['attr']) && is_array($params['attr'])) {
+        foreach($params['attr']as $key => $value) {
             $attr[$key] = $value;
         }
     }
@@ -8125,7 +8124,7 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
     $attr = array_map('dol_escape_htmltag', $attr);
 
     $TCompiledAttr = array();
-    foreach($attr as $key => $value){
+    foreach($attr as $key => $value) {
         $TCompiledAttr[] = $key.'="'.$value.'"';
     }
 
@@ -8168,13 +8167,13 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
     elseif ($displayMode == 1) {
         $return = !empty($html)?$html:(!empty($statusLabelShort)?$statusLabelShort:$statusLabel);
     }
-    // use status with images
-    elseif (empty($conf->global->MAIN_STATUS_USES_CSS)) {
+    // Use status with images (for backward compatibility)
+    elseif (! empty($conf->global->MAIN_STATUS_USES_IMAGES)) {
         $return = '';
         $htmlLabel      = (in_array($displayMode, array(1,2,5))?'<span class="hideonsmartphone">':'').(!empty($html)?$html:$statusLabel).(in_array($displayMode, array(1,2,5))?'</span>':'');
         $htmlLabelShort = (in_array($displayMode, array(1,2,5))?'<span class="hideonsmartphone">':'').(!empty($html)?$html:(!empty($statusLabelShort)?$statusLabelShort:$statusLabel)).(in_array($displayMode, array(1,2,5))?'</span>':'');
 
-        // For small screen, we use the short label instead of long label.
+        // For small screen, we always use the short label instead of long label.
         if (! empty($conf->dol_optimize_smallscreen))
         {
         	if ($displayMode == 0) $displayMode = 1;
@@ -8212,7 +8211,6 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
             $return =  $htmlImg .' '. $htmlLabel;
         }
         elseif ($displayMode === 5) {
-        	// Add here a span class="hideonsmartphone ?
             $return = $htmlLabelShort .' '. $htmlImg;
         }
         else { // $displayMode >= 6
@@ -8220,7 +8218,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         }
     }
     // Use new badge
-    elseif (!empty($conf->global->MAIN_STATUS_USES_CSS) && !empty($displayMode)) {
+    elseif (empty($conf->global->MAIN_STATUS_USES_IMAGES) && !empty($displayMode)) {
         $statusLabelShort = !empty($statusLabelShort)?$statusLabelShort:$statusLabel;
 
         if ($displayMode == 3) {

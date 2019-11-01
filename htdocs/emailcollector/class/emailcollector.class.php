@@ -183,6 +183,10 @@ class EmailCollector extends CommonObject
     public $debuginfo;
 
 
+    const STATUS_DISABLED = 0;
+    const STATUS_ENABLED = 1;
+
+
     /**
      * Constructor
      *
@@ -506,47 +510,20 @@ class EmailCollector extends CommonObject
     public function LibStatut($status, $mode = 0)
     {
         // phpcs:enable
-        if (empty($this->labelStatus))
+    	if (empty($this->labelStatus) || empty($this->labelStatusShort))
         {
             global $langs;
             //$langs->load("mymodule");
-            $this->labelStatus[1] = $langs->trans('Enabled');
-            $this->labelStatus[0] = $langs->trans('Disabled');
+            $this->labelStatus[self::STATUS_ENABLED] = $langs->trans('Enabled');
+            $this->labelStatus[self::STATUS_DISABLED] = $langs->trans('Disabled');
+            $this->labelStatusShort[self::STATUS_ENABLED] = $langs->trans('Enabled');
+            $this->labelStatusShort[self::STATUS_DISABLED] = $langs->trans('Disabled');
         }
 
-        if ($mode == 0)
-        {
-            return $this->labelStatus[$status];
-        }
-        elseif ($mode == 1)
-        {
-            return $this->labelStatus[$status];
-        }
-        elseif ($mode == 2)
-        {
-            if ($status == 1) return img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
-            elseif ($status == 0) return img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
-        }
-        elseif ($mode == 3)
-        {
-            if ($status == 1) return img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
-            elseif ($status == 0) return img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
-        }
-        elseif ($mode == 4)
-        {
-            if ($status == 1) return img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
-            elseif ($status == 0) return img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelStatus[$status];
-        }
-        elseif ($mode == 5)
-        {
-            if ($status == 1) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
-            elseif ($status == 0) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
-        }
-        elseif ($mode == 6)
-        {
-            if ($status == 1) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
-            elseif ($status == 0) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
-        }
+        $statusType = 'status5';
+        if ($status == self::STATUS_ENABLED) $statusType = 'status4';
+
+        return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
     }
 
     /**
