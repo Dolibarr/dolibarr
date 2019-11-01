@@ -179,7 +179,8 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 				$data2 = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0), $startmonth);
 
 				$filenamenb = $dir."/".$prefix."invoicessupplieramountinyear-".$year.".png";
-				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesamountinyear-'.$year.'.png';
+				// default value for customer mode
+				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesamountinyear-'.$year.'.png';
 				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicessupplieramountinyear-'.$year.'.png';
 
 				$px2 = new DolGraph();
