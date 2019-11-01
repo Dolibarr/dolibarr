@@ -458,7 +458,7 @@ if ($mode == 'searchkey')
     //print 'param='.$param.' $_SERVER["PHP_SELF"]='.$_SERVER["PHP_SELF"].' num='.$num.' page='.$page.' nbtotalofrecords='.$nbtotalofrecords." sortfield=".$sortfield." sortorder=".$sortorder;
     $title = $langs->trans("TranslationKeySearch");
     if ($nbtotalofrecords > 0) $title.=' ('.$nbtotalofrecords.' / '.$nbtotalofrecordswithoutfilters.' - '.$nbtotaloffiles.' '.$langs->trans("Files").')';
-    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, '', '', $limit)."\n";
+    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, '', '', $limit);
 
     print '<input type="hidden" id="action" name="action" value="search">';
     print '<input type="hidden" id="mode" name="mode" value="'.$mode.'">';
