@@ -8094,7 +8094,7 @@ function roundUpToNextMultiple($n, $x = 5)
  * @param   string  $type       type of badge : Primary Secondary Success Danger Warning Info Light Dark status0 status1 status2 status3 status4 status5 status6 status7 status8 status9
  * @param   string  $mode       default '' , pill, dot
  * @param   string  $url        the url for link
- * @param   array   $params     various params for future : recommended rather than adding more fuction arguments
+ * @param   array   $params     various params for future : recommended rather than adding more fuction arguments. array('attr'=>array('title'=>'abc'))
  * @return  string              Html badge
  */
 function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '', $params = array())

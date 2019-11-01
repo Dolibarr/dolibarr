@@ -1668,44 +1668,44 @@ class Expedition extends CommonObject
 	/**
 	 * Return label of a status
 	 *
-	 * @param      int		$statut		Id statut
+	 * @param      int		$status		Id statut
 	 * @param      int		$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
 	 * @return     string				Label of status
 	 */
-	public function LibStatut($statut, $mode)
+	public function LibStatut($status, $mode)
 	{
         // phpcs:enable
 		global $langs;
 
 		if ($mode==0)
 		{
-			if ($statut==0) return $langs->trans($this->statuts[$statut]);
-			elseif ($statut==1) return $langs->trans($this->statuts[$statut]);
-			elseif ($statut==2) return $langs->trans($this->statuts[$statut]);
+			if ($status==0) return $langs->trans($this->statuts[$status]);
+			elseif ($status==1) return $langs->trans($this->statuts[$status]);
+			elseif ($status==2) return $langs->trans($this->statuts[$status]);
 		}
 		elseif ($mode==1)
 		{
-			if ($statut==0) return $langs->trans($this->statutshorts[$statut]);
-			elseif ($statut==1) return $langs->trans($this->statutshorts[$statut]);
-			elseif ($statut==2) return $langs->trans($this->statutshorts[$statut]);
+			if ($status==0) return $langs->trans($this->statutshorts[$status]);
+			elseif ($status==1) return $langs->trans($this->statutshorts[$status]);
+			elseif ($status==2) return $langs->trans($this->statutshorts[$status]);
 		}
 		elseif ($mode == 3)
 		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut0');
-			elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]), 'statut4');
-			elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]), 'statut6');
+			if ($status==0) return img_picto($langs->trans($this->statuts[$status]), 'statut0');
+			elseif ($status==1) return img_picto($langs->trans($this->statuts[$status]), 'statut4');
+			elseif ($status==2) return img_picto($langs->trans($this->statuts[$status]), 'statut6');
 		}
 		elseif ($mode == 4)
 		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut0').' '.$langs->trans($this->statuts[$statut]);
-			elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]), 'statut4').' '.$langs->trans($this->statuts[$statut]);
-			elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]), 'statut6').' '.$langs->trans($this->statuts[$statut]);
+			if ($status==0) return img_picto($langs->trans($this->statuts[$status]), 'statut0').' '.$langs->trans($this->statuts[$status]);
+			elseif ($status==1) return img_picto($langs->trans($this->statuts[$status]), 'statut4').' '.$langs->trans($this->statuts[$status]);
+			elseif ($status==2) return img_picto($langs->trans($this->statuts[$status]), 'statut6').' '.$langs->trans($this->statuts[$status]);
 		}
 		elseif ($mode == 5)
 		{
-			if ($statut==0) return $langs->trans($this->statutshorts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]), 'statut0');
-			elseif ($statut==1) return $langs->trans($this->statutshorts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]), 'statut4');
-			elseif ($statut==2) return $langs->trans($this->statutshorts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]), 'statut6');
+			if ($status==0) return $langs->trans($this->statutshorts[$status]).' '.img_picto($langs->trans($this->statuts[$status]), 'statut0');
+			elseif ($status==1) return $langs->trans($this->statutshorts[$status]).' '.img_picto($langs->trans($this->statuts[$status]), 'statut4');
+			elseif ($status==2) return $langs->trans($this->statutshorts[$status]).' '.img_picto($langs->trans($this->statuts[$status]), 'statut6');
 		}
 	}
 

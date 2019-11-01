@@ -3469,13 +3469,13 @@ class Commande extends CommonOrder
 	/**
 	 *	Return label of status
 	 *
-	 *	@param		int		$statut      	  Id statut
+	 *	@param		int		$status      	  Id status
 	 *  @param      int		$billed    		  If invoiced
 	 *	@param      int		$mode        	  0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @param      int     $donotshowbilled  Do not show billed status after order status
 	 *  @return     string					  Label of status
 	 */
-	public function LibStatut($statut, $billed, $mode, $donotshowbilled = 0)
+	public function LibStatut($status, $billed, $mode, $donotshowbilled = 0)
 	{
         // phpcs:enable
 		global $langs, $conf;
@@ -3483,37 +3483,37 @@ class Commande extends CommonOrder
 		$billedtext = '';
 		if (empty($donotshowbilled)) $billedtext .= ($billed?' - '.$langs->trans("Billed"):'');
 
-		if ($statut==self::STATUS_CANCELED){
+		if ($status==self::STATUS_CANCELED){
 		    $labelStatus = $langs->trans('StatusOrderCanceled');
 		    $labelStatusShort = $langs->trans('StatusOrderCanceledShort');
 		    $statusType='status5';
 		}
-		elseif ($statut==self::STATUS_DRAFT){
+		elseif ($status==self::STATUS_DRAFT){
 		    $labelStatus = $langs->trans('StatusOrderDraft');
 		    $labelStatusShort = $langs->trans('StatusOrderDraftShort');
 		    $statusType='status0';
 		}
-		elseif ($statut==self::STATUS_VALIDATED){
+		elseif ($status==self::STATUS_VALIDATED){
 		    $labelStatus = $langs->trans('StatusOrderValidated').$billedtext;
 		    $labelStatusShort = $langs->trans('StatusOrderValidatedShort').$billedtext;
 		    $statusType='status1';
 		}
-		elseif ($statut==self::STATUS_SHIPMENTONPROCESS){
+		elseif ($status==self::STATUS_SHIPMENTONPROCESS){
 		    $labelStatus = $langs->trans('StatusOrderSentShort').$billedtext;
 		    $labelStatusShort = $langs->trans('StatusOrderSentShort').$billedtext;
 		    $statusType='status3';
 		}
-		elseif ($statut==self::STATUS_CLOSED && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))){
+		elseif ($status==self::STATUS_CLOSED && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))){
 		    $labelStatus = $langs->trans('StatusOrderToBill');
 		    $labelStatusShort = $langs->trans('StatusOrderToBillShort');
 		    $statusType='status4';
 		}
-		elseif ($statut==self::STATUS_CLOSED && ($billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))){
+		elseif ($status==self::STATUS_CLOSED && ($billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))){
 		    $labelStatus = $langs->trans('StatusOrderProcessed').$billedtext;
 		    $labelStatusShort = $langs->trans('StatusOrderProcessed').$billedtext;
 		    $statusType='status6';
 		}
-		elseif ($statut==self::STATUS_CLOSED && (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))){
+		elseif ($status==self::STATUS_CLOSED && (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))){
 		    $labelStatus = $langs->trans('StatusOrderDelivered');
 		    $labelStatusShort = $langs->trans('StatusOrderDelivered');
 		    $statusType='status6';

@@ -3200,11 +3200,11 @@ class Propal extends CommonObject
 	/**
 	 *    	Return label of a status (draft, validated, ...)
 	 *
-	 *    	@param      int			$statut		id statut
+	 *    	@param      int			$status		Id status
 	 *    	@param      int			$mode      	0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
 	 *    	@return     string		Label
 	 */
-    public function LibStatut($statut, $mode = 1)
+    public function LibStatut($status, $mode = 1)
 	{
         // phpcs:enable
 		global $conf;
@@ -3227,13 +3227,13 @@ class Propal extends CommonObject
 		}
 
 		$statusType='';
-		if ($statut==self::STATUS_DRAFT) $statusType='status0';
-		elseif ($statut==self::STATUS_VALIDATED) $statusType='status1';
-		elseif ($statut==self::STATUS_SIGNED) $statusType='status3';
-		elseif ($statut==self::STATUS_NOTSIGNED) $statusType='status5';
-		elseif ($statut==self::STATUS_BILLED) $statusType='status6';
+		if ($status==self::STATUS_DRAFT) $statusType='status0';
+		elseif ($status==self::STATUS_VALIDATED) $statusType='status1';
+		elseif ($status==self::STATUS_SIGNED) $statusType='status3';
+		elseif ($status==self::STATUS_NOTSIGNED) $statusType='status5';
+		elseif ($status==self::STATUS_BILLED) $statusType='status6';
 
-		return dolGetStatus($this->labelStatus[$statut], $this->labelStatusShort[$statut], '', $statusType, $mode);
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 
@@ -3272,17 +3272,17 @@ class Propal extends CommonObject
 			$now=dol_now();
 
 			$delay_warning = 0;
-			$statut = 0;
+			$status = 0;
 			$label = $labelShort = '';
 			if ($mode == 'opened') {
 				$delay_warning=$conf->propal->cloture->warning_delay;
-				$statut = self::STATUS_VALIDATED;
+				$status = self::STATUS_VALIDATED;
 				$label = $langs->trans("PropalsToClose");
 				$labelShort = $langs->trans("ToAcceptRefuse");
 			}
 			if ($mode == 'signed') {
 				$delay_warning=$conf->propal->facturation->warning_delay;
-				$statut = self::STATUS_SIGNED;
+				$status = self::STATUS_SIGNED;
 				$label = $langs->trans("PropalsToBill");         // We set here bill but may be billed or ordered
 				$labelShort = $langs->trans("ToBill");
 			}
@@ -3291,8 +3291,8 @@ class Propal extends CommonObject
 			$response->warning_delay = $delay_warning/60/60/24;
 			$response->label = $label;
 			$response->labelShort = $labelShort;
-			$response->url = DOL_URL_ROOT.'/comm/propal/list.php?viewstatut='.$statut.'&mainmenu=commercial&leftmenu=propals';
-			$response->url_late = DOL_URL_ROOT.'/comm/propal/list.php?viewstatut='.$statut.'&mainmenu=commercial&leftmenu=propals&sortfield=p.datep&sortorder=asc';
+			$response->url = DOL_URL_ROOT.'/comm/propal/list.php?viewstatut='.$status.'&mainmenu=commercial&leftmenu=propals';
+			$response->url_late = DOL_URL_ROOT.'/comm/propal/list.php?viewstatut='.$status.'&mainmenu=commercial&leftmenu=propals&sortfield=p.datep&sortorder=asc';
 			$response->img = img_object('', "propal");
 
 			// This assignment in condition is not a bug. It allows walking the results.
