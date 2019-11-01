@@ -100,7 +100,7 @@ class EmailCollectorAction extends CommonObject
     public $actionparam;
 
     /**
-     * @var int		Date of creation
+     * @var integer|string date_creation
      */
     public $date_creation;
 
