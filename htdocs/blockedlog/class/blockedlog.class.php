@@ -100,7 +100,13 @@ class BlockedLog
 	 */
 	public $fk_user = 0;
 
+	/**
+	 * Creation date
+	 * @var int
+	 */
 	public $date_creation;
+	
+	
 	public $date_modification;
 
 	public $date_object = 0;

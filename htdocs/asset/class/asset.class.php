@@ -128,7 +128,14 @@ class Asset extends CommonObject
 
 	public $note_public;
 	public $note_private;
+	
+	/**
+	 * Creation date
+	 * @var int
+	 */
 	public $date_creation;
+	
+	
 	public $tms;
 
 	/**
