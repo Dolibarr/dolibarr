@@ -89,9 +89,8 @@ class CashControl extends CommonObject
 	public $date_valid;
 
 	/**
-	 * Creation date
-	 * @var int
-	 */
+     * @var integer|string date_creation
+     */
 	public $date_creation;
 
 
