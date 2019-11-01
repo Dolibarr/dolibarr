@@ -325,7 +325,12 @@ class Product extends CommonObject
     public $imgWidth;
     public $imgHeight;
 
+    /**
+     * @var integer|string date_creation
+     */
     public $date_creation;
+
+
     public $date_modification;
 
     //! Id du fournisseur
