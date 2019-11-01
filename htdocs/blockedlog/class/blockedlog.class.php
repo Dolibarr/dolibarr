@@ -101,9 +101,8 @@ class BlockedLog
 	public $fk_user = 0;
 
 	/**
-	 * Creation date
-	 * @var int
-	 */
+     * @var integer|string date_creation
+     */
 	public $date_creation;
 
 
