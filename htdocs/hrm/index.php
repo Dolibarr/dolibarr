@@ -248,84 +248,13 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
         }
         print '</table>';
         print '</div>';
+        print '<br>';
     }
     else dol_print_error($db);
 }
 
 
-// Last expense report (old module)
-if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
-{
-	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.statut, u.photo, d.rowid, d.dated as date, d.tms as dm, d.km, d.fk_statut";
-	$sql.= " FROM ".MAIN_DB_PREFIX."deplacement as d, ".MAIN_DB_PREFIX."user as u";
-	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE u.rowid = d.fk_user";
-	$sql.= " AND d.entity = ".$conf->entity;
-	if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $sql.=' AND d.fk_user IN ('.join(',', $childids).')';
-	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND d.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	if (!empty($socid)) $sql.= " AND d.fk_soc = ".$socid;
-	$sql.= $db->order("d.tms", "DESC");
-	$sql.= $db->plimit($max, 0);
-
-	$result = $db->query($sql);
-	if ($result)
-	{
-		$var=false;
-		$num = $db->num_rows($result);
-
-		$i = 0;
-
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre">';
-		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num)).'</th>';
-		print '<th class="right">'.$langs->trans("FeesKilometersOrAmout").'</th>';
-		print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
-		print '<th width="16">&nbsp;</th>';
-		print '</tr>';
-		if ($num)
-		{
-			$total_ttc = $totalam = $total = 0;
-
-			$deplacementstatic=new Deplacement($db);
-			$userstatic=new User($db);
-			while ($i < $num && $i < $max)
-			{
-				$obj = $db->fetch_object($result);
-
-				$deplacementstatic->ref=$obj->rowid;
-				$deplacementstatic->id=$obj->rowid;
-
-				$userstatic->id=$obj->uid;
-				$userstatic->lastname=$obj->lastname;
-				$userstatic->firstname=$obj->firstname;
-				$userstatic->login=$obj->login;
-                $userstatic->email=$obj->email;
-				$userstatic->statut=$obj->statut;
-				$userstatic->photo=$obj->photo;
-
-				print '<tr class="oddeven">';
-				print '<td class="nowraponall">'.$deplacementstatic->getNomUrl(1).'</td>';
-				print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1).'</td>';
-				print '<td class="right">'.$obj->km.'</td>';
-				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
-				print '<td>'.$deplacementstatic->LibStatut($obj->fk_statut, 3).'</td>';
-				print '</tr>';
-
-				$i++;
-			}
-		}
-		else
-		{
-			print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
-		}
-		print '</table>';
-		print '</div>';
-	}
-	else dol_print_error($db);
-}
-
-// Last expense report (new module)
+// Latest expense report
 if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 {
 	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.statut, u.photo, x.rowid, x.ref, x.date_debut as date, x.tms as dm, x.total_ttc, x.fk_statut as status";
@@ -342,7 +271,6 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 	$result = $db->query($sql);
 	if ($result)
 	{
-		$var=false;
 		$num = $db->num_rows($result);
 
 		$i = 0;

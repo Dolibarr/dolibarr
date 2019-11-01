@@ -1217,68 +1217,40 @@ class Holiday extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Returns the label of a statut
+	 *	Returns the label of a status
 	 *
-	 *	@param      int		$statut     id statut
+	 *	@param      int		$status     Id status
 	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *  @param		integer	$startdate	Date holiday should start
 	 *	@return     string      		Label
 	 */
-	public function LibStatut($statut, $mode = 0, $startdate = '')
+	public function LibStatut($status, $mode = 0, $startdate = '')
 	{
-        // phpcs:enable
-		global $langs;
-
-		if ($mode == 0)
+		// phpcs:enable
+		if (empty($this->labelstatus) || empty($this->labelstatusshort))
 		{
-			if ($statut == 1) return $langs->trans('DraftCP');
-			elseif ($statut == 2) return $langs->trans('ToReviewCP');
-			elseif ($statut == 3) return $langs->trans('ApprovedCP');
-			elseif ($statut == 4) return $langs->trans('CancelCP');
-			elseif ($statut == 5) return $langs->trans('RefuseCP');
-		}
-		elseif ($mode == 2)
-		{
-			$pictoapproved='statut6';
-			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
-			if ($statut == 1) return img_picto($langs->trans('DraftCP'), 'statut0').' '.$langs->trans('DraftCP');				// Draft
-			elseif ($statut == 2) return img_picto($langs->trans('ToReviewCP'), 'statut1').' '.$langs->trans('ToReviewCP');		// Waiting approval
-			elseif ($statut == 3) return img_picto($langs->trans('ApprovedCP'), $pictoapproved).' '.$langs->trans('ApprovedCP');
-			elseif ($statut == 4) return img_picto($langs->trans('CancelCP'), 'statut5').' '.$langs->trans('CancelCP');
-			elseif ($statut == 5) return img_picto($langs->trans('RefuseCP'), 'statut5').' '.$langs->trans('RefuseCP');
-		}
-		elseif ($mode == 3)
-		{
-			$pictoapproved='statut6';
-			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
-			if ($statut == 1) return img_picto($langs->trans('DraftCP'), 'statut0');
-			elseif ($statut == 2) return img_picto($langs->trans('ToReviewCP'), 'statut1');
-			elseif ($statut == 3) return img_picto($langs->trans('ApprovedCP'), $pictoapproved);
-			elseif ($statut == 4) return img_picto($langs->trans('CancelCP'), 'statut5');
-			elseif ($statut == 5) return img_picto($langs->trans('RefuseCP'), 'statut5');
-		}
-		elseif ($mode == 5)
-		{
-			$pictoapproved='statut6';
-			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
-			if ($statut == 1) return $langs->trans('DraftCP').' '.img_picto($langs->trans('DraftCP'), 'statut0');				// Draft
-			elseif ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'), 'statut1');		// Waiting approval
-			elseif ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'), $pictoapproved);
-			elseif ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'), 'statut5');
-			elseif ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'), 'statut5');
-		}
-		elseif ($mode == 6)
-		{
-			$pictoapproved='statut6';
-			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
-			if ($statut == 1) return $langs->trans('DraftCP').' '.img_picto($langs->trans('DraftCP'), 'statut0');				// Draft
-			elseif ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'), 'statut1');		// Waiting approval
-			elseif ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'), $pictoapproved);
-			elseif ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'), 'statut5');
-			elseif ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'), 'statut5');
+			global $langs;
+			//$langs->load("mymodule");
+			$this->labelstatus[self::STATUS_DRAFT] = $langs->trans('DraftCP');
+			$this->labelstatus[self::STATUS_VALIDATED] = $langs->trans('ToReviewCP');
+			$this->labelstatus[self::STATUS_APPROVED] = $langs->trans('ApprovedCP');
+			$this->labelstatus[self::STATUS_CANCELED] = $langs->trans('CancelCP');
+			$this->labelstatus[self::STATUS_REFUSED] = $langs->trans('RefuseCP');
+			$this->labelstatusshort[self::STATUS_DRAFT] = $langs->trans('DraftCP');
+			$this->labelstatusshort[self::STATUS_VALIDATED] = $langs->trans('ToReviewCP');
+			$this->labelstatusshort[self::STATUS_APPROVED] = $langs->trans('ApprovedCP');
+			$this->labelstatusshort[self::STATUS_CANCELED] = $langs->trans('CancelCP');
+			$this->labelstatusshort[self::STATUS_REFUSED] = $langs->trans('RefuseCP');
 		}
 
-		else return $statut;
+		$statusType = 'status6';
+		if (! empty($startdate) && $startdate > dol_now()) $statusType = 'status4';
+		if ($status == self::STATUS_DRAFT) $statusType = 'status0';
+		if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
+		if ($status == self::STATUS_CANCELED) $statusType = 'status5';
+		if ($status == self::STATUS_REFUSED) $statusType = 'status5';
+
+		return dolGetStatus($this->labelstatus[$status], $this->labelstatusshort[$status], '', $statusType, $mode);
 	}
 
 
