@@ -152,7 +152,7 @@ class EmailCollector extends CommonObject
     public $status;
 
     /**
-     * @var int		Date of creation
+     * @var integer|string date_creation
      */
     public $date_creation;
 
