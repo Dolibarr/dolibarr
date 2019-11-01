@@ -521,7 +521,8 @@ body[class*="colorblind-"] .text-success{
 }
 
 .fa-toggle-on, .fa-toggle-off { font-size: 2em; }
-.websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off { font-size: 1.5em; vertical-align: text-bottom; }
+.websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
+.asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off { font-size: 1.5em; vertical-align: text-bottom; }
 
 /* Themes for badges */
 <?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
