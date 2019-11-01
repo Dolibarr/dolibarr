@@ -130,9 +130,8 @@ class Asset extends CommonObject
 	public $note_private;
 
 	/**
-	 * Creation date
-	 * @var int
-	 */
+     * @var integer|string date_creation
+     */
 	public $date_creation;
 
 
