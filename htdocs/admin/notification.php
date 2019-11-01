@@ -238,7 +238,7 @@ foreach($listofnotifiedevents as $notifiedevent)
     	$s='<input type="text" size="32" name="NOTIF_'.$notifiedevent['code'].'_old_'.$reg[1].'_key" value="'.dol_escape_htmltag($value).'">';		// Do not use type="email" here, we must be able to enter a list of email with , separator.
 	    $arrayemail=explode(',', $value);
 		$showwarning=0;
-		foreach($arrayemail as $key=>$valuedet)
+		foreach($arrayemail as $keydet => $valuedet)
 		{
 			$valuedet=trim($valuedet);
 			if (! empty($valuedet) && ! isValidEmail($valuedet, 1)) $showwarning++;
