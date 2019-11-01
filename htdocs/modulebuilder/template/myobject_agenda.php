@@ -65,11 +65,6 @@ else
 }
 $search_agenda_label=GETPOST('search_agenda_label');
 
-// Security check - Protection if external user
-//if ($user->societe_id > 0) access_forbidden();
-//if ($user->societe_id > 0) $socid = $user->societe_id;
-//$result = restrictedArea($user, 'mymodule', $id);
-
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
@@ -79,7 +74,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield) $sortfield='a.datep,a.id';
-if (! $sortorder) $sortorder='DESC';
+if (! $sortorder) $sortorder='DESC,DESC';
 
 // Initialize technical objects
 $object=new MyObject($db);
@@ -93,13 +88,17 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || ! empty($ref)) $upload_dir = $conf->mymodule->multidir_output[$object->entity] . "/" . $object->id;
 
+// Security check - Protection if external user
+//if ($user->societe_id > 0) access_forbidden();
+//if ($user->societe_id > 0) $socid = $user->societe_id;
+//$result = restrictedArea($user, 'mymodule', $object->id);
 
 
 /*
  *	Actions
  */
 
-$parameters=array('id'=>$socid);
+$parameters=array('id'=>$id);
 $reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
