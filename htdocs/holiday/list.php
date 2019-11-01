@@ -121,6 +121,7 @@ $search_array_options=$extrafields->getOptionalsFromPost($object->table_element,
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
+	'cp.ref'=>'Ref',
     'cp.description'=>'Description',
     'uu.lastname'=>'EmployeeLastname',
     'uu.firstname'=>'EmployeeFirstname',
@@ -287,7 +288,7 @@ $sql.= ", ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
 $sql.= " WHERE cp.entity IN (".getEntity('holiday').")";
 $sql.= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
 // Search all
-if (!empty($sall)) $sql.= natural_search(array_keys($fieldstosearchall), $sall);
+//if (!empty($sall)) $sql.= natural_search(array_keys($fieldstosearchall), $sall);
 // Ref
 if(!empty($search_ref))
 {
