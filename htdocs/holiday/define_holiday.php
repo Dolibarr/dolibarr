@@ -201,11 +201,6 @@ if ($lastUpdate) {
 }
 print "</div><br>\n";
 
-$result = $holiday->updateBalance();	// Create users into table holiday if they don't exists. TODO Remove this whif we use field into table user.
-if ($result < 0)
-{
-	setEventMessages($holiday->error, $holiday->errors, 'errors');
-}
 
 $filters = '';
 
