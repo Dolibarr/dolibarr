@@ -458,7 +458,7 @@ if ($mode == 'searchkey')
     //print 'param='.$param.' $_SERVER["PHP_SELF"]='.$_SERVER["PHP_SELF"].' num='.$num.' page='.$page.' nbtotalofrecords='.$nbtotalofrecords." sortfield=".$sortfield." sortorder=".$sortorder;
     $title = $langs->trans("TranslationKeySearch");
     if ($nbtotalofrecords > 0) $title.=' ('.$nbtotalofrecords.' / '.$nbtotalofrecordswithoutfilters.' - '.$nbtotaloffiles.' '.$langs->trans("Files").')';
-    print print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, '', '', $limit)."\n";
+    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, '', '', $limit)."\n";
 
     print '<input type="hidden" id="action" name="action" value="search">';
     print '<input type="hidden" id="mode" name="mode" value="'.$mode.'">';
@@ -466,7 +466,7 @@ if ($mode == 'searchkey')
 	print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre("Language_en_US_es_MX_etc", $_SERVER["PHP_SELF"], 'lang,transkey', '', $param, '', $sortfield, $sortorder).'</td>';
+    print_liste_field_titre("Language_en_US_es_MX_etc", $_SERVER["PHP_SELF"], 'lang,transkey', '', $param, '', $sortfield, $sortorder);
     print_liste_field_titre("Key", $_SERVER["PHP_SELF"], 'transkey', '', $param, '', $sortfield, $sortorder);
     print_liste_field_titre("CurrentTranslationString", $_SERVER["PHP_SELF"], 'transvalue', '', $param, '', $sortfield, $sortorder);
     //if (! empty($conf->multicompany->enabled) && !$user->entity) print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], 'entity,transkey', '', $param, '', $sortfield, $sortorder);
