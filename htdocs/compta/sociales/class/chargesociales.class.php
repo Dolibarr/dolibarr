@@ -63,8 +63,7 @@ class ChargeSociales extends CommonObject
     public $periode;
 
     /**
-     * Creation date
-     * @var int
+     * @var integer|string date_creation
      */
     public $date_creation;
 
