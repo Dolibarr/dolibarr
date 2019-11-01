@@ -1122,13 +1122,20 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 {
 	global $conf, $langs, $hookmanager;
 
-	$out="\n".'<!-- dol_get_fiche_head --><div class="tabs" data-role="controlgroup" data-type="horizontal">'."\n";
-
-	if ($morehtmlright) $out.='<div class="inline-block floatright tabsElem">'.$morehtmlright.'</div>';	// Output right area first so when space is missing, text is in front of tabs and not under.
-
 	// Show title
 	$showtitle=1;
 	if (! empty($conf->dol_optimize_smallscreen)) $showtitle=0;
+
+	$out = "\n".'<!-- dol_get_fiche_head -->';
+
+	if ((! empty($title) && $showtitle) || $morehtmlright || ! empty($links)) {
+		$out.= '<div class="tabs" data-role="controlgroup" data-type="horizontal">'."\n";
+	}
+
+	// Show right part
+	if ($morehtmlright) $out.='<div class="inline-block floatright tabsElem">'.$morehtmlright.'</div>';	// Output right area first so when space is missing, text is in front of tabs and not under.
+
+	// Show title
 	if (! empty($title) && $showtitle)
 	{
 		$limittitle=30;
@@ -1137,6 +1144,8 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		$out.='<span class="tabTitleText">'.dol_trunc($title, $limittitle).'</span>';
 		$out.='</a>';
 	}
+
+	// Show tabs
 
 	// Define max of key (max may be higher than sizeof because of hole due to module disabling some tabs).
 	$maxkey=-1;
@@ -1149,16 +1158,15 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 	if (! empty($conf->dol_optimize_smallscreen)) $conf->global->MAIN_MAXTABS_IN_CARD=2;
 
 	// Show tabs
-	$bactive=false;
 	// if =0 we don't use the feature
 	$limittoshow=(empty($conf->global->MAIN_MAXTABS_IN_CARD)?99:$conf->global->MAIN_MAXTABS_IN_CARD);
 	$displaytab=0;
 	$nbintab=0;
-	$popuptab=0; $outmore='';
+	$popuptab=0;
+	$outmore='';
 	for ($i = 0 ; $i <= $maxkey ; $i++)
 	{
-		if ((is_numeric($active) && $i == $active) || (! empty($links[$i][2]) && ! is_numeric($active) && $active == $links[$i][2]))
-		{
+		if ((is_numeric($active) && $i == $active) || (! empty($links[$i][2]) && ! is_numeric($active) && $active == $links[$i][2])) {
 			// If active tab is already present
 			if ($i >= $limittoshow) $limittoshow--;
 		}
@@ -1166,13 +1174,10 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 
 	for ($i = 0 ; $i <= $maxkey ; $i++)
 	{
-		if ((is_numeric($active) && $i == $active) || (! empty($links[$i][2]) && ! is_numeric($active) && $active == $links[$i][2]))
-		{
+		if ((is_numeric($active) && $i == $active) || (! empty($links[$i][2]) && ! is_numeric($active) && $active == $links[$i][2])) {
 			$isactive=true;
-			$bactive=true;
 		}
-		else
-		{
+		else {
 			$isactive=false;
 		}
 
@@ -1258,7 +1263,9 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		$out.="</script>";
 	}
 
-	$out.="</div>\n";
+	if ((! empty($title) && $showtitle) || $morehtmlright || ! empty($links)) {
+		$out.="</div>\n";
+	}
 
 	if (! $notab || $notab == -1 || $notab == -2) $out.="\n".'<div class="tabBar'.($notab == -1 ? '' : ($notab == -2 ? ' tabBarNoTop' : ' tabBarWithBottom')).'">'."\n";
 

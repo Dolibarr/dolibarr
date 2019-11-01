@@ -163,7 +163,7 @@ if ($resql)
 			print '<tr class="oddeven">';
 			print '<td>'.$staticbom->getNomUrl(1, 32).'</td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datem), 'dayhour').'</td>';
-			print '<td class="right">'.$staticbom->getLibStatut(5).'</td>';
+			print '<td class="right">'.$staticbom->getLibStatut(3).'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -216,7 +216,7 @@ if ($resql)
             print '<tr class="oddeven">';
             print '<td>'.$staticmo->getNomUrl(1, 32).'</td>';
             print '<td>'.dol_print_date($db->jdate($obj->datem), 'dayhour').'</td>';
-            print '<td class="right">'.$staticmo->getLibStatut(5).'</td>';
+            print '<td class="right">'.$staticmo->getLibStatut(3).'</td>';
             print '</tr>';
             $i++;
         }

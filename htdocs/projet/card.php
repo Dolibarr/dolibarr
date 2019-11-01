@@ -509,7 +509,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 
 	dol_fiche_head();
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent tableforfieldcreate">';
 
 	$defaultref='';
 	$modele = empty($conf->global->PROJECT_ADDON)?'mod_project_simple':$conf->global->PROJECT_ADDON;

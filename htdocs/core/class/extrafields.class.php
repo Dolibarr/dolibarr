@@ -1029,7 +1029,7 @@ class ExtraFields
 			{
 				$morecss = 'minwidth100imp';
 			}
-			elseif ($type == 'datetime')
+			elseif ($type == 'datetime' || $type == 'link')
 			{
 				$morecss = 'minwidth200imp';
 			}
