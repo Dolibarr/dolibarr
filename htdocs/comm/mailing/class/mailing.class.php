@@ -68,9 +68,8 @@ class Mailing extends CommonObject
 	public $user_valid;
 
 	/**
-	 * Creation date
-	 * @var int
-	 */
+     * @var integer|string date_creation
+     */
 	public $date_creat;
 
 
