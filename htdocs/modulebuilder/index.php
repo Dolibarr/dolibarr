@@ -1641,14 +1641,14 @@ elseif (! empty($module))
 		$linktoenabledisable='';
 		if (! empty($conf->global->$const_name))	// If module is already activated
 		{
-			$linktoenabledisable.='<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=reset&value=mod' . $module . $param . '">';
-			$linktoenabledisable.=img_picto($langs->trans("Activated"), 'switch_on');
+			$linktoenabledisable.='<a class="reposition asetresetmodule" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=reset&value=mod' . $module . $param . '">';
+			$linktoenabledisable.=img_picto($langs->trans("Activated"), 'switch_on', '', false, 0, 0, '', '', 1);
 			$linktoenabledisable.='</a>';
 		}
 		else
 		{
-			$linktoenabledisable.='<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=set&value=mod' . $module . $param . '">';
-			$linktoenabledisable.=img_picto($langs->trans("Disabled"), 'switch_off');
+			$linktoenabledisable.='<a class="reposition asetresetmodule" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=set&value=mod' . $module . $param . '">';
+			$linktoenabledisable.=img_picto($langs->trans("Disabled"), 'switch_off', '', false, 0, 0, '', '', 1);
 			$linktoenabledisable.="</a>\n";
 		}
 		if (! empty($conf->$modulelowercase->enabled))
