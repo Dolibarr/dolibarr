@@ -167,7 +167,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 }
 .progress-bar-yellow,
 .progress-bar-warning {
-    background-color: #f39c12;
+    background-color: #bc9526;
 }
 .progress-striped .progress-bar-yellow,
 .progress-striped .progress-bar-warning {

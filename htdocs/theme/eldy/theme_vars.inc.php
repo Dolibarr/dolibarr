@@ -81,7 +81,7 @@ $toolTipFontColor='#333';
 $textSuccess   ='#28a745';
 $colorblind_deuteranopes_textSuccess   ='#37de5d';
 $textDanger    ='#dc3545';
-$textWarning   ='#f39c12';
+$textWarning   ='#bc9526';
 $colorblind_deuteranopes_textWarning = $textWarning; // currently not tested with a color blind people so use default color
 
 
