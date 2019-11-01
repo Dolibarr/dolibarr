@@ -5866,9 +5866,10 @@ class Form
 			{
 				$objecttmp = new $classname($this->db);
 				// Make some replacement
+				$sharedentities = getEntity(strtolower($classname));
 				$objecttmp->filter = str_replace(
-					array('__ENTITY__', '__USER_ID__'),
-					array($conf->entity, $user->id),
+					array('__ENTITY__', '__SHARED_ENTITIES__', '__USER_ID__'),
+					array($conf->entity, $sharedentities, $user->id),
 					$filter);
 			}
 		}
@@ -5878,6 +5879,7 @@ class Form
 			return 'Error bad setup of type for field '.join(',', $InfoFieldList);
 		}
 
+		//var_dump($objecttmp->filter);
 		$prefixforautocompletemode=$objecttmp->element;
 		if ($prefixforautocompletemode == 'societe') $prefixforautocompletemode='company';
 		$confkeyforautocompletemode=strtoupper($prefixforautocompletemode).'_USE_SEARCH_TO_SELECT';	// For example COMPANY_USE_SEARCH_TO_SELECT
