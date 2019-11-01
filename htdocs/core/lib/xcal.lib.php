@@ -137,7 +137,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
                             continue;
                         }
 
-                        fwrite($calfileh,"ATTENDEE;RSVP=TRUE:mailto:".$assignedUser->email."\n");
+                        fwrite($calfileh, "ATTENDEE;RSVP=TRUE:mailto:".$assignedUser->email."\n");
                     }
                 }
 
