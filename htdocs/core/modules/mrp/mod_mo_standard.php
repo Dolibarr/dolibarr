@@ -18,16 +18,16 @@
  */
 
 /**
- *  \file       htdocs/core/modules/mrp/mod_mrp_standard.php
+ *  \file       htdocs/core/modules/mrp/mod_mo_standard.php
  *  \ingroup    mrp
  *  \brief      File of class to manage MO numbering rules standard
  */
 require_once DOL_DOCUMENT_ROOT .'/core/modules/mrp/modules_mrp.php';
 
 /**
- *	Class to manage customer order numbering rules standard
+ *	Class to manage MO numbering rules standard
  */
-class mod_mrp_standard extends ModeleNumRefMos
+class mod_mo_standard extends ModeleNumRefMos
 {
 	/**
      * Dolibarr version of the loaded document
@@ -85,7 +85,7 @@ class mod_mrp_standard extends ModeleNumRefMos
 
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bom";
+		$sql.= " FROM ".MAIN_DB_PREFIX."mrp_mo";
 		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
@@ -119,7 +119,7 @@ class mod_mrp_standard extends ModeleNumRefMos
 		// D'abord on recupere la valeur max
 		$posindice=9;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bom_bom";
+		$sql.= " FROM ".MAIN_DB_PREFIX."mrp_mo";
 		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
 
@@ -132,7 +132,7 @@ class mod_mrp_standard extends ModeleNumRefMos
 		}
 		else
 		{
-			dol_syslog("mod_mrp_standard::getNextValue", LOG_DEBUG);
+			dol_syslog("mod_mo_standard::getNextValue", LOG_DEBUG);
 			return -1;
 		}
 
@@ -143,7 +143,7 @@ class mod_mrp_standard extends ModeleNumRefMos
     	if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
     	else $num = sprintf("%04s", $max+1);
 
-		dol_syslog("mod_mrp_standard::getNextValue return ".$this->prefix.$yymm."-".$num);
+		dol_syslog("mod_mo_standard::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
 	}
 }

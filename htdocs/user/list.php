@@ -677,7 +677,7 @@ while ($i < min($num, $limit))
 	if (! empty($arrayfields['u.statut']['checked']))
 	{
 	    $userstatic->statut=$obj->statut;
-	    print '<td class="center">'.$userstatic->getLibStatut(3).'</td>';
+	    print '<td class="center">'.$userstatic->getLibStatut(5).'</td>';
 	    if (! $i) $totalarray['nbfield']++;
 	}
 	// Action column

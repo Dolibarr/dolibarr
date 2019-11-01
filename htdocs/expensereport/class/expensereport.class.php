@@ -101,9 +101,6 @@ class ExpenseReport extends CommonObject
     // Paiement
     public $user_paid_infos;
 
-    /*
-        END ACTIONS
-    */
 
     /**
 	 * Draft status
@@ -198,7 +195,7 @@ class ExpenseReport extends CommonObject
         // List of language codes for status
         $this->statuts_short = array(0 => 'Draft', 2 => 'Validated', 4 => 'Canceled', 5 => 'Approved', 6 => 'Paid', 99 => 'Refused');
         $this->statuts = array(0 => 'Draft', 2 => 'ValidatedWaitingApproval', 4 => 'Canceled', 5 => 'Approved', 6 => 'Paid', 99 => 'Refused');
-        $this->statuts_logo = array(0 => 'statut0', 2 => 'statut1', 4 => 'statut5', 5 => 'statut3', 6 => 'statut6', 99 => 'statut5');
+        $this->statuts_logo = array(0 => 'status0', 2 => 'status1', 4 => 'status6', 5 => 'status4', 6 => 'status6', 99 => 'status5');
     }
 
     /**
@@ -683,29 +680,15 @@ class ExpenseReport extends CommonObject
      */
     public function LibStatut($status, $mode = 0)
     {
-        // phpcs:enable
-        global $langs;
+    	// phpcs:enable
+    	global $langs;
 
-        if ($mode == 0)
-            return $langs->transnoentities($this->statuts[$status]);
+    	$labelStatus = $langs->trans($this->statuts[$status]);
+    	$labelStatusShort = $langs->trans($this->statuts_short[$status]);
 
-        elseif ($mode == 1)
-            return $langs->transnoentities($this->statuts_short[$status]);
+    	$statusType = $this->statuts_logo[$status];
 
-        elseif ($mode == 2)
-            return img_picto($langs->transnoentities($this->statuts_short[$status]), $this->statuts_logo[$status]).' '.$langs->transnoentities($this->statuts_short[$status]);
-
-        elseif ($mode == 3)
-            return img_picto($langs->transnoentities($this->statuts_short[$status]), $this->statuts_logo[$status]);
-
-        elseif ($mode == 4)
-            return img_picto($langs->transnoentities($this->statuts_short[$status]), $this->statuts_logo[$status]).' '.$langs->transnoentities($this->statuts[$status]);
-
-        elseif ($mode == 5)
-            return '<span class="hideonsmartphone">'.$langs->transnoentities($this->statuts_short[$status]).' </span>'.img_picto($langs->transnoentities($this->statuts_short[$status]), $this->statuts_logo[$status]);
-
-        elseif ($mode == 6)
-            return $langs->transnoentities($this->statuts[$status]).' '.img_picto($langs->transnoentities($this->statuts_short[$status]), $this->statuts_logo[$status]);
+    	return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
     }
 
 

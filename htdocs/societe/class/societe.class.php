@@ -2258,8 +2258,8 @@ class Societe extends CommonObject
 	/**
 	 *    Return label of status (activity, closed)
 	 *
-	 *    @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *    @return   string        		Libelle
+	 *    @param  	int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *    @return   string     	   		Label of status
 	 */
     public function getLibStatut($mode = 0)
 	{
@@ -2283,15 +2283,15 @@ class Societe extends CommonObject
 		$statusType = 'status4';
 		if ($status == 0) $statusType = 'status5';
 
-		if (empty($this->labelstatus) || empty($this->labelstatusshort))
+		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
-			$this->labelstatus[0] = $langs->trans("ActivityCeased");
-			$this->labelstatus[1] = $langs->trans("InActivity");
-			$this->labelstatusshort[0] = $langs->trans("ActivityCeased");
-			$this->labelstatusshort[1] = $langs->trans("InActivity");
+			$this->labelStatus[0] = $langs->trans("ActivityCeased");
+			$this->labelStatus[1] = $langs->trans("InActivity");
+			$this->labelStatusShort[0] = $langs->trans("ActivityCeased");
+			$this->labelStatusShort[1] = $langs->trans("InActivity");
 		}
 
-		return dolGetStatus($this->labelstatus[$status], $this->labelstatusshort[$status], '', $statusType, $mode);
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

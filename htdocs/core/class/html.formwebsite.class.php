@@ -47,7 +47,7 @@ class FormWebsite
 
 
     /**
-     *    Return HTML select list of export models
+     *    Return HTML select list of websites
      *
      *    @param    string	$selected          Id modele pre-selectionne
      *    @param    string	$htmlname          Name of HTML select
@@ -99,7 +99,7 @@ class FormWebsite
 
 
     /**
-     *  Return a HTML select list of a dictionary
+     *  Return a HTML select list of type of containers from the dictionary
      *
      *  @param  string	$htmlname          	Name of select zone
      *  @param	string	$selected			Selected value
@@ -162,7 +162,7 @@ class FormWebsite
 
 
     /**
-     *  Return a HTML select list of type of containers
+     *  Return a HTML select list of samples of containers content
      *
      *  @param  string	$htmlname          	Name of select zone
      *  @param	string	$selected			Selected value
@@ -217,4 +217,72 @@ class FormWebsite
 
     	return $out;
     }
+
+
+    /**
+     *  Return a HTML select list of containers of a website.
+     *  Note: $website->lines must have been loaded.
+     *
+     *  @param  Website		$website       	Object Website
+     *  @param	string		$htmlname		Name of select zone
+     *  @param	int			$pageid			Preselected container ID
+     *  @param	int			$showempty		Show empty record
+     *  @param	string		$action			Action on page that use this select list
+     * 	@return	string						HTML select component with list of type of containers
+     */
+    public function selectContainer($website, $htmlname = 'pageid', $pageid = 0, $showempty = 0, $action = '')
+    {
+    	global $langs;
+
+    	$atleastonepage = (is_array($website->lines) && count($website->lines) > 0);
+
+	    $out='';
+	    if ($atleastonepage && $action != 'editsource')
+	    {
+	    	$out.='<select name="'.$htmlname.'" id="'.$htmlname.'" class="minwidth200 maxwidth300">';
+	    }
+	    else
+	    {
+	    	$out.='<select name="pageidbis" id="pageid" class="minwidth200 maxwidth300" disabled="disabled">';
+	    }
+
+	    if ($showempty || ! $atleastonepage) $out.='<option value="-1">&nbsp;</option>';
+
+	    if ($atleastonepage)
+	    {
+	    	if (empty($pageid) && $action != 'createcontainer')      // Page id is not defined, we try to take one
+	    	{
+	    		$firstpageid=0;$homepageid=0;
+	    		foreach($website->lines as $key => $valpage)
+	    		{
+	    			if (empty($firstpageid)) $firstpageid=$valpage->id;
+	    			if ($website->fk_default_home && $key == $website->fk_default_home) $homepageid=$valpage->id;
+	    		}
+	    		$pageid=$homepageid?$homepageid:$firstpageid;   // We choose home page and if not defined yet, we take first page
+	    	}
+
+	    	foreach($website->lines as $key => $valpage)
+	    	{
+	    		$out.='<option value="'.$key.'"';
+	    		if ($pageid > 0 && $pageid == $key) $out.=' selected';		// To preselect a value
+	    		$out.='>';
+	    		$out.='['.$valpage->type_container.' '.sprintf("%03d", $valpage->id).'] ';
+	    		$out.=$valpage->pageurl.' - '.$valpage->title;
+	    		if ($website->fk_default_home && $key == $website->fk_default_home) $out.=' ('.$langs->trans("HomePage").')';
+	    		$out.='</option>';
+	    	}
+	    }
+	    $out.='</select>';
+
+	    if ($atleastonepage && $action != 'editsource')
+	    {
+	    	$out.=ajax_combobox($htmlname);
+	    }
+	    else
+	    {
+	    	$out.='<input type="hidden" name="'.$htmlname.'" value="'.$pageid.'">';
+	    	$out.=ajax_combobox($htmlname);
+	    }
+	    return $out;
+	}
 }

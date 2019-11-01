@@ -192,8 +192,8 @@ class Propal extends CommonObject
 	public $lines = array();
 	public $line;
 
-	public $labelstatut=array();
-	public $labelstatut_short=array();
+	public $labelStatus=array();
+	public $labelStatusShort=array();
 
 	public $specimen;
 
@@ -3210,20 +3210,20 @@ class Propal extends CommonObject
 		global $conf;
 
 		// Init/load array of translation of status
-		if (empty($this->labelstatut) || empty($this->labelstatut_short))
+		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
 			global $langs;
 			$langs->load("propal");
-			$this->labelstatut[0]=$langs->trans("PropalStatusDraft");
-			$this->labelstatut[1]=$langs->trans("PropalStatusValidated");
-			$this->labelstatut[2]=$langs->trans("PropalStatusSigned");
-			$this->labelstatut[3]=$langs->trans("PropalStatusNotSigned");
-			$this->labelstatut[4]=$langs->trans("PropalStatusBilled");
-			$this->labelstatut_short[0]=$langs->trans("PropalStatusDraftShort");
-			$this->labelstatut_short[1]=$langs->trans("PropalStatusValidatedShort");
-			$this->labelstatut_short[2]=$langs->trans("PropalStatusSignedShort");
-			$this->labelstatut_short[3]=$langs->trans("PropalStatusNotSignedShort");
-			$this->labelstatut_short[4]=$langs->trans("PropalStatusBilledShort");
+			$this->labelStatus[0]=$langs->trans("PropalStatusDraft");
+			$this->labelStatus[1]=$langs->trans("PropalStatusValidated");
+			$this->labelStatus[2]=$langs->trans("PropalStatusSigned");
+			$this->labelStatus[3]=$langs->trans("PropalStatusNotSigned");
+			$this->labelStatus[4]=$langs->trans("PropalStatusBilled");
+			$this->labelStatusShort[0]=$langs->trans("PropalStatusDraftShort");
+			$this->labelStatusShort[1]=$langs->trans("PropalStatusValidatedShort");
+			$this->labelStatusShort[2]=$langs->trans("PropalStatusSignedShort");
+			$this->labelStatusShort[3]=$langs->trans("PropalStatusNotSignedShort");
+			$this->labelStatusShort[4]=$langs->trans("PropalStatusBilledShort");
 		}
 
 		$statusType='';
@@ -3233,7 +3233,7 @@ class Propal extends CommonObject
 		elseif ($statut==self::STATUS_NOTSIGNED) $statusType='status5';
 		elseif ($statut==self::STATUS_BILLED) $statusType='status6';
 
-		return dolGetStatus($this->labelstatut[$statut], $this->labelstatut_short[$statut], '', $statusType, $mode);
+		return dolGetStatus($this->labelStatus[$statut], $this->labelStatusShort[$statut], '', $statusType, $mode);
 	}
 
 

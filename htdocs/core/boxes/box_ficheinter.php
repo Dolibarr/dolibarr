@@ -138,7 +138,7 @@ class box_ficheinter extends ModeleBoxes
 
 					$this->info_box_contents[$i][] = array(
                         'td' => 'class="nowrap right"',
-                        'text' => $ficheinterstatic->getLibStatut(6),
+                        'text' => $ficheinterstatic->getLibStatut(3),
                         'asis' => 1,
 					);
 

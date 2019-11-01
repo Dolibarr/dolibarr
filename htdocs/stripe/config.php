@@ -28,7 +28,7 @@
 require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/stripe/lib/Stripe.php';
 
-global $stripe;
+//global $stripe;
 global $conf;
 global $stripearrayofkeysbyenv;
 
@@ -55,4 +55,4 @@ else
 
 \Stripe\Stripe::setApiKey($stripearrayofkeys['secret_key']);
 \Stripe\Stripe::setAppInfo("Dolibarr Stripe", DOL_VERSION, "https://www.dolibarr.org"); // add dolibarr version
-\Stripe\Stripe::setApiVersion("2019-05-16"); // force version API
+\Stripe\Stripe::setApiVersion(empty($conf->global->STRIPE_FORCE_VERSION)?"2019-05-16":$conf->global->STRIPE_FORCE_VERSION); // force version API

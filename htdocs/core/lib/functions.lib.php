@@ -2997,7 +2997,7 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
  *  @param		int			$notitle				1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
  *  @param		string		$alt					Force alt for bind people
  *  @param		string		$morecss				Add more class css on img tag (For example 'myclascss'). Work only if $moreatt is empty.
- *  @param		string		$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left maring on picto, 0 = No margin left. Works for fontawesome picto only.
+ *  @param		string		$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No margin left. Works for fontawesome picto only.
  *  @return     string       				    	Return img tag
  *  @see        img_object(), img_picto_common()
  */
@@ -3028,7 +3028,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
         if (empty($srconly) && in_array($pictowithouttext, array(
         		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
-        		'address', 'bank', 'building', 'cash-register', 'close_title', 'cubes', 'delete', 'dolly', 'edit', 'ellipsis-h', 'bookmark', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'note',
+        		'address', 'bank', 'bookmark', 'building', 'cash-register', 'close_title', 'cubes', 'delete', 'dolly', 'edit', 'ellipsis-h',
+        		'filter', 'file-code', 'grip', 'grip_title', 'list', 'listlight', 'note',
         		'object_list','object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
         		'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'stats',
 				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench', 'globe',
@@ -3058,12 +3059,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		    	$morecss .= ($morecss ? ' ' : '').('picto'.$pictowithouttext);
 		    } elseif ($pictowithouttext == 'switch_off') {
 				$facolor = '#999';
-				$fasize = '2em';
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 			}
 			elseif ($pictowithouttext == 'switch_on') {
 				$facolor = '#227722';
-				$fasize = '2em';
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 			}
 			elseif ($pictowithouttext == 'off') {
@@ -8094,19 +8093,18 @@ function roundUpToNextMultiple($n, $x = 5)
 function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '', $params = array())
 {
     $attr=array(
-        'class'=>'badge badge-status'.(!empty($mode)?' badge-'.$mode:'').(!empty($type)?' badge-'.$type:'')
+    	'class'=>'badge badge-status'.(!empty($mode)?' badge-'.$mode:'').(!empty($type)?' badge-'.$type:'').(empty($params['css'])?'':' '.$params['css'])
     );
 
-    if(empty($html)){
+    if (empty($html)) {
         $html = $label;
     }
 
-    if(!empty($url)){
+    if (!empty($url)) {
         $attr['href'] = $url;
     }
 
-    if($mode==='dot')
-    {
+    if ($mode==='dot') {
         $attr['class'].= ' classfortooltip';
         $attr['title'] = $html;
         $attr['aria-label'] = $label;
@@ -8114,8 +8112,8 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
     }
 
     // Override attr
-    if(!empty($params['attr']) && is_array($params['attr'])){
-        foreach($params['attr']as $key => $value){
+    if (!empty($params['attr']) && is_array($params['attr'])) {
+        foreach($params['attr']as $key => $value) {
             $attr[$key] = $value;
         }
     }
@@ -8126,7 +8124,7 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
     $attr = array_map('dol_escape_htmltag', $attr);
 
     $TCompiledAttr = array();
-    foreach($attr as $key => $value){
+    foreach($attr as $key => $value) {
         $TCompiledAttr[] = $key.'="'.$value.'"';
     }
 
@@ -8169,13 +8167,13 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
     elseif ($displayMode == 1) {
         $return = !empty($html)?$html:(!empty($statusLabelShort)?$statusLabelShort:$statusLabel);
     }
-    // use status with images
-    elseif (empty($conf->global->MAIN_STATUS_USES_CSS)) {
+    // Use status with images (for backward compatibility)
+    elseif (! empty($conf->global->MAIN_STATUS_USES_IMAGES)) {
         $return = '';
         $htmlLabel      = (in_array($displayMode, array(1,2,5))?'<span class="hideonsmartphone">':'').(!empty($html)?$html:$statusLabel).(in_array($displayMode, array(1,2,5))?'</span>':'');
         $htmlLabelShort = (in_array($displayMode, array(1,2,5))?'<span class="hideonsmartphone">':'').(!empty($html)?$html:(!empty($statusLabelShort)?$statusLabelShort:$statusLabel)).(in_array($displayMode, array(1,2,5))?'</span>':'');
 
-        // For small screen, we use the short label instead of long label.
+        // For small screen, we always use the short label instead of long label.
         if (! empty($conf->dol_optimize_smallscreen))
         {
         	if ($displayMode == 0) $displayMode = 1;
@@ -8183,7 +8181,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         	elseif ($displayMode == 6) $displayMode = 5;
         }
 
-        // image's filename are still in French, so we use this array to convert
+        // For backward compatibility. Image's filename are still in French, so we use this array to convert
         $statusImg=array(
         	'status0' => 'statut0'
         	,'status1' => 'statut1'
@@ -8220,7 +8218,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         }
     }
     // Use new badge
-    elseif (!empty($conf->global->MAIN_STATUS_USES_CSS) && !empty($displayMode)) {
+    elseif (empty($conf->global->MAIN_STATUS_USES_IMAGES) && !empty($displayMode)) {
         $statusLabelShort = !empty($statusLabelShort)?$statusLabelShort:$statusLabel;
 
         if ($displayMode == 3) {

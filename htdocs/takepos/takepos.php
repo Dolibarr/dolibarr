@@ -562,23 +562,23 @@ function MoreActions(totalactions){
 	}
 }
 
+// Popup to select the terminal to use
 function TerminalsDialog()
 {
     jQuery("#dialog-info").dialog({
 	    resizable: false,
-	    height:220,
-	    width:400,
+	    height: <?php echo 180+round($conf->global->TAKEPOS_NUM_TERMINALS / 3 * 20); ?>,
+	    width: <?php echo ($conf->dol_optimize_smallscreen ? 316 : 400); ?>,
 	    modal: true,
 	    buttons: {
-			Terminal1: function() {
+			'<?php echo dol_escape_js($langs->trans("Terminal")) ?> 1': function() {
 				location.href='takepos.php?setterminal=1';
 			}
 			<?php
 			for ($i = 2; $i <= $conf->global->TAKEPOS_NUM_TERMINALS; $i++)
 			{
-				print "
-				,
-				Terminal".$i.": function() {
+				print ",
+				'".dol_escape_js($langs->trans("Terminal"))." ".$i."': function() {
 					location.href='takepos.php?setterminal=".$i."';
 				}
 				";
