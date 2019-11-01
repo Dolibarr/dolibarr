@@ -427,9 +427,9 @@ function format_cal($format, $string)
     if ($format === "ical")
     {
         // Replace new lines chars by "\n"
-        $newstring = preg_replace("/"."\r\n"."/i", "\n", $newstring);
-        $newstring = preg_replace("/"."\n\r"."/i", "\n", $newstring);
-        $newstring = preg_replace("/"."\n"."/i", "\n", $newstring);
+        $newstring = preg_replace("/"."\r\n"."/i", "\\n", $newstring);
+        $newstring = preg_replace("/"."\n\r"."/i", "\\n", $newstring);
+        $newstring = preg_replace("/"."\n"."/i", "\\n", $newstring);
 
         // Must not exceed 75 char. Cut with "\r\n"+Space
         $newstring = calEncode($newstring);
