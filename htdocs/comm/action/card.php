@@ -287,8 +287,8 @@ if (empty($reshook) && $action == 'add')
 		    $object->elementtype = 'task';
 		}
 
-		$object->datep = $datep;
-		$object->datef = $datef;
+		$object->datep = (int) $datep;
+		$object->datef = (int) $datef;
 		$object->percentage = $percentage;
 		$object->duree=(((int) GETPOST('dureehour') * 60) + (int) GETPOST('dureemin')) * 60;
 
