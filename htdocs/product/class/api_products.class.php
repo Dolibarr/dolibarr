@@ -470,11 +470,11 @@ class Products extends DolibarrApi
         if (! $result ) {
             throw new RestException(404, 'Product not found');
         }
-        
+
         if ($result > 0) {
-		   require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
-	       $prodcustprice = new Productcustomerprice($this->db);
-           $result = $prodcustprice->fetch_all('', '', 0, 0, array('t.fk_product' => $id));
+			require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
+			$prodcustprice = new Productcustomerprice($this->db);
+			$result = $prodcustprice->fetch_all('', '', 0, 0, array('t.fk_product' => $id));
         }
 
         if ( empty($prodcustprice->lines)) {
