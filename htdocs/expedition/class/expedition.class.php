@@ -147,8 +147,8 @@ class Expedition extends CommonObject
 	 * @var int		Date of creation
 	 */
 	public $date_creation;
-	
-	
+
+
 	public $date_valid;
 
 	public $meths;
