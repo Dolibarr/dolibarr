@@ -125,8 +125,6 @@ if (empty($reshook))
  *	View
  */
 
-$contactstatic = new Contact($db);
-
 $form = new Form($db);
 
 if ($object->id > 0)
