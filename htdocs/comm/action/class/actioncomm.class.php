@@ -1579,6 +1579,22 @@ class ActionComm extends CommonObject
                     $event['created']=$this->db->jdate($obj->datec)-(empty($conf->global->AGENDA_EXPORT_FIX_TZ)?0:($conf->global->AGENDA_EXPORT_FIX_TZ*3600));
                     $event['modified']=$this->db->jdate($obj->datem)-(empty($conf->global->AGENDA_EXPORT_FIX_TZ)?0:($conf->global->AGENDA_EXPORT_FIX_TZ*3600));
 
+                    // TODO: find a way to call "$this->fetch_userassigned();" without override "$this" properties
+                    $this->id = $obj->id;
+                    $this->fetch_userassigned();
+
+                    $assignedUserArray = array();
+
+                    foreach($this->userassigned as $key => $value)
+                    {
+                        $assignedUser = new User($this->db);
+                        $assignedUser->fetch($value['id']);
+
+                        $assignedUserArray[$key]=$assignedUser;
+                    }
+
+                    $event['assignedUsers']=$assignedUserArray;
+
                     if ($qualified && $datestart)
                     {
                         $eventarray[]=$event;
