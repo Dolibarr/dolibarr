@@ -445,7 +445,6 @@ class Products extends DolibarrApi
             //'multiprices_default_vat_code'=>$this->product->multiprices_default_vat_code
         );
     }
-
     /**
      * Get prices per customer for a product
      *
@@ -471,13 +470,18 @@ class Products extends DolibarrApi
         if (! $result ) {
             throw new RestException(404, 'Product not found');
         }
-
-        if ($result < 0) {
-            throw new RestException(503, 'Error when retrieve prices list : '.array_merge(array($this->product->error), $this->product->errors));
+        
+        if ($result > 0) {
+		   require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
+	       $prodcustprice = new Productcustomerprice($this->db);
+           $result = $prodcustprice->fetch_all('', '', 0, 0, array('t.fk_product' => $id));
         }
 
-        throw new RestException(501, 'Feature not yet available');
-        //return $result;
+        if ( empty($prodcustprice->lines)) {
+            throw new RestException(503, 'Error when retrieve prices list : '.array_merge(array($prodcustprice->error), $prodcustprice->errors));
+        }
+
+        return $prodcustprice->lines;
     }
 
     /**
