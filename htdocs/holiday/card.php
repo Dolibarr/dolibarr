@@ -44,10 +44,6 @@ $id=GETPOST('id', 'int');
 $ref=GETPOST('ref', 'alpha');
 $fuserid = (GETPOST('fuserid', 'int')?GETPOST('fuserid', 'int'):$user->id);
 
-// Protection if external user
-if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'holiday', $id, 'holiday');
-
 $now=dol_now();
 
 // Load translation files required by the page
@@ -61,9 +57,9 @@ if (! empty($conf->global->HOLIDAY_FOR_NON_SALARIES_TOO)) $morefilter = '';
 $error = 0;
 
 $object = new Holiday($db);
-if ($id > 0)
+if (($id > 0) || $ref)
 {
-    $object->fetch($id);
+    $object->fetch($id, $ref);
 
     // Check current user can read this leave request
     $canread = 0;
@@ -82,6 +78,12 @@ if (! empty($user->rights->holiday->write) && in_array($fuserid, $childids)) $ca
 $candelete = 0;
 if (! empty($user->rights->holiday->delete)) $candelete=1;
 if ($object->statut == Holiday::STATUS_DRAFT && $user->rights->holiday->write && in_array($object->fk_user, $childids)) $candelete=1;
+
+// Protection if external user
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'holiday', $object->id, 'holiday');
+
+
 
 /*
  * Actions
