@@ -72,8 +72,8 @@ class Mailing extends CommonObject
 	 * @var int
 	 */
 	public $date_creat;
-	
-	
+
+
 	public $date_valid;
 
 	public $extraparams=array();

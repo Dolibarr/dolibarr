@@ -61,14 +61,14 @@ class ChargeSociales extends CommonObject
     public $amount;
     public $paye;
     public $periode;
-    
+
     /**
      * Creation date
      * @var int
      */
     public $date_creation;
-    
-    
+
+
     public $date_modification;
     public $date_validation;
 

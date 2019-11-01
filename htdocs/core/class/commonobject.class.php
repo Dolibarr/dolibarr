@@ -425,8 +425,8 @@ abstract class CommonObject
 	 * @var int		Date of creation
 	 */
 	public $date_creation;
-	
-	
+
+
 	public $date_validation;		// Date validation
 	public $date_modification;		// Date last change (tms field)
 
