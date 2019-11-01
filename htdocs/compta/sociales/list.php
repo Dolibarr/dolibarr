@@ -261,7 +261,7 @@ if ($resql)
 
 			$chargesociale_static->id=$obj->id;
 			$chargesociale_static->ref=$obj->id;
-			$chargesociale_static->lib=$obj->libelle;
+			$chargesociale_static->label=$obj->libelle;
 			$chargesociale_static->type_libelle=$obj->type_lib;
 
 			print '<tr class="oddeven">';
