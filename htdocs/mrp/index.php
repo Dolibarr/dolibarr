@@ -235,7 +235,10 @@ else
 
 print '</div></div></div>';
 
-$parameters = array('type' => $type, 'user' => $user);
+$parameters = array(
+    //'type' => $type,
+    'user' => $user,
+);
 $reshook = $hookmanager->executeHooks('dashboardMRP', $parameters);
 
 // End of page
