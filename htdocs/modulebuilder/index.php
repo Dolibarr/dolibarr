@@ -810,18 +810,23 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 			//'class/api_mymodule.class.php'=>'class/api_'.strtolower($module).'.class.php',
 		);
 
-		if (GETPOST('includerefgeneration', 'int'))
+		if (GETPOST('includerefgeneration', 'aZ09'))
 		{
+			dol_mkdir($destdir.'/core/modules/'.strtolower($module));
+
 			$filetogenerate += array(
-				'core/modules/myobject/mod_myobject_advanced.php'=>'core/modules/'.strtolower($objectname).'/mod_'.strtolower($objectname).'_advanced.php',
-				'core/modules/myobject/mod_myobject_standard.php'=>'core/modules/'.strtolower($objectname).'/mod_'.strtolower($objectname).'_standard.php',
-				'core/modules/myobject/modules_myobject.php'=>'core/modules/'.strtolower($objectname).'/mod_'.strtolower($objectname).'_advanced.php',
+				'core/modules/mymodule/mod_myobject_advanced.php'=>'core/modules/'.strtolower($module).'/mod_'.strtolower($objectname).'_advanced.php',
+				'core/modules/mymodule/mod_myobject_standard.php'=>'core/modules/'.strtolower($module).'/mod_'.strtolower($objectname).'_standard.php',
+				'core/modules/mymodule/modules_myobject.php'=>'core/modules/'.strtolower($module).'/modules_'.strtolower($objectname).'.php',
 			);
 		}
-		if (GETPOST('includedocgeneration', 'int'))
+		if (GETPOST('includedocgeneration', 'aZ09'))
 		{
+			dol_mkdir($destdir.'/core/modules/'.strtolower($module));
+			dol_mkdir($destdir.'/core/modules/'.strtolower($module).'/doc');
+
 			$filetogenerate += array(
-				'core/modules/myobject/doc/doc_generic_myobject_odt.modules.php'=>'core/modules/'.strtolower($objectname).'/doc/doc_generic_'.strtolower($objectname).'_odt.modules.php'
+				'core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php'=>'core/modules/'.strtolower($module).'/doc/doc_generic_'.strtolower($objectname).'_odt.modules.php'
 			);
 		}
 
@@ -843,8 +848,21 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 			}
 		}
 
-		//if (! $error)     // If there is error copying 1 file, we still have to make the replacement
-		//{
+		// Edit the class 'class/'.strtolower($objectname).'.class.php'
+		if (GETPOST('includerefgeneration', 'aZ09')) {
+			// Replace 'visible'=>1,  'noteditable'=>0, 'default'=>''
+			$arrayreplacement = array('/\'visible\'=>1,\s*\'noteditable\'=>0,\s*\'default\'=>\'\'/' => "'visible'=>4, 'noteditable'=>1, 'default'=>'(PROV)'");
+			//var_dump($arrayreplacement);exit;
+			//var_dump($destdir.'/class/'.strtolower($objectname).'.class.php');exit;
+			dolReplaceInFile($destdir.'/class/'.strtolower($objectname).'.class.php', $arrayreplacement, '', 0, 0, 1);
+		}
+
+		// Edit the setup file and the card page
+		if (GETPOST('includedocgeneration', 'aZ09')) {
+			// TODO
+			// dolReplaceInFile();
+		}
+
 		// Scan for object class files
 		$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
 
@@ -917,15 +935,12 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 
 			// Add module descriptor to list of files to replace "MyObject' string with real name of object.
 			$filetogenerate[]='core/modules/mod'.$module.'.class.php';
-
-			// TODO
 		}
-		//}
 	}
 
 	if (! $error)
 	{
-		// Edit PHP files
+		// Edit PHP files to make replacement
 		foreach($filetogenerate as $destfile)
 		{
 			$phpfileval['fullname'] = $destdir.'/'.$destfile;
@@ -970,6 +985,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 	if (! $error)
 	{
 		setEventMessages($langs->trans('FilesForObjectInitialized', $objectname), null);
+		$tabobj = $objectname;
 	}
 }
 
@@ -1198,14 +1214,15 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname)
 			'sql/llx_mymodule_myobject.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
 			'sql/llx_mymodule_myobject_extrafields.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql',
 			'sql/llx_mymodule_myobject.key.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.key.sql',
+			'sql/llx_mymodule_myobject_extrafields.key.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.key.sql',
 			'scripts/myobject.php'=>'scripts/'.strtolower($objectname).'.php',
 			'img/object_myobject.png'=>'img/object_'.strtolower($objectname).'.png',
 			'class/myobject.class.php'=>'class/'.strtolower($objectname).'.class.php',
 			'class/api_myobject.class.php'=>'class/api_'.strtolower($module).'.class.php',
-			'core/modules/myobject/mod_myobject_advanced.php'=>'core/modules/'.strtolower($objectname).'/mod_'.strtolower($objectname).'_advanced.php',
-			'core/modules/myobject/mod_myobject_standard.php'=>'core/modules/'.strtolower($objectname).'/mod_'.strtolower($objectname).'_standard.php',
-			'core/modules/myobject/modules_myobject.php'=>'core/modules/'.strtolower($objectname).'/mod_'.strtolower($objectname).'_advanced.php',
-			'core/modules/myobject/doc/doc_generic_myobject_odt.modules.php'=>'core/modules/'.strtolower($objectname).'/doc/doc_generic_'.strtolower($objectname).'_odt.modules.php'
+			'core/modules/mymodule/mod_myobject_advanced.php'=>'core/modules/'.strtolower($module).'/mod_'.strtolower($objectname).'_advanced.php',
+			'core/modules/mymodule/mod_myobject_standard.php'=>'core/modules/'.strtolower($module).'/mod_'.strtolower($objectname).'_standard.php',
+			'core/modules/mymodule/modules_myobject.php'=>'core/modules/'.strtolower($module).'/modules_'.strtolower($objectname).'.php',
+			'core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php'=>'core/modules/'.strtolower($module).'/doc/doc_generic_'.strtolower($objectname).'_odt.modules.php'
 		);
 
 		$resultko = 0;
@@ -2460,7 +2477,7 @@ elseif (! empty($module))
 
 							print load_fiche_titre($langs->trans("ObjectProperties"), '', '');
 
-
+							print '<!-- Table with properties of object -->'."\n";
 							print '<div class="div-table-responsive">';
 							print '<table class="noborder">';
 							print '<tr class="liste_titre">';
@@ -2470,16 +2487,22 @@ elseif (! empty($module))
 							print '<th>';
 							print $form->textwithpicto($langs->trans("Label"), $langs->trans("YouCanUseTranslationKey"));
 							print '</th>';
-							print '<th>'.$langs->trans("Type").'</td>';
+							print '<th>'.$form->textwithpicto($langs->trans("Type"), $langs->trans("TypeOfFieldsHelp")).'</th>';
 							print '<th>'.$form->textwithpicto($langs->trans("ArrayOfKeyValues"), $langs->trans("ArrayOfKeyValuesDesc")).'</th>';
 							print '<th class="center">'.$form->textwithpicto($langs->trans("NotNull"), $langs->trans("NotNullDesc")).'</th>';
 							print '<th class="center">'.$langs->trans("DefaultValue").'</th>';
 							print '<th class="center">'.$langs->trans("DatabaseIndex").'</th>';
+							print '<th class="center">'.$langs->trans("ForeignKey").'</th>';
 							print '<th class="right">'.$langs->trans("Position").'</th>';
 							print '<th class="center">'.$form->textwithpicto($langs->trans("Enabled"), $langs->trans("EnabledDesc")).'</th>';
 							print '<th class="center">'.$form->textwithpicto($langs->trans("Visible"), $langs->trans("VisibleDesc")).'</th>';
-							print '<th class="center">'.$form->textwithpicto($langs->trans("IsAMeasure"), $langs->trans("IsAMeasureDesc")).'</th>';
+							print '<th class="center">'.$langs->trans("NotEditable").'</th>';
 							print '<th class="center">'.$form->textwithpicto($langs->trans("SearchAll"), $langs->trans("SearchAllDesc")).'</th>';
+							print '<th class="center">'.$form->textwithpicto($langs->trans("IsAMeasure"), $langs->trans("IsAMeasureDesc")).'</th>';
+							print '<th class="center">'.$langs->trans("CSSClass").'</th>';
+							print '<th class="center">'.$langs->trans("KeyForTooltip").'</th>';
+							print '<th class="center">'.$langs->trans("ShowOnCombobox").'</th>';
+							//print '<th class="center">'.$langs->trans("Disabled").'</th>';
 							print '<th>'.$langs->trans("Comment").'</th>';
 							print '<th></th>';
 							print '</tr>';
@@ -2500,11 +2523,17 @@ elseif (! empty($module))
 								print '<td class="center"><input class="text" size="2" name="propnotnull" value="'.dol_escape_htmltag(GETPOST('propnotnull', 'alpha')).'"></td>';
 								print '<td><input class="text maxwidth50" name="propdefault" value="'.dol_escape_htmltag(GETPOST('propdefault', 'alpha')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propindex" value="'.dol_escape_htmltag(GETPOST('propindex', 'alpha')).'"></td>';
+								print '<td class="center"><input class="text" size="2" name="propforeignkey" value="'.dol_escape_htmltag(GETPOST('propforeignkey', 'alpha')).'"></td>';
 								print '<td class="right"><input class="text right" size="2" name="propposition" value="'.dol_escape_htmltag(GETPOST('propposition', 'alpha')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propenabled" value="'.dol_escape_htmltag(GETPOST('propenabled', 'alpha')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propvisible" value="'.dol_escape_htmltag(GETPOST('propvisible', 'alpha')).'"></td>';
-								print '<td class="center"><input class="text" size="2" name="propisameasure" value="'.dol_escape_htmltag(GETPOST('propisameasure', 'alpha')).'"></td>';
+								print '<td class="center"><input class="text" size="2" name="propnoteditable" value="'.dol_escape_htmltag(GETPOST('propnoteditable', 'alpha')).'"></td>';
 								print '<td class="center"><input class="text" size="2" name="propsearchall" value="'.dol_escape_htmltag(GETPOST('propsearchall', 'alpha')).'"></td>';
+								print '<td class="center"><input class="text" size="2" name="propisameasure" value="'.dol_escape_htmltag(GETPOST('propisameasure', 'alpha')).'"></td>';
+								print '<td class="center"><input class="text" size="2" name="propcss" value="'.dol_escape_htmltag(GETPOST('propcss', 'alpha')).'"></td>';
+								print '<td class="center"><input class="text" size="2" name="prophelp" value="'.dol_escape_htmltag(GETPOST('prophelp', 'alpha')).'"></td>';
+								print '<td class="center"><input class="text" size="2" name="propshowoncombobox" value="'.dol_escape_htmltag(GETPOST('propshowoncombobox', 'alpha')).'"></td>';
+								//print '<td class="center"><input class="text" size="2" name="propdisabled" value="'.dol_escape_htmltag(GETPOST('propdisabled', 'alpha')).'"></td>';
 								print '<td><input class="text maxwidth100" name="propcomment" value="'.dol_escape_htmltag(GETPOST('propcomment', 'alpha')).'"></td>';
 								print '<td class="center">';
 								print '<input class="button" type="submit" name="add" value="'.$langs->trans("Add").'">';
@@ -2531,13 +2560,19 @@ elseif (! empty($module))
 									$proptype=$propval['type'];
 									$proparrayofkeyval=$propval['arrayofkeyval'];
 									$propnotnull=$propval['notnull'];
-									$propsearchall=$propval['searchall'];
 									$propdefault=$propval['default'];
 									$propindex=$propval['index'];
+									$propforeignkey=$propval['foreignkey'];
 									$propposition=$propval['position'];
 									$propenabled=$propval['enabled'];
 									$propvisible=$propval['visible'];
+									$propnoteditable=$propval['noteditable'];
+									$propsearchall=$propval['searchall'];
 									$propisameasure=$propval['isameasure'];
+									$propcss=$propval['css'];
+									$prophelp=$propval['help'];
+									$propshowoncombobox=$propval['showoncombobox'];
+									//$propdisabled=$propval['disabled'];
 									$propcomment=$propval['comment'];
 
 									print '<tr class="oddeven">';
@@ -2548,7 +2583,7 @@ elseif (! empty($module))
 									print '<td>';
 									print $proplabel;
 									print '</td>';
-									print '<td>';
+									print '<td class="wordbreak">';
 									print $proptype;
 									print '</td>';
 									print '<td class="wordbreak">';
@@ -2565,6 +2600,9 @@ elseif (! empty($module))
 									print '<td class="center">';
 									print $propindex?'1':'';
 									print '</td>';
+									print '<td class="center">';
+									print $propforeignkey?$propforeignkey:'';
+									print '</td>';
 									print '<td class="right">';
 									print $propposition;
 									print '</td>';
@@ -2575,16 +2613,34 @@ elseif (! empty($module))
 									print $propvisible?$propvisible:'';
 									print '</td>';
 									print '<td class="center">';
-									print $propisameasure?$propisameasure:'';
+									print $propnoteditable?$propnoteditable:'';
 									print '</td>';
 									print '<td class="center">';
 									print $propsearchall?'1':'';
 									print '</td>';
+									print '<td class="center">';
+									print $propisameasure?$propisameasure:'';
+									print '</td>';
+									print '<td class="center">';
+									print $propcss?$propcss:'';
+									print '</td>';
+									print '<td class="center">';
+									print $prophelp?$prophelp:'';
+									print '</td>';
+									print '<td class="center">';
+									print $propshowoncombobox?$propshowoncombobox:'';
+									print '</td>';
+									/*print '<td class="center">';
+									print $propdisabled?$propdisabled:'';
+									print '</td>';*/
 									print '<td>';
 									print $propcomment;
 									print '</td>';
 									print '<td class="center">';
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
+									if ($propname != 'rowid')
+									{
+										print '<a href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
+									}
 									print '</td>';
 
 									print '</tr>';
