@@ -99,8 +99,8 @@ class EmailCollectorFilter extends CommonObject
 	public $rulevalue;
 
 	/**
-	 * @var int		Date of creation
-	 */
+     * @var integer|string date_creation
+     */
 	public $date_creation;
 
 
