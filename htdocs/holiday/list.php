@@ -288,12 +288,9 @@ $sql.= ", ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
 $sql.= " WHERE cp.entity IN (".getEntity('holiday').")";
 $sql.= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
 // Search all
-//if (!empty($sall)) $sql.= natural_search(array_keys($fieldstosearchall), $sall);
+if (!empty($sall)) $sql.= natural_search(array_keys($fieldstosearchall), $sall);
 // Ref
-if(!empty($search_ref))
-{
-	$sql.= " AND cp.rowid = ".(int) $db->escape($search_ref);
-}
+if (!empty($search_ref)) $sql.= natural_search("cp.ref", $search_ref);
 // Start date
 $sql.= dolSqlDateFilter("cp.date_debut", $search_day_start, $search_month_start, $search_year_start);
 // End date
