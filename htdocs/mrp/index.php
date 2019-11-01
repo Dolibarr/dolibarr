@@ -236,7 +236,7 @@ else
 print '</div></div></div>';
 
 $parameters = array('type' => $type, 'user' => $user);
-$reshook = $hookmanager->executeHooks('dashboardMRP', $parameters, null); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('dashboardMRP', $parameters, ''); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();
