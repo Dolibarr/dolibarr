@@ -94,8 +94,10 @@ class Mo extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'showoncombobox'=>'1',),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'position'=>20, 'notnull'=>1, 'default'=>'1', 'index'=>1,),
-		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'notnull'=>-1, 'searchall'=>1, 'showoncombobox'=>'1',),
+		'fk_bom' => array('type'=>'integer:Bom:bom/class/bom.class.php:0:t.status=1', 'filter'=>'active=1', 'label'=>'BOM', 'enabled'=>1, 'visible'=>1, 'position'=>33, 'notnull'=>-1, 'index'=>1, 'comment'=>"Original BOM",),
+		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:1', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'comment'=>"Product to produce",),
 		'qty' => array('type'=>'real', 'label'=>'QtyToProduce', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'notnull'=>1, 'comment'=>"Qty to produce",),
+		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>42, 'notnull'=>-1, 'searchall'=>1, 'showoncombobox'=>'1',),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'position'=>50, 'notnull'=>-1, 'index'=>1),
 	    'fk_warehouse' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label'=>'WarehouseForProduction', 'enabled'=>1, 'visible'=>-1, 'position'=>52),
 	    'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>61, 'notnull'=>-1,),
@@ -105,12 +107,10 @@ class Mo extends CommonObject
 		'fk_user_creat' => array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'position'=>510, 'notnull'=>1, 'foreignkey'=>'user.rowid',),
 		'fk_user_modif' => array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'position'=>511, 'notnull'=>-1,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
-		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:1', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'comment'=>"Product to produce",),
 		'date_start_planned' => array('type'=>'datetime', 'label'=>'DateStartPlannedMo', 'enabled'=>1, 'visible'=>1, 'position'=>55, 'notnull'=>-1, 'index'=>1, 'help'=>'KeepEmptyForAsap'),
 		'date_end_planned' => array('type'=>'datetime', 'label'=>'DateEndPlannedMo', 'enabled'=>1, 'visible'=>1, 'position'=>56, 'notnull'=>-1, 'index'=>1,),
-		'fk_bom' => array('type'=>'integer:Bom:bom/class/bom.class.php:0:t.status=1', 'filter'=>'active=1', 'label'=>'BOM', 'enabled'=>1, 'visible'=>1, 'position'=>33, 'notnull'=>-1, 'index'=>1, 'comment'=>"Original BOM",),
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>1, 'visible'=>-1, 'position'=>52, 'notnull'=>-1, 'index'=>1,),
-		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>4, 'position'=>1000, 'default'=>0, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Brouillon', '1'=>'Validated', '2'=>'InProgress', '3'=>'StatusMOProduced', '-1'=>'Canceled')),
+		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>2, 'position'=>1000, 'default'=>0, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Brouillon', '1'=>'Validated', '2'=>'InProgress', '3'=>'StatusMOProduced', '-1'=>'Canceled')),
 	);
 	public $rowid;
 	public $ref;

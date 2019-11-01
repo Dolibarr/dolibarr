@@ -240,7 +240,7 @@ if (GETPOST('action', 'aZ09') == 'create')
 	/*
  	 * List of payments on donation
 	 */
-	
+
 	$num = 1;
 	$i = 0;
 

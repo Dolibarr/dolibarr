@@ -49,6 +49,8 @@ UPDATE llx_c_units SET label = 'SurfaceUnitm2' WHERE code IN ('M2');
 
 -- For v11
 
+ALTER TABLE llx_don ADD COLUMN fk_user_modif integer;
+
 ALTER TABLE llx_expeditiondet ADD INDEX idx_expeditiondet_fk_origin_line (fk_origin_line);
 
 ALTER TABLE llx_rights_def ADD COLUMN module_position INTEGER NOT NULL DEFAULT 0;

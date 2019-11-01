@@ -4380,10 +4380,10 @@ class Product extends CommonObject
     /**
      *    Return label of a given status
      *
-     * @param  int $status Statut
-     * @param  int $mode   0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-     * @param  int $type   0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
-     * @return string              Label of status
+     * @param  int 		$status 	Statut
+     * @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+     * @param  int 		$type   	0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
+     * @return string              	Label of status
      */
     public function LibStatut($status, $mode = 0, $type = 0)
     {
@@ -4420,42 +4420,41 @@ class Product extends CommonObject
 
         $statuttrans=empty($status)?'status5':'status4';
 
-        if($status == 0){
+        if ($status == 0) {
             // $type   0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
-            if($type==0){
+            if($type==0) {
                 $labelstatut = $langs->trans('ProductStatusNotOnSellShort');
                 $labelstatutShort = $langs->trans('ProductStatusNotOnSell');
             }
-            elseif($type == 1){
+            elseif($type == 1) {
                 $labelstatut = $langs->trans('ProductStatusNotOnBuyShort');
                 $labelstatutShort = $langs->trans('ProductStatusNotOnBuy');
             }
-            elseif($type == 2){
+            elseif($type == 2) {
                 $labelstatut = $langs->trans('ProductStatusNotOnBatch');
                 $labelstatutShort = $langs->trans('ProductStatusNotOnBatchShort');
             }
         }
-        elseif($status == 1){
+        elseif ($status == 1) {
             // $type   0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
-            if($type==0){
+            if ($type==0) {
                 $labelstatut = $langs->trans('ProductStatusOnSellShort');
                 $labelstatutShort = $langs->trans('ProductStatusOnSell');
             }
-            elseif($type == 1){
+            elseif ($type == 1) {
                 $labelstatut = $langs->trans('ProductStatusOnBuyShort');
                 $labelstatutShort = $langs->trans('ProductStatusOnBuy');
             }
-            elseif($type == 2){
+            elseif ($type == 2) {
                 $labelstatut = $langs->trans('ProductStatusOnBatch');
                 $labelstatutShort = $langs->trans('ProductStatusOnBatchShort');
             }
         }
 
 
-        if($mode>6){
+        if ($mode > 6) {
             return dolGetStatus($langs->trans('Unknown'), '', '', 'status0', 0);
-        }
-        else{
+        } else {
             return dolGetStatus($labelstatut, $labelstatutShort, '', $statuttrans, $mode);
         }
     }

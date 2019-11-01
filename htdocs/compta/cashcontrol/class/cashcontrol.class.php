@@ -311,47 +311,20 @@ class CashControl extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		if (empty($this->labelstatus))
+		if (empty($this->labelstatus) || empty($this->labelstatusshort))
 		{
 			global $langs;
 			//$langs->load("mymodule");
 			$this->labelstatus[0] = $langs->trans('Draft');
 			$this->labelstatus[1] = $langs->trans('Closed');
+			$this->labelstatusshort[0] = $langs->trans('Draft');
+			$this->labelstatusshort[1] = $langs->trans('Closed');
 		}
 
-		if ($mode == 0)
-		{
-			return $this->labelstatus[$status];
-		}
-		elseif ($mode == 1)
-		{
-			return $this->labelstatus[$status];
-		}
-		elseif ($mode == 2)
-		{
-			if ($status == 1) return img_picto($this->labelstatus[$status], 'statut6', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-			elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut0', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-		}
-		elseif ($mode == 3)
-		{
-			if ($status == 1) return img_picto($this->labelstatus[$status], 'statut6', '', false, 0, 0, '', 'valignmiddle');
-			elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut0', '', false, 0, 0, '', 'valignmiddle');
-		}
-		elseif ($mode == 4)
-		{
-			if ($status == 1) return img_picto($this->labelstatus[$status], 'statut6', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-			elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut0', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-		}
-		elseif ($mode == 5)
-		{
-			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut6', '', false, 0, 0, '', 'valignmiddle');
-			elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut0', '', false, 0, 0, '', 'valignmiddle');
-		}
-		elseif ($mode == 6)
-		{
-			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut6', '', false, 0, 0, '', 'valignmiddle');
-			elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut0', '', false, 0, 0, '', 'valignmiddle');
-		}
+		$statusType = 'status0';
+		if ($status == self::STATUS_VALIDATED) $statusType = 'status6';
+
+		return dolGetStatus($this->labelstatus[$status], $this->labelstatusshort[$status], '', $statusType, $mode);
 	}
 
 	/**

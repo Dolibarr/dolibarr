@@ -1851,7 +1851,7 @@ function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = ''
 				if (! dol_is_file($fileoutput) || is_writeable($fileoutput))
 				{
 				    try {
-					   $ret = $image->writeImages($fileoutput, true);
+						$ret = $image->writeImages($fileoutput, true);
 				    }
 				    catch(Exception $e)
 				    {

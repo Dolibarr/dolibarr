@@ -1725,6 +1725,7 @@ if ($action != 'dopayment')
 			{
 				// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of stripe
 				print '<br><div class="button buttonpayment" id="div_dopayment_stripe"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_stripe" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
+				print '<input type="hidden" name="noidempotency" value="'.GETPOST('noidempotency', 'int').'">';
 				print '<br>';
 				print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span>';
 				print '</div>';
@@ -1858,12 +1859,12 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 
 			$service = 'StripeLive';
 			$servicestatus = 1;
-
 			if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
 			{
 				$service = 'StripeTest';
 				$servicestatus = 0;
 			}
+
 			$stripe = new Stripe($db);
 			$stripeacc = $stripe->getStripeAccount($service);
 			$stripecu = null;
@@ -1871,7 +1872,10 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 
 			if (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
 			{
-				$paymentintent=$stripe->getPaymentIntent($amount, $currency, $tag, 'Stripe payment: '.$fulltag.(is_object($object)?' ref='.$object->ref:''), $object, $stripecu, $stripeacc, $servicestatus);
+				$noidempotency_key = (GETPOSTISSET('noidempotency') ? GETPOST('noidempotency', 'int') : 0);	// By default noidempotency is unset, so we must use a different tag/ref for each payment. If set, we can pay several times the same tag/ref.
+				$paymentintent=$stripe->getPaymentIntent($amount, $currency, $tag, 'Stripe payment: '.$fulltag.(is_object($object)?' ref='.$object->ref:''), $object, $stripecu, $stripeacc, $servicestatus, 0, 'automatic', false, null, 0, $noidempotency_key);
+				// The paymentintnent has status 'requires_payment_method' (even if paymentintent was already payed)
+				//var_dump($paymentintent);
 				if ($stripe->error) setEventMessages($stripe->error, null, 'errors');
 			}
 		}

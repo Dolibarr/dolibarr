@@ -27,7 +27,7 @@
  *	\brief      File of class to build ODT documents for MOs
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/bom/modules_bom.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/mrp/modules_mrp.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
 /**
  *	Class to build documents using ODF templates generator
  */
-class doc_generic_mo_odt extends ModelePDFMOs
+class doc_generic_mo_odt extends ModelePDFMos
 {
 	/**
 	 * Issuer
@@ -486,7 +486,7 @@ class doc_generic_mo_odt extends ModelePDFMOs
 				}
 				else {
 					try {
-					$odfHandler->saveToDisk($file);
+						$odfHandler->saveToDisk($file);
 					} catch (Exception $e) {
                         $this->error=$e->getMessage();
                         dol_syslog($e->getMessage(), LOG_INFO);

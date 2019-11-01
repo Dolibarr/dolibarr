@@ -271,7 +271,7 @@ class MyModuleApi extends DolibarrApi
             throw new RestException(500, 'Error when deleting MyObject : '.$this->myobject->error);
         }
 
-         return array(
+        return array(
             'success' => array(
                 'code' => 200,
                 'message' => 'MyObject deleted'
