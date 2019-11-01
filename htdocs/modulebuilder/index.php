@@ -480,10 +480,15 @@ if ($dirins && $action == 'initcss' && !empty($module))
 			'Mon module'=>$modulename,
 			'mon module'=>$modulename,
 			'htdocs/modulebuilder/template'=>strtolower($modulename),
-			'---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email?' <'.$user->email.'>':'')
+			'---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email?' <'.$user->email.'>':''),
 		);
 
 		dolReplaceInFile($destfile, $arrayreplacement);
+
+		// Update descriptor file to uncomment file
+	    $srcfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+	    $arrayreplacement = array('/\/\/\s*\''.preg_quote('/'.strtolower($module).'/css/'.strtolower($module).'.css.php', '/').'\'/' => '\'/'.strtolower($module).'/css/'.strtolower($module).'.css.php\'');
+	    dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
 	}
 	else
 	{
@@ -518,6 +523,11 @@ if ($dirins && $action == 'initjs' && !empty($module))
 		);
 
 		dolReplaceInFile($destfile, $arrayreplacement);
+
+		// Update descriptor file to uncomment file
+		$srcfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+		$arrayreplacement = array('/\/\/\s*\''.preg_quote('/'.strtolower($module).'/js/'.strtolower($module).'.js.php', '/').'\'/' => '\'/'.strtolower($module).'/js/'.strtolower($module).'.js.php\'');
+		dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
 	}
 	else
 	{
@@ -635,6 +645,14 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module))
 
         $result = dol_delete_file($filetodelete);
         if (dol_is_dir_empty($dirtodelete)) dol_delete_dir($dirtodelete);
+
+        // Update descriptor file to comment file
+        if (in_array($tab, array('css', 'js')))
+        {
+            $srcfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+            $arrayreplacement = array('/^\s*\''.preg_quote('/'.$relativefilename, '/').'\',*/m'=>'                // \'/'.$relativefilename.'\',');
+            dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
+        }
     }
 }
 
@@ -1967,7 +1985,10 @@ elseif (! empty($module))
 				print '<span class="fa fa-file-o"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
 				print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 				print '<br>';
-				print '<span class="fa fa-file-o"></span> '.$langs->trans("LanguageFile").' :</span> <strong>'.$dicts['langs'].'</strong><br>';
+				print '<span class="fa fa-file-o"></span> '.$langs->trans("LanguageFile").' :</span> ';
+				if (! is_array($dicts) || empty($dicts)) print '<span class="opacitymedium">'.$langs->trans("NoDictionaries").'</span>';
+				else print '<strong>'.$dicts['langs'].'</strong>';
+				print '<br>';
 
 				print load_fiche_titre($langs->trans("ListOfDictionariesEntries"), '', '');
 
