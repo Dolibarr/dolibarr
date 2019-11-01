@@ -1977,9 +1977,8 @@ class BookKeepingLine
 	public $piece_num;
 
 	/**
-	 * Creation date
-	 * @var int
-	 */
+     * @var integer|string date_creation
+     */
 	public $date_creation;
 
     public $date_modification;
