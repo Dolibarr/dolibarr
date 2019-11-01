@@ -5624,7 +5624,7 @@ abstract class CommonObject
 			{
 				$morecss = 'minwidth100imp';
 			}
-			elseif ($type == 'datetime')
+			elseif ($type == 'datetime' || $type == 'link')
 			{
 				$morecss = 'minwidth200imp';
 			}
@@ -6093,7 +6093,7 @@ abstract class CommonObject
 			$param_list_array = explode(':', $param_list[0]);
 			$showempty=(($required && $default != '')?0:1);
 
-			$out=$form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', '', '', 0, empty($val['disabled'])?0:1);
+			$out=$form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, empty($val['disabled'])?0:1);
 
 			if (! empty($param_list_array[2]))		// If we set to add a create button
 			{

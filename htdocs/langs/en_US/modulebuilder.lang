@@ -134,4 +134,4 @@ KeyForTooltip=Key for tooltip
 CSSClass=CSS Class
 NotEditable=Not editable
 ForeignKey=Foreign key
-TypeOfFieldsHelp=Type of fields:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php:1 (1 means we add a + button after the combo to create the record)
+TypeOfFieldsHelp=Type of fields:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' means we add a + button after the combo to create the record, 'filter' can be 'status=1;entity=$conf->entity' for example)

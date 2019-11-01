@@ -5865,7 +5865,11 @@ class Form
 			if ($classname && class_exists($classname))
 			{
 				$objecttmp = new $classname($this->db);
-				$objecttmp->filter = $filter;
+				// Make some replacement
+				$objecttmp->filter = str_replace(
+					array('__ENTITY__', '__USER_ID__'),
+					array($conf->entity, $user->id),
+					$filter);
 			}
 		}
 		if (! is_object($objecttmp))
