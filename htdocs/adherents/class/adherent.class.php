@@ -2181,48 +2181,48 @@ class Adherent extends CommonObject
 		$langs->load("members");
 
         $statusType = '';
-        $labelstatut = '';
-        $labelstatutShort = '';
+        $labelStatus = '';
+        $labelStatusShort = '';
 
 		if ($statut == -1)
 		{
 			$statusType = 'status0';
-			$labelstatut = $langs->trans("MemberStatusDraft");
-			$labelstatutShort = $langs->trans("MemberStatusDraftShort");
+			$labelStatus = $langs->trans("MemberStatusDraft");
+			$labelStatusShort = $langs->trans("MemberStatusDraftShort");
 		}
 		elseif ($statut >= 1) {
 			if ($need_subscription == 0)
 			{
 				$statusType = 'status4';
-				$labelstatut = $langs->trans("MemberStatusNoSubscription");
-				$labelstatutShort = $langs->trans("MemberStatusNoSubscriptionShort");
+				$labelStatus = $langs->trans("MemberStatusNoSubscription");
+				$labelStatusShort = $langs->trans("MemberStatusNoSubscriptionShort");
 			}
 			elseif (! $date_end_subscription)
 			{
 				$statusType = 'status1';
-				$labelstatut = $langs->trans("MemberStatusActive");
-				$labelstatutShort = $langs->trans("MemberStatusActiveShort");
+				$labelStatus = $langs->trans("MemberStatusActive");
+				$labelStatusShort = $langs->trans("MemberStatusActiveShort");
 			}
 			elseif ($date_end_subscription < time())
 			{
 				$statusType = 'status3';
-				$labelstatut = $langs->trans("MemberStatusActiveLate");
-				$labelstatutShort = $langs->trans("MemberStatusActiveLateShort");
+				$labelStatus = $langs->trans("MemberStatusActiveLate");
+				$labelStatusShort = $langs->trans("MemberStatusActiveLateShort");
 			}
 			else {
 				$statusType = 'status4';
-				$labelstatut = $langs->trans("MemberStatusPaid");
-				$labelstatutShort = $langs->trans("MemberStatusPaidShort");
+				$labelStatus = $langs->trans("MemberStatusPaid");
+				$labelStatusShort = $langs->trans("MemberStatusPaidShort");
 			}
 		}
 		elseif ($statut == 0)
 		{
 			$statusType = 'status6';
-			$labelstatut = $langs->trans("MemberStatusResiliated");
-			$labelstatutShort = $langs->trans("MemberStatusResiliatedShort");
+			$labelStatus = $langs->trans("MemberStatusResiliated");
+			$labelStatusShort = $langs->trans("MemberStatusResiliatedShort");
 		}
 
-		return dolGetStatus($labelstatut, $labelstatutShort, '', $statusType, $mode);
+		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
 	}
 
 

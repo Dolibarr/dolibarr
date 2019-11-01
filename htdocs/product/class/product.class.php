@@ -4390,7 +4390,7 @@ class Product extends CommonObject
         // phpcs:enable
         global $conf, $langs;
 
-        $labelstatut = $labelstatutShort = '';
+        $labelStatus = $labelStatusShort = '';
 
         $langs->load('products');
         if (! empty($conf->productbatch->enabled)) { $langs->load("productbatch");
@@ -4423,31 +4423,31 @@ class Product extends CommonObject
         if ($status == 0) {
             // $type   0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
             if($type==0) {
-                $labelstatut = $langs->trans('ProductStatusNotOnSellShort');
-                $labelstatutShort = $langs->trans('ProductStatusNotOnSell');
+                $labelStatus = $langs->trans('ProductStatusNotOnSellShort');
+                $labelStatusShort = $langs->trans('ProductStatusNotOnSell');
             }
             elseif($type == 1) {
-                $labelstatut = $langs->trans('ProductStatusNotOnBuyShort');
-                $labelstatutShort = $langs->trans('ProductStatusNotOnBuy');
+                $labelStatus = $langs->trans('ProductStatusNotOnBuyShort');
+                $labelStatusShort = $langs->trans('ProductStatusNotOnBuy');
             }
             elseif($type == 2) {
-                $labelstatut = $langs->trans('ProductStatusNotOnBatch');
-                $labelstatutShort = $langs->trans('ProductStatusNotOnBatchShort');
+                $labelStatus = $langs->trans('ProductStatusNotOnBatch');
+                $labelStatusShort = $langs->trans('ProductStatusNotOnBatchShort');
             }
         }
         elseif ($status == 1) {
             // $type   0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
             if ($type==0) {
-                $labelstatut = $langs->trans('ProductStatusOnSellShort');
-                $labelstatutShort = $langs->trans('ProductStatusOnSell');
+                $labelStatus = $langs->trans('ProductStatusOnSellShort');
+                $labelStatusShort = $langs->trans('ProductStatusOnSell');
             }
             elseif ($type == 1) {
-                $labelstatut = $langs->trans('ProductStatusOnBuyShort');
-                $labelstatutShort = $langs->trans('ProductStatusOnBuy');
+                $labelStatus = $langs->trans('ProductStatusOnBuyShort');
+                $labelStatusShort = $langs->trans('ProductStatusOnBuy');
             }
             elseif ($type == 2) {
-                $labelstatut = $langs->trans('ProductStatusOnBatch');
-                $labelstatutShort = $langs->trans('ProductStatusOnBatchShort');
+                $labelStatus = $langs->trans('ProductStatusOnBatch');
+                $labelStatusShort = $langs->trans('ProductStatusOnBatchShort');
             }
         }
 
@@ -4455,7 +4455,7 @@ class Product extends CommonObject
         if ($mode > 6) {
             return dolGetStatus($langs->trans('Unknown'), '', '', 'status0', 0);
         } else {
-            return dolGetStatus($labelstatut, $labelstatutShort, '', $statuttrans, $mode);
+            return dolGetStatus($labelStatus, $labelStatusShort, '', $statuttrans, $mode);
         }
     }
 

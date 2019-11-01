@@ -1264,13 +1264,13 @@ class Contact extends CommonObject
         // phpcs:enable
 		global $langs;
 
-		$labelstatus = array(
+		$labelStatus = array(
 			0 => 'ActivityCeased',
 			1 => 'InActivity',
 			4 => 'InActivity',
 			5 => 'ActivityCeased',
 		);
-		$labelstatusshort = array(
+		$labelStatusShort = array(
 			0 => 'ActivityCeased',
 			1 => 'InActivity',
 			4 => 'InActivity',
@@ -1280,8 +1280,8 @@ class Contact extends CommonObject
 		$statusType = 'status4';
 		if ($status==0 || $status==5) $statusType = 'status5';
 
-		$label = $langs->trans($labelstatus[$status]);
-		$labelshort = $langs->trans($labelstatusshort[$status]);
+		$label = $langs->trans($labelStatus[$status]);
+		$labelshort = $langs->trans($labelStatusShort[$status]);
 
 		return dolGetStatus($label, $labelshort, '', $statusType, $mode);
 	}

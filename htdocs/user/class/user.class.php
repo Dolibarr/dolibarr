@@ -2495,20 +2495,20 @@ class User extends CommonObject
         // phpcs:enable
 		global $langs;
 
-		if (empty($this->labelstatus) || empty($this->labelstatusshort))
+		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelstatus[self::STATUS_ENABLED] = $langs->trans('Enabled');
-			$this->labelstatus[self::STATUS_DISABLED] = $langs->trans('Disabled');
-			$this->labelstatusshort[self::STATUS_ENABLED] = $langs->trans('Enabled');
-			$this->labelstatusshort[self::STATUS_DISABLED] = $langs->trans('Disabled');
+			$this->labelStatus[self::STATUS_ENABLED] = $langs->trans('Enabled');
+			$this->labelStatus[self::STATUS_DISABLED] = $langs->trans('Disabled');
+			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->trans('Enabled');
+			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->trans('Disabled');
 		}
 
 		$statusType = 'status5';
 		if ($status == self::STATUS_ENABLED) $statusType = 'status4';
 
-		return dolGetStatus($this->labelstatus[$status], $this->labelstatusshort[$status], '', $statusType, $mode);
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 

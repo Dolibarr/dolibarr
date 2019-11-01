@@ -1227,20 +1227,20 @@ class Holiday extends CommonObject
 	public function LibStatut($status, $mode = 0, $startdate = '')
 	{
 		// phpcs:enable
-		if (empty($this->labelstatus) || empty($this->labelstatusshort))
+		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelstatus[self::STATUS_DRAFT] = $langs->trans('DraftCP');
-			$this->labelstatus[self::STATUS_VALIDATED] = $langs->trans('ToReviewCP');
-			$this->labelstatus[self::STATUS_APPROVED] = $langs->trans('ApprovedCP');
-			$this->labelstatus[self::STATUS_CANCELED] = $langs->trans('CancelCP');
-			$this->labelstatus[self::STATUS_REFUSED] = $langs->trans('RefuseCP');
-			$this->labelstatusshort[self::STATUS_DRAFT] = $langs->trans('DraftCP');
-			$this->labelstatusshort[self::STATUS_VALIDATED] = $langs->trans('ToReviewCP');
-			$this->labelstatusshort[self::STATUS_APPROVED] = $langs->trans('ApprovedCP');
-			$this->labelstatusshort[self::STATUS_CANCELED] = $langs->trans('CancelCP');
-			$this->labelstatusshort[self::STATUS_REFUSED] = $langs->trans('RefuseCP');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('DraftCP');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('ToReviewCP');
+			$this->labelStatus[self::STATUS_APPROVED] = $langs->trans('ApprovedCP');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('CancelCP');
+			$this->labelStatus[self::STATUS_REFUSED] = $langs->trans('RefuseCP');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('DraftCP');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('ToReviewCP');
+			$this->labelStatusShort[self::STATUS_APPROVED] = $langs->trans('ApprovedCP');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('CancelCP');
+			$this->labelStatusShort[self::STATUS_REFUSED] = $langs->trans('RefuseCP');
 		}
 
 		$statusType = 'status6';
@@ -1250,7 +1250,7 @@ class Holiday extends CommonObject
 		if ($status == self::STATUS_CANCELED) $statusType = 'status5';
 		if ($status == self::STATUS_REFUSED) $statusType = 'status5';
 
-		return dolGetStatus($this->labelstatus[$status], $this->labelstatusshort[$status], '', $statusType, $mode);
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 

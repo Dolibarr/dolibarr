@@ -809,19 +809,19 @@ class BOM extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		if (empty($this->labelstatus))
+		if (empty($this->labelStatus))
 		{
 			global $langs;
 			//$langs->load("mrp");
-			$this->labelstatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelstatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
-			$this->labelstatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
 		}
 
 		$statusType = 'status'.$status;
 		if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
 
-		return dolGetStatus($this->labelstatus[$status], $this->labelstatus[$status], '', $statusType, $mode);
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatus[$status], '', $statusType, $mode);
 	}
 
 	/**

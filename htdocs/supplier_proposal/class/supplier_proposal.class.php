@@ -158,8 +158,8 @@ class SupplierProposal extends CommonObject
     public $lines = array();
     public $line;
 
-    public $labelstatut=array();
-    public $labelstatut_short=array();
+    public $labelStatus=array();
+    public $labelStatusShort=array();
 
     public $nbtodo;
     public $nbtodolate;
@@ -2196,20 +2196,20 @@ class SupplierProposal extends CommonObject
         // phpcs:enable
 
     	// Init/load array of translation of status
-    	if (empty($this->labelstatut) || empty($this->labelstatut_short))
+    	if (empty($this->labelStatus) || empty($this->labelStatusShort))
     	{
     		global $langs;
     		$langs->load("supplier_proposal");
-    		$this->labelstatut[self::STATUS_DRAFT]=$langs->trans("SupplierProposalStatusDraft");
-    		$this->labelstatut[self::STATUS_VALIDATED]=$langs->trans("SupplierProposalStatusValidated");
-    		$this->labelstatut[self::STATUS_SIGNED]=$langs->trans("SupplierProposalStatusSigned");
-    		$this->labelstatut[self::STATUS_NOTSIGNED]=$langs->trans("SupplierProposalStatusNotSigned");
-    		$this->labelstatut[self::STATUS_CLOSE]=$langs->trans("SupplierProposalStatusClosed");
-    		$this->labelstatut_short[self::STATUS_DRAFT]=$langs->trans("SupplierProposalStatusDraftShort");
-    		$this->labelstatut_short[self::STATUS_VALIDATED]=$langs->trans("Opened");
-    		$this->labelstatut_short[self::STATUS_SIGNED]=$langs->trans("SupplierProposalStatusSignedShort");
-    		$this->labelstatut_short[self::STATUS_NOTSIGNED]=$langs->trans("SupplierProposalStatusNotSignedShort");
-    		$this->labelstatut_short[self::STATUS_CLOSE]=$langs->trans("SupplierProposalStatusClosedShort");
+    		$this->labelStatus[self::STATUS_DRAFT]=$langs->trans("SupplierProposalStatusDraft");
+    		$this->labelStatus[self::STATUS_VALIDATED]=$langs->trans("SupplierProposalStatusValidated");
+    		$this->labelStatus[self::STATUS_SIGNED]=$langs->trans("SupplierProposalStatusSigned");
+    		$this->labelStatus[self::STATUS_NOTSIGNED]=$langs->trans("SupplierProposalStatusNotSigned");
+    		$this->labelStatus[self::STATUS_CLOSE]=$langs->trans("SupplierProposalStatusClosed");
+    		$this->labelStatusShort[self::STATUS_DRAFT]=$langs->trans("SupplierProposalStatusDraftShort");
+    		$this->labelStatusShort[self::STATUS_VALIDATED]=$langs->trans("Opened");
+    		$this->labelStatusShort[self::STATUS_SIGNED]=$langs->trans("SupplierProposalStatusSignedShort");
+    		$this->labelStatusShort[self::STATUS_NOTSIGNED]=$langs->trans("SupplierProposalStatusNotSignedShort");
+    		$this->labelStatusShort[self::STATUS_CLOSE]=$langs->trans("SupplierProposalStatusClosedShort");
     	}
 
     	$statusnew='';
@@ -2219,7 +2219,7 @@ class SupplierProposal extends CommonObject
     	elseif ($status==self::STATUS_NOTSIGNED) $statusnew='status5';
     	elseif ($status==self::STATUS_CLOSE) $statusnew='status6';
 
-    	return dolGetStatus($this->labelstatut[$status], $this->labelstatut_short[$status], '', $statusnew, $mode);
+    	return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusnew, $mode);
     }
 
 

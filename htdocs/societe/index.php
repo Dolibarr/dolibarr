@@ -232,7 +232,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 /*
- * Last third parties modified
+ * Latest modified third parties
  */
 $max=15;
 $sql = "SELECT s.rowid, s.nom as name, s.email, s.client, s.fournisseur";
@@ -316,7 +316,7 @@ if ($result)
             print dol_print_date($thirdparty_static->datem, 'day');
             print "</td>";
             print '<td class="right nowrap">';
-            print $thirdparty_static->getLibStatut(5);
+            print $thirdparty_static->getLibStatut(3);
             print "</td>";
             print "</tr>\n";
             $i++;

@@ -311,20 +311,20 @@ class CashControl extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		if (empty($this->labelstatus) || empty($this->labelstatusshort))
+		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelstatus[0] = $langs->trans('Draft');
-			$this->labelstatus[1] = $langs->trans('Closed');
-			$this->labelstatusshort[0] = $langs->trans('Draft');
-			$this->labelstatusshort[1] = $langs->trans('Closed');
+			$this->labelStatus[0] = $langs->trans('Draft');
+			$this->labelStatus[1] = $langs->trans('Closed');
+			$this->labelStatusShort[0] = $langs->trans('Draft');
+			$this->labelStatusShort[1] = $langs->trans('Closed');
 		}
 
 		$statusType = 'status0';
 		if ($status == self::STATUS_VALIDATED) $statusType = 'status6';
 
-		return dolGetStatus($this->labelstatus[$status], $this->labelstatusshort[$status], '', $statusType, $mode);
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 	/**

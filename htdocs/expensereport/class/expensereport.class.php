@@ -683,12 +683,12 @@ class ExpenseReport extends CommonObject
     	// phpcs:enable
     	global $langs;
 
-    	$labelstatus = $langs->trans($this->statuts[$status]);
-    	$labelstatusshort = $langs->trans($this->statuts_short[$status]);
+    	$labelStatus = $langs->trans($this->statuts[$status]);
+    	$labelStatusShort = $langs->trans($this->statuts_short[$status]);
 
     	$statusType = $this->statuts_logo[$status];
 
-    	return dolGetStatus($labelstatus, $labelstatusshort, '', $statusType, $mode);
+    	return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
     }
 
 

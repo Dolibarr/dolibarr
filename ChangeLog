@@ -25,7 +25,8 @@ Following changes may create regressions for some external modules, but were nec
 * The trigger BON_PRELEVEMENT_CREATE has been renamed into DIRECT_DEBIT_ORDER_CREATE.
 * The constant INVOICE_SHOW_POS_IN_EXPORT has been renamed into INVOICE_SHOW_POS.
 * If your logo was visible on the menu bar, you must upload a new logo into 'Home-Setup-Company/Organization' to have it visible agin in menu. 
-
+* All properties 'libstatut', 'labelstatut', 'labelstatus' were renamed into 'labelStatus'. 
+* All properties 'labelstatusshort' and 'labelstatut_short' were renamed into 'labelStatusShort'. 
 
 ***** ChangeLog for 10.0.3 compared to 10.0.2 *****
 IMPORTANT : This version fixes a serious bug in saving the units of weight, size, surface and volume on product card.

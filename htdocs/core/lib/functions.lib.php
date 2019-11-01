@@ -8182,7 +8182,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         	elseif ($displayMode == 6) $displayMode = 5;
         }
 
-        // image's filename are still in French, so we use this array to convert
+        // For backward compatibility. Image's filename are still in French, so we use this array to convert
         $statusImg=array(
         	'status0' => 'statut0'
         	,'status1' => 'statut1'
@@ -8212,6 +8212,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
             $return =  $htmlImg .' '. $htmlLabel;
         }
         elseif ($displayMode === 5) {
+        	// Add here a span class="hideonsmartphone ?
             $return = $htmlLabelShort .' '. $htmlImg;
         }
         else { // $displayMode >= 6
