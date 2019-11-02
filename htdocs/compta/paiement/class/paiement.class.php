@@ -78,7 +78,7 @@ class Paiement extends CommonObject
     /**
      * @var string type libelle
      */
-    public $type_libelle;
+    public $type_label;
 
     /**
      * @var string type code
@@ -160,7 +160,7 @@ class Paiement extends CommonObject
 	public function fetch($id, $ref = '', $fk_bank = '')
 	{
 		$sql = 'SELECT p.rowid, p.ref, p.datep as dp, p.amount, p.statut, p.ext_payment_id, p.ext_payment_site, p.fk_bank,';
-		$sql.= ' c.code as type_code, c.libelle as type_libelle,';
+		$sql.= ' c.code as type_code, c.libelle as type_label,';
 		$sql.= ' p.num_paiement as num_payment, p.note,';
 		$sql.= ' b.fk_account';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
@@ -188,7 +188,7 @@ class Paiement extends CommonObject
 				$this->montant        = $obj->amount;   // deprecated
 				$this->amount         = $obj->amount;
 				$this->note           = $obj->note;
-				$this->type_libelle   = $obj->type_libelle;
+				$this->type_label   = $obj->type_label;
 				$this->type_code      = $obj->type_code;
 				$this->statut         = $obj->statut;
                 $this->ext_payment_id = $obj->ext_payment_id;
