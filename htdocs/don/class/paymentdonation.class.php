@@ -633,7 +633,6 @@ class PaymentDonation extends CommonObject
 
 		$result='';
 
-		if (empty($this->ref)) $this->ref=$this->lib;
         $label = $langs->trans("ShowPayment").': '.$this->ref;
 
 		if (!empty($this->id))

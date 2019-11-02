@@ -221,7 +221,6 @@ if ($result)
             print '<td class="right">'.price($obj->total_ttc).'</td>';
             print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
             print '<td class="right">';
-            //print $obj->libelle;
 			print $expensereportstatic->LibStatut($obj->fk_status, 3);
             print '</td>';
             print '</tr>';
