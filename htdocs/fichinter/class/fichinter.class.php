@@ -1317,7 +1317,7 @@ class Fichinter extends CommonObject
         // phpcs:enable
 		$this->lines = array();
 
-		$sql = 'SELECT rowid, description, duree, date, rang';
+		$sql = 'SELECT rowid, fk_fichinter, description, duree, date, rang';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet';
 		$sql.=' WHERE fk_fichinter = '.$this->id .' ORDER BY rang ASC, date ASC' ;
 
@@ -1333,6 +1333,7 @@ class Fichinter extends CommonObject
 
 				$line = new FichinterLigne($this->db);
 				$line->id = $objp->rowid;
+				$line->fk_fichinter = $objp->fk_fichinter;
 				$line->desc = $objp->description;
 				$line->duration = $objp->duree;
 				//For invoicing we calculing hours
