@@ -115,7 +115,7 @@ print load_fiche_titre($langs->trans("ExpensesArea"));
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre">';
 print '<th colspan="4">'.$langs->trans("Statistics").'</th>';
@@ -152,6 +152,7 @@ print '<td class="right" colspan="3">'.price($totalsum, 1, $langs, 0, 0, 0, $con
 print '</tr>';
 
 print '</table>';
+print '</div>';
 
 
 
@@ -189,7 +190,8 @@ if ($result)
 
     $i = 0;
 
-    print '<table class="noborder" width="100%">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num)).'</th>';
     print '<th class="right">'.$langs->trans("AmountHT").'</th>';
@@ -232,7 +234,7 @@ if ($result)
     {
         print '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
-    print '</table><br>';
+    print '</table></div><br>';
 }
 else dol_print_error($db);
 
