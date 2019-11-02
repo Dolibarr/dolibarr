@@ -62,7 +62,10 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public $fk_element = 'fk_commande';
 
-    public $picto='order';
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto='order';
 
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -3586,7 +3589,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
      *	@param      int     $notrigger  1=Disable call to triggers
      *	@return     int                 <0 if KO, >0 if OK
      */
-    public function delete($notrigger)
+    public function delete($notrigger = 0)
     {
         global $user;
 
@@ -3594,7 +3597,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 
         $this->db->begin();
 
-        $sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid=".$this->rowid;
+        $sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid=".$this->id;
 
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);

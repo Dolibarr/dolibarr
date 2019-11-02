@@ -564,7 +564,7 @@ if (! empty($id) && $action == 'edit')
     }
     // Payment mode
     print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
-    if ($object->modepaymentid) $selected = $object->modepaymentid;
+    if ($object->mode_reglement_id) $selected = $object->mode_reglement_id;
     else $selected = '';
     $form->select_types_paiements($selected, 'modepayment', 'CRDT', 0, 1);
     print "</td></tr>\n";
@@ -708,7 +708,7 @@ if (! empty($id) && $action != 'edit')
 
 	// Payment mode
 	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>";
-	$form->form_modes_reglement(null, $object->modepaymentid, 'none');
+	$form->form_modes_reglement(null, $object->mode_reglement_id, 'none');
 	print "</td></tr>\n";
 
 	// Other attributes
