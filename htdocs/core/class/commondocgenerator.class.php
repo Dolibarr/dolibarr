@@ -596,7 +596,7 @@ abstract class CommonDocGenerator
 		$line->fetch_optionals();
 
         $resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);
-        
+
         // Check if the current line belongs to a supplier order
         if (get_class($line) == 'CommandeFournisseurLigne')
         {
@@ -606,7 +606,7 @@ abstract class CommonDocGenerator
             $columns = "";
             foreach ($extralabels as $key => $value)
                 $columns .= "$key, ";
-            
+
             if ($columns != "")
             {
                 $columns = substr($columns, 0, strlen($columns) - 2);
@@ -843,7 +843,7 @@ abstract class CommonDocGenerator
 				$id = $object->array_options['options_'.$key];
 				if ($id != "")
 				{
-					$param = $extrafields->attribute_param[$key];
+					$param = $extrafields->attributes[$object->table_element]['param'][$key];
 					$param_list=array_keys($param['options']);              // $param_list='ObjectName:classPath'
 					$InfoFieldList = explode(":", $param_list[0]);
 					$classname=$InfoFieldList[0];

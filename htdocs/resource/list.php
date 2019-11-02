@@ -71,7 +71,7 @@ foreach ($search_array_options as $key => $val)
 {
 	$crit=$val;
 	$tmpkey=preg_replace('/search_options_/', '', $key);
-	$typ=$extrafields->attribute_type[$tmpkey];
+	$typ=$extrafields->attributes[$object->table_element]['type'][$tmpkey];
 	if ($val != '') {
 		$param.='&search_options_'.$tmpkey.'='.urlencode($val);
 	}

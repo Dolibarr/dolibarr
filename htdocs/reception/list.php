@@ -473,7 +473,7 @@ foreach ($search_array_options as $key => $val)
 {
     $crit=$val;
     $tmpkey=preg_replace('/search_options_/', '', $key);
-    $typ=$extrafields->attribute_type[$tmpkey];
+    $typ=$extrafields->attributes[$object->table_element]['type'][$tmpkey];
     $mode=0;
     if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
     if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
