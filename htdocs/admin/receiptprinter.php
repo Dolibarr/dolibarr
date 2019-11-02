@@ -166,6 +166,24 @@ if ($action == 'testprinter' && $user->admin) {
     $action = '';
 }
 
+if ($action == 'testtemplate' && $user->admin) {
+    $error=0;
+    // if (empty($printerid)) {
+    //     $error++;
+    //     setEventMessages($langs->trans("PrinterIdEmpty"), null, 'errors');
+    // }
+
+    // if (! $error) {
+    //     // test
+    //     $ret = $printer->sendTestToPrinter($printerid);
+    //     if ($ret == 0) {
+    setEventMessages($langs->trans("TestTemplateToPrinter", $printername), null);
+    //     } else {
+    //         setEventMessages($printer->error, $printer->errors, 'errors');
+    //     }
+    // }
+    $action = '';
+}
 
 if ($action == 'updatetemplate' && $user->admin) {
     $error=0;
@@ -182,6 +200,29 @@ if ($action == 'updatetemplate' && $user->admin) {
         if (! $error) {
             $db->commit();
             setEventMessages($langs->trans("TemplateUpdated", $templatename), null);
+        } else {
+            $db->rollback();
+            dol_print_error($db);
+        }
+    }
+    $action = '';
+}
+
+if ($action == 'addtemplate' && $user->admin) {
+    $error=0;
+    $db->begin();
+    if (empty($templatename)) {
+        $error++;
+        setEventMessages($langs->trans("TemplateNameEmpty"), null, 'errors');
+    }
+
+    if (! $error) {
+        $result= $printer->addTemplate($templatename, $template);
+        if ($result > 0) $error++;
+
+        if (! $error) {
+            $db->commit();
+            setEventMessages($langs->trans("TemplateAdded", $templatename), null);
         } else {
             $db->rollback();
             dol_print_error($db);
@@ -345,7 +386,7 @@ if ($mode == 'template' && $user->admin) {
     dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), 0, 'technic');
 
     print $langs->trans("ReceiptPrinterTemplateDesc")."<br><br>\n";
-    print '<table class="noborder" width="100%">'."\n";
+    print '<table class="noborder centpercent">'."\n";
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("Name").'</th>';
     print '<th>'.$langs->trans("Template").'</th>';
@@ -359,8 +400,7 @@ if ($mode == 'template' && $user->admin) {
         setEventMessages($printer->error, $printer->errors, 'errors');
     } else {
         $max = count($printer->listprinterstemplates);
-        for ($line=0; $line < $max; $line++)
-        {
+        for ($line=0; $line < $max; $line++) {
             print '<tr class="oddeven">';
             if ($action=='edittemplate' && $printer->listprinterstemplates[$line]['rowid']==$templateid) {
                 print '<input type="hidden" name="templateid" value="'.$printer->listprinterstemplates[$line]['rowid'].'">';
@@ -392,6 +432,14 @@ if ($mode == 'template' && $user->admin) {
 
     print '</table>';
     if ($action!='edittemplate') {
+		print '<input type="hidden" name="templateid" value="'.$printer->listprinterstemplates[$line]['rowid'].'">';
+		print '<td><input size="50" type="text" name="templatename" value="'.$printer->listprinterstemplates[$line]['name'].'"></td>';
+		print '<td><textarea name="template" wrap="soft" cols="120" rows="12">'.$printer->listprinterstemplates[$line]['template'].'</textarea>';
+		print '</td>';
+		print '<td></td>';
+		print '<td></td>';
+		print '<td></td>';
+
         print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'"></div>';
     } else {
         print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';

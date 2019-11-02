@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015-2018  Frédéric France     <frederic.france@free.fr>
+/* Copyright (C) 2015-2019  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,13 +91,19 @@
  *
  */
 
-require_once DOL_DOCUMENT_ROOT .'/includes/mike42/escpos-php/Escpos.php';
+require_once DOL_DOCUMENT_ROOT .'/includes/mike42/escpos-php/autoload.php';
+use Mike42\Escpos\PrintConnectors\FilePrintConnector;
+use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
+use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
+use Mike42\Escpos\CapabilityProfile;
+use Mike42\Escpos\Printer;
+use Mike42\Escpos\EscposImage;
 
 
 /**
  * Class to manage Receipt Printers
  */
-class dolReceiptPrinter extends Escpos
+class dolReceiptPrinter extends Printer
 {
     const CONNECTOR_DUMMY = 1;
     const CONNECTOR_FILE_PRINT = 2;
@@ -424,6 +430,29 @@ class dolReceiptPrinter extends Escpos
     }
 
     /**
+     *  Function to add a printer template in db
+     *
+     *  @param    string    $name           Template name
+     *  @param    int       $template       Template
+     *  @return   int                       0 if OK; >0 if KO
+     */
+    public function addTemplate($name, $template)
+    {
+        global $conf;
+        $error = 0;
+        $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'printer_receipt_template';
+        $sql.= ' (name, template, entity) VALUES ("'.$this->db->escape($name).'"';
+        $sql.= ', "'.$this->db->escape($template).'", '.$conf->entity.')';
+        $resql = $this->db->query($sql);
+        if (! $resql) {
+            $error++;
+            $this->errors[] = $this->db->lasterror;
+        }
+        return $error;
+    }
+
+
+    /**
      *  Function to Update a printer template in db
      *
      *  @param    string    $name           Template name
@@ -458,16 +487,17 @@ class dolReceiptPrinter extends Escpos
     {
         global $conf;
         $error = 0;
-        $img = new EscposImage(DOL_DOCUMENT_ROOT .'/theme/common/dolibarr_logo_bw.png');
+        $img = EscposImage::load(DOL_DOCUMENT_ROOT .'/theme/common/dolibarr_logo_bw.png');
+        //$this->profile = CapabilityProfile::load("TM-T88IV");
         $ret = $this->initPrinter($printerid);
         if ($ret>0) {
             setEventMessages($this->error, $this->errors, 'errors');
         } else {
             try {
-                $this->printer->graphics($img);
+                $this->printer->bitImage($img);
                 $this->printer->text("Hello World!\n");
-                $testStr = "Testing 123";
-                $this->printer->qrCode($testStr);
+                $testStr = "1234567890";
+                $this->printer->barcode($testStr);
                 $this->printer->text("Most simple example\n");
                 $this->printer->feed();
                 $this->printer->cut();
@@ -687,7 +717,7 @@ class dolReceiptPrinter extends Escpos
                         $this->connector = 'CONNECTOR_UNKNOWN';
                         break;
                 }
-                $this->printer = new Escpos($this->connector);
+                $this->printer = new Printer($this->connector, $this->profile);
             } catch (Exception $e) {
                 $this->errors[] = $e->getMessage();
                 $error++;

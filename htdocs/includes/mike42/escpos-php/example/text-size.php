@@ -5,33 +5,37 @@
  *
  * @author Michael Billington <michael.billington@gmail.com>
  */
-require_once(dirname(__FILE__) . "/../Escpos.php");
-$printer = new Escpos();
+require __DIR__ . '/../autoload.php';
+use Mike42\Escpos\Printer;
+use Mike42\Escpos\PrintConnectors\FilePrintConnector;
+
+$connector = new FilePrintConnector("php://stdout");
+$printer = new Printer($connector);
 
 /* Initialize */
 $printer -> initialize();
 
 /* Text of various (in-proportion) sizes */
 title($printer, "Change height & width\n");
-for($i = 1; $i <= 8; $i++) {
-	$printer -> setTextSize($i, $i);
-	$printer -> text($i);
+for ($i = 1; $i <= 8; $i++) {
+    $printer -> setTextSize($i, $i);
+    $printer -> text($i);
 }
 $printer -> text("\n");
 
 /* Width changing only */
 title($printer, "Change width only (height=4):\n");
-for($i = 1; $i <= 8; $i++) {
-	$printer -> setTextSize($i, 4);
-	$printer -> text($i);
+for ($i = 1; $i <= 8; $i++) {
+    $printer -> setTextSize($i, 4);
+    $printer -> text($i);
 }
 $printer -> text("\n");
 
 /* Height changing only */
 title($printer, "Change height only (width=4):\n");
-for($i = 1; $i <= 8; $i++) {
-	$printer -> setTextSize(4, $i);
-	$printer -> text($i);
+for ($i = 1; $i <= 8; $i++) {
+    $printer -> setTextSize(4, $i);
+    $printer -> text($i);
 }
 $printer -> text("\n");
 
@@ -47,16 +51,15 @@ $printer -> text("Hello world!\n");
 
 /* Very large text */
 title($printer, "Largest possible text:\n");
-$printer -> setTextSize(8,8);
+$printer -> setTextSize(8, 8);
 $printer -> text("Hello\nworld!\n");
 
 $printer -> cut();
 $printer -> close();
 
-function title(Escpos $printer, $text) {
-	$printer -> selectPrintMode(Escpos::MODE_EMPHASIZED);
-	$printer -> text("\n" . $text);
-	$printer -> selectPrintMode(); // Reset
+function title(Printer $printer, $text)
+{
+    $printer -> selectPrintMode(Printer::MODE_EMPHASIZED);
+    $printer -> text("\n" . $text);
+    $printer -> selectPrintMode(); // Reset
 }
-
-?>

@@ -1,11 +1,14 @@
 <?php
 /* Example of Greek text on the P-822D */
-require_once(dirname(__FILE__) . "/../../Escpos.php");
+require __DIR__ . '/../../autoload.php';
+use Mike42\Escpos\CapabilityProfile;
+use Mike42\Escpos\Printer;
+use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 
 // Setup the printer
 $connector = new FilePrintConnector("php://stdout");
-$profile = P822DCapabilityProfile::getInstance();
-$printer = new Escpos($connector, $profile);
+$profile = CapabilityProfile::load("P822D");
+$printer = new Printer($connector, $profile);
 
 // Print a Greek pangram
 $text = "Ξεσκεπάζω την ψυχοφθόρα βδελυγμία";
