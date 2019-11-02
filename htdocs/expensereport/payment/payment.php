@@ -113,13 +113,13 @@ if ($action == 'add_payment')
 
     		// Create a line of payments
     		$payment = new PaymentExpenseReport($db);
-    		$payment->chid           = $expensereport->id;
+    		$payment->fk_expensereport = $expensereport->id;
     		$payment->datepaid       = $datepaid;
     		$payment->amounts        = $amounts;   // Tableau de montant
     		$payment->total          = $total;
-    		$payment->fk_typepayment = $_POST["fk_typepayment"];
-    		$payment->num_payment    = $_POST["num_payment"];
-    		$payment->note           = $_POST["note"];
+    		$payment->fk_typepayment = GETPOST("fk_typepayment", 'int');
+    		$payment->num_payment    = GETPOST("num_payment", 'alphanothtml');
+    		$payment->note_public    = GETPOST("note_public", 'none');
 
     		if (! $error)
     		{
@@ -239,9 +239,11 @@ if ($action == 'create' || empty($action))
 
     print '</table>';
 
-    print '<br>';
+    print '</div>';
 
-    print '<div class="underbanner clearboth"></div>';
+    dol_fiche_end();
+
+    dol_fiche_head();
 
     print '<table class="border centpercent">'."\n";
 
@@ -274,14 +276,14 @@ if ($action == 'create' || empty($action))
 
 	print '<tr>';
 	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
-	print '<td valign="top" colspan="2"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
+	print '<td valign="top" colspan="2"><textarea name="note_public" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
 	print '</tr>';
 
 	print '</table>';
 
-	print '</div>';
+	dol_fiche_end();
 
-    dol_fiche_end();
+	print '<br>';
 
 	// List of expenses ereport not already paid completely
 	$num = 1;
@@ -289,6 +291,7 @@ if ($action == 'create' || empty($action))
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("ExpenseReport").'</td>';
 	print '<td class="right">'.$langs->trans("Amount").'</td>';
 	print '<td class="right">'.$langs->trans("AlreadyPaid").'</td>';
 	print '<td class="right">'.$langs->trans("RemainderToPay").'</td>';
@@ -304,6 +307,7 @@ if ($action == 'create' || empty($action))
 
 		print '<tr class="oddeven">';
 
+		print '<td>'.$expensereport->getNomUrl(1)."</td>";
 		print '<td class="right">'.price($objp->total_ttc)."</td>";
 		print '<td class="right">'.price($sumpaid)."</td>";
 		print '<td class="right">'.price($objp->total_ttc - $sumpaid)."</td>";

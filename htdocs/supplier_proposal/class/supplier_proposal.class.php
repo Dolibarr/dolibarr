@@ -66,6 +66,9 @@ class SupplierProposal extends CommonObject
      */
     public $fk_element='fk_supplier_proposal';
 
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
     public $picto='propal';
 
     /**
@@ -1698,22 +1701,22 @@ class SupplierProposal extends CommonObject
      *	Close the askprice
      *
      *	@param      User	$user		Object user that close
-     *	@param      int		$statut		Statut
+     *	@param      int		$status		Status
      *	@param      string	$note		Comment
      *	@return     int         		<0 if KO, >0 if OK
      */
-    public function cloture($user, $statut, $note)
+    public function cloture($user, $status, $note)
     {
         global $langs,$conf;
 
-        $this->statut = $statut;
+        $this->statut = $status;
         $error=0;
         $now=dol_now();
 
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal";
-        $sql.= " SET fk_statut = ".$statut.", note_private = '".$this->db->escape($note)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
+        $sql.= " SET fk_statut = ".$status.", note_private = '".$this->db->escape($note)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
 
         $resql=$this->db->query($sql);
@@ -1722,7 +1725,7 @@ class SupplierProposal extends CommonObject
             $modelpdf=$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED?$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED:$this->modelpdf;
             $trigger_name='SUPPLIER_PROPOSAL_CLOSE_REFUSED';
 
-            if ($statut == 2)
+            if ($status == 2)
             {
                 $trigger_name='SUPPLIER_PROPOSAL_CLOSE_SIGNED';
                 $modelpdf=$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL?$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL:$this->modelpdf;
@@ -1732,7 +1735,7 @@ class SupplierProposal extends CommonObject
                     $result = $this->updateOrCreatePriceFournisseur($user);
                 }
             }
-            if ($statut == 4)
+            if ($status == 4)
             {
                 $trigger_name='SUPPLIER_PROPOSAL_CLASSIFY_BILLED';
             }
@@ -2258,15 +2261,16 @@ class SupplierProposal extends CommonObject
         if ($resql)
         {
 			$label = $labelShort = '';
+			$status = '';
             if ($mode == 'opened') {
                 $delay_warning=$conf->supplier_proposal->cloture->warning_delay;
-                $statut = self::STATUS_VALIDATED;
+                $status = self::STATUS_VALIDATED;
                 $label = $langs->trans("SupplierProposalsToClose");
                 $labelShort = $langs->trans("ToAcceptRefuse");
             }
             if ($mode == 'signed') {
                 $delay_warning=$conf->supplier_proposal->facturation->warning_delay;
-                $statut = self::STATUS_SIGNED;
+                $status = self::STATUS_SIGNED;
                 $label = $langs->trans("SupplierProposalsToProcess");      // May be billed or ordered
 				$labelShort = $langs->trans("ToClose");
             }
@@ -2275,7 +2279,7 @@ class SupplierProposal extends CommonObject
             $response->warning_delay = $delay_warning/60/60/24;
             $response->label = $label;
             $response->labelShort = $labelShort;
-            $response->url = DOL_URL_ROOT.'/supplier_proposal/list.php?viewstatut='.$statut;
+            $response->url = DOL_URL_ROOT.'/supplier_proposal/list.php?viewstatut='.$status;
             $response->img = img_object('', "propal");
 
             // This assignment in condition is not a bug. It allows walking the results.

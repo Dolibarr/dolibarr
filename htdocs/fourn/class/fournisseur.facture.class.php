@@ -63,6 +63,9 @@ class FactureFournisseur extends CommonInvoice
      */
     public $fk_element='fk_facture_fourn';
 
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
     public $picto='bill';
 
     /**

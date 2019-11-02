@@ -45,43 +45,67 @@ class ActionComm extends CommonObject
      */
     public $table_element = 'actioncomm';
 
+    /**
+     * @var string Name of id column
+     */
     public $table_rowid = 'id';
 
     /**
-     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     * @var string Name of icon for actioncomm object. Filename of icon is object_action.png
      */
     public $picto = 'action';
 
     /**
-     * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-     * @var int
+     * @var int 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
      */
     public $ismultientitymanaged = 1;
 
     /**
-     * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user, 2=Same than 1 but accept record if fksoc is empty
-     * @var integer
+     * @var integer 0=Default
+     *              1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
+     *              2=Same than 1 but accept record if fksoc is empty
      */
     public $restrictiononfksoc = 2;
 
     /**
-     * Id of the event
-     * @var int
+     * @var int Id of the event
      */
     public $id;
 
     /**
-     * Id of the event. Use $id as possible
-     * @var int
+     * @var int Id of the event. Use $id as possible
      */
     public $ref;
 
-    public $type_id;		// Id into parent table llx_c_actioncomm (used only if option to use type is set)
-    public $type_code;		// Code into parent table llx_c_actioncomm (used only if option to use type is set). With default setup, should be AC_OTH_AUTO or AC_OTH.
+    /**
+     * @var int Id into parent table llx_c_actioncomm (used only if option to use type is set)
+     */
+    public $type_id;
+
+    /**
+     * @var string Code into parent table llx_c_actioncomm (used only if option to use type is set). With default setup, should be AC_OTH_AUTO or AC_OTH.
+     */
+    public $type_code;
+
+    /**
+     * @var string Type label
+     */
     public $type_label;
-    public $type;			// Label into parent table llx_c_actioncomm (used only if option to use type is set)
-    public $type_color;	// Color into parent table llx_c_actioncomm (used only if option to use type is set)
-    public $code;			// Free code to identify action. Ie: Agenda trigger add here AC_TRIGGERNAME ('AC_COMPANY_CREATE', 'AC_PROPAL_VALIDATE', ...)
+
+    /**
+     * @var string Label into parent table llx_c_actioncomm (used only if option to use type is set)
+     */
+    public $type;
+
+    /**
+     * @var string Color into parent table llx_c_actioncomm (used only if option to use type is set)
+     */
+    public $type_color;
+
+    /**
+     * @var string Free code to identify action. Ie: Agenda trigger add here AC_TRIGGERNAME ('AC_COMPANY_CREATE', 'AC_PROPAL_VALIDATE', ...)
+     */
+    public $code;
 
     /**
      * @var string Agenda event label
@@ -89,72 +113,56 @@ class ActionComm extends CommonObject
     public $label;
 
     /**
-     * Date creation record (datec)
-     *
-     * @var integer
+     * @var integer Date creation record (datec)
      */
     public $datec;
 
     /**
-     * Date end record (datef)
-     *
-     * @var integer
+     * @var integer Date end record (datef)
      */
     public $datef;
 
     /**
-     * Duration (duree)
-     *
-     * @var integer
+     * @var integer Duration (duree)
      */
     public $duree;
 
     /**
-     * Date modification record (tms)
-     *
-     * @var integer
+     * @var integer Date modification record (tms)
      */
     public $datem;
 
     /**
-     * Object user that create action
-     * @var User
+     * @var User Object user that create action
      * @deprecated
      * @see $authorid
      */
     public $author;
 
     /**
-     * Object user that modified action
-     * @var User
+     * @var User Object user that modified action
      * @deprecated
      * @see $usermodid
      */
     public $usermod;
 
     /**
-     * Id user that create action
-     * @var int
+     * @var int Id user that create action
      */
     public $authorid;
 
     /**
-     * Id user that modified action
-     * @var int
+     * @var int Id user that modified action
      */
     public $usermodid;
 
     /**
-     * Date action start (datep)
-     *
-     * @var integer
+     * @var integer Date action start (datep)
      */
     public $datep;
 
     /**
-     * Date action end (datep2)
-     *
-     * @var integer
+     * @var integer Date action end (datep2)
      */
     public $datep2;
 
@@ -163,90 +171,178 @@ class ActionComm extends CommonObject
      * @deprecated
      */
     public $durationp = -1;
-    public $fulldayevent = 0;    // 1=Event on full day
 
     /**
-     * Milestone
-     * @var int
+     * @var int 1=Event on full day
+     */
+    public $fulldayevent = 0;
+
+    /**
+     * @var int Milestone
      * @deprecated Milestone is already event with end date = start date
      */
     public $punctual = 1;
-    public $percentage;    // Percentage
-    public $location;      // Location
 
-	public $transparency;	// Transparency (ical standard). Used to say if people assigned to event are busy or not by event. 0=available, 1=busy, 2=busy (refused events)
-    public $priority;      // Small int (0 By default)
+    /**
+     * @var integer Percentage
+     */
+    public $percentage;
 
-	public $userassigned = array();	// Array of user ids
-    public $userownerid;	// Id of user owner = fk_user_action into table
-    public $userdoneid;	// Id of user done (deprecated)
+    /**
+     * @var string Location
+     */
+    public $location;
 
-    public $socpeopleassigned = array(); // Array of contact ids
+    /**
+     * @var int Transparency (ical standard). Used to say if people assigned to event are busy or not by event. 0=available, 1=busy, 2=busy (refused events)
+     */
+    public $transparency;
 
-    public $otherassigned = array(); // Array of other contact emails (not user, not contact)
+    /**
+     * @var int (0 By default)
+     */
+    public $priority;
+
+    /**
+     * @var int[] Array of user ids
+     */
+    public $userassigned = array();
+
+    /**
+     * @var int Id of user owner = fk_user_action into table
+     */
+    public $userownerid;
+
+    /**
+     * @var int Id of user done (deprecated)
+     * @deprecated
+     */
+    public $userdoneid;
+
+    /**
+     * @var int[] Array of contact ids
+     */
+    public $socpeopleassigned = array();
+
+    /**
+     * @var int[] Array of other contact emails (not user, not contact)
+     */
+    public $otherassigned = array();
 
 
-	/**
-     * Object user of owner
-     * @var User
+    /**
+     * @var User Object user of owner
      * @deprecated
      * @see userownerid
      */
     public $usertodo;
 
     /**
-     * Object user that did action
-     * @var User
+     * @var User Object user that did action
      * @deprecated
      * @see userdoneid
      */
     public $userdone;
 
+    /**
+     * @var int thirdparty id linked to action
+     */
     public $socid;
+
+    /**
+     * @var int socpeople id linked to action
+     */
     public $contactid;
 
     /**
-     * Company linked to action (optional)
-     * @var Societe|null
+     * @var Societe|null Company linked to action (optional)
      * @deprecated
      * @see socid
      */
     public $societe;
 
     /**
-     * Contact linked to action (optional)
-     * @var Contact|null
+     * @var Contact|null Contact linked to action (optional)
      * @deprecated
      * @see contactid
      */
     public $contact;
 
     // Properties for links to other objects
+    /**
+     * @var int Id of linked object
+     */
     public $fk_element;    // Id of record
-    public $elementid;    // Id of record alternative for API
-    public $elementtype;   // Type of record. This if property ->element of object linked to.
 
-    // Ical
+    /**
+     * @var int Id of record alternative for API
+     */
+    public $elementid;
+
+    /**
+     * @var string Type of record. This if property ->element of object linked to.
+     */
+    public $elementtype;
+
+    /**
+     * @var string Ical name
+     */
     public $icalname;
+
+    /**
+     * @var string Ical color
+     */
     public $icalcolor;
 
+    /**
+     * @var array Actions
+     */
     public $actions=array();
 
-    // Fields for emails
+    /**
+     * @var string Email msgid
+     */
     public $email_msgid;
+
+    /**
+     * @var string Email from
+     */
     public $email_from;
+
+    /**
+     * @var string Email sender
+     */
     public $email_sender;
+
+    /**
+     * @var string Email to
+     */
     public $email_to;
+
+    /**
+     * @var string Email tocc
+     */
     public $email_tocc;
+    /**
+     * @var string Email tobcc
+     */
     public $email_tobcc;
+
+    /**
+     * @var string Email subject
+     */
     public $email_subject;
+
+    /**
+     * @var string Email errors to
+     */
     public $errors_to;
 
 
     /**
      *      Constructor
      *
-     *      @param		DoliDB		$db      Database handler
+     *      @param      DoliDB		$db      Database handler
      */
     public function __construct(DoliDB $db)
     {

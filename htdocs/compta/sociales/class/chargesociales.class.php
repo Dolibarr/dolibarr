@@ -57,7 +57,7 @@ class ChargeSociales extends CommonObject
     public $date_ech;
     public $label;
     public $type;
-    public $type_libelle;
+    public $type_label;
     public $amount;
     public $paye;
     public $periode;
@@ -136,7 +136,7 @@ class ChargeSociales extends CommonObject
                 $this->lib					= $obj->label;
                 $this->label				= $obj->label;
                 $this->type					= $obj->fk_type;
-                $this->type_libelle			= $obj->libelle;
+                $this->type_label			= $obj->libelle;
                 $this->fk_account			= $obj->fk_account;
                 $this->mode_reglement_id	= $obj->fk_mode_reglement;
                 $this->mode_reglement_code	= $obj->mode_reglement_code;
@@ -556,8 +556,8 @@ class ChargeSociales extends CommonObject
         	$label .= '<br><b>'.$langs->trans('Ref') . ':</b> ' . $this->ref;
         if (! empty($this->label))
         	$label .= '<br><b>'.$langs->trans('Label') . ':</b> ' . $this->label;
-        if (! empty($this->type_libelle))
-        	$label .= '<br><b>'.$langs->trans('Type') . ':</b> ' . $this->type_libelle;
+        if (! empty($this->type_label))
+        	$label .= '<br><b>'.$langs->trans('Type') . ':</b> ' . $this->type_label;
 
         $linkclose='';
         if (empty($notooltip) && $user->rights->facture->lire)
@@ -689,6 +689,6 @@ class ChargeSociales extends CommonObject
         $this->amount=100;
         $this->label = 'Social contribution label';
         $this->type = 1;
-        $this->type_libelle = 'Type of social contribution';
+        $this->type_label = 'Type of social contribution';
     }
 }

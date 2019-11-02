@@ -514,7 +514,7 @@ if ($id > 0)
 		print '<table class="border" width="100%">';
 
 		// Type
-		print '<tr><td class="titlefield">'.$langs->trans("Type")."</td><td>".$object->type_libelle."</td>";
+		print '<tr><td class="titlefield">'.$langs->trans("Type")."</td><td>".$object->type_label."</td>";
 		print "</tr>";
 
 		// Period end date

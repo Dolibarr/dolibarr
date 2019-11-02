@@ -173,6 +173,10 @@ llxHeader('', $langs->trans('CPTitreMenu'));
 
 
 $typeleaves=$holiday->getTypes(1, 1);
+$result = $holiday->updateBalance();	// Create users into table holiday if they don't exists. TODO Remove this whif we use field into table user.
+if ($result < 0) {
+	setEventMessages($holiday->error, $holiday->errors, 'errors');
+}
 
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -189,21 +193,14 @@ print load_fiche_titre($langs->trans('MenuConfCP'), '', 'title_hrm.png');
 
 print '<div class="info">'.$langs->trans('LastUpdateCP').': '."\n";
 $lastUpdate = $holiday->getConfCP('lastUpdate');
-if ($lastUpdate)
-{
-    $monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
-    $yearLastUpdate = $lastUpdate[0].$lastUpdate[1].$lastUpdate[2].$lastUpdate[3];
-    print '<strong>'.dol_print_date($db->jdate($holiday->getConfCP('lastUpdate')), 'dayhour', 'tzuser').'</strong>';
-    print '<br>'.$langs->trans("MonthOfLastMonthlyUpdate").': <strong>'.$yearLastUpdate.'-'.$monthLastUpdate.'</strong>'."\n";
+if ($lastUpdate) {
+    print '<strong>'.dol_print_date($db->jdate($lastUpdate), 'dayhour').'</strong>';
+    print '<br>'.$langs->trans("MonthOfLastMonthlyUpdate").': <strong>'.$langs->trans('Month'.substr($lastUpdate, 4, 2)).' '.substr($lastUpdate, 0, 4).'</strong>'."\n";
+} else {
+    print $langs->trans('None');
 }
-else print $langs->trans('None');
 print "</div><br>\n";
 
-$result = $holiday->updateBalance();	// Create users into table holiday if they don't exists. TODO Remove this whif we use field into table user.
-if ($result < 0)
-{
-	setEventMessages($holiday->error, $holiday->errors, 'errors');
-}
 
 $filters = '';
 

@@ -2068,10 +2068,10 @@ class Contrat extends CommonObject
 	/**
 	 *  Return list of line rowid
 	 *
-	 *  @param	int		$statut     Status of lines to get
+	 *  @param	int		$status     Status of lines to get
 	 *  @return array|int       	Array of line's rowid or <0 if error
 	 */
-	public function array_detail($statut = -1)
+	public function array_detail($status = -1)
 	{
         // phpcs:enable
 		$tab=array();
@@ -2079,7 +2079,7 @@ class Contrat extends CommonObject
 		$sql = "SELECT cd.rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
 		$sql.= " WHERE fk_contrat =".$this->id;
-		if ($statut >= 0) $sql.= " AND statut = '$statut'";
+		if ($status >= 0) $sql.= " AND statut = ".$status;
 
 		dol_syslog(get_class($this)."::array_detail()", LOG_DEBUG);
 		$resql=$this->db->query($sql);

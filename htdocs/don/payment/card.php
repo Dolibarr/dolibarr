@@ -172,8 +172,8 @@ print '<tr><td>'.$langs->trans('Number').'</td><td>'.$object->num_payment.'</td>
 // Amount
 print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
-// Note
-print '<tr><td>'.$langs->trans('Note').'</td><td>'.nl2br($object->note).'</td></tr>';
+// Note public
+print '<tr><td>'.$langs->trans('Note').'</td><td>'.nl2br($object->note_public).'</td></tr>';
 
 // Bank account
 if (! empty($conf->banque->enabled))
@@ -282,7 +282,7 @@ if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 }
 */
 
-if ($_GET['action'] == '')
+if (empty($action))
 {
 	if ($user->rights->don->supprimer)
 	{

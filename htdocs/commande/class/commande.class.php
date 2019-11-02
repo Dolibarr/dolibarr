@@ -53,19 +53,22 @@ class Commande extends CommonOrder
 	public $table_element='commande';
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string Name of subtable line
 	 */
 	public $table_element_line = 'commandedet';
 
+	/**
+	 * @var string Name of class line
+	 */
 	public $class_element_line = 'OrderLine';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field name with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_commande';
 
 	/**
-	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 * @var string String with name of icon for commande class. Here is object_order.png
 	 */
 	public $picto = 'order';
 
@@ -87,13 +90,23 @@ class Commande extends CommonOrder
 	protected $table_ref_field = 'ref';
 
 	/**
-	 * Client ID
-	 * @var int
+	 * @var int Thirparty ID
 	 */
 	public $socid;
 
+	/**
+	 * @var string Thirparty ref of order
+	 */
 	public $ref_client;
+
+    /**
+	 * @var string Internal ref for order
+	 */
 	public $ref_int;
+
+    /**
+	 * @var int Contact ID
+	 */
 	public $contactid;
 
 	/**
@@ -103,10 +116,9 @@ class Commande extends CommonOrder
 	public $statut;
 
 	/**
-	 * Billed
-	 * @var int
+	 * @var int Status Billed or not
 	 */
-	public $billed;		// billed or not
+	public $billed;
 
     /**
      * @var int Draft Status of the order
@@ -115,25 +127,22 @@ class Commande extends CommonOrder
     public $cond_reglement_code;
 
 	/**
-     * @var int ID
+     * @var int bank account ID
      */
 	public $fk_account;
 
 	/**
-	 * It holds the label of the payment mode. Use it in case translation cannot be found.
-	 * @var string
+	 * @var string It holds the label of the payment mode. Use it in case translation cannot be found.
 	 */
 	public $mode_reglement;
 
 	/**
-	 * Payment mode id
-	 * @var int
+	 * @var int Payment mode id
 	 */
 	public $mode_reglement_id;
 
 	/**
-	 * Payment mode code
-	 * @var string
+	 * @var string Payment mode code
 	 */
 	public $mode_reglement_code;
 
@@ -157,9 +166,13 @@ class Commande extends CommonOrder
 
 	public $demand_reason_id;   // Source reason. Why we receive order (after a phone campaign, ...)
 	public $demand_reason_code;
-	public $date;				// Date commande
+	/**
+     * @var int Date of order
+	 */
+	public $date;
 
 	/**
+     * @var int Date of order
 	 * @deprecated
 	 * @see $date
 	 */
@@ -182,7 +195,14 @@ class Commande extends CommonOrder
 
 	public $linked_objects=array();
 
+	/**
+     * @var int User author ID
+     */
 	public $user_author_id;
+
+    /**
+     * @var int User validator ID
+     */
 	public $user_valid;
 
 	/**
@@ -192,7 +212,7 @@ class Commande extends CommonOrder
 
 	// Multicurrency
 	/**
-     * @var int ID
+     * @var int Currency ID
      */
 	public $fk_multicurrency;
 
@@ -202,6 +222,9 @@ class Commande extends CommonOrder
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
 
+    /**
+     * @var Commande clone of order object
+     */
 	public $oldcopy;
 
 	//! key of module source when order generated from a dedicated module ('cashdesk', 'takepos', ...)

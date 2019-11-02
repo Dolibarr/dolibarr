@@ -220,7 +220,7 @@ print $form->editfieldval("Date", 'datep', $object->date, $object, $user->rights
 print '</td></tr>';
 
 // Payment type (VIR, LIQ, ...)
-$labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$object->type_code)?$langs->trans("PaymentType".$object->type_code):$object->type_libelle;
+$labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$object->type_code)?$langs->trans("PaymentType".$object->type_code):$object->type_label;
 print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>'.$labeltype;
 print $object->num_paiement?' - '.$object->num_paiement:'';
 print '</td></tr>';
