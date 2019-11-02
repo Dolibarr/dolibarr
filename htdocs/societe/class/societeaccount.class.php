@@ -124,7 +124,13 @@ class SocieteAccount extends CommonObject
 	public $date_last_login;
 	public $date_previous_login;
 	public $note_private;
+	
+	/**
+	 * @var integer|string date_creation
+	 */
 	public $date_creation;
+	
+	
 	public $tms;
 
 	/**

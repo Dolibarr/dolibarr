@@ -80,8 +80,14 @@ class Reception extends CommonObject
 	 * @var int
 	 */
 	public $date_reception;
-    public $date_creation;
-    public $date_valid;
+    
+	/**
+	 * @var integer|string date_creation
+	 */
+	public $date_creation;
+    
+	
+	public $date_valid;
 
     public $meths;
     public $listmeths;			// List of carriers
