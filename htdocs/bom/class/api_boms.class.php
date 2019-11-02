@@ -281,12 +281,53 @@ class Boms extends DolibarrApi
         // phpcs:enable
     	$object = parent::_cleanObjectDatas($object);
 
-    	/*unset($object->note);
-    	unset($object->address);
+    	unset($object->rowid);
+    	unset($object->canvas);
+
+    	unset($object->name);
+    	unset($object->lastname);
+    	unset($object->firstname);
+    	unset($object->civility_id);
+    	unset($object->statut);
+    	unset($object->state);
+    	unset($object->state_id);
+    	unset($object->state_code);
+    	unset($object->region);
+    	unset($object->region_code);
+    	unset($object->country);
+    	unset($object->country_id);
+    	unset($object->country_code);
     	unset($object->barcode_type);
     	unset($object->barcode_type_code);
     	unset($object->barcode_type_label);
-    	unset($object->barcode_type_coder);*/
+    	unset($object->barcode_type_coder);
+    	unset($object->total_ht);
+    	unset($object->total_tva);
+    	unset($object->total_localtax1);
+    	unset($object->total_localtax2);
+    	unset($object->total_ttc);
+    	unset($object->fk_account);
+    	unset($object->comments);
+    	unset($object->note);
+    	unset($object->mode_reglement_id);
+    	unset($object->cond_reglement_id);
+    	unset($object->cond_reglement);
+    	unset($object->shipping_method_id);
+    	unset($object->fk_incoterms);
+    	unset($object->label_incoterms);
+    	unset($object->location_incoterms);
+
+    	// If object has lines, remove $db property
+    	if (isset($object->lines) && is_array($object->lines) && count($object->lines) > 0)  {
+    		$nboflines = count($object->lines);
+    		for ($i=0; $i < $nboflines; $i++)
+    		{
+    			$this->_cleanObjectDatas($object->lines[$i]);
+
+    			unset($object->lines[$i]->lines);
+    			unset($object->lines[$i]->note);
+    		}
+    	}
 
     	return $object;
     }

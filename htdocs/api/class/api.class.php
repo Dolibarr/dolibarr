@@ -127,6 +127,7 @@ class DolibarrApi
         unset($object->timespent_withhour);
         unset($object->timespent_fk_user);
         unset($object->timespent_note);
+        unset($object->fk_delivery_address);
 
         unset($object->statuts);
         unset($object->statuts_short);
