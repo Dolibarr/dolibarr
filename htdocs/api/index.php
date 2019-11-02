@@ -38,9 +38,6 @@ if (! defined("NOLOGIN"))        define("NOLOGIN", '1');				// If this page is p
 if (! empty($_SERVER['HTTP_DOLAPIENTITY'])) define("DOLENTITY", (int) $_SERVER['HTTP_DOLAPIENTITY']);
 
 
-// Fix for NGINX
-$url = (isset($_SERVER['SCRIPT_URI']) && $_SERVER["SCRIPT_URI"] !== null) ? $_SERVER["SCRIPT_URI"] : $_SERVER['PHP_SELF'];
-
 $res=0;
 if (! $res && file_exists("../main.inc.php")) $res=include '../main.inc.php';
 if (! $res) die("Include of main fails");
@@ -58,7 +55,13 @@ require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 
-
+$url = $_SERVER['PHP_SELF'];
+// Fix for some NGINX setups (this should not be required even with NGINX, however setup of NGINX are often mysterious and this may help is such cases)
+if (! empty($conf->global->MAIN_NGINX_FIX))
+{
+	$url = (isset($_SERVER['SCRIPT_URI']) && $_SERVER["SCRIPT_URI"] !== null) ? $_SERVER["SCRIPT_URI"] : $_SERVER['PHP_SELF'];
+}
+			
 // Enable and test if module Api is enabled
 if (empty($conf->global->MAIN_MODULE_API))
 {
