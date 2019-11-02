@@ -1676,6 +1676,12 @@ class Thirdparties extends DolibarrApi
 		$object = parent::_cleanObjectDatas($object);
 
 		unset($object->nom);	// ->name already defined and nom deprecated
+		unset($object->name_bis);	// ->name_alias already defined
+		unset($object->note);	// ->note_private and note_public already defined
+		unset($object->departement);
+		unset($object->departement_code);
+		unset($object->pays);
+		unset($object->particulier);
 
 		unset($object->total_ht);
 		unset($object->total_tva);
@@ -1685,6 +1691,8 @@ class Thirdparties extends DolibarrApi
 
 		unset($object->lines);
 		unset($object->thirdparty);
+
+		unset($object->fk_delivery_address);	// deprecated feature
 
 		return $object;
 	}

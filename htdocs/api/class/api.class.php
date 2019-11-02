@@ -146,6 +146,7 @@ class DolibarrApi
 
         unset($object->skip_update_total);
         unset($object->context);
+        unset($object->next_prev_filter);
 
         // Remove the $oldcopy property because it is not supported by the JSON
         // encoder. The following error is generated when trying to serialize
