@@ -485,6 +485,8 @@ if ($resql)
 	if($type == Product::TYPE_SERVICE) $rightskey='service';
 	if($user->rights->{$rightskey}->creer)
 	{
+		$oldtype=$type;
+
 		if ($type === "") {
 			$newcardbutton.= dolGetButtonTitle($langs->trans('NewProduct'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&amp;type=0');
 			$type = Product::TYPE_SERVICE;
@@ -492,7 +494,9 @@ if ($resql)
 		$label='NewProduct';
 		if($type == Product::TYPE_SERVICE) $label='NewService';
         $newcardbutton.= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&amp;type='.$type);
-	}
+
+        $type=$oldtype;
+    }
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';

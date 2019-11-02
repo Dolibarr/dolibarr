@@ -35,7 +35,7 @@ $langs->loadLangs(array("compta","banks","bills","accountancy"));
 
 // Security check
 $socid = GETPOST("socid", "int");
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'banque', '', '', '');
 
 $optioncss = GETPOST('optioncss', 'alpha');

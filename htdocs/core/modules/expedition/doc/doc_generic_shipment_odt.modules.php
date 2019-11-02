@@ -562,7 +562,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 				}
 				else {
 					try {
-					$odfHandler->saveToDisk($file);
+					    $odfHandler->saveToDisk($file);
 					} catch (Exception $e) {
 						$this->error=$e->getMessage();
                         dol_syslog($e->getMessage(), LOG_INFO);

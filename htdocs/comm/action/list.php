@@ -110,7 +110,7 @@ if (! $sortfield)
 
 // Security check
 $socid = GETPOST("search_socid", 'int')?GETPOST("search_socid", 'int'):GETPOST("socid", 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'agenda', 0, '', 'myactions');
 if ($socid < 0) $socid='';
 
@@ -138,13 +138,16 @@ $arrayfields=array(
 	'a.tms'=>array('label'=>'DateModification', 'checked'=>0)
 );
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-   foreach($extrafields->attribute_label as $key => $val)
-   {
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
-   }
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+	{
+		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+	}
 }
+$object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 /*
@@ -485,7 +488,7 @@ if ($resql)
 	if (! empty($arrayfields['a.tms']['checked']))		print '<td class="liste_titre"></td>';
 	if (! empty($arrayfields['a.percent']['checked']))	{
 		print '<td class="liste_titre center">';
-    	print $formactions->form_select_status_action('formaction', $status, 1, 'status', 1, 2);
+        $formactions->form_select_status_action('formaction', $status, 1, 'status', 1, 2);
     	print ajax_combobox('selectstatus');
     	print '</td>';
     }
@@ -699,15 +702,15 @@ if ($resql)
 
 		// Linked object
 		if (! empty($arrayfields['a.fk_element']['checked'])) {
-		        print '<td>';
-		        //var_dump($obj->fkelement.' '.$obj->elementtype);
-		        if ($obj->fk_element > 0 && ! empty($obj->elementtype)) {
-              		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		            print dolGetElementUrl($obj->fk_element, $obj->elementtype, 1);
-		        } else {
-              		print "&nbsp;";
-		        }
-		        print '</td>';
+            print '<td>';
+            //var_dump($obj->fkelement.' '.$obj->elementtype);
+            if ($obj->fk_element > 0 && ! empty($obj->elementtype)) {
+                include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+                print dolGetElementUrl($obj->fk_element, $obj->elementtype, 1);
+            } else {
+                print "&nbsp;";
+            }
+            print '</td>';
 		}
 
 		// Extra fields

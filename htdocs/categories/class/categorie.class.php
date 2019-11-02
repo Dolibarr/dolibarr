@@ -779,9 +779,9 @@ class Categorie extends CommonObject
 		$sql .= " AND c.fk_categorie = ".$this->id;
 		$sql .= " AND c.fk_" . $this->MAP_CAT_FK[$type] . " = o.rowid";
 		// Protection for external users
-		if (($type == 'customer' || $type == 'supplier') && $user->societe_id > 0)
+		if (($type == 'customer' || $type == 'supplier') && $user->socid > 0)
 		{
-			$sql.= " AND o.rowid = ".$user->societe_id;
+			$sql.= " AND o.rowid = ".$user->socid;
 		}
 		if ($limit > 0 || $offset > 0)  $sql .= $this->db->plimit($limit + 1, $offset);
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -1018,11 +1018,11 @@ class Categorie extends CommonObject
 	 *                fulllabel = nom avec chemin complet de la categorie
 	 *                fullpath = chemin complet compose des id
 	 *
-	 * @param   string                  $type                   Type of categories ('customer', 'supplier', 'contact', 'product', 'member') or (0, 1, 2, ...).
+	 * @param   string                  $type                   Type of categories ('customer', 'supplier', 'contact', 'product', 'member', ...)
 	 * @param   int|string|array        $markafterid            Keep only or removed all categories including the leaf $markafterid in category tree (exclude) or Keep only of category is inside the leaf starting with this id.
      *                                                          $markafterid can be an :
      *                                                          - int (id of category)
-     *                                                          - string (categories ids seprated by comma)
+     *                                                          - string (categories ids separated by comma)
      *                                                          - array (list of categories ids)
      * @param   int                     $include                [=0] Removed or 1=Keep only
 	 * @return  array|int               Array of categories. this->cats and this->motherof are set, -1 on error

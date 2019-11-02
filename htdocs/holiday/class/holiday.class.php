@@ -54,6 +54,9 @@ class Holiday extends CommonObject
 	 */
 	public $fk_element = 'fk_holiday';
 
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto = 'holiday';
 
 	/**
@@ -1217,68 +1220,40 @@ class Holiday extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Returns the label of a statut
+	 *	Returns the label of a status
 	 *
-	 *	@param      int		$statut     id statut
+	 *	@param      int		$status     Id status
 	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *  @param		integer	$startdate	Date holiday should start
 	 *	@return     string      		Label
 	 */
-	public function LibStatut($statut, $mode = 0, $startdate = '')
+	public function LibStatut($status, $mode = 0, $startdate = '')
 	{
-        // phpcs:enable
-		global $langs;
-
-		if ($mode == 0)
+		// phpcs:enable
+		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
-			if ($statut == 1) return $langs->trans('DraftCP');
-			elseif ($statut == 2) return $langs->trans('ToReviewCP');
-			elseif ($statut == 3) return $langs->trans('ApprovedCP');
-			elseif ($statut == 4) return $langs->trans('CancelCP');
-			elseif ($statut == 5) return $langs->trans('RefuseCP');
-		}
-		elseif ($mode == 2)
-		{
-			$pictoapproved='statut6';
-			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
-			if ($statut == 1) return img_picto($langs->trans('DraftCP'), 'statut0').' '.$langs->trans('DraftCP');				// Draft
-			elseif ($statut == 2) return img_picto($langs->trans('ToReviewCP'), 'statut1').' '.$langs->trans('ToReviewCP');		// Waiting approval
-			elseif ($statut == 3) return img_picto($langs->trans('ApprovedCP'), $pictoapproved).' '.$langs->trans('ApprovedCP');
-			elseif ($statut == 4) return img_picto($langs->trans('CancelCP'), 'statut5').' '.$langs->trans('CancelCP');
-			elseif ($statut == 5) return img_picto($langs->trans('RefuseCP'), 'statut5').' '.$langs->trans('RefuseCP');
-		}
-		elseif ($mode == 3)
-		{
-			$pictoapproved='statut6';
-			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
-			if ($statut == 1) return img_picto($langs->trans('DraftCP'), 'statut0');
-			elseif ($statut == 2) return img_picto($langs->trans('ToReviewCP'), 'statut1');
-			elseif ($statut == 3) return img_picto($langs->trans('ApprovedCP'), $pictoapproved);
-			elseif ($statut == 4) return img_picto($langs->trans('CancelCP'), 'statut5');
-			elseif ($statut == 5) return img_picto($langs->trans('RefuseCP'), 'statut5');
-		}
-		elseif ($mode == 5)
-		{
-			$pictoapproved='statut6';
-			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
-			if ($statut == 1) return $langs->trans('DraftCP').' '.img_picto($langs->trans('DraftCP'), 'statut0');				// Draft
-			elseif ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'), 'statut1');		// Waiting approval
-			elseif ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'), $pictoapproved);
-			elseif ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'), 'statut5');
-			elseif ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'), 'statut5');
-		}
-		elseif ($mode == 6)
-		{
-			$pictoapproved='statut6';
-			if (! empty($startdate) && $startdate > dol_now()) $pictoapproved='statut4';
-			if ($statut == 1) return $langs->trans('DraftCP').' '.img_picto($langs->trans('DraftCP'), 'statut0');				// Draft
-			elseif ($statut == 2) return $langs->trans('ToReviewCP').' '.img_picto($langs->trans('ToReviewCP'), 'statut1');		// Waiting approval
-			elseif ($statut == 3) return $langs->trans('ApprovedCP').' '.img_picto($langs->trans('ApprovedCP'), $pictoapproved);
-			elseif ($statut == 4) return $langs->trans('CancelCP').' '.img_picto($langs->trans('CancelCP'), 'statut5');
-			elseif ($statut == 5) return $langs->trans('RefuseCP').' '.img_picto($langs->trans('RefuseCP'), 'statut5');
+			global $langs;
+			//$langs->load("mymodule");
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('DraftCP');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('ToReviewCP');
+			$this->labelStatus[self::STATUS_APPROVED] = $langs->trans('ApprovedCP');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('CancelCP');
+			$this->labelStatus[self::STATUS_REFUSED] = $langs->trans('RefuseCP');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('DraftCP');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('ToReviewCP');
+			$this->labelStatusShort[self::STATUS_APPROVED] = $langs->trans('ApprovedCP');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('CancelCP');
+			$this->labelStatusShort[self::STATUS_REFUSED] = $langs->trans('RefuseCP');
 		}
 
-		else return $statut;
+		$statusType = 'status6';
+		if (! empty($startdate) && $startdate > dol_now()) $statusType = 'status4';
+		if ($status == self::STATUS_DRAFT) $statusType = 'status0';
+		if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
+		if ($status == self::STATUS_CANCELED) $statusType = 'status5';
+		if ($status == self::STATUS_REFUSED) $statusType = 'status5';
+
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 
@@ -1744,7 +1719,8 @@ class Holiday extends CommonObject
 			}
 		}
 		else
-		{ // Si faux donc return array
+		{
+			// Si faux donc return array
 			// List for Dolibarr users
 			if ($type)
 			{
@@ -1757,49 +1733,47 @@ class Holiday extends CommonObject
 					$sql.= " WHERE (ug.fk_user = u.rowid";
 					$sql.= " AND ug.entity = ".$conf->entity.")";
 					$sql.= " OR u.admin = 1";
-				}
-				else
+				} else {
 					$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+				}
 
-					$sql.= " AND u.statut > 0";
-					if ($filters) $sql.=$filters;
+				$sql.= " AND u.statut > 0";
+				if ($filters) $sql.=$filters;
 
-					$resql=$this->db->query($sql);
+				$resql=$this->db->query($sql);
 
-					// Si pas d'erreur SQL
-					if ($resql)
-					{
-						$i = 0;
-						$tab_result = $this->holiday;
-						$num = $this->db->num_rows($resql);
+				// Si pas d'erreur SQL
+				if ($resql)
+				{
+					$i = 0;
+					$tab_result = $this->holiday;
+					$num = $this->db->num_rows($resql);
 
-						// Boucles du listage des utilisateurs
-						while($i < $num) {
-							$obj = $this->db->fetch_object($resql);
+					// Boucles du listage des utilisateurs
+					while($i < $num) {
+						$obj = $this->db->fetch_object($resql);
 
-							$tab_result[$i]['rowid'] = $obj->rowid;		// rowid of user
-							$tab_result[$i]['name'] = $obj->lastname;       // deprecated
-							$tab_result[$i]['lastname'] = $obj->lastname;
-							$tab_result[$i]['firstname'] = $obj->firstname;
-							$tab_result[$i]['gender'] = $obj->gender;
-							$tab_result[$i]['status'] = $obj->statut;
-							$tab_result[$i]['employee'] = $obj->employee;
-							$tab_result[$i]['photo'] = $obj->photo;
-							$tab_result[$i]['fk_user'] = $obj->fk_user;	// rowid of manager
-							//$tab_result[$i]['type'] = $obj->type;
-							//$tab_result[$i]['nb_holiday'] = $obj->nb_holiday;
+						$tab_result[$i]['rowid'] = $obj->rowid;		// rowid of user
+						$tab_result[$i]['name'] = $obj->lastname;       // deprecated
+						$tab_result[$i]['lastname'] = $obj->lastname;
+						$tab_result[$i]['firstname'] = $obj->firstname;
+						$tab_result[$i]['gender'] = $obj->gender;
+						$tab_result[$i]['status'] = $obj->statut;
+						$tab_result[$i]['employee'] = $obj->employee;
+						$tab_result[$i]['photo'] = $obj->photo;
+						$tab_result[$i]['fk_user'] = $obj->fk_user;	// rowid of manager
+						//$tab_result[$i]['type'] = $obj->type;
+						//$tab_result[$i]['nb_holiday'] = $obj->nb_holiday;
 
-							$i++;
-						}
-						// Retoune le tableau des utilisateurs
-						return $tab_result;
+						$i++;
 					}
-					else
-					{
-						// Erreur SQL
-						$this->errors[]="Error ".$this->db->lasterror();
-						return -1;
-					}
+					// Retoune le tableau des utilisateurs
+					return $tab_result;
+				} else {
+					// Erreur SQL
+					$this->errors[]="Error ".$this->db->lasterror();
+					return -1;
+				}
 			}
 			else
 			{
@@ -2198,7 +2172,7 @@ class Holiday extends CommonObject
         // phpcs:enable
         global $conf, $langs;
 
-        if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
+        if ($user->socid) return -1;   // protection pour eviter appel par utilisateur externe
 
         $now=dol_now();
 

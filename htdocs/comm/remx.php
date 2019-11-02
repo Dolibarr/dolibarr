@@ -40,9 +40,9 @@ $backtopage=GETPOST('backtopage', 'alpha');
 
 // Security check
 $socid = GETPOST('id', 'int')?GETPOST('id', 'int'):GETPOST('socid', 'int');
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 
@@ -252,7 +252,7 @@ if ($socid > 0)
 
 	dol_fiche_head($head, 'absolutediscount', $langs->trans("ThirdParty"), 0, 'company');
 
-    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+    dol_banner_tab($object, 'socid', '', ($user->socid?0:1), 'rowid', 'nom');
 
     print '<div class="fichecenter">';
 

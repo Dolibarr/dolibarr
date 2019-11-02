@@ -63,11 +63,13 @@ if ($nolinesbefore) {
 	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 	if ($conf->global->PRODUCT_USE_UNITS)
 	{
-		print '<td class="linecoluseunit left">';
-		print '<span id="title_units">';
-		print $langs->trans('Unit');
-		print '</span></td>';
+	    print '<td class="linecoluseunit left">';
+	    print '<span id="title_units">';
+	    print $langs->trans('Unit');
+	    print '</span></td>';
 	}
+	print '<td class="linecolqtyfrozen right">'.$form->textwithpicto($langs->trans('QtyFrozen'), $langs->trans("QuantityConsumedInvariable")).'</td>';
+	print '<td class="linecoldisablestockchange right">'.$form->textwithpicto($langs->trans('DisableStockChange'), $langs->trans('DisableStockChangeHelp')).'</td>';
 	print '<td class="linecollost right">'.$form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')).'</td>';
 	print '<td class="linecoledit" colspan="'.$colspan.'">&nbsp;</td>';
     print '</tr>';
@@ -109,6 +111,7 @@ if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 $coldisplay++;
 print '<td class="nobottom linecolqty right"><input type="text" size="2" name="qty" id="qty" class="flat right" value="'.(isset($_POST["qty"])?GETPOST("qty", 'alpha', 2):1).'">';
 print '</td>';
+
 if($conf->global->PRODUCT_USE_UNITS)
 {
     $coldisplay++;
@@ -118,7 +121,14 @@ if($conf->global->PRODUCT_USE_UNITS)
 }
 
 $coldisplay++;
+print '<td class="nobottom linecolqtyfrozen right"><input type="checkbox" name="qty_frozen" id="qty_frozen" class="flat right" value="1"'.(GETPOST("qty_frozen", 'alpha')?' checked="checked"':'').'>';
+print '</td>';
 
+$coldisplay++;
+print '<td class="nobottom linecoldisablestockchange right"><input type="checkbox" name="disable_stock_change" id="disable_stock_change" class="flat right" value="1"'.(GETPOST("disable_stock_change", 'alpha')?' checked="checked"':'').'">';
+print '</td>';
+
+$coldisplay++;
 print '<td class="nobottom nowrap linecollost right">';
 print '<input type="text" size="1" name="efficiency" id="efficiency" class="flat right" value="'.(GETPOSTISSET("efficiency")?GETPOST("efficiency", 'alpha'):1).'">';
 print '</td>';

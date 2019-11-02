@@ -585,7 +585,7 @@ class MouvementStock extends CommonObject
 	    $sql .= " t.batch,";
 	    $sql .= " t.eatby,";
 	    $sql .= " t.sellby,";
-	    $sql .= " t.fk_projet";
+	    $sql .= " t.fk_projet as fk_project";
 	    $sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 	    $sql.= ' WHERE 1 = 1';
 	    //if (null !== $ref) {
@@ -618,6 +618,7 @@ class MouvementStock extends CommonObject
 	            $this->batch = $obj->batch;
 	            $this->eatby = $this->db->jdate($obj->eatby);
 	            $this->sellby = $this->db->jdate($obj->sellby);
+	            $this->fk_project = $obj->fk_project;
 	        }
 
 	        // Retreive all extrafield

@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/fiscalyear.class.php';
 $langs->loadLangs(array("admin","compta"));
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 	accessforbidden();
 if (! $user->rights->accounting->fiscalyear->write)
 	accessforbidden();

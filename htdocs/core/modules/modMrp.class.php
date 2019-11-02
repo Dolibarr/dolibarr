@@ -58,7 +58,7 @@ class modMrp extends DolibarrModules
         // Module label (no space allowed), used if translation string 'ModuleMrpName' not found (Mrp is name of module).
         $this->name = preg_replace('/^mod/i', '', get_class($this));
         // Module description, used if translation string 'ModuleMrpDesc' not found (Mrp is name of module).
-        $this->description = "MRPDescription";
+        $this->description = "Module to Manage Manufacturing Orders (MO)";
         // Used only if file README.md and README-LL.md not found.
         $this->descriptionlong = "Module to Manage Manufacturing Orders (MO)";
         // Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
@@ -113,7 +113,7 @@ class modMrp extends DolibarrModules
         // Example: this->dirs = array("/mrp/temp","/mrp/subdir");
         $this->dirs = array("/mrp/temp");
         // Config pages. Put here list of php page, stored into mrp/admin directory, to use to setup module.
-        $this->config_page_url = array("setup.php@mrp");
+        $this->config_page_url = array("mrp.php");
         // Dependencies
         // A condition to hide module
         $this->hidden = false;
@@ -135,7 +135,9 @@ class modMrp extends DolibarrModules
         //                             2 => array('MRP_MYNEWCONST2', 'chaine', 'myvalue', 'This is another constant to add', 0, 'current', 1)
         // );
         $this->const = array(
-            // 1 => array('MRP_MYCONSTANT', 'chaine', 'avalue', 'This is a constant to add', 1, 'allentities', 1)
+        	1=>array('MRP_MO_ADDON_PDF', 'chaine', 'alpha', 'Name of PDF model of MO', 0),
+        	2=>array('MRP_MO_ADDON', 'chaine', 'mod_mo_standard', 'Name of numbering rules of MO', 0),
+        	3=>array('MRP_MO_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT/doctemplates/mrps', '', 0)
         );
 
         // Some keys to add into the overwriting translation tables
@@ -206,12 +208,7 @@ class modMrp extends DolibarrModules
         // Boxes/Widgets
         // Add here list of php file(s) stored in mrp/core/boxes that contains a class to show a widget.
         $this->boxes = array(
-            //  0 => array(
-            //      'file' => 'mrpwidget1.php@mrp',
-            //      'note' => 'Widget provided by Mrp',
-            //      'enabledbydefaulton' => 'Home',
-            //  ),
-            //  ...
+            0 => array('file' => 'box_mos.php', 'note' => '', 'enabledbydefaulton' => 'Home')
         );
 
         // Cronjobs (List of cron jobs entries to add when module is enabled)
@@ -317,6 +314,8 @@ class modMrp extends DolibarrModules
      */
     public function init($options = '')
     {
+    	global $conf, $langs;
+
         $result=$this->_load_tables('/mrp/sql/');
         if ($result < 0) return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 
@@ -329,7 +328,34 @@ class modMrp extends DolibarrModules
         //$result4=$extrafields->addExtraField('myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', 0, 0, '', '', 'mrp', '$conf->mrp->enabled');
         //$result5=$extrafields->addExtraField('myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'mrp', '$conf->mrp->enabled');
 
+        // Permissions
+        $this->remove($options);
+
         $sql = array();
+
+        // ODT template
+        $src=DOL_DOCUMENT_ROOT.'/install/doctemplates/mrps/template_mo.odt';
+        $dirodt=DOL_DATA_ROOT.'/doctemplates/mrps';
+        $dest=$dirodt.'/template_mo.odt';
+
+        if (file_exists($src) && ! file_exists($dest))
+        {
+        	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+        	dol_mkdir($dirodt);
+        	$result=dol_copy($src, $dest, 0, 0);
+        	if ($result < 0)
+        	{
+        		$langs->load("errors");
+        		$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
+        		return 0;
+        	}
+        }
+
+        $sql = array(
+        	"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape('standard')."' AND type = 'mo' AND entity = ".$conf->entity,
+        	"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape('standard')."', 'mo', ".$conf->entity.")"
+        );
+
         return $this->_init($sql, $options);
     }
 

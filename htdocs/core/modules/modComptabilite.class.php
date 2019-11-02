@@ -35,11 +35,11 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 class modComptabilite extends DolibarrModules
 {
 
-   /**
-	 *   Constructor. Define names, constants, directories, boxes, permissions
-	 *
-	 *   @param      DoliDB		$db      Database handler
-    */
+    /**
+     *   Constructor. Define names, constants, directories, boxes, permissions
+     *
+     *   @param      DoliDB		$db      Database handler
+     */
 	public function __construct($db)
 	{
 		global $conf;
@@ -72,11 +72,12 @@ class modComptabilite extends DolibarrModules
 		$this->const = array();
 
 		// Data directories to create when module is enabled
-		$this->dirs = array("/comptabilite/temp",
-		                    "/comptabilite/rapport",
-		                    "/comptabilite/export",
-		                    "/comptabilite/bordereau"
-		                    );
+        $this->dirs = array(
+            "/comptabilite/temp",
+            "/comptabilite/rapport",
+            "/comptabilite/export",
+            "/comptabilite/bordereau"
+        );
 
 		// Boxes
 		$this->boxes = array();

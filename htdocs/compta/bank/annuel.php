@@ -41,7 +41,7 @@ $ref=GETPOST('ref');
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref :''));
 $fieldtype = (! empty($ref) ? 'ref' :'rowid');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, 'banque', $fieldvalue, 'bank_account&bank_account', '', '', $fieldtype);
 
 $year_start=GETPOST('year_start');
@@ -306,7 +306,7 @@ else
 	$log="graph.php: min=".$min." max=".$max;
 	dol_syslog($log);
 
-// CRED PART
+	// CRED PART
 	// Chargement du tableau des années
 	$tblyear[0] = array();
 	$tblyear[1] = array();
@@ -393,7 +393,7 @@ else
 	unset($tblyear[1]);
 	unset($tblyear[2]);
 
-// DEDBT PART
+	// DEDBT PART
 	// Chargement du tableau des années
 	$tblyear[0] = array();
 	$tblyear[1] = array();

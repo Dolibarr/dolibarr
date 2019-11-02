@@ -572,9 +572,9 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 			}
 
 			if (isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
-			  $newproduct->ref .= $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR . $prodattrval->ref;
+			    $newproduct->ref .= $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR . $prodattrval->ref;
 			} else {
-			  $newproduct->ref .= '_'.$prodattrval->ref;
+			    $newproduct->ref .= '_'.$prodattrval->ref;
 			}
 
 			//The first one should not contain a linebreak

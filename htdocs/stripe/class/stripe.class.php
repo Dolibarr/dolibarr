@@ -62,6 +62,9 @@ class Stripe extends CommonObject
 	public $code;
 	public $declinecode;
 
+    /**
+     * @var string Message
+     */
 	public $message;
 
 	/**
@@ -315,9 +318,10 @@ class Stripe extends CommonObject
 	 * @param   boolean $confirmnow                         false=default, true=try to confirm immediatly after create (if conditions are ok)
 	 * @param   string  $payment_method                     'pm_....' (if known)
 	 * @param   string  $off_session                        If we use an already known payment method to pay off line.
+	 * @param	string	$noidempotency_key					Do not use the idempotency_key when creating the PaymentIntent
 	 * @return 	\Stripe\PaymentIntent|null 			        Stripe PaymentIntent or null if not found and failed to create
 	 */
-	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false, $payment_method = null, $off_session = 0)
+	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false, $payment_method = null, $off_session = 0, $noidempotency_key = 0)
 	{
 		global $conf;
 
@@ -338,17 +342,21 @@ class Stripe extends CommonObject
 		} elseif ($fee < $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
 		    $fee = $conf->global->STRIPE_APPLICATION_FEE_MINIMAL;
 		}
-				if (! in_array($currency_code, $arrayzerounitcurrency)) $stripefee = round($fee * 100);
-				else $stripefee = round($fee);
+		if (! in_array($currency_code, $arrayzerounitcurrency)) {
+			$stripefee = round($fee * 100);
+		} else {
+			$stripefee = round($fee);
+		}
 
 		$paymentintent = null;
 
 		if (is_object($object))
 		{
 			// Warning. If a payment was tried and failed, a payment intent was created.
-			// But if we change someting on object to pay (amount or other), reusing same payment intent is not allowed.
-			// Recommanded solution is to recreate a new payment intent each time we need one (old one will be automatically closed after a delay),
-			// that's why i comment the part of code to retreive a payment intent with object id (never mind if we cumulate payment intent with old that will not be used)
+			// But if we change someting on object to pay (amount or other that does not change the idempotency key), reusing same payment intent is not allowed.
+			// Recommanded solution is to recreate a new payment intent each time we need one (old one will be automatically closed after a delay), Stripe will
+			// automatically return the existing payment intent if idempotency is provided when we try to create the new one.
+			// That's why we can comment the part of code to retreive a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
 			/*
 			$sql = "SELECT pi.ext_payment_id, pi.entity, pi.fk_facture, pi.sourcetype, pi.ext_payment_site";
     		$sql.= " FROM " . MAIN_DB_PREFIX . "prelevement_facture_demande as pi";
@@ -439,14 +447,15 @@ class Stripe extends CommonObject
     			global $stripearrayofkeysbyenv;
     			\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
 
-    			// Note: If all data for payment intent are same than a previous on, even if we use 'create', Stripe will return ID of the old existing payment intent.
-    			if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
-    				$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array("idempotency_key" => "$description"));
-    			    //$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array());
-    			} else {
-    				$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array("idempotency_key" => "$description", "stripe_account" => $key));
-    			    //$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array("stripe_account" => $key));
+    			$arrayofoptions = array();
+    			if (empty($noidempotency_key)) {
+    				$arrayofoptions["idempotency_key"] = $description;
     			}
+    			// Note: If all data for payment intent are same than a previous on, even if we use 'create', Stripe will return ID of the old existing payment intent.
+    			if (! empty($key)) {				// If the Stripe connect account not set, we use common API usage
+    				$arrayofoptions["stripe_account"] = $key;
+    			}
+    			$paymentintent = \Stripe\PaymentIntent::create($dataforintent, $arrayofoptions);
 
     			// Store the payment intent
     			if (is_object($object))

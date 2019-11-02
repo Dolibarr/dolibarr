@@ -98,7 +98,7 @@ if (! empty($conf->accounting->enabled)) $modecompta='BOOKKEEPING';
 if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta", 'alpha');
 
 // Security check
-if ($user->societe_id > 0) $socid = $user->societe_id;
+if ($user->socid > 0) $socid = $user->socid;
 if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user, 'compta', '', '', 'resultat');
 if (! empty($conf->accounting->enabled)) $result=restrictedArea($user, 'accounting', '', '', 'comptarapport');
 
@@ -172,7 +172,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2,5)";
 	else $sql.= " AND f.type IN (0,1,2,3,5)";
 	$sql.= " AND f.entity IN (".getEntity('invoice').")";
-if ($socid) $sql.= " AND f.fk_soc = ".$socid;
+	if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 }
 elseif ($modecompta=="RECETTES-DEPENSES")
 {
@@ -187,7 +187,7 @@ elseif ($modecompta=="RECETTES-DEPENSES")
 	$sql.= " WHERE p.rowid = pf.fk_paiement";
 	$sql.= " AND pf.fk_facture = f.rowid";
 	$sql.= " AND f.entity IN (".getEntity('invoice').")";
-if ($socid) $sql.= " AND f.fk_soc = ".$socid;
+	if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 }
 elseif ($modecompta=="BOOKKEEPING")
 {

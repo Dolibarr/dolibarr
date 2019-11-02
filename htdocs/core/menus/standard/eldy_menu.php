@@ -79,7 +79,7 @@ class MenuManager
         	$_SESSION["leftmenuopened"]="";
         }
         else
-       {
+        {
         	// On va le chercher en session si non defini par le lien
         	$mainmenu=isset($_SESSION["mainmenu"])?$_SESSION["mainmenu"]:'';
         }

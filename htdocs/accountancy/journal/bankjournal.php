@@ -80,7 +80,7 @@ $now = dol_now();
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-if ($user->societe_id > 0 && empty($id_journal))
+if ($user->socid > 0 && empty($id_journal))
 	accessforbidden();
 
 
@@ -323,11 +323,11 @@ if ($result) {
 					if (preg_match('/^\((.*)\)$/i', $links[$key]['label'], $reg)) {
 						if ($reg[1] == 'socialcontribution')
 							$reg[1] = 'SocialContribution';
-						$chargestatic->lib = $langs->trans($reg[1]);
+						$chargestatic->label = $langs->trans($reg[1]);
 					} else {
-						$chargestatic->lib = $links[$key]['label'];
+						$chargestatic->label = $links[$key]['label'];
 					}
-					$chargestatic->ref = $chargestatic->lib;
+					$chargestatic->ref = $chargestatic->label;
 					$tabpay[$obj->rowid]["soclib"] = $chargestatic->getNomUrl(1, 30);
 					$tabpay[$obj->rowid]["paymentscid"] = $chargestatic->id;
 

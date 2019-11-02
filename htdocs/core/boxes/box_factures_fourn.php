@@ -99,11 +99,11 @@ class box_factures_fourn extends ModeleBoxes
 			$sql.= ' f.date_lim_reglement as datelimite, f.tms, f.type';
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql.= ", ".MAIN_DB_PREFIX."facture_fourn as f";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= " WHERE f.fk_soc = s.rowid";
 			$sql.= " AND f.entity = ".$conf->entity;
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-			if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+			if($user->socid) $sql.= " AND s.rowid = ".$user->socid;
             if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY f.datef DESC, f.ref DESC ";
             else $sql.= " ORDER BY f.tms DESC, f.ref DESC ";
 			$sql.= $this->db->plimit($max, 0);

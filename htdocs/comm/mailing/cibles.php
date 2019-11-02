@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 $langs->load("mails");
 
 // Security check
-if (! $user->rights->mailing->lire || $user->societe_id > 0) accessforbidden();
+if (! $user->rights->mailing->lire || $user->socid > 0) accessforbidden();
 
 
 // Load variable for pagination
@@ -479,14 +479,13 @@ if ($object->fetch($id) >= 0)
 	{
 		$num = $db->num_rows($resql);
 
-		$param = "&amp;id=".$object->id;
+		$param = "&id=".$object->id;
 		//if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 		if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 		if ($search_lastname)  $param.= "&search_lastname=".urlencode($search_lastname);
 		if ($search_firstname) $param.= "&search_firstname=".urlencode($search_firstname);
 		if ($search_email)     $param.= "&search_email=".urlencode($search_email);
 		if ($search_other)     $param.= "&search_other=".urlencode($search_other);
-		if ($page)			   $param.= "&page=".urlencode($page);
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -500,6 +499,7 @@ if ($object->fetch($id) >= 0)
 			$morehtmlcenter='<span class="opacitymedium">'.$langs->trans("ToClearAllRecipientsClickHere").'</span> <a href="'.$_SERVER["PHP_SELF"].'?clearlist=1&id='.$object->id.'" class="button reposition">'.$langs->trans("TargetsReset").'</a>';
 		}
 		$morehtmlcenter.=' <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?exportcsv=1&id='.$object->id.'">'.$langs->trans("Download").'</a>';
+
 		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $morehtmlcenter, $num, $nbtotalofrecords, 'generic', 0, '', '', $limit);
 
 		print '</form>';
@@ -559,6 +559,8 @@ if ($object->fetch($id) >= 0)
 		print $searchpicto;
 		print '</td>';
 		print '</tr>';
+
+		if ($page) $param.= "&page=".urlencode($page);
 
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "mc.email", $param, "", "", $sortfield, $sortorder);

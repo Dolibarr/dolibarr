@@ -353,6 +353,12 @@ class Conf
 		$this->propal->dir_output=$rootfordata."/propale";
 		$this->propal->dir_temp=$rootfordata."/propale/temp";
 
+		// For backward compatibility
+		$this->banque->multidir_output	= array($this->entity => $rootfordata."/bank");
+		$this->banque->multidir_temp	= array($this->entity => $rootfordata."/bank/temp");
+		$this->banque->dir_output=$rootfordata."/bank";
+		$this->banque->dir_temp=$rootfordata."/bank/temp";
+
 		// For medias storage
 		$this->medias->multidir_output	= array($this->entity => $rootfordata."/medias");
 		$this->medias->multidir_temp	= array($this->entity => $rootfordata."/medias/temp");

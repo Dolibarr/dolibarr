@@ -69,7 +69,7 @@ class BonPrelevement extends CommonObject
 	public $total;
 	public $fetched;
 	public $statut;    // 0-Wait, 1-Trans, 2-Done
-	public $labelstatut=array();
+	public $labelStatus=array();
 
 	public $invoice_in_error=array();
 	public $thirdparty_in_error=array();
@@ -1686,7 +1686,7 @@ class BonPrelevement extends CommonObject
 		$XML_DEBITOR ='';
 		$XML_DEBITOR .='			<DrctDbtTxInf>'.$CrLf;
 		$XML_DEBITOR .='				<PmtId>'.$CrLf;
-	//	$XML_DEBITOR .='					<EndToEndId>'.('AS-'.dol_trunc($row_ref,20).'-'.$Rowing).'</EndToEndId>'.$CrLf;          // ISO20022 states that EndToEndId has a MaxLength of 35 characters
+	    // $XML_DEBITOR .='					<EndToEndId>'.('AS-'.dol_trunc($row_ref,20).'-'.$Rowing).'</EndToEndId>'.$CrLf;          // ISO20022 states that EndToEndId has a MaxLength of 35 characters
 		$XML_DEBITOR .='					<EndToEndId>'.(($conf->global->PRELEVEMENT_END_TO_END != "" ) ? $conf->global->PRELEVEMENT_END_TO_END : ('AS-'.dol_trunc($row_ref, 20)).'-'.$Rowing).'</EndToEndId>'.$CrLf;          // ISO20022 states that EndToEndId has a MaxLength of 35 characters
 		$XML_DEBITOR .='				</PmtId>'.$CrLf;
 		$XML_DEBITOR .='				<InstdAmt Ccy="EUR">'.round($row_somme, 2).'</InstdAmt>'.$CrLf;
@@ -1718,8 +1718,8 @@ class BonPrelevement extends CommonObject
 		$XML_DEBITOR .='					</Id>'.$CrLf;
 		$XML_DEBITOR .='				</DbtrAcct>'.$CrLf;
 		$XML_DEBITOR .='				<RmtInf>'.$CrLf;
-	//	$XML_DEBITOR .='					<Ustrd>'.($row_ref.'/'.$Rowing.'/'.$Rum).'</Ustrd>'.$CrLf;
-	//	$XML_DEBITOR .='					<Ustrd>'.dol_trunc($row_ref, 135).'</Ustrd>'.$CrLf;        // 140 max
+	    // $XML_DEBITOR .='					<Ustrd>'.($row_ref.'/'.$Rowing.'/'.$Rum).'</Ustrd>'.$CrLf;
+	    // $XML_DEBITOR .='					<Ustrd>'.dol_trunc($row_ref, 135).'</Ustrd>'.$CrLf;        // 140 max
 		$XML_DEBITOR .='					<Ustrd>'.(($conf->global->PRELEVEMENT_USTRD != "" ) ? $conf->global->PRELEVEMENT_USTRD : dol_trunc($row_ref, 135) ).'</Ustrd>'.$CrLf;        // 140 max
 		$XML_DEBITOR .='				</RmtInf>'.$CrLf;
 		$XML_DEBITOR .='			</DrctDbtTxInf>'.$CrLf;
@@ -1887,15 +1887,15 @@ class BonPrelevement extends CommonObject
 			$XML_SEPA_INFO .= '					<BIC>'.$this->emetteur_bic.'</BIC>'.$CrLf;
 			$XML_SEPA_INFO .= '				</FinInstnId>'.$CrLf;
 			$XML_SEPA_INFO .= '			</CdtrAgt>'.$CrLf;
-/*			$XML_SEPA_INFO .= '			<UltmtCdtr>'.$CrLf;
+			/* $XML_SEPA_INFO .= '			<UltmtCdtr>'.$CrLf;
 			$XML_SEPA_INFO .= '				<Nm>'.$this->raison_sociale.'</Nm>'.$CrLf;
 			$XML_SEPA_INFO .= '				<PstlAdr>'.$CrLf;
 			$XML_SEPA_INFO .= '					<Ctry>'.$country[1].'</Ctry>'.$CrLf;
 			$XML_SEPA_INFO .= '					<AdrLine>'.$conf->global->MAIN_INFO_SOCIETE_ADDRESS.'</AdrLine>'.$CrLf;
 			$XML_SEPA_INFO .= '					<AdrLine>'.$conf->global->MAIN_INFO_SOCIETE_ZIP.' '.$conf->global->MAIN_INFO_SOCIETE_TOWN.'</AdrLine>'.$CrLf;
 			$XML_SEPA_INFO .= '				</PstlAdr>'.$CrLf;
-			$XML_SEPA_INFO .= '			</UltmtCdtr>'.$CrLf;
-*/			$XML_SEPA_INFO .= '			<ChrgBr>SLEV</ChrgBr>'.$CrLf;
+			$XML_SEPA_INFO .= '			</UltmtCdtr>'.$CrLf;*/
+			$XML_SEPA_INFO .= '			<ChrgBr>SLEV</ChrgBr>'.$CrLf;
 			$XML_SEPA_INFO .= '			<CdtrSchmeId>'.$CrLf;
 			$XML_SEPA_INFO .= '				<Id>'.$CrLf;
 			$XML_SEPA_INFO .= '					<PrvtId>'.$CrLf;
@@ -1995,55 +1995,55 @@ class BonPrelevement extends CommonObject
 	/**
 	 *  Return status label for a status
 	 *
-	 *  @param	int		$statut     id statut
+	 *  @param	int		$status     Id status
 	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 * 	@return	string  		    Label
 	 */
-	public function LibStatut($statut, $mode = 0)
+	public function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
-		if (empty($this->labelstatut))
+		if (empty($this->labelStatus))
 		{
 			global $langs;
 			$langs->load("withdrawals");
-			$this->labelstatut[0]=$langs->trans("StatusWaiting");
-			$this->labelstatut[1]=$langs->trans("StatusTrans");
-			$this->labelstatut[2]=$langs->trans("StatusCredited");
+			$this->labelStatus[0]=$langs->trans("StatusWaiting");
+			$this->labelStatus[1]=$langs->trans("StatusTrans");
+			$this->labelStatus[2]=$langs->trans("StatusCredited");
 		}
 
 		if ($mode == 0 || $mode == 1)
 		{
-			return $this->labelstatut[$statut];
+			return $this->labelStatus[$status];
 		}
 		elseif ($mode == 2)
 		{
-			if ($statut==0) return img_picto($this->labelstatut[$statut], 'statut1').' '.$this->labelstatut[$statut];
-			elseif ($statut==1) return img_picto($this->labelstatut[$statut], 'statut3').' '.$this->labelstatut[$statut];
-			elseif ($statut==2) return img_picto($this->labelstatut[$statut], 'statut6').' '.$this->labelstatut[$statut];
+			if ($status==0) return img_picto($this->labelStatus[$status], 'statut1').' '.$this->labelStatus[$status];
+			elseif ($status==1) return img_picto($this->labelStatus[$status], 'statut3').' '.$this->labelStatus[$status];
+			elseif ($status==2) return img_picto($this->labelStatus[$status], 'statut6').' '.$this->labelStatus[$status];
 		}
 		elseif ($mode == 3)
 		{
-			if ($statut==0) return img_picto($this->labelstatut[$statut], 'statut1');
-			elseif ($statut==1) return img_picto($this->labelstatut[$statut], 'statut3');
-			elseif ($statut==2) return img_picto($this->labelstatut[$statut], 'statut6');
+			if ($status==0) return img_picto($this->labelStatus[$status], 'statut1');
+			elseif ($status==1) return img_picto($this->labelStatus[$status], 'statut3');
+			elseif ($status==2) return img_picto($this->labelStatus[$status], 'statut6');
 		}
 		elseif ($mode == 4)
 		{
-			if ($statut==0) return img_picto($this->labelstatut[$statut], 'statut1').' '.$this->labelstatut[$statut];
-			elseif ($statut==1) return img_picto($this->labelstatut[$statut], 'statut3').' '.$this->labelstatut[$statut];
-			elseif ($statut==2) return img_picto($this->labelstatut[$statut], 'statut6').' '.$this->labelstatut[$statut];
+			if ($status==0) return img_picto($this->labelStatus[$status], 'statut1').' '.$this->labelStatus[$status];
+			elseif ($status==1) return img_picto($this->labelStatus[$status], 'statut3').' '.$this->labelStatus[$status];
+			elseif ($status==2) return img_picto($this->labelStatus[$status], 'statut6').' '.$this->labelStatus[$status];
 		}
 		elseif ($mode == 5)
 		{
-			if ($statut==0) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut1');
-			elseif ($statut==1) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut3');
-			elseif ($statut==2) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut6');
+			if ($status==0) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut1');
+			elseif ($status==1) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut3');
+			elseif ($status==2) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut6');
 		}
 		elseif ($mode == 6)
 		{
-			if ($statut==0) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut1');
-			elseif ($statut==1) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut3');
-			elseif ($statut==2) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut6');
+			if ($status==0) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut1');
+			elseif ($status==1) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut3');
+			elseif ($status==2) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut6');
 		}
 	}
 }

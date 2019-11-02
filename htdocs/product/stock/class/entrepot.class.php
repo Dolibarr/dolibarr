@@ -44,25 +44,19 @@ class Entrepot extends CommonObject
 	 */
 	public $table_element='entrepot';
 
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto='stock';
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	/**
-	 * Warehouse closed, inactive
+	 * @var string	Label
+	 * @deprecated
 	 */
-	const STATUS_CLOSED = 0;
-
-	/**
-	 * Warehouse open and operations for customer shipping, supplier dispatch, internal stock transfers/corrections allowed.
-	 */
-	const STATUS_OPEN_ALL = 1;
-
-	/**
-	 * Warehouse open and operations for stock transfers/corrections allowed (not for customer shipping and supplier dispatch).
-	 */
-	const STATUS_OPEN_INTERNAL = 2;
-
 	public $libelle;
+
+	public $label;
 
 	/**
 	 * @var string description
@@ -117,6 +111,21 @@ class Entrepot extends CommonObject
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>500),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>501),
 	);
+
+	/**
+	 * Warehouse closed, inactive
+	 */
+	const STATUS_CLOSED = 0;
+
+	/**
+	 * Warehouse open and operations for customer shipping, supplier dispatch, internal stock transfers/corrections allowed.
+	 */
+	const STATUS_OPEN_ALL = 1;
+
+	/**
+	 * Warehouse open and operations for stock transfers/corrections allowed (not for customer shipping and supplier dispatch).
+	 */
+	const STATUS_OPEN_INTERNAL = 2;
 
 
 	/**
@@ -443,7 +452,7 @@ class Entrepot extends CommonObject
 				$this->id             = $obj->rowid;
 				$this->fk_parent      = $obj->fk_parent;
 				$this->ref            = $obj->label;
-				$this->label          = $obj->label;			// deprecated
+				$this->label          = $obj->label;
 				$this->libelle        = $obj->label;            // deprecated
 				$this->description    = $obj->description;
 				$this->statut         = $obj->statut;
@@ -642,49 +651,23 @@ class Entrepot extends CommonObject
 	/**
 	 *	Return label of a given status
 	 *
-	 *	@param	int		$statut     Status
+	 *	@param	int		$status     Id status
 	 *	@param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *	@return string      		Label of status
 	 */
-	public function LibStatut($statut, $mode = 0)
+	public function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
 
+		$statusType = 'status5';
+		if ($status > 0) $statusType = 'status4';
+
 		$langs->load('stocks');
+		$label = $langs->trans($this->statuts[$status]);
+		$labelshort = $langs->trans($this->statuts[$status]);
 
-		$picto = 'statut5';
-		$label = $langs->trans($this->statuts[$statut]);
-
-
-		if ($mode == 0)
-		{
-			return $label;
-		}
-		elseif ($mode == 1)
-		{
-			return $label;
-		}
-		elseif ($mode == 2)
-		{
-			if ($statut > 0) $picto = 'statut4';
-			return img_picto($label, $picto).' '.$label;
-		}
-		elseif ($mode == 3)
-		{
-			if ($statut > 0) $picto = 'statut4';
-			return img_picto($label, $picto).' '.$label;
-		}
-		elseif ($mode == 4)
-		{
-			if ($statut > 0) $picto = 'statut4';
-			return img_picto($label, $picto).' '.$label;
-		}
-		elseif ($mode == 5)
-		{
-			if ($statut > 0) $picto = 'statut4';
-			return $label.' '.img_picto($label, $picto);
-		}
+		return dolGetStatus($label, $labelshort, '', $statusType, $mode);
 	}
 
 

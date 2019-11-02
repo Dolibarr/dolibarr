@@ -61,7 +61,7 @@ $backtopage	= GETPOST('backtopage', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
 
 $socid		= GETPOST('socid', 'int')?GETPOST('socid', 'int'):GETPOST('id', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 if (empty($socid) && $action == 'view') $action='create';
 
 $object = new Societe($db);
@@ -599,11 +599,11 @@ if (empty($reshook))
 						{
 						    case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
 						    case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
-						      $errors[] = "ErrorFileSizeTooLarge";
-						      break;
+						        $errors[] = "ErrorFileSizeTooLarge";
+						        break;
 	      					case 3: //uploaded file was only partially uploaded
-						      $errors[] = "ErrorFilePartiallyUploaded";
-						      break;
+						        $errors[] = "ErrorFilePartiallyUploaded";
+						        break;
 						}
 	                }
                     // Gestion du logo de la société
@@ -764,11 +764,11 @@ if (empty($reshook))
 					{
 					    case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
 					    case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
-					      $errors[] = "ErrorFileSizeTooLarge";
-					      break;
+					        $errors[] = "ErrorFileSizeTooLarge";
+					        break;
       					case 3: //uploaded file was only partially uploaded
-					      $errors[] = "ErrorFilePartiallyUploaded";
-					      break;
+					        $errors[] = "ErrorFilePartiallyUploaded";
+					        break;
 					}
                 }
                 // Gestion du logo de la société
@@ -1855,7 +1855,7 @@ else
 	                    print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.$object->code_fournisseur.'" maxlength="15">';
 	                }
 	                else
-	              {
+	                {
 	                    print $object->code_fournisseur;
 	                    print '<input type="hidden" name="supplier_code" value="'.$object->code_fournisseur.'">';
 	                }
@@ -2241,7 +2241,7 @@ else
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-        dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+        dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom');
 
 
         print '<div class="fichecenter">';
@@ -2663,7 +2663,7 @@ else
 
 		        if ($user->rights->societe->creer)
 		        {
-		            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
+		            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
 		        }
 
 		        if (! empty($conf->adherent->enabled))

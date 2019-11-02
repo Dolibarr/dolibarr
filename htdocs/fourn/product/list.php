@@ -54,7 +54,7 @@ if (! $sortfield) $sortfield="p.ref"; // Set here default search field
 if (! $sortorder) $sortorder="ASC";
 
 $fourn_id = GETPOST('fourn_id', 'intcomma');
-if ($user->societe_id) $fourn_id=$user->societe_id;
+if ($user->socid) $fourn_id=$user->socid;
 
 $catid = GETPOST('catid', 'intcomma');
 

@@ -1122,13 +1122,20 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 {
 	global $conf, $langs, $hookmanager;
 
-	$out="\n".'<!-- dol_get_fiche_head --><div class="tabs" data-role="controlgroup" data-type="horizontal">'."\n";
-
-	if ($morehtmlright) $out.='<div class="inline-block floatright tabsElem">'.$morehtmlright.'</div>';	// Output right area first so when space is missing, text is in front of tabs and not under.
-
 	// Show title
 	$showtitle=1;
 	if (! empty($conf->dol_optimize_smallscreen)) $showtitle=0;
+
+	$out = "\n".'<!-- dol_get_fiche_head -->';
+
+	if ((! empty($title) && $showtitle) || $morehtmlright || ! empty($links)) {
+		$out.= '<div class="tabs" data-role="controlgroup" data-type="horizontal">'."\n";
+	}
+
+	// Show right part
+	if ($morehtmlright) $out.='<div class="inline-block floatright tabsElem">'.$morehtmlright.'</div>';	// Output right area first so when space is missing, text is in front of tabs and not under.
+
+	// Show title
 	if (! empty($title) && $showtitle)
 	{
 		$limittitle=30;
@@ -1137,6 +1144,8 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		$out.='<span class="tabTitleText">'.dol_trunc($title, $limittitle).'</span>';
 		$out.='</a>';
 	}
+
+	// Show tabs
 
 	// Define max of key (max may be higher than sizeof because of hole due to module disabling some tabs).
 	$maxkey=-1;
@@ -1149,16 +1158,15 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 	if (! empty($conf->dol_optimize_smallscreen)) $conf->global->MAIN_MAXTABS_IN_CARD=2;
 
 	// Show tabs
-	$bactive=false;
 	// if =0 we don't use the feature
 	$limittoshow=(empty($conf->global->MAIN_MAXTABS_IN_CARD)?99:$conf->global->MAIN_MAXTABS_IN_CARD);
 	$displaytab=0;
 	$nbintab=0;
-	$popuptab=0; $outmore='';
+	$popuptab=0;
+	$outmore='';
 	for ($i = 0 ; $i <= $maxkey ; $i++)
 	{
-		if ((is_numeric($active) && $i == $active) || (! empty($links[$i][2]) && ! is_numeric($active) && $active == $links[$i][2]))
-		{
+		if ((is_numeric($active) && $i == $active) || (! empty($links[$i][2]) && ! is_numeric($active) && $active == $links[$i][2])) {
 			// If active tab is already present
 			if ($i >= $limittoshow) $limittoshow--;
 		}
@@ -1166,13 +1174,10 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 
 	for ($i = 0 ; $i <= $maxkey ; $i++)
 	{
-		if ((is_numeric($active) && $i == $active) || (! empty($links[$i][2]) && ! is_numeric($active) && $active == $links[$i][2]))
-		{
+		if ((is_numeric($active) && $i == $active) || (! empty($links[$i][2]) && ! is_numeric($active) && $active == $links[$i][2])) {
 			$isactive=true;
-			$bactive=true;
 		}
-		else
-		{
+		else {
 			$isactive=false;
 		}
 
@@ -1258,7 +1263,9 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		$out.="</script>";
 	}
 
-	$out.="</div>\n";
+	if ((! empty($title) && $showtitle) || $morehtmlright || ! empty($links)) {
+		$out.="</div>\n";
+	}
 
 	if (! $notab || $notab == -1 || $notab == -2) $out.="\n".'<div class="tabBar'.($notab == -1 ? '' : ($notab == -2 ? ' tabBarNoTop' : ' tabBarWithBottom')).'">'."\n";
 
@@ -1984,56 +1991,48 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = false, $
 		if ($second< 0 || $second > 60) return '';
 	}
 
-	if (method_exists('DateTime', 'getTimestamp'))
+	if (empty($gm) || $gm === 'server')
 	{
-		if (empty($gm) || $gm === 'server')
-		{
-			$default_timezone=@date_default_timezone_get();		// Example 'Europe/Berlin'
+		$default_timezone=@date_default_timezone_get();		// Example 'Europe/Berlin'
+		$localtz = new DateTimeZone($default_timezone);
+	}
+	elseif ($gm === 'user')
+	{
+		// We use dol_tz_string first because it is more reliable.
+		$default_timezone=(empty($_SESSION["dol_tz_string"])?@date_default_timezone_get():$_SESSION["dol_tz_string"]);		// Example 'Europe/Berlin'
+		try {
 			$localtz = new DateTimeZone($default_timezone);
 		}
-		elseif ($gm === 'user')
+		catch(Exception $e)
 		{
-			// We use dol_tz_string first because it is more reliable.
-			$default_timezone=(empty($_SESSION["dol_tz_string"])?@date_default_timezone_get():$_SESSION["dol_tz_string"]);		// Example 'Europe/Berlin'
-			try {
-				$localtz = new DateTimeZone($default_timezone);
-			}
-			catch(Exception $e)
-			{
-				dol_syslog("Warning dol_tz_string contains an invalid value ".$_SESSION["dol_tz_string"], LOG_WARNING);
-				$default_timezone=@date_default_timezone_get();
-			}
+			dol_syslog("Warning dol_tz_string contains an invalid value ".$_SESSION["dol_tz_string"], LOG_WARNING);
+			$default_timezone=@date_default_timezone_get();
 		}
-		elseif (strrpos($gm, "tz,") !== false)
-		{
-			$timezone=str_replace("tz,", "", $gm);  // Example 'tz,Europe/Berlin'
-			try
-			{
-				$localtz = new DateTimeZone($timezone);
-			}
-			catch(Exception $e)
-			{
-				dol_syslog("Warning passed timezone contains an invalid value ".$timezone, LOG_WARNING);
-			}
-		}
-
-		if (empty($localtz)) {
-			$localtz = new DateTimeZone('UTC');
-		}
-		//var_dump($localtz);
-		//var_dump($year.'-'.$month.'-'.$day.'-'.$hour.'-'.$minute);
-		$dt = new DateTime(null, $localtz);
-		$dt->setDate((int) $year, (int) $month, (int) $day);
-		$dt->setTime((int) $hour, (int) $minute, (int) $second);
-		$date=$dt->getTimestamp();	// should include daylight saving time
-		//var_dump($date);
-		return $date;
 	}
-	else
+	elseif (strrpos($gm, "tz,") !== false)
 	{
-		dol_print_error('', 'PHP version must be 5.4+');
-		return '';
+		$timezone=str_replace("tz,", "", $gm);  // Example 'tz,Europe/Berlin'
+		try
+		{
+			$localtz = new DateTimeZone($timezone);
+		}
+		catch(Exception $e)
+		{
+			dol_syslog("Warning passed timezone contains an invalid value ".$timezone, LOG_WARNING);
+		}
 	}
+
+	if (empty($localtz)) {
+		$localtz = new DateTimeZone('UTC');
+	}
+	//var_dump($localtz);
+	//var_dump($year.'-'.$month.'-'.$day.'-'.$hour.'-'.$minute);
+	$dt = new DateTime(null, $localtz);
+	$dt->setDate((int) $year, (int) $month, (int) $day);
+	$dt->setTime((int) $hour, (int) $minute, (int) $second);
+	$date=$dt->getTimestamp();	// should include daylight saving time
+	//var_dump($date);
+	return $date;
 }
 
 
@@ -2997,7 +2996,7 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
  *  @param		int			$notitle				1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
  *  @param		string		$alt					Force alt for bind people
  *  @param		string		$morecss				Add more class css on img tag (For example 'myclascss'). Work only if $moreatt is empty.
- *  @param		string		$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left maring on picto, 0 = No margin left. Works for fontawesome picto only.
+ *  @param		string		$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No margin left. Works for fontawesome picto only.
  *  @return     string       				    	Return img tag
  *  @see        img_object(), img_picto_common()
  */
@@ -3028,7 +3027,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
         if (empty($srconly) && in_array($pictowithouttext, array(
         		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
-        		'address', 'bank', 'building', 'cash-register', 'close_title', 'cubes', 'delete', 'dolly', 'edit', 'ellipsis-h', 'bookmark', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'note',
+        		'address', 'bank', 'bookmark', 'building', 'cash-register', 'close_title', 'cubes', 'delete', 'dolly', 'edit', 'ellipsis-h',
+        		'filter', 'file-code', 'grip', 'grip_title', 'list', 'listlight', 'note',
         		'object_list','object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
         		'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'stats',
 				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench', 'globe',
@@ -3058,12 +3058,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		    	$morecss .= ($morecss ? ' ' : '').('picto'.$pictowithouttext);
 		    } elseif ($pictowithouttext == 'switch_off') {
 				$facolor = '#999';
-				$fasize = '2em';
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 			}
 			elseif ($pictowithouttext == 'switch_on') {
 				$facolor = '#227722';
-				$fasize = '2em';
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 			}
 			elseif ($pictowithouttext == 'off') {
@@ -4624,7 +4622,7 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
 	    $unit = $forceunitoutput;
 	}*/
 
-	$ret=price($dimension, 0, $outputlangs, 0, 0, $round).' '.measuring_units_string(0, $type, $unit);
+	$ret=price($dimension, 0, $outputlangs, 0, 0, $round).' '.measuringUnitString(0, $type, $unit);
 
 	return $ret;
 }
@@ -5917,6 +5915,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__REF__'] = '__REF__';
 			$substitutionarray['__REF_CLIENT__'] = '__REF_CLIENT__';
 			$substitutionarray['__REF_SUPPLIER__'] = '__REF_SUPPLIER__';
+			$substitutionarray['__NOTE_PUBLIC__'] = '__NOTE_PUBLIC__';
+			$substitutionarray['__NOTE_PRIVATE__'] = '__NOTE_PRIVATE__';
 			$substitutionarray['__EXTRAFIELD_XXX__'] = '__EXTRAFIELD_XXX__';
 
 			if (! empty($conf->societe->enabled))
@@ -5937,6 +5937,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_APE__'] = '__THIRDPARTY_APE__';
 				$substitutionarray['__THIRDPARTY_RCSRM__'] = '__THIRDPARTY_RCSRM__';
 				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = '__THIRDPARTY_TVAINTRA__';
+				/*$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = '__THIRDPARTY_NOTE_PUBLIC__';
+				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = '__THIRDPARTY_NOTE_PRIVATE__';*/
 			}
 			if (! empty($conf->adherent->enabled))
 			{
@@ -5944,12 +5946,16 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__MEMBER_CIVILITY__'] = '__MEMBER_CIVILITY__';
 				$substitutionarray['__MEMBER_FIRSTNAME__'] = '__MEMBER_FIRSTNAME__';
 				$substitutionarray['__MEMBER_LASTNAME__'] = '__MEMBER_LASTNAME__';
+				/*$substitutionarray['__MEMBER_NOTE_PUBLIC__'] = '__MEMBER_NOTE_PUBLIC__';
+				$substitutionarray['__MEMBER_NOTE_PRIVATE__'] = '__MEMBER_NOTE_PRIVATE__';*/
 			}
 			if (! empty($conf->projet->enabled))
 			{
 				$substitutionarray['__PROJECT_ID__'] = '__PROJECT_ID__';
 				$substitutionarray['__PROJECT_REF__'] = '__PROJECT_REF__';
 				$substitutionarray['__PROJECT_NAME__'] = '__PROJECT_NAME__';
+				/*$substitutionarray['__PROJECT_NOTE_PUBLIC__'] = '__PROJECT_NOTE_PUBLIC__';
+				$substitutionarray['__PROJECT_NOTE_PRIVATE__'] = '__PROJECT_NOTE_PRIVATE__';*/
 			}
 			if (! empty($conf->contrat->enabled))
 			{
@@ -5982,13 +5988,17 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__REF__'] = $object->ref;
 			$substitutionarray['__REF_CLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
 			$substitutionarray['__REF_SUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
-			$substitutionarray['__SUPPLIER_ORDER_DATE_DELIVERY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, 'day', 0, $outputlangs): '');
+			$substitutionarray['__NOTE_PUBLIC__'] = (isset($object->note_public) ? $object->note_public : null);
+			$substitutionarray['__NOTE_PRIVATE__'] = (isset($object->note_private) ? $object->note_private : null);
+
+			$substitutionarray['__DATE_DELIVERY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, 'day', 0, $outputlangs): '');
+
 			// For backward compatibility
 			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
 			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
-
-			// TODO Remove this
-			$msgishtml = 0;
+			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : null));
+			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
+			$substitutionarray['__SUPPLIER_ORDER_DATE_DELIVERY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, 'day', 0, $outputlangs): '');
 
 			$birthday = dol_print_date($object->birth, 'day');
 
@@ -5996,22 +6006,22 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			{
 				$substitutionarray['__MEMBER_ID__']=$object->id;
 				if (method_exists($object, 'getCivilityLabel')) $substitutionarray['__MEMBER_CIVILITY__'] = $object->getCivilityLabel();
-				$substitutionarray['__MEMBER_FIRSTNAME__']=$msgishtml?dol_htmlentitiesbr($object->firstname):$object->firstname;
-				$substitutionarray['__MEMBER_LASTNAME__']=$msgishtml?dol_htmlentitiesbr($object->lastname):$object->lastname;
-				if (method_exists($object, 'getFullName')) $substitutionarray['__MEMBER_FULLNAME__']=$msgishtml?dol_htmlentitiesbr($object->getFullName($outputlangs)):$object->getFullName($outputlangs);
-				$substitutionarray['__MEMBER_COMPANY__']=$msgishtml?dol_htmlentitiesbr($object->societe):$object->societe;
-				$substitutionarray['__MEMBER_ADDRESS__']=$msgishtml?dol_htmlentitiesbr($object->address):$object->address;
-				$substitutionarray['__MEMBER_ZIP__']=$msgishtml?dol_htmlentitiesbr($object->zip):$object->zip;
-				$substitutionarray['__MEMBER_TOWN__']=$msgishtml?dol_htmlentitiesbr($object->town):$object->town;
-				$substitutionarray['__MEMBER_COUNTRY__']=$msgishtml?dol_htmlentitiesbr($object->country):$object->country;
-				$substitutionarray['__MEMBER_EMAIL__']=$msgishtml?dol_htmlentitiesbr($object->email):$object->email;
-				$substitutionarray['__MEMBER_BIRTH__']=$msgishtml?dol_htmlentitiesbr($birthday):$birthday;
-				$substitutionarray['__MEMBER_PHOTO__']=$msgishtml?dol_htmlentitiesbr($object->photo):$object->photo;
-				$substitutionarray['__MEMBER_LOGIN__']=$msgishtml?dol_htmlentitiesbr($object->login):$object->login;
-				$substitutionarray['__MEMBER_PASSWORD__']=$msgishtml?dol_htmlentitiesbr($object->pass):$object->pass;
-				$substitutionarray['__MEMBER_PHONE__']=$msgishtml?dol_htmlentitiesbr($object->phone):$object->phone;
-				$substitutionarray['__MEMBER_PHONEPRO__']=$msgishtml?dol_htmlentitiesbr($object->phone_perso):$object->phone_perso;
-				$substitutionarray['__MEMBER_PHONEMOBILE__']=$msgishtml?dol_htmlentitiesbr($object->phone_mobile):$object->phone_mobile;
+				$substitutionarray['__MEMBER_FIRSTNAME__']=$object->firstname;
+				$substitutionarray['__MEMBER_LASTNAME__']=$object->lastname;
+				if (method_exists($object, 'getFullName')) $substitutionarray['__MEMBER_FULLNAME__']=$object->getFullName($outputlangs);
+				$substitutionarray['__MEMBER_COMPANY__']=$object->societe;
+				$substitutionarray['__MEMBER_ADDRESS__']=$object->address;
+				$substitutionarray['__MEMBER_ZIP__']=$object->zip;
+				$substitutionarray['__MEMBER_TOWN__']=$object->town;
+				$substitutionarray['__MEMBER_COUNTRY__']=$object->country;
+				$substitutionarray['__MEMBER_EMAIL__']=$object->email;
+				$substitutionarray['__MEMBER_BIRTH__']=$birthday;
+				$substitutionarray['__MEMBER_PHOTO__']=$object->photo;
+				$substitutionarray['__MEMBER_LOGIN__']=$object->login;
+				$substitutionarray['__MEMBER_PASSWORD__']=$object->pass;
+				$substitutionarray['__MEMBER_PHONE__']=$object->phone;
+				$substitutionarray['__MEMBER_PHONEPRO__']=$object->phone_perso;
+				$substitutionarray['__MEMBER_PHONEMOBILE__']=$object->phone_mobile;
 				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE__']       = dol_print_date($object->first_subscription_date, 'dayrfc');
 				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE_START__'] = dol_print_date($object->first_subscription_date_start, 'dayrfc');
 				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE_END__']   = dol_print_date($object->first_subscription_date_end, 'dayrfc');
@@ -8076,25 +8086,24 @@ function roundUpToNextMultiple($n, $x = 5)
  * @param   string  $type       type of badge : Primary Secondary Success Danger Warning Info Light Dark status0 status1 status2 status3 status4 status5 status6 status7 status8 status9
  * @param   string  $mode       default '' , pill, dot
  * @param   string  $url        the url for link
- * @param   array   $params     various params for future : recommended rather than adding more fuction arguments
+ * @param   array   $params     various params for future : recommended rather than adding more fuction arguments. array('attr'=>array('title'=>'abc'))
  * @return  string              Html badge
  */
 function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '', $params = array())
 {
     $attr=array(
-        'class'=>'badge'.(!empty($mode)?' badge-'.$mode:'').(!empty($type)?' badge-'.$type:'')
+    	'class'=>'badge badge-status'.(!empty($mode)?' badge-'.$mode:'').(!empty($type)?' badge-'.$type:'').(empty($params['css'])?'':' '.$params['css'])
     );
 
-    if(empty($html)){
+    if (empty($html)) {
         $html = $label;
     }
 
-    if(!empty($url)){
+    if (!empty($url)) {
         $attr['href'] = $url;
     }
 
-    if($mode==='dot')
-    {
+    if ($mode==='dot') {
         $attr['class'].= ' classfortooltip';
         $attr['title'] = $html;
         $attr['aria-label'] = $label;
@@ -8102,8 +8111,8 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
     }
 
     // Override attr
-    if(!empty($params['attr']) && is_array($params['attr'])){
-        foreach($params['attr']as $key => $value){
+    if (!empty($params['attr']) && is_array($params['attr'])) {
+        foreach($params['attr']as $key => $value) {
             $attr[$key] = $value;
         }
     }
@@ -8114,7 +8123,7 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
     $attr = array_map('dol_escape_htmltag', $attr);
 
     $TCompiledAttr = array();
-    foreach($attr as $key => $value){
+    foreach($attr as $key => $value) {
         $TCompiledAttr[] = $key.'="'.$value.'"';
     }
 
@@ -8143,25 +8152,11 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
     global $conf;
 
     $return = '';
-
     $dolGetBadgeParams = array();
-    if(!empty($params['badgeParams'])){
+
+    if (!empty($params['badgeParams'])){
         $dolGetBadgeParams = $params['badgeParams'];
     }
-
-    // image's filename are still in French
-    $statusImg=array(
-        'status0' => 'statut0'
-        ,'status1' => 'statut1'
-        ,'status2' => 'statut2'
-        ,'status3' => 'statut3'
-        ,'status4' => 'statut4'
-        ,'status5' => 'statut5'
-        ,'status6' => 'statut6'
-        ,'status7' => 'statut7'
-        ,'status8' => 'statut8'
-        ,'status9' => 'statut9'
-    );
 
     // TODO : add a hook
 
@@ -8171,13 +8166,35 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
     elseif ($displayMode == 1) {
         $return = !empty($html)?$html:(!empty($statusLabelShort)?$statusLabelShort:$statusLabel);
     }
-    // use status with images
-    elseif (empty($conf->global->MAIN_STATUS_USES_CSS)){
+    // Use status with images (for backward compatibility)
+    elseif (! empty($conf->global->MAIN_STATUS_USES_IMAGES)) {
         $return = '';
         $htmlLabel      = (in_array($displayMode, array(1,2,5))?'<span class="hideonsmartphone">':'').(!empty($html)?$html:$statusLabel).(in_array($displayMode, array(1,2,5))?'</span>':'');
         $htmlLabelShort = (in_array($displayMode, array(1,2,5))?'<span class="hideonsmartphone">':'').(!empty($html)?$html:(!empty($statusLabelShort)?$statusLabelShort:$statusLabel)).(in_array($displayMode, array(1,2,5))?'</span>':'');
 
-        if(!empty($statusImg[$statusType])){
+        // For small screen, we always use the short label instead of long label.
+        if (! empty($conf->dol_optimize_smallscreen))
+        {
+        	if ($displayMode == 0) $displayMode = 1;
+        	elseif ($displayMode == 4) $displayMode = 2;
+        	elseif ($displayMode == 6) $displayMode = 5;
+        }
+
+        // For backward compatibility. Image's filename are still in French, so we use this array to convert
+        $statusImg=array(
+        	'status0' => 'statut0'
+        	,'status1' => 'statut1'
+        	,'status2' => 'statut2'
+        	,'status3' => 'statut3'
+        	,'status4' => 'statut4'
+        	,'status5' => 'statut5'
+        	,'status6' => 'statut6'
+        	,'status7' => 'statut7'
+        	,'status8' => 'statut8'
+        	,'status9' => 'statut9'
+        );
+
+        if (!empty($statusImg[$statusType])){
             $htmlImg = img_picto($statusLabel, $statusImg[$statusType]);
         }else{
             $htmlImg = img_picto($statusLabel, $statusType);
@@ -8200,7 +8217,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         }
     }
     // Use new badge
-    elseif (!empty($conf->global->MAIN_STATUS_USES_CSS) && !empty($displayMode)) {
+    elseif (empty($conf->global->MAIN_STATUS_USES_IMAGES) && !empty($displayMode)) {
         $statusLabelShort = !empty($statusLabelShort)?$statusLabelShort:$statusLabel;
 
         if ($displayMode == 3) {

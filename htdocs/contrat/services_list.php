@@ -90,7 +90,7 @@ $search_array_options=$extrafields->getOptionalsFromPost($object->table_element,
 
 // Security check
 $contratid = GETPOST('id', 'int');
-if (! empty($user->societe_id)) $socid=$user->societe_id;
+if (! empty($user->socid)) $socid=$user->socid;
 $result = restrictedArea($user, 'contrat', $contratid);
 
 if ($search_status != '')
@@ -705,17 +705,18 @@ while ($i < min($num, $limit))
 	// Status
 	if (! empty($arrayfields['status']['checked']))
 	{
-	   print '<td class="right">';
-	   if ($obj->cstatut == 0)	// If contract is draft, we say line is also draft
-	   {
-		   print $contractstatic->LibStatut(0, 5);
-	   }
-	   else
-	   {
-		   print $staticcontratligne->LibStatut($obj->statut, 5, ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < $now)?1:0);
-	   }
-	   print '</td>';
-       if (! $i) $totalarray['nbfield']++;
+	    print '<td class="right">';
+	    if ($obj->cstatut == 0)
+	    {
+			// If contract is draft, we say line is also draft
+		    print $contractstatic->LibStatut(0, 5);
+	    }
+	    else
+	    {
+		    print $staticcontratligne->LibStatut($obj->statut, 5, ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < $now)?1:0);
+	    }
+	    print '</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
 	// Action column
 	print '<td class="nowrap center">';

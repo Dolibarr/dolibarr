@@ -130,7 +130,7 @@ if (! empty($conf->accounting->enabled)) $modecompta='BOOKKEEPING';
 if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta", 'alpha');
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 	accessforbidden();
 if (! $user->rights->accounting->comptarapport->lire)
 	accessforbidden();

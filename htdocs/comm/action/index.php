@@ -67,7 +67,7 @@ if (! $sortfield) $sortfield="a.datec";
 
 // Security check
 $socid = GETPOST("search_socid", "int")?GETPOST("search_socid", "int"):GETPOST("socid", "int");
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'agenda', 0, '', 'myactions');
 if ($socid < 0) $socid='';
 
@@ -519,14 +519,14 @@ if (! empty($actioncode))
         elseif ($actioncode == 'AC_ALL_AUTO') $sql.= " AND ca.type = 'systemauto'";
         else
         {
-		if (is_array($actioncode))
-		{
+            if (is_array($actioncode))
+            {
 	        	$sql.=" AND ca.code IN ('".implode("','", $actioncode)."')";
-		}
-		else
-		{
+            }
+            else
+            {
 	        	$sql.=" AND ca.code IN ('".implode("','", explode(',', $actioncode))."')";
-		}
+            }
         }
     }
 }
@@ -614,7 +614,7 @@ if ($resql)
         $event->type_label=$obj->type_label;
         $event->type_color=$obj->type_color;
 
-        $event->libelle=$obj->label;
+        $event->libelle=$obj->label;				// deprecated
         $event->label=$obj->label;
         $event->percentage=$obj->percent;
         $event->authorid=$obj->fk_user_author;		// user id of creator
@@ -720,7 +720,7 @@ if ($showbirthday)
             $event->datep=dol_mktime(0, 0, 0, $datearray['mon'], $datearray['mday'], $year, true);    // For full day events, date are also GMT but they wont but converted during output
             $event->datef=$event->datep;
             $event->type_code='BIRTHDAY';
-            $event->libelle=$langs->trans("Birthday").' '.dolGetFirstLastname($obj->firstname, $obj->lastname);
+            $event->label=$langs->trans("Birthday").' '.dolGetFirstLastname($obj->firstname, $obj->lastname);
             $event->percentage=100;
             $event->fulldayevent=1;
 
@@ -949,9 +949,9 @@ if (count($listofextcals))
                     $event->datef=$dateend+$usertime;
                     $event->type_code="ICALEVENT";
 
-                    if($icalevent['SUMMARY']) $event->libelle=$icalevent['SUMMARY'];
-                    elseif($icalevent['DESCRIPTION']) $event->libelle=dol_nl2br($icalevent['DESCRIPTION'], 1);
-                    else $event->libelle = $langs->trans("ExtSiteNoLabel");
+                    if($icalevent['SUMMARY']) $event->label=$icalevent['SUMMARY'];
+                    elseif($icalevent['DESCRIPTION']) $event->label=dol_nl2br($icalevent['DESCRIPTION'], 1);
+                    else $event->label = $langs->trans("ExtSiteNoLabel");
 
                     $event->date_start_in_calendar=$event->datep;
 
@@ -1554,7 +1554,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
                         // Show title
                         $titletoshow = $daterange;
-                        $titletoshow.=($titletoshow?' ':'').$event->libelle;
+                        $titletoshow.=($titletoshow?' ':'').($event->label?$event->label:$event->libelle);
 
                         if ($event->type_code == 'ICALEVENT') print $titletoshow;
                         else
@@ -1729,11 +1729,24 @@ function dol_color_minus($color, $minus, $minusunit = 16)
  */
 function sort_events_by_date($a, $b)
 {
-	if($a->datep != $b->datep)
-	{
-		return $a->datep - $b->datep;
-	}
+    if($a->datep != $b->datep)
+    {
+        return $a->datep - $b->datep;
+    }
 
-	// If both events have the same start time, longest first
-	return $b->datef - $a->datef;
+    // If both events have the same start time, longest first
+
+    if(! is_numeric($b->datef))
+    {
+        // when event B have no end timestamp, event B should sort be before event A (All day events on top)
+        return 1;
+    }
+
+    if(! is_numeric($a->datef))
+    {
+        // when event A have no end timestamp , event A should sort be before event B (All day events on top)
+        return -1;
+    }
+
+    return $b->datef - $a->datef;
 }

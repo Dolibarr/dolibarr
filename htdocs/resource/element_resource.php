@@ -357,7 +357,7 @@ else
 			}
 			$morehtmlref.='</div>';
 
-			dol_banner_tab($act, 'element_id', $linkback, ($user->societe_id?0:1), 'id', 'ref', $morehtmlref, '&element='.$element, 0, '', '');
+			dol_banner_tab($act, 'element_id', $linkback, ($user->socid?0:1), 'id', 'ref', $morehtmlref, '&element='.$element, 0, '', '');
 
 			print '<div class="fichecenter">';
 
@@ -453,7 +453,7 @@ else
 
 			dol_fiche_head($head, 'resources', $langs->trans("ThirdParty"), -1, 'company');
 
-			dol_banner_tab($socstatic, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom', '', '&element='.$element);
+			dol_banner_tab($socstatic, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom', '', '&element='.$element);
 
 			print '<div class="fichecenter">';
 
@@ -557,7 +557,7 @@ else
 			dol_fiche_head($head, 'resources', $titre, -1, $picto);
 
             $shownav = 1;
-            if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+            if ($user->socid && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 			dol_banner_tab($product, 'ref', '', $shownav, 'ref', 'ref', '', '&element='.$element);
 
 			dol_fiche_end();

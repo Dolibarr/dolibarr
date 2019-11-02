@@ -52,7 +52,7 @@ $langs->loadLangs(array("interventions","admin","compta","bills"));
 // Security check
 $id=(GETPOST('fichinterid', 'int')?GETPOST('fichinterid', 'int'):GETPOST('id', 'int'));
 $action=GETPOST('action', 'alpha');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $objecttype = 'fichinter_rec';
 if ($action == "create" || $action == "add") $objecttype = '';
 $result = restrictedArea($user, 'ficheinter', $id, $objecttype);
@@ -158,12 +158,10 @@ if ($action == 'add') {
 	// on récupère les enregistrements
 	$object->fetch($id);
 
-
 	// on transfert les données de l'un vers l'autre
 	if ($object->socid > 0) {
 		$newinter->socid=$object->socid;
-		$newinter->fk_projet=$object->fk_projet;
-		$newinter->fk_project=$object->fk_projet;
+		$newinter->fk_project=$object->fk_project;
 		$newinter->fk_contrat=$object->fk_contrat;
 	} else {
 		$newinter->socid=GETPOST("socid");

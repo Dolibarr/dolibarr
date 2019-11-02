@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 $langs->loadLangs(array('ftp', 'companies', 'other'));
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'ftp', '');
 
 // Get parameters
@@ -359,7 +359,7 @@ llxHeader();
 // Add logic to shoow/hide buttons
 if ($conf->use_javascript_ajax)
 {
-?>
+	?>
 <script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery("#delconst").hide();
@@ -381,7 +381,7 @@ jQuery(document).ready(function() {
 
 </script>
 
-<?php
+	<?php
 }
 
 $form=new Form($db);

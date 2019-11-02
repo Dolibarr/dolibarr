@@ -73,7 +73,9 @@ $entitytoicon = array(
     'expensereport_line'=> 'trip',
 	'holiday'      => 'holiday',
     'contract_line' => 'contract',
-    'translation'  => 'generic'
+    'translation'  => 'generic',
+    'bomm'         => 'bom',
+    'bomline'      => 'bom'
 );
 
 // Translation code
@@ -120,7 +122,9 @@ $entitytolang = array(
 	'holiday'      => 'TitreRequestCP',
 	'contract'     => 'Contract',
     'contract_line'=> 'ContractLine',
-    'translation'  => 'Translation'
+    'translation'  => 'Translation',
+    'bom'          => 'BOM',
+    'bomline'      => 'BOMLine'
 );
 
 $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();
@@ -1198,7 +1202,7 @@ if ($step == 5 && $datatoexport)
     			}
     		}
     	}
-    	print '<td>'.(! empty($list)?$list:$langs->trans("None")).'</td>';
+    	print '<td>'.(! empty($list)?$list:'<span class="opacitymedium">'.$langs->trans("None").'</span>').'</td>';
     	print '</tr>';
     }
 

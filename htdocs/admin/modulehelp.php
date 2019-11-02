@@ -129,7 +129,7 @@ foreach ($modulesdir as $dir)
 								if (preg_match('/deprecated/', $objMod->version) && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL >= 0))) $modulequalified=0;
 
 		    					// We discard modules according to property disabled
-		    					if (! empty($objMod->hidden)) $modulequalified=0;
+		    					//if (! empty($objMod->hidden)) $modulequalified=0;
 
 		    					if ($modulequalified > 0)
 		    					{
@@ -214,15 +214,17 @@ asort($orders);
 //var_dump($modules);
 
 
+unset($objMod);
 $i=0;
 foreach($orders as $tmpkey => $tmpvalue)
 {
-    $objMod  = $modules[$tmpkey];
-    if ($objMod->numero == $id)
+    $tmpMod  = $modules[$tmpkey];
+    if ($tmpMod->numero == $id)
     {
         $key = $i;
         $modName = $filename[$tmpkey];
         $dirofmodule = $dirmod[$tmpkey];
+        $objMod = $tmpMod;
         break;
     }
     $i++;
@@ -233,25 +235,7 @@ $familyposition=$tab[0]; $familykey=$tab[1]; $module_position=$tab[2]; $numero=$
 
 
 
-$h = 0;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$id.'&mode=desc';
-$head[$h][1] = $langs->trans("Description");
-$head[$h][2] = 'desc';
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$id.'&mode=feature';
-$head[$h][1] = $langs->trans("TechnicalServicesProvided");
-$head[$h][2] = 'feature';
-$h++;
-
-if ($objMod->isCoreOrExternalModule() == 'external')
-{
-    $head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$id.'&mode=changelog';
-    $head[$h][1] = $langs->trans("ChangeLog");
-    $head[$h][2] = 'changelog';
-    $h++;
-}
+$head = modulehelp_prepare_head($objMod);
 
 // Check filters
 $modulename=$objMod->getName();

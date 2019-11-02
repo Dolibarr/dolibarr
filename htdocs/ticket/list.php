@@ -246,7 +246,7 @@ foreach($search as $key => $val)
 if ($search_all) $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
 if ($search_societe)     $sql .= natural_search('s.nom', $search_societe);
 if ($search_fk_project) $sql.= natural_search('fk_project', $search_fk_project, 2);
-if (! $user->societe_id && ($mode == "mine" || (!$user->admin && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY))) {
+if (! $user->socid && ($mode == "mine" || (!$user->admin && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY))) {
     $sql.= " AND (t.fk_user_assign = ".$user->id;
     if (empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) $sql.=" OR t.fk_user_create = ".$user->id;
     $sql.=")";
@@ -319,7 +319,7 @@ if ($socid && ! $projectid && ! $project_ref && $user->rights->societe->lire) {
 
         dol_fiche_head($head, 'ticket', $langs->trans("ThirdParty"), -1, 'company');
 
-        dol_banner_tab($socstat, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom');
+        dol_banner_tab($socstat, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
 
         print '<div class="fichecenter">';
 

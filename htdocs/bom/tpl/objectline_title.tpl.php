@@ -59,6 +59,13 @@ if ($conf->global->PRODUCT_USE_UNITS)
 	print '<td class="linecoluseunit left">'.$langs->trans('Unit').'</td>';
 }
 
+// Qty frozen
+print '<td class="linecolqty right">'.$form->textwithpicto($langs->trans('QtyFrozen'), $langs->trans("QuantityConsumedInvariable")).'</td>';
+
+// Disable stock change
+print '<td class="linecolqty right">'.$form->textwithpicto($langs->trans('DisableStockChange'), $langs->trans('DisableStockChangeHelp')).'</td>';
+
+// Efficiency
 print '<td class="linecollost right">'.$form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')).'</td>';
 
 print '<td class="linecoledit"></td>';  // No width to allow autodim

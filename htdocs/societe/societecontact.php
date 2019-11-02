@@ -51,7 +51,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'societe', $id, '');
 
 $object = new Societe($db);
@@ -166,7 +166,7 @@ if ($id > 0 || ! empty($ref))
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-        dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+        dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom');
 
     	print '<div class="fichecenter">';
 
@@ -301,6 +301,8 @@ if ($id > 0 || ! empty($ref))
 						// Type
 						$membertypestatic->id=$objp->type_id;
 						$membertypestatic->libelle=$objp->type;
+						$membertypestatic->label=$objp->type;
+
 						print '<td class="nowrap">';
 						print $membertypestatic->getNomUrl(1, 32);
 						print '</td>';

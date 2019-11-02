@@ -78,7 +78,7 @@ $confirm=GETPOST('confirm', 'alpha');
 $socid=GETPOST('socid', 'int');
 $duration_value = GETPOST('duration_value', 'int');
 $duration_unit = GETPOST('duration_unit', 'alpha');
-if (! empty($user->societe_id)) $socid=$user->societe_id;
+if (! empty($user->socid)) $socid=$user->socid;
 
 $object = new Product($db);
 $object->type = $type;	// so test later to fill $usercancxxx is correct
@@ -1120,7 +1120,7 @@ else
 	            // Net Measure
 	            print '<tr><td>'.$langs->trans("NetMeasure").'</td><td colspan="3">';
 	            print '<input name="net_measure" size="4" value="'.GETPOST('net_measure').'">';
-	            print $formproduct->selectMeasuringUnits("net_measure_units", '', GETPOSTISSET('net_measure_units')?GETPOST('net_measure_units', 'alpha'):(empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?0:$conf->global->MAIN_WEIGHT_DEFAULT_UNIT), '');
+	            print $formproduct->selectMeasuringUnits("net_measure_units", '', GETPOSTISSET('net_measure_units')?GETPOST('net_measure_units', 'alpha'):(empty($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?0:$conf->global->MAIN_WEIGHT_DEFAULT_UNIT), 0, 0);
 	            print '</td></tr>';
             }
         }
@@ -1503,7 +1503,7 @@ else
                 	// Net Measure
 	                print '<tr><td>'.$langs->trans("NetMeasure").'</td><td colspan="3">';
 	                print '<input name="net_measure" size="5" value="'.$object->net_measure.'"> ';
-	                print $formproduct->selectMeasuringUnits($object->net_measure_units, '');
+	                print $formproduct->selectMeasuringUnits($object->net_measure_units, '', 0, 0, 0);
 	                print '</td></tr>';
                 }
             }
@@ -1650,7 +1650,7 @@ else
             $object->next_prev_filter=" fk_product_type = ".$object->type;
 
             $shownav = 1;
-            if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+            if ($user->socid && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
             dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
@@ -1836,7 +1836,7 @@ else
                 print '</td>';
             }
 
-            //Parent product.
+            // Parent product.
             if (!empty($conf->variants->enabled) && ($object->isProduct() || $object->isService())) {
                 $combination = new ProductCombination($db);
 
@@ -1885,7 +1885,7 @@ else
                 print '<tr><td class="titlefield">'.$langs->trans("Weight").'</td><td colspan="2">';
                 if ($object->weight != '')
                 {
-                	print $object->weight." ".measuring_units_string(0, "weight", $object->weight_units);
+                	print $object->weight." ".measuringUnitString(0, "weight", $object->weight_units);
                 }
                 else
                 {
@@ -1902,7 +1902,7 @@ else
                         print $object->length;
                         if ($object->width) print " x ".$object->width;
                         if ($object->height) print " x ".$object->height;
-                        print ' '.measuring_units_string(0, "size", $object->length_units);
+                        print ' '.measuringUnitString(0, "size", $object->length_units);
                     }
                     else
                     {
@@ -1916,7 +1916,7 @@ else
                     print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="2">';
                     if ($object->surface != '')
                     {
-                    	print $object->surface." ".measuring_units_string(0, "surface", $object->surface_units);
+                    	print $object->surface." ".measuringUnitString(0, "surface", $object->surface_units);
                     }
                     else
                     {
@@ -1930,7 +1930,7 @@ else
                     print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="2">';
                     if ($object->volume != '')
                     {
-                    	print $object->volume." ".measuring_units_string(0, "volume", $object->volume_units);
+                    	print $object->volume." ".measuringUnitString(0, "volume", $object->volume_units);
                     }
                     else
                     {
@@ -1945,7 +1945,7 @@ else
                 	print '<tr><td class="titlefield">'.$langs->trans("NetMeasure").'</td><td colspan="2">';
                 	if ($object->net_measure != '')
                 	{
-                		print $object->net_measure." ".measuring_units_string(0, "weight", $object->net_measure_units);
+                		print $object->net_measure." ".measuringUnitString(0, "weight", $object->net_measure_units);
                 	}
                 	else
                 	{

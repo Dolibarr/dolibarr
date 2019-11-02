@@ -411,34 +411,34 @@ if (preg_match('/fr/i', $conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 	print '<tr class="oddeven">';
 	print '<td width="80%">' . $langs->trans("DONATION_ART200") . '</td>';
 	print '<td class="center">';
-if ($conf->use_javascript_ajax) {
-  print ajax_constantonoff('DONATION_ART200');
-} else {
-  $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-  print $form->selectarray("DONATION_ART200", $arrval, $conf->global->DONATION_ART200);
-}
+    if ($conf->use_javascript_ajax) {
+        print ajax_constantonoff('DONATION_ART200');
+    } else {
+        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+        print $form->selectarray("DONATION_ART200", $arrval, $conf->global->DONATION_ART200);
+    }
 	print '</td></tr>';
 
 	print '<tr class="oddeven">';
 	print '<td width="80%">' . $langs->trans("DONATION_ART238") . '</td>';
 	print '<td class="center">';
-if ($conf->use_javascript_ajax) {
-  print ajax_constantonoff('DONATION_ART238');
-} else {
-  $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-  print $form->selectarray("DONATION_ART238", $arrval, $conf->global->DONATION_ART238);
-}
+    if ($conf->use_javascript_ajax) {
+        print ajax_constantonoff('DONATION_ART238');
+    } else {
+        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+        print $form->selectarray("DONATION_ART238", $arrval, $conf->global->DONATION_ART238);
+    }
 	print '</td></tr>';
 
 	print '<tr class="oddeven">';
 	print '<td width="80%">' . $langs->trans("DONATION_ART885") . '</td>';
 	print '<td class="center">';
-if ($conf->use_javascript_ajax) {
-  print ajax_constantonoff('DONATION_ART885');
-} else {
-  $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-  print $form->selectarray("DONATION_ART885", $arrval, $conf->global->DONATION_ART885);
-}
+    if ($conf->use_javascript_ajax) {
+        print ajax_constantonoff('DONATION_ART885');
+    } else {
+        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+        print $form->selectarray("DONATION_ART885", $arrval, $conf->global->DONATION_ART885);
+    }
 	print '</td></tr>';
 	print "</table>\n";
 }

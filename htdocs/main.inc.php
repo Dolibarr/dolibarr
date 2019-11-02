@@ -1020,7 +1020,7 @@ $heightforframes=50;
 // Init menu manager
 if (! defined('NOREQUIREMENU'))
 {
-	if (empty($user->societe_id))    // If internal user or not defined
+	if (empty($user->socid))    // If internal user or not defined
 	{
 		$conf->standard_menu=(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?(empty($conf->global->MAIN_MENU_STANDARD)?'eldy_menu.php':$conf->global->MAIN_MENU_STANDARD):$conf->global->MAIN_MENU_STANDARD_FORCED);
 	}
@@ -1048,7 +1048,7 @@ if (! defined('NOREQUIREMENU'))
 			include_once DOL_DOCUMENT_ROOT."/core/menus/standard/".$file_menu;
 		}
 	}
-	$menumanager = new MenuManager($db, empty($user->societe_id)?0:1);
+	$menumanager = new MenuManager($db, empty($user->socid)?0:1);
 	$menumanager->loadMenu();
 }
 
@@ -1277,7 +1277,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		if (GETPOSTISSET('dol_optimize_smallscreen'))   { $themeparam.='&amp;dol_optimize_smallscreen='.GETPOST('dol_optimize_smallscreen', 'int'); }
 		if (GETPOSTISSET('dol_no_mouse_hover'))         { $themeparam.='&amp;dol_no_mouse_hover='.GETPOST('dol_no_mouse_hover', 'int'); }
 		if (GETPOSTISSET('dol_use_jmobile'))            { $themeparam.='&amp;dol_use_jmobile='.GETPOST('dol_use_jmobile', 'int'); $conf->dol_use_jmobile=GETPOST('dol_use_jmobile', 'int'); }
-		if (GETPOSTISSET('THEME_AGRESSIVITY_RATIO'))    { $themeparam.='&amp;THEME_AGRESSIVITY_RATIO='.GETPOST('THEME_AGRESSIVITY_RATIO', 'int'); }
+		if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO'))    { $themeparam.='&amp;THEME_AGRESSIVENESS_RATIO='.GETPOST('THEME_AGRESSIVENESS_RATIO', 'int'); }
 
 		if (! defined('DISABLE_JQUERY') && ! $disablejs && $conf->use_javascript_ajax)
 		{
@@ -1984,7 +1984,7 @@ function top_menu_bookmark()
  */
 function top_menu_search()
 {
-    global $langs, $conf, $db, $user;
+    global $langs, $conf, $db, $user, $hookmanager;
 
 	$html = '';
 

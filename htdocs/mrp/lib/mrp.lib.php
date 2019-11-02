@@ -35,7 +35,7 @@ function mrpAdminPrepareHead()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/mrp/admin/setup.php", 1);
+	$head[$h][0] = dol_buildpath("/admin/mrp.php", 1);
 	$head[$h][1] = $langs->trans("Settings");
 	$head[$h][2] = 'settings';
 	$h++;

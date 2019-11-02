@@ -23,7 +23,7 @@
 /**
  * \file       htdocs/core/modules/bom/mod_bom_advanced.php
  * \ingroup    bom
- * \brief      File containing class for numbering model of bom advanced
+ * \brief      File containing class for numbering model of BOMs advanced
  */
 
 require_once DOL_DOCUMENT_ROOT .'/core/modules/bom/modules_bom.php';

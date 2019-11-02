@@ -60,7 +60,10 @@ class mod_codeproduct_elephant extends ModeleProductCode
      */
 	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
 
-	public $code_auto;                     // Numerotation automatique
+	/**
+	 * @var int Automatic numbering
+	 */
+	public $code_auto;
 
 	public $searchcode; // String de recherche
 

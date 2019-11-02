@@ -86,12 +86,14 @@ class box_contacts extends ModeleBoxes
 			$sql.= ", sp.address, sp.zip, sp.town, sp.phone, sp.phone_perso, sp.phone_mobile, sp.email as spemail";
 			$sql.= ", s.nom as socname, s.name_alias, s.email as semail";
 			$sql.= ", s.client, s.fournisseur, s.code_client, s.code_fournisseur";
+			$sql.= ", co.label as country, co.code as country_code";
 			$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON sp.fk_pays = co.rowid";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON sp.fk_soc = s.rowid";
-			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			if (! $user->rights->societe->client->voir && ! $user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= " WHERE sp.entity IN (".getEntity('socpeople').")";
-			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " AND sp.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-			if ($user->societe_id) $sql.= " AND sp.fk_soc = ".$user->societe_id;
+			if (! $user->rights->societe->client->voir && ! $user->socid) $sql.= " AND sp.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+			if ($user->socid) $sql.= " AND sp.fk_soc = ".$user->socid;
 			$sql.= " ORDER BY sp.tms DESC";
 			$sql.= $this->db->plimit($max, 0);
 
@@ -121,6 +123,8 @@ class box_contacts extends ModeleBoxes
 					$contactstatic->address = $objp->address;
 					$contactstatic->zip = $objp->zip;
 					$contactstatic->town = $objp->town;
+					$contactstatic->country = $objp->country;
+					$contactstatic->country_code = $objp->country_code;
 
 					$societestatic->id = $objp->fk_soc;
 					$societestatic->name = $objp->socname;

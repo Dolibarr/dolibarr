@@ -104,39 +104,39 @@ a.info-box-text{ text-decoration: none;}
 }
 <?php
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-if (! isset($conf->global->THEME_AGRESSIVITY_RATIO)) $conf->global->THEME_AGRESSIVITY_RATIO=-100;
-if (GETPOSTISSET('THEME_AGRESSIVITY_RATIO')) $conf->global->THEME_AGRESSIVITY_RATIO=GETPOST('THEME_AGRESSIVITY_RATIO', 'int');
+if (! isset($conf->global->THEME_AGRESSIVENESS_RATIO)) $conf->global->THEME_AGRESSIVENESS_RATIO=-100;
+if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENESS_RATIO=GETPOST('THEME_AGRESSIVENESS_RATIO', 'int');
 ?>
 .bg-infoxbox-project i.fa{
-	color: <?php print colorAgressivity('#605ca8', $conf->global->THEME_AGRESSIVITY_RATIO); ?> !important;
+	color: <?php print colorAgressiveness('#605ca8', $conf->global->THEME_AGRESSIVENESS_RATIO); ?> !important;
 }
 .bg-infoxbox-action i.fa{
-	color: <?php print colorAgressivity('#d84b80', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
+	color: <?php print colorAgressiveness('#d84b80', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
 .bg-infoxbox-propal i.fa,
 .bg-infoxbox-facture i.fa,
 .bg-infoxbox-commande i.fa{
-	color: <?php print colorAgressivity('#abb87b', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
+	color: <?php print colorAgressiveness('#abb87b', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
 .bg-infoxbox-supplier_proposal i.fa,
 .bg-infoxbox-invoice_supplier i.fa,
 .bg-infoxbox-order_supplier i.fa{
-	color: <?php print colorAgressivity('#40b0cf', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
+	color: <?php print colorAgressiveness('#40b0cf', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
 .bg-infoxbox-contrat i.fa{
-	color: <?php print colorAgressivity('#20a68a', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
+	color: <?php print colorAgressiveness('#20a68a', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
 .bg-infoxbox-bank_account i.fa{
-	color: <?php print colorAgressivity('#e39c42', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
+	color: <?php print colorAgressiveness('#e39c42', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
 .bg-infoxbox-adherent i.fa{
-	color: <?php print colorAgressivity('#f39c12', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
+	color: <?php print colorAgressiveness('#f39c12', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
 .bg-infoxbox-expensereport i.fa{
-	color: <?php print colorAgressivity('#755114', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
+	color: <?php print colorAgressiveness('#755114', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
 .bg-infoxbox-holiday i.fa{
-	color: <?php print colorAgressivity('#755114', $conf->global->THEME_AGRESSIVITY_RATIO); ?>  !important;
+	color: <?php print colorAgressiveness('#755114', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
 
 

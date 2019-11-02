@@ -338,6 +338,7 @@ class AgendaEvents extends DolibarrApi
         // phpcs:enable
         $object = parent::_cleanObjectDatas($object);
 
+        unset($object->note);		// alreaydy into note_private
         unset($object->usermod);
         unset($object->libelle);
         unset($object->context);
@@ -350,6 +351,11 @@ class AgendaEvents extends DolibarrApi
         unset($object->origin_id);
         unset($object->ref_ext);
         unset($object->statut);
+        unset($object->state_code);
+        unset($object->state_id);
+        unset($object->state);
+        unset($object->region);
+        unset($object->region_code);
         unset($object->country);
         unset($object->country_id);
         unset($object->country_code);
@@ -377,6 +383,9 @@ class AgendaEvents extends DolibarrApi
         unset($object->civility_id);
         unset($object->contact);
         unset($object->societe);
+
+        unset($object->actions);
+        unset($object->lines);
 
         return $object;
     }

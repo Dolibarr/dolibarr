@@ -70,8 +70,8 @@ if (empty($action) && empty($id) && empty($ref)) $action='view';
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once.
 
 // Security check - Protection if external user
-//if ($user->societe_id > 0) access_forbidden();
-//if ($user->societe_id > 0) $socid = $user->societe_id;
+//if ($user->socid > 0) access_forbidden();
+//if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->statut == BillOfMaterials::STATUS_DRAFT) ? 1 : 0);
 //$result = restrictedArea($user, 'bom', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
@@ -125,9 +125,11 @@ if (empty($reshook))
 		$error = 0;
 
 		// Set if we used free entry or predefined product
-		$idprod=GETPOST('idprod', 'int');
-		$qty=GETPOST('qty', 'int');
-		$efficiency=GETPOST('efficiency', 'int');
+		$idprod = GETPOST('idprod', 'int');
+		$qty = GETPOST('qty', 'int');
+		$qty_frozen = GETPOST('qty_frozen', 'int');
+		$disable_stock_change = GETPOST('disable_stock_change', 'int');
+		$efficiency = GETPOST('efficiency', 'int');
 
 		if ($qty == '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
@@ -138,17 +140,27 @@ if (empty($reshook))
 			$error++;
 		}
 
-		$bomline = new BOMLine($db);
-		$bomline->fk_bom = $id;
-		$bomline->fk_product = $idprod;
-		$bomline->qty = $qty;
-		$bomline->efficiency = $efficiency;
-
-		$result = $bomline->create($user);
-		if ($result <= 0)
+		if (! $error)
 		{
-			setEventMessages($bomline->error, $bomline->errors, 'errors');
-			$action = '';
+    		$bomline = new BOMLine($db);
+    		$bomline->fk_bom = $id;
+    		$bomline->fk_product = $idprod;
+    		$bomline->qty = $qty;
+    		$bomline->qty_frozen = $qty_frozen;
+    		$bomline->disable_stock_change = $disable_stock_change;
+    		$bomline->efficiency = $efficiency;
+
+    		$result = $bomline->create($user);
+    		if ($result <= 0)
+    		{
+    			setEventMessages($bomline->error, $bomline->errors, 'errors');
+    			$action = '';
+    		}
+    		else
+    		{
+    		    unset($_POST['qty_frozen']);
+    		    unset($_POST['disable_stock_change']);
+    		}
 		}
 	}
 
@@ -160,6 +172,8 @@ if (empty($reshook))
 
 		// Set if we used free entry or predefined product
 		$qty=GETPOST('qty', 'int');
+		$qty_frozen = GETPOST('qty_frozen', 'int');
+		$disable_stock_change = GETPOST('disable_stock_change', 'int');
 		$efficiency=GETPOST('efficiency', 'int');
 
 		if ($qty == '') {
@@ -170,6 +184,8 @@ if (empty($reshook))
 		$bomline = new BOMLine($db);
 		$bomline->fetch($lineid);
 		$bomline->qty = $qty;
+		$bomline->qty_frozen = $qty_frozen;
+		$bomline->disable_stock_change = $disable_stock_change;
 		$bomline->efficiency = $efficiency;
 
 		$result = $bomline->update($user);
@@ -177,6 +193,11 @@ if (empty($reshook))
 		{
 			setEventMessages($bomline->error, $bomline->errors, 'errors');
 			$action = '';
+		}
+		else
+		{
+		    unset($_POST['qty_frozen']);
+		    unset($_POST['disable_stock_change']);
 		}
 	}
 }
@@ -293,12 +314,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action == 'deleteline')
 	{
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
-	}
-	$formconfirm = '';
-
-	// Confirmation to delete
-	if ($action == 'delete') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 1);
 	}
 
 	// Confirmation of validation
@@ -647,14 +662,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    print '<a name="builddoc"></a>'; // ancre
 
 	    // Documents
-	    /*$objref = dol_sanitizeFileName($object->ref);
-	    $relativepath = $comref . '/' . $comref . '.pdf';
+	    $objref = dol_sanitizeFileName($object->ref);
+	    $relativepath = $objref . '/' . $objref . '.pdf';
 	    $filedir = $conf->bom->dir_output . '/' . $objref;
 	    $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
 	    $genallowed = $user->rights->bom->read;	// If you can read, you can build the PDF to read content
-	    $delallowed = $user->rights->bom->create;	// If you can create/edit, you can remove a file on card
-	    print $formfile->showdocuments('bom', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
-		*/
+	    $delallowed = $user->rights->bom->write;	// If you can create/edit, you can remove a file on card
+	    print $formfile->showdocuments('bom', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $mysoc->default_lang);
 
 	    // Show links to link elements
 	    $linktoelem = $form->showLinkToObjectBlock($object, null, array('bom'));
@@ -678,17 +692,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	//Select mail models is same action as presend
-	/*
-	 if (GETPOST('modelselected')) $action = 'presend';
+    if (GETPOST('modelselected')) $action = 'presend';
 
-	 // Presend form
-	 $modelmail='inventory';
-	 $defaulttopic='InformationMessage';
-	 $diroutput = $conf->product->dir_output.'/inventory';
-	 $trackid = 'stockinv'.$object->id;
+	// Presend form
+	$modelmail='bom';
+	$defaulttopic='InformationMessage';
+	$diroutput = $conf->bom->dir_output;
+	$trackid = 'bom'.$object->id;
 
-	 include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
-	 */
+	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
 
 // End of page

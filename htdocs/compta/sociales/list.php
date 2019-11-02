@@ -42,7 +42,7 @@ $contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'sclist';
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 $search_ref = GETPOST('search_ref', 'int');
@@ -110,8 +110,8 @@ $chargesociale_static=new ChargeSociales($db);
 llxHeader('', $langs->trans("SocialContributions"));
 
 $sql = "SELECT cs.rowid as id, cs.fk_type as type, ";
-$sql.= " cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode,";
-$sql.= " c.libelle as type_lib,";
+$sql.= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode,";
+$sql.= " c.libelle as type_label,";
 $sql.= " SUM(pc.amount) as alreadypayed";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
 $sql.= " ".MAIN_DB_PREFIX."chargesociales as cs";
@@ -261,8 +261,8 @@ if ($resql)
 
 			$chargesociale_static->id=$obj->id;
 			$chargesociale_static->ref=$obj->id;
-			$chargesociale_static->lib=$obj->libelle;
-			$chargesociale_static->type_libelle=$obj->type_lib;
+			$chargesociale_static->label=$obj->label;
+			$chargesociale_static->type_label=$obj->type_label;
 
 			print '<tr class="oddeven">';
 
@@ -272,10 +272,10 @@ if ($resql)
 			print '</td>';
 
 			// Label
-			print '<td>'.dol_trunc($obj->libelle, 42).'</td>';
+			print '<td>'.dol_trunc($obj->label, 42).'</td>';
 
 			// Type
-			print '<td>'.$obj->type_lib.'</td>';
+			print '<td>'.$obj->type_label.'</td>';
 
 			// Date end period
 			print '<td align="center">';

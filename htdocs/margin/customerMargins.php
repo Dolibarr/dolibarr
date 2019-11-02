@@ -36,7 +36,7 @@ $socid = GETPOST('socid', 'int');
 $TSelectedProducts = GETPOST('products', 'array');
 $TSelectedCats = GETPOST('categories', 'array');
 
-if (! empty($user->societe_id)) $socid=$user->societe_id;
+if (! empty($user->socid)) $socid=$user->socid;
 $result = restrictedArea($user, 'societe', '', '');
 $result = restrictedArea($user, 'margins');
 
@@ -360,7 +360,7 @@ if ($result)
 		print "<td class=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
 	print "</tr>\n";
 
-  print "</table>";
+    print "</table>";
 }
 else
 {

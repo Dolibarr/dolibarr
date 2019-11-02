@@ -51,7 +51,10 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
      */
 	public $version = 'dolibarr';	    	// 'development', 'experimental', 'dolibarr'
 
-	public $code_auto;                     // Numerotation automatique
+	/**
+	 * @var int Automatic numbering
+	 */
+	public $code_auto;
 
 	public $prefixcustomer='CU';
 

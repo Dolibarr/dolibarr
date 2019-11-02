@@ -91,11 +91,18 @@ class Product extends CommonObject
     public $label;
 
     /**
-     * Product descripion
+     * Product description
      *
      * @var string
      */
     public $description;
+
+	/**
+     * Product other fields PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION
+     *
+     * @var string
+     */
+    public $other;
 
     /**
      * Check TYPE constants
@@ -256,17 +263,22 @@ class Product extends CommonObject
      */
     public $url;
 
-    //! Unites de mesure
-    public $net_measure;
-    public $net_measure_units;
+    //! Metric of products
     public $weight;
     public $weight_units;
     public $length;
     public $length_units;
+    public $width;
+    public $width_units;
+    public $height;
+    public $height_units;
     public $surface;
     public $surface_units;
     public $volume;
     public $volume_units;
+
+    public $net_measure;
+    public $net_measure_units;
 
     public $accountancy_code_sell;
     public $accountancy_code_sell_intra;
@@ -313,7 +325,12 @@ class Product extends CommonObject
     public $imgWidth;
     public $imgHeight;
 
+    /**
+     * @var integer|string date_creation
+     */
     public $date_creation;
+
+
     public $date_modification;
 
     //! Id du fournisseur
@@ -2075,14 +2092,17 @@ class Product extends CommonObject
         }
 
         $resql = $this->db->query($sql);
-        if ($resql ) {
+        if ($resql) {
+
+        	unset($this->oldcopy);
+
             if ($this->db->num_rows($resql) > 0) {
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id = $obj->rowid;
                 $this->ref                            = $obj->ref;
                 $this->ref_ext                        = $obj->ref_ext;
-                $this->label                        = $obj->label;
+                $this->label                          = $obj->label;
                 $this->description                    = $obj->description;
                 $this->url                            = $obj->url;
                 $this->note_private                    = $obj->note_private;
@@ -4197,22 +4217,22 @@ class Product extends CommonObject
         if ($this->type == Product::TYPE_PRODUCT)
         {
             if ($this->weight) {
-                $label.="<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuring_units_string($this->weight_units, "weight");
+            	$label.="<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuringUnitString(0, "weight", $this->weight_units);
             }
             if ($this->length) {
-                $label.="<br><b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuring_units_string($this->length_units, 'size');
+            	$label.="<br><b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuringUnitString(0, 'size', $this->length_units);
             }
             if ($this->width) {
-                $label.="<br><b>".$langs->trans("Width").'</b>: '.$this->width.' '.measuring_units_string($this->width_units, 'size');
+            	$label.="<br><b>".$langs->trans("Width").'</b>: '.$this->width.' '.measuringUnitString(0, 'size', $this->width_units);
             }
             if ($this->height) {
-                $label.="<br><b>".$langs->trans("Height").'</b>: '.$this->height.' '.measuring_units_string($this->height_units, 'size');
+            	$label.="<br><b>".$langs->trans("Height").'</b>: '.$this->height.' '.measuringUnitString(0, 'size', $this->height_units);
             }
             if ($this->surface) {
-                $label.="<br><b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuring_units_string($this->surface_units, 'surface');
+            	$label.="<br><b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuringUnitString(0, 'surface', $this->surface_units);
             }
             if ($this->volume) {
-                $label.="<br><b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuring_units_string($this->volume_units, 'volume');
+            	$label.="<br><b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuringUnitString(0, 'volume', $this->volume_units);
             }
         }
 
@@ -4368,17 +4388,17 @@ class Product extends CommonObject
     /**
      *    Return label of a given status
      *
-     * @param  int $status Statut
-     * @param  int $mode   0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-     * @param  int $type   0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
-     * @return string              Label of status
+     * @param  int 		$status 	Statut
+     * @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+     * @param  int 		$type   	0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
+     * @return string              	Label of status
      */
     public function LibStatut($status, $mode = 0, $type = 0)
     {
         // phpcs:enable
         global $conf, $langs;
 
-        $labelstatut = $labelstatutShort = '';
+        $labelStatus = $labelStatusShort = '';
 
         $langs->load('products');
         if (! empty($conf->productbatch->enabled)) { $langs->load("productbatch");
@@ -4408,51 +4428,50 @@ class Product extends CommonObject
 
         $statuttrans=empty($status)?'status5':'status4';
 
-        if($status == 0){
+        if ($status == 0) {
             // $type   0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
-            if($type==0){
-                $labelstatut = $langs->trans('ProductStatusNotOnSellShort');
-                $labelstatutShort = $langs->trans('ProductStatusNotOnSell');
+            if($type==0) {
+                $labelStatus = $langs->trans('ProductStatusNotOnSellShort');
+                $labelStatusShort = $langs->trans('ProductStatusNotOnSell');
             }
-            elseif($type == 1){
-                $labelstatut = $langs->trans('ProductStatusNotOnBuyShort');
-                $labelstatutShort = $langs->trans('ProductStatusNotOnBuy');
+            elseif($type == 1) {
+                $labelStatus = $langs->trans('ProductStatusNotOnBuyShort');
+                $labelStatusShort = $langs->trans('ProductStatusNotOnBuy');
             }
-            elseif($type == 2){
-                $labelstatut = $langs->trans('ProductStatusNotOnBatch');
-                $labelstatutShort = $langs->trans('ProductStatusNotOnBatchShort');
+            elseif($type == 2) {
+                $labelStatus = $langs->trans('ProductStatusNotOnBatch');
+                $labelStatusShort = $langs->trans('ProductStatusNotOnBatchShort');
             }
         }
-        elseif($status == 1){
+        elseif ($status == 1) {
             // $type   0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
-            if($type==0){
-                $labelstatut = $langs->trans('ProductStatusOnSellShort');
-                $labelstatutShort = $langs->trans('ProductStatusOnSell');
+            if ($type==0) {
+                $labelStatus = $langs->trans('ProductStatusOnSellShort');
+                $labelStatusShort = $langs->trans('ProductStatusOnSell');
             }
-            elseif($type == 1){
-                $labelstatut = $langs->trans('ProductStatusOnBuyShort');
-                $labelstatutShort = $langs->trans('ProductStatusOnBuy');
+            elseif ($type == 1) {
+                $labelStatus = $langs->trans('ProductStatusOnBuyShort');
+                $labelStatusShort = $langs->trans('ProductStatusOnBuy');
             }
-            elseif($type == 2){
-                $labelstatut = $langs->trans('ProductStatusOnBatch');
-                $labelstatutShort = $langs->trans('ProductStatusOnBatchShort');
+            elseif ($type == 2) {
+                $labelStatus = $langs->trans('ProductStatusOnBatch');
+                $labelStatusShort = $langs->trans('ProductStatusOnBatchShort');
             }
         }
 
 
-        if($mode>6){
+        if ($mode > 6) {
             return dolGetStatus($langs->trans('Unknown'), '', '', 'status0', 0);
-        }
-        else{
-            return dolGetStatus($labelstatut, $labelstatutShort, '', $statuttrans, $mode);
+        } else {
+            return dolGetStatus($labelStatus, $labelStatusShort, '', $statuttrans, $mode);
         }
     }
 
 
     /**
-     *  Retourne le libelle du finished du produit
+     *  Retour label of nature of product
      *
-     * @return string        Libelle
+     * @return string        Label
      */
     public function getLibFinished()
     {

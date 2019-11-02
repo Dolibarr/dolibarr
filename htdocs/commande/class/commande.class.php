@@ -53,19 +53,22 @@ class Commande extends CommonOrder
 	public $table_element='commande';
 
 	/**
-	 * @var int    Name of subtable line
+	 * @var string Name of subtable line
 	 */
 	public $table_element_line = 'commandedet';
 
+	/**
+	 * @var string Name of class line
+	 */
 	public $class_element_line = 'OrderLine';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var string Field name with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_commande';
 
 	/**
-	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 * @var string String with name of icon for commande class. Here is object_order.png
 	 */
 	public $picto = 'order';
 
@@ -87,13 +90,23 @@ class Commande extends CommonOrder
 	protected $table_ref_field = 'ref';
 
 	/**
-	 * Client ID
-	 * @var int
+	 * @var int Thirparty ID
 	 */
 	public $socid;
 
+	/**
+	 * @var string Thirparty ref of order
+	 */
 	public $ref_client;
+
+    /**
+	 * @var string Internal ref for order
+	 */
 	public $ref_int;
+
+    /**
+	 * @var int Contact ID
+	 */
 	public $contactid;
 
 	/**
@@ -103,10 +116,9 @@ class Commande extends CommonOrder
 	public $statut;
 
 	/**
-	 * Billed
-	 * @var int
+	 * @var int Status Billed or not
 	 */
-	public $billed;		// billed or not
+	public $billed;
 
     /**
      * @var int Draft Status of the order
@@ -115,25 +127,22 @@ class Commande extends CommonOrder
     public $cond_reglement_code;
 
 	/**
-     * @var int ID
+     * @var int bank account ID
      */
 	public $fk_account;
 
 	/**
-	 * It holds the label of the payment mode. Use it in case translation cannot be found.
-	 * @var string
+	 * @var string It holds the label of the payment mode. Use it in case translation cannot be found.
 	 */
 	public $mode_reglement;
 
 	/**
-	 * Payment mode id
-	 * @var int
+	 * @var int Payment mode id
 	 */
 	public $mode_reglement_id;
 
 	/**
-	 * Payment mode code
-	 * @var string
+	 * @var string Payment mode code
 	 */
 	public $mode_reglement_code;
 
@@ -157,9 +166,13 @@ class Commande extends CommonOrder
 
 	public $demand_reason_id;   // Source reason. Why we receive order (after a phone campaign, ...)
 	public $demand_reason_code;
-	public $date;				// Date commande
+	/**
+     * @var int Date of order
+	 */
+	public $date;
 
 	/**
+     * @var int Date of order
 	 * @deprecated
 	 * @see $date
 	 */
@@ -182,7 +195,14 @@ class Commande extends CommonOrder
 
 	public $linked_objects=array();
 
+	/**
+     * @var int User author ID
+     */
 	public $user_author_id;
+
+    /**
+     * @var int User validator ID
+     */
 	public $user_valid;
 
 	/**
@@ -192,7 +212,7 @@ class Commande extends CommonOrder
 
 	// Multicurrency
 	/**
-     * @var int ID
+     * @var int Currency ID
      */
 	public $fk_multicurrency;
 
@@ -202,6 +222,9 @@ class Commande extends CommonOrder
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
 
+    /**
+     * @var Commande clone of order object
+     */
 	public $oldcopy;
 
 	//! key of module source when order generated from a dedicated module ('cashdesk', 'takepos', ...)
@@ -3393,7 +3416,7 @@ class Commande extends CommonOrder
 
 		$sql = "SELECT c.rowid, c.date_creation as datec, c.date_commande, c.date_livraison as delivery_date, c.fk_statut, c.total_ht";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
-		if (!$user->rights->societe->client->voir && !$user->societe_id)
+		if (!$user->rights->societe->client->voir && !$user->socid)
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;
@@ -3402,7 +3425,7 @@ class Commande extends CommonOrder
 		$sql.= $clause." c.entity IN (".getEntity('commande').")";
 		//$sql.= " AND c.fk_statut IN (1,2,3) AND c.facture = 0";
 		$sql.= " AND ((c.fk_statut IN (".self::STATUS_VALIDATED.",".self::STATUS_SHIPMENTONPROCESS.")) OR (c.fk_statut = ".self::STATUS_CLOSED." AND c.facture = 0))";    // If status is 2 and facture=1, it must be selected
-		if ($user->societe_id) $sql.=" AND c.fk_soc = ".$user->societe_id;
+		if ($user->socid) $sql.=" AND c.fk_soc = ".$user->socid;
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -3469,13 +3492,13 @@ class Commande extends CommonOrder
 	/**
 	 *	Return label of status
 	 *
-	 *	@param		int		$statut      	  Id statut
+	 *	@param		int		$status      	  Id status
 	 *  @param      int		$billed    		  If invoiced
 	 *	@param      int		$mode        	  0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @param      int     $donotshowbilled  Do not show billed status after order status
 	 *  @return     string					  Label of status
 	 */
-	public function LibStatut($statut, $billed, $mode, $donotshowbilled = 0)
+	public function LibStatut($status, $billed, $mode, $donotshowbilled = 0)
 	{
         // phpcs:enable
 		global $langs, $conf;
@@ -3483,49 +3506,49 @@ class Commande extends CommonOrder
 		$billedtext = '';
 		if (empty($donotshowbilled)) $billedtext .= ($billed?' - '.$langs->trans("Billed"):'');
 
-		if ($statut==self::STATUS_CANCELED){
-		    $labelstatut = $langs->trans('StatusOrderCanceled');
-		    $labelstatutShort = $langs->trans('StatusOrderCanceledShort');
+		if ($status==self::STATUS_CANCELED){
+		    $labelStatus = $langs->trans('StatusOrderCanceled');
+		    $labelStatusShort = $langs->trans('StatusOrderCanceledShort');
 		    $statusType='status5';
 		}
-		elseif ($statut==self::STATUS_DRAFT){
-		    $labelstatut = $langs->trans('StatusOrderDraft');
-		    $labelstatutShort = $langs->trans('StatusOrderDraftShort');
+		elseif ($status==self::STATUS_DRAFT){
+		    $labelStatus = $langs->trans('StatusOrderDraft');
+		    $labelStatusShort = $langs->trans('StatusOrderDraftShort');
 		    $statusType='status0';
 		}
-		elseif ($statut==self::STATUS_VALIDATED){
-		    $labelstatut = $langs->trans('StatusOrderValidated').$billedtext;
-		    $labelstatutShort = $langs->trans('StatusOrderValidatedShort').$billedtext;
+		elseif ($status==self::STATUS_VALIDATED){
+		    $labelStatus = $langs->trans('StatusOrderValidated').$billedtext;
+		    $labelStatusShort = $langs->trans('StatusOrderValidatedShort').$billedtext;
 		    $statusType='status1';
 		}
-		elseif ($statut==self::STATUS_SHIPMENTONPROCESS){
-		    $labelstatut = $langs->trans('StatusOrderSentShort').$billedtext;
-		    $labelstatutShort = $langs->trans('StatusOrderSentShort').$billedtext;
+		elseif ($status==self::STATUS_SHIPMENTONPROCESS){
+		    $labelStatus = $langs->trans('StatusOrderSentShort').$billedtext;
+		    $labelStatusShort = $langs->trans('StatusOrderSentShort').$billedtext;
 		    $statusType='status3';
 		}
-		elseif ($statut==self::STATUS_CLOSED && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))){
-		    $labelstatut = $langs->trans('StatusOrderToBill');
-		    $labelstatutShort = $langs->trans('StatusOrderToBillShort');
+		elseif ($status==self::STATUS_CLOSED && (! $billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))){
+		    $labelStatus = $langs->trans('StatusOrderToBill');
+		    $labelStatusShort = $langs->trans('StatusOrderToBillShort');
 		    $statusType='status4';
 		}
-		elseif ($statut==self::STATUS_CLOSED && ($billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))){
-		    $labelstatut = $langs->trans('StatusOrderProcessed').$billedtext;
-		    $labelstatutShort = $langs->trans('StatusOrderProcessed').$billedtext;
+		elseif ($status==self::STATUS_CLOSED && ($billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))){
+		    $labelStatus = $langs->trans('StatusOrderProcessed').$billedtext;
+		    $labelStatusShort = $langs->trans('StatusOrderProcessed').$billedtext;
 		    $statusType='status6';
 		}
-		elseif ($statut==self::STATUS_CLOSED && (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))){
-		    $labelstatut = $langs->trans('StatusOrderDelivered');
-		    $labelstatutShort = $langs->trans('StatusOrderDelivered');
+		elseif ($status==self::STATUS_CLOSED && (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))){
+		    $labelStatus = $langs->trans('StatusOrderDelivered');
+		    $labelStatusShort = $langs->trans('StatusOrderDelivered');
 		    $statusType='status6';
 		}
 		else{
-		    $labelstatut = $langs->trans('Unknown');
-		    $labelstatutShort = '';
+		    $labelStatus = $langs->trans('Unknown');
+		    $labelStatusShort = '';
 		    $statusType='';
 		    $mode = 0;
 		}
 
-		return dolGetStatus($labelstatut, $labelstatutShort, '', $statusType, $mode);
+		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
 	}
 
 
@@ -3774,7 +3797,7 @@ class Commande extends CommonOrder
 		$sql = "SELECT count(co.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande as co";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON co.fk_soc = s.rowid";
-		if (!$user->rights->societe->client->voir && !$user->societe_id)
+		if (!$user->rights->societe->client->voir && !$user->socid)
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;

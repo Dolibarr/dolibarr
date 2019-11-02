@@ -1169,123 +1169,123 @@ class Ticket extends CommonObject
     /**
      *    Return status label of object
      *
-     *    @param      string 	$statut      id statut
+     *    @param      string 	$status      Id status
      *    @param      int		$mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
      *    @return     string     			 Label
      */
-    public function LibStatut($statut, $mode = 0)
+    public function LibStatut($status, $mode = 0)
     {
         // phpcs:enable
         global $langs;
 
         if ($mode == 0) {
-            return $langs->trans($this->statuts[$statut]);
+            return $langs->trans($this->statuts[$status]);
         }
         elseif ($mode == 1) {
-            return $langs->trans($this->statuts_short[$statut]);
+            return $langs->trans($this->statuts_short[$status]);
         }
         elseif ($mode == 2) {
-            if ($statut == self::STATUS_NOT_READ) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut0.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
+            if ($status == self::STATUS_NOT_READ) {
+                return img_picto($langs->trans($this->statuts_short[$status]), 'statut0.png@ticket') . ' ' . $langs->trans($this->statuts_short[$status]);
             }
-            elseif ($statut == self::STATUS_READ) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut1.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
+            elseif ($status == self::STATUS_READ) {
+                return img_picto($langs->trans($this->statuts_short[$status]), 'statut1.png@ticket') . ' ' . $langs->trans($this->statuts_short[$status]);
             }
-            elseif ($statut == self::STATUS_ASSIGNED) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut2.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
+            elseif ($status == self::STATUS_ASSIGNED) {
+                return img_picto($langs->trans($this->statuts_short[$status]), 'statut2.png@ticket') . ' ' . $langs->trans($this->statuts_short[$status]);
             }
-            elseif ($statut == self::STATUS_IN_PROGRESS) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut3.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
+            elseif ($status == self::STATUS_IN_PROGRESS) {
+                return img_picto($langs->trans($this->statuts_short[$status]), 'statut3.png@ticket') . ' ' . $langs->trans($this->statuts_short[$status]);
             }
-            elseif ($statut == self::STATUS_NEED_MORE_INFO) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut5.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
+            elseif ($status == self::STATUS_NEED_MORE_INFO) {
+                return img_picto($langs->trans($this->statuts_short[$status]), 'statut5.png@ticket') . ' ' . $langs->trans($this->statuts_short[$status]);
             }
-            elseif ($statut == self::STATUS_WAITING) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut6.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
+            elseif ($status == self::STATUS_WAITING) {
+                return img_picto($langs->trans($this->statuts_short[$status]), 'statut6.png@ticket') . ' ' . $langs->trans($this->statuts_short[$status]);
             }
-            elseif ($statut == self::STATUS_CLOSED) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut8.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
+            elseif ($status == self::STATUS_CLOSED) {
+                return img_picto($langs->trans($this->statuts_short[$status]), 'statut8.png@ticket') . ' ' . $langs->trans($this->statuts_short[$status]);
             }
-            elseif ($statut == self::STATUS_CANCELED) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut9.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
+            elseif ($status == self::STATUS_CANCELED) {
+                return img_picto($langs->trans($this->statuts_short[$status]), 'statut9.png@ticket') . ' ' . $langs->trans($this->statuts_short[$status]);
             }
         }
         elseif ($mode == 3) {
-            if ($statut == self::STATUS_NOT_READ) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut0.png@ticket');
+            if ($status == self::STATUS_NOT_READ) {
+                return img_picto($langs->trans($this->statuts_short[$status]), 'statut0.png@ticket');
             }
-            elseif ($statut == self::STATUS_READ) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut1.png@ticket');
+            elseif ($status == self::STATUS_READ) {
+                return img_picto($langs->trans($this->statuts_short[$status]), 'statut1.png@ticket');
             }
-            elseif ($statut == self::STATUS_ASSIGNED) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut2.png@ticket');
+            elseif ($status == self::STATUS_ASSIGNED) {
+                return img_picto($langs->trans($this->statuts_short[$status]), 'statut2.png@ticket');
             }
-            elseif ($statut == self::STATUS_IN_PROGRESS) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut3.png@ticket');
+            elseif ($status == self::STATUS_IN_PROGRESS) {
+                return img_picto($langs->trans($this->statuts_short[$status]), 'statut3.png@ticket');
             }
-            elseif ($statut == self::STATUS_NEED_MORE_INFO) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut5.png@ticket');
+            elseif ($status == self::STATUS_NEED_MORE_INFO) {
+                return img_picto($langs->trans($this->statuts_short[$status]), 'statut5.png@ticket');
             }
-            elseif ($statut == self::STATUS_WAITING) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut6.png@ticket');
+            elseif ($status == self::STATUS_WAITING) {
+                return img_picto($langs->trans($this->statuts_short[$status]), 'statut6.png@ticket');
             }
-            elseif ($statut == self::STATUS_CLOSED) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut8.png@ticket');
+            elseif ($status == self::STATUS_CLOSED) {
+                return img_picto($langs->trans($this->statuts_short[$status]), 'statut8.png@ticket');
             }
-            elseif ($statut == self::STATUS_CANCELED) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut9.png@ticket');
+            elseif ($status == self::STATUS_CANCELED) {
+                return img_picto($langs->trans($this->statuts_short[$status]), 'statut9.png@ticket');
             }
         }
         elseif ($mode == 4) {
-            if ($statut == self::STATUS_NOT_READ) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut0.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
+            if ($status == self::STATUS_NOT_READ) {
+                return img_picto($langs->trans($this->statuts_short[$status]), 'statut0.png@ticket') . ' ' . $langs->trans($this->statuts_short[$status]);
             }
-            elseif ($statut == self::STATUS_READ) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut1.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
+            elseif ($status == self::STATUS_READ) {
+                return img_picto($langs->trans($this->statuts_short[$status]), 'statut1.png@ticket') . ' ' . $langs->trans($this->statuts_short[$status]);
             }
-            elseif ($statut == self::STATUS_ASSIGNED) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut2.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
+            elseif ($status == self::STATUS_ASSIGNED) {
+                return img_picto($langs->trans($this->statuts_short[$status]), 'statut2.png@ticket') . ' ' . $langs->trans($this->statuts_short[$status]);
             }
-            elseif ($statut == self::STATUS_IN_PROGRESS) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut3.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
+            elseif ($status == self::STATUS_IN_PROGRESS) {
+                return img_picto($langs->trans($this->statuts_short[$status]), 'statut3.png@ticket') . ' ' . $langs->trans($this->statuts_short[$status]);
             }
-            elseif ($statut == self::STATUS_NEED_MORE_INFO) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut5.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
+            elseif ($status == self::STATUS_NEED_MORE_INFO) {
+                return img_picto($langs->trans($this->statuts_short[$status]), 'statut5.png@ticket') . ' ' . $langs->trans($this->statuts_short[$status]);
             }
-            elseif ($statut == self::STATUS_WAITING) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut6.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
+            elseif ($status == self::STATUS_WAITING) {
+                return img_picto($langs->trans($this->statuts_short[$status]), 'statut6.png@ticket') . ' ' . $langs->trans($this->statuts_short[$status]);
             }
-            elseif ($statut == self::STATUS_CLOSED) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut8.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
+            elseif ($status == self::STATUS_CLOSED) {
+                return img_picto($langs->trans($this->statuts_short[$status]), 'statut8.png@ticket') . ' ' . $langs->trans($this->statuts_short[$status]);
             }
-            elseif ($statut == self::STATUS_CANCELED) {
-                return img_picto($langs->trans($this->statuts_short[$statut]), 'statut9.png@ticket') . ' ' . $langs->trans($this->statuts_short[$statut]);
+            elseif ($status == self::STATUS_CANCELED) {
+                return img_picto($langs->trans($this->statuts_short[$status]), 'statut9.png@ticket') . ' ' . $langs->trans($this->statuts_short[$status]);
             }
         }
         elseif ($mode == 5 || $mode == 6) {
-            if ($statut == self::STATUS_NOT_READ) {
-                return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut0.png@ticket');
+            if ($status == self::STATUS_NOT_READ) {
+                return $langs->trans($this->statuts_short[$status]) . ' ' . img_picto($langs->trans($this->statuts_short[$status]), 'statut0.png@ticket');
             }
-            elseif ($statut == self::STATUS_READ) {
-                return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut1.png@ticket');
+            elseif ($status == self::STATUS_READ) {
+                return $langs->trans($this->statuts_short[$status]) . ' ' . img_picto($langs->trans($this->statuts_short[$status]), 'statut1.png@ticket');
             }
-            elseif ($statut == self::STATUS_ASSIGNED) {
-                return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut2.png@ticket');
+            elseif ($status == self::STATUS_ASSIGNED) {
+                return $langs->trans($this->statuts_short[$status]) . ' ' . img_picto($langs->trans($this->statuts_short[$status]), 'statut2.png@ticket');
             }
-            elseif ($statut == self::STATUS_IN_PROGRESS) {
-                return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut3.png@ticket');
+            elseif ($status == self::STATUS_IN_PROGRESS) {
+                return $langs->trans($this->statuts_short[$status]) . ' ' . img_picto($langs->trans($this->statuts_short[$status]), 'statut3.png@ticket');
             }
-            elseif ($statut == self::STATUS_NEED_MORE_INFO) {
-                return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut5.png@ticket');
+            elseif ($status == self::STATUS_NEED_MORE_INFO) {
+                return $langs->trans($this->statuts_short[$status]) . ' ' . img_picto($langs->trans($this->statuts_short[$status]), 'statut5.png@ticket');
             }
-            elseif ($statut == self::STATUS_WAITING) {
-                return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut6.png@ticket');
+            elseif ($status == self::STATUS_WAITING) {
+                return $langs->trans($this->statuts_short[$status]) . ' ' . img_picto($langs->trans($this->statuts_short[$status]), 'statut6.png@ticket');
             }
-            elseif ($statut == self::STATUS_CLOSED) {
-                return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut8.png@ticket');
+            elseif ($status == self::STATUS_CLOSED) {
+                return $langs->trans($this->statuts_short[$status]) . ' ' . img_picto($langs->trans($this->statuts_short[$status]), 'statut8.png@ticket');
             }
-            elseif ($statut == self::STATUS_CANCELED) {
-                return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_short[$statut]), 'statut9.png@ticket');
+            elseif ($status == self::STATUS_CANCELED) {
+                return $langs->trans($this->statuts_short[$status]) . ' ' . img_picto($langs->trans($this->statuts_short[$status]), 'statut9.png@ticket');
             }
         }
     }
@@ -2228,13 +2228,13 @@ class Ticket extends CommonObject
      *    Get array of all contacts for a ticket
      *    Override method of file commonobject.class.php to add phone number
      *
-     *    @param	int    	$statut 	Status of lines to get (-1=all)
+     *    @param	int    	$status 	Status of lines to get (-1=all)
      *    @param	string 	$source 	Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
      *    @param	int    	$list   	0:Return array contains all properties, 1:Return array contains just id
      *    @param    string  $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
      *    @return 	array          		Array of contacts
      */
-    public function listeContact($statut = -1, $source = 'external', $list = 0, $code = '')
+    public function listeContact($status = -1, $source = 'external', $list = 0, $code = '')
     {
         global $langs;
 
@@ -2258,7 +2258,7 @@ class Ticket extends CommonObject
             $sql .= ", t.phone as phone, t.phone_mobile as phone_mobile, t.phone_perso as phone_perso";
         }
 
-        $sql .= ", tc.source, tc.element, tc.code, tc.libelle";
+        $sql .= ", tc.source, tc.element, tc.code, tc.libelle as type_contact_label";
         $sql .= " FROM " . MAIN_DB_PREFIX . "c_type_contact tc";
         $sql .= ", " . MAIN_DB_PREFIX . "element_contact ec";
         if ($source == 'internal') {
@@ -2281,8 +2281,8 @@ class Ticket extends CommonObject
         }
 
         $sql .= " AND tc.active=1";
-        if ($statut >= 0) {
-            $sql .= " AND ec.statut = '" . $statut . "'";
+        if ($status >= 0) {
+            $sql .= " AND ec.statut = '" . $status . "'";
         }
 
         $sql .= " ORDER BY t.lastname ASC";
@@ -2296,7 +2296,7 @@ class Ticket extends CommonObject
 
                 if (!$list) {
                     $transkey = "TypeContact_" . $obj->element . "_" . $obj->source . "_" . $obj->code;
-                    $libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->libelle);
+                    $libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_contact_label);
                     $tab[$i] = array(
                             'source' => $obj->source,
                             'socid' => $obj->socid,

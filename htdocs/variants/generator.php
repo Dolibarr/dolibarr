@@ -159,7 +159,7 @@ if (! empty($id) || ! empty($ref)) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 		$object->next_prev_filter=" fk_product_type = ".$object->type;
 
-		dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', '', '', '', 0, '', '', 1);
+		dol_banner_tab($object, 'ref', $linkback, ($user->socid?0:1), 'ref', '', '', '', 0, '', '', 1);
 
 		dol_fiche_end();
 	}
@@ -179,7 +179,7 @@ if (! empty($id) || ! empty($ref)) {
 	<script>
 
 		dictionary_attr = <?php echo json_encode($dictionary_attr) ?>;
-		weight_units = '<?php echo measuring_units_string($object->weight_units, 'weight') ?>';
+		weight_units = '<?php echo measuringUnitString(0, 'weight', $object->weight_units) ?>';
 		attr_selected = {};
 		percentage_variation = jQuery('input#price_var_percent').prop('checked');
 
@@ -378,8 +378,8 @@ if (! empty($id) || ! empty($ref)) {
 
 	<?php
 
-  // End of page
-  llxFooter();
+    // End of page
+    llxFooter();
 }
 
 $db->close();

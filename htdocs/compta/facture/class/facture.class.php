@@ -862,10 +862,10 @@ class Facture extends CommonInvoice
 
 			        if (! $error && ! $notrigger)
 			        {
-			           // Call trigger
-			           $result=$this->call_trigger('BILL_CREATE', $user);
-			           if ($result < 0) $error++;
-			           // End call triggers
+			            // Call trigger
+			            $result=$this->call_trigger('BILL_CREATE', $user);
+			            if ($result < 0) $error++;
+			            // End call triggers
 			        }
 
 					if (! $error)
@@ -1127,7 +1127,7 @@ class Facture extends CommonInvoice
 		{
 			$line = new FactureLigne($this->db);
 
-			$line->libelle			= $object->lines[$i]->libelle;
+			$line->libelle			= $object->lines[$i]->libelle;		// deprecated
 			$line->label			= $object->lines[$i]->label;
 			$line->desc				= $object->lines[$i]->desc;
 			$line->subprice			= $object->lines[$i]->subprice;
@@ -1551,7 +1551,7 @@ class Facture extends CommonInvoice
 				$line->product_type     = $objp->product_type;		// Type of line
 				$line->ref              = $objp->product_ref;		// Ref product
 				$line->product_ref      = $objp->product_ref;		// Ref product
-				$line->libelle          = $objp->product_label;		// TODO deprecated
+				$line->libelle          = $objp->product_label;		// deprecated
 				$line->product_label	= $objp->product_label;		// Label product
 				$line->product_desc     = $objp->product_desc;		// Description product
 				$line->fk_product_type  = $objp->fk_product_type;	// Type of product
@@ -1605,9 +1605,9 @@ class Facture extends CommonInvoice
 
 				// multilangs
         		if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($objp->fk_product) && ! empty($loadalsotranslation)) {
-        		$line = new Product($this->db);
-        		$line->fetch($objp->fk_product);
-        		$line->getMultiLangs();
+        		    $line = new Product($this->db);
+        		    $line->fetch($objp->fk_product);
+        		    $line->getMultiLangs();
         		}
 
 				$this->lines[$i] = $line;
@@ -2545,7 +2545,7 @@ class Facture extends CommonInvoice
     				if (empty($final)) $this->situation_final = 0;
     				else $this->situation_final = 1;
 
-				$this->setFinal($user);
+				    $this->setFinal($user);
                 }
 			}
 		}
@@ -2587,10 +2587,12 @@ class Facture extends CommonInvoice
 			$next_invoice->brouillon = 1;
 			foreach ($next_invoice->lines as $line)
 			{
-				$result = $next_invoice->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent,
-														$line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type,
-														$line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent,
-														$line->fk_unit);
+				$result = $next_invoice->updateline(
+					$line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent,
+					$line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type,
+					$line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent,
+					$line->fk_unit
+				);
 
 				if ($result < 0)
 				{
@@ -3959,7 +3961,7 @@ class Facture extends CommonInvoice
 
 		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin,f.fk_statut, f.total";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
-		if (!$user->rights->societe->client->voir && !$user->societe_id)
+		if (!$user->rights->societe->client->voir && !$user->socid)
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON f.fk_soc = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;
@@ -3968,7 +3970,7 @@ class Facture extends CommonInvoice
 		$sql.= $clause." f.paye=0";
 		$sql.= " AND f.entity IN (".getEntity('invoice').")";
 		$sql.= " AND f.fk_statut = ".self::STATUS_VALIDATED;
-		if ($user->societe_id) $sql.= " AND f.fk_soc = ".$user->societe_id;
+		if ($user->socid) $sql.= " AND f.fk_soc = ".$user->socid;
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -4209,7 +4211,7 @@ class Facture extends CommonInvoice
 		$sql = "SELECT count(f.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
-		if (!$user->rights->societe->client->voir && !$user->societe_id)
+		if (!$user->rights->societe->client->voir && !$user->socid)
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;

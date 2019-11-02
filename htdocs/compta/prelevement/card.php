@@ -37,7 +37,7 @@ if (!$user->rights->prelevement->bons->lire)
 accessforbidden();
 
 // Security check
-if ($user->societe_id > 0) accessforbidden();
+if ($user->socid > 0) accessforbidden();
 
 // Get supervariables
 $action = GETPOST('action', 'alpha');
@@ -271,7 +271,7 @@ if ($id > 0 || $ref)
 		print '<tr class="oddeven"><td>'.$langs->trans("TransMetod").'</td><td>';
 		print $form->selectarray("methode", $object->methodes_trans);
 		print '</td></tr>';
-/*			print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
+        /*print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
 		print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 		print '<input class="flat" type="file" name="userfile"><br>';
 		print '</td></tr>';*/

@@ -115,7 +115,7 @@ $boxstatFromHook = '';
 // Load translation files required by page
 $langs->loadLangs(array('commercial', 'bills', 'orders', 'contracts'));
 
-if (empty($user->societe_id) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
+if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 {
     $object=new stdClass();
     $parameters=array();
@@ -283,26 +283,27 @@ if (empty($user->societe_id) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTAT
 			DOL_URL_ROOT.'/don/list.php?leftmenu=donations'
 	    );
 	    // Translation lang files
-	    $langfile=array("users",
-	                    "companies",
-	                    "prospects",
-	                    "suppliers",
-	                    "companies",
-	                    "members",
-	                    "products",
-	                    "products",
-	                    "propal",
-	                    "orders",
-            	        "bills",
-						"contracts",
-						"interventions",
-	                    "bills",
-	                    "bills",
-	                    "supplier_proposal",
-	                    "projects",
-						"trips",
-                        "holiday",
-						"donations"
+	    $langfile=array(
+            "users",
+            "companies",
+            "prospects",
+            "suppliers",
+            "companies",
+            "members",
+            "products",
+            "products",
+            "propal",
+            "orders",
+            "bills",
+			"contracts",
+			"interventions",
+            "bills",
+            "bills",
+            "supplier_proposal",
+	        "projects",
+			"trips",
+            "holiday",
+			"donations",
 	    );
 
 
@@ -353,34 +354,34 @@ if (empty($user->societe_id) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTAT
 if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
     $showweather = (empty($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_METEO == 2) ? 1 : 0;
 
-//Array that contains all WorkboardResponse classes to process them
+    //Array that contains all WorkboardResponse classes to process them
     $dashboardlines = array();
 
-// Do not include sections without management permission
+    // Do not include sections without management permission
     require_once DOL_DOCUMENT_ROOT . '/core/class/workboardresponse.class.php';
 
-// Number of actions to do (late)
+    // Number of actions to do (late)
     if (!empty($conf->agenda->enabled) && $user->rights->agenda->myactions->read) {
         include_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
         $board = new ActionComm($db);
         $dashboardlines[$board->element] = $board->load_board($user);
     }
 
-// Number of project opened
+    // Number of project opened
     if (!empty($conf->projet->enabled) && $user->rights->projet->lire) {
         include_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
         $board = new Project($db);
         $dashboardlines[$board->element] = $board->load_board($user);
     }
 
-// Number of tasks to do (late)
+    // Number of tasks to do (late)
     if (!empty($conf->projet->enabled) && empty($conf->global->PROJECT_HIDE_TASKS) && $user->rights->projet->lire) {
         include_once DOL_DOCUMENT_ROOT . '/projet/class/task.class.php';
         $board = new Task($db);
         $dashboardlines[$board->element] = $board->load_board($user);
     }
 
-// Number of commercial proposals opened (expired)
+    // Number of commercial proposals opened (expired)
     if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
         include_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
         $board = new Propal($db);
@@ -389,7 +390,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
         $dashboardlines[$board->element . '_signed'] = $board->load_board($user, "signed");
     }
 
-// Number of commercial proposals opened (expired)
+    // Number of commercial proposals opened (expired)
     if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire) {
         include_once DOL_DOCUMENT_ROOT . '/supplier_proposal/class/supplier_proposal.class.php';
         $board = new SupplierProposal($db);
@@ -398,14 +399,14 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
         $dashboardlines[$board->element . '_signed'] = $board->load_board($user, "signed");
     }
 
-// Number of customer orders a deal
+    // Number of customer orders a deal
     if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
         include_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
         $board = new Commande($db);
         $dashboardlines[$board->element] = $board->load_board($user);
     }
 
-// Number of suppliers orders a deal
+    // Number of suppliers orders a deal
     if (!empty($conf->supplier_order->enabled) && $user->rights->fournisseur->commande->lire) {
         include_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
         $board = new CommandeFournisseur($db);
@@ -413,7 +414,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
         $dashboardlines[$board->element . '_awaiting'] = $board->load_board($user, 'awaiting');
     }
 
-// Number of services enabled (delayed)
+    // Number of services enabled (delayed)
     if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
         include_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
         $board = new Contrat($db);
@@ -421,22 +422,22 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
         // Number of active services (expired)
         $dashboardlines[$board->element . '_active'] = $board->load_board($user, "active");
     }
-// Number of invoices customers (has paid)
+    // Number of invoices customers (has paid)
     if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
         include_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
         $board = new Facture($db);
         $dashboardlines[$board->element] = $board->load_board($user);
     }
 
-// Number of supplier invoices (has paid)
+    // Number of supplier invoices (has paid)
     if (!empty($conf->supplier_invoice->enabled) && !empty($user->rights->fournisseur->facture->lire)) {
         include_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
         $board = new FactureFournisseur($db);
         $dashboardlines[$board->element] = $board->load_board($user);
     }
 
-// Number of transactions to conciliate
-    if (!empty($conf->banque->enabled) && $user->rights->banque->lire && !$user->societe_id) {
+    // Number of transactions to conciliate
+    if (!empty($conf->banque->enabled) && $user->rights->banque->lire && !$user->socid) {
         include_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
         $board = new Account($db);
         $nb = $board::countAccountToReconcile();    // Get nb of account to reconciliate
@@ -445,35 +446,35 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
         }
     }
 
-// Number of cheque to send
-    if (!empty($conf->banque->enabled) && $user->rights->banque->lire && !$user->societe_id && empty($conf->global->BANK_DISABLE_CHECK_DEPOSIT)) {
+    // Number of cheque to send
+    if (!empty($conf->banque->enabled) && $user->rights->banque->lire && !$user->socid && empty($conf->global->BANK_DISABLE_CHECK_DEPOSIT)) {
         include_once DOL_DOCUMENT_ROOT . '/compta/paiement/cheque/class/remisecheque.class.php';
         $board = new RemiseCheque($db);
         $dashboardlines['RemiseCheque'] = $board->load_board($user);
     }
 
-// Number of foundation members
-    if (!empty($conf->adherent->enabled) && $user->rights->adherent->lire && !$user->societe_id) {
+    // Number of foundation members
+    if (!empty($conf->adherent->enabled) && $user->rights->adherent->lire && !$user->socid) {
         include_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
         $board = new Adherent($db);
         $dashboardlines['Adherent'] = $board->load_board($user);
     }
 
-// Number of expense reports to approve
+    // Number of expense reports to approve
     if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->approve) {
         include_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
         $board = new ExpenseReport($db);
         $dashboardlines['ExpenseReport'] = $board->load_board($user, 'toapprove');
     }
 
-// Number of expense reports to pay
+    // Number of expense reports to pay
     if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->to_paid) {
         include_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
         $board = new ExpenseReport($db);
         $dashboardlines['ExpenseReport'] = $board->load_board($user, 'topay');
     }
 
-// Number of holidays to approve
+    // Number of holidays to approve
     if (!empty($conf->holiday->enabled) && $user->rights->holiday->approve) {
         include_once DOL_DOCUMENT_ROOT . '/holiday/class/holiday.class.php';
         $board = new Holiday($db);
@@ -591,11 +592,11 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
     }
 
 
-// Calculate total nb of late
+    // Calculate total nb of late
     $totallate = $totaltodo = 0;
 
-//Remove any invalid response
-//load_board can return an integer if failed or WorkboardResponse if OK
+    //Remove any invalid response
+    //load_board can return an integer if failed or WorkboardResponse if OK
     $valid_dashboardlines = array();
     foreach ($dashboardlines as $infoKey => $tmp) {
         if ($tmp instanceof WorkboardResponse) {
@@ -603,7 +604,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
         }
     }
 
-// We calculate $totallate. Must be defined before start of next loop because it is show in first fetch on next loop
+    // We calculate $totallate. Must be defined before start of next loop because it is show in first fetch on next loop
     foreach ($valid_dashboardlines as $board) {
         if ($board->nbtodolate > 0) {
             $totaltodo += $board->nbtodo;
@@ -645,7 +646,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
     $boxwork .= '</th>';
     $boxwork .= '</tr>' . "\n";
 
-// Show dashboard
+    // Show dashboard
     $nbworkboardempty = 0;
     $isIntopOpenedDashBoard = $globalStatInTopOpenedDashBoard = array();
     if (!empty($valid_dashboardlines)) {
@@ -886,7 +887,7 @@ $boxlist.=$resultboxes['boxlista'];
 $boxlist.= '</div>';
 
 
-if (empty($user->societe_id) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
+if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 {
     // Remove allready present info in new dash board
     if(!empty($conf->global->MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD) && is_array($boxstatItems) && count($boxstatItems) > 0){
@@ -1001,7 +1002,7 @@ function showWeather($totallate, $text, $options, $morecss = '')
 {
     global $conf;
 
-	$weather = getWeatherStatus($totallate);
+    $weather = getWeatherStatus($totallate);
     return img_weather($text, $weather->picto, $options, 0, $morecss);
 }
 

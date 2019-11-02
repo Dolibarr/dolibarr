@@ -46,7 +46,7 @@ $statut=GETPOST('statut')?GETPOST('statut'):1;
 // Security check
 $socid=0;
 $id = GETPOST('id', 'int');
-if (! empty($user->societe_id)) $socid=$user->societe_id;
+if (! empty($user->socid)) $socid=$user->socid;
 $result = restrictedArea($user, 'contrat', $id);
 
 $staticcompany=new Societe($db);
@@ -114,7 +114,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX
 $sql.= " WHERE cd.fk_contrat = c.rowid AND c.fk_soc = s.rowid";
 $sql.= " AND (cd.statut != 4 OR (cd.statut = 4 AND (cd.date_fin_validite is null or cd.date_fin_validite >= '".$db->idate($now)."')))";
 $sql.= " AND c.entity IN (".getEntity('contract', 0).")";
-if ($user->societe_id) $sql.=' AND c.fk_soc = '.$user->societe_id;
+if ($user->socid) $sql.=' AND c.fk_soc = '.$user->socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " GROUP BY cd.statut";
 $resql = $db->query($sql);
@@ -151,7 +151,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX
 $sql.= " WHERE cd.fk_contrat = c.rowid AND c.fk_soc = s.rowid";
 $sql.= " AND (cd.statut = 4 AND cd.date_fin_validite < '".$db->idate($now)."')";
 $sql.= " AND c.entity IN (".getEntity('contract', 0).")";
-if ($user->societe_id) $sql.=' AND c.fk_soc = '.$user->societe_id;
+if ($user->socid) $sql.=' AND c.fk_soc = '.$user->socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " GROUP BY cd.statut";
 $resql = $db->query($sql);

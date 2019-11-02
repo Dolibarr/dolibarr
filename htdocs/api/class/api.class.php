@@ -102,6 +102,7 @@ class DolibarrApi
         unset($object->isextrafieldmanaged);
 		unset($object->ismultientitymanaged);
 		unset($object->restrictiononfksoc);
+		unset($object->table_rowid);
 
         // Remove linkedObjects. We should already have linkedObjectIds that avoid huge responses
         unset($object->linkedObjects);
@@ -127,13 +128,14 @@ class DolibarrApi
         unset($object->timespent_withhour);
         unset($object->timespent_fk_user);
         unset($object->timespent_note);
+        unset($object->fk_delivery_address);
 
         unset($object->statuts);
         unset($object->statuts_short);
         unset($object->statuts_logo);
         unset($object->statuts_long);
-        unset($object->labelstatut);
-        unset($object->labelstatut_short);
+        unset($object->labelStatus);
+        unset($object->labelStatusShort);
 
         unset($object->element);
         unset($object->fk_element);
@@ -146,6 +148,11 @@ class DolibarrApi
 
         unset($object->skip_update_total);
         unset($object->context);
+        unset($object->next_prev_filter);
+
+        if ($object->table_element != 'ticket') {
+        	unset($object->comments);
+        }
 
         // Remove the $oldcopy property because it is not supported by the JSON
         // encoder. The following error is generated when trying to serialize
@@ -178,6 +185,7 @@ class DolibarrApi
                 unset($object->lines[$i]->cond_reglement);
                 unset($object->lines[$i]->fk_delivery_address);
                 unset($object->lines[$i]->fk_projet);
+                unset($object->lines[$i]->fk_project);
                 unset($object->lines[$i]->thirdparty);
                 unset($object->lines[$i]->user);
                 unset($object->lines[$i]->model_pdf);

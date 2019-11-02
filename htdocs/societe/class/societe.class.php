@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
  * Copyright (C) 2003       Brian Fraval            <brian@fraval.org>
  * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
@@ -69,6 +69,9 @@ class Societe extends CommonObject
 	 */
 	protected $childtablesoncascade=array("societe_prices", "societe_log", "societe_address", "product_fournisseur_price", "product_customer_price_log", "product_customer_price", "socpeople", "adherent", "societe_account", "societe_rib", "societe_remise", "societe_remise_except", "societe_commerciaux", "categorie", "notify", "notify_def", "actioncomm");
 
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto = 'company';
 
 	/**
@@ -316,11 +319,12 @@ class Societe extends CommonObject
 	 * @var string
 	 */
 	public $user_modification;
+
 	/**
-	 * Date of creation
-	 * @var string
+	 * @var integer|string date_creation
 	 */
 	public $date_creation;
+
 	/**
 	 * User that created the thirdparty
 	 * @var User
@@ -395,9 +399,16 @@ class Societe extends CommonObject
 	 */
 	public $note_public;
 
-	//! code statut prospect
+	/**
+	 * Status prospect id
+	 * @var int
+	 */
 	public $stcomm_id;
-	public $statut_commercial;
+	/**
+	 * Status prospect label
+	 * @var int
+	 */
+	public $status_prospect_label;
 
 	/**
 	 * Assigned price level
@@ -1226,7 +1237,7 @@ class Societe extends CommonObject
 			}
 		}
 		else
-	   {
+	    {
 			$this->db->rollback();
 			dol_syslog(get_class($this)."::Update fails verify ".join(',', $this->errors), LOG_WARNING);
 			return -3;
@@ -1350,9 +1361,9 @@ class Societe extends CommonObject
 				$this->state        = ($obj->state!='-'?$obj->state:'');
 
 				$transcode=$langs->trans('StatusProspect'.$obj->fk_stcomm);
-				$libelle=($transcode!='StatusProspect'.$obj->fk_stcomm?$transcode:$obj->stcomm);
-				$this->stcomm_id = $obj->fk_stcomm;     // id statut commercial
-				$this->statut_commercial = $libelle;    // libelle statut commercial
+				$label = ($transcode!='StatusProspect'.$obj->fk_stcomm ? $transcode : $obj->stcomm);
+				$this->stcomm_id = $obj->fk_stcomm;       // id status prospect
+				$this->status_prospect_label = $label;    // label status prospect
 
 				$this->email = $obj->email;
 				$this->skype = $obj->skype;
@@ -1865,7 +1876,7 @@ class Societe extends CommonObject
 
 		$reparray=array();
 
-		$sql = "SELECT DISTINCT u.rowid, u.login, u.lastname, u.firstname, u.email, u.statut, u.entity, u.photo";
+		$sql = "SELECT DISTINCT u.rowid, u.login, u.lastname, u.firstname, u.office_phone, u.job, u.email, u.statut, u.entity, u.photo";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."user as u";
 		if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 		{
@@ -1894,6 +1905,8 @@ class Societe extends CommonObject
 					$reparray[$i]['lastname']=$obj->lastname;
 					$reparray[$i]['firstname']=$obj->firstname;
 					$reparray[$i]['email']=$obj->email;
+					$reparray[$i]['phone']=$obj->office_phone;
+					$reparray[$i]['job']=$obj->job;
 					$reparray[$i]['statut']=$obj->statut;
 					$reparray[$i]['entity']=$obj->entity;
 					$reparray[$i]['login']=$obj->login;
@@ -2126,8 +2139,8 @@ class Societe extends CommonObject
 
 		if ($option == 'customer' || $option == 'compta' || $option == 'category' || $option == 'category_supplier')
 		{
-		   $label.= '<u>' . $langs->trans("ShowCustomer") . '</u>';
-		   $linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
+		    $label.= '<u>' . $langs->trans("ShowCustomer") . '</u>';
+		    $linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
 		}
 		elseif ($option == 'prospect' && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
 		{
@@ -2232,7 +2245,7 @@ class Societe extends CommonObject
 		$linkend='</a>';
 
 		global $user;
-		if (! $user->rights->societe->client->voir && $user->societe_id > 0 && $this->id != $user->societe_id)
+		if (! $user->rights->societe->client->voir && $user->socid > 0 && $this->id != $user->socid)
 		{
 			$linkstart='';
 			$linkend='';
@@ -2256,8 +2269,8 @@ class Societe extends CommonObject
 	/**
 	 *    Return label of status (activity, closed)
 	 *
-	 *    @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *    @return   string        		Libelle
+	 *    @param  	int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *    @return   string     	   		Label of status
 	 */
     public function getLibStatut($mode = 0)
 	{
@@ -2268,52 +2281,29 @@ class Societe extends CommonObject
 	/**
 	 *  Return the label of a given status
 	 *
-	 *  @param	int		$statut         Status id
+	 *  @param	int		$status         Status id
 	 *  @param	int		$mode           0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string          		Status label
 	 */
-    public function LibStatut($statut, $mode = 0)
+    public function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
 		$langs->load('companies');
 
-		if ($mode == 0)
+		$statusType = 'status4';
+		if ($status == 0) $statusType = 'status5';
+
+		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
-			if ($statut==0) return $langs->trans("ActivityCeased");
-			elseif ($statut==1) return $langs->trans("InActivity");
+			$this->labelStatus[0] = $langs->trans("ActivityCeased");
+			$this->labelStatus[1] = $langs->trans("InActivity");
+			$this->labelStatusShort[0] = $langs->trans("ActivityCeased");
+			$this->labelStatusShort[1] = $langs->trans("InActivity");
 		}
-		elseif ($mode == 1)
-		{
-			if ($statut==0) return $langs->trans("ActivityCeased");
-			elseif ($statut==1) return $langs->trans("InActivity");
-		}
-		elseif ($mode == 2)
-		{
-			if ($statut==0) return img_picto($langs->trans("ActivityCeased"), 'statut5', 'class="pictostatus"').' '.$langs->trans("ActivityCeased");
-			elseif ($statut==1) return img_picto($langs->trans("InActivity"), 'statut4', 'class="pictostatus"').' '.$langs->trans("InActivity");
-		}
-		elseif ($mode == 3)
-		{
-			if ($statut==0) return img_picto($langs->trans("ActivityCeased"), 'statut5', 'class="pictostatus"');
-			elseif ($statut==1) return img_picto($langs->trans("InActivity"), 'statut4', 'class="pictostatus"');
-		}
-		elseif ($mode == 4)
-		{
-			if ($statut==0) return img_picto($langs->trans("ActivityCeased"), 'statut5', 'class="pictostatus"').' '.$langs->trans("ActivityCeased");
-			elseif ($statut==1) return img_picto($langs->trans("InActivity"), 'statut4', 'class="pictostatus"').' '.$langs->trans("InActivity");
-		}
-		elseif ($mode == 5)
-		{
-			if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans("ActivityCeased").'</span> '.img_picto($langs->trans("ActivityCeased"), 'statut5', 'class="pictostatus"');
-			elseif ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans("InActivity").'</span> '.img_picto($langs->trans("InActivity"), 'statut4', 'class="pictostatus"');
-		}
-		elseif ($mode == 6)
-		{
-			if ($statut==0) return $langs->trans("ActivityCeased").' '.img_picto($langs->trans("ActivityCeased"), 'statut5', 'class="pictostatus"');
-			elseif ($statut==1) return $langs->trans("InActivity").' '.img_picto($langs->trans("InActivity"), 'statut4', 'class="pictostatus"');
-		}
-	}
+
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+    }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -2378,6 +2368,7 @@ class Societe extends CommonObject
 		$sql = "SELECT rowid, email, statut, phone_mobile, lastname, poste, firstname";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople";
 		$sql.= " WHERE fk_soc = ".$this->id;
+		$sql.= " ORDER BY lastname, firstname";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -3088,8 +3079,8 @@ class Societe extends CommonObject
 			//Check NIF
 			if (preg_match('/(^[0-9]{8}[A-Z]{1}$)/', $string))
 				if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr($string, 0, 8) % 23, 1))
-				return 1;
-				else
+					return 1;
+			else
 				return -1;
 
 			//algorithm checking type code CIF
@@ -3101,29 +3092,29 @@ class Societe extends CommonObject
 			//Chek special NIF
 			if (preg_match('/^[KLM]{1}/', $string))
 				if ($num[8] == chr(64 + $n) || $num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr($string, 1, 8) % 23, 1))
-				return 1;
-				else
+					return 1;
+			else
 				return -1;
 
 			//Check CIF
 			if (preg_match('/^[ABCDEFGHJNPQRSUVW]{1}/', $string))
 				if ($num[8] == chr(64 + $n) || $num[8] == substr($n, strlen($n) - 1, 1))
-				return 2;
-				else
+					return 2;
+			else
 				return -2;
 
 			//Check NIE T
 			if (preg_match('/^[T]{1}/', $string))
 				if ($num[8] == preg_match('/^[T]{1}[A-Z0-9]{8}$/', $string))
-				return 3;
-				else
+					return 3;
+			else
 				return -3;
 
 			//Check NIE XYZ
 			if (preg_match('/^[XYZ]{1}/', $string))
 				if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr(str_replace(array('X','Y','Z'), array('0','1','2'), $string), 0, 8) % 23, 1))
-				return 3;
-				else
+					return 3;
+			else
 				return -3;
 
 			//Can not be verified
@@ -3734,12 +3725,12 @@ class Societe extends CommonObject
 	/**
 	 *  Return label of a given status
 	 *
-	 *  @param	int|string	$statut        	Id or code for prospection status
+	 *  @param	int|string	$status        	Id or code for prospection status
 	 *  @param  int			$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *  @param	string		$label			Label to use for status for added status
 	 *  @return string       	 			Libelle du statut
 	 */
-    public function LibProspCommStatut($statut, $mode = 0, $label = '')
+    public function LibProspCommStatut($status, $mode = 0, $label = '')
 	{
         // phpcs:enable
 		global $langs;
@@ -3747,38 +3738,38 @@ class Societe extends CommonObject
 
 		if ($mode == 2)
 		{
-			if ($statut == '-1' || $statut == 'ST_NO')         return img_action($langs->trans("StatusProspect-1"), -1).' '.$langs->trans("StatusProspect-1");
-			elseif ($statut ==  '0' || $statut == 'ST_NEVER') return img_action($langs->trans("StatusProspect0"), 0).' '.$langs->trans("StatusProspect0");
-			elseif ($statut ==  '1' || $statut == 'ST_TODO')  return img_action($langs->trans("StatusProspect1"), 1).' '.$langs->trans("StatusProspect1");
-			elseif ($statut ==  '2' || $statut == 'ST_PEND')  return img_action($langs->trans("StatusProspect2"), 2).' '.$langs->trans("StatusProspect2");
-			elseif ($statut ==  '3' || $statut == 'ST_DONE')  return img_action($langs->trans("StatusProspect3"), 3).' '.$langs->trans("StatusProspect3");
+			if ($status == '-1' || $status == 'ST_NO')         return img_action($langs->trans("StatusProspect-1"), -1).' '.$langs->trans("StatusProspect-1");
+			elseif ($status ==  '0' || $status == 'ST_NEVER') return img_action($langs->trans("StatusProspect0"), 0).' '.$langs->trans("StatusProspect0");
+			elseif ($status ==  '1' || $status == 'ST_TODO')  return img_action($langs->trans("StatusProspect1"), 1).' '.$langs->trans("StatusProspect1");
+			elseif ($status ==  '2' || $status == 'ST_PEND')  return img_action($langs->trans("StatusProspect2"), 2).' '.$langs->trans("StatusProspect2");
+			elseif ($status ==  '3' || $status == 'ST_DONE')  return img_action($langs->trans("StatusProspect3"), 3).' '.$langs->trans("StatusProspect3");
 			else
 			{
-				return img_action(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label, 0).' '.(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label);
+				return img_action(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label, 0).' '.(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label);
 			}
 		}
 		if ($mode == 3)
 		{
-			if ($statut == '-1' || $statut == 'ST_NO')         return img_action($langs->trans("StatusProspect-1"), -1);
-			elseif ($statut ==  '0' || $statut == 'ST_NEVER') return img_action($langs->trans("StatusProspect0"), 0);
-			elseif ($statut ==  '1' || $statut == 'ST_TODO')  return img_action($langs->trans("StatusProspect1"), 1);
-			elseif ($statut ==  '2' || $statut == 'ST_PEND')  return img_action($langs->trans("StatusProspect2"), 2);
-			elseif ($statut ==  '3' || $statut == 'ST_DONE')  return img_action($langs->trans("StatusProspect3"), 3);
+			if ($status == '-1' || $status == 'ST_NO')         return img_action($langs->trans("StatusProspect-1"), -1);
+			elseif ($status ==  '0' || $status == 'ST_NEVER') return img_action($langs->trans("StatusProspect0"), 0);
+			elseif ($status ==  '1' || $status == 'ST_TODO')  return img_action($langs->trans("StatusProspect1"), 1);
+			elseif ($status ==  '2' || $status == 'ST_PEND')  return img_action($langs->trans("StatusProspect2"), 2);
+			elseif ($status ==  '3' || $status == 'ST_DONE')  return img_action($langs->trans("StatusProspect3"), 3);
 			else
 			{
-				return img_action(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label, 0);
+				return img_action(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label, 0);
 			}
 		}
 		if ($mode == 4)
 		{
-			if ($statut == '-1' || $statut == 'ST_NO')         return img_action($langs->trans("StatusProspect-1"), -1).' '.$langs->trans("StatusProspect-1");
-			elseif ($statut ==  '0' || $statut == 'ST_NEVER') return img_action($langs->trans("StatusProspect0"), 0).' '.$langs->trans("StatusProspect0");
-			elseif ($statut ==  '1' || $statut == 'ST_TODO')  return img_action($langs->trans("StatusProspect1"), 1).' '.$langs->trans("StatusProspect1");
-			elseif ($statut ==  '2' || $statut == 'ST_PEND')  return img_action($langs->trans("StatusProspect2"), 2).' '.$langs->trans("StatusProspect2");
-			elseif ($statut ==  '3' || $statut == 'ST_DONE')  return img_action($langs->trans("StatusProspect3"), 3).' '.$langs->trans("StatusProspect3");
+			if ($status == '-1' || $status == 'ST_NO')         return img_action($langs->trans("StatusProspect-1"), -1).' '.$langs->trans("StatusProspect-1");
+			elseif ($status ==  '0' || $status == 'ST_NEVER') return img_action($langs->trans("StatusProspect0"), 0).' '.$langs->trans("StatusProspect0");
+			elseif ($status ==  '1' || $status == 'ST_TODO')  return img_action($langs->trans("StatusProspect1"), 1).' '.$langs->trans("StatusProspect1");
+			elseif ($status ==  '2' || $status == 'ST_PEND')  return img_action($langs->trans("StatusProspect2"), 2).' '.$langs->trans("StatusProspect2");
+			elseif ($status ==  '3' || $status == 'ST_DONE')  return img_action($langs->trans("StatusProspect3"), 3).' '.$langs->trans("StatusProspect3");
 			else
 			{
-				return img_action(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label, 0).' '.(($langs->trans("StatusProspect".$statut) != "StatusProspect".$statut) ? $langs->trans("StatusProspect".$statut) : $label);
+				return img_action(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label, 0).' '.(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label);
 			}
 		}
 
@@ -3975,19 +3966,19 @@ class Societe extends CommonObject
 	/**
 	 *  Return the label of the customer/prospect status
 	 *
-	 *  @param	int		$statut         Id statut
+	 *  @param	int		$status         Id statut
 	 *  @return	string          		Libelle du statut
 	 */
-    public function LibCustProspStatut($statut)
+    public function LibCustProspStatut($status)
 	{
         // phpcs:enable
 		global $langs;
 		$langs->load('companies');
 
-		if ($statut==0) return $langs->trans("NorProspectNorCustomer");
-		elseif ($statut==1) return $langs->trans("Customer");
-		elseif ($statut==2) return $langs->trans("Prospect");
-		elseif ($statut==3) return $langs->trans("ProspectCustomer");
+		if ($status==0) return $langs->trans("NorProspectNorCustomer");
+		elseif ($status==1) return $langs->trans("Customer");
+		elseif ($status==2) return $langs->trans("Prospect");
+		elseif ($status==3) return $langs->trans("ProspectCustomer");
 	}
 
 

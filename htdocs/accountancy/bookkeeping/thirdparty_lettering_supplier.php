@@ -83,7 +83,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 
 // Security check
 $socid = GETPOST("socid", 'int');
-// if ($user->societe_id) $socid=$user->societe_id;
+// if ($user->socid) $socid=$user->socid;
 
 $lettering = new Lettering($db);
 $object = new Societe($db);
@@ -138,7 +138,7 @@ dol_fiche_head($head, 'lettering_supplier', $langs->trans("ThirdParty"), 0, 'com
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom', '', '', 0, '', '', 'arearefnobottom');
+dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom', '', '', 0, '', '', 'arearefnobottom');
 
 dol_fiche_end();
 

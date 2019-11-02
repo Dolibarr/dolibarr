@@ -116,13 +116,13 @@ class mod_task_universal extends ModeleNumRefTask
 		return $numExample;
     }
 
-   /**
-	*  Return next value
-	*
-	*  @param	Societe		$objsoc		Object third party
-	*  @param   Task		$object	    Object task
-	*  @return  string					Value if OK, 0 if KO
-	*/
+    /**
+     *  Return next value
+     *
+     *  @param	Societe		$objsoc		Object third party
+     *  @param   Task		$object	    Object task
+     *  @return  string					Value if OK, 0 if KO
+     */
     public function getNextValue($objsoc, $object)
     {
 		global $db,$conf;

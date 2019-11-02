@@ -182,16 +182,16 @@ abstract class CommonStickerGenerator
 		for($i=$x1;$i<=$x2;$i+=$Pointilles+$Pointilles) {
 			for($j=$i;$j<=($i+$Pointilles);$j++) {
 				if($j<=($x2-1)) {
-		$pdf->Line($j, $y1, $j+1, $y1); // on trace le pointill? du haut, point par point
-		$pdf->Line($j, $y2, $j+1, $y2); // on trace le pointill? du bas, point par point
+		            $pdf->Line($j, $y1, $j+1, $y1); // on trace le pointill? du haut, point par point
+		            $pdf->Line($j, $y2, $j+1, $y2); // on trace le pointill? du bas, point par point
 				}
 			}
 		}
 		for($i=$y1;$i<=$y2;$i+=$Pointilles+$Pointilles) {
 			for($j=$i;$j<=($i+$Pointilles);$j++) {
 				if($j<=($y2-1)) {
-		$pdf->Line($x1, $j, $x1, $j+1); // on trace le pointill? du haut, point par point
-		$pdf->Line($x2, $j, $x2, $j+1); // on trace le pointill? du bas, point par point
+		            $pdf->Line($x1, $j, $x1, $j+1); // on trace le pointill? du haut, point par point
+		            $pdf->Line($x2, $j, $x2, $j+1); // on trace le pointill? du bas, point par point
 				}
 			}
 		}

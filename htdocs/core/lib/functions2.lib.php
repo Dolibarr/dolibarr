@@ -832,12 +832,12 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 
     if (strstr($mask, 'user_extra_'))
     {
-			$start = "{user_extra_";
-			$end = "\}";
-			$extra= get_string_between($mask, "user_extra_", "}");
-			if(!empty($user->array_options['options_'.$extra])){
-				$mask =  preg_replace('#('.$start.')(.*?)('.$end.')#si', $user->array_options['options_'.$extra], $mask);
-			}
+		$start = "{user_extra_";
+		$end = "\}";
+		$extra= get_string_between($mask, "user_extra_", "}");
+		if (!empty($user->array_options['options_'.$extra])) {
+			$mask =  preg_replace('#('.$start.')(.*?)('.$end.')#si', $user->array_options['options_'.$extra], $mask);
+		}
     }
     $maskwithonlyymcode=$mask;
     $maskwithonlyymcode=preg_replace('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i', $maskcounter, $maskwithonlyymcode);
@@ -1617,7 +1617,7 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
     $found=0;
     $dirtoscan='';
 
-    $sql = "SELECT nom as id, nom as lib, libelle as label, description as description";
+    $sql = "SELECT nom as id, nom as doc_template_name, libelle as label, description as description";
     $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
     $sql.= " WHERE type = '".$type."'";
     $sql.= " AND entity IN (0,".$conf->entity.")";
@@ -1645,7 +1645,7 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
                 //irtoscan.=($dirtoscan?',':'').preg_replace('/[\r\n]+/',',',trim($conf->global->$const));
                 $dirtoscan= preg_replace('/[\r\n]+/', ',', trim($conf->global->$const));
 
-		$listoffiles=array();
+                $listoffiles=array();
 
                 // Now we add models found in directories scanned
                 $listofdir=explode(',', $dirtoscan);
@@ -1656,8 +1656,8 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
                     if (! $tmpdir) { unset($listofdir[$key]); continue; }
                     if (is_dir($tmpdir))
                     {
-			// all type of template is allowed
-			$tmpfiles=dol_dir_list($tmpdir, 'files', 0, '', '', 'name', SORT_ASC, 0);
+                        // all type of template is allowed
+                        $tmpfiles=dol_dir_list($tmpdir, 'files', 0, '', '', 'name', SORT_ASC, 0);
                         if (count($tmpfiles)) $listoffiles=array_merge($listoffiles, $tmpfiles);
                     }
                 }
@@ -1677,18 +1677,18 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
             }
             else
             {
-                if ($type == 'member' && $obj->lib == 'standard')   // Special case, if member template, we add variant per format
+            	if ($type == 'member' && $obj->doc_template_name == 'standard')   // Special case, if member template, we add variant per format
                 {
                     global $_Avery_Labels;
                     include_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
                     foreach($_Avery_Labels as $key => $val)
                     {
-                        $liste[$obj->id.':'.$key]=($obj->label?$obj->label:$obj->lib).' '.$val['name'];
+                    	$liste[$obj->id.':'.$key]=($obj->label?$obj->label:$obj->doc_template_name).' '.$val['name'];
                     }
                 }
                 else    // Common usage
                 {
-                    $liste[$obj->id]=$obj->label?$obj->label:$obj->lib;
+                	$liste[$obj->id]=$obj->label?$obj->label:$obj->doc_template_name;
                 }
             }
             $i++;
@@ -2250,13 +2250,16 @@ function colorValidateHex($color, $allow_white = true)
 /**
  * Change color to make it less aggressive (ratio is negative) or more aggressive (ratio is positive)
  *
- * @param string 		$hex		Color in hex ('#AA1122' or 'AA1122' or '#a12' or 'a12')
- * @param integer		$ratio		Default=-50. Note: 0=Component color is unchanged, -100=Component color become 88, +100=Component color become 00 or FF
+ * @param 	string 		$hex			Color in hex ('#AA1122' or 'AA1122' or '#a12' or 'a12')
+ * @param 	integer		$ratio			Default=-50. Note: 0=Component color is unchanged, -100=Component color become 88, +100=Component color become 00 or FF
+ * @param	integer		$brightness 	Default=0. Adjust brightness. -100=Decrease brightness by 100%, +100=Increase of 100%.
  * @return string		New string of color
  * @see colorAdjustBrightness()
  */
-function colorAgressivity($hex, $ratio = -50)
+function colorAgressiveness($hex, $ratio = -50, $brightness = 0)
 {
+	if (empty($ratio)) $ratio = 0;	// To avoid null
+
 	// Steps should be between -255 and 255. Negative = darker, positive = lighter
 	$ratio = max(-100, min(100, $ratio));
 
@@ -2277,12 +2280,21 @@ function colorAgressivity($hex, $ratio = -50)
 			if ($color > 127) $color += ((255 - $color) * ($ratio / 100));
 			if ($color < 128) $color -= ($color * ($ratio / 100));
 		}
-		else			// We decrease agressivity
+		else			// We decrease agressiveness
 		{
 			if ($color > 128) $color -= (($color - 128) * (abs($ratio) / 100));
 			if ($color < 127) $color += ((128 - $color) * (abs($ratio) / 100));
 		}
-		$color   = max(0, min(255, $color)); // Adjust color
+		if ($brightness > 0)
+		{
+			$color = ($color * (100 + abs($brightness)) / 100);
+		}
+		else
+		{
+			$color = ($color * (100 - abs($brightness)) / 100);
+		}
+
+		$color   = max(0, min(255, $color)); // Adjust color to stay into valid range
 		$return .= str_pad(dechex($color), 2, '0', STR_PAD_LEFT); // Make two char hex code
 	}
 
@@ -2294,7 +2306,7 @@ function colorAgressivity($hex, $ratio = -50)
  * @param string 	$hex 		Color in hex ('#AA1122' or 'AA1122' or '#a12' or 'a12')
  * @param integer 	$steps 		Step/offset added to each color component. It should be between -255 and 255. Negative = darker, positive = lighter
  * @return string				New color with format '#AA1122'
- * @see colorAgressivity()
+ * @see colorAgressiveness()
  */
 function colorAdjustBrightness($hex, $steps)
 {

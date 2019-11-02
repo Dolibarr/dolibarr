@@ -450,12 +450,13 @@ class Products extends DolibarrApi
      * Get prices per customer for a product
      *
      * @param int $id ID of product
+     * @param string   	$thirdparty_id	  Thirdparty id to filter orders of (example '1') {@pattern /^[0-9,]*$/i}
      *
      * @return mixed
      *
      * @url GET {id}/selling_multiprices/per_customer
      */
-    public function getCustomerPricesPerCustomer($id)
+    public function getCustomerPricesPerCustomer($id, $thirdparty_id = '')
     {
         global $conf;
 
@@ -472,12 +473,20 @@ class Products extends DolibarrApi
             throw new RestException(404, 'Product not found');
         }
 
-        if ($result < 0) {
-            throw new RestException(503, 'Error when retrieve prices list : '.array_merge(array($this->product->error), $this->product->errors));
+        if ($result > 0) {
+			require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
+			$prodcustprice = new Productcustomerprice($this->db);
+			$filter = array();
+			$filter['t.fk_product'] .= $id;
+			if ($thirdparty_id) $filter['t.fk_soc'] .= $thirdparty_id;
+			$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
         }
 
-        throw new RestException(501, 'Feature not yet available');
-        //return $result;
+        if ( empty($prodcustprice->lines)) {
+            throw new RestException(404, 'Prices not found');
+        }
+
+        return $prodcustprice->lines;
     }
 
     /**
@@ -573,7 +582,7 @@ class Products extends DolibarrApi
     {
     	global $db, $conf;
     	$obj_ret = array();
-    	$socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
+    	$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
     	$sql = "SELECT t.rowid, t.ref, t.ref_ext";
     	$sql.= " FROM ".MAIN_DB_PREFIX."product as t";
     	if ($category > 0) {

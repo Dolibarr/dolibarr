@@ -105,7 +105,13 @@ class EmailSenderProfile extends CommonObject
     public $label;
 
 	public $email;
+
+	/**
+     * @var integer|string date_creation
+     */
 	public $date_creation;
+
+
 	public $tms;
 	//public $fk_user_creat;
 	//public $fk_user_modif;

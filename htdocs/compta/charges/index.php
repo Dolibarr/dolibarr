@@ -45,7 +45,7 @@ $hookmanager->initHooks(array('specialexpensesindex'));
 $langs->loadLangs(array('compta', 'bills'));
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'tax|salaries', '', '', 'charges|');
 
 $mode=GETPOST("mode", 'alpha');
@@ -138,7 +138,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 	print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "pc.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 	print "</tr>\n";
 
-	$sql = "SELECT c.id, c.libelle as lib,";
+	$sql = "SELECT c.id, c.libelle as label,";
 	$sql.= " cs.rowid, cs.libelle, cs.fk_type as type, cs.periode, cs.date_ech, cs.amount as total,";
 	$sql.= " pc.rowid as pid, pc.datep, pc.amount as totalpaye, pc.num_paiement as num_payment, pc.fk_bank,";
 	$sql.= " pct.code as payment_code,";
@@ -185,12 +185,12 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			// Label
 			print '<td>';
 			$socialcontrib->id=$obj->rowid;
-			$socialcontrib->ref=$obj->libelle;
-			$socialcontrib->lib=$obj->libelle;
+			$socialcontrib->ref=$obj->label;
+			$socialcontrib->label=$obj->label;
 			print $socialcontrib->getNomUrl(1, '20');
 			print '</td>';
 			// Type
-			print '<td><a href="../sociales/list.php?filtre=cs.fk_type:'.$obj->type.'">'.$obj->lib.'</a></td>';
+			print '<td><a href="../sociales/list.php?filtre=cs.fk_type:'.$obj->type.'">'.$obj->label.'</a></td>';
 			// Expected to pay
 			print '<td class="right">'.price($obj->total).'</td>';
 			// Ref payment

@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 // Security check
 $orderid = GETPOST('orderid');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'fournisseur', $orderid, '', 'commande');
 
 $hookmanager = new HookManager($db);
@@ -81,7 +81,7 @@ $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE cf.fk_soc = s.rowid";
 $sql.= " AND cf.entity = ".$conf->entity;
-if ($user->societe_id) $sql.=' AND cf.fk_soc = '.$user->societe_id;
+if ($user->socid) $sql.=' AND cf.fk_soc = '.$user->socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " GROUP BY cf.fk_statut";
 
@@ -117,14 +117,14 @@ if ($resql)
 	print '<table class="noborder nohover" width="100%">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("SuppliersOrders").'</th></tr>';
 	print "</tr>\n";
-	foreach (array(0,1,2,3,4,5,6) as $statut)
+	foreach (array(0,1,2,3,4,5,6) as $status)
 	{
-		$dataseries[]=array($commandestatic->LibStatut($statut, 1), (isset($vals[$statut])?(int) $vals[$statut]:0));
+		$dataseries[]=array($commandestatic->LibStatut($status, 1), (isset($vals[$status])?(int) $vals[$status]:0));
 		if (! $conf->use_javascript_ajax)
 		{
 			print '<tr class="oddeven">';
-			print '<td>'.$commandestatic->LibStatut($statut, 0).'</td>';
-			print '<td class="right"><a href="list.php?statut='.$statut.'">'.(isset($vals[$statut])?$vals[$statut]:0).'</a></td>';
+			print '<td>'.$commandestatic->LibStatut($status, 0).'</td>';
+			print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
 			print "</tr>\n";
 		}
 	}
@@ -168,7 +168,7 @@ $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE cf.fk_soc = s.rowid";
 $sql.= " AND s.entity = ".$conf->entity;
-if ($user->societe_id) $sql.=' AND cf.fk_soc = '.$user->societe_id;
+if ($user->socid) $sql.=' AND cf.fk_soc = '.$user->socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " GROUP BY cf.fk_statut";
 

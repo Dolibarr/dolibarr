@@ -280,7 +280,7 @@ input#onlinepaymenturl, input#directdownloadlink {
 	opacity: 0.7;
 }
 
-div#moretabsListaction {
+div#moretabsList, div#moretabsListaction {
     z-index: 5;
 }
 
@@ -473,6 +473,12 @@ textarea.centpercent {
 .paddingright2 {
 	padding-<?php print $right; ?>: 2px;
 }
+.marginleft2 {
+	margin-<?php print $left; ?>: 2px;
+}
+.marginright2 {
+	margin-<?php print $right; ?>: 2px;
+}
 .cursordefault {
 	cursor: default;
 }
@@ -487,6 +493,9 @@ textarea.centpercent {
 }
 .backgroundblank {
     background-color: #fff;
+}
+.nobackground, .nobackground tr {
+	background: unset !important;
 }
 .checkboxattachfilelabel {
     font-size: 0.85em;
@@ -510,13 +519,16 @@ body[class*="colorblind-"] .text-success{
     color : <?php print $textDanger ; ?>
 }
 
-.editfielda span.fa-pencil-alt {
+.editfielda span.fa-pencil-alt, .editfielda span.fa-trash {
     color: #ccc !important;
 }
-.editfielda span.fa-pencil-alt:hover {
+.editfielda span.fa-pencil-alt:hover, .editfielda span.fa-trash:hover {
     color: rgb(<?php echo $colortexttitle; ?>) !important;
 }
 
+.fa-toggle-on, .fa-toggle-off { font-size: 2em; }
+.websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
+.asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off { font-size: 1.5em; vertical-align: text-bottom; }
 
 /* Themes for badges */
 <?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
@@ -555,7 +567,7 @@ div.divsearchfield {
 <?php
 // Add a nowrap on smartphone, so long list of field used for filter are overflowed with clip
 if ($conf->browser->layout == 'phone') {
-?>
+	?>
 .divsearchfieldfilter {
    	white-space: nowrap;
 }
@@ -2529,6 +2541,9 @@ span.tabspan {
 	margin: 0px !important;
 	padding: 0px !important;
 }
+.noborderspacing {
+	border-spacing: 0;
+}
 tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 {
 	border: 0px;
@@ -2753,6 +2768,7 @@ table.listwithfilterbefore {
 .tagtable, .table-border { display: table; }
 .tagtr, .table-border-row  { display: table-row; }
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
+.confirmquestions .tagtr .tagtd:not(:first-child)  { padding-left: 10px; }
 
 
 /* Pagination */
@@ -4399,6 +4415,14 @@ pre#editfilecontentaceeditorid {
 #comment .comment-delete:hover {
     background:rgba(250,20,20,0.8);
 }
+#comment .comment-edit {
+    width: 100px;
+    text-align:center;
+    vertical-align:middle;
+}
+#comment .comment-edit:hover {
+    background:rgba(0,184,148,0.8);
+}
 #comment textarea {
     width: 100%;
 }
@@ -5788,7 +5812,7 @@ div.tabsElem a.tab {
 	}
 
 	.dropdown dd ul {
-		max-width: 300px;
+		max-width: 350px;
 	}
 }
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
@@ -5816,6 +5840,10 @@ div.tabsElem a.tab {
     	background-size: 20px auto;
     	margin-top: 2px;
     	left: 4px;
+	}
+
+	.dropdown dd ul {
+		max-width: 300px;
 	}
 }
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */

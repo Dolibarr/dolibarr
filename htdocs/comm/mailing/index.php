@@ -60,6 +60,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
     // Recherche emails
     print '<form method="post" action="'.DOL_URL_ROOT.'/comm/mailing/list.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAMailing").'</td></tr>';
     print '<tr class="oddeven"><td class="nowrap">';
@@ -68,7 +69,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
     print '<tr class="oddeven"><td class="nowrap">';
     print $langs->trans("Other").':</td><td><input type="text" class="flat inputsearch" name="sall"></td>';
 
-    print "</table></form><br>\n";
+    print "</table></div></form><br>\n";
 //}
 
 
@@ -131,7 +132,7 @@ if (is_resource($handle))
                         }
                         else
                         {
-                          dol_print_error($db);
+                            dol_print_error($db);
                         }
                         print '</tr>';
                     }
@@ -160,6 +161,7 @@ $sql.= " ORDER BY m.date_creat DESC";
 $sql.= " LIMIT ".$limit;
 $result=$db->query($sql);
 if ($result) {
+    print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td colspan="2">'.$langs->trans("LastMailings", $limit).'</td>';
@@ -193,7 +195,7 @@ if ($result) {
     {
         print '<tr><td class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
-    print "</table><br>";
+    print "</table></div><br>";
     $db->free($result);
 }
 else
