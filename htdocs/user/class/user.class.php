@@ -2943,7 +2943,7 @@ class User extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 	Reconstruit l'arborescence hierarchique des users sous la forme d'un tableau
+	 * 	Build the hierarchy/tree of users into an array.
 	 *	Set and return this->users that is an array sorted according to tree with arrays of:
 	 *				id = id user
 	 *				lastname
