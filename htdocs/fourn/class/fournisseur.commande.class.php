@@ -439,7 +439,7 @@ class CommandeFournisseur extends CommonOrder
 
     			$line->fk_product          = $objp->fk_product;
 
-    			$line->libelle             = $objp->product_label;
+    			$line->libelle             = $objp->product_label;	// deprecated
     			$line->product_label       = $objp->product_label;
     			$line->product_desc        = $objp->product_desc;
 
@@ -2349,17 +2349,17 @@ class CommandeFournisseur extends CommonOrder
         for ($i = 0; $i < $num; $i++)
         {
             $prod = new Product($this->db);
-            $libelle = '';
+            $label = '';
             $ref = '';
             if ($prod->fetch($comclient->lines[$i]->fk_product) > 0)
             {
-                $libelle  = $prod->libelle;
-                $ref      = $prod->ref;
+                $label  = $prod->label;
+                $ref    = $prod->ref;
             }
 
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet";
-            $sql .= " (fk_commande,label,description,fk_product, price, qty, tva_tx, localtax1_tx, localtax2_tx, remise_percent, subprice, remise, ref)";
-            $sql .= " VALUES (".$idc.", '" . $this->db->escape($libelle) . "','" . $this->db->escape($comclient->lines[$i]->desc) . "'";
+            $sql .= " (fk_commande, label, description, fk_product, price, qty, tva_tx, localtax1_tx, localtax2_tx, remise_percent, subprice, remise, ref)";
+            $sql .= " VALUES (".$idc.", '" . $this->db->escape($label) . "','" . $this->db->escape($comclient->lines[$i]->desc) . "'";
             $sql .= ",".$comclient->lines[$i]->fk_product.",'".price2num($comclient->lines[$i]->price)."'";
             $sql .= ", '".$comclient->lines[$i]->qty."', ".$comclient->lines[$i]->tva_tx.", ".$comclient->lines[$i]->localtax1_tx.", ".$comclient->lines[$i]->localtax2_tx.", ".$comclient->lines[$i]->remise_percent;
             $sql .= ", '".price2num($comclient->lines[$i]->subprice)."','0','".$ref."');";

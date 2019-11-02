@@ -258,7 +258,7 @@ class User extends CommonObject
 		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.employee, u.gender, u.birth, u.email, u.personal_email, u.job, u.skype, u.twitter, u.facebook, u.linkedin,";
 		$sql.= " u.signature, u.office_phone, u.office_fax, u.user_mobile, u.personal_mobile,";
 		$sql.= " u.address, u.zip, u.town, u.fk_state as state_id, u.fk_country as country_id,";
-		$sql.= " u.admin, u.login, u.note,";
+		$sql.= " u.admin, u.login, u.note as note_private, u.note_public,";
 		$sql.= " u.pass, u.pass_crypted, u.pass_temp, u.api_key,";
 		$sql.= " u.fk_soc, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid, u.fk_user_expense_validator, u.fk_user_holiday_validator,";
 		$sql.= " u.statut, u.lang, u.entity,";
@@ -374,7 +374,9 @@ class User extends CommonObject
 				$this->job			= $obj->job;
 				$this->signature	= $obj->signature;
 				$this->admin		= $obj->admin;
-				$this->note			= $obj->note;
+				$this->note_public	= $obj->note_public;
+				$this->note_private	= $obj->note_private;
+				$this->note			= $obj->note_private;
 				$this->statut		= $obj->statut;
 				$this->photo		= $obj->photo;
 				$this->openid		= $obj->openid;
@@ -1222,7 +1224,8 @@ class User extends CommonObject
 						require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 						$langs->load("stocks");
 						$entrepot = new Entrepot($this->db);
-						$entrepot->libelle = $langs->trans("PersonalStock", $this->getFullName($langs));
+						$entrepot->label = $langs->trans("PersonalStock", $this->getFullName($langs));
+						$entrepot->libelle = $entrepot->label;	// For backward compatibility
 						$entrepot->description = $langs->trans("ThisWarehouseIsPersonalStock", $this->getFullName($langs));
 						$entrepot->statut = 1;
 						$entrepot->country_id = $mysoc->country_id;
@@ -1515,7 +1518,8 @@ class User extends CommonObject
 
 		$this->job    		= trim($this->job);
 		$this->signature    = trim($this->signature);
-		$this->note         = trim($this->note);
+		$this->note_public  = trim($this->note_public);
+		$this->note_private = trim($this->note_private);
 		$this->openid       = trim(empty($this->openid)?'':$this->openid);    // Avoid warning
 		$this->admin        = $this->admin?$this->admin:0;
 		$this->address		= empty($this->address)?'':$this->address;
@@ -1574,7 +1578,8 @@ class User extends CommonObject
 		$sql.= ", color = '".$this->db->escape($this->color)."'";
 		$sql.= ", dateemployment=".(strval($this->dateemployment)!='' ? "'".$this->db->idate($this->dateemployment)."'" : 'null');
 		$sql.= ", dateemploymentend=".(strval($this->dateemploymentend)!='' ? "'".$this->db->idate($this->dateemploymentend)."'" : 'null');
-		$sql.= ", note = '".$this->db->escape($this->note)."'";
+		$sql.= ", note = '".$this->db->escape($this->note_private)."'";
+		$sql.= ", note_public = '".$this->db->escape($this->note_public)."'";
 		$sql.= ", photo = ".($this->photo?"'".$this->db->escape($this->photo)."'":"null");
 		$sql.= ", openid = ".($this->openid?"'".$this->db->escape($this->openid)."'":"null");
 		$sql.= ", fk_user = ".($this->fk_user > 0?"'".$this->db->escape($this->fk_user)."'":"null");
@@ -2692,7 +2697,8 @@ class User extends CommonObject
 		$this->lastname='DOLIBARR';
 		$this->firstname='SPECIMEN';
 		$this->gender='man';
-		$this->note='This is a note';
+		$this->note_public='This is a note public';
+		$this->note_private='This is a note private';
 		$this->email='email@specimen.com';
         $this->personal_email='personalemail@specimen.com';
 		$this->skype='skypepseudo';

@@ -637,6 +637,7 @@ class FactureFournisseur extends CommonInvoice
                 $this->libelle				= $obj->label;		// deprecated
                 $this->label				= $obj->label;
                 $this->paye					= $obj->paye;
+                $this->paid					= $obj->paye;
                 $this->amount				= $obj->amount;
                 $this->remise				= $obj->remise;
                 $this->close_code			= $obj->close_code;

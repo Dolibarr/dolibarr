@@ -301,6 +301,8 @@ if ($id > 0 || ! empty($ref))
 						// Type
 						$membertypestatic->id=$objp->type_id;
 						$membertypestatic->libelle=$objp->type;
+						$membertypestatic->label=$objp->type;
+
 						print '<td class="nowrap">';
 						print $membertypestatic->getNomUrl(1, 32);
 						print '</td>';

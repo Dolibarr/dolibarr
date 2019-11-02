@@ -636,10 +636,10 @@ if (empty($reshook))
 				$result = $object->fetch(GETPOST('fac_replacement'), 'int');
 				$object->fetch_thirdparty();
 
-				$object->ref				= GETPOST('ref');
+				$object->ref				= GETPOST('ref', 'nohtml');
 				$object->ref_supplier		= GETPOST('ref_supplier', 'alpha');
 				$object->socid				= GETPOST('socid', 'int');
-				$object->libelle			= GETPOST('label');
+				$object->libelle			= GETPOST('label', 'nohtml');
 				$object->date				= $datefacture;
 				$object->date_echeance		= $datedue;
 				$object->note_public		= GETPOST('note_public', 'none');
@@ -700,10 +700,11 @@ if (empty($reshook))
 				$tmpproject = GETPOST('projectid', 'int');
 
 				// Creation facture
-				$object->ref				= $_POST['ref'];
-				$object->ref_supplier		= $_POST['ref_supplier'];
-				$object->socid				= $_POST['socid'];
-				$object->libelle			= $_POST['label'];
+				$object->ref				= GETPOST('ref', 'nohtml');
+				$object->ref_supplier		= GETPOST('ref_supplier', 'nohtml');
+				$object->socid				= GETPOST('socid', 'int');
+				$object->libelle			= GETPOST('label', 'nohtml');
+				$object->label				= GETPOST('label', 'nohtml');
 				$object->date				= $datefacture;
 				$object->date_echeance		= $datedue;
 				$object->note_public		= GETPOST('note_public', 'none');

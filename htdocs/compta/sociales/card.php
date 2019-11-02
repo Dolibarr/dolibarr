@@ -167,7 +167,7 @@ if ($action == 'add' && $user->rights->tax->charges->creer)
 	else
 	{
 		$object->type				= $actioncode;
-		$object->lib				= GETPOST('label');
+		$object->label				= GETPOST('label', 'alpha');
 		$object->date_ech			= $dateech;
 		$object->periode			= $dateperiod;
 		$object->amount				= $amount;
@@ -464,8 +464,8 @@ if ($id > 0)
 
 		$morehtmlref='<div class="refidno">';
 		// Ref customer
-		$morehtmlref.=$form->editfieldkey("Label", 'lib', $object->lib, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
-		$morehtmlref.=$form->editfieldval("Label", 'lib', $object->lib, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
+		$morehtmlref.=$form->editfieldkey("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
+		$morehtmlref.=$form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
 		// Project
 		if (! empty($conf->projet->enabled))
 		{

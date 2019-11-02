@@ -1344,7 +1344,6 @@ class ActionComm extends CommonObject
 			$linkstart = '';
 			$linkend = '';
 		}
-		//print 'rrr'.$this->libelle.'rrr'.$this->label.'rrr'.$withpicto;
 
         if ($withpicto == 2)
         {
@@ -1463,7 +1462,7 @@ class ActionComm extends CommonObject
             $sql.= " a.priority, a.fulldayevent, a.location, a.punctual, a.transparency,";
             $sql.= " u.firstname, u.lastname, u.email,";
             $sql.= " s.nom as socname,";
-            $sql.= " c.id as type_id, c.code as type_code, c.libelle";
+            $sql.= " c.id as type_id, c.code as type_code, c.libelle as type_label";
             $sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."actioncomm as a)";
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";	// Link to get author of event for export
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
@@ -1568,7 +1567,7 @@ class ActionComm extends CommonObject
                     $event['location']=$obj->location;
                     $event['transparency']=(($obj->transparency > 0)?'OPAQUE':'TRANSPARENT');		// OPAQUE (busy) or TRANSPARENT (not busy)
                     $event['punctual']=$obj->punctual;
-                    $event['category']=$obj->libelle;	// libelle type action
+                    $event['category']=$obj->type_label;
                     $event['email']=$obj->email;
 					// Define $urlwithroot
 					$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));

@@ -986,7 +986,7 @@ if ($resql)
 
         $warehousestatic->id=$objp->entrepot_id;
         $warehousestatic->ref=$objp->warehouse_ref;
-        $warehousestatic->libelle=$objp->warehouse_ref;
+        $warehousestatic->libelle=$objp->warehouse_ref;	// deprecated
         $warehousestatic->label=$objp->warehouse_ref;
         $warehousestatic->lieu=$objp->lieu;
         $warehousestatic->fk_parent = $objp->fk_parent;

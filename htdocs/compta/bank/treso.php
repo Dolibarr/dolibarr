@@ -258,7 +258,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 			{
 				$socialcontribstatic->ref=$obj->ref;
 				$socialcontribstatic->id=$obj->objid;
-				$socialcontribstatic->lib=$obj->type;
+				$socialcontribstatic->label=$obj->type;
 				$ref = $socialcontribstatic->getNomUrl(1, 24);
 
 				$totalpayment = -1*$socialcontribstatic->getSommePaiement();	// Payment already done

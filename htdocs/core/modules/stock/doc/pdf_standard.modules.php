@@ -276,7 +276,7 @@ class pdf_standard extends ModelePDFStock
 				$pdf->SetSubject($outputlangs->transnoentities("Stock"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Stock")." ".$outputlangs->convToOutputCharset($object->libelle));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Stock")." ".$outputlangs->convToOutputCharset($object->label));
 				if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
@@ -334,7 +334,7 @@ class pdf_standard extends ModelePDFStock
 							$sql = "SELECT label";
 							$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
 							$sql.= " WHERE fk_product=".$objp->rowid;
-							$sql.= " AND lang='". $langs->getDefaultLang() ."'";
+							$sql.= " AND lang='". $db->escape($langs->getDefaultLang()) ."'";
 							$sql.= " LIMIT 1";
 
 							$result = $db->query($sql);
@@ -934,7 +934,7 @@ class pdf_standard extends ModelePDFStock
 	    $pdf->SetXY($posx, $posy);
 	    $pdf->SetTextColor(0, 0, 60);
 
-	    $pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : " . $outputlangs->convToOutputCharset($object->libelle), '', 'R');
+	    $pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : " . $outputlangs->convToOutputCharset($object->label), '', 'R');
 
 	    $posy+=5;
 	    $pdf->SetFont('', '', $default_font_size - 1);
@@ -958,7 +958,7 @@ class pdf_standard extends ModelePDFStock
 		$e = new Entrepot($db);
 		if(!empty($object->fk_parent) && $e->fetch($object->fk_parent) > 0)
 		{
-			$pdf->MultiCell(150, 3, $e->libelle, '', 'R');
+			$pdf->MultiCell(150, 3, $e->label, '', 'R');
 		}
 		else
 		{

@@ -2094,7 +2094,7 @@ class Product extends CommonObject
                 $this->id = $obj->rowid;
                 $this->ref                            = $obj->ref;
                 $this->ref_ext                        = $obj->ref_ext;
-                $this->label                        = $obj->label;
+                $this->label                          = $obj->label;
                 $this->description                    = $obj->description;
                 $this->url                            = $obj->url;
                 $this->note_private                    = $obj->note_private;
@@ -4461,9 +4461,9 @@ class Product extends CommonObject
 
 
     /**
-     *  Retourne le libelle du finished du produit
+     *  Retour label of nature of product
      *
-     * @return string        Libelle
+     * @return string        Label
      */
     public function getLibFinished()
     {

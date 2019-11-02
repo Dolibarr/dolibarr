@@ -127,7 +127,7 @@ if ($id > 0 || ! empty($ref))
 		if ($user->rights->fournisseur->facture->lire)
 		{
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client, d.rowid, d.total_ht as line_total_ht,";
-			$sql .= " f.rowid as facid, f.ref, f.ref_supplier, f.datef, f.libelle, f.total_ht, f.total_ttc, f.total_tva, f.paye, f.fk_statut as statut, d.qty";
+			$sql .= " f.rowid as facid, f.ref, f.ref_supplier, f.datef, f.libelle as label, f.total_ht, f.total_ttc, f.total_tva, f.paye, f.fk_statut as statut, d.qty";
 			if (! $user->rights->societe->client->voir && ! $socid)
 				$sql .= ", sc.fk_soc, sc.fk_user ";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
@@ -221,7 +221,8 @@ if ($id > 0 || ! empty($ref))
 						$supplierinvoicestatic->id = $objp->facid;
 						$supplierinvoicestatic->ref = $objp->ref;
 						$supplierinvoicestatic->ref_supplier = $objp->ref_supplier;
-						$supplierinvoicestatic->libelle = $objp->libelle;
+						$supplierinvoicestatic->libelle = $objp->label;
+						$supplierinvoicestatic->label = $objp->label;
 						$supplierinvoicestatic->total_ht = $objp->total_ht;
 						$supplierinvoicestatic->total_ttc = $objp->total_ttc;
 						$supplierinvoicestatic->total_tva = $objp->total_tva;

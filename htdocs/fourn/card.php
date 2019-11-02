@@ -706,7 +706,7 @@ if ($object->id > 0)
 	if ($user->rights->fournisseur->facture->lire)
 	{
 		// TODO move to DAO class
-		$sql = 'SELECT f.rowid,f.libelle,f.ref,f.ref_supplier,f.fk_statut,f.datef as df, f.total_ht, f.total_tva, f.total_ttc as amount,f.paye,';
+		$sql = 'SELECT f.rowid, f.libelle as label, f.ref, f.ref_supplier, f.fk_statut, f.datef as df, f.total_ht, f.total_tva, f.total_ttc as amount,f.paye,';
 		$sql.= ' SUM(pf.amount) as am';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON f.rowid=pf.fk_facturefourn';
@@ -741,13 +741,14 @@ if ($object->id > 0)
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->ref=($obj->ref?$obj->ref:$obj->rowid);
 				$facturestatic->ref_supplier = $obj->ref_supplier;
-				$facturestatic->libelle = $obj->libelle;
+				$facturestatic->libelle = $obj->label;	// deprecated
+				$facturestatic->label = $obj->label;
 				$facturestatic->total_ht = $obj->total_ht;
                 $facturestatic->total_tva = $obj->total_tva;
                 $facturestatic->total_ttc = $obj->total_ttc;
 				print $facturestatic->getNomUrl(1);
 				print $obj->ref_supplier?' - '.$obj->ref_supplier:'';
-				print ($obj->libelle?' - ':'').dol_trunc($obj->libelle, 14);
+				print ($obj->label?' - ':'').dol_trunc($obj->label, 14);
 				print '</td>';
 				print '<td class="center nowrap">'.dol_print_date($db->jdate($obj->df), 'day').'</td>';
 				print '<td class="right nowrap">'.price($obj->amount).'</td>';

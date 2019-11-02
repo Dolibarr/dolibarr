@@ -663,7 +663,7 @@ class PaymentExpenseReport extends CommonObject
 
 		$result='';
 
-		if (empty($this->ref)) $this->ref=$this->lib;
+		if (empty($this->ref)) $this->ref=$this->label;
         $label = $langs->trans("ShowPayment").': '.$this->ref;
 
 		if (!empty($this->id))

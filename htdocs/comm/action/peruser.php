@@ -752,12 +752,12 @@ while($currentdaytoshow<$lastdaytoshow) {
 	// Load array of colors by type
 	$colorsbytype=array();
 	$labelbytype=array();
-	$sql="SELECT code, color, libelle FROM ".MAIN_DB_PREFIX."c_actioncomm ORDER BY position";
+	$sql="SELECT code, color, libelle as label FROM ".MAIN_DB_PREFIX."c_actioncomm ORDER BY position";
 	$resql=$db->query($sql);
 	while ($obj = $db->fetch_object($resql))
 	{
 		$colorsbytype[$obj->code]=$obj->color;
-		$labelbytype[$obj->code]=$obj->libelle;
+		$labelbytype[$obj->code]=$obj->label;
 	}
 
 	// Loop on each user to show calendar

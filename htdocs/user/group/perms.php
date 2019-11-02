@@ -243,7 +243,7 @@ if ($object->id > 0)
     print '<td>'.$langs->trans("Permissions").'</td>';
     print '</tr>';
 
-    $sql = "SELECT r.id, r.libelle, r.module";
+    $sql = "SELECT r.id, r.libelle as label, r.module";
     $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
     $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
     $sql.= " AND r.entity = " . $entity;
@@ -330,7 +330,7 @@ if ($object->id > 0)
             	print '<td>&nbsp</td>';
             }
 
-            $perm_libelle=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$langs->trans($obj->libelle)));
+            $perm_libelle=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$langs->trans($obj->label)));
             print '<td>'.$perm_libelle. '</td>';
 
             print '</tr>';

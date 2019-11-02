@@ -1366,7 +1366,7 @@ if ($action == 'create')
 							    print '</td>';
 
 							    print '<td class="left">';
-							    print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $staticwarehouse->libelle);
+							    print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $staticwarehouse->label);
 							    print '</td></tr>';
 							}
 						}
@@ -1548,7 +1548,7 @@ if ($action == 'create')
 	    						{
 	    							$warehouseObject=new Entrepot($db);
 	    							$warehouseObject->fetch($warehouse_selected_id);
-	    							print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $warehouseObject->libelle);
+	    							print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $warehouseObject->label);
 	    						}
 	    						else
 	    						{

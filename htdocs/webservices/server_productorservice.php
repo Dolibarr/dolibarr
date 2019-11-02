@@ -518,10 +518,10 @@ function createProductOrService($authentication, $product)
         $newobject->ref=$product['ref'];
         $newobject->ref_ext=$product['ref_ext'];
         $newobject->type=$product['type'];
-        $newobject->libelle=$product['label'];    // @deprecated
         $newobject->label=$product['label'];
         $newobject->description=$product['description'];
-        $newobject->note=$product['note'];
+        $newobject->note_public=$product['note_public'];
+        $newobject->note_private=$product['note_private'];
         $newobject->status=$product['status_tosell'];
         $newobject->status_buy=$product['status_tobuy'];
         $newobject->price=$product['price_net'];
@@ -692,7 +692,6 @@ function updateProductOrService($authentication, $product)
         if (isset($product['ref']))     $newobject->ref=$product['ref'];
         if (isset($product['ref_ext'])) $newobject->ref_ext=$product['ref_ext'];
         $newobject->type=$product['type'];
-        $newobject->libelle=$product['label'];    // @deprecated
         $newobject->label=$product['label'];
         $newobject->description=$product['description'];
         $newobject->note=$product['note'];

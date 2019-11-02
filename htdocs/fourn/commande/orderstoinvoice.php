@@ -158,17 +158,18 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 			$datefacture = dol_mktime(date("h"), date("M"), 0, date("m"), date("d"), date("Y"));
 		}
 		if (! $error) {
-			$object->ref = GETPOST('ref');
-			$object->ref_supplier = GETPOST('ref_supplier');
+			$object->ref = GETPOST('ref', 'nohtml');
+			$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
 			$object->socid = GETPOST('socid', 'int');
-			$object->libelle = GETPOST('libelle');
+			$object->libelle = (GETPOSTISSET('libelle') ? GETPOST('libelle', 'nohtml') : GETPOST('label', 'nohtml'));
+			$object->label = (GETPOSTISSET('libelle') ? GETPOST('libelle', 'nohtml') : GETPOST('label', 'nohtml'));
 			$object->date = $datefacture;
 			$object->date_echeance = $datedue;
 			$object->note_public = GETPOST('note_public', 'none');
 			$object->note_private = GETPOST('note_private', 'none');
 			$object->cond_reglement_id = GETPOST('cond_reglement_id');
 			$object->mode_reglement_id = GETPOST('mode_reglement_id');
-			$projectid = GETPOST('projectid');
+			$projectid = GETPOST('projectid', 'int');
 			if ($projectid > 0)
 				$object->fk_project = $projectid;
 

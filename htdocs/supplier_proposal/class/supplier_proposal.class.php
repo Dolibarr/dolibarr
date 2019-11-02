@@ -1364,9 +1364,9 @@ class SupplierProposal extends CommonObject
 
                         $line->fk_product       = $objp->fk_product;
 
-                        $line->ref				= $objp->product_ref;		// TODO deprecated
+                        $line->ref				= $objp->product_ref;		// deprecated
                         $line->product_ref		= $objp->product_ref;
-                        $line->libelle			= $objp->product_label;		// TODO deprecated
+                        $line->libelle			= $objp->product_label;		// deprecated
                         $line->product_label	= $objp->product_label;
                         $line->product_desc     = $objp->product_desc; 		// Description produit
                         $line->fk_product_type  = $objp->fk_product_type;

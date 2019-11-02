@@ -283,7 +283,7 @@ print '<td>'.$langs->trans("Permissions").'</td>';
 print '</tr>'."\n";
 
 //print "xx".$conf->global->MAIN_USE_ADVANCED_PERMS;
-$sql = "SELECT r.id, r.libelle, r.module, r.module_position";
+$sql = "SELECT r.id, r.libelle as label, r.module, r.module_position";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
 $sql.= " AND r.entity = " . $entity;
@@ -421,7 +421,7 @@ if ($result)
         }
 
         // Label
-		$permlabel=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$langs->trans($obj->libelle)));
+		$permlabel=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$langs->trans($obj->label)));
 		print '<td class="maxwidthonsmartphone">'.$permlabel.'</td>';
 
 		print '</tr>'."\n";

@@ -958,7 +958,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 {
 	$facstatic=new FactureFournisseur($db);
 
-	$sql = "SELECT ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_tva, ff.total_ttc, ff.paye";
+	$sql = "SELECT ff.rowid, ff.ref, ff.fk_statut, ff.libelle as label, ff.total_ht, ff.total_tva, ff.total_ttc, ff.paye";
 	$sql.= ", ff.date_lim_reglement";
 	$sql.= ", s.nom as name";
     $sql.= ", s.rowid as socid, s.email";
@@ -1075,9 +1075,8 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-
 		print '<tr class="oddeven"><td>'.dol_print_date($db->jdate($obj->da), "day").'</td>';
-		print '<td><a href="action/card.php">'.$obj->libelle.' '.$obj->label.'</a></td></tr>';
+		print '<td><a href="action/card.php">'.$obj->label.'</a></td></tr>';
 		$i++;
 	}
 	$db->free($resql);

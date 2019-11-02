@@ -1777,7 +1777,8 @@ class Expedition extends CommonObject
 		{
 			$line=new ExpeditionLigne($this->db);
 			$line->desc=$langs->trans("Description")." ".$xnbp;
-			$line->libelle=$langs->trans("Description")." ".$xnbp;
+			$line->libelle=$langs->trans("Description")." ".$xnbp;	// deprecated
+			$line->label=$langs->trans("Description")." ".$xnbp;
 			$line->qty=10;
 			$line->qty_asked=5;
 			$line->qty_shipped=4;
@@ -1836,7 +1837,7 @@ class Expedition extends CommonObject
 		global $langs;
 		$this->meths = array();
 
-		$sql = "SELECT em.rowid, em.code, em.libelle";
+		$sql = "SELECT em.rowid, em.code, em.libelle as label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
 		$sql.= " WHERE em.active = 1";
 		$sql.= " ORDER BY em.libelle ASC";
@@ -1847,7 +1848,7 @@ class Expedition extends CommonObject
 			while ($obj = $this->db->fetch_object($resql))
 			{
 				$label=$langs->trans('SendingMethod'.$obj->code);
-				$this->meths[$obj->rowid] = ($label != 'SendingMethod'.$obj->code?$label:$obj->libelle);
+				$this->meths[$obj->rowid] = ($label != 'SendingMethod'.$obj->code?$label:$obj->label);
 			}
 		}
 	}
@@ -1867,7 +1868,7 @@ class Expedition extends CommonObject
 		$this->listmeths = array();
 		$i=0;
 
-		$sql = "SELECT em.rowid, em.code, em.libelle, em.description, em.tracking, em.active";
+		$sql = "SELECT em.rowid, em.code, em.libelle as label, em.description, em.tracking, em.active";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
 		if ($id!='') $sql.= " WHERE em.rowid=".$id;
 
@@ -1879,7 +1880,7 @@ class Expedition extends CommonObject
 				$this->listmeths[$i]['rowid'] = $obj->rowid;
 				$this->listmeths[$i]['code'] = $obj->code;
 				$label=$langs->trans('SendingMethod'.$obj->code);
-				$this->listmeths[$i]['libelle'] = ($label != 'SendingMethod'.$obj->code?$label:$obj->libelle);
+				$this->listmeths[$i]['libelle'] = ($label != 'SendingMethod'.$obj->code?$label:$obj->label);
 				$this->listmeths[$i]['description'] = $obj->description;
 				$this->listmeths[$i]['tracking'] = $obj->tracking;
 				$this->listmeths[$i]['active'] = $obj->active;

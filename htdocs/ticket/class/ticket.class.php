@@ -2258,7 +2258,7 @@ class Ticket extends CommonObject
             $sql .= ", t.phone as phone, t.phone_mobile as phone_mobile, t.phone_perso as phone_perso";
         }
 
-        $sql .= ", tc.source, tc.element, tc.code, tc.libelle";
+        $sql .= ", tc.source, tc.element, tc.code, tc.libelle as type_contact_label";
         $sql .= " FROM " . MAIN_DB_PREFIX . "c_type_contact tc";
         $sql .= ", " . MAIN_DB_PREFIX . "element_contact ec";
         if ($source == 'internal') {
@@ -2296,7 +2296,7 @@ class Ticket extends CommonObject
 
                 if (!$list) {
                     $transkey = "TypeContact_" . $obj->element . "_" . $obj->source . "_" . $obj->code;
-                    $libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->libelle);
+                    $libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->type_contact_label);
                     $tab[$i] = array(
                             'source' => $obj->source,
                             'socid' => $obj->socid,

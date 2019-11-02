@@ -221,7 +221,7 @@ dol_fiche_end();
  */
 
 $disable_delete = 0;
-$sql = 'SELECT f.rowid as scid, f.libelle, f.paye, f.amount as sc_amount, pf.amount, pc.libelle as sc_type';
+$sql = 'SELECT f.rowid as scid, f.libelle as label, f.paye, f.amount as sc_amount, pf.amount, pc.libelle as sc_type';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'paiementcharge as pf,'.MAIN_DB_PREFIX.'chargesociales as f, '.MAIN_DB_PREFIX.'c_chargesociales as pc';
 $sql.= ' WHERE pf.fk_charge = f.rowid AND f.fk_type = pc.id';
 $sql.= ' AND f.entity = '.$conf->entity;
@@ -263,7 +263,7 @@ if ($resql)
             /*print $socialcontrib->type;*/
             print "</td>\n";
 			// Label
-			print '<td>'.$objp->libelle.'</td>';
+			print '<td>'.$objp->label.'</td>';
 			// Expected to pay
 			print '<td class="right">'.price($objp->sc_amount).'</td>';
 			// Status

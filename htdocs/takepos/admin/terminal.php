@@ -45,14 +45,14 @@ $langs->loadLangs(array("admin", "cashdesk"));
 
 global $db;
 
-$sql = "SELECT code, libelle FROM ".MAIN_DB_PREFIX."c_paiement";
+$sql = "SELECT code, libelle as label FROM ".MAIN_DB_PREFIX."c_paiement";
 $sql.= " WHERE entity IN (".getEntity('c_paiement').")";
 $sql.= " AND active = 1";
 $sql.= " ORDER BY libelle";
 $resql = $db->query($sql);
 $paiements = array();
-if($resql){
-	while ($obj = $db->fetch_object($resql)){
+if ($resql) {
+	while ($obj = $db->fetch_object($resql)) {
 		array_push($paiements, $obj);
 	}
 }
@@ -152,7 +152,7 @@ if (! empty($conf->banque->enabled))
 	foreach($paiements as $modep) {
         if (in_array($modep->code, array('LIQ', 'CB', 'CHQ'))) continue;	// Already managed before
         $name="CASHDESK_ID_BANKACCOUNT_".$modep->code.$terminaltouse;
-		print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountFor").' '.$langs->trans($modep->libelle).'</td>';
+		print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountFor").' '.$langs->trans($modep->label).'</td>';
 		print '<td>';
 		if (! empty($conf->global->$name)) $atleastonefound++;
 		$cour=preg_match('/^LIQ.*/', $modep->code)?2:1;
