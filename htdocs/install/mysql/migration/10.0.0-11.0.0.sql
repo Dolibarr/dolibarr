@@ -146,6 +146,10 @@ ALTER TABLE llx_stock_mouvement ADD COLUMN fk_projet INTEGER NOT NULL DEFAULT 0 
 
 ALTER TABLE llx_oauth_token ADD COLUMN fk_soc integer DEFAULT NULL after token;
 
+
+ALTER TABLE llx_adherent_type ADD COLUMN duration varchar(6) DEFAULT NULL after morphy;
+
+
 ALTER TABLE llx_mailing ADD COLUMN tms timestamp;
 ALTER TABLE llx_mailing_cibles ADD COLUMN tms timestamp;
 
@@ -246,6 +250,7 @@ INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, m
 -- India (117)
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('IN-REPUBLICDAY',  0, 117, '', 0,  1, 26, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('IN-GANDI',        0, 117, '', 0, 10,  2, 1);
+
 
 ALTER TABLE llx_product ADD COLUMN net_measure         float;
 ALTER TABLE llx_product ADD COLUMN net_measure_units     tinyint;
