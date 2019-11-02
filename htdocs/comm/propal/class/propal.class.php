@@ -13,7 +13,7 @@
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García            <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018      Frédéric France          <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019 Frédéric France          <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Ferran Marcet         	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -95,8 +95,17 @@ class Propal extends CommonObject
 	 */
 	public $socid;
 
+	/**
+	 * ID of the contact
+	 * @var int
+	 */
 	public $contactid;
 	public $author;
+
+	/**
+	 * Ref from thirdparty
+	 * @var string
+	 */
 	public $ref_client;
 
 	/**
@@ -240,7 +249,7 @@ class Propal extends CommonObject
 	 *	@param      int		$socid		Id third party
 	 *	@param      int		$propalid   Id proposal
 	 */
-    public function __construct($db, $socid = "", $propalid = 0)
+    public function __construct($db, $socid = 0, $propalid = 0)
 	{
 		global $conf,$langs;
 
