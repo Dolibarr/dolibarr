@@ -59,12 +59,12 @@
  * <dol_print_payment>                              Print payment method
  * <dol_print_logo>                                 Print logo stored on printer. Example : <print_logo>32|32
  * <dol_print_logo_old>                             Print logo stored on printer. Must be followed by logo code. For old printers.
- * <dol_print_order_lines>                          Print order lines
- * <dol_print_order_tax>                            Print order total tax
- * <dol_print_order_local_tax>                      Print order local tax
- * <dol_print_order_total>                          Print order total
- * <dol_print_order_number>                         Print order number
- * <dol_print_order_number_unique>                  Print order number after validation
+ * <dol_print_object_lines>                          Print object lines
+ * <dol_print_object_tax>                            Print object total tax
+ * <dol_print_object_local_tax>                      Print object local tax
+ * <dol_print_object_total>                          Print object total
+ * <dol_print_object_number>                         Print object number
+ * <dol_print_object_number_unique>                  Print object number after validation
  * <dol_print_customer_firstname>                   Print customer firstname
  * <dol_print_customer_lastname>                    Print customer name
  * <dol_print_customer_mail>                        Print customer mail
@@ -77,15 +77,15 @@
  * <dol_print_vendor_firstname>                     Print vendor firstname
  * <dol_print_vendor_mail>                          Print vendor mail
  * <dol_print_customer_points>                      Print customer points
- * <dol_print_order_points>                         Print number of points for this order
+ * <dol_print_object_points>                         Print number of points for this object
  *
  * Conditional code at line start (if�then Print)
- * <dol_print_if_customer>                          Print the line IF a customer is affected to the order
- * <dol_print_if_vendor>                            Print the line IF a vendor is affected to the order
+ * <dol_print_if_customer>                          Print the line IF a customer is affected to the object
+ * <dol_print_if_vendor>                            Print the line IF a vendor is affected to the object
  * <dol_print_if_happy_hour>                        Print the line IF Happy Hour
- * <dol_print_if_num_order_unique>                  Print the line IF order is validated
+ * <dol_print_if_num_object_unique>                  Print the line IF object is validated
  * <dol_print_if_customer_points>                   Print the line IF customer points > 0
- * <dol_print_if_order_points>                      Print the line IF points of the order > 0
+ * <dol_print_if_object_points>                      Print the line IF points of the object > 0
  * <dol_print_if_customer_tax_number>               Print the line IF customer has vat number
  * <dol_print_if_customer_account_balance_positive> Print the line IF customer balance > 0
  *
@@ -141,6 +141,7 @@ class dolReceiptPrinter extends Printer
     {
         $this->db=$db;
         $this->tags = array(
+            'dol_line_feed',
             'dol_align_left',
             'dol_align_center',
             'dol_align_right',
@@ -167,7 +168,8 @@ class dolReceiptPrinter extends Printer
             'dol_cut_paper_full',
             'dol_cut_paper_partial',
             'dol_open_drawer',
-            'dol_activate_buzzer',
+            //'dol_activate_buzzer',
+            'dol_print_text',
             'dol_print_qrcode',
             'dol_print_date',
             'dol_print_date_time',
@@ -181,12 +183,14 @@ class dolReceiptPrinter extends Printer
             'dol_print_payment',
             'dol_print_logo',
             'dol_print_logo_old',
-            'dol_print_order_lines',
-            'dol_print_order_tax',
-            'dol_print_order_local_tax',
-            'dol_print_order_total',
-            'dol_print_order_number',
-            'dol_print_order_number_unique',
+            'dol_print_object_id',
+            'dol_print_object_ref',
+            'dol_print_object_lines',
+            'dol_print_object_tax',
+            'dol_print_object_local_tax',
+            'dol_print_object_total',
+            'dol_print_object_number',
+            'dol_print_object_number_unique',
             'dol_print_customer_firstname',
             'dol_print_customer_lastname',
             'dol_print_customer_mail',
@@ -199,13 +203,13 @@ class dolReceiptPrinter extends Printer
             'dol_print_vendor_firstname',
             'dol_print_vendor_mail',
             'dol_print_customer_points',
-            'dol_print_order_points',
+            'dol_print_object_points',
             'dol_print_if_customer',
             'dol_print_if_vendor',
             'dol_print_if_happy_hour',
-            'dol_print_if_num_order_unique',
+            'dol_print_if_num_object_unique',
             'dol_print_if_customer_points',
-            'dol_print_if_order_points',
+            'dol_print_if_object_points',
             'dol_print_if_customer_tax_number',
             'dol_print_if_customer_account_balance_positive',
         );
@@ -521,12 +525,13 @@ class dolReceiptPrinter extends Printer
      */
     public function sendToPrinter($object, $templateid, $printerid)
     {
-        global $conf;
+        global $conf, $mysoc;
         $error = 0;
         $ret = $this->loadTemplate($templateid);
 
         // tags a remplacer par leur valeur avant de parser
-        $this->template = str_replace('<dol_print_num_order>', $object->id, $this->template);
+        $this->template = str_replace('<dol_print_object_id>', $object->id, $this->template);
+        $this->template = str_replace('<dol_print_object_ref>', $object->ref, $this->template);
         $this->template = str_replace('<dol_print_customer_firstname>', $object->customer_firstname, $this->template);
         $this->template = str_replace('<dol_print_customer_lastname>', $object->customer_lastname, $this->template);
         $this->template = str_replace('<dol_print_customer_mail>', $object->customer_mail, $this->template);
@@ -536,7 +541,7 @@ class dolReceiptPrinter extends Printer
         $this->template = str_replace('<dol_print_customer_tax_number>', $object->customer_tax_number, $this->template);
         $this->template = str_replace('<dol_print_customer_account_balance>', $object->customer_account_balance, $this->template);
         $this->template = str_replace('<dol_print_customer_points>', $object->customer_points, $this->template);
-        $this->template = str_replace('<dol_print_order_points>', $object->order_points, $this->template);
+        $this->template = str_replace('<dol_print_object_points>', $object->object_points, $this->template);
         $this->template = str_replace('<dol_print_vendor_firstname>', $object->vendor_firstname, $this->template);
         $this->template = str_replace('<dol_print_vendor_lastname>', $object->vendor_lastname, $this->template);
         $this->template = str_replace('<dol_print_vendor_mail>', $object->vendor_mail, $this->template);
@@ -558,78 +563,92 @@ class dolReceiptPrinter extends Printer
         //print '<pre>'.print_r($vals, true).'</pre>';
         // print ticket
         $level = 0;
-        $html = '<table border="1" style="width:210px"><pre>';
+        $nbcaractbyline = 47;
         $ret = $this->initPrinter($printerid);
         if ($ret>0) {
             setEventMessages($this->error, $this->errors, 'errors');
         } else {
             $nboflines = count($vals);
-            for ($line=0; $line < $nboflines; $line++) {
-                switch ($vals[$line]['tag']) {
+            for ($tplline=0; $tplline < $nboflines; $tplline++) {
+                //var_dump($vals[$tplline]['value']);
+                switch ($vals[$tplline]['tag']) {
+                    case 'DOL_PRINT_TEXT':
+                        $this->printer->text($vals[$tplline]['value']);
+                        break;
+                    case 'DOL_PRINT_OBJECT_LINES':
+                        foreach ($object->lines as $line) {
+                            $spacestoadd = $nbcaractbyline - strlen($line->ref) - strlen(price($line->total_ttc, 'MT'));
+                            $spaces = str_repeat(' ', $spacestoadd);
+                            $this->printer->text($line->ref.$spaces.price($line->total_ttc, 'MT')."\n");
+                            //var_dump($line->ref);
+                        }
+                        break;
+                    case 'DOL_LINE_FEED':
+                        $this->printer->feed();
+                        break;
                     case 'DOL_ALIGN_CENTER':
-                        $this->printer->setJustification(Escpos::JUSTIFY_CENTER);
-                        $html.='<center>';
-                        $this->printer->text($vals[$line]['value']);
+                        $this->printer->setJustification(Printer::JUSTIFY_CENTER);
                         break;
                     case 'DOL_ALIGN_RIGHT':
-                        $this->printer->setJustification(Escpos::JUSTIFY_RIGHT);
-                        $html.='<right>';
+                        $this->printer->setJustification(Printer::JUSTIFY_RIGHT);
                         break;
                     case 'DOL_ALIGN_LEFT':
-                        $this->printer->setJustification(Escpos::JUSTIFY_LEFT);
-                        $html.='<left>';
+                        $this->printer->setJustification(Printer::JUSTIFY_LEFT);
                         break;
                     case 'DOL_OPEN_DRAWER':
                         $this->printer->pulse();
-                        $html.= ' &#991;'.nl2br($vals[$line]['value']);
                         break;
                     case 'DOL_ACTIVATE_BUZZER':
                         //$this->printer->buzzer();
-                        $html.= ' &#x266b;'.nl2br($vals[$line]['value']);
                         break;
                     case 'DOL_PRINT_BARCODE':
-                        // $vals[$line]['value'] -> barcode($content, $type)
+                        // $vals[$tplline]['value'] -> barcode($content, $type)
                         $this->printer->barcode($object->barcode);
                         break;
+                    case 'DOL_PRINT_LOGO':
+                        // $vals[$tplline]['value'] -> barcode($content, $type)
+                        $img = EscposImage::load(DOL_DATA_ROOT .'/mycompany/logos/'.$mysoc->logo);
+                        $this->printer->graphics($img);
+                        break;
+                    case 'DOL_PRINT_LOGO_OLD':
+                        // $vals[$tplline]['value'] -> barcode($content, $type)
+                        $img = EscposImage::load(DOL_DATA_ROOT .'/mycompany/logos/'.$mysoc->logo);
+                        $this->printer->bitImage($img);
+                        break;
                     case 'DOL_PRINT_BARCODE_CUSTOMER_ID':
-                        // $vals[$line]['value'] -> barcode($content, $type)
+                        // $vals[$tplline]['value'] -> barcode($content, $type)
                         $this->printer->barcode($object->customer_id);
                         break;
                     case 'DOL_PRINT_QRCODE':
-                        // $vals[$line]['value'] -> qrCode($content, $ec, $size, $model)
-                        $this->printer->qrcode($vals[$line]['value']);
-                        $html.='QRCODE: '.$vals[$line]['value'];
+                        // $vals[$tplline]['value'] -> qrCode($content, $ec, $size, $model)
+                        $this->printer->qrcode($vals[$tplline]['value']);
                         break;
                     case 'DOL_CUT_PAPER_FULL':
-                        $this->printer->cut(Escpos::CUT_FULL);
-                        $html.= ' &#9986;'.nl2br($vals[$line]['value']);
+                        $this->printer->cut(Printer::CUT_FULL);
                         break;
                     case 'DOL_CUT_PAPER_PARTIAL':
-                        $this->printer->cut(Escpos::CUT_PARTIAL);
-                        $html.= ' &#9986;'.nl2br($vals[$line]['value']);
+                        $this->printer->cut(Printer::CUT_PARTIAL);
                         break;
                     case 'DOL_USE_FONT_A':
-                        $this->printer->setFont(Escpos::FONT_A);
-                        $this->printer->text($vals[$line]['value']);
+                        $this->printer->setFont(Printer::FONT_A);
+                        $this->printer->text($vals[$tplline]['value']);
                         break;
                     case 'DOL_USE_FONT_B':
-                        $this->printer->setFont(Escpos::FONT_B);
-                        $this->printer->text($vals[$line]['value']);
+                        $this->printer->setFont(Printer::FONT_B);
+                        $this->printer->text($vals[$tplline]['value']);
                         break;
                     case 'DOL_USE_FONT_C':
-                        $this->printer->setFont(Escpos::FONT_C);
-                        $this->printer->text($vals[$line]['value']);
+                        $this->printer->setFont(Printer::FONT_C);
+                        $this->printer->text($vals[$tplline]['value']);
                         break;
                     default:
-                        $this->printer->text($vals[$line]['value']);
-                        $html.= nl2br($vals[$line]['value']);
-                        $this->errors[] = 'UnknowTag: &lt;'.strtolower($vals[$line]['tag']).'&gt;';
+                        $this->printer->text($vals[$tplline]['value']);
+                        $html.= nl2br($vals[$tplline]['value']);
+                        $this->errors[] = 'UnknowTag: &lt;'.strtolower($vals[$tplline]['tag']).'&gt;';
                         $error++;
                         break;
                 }
             }
-            $html.= '</pre></table>';
-            print $html;
             // Close and print
             // uncomment next line to see content sent to printer
             //print '<pre>'.print_r($this->connector, true).'</pre>';

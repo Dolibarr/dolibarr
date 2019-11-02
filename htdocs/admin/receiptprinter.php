@@ -174,14 +174,19 @@ if ($action == 'testtemplate' && $user->admin) {
     // }
 
     // if (! $error) {
-    //     // test
-    //     $ret = $printer->sendTestToPrinter($printerid);
-    //     if ($ret == 0) {
-    setEventMessages($langs->trans("TestTemplateToPrinter", $printername), null);
-    //     } else {
-    //         setEventMessages($printer->error, $printer->errors, 'errors');
-    //     }
-    // }
+	// test
+	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+	$object = new Facture($db);
+	//$object->initAsSpecimen();
+	$object->fetch(8);
+	//var_dump($object->lines);
+    $ret = $printer->sendToPrinter($object, $templateid, 1);
+    if ($ret == 0) {
+        setEventMessages($langs->trans("TestTemplateToPrinter", $printername), null);
+    } else {
+        setEventMessages($printer->error, $printer->errors, 'errors');
+    }
+    //}
     $action = '';
 }
 
@@ -310,7 +315,7 @@ if ($mode == 'config' && $user->admin) {
         }
     }
 
-    if ($action!='editprinter') {
+    if ($action != 'editprinter') {
         if ($nbofprinters > 0) {
             print '<tr class="liste_titre">';
             print '<th>'.$langs->trans("Name").'</th>';
@@ -446,7 +451,7 @@ if ($mode == 'template' && $user->admin) {
     }
     print '</form>';
     print '<div><p></div>';
-    print '<table class="noborder" width="100%">'."\n";
+    print '<table class="noborder centpercent">'."\n";
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("Tag").'</th>';
     print '<th>'.$langs->trans("Description").'</th>';
@@ -461,18 +466,6 @@ if ($mode == 'template' && $user->admin) {
 
     dol_fiche_end();
 }
-
-// to remove after test
-// $object=new stdClass();
-// $object->date_time = '2015-11-02 22:30:25';
-// $object->id = 1234;
-// $object->customer_firstname  = 'John';
-// $object->customer_lastname  = 'Deuf';
-// $object->vendor_firstname  = 'Jim';
-// $object->vendor_lastname  = 'Big';
-// $object->barcode = '3700123862396';
-//$printer->sendToPrinter($object, 1, 16);
-//setEventMessages($printer->error, $printer->errors, 'errors');
 
 // End of page
 llxFooter();
