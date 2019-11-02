@@ -769,6 +769,7 @@ if ($resql)
 	$total=0;
 	$subtotal=0;
 	$productstat_cache=array();
+	$getNomUrl_cache=array();
 
 	$generic_commande = new Commande($db);
 	$generic_product = new Product($db);
@@ -785,11 +786,14 @@ if ($resql)
 		$text_warning='';
 		$nbprod=0;
 
-		$companystatic->id=$obj->socid;
+        $companystatic->id = $obj->socid;
 		$companystatic->code_client = $obj->code_client;
-		$companystatic->name=$obj->name;
-		$companystatic->client=$obj->client;
-		$companystatic->email=$obj->email;
+		$companystatic->name = $obj->name;
+		$companystatic->client = $obj->client;
+		$companystatic->email = $obj->email;
+		if (!isset($getNomUrl_cache[$obj->socid])) {
+		    $getNomUrl_cache[$obj->socid] = $companystatic->getNomUrl(1, 'customer');
+		}
 
 		$generic_commande->id=$obj->rowid;
 		$generic_commande->ref=$obj->ref;
@@ -974,7 +978,7 @@ if ($resql)
 		if (! empty($arrayfields['s.nom']['checked']))
 		{
 			print '<td class="tdoverflowmax200">';
-			print $companystatic->getNomUrl(1, 'customer');
+			print $getNomUrl_cache[$obj->socid];
 
 			// If module invoices enabled and user with invoice creation permissions
 			if (! empty($conf->facture->enabled) && ! empty($conf->global->ORDER_BILLING_ALL_CUSTOMER))
