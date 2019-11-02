@@ -49,9 +49,9 @@ $action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
 
 // Security check
-if ($user->societe_id)
+if ($user->socid)
 {
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 $result=restrictedArea($user, 'facture', $id, '');
 

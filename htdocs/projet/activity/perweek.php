@@ -56,7 +56,7 @@ $hookmanager->initHooks(array('timesheetperweekcard'));
 // Security check
 $socid=0;
 // For external user, no check is done on company because readability is managed by public status of project and assignement.
-// if ($user->societe_id > 0) $socid=$user->societe_id;
+// if ($user->socid > 0) $socid=$user->socid;
 $result = restrictedArea($user, 'projet', $projectid);
 
 $now=dol_now();

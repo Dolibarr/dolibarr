@@ -139,8 +139,8 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 	$search_ref = GETPOST('sf_ref') ? GETPOST('sf_ref') : GETPOST('search_ref');
 
 	// Security check
-	if ($user->societe_id)
-		$socid = $user->societe_id;
+	if ($user->socid)
+		$socid = $user->socid;
 	$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
 	$usehm = $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
@@ -398,7 +398,7 @@ if ($action == 'create' && !$error) {
 	print '</textarea></td></tr>';
 
 	// Private note
-	if (empty($user->societe_id)) {
+	if (empty($user->socid)) {
 		print '<tr>';
 		print '<td class="tdtop">' . $langs->trans('NotePrivate') . '</td>';
 		print '<td colspan="2">';

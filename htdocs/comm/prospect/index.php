@@ -30,9 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 $langs->load("propal");
 
 
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 

@@ -48,7 +48,7 @@ $projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOS
 
 // Security check
 $socid = GETPOST("socid", "int");
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'salaries', '', '', '');
 
 $object = new PaymentSalary($db);

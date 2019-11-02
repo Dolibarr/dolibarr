@@ -42,7 +42,7 @@ $toselect = GETPOST('toselect', 'array');
 
 // Security check
 $receptionid = GETPOST('id', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'reception', $receptionid, '');
 
 $diroutputmassaction=$conf->reception->dir_output . '/temp/massgeneration/'.$user->id;

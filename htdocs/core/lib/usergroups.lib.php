@@ -108,7 +108,7 @@ function user_prepare_head($object)
 	}
 
 	// Notifications
-	if ($user->societe_id == 0 && ! empty($conf->notification->enabled))
+	if ($user->socid == 0 && ! empty($conf->notification->enabled))
 	{
 		$nbNote = 0;
 		$sql = "SELECT COUNT(n.rowid) as nb";
@@ -157,7 +157,7 @@ function user_prepare_head($object)
 	}
 
 	// Such info on users is visible only by internal user
-	if (empty($user->societe_id))
+	if (empty($user->socid))
 	{
 		// Notes
 		$nbNote = 0;

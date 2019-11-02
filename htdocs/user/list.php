@@ -42,8 +42,8 @@ $contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'userlist
 
 // Security check (for external users)
 $socid=0;
-if ($user->societe_id > 0) {
-	$socid = $user->societe_id;
+if ($user->socid > 0) {
+	$socid = $user->socid;
 }
 
 // Load mode employee

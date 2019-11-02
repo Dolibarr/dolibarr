@@ -104,7 +104,7 @@ if (empty($url))
 $langs->loadLangs(array("ecm","companies","other"));
 
 // Security check
-if ($user->societe_id > 0) $socid = $user->societe_id;
+if ($user->socid > 0) $socid = $user->socid;
 
 //print 'xxx'.$upload_dir;
 

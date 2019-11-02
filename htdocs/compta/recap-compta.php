@@ -35,7 +35,7 @@ if (! empty($conf->facture->enabled)) $langs->load("bills");
 $id = GETPOST('id')?GETPOST('id', 'int'):GETPOST('socid', 'int');
 
 // Security check
-if ($user->societe_id) $id=$user->societe_id;
+if ($user->socid) $id=$user->socid;
 $result = restrictedArea($user, 'societe', $id, '&societe');
 
 $object = new Societe($db);
@@ -96,7 +96,7 @@ if ($id > 0)
     $head = societe_prepare_head($object);
 
 	dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"), 0, 'company');
-	dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom', '', '', 0, '', '', 1);
+	dol_banner_tab($object, 'socid', '', ($user->socid?0:1), 'rowid', 'nom', '', '', 0, '', '', 1);
 	dol_fiche_end();
 
 	if (! empty($conf->facture->enabled) && $user->rights->facture->lire)

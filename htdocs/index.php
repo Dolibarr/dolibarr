@@ -115,7 +115,7 @@ $boxstatFromHook = '';
 // Load translation files required by page
 $langs->loadLangs(array('commercial', 'bills', 'orders', 'contracts'));
 
-if (empty($user->societe_id) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
+if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 {
     $object=new stdClass();
     $parameters=array();
@@ -437,7 +437,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
     }
 
     // Number of transactions to conciliate
-    if (!empty($conf->banque->enabled) && $user->rights->banque->lire && !$user->societe_id) {
+    if (!empty($conf->banque->enabled) && $user->rights->banque->lire && !$user->socid) {
         include_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
         $board = new Account($db);
         $nb = $board::countAccountToReconcile();    // Get nb of account to reconciliate
@@ -447,14 +447,14 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
     }
 
     // Number of cheque to send
-    if (!empty($conf->banque->enabled) && $user->rights->banque->lire && !$user->societe_id && empty($conf->global->BANK_DISABLE_CHECK_DEPOSIT)) {
+    if (!empty($conf->banque->enabled) && $user->rights->banque->lire && !$user->socid && empty($conf->global->BANK_DISABLE_CHECK_DEPOSIT)) {
         include_once DOL_DOCUMENT_ROOT . '/compta/paiement/cheque/class/remisecheque.class.php';
         $board = new RemiseCheque($db);
         $dashboardlines['RemiseCheque'] = $board->load_board($user);
     }
 
     // Number of foundation members
-    if (!empty($conf->adherent->enabled) && $user->rights->adherent->lire && !$user->societe_id) {
+    if (!empty($conf->adherent->enabled) && $user->rights->adherent->lire && !$user->socid) {
         include_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
         $board = new Adherent($db);
         $dashboardlines['Adherent'] = $board->load_board($user);
@@ -887,7 +887,7 @@ $boxlist.=$resultboxes['boxlista'];
 $boxlist.= '</div>';
 
 
-if (empty($user->societe_id) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
+if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 {
     // Remove allready present info in new dash board
     if(!empty($conf->global->MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD) && is_array($boxstatItems) && count($boxstatItems) > 0){

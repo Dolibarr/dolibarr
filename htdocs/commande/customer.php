@@ -33,10 +33,10 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 $action=GETPOST('action', 'aZ09');
 
 // Secrutiy check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
 	$action = '';
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 if (! $user->rights->facture->creer)

@@ -51,7 +51,7 @@ $month	= GETPOST('month', 'int');
 $year	= GETPOST('year', 'int');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'facture', $facid, '');
 
 $paymentstatic=new Paiement($db);

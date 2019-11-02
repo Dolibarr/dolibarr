@@ -37,9 +37,9 @@ $action = GETPOST('action', 'aZ09');
 
 // Protection
 $socid=0;
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 
 $object = new Adherent($db);

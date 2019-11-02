@@ -50,10 +50,10 @@ $action=GETPOST('action', 'alpha');
 // Securite acces client
 if (! $user->rights->zapierfordolibarr->read) accessforbidden();
 $socid=GETPOST('socid', 'int');
-if (isset($user->societe_id) && $user->societe_id > 0)
+if (isset($user->socid) && $user->socid > 0)
 {
 	$action = '';
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 $max=5;

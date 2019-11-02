@@ -71,7 +71,7 @@ $search_country_id = GETPOST('search_country_id', 'int');
 
 
 // Security check
-if ($user->societe_id > 0) accessforbidden();
+if ($user->socid > 0) accessforbidden();
 if (! $user->rights->accounting->chartofaccount) accessforbidden();
 
 

@@ -60,11 +60,11 @@ $contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'supplier
 $socid = GETPOST('socid', 'int');
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
 	$action='';
 	$_GET["action"] = '';
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 $mode=GETPOST("mode");

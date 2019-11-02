@@ -141,7 +141,7 @@ if ($object->id > 0)
     $morehtmlref.='</div>';
 
     $shownav = 1;
-    if ($user->societe_id && ! in_array('resource', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+    if ($user->socid && ! in_array('resource', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
     dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 

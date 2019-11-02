@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 $langs->load("mails");
 
 // Security check
-if (! $user->rights->mailing->lire || $user->societe_id > 0) accessforbidden();
+if (! $user->rights->mailing->lire || $user->socid > 0) accessforbidden();
 
 
 // Load variable for pagination

@@ -65,9 +65,9 @@ $multicurrency_amountsresttopay=array();
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 
 $object=new Facture($db);

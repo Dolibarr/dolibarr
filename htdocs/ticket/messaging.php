@@ -77,19 +77,19 @@ if (!$action) {
 // Security check
 $id = GETPOST("id", 'int');
 $socid=0;
-//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result=restrictedArea($user, 'ticket', $id, '');
 
 if (!$user->rights->ticket->read) {
 	accessforbidden();
 }
 // restrict access for externals users
-if ($user->societe_id > 0 && ($object->fk_soc != $user->societe_id))
+if ($user->socid > 0 && ($object->fk_soc != $user->socid))
 {
 	accessforbidden();
 }
 // or for unauthorized internals users
-if (!$user->societe_id && ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
+if (!$user->socid && ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
 	accessforbidden();
 }
 
@@ -171,7 +171,7 @@ if (!empty($object->origin_email)) {
 if (! empty($conf->societe->enabled))
 {
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty');
-	/*if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->societe_id && $user->rights->ticket->write) {
+	/*if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->socid && $user->rights->ticket->write) {
 		$morehtmlref.='<a class="editfielda" href="' . $url_page_current . '?action=editcustomer&amp;track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
 	}*/
 	$morehtmlref.=' : ';

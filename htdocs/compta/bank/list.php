@@ -50,7 +50,7 @@ $search_status=GETPOST('search_status')?GETPOST('search_status', 'alpha'):'opene
 $optioncss = GETPOST('optioncss', 'alpha');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 if (! empty($user->rights->accounting->chartofaccount)) $allowed=1;    // Dictionary with list of banks accounting account allowed to manager of chart account
 if (! $allowed) $result=restrictedArea($user, 'banque');
 

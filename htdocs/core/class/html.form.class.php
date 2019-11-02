@@ -1651,7 +1651,7 @@ class Form
 				$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 			}
 		}
-		if (! empty($user->societe_id)) $sql.= " AND u.fk_soc = ".$user->societe_id;
+		if (! empty($user->socid)) $sql.= " AND u.fk_soc = ".$user->socid;
 		if (is_array($exclude) && $excludeUsers) $sql.= " AND u.rowid NOT IN (".$excludeUsers.")";
 		if ($includeUsers) $sql.= " AND u.rowid IN (".$includeUsers.")";
 		if (! empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX) || $noactive) $sql.= " AND u.statut <> 0";

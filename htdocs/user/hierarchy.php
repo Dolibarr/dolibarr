@@ -37,8 +37,8 @@ $langs->loadLangs(array('users', 'companies'));
 
 // Security check (for external users)
 $socid=0;
-if ($user->societe_id > 0)
-	$socid = $user->societe_id;
+if ($user->socid > 0)
+	$socid = $user->socid;
 
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_user=GETPOST('search_user', 'alpha');

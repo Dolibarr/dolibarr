@@ -56,10 +56,10 @@ $bid=GETPOST('bid', 'int');
 
 // Security check
 $socid='';
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
 	$action = '';
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 $max=3;

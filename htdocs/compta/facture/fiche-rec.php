@@ -58,7 +58,7 @@ $contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'invoice
 $id=(GETPOST('facid', 'int')?GETPOST('facid', 'int'):GETPOST('id', 'int'));
 $lineid=GETPOST('lineid', 'int');
 $ref=GETPOST('ref', 'alpha');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $objecttype = 'facture_rec';
 if ($action == "create" || $action == "add") $objecttype = '';
 $result = restrictedArea($user, 'facture', $id, $objecttype);
@@ -1039,7 +1039,7 @@ if ($action == 'create')
 		print $doleditor->Create(1);
 
 		// Private note
-		if (empty($user->societe_id))
+		if (empty($user->socid))
 		{
 			print '<tr>';
 			print '<td class="tdtop">';

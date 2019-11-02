@@ -46,12 +46,12 @@ if (isset($_SESSION['DolMessage'])) {
 }
 
 // Security check
-if ($user->societe_id) {
+if ($user->socid) {
     $action = '';
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
-if ($user->societe_id)
-    $socid = $user->societe_id;
+if ($user->socid)
+    $socid = $user->socid;
 
 // Get parameters
 $sortfield = GETPOST("sortfield", 'alpha');

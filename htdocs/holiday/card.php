@@ -90,7 +90,7 @@ if (! empty($user->rights->holiday->delete)) $candelete=1;
 if ($object->statut == Holiday::STATUS_DRAFT && $user->rights->holiday->write && in_array($object->fk_user, $childids)) $candelete=1;
 
 // Protection if external user
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'holiday', $object->id, 'holiday');
 
 

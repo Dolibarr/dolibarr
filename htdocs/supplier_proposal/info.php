@@ -39,7 +39,7 @@ $id=GETPOST('id', 'int');
 $socid=GETPOST('socid', 'int');
 
 // Security check
-if (! empty($user->societe_id)) $socid=$user->societe_id;
+if (! empty($user->socid)) $socid=$user->socid;
 $result = restrictedArea($user, 'supplier_proposal', $id);
 
 

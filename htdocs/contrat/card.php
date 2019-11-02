@@ -62,7 +62,7 @@ $datecontrat='';
 $usehm=(! empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE:0);
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, 'contrat', $id);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -1256,7 +1256,7 @@ if ($action == 'create')
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
-	if (empty($user->societe_id))
+	if (empty($user->socid))
 	{
 		print '<tr><td>'.$langs->trans("NotePrivate").'</td><td class="tdtop">';
 		$doleditor=new DolEditor('note_private', $note_private, '', '100', 'dolibarr_notes', 'In', 1, true, true, ROWS_3, '90%');
@@ -1890,7 +1890,7 @@ else
 				print '<tr class="oddeven">';
 				print '<td>'.$langs->trans("ServiceStatus").': '.$object->lines[$cursorline-1]->getLibStatut(4).'</td>';
 				print '<td width="30" class="right">';
-				if ($user->societe_id == 0)
+				if ($user->socid == 0)
 				{
 					if ($object->statut > 0 && $action != 'activateline' && $action != 'unactivateline')
 					{
@@ -2098,7 +2098,7 @@ else
          * Buttons
          */
 
-		if ($user->societe_id == 0)
+		if ($user->socid == 0)
 		{
 			print '<div class="tabsAction">';
 

@@ -39,7 +39,7 @@ $action = GETPOST('action', 'aZ09');
 $actionid=GETPOST('actionid');
 
 // Security check
-if ($user->societe_id) $id=$user->societe_id;
+if ($user->socid) $id=$user->socid;
 $result = restrictedArea($user, 'societe', '', '');
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
