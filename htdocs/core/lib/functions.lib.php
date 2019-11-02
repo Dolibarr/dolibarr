@@ -1991,56 +1991,48 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = false, $
 		if ($second< 0 || $second > 60) return '';
 	}
 
-	if (method_exists('DateTime', 'getTimestamp'))
+	if (empty($gm) || $gm === 'server')
 	{
-		if (empty($gm) || $gm === 'server')
-		{
-			$default_timezone=@date_default_timezone_get();		// Example 'Europe/Berlin'
+		$default_timezone=@date_default_timezone_get();		// Example 'Europe/Berlin'
+		$localtz = new DateTimeZone($default_timezone);
+	}
+	elseif ($gm === 'user')
+	{
+		// We use dol_tz_string first because it is more reliable.
+		$default_timezone=(empty($_SESSION["dol_tz_string"])?@date_default_timezone_get():$_SESSION["dol_tz_string"]);		// Example 'Europe/Berlin'
+		try {
 			$localtz = new DateTimeZone($default_timezone);
 		}
-		elseif ($gm === 'user')
+		catch(Exception $e)
 		{
-			// We use dol_tz_string first because it is more reliable.
-			$default_timezone=(empty($_SESSION["dol_tz_string"])?@date_default_timezone_get():$_SESSION["dol_tz_string"]);		// Example 'Europe/Berlin'
-			try {
-				$localtz = new DateTimeZone($default_timezone);
-			}
-			catch(Exception $e)
-			{
-				dol_syslog("Warning dol_tz_string contains an invalid value ".$_SESSION["dol_tz_string"], LOG_WARNING);
-				$default_timezone=@date_default_timezone_get();
-			}
+			dol_syslog("Warning dol_tz_string contains an invalid value ".$_SESSION["dol_tz_string"], LOG_WARNING);
+			$default_timezone=@date_default_timezone_get();
 		}
-		elseif (strrpos($gm, "tz,") !== false)
-		{
-			$timezone=str_replace("tz,", "", $gm);  // Example 'tz,Europe/Berlin'
-			try
-			{
-				$localtz = new DateTimeZone($timezone);
-			}
-			catch(Exception $e)
-			{
-				dol_syslog("Warning passed timezone contains an invalid value ".$timezone, LOG_WARNING);
-			}
-		}
-
-		if (empty($localtz)) {
-			$localtz = new DateTimeZone('UTC');
-		}
-		//var_dump($localtz);
-		//var_dump($year.'-'.$month.'-'.$day.'-'.$hour.'-'.$minute);
-		$dt = new DateTime(null, $localtz);
-		$dt->setDate((int) $year, (int) $month, (int) $day);
-		$dt->setTime((int) $hour, (int) $minute, (int) $second);
-		$date=$dt->getTimestamp();	// should include daylight saving time
-		//var_dump($date);
-		return $date;
 	}
-	else
+	elseif (strrpos($gm, "tz,") !== false)
 	{
-		dol_print_error('', 'PHP version must be 5.4+');
-		return '';
+		$timezone=str_replace("tz,", "", $gm);  // Example 'tz,Europe/Berlin'
+		try
+		{
+			$localtz = new DateTimeZone($timezone);
+		}
+		catch(Exception $e)
+		{
+			dol_syslog("Warning passed timezone contains an invalid value ".$timezone, LOG_WARNING);
+		}
 	}
+
+	if (empty($localtz)) {
+		$localtz = new DateTimeZone('UTC');
+	}
+	//var_dump($localtz);
+	//var_dump($year.'-'.$month.'-'.$day.'-'.$hour.'-'.$minute);
+	$dt = new DateTime(null, $localtz);
+	$dt->setDate((int) $year, (int) $month, (int) $day);
+	$dt->setTime((int) $hour, (int) $minute, (int) $second);
+	$date=$dt->getTimestamp();	// should include daylight saving time
+	//var_dump($date);
+	return $date;
 }
 
 
