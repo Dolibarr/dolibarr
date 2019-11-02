@@ -1018,11 +1018,11 @@ class Categorie extends CommonObject
 	 *                fulllabel = nom avec chemin complet de la categorie
 	 *                fullpath = chemin complet compose des id
 	 *
-	 * @param   string                  $type                   Type of categories ('customer', 'supplier', 'contact', 'product', 'member') or (0, 1, 2, ...).
+	 * @param   string                  $type                   Type of categories ('customer', 'supplier', 'contact', 'product', 'member', ...)
 	 * @param   int|string|array        $markafterid            Keep only or removed all categories including the leaf $markafterid in category tree (exclude) or Keep only of category is inside the leaf starting with this id.
      *                                                          $markafterid can be an :
      *                                                          - int (id of category)
-     *                                                          - string (categories ids seprated by comma)
+     *                                                          - string (categories ids separated by comma)
      *                                                          - array (list of categories ids)
      * @param   int                     $include                [=0] Removed or 1=Keep only
 	 * @return  array|int               Array of categories. this->cats and this->motherof are set, -1 on error
