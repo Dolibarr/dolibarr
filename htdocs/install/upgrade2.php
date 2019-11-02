@@ -65,7 +65,7 @@ $error = 0;
 $err=error_reporting();
 error_reporting(0);
 if (! empty($conf->global->MAIN_OVERRIDE_TIME_LIMIT))
-	@set_time_limit((int)$conf->global->MAIN_OVERRIDE_TIME_LIMIT);
+	@set_time_limit((int) $conf->global->MAIN_OVERRIDE_TIME_LIMIT);
 else
 	@set_time_limit(300);
 error_reporting($err);
