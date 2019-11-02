@@ -1749,12 +1749,12 @@ function searchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
  * @param   int		$socid				Id thirdparty
  * @param   int		$projectsListId     Id of project I have permission on
  * @param   int		$mytasks            Limited to task I am contact to
- * @param	int		$statut				-1=No filter on statut, 0 or 1 = Filter on status
+ * @param	int		$status				-1=No filter on statut, 0 or 1 = Filter on status
  * @param	array	$listofoppstatus	List of opportunity status
  * @param   array   $hiddenfields       List of info to not show ('projectlabel', 'declaredprogress', '...', )
  * @return	void
  */
-function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks = 0, $statut = -1, $listofoppstatus = array(), $hiddenfields = array())
+function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks = 0, $status = -1, $listofoppstatus = array(), $hiddenfields = array())
 {
 	global $langs,$conf,$user,$bc;
 
@@ -1768,7 +1768,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	$project_year_filter=0;
 
 	$title=$langs->trans("Projects");
-	if (strcmp($statut, '') && $statut >= 0) $title=$langs->trans("Projects").' '.$langs->trans($projectstatic->statuts_long[$statut]);
+	if (strcmp($status, '') && $status >= 0) $title=$langs->trans("Projects").' '.$langs->trans($projectstatic->statuts_long[$status]);
 
 	$arrayidtypeofcontact=array();
 
@@ -1797,9 +1797,9 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		$sql.= " AND ec.fk_c_type_contact = ctc.rowid";   // Replace the 2 lines with ec.fk_c_type_contact in $arrayidtypeofcontact
 		$sql.= " AND ctc.element = 'project_task'";
 	}
-	if ($statut >= 0)
+	if ($status >= 0)
 	{
-		$sql.= " AND p.fk_statut = ".$statut;
+		$sql.= " AND p.fk_statut = ".(int) $status;
 	}
 	if (!empty($conf->global->PROJECT_LIMIT_YEAR_RANGE))
 	{

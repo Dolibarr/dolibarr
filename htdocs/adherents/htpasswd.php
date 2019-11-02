@@ -42,7 +42,7 @@ if (empty($sortorder)) {  $sortorder="ASC"; }
 if (empty($sortfield)) {  $sortfield="d.login"; }
 if (! isset($statut))
 {
-	$statut = 1 ;
+	$statut = 1;
 }
 
 if (! isset($cotis))
@@ -54,7 +54,7 @@ if (! isset($cotis))
 
 $sql = "SELECT d.login, d.pass, d.datefin";
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d ";
-$sql .= " WHERE d.statut = $statut ";
+$sql .= " WHERE d.statut = ".$statut;
 if ($cotis==1)
 {
 	$sql .= " AND datefin > '".$db->idate($now)."'";

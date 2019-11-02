@@ -43,7 +43,7 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="d.datedon";
 
-$statut=(GETPOST("statut", 'intcomma')!='')?GETPOST("statut", 'intcomma'):"-1";
+$search_status=(GETPOST("search_status", 'intcomma') != '') ? GETPOST("search_status", 'intcomma') : "-1";
 $search_all=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_ref=GETPOST('search_ref', 'alpha');
 $search_company=GETPOST('search_company', 'alpha');
@@ -87,13 +87,13 @@ $donationstatic=new Don($db);
 
 // Genere requete de liste des dons
 $sql = "SELECT d.rowid, d.datedon, d.fk_soc as socid, d.firstname, d.lastname, d.societe,";
-$sql.= " d.amount, d.fk_statut as statut, ";
+$sql.= " d.amount, d.fk_statut as status,";
 $sql.= " p.rowid as pid, p.ref, p.title, p.public";
 $sql.= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p";
 $sql.= " ON p.rowid = d.fk_projet WHERE d.entity IN (".getEntity('donation').")";
-if ($statut != '' && $statut != '-1')
+if ($search_status != '' && $search_status != '-1')
 {
-	$sql .= " AND d.fk_statut IN (".$db->escape($statut).")";
+	$sql .= " AND d.fk_statut IN (".$db->escape($search_status).")";
 }
 if (trim($search_ref) != '')
 {
@@ -135,9 +135,13 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	$param = '&statut='.$statut;
-    //if ($page > 0) $param.= '&page='.$page;
-	if ($optioncss != '') $param.='&optioncss='.$optioncss;
+	$param = '';
+	if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
+	if ($search_status && $search_status != -1) $param .= '&search_status='.urlencode($search_status);
+	if ($search_ref) $param .= '&search_ref='.urlencode($search_ref);
+	if ($search_company) $param .= '&search_company='.urlencode($search_company);
+	if ($search_name) $param .= '&search_name='.urlencode($search_name);
+	if ($search_amount) $param .= '&search_amount='.urlencode($search_amount);
 
 	$newcardbutton='';
 	if ($user->rights->don->creer)
@@ -257,7 +261,7 @@ if ($resql)
 			print "</td>\n";
 		}
 		print '<td class="right">'.price($objp->amount).'</td>';
-		print '<td class="right">'.$donationstatic->LibStatut($objp->statut, 5).'</td>';
+		print '<td class="right">'.$donationstatic->LibStatut($objp->status, 5).'</td>';
         print '<td></td>';
 		print "</tr>";
 		$i++;

@@ -1057,13 +1057,13 @@ abstract class CommonObject
 	/**
 	 *    Get array of all contacts for an object
 	 *
-	 *    @param	int			$statut		Status of links to get (-1=all)
+	 *    @param	int			$status		Status of links to get (-1=all)
 	 *    @param	string		$source		Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
 	 *    @param	int         $list       0:Return array contains all properties, 1:Return array contains just id
 	 *    @param    string      $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *    @return	array|int		        Array of contacts, -1 if error
 	 */
-	public function liste_contact($statut = -1, $source = 'external', $list = 0, $code = '')
+	public function liste_contact($status = -1, $source = 'external', $list = 0, $code = '')
 	{
         // phpcs:enable
 		global $langs;
@@ -1086,7 +1086,7 @@ abstract class CommonObject
 		if ($source == 'internal') $sql.= " AND tc.source = 'internal'";
 		if ($source == 'external' || $source == 'thirdparty') $sql.= " AND tc.source = 'external'";
 		$sql.= " AND tc.active=1";
-		if ($statut >= 0) $sql.= " AND ec.statut = '".$statut."'";
+		if ($status >= 0) $sql.= " AND ec.statut = ".$status;
 		$sql.=" ORDER BY t.lastname ASC";
 
 		dol_syslog(get_class($this)."::liste_contact", LOG_DEBUG);

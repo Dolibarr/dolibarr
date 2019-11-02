@@ -3765,7 +3765,7 @@ class Form
 	 *
 	 *  @param	string	$selected           Id account pre-selected
 	 *  @param  string	$htmlname           Name of select zone
-	 *  @param  int		$statut             Status of searched accounts (0=open, 1=closed, 2=both)
+	 *  @param  int		$status             Status of searched accounts (0=open, 1=closed, 2=both)
 	 *  @param  string	$filtre             To filter list
 	 *  @param  int		$useempty           1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 *  @param  string	$moreattrib         To add more attribute on select
@@ -3773,7 +3773,7 @@ class Form
 	 *  @param	string	$morecss			More CSS
 	 * 	@return	int							<0 if error, Num of bank account found if OK (0, 1, 2, ...)
 	 */
-    public function select_comptes($selected = '', $htmlname = 'accountid', $statut = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0, $morecss = '')
+    public function select_comptes($selected = '', $htmlname = 'accountid', $status = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0, $morecss = '')
 	{
         // phpcs:enable
 		global $langs, $conf;
@@ -3784,7 +3784,7 @@ class Form
 		$sql = "SELECT rowid, label, bank, clos as status, currency_code";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 		$sql.= " WHERE entity IN (".getEntity('bank_account').")";
-		if ($statut != 2) $sql.= " AND clos = '".$statut."'";
+		if ($status != 2) $sql.= " AND clos = ".(int) $status;
 		if ($filtre) $sql.=" AND ".$filtre;
 		$sql.= " ORDER BY label";
 
@@ -3815,7 +3815,7 @@ class Form
 					}
 					print trim($obj->label);
 					if ($showcurrency) print ' ('.$obj->currency_code.')';
-					if ($statut == 2 && $obj->status == 1) print ' ('.$langs->trans("Closed").')';
+					if ($status == 2 && $obj->status == 1) print ' ('.$langs->trans("Closed").')';
 					print '</option>';
 					$i++;
 				}
@@ -3823,7 +3823,7 @@ class Form
 			}
 			else
 			{
-				if ($statut == 0) print '<span class="opacitymedium">'.$langs->trans("NoActiveBankAccountDefined").'</span>';
+				if ($status == 0) print '<span class="opacitymedium">'.$langs->trans("NoActiveBankAccountDefined").'</span>';
 				else print '<span class="opacitymedium">'.$langs->trans("NoBankAccountFound").'</span>';
 			}
 		}
@@ -3839,13 +3839,13 @@ class Form
 	 *
 	 *  @param	string	$selected           Id establishment pre-selected
 	 *  @param  string	$htmlname           Name of select zone
-	 *  @param  int		$statut             Status of searched establishment (0=open, 1=closed, 2=both)
+	 *  @param  int		$status             Status of searched establishment (0=open, 1=closed, 2=both)
 	 *  @param  string	$filtre             To filter list
 	 *  @param  int		$useempty           1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 *  @param  string	$moreattrib         To add more attribute on select
 	 * 	@return	int							<0 if error, Num of establishment found if OK (0, 1, 2, ...)
 	 */
-	public function selectEstablishments($selected = '', $htmlname = 'entity', $statut = 0, $filtre = '', $useempty = 0, $moreattrib = '')
+	public function selectEstablishments($selected = '', $htmlname = 'entity', $status = 0, $filtre = '', $useempty = 0, $moreattrib = '')
 	{
         // phpcs:enable
 		global $langs, $conf;
@@ -3856,7 +3856,7 @@ class Form
 		$sql = "SELECT rowid, name, fk_country, status, entity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."establishment";
 		$sql.= " WHERE 1=1";
-		if ($statut != 2) $sql.= " AND status = '".$statut."'";
+		if ($status != 2) $sql.= " AND status = ".(int) $status;
 		if ($filtre) $sql.=" AND ".$filtre;
 		$sql.= " ORDER BY name";
 
@@ -3886,7 +3886,7 @@ class Form
 						print '<option value="'.$obj->rowid.'">';
 					}
 					print trim($obj->name);
-					if ($statut == 2 && $obj->status == 1) print ' ('.$langs->trans("Closed").')';
+					if ($status == 2 && $obj->status == 1) print ' ('.$langs->trans("Closed").')';
 					print '</option>';
 					$i++;
 				}
@@ -3894,7 +3894,7 @@ class Form
 			}
 			else
 			{
-				if ($statut == 0) print '<span class="opacitymedium">'.$langs->trans("NoActiveEstablishmentDefined").'</span>';
+				if ($status == 0) print '<span class="opacitymedium">'.$langs->trans("NoActiveEstablishmentDefined").'</span>';
 				else print '<span class="opacitymedium">'.$langs->trans("NoEstablishmentFound").'</span>';
 			}
 		}
