@@ -61,7 +61,7 @@ if (! empty($conf->global->MAIN_NGINX_FIX))
 {
 	$url = (isset($_SERVER['SCRIPT_URI']) && $_SERVER["SCRIPT_URI"] !== null) ? $_SERVER["SCRIPT_URI"] : $_SERVER['PHP_SELF'];
 }
-			
+
 // Enable and test if module Api is enabled
 if (empty($conf->global->MAIN_MODULE_API))
 {
