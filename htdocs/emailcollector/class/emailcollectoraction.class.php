@@ -98,7 +98,13 @@ class EmailCollectorAction extends CommonObject
     public $fk_emailcollector;
     public $type;
     public $actionparam;
+
+    /**
+     * @var integer|string date_creation
+     */
     public $date_creation;
+
+
     public $tms;
     public $fk_user_creat;
     public $fk_user_modif;

@@ -112,7 +112,13 @@ class BOM extends CommonObject
 	public $description;
 	public $note_public;
 	public $note_private;
+
+	/**
+     * @var integer|string date_creation
+     */
 	public $date_creation;
+
+
 	public $tms;
 	public $fk_user_creat;
 	public $fk_user_modif;

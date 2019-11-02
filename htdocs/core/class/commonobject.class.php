@@ -421,7 +421,12 @@ abstract class CommonObject
 	public $civility_id;
 
 	// Dates
-	public $date_creation;			// Date creation
+	/**
+     * @var integer|string date_creation
+     */
+	public $date_creation;
+
+
 	public $date_validation;		// Date validation
 	public $date_modification;		// Date last change (tms field)
 

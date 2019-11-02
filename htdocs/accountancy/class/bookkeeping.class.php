@@ -1975,7 +1975,12 @@ class BookKeepingLine
 	public $code_journal;
 	public $journal_label;
 	public $piece_num;
+
+	/**
+     * @var integer|string date_creation
+     */
 	public $date_creation;
+
     public $date_modification;
     public $date_export;
 }

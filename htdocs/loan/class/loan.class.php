@@ -66,7 +66,13 @@ class Loan extends CommonObject
 	public $account_capital;
 	public $account_insurance;
 	public $account_interest;
+
+	/**
+     * @var integer|string date_creation
+     */
 	public $date_creation;
+
+
 	public $date_modification;
 	public $date_validation;
 
