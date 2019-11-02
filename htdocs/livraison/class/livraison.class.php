@@ -73,7 +73,7 @@ class Livraison extends CommonObject
 	public $date_valid;
 	public $model_pdf;
 
-  
+
 	/**
 	 * Constructor
 	 *
