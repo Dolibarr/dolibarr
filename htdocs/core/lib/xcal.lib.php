@@ -112,6 +112,41 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
             $category    = format_cal($format, $category);
             $location    = format_cal($format, $location);
 
+			// Output the vCard/iCal VEVENT object
+			/*
+			Example from Google ical export for a 1 hour event:
+			BEGIN:VEVENT
+			DTSTART:20101103T120000Z
+			DTEND:20101103T130000Z
+			DTSTAMP:20101121T144902Z
+			UID:4eilllcsq8r1p87ncg7vc8dbpk@google.com
+			CREATED:20101121T144657Z
+			DESCRIPTION:
+			LAST-MODIFIED:20101121T144707Z
+			LOCATION:
+			SEQUENCE:0
+			STATUS:CONFIRMED
+			SUMMARY:Tâche 1 heure
+			TRANSP:OPAQUE
+			END:VEVENT
+			
+			Example from Google ical export for a 1 day event:
+			BEGIN:VEVENT
+			DTSTART;VALUE=DATE:20101102
+			DTEND;VALUE=DATE:20101103
+			DTSTAMP:20101121T144902Z
+			UID:d09t43kcf1qgapu9efsmmo1m6k@google.com
+			CREATED:20101121T144607Z
+			DESCRIPTION:
+			LAST-MODIFIED:20101121T144607Z
+			LOCATION:
+			SEQUENCE:0
+			STATUS:CONFIRMED
+			SUMMARY:Tâche 1 jour
+			TRANSP:TRANSPARENT
+			END:VEVENT
+			*/
+			
             if ($type === "event")
             {
                 fwrite($calfileh, "BEGIN:VEVENT\n");
