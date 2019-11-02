@@ -174,7 +174,7 @@ class Adherent extends CommonObject
 
     // -1:brouillon, 0:resilie, >=1:valide,paye
     // def in common object
-    //public $statut;
+    //public $status;
 
     public $photo;
 
@@ -2168,13 +2168,13 @@ class Adherent extends CommonObject
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
-	 *  @param	int			$statut      			Id statut
+	 *  @param	int			$status      			Id status
 	 *	@param	int			$need_subscription		1 if member type need subscription, 0 otherwise
 	 *	@param	int     	$date_end_subscription	Date fin adhesion
 	 *  @param  int		    $mode                   0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string      						Label
 	 */
-	public function LibStatut($statut, $need_subscription, $date_end_subscription, $mode = 0)
+	public function LibStatut($status, $need_subscription, $date_end_subscription, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -2184,13 +2184,13 @@ class Adherent extends CommonObject
         $labelStatus = '';
         $labelStatusShort = '';
 
-		if ($statut == -1)
+		if ($status == -1)
 		{
 			$statusType = 'status0';
 			$labelStatus = $langs->trans("MemberStatusDraft");
 			$labelStatusShort = $langs->trans("MemberStatusDraftShort");
 		}
-		elseif ($statut >= 1) {
+		elseif ($status >= 1) {
 			if ($need_subscription == 0)
 			{
 				$statusType = 'status4';
@@ -2215,7 +2215,7 @@ class Adherent extends CommonObject
 				$labelStatusShort = $langs->trans("MemberStatusPaidShort");
 			}
 		}
-		elseif ($statut == 0)
+		elseif ($status == 0)
 		{
 			$statusType = 'status6';
 			$labelStatus = $langs->trans("MemberStatusResiliated");

@@ -545,8 +545,6 @@ class PaymentLoan extends CommonObject
 
 		$result='';
 
-		if (empty($this->ref)) $this->ref=$this->lib;
-
 		if (!empty($this->id))
 		{
 			$link = '<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$this->id.'">';

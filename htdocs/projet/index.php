@@ -171,7 +171,7 @@ print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppst
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
-// Last modified projects
+// Latest modified projects
 $sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut, p.tms as datem,";
 $sql.= " s.rowid as socid, s.nom as name, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
@@ -243,7 +243,7 @@ if ($resql)
 			}
 			print '</td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
-			print '<td class="right">'.$projectstatic->LibStatut($obj->fk_statut, 5).'</td>';
+			print '<td class="right">'.$projectstatic->LibStatut($obj->fk_statut, 3).'</td>';
 			print '</tr>';
 			$i++;
 		}

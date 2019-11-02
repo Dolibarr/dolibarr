@@ -1996,6 +1996,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
  * @param   hideOnProgressNull  $hideOnProgressNull bool            hide if progress is null
  * @param   spaced              $spaced             bool            used to add space at bottom (made by css)
  * @return string
+ * @see getTaskProgressBadge()
  */
 function getTaskProgressView($task, $label = true, $progressNumber = true, $hideOnProgressNull = false, $spaced = false)
 {
@@ -2033,7 +2034,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
             $title = $langs->trans('TheReportedProgressIsLessThanTheCalculatedProgressionByX', abs($task->progress-$progressCalculated).' '.$langs->trans("point"));
             $diff = '<span class="text-danger classfortooltip paddingrightonly" title="'.dol_htmlentities($title.$diffTitle).'" ><i class="fa fa-caret-down"></i> '.($task->progress-$progressCalculated).'%</span>';
         }
-        elseif (doubleval($progressCalculated) > doubleval($task->progress)) { // warning if close at 1%
+        elseif (doubleval($progressCalculated) > doubleval($task->progress)) { // warning if close at 10%
             $progressBarClass = 'progress-bar-warning';
             $title = $langs->trans('TheReportedProgressIsLessThanTheCalculatedProgressionByX', abs($task->progress-$progressCalculated).' '.$langs->trans("point"));
             $diff = '<span class="text-warning classfortooltip paddingrightonly" title="'.dol_htmlentities($title.$diffTitle).'" ><i class="fa fa-caret-left"></i> '.($task->progress-$progressCalculated).'%</span>';
@@ -2116,6 +2117,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
  * @param label     $label     string   empty = auto (progress), string = replace output
  * @param tooltip   $tooltip   string   empty = auto , string = replace output
  * @return string
+ * @see getTaskProgressView()
  */
 function getTaskProgressBadge($task, $label = '', $tooltip = '')
 {
@@ -2135,10 +2137,10 @@ function getTaskProgressBadge($task, $label = '', $tooltip = '')
             // this conf is actually hidden, by default we use 10% for "be carefull or warning"
             $warningRatio = !empty($conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT) ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.10;
 
-            if($progressCalculated > doubleval($task->progress)){
+            if (doubleval($progressCalculated) > doubleval($task->progress * $warningRatio)) {
                 $badgeClass.= 'badge-danger';
             }
-            elseif($progressCalculated * $warningRatio >= doubleval($task->progress)){ // warning if close at 1%
+            elseif (doubleval($progressCalculated) > doubleval($task->progress)) { // warning if close at 10%
                 $badgeClass.= 'badge-warning';
             }
             else{

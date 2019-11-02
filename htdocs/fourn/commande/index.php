@@ -117,14 +117,14 @@ if ($resql)
 	print '<table class="noborder nohover" width="100%">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("SuppliersOrders").'</th></tr>';
 	print "</tr>\n";
-	foreach (array(0,1,2,3,4,5,6) as $statut)
+	foreach (array(0,1,2,3,4,5,6) as $status)
 	{
-		$dataseries[]=array($commandestatic->LibStatut($statut, 1), (isset($vals[$statut])?(int) $vals[$statut]:0));
+		$dataseries[]=array($commandestatic->LibStatut($status, 1), (isset($vals[$status])?(int) $vals[$status]:0));
 		if (! $conf->use_javascript_ajax)
 		{
 			print '<tr class="oddeven">';
-			print '<td>'.$commandestatic->LibStatut($statut, 0).'</td>';
-			print '<td class="right"><a href="list.php?statut='.$statut.'">'.(isset($vals[$statut])?$vals[$statut]:0).'</a></td>';
+			print '<td>'.$commandestatic->LibStatut($status, 0).'</td>';
+			print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
 			print "</tr>\n";
 		}
 	}

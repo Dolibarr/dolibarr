@@ -511,7 +511,7 @@ class ExpenseReport extends CommonObject
         $sql.= " d.fk_user_author, d.fk_user_modif, d.fk_user_validator,";
         $sql.= " d.fk_user_valid, d.fk_user_approve,";
         $sql.= " d.fk_statut as status, d.fk_c_paiement, d.paid,";
-        $sql.= " dp.libelle as libelle_paiement, dp.code as code_paiement";                             // INNER JOIN paiement
+        $sql.= " dp.libelle as label_payment, dp.code as code_paiement";                             // INNER JOIN paiement
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as d";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as dp ON d.fk_c_paiement = dp.id";
         if ($ref) $sql.= " WHERE d.ref = '".$this->db->escape($ref)."'";
@@ -567,15 +567,13 @@ class ExpenseReport extends CommonObject
                 $this->fk_c_paiement            = $obj->fk_c_paiement;
                 $this->paid                     = $obj->paid;
 
-                if ($this->fk_statut==5 || $this->fk_statut==6)
+                if ($this->fk_statut == self::STATUS_APPROVED || $this->fk_statut == self::STATUS_CLOSED)
                 {
                     $user_valid = new User($this->db);
                     if ($this->fk_user_valid > 0) $user_valid->fetch($this->fk_user_valid);
                     $this->user_valid_infos = dolGetFirstLastname($user_valid->firstname, $user_valid->lastname);
                 }
 
-                $this->libelle_statut   = $obj->libelle_statut;
-                $this->libelle_paiement = $obj->libelle_paiement;
                 $this->code_statut      = $obj->code_statut;
                 $this->code_paiement    = $obj->code_paiement;
 

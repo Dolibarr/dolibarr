@@ -474,11 +474,11 @@ class PaymentDonation extends CommonObject
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
-	 *  @param	int		$statut        	Id statut
+	 *  @param	int		$status        	Id status
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Libelle du statut
 	 */
-    public function LibStatut($statut, $mode = 0)
+    public function LibStatut($status, $mode = 0)
     {
         // phpcs:enable
         global $langs;
@@ -633,7 +633,6 @@ class PaymentDonation extends CommonObject
 
 		$result='';
 
-		if (empty($this->ref)) $this->ref=$this->lib;
         $label = $langs->trans("ShowPayment").': '.$this->ref;
 
 		if (!empty($this->id))

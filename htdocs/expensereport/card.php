@@ -1506,7 +1506,7 @@ if ($action == 'create')
 		print '<tr>';
 		print '<td>'.$langs->trans("ModePaiement").'</td>';
 		print '<td>';
-		$form->select_types_paiements(2, 'fk_c_paiement');
+		$form->select_types_paiements('', 'fk_c_paiement');
 		print '</td>';
 		print '</tr>';
 	}
@@ -1832,7 +1832,7 @@ else
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans("ModePaiement").'</td>';
-					print '<td>'.$object->libelle_paiement.'</td>';
+					print '<td>'.$object->fk_c_paiement.'</td>';
 					print '</tr>';
 				}
 
