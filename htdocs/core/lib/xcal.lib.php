@@ -129,7 +129,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 			SUMMARY:Tâche 1 heure
 			TRANSP:OPAQUE
 			END:VEVENT
-			
+
 			Example from Google ical export for a 1 day event:
 			BEGIN:VEVENT
 			DTSTART;VALUE=DATE:20101102
@@ -146,7 +146,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 			TRANSP:TRANSPARENT
 			END:VEVENT
 			*/
-			
+
             if ($type === "event")
             {
                 fwrite($calfileh, "BEGIN:VEVENT\n");
