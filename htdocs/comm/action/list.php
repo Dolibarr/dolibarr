@@ -488,7 +488,7 @@ if ($resql)
 	if (! empty($arrayfields['a.tms']['checked']))		print '<td class="liste_titre"></td>';
 	if (! empty($arrayfields['a.percent']['checked']))	{
 		print '<td class="liste_titre center">';
-    	print $formactions->form_select_status_action('formaction', $status, 1, 'status', 1, 2);
+        $formactions->form_select_status_action('formaction', $status, 1, 'status', 1, 2);
     	print ajax_combobox('selectstatus');
     	print '</td>';
     }
