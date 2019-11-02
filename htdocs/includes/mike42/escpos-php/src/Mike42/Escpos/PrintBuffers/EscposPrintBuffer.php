@@ -136,7 +136,7 @@ class EscposPrintBuffer implements PrintBuffer
             if ($c == "\r") {
                 /* Skip past Windows line endings (raw usage). */
                 continue;
-            } else if (self::asciiCheck($c, true)) {
+            } elseif (self::asciiCheck($c, true)) {
                 $outp[$j] = $c;
             }
             $j++;
@@ -167,7 +167,7 @@ class EscposPrintBuffer implements PrintBuffer
         }
         return false;
     }
-    
+
     /**
      * Based on the printer's connector, compute (or load a cached copy of) maps
      * of UTF character to unicode characters for later use.
@@ -219,7 +219,7 @@ class EscposPrintBuffer implements PrintBuffer
                 $encode[$num][$utf8] = chr($char);
             }
         }
-        
+
         /* Use generated data */
         $dataArray = ["available" => $available, "encode" => $encode, "key" => $cacheKey];
         $this -> available = $dataArray["available"];

@@ -33,7 +33,7 @@ class GdEscposImage extends EscposImage
             /* Set to blank image */
             return parent::loadImageData($filename);
         }
-        
+
         $ext = pathinfo($filename, PATHINFO_EXTENSION);
         switch ($ext) {
             case "png":
@@ -73,7 +73,7 @@ class GdEscposImage extends EscposImage
                 /* Faster to average channels, blend alpha and negate the image here than via filters (tested!) */
                 $cols = imagecolorsforindex($im, imagecolorat($im, $x, $y));
                 // 1 for white, 0 for black, ignoring transparency
-                $greyness = (int)(($cols['red'] + $cols['green'] + $cols['blue']) / 3) >> 7;
+                $greyness = (int) (($cols['red'] + $cols['green'] + $cols['blue']) / 3) >> 7;
                 // 1 for black, 0 for white, taking into account transparency
                 $black = (1 - $greyness) >> ($cols['alpha'] >> 6);
                 $imgData[$y * $imgWidth + $x] = $black;
