@@ -399,9 +399,16 @@ class Societe extends CommonObject
 	 */
 	public $note_public;
 
-	//! code statut prospect
+	/**
+	 * Status prospect id
+	 * @var int
+	 */
 	public $stcomm_id;
-	public $statut_commercial;
+	/**
+	 * Status prospect label
+	 * @var int
+	 */
+	public $status_prospect_label;
 
 	/**
 	 * Assigned price level
@@ -1354,9 +1361,9 @@ class Societe extends CommonObject
 				$this->state        = ($obj->state!='-'?$obj->state:'');
 
 				$transcode=$langs->trans('StatusProspect'.$obj->fk_stcomm);
-				$libelle=($transcode!='StatusProspect'.$obj->fk_stcomm?$transcode:$obj->stcomm);
-				$this->stcomm_id = $obj->fk_stcomm;     // id statut commercial
-				$this->statut_commercial = $libelle;    // libelle statut commercial
+				$label = ($transcode!='StatusProspect'.$obj->fk_stcomm ? $transcode : $obj->stcomm);
+				$this->stcomm_id = $obj->fk_stcomm;       // id status prospect
+				$this->status_prospect_label = $label;    // label status prospect
 
 				$this->email = $obj->email;
 				$this->skype = $obj->skype;
