@@ -316,12 +316,12 @@ class Societe extends CommonObject
 	 * @var string
 	 */
 	public $user_modification;
-	
-	/**	     
+
+	/**
 	 * @var integer|string date_creation
 	 */
 	public $date_creation;
-	
+
 	/**
 	 * User that created the thirdparty
 	 * @var User

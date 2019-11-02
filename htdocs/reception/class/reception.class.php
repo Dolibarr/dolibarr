@@ -80,13 +80,13 @@ class Reception extends CommonObject
 	 * @var int
 	 */
 	public $date_reception;
-    
+
 	/**
 	 * @var integer|string date_creation
 	 */
 	public $date_creation;
-    
-	
+
+
 	public $date_valid;
 
     public $meths;
