@@ -1682,6 +1682,7 @@ class Thirdparties extends DolibarrApi
 		unset($object->departement_code);
 		unset($object->pays);
 		unset($object->particulier);
+		unset($object->prefix_comm);
 
 		unset($object->total_ht);
 		unset($object->total_tva);
