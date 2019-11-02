@@ -185,8 +185,8 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			// Label
 			print '<td>';
 			$socialcontrib->id=$obj->rowid;
-			$socialcontrib->ref=$obj->libelle;
-			$socialcontrib->lib=$obj->libelle;
+			$socialcontrib->ref=$obj->rowid;
+			$socialcontrib->label=$obj->libelle;
 			print $socialcontrib->getNomUrl(1, '20');
 			print '</td>';
 			// Type

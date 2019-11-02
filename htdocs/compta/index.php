@@ -661,8 +661,8 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 					$obj = $db->fetch_object($resql);
 
 					$chargestatic->id=$obj->rowid;
-					$chargestatic->ref=$obj->libelle;
-					$chargestatic->lib=$obj->libelle;
+					$chargestatic->ref=$obj->rowid;
+					$chargestatic->label=$obj->libelle;
 					$chargestatic->paye=$obj->paye;
 
 					print '<tr class="oddeven">';
