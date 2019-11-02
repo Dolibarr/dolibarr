@@ -132,8 +132,8 @@ class DolibarrApi
         unset($object->statuts_short);
         unset($object->statuts_logo);
         unset($object->statuts_long);
-        unset($object->labelstatut);
-        unset($object->labelstatut_short);
+        unset($object->labelStatus);
+        unset($object->labelStatusShort);
 
         unset($object->element);
         unset($object->fk_element);

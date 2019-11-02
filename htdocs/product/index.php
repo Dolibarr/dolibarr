@@ -266,7 +266,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 /*
- * Last modified products
+ * Latest modified products
  */
 $max=15;
 $sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy, p.tobatch, p.fk_price_expression,";
@@ -299,11 +299,11 @@ if ($result)
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 
-		$colnb=4;
+		$colnb=2;
 		if (empty($conf->global->PRODUIT_MULTIPRICES)) $colnb++;
 
 		print '<tr class="liste_titre"><th colspan="'.$colnb.'">'.$transRecordedType.'</th>';
-		print '<th class="right"><a href="'.DOL_URL_ROOT.'/product/list.php?sortfield=p.tms&sortorder=DESC">'.$langs->trans("FullList").'</td>';
+		print '<th class="right" colspan="3"><a href="'.DOL_URL_ROOT.'/product/list.php?sortfield=p.tms&sortorder=DESC">'.$langs->trans("FullList").'</td>';
 		print '</tr>';
 
 		while ($i < $num)
@@ -359,11 +359,11 @@ if ($result)
     			else print price($objp->price).' '.$langs->trans("HT");
     			print '</td>';
 			}
-			print '<td class="right nowrap"><span class="statusrefsell">';
-			print $product_static->LibStatut($objp->tosell, 5, 0);
+			print '<td class="right nowrap width25"><span class="statusrefsell">';
+			print $product_static->LibStatut($objp->tosell, 3, 0);
 			print "</span></td>";
-            print '<td class="right nowrap"><span class="statusrefbuy">';
-            print $product_static->LibStatut($objp->tobuy, 5, 1);
+            print '<td class="right nowrap width25"><span class="statusrefbuy">';
+            print $product_static->LibStatut($objp->tobuy, 3, 1);
             print "</span></td>";
 			print "</tr>\n";
 			$i++;

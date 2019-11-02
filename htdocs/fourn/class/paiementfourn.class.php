@@ -46,6 +46,9 @@ class PaiementFourn extends Paiement
 	 */
 	public $table_element='paiementfourn';
 
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto = 'payment';
 
 	public $statut;        //Status of payment. 0 = unvalidated; 1 = validated
@@ -56,7 +59,7 @@ class PaiementFourn extends Paiement
 	 * Label of payment type
 	 * @var string
 	 */
-	public $type_libelle;
+	public $type_label;
 
 	/**
 	 * Code of Payment type
@@ -123,7 +126,7 @@ class PaiementFourn extends Paiement
 				$this->note           = $obj->note;
 				$this->note_private   = $obj->note;
 				$this->type_code      = $obj->paiement_code;
-				$this->type_libelle   = $obj->paiement_type;
+				$this->type_label   = $obj->paiement_type;
 				$this->statut         = $obj->statut;
 				$error = 1;
 			}

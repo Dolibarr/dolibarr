@@ -121,6 +121,7 @@ $search_array_options=$extrafields->getOptionalsFromPost($object->table_element,
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
+	'cp.ref'=>'Ref',
     'cp.description'=>'Description',
     'uu.lastname'=>'EmployeeLastname',
     'uu.firstname'=>'EmployeeFirstname',
@@ -289,10 +290,7 @@ $sql.= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pou
 // Search all
 if (!empty($sall)) $sql.= natural_search(array_keys($fieldstosearchall), $sall);
 // Ref
-if(!empty($search_ref))
-{
-	$sql.= " AND cp.rowid = ".(int) $db->escape($search_ref);
-}
+if (!empty($search_ref)) $sql.= natural_search("cp.ref", $search_ref);
 // Start date
 $sql.= dolSqlDateFilter("cp.date_debut", $search_day_start, $search_month_start, $search_year_start);
 // End date

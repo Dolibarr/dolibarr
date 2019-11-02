@@ -259,7 +259,7 @@ if ($resql)
 			print "</td>\n";
 			// Type
             print '<td>';
-            print $socialcontrib->type_libelle;
+            print $socialcontrib->type_label;
             /*print $socialcontrib->type;*/
             print "</td>\n";
 			// Label

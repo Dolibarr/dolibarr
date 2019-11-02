@@ -624,12 +624,12 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		$chargestatic=new ChargeSociales($db);
 
 		$sql = "SELECT c.rowid, c.amount, c.date_ech, c.paye,";
-		$sql.= " cc.libelle,";
+		$sql.= " cc.libelle as label,";
 		$sql.= " SUM(pc.amount) as sumpaid";
 		$sql.= " FROM (".MAIN_DB_PREFIX."c_chargesociales as cc, ".MAIN_DB_PREFIX."chargesociales as c)";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = c.rowid";
 		$sql.= " WHERE c.fk_type = cc.id";
-		$sql.= " AND c.entity = ".$conf->entity;
+		$sql.= " AND c.entity IN (".getEntity('tax').')';
 		$sql.= " AND c.paye = 0";
 		// Add where from hooks
 		$parameters=array();
@@ -661,8 +661,8 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 					$obj = $db->fetch_object($resql);
 
 					$chargestatic->id=$obj->rowid;
-					$chargestatic->ref=$obj->libelle;
-					$chargestatic->lib=$obj->libelle;
+					$chargestatic->ref=$obj->rowid;
+					$chargestatic->label=$obj->label;
 					$chargestatic->paye=$obj->paye;
 
 					print '<tr class="oddeven">';
@@ -672,6 +672,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 					print '<td class="nowrap right">'.price($obj->sumpaid).'</td>';
 					print '<td align="center">'.$chargestatic->getLibStatut(3).'</td>';
 					print '</tr>';
+
 					$tot_ttc+=$obj->amount;
 					$i++;
 				}

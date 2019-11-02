@@ -954,22 +954,22 @@ class User extends CommonObject
 	/**
 	 *  Change status of a user
 	 *
-	 *	@param	int		$statut		Status to set
+	 *	@param	int		$status		Status to set
 	 *  @return int     			<0 if KO, 0 if nothing is done, >0 if OK
 	 */
-	public function setstatus($statut)
+	public function setstatus($status)
 	{
 		global $conf,$langs,$user;
 
 		$error=0;
 
 		// Check parameters
-		if ($this->statut == $statut) return 0;
-		else $this->statut = $statut;
+		if ($this->statut == $status) return 0;
+		else $this->statut = $status;
 
 		$this->db->begin();
 
-		// Deactivate user
+		// Save in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 		$sql.= " SET statut = ".$this->statut;
 		$sql.= " WHERE rowid = ".$this->id;
@@ -2495,20 +2495,20 @@ class User extends CommonObject
         // phpcs:enable
 		global $langs;
 
-		if (empty($this->labelstatus) || empty($this->labelstatusshort))
+		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelstatus[self::STATUS_ENABLED] = $langs->trans('Enabled');
-			$this->labelstatus[self::STATUS_DISABLED] = $langs->trans('Disabled');
-			$this->labelstatusshort[self::STATUS_ENABLED] = $langs->trans('Enabled');
-			$this->labelstatusshort[self::STATUS_DISABLED] = $langs->trans('Disabled');
+			$this->labelStatus[self::STATUS_ENABLED] = $langs->trans('Enabled');
+			$this->labelStatus[self::STATUS_DISABLED] = $langs->trans('Disabled');
+			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->trans('Enabled');
+			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->trans('Disabled');
 		}
 
 		$statusType = 'status5';
 		if ($status == self::STATUS_ENABLED) $statusType = 'status4';
 
-		return dolGetStatus($this->labelstatus[$status], $this->labelstatusshort[$status], '', $statusType, $mode);
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 

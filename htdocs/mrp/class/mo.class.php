@@ -552,21 +552,21 @@ class Mo extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		if (empty($this->labelstatus))
+		if (empty($this->labelStatus))
 		{
 			global $langs;
 			//$langs->load("mrp");
-			$this->labelstatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelstatus[self::STATUS_VALIDATED] = $langs->trans('Validated');
-			$this->labelstatus[self::STATUS_INPROGRESS] = $langs->trans('InProgress');
-			$this->labelstatus[self::STATUS_PRODUCED] = $langs->trans('StatusMOProduced');
-			$this->labelstatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated');
+			$this->labelStatus[self::STATUS_INPROGRESS] = $langs->trans('InProgress');
+			$this->labelStatus[self::STATUS_PRODUCED] = $langs->trans('StatusMOProduced');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
 		}
 
 		$statusType = 'status'.$status;
 		//if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
 
-		return dolGetStatus($this->labelstatus[$status], $this->labelstatus[$status], '', $statusType, $mode);
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatus[$status], '', $statusType, $mode);
 	}
 
 	/**

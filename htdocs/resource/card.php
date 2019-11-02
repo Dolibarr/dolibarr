@@ -63,9 +63,9 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 
 
-/*******************************************************************
- * ACTIONS
- ********************************************************************/
+/*
+ * Actions
+ */
 
 $hookmanager->initHooks(array('resource', 'resource_card','globalcard'));
 $parameters=array('resource_id'=>$id);
@@ -211,18 +211,17 @@ if (empty($reshook))
 }
 
 
-/***************************************************
-* VIEW
-*
-* Put here all code to build page
-****************************************************/
+/*
+ * View
+ */
+
 $title = $langs->trans($action == 'create' ? 'AddResource' : 'ResourceSingular');
 llxHeader('', $title, '');
 
 $form = new Form($db);
 $formresource = new FormResource($db);
 
-if ($action == 'create' || $object->fetch($id) > 0)
+if ($action == 'create' || $object->fetch($id, $ref) > 0)
 {
 	if ($action == 'create')
 	{

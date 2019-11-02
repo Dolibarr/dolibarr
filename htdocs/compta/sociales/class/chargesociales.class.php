@@ -57,7 +57,7 @@ class ChargeSociales extends CommonObject
     public $date_ech;
     public $label;
     public $type;
-    public $type_libelle;
+    public $type_label;
     public $amount;
     public $paye;
     public $periode;
@@ -142,7 +142,7 @@ class ChargeSociales extends CommonObject
                 $this->lib					= $obj->label;
                 $this->label				= $obj->label;
                 $this->type					= $obj->fk_type;
-                $this->type_libelle			= $obj->libelle;
+                $this->type_label			= $obj->libelle;
                 $this->fk_account			= $obj->fk_account;
                 $this->mode_reglement_id	= $obj->fk_mode_reglement;
                 $this->mode_reglement_code	= $obj->mode_reglement_code;
@@ -471,12 +471,12 @@ class ChargeSociales extends CommonObject
     /**
      *  Renvoi le libelle d'un statut donne
      *
-     *  @param	int		$statut        	Id statut
+     *  @param	int		$status        	Id status
      *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
 	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
      *  @return string        			Label
      */
-    public function LibStatut($statut, $mode = 0, $alreadypaid = -1)
+    public function LibStatut($status, $mode = 0, $alreadypaid = -1)
     {
         // phpcs:enable
         global $langs;
@@ -486,38 +486,38 @@ class ChargeSociales extends CommonObject
 
         if ($mode == 0 || $mode == 1)
         {
-            if ($statut ==  0) return $langs->trans("Unpaid");
-            elseif ($statut ==  1) return $langs->trans("Paid");
+            if ($status ==  0) return $langs->trans("Unpaid");
+            elseif ($status ==  1) return $langs->trans("Paid");
         }
         elseif ($mode == 2)
         {
-            if ($statut ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
-            elseif ($statut ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
-            elseif ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
+            if ($status ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
+            elseif ($status ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
+            elseif ($status ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
         }
         elseif ($mode == 3)
         {
-            if ($statut ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1');
-            elseif ($statut ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3');
-            elseif ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6');
+            if ($status ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1');
+            elseif ($status ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3');
+            elseif ($status ==  1) return img_picto($langs->trans("Paid"), 'statut6');
         }
         elseif ($mode == 4)
         {
-            if ($statut ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
-            elseif ($statut ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
-            elseif ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
+            if ($status ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
+            elseif ($status ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
+            elseif ($status ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
         }
         elseif ($mode == 5)
         {
-            if ($statut ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
-            elseif ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
-            elseif ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
+            if ($status ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
+            elseif ($status ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
+            elseif ($status ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
         }
         elseif ($mode == 6)
         {
-            if ($statut ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
-            elseif ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
-            elseif ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
+            if ($status ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
+            elseif ($status ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
+            elseif ($status ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
         }
 
         else return "Error, mode/status not found";
@@ -562,8 +562,8 @@ class ChargeSociales extends CommonObject
         	$label .= '<br><b>'.$langs->trans('Ref') . ':</b> ' . $this->ref;
         if (! empty($this->label))
         	$label .= '<br><b>'.$langs->trans('Label') . ':</b> ' . $this->label;
-        if (! empty($this->type_libelle))
-        	$label .= '<br><b>'.$langs->trans('Type') . ':</b> ' . $this->type_libelle;
+        if (! empty($this->type_label))
+        	$label .= '<br><b>'.$langs->trans('Type') . ':</b> ' . $this->type_label;
 
         $linkclose='';
         if (empty($notooltip) && $user->rights->facture->lire)
@@ -695,6 +695,6 @@ class ChargeSociales extends CommonObject
         $this->amount=100;
         $this->label = 'Social contribution label';
         $this->type = 1;
-        $this->type_libelle = 'Type of social contribution';
+        $this->type_label = 'Type of social contribution';
     }
 }

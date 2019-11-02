@@ -328,13 +328,13 @@ class Contact extends CommonObject
 		$this->town=(empty($this->town)?'':$this->town);
 		$this->country_id=($this->country_id > 0?$this->country_id:$this->country_id);
 		if (empty($this->statut)) $this->statut = 0;
-
+		if (empty($this->civility_code) && ! is_numeric($this->civility_id)) $this->civility_code = $this->civility_id;   // For backward compatibility
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
 		if ($this->socid > 0) $sql .= " fk_soc='".$this->db->escape($this->socid)."',";
 		elseif ($this->socid == -1) $sql .= " fk_soc=null,";
-		$sql .= "  civility='".$this->db->escape($this->civility_id)."'";
+		$sql .= "  civility='".$this->db->escape($this->civility_code)."'";
 		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname='".$this->db->escape($this->firstname)."'";
 		$sql .= ", address='".$this->db->escape($this->address)."'";
@@ -1264,13 +1264,13 @@ class Contact extends CommonObject
         // phpcs:enable
 		global $langs;
 
-		$labelstatus = array(
+		$labelStatus = array(
 			0 => 'ActivityCeased',
 			1 => 'InActivity',
 			4 => 'InActivity',
 			5 => 'ActivityCeased',
 		);
-		$labelstatusshort = array(
+		$labelStatusShort = array(
 			0 => 'ActivityCeased',
 			1 => 'InActivity',
 			4 => 'InActivity',
@@ -1280,8 +1280,8 @@ class Contact extends CommonObject
 		$statusType = 'status4';
 		if ($status==0 || $status==5) $statusType = 'status5';
 
-		$label = $langs->trans($labelstatus[$status]);
-		$labelshort = $langs->trans($labelstatusshort[$status]);
+		$label = $langs->trans($labelStatus[$status]);
+		$labelshort = $langs->trans($labelStatusShort[$status]);
 
 		return dolGetStatus($label, $labelshort, '', $statusType, $mode);
 	}

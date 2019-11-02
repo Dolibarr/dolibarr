@@ -31,6 +31,10 @@ class mailing_advthirdparties extends MailingTargets
     public $require_admin=0;
 
     public $require_module=array("none");	// This module should not be displayed as Selector in mailling
+
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
     public $picto='company';
 
 	/**

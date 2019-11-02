@@ -32,6 +32,10 @@ class printing_printipp extends PrintingDriver
 {
     public $name = 'printipp';
     public $desc = 'PrintIPPDesc';
+
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
     public $picto = 'printer';
     public $active = 'PRINTING_PRINTIPP';
     public $conf = array();

@@ -13,7 +13,7 @@
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García            <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018      Frédéric France          <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019 Frédéric France          <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Ferran Marcet         	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -95,8 +95,17 @@ class Propal extends CommonObject
 	 */
 	public $socid;
 
+	/**
+	 * ID of the contact
+	 * @var int
+	 */
 	public $contactid;
 	public $author;
+
+	/**
+	 * Ref from thirdparty
+	 * @var string
+	 */
 	public $ref_client;
 
 	/**
@@ -192,8 +201,8 @@ class Propal extends CommonObject
 	public $lines = array();
 	public $line;
 
-	public $labelstatut=array();
-	public $labelstatut_short=array();
+	public $labelStatus=array();
+	public $labelStatusShort=array();
 
 	public $specimen;
 
@@ -240,7 +249,7 @@ class Propal extends CommonObject
 	 *	@param      int		$socid		Id third party
 	 *	@param      int		$propalid   Id proposal
 	 */
-    public function __construct($db, $socid = "", $propalid = 0)
+    public function __construct($db, $socid = 0, $propalid = 0)
 	{
 		global $conf,$langs;
 
@@ -3200,40 +3209,40 @@ class Propal extends CommonObject
 	/**
 	 *    	Return label of a status (draft, validated, ...)
 	 *
-	 *    	@param      int			$statut		id statut
+	 *    	@param      int			$status		Id status
 	 *    	@param      int			$mode      	0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
 	 *    	@return     string		Label
 	 */
-    public function LibStatut($statut, $mode = 1)
+    public function LibStatut($status, $mode = 1)
 	{
         // phpcs:enable
 		global $conf;
 
 		// Init/load array of translation of status
-		if (empty($this->labelstatut) || empty($this->labelstatut_short))
+		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
 			global $langs;
 			$langs->load("propal");
-			$this->labelstatut[0]=$langs->trans("PropalStatusDraft");
-			$this->labelstatut[1]=$langs->trans("PropalStatusValidated");
-			$this->labelstatut[2]=$langs->trans("PropalStatusSigned");
-			$this->labelstatut[3]=$langs->trans("PropalStatusNotSigned");
-			$this->labelstatut[4]=$langs->trans("PropalStatusBilled");
-			$this->labelstatut_short[0]=$langs->trans("PropalStatusDraftShort");
-			$this->labelstatut_short[1]=$langs->trans("PropalStatusValidatedShort");
-			$this->labelstatut_short[2]=$langs->trans("PropalStatusSignedShort");
-			$this->labelstatut_short[3]=$langs->trans("PropalStatusNotSignedShort");
-			$this->labelstatut_short[4]=$langs->trans("PropalStatusBilledShort");
+			$this->labelStatus[0]=$langs->trans("PropalStatusDraft");
+			$this->labelStatus[1]=$langs->trans("PropalStatusValidated");
+			$this->labelStatus[2]=$langs->trans("PropalStatusSigned");
+			$this->labelStatus[3]=$langs->trans("PropalStatusNotSigned");
+			$this->labelStatus[4]=$langs->trans("PropalStatusBilled");
+			$this->labelStatusShort[0]=$langs->trans("PropalStatusDraftShort");
+			$this->labelStatusShort[1]=$langs->trans("PropalStatusValidatedShort");
+			$this->labelStatusShort[2]=$langs->trans("PropalStatusSignedShort");
+			$this->labelStatusShort[3]=$langs->trans("PropalStatusNotSignedShort");
+			$this->labelStatusShort[4]=$langs->trans("PropalStatusBilledShort");
 		}
 
 		$statusType='';
-		if ($statut==self::STATUS_DRAFT) $statusType='status0';
-		elseif ($statut==self::STATUS_VALIDATED) $statusType='status1';
-		elseif ($statut==self::STATUS_SIGNED) $statusType='status3';
-		elseif ($statut==self::STATUS_NOTSIGNED) $statusType='status5';
-		elseif ($statut==self::STATUS_BILLED) $statusType='status6';
+		if ($status==self::STATUS_DRAFT) $statusType='status0';
+		elseif ($status==self::STATUS_VALIDATED) $statusType='status1';
+		elseif ($status==self::STATUS_SIGNED) $statusType='status3';
+		elseif ($status==self::STATUS_NOTSIGNED) $statusType='status5';
+		elseif ($status==self::STATUS_BILLED) $statusType='status6';
 
-		return dolGetStatus($this->labelstatut[$statut], $this->labelstatut_short[$statut], '', $statusType, $mode);
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 
@@ -3272,17 +3281,17 @@ class Propal extends CommonObject
 			$now=dol_now();
 
 			$delay_warning = 0;
-			$statut = 0;
+			$status = 0;
 			$label = $labelShort = '';
 			if ($mode == 'opened') {
 				$delay_warning=$conf->propal->cloture->warning_delay;
-				$statut = self::STATUS_VALIDATED;
+				$status = self::STATUS_VALIDATED;
 				$label = $langs->trans("PropalsToClose");
 				$labelShort = $langs->trans("ToAcceptRefuse");
 			}
 			if ($mode == 'signed') {
 				$delay_warning=$conf->propal->facturation->warning_delay;
-				$statut = self::STATUS_SIGNED;
+				$status = self::STATUS_SIGNED;
 				$label = $langs->trans("PropalsToBill");         // We set here bill but may be billed or ordered
 				$labelShort = $langs->trans("ToBill");
 			}
@@ -3291,8 +3300,8 @@ class Propal extends CommonObject
 			$response->warning_delay = $delay_warning/60/60/24;
 			$response->label = $label;
 			$response->labelShort = $labelShort;
-			$response->url = DOL_URL_ROOT.'/comm/propal/list.php?viewstatut='.$statut.'&mainmenu=commercial&leftmenu=propals';
-			$response->url_late = DOL_URL_ROOT.'/comm/propal/list.php?viewstatut='.$statut.'&mainmenu=commercial&leftmenu=propals&sortfield=p.datep&sortorder=asc';
+			$response->url = DOL_URL_ROOT.'/comm/propal/list.php?viewstatut='.$status.'&mainmenu=commercial&leftmenu=propals';
+			$response->url_late = DOL_URL_ROOT.'/comm/propal/list.php?viewstatut='.$status.'&mainmenu=commercial&leftmenu=propals&sortfield=p.datep&sortorder=asc';
 			$response->img = img_object('', "propal");
 
 			// This assignment in condition is not a bug. It allows walking the results.

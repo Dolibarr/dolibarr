@@ -135,7 +135,8 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				$data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0), $startmonth);
 
 				$filenamenb = $dir."/".$prefix."invoicesnbinyear-".$endyear.".png";
-				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesnbinyear-'.$endyear.'.png';
+				// default value for customer mode
+				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesnbinyear-'.$endyear.'.png';
 				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicessuppliernbinyear-'.$endyear.'.png';
 
 				$px1 = new DolGraph();
@@ -180,7 +181,8 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				$data2 = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0), $startmonth);
 
 				$filenamenb = $dir."/".$prefix."invoicesamountinyear-".$endyear.".png";
-				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesamountinyear-'.$endyear.'.png';
+				// default value for customer mode
+				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesamountinyear-'.$endyear.'.png';
 				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicessupplieramountinyear-'.$endyear.'.png';
 
 				$px2 = new DolGraph();

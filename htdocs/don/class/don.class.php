@@ -116,12 +116,12 @@ class Don extends CommonObject
     /**
 	 * @var array Array of status label
 	 */
-	public $labelstatut;
+	public $labelStatus;
 
     /**
 	 * @var array Array of status label short
 	 */
-	public $labelstatutshort;
+	public $labelStatusShort;
 
 
 	const STATUS_DRAFT = 0;
@@ -163,25 +163,25 @@ class Don extends CommonObject
     public function LibStatut($status, $mode = 0)
     {
         // phpcs:enable
-    	if (empty($this->labelstatut) || empty($this->labelstatutshort))
+    	if (empty($this->labelStatus) || empty($this->labelStatusShort))
     	{
 	    	global $langs;
 	    	$langs->load("donations");
-	    	$this->labelstatut[-1]=$langs->trans("Canceled");
-	    	$this->labelstatut[0]=$langs->trans("DonationStatusPromiseNotValidated");
-	    	$this->labelstatut[1]=$langs->trans("DonationStatusPromiseValidated");
-	    	$this->labelstatut[2]=$langs->trans("DonationStatusPaid");
-	    	$this->labelstatutshort[-1]=$langs->trans("Canceled");
-	    	$this->labelstatutshort[0]=$langs->trans("DonationStatusPromiseNotValidatedShort");
-	    	$this->labelstatutshort[1]=$langs->trans("DonationStatusPromiseValidatedShort");
-	    	$this->labelstatutshort[2]=$langs->trans("DonationStatusPaidShort");
+	    	$this->labelStatus[-1]=$langs->trans("Canceled");
+	    	$this->labelStatus[0]=$langs->trans("DonationStatusPromiseNotValidated");
+	    	$this->labelStatus[1]=$langs->trans("DonationStatusPromiseValidated");
+	    	$this->labelStatus[2]=$langs->trans("DonationStatusPaid");
+	    	$this->labelStatusShort[-1]=$langs->trans("Canceled");
+	    	$this->labelStatusShort[0]=$langs->trans("DonationStatusPromiseNotValidatedShort");
+	    	$this->labelStatusShort[1]=$langs->trans("DonationStatusPromiseValidatedShort");
+	    	$this->labelStatusShort[2]=$langs->trans("DonationStatusPaidShort");
     	}
 
     	$statusType = 'status'.$status;
     	if ($status == self::STATUS_CANCELED) $statusType = 'status5';
     	if ($status == self::STATUS_PAID) $statusType = 'status6';
 
-    	return dolGetStatus($this->labelstatut[$status], $this->labelstatutshort[$status], '', $statusType, $mode);
+    	return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
     }
 
 
