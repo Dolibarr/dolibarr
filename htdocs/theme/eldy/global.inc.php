@@ -4415,6 +4415,14 @@ pre#editfilecontentaceeditorid {
 #comment .comment-delete:hover {
     background:rgba(250,20,20,0.8);
 }
+#comment .comment-edit {
+    width: 100px;
+    text-align:center;
+    vertical-align:middle;
+}
+#comment .comment-edit:hover {
+    background:rgba(0,184,148,0.8);
+}
 #comment textarea {
     width: 100%;
 }
