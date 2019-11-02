@@ -1393,18 +1393,40 @@ class CommandeFournisseur extends CommonOrder
      *	Load an object from its id and create a new one in database
      *
 	 *  @param	    User	$user		User making the clone
+	 *	@param		int		$socid		Id of thirdparty
      *	@return		int					New id of clone
      */
-    public function createFromClone(User $user)
+    public function createFromClone(User $user, $socid = 0)
     {
-        global $hookmanager;
+    	global $conf, $user,$hookmanager;
 
         $error=0;
 
 		$this->db->begin();
 
+		// get lines so they will be clone
+		foreach($this->lines as $line)
+			$line->fetch_optionals();
+
 		// Load source object
 		$objFrom = clone $this;
+
+		// Change socid if needed
+		if (! empty($socid) && $socid != $this->socid)
+		{
+			$objsoc = new Societe($this->db);
+
+			if ($objsoc->fetch($socid)>0)
+			{
+				$this->socid 				= $objsoc->id;
+				$this->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
+				$this->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
+				$this->fk_project			= 0;
+				$this->fk_delivery_address	= 0;
+			}
+
+			// TODO Change product price if multi-prices
+		}
 
         $this->id=0;
         $this->statut=self::STATUS_DRAFT;

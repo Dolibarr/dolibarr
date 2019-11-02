@@ -963,7 +963,9 @@ if (empty($reshook))
 		{
 			if ($object->id > 0)
 			{
-				$result=$object->createFromClone($user);
+				$orig = clone $object;
+
+				$result=$object->createFromClone($user, $socid);
 				if ($result > 0)
 				{
 					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
@@ -972,6 +974,7 @@ if (empty($reshook))
 				else
 				{
 					setEventMessages($object->error, $object->errors, 'errors');
+					$object = $orig;
 					$action='';
 				}
 			}
@@ -1789,7 +1792,7 @@ elseif (! empty($object->id))
 	{
 		// Create an array for form
 		$formquestion=array(
-				//array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1)
+			array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.fournisseur=1)'))
 		);
 		// Paiement incomplet. On demande si motif = escompte ou autre
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneOrder', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
