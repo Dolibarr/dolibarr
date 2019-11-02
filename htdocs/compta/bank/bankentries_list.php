@@ -1065,9 +1065,10 @@ if ($resql)
            			}
             	}
             	// Extra fields
-            	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+            	$element = 'banktransaction';
+            	if (is_array($extrafields->attributes[$element]['label']) && count($extrafields->attributes[$element]['label']))
             	{
-            		foreach($extrafields->attribute_label as $key => $val)
+            		foreach($extrafields->attributes[$element]['label'] as $key => $val)
             		{
             			if (! empty($arrayfields["ef.".$key]['checked']))
             			{
