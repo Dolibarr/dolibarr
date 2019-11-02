@@ -421,7 +421,12 @@ abstract class CommonObject
 	public $civility_id;
 
 	// Dates
-	public $date_creation;			// Date creation
+	/**
+     * @var integer|string date_creation
+     */
+	public $date_creation;
+
+
 	public $date_validation;		// Date validation
 	public $date_modification;		// Date last change (tms field)
 
@@ -1741,7 +1746,7 @@ abstract class CommonObject
 
 		// Security on socid
 		$socid = 0;
-		if ($user->societe_id > 0) $socid = $user->societe_id;
+		if ($user->socid > 0) $socid = $user->socid;
 
 		// this->ismultientitymanaged contains
 		// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe

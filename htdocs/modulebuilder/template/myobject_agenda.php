@@ -61,9 +61,9 @@ if (GETPOST('actioncode', 'array'))
 }
 else
 {
-    $actioncode=GETPOST("actioncode", "alpha", 3)?GETPOST("actioncode", "alpha", 3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+    $actioncode = GETPOST("actioncode", "alpha", 3)?GETPOST("actioncode", "alpha", 3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
-$search_agenda_label=GETPOST('search_agenda_label');
+$search_agenda_label = GETPOST('search_agenda_label');
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -77,7 +77,7 @@ if (! $sortfield) $sortfield='a.datep,a.id';
 if (! $sortorder) $sortorder='DESC,DESC';
 
 // Initialize technical objects
-$object=new MyObject($db);
+$object = new MyObject($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('myobjectagenda','globalcard'));     // Note that conf->hooks_modules contains array
@@ -89,13 +89,13 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 if ($id > 0 || ! empty($ref)) $upload_dir = $conf->mymodule->multidir_output[$object->entity] . "/" . $object->id;
 
 // Security check - Protection if external user
-//if ($user->societe_id > 0) access_forbidden();
-//if ($user->societe_id > 0) $socid = $user->societe_id;
+//if ($user->socid > 0) access_forbidden();
+//if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'mymodule', $object->id);
 
 
 /*
- *	Actions
+ *  Actions
  */
 
 $parameters=array('id'=>$id);

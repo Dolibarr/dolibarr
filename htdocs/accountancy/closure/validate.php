@@ -34,7 +34,7 @@ $langs->loadLangs(array("compta","bills","other","main","accountancy"));
 if (empty($conf->accounting->enabled)) {
 	accessforbidden();
 }
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 	accessforbidden();
 	if (! $user->rights->accounting->fiscalyear->write)
 	accessforbidden();

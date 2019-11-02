@@ -143,7 +143,12 @@ class Expedition extends CommonObject
 	 */
 	public $date_shipping;
 
+	/**
+     * @var integer|string date_creation
+     */
 	public $date_creation;
+
+
 	public $date_valid;
 
 	public $meths;

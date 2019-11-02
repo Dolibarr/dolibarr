@@ -88,7 +88,7 @@ $search_project=GETPOST('search_project', 'alpha');
 
 // Security check
 $id = (GETPOST('orderid')?GETPOST('orderid', 'int'):GETPOST('id', 'int'));
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'commande', $id, '');
 
 $diroutputmassaction=$conf->commande->multidir_output[$conf->entity] . '/temp/massgeneration/'.$user->id;

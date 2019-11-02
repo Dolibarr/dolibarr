@@ -112,7 +112,7 @@ class PropaleStats extends Stats
 
 		$sql = "SELECT date_format(".$this->field_date.",'%m') as dm, COUNT(*) as nb";
 		$sql.= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->field_date." BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";

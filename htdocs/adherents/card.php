@@ -1885,7 +1885,7 @@ else
 				}
 
 				// Create user
-				if (! $user->societe_id && ! $object->user_id)
+				if (! $user->socid && ! $object->user_id)
 				{
 					if ($user->rights->user->user->creer)
 					{

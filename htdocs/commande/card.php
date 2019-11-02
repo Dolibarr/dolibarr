@@ -82,8 +82,8 @@ $hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (! empty(
 $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
 // Security check
-if (! empty($user->societe_id))
-	$socid = $user->societe_id;
+if (! empty($user->socid))
+	$socid = $user->socid;
 $result = restrictedArea($user, 'commande', $id);
 
 $object = new Commande($db);
@@ -1803,7 +1803,7 @@ if ($action == 'create' && $usercancreate)
 	print '</td></tr>';
 
 	// Note private
-	if (empty($user->societe_id)) {
+	if (empty($user->socid)) {
 		print '<tr>';
 		print '<td class="tdtop">' . $langs->trans('NotePrivate') . '</td>';
 		print '<td>';

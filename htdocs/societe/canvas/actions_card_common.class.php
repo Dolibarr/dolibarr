@@ -266,7 +266,7 @@ abstract class ActionsCardCommon
             $this->tpl['showhead']=dol_get_fiche_head($head, 'card', '', 0, 'company');
             $this->tpl['showend']=dol_get_fiche_end();
 
-            $this->tpl['showrefnav'] 		= $form->showrefnav($this->object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+            $this->tpl['showrefnav'] 		= $form->showrefnav($this->object, 'socid', '', ($user->socid?0:1), 'rowid', 'nom');
 
             $this->tpl['checkcustomercode'] = $this->object->check_codeclient();
             $this->tpl['checksuppliercode'] = $this->object->check_codefournisseur();

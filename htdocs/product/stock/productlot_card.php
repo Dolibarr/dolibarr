@@ -53,7 +53,7 @@ if (empty($action) && empty($id) && empty($ref)) $action='list';
 
 
 // Protection if external user
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
     //accessforbidden();
 }
@@ -318,7 +318,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$linkback = '<a href="' . DOL_URL_ROOT . '/product/stock/productlot_list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
     $shownav = 1;
-    if ($user->societe_id && ! in_array('batch', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+    if ($user->socid && ! in_array('batch', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
 	dol_banner_tab($object, 'id', $linkback, $shownav, 'rowid', 'batch');
 

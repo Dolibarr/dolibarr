@@ -41,7 +41,7 @@ $action=GETPOST('action', 'alpha');
 
 // Security check
 $socid='';
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, $origin, $origin_id);
 
 $object = new Expedition($db);

@@ -582,7 +582,7 @@ class Products extends DolibarrApi
     {
     	global $db, $conf;
     	$obj_ret = array();
-    	$socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
+    	$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
     	$sql = "SELECT t.rowid, t.ref, t.ref_ext";
     	$sql.= " FROM ".MAIN_DB_PREFIX."product as t";
     	if ($category > 0) {

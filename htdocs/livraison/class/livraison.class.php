@@ -66,12 +66,13 @@ class Livraison extends CommonObject
 	public $date_delivery;    // Date really received
 
 	/**
-	 * @var integer|string date_creation
-	 */
+   * @var integer|string date_creation
+   */
 	public $date_creation;
 
 	public $date_valid;
 	public $model_pdf;
+
 
 	/**
 	 * Constructor

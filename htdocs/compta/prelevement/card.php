@@ -37,7 +37,7 @@ if (!$user->rights->prelevement->bons->lire)
 accessforbidden();
 
 // Security check
-if ($user->societe_id > 0) accessforbidden();
+if ($user->socid > 0) accessforbidden();
 
 // Get supervariables
 $action = GETPOST('action', 'alpha');

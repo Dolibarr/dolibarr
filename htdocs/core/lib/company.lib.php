@@ -268,7 +268,7 @@ function societe_prepare_head(Societe $object)
     // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'thirdparty');
 
-    if ($user->societe_id == 0)
+    if ($user->socid == 0)
     {
         // Notifications
         if (! empty($conf->notification->enabled))

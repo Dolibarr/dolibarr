@@ -112,7 +112,7 @@ if (! $sortorder) $sortorder='DESC';
 $module='propal';
 $dbtable='';
 $objectid='';
-if (! empty($user->societe_id))	$socid=$user->societe_id;
+if (! empty($user->socid))	$socid=$user->socid;
 if (! empty($socid))
 {
 	$objectid=$socid;

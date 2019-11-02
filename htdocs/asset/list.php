@@ -72,9 +72,9 @@ if (! $sortorder) $sortorder="ASC";
 
 // Protection if external user
 $socid=0;
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
-	//$socid = $user->societe_id;
+	//$socid = $user->socid;
 	accessforbidden();
 }
 //$result = restrictedArea($user, 'asset', $id,'');

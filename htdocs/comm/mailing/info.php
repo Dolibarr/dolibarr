@@ -33,7 +33,7 @@ $id=GETPOST('id');
 $langs->load("mails");
 
 // Security check
-if (! $user->rights->mailing->lire || $user->societe_id > 0)
+if (! $user->rights->mailing->lire || $user->socid > 0)
 accessforbidden();
 
 

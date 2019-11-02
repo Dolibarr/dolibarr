@@ -40,7 +40,7 @@ $ref = GETPOST('ref');
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 $object = new CommandeFournisseur($db);

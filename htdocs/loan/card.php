@@ -44,7 +44,7 @@ $projectid = GETPOST('projectid', 'int');
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'loan', $id, '', '');
 
 $object = new Loan($db);

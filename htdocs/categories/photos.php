@@ -136,7 +136,7 @@ if ($object->id)
 	}
 	$morehtmlref.='</div>';
 
-	dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
+	dol_banner_tab($object, 'ref', $linkback, ($user->socid?0:1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
 	/*
 	 * Confirmation de la suppression de photo

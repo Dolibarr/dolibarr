@@ -80,8 +80,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 if ($id > 0 || ! empty($ref)) $upload_dir = $conf->mymodule->multidir_output[$object->entity?$object->entity:$conf->entity] . "/myobject/" . dol_sanitizeFileName($object->ref);
 
 // Security check - Protection if external user
-//if ($user->societe_id > 0) access_forbidden();
-//if ($user->societe_id > 0) $socid = $user->societe_id;
+//if ($user->socid > 0) access_forbidden();
+//if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'mymodule', $object->id);
 
 

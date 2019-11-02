@@ -1456,7 +1456,7 @@ class Project extends CommonObject
 
 				// Security check
 				$socid=0;
-				if ($user->societe_id > 0) $socid = $user->societe_id;
+				if ($user->socid > 0) $socid = $user->socid;
 
 				$tasksarray=$taskstatic->getTasksArray(0, 0, $fromid, $socid, 0);
 
@@ -1536,7 +1536,7 @@ class Project extends CommonObject
 
 		// Security check
 		$socid=0;
-		if ($user->societe_id > 0) $socid = $user->societe_id;
+		if ($user->socid > 0) $socid = $user->socid;
 
 		$tasksarray=$taskstatic->getTasksArray(0, 0, $this->id, $socid, 0);
 
@@ -1767,7 +1767,7 @@ class Project extends CommonObject
         global $conf, $langs;
 
         // For external user, no check is done on company because readability is managed by public status of project and assignement.
-        //$socid=$user->societe_id;
+        //$socid=$user->socid;
 
 		$projectsListId = null;
         if (! $user->rights->projet->all->lire) $projectsListId = $this->getProjectsAuthorizedForUser($user, 0, 1);

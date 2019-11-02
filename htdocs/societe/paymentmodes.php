@@ -44,7 +44,7 @@ $langs->loadLangs(array("companies","commercial","banks","bills",'paypal','strip
 
 // Security check
 $socid = GETPOST("socid", "int");
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'societe', '', '');
 
 $id=GETPOST("id", "int");
@@ -804,7 +804,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+	dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom');
 
 
 	if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
@@ -1615,7 +1615,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+	dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom');
 
 	print '<div class="fichecenter">';
 
@@ -1721,7 +1721,7 @@ if ($socid && $action == 'editcard' && $user->rights->societe->creer)
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+	dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom');
 
 	print '<div class="fichecenter">';
 
@@ -1769,7 +1769,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+	dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom');
 
 	print '<div class="nofichecenter">';
 
@@ -1869,7 +1869,7 @@ if ($socid && $action == 'createcard' && $user->rights->societe->creer)
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+	dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom');
 
 	print '<div class="nofichecenter">';
 

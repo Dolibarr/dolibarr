@@ -139,7 +139,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 
 	// Security check
 	$fieldid = GETPOST('ref', 'alpha')?'ref':'rowid';
-	if ($user->societe_id) $socid=$user->societe_id;
+	if ($user->socid) $socid=$user->socid;
 	$result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid);
 
 	$usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
@@ -503,7 +503,7 @@ if ($action == 'create' && !$error)
 
 	print '</textarea></td></tr>';
 	// Private note
-	if (empty($user->societe_id))
+	if (empty($user->socid))
 	{
 		print '<tr>';
 		print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';

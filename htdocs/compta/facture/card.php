@@ -130,7 +130,7 @@ $permissiontoadd = $usercancreate; // Used by the include of actions_addupdatede
 
 // Security check
 $fieldid = (! empty($ref) ? 'ref' : 'rowid');
-if ($user->societe_id) $socid = $user->societe_id;
+if ($user->socid) $socid = $user->socid;
 $isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid, $isdraft);
 
@@ -3334,7 +3334,7 @@ if ($action == 'create')
 	print $doleditor->Create(1);
 
 	// Private note
-	if (empty($user->societe_id))
+	if (empty($user->socid))
 	{
 		print '<tr>';
 		print '<td class="tdtop">';
@@ -3460,7 +3460,7 @@ elseif ($id > 0 || ! empty($ref))
 	// fetch optionals attributes and labels
 	$extrafields->fetch_name_optionals_label($object->table_element);
 
-	if ($user->societe_id > 0 && $user->societe_id != $object->socid)
+	if ($user->socid > 0 && $user->socid != $object->socid)
 	{
 		accessforbidden('', 0, 1);
 	}
@@ -4547,7 +4547,7 @@ elseif ($id > 0 || ! empty($ref))
 				}
 				print '<td class="right">' . price($sign * $objp->amount) . '</td>';
 				print '<td align="center">';
-				if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $user->societe_id == 0)
+				if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $user->socid == 0)
 				{
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletepaiement&paiement_id='.$objp->rowid.'">';
 					print img_delete();

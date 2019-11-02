@@ -90,7 +90,7 @@ $search_array_options=$extrafields->getOptionalsFromPost($object->table_element,
 
 // Security check
 $contratid = GETPOST('id', 'int');
-if (! empty($user->societe_id)) $socid=$user->societe_id;
+if (! empty($user->socid)) $socid=$user->socid;
 $result = restrictedArea($user, 'contrat', $contratid);
 
 if ($search_status != '')

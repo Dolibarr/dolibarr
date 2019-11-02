@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 $langs->loadLangs(array("compta","bills","other","accountancy","loans","banks","admin","dict"));
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 	accessforbidden();
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks

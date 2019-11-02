@@ -1852,7 +1852,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 		// Add personalized menus and modules menus
 		//var_dump($newmenu->liste);    //
 		$menuArbo = new Menubase($db, 'eldy');
-		$newmenu = $menuArbo->menuLeftCharger($newmenu, $mainmenu, $leftmenu, (empty($user->societe_id)?0:1), 'eldy', $tabMenu);
+		$newmenu = $menuArbo->menuLeftCharger($newmenu, $mainmenu, $leftmenu, (empty($user->socid)?0:1), 'eldy', $tabMenu);
 		//var_dump($newmenu->liste);    //
 
 		// We update newmenu for special dynamic menus

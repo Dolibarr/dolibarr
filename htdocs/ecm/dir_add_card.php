@@ -44,10 +44,10 @@ $pageid  = GETPOST('pageid', 'int');
 if (empty($module)) $module='ecm';
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
     $action = '';
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 
 $section=$urlsection=GETPOST('section', 'alpha');

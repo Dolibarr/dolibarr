@@ -52,7 +52,7 @@ $contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'contactl
 $id = GETPOST('id', 'int');
 $contactid = GETPOST('id', 'int');
 $ref = '';  // There is no ref for contacts
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'contact', $contactid, '');
 
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));

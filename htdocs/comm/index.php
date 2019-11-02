@@ -51,10 +51,10 @@ $bid=GETPOST('bid', 'int');
 
 // Securite acces client
 $socid=GETPOST('socid', 'int');
-if (isset($user->societe_id) && $user->societe_id > 0)
+if (isset($user->socid) && $user->socid > 0)
 {
 	$action = '';
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 $max=3;
@@ -120,6 +120,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
     	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<div class="div-table-responsive-no-min">';
     	print '<table class="noborder nohover centpercent">';
     	$i=0;
     	foreach($listofsearchfields as $key => $value)
@@ -132,6 +133,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     		$i++;
     	}
     	print '</table>';
+        print '</div>';
     	print '</form>';
     	print '<br>';
     }
@@ -559,10 +561,10 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
 	$sql = "SELECT s.nom as name, s.rowid, s.datec as dc, s.canvas, s.tms as dm";
     $sql.= ", s.code_fournisseur";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (! $user->rights->societe->client->voir && ! $user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.fournisseur = 1";
 	$sql.= " AND s.entity IN (".getEntity($companystatic->element).")";
-	if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if (! $user->rights->societe->client->voir && ! $user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid)	$sql.= " AND s.rowid = ".$socid;
 	$sql.= " ORDER BY s.datec DESC";
 	$sql.= $db->plimit($max, 0);

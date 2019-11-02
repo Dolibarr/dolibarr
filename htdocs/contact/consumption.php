@@ -121,7 +121,7 @@ if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
 }
 $morehtmlref.='</div>';
 
-dol_banner_tab($object, 'id', $linkback, ($user->societe_id?0:1), 'rowid', 'nom', $morehtmlref);
+dol_banner_tab($object, 'id', $linkback, ($user->socid?0:1), 'rowid', 'nom', $morehtmlref);
 
 print '<div class="fichecenter">';
 

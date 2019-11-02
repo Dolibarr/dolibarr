@@ -2172,7 +2172,7 @@ class Holiday extends CommonObject
         // phpcs:enable
         global $conf, $langs;
 
-        if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
+        if ($user->socid) return -1;   // protection pour eviter appel par utilisateur externe
 
         $now=dol_now();
 

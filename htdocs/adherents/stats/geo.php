@@ -34,10 +34,10 @@ $mode=GETPOST('mode')?GETPOST('mode'):'';
 
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
     $action = '';
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 $result=restrictedArea($user, 'adherent', '', '', 'cotisation');
 

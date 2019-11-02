@@ -46,9 +46,9 @@ $ref		= GETPOST('ref', 'alpha');
 
 // Security check
 $socid='';
-if (! empty($user->societe_id))
+if (! empty($user->socid))
 {
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'propal', $id);
 
