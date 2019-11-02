@@ -1984,7 +1984,7 @@ function top_menu_bookmark()
  */
 function top_menu_search()
 {
-    global $langs, $conf, $db, $user;
+    global $langs, $conf, $db, $user, $hookmanager;
 
 	$html = '';
 
