@@ -289,7 +289,6 @@ $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("
 
 $sql = "SELECT s.rowid as socid, s.nom as name,";
 $sql.= " p.rowid, p.lastname as lastname, p.statut, p.firstname, p.zip, p.town, p.poste, p.email, p.no_email,";
-// socialnetworks->>'$.facebook' as facebook
 $sql.= " p.socialnetworks,";
 $sql.= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.datec as date_creation, p.tms as date_update,";
 $sql.= " co.label as country, co.code as country_code";
@@ -355,7 +354,8 @@ if (strlen($search_fax))            $sql.= natural_search('p.fax', $search_fax);
 if (! empty($conf->socialnetworks->enabled)) {
 	foreach ($socialnetworks as $key => $value) {
 		if ($value['active'] && strlen($search_{$key})) {
-			$sql.= natural_search("p.socialnetworks->'$.".$key."'", $search_{$key});
+			//$sql.= natural_search("p.socialnetworks->'$.".$key."'", $search_{$key});
+			$sql.= ' AND p.socialnetworks LIKE \'%"'.$key.'":"'.$search_{$key}.'%\'';
 		}
 	}
 }
