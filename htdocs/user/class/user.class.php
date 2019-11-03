@@ -1520,7 +1520,6 @@ class User extends CommonObject
 		$this->signature    = trim($this->signature);
 		$this->note_public  = trim($this->note_public);
 		$this->note_private = trim($this->note_private);
-		$this->note = trim($this->note_private);
 		$this->openid       = trim(empty($this->openid)?'':$this->openid);    // Avoid warning
 		$this->admin        = $this->admin?$this->admin:0;
 		$this->address		= empty($this->address)?'':$this->address;
