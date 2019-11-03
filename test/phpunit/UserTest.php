@@ -192,7 +192,7 @@ class UserTest extends PHPUnit\Framework\TestCase
         $newlocalobject=new User($this->savdb);
         $newlocalobject->initAsSpecimen();
         $this->changeProperties($newlocalobject);
-        $this->assertEquals($this->objCompare($localobject, $newlocalobject, true, array('id','ref','pass','pass_indatabase','pass_indatabase_crypted','datec','datem','datelastlogin','datepreviouslogin')), array());    // Actual, Expected
+        $this->assertEquals($this->objCompare($localobject, $newlocalobject, true, array('id','socid','societe_id','ref','pass','pass_indatabase','pass_indatabase_crypted','datec','datem','datelastlogin','datepreviouslogin')), array());    // Actual, Expected
 
         return $localobject;
     }
@@ -309,7 +309,7 @@ class UserTest extends PHPUnit\Framework\TestCase
      */
     public function changeProperties(&$localobject)
     {
-        $localobject->note='New note after update';
+        $localobject->note_private='New note after update';
     }
 
     /**
