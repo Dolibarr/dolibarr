@@ -30,9 +30,9 @@ class ApiPrintConnector implements PrintConnector
     /**
     * Construct new connector
     *
-    * @param string $host
-    * @param string $printerId
-    * @param string $apiToken
+    * @param string $host      Host
+    * @param string $printerId Printer Id
+    * @param string $apiToken  Api Token
     */
     public function __construct($host, $printerId, $apiToken)
     {
@@ -57,6 +57,7 @@ class ApiPrintConnector implements PrintConnector
     /**
      * Finish using this print connector (close file, socket, send
      * accumulated output, etc).
+	 * @return void
      */
     public function finalize()
     {
@@ -94,6 +95,7 @@ class ApiPrintConnector implements PrintConnector
      * Write data to the print connector.
      *
      * @param string $data The data to write
+	 * @return void
      */
     public function write($data)
     {

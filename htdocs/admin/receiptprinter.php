@@ -178,7 +178,7 @@ if ($action == 'testtemplate' && $user->admin) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	$object = new Facture($db);
 	//$object->initAsSpecimen();
-	$object->fetch(8);
+	$object->fetch(18);
 	//var_dump($object->lines);
     $ret = $printer->sendToPrinter($object, $templateid, 1);
     if ($ret == 0) {
@@ -263,14 +263,12 @@ if ($mode == 'config' && $user->admin) {
 
     print $langs->trans("ReceiptPrinterDesc")."<br><br>\n";
 
-    print '<table class="noborder" width="100%">'."\n";
+    print '<table class="noborder centpercent">'."\n";
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("Name").'</th>';
     print '<th>'.$langs->trans("Type").'</th>';
     print '<th>'.$langs->trans("Profile").'</th>';
     print '<th>'.$langs->trans("Parameters").'</th>';
-    print '<th></th>';
-    print '<th></th>';
     print '<th></th>';
     print "</tr>\n";
     $ret = $printer->listprinters();
@@ -290,8 +288,6 @@ if ($mode == 'config' && $user->admin) {
                 print '<td>'.$printer->profileresprint.'</td>';
                 print '<td><input size="60" type="text" name="parameter" value="'.$printer->listprinters[$line]['parameter'].'"></td>';
                 print '<td></td>';
-                print '<td></td>';
-                print '<td></td>';
                 print '</tr>';
             } else {
                 print '<td>'.$printer->listprinters[$line]['name'].'</td>';
@@ -301,13 +297,13 @@ if ($mode == 'config' && $user->admin) {
                 // edit icon
                 print '<td><a href="'.$_SERVER['PHP_SELF'].'?mode=config&amp;action=editprinter&amp;printerid='.$printer->listprinters[$line]['rowid'].'">';
                 print img_picto($langs->trans("Edit"), 'edit');
-                print '</a></td>';
+                print '</a>';
                 // delete icon
-                print '<td><a href="'.$_SERVER['PHP_SELF'].'?mode=config&amp;action=deleteprinter&amp;printerid='.$printer->listprinters[$line]['rowid'].'&amp;printername='.$printer->listprinters[$line]['name'].'">';
+                print '<a href="'.$_SERVER['PHP_SELF'].'?mode=config&amp;action=deleteprinter&amp;printerid='.$printer->listprinters[$line]['rowid'].'&amp;printername='.$printer->listprinters[$line]['name'].'">';
                 print img_picto($langs->trans("Delete"), 'delete');
-                print '</a></td>';
+                print '</a>';
                 // test icon
-                print '<td><a href="'.$_SERVER['PHP_SELF'].'?mode=config&amp;action=testprinter&amp;printerid='.$printer->listprinters[$line]['rowid'].'&amp;printername='.$printer->listprinters[$line]['name'].'">';
+                print '<a href="'.$_SERVER['PHP_SELF'].'?mode=config&amp;action=testprinter&amp;printerid='.$printer->listprinters[$line]['rowid'].'&amp;printername='.$printer->listprinters[$line]['name'].'">';
                 print img_picto($langs->trans("TestPrinter"), 'printer');
                 print '</a></td>';
                 print '</tr>';
@@ -322,8 +318,6 @@ if ($mode == 'config' && $user->admin) {
             print '<th>'.$langs->trans("Type").'</th>';
             print '<th>'.$langs->trans("Profile").'</th>';
             print '<th>'.$langs->trans("Parameters").'</th>';
-            print '<th></th>';
-            print '<th></th>';
             print '<th></th>';
             print "</tr>\n";
         }
@@ -413,21 +407,19 @@ if ($mode == 'template' && $user->admin) {
                 print '<td><textarea name="template" wrap="soft" cols="120" rows="12">'.$printer->listprinterstemplates[$line]['template'].'</textarea>';
                 print '</td>';
                 print '<td></td>';
-                print '<td></td>';
-                print '<td></td>';
             } else {
                 print '<td>'.$printer->listprinterstemplates[$line]['name'].'</td>';
                 print '<td>'.nl2br(htmlentities($printer->listprinterstemplates[$line]['template'])).'</td>';
                 // edit icon
                 print '<td><a href="'.$_SERVER['PHP_SELF'].'?mode=template&amp;action=edittemplate&amp;templateid='.$printer->listprinterstemplates[$line]['rowid'].'">';
                 print img_picto($langs->trans("Edit"), 'edit');
-                print '</a></td>';
+                print '</a>';
                 // delete icon
-                print '<td><a href="'.$_SERVER['PHP_SELF'].'?mode=template&amp;action=deletetemplate&amp;templateid='.$printer->listprinterstemplates[$line]['rowid'].'&amp;templatename='.$printer->listprinterstemplates[$line]['name'].'">';
+                print '<a href="'.$_SERVER['PHP_SELF'].'?mode=template&amp;action=deletetemplate&amp;templateid='.$printer->listprinterstemplates[$line]['rowid'].'&amp;templatename='.$printer->listprinterstemplates[$line]['name'].'">';
                 print img_picto($langs->trans("Delete"), 'delete');
-                print '</a></td>';
+                print '</a>';
                 // test icon
-                print '<td><a href="'.$_SERVER['PHP_SELF'].'?mode=template&amp;action=testtemplate&amp;templateid='.$printer->listprinterstemplates[$line]['rowid'].'&amp;templatename='.$printer->listprinterstemplates[$line]['name'].'">';
+                print '<a href="'.$_SERVER['PHP_SELF'].'?mode=template&amp;action=testtemplate&amp;templateid='.$printer->listprinterstemplates[$line]['rowid'].'&amp;templatename='.$printer->listprinterstemplates[$line]['name'].'">';
                 print img_picto($langs->trans("TestPrinterTemplate"), 'printer');
                 print '</a></td>';
             }
@@ -441,8 +433,6 @@ if ($mode == 'template' && $user->admin) {
 		print '<td><input size="50" type="text" name="templatename" value="'.$printer->listprinterstemplates[$line]['name'].'"></td>';
 		print '<td><textarea name="template" wrap="soft" cols="120" rows="12">'.$printer->listprinterstemplates[$line]['template'].'</textarea>';
 		print '</td>';
-		print '<td></td>';
-		print '<td></td>';
 		print '<td></td>';
 
         print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'"></div>';

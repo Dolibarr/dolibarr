@@ -2093,7 +2093,6 @@ class Product extends CommonObject
 
         $resql = $this->db->query($sql);
         if ($resql) {
-
         	unset($this->oldcopy);
 
             if ($this->db->num_rows($resql) > 0) {
