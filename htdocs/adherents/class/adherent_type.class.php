@@ -70,7 +70,7 @@ class AdherentType extends CommonObject
      * @var string Adherent type nature
      */
     public $morphy;
-    
+
     public $duration;
 
     /*
@@ -385,9 +385,9 @@ class AdherentType extends CommonObject
 		$sql.= "SET ";
 		$sql.= "statut = ".$this->statut.",";
 		$sql.= "libelle = '".$this->db->escape($this->label) ."',";
-    $sql.= "morphy = '".$this->db->escape($this->morphy) ."',";
+		$sql.= "morphy = '".$this->db->escape($this->morphy) ."',";
 		$sql.= "subscription = '".$this->db->escape($this->subscription)."',";
-    $sql.= "duration = '" . $this->db->escape($this->duration_value . $this->duration_unit) ."',";
+		$sql.= "duration = '" . $this->db->escape($this->duration_value . $this->duration_unit) ."',";
 		$sql.= "note = '".$this->db->escape($this->note)."',";
 		$sql.= "vote = ".(integer) $this->db->escape($this->vote).",";
 		$sql.= "mail_valid = '".$this->db->escape($this->mail_valid)."'";
@@ -507,9 +507,9 @@ class AdherentType extends CommonObject
 				$this->label          = $obj->label;
 				$this->morphy         = $obj->morphy;
 				$this->statut         = $obj->statut;
-        $this->duration       = $obj->duration;
-        $this->duration_value = substr($obj->duration, 0, dol_strlen($obj->duration)-1);
-        $this->duration_unit  = substr($obj->duration, -1);
+				$this->duration       = $obj->duration;
+				$this->duration_value = substr($obj->duration, 0, dol_strlen($obj->duration)-1);
+				$this->duration_unit  = substr($obj->duration, -1);
 				$this->subscription   = $obj->subscription;
 				$this->mail_valid     = $obj->mail_valid;
 				$this->note           = $obj->note;

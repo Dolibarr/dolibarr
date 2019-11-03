@@ -107,11 +107,11 @@ if ($cancel) {
 
 if ($action == 'add' && $user->rights->adherent->configurer) {
 	$object->label			= trim($label);
-  $object->morphy         = trim($morphy);
+	$object->morphy         = trim($morphy);
 	$object->statut         = (int) $statut;
 	$object->subscription   = (int) $subscription;
-  $object->duration_value     	 = $duration_value;
-  $object->duration_unit      	 = $duration_unit;
+	$object->duration_value     	 = $duration_value;
+	$object->duration_unit      	 = $duration_unit;
 	$object->note			= trim($comment);
 	$object->mail_valid		= trim($mail_valid);
 	$object->vote			= (int) $vote;
@@ -164,11 +164,11 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 	$object->oldcopy = clone $object;
 
 	$object->label			= trim($label);
-  $object->morphy         = trim($morphy);
+	$object->morphy         = trim($morphy);
 	$object->statut = (int) $statut;
 	$object->subscription = (int) $subscription;
-  $object->duration_value     	 = $duration_value;
-  $object->duration_unit      	 = $duration_unit;
+	$object->duration_value     	 = $duration_value;
+	$object->duration_unit      	 = $duration_unit;
 	$object->note			= trim($comment);
 	$object->mail_valid		= trim($mail_valid);
 	$object->vote			= (boolean) trim($vote);
@@ -361,11 +361,11 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
 	print $form->selectyesno("vote", 0, 1);
 	print '</td></tr>';
-  
-  print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
-  print '<input name="duration_value" size="5" value="'.$_POST["duration_value"].'"> ';
-  print $formproduct->selectMeasuringUnits("duration_unit", "time", $_POST["duration_unit"], 0, 1);
-  print '</td></tr>';
+
+	print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
+	print '<input name="duration_value" size="5" value="'.$_POST["duration_value"].'"> ';
+	print $formproduct->selectMeasuringUnits("duration_unit", "time", $_POST["duration_unit"], 0, 1);
+	print '</td></tr>';
 
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	print '<textarea name="comment" wrap="soft" class="centpercent" rows="3"></textarea></td></tr>';
@@ -451,18 +451,18 @@ if ($rowid > 0)
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
 		print yn($object->vote);
 		print '</tr>';
-    
-    print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td colspan="2">'.$object->duration_value.'&nbsp;';
-    if ($object->duration_value > 1)
-    {
-    $dur=array("i"=>$langs->trans("Minute"),"h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
-    }
-    elseif ($object->duration_value > 0)
-    {
-    $dur=array("i"=>$langs->trans("Minute"),"h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
-    }
-    print (! empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
-    print '</td></tr>';
+
+		print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td colspan="2">'.$object->duration_value.'&nbsp;';
+		if ($object->duration_value > 1)
+		{
+			$dur=array("i"=>$langs->trans("Minute"),"h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
+		}
+		elseif ($object->duration_value > 0)
+		{
+			$dur=array("i"=>$langs->trans("Minute"),"h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
+		}
+		print (! empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
+		print '</td></tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		print nl2br($object->note)."</td></tr>";
@@ -811,11 +811,11 @@ if ($rowid > 0)
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
 		print $form->selectyesno("vote", $object->vote, 1);
 		print '</td></tr>';
-    
-    print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
-    print '<input name="duration_value" size="5" value="'.$object->duration_value.'"> ';
-    print $formproduct->selectMeasuringUnits("duration_unit", "time", $object->duration_unit, 0, 1);
-    print '</td></tr>';
+
+		print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
+		print '<input name="duration_value" size="5" value="'.$object->duration_value.'"> ';
+		print $formproduct->selectMeasuringUnits("duration_unit", "time", $object->duration_unit, 0, 1);
+		print '</td></tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		print '<textarea name="comment" wrap="soft" class="centpercent" rows="3">'.$object->note.'</textarea></td></tr>';
