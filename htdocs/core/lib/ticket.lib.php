@@ -881,7 +881,8 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 
 
 /**
- * @var ActionComm $object ActionComm
+ * get ticket Actioncomm Ecm List
+ * @param  ActionComm $object ActionComm
  * @return array
  */
 function getTicketActionCommEcmList($object)
