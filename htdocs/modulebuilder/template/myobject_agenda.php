@@ -93,6 +93,8 @@ if ($id > 0 || ! empty($ref)) $upload_dir = $conf->mymodule->multidir_output[$ob
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'mymodule', $object->id);
 
+$permissiontoadd = $user->rights->mymodule->myobject->write; 		// Used by the include of actions_addupdatedelete.inc.php
+
 
 /*
  *  Actions
@@ -156,7 +158,7 @@ if ($object->id > 0)
 	 {
 	 $langs->load("projects");
 	 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-	 if ($user->rights->mymodule->creer)
+	 if ($permissiontoadd)
 	 {
 	 if ($action != 'classify')
 	 	//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
