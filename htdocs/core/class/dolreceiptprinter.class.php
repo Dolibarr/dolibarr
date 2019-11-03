@@ -617,7 +617,7 @@ class dolReceiptPrinter extends Printer
                             //var_dump($line);
                             $spacestoadd = $nbcharactbyline - strlen($line->ref)- strlen($line->qty) - 10 - 1;
                             $spaces = str_repeat(' ', $spacestoadd);
-                            $this->printer->text($line->ref.$spaces.$line->qty.' '.str_pad(price($line->total_ttc, 'MT'), 10, ' ', STR_PAD_LEFT)."\n");
+                            $this->printer->text($line->ref.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
                             $this->printer->text(strip_tags(htmlspecialchars_decode($line->desc))."\n");
                         }
                         break;
@@ -630,22 +630,22 @@ class dolReceiptPrinter extends Printer
                         foreach($vatarray as $vatkey => $vatvalue) {
                              $spacestoadd = $nbcharactbyline - strlen($vatkey)- 12;
                              $spaces = str_repeat(' ', $spacestoadd);
-                             $this->printer->text($spaces. $vatkey.'% '.str_pad(price($vatvalue, 'MT'), 10, ' ', STR_PAD_LEFT)."\n");
+                             $this->printer->text($spaces. $vatkey.'% '.str_pad(price($vatvalue), 10, ' ', STR_PAD_LEFT)."\n");
                         }
                         break;
                     case 'DOL_PRINT_OBJECT_TOTAL':
                         $title = $langs->trans('TotalHT');
                         $spacestoadd = $nbcharactbyline - strlen($title) - 10;
                         $spaces = str_repeat(' ', $spacestoadd);
-                        $this->printer->text($title.$spaces.str_pad(price($object->total_ht, 'MT'), 10, ' ', STR_PAD_LEFT)."\n");
+                        $this->printer->text($title.$spaces.str_pad(price($object->total_ht), 10, ' ', STR_PAD_LEFT)."\n");
                         $title = $langs->trans('TotalVAT');
                         $spacestoadd = $nbcharactbyline - strlen($title) - 10;
                         $spaces = str_repeat(' ', $spacestoadd);
-                        $this->printer->text($title.$spaces.str_pad(price($object->total_tva, 'MT'), 10, ' ', STR_PAD_LEFT)."\n");
+                        $this->printer->text($title.$spaces.str_pad(price($object->total_tva), 10, ' ', STR_PAD_LEFT)."\n");
                         $title = $langs->trans('TotalTTC');
                         $spacestoadd = $nbcharactbyline - strlen($title) - 10;
                         $spaces = str_repeat(' ', $spacestoadd);
-                        $this->printer->text($title.$spaces.str_pad(price($object->total_ttc, 'MT'), 10, ' ', STR_PAD_LEFT)."\n");
+                        $this->printer->text($title.$spaces.str_pad(price($object->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
                         break;
                     case 'DOL_LINE_FEED':
                         $this->printer->feed();
