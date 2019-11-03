@@ -11,4 +11,4 @@ fixers:
 
 files:
     ignore:
-        - 'dev/htdocs/includes/*'
+        - 'htdocs/includes/*'
