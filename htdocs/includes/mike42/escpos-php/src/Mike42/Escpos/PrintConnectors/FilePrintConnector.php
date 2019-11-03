@@ -55,7 +55,7 @@ class FilePrintConnector implements PrintConnector
             $this -> fp = false;
         }
     }
-
+    
     /* (non-PHPdoc)
      * @see PrintConnector::read()
      */
@@ -66,7 +66,7 @@ class FilePrintConnector implements PrintConnector
         }
         return fread($this -> fp, $len);
     }
-
+    
     /**
      * Write data to the file
      *

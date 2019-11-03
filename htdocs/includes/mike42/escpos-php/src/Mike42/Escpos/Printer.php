@@ -362,7 +362,7 @@ class Printer
     {
         /* Set connector */
         $this -> connector = $connector;
-
+        
         /* Set capability profile */
         if ($profile === null) {
             $profile = CapabilityProfile::load('default');
@@ -374,18 +374,18 @@ class Printer
         $this -> setPrintBuffer($buffer);
         $this -> initialize();
     }
-
+    
     /**
      * Print a barcode.
      *
      * @param string $content The information to encode.
      * @param int $type The barcode standard to output. Supported values are
-     *                  `Printer::BARCODE_UPCA`, `Printer::BARCODE_UPCE`, `Printer::BARCODE_JAN13`,
-     *                  `Printer::BARCODE_JAN8`, `Printer::BARCODE_CODE39`, `Printer::BARCODE_ITF`,
-     *                  `Printer::BARCODE_CODABAR`, `Printer::BARCODE_CODE93`, and `Printer::BARCODE_CODE128`.
-     *                  If not specified, `Printer::BARCODE_CODE39` will be used. Note that some
-     *                  barcode formats only support specific lengths or sets of characters, and that
-     *                  available barcode types vary between printers.
+     * `Printer::BARCODE_UPCA`, `Printer::BARCODE_UPCE`, `Printer::BARCODE_JAN13`,
+     * `Printer::BARCODE_JAN8`, `Printer::BARCODE_CODE39`, `Printer::BARCODE_ITF`,
+     * `Printer::BARCODE_CODABAR`, `Printer::BARCODE_CODE93`, and `Printer::BARCODE_CODE128`.
+     * If not specified, `Printer::BARCODE_CODE39` will be used. Note that some
+     * barcode formats only support specific lengths or sets of characters, and that
+     * available barcode types vary between printers.
      * @throws InvalidArgumentException Where the length or characters used in $content is invalid for the requested barcode format.
      */
     public function barcode($content, $type = Printer::BARCODE_CODE39)
@@ -441,7 +441,7 @@ class Printer
         // More advanced function B, used in preference
         $this -> connector -> write(self::GS . "k" . chr($type) . chr(strlen($content)) . $content);
     }
-
+    
     /**
      * Print an image, using the older "bit image" command. This creates padding on the right of the image,
      * if its width is not divisible by 8.
@@ -451,8 +451,8 @@ class Printer
      *
      * @param EscposImage $img The image to print
      * @param int $size Size modifier for the image. Must be either `Printer::IMG_DEFAULT`
-     *                  (default), or any combination of the `Printer::IMG_DOUBLE_HEIGHT` and
-     *                  `Printer::IMG_DOUBLE_WIDTH` flags.
+     *  (default), or any combination of the `Printer::IMG_DOUBLE_HEIGHT` and
+     *  `Printer::IMG_DOUBLE_WIDTH` flags.
      */
     public function bitImage(EscposImage $img, $size = Printer::IMG_DEFAULT)
     {
@@ -471,8 +471,8 @@ class Printer
      *
      * @param EscposImage $img The image to print
      * @param int $size Size modifier for the image. Must be either `Printer::IMG_DEFAULT`
-     *                  (default), or any combination of the `Printer::IMG_DOUBLE_HEIGHT` and
-     *                  `Printer::IMG_DOUBLE_WIDTH` flags.
+     *  (default), or any combination of the `Printer::IMG_DOUBLE_HEIGHT` and
+     *  `Printer::IMG_DOUBLE_WIDTH` flags.
      */
     public function bitImageColumnFormat(EscposImage $img, $size = Printer::IMG_DEFAULT)
     {
@@ -502,7 +502,7 @@ class Printer
     {
         $this -> connector -> finalize();
     }
-
+    
     /**
      * Cut the paper.
      *
@@ -514,7 +514,7 @@ class Printer
         // TODO validation on cut() inputs
         $this -> connector -> write(self::GS . "V" . chr($mode) . chr($lines));
     }
-
+    
     /**
      * Print and feed line / Print and feed n lines.
      *
@@ -565,7 +565,7 @@ class Printer
     {
         return $this -> characterTable;
     }
-
+    
     /**
      * @return PrintBuffer
      */
@@ -606,8 +606,8 @@ class Printer
      *
      * @param EscposImage $img The image to print.
      * @param int $size Size modifier for the image. Must be either `Printer::IMG_DEFAULT`
-     *                  (default), or any combination of the `Printer::IMG_DOUBLE_HEIGHT` and
-     *                  `Printer::IMG_DOUBLE_WIDTH` flags.
+     *  (default), or any combination of the `Printer::IMG_DOUBLE_HEIGHT` and
+     *  `Printer::IMG_DOUBLE_WIDTH` flags.
      */
     public function graphics(EscposImage $img, $size = Printer::IMG_DEFAULT)
     {
@@ -622,7 +622,7 @@ class Printer
         $this -> wrapperSendGraphicsData('0', 'p', $header . $rasterData);
         $this -> wrapperSendGraphicsData('0', '2');
     }
-
+    
     /**
      * Initialize printer. This resets formatting back to the defaults.
      */
@@ -637,15 +637,15 @@ class Printer
      *
      * @param string $content Text or numbers to store in the code
      * @param int $width Width of a module (pixel) in the printed code.
-     *                   Default is 3 dots.
+     *  Default is 3 dots.
      * @param int $heightMultiplier Multiplier for height of a module.
-     *                              Default is 3 times the width.
+     *  Default is 3 times the width.
      * @param int $dataColumnCount Number of data columns to use. 0 (default)
-     *                             is to auto-calculate. Smaller numbers will result in a narrower code,
-     *                             making larger pixel sizes possible. Larger numbers require smaller pixel sizes.
+     *  is to auto-calculate. Smaller numbers will result in a narrower code,
+     *  making larger pixel sizes possible. Larger numbers require smaller pixel sizes.
      * @param float $ec Error correction ratio, from 0.01 to 4.00. Default is 0.10 (10%).
      * @param int $options Standard code Printer::PDF417_STANDARD with
-     *                     start/end bars, or truncated code Printer::PDF417_TRUNCATED with start bars only.
+     *  start/end bars, or truncated code Printer::PDF417_TRUNCATED with start bars only.
      * @throws Exception If this profile indicates that PDF417 code is not supported
      */
     public function pdf417Code($content, $width = 3, $heightMultiplier = 3, $dataColumnCount = 0, $ec = 0.10, $options = Printer::PDF417_STANDARD)
@@ -672,7 +672,7 @@ class Printer
         $this -> wrapperSend2dCodeData(chr(67), $cn, chr($width));
         $this -> wrapperSend2dCodeData(chr(68), $cn, chr($heightMultiplier));
         // Set error correction ratio: 1% to 400%
-        $ec_int = (int) ceil(floatval($ec) * 10);
+        $ec_int = (int)ceil(floatval($ec) * 10);
         $this -> wrapperSend2dCodeData(chr(69), $cn, chr($ec_int), '1');
         // Send content & print
         $this -> wrapperSend2dCodeData(chr(80), $cn, $content, '0');
@@ -772,7 +772,7 @@ class Printer
 
         $this -> connector -> write(self::ESC . "!" . chr($mode));
     }
-
+    
     /**
      * Set barcode height.
      *
@@ -788,27 +788,27 @@ class Printer
      * Set barcode bar width.
      *
      * @param int $width Bar width in dots. If not specified, 3 will be used.
-     *                   Values above 6 appear to have no effect.
+     *  Values above 6 appear to have no effect.
      */
     public function setBarcodeWidth($width = 3)
     {
         self::validateInteger($width, 1, 255, __FUNCTION__);
         $this -> connector -> write(self::GS . "w" . chr($width));
     }
-
+    
     /**
      * Set the position for the Human Readable Interpretation (HRI) of barcode characters.
      *
      * @param int $position. Use Printer::BARCODE_TEXT_NONE to hide the text (default),
-     *                       or any combination of Printer::BARCODE_TEXT_ABOVE and Printer::BARCODE_TEXT_BELOW
-     *                       flags to display the text.
+     *  or any combination of Printer::BARCODE_TEXT_ABOVE and Printer::BARCODE_TEXT_BELOW
+     *  flags to display the text.
      */
     public function setBarcodeTextPosition($position = Printer::BARCODE_TEXT_NONE)
     {
         self::validateInteger($position, 0, 3, __FUNCTION__, "Barcode text position");
         $this -> connector -> write(self::GS . "H" . chr($position));
     }
-
+    
     /**
      * Turn double-strike mode on/off.
      *
@@ -841,7 +841,7 @@ class Printer
         self::validateBoolean($on, __FUNCTION__);
         $this -> connector -> write(self::ESC . "E". ($on ? chr(1) : chr(0)));
     }
-
+    
     /**
      * Select font. Most printers have two fonts (Fonts A and B), and some have a third (Font C).
      *
@@ -852,7 +852,7 @@ class Printer
         self::validateInteger($font, 0, 2, __FUNCTION__);
         $this -> connector -> write(self::ESC . "M" . chr($font));
     }
-
+    
     /**
      * Select justification.
      *
@@ -870,7 +870,7 @@ class Printer
      * Some printers will allow you to overlap lines with a smaller line feed.
      *
      * @param int|null $height The height of each line, in dots. If not set, the printer
-     *                         will reset to its default line spacing.
+     *  will reset to its default line spacing.
      */
     public function setLineSpacing($height = null)
     {
@@ -926,7 +926,7 @@ class Printer
         $this -> buffer = $buffer;
         $this -> buffer -> setPrinter($this);
     }
-
+    
     /**
      * Set black/white reverse mode on or off. In this mode, text is printed white on a black background.
      *
@@ -995,7 +995,7 @@ class Printer
     public function text($str = "")
     {
         self::validateString($str, __FUNCTION__);
-        $this -> buffer -> writeText((string) $str);
+        $this -> buffer -> writeText((string)$str);
     }
 
     /**
@@ -1010,7 +1010,7 @@ class Printer
         self::validateString($str, __FUNCTION__);
         $this -> connector -> write(self::FS . "&");
         $str = iconv("UTF-8", "GBK//IGNORE", $str);
-        $this -> buffer -> writeTextRaw((string) $str);
+        $this -> buffer -> writeTextRaw((string)$str);
         $this -> connector -> write(self::FS . ".");
     }
 
@@ -1025,9 +1025,9 @@ class Printer
     public function textRaw($str = "")
     {
         self::validateString($str, __FUNCTION__);
-        $this -> buffer -> writeTextRaw((string) $str);
+        $this -> buffer -> writeTextRaw((string)$str);
     }
-
+    
     /**
      * Wrapper for GS ( k, to calculate and send correct data length.
      *
@@ -1045,7 +1045,7 @@ class Printer
         $header = $this -> intLowHigh(strlen($data) + strlen($m) + 2, 2);
         $this -> connector -> write(self::GS . "(k" . $header . $cn . $fn . $m . $data);
     }
-
+    
     /**
      * Wrapper for GS ( L, to calculate and send correct data length.
      *
@@ -1062,7 +1062,7 @@ class Printer
         $header = $this -> intLowHigh(strlen($data) + 2, 2);
         $this -> connector -> write(self::GS . "(L" . $header . $m . $fn . $data);
     }
-
+    
     /**
      * Convert widths and heights to characters. Used before sending graphics to set the size.
      *
@@ -1083,7 +1083,7 @@ class Printer
         }
         return implode("", $outp);
     }
-
+    
     /**
      * Generate two characters for a number: In lower and higher parts, or more parts as needed.
      *
@@ -1098,11 +1098,11 @@ class Printer
         $outp = "";
         for ($i = 0; $i < $length; $i++) {
             $outp .= chr($input % 256);
-            $input = (int) ($input / 256);
+            $input = (int)($input / 256);
         }
         return $outp;
     }
-
+    
     /**
      * Throw an exception if the argument given is not a boolean
      *
@@ -1148,7 +1148,7 @@ class Printer
     {
         self::validateIntegerMulti($test, [[$min, $max]], $source, $argument);
     }
-
+    
     /**
      * Throw an exception if the argument given is not an integer within one of the specified ranges
      *
@@ -1198,7 +1198,7 @@ class Printer
             throw new InvalidArgumentException("$argument to $source must be a string");
         }
     }
-
+    
     /**
      * Throw an exception if the argument doesn't match the given regex.
      *

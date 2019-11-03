@@ -44,7 +44,7 @@ class ImagickEscposImage extends EscposImage
                 /* Faster to average channels, blend alpha and negate the image here than via filters (tested!) */
                 $cols = $im -> getImagePixelColor($x, $y);
                 $cols = $cols -> getcolor();
-                $greyness = (int) (($cols['r'] + $cols['g'] + $cols['b']) / 3) >> 7;  // 1 for white, 0 for black
+                $greyness = (int)(($cols['r'] + $cols['g'] + $cols['b']) / 3) >> 7;  // 1 for white, 0 for black
                 $imgData[$y * $imgWidth + $x] = (1 - $greyness); // 1 for black, 0 for white
             }
         }
@@ -70,7 +70,7 @@ class ImagickEscposImage extends EscposImage
         $im = $this -> getImageFromFile($filename);
         $this -> setImgWidth($im -> getimagewidth());
         $this -> setImgHeight($im -> getimageheight());
-
+        
         /* Strip transparency */
         $im = self::alphaRemove($im);
         $im -> setformat('pbm');
@@ -95,7 +95,7 @@ class ImagickEscposImage extends EscposImage
             /* Set to blank image */
             return parent::loadImageData($filename);
         }
-
+    
         $im = $this -> getImageFromFile($filename);
         $this -> readImageFromImagick($im);
     }

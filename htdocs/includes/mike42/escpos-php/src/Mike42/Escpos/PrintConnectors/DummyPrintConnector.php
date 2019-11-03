@@ -41,7 +41,7 @@ final class DummyPrintConnector implements PrintConnector
     {
         $this -> buffer = [];
     }
-
+    
     public function __destruct()
     {
         if ($this -> buffer !== null) {
