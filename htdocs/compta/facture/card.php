@@ -2579,7 +2579,6 @@ $title = $langs->trans('InvoiceCustomer') . " - " . $langs->trans('Card');
 $helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
 llxHeader('', $title, $helpurl);
 
-
 // Mode creation
 
 if ($action == 'create')
@@ -2600,18 +2599,19 @@ if ($action == 'create')
 	{
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
+		$regs = array();
 		if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
-			$element = $regs [1];
-			$subelement = $regs [2];
+			$element = $reg[1];
+			$subelement = $regs[2];
 		}
 
 		if ($element == 'project') {
 			$projectid = $originid;
 
-			if (!$cond_reglement_id) {
+			if (empty($cond_reglement_id)) {
 				$cond_reglement_id = $soc->cond_reglement_id;
 			}
-			if (!$mode_reglement_id) {
+			if (empty($mode_reglement_id)) {
 				$mode_reglement_id = $soc->mode_reglement_id;
 			}
 			if (!$remise_percent) {
@@ -2754,7 +2754,7 @@ if ($action == 'create')
 
 	// Thirdparty
 	print '<td class="fieldrequired">' . $langs->trans('Customer') . '</td>';
-	if ($soc->id > 0 && ! GETPOST('fac_rec', 'alpha'))
+	if ($soc->id > 0 && ! GETPOST('fac_rec', 'int'))
 	{
 		print '<td colspan="2">';
 		print $soc->getNomUrl(1);
@@ -2797,7 +2797,7 @@ if ($action == 'create')
 
 	$exampletemplateinvoice=new FactureRec($db);
 
-	// Overwrite value if creation of invoice is from a predefined invoice
+	// Overwrite some values if creation of invoice is from a predefined invoice
 	if (empty($origin) && empty($originid) && GETPOST('fac_rec', 'int') > 0)
 	{
 		$invoice_predefined = new FactureRec($db);
@@ -2810,6 +2810,9 @@ if ($action == 'create')
 		$fk_account = $invoice_predefined->fk_account;
 		$note_public = $invoice_predefined->note_public;
 		$note_private = $invoice_predefined->note_private;
+
+		if (! empty($invoice_predefined->multicurrency_code)) $currency_code = $invoice_predefined->multicurrency_code;
+		if (! empty($invoice_predefined->multicurrency_tx)) $currency_tx = $invoice_predefined->multicurrency_tx;
 
 		$sql = 'SELECT r.rowid, r.titre as title, r.total_ttc';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'facture_rec as r';
@@ -2833,7 +2836,7 @@ if ($action == 'create')
 					if (GETPOST('fac_rec') == $objp->rowid)
 					{
 						print ' selected';
-						$exampletemplateinvoice->fetch(GETPOST('fac_rec'));
+						$exampletemplateinvoice->fetch(GETPOST('fac_rec', 'int'));
 					}
 					print '>' . $objp->title . ' (' . price($objp->total_ttc) . ' ' . $langs->trans("TTC") . ')</option>';
 					$i ++;
@@ -2921,12 +2924,17 @@ if ($action == 'create')
 
 			// Next situation invoice
 			$opt = $form->selectSituationInvoices(GETPOST('originid'), $socid);
+
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 			$tmp='<input type="radio" name="type" value="5"' . (GETPOST('type') == 5 && GETPOST('originid') ? ' checked' : '');
-			if ($opt == ('<option value ="0" selected>' . $langs->trans('NoSituations') . '</option>') || (GETPOST('origin') && GETPOST('origin') != 'facture' && GETPOST('origin') != 'commande')) $tmp.=' disabled';
+			if ($opt == ('<option value ="0" selected>' . $langs->trans('NoSituations') . '</option>') || (GETPOST('origin') && GETPOST('origin') != 'facture' && GETPOST('origin') != 'commande'))
+				$tmp.=' disabled';
 			$tmp.= '> ';
 			$text = '<label>'.$tmp.$langs->trans("InvoiceSituationAsk") . '</label> ';
-			$text .= '<select class="flat" id="situations" name="situations">';
+			$text .= '<select class="flat" id="situations" name="situations"';
+			if ($opt == ('<option value ="0" selected>' . $langs->trans('NoSituations') . '</option>') || (GETPOST('origin') && GETPOST('origin') != 'facture' && GETPOST('origin') != 'commande'))
+				$text .= ' disabled';
+			$text .='>';
 			$text .= $opt;
 			$text .= '</select>';
 			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceSituationDesc"), 1, 'help', '', 0, 3);
@@ -5026,7 +5034,7 @@ elseif ($id > 0 || ! empty($ref))
 			{
 				if (! $objectidnext && count($object->lines) > 0)
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/fiche-rec.php?facid=' . $object->id . '&amp;action=create">' . $langs->trans("ChangeIntoRepeatableInvoice") . '</a>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card-rec.php?facid=' . $object->id . '&amp;action=create">' . $langs->trans("ChangeIntoRepeatableInvoice") . '</a>';
 				}
 			}
 

@@ -25,7 +25,7 @@
  */
 
 /**
- *	\file       htdocs/compta/facture/fiche-rec.php
+ *	\file       htdocs/compta/facture/card-rec.php
  *	\ingroup    facture
  *	\brief      Page to show predefined invoice
  */
@@ -386,6 +386,15 @@ if (empty($reshook))
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
+	}
+	// Multicurrency Code
+	elseif ($action == 'setmulticurrencycode' && $usercancreate) {
+		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
+	}
+
+	// Multicurrency rate
+	elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
+		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')), GETPOST('calculation_mode', 'int'));
 	}
 
 	// Delete line
@@ -1346,6 +1355,52 @@ else
 		}
 		print '</td></tr>';
 
+		// Multicurrency
+		if (! empty($conf->multicurrency->enabled))
+		{
+			// Multicurrency code
+			print '<tr>';
+			print '<td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0);
+			print '</td>';
+			if ($usercancreate && $action != 'editmulticurrencycode' && ! empty($object->brouillon))
+				print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencycode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
+				print '</tr></table>';
+				print '</td><td>';
+				$htmlname = (($usercancreate && $action == 'editmulticurrencycode')?'multicurrency_code':'none');
+				$form->form_multicurrency_code($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_code, $htmlname);
+				print '</td></tr>';
+
+				// Multicurrency rate
+				if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1)
+				{
+					print '<tr>';
+					print '<td>';
+					print '<table class="nobordernopadding" width="100%"><tr><td>';
+					print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
+					print '</td>';
+					if ($usercancreate && $action != 'editmulticurrencyrate' && ! empty($object->brouillon) && $object->multicurrency_code && $object->multicurrency_code != $conf->currency)
+						print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
+						print '</tr></table>';
+						print '</td><td>';
+						if ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') {
+							if($action == 'actualizemulticurrencyrate') {
+								list($object->fk_multicurrency, $object->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($object->db, $object->multicurrency_code);
+							}
+							$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, ($usercancreate?'multicurrency_tx':'none'), $object->multicurrency_code);
+						} else {
+							$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
+							if($object->statut == $object::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
+								print '<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
+								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=actualizemulticurrencyrate">'.$langs->trans("ActualizeCurrency").'</a>';
+								print '</div>';
+							}
+						}
+						print '</td></tr>';
+				}
+		}
+
 		// Help of substitution key
 		$dateexample=dol_now();
 		if (! empty($object->frequency) && ! empty($object->date_when)) $dateexample=$object->date_when;
@@ -1701,11 +1756,11 @@ else
 		{
 			if (empty($object->suspended))
 			{
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.DOL_URL_ROOT.'/compta/facture/fiche-rec.php?action=disable&id='.$object->id.'">'.$langs->trans("Disable").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.DOL_URL_ROOT.'/compta/facture/card-rec.php?action=disable&id='.$object->id.'">'.$langs->trans("Disable").'</a></div>';
 			}
 			else
 			{
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/fiche-rec.php?action=enable&id='.$object->id.'">'.$langs->trans("Enable").'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card-rec.php?action=enable&id='.$object->id.'">'.$langs->trans("Enable").'</a></div>';
 			}
 		}
 
