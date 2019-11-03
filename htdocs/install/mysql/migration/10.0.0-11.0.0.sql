@@ -149,10 +149,9 @@ ALTER TABLE llx_oauth_token ADD COLUMN fk_soc integer DEFAULT NULL after token;
 
 ALTER TABLE llx_adherent_type ADD COLUMN duration varchar(6) DEFAULT NULL after morphy;
 
-https://www.royalmail.com/track-your-item#/
-https://www.royalmail.com/track-your-item#/
-https://www.royalmail.com/track-your-item#/
-https://www.royalmail.com/track-your-item#/
+ALTER TABLE llx_mailing ADD COLUMN tms timestamp;
+ALTER TABLE llx_mailing_cibles ADD COLUMN tms timestamp;
+
 ALTER TABLE llx_projet ADD COLUMN usage_opportunity integer DEFAULT 0;
 ALTER TABLE llx_projet ADD COLUMN usage_task integer DEFAULT 1;
 ALTER TABLE llx_projet CHANGE COLUMN bill_time usage_bill_time integer DEFAULT 0;		-- rename existing field
