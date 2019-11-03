@@ -36,7 +36,7 @@ $langs->load('propal');
 $type=GETPOST("type", "int");
 
 // Security check
-if (! empty($user->societe_id)) $socid=$user->societe_id;
+if (! empty($user->socid)) $socid=$user->socid;
 $result=restrictedArea($user, 'produit|service');
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;

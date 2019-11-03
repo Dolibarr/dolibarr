@@ -34,10 +34,10 @@ if (! $user->rights->facture->lire) accessforbidden();
 $action=GETPOST('action', 'aZ09');
 
 $socid=0;
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
     $action = '';
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 
 $dir = $conf->facture->dir_output.'/payments';

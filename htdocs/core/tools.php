@@ -29,7 +29,7 @@ $langs->loadLangs(array("companies","other"));
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0) $socid=$user->societe_id;
+if ($user->socid > 0) $socid=$user->socid;
 
 
 

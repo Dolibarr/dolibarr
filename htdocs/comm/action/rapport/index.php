@@ -49,7 +49,7 @@ if (! $sortfield) $sortfield="a.datep";
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'agenda', $socid, '', 'myactions');
 
 

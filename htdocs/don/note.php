@@ -45,7 +45,7 @@ $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
 // Security check
 $socid=0;
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, 'don', $id, '');
 
 $object = new Don($db);

@@ -56,7 +56,7 @@ $backtopage=GETPOST('backtopage', 'alpha');
 
 // Security check
 $id = GETPOST('id', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, 'expedition', $id, 'livraison', 'livraison');
 
 $object = new Livraison($db);
@@ -559,7 +559,7 @@ else
 				$entrepot = new Entrepot($db);
 				$entrepot->fetch($object->entrepot_id);
 				print '<tr><td width="20%">'.$langs->trans("Warehouse").'</td>';
-				print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/product/stock/card.php?id='.$entrepot->id.'">'.$entrepot->libelle.'</a></td>';
+				print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/product/stock/card.php?id='.$entrepot->id.'">'.$entrepot->label.'</a></td>';
 				print '</tr>';
 			}
 
@@ -706,7 +706,7 @@ else
 			 *    Boutons actions
 			 */
 
-			if ($user->societe_id == 0)
+			if ($user->socid == 0)
 			{
 				print '<div class="tabsAction">';
 

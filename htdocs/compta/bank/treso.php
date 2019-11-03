@@ -42,7 +42,7 @@ if (isset($_GET["account"]) || isset($_GET["ref"]))
 	$id = isset($_GET["account"])?$_GET["account"]:(isset($_GET["ref"])?$_GET["ref"]:'');
 }
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
 
 
@@ -258,7 +258,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 			{
 				$socialcontribstatic->ref=$obj->ref;
 				$socialcontribstatic->id=$obj->objid;
-				$socialcontribstatic->lib=$obj->type;
+				$socialcontribstatic->label=$obj->type;
 				$ref = $socialcontribstatic->getNomUrl(1, 24);
 
 				$totalpayment = -1*$socialcontribstatic->getSommePaiement();	// Payment already done

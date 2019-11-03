@@ -1617,7 +1617,7 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
     $found=0;
     $dirtoscan='';
 
-    $sql = "SELECT nom as id, nom as lib, libelle as label, description as description";
+    $sql = "SELECT nom as id, nom as doc_template_name, libelle as label, description as description";
     $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
     $sql.= " WHERE type = '".$type."'";
     $sql.= " AND entity IN (0,".$conf->entity.")";
@@ -1677,18 +1677,18 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
             }
             else
             {
-                if ($type == 'member' && $obj->lib == 'standard')   // Special case, if member template, we add variant per format
+            	if ($type == 'member' && $obj->doc_template_name == 'standard')   // Special case, if member template, we add variant per format
                 {
                     global $_Avery_Labels;
                     include_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
                     foreach($_Avery_Labels as $key => $val)
                     {
-                        $liste[$obj->id.':'.$key]=($obj->label?$obj->label:$obj->lib).' '.$val['name'];
+                    	$liste[$obj->id.':'.$key]=($obj->label?$obj->label:$obj->doc_template_name).' '.$val['name'];
                     }
                 }
                 else    // Common usage
                 {
-                    $liste[$obj->id]=$obj->label?$obj->label:$obj->lib;
+                	$liste[$obj->id]=$obj->label?$obj->label:$obj->doc_template_name;
                 }
             }
             $i++;

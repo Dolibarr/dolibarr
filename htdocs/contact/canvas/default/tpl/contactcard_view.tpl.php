@@ -133,7 +133,7 @@ if (! empty($this->control->tpl['action_delete'])) echo $this->control->tpl['act
 
 <?php echo $this->control->tpl['showend'];
 
-if (empty($user->societe_id)) {
+if (empty($user->socid)) {
 	print '<div class="tabsAction">';
 	if ($user->rights->societe->contact->creer) {
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&amp;action=edit&amp;canvas='.$canvas.'">'.$langs->trans('Modify').'</a>';

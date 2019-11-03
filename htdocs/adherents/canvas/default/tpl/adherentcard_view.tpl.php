@@ -118,7 +118,7 @@ if (! empty($this->control->tpl['action_delete'])) echo $this->control->tpl['act
 
 <?php echo $this->control->tpl['showend'];
 
-if (empty($user->societe_id)) {
+if (empty($user->socid)) {
     echo '<div class="tabsAction">';
 
     if ($user->rights->adherent->creer) {

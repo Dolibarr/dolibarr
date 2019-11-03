@@ -53,7 +53,7 @@ $hookmanager->initHooks(array('ordershipmentcard'));
 
 // Security check
 $socid=0;
-if (! empty($user->societe_id)) $socid=$user->societe_id;
+if (! empty($user->socid)) $socid=$user->socid;
 $result=restrictedArea($user, 'commande', $id);
 
 $object = new Commande($db);
@@ -856,7 +856,7 @@ if ($id > 0 || ! empty($ref))
 		 * Boutons Actions
 		 */
 
-		if (empty($user->societe_id))
+		if (empty($user->socid))
 		{
 			print '<div class="tabsAction">';
 

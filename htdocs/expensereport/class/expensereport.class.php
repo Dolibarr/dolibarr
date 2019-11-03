@@ -46,6 +46,10 @@ class ExpenseReport extends CommonObject
 
     public $table_element_line = 'expensereport_det';
     public $fk_element = 'fk_expensereport';
+
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
     public $picto = 'trip';
 
     public $lines=array();
@@ -101,9 +105,6 @@ class ExpenseReport extends CommonObject
     // Paiement
     public $user_paid_infos;
 
-    /*
-        END ACTIONS
-    */
 
     /**
 	 * Draft status
@@ -198,7 +199,7 @@ class ExpenseReport extends CommonObject
         // List of language codes for status
         $this->statuts_short = array(0 => 'Draft', 2 => 'Validated', 4 => 'Canceled', 5 => 'Approved', 6 => 'Paid', 99 => 'Refused');
         $this->statuts = array(0 => 'Draft', 2 => 'ValidatedWaitingApproval', 4 => 'Canceled', 5 => 'Approved', 6 => 'Paid', 99 => 'Refused');
-        $this->statuts_logo = array(0 => 'statut0', 2 => 'statut1', 4 => 'statut5', 5 => 'statut3', 6 => 'statut6', 99 => 'statut5');
+        $this->statuts_logo = array(0 => 'status0', 2 => 'status1', 4 => 'status6', 5 => 'status4', 6 => 'status6', 99 => 'status5');
     }
 
     /**
@@ -514,7 +515,7 @@ class ExpenseReport extends CommonObject
         $sql.= " d.fk_user_author, d.fk_user_modif, d.fk_user_validator,";
         $sql.= " d.fk_user_valid, d.fk_user_approve,";
         $sql.= " d.fk_statut as status, d.fk_c_paiement, d.paid,";
-        $sql.= " dp.libelle as libelle_paiement, dp.code as code_paiement";                             // INNER JOIN paiement
+        $sql.= " dp.libelle as label_payment, dp.code as code_paiement";                             // INNER JOIN paiement
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as d";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as dp ON d.fk_c_paiement = dp.id";
         if ($ref) $sql.= " WHERE d.ref = '".$this->db->escape($ref)."'";
@@ -570,15 +571,13 @@ class ExpenseReport extends CommonObject
                 $this->fk_c_paiement            = $obj->fk_c_paiement;
                 $this->paid                     = $obj->paid;
 
-                if ($this->fk_statut==5 || $this->fk_statut==6)
+                if ($this->fk_statut == self::STATUS_APPROVED || $this->fk_statut == self::STATUS_CLOSED)
                 {
                     $user_valid = new User($this->db);
                     if ($this->fk_user_valid > 0) $user_valid->fetch($this->fk_user_valid);
                     $this->user_valid_infos = dolGetFirstLastname($user_valid->firstname, $user_valid->lastname);
                 }
 
-                $this->libelle_statut   = $obj->libelle_statut;
-                $this->libelle_paiement = $obj->libelle_paiement;
                 $this->code_statut      = $obj->code_statut;
                 $this->code_paiement    = $obj->code_paiement;
 
@@ -683,29 +682,15 @@ class ExpenseReport extends CommonObject
      */
     public function LibStatut($status, $mode = 0)
     {
-        // phpcs:enable
-        global $langs;
+    	// phpcs:enable
+    	global $langs;
 
-        if ($mode == 0)
-            return $langs->transnoentities($this->statuts[$status]);
+    	$labelStatus = $langs->trans($this->statuts[$status]);
+    	$labelStatusShort = $langs->trans($this->statuts_short[$status]);
 
-        elseif ($mode == 1)
-            return $langs->transnoentities($this->statuts_short[$status]);
+    	$statusType = $this->statuts_logo[$status];
 
-        elseif ($mode == 2)
-            return img_picto($langs->transnoentities($this->statuts_short[$status]), $this->statuts_logo[$status]).' '.$langs->transnoentities($this->statuts_short[$status]);
-
-        elseif ($mode == 3)
-            return img_picto($langs->transnoentities($this->statuts_short[$status]), $this->statuts_logo[$status]);
-
-        elseif ($mode == 4)
-            return img_picto($langs->transnoentities($this->statuts_short[$status]), $this->statuts_logo[$status]).' '.$langs->transnoentities($this->statuts[$status]);
-
-        elseif ($mode == 5)
-            return '<span class="hideonsmartphone">'.$langs->transnoentities($this->statuts_short[$status]).' </span>'.img_picto($langs->transnoentities($this->statuts_short[$status]), $this->statuts_logo[$status]);
-
-        elseif ($mode == 6)
-            return $langs->transnoentities($this->statuts[$status]).' '.img_picto($langs->transnoentities($this->statuts_short[$status]), $this->statuts_logo[$status]);
+    	return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
     }
 
 
@@ -2351,7 +2336,7 @@ class ExpenseReport extends CommonObject
         // phpcs:enable
         global $conf, $langs;
 
-        if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
+        if ($user->socid) return -1;   // protection pour eviter appel par utilisateur externe
 
         $now=dol_now();
 

@@ -496,27 +496,27 @@ abstract class CommonInvoice extends CommonObject
 		$prefix='Short';
 		if (! $paye){
 		    if ($status == 0) {
-		        $labelstatut = $langs->trans('BillStatusDraft');
-		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusDraft');
+		        $labelStatus = $langs->trans('BillStatusDraft');
+		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusDraft');
 		    }
 		    elseif (($status == 3 || $status == 2) && $alreadypaid <= 0) {
-		        $labelstatut = $langs->trans('BillStatusClosedUnpaid');
-		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusClosedUnpaid');
+		        $labelStatus = $langs->trans('BillStatusClosedUnpaid');
+		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusClosedUnpaid');
 		        $statusType='status5';
 		    }
 		    elseif (($status == 3 || $status == 2) && $alreadypaid > 0) {
-		        $labelstatut = $langs->trans('BillStatusClosedPaidPartially');
-		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
+		        $labelStatus = $langs->trans('BillStatusClosedPaidPartially');
+		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
 		        $statusType='status9';
 		    }
 		    elseif ($alreadypaid <= 0) {
-		        $labelstatut = $langs->trans('BillStatusNotPaid');
-		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusNotPaid');
+		        $labelStatus = $langs->trans('BillStatusNotPaid');
+		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusNotPaid');
 		        $statusType='status1';
 		    }
 		    else {
-		        $labelstatut = $langs->trans('BillStatusStarted');
-		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusStarted');
+		        $labelStatus = $langs->trans('BillStatusStarted');
+		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusStarted');
 		        $statusType='status3';
 		    }
 		}
@@ -525,20 +525,20 @@ abstract class CommonInvoice extends CommonObject
 		    $statusType='status6';
 
 		    if ($type == self::TYPE_CREDIT_NOTE){
-		        $labelstatut = $langs->trans('BillStatusPaidBackOrConverted');       // credit note
-		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusPaidBackOrConverted');       // credit note
+		        $labelStatus = $langs->trans('BillStatusPaidBackOrConverted');       // credit note
+		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusPaidBackOrConverted');       // credit note
 		    }
 		    elseif ($type == self::TYPE_DEPOSIT){
-		        $labelstatut = $langs->trans('BillStatusConverted');             // deposit invoice
-		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusConverted');             // deposit invoice
+		        $labelStatus = $langs->trans('BillStatusConverted');             // deposit invoice
+		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusConverted');             // deposit invoice
 		    }
 		    else{
-		        $labelstatut = $langs->trans('BillStatusPaid');
-		        $labelstatutShort = $langs->trans('Bill'.$prefix.'StatusPaid');
+		        $labelStatus = $langs->trans('BillStatusPaid');
+		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusPaid');
 		    }
 		}
 
-		return dolGetStatus($labelstatut, $labelstatutShort, '', $statusType, $mode);
+		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

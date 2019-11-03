@@ -549,7 +549,7 @@ if ($resql)
         $morehtmlref.='</div>';
 
         $shownav = 1;
-        if ($user->societe_id && ! in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+        if ($user->socid && ! in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
         dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
 
@@ -986,7 +986,7 @@ if ($resql)
 
         $warehousestatic->id=$objp->entrepot_id;
         $warehousestatic->ref=$objp->warehouse_ref;
-        $warehousestatic->libelle=$objp->warehouse_ref;
+        $warehousestatic->libelle=$objp->warehouse_ref;	// deprecated
         $warehousestatic->label=$objp->warehouse_ref;
         $warehousestatic->lieu=$objp->lieu;
         $warehousestatic->fk_parent = $objp->fk_parent;

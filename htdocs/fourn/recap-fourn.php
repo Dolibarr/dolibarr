@@ -32,10 +32,10 @@ $langs->loadLangs(array('bills', 'companies'));
 
 // Security check
 $socid = GETPOST("socid", 'int');
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
     $action = '';
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 
 
@@ -62,7 +62,7 @@ if ($socid > 0)
     $head = societe_prepare_head($societe);
 
     dol_fiche_head($head, 'supplier', $langs->trans("ThirdParty"), 0, 'company');
-	dol_banner_tab($societe, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+	dol_banner_tab($societe, 'socid', '', ($user->socid?0:1), 'rowid', 'nom');
 	dol_fiche_end();
 
     if (! empty($conf->fournisseur->enabled) && $user->rights->facture->lire)

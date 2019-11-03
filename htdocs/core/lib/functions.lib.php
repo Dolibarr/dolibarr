@@ -1122,13 +1122,20 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 {
 	global $conf, $langs, $hookmanager;
 
-	$out="\n".'<!-- dol_get_fiche_head --><div class="tabs" data-role="controlgroup" data-type="horizontal">'."\n";
-
-	if ($morehtmlright) $out.='<div class="inline-block floatright tabsElem">'.$morehtmlright.'</div>';	// Output right area first so when space is missing, text is in front of tabs and not under.
-
 	// Show title
 	$showtitle=1;
 	if (! empty($conf->dol_optimize_smallscreen)) $showtitle=0;
+
+	$out = "\n".'<!-- dol_get_fiche_head -->';
+
+	if ((! empty($title) && $showtitle) || $morehtmlright || ! empty($links)) {
+		$out.= '<div class="tabs" data-role="controlgroup" data-type="horizontal">'."\n";
+	}
+
+	// Show right part
+	if ($morehtmlright) $out.='<div class="inline-block floatright tabsElem">'.$morehtmlright.'</div>';	// Output right area first so when space is missing, text is in front of tabs and not under.
+
+	// Show title
 	if (! empty($title) && $showtitle)
 	{
 		$limittitle=30;
@@ -1137,6 +1144,8 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		$out.='<span class="tabTitleText">'.dol_trunc($title, $limittitle).'</span>';
 		$out.='</a>';
 	}
+
+	// Show tabs
 
 	// Define max of key (max may be higher than sizeof because of hole due to module disabling some tabs).
 	$maxkey=-1;
@@ -1149,16 +1158,15 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 	if (! empty($conf->dol_optimize_smallscreen)) $conf->global->MAIN_MAXTABS_IN_CARD=2;
 
 	// Show tabs
-	$bactive=false;
 	// if =0 we don't use the feature
 	$limittoshow=(empty($conf->global->MAIN_MAXTABS_IN_CARD)?99:$conf->global->MAIN_MAXTABS_IN_CARD);
 	$displaytab=0;
 	$nbintab=0;
-	$popuptab=0; $outmore='';
+	$popuptab=0;
+	$outmore='';
 	for ($i = 0 ; $i <= $maxkey ; $i++)
 	{
-		if ((is_numeric($active) && $i == $active) || (! empty($links[$i][2]) && ! is_numeric($active) && $active == $links[$i][2]))
-		{
+		if ((is_numeric($active) && $i == $active) || (! empty($links[$i][2]) && ! is_numeric($active) && $active == $links[$i][2])) {
 			// If active tab is already present
 			if ($i >= $limittoshow) $limittoshow--;
 		}
@@ -1166,13 +1174,10 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 
 	for ($i = 0 ; $i <= $maxkey ; $i++)
 	{
-		if ((is_numeric($active) && $i == $active) || (! empty($links[$i][2]) && ! is_numeric($active) && $active == $links[$i][2]))
-		{
+		if ((is_numeric($active) && $i == $active) || (! empty($links[$i][2]) && ! is_numeric($active) && $active == $links[$i][2])) {
 			$isactive=true;
-			$bactive=true;
 		}
-		else
-		{
+		else {
 			$isactive=false;
 		}
 
@@ -1258,7 +1263,9 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		$out.="</script>";
 	}
 
-	$out.="</div>\n";
+	if ((! empty($title) && $showtitle) || $morehtmlright || ! empty($links)) {
+		$out.="</div>\n";
+	}
 
 	if (! $notab || $notab == -1 || $notab == -2) $out.="\n".'<div class="tabBar'.($notab == -1 ? '' : ($notab == -2 ? ' tabBarNoTop' : ' tabBarWithBottom')).'">'."\n";
 
@@ -1984,56 +1991,48 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = false, $
 		if ($second< 0 || $second > 60) return '';
 	}
 
-	if (method_exists('DateTime', 'getTimestamp'))
+	if (empty($gm) || $gm === 'server')
 	{
-		if (empty($gm) || $gm === 'server')
-		{
-			$default_timezone=@date_default_timezone_get();		// Example 'Europe/Berlin'
+		$default_timezone=@date_default_timezone_get();		// Example 'Europe/Berlin'
+		$localtz = new DateTimeZone($default_timezone);
+	}
+	elseif ($gm === 'user')
+	{
+		// We use dol_tz_string first because it is more reliable.
+		$default_timezone=(empty($_SESSION["dol_tz_string"])?@date_default_timezone_get():$_SESSION["dol_tz_string"]);		// Example 'Europe/Berlin'
+		try {
 			$localtz = new DateTimeZone($default_timezone);
 		}
-		elseif ($gm === 'user')
+		catch(Exception $e)
 		{
-			// We use dol_tz_string first because it is more reliable.
-			$default_timezone=(empty($_SESSION["dol_tz_string"])?@date_default_timezone_get():$_SESSION["dol_tz_string"]);		// Example 'Europe/Berlin'
-			try {
-				$localtz = new DateTimeZone($default_timezone);
-			}
-			catch(Exception $e)
-			{
-				dol_syslog("Warning dol_tz_string contains an invalid value ".$_SESSION["dol_tz_string"], LOG_WARNING);
-				$default_timezone=@date_default_timezone_get();
-			}
+			dol_syslog("Warning dol_tz_string contains an invalid value ".$_SESSION["dol_tz_string"], LOG_WARNING);
+			$default_timezone=@date_default_timezone_get();
 		}
-		elseif (strrpos($gm, "tz,") !== false)
-		{
-			$timezone=str_replace("tz,", "", $gm);  // Example 'tz,Europe/Berlin'
-			try
-			{
-				$localtz = new DateTimeZone($timezone);
-			}
-			catch(Exception $e)
-			{
-				dol_syslog("Warning passed timezone contains an invalid value ".$timezone, LOG_WARNING);
-			}
-		}
-
-		if (empty($localtz)) {
-			$localtz = new DateTimeZone('UTC');
-		}
-		//var_dump($localtz);
-		//var_dump($year.'-'.$month.'-'.$day.'-'.$hour.'-'.$minute);
-		$dt = new DateTime(null, $localtz);
-		$dt->setDate((int) $year, (int) $month, (int) $day);
-		$dt->setTime((int) $hour, (int) $minute, (int) $second);
-		$date=$dt->getTimestamp();	// should include daylight saving time
-		//var_dump($date);
-		return $date;
 	}
-	else
+	elseif (strrpos($gm, "tz,") !== false)
 	{
-		dol_print_error('', 'PHP version must be 5.4+');
-		return '';
+		$timezone=str_replace("tz,", "", $gm);  // Example 'tz,Europe/Berlin'
+		try
+		{
+			$localtz = new DateTimeZone($timezone);
+		}
+		catch(Exception $e)
+		{
+			dol_syslog("Warning passed timezone contains an invalid value ".$timezone, LOG_WARNING);
+		}
 	}
+
+	if (empty($localtz)) {
+		$localtz = new DateTimeZone('UTC');
+	}
+	//var_dump($localtz);
+	//var_dump($year.'-'.$month.'-'.$day.'-'.$hour.'-'.$minute);
+	$dt = new DateTime(null, $localtz);
+	$dt->setDate((int) $year, (int) $month, (int) $day);
+	$dt->setTime((int) $hour, (int) $minute, (int) $second);
+	$date=$dt->getTimestamp();	// should include daylight saving time
+	//var_dump($date);
+	return $date;
 }
 
 
@@ -3024,7 +3023,7 @@ function dol_trunc($string, $size = 40, $trunc = 'right', $stringencoding = 'UTF
  *  @param		int			$notitle				1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
  *  @param		string		$alt					Force alt for bind people
  *  @param		string		$morecss				Add more class css on img tag (For example 'myclascss'). Work only if $moreatt is empty.
- *  @param		string		$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left maring on picto, 0 = No margin left. Works for fontawesome picto only.
+ *  @param		string		$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No margin left. Works for fontawesome picto only.
  *  @return     string       				    	Return img tag
  *  @see        img_object(), img_picto_common()
  */
@@ -3055,7 +3054,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
         if (empty($srconly) && in_array($pictowithouttext, array(
         		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
-        		'address', 'bank', 'building', 'cash-register', 'close_title', 'cubes', 'delete', 'dolly', 'edit', 'ellipsis-h', 'bookmark', 'filter', 'grip', 'grip_title', 'list', 'listlight', 'note',
+        		'address', 'bank', 'bookmark', 'building', 'cash-register', 'close_title', 'cubes', 'delete', 'dolly', 'edit', 'ellipsis-h',
+        		'filter', 'file-code', 'grip', 'grip_title', 'list', 'listlight', 'note',
         		'object_list','object_calendar', 'object_calendarweek', 'object_calendarmonth', 'object_calendarday', 'object_calendarperuser',
         		'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'stats',
 				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench', 'globe',
@@ -3086,12 +3086,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		    	$morecss .= ($morecss ? ' ' : '').('picto'.$pictowithouttext);
 		    } elseif ($pictowithouttext == 'switch_off') {
 				$facolor = '#999';
-				$fasize = '2em';
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 			}
 			elseif ($pictowithouttext == 'switch_on') {
 				$facolor = '#227722';
-				$fasize = '2em';
 				$fakey = 'fa-'.$arrayconvpictotofa[$pictowithouttext];
 			}
 			elseif ($pictowithouttext == 'off') {
@@ -8116,25 +8114,24 @@ function roundUpToNextMultiple($n, $x = 5)
  * @param   string  $type       type of badge : Primary Secondary Success Danger Warning Info Light Dark status0 status1 status2 status3 status4 status5 status6 status7 status8 status9
  * @param   string  $mode       default '' , pill, dot
  * @param   string  $url        the url for link
- * @param   array   $params     various params for future : recommended rather than adding more fuction arguments
+ * @param   array   $params     various params for future : recommended rather than adding more fuction arguments. array('attr'=>array('title'=>'abc'))
  * @return  string              Html badge
  */
 function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '', $params = array())
 {
     $attr=array(
-        'class'=>'badge badge-status'.(!empty($mode)?' badge-'.$mode:'').(!empty($type)?' badge-'.$type:'')
+    	'class'=>'badge badge-status'.(!empty($mode)?' badge-'.$mode:'').(!empty($type)?' badge-'.$type:'').(empty($params['css'])?'':' '.$params['css'])
     );
 
-    if(empty($html)){
+    if (empty($html)) {
         $html = $label;
     }
 
-    if(!empty($url)){
+    if (!empty($url)) {
         $attr['href'] = $url;
     }
 
-    if($mode==='dot')
-    {
+    if ($mode==='dot') {
         $attr['class'].= ' classfortooltip';
         $attr['title'] = $html;
         $attr['aria-label'] = $label;
@@ -8142,8 +8139,8 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
     }
 
     // Override attr
-    if(!empty($params['attr']) && is_array($params['attr'])){
-        foreach($params['attr']as $key => $value){
+    if (!empty($params['attr']) && is_array($params['attr'])) {
+        foreach($params['attr']as $key => $value) {
             $attr[$key] = $value;
         }
     }
@@ -8154,7 +8151,7 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
     $attr = array_map('dol_escape_htmltag', $attr);
 
     $TCompiledAttr = array();
-    foreach($attr as $key => $value){
+    foreach($attr as $key => $value) {
         $TCompiledAttr[] = $key.'="'.$value.'"';
     }
 
@@ -8197,13 +8194,13 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
     elseif ($displayMode == 1) {
         $return = !empty($html)?$html:(!empty($statusLabelShort)?$statusLabelShort:$statusLabel);
     }
-    // use status with images
-    elseif (empty($conf->global->MAIN_STATUS_USES_CSS)) {
+    // Use status with images (for backward compatibility)
+    elseif (! empty($conf->global->MAIN_STATUS_USES_IMAGES)) {
         $return = '';
         $htmlLabel      = (in_array($displayMode, array(1,2,5))?'<span class="hideonsmartphone">':'').(!empty($html)?$html:$statusLabel).(in_array($displayMode, array(1,2,5))?'</span>':'');
         $htmlLabelShort = (in_array($displayMode, array(1,2,5))?'<span class="hideonsmartphone">':'').(!empty($html)?$html:(!empty($statusLabelShort)?$statusLabelShort:$statusLabel)).(in_array($displayMode, array(1,2,5))?'</span>':'');
 
-        // For small screen, we use the short label instead of long label.
+        // For small screen, we always use the short label instead of long label.
         if (! empty($conf->dol_optimize_smallscreen))
         {
         	if ($displayMode == 0) $displayMode = 1;
@@ -8211,7 +8208,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         	elseif ($displayMode == 6) $displayMode = 5;
         }
 
-        // image's filename are still in French, so we use this array to convert
+        // For backward compatibility. Image's filename are still in French, so we use this array to convert
         $statusImg=array(
         	'status0' => 'statut0'
         	,'status1' => 'statut1'
@@ -8248,7 +8245,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         }
     }
     // Use new badge
-    elseif (!empty($conf->global->MAIN_STATUS_USES_CSS) && !empty($displayMode)) {
+    elseif (empty($conf->global->MAIN_STATUS_USES_IMAGES) && !empty($displayMode)) {
         $statusLabelShort = !empty($statusLabelShort)?$statusLabelShort:$statusLabel;
 
         if ($displayMode == 3) {

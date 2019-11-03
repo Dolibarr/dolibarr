@@ -421,7 +421,12 @@ abstract class CommonObject
 	public $civility_id;
 
 	// Dates
-	public $date_creation;			// Date creation
+	/**
+     * @var integer|string date_creation
+     */
+	public $date_creation;
+
+
 	public $date_validation;		// Date validation
 	public $date_modification;		// Date last change (tms field)
 
@@ -1064,13 +1069,13 @@ abstract class CommonObject
 	/**
 	 *    Get array of all contacts for an object
 	 *
-	 *    @param	int			$statut		Status of links to get (-1=all)
+	 *    @param	int			$status		Status of links to get (-1=all)
 	 *    @param	string		$source		Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
 	 *    @param	int         $list       0:Return array contains all properties, 1:Return array contains just id
 	 *    @param    string      $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *    @return	array|int		        Array of contacts, -1 if error
 	 */
-	public function liste_contact($statut = -1, $source = 'external', $list = 0, $code = '')
+	public function liste_contact($status = -1, $source = 'external', $list = 0, $code = '')
 	{
         // phpcs:enable
 		global $langs;
@@ -1093,7 +1098,7 @@ abstract class CommonObject
 		if ($source == 'internal') $sql.= " AND tc.source = 'internal'";
 		if ($source == 'external' || $source == 'thirdparty') $sql.= " AND tc.source = 'external'";
 		$sql.= " AND tc.active=1";
-		if ($statut >= 0) $sql.= " AND ec.statut = '".$statut."'";
+		if ($status >= 0) $sql.= " AND ec.statut = ".$status;
 		$sql.=" ORDER BY t.lastname ASC";
 
 		dol_syslog(get_class($this)."::liste_contact", LOG_DEBUG);
@@ -1748,7 +1753,7 @@ abstract class CommonObject
 
 		// Security on socid
 		$socid = 0;
-		if ($user->societe_id > 0) $socid = $user->societe_id;
+		if ($user->socid > 0) $socid = $user->socid;
 
 		// this->ismultientitymanaged contains
 		// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -5631,7 +5636,7 @@ abstract class CommonObject
 			{
 				$morecss = 'minwidth100imp';
 			}
-			elseif ($type == 'datetime')
+			elseif ($type == 'datetime' || $type == 'link')
 			{
 				$morecss = 'minwidth200imp';
 			}
@@ -6100,7 +6105,7 @@ abstract class CommonObject
 			$param_list_array = explode(':', $param_list[0]);
 			$showempty=(($required && $default != '')?0:1);
 
-			$out=$form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', '', '', 0, empty($val['disabled'])?0:1);
+			$out=$form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, empty($val['disabled'])?0:1);
 
 			if (! empty($param_list_array[2]))		// If we set to add a create button
 			{

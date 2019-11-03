@@ -183,7 +183,7 @@ class Adherent extends CommonObject
 
     // -1:brouillon, 0:resilie, >=1:valide,paye
     // def in common object
-    //public $statut;
+    //public $status;
 
     public $photo;
 
@@ -2165,61 +2165,61 @@ class Adherent extends CommonObject
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
-	 *  @param	int			$statut      			Id statut
+	 *  @param	int			$status      			Id status
 	 *	@param	int			$need_subscription		1 if member type need subscription, 0 otherwise
 	 *	@param	int     	$date_end_subscription	Date fin adhesion
 	 *  @param  int		    $mode                   0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string      						Label
 	 */
-	public function LibStatut($statut, $need_subscription, $date_end_subscription, $mode = 0)
+	public function LibStatut($status, $need_subscription, $date_end_subscription, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
 		$langs->load("members");
 
         $statusType = '';
-        $labelstatut = '';
-        $labelstatutShort = '';
+        $labelStatus = '';
+        $labelStatusShort = '';
 
-		if ($statut == -1)
+		if ($status == -1)
 		{
 			$statusType = 'status0';
-			$labelstatut = $langs->trans("MemberStatusDraft");
-			$labelstatutShort = $langs->trans("MemberStatusDraftShort");
+			$labelStatus = $langs->trans("MemberStatusDraft");
+			$labelStatusShort = $langs->trans("MemberStatusDraftShort");
 		}
-		elseif ($statut >= 1) {
+		elseif ($status >= 1) {
 			if ($need_subscription == 0)
 			{
 				$statusType = 'status4';
-				$labelstatut = $langs->trans("MemberStatusNoSubscription");
-				$labelstatutShort = $langs->trans("MemberStatusNoSubscriptionShort");
+				$labelStatus = $langs->trans("MemberStatusNoSubscription");
+				$labelStatusShort = $langs->trans("MemberStatusNoSubscriptionShort");
 			}
 			elseif (! $date_end_subscription)
 			{
 				$statusType = 'status1';
-				$labelstatut = $langs->trans("MemberStatusActive");
-				$labelstatutShort = $langs->trans("MemberStatusActiveShort");
+				$labelStatus = $langs->trans("MemberStatusActive");
+				$labelStatusShort = $langs->trans("MemberStatusActiveShort");
 			}
 			elseif ($date_end_subscription < time())
 			{
 				$statusType = 'status3';
-				$labelstatut = $langs->trans("MemberStatusActiveLate");
-				$labelstatutShort = $langs->trans("MemberStatusActiveLateShort");
+				$labelStatus = $langs->trans("MemberStatusActiveLate");
+				$labelStatusShort = $langs->trans("MemberStatusActiveLateShort");
 			}
 			else {
 				$statusType = 'status4';
-				$labelstatut = $langs->trans("MemberStatusPaid");
-				$labelstatutShort = $langs->trans("MemberStatusPaidShort");
+				$labelStatus = $langs->trans("MemberStatusPaid");
+				$labelStatusShort = $langs->trans("MemberStatusPaidShort");
 			}
 		}
-		elseif ($statut == 0)
+		elseif ($status == 0)
 		{
 			$statusType = 'status6';
-			$labelstatut = $langs->trans("MemberStatusResiliated");
-			$labelstatutShort = $langs->trans("MemberStatusResiliatedShort");
+			$labelStatus = $langs->trans("MemberStatusResiliated");
+			$labelStatusShort = $langs->trans("MemberStatusResiliatedShort");
 		}
 
-		return dolGetStatus($labelstatut, $labelstatutShort, '', $statusType, $mode);
+		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
 	}
 
 

@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 $object = new Societe($db);
 if ($socid > 0) $object->fetch($socid);
@@ -109,7 +109,7 @@ dol_fiche_head($head, 'consumption', $langs->trans("ThirdParty"), -1, 'company')
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom');
 
 print '<div class="fichecenter">';
 

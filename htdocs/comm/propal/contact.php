@@ -41,7 +41,7 @@ $lineid=GETPOST('lineid', 'int');
 $action=GETPOST('action', 'alpha');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'propal', $id);
 
 $object = new Propal($db);

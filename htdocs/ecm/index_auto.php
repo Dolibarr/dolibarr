@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 $langs->loadLangs(array("ecm","companies","other","users","orders","propal","bills","contracts"));
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'ecm', 0);
 
 // Get parameters

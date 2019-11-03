@@ -66,12 +66,12 @@ $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref :''));
 $fieldtype = (! empty($ref) ? 'ref' :'rowid');
 if ($fielvalue)
 {
-	if ($user->societe_id) $socid=$user->societe_id;
+	if ($user->socid) $socid=$user->socid;
 	$result=restrictedArea($user, 'banque', $fieldvalue, 'bank_account&bank_account', '', '', $fieldtype);
 }
 else
 {
-	if ($user->societe_id) $socid=$user->societe_id;
+	if ($user->socid) $socid=$user->socid;
 	$result=restrictedArea($user, 'banque');
 }
 
@@ -1065,9 +1065,10 @@ if ($resql)
            			}
             	}
             	// Extra fields
-            	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+            	$element = 'banktransaction';
+            	if (is_array($extrafields->attributes[$element]['label']) && count($extrafields->attributes[$element]['label']))
             	{
-            		foreach($extrafields->attribute_label as $key => $val)
+            		foreach($extrafields->attributes[$element]['label'] as $key => $val)
             		{
             			if (! empty($arrayfields["ef.".$key]['checked']))
             			{

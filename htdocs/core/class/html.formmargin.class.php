@@ -195,7 +195,7 @@ class FormMargin
 	{
 		global $langs, $conf, $user;
 
-    	if (! empty($user->societe_id)) return;
+    	if (! empty($user->socid)) return;
 
     	if (! $user->rights->margins->liretous) return;
 

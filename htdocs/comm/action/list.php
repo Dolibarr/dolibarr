@@ -110,7 +110,7 @@ if (! $sortfield)
 
 // Security check
 $socid = GETPOST("search_socid", 'int')?GETPOST("search_socid", 'int'):GETPOST("socid", 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'agenda', 0, '', 'myactions');
 if ($socid < 0) $socid='';
 
@@ -488,7 +488,7 @@ if ($resql)
 	if (! empty($arrayfields['a.tms']['checked']))		print '<td class="liste_titre"></td>';
 	if (! empty($arrayfields['a.percent']['checked']))	{
 		print '<td class="liste_titre center">';
-    	print $formactions->form_select_status_action('formaction', $status, 1, 'status', 1, 2);
+        $formactions->form_select_status_action('formaction', $status, 1, 'status', 1, 2);
     	print ajax_combobox('selectstatus');
     	print '</td>';
     }

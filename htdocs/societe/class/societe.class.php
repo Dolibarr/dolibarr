@@ -70,6 +70,9 @@ class Societe extends CommonObject
 	 */
 	protected $childtablesoncascade=array("societe_prices", "societe_log", "societe_address", "product_fournisseur_price", "product_customer_price_log", "product_customer_price", "socpeople", "adherent", "societe_account", "societe_rib", "societe_remise", "societe_remise_except", "societe_commerciaux", "categorie", "notify", "notify_def", "actioncomm");
 
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto = 'company';
 
 	/**
@@ -328,11 +331,12 @@ class Societe extends CommonObject
 	 * @var string
 	 */
 	public $user_modification;
+
 	/**
-	 * Date of creation
-	 * @var string
+	 * @var integer|string date_creation
 	 */
 	public $date_creation;
+
 	/**
 	 * User that created the thirdparty
 	 * @var User
@@ -407,9 +411,16 @@ class Societe extends CommonObject
 	 */
 	public $note_public;
 
-	//! code statut prospect
+	/**
+	 * Status prospect id
+	 * @var int
+	 */
 	public $stcomm_id;
-	public $statut_commercial;
+	/**
+	 * Status prospect label
+	 * @var int
+	 */
+	public $status_prospect_label;
 
 	/**
 	 * Assigned price level
@@ -1354,9 +1365,9 @@ class Societe extends CommonObject
 				$this->state        = ($obj->state!='-'?$obj->state:'');
 
 				$transcode=$langs->trans('StatusProspect'.$obj->fk_stcomm);
-				$libelle=($transcode!='StatusProspect'.$obj->fk_stcomm?$transcode:$obj->stcomm);
-				$this->stcomm_id = $obj->fk_stcomm;     // id statut commercial
-				$this->statut_commercial = $libelle;    // libelle statut commercial
+				$label = ($transcode!='StatusProspect'.$obj->fk_stcomm ? $transcode : $obj->stcomm);
+				$this->stcomm_id = $obj->fk_stcomm;       // id status prospect
+				$this->status_prospect_label = $label;    // label status prospect
 
                 $this->email = $obj->email;
 				$this->socialnetworks = (array) json_decode($obj->socialnetworks, true);
@@ -2236,7 +2247,7 @@ class Societe extends CommonObject
 		$linkend='</a>';
 
 		global $user;
-		if (! $user->rights->societe->client->voir && $user->societe_id > 0 && $this->id != $user->societe_id)
+		if (! $user->rights->societe->client->voir && $user->socid > 0 && $this->id != $user->socid)
 		{
 			$linkstart='';
 			$linkend='';
@@ -2260,8 +2271,8 @@ class Societe extends CommonObject
 	/**
 	 *    Return label of status (activity, closed)
 	 *
-	 *    @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *    @return   string        		Libelle
+	 *    @param  	int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *    @return   string     	   		Label of status
 	 */
     public function getLibStatut($mode = 0)
 	{
@@ -2285,15 +2296,15 @@ class Societe extends CommonObject
 		$statusType = 'status4';
 		if ($status == 0) $statusType = 'status5';
 
-		if (empty($this->labelstatus) || empty($this->labelstatusshort))
+		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
-			$this->labelstatus[0] = $langs->trans("ActivityCeased");
-			$this->labelstatus[1] = $langs->trans("InActivity");
-			$this->labelstatusshort[0] = $langs->trans("ActivityCeased");
-			$this->labelstatusshort[1] = $langs->trans("InActivity");
+			$this->labelStatus[0] = $langs->trans("ActivityCeased");
+			$this->labelStatus[1] = $langs->trans("InActivity");
+			$this->labelStatusShort[0] = $langs->trans("ActivityCeased");
+			$this->labelStatusShort[1] = $langs->trans("InActivity");
 		}
 
-		return dolGetStatus($this->labelstatus[$status], $this->labelstatusshort[$status], '', $statusType, $mode);
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

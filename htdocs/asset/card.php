@@ -60,8 +60,8 @@ foreach($object->fields as $key => $val)
 if (empty($action) && empty($id) && empty($ref)) $action='view';
 
 // Security check - Protection if external user
-//if ($user->societe_id > 0) access_forbidden();
-//if ($user->societe_id > 0) $socid = $user->societe_id;
+//if ($user->socid > 0) access_forbidden();
+//if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'asset', $id);
 
 // Load object

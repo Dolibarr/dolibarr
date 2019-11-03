@@ -69,7 +69,7 @@ $line_id = GETPOST('lineid', 'int')?GETPOST('lineid', 'int'):'';
 
 // Security check
 $socid='';
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 
 if ($origin == 'expedition') $result=restrictedArea($user, $origin, $id);
 else {
@@ -92,6 +92,7 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 $extrafields->fetch_name_optionals_label($object->table_element_line);
+$extrafields->fetch_name_optionals_label(OrderLine::$table_element);
 
 // Load object. Make an object->fetch
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
@@ -301,12 +302,11 @@ if (empty($reshook))
 			}
 
 			// Extrafields
-			$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
 			$array_options[$i] = $extrafields->getOptionalsFromPost($object->table_element_line, $i);
 			// Unset extrafield
-			if (is_array($extralabelsline)) {
+			if (is_array($extrafields->attributes[$object->table_element_line]['label'])) {
 				// Get extra fields
-				foreach ($extralabelsline as $key => $value) {
+				foreach ($extrafields->attributes[$object->table_element_line]['label'] as $key => $value) {
 					unset($_POST["options_" . $key]);
 				}
 			}
@@ -627,11 +627,10 @@ if (empty($reshook))
 				$line = new ExpeditionLigne($db);
 
 				// Extrafields Lines
-				$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
 				$line->array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
 				// Unset extrafield POST Data
-				if (is_array($extralabelsline)) {
-					foreach ($extralabelsline as $key => $value) {
+				if (is_array($extrafields->attributes[$object->table_element_line]['label'])) {
+					foreach ($extrafields->attributes[$object->table_element_line]['label'] as $key => $value) {
 						unset($_POST["options_" . $key]);
 					}
 				}
@@ -981,7 +980,7 @@ if ($action == 'create')
             print "</td></tr>";
 
             // Note Private
-            if ($object->note_private && ! $user->societe_id)
+            if ($object->note_private && ! $user->socid)
             {
                 print '<tr><td>'.$langs->trans("NotePrivate").'</td>';
                 print '<td colspan="3">';
@@ -1031,7 +1030,6 @@ if ($action == 'create')
 
 			if (empty($reshook)) {
 				// copy from order
-				$extrafields->fetch_name_optionals_label($object->table_element);
 				if ($object->fetch_optionals() > 0) {
 					$expe->array_options = array_merge($expe->array_options, $object->array_options);
 				}
@@ -1368,7 +1366,7 @@ if ($action == 'create')
 							    print '</td>';
 
 							    print '<td class="left">';
-							    print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $staticwarehouse->libelle);
+							    print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $staticwarehouse->label);
 							    print '</td></tr>';
 							}
 						}
@@ -1550,7 +1548,7 @@ if ($action == 'create')
 	    						{
 	    							$warehouseObject=new Entrepot($db);
 	    							$warehouseObject->fetch($warehouse_selected_id);
-	    							print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $warehouseObject->libelle);
+	    							print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $warehouseObject->label);
 	    						}
 	    						else
 	    						{
@@ -1572,11 +1570,9 @@ if ($action == 'create')
 					{
 						//var_dump($line);
 						$colspan=5;
-						$extrafields->fetch_name_optionals_label($expe->table_element_line);
 						$expLine = new ExpeditionLigne($db);
 
 						$srcLine = new OrderLine($db);
-						$extrafields->fetch_name_optionals_label($srcLine->table_element);
 						$srcLine->fetch_optionals($line->id); // fetch extrafields also available in orderline
 						//$line->fetch_optionals($line->id);
 						$line->array_options = array_merge($line->array_options, $srcLine->array_options);
@@ -2464,8 +2460,6 @@ elseif ($id || $ref)
 
 					$lines[$i]->fetch_optionals($lines[$i]->id);
 
-					$extrafields->fetch_name_optionals_label($lines[$i]->table_element);
-
 					print '<tr class="oddeven">';
 					if ($action == 'editline' && $lines[$i]->id == $line_id)
 					{
@@ -2498,7 +2492,7 @@ elseif ($id || $ref)
 	 *    Boutons actions
 	 */
 
-	if (($user->societe_id == 0) && ($action!='presend'))
+	if (($user->socid == 0) && ($action!='presend'))
 	{
 		print '<div class="tabsAction">';
 

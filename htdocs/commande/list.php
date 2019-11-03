@@ -88,7 +88,7 @@ $search_project=GETPOST('search_project', 'alpha');
 
 // Security check
 $id = (GETPOST('orderid')?GETPOST('orderid', 'int'):GETPOST('id', 'int'));
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'commande', $id, '');
 
 $diroutputmassaction=$conf->commande->multidir_output[$conf->entity] . '/temp/massgeneration/'.$user->id;
@@ -268,7 +268,7 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typ
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
 if (! empty($search_categ_cus)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
 $sql.= ', '.MAIN_DB_PREFIX.'commande as c';
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande_extrafields as ef on (c.rowid = ef.fk_object)";
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande_extrafields as ef on (c.rowid = ef.fk_object)";
 if ($sall || $search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'commandedet as pd ON c.rowid=pd.fk_commande';
 if ($search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=pd.fk_product';
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = c.fk_projet";
@@ -769,6 +769,7 @@ if ($resql)
 	$total=0;
 	$subtotal=0;
 	$productstat_cache=array();
+	$getNomUrl_cache=array();
 
 	$generic_commande = new Commande($db);
 	$generic_product = new Product($db);
@@ -785,11 +786,14 @@ if ($resql)
 		$text_warning='';
 		$nbprod=0;
 
-		$companystatic->id=$obj->socid;
+        $companystatic->id = $obj->socid;
 		$companystatic->code_client = $obj->code_client;
-		$companystatic->name=$obj->name;
-		$companystatic->client=$obj->client;
-		$companystatic->email=$obj->email;
+		$companystatic->name = $obj->name;
+		$companystatic->client = $obj->client;
+		$companystatic->email = $obj->email;
+		if (!isset($getNomUrl_cache[$obj->socid])) {
+		    $getNomUrl_cache[$obj->socid] = $companystatic->getNomUrl(1, 'customer');
+		}
 
 		$generic_commande->id=$obj->rowid;
 		$generic_commande->ref=$obj->ref;
@@ -974,7 +978,7 @@ if ($resql)
 		if (! empty($arrayfields['s.nom']['checked']))
 		{
 			print '<td class="tdoverflowmax200">';
-			print $companystatic->getNomUrl(1, 'customer');
+			print $getNomUrl_cache[$obj->socid];
 
 			// If module invoices enabled and user with invoice creation permissions
 			if (! empty($conf->facture->enabled) && ! empty($conf->global->ORDER_BILLING_ALL_CUSTOMER))

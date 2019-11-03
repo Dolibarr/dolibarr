@@ -1029,7 +1029,7 @@ class ExtraFields
 			{
 				$morecss = 'minwidth100imp';
 			}
-			elseif ($type == 'datetime')
+			elseif ($type == 'datetime' || $type == 'link')
 			{
 				$morecss = 'minwidth200imp';
 			}
@@ -1586,7 +1586,7 @@ class ExtraFields
 	 * @param   string	$key            		Key of attribute
 	 * @param   string	$value          		Value to show
 	 * @param	string	$moreparam				To add more parameters on html input tag (only checkbox use html input for output rendering)
-	 * @param	string	$extrafieldsobjectkey	If defined (for example $object->table_element), use the new method to get extrafields data
+	 * @param	string	$extrafieldsobjectkey	If defined (for example $object->table_element), function uses the new method to get extrafields data
 	 * @return	string							Formated value
 	 */
 	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '')
@@ -1611,6 +1611,7 @@ class ExtraFields
 		}
 		else	// Old usage
 		{
+			//dol_syslog("Warning: parameter 'extrafieldsobjectkey' is missing", LOG_WARNING);
 			$label=$this->attribute_label[$key];
 			$type=$this->attribute_type[$key];
 			$size=$this->attribute_size[$key];

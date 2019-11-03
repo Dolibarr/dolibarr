@@ -45,7 +45,7 @@ if ($search_project_user == $user->id) $mine = 1;
 
 // Security check
 $socid=0;
-//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 if (!$user->rights->projet->lire) accessforbidden();
 
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -171,7 +171,7 @@ print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppst
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
-// Last modified projects
+// Latest modified projects
 $sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut, p.tms as datem,";
 $sql.= " s.rowid as socid, s.nom as name, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
@@ -243,7 +243,7 @@ if ($resql)
 			}
 			print '</td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
-			print '<td class="right">'.$projectstatic->LibStatut($obj->fk_statut, 5).'</td>';
+			print '<td class="right">'.$projectstatic->LibStatut($obj->fk_statut, 3).'</td>';
 			print '</tr>';
 			$i++;
 		}

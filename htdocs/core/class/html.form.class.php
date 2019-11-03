@@ -1651,7 +1651,7 @@ class Form
 				$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 			}
 		}
-		if (! empty($user->societe_id)) $sql.= " AND u.fk_soc = ".$user->societe_id;
+		if (! empty($user->socid)) $sql.= " AND u.fk_soc = ".$user->socid;
 		if (is_array($exclude) && $excludeUsers) $sql.= " AND u.rowid NOT IN (".$excludeUsers.")";
 		if ($includeUsers) $sql.= " AND u.rowid IN (".$includeUsers.")";
 		if (! empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX) || $noactive) $sql.= " AND u.statut <> 0";
@@ -3765,7 +3765,7 @@ class Form
 	 *
 	 *  @param	string	$selected           Id account pre-selected
 	 *  @param  string	$htmlname           Name of select zone
-	 *  @param  int		$statut             Status of searched accounts (0=open, 1=closed, 2=both)
+	 *  @param  int		$status             Status of searched accounts (0=open, 1=closed, 2=both)
 	 *  @param  string	$filtre             To filter list
 	 *  @param  int		$useempty           1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 *  @param  string	$moreattrib         To add more attribute on select
@@ -3773,7 +3773,7 @@ class Form
 	 *  @param	string	$morecss			More CSS
 	 * 	@return	int							<0 if error, Num of bank account found if OK (0, 1, 2, ...)
 	 */
-    public function select_comptes($selected = '', $htmlname = 'accountid', $statut = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0, $morecss = '')
+    public function select_comptes($selected = '', $htmlname = 'accountid', $status = 0, $filtre = '', $useempty = 0, $moreattrib = '', $showcurrency = 0, $morecss = '')
 	{
         // phpcs:enable
 		global $langs, $conf;
@@ -3784,7 +3784,7 @@ class Form
 		$sql = "SELECT rowid, label, bank, clos as status, currency_code";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 		$sql.= " WHERE entity IN (".getEntity('bank_account').")";
-		if ($statut != 2) $sql.= " AND clos = '".$statut."'";
+		if ($status != 2) $sql.= " AND clos = ".(int) $status;
 		if ($filtre) $sql.=" AND ".$filtre;
 		$sql.= " ORDER BY label";
 
@@ -3815,7 +3815,7 @@ class Form
 					}
 					print trim($obj->label);
 					if ($showcurrency) print ' ('.$obj->currency_code.')';
-					if ($statut == 2 && $obj->status == 1) print ' ('.$langs->trans("Closed").')';
+					if ($status == 2 && $obj->status == 1) print ' ('.$langs->trans("Closed").')';
 					print '</option>';
 					$i++;
 				}
@@ -3823,7 +3823,7 @@ class Form
 			}
 			else
 			{
-				if ($statut == 0) print '<span class="opacitymedium">'.$langs->trans("NoActiveBankAccountDefined").'</span>';
+				if ($status == 0) print '<span class="opacitymedium">'.$langs->trans("NoActiveBankAccountDefined").'</span>';
 				else print '<span class="opacitymedium">'.$langs->trans("NoBankAccountFound").'</span>';
 			}
 		}
@@ -3839,13 +3839,13 @@ class Form
 	 *
 	 *  @param	string	$selected           Id establishment pre-selected
 	 *  @param  string	$htmlname           Name of select zone
-	 *  @param  int		$statut             Status of searched establishment (0=open, 1=closed, 2=both)
+	 *  @param  int		$status             Status of searched establishment (0=open, 1=closed, 2=both)
 	 *  @param  string	$filtre             To filter list
 	 *  @param  int		$useempty           1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 *  @param  string	$moreattrib         To add more attribute on select
 	 * 	@return	int							<0 if error, Num of establishment found if OK (0, 1, 2, ...)
 	 */
-	public function selectEstablishments($selected = '', $htmlname = 'entity', $statut = 0, $filtre = '', $useempty = 0, $moreattrib = '')
+	public function selectEstablishments($selected = '', $htmlname = 'entity', $status = 0, $filtre = '', $useempty = 0, $moreattrib = '')
 	{
         // phpcs:enable
 		global $langs, $conf;
@@ -3856,7 +3856,7 @@ class Form
 		$sql = "SELECT rowid, name, fk_country, status, entity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."establishment";
 		$sql.= " WHERE 1=1";
-		if ($statut != 2) $sql.= " AND status = '".$statut."'";
+		if ($status != 2) $sql.= " AND status = ".(int) $status;
 		if ($filtre) $sql.=" AND ".$filtre;
 		$sql.= " ORDER BY name";
 
@@ -3886,7 +3886,7 @@ class Form
 						print '<option value="'.$obj->rowid.'">';
 					}
 					print trim($obj->name);
-					if ($statut == 2 && $obj->status == 1) print ' ('.$langs->trans("Closed").')';
+					if ($status == 2 && $obj->status == 1) print ' ('.$langs->trans("Closed").')';
 					print '</option>';
 					$i++;
 				}
@@ -3894,7 +3894,7 @@ class Form
 			}
 			else
 			{
-				if ($statut == 0) print '<span class="opacitymedium">'.$langs->trans("NoActiveEstablishmentDefined").'</span>';
+				if ($status == 0) print '<span class="opacitymedium">'.$langs->trans("NoActiveEstablishmentDefined").'</span>';
 				else print '<span class="opacitymedium">'.$langs->trans("NoEstablishmentFound").'</span>';
 			}
 		}
@@ -4070,13 +4070,13 @@ class Form
 	 *	   @param  	array		$formquestion	   	An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , ))
 	 *												type can be 'hidden', 'text', 'password', 'checkbox', 'radio', 'date', 'morecss', ...
 	 * 	   @param  	string		$selectedchoice  	'' or 'no', or 'yes' or '1' or '0'
-	 * 	   @param  	int			$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
-	 *     @param  	int			$height          	Force height of box
+	 * 	   @param  	int|string	$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
+	 *     @param  	int			$height          	Force height of box (0 = auto)
 	 *     @param	int			$width				Force width of box ('999' or '90%'). Ignored and forced to 90% on smartphones.
 	 *     @param	int			$disableformtag		1=Disable form tag. Can be used if we are already inside a <form> section.
 	 *     @return 	string      	    			HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
 	 */
-    public function formconfirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = '', $useajax = 0, $height = 210, $width = 500, $disableformtag = 0)
+    public function formconfirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = '', $useajax = 0, $height = 0, $width = 500, $disableformtag = 0)
 	{
 		global $langs,$conf;
 		global $useglobalvars;
@@ -4089,6 +4089,14 @@ class Form
 		// Clean parameters
 		$newselectedchoice=empty($selectedchoice)?"no":$selectedchoice;
 		if ($conf->browser->layout == 'phone') $width='95%';
+
+		// Set height automatically if not defined
+		if (empty($height)) {
+			$height = 210;
+			if (is_array($formquestion) && count($formquestion) > 2) {
+				$height += ((count($formquestion) - 2) * 24);
+			}
+		}
 
 		if (is_array($formquestion) && ! empty($formquestion))
 		{
@@ -4105,7 +4113,7 @@ class Form
 			}
 
 			// Now add questions
-			$more.='<table class="paddingtopbottomonly centpercent">'."\n";
+			$more.='<div class="tagtable paddingtopbottomonly centpercent noborderspacing">'."\n";
 			if (! empty($formquestion['text'])) $more.='<tr><td colspan="2">'.$formquestion['text'].'</td></tr>'."\n";
 			foreach ($formquestion as $key => $input)
 			{
@@ -4117,52 +4125,52 @@ class Form
 
 					if ($input['type'] == 'text')
 					{
-						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>'.$input['label'].'</td><td class="left"><input type="text" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></td></tr>'."\n";
+						$more.='<div class="tagtr"><div class="tagtd'.(empty($input['tdclass'])?'':(' '.$input['tdclass'])).'">'.$input['label'].'</div><div class="tagtd"><input type="text" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></div></div>'."\n";
 					}
 					elseif ($input['type'] == 'password')
 					{
-						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>'.$input['label'].'</td><td class="left"><input type="password" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></td></tr>'."\n";
+						$more.='<div class="tagtr"><div class="tagtd'.(empty($input['tdclass'])?'':(' '.$input['tdclass'])).'">'.$input['label'].'</div><div class="tagtd"><input type="password" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></div></div>'."\n";
 					}
 					elseif ($input['type'] == 'select')
 					{
-						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>';
-						if (! empty($input['label'])) $more.=$input['label'].'</td><td class="tdtop left">';
+						$more.='<div class="tagtr"><div class="tagtd'.(empty($input['tdclass'])?'':(' '.$input['tdclass'])).'">';
+						if (! empty($input['label'])) $more.=$input['label'].'</div><div class="tagtd tdtop left">';
 						$more.=$this->selectarray($input['name'], $input['values'], $input['default'], 1, 0, 0, $moreattr, 0, 0, 0, '', $morecss);
-						$more.='</td></tr>'."\n";
+						$more.='</div></div>'."\n";
 					}
 					elseif ($input['type'] == 'checkbox')
 					{
-						$more.='<tr>';
-						$more.='<td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>'.$input['label'].' </td><td class="left">';
+						$more.='<div class="tagtr">';
+						$more.='<div class="tagtd'.(empty($input['tdclass'])?'':(' '.$input['tdclass'])).'">'.$input['label'].' </div><div class="tagtd">';
 						$more.='<input type="checkbox" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$moreattr;
 						if (! is_bool($input['value']) && $input['value'] != 'false' && $input['value'] != '0') $more.=' checked';
 						if (is_bool($input['value']) && $input['value']) $more.=' checked';
 						if (isset($input['disabled'])) $more.=' disabled';
-						$more.=' /></td>';
-						$more.='</tr>'."\n";
+						$more.=' /></div>';
+						$more.='</div>'."\n";
 					}
 					elseif ($input['type'] == 'radio')
 					{
 						$i=0;
 						foreach($input['values'] as $selkey => $selval)
 						{
-							$more.='<tr>';
-							if ($i==0) $more.='<td'.(empty($input['tdclass'])?' class="tdtop"':(' class="tdtop '.$input['tdclass'].'"')).'>'.$input['label'].'</td>';
-							else $more.='<td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>&nbsp;</td>';
-							$more.='<td><input type="radio" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"'.$moreattr;
+							$more.='<div class="tagtr">';
+							if ($i==0) $more.='<div class="tagtd'.(empty($input['tdclass'])?' tdtop':(' tdtop '.$input['tdclass'])).'">'.$input['label'].'</div>';
+							else $more.='<div clas="tagtd'.(empty($input['tdclass'])?'':(' "'.$input['tdclass'])).'">&nbsp;</div>';
+							$more.='<div class="tagtd"><input type="radio" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"'.$moreattr;
 							if ($input['disabled']) $more.=' disabled';
 							$more.=' /> ';
 							$more.=$selval;
-							$more.='</td></tr>'."\n";
+							$more.='</div></div>'."\n";
 							$i++;
 						}
 					}
 					elseif ($input['type'] == 'date')
 					{
-						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>'.$input['label'].'</td>';
-						$more.='<td class="left">';
+						$more.='<div class="tagtr"><div class="tagtd'.(empty($input['tdclass'])?'':(' '.$input['tdclass'])).'">'.$input['label'].'</div>';
+						$more.='<div class="tagtd">';
 						$more.=$this->selectDate($input['value'], $input['name'], 0, 0, 0, '', 1, 0);
-						$more.='</td></tr>'."\n";
+						$more.='</div></div>'."\n";
 						$formquestion[] = array('name'=>$input['name'].'day');
 						$formquestion[] = array('name'=>$input['name'].'month');
 						$formquestion[] = array('name'=>$input['name'].'year');
@@ -4171,21 +4179,21 @@ class Form
 					}
 					elseif ($input['type'] == 'other')
 					{
-						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>';
-						if (! empty($input['label'])) $more.=$input['label'].'</td><td class="left">';
+						$more.='<div class="tagtr"><div class="tagtd'.(empty($input['tdclass'])?'':(' '.$input['tdclass'])).'">';
+						if (! empty($input['label'])) $more.=$input['label'].'</div><div class="tagtd">';
 						$more.=$input['value'];
-						$more.='</td></tr>'."\n";
+						$more.='</div></div>'."\n";
 					}
 
 					elseif ($input['type'] == 'onecolumn')
 					{
-						$more.='<tr><td colspan="2" class="left">';
+						$more.='<div class="tagtr"><div class="tagtd">';
 						$more.=$input['value'];
-						$more.='</td></tr>'."\n";
+						$more.='</div></div>'."\n";
 					}
 				}
 			}
-			$more.='</table>'."\n";
+			$more.='</div>'."\n";
 		}
 
 		// JQUI method dialog is broken with jmobile, we use standard HTML.
@@ -5336,13 +5344,14 @@ class Form
 	 * 	@param 	int			$disabled		Disable input fields
 	 *  @param  int			$fullday        When a checkbox with this html name is on, hour and day are set with 00:00 or 23:59
 	 *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another selectDate field.
-	 *  @param  datetime    $adddateof      Add a link "Date of invoice" using the following date.
-     *  @param  string      $openinghours   Specify hour strat and hour end for the select ex 8,20
+	 *  @param  datetime    $adddateof      Add a link "Date of invoice" using the following date. See also $labeladddateof for the label used.
+     *  @param  string      $openinghours   Specify hour start and hour end for the select ex 8,20
      *  @param  int         $stepminutes    Specify step for minutes between 1 and 30
+     *  @param	string		$labeladddateof Label to use for the $adddateof parameter.
 	 * 	@return string                      Html for selectDate
 	 *  @see    form_date(), select_month(), select_year(), select_dayofweek()
 	 */
-    public function selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '', $openinghours = '', $stepminutes = 1)
+    public function selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '', $openinghours = '', $stepminutes = 1, $labeladddateof = '')
 	{
 		global $conf,$langs;
 
@@ -5729,7 +5738,8 @@ class Form
 		if ($conf->use_javascript_ajax && $adddateof)
 		{
 			$tmparray=dol_getdate($adddateof);
-			$retstring.=' - <button class="dpInvisibleButtons datenowlink" id="dateofinvoice" type="button" name="_dateofinvoice" value="now" onclick="jQuery(\'#re\').val(\''.dol_print_date($adddateof, 'day').'\');jQuery(\'#reday\').val(\''.$tmparray['mday'].'\');jQuery(\'#remonth\').val(\''.$tmparray['mon'].'\');jQuery(\'#reyear\').val(\''.$tmparray['year'].'\');">'.$langs->trans("DateInvoice").'</a>';
+			if (empty($labeladddateof)) $labeladddateof = $langs->trans("DateInvoice");
+			$retstring.=' - <button class="dpInvisibleButtons datenowlink" id="dateofinvoice" type="button" name="_dateofinvoice" value="now" onclick="jQuery(\'#re\').val(\''.dol_print_date($adddateof, 'day').'\');jQuery(\'#reday\').val(\''.$tmparray['mday'].'\');jQuery(\'#remonth\').val(\''.$tmparray['mon'].'\');jQuery(\'#reyear\').val(\''.$tmparray['year'].'\');">'.$labeladddateof.'</a>';
 		}
 
 		return $retstring;
@@ -5857,7 +5867,12 @@ class Form
 			if ($classname && class_exists($classname))
 			{
 				$objecttmp = new $classname($this->db);
-				$objecttmp->filter = $filter;
+				// Make some replacement
+				$sharedentities = getEntity(strtolower($classname));
+				$objecttmp->filter = str_replace(
+					array('__ENTITY__', '__SHARED_ENTITIES__', '__USER_ID__'),
+					array($conf->entity, $sharedentities, $user->id),
+					$filter);
 			}
 		}
 		if (! is_object($objecttmp))
@@ -5866,6 +5881,7 @@ class Form
 			return 'Error bad setup of type for field '.join(',', $InfoFieldList);
 		}
 
+		//var_dump($objecttmp->filter);
 		$prefixforautocompletemode=$objecttmp->element;
 		if ($prefixforautocompletemode == 'societe') $prefixforautocompletemode='company';
 		$confkeyforautocompletemode=strtoupper($prefixforautocompletemode).'_USE_SEARCH_TO_SELECT';	// For example COMPANY_USE_SEARCH_TO_SELECT

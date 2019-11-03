@@ -68,7 +68,7 @@ $childids = $user->getAllChildIds(1);
 
 // Security check
 $id=GETPOST("id", 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 
 
@@ -1506,7 +1506,7 @@ if ($action == 'create')
 		print '<tr>';
 		print '<td>'.$langs->trans("ModePaiement").'</td>';
 		print '<td>';
-		$form->select_types_paiements(2, 'fk_c_paiement');
+		$form->select_types_paiements('', 'fk_c_paiement');
 		print '</td>';
 		print '</tr>';
 	}
@@ -1521,7 +1521,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Private note
-	if (empty($user->societe_id)) {
+	if (empty($user->socid)) {
 		print '<tr>';
 		print '<td class="tdtop">' . $langs->trans('NotePrivate') . '</td>';
 		print '<td>';
@@ -1832,7 +1832,7 @@ else
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans("ModePaiement").'</td>';
-					print '<td>'.$object->libelle_paiement.'</td>';
+					print '<td>'.$object->fk_c_paiement.'</td>';
 					print '</tr>';
 				}
 

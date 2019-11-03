@@ -66,6 +66,9 @@ class SupplierProposal extends CommonObject
      */
     public $fk_element='fk_supplier_proposal';
 
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
     public $picto='propal';
 
     /**
@@ -158,8 +161,8 @@ class SupplierProposal extends CommonObject
     public $lines = array();
     public $line;
 
-    public $labelstatut=array();
-    public $labelstatut_short=array();
+    public $labelStatus=array();
+    public $labelStatusShort=array();
 
     public $nbtodo;
     public $nbtodolate;
@@ -1364,9 +1367,9 @@ class SupplierProposal extends CommonObject
 
                         $line->fk_product       = $objp->fk_product;
 
-                        $line->ref				= $objp->product_ref;		// TODO deprecated
+                        $line->ref				= $objp->product_ref;		// deprecated
                         $line->product_ref		= $objp->product_ref;
-                        $line->libelle			= $objp->product_label;		// TODO deprecated
+                        $line->libelle			= $objp->product_label;		// deprecated
                         $line->product_label	= $objp->product_label;
                         $line->product_desc     = $objp->product_desc; 		// Description produit
                         $line->fk_product_type  = $objp->fk_product_type;
@@ -1698,22 +1701,22 @@ class SupplierProposal extends CommonObject
      *	Close the askprice
      *
      *	@param      User	$user		Object user that close
-     *	@param      int		$statut		Statut
+     *	@param      int		$status		Status
      *	@param      string	$note		Comment
      *	@return     int         		<0 if KO, >0 if OK
      */
-    public function cloture($user, $statut, $note)
+    public function cloture($user, $status, $note)
     {
         global $langs,$conf;
 
-        $this->statut = $statut;
+        $this->statut = $status;
         $error=0;
         $now=dol_now();
 
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal";
-        $sql.= " SET fk_statut = ".$statut.", note_private = '".$this->db->escape($note)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
+        $sql.= " SET fk_statut = ".$status.", note_private = '".$this->db->escape($note)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
 
         $resql=$this->db->query($sql);
@@ -1722,7 +1725,7 @@ class SupplierProposal extends CommonObject
             $modelpdf=$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED?$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED:$this->modelpdf;
             $trigger_name='SUPPLIER_PROPOSAL_CLOSE_REFUSED';
 
-            if ($statut == 2)
+            if ($status == 2)
             {
                 $trigger_name='SUPPLIER_PROPOSAL_CLOSE_SIGNED';
                 $modelpdf=$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL?$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL:$this->modelpdf;
@@ -1732,7 +1735,7 @@ class SupplierProposal extends CommonObject
                     $result = $this->updateOrCreatePriceFournisseur($user);
                 }
             }
-            if ($statut == 4)
+            if ($status == 4)
             {
                 $trigger_name='SUPPLIER_PROPOSAL_CLASSIFY_BILLED';
             }
@@ -2196,20 +2199,20 @@ class SupplierProposal extends CommonObject
         // phpcs:enable
 
     	// Init/load array of translation of status
-    	if (empty($this->labelstatut) || empty($this->labelstatut_short))
+    	if (empty($this->labelStatus) || empty($this->labelStatusShort))
     	{
     		global $langs;
     		$langs->load("supplier_proposal");
-    		$this->labelstatut[self::STATUS_DRAFT]=$langs->trans("SupplierProposalStatusDraft");
-    		$this->labelstatut[self::STATUS_VALIDATED]=$langs->trans("SupplierProposalStatusValidated");
-    		$this->labelstatut[self::STATUS_SIGNED]=$langs->trans("SupplierProposalStatusSigned");
-    		$this->labelstatut[self::STATUS_NOTSIGNED]=$langs->trans("SupplierProposalStatusNotSigned");
-    		$this->labelstatut[self::STATUS_CLOSE]=$langs->trans("SupplierProposalStatusClosed");
-    		$this->labelstatut_short[self::STATUS_DRAFT]=$langs->trans("SupplierProposalStatusDraftShort");
-    		$this->labelstatut_short[self::STATUS_VALIDATED]=$langs->trans("Opened");
-    		$this->labelstatut_short[self::STATUS_SIGNED]=$langs->trans("SupplierProposalStatusSignedShort");
-    		$this->labelstatut_short[self::STATUS_NOTSIGNED]=$langs->trans("SupplierProposalStatusNotSignedShort");
-    		$this->labelstatut_short[self::STATUS_CLOSE]=$langs->trans("SupplierProposalStatusClosedShort");
+    		$this->labelStatus[self::STATUS_DRAFT]=$langs->trans("SupplierProposalStatusDraft");
+    		$this->labelStatus[self::STATUS_VALIDATED]=$langs->trans("SupplierProposalStatusValidated");
+    		$this->labelStatus[self::STATUS_SIGNED]=$langs->trans("SupplierProposalStatusSigned");
+    		$this->labelStatus[self::STATUS_NOTSIGNED]=$langs->trans("SupplierProposalStatusNotSigned");
+    		$this->labelStatus[self::STATUS_CLOSE]=$langs->trans("SupplierProposalStatusClosed");
+    		$this->labelStatusShort[self::STATUS_DRAFT]=$langs->trans("SupplierProposalStatusDraftShort");
+    		$this->labelStatusShort[self::STATUS_VALIDATED]=$langs->trans("Opened");
+    		$this->labelStatusShort[self::STATUS_SIGNED]=$langs->trans("SupplierProposalStatusSignedShort");
+    		$this->labelStatusShort[self::STATUS_NOTSIGNED]=$langs->trans("SupplierProposalStatusNotSignedShort");
+    		$this->labelStatusShort[self::STATUS_CLOSE]=$langs->trans("SupplierProposalStatusClosedShort");
     	}
 
     	$statusnew='';
@@ -2219,7 +2222,7 @@ class SupplierProposal extends CommonObject
     	elseif ($status==self::STATUS_NOTSIGNED) $statusnew='status5';
     	elseif ($status==self::STATUS_CLOSE) $statusnew='status6';
 
-    	return dolGetStatus($this->labelstatut[$status], $this->labelstatut_short[$status], '', $statusnew, $mode);
+    	return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusnew, $mode);
     }
 
 
@@ -2258,15 +2261,16 @@ class SupplierProposal extends CommonObject
         if ($resql)
         {
 			$label = $labelShort = '';
+			$status = '';
             if ($mode == 'opened') {
                 $delay_warning=$conf->supplier_proposal->cloture->warning_delay;
-                $statut = self::STATUS_VALIDATED;
+                $status = self::STATUS_VALIDATED;
                 $label = $langs->trans("SupplierProposalsToClose");
                 $labelShort = $langs->trans("ToAcceptRefuse");
             }
             if ($mode == 'signed') {
                 $delay_warning=$conf->supplier_proposal->facturation->warning_delay;
-                $statut = self::STATUS_SIGNED;
+                $status = self::STATUS_SIGNED;
                 $label = $langs->trans("SupplierProposalsToProcess");      // May be billed or ordered
 				$labelShort = $langs->trans("ToClose");
             }
@@ -2275,7 +2279,7 @@ class SupplierProposal extends CommonObject
             $response->warning_delay = $delay_warning/60/60/24;
             $response->label = $label;
             $response->labelShort = $labelShort;
-            $response->url = DOL_URL_ROOT.'/supplier_proposal/list.php?viewstatut='.$statut;
+            $response->url = DOL_URL_ROOT.'/supplier_proposal/list.php?viewstatut='.$status;
             $response->img = img_object('', "propal");
 
             // This assignment in condition is not a bug. It allows walking the results.

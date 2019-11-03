@@ -291,6 +291,11 @@ function product_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_supplier_extrafields.php';
+	$head[$h][1] = $langs->trans("ProductSupplierExtraFields");
+	$head[$h][2] = 'supplierAttributes';
+	$h++;
+
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'product_admin', 'remove');
 
 	return $head;

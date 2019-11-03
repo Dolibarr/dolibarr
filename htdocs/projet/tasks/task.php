@@ -48,7 +48,7 @@ $planned_workload=((GETPOST('planned_workloadhour', 'int')!='' || GETPOST('plann
 
 // Security check
 $socid=0;
-//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 if (! $user->rights->projet->lire) accessforbidden();
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context

@@ -35,7 +35,7 @@ $id		= GETPOST('id', 'int');
 $action	= GETPOST('action', 'alpha');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 $object = new Contact($db);
 
@@ -319,7 +319,7 @@ else
 if ($action != 'edit')
 {
     // Barre d'actions
-    if ($user->societe_id == 0)
+    if ($user->socid == 0)
     {
         print '<div class="tabsAction">';
 

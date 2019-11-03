@@ -396,16 +396,16 @@ class Inventory extends CommonObject
         // phpcs:enable
 		global $langs;
 
-		if (empty($this->labelstatus))
+		if (empty($this->labelStatus))
 		{
 			global $langs;
 			//$langs->load("mrp");
-			$this->labelstatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelstatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
-			$this->labelstatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
 		}
 
-		return dolGetStatus($this->labelstatus[$status], $this->labelstatus[$status], '', 'status'.$status, $mode);
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatus[$status], '', 'status'.$status, $mode);
 	}
 
 	/**

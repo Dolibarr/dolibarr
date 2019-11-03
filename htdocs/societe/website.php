@@ -47,7 +47,7 @@ $search_status=GETPOST('search_status');
 
 // Security check
 $id = GETPOST('id', 'int')?GETPOST('id', 'int'):GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -195,7 +195,7 @@ dol_fiche_head($head, 'website', $langs->trans("ThirdParty"), - 1, 'company');
 
 $linkback = '<a href="' . DOL_URL_ROOT . '/societe/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
-dol_banner_tab($object, 'socid', $linkback, ($user->societe_id ? 0 : 1), 'rowid', 'nom');
+dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
 print '<div class="fichecenter">';
 
@@ -426,14 +426,6 @@ $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $objectw
 print $hookmanager->resPrint;
 print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ')."\n";
 print '</tr>'."\n";
-
-
-// Detect if we need a fetch on each output line
-$needToFetchEachLine=0;
-foreach ($extrafields->attribute_computed as $key => $val)
-{
-	if (preg_match('/\$object/', $val)) $needToFetchEachLine++;  // There is at least one compute field that use $object
-}
 
 
 // Detect if we need a fetch on each output line

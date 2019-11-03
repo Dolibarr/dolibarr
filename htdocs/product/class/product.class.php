@@ -325,7 +325,12 @@ class Product extends CommonObject
     public $imgWidth;
     public $imgHeight;
 
+    /**
+     * @var integer|string date_creation
+     */
     public $date_creation;
+
+
     public $date_modification;
 
     //! Id du fournisseur
@@ -2087,14 +2092,17 @@ class Product extends CommonObject
         }
 
         $resql = $this->db->query($sql);
-        if ($resql ) {
+        if ($resql) {
+
+        	unset($this->oldcopy);
+
             if ($this->db->num_rows($resql) > 0) {
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id = $obj->rowid;
                 $this->ref                            = $obj->ref;
                 $this->ref_ext                        = $obj->ref_ext;
-                $this->label                        = $obj->label;
+                $this->label                          = $obj->label;
                 $this->description                    = $obj->description;
                 $this->url                            = $obj->url;
                 $this->note_private                    = $obj->note_private;
@@ -4380,17 +4388,17 @@ class Product extends CommonObject
     /**
      *    Return label of a given status
      *
-     * @param  int $status Statut
-     * @param  int $mode   0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-     * @param  int $type   0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
-     * @return string              Label of status
+     * @param  int 		$status 	Statut
+     * @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+     * @param  int 		$type   	0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
+     * @return string              	Label of status
      */
     public function LibStatut($status, $mode = 0, $type = 0)
     {
         // phpcs:enable
         global $conf, $langs;
 
-        $labelstatut = $labelstatutShort = '';
+        $labelStatus = $labelStatusShort = '';
 
         $langs->load('products');
         if (! empty($conf->productbatch->enabled)) { $langs->load("productbatch");
@@ -4420,51 +4428,50 @@ class Product extends CommonObject
 
         $statuttrans=empty($status)?'status5':'status4';
 
-        if($status == 0){
+        if ($status == 0) {
             // $type   0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
-            if($type==0){
-                $labelstatut = $langs->trans('ProductStatusNotOnSellShort');
-                $labelstatutShort = $langs->trans('ProductStatusNotOnSell');
+            if($type==0) {
+                $labelStatus = $langs->trans('ProductStatusNotOnSellShort');
+                $labelStatusShort = $langs->trans('ProductStatusNotOnSell');
             }
-            elseif($type == 1){
-                $labelstatut = $langs->trans('ProductStatusNotOnBuyShort');
-                $labelstatutShort = $langs->trans('ProductStatusNotOnBuy');
+            elseif($type == 1) {
+                $labelStatus = $langs->trans('ProductStatusNotOnBuyShort');
+                $labelStatusShort = $langs->trans('ProductStatusNotOnBuy');
             }
-            elseif($type == 2){
-                $labelstatut = $langs->trans('ProductStatusNotOnBatch');
-                $labelstatutShort = $langs->trans('ProductStatusNotOnBatchShort');
+            elseif($type == 2) {
+                $labelStatus = $langs->trans('ProductStatusNotOnBatch');
+                $labelStatusShort = $langs->trans('ProductStatusNotOnBatchShort');
             }
         }
-        elseif($status == 1){
+        elseif ($status == 1) {
             // $type   0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
-            if($type==0){
-                $labelstatut = $langs->trans('ProductStatusOnSellShort');
-                $labelstatutShort = $langs->trans('ProductStatusOnSell');
+            if ($type==0) {
+                $labelStatus = $langs->trans('ProductStatusOnSellShort');
+                $labelStatusShort = $langs->trans('ProductStatusOnSell');
             }
-            elseif($type == 1){
-                $labelstatut = $langs->trans('ProductStatusOnBuyShort');
-                $labelstatutShort = $langs->trans('ProductStatusOnBuy');
+            elseif ($type == 1) {
+                $labelStatus = $langs->trans('ProductStatusOnBuyShort');
+                $labelStatusShort = $langs->trans('ProductStatusOnBuy');
             }
-            elseif($type == 2){
-                $labelstatut = $langs->trans('ProductStatusOnBatch');
-                $labelstatutShort = $langs->trans('ProductStatusOnBatchShort');
+            elseif ($type == 2) {
+                $labelStatus = $langs->trans('ProductStatusOnBatch');
+                $labelStatusShort = $langs->trans('ProductStatusOnBatchShort');
             }
         }
 
 
-        if($mode>6){
+        if ($mode > 6) {
             return dolGetStatus($langs->trans('Unknown'), '', '', 'status0', 0);
-        }
-        else{
-            return dolGetStatus($labelstatut, $labelstatutShort, '', $statuttrans, $mode);
+        } else {
+            return dolGetStatus($labelStatus, $labelStatusShort, '', $statuttrans, $mode);
         }
     }
 
 
     /**
-     *  Retourne le libelle du finished du produit
+     *  Retour label of nature of product
      *
-     * @return string        Libelle
+     * @return string        Label
      */
     public function getLibFinished()
     {

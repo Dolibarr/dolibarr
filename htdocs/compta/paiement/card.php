@@ -44,7 +44,7 @@ $confirm=GETPOST('confirm', 'alpha');
 $backtopage=GETPOST('backtopage', 'alpha');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 // TODO ajouter regle pour restreindre acces paiement
 //$result = restrictedArea($user, 'facture', $id,'');
 
@@ -220,7 +220,7 @@ print $form->editfieldval("Date", 'datep', $object->date, $object, $user->rights
 print '</td></tr>';
 
 // Payment type (VIR, LIQ, ...)
-$labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$object->type_code)?$langs->trans("PaymentType".$object->type_code):$object->type_libelle;
+$labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$object->type_code)?$langs->trans("PaymentType".$object->type_code):$object->type_label;
 print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>'.$labeltype;
 print $object->num_paiement?' - '.$object->num_paiement:'';
 print '</td></tr>';
@@ -429,7 +429,7 @@ print '<div class="tabsAction">';
 
 if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 {
-	if ($user->societe_id == 0 && $object->statut == 0 && $_GET['action'] == '')
+	if ($user->socid == 0 && $object->statut == 0 && $_GET['action'] == '')
 	{
 		if ($user->rights->facture->paiement)
 		{
@@ -438,7 +438,7 @@ if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 	}
 }
 
-if ($user->societe_id == 0 && $action == '')
+if ($user->socid == 0 && $action == '')
 {
 	if ($user->rights->facture->paiement)
 	{

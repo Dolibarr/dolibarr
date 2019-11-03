@@ -90,9 +90,9 @@ if (! $sortorder) $sortorder="ASC";
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0)	// Protection if external user
+if ($user->socid > 0)	// Protection if external user
 {
-	//$socid = $user->societe_id;
+	//$socid = $user->socid;
 	accessforbidden();
 }
 //$result = restrictedArea($user, 'monmodule', $id, '');
@@ -322,7 +322,7 @@ $arrayofmassactions =  array(
 //'presend'=>$langs->trans("SendByMail"),
 //'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->monmodule->delete) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+//if ($user->rights->monmodule->delete) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -336,13 +336,9 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$newcardbutton='';
-//if ($user->rights->monmodule->creer)
-	//{
-$newcardbutton='<a class="butActionNew" href="cashcontrol_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']).'"><span class="valignmiddle text-plus-circle">'.$langs->trans('New').'</span>';
-$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-$newcardbutton.= '</a>';
-//}
+$permforcashfence = 1;
+
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_card?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permforcashfence);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'cash-register', 0, $newcardbutton, '', $limit);
 
@@ -389,12 +385,18 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 print '<tr class="liste_titre">';
 foreach($object->fields as $key => $val)
 {
-    $cssforfield='';
-    if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
-    if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
-    if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price'))) $cssforfield.=($cssforfield?' ':'').'right';
-    if ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
-	if (! empty($arrayfields['t.'.$key]['checked'])) print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'"><input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'"></td>';
+	$cssforfield=(empty($val['css'])?'':$val['css']);
+	if ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
+	elseif (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
+	elseif (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
+	elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $val['label'] != 'TechnicalID') $cssforfield.=($cssforfield?' ':'').'right';
+	if (! empty($arrayfields['t.'.$key]['checked']))
+	{
+		print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
+		if (is_array($val['arrayofkeyval'])) print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth75');
+		else print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
+		print '</td>';
+	}
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
@@ -416,15 +418,15 @@ print '</tr>'."\n";
 print '<tr class="liste_titre">';
 foreach($object->fields as $key => $val)
 {
-    $cssforfield='';
-    if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
-    if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
-    if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price'))) $cssforfield.=($cssforfield?' ':'').'right';
-    if ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
-    if (! empty($arrayfields['t.'.$key]['checked']))
-    {
-        print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield?'class="'.$cssforfield.'"':''), $sortfield, $sortorder, ($cssforfield?$cssforfield.' ':''))."\n";
-    }
+	$cssforfield=(empty($val['css'])?'':$val['css']);
+	if ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
+	elseif (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
+	elseif (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
+	elseif (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $val['label'] != 'TechnicalID') $cssforfield.=($cssforfield?' ':'').'right';
+	if (! empty($arrayfields['t.'.$key]['checked']))
+	{
+		print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($cssforfield?'class="'.$cssforfield.'"':''), $sortfield, $sortorder, ($cssforfield?$cssforfield.' ':''))."\n";
+	}
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -467,25 +469,21 @@ while ($i < min($num, $limit))
 	print '<tr class="oddeven">';
 	foreach($object->fields as $key => $val)
 	{
-	    $cssforfield='';
-	    if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
-	    elseif ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
+		$cssforfield=(empty($val['css'])?'':$val['css']);
+		if (in_array($val['type'], array('date','datetime','timestamp'))) $cssforfield.=($cssforfield?' ':'').'center';
+		elseif ($key == 'status') $cssforfield.=($cssforfield?' ':'').'center';
 
-	    if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
-	    elseif ($key == 'ref') $cssforfield.=($cssforfield?' ':'').'nowrap';
+		if (in_array($val['type'], array('timestamp'))) $cssforfield.=($cssforfield?' ':'').'nowrap';
+		elseif ($key == 'ref') $cssforfield.=($cssforfield?' ':'').'nowrap';
 
-	    if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price'))) $cssforfield.=($cssforfield?' ':'').'right';
+		if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $key != 'status') $cssforfield.=($cssforfield?' ':'').'right';
 
 		if (! empty($arrayfields['t.'.$key]['checked']))
 		{
-			print '<td';
-			if ($cssforfield || $val['css']) print ' class="';
-			print $cssforfield;
-			if ($cssforfield && $val['css']) print ' ';
-			print $val['css'];
-			if ($cssforfield || $val['css']) print '"';
-			print '>';
-			print $object->showOutputField($val, $key, $obj->$key, '');
+			print '<td'.($cssforfield ? ' class="'.$cssforfield.'"' : '').'>';
+			if ($key == 'status') print $object->getLibStatut(5);
+			elseif (in_array($val['type'], array('date','datetime','timestamp'))) print $object->showOutputField($val, $key, $db->jdate($obj->$key), '');
+			else print $object->showOutputField($val, $key, $obj->$key, '');
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 			if (! empty($val['isameasure']))

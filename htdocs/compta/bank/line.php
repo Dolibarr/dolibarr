@@ -53,7 +53,7 @@ $cancel=GETPOST('cancel', 'alpha');
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref :''));
 $fieldtype = (! empty($ref) ? 'ref' :'rowid');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, 'banque', $fieldvalue, 'bank_account', '', '', $fieldtype);
 if (! $user->rights->banque->lire && ! $user->rights->banque->consolidate) accessforbidden();
 

@@ -98,9 +98,9 @@ if (! $sortorder) $sortorder="ASC";
 // Security check
 if (empty($conf->mrp->enabled)) accessforbidden('Module not enabled');
 $socid=0;
-if ($user->societe_id > 0)	// Protection if external user
+if ($user->socid > 0)	// Protection if external user
 {
-	//$socid = $user->societe_id;
+	//$socid = $user->socid;
 	accessforbidden();
 }
 //$result = restrictedArea($user, 'mrp', $id, '');

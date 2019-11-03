@@ -565,7 +565,7 @@ class Invoices extends DolibarrApi
             throw new RestException(500);
         }
 
-         return array(
+        return array(
             'success' => array(
                 'code' => 200,
                 'message' => 'Invoice deleted'

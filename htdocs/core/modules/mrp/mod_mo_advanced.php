@@ -21,7 +21,7 @@
  */
 
 /**
- * \file       htdocs/core/modules/mrp/mod_mrp_advanced.php
+ * \file       htdocs/core/modules/mrp/mod_mo_advanced.php
  * \ingroup    mrp
  * \brief      File containing class for numbering model of MOs advanced
  */
@@ -30,9 +30,9 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/mrp/modules_mrp.php';
 
 
 /**
- *	Class to manage customer Bom numbering rules advanced
+ *	Class to manage MO numbering rules advanced
  */
-class mod_mrp_advanced extends ModeleNumRefMos
+class mod_mo_advanced extends ModeleNumRefMos
 {
 	/**
      * Dolibarr version of the loaded document
@@ -68,7 +68,7 @@ class mod_mrp_advanced extends ModeleNumRefMos
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		$texte.= '<input type="hidden" name="action" value="updateMask">';
-		$texte.= '<input type="hidden" name="maskconstBom" value="MRP_ADVANCED_MASK">';
+		$texte.= '<input type="hidden" name="maskconstBom" value="MRP_MO_ADVANCED_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
 		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Mo"), $langs->transnoentities("Mo"));
@@ -79,7 +79,7 @@ class mod_mrp_advanced extends ModeleNumRefMos
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskMo" value="'.$conf->global->MRP_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskMo" value="'.$conf->global->MRP_MO_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
 
 		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
@@ -129,7 +129,7 @@ class mod_mrp_advanced extends ModeleNumRefMos
 		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask=$conf->global->MRP_ADVANCED_MASK;
+		$mask=$conf->global->MRP_MO_ADVANCED_MASK;
 
 		if (! $mask)
 		{

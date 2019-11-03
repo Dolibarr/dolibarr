@@ -82,8 +82,8 @@ $hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (! empty(
 $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
 // Security check
-if (! empty($user->societe_id))
-	$socid = $user->societe_id;
+if (! empty($user->socid))
+	$socid = $user->socid;
 $result = restrictedArea($user, 'commande', $id);
 
 $object = new Commande($db);
@@ -1803,7 +1803,7 @@ if ($action == 'create' && $usercancreate)
 	print '</td></tr>';
 
 	// Note private
-	if (empty($user->societe_id)) {
+	if (empty($user->socid)) {
 		print '<tr>';
 		print '<td class="tdtop">' . $langs->trans('NotePrivate') . '</td>';
 		print '<td>';
@@ -2057,12 +2057,8 @@ if ($action == 'create' && $usercancreate)
 		if ($action == 'clone') {
 			// Create an array for form
 			$formquestion = array(
-								// 'text' => $langs->trans("ConfirmClone"),
-								// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' =>
-								// 1),
-								// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
-								// => 1),
-								array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=3)')));
+				array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=3)'))
+			);
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneOrder', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 		}
 
@@ -2291,25 +2287,28 @@ if ($action == 'create' && $usercancreate)
 			print '</td></tr>';
 
 			// Multicurrency rate
-			print '<tr>';
-			print '<td>';
-			$editenable = $usercancreate && $object->multicurrency_code && $object->multicurrency_code != $conf->currency && $object->statut == Commande::STATUS_DRAFT;
-			print $form->editfieldkey("CurrencyRate", 'multicurrencyrate', '', $object, $editenable);
-			print '</td><td>';
-			if ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') {
-				if($action == 'actualizemulticurrencyrate') {
-					list($object->fk_multicurrency, $object->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($object->db, $object->multicurrency_code);
+			if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1)
+			{
+				print '<tr>';
+				print '<td>';
+				$editenable = $usercancreate && $object->multicurrency_code && $object->multicurrency_code != $conf->currency && $object->statut == $object::STATUS_DRAFT;
+				print $form->editfieldkey("CurrencyRate", 'multicurrencyrate', '', $object, $editenable);
+				print '</td><td>';
+				if ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') {
+					if($action == 'actualizemulticurrencyrate') {
+						list($object->fk_multicurrency, $object->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($object->db, $object->multicurrency_code);
+					}
+					$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx', $object->multicurrency_code);
+				} else {
+					$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
+					if($object->statut == $object::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
+						print '<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=actualizemulticurrencyrate">'.$langs->trans("ActualizeCurrency").'</a>';
+						print '</div>';
+					}
 				}
-				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx', $object->multicurrency_code);
-			} else {
-				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
-				if($object->statut == $object::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
-					print '<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=actualizemulticurrencyrate">'.$langs->trans("ActualizeCurrency").'</a>';
-					print '</div>';
-				}
+				print '</td></tr>';
 			}
-			print '</td></tr>';
 		}
 
 		// Delivery delay

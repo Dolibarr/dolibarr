@@ -39,8 +39,8 @@ $element=GETPOST('element', 'alpha');
 $object = new GenericObject($db);
 
 // Security check
-if (! empty($user->societe_id))
-	$socid = $user->societe_id;
+if (! empty($user->socid))
+	$socid = $user->socid;
 
 
 

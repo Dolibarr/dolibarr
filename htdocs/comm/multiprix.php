@@ -33,9 +33,9 @@ $langs->loadLangs(array('orders', 'companies'));
 $id = GETPOST('id', 'int');
 $_socid = GETPOST("id", 'int');
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
-	$_socid = $user->societe_id;
+	$_socid = $user->socid;
 }
 
 

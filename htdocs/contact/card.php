@@ -76,7 +76,7 @@ if (! empty($canvas))
 }
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -181,7 +181,7 @@ if (empty($reshook))
         $object->socid			= GETPOST("socid", 'int');
         $object->lastname		= GETPOST("lastname", 'alpha');
         $object->firstname		= GETPOST("firstname", 'alpha');
-		$object->civility_id	= GETPOST("civility_id", 'alpha');
+		$object->civility_code	= GETPOST("civility_code", 'alpha');
         $object->poste			= GETPOST("poste", 'alpha');
         $object->address		= GETPOST("address", 'alpha');
         $object->zip			= GETPOST("zipcode", 'alpha');
@@ -377,7 +377,7 @@ if (empty($reshook))
             $object->socid			= GETPOST("socid", 'int');
             $object->lastname		= GETPOST("lastname", 'alpha');
             $object->firstname		= GETPOST("firstname", 'alpha');
-            $object->civility_id	= GETPOST("civility_id", 'alpha');
+            $object->civility_code	= GETPOST("civility_code", 'alpha');
             $object->poste			= GETPOST("poste", 'alpha');
 
             $object->address		= GETPOST("address", 'alpha');
@@ -638,8 +638,8 @@ else
             }
 
             // Civility
-            print '<tr><td><label for="civility_id">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
-            print $formcompany->select_civility(GETPOST("civility", 'alpha')?GETPOST("civility", 'alpha'):$object->civility_code);
+            print '<tr><td><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
+            print $formcompany->select_civility(GETPOSTISSET("civility_code")?GETPOST("civility_code", 'alpha'):$object->civility_code, 'civility_code');
             print '</td></tr>';
 
             print '<tr><td><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';
@@ -962,8 +962,8 @@ else
             }
 
             // Civility
-            print '<tr><td><label for="civility_id">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
-            print $formcompany->select_civility(isset($_POST["civility"])?GETPOST("civility"):$object->civility_code);
+            print '<tr><td><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
+            print $formcompany->select_civility(GETPOSTISSET("civility_code")?GETPOST("civility", "aZ09"):$object->civility_code, 'civility_code');
             print '</td></tr>';
 
             print '<tr><td><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';

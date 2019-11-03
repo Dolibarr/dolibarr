@@ -44,25 +44,19 @@ class Entrepot extends CommonObject
 	 */
 	public $table_element='entrepot';
 
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto='stock';
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	/**
-	 * Warehouse closed, inactive
+	 * @var string	Label
+	 * @deprecated
 	 */
-	const STATUS_CLOSED = 0;
-
-	/**
-	 * Warehouse open and operations for customer shipping, supplier dispatch, internal stock transfers/corrections allowed.
-	 */
-	const STATUS_OPEN_ALL = 1;
-
-	/**
-	 * Warehouse open and operations for stock transfers/corrections allowed (not for customer shipping and supplier dispatch).
-	 */
-	const STATUS_OPEN_INTERNAL = 2;
-
 	public $libelle;
+
+	public $label;
 
 	/**
 	 * @var string description
@@ -117,6 +111,21 @@ class Entrepot extends CommonObject
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>500),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>501),
 	);
+
+	/**
+	 * Warehouse closed, inactive
+	 */
+	const STATUS_CLOSED = 0;
+
+	/**
+	 * Warehouse open and operations for customer shipping, supplier dispatch, internal stock transfers/corrections allowed.
+	 */
+	const STATUS_OPEN_ALL = 1;
+
+	/**
+	 * Warehouse open and operations for stock transfers/corrections allowed (not for customer shipping and supplier dispatch).
+	 */
+	const STATUS_OPEN_INTERNAL = 2;
 
 
 	/**
@@ -443,7 +452,7 @@ class Entrepot extends CommonObject
 				$this->id             = $obj->rowid;
 				$this->fk_parent      = $obj->fk_parent;
 				$this->ref            = $obj->label;
-				$this->label          = $obj->label;			// deprecated
+				$this->label          = $obj->label;
 				$this->libelle        = $obj->label;            // deprecated
 				$this->description    = $obj->description;
 				$this->statut         = $obj->statut;

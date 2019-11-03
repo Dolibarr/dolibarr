@@ -160,7 +160,7 @@ class Fichinter extends CommonObject
 		$sql = "SELECT count(fi.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter as fi";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON fi.fk_soc = s.rowid";
-		if (!$user->rights->societe->client->voir && !$user->societe_id)
+		if (!$user->rights->societe->client->voir && !$user->socid)
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;
@@ -1317,7 +1317,7 @@ class Fichinter extends CommonObject
         // phpcs:enable
 		$this->lines = array();
 
-		$sql = 'SELECT rowid, description, duree, date, rang';
+		$sql = 'SELECT rowid, fk_fichinter, description, duree, date, rang';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet';
 		$sql.=' WHERE fk_fichinter = '.$this->id .' ORDER BY rang ASC, date ASC' ;
 
@@ -1333,6 +1333,7 @@ class Fichinter extends CommonObject
 
 				$line = new FichinterLigne($this->db);
 				$line->id = $objp->rowid;
+				$line->fk_fichinter = $objp->fk_fichinter;
 				$line->desc = $objp->description;
 				$line->duration = $objp->duree;
 				//For invoicing we calculing hours

@@ -260,6 +260,9 @@ if ($action == "addline")
 	$prod = new Product($db);
     $prod->fetch($idproduct);
 
+	$customer = new Societe($db);
+	$customer->fetch($invoice->socid);
+
     $price = $prod->price;
     $tva_tx = $prod->tva_tx;
     $price_ttc = $prod->price_ttc;
@@ -267,16 +270,13 @@ if ($action == "addline")
 
     if (! empty($conf->global->PRODUIT_MULTIPRICES))
     {
-    	$customer = new Societe($db);
-    	$customer->fetch($invoice->socid);
-
     	$price = $prod->multiprices[$customer->price_level];
     	$tva_tx = $prod->multiprices_tva_tx[$customer->price_level];
     	$price_ttc = $prod->multiprices_ttc[$customer->price_level];
     	$price_base_type = $prod->multiprices_base_type[$customer->price_level];
     }
 
-    $idoflineadded = $invoice->addline($prod->description, $price, 1, $tva_tx, $prod->localtax1_tx, $prod->localtax2_tx, $idproduct, $prod->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', null, 0);
+    $idoflineadded = $invoice->addline($prod->description, $price, 1, $tva_tx, $prod->localtax1_tx, $prod->localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', null, 0);
     $invoice->fetch($placeid);
 }
 

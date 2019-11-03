@@ -63,6 +63,9 @@ class FactureFournisseur extends CommonInvoice
      */
     public $fk_element='fk_facture_fourn';
 
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
     public $picto='bill';
 
     /**
@@ -637,6 +640,7 @@ class FactureFournisseur extends CommonInvoice
                 $this->libelle				= $obj->label;		// deprecated
                 $this->label				= $obj->label;
                 $this->paye					= $obj->paye;
+                $this->paid					= $obj->paye;
                 $this->amount				= $obj->amount;
                 $this->remise				= $obj->remise;
                 $this->close_code			= $obj->close_code;
@@ -2187,12 +2191,12 @@ class FactureFournisseur extends CommonInvoice
 
         $sql = 'SELECT ff.rowid, ff.date_lim_reglement as datefin, ff.fk_statut';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as ff';
-        if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql.= ' WHERE ff.paye=0';
         $sql.= ' AND ff.fk_statut > 0';
         $sql.= " AND ff.entity = ".$conf->entity;
-        if ($user->societe_id) $sql.=' AND ff.fk_soc = '.$user->societe_id;
-        if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND ff.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
+        if ($user->socid) $sql.=' AND ff.fk_soc = '.$user->socid;
+        if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND ff.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -2490,7 +2494,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql = "SELECT count(f.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
-		if (!$user->rights->societe->client->voir && !$user->societe_id)
+		if (!$user->rights->societe->client->voir && !$user->socid)
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;

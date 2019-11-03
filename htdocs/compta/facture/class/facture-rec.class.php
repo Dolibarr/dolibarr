@@ -896,7 +896,7 @@ class FactureRec extends CommonInvoice
 	 *  @param		int			$date_start_fill	1=Flag to fill start date when generating invoice
 	 *  @param		int			$date_end_fill		1=Flag to fill end date when generating invoice
 	 * 	@param		int			$fk_fournprice		Id of origin supplier price
-	 * 	@param		int			$pa_ht				Price (without tax) of product when it was bought
+	 * 	@param		int			$pa_ht				Price (without tax) of product for margin calculation
 	 *	@return    	int             				<0 if KO, Id of line if OK
 	 */
 	public function updateline($rowid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = '', $pu_ttc = 0, $type = 0, $rang = -1, $special_code = 0, $label = '', $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $date_start_fill = 0, $date_end_fill = 0, $fk_fournprice = null, $pa_ht = 0)
@@ -920,8 +920,9 @@ class FactureRec extends CommonInvoice
 	        $remise_percent=price2num($remise_percent);
 	        $qty=price2num($qty);
 	        if (empty($info_bits)) $info_bits=0;
-	        $pu_ht=price2num($pu_ht);
-	        $pu_ttc=price2num($pu_ttc);
+	        $pu_ht          = price2num($pu_ht);
+	        $pu_ttc         = price2num($pu_ttc);
+	        $pu_ht_devise	= price2num($pu_ht_devise);
 	        $txtva=price2num($txtva);
 		    $txlocaltax1	= price2num($txlocaltax1);
 		    $txlocaltax2	= price2num($txlocaltax2);
@@ -1258,7 +1259,7 @@ class FactureRec extends CommonInvoice
 			}
 		}
 
-        $url = DOL_URL_ROOT.'/compta/facture/fiche-rec.php?facid='.$this->id;
+        $url = DOL_URL_ROOT.'/compta/facture/card-rec.php?facid='.$this->id;
 
         if ($short) return $url;
 

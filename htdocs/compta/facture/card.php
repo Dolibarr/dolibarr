@@ -130,7 +130,7 @@ $permissiontoadd = $usercancreate; // Used by the include of actions_addupdatede
 
 // Security check
 $fieldid = (! empty($ref) ? 'ref' : 'rowid');
-if ($user->societe_id) $socid = $user->societe_id;
+if ($user->socid) $socid = $user->socid;
 $isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid, $isdraft);
 
@@ -2579,7 +2579,6 @@ $title = $langs->trans('InvoiceCustomer') . " - " . $langs->trans('Card');
 $helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
 llxHeader('', $title, $helpurl);
 
-
 // Mode creation
 
 if ($action == 'create')
@@ -2600,18 +2599,19 @@ if ($action == 'create')
 	{
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
+		$regs = array();
 		if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
-			$element = $regs [1];
-			$subelement = $regs [2];
+			$element = $reg[1];
+			$subelement = $regs[2];
 		}
 
 		if ($element == 'project') {
 			$projectid = $originid;
 
-			if (!$cond_reglement_id) {
+			if (empty($cond_reglement_id)) {
 				$cond_reglement_id = $soc->cond_reglement_id;
 			}
-			if (!$mode_reglement_id) {
+			if (empty($mode_reglement_id)) {
 				$mode_reglement_id = $soc->mode_reglement_id;
 			}
 			if (!$remise_percent) {
@@ -2754,7 +2754,7 @@ if ($action == 'create')
 
 	// Thirdparty
 	print '<td class="fieldrequired">' . $langs->trans('Customer') . '</td>';
-	if ($soc->id > 0 && ! GETPOST('fac_rec', 'alpha'))
+	if ($soc->id > 0 && ! GETPOST('fac_rec', 'int'))
 	{
 		print '<td colspan="2">';
 		print $soc->getNomUrl(1);
@@ -2797,7 +2797,7 @@ if ($action == 'create')
 
 	$exampletemplateinvoice=new FactureRec($db);
 
-	// Overwrite value if creation of invoice is from a predefined invoice
+	// Overwrite some values if creation of invoice is from a predefined invoice
 	if (empty($origin) && empty($originid) && GETPOST('fac_rec', 'int') > 0)
 	{
 		$invoice_predefined = new FactureRec($db);
@@ -2810,6 +2810,9 @@ if ($action == 'create')
 		$fk_account = $invoice_predefined->fk_account;
 		$note_public = $invoice_predefined->note_public;
 		$note_private = $invoice_predefined->note_private;
+
+		if (! empty($invoice_predefined->multicurrency_code)) $currency_code = $invoice_predefined->multicurrency_code;
+		if (! empty($invoice_predefined->multicurrency_tx)) $currency_tx = $invoice_predefined->multicurrency_tx;
 
 		$sql = 'SELECT r.rowid, r.titre as title, r.total_ttc';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'facture_rec as r';
@@ -2833,7 +2836,7 @@ if ($action == 'create')
 					if (GETPOST('fac_rec') == $objp->rowid)
 					{
 						print ' selected';
-						$exampletemplateinvoice->fetch(GETPOST('fac_rec'));
+						$exampletemplateinvoice->fetch(GETPOST('fac_rec', 'int'));
 					}
 					print '>' . $objp->title . ' (' . price($objp->total_ttc) . ' ' . $langs->trans("TTC") . ')</option>';
 					$i ++;
@@ -2921,12 +2924,17 @@ if ($action == 'create')
 
 			// Next situation invoice
 			$opt = $form->selectSituationInvoices(GETPOST('originid'), $socid);
+
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 			$tmp='<input type="radio" name="type" value="5"' . (GETPOST('type') == 5 && GETPOST('originid') ? ' checked' : '');
-			if ($opt == ('<option value ="0" selected>' . $langs->trans('NoSituations') . '</option>') || (GETPOST('origin') && GETPOST('origin') != 'facture' && GETPOST('origin') != 'commande')) $tmp.=' disabled';
+			if ($opt == ('<option value ="0" selected>' . $langs->trans('NoSituations') . '</option>') || (GETPOST('origin') && GETPOST('origin') != 'facture' && GETPOST('origin') != 'commande'))
+				$tmp.=' disabled';
 			$tmp.= '> ';
 			$text = '<label>'.$tmp.$langs->trans("InvoiceSituationAsk") . '</label> ';
-			$text .= '<select class="flat" id="situations" name="situations">';
+			$text .= '<select class="flat" id="situations" name="situations"';
+			if ($opt == ('<option value ="0" selected>' . $langs->trans('NoSituations') . '</option>') || (GETPOST('origin') && GETPOST('origin') != 'facture' && GETPOST('origin') != 'commande'))
+				$text .= ' disabled';
+			$text .='>';
 			$text .= $opt;
 			$text .= '</select>';
 			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceSituationDesc"), 1, 'help', '', 0, 3);
@@ -3334,7 +3342,7 @@ if ($action == 'create')
 	print $doleditor->Create(1);
 
 	// Private note
-	if (empty($user->societe_id))
+	if (empty($user->socid))
 	{
 		print '<tr>';
 		print '<td class="tdtop">';
@@ -3460,7 +3468,7 @@ elseif ($id > 0 || ! empty($ref))
 	// fetch optionals attributes and labels
 	$extrafields->fetch_name_optionals_label($object->table_element);
 
-	if ($user->societe_id > 0 && $user->societe_id != $object->socid)
+	if ($user->socid > 0 && $user->socid != $object->socid)
 	{
 		accessforbidden('', 0, 1);
 	}
@@ -4030,29 +4038,33 @@ elseif ($id > 0 || ! empty($ref))
 		$form->form_multicurrency_code($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_code, $htmlname);
 		print '</td></tr>';
 
-		print '<tr>';
-		print '<td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
-		print '</td>';
-		if ($usercancreate && $action != 'editmulticurrencyrate' && ! empty($object->brouillon) && $object->multicurrency_code && $object->multicurrency_code != $conf->currency)
-			print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
-		print '</tr></table>';
-		print '</td><td>';
-		if ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') {
-			if($action == 'actualizemulticurrencyrate') {
-				list($object->fk_multicurrency, $object->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($object->db, $object->multicurrency_code);
+		// Multicurrency rate
+		if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1)
+		{
+			print '<tr>';
+			print '<td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
+			print '</td>';
+			if ($usercancreate && $action != 'editmulticurrencyrate' && ! empty($object->brouillon) && $object->multicurrency_code && $object->multicurrency_code != $conf->currency)
+				print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
+			print '</tr></table>';
+			print '</td><td>';
+			if ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') {
+				if($action == 'actualizemulticurrencyrate') {
+					list($object->fk_multicurrency, $object->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($object->db, $object->multicurrency_code);
+				}
+				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, ($usercancreate?'multicurrency_tx':'none'), $object->multicurrency_code);
+			} else {
+				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
+				if($object->statut == $object::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
+					print '<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=actualizemulticurrencyrate">'.$langs->trans("ActualizeCurrency").'</a>';
+					print '</div>';
+				}
 			}
-			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, ($usercancreate?'multicurrency_tx':'none'), $object->multicurrency_code);
-		} else {
-			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
-			if($object->statut == $object::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
-				print '<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=actualizemulticurrencyrate">'.$langs->trans("ActualizeCurrency").'</a>';
-				print '</div>';
-			}
+			print '</td></tr>';
 		}
-		print '</td></tr>';
 	}
 
 	// Bank Account
@@ -4099,7 +4111,7 @@ elseif ($id > 0 || ! empty($ref))
 	}
 
 	$displayWarranty = false;
-	if( ( $object->type == Facture::TYPE_SITUATION && (!empty($object->retained_warranty) || !empty($conf->global->INVOICE_USE_SITUATION_RETAINED_WARRANTY)) ) )
+	if (($object->type == Facture::TYPE_SITUATION && (!empty($object->retained_warranty) || !empty($conf->global->INVOICE_USE_SITUATION_RETAINED_WARRANTY))))
 	{
 	    // Check if this situation invoice is 100% for real
 	    if(!empty($object->situation_final) &&  !empty($object->lines)){
@@ -4179,9 +4191,7 @@ elseif ($id > 0 || ! empty($ref))
         print '</td></tr>';
 
 
-
-
-        if($displayWarranty)
+        if ($displayWarranty)
         {
             // Retained Warranty payment date limit
             print '<tr class="retained-warranty-lines"  ><td>';
@@ -4547,7 +4557,7 @@ elseif ($id > 0 || ! empty($ref))
 				}
 				print '<td class="right">' . price($sign * $objp->amount) . '</td>';
 				print '<td align="center">';
-				if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $user->societe_id == 0)
+				if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $user->socid == 0)
 				{
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletepaiement&paiement_id='.$objp->rowid.'">';
 					print img_delete();
@@ -5024,7 +5034,7 @@ elseif ($id > 0 || ! empty($ref))
 			{
 				if (! $objectidnext && count($object->lines) > 0)
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/fiche-rec.php?facid=' . $object->id . '&amp;action=create">' . $langs->trans("ChangeIntoRepeatableInvoice") . '</a>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card-rec.php?facid=' . $object->id . '&amp;action=create">' . $langs->trans("ChangeIntoRepeatableInvoice") . '</a>';
 				}
 			}
 

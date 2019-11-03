@@ -100,16 +100,16 @@ if (empty($action) && empty($id) && empty($ref)) $action='view';
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once.
 
 // Security check - Protection if external user
-//if ($user->societe_id > 0) access_forbidden();
-//if ($user->societe_id > 0) $socid = $user->societe_id;
+//if ($user->socid > 0) access_forbidden();
+//if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->statut == MyObject::STATUS_DRAFT) ? 1 : 0);
 //$result = restrictedArea($user, 'mymodule', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
-$permissionnote = $user->rights->mymodule->write;		// Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->mymodule->write;	// Used by the include of actions_dellink.inc.php
-$permissionedit = $user->rights->mymodule->write; 		// Used by the include of actions_lineupdown.inc.php
-$permissiontoadd = $user->rights->mymodule->write; 		// Used by the include of actions_addupdatedelete.inc.php
-$permissiontodelete = $user->rights->mymodule->delete || ($permissiontoadd && $object->status == 0);
+$permissionnote = $user->rights->mymodule->myobject->write;		// Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->rights->mymodule->myobject->write;	// Used by the include of actions_dellink.inc.php
+$permissionedit = $user->rights->mymodule->myobject->write; 		// Used by the include of actions_lineupdown.inc.php
+$permissiontoadd = $user->rights->mymodule->myobject->write; 		// Used by the include of actions_addupdatedelete.inc.php
+$permissiontodelete = $user->rights->mymodule->myobject->delete || ($permissiontoadd && $object->status == 0);
 
 
 
@@ -319,8 +319,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$morehtmlref='<div class="refidno">';
 	/*
 	// Ref bis
-	$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->mymodule->creer, 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->mymodule->creer, 'string', '', null, null, '', 1);
+	$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->mymodule->myobject->creer, 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->mymodule->myobject->creer, 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	// Project
@@ -328,7 +328,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	{
 	    $langs->load("projects");
 	    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-	    if ($user->rights->mymodule->write)
+	    if ($permissiontoadd)
 	    {
 	        if ($action != 'classify')
 	            $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
@@ -451,13 +451,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
             print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
 
             // Back to draft
-            if (! empty($user->rights->mymodule->write) && $object->status == BOM::STATUS_VALIDATED)
+            if (! empty($user->rights->mymodule->myobject->write) && $object->status == BOM::STATUS_VALIDATED)
             {
             	print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=setdraft">' . $langs->trans("SetToDraft") . '</a>';
             }
 
             // Modify
-            if (! empty($user->rights->mymodule->write))
+            if (! empty($user->rights->mymodule->myobject->write))
     		{
     			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
     		}
@@ -467,13 +467,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		}
 
     		// Clone
-    		if (! empty($user->rights->mymodule->write))
+    		if (! empty($user->rights->mymodule->myobject->write))
     		{
     			print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=order">' . $langs->trans("ToClone") . '</a>'."\n";
     		}
 
     		/*
-    		if ($user->rights->mymodule->write)
+    		if ($user->rights->mymodule->myobject->write)
     		{
     			if ($object->status == 1)
     		 	{
@@ -487,7 +487,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		*/
 
     		// Delete (need delete permission, or if draft, just need create/modify permission)
-    		if (! empty($user->rights->mymodule->delete) || (! empty($object->fields['status']) && $object->status == $object::STATUS_DRAFT && ! empty($user->rights->mymodule->write)))
+    		if (! empty($user->rights->mymodule->myobject->delete) || (! empty($object->fields['status']) && $object->status == $object::STATUS_DRAFT && ! empty($user->rights->mymodule->myobject->write)))
     		{
     			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>'."\n";
     		}
@@ -512,11 +512,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	    // Documents
 	    /*$objref = dol_sanitizeFileName($object->ref);
-	    $relativepath = $comref . '/' . $comref . '.pdf';
+	    $relativepath = $objref . '/' . $objref . '.pdf';
 	    $filedir = $conf->mymodule->dir_output . '/' . $objref;
 	    $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-	    $genallowed = $user->rights->mymodule->read;	// If you can read, you can build the PDF to read content
-	    $delallowed = $user->rights->mymodule->create;	// If you can create/edit, you can remove a file on card
+	    $genallowed = $user->rights->mymodule->myobject->read;	// If you can read, you can build the PDF to read content
+	    $delallowed = $user->rights->mymodule->myobject->create;	// If you can create/edit, you can remove a file on card
 	    print $formfile->showdocuments('mymodule', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 		*/
 
@@ -536,23 +536,23 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    // List of actions on element
 	    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 	    $formactions = new FormActions($db);
-	    $somethingshown = $formactions->showactions($object, 'myobject', $socid, 1, '', $MAXEVENT, '', $morehtmlright);
+	    $somethingshown = $formactions->showactions($object, 'myobject', (is_object($object->thirdparty)?$object->thirdparty->id:0), 1, '', $MAXEVENT, '', $morehtmlright);
 
 	    print '</div></div></div>';
 	}
 
 	//Select mail models is same action as presend
 	/*
-	 if (GETPOST('modelselected')) $action = 'presend';
+	if (GETPOST('modelselected')) $action = 'presend';
 
-	 // Presend form
-	 $modelmail='inventory';
-	 $defaulttopic='InformationMessage';
-	 $diroutput = $conf->product->dir_output.'/inventory';
-	 $trackid = 'stockinv'.$object->id;
+	// Presend form
+	$modelmail='myobject';
+	$defaulttopic='InformationMessage';
+	$diroutput = $conf->mymodule->dir_output;
+	$trackid = 'myobject'.$object->id;
 
-	 include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
-	 */
+	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
+	*/
 }
 
 // End of page

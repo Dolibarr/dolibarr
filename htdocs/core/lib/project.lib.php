@@ -670,8 +670,9 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
         if ($total_projectlinesa_planned) {
             $totalAverageDeclaredProgress = round(100 * $total_projectlinesa_declared_if_planned / $total_projectlinesa_planned, 2);
             $totalCalculatedProgress = round(100 * $total_projectlinesa_spent / $total_projectlinesa_planned, 2);
-            // this conf is actually hidden, by default we use 1% for "be carefull or warning"
-            $warningRatio = !empty($conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT) ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.01;
+
+            // this conf is actually hidden, by default we use 10% for "be carefull or warning"
+            $warningRatio = !empty($conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT) ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.10;
 
             // define progress color according to time spend vs workload
             $progressBarClass = 'progress-bar-info';
@@ -1748,12 +1749,12 @@ function searchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
  * @param   int		$socid				Id thirdparty
  * @param   int		$projectsListId     Id of project I have permission on
  * @param   int		$mytasks            Limited to task I am contact to
- * @param	int		$statut				-1=No filter on statut, 0 or 1 = Filter on status
+ * @param	int		$status				-1=No filter on statut, 0 or 1 = Filter on status
  * @param	array	$listofoppstatus	List of opportunity status
  * @param   array   $hiddenfields       List of info to not show ('projectlabel', 'declaredprogress', '...', )
  * @return	void
  */
-function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks = 0, $statut = -1, $listofoppstatus = array(), $hiddenfields = array())
+function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks = 0, $status = -1, $listofoppstatus = array(), $hiddenfields = array())
 {
 	global $langs,$conf,$user,$bc;
 
@@ -1767,7 +1768,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	$project_year_filter=0;
 
 	$title=$langs->trans("Projects");
-	if (strcmp($statut, '') && $statut >= 0) $title=$langs->trans("Projects").' '.$langs->trans($projectstatic->statuts_long[$statut]);
+	if (strcmp($status, '') && $status >= 0) $title=$langs->trans("Projects").' '.$langs->trans($projectstatic->statuts_long[$status]);
 
 	$arrayidtypeofcontact=array();
 
@@ -1796,9 +1797,9 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		$sql.= " AND ec.fk_c_type_contact = ctc.rowid";   // Replace the 2 lines with ec.fk_c_type_contact in $arrayidtypeofcontact
 		$sql.= " AND ctc.element = 'project_task'";
 	}
-	if ($statut >= 0)
+	if ($status >= 0)
 	{
-		$sql.= " AND p.fk_statut = ".$statut;
+		$sql.= " AND p.fk_statut = ".(int) $status;
 	}
 	if (!empty($conf->global->PROJECT_LIMIT_YEAR_RANGE))
 	{
@@ -1995,6 +1996,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
  * @param   hideOnProgressNull  $hideOnProgressNull bool            hide if progress is null
  * @param   spaced              $spaced             bool            used to add space at bottom (made by css)
  * @return string
+ * @see getTaskProgressBadge()
  */
 function getTaskProgressView($task, $label = true, $progressNumber = true, $hideOnProgressNull = false, $spaced = false)
 {
@@ -2020,26 +2022,27 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
     if ($task->planned_workload){
         $progressCalculated =  round(100 * doubleval($task->duration_effective) / doubleval($task->planned_workload), 2);
 
-        // this conf is actually hidden, by default we use 1% for "be carefull or warning"
-        $warningRatio = !empty($conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT) ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.01;
+        // this conf is actually hidden, by default we use 10% for "be carefull or warning"
+        $warningRatio = !empty($conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT) ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.10;
 
-        $diffTitle = '<br/>'.$langs->trans('ProgressDeclared').' : '.$task->progress.'%';
-        $diffTitle.= '<br/>'.$langs->trans('ProgressCalculated').' : '.$progressCalculated.'%';
+        $diffTitle = '<br/>'.$langs->trans('ProgressDeclared').' : '.$task->progress.($task->progress ? '%' : '');
+        $diffTitle.= '<br/>'.$langs->trans('ProgressCalculated').' : '.$progressCalculated.($progressCalculated ? '%' : '');
 
-        if($progressCalculated > doubleval($task->progress)){
+        //var_dump($progressCalculated.' '.$warningRatio.' '.$task->progress.' '.doubleval($task->progress * $warningRatio));
+        if (doubleval($progressCalculated) > doubleval($task->progress * $warningRatio)) {
             $progressBarClass = 'progress-bar-danger';
-            $title = $langs->trans('TheReportedProgressIsLessThanTheCalculatedProgressionByX', abs($task->progress-$progressCalculated).'%');
-            $diff = '<span class="text-danger classfortooltip"" title="'.dol_htmlentities($title.$diffTitle).'" ><i class="fa fa-caret-down"></i> '.($task->progress-$progressCalculated).'%</span>';
+            $title = $langs->trans('TheReportedProgressIsLessThanTheCalculatedProgressionByX', abs($task->progress-$progressCalculated).' '.$langs->trans("point"));
+            $diff = '<span class="text-danger classfortooltip paddingrightonly" title="'.dol_htmlentities($title.$diffTitle).'" ><i class="fa fa-caret-down"></i> '.($task->progress-$progressCalculated).'%</span>';
         }
-        elseif($progressCalculated * $warningRatio >= doubleval($task->progress)){ // warning if close at 1%
+        elseif (doubleval($progressCalculated) > doubleval($task->progress)) { // warning if close at 10%
             $progressBarClass = 'progress-bar-warning';
-            $title = $langs->trans('TheReportedProgressIsLessThanTheCalculatedProgressionByX', abs($task->progress-$progressCalculated).'%');
-            $diff = '<span class="text-warning classfortooltip" title="'.dol_htmlentities($title.$diffTitle).'" ><i class="fa fa-caret-left"></i> '.($task->progress-$progressCalculated).'%</span>';
+            $title = $langs->trans('TheReportedProgressIsLessThanTheCalculatedProgressionByX', abs($task->progress-$progressCalculated).' '.$langs->trans("point"));
+            $diff = '<span class="text-warning classfortooltip paddingrightonly" title="'.dol_htmlentities($title.$diffTitle).'" ><i class="fa fa-caret-left"></i> '.($task->progress-$progressCalculated).'%</span>';
         }
         else{
             $progressBarClass = 'progress-bar-success';
-            $title = $langs->trans('TheReportedProgressIsMoreThanTheCalculatedProgressionByX', ($task->progress-$progressCalculated).'%');
-            $diff = '<span class="text-success classfortooltip" title="'.dol_htmlentities($title.$diffTitle).'" ><i class="fa fa-caret-up"></i> '.($task->progress-$progressCalculated).'%</span>';
+            $title = $langs->trans('TheReportedProgressIsMoreThanTheCalculatedProgressionByX', ($task->progress-$progressCalculated).' '.$langs->trans("point"));
+            $diff = '<span class="text-success classfortooltip paddingrightonly" title="'.dol_htmlentities($title.$diffTitle).'" ><i class="fa fa-caret-up"></i> '.($task->progress-$progressCalculated).'%</span>';
         }
     }
 
@@ -2062,7 +2065,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
     if($progressNumber !== false)
     {
         $out.= '    <span class="progress-number">';
-        if($progressNumber!==true){
+        if ($progressNumber!==true) {
             $out.= $progressNumber; // replace label by param
         }
         else{
@@ -2087,8 +2090,21 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 
 
     $out.= '</span>';
-    $out.= '    <div class="progress sm '.$spaced.'" title="'.doubleval($task->progress).'%" >';
-    $out.= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.doubleval($task->progress).'%"></div>';
+    $out.= '    <div class="progress sm '.$spaced.'">';
+    $diffval = doubleval($task->progress) - doubleval($progressCalculated);
+    if ($diffval >= 0) {
+    	// good
+    	$out.= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.doubleval($task->progress).'%" title="'.doubleval($task->progress).'%">';
+    	$out.= '        <div class="progress-bar progress-bar-consumed" style="width: '.doubleval($progressCalculated / $task->progress * 100).'%" title="'.doubleval($progressCalculated).'%"></div>';
+    	$out.= '        </div>';
+    }
+    else
+    {
+    	// bad
+    	$out.= '        <div class="progress-bar progress-bar-consumed" style="width: '.doubleval($progressCalculated).'%" title="'.doubleval($progressCalculated).'%">';
+    	$out.= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.($task->progress ? doubleval($task->progress / $progressCalculated * 100).'%' : '1px').'" title="'.doubleval($task->progress).'%"></div>';
+    	$out.= '        </div>';
+    }
     $out.= '    </div>';
     $out.= '</div>';
 
@@ -2101,6 +2117,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
  * @param label     $label     string   empty = auto (progress), string = replace output
  * @param tooltip   $tooltip   string   empty = auto , string = replace output
  * @return string
+ * @see getTaskProgressView()
  */
 function getTaskProgressBadge($task, $label = '', $tooltip = '')
 {
@@ -2117,13 +2134,13 @@ function getTaskProgressBadge($task, $label = '', $tooltip = '')
         if ($task->planned_workload){
             $progressCalculated =  round(100 * doubleval($task->duration_effective) / doubleval($task->planned_workload), 2);
 
-            // this conf is actually hidden, by default we use 1% for "be carefull or warning"
-            $warningRatio = !empty($conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT) ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.01;
+            // this conf is actually hidden, by default we use 10% for "be carefull or warning"
+            $warningRatio = !empty($conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT) ? (1 + $conf->global->PROJECT_TIME_SPEND_WARNING_PERCENT / 100) : 1.10;
 
-            if($progressCalculated > doubleval($task->progress)){
+            if (doubleval($progressCalculated) > doubleval($task->progress * $warningRatio)) {
                 $badgeClass.= 'badge-danger';
             }
-            elseif($progressCalculated * $warningRatio >= doubleval($task->progress)){ // warning if close at 1%
+            elseif (doubleval($progressCalculated) > doubleval($task->progress)) { // warning if close at 10%
                 $badgeClass.= 'badge-warning';
             }
             else{

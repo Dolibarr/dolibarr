@@ -59,7 +59,7 @@ $socid=GETPOST('socid', 'int');
 
 // Security check
 $id = GETPOST('id', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 $diroutputmassaction=$conf->ficheinter->dir_output . '/temp/massgeneration/'.$user->id;

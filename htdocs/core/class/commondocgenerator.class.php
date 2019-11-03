@@ -585,7 +585,7 @@ abstract class CommonDocGenerator
 		{
 		      $resarray['line_unit']=$outputlangs->trans($line->getLabelOfUnit('long'));
 		      $resarray['line_unit_short']=$outputlangs->trans($line->getLabelOfUnit('short'));
-		}
+        }
 
 		// Retrieve extrafields
 		$extrafieldkey=$line->element;
@@ -595,7 +595,30 @@ abstract class CommonDocGenerator
 		$extrafields->fetch_name_optionals_label($extrafieldkey, true);
 		$line->fetch_optionals();
 
-		$resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);
+        $resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);
+
+        // Check if the current line belongs to a supplier order
+        if (get_class($line) == 'CommandeFournisseurLigne')
+        {
+            // Add the product supplier extrafields to the substitutions
+            $extrafields->fetch_name_optionals_label("product_fournisseur_price");
+            $extralabels=$extrafields->attributes["product_fournisseur_price"]['label'];
+            $columns = "";
+            foreach ($extralabels as $key => $value)
+                $columns .= "$key, ";
+
+            if ($columns != "")
+            {
+                $columns = substr($columns, 0, strlen($columns) - 2);
+                $resql = $this->db->query("SELECT $columns FROM " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields AS ex INNER JOIN " . MAIN_DB_PREFIX . "product_fournisseur_price AS f ON ex.fk_object = f.rowid WHERE f.ref_fourn = '" . $line->ref_supplier . "'");
+                if ($this->db->num_rows($resql) > 0) {
+                    $resql = $this->db->fetch_object($resql);
+
+                    foreach ($extralabels as $key => $value)
+                        $resarray['line_product_supplier_'.$key] = $resql->{$key};
+                }
+            }
+        }
 
 		// Load product data optional fields to the line -> enables to use "line_options_{extrafield}"
 		if (isset($line->fk_product) && $line->fk_product > 0)
@@ -820,7 +843,7 @@ abstract class CommonDocGenerator
 				$id = $object->array_options['options_'.$key];
 				if ($id != "")
 				{
-					$param = $extrafields->attribute_param[$key];
+					$param = $extrafields->attributes[$object->table_element]['param'][$key];
 					$param_list=array_keys($param['options']);              // $param_list='ObjectName:classPath'
 					$InfoFieldList = explode(":", $param_list[0]);
 					$classname=$InfoFieldList[0];

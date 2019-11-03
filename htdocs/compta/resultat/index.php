@@ -98,7 +98,7 @@ $nbofyear = ($year_end - $year_start) + 1;
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id > 0) $socid = $user->societe_id;
+if ($user->socid > 0) $socid = $user->socid;
 if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user, 'compta', '', '', 'resultat');
 if (! empty($conf->accounting->enabled)) $result=restrictedArea($user, 'accounting', '', '', 'comptarapport');
 
@@ -480,10 +480,10 @@ if (! empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
 					$obj = $db->fetch_object($result);
 
 					if (! isset($encaiss[$obj->dm])) $encaiss[$obj->dm]=0;
-					$encaiss[$obj->dm] += $obj->amount;
+					$encaiss[$obj->dm] += -$obj->amount;
 
 					if (! isset($encaiss_ttc[$obj->dm])) $encaiss_ttc[$obj->dm]=0;
-					$encaiss_ttc[$obj->dm] += $obj->amount;
+					$encaiss_ttc[$obj->dm] += -$obj->amount;
 
 					$i++;
 				}

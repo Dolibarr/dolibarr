@@ -56,10 +56,10 @@ $bid=GETPOST('bid', 'int');
 
 // Security check
 $socid='';
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
 	$action = '';
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 $max=3;
@@ -624,12 +624,12 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		$chargestatic=new ChargeSociales($db);
 
 		$sql = "SELECT c.rowid, c.amount, c.date_ech, c.paye,";
-		$sql.= " cc.libelle,";
+		$sql.= " cc.libelle as label,";
 		$sql.= " SUM(pc.amount) as sumpaid";
 		$sql.= " FROM (".MAIN_DB_PREFIX."c_chargesociales as cc, ".MAIN_DB_PREFIX."chargesociales as c)";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = c.rowid";
 		$sql.= " WHERE c.fk_type = cc.id";
-		$sql.= " AND c.entity = ".$conf->entity;
+		$sql.= " AND c.entity IN (".getEntity('tax').')';
 		$sql.= " AND c.paye = 0";
 		// Add where from hooks
 		$parameters=array();
@@ -661,8 +661,8 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 					$obj = $db->fetch_object($resql);
 
 					$chargestatic->id=$obj->rowid;
-					$chargestatic->ref=$obj->libelle;
-					$chargestatic->lib=$obj->libelle;
+					$chargestatic->ref=$obj->rowid;
+					$chargestatic->label=$obj->label;
 					$chargestatic->paye=$obj->paye;
 
 					print '<tr class="oddeven">';
@@ -672,6 +672,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 					print '<td class="nowrap right">'.price($obj->sumpaid).'</td>';
 					print '<td align="center">'.$chargestatic->getLibStatut(3).'</td>';
 					print '</tr>';
+
 					$tot_ttc+=$obj->amount;
 					$i++;
 				}
@@ -957,7 +958,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 {
 	$facstatic=new FactureFournisseur($db);
 
-	$sql = "SELECT ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_tva, ff.total_ttc, ff.paye";
+	$sql = "SELECT ff.rowid, ff.ref, ff.fk_statut, ff.libelle as label, ff.total_ht, ff.total_tva, ff.total_ttc, ff.paye";
 	$sql.= ", ff.date_lim_reglement";
 	$sql.= ", s.nom as name";
     $sql.= ", s.rowid as socid, s.email";
@@ -1074,9 +1075,8 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-
 		print '<tr class="oddeven"><td>'.dol_print_date($db->jdate($obj->da), "day").'</td>';
-		print '<td><a href="action/card.php">'.$obj->libelle.' '.$obj->label.'</a></td></tr>';
+		print '<td><a href="action/card.php">'.$obj->label.'</a></td></tr>';
 		$i++;
 	}
 	$db->free($resql);

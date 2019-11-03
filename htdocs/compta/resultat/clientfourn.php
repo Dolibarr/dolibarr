@@ -50,7 +50,7 @@ $showaccountdetail = GETPOST('showaccountdetail', 'aZ09')?GETPOST('showaccountde
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id > 0) $socid = $user->societe_id;
+if ($user->socid > 0) $socid = $user->socid;
 if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user, 'compta', '', '', 'resultat');
 if (! empty($conf->accounting->enabled)) $result=restrictedArea($user, 'accounting', '', '', 'comptarapport');
 
@@ -1132,11 +1132,11 @@ else
 		            while ($i < $num) {
 		                $obj = $db->fetch_object($result);
 
-		                $amount += $obj->amount;
-		                $total_ht += $obj->amount;
-		                $total_ttc += $obj->amount;
-		                $subtotal_ht += $obj->amount;
-		                $subtotal_ttc += $obj->amount;
+		                $amount += -$obj->amount;
+		                $total_ht += -$obj->amount;
+		                $total_ttc += -$obj->amount;
+		                $subtotal_ht += -$obj->amount;
+		                $subtotal_ttc += -$obj->amount;
 
 		                $i++;
 		            }

@@ -119,25 +119,25 @@ class box_task extends ModeleBoxes
 		// list the summary of the orders
 		if ($user->rights->projet->lire) {
             $boxcontent.= '<div id="ancor-idfilter'.$this->boxcode.'" style="display: block; position: absolute; margin-top: -100px"></div>'."\n";
-            $boxcontent.= '<div id="idfilter'.$this->boxcode.'" class="hideobject center" >'."\n";
+            $boxcontent.= '<div id="idfilter'.$this->boxcode.'" class="center" >'."\n";
             $boxcontent.= '<form class="flat " method="POST" action="'.$_SERVER["PHP_SELF"].'#ancor-idfilter'.$this->boxcode.'">'."\n";
             $boxcontent.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
             $selectArray = array('all' => $langs->trans("NoFilter"), 'im_task_contact' => $langs->trans("WhichIamLinkedTo"), 'im_project_contact' => $langs->trans("WhichIamLinkedToProject"));
             $boxcontent.= $form->selectArray($cookie_name, $selectArray, $filterValue);
-            $boxcontent.= '<button type="submit" >'.$langs->trans("Change").'</button>';
+            $boxcontent.= '<button type="submit" class="button">'.$langs->trans("Refresh").'</button>';
             $boxcontent.= '</form>'."\n";
             $boxcontent.= '</div>'."\n";
             $boxcontent.= '<script type="text/javascript" language="javascript">
 					jQuery(document).ready(function() {
 						jQuery("#idsubimg'.$this->boxcode.'").click(function() {
-							jQuery("#idfilter'.$this->boxcode.'").toggle();
+							jQuery(".showiffilter'.$this->boxcode.'").toggle();
 						});
 					});
 					</script>';
             // set cookie by js
             $boxcontent.='<script>date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "'.$cookie_name.'='.$filterValue.'; expires= " + date.toGMTString() + "; path=/ "; </script>';
             $this->info_box_contents[0][] = array(
-                'tr'=>'class="nohover"',
+                'tr'=>'class="nohover showiffilter'.$this->boxcode.' hideobject"',
                 'td' => 'class="nohover"',
                 'textnoformat' => $boxcontent,
             );
@@ -188,7 +188,7 @@ class box_task extends ModeleBoxes
 
                     $label = $projectstatic->getNomUrl(1).' '.$taskstatic->getNomUrl(1).' '.dol_htmlentities($taskstatic->label);
 
-                    $boxcontent = getTaskProgressView($taskstatic, $label, true, false, true);
+                    $boxcontent = getTaskProgressView($taskstatic, $label, true, false, false);
 
                     $this->info_box_contents[$i][] = array(
                         'td' => '',

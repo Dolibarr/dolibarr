@@ -46,8 +46,12 @@ UPDATE llx_c_units SET scale = -3, active = 0 WHERE code IN ('L');
 UPDATE llx_c_units SET label = 'VolumeUnitm3' WHERE code IN ('M3');
 UPDATE llx_c_units SET label = 'SurfaceUnitm2' WHERE code IN ('M2');
 
+ALTER TABLE llx_adherent_type ADD UNIQUE INDEX uk_adherent_type_libelle (libelle, entity);
+
 
 -- For v11
+
+ALTER TABLE llx_don ADD COLUMN fk_user_modif integer;
 
 ALTER TABLE llx_expeditiondet ADD INDEX idx_expeditiondet_fk_origin_line (fk_origin_line);
 
@@ -142,9 +146,13 @@ ALTER TABLE llx_stock_mouvement ADD COLUMN fk_projet INTEGER NOT NULL DEFAULT 0 
 
 ALTER TABLE llx_oauth_token ADD COLUMN fk_soc integer DEFAULT NULL after token;
 
-ALTER TABLE llx_mailing ADD COLUMN tms timestamp;
-ALTER TABLE llx_mailing_cibles ADD COLUMN tms timestamp;
 
+ALTER TABLE llx_adherent_type ADD COLUMN duration varchar(6) DEFAULT NULL after morphy;
+
+https://www.royalmail.com/track-your-item#/
+https://www.royalmail.com/track-your-item#/
+https://www.royalmail.com/track-your-item#/
+https://www.royalmail.com/track-your-item#/
 ALTER TABLE llx_projet ADD COLUMN usage_opportunity integer DEFAULT 0;
 ALTER TABLE llx_projet ADD COLUMN usage_task integer DEFAULT 1;
 ALTER TABLE llx_projet CHANGE COLUMN bill_time usage_bill_time integer DEFAULT 0;		-- rename existing field
@@ -472,3 +480,5 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_VALIDATE','MO validated','Executed when a MO is validated','bom',410);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_PRODUCED','MO disabled','Executed when a MO is produced','bom',411);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_DELETE','MO deleted','Executed when a MO is deleted','bom',412);
+
+ALTER TABLE llx_comment ADD COLUMN fk_user_modif  integer DEFAULT NULL;

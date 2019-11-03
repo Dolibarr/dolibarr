@@ -46,7 +46,7 @@ $toselect   = GETPOST('toselect', 'array');
 
 // Security check
 $expeditionid = GETPOST('id', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'expedition', $expeditionid, '');
 
 $search_ref_exp = GETPOST("search_ref_exp", 'alpha');

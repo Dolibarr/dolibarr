@@ -40,10 +40,10 @@ $id=(GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
 $ref = GETPOST('ref', 'alpha');
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
 	unset($action);
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'societe', $id, '&societe');
 
@@ -117,7 +117,7 @@ if ($object->id)
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+    dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom');
 
     print '<div class="fichecenter">';
 

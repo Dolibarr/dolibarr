@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
 /**
  *	Class to build documents using ODF templates generator
  */
-class doc_generic_bom_odt extends ModelePDFBOMs
+class doc_generic_bom_odt extends ModelePDFBoms
 {
 	/**
 	 * Issuer
@@ -85,14 +85,7 @@ class doc_generic_bom_odt extends ModelePDFBOMs
 		$this->marge_haute=0;
 		$this->marge_basse=0;
 
-		$this->option_logo = 1;                    // Affiche logo
-		$this->option_tva = 0;                     // Gere option tva COMMANDE_TVAOPTION
-		$this->option_modereg = 0;                 // Affiche mode reglement
-		$this->option_condreg = 0;                 // Affiche conditions reglement
-		$this->option_codeproduitservice = 0;      // Affiche code produit-service
 		$this->option_multilang = 1;               // Dispo en plusieurs langues
-		$this->option_escompte = 0;                // Affiche si il y a eu escompte
-		$this->option_credit_note = 0;             // Support credit notes
 		$this->option_freetext = 1;				   // Support add of a personalised text
 		$this->option_draft_watermark = 0;		   // Support add of a watermark on drafts
 
@@ -486,7 +479,7 @@ class doc_generic_bom_odt extends ModelePDFBOMs
 				}
 				else {
 					try {
-					$odfHandler->saveToDisk($file);
+						$odfHandler->saveToDisk($file);
 					} catch (Exception $e) {
                         $this->error=$e->getMessage();
                         dol_syslog($e->getMessage(), LOG_INFO);

@@ -116,17 +116,18 @@ class Don extends CommonObject
     /**
 	 * @var array Array of status label
 	 */
-	public $labelstatut;
+	public $labelStatus;
 
     /**
 	 * @var array Array of status label short
 	 */
-	public $labelstatutshort;
+	public $labelStatusShort;
 
-	/**
-	 * Draft
-	 */
+
 	const STATUS_DRAFT = 0;
+	const STATUS_VALIDATED = 1;
+	const STATUS_PAID = 2;
+	const STATUS_CANCELED = -1;
 
 
     /**
@@ -155,70 +156,32 @@ class Don extends CommonObject
     /**
      *  Return the label of a given status
      *
-     *  @param	int		$statut        	Id statut
+     *  @param	int		$status        	Id statut
      *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
      *  @return string 			       	Libelle du statut
      */
-    public function LibStatut($statut, $mode = 0)
+    public function LibStatut($status, $mode = 0)
     {
         // phpcs:enable
-    	if (empty($this->labelstatut) || empty($this->labelstatutshort))
+    	if (empty($this->labelStatus) || empty($this->labelStatusShort))
     	{
 	    	global $langs;
 	    	$langs->load("donations");
-	    	$this->labelstatut[-1]=$langs->trans("Canceled");
-	    	$this->labelstatut[0]=$langs->trans("DonationStatusPromiseNotValidated");
-	    	$this->labelstatut[1]=$langs->trans("DonationStatusPromiseValidated");
-	    	$this->labelstatut[2]=$langs->trans("DonationStatusPaid");
-	    	$this->labelstatutshort[-1]=$langs->trans("Canceled");
-	    	$this->labelstatutshort[0]=$langs->trans("DonationStatusPromiseNotValidatedShort");
-	    	$this->labelstatutshort[1]=$langs->trans("DonationStatusPromiseValidatedShort");
-	    	$this->labelstatutshort[2]=$langs->trans("DonationStatusPaidShort");
+	    	$this->labelStatus[-1]=$langs->trans("Canceled");
+	    	$this->labelStatus[0]=$langs->trans("DonationStatusPromiseNotValidated");
+	    	$this->labelStatus[1]=$langs->trans("DonationStatusPromiseValidated");
+	    	$this->labelStatus[2]=$langs->trans("DonationStatusPaid");
+	    	$this->labelStatusShort[-1]=$langs->trans("Canceled");
+	    	$this->labelStatusShort[0]=$langs->trans("DonationStatusPromiseNotValidatedShort");
+	    	$this->labelStatusShort[1]=$langs->trans("DonationStatusPromiseValidatedShort");
+	    	$this->labelStatusShort[2]=$langs->trans("DonationStatusPaidShort");
     	}
 
-        if ($mode == 0)
-        {
-            return $this->labelstatut[$statut];
-        }
-        elseif ($mode == 1)
-        {
-            return $this->labelstatutshort[$statut];
-        }
-        elseif ($mode == 2)
-        {
-            if ($statut == -1) return img_picto($this->labelstatut[$statut], 'statut5').' '.$this->labelstatutshort[$statut];
-            elseif ($statut == 0)  return img_picto($this->labelstatut[$statut], 'statut0').' '.$this->labelstatutshort[$statut];
-            elseif ($statut == 1)  return img_picto($this->labelstatut[$statut], 'statut1').' '.$this->labelstatutshort[$statut];
-            elseif ($statut == 2)  return img_picto($this->labelstatut[$statut], 'statut6').' '.$this->labelstatutshort[$statut];
-        }
-        elseif ($mode == 3)
-        {
-            if ($statut == -1) return img_picto($this->labelstatut[$statut], 'statut5');
-            elseif ($statut == 0)  return img_picto($this->labelstatut[$statut], 'statut0');
-            elseif ($statut == 1)  return img_picto($this->labelstatut[$statut], 'statut1');
-            elseif ($statut == 2)  return img_picto($this->labelstatut[$statut], 'statut6');
-        }
-        elseif ($mode == 4)
-        {
-            if ($statut == -1) return img_picto($this->labelstatut[$statut], 'statut5').' '.$this->labelstatut[$statut];
-            elseif ($statut == 0)  return img_picto($this->labelstatut[$statut], 'statut0').' '.$this->labelstatut[$statut];
-            elseif ($statut == 1)  return img_picto($this->labelstatut[$statut], 'statut1').' '.$this->labelstatut[$statut];
-            elseif ($statut == 2)  return img_picto($this->labelstatut[$statut], 'statut6').' '.$this->labelstatut[$statut];
-        }
-        elseif ($mode == 5)
-        {
-            if ($statut == -1) return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut], 'statut5');
-            elseif ($statut == 0)  return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut], 'statut0');
-            elseif ($statut == 1)  return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut], 'statut1');
-            elseif ($statut == 2)  return $this->labelstatutshort[$statut].' '.img_picto($this->labelstatut[$statut], 'statut6');
-        }
-        elseif ($mode == 6)
-        {
-            if ($statut == -1) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut5');
-            elseif ($statut == 0)  return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut0');
-            elseif ($statut == 1)  return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut1');
-            elseif ($statut == 2)  return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut6');
-        }
+    	$statusType = 'status'.$status;
+    	if ($status == self::STATUS_CANCELED) $statusType = 'status5';
+    	if ($status == self::STATUS_PAID) $statusType = 'status6';
+
+    	return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
     }
 
 

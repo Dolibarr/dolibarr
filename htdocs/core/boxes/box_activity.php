@@ -84,7 +84,7 @@ class box_activity extends ModeleBoxes
         $totalnb = 0;
         $line = 0;
         $cachetime = 3600;
-        $fileid = '-e'.$conf->entity.'-u'.$user->id.'-s'.$user->societe_id.'-r'.($user->rights->societe->client->voir?'1':'0').'.cache';
+        $fileid = '-e'.$conf->entity.'-u'.$user->id.'-s'.$user->socid.'-r'.($user->rights->societe->client->voir?'1':'0').'.cache';
         $now = dol_now();
         $nbofperiod=3;
 
@@ -113,12 +113,12 @@ class box_activity extends ModeleBoxes
         	{
         		$sql = "SELECT p.fk_statut, SUM(p.total) as Mnttot, COUNT(*) as nb";
         		$sql.= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
-        		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         		$sql.= ")";
         		$sql.= " WHERE p.entity IN (".getEntity('propal').")";
         		$sql.= " AND p.fk_soc = s.rowid";
-        		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-        		if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
+        		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+        		if($user->socid) $sql.= " AND s.rowid = ".$user->socid;
         		$sql.= " AND p.datep >= '".$this->db->idate($tmpdate)."'";
         		$sql.= " AND p.date_cloture IS NULL"; // just unclosed
         		$sql.= " GROUP BY p.fk_statut";
@@ -202,12 +202,12 @@ class box_activity extends ModeleBoxes
             if ($refresh) {
                 $sql = "SELECT c.fk_statut, sum(c.total_ttc) as Mnttot, count(*) as nb";
                 $sql.= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
-                if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+                if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
                 $sql.= ")";
                 $sql.= " WHERE c.entity = ".$conf->entity;
                 $sql.= " AND c.fk_soc = s.rowid";
-                if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-                if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
+                if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+                if($user->socid) $sql.= " AND s.rowid = ".$user->socid;
                 $sql.= " AND c.date_commande >= '".$this->db->idate($tmpdate)."'";
                 $sql.= " GROUP BY c.fk_statut";
                 $sql.= " ORDER BY c.fk_statut DESC";
@@ -286,11 +286,11 @@ class box_activity extends ModeleBoxes
         	{
         		$sql = "SELECT f.fk_statut, SUM(f.total_ttc) as Mnttot, COUNT(*) as nb";
         		$sql.= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-        		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         		$sql.= ")";
         		$sql.= " WHERE f.entity IN (".getEntity('invoice').')';
-        		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-        		if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
+        		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+        		if($user->socid) $sql.= " AND s.rowid = ".$user->socid;
         		$sql.= " AND f.fk_soc = s.rowid";
         		$sql.= " AND f.datef >= '".$this->db->idate($tmpdate)."' AND f.paye=1";
         		$sql.= " GROUP BY f.fk_statut";

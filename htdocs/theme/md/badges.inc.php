@@ -36,8 +36,8 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 .badge-dot {
     padding: 0;
     border-radius: 50%;
-    padding: 0.25rem;
-    vertical-align: middle;
+    padding: 0.35em;
+    vertical-align: unset;
 }
 
 a.badge:focus, a.badge:hover {

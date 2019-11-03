@@ -260,4 +260,23 @@ div.pagination li:first-child a.btnTitle{
 .butActionRefused, .butActionNewRefused, .btnTitle.refused {
     display: none !important;
 }
-<?php }
+<?php } ?>
+
+
+/*
+ * BTN LINK
+ */
+
+.btn-link{
+	margin-right: 5px;
+	border: 1px solid #ddd;
+	color: #333;
+	padding: 5px 10px;
+	border-radius:1em;
+	text-decoration: none !important;
+}
+
+.btn-link:hover{
+	background-color: #ddd;
+	border: 1px solid #ddd;
+}

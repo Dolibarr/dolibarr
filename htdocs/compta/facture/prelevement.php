@@ -47,7 +47,7 @@ $socid=GETPOST('socid', 'int');
 $action=GETPOST('action', 'alpha');
 
 $fieldid = (! empty($ref)?'ref':'rowid');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid);
 
 $object = new Facture($db);

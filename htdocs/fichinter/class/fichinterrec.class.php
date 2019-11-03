@@ -42,6 +42,10 @@ class FichinterRec extends Fichinter
     public $table_element = 'fichinter_rec';
     public $table_element_line = 'fichinter_rec';
     public $fk_element = 'fk_fichinter';
+
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
     public $picto = 'intervention';
 
     public $title;
@@ -342,12 +346,11 @@ class FichinterRec extends Fichinter
                 $objp = $this->db->fetch_object($result);
                 $line = new FichinterLigne($this->db);
 
-                $line->rowid = $objp->rowid;
+                $line->id = $objp->rowid;
                 $line->label = $objp->custom_label;		// Label line
                 $line->desc = $objp->description;		// Description line
                 $line->product_type = $objp->product_type;		// Type of line
                 $line->product_ref = $objp->product_ref;		// Ref product
-                $line->libelle = $objp->product_label;		// deprecated
                 $line->product_label = $objp->product_label;		// Label product
                 $line->product_desc = $objp->product_desc;		// Description product
                 $line->fk_product_type = $objp->fk_product_type;	// Type of product

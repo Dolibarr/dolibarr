@@ -53,7 +53,7 @@ $childids = $user->getAllChildIds(1);
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'expensereport', '', '');
 $id = GETPOST('id', 'int');
 // If we are on the view of a specific user

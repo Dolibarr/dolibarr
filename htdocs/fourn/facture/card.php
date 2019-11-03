@@ -95,7 +95,7 @@ if ($id > 0 || ! empty($ref))
 
 // Security check
 $socid='';
-if (! empty($user->societe_id)) $socid=$user->societe_id;
+if (! empty($user->socid)) $socid=$user->socid;
 $isdraft = (($object->statut == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture', 'fk_soc', 'rowid', $isdraft);
 
@@ -636,10 +636,10 @@ if (empty($reshook))
 				$result = $object->fetch(GETPOST('fac_replacement'), 'int');
 				$object->fetch_thirdparty();
 
-				$object->ref				= GETPOST('ref');
+				$object->ref				= GETPOST('ref', 'nohtml');
 				$object->ref_supplier		= GETPOST('ref_supplier', 'alpha');
 				$object->socid				= GETPOST('socid', 'int');
-				$object->libelle			= GETPOST('label');
+				$object->libelle			= GETPOST('label', 'nohtml');
 				$object->date				= $datefacture;
 				$object->date_echeance		= $datedue;
 				$object->note_public		= GETPOST('note_public', 'none');
@@ -700,10 +700,11 @@ if (empty($reshook))
 				$tmpproject = GETPOST('projectid', 'int');
 
 				// Creation facture
-				$object->ref				= $_POST['ref'];
-				$object->ref_supplier		= $_POST['ref_supplier'];
-				$object->socid				= $_POST['socid'];
-				$object->libelle			= $_POST['label'];
+				$object->ref				= GETPOST('ref', 'nohtml');
+				$object->ref_supplier		= GETPOST('ref_supplier', 'nohtml');
+				$object->socid				= GETPOST('socid', 'int');
+				$object->libelle			= GETPOST('label', 'nohtml');
+				$object->label				= GETPOST('label', 'nohtml');
 				$object->date				= $datefacture;
 				$object->date_echeance		= $datedue;
 				$object->note_public		= GETPOST('note_public', 'none');
@@ -2556,7 +2557,7 @@ else
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0);
 			print '</td>';
-			if ($action != 'editmulticurrencycode' && $object->statut == FactureFournisseur::STATUS_DRAFT)
+			if ($action != 'editmulticurrencycode' && $object->statut == $object::STATUS_DRAFT)
 				print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencycode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 			print '</tr></table>';
 			print '</td><td colspan="3">';
@@ -2568,29 +2569,32 @@ else
 			print '</td></tr>';
 
 			// Multicurrency rate
-			print '<tr>';
-			print '<td>';
-			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
-			print '</td>';
-			if ($action != 'editmulticurrencyrate' && $object->statut == FactureFournisseur::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency)
-				print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
-			print '</tr></table>';
-			print '</td><td colspan="3">';
-			if ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') {
-				if ($action == 'actualizemulticurrencyrate') {
-					list($object->fk_multicurrency, $object->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($object->db, $object->multicurrency_code);
+			if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1)
+			{
+				print '<tr>';
+				print '<td>';
+				print '<table class="nobordernopadding" width="100%"><tr><td>';
+				print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
+				print '</td>';
+				if ($action != 'editmulticurrencyrate' && $object->statut == $object::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency)
+					print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
+				print '</tr></table>';
+				print '</td><td colspan="3">';
+				if ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') {
+					if ($action == 'actualizemulticurrencyrate') {
+						list($object->fk_multicurrency, $object->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($object->db, $object->multicurrency_code);
+					}
+					$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx', $object->multicurrency_code);
+				} else {
+					$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
+					if ($object->statut == $object::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
+						print '<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=actualizemulticurrencyrate">'.$langs->trans("ActualizeCurrency").'</a>';
+						print '</div>';
+					}
 				}
-				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx', $object->multicurrency_code);
-			} else {
-				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
-				if ($object->statut == $object::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
-					print '<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=actualizemulticurrencyrate">'.$langs->trans("ActualizeCurrency").'</a>';
-					print '</div>';
-				}
+				print '</td></tr>';
 			}
-			print '</td></tr>';
 		}
 
 		// Bank Account
@@ -2785,7 +2789,7 @@ else
 					}
 					print '<td class="right">' . price($sign * $objp->amount) . '</td>';
 					print '<td class="center">';
-					if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0 && $user->societe_id == 0)
+					if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0 && $user->socid == 0)
 					{
 						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletepaiement&paiement_id='.$objp->rowid.'">';
 						print img_delete();
@@ -3088,13 +3092,13 @@ else
 				}
 
 	            // Make payments
-	            if ($object->type != FactureFournisseur::TYPE_CREDIT_NOTE && $action != 'confirm_edit' && $object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0  && $user->societe_id == 0)
+	            if ($object->type != FactureFournisseur::TYPE_CREDIT_NOTE && $action != 'confirm_edit' && $object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0  && $user->socid == 0)
 	            {
 	                print '<div class="inline-block divButAction"><a class="butAction" href="paiement.php?facid='.$object->id.'&amp;action=create'.($object->fk_account>0?'&amp;accountid='.$object->fk_account:'').'">'.$langs->trans('DoPayment').'</a></div>';	// must use facid because id is for payment id not invoice
 	            }
 
 	            // Classify paid
-	            if ($action != 'confirm_edit' && $object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0  && $user->societe_id == 0)
+	            if ($action != 'confirm_edit' && $object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0  && $user->socid == 0)
 	            {
 	                print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=paid"';
 	                print '>'.$langs->trans('ClassifyPaid').'</a></div>';

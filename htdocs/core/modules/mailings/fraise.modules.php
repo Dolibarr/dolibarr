@@ -40,6 +40,10 @@ class mailing_fraise extends MailingTargets
     public $require_admin=0;
 
     public $require_module=array('adherent');
+
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
     public $picto='user';
 
     /**
@@ -129,7 +133,7 @@ class mailing_fraise extends MailingTargets
         $s.='</select> ';
         $s.=$langs->trans("Type").': ';
         $s.='<select name="filter_type" class="flat">';
-        $sql = "SELECT rowid, libelle, statut";
+        $sql = "SELECT rowid, libelle as label, statut";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type";
         $sql.= " WHERE entity IN (".getEntity('member_type').")";
         $sql.= " ORDER BY rowid";
@@ -146,7 +150,7 @@ class mailing_fraise extends MailingTargets
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->libelle, 38, 'middle');
+                $s.='<option value="'.$obj->rowid.'">'.dol_trunc($obj->label, 38, 'middle');
                 $s.='</option>';
                 $i++;
             }

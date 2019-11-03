@@ -46,11 +46,11 @@ $id			= GETPOST('id', 'int');
 $ref		= GETPOST('ref', 'alpha');
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
 	unset($_GET["action"]);
 	$action='';
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'contrat', $id);
 

@@ -55,7 +55,7 @@ if ($contextpage == 'poslist')
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'societe', $socid, '');
 
 $search_all=trim(GETPOST('search_all', 'alphanohtml')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));

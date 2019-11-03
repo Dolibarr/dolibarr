@@ -56,7 +56,7 @@ if ($in_bookkeeping == '') $in_bookkeeping = 'notyet';
 $now = dol_now();
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 	accessforbidden();
 
 /*
