@@ -84,6 +84,8 @@ if ($id > 0 || ! empty($ref)) $upload_dir = $conf->mymodule->multidir_output[$ob
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'mymodule', $object->id);
 
+$permissiontoadd = $user->rights->mymodule->myobject->write; 		// Used by the include of actions_addupdatedelete.inc.php
+
 
 
 /*
@@ -146,9 +148,9 @@ if ($object->id)
 	dol_fiche_end();
 
 	$modulepart = 'mymodule';
-	//$permission = $user->rights->mymodule->create;
+	//$permission = $user->rights->mymodule->myobject->write;
 	$permission = 1;
-	//$permtoedit = $user->rights->mymodule->create;
+	//$permtoedit = $user->rights->mymodule->myobject->write;
 	$permtoedit = 1;
 	$param = '&id=' . $object->id;
 
