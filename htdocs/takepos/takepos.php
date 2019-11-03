@@ -539,19 +539,18 @@ function TakeposPrintingTemp(){
 function OpenDrawer(){
 	console.log("OpenDrawer");
 	$.ajax({
-			type: "POST",
-			url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER;?>:8111/print',
-			data: "opendrawer"
-		});
+		type: "POST",
+		url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER;?>:8111/print',
+		data: "opendrawer"
+	});
 }
 
-function DolibarrOpenDrawer(){
+function DolibarrOpenDrawer() {
 	console.log("DolibarrOpenDrawer");
-	// $.ajax({
-	// 	type: "POST",
-	// 	url: 'http://',
-	// 	data: "opendrawer"
-	// });
+	$.ajax({
+		type: "GET",
+		url: "<?php print dol_buildpath('/takepos/ajax/ajax.php', 1).'?action=opendrawer&term='.$_SESSION["takeposterminal"]; ?>",
+	});
 }
 
 function MoreActions(totalactions){

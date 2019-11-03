@@ -554,16 +554,11 @@ function TakeposPrinting(id){
     });
 }
 function DolibarrTakeposPrinting(id) {
-	console.log('Printing ticket ' + id)
-    var receipt;
-    // $.get("receipt.php?facid="+id, function(data, status) {
-    //     receipt=data.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '');
-    //     $.ajax({
-    //         type: "POST",
-    //         url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print',
-    //         data: receipt
-    //     });
-    // });
+    console.log('Printing invoice ticket ' + id)
+    $.ajax({
+        type: "GET",
+        url: "<?php print dol_buildpath('/takepos/ajax/ajax.php', 1).'?action=printinvoiceticket&term='.$_SESSION["takeposterminal"].'&id='; ?>" + id,
+    });
 }
 </script>
 
