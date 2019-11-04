@@ -82,7 +82,7 @@ function product_prepare_head($object)
 		$head[$h][1] = $langs->trans('AssociatedProducts');
 
 		$nbFatherAndChild = $object->hasFatherOrChild();
-		if ($nbFatherAndChild > 0) $head[$h][1].= ' <span class="badge">'.$nbFatherAndChild.'</span>';
+		if ($nbFatherAndChild > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbFatherAndChild.'</span>';
 		$head[$h][2] = 'subproduct';
 		$h++;
 	}
@@ -110,7 +110,7 @@ function product_prepare_head($object)
 			$head[$h][1] = $langs->trans('ProductCombinations');
 			$head[$h][2] = 'combinations';
 			$nbVariant = $prodcomb->countNbOfCombinationForFkProductParent($object->id);
-            if ($nbVariant > 0) $head[$h][1].= ' <span class="badge">'.$nbVariant.'</span>';
+            if ($nbVariant > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbVariant.'</span>';
 		}
 
 		$h++;
@@ -160,7 +160,7 @@ function product_prepare_head($object)
         if(!empty($object->note_public)) $nbNote++;
         $head[$h][0] = DOL_URL_ROOT.'/product/note.php?id='.$object->id;
         $head[$h][1] = $langs->trans('Notes');
-        if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+        if ($nbNote > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
         $head[$h][2] = 'note';
         $h++;
     }
@@ -179,7 +179,7 @@ function product_prepare_head($object)
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
@@ -228,7 +228,7 @@ function productlot_prepare_head($object)
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT."/product/stock/productlot_document.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("Documents");
-	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
     $head[$h][2] = 'documents';
 	$h++;
 
