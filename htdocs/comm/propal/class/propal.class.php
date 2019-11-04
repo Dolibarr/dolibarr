@@ -3536,9 +3536,10 @@ class Propal extends CommonObject
 	 *	@param      string	$get_params    	          Parametres added to url
 	 *  @param	    int   	$notooltip		          1=Disable tooltip
 	 *  @param      int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *  @param      int     $addlinktonotes           -1=Disable, 0=Just add label show notes, 1=Add private note (only internal user), 2=Add public note (internal or external user), 3=Add private (internal user) and public note (internal and external user)
 	 *	@return     string          		          String with URL
 	 */
-    public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0, $save_lastsearch_value = -1)
+    public function getNomUrl($withpicto = 0, $option = '', $get_params = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = -1)
 	{
 		global $langs, $conf, $user;
 
@@ -3603,6 +3604,46 @@ class Propal extends CommonObject
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
 		if ($withpicto != 2) $result.= $this->ref;
 		$result .= $linkend;
+
+        if ($addlinktonotes >= 0) {
+            $txttoshow = '';
+
+            if ($addlinktonotes == 0) {
+                if (!empty($this->note_private) || !empty($this->note_public)) {
+                    $txttoshow = $langs->trans('ViewPrivateNote');
+                }
+            } elseif ($addlinktonotes == 1) {
+                if (!empty($this->note_private)) {
+                    $txttoshow .= ($user->socid > 0 ? '' : dol_string_nohtmltag($this->note_private, 1));
+                }
+            } elseif ($addlinktonotes == 2) {
+                if (!empty($this->note_public)) {
+                    $txttoshow .= dol_string_nohtmltag($this->note_public, 1);
+                }
+            } elseif ($addlinktonotes == 3) {
+                if ($user->socid > 0) {
+                    if (!empty($this->note_public)) {
+                        $txttoshow .= dol_string_nohtmltag($this->note_public, 1);
+                    }
+                } else {
+                    if (!empty($this->note_private)) {
+                        $txttoshow .= dol_string_nohtmltag($this->note_private, 1);
+                    }
+                    if (!empty($this->note_public)) {
+                        if (!empty($txttoshow)) $txttoshow .= '<br />';
+                        $txttoshow .= dol_string_nohtmltag($this->note_public, 1);
+                    }
+                }
+            }
+
+            if ($txttoshow) {
+                $result .= ' <span class="note inline-block">';
+                $result .= '<a href="'.DOL_URL_ROOT.'/comm/propal/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($txttoshow).'">';
+                $result .= img_picto('', 'note');
+                $result .= '</a>';
+                $result .= '</span>';
+            }
+        }
 
 		return $result;
 	}
