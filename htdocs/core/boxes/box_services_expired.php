@@ -133,7 +133,7 @@ class box_services_expired extends ModeleBoxes
 					if (($dateline + $conf->contrat->services->expires->warning_delay) < $now) $late=img_warning($langs->trans("Late"));
 
     				$this->info_box_contents[$i][] = array(
-                        'td' => '',
+                        'td' => 'class="nowraponall"',
                         'text' => $contract->getNomUrl(1),
                         'asis' => 1
     				);
