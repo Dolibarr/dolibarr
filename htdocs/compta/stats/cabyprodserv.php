@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -36,7 +36,7 @@ $langs->loadLangs(array("products","categories","errors",'accountancy'));
 // Security pack (data & check)
 $socid = GETPOST('socid', 'int');
 
-if ($user->societe_id > 0) $socid = $user->societe_id;
+if ($user->socid > 0) $socid = $user->socid;
 if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user, 'compta', '', '', 'resultat');
 if (! empty($conf->accounting->enabled)) $result=restrictedArea($user, 'accounting', '', '', 'comptarapport');
 
@@ -51,6 +51,7 @@ if (! $sortfield) $sortfield="ref";
 
 // Category
 $selected_cat = (int) GETPOST('search_categ', 'int');
+$selected_soc = (int) GETPOST('search_soc', 'int');
 $subcat = false;
 if (GETPOST('subcat', 'alpha') === 'yes') {
 	$subcat = true;
@@ -137,6 +138,7 @@ $headerparams['q'] = $q;
 
 $tableparams = array();
 $tableparams['search_categ'] = $selected_cat;
+$tableparams['search_soc'] = $selected_soc;
 $tableparams['search_type'] = $selected_type;
 $tableparams['subcat'] = ($subcat === true)?'yes':'';
 
@@ -191,13 +193,9 @@ elseif ($modecompta=="RECETTES-DEPENSES")
 }
 elseif ($modecompta=="BOOKKEEPING")
 {
-
-
 }
 elseif ($modecompta=="BOOKKEEPINGCOLLECTED")
 {
-
-
 }
 
 $period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
@@ -225,7 +223,9 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql = "SELECT DISTINCT p.rowid as rowid, p.ref as ref, p.label as label, p.fk_product_type as product_type,";
 	$sql.= " SUM(l.total_ht) as amount, SUM(l.total_ttc) as amount_ttc,";
 	$sql.= " SUM(CASE WHEN f.type = 2 THEN -l.qty ELSE l.qty END) as qty";
-	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as l";
+	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+    if($selected_soc > 0) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as soc ON (soc.rowid = f.fk_soc)";
+    $sql.= ",".MAIN_DB_PREFIX."facturedet as l";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product = p.rowid";
 	if ($selected_cat === -2)	// Without any category
 	{
@@ -240,7 +240,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 		$sql.= " AND f.type IN (0,1,2,5)";
 	} else {
-	$sql.= " AND f.type IN (0,1,2,3,5)";
+		$sql.= " AND f.type IN (0,1,2,3,5)";
 	}
 	if ($date_start && $date_end) {
 		$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
@@ -259,6 +259,7 @@ if ($modecompta == 'CREANCES-DETTES')
 		$sql.= ")";
 		$sql.= " AND cp.fk_categorie = c.rowid AND cp.fk_product = p.rowid";
 	}
+    if($selected_soc > 0) $sql .= " AND soc.rowid=".$selected_soc;
 	$sql.= " AND f.entity IN (".getEntity('invoice').")";
 	$sql.= " GROUP BY p.rowid, p.ref, p.label, p.fk_product_type";
 	$sql.= $db->order($sortfield, $sortorder);
@@ -313,6 +314,10 @@ if ($modecompta == 'CREANCES-DETTES')
     print ' ';
     print $langs->trans("Type"). ': ';
     $form->select_type_of_lines(isset($selected_type)?$selected_type:-1, 'search_type', 1, 1, 1);
+
+    //select thirdparty
+    print '</br>';
+    print $langs->trans("ThirdParty") . ': ' . $form->select_thirdparty_list($selected_soc, 'search_soc', '', 1);
     print '</td>';
 
     print '<td colspan="5" class="right">';
@@ -321,7 +326,7 @@ if ($modecompta == 'CREANCES-DETTES')
 
 	// Array header
 	print "<tr class=\"liste_titre\">";
-print_liste_field_titre(
+	print_liste_field_titre(
 		$langs->trans("Product"),
 		$_SERVER["PHP_SELF"],
 		"ref",
@@ -331,7 +336,7 @@ print_liste_field_titre(
 		$sortfield,
 		$sortorder
 	);
-print_liste_field_titre(
+	print_liste_field_titre(
 		$langs->trans('Quantity'),
 		$_SERVER["PHP_SELF"],
 		"qty",
@@ -341,7 +346,7 @@ print_liste_field_titre(
 		$sortfield,
 		$sortorder
 	);
-print_liste_field_titre(
+	print_liste_field_titre(
 		$langs->trans("Percentage"),
 		$_SERVER["PHP_SELF"],
 		"qty",
@@ -351,7 +356,7 @@ print_liste_field_titre(
 		$sortfield,
 		$sortorder
 	);
-print_liste_field_titre(
+	print_liste_field_titre(
 		$langs->trans('AmountHT'),
 		$_SERVER["PHP_SELF"],
 		"amount",
@@ -361,7 +366,7 @@ print_liste_field_titre(
 		$sortfield,
 		$sortorder
 	);
-print_liste_field_titre(
+	print_liste_field_titre(
 		$langs->trans("AmountTTC"),
 		$_SERVER["PHP_SELF"],
 		"amount_ttc",
@@ -371,7 +376,7 @@ print_liste_field_titre(
 		$sortfield,
 		$sortorder
 	);
-print_liste_field_titre(
+	print_liste_field_titre(
 		$langs->trans("Percentage"),
 		$_SERVER["PHP_SELF"],
 		"amount_ttc",
@@ -385,7 +390,6 @@ print_liste_field_titre(
 
 	if (count($name)) {
 		foreach($name as $key=>$value) {
-
 			print '<tr class="oddeven">';
 
 			// Product

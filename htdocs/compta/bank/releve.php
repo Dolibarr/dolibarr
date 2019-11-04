@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -57,7 +57,7 @@ $newbankreceipt=GETPOST('newbankreceipt', 'alpha');
 // Security check
 $fieldid = (! empty($ref)?$ref:$id);
 $fieldname = isset($ref)?'ref':'rowid';
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, 'banque', $fieldid, 'bank_account', '', '', $fieldname);
 
 if ($user->rights->banque->consolidate && $action == 'dvnext' && ! empty($dvid))
@@ -182,169 +182,6 @@ if ($action == 'confirm_editbankreceipt' && ! empty($oldbankreceipt) && ! empty(
 	$action='view';
 }
 
-// ZIP creation
-if ($action=="dl" && $numref > 0)
-{
-	// TODO Replace this with a standard builddoc action that use a document generation module to build the ZIP
-    $log = '';
-
-    $outdir = $conf->bank->dir_temp.'/'.$numref.'-'.$object->label;
-    $outdirinvoices = $outdir.'/'.$langs->trans("BillsCustomers");
-    $outdirsupplierinvoices = $outdir.'/'.$langs->trans("BillsSuppliers");
-
-    dol_mkdir($outdir);
-    dol_mkdir($outdirinvoices);
-    dol_mkdir($outdirsupplierinvoices);
-
-    //$zipname = $object->label.'-'.$numref . '.zip';
-    //$zip = new ZipArchive();
-    //$zip->open($zipname, ZipArchive::OVERWRITE);
-
-    $sql = $sqlrequestforbankline;
-
-    $facturestatic=new Facture($db);
-
-    $resd = $db->query($sql);
-    if ($resd) {
-        $numd = $db->num_rows($resd);
-        $i = 0;
-        if ($numd > 0)
-        {
-            $objd = $db->fetch_object($resd);
-
-            $log.='Transaction '.$objd->rowid;
-            $links = $object->get_url($objd->rowid);
-
-            foreach($links as $key=>$val)
-            {
-                $link = ''; $upload_dir = '';
-
-                switch ($val['type']) {
-                    case "payment":
-                        $payment = new Paiement($db);
-                        $payment->fetch($val['url_id']);
-                        $arraybill = $payment->getBillsArray();
-                        if (is_array($arraybill) && count($arraybill) > 0)
-                        {
-                            foreach ($arraybill as $billid)
-                            {
-                                $facturestatic->fetch($billid);
-                                $subdir = get_exdir($facturestatic->id, 2, 0, 0, $facturestatic, 'invoice');
-
-                                $arrayofinclusion=array();              // TODO Find a way to get doc ODT or other
-                                // TODO Use get_exdir
-                                $arrayofinclusion[]=preg_quote($facturestatic->ref.'.pdf', '/');
-                                $listoffiles = dol_dir_list($conf->facture->dir_output.$subdir, 'all', 1, implode('|', $arrayofinclusion), '\.meta$|\.png', 'date', SORT_DESC, 0, true);
-                                // build list of files with full path
-                                $files = array();
-                                foreach($listoffiles as $filefound)
-                                {
-                                    if (strstr($filefound["name"], $facturestatic->ref))
-                                    {
-                                        $files[] = $uploaddir.'/'.$facturestatic->ref.'/'.$filefound["name"];
-                                        break;
-                                    }
-                                }
-                                /*var_dump($files);*/
-                                //var_dump($listoffiles);
-                                foreach($listoffiles as $key => $srcfileobj)
-                                {
-                                    $srcfile = $srcfileobj['fullname'];
-                                    $destfile = $outdirinvoices.'/'.$srcfileobj['name'];
-                                    //var_dump($srcfile.' - '.$destfile);
-                                    dol_copy($srcfile, $destfile);
-                                }
-                            }
-                        }
-                        break;
-                    case "payment_supplier":
-                        $payment = new PaiementFourn($db);
-                        $payment->fetch($val['url_id']);
-                        $arraybill = $payment->getBillsArray();
-                        if (is_array($arraybill) && count($arraybill) > 0)
-                        {
-                            foreach ($arraybill as $billid)
-                            {
-                                $facturestatic->fetch($billid);
-                                $subdir = get_exdir($facturestatic->id, 2, 0, 0, $facturestatic, 'invoice_supplier');
-
-                                $arrayofinclusion=array();              // TODO Find a way to get doc ODT or other
-                                // TODO Use get_exdir
-                                $arrayofinclusion[]=preg_quote($facturestatic->ref.'.pdf', '/');
-                                $listoffiles = dol_dir_list($conf->fournisseur->facture->dir_output.$subdir, 'all', 1, implode('|', $arrayofinclusion), '\.meta$|\.png', 'date', SORT_DESC, 0, true);
-                                // build list of files with full path
-                                $files = array();
-                                foreach($listoffiles as $filefound)
-                                {
-                                    if (strstr($filefound["name"], $facturestatic->ref))
-                                    {
-                                        $files[] = $uploaddir.'/'.$facturestatic->ref.'/'.$filefound["name"];
-                                        break;
-                                    }
-                                }
-                                /*var_dump($files);*/
-                                //var_dump($listoffiles);
-                                foreach($listoffiles as $key => $srcfileobj)
-                                {
-                                    $srcfile = $srcfileobj['fullname'];
-                                    $destfile = $outdirinvoices.'/'.$srcfileobj['name'];
-                                    //var_dump($srcfile.' - '.$destfile);
-                                    dol_copy($srcfile, $destfile);
-                                }
-                            }
-                        }
-                        break;
-                    case "payment_expensereport":
-                        /*$subdir = dol_sanitizeFileName($objd->refe);
-                        $upload_dir = $conf->expensereport->dir_output . '/' . $subdir;*/
-                        break;
-                    case "payment_salary":
-                        /*$subdir = dol_sanitizeFileName($objd->ids);
-                        $upload_dir = $conf->salaries->dir_output . '/' . $subdir;*/
-                        break;
-                    case "payment_donation":
-                        /*$subdir = get_exdir(null, 2, 0, 1, $objd, 'donation') . '/' . dol_sanitizeFileName($objd->idd);
-                        $upload_dir = $conf->don->dir_output . '/' . $subdir;*/
-                        break;
-                    default:
-                        break;
-                }
-            }
-            $log.="\n";
-
-            /*if (! empty($upload_dir))
-            {
-                $files = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', '', SORT_ASC, 1);
-
-                if (is_array($files)) {
-                    foreach ($files as $file) {
-                        $zip->addFile($file["fullname"], $file["name"]); //
-                        $log .= $key . ',' . $file["name"] . "\n";
-                    }
-                } else {
-                    $log .= $key . ',' . $langs->trans("Nofile") . "\n";
-                }
-
-            }*/
-        }
-    }
-
-    $db->free($resd);
-
-
-    //$zip->addFromString('log '.$numref.'.csv', $log);
-    //$zip->close();
-
-    // /Then download the zipped file.
-    /*header('Content-Type: application/zip');
-    header('Content-disposition: attachment; filename=' . $zipname);
-    header('Content-Length: ' . filesize($zipname));
-
-    readfile($zipname);
-
-    exit;*/
-}
-
 
 /*
  * View
@@ -415,7 +252,7 @@ if (empty($numref))
 		if ($object->canBeConciliated() > 0) {
 			// If not cash account and can be reconciliate
 			if ($user->rights->banque->consolidate) {
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&search_conciliated=0'.$param.'">'.$langs->trans("Conciliate").'</a>';
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0&search_account='.$id.$param.'">'.$langs->trans("Conciliate").'</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
 			}
@@ -431,6 +268,7 @@ if (empty($numref))
 		print '<input type="hidden" name="action" value="confirm_editbankreceipt">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		print '<input type="hidden" name="account" value="'.$object->id.'">';
+		print '<input type="hidden" name="page" value="'.$page.'">';
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
@@ -498,7 +336,7 @@ if (empty($numref))
 
 				print '<td class="center">';
 				if ($user->rights->banque->consolidate && $action != 'editbankreceipt') {
-					print '<a href="'.$_SERVER["PHP_SELF"].'?account='.$object->id.'&action=editbankreceipt&brref='.$objp->numr.'">'.img_edit().'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?account='.$object->id.($page > 0 ? '&page='.$page : '').'&action=editbankreceipt&brref='.$objp->numr.'">'.img_edit().'</a>';
 				}
 				print '</td>';
 
@@ -616,7 +454,7 @@ else
 			print '<td class="nowrap">'.$type_label.' '.($objp->num_chq?$objp->num_chq:'').$link.'</td>';
 
 			// Description
-			print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'">';
+			print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$objp->rowid.'&amp;account='.$object->id.'">';
 			$reg=array();
 			preg_match('/\((.+)\)/i', $objp->label, $reg);	// Si texte entoure de parenthese on tente recherche de traduction
 			if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) print $langs->trans($reg[1]);
@@ -662,7 +500,7 @@ else
 				}
 				elseif ($links[$key]['type']=='payment_salary')
 				{
-					print '<a href="'.DOL_URL_ROOT.'/compta/salaries/card.php?id='.$links[$key]['url_id'].'">';
+					print '<a href="'.DOL_URL_ROOT.'/salaries/card.php?id='.$links[$key]['url_id'].'">';
 					print ' '.img_object($langs->trans('ShowPayment'), 'payment').' ';
 					print $langs->trans("Payment");
 					print '</a>';
@@ -778,7 +616,7 @@ else
 
 			if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
 			{
-				print '<td class="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&account='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?account='.$object->id.'&num='.$numref).'">';
+				print '<td class="center"><a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$objp->rowid.'&account='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?account='.$object->id.'&num='.$numref).'">';
 				print img_edit();
 				print "</a></td>";
 			}
@@ -801,16 +639,10 @@ else
 	print '<td class="right"><b>'.price(price2num($total, 'MT'))."</b></td><td>&nbsp;</td>";
 	print "</tr>\n";
 	print "</table>";
+
 	print "</div>";
 
 	print "</form>\n";
-
-	// Add a download button
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2)   // Started a rewrite to make this feature more Dolibarr compliant. Still need dev to be completed.
-	{
-	    // TODO Replace this with standard box to generate document.
-	   print '<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?num='.$numref.'&account='.$id.'&action=dl" class="butAction" name="Send" >'.$langs->trans('DownloadPackageWithAllDocuments')." </a>\n";
-	}
 }
 
 // End of page

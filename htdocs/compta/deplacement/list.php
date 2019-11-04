@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -36,7 +36,7 @@ $langs->loadLangs(array('companies', 'users', 'trips'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'deplacement', '', '');
 
 $search_ref=GETPOST('search_ref', 'int');
@@ -153,7 +153,7 @@ if ($resql)
     print '<td class="liste_titre right">';
     // print '<input class="flat" size="10" type="text" name="search_amount" value="'.$search_amount.'">';
     print '</td>';
-    print '<td class="liste_titre right">';
+    print '<td class="liste_titre maxwidthsearch">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';

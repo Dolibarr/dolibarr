@@ -73,23 +73,19 @@ EX_PAR_VP=Parking PV
 EX_CAM_VP=PV maintenance and repair
 DefaultCategoryCar=Default transportation mode
 DefaultRangeNumber=Default range number
-
+UploadANewFileNow=Upload a new document now
 Error_EXPENSEREPORT_ADDON_NotDefined=Error, the rule for expense report numbering ref was not defined into setup of module 'Expense Report'
 ErrorDoubleDeclaration=Prijavili ste još jedan trošak u sličnom vremenskom periodu.
 AucuneLigne=Nema prijavljenih troškova.
-
 ModePaiement=Način plaćanja
-
 VALIDATOR=Korisnik odgovoran za odobrenje
 VALIDOR=Odobrio
 AUTHOR=Snimio
 AUTHORPAIEMENT=Platio
 REFUSEUR=Odbio
 CANCEL_USER=Obrisao
-
 MOTIF_REFUS=Razlog
 MOTIF_CANCEL=Razlog
-
 DATE_REFUS=Datum odbijanja
 DATE_SAVE=Datum odobrenja
 DATE_CANCEL=Datum otkazivanja
@@ -113,7 +109,6 @@ NoTripsToExportCSV=Nema troškova za ovaj period.
 ExpenseReportPayment=Isplata troška
 ExpenseReportsToApprove=Izveštaj trškova za odobrenje
 ExpenseReportsToPay=Troškovi zaisplatu
-CloneExpenseReport=Clone expense report
 ConfirmCloneExpenseReport=Are you sure you want to clone this expense report ?
 ExpenseReportsIk=Expense report milles index
 ExpenseReportsRules=Expense report rules
@@ -140,7 +135,6 @@ OnExpense=Expense line
 ExpenseReportRuleSave=Expense report rule saved
 ExpenseReportRuleErrorOnSave=Error: %s
 RangeNum=Range %d
-
 ExpenseReportConstraintViolationError=Constraint violation id [%s]: %s  is superior to %s %s
 byEX_DAY=by day (limitation to %s)
 byEX_MON=by month (limitation to %s)
@@ -151,7 +145,7 @@ nolimitbyEX_DAY=by day (no limitation)
 nolimitbyEX_MON=by month (no limitation)
 nolimitbyEX_YEA=by year (no limitation)
 nolimitbyEX_EXP=by line (no limitation)
-
 CarCategory=Category of car
 ExpenseRangeOffset=Offset amount: %s
 RangeIk=Mileage range
+AttachTheNewLineToTheDocument=Attach the new line to an existing document

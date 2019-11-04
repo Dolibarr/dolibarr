@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,10 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-$langs->load("receptions");
-$langs->load("deliveries");
-$langs->load('companies');
-$langs->load('bills');
+$langs->loadLangs(array("sendings", "receptions", "deliveries", 'companies', 'bills'));
 
 $socid=GETPOST('socid', 'int');
 $massaction=GETPOST('massaction', 'alpha');
@@ -45,7 +42,7 @@ $toselect = GETPOST('toselect', 'array');
 
 // Security check
 $receptionid = GETPOST('id', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'reception', $receptionid, '');
 
 $diroutputmassaction=$conf->reception->dir_output . '/temp/massgeneration/'.$user->id;
@@ -79,13 +76,15 @@ $contextpage='receptionlist';
 
 $viewstatut=GETPOST('viewstatut');
 
+$object = new Reception($db);
+
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('receptionlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('reception');
-$search_array_options=$extrafields->getOptionalsFromPost($extralabels, '', 'search_');
+$extrafields->fetch_name_optionals_label($object->table_element);
+$search_array_options=$extrafields->getOptionalsFromPost(null, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -111,15 +110,17 @@ $arrayfields=array(
     'e.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
     'e.billed'=>array('label'=>$langs->trans("Billed"), 'checked'=>1, 'position'=>1000, 'enabled'=>(!empty($conf->global->WORKFLOW_BILL_ON_RECEPTION)))
 );
-
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-    foreach($extrafields->attribute_label as $key => $val)
-    {
-        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
-    }
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+	{
+		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+	}
 }
+$object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 /*
@@ -145,7 +146,6 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
     $search_town='';
 	$search_zip="";
     $search_state="";
-	$search_type='';
 	$search_country='';
 	$search_type_thirdparty='';
 	$search_billed='';
@@ -156,10 +156,9 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 if (empty($reshook))
 {
 	if ($massaction == 'confirm_createbills') {
-
     	$receptions = GETPOST('toselect', 'array');
     	$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
-    	$validate_invoices = GETPOST('valdate_invoices', 'int');
+    	$validate_invoices = GETPOST('validate_invoices', 'int');
 
     	$TFact = array();
     	$TFactThird = array();
@@ -306,29 +305,28 @@ if (empty($reshook))
 	    					{
 	    						$fk_parent_line = 0;
 	    					}
-        $result = $object->addline(
-	    							$desc,
-	    							$lines[$i]->subprice,
-	    							$lines[$i]->tva_tx,
-	    							$lines[$i]->localtax1_tx,
-	    							$lines[$i]->localtax2_tx,
-									$lines[$i]->qty,
-	    							$lines[$i]->fk_product,
-	    							$lines[$i]->remise_percent,
-	    							$date_start,
-	    							$date_end,
-	    							0,
-	    							$lines[$i]->info_bits,
-	    							'HT',
-	    							$product_type,
-	    							$i,
-	    							false,
-									0,
-									null,
-	    							$lines[$i]->rowid,
-									0,
-									$lines[$i]->ref_supplier
-
+                            $result = $object->addline(
+	    						$desc,
+	    						$lines[$i]->subprice,
+	    						$lines[$i]->tva_tx,
+	    						$lines[$i]->localtax1_tx,
+	    						$lines[$i]->localtax2_tx,
+								$lines[$i]->qty,
+	    						$lines[$i]->fk_product,
+	    						$lines[$i]->remise_percent,
+	    						$date_start,
+	    						$date_end,
+	    						0,
+	    						$lines[$i]->info_bits,
+	    						'HT',
+	    						$product_type,
+	    						$i,
+	    						false,
+								0,
+								null,
+	    						$lines[$i]->rowid,
+								0,
+								$lines[$i]->ref_supplier
 	    					);
 
 							$rcp->add_object_linked('facture_fourn_det', $result);
@@ -395,7 +393,6 @@ if (empty($reshook))
     	}
     	else
     	{
-
     		$db->rollback();
     		$action='create';
     		$_GET["origin"]=$_POST["origin"];
@@ -427,13 +424,15 @@ $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
 $sql.= ' e.date_creation as date_creation, e.tms as date_update';
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."reception as e";
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."reception_extrafields as ef on (e.rowid = ef.fk_object)";
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (e.rowid = ef.fk_object)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
@@ -474,7 +473,7 @@ foreach ($search_array_options as $key => $val)
 {
     $crit=$val;
     $tmpkey=preg_replace('/search_options_/', '', $key);
-    $typ=$extrafields->attribute_type[$tmpkey];
+    $typ=$extrafields->attributes[$object->table_element]['type'][$tmpkey];
     $mode=0;
     if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
     if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
@@ -533,9 +532,9 @@ if ($resql)
 	}
 
 
-	$arrayofmassactions =  array(
-//    'presend'=>$langs->trans("SendByMail"),
-);
+    $arrayofmassactions =  array(
+    // 'presend'=>$langs->trans("SendByMail"),
+    );
 
 	if($user->rights->fournisseur->facture->creer)$arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisSupplier");
 	if($massaction == 'createbills') $arrayofmassactions=array();
@@ -566,7 +565,7 @@ if ($resql)
 		print $langs->trans('DateInvoice');
 		print '</td>';
 		print '<td>';
-		print $form->select_date('', '', '', '', '', '', 1, 1);
+		print $form->selectDate('', '', '', '', '', '', 1, 1);
 		print '</td>';
 		print '</tr>';
 		print '<tr>';
@@ -584,12 +583,12 @@ if ($resql)
 		print '<td>';
 		if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_BILL))
 		{
-		    print $form->selectyesno('valdate_invoices', 0, 1, 1);
+		    print $form->selectyesno('validate_invoices', 0, 1, 1);
 		    print ' ('.$langs->trans("AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation").')';
 		}
 		else
 		{
-            print $form->selectyesno('valdate_invoices', 0, 1);
+            print $form->selectyesno('validate_invoices', 0, 1);
 		}
 		print '</td>';
 		print '</tr>';
@@ -628,8 +627,9 @@ if ($resql)
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-	// Lignes des champs de filtre
-	print '<tr class="liste_titre_filter">';
+    // Fields title search
+    // --------------------------------------------------------------------
+    print '<tr class="liste_titre_filter">';
 	// Ref
 	if (! empty($arrayfields['e.ref']['checked']))
 	{
@@ -694,28 +694,8 @@ if ($resql)
 		print '<td class="liste_titre">&nbsp;</td>';
 	}
 	// Extra fields
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-	{
-	    foreach($extrafields->attribute_label as $key => $val)
-	    {
-	        if (! empty($arrayfields["ef.".$key]['checked']))
-	        {
-	            $align=$extrafields->getAlignFlag($key);
-	            $typeofextrafield=$extrafields->attribute_type[$key];
-	            print '<td class="liste_titre'.($align?' '.$align:'').'">';
-	            if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
-	            {
-	                $crit=$val;
-	                $tmpkey=preg_replace('/search_options_/', '', $key);
-	                $searchclass='';
-	                if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
-	                if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
-	                print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
-	            }
-	            print '</td>';
-	        }
-	    }
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
 	// Fields from hook
 	$parameters=array('arrayfields'=>$arrayfields);
 	$reshook=$hookmanager->executeHooks('printFieldListOption', $parameters);    // Note that $action and $object may have been modified by hook
@@ -766,22 +746,10 @@ if ($resql)
 	if (! empty($arrayfields['l.ref']['checked']))            print_liste_field_titre($arrayfields['l.ref']['label'], $_SERVER["PHP_SELF"], "l.ref", "", $param, '', $sortfield, $sortorder);
 	if (! empty($arrayfields['l.date_delivery']['checked']))  print_liste_field_titre($arrayfields['l.date_delivery']['label'], $_SERVER["PHP_SELF"], "l.date_delivery", "", $param, '', $sortfield, $sortorder, 'center ');
 	// Extra fields
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-	{
-	    foreach($extrafields->attribute_label as $key => $val)
-	    {
-	        if (! empty($arrayfields["ef.".$key]['checked']))
-	        {
-	            $align=$extrafields->getAlignFlag($key);
-    			$sortonfield = "ef.".$key;
-    			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-    			print_liste_field_titre($extralabels[$key], $_SERVER["PHP_SELF"], $sortonfield, "", $param, '', $sortfield, $sortorder, ($align?'"'.$align.' "':''));
-	        }
-	    }
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
-	$parameters=array('arrayfields'=>$arrayfields);
-	$reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
+	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
+	$reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $object);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (! empty($arrayfields['e.datec']['checked']))  print_liste_field_titre($arrayfields['e.datec']['label'], $_SERVER["PHP_SELF"], "e.date_creation", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	if (! empty($arrayfields['e.tms']['checked']))    print_liste_field_titre($arrayfields['e.tms']['label'], $_SERVER["PHP_SELF"], "e.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
@@ -914,23 +882,8 @@ if ($resql)
 		}
 
 		// Extra fields
-		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-		{
-		    foreach($extrafields->attribute_label as $key => $val)
-		    {
-		        if (! empty($arrayfields["ef.".$key]['checked']))
-		        {
-		            print '<td class="tdofextrafield';
-		            $align=$extrafields->getAlignFlag($key);
-		            if ($align) print ' '.$align;
-		            print '">';
-		            $tmpkey='options_'.$key;
-		            print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
-		            print '</td>';
-		            if (! $i) $totalarray['nbfield']++;
-		        }
-		    }
-		}
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+
 		// Fields from hook
 		$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
 		$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters);    // Note that $action and $object may have been modified by hook

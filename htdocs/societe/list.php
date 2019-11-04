@@ -22,7 +22,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,6 +35,7 @@ require_once '../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
@@ -54,7 +55,7 @@ if ($contextpage == 'poslist')
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'societe', $socid, '');
 
 $search_all=trim(GETPOST('search_all', 'alphanohtml')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
@@ -126,7 +127,8 @@ $hookmanager->initHooks(array('thirdpartylist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('societe');
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
@@ -197,8 +199,8 @@ $arrayfields=array(
 	's.idprof4'=>array('label'=>"ProfId4Short", 'checked'=>$checkedprofid4),
 	's.idprof5'=>array('label'=>"ProfId5Short", 'checked'=>$checkedprofid5),
 	's.idprof6'=>array('label'=>"ProfId6Short", 'checked'=>$checkedprofid6),
-	's.tva_intra'=>array('label'=>"VATIntra", 'checked'=>0),
-	'customerorsupplier'=>array('label'=>'Nature', 'checked'=>1),
+	's.tva_intra'=>array('label'=>"VATIntraShort", 'checked'=>0),
+	'customerorsupplier'=>array('label'=>'NatureOfThirdParty', 'checked'=>1),
 	's.fk_prospectlevel'=>array('label'=>"ProspectLevelShort", 'checked'=>$checkprospectlevel),
 	's.fk_stcomm'=>array('label'=>"StatusProsp", 'checked'=>$checkstcomm),
     's2.nom'=>array('label'=>'ParentCompany', 'checked'=>0),
@@ -208,36 +210,40 @@ $arrayfields=array(
 	's.import_key'=>array('label'=>"ImportId", 'checked'=>0, 'position'=>1100),
 );
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-   foreach($extrafields->attribute_label as $key => $val)
-   {
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
-   }
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+	{
+		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+	}
 }
-
-$object = new Societe($db);
+$object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 /*
  * Actions
  */
 
-if ($action=="change")
+if ($action=="change")	// Change customer for TakePOS
 {
     $idcustomer = GETPOST('idcustomer', 'int');
     $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
-    $posnb = (GETPOST('posnb', 'int') > 0 ? GETPOST('posnb', 'int') : 0);   // $posnb is id of POS
 
-    $sql="UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$idcustomer." where ref='(PROV-POS-".$place.")'";
+    // @TODO Check if draft invoice already exists, if not create it or return a warning to ask to enter at least one line to have it created automatically
+    $sql="UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$idcustomer." where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
     $resql = $db->query($sql);
     ?>
-    <script>
-    parent.$("#poslines").load("invoice.php?place="+<?php print $place;?>, function() {
-        //parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
-        parent.$.colorbox.close();
-    });
-    </script>
+	    <script>
+	    parent.$("#poslines").load("invoice.php?place="+<?php print $place;?>, function() {
+	        //parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
+			<?php if (! $resql) { ?>
+				alert('Error failed to update customer on draft invoice.');
+			<?php } ?>
+	        parent.$.colorbox.close(); /* Close the popup */
+	    });
+	    </script>
     <?php
     exit;
 }
@@ -374,7 +380,7 @@ $sql.= " s.code_compta, s.code_compta_fournisseur, s.parent as fk_parent,";
 $sql.= " s2.nom as name2,";
 $sql.= " typent.code as typent_code,";
 $sql.= " staff.code as staff_code,";
-$sql.= " country.code as country_code,";
+$sql.= " country.code as country_code, country.label as country_label,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
 $sql.= " region.code_region as region_code, region.nom as region_name";
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
@@ -383,14 +389,16 @@ if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
 if ($search_categ_cus) $sql .= ", cc.fk_categorie, cc.fk_soc";
 if ($search_categ_sup) $sql .= ", cs.fk_categorie, cs.fk_soc";
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s2 ON s.parent = s2.rowid";
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as ef on (s.rowid = ef.fk_object)";
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (s.rowid = ef.fk_object)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_effectif as staff on (staff.id = s.fk_effectif)";
@@ -564,7 +572,7 @@ $arrayofmassactions =  array(
 //    'builddoc'=>$langs->trans("PDFMerge"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
-if ($user->rights->societe->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if ($user->rights->societe->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -582,9 +590,7 @@ if ($user->rights->societe->creer && $contextpage != 'poslist')
 		if($type == 'f') $label='NewSupplier';
 	}
 
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter.'"><span class="valignmiddle text-plus-circle">'.$langs->trans($label).'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
+    $newcardbutton.= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter);
 }
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">';
@@ -594,8 +600,9 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
+print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, $newcardbutton, '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'building', 0, $newcardbutton, '', $limit);
 
 $langs->load("other");
 $textprofid=array();
@@ -667,7 +674,7 @@ if ($moreforfilter)
 
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
+if ($massactionbutton && $contextpage != 'poslist') $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
 if (empty($arrayfields['customerorsupplier']['checked'])) print '<input type="hidden" name="type" value="'.$type.'">';
 
@@ -992,6 +999,8 @@ while ($i < min($num, $limit))
 	$companystatic->fournisseur=$obj->fournisseur;
 	$companystatic->code_client=$obj->code_client;
 	$companystatic->code_fournisseur=$obj->code_fournisseur;
+	$companystatic->tva_intra=$obj->tva_intra;
+	$companystatic->country_code=$obj->country_code;
 
 	$companystatic->code_compta_client=$obj->code_compta;
 	$companystatic->code_compta_fournisseur=$obj->code_compta_fournisseur;
@@ -1002,6 +1011,7 @@ while ($i < min($num, $limit))
 	print '<tr class="oddeven"';
 	if ($contextpage == 'poslist')
 	{
+		$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0);   // $place is id of table for Ba or Restaurant
 	    print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.$place.'\'"';
 	}
 	print '>';
@@ -1094,8 +1104,8 @@ while ($i < min($num, $limit))
 	if (! empty($arrayfields['country.code_iso']['checked']))
 	{
 		print '<td class="center">';
-		$tmparray=getCountry($obj->fk_pays, 'all');
-		print $tmparray['label'];
+		$labelcountry=($obj->country_code && ($langs->trans("Country".$obj->country_code)!="Country".$obj->country_code))?$langs->trans("Country".$obj->country_code):$obj->country_label;
+		print $labelcountry;
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
@@ -1169,7 +1179,13 @@ while ($i < min($num, $limit))
 	}
 	if (! empty($arrayfields['s.tva_intra']['checked']))
 	{
-		print "<td>".$obj->tva_intra."</td>\n";
+		print "<td>";
+		print $obj->tva_intra;
+		if ($obj->tva_intra && ! isValidVATID($companystatic))
+		{
+			print img_warning("BadVATNumber", '', '');
+		}
+		print "</td>\n";
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Type
@@ -1232,8 +1248,8 @@ while ($i < min($num, $limit))
 	    print '<td class="center">';
 	    if ($companystatic->fk_parent > 0)
 	    {
-	       $companyparent->fetch($companystatic->fk_parent);
-	       print $companyparent->getNomUrl(1);
+	        $companyparent->fetch($companystatic->fk_parent);
+	        print $companyparent->getNomUrl(1);
 	    }
 	    print "</td>";
 	    if (! $i) $totalarray['nbfield']++;
@@ -1263,7 +1279,7 @@ while ($i < min($num, $limit))
 	// Status
 	if (! empty($arrayfields['s.status']['checked']))
 	{
-		print '<td class="center nowrap">'.$companystatic->getLibStatut(3).'</td>';
+		print '<td class="center nowrap">'.$companystatic->getLibStatut(5).'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['s.import_key']['checked']))
@@ -1276,7 +1292,7 @@ while ($i < min($num, $limit))
 
 	// Action column
 	print '<td class="nowrap center">';
-	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+	if (($massactionbutton || $massaction) && $contextpage != 'poslist')   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 	{
 		$selected=0;
 		if (in_array($obj->rowid, $arrayofselected)) $selected=1;

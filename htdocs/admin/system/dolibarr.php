@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -286,7 +286,8 @@ $configfileparameters=array(
 		'dolibarr_main_document_root'=> $langs->trans("DocumentRootServer"),
 		'?dolibarr_main_document_root_alt' => $langs->trans("DocumentRootServer").' (alt)',
 		'dolibarr_main_data_root' => $langs->trans("DataRootServer"),
-		'separator1' => '',
+        'dolibarr_main_instance_unique_id' => $langs->trans("InstanceUniqueID"),
+        'separator1' => '',
 		'dolibarr_main_db_host' => $langs->trans("DatabaseServer"),
 		'dolibarr_main_db_port' => $langs->trans("DatabasePort"),
 		'dolibarr_main_db_name' => $langs->trans("DatabaseName"),
@@ -391,7 +392,20 @@ foreach($configfileparameters as $key => $value)
 					++$i;
 				}
 			}
-			else print ${$newkey};
+			elseif ($newkey == 'dolibarr_main_instance_unique_id')
+			{
+			    //print $conf->file->instance_unique_id;
+			    global $dolibarr_main_cookie_cryptkey;
+			    $valuetoshow = ${$newkey} ? ${$newkey} : $dolibarr_main_cookie_cryptkey;
+			    print $valuetoshow;
+			    if (empty($valuetoshow)) {
+			        print img_warning("EditConfigFileToAddEntry", 'dolibarr_main_instance_unique_id');
+			    }
+			}
+			else
+			{
+			    print ${$newkey};
+			}
 			if ($newkey == 'dolibarr_main_url_root' && ${$newkey} != DOL_MAIN_URL_ROOT) print ' (currently overwritten by autodetected value: '.DOL_MAIN_URL_ROOT.')';
 			print "</td>";
 		}

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -40,14 +40,14 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'loan', $id, '', '');
 
 // Get parameters
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOST("page", 'int');
-if ($page == -1) {
+if (empty($page) || $page == -1) {
     $page = 0;
 }
 $offset = $conf->liste_limit * $page;
@@ -98,7 +98,7 @@ if ($object->id)
 		$morehtmlref .= '<br>' . $langs->trans('Project') . ' : ';
 		if ($user->rights->loan->write) {
 			//if ($action != 'classify')
-			//	$morehtmlref .= '<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+			//	$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			if ($action == 'classify') {
 				// $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 				$morehtmlref .= '<form method="post" action="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '">';
@@ -143,7 +143,7 @@ if ($object->id)
     }
 
 
-    print '<table class="border" width="100%">';
+    print '<table class="border tableforfield centpercent">';
     print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td>'.count($filearray).'</td></tr>';
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.dol_print_size($totalsize, 1, 1).'</td></tr>';
     print "</table>\n";

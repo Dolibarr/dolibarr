@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Path to WSDL is: http://localhost/dolibarr/webservices/server_productorservice.php?wsdl
  */
@@ -130,21 +130,28 @@ $productorservice_fields = array(
     'images' => array('name'=>'images','type'=>'tns:ImagesArray')
 );
 
+
+$elementtype = 'product';
+
+
 //Retreive all extrafield for product
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label('product', true);
+$extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields) > 0) {
 	$extrafield_array = array();
 }
-foreach($extrafields->attribute_label as $key=>$label)
+if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 {
-	$type =$extrafields->attribute_type[$key];
-	if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
-	else {$type='xsd:string';}
+	foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	{
+		$type =$extrafields->attributes[$elementtype]['type'][$key];
+		if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
+		else {$type='xsd:string';}
 
-	$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+		$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+	}
 }
 
 if (is_array($extrafield_array)) $productorservice_fields=array_merge($productorservice_fields, $extrafield_array);
@@ -358,7 +365,6 @@ function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = ''
 
     if (! $error)
     {
-
     	$langcode=($lang?$lang:(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
     	$langs->setDefaultLang($langcode);
 
@@ -421,16 +427,21 @@ function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = ''
             		'images' => $product->liste_photos($dir, $nbmax)
             	);
 
+            	$elementtype = 'product';
+
                 //Retreive all extrafield for thirdsparty
             	// fetch optionals attributes and labels
             	$extrafields=new ExtraFields($db);
-            	$extralabels=$extrafields->fetch_name_optionals_label('product', true);
+            	$extrafields->fetch_name_optionals_label($elementtype, true);
             	//Get extrafield values
             	$product->fetch_optionals();
 
-            	foreach($extrafields->attribute_label as $key=>$label)
+            	if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
             	{
-            		$productorservice_result_fields=array_merge($productorservice_result_fields, array('options_'.$key => $product->array_options['options_'.$key]));
+            		foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	            	{
+	            		$productorservice_result_fields=array_merge($productorservice_result_fields, array('options_'.$key => $product->array_options['options_'.$key]));
+	            	}
             	}
 
                 // Create
@@ -494,7 +505,7 @@ function createProductOrService($authentication, $product)
 
     if ($product['barcode'] && !$product['barcode_type'])
     {
-	$errror++; $errorcode='KO' ; $errorlabel="You must set a barcode type when setting a barcode.";
+        $errror++; $errorcode='KO' ; $errorlabel="You must set a barcode type when setting a barcode.";
     }
 
 
@@ -507,10 +518,10 @@ function createProductOrService($authentication, $product)
         $newobject->ref=$product['ref'];
         $newobject->ref_ext=$product['ref_ext'];
         $newobject->type=$product['type'];
-        $newobject->libelle=$product['label'];    // @deprecated
         $newobject->label=$product['label'];
         $newobject->description=$product['description'];
-        $newobject->note=$product['note'];
+        $newobject->note_public=$product['note_public'];
+        $newobject->note_private=$product['note_private'];
         $newobject->status=$product['status_tosell'];
         $newobject->status_buy=$product['status_tobuy'];
         $newobject->price=$product['price_net'];
@@ -550,12 +561,17 @@ function createProductOrService($authentication, $product)
         //var_dump($product['ref_ext']);
         //var_dump($product['lines'][0]['type']);
 
+        $elementtype = 'product';
+
         $extrafields=new ExtraFields($db);
-		$extralabels=$extrafields->fetch_name_optionals_label('product', true);
-		foreach($extrafields->attribute_label as $key=>$label)
+        $extrafields->fetch_name_optionals_label($elementtype, true);
+		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
-			$key='options_'.$key;
-			$newobject->array_options[$key]=$product[$key];
+			foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+			{
+				$key='options_'.$key;
+				$newobject->array_options[$key]=$product[$key];
+			}
 		}
 
         $db->begin();
@@ -676,7 +692,6 @@ function updateProductOrService($authentication, $product)
         if (isset($product['ref']))     $newobject->ref=$product['ref'];
         if (isset($product['ref_ext'])) $newobject->ref_ext=$product['ref_ext'];
         $newobject->type=$product['type'];
-        $newobject->libelle=$product['label'];    // @deprecated
         $newobject->label=$product['label'];
         $newobject->description=$product['description'];
         $newobject->note=$product['note'];
@@ -719,12 +734,17 @@ function updateProductOrService($authentication, $product)
         //var_dump($product['ref_ext']);
         //var_dump($product['lines'][0]['type']);
 
+        $elementtype = 'product';
+
 		$extrafields=new ExtraFields($db);
-		$extralabels=$extrafields->fetch_name_optionals_label('product', true);
-		foreach($extrafields->attribute_label as $key=>$label)
+		$extrafields->fetch_name_optionals_label($elementtype, true);
+		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
-			$key='options_'.$key;
-			$newobject->array_options[$key]=$product[$key];
+			foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+			{
+				$key='options_'.$key;
+				$newobject->array_options[$key]=$product[$key];
+			}
 		}
 
         $db->begin();
@@ -946,9 +966,9 @@ function getListOfProductsOrServices($authentication, $filterproduct)
         $sql.=" WHERE entity=".$conf->entity;
         foreach($filterproduct as $key => $val)
         {
-		if ($key == 'type' && $val >= 0)   	$sql.=" AND fk_product_type = ".$db->escape($val);
-		if ($key == 'status_tosell') 				$sql.=" AND tosell = ".$db->escape($val);
-		if ($key == 'status_tobuy')  				$sql.=" AND tobuy = ".$db->escape($val);
+		    if ($key == 'type' && $val >= 0) $sql.=" AND fk_product_type = ".$db->escape($val);
+		    if ($key == 'status_tosell') $sql.=" AND tosell = ".$db->escape($val);
+		    if ($key == 'status_tobuy') $sql.=" AND tobuy = ".$db->escape($val);
         }
 		$resql=$db->query($sql);
         if ($resql)
@@ -1049,58 +1069,64 @@ function getProductsForCategory($authentication, $id, $lang = '')
 				if ($res)
 				{
 					$iProduct = 0;
+					$tmpproduct = new Product($db);
+					$products=array();
 					while ($rec = $db->fetch_array($res))
 					{
-						$obj = new Product($db);
-						$obj->fetch($rec['fk_'.$field]);
-						if($obj->status > 0 )
+						$tmpproduct->fetch($rec['fk_'.$field]);
+						if ($tmpproduct->status > 0)
 						{
 							$dir = (!empty($conf->product->dir_output)?$conf->product->dir_output:$conf->service->dir_output);
-							$pdir = get_exdir($obj->id, 2, 0, 0, $product, 'product') . $obj->id ."/photos/";
+							$pdir = get_exdir($tmpproduct->id, 2, 0, 0, $tmpproduct, 'product') . $tmpproduct->id ."/photos/";
 							$dir = $dir . '/'. $pdir;
 
 							$products[] = array(
-						    	'id' => $obj->id,
-					   			'ref' => $obj->ref,
-					   			'ref_ext' => $obj->ref_ext,
-					    		'label' => ! empty($obj->multilangs[$langs->defaultlang]["label"]) ? $obj->multilangs[$langs->defaultlang]["label"] : $obj->label,
-					    		'description' => ! empty($obj->multilangs[$langs->defaultlang]["description"]) ? $obj->multilangs[$langs->defaultlang]["description"] : $obj->description,
-					    		'date_creation' => dol_print_date($obj->date_creation, 'dayhourrfc'),
-					    		'date_modification' => dol_print_date($obj->date_modification, 'dayhourrfc'),
-					            'note' => ! empty($obj->multilangs[$langs->defaultlang]["note"]) ? $obj->multilangs[$langs->defaultlang]["note"] : $obj->note,
-					            'status_tosell' => $obj->status,
-					            'status_tobuy' => $obj->status_buy,
-		                		'type' => $obj->type,
-						        'barcode' => $obj->barcode,
-						        'barcode_type' => $obj->barcode_type,
-		                		'country_id' => $obj->country_id>0?$obj->country_id:'',
-						        'country_code' => $obj->country_code,
-						        'custom_code' => $obj->customcode,
+						    	'id' => $tmpproduct->id,
+					   			'ref' => $tmpproduct->ref,
+					   			'ref_ext' => $tmpproduct->ref_ext,
+					    		'label' => ! empty($tmpproduct->multilangs[$langs->defaultlang]["label"]) ? $tmpproduct->multilangs[$langs->defaultlang]["label"] : $tmpproduct->label,
+					    		'description' => ! empty($tmpproduct->multilangs[$langs->defaultlang]["description"]) ? $tmpproduct->multilangs[$langs->defaultlang]["description"] : $tmpproduct->description,
+					    		'date_creation' => dol_print_date($tmpproduct->date_creation, 'dayhourrfc'),
+					    		'date_modification' => dol_print_date($tmpproduct->date_modification, 'dayhourrfc'),
+					            'note' => ! empty($tmpproduct->multilangs[$langs->defaultlang]["note"]) ? $tmpproduct->multilangs[$langs->defaultlang]["note"] : $tmpproduct->note,
+					            'status_tosell' => $tmpproduct->status,
+					            'status_tobuy' => $tmpproduct->status_buy,
+		                		'type' => $tmpproduct->type,
+						        'barcode' => $tmpproduct->barcode,
+						        'barcode_type' => $tmpproduct->barcode_type,
+		                		'country_id' => $tmpproduct->country_id>0?$tmpproduct->country_id:'',
+						        'country_code' => $tmpproduct->country_code,
+						        'custom_code' => $tmpproduct->customcode,
 
-						        'price_net' => $obj->price,
-						        'price' => $obj->price_ttc,
-						        'vat_rate' => $obj->tva_tx,
+						        'price_net' => $tmpproduct->price,
+						        'price' => $tmpproduct->price_ttc,
+						        'vat_rate' => $tmpproduct->tva_tx,
 
-								'price_base_type' => $obj->price_base_type,
+								'price_base_type' => $tmpproduct->price_base_type,
 
-						        'stock_real' => $obj->stock_reel,
-		                		'stock_alert' => $obj->seuil_stock_alerte,
-						        'pmp' => $obj->pmp,
-		                		'import_key' => $obj->import_key,
+						        'stock_real' => $tmpproduct->stock_reel,
+		                		'stock_alert' => $tmpproduct->seuil_stock_alerte,
+						        'pmp' => $tmpproduct->pmp,
+		                		'import_key' => $tmpproduct->import_key,
 		                		'dir' => $pdir,
-								'images' => $obj->liste_photos($dir, $nbmax)
+								'images' => $tmpproduct->liste_photos($dir, $nbmax)
 							);
+
+							$elementtype = 'product';
 
 							//Retreive all extrafield for thirdsparty
 							// fetch optionals attributes and labels
 							$extrafields=new ExtraFields($db);
-							$extralabels=$extrafields->fetch_name_optionals_label('product', true);
+							$extrafields->fetch_name_optionals_label($elementtype, true);
 							//Get extrafield values
-							$obj->fetch_optionals();
+							$tmpproduct->fetch_optionals();
 
-							foreach($extrafields->attribute_label as $key=>$label)
+							if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 							{
-								$products[$iProduct]=array_merge($products[$iProduct], array('options_'.$key => $obj->array_options['options_'.$key]));
+								foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+								{
+									$products[$iProduct]=array_merge($products[$iProduct], array('options_'.$key => $tmpproduct->array_options['options_'.$key]));
+								}
 							}
 
 							$iProduct++;
@@ -1117,7 +1143,7 @@ function getProductsForCategory($authentication, $id, $lang = '')
 				{
 					$errorcode='NORECORDS_FOR_ASSOCIATION'; $errorlabel='No products associated'.$sql;
 					$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
-					dol_syslog("getProductsForCategory:: ".$c->error, LOG_DEBUG);
+					dol_syslog("getProductsForCategory:: ".$errorcode, LOG_DEBUG);
 				}
 			}
 			else

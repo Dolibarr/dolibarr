@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -171,7 +171,6 @@ if (empty($reshook))
     }
 
     if ($action == 'edit') {
-
     	// Security check
     	if (!$user->rights->opensurvey->write) accessforbidden();
     }
@@ -226,7 +225,7 @@ dol_banner_tab($object, 'id', $linkback, 1, 'id_sondage', 'id_sondage', $morehtm
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border" width="100%">';
+print '<table class="border tableforfield centpercent">';
 
 // Type
 $type=($object->format=="A")?'classic':'date';
@@ -327,7 +326,7 @@ if ($object->fk_user_creat) {
 print '</td></tr>';
 
 // Link
-print '<tr><td>'.img_picto('', 'object_globe.png').' '.$langs->trans("UrlForSurvey", '').'</td><td colspan="2">';
+print '<tr><td>'.img_picto('', 'globe').' '.$langs->trans("UrlForSurvey", '').'</td><td colspan="2">';
 
 // Define $urlwithroot
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -365,7 +364,6 @@ print '</form>'."\n";
 print '<div class="tabsAction">';
 
 if ($action != 'edit' && $user->rights->opensurvey->write) {
-
     //Modify button
     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id=' . $numsondage . '">'.$langs->trans("Modify") . '</a>';
 

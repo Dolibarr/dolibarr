@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,7 +35,7 @@ $id		= GETPOST('id', 'int');
 $action	= GETPOST('action', 'alpha');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 $object = new Contact($db);
 
@@ -319,7 +319,7 @@ else
 if ($action != 'edit')
 {
     // Barre d'actions
-    if ($user->societe_id == 0)
+    if ($user->socid == 0)
     {
         print '<div class="tabsAction">';
 

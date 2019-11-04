@@ -9,28 +9,28 @@ ACCOUNTING_EXPORT_AMOUNT=Eksporta summa
 ACCOUNTING_EXPORT_DEVISE=Eksportējamā valūta
 Selectformat=Izvēlieties faila formātu
 ACCOUNTING_EXPORT_FORMAT=Izvēlieties faila formātu
-ACCOUNTING_EXPORT_ENDLINE=Select the carriage return type
-ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
+ACCOUNTING_EXPORT_ENDLINE=Izvēlieties vagonu atgriešanas veidu
+ACCOUNTING_EXPORT_PREFIX_SPEC=Norādiet faila nosaukuma prefiksu
 ThisService=Šis pakalpojums
 ThisProduct=Šis produkts
 DefaultForService=Noklusējums pakalpojumam
 DefaultForProduct=Noklusējums produktam
 CantSuggest=Nevar ieteikt
 AccountancySetupDoneFromAccountancyMenu=Lielākā daļa grāmatvedības iestatīšanas tiek veikta no izvēlnes %s
-ConfigAccountingExpert=Configuration of the module accounting expert
+ConfigAccountingExpert=Moduļa grāmatvedības eksperta konfigurācija
 Journalization=Grāmatvedības ieraksts
 Journaux=Žurnāli
 JournalFinancial=Finanšu žurnāli
-BackToChartofaccounts=Return chart of accounts
+BackToChartofaccounts=Atgriezties kontu diagrammā
 Chartofaccounts=Kontu plāns
-CurrentDedicatedAccountingAccount=Pašreizējais veltītais konts
+CurrentDedicatedAccountingAccount=Pašreizējais konts
 AssignDedicatedAccountingAccount=Jauns konts, kuru piešķirt
 InvoiceLabel=Rēķina nosaukums
 OverviewOfAmountOfLinesNotBound=Pārskats par to līniju skaitu, kurām nav saistības ar grāmatvedības kontu
 OverviewOfAmountOfLinesBound=Pārskats par to līniju skaitu, kuras jau ir piesaistītas grāmatvedības kontam
 OtherInfo=Cita informācija
 DeleteCptCategory=No grāmatvedības konta noņemt grupu
-ConfirmDeleteCptCategory=Vai tiešām vēlaties noņemt šo grāmatvedības kontu no grāmatvedības kontu grupas?
+ConfirmDeleteCptCategory=Vai tiešām vēlaties noņemt šo grāmatvedības kontu no grāmatvedības konta grupas?
 JournalizationInLedgerStatus=Žurnālistikas statuss
 AlreadyInGeneralLedger=Jau žurnalizēts žurnālos
 NotYetInGeneralLedger=Vēl nav publicēts žurnālos
@@ -42,11 +42,13 @@ CountriesInEEC=Valstis EEK
 CountriesNotInEEC=Valstis, kas nav EEK valstīs
 CountriesInEECExceptMe=Valstis EEK, izņemot %s
 CountriesExceptMe=Visas valstis, izņemot %s
+AccountantFiles=Eksporta grāmatvedības dokumenti
 
 MainAccountForCustomersNotDefined=Galvenais grāmatvedības konts klientiem, kas nav definēti iestatījumos
 MainAccountForSuppliersNotDefined=Galvenais grāmatvedības konts piegādātājiem, kas nav definēti iestatījumos
 MainAccountForUsersNotDefined=Galvenais grāmatvedības konts lietotājiem, kas nav definēti iestatījumos
 MainAccountForVatPaymentNotDefined=Galvenais grāmatvedības konts par PVN maksājumu, kas nav definēts iestatījumos
+MainAccountForSubscriptionPaymentNotDefined=Galvenais grāmatvedības konts abonēšanas maksā, kas nav definēts iestatījumā
 
 AccountancyArea=Grāmatvedības zona
 AccountancyAreaDescIntro=Grāmatvedības moduļa lietošana tiek veikta vairākos posmos:
@@ -54,7 +56,7 @@ AccountancyAreaDescActionOnce=Šīs darbības parasti izpilda tikai vienu reizi 
 AccountancyAreaDescActionOnceBis=Veicot nākamo darbību, lai nākotnē ietaupītu laiku, ierosinot pareizu noklusējuma grāmatvedības kontu žurnālistikas veikšanā (rakstot žurnālu un galveno virsgrāmatu)
 AccountancyAreaDescActionFreq=Šīs darbības parasti tiek veiktas katru mēnesi, nedēļu vai dienu ļoti lieliem uzņēmumiem ...
 
-AccountancyAreaDescJournalSetup=STEP %s: izveidojiet vai pārbaudiet žurnāla satura saturu no izvēlnes %s
+AccountancyAreaDescJournalSetup=Solis %s: izveidojiet vai pārbaudiet žurnāla satura saturu no izvēlnes %s
 AccountancyAreaDescChartModel=STEP %s: izveidojiet konta diagrammas modeli no izvēlnes %s
 AccountancyAreaDescChart=STEP %s: izveidojiet vai pārbaudiet sava konta diagrammas saturu no izvēlnes %s
 
@@ -64,6 +66,7 @@ AccountancyAreaDescExpenseReport=STEP %s: definējiet noklusējuma uzskaites kon
 AccountancyAreaDescSal=STEP %s: definējiet noklusējuma uzskaites kontus algu izmaksāšanai. Šajā nolūkā izmantojiet izvēlnes ierakstu %s.
 AccountancyAreaDescContrib=STEP %s: definējiet noklusējuma grāmatvedības kontus īpašiem izdevumiem (dažādiem nodokļiem). Šajā nolūkā izmantojiet izvēlnes ierakstu %s.
 AccountancyAreaDescDonation=STEP %s: definējiet noklusējuma uzskaites kontus ziedojumiem. Šajā nolūkā izmantojiet izvēlnes ierakstu %s.
+AccountancyAreaDescSubscription=STEP %s: definējiet noklusējuma grāmatvedības kontus dalībnieku abonementam. Lai to izdarītu, izmantojiet izvēlnes ierakstu %s.
 AccountancyAreaDescMisc=STEP %s: norādiet obligātos noklusējuma kontu un noklusējuma grāmatvedības kontus dažādiem darījumiem. Šajā nolūkā izmantojiet izvēlnes ierakstu %s.
 AccountancyAreaDescLoan=STEP %s: definējiet noklusējuma aizņēmumu grāmatvedības uzskaiti. Šajā nolūkā izmantojiet izvēlnes ierakstu %s.
 AccountancyAreaDescBank=STEP %s: definējiet grāmatvedības kontus un žurnāla kodu katrai bankai un finanšu kontiem. Šajā nolūkā izmantojiet izvēlnes ierakstu %s.
@@ -81,7 +84,8 @@ ChangeAndLoad=Mainīt un ielādēt
 Addanaccount=Pievienot grāmatvedības kontu
 AccountAccounting=Grāmatvedības konts
 AccountAccountingShort=Konts
-SubledgerAccount=Apakšuzņēmēja konts
+SubledgerAccount=Subledger konts
+SubledgerAccountLabel=Subledger konta etiķete
 ShowAccountingAccount=Rādīt grāmatvedības kontu
 ShowAccountingJournal=Rādīt grāmatvedības žurnālu
 AccountAccountingSuggest=Ieteicamais grāmatvedības konts
@@ -92,19 +96,22 @@ MenuTaxAccounts=Nodokļu konti
 MenuExpenseReportAccounts=Izdevumu atskaišu konti
 MenuLoanAccounts=Aizdevumu konti
 MenuProductsAccounts=Produktu konti
+MenuClosureAccounts=Slēgšanas konti
 ProductsBinding=Produktu konti
-Ventilation=Saistīšana ar kontiem
+TransferInAccounting=Pārskaitījums grāmatvedībā
+RegistrationInAccounting=Reģistrācija grāmatvedībā
+Binding=Saistīšana ar kontiem
 CustomersVentilation=Klienta rēķins saistošs
 SuppliersVentilation=Piegādātāja rēķins saistošs
 ExpenseReportsVentilation=Izdevumu pārskats ir saistošs
 CreateMvts=Izveidot jaunu darījumu
 UpdateMvts=Darījuma grozīšana
 ValidTransaction=Apstipriniet darījumu
-WriteBookKeeping=Žurnalizēt darījumus grāmatvedībā
+WriteBookKeeping=Reģistrēt darījumus Ledger
 Bookkeeping=Ledger
 AccountBalance=Konta bilance
 ObjectsRef=Avota objekta ref
-CAHTF=Total purchase supplier before tax
+CAHTF=Kopējais pirkuma pārdevējs pirms nodokļu nomaksas
 TotalExpenseReport=Kopējais izdevumu pārskats
 InvoiceLines=Rindu līnijas saistīšanai
 InvoiceLinesDone=Iesaistīto rēķinu līnijas
@@ -117,7 +124,7 @@ Ventilate=Saistīt
 LineId=Id līnija
 Processing=Apstrādā
 EndProcessing=Process ir pārtraukts.
-SelectedLines=Selected lines
+SelectedLines=Atlasītās līnijas
 Lineofinvoice=Line of invoice
 LineOfExpenseReport=Izdevumu rindas pārskats
 NoAccountSelected=Nav izvēlēts grāmatvedības konts
@@ -126,31 +133,41 @@ NotVentilatedinAccount=Nav saistošs grāmatvedības kontam
 XLineSuccessfullyBinded=%s produkti / pakalpojumi, kas veiksmīgi piesaistīti grāmatvedības kontam
 XLineFailedToBeBinded=%s produkti / pakalpojumi nav saistīti ar jebkuru grāmatvedības kontu
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Elementu skaits saistīšanai, kas norādīts lapā (maksimālais ieteicamais: 50)
+ACCOUNTING_LIMIT_LIST_VENTILATION=Saistīto elementu skaits, kas redzams lapā (maksimāli ieteicams: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Sāciet lappuses "Saistīšanu darīt" šķirošanu ar jaunākajiem elementiem
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Sāciet lappuses "Saistīšana pabeigta" šķirošanu ar jaunākajiem elementiem
 
 ACCOUNTING_LENGTH_DESCRIPTION=Produkta un pakalpojumu apraksta saīsinājums sarakstos pēc x skaitļiem (vislabāk = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Griezieties produkta un pakalpojuma konta apraksta veidlapā sarakstos pēc x kārtas (vislabāk = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Vispārējo grāmatvedības kontu garums (ja šeit iestatāt vērtību 6, ekrānā parādīsies '706' konts, piemēram, '706000').
-ACCOUNTING_LENGTH_AACCOUNT=Trešās puses grāmatvedības kontu garums (ja šeit iestatāt vērtību 6, ekrānā '401' konts parādīsies kā '401000')
-ACCOUNTING_MANAGE_ZERO=Grāmatvedības konta beigās ļauj pārvaldīt citu nulles numuru. Nepieciešams dažās valstīs (piemēram, Šveice). Ja turpiniet izslēgt (pēc noklusējuma), varat iestatīt 2 šādus parametrus, lai pieprasītu lietojumprogrammai pievienot virtuālo nulli.
+ACCOUNTING_LENGTH_AACCOUNT=Trešo pušu grāmatvedības kontu garums (ja iestatāt vērtību 6, konts 401 parādīsies ekrānā kā 401000)
+ACCOUNTING_MANAGE_ZERO=Atļaujiet pārvaldīt atšķirīgu skaitu nulles grāmatvedības konta beigās. Nepieciešamas dažas valstis (piemēram, Šveice). Ja iestatījums ir izslēgts (noklusējums), varat iestatīt šādus divus parametrus, lai pieprasītu lietojumprogrammai pievienot virtuālās nulles.
 BANK_DISABLE_DIRECT_INPUT=Atspējot tiešu darījumu reģistrāciju bankas kontā
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Iespējot eksporta projektu žurnālā
+ACCOUNTANCY_COMBO_FOR_AUX=Iespējot kombinēto sarakstu papildu kontam (var būt lēni, ja jums ir daudz trešo personu)
 
 ACCOUNTING_SELL_JOURNAL=Pārdošanas žurnāls
 ACCOUNTING_PURCHASE_JOURNAL=Pirkuma žurnāls
-ACCOUNTING_MISCELLANEOUS_JOURNAL=Miscellaneous journal
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Dažādi žurnāli
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
 ACCOUNTING_SOCIAL_JOURNAL=Sociālais žurnāls
 ACCOUNTING_HAS_NEW_JOURNAL=Vai jauns Vēstnesis?
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Pārveduma grāmatvedības konts
+ACCOUNTING_RESULT_PROFIT=Rezultātu uzskaites konts (peļņa)
+ACCOUNTING_RESULT_LOSS=Rezultātu uzskaites konts (zaudējumi)
+ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Noslēguma žurnāls
+
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Grāmatvedības konts bankas pārskaitījuma starp konts
+TransitionalAccount=Pārejas bankas konta pārejas konts
+
 ACCOUNTING_ACCOUNT_SUSPENSE=Gaidīšanas grāmatvedības konts
 DONATION_ACCOUNTINGACCOUNT=Accounting account to register donations
+ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Grāmatvedības konts, lai reģistrētu abonementus
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Grāmatvedības konts pēc noklusējuma par nopirktajiem produktiem (izmanto, ja produkta lapā nav noteikts).
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Grāmatvedības konts pēc noklusējuma pārdotajiem produktiem (izmanto, ja produkta lapā nav noteikts).
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Grāmatvedības konts pēc noklusējuma par pārdotajiem produktiem EEK (lieto, ja tas nav norādīts produkta lapā)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Grāmatvedības konts pēc noklusējuma par pārdotajiem produktiem, kas eksportēti no EEK (lieto, ja tas nav norādīts produkta lapā)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Grāmatvedības konts pēc noklusējuma par nopirktajiem pakalpojumiem (lieto, ja tas nav noteikts pakalpojuma lapā)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Grāmatvedības konts pēc noklusējuma pārdotajiem pakalpojumiem (izmanto, ja tas nav noteikts pakalpojuma lapā)
 
@@ -161,7 +178,9 @@ LabelAccount=Konta nosaukums
 LabelOperation=Etiķetes darbība
 Sens=Sens
 LetteringCode=Burtu kods
+Lettering=Burti
 Codejournal=Žurnāls
+JournalLabel=Žurnāla etiķete
 NumPiece=Gabala numurs
 TransactionNumShort=Num. darījums
 AccountingCategory=Personalizētas grupas
@@ -175,7 +194,7 @@ NotMatch=Nav iestatīts
 DeleteMvt=Delete Ledger lines
 DelYear=Gads kurš jādzēš
 DelJournal=Žurnāls kurš jādzēš
-ConfirmDeleteMvt=Tas dzēsīs visas Ledger rindas uz gadu un / vai no konkrēta žurnāla. Ir vajadzīgi vismaz viens kritērijs.
+ConfirmDeleteMvt=Tas izdzēsīs visas Ledger rindas gadā un / vai no konkrēta žurnāla. Nepieciešams vismaz viens kritērijs.
 ConfirmDeleteMvtPartial=Tiks dzēsts darījums no Ledger (visas līnijas, kas attiecas uz to pašu darījumu, tiks dzēsti).
 FinanceJournal=Finanšu žurnāls
 ExpenseReportsJournal=Izdevumu pārskatu žurnāls
@@ -193,20 +212,22 @@ NumMvts=Darījuma numurs
 ListeMvts=Pārvietošanas saraksts
 ErrorDebitCredit=Debit and Credit cannot have a value at the same time
 AddCompteFromBK=Pievienojiet grāmatvedības kontiem grupai
-ReportThirdParty=Trešo personu kontu saraksts
-DescThirdPartyReport=Konsultējieties šeit ar trešo pušu klientiem un pārdevējiem un viņu grāmatvedības kontiem
-ListAccounts=List of the accounting accounts
-UnknownAccountForThirdparty=Nezināma trešās puses konts. Mēs izmantosim %s
-UnknownAccountForThirdpartyBlocking=Nezināma trešās puses konts. Bloķēšanas kļūda
-UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Nezināma trešās puses konta un gaidīšanas konts nav definēts. Bloķēšanas kļūda
+ReportThirdParty=Uzskaitiet trešās puses kontu
+DescThirdPartyReport=Konsultējieties ar trešo pušu klientu un pārdevēju sarakstu un grāmatvedības kontiem
+ListAccounts=Grāmatvedības kontu saraksts
+UnknownAccountForThirdparty=Nezināmas trešās puses konts. Mēs izmantosim %s
+UnknownAccountForThirdpartyBlocking=Nezināms trešās puses konts. Bloķēšanas kļūda
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Trešās puses konts nav definēts vai trešā persona nav zināma. Mēs izmantosim %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Trešās puses konts nav definēts vai trešā persona nav zināma. Bloķēšanas kļūda.
+UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Nav noteikts nezināms trešās puses konts un gaidīšanas konts. Bloķēšanas kļūda
 PaymentsNotLinkedToProduct=Maksājums nav saistīts ar kādu produktu / pakalpojumu
 
 Pcgtype=Kontu grupa
 Pcgsubtype=Konta apakšgrupa
 PcgtypeDesc=Kontu grupa un apakšgrupa tiek izmantota kā iepriekš definēts "filtru" un "grupēšanas" kritērijs dažiem grāmatvedības pārskatiem. Piemēram, "ienākumi" vai "IZDEVUMI" tiek izmantoti kā produktu grāmatvedības kontu grupas, lai izveidotu izdevumu / ienākumu pārskatu.
 
-TotalVente=Total turnover before tax
-TotalMarge=Total sales margin
+TotalVente=Kopējais apgrozījums pirms nodokļu nomaksas
+TotalMarge=Kopējā pārdošanas starpība
 
 DescVentilCustomer=Aplūkojiet šeit klienta rēķina līniju sarakstu, kas saistītas (vai nav) ar produktu grāmatvedības kontu
 DescVentilMore=Vairumā gadījumu, ja jūs izmantojat iepriekš definētus produktus vai pakalpojumus, un produkta / pakalpojuma kartē norādiet konta numuru, programma varēs veikt visu saistību starp jūsu rēķina līnijām un jūsu kontu plāna grāmatvedības kontu, tikai vienu klikšķi, izmantojot pogu <strong> "%s" </ strong>. Ja konts nav iestatīts uz produktu / pakalpojumu kartēm vai ja jums joprojām ir dažas līnijas, kurām nav saistības ar kontu, izvēlnē "<strong> %s </ strong>" būs jāveic manuāla piesaistīšana.
@@ -215,17 +236,17 @@ DescVentilTodoCustomer=Piesaistiet rēķina līnijas, kas vēl nav saistītas ar
 ChangeAccount=Izmainiet produktu / pakalpojumu grāmatvedības kontu izvēlētajām līnijām ar šādu grāmatvedības kontu:
 Vide=-
 DescVentilSupplier=Konsultējieties šeit ar pārdevēju rēķina līniju sarakstu, kas saistītas vai vēl nav saistītas ar produktu grāmatvedības kontu
-DescVentilDoneSupplier=Konsultējieties šeit ar rēķinu piegādātāju rindu sarakstu un to grāmatvedības kontu
+DescVentilDoneSupplier=Šeit skatiet piegādātāju rēķinu un to grāmatvedības kontu sarakstu
 DescVentilTodoExpenseReport=Bind expense report lines, kas jau nav saistītas ar maksu grāmatvedības kontu
 DescVentilExpenseReport=Konsultējieties šeit ar izdevumu pārskatu rindiņu sarakstu, kas ir saistoši (vai nē) ar maksu grāmatvedības kontu
 DescVentilExpenseReportMore=Ja jūs izveidojat grāmatvedības kontu uz izdevumu pārskata rindiņu veida, programma varēs visu saistību starp jūsu rēķina pārskatu rindiņām un jūsu kontu diagrammas grāmatvedības kontu veikt tikai ar vienu klikšķi, izmantojot pogu <strong> "%s" </ strong>. Ja kontam nav iestatīta maksu vārdnīca vai ja jums joprojām ir dažas rindiņas, kurām nav saistības ar kādu kontu, izvēlnē "<strong> %s </ strong>" būs jāveic manuāla piesaistīšana.
 DescVentilDoneExpenseReport=Konsultējieties šeit ar izdevumu pārskatu rindu sarakstu un to maksu grāmatvedības kontu
 
-ValidateHistory=Bind automātiski
-AutomaticBindingDone=Automātiska piesaistīšana pabeigta
+ValidateHistory=Piesaistiet automātiski
+AutomaticBindingDone=Automātiskā piesaistīšana pabeigta
 
-ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
-MvtNotCorrectlyBalanced=Kustība nav pareizi sabalansēta. Debit = %s | Kredīts = %s
+ErrorAccountancyCodeIsAlreadyUse=Kļūda, nevarat izdzēst šo grāmatvedības kontu, jo tas tiek izmantots
+MvtNotCorrectlyBalanced=Kustība nav pareizi sabalansēta. Debits = %s | Kredīts = %s
 Balancing=Līdzsvarošana
 FicheVentilation=Iesiešanas kartiņa
 GeneralLedgerIsWritten=Darījumi ir rakstīti grāmatvedībā
@@ -233,18 +254,18 @@ GeneralLedgerSomeRecordWasNotRecorded=Daži darījumi nevarēja tikt publicēti 
 NoNewRecordSaved=Neviens ieraksts žurnālistikai nav
 ListOfProductsWithoutAccountingAccount=Produktu saraksts, uz kuriem nav saistīta kāds grāmatvedības konts
 ChangeBinding=Mainiet saites
-Accounted=Uzskaita virsgrāmatā
+Accounted=Uzskaitīts virsgrāmatā
 NotYetAccounted=Vēl nav uzskaitīti virsgrāmatā
 
 ## Admin
 ApplyMassCategories=Pielietot masu sadaļas
-AddAccountFromBookKeepingWithNoCategories=Pieejamais konts, kas vēl nav personalizētajā grupā
+AddAccountFromBookKeepingWithNoCategories=Pieejamais konts vēl nav personalizētajā grupā
 CategoryDeleted=Grāmatvedības konta kategorija ir noņemta
 AccountingJournals=Grāmatvedības žurnāli
 AccountingJournal=Grāmatvedības žurnāls
 NewAccountingJournal=Jauns grāmatvedības žurnāls
 ShowAccoutingJournal=Rādīt grāmatvedības žurnālu
-Nature=Daba
+NatureOfJournal=Žurnāla raksturs
 AccountingJournalType1=Dažādas darbības
 AccountingJournalType2=Pārdošanas
 AccountingJournalType3=Pirkumi
@@ -254,32 +275,42 @@ AccountingJournalType8=Inventārs
 AccountingJournalType9=Ir jauns
 ErrorAccountingJournalIsAlreadyUse=Šis žurnāls jau ir izmantots
 AccountingAccountForSalesTaxAreDefinedInto=Piezīme. Pārdošanas nodokļa grāmatvedības konts ir norādīts izvēlnē <b> %s </b>- <b> %s </b>.
+NumberOfAccountancyEntries=Ierakstu skaits
+NumberOfAccountancyMovements=Pārvietošanas skaits
 
 ## Export
 ExportDraftJournal=Eksporta žurnāla projekts
 Modelcsv=Eksporta modulis
 Selectmodelcsv=Select a model of export
 Modelcsv_normal=Klasiskais eksports
-Modelcsv_CEGID=Eksportēt uz CEGID Expert Comptabilité
-Modelcsv_COALA=Export towards Sage Coala
-Modelcsv_bob50=Export towards Sage BOB 50
-Modelcsv_ciel=Export towards Sage Ciel Compta or Compta Evolution
-Modelcsv_quadratus=Export towards Quadratus QuadraCompta
-Modelcsv_ebp=Eksports uz EBP
+Modelcsv_CEGID=Eksports uz CEGID ekspertu kompāniju
+Modelcsv_COALA=Eksportēt Sage Coala
+Modelcsv_bob50=Eksportēt Sage BOB 50
+Modelcsv_ciel=Eksportēt Sage Ciel Compta vai Compta Evolution
+Modelcsv_quadratus=Eksportēt Quadratus QuadraCompta
+Modelcsv_ebp=Eksportēt uz EBP
 Modelcsv_cogilog=Eksportēt uz Cogilog
-Modelcsv_agiris=Eksports uz Agirisu
+Modelcsv_agiris=Eksports uz Agiris
+Modelcsv_LDCompta=Eksports LD Compta (v9 un jaunākiem) (pārbaude)
+Modelcsv_openconcerto=Eksportēt OpenConcerto (tests)
 Modelcsv_configurable=Eksportēt CSV konfigurējamu
-Modelcsv_FEC=Eksporta FEC (L47 A pants) (pārbaude)
+Modelcsv_FEC=Eksporta FEC
+Modelcsv_Sage50_Swiss=Eksports uz Sage 50 Šveici
 ChartofaccountsId=Kontu konts. Id
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init grāmatvedība
 InitAccountancyDesc=Šo lapu var izmantot, lai inicializētu grāmatvedības kontu par produktiem un pakalpojumiem, kuriem nav noteikts grāmatvedības konts pārdošanai un pirkumiem.
 DefaultBindingDesc=Šo lapu var izmantot, lai iestatītu noklusēto kontu, ko izmantot, lai saistītu darījumu protokolu par algas, ziedojumiem, nodokļiem un PVN, ja neviens konkrēts grāmatvedības konts jau nav iestatīts.
+DefaultClosureDesc=Šo lapu var izmantot, lai iestatītu parametrus, ko izmanto grāmatvedības slēgšanai.
 Options=Iespējas
 OptionModeProductSell=Mode pārdošana
+OptionModeProductSellIntra=Pārdošanas veids, ko eksportē EEK
+OptionModeProductSellExport=Pārdošanas režīms citās valstīs
 OptionModeProductBuy=Mode pirkumi
 OptionModeProductSellDesc=Parādiet visus produktus ar grāmatvedības kontu pārdošanai.
+OptionModeProductSellIntraDesc=Rādīt visus produktus ar grāmatvedības kontu pārdošanai EEK.
+OptionModeProductSellExportDesc=Rādīt visus produktus ar grāmatvedības kontu citiem ārvalstu pārdošanas darījumiem.
 OptionModeProductBuyDesc=Parādiet visus produktus ar grāmatvedības kontu pirkumiem.
 CleanFixHistory=Noņemiet grāmatvedības kodu no rindām, kas nav konta diagrammās
 CleanHistory=Atiestatīt visas saistītās vērtības izvēlētajam gadam
@@ -287,9 +318,13 @@ PredefinedGroups=Iepriekš definētas grupas
 WithoutValidAccount=Bez derīga veltīta konta
 WithValidAccount=Izmantojot derīgu veltītu kontu
 ValueNotIntoChartOfAccount=Šī grāmatvedības konta vērtība konta diagrammā nepastāv
+AccountRemovedFromGroup=Konts ir noņemts no grupas
+SaleLocal=Vietējā pārdošana
+SaleExport=Eksporta pārdošana
+SaleEEC=Pārdošana EEK
 
 ## Dictionary
-Range=Range of accounting account
+Range=Grāmatvedības konta diapazons
 Calculated=Aprēķināts
 Formula=Formula
 
@@ -307,7 +342,7 @@ UseMenuToSetBindindManualy=Līnijas, kas vēl nav saistītas, izmantojiet izvēl
 
 ## Import
 ImportAccountingEntries=Grāmatvedības ieraksti
-
+DateExport=Eksporta datums
 WarningReportNotReliable=Brīdinājums. Šis pārskats nav balstīts uz grāmatvedi, tādēļ tajā nav darījumu, kas Manuāli ir manuāli modificēts. Ja žurnāls ir atjaunināts, grāmatvedības skats ir precīzāks.
 ExpenseReportJournal=Izdevumu atskaites žurnāls
 InventoryJournal=Inventāra žurnāls

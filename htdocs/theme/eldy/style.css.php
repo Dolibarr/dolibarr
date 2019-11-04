@@ -13,11 +13,11 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FI8TNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -134,15 +134,14 @@ $fontsize            =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty(
 $fontsizesmaller     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_FONT_SIZE2)   ?$fontsize:$conf->global->THEME_ELDY_FONT_SIZE2)             :(empty($user->conf->THEME_ELDY_FONT_SIZE2)?$fontsize:$user->conf->THEME_ELDY_FONT_SIZE2);
 
 // Hover color
-$colorbacklinepairhover=((! isset($conf->global->THEME_ELDY_USE_HOVER) || (string) $conf->global->THEME_ELDY_USE_HOVER === '0')?'':($conf->global->THEME_ELDY_USE_HOVER === '1'?'e6edf0':$conf->global->THEME_ELDY_USE_HOVER));
-$colorbacklinepairchecked=((! isset($conf->global->THEME_ELDY_USE_CHECKED) || (string) $conf->global->THEME_ELDY_USE_CHECKED === '0')?'':($conf->global->THEME_ELDY_USE_CHECKED === '1'?'e6edf0':$conf->global->THEME_ELDY_USE_CHECKED));
+$colorbacklinepairhover=((! isset($conf->global->THEME_ELDY_USE_HOVER) || (string) $conf->global->THEME_ELDY_USE_HOVER === '255,255,255')?'':($conf->global->THEME_ELDY_USE_HOVER === '1'?'e6edf0':$conf->global->THEME_ELDY_USE_HOVER));
+$colorbacklinepairchecked=((! isset($conf->global->THEME_ELDY_USE_CHECKED) || (string) $conf->global->THEME_ELDY_USE_CHECKED === '255,255,255')?'':($conf->global->THEME_ELDY_USE_CHECKED === '1'?'e6edf0':$conf->global->THEME_ELDY_USE_CHECKED));
 if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
 {
     $colorbacklinepairhover=((! isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '0')?'':($user->conf->THEME_ELDY_USE_HOVER === '1'?'e6edf0':$user->conf->THEME_ELDY_USE_HOVER));
     $colorbacklinepairchecked=((! isset($user->conf->THEME_ELDY_USE_CHECKED) || $user->conf->THEME_ELDY_USE_CHECKED === '0')?'':($user->conf->THEME_ELDY_USE_CHECKED === '1'?'e6edf0':$user->conf->THEME_ELDY_USE_CHECKED));
 }
 
-//$colortopbordertitle1=$colorbackhmenu1;
 
 // Set text color to black or white
 $colorbackhmenu1=join(',', colorStringToArray($colorbackhmenu1));    // Normalize value to 'x,y,z'
@@ -193,14 +192,19 @@ $colortext=join(',', colorStringToArray($colortext));
 $colortextlink=join(',', colorStringToArray($colortextlink));
 
 $nbtopmenuentries=$menumanager->showmenu('topnb');
+if ($conf->browser->layout == 'phone') $nbtopmenuentries = max($nbtopmenuentries, 10);
 
 
 $minwidthtmenu=66;		/* minimum width for one top menu entry */
 $heightmenu=48;			/* height of top menu, part with image */
 $heightmenu2=49;        /* height of top menu, part with login  */
 $disableimages = 0;
-$maxwidthloginblock = 130;
-if (! empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) { $disableimages = 1; $maxwidthloginblock = 180; $minwidthtmenu=0; }
+$maxwidthloginblock = 180;
+if (! empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) { $disableimages = 1; $maxwidthloginblock = $maxwidthloginblock + 50; $minwidthtmenu=0; }
+
+
+if(!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)){ $maxwidthloginblock = $maxwidthloginblock + 55; }
+if(! empty($conf->bookmark->enabled) && !empty($conf->global->MAIN_USE_TOP_MENU_BOOKMARK_DROPDOWN)) { $maxwidthloginblock = $maxwidthloginblock + 55; }
 
 
 print '/*'."\n";
@@ -228,13 +232,15 @@ print 'dol_screenwidth='.$_SESSION['dol_screenwidth']."\n";
 print 'dol_screenheight='.$_SESSION['dol_screenheight']."\n";
 print 'fontsize='.$fontsize."\n";
 print 'nbtopmenuentries='.$nbtopmenuentries."\n";
-print 'fontsizesmaller='.$fontsizesmaller;
+print 'fontsizesmaller='.$fontsizesmaller."\n";
 print 'topMenuFontSize='.$topMenuFontSize."\n";
 print 'toolTipBgColor='.$toolTipBgColor."\n";
 print 'toolTipFontColor='.$toolTipFontColor."\n";
+print 'conf->global->THEME_AGRESSIVENESS_RATIO='.$conf->global->THEME_AGRESSIVENESS_RATIO." (must be between -100 and +100)\n";
 print '*/'."\n";
 
 
+// Include the global.inc.php that include the badges, btn, info-box, dropdown, progress...
 require __DIR__ . '/global.inc.php';
 
 

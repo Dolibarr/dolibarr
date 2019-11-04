@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -212,7 +212,6 @@ class Productbatch extends CommonObject
 		// TODO Check qty is ok for stock move. Negative may not be allowed.
 		if ($this->qty < 0)
 		{
-
 		}
 
         // Update request
@@ -223,7 +222,7 @@ class Productbatch extends CommonObject
 		$sql.= " batch=".(isset($this->batch)?"'".$this->db->escape($this->batch)."'":"null").",";
 		$sql.= " qty=".(isset($this->qty)?$this->qty:"null").",";
 		$sql.= " import_key=".(isset($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null")."";
-        $sql.= " WHERE rowid=".$this->id." AND tms='".$this->db->idate($this->tms)."'";
+        $sql.= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
 
@@ -327,13 +326,12 @@ class Productbatch extends CommonObject
 	/**
 	 *	Load an object from its id and create a new one in database
 	 *
+	 *  @param	User	$user		User making the clone
 	 *	@param	int		$fromid     Id of object to clone
 	 * 	@return	int					New id of clone
 	 */
-	public function createFromClone($fromid)
+	public function createFromClone(User $user, $fromid)
 	{
-		global $user,$langs;
-
 		$error=0;
 
 		$object=new Productbatch($this->db);
@@ -362,7 +360,6 @@ class Productbatch extends CommonObject
 
 		if (! $error)
 		{
-
 		}
 
 		unset($object->context['createfromclone']);
@@ -416,14 +413,15 @@ class Productbatch extends CommonObject
      *  Find first detail record that match eather eat-by or sell-by or batch within given warehouse
      *
      *  @param	int			$fk_product_stock   id product_stock for objet
-     *  @param	date		$eatby    			eat-by date for object - deprecated: a search must be done on batch number
-     *  @param	date		$sellby   			sell-by date for object - deprecated: a search must be done on batch number
+     *  @param	integer		$eatby    			eat-by date for object - deprecated: a search must be done on batch number
+     *  @param	integer		$sellby   			sell-by date for object - deprecated: a search must be done on batch number
      *  @param	string		$batch_number   	batch number for object
      *  @return int          					<0 if KO, >0 if OK
      */
     public function find($fk_product_stock = 0, $eatby = '', $sellby = '', $batch_number = '')
     {
     	global $langs;
+
 		$where = array();
 		$sql = "SELECT";
 		$sql.= " t.rowid,";

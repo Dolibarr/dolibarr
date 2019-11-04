@@ -35,11 +35,11 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	                $valsamount[$obj->opp_status]=$obj->opp_amount;
 	                $totalnb+=$obj->nb;
 	                if ($obj->opp_status) $totaloppnb+=$obj->nb;
-	                if (! in_array($obj->code, array('WON', 'LOST')))
+				if (! in_array($obj->code, array('WON', 'LOST')))
 	                {
-	                   $totalamount+=$obj->opp_amount;
-	                   $ponderated_opp_amount+=$obj->ponderated_opp_amount;
-	                }
+					$totalamount+=$obj->opp_amount;
+					$ponderated_opp_amount+=$obj->ponderated_opp_amount;
+				}
 	            }
 	            $total+=$row[0];
 	        }
@@ -55,21 +55,20 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    $listofstatus=array_keys($listofoppstatus);
 	    foreach ($listofstatus as $status)
 	    {
-	    	$labelstatus = '';
+	    	$labelStatus = '';
 
 			$code = dol_getIdFromCode($db, $status, 'c_lead_status', 'rowid', 'code');
-	        if ($code) $labelstatus = $langs->trans("OppStatus".$code);
-	        if (empty($labelstatus)) $labelstatus=$listofopplabel[$status];
+	        if ($code) $labelStatus = $langs->trans("OppStatus".$code);
+	        if (empty($labelStatus)) $labelStatus=$listofopplabel[$status];
 
-	        //$labelstatus .= ' ('.$langs->trans("Coeff").': '.price2num($listofoppstatus[$status]).')';
-	        //$labelstatus .= ' - '.price2num($listofoppstatus[$status]).'%';
+	        //$labelStatus .= ' ('.$langs->trans("Coeff").': '.price2num($listofoppstatus[$status]).')';
+	        //$labelStatus .= ' - '.price2num($listofoppstatus[$status]).'%';
 
-	        $dataseries[]=array($labelstatus, (isset($valsamount[$status])?(float) $valsamount[$status]:0));
+	        $dataseries[]=array($labelStatus, (isset($valsamount[$status])?(float) $valsamount[$status]:0));
 	        if (! $conf->use_javascript_ajax)
 	        {
-
 	            print '<tr class="oddeven">';
-	            print '<td>'.$labelstatus.'</td>';
+	            print '<td>'.$labelStatus.'</td>';
 	            print '<td class="right"><a href="list.php?statut='.$status.'">'.price((isset($valsamount[$status])?(float) $valsamount[$status]:0), 0, '', 1, -1, -1, $conf->currency).'</a></td>';
 	            print "</tr>\n";
 	        }

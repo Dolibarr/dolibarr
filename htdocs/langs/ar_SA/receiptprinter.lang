@@ -1,12 +1,12 @@
 # Dolibarr language file - Source file is en_US - receiptprinter
 ReceiptPrinterSetup=Setup of module ReceiptPrinter
-PrinterAdded=طابعة٪ الصورة بإضافة
-PrinterUpdated=طابعة%s تجديد
-PrinterDeleted=طابعة٪ الصورة حذفها
-TestSentToPrinter=اختبار المرسلة إلى الطابعة٪ الصورة
+PrinterAdded=تم إضافة الطابعة %s
+PrinterUpdated=تم تحديث الطابعة %s
+PrinterDeleted=تم حذف الطابعة %s
+TestSentToPrinter=تجربة طباعة نموذج على الطابعة %s
 ReceiptPrinter=Receipt printers
 ReceiptPrinterDesc=Setup of receipt printers
-ReceiptPrinterTemplateDesc=إعداد قوالب
+ReceiptPrinterTemplateDesc=إعداد القوالب
 ReceiptPrinterTypeDesc=وصف نوع استلام الطابعة
 ReceiptPrinterProfileDesc=وصف الملف استلام الطابعة
 ListPrinters=قائمة طابعات
@@ -19,7 +19,7 @@ CONNECTOR_DUMMY_HELP=طابعة وهمية لاختبار، لا يفعل شيئ
 CONNECTOR_NETWORK_PRINT_HELP=10.xxx:9100
 CONNECTOR_FILE_PRINT_HELP=/ ديف / USB / lp0، / ديف / USB / LP1
 CONNECTOR_WINDOWS_PRINT_HELP=LPT1، COM1، فلان: // FooUser: السر @ الكمبيوتر / مجموعة العمل / استلام الطابعة
-PROFILE_DEFAULT=الملف التعريف الافتراضي
+PROFILE_DEFAULT=ملف التعريف الافتراضي
 PROFILE_SIMPLE=ملف التعريف بسيط
 PROFILE_EPOSTEP=ملحمة تيب الملف الشخصي
 PROFILE_P822D=الملف P822D

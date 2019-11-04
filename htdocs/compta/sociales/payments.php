@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -30,14 +30,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills'));
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'tax|salaries', '', '', 'charges|');
 
 $mode=GETPOST("mode", 'alpha');
@@ -90,7 +90,7 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 if ($mode != 'sconly')
 {
-    $center=($year?'<a href="index.php?year='.($year-1).$param.'">'.img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a> ".$langs->trans("Year").' '.$year.' <a href="index.php?year='.($year+1).$param.'">'.img_next($langs->trans("Next"), 'class="valignbottom"')."</a>":"");
+    $center=($year?'<a href="list.php?year='.($year-1).$param.'">'.img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a> ".$langs->trans("Year").' '.$year.' <a href="list.php?year='.($year+1).$param.'">'.img_next($langs->trans("Next"), 'class="valignbottom"')."</a>":"");
     print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'title_accountancy', 0, '', '', $limit, 1);
 }
 else
@@ -126,8 +126,8 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 	print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "pc.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 	print "</tr>\n";
 
-	$sql = "SELECT c.id, c.libelle as lib,";
-	$sql.= " cs.rowid, cs.libelle, cs.fk_type as type, cs.periode, cs.date_ech, cs.amount as total,";
+	$sql = "SELECT c.id, c.libelle as type_label,";
+	$sql.= " cs.rowid, cs.libelle as label, cs.fk_type as type, cs.periode, cs.date_ech, cs.amount as total,";
 	$sql.= " pc.rowid as pid, pc.datep, pc.amount as totalpaye, pc.num_paiement as num_payment,";
 	$sql.= " pct.code as payment_code";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
@@ -162,10 +162,12 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		while ($i < min($num, $limit))
 		{
 			$obj = $db->fetch_object($resql);
-			print '<tr class="oddeven">';
-			// Ref payment
+
 			$payment_sc_static->id=$obj->pid;
 			$payment_sc_static->ref=$obj->pid;
+
+			print '<tr class="oddeven">';
+			// Ref payment
 			print '<td>'.$payment_sc_static->getNomUrl(1)."</td>\n";
 			// Date payment
 			print '<td align="center">'.dol_print_date($db->jdate($obj->datep), 'day').'</td>';
@@ -176,12 +178,12 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			// Label
 			print '<td>';
 			$socialcontrib->id=$obj->rowid;
-			$socialcontrib->ref=$obj->libelle;
-			$socialcontrib->lib=$obj->libelle;
+			$socialcontrib->ref=$obj->rowid;
+			$socialcontrib->label=$obj->label;
 			print $socialcontrib->getNomUrl(1, '20');
 			print '</td>';
 			// Type
-			print '<td><a href="../sociales/index.php?filtre=cs.fk_type:'.$obj->type.'">'.$obj->lib.'</a></td>';
+			print '<td><a href="../sociales/list.php?filtre=cs.fk_type:'.$obj->type.'">'.$obj->type_label.'</a></td>';
 			// Date
 			$date=$obj->periode;
 			if (empty($date)) $date=$obj->date_ech;

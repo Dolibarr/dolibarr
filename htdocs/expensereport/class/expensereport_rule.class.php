@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -143,10 +143,10 @@ class ExpenseReportRule extends CoreObject
 	/**
 	 * Return all rules or filtered by something
 	 *
-	 * @param int	$fk_c_type_fees	type of expense
-	 * @param date	$date			date of expense
-	 * @param type	$fk_user		user of expense
-	 * @return array \ExpenseReportRule
+	 * @param int	     $fk_c_type_fees	type of expense
+	 * @param integer	 $date			    date of expense
+	 * @param int        $fk_user		    user of expense
+	 * @return array                        Array with ExpenseReportRule
 	 */
 	public static function getAllRule($fk_c_type_fees = '', $date = '', $fk_user = '')
 	{

@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -27,6 +28,11 @@
 require "../main.inc.php";
 require_once DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php";
 require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
+
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('contractindex'));
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'companies', 'contracts'));
@@ -40,7 +46,7 @@ $statut=GETPOST('statut')?GETPOST('statut'):1;
 // Security check
 $socid=0;
 $id = GETPOST('id', 'int');
-if (! empty($user->societe_id)) $socid=$user->societe_id;
+if (! empty($user->socid)) $socid=$user->socid;
 $result = restrictedArea($user, 'contrat', $id);
 
 $staticcompany=new Societe($db);
@@ -64,7 +70,7 @@ $now = dol_now();
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("ContractsArea"), '', 'title_commercial.png');
+print load_fiche_titre($langs->trans("ContractsArea"), '', 'commercial');
 
 
 //print '<table border="0" width="100%" class="notopnoleftnoright">';
@@ -108,7 +114,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX
 $sql.= " WHERE cd.fk_contrat = c.rowid AND c.fk_soc = s.rowid";
 $sql.= " AND (cd.statut != 4 OR (cd.statut = 4 AND (cd.date_fin_validite is null or cd.date_fin_validite >= '".$db->idate($now)."')))";
 $sql.= " AND c.entity IN (".getEntity('contract', 0).")";
-if ($user->societe_id) $sql.=' AND c.fk_soc = '.$user->societe_id;
+if ($user->socid) $sql.=' AND c.fk_soc = '.$user->socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " GROUP BY cd.statut";
 $resql = $db->query($sql);
@@ -145,7 +151,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX
 $sql.= " WHERE cd.fk_contrat = c.rowid AND c.fk_soc = s.rowid";
 $sql.= " AND (cd.statut = 4 AND cd.date_fin_validite < '".$db->idate($now)."')";
 $sql.= " AND c.entity IN (".getEntity('contract', 0).")";
-if ($user->societe_id) $sql.=' AND c.fk_soc = '.$user->societe_id;
+if ($user->socid) $sql.=' AND c.fk_soc = '.$user->socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " GROUP BY cd.statut";
 $resql = $db->query($sql);
@@ -186,7 +192,6 @@ foreach($listofstatus as $status)
     $dataseries[]=array($staticcontratligne->LibStatut($status, 1, ($bool?1:0)),(isset($nb[$status.$bool])?(int) $nb[$status.$bool]:0));
     if (empty($conf->use_javascript_ajax))
     {
-
         print '<tr class="oddeven">';
         print '<td>'.$staticcontratligne->LibStatut($status, 0, ($bool?1:0)).'</td>';
         print '<td class="right"><a href="services_list.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status, 3, ($bool?1:0)).'</a></td>';
@@ -511,7 +516,7 @@ if ($resql)
 		$staticcompany->name=$obj->name;
 		print $staticcompany->getNomUrl(1, '', 20);
 		print '</td>';
-		print '<td width="16" class="right"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
+		print '<td width="16" class="right"><a href="line.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
 		print $staticcontratligne->LibStatut($obj->statut, 3);
 		print '</a></td>';
 		print "</tr>\n";
@@ -590,7 +595,7 @@ if ($resql)
 		$staticcompany->name=$obj->name;
 		print $staticcompany->getNomUrl(1, '', 20);
 		print '</td>';
-		print '<td width="16" class="right"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
+		print '<td width="16" class="right"><a href="line.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
 		print $staticcontratligne->LibStatut($obj->statut, 3, 1);
 		print '</a></td>';
 		print "</tr>\n";
@@ -609,6 +614,8 @@ else
 //print '</td></tr></table>';
 print '</div></div></div>';
 
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardContracts', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 llxFooter();
 

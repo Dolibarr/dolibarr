@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -51,12 +51,15 @@ class MenuManager
 
 
 	/**
-	 * Load this->tabMenu
-	 *
-	 * @return	void
+   	 * Load this->tabMenu
+   	 *
+   	 * @param	string	$forcemainmenu		To force mainmenu to load
+   	 * @param	string	$forceleftmenu		To force leftmenu to load
+   	 * @return	void
 	 */
-	public function loadMenu()
+	public function loadMenu($forcemainmenu = '', $forceleftmenu = '')
 	{
+		// Do nothing
 	}
 
 
@@ -90,7 +93,7 @@ class MenuManager
 		{
 			if (empty($noout)) print_start_menu_array_empty();
 
-			$usemenuhider = (GETPOST('testmenuhider', 'int') || ! empty($conf->global->MAIN_TESTMENUHIDER));
+            $usemenuhider = 1;
 
 			// Show/Hide vertical menu
 			if ($mode != 'jmobile' && $mode != 'topnb' && $usemenuhider &&  empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
@@ -304,10 +307,12 @@ class MenuManager
 		                    print $val2['titre'];
 		                    if ($relurl2)
 		                    {
-		                        if ($val2['enabled'])	// Allowed
-		                            print '</a>';
-		                            else
-		                                print '</a>';
+		                        if ($val2['enabled']) {
+                                    // Allowed
+                                    print '</a>';
+                                } else {
+                                    print '</a>';
+                                }
 		                    }
 		                    print '</li>'."\n";
 		                }
@@ -445,7 +450,7 @@ class MenuManager
 				unset($this->menu->liste);
 			}
 		}
-/*
+        /*
 		if ($mode == 'jmobile')
 		{
 			foreach($this->menu->liste as $key => $val)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
@@ -503,7 +508,7 @@ class MenuManager
 				break;	// Only first menu entry (so home)
 			}
 		}
-*/
+        */
 		unset($this->menu);
 
 		return $res;

@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -39,7 +39,7 @@ $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
 $socid = GETPOST("socid", "int");
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'banque', '', '', '');
 
 // Get parameters
@@ -57,7 +57,7 @@ if (! $sortfield) $sortfield="name";
 $object = new PaymentVarious($db);
 $object->fetch($id, $ref);
 
-$upload_dir = $conf->banque->dir_output.'/'.dol_sanitizeFileName($object->id);
+$upload_dir = $conf->bank->dir_output.'/'.dol_sanitizeFileName($object->id);
 $modulepart='banque';
 
 
@@ -82,7 +82,7 @@ if ($object->id)
 {
 	$head=various_payment_prepare_head($object);
 
-	dol_fiche_head($head, 'documents', $langs->trans("VariousPayment"), -1, 'payment');
+	dol_fiche_head($head, 'documents', $langs->trans("VariousPayment"), -1, $object->picto);
 
 	$morehtmlref='<div class="refidno">';
 	// Project
@@ -92,19 +92,20 @@ if ($object->id)
 		$morehtmlref.=$langs->trans('Project') . ' : ';
 		if ($user->rights->banque->modifier && 0)
 		{
-			if ($action != 'classify')
-				$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-				if ($action == 'classify') {
-					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-					$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-					$morehtmlref.='<input type="hidden" name="action" value="classin">';
-					$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-					$morehtmlref.=$formproject->select_projects(0, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-					$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-					$morehtmlref.='</form>';
-				} else {
-					$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-				}
+			if ($action != 'classify') {
+				$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+			}
+			if ($action == 'classify') {
+				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+				$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+				$morehtmlref.='<input type="hidden" name="action" value="classin">';
+				$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+				$morehtmlref.=$formproject->select_projects(0, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+				$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				$morehtmlref.='</form>';
+			} else {
+				$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+			}
 		} else {
 			if (! empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -131,7 +132,7 @@ if ($object->id)
 		$totalsize+=$file['size'];
 	}
 
-	print '<table class="border" width="100%">';
+	print '<table class="border tableforfield centpercent">';
 
 	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';

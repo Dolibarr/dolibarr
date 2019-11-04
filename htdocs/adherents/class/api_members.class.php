@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -86,7 +86,8 @@ class Members extends DolibarrApi
      * @param int       $limit      Limit for list
      * @param int       $page       Page number
      * @param string    $typeid     ID of the type of member
-     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma.
+     *                              Example: "(t.ref:like:'SO-%') and ((t.date_creation:<:'20160101') or (t.nature:is:NULL))"
      * @return array                Array of member objects
      *
      * @throws RestException
@@ -303,7 +304,7 @@ class Members extends DolibarrApi
         // Remove the subscriptions because they are handled as a subresource.
         unset($object->subscriptions);
         unset($object->fk_incoterms);
-        unset($object->libelle_incoterms);
+        unset($object->label_incoterms);
         unset($object->location_incoterms);
         unset($object->fk_delivery_address);
         unset($object->shipping_method_id);

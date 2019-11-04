@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -40,7 +40,7 @@ $TSelectedCats=GETPOST('categories', 'array');
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
-if (! empty($user->societe_id)) $socid=$user->societe_id;
+if (! empty($user->socid)) $socid=$user->socid;
 $result=restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 $result=restrictedArea($user, 'margins');
 
@@ -103,14 +103,13 @@ dol_fiche_head($head, 'productMargins', $titre, 0, $picto);
 print '<table class="border" width="100%">';
 
 if ($id > 0) {
+    print '<tr><td class="titlefield">'.$langs->trans('ChooseProduct/Service').'</td>';
+    print '<td class="maxwidthonsmartpone" colspan="4">';
+    print $form->select_produits($id, 'id', '', 20, 0, 1, 2, '', 1, array(), 0, 'All');
+    print '</td></tr>';
 
-  print '<tr><td class="titlefield">'.$langs->trans('ChooseProduct/Service').'</td>';
-  print '<td class="maxwidthonsmartpone" colspan="4">';
-  print $form->select_produits($id, 'id', '', 20, 0, 1, 2, '', 1, array(), 0, 'All');
-  print '</td></tr>';
-
-  if (! $sortorder) $sortorder="DESC";
-  if (! $sortfield) $sortfield="f.datef";
+    if (! $sortorder) $sortorder="DESC";
+    if (! $sortfield) $sortfield="f.datef";
 }
 else {
 	print '<tr><td class="titlefield">'.$langs->trans('ChooseProduct/Service').'</td>';

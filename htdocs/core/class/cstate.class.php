@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -54,7 +54,7 @@ class Cstate // extends CommonObject
 	/**
 	 * @var string
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='';
 
@@ -247,24 +247,19 @@ class Cstate // extends CommonObject
 	    //    }
         //}
 
-        // Commit or rollback
-        if ($error)
-		{
-			foreach($this->errors as $errmsg)
-			{
-	            dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
-			$this->db->rollback();
-			return -1*$error;
-		}
-		else
-		{
-			$this->db->commit();
-			return 1;
-		}
+	    // Commit or rollback
+	    if ($error) {
+		    foreach ($this->errors as $errmsg) {
+			    dol_syslog(get_class($this) . "::update " . $errmsg, LOG_ERR);
+			    $this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
+		    }
+		    $this->db->rollback();
+		    return -1 * $error;
+	    } else {
+		    $this->db->commit();
+		    return 1;
+	    }
     }
-
 
  	/**
  	 *  Delete object in database

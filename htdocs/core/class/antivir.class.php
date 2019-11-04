@@ -15,14 +15,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
  *      \file       htdocs/core/class/antivir.class.php
  *      \brief      File of class to scan viruses
- *      \author	    Laurent Destailleur.
  */
 
 /**
@@ -93,6 +92,8 @@ class AntiVir
 		dol_syslog("AntiVir::dol_avscan_file Run command=".$fullcommand." with safe_mode ".($safemode?"on":"off"));
 		// Run CLI command. If run of Windows, you can get return with echo %ERRORLEVEL%
 		$lastline=exec($fullcommand, $output, $return_var);
+
+		if (is_null($output)) $output=array();
 
         //print "x".$lastline." - ".join(',',$output)." - ".$return_var."y";exit;
 

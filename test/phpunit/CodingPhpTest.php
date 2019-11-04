@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -57,7 +57,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class CodingPhpTest extends PHPUnit_Framework_TestCase
+class CodingPhpTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -236,7 +236,20 @@ class CodingPhpTest extends PHPUnit_Framework_TestCase
                     break;
                 }
             }
-            $this->assertTrue($ok, 'Found a tag <br /> that is for xml in file '.$file['fullname'].' You may use <br> instead.');
+            $this->assertTrue($ok, 'Found a tag <br /> that is for xml in file '.$file['fullname'].'. You may use html syntax <br> instead.');
+
+
+            // Test we don't have @var array(
+            $ok=true;
+            $matches=array();
+            // Check string   ='".$this->xxx   with xxx that is not 'escape'. It means we forget a db->escape when forging sql request.
+            preg_match_all('/@var\s+array\(/', $filecontent, $matches, PREG_SET_ORDER);
+            foreach($matches as $key => $val)
+            {
+                $ok=false;
+                break;
+            }
+            $this->assertTrue($ok, 'Found a declaration @var array() instead of @var array in file '.$file['fullname'].'.');
         }
 
         return;

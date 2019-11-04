@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -44,7 +44,7 @@ $projectid = GETPOST('projectid', 'int');
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'loan', $id, '', '');
 
 $object = new Loan($db);
@@ -179,11 +179,12 @@ if (empty($reshook))
 			}
 			else
 			{
-				$object->datestart	= $datestart;
-				$object->dateend	= $dateend;
-				$object->capital	= $capital;
-				$object->nbterm		= GETPOST("nbterm", 'int');
-				$object->rate		= price2num(GETPOST("rate", 'alpha'));
+				$object->datestart	        = $datestart;
+				$object->dateend	        = $dateend;
+				$object->capital	        = $capital;
+				$object->nbterm		        = GETPOST("nbterm", 'int');
+				$object->rate		        = price2num(GETPOST("rate", 'alpha'));
+                $object->insurance_amount   = price2num(GETPOST('insurance_amount', 'int'));
 
 				$accountancy_account_capital	= GETPOST('accountancy_account_capital');
 				$accountancy_account_insurance	= GETPOST('accountancy_account_insurance');
@@ -302,7 +303,7 @@ if ($action == 'create')
 	// Rate
 	print '<tr><td class="fieldrequired">'.$langs->trans("Rate").'</td><td><input name="rate" size="5" value="' . dol_escape_htmltag(GETPOST("rate")) . '"> %</td></tr>';
 
-	// insurance amount
+	// Insurance amount
 	print '<tr><td>'.$langs->trans("Insurance").'</td><td><input name="insurance_amount" size="10" value="' . dol_escape_htmltag(GETPOST("insurance_amount")) . '" placeholder="'.$langs->trans('Amount').'"></td></tr>';
 
 	// Project
@@ -452,7 +453,7 @@ if ($id > 0)
 			if ($user->rights->loan->write)
 			{
 				if ($action != 'classify')
-					$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+					$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				if ($action == 'classify') {
 					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 					$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -707,7 +708,9 @@ if ($id > 0)
 			$total_insurance = 0;
 			$total_interest = 0;
 			$total_capital = 0;
-			print '<table class="noborder">';
+
+			print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+			print '<table class="noborder paymenttable">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("RefPayment").'</td>';
 			print '<td>'.$langs->trans("Date").'</td>';
@@ -743,11 +746,13 @@ if ($id > 0)
 				$staytopay = $object->capital - $totalpaid;
 
 				print '<tr><td colspan="5" class="right">'.$langs->trans("RemainderToPay").' :</td>';
-				print '<td class="right"'.($staytopay?' class="amountremaintopay"':'class="amountpaymentcomplete"').'>';
+				print '<td class="right'.($staytopay?' amountremaintopay':' amountpaymentcomplete').'">';
 				print price($staytopay, 0, $langs, 0, 0, -1, $conf->currency);
 				print '</td></tr>';
 			}
 			print "</table>";
+			print '</div>';
+
 			$db->free($resql);
 		}
 		else
@@ -789,25 +794,25 @@ if ($id > 0)
 				{
 					// print '<a href="javascript:popEcheancier()" class="butAction">'.$langs->trans('CreateCalcSchedule').'</a>';
 
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>';
 				}
 
 				// Emit payment
 				if ($object->paid == 0 && ((price2num($object->capital) > 0 && round($staytopay) < 0) || (price2num($object->capital) > 0 && round($staytopay) > 0)) && $user->rights->loan->write)
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&amp;action=create&last=true">'.$langs->trans("DoPayment").'</a>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&amp;action=create&last=true">'.$langs->trans("DoPayment").'</a></div>';
 				}
 
 				// Classify 'paid'
 				if ($object->paid == 0 && round($staytopay) <=0 && $user->rights->loan->write)
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=paid">'.$langs->trans("ClassifyPaid").'</a>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=paid">'.$langs->trans("ClassifyPaid").'</a></div>';
 				}
 
 				// Delete
 				if ($object->paid == 0 && $user->rights->loan->delete)
 				{
-					print '<a class="butActionDelete" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
 				}
 
 				print "</div>";

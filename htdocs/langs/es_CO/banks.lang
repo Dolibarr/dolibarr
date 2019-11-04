@@ -3,6 +3,7 @@ BankAccounts=cuentas bancarias
 BankBalance=Equilibrar
 StatusAccountOpened=Activo
 StatusAccountClosed=Cerrado
+WithdrawalPayment=Withdrawal payment
 SocialContributionPayment=Pago de impuestos sociales / fiscales
 BankTransfer=transferencia bancaria
 TransferTo=A

@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -70,14 +70,6 @@ if (GETPOST('dol_no_mouse_hover'))       $url.=(preg_match('/\?/', $url)?'&':'?'
 if (GETPOST('dol_use_jmobile'))          $url.=(preg_match('/\?/', $url)?'&':'?').'dol_use_jmobile=1';
 
 // Destroy session
-/*$prefix=dol_getprefix('');
-$sessionname='DOLSESSID_'.$prefix;
-$sessiontimeout='DOLSESSTIMEOUT_'.$prefix;
-if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$_COOKIE[$sessiontimeout]);
-session_name($sessionname);
-session_destroy();
-dol_syslog("End of session ".$sessionname);
-*/
 dol_syslog("End of session ".session_id());
 if (session_status() === PHP_SESSION_ACTIVE)
 {
@@ -88,6 +80,7 @@ if (session_status() === PHP_SESSION_ACTIVE)
 // Not sure this is required
 unset($_SESSION['dol_login']);
 unset($_SESSION['dol_entity']);
+unset($_SESSION['urlfrom']);
 
 if (GETPOST('noredirect')) return;
 header("Location: ".$url);		// Default behaviour is redirect to index.php page

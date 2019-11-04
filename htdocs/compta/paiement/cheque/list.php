@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $langs->loadLangs(array('banks', 'categories', 'bills'));
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'banque', '', '');
 
 $search_ref = GETPOST('search_ref', 'alpha');
@@ -96,19 +96,8 @@ $sql.= " AND bc.entity = ".$conf->entity;
 if ($search_ref)			$sql.=natural_search("bc.ref", $search_ref);
 if ($search_account > 0)	$sql.=" AND bc.fk_bank_account=".$search_account;
 if ($search_amount)			$sql.=natural_search("bc.amount", price2num($search_amount));
-if ($month > 0)
-{
-    if ($year > 0 && empty($day))
-    $sql.= " AND bc.date_bordereau BETWEEN '".$db->idate(dol_get_first_day($year, $month, false))."' AND '".$db->idate(dol_get_last_day($year, $month, false))."'";
-    elseif ($year > 0 && ! empty($day))
-    $sql.= " AND bc.date_bordereau BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
-    else
-    $sql.= " AND date_format(bc.date_bordereau, '%m') = '".$month."'";
-}
-elseif ($year > 0)
-{
-	$sql.= " AND bc.date_bordereau BETWEEN '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
-}
+$sql.= dolSqlDateFilter('bc.date_bordereau', 0, $month, $year);
+
 $sql.= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
@@ -138,9 +127,7 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->banque->cheque)
 	{
-		$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=new"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewCheckDeposit').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
+        $newcardbutton.= dolGetButtonTitle($langs->trans('NewCheckDeposit'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=new');
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -159,7 +146,7 @@ if ($resql)
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-	// Lignes des champs de filtre
+	// Fields title search
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" size="4" name="search_ref" value="'.$search_ref.'">';
@@ -177,7 +164,7 @@ if ($resql)
 	print '<input class="flat maxwidth50" type="text" name="search_amount" value="'.$search_amount.'">';
 	print '</td>';
 	print '<td class="liste_titre"></td>';
-    print '<td class="liste_titre right">';
+    print '<td class="liste_titre maxwidthsearch">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';

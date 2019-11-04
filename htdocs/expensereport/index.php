@@ -4,6 +4,8 @@
  * Copyright (C) 2004		Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2019       Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2019       Frédéric FRANCE      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -30,12 +32,17 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('expensereportindex'));
+
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'users', 'trips'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'expensereport', '', '');
 
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -127,6 +134,8 @@ if ($conf->use_javascript_ajax)
     include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
     $dolgraph = new DolGraph();
     $dolgraph->SetData($dataseries);
+    $dolgraph->setHeight(350);
+    $dolgraph->combine = empty($conf->global->MAIN_EXPENSEREPORT_COMBINE_GRAPH_STAT)?0.05:$conf->global->MAIN_EXPENSEREPORT_COMBINE_GRAPH_STAT;
     $dolgraph->setShowLegend(1);
     $dolgraph->setShowPercent(1);
     $dolgraph->SetType(array('pie'));
@@ -156,7 +165,7 @@ $langs->load("boxes");
 
 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.statut, u.photo, d.rowid, d.ref, d.date_debut as dated, d.date_fin as datef, d.date_create as dm, d.total_ht, d.total_ttc, d.fk_statut as fk_status";
 $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d, ".MAIN_DB_PREFIX."user as u";
-if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE u.rowid = d.fk_user_author";
 // RESTRICT RIGHTS
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
@@ -167,7 +176,7 @@ if (empty($user->rights->expensereport->readall) && empty($user->rights->expense
     $sql.= " AND d.fk_user_author IN (".join(',', $childids).")\n";
 }
 $sql.= ' AND d.entity IN ('.getEntity('expensereport').')';
-if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND d.fk_user_author = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND d.fk_user_author = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND d.fk_user_author = ".$socid;
 $sql.= $db->order($sortfield, $sortorder);
 $sql.= $db->plimit($max, 0);
@@ -212,7 +221,6 @@ if ($result)
             print '<td class="right">'.price($obj->total_ttc).'</td>';
             print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
             print '<td class="right">';
-            //print $obj->libelle;
 			print $expensereportstatic->LibStatut($obj->fk_status, 3);
             print '</td>';
             print '</tr>';
@@ -229,6 +237,9 @@ if ($result)
 else dol_print_error($db);
 
 print '</div></div></div>';
+
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardExpenseReport', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

@@ -290,6 +290,7 @@ CurrencyXOF=CFA frankai BCEAO
 CurrencySingXOF=CFA BCEAO frankas
 CurrencyXPF=CFP frankai
 CurrencySingXPF=CFP frankas
+CurrencyCentEUR=cents
 CurrencyCentSingEUR=centas
 CurrencyCentINR=paisa (1/100 rupijos)
 CurrencyCentSingINR=paisa (1/100 rupijos)

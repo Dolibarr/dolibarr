@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "other", "orders"));
+$langs->loadLangs(array("admin", "other", "orders", "stocks"));
 
 if (!$user->admin)
 accessforbidden();
@@ -178,7 +178,7 @@ elseif ($action == 'set_SUPPLIER_ORDER_OTHER')
     // TODO We add/delete permission here until permission can have a condition on a global var
     include_once DOL_DOCUMENT_ROOT.'/core/modules/modFournisseur.class.php';
     $newmodule=new modFournisseur($db);
-    
+
     if ($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED)
     {
     	// clear default rights array
@@ -191,7 +191,7 @@ elseif ($action == 'set_SUPPLIER_ORDER_OTHER')
     	$newmodule->rights[$r][3] = 0;
     	$newmodule->rights[$r][4] = 'commande';
     	$newmodule->rights[$r][5] = 'approve2';
-    	
+
     	// Insert
     	$newmodule->insert_permissions(1);
     }
@@ -199,7 +199,7 @@ elseif ($action == 'set_SUPPLIER_ORDER_OTHER')
     {
     	// Remove all rights with Permission1190
     	$newmodule->delete_permissions();
-    	
+
     	// Add all right without Permission1190
     	$newmodule->insert_permissions(1);
     }
@@ -267,7 +267,6 @@ foreach ($dirmodels as $reldir)
         $handle = opendir($dir);
         if (is_resource($handle))
         {
-
             while (($file = readdir($handle))!==false)
             {
                 if (substr($file, 0, 25) == 'mod_commande_fournisseur_' && substr($file, dol_strlen($file)-3, 3) == 'php')
@@ -306,7 +305,7 @@ foreach ($dirmodels as $reldir)
                         }
                         else
                         {
-                            print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+                            print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
                         }
                         print '</td>';
 
@@ -414,8 +413,8 @@ foreach ($dirmodels as $reldir)
                     print "<td>\n";
                     require_once $dir.$file;
                     $module = new $classname($db, $specimenthirdparty);
-		    if (method_exists($module, 'info')) print $module->info($langs);
-	            else print $module->description;
+                    if (method_exists($module, 'info')) print $module->info($langs);
+                    else print $module->description;
                     print "</td>\n";
 
                     // Active
@@ -494,20 +493,16 @@ print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
-$var=false;
 
-//if ($conf->global->MAIN_FEATURES_LEVEL > 0)
-//{
-	print '<tr class="oddeven"><td>';
-	print $form->textwithpicto($langs->trans("UseDoubleApproval"), $langs->trans("Use3StepsApproval"), 1, 'help').'<br>';
-	print $langs->trans("IfSetToYesDontForgetPermission");
-	print '</td><td>';
-	print '<input type="text" size="6" name="SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED" value="'.$conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED.'">';
-	print '</td><td class="right">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-	print "</td></tr>\n";
+print '<tr class="oddeven"><td>';
+print $form->textwithpicto($langs->trans("UseDoubleApproval"), $langs->trans("Use3StepsApproval"), 1, 'help').'<br>';
+print $langs->trans("IfSetToYesDontForgetPermission");
+print '</td><td>';
+print '<input type="text" size="6" name="SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED" value="'.$conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED.'">';
+print '</td><td class="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
 
-//}
 
 // Ask for payment bank during supplier order
 /* Kept as hidden for the moment
@@ -564,10 +559,30 @@ print '</td><td class="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 
+// Option to add a quality/validation step, on products, after reception.
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("UseDispatchStatus").'</td>';
+print '<td></td>';
+print '<td class="center">';
+if ($conf->reception->enabled)
+{
+	print '<span class="opacitymedium">'.$langs->trans("FeatureNotAvailableWithReceptionModule").'</span>';
+}
+else
+{
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('SUPPLIER_ORDER_USE_DISPATCH_STATUS');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("SUPPLIER_ORDER_USE_DISPATCH_STATUS", $arrval, $conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS);
+	}
+}
+print "</td>\n";
+print "</tr>\n";
+
 print '</table><br>';
 
 print '</form>';
-
 
 
 /*

@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -143,9 +143,7 @@ if ($resql)
     $newcardbutton='';
     if ($caneditperms)
     {
-    	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/user/group/card.php?action=create&leftmenu="><span class="valignmiddle text-plus-circle">'.$langs->trans('NewGroup').'</span>';
-    	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-    	$newcardbutton.= '</a>';
+        $newcardbutton.= dolGetButtonTitle($langs->trans('NewGroup'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/user/group/card.php?action=create&leftmenu=');
     }
 
     print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -158,7 +156,7 @@ if ($resql)
     print '<input type="hidden" name="mode" value="'.$mode.'">';
     print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-    print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'title_generic', 0, $newcardbutton, '', $limit);
+    print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit);
 
     if ($sall)
     {
@@ -184,6 +182,7 @@ if ($resql)
     print_liste_field_titre("NbOfUsers", $_SERVER["PHP_SELF"], "nb", $param, "", '', $sortfield, $sortorder, 'center ');
     print_liste_field_titre("NbOfPermissions", $_SERVER["PHP_SELF"], "nbpermissions", $param, "", '', $sortfield, $sortorder, 'center ');
     print_liste_field_titre("DateCreationShort", $_SERVER["PHP_SELF"], "g.datec", $param, "", '', $sortfield, $sortorder, 'center ');
+    print_liste_field_titre("", $_SERVER["PHP_SELF"]);
     print "</tr>\n";
 
     $grouptemp = new UserGroup($db);
@@ -212,7 +211,8 @@ if ($resql)
         }
         print '<td class="center">'.$obj->nb.'</td>';
         print '<td class="center">'.$obj->nbpermissions.'</td>';
-        print '<td class="right nowrap">'.dol_print_date($db->jdate($obj->datec), "dayhour").'</td>';
+        print '<td class="center nowrap">'.dol_print_date($db->jdate($obj->datec), "dayhour").'</td>';
+        print '<td></td>';
         print "</tr>\n";
         $i++;
     }

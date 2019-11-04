@@ -15,14 +15,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *     	\file       htdocs/adherents/admin/website.php
  *		\ingroup    member
  *		\brief      File of main public page for member module
- *		\author	    Laurent Destailleur
  */
 
 require '../../main.inc.php';
@@ -179,7 +178,7 @@ if (! empty($conf->global->MEMBER_ENABLE_PUBLIC))
 	$listofval = array(-1 => $langs->trans("Undefined"));
 	$listofval += $adht->liste_array();
 	$forcetype = $conf->global->MEMBER_NEWFORM_FORCETYPE ?: -1;
-	print $form->selectarray("MEMBER_NEWFORM_FORCETYPE", $listofval, $forcetype, count($listetype)>1?1:0);
+	print $form->selectarray("MEMBER_NEWFORM_FORCETYPE", $listofval, $forcetype, count($listofval)>1?1:0);
 	print "</td></tr>\n";
 
 	// Amount
@@ -211,9 +210,9 @@ if (! empty($conf->global->MEMBER_ENABLE_PUBLIC))
 
 	print '</table>';
 
-	print '<center>';
+	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-	print '</center>';
+	print '</div>';
 }
 
 
@@ -226,7 +225,7 @@ if (! empty($conf->global->MEMBER_ENABLE_PUBLIC))
 {
 	print '<br>';
 	//print $langs->trans('FollowingLinksArePublic').'<br>';
-	print img_picto('', 'object_globe.png').' '.$langs->trans('BlankSubscriptionForm').':<br>';
+	print img_picto('', 'globe').' '.$langs->trans('BlankSubscriptionForm').':<br>';
 	if ($conf->multicompany->enabled) {
 		$entity_qr='?entity='.$conf->entity;
 	} else {

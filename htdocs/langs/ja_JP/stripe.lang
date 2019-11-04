@@ -1,30 +1,28 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Stripe module setup
-StripeDesc=Module to offer an online payment page accepting payments with Credit/Debit card via <a href="http://www.stripe.com" target="_blank">Stripe</a>. This can be used to allow your customers to make free payments or for a payment on a particular Dolibarr object (invoice, order, ...)
+StripeDesc=Offer customers a Stripe online payment page for payments with credit/cebit cards via <a href="http://www.stripe.com" target="_blank">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
 StripeOrCBDoPayment=Pay with credit card or Stripe
 FollowingUrlAreAvailableToMakePayments=以下のURLはDolibarrオブジェクト上で支払いをするために顧客にページを提供するために利用可能です
 PaymentForm=支払い形態
-WelcomeOnPaymentPage=ようこそ私たちのオンライン決済サービスについて
+WelcomeOnPaymentPage=Welcome to our online payment service
 ThisScreenAllowsYouToPay=この画面では、%sにオンライン決済を行うことができます。
 ThisIsInformationOnPayment=これは、実行する支払いに関する情報です。
 ToComplete=完了する
 YourEMail=入金確認を受信する電子メール
-STRIPE_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or not)
+STRIPE_PAYONLINE_SENDEMAIL=Email notification after a payment attempt (success or fail)
 Creditor=債権者
 PaymentCode=支払いコード
-StripeDoPayment=Pay with Credit or Debit Card (Stripe)
+StripeDoPayment=Pay with Stripe
 YouWillBeRedirectedOnStripe=You will be redirected on secured Stripe page to input you credit card information
 Continue=次の
 ToOfferALinkForOnlinePayment=%s支払いのURL
-ToOfferALinkForOnlinePaymentOnOrder=顧客の注文のための%sオンライン決済のユーザインタフェースを提供するためのURL
+ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
 ToOfferALinkForOnlinePaymentOnInvoice=顧客の請求書の%sオンライン決済のユーザインタフェースを提供するためのURL
 ToOfferALinkForOnlinePaymentOnContractLine=契約回線の%sオンライン決済のユーザインタフェースを提供するためのURL
 ToOfferALinkForOnlinePaymentOnFreeAmount=空き容量のため夜中オンライン決済のユーザインタフェースを提供するためのURL
 ToOfferALinkForOnlinePaymentOnMemberSubscription=メンバーのサブスクリプションの%sオンライン決済のユーザインタフェースを提供するためのURL
 YouCanAddTagOnUrl=また、独自の支払いコメントタグを追加するには、それらのURL（無料支払のためにのみ必要）のいずれかにurlパラメータ<b>·タグ= <i>値を</i></b>追加<i><b>する</b></i>こと<i><b>が</b></i>できます。
 SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
-YourPaymentHasBeenRecorded=このページでは、あなたの支払が記録されていることを確認します。ありがとうございます。
-YourPaymentHasNotBeenRecorded=あなたの支払は記録されていないトランザクションがキャンセルされました。ありがとうございます。
 AccountParameter=アカウントのパラメータ
 UsageParameter=使用パラメータ
 InformationToFindParameters=あなたの%sアカウント情報を見つけるのを助ける
@@ -42,7 +40,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook live key
 ONLINE_PAYMENT_WAREHOUSE=Stock to use for stock decrease when online payment is done<br>(TODO When option to decrease stock is done on an action on invoice and the online payment generate itself the invoice ?)
 StripeLiveEnabled=Stripe live enabled (otherwise test/sandbox mode)
 StripeImportPayment=Import Stripe payments
-ExampleOfTestCreditCard=Example of credit card for test: %s (valid), %s (error CVC), %s (expired), %s (charge fails)
+ExampleOfTestCreditCard=Example of credit card for test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
 StripeGateways=Stripe gateways
 OAUTH_STRIPE_TEST_ID=Stripe Connect Client ID (ca_...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect Client ID (ca_...)
@@ -63,3 +61,9 @@ ConfirmDeleteCard=Are you sure you want to delete this Credit or Debit card?
 CreateCustomerOnStripe=Create customer on Stripe
 CreateCardOnStripe=Create card on Stripe
 ShowInStripe=Show in Stripe
+StripeUserAccountForActions=User account to use for email notification of some Stripe events (Stripe payouts)
+StripePayoutList=List of Stripe payouts
+ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mode)
+ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
+PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
+ClickHereToTryAgain=<a href="%s">Click here to try again...</a>

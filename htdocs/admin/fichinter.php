@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -207,8 +207,7 @@ elseif ($action == 'set_FICHINTER_PRINT_PRODUCTS')
     }
 } elseif ($action == 'set_FICHINTER_USE_SERVICE_DURATION') {
 	$val = GETPOST('FICHINTER_USE_SERVICE_DURATION', 'alpha');
-$res = dolibarr_set_const($db, "FICHINTER_USE_SERVICE_DURATION", ($val == 'on' ? 1 : 0), 'bool', 0, '',
-		$conf->entity);
+    $res = dolibarr_set_const($db, "FICHINTER_USE_SERVICE_DURATION", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
 
 	if (!$res > 0) {
 		$error++;
@@ -220,33 +219,31 @@ $res = dolibarr_set_const($db, "FICHINTER_USE_SERVICE_DURATION", ($val == 'on' ?
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 } elseif ($action == 'set_FICHINTER_WITHOUT_DURATION') {
-        $val = GETPOST('FICHINTER_WITHOUT_DURATION', 'alpha');
-        $res = dolibarr_set_const($db, "FICHINTER_WITHOUT_DURATION", ($val == 'on' ? 1 : 0), 'bool', 0, '',
-                $conf->entity);
+    $val = GETPOST('FICHINTER_WITHOUT_DURATION', 'alpha');
+    $res = dolibarr_set_const($db, "FICHINTER_WITHOUT_DURATION", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
 
-        if (!$res > 0) {
-                $error++;
-        }
+    if (!$res > 0) {
+        $error++;
+    }
 
-        if (!$error) {
-                setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-        } else {
-                setEventMessages($langs->trans("Error"), null, 'errors');
-        }
+    if (!$error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 } elseif ($action == 'set_FICHINTER_DATE_WITHOUT_HOUR') {
-        $val = GETPOST('FICHINTER_DATE_WITHOUT_HOUR', 'alpha');
-        $res = dolibarr_set_const($db, "FICHINTER_DATE_WITHOUT_HOUR", ($val == 'on' ? 1 : 0), 'bool', 0, '',
-                $conf->entity);
+    $val = GETPOST('FICHINTER_DATE_WITHOUT_HOUR', 'alpha');
+    $res = dolibarr_set_const($db, "FICHINTER_DATE_WITHOUT_HOUR", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
 
-        if (!$res > 0) {
-                $error++;
-        }
+    if (!$res > 0) {
+        $error++;
+    }
 
-        if (!$error) {
-                setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-        } else {
-                setEventMessages($langs->trans("Error"), null, 'errors');
-        }
+    if (!$error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 
 
@@ -293,7 +290,6 @@ foreach ($dirmodels as $reldir)
 		$handle = opendir($dir);
 		if (is_resource($handle))
 		{
-
 			while (($file = readdir($handle))!==false)
 			{
 				if (preg_match('/^(mod_.*)\.php$/i', $file, $reg))
@@ -331,7 +327,7 @@ foreach ($dirmodels as $reldir)
 						}
 						else
 						{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 						}
 						print '</td>';
 
@@ -433,8 +429,6 @@ foreach ($dirmodels as $reldir)
 		    	{
 		    		if (file_exists($dir.'/'.$file))
 		    		{
-
-
 		    			$name = substr($file, 4, dol_strlen($file) -16);
 		    			$classname = substr($file, 0, dol_strlen($file) -12);
 

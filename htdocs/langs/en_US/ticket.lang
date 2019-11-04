@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -53,14 +53,15 @@ TypeContact_ticket_external_SUPPORTCLI=Customer contact / incident tracking
 TypeContact_ticket_external_CONTRIBUTOR=External contributor
 
 OriginEmail=Email source
-Notify_TICKETMESSAGE_SENTBYMAIL=Send ticket answer by email
+Notify_TICKET_SENTBYMAIL=Send ticket message by email
 
 # Status
 NotRead=Not read
 Read=Read
-Answered=Answered
 Assigned=Assigned
 InProgress=In progress
+NeedMoreInformation=Waiting for information
+Answered=Answered
 Waiting=Waiting
 Closed=Closed
 Deleted=Deleted
@@ -124,7 +125,7 @@ TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automaticall
 TicketNumberingModules=Tickets numbering module
 TicketNotifyTiersAtCreation=Notify third party at creation
 TicketGroup=Group
-TicketsDisableCustomerEmail=Alsways disable emails when a ticket is created from public interface
+TicketsDisableCustomerEmail=Always disable emails when a ticket is created from public interface
 #
 # Index & list page
 #
@@ -132,9 +133,14 @@ TicketsIndex=Ticket - home
 TicketList=List of tickets
 TicketAssignedToMeInfos=This page display ticket list created by or assigned to current user
 NoTicketsFound=No ticket found
+NoUnreadTicketsFound=No unread ticket found
 TicketViewAllTickets=View all tickets
 TicketViewNonClosedOnly=View only open tickets
 TicketStatByStatus=Tickets by status
+OrderByDateAsc=Sort by ascending date
+OrderByDateDesc=Sort by descending date
+ShowAsConversation=Show as conversation list
+MessageListViewType=Show as table list
 
 #
 # Ticket card
@@ -152,7 +158,7 @@ TicketCategory=Analytic code
 SeeTicket=See ticket
 TicketMarkedAsRead=Ticket has been marked as read
 TicketReadOn=Read on
-TicketCloseOn=Clotured on
+TicketCloseOn=Closing date
 MarkAsRead=Mark ticket as read
 TicketHistory=Ticket history
 AssignUser=Assign to user
@@ -220,6 +226,8 @@ TicketConfirmChangeStatus=Confirm the status change: %s ?
 TicketLogStatusChanged=Status changed: %s to %s
 TicketNotNotifyTiersAtCreate=Not notify company at create
 Unread=Unread
+TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
+PublicInterfaceNotEnabled=Public interface was not enabled
 
 #
 # Logs
@@ -253,8 +261,8 @@ TicketEmailPleaseDoNotReplyToThisEmail=Please do not reply directly to this emai
 TicketPublicInfoCreateTicket=This form allows you to record a support ticket in our management system.
 TicketPublicPleaseBeAccuratelyDescribe=Please accurately describe the problem. Provide the most information possible to allow us to correctly identify your request.
 TicketPublicMsgViewLogIn=Please enter ticket tracking ID
-TicketTrackId=Tracking ID
-OneOfTicketTrackId=One of yours tracking ID
+TicketTrackId=Public Tracking ID
+OneOfTicketTrackId=One of your tracking ID
 ErrorTicketNotFound=Ticket with tracking ID %s not found!
 Subject=Subject
 ViewTicket=View ticket
@@ -264,7 +272,11 @@ TicketNewEmailSubjectAdmin=New ticket created
 TicketNewEmailBodyAdmin=<p>Ticket has just been created with ID #%s, see information:</p>
 SeeThisTicketIntomanagementInterface=See ticket in management interface
 TicketPublicInterfaceForbidden=The public interface for the tickets was not enabled
-
+ErrorEmailOrTrackingInvalid=Bad value for tracking ID or email
+OldUser=Old user
+NewUser=New user
+NumberOfTicketsByMonth=Number of tickets per month
+NbOfTickets=Number of tickets
 # notifications
 TicketNotificationEmailSubject=Ticket %s updated
 TicketNotificationEmailBody=This is an automatic message to notify you that ticket %s has just been updated

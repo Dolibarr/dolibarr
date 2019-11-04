@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -14,8 +14,8 @@
 * GNU General Public License for more details.
 *
 * You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-* or see http://www.gnu.org/
+* along with this program. If not, see <https://www.gnu.org/licenses/>.
+* or see https://www.gnu.org/
 */
 
 /**
@@ -46,9 +46,9 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 
 	/**
      * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+     * e.g.: PHP ≥ 5.5 = array(5, 5)
      */
-	public $phpmin = array(5, 4);
+	public $phpmin = array(5, 5);
 
 	/**
    * Dolibarr version of the loaded document
@@ -74,7 +74,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 		$this->description = $langs->trans("DocumentModelOdt");
 		$this->scandir = 'USERGROUP_ADDON_PDF_ODT_PATH';	// Name of constant that is used to save list of directories to scan
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'odt';
 		$this->page_largeur = 0;
 		$this->page_hauteur = 0;

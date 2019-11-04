@@ -3,8 +3,8 @@
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2018       Philippe Grand      <philippe.grand@atoo-net.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2019  Philippe Grand      <philippe.grand@atoo-net.com>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 * GNU General Public License for more details.
 *
 * You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-* or see http://www.gnu.org/
+* along with this program. If not, see <https://www.gnu.org/licenses/>.
+* or see https://www.gnu.org/
 */
 
 /**
@@ -48,9 +48,9 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 
 	/**
      * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+     * e.g.: PHP ≥ 5.5 = array(5, 5)
      */
-	public $phpmin = array(5, 4);
+	public $phpmin = array(5, 5);
 
 	/**
      * Dolibarr version of the loaded document
@@ -76,7 +76,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 		$this->description = $langs->trans("DocumentModelOdt");
 		$this->scandir = 'EXPEDITION_ADDON_PDF_ODT_PATH';	// Name of constant that is used to save list of directories to scan
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'odt';
 		$this->page_largeur = 0;
 		$this->page_hauteur = 0;
@@ -227,7 +227,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
 		if ($conf->expedition->dir_output."/sending")
@@ -414,7 +414,11 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 					}
 				}
 				// Make substitutions into odt of thirdparty
-				$tmparray=$this->get_substitutionarray_thirdparty($socobject, $outputlangs);
+                if ($socobject->element == 'contact') {
+                    $tmparray = $this->get_substitutionarray_contact($socobject, $outputlangs);
+                } else {
+                    $tmparray = $this->get_substitutionarray_thirdparty($socobject, $outputlangs);
+                }
 				foreach($tmparray as $key=>$value)
 				{
 					try {
@@ -558,7 +562,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 				}
 				else {
 					try {
-					$odfHandler->saveToDisk($file);
+					    $odfHandler->saveToDisk($file);
 					} catch (Exception $e) {
 						$this->error=$e->getMessage();
                         dol_syslog($e->getMessage(), LOG_INFO);

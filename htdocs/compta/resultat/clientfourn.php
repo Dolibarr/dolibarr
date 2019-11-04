@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -50,7 +50,7 @@ $showaccountdetail = GETPOST('showaccountdetail', 'aZ09')?GETPOST('showaccountde
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id > 0) $socid = $user->societe_id;
+if ($user->socid > 0) $socid = $user->socid;
 if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user, 'compta', '', '', 'resultat');
 if (! empty($conf->accounting->enabled)) $result=restrictedArea($user, 'accounting', '', '', 'comptarapport');
 
@@ -129,21 +129,6 @@ $AccCat = new AccountancyCategory($db);
 /*
  * View
  */
-
-$months = array(
-	$langs->trans("JanuaryMin"),
-	$langs->trans("FebruaryMin"),
-	$langs->trans("MarchMin"),
-	$langs->trans("AprilMin"),
-	$langs->trans("MayMin"),
-	$langs->trans("JuneMin"),
-	$langs->trans("JulyMin"),
-	$langs->trans("AugustMin"),
-	$langs->trans("SeptemberMin"),
-	$langs->trans("OctoberMin"),
-	$langs->trans("NovemberMin"),
-	$langs->trans("DecemberMin"),
-);
 
 llxHeader();
 
@@ -773,7 +758,7 @@ else
 
 		            print '<tr class="oddeven"><td>&nbsp;</td>';
 
-		            print "<td>".$langs->trans("Salary")." <a href=\"".DOL_URL_ROOT."/compta/salaries/list.php?filtre=s.fk_user=".$obj->fk_user."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
+		            print "<td>".$langs->trans("Salary")." <a href=\"".DOL_URL_ROOT."/salaries/list.php?filtre=s.fk_user=".$obj->fk_user."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
 
 		            if ($modecompta == 'CREANCES-DETTES') print '<td class="right">'.price(-$obj->amount).'</td>';
 		            print '<td class="right">'.price(-$obj->amount).'</td>';
@@ -1147,11 +1132,11 @@ else
 		            while ($i < $num) {
 		                $obj = $db->fetch_object($result);
 
-		                $amount += $obj->amount;
-		                $total_ht += $obj->amount;
-		                $total_ttc += $obj->amount;
-		                $subtotal_ht += $obj->amount;
-		                $subtotal_ttc += $obj->amount;
+		                $amount += -$obj->amount;
+		                $total_ht += -$obj->amount;
+		                $total_ttc += -$obj->amount;
+		                $subtotal_ht += -$obj->amount;
+		                $subtotal_ttc += -$obj->amount;
 
 		                $i++;
 		            }

@@ -23,7 +23,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -103,7 +103,7 @@ $NBLINES=4;
 $module='supplier_proposal';
 $dbtable='';
 $objectid='';
-if (! empty($user->societe_id))	$socid=$user->societe_id;
+if (! empty($user->socid))	$socid=$user->socid;
 if (! empty($socid))
 {
 	$objectid=$socid;
@@ -120,7 +120,8 @@ $hookmanager->initHooks(array('supplier_proposallist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('supplier_proposal');
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 
@@ -153,14 +154,16 @@ $arrayfields=array(
 	'sp.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-	foreach($extrafields->attribute_label as $key => $val)
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
 	{
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
+		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
 	}
 }
-
+$object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 
@@ -247,7 +250,9 @@ $sql.= " p.rowid as project_id, p.ref as project_ref,";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " sc.fk_soc, sc.fk_user,";
 $sql.= " u.firstname, u.lastname, u.photo, u.login";
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -257,7 +262,7 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
 $sql.= ', '.MAIN_DB_PREFIX.'supplier_proposal as sp';
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."supplier_proposal_extrafields as ef on (sp.rowid = ef.fk_object)";
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (sp.rowid = ef.fk_object)";
 if ($sall || $search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'supplier_proposaldet as pd ON sp.rowid=pd.fk_supplier_proposal';
 if ($search_product_category > 0) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=pd.fk_product';
 $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON sp.fk_user_author = u.rowid';
@@ -377,23 +382,21 @@ if ($resql)
 
 	// List of mass actions available
 	$arrayofmassactions =  array(
-		'generate_doc'=>$langs->trans("Generate"),
-		//'presend'=>$langs->trans("SendByMail"),
+		'generate_doc'=>$langs->trans("ReGeneratePDF"),
 		'builddoc'=>$langs->trans("PDFMerge"),
+	    //'presend'=>$langs->trans("SendByMail"),
 	);
-	if ($user->rights->supplier_proposal->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+	if ($user->rights->supplier_proposal->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 	$newcardbutton='';
 	if($user->rights->supplier_proposal->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewAskPrice').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
-	}
+        $newcardbutton.= dolGetButtonTitle($langs->trans('NewAskPrice'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/supplier_proposal/card.php?action=create');
+    }
 
-	// Lignes des champs de filtre
+	// Fields title search
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -403,7 +406,7 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, $newcardbutton, '', $limit);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'commercial', 0, $newcardbutton, '', $limit);
 
 	$topicmail="SendSupplierProposalRef";
 	$modelmail="supplier_proposal_send";

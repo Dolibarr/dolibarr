@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Need to have following variables defined:
  * $object (invoice, order, ...)
@@ -40,7 +40,7 @@ if (empty($object) || ! is_object($object))
 
 
 $usemargins=0;
-if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element, array('facture','propal','commande'))) $usemargins=1;
+if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element, array('facture','facturerec','propal','commande'))) $usemargins=1;
 
 global $forceall, $senderissupplier, $inputalsopricewithtax;
 if (empty($dateSelector)) $dateSelector=0;
@@ -49,23 +49,23 @@ if (empty($senderissupplier)) $senderissupplier=0;
 if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 
 
-// Define colspan for button Add
+// Define colspan for the button 'Add'
 $colspan = 3;	// Col total ht + col edit + col delete
 if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
-if (in_array($object->element, array('propal','supplier_proposal','facture','invoice','commande','order','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
-if (empty($user->rights->margins->creer)) $colspan++;
+if (in_array($object->element, array('propal','supplier_proposal','facture','facturerec','invoice','commande','order','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
 if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) $colspan+=2;
-?>
 
-<!-- BEGIN PHP TEMPLATE objectline_edit.tpl.php -->
+print "<!-- BEGIN PHP TEMPLATE objectline_edit.tpl.php -->\n";
 
-<?php
-$coldisplay=-1; // We remove first td
+$coldisplay=0;
 ?>
-<tr <?php echo $bc[$var]; ?>>
-	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
+<tr class="oddeven tredited">
+<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 		<td class="linecolnum center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
-	<?php } ?>
+<?php }
+
+$coldisplay++;
+?>
 	<td>
 	<div id="line_<?php echo $line->id; ?>"></div>
 
@@ -76,7 +76,6 @@ $coldisplay=-1; // We remove first td
 	<input type="hidden" id="fk_parent_line" name="fk_parent_line" value="<?php echo $line->fk_parent_line; ?>">
 
 	<?php if ($line->fk_product > 0) { ?>
-
 		<?php
 		if ($line->fk_parent_line > 0) echo img_picto('', 'rightarrow');
 		?>
@@ -113,7 +112,7 @@ $coldisplay=-1; // We remove first td
 		$enable=(isset($conf->global->FCKEDITOR_ENABLE_DETAILS)?$conf->global->FCKEDITOR_ENABLE_DETAILS:0);
 		$toolbarname='dolibarr_details';
 		if (! empty($conf->global->FCKEDITOR_ENABLE_DETAILS_FULL)) $toolbarname='dolibarr_notes';
-		$doleditor=new DolEditor('product_desc', $line->description, '', 164, $toolbarname, '', false, true, $enable, $nbrows, '98%');
+		$doleditor=new DolEditor('product_desc', $line->description, '', (empty($conf->global->MAIN_DOLEDITOR_HEIGHT)?164:$conf->global->MAIN_DOLEDITOR_HEIGHT), $toolbarname, '', false, true, $enable, $nbrows, '98%');
 		$doleditor->Create();
 	} else {
 		print '<textarea id="product_desc" class="flat" name="product_desc" readonly style="width: 200px; height:80px;">' . $line->description . '</textarea>';
@@ -136,9 +135,10 @@ $coldisplay=-1; // We remove first td
 	<?php
 	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
 	{
-	?>
-		<td class="right"><input id="fourn_ref" name="fourn_ref" class="flat minwidth75" value="<?php echo ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
-	<?php
+	    $coldisplay++;
+		?>
+		<td class="right"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth150" value="<?php echo ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
+		<?php
 	}
 
 	$coldisplay++;
@@ -154,6 +154,7 @@ $coldisplay=-1; // We remove first td
 	print '></td>';
 
 	if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
+	    $coldisplay++;
 		print '<td class="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right" size="5" id="multicurrency_subprice" name="multicurrency_subprice" value="'.price($line->multicurrency_subprice).'" /></td>';
 	}
 
@@ -165,8 +166,9 @@ $coldisplay=-1; // We remove first td
 		print '></td>';
 	}
 	?>
-	<td class="right"><?php $coldisplay++; ?>
-	<?php if (($line->info_bits & 2) != 2) {
+	<td class="right">
+	<?php $coldisplay++;
+	if (($line->info_bits & 2) != 2) {
 		// I comment this because it shows info even when not required
 		// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
 		// must also not be output for most entities (proposal, intervention, ...)
@@ -182,14 +184,16 @@ $coldisplay=-1; // We remove first td
 	<?php
 	if($conf->global->PRODUCT_USE_UNITS)
 	{
+	    $coldisplay++;
 		print '<td class="left">';
 		print $form->selectUnits($line->fk_unit, "units");
 		print '</td>';
 	}
 	?>
 
-	<td class="nowrap right"><?php $coldisplay++; ?>
-	<?php if (($line->info_bits & 2) != 2) {
+	<td class="nowrap right">
+	<?php $coldisplay++;
+	if (($line->info_bits & 2) != 2) {
 		print '<input size="1" type="text" class="flat right" name="remise_percent" id="remise_percent" value="' . $line->remise_percent . '"';
 		if ($line->fk_prev_id != null ) print ' readonly';
 		print '>%';
@@ -197,28 +201,29 @@ $coldisplay=-1; // We remove first td
 		&nbsp;
 	<?php } ?>
 	</td>
-<?php
+	<?php
 	if ($this->situation_cycle_ref) {
 		$coldisplay++;
-		print '<td class="nowrap right"><input class="right" type="text" size="1" value="' . $line->situation_percent . '" name="progress">%</td>';
+		print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="' . $line->situation_percent . '" name="progress">%</td>';
+		$coldisplay++;
+		print '<td></td>';
 	}
 	if (! empty($usemargins))
 	{
-        if (!empty($user->rights->margins->creer)) {
-?>
-        <td class="margininfos right">
-<?php
+        if (!empty($user->rights->margins->creer))
+        {
             $coldisplay++;
-?>
+        	?>
+        <td class="margininfos right">
 			<!-- For predef product -->
 			<?php if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) { ?>
-			<select id="fournprice_predef" name="fournprice_predef" class="flat right" style="display: none;"></select>
+			<select id="fournprice_predef" name="fournprice_predef" class="flat minwidth75imp right" style="display: none;"></select>
 			<?php } ?>
 			<!-- For free product -->
-			<input class="flat right" type="text" size="5" id="buying_price" name="buying_price" class="hideobject" value="<?php echo price($line->pa_ht, 0, '', 0); ?>">
+			<input class="flat maxwidth75 right" type="text" id="buying_price" name="buying_price" class="hideobject" value="<?php echo price($line->pa_ht, 0, '', 0); ?>">
 		</td>
-		<?php } ?>
-<?php
+		<?php }
+
         if ($user->rights->margins->creer) {
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 			{
@@ -227,7 +232,7 @@ $coldisplay=-1; // We remove first td
 				if ($line->subprice < 0)
 					echo '<td class="right nowrap margininfos">'.$margin_rate.'<span class="hideonsmartphone">%</span></td>';
 				else
-					echo '<td class="right nowrap margininfos"><input class="right" type="text" size="2" name="np_marginRate" value="'.$margin_rate.'"><span class="hideonsmartphone">%</span></td>';
+					echo '<td class="right nowrap margininfos"><input class="right maxwidth75" type="text" name="np_marginRate" value="'.$margin_rate.'"><span class="hideonsmartphone">%</span></td>';
 				$coldisplay++;
 			}
 			elseif (! empty($conf->global->DISPLAY_MARK_RATES))
@@ -237,15 +242,15 @@ $coldisplay=-1; // We remove first td
 				if ($line->subprice < 0)
 					echo '<td class="right nowrap margininfos">'.$mark_rate.'<span class="hideonsmartphone">%</span></td>';
 				else
-					echo '<td class="right nowrap margininfos"><input class="right" type="text" size="2" name="np_markRate" value="'.$mark_rate.'"><span class="hideonsmartphone">%</span></td>';
+					echo '<td class="right nowrap margininfos"><input class="right maxwidth75" type="text" name="np_markRate" value="'.$mark_rate.'"><span class="hideonsmartphone">%</span></td>';
 				$coldisplay++;
 			}
 		}
 	}
-?>
+	?>
 
-	<!-- colspan=4 for this td because it replace total_ht+3 td for buttons -->
-	<td class="center valignmiddle" colspan="<?php echo $colspan; ?>"><?php $coldisplay+=4; ?>
+	<!-- colspan for this td because it replace total_ht+3 td for buttons+... -->
+	<td class="center valignmiddle" colspan="<?php echo $colspan; ?>"><?php $coldisplay+=$colspan; ?>
 		<input type="submit" class="button" id="savelinebutton" name="save" value="<?php echo $langs->trans("Save"); ?>"><br>
 		<input type="submit" class="button" id="cancellinebutton" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
 	</td>
@@ -253,18 +258,18 @@ $coldisplay=-1; // We remove first td
 
 <?php
 //Line extrafield
-if (!empty($extrafieldsline))
+if (!empty($extrafields))
 {
-	print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var],'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+	print $line->showOptionals($extrafields, 'edit', array('class'=>'tredited', 'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
 }
 ?>
 
-<?php if (! empty($conf->service->enabled) && $line->product_type == 1 && $dateSelector)	 { ?>
-<tr id="service_duration_area" <?php echo $bc[$var]; ?>>
+<?php if (! empty($conf->service->enabled) && $line->product_type == 1 && $dateSelector) { ?>
+<tr id="service_duration_area" class="treditedlinefordate">
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
-		<td class="linecolnum center"><?php $coldisplay++; ?></td>
+		<td class="linecolnum center"></td>
 	<?php } ?>
-	<td colspan="<?php echo 7+$colspan ?>"><?php echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' '; ?>
+	<td colspan="<?php echo $coldisplay-(empty($conf->global->MAIN_VIEW_LINE_NUMBER)?0:1) ?>"><?php echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' '; ?>
 	<?php
 	$hourmin=(isset($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE:'');
 	print $form->selectDate($line->date_start, 'date_start', $hourmin, $hourmin, $line->date_start?0:1, "updateline", 1, 0);
@@ -324,7 +329,7 @@ jQuery(document).ready(function()
     <?php
     if (! empty($conf->margin->enabled))
     {
-    ?>
+        ?>
 		/* Add rule to clear margin when we change some data, so when we change sell or buy price, margin will be recalculated after submitting form */
 		jQuery("#tva_tx").click(function() {						/* somtimes field is a text, sometimes a combo */
 			jQuery("input[name='np_marginRate']:first").val('');
@@ -387,7 +392,7 @@ jQuery(document).ready(function()
 			$('#buying_price').show();
 		}
 		}, 'json');
-    <?php
+        <?php
     }
     ?>
 });

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,8 +32,9 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 dol_include_once('/emailcollector/class/emailcollector.class.php');
 
 if (!$user->admin) accessforbidden();
+if (empty($conf->emailcollector->enabled)) accessforbidden();
 
-// Load traductions files requiredby by page
+// Load traductions files required by page
 $langs->loadLangs(array("admin", "other"));
 
 $action     = GETPOST('action', 'aZ09')?GETPOST('action', 'aZ09'):'view';				// The action 'add', 'create', 'edit', 'update', 'view', ...
@@ -65,8 +66,10 @@ $object = new EmailCollector($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->emailcollector->dir_output . '/temp/massgeneration/' . $user->id;
 $hookmanager->initHooks(array('emailcollectorlist')); // Note that conf->hooks_modules contains array
+
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('emailcollector');
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Default sort order (if not yet defined by previous GETPOST)
@@ -75,9 +78,9 @@ if (! $sortorder) $sortorder="ASC";
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0)	// Protection if external user
+if ($user->socid > 0)	// Protection if external user
 {
-	//$socid = $user->societe_id;
+	//$socid = $user->socid;
 	accessforbidden();
 }
 //$result = restrictedArea($user, 'emailcollector', $id, '');
@@ -304,7 +307,7 @@ $arrayofmassactions =  array(
 	//'presend'=>$langs->trans("SendByMail"),
 	//'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->emailcollector->delete) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if ($user->rights->emailcollector->delete) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -321,9 +324,7 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 $newcardbutton='';
 //if ($user->rights->emailcollector->creer)
 //{
-$newcardbutton='<a class="butActionNew" href="emailcollector_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']).'"><span class="valignmiddle text-plus-circle">'.$langs->trans('New').'</span>';
-$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-$newcardbutton.= '</a>';
+$newcardbutton.= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', 'emailcollector_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']));
 //}
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, $newcardbutton, '', $limit);
@@ -385,7 +386,7 @@ $parameters=array('arrayfields'=>$arrayfields);
 $reshook=$hookmanager->executeHooks('printFieldListOption', $parameters, $object);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-print '<td class="liste_titre right">';
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -440,7 +441,7 @@ while ($i < min($num, $limit))
 	$object->id = $obj->rowid;
 	foreach($object->fields as $key => $val)
 	{
-		if (isset($obj->$key)) $object->$key = $obj->$key;
+		if (property_exists($obj, $key)) $object->$key = $obj->$key;
 	}
 
 	// Show here line of result

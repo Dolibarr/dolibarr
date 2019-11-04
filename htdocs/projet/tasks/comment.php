@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -49,7 +49,7 @@ $planned_workload=((GETPOST('planned_workloadhour', 'int')!='' || GETPOST('plann
 
 // Security check
 $socid=0;
-//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 if (! $user->rights->projet->lire) accessforbidden();
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -60,7 +60,7 @@ $extrafields = new ExtraFields($db);
 $projectstatic = new Project($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // include comment actions
 include DOL_DOCUMENT_ROOT . '/core/actions_comments.inc.php';
@@ -150,11 +150,63 @@ if ($id > 0 || ! empty($ref))
 
             print '<table class="border" width="100%">';
 
+            // Usage
+            print '<tr><td class="tdtop">';
+            print $langs->trans("Usage");
+            print '</td>';
+            print '<td>';
+            if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+            {
+            	print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha')!=''?' checked="checked"':'') : ($projectstatic->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+            	$htmltext = $langs->trans("ProjectFollowOpportunity");
+            	print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+            	print '<br>';
+            }
+            if (empty($conf->global->PROJECT_HIDE_TASKS))
+            {
+            	print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha')!=''?' checked="checked"':'') : ($projectstatic->usage_task ? ' checked="checked"' : '')).'"> ';
+            	$htmltext = $langs->trans("ProjectFollowTasks");
+            	print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+            	print '<br>';
+            }
+            if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+            {
+            	print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha')!=''?' checked="checked"':'') : ($projectstatic->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+            	$htmltext = $langs->trans("ProjectBillTimeDescription");
+            	print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+            	print '<br>';
+            }
+            print '</td></tr>';
+
             // Visibility
             print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
             if ($projectstatic->public) print $langs->trans('SharedProject');
             else print $langs->trans('PrivateProject');
             print '</td></tr>';
+
+            // Usage
+            if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES) && ! empty($object->usage_opportunity))
+            {
+            	// Opportunity status
+            	print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
+            	$code = dol_getIdFromCode($db, $projectstatic->opp_status, 'c_lead_status', 'rowid', 'code');
+            	if ($code) print $langs->trans("OppStatus".$code);
+            	print '</td></tr>';
+
+            	// Opportunity percent
+            	print '<tr><td>'.$langs->trans("OpportunityProbability").'</td><td>';
+            	if (strcmp($object->opp_percent, '')) print price($projectstatic->opp_percent, 0, $langs, 1, 0).' %';
+            	print '</td></tr>';
+
+            	// Opportunity Amount
+            	print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
+            	/*if ($object->opp_status)
+            	 {
+            	 print price($obj->opp_amount, 1, $langs, 1, 0, -1, $conf->currency);
+            	 }*/
+            	if (strcmp($projectstatic->opp_amount, '')) print price($projectstatic->opp_amount, 0, $langs, 1, 0, -1, $conf->currency);
+            	print '</td></tr>';
+            }
 
             // Date start - end
             print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';

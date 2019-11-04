@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -177,6 +177,7 @@ class Conf
 
 					if ($value && preg_match('/^MAIN_MODULE_/', $key))
 					{
+						$reg=array();
 						// If this is constant for a new tab page activated by a module. It initializes modules_parts['tabs'].
 						if (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_TABS_/i', $key))
 						{
@@ -226,10 +227,7 @@ class Conf
             $filesList = explode(":", $this->global->LOCAL_CONSTS_FILES);
             foreach ($filesList as $file) {
                 $file=dol_sanitizeFileName($file);
-                include_once DOL_DOCUMENT_ROOT . "/".$file."/".$file."_consts.php";
-                foreach ($file2bddconsts as $key=>$value) {
-                    $this->global->$key=$value;
-                }
+                include_once DOL_DOCUMENT_ROOT . "/".$file."/".$file."_consts.php";	// This file can run code like setting $this->global->XXX vars.
             }
         }
 
@@ -327,6 +325,9 @@ class Conf
 		}
 
 		// For mycompany storage
+		$this->mycompany->multidir_output	= array($this->entity => $rootfordata."/mycompany");
+		$this->mycompany->multidir_temp		= array($this->entity => $rootfordata."/mycompany/temp");
+		// For backward compatibility
 		$this->mycompany->dir_output=$rootfordata."/mycompany";
 		$this->mycompany->dir_temp=$rootfordata."/mycompany/temp";
 
@@ -352,6 +353,12 @@ class Conf
 		$this->propal->dir_output=$rootfordata."/propale";
 		$this->propal->dir_temp=$rootfordata."/propale/temp";
 
+		// For backward compatibility
+		$this->banque->multidir_output	= array($this->entity => $rootfordata."/bank");
+		$this->banque->multidir_temp	= array($this->entity => $rootfordata."/bank/temp");
+		$this->banque->dir_output=$rootfordata."/bank";
+		$this->banque->dir_temp=$rootfordata."/bank/temp";
+
 		// For medias storage
 		$this->medias->multidir_output	= array($this->entity => $rootfordata."/medias");
 		$this->medias->multidir_temp	= array($this->entity => $rootfordata."/medias/temp");
@@ -364,6 +371,7 @@ class Conf
 		$this->livraison_bon->enabled=(! empty($this->global->MAIN_SUBMODULE_LIVRAISON)?$this->global->MAIN_SUBMODULE_LIVRAISON:0);
 
 		// Module fournisseur
+		// TODO To split into module supplier_invoice and supplier_order
 		if (! empty($this->fournisseur))
 		{
 			$this->fournisseur->commande=new stdClass();
@@ -376,37 +384,35 @@ class Conf
 			$this->fournisseur->facture->multidir_temp  =array($this->entity => $rootfordata."/fournisseur/facture/temp");
 			$this->fournisseur->facture->dir_output =$rootfordata."/fournisseur/facture";		// For backward compatibility
 			$this->fournisseur->facture->dir_temp   =$rootfordata."/fournisseur/facture/temp";	// For backward compatibility
-			$this->supplierproposal=new stdClass();
-			$this->supplierproposal->multidir_output=array($this->entity => $rootfordata."/supplier_proposal");
-			$this->supplierproposal->multidir_temp  =array($this->entity => $rootfordata."/supplier_proposal/temp");
-			$this->supplierproposal->dir_output=$rootfordata."/supplier_proposal";				// For backward compatibility
-			$this->supplierproposal->dir_temp=$rootfordata."/supplier_proposal/temp";			// For backward compatibility
+
 			$this->fournisseur->payment=new stdClass();
 			$this->fournisseur->payment->multidir_output=array($this->entity => $rootfordata."/fournisseur/payment");
 			$this->fournisseur->payment->multidir_temp  =array($this->entity => $rootfordata."/fournisseur/payment/temp");
 			$this->fournisseur->payment->dir_output =$rootfordata."/fournisseur/payment";		// For backward compatibility
 			$this->fournisseur->payment->dir_temp   =$rootfordata."/fournisseur/payment/temp";	// For backward compatibility
 
-			// To prepare split of module fournisseur into fournisseur + supplier_order + supplier_invoice
-			if (! empty($this->fournisseur->enabled) && empty($this->global->MAIN_USE_NEW_SUPPLIERMOD))  // By default, if module supplier is on, we set new properties
+			// To prepare split of module vendor(fournisseur) into vendor + supplier_order + supplier_invoice + supplierproposal
+			if (! empty($this->fournisseur->enabled))  // By default, if module supplier is on, we set new properties
 			{
-    			$this->supplier_order=new stdClass();
-    			$this->supplier_order->enabled=1;
-    			$this->supplier_order->multidir_output=array($this->entity => $rootfordata."/fournisseur/commande");
-    			$this->supplier_order->multidir_temp  =array($this->entity => $rootfordata."/fournisseur/commande/temp");
-    			$this->supplier_order->dir_output=$rootfordata."/fournisseur/commande";			// For backward compatibility
-    			$this->supplier_order->dir_temp=$rootfordata."/fournisseur/commande/temp";		// For backward compatibility
-    			$this->supplier_invoice=new stdClass();
-    			$this->supplier_invoice->enabled=1;
-    			$this->supplier_invoice->multidir_output=array($this->entity => $rootfordata."/fournisseur/facture");
-    			$this->supplier_invoice->multidir_temp  =array($this->entity => $rootfordata."/fournisseur/facture/temp");
-    			$this->supplier_invoice->dir_output=$rootfordata."/fournisseur/facture";		// For backward compatibility
-    			$this->supplier_invoice->dir_temp=$rootfordata."/fournisseur/facture/temp";		// For backward compatibility
-    			$this->supplierproposal=new stdClass();
-    			$this->supplierproposal->multidir_output=array($this->entity => $rootfordata."/supplier_proposal");
-    			$this->supplierproposal->multidir_temp  =array($this->entity => $rootfordata."/supplier_proposal/temp");
-    			$this->supplierproposal->dir_output=$rootfordata."/supplier_proposal";			// For backward compatibility
-    			$this->supplierproposal->dir_temp=$rootfordata."/supplier_proposal/temp";		// For backward compatibility
+				if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))	// This can be set to 1 once modules purchase order and supplier invoice exists
+				{
+	    			$this->supplier_order=new stdClass();
+	    			$this->supplier_order->enabled=1;
+	    			$this->supplier_order->multidir_output=array($this->entity => $rootfordata."/fournisseur/commande");
+	    			$this->supplier_order->multidir_temp  =array($this->entity => $rootfordata."/fournisseur/commande/temp");
+	    			$this->supplier_order->dir_output=$rootfordata."/fournisseur/commande";			// For backward compatibility
+	    			$this->supplier_order->dir_temp=$rootfordata."/fournisseur/commande/temp";		// For backward compatibility
+				}
+
+				if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD))	// This can be set to 1 once modules purchase order and supplier invoice exists
+				{
+					$this->supplier_invoice=new stdClass();
+	    			$this->supplier_invoice->enabled=1;
+	    			$this->supplier_invoice->multidir_output=array($this->entity => $rootfordata."/fournisseur/facture");
+	    			$this->supplier_invoice->multidir_temp  =array($this->entity => $rootfordata."/fournisseur/facture/temp");
+	    			$this->supplier_invoice->dir_output=$rootfordata."/fournisseur/facture";		// For backward compatibility
+	    			$this->supplier_invoice->dir_temp=$rootfordata."/fournisseur/facture/temp";		// For backward compatibility
+				}
 			}
 		}
 
@@ -439,7 +445,6 @@ class Conf
 
 		// Set some default values
 		//$this->global->MAIN_LIST_FILTER_ON_DAY=1;		// On filter that show date, we must show input field for day before or after month
-		$this->global->MAIN_ACTIVATE_HTML5=1;
         $this->global->MAIN_MAIL_USE_MULTI_PART=1;
 
 		// societe
@@ -447,7 +452,7 @@ class Conf
 		if (empty($this->global->SOCIETE_CODECOMPTA_ADDON))		$this->global->SOCIETE_CODECOMPTA_ADDON="mod_codecompta_panicum";
 
 		if (empty($this->global->CHEQUERECEIPTS_ADDON))			$this->global->CHEQUERECEIPTS_ADDON='mod_chequereceipt_mint';
-		if (empty($conf->global->TICKETSUP_ADDON))				$this->global->TICKETSUP_ADDON='mod_ticket_simple';
+		if (empty($conf->global->TICKET_ADDON))				    $this->global->TICKET_ADDON='mod_ticket_simple';
 
         // Security
 		if (empty($this->global->USER_PASSWORD_GENERATED)) $this->global->USER_PASSWORD_GENERATED='standard'; // Default password generator
@@ -490,7 +495,10 @@ class Conf
         if (empty($this->global->ACCOUNTING_MODE)) $this->global->ACCOUNTING_MODE='RECETTES-DEPENSES';  // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
 
         // By default, suppliers objects can be linked to all projects
-        $this->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS = 1;
+        if (! isset($this->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)) $this->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS = 1;
+
+        // By default we enable feature to bill time spent
+        if (! isset($this->global->PROJECT_BILL_TIME_SPENT)) $this->global->PROJECT_BILL_TIME_SPENT = 1;
 
         // MAIN_HTML_TITLE
         if (! isset($this->global->MAIN_HTML_TITLE)) $this->global->MAIN_HTML_TITLE='noapp,thirdpartynameonly,contactnameonly,projectnameonly';
@@ -546,9 +554,6 @@ class Conf
 		if (! isset($this->global->MAIN_PDF_DASH_BETWEEN_LINES)) $this->global->MAIN_PDF_DASH_BETWEEN_LINES=1;    // use dash between lines
 		if (! isset($this->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) $this->global->PDF_ALLOW_HTML_FOR_FREE_TEXT=1;  // allow html content into free footer text
 
-		// Set default value to MAIN_SHOW_LOGO
-		if (! isset($this->global->MAIN_SHOW_LOGO)) $this->global->MAIN_SHOW_LOGO=1;
-
 		// Default max file size for upload
 		$this->maxfilesize = (empty($this->global->MAIN_UPLOAD_DOC) ? 0 : (int) $this->global->MAIN_UPLOAD_DOC * 1024);
 
@@ -563,6 +568,9 @@ class Conf
 
 		// By default, we show state code in combo list
 		if (! isset($this->global->MAIN_SHOW_STATE_CODE)) $this->global->MAIN_SHOW_STATE_CODE=1;
+
+		// Use a SCA ready workflow with Stripe module (STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION by default if nothing defined)
+		if (! isset($this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) && empty($this->global->STRIPE_USE_NEW_CHECKOUT)) $this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=1;
 
 		// Define list of limited modules (value must be key found for "name" property of module, so for example 'supplierproposal' for Module "Supplier Proposal"
 		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,agenda,resource,adherent,blockedlog';	// '' means 'all'. Note that contact is added here as it should be a module later.
@@ -637,6 +645,10 @@ class Conf
 		    $this->expensereport->payment = new stdClass();
 		    $this->expensereport->payment->warning_delay=(isset($this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY)?$this->global->MAIN_DELAY_EXPENSEREPORTS_TO_PAY:0)*24*60*60;
 		}
+        if (isset($this->holiday)) {
+            $this->holiday->approve = new stdClass();
+            $this->holiday->approve->warning_delay=(isset($this->global->MAIN_DELAY_HOLIDAYS)?$this->global->MAIN_DELAY_HOLIDAYS:0)*24*60*60;
+        }
 
 		if (! empty($this->global->PRODUIT_MULTIPRICES) && empty($this->global->PRODUIT_MULTIPRICES_LIMIT))
 		{
@@ -659,8 +671,13 @@ class Conf
 
 		if (! isset($this->global->MAIN_EXTRAFIELDS_IN_ONE_TD)) $this->global->MAIN_EXTRAFIELDS_IN_ONE_TD = 1;
 
-		$this->global->MAIN_MODULE_DOLISTORE_API_SRV='https://www.dolistore.com';
-		$this->global->MAIN_MODULE_DOLISTORE_API_KEY='dolistorecatalogpublickey1234567';
+		if (! isset($this->global->MAIN_USE_OLD_TITLE_BUTTON)) $this->global->MAIN_USE_OLD_TITLE_BUTTON = 0;
+
+		if (empty($this->global->MAIN_MODULE_DOLISTORE_API_SRV)) $this->global->MAIN_MODULE_DOLISTORE_API_SRV='https://www.dolistore.com';
+		if (empty($this->global->MAIN_MODULE_DOLISTORE_API_KEY)) $this->global->MAIN_MODULE_DOLISTORE_API_KEY='dolistorecatalogpublickey1234567';
+
+		// If we are in develop mode, we activate the option MAIN_SECURITY_CSRF_WITH_TOKEN to 1 if not already defined.
+		if (! isset($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN) && $conf->global->MAIN_FEATURES_LEVEL >= 2) $conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 1;
 
 		// For backward compatibility
 		if (isset($this->product))   $this->produit=$this->product;
@@ -668,6 +685,7 @@ class Conf
 		if (isset($this->commande))  $this->order=$this->commande;
 		if (isset($this->contrat))   $this->contract=$this->contrat;
 		if (isset($this->categorie)) $this->category=$this->categorie;
+		if (isset($this->project))   $this->project=$this->projet;
 
         // Object $mc
         if (! defined('NOREQUIREMC') && ! empty($this->multicompany->enabled))

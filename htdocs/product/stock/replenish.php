@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -38,8 +38,8 @@ require_once './lib/replenishment.lib.php';
 $langs->loadLangs(array('products', 'stocks', 'orders'));
 
 // Security check
-if ($user->societe_id) {
-    $socid = $user->societe_id;
+if ($user->socid) {
+    $socid = $user->socid;
 }
 $result=restrictedArea($user, 'produit|service');
 
@@ -140,7 +140,6 @@ if ($action == 'order' && isset($_POST['valid']))
                 	if ($qty)
                 	{
 	                    //might need some value checks
-	                    $obj = $db->fetch_object($resql);
 	                    $line = new CommandeFournisseurLigne($db);
 	                    $line->qty = $qty;
 	                    $line->fk_product = $idprod;
@@ -179,7 +178,7 @@ if ($action == 'order' && isset($_POST['valid']))
                     $error=$db->lasterror();
                     dol_print_error($db);
                 }
-                $db->free($resql);
+
                 unset($_POST['fourn' . $i]);
             }
             unset($_POST[$i]);
@@ -304,6 +303,12 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entre
 }
 $sql.= ' '.$sqldesiredtock.' as desiredstockcombined, '.$sqlalertstock.' as seuil_stock_alertecombined,';
 $sql.= ' SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").') as stock_physique';
+
+// Add fields from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
+
 $sql.= ' FROM ' . MAIN_DB_PREFIX . 'product as p';
 $sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'product_stock as s';
 $sql.= ' ON (p.rowid = s.fk_product AND s.fk_entrepot IN (SELECT ent.rowid FROM '.MAIN_DB_PREFIX.'entrepot AS ent WHERE ent.entity IN('.getEntity('stock').')))';
@@ -313,6 +318,12 @@ if ($fk_supplier > 0) {
 if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) {
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_warehouse_properties AS pse ON (p.rowid = pse.fk_product AND pse.fk_entrepot = '.$fk_entrepot.')';
 }
+
+// Add fields from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListJoin', $parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
+
 $sql.= ' WHERE p.entity IN (' . getEntity('product') . ')';
 if ($sall) $sql .= natural_search(array('p.ref', 'p.label', 'p.description', 'p.note'), $sall);
 // if the type is not 1, we show all products (type = 0,2,3)
@@ -393,6 +404,11 @@ if ($usevirtualstock)
 	}
 }
 
+// Add where from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
+
 $sql.= $db->order($sortfield, $sortorder);
 $sql.= $db->plimit($limit + 1, $offset);
 
@@ -421,7 +437,7 @@ $head[1][1] = $langs->trans("ReplenishmentOrders");
 $head[1][2] = 'replenishorders';
 
 
-print load_fiche_titre($langs->trans('Replenishment'), '', 'title_generic.png');
+print load_fiche_titre($langs->trans('Replenishment'), '', 'generic');
 
 dol_fiche_head($head, 'replenish', '', -1, '');
 
@@ -456,9 +472,15 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE))
 print '<div class="inline-block valignmiddle" style="padding-right: 20px;">';
 print $langs->trans('Supplier').' '.$form->select_company($fk_supplier, 'fk_supplier', 'fournisseur=1', 1);
 print '</div>';
+
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldPreListTitle', $parameters);    // Note that $action and $object may have been modified by hook
+if (empty($reshook)) print $hookmanager->resPrint;
+
 print '<div class="inline-block valignmiddle">';
 print '<input class="button" type="submit" name="valid" value="'.$langs->trans('ToFilter').'">';
 print '</div>';
+
 print '</form>';
 
 if ($sref || $snom || $sall || $salert || $draftorder || GETPOST('search', 'alpha')) {
@@ -469,7 +491,7 @@ if ($sref || $snom || $sall || $salert || $draftorder || GETPOST('search', 'alph
 	$filters .= '&mode=' . $mode;
 	$filters .= '&fk_supplier=' . $fk_supplier;
 	$filters .= '&fk_entrepot=' . $fk_entrepot;
-print_barre_liste(
+	print_barre_liste(
 		$texte,
 		$page,
 		'replenish.php',
@@ -488,7 +510,7 @@ print_barre_liste(
 	$filters .= '&mode=' . $mode;
 	$filters .= '&fk_supplier=' . $fk_supplier;
 	$filters .= '&fk_entrepot=' . $fk_entrepot;
-print_barre_liste(
+	print_barre_liste(
 		$texte,
 		$page,
 		'replenish.php',
@@ -528,7 +550,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">'
 	'<input type="hidden" name="action" value="order">'.
 	'<input type="hidden" name="mode" value="' . $mode . '">';
 
-// Lignes des champs de filtre
+// Fields title search
 print '<tr class="liste_titre_filter">';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre"><input class="flat" type="text" name="sref" size="8" value="'.dol_escape_htmltag($sref).'"></td>';
@@ -539,7 +561,12 @@ print '<td class="liste_titre right">&nbsp;</td>';
 print '<td class="liste_titre right">' . $langs->trans('AlertOnly') . '&nbsp;<input type="checkbox" id="salert" name="salert" ' . (!empty($alertchecked)?$alertchecked:'') . '></td>';
 print '<td class="liste_titre right">' . $langs->trans('IncludeAlsoDraftOrders') . '&nbsp;<input type="checkbox" id="draftorder" name="draftorder" ' . (!empty($draftchecked)?$draftchecked:'') . '></td>';
 print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre right">';
+// Fields from hook
+$parameters=array('param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
+$reshook=$hookmanager->executeHooks('printFieldListOption', $parameters);    // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
 print '</td>';
@@ -557,6 +584,12 @@ print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], 'stock_physique', $pa
 print_liste_field_titre('Ordered', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
 print_liste_field_titre('StockToBuy', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
 print_liste_field_titre('SupplierRef', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
+
+// Hook fields
+$parameters=array('param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
+$reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+
 print "</tr>\n";
 
 while ($i < ($limit ? min($num, $limit) : $num))
@@ -682,6 +715,11 @@ while ($i < ($limit ? min($num, $limit) : $num))
 
 		// Supplier
 		print '<td class="right">'.	$form->select_product_fourn_price($prod->id, 'fourn'.$i, $fk_supplier).'</td>';
+
+		// Fields from hook
+		$parameters=array( 'objp'=>$objp);
+		$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters);    // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
 
 		print '</tr>';
 	}

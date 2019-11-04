@@ -2,8 +2,8 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015	   Charlie Benke		<charlie@patas-monkey.com>
-
+ * Copyright (C) 2015	   Charlie Benke        <charlie@patas-monkey.com>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,15 +32,20 @@ require_once DOL_DOCUMENT_ROOT .'/fichinter/class/fichinter.class.php';
 
 if (!$user->rights->ficheinter->lire) accessforbidden();
 
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('interventionindex'));
+
 // Load translation files required by the page
 $langs->load("interventions");
 
 // Security check
 $socid=GETPOST('socid', 'int');
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
 	$action = '';
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 
@@ -84,7 +89,7 @@ $sql.= ", ".MAIN_DB_PREFIX."fichinter as f";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE f.entity IN (".getEntity('intervention').")";
 $sql.= " AND f.fk_soc = s.rowid";
-if ($user->societe_id) $sql.=' AND f.fk_soc = '.$user->societe_id;
+if ($user->socid) $sql.=' AND f.fk_soc = '.$user->socid;
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " GROUP BY f.fk_statut";
 $resql = $db->query($sql);
@@ -356,6 +361,8 @@ if (! empty($conf->ficheinter->enabled))
 
 print '</div></div></div>';
 
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardInterventions', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 llxFooter();
 

@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,7 +32,7 @@ $langs->loadLangs(array("suppliers", "orders", "companies"));
 
 // Security check
 $socid = GETPOST("socid", 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'societe', $socid, '');
 
 
@@ -145,7 +145,6 @@ if (! empty($conf->fournisseur->enabled))
 			}
 			if ($total>0)
 			{
-
 				print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
 			}
 			print "</table>";

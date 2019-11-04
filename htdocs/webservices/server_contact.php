@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -115,23 +115,29 @@ $contact_fields = array(
 	'poste' => array('name'=>'poste','type'=>'xsd:string')
 	//...
 );
+
+$elementtype = 'socpeople';
+
+
 //Retreive all extrafield for contact
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label('socpeople', true);
+$extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_array = array();
 }
-foreach($extrafields->attribute_label as $key=>$label)
+if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 {
-	$type =$extrafields->attribute_type[$key];
-	if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
-	else {$type='xsd:string';}
+	foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	{
+		$type =$extrafields->attributes[$elementtype]['type'][$key];
+		if ($type=='date' || $type=='datetime') {$type='xsd:dateTime';}
+		else {$type='xsd:string';}
 
-	$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+		$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
+	}
 }
-
 if (is_array($extrafield_array)) $contact_fields=array_merge($contact_fields, $extrafield_array);
 
 // Define other specific objects
@@ -304,18 +310,22 @@ function getContact($authentication, $id, $ref_ext)
             		'poste' => $contact->poste
             	);
 
+            	$elementtype = 'socpeople';
+
             	//Retreive all extrafield for thirdsparty
             	// fetch optionals attributes and labels
             	$extrafields=new ExtraFields($db);
-            	$extralabels=$extrafields->fetch_name_optionals_label('socpeople', true);
+            	$extrafields->fetch_name_optionals_label($elementtype, true);
             	//Get extrafield values
             	$contact->fetch_optionals();
 
-            	foreach($extrafields->attribute_label as $key=>$label)
+            	if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
             	{
-            		$contact_result_fields=array_merge($contact_result_fields, array('options_'.$key => $contact->array_options['options_'.$key]));
+            		foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+	            	{
+	            		$contact_result_fields=array_merge($contact_result_fields, array('options_'.$key => $contact->array_options['options_'.$key]));
+	            	}
             	}
-
 
                 // Create
                 $objectresp = array(
@@ -375,8 +385,6 @@ function createContact($authentication, $contact)
 
 	if (! $error)
 	{
-
-
 		$newobject=new Contact($db);
 
 		$newobject->id=$contact['id'];
@@ -412,16 +420,20 @@ function createContact($authentication, $contact)
 		$newobject->user_login=$contact['user_login'];
 		$newobject->poste=$contact['poste'];
 
+		$elementtype = 'socpeople';
+
 		//Retreive all extrafield for thirdsparty
 		// fetch optionals attributes and labels
 		$extrafields=new ExtraFields($db);
-		$extralabels=$extrafields->fetch_name_optionals_label('socpeople', true);
-		foreach($extrafields->attribute_label as $key=>$label)
+		$extrafields->fetch_name_optionals_label($elementtype, true);
+		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
-			$key='options_'.$key;
-			$newobject->array_options[$key]=$contact[$key];
+			foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+			{
+				$key='options_'.$key;
+				$newobject->array_options[$key]=$contact[$key];
+			}
 		}
-
 
 
 		//...
@@ -490,7 +502,7 @@ function getContactsForThirdParty($authentication, $idthirdparty)
 		$sql = "SELECT c.rowid, c.fk_soc, c.civility as civility_id, c.lastname, c.firstname, c.statut as status,";
 		$sql.= " c.address, c.zip, c.town,";
 		$sql.= " c.fk_pays as country_id,";
-		$sql.= " c.fk_departement,";
+		$sql.= " c.fk_departement as state_id,";
 		$sql.= " c.birthday,";
 		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid,";
 		//$sql.= " c.priv, c.note, c.default_lang, c.canvas,";
@@ -503,7 +515,7 @@ function getContactsForThirdParty($authentication, $idthirdparty)
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON c.fk_departement = d.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
-		$sql.= " WHERE c.fk_soc=$idthirdparty";
+		$sql.= " WHERE c.fk_soc = ".$idthirdparty;
 
 		$resql=$db->query($sql);
 		if ($resql)
@@ -631,7 +643,6 @@ function updateContact($authentication, $contact)
 		$result=$object->fetch($contact['id'], 0, $contact['ref_ext']);
 
 		if (!empty($object->id)) {
-
 			$objectfound=true;
 
 
@@ -658,15 +669,19 @@ function updateContact($authentication, $contact)
 
 			$object->statut=$contact['status'];
 
+			$elementtype = 'socpeople';
 
 			//Retreive all extrafield for contact
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
-			$extralabels=$extrafields->fetch_name_optionals_label('socpeople', true);
-			foreach($extrafields->attribute_label as $key=>$label)
+			$extrafields->fetch_name_optionals_label($elementtype, true);
+			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 			{
-				$key='options_'.$key;
-				$object->array_options[$key]=$contact[$key];
+				foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+				{
+					$key='options_'.$key;
+					$object->array_options[$key]=$contact[$key];
+				}
 			}
 
 			$db->begin();

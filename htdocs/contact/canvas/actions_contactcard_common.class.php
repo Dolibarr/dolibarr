@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -154,7 +154,7 @@ abstract class ActionsContactCardCommon
             if ($user->admin) $this->tpl['info_admin'] = info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 
             // State
-            if ($this->object->country_id) $this->tpl['select_state'] = $formcompany->select_state($this->object->fk_departement, $this->object->country_code);
+            if ($this->object->country_id) $this->tpl['select_state'] = $formcompany->select_state($this->object->state_id, $this->object->country_code);
             else $this->tpl['select_state'] = $countrynotdefined;
 
             // Public or private
@@ -289,7 +289,6 @@ abstract class ActionsContactCardCommon
         $this->object->address			= $_POST["address"];
         $this->object->zip				= $_POST["zipcode"];
         $this->object->town				= $_POST["town"];
-        $this->object->fk_departement	= $_POST["state_id"];
         $this->object->country_id		= $_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
         $this->object->state_id        	= $_POST["state_id"];
         $this->object->phone_pro		= $_POST["phone_pro"];

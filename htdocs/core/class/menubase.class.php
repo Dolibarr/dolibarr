@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -137,22 +137,21 @@ class Menubase
         // an insert with a forced id.
         if (in_array($this->db->type, array('pgsql')))
         {
-          $sql = "SELECT MAX(rowid) as maxrowid FROM ".MAIN_DB_PREFIX."menu";
-          $resqlrowid=$this->db->query($sql);
-          if ($resqlrowid)
-          {
-               $obj=$this->db->fetch_object($resqlrowid);
-               $maxrowid=$obj->maxrowid;
+            $sql = "SELECT MAX(rowid) as maxrowid FROM ".MAIN_DB_PREFIX."menu";
+            $resqlrowid=$this->db->query($sql);
+            if ($resqlrowid) {
+                $obj=$this->db->fetch_object($resqlrowid);
+                $maxrowid=$obj->maxrowid;
 
-               // Max rowid can be empty if there is no record yet
-               if(empty($maxrowid)) $maxrowid=1;
+                // Max rowid can be empty if there is no record yet
+                if(empty($maxrowid)) $maxrowid=1;
 
-               $sql = "SELECT setval('".MAIN_DB_PREFIX."menu_rowid_seq', ".($maxrowid).")";
-               //print $sql; exit;
-               $resqlrowidset=$this->db->query($sql);
-               if (! $resqlrowidset) dol_print_error($this->db);
-          }
-          else dol_print_error($this->db);
+                $sql = "SELECT setval('".MAIN_DB_PREFIX."menu_rowid_seq', ".($maxrowid).")";
+                //print $sql; exit;
+                $resqlrowidset=$this->db->query($sql);
+                if (! $resqlrowidset) dol_print_error($this->db);
+            }
+            else dol_print_error($this->db);
         }
 
         // Check that entry does not exists yet on key menu_handler-fk_menu-position-url-entity, to avoid errors with postgresql
@@ -422,7 +421,8 @@ class Menubase
         $this->position='';
         $this->url='http://dummy';
         $this->target='';
-        $this->titre='Specimen menu';
+        $this->titre='Specimen menu';		// deprecated
+        $this->title='Specimen menu';
         $this->langs='';
         $this->level='';
         $this->leftmenu='';

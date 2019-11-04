@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -43,8 +43,10 @@ $object=new Asset($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->asset->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('assetcard'));     // Note that conf->hooks_modules contains array
+
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('asset');
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Initialize array of search criterias
@@ -58,16 +60,17 @@ foreach($object->fields as $key => $val)
 if (empty($action) && empty($id) && empty($ref)) $action='view';
 
 // Security check - Protection if external user
-//if ($user->societe_id > 0) access_forbidden();
-//if ($user->societe_id > 0) $socid = $user->societe_id;
+//if ($user->socid > 0) access_forbidden();
+//if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'asset', $id);
 
-// fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once.
 
+$permissionnote=$user->rights->asset->write;	// Used by the include of actions_setnotes.inc.php
+$permissiondellink=$user->rights->asset->write;	// Used by the include of actions_dellink.inc.php
+$permissionedit=$user->rights->asset->write; // Used by the include of actions_lineupdown.inc.php
+$permissiontoadd=$user->rights->asset->write; // Used by the include of actions_addupdatedelete.inc.php
 
 
 /*
@@ -136,7 +139,7 @@ jQuery(document).ready(function() {
 // Part to create
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("NewAsset"));
+	print load_fiche_titre($langs->trans("NewAsset"), '', 'accountancy');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -201,7 +204,7 @@ if (($id || $ref) && $action == 'edit')
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
-	$res = $object->fetch_optionals($object->id, $extralabels);
+	$res = $object->fetch_optionals($object->id);
 
 	$head = asset_prepare_head($object);
 	dol_fiche_head($head, 'card', $langs->trans("Asset"), -1, 'generic');

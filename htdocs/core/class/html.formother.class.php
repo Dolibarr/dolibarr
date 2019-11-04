@@ -9,6 +9,7 @@
  * Copyright (C) 2006      Marc Barilley/Ocebo  <marc@ocebo.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2007      Patrick Raguin 		<patrick.raguin@gmail.com>
+ * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -326,7 +327,7 @@ class FormOther
      * @param   int     $showempty      Add also an empty line
      * @param   string  $morecss        More CSS
      * @return  string		        	Html combo list code
-     * @see	select_all_categories
+     * @see	select_all_categories()
      */
     public function select_categories($type, $selected = 0, $htmlname = 'search_categ', $nocateg = 0, $showempty = 1, $morecss = '')
     {
@@ -392,7 +393,8 @@ class FormOther
     public function select_salesrepresentatives($selected, $htmlname, $user, $showstatus = 0, $showempty = 1, $morecss = '')
     {
         // phpcs:enable
-        global $conf,$langs;
+        global $conf, $langs;
+
         $langs->load('users');
 
         $out = '';
@@ -414,17 +416,44 @@ class FormOther
         // Get list of users allowed to be viewed
         $sql_usr = "SELECT u.rowid, u.lastname, u.firstname, u.statut, u.login";
         $sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u";
-        $sql_usr.= " WHERE u.entity IN (0,".$conf->entity.")";
+
+        if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+        {
+        	if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
+        		$sql_usr.= " WHERE u.entity IS NOT NULL"; // Show all users
+        	} else {
+        		$sql_usr.= " WHERE EXISTS (SELECT ug.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ug WHERE u.rowid = ug.fk_user AND ug.entity IN (".getEntity('usergroup')."))";
+        		$sql_usr.= " OR u.entity = 0"; // Show always superadmin
+        	}
+        }
+        else
+        {
+        	$sql_usr.= " WHERE u.entity IN (".getEntity('user').")";
+        }
+
         if (empty($user->rights->user->user->lire)) $sql_usr.=" AND u.rowid = ".$user->id;
-        if (! empty($user->societe_id)) $sql_usr.=" AND u.fk_soc = ".$user->societe_id;
+        if (! empty($user->socid)) $sql_usr.=" AND u.fk_soc = ".$user->socid;
         // Add existing sales representatives of thirdparty of external user
-        if (empty($user->rights->user->user->lire) && $user->societe_id)
+        if (empty($user->rights->user->user->lire) && $user->socid)
         {
             $sql_usr.=" UNION ";
             $sql_usr.= "SELECT u2.rowid, u2.lastname, u2.firstname, u2.statut, u2.login";
             $sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u2, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-            $sql_usr.= " WHERE u2.entity IN (0,".$conf->entity.")";
-            $sql_usr.= " AND u2.rowid = sc.fk_user AND sc.fk_soc=".$user->societe_id;
+
+            if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+            {
+            	if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
+            		$sql_usr.= " WHERE u2.entity IS NOT NULL"; // Show all users
+            	} else {
+            		$sql_usr.= " WHERE EXISTS (SELECT ug2.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ug2 WHERE u2.rowid = ug2.fk_user AND ug2.entity IN (".getEntity('usergroup')."))";
+            	}
+            }
+            else
+            {
+            	$sql_usr.= " WHERE u2.entity IN (".getEntity('user').")";
+            }
+
+            $sql_usr.= " AND u2.rowid = sc.fk_user AND sc.fk_soc=".$user->socid;
         }
 	    $sql_usr.= " ORDER BY statut DESC, lastname ASC";  // Do not use 'ORDER BY u.statut' here, not compatible with the UNION.
         //print $sql_usr;exit;
@@ -434,7 +463,6 @@ class FormOther
         {
             while ($obj_usr = $this->db->fetch_object($resql_usr))
             {
-
                 $out.='<option value="'.$obj_usr->rowid.'"';
 
                 if ($obj_usr->rowid == $selected) $out.=' selected';
@@ -617,7 +645,7 @@ class FormOther
      *  @param	string		$color				String with hex (FFFFFF) or comma RGB ('255,255,255')
      *  @param	string		$textifnotdefined	Text to show if color not defined
      *  @return	string							HTML code for color thumb
-     *  @see selectColor
+     *  @see selectColor()
      */
     public static function showColor($color, $textifnotdefined = '')
     {
@@ -660,7 +688,7 @@ class FormOther
      *  @param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
      *  @param	string		$morecss		Add css style into input field
      *  @return	string
-     *  @see showColor
+     *  @see showColor()
      */
     public static function selectColor($set_color = '', $prefix = 'f_color', $form_name = '', $showcolorbox = 1, $arrayofcolors = '', $morecss = '')
     {
@@ -960,8 +988,8 @@ class FormOther
      *  Class 'Form' must be known.
      *
      * 	@param	   User         $user		 Object User
-     * 	@param	   String       $areacode    Code of area for pages ('0'=value for Home page)
-     * 	@return    array                     array('selectboxlist'=>, 'boxactivated'=>, 'boxlista'=>, 'boxlistb'=>)
+     * 	@param	   String       $areacode    Code of area for pages - 0 = Home page ... See getListOfPagesForBoxes()
+	 *	@return    array                     array('selectboxlist'=>, 'boxactivated'=>, 'boxlista'=>, 'boxlistb'=>)
      */
     public static function getBoxesArea($user, $areacode)
     {
@@ -1232,4 +1260,44 @@ class FormOther
             dol_print_error($this->db);
         }
     }
+
+    /**
+	 *	Return an html string with a select combo box to choose yes or no
+	 *
+	 *	@param	string		$htmlname		Name of html select field
+	 *	@param	string		$value			Pre-selected value
+	 *	@param	int			$option			0 return automatic/manual, 1 return 1/0
+	 *	@param	bool		$disabled		true or false
+	 *  @param	int      	$useempty		1=Add empty line
+	 *	@return	string						See option
+	 */
+    public function selectAutoManual($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0)
+	{
+		global $langs;
+
+		$automatic="automatic"; $manual="manual";
+		if ($option)
+		{
+			$automatic="1";
+			$manual="0";
+		}
+
+		$disabled = ($disabled ? ' disabled' : '');
+
+		$resultautomanual = '<select class="flat width100" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
+		if ($useempty) $resultautomanual .= '<option value="-1"'.(($value < 0)?' selected':'').'>&nbsp;</option>'."\n";
+		if (("$value" == 'automatic') || ($value == 1))
+		{
+			$resultautomanual .= '<option value="'.$automatic.'" selected>'.$langs->trans("Automatic").'</option>'."\n";
+			$resultautomanual .= '<option value="'.$manual.'">'.$langs->trans("Manual").'</option>'."\n";
+		}
+		else
+	    {
+	   		$selected=(($useempty && $value != '0' && $value != 'manual')?'':' selected');
+			$resultautomanual .= '<option value="'.$automatic.'">'.$langs->trans("Automatic").'</option>'."\n";
+			$resultautomanual .= '<option value="'.$manual.'"'.$selected.'>'.$langs->trans("Manual").'</option>'."\n";
+		}
+		$resultautomanual .= '</select>'."\n";
+		return $resultautomanual;
+	}
 }

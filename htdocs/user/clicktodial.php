@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,7 +33,7 @@ $id=GETPOST('id', 'int');
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0) $socid = $user->societe_id;
+if ($user->socid > 0) $socid = $user->socid;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
@@ -110,7 +110,7 @@ if ($id > 0)
     // Edit mode
     if ($action == 'edit')
     {
-       print '<table class="border centpercent">';
+        print '<table class="border centpercent">';
 
         if ($user->admin)
         {
@@ -120,7 +120,7 @@ if ($id > 0)
             if (empty($conf->global->CLICKTODIAL_URL) && empty($object->clicktodial_url))
             {
                 $langs->load("errors");
-                print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete").'</font>';
+                print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("ClickToDial")).'</font>';
             }
             else
             {
@@ -149,8 +149,7 @@ if ($id > 0)
     }
     else	// View mode
     {
-
-        print '<table class="border centpercent">';
+        print '<table class="border centpercent tableforfield">';
 
         if (! empty($user->admin))
         {
@@ -161,7 +160,7 @@ if ($id > 0)
         	if (empty($url))
         	{
         	    $langs->load("errors");
-        	    print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete").'</font>';
+        	    print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("ClickToDial")).'</font>';
         	}
         	else
         	{

@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -142,7 +142,11 @@ class Facturation
         $this->montantRemise($montant_remise_ht);
 
         $newcartarray=$_SESSION['poscart'];
-        $i=count($newcartarray);
+
+        $i = 0;
+        if (!is_null($newcartarray) && !empty($newcartarray)) {
+            $i=count($newcartarray);
+        }
 
         $newcartarray[$i]['id']=$i;
         $newcartarray[$i]['ref']=$product->ref;
@@ -190,9 +194,9 @@ class Facturation
         {
             if ($poscart[$key]['id'] != $aArticle)
             {
-               $newposcart[$j]=$poscart[$key];
-               $newposcart[$j]['id']=$j;
-               $j++;
+                $newposcart[$j]=$poscart[$key];
+                $newposcart[$j]['id']=$j;
+                $j++;
             }
         }
         unset($poscart);
@@ -281,7 +285,7 @@ class Facturation
      * Getter for id
      *
      * @param	int		$aId	Id
-     * @return  id
+     * @return  int             Id
      */
     public function id($aId = null)
     {
@@ -292,12 +296,10 @@ class Facturation
         }
         elseif ( $aId == 'RESET' )
         {
-
             $this->id = null;
         }
         else
         {
-
             $this->id = $aId;
         }
     }
@@ -339,7 +341,6 @@ class Facturation
         }
         elseif ( $aQte == 'RESET' )
         {
-
             $this->qte = null;
         }
         else
@@ -404,13 +405,10 @@ class Facturation
     {
 
         if (is_null($aMontantRemise)) {
-
             return $this->montant_remise;
         } elseif ( $aMontantRemise == 'RESET' ) {
-
             $this->montant_remise = null;
         } else {
-
             $this->montant_remise = $aMontantRemise;
         }
     }
@@ -425,13 +423,10 @@ class Facturation
     {
 
         if (is_null($aPrix)) {
-
             return $this->prix;
         } elseif ( $aPrix == 'RESET' ) {
-
             $this->prix = null;
         } else {
-
             $this->prix = $aPrix;
         }
     }
@@ -445,13 +440,10 @@ class Facturation
     public function tva($aTva = null)
     {
         if (is_null($aTva)) {
-
             return $this->tva;
         } elseif ( $aTva == 'RESET' ) {
-
             $this->tva = null;
         } else {
-
             $this->tva = $aTva;
         }
     }
@@ -465,13 +457,10 @@ class Facturation
     public function numInvoice($aNumFacture = null)
     {
         if (is_null($aNumFacture)) {
-
             return $this->num_facture;
         } elseif ( $aNumFacture == 'RESET' ) {
-
             $this->num_facture = null;
         } else {
-
             $this->num_facture = $aNumFacture;
         }
     }
@@ -486,13 +475,10 @@ class Facturation
     {
 
         if (is_null($aModeReglement)) {
-
             return $this->mode_reglement;
         } elseif ( $aModeReglement == 'RESET' ) {
-
             $this->mode_reglement = null;
         } else {
-
             $this->mode_reglement = $aModeReglement;
         }
     }
@@ -507,13 +493,10 @@ class Facturation
     {
 
         if (is_null($aMontantEncaisse)) {
-
             return $this->montant_encaisse;
         } elseif ( $aMontantEncaisse == 'RESET' ) {
-
             $this->montant_encaisse = null;
         } else {
-
             $this->montant_encaisse = $aMontantEncaisse;
         }
     }
@@ -528,13 +511,10 @@ class Facturation
     {
 
         if (is_null($aMontantRendu)) {
-
             return $this->montant_rendu;
         } elseif ( $aMontantRendu == 'RESET' ) {
-
             $this->montant_rendu = null;
         } else {
-
             $this->montant_rendu = $aMontantRendu;
         }
     }
@@ -542,19 +522,16 @@ class Facturation
     /**
      * Get payment date
      *
-     * @param	date		$aPaiementLe		Date
-     * @return	date							Date
+     * @param	integer		$aPaiementLe		Date
+     * @return	integer							Date
      */
     public function paiementLe($aPaiementLe = null)
     {
         if (is_null($aPaiementLe)) {
-
             return $this->paiement_le;
         } elseif ( $aPaiementLe == 'RESET' ) {
-
             $this->paiement_le = null;
         } else {
-
             $this->paiement_le = $aPaiementLe;
         }
     }
@@ -568,13 +545,10 @@ class Facturation
     public function prixTotalHt($aTotalHt = null)
     {
         if (is_null($aTotalHt)) {
-
             return $this->prix_total_ht;
         } elseif ( $aTotalHt == 'RESET' ) {
-
             $this->prix_total_ht = null;
         } else {
-
             $this->prix_total_ht = $aTotalHt;
         }
     }
@@ -588,13 +562,10 @@ class Facturation
     public function montantTva($aMontantTva = null)
     {
         if (is_null($aMontantTva)) {
-
             return $this->montant_tva;
         } elseif ( $aMontantTva == 'RESET' ) {
-
             $this->montant_tva = null;
         } else {
-
             $this->montant_tva = $aMontantTva;
         }
     }

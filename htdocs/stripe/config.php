@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * Set Stripe environment: set the ApiKey and AppInfo
  */
@@ -28,7 +28,7 @@
 require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/stripe/lib/Stripe.php';
 
-global $stripe;
+//global $stripe;
 global $conf;
 global $stripearrayofkeysbyenv;
 
@@ -46,13 +46,13 @@ $stripearrayofkeysbyenv = array(
 $stripearrayofkeys = array();
 if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
 {
-	$stripearrayofkeys = $stripearrayofkeysbyenv[0];	// Test
+	$stripearrayofkeys = $stripearrayofkeysbyenv[0]; // Test
 }
 else
 {
-	$stripearrayofkeys = $stripearrayofkeysbyenv[1];	// Live
+	$stripearrayofkeys = $stripearrayofkeysbyenv[1]; // Live
 }
 
 \Stripe\Stripe::setApiKey($stripearrayofkeys['secret_key']);
 \Stripe\Stripe::setAppInfo("Dolibarr Stripe", DOL_VERSION, "https://www.dolibarr.org"); // add dolibarr version
-\Stripe\Stripe::setApiVersion("2018-11-08"); // force version API
+\Stripe\Stripe::setApiVersion(empty($conf->global->STRIPE_FORCE_VERSION) ? "2019-05-16" : $conf->global->STRIPE_FORCE_VERSION); // force version API

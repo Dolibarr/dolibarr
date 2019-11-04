@@ -14,7 +14,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 -- ===========================================================================
 
 create table llx_user
@@ -36,7 +36,7 @@ create table llx_user
   pass_encoding     varchar(24),
   pass              varchar(128),
   pass_crypted      varchar(128),
-  pass_temp         varchar(128),				-- temporary password when asked for forget password or 'hashtoallowreset:YYYMMDDHHMMSS' (where date is max date of validaity)
+  pass_temp         varchar(128),				-- temporary password when asked for forget password or 'hashtoallowreset:YYYMMDDHHMMSS' (where date is max date of validity)
   api_key           varchar(128),				-- key to use REST API by this user
   gender            varchar(10),
   civility          varchar(6),
@@ -48,11 +48,13 @@ create table llx_user
   fk_state          integer        DEFAULT 0,
   fk_country        integer        DEFAULT 0,
   birth             date,						-- birthday
-  job				varchar(128),
+  job				        varchar(128),
   office_phone      varchar(20),
   office_fax        varchar(20),
   user_mobile       varchar(20),
+  personal_mobile   varchar(20),
   email             varchar(255),
+  personal_email    varchar(255),
   
   jabberid			varchar(255),
   skype				varchar(255),
@@ -73,11 +75,15 @@ create table llx_user
   fk_socpeople      integer,
   fk_member         integer,
   fk_user           integer,					-- Hierarchic parent
+  fk_user_expense_validator           integer,
+  fk_user_holiday_validator           integer,
   note_public		text,
   note              text DEFAULT NULL,
   model_pdf         varchar(255) DEFAULT NULL,
   datelastlogin     datetime,
   datepreviouslogin datetime,
+  iplastlogin       varchar(250),
+  ippreviouslogin   varchar(250),
   egroupware_id     integer,
   ldap_sid          varchar(255) DEFAULT NULL,
   openid            varchar(255),

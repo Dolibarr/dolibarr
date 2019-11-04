@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -42,7 +42,7 @@ if (! empty($conf->propal->enabled)) require_once DOL_DOCUMENT_ROOT.'/comm/propa
 if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('orders',"companies","bills",'propal','deliveries','stocks',"productbatch",'incoterm'));
+$langs->loadLangs(array('orders',"companies","bills",'propal','deliveries','stocks',"productbatch",'incoterm','other'));
 
 $id     = GETPOST('id', 'int');			// id of order
 $ref    = GETPOST('ref', 'alpha');
@@ -53,14 +53,14 @@ $hookmanager->initHooks(array('ordershipmentcard'));
 
 // Security check
 $socid=0;
-if (! empty($user->societe_id)) $socid=$user->societe_id;
+if (! empty($user->socid)) $socid=$user->socid;
 $result=restrictedArea($user, 'commande', $id);
 
 $object = new Commande($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
@@ -189,8 +189,7 @@ if (empty($reshook))
     	$object->oldcopy = dol_clone($object);
 
     	// Fill array 'array_options' with data from update form
-        $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
+        $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
         if ($ret < 0) $error++;
 
         if (! $error)
@@ -289,19 +288,20 @@ if ($id > 0 || ! empty($ref))
 	        $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 	        if ($user->rights->commande->creer)
 	        {
-	            if ($action != 'classify')
-	                $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-	                if ($action == 'classify') {
-	                    //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-	                    $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-	                    $morehtmlref.='<input type="hidden" name="action" value="classin">';
-	                    $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	                    $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-	                    $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-	                    $morehtmlref.='</form>';
-	                } else {
-	                    $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-	                }
+	            if ($action != 'classify') {
+					$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+                }
+                if ($action == 'classify') {
+                    //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+                    $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+                    $morehtmlref.='<input type="hidden" name="action" value="classin">';
+                    $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                    $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+                    $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+                    $morehtmlref.='</form>';
+                } else {
+                    $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+                }
 	        } else {
 	            if (! empty($object->fk_project)) {
 	                $proj = new Project($db);
@@ -324,7 +324,7 @@ if ($id > 0 || ! empty($ref))
 	    print '<div class="fichehalfleft">';
 	    print '<div class="underbanner clearboth"></div>';
 
-	    print '<table class="border" width="100%">';
+	    print '<table class="border centpercent tableforfield">';
 
 		// Discounts for third party
 	    if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
@@ -365,7 +365,7 @@ if ($id > 0 || ! empty($ref))
 		print $langs->trans('DateDeliveryPlanned');
 		print '</td>';
 
-		if ($action != 'editdate_livraison') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
+		if ($action != 'editdate_livraison') print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editdate_livraison')
@@ -397,7 +397,7 @@ if ($id > 0 || ! empty($ref))
         print $langs->trans('SendingMethod');
         print '</td>';
         if ($action != 'editshippingmethod' && $user->rights->expedition->creer)
-            print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&amp;id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'), 1).'</a></td>';
+            print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&amp;id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'), 1).'</a></td>';
         print '</tr></table>';
         print '</td><td colspan="2">';
         if ($action == 'editshippingmethod') {
@@ -417,7 +417,7 @@ if ($id > 0 || ! empty($ref))
             print $langs->trans('Warehouse');
             print '</td>';
             if ($action != 'editwarehouse' && $user->rights->commande->creer)
-                print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editwarehouse&amp;id='.$object->id.'">'.img_edit($langs->trans('SetWarehouse'), 1).'</a></td>';
+                print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editwarehouse&amp;id='.$object->id.'">'.img_edit($langs->trans('SetWarehouse'), 1).'</a></td>';
             print '</tr></table>';
             print '</td><td colspan="2">';
             if ($action == 'editwarehouse') {
@@ -436,7 +436,7 @@ if ($id > 0 || ! empty($ref))
 		print $langs->trans('PaymentConditionsShort');
 		print '</td>';
 
-		if ($action != 'editconditions' && $object->statut == Expedition::STATUS_VALIDATED) print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+		if ($action != 'editconditions' && $object->statut == Expedition::STATUS_VALIDATED) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editconditions')
@@ -454,7 +454,7 @@ if ($id > 0 || ! empty($ref))
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('PaymentMode');
 		print '</td>';
-		if ($action != 'editmode' && $object->statut == Expedition::STATUS_VALIDATED) print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+		if ($action != 'editmode' && $object->statut == Expedition::STATUS_VALIDATED) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editmode')
@@ -473,7 +473,7 @@ if ($id > 0 || ! empty($ref))
 		print $langs->trans('AvailabilityPeriod');
 		print '</td>';
 		if ($action != 'editavailability')
-			print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editavailability&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetAvailability'), 1) . '</a></td>';
+			print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editavailability&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetAvailability'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
 		if ($action == 'editavailability') {
@@ -489,7 +489,7 @@ if ($id > 0 || ! empty($ref))
 		print $langs->trans('Source');
 		print '</td>';
 		if ($action != 'editdemandreason')
-			print '<td class="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdemandreason&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetDemandReason'), 1) . '</a></td>';
+			print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editdemandreason&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetDemandReason'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
 		if ($action == 'editdemandreason') {
@@ -522,14 +522,14 @@ if ($id > 0 || ! empty($ref))
 		    print '<table width="100%" class="nobordernopadding"><tr><td>';
 		    print $langs->trans('IncotermLabel');
 		    print '<td><td class="right">';
-		    if ($user->rights->commande->creer) print '<a href="'.$_SERVER['PHP_SELF'].'/expedition/shipment.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+		    if ($user->rights->commande->creer) print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'/expedition/shipment.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
 		    else print '&nbsp;';
 		    print '</td></tr></table>';
 		    print '</td>';
 		    print '<td colspan="3">';
 		    if ($action != 'editincoterm')
 		    {
-		        print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+		        print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 		    }
 		    else
 		    {
@@ -537,6 +537,9 @@ if ($id > 0 || ! empty($ref))
 		    }
 		    print '</td></tr>';
 		}
+
+		$expe = new Expedition($db);
+		$extrafields->fetch_name_optionals_label($expe->table_element);
 
 		// Other attributes
 		$cols = 2;
@@ -549,7 +552,7 @@ if ($id > 0 || ! empty($ref))
 		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border centpercent">';
+		print '<table class="border centpercent tableforfield">';
 
 		if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency))
 		{
@@ -616,7 +619,9 @@ if ($id > 0 || ! empty($ref))
 		$sql.= ' cd.date_start,';
 		$sql.= ' cd.date_end,';
 		$sql.= ' cd.special_code,';
-		$sql.= ' p.rowid as prodid, p.label as product_label, p.entity, p.ref, p.fk_product_type as product_type, p.description as product_desc';
+		$sql.= ' p.rowid as prodid, p.label as product_label, p.entity, p.ref, p.fk_product_type as product_type, p.description as product_desc,';
+		$sql.= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units,';
+		$sql.= ' p.surface, p.surface_units, p.volume, p.volume_units';
 		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 		$sql.= " WHERE cd.fk_commande = ".$object->id;
@@ -703,6 +708,20 @@ if ($id > 0 || ! empty($ref))
 						$product_static->id=$objp->fk_product;
 						$product_static->ref=$objp->ref;
 	                    $product_static->entity = $objp->entity;
+
+	                    $product_static->weight=$objp->weight;
+	                    $product_static->weight_units=$objp->weight_units;
+	                    $product_static->length=$objp->length;
+	                    $product_static->length_units=$objp->length_units;
+	                    $product_static->width=$objp->width;
+	                    $product_static->width_units=$objp->width_units;
+	                    $product_static->height=$objp->height;
+	                    $product_static->height_units=$objp->height_units;
+	                    $product_static->surface=$objp->surface;
+	                    $product_static->surface_units=$objp->surface_units;
+	                    $product_static->volume=$objp->volume;
+	                    $product_static->volume_units=$objp->volume_units;
+
 						$text=$product_static->getNomUrl(1);
 						$text.= ' - '.$label;
 						$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description)).'<br>';
@@ -837,7 +856,7 @@ if ($id > 0 || ! empty($ref))
 		 * Boutons Actions
 		 */
 
-		if (empty($user->societe_id))
+		if (empty($user->socid))
 		{
 			print '<div class="tabsAction">';
 
@@ -894,7 +913,7 @@ if ($id > 0 || ! empty($ref))
 					print $langs->trans("WarehouseSource");
 					//print '</td>';
 					//print '<td>';
-					print $formproduct->selectWarehouses(! empty($object->warehouse_id)?$object->warehouse_id:-1, 'entrepot_id', '', 1, 0, 0, '', 0, 0, array(), 'minwidth200');
+					print $formproduct->selectWarehouses(! empty($object->warehouse_id)?$object->warehouse_id:'ifone', 'entrepot_id', '', 1, 0, 0, '', 0, 0, array(), 'minwidth200');
 					if (count($formproduct->cache_warehouses) <= 0)
 					{
 						print ' &nbsp; '.$langs->trans("WarehouseSourceNotDefined").' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create">'.$langs->trans("AddOne").'</a>';

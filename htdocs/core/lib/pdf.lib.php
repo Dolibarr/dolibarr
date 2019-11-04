@@ -22,8 +22,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -36,25 +36,31 @@
 /**
  *	Return array with format properties of default PDF format
  *
- *	@param		Translate	$outputlangs		Output lang to use to autodetect output format if setup not done
+ *	@param		Translate	$outputlangs		Output lang to use to autodetect output format if we need 'auto' detection
+ *  @param		string		$mode				'setup' = Use setup, 'auto' = Force autodetection whatever is setup
  *  @return     array							Array('width'=>w,'height'=>h,'unit'=>u);
  */
-function pdf_getFormat(Translate $outputlangs = null)
+function pdf_getFormat(Translate $outputlangs = null, $mode = 'setup')
 {
-	global $conf,$db;
+	global $conf, $db, $langs;
+
+	dol_syslog("pdf_getFormat Get paper format with mode=".$mode." MAIN_PDF_FORMAT=".(empty($conf->global->MAIN_PDF_FORMAT)?'null':$conf->global->MAIN_PDF_FORMAT)." outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null')." and langs->defaultlang=".(is_object($langs) ? $langs->defaultlang : 'null'));
 
 	// Default value if setup was not done and/or entry into c_paper_format not defined
 	$width=210; $height=297; $unit='mm';
 
-	if (empty($conf->global->MAIN_PDF_FORMAT))
+	if ($mode == 'auto' || empty($conf->global->MAIN_PDF_FORMAT) || $conf->global->MAIN_PDF_FORMAT == 'auto')
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		$pdfformat=dol_getDefaultFormat($outputlangs);
 	}
-	else $pdfformat=$conf->global->MAIN_PDF_FORMAT;
+	else
+	{
+		$pdfformat=$conf->global->MAIN_PDF_FORMAT;
+	}
 
 	$sql="SELECT code, label, width, height, unit FROM ".MAIN_DB_PREFIX."c_paper_format";
-	$sql.=" WHERE code = '".$pdfformat."'";
+	$sql.=" WHERE code = '".$db->escape($pdfformat)."'";
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -175,18 +181,29 @@ function pdf_getInstance($format = '', $metric = 'mm', $pagetype = 'P')
 /**
  * Return if pdf file is protected/encrypted
  *
- * @param	TCPDF		$pdf			PDF initialized object
  * @param   string		$pathoffile		Path of file
  * @return  boolean     			    True or false
  */
-function pdf_getEncryption(&$pdf, $pathoffile)
+function pdf_getEncryption($pathoffile)
 {
+	require_once TCPDF_PATH.'tcpdf_parser.php';
+
 	$isencrypted = false;
 
-	$pdfparser = $pdf->_getPdfParser($pathoffile);
-	$data = $pdfparser->getParsedData();
-	if (isset($data[0]['trailer'][1]['/Encrypt'])) {
-		$isencrypted = true;
+	$content = file_get_contents($pathoffile);
+
+	//ob_start();
+	@($parser = new \TCPDF_PARSER(ltrim($content)));
+	list($xref, $data) = $parser->getParsedData();
+	unset($parser);
+	//ob_end_clean();
+
+	if (isset($xref['trailer']['encrypt'])) {
+		$isencrypted = true;	// Secured pdf file are currently not supported
+	}
+
+	if (empty($data)) {
+		$isencrypted = true;	// Object list not found. Possible secured file
 	}
 
 	return $isencrypted;
@@ -223,14 +240,18 @@ function pdf_getPDFFont($outputlangs)
  */
 function pdf_getPDFFontSize($outputlangs)
 {
+	global $conf;
+
 	$size=10;                   // By default, for FPDI or ISO language on TCPDF
-	if (class_exists('TCPDF'))  // If TCPDF on, we can use an UTF8 one like DejaVuSans if required (slower)
+	if (class_exists('TCPDF'))  // If TCPDF on, we can use an UTF8 font like DejaVuSans if required (slower)
 	{
-		if ($outputlangs->trans('FONTSIZEFORPDF')!='FONTSIZEFORPDF')
+		if ($outputlangs->trans('FONTSIZEFORPDF') != 'FONTSIZEFORPDF')
 		{
 			$size = (int) $outputlangs->trans('FONTSIZEFORPDF');
 		}
 	}
+	if (! empty($conf->global->MAIN_PDF_FORCE_FONT_SIZE)) $size = $conf->global->MAIN_PDF_FORCE_FONT_SIZE;
+
 	return $size;
 }
 
@@ -341,14 +362,14 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
 /**
  *   	Return a string with full address formated for output on documents
  *
- * 		@param	Translate	$outputlangs		Output langs object
- *   	@param  Societe		$sourcecompany		Source company object
- *   	@param  Societe		$targetcompany		Target company object
- *      @param  Contact		$targetcontact		Target contact object
- * 		@param	int			$usecontact			Use contact instead of company
- * 		@param	int			$mode				Address type ('source', 'target', 'targetwithdetails', 'targetwithdetails_xxx': target but include also phone/fax/email/url)
- *      @param  Object      $object             Object we want to build document for
- * 		@return	string							String with full address
+ * 		@param	Translate	          $outputlangs		    Output langs object
+ *   	@param  Societe		          $sourcecompany		Source company object
+ *   	@param  Societe|string|null   $targetcompany		Target company object
+ *      @param  Contact|string|null	  $targetcontact	    Target contact object
+ * 		@param	int			          $usecontact		    Use contact instead of company
+ * 		@param	string  	          $mode				    Address type ('source', 'target', 'targetwithdetails', 'targetwithdetails_xxx': target but include also phone/fax/email/url)
+ *      @param  Object                $object               Object we want to build document for
+ * 		@return	string					    		        String with full address
  */
 function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $targetcontact = '', $usecontact = 0, $mode = 'source', $object = null)
 {
@@ -357,18 +378,14 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 	if ($mode == 'source' && ! is_object($sourcecompany)) return -1;
 	if ($mode == 'target' && ! is_object($targetcompany)) return -1;
 
-	if (! empty($sourcecompany->state_id) && empty($sourcecompany->departement)) $sourcecompany->departement=getState($sourcecompany->state_id); //TODO deprecated
-	if (! empty($sourcecompany->state_id) && empty($sourcecompany->state))       $sourcecompany->state=getState($sourcecompany->state_id);
-	if (! empty($sourcecompany->state_id) && !isset($sourcecompany->departement_id))   $sourcecompany->departement_id=getState($sourcecompany->state_id, '2');
-	if (! empty($targetcompany->state_id) && empty($targetcompany->departement)) $targetcompany->departement=getState($targetcompany->state_id); //TODO deprecated
-	if (! empty($targetcompany->state_id) && empty($targetcompany->state))       $targetcompany->state=getState($targetcompany->state_id);
-	if (! empty($targetcompany->state_id) && !isset($targetcompany->departement_id))   $targetcompany->departement_id=getState($targetcompany->state_id, '2');
+	if (! empty($sourcecompany->state_id) && empty($sourcecompany->state))             $sourcecompany->state=getState($sourcecompany->state_id);
+	if (! empty($targetcompany->state_id) && empty($targetcompany->state))             $targetcompany->state=getState($targetcompany->state_id);
 
 	$reshook=0;
 	$stringaddress = '';
 	if (is_object($hookmanager))
 	{
-		$parameters = array('sourcecompany'=>&$sourcecompany,'targetcompany'=>&$targetcompany,'targetcontact'=>$targetcontact,'outputlangs'=>$outputlangs,'mode'=>$mode,'usecontact'=>$usecontact);
+		$parameters = array('sourcecompany'=>&$sourcecompany, 'targetcompany'=>&$targetcompany, 'targetcontact'=>&$targetcontact, 'outputlangs'=>$outputlangs, 'mode'=>$mode, 'usecontact'=>$usecontact);
 		$action='';
 		$reshook = $hookmanager->executeHooks('pdf_build_address', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 		$stringaddress.=$hookmanager->resPrint;
@@ -922,6 +939,11 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		{
 			$line1.=($line1?" ":"").$fromcompany->town;
 		}
+		// Country
+		if ($fromcompany->country)
+		{
+			$line1.=($line1?", ":"").$fromcompany->country;
+		}
 		// Phone
 		if ($fromcompany->phone)
 		{
@@ -1378,6 +1400,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	if (! empty($object->lines[$i]->date_start) || ! empty($object->lines[$i]->date_end))
 	{
 		$format='day';
+        $period = '';
 		// Show duration if exists
 		if ($object->lines[$i]->date_start && $object->lines[$i]->date_end)
 		{
@@ -1394,8 +1417,8 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		//print '>'.$outputlangs->charset_output.','.$period;
 		if(!empty($conf->global->ADD_HTML_FORMATING_INTO_DESC_DOC)){
 		    $libelleproduitservice.= '<b style="color:#333666;" ><em>'."__N__</b> ".$period.'</em>';
-		}else{
-		$libelleproduitservice.="__N__".$period;
+		} else {
+		    $libelleproduitservice.="__N__".$period;
 		}
 		//print $libelleproduitservice;
 	}
@@ -1682,8 +1705,8 @@ function pdf_getlineqty($object, $i, $outputlangs, $hidedetails = 0)
 	}
     if (empty($reshook))
 	{
-	   if ($object->lines[$i]->special_code == 3) return '';
-	   if (empty($hidedetails) || $hidedetails > 1) $result.=$object->lines[$i]->qty;
+	    if ($object->lines[$i]->special_code == 3) return '';
+	    if (empty($hidedetails) || $hidedetails > 1) $result.=$object->lines[$i]->qty;
 	}
 	return $result;
 }
@@ -1958,6 +1981,7 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
         	$total_ht = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1 ? $object->lines[$i]->multicurrency_total_ht : $object->lines[$i]->total_ht);
         	if ($object->lines[$i]->situation_percent > 0)
         	{
+        	    // TODO Remove this. The total should be saved correctly in database instead of being modified here.
         		$prev_progress = 0;
         		$progress = 1;
         		if (method_exists($object->lines[$i], 'get_prev_progress'))
@@ -1968,7 +1992,9 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
 				$result.=price($sign * ($total_ht/($object->lines[$i]->situation_percent/100)) * $progress, 0, $outputlangs);
         	}
         	else
-			$result.=price($sign * $total_ht, 0, $outputlangs);
+        	{
+                $result.=price($sign * $total_ht, 0, $outputlangs);
+        	}
         }
     }
     return $result;
@@ -2028,10 +2054,10 @@ function pdf_getTotalQty($object, $type, $outputlangs)
 	global $hookmanager;
 
 	$total=0;
-	$nblignes=count($object->lines);
+	$nblines=count($object->lines);
 
 	// Loop on each lines
-	for ($i = 0 ; $i < $nblignes ; $i++)
+	for ($i = 0 ; $i < $nblines ; $i++)
 	{
 		if ($object->lines[$i]->special_code != 3)
 		{
@@ -2082,7 +2108,7 @@ function pdf_getLinkedObjects($object, $outputlangs)
 	{
 	    if ($objecttype == 'facture')
 	    {
-	       // For invoice, we don't want to have a reference line on document. Image we are using recuring invoice, we will have a line longer than document width.
+	        // For invoice, we don't want to have a reference line on document. Image we are using recuring invoice, we will have a line longer than document width.
 	    }
 	    elseif ($objecttype == 'propal' || $objecttype == 'supplier_proposal')
 		{
@@ -2194,4 +2220,49 @@ function pdf_getSizeForImage($realpath)
 		}
 	}
 	return array('width'=>$width,'height'=>$height);
+}
+
+/**
+ *	Return line total amount discount
+ *
+ *	@param	Object		$object				Object
+ *	@param	int			$i					Current line number
+ *  @param  Translate	$outputlangs		Object langs for output
+ *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ * 	@return	string							Return total of line excl tax
+ */
+function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails = 0)
+{
+	global $conf, $hookmanager;
+	$sign=1;
+	if (isset($object->type) && $object->type == 2 && ! empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE)) $sign=-1;
+	if ($object->lines[$i]->special_code == 3)
+	{
+		return $outputlangs->transnoentities("Option");
+	}
+	else
+	{
+		if (is_object($hookmanager))
+		{
+			$special_code = $object->lines[$i]->special_code;
+			if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
+
+			$parameters = array(
+				'i'=>$i,
+				'outputlangs'=>$outputlangs,
+				'hidedetails'=>$hidedetails,
+				'special_code'=>$special_code
+			);
+
+			$action='';
+
+			if( $hookmanager->executeHooks('getlinetotalremise', $parameters, $object, $action)>0)
+			{
+				return $hookmanager->resPrint;    // Note that $action and $object may have been modified by some hooks
+			}
+		}
+
+		if (empty($hidedetails) || $hidedetails > 1) return $sign * ( ($object->lines[$i]->subprice * $object->lines[$i]->qty) - $object->lines[$i]->total_ht );
+	}
+	return '';
 }

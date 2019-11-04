@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -38,7 +38,7 @@ class StockMovements extends DolibarrApi
     );
 
     /**
-     * @var MouvmeentStock $stockmovement {@type MouvementStock}
+     * @var MouvementStock $stockmovement {@type MouvementStock}
      */
     public $stockmovement;
 
@@ -292,7 +292,7 @@ class StockMovements extends DolibarrApi
         unset($object->lastname);
         unset($object->name);
         unset($object->location_incoterms);
-        unset($object->libelle_incoterms);
+        unset($object->label_incoterms);
         unset($object->fk_incoterms);
         unset($object->lines);
         unset($object->total_ht);

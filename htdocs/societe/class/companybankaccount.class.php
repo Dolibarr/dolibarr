@@ -16,13 +16,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- * 		\file		htdocs/societe/class/companybankaccount.class.php
- *		\ingroup    societe
- *		\brief      File of class to manage bank accounts description of third parties
+ *  \file		htdocs/societe/class/companybankaccount.class.php
+ *  \ingroup    societe
+ *  \brief      File of class to manage bank accounts description of third parties
  */
 
 require_once DOL_DOCUMENT_ROOT .'/compta/bank/class/account.class.php';
@@ -46,7 +46,7 @@ class CompanyBankAccount extends Account
      * @var integer
      */
     public $datec;
-    
+
 	/**
      * Date modification record (tms)
      *
@@ -174,27 +174,25 @@ class CompanyBankAccount extends Account
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-
-
-		if (! $notrigger)
-		{
-			// Call trigger
-			$result=$this->call_trigger('COMPANY_RIB_MODIFY', $user);
-			if ($result < 0) $error++;
-			// End call triggers
-			if(! $error )
+			if (! $notrigger)
 			{
-				return 1;
+				// Call trigger
+				$result=$this->call_trigger('COMPANY_RIB_MODIFY', $user);
+				if ($result < 0) $error++;
+				// End call triggers
+				if(! $error )
+				{
+					return 1;
+				}
+				else
+				{
+					return -1;
+				}
 			}
 			else
 			{
-				return -1;
+				return 1;
 			}
-		}
-		else
-		{
-			return 1;
-		}
 		}
 		else
 		{
@@ -217,7 +215,7 @@ class CompanyBankAccount extends Account
 		if (empty($id) && empty($socid)) return -1;
 
 		$sql = "SELECT rowid, type, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
-		$sql.= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur";
+		$sql.= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur, date_rum";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe_rib";
 		if ($id)    $sql.= " WHERE rowid = ".$id;
 		if ($socid)
@@ -255,6 +253,7 @@ class CompanyBankAccount extends Account
 				$this->datem           = $this->db->jdate($obj->datem);
 				$this->rum             = $obj->rum;
 				$this->frstrecur       = $obj->frstrecur;
+				$this->date_rum        = $this->db->jdate($obj->date_rum);
 			}
 			$this->db->free($resql);
 
@@ -327,7 +326,6 @@ class CompanyBankAccount extends Account
 		$rib = '';
 
 		if ($this->code_banque || $this->code_guichet || $this->number || $this->cle_rib || $this->iban || $this->bic ) {
-
 			if ($this->label && $displayriblabel) {
 				$rib = $this->label." : ";
 			}

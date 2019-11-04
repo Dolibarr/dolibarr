@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -201,7 +201,6 @@ $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-
 	dol_syslog(__FILE__, LOG_DEBUG);
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);

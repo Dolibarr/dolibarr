@@ -18,10 +18,10 @@
 * versions in the future. If you wish to customize PrestaShop for your
 * needs please refer to http://www.prestashop.com for more information.
 *
-*  @author PrestaShop SA <contact@prestashop.com>
-*  @copyright  2007-2013 PrestaShop SA
-*  @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
-*  International Registered Trademark & Property of PrestaShop SA
+* @author PrestaShop SA <contact@prestashop.com>
+* @copyright  2007-2013 PrestaShop SA
+* @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+* International Registered Trademark & Property of PrestaShop SA
 * PrestaShop Webservice Library
 * @package PrestaShopWebservice
 */
@@ -46,7 +46,7 @@ class PrestaShopWebservice
 
 	/** @var array compatible versions of PrestaShop Webservice */
 	const PSCOMPATIBLEVERSIONMIN = '1.4.0.0';
-	const PSCOMPATIBLEVERSIONMAX = '1.6.99.99';
+	const PSCOMPATIBLEVERSIONMAX = '1.7.99.99';
 
 
 	/**
@@ -128,6 +128,7 @@ class PrestaShopWebservice
 			CURLOPT_HTTPHEADER => array( 'Expect:' )
 		);
 
+		dol_syslog("curl_init url=".$url);
 		$session = curl_init($url);
 
 		$curl_options = array();
@@ -142,6 +143,7 @@ class PrestaShopWebservice
 			if (!isset($curl_options[$defkey]))
 				$curl_options[$defkey] = $curl_params[$defkey];
 
+		dol_syslog("curl curl_options = ".var_export($curl_options, true));
 		curl_setopt_array($session, $curl_options);
 		$response = curl_exec($session);
 
@@ -252,6 +254,7 @@ class PrestaShopWebservice
 	public function add($options)
 	{
 		$xml = '';
+		$url = '';
 
 		if (isset($options['resource'], $options['postXml']) || isset($options['url'], $options['postXml']))
 		{
@@ -263,7 +266,9 @@ class PrestaShopWebservice
 				$url .= '&id_group_shop='.$options['id_group_shop'];
 		}
 		else
+		{
 			throw new PrestaShopWebserviceException('Bad parameters given');
+		}
 		$request = self::executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'POST', CURLOPT_POSTFIELDS => $xml));
 
 		self::checkStatusCode($request['status_code']);
@@ -309,7 +314,9 @@ class PrestaShopWebservice
 			if (isset($options['id']))
 				$url .= '/'.$options['id'];
 
-			$params = array('filter', 'display', 'sort', 'limit', 'id_shop', 'id_group_shop');
+			// @CHANGE LDR
+			//$params = array('filter', 'display', 'sort', 'limit', 'id_shop', 'id_group_shop');
+			$params = array('filter', 'display', 'sort', 'limit', 'id_shop', 'id_group_shop', 'date');
 			foreach ($params as $p)
 				foreach ($options as $k => $o)
 					if (strpos($k, $p) !== false)

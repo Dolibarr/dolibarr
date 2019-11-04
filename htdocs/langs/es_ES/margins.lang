@@ -28,10 +28,10 @@ UseDiscountAsService=Como un servicio
 UseDiscountOnTotal=Sobre el total
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Indica si un descuento global se toma en cuenta como un producto, servicio o sólo en el total a la hora de calcular los márgenes.
 MARGIN_TYPE=Precio compra/coste sugerido por defecto por el cálculo de márgenes
-MargeType1=Margen en Mejor Precio Proveedor
+MargeType1=Margen en Mejor precio de proveedor
 MargeType2=Margen en Precio Medio Ponderado (PMP)
 MargeType3=Margen en Precio de coste
-MarginTypeDesc=* Margen en mejor precio de compra = Precio de venta - Mejor precio de proveedor definido en la ficha del producto<br>* Margen en Precio promedio ponderado (PMP) = Precio de venta - Precio Medio Ponderado del producto (PMP), o mejor precio de proveedor si PMP aún no está definido <br > * Margen en precio de coste = Precio de venta - precio de coste definido en la ficha del producto o PMP si el precio de coste no está definido, o mejor precio de proveedor si PMP aún no está definido
+MarginTypeDesc=* Margen sobre mejor precio de compra = Precio de venta - Mejor precio proveedor definido en la ficha del producto <br> * Margen sobre Precio Medio Ponderado (PMP) = Precio de venta - Precio Promedio Ponderado (PMP) o mejor precio proveedor si aún no hay PMP<br> * Margen sobre el precio de coste = Precio venta - Precio de coste definido en la ficha del producto o PMP si el precio de coste no se ha definido, o mejor precio proveedor si aún no hay PMP
 CostPrice=Precio de compra
 UnitCharges=Carga unitaria
 Charges=Cargas

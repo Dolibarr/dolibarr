@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -48,7 +48,7 @@ $planned_workload=((GETPOST('planned_workloadhour', 'int')!='' || GETPOST('plann
 
 // Security check
 $socid=0;
-//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 if (! $user->rights->projet->lire) accessforbidden();
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -59,7 +59,7 @@ $extrafields = new ExtraFields($db);
 $projectstatic = new Project($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 $parameters=array('id'=>$id);
 $reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
@@ -102,7 +102,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 		$object->progress = $_POST['progress'];
 
 		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) $error++;
 
 		if (! $error)
@@ -258,7 +258,35 @@ if ($id > 0 || ! empty($ref))
             print '<div class="fichehalfleft">';
             print '<div class="underbanner clearboth"></div>';
 
-            print '<table class="border" width="100%">';
+            print '<table class="border tableforfield centpercent">';
+
+            // Usage
+            print '<tr><td class="tdtop">';
+            print $langs->trans("Usage");
+            print '</td>';
+            print '<td>';
+            if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+            {
+            	print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha')!=''?' checked="checked"':'') : ($projectstatic->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+            	$htmltext = $langs->trans("ProjectFollowOpportunity");
+            	print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+            	print '<br>';
+            }
+            if (empty($conf->global->PROJECT_HIDE_TASKS))
+            {
+            	print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha')!=''?' checked="checked"':'') : ($projectstatic->usage_task ? ' checked="checked"' : '')).'"> ';
+            	$htmltext = $langs->trans("ProjectFollowTasks");
+            	print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
+            	print '<br>';
+            }
+            if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+            {
+            	print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha')!=''?' checked="checked"':'') : ($projectstatic->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+            	$htmltext = $langs->trans("ProjectBillTimeDescription");
+            	print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
+            	print '<br>';
+            }
+            print '</td></tr>';
 
             // Visibility
             print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
@@ -588,7 +616,7 @@ if ($id > 0 || ! empty($ref))
 				{
 				    if (! $object->hasChildren() && ! $object->hasTimeSpent())
 				    {
-					   print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;withproject='.$withproject.'">'.$langs->trans('Delete').'</a>';
+						print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;withproject='.$withproject.'">'.$langs->trans('Delete').'</a>';
 				    }
 				    else
 				    {

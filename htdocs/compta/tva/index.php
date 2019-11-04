@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -76,7 +76,7 @@ if (empty($modetax)) $modetax=0;
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 
@@ -198,7 +198,11 @@ $form=new Form($db);
 $company_static=new Societe($db);
 $tva = new Tva($db);
 
-$description = '';
+$fsearch ='<!-- hidden fields for form -->';
+$fsearch.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+$fsearch.='<input type="hidden" name="modetax" value="'.$modetax.'">';
+
+$description = $fsearch;
 
 // Show report header
 $name = $langs->trans("ReportByMonth");
@@ -208,7 +212,7 @@ if ($modetax == 1) $calcmode=$langs->trans('OptionVATDebitOption');
 if ($modetax == 2) $calcmode=$langs->trans('OptionPaymentForProductAndServices');
 $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')';
 
-$description = $langs->trans("VATSummary").'<br>';
+$description .= $langs->trans("VATSummary").'<br>';
 if ($conf->global->TAX_MODE_SELL_PRODUCT == 'invoice') $description.=$langs->trans("RulesVATDueProducts");
 if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment') $description.=$langs->trans("RulesVATInProducts");
 if ($conf->global->TAX_MODE_SELL_SERVICE == 'invoice') $description.='<br>'.$langs->trans("RulesVATDueServices");
@@ -227,7 +231,7 @@ llxHeader('', $name);
 
 //$textprevyear="<a href=\"index.php?year=" . ($year_current-1) . "\">".img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a>";
 //$textnextyear=" <a href=\"index.php?year=" . ($year_current+1) . "\">".img_next($langs->trans("Next"), 'class="valignbottom"')."</a>";
-//print load_fiche_titre($langs->transcountry("VAT", $mysoc->country_code), $textprevyear." ".$langs->trans("Year")." ".$year_start." ".$textnextyear, 'title_accountancy.png');
+//print load_fiche_titre($langs->transcountry("VAT", $mysoc->country_code), $textprevyear." ".$langs->trans("Year")." ".$year_start." ".$textnextyear, 'invoicing');
 
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 //report_header($name,'',$textprevyear.$langs->trans("Year")." ".$year_start.$textnextyear,'',$description,$builddate,$exportlink,array(),$calcmode);

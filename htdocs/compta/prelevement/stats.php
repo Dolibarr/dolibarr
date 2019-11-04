@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,7 +33,7 @@ $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 
@@ -115,7 +115,7 @@ if ($resql)
 		print '</td><td class="right">';
 		print round($row[0]/$total*100, 2)." %";
 		print '</td></tr>';
-		
+
 		$i++;
 	}
 
@@ -209,7 +209,7 @@ if ($resql)
 		print round($row[0]/$total*100, 2)." %";
 
 		print '</td></tr>';
-		
+
 		$i++;
 	}
 

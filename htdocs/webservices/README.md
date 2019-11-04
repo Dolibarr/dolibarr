@@ -3,11 +3,13 @@ API SOAP howto
 
 This directory contains files to make Dolibarr a server of SOAP Web Services.
 
+WARNING: It is highly recommended to use the REST APIs instead of SOAP APIs: You will find more API, faster and easier to use in the the module REST API than into this module. 
+
 
 Explore the api
 ---------------
 
-* To see all Webservices provided by Dolibarr, just call following Url:
+* To see all Webservices provided by Dolibarr, just call the following Url:
 http://mydomain.com/mydolibarr/webservices/admin/index.php
 
 

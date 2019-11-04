@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -37,7 +37,11 @@ if (!defined("NOLOGIN")) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies","other","ticket"));
@@ -58,7 +62,7 @@ if (isset($_SESSION['email_customer'])) {
     $email = $_SESSION['email_customer'];
 }
 
-$object = new ActionsTicket($db);
+$object = new Ticket($db);
 
 
 
@@ -83,7 +87,7 @@ if ($action == "view_ticketlist") {
     } else {
         if (!isValidEmail($email)) {
             $error++;
-            array_push($object->errors, $langs->trans("ErrorEmailInvalid"));
+            array_push($object->errors, $langs->trans("ErrorEmailOrTrackingInvalid"));
             $action = '';
         }
     }
@@ -91,9 +95,9 @@ if ($action == "view_ticketlist") {
     if (!$error) {
     	$ret = $object->fetch('', '', $track_id);
 
-        if ($ret && $object->dao->id > 0) {
-            // vérifie si l'adresse email est bien dans les contacts du ticket
-            $contacts = $object->dao->liste_contact(-1, 'external');
+        if ($ret && $object->id > 0) {
+        	// vérifie si l'adresse email est bien dans les contacts du ticket
+            $contacts = $object->liste_contact(-1, 'external');
             foreach ($contacts as $contact) {
                 if ($contact['email'] == $email) {
                     $display_ticket_list = true;
@@ -104,12 +108,26 @@ if ($action == "view_ticketlist") {
                     $display_ticket_list = false;
                 }
             }
-
-            if ($object->dao->fk_soc > 0) {
-                $object->dao->fetch_thirdparty();
+            if ($object->fk_soc > 0) {
+                $object->fetch_thirdparty();
+                if ($email == $object->thirdparty->email) {
+                    $display_ticket_list = true;
+                    $_SESSION['email_customer'] = $email;
+                    $_SESSION['track_id_customer'] = $track_id;
+                }
+            }
+            if ($object->fk_user_create > 0) {
+                $tmpuser=new User($db);
+                $tmpuser->fetch($object->fk_user_create);
+                if ($email == $tmpuser->email) {
+                    $display_ticket_list = true;
+                    $_SESSION['email_customer'] = $email;
+                    $_SESSION['track_id_customer'] = $track_id;
+                }
             }
 
-            if ($email == $object->dao->origin_email || $email == $object->dao->thirdparty->email) {
+            $emailorigin = CMailFile::getValidAddress($object->origin_email, 2);
+            if ($email == $emailorigin) {
                 $display_ticket_list = true;
                 $_SESSION['email_customer'] = $email;
                 $_SESSION['track_id_customer'] = $track_id;
@@ -127,7 +145,7 @@ if ($action == "view_ticketlist") {
     }
 }
 
-$object->doActions($action);
+//$object->doActions($action);
 
 
 
@@ -138,23 +156,25 @@ $object->doActions($action);
 $form = new Form($db);
 $user_assign = new User($db);
 $user_create = new User($db);
-$formticket = new FormTicket($db);
+$formTicket = new FormTicket($db);
+
+if (!$conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) {
+	print '<div class="error">' . $langs->trans('TicketPublicInterfaceForbidden') . '</div>';
+	$db->close();
+	exit();
+}
 
 $arrayofjs = array();
 $arrayofcss = array('/ticket/css/styles.css.php');
+
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
-if (!$conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) {
-    print '<div class="error">' . $langs->trans('TicketPublicInterfaceForbidden') . '</div>';
-    $db->close();
-    exit();
-}
 
-print '<div style="margin: 0 auto; width:60%">';
+print '<div style="margin: 0 auto; width:60%" class="ticketpublicarea">';
 
 if ($action == "view_ticketlist")
 {
-
+	print '<br>';
     if ($display_ticket_list) {
         // Filters
         $search_fk_status = GETPOST("search_fk_status", 'alpha');
@@ -181,11 +201,12 @@ if ($action == "view_ticketlist")
 
         // fetch optionals attributes and labels
         $extrafields = new ExtraFields($db);
-        $extralabels = $extrafields->fetch_name_optionals_label('ticket');
-        $search_array_options = $extrafields->getOptionalsFromPost('ticket', '', 'search_');
+        $extrafields->fetch_name_optionals_label('ticket');
+
+        $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
         $filter = array();
-        $param = '';
+        $param = 'action=view_ticketlist';
 
         // Definition of fields for list
         $arrayfields = array(
@@ -193,7 +214,8 @@ if ($action == "view_ticketlist")
             't.date_read' => array('label' => $langs->trans("TicketReadOn"), 'checked' => 0),
             't.date_close' => array('label' => $langs->trans("TicketCloseOn"), 'checked' => 0),
             't.ref' => array('label' => $langs->trans("Ref"), 'checked' => 1),
-            't.fk_statut' => array('label' => $langs->trans("Statut"), 'checked' => 1),
+        	//'t.track_id' => array('label' => $langs->trans("IDTracking"), 'checked' => 0),
+        	't.fk_statut' => array('label' => $langs->trans("Statut"), 'checked' => 1),
             't.subject' => array('label' => $langs->trans("Subject"), 'checked' => 1),
             'type.code' => array('label' => $langs->trans("Type"), 'checked' => 1),
             'category.code' => array('label' => $langs->trans("Category"), 'checked' => 1),
@@ -201,7 +223,7 @@ if ($action == "view_ticketlist")
             't.progress' => array('label' => $langs->trans("Progression"), 'checked' => 0),
             //'t.fk_contract' => array('label' => $langs->trans("Contract"), 'checked' => 0),
             't.fk_user_create' => array('label' => $langs->trans("Author"), 'checked' => 1),
-            't.fk_user_assign' => array('label' => $langs->trans("AuthorAssign"), 'checked' => 0),
+            't.fk_user_assign' => array('label' => $langs->trans("AssignedTo"), 'checked' => 0),
 
             //'t.entity'=>array('label'=>$langs->trans("Entity"), 'checked'=>1, 'enabled'=>(! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode))),
             //'t.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
@@ -219,40 +241,38 @@ if ($action == "view_ticketlist")
         }
         if (!empty($search_subject)) {
             $filter['t.subject'] = $search_subject;
-            $param .= '&search_subject=' . $search_subject;
+            $param .= '&search_subject=' .urlencode($search_subject);
         }
         if (!empty($search_type)) {
             $filter['t.type_code'] = $search_type;
-            $param .= '&search_type=' . $search_type;
+            $param .= '&search_type=' . urlencode($search_type);
         }
         if (!empty($search_category)) {
             $filter['t.category_code'] = $search_category;
-            $param .= '&search_category=' . $search_category;
+            $param .= '&search_category=' . urlencode($search_category);
         }
         if (!empty($search_severity)) {
             $filter['t.severity_code'] = $search_severity;
-            $param .= '&search_severity=' . $search_severity;
+            $param .= '&search_severity=' . urlencode($search_severity);
         }
         if (!empty($search_fk_user_assign)) {
             // -1 value = all so no filter
             if ($search_fk_user_assign > 0) {
                 $filter['t.fk_user_assign'] = $search_fk_user_assign;
-                $param .= '&search_fk_user_assign=' . $search_fk_user_assign;
+                $param .= '&search_fk_user_assign=' . urlencode($search_fk_user_assign);
             }
         }
         if (!empty($search_fk_user_create)) {
             // -1 value = all so no filter
             if ($search_fk_user_create > 0) {
                 $filter['t.fk_user_create'] = $search_fk_user_create;
-                $param .= '&search_fk_user_create=' . $search_fk_user_create;
+                $param .= '&search_fk_user_create=' . urlencode($search_fk_user_create);
             }
         }
-
         if ((isset($search_fk_status) && $search_fk_status != '') && $search_fk_status != '-1' && $search_fk_status != 'non_closed') {
             $filter['t.fk_statut'] = $search_fk_status;
-            $param .= '&search_fk_status=' . $search_fk_status;
+            $param .= '&search_fk_status=' . urlencode($search_fk_status);
         }
-
         if (isset($search_fk_status) && $search_fk_status == 'non_closed') {
             $filter['t.fk_statut'] = array(0, 1, 3, 4, 5, 6);
             $param .= '&search_fk_status=non_closed';
@@ -266,7 +286,6 @@ if ($action == "view_ticketlist")
         if (!$sortfield) {
             $sortfield = 't.datec';
         }
-
         if (!$sortorder) {
             $sortorder = 'DESC';
         }
@@ -361,9 +380,7 @@ if ($action == "view_ticketlist")
                 $num = $db->num_rows($resql);
                 print_barre_liste($langs->trans('TicketList'), $page, 'public/list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'ticket');
 
-                /*
-                * Search bar
-                */
+                // Search bar
                 print '<form method="get" action="' . $url_form . '" id="searchFormList" >' . "\n";
                 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
                 print '<input type="hidden" name="action" value="view_ticketlist">';
@@ -375,63 +392,7 @@ if ($action == "view_ticketlist")
 
                 print '<table class="liste ' . ($moreforfilter ? "listwithfilterbefore" : "") . '">';
 
-                print '<tr class="liste_titre">';
-                if (!empty($arrayfields['t.datec']['checked'])) {
-                    print_liste_field_titre($arrayfields['t.datec']['label'], $url_page_current, 't.datec', '', $param, '', $sortfield, $sortorder);
-                }
-                if (!empty($arrayfields['t.date_read']['checked'])) {
-                    print_liste_field_titre($arrayfields['t.date_read']['label'], $url_page_current, 't.date_read', '', $param, '', $sortfield, $sortorder);
-                }
-                if (!empty($arrayfields['t.date_close']['checked'])) {
-                    print_liste_field_titre($arrayfields['t.date_close']['label'], $url_page_current, 't.date_close', '', $param, '', $sortfield, $sortorder);
-                }
-                if (!empty($arrayfields['t.ref']['checked'])) {
-                    print_liste_field_titre($arrayfields['t.ref']['label'], $url_page_current, 't.ref', '', $param, '', $sortfield, $sortorder);
-                }
-                if (!empty($arrayfields['t.fk_statut']['checked'])) {
-                    print_liste_field_titre($arrayfields['t.fk_statut']['label'], $url_page_current, 't.fk_statut', '', $param, '', $sortfield, $sortorder);
-                }
-                if (!empty($arrayfields['t.subject']['checked'])) {
-                    print_liste_field_titre($arrayfields['t.subject']['label']);
-                }
-                if (!empty($arrayfields['type.code']['checked'])) {
-                    print_liste_field_titre($arrayfields['type.code']['label'], $url_page_current, 'type.code', '', $param, '', $sortfield, $sortorder);
-                }
-                if (!empty($arrayfields['category.code']['checked'])) {
-                    print_liste_field_titre($arrayfields['category.code']['label'], $url_page_current, 'category.code', '', $param, '', $sortfield, $sortorder);
-                }
-                if (!empty($arrayfields['severity.code']['checked'])) {
-                    print_liste_field_titre($arrayfields['severity.code']['label'], $url_page_current, 'severity.code', '', $param, '', $sortfield, $sortorder);
-                }
-                if (!empty($arrayfields['t.progress']['checked'])) {
-                    print_liste_field_titre($arrayfields['t.progress']['label'], $url_page_current, 't.progress', '', $param, '', $sortfield, $sortorder);
-                }
-                if (!empty($arrayfields['t.fk_user_create']['checked'])) {
-                    print_liste_field_titre($arrayfields['t.fk_user_create']['label'], $url_page_current, 't.fk_user_create', '', $param, '', $sortfield, $sortorder);
-                }
-                if (!empty($arrayfields['t.fk_user_assign']['checked'])) {
-                    print_liste_field_titre($arrayfields['t.fk_user_assign']['label'], $url_page_current, 't.fk_user_assign', '', $param, '', $sortfield, $sortorder);
-                }
-                if (!empty($arrayfields['t.tms']['checked'])) {
-                    print_liste_field_titre($arrayfields['t.tms']['label'], $url_page_current, 't.tms', '', $param, '', $sortfield, $sortorder);
-                }
-                // Extra fields
-                if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-                	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-                        if (!empty($arrayfields["ef." . $key]['checked'])) {
-                            $align = $extrafields->getAlignFlag($key);
-                            print_liste_field_titre($extralabels[$key], $url_page_current, "ef." . $key, "", $param, ($align ? 'align="' . $align . '"' : ''), $sortfield, $sortorder);
-                        }
-                    }
-                }
-                print_liste_field_titre($selectedfields, $url_page_current, "", '', '', 'align="right"', $sortfield, $sortorder, 'maxwidthsearch ');
-                print '</tr>';
-
-                /*
-                 * Filter bar
-                 */
-                $formTicket = new FormTicket($db);
-
+                // Filter bar
                 print '<tr class="liste_titre">';
 
                 if (!empty($arrayfields['t.datec']['checked'])) {
@@ -449,23 +410,15 @@ if ($action == "view_ticketlist")
                     print '<td class="liste_titre"></td>';
                 }
 
-                // Status
-                if (!empty($arrayfields['t.fk_statut']['checked'])) {
-                    print '<td class="liste_titre">';
-                    $selected = ($search_fk_status != "non_closed" ? $search_fk_status : '');
-                    //$object->printSelectStatus($selected);
-                    print '</td>';
-                }
-
                 if (!empty($arrayfields['t.subject']['checked'])) {
                     print '<td class="liste_titre">';
-                    print '<input type="text" class="flat" name="search_subject" value="' . $search_subject . '" size="20">';
+                    print '<input type="text" class="flat maxwidth100" name="search_subject" value="' . $search_subject . '">';
                     print '</td>';
                 }
 
                 if (!empty($arrayfields['type.code']['checked'])) {
                     print '<td class="liste_titre">';
-                    $formTicket->selectTypesTickets($search_type, 'search_type', '', 2, 1, 1);
+                    $formTicket->selectTypesTickets($search_type, 'search_type', '', 2, 1, 1, 0, 'maxwidth150');
                     print '</td>';
                 }
 
@@ -498,18 +451,79 @@ if ($action == "view_ticketlist")
                 }
 
                 // Extra fields
-                if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-                	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-                        if (!empty($arrayfields["ef." . $key]['checked'])) {
-                            print '<td class="liste_titre"></td>';
-                        }
-                    }
+                include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
+                // Fields from hook
+                $parameters=array('arrayfields'=>$arrayfields);
+                $reshook=$hookmanager->executeHooks('printFieldListOption', $parameters, $object);    // Note that $action and $object may have been modified by hook
+                print $hookmanager->resPrint;
+
+                // Status
+                if (!empty($arrayfields['t.fk_statut']['checked'])) {
+                    print '<td class="liste_titre">';
+                    $selected = ($search_fk_status != "non_closed" ? $search_fk_status : '');
+                    //$object->printSelectStatus($selected);
+                    print '</td>';
                 }
 
-                print '<td class="liste_titre nowraponall right">';
-                print '<input type="image" class="liste_titre" name="button_search" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
-                print '<input type="image" class="liste_titre" name="button_removefilter" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
+                // Action column
+                print '<td class="liste_titre maxwidthsearch">';
+                $searchpicto=$form->showFilterButtons();
+                print $searchpicto;
                 print '</td>';
+                print '</tr>';
+
+                // Field title
+                print '<tr class="liste_titre">';
+                if (!empty($arrayfields['t.datec']['checked'])) {
+                	print_liste_field_titre($arrayfields['t.datec']['label'], $url_page_current, 't.datec', '', $param, '', $sortfield, $sortorder);
+                }
+                if (!empty($arrayfields['t.date_read']['checked'])) {
+                	print_liste_field_titre($arrayfields['t.date_read']['label'], $url_page_current, 't.date_read', '', $param, '', $sortfield, $sortorder);
+                }
+                if (!empty($arrayfields['t.date_close']['checked'])) {
+                	print_liste_field_titre($arrayfields['t.date_close']['label'], $url_page_current, 't.date_close', '', $param, '', $sortfield, $sortorder);
+                }
+                if (!empty($arrayfields['t.ref']['checked'])) {
+                	print_liste_field_titre($arrayfields['t.ref']['label'], $url_page_current, 't.ref', '', $param, '', $sortfield, $sortorder);
+                }
+                if (!empty($arrayfields['t.subject']['checked'])) {
+                	print_liste_field_titre($arrayfields['t.subject']['label']);
+                }
+                if (!empty($arrayfields['type.code']['checked'])) {
+                	print_liste_field_titre($arrayfields['type.code']['label'], $url_page_current, 'type.code', '', $param, '', $sortfield, $sortorder);
+                }
+                if (!empty($arrayfields['category.code']['checked'])) {
+                	print_liste_field_titre($arrayfields['category.code']['label'], $url_page_current, 'category.code', '', $param, '', $sortfield, $sortorder);
+                }
+                if (!empty($arrayfields['severity.code']['checked'])) {
+                	print_liste_field_titre($arrayfields['severity.code']['label'], $url_page_current, 'severity.code', '', $param, '', $sortfield, $sortorder);
+                }
+                if (!empty($arrayfields['t.progress']['checked'])) {
+                	print_liste_field_titre($arrayfields['t.progress']['label'], $url_page_current, 't.progress', '', $param, '', $sortfield, $sortorder);
+                }
+                if (!empty($arrayfields['t.fk_user_create']['checked'])) {
+                	print_liste_field_titre($arrayfields['t.fk_user_create']['label'], $url_page_current, 't.fk_user_create', '', $param, '', $sortfield, $sortorder);
+                }
+                if (!empty($arrayfields['t.fk_user_assign']['checked'])) {
+                	print_liste_field_titre($arrayfields['t.fk_user_assign']['label'], $url_page_current, 't.fk_user_assign', '', $param, '', $sortfield, $sortorder);
+                }
+                if (!empty($arrayfields['t.tms']['checked'])) {
+                	print_liste_field_titre($arrayfields['t.tms']['label'], $url_page_current, 't.tms', '', $param, '', $sortfield, $sortorder);
+                }
+
+                // Extra fields
+                include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+
+                // Hook fields
+                $parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
+                $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $object);    // Note that $action and $object may have been modified by hook
+                print $hookmanager->resPrint;
+
+                if (!empty($arrayfields['t.fk_statut']['checked'])) {
+                	print_liste_field_titre($arrayfields['t.fk_statut']['label'], $url_page_current, 't.fk_statut', '', $param, '', $sortfield, $sortorder);
+                }
+                print_liste_field_titre($selectedfields, $url_page_current, "", '', '', 'align="right"', $sortfield, $sortorder, 'center maxwidthsearch ');
                 print '</tr>';
 
                 while ($obj = $db->fetch_object($resql))
@@ -519,36 +533,28 @@ if ($action == "view_ticketlist")
                     // Date ticket
                     if (!empty($arrayfields['t.datec']['checked'])) {
                         print '<td>';
-                        print dol_print_date($obj->datec, 'dayhour');
+                        print dol_print_date($db->jdate($obj->datec), 'dayhour');
                         print '</td>';
                     }
 
                     // Date read
                     if (!empty($arrayfields['t.date_read']['checked'])) {
                         print '<td>';
-                        print dol_print_date($obj->date_read, 'dayhour');
+                        print dol_print_date($db->jdate($obj->date_read), 'dayhour');
                         print '</td>';
                     }
 
                     // Date close
                     if (!empty($arrayfields['t.date_close']['checked'])) {
                         print '<td>';
-                        print dol_print_date($obj->date_close, 'dayhour');
+                        print dol_print_date($db->jdate($obj->date_close), 'dayhour');
                         print '</td>';
                     }
 
-                    // ref
+                    // Ref
                     if (!empty($arrayfields['t.ref']['checked'])) {
-                        print '<td>';
+                        print '<td class="nowraponall">';
                         print $obj->ref;
-                        print '</td>';
-                    }
-
-                    // Statut
-                    if (!empty($arrayfields['t.fk_statut']['checked'])) {
-                        print '<td>';
-                        $object->fk_statut = $obj->fk_statut;
-                        print $object->getLibStatut(2);
                         print '</td>';
                     }
 
@@ -609,14 +615,12 @@ if ($action == "view_ticketlist")
                             $user_assign->lastname = (!empty($obj->user_assign_lastname) ? $obj->user_assign_lastname : '');
                             $user_assign->id = (!empty($obj->fk_user_assign) ? $obj->fk_user_assign : '');
                             print $user_assign->getFullName($langs);
-                        } else {
-                            print $langs->trans('None');
                         }
                         print '</td>';
                     }
 
                     if (!empty($arrayfields['t.tms']['checked'])) {
-                        print '<td>' . dol_print_date($obj->tms, 'dayhour') . '</td>';
+                        print '<td>' . dol_print_date($db->jdate($obj->tms), 'dayhour') . '</td>';
                     }
 
                     // Extra fields
@@ -635,7 +639,17 @@ if ($action == "view_ticketlist")
                             }
                         }
                     }
+
+                    // Statut
+                    if (!empty($arrayfields['t.fk_statut']['checked'])) {
+                        print '<td class="nowraponall">';
+                        $object->fk_statut = $obj->fk_statut;
+                        print $object->getLibStatut(2);
+                        print '</td>';
+                    }
+
                     print '<td></td>';
+
                     $i++;
                     print '</tr>';
                 }
@@ -665,12 +679,13 @@ if ($action == "view_ticketlist")
     }
 } else {
     print '<p class="center">' . $langs->trans("TicketPublicMsgViewLogIn") . '</p>';
+	print '<br>';
 
     print '<div id="form_view_ticket">';
     print '<form method="post" name="form_view_ticketlist"  enctype="multipart/form-data" action="' . $_SERVER['PHP_SELF'] . '">';
     print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
     print '<input type="hidden" name="action" value="view_ticketlist">';
-    print '<input type="hidden" name="search_fk_status" value="non_closed">';
+    //print '<input type="hidden" name="search_fk_status" value="non_closed">';
 
     print '<p><label for="track_id" style="display: inline-block; width: 30%; "><span class="fieldrequired">' . $langs->trans("OneOfTicketTrackId") . '</span></label>';
     print '<input size="30" id="track_id" name="track_id" value="' . (GETPOST('track_id', 'alpha') ? GETPOST('track_id', 'alpha') : '') . '" />';
@@ -688,6 +703,11 @@ if ($action == "view_ticketlist")
     print "</div>\n";
 }
 
+print "</div>";
+
 // End of page
-llxFooter();
+htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix, $object);
+
+llxFooter('', 'public');
+
 $db->close();

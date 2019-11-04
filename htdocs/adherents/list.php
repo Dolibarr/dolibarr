@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -39,6 +39,7 @@ $massaction=GETPOST('massaction', 'alpha');
 $show_files=GETPOST('show_files', 'int');
 $confirm=GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'memberslist';   // To manage different context of search
 
 // Security check
 $result=restrictedArea($user, 'adherent');
@@ -88,7 +89,8 @@ $hookmanager->initHooks(array('memberlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('adherent');
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
@@ -130,15 +132,17 @@ $arrayfields=array(
 	'd.note_private'=>array('label'=>$langs->trans("NotePrivate"), 'checked'=>0),*/
 	'd.datefin'=>array('label'=>$langs->trans("EndSubscription"), 'checked'=>1, 'position'=>500),
 	'd.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+	'd.birth'=>array('label'=>$langs->trans("Birthday"), 'checked'=>0, 'position'=>500),
 	'd.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 	'd.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000)
 );
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-	foreach($extrafields->attribute_label as $key => $val)
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
 	{
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
+		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
 	}
 }
 
@@ -189,6 +193,42 @@ if (empty($reshook))
 		$search_array_options=array();
 	}
 
+	// Close
+	if ($massaction == 'close' && $user->rights->adherent->creer)
+	{
+	    $tmpmember = new Adherent($db);
+	    $error=0;
+	    $nbclose=0;
+
+	    $db->begin();
+
+        foreach($toselect as $idtoclose)
+        {
+            $tmpmember->fetch($idtoclose);
+            $result=$tmpmember->resiliate($user);
+
+            if ($result < 0 && ! count($tmpmember->errors))
+    	    {
+    	        setEventMessages($tmpmember->error, $tmpmember->errors, 'errors');
+    	    }
+    	    else
+    	    {
+    	        if ($result > 0) $nbclose++;
+    	    }
+        }
+
+        if (! $error)
+        {
+            setEventMessages($langs->trans("XMembersClosed", $nbclose), null, 'mesgs');
+
+            $db->commit();
+        }
+        else
+        {
+            $db->rollback();
+        }
+	}
+
 	// Mass actions
 	$objectclass='Adherent';
 	$objectlabel='Members';
@@ -215,15 +255,17 @@ $sql.= " d.civility, d.datefin, d.address, d.zip, d.town, d.state_id, d.country,
 $sql.= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.skype, d.birth, d.public, d.photo,";
 $sql.= " d.fk_adherent_type as type_id, d.morphy, d.statut, d.datec as date_creation, d.tms as date_update,";
 $sql.= " t.libelle as type, t.subscription,";
-$sql.= " state.code_departement as state_code, state.nom as state_name";
+$sql.= " state.code_departement as state_code, state.nom as state_name,";
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label']))
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.' as options_'.$key.', ' : '');
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
-$sql.=$hookmanager->resPrint;
+$sql.=preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql =preg_replace('/,\s*$/', '', $sql);
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d";
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_extrafields as ef on (d.rowid = ef.fk_object)";
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (d.rowid = ef.fk_object)";
 if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_member as cm ON d.rowid = cm.fk_member"; // We need this table joined to the select in order to filter by categ
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = d.country)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = d.state_id)";
@@ -252,8 +294,8 @@ if ($search_town)     $sql.= natural_search("d.town", $search_town);
 if ($search_zip)      $sql.= natural_search("d.zip", $search_zip);
 if ($search_state)    $sql.= natural_search("state.nom", $search_state);
 if ($search_country) $sql .= " AND d.country IN (".$search_country.')';
-if ($filter == 'uptodate') $sql.=" AND datefin >= '".$db->idate($now)."'";
-if ($filter == 'outofdate') $sql.=" AND (datefin IS NULL OR datefin < '".$db->idate($now)."')";
+if ($filter == 'uptodate') $sql.=" AND (datefin >= '".$db->idate($now)."' OR t.subscription = 0)";
+if ($filter == 'outofdate') $sql.=" AND ((datefin IS NULL OR datefin < '".$db->idate($now)."') AND t.subscription = 1)";
 
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -326,12 +368,11 @@ if ($search_type > 0)
 }
 
 $param='';
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 if ($sall != "") $param.="&sall=".urlencode($sall);
 if ($statut != "") $param.="&statut=".urlencode($statut);
 if ($search_ref)   $param.="&search_ref=".urlencode($search_ref);
-if ($search_nom)   $param.="&search_nom=".urlencode($search_nom);
 if ($search_civility) $param.="&search_civility=".urlencode($search_civility);
 if ($search_firstname) $param.="&search_firstname=".urlencode($search_firstname);
 if ($search_lastname)  $param.="&search_lastname=".urlencode($search_lastname);
@@ -358,16 +399,15 @@ $arrayofmassactions =  array(
 	//'presend'=>$langs->trans("SendByMail"),
 	//'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->adherent->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if ($user->rights->adherent->creer) $arrayofmassactions['close']=$langs->trans("Resiliate");
+if ($user->rights->adherent->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 $newcardbutton='';
 if ($user->rights->adherent->creer)
 {
-	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/adherents/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewMember').'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
+    $newcardbutton.= dolGetButtonTitle($langs->trans('NewMember'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/card.php?action=create');
 }
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -380,7 +420,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);
+print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit);
 
 $topicmail="Information";
 $modelmail="member";
@@ -457,7 +497,7 @@ if (! empty($arrayfields['d.lastname']['checked']))
 if (! empty($arrayfields['d.gender']['checked']))
 {
 	print '<td class="liste_titre">';
-	$arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
+	$arraygender=array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"));
 	print $form->selectarray('search_gender', $arraygender, $search_gender, 1);
 	print '</td>';
 }
@@ -557,6 +597,12 @@ if (! empty($arrayfields['d.datec']['checked']))
 	print '<td class="liste_titre">';
 	print '</td>';
 }
+//Birthday
+if (! empty($arrayfields['d.birth']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '</td>';
+}
 // Date modification
 if (! empty($arrayfields['d.tms']['checked']))
 {
@@ -612,6 +658,7 @@ $parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sort
 $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (! empty($arrayfields['d.datec']['checked']))     print_liste_field_titre($arrayfields['d.datec']['label'], $_SERVER["PHP_SELF"], "d.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+if (! empty($arrayfields['d.birth']['checked']))     print_liste_field_titre($arrayfields['d.birth']['label'], $_SERVER["PHP_SELF"], "d.birth", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 if (! empty($arrayfields['d.tms']['checked']))       print_liste_field_titre($arrayfields['d.tms']['label'], $_SERVER["PHP_SELF"], "d.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 if (! empty($arrayfields['d.statut']['checked']))    print_liste_field_titre($arrayfields['d.statut']['label'], $_SERVER["PHP_SELF"], "d.statut", "", $param, 'class="right"', $sortfield, $sortorder);
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
@@ -634,6 +681,7 @@ while ($i < min($num, $limit))
 	$memberstatic->datefin= $datefin;
 	$memberstatic->socid = $obj->fk_soc;
 	$memberstatic->photo = $obj->photo;
+	$memberstatic->morphy = $obj->morphy;
 
 	if (! empty($obj->fk_soc)) {
 		$memberstatic->fetch_thirdparty();
@@ -641,7 +689,7 @@ while ($i < min($num, $limit))
 	} else {
 		$companyname=$obj->company;
 	}
-	$memberstatic->societe = $companyname;
+	$memberstatic->company = $companyname;
 
 	print '<tr class="oddeven">';
 
@@ -831,6 +879,14 @@ while ($i < min($num, $limit))
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
+	// Birth
+	if (! empty($arrayfields['d.birth']['checked']))
+	{
+		print '<td class="nowrap center">';
+		print dol_print_date($db->jdate($obj->birth), 'day', 'tzuser');
+		print '</td>';
+		if (! $i) $totalarray['nbfield']++;
+	}
 	// Date modification
 	if (! empty($arrayfields['d.tms']['checked']))
 	{
@@ -902,7 +958,7 @@ print "</table>\n";
 print "</div>";
 print '</form>';
 
-if ($num > $limit || $page) print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit, 1);
+if ($num > $limit || $page) print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, '', '', $limit, 1);
 
 // End of page
 llxFooter();

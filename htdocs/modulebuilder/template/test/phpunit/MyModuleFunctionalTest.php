@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -69,14 +69,14 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 		),
 		// Geckodriver does not keep the session at the moment?!
 		// XPath selectors also don't seem to work
-//        array(
-//            'browser' => 'Mozilla Firefox on Linux',
-//            'browserName' => 'firefox',
-//            'sessionStrategy' => 'shared',
-//            'desiredCapabilities' => array(
-//                'marionette' => true
-//            )
-//        )
+        //array(
+        //    'browser' => 'Mozilla Firefox on Linux',
+        //    'browserName' => 'firefox',
+        //    'sessionStrategy' => 'shared',
+        //    'desiredCapabilities' => array(
+        //        'marionette' => true,
+        //    ),
+        //)
 	);
 
 	/**
@@ -224,7 +224,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	{
 		$this->url('/custom/mymodule/admin/about.php');
 		$this->authenticate();
-return $this->assertEquals(
+        return $this->assertEquals(
 			'Dolibarr Module Template (aka My Module)',
 			$this->byTag('h1')->text(),
 			"Readme title"
@@ -254,7 +254,7 @@ return $this->assertEquals(
 	{
 		$this->url('/admin/triggers.php');
 		$this->authenticate();
-return $this->assertContains(
+        return $this->assertContains(
 			'interface_99_modMyModule_MyModuleTriggers.class.php',
 			$this->byTag('body')->text(),
 			"Trigger declared"
@@ -271,7 +271,7 @@ return $this->assertContains(
 	{
 		$this->url('/admin/triggers.php');
 		$this->authenticate();
-return $this->assertContains(
+        return $this->assertContains(
 			'tick.png',
 			$this->byXPath('//td[text()="interface_99_modMyModule_MyTrigger.class.php"]/following::img')->attribute('src'),
 			"Trigger enabled"

@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,7 +35,7 @@ $allowinstall = 0;
 $allowupgrade = false;
 $checksok = 1;
 
-$setuplang=GETPOST("selectlang", 'az09', 3)?GETPOST("selectlang", 'az09', 3):$langs->getDefaultLang();
+$setuplang=GETPOST("selectlang", 'aZ09', 3)?GETPOST("selectlang", 'aZ09', 3):$langs->getDefaultLang();
 $langs->setDefaultLang($setuplang);
 
 $langs->load("install");
@@ -76,8 +76,8 @@ if (! empty($useragent))
 
 
 // Check PHP version
-$arrayphpminversionerror = array(5,4,0);
-$arrayphpminversionwarning = array(5,4,0);
+$arrayphpminversionerror = array(5,5,0);
+$arrayphpminversionwarning = array(5,5,0);
 if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0)        // Minimum to use (error if lower)
 {
 	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
@@ -127,7 +127,7 @@ if (! function_exists("imagecreate"))
 {
 	$langs->load("errors");
 	print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportGD")."<br>\n";
-	// $checksok=0;		// If image ko, just warning. So check must still be 1 (otherwise no way to install)
+	// $checksok=0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
 }
 else
 {
@@ -140,11 +140,21 @@ if (! function_exists("curl_init"))
 {
     $langs->load("errors");
     print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportCurl")."<br>\n";
-    // $checksok=0;		// If image ko, just warning. So check must still be 1 (otherwise no way to install)
+    // $checksok=0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
 }
 else
 {
     print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportCurl")."<br>\n";
+}
+
+// Check if PHP calendar extension is available
+if (! function_exists("easter_date"))
+{
+    print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportCalendar")."<br>\n";
+}
+else
+{
+    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportCalendar")."<br>\n";
 }
 
 
@@ -153,13 +163,28 @@ if (! function_exists("utf8_encode"))
 {
 	$langs->load("errors");
 	print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportUTF8")."<br>\n";
-	// $checksok=0;		// If image ko, just warning. So check must still be 1 (otherwise no way to install)
+	// $checksok=0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
 }
 else
 {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportUTF8")."<br>\n";
 }
 
+
+// Check if intl methods are supported
+if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@localhost')
+{
+	if (! function_exists("locale_get_primary_language") || ! function_exists("locale_get_region"))
+	{
+	    $langs->load("errors");
+	    print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportIntl")."<br>\n";
+	    // $checksok=0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
+	}
+	else
+	{
+	    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportIntl")."<br>\n";
+	}
+}
 
 
 // Check memory
@@ -364,7 +389,7 @@ else
 		// Show title
 		if (! empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ! empty($conf->global->MAIN_VERSION_LAST_INSTALL))
 		{
-            print $langs->trans("VersionLastUpgrade").': <b><span class="ok">'.(empty($conf->global->MAIN_VERSION_LAST_UPGRADE)?$conf->global->MAIN_VERSION_LAST_INSTALL:$conf->global->MAIN_VERSION_LAST_UPGRADE).'</span></b><br>';
+            print $langs->trans("VersionLastUpgrade").': <b><span class="ok">'.(empty($conf->global->MAIN_VERSION_LAST_UPGRADE)?$conf->global->MAIN_VERSION_LAST_INSTALL:$conf->global->MAIN_VERSION_LAST_UPGRADE).'</span></b> - ';
             print $langs->trans("VersionProgram").': <b><span class="ok">'.DOL_VERSION.'</span></b>';
 			//print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired"));
 			print '<br>';
@@ -372,18 +397,17 @@ else
 		}
 		else print "<br>\n";
 
-		print $langs->trans("InstallEasy")." ";
-		print $langs->trans("ChooseYourSetupMode");
-
-        print '<br>';
+		//print $langs->trans("InstallEasy")." ";
+		print '<h3><span class="soustitre">'.$langs->trans("ChooseYourSetupMode").'...</span></h3>';
 
 		$foundrecommandedchoice=0;
 
         $available_choices = array();
         $notavailable_choices = array();
 
-		// Show first install line
-        $choice = "\n".'<tr><td class="nowrap center"><b>'.$langs->trans("FreshInstall").'</b>';
+		// Show line of first install choice
+        $choice  = '<tr class="trlineforchoice">'."\n";
+        $choice .= '<td class="nowrap center"><b>'.$langs->trans("FreshInstall").'</b>';
 		$choice .= '</td>';
         $choice .= '<td class="listofchoicesdesc">';
 		$choice .= $langs->trans("FreshInstallDesc");
@@ -404,15 +428,16 @@ else
 		}
 		else
 		{
-            $choice .= $langs->trans("InstallNotAllowed");
+			$choice .= ($foundrecommandedchoice ? '<span class="warning">' : '').$langs->trans("InstallNotAllowed").($foundrecommandedchoice ? '</span>' : '');
 		}
-        $choice .= '</td>';
+        $choice .= '</td>'."\n";
         $choice .= '</tr>'."\n";
 
+        $positionkey = ($foundrecommandedchoice ? 999 : 0);
         if ($allowinstall) {
-            $available_choices[] = $choice;
+        	$available_choices[$positionkey] = $choice;
         } else {
-            $notavailable_choices[] = $choice;
+        	$notavailable_choices[$positionkey] = $choice;
         }
 
 		// Show upgrade lines
@@ -438,13 +463,13 @@ else
 								array('from'=>'6.0.0', 'to'=>'7.0.0'),
 								array('from'=>'7.0.0', 'to'=>'8.0.0'),
 								array('from'=>'8.0.0', 'to'=>'9.0.0'),
-								array('from'=>'9.0.0', 'to'=>'10.0.0')
+								array('from'=>'9.0.0', 'to'=>'10.0.0'),
+								array('from'=>'10.0.0', 'to'=>'11.0.0')
 		);
 
 		$count=0;
 		foreach ($migrationscript as $migarray)
 		{
-
             $choice = '';
 
 			$count++;
@@ -483,7 +508,8 @@ else
                 }
             }
 
-            $choice .= "\n".'<tr'.($recommended_choice ? ' class="choiceselected"' : '').'>';
+            $choice .= "\n".'<!-- choice '.$count.' -->'."\n";
+            $choice .= '<tr'.($recommended_choice ? ' class="choiceselected"' : '').'>';
             $choice .= '<td class="nowrap center"><b>'.$langs->trans("Upgrade").'<br>'.$newversionfrom.$newversionfrombis.' -> '.$newversionto.'</b></td>';
             $choice .= '<td class="listofchoicesdesc">';
             $choice .= $langs->trans("UpgradeDesc");
@@ -516,7 +542,7 @@ else
 				}
 				if ($disabled)
                 {
-                    $choice .= '<span class="button">'.$langs->trans("NotAvailable").'</span>';
+                    $choice .= '<span class="button">'.$langs->trans("NotYetAvailable").'</span>';
                 }
 				else
                 {
@@ -531,9 +557,9 @@ else
             $choice .= '</tr>'."\n";
 
             if ($allowupgrade) {
-                $available_choices[] = $choice;
+                $available_choices[$count] = $choice;
             } else {
-                $notavailable_choices[] = $choice;
+                $notavailable_choices[$count] = $choice;
             }
 		}
 
@@ -545,6 +571,7 @@ else
 		}
 
         // Array of install choices
+		krsort($available_choices, SORT_NATURAL);
         print"\n";
         print '<table width="100%" class="listofchoices">';
         foreach ($available_choices as $choice) {
@@ -554,9 +581,8 @@ else
         print '</table>'."\n";
 
         if (count($notavailable_choices)) {
-
             print '<br><div id="AShowChoices" style="opacity: 0.5">';
-            print '<img id="availchoice" src="../theme/eldy/img/1downarrow.png"> '.$langs->trans('ShowNotAvailableOptions').'...';
+            print '> '.$langs->trans('ShowNotAvailableOptions').'...';
             print '</div>';
 
             print '<div id="navail_choices" style="display:none">';
@@ -579,7 +605,7 @@ $("div#AShowChoices").click(function() {
     $("div#navail_choices").toggle();
 
     if ($("div#navail_choices").css("display") == "none") {
-        $(this).text("'.$langs->trans('ShowNotAvailableOptions').'...");
+        $(this).text("> '.$langs->trans('ShowNotAvailableOptions').'...");
     } else {
         $(this).text("'.$langs->trans('HideNotAvailableOptions').'...");
     }

@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -201,7 +201,7 @@ if ($object->id > 0)
      * Ecran ajout/suppression permission
      */
 
-    print '<table class="border centpercent">';
+    print '<table class="border centpercent tableforfield">';
 
     // Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
     if (! empty($conf->mutlicompany->enabled))
@@ -243,7 +243,7 @@ if ($object->id > 0)
     print '<td>'.$langs->trans("Permissions").'</td>';
     print '</tr>';
 
-    $sql = "SELECT r.id, r.libelle, r.module";
+    $sql = "SELECT r.id, r.libelle as label, r.module";
     $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
     $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
     $sql.= " AND r.entity = " . $entity;
@@ -330,7 +330,7 @@ if ($object->id > 0)
             	print '<td>&nbsp</td>';
             }
 
-            $perm_libelle=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$langs->trans($obj->libelle)));
+            $perm_libelle=($conf->global->MAIN_USE_ADVANCED_PERMS && ($langs->trans("PermissionAdvanced".$obj->id)!=("PermissionAdvanced".$obj->id))?$langs->trans("PermissionAdvanced".$obj->id):(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$langs->trans($obj->label)));
             print '<td>'.$perm_libelle. '</td>';
 
             print '</tr>';

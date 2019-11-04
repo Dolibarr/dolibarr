@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -41,7 +41,7 @@ $ref=GETPOST('ref');
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref :''));
 $fieldtype = (! empty($ref) ? 'ref' :'rowid');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, 'banque', $fieldvalue, 'bank_account&bank_account', '', '', $fieldtype);
 
 $year_start=GETPOST('year_start');
@@ -202,7 +202,6 @@ print '</tr>';
 
 for ($mois = 1 ; $mois < 13 ; $mois++)
 {
-
 	print '<tr class="oddeven">';
 	print "<td>".dol_print_date(dol_mktime(1, 1, 1, $mois, 1, 2000), "%B")."</td>";
 	for ($annee = $year_start ; $annee <= $year_end ; $annee++)
@@ -217,7 +216,7 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 		}
 		print "</td>";
 
-		print '<td class="right" class="borderrightlight" width="10%">&nbsp;';
+		print '<td class="right borderrightlight" width="10%">&nbsp;';
 		if ($encaiss[$case]>0)
 		{
 			print price($encaiss[$case]);
@@ -232,7 +231,7 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 print '<tr class="liste_total"><td><b>'.$langs->trans("Total")."</b></td>";
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	print '<td class="right"><b>'.price($totsorties[$annee]).'</b></td><td class="right"><b>'.price($totentrees[$annee]).'</b></td>';
+	print '<td class="right nowraponall"><b>'.price($totsorties[$annee]).'</b></td><td class="right nowraponall"><b>'.price($totentrees[$annee]).'</b></td>';
 }
 print "</tr>\n";
 
@@ -307,7 +306,7 @@ else
 	$log="graph.php: min=".$min." max=".$max;
 	dol_syslog($log);
 
-// CRED PART
+	// CRED PART
 	// Chargement du tableau des années
 	$tblyear[0] = array();
 	$tblyear[1] = array();
@@ -384,7 +383,6 @@ else
 	$px1->setBgColor('onglet');
 	$px1->setBgColorGrid(array(255,255,255));
 	$px1->SetHorizTickIncrement(1);
-	$px1->SetPrecisionY(0);
 	$px1->draw($file, $fileurl);
 
 	$show1 = $px1->show();
@@ -395,7 +393,7 @@ else
 	unset($tblyear[1]);
 	unset($tblyear[2]);
 
-// DEDBT PART
+	// DEDBT PART
 	// Chargement du tableau des années
 	$tblyear[0] = array();
 	$tblyear[1] = array();
@@ -471,7 +469,6 @@ else
 	$px2->setBgColor('onglet');
 	$px2->setBgColorGrid(array(255,255,255));
 	$px2->SetHorizTickIncrement(1);
-	$px2->SetPrecisionY(0);
 	$px2->draw($file, $fileurl);
 
 	$show2 = $px2->show();

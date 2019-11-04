@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -27,6 +27,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
@@ -34,9 +35,9 @@ $langs->loadLangs(array("holiday"));
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0)	// Protection if external user
+if ($user->socid > 0)	// Protection if external user
 {
-	//$socid = $user->societe_id;
+	//$socid = $user->socid;
 	accessforbidden();
 }
 $result = restrictedArea($user, 'holiday', $id, '');
@@ -47,17 +48,15 @@ $result = restrictedArea($user, 'holiday', $id, '');
  * View
  */
 
+$html = new Form($db);
+$formother = new FormOther($db);
 $holidaystatic = new Holiday($db);
 
 $listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->trans("Afternoon"));
 
-
 llxHeader('', $langs->trans('CPTitreMenu'));
 
-print load_fiche_titre($langs->trans('MenuReportMonth'));
-
-$html = new Form($db);
-$formother = new FormOther($db);
+print load_fiche_titre($langs->trans('MenuReportMonth'), '', 'title_hrm');
 
 
 // Selection filter
@@ -68,7 +67,6 @@ print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">' . "\n";
 $search_month = GETPOST("remonth", 'int')?GETPOST("remonth", 'int'):date("m", time());
 $search_year = GETPOST("reyear", 'int')?GETPOST("reyear", 'int'):date("Y", time());
 
-$month_year = sprintf("%02d", $search_month).'-'.sprintf("%04d", $search_year);
 $year_month = sprintf("%04d", $search_year).'-'.sprintf("%02d", $search_month);
 
 print $formother->select_month($search_month, 'remonth');
@@ -121,75 +119,75 @@ print '</tr>';
 
 if ($num == 0)
 {
-   print '<tr><td colspan="10" class="opacitymedium">'.$langs->trans('None').'</td></tr>';
+    print '<tr><td colspan="10" class="opacitymedium">'.$langs->trans('None').'</td></tr>';
 }
 else
 {
-   while ($obj = $db->fetch_object($resql))
-   {
-      $user = new User($db);
-      $user->fetch($obj->fk_user);
+    while ($obj = $db->fetch_object($resql))
+    {
+        $user = new User($db);
+        $user->fetch($obj->fk_user);
 
-      $date_start = $db->jdate($obj->date_debut, true);
-      $date_end = $db->jdate($obj->date_fin, true);
+        $date_start = $db->jdate($obj->date_debut, true);
+        $date_end = $db->jdate($obj->date_fin, true);
 
-      $tmpstart = dol_getdate($date_start);
-      $tmpend = dol_getdate($date_end);
+        $tmpstart = dol_getdate($date_start);
+        $tmpend = dol_getdate($date_end);
 
-      $starthalfday=($obj->halfday == -1 || $obj->halfday == 2)?'afternoon':'morning';
-      $endhalfday=($obj->halfday == 1 || $obj->halfday == 2)?'morning':'afternoon';
+        $starthalfday=($obj->halfday == -1 || $obj->halfday == 2)?'afternoon':'morning';
+        $endhalfday=($obj->halfday == 1 || $obj->halfday == 2)?'morning':'afternoon';
 
-      $halfdayinmonth = $obj->halfday;
-      $starthalfdayinmonth = $starthalfday;
-      $endhalfdayinmonth = $endhalfday;
+        $halfdayinmonth = $obj->halfday;
+        $starthalfdayinmonth = $starthalfday;
+        $endhalfdayinmonth = $endhalfday;
 
-      //0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
+        //0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
 
-      // Set date_start_gmt and date_end_gmt that are date to show for the selected month
-      $date_start_inmonth = $db->jdate($obj->date_debut, true);
-      $date_end_inmonth = $db->jdate($obj->date_fin, true);
-      if ($tmpstart['year'] < $search_year || $tmpstart['mon'] < $search_month)
-      {
-      	$date_start_inmonth = dol_get_first_day($search_year, $search_month, true);
-      	$starthalfdayinmonth = 'morning';
-      	if ($halfdayinmonth ==  2) $halfdayinmonth=1;
-      	if ($halfdayinmonth == -1) $halfdayinmonth=0;
-      }
-      if ($tmpend['year'] > $search_year || $tmpend['mon'] > $search_month)
-      {
-      	$date_end_inmonth = dol_get_last_day($search_year, $search_month, true) - ((24 * 3600) - 1);
-      	$endhalfdayinmonth = 'afternoon';
-      	if ($halfdayinmonth ==  2) $halfdayinmonth=-1;
-      	if ($halfdayinmonth ==  1) $halfdayinmonth=0;
-      }
+        // Set date_start_gmt and date_end_gmt that are date to show for the selected month
+        $date_start_inmonth = $db->jdate($obj->date_debut, true);
+        $date_end_inmonth = $db->jdate($obj->date_fin, true);
+        if ($tmpstart['year'] < $search_year || $tmpstart['mon'] < $search_month)
+        {
+            $date_start_inmonth = dol_get_first_day($search_year, $search_month, true);
+            $starthalfdayinmonth = 'morning';
+            if ($halfdayinmonth ==  2) $halfdayinmonth=1;
+            if ($halfdayinmonth == -1) $halfdayinmonth=0;
+        }
+        if ($tmpend['year'] > $search_year || $tmpend['mon'] > $search_month)
+        {
+            $date_end_inmonth = dol_get_last_day($search_year, $search_month, true) - ((24 * 3600) - 1);
+            $endhalfdayinmonth = 'afternoon';
+            if ($halfdayinmonth ==  2) $halfdayinmonth=-1;
+            if ($halfdayinmonth ==  1) $halfdayinmonth=0;
+        }
 
-      // Leave request
-      $holidaystatic->id=$obj->rowid;
-      $holidaystatic->ref=$obj->rowid;
+        // Leave request
+        $holidaystatic->id=$obj->rowid;
+        $holidaystatic->ref=$obj->rowid;
 
-      print '<tr class="oddeven">';
-      	 print '<td>';
-      	 print $holidaystatic->getNomUrl(1, 1);
-      	 print '</td>';
-         print '<td>' . $user->getFullName($langs) . '</td>';
-         print '<td>' . $obj->label . '</td>';
-         print '<td class="center">' . dol_print_date($obj->date_debut, 'day');
-         print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$starthalfday]).')</span>';
-         print '</td>';
-         print '<td class="center">' . dol_print_date($obj->date_fin, 'day');
-         print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$endhalfday]).')</span>';
-         print '</td>';
-         print '<td class="right">' . num_open_day($date_start, $date_end, 0, 1, $obj->halfday) . '</td>';
-         print '<td class="center">' . dol_print_date($date_start_inmonth, 'day');
-         print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$starthalfdayinmonth]).')</span>';
-         print '</td>';
-         print '<td class="center">' . dol_print_date($date_end_inmonth, 'day');
-         print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$endhalfdayinmonth]).')</span>';
-         print '</td>';
-         print '<td class="right">' . num_open_day($date_start_inmonth, $date_end_inmonth, 0, 1, $halfdayinmonth) . '</td>';
-         print '<td class="maxwidth300">' . dol_escape_htmltag(dolGetFirstLineOfText($obj->description)) . '</td>';
-      print '</tr>';
-   }
+        print '<tr class="oddeven">';
+        print '<td>';
+        print $holidaystatic->getNomUrl(1, 1);
+        print '</td>';
+        print '<td>' . $user->getFullName($langs) . '</td>';
+        print '<td>' . $obj->label . '</td>';
+        print '<td class="center">' . dol_print_date($db->jdate($obj->date_debut), 'day');
+        print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$starthalfday]).')</span>';
+        print '</td>';
+        print '<td class="center">' . dol_print_date($db->jdate($obj->date_fin), 'day');
+        print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$endhalfday]).')</span>';
+        print '</td>';
+        print '<td class="right">' . num_open_day($date_start, $date_end, 0, 1, $obj->halfday) . '</td>';
+        print '<td class="center">' . dol_print_date($date_start_inmonth, 'day');
+        print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$starthalfdayinmonth]).')</span>';
+        print '</td>';
+        print '<td class="center">' . dol_print_date($date_end_inmonth, 'day');
+        print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$endhalfdayinmonth]).')</span>';
+        print '</td>';
+        print '<td class="right">' . num_open_day($date_start_inmonth, $date_end_inmonth, 0, 1, $halfdayinmonth) . '</td>';
+        print '<td class="maxwidth300">' . dol_escape_htmltag(dolGetFirstLineOfText($obj->description)) . '</td>';
+        print '</tr>';
+    }
 }
 print '</table>';
 print '</div>';

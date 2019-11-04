@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,7 +32,7 @@ $langs->loadLangs(array("loan","compta","banks","bills"));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'loan', '', '', '');
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -116,9 +116,7 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->loan->write)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/loan/card.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewLoan').'</span>';
-		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-		$newcardbutton.= '</a>';
+        $newcardbutton.= dolGetButtonTitle($langs->trans('NewLoan'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/loan/card.php?action=create');
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";

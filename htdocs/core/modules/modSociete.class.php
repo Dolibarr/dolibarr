@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -49,7 +49,7 @@ class modSociete extends DolibarrModules
 		$this->numero = 1;
 
 		$this->family = "crm";
-		$this->module_position = '10';
+		$this->module_position = '09';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Gestion des sociétés et contacts";
@@ -148,7 +148,7 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
 
-/*		$r++;
+        /*$r++;
 		$this->rights[$r][0] = 241;
 		$this->rights[$r][1] = 'Read thirdparties customers';
 		$this->rights[$r][2] = 'r';
@@ -163,7 +163,7 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'thirdparty_supplier_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'read';
-*/
+        */
 
 		$r++;
 		$this->rights[$r][0] = 122; // id de la permission
@@ -172,8 +172,8 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'creer';
 
-/*		$r++;
-		 $this->rights[$r][0] = 251;
+        /* $r++;
+		$this->rights[$r][0] = 251;
 		$this->rights[$r][1] = 'Create thirdparties customers';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
@@ -187,7 +187,7 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'thirdparty_supplier_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'read';
-*/
+        */
 
 		$r++;
 		$this->rights[$r][0] = 125; // id de la permission
@@ -270,6 +270,7 @@ class modSociete extends DolibarrModules
 			'st.code'=>'ProspectStatus','payterm.libelle'=>'PaymentConditions','paymode.libelle'=>'PaymentMode'
 		);
 		if (! empty($conf->global->SOCIETE_USEPREFIX)) $this->export_fields_array[$r]['s.prefix']='Prefix';
+		if (! empty($conf->global->PRODUIT_MULTIPRICES)) $this->export_fields_array[$r]['s.price_level']='PriceLevel';
 		// Add multicompany field
 		if (! empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED))
 		{
@@ -295,7 +296,8 @@ class modSociete extends DolibarrModules
 			's.tva_intra'=>"Text",'s.capital'=>"Numeric",'s.note_private'=>"Text",'s.note_public'=>"Text",'t.libelle'=>"Text",
 			'ce.code'=>"List:c_effectif:libelle:code","cfj.libelle"=>"Text",'s.fk_prospectlevel'=>'List:c_prospectlevel:label:code',
 			'st.code'=>'List:c_stcomm:libelle:code','d.nom'=>'Text','u.login'=>'Text','u.firstname'=>'Text','u.lastname'=>'Text','payterm.libelle'=>'Text',
-			'paymode.libelle'=>'Text','s.entity'=>'Numeric'
+			'paymode.libelle'=>'Text','s.entity'=>'Numeric',
+			's.price_level'=>'Numeric'
 		);
 
 		$this->export_entities_array[$r]=array('u.login'=>'user','u.firstname'=>'user','u.lastname'=>'user');	// We define here only fields that use another picto
@@ -332,19 +334,28 @@ class modSociete extends DolibarrModules
 			'c.rowid'=>"IdContact",'c.civility'=>"CivilityCode",'c.lastname'=>'Lastname','c.firstname'=>'Firstname','c.poste'=>'PostOrFunction',
 			'c.datec'=>"DateCreation",'c.tms'=>"DateLastModification",'c.priv'=>"ContactPrivate",'c.address'=>"Address",'c.zip'=>"Zip",'c.town'=>"Town",
 			'd.nom'=>'State','co.label'=>"Country",'co.code'=>"CountryCode",'c.phone'=>"Phone",'c.fax'=>"Fax",'c.phone_mobile'=>"Mobile",'c.email'=>"EMail",
+			'c.statut'=>"Status",
 			's.rowid'=>"IdCompany",'s.nom'=>"CompanyName",'s.status'=>"Status",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode",
-			's.client'=>'Customer','s.fournisseur'=>'Supplier'
+			's.client'=>'Customer','s.fournisseur'=>'Supplier',
+            's.address'=>'Address','s.zip'=>"Zip",'s.town'=>"Town",'s.phone'=>'Phone','s.email'=>"Email",
+            't.libelle'=>"ThirdPartyType"
 		);
 		$this->export_examplevalues_array[$r]=array('s.client'=>'0 (no customer no prospect)/1 (customer)/2 (prospect)/3 (customer and prospect)','s.fournisseur'=>'0 (not a supplier) or 1 (supplier)');
 		$this->export_TypeFields_array[$r]=array(
 			'c.civility'=>"List:c_civility:label:code",'c.lastname'=>'Text','c.firstname'=>'Text','c.poste'=>'Text','c.datec'=>"Date",'c.priv'=>"Boolean",
 			'c.address'=>"Text",'c.zip'=>"Text",'c.town'=>"Text",'d.nom'=>'Text','co.label'=>"List:c_country:label:rowid",'co.code'=>"Text",'c.phone'=>"Text",
-			'c.fax'=>"Text",'c.email'=>"Text",'s.rowid'=>"List:societe:nom::thirdparty",'s.nom'=>"Text",'s.status'=>"Status",'s.code_client'=>"Text",'s.code_fournisseur'=>"Text",
-			's.client'=>"Text",'s.fournisseur'=>"Text"
+			'c.fax'=>"Text",'c.email'=>"Text",
+            'c.statut'=>"Status",
+            's.rowid'=>"List:societe:nom::thirdparty",'s.nom'=>"Text",'s.status'=>"Status",'s.code_client'=>"Text",'s.code_fournisseur'=>"Text",
+			's.client'=>"Text",'s.fournisseur'=>"Text",
+            's.address'=>"Text",'s.zip'=>"Text",'s.town'=>"Text",'s.phone'=>"Text",'s.email'=>"Text",
+            't.libelle'=>"Text"
 		);
 		$this->export_entities_array[$r]=array(
 			's.rowid'=>"company",'s.nom'=>"company", 's.status'=>'company', 's.code_client'=>"company",'s.code_fournisseur'=>"company", 's.client'=>"company",
-			's.fournisseur'=>"company"
+			's.fournisseur'=>"company",
+            's.address'=>"company", 's.zip'=>"company", 's.town'=>"company", 's.phone'=>"company", 's.email'=>"company",
+            't.libelle'=>"company"
 		);	// We define here only fields that use another picto
         if (empty($conf->fournisseur->enabled))
         {
@@ -363,6 +374,7 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON c.fk_departement = d.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON c.fk_pays = co.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra ON extra.fk_object = c.rowid';
+        $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id';
 		$this->export_sql_end[$r] .=' WHERE c.entity IN ('.getEntity('socpeople').')';
 		if (is_object($user) && empty($user->rights->societe->client->voir)) {
 			$this->export_sql_end[$r] .=' AND (sc.fk_user = '.$user->id.' ';

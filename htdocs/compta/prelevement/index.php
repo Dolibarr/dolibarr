@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -38,7 +38,7 @@ $langs->loadLangs(array('banks', 'categories', 'withdrawals'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'prelevement', '', '');
 
 
@@ -58,7 +58,7 @@ llxHeader('', $langs->trans("CustomersStandingOrdersArea"));
 if (prelevement_check_config() < 0)
 {
 	$langs->load("errors");
-	setEventMessages($langs->trans("ErrorModuleSetupNotComplete"), null, 'errors');
+	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Withdraw")), null, 'errors');
 }
 
 print load_fiche_titre($langs->trans("CustomersStandingOrdersArea"));
@@ -71,6 +71,7 @@ $thirdpartystatic=new Societe($db);
 $invoicestatic=new Facture($db);
 $bprev = new BonPrelevement($db);
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
 
@@ -84,7 +85,7 @@ print '</td></tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("AmountToWithdraw").'</td>';
 print '<td class="right">';
 print price($bprev->SommeAPrelever(), '', '', 1, -1, -1, 'auto');
-print '</td></tr></table><br>';
+print '</td></tr></table></div><br>';
 
 
 
@@ -100,6 +101,11 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX
 $sql.= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 $sql.= " WHERE s.rowid = f.fk_soc";
 $sql.= " AND f.entity IN (".getEntity('invoice').")";
+$sql.= " AND f.total_ttc > 0";
+if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS))
+{
+	$sql.= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
+}
 $sql.= " AND pfd.traite = 0 AND pfd.fk_facture = f.rowid";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
@@ -110,6 +116,7 @@ if ($resql)
     $num = $db->num_rows($resql);
     $i = 0;
 
+    print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<th colspan="5">'.$langs->trans("InvoiceWaitingWithdraw").' ('.$num.')</th></tr>';
@@ -156,7 +163,7 @@ if ($resql)
     {
         print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("NoInvoiceToWithdraw", $langs->transnoentitiesnoconv("StandingOrders")).'</td></tr>';
     }
-    print "</table><br>";
+    print "</table></div><br>";
 }
 else
 {
@@ -183,6 +190,7 @@ if ($result)
     $i = 0;
 
     print"\n<!-- debut table -->\n";
+    print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><th>'.$langs->trans("LastWithdrawalReceipt", $limit).'</th>';
     print '<th>'.$langs->trans("Date").'</th>';
@@ -210,7 +218,7 @@ if ($result)
         print "</tr>\n";
         $i++;
     }
-    print "</table><br>";
+    print "</table></div><br>";
     $db->free($result);
 }
 else

@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -107,7 +107,7 @@ $object = new stdClass();   // For triggers
  * View
  */
 
-dol_syslog("Callback url when an online payment is canceled. query_string=".(empty($_SERVER["QUERY_STRING"])?'':$_SERVER["QUERY_STRING"])." script_uri=".(empty($_SERVER["SCRIPT_URI"])?'':$_SERVER["SCRIPT_URI"]), LOG_DEBUG, 0, '_payment');
+dol_syslog("Callback url when an online payment is refused or canceled. query_string=".(empty($_SERVER["QUERY_STRING"])?'':$_SERVER["QUERY_STRING"])." script_uri=".(empty($_SERVER["SCRIPT_URI"])?'':$_SERVER["SCRIPT_URI"]), LOG_DEBUG, 0, '_payment');
 
 $tracepost = "";
 foreach($_POST as $k => $v) $tracepost .= "{$k} - {$v}\n";
@@ -126,6 +126,7 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
     $FinalPaymentAmt    = $_SESSION['FinalPaymentAmt'];
     // From env
     $ipaddress          = $_SESSION['ipaddress'];
+    $errormessage       = $_SESSION['errormessage'];
 
     // Appel des triggers
     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
@@ -173,8 +174,9 @@ if (! empty($_SESSION['ipaddress']))      // To avoid to make action twice
     	$content.='<u>'.$companylangs->transnoentitiesnoconv("TechnicalInformation").":</u><br>\n";
     	$content.=$companylangs->transnoentitiesnoconv("OnlinePaymentSystem").': <strong>'.$paymentmethod."</strong><br>\n";
     	$content.=$companylangs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."<br>\n";
+    	$content.=$companylangs->transnoentitiesnoconv("Error").': '.$errormessage."<br>\n";
     	$content.="<br>\n";
-    	$content.="tag=".$fulltag."\ntoken=".$onlinetoken." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
+    	$content.="tag=".$fulltag." token=".$onlinetoken." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
 
     	$ishtml=dol_textishtml($content);	// May contain urls
 
@@ -233,7 +235,7 @@ elseif (! empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$lo
 // Output html code for logo
 if ($urllogo)
 {
-	print '<center><img id="dolpaymentlogo" title="'.$title.'" src="'.$urllogo.'"';
+	print '<center><img id="dolpaymentlogo" src="'.$urllogo.'"';
 	if ($width) print ' width="'.$width.'"';
 	print '></center>';
 	print '<br>';
@@ -243,6 +245,17 @@ print $langs->trans("YourPaymentHasNotBeenRecorded")."<br><br>";
 
 $key='ONLINE_PAYMENT_MESSAGE_KO';
 if (! empty($conf->global->$key)) print $conf->global->$key;
+
+$type = GETPOST('s', 'alpha');
+$ref = GETPOST('ref', 'none');
+$tag = GETPOST('tag', 'alpha');
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+if ($type || $tag)
+{
+	$urlsubscription =getOnlinePaymentUrl(0, ($type?$type:'free'), $ref, $FinalPaymentAmt, $tag);
+
+	print $langs->trans("ClickHereToTryAgain", $urlsubscription);
+}
 
 print "\n</div>\n";
 

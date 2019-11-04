@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -38,10 +38,10 @@ $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 $userid=GETPOST('userid', 'int');
 $socid=GETPOST('socid', 'int');
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
 	$action = '';
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 $nowyear=strftime("%Y", dol_now());
 $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
@@ -67,7 +67,7 @@ llxHeader('', $langs->trans('Tasks'));
 $title=$langs->trans("TasksStatistics");
 $dir=$conf->projet->dir_output.'/temp';
 
-print load_fiche_titre($title, '', 'title_project.png');
+print load_fiche_titre($title, '', 'project');
 
 dol_mkdir($dir);
 
@@ -92,7 +92,6 @@ $mesg = $px1->isGraphKo();
 if (! $mesg)
 {
 	$px1->SetData($data);
-	$px1->SetPrecisionY(0);
 	$i=$startyear;$legend=array();
 	while ($i <= $endyear)
 	{
@@ -106,7 +105,6 @@ if (! $mesg)
 	$px1->SetYLabel($langs->trans("ProjectNbTask"));
 	$px1->SetShading(3);
 	$px1->SetHorizTickIncrement(1);
-	$px1->SetPrecisionY(0);
 	$px1->mode='depth';
 	$px1->SetTitle($langs->trans("ProjectNbTaskByMonth"));
 
@@ -146,9 +144,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
 /*print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-if ($mode == 'customer') $filter='s.client in (1,2,3)';
-if ($mode == 'supplier') $filter='s.fournisseur = 1';
-print $form->select_company($socid,'socid',$filter,1,0,0,array(),0,'','style="width: 95%"');
+print $form->select_company($socid,'socid','',1,0,0,array(),0,'','style="width: 95%"');
 print '</td></tr>';
 */
 // User

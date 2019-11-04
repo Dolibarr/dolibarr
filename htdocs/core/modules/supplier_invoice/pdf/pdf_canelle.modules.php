@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2010-2011      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2010-2014 		Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015           Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+/* Copyright (C) 2010-2011  Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2014  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -59,9 +59,9 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
     /**
      * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+     * e.g.: PHP ≥ 5.5 = array(5, 5)
      */
-	public $phpmin = array(5, 4);
+	public $phpmin = array(5, 5);
 
 	/**
      * Dolibarr version of the loaded document
@@ -106,7 +106,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 	/**
 	 * Issuer
-	 * @var Company object that emits
+	 * @var Societe object that emits
 	 */
 	public $emetteur;
 
@@ -128,7 +128,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$this->name = "canelle";
 		$this->description = $langs->trans('SuppliersInvoiceModel');
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -148,11 +148,12 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 		$this->franchise=!$mysoc->tva_assuj;
 
-        // Defini position des colonnes
+        // Define column position
 		$this->posxdesc=$this->marge_gauche+1;
 		$this->posxtva=112;
 		$this->posxup=126;
 		$this->posxqty=145;
+		$this->posxunit=162;
 		$this->posxdiscount=162;
 		$this->postotalht=174;
 
@@ -198,7 +199,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
     public function write_file($object, $outputlangs = '', $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
     {
         // phpcs:enable
-		global $user,$langs,$conf,$mysoc,$hookmanager,$nblignes;
+		global $user,$langs,$conf,$mysoc,$hookmanager,$nblines;
 
 		// Get source company
 		if (! is_object($object->thirdparty)) $object->fetch_thirdparty();
@@ -258,7 +259,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				global $action;
 				$reshook=$hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 
-				$nblignes = count($object->lines);
+				$nblines = count($object->lines);
 
                 $pdf=pdf_getInstance($this->format);
                 $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
@@ -295,21 +296,23 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 
 			    // Positionne $this->atleastonediscount si on a au moins une remise
-                for ($i = 0 ; $i < $nblignes ; $i++)
+                for ($i = 0 ; $i < $nblines ; $i++)
                 {
                     if ($object->lines[$i]->remise_percent)
                     {
                         $this->atleastonediscount++;
                     }
                 }
-				if (empty($this->atleastonediscount) && empty($conf->global->PRODUCT_USE_UNITS))
+				if (empty($this->atleastonediscount))
 				{
-					$this->posxpicture+=($this->postotalht - $this->posxdiscount);
-					$this->posxtva+=($this->postotalht - $this->posxdiscount);
-					$this->posxup+=($this->postotalht - $this->posxdiscount);
-					$this->posxqty+=($this->postotalht - $this->posxdiscount);
-					$this->posxdiscount+=($this->postotalht - $this->posxdiscount);
-					//$this->postotalht;
+				    $delta = ($this->postotalht - $this->posxdiscount);
+				    $this->posxpicture+=$delta;
+				    $this->posxtva+=$delta;
+				    $this->posxup+=$delta;
+				    $this->posxqty+=$delta;
+				    $this->posxunit+=$delta;
+				    $this->posxdiscount+=$delta;
+				    // post of fields after are not modified, stay at same position
 				}
 
                 // New page
@@ -337,7 +340,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 						$nexY = $pdf->GetY();
 						$height_incoterms=$nexY-$tab_top;
 
-						// Rect prend une longueur en 3eme param
+						// Rect takes a length in 3rd parameter
 						$pdf->SetDrawColor(192, 192, 192);
 						$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_incoterms+1);
 
@@ -355,7 +358,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
-					// Rect prend une longueur en 3eme param
+					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
 					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
@@ -367,7 +370,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$nexY = $tab_top + 7;
 
 				// Loop on each lines
-				for ($i = 0 ; $i < $nblignes ; $i++)
+				for ($i = 0 ; $i < $nblines ; $i++)
 				{
 					$curY = $nexY;
 					$pdf->SetFont('', '', $default_font_size - 1);   // Into loop to work with multipage
@@ -394,7 +397,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 						$posyafter=$pdf->GetY();
 						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
 						{
-							if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
+							if ($i == ($nblines-1))	// No more lines, and no space left to show total, so we create a new page
 							{
 								$pdf->AddPage('', '', true);
 								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
@@ -447,15 +450,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					// Quantity
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxqty, $curY);
-					// Enough for 6 chars
-					if($conf->global->PRODUCT_USE_UNITS)
-					{
-						$pdf->MultiCell($this->posxunit-$this->posxqty-0.8, 4, $qty, 0, 'R');
-					}
-					else
-					{
-						$pdf->MultiCell($this->posxdiscount-$this->posxqty-0.8, 4, $qty, 0, 'R');
-					}
+					$pdf->MultiCell($this->posxunit-$this->posxqty-0.8, 4, $qty, 0, 'R');  // Enough for 6 chars
 
 					// Unit
 					if($conf->global->PRODUCT_USE_UNITS)
@@ -470,7 +465,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					if ($object->lines[$i]->remise_percent)
 					{
 					    $remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
-						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, $remise_percent."%", 0, 'R');
+						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, $remise_percent, 0, 'R');
 					}
 
 					// Total HT line
@@ -500,7 +495,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$this->localtax2[$localtax2rate]+=$localtax2ligne;
 
 					// Add line
-					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
+					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
 					{
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(80,80,80)));
@@ -509,7 +504,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 						$pdf->SetLineStyle(array('dash'=>0));
 					}
 
-					$nexY+=2;    // Passe espace entre les lignes
+					$nexY+=2;    // Add space between lines
 
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)
@@ -595,7 +590,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 				$this->result = array('fullpath'=>$file);
 
-				return 1;   // Pas d'erreur
+				return 1;   // No error
 			}
 			else
 			{
@@ -610,6 +605,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		}
     }
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Show total to pay
@@ -621,7 +617,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
-    private function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
+	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
         // phpcs:enable
 		global $conf,$mysoc;
@@ -718,58 +714,56 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		{
 			//if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 			//{
-				//Local tax 1
-				foreach($this->localtax1 as $tvakey => $tvaval)
+			//Local tax 1
+			foreach ($this->localtax1 as $tvakey => $tvaval) {
+				if ($tvakey != 0)    // On affiche pas taux 0
 				{
-					if ($tvakey != 0)    // On affiche pas taux 0
+					//$this->atleastoneratenotnull++;
+
+					$index++;
+					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+
+					$tvacompl='';
+					if (preg_match('/\*/', $tvakey))
 					{
-						//$this->atleastoneratenotnull++;
-
-						$index++;
-						$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-
-						$tvacompl='';
-						if (preg_match('/\*/', $tvakey))
-						{
-							$tvakey=str_replace('*', '', $tvakey);
-							$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
-						}
-						$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).' ';
-						$totalvat.= vatrate(abs($tvakey), 1).$tvacompl;
-						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
-
-						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-						$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+						$tvakey=str_replace('*', '', $tvakey);
+						$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 					}
+					$totalvat = $outputlangs->transcountrynoentities("TotalLT1", $mysoc->country_code).' ';
+					$totalvat.= vatrate(abs($tvakey), 1).$tvacompl;
+					$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
+
+					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
 				}
+			}
 			//}
 
 			//if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
 			//{
-				//Local tax 2
-				foreach($this->localtax2 as $tvakey => $tvaval)
+			//Local tax 2
+			foreach($this->localtax2 as $tvakey => $tvaval) {
+				if ($tvakey != 0)    // On affiche pas taux 0
 				{
-					if ($tvakey != 0)    // On affiche pas taux 0
+					//$this->atleastoneratenotnull++;
+
+					$index++;
+					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+
+					$tvacompl='';
+					if (preg_match('/\*/', $tvakey))
 					{
-						//$this->atleastoneratenotnull++;
-
-						$index++;
-						$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-
-						$tvacompl='';
-						if (preg_match('/\*/', $tvakey))
-						{
-							$tvakey=str_replace('*', '', $tvakey);
-							$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
-						}
-						$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).' ';
-						$totalvat.= vatrate(abs($tvakey), 1).$tvacompl;
-						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
-
-						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-						$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+						$tvakey=str_replace('*', '', $tvakey);
+						$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 					}
+					$totalvat = $outputlangs->transcountrynoentities("TotalLT2", $mysoc->country_code).' ';
+					$totalvat.= vatrate(abs($tvakey), 1).$tvacompl;
+					$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
+
+					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
 				}
+			}
 			//}
 		}
 
@@ -819,6 +813,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		return ($tab2_top + ($tab2_hl * $index));
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *   Show table for lines
 	 *
@@ -832,7 +827,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *   @param		string		$currency		Currency code
 	 *   @return	void
 	 */
-	private function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
 	{
 		global $conf;
 
@@ -861,11 +856,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$pdf->SetFont('', '', $default_font_size - 1);
 
 		// Output Rect
-		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
+		$this->printRect($pdf, $this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect takes a length in 3rd parameter and 4th parameter
 
 		if (empty($hidetop))
 		{
-			$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);	// line prend une position y en 2eme param et 4eme param
+			$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);	// line takes a position y in 2nd parameter and 4th parameter
 
 			$pdf->SetXY($this->posxdesc-1, $tab_top+1);
 			$pdf->MultiCell(108, 2, $outputlangs->transnoentities("Designation"), '', 'L');
@@ -892,14 +887,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxqty-1, $tab_top+1);
-			if($conf->global->PRODUCT_USE_UNITS)
-			{
-				$pdf->MultiCell($this->posxunit-$this->posxqty-1, 2, $outputlangs->transnoentities("Qty"), '', 'C');
-			}
-			else
-			{
-				$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 2, $outputlangs->transnoentities("Qty"), '', 'C');
-			}
+			$pdf->MultiCell($this->posxunit-$this->posxqty-1, 2, $outputlangs->transnoentities("Qty"), '', 'C');
 		}
 
 		if($conf->global->PRODUCT_USE_UNITS) {
@@ -932,6 +920,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Show payments table
@@ -942,7 +931,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *  @param  Translate           $outputlangs    Object langs for output
 	 *  @return int                                 <0 if KO, >0 if OK
 	 */
-	private function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
+	protected function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
         // phpcs:enable
 		global $conf;
@@ -1025,6 +1014,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *  Show top header of page.
 	 *
@@ -1034,7 +1024,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *  @param  Translate           $outputlangs    Object lang for output
 	 *  @return void
 	 */
-	private function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $langs, $conf, $mysoc;
 
@@ -1238,6 +1228,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		return $top_shift;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      *  Show footer of page. Need this->emetteur object
      *
@@ -1247,7 +1238,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
      *  @param  int                 $hidefreetext       1=Hide free text
      *  @return int                                     Return height of bottom margin including footer text
      */
-    private function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+    protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
     {
         global $conf;
         $showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;

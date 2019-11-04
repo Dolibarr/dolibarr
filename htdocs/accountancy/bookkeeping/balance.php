@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016       Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2016       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2016-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -15,13 +15,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
 /**
  *  \file 		htdocs/accountancy/bookkeeping/balance.php
- *  \ingroup 	Advanced accountancy
+ *  \ingroup 	Accountancy (Double entries)
  *  \brief 		Balance of book keeping
  */
 
@@ -164,7 +164,7 @@ if ($action == 'export_csv')
 		print $object->get_compte_desc($line->numero_compte) . $sep;
 		print price($line->debit) . $sep;
 		print price($line->credit) . $sep;
-		print price($line->credit - $line->debit) . $sep;
+		print price($line->debit - $line->credit) . $sep;
 		print "\n";
 	}
 
@@ -265,7 +265,7 @@ if ($action != 'export_csv')
 		$description = $object->get_compte_desc($line->numero_compte); // Search description of the account
 		$root_account_description = $object->get_compte_racine($line->numero_compte);
 		if (empty($description)) {
-			$link = '<a href="../admin/card.php?action=create&accountingaccount=' . length_accountg($line->numero_compte) . '">' . img_edit_add() . '</a>';
+			$link = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/card.php?action=create&accountingaccount=' . length_accountg($line->numero_compte) . '">' . img_edit_add() . '</a>';
 		}
 		print '<tr class="oddeven">';
 
@@ -279,8 +279,8 @@ if ($action != 'export_csv')
 				print '</tr>';
 			}
 
-			// Affiche le compte comptable en debut de ligne
-			print "<tr>";
+			// Show first line of a break
+			print '<tr class="trforbreak">';
 			print '<td colspan="6" style="font-weight:bold; border-bottom: 1pt solid black;">' . $line->numero_compte . ($root_account_description ? ' - ' . $root_account_description : '') . '</td>';
 			print '</tr>';
 
@@ -293,9 +293,9 @@ if ($action != 'export_csv')
 
 		print '<td>' . length_accountg($line->numero_compte) . '</td>';
 		print '<td>' . $description . '</td>';
-		print '<td class="right">' . price($line->debit) . '</td>';
-		print '<td class="right">' . price($line->credit) . '</td>';
-		print '<td class="right">' . price($line->credit - $line->debit) . '</td>';
+		print '<td class="nowraponall right">' . price($line->debit) . '</td>';
+		print '<td class="nowraponall right">' . price($line->credit) . '</td>';
+		print '<td class="nowraponall right">' . price($line->debit - $line->credit) . '</td>';
 		print '<td class="center">' . $link;
 		print '</td>';
 		print "</tr>\n";
@@ -305,11 +305,11 @@ if ($action != 'export_csv')
 		$sous_total_credit += $line->credit;
 	}
 
-	print '<tr class="liste_total"><td class="right" colspan="2">' . $langs->trans("SubTotal") . ':</td><td class="nowrap right">' . price($sous_total_debit) . '</td><td class="nowrap right">' . price($sous_total_credit) . '</td><td class="nowrap right">' . price(price2num($sous_total_credit - $sous_total_debit)) . '</td>';
+	print '<tr class="liste_total"><td class="right" colspan="2">' . $langs->trans("SubTotal") . ':</td><td class="nowrap right">' . price($sous_total_debit) . '</td><td class="nowrap right">' . price($sous_total_credit) . '</td><td class="nowrap right">' . price(price2num($sous_total_debit - $sous_total_credit)) . '</td>';
 	print "<td>&nbsp;</td>\n";
 	print '</tr>';
 
-	print '<tr class="liste_total"><td class="right" colspan="2">' . $langs->trans("AccountBalance") . ':</td><td class="nowrap right">' . price($total_debit) . '</td><td class="nowrap right">' . price($total_credit) . '</td><td class="nowrap right">' . price(price2num($total_credit - $total_debit)) . '</td>';
+	print '<tr class="liste_total"><td class="right" colspan="2">' . $langs->trans("AccountBalance") . ':</td><td class="nowrap right">' . price($total_debit) . '</td><td class="nowrap right">' . price($total_credit) . '</td><td class="nowrap right">' . price(price2num($total_debit - $total_credit)) . '</td>';
 	print "<td>&nbsp;</td>\n";
 	print '</tr>';
 

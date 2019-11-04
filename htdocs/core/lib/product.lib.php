@@ -16,8 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -98,7 +98,6 @@ function product_prepare_head($object)
 	$h++;
 
 	if (!empty($conf->variants->enabled) && ($object->isProduct() || $object->isService())) {
-
 		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
@@ -124,6 +123,25 @@ function product_prepare_head($object)
             $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$object->id;
             $head[$h][1] = $langs->trans("Stock");
             $head[$h][2] = 'stock';
+            $h++;
+        }
+    }
+
+    // Tab to link resources
+    if (!empty($conf->resource->enabled))
+    {
+        if ($object->isProduct() && ! empty($conf->global->RESOURCE_ON_PRODUCTS))
+        {
+            $head[$h][0] = DOL_URL_ROOT . '/resource/element_resource.php?element=product&ref=' . $object->ref;
+            $head[$h][1] = $langs->trans("Resources");
+            $head[$h][2] = 'resources';
+            $h++;
+        }
+        if ($object->isService() && ! empty($conf->global->RESOURCE_ON_SERVICES))
+        {
+            $head[$h][0] = DOL_URL_ROOT . '/resource/element_resource.php?element=service&ref=' . $object->ref;
+            $head[$h][1] = $langs->trans("Resources");
+            $head[$h][2] = 'resources';
             $h++;
         }
     }
@@ -154,7 +172,7 @@ function product_prepare_head($object)
     if (! empty($conf->service->enabled) && ($object->type==Product::TYPE_SERVICE)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
     $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
-        if (! empty($conf->product->enabled) && ($object->type==Product::TYPE_PRODUCT)) $upload_dir = $conf->produit->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
+        if (! empty($conf->product->enabled) && ($object->type==Product::TYPE_PRODUCT)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
         if (! empty($conf->service->enabled) && ($object->type==Product::TYPE_SERVICE)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
         $nbFiles += count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
     }
@@ -271,6 +289,11 @@ function product_admin_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$head[$h][2] = 'attributes';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_supplier_extrafields.php';
+	$head[$h][1] = $langs->trans("ProductSupplierExtraFields");
+	$head[$h][2] = 'supplierAttributes';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'product_admin', 'remove');
@@ -462,29 +485,61 @@ function show_stats_for_company($product, $socid)
 }
 
 /**
+ *	Return translation label of a unit key.
+ *  Function kept for backward compatibility.
+ *
+ *  @param	string  $scale				 Scale of unit: '0', '-3', '6', ...
+ *	@param  string	$measuring_style     Style of unit: weight, volume,...
+ *	@param	int		$unit                ID of unit (rowid in llx_c_units table)
+ *  @param	int		$use_short_label	 1=Use short label ('g' instead of 'gram'). Short labels are not translated.
+ *	@return	string	   			         Unit string
+ * 	@see	measuringUnitString() formproduct->selectMeasuringUnits()
+ */
+function measuring_units_string($scale = '', $measuring_style = '', $unit = 0, $use_short_label = 0)
+{
+	return measuringUnitString($unit, $measuring_style, $scale, $use_short_label);
+}
+
+/**
  *	Return translation label of a unit key
  *
- *	@param	int		$unit                Unit key (-3,0,3,98,99...)
+ *	@param	int		$unit                ID of unit (rowid in llx_c_units table)
  *	@param  string	$measuring_style     Style of unit: weight, volume,...
+ *  @param	string  $scale				 Scale of unit: '0', '-3', '6', ...
+ *  @param	int		$use_short_label	 1=Use short label ('g' instead of 'gram'). Short labels are not translated.
  *	@return	string	   			         Unit string
- * 	@see	formproduct->selectMeasuringUnits
+ * 	@see	formproduct->selectMeasuringUnits()
  */
-function measuring_units_string($unit, $measuring_style = '')
+function measuringUnitString($unit, $measuring_style = '', $scale = '', $use_short_label = 0)
 {
 	global $langs, $db;
 	require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 	$measuringUnits= new CUnits($db);
-	$result = $measuringUnits->fetchAll('', '', 0, 0, array(
-			't.code' => $unit,
+
+	if ($scale !== '')
+	{
+		$arrayforfilter = array(
+			't.scale' => $scale,
 			't.unit_type' => $measuring_style,
 			't.active' => 1
-	));
+		);
+	}
+	else
+	{
+		$arrayforfilter = array(
+			't.rowid' => $unit,
+			't.unit_type' => $measuring_style,
+			't.active' => 1
+		);
+	}
+	$result = $measuringUnits->fetchAll('', '', 0, 0, $arrayforfilter);
 
 	if ($result<0) {
 		return -1;
 	} else {
 		if (is_array($measuringUnits->records) && count($measuringUnits->records)>0) {
-			return $langs->transnoentitiesnoconv($measuringUnits->records[key($measuringUnits->records)]->label);
+			if ($use_short_label) return $measuringUnits->records[key($measuringUnits->records)]->short_label;
+			else return $langs->transnoentitiesnoconv($measuringUnits->records[key($measuringUnits->records)]->label);
 		} else {
 			return '';
 		}
@@ -492,9 +547,9 @@ function measuring_units_string($unit, $measuring_style = '')
 }
 
 /**
- *	Transform a given unit into the square of that unit, if known
+ *	Transform a given unit scale into the square of that unit, if known.
  *
- *	@param	int		$unit            Unit key (-3,-2,-1,0,98,99...)
+ *	@param	int		$unit            Unit scale key (-3,-2,-1,0,98,99...)
  *	@return	int	   			         Squared unit key (-6,-4,-2,0,98,99...)
  * 	@see	formproduct->selectMeasuringUnits
  */
@@ -512,9 +567,9 @@ function measuring_units_squared($unit)
 
 
 /**
- *	Transform a given unit into the cube of that unit, if known
+ *	Transform a given unit scale into the cube of that unit, if known
  *
- *	@param	int		$unit            Unit key (-3,-2,-1,0,98,99...)
+ *	@param	int		$unit            Unit scale key (-3,-2,-1,0,98,99...)
  *	@return	int	   			         Cubed unit key (-9,-6,-3,0,88,89...)
  * 	@see	formproduct->selectMeasuringUnits
  */

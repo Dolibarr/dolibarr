@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Upgrade2 scripts can be ran from command line with syntax:
  *
@@ -64,7 +64,10 @@ $error = 0;
 // Ne fonctionne que si on est pas en safe_mode.
 $err=error_reporting();
 error_reporting(0);
-@set_time_limit(300);
+if (! empty($conf->global->MAIN_OVERRIDE_TIME_LIMIT))
+	@set_time_limit((int) $conf->global->MAIN_OVERRIDE_TIME_LIMIT);
+else
+	@set_time_limit(600);
 error_reporting($err);
 
 $setuplang=GETPOST("selectlang", 'aZ09', 3)?GETPOST("selectlang", 'aZ09', 3):'auto';
@@ -699,8 +702,8 @@ function migrate_paiements_orphelins_1($db, $langs, $conf)
         $sql = "SELECT distinct p.rowid, p.datec, p.amount as pamount, bu.fk_bank, b.amount as bamount,";
         $sql.= " bu2.url_id as socid";
         $sql.= " FROM (".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."bank_url as bu, ".MAIN_DB_PREFIX."bank as b)";
-        $sql.= " LEFT JOIN llx_paiement_facture as pf ON pf.fk_paiement = p.rowid";
-        $sql.= " LEFT JOIN llx_bank_url as bu2 ON (bu.fk_bank=bu2.fk_bank AND bu2.type = 'company')";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON pf.fk_paiement = p.rowid";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu2 ON (bu.fk_bank=bu2.fk_bank AND bu2.type = 'company')";
         $sql.= " WHERE pf.rowid IS NULL AND (p.rowid=bu.url_id AND bu.type='payment') AND bu.fk_bank = b.rowid";
         $sql.= " AND b.rappro = 1";
         $sql.= " AND (p.fk_facture = 0 OR p.fk_facture IS NULL)";
@@ -826,8 +829,8 @@ function migrate_paiements_orphelins_2($db, $langs, $conf)
         $sql = "SELECT distinct p.rowid, p.datec, p.amount as pamount, bu.fk_bank, b.amount as bamount,";
         $sql.= " bu2.url_id as socid";
         $sql.= " FROM (".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."bank_url as bu, ".MAIN_DB_PREFIX."bank as b)";
-        $sql.= " LEFT JOIN llx_paiement_facture as pf ON pf.fk_paiement = p.rowid";
-        $sql.= " LEFT JOIN llx_bank_url as bu2 ON (bu.fk_bank = bu2.fk_bank AND bu2.type = 'company')";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON pf.fk_paiement = p.rowid";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu2 ON (bu.fk_bank = bu2.fk_bank AND bu2.type = 'company')";
         $sql.= " WHERE pf.rowid IS NULL AND (p.fk_bank = bu.fk_bank AND bu.type = 'payment') AND bu.fk_bank = b.rowid";
         $sql.= " AND (p.fk_facture = 0 OR p.fk_facture IS NULL)";
 
@@ -1089,7 +1092,7 @@ function migrate_links_transfert($db, $langs, $conf)
                 $sql.= "fk_bank, url_id, url, label, type";
                 $sql.= ")";
                 $sql.= " VALUES (";
-                $sql.= $obj->barowid.",".$obj->bbrowid.", '/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert'";
+                $sql.= $obj->barowid.",".$obj->bbrowid.", '/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert'";
                 $sql.= ")";
 
                 print $sql.'<br>';
@@ -1143,7 +1146,7 @@ function migrate_contracts_date1($db, $langs, $conf)
     print '<br>';
     print '<b>'.$langs->trans('MigrationContractsEmptyDatesUpdate')."</b><br>\n";
 
-    $sql="update llx_contrat set date_contrat=tms where date_contrat is null";
+    $sql="update ".MAIN_DB_PREFIX."contrat set date_contrat=tms where date_contrat is null";
     dolibarr_install_syslog("upgrade2::migrate_contracts_date1");
     $resql = $db->query($sql);
     if (! $resql) dol_print_error($db);
@@ -1152,7 +1155,7 @@ function migrate_contracts_date1($db, $langs, $conf)
     else
     print $langs->trans('MigrationContractsEmptyDatesNothingToUpdate')."<br>\n";
 
-    $sql="update llx_contrat set datec=tms where datec is null";
+    $sql="update ".MAIN_DB_PREFIX."contrat set datec=tms where datec is null";
     dolibarr_install_syslog("upgrade2::migrate_contracts_date1");
     $resql = $db->query($sql);
     if (! $resql) dol_print_error($db);
@@ -1243,7 +1246,7 @@ function migrate_contracts_date3($db, $langs, $conf)
     print '<br>';
     print '<b>'.$langs->trans('MigrationContractsIncoherentCreationDateUpdate')."</b><br>\n";
 
-    $sql="update llx_contrat set datec=date_contrat where datec is null or datec > date_contrat";
+    $sql="update ".MAIN_DB_PREFIX."contrat set datec=date_contrat where datec is null or datec > date_contrat";
     dolibarr_install_syslog("upgrade2::migrate_contracts_date3");
     $resql = $db->query($sql);
     if (! $resql) dol_print_error($db);
@@ -1270,7 +1273,7 @@ function migrate_contracts_open($db, $langs, $conf)
     print '<br>';
     print '<b>'.$langs->trans('MigrationReopeningContracts')."</b><br>\n";
 
-    $sql = "SELECT c.rowid as cref FROM llx_contrat as c, llx_contratdet as cd";
+    $sql = "SELECT c.rowid as cref FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."contratdet as cd";
     $sql.= " WHERE cd.statut = 4 AND c.statut=2 AND c.rowid=cd.fk_contrat";
     dolibarr_install_syslog("upgrade2::migrate_contracts_open");
     $resql = $db->query($sql);
@@ -1432,7 +1435,7 @@ function migrate_paiementfourn_facturefourn($db, $langs, $conf)
 }
 
 /**
- * Mise a jour des totaux lignes de facture
+ * Update total of invoice lines
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -1453,7 +1456,7 @@ function migrate_price_facture($db, $langs, $conf)
     print '<br>';
     print '<b>'.$langs->trans('MigrationInvoice')."</b><br>\n";
 
-    // Liste des lignes facture non a jour
+    // List of invoice lines not up to date
     $sql = "SELECT fd.rowid, fd.qty, fd.subprice, fd.remise_percent, fd.tva_tx as vatrate, fd.total_ttc, fd.info_bits,";
     $sql.= " f.rowid as facid, f.remise_percent as remise_percent_global, f.total_ttc as total_ttc_f";
     $sql.= " FROM ".MAIN_DB_PREFIX."facturedet as fd, ".MAIN_DB_PREFIX."facture as f";
@@ -1551,7 +1554,7 @@ function migrate_price_facture($db, $langs, $conf)
 }
 
 /**
- * Mise a jour des totaux lignes de propal
+ * Update total of proposal lines
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -1570,7 +1573,7 @@ function migrate_price_propal($db, $langs, $conf)
     print '<br>';
     print '<b>'.$langs->trans('MigrationProposal')."</b><br>\n";
 
-    // Liste des lignes propal non a jour
+    // List of proposal lines not up to date
     $sql = "SELECT pd.rowid, pd.qty, pd.subprice, pd.remise_percent, pd.tva_tx as vatrate, pd.info_bits,";
     $sql.= " p.rowid as propalid, p.remise_percent as remise_percent_global";
     $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."propal as p";
@@ -1679,7 +1682,7 @@ function migrate_price_contrat($db, $langs, $conf)
     print '<br>';
     print '<b>'.$langs->trans('MigrationContract')."</b><br>\n";
 
-    // Liste des lignes contrat non a jour
+    // List of contract lines not up to date
     $sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as vatrate, cd.info_bits,";
     $sql.= " c.rowid as contratid";
     $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c";
@@ -1748,7 +1751,7 @@ function migrate_price_contrat($db, $langs, $conf)
 }
 
 /**
- * Mise a jour des totaux lignes de commande
+ * Update total of sales order lines
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -1767,7 +1770,7 @@ function migrate_price_commande($db, $langs, $conf)
     print '<br>';
     print '<b>'.$langs->trans('MigrationOrder')."</b><br>\n";
 
-    // Liste des lignes commande non a jour
+    // List of sales orders lines not up to date
     $sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as vatrate, cd.info_bits,";
     $sql.= " c.rowid as commandeid, c.remise_percent as remise_percent_global";
     $sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."commande as c";
@@ -1865,7 +1868,7 @@ function migrate_price_commande($db, $langs, $conf)
 }
 
 /**
- * Mise a jour des totaux lignes de commande fournisseur
+ * Update total of purchase order lines
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -1884,7 +1887,7 @@ function migrate_price_commande_fournisseur($db, $langs, $conf)
     print '<br>';
     print '<b>'.$langs->trans('MigrationSupplierOrder')."</b><br>\n";
 
-    // Liste des lignes commande non a jour
+    // List of purchase order lines not up to date
     $sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as vatrate, cd.info_bits,";
     $sql.= " c.rowid as commandeid, c.remise_percent as remise_percent_global";
     $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd, ".MAIN_DB_PREFIX."commande_fournisseur as c";
@@ -2003,7 +2006,7 @@ function migrate_modeles($db, $langs, $conf)
         if (count($modellist)==0)
         {
             // Aucun model par defaut.
-            $sql=" insert into llx_document_model(nom,type) values('crabe','invoice')";
+            $sql=" insert into ".MAIN_DB_PREFIX."document_model(nom,type) values('crabe','invoice')";
             $resql = $db->query($sql);
             if (! $resql) dol_print_error($db);
         }
@@ -2016,7 +2019,7 @@ function migrate_modeles($db, $langs, $conf)
         if (count($modellist)==0)
         {
             // Aucun model par defaut.
-            $sql=" insert into llx_document_model(nom,type) values('einstein','order')";
+            $sql=" insert into ".MAIN_DB_PREFIX."document_model(nom,type) values('einstein','order')";
             $resql = $db->query($sql);
             if (! $resql) dol_print_error($db);
         }
@@ -2029,7 +2032,7 @@ function migrate_modeles($db, $langs, $conf)
         if (count($modellist)==0)
         {
             // Aucun model par defaut.
-            $sql=" insert into llx_document_model(nom,type) values('rouget','shipping')";
+            $sql=" insert into ".MAIN_DB_PREFIX."document_model(nom,type) values('rouget','shipping')";
             $resql = $db->query($sql);
             if (! $resql) dol_print_error($db);
         }
@@ -2373,7 +2376,6 @@ function migrate_stocks($db, $langs, $conf)
                 $resql2=$db->query($sql);
                 if ($resql2)
                 {
-
                 }
                 else
                 {
@@ -2450,7 +2452,6 @@ function migrate_menus($db, $langs, $conf)
                     $resql2=$db->query($sql);
                     if ($resql2)
                     {
-
                     }
                     else
                     {

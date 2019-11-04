@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -94,8 +94,14 @@ if (empty($modetax)) $modetax=0;
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
+
+if (empty($local))
+{
+	accessforbidden('Parameter localTaxType is missing');
+	exit;
+}
 
 
 
@@ -122,9 +128,10 @@ foreach ($listofparams as $param)
 
 llxHeader('', $langs->trans("LocalTaxReport"), '', '', 0, 0, '', '', $morequerystring);
 
-$fsearch.='  <input type="hidden" name="year" value="'.$year.'">';
-$fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
-$fsearch.='  <input type="hidden" name="localTaxType" value="'.$local.'">';
+$fsearch = '<!-- hidden fields for form -->';
+$fsearch.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+$fsearch.= '<input type="hidden" name="modetax" value="'.$modetax.'">';
+$fsearch.= '<input type="hidden" name="localTaxType" value="'.$local.'">';
 
 $name=$langs->transcountry($local==1?"LT1ReportByQuarters":"LT2ReportByQuarters", $mysoc->country_code);
 $calcmode='';
@@ -161,7 +168,7 @@ if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	$description.='<br>'.$langs->trans("DepositsAreNotIncluded");
 }
 */
-if (! empty($conf->global->MAIN_MODULE_ACCOUNTING)) $description.='<br>'.$langs->trans("ThisIsAnEstimatedValue");
+if (! empty($conf->global->MAIN_MODULE_ACCOUNTING)) $description.=$langs->trans("ThisIsAnEstimatedValue");
 
 // Customers invoices
 $elementcust=$langs->trans("CustomersInvoices");
@@ -170,7 +177,7 @@ $amountcust=$langs->trans("AmountHT");
 $vatcust=$langs->trans("VATReceived");
 $namecust=$langs->trans("Name");
 if ($mysoc->tva_assuj) {
-	$vatcust.=' ('.$langs->trans("ToPay").')';
+	$vatcust.=' ('.$langs->trans("StatusToPay").')';
 }
 
 // Suppliers invoices
@@ -186,15 +193,14 @@ if ($mysoc->tva_assuj) {
 
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 
-
 if($local==1){
-	$vatcust=$langs->transcountry("LocalTax1", $mysoc->country_code);
-	$vatsup=$langs->transcountry("LocalTax1", $mysoc->country_code);
-	$vatexpensereport=$langs->transcountry("LocalTax1", $mysoc->country_code);
+	$vatcust=$langs->transcountry("LT1", $mysoc->country_code);
+	$vatsup=$langs->transcountry("LT1", $mysoc->country_code);
+	$vatexpensereport=$langs->transcountry("LT1", $mysoc->country_code);
 }else{
-	$vatcust=$langs->transcountry("LocalTax2", $mysoc->country_code);
-	$vatsup=$langs->transcountry("LocalTax2", $mysoc->country_code);
-	$vatexpensereport=$langs->transcountry("LocalTax2", $mysoc->country_code);
+	$vatcust=$langs->transcountry("LT2", $mysoc->country_code);
+	$vatsup=$langs->transcountry("LT2", $mysoc->country_code);
+	$vatexpensereport=$langs->transcountry("LT2", $mysoc->country_code);
 }
 
 // VAT Received and paid
@@ -314,323 +320,318 @@ else
 	$span=$columns;
 	if ($modetax != 1) $span+=2;
 
-	//if ($modetax == 0 || $modetax == 2)
-	//{
-		// Customers invoices
-		print '<tr class="liste_titre">';
-		print '<td class="left">'.$elementcust.'</td>';
-		print '<td class="left">'.$productcust.'</td>';
-		if ($modetax != 2) print '<td class="right">'.$amountcust.'</td>';
-		if ($modetax != 1) print '<td class="right">'.$langs->trans("Payment").' ('.$langs->trans("PercentOfInvoice").')</td>';
-		print '<td class="right">'.$langs->trans("BI").'</td>';
-		print '<td class="right">'.$vatcust.'</td>';
-		print '</tr>';
+	// Customers invoices
+	print '<tr class="liste_titre">';
+	print '<td class="left">'.$elementcust.'</td>';
+	print '<td class="left">'.$productcust.'</td>';
+	if ($modetax != 2) print '<td class="right">'.$amountcust.'</td>';
+	if ($modetax != 1) print '<td class="right">'.$langs->trans("Payment").' ('.$langs->trans("PercentOfInvoice").')</td>';
+	print '<td class="right">'.$langs->trans("BI").'</td>';
+	print '<td class="right">'.$vatcust.'</td>';
+	print '</tr>';
 
 
-		$LT=0;
-		$sameLT=false;
-		foreach(array_keys($x_coll) as $rate)
+	$LT=0;
+	$sameLT=false;
+	foreach(array_keys($x_coll) as $rate)
+	{
+		$subtot_coll_total_ht = 0;
+		$subtot_coll_vat = 0;
+
+		if (is_array($x_both[$rate]['coll']['detail']))
 		{
-			$subtot_coll_total_ht = 0;
-			$subtot_coll_vat = 0;
-
-			if (is_array($x_both[$rate]['coll']['detail']))
+			// VAT Rate
+			if($rate!=0){
+				print "<tr>";
+				print '<td class="tax_rate">'.$langs->trans("Rate").': '.vatrate($rate).'%</td><td colspan="'.$span.'"></td>';
+				print '</tr>'."\n";
+			}
+			foreach($x_both[$rate]['coll']['detail'] as $index => $fields)
 			{
-				// VAT Rate
-				if($rate!=0){
-					print "<tr>";
-					print '<td class="tax_rate">'.$langs->trans("Rate").': '.vatrate($rate).'%</td><td colspan="'.$span.'"></td>';
-					print '</tr>'."\n";
-				}
-				foreach($x_both[$rate]['coll']['detail'] as $index => $fields)
+				if(($local==1 && $fields['localtax1']!=0) || ($local==2 && $fields['localtax2']!=0))
 				{
-					if(($local==1 && $fields['localtax1']!=0) || ($local==2 && $fields['localtax2']!=0))
+					// Define type
+					$type=($fields['dtype']?$fields['dtype']:$fields['ptype']);
+					// Try to enhance type detection using date_start and date_end for free lines where type
+					// was not saved.
+					if (! empty($fields['ddate_start'])) $type=1;
+					if (! empty($fields['ddate_end'])) $type=1;
+
+
+					print '<tr class="oddeven">';
+
+					// Ref
+					print '<td class="nowrap left">'.$fields['link'].'</td>';
+
+					// Description
+					print '<td class="left">';
+					if ($fields['pid'])
 					{
-						// Define type
-						$type=($fields['dtype']?$fields['dtype']:$fields['ptype']);
-						// Try to enhance type detection using date_start and date_end for free lines where type
-						// was not saved.
-						if (! empty($fields['ddate_start'])) $type=1;
-						if (! empty($fields['ddate_end'])) $type=1;
-
-
-						print '<tr class="oddeven">';
-
-						// Ref
-						print '<td class="nowrap left">'.$fields['link'].'</td>';
-
-						// Description
-						print '<td class="left">';
-						if ($fields['pid'])
-						{
-							$product_static->id=$fields['pid'];
-							$product_static->ref=$fields['pref'];
-							$product_static->type=$fields['ptype'];
-							print $product_static->getNomUrl(1);
-							if (dol_string_nohtmltag($fields['descr'])) print ' - '.dol_trunc(dol_string_nohtmltag($fields['descr']), 16);
-						}
-						else
-						{
-							if ($type) $text = img_object($langs->trans('Service'), 'service');
-							else $text = img_object($langs->trans('Product'), 'product');
-				            if (preg_match('/^\((.*)\)$/', $fields['descr'], $reg))
-				            {
-				                if ($reg[1]=='DEPOSIT') $fields['descr']=$langs->transnoentitiesnoconv('Deposit');
-				                elseif ($reg[1]=='CREDIT_NOTE') $fields['descr']=$langs->transnoentitiesnoconv('CreditNote');
-				                else $fields['descr']=$langs->transnoentitiesnoconv($reg[1]);
-				            }
-							print $text.' '.dol_trunc(dol_string_nohtmltag($fields['descr']), 16);
-
-							// Show range
-							print_date_range($fields['ddate_start'], $fields['ddate_end']);
-						}
-						print '</td>';
-
-						// Total HT
-						if ($modetax != 2)
-						{
-							print '<td class="nowrap right">';
-							print price($fields['totalht']);
-							if (price2num($fields['ftotal_ttc']))
-							{
-								$ratiolineinvoice=($fields['dtotal_ttc']/$fields['ftotal_ttc']);
-							}
-							print '</td>';
-						}
-
-						// Payment
-						$ratiopaymentinvoice=1;
-						if ($modetax != 1)
-						{
-							if (isset($fields['payment_amount']) && $fields['ftotal_ttc']) $ratiopaymentinvoice=($fields['payment_amount']/$fields['ftotal_ttc']);
-							print '<td class="nowrap right">';
-							if ($fields['payment_amount'] && $fields['ftotal_ttc'])
-							{
-								$payment_static->id=$fields['payment_id'];
-								print $payment_static->getNomUrl(2);
-							}
-							if ($type == 0)
-							{
-								print $langs->trans("NotUsedForGoods");
-							}
-							else {
-								print price($fields['payment_amount']);
-								if (isset($fields['payment_amount'])) print ' ('.round($ratiopaymentinvoice*100, 2).'%)';
-							}
-							print '</td>';
-						}
-
-						// Total collected
-						print '<td class="nowrap right">';
-						$temp_ht=$fields['totalht'];
-						if ($type == 1) $temp_ht=$fields['totalht']*$ratiopaymentinvoice;
-						print price(price2num($temp_ht, 'MT'));
-						print '</td>';
-
-						// Localtax
-						print '<td class="nowrap right">';
-						$temp_vat= $local==1?$fields['localtax1']:$fields['localtax2'];
-						print price(price2num($temp_vat, 'MT'));
-						//print price($fields['vat']);
-						print '</td>';
-						print '</tr>';
-
-						$subtot_coll_total_ht += $temp_ht;
-						$subtot_coll_vat      += $temp_vat;
-						$x_coll_sum           += $temp_vat;
+						$product_static->id=$fields['pid'];
+						$product_static->ref=$fields['pref'];
+						$product_static->type=$fields['ptype'];
+						print $product_static->getNomUrl(1);
+						if (dol_string_nohtmltag($fields['descr'])) print ' - '.dol_trunc(dol_string_nohtmltag($fields['descr']), 16);
 					}
+					else
+					{
+						if ($type) $text = img_object($langs->trans('Service'), 'service');
+						else $text = img_object($langs->trans('Product'), 'product');
+			            if (preg_match('/^\((.*)\)$/', $fields['descr'], $reg))
+			            {
+			                if ($reg[1]=='DEPOSIT') $fields['descr']=$langs->transnoentitiesnoconv('Deposit');
+			                elseif ($reg[1]=='CREDIT_NOTE') $fields['descr']=$langs->transnoentitiesnoconv('CreditNote');
+			                else $fields['descr']=$langs->transnoentitiesnoconv($reg[1]);
+			            }
+						print $text.' '.dol_trunc(dol_string_nohtmltag($fields['descr']), 16);
+
+						// Show range
+						print_date_range($fields['ddate_start'], $fields['ddate_end']);
+					}
+					print '</td>';
+
+					// Total HT
+					if ($modetax != 2)
+					{
+						print '<td class="nowrap right">';
+						print price($fields['totalht']);
+						if (price2num($fields['ftotal_ttc']))
+						{
+							$ratiolineinvoice=($fields['dtotal_ttc']/$fields['ftotal_ttc']);
+						}
+						print '</td>';
+					}
+
+					// Payment
+					$ratiopaymentinvoice=1;
+					if ($modetax != 1)
+					{
+						if (isset($fields['payment_amount']) && $fields['ftotal_ttc']) $ratiopaymentinvoice=($fields['payment_amount']/$fields['ftotal_ttc']);
+						print '<td class="nowrap right">';
+						if ($fields['payment_amount'] && $fields['ftotal_ttc'])
+						{
+							$payment_static->id=$fields['payment_id'];
+							print $payment_static->getNomUrl(2);
+						}
+						if ($type == 0)
+						{
+							print $langs->trans("NotUsedForGoods");
+						}
+						else {
+							print price($fields['payment_amount']);
+							if (isset($fields['payment_amount'])) print ' ('.round($ratiopaymentinvoice*100, 2).'%)';
+						}
+						print '</td>';
+					}
+
+					// Total collected
+					print '<td class="nowrap right">';
+					$temp_ht=$fields['totalht'];
+					if ($type == 1) $temp_ht=$fields['totalht']*$ratiopaymentinvoice;
+					print price(price2num($temp_ht, 'MT'));
+					print '</td>';
+
+					// Localtax
+					print '<td class="nowrap right">';
+					$temp_vat= $local==1?$fields['localtax1']:$fields['localtax2'];
+					print price(price2num($temp_vat, 'MT'));
+					//print price($fields['vat']);
+					print '</td>';
+					print '</tr>';
+
+					$subtot_coll_total_ht += $temp_ht;
+					$subtot_coll_vat      += $temp_vat;
+					$x_coll_sum           += $temp_vat;
 				}
 			}
-
-		    // Total customers for this vat rate
-		    print '<tr class="liste_total">';
-		    print '<td></td>';
-		    print '<td class="right">'.$langs->trans("Total").':</td>';
-		    if ($modetax != 1)
-		    {
-		        print '<td class="nowrap right">&nbsp;</td>';
-		        print '<td class="right">&nbsp;</td>';
-		    }
-		    print '<td class="right">'.price(price2num($subtot_coll_total_ht, 'MT')).'</td>';
-		    print '<td class="nowrap right">'.price(price2num($subtot_coll_vat, 'MT')).'</td>';
-		    print '</tr>';
 		}
 
-	    if (count($x_coll) == 0)   // Show a total ine if nothing shown
+	    // Total customers for this vat rate
+	    print '<tr class="liste_total">';
+	    print '<td></td>';
+	    print '<td class="right">'.$langs->trans("Total").':</td>';
+	    if ($modetax != 1)
 	    {
-	        print '<tr class="liste_total">';
-	        print '<td>&nbsp;</td>';
-	        print '<td class="right">'.$langs->trans("Total").':</td>';
-	        if ($modetax == 0)
-	        {
-	            print '<td class="nowrap right">&nbsp;</td>';
-	            print '<td class="right">&nbsp;</td>';
-	        }
-	        print '<td class="right">'.price(price2num(0, 'MT')).'</td>';
-	        print '<td class="nowrap right">'.price(price2num(0, 'MT')).'</td>';
-	        print '</tr>';
+	        print '<td class="nowrap right">&nbsp;</td>';
+	        print '<td class="right">&nbsp;</td>';
 	    }
+	    print '<td class="right">'.price(price2num($subtot_coll_total_ht, 'MT')).'</td>';
+	    print '<td class="nowrap right">'.price(price2num($subtot_coll_vat, 'MT')).'</td>';
+	    print '</tr>';
+	}
 
-	    // Blank line
-		print '<tr><td colspan="'.($span+1).'">&nbsp;</td></tr>';
-		print '</table>';
-		$diff=$x_coll_sum;
-	//}
+    if (count($x_coll) == 0)   // Show a total ine if nothing shown
+    {
+        print '<tr class="liste_total">';
+        print '<td>&nbsp;</td>';
+        print '<td class="right">'.$langs->trans("Total").':</td>';
+        if ($modetax == 0)
+        {
+            print '<td class="nowrap right">&nbsp;</td>';
+            print '<td class="right">&nbsp;</td>';
+        }
+        print '<td class="right">'.price(price2num(0, 'MT')).'</td>';
+        print '<td class="nowrap right">'.price(price2num(0, 'MT')).'</td>';
+        print '</tr>';
+    }
 
-	//if($conf->global->$calc ==0 || $conf->global->$calc == 1){
-		echo '<table class="noborder" width="100%">';
-		//print table headers for this quadri - expenses now
-		print '<tr class="liste_titre">';
-		print '<td class="left">'.$elementsup.'</td>';
-		print '<td class="left">'.$productsup.'</td>';
-		if ($modetax != 1)
+    // Blank line
+	print '<tr><td colspan="'.($span+1).'">&nbsp;</td></tr>';
+	print '</table>';
+	$diff=$x_coll_sum;
+
+	echo '<table class="noborder" width="100%">';
+	//print table headers for this quadri - expenses now
+	print '<tr class="liste_titre">';
+	print '<td class="left">'.$elementsup.'</td>';
+	print '<td class="left">'.$productsup.'</td>';
+	if ($modetax != 1)
+	{
+		print '<td class="right">'.$amountsup.'</td>';
+		print '<td class="right">'.$langs->trans("Payment").' ('.$langs->trans("PercentOfInvoice").')</td>';
+	}
+	print '<td class="right">'.$langs->trans("BI").'</td>';
+	print '<td class="right">'.$vatsup.'</td>';
+	print '</tr>'."\n";
+
+	foreach(array_keys($x_paye) as $rate)
+	{
+		$subtot_paye_total_ht = 0;
+		$subtot_paye_vat = 0;
+
+		if (is_array($x_both[$rate]['paye']['detail']))
 		{
-			print '<td class="right">'.$amountsup.'</td>';
-			print '<td class="right">'.$langs->trans("Payment").' ('.$langs->trans("PercentOfInvoice").')</td>';
-		}
-		print '<td class="right">'.$langs->trans("BI").'</td>';
-		print '<td class="right">'.$vatsup.'</td>';
-		print '</tr>'."\n";
-
-		foreach(array_keys($x_paye) as $rate)
-		{
-			$subtot_paye_total_ht = 0;
-			$subtot_paye_vat = 0;
-
-			if (is_array($x_both[$rate]['paye']['detail']))
+			if($rate!=0){
+				print "<tr>";
+				print '<td class="tax_rate">'.$langs->trans("Rate").': '.vatrate($rate).'%</td><td colspan="'.$span.'"></td>';
+				print '</tr>'."\n";
+			}
+			foreach($x_both[$rate]['paye']['detail'] as $index=>$fields)
 			{
-				if($rate!=0){
-					print "<tr>";
-					print '<td class="tax_rate">'.$langs->trans("Rate").': '.vatrate($rate).'%</td><td colspan="'.$span.'"></td>';
-					print '</tr>'."\n";
-				}
-				foreach($x_both[$rate]['paye']['detail'] as $index=>$fields)
+				if(($local==1 && $fields['localtax1']!=0) || ($local==2 && $fields['localtax2']!=0))
 				{
-					if(($local==1 && $fields['localtax1']!=0) || ($local==2 && $fields['localtax2']!=0))
+					// Define type
+					$type=($fields['dtype']?$fields['dtype']:$fields['ptype']);
+					// Try to enhance type detection using date_start and date_end for free lines where type
+					// was not saved.
+					if (! empty($fields['ddate_start'])) $type=1;
+					if (! empty($fields['ddate_end'])) $type=1;
+
+
+					print '<tr class="oddeven">';
+
+					// Ref
+					print '<td class="nowrap left">'.$fields['link'].'</td>';
+
+					// Description
+					print '<td class="left">';
+					if ($fields['pid'])
 					{
-						// Define type
-						$type=($fields['dtype']?$fields['dtype']:$fields['ptype']);
-						// Try to enhance type detection using date_start and date_end for free lines where type
-						// was not saved.
-						if (! empty($fields['ddate_start'])) $type=1;
-						if (! empty($fields['ddate_end'])) $type=1;
+						$product_static->id=$fields['pid'];
+						$product_static->ref=$fields['pref'];
+						$product_static->type=$fields['ptype'];
+						print $product_static->getNomUrl(1);
+						if (dol_string_nohtmltag($fields['descr'])) print ' - '.dol_trunc(dol_string_nohtmltag($fields['descr']), 16);
+					}
+					else
+					{
+						if ($type) $text = img_object($langs->trans('Service'), 'service');
+						else $text = img_object($langs->trans('Product'), 'product');
+						print $text.' '.dol_trunc(dol_string_nohtmltag($fields['descr']), 16);
 
+						// Show range
+						print_date_range($fields['ddate_start'], $fields['ddate_end']);
+					}
+					print '</td>';
 
-						print '<tr class="oddeven">';
-
-						// Ref
-						print '<td class="nowrap left">'.$fields['link'].'</td>';
-
-						// Description
-						print '<td class="left">';
-						if ($fields['pid'])
+					// Total HT
+					if ($modetax != 2)
+					{
+						print '<td class="nowrap right">';
+						print price($fields['totalht']);
+						if (price2num($fields['ftotal_ttc']))
 						{
-							$product_static->id=$fields['pid'];
-							$product_static->ref=$fields['pref'];
-							$product_static->type=$fields['ptype'];
-							print $product_static->getNomUrl(1);
-							if (dol_string_nohtmltag($fields['descr'])) print ' - '.dol_trunc(dol_string_nohtmltag($fields['descr']), 16);
+							//print $fields['dtotal_ttc']."/".$fields['ftotal_ttc']." - ";
+							$ratiolineinvoice=($fields['dtotal_ttc']/$fields['ftotal_ttc']);
+							//print ' ('.round($ratiolineinvoice*100,2).'%)';
+						}
+						print '</td>';
+					}
+
+					// Payment
+					$ratiopaymentinvoice=1;
+					if ($modetax != 1)
+					{
+						print '<td class="nowrap right">';
+						if (isset($fields['payment_amount']) && $fields['ftotal_ttc']) $ratiopaymentinvoice=($fields['payment_amount']/$fields['ftotal_ttc']);
+						if ($fields['payment_amount'] && $fields['ftotal_ttc'])
+						{
+							$paymentfourn_static->id=$fields['payment_id'];
+							print $paymentfourn_static->getNomUrl(2);
+						}
+						if ($type == 0)
+						{
+							print $langs->trans("NA");
 						}
 						else
 						{
-							if ($type) $text = img_object($langs->trans('Service'), 'service');
-							else $text = img_object($langs->trans('Product'), 'product');
-							print $text.' '.dol_trunc(dol_string_nohtmltag($fields['descr']), 16);
-
-							// Show range
-							print_date_range($fields['ddate_start'], $fields['ddate_end']);
+							print price(price2num($fields['payment_amount'], 'MT'));
+							if (isset($fields['payment_amount'])) {
+								print ' ('.round($ratiopaymentinvoice*100, 2).'%)';
+							}
 						}
 						print '</td>';
-
-						// Total HT
-						if ($modetax != 2)
-						{
-							print '<td class="nowrap right">';
-							print price($fields['totalht']);
-							if (price2num($fields['ftotal_ttc']))
-							{
-								//print $fields['dtotal_ttc']."/".$fields['ftotal_ttc']." - ";
-								$ratiolineinvoice=($fields['dtotal_ttc']/$fields['ftotal_ttc']);
-								//print ' ('.round($ratiolineinvoice*100,2).'%)';
-							}
-							print '</td>';
-						}
-
-						// Payment
-						$ratiopaymentinvoice=1;
-						if ($modetax != 1)
-						{
-							print '<td class="nowrap right">';
-							if (isset($fields['payment_amount']) && $fields['ftotal_ttc']) $ratiopaymentinvoice=($fields['payment_amount']/$fields['ftotal_ttc']);
-							if ($fields['payment_amount'] && $fields['ftotal_ttc'])
-							{
-								$paymentfourn_static->id=$fields['payment_id'];
-								print $paymentfourn_static->getNomUrl(2);
-							}
-							if ($type == 0)
-							{
-								print $langs->trans("NA");
-							}
-							else
-							{
-								print price(price2num($fields['payment_amount'], 'MT'));
-								if (isset($fields['payment_amount'])) {
-									print ' ('.round($ratiopaymentinvoice*100, 2).'%)';
-								}
-							}
-							print '</td>';
-						}
-
-						// VAT paid
-						print '<td class="nowrap right">';
-						$temp_ht=$fields['totalht']*$ratiopaymentinvoice;
-						print price(price2num($temp_ht, 'MT'), 1);
-						print '</td>';
-
-						// Localtax
-						print '<td class="nowrap right">';
-						$temp_vat=($local==1?$fields['localtax1']:$fields['localtax2'])*$ratiopaymentinvoice;
-						print price(price2num($temp_vat, 'MT'), 1);
-						//print price($fields['vat']);
-						print '</td>';
-						print '</tr>';
-
-						$subtot_paye_total_ht += $temp_ht;
-						$subtot_paye_vat      += $temp_vat;
-						$x_paye_sum           += $temp_vat;
 					}
+
+					// VAT paid
+					print '<td class="nowrap right">';
+					$temp_ht=$fields['totalht']*$ratiopaymentinvoice;
+					print price(price2num($temp_ht, 'MT'), 1);
+					print '</td>';
+
+					// Localtax
+					print '<td class="nowrap right">';
+					$temp_vat=($local==1?$fields['localtax1']:$fields['localtax2'])*$ratiopaymentinvoice;
+					print price(price2num($temp_vat, 'MT'), 1);
+					//print price($fields['vat']);
+					print '</td>';
+					print '</tr>';
+
+					$subtot_paye_total_ht += $temp_ht;
+					$subtot_paye_vat      += $temp_vat;
+					$x_paye_sum           += $temp_vat;
 				}
 			}
-
-		    // Total suppliers for this vat rate
-		    print '<tr class="liste_total">';
-		    print '<td>&nbsp;</td>';
-		    print '<td class="right">'.$langs->trans("Total").':</td>';
-		    if ($modetax != 1)
-		    {
-		        print '<td class="nowrap right">&nbsp;</td>';
-		        print '<td class="right">&nbsp;</td>';
-		    }
-		    print '<td class="right">'.price(price2num($subtot_paye_total_ht, 'MT')).'</td>';
-		    print '<td class="nowrap right">'.price(price2num($subtot_paye_vat, 'MT')).'</td>';
-		    print '</tr>';
 		}
 
-		if (count($x_paye) == 0) {  // Show a total line if nothing shown
-			print '<tr class="liste_total">';
-			print '<td>&nbsp;</td>';
-			print '<td class="right">'.$langs->trans("Total").':</td>';
-			if ($modetax != 1) {
-				print '<td class="nowrap right">&nbsp;</td>';
-				print '<td class="right">&nbsp;</td>';
-			}
-			print '<td class="right">'.price(price2num(0, 'MT')).'</td>';
-			print '<td class="nowrap right">'.price(price2num(0, 'MT')).'</td>';
-			print '</tr>';
-		}
+	    // Total suppliers for this vat rate
+	    print '<tr class="liste_total">';
+	    print '<td>&nbsp;</td>';
+	    print '<td class="right">'.$langs->trans("Total").':</td>';
+	    if ($modetax != 1)
+	    {
+	        print '<td class="nowrap right">&nbsp;</td>';
+	        print '<td class="right">&nbsp;</td>';
+	    }
+	    print '<td class="right">'.price(price2num($subtot_paye_total_ht, 'MT')).'</td>';
+	    print '<td class="nowrap right">'.price(price2num($subtot_paye_vat, 'MT')).'</td>';
+	    print '</tr>';
+	}
 
-	    print '</table>';
-	//}
+	if (count($x_paye) == 0) {  // Show a total line if nothing shown
+		print '<tr class="liste_total">';
+		print '<td>&nbsp;</td>';
+		print '<td class="right">'.$langs->trans("Total").':</td>';
+		if ($modetax != 1) {
+			print '<td class="nowrap right">&nbsp;</td>';
+			print '<td class="right">&nbsp;</td>';
+		}
+		print '<td class="right">'.price(price2num(0, 'MT')).'</td>';
+		print '<td class="nowrap right">'.price(price2num(0, 'MT')).'</td>';
+		print '</tr>';
+	}
+
+	print '</table>';
 
 	// Total to pay
     print '<br><br>';

@@ -30,6 +30,10 @@ class mailing_thirdparties extends MailingTargets
 	public $require_admin=0;
 
 	public $require_module=array("societe");	// This module allows to select by categories must be also enabled if category module is not activated
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto='company';
 
 	/**
@@ -66,6 +70,7 @@ class mailing_thirdparties extends MailingTargets
 
 		$cibles = array();
 
+        $addDescription= "";
 		// Select the third parties from category
 		if (empty($_POST['filter']))
 		{
@@ -77,6 +82,50 @@ class mailing_thirdparties extends MailingTargets
 		}
 		else
 		{
+            $addFilter ="";
+            if (isset($_POST["filter_client"]) && $_POST["filter_client"] <> '-1')
+            {
+                $addFilter.= " AND s.client=" . $_POST["filter_client"];
+                $addDescription= $langs->trans('ProspectCustomer')."=";
+                if ($_POST["filter_client"] == 0)
+                {
+                    $addDescription.= $langs->trans('NorProspectNorCustomer');
+                }
+                elseif ($_POST["filter_client"] == 1)
+                {
+                    $addDescription.= $langs->trans('Customer');
+                }
+                elseif ($_POST["filter_client"] == 2)
+                {
+                    $addDescription.= $langs->trans('Prospect');
+                }
+                elseif ($_POST["filter_client"] == 3)
+                {
+                    $addDescription.= $langs->trans('ProspectCustomer');
+                }
+                else
+                {
+                    $addDescription.= "Unknown status ".$_POST["filter_client"];
+                }
+            }
+            if (isset($_POST["filter_status"]))
+            {
+                if (strlen($addDescription) > 0)
+                {
+                    $addDescription.= ";";
+                }
+                $addDescription.= $langs->trans("Status")."=";
+                if ($_POST["filter_status"] == '1')
+                {
+                    $addFilter.= " AND s.status=1";
+                    $addDescription.= $langs->trans("Enabled");
+                }
+                else
+                {
+                    $addFilter.= " AND s.status=0";
+                    $addDescription.= $langs->trans("Disabled");
+                }
+            }
 		    $sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, c.label as label";
 		    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."categorie_societe as cs, ".MAIN_DB_PREFIX."categorie as c";
 		    $sql.= " WHERE s.email <> ''";
@@ -85,6 +134,7 @@ class mailing_thirdparties extends MailingTargets
 		    $sql.= " AND cs.fk_soc = s.rowid";
 		    $sql.= " AND c.rowid = cs.fk_categorie";
 		    $sql.= " AND c.rowid='".$this->db->escape($_POST['filter'])."'";
+            $sql.= $addFilter;
 		    $sql.= " UNION ";
 		    $sql.= "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, c.label as label";
 		    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."categorie_fournisseur as cs, ".MAIN_DB_PREFIX."categorie as c";
@@ -94,51 +144,7 @@ class mailing_thirdparties extends MailingTargets
 		    $sql.= " AND cs.fk_soc = s.rowid";
 		    $sql.= " AND c.rowid = cs.fk_categorie";
 		    $sql.= " AND c.rowid='".$this->db->escape($_POST['filter'])."'";
-		}
-
-        $addDescription= "";
-        if (isset($_POST["filter_client"]) && $_POST["filter_client"] <> '-1')
-        {
-            $sql.= " AND s.client=" . $_POST["filter_client"];
-            $addDescription= $langs->trans('ProspectCustomer')."=";
-            if ($_POST["filter_client"] == 0)
-            {
-                $addDescription.= $langs->trans('NorProspectNorCustomer');
-            }
-            elseif ($_POST["filter_client"] == 1)
-            {
-                $addDescription.= $langs->trans('Customer');
-            }
-            elseif ($_POST["filter_client"] == 2)
-            {
-                $addDescription.= $langs->trans('Prospect');
-            }
-            elseif ($_POST["filter_client"] == 3)
-            {
-                $addDescription.= $langs->trans('ProspectCustomer');
-            }
-            else
-            {
-                $addDescription.= "Unknown status ".$_POST["filter_client"];
-            }
-        }
-        if (isset($_POST["filter_status"]))
-        {
-            if (strlen($addDescription) > 0)
-            {
-                $addDescription.= ";";
-            }
-            $addDescription.= $langs->trans("Status")."=";
-            if ($_POST["filter_status"] == '1')
-            {
-                $sql.= " AND s.status=1";
-                $addDescription.= $langs->trans("Enabled");
-            }
-            else
-            {
-                $sql.= " AND s.status=0";
-                $addDescription.= $langs->trans("Disabled");
-            }
+            $sql.= $addFilter;
         }
         $sql.= " ORDER BY email";
 
@@ -188,7 +194,7 @@ class mailing_thirdparties extends MailingTargets
 			return -1;
 		}
 
-		return parent::add_to_target($mailing_id, $cibles);
+		return parent::addTargetsToDatabase($mailing_id, $cibles);
 	}
 
 
@@ -286,29 +292,28 @@ class mailing_thirdparties extends MailingTargets
 		}
 
 		$s.='</select> ';
-                $s.= $langs->trans('ProspectCustomer');
-                $s.=': <select name="filter_client" class="flat">';
-                $s.= '<option value="-1">&nbsp;</option>';
-                if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
-                {
-                    $s.= '<option value="2">'.$langs->trans('Prospect').'</option>';
-                }
-                if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
-                    $s.= '<option value="3">'.$langs->trans('ProspectCustomer').'</option>';
-                }
-                if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
-                    $s.= '<option value="1">'.$langs->trans('Customer').'</option>';
-                }
-                $s.= '<option value="0">'.$langs->trans('NorProspectNorCustomer').'</option>';
+        $s.= $langs->trans('ProspectCustomer');
+        $s.=': <select name="filter_client" class="flat">';
+        $s.= '<option value="-1">&nbsp;</option>';
+        if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
+            $s.= '<option value="2">'.$langs->trans('Prospect').'</option>';
+        }
+        if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
+            $s.= '<option value="3">'.$langs->trans('ProspectCustomer').'</option>';
+        }
+        if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
+            $s.= '<option value="1">'.$langs->trans('Customer').'</option>';
+        }
+        $s.= '<option value="0">'.$langs->trans('NorProspectNorCustomer').'</option>';
 
-                $s.='</select> ';
+        $s.= '</select> ';
 
-                $s.=$langs->trans("Status");
-                $s.=': <select name="filter_status" class="flat">';
-                $s.='<option value="-1">&nbsp;</option>';
-                $s.='<option value="1" selected>'.$langs->trans("Enabled").'</option>';
-                $s.='<option value="0">'.$langs->trans("Disabled").'</option>';
-		$s.='</select>';
+        $s.= $langs->trans("Status");
+        $s.= ': <select name="filter_status" class="flat">';
+        $s.= '<option value="-1">&nbsp;</option>';
+        $s.= '<option value="1" selected>'.$langs->trans("Enabled").'</option>';
+        $s.= '<option value="0">'.$langs->trans("Disabled").'</option>';
+        $s.= '</select>';
 		return $s;
 	}
 

@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -244,21 +244,19 @@ print "<br>\n";
 // Confirmation for remove menu entry
 if ($action == 'delete')
 {
-	$sql = "SELECT m.titre";
+	$sql = "SELECT m.titre as title";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
 	$sql.= " WHERE m.rowid = ".GETPOST('menuId', 'int');
 	$result = $db->query($sql);
 	$obj = $db->fetch_object($result);
 
-    print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOST('menuId', 'int'), $langs->trans("DeleteMenu"), $langs->trans("ConfirmDeleteMenu", $obj->titre), "confirm_delete");
+    print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOST('menuId', 'int'), $langs->trans("DeleteMenu"), $langs->trans("ConfirmDeleteMenu", $obj->title), "confirm_delete");
 }
 
 $newcardbutton='';
 if ($user->admin)
 {
-    $newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/admin/menus/edit.php?menuId=0&action=create&menu_handler='.urlencode($menu_handler).'&backtopage='.urlencode($_SERVER['PHP_SELF']).'"><span class="valignmiddle text-plus-circle">'.$langs->trans('New').'</span>';
-    $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-    $newcardbutton.= '</a>';
+    $newcardbutton.= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/admin/menus/edit.php?menuId=0&action=create&menu_handler='.urlencode($menu_handler).'&backtopage='.urlencode($_SERVER['PHP_SELF']));
 }
 
 print '<form name="newmenu" class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'">';

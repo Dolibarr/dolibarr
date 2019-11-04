@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,7 +33,7 @@ $langs->loadLangs(array("bills","banks","companies","loan"));
 $id=GETPOST("id", 'int');
 $action=GETPOST('action', 'aZ09');
 $confirm=GETPOST('confirm');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 // TODO ajouter regle pour restreindre acces paiement
 //$result = restrictedArea($user, 'facture', $id,'');
 
@@ -271,7 +271,7 @@ print '<div class="tabsAction">';
 /*
 if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 {
-	if ($user->societe_id == 0 && $payment->statut == 0 && $_GET['action'] == '')
+	if ($user->socid == 0 && $payment->statut == 0 && $_GET['action'] == '')
 	{
 		if ($user->rights->facture->paiement)
 		{

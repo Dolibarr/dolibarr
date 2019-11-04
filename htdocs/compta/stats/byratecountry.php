@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.
 // Load translation files required by the page
 $langs->loadLangs(array("other","compta","banks","bills","companies","product","trips","admin","accountancy"));
 
-$modecompta = GETPOST('modecompta', 'alpha');
+$modecompta = (GETPOST('modecompta', 'alpha') ? GETPOST('modecompta', 'alpha') : $conf->global->ACCOUNTING_MODE);
 
 // Date range
 $year=GETPOST("year", 'int');
@@ -107,7 +107,7 @@ if (empty($modetax)) $modetax=0;
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 
@@ -223,13 +223,9 @@ elseif ($modecompta=="RECETTES-DEPENSES")
 }
 elseif ($modecompta=="BOOKKEEPING")
 {
-
-
 }
 elseif ($modecompta=="BOOKKEEPINGCOLLECTED")
 {
-
-
 }
 $period=$form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) $periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
@@ -245,166 +241,163 @@ if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 }
 
 
-if ($modecompta == 'CREANCES-DETTES')
-{
+if ($modecompta == 'CREANCES-DETTES') {
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td width="6%" class="right">' . $langs->trans("TurnoverbyVatrate") . '</td>';
+	print '<td class="left">' . $langs->trans("ProductOrService") . '</td>';
+	print '<td class="left">' . $langs->trans("Country") . '</td>';
+	$i=0;
+	while($i < 12) {
+		$j = $i + (empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START);
+		if ($j > 12) $j -= 12;
+		print '<td width="60" class="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
+		$i++;
+	}
+	print '<td width="60" class="right"><b>' . $langs->trans("TotalHT") . '</b></td></tr>';
 
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td width="6%" class="right">' . $langs->trans("TurnoverbyVatrate") . '</td>';
-print '<td class="left">' . $langs->trans("ProductOrService") . '</td>';
-print '<td class="left">' . $langs->trans("Country") . '</td>';
-$i=0;
-while($i < 12)
-{
-	$j = $i + (empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START);
-	if ($j > 12) $j -= 12;
-	print '<td width="60" class="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
-	$i++;
-}
-print '<td width="60" class="right"><b>' . $langs->trans("TotalHT") . '</b></td></tr>';
+	$sql = "SELECT fd.tva_tx AS vatrate,";
+	$sql .= " fd.product_type AS product_type,";
+	$sql .= " cc.label AS country,";
+	for ($i = 1; $i <= 12; $i ++) {
+		$sql .= " SUM(" . $db->ifsql('MONTH(f.datef)=' . $i, 'fd.total_ht', '0') . ") AS month" . str_pad($i, 2, '0', STR_PAD_LEFT) . ",";
+	}
+	$sql .= "  SUM(fd.total_ht) as total";
+	$sql .= " FROM " . MAIN_DB_PREFIX . "facturedet as fd";
+	$sql .= "  INNER JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_facture";
+	$sql .= "  INNER JOIN " . MAIN_DB_PREFIX . "societe as soc ON soc.rowid = f.fk_soc";
+	$sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "c_country as cc ON cc.rowid = soc.fk_pays";
+	$sql .= " WHERE f.datef >= '" . $db->idate($date_start) . "'";
+	$sql .= "  AND f.datef <= '" . $db->idate($date_end) . "'";
+	$sql.= " AND f.fk_statut in (1,2)";
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		$sql.= " AND f.type IN (0,1,2,5)";
+	} else {
+		$sql.= " AND f.type IN (0,1,2,3,5)";
+	}
+	$sql .= " AND f.entity IN (" . getEntity('invoice', 0) . ")";
+	$sql .= " GROUP BY fd.tva_tx,fd.product_type, cc.label ";
 
-$sql = "SELECT fd.tva_tx AS vatrate,";
-$sql .= " fd.product_type AS product_type,";
-$sql .= " cc.label AS country,";
-for ($i = 1; $i <= 12; $i ++) {
-	$sql .= " SUM(" . $db->ifsql('MONTH(f.datef)=' . $i, 'fd.total_ht', '0') . ") AS month" . str_pad($i, 2, '0', STR_PAD_LEFT) . ",";
-}
-$sql .= "  SUM(fd.total_ht) as total";
-$sql .= " FROM " . MAIN_DB_PREFIX . "facturedet as fd";
-$sql .= "  INNER JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_facture";
-$sql .= "  INNER JOIN " . MAIN_DB_PREFIX . "societe as soc ON soc.rowid = f.fk_soc";
-$sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "c_country as cc ON cc.rowid = soc.fk_pays";
-$sql .= " WHERE f.datef >= '" . $db->idate($date_start) . "'";
-$sql .= "  AND f.datef <= '" . $db->idate($date_end) . "'";
-$sql.= " AND f.fk_statut in (1,2)";
-if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-	$sql.= " AND f.type IN (0,1,2,5)";
-} else {
-	$sql.= " AND f.type IN (0,1,2,3,5)";
-}
-$sql .= " AND f.entity IN (" . getEntity('invoice', 0) . ")";
-$sql .= " GROUP BY fd.tva_tx,fd.product_type, cc.label ";
-
-dol_syslog("htdocs/compta/tva/index.php sql=" . $sql, LOG_DEBUG);
-$resql = $db->query($sql);
-if ($resql) {
-	$num = $db->num_rows($resql);
-	$totalpermonth = array();
-	while ( $obj = $db->fetch_object($resql)) {
-		print '<tr class="oddeven"><td class="right">' . vatrate($obj->vatrate) . '</td>';
-		if ($obj->product_type == 0) {
-			print '<td class="left">'. $langs->trans("Product") . '</td>';
-		} else {
-			print '<td class="left">'. $langs->trans("Service") . '</td>';
+	dol_syslog("htdocs/compta/tva/index.php sql=" . $sql, LOG_DEBUG);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		$totalpermonth = array();
+		while ( $obj = $db->fetch_object($resql)) {
+			print '<tr class="oddeven"><td class="right">' . vatrate($obj->vatrate) . '</td>';
+			if ($obj->product_type == 0) {
+				print '<td class="left">'. $langs->trans("Product") . '</td>';
+			} else {
+				print '<td class="left">'. $langs->trans("Service") . '</td>';
+			}
+			print '<td>' .$obj->country . '</td>';
+			for($i = 0; $i < 12; $i++) {
+				$j = $i + (empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START);
+				if ($j > 12) $j -= 12;
+				$monthj = 'month'.str_pad($j, 2, '0', STR_PAD_LEFT);
+				print '<td class="right" width="6%">' . price($obj->$monthj) . '</td>';
+				$totalpermonth[$j]=(empty($totalpermonth[$j])?0:$totalpermonth[$j])+$obj->$monthj;
+			}
+			print '<td class="right" width="6%"><b>' . price($obj->total) . '</b></td>';
+			$totalpermonth['total']=(empty($totalpermonth['total'])?0:$totalpermonth['total'])+$obj->total;
+			print '</tr>';
 		}
-		print '<td>' .$obj->country . '</td>';
+		$db->free($resql);
+
+		// Total
+		print '<tr class="liste_total"><td class="right"></td>';
+		print '<td class="left"></td>';
+		print '<td></td>';
 		for($i = 0; $i < 12; $i++) {
 			$j = $i + (empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START);
 			if ($j > 12) $j -= 12;
 			$monthj = 'month'.str_pad($j, 2, '0', STR_PAD_LEFT);
-			print '<td class="right" width="6%">' . price($obj->$monthj) . '</td>';
-			$totalpermonth[$j]=(empty($totalpermonth[$j])?0:$totalpermonth[$j])+$obj->$monthj;
+			print '<td class="right" width="6%">' . price($totalpermonth[$j]) . '</td>';
 		}
-		print '<td class="right" width="6%"><b>' . price($obj->total) . '</b></td>';
-		$totalpermonth['total']=(empty($totalpermonth['total'])?0:$totalpermonth['total'])+$obj->total;
+		print '<td class="right" width="6%"><b>' . price($totalpermonth['total']) . '</b></td>';
 		print '</tr>';
+	} else {
+		print $db->lasterror(); // Show last sql error
 	}
-	$db->free($resql);
 
-	// Total
-	print '<tr class="liste_total"><td class="right"></td>';
-	print '<td class="left"></td>';
-	print '<td></td>';
-	for($i = 0; $i < 12; $i++) {
+
+	print '<tr class="liste_titre"><td width="6%" class="right">' . $langs->trans("PurchasebyVatrate") . '</td>';
+	print '<td class="left">' . $langs->trans("ProductOrService") . '</td>';
+	print '<td class="left">' . $langs->trans("Country") . '</td>';
+	$i=0;
+	while($i < 12)
+	{
 		$j = $i + (empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START);
 		if ($j > 12) $j -= 12;
-		$monthj = 'month'.str_pad($j, 2, '0', STR_PAD_LEFT);
-		print '<td class="right" width="6%">' . price($totalpermonth[$j]) . '</td>';
+		print '<td width="60" class="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
+		$i++;
 	}
-	print '<td class="right" width="6%"><b>' . price($totalpermonth['total']) . '</b></td>';
-	print '</tr>';
-} else {
-	print $db->lasterror(); // Show last sql error
-}
+	print '<td width="60" class="right"><b>' . $langs->trans("TotalHT") . '</b></td></tr>';
 
+	$sql2 = "SELECT ffd.tva_tx AS vatrate,";
+	$sql2 .= " ffd.product_type AS product_type,";
+	$sql2 .= " cc.label AS country,";
+	for($i = 1; $i <= 12; $i ++) {
+		$sql2 .= " SUM(" . $db->ifsql('MONTH(ff.datef)=' . $i, 'ffd.total_ht', '0') . ") AS month" . str_pad($i, 2, '0', STR_PAD_LEFT) . ",";
+	}
+	$sql2 .= "  SUM(ffd.total_ht) as total";
+	$sql2 .= " FROM " . MAIN_DB_PREFIX . "facture_fourn_det as ffd";
+	$sql2 .= "  INNER JOIN " . MAIN_DB_PREFIX . "facture_fourn as ff ON ff.rowid = ffd.fk_facture_fourn";
+	$sql2 .= "  INNER JOIN " . MAIN_DB_PREFIX . "societe as soc ON soc.rowid = ff.fk_soc";
+	$sql2 .= "  LEFT JOIN " . MAIN_DB_PREFIX . "c_country as cc ON cc.rowid = soc.fk_pays";
+	$sql2 .= " WHERE ff.datef >= '" . $db->idate($date_start) . "'";
+	$sql2 .= "  AND ff.datef <= '" . $db->idate($date_end) . "'";
+	$sql.= " AND ff.fk_statut in (1,2)";
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		$sql.= " AND ff.type IN (0,1,2,5)";
+	} else {
+		$sql.= " AND ff.type IN (0,1,2,3,5)";
+	}
+	$sql2 .= " AND ff.entity IN (" . getEntity("facture_fourn", 0) . ")";
+	$sql2 .= " GROUP BY ffd.tva_tx, ffd.product_type, cc.label";
 
-print '<tr class="liste_titre"><td width="6%" class="right">' . $langs->trans("PurchasebyVatrate") . '</td>';
-print '<td class="left">' . $langs->trans("ProductOrService") . '</td>';
-print '<td class="left">' . $langs->trans("Country") . '</td>';
-$i=0;
-while($i < 12)
-{
-	$j = $i + (empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START);
-	if ($j > 12) $j -= 12;
-	print '<td width="60" class="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
-	$i++;
-}
-print '<td width="60" class="right"><b>' . $langs->trans("TotalHT") . '</b></td></tr>';
-
-$sql2 = "SELECT ffd.tva_tx AS vatrate,";
-$sql2 .= " ffd.product_type AS product_type,";
-$sql2 .= " cc.label AS country,";
-for($i = 1; $i <= 12; $i ++) {
-	$sql2 .= " SUM(" . $db->ifsql('MONTH(ff.datef)=' . $i, 'ffd.total_ht', '0') . ") AS month" . str_pad($i, 2, '0', STR_PAD_LEFT) . ",";
-}
-$sql2 .= "  SUM(ffd.total_ht) as total";
-$sql2 .= " FROM " . MAIN_DB_PREFIX . "facture_fourn_det as ffd";
-$sql2 .= "  INNER JOIN " . MAIN_DB_PREFIX . "facture_fourn as ff ON ff.rowid = ffd.fk_facture_fourn";
-$sql2 .= "  INNER JOIN " . MAIN_DB_PREFIX . "societe as soc ON soc.rowid = ff.fk_soc";
-$sql2 .= "  LEFT JOIN " . MAIN_DB_PREFIX . "c_country as cc ON cc.rowid = soc.fk_pays";
-$sql2 .= " WHERE ff.datef >= '" . $db->idate($date_start) . "'";
-$sql2 .= "  AND ff.datef <= '" . $db->idate($date_end) . "'";
-$sql.= " AND ff.fk_statut in (1,2)";
-if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-	$sql.= " AND ff.type IN (0,1,2,5)";
-} else {
-	$sql.= " AND ff.type IN (0,1,2,3,5)";
-}
-$sql2 .= " AND ff.entity IN (" . getEntity("facture_fourn", 0) . ")";
-$sql2 .= " GROUP BY ffd.tva_tx, ffd.product_type, cc.label";
-
-//print $sql2;
-dol_syslog("htdocs/compta/tva/index.php sql=" . $sql, LOG_DEBUG);
-$resql2 = $db->query($sql2);
-if ($resql2) {
-	$num = $db->num_rows($resql2);
-	$totalpermonth = array();
-	while ( $obj = $db->fetch_object($resql2)) {
-		print '<tr class="oddeven"><td class="right">' . vatrate($obj->vatrate) . '</td>';
-		if ($obj->product_type == 0) {
-			print '<td class="left">'. $langs->trans("Product") . '</td>';
-		} else {
-			print '<td class="left">'. $langs->trans("Service") . '</td>';
+	//print $sql2;
+	dol_syslog("htdocs/compta/tva/index.php sql=" . $sql, LOG_DEBUG);
+	$resql2 = $db->query($sql2);
+	if ($resql2) {
+		$num = $db->num_rows($resql2);
+		$totalpermonth = array();
+		while ( $obj = $db->fetch_object($resql2)) {
+			print '<tr class="oddeven"><td class="right">' . vatrate($obj->vatrate) . '</td>';
+			if ($obj->product_type == 0) {
+				print '<td class="left">'. $langs->trans("Product") . '</td>';
+			} else {
+				print '<td class="left">'. $langs->trans("Service") . '</td>';
+			}
+			print '<td>' . $obj->country . '</td>';
+			for($i = 0; $i < 12; $i++) {
+				$j = $i + (empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START);
+				if ($j > 12) $j -= 12;
+				$monthj = 'month'.str_pad($j, 2, '0', STR_PAD_LEFT);
+				print '<td class="right" width="6%">' . price($obj->$monthj) . '</td>';
+				$totalpermonth[$j]=(empty($totalpermonth[$j])?0:$totalpermonth[$j])+$obj->$monthj;
+			}
+			print '<td class="right" width="6%"><b>' . price($obj->total) . '</b></td>';
+			$totalpermonth['total']=(empty($totalpermonth['total'])?0:$totalpermonth['total'])+$obj->total;
+			print '</tr>';
 		}
-		print '<td>' . $obj->country . '</td>';
+		$db->free($resql2);
+
+		// Total
+		print '<tr class="liste_total"><td class="right"></td>';
+		print '<td class="left"></td>';
+		print '<td></td>';
 		for($i = 0; $i < 12; $i++) {
 			$j = $i + (empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START);
 			if ($j > 12) $j -= 12;
 			$monthj = 'month'.str_pad($j, 2, '0', STR_PAD_LEFT);
-			print '<td class="right" width="6%">' . price($obj->$monthj) . '</td>';
-			$totalpermonth[$j]=(empty($totalpermonth[$j])?0:$totalpermonth[$j])+$obj->$monthj;
+			print '<td class="right" width="6%">' . price($totalpermonth[$j]) . '</td>';
 		}
-		print '<td class="right" width="6%"><b>' . price($obj->total) . '</b></td>';
-		$totalpermonth['total']=(empty($totalpermonth['total'])?0:$totalpermonth['total'])+$obj->total;
+		print '<td class="right" width="6%"><b>' . price($totalpermonth['total']) . '</b></td>';
 		print '</tr>';
+	} else {
+		print $db->lasterror(); // Show last sql error
 	}
-	$db->free($resql2);
-
-	// Total
-	print '<tr class="liste_total"><td class="right"></td>';
-	print '<td class="left"></td>';
-	print '<td></td>';
-	for($i = 0; $i < 12; $i++) {
-		$j = $i + (empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START);
-		if ($j > 12) $j -= 12;
-		$monthj = 'month'.str_pad($j, 2, '0', STR_PAD_LEFT);
-		print '<td class="right" width="6%">' . price($totalpermonth[$j]) . '</td>';
-	}
-	print '<td class="right" width="6%"><b>' . price($totalpermonth['total']) . '</b></td>';
-	print '</tr>';
-} else {
-	print $db->lasterror(); // Show last sql error
-}
-print "</table>\n";
+	print "</table>\n";
 } else {
 	// $modecompta != 'CREANCES-DETTES'
 	// "Calculation of part of each product for accountancy in this mode is not possible. When a partial payment (for example 5 euros) is done on an

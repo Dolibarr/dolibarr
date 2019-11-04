@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -36,7 +36,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
 
@@ -48,7 +48,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Jade';
 
@@ -61,7 +61,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 
 
 	/**
-	 *   Renvoi la description du modele de numerotation
+	 *   Returns the description of the numbering model
 	 *
 	 *   @return     string      Texte descripif
 	 */
@@ -72,7 +72,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 	}
 
 	/**
-	 *  Renvoi un exemple de numerotation
+	 *  Return an example of numbering
 	 *
      *  @return     string      Example
      */
@@ -82,10 +82,10 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
     }
 
     /**
-     *  Test si les numeros deja en vigueur dans la base ne provoquent pas de
-     *  de conflits qui empechera cette numerotation de fonctionner.
+     *  Checks if the numbers already in force in the data base do not
+     *  cause conflicts that would prevent this numbering from working.
      *
-     *  @return     boolean     false si conflit, true si ok
+     *  @return     boolean     false if conflict, true if ok
      */
     public function canBeActivated()
     {

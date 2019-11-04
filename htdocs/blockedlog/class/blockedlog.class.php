@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * See https://medium.com/@lhartikk/a-blockchain-in-200-lines-of-code-963cc1cc0e54
  */
@@ -100,7 +100,12 @@ class BlockedLog
 	 */
 	public $fk_user = 0;
 
+	/**
+     * @var integer|string date_creation
+     */
 	public $date_creation;
+
+
 	public $date_modification;
 
 	public $date_object = 0;
@@ -398,7 +403,7 @@ class BlockedLog
 		        'name','lastname','firstname','region','region_id','region_code','state','state_id','state_code','country','country_id','country_code',
 		        'total_ht','total_tva','total_ttc','total_localtax1','total_localtax2',
 		        'barcode_type','barcode_type_code','barcode_type_label','barcode_type_coder','mode_reglement_id','cond_reglement_id','mode_reglement','cond_reglement','shipping_method_id',
-		        'fk_incoterms','libelle_incoterms','location_incoterms','lines')
+		        'fk_incoterms','label_incoterms','location_incoterms','lines')
 		    );
 		}
 
@@ -449,7 +454,7 @@ class BlockedLog
 			{
 				if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
 				if (! in_array($key, array(
-				'ref','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public','lines'
+					'ref','ref_client','ref_supplier','date','datef','datev','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public','lines'
 				))) continue;									// Discard if not into a dedicated list
 				if ($key == 'lines')
 				{
@@ -459,8 +464,8 @@ class BlockedLog
 						$lineid++;
 						foreach($tmpline as $keyline => $valueline)
 						{
-    if (! in_array($keyline, array(
-							'ref','multicurrency_code','multicurrency_total_ht','multicurrency_total_tva','multicurrency_total_ttc','qty','product_type','vat_src_code','tva_tx','info_bits','localtax1_tx','localtax2_tx','total_ht','total_tva','total_ttc','total_localtax1','total_localtax2'
+							if (! in_array($keyline, array(
+								'ref','multicurrency_code','multicurrency_total_ht','multicurrency_total_tva','multicurrency_total_ttc','qty','product_type','vat_src_code','tva_tx','info_bits','localtax1_tx','localtax2_tx','total_ht','total_tva','total_ttc','total_localtax1','total_localtax2'
 							))) continue;									// Discard if not into a dedicated list
 
 							if (! is_object($this->object_data->invoiceline[$lineid])) $this->object_data->invoiceline[$lineid] = new stdClass();
@@ -575,7 +580,7 @@ class BlockedLog
 					foreach($tmpobject->thirdparty as $key=>$value)
 					{
 						if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
-    if (! in_array($key, array(
+                        if (! in_array($key, array(
 						'name','name_alias','ref_ext','address','zip','town','state_code','country_code','idprof1','idprof2','idprof3','idprof4','idprof5','idprof6','phone','fax','email','barcode',
 						'tva_intra', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
 						))) continue;									// Discard if not into a dedicated list
@@ -592,7 +597,7 @@ class BlockedLog
 					foreach($tmpobject as $key=>$value)
 					{
 						if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
-    if (! in_array($key, array(
+                        if (! in_array($key, array(
 						'ref','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public'
 						))) continue;									// Discard if not into a dedicated list
 						if (!is_object($value))
@@ -977,7 +982,6 @@ class BlockedLog
 		if (empty($cachedlogs)) $cachedlogs=array();
 
 		if ($element=='all') {
-
 	 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
 	         WHERE entity=".$conf->entity;
 		}
@@ -1006,7 +1010,6 @@ class BlockedLog
 
 		$res = $this->db->query($sql);
 		if($res) {
-
 			$results=array();
 
 			$i = 0;
@@ -1046,8 +1049,8 @@ class BlockedLog
 		global $db,$conf,$mysoc;
 
 		if (empty($conf->global->BLOCKEDLOG_ENTITY_FINGERPRINT)) { // creation of a unique fingerprint
-
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
 			$fingerprint = dol_hash(print_r($mysoc, true).getRandomPassword(1), '5');

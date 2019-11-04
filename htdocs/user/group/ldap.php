@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -49,7 +49,7 @@ $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
 
 $socid=0;
-if ($user->societe_id > 0) $socid = $user->societe_id;
+if ($user->socid > 0) $socid = $user->socid;
 
 $object = new Usergroup($db);
 $object->fetch($id);
@@ -95,10 +95,9 @@ if ($action == 'dolibarr2ldap')
  *	View
  */
 
-llxHeader();
-
 $form = new Form($db);
 
+llxHeader();
 
 $head = group_prepare_head($object);
 
@@ -106,7 +105,7 @@ dol_fiche_head($head, 'ldap', $langs->trans("Group"), -1, 'group');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-dol_banner_tab($object, 'id', $linback, $user->rights->user->user->lire || $user->admin);
+dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
@@ -183,16 +182,17 @@ if ($result > 0)
 	$info=$object->_load_ldap_info();
 	$dn=$object->_load_ldap_dn($info, 1);
 	$search = "(".$object->_load_ldap_dn($info, 2).")";
+
 	$records = $ldap->getAttribute($dn, $search);
 
 	//var_dump($records);
 
-	// Affichage arbre
-    if ((! is_numeric($records) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
+	// Show tree
+    if (((! is_numeric($records)) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
 	{
 		if (! is_array($records))
 		{
-			print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
+			print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
 		}
 		else
 		{
@@ -201,7 +201,7 @@ if ($result > 0)
 	}
 	else
 	{
-		print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
+		print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
 	}
 	$ldap->unbind();
 	$ldap->close();

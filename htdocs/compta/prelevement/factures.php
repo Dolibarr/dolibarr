@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('banks', 'categories', 'companies', 'withdrawals', 'bills'));
 
 // Securite acces client
-if ($user->societe_id > 0) accessforbidden();
+if ($user->socid > 0) accessforbidden();
 
 // Get supervariables
 $prev_id = GETPOST('id', 'int');
@@ -156,7 +156,7 @@ $sql.= " AND pl.fk_prelevement_bons = p.rowid";
 $sql.= " AND f.fk_soc = s.rowid";
 $sql.= " AND pf.fk_facture = f.rowid";
 $sql.= " AND f.entity IN (".getEntity('invoice').")";
-if ($prev_id) $sql.= " AND p.rowid=".$prev_id;
+if ($object->id > 0) $sql.= " AND p.rowid=".$object->id;
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 $sql.= $db->order($sortfield, $sortorder);
 

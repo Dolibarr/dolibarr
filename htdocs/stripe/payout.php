@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Put here all includes required by your class file
@@ -33,7 +33,7 @@ $langs->loadLangs(array('compta', 'salaries', 'bills', 'hrm', 'stripe'));
 
 // Security check
 $socid = GETPOST("socid", "int");
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 //$result = restrictedArea($user, 'salaries', '', '', '');
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -78,7 +78,6 @@ $stripeacc = $stripe->getStripeAccount($service);
 }*/
 
 if (! $rowid) {
-
 	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
 	if ($optioncss != '') {
         print '<input type="hidden" name="optioncss" value="' . $optioncss . '">';
@@ -169,7 +168,7 @@ if (! $rowid) {
 			$url='https://dashboard.stripe.com/'.$connect.'payouts/'.$payout->id;
 		}
 
-        print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'object_globe')." " . $payout->id . "</a></td>\n";
+        print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." " . $payout->id . "</a></td>\n";
 
 
 		// Stripe customer

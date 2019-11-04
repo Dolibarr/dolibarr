@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -30,7 +30,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 
@@ -44,7 +44,7 @@ class mod_contract_serpis extends ModelNumRefContracts
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Serpis';
 
@@ -53,6 +53,9 @@ class mod_contract_serpis extends ModelNumRefContracts
 	 */
 	public $name='Serpis';
 
+	/**
+	 * @var int Automatic numbering
+	 */
 	public $code_auto=1;
 
 

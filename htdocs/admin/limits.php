@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -90,7 +90,7 @@ llxHeader();
 print load_fiche_titre($langs->trans("LimitsSetup"), '', 'title_setup');
 
 
-print $langs->trans("LimitsDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("LimitsDesc")."</span><br>\n";
 print "<br>\n";
 
 if ($action == 'edit')
@@ -102,7 +102,7 @@ if ($action == 'edit')
     clearstatcache();
 
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 
     print '<tr class="oddeven"><td>';
@@ -110,23 +110,25 @@ if ($action == 'edit')
     print '</td><td><input class="flat" name="MAIN_MAX_DECIMALS_UNIT" size="3" value="' . $conf->global->MAIN_MAX_DECIMALS_UNIT . '"></td></tr>';
 
 
-    print '<tr class="oddeven"><td>';
+    print '<tr><td>';
     print $form->textwithpicto($langs->trans("MAIN_MAX_DECIMALS_TOT"), $langs->trans("ParameterActiveForNextInputOnly"));
     print '</td><td><input class="flat" name="MAIN_MAX_DECIMALS_TOT" size="3" value="' . $conf->global->MAIN_MAX_DECIMALS_TOT . '"></td></tr>';
 
 
-    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAX_DECIMALS_SHOWN").'</td><td><input class="flat" name="MAIN_MAX_DECIMALS_SHOWN" size="3" value="' . $conf->global->MAIN_MAX_DECIMALS_SHOWN . '"></td></tr>';
+    print '<tr><td>'.$langs->trans("MAIN_MAX_DECIMALS_SHOWN").'</td><td><input class="flat" name="MAIN_MAX_DECIMALS_SHOWN" size="3" value="' . $conf->global->MAIN_MAX_DECIMALS_SHOWN . '"></td></tr>';
 
 
-    print '<tr class="oddeven"><td>';
+    print '<tr><td>';
     print $form->textwithpicto($langs->trans("MAIN_ROUNDING_RULE_TOT"), $langs->trans("ParameterActiveForNextInputOnly"));
     print '</td><td><input class="flat" name="MAIN_ROUNDING_RULE_TOT" size="3" value="' . $conf->global->MAIN_ROUNDING_RULE_TOT . '"></td></tr>';
 
     print '</table>';
 
-    print '<br><div class="center">';
+    print '<br>';
+    print '<div class="center">';
     print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
     print '</div>';
+	print '<br>';
 
     print '</form>';
     print '<br>';
@@ -142,21 +144,21 @@ else
     print '</td><td class="right">'.$conf->global->MAIN_MAX_DECIMALS_UNIT.'</td></tr>';
 
 
-    print '<tr class="oddeven"><td>';
+    print '<tr><td>';
     print $form->textwithpicto($langs->trans("MAIN_MAX_DECIMALS_TOT"), $langs->trans("ParameterActiveForNextInputOnly"));
     print '</td><td class="right">'.$conf->global->MAIN_MAX_DECIMALS_TOT.'</td></tr>';
 
 
-    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAX_DECIMALS_SHOWN").'</td><td class="right">'.$conf->global->MAIN_MAX_DECIMALS_SHOWN.'</td></tr>';
+    print '<tr><td>'.$langs->trans("MAIN_MAX_DECIMALS_SHOWN").'</td><td class="right">'.$conf->global->MAIN_MAX_DECIMALS_SHOWN.'</td></tr>';
 
 
-    print '<tr class="oddeven"><td>';
+    print '<tr><td>';
     print $form->textwithpicto($langs->trans("MAIN_ROUNDING_RULE_TOT"), $langs->trans("ParameterActiveForNextInputOnly"));
     print '</td><td class="right">'.$conf->global->MAIN_ROUNDING_RULE_TOT.'</td></tr>';
 
     print '</table>';
 
-    print '<div class="tabsAction">';
+    print '<div class="tabsAction tabsActionNoBottom">';
     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
     print '</div>';
 }
@@ -170,7 +172,6 @@ if (empty($mysoc->country_code))
 }
 else
 {
-
 	// Show examples
 	print '<b>'.$langs->trans("ExamplesWithCurrentSetup").":</b><br>\n";
 

@@ -42,11 +42,13 @@ CountriesInEEC=Países en la CEE
 CountriesNotInEEC=Países no incluidos en la CEE
 CountriesInEECExceptMe=Países en la CEE excepto %s
 CountriesExceptMe=Todos los países excepto %s
+AccountantFiles=Exportar documentos contables
 
 MainAccountForCustomersNotDefined=Cuenta contable para clientes no definida en la configuración
 MainAccountForSuppliersNotDefined=Cuenta contable para proveedores no definida en la configuración
 MainAccountForUsersNotDefined=Cuenta contable para usuarios no definida en la configuración
 MainAccountForVatPaymentNotDefined=Cuenta contable para IVA no definida en la configuración
+MainAccountForSubscriptionPaymentNotDefined=Cuenta contable para subscripciones no definida en la configuración
 
 AccountancyArea=Área contabilidad
 AccountancyAreaDescIntro=El uso del módulo de contabilidad se realiza en varios pasos:
@@ -64,6 +66,7 @@ AccountancyAreaDescExpenseReport=PASO %s: Defina las cuentas contables para los 
 AccountancyAreaDescSal=PASO %s: Defina las cuentas contables para los pagos de salarios. Para ello puede utilizar el menú %s.
 AccountancyAreaDescContrib=PASO %s: Defina las cuentas contables de los gastos especiales (impuestos varios). Para ello puede utilizar el menú %s.
 AccountancyAreaDescDonation=PASO %s: Defina las cuentas contables para las donaciones. Para ello puede utilizar el menú %s.
+AccountancyAreaDescSubscription=PASO %s: Defina las cuentas contables para las subscripciones. Para ello puede utilizar el menú %s.
 AccountancyAreaDescMisc=PASO %s: Defina las cuentas contables para registros varios. Para ello puede utilizar el menú %s.
 AccountancyAreaDescLoan=PASO %s: Defina las cuentas contables para los préstamos. Para ello puede utilizar el menú %s.\n
 AccountancyAreaDescBank=PASO %s: Defina las cuentas contables para cada banco y cuentas financieras. Puede empezar desde la página %s.
@@ -82,6 +85,7 @@ Addanaccount=Añadir una cuenta contable
 AccountAccounting=Cuenta contable
 AccountAccountingShort=Cuenta
 SubledgerAccount=Subcuenta contable
+SubledgerAccountLabel=Etiqueta subcuenta contable
 ShowAccountingAccount=Mostrar diario de cuentas
 ShowAccountingJournal=Mostrar diario contable
 AccountAccountingSuggest=Cuenta contable sugerida
@@ -92,8 +96,11 @@ MenuTaxAccounts=Cuentas de impuestos
 MenuExpenseReportAccounts=Cuentas de informes de pagos
 MenuLoanAccounts=Cuentas de préstamos
 MenuProductsAccounts=Cuentas contables de productos
+MenuClosureAccounts=Cerrar cuentas
 ProductsBinding=Cuentas de productos
-Ventilation=Contabilizar
+TransferInAccounting=Transferencia en contabilidad
+RegistrationInAccounting=Registro en contabilidad
+Binding=Contabilizar
 CustomersVentilation=Contabilizar facturas a clientes
 SuppliersVentilation=Contabilizar facturas de proveedores
 ExpenseReportsVentilation=Contabilizar informes de gastos
@@ -133,10 +140,11 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Ordenar las páginas de contabilización "
 ACCOUNTING_LENGTH_DESCRIPTION=Longitud para la visualización de la descripción de productos y servicios en los listados (Ideal = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Longitud para la visualización de la descripción de la cuenta de productos y servicios en los listados (Ideal = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Longitud de las cuentas generales (si ajusta el valor a 6 aquí, la cuenta '706' aparecerá como '706000' en la pantalla)
-ACCOUNTING_LENGTH_AACCOUNT=Longitud de las subcuentas ( si ajusta el valor a 6 aquí, la cuenta '401' aparecerá como '401000' en la pantalla)
+ACCOUNTING_LENGTH_AACCOUNT=Longitud de las subcuentas de terceros ( si ajusta el valor a 6 aquí, la cuenta '401' aparecerá como '401000' en la pantalla)
 ACCOUNTING_MANAGE_ZERO=Gestiona el cero al final de una cuenta contable. Necesario en algunos países (como Suiza). Si se mantiene desactivada (por defecto), puede configurar los 2 parámetros siguientes para pedir que la aplicación agregue el cero virtual
 BANK_DISABLE_DIRECT_INPUT=Desactivar transacciones directas en cuenta bancaria
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Habilitar exportación de borradores al diario
+ACCOUNTANCY_COMBO_FOR_AUX=Habilitar la lista combinada para la cuenta subsidiaria (puede ser lento si tiene muchos terceros)
 
 ACCOUNTING_SELL_JOURNAL=Diario de ventas
 ACCOUNTING_PURCHASE_JOURNAL=Diario de compras
@@ -145,12 +153,21 @@ ACCOUNTING_EXPENSEREPORT_JOURNAL=Informe de gastos diario
 ACCOUNTING_SOCIAL_JOURNAL=Diario social
 ACCOUNTING_HAS_NEW_JOURNAL=Tiene un nuevo diario
 
+ACCOUNTING_RESULT_PROFIT=Cuenta contable de resultados (Ganancias)
+ACCOUNTING_RESULT_LOSS=Cuenta contable de resultados (Pérdidas)
+ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Diario de cierre
+
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Cuenta de caja
+TransitionalAccount=Cuenta de transferencia bancaria de transición
+
 ACCOUNTING_ACCOUNT_SUSPENSE=Cuenta operaciones pendientes de asignar
 DONATION_ACCOUNTINGACCOUNT=Cuenta contable para registrar donaciones
+ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Cuenta contable para registrar subscripciones
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cuenta contable predeterminada para los productos comprados (si no se define en el producto)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Cuenta contable predeterminada para los productos vendidos (si no se define en el producto)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Cuenta contable predeterminada para los productos vendidos en la CEE (si no se define en el producto)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Cuenta contable predeterminada para los productos vendidos fuera de la CEE (si no se define en el producto)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Cuenta contable predeterminada para los servicios comprados (si no se define en el servicio)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Cuenta contable predeterminada para los servicios vendidos (si no se define en el servico)
 
@@ -161,7 +178,9 @@ LabelAccount=Descripción
 LabelOperation=Etiqueta operación
 Sens=Sentido
 LetteringCode=Cogido de letras
+Lettering=Letras
 Codejournal=Diario
+JournalLabel=Etiqueta del diario
 NumPiece=Apunte
 TransactionNumShort=Núm. transacción
 AccountingCategory=Grupos personalizados
@@ -198,7 +217,9 @@ DescThirdPartyReport=Consulte aquí el listado de clientes y proveedores y sus c
 ListAccounts=Listado de cuentas contables
 UnknownAccountForThirdparty=Cuenta contable de tercero desconocida, usaremos %s
 UnknownAccountForThirdpartyBlocking=Cuenta contable de tercero desconocida. Error de bloqueo
-UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Cuenta del terceros desconocida y cuenta de espera no definida. Error de bloqueo
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Cuenta de tercero no definida o tercero desconocido. Usaremos %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Cuenta del tercero desconocida o tercero desconocido. Error de bloqueo
+UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Cuenta del tercero desconocida y cuenta de espera no definida. Error de bloqueo
 PaymentsNotLinkedToProduct=Pagos no vinculados a un producto/servicio
 
 Pcgtype=Grupo de cuenta
@@ -215,7 +236,7 @@ DescVentilTodoCustomer=Contabilizar líneas de factura aún no contabilizadas co
 ChangeAccount=Cambie la cuenta del producto/servicio para las líneas seleccionadas a la cuenta:
 Vide=-
 DescVentilSupplier=Consulte aquí la lista de líneas de facturas de proveedores enlazadas (o no) a una cuenta contable de producto
-DescVentilDoneSupplier=Consulte aquí la lista de facturas de proveedores y sus cuentas contables
+DescVentilDoneSupplier=Consulte aquí las líneas de facturas de proveedores y sus cuentas contables
 DescVentilTodoExpenseReport=Contabilizar líneas de informes de gastos aún no contabilizadas con una cuenta contable de gastos
 DescVentilExpenseReport=Consulte aquí la lista de líneas de informes de gastos (o no) a una cuenta contable de gastos
 DescVentilExpenseReportMore=Si configura la cuentas contables de los tipos de informes de gastos, la aplicación será capaz de hacer el enlace entre sus líneas de informes de gastos y las cuentas contables, simplemente con un clic en el botón <strong>"%s"</strong> , Si no se ha establecido la cuenta contable en el diccionario o si todavía tiene algunas líneas no contabilizadas a alguna cuenta, tendrá que hacer una contabilización manual desde el menú "<strong>%s</strong>".
@@ -244,7 +265,7 @@ AccountingJournals=Diarios contables
 AccountingJournal=Diario contable
 NewAccountingJournal=Nuevo diario contable
 ShowAccoutingJournal=Mostrar diario contable
-Nature=Naturaleza
+NatureOfJournal=Naturaleza del diario
 AccountingJournalType1=Operaciones varias
 AccountingJournalType2=Ventas
 AccountingJournalType3=Compras
@@ -254,32 +275,42 @@ AccountingJournalType8=Inventario
 AccountingJournalType9=Haber
 ErrorAccountingJournalIsAlreadyUse=Este diario ya esta siendo usado
 AccountingAccountForSalesTaxAreDefinedInto=Nota: La cuenta contable del IVA a las ventas se define en el menú <b> %s</b> - <b> %s</b>
+NumberOfAccountancyEntries=Número de entradas
+NumberOfAccountancyMovements=Número de movimientos
 
 ## Export
 ExportDraftJournal=Exportar libro borrador
 Modelcsv=Modelo de exportación
 Selectmodelcsv=Seleccione un modelo de exportación
 Modelcsv_normal=Exportación clásica
-Modelcsv_CEGID=Exportar hacia CEGID Expert Comptabilité
-Modelcsv_COALA=Exportar hacia Sage Coala
-Modelcsv_bob50=Exportar hacia Sage BOB 50
-Modelcsv_ciel=Exportar hacia Sage Ciel Compta o Compta Evolution
-Modelcsv_quadratus=Exportar hacia Quadratus QuadraCompta
+Modelcsv_CEGID=Exportar a CEGID Expert Comptabilité
+Modelcsv_COALA=Exportar a Sage Coala
+Modelcsv_bob50=Exportar a Sage BOB 50
+Modelcsv_ciel=Exportar a Sage Ciel Compta o Compta Evolution
+Modelcsv_quadratus=Exportar a Quadratus QuadraCompta
 Modelcsv_ebp=Exportar a EBP
 Modelcsv_cogilog=Eportar a Cogilog
 Modelcsv_agiris=Exportar a Agiris
+Modelcsv_LDCompta=Exportar para LD Compta (v9 y superior) (En pruebas)
+Modelcsv_openconcerto=Exportar a OpenConcerto (En pruebas)
 Modelcsv_configurable=Exportación CSV Configurable
-Modelcsv_FEC=Exportación FEC (Art. L47 A) (Prueba)
+Modelcsv_FEC=Exportación FEC
+Modelcsv_Sage50_Swiss=Exportación a Sage 50 Suiza
 ChartofaccountsId=Id plan contable
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Iniciar contabilidad
 InitAccountancyDesc=Puede usar esta página para inicializar el código contable en productos y servicios que no tienen código contable definido para ventas y compras
 DefaultBindingDesc=Esta página puede usarse para establecer una cuenta predeterminada que se utilizará para enlazar registros de salarios, donaciones, impuestos e IVA cuando no tengan establecida una cuenta contable.
+DefaultClosureDesc=Esta página se puede usar para configurar los parámetros que se usarán en los cierres contables.
 Options=Opciones
 OptionModeProductSell=Modo ventas
+OptionModeProductSellIntra=Modo Ventas exportación CEE
+OptionModeProductSellExport=Modo ventas exportación otros paises
 OptionModeProductBuy=Modo compras
 OptionModeProductSellDesc=Mostrar todos los productos con cuenta contable de ventas
+OptionModeProductSellIntraDesc=Mostrar todos los productos con cuenta contable para ventas en CEE.
+OptionModeProductSellExportDesc=Mostrar todos los productos con cuenta contable para otras ventas al exterior.
 OptionModeProductBuyDesc=Mostrar todos los productos con cuenta contable de compras
 CleanFixHistory=Eliminar código contable de las líneas que no existen en el plan contable
 CleanHistory=Resetear todos los vínculos del año seleccionado
@@ -287,6 +318,10 @@ PredefinedGroups=Grupos personalizados
 WithoutValidAccount=Sin cuenta dedicada válida
 WithValidAccount=Con cuenta dedicada válida
 ValueNotIntoChartOfAccount=Este valor de cuenta contable no existe en el plan general contable
+AccountRemovedFromGroup=Cuenta eliminada del grupo
+SaleLocal=Venta local
+SaleExport=Venta de exportación
+SaleEEC=Venta en CEE
 
 ## Dictionary
 Range=Rango de cuenta contable
@@ -307,7 +342,7 @@ UseMenuToSetBindindManualy=No es posible autodetectar, utilice el menú <a href=
 
 ## Import
 ImportAccountingEntries=Entradas contables
-
+DateExport=Fecha de exportación
 WarningReportNotReliable=Advertencia, este informe no se basa en el Libro mayor, por lo que no contiene modificaciones manualmente modificadas en el Libro mayor.. Si su diario está actualizado, la vista contable es más precisa.
 ExpenseReportJournal=Informe de gastos diario
 InventoryJournal=Inventario

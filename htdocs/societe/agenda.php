@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-$langs->load("companies");
+$langs->loadLangs(array("companies", "bills", "propal", "orders"));
 
 if (GETPOST('actioncode', 'array'))
 {
@@ -47,7 +47,7 @@ $search_agenda_label=GETPOST('search_agenda_label');
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -103,9 +103,6 @@ if ($socid > 0)
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-	$langs->load("companies");
-
-
 	$object = new Societe($db);
 	$result = $object->fetch($socid);
 
@@ -120,14 +117,14 @@ if ($socid > 0)
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+    dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom');
 
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
 
     $object->info($socid);
-	print dol_print_object_info($object, 1);
+	dol_print_object_info($object, 1);
 
 	print '</div>';
 
@@ -162,9 +159,7 @@ if ($socid > 0)
     {
     	if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
     	{
-        	$newcardbutton.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddAction").'</span>';
-        	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-        	$newcardbutton.= '</a>';
+            $newcardbutton.= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
     	}
     }
 

@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - deliveries
+Delivery=Entrega
 DeliveryRef=Ref. entrega
-DeliveryCard=Recibo de recebimento
+DeliveryCard=Cartão de recibo
+CreateDeliveryOrder=Gerar recebimento de entrega
 DeliveryStateSaved=Estado de entrega salvo
 SetDeliveryDate=Indicar a Data de Envio
 ValidateDeliveryReceipt=Confirmar a Nota de Entrega
@@ -11,6 +13,7 @@ DeliveryMethod=Método de entrega
 TrackingNumber=Número de rastreamento
 StatusDeliveryValidated=Recebida
 GoodStatusDeclaration=Recebi a mercadorias acima em bom estado,
+Deliverer=Entregador :
 Sender=Remetente
 ErrorStockIsNotEnough=Não existe estoque suficiente
 Shippable=Disponivel para envio

@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -47,7 +47,7 @@ if ($id)
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0) $socid = $user->societe_id;
+if ($user->socid > 0) $socid = $user->socid;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
@@ -152,6 +152,12 @@ if (empty($reshook)) {
 			    $tabparam["MAIN_OPTIMIZEFORTEXTBROWSER"] = 0;
 			}
 
+			if (GETPOST('MAIN_OPTIMIZEFORCOLORBLIND')) {
+				$tabparam["MAIN_OPTIMIZEFORCOLORBLIND"] = GETPOST('MAIN_OPTIMIZEFORCOLORBLIND');
+			} else {
+				$tabparam["MAIN_OPTIMIZEFORCOLORBLIND"] = 0;
+			}
+
 			$result = dol_set_user_param($db, $conf, $object, $tabparam);
 
 			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);
@@ -173,7 +179,7 @@ if (! empty($conf->projet->enabled)) $tmparray['projet/index.php?mainmenu=projec
 if (! empty($conf->holiday->enabled) || ! empty($conf->expensereport->enabled)) $tmparray['hrm/index.php?mainmenu=hrm&leftmenu=']='HRMArea';   // TODO Complete list with first level of menus
 if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) $tmparray['product/index.php?mainmenu=products&leftmenu=']='ProductsAndServicesArea';
 if (! empty($conf->propal->enabled) || ! empty($conf->commande->enabled) || ! empty($conf->ficheinter->enabled) || ! empty($conf->contrat->enabled)) $tmparray['comm/index.php?mainmenu=commercial&leftmenu=']='CommercialArea';
-if (! empty($conf->compta->enabled) || ! empty($conf->accounting->enabled)) $tmparray['compta/index.php?mainmenu=compta&leftmenu=']='AccountancyTreasuryArea';
+if (! empty($conf->comptabilite->enabled) || ! empty($conf->accounting->enabled)) $tmparray['compta/index.php?mainmenu=compta&leftmenu=']='AccountancyTreasuryArea';
 if (! empty($conf->adherent->enabled)) $tmparray['adherents/index.php?mainmenu=members&leftmenu=']='MembersArea';
 if (! empty($conf->agenda->enabled)) $tmparray['comm/action/index.php?mainmenu=agenda&leftmenu=']='Agenda';
 
@@ -308,7 +314,7 @@ if ($action == 'edit')
     print '</table><br>';
 
     // Theme
-    show_theme($object, (($user->admin || empty($dolibarr_main_demo))?1:0), true);
+    showSkins($object, (($user->admin || empty($dolibarr_main_demo))?1:0), true);
 
     dol_fiche_end();
 
@@ -381,7 +387,7 @@ else
 
 
     // Skin
-    show_theme($object, 0, true);
+    showSkins($object, 0, true);
 
     dol_fiche_end();
 

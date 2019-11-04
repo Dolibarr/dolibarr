@@ -11,7 +11,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see http://www.gnu.org/licenses/.
+-- along with this program.  If not, see https://www.gnu.org/licenses/.
 --
 -- Table to store accounts of thirdparties on external websites (like on stripe field site = 'stripe')
 -- or on local website (fk_website).
@@ -32,7 +32,7 @@ CREATE TABLE llx_societe_account(
 	date_last_login   datetime,
 	date_previous_login datetime,
 	date_creation datetime NOT NULL, 
-	tms timestamp NOT NULL, 
+	tms timestamp, 
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
 	import_key varchar(14), 

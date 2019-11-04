@@ -5,6 +5,7 @@
 // during install process to be used.
 //
 //
+$force_install_type='doliwamp';
 $force_install_noedit=2;		// 1=To block vars specific to distrib, 2 to block all technical parameters
 $force_install_message='KeepDefaultValuesWamp';
 $force_install_main_data_root='WAMPROOT/dolibarr_documents';

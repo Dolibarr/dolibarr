@@ -56,7 +56,6 @@ CopyPropalFrom=Crear presupuesto por copia de uno existente
 CreateEmptyPropal=Crear propuesta comercial vacía o desde lista de productos/servicios.
 DefaultProposalDurationValidity=Plazo de validez por defecto (en días)
 UseCustomerContactAsPropalRecipientIfExist=Utilizar dirección del contacto de seguimiento de cliente definido, en vez de la dirección del tercero como destinatario de los presupuestos
-ClonePropal=Clonar presupuesto
 ConfirmClonePropal=¿Está seguro de querer clonar el presupuesto <b>%s</b>?
 ConfirmReOpenProp=¿Está seguro de querer reabrir el presupuesto <b>%s</b>?
 ProposalsAndProposalsLines=Presupuestos a clientes y líneas de presupuestos

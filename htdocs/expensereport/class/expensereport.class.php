@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -46,6 +46,10 @@ class ExpenseReport extends CommonObject
 
     public $table_element_line = 'expensereport_det';
     public $fk_element = 'fk_expensereport';
+
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
     public $picto = 'trip';
 
     public $lines=array();
@@ -101,9 +105,6 @@ class ExpenseReport extends CommonObject
     // Paiement
     public $user_paid_infos;
 
-    /*
-        END ACTIONS
-    */
 
     /**
 	 * Draft status
@@ -136,6 +137,51 @@ class ExpenseReport extends CommonObject
 	const STATUS_CLOSED = 6;
 
 
+	public $fields=array(
+		'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+		'ref' =>array('type'=>'varchar(50)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>15),
+		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>20),
+		'ref_number_int' =>array('type'=>'integer', 'label'=>'Ref number int', 'enabled'=>1, 'visible'=>-1, 'position'=>25),
+		'ref_ext' =>array('type'=>'integer', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
+		'total_ht' =>array('type'=>'double(24,8)', 'label'=>'Total ht', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
+		'total_tva' =>array('type'=>'double(24,8)', 'label'=>'Total tva', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
+		'localtax1' =>array('type'=>'double(24,8)', 'label'=>'Localtax1', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
+		'localtax2' =>array('type'=>'double(24,8)', 'label'=>'Localtax2', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
+		'total_ttc' =>array('type'=>'double(24,8)', 'label'=>'Total ttc', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
+		'date_debut' =>array('type'=>'date', 'label'=>'Date debut', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>60),
+		'date_fin' =>array('type'=>'date', 'label'=>'Date fin', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>65),
+		'date_valid' =>array('type'=>'datetime', 'label'=>'Date valid', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
+		'date_approve' =>array('type'=>'datetime', 'label'=>'Date approve', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
+		'date_refuse' =>array('type'=>'datetime', 'label'=>'Date refuse', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
+		'date_cancel' =>array('type'=>'datetime', 'label'=>'Date cancel', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
+		'fk_user_author' =>array('type'=>'integer', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>100),
+		'fk_user_modif' =>array('type'=>'integer', 'label'=>'Fk user modif', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
+		'fk_user_valid' =>array('type'=>'integer', 'label'=>'Fk user valid', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
+		'fk_user_validator' =>array('type'=>'integer', 'label'=>'Fk user validator', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
+		'fk_user_approve' =>array('type'=>'integer', 'label'=>'Fk user approve', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
+		'fk_user_refuse' =>array('type'=>'integer', 'label'=>'Fk user refuse', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
+		'fk_user_cancel' =>array('type'=>'integer', 'label'=>'Fk user cancel', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
+		'fk_c_paiement' =>array('type'=>'integer', 'label'=>'Fk c paiement', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
+		'paid' =>array('type'=>'integer', 'label'=>'Paid', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>145),
+		'note_public' =>array('type'=>'text', 'label'=>'Note public', 'enabled'=>1, 'visible'=>0, 'position'=>150),
+		'note_private' =>array('type'=>'text', 'label'=>'Note private', 'enabled'=>1, 'visible'=>0, 'position'=>155),
+		'detail_refuse' =>array('type'=>'varchar(255)', 'label'=>'Detail refuse', 'enabled'=>1, 'visible'=>-1, 'position'=>160),
+		'detail_cancel' =>array('type'=>'varchar(255)', 'label'=>'Detail cancel', 'enabled'=>1, 'visible'=>-1, 'position'=>165),
+		'integration_compta' =>array('type'=>'integer', 'label'=>'Integration compta', 'enabled'=>1, 'visible'=>-1, 'position'=>170),
+		'fk_bank_account' =>array('type'=>'integer', 'label'=>'Fk bank account', 'enabled'=>1, 'visible'=>-1, 'position'=>175),
+		'model_pdf' =>array('type'=>'varchar(50)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>180),
+		'fk_multicurrency' =>array('type'=>'integer', 'label'=>'Fk multicurrency', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
+		'multicurrency_code' =>array('type'=>'varchar(255)', 'label'=>'Multicurrency code', 'enabled'=>1, 'visible'=>-1, 'position'=>190),
+		'multicurrency_tx' =>array('type'=>'double(24,8)', 'label'=>'Multicurrency tx', 'enabled'=>1, 'visible'=>-1, 'position'=>195),
+		'multicurrency_total_ht' =>array('type'=>'double(24,8)', 'label'=>'Multicurrency total ht', 'enabled'=>1, 'visible'=>-1, 'position'=>200),
+		'multicurrency_total_tva' =>array('type'=>'double(24,8)', 'label'=>'Multicurrency total tva', 'enabled'=>1, 'visible'=>-1, 'position'=>205),
+		'multicurrency_total_ttc' =>array('type'=>'double(24,8)', 'label'=>'Multicurrency total ttc', 'enabled'=>1, 'visible'=>-1, 'position'=>210),
+		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportKey', 'enabled'=>1, 'visible'=>-1, 'position'=>215),
+		'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>220),
+		'date_create' =>array('type'=>'datetime', 'label'=>'Date create', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>300),
+		'tms' =>array('type'=>'timestamp', 'label'=>'Tms', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>305),
+		'fk_statut' =>array('type'=>'integer', 'label'=>'Fk statut', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
+	);
 
 	/**
      *  Constructor
@@ -153,7 +199,7 @@ class ExpenseReport extends CommonObject
         // List of language codes for status
         $this->statuts_short = array(0 => 'Draft', 2 => 'Validated', 4 => 'Canceled', 5 => 'Approved', 6 => 'Paid', 99 => 'Refused');
         $this->statuts = array(0 => 'Draft', 2 => 'ValidatedWaitingApproval', 4 => 'Canceled', 5 => 'Approved', 6 => 'Paid', 99 => 'Refused');
-        $this->statuts_logo = array(0 => 'statut0', 2 => 'statut1', 4 => 'statut5', 5 => 'statut3', 6 => 'statut6', 99 => 'statut5');
+        $this->statuts_logo = array(0 => 'status0', 2 => 'status1', 4 => 'status6', 5 => 'status4', 6 => 'status6', 99 => 'status5');
     }
 
     /**
@@ -266,7 +312,6 @@ class ExpenseReport extends CommonObject
                 $result=$this->update_price();
                 if ($result > 0)
                 {
-
 					if (!$notrigger)
 					{
 						// Call trigger
@@ -314,12 +359,13 @@ class ExpenseReport extends CommonObject
     /**
      *	Load an object from its id and create a new one in database
      *
-     *	@param		int			$fk_user_author		  Id of new user
-     *	@return		int							      New id of clone
+	 *  @param	    User	$user		        User making the clone
+     *	@param		int     $fk_user_author		Id of new user
+     *	@return		int							New id of clone
      */
-    public function createFromClone($fk_user_author)
+    public function createFromClone(User $user, $fk_user_author)
     {
-        global $user,$hookmanager;
+        global $hookmanager;
 
         $error=0;
 
@@ -469,7 +515,7 @@ class ExpenseReport extends CommonObject
         $sql.= " d.fk_user_author, d.fk_user_modif, d.fk_user_validator,";
         $sql.= " d.fk_user_valid, d.fk_user_approve,";
         $sql.= " d.fk_statut as status, d.fk_c_paiement, d.paid,";
-        $sql.= " dp.libelle as libelle_paiement, dp.code as code_paiement";                             // INNER JOIN paiement
+        $sql.= " dp.libelle as label_payment, dp.code as code_paiement";                             // INNER JOIN paiement
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as d";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as dp ON d.fk_c_paiement = dp.id";
         if ($ref) $sql.= " WHERE d.ref = '".$this->db->escape($ref)."'";
@@ -525,15 +571,13 @@ class ExpenseReport extends CommonObject
                 $this->fk_c_paiement            = $obj->fk_c_paiement;
                 $this->paid                     = $obj->paid;
 
-                if ($this->fk_statut==5 || $this->fk_statut==6)
+                if ($this->fk_statut == self::STATUS_APPROVED || $this->fk_statut == self::STATUS_CLOSED)
                 {
                     $user_valid = new User($this->db);
                     if ($this->fk_user_valid > 0) $user_valid->fetch($this->fk_user_valid);
                     $this->user_valid_infos = dolGetFirstLastname($user_valid->firstname, $user_valid->lastname);
                 }
 
-                $this->libelle_statut   = $obj->libelle_statut;
-                $this->libelle_paiement = $obj->libelle_paiement;
                 $this->code_statut      = $obj->code_statut;
                 $this->code_paiement    = $obj->code_paiement;
 
@@ -571,8 +615,8 @@ class ExpenseReport extends CommonObject
 		$this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."expensereport";
-        $sql.= " SET fk_statut = 6, paid=1";
-        $sql.= " WHERE rowid = ".$id." AND fk_statut = 5";
+        $sql.= " SET fk_statut = ".self::STATUS_CLOSED.", paid=1";
+        $sql.= " WHERE rowid = ".$id." AND fk_statut = ".self::STATUS_APPROVED;
 
         dol_syslog(get_class($this)."::set_paid sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -638,29 +682,15 @@ class ExpenseReport extends CommonObject
      */
     public function LibStatut($status, $mode = 0)
     {
-        // phpcs:enable
-        global $langs;
+    	// phpcs:enable
+    	global $langs;
 
-        if ($mode == 0)
-            return $langs->transnoentities($this->statuts[$status]);
+    	$labelStatus = $langs->trans($this->statuts[$status]);
+    	$labelStatusShort = $langs->trans($this->statuts_short[$status]);
 
-        elseif ($mode == 1)
-            return $langs->transnoentities($this->statuts_short[$status]);
+    	$statusType = $this->statuts_logo[$status];
 
-        elseif ($mode == 2)
-            return img_picto($langs->transnoentities($this->statuts_short[$status]), $this->statuts_logo[$status]).' '.$langs->transnoentities($this->statuts_short[$status]);
-
-        elseif ($mode == 3)
-            return img_picto($langs->transnoentities($this->statuts_short[$status]), $this->statuts_logo[$status]);
-
-        elseif ($mode == 4)
-            return img_picto($langs->transnoentities($this->statuts_short[$status]), $this->statuts_logo[$status]).' '.$langs->transnoentities($this->statuts[$status]);
-
-        elseif ($mode == 5)
-            return '<span class="hideonsmartphone">'.$langs->transnoentities($this->statuts_short[$status]).' </span>'.img_picto($langs->transnoentities($this->statuts_short[$status]), $this->statuts_logo[$status]);
-
-        elseif ($mode == 6)
-            return $langs->transnoentities($this->statuts[$status]).' '.img_picto($langs->transnoentities($this->statuts_short[$status]), $this->statuts_logo[$status]);
+    	return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
     }
 
 
@@ -818,7 +848,6 @@ class ExpenseReport extends CommonObject
         $langs->load('trips');
 
         if ($user->rights->expensereport->lire) {
-
             $sql = "SELECT de.fk_expensereport, de.date, de.comments, de.total_ht, de.total_ttc";
             $sql.= " FROM ".MAIN_DB_PREFIX."expensereport_det as de";
             $sql.= " WHERE de.fk_projet = ".$projectid;
@@ -834,7 +863,6 @@ class ExpenseReport extends CommonObject
 
                 while ($i < $num)
                 {
-
                     $objp = $db->fetch_object($result);
 
                     $sql2 = "SELECT d.rowid, d.fk_user_author, d.ref, d.fk_statut";
@@ -929,10 +957,10 @@ class ExpenseReport extends CommonObject
             $num = $this->db->num_rows($result);
             $i = 0;
             while ($i < $num):
-            $objp = $this->db->fetch_object($result);
-            $total_ht+=$objp->total_ht;
-            $total_tva+=$objp->total_tva;
-            $i++;
+                $objp = $this->db->fetch_object($result);
+                $total_ht+=$objp->total_ht;
+                $total_tva+=$objp->total_tva;
+                $i++;
             endwhile;
 
             $total_ttc = $total_ht + $total_tva;
@@ -942,13 +970,13 @@ class ExpenseReport extends CommonObject
             $sql.= " , total_tva = ".$total_tva;
             $sql.= " WHERE rowid = ".$id;
             $result = $this->db->query($sql);
-            if($result):
-            $this->db->free($result);
-            return 1;
+            if ($result):
+                $this->db->free($result);
+                return 1;
             else:
-            $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::recalculer: Error ".$this->error, LOG_ERR);
-            return -3;
+                $this->error=$this->db->lasterror();
+                dol_syslog(get_class($this)."::recalculer: Error ".$this->error, LOG_ERR);
+                return -3;
             endif;
         }
         else
@@ -1131,11 +1159,10 @@ class ExpenseReport extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
-			if (!$notrigger)
+			if (! $error && ! $notrigger)
 			{
 				// Call trigger
 				$result=$this->call_trigger('EXPENSE_REPORT_VALIDATE', $fuser);
-
 				if ($result < 0) {
 					$error++;
 				}
@@ -1151,15 +1178,20 @@ class ExpenseReport extends CommonObject
 			    {
 			    	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-			    	// On renomme repertoire ($this->ref = ancienne ref, $num = nouvelle ref)
-					// in order not to lose the attachments
+			    	// Now we rename also files into index
+			    	$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref)+1).")), filepath = 'expensereport/".$this->db->escape($this->newref)."'";
+			    	$sql.= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'expensereport/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$resql = $this->db->query($sql);
+					if (! $resql) { $error++; $this->error = $this->db->lasterror(); }
+
+			    	// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 					$oldref = dol_sanitizeFileName($this->ref);
 					$newref = dol_sanitizeFileName($num);
 					$dirsource = $conf->expensereport->dir_output.'/'.$oldref;
 					$dirdest = $conf->expensereport->dir_output.'/'.$newref;
-					if (file_exists($dirsource))
+					if (! $error && file_exists($dirsource))
 					{
-					    dol_syslog(get_class($this)."::valid() rename dir ".$dirsource." into ".$dirdest);
+					    dol_syslog(get_class($this)."::setValidate() rename dir ".$dirsource." into ".$dirdest);
 
 					    if (@rename($dirsource, $dirdest))
 					    {
@@ -1229,10 +1261,10 @@ class ExpenseReport extends CommonObject
 
         $this->date_debut = $this->db->jdate($objp->date_debut);
 
-        if ($this->fk_statut != 2)
+        if ($this->fk_statut != self::STATUS_VALIDATED)
         {
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET fk_statut = 2";
+            $sql.= " SET fk_statut = ".self::STATUS_VALIDATED;
             $sql.= ' WHERE rowid = '.$this->id;
 
             dol_syslog(get_class($this)."::set_save_from_refuse sql=".$sql, LOG_DEBUG);
@@ -1267,11 +1299,12 @@ class ExpenseReport extends CommonObject
 
         // date approval
         $this->date_approve = $now;
-        if ($this->fk_statut != 5) {
-            $this->db->begin();
+        if ($this->fk_statut != self::STATUS_APPROVED)
+        {
+			$this->db->begin();
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = 5, fk_user_approve = ".$fuser->id.",";
+            $sql.= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = ".self::STATUS_APPROVED.", fk_user_approve = ".$fuser->id.",";
             $sql.= " date_approve='".$this->db->idate($this->date_approve)."'";
             $sql.= ' WHERE rowid = '.$this->id;
             if ($this->db->query($sql))
@@ -1318,7 +1351,7 @@ class ExpenseReport extends CommonObject
      * setDeny
      *
      * @param User      $fuser      User
-     * @param Details   $details    Details
+     * @param string    $details    Details
      * @param int       $notrigger  Disable triggers
      * @return int
      */
@@ -1328,10 +1361,10 @@ class ExpenseReport extends CommonObject
 		$error = 0;
 
         // date de refus
-        if ($this->fk_statut != 99)
+		if ($this->fk_statut != self::STATUS_REFUSED)
         {
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = 99, fk_user_refuse = ".$fuser->id.",";
+            $sql.= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = ".self::STATUS_REFUSED.", fk_user_refuse = ".$fuser->id.",";
             $sql.= " date_refuse='".$this->db->idate($now)."',";
             $sql.= " detail_refuse='".$this->db->escape($details)."',";
             $sql.= " fk_user_approve = NULL";
@@ -1392,12 +1425,12 @@ class ExpenseReport extends CommonObject
         // phpcs:enable
 		$error = 0;
 
-        if ($this->fk_c_deplacement_statuts != 5)
+		if ($this->paid)
         {
 			$this->db->begin();
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET fk_statut = 5";
+            $sql.= " SET paid = 0, fk_statut = ".self::STATUS_APPROVED;
             $sql.= ' WHERE rowid = '.$this->id;
 
             dol_syslog(get_class($this)."::set_unpaid sql=".$sql, LOG_DEBUG);
@@ -1454,12 +1487,12 @@ class ExpenseReport extends CommonObject
         // phpcs:enable
 		$error = 0;
         $this->date_cancel = $this->db->idate(gmmktime());
-        if ($this->fk_statut != ExpenseReport::STATUS_CANCELED)
+        if ($this->fk_statut != self::STATUS_CANCELED)
         {
 			$this->db->begin();
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET fk_statut = ".ExpenseReport::STATUS_CANCELED.", fk_user_cancel = ".$fuser->id;
+            $sql.= " SET fk_statut = ".self::STATUS_CANCELED.", fk_user_cancel = ".$fuser->id;
             $sql.= ", date_cancel='".$this->db->idate($this->date_cancel)."'";
             $sql.= " ,detail_cancel='".$this->db->escape($detail)."'";
             $sql.= ' WHERE rowid = '.$this->id;
@@ -1648,10 +1681,10 @@ class ExpenseReport extends CommonObject
 
         $result = $this->db->query($sql);
         if ($result):
-        return 1;
+            return 1;
         else:
-        $this->error=$this->db->error();
-        return -1;
+            $this->error=$this->db->error();
+            return -1;
         endif;
     }
 
@@ -1678,10 +1711,10 @@ class ExpenseReport extends CommonObject
 
         $result = $this->db->query($sql);
         if ($result):
-        return 1;
+            return 1;
         else:
-        $this->error=$this->db->error();
-        return -1;
+            $this->error=$this->db->error();
+            return -1;
         endif;
     }
 
@@ -1940,7 +1973,7 @@ class ExpenseReport extends CommonObject
 	}
 
     /**
-     * updateline
+     * Update an expense report line
      *
      * @param   int         $rowid                  Line to edit
      * @param   int         $type_fees_id           Type payment
@@ -1951,10 +1984,11 @@ class ExpenseReport extends CommonObject
      * @param   double      $value_unit             Value init
      * @param   int         $date                   Date
      * @param   int         $expensereport_id       Expense report id
-     * @param   int         $fk_c_exp_tax_cat       id of category of car
+     * @param   int         $fk_c_exp_tax_cat       Id of category of car
+	 * @param   int         $fk_ecm_files           Id of ECM file to link to this expensereport line
      * @return  int                                 <0 if KO, >0 if OK
      */
-    public function updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $expensereport_id, $fk_c_exp_tax_cat = 0)
+    public function updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $expensereport_id, $fk_c_exp_tax_cat = 0, $fk_ecm_files = 0)
     {
         global $user, $mysoc;
 
@@ -2013,6 +2047,8 @@ class ExpenseReport extends CommonObject
             $this->line->localtax1_type = $localtaxes_type[0];
             $this->line->localtax2_type = $localtaxes_type[2];
 
+            $this->line->fk_ecm_files = $fk_ecm_files;
+
             $this->line->rowid           = $rowid;
             $this->line->id              = $rowid;
 
@@ -2020,21 +2056,26 @@ class ExpenseReport extends CommonObject
             $sql = "SELECT c.code as code_type_fees, c.label as libelle_type_fees";
             $sql.= " FROM ".MAIN_DB_PREFIX."c_type_fees as c";
             $sql.= " WHERE c.id = ".$type_fees_id;
-            $result = $this->db->query($sql);
-            $objp_fees = $this->db->fetch_object($result);
-            $this->line->type_fees_code      = $objp_fees->code_type_fees;
-            $this->line->type_fees_libelle   = $objp_fees->libelle_type_fees;
+            $resql = $this->db->query($sql);
+            if ($resql)
+            {
+                $objp_fees = $this->db->fetch_object($resql);
+                $this->line->type_fees_code      = $objp_fees->code_type_fees;
+                $this->line->type_fees_libelle   = $objp_fees->libelle_type_fees;
+                $this->db->free($resql);
+            }
 
             // Select des informations du projet
             $sql = "SELECT p.ref as ref_projet, p.title as title_projet";
             $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
             $sql.= " WHERE p.rowid = ".$projet_id;
-            $result = $this->db->query($sql);
-            if ($result) {
-            	$objp_projet = $this->db->fetch_object($result);
+            $resql = $this->db->query($sql);
+            if ($resql) {
+            	$objp_projet = $this->db->fetch_object($resql);
+            	$this->line->projet_ref          = $objp_projet->ref_projet;
+            	$this->line->projet_title        = $objp_projet->title_projet;
+            	$this->db->free($resql);
             }
-            $this->line->projet_ref          = $objp_projet->ref_projet;
-            $this->line->projet_title        = $objp_projet->title_projet;
 
 			$this->applyOffset();
 			$this->checkRules();
@@ -2088,10 +2129,10 @@ class ExpenseReport extends CommonObject
     /**
      * periode_existe
      *
-     * @param   User    $fuser          User
-     * @param   Date    $date_debut     Start date
-     * @param   Date    $date_fin       End date
-     * @return  int                     <0 if KO, >0 if OK
+     * @param   User       $fuser          User
+     * @param   integer    $date_debut     Start date
+     * @param   integer    $date_fin       End date
+     * @return  int                        <0 if KO, >0 if OK
      */
     public function periode_existe($fuser, $date_debut, $date_fin)
     {
@@ -2103,16 +2144,16 @@ class ExpenseReport extends CommonObject
         dol_syslog(get_class($this)."::periode_existe sql=".$sql);
         $result = $this->db->query($sql);
         if ($result) {
-            $num_lignes = $this->db->num_rows($result); $i = 0;
+            $num_rows = $this->db->num_rows($result); $i = 0;
 
-            if ($num_lignes>0)
+            if ($num_rows > 0)
             {
                 $date_d_form = $date_debut;
                 $date_f_form = $date_fin;
 
                 $existe = false;
 
-                while ($i < $num_lignes)
+                while ($i < $num_rows)
                 {
                     $objp = $this->db->fetch_object($result);
 
@@ -2166,8 +2207,8 @@ class ExpenseReport extends CommonObject
         $result = $this->db->query($sql);
         if($result)
         {
-            $num_lignes = $this->db->num_rows($result); $i = 0;
-            while ($i < $num_lignes)
+            $num_rows = $this->db->num_rows($result); $i = 0;
+            while ($i < $num_rows)
             {
                 $objp = $this->db->fetch_object($result);
                 array_push($users_validator, $objp->fk_user);
@@ -2201,7 +2242,6 @@ class ExpenseReport extends CommonObject
         $langs->load("trips");
 
 	    if (! dol_strlen($modele)) {
-
 		    $modele = 'standard';
 
 		    if ($this->modelpdf) {
@@ -2296,7 +2336,7 @@ class ExpenseReport extends CommonObject
         // phpcs:enable
         global $conf, $langs;
 
-        if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
+        if ($user->socid) return -1;   // protection pour eviter appel par utilisateur externe
 
         $now=dol_now();
 
@@ -2318,14 +2358,16 @@ class ExpenseReport extends CommonObject
 	        $response = new WorkboardResponse();
 	        if ($option == 'toapprove')
 	        {
-	           $response->warning_delay=$conf->expensereport->approve->warning_delay/60/60/24;
-	           $response->label=$langs->trans("ExpenseReportsToApprove");
-	           $response->url=DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut=2';
+	            $response->warning_delay=$conf->expensereport->approve->warning_delay/60/60/24;
+	            $response->label=$langs->trans("ExpenseReportsToApprove");
+	            $response->labelShort=$langs->trans("ToApprove");
+	            $response->url=DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut=2';
 	        }
 	        else
 	        {
 	            $response->warning_delay=$conf->expensereport->payment->warning_delay/60/60/24;
 	            $response->label=$langs->trans("ExpenseReportsToPay");
+	            $response->labelShort=$langs->trans("StatusToPay");
 	            $response->url=DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut=5';
 	        }
 	        $response->img=img_object('', "trip");
@@ -2727,7 +2769,8 @@ class ExpenseReportLine
 		$sql.= ",vat_src_code='".$this->db->escape($this->vat_src_code)."'";
         $sql.= ",rule_warning_message='".$this->db->escape($this->rule_warning_message)."'";
 		$sql.= ",fk_c_exp_tax_cat=".$this->db->escape($this->fk_c_exp_tax_cat);
-        if ($this->fk_c_type_fees) $sql.= ",fk_c_type_fees=".$this->db->escape($this->fk_c_type_fees);
+		$sql.= ",fk_ecm_files=".($this->fk_ecm_files > 0 ? $this->fk_ecm_files : 'null');
+		if ($this->fk_c_type_fees) $sql.= ",fk_c_type_fees=".$this->db->escape($this->fk_c_type_fees);
         else $sql.= ",fk_c_type_fees=null";
         if ($this->fk_project > 0) $sql.= ",fk_projet=".$this->db->escape($this->fk_project);
         else $sql.= ",fk_projet=null";

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -73,10 +73,10 @@ class Invoices extends DolibarrApi
 		}
 
 		// Get payment details
-		$this->invoice->totalpaye = $this->invoice->getSommePaiement();
+		$this->invoice->totalpaid = $this->invoice->getSommePaiement();
 		$this->invoice->totalcreditnotes = $this->invoice->getSumCreditNotesUsed();
 		$this->invoice->totaldeposits = $this->invoice->getSumDepositsUsed();
-		$this->invoice->resteapayer = price2num($this->invoice->total_ttc - $this->invoice->totalpaye - $this->invoice->totalcreditnotes - $this->invoice->totaldeposits, 'MT');
+		$this->invoice->remaintopay = price2num($this->invoice->total_ttc - $this->invoice->totalpaid - $this->invoice->totalcreditnotes - $this->invoice->totaldeposits, 'MT');
 
 		if (! DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
@@ -98,7 +98,7 @@ class Invoices extends DolibarrApi
      * @param string	$sortorder	      Sort order
      * @param int		$limit		      Limit for list
      * @param int		$page		      Page number
-     * @param string   	$thirdparty_ids	  Thirdparty ids to filter orders of. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
+     * @param string   	$thirdparty_ids	  Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
      * @param string	$status		      Filter by invoice status : draft | unpaid | paid | cancelled
      * @param string    $sqlfilters       Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return array                      Array of invoice objects
@@ -112,7 +112,7 @@ class Invoices extends DolibarrApi
         $obj_ret = array();
 
         // case of external user, $thirdparty_ids param is ignored and replaced by user's socid
-        $socids = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $thirdparty_ids;
+        $socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $thirdparty_ids;
 
         // If the internal user must only see his customers, force searching by him
         $search_sale = 0;
@@ -316,7 +316,7 @@ class Invoices extends DolibarrApi
      *
      * @url	PUT {id}/lines/{lineid}
      *
-     * @return object
+     * @return array
      *
      * @throws 200
      * @throws 304
@@ -415,7 +415,7 @@ class Invoices extends DolibarrApi
         return $this->_cleanObjectDatas($this->invoice);
     }
 
-   /**
+    /**
 	 * Delete a contact type of given invoice
 	 *
 	 * @param int    $id             Id of invoice to update
@@ -423,7 +423,7 @@ class Invoices extends DolibarrApi
 	 *
 	 * @url	DELETE {id}/contact/{rowid}
 	 *
-	 * @return int
+	 * @return array
      * @throws 401
      * @throws 404
      * @throws 500
@@ -529,10 +529,9 @@ class Invoices extends DolibarrApi
         // update bank account
         if (!empty($this->invoice->fk_account))
         {
-             if($this->invoice->setBankAccount($this->invoice->fk_account) == 0)
-             {
-                 throw new RestException(400, $this->invoice->error);
-             }
+            if ($this->invoice->setBankAccount($this->invoice->fk_account) == 0) {
+                throw new RestException(400, $this->invoice->error);
+            }
         }
 
         if($this->invoice->update(DolibarrApiAccess::$user))
@@ -566,7 +565,7 @@ class Invoices extends DolibarrApi
             throw new RestException(500);
         }
 
-         return array(
+        return array(
             'success' => array(
                 'code' => 200,
                 'message' => 'Invoice deleted'
@@ -909,18 +908,18 @@ class Invoices extends DolibarrApi
 
 
         $result = $this->invoice->fetch($id);
-        if( ! $result ) {
+        if (! $result) {
             throw new RestException(404, 'Invoice not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
+        if (! DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
         return $this->_cleanObjectDatas($this->invoice);
     }
 
-   /**
+    /**
      * Create a discount (credit available) for a credit note or a deposit.
      *
      * @param   int 	$id            Invoice ID
@@ -936,7 +935,7 @@ class Invoices extends DolibarrApi
      */
     public function markAsCreditAvailable($id)
     {
-        if(! DolibarrApiAccess::$user->rights->facture->creer) {
+        if( ! DolibarrApiAccess::$user->rights->facture->creer) {
             throw new RestException(401);
         }
 
@@ -949,89 +948,145 @@ class Invoices extends DolibarrApi
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
-		$result = $this->invoice->fetch_thirdparty();
-        if( ! $result ) {
-            throw new RestException(404, 'Thirdparty not found');
+        if ($this->invoice->paye) {
+            throw new RestException(500, 'Alreay payed');
         }
 
-		if (! $this->invoice->paye)	// protection against multiple submit
-		{
-		    $this->db->begin();
+        $this->invoice->fetch($id);
+        $this->invoice->fetch_thirdparty();
 
-		   	$this->invoice->fetch_lines();
+        // Check if there is already a discount (protection to avoid duplicate creation when resubmit post)
+        $discountcheck=new DiscountAbsolute($this->db);
+        $result=$discountcheck->fetch(0, $this->invoice->id);
 
-		   	$amount_ht = $amount_tva = $amount_ttc = array();
+        $canconvert=0;
+        if ($this->invoice->type == Facture::TYPE_DEPOSIT && empty($discountcheck->id)) $canconvert=1;	// we can convert deposit into discount if deposit is payed (completely, partially or not at all) and not already converted (see real condition into condition used to show button converttoreduc)
+        if (($this->invoice->type == Facture::TYPE_CREDIT_NOTE || $this->invoice->type == Facture::TYPE_STANDARD) && $this->invoice->paye == 0 && empty($discountcheck->id)) $canconvert=1;	// we can convert credit note into discount if credit note is not payed back and not already converted and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
+        if ($canconvert)
+        {
+            $this->db->begin();
 
-			// Loop on each vat rate
-			$i=0;
-            $amount_ht = array();
-            $amount_tva = array();
-            $amount_ttc = array();
-			foreach($this->invoice->lines as $line)
-			{
-				$amount_ht[$line->tva_tx]+=$line->total_ht;
-				$amount_tva[$line->tva_tx]+=$line->total_tva;
-				$amount_ttc[$line->tva_tx]+=$line->total_ttc;
-				$i++;
-			}
+            $amount_ht = $amount_tva = $amount_ttc = array();
+            $multicurrency_amount_ht = $multicurrency_amount_tva = $multicurrency_amount_ttc = array();
 
-			// Insert one discount by VAT rate category
-			$discount = new DiscountAbsolute($this->db);
-			if ($this->invoice->type == 2)     $discount->description='(CREDIT_NOTE)';
-			elseif ($this->invoice->type == 3) $discount->description='(DEPOSIT)';
-			else {
-				$this->error="CantConvertToReducAnInvoiceOfThisType";
-				return -1;
-			}
-			$discount->tva_tx=abs($this->invoice->total_ttc);
-			$discount->fk_soc=$this->invoice->socid;
-			$discount->fk_facture_source=$this->invoice->id;
+            // Loop on each vat rate
+            $i = 0;
+            foreach ($this->invoice->lines as $line)
+            {
+                if ($line->product_type < 9 && $line->total_ht != 0) // Remove lines with product_type greater than or equal to 9
+                { 	// no need to create discount if amount is null
+                    $amount_ht[$line->tva_tx] += $line->total_ht;
+                    $amount_tva[$line->tva_tx] += $line->total_tva;
+                    $amount_ttc[$line->tva_tx] += $line->total_ttc;
+                    $multicurrency_amount_ht[$line->tva_tx] += $line->multicurrency_total_ht;
+                    $multicurrency_amount_tva[$line->tva_tx] += $line->multicurrency_total_tva;
+                    $multicurrency_amount_ttc[$line->tva_tx] += $line->multicurrency_total_ttc;
+                    $i++;
+                }
+            }
 
-			$error=0;
-			foreach($amount_ht as $tva_tx => $xxx)
-			{
-				$discount->amount_ht=abs($amount_ht[$tva_tx]);
-				$discount->amount_tva=abs($amount_tva[$tva_tx]);
-				$discount->amount_ttc=abs($amount_ttc[$tva_tx]);
-				$discount->tva_tx=abs($tva_tx);
+            // Insert one discount by VAT rate category
+            $discount = new DiscountAbsolute($this->db);
+            if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
+                $discount->description = '(CREDIT_NOTE)';
+            }
+            elseif ($this->invoice->type == Facture::TYPE_DEPOSIT) {
+                $discount->description = '(DEPOSIT)';
+            }
+            elseif ($this->invoice->type == Facture::TYPE_STANDARD || $this->invoice->type == Facture::TYPE_REPLACEMENT || $this->invoice->type == Facture::TYPE_SITUATION) {
+                $discount->description = '(EXCESS RECEIVED)';
+            }
+            else {
+                throw new RestException(500, 'Cant convert to reduc an Invoice of this type');
+            }
 
-				$result=$discount->create(DolibarrApiAccess::$user);
-				if ($result < 0)
-				{
-					$error++;
-					break;
-				}
-			}
+            $discount->fk_soc = $this->invoice->socid;
+            $discount->fk_facture_source = $this->invoice->id;
 
-			if (! $error)
-			{
-				// Classe facture
-				$result=$this->invoice->set_paid(DolibarrApiAccess::$user);
-				if ($result > 0)
-				{
-					//$mesg='OK'.$discount->id;
-					$this->db->commit();
-				}
-				else
-				{
-				    $this->db->rollback();
-				    throw new RestException(500, 'Could not set paid');
-				}
-			}
-			else
-			{
-			    $this->db->rollback();
-			    throw new RestException(500, 'Discount creation error');
-			}
-		}
+            $error = 0;
 
-        $result = $this->invoice->fetch($id);
-        if( ! $result ) {
-            throw new RestException(404, 'Invoice not found');
-        }
+            if ($this->invoice->type == Facture::TYPE_STANDARD || $this->invoice->type == Facture::TYPE_REPLACEMENT || $this->invoice->type == Facture::TYPE_SITUATION)
+            {
+                // If we're on a standard invoice, we have to get excess received to create a discount in TTC without VAT
 
-        if( ! DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
-            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+                // Total payments
+                $sql = 'SELECT SUM(pf.amount) as total_paiements';
+                $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf, '.MAIN_DB_PREFIX.'paiement as p';
+                $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
+                $sql.= ' WHERE pf.fk_facture = '.$this->invoice->id;
+                $sql.= ' AND pf.fk_paiement = p.rowid';
+                $sql.= ' AND p.entity IN ('.getEntity('invoice').')';
+                $resql = $this->db->query($sql);
+                if (! $resql) dol_print_error($this->db);
+
+                $res = $this->db->fetch_object($resql);
+                $total_paiements = $res->total_paiements;
+
+                // Total credit note and deposit
+                $total_creditnote_and_deposit = 0;
+                $sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
+                $sql .= " re.description, re.fk_facture_source";
+                $sql .= " FROM " . MAIN_DB_PREFIX . "societe_remise_except as re";
+                $sql .= " WHERE fk_facture = " . $this->invoice->id;
+                $resql = $this->db->query($sql);
+                if (!empty($resql)) {
+                    while ($obj = $this->db->fetch_object($resql)) $total_creditnote_and_deposit += $obj->amount_ttc;
+                } else dol_print_error($this->db);
+
+                $discount->amount_ht = $discount->amount_ttc = $total_paiements + $total_creditnote_and_deposit - $this->invoice->total_ttc;
+                $discount->amount_tva = 0;
+                $discount->tva_tx = 0;
+
+                $result = $discount->create(DolibarrApiAccess::$user);
+                if ($result < 0)
+                {
+                    $error++;
+                }
+            }
+            if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE || $this->invoice->type == Facture::TYPE_DEPOSIT)
+            {
+                foreach ($amount_ht as $tva_tx => $xxx)
+                {
+                    $discount->amount_ht = abs($amount_ht[$tva_tx]);
+                    $discount->amount_tva = abs($amount_tva[$tva_tx]);
+                    $discount->amount_ttc = abs($amount_ttc[$tva_tx]);
+                    $discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
+                    $discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
+                    $discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
+                    $discount->tva_tx = abs($tva_tx);
+
+                    $result = $discount->create(DolibarrApiAccess::$user);
+                    if ($result < 0)
+                    {
+                        $error++;
+                        break;
+                    }
+                }
+            }
+
+            if (empty($error))
+            {
+                if($this->invoice->type != Facture::TYPE_DEPOSIT) {
+                    // Classe facture
+                    $result = $this->invoice->set_paid(DolibarrApiAccess::$user);
+                    if ($result >= 0)
+                    {
+                        $this->db->commit();
+                    }
+                    else
+                    {
+                        $this->db->rollback();
+                        throw new RestException(500, 'Could not set paid');
+                    }
+                } else {
+                    $this->db->commit();
+                }
+            }
+            else
+            {
+                $this->db->rollback();
+                throw new RestException(500, 'Discount creation error');
+            }
         }
 
         return $this->_cleanObjectDatas($this->invoice);

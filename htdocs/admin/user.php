@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -137,7 +137,7 @@ $form = new Form($db);
 $help_url='EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios';
 llxHeader('', $langs->trans("UsersSetup"), $help_url);
 
-$linkback='<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("UsersSetup"), $linkback, 'title_setup');
 
 
@@ -182,8 +182,6 @@ print '</table>';
 print '<br>';
 
 $dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
-
-$form=new Form($db);
 
 // Defini tableau def des modeles
 $def = array();
@@ -241,7 +239,6 @@ foreach ($dirmodels as $reldir)
                 {
                     if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
                     {
-
                     	if (file_exists($dir.'/'.$file))
                     	{
                     		$name = substr($file, 4, dol_strlen($file) -16);
@@ -291,9 +288,9 @@ foreach ($dirmodels as $reldir)
 	                            }
 	                            print '</td>';
 
-	                           // Info
-		    					$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
-					    		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+	                            // Info
+		    					$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
+					    		$htmltooltip.= '<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
 			                    if ($module->type == 'pdf')
 			                    {
 			                        $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;

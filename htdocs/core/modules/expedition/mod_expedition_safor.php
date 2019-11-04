@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -30,7 +30,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 {
 	/**
      * Dolibarr version of the loaded document
-     * @public string
+     * @var string
      */
 	public $version = 'dolibarr';
 
@@ -44,7 +44,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Safor';
 

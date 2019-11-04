@@ -3,7 +3,7 @@
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2018       Philippe Grand      <philippe.grand@atoo-net.com>
+ * Copyright (C) 2018-2019  Philippe Grand      <philippe.grand@atoo-net.com>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -47,10 +47,10 @@ class doc_generic_order_odt extends ModelePDFCommandes
 	public $emetteur;
 
 	/**
-   * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.4 = array(5, 4)
-   */
-	public $phpmin = array(5, 4);
+     * @var array Minimum version of PHP required by module.
+     * e.g.: PHP ≥ 5.5 = array(5, 5)
+     */
+	public $phpmin = array(5, 5);
 
 	/**
      * @var string Dolibarr version of the loaded document
@@ -75,7 +75,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 		$this->description = $langs->trans("DocumentModelOdt");
 		$this->scandir = 'COMMANDE_ADDON_PDF_ODT_PATH';	// Name of constant that is used to save list of directories to scan
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'odt';
 		$this->page_largeur = 0;
 		$this->page_hauteur = 0;
@@ -244,7 +244,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				}
 			}
 
-			$dir = $conf->commande->dir_output;
+			$dir = $conf->commande->multidir_output[$object->entity];
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (! preg_match('/specimen/i', $objectref)) $dir.= "/" . $objectref;
 			$file = $dir . "/" . $objectref . ".odt";
@@ -486,7 +486,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				}
 				else {
 					try {
-					$odfHandler->saveToDisk($file);
+					    $odfHandler->saveToDisk($file);
 					} catch (Exception $e) {
                         $this->error=$e->getMessage();
                         dol_syslog($e->getMessage(), LOG_INFO);

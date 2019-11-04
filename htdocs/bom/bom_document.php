@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -41,8 +41,8 @@ $id=(GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
 $ref = GETPOST('ref', 'alpha');
 
 // Security check - Protection if external user
-//if ($user->societe_id > 0) access_forbidden();
-//if ($user->societe_id > 0) $socid = $user->societe_id;
+//if ($user->socid > 0) access_forbidden();
+//if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'bom', $id);
 
 // Get parameters
@@ -63,13 +63,13 @@ $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->bom->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('bomdocument', 'globalcard'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('bom');
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
-//if ($id > 0 || ! empty($ref)) $upload_dir = $conf->sellyoursaas->multidir_output[$object->entity] . "/bom/" . dol_sanitizeFileName($object->id);
-if ($id > 0 || ! empty($ref)) $upload_dir = $conf->sellyoursaas->multidir_output[$object->entity] . "/bom/" . dol_sanitizeFileName($object->ref);
+//if ($id > 0 || ! empty($ref)) $upload_dir = $conf->bom->multidir_output[$object->entity?$object->entity:1] . "/bom/" . dol_sanitizeFileName($object->id);
+if ($id > 0 || ! empty($ref)) $upload_dir = $conf->bom->multidir_output[$object->entity?$object->entity:1] . "/bom/" . dol_sanitizeFileName($object->ref);
 
 
 /*
@@ -117,7 +117,7 @@ if ($object->id)
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfield">';
 
 	// Number of files
 	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
@@ -132,10 +132,8 @@ if ($object->id)
 	dol_fiche_end();
 
 	$modulepart = 'bom';
-	//$permission = $user->rights->bom->create;
-	$permission = 1;
-	//$permtoedit = $user->rights->bom->create;
-	$permtoedit = 1;
+	$permission = $user->rights->bom->write;
+	$permtoedit = $user->rights->bom->write;
 	$param = '&id=' . $object->id;
 
 	//$relativepathwithnofile='bom/' . dol_sanitizeFileName($object->id).'/';
@@ -145,7 +143,7 @@ if ($object->id)
 }
 else
 {
-	accessforbidden('', 0, 0);
+	accessforbidden('', 0, 1);
 }
 
 // End of page

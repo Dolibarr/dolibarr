@@ -15,11 +15,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *	\file       htdocs/mymodule/template/mymoduleindex.php
+ *	\file       htdocs/modulebuilder/template/mymoduleindex.php
  *	\ingroup    mymodule
  *	\brief      Home page of mymodule top menu
  */
@@ -50,10 +50,10 @@ $action=GETPOST('action', 'alpha');
 // Securite acces client
 if (! $user->rights->mymodule->read) accessforbidden();
 $socid=GETPOST('socid', 'int');
-if (isset($user->societe_id) && $user->societe_id > 0)
+if (isset($user->socid) && $user->socid > 0)
 {
 	$action = '';
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 $max=5;

@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2001-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2012		Vinicius Nogueira		<viniciusvgn@gmail.com>
+ * Copyright (C) 2004-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2012		Vinicius Nogueira	<viniciusvgn@gmail.com>
+ * Copyright (C) 2019           Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -31,8 +32,13 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 // Security check
 $orderid = GETPOST('orderid');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'fournisseur', $orderid, '', 'commande');
+
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('orderssuppliersindex'));
 
 // Load translation files required by the page
 $langs->loadLangs(array("suppliers", "orders"));
@@ -48,7 +54,7 @@ $commandestatic = new CommandeFournisseur($db);
 $userstatic=new User($db);
 $formfile = new FormFile($db);
 
-print load_fiche_titre($langs->trans("SuppliersOrdersArea"));
+print load_fiche_titre($langs->trans("SuppliersOrdersArea"), '', 'commercial');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -75,7 +81,7 @@ $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE cf.fk_soc = s.rowid";
 $sql.= " AND cf.entity = ".$conf->entity;
-if ($user->societe_id) $sql.=' AND cf.fk_soc = '.$user->societe_id;
+if ($user->socid) $sql.=' AND cf.fk_soc = '.$user->socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " GROUP BY cf.fk_statut";
 
@@ -111,15 +117,14 @@ if ($resql)
 	print '<table class="noborder nohover" width="100%">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("SuppliersOrders").'</th></tr>';
 	print "</tr>\n";
-	foreach (array(0,1,2,3,4,5,6) as $statut)
+	foreach (array(0,1,2,3,4,5,6) as $status)
 	{
-		$dataseries[]=array($commandestatic->LibStatut($statut, 1), (isset($vals[$statut])?(int) $vals[$statut]:0));
+		$dataseries[]=array($commandestatic->LibStatut($status, 1), (isset($vals[$status])?(int) $vals[$status]:0));
 		if (! $conf->use_javascript_ajax)
 		{
-
 			print '<tr class="oddeven">';
-			print '<td>'.$commandestatic->LibStatut($statut, 0).'</td>';
-			print '<td class="right"><a href="list.php?statut='.$statut.'">'.(isset($vals[$statut])?$vals[$statut]:0).'</a></td>';
+			print '<td>'.$commandestatic->LibStatut($status, 0).'</td>';
+			print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
 			print "</tr>\n";
 		}
 	}
@@ -163,7 +168,7 @@ $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE cf.fk_soc = s.rowid";
 $sql.= " AND s.entity = ".$conf->entity;
-if ($user->societe_id) $sql.=' AND cf.fk_soc = '.$user->societe_id;
+if ($user->socid) $sql.=' AND cf.fk_soc = '.$user->socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " GROUP BY cf.fk_statut";
 
@@ -431,6 +436,9 @@ print "</table><br>";
 */
 
 print '</div></div></div>';
+
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardOrdersSuppliers', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

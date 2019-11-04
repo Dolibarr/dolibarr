@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -68,7 +68,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, 
 
 if ($user->rights->adherent->cotisation->creer && $action == 'update' && ! $cancel)
 {
-	// Charge objet actuel
+	// Load current object
 	$result=$object->fetch($rowid);
 	if ($result > 0)
 	{
@@ -101,7 +101,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'update' && ! $canc
 
 		if (! $errmsg)
 		{
-			// Modifie valeures
+			// Modify values
 			$object->dateh=dol_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
 			$object->datef=dol_mktime($_POST['datesubendhour'], $_POST['datesubendmin'], 0, $_POST['datesubendmonth'], $_POST['datesubendday'], $_POST['datesubendyear']);
 			$object->fk_type=$_POST["typeid"];
@@ -205,17 +205,17 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 	print $form->showrefnav($object, 'rowid', $linkback, 1);
 	print '</td></tr>';
 
-    // Type
+	// Member
+	$adh->ref=$adh->getFullName($langs);
+	print '<tr>';
+	print '<td>'.$langs->trans("Member").'</td><td class="valeur" colspan="3">'.$adh->getNomUrl(1, 0, 'subscription').'</td>';
+	print '</tr>';
+
+	// Type
 	print '<tr>';
 	print '<td>'.$langs->trans("Type").'</td><td class="valeur" colspan="3">';
 	print $form->selectarray("typeid", $adht->liste_array(), (isset($_POST["typeid"])?$_POST["typeid"]:$object->fk_type));
 	print'</td></tr>';
-
-    // Member
-	$adh->ref=$adh->getFullName($langs);
-    print '<tr>';
-	print '<td>'.$langs->trans("Member").'</td><td class="valeur" colspan="3">'.$adh->getNomUrl(1, 0, 'subscription').'</td>';
-    print '</tr>';
 
     // Date start subscription
     print '<tr><td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="2">';
@@ -309,28 +309,24 @@ if ($rowid && $action != 'edit')
 
     print '<table class="border" width="100%">';
 
+    // Member
+    $adh->ref=$adh->getFullName($langs);
+    print '<tr>';
+    print '<td class="titlefield">'.$langs->trans("Member").'</td><td class="valeur">'.$adh->getNomUrl(1, 0, 'subscription').'</td>';
+    print '</tr>';
+
     // Type
     print '<tr>';
     print '<td class="titlefield">'.$langs->trans("Type").'</td>';
     print '<td class="valeur">';
-    if (! empty($object->fk_type) ) {
-        $adht->fetch($object->fk_type);
+    if ($object->fk_type > 0 || $adh->typeid > 0) {
+    	$typeid = ($object->fk_type > 0 ? $object->fk_type : $adh->typeid);
+    	$adht->fetch($typeid);
         print $adht->getNomUrl(1);
     } else {
         print $langs->trans("NoType");
     }
     print '</td></tr>';
-
-    // Member
-	$adh->ref=$adh->getFullName($langs);
-    print '<tr>';
-	print '<td class="titlefield">'.$langs->trans("Member").'</td><td class="valeur">'.$adh->getNomUrl(1, 0, 'subscription').'</td>';
-    print '</tr>';
-
-    // Date record
-    /*print '<tr>';
-	print '<td>'.$langs->trans("DateSubscription").'</td><td class="valeur">'.dol_print_date($object->datec,'dayhour').'</td>';
-    print '</tr>';*/
 
     // Date subscription
     print '<tr>';
@@ -345,7 +341,7 @@ if ($rowid && $action != 'edit')
     // Amount
     print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur">'.price($object->amount).'</td></tr>';
 
-    // Amount
+    // Label
     print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur">'.$object->note.'</td></tr>';
 
 	// Bank line
@@ -393,7 +389,7 @@ if ($rowid && $action != 'edit')
 		}
 	}
 
-    // Supprimer
+    // Delete
     if ($user->rights->adherent->cotisation->creer)
     {
         print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"]."?rowid=".$object->id."&action=delete\">".$langs->trans("Delete")."</a></div>\n";

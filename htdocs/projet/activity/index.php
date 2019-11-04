@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,9 +36,14 @@ if ($search_project_user == $user->id) $mine = 1;
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0) $socid=$user->societe_id;
+if ($user->socid > 0) $socid=$user->socid;
 //$result = restrictedArea($user, 'projet', $projectid);
 if (!$user->rights->projet->lire) accessforbidden();
+
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('activityindex'));
 
 // Load translation files required by the page
 $langs->load("projects");
@@ -79,8 +85,8 @@ $morehtml.='<option name="mine" value="'.$user->id.'"'.(($search_project_user ==
 $morehtml.='</SELECT>';
 $morehtml.='<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
 
-print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'title_project.png', 0, $morehtml);
-//print load_fiche_titre($title, '', 'title_project');
+print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'project', 0, $morehtml);
+//print load_fiche_titre($title, '', 'project');
 
 if ($mine) print $langs->trans("MyTasksDesc").'<br><br>';
 else
@@ -105,6 +111,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
     	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<div class="div-table-responsive-no-min">';
     	print '<table class="noborder nohover centpercent">';
     	$i=0;
     	foreach($listofsearchfields as $key => $value)
@@ -117,6 +124,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     		$i++;
     	}
     	print '</table>';
+        print '</div>';
     	print '</form>';
     	print '<br>';
     }
@@ -124,6 +132,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 
 
 /* Affichage de la liste des projets d'aujourd'hui */
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="50%">'.$langs->trans('ActivityOnProjectToday').'</td>';
@@ -173,12 +182,14 @@ print '<td>'.$langs->trans('Total').'</td>';
 print '<td class="right">'.convertSecondToTime($total, 'allhourmin').'</td>';
 print "</tr>\n";
 print "</table>";
+print '</div>';
 
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 /* Affichage de la liste des projets d'hier */
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans('ActivityOnProjectYesterday').'</td>';
@@ -228,6 +239,7 @@ print '<td>'.$langs->trans('Total').'</td>';
 print '<td class="right">'.convertSecondToTime($total, 'allhourmin').'</td>';
 print "</tr>\n";
 print "</table>";
+print '</div>';
 
 
 
@@ -237,6 +249,7 @@ if ($db->type != 'pgsql')
     print '<br>';
 
     // Affichage de la liste des projets de la semaine
+    print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("ActivityOnProjectThisWeek").'</td>';
@@ -285,7 +298,7 @@ if ($db->type != 'pgsql')
     print '<td>'.$langs->trans('Total').'</td>';
     print '<td class="right">'.convertSecondToTime($total, 'allhourmin').'</td>';
     print "</tr>\n";
-    print "</table><br>";
+    print "</table></div><br>";
 
 }
 */
@@ -293,6 +306,7 @@ if ($db->type != 'pgsql')
 /* Affichage de la liste des projets du mois */
 if (! empty($conf->global->PROJECT_TASK_TIME_MONTH))
 {
+    print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("ActivityOnProjectThisMonth").': '.dol_print_date($now, "%B %Y").'</td>';
@@ -337,11 +351,13 @@ if (! empty($conf->global->PROJECT_TASK_TIME_MONTH))
     print '<td class="right">'.convertSecondToTime($total, 'allhourmin').'</td>';
     print "</tr>\n";
     print "</table>";
+    print '</div>';
 }
 
 /* Affichage de la liste des projets de l'annee */
 if (! empty($conf->global->PROJECT_TASK_TIME_YEAR))
 {
+    print '<div class="div-table-responsive-no-min">';
 	print '<br><table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("ActivityOnProjectThisYear").': '.strftime("%Y", $now).'</td>';
@@ -387,6 +403,7 @@ if (! empty($conf->global->PROJECT_TASK_TIME_YEAR))
 	print '<td class="right">'.convertSecondToTime($total, 'allhourmin').'</td>';
 	print "</tr>\n";
 	print "</table>";
+    print '</div>';
 }
 
 if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_SHOW_TASK_LIST_ON_PROJECT_AREA))
@@ -461,6 +478,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 
 		//print load_fiche_titre($langs->trans("TasksOnOpenedProject"),'','').'<br>';
 
+        print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		//print '<th>'.$langs->trans('TaskRessourceLinks').'</th>';
@@ -479,6 +497,20 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 		{
 			$obj = $db->fetch_object($resql);
 
+			$projectstatic->id = $obj->projectid;
+			$projectstatic->ref = $obj->ref;
+			$projectstatic->title = $obj->title;
+			$projectstatic->statut = $obj->status;
+			$projectstatic->public = $obj->public;
+			$projectstatic->dateo = $db->jdate($obj->projdateo);
+			$projectstatic->datee = $db->jdate($obj->projdatee);
+
+			$taskstatic->projectstatus = $obj->projectstatus;
+			$taskstatic->progress = $obj->progress;
+			$taskstatic->fk_statut = $obj->status;
+			$taskstatic->dateo = $db->jdate($obj->dateo);
+			$taskstatic->datee = $db->jdate($obj->datee);
+
 			$username='';
 			if ($obj->userid && $userstatic->id != $obj->userid)	// We have a user and it is not last loaded user
 			{
@@ -490,14 +522,6 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 			print '<tr class="oddeven">';
 			//print '<td>'.$username.'</td>';
 			print '<td>';
-			$projectstatic->id=$obj->projectid;
-			$projectstatic->ref=$obj->ref;
-			$projectstatic->title=$obj->title;
-			$projectstatic->statut = $obj->status;
-			$projectstatic->public = $obj->public;
-			$projectstatic->dateo = $db->jdate($obj->projdateo);
-			$projectstatic->datee = $db->jdate($obj->projdatee);
-
 			print $projectstatic->getNomUrl(1, '', 0, '', '<br>');
 			print '</td>';
 			if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
@@ -517,14 +541,8 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 			}
 			else print $langs->trans("NoTasks");
 			print '</td>';
-			$taskstatic->projectstatus = $obj->projectstatus;
-			$taskstatic->progress = $obj->progress;
-			$taskstatic->fk_statut = $obj->status;
-			$taskstatic->dateo = $db->jdate($obj->dateo);
-			$taskstatic->datee = $db->jdate($obj->datee);
 			print '<td class="center">'.dol_print_date($db->jdate($obj->dateo), 'day').'</td>';
 			print '<td class="center">'.dol_print_date($db->jdate($obj->datee), 'day');
-			print dol_print_date($obj->date_end, 'dayhour');
 			if ($taskstatic->hasDelay()) print img_warning($langs->trans("Late"));
 			print '</td>';
 			print '<td class="right"><a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$obj->taskid.'&withproject=1">';
@@ -560,6 +578,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 		}
 
 		print "</table>";
+        print '</div>';
 
 
 		$db->free($resql);
@@ -572,6 +591,9 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 
 
 print '</div></div></div>';
+
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardActivities', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

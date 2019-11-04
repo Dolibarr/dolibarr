@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array("banks","categories",'withdrawals','bills'));
 
 // Securite acces client
-if ($user->societe_id > 0) accessforbidden();
+if ($user->socid > 0) accessforbidden();
 
 // Get supervariables
 $prev_id = GETPOST('id', 'int');
@@ -203,7 +203,7 @@ if ($resql)
 
     		print '<tr class="oddeven"><td>';
 
-    		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
+    		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'">';
     		print img_picto('', 'statut'.$obj->statut).' ';
     		print substr('000000'.$obj->rowid, -6);
     		print '</a></td>';
@@ -223,7 +223,7 @@ if ($resql)
 	}
 	else
 	{
-	   print '<tr><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+	    print '<tr><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 	}
 
   	if ($num > 0)

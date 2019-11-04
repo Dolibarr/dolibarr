@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,7 +33,7 @@ $langs->loadLangs(array('banks', 'categories', 'widthdrawals'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -108,9 +108,7 @@ if ($result)
     $newcardbutton='';
     if ($user->rights->prelevement->bons->creer)
     {
-        $newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/prelevement/create.php"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewStandingOrder').'</span>';
-        $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-        $newcardbutton.= '</a>';
+        $newcardbutton.= dolGetButtonTitle($langs->trans('NewStandingOrder'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/prelevement/create.php');
     }
 
     // Lines of title fields
@@ -124,7 +122,7 @@ if ($result)
     print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-    print_barre_liste($langs->trans("WithdrawalsReceipts"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic', 0, $newcardbutton, '', $limit);
+    print_barre_liste($langs->trans("WithdrawalsReceipts"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit);
 
     $moreforfilter='';
 
@@ -136,7 +134,7 @@ if ($result)
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre right"><input type="text" class="flat maxwidth100" name="search_amount" value="'. dol_escape_htmltag($search_amount).'"></td>';
     print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre right">';
+    print '<td class="liste_titre maxwidthsearch">';
     $searchpicto=$form->showFilterButtons();
     print $searchpicto;
     print '</td>';

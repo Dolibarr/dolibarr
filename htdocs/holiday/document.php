@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('other', 'holidays', 'companies'));
+$langs->loadLangs(array('other', 'holiday', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -45,10 +45,8 @@ $action = GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'holiday', $id, 'holiday');
-
-$langs->load("holiday");
 
 // Get parameters
 $sortfield = GETPOST('sortfield', 'alpha');
@@ -118,7 +116,7 @@ if ($object->id)
 	//print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border centpercent">';
+	print '<table class="border tableforfield centpercent">';
 
     print '<tr>';
     print '<td class="titlefield">'.$langs->trans("User").'</td>';
@@ -215,7 +213,7 @@ if ($object->id)
 
     print '</tbody>';
     print '</table>'."\n";
-/*
+    /*
     print '</div>';
     print '<div class="fichehalfright">';
     print '<div class="ficheaddleft">';
@@ -223,7 +221,7 @@ if ($object->id)
     print '<div class="underbanner clearboth"></div>';
 
 	// Info workflow
-    print '<table class="border centpercent">'."\n";
+    print '<table class="border tableforfield centpercent">'."\n";
     print '<tbody>';
 
     if (! empty($object->fk_user_create))
@@ -251,7 +249,7 @@ if ($object->id)
     }
 
     print '<tr>';
-    print '<td>'.$langs->trans('DateCreateCP').'</td>';
+    print '<td>'.$langs->trans('DateCreation').'</td>';
     print '<td>'.dol_print_date($object->date_create,'dayhour').'</td>';
     print '</tr>';
     if ($object->statut == 3) {

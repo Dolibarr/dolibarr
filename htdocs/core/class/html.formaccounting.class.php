@@ -16,12 +16,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/core/class/html.formaccounting.class.php
- *  \ingroup    Advanced accountancy
+ *  \ingroup    Accountancy (Double entries)
  *	\brief      File of class with all html predefined components
  */
 require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
@@ -45,11 +45,11 @@ class FormAccounting extends Form
 	 */
 	public $error='';
 
-   /**
-	* Constructor
-	*
-	* @param		DoliDB		$db      Database handler
-	*/
+    /**
+	 * Constructor
+	 *
+	 * @param		DoliDB		$db      Database handler
+	 */
 	public function __construct($db)
 	{
 	    $this->db = $db;
@@ -224,9 +224,9 @@ class FormAccounting extends Form
 	/**
 	 * Return select filter with date of transaction
 	 *
-	 * @param string $htmlname Name of select field
-	 * @param string $selectedkey Value
-	 * @return string HTML edit field
+	 * @param string $htmlname         Name of select field
+	 * @param string $selectedkey      Value
+	 * @return string                  HTML edit field
 	 */
     public function select_bookkeeping_importkey($htmlname = 'importkey', $selectedkey = '')
     {
@@ -247,7 +247,7 @@ class FormAccounting extends Form
 		}
 
 		while ($obj = $this->db->fetch_object($resql)) {
-			$options[$obj->import_key] = dol_print_date($obj->import_key, 'dayhourtext');
+			$options[$obj->import_key] = $obj->import_key;
 		}
 
 		return Form::selectarray($htmlname, $options, $selectedkey);
@@ -392,7 +392,7 @@ class FormAccounting extends Form
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
-				if (!empty($obj->code_compta_fournisseur)) {
+				if ($obj->code_compta_fournisseur != "") {
 					$aux_account[$obj->code_compta_fournisseur] = $obj->code_compta_fournisseur.' ('.$obj->nom.')';
 				}
 			}

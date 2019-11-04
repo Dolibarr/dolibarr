@@ -16,8 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -62,9 +62,9 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 	/**
      * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+     * e.g.: PHP ≥ 5.5 = array(5, 5)
      */
-	public $phpmin = array(5, 4);
+	public $phpmin = array(5, 5);
 
 	/**
      * Dolibarr version of the loaded document
@@ -82,7 +82,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	{
 		global $conf, $langs, $mysoc;
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$langs->loadLangs(array("companies", "main"));
 
 		$this->db = $db;
@@ -90,7 +90,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		$this->description = $langs->trans("DocumentModelOdt");
 		$this->scandir = 'PROJECT_ADDON_PDF_ODT_PATH';	// Name of constant that is used to save list of directories to scan
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'odt';
 		$this->page_largeur = 0;
 		$this->page_hauteur = 0;
@@ -148,7 +148,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
-		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element, true);
+		$extrafields->fetch_name_optionals_label($object->table_element, true);
 		$object->fetch_optionals();
 
 		$resarray = $this->fill_substitutionarray_with_extrafields($object, $resarray, $extrafields, $array_key, $outputlangs);
@@ -189,8 +189,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
-		$extralabels = $extrafields->fetch_name_optionals_label($task->table_element, true);
-		$task->fetch_optionals($task->id, $extralabels);
+		$extrafields->fetch_name_optionals_label($task->table_element, true);
+		$task->fetch_optionals($task->id);
 
 		$resarray = $this->fill_substitutionarray_with_extrafields($task, $resarray, $extrafields, 'task', $outputlangs);
 
@@ -235,7 +235,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 			// fetch external user extrafields
 			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields=new ExtraFields($this->db);
-			$extralabels=$extrafields->fetch_name_optionals_label($ct->table_element, true);
+			$extrafields->fetch_name_optionals_label($ct->table_element, true);
 			$extrafields_num = $ct->fetch_optionals();
 			//dol_syslog(get_class($this)."::get_substitutionarray_project_contacts: ===== Number of Extrafields found: ".$extrafields_num, LOG_DEBUG);
 			foreach($ct->array_options as $efkey => $efval) {
@@ -582,7 +582,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 				);
 				complete_substitutions_array($substitutionarray, $langs, $object);
 				// Call the ODTSubstitution hook
-				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
+				$parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$substitutionarray);
 				$reshook=$hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 
 				// Open and load template

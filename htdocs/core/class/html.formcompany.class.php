@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,28 +29,11 @@
  *	Class to build HTML component for third parties management
  *	Only common components are here.
  */
-class FormCompany
+
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+
+class FormCompany extends Form
 {
-	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
-
-	/**
-	 *	Constructor
-	 *
-	 *	@param	DoliDB	$db		Database handler
-	 */
-	public function __construct($db)
-	{
-		$this->db = $db;
-	}
-
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -211,13 +194,13 @@ class FormCompany
      *   The key of the list is the code (there can be several entries for a given code but in this case, the country field differs).
      *   Thus the links with the departments are done on a department independently of its name.
 	 *
-	 *    @param	string	$selected        	Code state preselected (mus be state id)
+	 *    @param	int		$selected        	Code state preselected (mus be state id)
 	 *    @param    integer	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
 	 *    @param    string	$htmlname			Id of department. If '', we want only the string with <option>
 	 * 	  @return	string						String with HTML select
-	 *    @see select_country
+	 *    @see select_country()
 	 */
-	public function select_state($selected = '', $country_codeid = 0, $htmlname = 'state_id')
+	public function select_state($selected = 0, $country_codeid = 0, $htmlname = 'state_id')
 	{
         // phpcs:enable
 		global $conf,$langs,$user;
@@ -391,7 +374,7 @@ class FormCompany
 	/**
 	 *  Return combo list with people title
 	 *
-	 *  @param  string	$selected   	Title preselected
+	 *  @param  string	$selected   	Civility/Title code preselected
 	 * 	@param	string	$htmlname		Name of HTML select combo field
 	 *  @param  string  $morecss        Add more css on SELECT element
 	 *  @return	string					String with HTML select
@@ -716,12 +699,13 @@ class FormCompany
 					}
 				}
 				print "</select>\n";
+				print ajax_combobox($htmlname);
 				return $firstCompany;
 			}
 			else
 			{
 				dol_print_error($this->db);
-				print 'Error sql';
+				return 0;
 			}
 		}
 	}
@@ -760,6 +744,45 @@ class FormCompany
 
 			print "\n";
 		}
+	}
+
+	/**
+	 * showContactRoles on view and edit mode
+	 *
+	 * @param string $htmlname Html component name and id
+	 * @param Contact $contact Contact Obejct
+	 * @param string $rendermode view, edit
+	 * @param array $selected $key=>$val $val is selected Roles for input mode
+	 * @return string   String with contacts roles
+	 */
+	public function showRoles($htmlname, Contact $contact, $rendermode = 'view', $selected = array())
+	{
+		if ($rendermode === 'view') {
+			$toprint = array();
+			foreach ($contact->roles as $key => $val) {
+				$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa;">' . $val['label'] . '</li>';
+			}
+			return '<div class="select2-container-multi-dolibarr" style="width: 90%;" id="'.$htmlname.'"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
+		}
+
+		if ($rendermode === 'edit')
+		{
+			$contactType=$contact->listeTypeContacts('external', '', 1);
+			if (count($selected)>0) {
+				$newselected=array();
+				foreach($selected as $key=>$val) {
+					if (is_array($val) && array_key_exists('id', $val) && in_array($val['id'], array_keys($contactType))) {
+						$newselected[]=$val['id'];
+					} else {
+						break;
+					}
+				}
+				if (count($newselected)>0) $selected=$newselected;
+			}
+			return $this->multiselectarray($htmlname, $contactType, $selected);
+		}
+
+		return 'ErrorBadValueForParameterRenderMode';	// Should not happened
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -907,7 +930,7 @@ class FormCompany
 
     	$out = '<select class="flat '.$morecss.'" name="'.$htmlname.'" id="'.$htmlidname.'">';
     	if ($typeinput=='form') {
-	    	if ($selected == '') $out .= '<option value="-1">&nbsp;</option>';
+    		if ($selected == '' || $selected == '-1') $out .= '<option value="-1">&nbsp;</option>';
 	    	if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
 	    		$out .= '<option value="2"'.($selected==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
 	    	}
@@ -919,7 +942,7 @@ class FormCompany
 	    	}
 	    	$out .= '<option value="0"'.((string) $selected == '0'?' selected':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
     	} elseif ($typeinput=='list') {
-    		$out .=  '<option value="-1"'.($selected==''?' selected':'').'>&nbsp;</option>';
+    		$out .=  '<option value="-1"'.(($selected=='' || $selected == '-1')?' selected':'').'>&nbsp;</option>';
     		if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
     			$out .=  '<option value="1,3"'.($selected=='1,3'?' selected':'').'>'.$langs->trans('Customer').'</option>';
     		}

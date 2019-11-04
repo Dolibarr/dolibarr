@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -99,7 +99,7 @@ if (! isset($conf->global->THEME_ELDY_BACKBODY)) $conf->global->THEME_ELDY_BACKB
 if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1=$colorbackhmenu1;
 if (! isset($conf->global->THEME_ELDY_VERMENU_BACK1)) $conf->global->THEME_ELDY_VERMENU_BACK1=$colorbackvmenu1;
 if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1=$colorbacktitle1;
-if (! isset($conf->global->THEME_ELDY_USE_HOVER)) $conf->global->THEME_ELDY_USE_HOVER==$colorbacklinepairhover;
+if (! isset($conf->global->THEME_ELDY_USE_HOVER)) $conf->global->THEME_ELDY_USE_HOVER=$colorbacklinepairhover;
 if (! isset($conf->global->THEME_ELDY_USE_CHECKED)) $conf->global->THEME_ELDY_USE_CHECKED=$colorbacklinepairchecked;
 if (! isset($conf->global->THEME_ELDY_LINEBREAK)) $conf->global->THEME_ELDY_LINEBREAK=$colorbacklinebreak;
 if (! isset($conf->global->THEME_ELDY_TEXTTITLENOTAB)) $conf->global->THEME_ELDY_TEXTTITLENOTAB=$colortexttitlenotab;
@@ -108,12 +108,12 @@ if (! isset($conf->global->THEME_ELDY_TEXTLINK)) $conf->global->THEME_ELDY_TEXTL
 // Case of option editable only if option THEME_ELDY_ENABLE_PERSONALIZED is on
 if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
 {
-    // 90A4AE, 607D8B, 455A64, 37474F
-    $conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';     // card
-    $conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
-    $conf->global->THEME_ELDY_TEXT='0,0,0';
-    $conf->global->THEME_ELDY_FONT_SIZE1='14';
-    $conf->global->THEME_ELDY_FONT_SIZE2='11';
+	// 90A4AE, 607D8B, 455A64, 37474F
+	$conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';     // card
+	$conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
+	$conf->global->THEME_ELDY_TEXT='0,0,0';
+	$conf->global->THEME_ELDY_FONT_SIZE1='14';
+	$conf->global->THEME_ELDY_FONT_SIZE2='11';
 }
 
 // Case of option availables only if THEME_ELDY_ENABLE_PERSONALIZED is on
@@ -137,16 +137,15 @@ $fontsize            =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty(
 $fontsizesmaller     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_FONT_SIZE2)   ?$fontsize:$conf->global->THEME_ELDY_FONT_SIZE2)             :(empty($user->conf->THEME_ELDY_FONT_SIZE2)?$fontsize:$user->conf->THEME_ELDY_FONT_SIZE2);
 
 // Hover color
-$colorbacklinepairhover=((! isset($conf->global->THEME_ELDY_USE_HOVER) || (string) $conf->global->THEME_ELDY_USE_HOVER === '0')?'':($conf->global->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$conf->global->THEME_ELDY_USE_HOVER));
-$colorbacklinepairchecked=((! isset($conf->global->THEME_ELDY_USE_CHECKED) || (string) $conf->global->THEME_ELDY_USE_CHECKED === '0')?'':($conf->global->THEME_ELDY_USE_CHECKED === '1'?'edf4fb':$conf->global->THEME_ELDY_USE_CHECKED));
+$colorbacklinepairhover=((! isset($conf->global->THEME_ELDY_USE_HOVER) || (string) $conf->global->THEME_ELDY_USE_HOVER === '255,255,255')?'':($conf->global->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$conf->global->THEME_ELDY_USE_HOVER));
+$colorbacklinepairchecked=((! isset($conf->global->THEME_ELDY_USE_CHECKED) || (string) $conf->global->THEME_ELDY_USE_CHECKED === '255,255,255')?'':($conf->global->THEME_ELDY_USE_CHECKED === '1'?'edf4fb':$conf->global->THEME_ELDY_USE_CHECKED));
 if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
 {
-    $colorbacklinepairhover=((! isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '0')?'':($user->conf->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_HOVER));
-    $colorbacklinepairchecked=((! isset($user->conf->THEME_ELDY_USE_CHECKED) || $user->conf->THEME_ELDY_USE_CHECKED === '0')?'':($user->conf->THEME_ELDY_USE_CHECKED === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_CHECKED));
+	$colorbacklinepairhover=((! isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '255,255,255')?'':($user->conf->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_HOVER));
+	$colorbacklinepairchecked=((! isset($user->conf->THEME_ELDY_USE_CHECKED) || $user->conf->THEME_ELDY_USE_CHECKED === '255,255,255')?'':($user->conf->THEME_ELDY_USE_CHECKED === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_CHECKED));
 }
 
 if (empty($colortopbordertitle1)) $colortopbordertitle1=$colorbackhmenu1;
-
 
 // Set text color to black or white
 $colorbackhmenu1=join(',', colorStringToArray($colorbackhmenu1));    // Normalize value to 'x,y,z'
@@ -196,6 +195,7 @@ $colortext=join(',', colorStringToArray($colortext));
 $colortextlink=join(',', colorStringToArray($colortextlink));
 
 $nbtopmenuentries=$menumanager->showmenu('topnb');
+if ($conf->browser->layout == 'phone') $nbtopmenuentries = max($nbtopmenuentries, 10);
 
 print '/*'."\n";
 print 'colorbackbody='.$colorbackbody."\n";
@@ -324,7 +324,9 @@ input, select {
 	margin-bottom:1px;
 	margin-top:1px;
 }
-
+input.button.massactionconfirmed {
+    margin: 4px;
+}
 
 textarea {
 	border-radius: 0;
@@ -351,18 +353,32 @@ input.smallpadd {	/* Used for timesheet input */
 input.buttongen {
 	vertical-align: middle;
 }
-input.buttonpayment {
-	min-width: 320px;
+input.buttonpayment, button.buttonpayment, div.buttonpayment {
+	min-width: 290px;
 	margin-bottom: 15px;
+	margin-top: 0;
+    margin-left: 5px;
+    margin-right: 5px;
 	background-image: none;
 	line-height: 24px;
 	padding: 8px;
 	background: none;
-	padding-left: 30px;
-	text-align: <?php echo $left; ?>;
+	text-align: center;
 	border: 2px solid #ccc;
 	background-color: #eee;
 	white-space: normal;
+	color: #888 !important;
+}
+div.buttonpayment input {
+    background-color: unset;
+    border-bottom: unset;
+    font-weight: bold;
+    text-transform: uppercase;
+	color: #333;
+	cursor: pointer;
+}
+div.buttonpayment input:focus {
+    color: #008;
 }
 input.buttonpaymentcb {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/common/credit_card.png', 1) ?>);
@@ -401,6 +417,11 @@ input.buttonpaymentstripe {
 	background-repeat: no-repeat;
 	background-position: 8px 7px;
 }
+a.buttonticket {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
 /* Used for timesheets */
 span.timesheetalreadyrecorded input {
     border: none;
@@ -447,8 +468,10 @@ select.flat, form.flat select {
 	opacity: 0;
 }
 select:invalid { color: gray; }
-input:disabled {
-	background:#f4f4f4;
+
+input:disabled, textarea:disabled, select[disabled='disabled']
+{
+	background:#eee;
 }
 
 input.liste_titre {
@@ -462,9 +485,7 @@ input.removedfile {
 	border: 0px !important;
 	vertical-align: text-bottom;
 }
-textarea:disabled {
-	background:#f4f4f4;
-}
+
 input[type=file ]    { background-color: transparent; border-top: none; border-left: none; border-right: none; box-shadow: none; }
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=radio]    { background-color: transparent; border: none; box-shadow: none; }
@@ -479,10 +500,16 @@ input:-webkit-autofill {
 ::-moz-placeholder { color:#bbb; } 			/* firefox 19+ */
 :-ms-input-placeholder { color:#ccc; } 		/* ie */
 input:-moz-placeholder { color:#ccc; }
-input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], select[name=incoterm_id] { margin-right: 6px; }
-input[name=surface] { margin-right: 4px; }
+input[name=price], input[name=weight], input[name=volume], input[name=surface], input[name=sizeheight], input[name=net_measure], select[name=incoterm_id] { margin-right: 6px; }
 fieldset { border: 1px solid #AAAAAA !important; }
 .legendforfieldsetstep { padding-bottom: 10px; }
+input#onlinepaymenturl, input#directdownloadlink {
+	opacity: 0.7;
+}
+
+div#moretabsList, div#moretabsListaction {
+    z-index: 5;
+}
 
 hr { border: 0; border-top: 1px solid #ccc; }
 
@@ -523,7 +550,7 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	-webkit-box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
-.button:disabled, .buttonDelete:disabled {
+.button:disabled, .buttonDelete:disabled, .button.disabled {
 	opacity: 0.4;
     box-shadow: none;
     -webkit-box-shadow: none;
@@ -535,6 +562,10 @@ hr { border: 0; border-top: 1px solid #ccc; }
 	opacity: 0.4;
     box-shadow: none;
     -webkit-box-shadow: none;
+}
+.button_search, .button_removefilter {
+    border: unset;
+    background: unset;
 }
 form {
     padding:0px;
@@ -618,6 +649,9 @@ textarea.centpercent {
 .wordwrap {
 	word-wrap: break-word;
 }
+.wordbreakimp {
+	word-break: break-word;
+}
 .wordbreak {
 	word-break: break-all;
 }
@@ -642,6 +676,12 @@ textarea.centpercent {
 .paddingright2 {
 	padding-<?php print $right; ?>: 2px;
 }
+.marginleft2 {
+	margin-<?php print $left; ?>: 2px;
+}
+.marginright2 {
+	margin-<?php print $right; ?>: 2px;
+}
 .cursordefault {
 	cursor: default;
 }
@@ -654,20 +694,47 @@ textarea.centpercent {
 .cursornotallowed {
 	cursor: not-allowed;
 }
-.badge {
-	display: inline-block;
-	min-width: 10px;
-	padding: 2px 5px;
-	font-size: 10px;
-	font-weight: 700;
-	line-height: 1em;
-	color: #fff;
-	text-align: center;
-	white-space: nowrap;
-	vertical-align: baseline;
-	background-color: #777;
-	border-radius: 10px;
+.backgroundblank {
+    background-color: #fff;
 }
+.nobackground, .nobackground tr {
+	background: unset !important;
+}
+.checkboxattachfilelabel {
+    font-size: 0.85em;
+    opacity: 0.7;
+}
+
+.text-warning{
+    color : <?php print $textWarning ; ?>
+}
+body[class*="colorblind-"] .text-warning{
+    color : <?php print $colorblind_deuteranopes_textWarning ; ?>
+}
+.text-success{
+    color : <?php print $textSuccess ; ?>
+}
+body[class*="colorblind-"] .text-success{
+    color : <?php print $colorblind_deuteranopes_textSuccess ; ?>
+}
+
+.text-danger{
+    color : <?php print $textDanger ; ?>
+}
+
+.editfielda span.fa-pencil-alt {
+    color: #ccc !important;
+}
+.editfielda span.fa-pencil-alt:hover {
+    color: rgb(<?php echo $colortexttitle; ?>) !important;
+}
+
+.fa-toggle-on, .fa-toggle-off { font-size: 2em; }
+.websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off { font-size: 1.5em; vertical-align: text-bottom; }
+
+
+/* Themes for badges */
+<?php include dol_buildpath($path.'/theme/'.$theme.'/badges.inc.php', 0); ?>
 
 .borderrightlight
 {
@@ -897,6 +964,10 @@ select.selectarrowonleft option {
 	direction: ltr;
 }
 
+table[summary="list_of_modules"] .fa-cog {
+    font-size: 1.5em;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -949,7 +1020,7 @@ select.selectarrowonleft option {
 .minheight20 { min-height: 20px; }
 .minheight40 { min-height: 40px; }
 .titlefieldcreate { width: 20%; }
-.titlefield       { width: 25%; }
+.titlefield       { /* width: 25%; */ width: 250px; }
 .titlefieldmiddle { width: 50%; }
 .imgmaxwidth180 { max-width: 180px; }
 
@@ -957,7 +1028,7 @@ select.selectarrowonleft option {
 /* Force values for small screen 1400 */
 @media only screen and (max-width: 1400px)
 {
-	.titlefield { width: 30% !important; }
+	.titlefield { /* width: 30% !important; */ }
 	.titlefieldcreate { width: 30% !important; }
 	.minwidth50imp  { min-width: 50px !important; }
     .minwidth75imp  { min-width: 75px !important; }
@@ -1004,6 +1075,10 @@ select.selectarrowonleft option {
 		font-size: <?php print $fontsize+3; ?>px !important;
 	}
 
+	.login_vertical_align {
+    	padding-left: 0;
+    }
+
 	.divmainbodylarge { margin-left: 20px; margin-right: 20px; }
 
     .tdoverflowonsmartphone {
@@ -1041,6 +1116,7 @@ select.selectarrowonleft option {
     .maxwidth75onsmartphone { max-width: 50px; }
     .maxwidth100onsmartphone { max-width: 70px; }
     .maxwidth150onsmartphone { max-width: 120px; }
+    .maxwidth150onsmartphoneimp { max-width: 120px !important; }
     .maxwidth200onsmartphone { max-width: 200px; }
     .maxwidth300onsmartphone { max-width: 300px; }
     .maxwidth400onsmartphone { max-width: 400px; }
@@ -1095,9 +1171,15 @@ select.selectarrowonleft option {
    	}
 }
 .linkobject { cursor: pointer; }
+
+table.tableforfield tr>td:first-of-type, div.tableforfield div.tagtr>div.tagtd:first-of-type {
+	color: #666;
+}
+
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 .hideonprint { display: none; }
 <?php } ?>
+
 
 
 /* ============================================================================== */
@@ -1160,11 +1242,12 @@ td.showDragHandle {
 	display: block;
 	font-family: "RobotoDraft","Roboto",sans-serif;
 	left: 0;
-<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
-<?php } else { ?>
+	<?php
+	if (in_array($conf->browser->layout, array('phone','tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+	} else { ?>
 	position: fixed;
 	top: 50px;
-<?php } ?>
+	<?php } ?>
 	z-index: 90;
 	-webkit-transform: translateZ(0);
 	-moz-transform: translateZ(0);
@@ -1189,12 +1272,14 @@ td.showDragHandle {
 	-moz-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 	-webkit-overflow-scrolling: touch;
-<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
-<?php } else { ?>
+	<?php
+	if (in_array($conf->browser->layout, array('phone','tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+	} else { ?>
 	overflow-x: hidden;
 	overflow-y: auto;
-<?php } ?>
-<?php } ?>
+	<?php }
+}
+?>
 }
 
 /*
@@ -1217,7 +1302,7 @@ body.sidebar-collapse .side-nav-vert, body.sidebar-collapse #id-right {
 	margin-left: 228px;
 }
 body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block {
-<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
+<?php if (in_array($conf->browser->layout, array('phone','tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 	left: -240px;
 <?php } else { ?>
 	left: -229px;
@@ -1232,7 +1317,7 @@ body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block {
 <?php } ?>
 
 /* For smartphone (testmenuhider is on) */
-<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
+<?php if (in_array($conf->browser->layout, array('phone','tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 #id-container {
 	width: 100%;
 }
@@ -1245,11 +1330,12 @@ div.login_block {
 }
 
 .side-nav {
-<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
-<?php } else { ?>
+	<?php
+	if (in_array($conf->browser->layout, array('phone','tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+	} else { ?>
 	overflow-x: initial !important;
 	overflow-y: scroll;
-<?php } ?>
+	<?php } ?>
 	display: block;
 
 	position: relative;
@@ -1293,11 +1379,12 @@ div.login_block {
 	z-index: 91;
 	background: rgb(<?php echo $colorbackvmenu1; ?>);
 	border-right: 1px solid rgba(0,0,0,0.3);
-<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
+	<?php
+	if (in_array($conf->browser->layout, array('phone','tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 	top: 50px ! important;
-<?php } else { ?>
+	<?php } else { ?>
 	top: 60px ! important;
-<?php } ?>
+	<?php } ?>
 }
 div.fiche {
 	margin-<?php print $left; ?>: 6px !important;
@@ -1331,17 +1418,19 @@ div.fichetwothirdright {
 	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
 	<?php if ($conf->browser->layout == 'phone') { print "padding-bottom: 6px\n"; } ?>
 }
+div.fichetwothirdright div.ficheaddleft {
+    padding-left: 20px;
+}
 div.fichehalfleft {
 	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$left.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: calc(50% - 10px);\n"; } ?>
 }
 div.fichehalfright {
 	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$right.";\n"; } ?>
-	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: calc(50% - 10px);\n"; } ?>
 }
-div.ficheaddleft {
-	<?php if ($conf->browser->layout != 'phone')   { print "padding-".$left.": 16px;\n"; }
-	else print "margin-top: 10px;\n"; ?>
+div.fichehalfright {
+	<?php if ($conf->browser->layout == 'phone')   { print "margin-top: 10px;\n"; } ?>
 }
 div.firstcolumn div.box {
 	padding-right: 10px;
@@ -1375,6 +1464,9 @@ div.secondcolumn div.box {
     	width: auto;
     	padding-bottom: 6px;
     }
+    div.fichetwothirdright div.ficheaddleft {
+    	padding-left: 0;
+	}
     div.fichehalfleft {
     	float: none;
     	width: auto;
@@ -1383,8 +1475,7 @@ div.secondcolumn div.box {
     	float: none;
     	width: auto;
     }
-    div.ficheaddleft {
-    	<?php print "padding-".$left.": 0px;\n"; ?>
+    div.fichehalfright {
     	margin-top: 10px;
     }
     div.firstcolumn div.box {
@@ -1396,7 +1487,7 @@ div.secondcolumn div.box {
 }
 
 /* For table into table into card */
-div.ficheaddleft tr.liste_titre:first-child td table.nobordernopadding td, div.nopadding {
+div.fichehalfright tr.liste_titre:first-child td table.nobordernopadding td, div.nopadding {
     padding: 0 0 0 0;
 }
 div.nopadding {
@@ -1432,7 +1523,11 @@ table.noborder tr.liste_titre td {
     padding-<?php echo $left; ?>: 3px;
 }
 .pictowarning {
-    vertical-align: text-bottom;
+    /* vertical-align: text-bottom; */
+    color: #9f4705;
+}
+.pictomodule {
+	width: 14px;
 }
 .fiche .arearef img.pictoedit, .fiche .arearef span.pictoedit,
 .fiche .fichecenter img.pictoedit, .fiche .fichecenter span.pictoedit,
@@ -1524,9 +1619,17 @@ img.photorefnoborder {
 .underbanner {
 	border-bottom: <?php echo $borderwidth; ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
+
+.trextrafieldseparator td {
+    border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>) !important;
+}
 .tdhrthin {
 	margin: 0;
 	padding-bottom: 0 !important;
+}
+/* Payment Screen : Pointer cursor in the autofill image */
+.AutoFillAmount {
+	cursor:pointer;
 }
 
 
@@ -1644,12 +1747,12 @@ li.tmenu, li.tmenusel {
 	vertical-align: bottom;
 	<?php if (empty($conf->global->MAIN_MENU_INVERT)) { ?>
 	float: <?php print $left; ?>;
-    <?php if (! $disableimages) { ?>
+    	<?php if (! $disableimages) { ?>
     height: <?php print $heightmenu; ?>px;
 	padding: 0px 0px 2px 0px;
-    <?php } else { ?>
+    	<?php } else { ?>
     padding: 0px 0px 0px 0px;
-    <?php } } ?>
+		<?php } } ?>
 	position:relative;
 	display: block;
 	margin: 0px 0px 0px 0px;
@@ -1670,9 +1773,9 @@ div.tmenuleft
 	margin-top: 0px;
 	<?php if (empty($conf->dol_optimize_smallscreen)) { ?>
 	width: 5px;
-	<?php if (! $disableimages) { ?>
+		<?php if (! $disableimages) { ?>
 	height: <?php print $heightmenu+4; ?>px;
-	<?php } ?>
+		<?php } ?>
 	<?php } ?>
 }
 div.tmenucenter
@@ -1703,13 +1806,16 @@ div.mainmenu {
 	position : relative;
 	background-repeat:no-repeat;
 	background-position:center top;
-	height: <?php echo ($heightmenu-19); ?>px;
+	height: <?php echo ($heightmenu-22); ?>px;
 	margin-left: 0px;
 	min-width: 40px;
 }
 
 /* Do not load menu img if hidden to save bandwidth */
 <?php if (empty($dol_hide_topmenu)) { ?>
+    <?php if (! defined('DISABLE_FONT_AWSOME')) { ?>
+        <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
+    <?php } ?>
 
 div.mainmenu.home{
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home.png', 1) ?>);
@@ -1771,6 +1877,7 @@ div.mainmenu.members {
 div.mainmenu.menu {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/menu.png', 1) ?>);
 	top: 7px;
+	left: 5px;
 }
 
 div.mainmenu.products {
@@ -1797,82 +1904,82 @@ div.mainmenu.website {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/externalsite.png', 1) ?>);
 }
 
-<?php
-// Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
+	<?php
+	// Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
 
-$moduletomainmenu=array(
-	'user'=>'','syslog'=>'','societe'=>'companies','projet'=>'project','propale'=>'commercial','commande'=>'commercial',
-	'produit'=>'products','service'=>'products','stock'=>'products',
-	'don'=>'accountancy','tax'=>'accountancy','banque'=>'accountancy','facture'=>'accountancy','compta'=>'accountancy','accounting'=>'accountancy','adherent'=>'members','import'=>'tools','export'=>'tools','mailing'=>'tools',
-	'contrat'=>'commercial','ficheinter'=>'commercial','ticket'=>'ticket','deplacement'=>'commercial',
-	'fournisseur'=>'companies',
-	'barcode'=>'','fckeditor'=>'','categorie'=>'',
-);
-$mainmenuused='home';
-foreach($conf->modules as $val)
-{
-	$mainmenuused.=','.(isset($moduletomainmenu[$val])?$moduletomainmenu[$val]:$val);
-}
-$mainmenuusedarray=array_unique(explode(',', $mainmenuused));
-
-$generic=1;
-// Put here list of menu entries when the div.mainmenu.menuentry was previously defined
-$divalreadydefined=array('home','companies','products','mrp','commercial','externalsite','accountancy','project','tools','members','agenda','ftp','holiday','hrm','bookmark','cashdesk','takepos','ecm','geoipmaxmind','gravatar','clicktodial','paypal','stripe','webservices','website');
-// Put here list of menu entries we are sure we don't want
-$divnotrequired=array('multicurrency','salaries','ticket','margin','opensurvey','paybox','expensereport','incoterm','prelevement','propal','workflow','notification','supplier_proposal','cron','product','productbatch','expedition');
-foreach($mainmenuusedarray as $val)
-{
-	if (empty($val) || in_array($val, $divalreadydefined)) continue;
-	if (in_array($val, $divnotrequired)) continue;
-	//print "XXX".$val;
-
-	// Search img file in module dir
-	$found=0; $url='';
-	foreach($conf->file->dol_document_root as $dirroot)
+	$moduletomainmenu=array(
+		'user'=>'','syslog'=>'','societe'=>'companies','projet'=>'project','propale'=>'commercial','commande'=>'commercial',
+		'produit'=>'products','service'=>'products','stock'=>'products',
+		'don'=>'accountancy','tax'=>'accountancy','banque'=>'accountancy','facture'=>'accountancy','compta'=>'accountancy','accounting'=>'accountancy','adherent'=>'members','import'=>'tools','export'=>'tools','mailing'=>'tools',
+		'contrat'=>'commercial','ficheinter'=>'commercial','ticket'=>'ticket','deplacement'=>'commercial',
+		'fournisseur'=>'companies',
+		'barcode'=>'',
+		'fckeditor'=>'',
+		'categorie'=>'',
+	);
+	$mainmenuused='home';
+	foreach($conf->modules as $val)
 	{
-	    if (file_exists($dirroot."/".$val."/img/".$val."_over.png"))
-	    {
-	        $url=dol_buildpath('/'.$val.'/img/'.$val.'_over.png', 1);
-	        $found=1;
-	        break;
-	    }
-	    elseif (file_exists($dirroot."/".$val."/img/".$val.".png"))    // Retro compatibilité
+		$mainmenuused.=','.(isset($moduletomainmenu[$val])?$moduletomainmenu[$val]:$val);
+	}
+	$mainmenuusedarray=array_unique(explode(',', $mainmenuused));
+
+	$generic=1;
+	// Put here list of menu entries when the div.mainmenu.menuentry was previously defined
+	$divalreadydefined=array('home','companies','products','mrp','commercial','externalsite','accountancy','project','tools','members','agenda','ftp','holiday','hrm','bookmark','cashdesk','takepos','ecm','geoipmaxmind','gravatar','clicktodial','paypal','stripe','webservices','website');
+	// Put here list of menu entries we are sure we don't want
+	$divnotrequired=array('multicurrency','salaries','ticket','margin','opensurvey','paybox','expensereport','incoterm','prelevement','propal','workflow','notification','supplier_proposal','cron','product','productbatch','expedition');
+	foreach($mainmenuusedarray as $val)
+	{
+		if (empty($val) || in_array($val, $divalreadydefined)) continue;
+		if (in_array($val, $divnotrequired)) continue;
+		//print "XXX".$val;
+
+		// Search img file in module dir
+		$found=0; $url='';
+		foreach($conf->file->dol_document_root as $dirroot)
 		{
-		    $url=dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
-		    $found=1;
-		    break;
+		    if (file_exists($dirroot."/".$val."/img/".$val."_over.png"))
+		    {
+		        $url=dol_buildpath('/'.$val.'/img/'.$val.'_over.png', 1);
+		        $found=1;
+		        break;
+		    }
+		    elseif (file_exists($dirroot."/".$val."/img/".$val.".png"))    // Retro compatibilité
+			{
+			    $url=dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
+			    $found=1;
+			    break;
+			}
+		}
+		// Img file not found
+		if (! $found)
+		{
+		    if (! defined('DISABLE_FONT_AWSOME')) {
+		        print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+		        print 'div.mainmenu.'.$val.'::before {
+	                    content: "\f249";
+	                }';
+		    }
+		    else
+		    {
+		        print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+		        $url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
+		        print "div.mainmenu.".$val." {\n";
+		        print "	background-image: url(".$url.");\n";
+		        print "}\n";
+	    	}
+	    	$generic++;
+		}
+		else
+		{
+			print "div.mainmenu.".$val." {\n";
+			print "	background-image: url(".$url.");\n";
+			print "}\n";
 		}
 	}
-	// Img file not found
-	if (! $found)
-	{
-	    if (! defined('DISABLE_FONT_AWSOME') && empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) {
-	        print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
-	        print 'div.mainmenu.'.$val.'::before {
-                    content: "\f249";
-                }';
-	    }
-	    else
-	    {
-	        print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
-	        $url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
-	        print "div.mainmenu.".$val." {\n";
-	        print "	background-image: url(".$url.");\n";
-	        print "}\n";
-	    }
-	    $generic++;
-	}
-	else
-	{
-		print "div.mainmenu.".$val." {\n";
-		print "	background-image: url(".$url.");\n";
-		print "}\n";
-	}
-}
-// End of part to add more div class css
-?>
-
-<?php }	// End test if $dol_hide_topmenu ?>
+	// End of part to add more div class css
+}	// End test if $dol_hide_topmenu ?>
 
 .tmenuimage {
     padding:0 0 0 0 !important;
@@ -1881,8 +1988,16 @@ foreach($mainmenuusedarray as $val)
     	display: none;
     <?php } ?>
 }
+.topmenuimage {
+	<?php if ($disableimages) { ?>
+    	display: none;
+    <?php } ?>
+}
 a.tmenuimage {
     display: block;
+}
+a.tmenuimage:focus {
+    outline: none;
 }
 
 
@@ -1961,6 +2076,9 @@ form#login {
 	width: 14px;
 }
 
+.login_main_home {
+    word-break: break-word;
+}
 .login_main_message {
 	text-align: center;
 	max-width: 570px;
@@ -2010,11 +2128,11 @@ table.login_table_securitycode tr td {
 
 div.login_block {
 	border-right: 1px solid rgba(0,0,0,0.3);
-    padding-top: 5px;
+    padding-top: 3px;
     padding-bottom: 3px;
 	<?php print $left; ?>: 0;
 	top: 0px;
-<?php if (in_array($conf->browser->layout, array('phone','tablet')) && ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))) { ?>
+<?php if (in_array($conf->browser->layout, array('phone','tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 	position: absolute;
 <?php } else { ?>
 	position: fixed;
@@ -2087,16 +2205,16 @@ img.login, img.printer, img.entity {
 	background-color: #FFF;
 }
 img.userphoto {			/* size for user photo in lists */
-    border-radius: 9px;
-    width: 18px;
-    height: 18px;
+    border-radius: 0.75em;
+    width: 1.5em;
+    height: 1.5em;
     background-size: contain;
     vertical-align: middle;
 }
 img.userphotosmall {			/* size for user photo in lists */
-	border-radius: 6px;
-	width: 12px;
-    height: 12px;
+	border-radius: 0.6em;
+	width: 1.2em;
+    height: 1.2em;
     background-size: contain;
     vertical-align: middle;
 }
@@ -2144,7 +2262,7 @@ div.vmenu, td.vmenu {
 .companylogo { padding-top: 4px; }
 .searchform { padding-top: 10px; }
 
-a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu { white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
+a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu, span.vsmenu { white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
 font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }
 a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 
@@ -2159,6 +2277,43 @@ div.blockvmenulogo
 {
 	border-bottom: 0 !important;
 }
+.menulogocontainer {
+    margin: <?php echo $disableimages?'0':'6'; ?>px;
+    margin-left: 12px;
+    margin-right: 6px;
+    padding: 0;
+    height: <?php echo $disableimages?'20':'32'; ?>px;
+    /* width: 100px; */
+    max-width: 100px;
+    vertical-align: middle;
+}
+.backgroundforcompanylogo {
+	background-color: rgba(255,255,255,0.7);
+	border-radius: 5px;
+}
+.menulogocontainer img.mycompany {
+    object-fit: contain;
+    width: inherit;
+    height: inherit;
+}
+#mainmenutd_companylogo::after {
+	content: unset;
+}
+li#mainmenutd_companylogo .tmenucenter {
+	width: unset;
+}
+li#mainmenutd_companylogo {
+	min-width: unset !important;
+}
+<?php if ($disableimages) { ?>
+	li#mainmenutd_home {
+		min-width: unset !important;
+	}
+	li#mainmenutd_home .tmenucenter {
+		width: unset;
+	}
+<?php } ?>
+
 div.blockvmenupair, div.blockvmenuimpair
 {
 	font-family: <?php print $fontlist ?>;
@@ -2187,6 +2342,7 @@ a.vsmenu.addbookmarkpicto {
 }
 div.blockvmenufirst {
 	padding-top: 10px;
+/*	border-top: 1px solid #e0e0e0; */
 }
 div.blockvmenusearch, div.blockvmenubookmarks
 {
@@ -2294,6 +2450,9 @@ img.toolbarbutton {
     height: 30px;
 }
 
+li.expanded > a.fmdirlia.jqft.ecmjqft {
+    font-weight: bold !important;
+}
 
 
 /* ============================================================================== */
@@ -2351,7 +2510,7 @@ div.tabBar table.tableforservicepart2:last-child {
 }
 
 /* ============================================================================== */
-/* Boutons actions                                                                */
+/* Buttons for actions                                                            */
 /* ============================================================================== */
 
 div.divButAction {
@@ -2375,8 +2534,8 @@ div.popuptabset {
 	border: 1px solid #888;
 }
 div.popuptab {
-	padding-top: 3px;
-	padding-bottom: 3px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 	padding-left: 5px;
 	padding-right: 5px;
 }
@@ -2454,148 +2613,9 @@ span.tabspan {
 }
 
 /* ============================================================================== */
-/* Boutons actions                                                                */
+/* Buttons for actions                                                            */
 /* ============================================================================== */
-
-div.divButAction {
-	margin-bottom: 1.4em;
-	vertical-align: top;
-}
-div.tabsAction > a.butAction, div.tabsAction > a.butActionRefused {
-	margin-bottom: 1.4em !important;
-}
-
-span.butAction, span.butActionDelete {
-	cursor: pointer;
-}
-
-
-.button, .butAction, .butActionDelete, .butActionRefused, .butActionNewRefused {
-	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
-	display: inline-block;
-    padding: 0.4em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
-    margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
-	line-height: 20px;
-	text-align: center;
-	vertical-align: middle;
-	cursor: pointer;
-	color: #333333 !important;
-	text-decoration: none !important;
-	text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
-	background-color: #f5f5f5;
-	background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
-	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
-	background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
-	background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
-	background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
-	background-repeat: repeat-x;
-	border-color: #e6e6e6 #e6e6e6 #bfbfbf;
-	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-	border: 1px solid #bbbbbb;
-	border-bottom-color: #a2a2a2;
-	-webkit-border-radius: 2px;
-	border-radius: 2px;
-	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-.butActionNew, .butActionNewRefused, .butActionNew:link, .butActionNew:visited, .butActionNew:hover, .butActionNew:active {
-	text-decoration: none;
-	/* border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25); */
-	display: inline-block;
-    padding: 0.2em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
-    margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
-	line-height: 20px;
-	/* text-align: center;  New button are on right of screen */
-	vertical-align: middle;
-	cursor: pointer;
-	/* color: #ffffff !important; */
-	/* text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25); */
-	-webkit-border-radius: 2px;
-	border-radius: 2px;
-	/* -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05); */
-	/* background-color: #006dcc;
-	background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
-	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0044cc));
-	background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
-	background-image: -o-linear-gradient(top, #0088cc, #0044cc);
-	background-image: linear-gradient(to bottom, #0088cc, #0044cc);
-	background-repeat: repeat-x; */
-}
-a.butActionNew>span.fa-plus-circle { padding-left: 6px; font-size: 1.5em; }
-a.butActionNewRefused>span.fa-plus-circle { padding-left: 6px; font-size: 1.5em; }
-
-.button, .butAction {
-	color: #ffffff !important;
-	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-	background-color: #006dcc;
-	background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
-	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0044cc));
-	background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
-	background-image: -o-linear-gradient(top, #0088cc, #0044cc);
-	background-image: linear-gradient(to bottom, #0088cc, #0044cc);
-	background-repeat: repeat-x;
-	border-color: #0044cc #0044cc #002a80;
-	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-}
-.button:disabled, .butAction:disabled {
-    color: #666 !important;
-    text-shadow: none;
-    border-color: #555;
-    cursor: not-allowed;
-
-    background-color: #f5f5f5;
-    background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
-    background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
-    background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
-    background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
-    background-repeat: repeat-x
-}
-
-.butActionDelete, .buttonDelete {
-	color: #ffffff !important;
-	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-	background-color: #cc6d00;
-	background-image: -moz-linear-gradient(top, #cc8800, #cc4400);
-	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#cc8800), to(#cc4400));
-	background-image: -webkit-linear-gradient(top, #cc8800, #cc4400);
-	background-image: -o-linear-gradient(top, #cc8800, #cc4400);
-	background-image: linear-gradient(to bottom, #cc8800, #cc4400);
-	background-repeat: repeat-x;
-	border-color: #cc4400 #cc4400 #802a00;
-	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-}
-a.butAction:link, a.butAction:visited, a.butAction:hover, a.butAction:active {
-	color: #FFFFFF;
-}
-
-.butActionRefused, .butActionNewRefused {
-	color: #AAAAAA !important;
-	cursor: not-allowed !important;
-}
-
-a.butAction:hover, a.butActionDelete:hover, a.butActionRefused:hover {
-    text-decoration: none;
-}
-a.butActionNewRefused:hover {
-	border-color: unset !important;
-	border: 1px solid #bbbbbb;
-}
-a.butAction:hover, a.butActionNew:hover, a.butActionDelete:hover {
-	opacity: 0.9;
-}
-
-.butActionTransparent {
-	color: #222 ! important;
-	background-color: transparent ! important;
-}
-
-<?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) { ?>
-.butActionRefused, .butActionNewRefused {
-	display: none;
-}
-<?php } ?>
+<?php include dol_buildpath($path.'/theme/'.$theme.'/btn.inc.php', 0); ?>
 
 
 
@@ -2612,7 +2632,6 @@ a.butAction:hover, a.butActionNew:hover, a.butActionDelete:hover {
 	margin-top: <?php echo ($dol_hide_topmenu?'6':'0'); ?>px;
 }
 
-
 .paddingrightonly {
 	border-collapse: collapse;
 	border: 0px;
@@ -2624,6 +2643,9 @@ a.butAction:hover, a.butActionNew:hover, a.butActionDelete:hover {
 	list-style-type:none;
 	margin: 0px !important;
 	padding: 0px !important;
+}
+.noborderspacing {
+	border-spacing: 0;
 }
 tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 {
@@ -2702,7 +2724,7 @@ td.border, div.tagtable div div.border {
 	border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
 
-.ficheaddleft table.noborder {
+.fichehalfright table.noborder {
 	margin: 0px 0px 0px 0px;
 }
 div.colorback
@@ -2830,6 +2852,8 @@ table.listwithfilterbefore {
 .tagtable, .table-border { display: table; }
 .tagtr, .table-border-row  { display: table-row; }
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
+.confirmquestions .tagtr .tagtd:not(:first-child)  { padding-left: 10px; }
+
 
 /* Pagination */
 div.refidpadding  {
@@ -3001,13 +3025,14 @@ ul.noborder li:nth-child(odd):not(.liste_titre) {
 	box-shadow: unset;
 	-webkit-box-shadow: unset;
 }
+
 .oddeven:hover, .evenodd:hover, .impair:hover, .pair:hover
 {
-<?php if ($colorbacklinepairhover) { ?>
 	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;
-<?php } ?>
 }
-
+.tredited {
+	background: rgb(<?php echo $colorbacklinepairchecked; ?>) !important;   /* Must be background to be stronger than background of odd or even */
+}
 <?php if ($colorbacklinepairchecked) { ?>
 .highlight {
 	background: rgb(<?php echo $colorbacklinepairchecked; ?>) !important; /* Must be background to be stronger than background of odd or even */
@@ -3051,7 +3076,9 @@ td.evenodd, tr.nohoverpair td {
 	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
 }
 .trforbreak td {
-	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinebreak)); ?> !important;
+	font-weight: bold;
+    border-bottom: 1pt solid black !important;
+	/* background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinebreak)); ?> !important; */
 }
 
 table.dataTable td {
@@ -3176,8 +3203,7 @@ input.liste_titre {
 
 .noborder tr.liste_total td, tr.liste_total td, form.liste_total div, .noborder tr.liste_total_wrap td, tr.liste_total_wrap td, form.liste_total_wrap div {
     color: #332266;
-    font-weight: normal;
-    padding: 4px;
+    /* padding: 4px; */
 }
 .noborder tr.liste_total td, tr.liste_total td, form.liste_total div {
     white-space: nowrap;
@@ -3219,6 +3245,10 @@ tr.liste_sub_total, tr.liste_sub_total td {
 	-webkit-box-shadow: 0px 0px 0px #f4f4f4 !important;
 	box-shadow: 0px 0px 0px #f4f4f4 !important;
 }
+.shadow {
+	-webkit-box-shadow: 2px 2px 5px #CCC !important;
+	box-shadow: 2px 2px 5px #CCC !important;
+}
 
 div.tabBar .noborder {
 	-webkit-box-shadow: 0px 0px 0px #f4f4f4 !important;
@@ -3241,8 +3271,8 @@ div .tdtop {
 /* Prepare to remove class pair - impair */
 
 .noborder > tbody > tr:nth-child(even):not(.liste_titre), .liste > tbody > tr:nth-child(even):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(even):not(.liste_titre)
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(even):not(.liste_titre)
 {
 	background: linear-gradient(to bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
@@ -3257,8 +3287,8 @@ div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) .oddeven.tagtr:nth-
 }
 
 .noborder > tbody > tr:nth-child(odd):not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre),
-div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre)
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre),
+div:not(.fichecenter):not(.fichehalfleft):not(.fichehalfright):not(.ficheaddleft) .oddeven.tagtr:nth-of-type(odd):not(.liste_titre)
 {
 	background: linear-gradient(to bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
@@ -3284,10 +3314,13 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 .box {
     overflow-x: auto;
     min-height: 40px;
+    padding-right: 0px;
+    padding-left: 0px;
+    padding-bottom: 12px;
 }
-/*.ficheaddleft div.boxstats, .ficheaddright div.boxstats {
+.ficheaddleft div.boxstats, .ficheaddright div.boxstats {
     border: none;
-}*/
+}
 .boxstatsborder {
     /* border: 1px solid #CCC !important; */
 }
@@ -3311,7 +3344,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 }
 .boxstats130 {
     width: 135px;
-    height: 48px;
+    height: 54px;
     padding: 3px;
 }
 @media only screen and (max-width: 767px)
@@ -3410,12 +3443,6 @@ a.valignmiddle.dashboardlineindicator {
     line-height: 30px;
 }
 
-.box {
-    padding-right: 0px;
-    padding-left: 0px;
-    padding-bottom: 12px;
-}
-
 tr.box_titre {
     height: 26px !important;
 
@@ -3468,8 +3495,9 @@ img.boxhandle, img.boxclose {
  *   Ok, Warning, Error
  */
 .ok      { color: #114466; }
-.warning { color: #887711; }
+.warning { color: #887711 !important; }
 .error   { color: #550000 !important; font-weight: bold; }
+.green   { color: #118822; }
 
 div.ok {
   color: #114466;
@@ -3548,6 +3576,10 @@ a.impayee:hover { font-weight: bold; color: #550000; }
  *  Other
  */
 
+.opened-dash-board-wrap {
+    margin-bottom: 25px;
+}
+
 div.boximport {
     min-height: unset;
 }
@@ -3557,7 +3589,7 @@ div.boximport {
 
 .fieldrequired { font-weight: bold; color: #000055; }
 
-.widthpictotitle { width: 40px; text-align: <?php echo $left; ?>; }
+.widthpictotitle { width: 40px; font-size: 1.4em; text-align: <?php echo $left; ?>; }
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
 .dolgraphtitlecssboxes { /* margin: 0px; */ }
@@ -3566,6 +3598,9 @@ div.dolgraph div.legend, div.dolgraph div.legend div { background-color: rgba(25
 div.dolgraph div.legend table tbody tr { height: auto; }
 td.legendColorBox { padding: 2px 2px 2px 0 !important; }
 td.legendLabel { padding: 2px 2px 2px 0 !important; }
+td.legendLabel {
+    text-align: <?php echo $left; ?>;
+}
 
 label.radioprivate {
     white-space: nowrap;
@@ -3620,6 +3655,10 @@ div.titre, .secondary {
 	color: rgb(<?php print $colortexttitlenotab; ?>);
 }
 
+table.table-fiche-title .col-title div.titre{
+	line-height: 40px;
+}
+
 #dolpaymenttable { min-width: 320px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
 #tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
@@ -3637,6 +3676,7 @@ div#card-errors {
 	color: #fa755a;
     text-align: center;
     padding-top: 3px;
+    max-width: 320px;
 }
 
 
@@ -3850,7 +3890,7 @@ div.visible {
     display: block;
 }
 
-div.hidden, td.hidden, img.hidden {
+div.hidden, td.hidden, img.hidden, span.hidden {
     display: none;
 }
 
@@ -3873,6 +3913,12 @@ tr.visible {
     background-image: none;
     color: #000 !important;
     text-shadow: none;
+}
+.bordertransp {
+    background-color: transparent;
+    background-image: none;
+    border: 1px solid #aaa;
+	font-weight: normal;
 }
 .websitebar {
 	border-bottom: 1px solid #ccc;
@@ -3965,7 +4011,7 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 .cal_peruserviewname { max-width: 140px; height: 22px; }
 
 .topmenuimage {
-	background-size: 28px auto;
+	background-size: 24px auto;
 }
 
 /* ============================================================================== */
@@ -5020,6 +5066,11 @@ dl.dropdown {
     background-color: #eee;
 }
 
+dd.dropdowndd ul li {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
 
 
 /* ============================================================================== */
@@ -5329,7 +5380,6 @@ border-top-right-radius: 6px;
 }
 
 
-
 /* ============================================================================== */
 /*  Public                                                                        */
 /* ============================================================================== */
@@ -5343,25 +5393,29 @@ border-top-right-radius: 6px;
 }
 
 
-
-::-webkit-scrollbar {
-    width: 12px;
-}
-::-webkit-scrollbar-button {
-    background: #aaa
-}
-::-webkit-scrollbar-track-piece {
-    background: #fff
-}
-::-webkit-scrollbar-thumb {
-    background: #ddd
-}​
-
-
-
 /* ============================================================================== */
 /* Ticket module                                                                  */
 /* ============================================================================== */
+
+.ticketpublicarea {
+	width: 70%;
+}
+.publicnewticketform {
+	margin-top: 25px !important;
+}
+.ticketlargemargin {
+	padding-left: 50px;
+	padding-right: 50px;
+}
+@media only screen and (max-width: 767px)
+{
+	.ticketlargemargin {
+		padding-left: 5px; padding-right: 5px;
+	}
+	.ticketpublicarea {
+		width: 100%;
+	}
+}
 
 #cd-timeline {
   position: relative;
@@ -5655,6 +5709,10 @@ border-top-right-radius: 6px;
         border-left: none;
     }
 
+	.box-flex-container {
+	    margin: 0 0 0 -8px !important;
+	}
+
 }
 
 @media only screen and (max-width: 1024px)
@@ -5668,10 +5726,14 @@ border-top-right-radius: 6px;
 	}
 }
 
+.menuhider {
+	width: <?php echo $disableimages ? 'auto' : '44'; ?>px;
+}
+
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo $fontsize ?> */
 /* disableimages = <?php echo $disableimages; ?> */
 /* rule to reduce top menu - 1st reduction */
-@media only screen and (max-width:  <?php echo round($nbtopmenuentries * $fontsize * 7, 0) + 200; ?>px)
+@media only screen and (max-width:  <?php echo round($nbtopmenuentries * $fontsize * 7, 0) + 300; ?>px)
 {
 	div.tmenucenter {
 	    max-width: <?php echo round($fontsize * 4); ?>px;	/* size of viewport */
@@ -5684,11 +5746,11 @@ border-top-right-radius: 6px;
   		font-size: 12px;
     }
     .topmenuimage {
-    	background-size: 26px auto;
+    	background-size: 24px auto;
     	margin-top: 0px;
 	}
     li.tmenu, li.tmenusel {
-    	min-width: 32px;
+    	min-width: 34px;
     }
     div.mainmenu {
     	min-width: auto;
@@ -5698,8 +5760,12 @@ border-top-right-radius: 6px;
 	}
 }
 /* rule to reduce top menu - 2nd reduction */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 4.5, 0) + 200; ?>px)
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 4.5, 0) + 300; ?>px)
 {
+	li.tmenucompanylogo {
+		display: none;
+	}
+
 	div.tmenucenter {
 	    max-width: <?php echo round($fontsize * 2); ?>px;	/* size of viewport */
   		text-overflow: clip;
@@ -5763,16 +5829,41 @@ border-top-right-radius: 6px;
 	.titlefield {
 		width: auto !important;		/* We want to ignor the 30%, try to use more if you can */
 	}
-	.tableforfield>tr>td:first-child {
-		max-width: 100px;			/* but no more than 100px */
+	.tableforfield>tr>td:first-child, .tableforfield>tbody>tr>td:first-child, div.tableforfield div.tagtr>div.tagtd:first-of-type {
+	    /* max-width: 100px; */			/* but no more than 100px */
+	}
+	.tableforfield>tr>td:nth-child(2), .tableforfield>tbody>tr>td:nth-child(2), div.tableforfield div.tagtr>div.tagtd:nth-child(2) {
+	    word-break: break-word;
 	}
 }
 
 
-<?php if (! defined('DISABLE_FONT_AWSOME') && empty($conf->global->MAIN_DISABLE_FONT_AWESOME_5)) { ?>
+
+/* This must be at end */
+::-webkit-scrollbar {
+    width: 12px;
+}
+::-webkit-scrollbar-button {
+    background: #aaa;
+}
+::-webkit-scrollbar-track-piece {
+    background: #fff;
+}
+::-webkit-scrollbar-thumb {
+    background: #ddd;
+}​
+
+
+
+<?php if (! defined('DISABLE_FONT_AWSOME')) { ?>
         <?php include dol_buildpath($path.'/theme/'.$theme.'/main_menu_fa_icons.inc.php', 0); ?>
-<?php } ?>
+<?php }
+
+include dol_buildpath($path.'/theme/'.$theme.'/dropdown.inc.php', 0);
+include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
+include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
+include dol_buildpath($path.'/theme/eldy/timeline.inc.php', 0); // actually md use same style as eldy theme
 
 
-<?php
+
 if (is_object($db)) $db->close();

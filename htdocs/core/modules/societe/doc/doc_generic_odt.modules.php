@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2011 Laurent Destailleur <ely@users.sourceforge.net>
- * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2016	   Charlie Benke	   <charlie@patas-monkey.com>
+ * Copyright (C) 2018      Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -44,9 +44,9 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 	/**
      * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+     * e.g.: PHP ≥ 5.5 = array(5, 5)
      */
-	public $phpmin = array(5, 4);
+	public $phpmin = array(5, 5);
 
 
 	/**
@@ -66,7 +66,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$this->description = $langs->trans("DocumentModelOdt");
 		$this->scandir = 'COMPANY_ADDON_PDF_ODT_PATH';	// Name of constant that is used to save list of directories to scan
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'odt';
 		$this->page_largeur = 0;
 		$this->page_hauteur = 0;
@@ -78,7 +78,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 		$this->option_logo = 1;                    // Affiche logo
 
-		// Recupere emmetteur
+		// Retrieves transmitter
 		$this->emetteur=$mysoc;
 		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang, -2);    // Par defaut, si n'etait pas defini
 	}
@@ -94,7 +94,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	{
 		global $conf,$langs;
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$langs->loadLangs(array("companies", "errors"));
 
 		$form = new Form($this->db);
@@ -197,14 +197,13 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			return -1;
 		}
 
-                // Add odtgeneration hook
-                if (! is_object($hookmanager))
-                {
-                        include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-                        $hookmanager=new HookManager($this->db);
-                }
-                $hookmanager->initHooks(array('odtgeneration'));
-                global $action;
+        // Add odtgeneration hook
+        if (! is_object($hookmanager)) {
+            include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+            $hookmanager=new HookManager($this->db);
+        }
+        $hookmanager->initHooks(array('odtgeneration'));
+        global $action;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$sav_charset_output=$outputlangs->charset_output;
@@ -408,17 +407,16 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				}
 				else {
 				    try {
-					   $odfHandler->creator = $user->getFullName($outputlangs);
-					   $odfHandler->title = $object->builddoc_filename;
-					   $odfHandler->subject = $object->builddoc_filename;
+                        $odfHandler->creator = $user->getFullName($outputlangs);
+                        $odfHandler->title = $object->builddoc_filename;
+                        $odfHandler->subject = $object->builddoc_filename;
 
-					   if (! empty($conf->global->ODT_ADD_DOLIBARR_ID))
-					   {
-    					  $odfHandler->userdefined['dol_id'] = $object->id;
-	   		  		      $odfHandler->userdefined['dol_element'] = $object->element;
-					   }
+                        if (! empty($conf->global->ODT_ADD_DOLIBARR_ID)) {
+                            $odfHandler->userdefined['dol_id'] = $object->id;
+                            $odfHandler->userdefined['dol_element'] = $object->element;
+                        }
 
-					   $odfHandler->saveToDisk($file);
+                        $odfHandler->saveToDisk($file);
 					} catch (Exception $e){
 						$this->error=$e->getMessage();
                         dol_syslog($e->getMessage(), LOG_INFO);

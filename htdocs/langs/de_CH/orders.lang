@@ -1,7 +1,12 @@
 # Dolibarr language file - Source file is en_US - orders
 OrdersArea=Kundenauftrags-Übersicht
 OrderCard=Bestell-Karte
+CustomersOrders=Kundenaufträge
 CancelOrder=Bestellung verwerfen
+ShowOrder=Zeige Bestellung
 NoOrder=Keine Bestellung
 CloseOrder=Bestellung schliessen
+OrderMode=Bestellweise
+OtherOrders=Bestellungen Anderer
 Error_OrderNotChecked=Keine zu verrechnenden Bestellungen ausgewählt
+OrderByEMail=E-Mail

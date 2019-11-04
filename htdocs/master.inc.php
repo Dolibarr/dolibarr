@@ -22,7 +22,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -65,7 +65,7 @@ $conf->file->mailing_limit_sendbycli	= $dolibarr_mailing_limit_sendbycli;
 $conf->file->main_authentication		= empty($dolibarr_main_authentication)?'':$dolibarr_main_authentication;	// Identification mode
 $conf->file->main_force_https			= empty($dolibarr_main_force_https)?'':$dolibarr_main_force_https;			// Force https
 $conf->file->strict_mode 				= empty($dolibarr_strict_mode)?'':$dolibarr_strict_mode;					// Force php strict mode (for debug)
-$conf->file->cookie_cryptkey			= empty($dolibarr_main_cookie_cryptkey)?'':$dolibarr_main_cookie_cryptkey;	// Cookie cryptkey
+$conf->file->instance_unique_id     	= empty($dolibarr_main_instance_unique_id)?(empty($dolibarr_main_cookie_cryptkey)?'':$dolibarr_main_cookie_cryptkey):$dolibarr_main_instance_unique_id;	// Unique id of instance
 $conf->file->dol_document_root			= array('main' => (string) DOL_DOCUMENT_ROOT);								// Define array of document root directories ('/home/htdocs')
 $conf->file->dol_url_root				= array('main' => (string) DOL_URL_ROOT);									// Define array of url root path ('' or '/dolibarr')
 if (! empty($dolibarr_main_document_root_alt))
@@ -121,6 +121,25 @@ if (! defined('NOREQUIREDB'))
 
 	if ($db->error)
 	{
+		// If we were into a website context
+		if (! defined('USEDOLIBARREDITOR') && ! defined('USEDOLIBARRSERVER') && ! empty($_SERVER['SCRIPT_FILENAME']) && (strpos($_SERVER['SCRIPT_FILENAME'], DOL_DATA_ROOT.'/website') === 0))
+		{
+			$sapi_type = php_sapi_name();
+			if (substr($sapi_type, 0, 3) != 'cgi') http_response_code(503);				// To tel search engine this is a temporary error
+			print '<div class="center" style="text-align: center; margin: 100px;">';
+			if (is_object($langs))
+			{
+				$langs->setDefaultLang('auto');
+				$langs->load("website");
+				print $langs->trans("SorryWebsiteIsCurrentlyOffLine");
+			}
+			else
+			{
+				print "SorryWebsiteIsCurrentlyOffLine";
+			}
+			print '</div>';
+			exit;
+		}
 		dol_print_error($db, "host=".$conf->db->host.", port=".$conf->db->port.", user=".$conf->db->user.", databasename=".$conf->db->name.", ".$db->error);
 		exit;
 	}
@@ -245,3 +264,4 @@ $hookmanager=new HookManager($db);
 
 
 if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR', 'NPR');
+//if (! defined('PCLZIP_TEMPORARY_DIR')) define('PCLZIP_TEMPORARY_DIR', $conf->user->dir_temp);

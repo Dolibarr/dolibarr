@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -90,7 +90,7 @@ if (empty($modetax)) $modetax=0;
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 
@@ -123,11 +123,11 @@ if (isset($_REQUEST['extra_report']) && $_REQUEST['extra_report'] == 1) {
 
 llxHeader('', $langs->trans("VATReport"), '', '', 0, 0, '', '', $morequerystring);
 
-$fsearch.='<br>';
-$fsearch.='  <input type="hidden" name="year" value="'.$year.'">';
-$fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
-$fsearch.='  '.$langs->trans("SalesTurnoverMinimum").': ';
-$fsearch.='  <input type="text" name="min" id="min" value="'.$min.'" size="6">';
+$fsearch ='<!-- hidden fields for form -->';
+$fsearch.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+$fsearch.='<input type="hidden" name="modetax" value="'.$modetax.'">';
+$fsearch.=$langs->trans("SalesTurnoverMinimum").': ';
+$fsearch.='<input type="text" name="min" id="min" value="'.$min.'" size="6">';
 
 // Show report header
 $name=$langs->trans("VATReportByThirdParties");
@@ -185,7 +185,7 @@ $productcust=$langs->trans("Description");
 $namerate=$langs->trans("VATRate");
 $amountcust=$langs->trans("AmountHT");
 if ($mysoc->tva_assuj) {
-    $vatcust.=' ('.$langs->trans("ToPay").')';
+    $vatcust.=' ('.$langs->trans("StatusToPay").')';
 }
 $elementsup=$langs->trans("SuppliersInvoices");
 $productsup=$langs->trans("Description");
@@ -566,7 +566,6 @@ if (! is_array($x_coll) || ! is_array($x_paye))
         $subtot_paye_vat = 0;
 
         if ($min == 0 || ($min > 0 && $x_both[$thirdparty_id]['paye']['totalht'] > $min)) {
-
             if (is_array($x_both[$thirdparty_id]['paye']['detail'])) {
                 print "<tr>";
                 print '<td class="tax_rate">';

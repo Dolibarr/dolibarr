@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2018	   Ferran Marcet        <fmarcet@2byte.es>
  *
@@ -15,13 +15,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/projet/tasks/list.php
  *	\ingroup    project
- *	\brief      List all task of a project
+ *	\brief      List all tasks of a project
  */
 
 require "../../main.inc.php";
@@ -78,12 +78,12 @@ $hookmanager->initHooks(array('tasklist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('projet_task');
+$extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Security check
 $socid=0;
-//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 if (!$user->rights->projet->lire) accessforbidden();
 
 $diroutputmassaction=$conf->projet->dir_output . '/tasks/temp/massgeneration/'.$user->id;
@@ -121,18 +121,24 @@ $arrayfields=array(
 	't.duration_effective'=>array('label'=>$langs->trans("TimeSpent"), 'checked'=>1, 'position'=>103),
 	't.progress_calculated'=>array('label'=>$langs->trans("ProgressCalculated"), 'checked'=>1, 'position'=>104),
 	't.progress'=>array('label'=>$langs->trans("ProgressDeclared"), 'checked'=>1, 'position'=>105),
-	't.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+	't.progress_summary'=>array('label'=>$langs->trans("TaskProgressSummary"), 'checked'=>1, 'position'=>106),
+    't.tobill'=>array('label'=>$langs->trans("TimeToBill"), 'checked'=>0, 'position'=>110),
+    't.billed'=>array('label'=>$langs->trans("TimeBilled"), 'checked'=>0, 'position'=>111),
+    't.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	't.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 	//'t.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-	foreach($extrafields->attribute_label as $key => $val)
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
 	{
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
+		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
 	}
 }
+$object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 /*
@@ -203,13 +209,18 @@ $tuser=new User($db);
 if ($search_project_user > 0) $puser->fetch($search_project_user);
 if ($search_task_user > 0) $tuser->fetch($search_task_user);
 
+
+$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+
+
 $title=$langs->trans("Activities");
 //if ($search_task_user == $user->id) $title=$langs->trans("MyActivities");
 
 if ($id)
 {
 	$projectstatic->fetch($id);
-	$projectstatic->societe->fetch($projectstatic->societe->id);
+	$projectstatic->fetch_thirdparty();
 }
 
 // Get list of project id allowed to user (in a string list separated by coma)
@@ -247,15 +258,22 @@ if ($resql)
 else dol_print_error($db);
 if (count($listoftaskcontacttype) == 0) $listoftaskcontacttype[0]='0';         // To avoid sql syntax error if not found
 
-$distinct='DISTINCT';   // We add distinct until we are added a protection to be sure a contact of a project and task is only once.
-$sql = "SELECT ".$distinct." p.rowid as projectid, p.ref as projectref, p.title as projecttitle, p.fk_statut as projectstatus, p.datee as projectdatee, p.fk_opp_status, p.public, p.fk_user_creat as projectusercreate";
-$sql.= ", s.nom as name, s.rowid as socid";
-$sql.= ", t.datec as date_creation, t.dateo as date_start, t.datee as date_end, t.tms as date_update";
-$sql.= ", t.rowid as id, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress, t.fk_statut";
+$distinct='DISTINCT';   // We add distinct until we are added a protection to be sure a contact of a project and task is assigned only once.
+$sql = "SELECT ".$distinct." p.rowid as projectid, p.ref as projectref, p.title as projecttitle, p.fk_statut as projectstatus, p.datee as projectdatee, p.fk_opp_status, p.public, p.fk_user_creat as projectusercreate, p.usage_bill_time,";
+$sql.= " s.nom as name, s.rowid as socid,";
+$sql.= " t.datec as date_creation, t.dateo as date_start, t.datee as date_end, t.tms as date_update,";
+$sql.= " t.rowid as id, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress, t.fk_statut";
 // We'll need these fields in order to filter by categ
 if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_project";
+// Add sum fields
+if (! empty($arrayfields['t.tobill']['checked']) || ! empty($arrayfields['t.billed']['checked']))
+{
+    $sql.=" , SUM(tt.task_duration * ".$db->ifsql("invoice_id IS NULL", "1", "0").") as tobill, SUM(tt.task_duration * ".$db->ifsql("invoice_id IS NULL", "0", "1").") as billed";
+}
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -265,12 +283,17 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 // We'll need this table joined to the select in order to filter by categ
 if (! empty($search_categ)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_project as cs ON p.rowid = cs.fk_project"; // We'll need this table joined to the select in order to filter by categ
 $sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_extrafields as ef on (t.rowid = ef.fk_object)";
+if (! empty($arrayfields['t.tobill']['checked']) || ! empty($arrayfields['t.billed']['checked']))
+{
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time as tt ON tt.fk_task = t.rowid";
+}
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 if ($search_project_user > 0)  $sql.=", ".MAIN_DB_PREFIX."element_contact as ecp";
 if ($search_task_user > 0)     $sql.=", ".MAIN_DB_PREFIX."element_contact as ect";
 $sql.= " WHERE t.fk_projet = p.rowid";
 $sql.= " AND p.entity IN (".getEntity('project').')';
 if (! $user->rights->projet->all->lire) $sql.=" AND p.rowid IN (".($projectsListId?$projectsListId:'0').")";    // public and assigned to projects, or restricted to company for external users
+if (is_object($projectstatic) && $projectstatic->id > 0) $sql.=" AND p.rowid = ".$projectstatic->id;
 // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 if ($search_categ > 0)     $sql.= " AND cs.fk_categorie = ".$db->escape($search_categ);
@@ -279,33 +302,9 @@ if ($search_project_ref)   $sql .= natural_search('p.ref', $search_project_ref);
 if ($search_project_title) $sql .= natural_search('p.title', $search_project_title);
 if ($search_task_ref)      $sql .= natural_search('t.ref', $search_task_ref);
 if ($search_task_label)    $sql .= natural_search('t.label', $search_task_label);
-if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
-if ($search_smonth > 0)
-{
-	if ($search_syear > 0 && empty($search_sday))
-		$sql.= " AND t.dateo BETWEEN '".$db->idate(dol_get_first_day($search_syear, $search_smonth, false))."' AND '".$db->idate(dol_get_last_day($search_syear, $search_smonth, false))."'";
-		elseif ($search_syear > 0 && ! empty($search_sday))
-			$sql.= " AND t.dateo BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_smonth, $search_sday, $search_syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_smonth, $search_sday, $search_syear))."'";
-			else
-				$sql.= " AND date_format(t.dateo, '%m') = '".$search_smonth."'";
-}
-elseif ($search_syear > 0)
-{
-	$sql.= " AND t.dateo BETWEEN '".$db->idate(dol_get_first_day($search_syear, 1, false))."' AND '".$db->idate(dol_get_last_day($search_syear, 12, false))."'";
-}
-if ($search_emonth > 0)
-{
-	if ($search_eyear > 0 && empty($search_eday))
-		$sql.= " AND t.datee BETWEEN '".$db->idate(dol_get_first_day($search_eyear, $search_emonth, false))."' AND '".$db->idate(dol_get_last_day($search_eyear, $search_emonth, false))."'";
-		elseif ($search_eyear > 0 && ! empty($search_eday))
-			$sql.= " AND t.datee BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_emonth, $search_eday, $search_eyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_emonth, $search_eday, $search_eyear))."'";
-			else
-				$sql.= " AND date_format(t.datee, '%m') = '".$search_emonth."'";
-}
-elseif ($search_eyear > 0)
-{
-	$sql.= " AND t.datee BETWEEN '".$db->idate(dol_get_first_day($search_eyear, 1, false))."' AND '".$db->idate(dol_get_last_day($search_eyear, 12, false))."'";
-}
+if ($search_societe)       $sql .= natural_search('s.nom', $search_societe);
+$sql.= dolSqlDateFilter('t.dateo', $search_sday, $search_smonth, $search_syear);
+$sql.= dolSqlDateFilter('t.datee', $search_eday, $search_emonth, $search_eyear);
 if ($search_all) $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 if ($search_projectstatus >= 0)
 {
@@ -321,6 +320,18 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
+if (! empty($arrayfields['t.tobill']['checked']) || ! empty($arrayfields['t.billed']['checked']))
+{
+    $sql.=" GROUP BY p.rowid, p.ref, p.title, p.fk_statut, p.datee, p.fk_opp_status, p.public, p.fk_user_creat,";
+    $sql.=" s.nom, s.rowid,";
+    $sql.=" t.datec, t.dateo, t.datee, t.tms,";
+    $sql.=" t.rowid, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress, t.fk_statut";
+    if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_project";
+    // Add fields from extrafields
+    if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+    	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key : '');
+    }
+}
 $sql.= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
@@ -362,27 +373,27 @@ $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("", $title, $help_url);
 
 $param='';
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-if ($search_sday)                 		$param.='&search_sday='.$search_sday;
-if ($search_smonth)              		$param.='&search_smonth='.$search_smonth;
-if ($search_syear)               		$param.='&search_syear=' .$search_syear;
-if ($search_eday)               		$param.='&search_eday='.$search_eday;
-if ($search_emonth)              		$param.='&search_emonth='.$search_emonth;
-if ($search_eyear)               		$param.='&search_eyear=' .$search_eyear;
-if ($socid)				        $param.='&socid='.$socid;
-if ($search_all != '') 			$param.='&search_all='.$search_all;
-if ($search_project_ref != '') 			$param.='&search_project_ref='.$search_project_ref;
-if ($search_project_title != '') 		$param.='&search_project_title='.$search_project_title;
-if ($search_ref != '') 			$param.='&search_ref='.$search_ref;
-if ($search_label != '') 		$param.='&search_label='.$search_label;
-if ($search_societe != '') 		$param.='&search_societe='.$search_societe;
-if ($search_projectstatus != '') $param.='&search_projectstatus='.$search_projectstatus;
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+if ($search_sday)                 		$param.='&search_sday='.urlencode($search_sday);
+if ($search_smonth)              		$param.='&search_smonth='.urlencode($search_smonth);
+if ($search_syear)               		$param.='&search_syear=' .urlencode($search_syear);
+if ($search_eday)               		$param.='&search_eday='.urlencode($search_eday);
+if ($search_emonth)              		$param.='&search_emonth='.urlencode($search_emonth);
+if ($search_eyear)               		$param.='&search_eyear=' .urlencode($search_eyear);
+if ($socid)				        $param.='&socid='.urlencode($socid);
+if ($search_all != '') 			$param.='&search_all='.urlencode($search_all);
+if ($search_project_ref != '') 			$param.='&search_project_ref='.urlencode($search_project_ref);
+if ($search_project_title != '') 		$param.='&search_project_title='.urlencode($search_project_title);
+if ($search_ref != '') 			$param.='&search_ref='.urlencode($search_ref);
+if ($search_label != '') 		$param.='&search_label='.urlencode($search_label);
+if ($search_societe != '') 		$param.='&search_societe='.urlencode($search_societe);
+if ($search_projectstatus != '') $param.='&search_projectstatus='.urlencode($search_projectstatus);
 if ((is_numeric($search_opp_status) && $search_opp_status >= 0) || in_array($search_opp_status, array('all','none'))) 	$param.='&search_opp_status='.urlencode($search_opp_status);
-if ($search_public != '') 		$param.='&search_public='.$search_public;
-if ($search_project_user != '')   $param.='&search_project_user='.$search_project_user;
-if ($search_task_user > 0)    	$param.='&search_task_user='.$search_task_user;
-if ($optioncss != '') $param.='&optioncss='.$optioncss;
+if ($search_public != '') 		$param.='&search_public='.urlencode($search_public);
+if ($search_project_user != '')   $param.='&search_project_user='.urlencode($search_project_user);
+if ($search_task_user > 0)    	$param.='&search_task_user='.urlencode($search_task_user);
+if ($optioncss != '')           $param.='&optioncss='.urlencode($optioncss);
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -392,16 +403,14 @@ $arrayofmassactions =  array(
 //    'builddoc'=>$langs->trans("PDFMerge"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
-if ($user->rights->societe->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if ($user->rights->societe->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 $newcardbutton='';
 if ($user->rights->projet->creer)
 {
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/projet/tasks.php?action=create"><span class="valignmiddle text-plus-circle">'.$langs->trans('NewTask').'</span>';
-	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-	$newcardbutton.= '</a>';
+    $newcardbutton.= dolGetButtonTitle($langs->trans('NewTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?action=create');
 }
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -415,17 +424,16 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_project', 0, $newcardbutton, '', $limit);
-
 // Show description of content
-print '<div class="opacitymedium">';
-if ($search_task_user == $user->id) print $langs->trans("MyTasksDesc").'<br><br>';
+$texthelp='';
+if ($search_task_user == $user->id) $texthelp.=$langs->trans("MyTasksDesc");
 else
 {
-	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("TasksOnProjectsDesc").'<br><br>';
-	else print $langs->trans("TasksOnProjectsPublicDesc").'<br><br>';
+    if ($user->rights->projet->all->lire && ! $socid) $texthelp.=$langs->trans("TasksOnProjectsDesc");
+    else $texthelp.=$langs->trans("TasksOnProjectsPublicDesc");
 }
-print '</div>';
+
+print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'project', 0, $newcardbutton, '', $limit);
 
 $topicmail="Information";
 $modelmail="task";
@@ -477,12 +485,10 @@ if (! empty($moreforfilter))
 	print '</div>';
 }
 
-$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
 print '<div class="div-table-responsive">';
-print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">'."\n";
+print '<table class="tagtable nobottomiftotal liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">'."\n";
 
 print '<tr class="liste_titre_filter">';
 if (! empty($arrayfields['t.ref']['checked']))
@@ -500,7 +506,7 @@ if (! empty($arrayfields['t.label']['checked']))
 // Start date
 if (! empty($arrayfields['t.dateo']['checked']))
 {
-	print '<td class="liste_titre center">';
+	print '<td class="liste_titre center minwidth150">';
 	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_sday" value="'.$search_sday.'">';
 	print '<input class="flat" type="text" size="1" maxlength="2" name="search_smonth" value="'.$search_smonth.'">';
 	$formother->select_year($search_syear?$search_syear:-1, 'search_syear', 1, 20, 5);
@@ -509,7 +515,7 @@ if (! empty($arrayfields['t.dateo']['checked']))
 // End date
 if (! empty($arrayfields['t.datee']['checked']))
 {
-	print '<td class="liste_titre center">';
+	print '<td class="liste_titre center minwidth150">';
 	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_eday" value="'.$search_eday.'">';
 	print '<input class="flat" type="text" size="1" maxlength="2" name="search_emonth" value="'.$search_emonth.'">';
 	$formother->select_year($search_eyear?$search_eyear:-1, 'search_eyear', 1, 20, 5);
@@ -546,6 +552,9 @@ if (! empty($arrayfields['t.planned_workload']['checked'])) print '<td class="li
 if (! empty($arrayfields['t.duration_effective']['checked'])) print '<td class="liste_titre"></td>';
 if (! empty($arrayfields['t.progress_calculated']['checked'])) print '<td class="liste_titre"></td>';
 if (! empty($arrayfields['t.progress']['checked'])) print '<td class="liste_titre"></td>';
+if (! empty($arrayfields['t.progress_summary']['checked'])) print '<td class="liste_titre"></td>';
+if (! empty($arrayfields['t.tobill']['checked'])) print '<td class="liste_titre"></td>';
+if (! empty($arrayfields['t.billed']['checked'])) print '<td class="liste_titre"></td>';
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 // Fields from hook
@@ -565,7 +574,7 @@ if (! empty($arrayfields['t.tms']['checked']))
 	print '</td>';
 }
 // Action column
-print '<td class="liste_titre right">';
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -584,6 +593,9 @@ if (! empty($arrayfields['t.planned_workload']['checked']))         print_liste_
 if (! empty($arrayfields['t.duration_effective']['checked']))       print_liste_field_titre($arrayfields['t.duration_effective']['label'], $_SERVER["PHP_SELF"], "t.duration_effective", "", $param, '', $sortfield, $sortorder, 'center ');
 if (! empty($arrayfields['t.progress_calculated']['checked']))      print_liste_field_titre($arrayfields['t.progress_calculated']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'center ');
 if (! empty($arrayfields['t.progress']['checked']))      print_liste_field_titre($arrayfields['t.progress']['label'], $_SERVER["PHP_SELF"], "t.progress", "", $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['t.progress_summary']['checked']))      print_liste_field_titre($arrayfields['t.progress_summary']['label'], $_SERVER["PHP_SELF"], "t.progress", "", $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['t.tobill']['checked']))        print_liste_field_titre($arrayfields['t.tobill']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
+if (! empty($arrayfields['t.billed']['checked']))        print_liste_field_titre($arrayfields['t.billed']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
@@ -614,6 +626,9 @@ while ($i < min($num, $limit))
 	$object->progress = $obj->progress;
 	$object->datee = $db->jdate($obj->date_end);	// deprecated
 	$object->date_end = $db->jdate($obj->date_end);
+    $object->planned_workload= $obj->planned_workload;
+    $object->duration_effective= $obj->duration_effective;
+
 
 	$projectstatic->id = $obj->projectid;
 	$projectstatic->ref = $obj->projectref;
@@ -630,7 +645,7 @@ while ($i < min($num, $limit))
 		// Ref
 		if (! empty($arrayfields['t.ref']['checked']))
 		{
-			print '<td>';
+			print '<td class="nowraponall">';
 			print $object->getNomUrl(1, 'withproject');
 			if ($object->hasDelay()) print img_warning("Late");
 			print '</td>';
@@ -748,7 +763,7 @@ while ($i < min($num, $limit))
 			}
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['totalprogress_calculated']=$totalarray['nbfield'];
+			if (! $i) $totalarray['totalprogress_calculatedfield']=$totalarray['nbfield'];
 		}
 		// Declared progress
 		if (! empty($arrayfields['t.progress']['checked']))
@@ -756,10 +771,57 @@ while ($i < min($num, $limit))
 			print '<td class="center">';
 			if ($obj->progress != '')
 			{
-				print $obj->progress.' %';
+				print getTaskProgressBadge($object);
 			}
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
+            if (! $i) $totalarray['totalprogress_declaredfield']=$totalarray['nbfield'];
+            $totalarray['totaldurationdeclared'] += $obj->planned_workload * $obj->progress / 100;
+		}
+		// Progress summary
+		if (! empty($arrayfields['t.progress_summary']['checked']))
+		{
+			print '<td class="center">';
+			if($obj->progress != '' && $obj->duration_effective){
+                print getTaskProgressView($object, false, false);
+            }
+			print '</td>';
+			if (! $i) $totalarray['nbfield']++;
+            if (! $i) $totalarray['totalprogress_summary']=$totalarray['nbfield'];
+		}
+		// Time not billed
+		if (! empty($arrayfields['t.tobill']['checked']))
+		{
+		    print '<td class="center">';
+		    if ($obj->usage_bill_time)
+		    {
+		        print convertSecondToTime($obj->tobill, 'allhourmin');
+		        $totalarray['totaltobill'] += $obj->tobill;
+		    }
+		    else
+		    {
+		        print '<span class="opacitymedium">'.$langs->trans("NA").'</span>';
+		    }
+		    print '</td>';
+		    if (! $i) $totalarray['nbfield']++;
+		    if (! $i) $totalarray['totaltobillfield']=$totalarray['nbfield'];
+		}
+		// Time billed
+		if (! empty($arrayfields['t.billed']['checked']))
+		{
+		    print '<td class="center">';
+		    if ($obj->usage_bill_time)
+		    {
+		        print convertSecondToTime($obj->billed, 'allhourmin');
+		        $totalarray['totalbilled'] += $obj->billed;
+		    }
+		    else
+		    {
+		        print '<span class="opacitymedium">'.$langs->trans("NA").'</span>';
+		    }
+		    print '</td>';
+		    if (! $i) $totalarray['nbfield']++;
+		    if (! $i) $totalarray['totalbilledfield']=$totalarray['nbfield'];
 		}
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
@@ -807,9 +869,9 @@ while ($i < min($num, $limit))
 
 	$i++;
 }
-
 // Show total line
-if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['totalplannedworkloadfield']))
+if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['totalplannedworkloadfield']) || isset($totalarray['totalprogress_calculatedfield'])
+    || isset($totalarray['totaltobill']) || isset($totalarray['totalbilled']))
 {
 	print '<tr class="liste_total">';
 	$i=0;
@@ -823,8 +885,11 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 		}
 		elseif ($totalarray['totalplannedworkloadfield'] == $i) print '<td class="center">'.convertSecondToTime($totalarray['totalplannedworkload'], $plannedworkloadoutputformat).'</td>';
 		elseif ($totalarray['totaldurationeffectivefield'] == $i) print '<td class="center">'.convertSecondToTime($totalarray['totaldurationeffective'], $timespentoutputformat).'</td>';
-		elseif ($totalarray['totalprogress_calculated'] == $i) print '<td class="center">'.($totalarray['totalplannedworkload'] > 0 ? round(100 * $totalarray['totaldurationeffective'] / $totalarray['totalplannedworkload'], 2).' %' : '').'</td>';
-		else print '<td></td>';
+		elseif ($totalarray['totalprogress_calculatedfield'] == $i) print '<td class="center">'.($totalarray['totalplannedworkload'] > 0 ? round(100 * $totalarray['totaldurationeffective'] / $totalarray['totalplannedworkload'], 2).' %' : '').'</td>';
+		elseif ($totalarray['totalprogress_declaredfield'] == $i) print '<td class="center">'.($totalarray['totalplannedworkload'] > 0 ? round(100 * $totalarray['totaldurationdeclared'] / $totalarray['totalplannedworkload'], 2).' %' : '').'</td>';
+		elseif ($totalarray['totaltobillfield'] == $i) print '<td class="center">'.convertSecondToTime($totalarray['totaltobill'], $plannedworkloadoutputformat).'</td>';
+		elseif ($totalarray['totalbilledfield'] == $i) print '<td class="center">'.convertSecondToTime($totalarray['totalbilled'], $plannedworkloadoutputformat).'</td>';
+        else print '<td></td>';
 	}
 	print '</tr>';
 }

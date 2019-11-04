@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -172,7 +172,6 @@ class PaymentSocialContribution extends CommonObject
 						// If we want to closed payed invoices
 						if ($closepaidcontrib)
 						{
-
 							$contrib=new ChargeSociales($this->db);
 							$contrib->fetch($contribid);
 							$paiement = $contrib->getSommePaiement();
@@ -184,7 +183,7 @@ class PaymentSocialContribution extends CommonObject
 							$remaintopay=price2num($contrib->amount - $paiement - $creditnotes - $deposits, 'MT');
 							if ($remaintopay == 0)
 							{
-								$result=$contrib->set_paid($user, '', '');
+								$result=$contrib->set_paid($user);
 							}
 							else dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
 						}
@@ -237,7 +236,7 @@ class PaymentSocialContribution extends CommonObject
 		$sql.= " t.fk_bank,";
 		$sql.= " t.fk_user_creat,";
 		$sql.= " t.fk_user_modif,";
-		$sql.= " pt.code as type_code, pt.libelle as type_libelle,";
+		$sql.= " pt.code as type_code, pt.libelle as type_label,";
 		$sql.= ' b.fk_account';
 		$sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as t LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepaiement = pt.id";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
@@ -268,7 +267,7 @@ class PaymentSocialContribution extends CommonObject
 				$this->fk_user_modif = $obj->fk_user_modif;
 
 				$this->type_code = $obj->type_code;
-				$this->type_libelle = $obj->type_libelle;
+				$this->type_label = $obj->type_label;
 
 				$this->bank_account   = $obj->fk_account;
 				$this->bank_line      = $obj->fk_bank;
@@ -448,13 +447,12 @@ class PaymentSocialContribution extends CommonObject
 	/**
 	 *	Load an object from its id and create a new one in database
 	 *
+	 *  @param	User	$user		    User making the clone
 	 *	@param	int		$fromid     	Id of object to clone
 	 * 	@return	int						New id of clone
 	 */
-	public function createFromClone($fromid)
+	public function createFromClone(User $user, $fromid)
 	{
-		global $user,$langs;
-
 		$error=0;
 
 		$object=new PaymentSocialContribution($this->db);
@@ -594,7 +592,7 @@ class PaymentSocialContribution extends CommonObject
                     {
                         $socialcontrib = new ChargeSociales($this->db);
                         $socialcontrib->fetch($key);
-                        $result=$acc->add_url_line($bank_line_id, $socialcontrib->id, DOL_URL_ROOT.'/compta/charges.php?id=', $socialcontrib->type_libelle.(($socialcontrib->lib && $socialcontrib->lib!=$socialcontrib->type_libelle)?' ('.$socialcontrib->lib.')':''), 'sc');
+                        $result=$acc->add_url_line($bank_line_id, $socialcontrib->id, DOL_URL_ROOT.'/compta/charges.php?id=', $socialcontrib->type_label.(($socialcontrib->lib && $socialcontrib->lib!=$socialcontrib->type_label)?' ('.$socialcontrib->lib.')':''), 'sc');
                         if ($result <= 0) dol_print_error($this->db);
                     }
                 }

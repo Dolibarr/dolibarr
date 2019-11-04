@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -40,10 +40,10 @@ $id=(GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
 $ref = GETPOST('ref', 'alpha');
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
 	unset($action);
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'societe', $id, '&societe');
 
@@ -55,6 +55,10 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+
+if (! empty($conf->global->MAIN_DOC_SORT_FIELD)) { $sortfield=$conf->global->MAIN_DOC_SORT_FIELD; }
+if (! empty($conf->global->MAIN_DOC_SORT_ORDER)) { $sortorder=$conf->global->MAIN_DOC_SORT_ORDER; }
+
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="position_name";
 
@@ -113,12 +117,12 @@ if ($object->id)
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+    dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom');
 
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Prefix
 	if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field

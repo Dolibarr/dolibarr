@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * ATTENTION DE PAS EXECUTER CE SCRIPT SUR UNE INSTALLATION DE PRODUCTION
  */
@@ -61,8 +61,8 @@ $user->getrights();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product"; $productsid = array();
 $resql=$db->query($sql);
 if ($resql) {
-  $num = $db->num_rows($resql); $i = 0;
-  while ($i < $num) {      $row = $db->fetch_row($resql);      $productsid[$i] = $row[0];      $i++; }
+    $num = $db->num_rows($resql); $i = 0;
+    while ($i < $num) {      $row = $db->fetch_row($resql);      $productsid[$i] = $row[0];      $i++; }
 }
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe"; $societesid = array();

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -159,11 +159,11 @@ class Cronjob extends CommonObject
 		// Check parameters
 		// Put here code to add a control on parameters values
 		if (dol_strlen($this->datestart)==0) {
-			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->trans('CronDtStart'));
+			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronDtStart'));
 			$error++;
 		}
 		if (empty($this->label)) {
-			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->trans('CronLabel'));
+			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronLabel'));
 			$error++;
 		}
 		if ((dol_strlen($this->datestart)!=0) && (dol_strlen($this->dateend)!=0) && ($this->dateend<$this->datestart)) {
@@ -171,28 +171,27 @@ class Cronjob extends CommonObject
 			$error++;
 		}
 		if (empty($this->unitfrequency)) {
-			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->trans('CronFrequency'));
+			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronFrequency'));
 			$error++;
 		}
 		if (($this->jobtype=='command') && (empty($this->command))) {
-			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->trans('CronCommand'));
+			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronCommand'));
 			$error++;
 		}
 		if (($this->jobtype=='method') && (empty($this->classesname))) {
-			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->trans('CronClass'));
+			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronClass'));
 			$error++;
 		}
 		if (($this->jobtype=='method' || $this->jobtype == 'function') && (empty($this->methodename))) {
-			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->trans('CronMethod'));
+			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronMethod'));
 			$error++;
 		}
 		if (($this->jobtype=='method') && (empty($this->objectname))) {
-			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->trans('CronObject'));
+			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronObject'));
 			$error++;
 		}
-
 		if (($this->jobtype=='function') && (empty($this->libname))) {
-			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->trans('CronLib'));
+			$this->errors[]=$langs->trans('CronFieldMandatory', $langs->transnoentitiesnoconv('CronLib'));
 			$error++;
 		}
 
@@ -736,13 +735,12 @@ class Cronjob extends CommonObject
 	/**
 	 *	Load an object from its id and create a new one in database
 	 *
+	 *  @param	User	$user		User making the clone
 	 *	@param	int		$fromid     Id of object to clone
 	 * 	@return	int					New id of clone
 	 */
-	public function createFromClone($fromid)
+	public function createFromClone(User $user, $fromid)
 	{
-		global $user,$langs;
-
 		$error=0;
 
 		$object=new Cronjob($this->db);
@@ -851,7 +849,6 @@ class Cronjob extends CommonObject
 		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
 		$result = '';
-		$companylink = '';
 
 		$label = '<u>' . $langs->trans("CronJob") . '</u>';
 		$label.= '<br>';
@@ -897,14 +894,15 @@ class Cronjob extends CommonObject
 	/**
 	 *	Load object information
 	 *
-	 *	@return	int
+	 *  @param	int		$id		ID
+	 *	@return	int				<0 if KO, >0 if OK
 	 */
-	public function info()
+	public function info($id)
 	{
 		$sql = "SELECT";
 		$sql.= " f.rowid, f.datec, f.tms, f.fk_user_mod, f.fk_user_author";
 		$sql.= " FROM ".MAIN_DB_PREFIX."cronjob as f";
-		$sql.= " WHERE f.rowid = ".$this->id;
+		$sql.= " WHERE f.rowid = ".$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);

@@ -6,6 +6,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019       Pierre Ardoin           <mapiolca@me.com>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -76,7 +77,7 @@ if ((isset($_GET["type"]) && $_GET["type"] == 1) || empty($conf->product->enable
 llxHeader("", $langs->trans("ProductsAndServices"), $helpurl);
 
 $linkback="";
-print load_fiche_titre($transAreaType, $linkback, 'title_products.png');
+print load_fiche_titre($transAreaType, $linkback, 'products');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -94,6 +95,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
     	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<div class="div-table-responsive-no-min">';
     	print '<table class="noborder nohover centpercent">';
     	$i=0;
     	foreach($listofsearchfields as $key => $value)
@@ -106,6 +108,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     		$i++;
     	}
     	print '</table>';
+        print '</div>';
     	print '</form>';
     	print '<br>';
     }
@@ -129,68 +132,64 @@ $sql.= " GROUP BY p.fk_product_type, p.tosell, p.tobuy";
 $result = $db->query($sql);
 while ($objp = $db->fetch_object($result))
 {
-	$status=3;
+	$status=3;											// On sale + On purchase
 	if (! $objp->tosell && ! $objp->tobuy) $status=0;	// Not on sale, not on purchase
 	if ($objp->tosell && ! $objp->tobuy) $status=1;     // On sale only
 	if (! $objp->tosell && $objp->tobuy) $status=2;     // On purchase only
 	$prodser[$objp->fk_product_type][$status]=$objp->total;
+	if ($objp->tosell) $prodser[$objp->fk_product_type]['sell']+=$objp->total;
+	if ($objp->tobuy)  $prodser[$objp->fk_product_type]['buy']+=$objp->total;
+	if (! $objp->tosell && ! $objp->tobuy)  $prodser[$objp->fk_product_type]['none']+=$objp->total;
 }
 
+if ($conf->use_javascript_ajax)
+{
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
+	print '<tr><td class="center" colspan="2">';
 
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
-if (! empty($conf->product->enabled))
-{
-	$statProducts = '<tr class="oddeven">';
-	$statProducts.= '<td><a href="list.php?type=0&amp;tosell=0&amp;tobuy=0">'.$langs->trans("ProductsNotOnSell").'</a></td><td class="right">'.round($prodser[0][0]).'</td>';
-	$statProducts.= "</tr>";
-	$statProducts.= '<tr class="oddeven">';
-	$statProducts.= '<td><a href="list.php?type=0">'.$langs->trans("ProductsOnSaleOnly").'</a></td><td class="right">'.round($prodser[0][1]).'</td>';
-	$statProducts.= "</tr>";
-	$statProducts.= '<tr class="oddeven">';
-	$statProducts.= '<td><a href="list.php?type=0">'.$langs->trans("ProductsOnPurchaseOnly").'</a></td><td class="right">'.round($prodser[0][2]).'</td>';
-	$statProducts.= "</tr>";
-	$statProducts.= '<tr class="oddeven">';
-	$statProducts.= '<td><a href="list.php?type=0&amp;tosell=1&amp;tobuy=1">'.$langs->trans("ProductsOnSellAndOnBuy").'</a></td><td class="right">'.round($prodser[0][3]).'</td>';
-	$statProducts.= "</tr>";
+	$SommeA=$prodser[0]['sell'];
+	$SommeB=$prodser[0]['buy'];
+	$SommeC=$prodser[0]['none'];
+	$SommeD=$prodser[1]['sell'];
+	$SommeE=$prodser[1]['buy'];
+	$SommeF=$prodser[1]['none'];
+	$total=0;
+	$dataval=array();
+	$datalabels=array();
+	$i=0;
+
+	$total = $SommeA + $SommeB + $SommeC + $SommeD + $SommeE + $SommeF;
+	$dataseries=array();
+	if (! empty($conf->product->enabled))
+	{
+		$dataseries[]=array($langs->trans("ProductsOnSale"), round($SommeA));
+		$dataseries[]=array($langs->trans("ProductsOnPurchase"), round($SommeB));
+		$dataseries[]=array($langs->trans("ProductsNotOnSell"), round($SommeC));
+	}
+	if (! empty($conf->service->enabled))
+	{
+		$dataseries[]=array($langs->trans("ServicesOnSale"), round($SommeD));
+		$dataseries[]=array($langs->trans("ServicesOnPurchase"), round($SommeE));
+		$dataseries[]=array($langs->trans("ServicesNotOnSell"), round($SommeF));
+	}
+
+	include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+	$dolgraph = new DolGraph();
+	$dolgraph->SetData($dataseries);
+	$dolgraph->setShowLegend(1);
+	$dolgraph->setShowPercent(0);
+	$dolgraph->SetType(array('pie'));
+	$dolgraph->setWidth('100%');
+	$dolgraph->draw('idgraphstatus');
+	print $dolgraph->show($total?0:1);
+
+	print '</td></tr>';
+	print '</table>';
+	print '</div>';
 }
-if (! empty($conf->service->enabled))
-{
-	$statServices = '<tr class="oddeven">';
-	$statServices.= '<td><a href="list.php?type=1&amp;tosell=0&amp;tobuy=0">'.$langs->trans("ServicesNotOnSell").'</a></td><td class="right">'.round($prodser[1][0]).'</td>';
-	$statServices.= "</tr>";
-	$statServices.= '<tr class="oddeven">';
-	$statServices.= '<td><a href="list.php?type=1">'.$langs->trans("ServicesOnSaleOnly").'</a></td><td class="right">'.round($prodser[1][1]).'</td>';
-	$statServices.= "</tr>";
-	$statServices.= '<tr class="oddeven">';
-	$statServices.= '<td><a href="list.php?type=1">'.$langs->trans("ServicesOnPurchaseOnly").'</a></td><td class="right">'.round($prodser[1][2]).'</td>';
-	$statServices.= "</tr>";
-	$statServices.= '<tr class="oddeven">';
-	$statServices.= '<td><a href="list.php?type=1&amp;tosell=1&amp;tobuy=1">'.$langs->trans("ServicesOnSellAndOnBuy").'</a></td><td class="right">'.round($prodser[1][3]).'</td>';
-	$statServices.= "</tr>";
-}
-$total=0;
-if ($type == '0')
-{
-	print $statProducts;
-	$total=round($prodser[0][0])+round($prodser[0][1])+round($prodser[0][2])+round($prodser[0][3]);
-}
-elseif ($type == '1')
-{
-	print $statServices;
-	$total=round($prodser[1][0])+round($prodser[1][1])+round($prodser[1][2])+round($prodser[1][3]);
-}
-else
-{
-	print $statProducts.$statServices;
-	$total=round($prodser[0][0])+round($prodser[0][1])+round($prodser[0][2])+round($prodser[0][3])+round($prodser[1][0])+round($prodser[1][1])+round($prodser[1][2])+round($prodser[1][3]); //Calcul du Total des Produits et Services
-}
-print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">';
-print $total;
-print '</td></tr>';
-print '</table>';
-print '</div>';
+
 
 if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHSTATS_ON_PRODUCTS))
 {
@@ -269,7 +268,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 /*
- * Last modified products
+ * Latest modified products
  */
 $max=15;
 $sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy, p.tobatch, p.fk_price_expression,";
@@ -302,11 +301,11 @@ if ($result)
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 
-		$colnb=4;
+		$colnb=2;
 		if (empty($conf->global->PRODUIT_MULTIPRICES)) $colnb++;
 
 		print '<tr class="liste_titre"><th colspan="'.$colnb.'">'.$transRecordedType.'</th>';
-		print '<th class="right"><a href="'.DOL_URL_ROOT.'/product/list.php?sortfield=p.tms&sortorder=DESC">'.$langs->trans("FullList").'</td>';
+		print '<th class="right" colspan="3"><a href="'.DOL_URL_ROOT.'/product/list.php?sortfield=p.tms&sortorder=DESC">'.$langs->trans("FullList").'</td>';
 		print '</tr>';
 
 		while ($i < $num)
@@ -357,15 +356,15 @@ if ($result)
                         $objp->price = $price_result;
                     }
                 }
-				print '<td class="right">';
+				print '<td class="nowrap right">';
     			if (isset($objp->price_base_type) && $objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
     			else print price($objp->price).' '.$langs->trans("HT");
     			print '</td>';
 			}
-			print '<td class="right nowrap"><span class="statusrefsell">';
+			print '<td class="right nowrap width25"><span class="statusrefsell">';
 			print $product_static->LibStatut($objp->tosell, 3, 0);
 			print "</span></td>";
-            print '<td class="right nowrap"><span class="statusrefbuy">';
+            print '<td class="right nowrap width25"><span class="statusrefbuy">';
             print $product_static->LibStatut($objp->tobuy, 3, 1);
             print "</span></td>";
 			print "</tr>\n";
@@ -396,6 +395,9 @@ if (! empty($conf->global->MAIN_SHOW_PRODUCT_ACTIVITY_TRIM))
 
 
 print '</div></div></div>';
+
+$parameters = array('type' => $type, 'user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardProductsServices', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();
@@ -442,6 +444,7 @@ function activitytrim($product_type)
 
 		if ($num > 0 )
 		{
+            print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder" width="75%">';
 
 			if ($product_type==0)
@@ -465,11 +468,11 @@ function activitytrim($product_type)
 				if ($trim1+$trim2+$trim3+$trim4 > 0)
 				{
 					print '<tr class="oddeven"><td class=left>'.$tmpyear.'</td>';
-					print '<td class=right>'.price($trim1).'</td>';
-					print '<td class=right>'.price($trim2).'</td>';
-					print '<td class=right>'.price($trim3).'</td>';
-					print '<td class=right>'.price($trim4).'</td>';
-					print '<td class=right>'.price($trim1+$trim2+$trim3+$trim4).'</td>';
+					print '<td class="nowrap right">'.price($trim1).'</td>';
+					print '<td class="nowrap right">'.price($trim2).'</td>';
+					print '<td class="nowrap right">'.price($trim3).'</td>';
+					print '<td class="nowrap right">'.price($trim4).'</td>';
+					print '<td class="nowrap right">'.price($trim1+$trim2+$trim3+$trim4).'</td>';
 					print '</tr>';
 					$lgn++;
 				}
@@ -498,14 +501,14 @@ function activitytrim($product_type)
 		if ($trim1+$trim2+$trim3+$trim4 > 0)
 		{
 			print '<tr class="oddeven"><td class=left>'.$tmpyear.'</td>';
-			print '<td class=right>'.price($trim1).'</td>';
-			print '<td class=right>'.price($trim2).'</td>';
-			print '<td class=right>'.price($trim3).'</td>';
-			print '<td class=right>'.price($trim4).'</td>';
-			print '<td class=right>'.price($trim1+$trim2+$trim3+$trim4).'</td>';
+			print '<td class="nowrap right">'.price($trim1).'</td>';
+			print '<td class="nowrap right">'.price($trim2).'</td>';
+			print '<td class="nowrap right">'.price($trim3).'</td>';
+			print '<td class="nowrap right">'.price($trim4).'</td>';
+			print '<td class="nowrap right">'.price($trim1+$trim2+$trim3+$trim4).'</td>';
 			print '</tr>';
 		}
 		if ($num > 0 )
-			print '</table>';
+			print '</table></div>';
 	}
 }

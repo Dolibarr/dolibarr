@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -108,7 +108,6 @@ if ($action == 'update')
 		}
 		else
 		{
-
 			$db->rollback();
 			if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
@@ -158,7 +157,6 @@ if ($action == 'add')
 		}
 		else
 		{
-
 		    $db->rollback();
 		    if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		    {
@@ -229,7 +227,7 @@ print load_fiche_titre($langs->trans("Translation"), $enabledisablehtml, 'title_
 
 $current_language_code=$langs->defaultlang;
 $s=picto_from_langcode($current_language_code);
-print $form->textwithpicto($langs->trans("CurrentUserLanguage").': <strong>'.$s.' '.$current_language_code.'</strong>', $langs->trans("TranslationDesc")).'<br>';
+print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("CurrentUserLanguage").': <strong>'.$s.' '.$current_language_code.'</strong>', $langs->trans("TranslationDesc")).'</span><br>';
 
 print '<br>';
 
@@ -460,7 +458,7 @@ if ($mode == 'searchkey')
     //print 'param='.$param.' $_SERVER["PHP_SELF"]='.$_SERVER["PHP_SELF"].' num='.$num.' page='.$page.' nbtotalofrecords='.$nbtotalofrecords." sortfield=".$sortfield." sortorder=".$sortorder;
     $title = $langs->trans("TranslationKeySearch");
     if ($nbtotalofrecords > 0) $title.=' ('.$nbtotalofrecords.' / '.$nbtotalofrecordswithoutfilters.' - '.$nbtotaloffiles.' '.$langs->trans("Files").')';
-    print print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, '', '', $limit)."\n";
+    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, '', '', $limit);
 
     print '<input type="hidden" id="action" name="action" value="search">';
     print '<input type="hidden" id="mode" name="mode" value="'.$mode.'">';
@@ -468,7 +466,7 @@ if ($mode == 'searchkey')
 	print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre("Language_en_US_es_MX_etc", $_SERVER["PHP_SELF"], 'lang,transkey', '', $param, '', $sortfield, $sortorder).'</td>';
+    print_liste_field_titre("Language_en_US_es_MX_etc", $_SERVER["PHP_SELF"], 'lang,transkey', '', $param, '', $sortfield, $sortorder);
     print_liste_field_titre("Key", $_SERVER["PHP_SELF"], 'transkey', '', $param, '', $sortfield, $sortorder);
     print_liste_field_titre("CurrentTranslationString", $_SERVER["PHP_SELF"], 'transvalue', '', $param, '', $sortfield, $sortorder);
     //if (! empty($conf->multicompany->enabled) && !$user->entity) print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], 'entity,transkey', '', $param, '', $sortfield, $sortorder);
@@ -553,7 +551,7 @@ if ($mode == 'searchkey')
             	//$transifexurl = 'https://www.transifex.com/dolibarr-association/dolibarr/translate/#'.$langcode.'/'.$transifexlangfile.'?key='.$key;
             	$transifexurl = 'https://www.transifex.com/dolibarr-association/dolibarr/translate/#'.$langcode.'/'.$transifexlangfile.'?q=key%3A'.$key;
 
-            	print ' &nbsp; <a href="'.$transifexurl.'" target="transifex">'.img_picto('FixOnTransifex', 'object_globe').'</a>';
+            	print ' &nbsp; <a href="'.$transifexurl.'" target="transifex">'.img_picto('FixOnTransifex', 'globe').'</a>';
             }
         }
         else

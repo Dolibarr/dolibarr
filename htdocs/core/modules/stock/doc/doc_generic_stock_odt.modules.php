@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@stocks.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -14,8 +14,8 @@
 * GNU General Public License for more details.
 *
 * You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-* or see http://www.gnu.org/
+* along with this program. If not, see <https://www.gnu.org/licenses/>.
+* or see https://www.gnu.org/
 */
 
 /**
@@ -45,9 +45,9 @@ class doc_generic_stock_odt extends ModelePDFStock
 
     /**
      * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.4 = array(5, 4)
+     * e.g.: PHP ≥ 5.5 = array(5, 5)
      */
-	public $phpmin = array(5, 4);
+	public $phpmin = array(5, 5);
 
 	/**
      * Dolibarr version of the loaded document
@@ -73,7 +73,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 		$this->description = $langs->trans("DocumentModelOdt");
 		$this->scandir = 'STOCK_ADDON_PDF_ODT_PATH';	// Name of constant that is used to save list of directories to scan
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'odt';
 		$this->page_largeur = 0;
 		$this->page_hauteur = 0;
@@ -244,7 +244,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
-		if ($conf->produit->dir_output)
+		if ($conf->product->dir_output)
 		{
 			// If $object is id instead of object
 			if (! is_object($object))
@@ -262,7 +262,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 			$supplierprices = $stockFournisseur->list_stock_fournisseur_price($object->id);
 			$object->supplierprices = $supplierprices;
 
-			$dir = $conf->produit->dir_output;
+			$dir = $conf->product->dir_output;
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (! preg_match('/specimen/i', $objectref)) $dir.= "/" . $objectref;
 			$file = $dir . "/" . $objectref . ".odt";
@@ -302,9 +302,9 @@ class doc_generic_stock_odt extends ModelePDFStock
 				//print "newdir=".$dir;
 				//print "newfile=".$newfile;
 				//print "file=".$file;
-				//print "conf->produit->dir_temp=".$conf->produit->dir_temp;
+				//print "conf->product->dir_temp=".$conf->product->dir_temp;
 
-				dol_mkdir($conf->produit->dir_temp);
+				dol_mkdir($conf->product->dir_temp);
 
 
 				// If CUSTOMER contact defined on stock, we use it
@@ -360,7 +360,7 @@ class doc_generic_stock_odt extends ModelePDFStock
                     $odfHandler = new odf(
                         $srctemplatepath,
 					    array(
-						    'PATH_TO_TMP'	  => $conf->produit->dir_temp,
+						    'PATH_TO_TMP'	  => $conf->product->dir_temp,
 						    'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 						    'DELIMITER_LEFT'  => '{',
 						    'DELIMITER_RIGHT' => '}'
@@ -495,7 +495,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 				}
 				else {
 					try {
-					$odfHandler->saveToDisk($file);
+					    $odfHandler->saveToDisk($file);
 					} catch (Exception $e) {
 						$this->error=$e->getMessage();
                         dol_syslog($e->getMessage(), LOG_INFO);

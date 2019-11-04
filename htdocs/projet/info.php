@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -62,7 +62,7 @@ $search_agenda_label=GETPOST('search_agenda_label');
 // Security check
 $id = GETPOST("id", 'int');
 $socid=0;
-//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result=restrictedArea($user, 'projet', $id, '');
 
 if (!$user->rights->projet->lire)	accessforbidden();
@@ -161,16 +161,8 @@ if ($permok)
 $morehtmlcenter='';
 if (! empty($conf->agenda->enabled))
 {
-    if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
-    {
-        $morehtmlcenter.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddAction").'</span>';
-        $morehtmlcenter.='<span class="fa fa-plus-circle valignmiddle"></span>';
-        $morehtmlcenter.='</a>';
-    }
-    else
-    {
-        $morehtmlcenter.='<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddAction").'</a>';
-    }
+    $addActionBtnRight = ! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create);
+    $morehtmlcenter.= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $addActionBtnRight);
 }
 
 //print '</div>';

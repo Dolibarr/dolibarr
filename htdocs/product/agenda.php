@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -50,7 +50,7 @@ $search_agenda_label=GETPOST('search_agenda_label');
 // Security check
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-if ($user->societe_id) $id=$user->societe_id;
+if ($user->socid) $id=$user->socid;
 $result=restrictedArea($user, 'produit|service', $id, 'product&product');
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -132,7 +132,7 @@ if ($id > 0 || $ref)
     $object->next_prev_filter=" fk_product_type = ".$object->type;
 
     $shownav = 1;
-    if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+    if ($user->socid && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
     dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
@@ -141,7 +141,7 @@ if ($id > 0 || $ref)
     print '<div class="underbanner clearboth"></div>';
 
     $object->info($object->id);
-	print dol_print_object_info($object, 1);
+	dol_print_object_info($object, 1);
 
 	print '</div>';
 
@@ -174,14 +174,8 @@ if ($id > 0 || $ref)
 	$morehtmlcenter='';
     if (! empty($conf->agenda->enabled))
     {
-    	if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
-    	{
-        	$morehtmlcenter.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddAction").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
-    	}
-    	else
-    	{
-        	$morehtmlcenter.='<a class="butActionNewRefused" href="#"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddAction").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
-    	}
+        $linktocreatetimeBtnStatus = ! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create);
+        $morehtmlcenter = dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out, '', $linktocreatetimeBtnStatus);
     }
 
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))

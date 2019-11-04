@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - categories
 Rubrique=Tag/Catégorie
-Rubriques=Tags/Catégories
+Rubriques=Tags/catégories
 RubriquesTransactions=Tags/catégories des transactions
 categories=tags/catégories
 NoCategoryYet=Aucun tag/catégorie de ce type n'a été créé
@@ -83,7 +83,7 @@ DeleteFromCat=Enlever des tags/catégories
 ExtraFieldsCategories=Attributs supplémentaires
 CategoriesSetup=Configuration des tags/catégories
 CategorieRecursiv=Lier automatiquement avec le(a) tag/catégorie parent(e)
-CategorieRecursivHelp=Si activé : quand un élément est ajouté dans une catégorie, l'ajouter aussi dans toutes les catégories parentes
+CategorieRecursivHelp=Si l'option est activé, quand un produit est ajouté dans une sous-catégorie, le produit sera ajouté aussi dans la catégorie parente.
 AddProductServiceIntoCategory=Ajouter le produit/service suivant
 ShowCategory=Afficher tag/catégorie
 ByDefaultInList=Par défaut dans la liste

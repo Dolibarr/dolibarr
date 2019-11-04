@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -49,9 +49,9 @@ $action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
 
 // Security check
-if ($user->societe_id)
+if ($user->socid)
 {
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 $result=restrictedArea($user, 'facture', $id, '');
 
@@ -97,7 +97,7 @@ if ($id > 0 || ! empty($ref))
 	{
 		$object->fetch_thirdparty();
 
-		$upload_dir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($object->ref);
+		$upload_dir = $conf->facture->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 
 		$head = facture_prepare_head($object);
 		dol_fiche_head($head, 'documents', $langs->trans('InvoiceCustomer'), -1, 'bill');
@@ -131,7 +131,7 @@ if ($id > 0 || ! empty($ref))
 	    	if ($user->rights->facture->creer)
 	    	{
 	    		if ($action != 'classify')
-	    			//$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+	    			//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 	    			$morehtmlref.=' : ';
 	    		if ($action == 'classify') {
 	    			//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -165,7 +165,7 @@ if ($id > 0 || ! empty($ref))
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';

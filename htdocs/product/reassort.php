@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2019       Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,16 +36,16 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 $langs->loadLangs(array('products', 'stocks'));
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, 'produit|service');
 
 
 $action=GETPOST('action', 'alpha');
-$sref=GETPOST("sref");
-$snom=GETPOST("snom");
+$sref=GETPOST("sref", 'alpha');
+$snom=GETPOST("snom", 'alpha');
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $type=GETPOST("type", "int");
-$search_barcode=GETPOST("search_barcode");
+$search_barcode=GETPOST("search_barcode", 'alpha');
 $catid=GETPOST('catid', 'int');
 $toolowstock=GETPOST('toolowstock');
 $tosell = GETPOST("tosell");
@@ -119,8 +120,10 @@ $sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price
 $sql.= ' p.fk_product_type, p.tms as datem,';
 $sql.= ' p.duration, p.tosell as statut, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
 $sql.= ' SUM(s.reel) as stock_physique';
+if (! empty($conf->global->PRODUCT_USE_UNITS)) $sql.= ', u.short_label as unit_short';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s on p.rowid = s.fk_product';
+if (! empty($conf->global->PRODUCT_USE_UNITS)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_units as u on p.fk_unit = u.rowid';
 // We'll need this table joined to the select in order to filter by categ
 if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 $sql.= " WHERE p.entity IN (".getEntity('product').")";
@@ -215,7 +218,7 @@ if ($resql)
     print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
 
-	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_products', 0, '', '', $limit);
+	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'products', 0, '', '', $limit);
 
 	if (! empty($catid))
 	{
@@ -271,7 +274,7 @@ if ($resql)
     print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
 
-	// Lignes des champs de filtre
+	// Fields title search
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="sref" size="6" value="'.$sref.'">';
@@ -294,13 +297,13 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" colspan="'.$colspan_warehouse.'">&nbsp;</td>';
 	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre right">';
+	print '<td class="liste_titre maxwidthsearch">';
    	$searchpicto=$form->showFilterAndCheckAddButtons(0);
    	print $searchpicto;
 	print '</td>';
 	print '</tr>';
 
-	// Lignes des titres
+	//Line for column titles
 	print "<tr class=\"liste_titre\">";
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", $param, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", $param, "", "", $sortfield, $sortorder);
@@ -318,6 +321,10 @@ if ($resql)
 	    }
 	}
 	if ($virtualdiffersfromphysical) print_liste_field_titre("VirtualStock", $_SERVER["PHP_SELF"], "", $param, "", '', $sortfield, $sortorder, 'right ');
+    // Units
+    if (! empty($conf->global->PRODUCT_USE_UNITS)) {
+        print_liste_field_titre("Unit", $_SERVER["PHP_SELF"], "unit_short", $param, "", 'align="right"', $sortfield, $sortorder);
+    }
 	print_liste_field_titre('');
 	print_liste_field_titre("ProductStatusOnSell", $_SERVER["PHP_SELF"], "p.tosell", $param, "", '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("ProductStatusOnBuy", $_SERVER["PHP_SELF"], "p.tobuy", $param, "", '', $sortfield, $sortorder, 'right ');
@@ -362,7 +369,6 @@ if ($resql)
 		{
 			if($nb_warehouse>1) {
 				foreach($warehouses_list as &$wh) {
-
 					print '<td class="right">';
 					print empty($product->stock_warehouse[$wh['id']]->real) ? '0' : $product->stock_warehouse[$wh['id']]->real;
 					print '</td>';
@@ -378,6 +384,10 @@ if ($resql)
 			print $product->stock_theorique;
 			print '</td>';
 		}
+        // Units
+        if (! empty($conf->global->PRODUCT_USE_UNITS)) {
+            print '<td class="left">' . $objp->unit_short . '</td>';
+        }
 		print '<td class="right"><a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$product->id.'">'.$langs->trans("Movements").'</a></td>';
 		print '<td class="right nowrap">'.$product->LibStatut($objp->statut, 5, 0).'</td>';
         print '<td class="right nowrap">'.$product->LibStatut($objp->tobuy, 5, 1).'</td>';

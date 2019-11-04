@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -27,15 +28,20 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT .'/supplier_proposal/class/supplier_proposal.class.php';
 
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('suppliersproposalsindex'));
+
 // Load translation files required by the page
 $langs->loadLangs(array('supplier_proposal', 'companies'));
 
 // Security check
 $socid=GETPOST('socid', 'int');
-if (isset($user->societe_id) && $user->societe_id  > 0)
+if (isset($user->socid) && $user->socid  > 0)
 {
 	$action = '';
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'supplier_proposal');
 
@@ -52,7 +58,7 @@ $help_url="EN:Module_Ask_Price_Supplier|FR:Module_Demande_de_prix_fournisseur";
 
 llxHeader("", $langs->trans("SupplierProposalArea"), $help_url);
 
-print load_fiche_titre($langs->trans("SupplierProposalArea"));
+print load_fiche_titre($langs->trans("SupplierProposalArea"), '', 'commercial');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -84,7 +90,7 @@ $sql.= ", ".MAIN_DB_PREFIX."supplier_proposal as p";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE p.fk_soc = s.rowid";
 $sql.= " AND p.entity IN (".getEntity('supplier_proposal').")";
-if ($user->societe_id) $sql.=' AND p.fk_soc = '.$user->societe_id;
+if ($user->socid) $sql.=' AND p.fk_soc = '.$user->socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " AND p.fk_statut IN (0,1,2,3,4)";
 $sql.= " GROUP BY p.fk_statut";
@@ -374,6 +380,9 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 }
 
 print '</div></div></div>';
+
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardSupplierProposal', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

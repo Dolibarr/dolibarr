@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -58,7 +58,7 @@ abstract class ActionsCardCommon
      *  Get object from id or ref and save it into this->object
 	 *
      *  @param		int		$id			Object id
-     *  @param		ref		$ref		Object ref
+     *  @param		string	$ref		Object ref
      *  @return		object				Object loaded
      */
     protected function getObject($id, $ref = '')
@@ -266,7 +266,7 @@ abstract class ActionsCardCommon
             $this->tpl['showhead']=dol_get_fiche_head($head, 'card', '', 0, 'company');
             $this->tpl['showend']=dol_get_fiche_end();
 
-            $this->tpl['showrefnav'] 		= $form->showrefnav($this->object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+            $this->tpl['showrefnav'] 		= $form->showrefnav($this->object, 'socid', '', ($user->socid?0:1), 'rowid', 'nom');
 
             $this->tpl['checkcustomercode'] = $this->object->check_codeclient();
             $this->tpl['checksuppliercode'] = $this->object->check_codefournisseur();

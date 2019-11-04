@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /* To call this template, you must define
@@ -103,7 +103,8 @@ if (is_array($extrafields->attributes[$elementtype]['type']) && count($extrafiel
 }
 else
 {
-	$colspan=9;
+	$colspan=13;
+	if (! empty($conf->multicompany->enabled))  $colspan++;
 
 	print '<tr class="oddeven">';
 	print '<td class="opacitymedium" colspan="'.$colspan.'">';

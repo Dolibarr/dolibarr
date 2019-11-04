@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -59,7 +59,7 @@ $object = new Contact($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($id);
@@ -84,7 +84,7 @@ else
 $search_agenda_label=GETPOST('search_agenda_label');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -227,7 +227,7 @@ else
         print '<div class="underbanner clearboth"></div>';
 
         $object->info($id);
-        print dol_print_object_info($object, 1);
+        dol_print_object_info($object, 1);
 
         print '</div>';
 
@@ -261,9 +261,7 @@ else
     	{
     		if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
     		{
-    			$newcardbutton.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddAction").'</span>';
-    			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-    			$newcardbutton.= '</a>';
+                $newcardbutton.= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
     		}
     	}
 

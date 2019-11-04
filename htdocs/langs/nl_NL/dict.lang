@@ -250,7 +250,7 @@ CountryMF=Saint Martin
 
 ##### Civilities #####
 CivilityMME=Mevrouw
-CivilityMR=Meneer
+CivilityMR=De Heer
 CivilityMLE=Mejuffrouw
 CivilityMTRE=Meester
 CivilityDR=Dokter
@@ -290,6 +290,7 @@ CurrencyXOF=Francs CFA BCEAO
 CurrencySingXOF=Franc CFA BCEAO
 CurrencyXPF=Francs CFP
 CurrencySingXPF=Franc CFP
+CurrencyCentEUR=cents
 CurrencyCentSingEUR=cent
 CurrencyCentINR=paisa
 CurrencyCentSingINR=paise

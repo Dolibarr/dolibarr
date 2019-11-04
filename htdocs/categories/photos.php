@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -69,7 +69,6 @@ if ($id > 0)
 if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
     if ($object->id) {
-
         $file = $_FILES['userfile'];
         if (is_array($file['name']) && count($file['name']) > 0)
         {
@@ -137,7 +136,7 @@ if ($object->id)
 	}
 	$morehtmlref.='</div>';
 
-	dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
+	dol_banner_tab($object, 'ref', $linkback, ($user->socid?0:1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
 	/*
 	 * Confirmation de la suppression de photo

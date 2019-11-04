@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/imports/class/import.class.php';
 // Load translation files required by the page
 $langs->load("exports");
 
-if (! $user->societe_id == 0)
+if (! $user->socid == 0)
   accessforbidden();
 
 $import=new Import($db);
@@ -92,7 +92,7 @@ if (count($import->array_import_code))
 {
 	//if ($user->rights->import->run)
 	//{
-	print '<a class="butActionNew" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import"><span class="valignmiddle text-plus-circle">'.$langs->trans("NewImport").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+    print dolGetButtonTitle($langs->trans('NewImport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/imports/import.php?leftmenu=import');
 	//}
 	//else
 	//{

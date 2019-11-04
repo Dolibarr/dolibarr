@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -124,10 +124,9 @@ elseif ($action == 'update')
 	$error = 0;
 
 	if (! $cancel) {
-
 		$name = GETPOST('name', 'alpha');
 		if (empty($name)) {
-			setEventMessages($langs->trans('ErrorFieldRequired', $langs->trans('Name')), null, 'errors');
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Name')), null, 'errors');
 			$error ++;
 		}
 
@@ -291,7 +290,7 @@ if (($id || $ref) && $action == 'edit')
             print '<tr><td>'.$form->editfieldkey('Name', 'name', '', $object, 0, 'string', '', 1).'</td><td>';
             print '<input name="name" id="name" class="flat" size="32" value="'.$object->name.'">';
             print '</td></tr>';
-			
+
 			// Parent
             print '<tr><td>'.$form->editfieldkey('Parent', 'entity', '', $object, 0, 'string', '', 1).'</td>';
 			print '<td class="maxwidthonsmartphone">';
@@ -380,7 +379,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<td class="titlefield">'.$langs->trans("Name").'</td>';
 	print '<td>'.$object->name.'</td>';
 	print '</tr>';
-	
+
 	// Parent
 	print '<tr>';
 	print '<td class="titlefield">'.$langs->trans("Parent").'</td>';

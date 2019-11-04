@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -47,7 +47,7 @@ class WebsitePage extends CommonObject
 	/**
 	 * @var string String with name of icon for websitepage. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'label';
+	public $picto = 'file-code';
 
 	/**
      * @var int ID
@@ -88,6 +88,11 @@ class WebsitePage extends CommonObject
 	public $date_modification;
 
 
+	const STATUS_DRAFT = 0;
+	const STATUS_VALIDATED = 1;
+
+
+
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
      * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
@@ -99,7 +104,7 @@ class WebsitePage extends CommonObject
 		'type_container' =>array('type'=>'varchar(16)',  'label'=>'Type',             'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'index'=>0, 'position'=>12, 'comment'=>'Type of container'),
 		'title'          =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1),
 	    'description'    =>array('type'=>'varchar(255)', 'label'=>'Description',      'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1),
-		'image'          =>array('type'=>'varchar(255)', 'label'=>'Image',            'enabled'=>1, 'visible'=>1,  'position'=>32,  'searchall'=>0, 'help'=>'Relative path of media. Used if Type is "blog_post"'),
+		'image'          =>array('type'=>'varchar(255)', 'label'=>'Image',            'enabled'=>1, 'visible'=>1,  'position'=>32,  'searchall'=>0, 'help'=>'Relative path of media. Used if Type is "blogpost"'),
 		'keywords'       =>array('type'=>'varchar(255)', 'label'=>'Keywords',         'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
 		'lang'           =>array('type'=>'varchar(6)',   'label'=>'Lang',             'enabled'=>1, 'visible'=>1,  'position'=>45,  'searchall'=>0),
 		//'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'index'=>true,   'position'=>1000),
@@ -340,7 +345,8 @@ class WebsitePage extends CommonObject
 
 			return $records;
 		} else {
-			$this->errors[] = 'Error ' . $this->db->lasterror();
+			$this->error = 'Error ' . $this->db->lasterror();
+			$this->errors[] = $this->error;
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 
 			return -1;
@@ -479,25 +485,39 @@ class WebsitePage extends CommonObject
         global $menumanager;
 
         $result = '';
-        $companylink = '';
 
         $label = '<u>' . $langs->trans("Page") . '</u>';
-        $label.= '<div width="100%">';
-        $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+        $label.= '<br>';
+        $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref.'<br>';
+        $label.= '<b>' . $langs->trans('ID') . ':</b> ' . $this->id.'<br>';
+        $label.= '<b>' . $langs->trans('Title') . ':</b> ' . $this->title;
 
-        $linkstart = '<a href="'.DOL_URL_ROOT.'/website/card.php?id='.$this->id.'"';
-        $linkstart.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss?' '.$morecss:'').'"');
-        $linkstart.= '>';
+        $url = DOL_URL_ROOT.'/website/index.php?websiteid='.$this->fk_website.'&pageid='.$this->id;
+
+        $linkclose='';
+        if (empty($notooltip))
+        {
+        	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+        	{
+        		$label=$langs->trans("ShowMyObject");
+        		$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+        	}
+        	$linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
+        	$linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+        }
+        else $linkclose = ($morecss?' class="'.$morecss.'"':'');
+
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
-		$linkstart = $linkend = '';
+		//$linkstart = $linkend = '';
 
-        if ($withpicto)
-        {
-            $result.=($linkstart.img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?'':'class="classfortooltip"')).$linkend);
-        	if ($withpicto != 2) $result.=' ';
-		}
-		$result.= $linkstart . $this->ref . $linkend;
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_picto(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
+
 		return $result;
 	}
 
@@ -525,37 +545,20 @@ class WebsitePage extends CommonObject
         // phpcs:enable
 		global $langs;
 
-		if ($mode == 0)
+		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
-			$prefix='';
-			if ($status == 1) return $langs->trans('Enabled');
-			elseif ($status == 0) return $langs->trans('Disabled');
+			global $langs;
+			//$langs->load("mymodule");
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Disabled');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Disabled');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Enabled');
 		}
-		elseif ($mode == 1)
-		{
-			if ($status == 1) return $langs->trans('Enabled');
-			elseif ($status == 0) return $langs->trans('Disabled');
-		}
-		elseif ($mode == 2)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-		}
-		elseif ($mode == 3)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
-		}
-		elseif ($mode == 4)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-		}
-		elseif ($mode == 5)
-		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
-		}
+
+		$statusType = 'status5';
+		if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
+
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 

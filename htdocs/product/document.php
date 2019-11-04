@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -48,7 +48,7 @@ $confirm= GETPOST('confirm', 'alpha');
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -119,7 +119,6 @@ if ($action=='filemerge')
 {
 	$is_refresh = GETPOST('refresh');
 	if (empty($is_refresh)) {
-
 		$filetomerge_file_array = GETPOST('filetoadd');
 
 		$filetomerge_file_array = GETPOST('filetoadd');
@@ -216,14 +215,14 @@ if ($object->id)
     $object->next_prev_filter=" fk_product_type = ".$object->type;
 
     $shownav = 1;
-    if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+    if ($user->socid && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
     dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
-    print '<table class="border tableforfield" width="100%">';
+    print '<table class="border tableforfield centpercent">';
 
     print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize, 1, 1).'</td></tr>';
@@ -258,7 +257,6 @@ if ($object->id)
 
     	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
     	{
-
     		$filearray = array_merge($filearray, dol_dir_list($upload_dirold, "files", 0, '', '\.meta$', 'name', SORT_ASC, 1));
     	}
 
@@ -282,7 +280,6 @@ if ($object->id)
 
     		// Get language
     		if ($conf->global->MAIN_MULTILANGS) {
-
     			$langs->load("languages");
 
     			print  '<tr class="liste_titre"><td>';

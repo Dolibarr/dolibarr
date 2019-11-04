@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -78,6 +78,12 @@ if ($action == 'setproductionmode')
 	}
 }
 
+if ($action == 'save')
+{
+	dolibarr_set_const($db, 'API_RESTRICT_ON_IP', GETPOST('API_RESTRICT_ON_IP', 'alpha'));
+}
+
+
 dol_mkdir(DOL_DATA_ROOT.'/api/temp');		// May have been deleted by a purge
 
 
@@ -93,36 +99,49 @@ print load_fiche_titre($langs->trans("ApiSetup"), $linkback, 'title_setup');
 print $langs->trans("ApiDesc")."<br>\n";
 print "<br>\n";
 
-//print '<form name="apisetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="save">';
+
 print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameter")."</td>";
-print '<td align="center">'.$langs->trans("Value")."</td>";
+print '<td>'.$langs->trans("Value")."</td>";
 print "<td>&nbsp;</td>";
 print "</tr>";
 
-print '<tr class="impair">';
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ApiProductionMode").'</td>';
 $production_mode=(empty($conf->global->API_PRODUCTION_MODE)?false:true);
 if ($production_mode)
 {
-    print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&value='.($i+1).'&status=0">';
+    print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&value='.($i+1).'&status=0">';
     print img_picto($langs->trans("Activated"), 'switch_on');
     print '</a></td>';
 }
 else
 {
-    print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&value='.($i+1).'&status=1">';
+    print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&value='.($i+1).'&status=1">';
     print img_picto($langs->trans("Disabled"), 'switch_off');
     print '</a></td>';
 }
 print '<td>&nbsp;</td>';
 print '</tr>';
 
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("RESTRICT_API_ON_IP").'</td>';
+print '<td><input type="text" name="API_RESTRICT_ON_IP" value="'.dol_escape_htmltag($conf->global->API_RESTRICT_ON_IP).'"></td>';
+print '<td>';
+print '<input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></td>';
+print '</td>';
+print '</tr>';
+
 print '</table>';
 print '<br><br>';
+
+print '</form>';
+
 
 // Define $urlwithroot
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -133,7 +152,7 @@ $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain
 $message='';
 $url=$urlwithroot.'/api/index.php/login?login=<strong>auserlogin</strong>&password=<strong>thepassword</strong>[&reset=1]';
 $message.=$langs->trans("UrlToGetKeyToUseAPIs").':<br>';
-$message.=img_picto('', 'object_globe.png').' '.$url;
+$message.=img_picto('', 'globe').' '.$url;
 print $message;
 print '<br>';
 print '<br>';
@@ -143,7 +162,7 @@ print '<u>'.$langs->trans("ApiExporerIs").':</u><br>';
 if (dol_is_dir(DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/explorer'))
 {
     $url=DOL_MAIN_URL_ROOT.'/api/index.php/explorer';
-    print img_picto('', 'object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+    print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 }
 else
 {

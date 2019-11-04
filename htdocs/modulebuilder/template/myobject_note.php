@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -56,19 +56,19 @@ $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('myobjectnote','globalcard'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('myobject');
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Security check - Protection if external user
-//if ($user->societe_id > 0) access_forbidden();
-//if ($user->societe_id > 0) $socid = $user->societe_id;
+//if ($user->socid > 0) access_forbidden();
+//if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'mymodule', $id);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || ! empty($ref)) $upload_dir = $conf->mymodule->multidir_output[$object->entity] . "/" . $object->id;
 
-$permissionnote=1;
-//$permissionnote=$user->rights->mymodule->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote=$user->rights->mymodule->myobject->write;	// Used by the include of actions_setnotes.inc.php
+$permissiontoadd = $user->rights->mymodule->myobject->write; 		// Used by the include of actions_addupdatedelete.inc.php
 
 
 
@@ -95,7 +95,7 @@ if ($id > 0 || ! empty($ref))
 
 	$head = myobjectPrepareHead($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("MyObject"), -1, 'myobject@mymodule');
+	dol_fiche_head($head, 'note', $langs->trans("MyObject"), -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------
@@ -113,10 +113,10 @@ if ($id > 0 || ! empty($ref))
 	{
 	    $langs->load("projects");
 	    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-	    if ($user->rights->mymodule->creer)
+	    if ($permissiontoadd)
 	    {
 	        if ($action != 'classify')
-	            //$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+	            //$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 	            $morehtmlref.=' : ';
 	            if ($action == 'classify') {
 	                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);

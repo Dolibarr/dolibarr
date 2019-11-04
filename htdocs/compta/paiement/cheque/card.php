@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -43,7 +43,7 @@ $confirm=GETPOST('confirm', 'alpha');
 
 // Security check
 $fieldname = (! empty($ref)?'ref':'rowid');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'cheque', $id, 'bordereau_cheque', '', 'fk_user_author', $fieldname);
 
 $sortfield=GETPOST('sortfield', 'alpha');
@@ -444,7 +444,6 @@ if ($action == 'new')
 
 	foreach ($accounts as $bid => $account_label)
 	{
-
         print '
         <script language="javascript" type="text/javascript">
         jQuery(document).ready(function()
@@ -472,14 +471,14 @@ if ($action == 'new')
         print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 		print '<tr class="liste_titre">';
-		print '<td style="min-width: 120px">'.$langs->trans("DateChequeReceived").'</td>'."\n";
-		print '<td style="min-width: 120px">'.$langs->trans("ChequeNumber")."</td>\n";
-		print '<td style="min-width: 200px">'.$langs->trans("CheckTransmitter")."</td>\n";
-		print '<td style="min-width: 200px">'.$langs->trans("Bank")."</td>\n";
-		print '<td class="right" width="100px">'.$langs->trans("Amount")."</td>\n";
-		print '<td align="center" width="100px">'.$langs->trans("Payment")."</td>\n";
-		print '<td align="center" width="100px">'.$langs->trans("LineRecord")."</td>\n";
-		print '<td align="center" width="100px">'.$langs->trans("Select")."<br>";
+		print '<td>'.$langs->trans("DateChequeReceived").'</td>'."\n";
+		print '<td>'.$langs->trans("ChequeNumber")."</td>\n";
+		print '<td>'.$langs->trans("CheckTransmitter")."</td>\n";
+		print '<td>'.$langs->trans("Bank")."</td>\n";
+		print '<td>'.$langs->trans("Amount")."</td>\n";
+		print '<td class="center">'.$langs->trans("Payment")."</td>\n";
+		print '<td class="center">'.$langs->trans("LineRecord")."</td>\n";
+		print '<td class="center">'.$langs->trans("Select")."<br>";
 		if ($conf->use_javascript_ajax) print '<a href="#" id="checkall_'.$bid.'">'.$langs->trans("All").'</a> / <a href="#" id="checknone_'.$bid.'">'.$langs->trans("None").'</a>';
 		print '</td>';
 		print "</tr>\n";
@@ -576,7 +575,7 @@ else
     print '<table class="nobordernopadding" width="100%"><tr><td>';
     print $langs->trans('Date');
     print '</td>';
-    if ($action != 'editdate') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
+    if ($action != 'editdate') print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'), 1).'</a></td>';
     print '</tr></table>';
     print '</td><td colspan="2">';
     if ($action == 'editdate')
@@ -603,7 +602,7 @@ else
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
     print $langs->trans('RefExt');
     print '</td>';
-    if ($action != 'editrefext') print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editrefext&amp;id='.$object->id.'">'.img_edit($langs->trans('SetRefExt'),1).'</a></td>';
+    if ($action != 'editrefext') print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editrefext&amp;id='.$object->id.'">'.img_edit($langs->trans('SetRefExt'),1).'</a></td>';
     print '</tr></table>';
     print '</td><td colspan="2">';
     if ($action == 'editrefext')
@@ -771,12 +770,12 @@ else
 
 print '<div class="tabsAction">';
 
-if ($user->societe_id == 0 && ! empty($object->id) && $object->statut == 0 && $user->rights->banque->cheque)
+if ($user->socid == 0 && ! empty($object->id) && $object->statut == 0 && $user->rights->banque->cheque)
 {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valide&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.$langs->trans('Validate').'</a>';
 }
 
-if ($user->societe_id == 0 && ! empty($object->id) && $user->rights->banque->cheque)
+if ($user->socid == 0 && ! empty($object->id) && $user->rights->banque->cheque)
 {
 	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.$langs->trans('Delete').'</a>';
 }
