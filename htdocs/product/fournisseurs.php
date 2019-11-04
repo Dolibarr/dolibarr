@@ -269,7 +269,6 @@ if (empty($reshook))
 				$resql = $db->query("SELECT * FROM " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields WHERE fk_object = " . $object->product_fourn_price_id);
 				// Insert a new extrafields row, if none exists
 				if ($db->num_rows($resql) != 1) {
-
 					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields (fk_object, ";
 					foreach ($extrafield_values as $key => $value) {
 						$sql .= str_replace('options_', '', $key) . ', ';
