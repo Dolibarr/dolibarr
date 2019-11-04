@@ -565,15 +565,18 @@ if ($result) {
 		$suggestedid = $objp->aarowid_suggest;
 		if (empty($suggestedid) && empty($objp->code_sell_p) && ! empty($objp->code_sell_l) && ! empty($conf->global->ACCOUNTANCY_AUTOFILL_ACCOUNT_WITH_GENERIC))
 		{
-			//$suggestedid = // id of $objp->code_sell_l
+            $accountingaccountstatic = new AccountingAccount($db);
+            $accountingaccountstatic->fetch('', $objp->code_sell_l, 1);
+
+			$suggestedid = $accountingaccountstatic->rowid;
 		}
 		print $formaccounting->select_account($suggestedid, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'codeventil maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';
 
 		// Column with checkbox
 		print '<td class="center">';
-		//var_dump($objp->aarowid);var_dump($objp->aarowid_intra);var_dump($objp->aarowid_export);var_dump($objp->aarowid_suggest);
-		$ischecked = $objp->aarowid_suggest;
+		//var_dump($objp->code_sell_l);var_dump($objp->aarowid);var_dump($objp->aarowid_intra);var_dump($objp->aarowid_export);var_dump($objp->aarowid_suggest);
+		$ischecked = $suggestedid;
 		print '<input type="checkbox" class="flat checkforselect checkforselect'.$objp->rowid.'" name="toselect[]" value="' . $objp->rowid . "_" . $i . '"' . ($ischecked ? "checked" : "") . '/>';
 		print '</td>';
 
