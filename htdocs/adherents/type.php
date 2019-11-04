@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
 $langs->load("members");
 
@@ -61,6 +62,8 @@ $label=GETPOST("label", "alpha");
 $morphy=GETPOST("morphy", "alpha");
 $statut=GETPOST("statut", "int");
 $subscription=GETPOST("subscription", "int");
+$duration_value = GETPOST('duration_value', 'int');
+$duration_unit = GETPOST('duration_unit', 'alpha');
 $vote=GETPOST("vote", "int");
 $comment=GETPOST("comment", 'alphanohtml');
 $mail_valid=GETPOST("mail_valid", 'none');
@@ -104,9 +107,11 @@ if ($cancel) {
 
 if ($action == 'add' && $user->rights->adherent->configurer) {
 	$object->label			= trim($label);
-    $object->morphy         = trim($morphy);
+	$object->morphy         = trim($morphy);
 	$object->statut         = (int) $statut;
 	$object->subscription   = (int) $subscription;
+	$object->duration_value     	 = $duration_value;
+	$object->duration_unit      	 = $duration_unit;
 	$object->note			= trim($comment);
 	$object->mail_valid		= trim($mail_valid);
 	$object->vote			= (int) $vote;
@@ -159,9 +164,11 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 	$object->oldcopy = clone $object;
 
 	$object->label			= trim($label);
-    $object->morphy         = trim($morphy);
+	$object->morphy         = trim($morphy);
 	$object->statut = (int) $statut;
 	$object->subscription = (int) $subscription;
+	$object->duration_value     	 = $duration_value;
+	$object->duration_unit      	 = $duration_unit;
 	$object->note			= trim($comment);
 	$object->mail_valid		= trim($mail_valid);
 	$object->vote			= (boolean) trim($vote);
@@ -209,6 +216,7 @@ if ($action == 'confirm_delete' && $user->rights->adherent->configurer)
  */
 
 $form=new Form($db);
+$formproduct = new FormProduct($db);
 
 llxHeader('', $langs->trans("MembersTypeSetup"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
@@ -354,6 +362,11 @@ if ($action == 'create')
 	print $form->selectyesno("vote", 0, 1);
 	print '</td></tr>';
 
+	print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
+	print '<input name="duration_value" size="5" value="'.$_POST["duration_value"].'"> ';
+	print $formproduct->selectMeasuringUnits("duration_unit", "time", $_POST["duration_unit"], 0, 1);
+	print '</td></tr>';
+
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	print '<textarea name="comment" wrap="soft" class="centpercent" rows="3"></textarea></td></tr>';
 
@@ -438,6 +451,18 @@ if ($rowid > 0)
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
 		print yn($object->vote);
 		print '</tr>';
+
+		print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td colspan="2">'.$object->duration_value.'&nbsp;';
+		if ($object->duration_value > 1)
+		{
+			$dur=array("i"=>$langs->trans("Minute"),"h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
+		}
+		elseif ($object->duration_value > 0)
+		{
+			$dur=array("i"=>$langs->trans("Minute"),"h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
+		}
+		print (! empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
+		print '</td></tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		print nl2br($object->note)."</td></tr>";
@@ -785,6 +810,11 @@ if ($rowid > 0)
 
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
 		print $form->selectyesno("vote", $object->vote, 1);
+		print '</td></tr>';
+
+		print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
+		print '<input name="duration_value" size="5" value="'.$object->duration_value.'"> ';
+		print $formproduct->selectMeasuringUnits("duration_unit", "time", $object->duration_unit, 0, 1);
 		print '</td></tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
