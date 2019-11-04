@@ -223,8 +223,8 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='CommandeFournisseur';
 	$objectlabel='SupplierOrders';
-	$permtoread = $user->rights->fournisseur->commande->lire;
-	$permtodelete = $user->rights->fournisseur->commande->supprimer;
+	$permissiontoread = $user->rights->fournisseur->commande->lire;
+	$permissiontodelete = $user->rights->fournisseur->commande->supprimer;
 	$uploaddir = $conf->fournisseur->commande->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 

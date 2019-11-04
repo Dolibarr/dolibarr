@@ -1471,7 +1471,7 @@ class FormFile
 	 *  @param  string	$param              Parameters on sort links
 	 *  @param  int		$forcedownload      Force to open dialog box "Save As" when clicking on file
 	 *  @param  string	$relativepath       Relative path of docs (autodefined if not provided)
-	 *  @param  int		$permtodelete       Permission to delete
+	 *  @param  int		$permissiontodelete       Permission to delete
 	 *  @param  int		$useinecm           Change output for use in ecm module
 	 *  @param  int		$textifempty        Text to show if filearray is empty
 	 *  @param  int		$maxlength          Maximum length of file name shown
@@ -1480,7 +1480,7 @@ class FormFile
 	 *  @return int                 		<0 if KO, nb of files shown if OK
 	 *  @see list_of_documents()
 	 */
-	public function list_of_autoecmfiles($upload_dir, $filearray, $modulepart, $param, $forcedownload = 0, $relativepath = '', $permtodelete = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $url = '', $addfilterfields = 0)
+	public function list_of_autoecmfiles($upload_dir, $filearray, $modulepart, $param, $forcedownload = 0, $relativepath = '', $permissiontodelete = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $url = '', $addfilterfields = 0)
 	{
         // phpcs:enable
 		global $user, $conf, $langs, $form;
@@ -1703,7 +1703,7 @@ class FormFile
 				//if ($forcedownload) print '&attachment=1';
 				//print '&file='.urlencode($relativefile).'">';
 				//print img_view().'</a> &nbsp; ';
-				//if ($permtodelete) print '<a href="'.$url.'?id='.$object->id.'&section='.$_REQUEST["section"].'&action=delete&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
+				//if ($permissiontodelete) print '<a href="'.$url.'?id='.$object->id.'&section='.$_REQUEST["section"].'&action=delete&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
 				//else print '&nbsp;';
 				print "</td></tr>\n";
 			}
@@ -1758,13 +1758,13 @@ class FormFile
 	 * Show array with linked files
 	 *
 	 * @param 	Object		$object			Object
-	 * @param 	int			$permtodelete	Deletion is allowed
+	 * @param 	int			$permissiontodelete	Deletion is allowed
 	 * @param 	string		$action			Action
 	 * @param 	string		$selected		???
 	 * @param	string		$param			More param to add into URL
 	 * @return 	int							Number of links
 	 */
-	public function listOfLinks($object, $permtodelete = 1, $action = null, $selected = null, $param = '')
+	public function listOfLinks($object, $permissiontodelete = 1, $action = null, $selected = null, $param = '')
 	{
 		global $user, $conf, $langs, $user;
 		global $sortfield, $sortorder;
@@ -1878,7 +1878,7 @@ class FormFile
 				print '<td class="center"></td>';
 				print '<td class="right">';
 				print '<a href="' . $_SERVER['PHP_SELF'] . '?action=update&linkid=' . $link->id . $param . '" class="editfilelink reposition" >' . img_edit() . '</a>';	// id= is included into $param
-				if ($permtodelete) {
+				if ($permissiontodelete) {
 					print ' &nbsp; <a href="'. $_SERVER['PHP_SELF'] .'?action=delete&linkid=' . $link->id . $param . '" class="deletefilelink">' . img_delete() . '</a>';	// id= is included into $param
 				} else {
 					print '&nbsp;';

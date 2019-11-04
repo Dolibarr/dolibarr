@@ -30,7 +30,7 @@
 // $objectclass and $objectlabel must be defined
 // $parameters, $object, $action must be defined for the hook.
 
-// $permtoread, $permtocreate and $permtodelete may be defined
+// $permissiontoread, $permissiontoadd and $permissiontodelete may be defined
 // $uploaddir may be defined (example to $conf->projet->dir_output."/";)
 // $toselect may be defined
 // $diroutputmassaction may be defined
@@ -42,6 +42,11 @@ if (empty($objectclass) || empty($uploaddir))
 	dol_print_error(null, 'include of actions_massactions.inc.php is done but var $objectclass or $uploaddir was not defined');
 	exit;
 }
+
+// For backward compatibility
+if (! empty($permtoread) && empty($permissiontoread)) $permissiontoread = $permtoread;
+if (! empty($permtocreate) && empty($permissiontoadd)) $permissiontoadd = $permtocreate;
+if (! empty($permtodelete) && empty($permissiontodelete)) $permissiontoread = $permtodelete;
 
 
 // Mass actions. Controls on number of lines checked.
@@ -924,7 +929,7 @@ if (!$error && $massaction == 'cancelorders')
 }
 
 
-if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_search'))
+if (! $error && $massaction == "builddoc" && $permissiontoread && ! GETPOST('button_search'))
 {
 	if (empty($diroutputmassaction))
 	{
@@ -1105,7 +1110,7 @@ if ($action == 'remove_file')
 }
 
 // Validate records
-if (! $error && $massaction == 'validate' && $permtocreate)
+if (! $error && $massaction == 'validate' && $permissiontoadd)
 {
 	$objecttmp=new $objectclass($db);
 
@@ -1170,6 +1175,62 @@ if (! $error && $massaction == 'validate' && $permtocreate)
 		//var_dump($listofobjectthirdparties);exit;
 	}
 }
+var_dump($permissiontoadd);
+// Validate records
+if (! $error && $massaction == 'disable' && $permissiontocreate)
+{
+	$objecttmp=new $objectclass($db);
+
+	if (! $error)
+	{
+		$db->begin();
+
+		$nbok = 0;
+		foreach($toselect as $toselectid)
+		{
+			$result=$objecttmp->fetch($toselectid);
+			if ($result > 0)
+			{
+				//if (in_array($objecttmp->element, array('societe','member'))) $result = $objecttmp->delete($objecttmp->id, $user, 1);
+				//else
+				$result = $objecttmp->close($user);
+				if ($result == $objecttmp::STATUS_VALIDATED)
+				{
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorObjectMustHaveStatusValidatedToBeDisabled", $objecttmp->ref), null, 'errors');
+					$error++;
+					break;
+				}
+				elseif ($result < 0)
+				{
+					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+					$error++;
+					break;
+				}
+				else $nbok++;
+			}
+			else
+			{
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error++;
+				break;
+			}
+		}
+
+		if (! $error)
+		{
+			if ($nbok > 1) setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+			else setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
+		//var_dump($listofobjectthirdparties);exit;
+	}
+}
+
 // Closed records
 if (!$error && $massaction == 'closed' && $objectclass == "Propal" && $permtoclose) {
     $db->begin();
@@ -1206,7 +1267,7 @@ if (!$error && $massaction == 'closed' && $objectclass == "Propal" && $permtoclo
     }
 }
 // Delete record from mass action (massaction = 'delete' for direct delete, action/confirm='delete'/'yes' with a confirmation step before)
-if (! $error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 'yes')) && $permtodelete)
+if (! $error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 'yes')) && $permissiontodelete)
 {
 	$db->begin();
 
@@ -1272,7 +1333,7 @@ if (! $error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 
 
 // Generate document foreach object according to model linked to object
 // @TODO : propose model selection
-if (! $error && $massaction == 'generate_doc' && $permtoread)
+if (! $error && $massaction == 'generate_doc' && $permissiontoread)
 {
     $db->begin();
 

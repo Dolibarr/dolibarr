@@ -421,8 +421,8 @@ if (empty($reshook) && $action != 'remove_file')
 {
     $objectclass='MouvementStock';
     $objectlabel='Movements';
-    $permtoread = $user->rights->stock->lire;
-    $permtodelete = $user->rights->stock->supprimer;
+    $permissiontoread = $user->rights->stock->lire;
+    $permissiontodelete = $user->rights->stock->supprimer;
     $uploaddir = $conf->stock->dir_output . "/movement/";
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }

@@ -188,8 +188,8 @@ if (empty($reshook))
 {
 	$objectclass='Contrat';
 	$objectlabel='Contracts';
-	$permtoread = $user->rights->contrat->lire;
-	$permtodelete = $user->rights->contrat->supprimer;
+	$permissiontoread = $user->rights->contrat->lire;
+	$permissiontodelete = $user->rights->contrat->supprimer;
 	$uploaddir = $conf->contrat->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }

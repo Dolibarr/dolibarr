@@ -133,8 +133,8 @@ if (empty($reshook))
     // Mass actions
     $objectclass='Opensurveysondage';
     $objectlabel='Opensurveysondage';
-    $permtoread = $user->rights->opensurvey->read;
-    $permtodelete = $user->rights->opensurvey->write;
+    $permissiontoread = $user->rights->opensurvey->read;
+    $permissiontodelete = $user->rights->opensurvey->write;
     $uploaddir = $conf->opensurvey->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }

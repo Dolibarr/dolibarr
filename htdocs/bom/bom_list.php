@@ -1,6 +1,5 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,8 +150,8 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='BOM';
 	$objectlabel='BillOfMaterials';
-	$permtoread = $user->rights->bom->read;
-	$permtodelete = $user->rights->bom->delete;
+	$permissiontoread = $user->rights->bom->read;
+	$permissiontodelete = $user->rights->bom->delete;
 	$uploaddir = $conf->bom->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -303,7 +302,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // List of mass actions available
 $arrayofmassactions =  array(
 	//'presend'=>$langs->trans("SendByMail"),
-	//'builddoc'=>$langs->trans("PDFMerge"),
+	'disable'=>$langs->trans("Disable"),
 );
 if ($user->rights->bom->delete) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions=array();
@@ -538,6 +537,7 @@ print '</table>'."\n";
 print '</div>'."\n";
 
 print '</form>'."\n";
+
 
 if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords))
 {

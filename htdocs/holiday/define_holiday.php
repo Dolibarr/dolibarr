@@ -95,8 +95,8 @@ if (empty($reshook))
     /*
     $objectclass='Skeleton';
     $objectlabel='Skeleton';
-    $permtoread = $user->rights->skeleton->read;
-    $permtodelete = $user->rights->skeleton->delete;
+    $permissiontoread = $user->rights->skeleton->read;
+    $permissiontodelete = $user->rights->skeleton->delete;
     $uploaddir = $conf->skeleton->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
     */

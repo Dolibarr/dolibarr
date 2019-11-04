@@ -209,8 +209,8 @@ if (empty($reshook))
 {
     $objectclass='Account';
     $objectlabel='BankTransaction';
-    $permtoread = $user->rights->banque->lire;
-    $permtodelete = $user->rights->banque->supprimer;
+    $permissiontoread = $user->rights->banque->lire;
+    $permissiontodelete = $user->rights->banque->supprimer;
     $uploaddir = $conf->bank->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }

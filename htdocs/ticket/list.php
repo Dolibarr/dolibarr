@@ -176,8 +176,8 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='Ticket';
 	$objectlabel='Ticket';
-	$permtoread = $user->rights->ticket->read;
-	$permtodelete = $user->rights->ticket->delete;
+	$permissiontoread = $user->rights->ticket->read;
+	$permissiontodelete = $user->rights->ticket->delete;
 	$uploaddir = $conf->ticket->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
