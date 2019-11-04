@@ -502,12 +502,13 @@ while ($i < min($num, $limit))
 	$obj = $db->fetch_object($result);
 
 	$userstatic->id=$obj->rowid;
+	$userstatic->admin = $obj->admin;
 	$userstatic->ref=$obj->label;
 	$userstatic->login=$obj->login;
 	$userstatic->statut=$obj->statut;
 	$userstatic->email=$obj->email;
 	$userstatic->gender=$obj->gender;
-	$userstatic->societe_id=$obj->fk_soc;
+	$userstatic->socid=$obj->fk_soc;
 	$userstatic->firstname=$obj->firstname;
 	$userstatic->lastname=$obj->lastname;
 	$userstatic->employee=$obj->employee;
