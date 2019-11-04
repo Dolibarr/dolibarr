@@ -322,7 +322,7 @@ if (empty($reshook))
 }
 
 if ($search_status=='') $search_status=1; // always display active thirdparty first
-
+if ($search_type_thirdparty=='') $search_type_thirdparty='0'; // use unknown if the thirdparty type is not set
 
 
 /*
