@@ -156,7 +156,7 @@ if (! $rowid) {
 		$societestatic->admin = $obj->admin;
 		$societestatic->login = $obj->login;
 		$societestatic->email = $obj->email;
-		$societestatic->societe_id = $obj->fk_soc;
+		$societestatic->socid = $obj->fk_soc;
 
 		print '<tr class="oddeven">';
 
