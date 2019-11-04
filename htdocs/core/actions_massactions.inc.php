@@ -30,7 +30,7 @@
 // $objectclass and $objectlabel must be defined
 // $parameters, $object, $action must be defined for the hook.
 
-// $permissiontoread, $permissiontoadd and $permissiontodelete may be defined
+// $permissiontoread, $permissiontoadd, $permissiontodelete, $permissiontoclose may be defined
 // $uploaddir may be defined (example to $conf->projet->dir_output."/";)
 // $toselect may be defined
 // $diroutputmassaction may be defined
@@ -1175,64 +1175,9 @@ if (! $error && $massaction == 'validate' && $permissiontoadd)
 		//var_dump($listofobjectthirdparties);exit;
 	}
 }
-var_dump($permissiontoadd);
-// Validate records
-if (! $error && $massaction == 'disable' && $permissiontocreate)
-{
-	$objecttmp=new $objectclass($db);
-
-	if (! $error)
-	{
-		$db->begin();
-
-		$nbok = 0;
-		foreach($toselect as $toselectid)
-		{
-			$result=$objecttmp->fetch($toselectid);
-			if ($result > 0)
-			{
-				//if (in_array($objecttmp->element, array('societe','member'))) $result = $objecttmp->delete($objecttmp->id, $user, 1);
-				//else
-				$result = $objecttmp->close($user);
-				if ($result == $objecttmp::STATUS_VALIDATED)
-				{
-					$langs->load("errors");
-					setEventMessages($langs->trans("ErrorObjectMustHaveStatusValidatedToBeDisabled", $objecttmp->ref), null, 'errors');
-					$error++;
-					break;
-				}
-				elseif ($result < 0)
-				{
-					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-					$error++;
-					break;
-				}
-				else $nbok++;
-			}
-			else
-			{
-				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-				$error++;
-				break;
-			}
-		}
-
-		if (! $error)
-		{
-			if ($nbok > 1) setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
-			else setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
-			$db->commit();
-		}
-		else
-		{
-			$db->rollback();
-		}
-		//var_dump($listofobjectthirdparties);exit;
-	}
-}
 
 // Closed records
-if (!$error && $massaction == 'closed' && $objectclass == "Propal" && $permtoclose) {
+if (!$error && $massaction == 'closed' && $objectclass == "Propal" && $permissiontoclose) {
     $db->begin();
 
     $objecttmp = new $objectclass($db);

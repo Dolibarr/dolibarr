@@ -113,6 +113,9 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
+$permissiontoread = $user->rights->bom->read;
+$permissiontoadd = $user->rights->bom->write;
+$permissiontodelete = $user->rights->bom->delete;
 
 
 /*
@@ -154,8 +157,63 @@ if (empty($reshook))
 	$permissiontodelete = $user->rights->bom->delete;
 	$uploaddir = $conf->bom->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
-}
 
+
+	// Validate records
+	if (! $error && $massaction == 'disable' && $permissiontoadd)
+	{
+		$objecttmp=new $objectclass($db);
+
+		if (! $error)
+		{
+			$db->begin();
+
+			$nbok = 0;
+			foreach($toselect as $toselectid)
+			{
+				$result=$objecttmp->fetch($toselectid);
+				if ($result > 0)
+				{
+					if ($objecttmp->status != $objecttmp::STATUS_VALIDATED)
+					{
+						$langs->load("errors");
+						setEventMessages($langs->trans("ErrorObjectMustHaveStatusValidatedToBeDisabled", $objecttmp->ref), null, 'errors');
+						$error++;
+						break;
+					}
+
+					// Can be 'cancel()' or 'close()'
+					$result = $objecttmp->cancel($user);
+					if ($result < 0)
+					{
+						setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+						$error++;
+						break;
+					}
+					else $nbok++;
+				}
+				else
+				{
+					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+					$error++;
+					break;
+				}
+			}
+
+			if (! $error)
+			{
+				if ($nbok > 1) setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+				else setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+				$db->commit();
+			}
+			else
+			{
+				$db->rollback();
+			}
+			//var_dump($listofobjectthirdparties);exit;
+		}
+	}
+}
 
 
 /*

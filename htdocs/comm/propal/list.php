@@ -243,7 +243,7 @@ if (empty($reshook))
 	$objectlabel='Proposals';
 	$permissiontoread = $user->rights->propal->lire;
 	$permissiontodelete = $user->rights->propal->supprimer;
-	$permtoclose = $user->rights->propal->cloturer;
+	$permissiontoclose = $user->rights->propal->cloturer;
 	$uploaddir = $conf->propal->multidir_output[$conf->entity];
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
