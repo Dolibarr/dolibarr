@@ -135,7 +135,7 @@ class box_commandes extends ModeleBoxes
                     $societestatic->logo = $objp->logo;
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="nowraponall"',
                         'text' => $commandestatic->getNomUrl(1),
                         'asis' => 1,
                     );
@@ -147,7 +147,7 @@ class box_commandes extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="nowrap right"',
+                        'td' => 'class="nowraponall right"',
                         'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
                     );
 

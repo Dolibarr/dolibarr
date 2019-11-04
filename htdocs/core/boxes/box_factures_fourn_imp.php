@@ -145,13 +145,13 @@ class box_factures_fourn_imp extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
                         'text' => $thirdpartytmp->getNomUrl(1, '', 40),
                         'asis' => 1,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="nowrap right"',
+                        'td' => 'class="nowraponall right"',
                         'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
                     );
 

@@ -157,7 +157,7 @@ class box_factures_imp extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
                         'text' => $societestatic->getNomUrl(1, '', 44),
                         'asis' => 1,
                     );
