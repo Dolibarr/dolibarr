@@ -1899,7 +1899,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'tzserver', $outputlang
 
 
 /**
- *	Return an array with locale date info.
+ *  Return an array with locale date info.
  *  PHP getdate is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
  *  WARNING: This function always use PHP server timezone to return locale informations !!!
  *  Usage must be avoid.
@@ -2037,9 +2037,9 @@ function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = false, $
 
 
 /**
- *	Return date for now. In most cases, we use this function without parameters (that means GMT time).
+ *  Return date for now. In most cases, we use this function without parameters (that means GMT time).
  *
- * 	@param	string		$mode	'gmt' => we return GMT timestamp,
+ *  @param	string		$mode	'gmt' => we return GMT timestamp,
  * 								'tzserver' => we add the PHP server timezone
  *  							'tzref' => we add the company timezone
  * 								'tzuser' => we add the user timezone
@@ -2199,6 +2199,32 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 }
 
 /**
+ * Get array of social network dictionary
+ *
+ * @return  array       Array of Social Networks Dictionary
+ */
+function getArrayOfSocialNetworks()
+{
+    global $conf, $db;
+    $sql = "SELECT rowid, code, label, url, icon, active FROM ".MAIN_DB_PREFIX."c_socialnetworks";
+    $sql.= " WHERE entity=".$conf->entity;
+    $socialnetworks = array();
+    $resql = $db->query($sql);
+    if ($resql) {
+        while ($obj = $db->fetch_object($resql)) {
+            $socialnetworks[$obj->code] = array(
+                'rowid' => $obj->rowid,
+                'label' => $obj->label,
+                'url' => $obj->url,
+                'icon' => $obj->icon,
+                'active' => $obj->active,
+            );
+        }
+    }
+    return $socialnetworks;
+}
+
+/**
  * Show social network link
  *
  * @param	string		$value			Skype to show (only skype, without 'Name of recipient' before)
@@ -2211,42 +2237,43 @@ function dol_print_socialnetworks($value, $cid, $socid, $type)
 {
 	global $conf,$user,$langs;
 
-	$newskype=$value;
+	$htmllink=$value;
 
 	if (empty($value)) return '&nbsp;';
 
 	if (! empty($type))
 	{
-		$newskype ='<div class="divsocialnetwork inline-block valignmiddle">';
-		$newskype.=img_picto($langs->trans(strtoupper($type)), $type.'.png', '', false, 0, 0, '', 'paddingright', 0);
-		$newskype.=$value;
+		$htmllink = '<div class="divsocialnetwork inline-block valignmiddle">';
+		$htmllink .= img_picto($langs->trans(strtoupper($type)), $type.'.png', '', false, 0, 0, '', 'paddingright', 0);
+		$htmllink .= $value;
 		if ($type == 'skype')
 		{
-			$newskype.= '&nbsp;';
-			$newskype.='<a href="skype:';
-			$newskype.=$value;
-			$newskype.='?call" alt="'.$langs->trans("Call").'&nbsp;'.$value.'" title="'.$langs->trans("Call").'&nbsp;'.$value.'">';
-			$newskype.='<img src="'.DOL_URL_ROOT.'/theme/common/skype_callbutton.png" border="0">';
-			$newskype.='</a><a href="skype:';
-			$newskype.=$value;
-			$newskype.='?chat" alt="'.$langs->trans("Chat").'&nbsp;'.$value.'" title="'.$langs->trans("Chat").'&nbsp;'.$value.'">';
-			$newskype.='<img class="paddingleft" src="'.DOL_URL_ROOT.'/theme/common/skype_chatbutton.png" border="0">';
-			$newskype.='</a>';
+			$htmllink.= '&nbsp;';
+			$htmllink.='<a href="skype:';
+			$htmllink.=$value;
+			$htmllink.='?call" alt="'.$langs->trans("Call").'&nbsp;'.$value.'" title="'.$langs->trans("Call").'&nbsp;'.$value.'">';
+			$htmllink.='<img src="'.DOL_URL_ROOT.'/theme/common/skype_callbutton.png" border="0">';
+			$htmllink.='</a><a href="skype:';
+			$htmllink.=$value;
+			$htmllink.='?chat" alt="'.$langs->trans("Chat").'&nbsp;'.$value.'" title="'.$langs->trans("Chat").'&nbsp;'.$value.'">';
+			$htmllink.='<img class="paddingleft" src="'.DOL_URL_ROOT.'/theme/common/skype_chatbutton.png" border="0">';
+			$htmllink.='</a>';
 		}
 		if (($cid || $socid) && ! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create && $type=='skype')
 		{
-			$addlink='AC_SKYPE'; $link='';
+			$addlink='AC_SKYPE';
+			$link='';
 			if (! empty($conf->global->AGENDA_ADDACTIONFORSKYPE)) $link='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;backtopage=1&amp;actioncode='.$addlink.'&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.img_object($langs->trans("AddAction"), "calendar").'</a>';
-			$newskype.=($link?' '.$link:'');
+			$htmllink.=($link?' '.$link:'');
 		}
-		$newskype.='</div>';
+		$htmllink.='</div>';
 	}
 	else
 	{
 		$langs->load("errors");
-		$newskype.=img_warning($langs->trans("ErrorBadSocialNetworkValue", $value));
+		$htmllink.=img_warning($langs->trans("ErrorBadSocialNetworkValue", $value));
 	}
-	return $newskype;
+	return $htmllink;
 }
 
 /**
@@ -3033,6 +3060,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
         		'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'stats',
 				'note', 'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench', 'globe',
 				'jabber','skype','twitter','facebook','linkedin',
+				'instagram', 'snapchat', 'youtube', 'google-plus-g','whatsapp',
 				'chevron-left','chevron-right','chevron-down','chevron-top',
 				'home', 'companies', 'products', 'commercial', 'invoicing', 'accountancy', 'project', 'hrm', 'members', 'ticket', 'generic',
         		'error','warning',
@@ -3146,7 +3174,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithouttext == 'jabber') {
 				$fakey = 'fa-comment-o';
 			}
-			elseif (in_array($pictowithouttext, array('skype', 'twitter', 'facebook', 'linkedin'))) {
+			elseif (in_array($pictowithouttext, array('skype', 'twitter', 'facebook', 'linkedin', 'instagram','snapchat','youtube','google-plus-g','whatsapp'))) {
 			    $fakey = 'fa-'.$pictowithouttext;
 			    $fa = 'fab';
 			}

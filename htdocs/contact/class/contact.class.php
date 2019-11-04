@@ -83,6 +83,11 @@ class Contact extends CommonObject
 	public $civility_id;      	// In fact we store civility_code
 	public $civility_code;
 	public $civility;
+
+	/**
+	 * Address
+	 * @var string
+	 */
 	public $address;
 	public $zip;
 	public $town;
@@ -97,11 +102,60 @@ class Contact extends CommonObject
 	public $statut;					// 0=inactif, 1=actif
 
 	public $code;
+
+    /**
+     * Email
+     * @var string
+     */
 	public $email;
-	public $no_email;			  // 1 = contact has globaly unsubscribe of all mass emailings
+
+    /**
+     * Unsuscribe all : 1 = contact has globaly unsubscribe of all mass emailings
+	 * @var int
+     */
+	public $no_email;
+
+    /**
+     * @var array array of socialnetworks
+     */
+    public $socialnetworks;
+
+    /**
+     * Skype username
+     * @var string
+     * @deprecated
+     */
 	public $skype;
-	public $photo;
+
+	/**
+     * Twitter username
+     * @var string
+     * @deprecated
+     */
+	public $twitter;
+
+	 /**
+     * Facebook username
+     * @var string
+     * @deprecated
+     */
+	public $facebook;
+
+	 /**
+     * Linkedin username
+     * @var string
+     * @deprecated
+     */
+    public $linkedin;
+
+    /**
+     * Jabber username
+     * @var string
+     * @deprecated
+     */
 	public $jabberid;
+
+	public $photo;
 	public $phone_pro;
 	public $phone_perso;
 	public $phone_mobile;
@@ -123,6 +177,10 @@ class Contact extends CommonObject
 	// END MODULEBUILDER PROPERTIES
 
 
+    /**
+     * Old copy
+     * @var Contact
+     */
 	public $oldcopy;				// To contains a clone of this when we need to save old properties of object
 
 	public $roles=array();
@@ -345,10 +403,7 @@ class Contact extends CommonObject
 		$sql .= ", poste='".$this->db->escape($this->poste)."'";
 		$sql .= ", fax='".$this->db->escape($this->fax)."'";
 		$sql .= ", email='".$this->db->escape($this->email)."'";
-		$sql .= ", skype='".$this->db->escape($this->skype)."'";
-		$sql .= ", twitter='".$this->db->escape($this->twitter)."'";
-		$sql .= ", facebook='".$this->db->escape($this->facebook)."'";
-		$sql .= ", linkedin='".$this->db->escape($this->linkedin)."'";
+        $sql .= ", socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
 		$sql .= ", photo='".$this->db->escape($this->photo)."'";
 		$sql .= ", birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
 		$sql .= ", note_private = ".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
@@ -356,7 +411,6 @@ class Contact extends CommonObject
 		$sql .= ", phone = ".(isset($this->phone_pro)?"'".$this->db->escape($this->phone_pro)."'":"null");
 		$sql .= ", phone_perso = ".(isset($this->phone_perso)?"'".$this->db->escape($this->phone_perso)."'":"null");
 		$sql .= ", phone_mobile = ".(isset($this->phone_mobile)?"'".$this->db->escape($this->phone_mobile)."'":"null");
-		$sql .= ", jabberid = ".(isset($this->jabberid)?"'".$this->db->escape($this->jabberid)."'":"null");
 		$sql .= ", priv = '".$this->db->escape($this->priv)."'";
 		$sql .= ", statut = ".$this->db->escape($this->statut);
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$this->db->escape($user->id)."'":"NULL");
@@ -439,29 +493,34 @@ class Contact extends CommonObject
 					$tmpobj->email = $this->email;
 					$usermustbemodified++;
 				}
-				if ($tmpobj->skype != $this->skype)
+				if (!empty(array_diff($tmpobj->socialnetworks, $this->socialnetworks)))
 				{
-					$tmpobj->skype = $this->skype;
+					$tmpobj->socialnetworks = $this->socialnetworks;
 					$usermustbemodified++;
 				}
-				if ($tmpobj->twitter != $this->twitter)
-				{
-					$tmpobj->twitter = $this->twitter;
-					$usermustbemodified++;
-				}
-				if ($tmpobj->facebook != $this->facebook)
-				{
-					$tmpobj->facebook = $this->facebook;
-					$usermustbemodified++;
-				}
-				if ($tmpobj->linkedin != $this->linkedin)
-				{
-				    $tmpobj->linkedin = $this->linkedin;
-				    $usermustbemodified++;
-				}
+				// if ($tmpobj->skype != $this->skype)
+				// {
+				// 	$tmpobj->skype = $this->skype;
+				// 	$usermustbemodified++;
+				// }
+				// if ($tmpobj->twitter != $this->twitter)
+				// {
+				// 	$tmpobj->twitter = $this->twitter;
+				// 	$usermustbemodified++;
+				// }
+				// if ($tmpobj->facebook != $this->facebook)
+				// {
+				// 	$tmpobj->facebook = $this->facebook;
+				// 	$usermustbemodified++;
+				// }
+				// if ($tmpobj->linkedin != $this->linkedin)
+				// {
+				//     $tmpobj->linkedin = $this->linkedin;
+				//     $usermustbemodified++;
+				// }
 				if ($usermustbemodified)
 				{
-					$result=$tmpobj->update($user, 0, 1, 1, 1);
+					$result = $tmpobj->update($user, 0, 1, 1, 1);
 					if ($result < 0) { $error++; }
 				}
 			}
@@ -713,7 +772,8 @@ class Contact extends CommonObject
 		$sql.= " c.fk_pays as country_id,";
 		$sql.= " c.fk_departement as state_id,";
 		$sql.= " c.birthday,";
-		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid, c.skype, c.twitter, c.facebook, c.linkedin,";
+		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email,";
+		$sql.= " c.socialnetworks,";
         $sql.= " c.photo,";
 		$sql.= " c.priv, c.note_private, c.note_public, c.default_lang, c.canvas,";
 		$sql.= " c.import_key,";
@@ -782,11 +842,7 @@ class Contact extends CommonObject
 				$this->phone_mobile		= trim($obj->phone_mobile);
 
 				$this->email			= $obj->email;
-				$this->jabberid			= $obj->jabberid;
-				$this->skype			= $obj->skype;
-				$this->twitter			= $obj->twitter;
-				$this->facebook			= $obj->facebook;
-				$this->linkedin			= $obj->linkedin;
+				$this->socialnetworks = (array) json_decode($obj->socialnetworks, true);
 				$this->photo			= $obj->photo;
 				$this->priv				= $obj->priv;
 				$this->mail				= $obj->email;
@@ -1333,8 +1389,10 @@ class Contact extends CommonObject
 		$this->country_code = 'FR';
 		$this->country = 'France';
 		$this->email = 'specimen@specimen.com';
-    	$this->skype = 'tom.hanson';
-
+		$this->skype = 'tom.hanson';
+		$this->socialnetworks = array(
+			'skype' => 'tom.hanson',
+		);
 		$this->phone_pro = '0909090901';
 		$this->phone_perso = '0909090902';
 		$this->phone_mobile = '0909090903';

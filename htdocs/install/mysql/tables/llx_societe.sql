@@ -34,7 +34,7 @@ create table llx_societe
   statut                   tinyint        DEFAULT 0,            		-- statut
   parent                   integer,
 
-  status            	   tinyint 		  DEFAULT 1,			        -- cessation d'activité ( 1 -- en activité, 0 -- cessation d'activité)						
+  status            	   tinyint 		  DEFAULT 1,			        -- cessation d'activité ( 1 -- en activité, 0 -- cessation d'activité)
 
   code_client              varchar(24),                         		-- code client
   code_fournisseur         varchar(24),                         		-- code founisseur
@@ -50,7 +50,8 @@ create table llx_societe
   fax                      varchar(20),                         		-- fax number
   url                      varchar(255),                        		--
   email                    varchar(128),                        		--
-  
+
+  socialnetworks           text DEFAULT NULL,                           -- json with socialnetworks
   skype                    varchar(255),                        		--
   twitter                  varchar(255),                        		--
   facebook                 varchar(255),                        		--
@@ -60,7 +61,7 @@ create table llx_societe
   googleplus               varchar(255),                        		--
   youtube                  varchar(255),                        		--
   whatsapp                 varchar(255),                        		--
-  
+
   fk_effectif              integer        DEFAULT 0,            		--
   fk_typent                integer        DEFAULT 0,            		--
   fk_forme_juridique       integer        DEFAULT 0,            		-- juridical status
@@ -112,7 +113,7 @@ create table llx_societe
   fk_entrepot 			   integer DEFAULT 0,							-- if we need a link between third party and warehouse
   webservices_url          varchar(255),                            	-- supplier webservice url
   webservices_key          varchar(128),                            	-- supplier webservice key
-  
+
   tms                      timestamp,									-- last modification date
   datec	                   datetime,                            		-- creation date
   fk_user_creat            integer NULL,                        		-- utilisateur qui a cree l'info

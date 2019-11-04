@@ -15,6 +15,7 @@
  * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018	    Philippe Grand	        <philippe.grand@atoo-net.com>
  * Copyright (C) 2019	    Josep Lluís Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -200,24 +201,35 @@ class Societe extends CommonObject
 	 * @var string
 	 */
 	public $email;
+
+    /**
+     * @var array array of socialnetworks
+     */
+    public $socialnetworks;
+
 	/**
 	 * Skype username
 	 * @var string
+	 * @deprecated
 	 */
 	public $skype;
+
 	/**
 	 * Twitter username
 	 * @var string
+	 * @deprecated
 	 */
 	public $twitter;
 	/**
 	 * Facebook username
 	 * @var string
+	 * @deprecated
 	 */
 	public $facebook;
     /**
      * LinkedIn username
      * @var string
+	 * @deprecated
      */
     public $linkedin;
 	/**
@@ -873,10 +885,6 @@ class Societe extends CommonObject
 		$this->fax			= preg_replace("/\s/", "", $this->fax);
 		$this->fax			= preg_replace("/\./", "", $this->fax);
 		$this->email		= trim($this->email);
-		$this->skype		= trim($this->skype);
-		$this->twitter		= trim($this->twitter);
-		$this->facebook		= trim($this->facebook);
-        $this->linkedin		= trim($this->linkedin);
 		$this->url			= $this->url?clean_url($this->url, 0):'';
 		$this->note_private = trim($this->note_private);
 		$this->note_public  = trim($this->note_public);
@@ -1016,11 +1024,8 @@ class Societe extends CommonObject
 
 			$sql .= ",phone = ".(! empty($this->phone)?"'".$this->db->escape($this->phone)."'":"null");
 			$sql .= ",fax = ".(! empty($this->fax)?"'".$this->db->escape($this->fax)."'":"null");
-			$sql .= ",email = ".(! empty($this->email)?"'".$this->db->escape($this->email)."'":"null");
-			$sql .= ",skype = ".(! empty($this->skype)?"'".$this->db->escape($this->skype)."'":"null");
-			$sql .= ",twitter = ".(! empty($this->twitter)?"'".$this->db->escape($this->twitter)."'":"null");
-			$sql .= ",facebook = ".(! empty($this->facebook)?"'".$this->db->escape($this->facebook)."'":"null");
-			$sql .= ",linkedin = ".(! empty($this->linkedin)?"'".$this->db->escape($this->linkedin)."'":"null");
+            $sql .= ",email = ".(! empty($this->email)?"'".$this->db->escape($this->email)."'":"null");
+            $sql .= ", socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
 			$sql .= ",url = ".(! empty($this->url)?"'".$this->db->escape($this->url)."'":"null");
 
 			$sql .= ",parent = " . ($this->parent > 0 ? $this->parent : "null");
@@ -1162,10 +1167,7 @@ class Societe extends CommonObject
 							$lmember->zip=$this->zip;
 							$lmember->town=$this->town;
 							$lmember->email=$this->email;
-							$lmember->skype=$this->skype;
-							$lmember->twitter=$this->twitter;
-							$lmember->facebook=$this->facebook;
-							$lmember->linkedin=$this->linkedin;
+							$lmember->socialnetworks=$this->socialnetworks;
 							$lmember->phone=$this->phone;
 							$lmember->state_id=$this->state_id;
 							$lmember->country_id=$this->country_id;
@@ -1272,7 +1274,9 @@ class Societe extends CommonObject
 		$sql .= ', s.status';
 		$sql .= ', s.price_level';
 		$sql .= ', s.tms as date_modification, s.fk_user_creat, s.fk_user_modif';
-		$sql .= ', s.phone, s.fax, s.email, s.skype, s.twitter, s.facebook, s.linkedin, s.url, s.zip, s.town, s.note_private, s.note_public, s.model_pdf, s.client, s.fournisseur';
+		$sql .= ', s.phone, s.fax, s.email';
+		$sql .= ', s.socialnetworks';
+		$sql .= ', s.url, s.zip, s.town, s.note_private, s.note_public, s.model_pdf, s.client, s.fournisseur';
 		$sql .= ', s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6';
 		$sql .= ', s.capital, s.tva_intra';
 		$sql .= ', s.fk_typent as typent_id';
@@ -1324,7 +1328,7 @@ class Societe extends CommonObject
 			$num=$this->db->num_rows($resql);
 			if ($num > 1)
 			{
-				$this->error='Fetch found several records. Rename one of tirdparties to avoid duplicate.';
+				$this->error='Fetch found several records. Rename one of thirdparties to avoid duplicate.';
 				dol_syslog($this->error, LOG_ERR);
 				$result = -2;
 			}
@@ -1365,11 +1369,9 @@ class Societe extends CommonObject
 				$this->stcomm_id = $obj->fk_stcomm;       // id status prospect
 				$this->status_prospect_label = $label;    // label status prospect
 
-				$this->email = $obj->email;
-				$this->skype = $obj->skype;
-				$this->twitter = $obj->twitter;
-				$this->facebook = $obj->facebook;
-				$this->linkedin = $obj->linkedin;
+                $this->email = $obj->email;
+				$this->socialnetworks = (array) json_decode($obj->socialnetworks, true);
+
 				$this->url = $obj->url;
 				$this->phone = $obj->phone;
 				$this->fax = $obj->fax;
@@ -3391,10 +3393,7 @@ class Societe extends CommonObject
 		$this->country_id=$member->country_id;
 		$this->phone=$member->phone;       // Prof phone
 		$this->email=$member->email;
-		$this->skype=$member->skype;
-		$this->twitter=$member->twitter;
-		$this->facebook=$member->facebook;
-		$this->linkedin=$member->linkedin;
+        $this->socialnetworks = $member->socialnetworks;
 
 		$this->client = 1;				// A member is a customer by default
 		$this->code_client = ($customercode?$customercode:-1);
@@ -3562,10 +3561,12 @@ class Societe extends CommonObject
 		$this->country_id=1;
 		$this->country_code='FR';
 		$this->email='specimen@specimen.com';
-		$this->skype='tom.hanson';
-		$this->twitter='tomhanson';
-		$this->facebook='tomhanson';
-		$this->linkedin='tomhanson';
+		$this->socialnetworks = array(
+			'skype' => 'tom.hanson',
+			'twitter' => 'tomhanson',
+			'facebook' => 'tomhanson',
+			'linkedin' => 'tomhanson',
+		);
 		$this->url='http://www.specimen.com';
 
 		$this->phone='0909090901';

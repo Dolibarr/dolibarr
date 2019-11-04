@@ -876,6 +876,8 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     $search_poste   = GETPOST("search_poste", 'alpha');
 	$search_roles   = GETPOST("search_roles", 'array');
 
+    $socialnetworks = getArrayOfSocialNetworks();
+
     $searchAddressPhoneDBFields = array(
         //Address
         't.address',
@@ -892,18 +894,13 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 
         //E-mail
         't.email',
-
-        //Social media
-        "t.skype",
-        "t.jabberid",
-        "t.twitter",
-        "t.facebook",
-        "t.linkedin",
-        "t.whatsapp",
-        "t.youtube",
-        "t.snapchat",
-        "t.instagram"
     );
+    //Social media
+    foreach ($socialnetworks as $key => $value) {
+        if ($value['active']) {
+            $searchAddressPhoneDBFields['t.'.$key] = "t.socialnetworks->'$.".$key."'";
+        }
+    }
 
     if (! $sortorder) $sortorder="ASC";
     if (! $sortfield) $sortfield="t.lastname";
@@ -919,11 +916,11 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     $extrafields->fetch_name_optionals_label($contactstatic->table_element);
 
     $contactstatic->fields=array(
-    'name'      =>array('type'=>'varchar(128)', 'label'=>'Name',             'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
-    'poste'     =>array('type'=>'varchar(128)', 'label'=>'PostOrFunction',   'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>20),
-    'address'   =>array('type'=>'varchar(128)', 'label'=>'Address',          'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>30),
-    'role'      =>array('type'=>'checkbox',     'label'=>'Role',             'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>40),
-    'statut'    =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>50, 'arrayofkeyval'=>array(0=>$contactstatic->LibStatut(0, 1), 1=>$contactstatic->LibStatut(1, 1))),
+        'name'      =>array('type'=>'varchar(128)', 'label'=>'Name',             'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
+        'poste'     =>array('type'=>'varchar(128)', 'label'=>'PostOrFunction',   'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>20),
+        'address'   =>array('type'=>'varchar(128)', 'label'=>'Address',          'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>30),
+        'role'      =>array('type'=>'checkbox',     'label'=>'Role',             'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>40),
+        'statut'    =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>50, 'arrayofkeyval'=>array(0=>$contactstatic->LibStatut(0, 1), 1=>$contactstatic->LibStatut(1, 1))),
     );
 
     // Definition of fields for list
@@ -1020,7 +1017,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     $extrafieldsobjectkey=$contactstatic->table_element;
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-    $sql = "SELECT t.rowid, t.lastname, t.firstname, t.fk_pays as country_id, t.civility, t.poste, t.phone as phone_pro, t.phone_mobile, t.phone_perso, t.fax, t.email, t.skype, t.statut, t.photo,";
+    $sql = "SELECT t.rowid, t.lastname, t.firstname, t.fk_pays as country_id, t.civility, t.poste, t.phone as phone_pro, t.phone_mobile, t.phone_perso, t.fax, t.email, t.socialnetworks, t.statut, t.photo,";
     $sql .= " t.civility as civility_id, t.address, t.zip, t.town";
     $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
     $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (t.rowid = ef.fk_object)";
@@ -1028,7 +1025,9 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     if ($search_status!='' && $search_status != '-1') $sql .= " AND t.statut = ".$db->escape($search_status);
     if ($search_name)    $sql .= natural_search(array('t.lastname', 't.firstname'), $search_name);
     if ($search_poste)   $sql .= natural_search('t.poste', $search_poste);
-    if ($search_address) $sql .= natural_search($searchAddressPhoneDBFields, $search_address);
+    if ($search_address) {
+		$sql .= natural_search($searchAddressPhoneDBFields, $search_address);
+	}
 	if (count($search_roles)>0) {
 		$sql .= " AND t.rowid IN (SELECT sc.fk_socpeople FROM ".MAIN_DB_PREFIX."societe_contacts as sc WHERE sc.fk_c_type_contact IN (".implode(',', $search_roles)."))";
 	}
@@ -1132,7 +1131,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
             $contactstatic->phone_perso = $obj->phone_perso;
             $contactstatic->email = $obj->email;
             $contactstatic->web = $obj->web;
-            $contactstatic->skype = $obj->skype;
+            $contactstatic->socialnetworks = $obj->socialnetworks;
             $contactstatic->photo = $obj->photo;
 
             $country_code = getCountry($obj->country_id, 2);
