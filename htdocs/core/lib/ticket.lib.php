@@ -834,7 +834,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 					$filePath = DOL_DATA_ROOT . '/'. $doc->filepath . '/'. $doc->filename;
 					$mime = dol_mimetype($filePath);
 					$file = $actionstatic->id.'/'.$doc->filename;
-					$thumb = $actionstatic->id.'/thumbs/'.substr($doc->filename, 0, strrpos($doc->filename,'.')).'_mini'.substr($doc->filename, strrpos($doc->filename,'.'));
+					$thumb = $actionstatic->id.'/thumbs/'.substr($doc->filename, 0, strrpos($doc->filename, '.')).'_mini'.substr($doc->filename, strrpos($doc->filename, '.'));
 					$doclink = dol_buildpath('document.php', 1).'?modulepart=actions&attachment=0&file='.urlencode($file).'&entity='.$conf->entity;
 					$viewlink = dol_buildpath('viewimage.php', 1).'?modulepart=actions&file='.urlencode($thumb).'&entity='.$conf->entity;
 
@@ -881,8 +881,10 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 
 
 /**
- * @var $object ActionComm
- * @return array
+ * getTicketActionCommEcmList
+ *
+ * @param	ActionComm		$object
+ * @return 	array			Array of documents in index table
  */
 function getTicketActionCommEcmList($object)
 {

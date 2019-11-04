@@ -291,7 +291,7 @@ if (empty($reshook))
 
 				// Execute the sql command from above
 				$db->query($sql);
-				
+
 				$newprice = price2num(GETPOST("price", "alpha"));
 
                 if ($conf->multicurrency->enabled)
