@@ -120,6 +120,13 @@ class Reception extends CommonObject
 		$this->statuts[0]  = 'StatusReceptionDraft';
 		$this->statuts[1]  = 'StatusReceptionValidated';
 		$this->statuts[2]  = 'StatusReceptionProcessed';
+
+		// List of short language codes for status
+		$this->statutshorts = array();
+		$this->statutshorts[-1] = 'StatusReceptionCanceledShort';
+		$this->statutshorts[0]  = 'StatusReceptionDraftShort';
+		$this->statutshorts[1]  = 'StatusReceptionValidatedShort';
+		$this->statutshorts[2]  = 'StatusReceptionProcessedShort';
 	}
 
 	/**
@@ -1152,6 +1159,18 @@ class Reception extends CommonObject
 	 */
     public function LibStatut($status, $mode)
     {
+    	// phpcs:enable
+    	global $langs;
+
+    	$labelStatus = $langs->trans($this->statuts[$status]);
+    	$labelStatusShort = $langs->trans($this->statutshorts[$status]);
+
+    	$statusType = 'status'.$status;
+    	if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
+    	if ($status == self::STATUS_CLOSED) $statusType = 'status6';
+
+    	return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
+
 		// phpcs:enable
 		global $langs;
 
