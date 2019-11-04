@@ -120,13 +120,13 @@ class box_ficheinter extends ModeleBoxes
 					$companystatic->email = $objp->semail;
 
 					$this->info_box_contents[$i][] = array(
-                        'td' => '',
+                        'td' => 'class="nowraponall"',
                         'text' => $ficheinterstatic->getNomUrl(1),
                         'asis' => 1,
 					);
 
 					$this->info_box_contents[$i][] = array(
-                        'td' => '',
+                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
                         'text' => $companystatic->getNomUrl(1),
                         'asis' => 1,
                     );

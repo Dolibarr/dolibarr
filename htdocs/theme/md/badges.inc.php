@@ -44,7 +44,7 @@ a.badge:focus, a.badge:hover {
     text-decoration: none;
 }
 
-.liste_titre .badge {
+.liste_titre .badge:not(.nochangebackground) {
     background-color: <?php print $badgeSecondary; ?>;
     color: #fff;
 }

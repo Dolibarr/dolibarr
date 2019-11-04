@@ -178,12 +178,12 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='CronJob';
 	$objectlabel='CronJob';
-	$permtoread = $user->rights->cron->read;
-	$permtocreate = $user->rights->cron->create?$user->rights->cron->create:$user->rights->cron->write;
-	$permtodelete = $user->rights->cron->delete;
+	$permissiontoread = $user->rights->cron->read;
+	$permissiontoadd = $user->rights->cron->create?$user->rights->cron->create:$user->rights->cron->write;
+	$permissiontodelete = $user->rights->cron->delete;
 	$uploaddir = $conf->cron->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
-	if ($permtocreate)
+	if ($permissiontoadd)
 	{
 		$tmpcron = new Cronjob($db);
 		foreach($toselect as $id)

@@ -121,7 +121,7 @@ if (! empty($conf->fournisseur->enabled))
 		{
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
-			print '<td colspan="3">'.$langs->trans("DraftOrders").' <span class="badge">'.$num.'</span></td></tr>';
+			print '<td colspan="3">'.$langs->trans("DraftOrders").'<span class="badge marginleftonlyshort">'.$num.'</span></td></tr>';
 
 			$i = 0;
 			while ($i < $num)
@@ -176,7 +176,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 		{
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
-			print '<td colspan="3">'.$langs->trans("DraftBills").' <span class="badge">'.$num.'</span></td></tr>';
+			print '<td colspan="3">'.$langs->trans("DraftBills").'<span class="badge marginleftonlyshort">'.$num.'</span></td></tr>';
 			$i = 0;
 			$tot_ttc = 0;
 

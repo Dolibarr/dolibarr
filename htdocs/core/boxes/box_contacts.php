@@ -136,13 +136,13 @@ class box_contacts extends ModeleBoxes
 					$societestatic->fournisseur = $objp->fournisseur;
 
 					$this->info_box_contents[$line][] = array(
-						'td' => '',
+						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
 						'text' => $contactstatic->getNomUrl(1),
 						'asis' => 1,
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => '',
+						'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
 						'text' => ($objp->fk_soc > 0 ? $societestatic->getNomUrl(1) : ''),
 						'asis' => 1,
 					);
@@ -164,7 +164,8 @@ class box_contacts extends ModeleBoxes
 				if ($num==0)
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=>$langs->trans("NoRecordedContacts"),
+						'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedContacts").'</span>',
+						'asis'=> 1
 					);
 
 				$this->db->free($result);

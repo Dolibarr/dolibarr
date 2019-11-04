@@ -116,7 +116,7 @@ class box_mos extends ModeleBoxes
                     $productstatic->ref = $objp->product_ref;
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="nowraponall"',
                         'text' => $mostatic->getNomUrl(1),
                         'asis' => 1,
                     );

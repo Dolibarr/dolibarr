@@ -241,9 +241,9 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='FactureFournisseur';
 	$objectlabel='SupplierInvoices';
-	$permtoread = $user->rights->fournisseur->facture->lire;
-	$permtocreate = $user->rights->fournisseur->facture->creer;
-	$permtodelete = $user->rights->fournisseur->facture->supprimer;
+	$permissiontoread = $user->rights->fournisseur->facture->lire;
+	$permissiontoadd = $user->rights->fournisseur->facture->creer;
+	$permissiontodelete = $user->rights->fournisseur->facture->supprimer;
 	$uploaddir = $conf->fournisseur->facture->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }

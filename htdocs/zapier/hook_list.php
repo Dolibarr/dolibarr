@@ -191,8 +191,8 @@ if (empty($reshook)) {
     // Mass actions
     $objectclass='Hook';
     $objectlabel='Hook';
-    $permtoread = $user->rights->mymodule->read;
-    $permtodelete = $user->rights->mymodule->delete;
+    $permissiontoread = $user->rights->mymodule->read;
+    $permissiontodelete = $user->rights->mymodule->delete;
     $uploaddir = $conf->mymodule->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }

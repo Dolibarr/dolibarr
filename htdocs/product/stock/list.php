@@ -144,8 +144,8 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='Entrepot';
 	$objectlabel='Warehouse';
-	$permtoread = $user->rights->stock->lire;
-	$permtodelete = $user->rights->stock->supprimer;
+	$permissiontoread = $user->rights->stock->lire;
+	$permissiontodelete = $user->rights->stock->supprimer;
 	$uploaddir = $conf->stock->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }

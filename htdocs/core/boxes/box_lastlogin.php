@@ -78,11 +78,11 @@ class box_lastlogin extends ModeleBoxes
 
         $line=0;
         $this->info_box_contents[$line][0] = array(
-            'td' => '',
+            'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
             'text' => $langs->trans("User"),
         );
         $this->info_box_contents[$line][1] = array(
-            'td' => '',
+            'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
             'text' => $user->getNomUrl(-1),
             'asis' => 1
         );

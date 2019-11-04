@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2018      Ferran Marcet		<fmarcet@2byte.es>
@@ -512,8 +512,7 @@ foreach ($accounts as $key=>$type)
             } else {
                 print '<span class="badge badge-info classfortooltip" title="'.dol_htmlentities($langs->trans("TransactionsToConciliate")).'">'.$result->nbtodo.'</span>';
                 if ($result->nbtodolate) {
-                    print '&nbsp;';
-                    print '<span title="'.dol_htmlentities($langs->trans("Late")).'" class="classfortooltip badge badge-danger">';
+                    print '<span title="'.dol_htmlentities($langs->trans("Late")).'" class="classfortooltip badge badge-danger marginleftonlyshort">';
                     print '<i class="fa fa-exclamation-triangle"></i> '.$result->nbtodolate;
                     print '</span>';
                 }

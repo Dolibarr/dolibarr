@@ -140,7 +140,7 @@ class box_last_modified_ticket extends ModeleBoxes
 
                     // Ticket
                     $this->info_box_contents[$i][0] = array(
-                        'td' => 'class="left"',
+                        'td' => 'class="nowraponall"',
                         'text' => $ticket->getNomUrl(1),
                         'asis' => 1,
                     );
@@ -148,7 +148,7 @@ class box_last_modified_ticket extends ModeleBoxes
 
                     // Subject
                     $this->info_box_contents[$i][$r] = array(
-                        'td' => 'class="left"',
+                        'td' => 'class="nowrap"',
                         'text' => $objp->subject,    // Some event have no ref
                         'url' => DOL_URL_ROOT."/ticket/card.php?track_id=".$objp->track_id,
                     );
@@ -156,7 +156,7 @@ class box_last_modified_ticket extends ModeleBoxes
 
                     // Customer
                     $this->info_box_contents[$i][$r] = array(
-                        'td' => 'class="left"',
+                        'td' => 'class="tdoverflowmax150 maxwidth300onsmartphone"',
                         'text' => $link,
                         'asis' => 1,
                     );
@@ -172,7 +172,7 @@ class box_last_modified_ticket extends ModeleBoxes
 
                     // Statut
                     $this->info_box_contents[$i][$r] = array(
-                        'td' => 'class="right"',
+                        'td' => 'class="right nowraponall"',
                         'text' => $ticket->getLibStatut(3)
                     );
                     $r++;

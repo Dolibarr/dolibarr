@@ -69,7 +69,7 @@ function societe_prepare_head(Societe $object)
 
 		    $head[$h][0] = DOL_URL_ROOT.'/societe/contact.php?socid='.$object->id;
 		    $head[$h][1] = $langs->trans('ContactsAddresses');
-		    if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
+		    if ($nbContact > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
 		    $head[$h][2] = 'contact';
 		    $h++;
 		}
@@ -79,7 +79,7 @@ function societe_prepare_head(Societe $object)
 		$head[$h][0] = DOL_URL_ROOT.'/societe/societecontact.php?socid='.$object->id;
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 		$head[$h][1] = $langs->trans("ContactsAddresses");
-		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
+		if ($nbContact > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
 		$head[$h][2] = 'contact';
 		$h++;
 	}
@@ -136,7 +136,7 @@ function societe_prepare_head(Societe $object)
     	else {
     		dol_print_error($db);
     	}
-		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+		if ($nbNote > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
     	$head[$h][2] = 'project';
     	$h++;
     }
@@ -229,7 +229,7 @@ function societe_prepare_head(Societe $object)
         $head[$h][0] = DOL_URL_ROOT .'/societe/paymentmodes.php?socid='.$object->id;
         $head[$h][1] = $title;
         if ($foundonexternalonlinesystem) $head[$h][1].= ' <span class="badge">...</span>';
-       	elseif ($nbBankAccount > 0) $head[$h][1].= ' <span class="badge">'.$nbBankAccount.'</span>';
+       	elseif ($nbBankAccount > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbBankAccount.'</span>';
         $head[$h][2] = 'rib';
         $h++;
     }
@@ -257,7 +257,7 @@ function societe_prepare_head(Societe $object)
     	else {
     		dol_print_error($db);
     	}
-    	if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+    	if ($nbNote > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
     	$head[$h][2] = 'website';
     	$h++;
     }
@@ -295,7 +295,7 @@ function societe_prepare_head(Societe $object)
 
         	$head[$h][0] = DOL_URL_ROOT.'/societe/notify/card.php?socid='.$object->id;
         	$head[$h][1] = $langs->trans("Notifications");
-			if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+			if ($nbNote > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
         	$head[$h][2] = 'notify';
         	$h++;
         }
@@ -306,7 +306,7 @@ function societe_prepare_head(Societe $object)
 		if(!empty($object->note_public)) $nbNote++;
         $head[$h][0] = DOL_URL_ROOT.'/societe/note.php?id='.$object->id;
         $head[$h][1] = $langs->trans("Notes");
-		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+		if ($nbNote > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
         $head[$h][2] = 'note';
         $h++;
 
@@ -319,7 +319,7 @@ function societe_prepare_head(Societe $object)
 
         $head[$h][0] = DOL_URL_ROOT.'/societe/document.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Documents");
-		if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+		if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
         $head[$h][2] = 'document';
         $h++;
     }

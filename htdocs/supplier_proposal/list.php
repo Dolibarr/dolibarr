@@ -214,8 +214,8 @@ if (empty($reshook))
 {
 	$objectclass='SupplierProposal';
 	$objectlabel='SupplierProposals';
-	$permtoread = $user->rights->supplier_proposal->lire;
-	$permtodelete = $user->rights->supplier_proposal->supprimer;
+	$permissiontoread = $user->rights->supplier_proposal->lire;
+	$permissiontodelete = $user->rights->supplier_proposal->supprimer;
 	$uploaddir = $conf->supplier_proposal->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }

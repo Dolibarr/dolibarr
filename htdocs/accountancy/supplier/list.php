@@ -133,8 +133,8 @@ if (empty($reshook))
 
 	// Mass actions
 	$objectclass='AccountingAccount';
-	$permtoread = $user->rights->accounting->read;
-	$permtodelete = $user->rights->accounting->delete;
+	$permissiontoread = $user->rights->accounting->read;
+	$permissiontodelete = $user->rights->accounting->delete;
 	$uploaddir = $conf->accounting->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }

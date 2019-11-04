@@ -232,8 +232,8 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='Adherent';
 	$objectlabel='Members';
-	$permtoread = $user->rights->adherent->lire;
-	$permtodelete = $user->rights->adherent->supprimer;
+	$permissiontoread = $user->rights->adherent->lire;
+	$permissiontodelete = $user->rights->adherent->supprimer;
 	$uploaddir = $conf->adherent->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }

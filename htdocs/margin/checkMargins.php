@@ -120,8 +120,8 @@ if (empty($reshook))
     if ((string) $type == '1') { $objectlabel='Services'; }
     if ((string) $type == '0') { $objectlabel='Products'; }
 
-    $permtoread = $user->rights->produit->lire;
-    $permtodelete = $user->rights->produit->supprimer;
+    $permissiontoread = $user->rights->produit->lire;
+    $permissiontodelete = $user->rights->produit->supprimer;
     $uploaddir = $conf->product->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
     */
