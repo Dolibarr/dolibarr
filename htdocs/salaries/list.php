@@ -226,7 +226,7 @@ if ($result)
         $userstatic->admin=$obj->admin;
         $userstatic->login=$obj->login;
         $userstatic->email=$obj->email;
-        $userstatic->societe_id=$obj->fk_soc;
+        $userstatic->socid=$obj->fk_soc;
         $userstatic->statut=$obj->status;
 
         $salstatic->id=$obj->rowid;

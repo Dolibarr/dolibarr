@@ -98,7 +98,7 @@ else
     	$userstatic->statut=$val['statut'];
         $userstatic->email=$val['email'];
         $userstatic->gender=$val['gender'];
-    	$userstatic->societe_id=$val['fk_soc'];
+    	$userstatic->socid=$val['fk_soc'];
     	$userstatic->admin=$val['admin'];
     	$userstatic->entity=$val['entity'];
     	$userstatic->photo=$val['photo'];
