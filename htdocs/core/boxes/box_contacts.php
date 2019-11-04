@@ -165,6 +165,7 @@ class box_contacts extends ModeleBoxes
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
 						'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedContacts").'</span>',
+						'asis'=> 1
 					);
 
 				$this->db->free($result);
