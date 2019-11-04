@@ -145,7 +145,7 @@ class box_services_expired extends ModeleBoxes
     				);
 
     				$this->info_box_contents[$i][] = array(
-                        'td' => 'class="center"',
+                        'td' => 'class="center nowraponall"',
                         'text' => dol_print_date($dateline, 'day'),
                         'text2'=> $late,
                     );
