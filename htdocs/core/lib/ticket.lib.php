@@ -86,7 +86,7 @@ function ticket_prepare_head($object)
     	$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
     	$head[$h][0] = DOL_URL_ROOT.'/ticket/contact.php?track_id='.$object->track_id;
     	$head[$h][1] = $langs->trans('ContactsAddresses');
-    	if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
+    	if ($nbContact > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
     	$head[$h][2] = 'contact';
     	$h++;
     }
@@ -100,7 +100,7 @@ function ticket_prepare_head($object)
     $head[$h][0] = dol_buildpath('/ticket/document.php', 1) . '?id=' . $object->id;
     $head[$h][1] = $langs->trans("Documents");
     if ($nbFiles > 0) {
-        $head[$h][1] .= ' <span class="badge">' . $nbFiles . '</span>';
+        $head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbFiles . '</span>';
     }
 
     $head[$h][2] = 'tabTicketDocument';
