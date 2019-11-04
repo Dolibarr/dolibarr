@@ -2,7 +2,7 @@
 License
 -------
 
-Dolibarr is released under the terms of the GNU General Public License as 
+Dolibarr is released under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 3 of the License,
 or (at your option) any later version (GPL-3+).
 More information: https://www.gnu.org/licenses/gpl-3.0.txt
@@ -15,13 +15,13 @@ PHP libraries:
 AdoDb-Date             0.36          Modified BSD License        Yes             Date convertion (not into rpm package)
 CKEditor               4.12.1        LGPL-2.1+                   Yes             Editor WYSIWYG
 EvalMath               1.0           BSD                         Yes             Safe math expressions evaluation
-Escpos-php             ?             MIT License                 Yes             Thermal receipt printer library, for use with ESC/POS compatible printers
+Escpos-php             2.2           MIT License                 Yes             Thermal receipt printer library, for use with ESC/POS compatible printers
 GeoIP                  1.4           LGPL-2.1+                   Yes             Sample code to make geoip convert (not into deb package)
 Mobiledetect           2.8.33        MIT License                 Yes             Detect mobile devices browsers
 NuSoap                 0.9.5         LGPL 2.1+                   Yes             Library to develop SOAP Web services (not into rpm and deb package)
 PEAR Mail_MIME         1.8.9         BSD                         Yes             NuSoap dependency
 ParseDown              1.6           MIT License                 Yes             Markdown parser
-PHPDebugBar			   1.15.0		 MIT License	             Yes             Used only by the module "debugbar" for developers
+PHPDebugBar            1.15.0        MIT License	             Yes             Used only by the module "debugbar" for developers
 PHPExcel               1.8.1         LGPL-2.1+                   Yes             Read/Write XLS files, read ODS files
 PHPSpreadSheet         ?             LGPL-2.1+                   Yes             Read/Write XLS files, read ODS files
 php-iban               1.4.7         LGPL-3+                     Yes             Parse and validate IBAN (and IIBAN) bank account information in PHP
@@ -37,7 +37,7 @@ TCPDF                  6.3.2         LGPL-3+                     Yes            
 TCPDI                  1.0.0         LGPL-3+ / Apache 2.0        Yes             FPDI replacement
 
 JS libraries:
-Ace                    1.4.6         BSD                         Yes             JS library to get code syntaxique coloration in a textarea.    
+Ace                    1.4.6         BSD                         Yes             JS library to get code syntaxique coloration in a textarea.
 jQuery                 3.4.1         MIT License                 Yes             JS library
 jQuery UI              1.12.1        GPL and MIT License         Yes             JS library plugin UI
 jQuery select2         4.0.5         GPL and Apache License      Yes             JS library plugin for sexier multiselect
