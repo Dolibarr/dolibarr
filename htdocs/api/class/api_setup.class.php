@@ -44,7 +44,7 @@ class Setup extends DolibarrApi
         global $db;
         $this->db = $db;
     }
-    
+
     /**
      * Get the list of ordering methods.
      *
@@ -65,7 +65,7 @@ class Setup extends DolibarrApi
     public function getOrderingMethods($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
         $list = array();
-        
+
         $sql = "SELECT rowid, code, libelle as label, module";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_input_method as t";
         $sql.= " WHERE t.active = ".$active;
@@ -79,21 +79,21 @@ class Setup extends DolibarrApi
             $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-        
-        
+
+
         $sql.= $this->db->order($sortfield, $sortorder);
-        
+
         if ($limit) {
             if ($page < 0) {
                 $page = 0;
             }
             $offset = $limit * $page;
-            
+
             $sql .= $this->db->plimit($limit, $offset);
         }
-        
+
         $result = $this->db->query($sql);
-        
+
         if ($result) {
             $num = $this->db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
@@ -103,7 +103,7 @@ class Setup extends DolibarrApi
         } else {
             throw new RestException(400, $this->db->lasterror());
         }
-        
+
         return $list;
     }
 
