@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
 /**
  *	Class to build documents using ODF templates generator
  */
-class doc_generic_bom_odt extends ModelePDFBoms
+class doc_generic_bom_odt extends ModelePDFBom
 {
 	/**
 	 * Issuer
