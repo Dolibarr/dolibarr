@@ -241,9 +241,9 @@ if (empty($reshook))
 {
 	$objectclass='Propal';
 	$objectlabel='Proposals';
-	$permtoread = $user->rights->propal->lire;
-	$permtodelete = $user->rights->propal->supprimer;
-	$permtoclose = $user->rights->propal->cloturer;
+	$permissiontoread = $user->rights->propal->lire;
+	$permissiontodelete = $user->rights->propal->supprimer;
+	$permissiontoclose = $user->rights->propal->cloturer;
 	$uploaddir = $conf->propal->multidir_output[$conf->entity];
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }

@@ -136,7 +136,7 @@ class box_contracts extends ModeleBoxes
     				// if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->contrat->cloture->warning_delay)) { $late = img_warning($langs->trans("Late")); }
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="nowraponall"',
                         'text' => $contractstatic->getNomUrl(1),
                         'text2'=> $late,
                         'asis'=>1

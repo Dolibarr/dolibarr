@@ -165,9 +165,9 @@ if (empty($reshook))
 {
     $objectclass  = 'Expedition';
     $objectlabel  = 'Sendings';
-    $permtoread   = $user->rights->expedition->lire;
-    $permtocreate = $user->rights->expedition->creer;
-    $permtodelete = $user->rights->expedition->supprimer;
+    $permissiontoread   = $user->rights->expedition->lire;
+    $permissiontoadd = $user->rights->expedition->creer;
+    $permissiontodelete = $user->rights->expedition->supprimer;
     $uploaddir    = $conf->expedition->dir_output . '/sending';
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }

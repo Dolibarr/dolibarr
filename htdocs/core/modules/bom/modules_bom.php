@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';	// requir
 /**
  *	Parent class for boms models
  */
-abstract class ModelePDFBoms extends CommonDocGenerator
+abstract class ModelePDFBom extends CommonDocGenerator
 {
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

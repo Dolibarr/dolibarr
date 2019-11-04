@@ -188,8 +188,8 @@ if (empty($reshook))
 {
 	$objectclass='Contrat';
 	$objectlabel='Contracts';
-	$permtoread = $user->rights->contrat->lire;
-	$permtodelete = $user->rights->contrat->supprimer;
+	$permissiontoread = $user->rights->contrat->lire;
+	$permissiontodelete = $user->rights->contrat->supprimer;
 	$uploaddir = $conf->contrat->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -591,10 +591,10 @@ if (! empty($arrayfields['lower_planned_end_date']['checked'])) {
     print_liste_field_titre($arrayfields['lower_planned_end_date']['label'], $_SERVER["PHP_SELF"], "lower_planned_end_date", "", $param, '', $sortfield, $sortorder, 'center ');
 }
 if (! empty($arrayfields['status']['checked'])) {
-	print_liste_field_titre($staticcontratligne->LibStatut(0, 3), '', '', '', '', 'width="16"');
-	print_liste_field_titre($staticcontratligne->LibStatut(4, 3, 0), '', '', '', '', 'width="16"');
-	print_liste_field_titre($staticcontratligne->LibStatut(4, 3, 1), '', '', '', '', 'width="16"');
-	print_liste_field_titre($staticcontratligne->LibStatut(5, 3), '', '', '', '', 'width="16"');
+	print_liste_field_titre($staticcontratligne->LibStatut(0, 3, -1, 'class="nochangebackground"'), '', '', '', '', 'width="16"');
+	print_liste_field_titre($staticcontratligne->LibStatut(4, 3,  0, 'class="nochangebackground"'), '', '', '', '', 'width="16"');
+	print_liste_field_titre($staticcontratligne->LibStatut(4, 3,  1, 'class="nochangebackground"'), '', '', '', '', 'width="16"');
+	print_liste_field_titre($staticcontratligne->LibStatut(5, 3, -1, 'class="nochangebackground"'), '', '', '', '', 'width="16"');
 }
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>\n";

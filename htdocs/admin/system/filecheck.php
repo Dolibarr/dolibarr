@@ -46,7 +46,7 @@ llxHeader();
 
 print load_fiche_titre($langs->trans("FileCheckDolibarr"), '', 'title_setup');
 
-print $langs->trans("FileCheckDesc").'<br><br>';
+print '<span class="opacitymedium">'.$langs->trans("FileCheckDesc").'</span><br><br>';
 
 // Version
 print '<div class="div-table-responsive-no-min">';
@@ -239,6 +239,7 @@ if (! $error && $xml)
         $out.='<tr class="liste_titre">';
         $out.='<td>#</td>';
         $out.='<td>' . $langs->trans("Filename") . '</td>';
+        $out.='<td class="right">' . $langs->trans("ExpectedSize") . '</td>';
         $out.='<td class="center">' . $langs->trans("ExpectedChecksum") . '</td>';
         $out.='</tr>'."\n";
         $tmpfilelist = dol_sort_array($file_list['missing'], 'filename');
@@ -251,6 +252,9 @@ if (! $error && $xml)
 	            $out.='<tr class="oddeven">';
 	            $out.='<td>'.$i.'</td>' . "\n";
 	            $out.='<td>'.$file['filename'].'</td>' . "\n";
+	            $out.='<td class="right">';
+	            if (! empty($file['expectedsize'])) $out.=dol_print_size($file['expectedsize']);
+	            $out.='</td>' . "\n";
 	            $out.='<td class="center">'.$file['expectedmd5'].'</td>' . "\n";
 	            $out.="</tr>\n";
 	        }
@@ -275,7 +279,8 @@ if (! $error && $xml)
         $out.='<td>' . $langs->trans("Filename") . '</td>';
         $out.='<td class="center">' . $langs->trans("ExpectedChecksum") . '</td>';
         $out.='<td class="center">' . $langs->trans("CurrentChecksum") . '</td>';
-        $out.='<td class="right">' . $langs->trans("Size") . '</td>';
+        $out.='<td class="right">' . $langs->trans("ExpectedSize") . '</td>';
+        $out.='<td class="right">' . $langs->trans("CurrentSize") . '</td>';
         $out.='<td class="right">' . $langs->trans("DateModification") . '</td>';
         $out.='</tr>'."\n";
         $tmpfilelist2 = dol_sort_array($file_list['updated'], 'filename');
@@ -290,6 +295,9 @@ if (! $error && $xml)
 	            $out.='<td>'.$file['filename'].'</td>' . "\n";
 	            $out.='<td class="center">'.$file['expectedmd5'].'</td>' . "\n";
 	            $out.='<td class="center">'.$file['md5'].'</td>' . "\n";
+	            $out.='<td class="right">';
+	            if ($file['expectedsize']) $out.=dol_print_size($file['expectedsize']);
+	            $out.='</td>' . "\n";
 	            $size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
 	            $totalsize += $size;
 	            $out.='<td class="right">'.dol_print_size($size).'</td>' . "\n";
@@ -299,6 +307,7 @@ if (! $error && $xml)
             $out.='<tr class="liste_total">';
             $out.='<td></td>' . "\n";
             $out.='<td>'.$langs->trans("Total").'</td>' . "\n";
+            $out.='<td class="center"></td>' . "\n";
             $out.='<td class="center"></td>' . "\n";
             $out.='<td class="center"></td>' . "\n";
             $out.='<td class="right">'.dol_print_size($totalsize).'</td>' . "\n";

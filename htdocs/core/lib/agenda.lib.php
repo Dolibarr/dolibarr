@@ -473,7 +473,7 @@ function actions_prepare_head($object)
         $listofresourcelinked = $resource->getElementResources($object->element, $object->id);
         $nbResources=(is_array($listofresourcelinked)?count($listofresourcelinked):0);
 		$head[$h][1] = $langs->trans("Resources");
-		if ($nbResources > 0) $head[$h][1].= ' <span class="badge">'.($nbResources).'</span>';
+		if ($nbResources > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbResources).'</span>';
 		$head[$h][2] = 'resources';
 		$h++;
 	}

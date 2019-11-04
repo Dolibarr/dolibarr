@@ -1875,8 +1875,8 @@ class Contrat extends CommonObject
 	/**
 	 *  Return label of a contract status
 	 *
-	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Long label of all services, 5=Libelle court + Picto, 6=Picto of all services, 7=Same than 6 with fixed length
-	 *  @return string      		Label
+	 *  @param  int		$mode       	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto, 7=Same than 6 with fixed length
+	 *  @return string      			Label
 	 */
 	public function getLibStatut($mode)
 	{
@@ -1888,7 +1888,7 @@ class Contrat extends CommonObject
 	 *  Renvoi label of a given contrat status
 	 *
 	 *  @param	int		$status      	Id status
-	 *  @param  int		$mode          	0=Long label, 1=Short label, 2=Picto + Libelle court, 3=Picto, 4=Picto + Long label of all services, 5=Libelle court + Picto, 6=Picto of all services, 7=Same than 6 with fixed length
+	 *  @param  int		$mode       	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto, 7=Same than 6 with fixed length
 	 *	@return string      			Label
 	 */
 	public function LibStatut($status, $mode)
@@ -1921,13 +1921,13 @@ class Contrat extends CommonObject
 				$text.=': &nbsp; &nbsp; ';
 				$text.='</span>';
 			}
-			$text.=($mode == 7?'<span class="nowrap">':'');
+			$text.=($mode == 7?'<span class="nowraponall">':'');
 			$text.=($mode != 7 || $this->nbofserviceswait > 0) ? ($this->nbofserviceswait.ContratLigne::LibStatut(0, 3, -1, 'class="marginleft2"')).(($mode != 7 || $this->nbofservicesopened || $this->nbofservicesexpired || $this->nbofservicesclosed)?' &nbsp; ':'') : '';
-			$text.=($mode == 7?'</span><span class="nowrap">':'');
+			$text.=($mode == 7?'</span><span class="nowraponall">':'');
 			$text.=($mode != 7 || $this->nbofservicesopened > 0) ? ($this->nbofservicesopened.ContratLigne::LibStatut(4, 3, 0, 'class="marginleft2"')).(($mode != 7 || $this->nbofservicesexpired || $this->nbofservicesclosed)?' &nbsp; ':'') : '';
-			$text.=($mode == 7?'</span><span class="nowrap">':'');
+			$text.=($mode == 7?'</span><span class="nowraponall">':'');
 			$text.=($mode != 7 || $this->nbofservicesexpired > 0) ? ($this->nbofservicesexpired.ContratLigne::LibStatut(4, 3, 1, 'class="marginleft2"')).(($mode != 7 || $this->nbofservicesclosed)?' &nbsp; ':'') : '';
-			$text.=($mode == 7?'</span><span class="nowrap">':'');
+			$text.=($mode == 7?'</span><span class="nowraponall">':'');
 			$text.=($mode != 7 || $this->nbofservicesclosed > 0) ? ($this->nbofservicesclosed.ContratLigne::LibStatut(5, 3, -1, 'class="marginleft2"')) : '';
 			$text.=($mode == 7?'</span>':'');
 			return $text;

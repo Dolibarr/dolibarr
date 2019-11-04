@@ -152,8 +152,8 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='Asset';
 	$objectlabel='Asset';
-	$permtoread = $user->rights->asset->read;
-	$permtodelete = $user->rights->asset->delete;
+	$permissiontoread = $user->rights->asset->read;
+	$permissiontodelete = $user->rights->asset->delete;
 	$uploaddir = $conf->asset->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }

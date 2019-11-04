@@ -153,9 +153,9 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-$permtoread = $user->rights->mymodule->myobject->read;
-$permtowrite = $user->rights->mymodule->myobject->write;
-$permtodelete = $user->rights->mymodule->myobject->delete;
+$permissiontoread = $user->rights->mymodule->myobject->read;
+$permissiontoadd = $user->rights->mymodule->myobject->write;
+$permissiontodelete = $user->rights->mymodule->myobject->delete;
 
 
 /*
@@ -347,7 +347,7 @@ $arrayofmassactions =  array(
     //'builddoc'=>$langs->trans("PDFMerge"),
     //'presend'=>$langs->trans("SendByMail"),
 );
-if ($permtodelete) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+if ($permissiontodelete) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -361,7 +361,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/mymodule/myobject_card.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permtowrite);
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/mymodule/myobject_card.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, $newcardbutton, '', $limit);
 
@@ -594,8 +594,8 @@ if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $n
 	$urlsource.=str_replace('&amp;', '&', $param);
 
 	$filedir=$diroutputmassaction;
-	$genallowed=$permtoread;
-	$delallowed=$permtowrite;
+	$genallowed=$permissiontoread;
+	$delallowed=$permissiontoadd;
 
 	print $formfile->showdocuments('massfilesarea_mymodule', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }

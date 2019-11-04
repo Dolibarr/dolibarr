@@ -160,8 +160,8 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='Fichinter';
 	$objectlabel='Interventions';
-	$permtoread = $user->rights->ficheinter->lire;
-	$permtodelete = $user->rights->ficheinter->supprimer;
+	$permissiontoread = $user->rights->ficheinter->lire;
+	$permissiontodelete = $user->rights->ficheinter->supprimer;
 	$uploaddir = $conf->ficheinter->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }

@@ -663,7 +663,7 @@ function security_prepare_head()
 
     $head[$h][0] = DOL_URL_ROOT."/admin/perms.php";
     $head[$h][1] = $langs->trans("DefaultRights");
-    if ($nbPerms > 0) $head[$h][1].= ' <span class="badge">'.$nbPerms.'</span>';
+    if ($nbPerms > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbPerms.'</span>';
     $head[$h][2] = 'default';
     $h++;
 

@@ -220,8 +220,8 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='Commande';
 	$objectlabel='Orders';
-	$permtoread = $user->rights->commande->lire;
-	$permtodelete = $user->rights->commande->supprimer;
+	$permissiontoread = $user->rights->commande->lire;
+	$permissiontodelete = $user->rights->commande->supprimer;
 	$uploaddir = $conf->commande->multidir_output[$conf->entity];
 	$trigger_name='ORDER_SENTBYMAIL';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';

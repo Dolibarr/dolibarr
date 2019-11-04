@@ -202,8 +202,8 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='Project';
 	$objectlabel='Project';
-	$permtoread = $user->rights->projet->lire;
-	$permtodelete = $user->rights->projet->supprimer;
+	$permissiontoread = $user->rights->projet->lire;
+	$permissiontodelete = $user->rights->projet->supprimer;
 	$uploaddir = $conf->projet->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 

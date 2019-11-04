@@ -148,8 +148,8 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='EmailSenderProfile';
 	$objectlabel='EmailSenderProfile';
-	$permtoread = $user->admin;
-	$permtodelete = $user->admin;
+	$permissiontoread = $user->admin;
+	$permissiontodelete = $user->admin;
 	$uploaddir = $conf->admin->dir_output.'/senderprofiles';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }

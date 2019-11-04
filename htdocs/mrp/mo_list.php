@@ -177,8 +177,8 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='Mo';
 	$objectlabel='Mo';
-	$permtoread = $user->rights->mrp->read;
-	$permtodelete = $user->rights->mrp->delete;
+	$permissiontoread = $user->rights->mrp->read;
+	$permissiontodelete = $user->rights->mrp->delete;
 	$uploaddir = $conf->mrp->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }

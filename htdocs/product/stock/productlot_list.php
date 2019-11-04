@@ -158,8 +158,8 @@ if (empty($reshook))
 {
 	$objectclass='ProductLot';
 	$objectlabel='LotSerial';
-	$permtoread = $user->rights->stock->read;
-	$permtodelete = $user->rights->stock->delete;
+	$permissiontoread = $user->rights->stock->read;
+	$permissiontodelete = $user->rights->stock->delete;
 	$uploaddir = $conf->stock->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }

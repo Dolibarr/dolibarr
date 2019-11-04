@@ -156,8 +156,8 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='EmailCollector';
 	$objectlabel='EmailCollector';
-	$permtoread = $user->rights->emailcollector->read;
-	$permtodelete = $user->rights->emailcollector->delete;
+	$permissiontoread = $user->rights->emailcollector->read;
+	$permissiontodelete = $user->rights->emailcollector->delete;
 	$uploaddir = $conf->emailcollector->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }

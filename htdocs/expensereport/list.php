@@ -195,8 +195,8 @@ if (empty($reshook))
 	// Mass actions
     $objectclass='ExpenseReport';
     $objectlabel='ExpenseReport';
-    $permtoread = $user->rights->expensereport->lire;
-    $permtodelete = $user->rights->expensereport->supprimer;
+    $permissiontoread = $user->rights->expensereport->lire;
+    $permissiontodelete = $user->rights->expensereport->supprimer;
     $uploaddir = $conf->expensereport->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 

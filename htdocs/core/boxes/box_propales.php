@@ -128,7 +128,7 @@ class box_propales extends ModeleBoxes
     				}
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="nowraponall"',
                         'text' => $propalstatic->getNomUrl(1),
                         'text2'=> $late,
                         'asis' => 1,

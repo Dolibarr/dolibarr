@@ -304,8 +304,8 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='Societe';
 	$objectlabel='ThirdParty';
-	$permtoread = $user->rights->societe->lire;
-	$permtodelete = $user->rights->societe->supprimer;
+	$permissiontoread = $user->rights->societe->lire;
+	$permissiontodelete = $user->rights->societe->supprimer;
 	$uploaddir = $conf->societe->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 

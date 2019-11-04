@@ -23,10 +23,10 @@
  */
 
 /**
- *  \file			htdocs/core/modules/mrp/modules_mrp.php
- *  \ingroup		bom
- *  \brief			File that contains parent class for mos models
- *                  and parent class for mos numbering models
+ *  \file			htdocs/core/modules/mrp/modules_mo.php
+ *  \ingroup		mrp
+ *  \brief			File that contains parent class for MOs models
+ *                  and parent class for MOs numbering models
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';	// requir
 /**
  *	Parent class for mos models
  */
-abstract class ModelePDFMos extends CommonDocGenerator
+abstract class ModelePDFMo extends CommonDocGenerator
 {
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

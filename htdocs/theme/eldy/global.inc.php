@@ -681,6 +681,12 @@ select.flat.selectlimit {
     -webkit-line-clamp: 2;
     overflow: hidden;
 }
+.twolinesmax {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
 
 .tablelistofcalendars {
 	margin-top: 25px !important;
@@ -2068,7 +2074,7 @@ div.login_block_other { padding-top: 0; text-align: right; margin-right: 8px; }
 	float: right;
 	vertical-align: top;
 	padding: 0px 3px 0px 4px !important;
-	line-height: <?php echo $disableimages?'25':'50'; ?>px;
+	line-height: <?php echo $disableimages?'25':'48'; ?>px;
 	height: <?php echo $disableimages?'25':'50'; ?>px;
 }
 .atoplogin, .atoplogin:hover {

@@ -265,9 +265,9 @@ if (empty($reshook))
 {
 	$objectclass='Facture';
 	$objectlabel='Invoices';
-	$permtoread = $user->rights->facture->lire;
-	$permtocreate = $user->rights->facture->creer;
-	$permtodelete = $user->rights->facture->supprimer;
+	$permissiontoread = $user->rights->facture->lire;
+	$permissiontoadd = $user->rights->facture->creer;
+	$permissiontodelete = $user->rights->facture->supprimer;
 	$uploaddir = $conf->facture->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }

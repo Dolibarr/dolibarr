@@ -123,7 +123,7 @@ class box_project extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$i][] = array(
-                        'td' => '',
+                        'td' => 'class="tdoverflowmax150 maxwidth200onsmartphone"',
                         'text' => $objp->title,
                     );
 

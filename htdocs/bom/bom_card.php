@@ -72,14 +72,14 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 // Security check - Protection if external user
 //if ($user->socid > 0) access_forbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$isdraft = (($object->statut == BillOfMaterials::STATUS_DRAFT) ? 1 : 0);
+//$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
 //$result = restrictedArea($user, 'bom', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
 $permissionnote=$user->rights->bom->write;	// Used by the include of actions_setnotes.inc.php
 $permissiondellink=$user->rights->bom->write;	// Used by the include of actions_dellink.inc.php
 $permissionedit=$user->rights->bom->write; // Used by the include of actions_lineupdown.inc.php
 $permissiontoadd=$user->rights->bom->write; // Used by the include of actions_addupdatedelete.inc.php
-$permissiontodelete = $user->rights->bom->delete || ($permissiontoadd && $object->status == 0);
+$permissiontodelete = $user->rights->bom->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 
 
 /*
@@ -457,7 +457,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	{
 	    $langs->load("projects");
 	    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-	    if ($user->rights->bom->write)
+	    if ($permissiontoadd)
 	    {
 	        if ($action != 'classify')
 	            $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
@@ -532,7 +532,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    }
 
 	    print '<div class="div-table-responsive-no-min">';
-	    if (! empty($object->lines) || ($object->status == 0 && $permissiontoadd && $action != 'selectlines' && $action != 'editline'))
+	    if (! empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline'))
 	    {
 	        print '<table id="tablelines" class="noborder noshadow" width="100%">';
 	    }
@@ -555,7 +555,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	        }
 	    }
 
-	    if (! empty($object->lines) || ($object->status == 0 && $permissiontoadd && $action != 'selectlines' && $action != 'editline'))
+	    if (! empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline'))
 	    {
 	        print '</table>';
 	    }
@@ -565,8 +565,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 
-
 	// Buttons for actions
+
 	if ($action != 'presend' && $action != 'editline') {
     	print '<div class="tabsAction">'."\n";
     	$parameters=array();
@@ -584,7 +584,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		}
 
             // Modify
-    		if ($user->rights->bom->write)
+    		if ($permissiontoadd)
     		{
     			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
     		}
@@ -619,7 +619,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		}
 
     		// Clone
-    		if ($user->rights->bom->write)
+    		if ($permissiontoadd)
     		{
     			print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=clone&object=bom">' . $langs->trans("ToClone") . '</a>';
     		}
@@ -638,7 +638,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		}
     		*/
 
-    		if ($user->rights->bom->delete)
+    		if ($permissiontodelete)
     		{
     			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>'."\n";
     		}
