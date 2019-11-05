@@ -46,6 +46,68 @@ class Setup extends DolibarrApi
     }
 
     /**
+     * Get the list of ordering methods.
+     *
+     * @param string    $sortfield  Sort field
+     * @param string    $sortorder  Sort order
+     * @param int       $limit      Number of items per page
+     * @param int       $page       Page number {@min 0}
+     * @param int       $active     Payment type is active or not {@min 0} {@max 1}
+     * @param string    $sqlfilters SQL criteria to filter with. Syntax example "(t.code:=:'CHQ')"
+     *
+     * @url     GET dictionary/ordering_methods
+     *
+     * @return array [List of ordering methods]
+     *
+     * @throws 400 RestException
+     * @throws 200 OK
+     */
+    public function getOrderingMethods($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
+    {
+        $list = array();
+
+        $sql = "SELECT rowid, code, libelle as label, module";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_input_method as t";
+        $sql.= " WHERE t.active = ".$active;
+        // Add sql filters
+        if ($sqlfilters)
+        {
+            if (! DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(400, 'error when validating parameter sqlfilters '.$sqlfilters);
+            }
+            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+        }
+
+
+        $sql.= $this->db->order($sortfield, $sortorder);
+
+        if ($limit) {
+            if ($page < 0) {
+                $page = 0;
+            }
+            $offset = $limit * $page;
+
+            $sql .= $this->db->plimit($limit, $offset);
+        }
+
+        $result = $this->db->query($sql);
+
+        if ($result) {
+            $num = $this->db->num_rows($result);
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            for ($i = 0; $i < $min; $i++) {
+                $list[] = $this->db->fetch_object($result);
+            }
+        } else {
+            throw new RestException(400, $this->db->lasterror());
+        }
+
+        return $list;
+    }
+
+    /**
      * Get the list of payments types.
      *
      * @param string    $sortfield  Sort field
