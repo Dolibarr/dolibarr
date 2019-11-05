@@ -27,7 +27,7 @@ INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'linkedin', 'LinkedIn', 'https://www.linkedin.com/{socialid}', 'fa-linkedin', 1);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'instagram', 'Instagram', 'https://www.instagram.com/{socialid}', 'fa-instagram', 1);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'snapchat', 'Snapchat', '{socialid}', 'fa-snapchat', 1);
-INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'googleplus', 'GooglePlus', 'https://www.googleplus.com/{socialid}', 'fa-google-plus-g', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'googleplus', 'GooglePlus', 'https://www.googleplus.com/{socialid}', 'fa-google-plus-g', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'youtube', 'Youtube', 'https://www.youtube.com/{socialid}', 'fa-youtube', 1);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'whatsapp', 'Whatsapp', '{socialid}', 'fa-whatsapp', 1);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'tumblr', 'Tumblr', 'https://www.tumblr.com/{socialid}', '', 0);
