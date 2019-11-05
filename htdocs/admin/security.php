@@ -241,7 +241,7 @@ if (is_resource($handle))
 }
 asort($arrayhandler);
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("RuleForGeneratedPasswords").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
@@ -291,7 +291,7 @@ print '</form>';
 if ($conf->global->USER_PASSWORD_GENERATED == "Perso"){
 	$tabConf = explode(";", $conf->global->USER_PASSWORD_PATTERN);
 	print '<br>';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="3"> '.$langs->trans("PasswordPatternDesc").'</td>';
 	print '</tr>';
@@ -402,7 +402,7 @@ print "<form method=\"post\" action=\"" . $_SERVER["PHP_SELF"] . "\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"encrypt\">";
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
 print '<td align="center">'.$langs->trans("Activated").'</td>';

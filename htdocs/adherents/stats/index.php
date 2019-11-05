@@ -145,7 +145,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 // Show filter box
 /*print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 print '<tr><td>'.$langs->trans("Member").'</td><td>';
 print $form->select_company($id,'memberid','',1);
@@ -211,7 +211,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
-print '<table class="border" width="100%"><tr class="pair nohover"><td class="center">';
+print '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
 if ($mesg) { print $mesg; }
 else {
     print $px1->show();

@@ -80,7 +80,7 @@ print '<input type="hidden" name="action" value="update">';
 
 dol_fiche_head($head, 'parameters', $langs->trans("HRM"), -1, "user");
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">' . $langs->trans('Journaux') . '</td>';
 print "</tr>\n";

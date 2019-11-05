@@ -46,7 +46,7 @@ print '<br>';
 $extrafields->fetch_name_optionals_label($elementtype);
 
 print '<div class="div-table-responsive">';
-print '<table summary="listofattributes" class="noborder" width="100%">';
+print '<table summary="listofattributes" class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td class="left">'.$langs->trans("Position");

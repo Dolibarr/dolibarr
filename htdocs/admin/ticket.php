@@ -197,7 +197,7 @@ dol_fiche_end();
 
 print load_fiche_titre($langs->trans("TicketNumberingModules"));
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="100">' . $langs->trans("Name") . '</td>';
 print '<td>' . $langs->trans("Description") . '</td>';
@@ -296,7 +296,7 @@ if (!$conf->use_javascript_ajax) {
 }
 
 print load_fiche_titre($langs->trans("TicketParams"));
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>' . $langs->trans("Parameter") . '</td>';
@@ -400,7 +400,7 @@ if (!$conf->use_javascript_ajax) {
 // Admin var of module
 print load_fiche_titre($langs->trans("Notification"));
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<form method="post" action="' . $_SERVER['PHP_SELF'] . '" enctype="multipart/form-data" >';
 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';

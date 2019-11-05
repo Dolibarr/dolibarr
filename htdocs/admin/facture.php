@@ -279,7 +279,7 @@ dol_fiche_head($head, 'general', $langs->trans("Invoices"), -1, 'invoice');
 
 print load_fiche_titre($langs->trans("BillsNumberingModule"), '', '');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -468,7 +468,7 @@ else
     dol_print_error($db);
 }
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -607,7 +607,7 @@ if(!empty($conf->global->INVOICE_USE_DEFAULT_DOCUMENT)) // Hidden conf
     print '<form action="'.$_SERVER["PHP_SELF"].'#default-pdf-modules-by-type-table" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
     print '<input type="hidden" name="action" value="setDefaultPDFModulesByType" >';
-    print '<table id="default-pdf-modules-by-type-table" class="noborder" width="100%">';
+    print '<table id="default-pdf-modules-by-type-table" class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Type").'</td>';
     print '<td>'.$langs->trans("Name").'</td>';
@@ -648,7 +648,7 @@ print load_fiche_titre($langs->trans("SuggestedPaymentModesIfNotDefinedInInvoice
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>';
@@ -738,7 +738,7 @@ print "</form>";
 print "<br>";
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td class="center" width="60">'.$langs->trans("Value").'</td>';

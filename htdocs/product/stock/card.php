@@ -255,7 +255,7 @@ if ($action == 'create')
 
 	dol_fiche_head();
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Ref
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input name="libelle" size="20" value=""></td></tr>';
@@ -386,7 +386,7 @@ else
         	print '<div class="fichehalfleft">';
         	print '<div class="underbanner clearboth"></div>';
 
-        	print '<table class="border" width="100%">';
+        	print '<table class="border centpercent">';
 
 			// Parent entrepot
 			$e = new Entrepot($db);
@@ -504,7 +504,7 @@ else
 			/* ************************************************************************** */
 			print '<br>';
 
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print "<tr class=\"liste_titre\">";
 			print_liste_field_titre("Product", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Label", "", "p.label", "&amp;id=".$id, "", "", $sortfield, $sortorder);
@@ -665,7 +665,7 @@ else
 
 			dol_fiche_head($head, 'card', $langs->trans("Warehouse"), 0, 'stock');
 
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent">';
 
 			// Ref
 			print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input name="libelle" size="20" value="'.$object->libelle.'"></td></tr>';

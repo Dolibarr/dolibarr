@@ -118,7 +118,7 @@ print '<div class="fichecenter">';
 print '<div class="fichehalfleft">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 
 // Visibility
 print '<tr><td class="titlefield">' . $langs->trans("Visibility") . '</td><td>';
@@ -150,7 +150,7 @@ print '<div class="fichehalfright">';
 print '<div class="ficheaddleft">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 
 // Description
 print '<td class="titlefield tdtop">' . $langs->trans("Description") . '</td><td>';

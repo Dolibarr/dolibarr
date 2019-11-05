@@ -117,7 +117,7 @@ else
 }
 
 // Print array
-print '<table class="liste" width="100%">';
+print '<table class="liste centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Nature").'</td>';
 print '<td class="right">'.$langs->trans("NbOfMembers").'</td>';

@@ -112,7 +112,7 @@ if ($prev_id > 0 || $ref)
 		print '<br>';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		$acc = new Account($db);
 		$result=$acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);

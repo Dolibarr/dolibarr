@@ -273,7 +273,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // Company
 print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
@@ -296,7 +296,7 @@ print '</form>';
 print '<br><br>';
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre" height="24">';
 print '<td class="center">'.$langs->trans("Year").'</td>';
 print '<td class="right">'.$langs->trans("NbOfProjects").'</td>';
@@ -346,7 +346,7 @@ print '</div>';
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
-$stringtoshow.= '<table class="border" width="100%"><tr class="pair nohover"><td class="center">';
+$stringtoshow.= '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
 if ($mesg) { print $mesg; }
 else {
 	$stringtoshow.= $px1->show();

@@ -325,7 +325,7 @@ if ($result)
 	print '<br>';
 
     // Select mode
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>' . $langs->trans('Options') . '</td><td>' . $langs->trans('Description') . '</td>';
 	print "</tr>\n";

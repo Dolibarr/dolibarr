@@ -104,7 +104,7 @@ print '<input type="hidden" name="action" value="display">';
 
 dol_fiche_head();
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 
 // Select the category
 print '<tr><td class="titlefield">' . $langs->trans("AccountingCategory") . '</td>';

@@ -586,7 +586,7 @@ else
 			$num_prod = count($object->lines);
 			$i = 0; $total = 0;
 
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 
 			if ($num_prod)
 			{

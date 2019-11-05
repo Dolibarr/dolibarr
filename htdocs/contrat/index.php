@@ -85,7 +85,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/list.php">';
     	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    	print '<table class="noborder nohover" width="100%">';
+    	print '<table class="noborder nohover centpercent">';
     	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
     	print '<tr class="oddeven">';
     	print '<td class="nowrap">'.$langs->trans("Contract").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
@@ -184,7 +184,7 @@ else
 }
 
 
-print '<table class="noborder nohover" width="100%">';
+print '<table class="noborder nohover centpercent">';
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Services").'</th></tr>'."\n";
 $listofstatus=array(0,4,4,5); $bool=false;
 foreach($listofstatus as $status)
@@ -255,7 +255,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 	{
 		$num = $db->num_rows($resql);
 
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("DraftContracts").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 		if ($num)
@@ -333,7 +333,7 @@ if ($result)
 	$num = $db->num_rows($result);
 	$i = 0;
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastContracts", 5).'</th>';
 	print '<th class="center">'.$langs->trans("DateModification").'</th>';
@@ -400,7 +400,7 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 
 	print '<tr class="liste_titre"><th colspan="4">'.$langs->trans("LastModifiedServices", $max).'</th>';
 	print "</tr>\n";
@@ -479,7 +479,7 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 
 	print '<tr class="liste_titre"><th colspan="4">'.$langs->trans("NotActivatedServices").' <a href="'.DOL_URL_ROOT.'/contrat/services_list.php?mode=0"><span class="badge">'.$num.'</span></a></th>';
 	print "</tr>\n";
@@ -558,7 +558,7 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 
 	print '<tr class="liste_titre"><th colspan="4">'.$langs->trans("ListOfExpiredServices").' <a href="'.DOL_URL_ROOT.'/contrat/services_list.php?mode=4&amp;filter=expired"><span class="badge">'.$num.'</span></a></th>';
 	print "</tr>\n";

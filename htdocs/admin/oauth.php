@@ -90,7 +90,7 @@ dol_fiche_head($head, 'services', '', -1, 'technic');
 
 print $langs->trans("ListOfSupportedOauthProviders").'<br><br>';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 $i=0;
 

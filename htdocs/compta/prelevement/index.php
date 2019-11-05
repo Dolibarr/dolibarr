@@ -72,7 +72,7 @@ $invoicestatic=new Facture($db);
 $bprev = new BonPrelevement($db);
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("NbOfInvoiceToWithdraw").'</td>';
@@ -117,7 +117,7 @@ if ($resql)
     $i = 0;
 
     print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<th colspan="5">'.$langs->trans("InvoiceWaitingWithdraw").' ('.$num.')</th></tr>';
     if ($num)
@@ -191,7 +191,7 @@ if ($result)
 
     print"\n<!-- debut table -->\n";
     print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><th>'.$langs->trans("LastWithdrawalReceipt", $limit).'</th>';
     print '<th>'.$langs->trans("Date").'</th>';
     print '<th class="right">'.$langs->trans("Amount").'</th>';

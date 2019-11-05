@@ -1090,7 +1090,7 @@ if ($action == 'create')
 
             print '<br>';
 
-            print '<table class="noborder" width="100%">';
+            print '<table class="noborder centpercent">';
 
             // Load shipments already done for same order
             $object->loadExpeditions();

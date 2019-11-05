@@ -999,7 +999,7 @@ if ($action == 'create')
 		if (! empty($conf->projet->enabled)) $rowspan++;
 		if ($object->fk_account > 0) $rowspan++;
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		$object->fetch_thirdparty();
 
@@ -1111,7 +1111,7 @@ if ($action == 'create')
 
 		dol_fiche_head(null, '', '', 0);
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		// Frequency + unit
 		print '<tr><td class="titlefieldcreate">'.$form->textwithpicto($langs->trans("Frequency"), $langs->transnoentitiesnoconv('toolTipFrequency'))."</td><td>";
@@ -1285,7 +1285,7 @@ else
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		print '<tr><td class="titlefield">'.$langs->trans("Author").'</td><td>'.$author->getFullName($langs)."</td></tr>";
 
@@ -1514,7 +1514,7 @@ else
 		$title = $langs->trans("Recurrence");
 		//print load_fiche_titre($title, '', 'calendar');
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		print '<tr><td colspan="2"><span class="fa fa-calendar"></span> '.$title.'</td></tr>';
 

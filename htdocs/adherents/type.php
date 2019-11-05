@@ -337,7 +337,7 @@ if ($action == 'create')
 
     dol_fiche_head('');
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 	print '<tbody>';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth200" name="label" autofocus="autofocus"></td></tr>';
@@ -430,7 +430,7 @@ if ($rowid > 0)
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
    		print '<tr><td class="titlefield">'.$langs->trans("Status").'</td><td>';
         if ( !empty($object->statut) ) {
@@ -787,7 +787,7 @@ if ($rowid > 0)
 
 		dol_fiche_head($head, 'card', $langs->trans("MemberType"), 0, 'group');
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->id.'</td></tr>';
 

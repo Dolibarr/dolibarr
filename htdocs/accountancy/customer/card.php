@@ -123,7 +123,7 @@ if (! empty($id)) {
 
 			dol_fiche_head();
 
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent">';
 
 			// Ref facture
 			print '<tr><td>' . $langs->trans("Invoice") . '</td>';

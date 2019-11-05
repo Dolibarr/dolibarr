@@ -72,7 +72,7 @@ $h++;
 dol_fiche_head($head, 'setup', $langs->trans("ExportsArea"), -1, "exports");
 
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td class="center" width="20">&nbsp;</td>';

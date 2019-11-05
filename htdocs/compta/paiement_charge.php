@@ -199,7 +199,7 @@ if ($action == 'create')
 
 	dol_fiche_head('', '');
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td><a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$chid.'">'.$chid.'</a></td></tr>';
 	print '<tr><td>'.$langs->trans("Type")."</td><td>".$charge->type_label."</td></tr>\n";
@@ -260,7 +260,7 @@ if ($action == 'create')
 	$num = 1;
 	$i = 0;
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	//print '<td>'.$langs->trans("SocialContribution").'</td>';
 	print '<td class="left">'.$langs->trans("DateDue").'</td>';

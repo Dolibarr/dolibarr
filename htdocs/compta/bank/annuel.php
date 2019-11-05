@@ -183,7 +183,7 @@ dol_fiche_end();
 print load_fiche_titre('', $link, '');
 
 print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
@@ -262,7 +262,7 @@ else {
 	dol_print_error($db);
 }
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_total"><td><b>'.$langs->trans("CurrentBalance")."</b></td>";
 print '<td colspan="'.($nbcol).'" class="right">'.price($balance).'</td>';

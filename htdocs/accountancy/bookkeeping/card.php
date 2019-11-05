@@ -354,7 +354,7 @@ if ($action == 'create')
 
 	dol_fiche_head();
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	/*print '<tr>';
 	print '<td class="titlefieldcreate fieldrequired">' . $langs->trans("NumPiece") . '</td>';

@@ -136,7 +136,7 @@ if (! function_exists('curl_version'))
 
 print '<br>';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 // Account Parameters
 print '<tr class="liste_titre">';

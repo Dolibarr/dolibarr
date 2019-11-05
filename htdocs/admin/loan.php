@@ -89,7 +89,7 @@ print '<input type="hidden" name="action" value="update">';
 /*
  *  Params
  */
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">' . $langs->trans('Options') . '</td>';
 print "</tr>\n";

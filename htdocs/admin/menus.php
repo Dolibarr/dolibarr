@@ -162,7 +162,7 @@ print "<br>\n";
 clearstatcache();
 
 // Gestionnaires de menu
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Menu").'</td>';
 print '<td>';
 print $form->textwithpicto($langs->trans("InternalUsers"), $langs->trans("InternalExternalDesc"));
