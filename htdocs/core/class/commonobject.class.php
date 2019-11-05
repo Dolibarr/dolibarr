@@ -1079,7 +1079,7 @@ abstract class CommonObject
 	{
         // phpcs:enable
 		global $langs;
-        
+
         $langs->load("dict");
 
 		$tab=array();
