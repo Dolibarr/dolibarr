@@ -1077,7 +1077,7 @@ class Setup extends DolibarrApi
 
         return $list;
     }
-	
+
     /**
      * Get the list of social networks.
      *
