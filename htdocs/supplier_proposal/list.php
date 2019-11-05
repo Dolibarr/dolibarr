@@ -751,7 +751,6 @@ if ($resql)
 			  if (! $i) $totalarray['nbfield']++;
 			  if (! $i) $totalarray['pos'][$totalarray['nbfield']]='sp.total_ht';
 			  $totalarray['val']['sp.total_ht'] += $obj->total_ht;
-
 		}
 		// Amount VAT
 		if (! empty($arrayfields['sp.total_vat']['checked']))
