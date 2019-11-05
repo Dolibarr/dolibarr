@@ -39,7 +39,6 @@ print load_fiche_titre("XCache", '', 'title_setup');
 
 print "<br>\n";
 
-//function_exists('apc_cache_info') || function_exists('eaccelerator_info') || function_exists('xcache_info'))
 if (!function_exists('xcache_info'))
 {
     print 'XCache seems to be not installed. Function xcache_info not found.';
