@@ -177,13 +177,68 @@ if (empty($reshook))
 					if ($objecttmp->status != $objecttmp::STATUS_VALIDATED)
 					{
 						$langs->load("errors");
-						setEventMessages($langs->trans("ErrorObjectMustHaveStatusValidatedToBeDisabled", $objecttmp->ref), null, 'errors');
+						setEventMessages($langs->trans("ErrorObjectMustHaveStatusActiveToBeDisabled", $objecttmp->ref), null, 'errors');
 						$error++;
 						break;
 					}
 
 					// Can be 'cancel()' or 'close()'
 					$result = $objecttmp->cancel($user);
+					if ($result < 0)
+					{
+						setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+						$error++;
+						break;
+					}
+					else $nbok++;
+				}
+				else
+				{
+					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+					$error++;
+					break;
+				}
+			}
+
+			if (! $error)
+			{
+				if ($nbok > 1) setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+				else setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+				$db->commit();
+			}
+			else
+			{
+				$db->rollback();
+			}
+			//var_dump($listofobjectthirdparties);exit;
+		}
+	}
+
+	// Validate records
+	if (! $error && $massaction == 'enable' && $permissiontoadd)
+	{
+		$objecttmp=new $objectclass($db);
+
+		if (! $error)
+		{
+			$db->begin();
+
+			$nbok = 0;
+			foreach($toselect as $toselectid)
+			{
+				$result=$objecttmp->fetch($toselectid);
+				if ($result > 0)
+				{
+					if ($objecttmp->status != $objecttmp::STATUS_DRAFT && $objecttmp->status != $objecttmp::STATUS_CANCELED)
+					{
+						$langs->load("errors");
+						setEventMessages($langs->trans("ErrorObjectMustHaveStatusDraftOrDisabledToBeActivated", $objecttmp->ref), null, 'errors');
+						$error++;
+						break;
+					}
+
+					// Can be 'cancel()' or 'close()'
+					$result = $objecttmp->validate($user);
 					if ($result < 0)
 					{
 						setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
@@ -360,6 +415,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // List of mass actions available
 $arrayofmassactions =  array(
 	//'presend'=>$langs->trans("SendByMail"),
+	'enable'=>$langs->trans("Enable"),
 	'disable'=>$langs->trans("Disable"),
 );
 if ($user->rights->bom->delete) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
