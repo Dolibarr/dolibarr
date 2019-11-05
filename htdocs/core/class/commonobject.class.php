@@ -8035,7 +8035,8 @@ abstract class CommonObject
 
 		if (! $this->db->query($sql))
 		{
-			$this->db->rollback();die($sql);
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
 			return -1;
 		}
 
