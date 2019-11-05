@@ -1125,8 +1125,8 @@ class CMailFile
 		$strContentAltText = '';
 		if ($this->msgishtml)
 		{
-			// Similar code to forge a text from html is also in CMailFile.class.php
-			$strContentAltText = preg_replace("/<br\s*[^>]*>/", " ", $strContent);
+			// Similar code to forge a text from html is also in smtps.class.php
+			$strContentAltText = preg_replace("/<br\s*[^>]*>/", "\n", $strContent);
 			$strContentAltText = html_entity_decode(strip_tags($strContentAltText));
 			$strContentAltText = rtrim(wordwrap($strContentAltText, 75, empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA)?"\r\n":"\n"));
 
