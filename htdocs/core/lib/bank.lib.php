@@ -3,6 +3,7 @@
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2016		Juanjo Menent   	<jmenent@2byte.es>
+ * Copyright (C) 2019	   Nicolas ZABOURI     <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,8 +153,49 @@ function bank_admin_prepare_head($object)
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin', 'remove');
 
+
 	return $head;
 }
+
+
+/**
+ * Prepare array with list of tabs
+ *
+ * @param   Object	$object		Object related to tabs
+ * @param   Object	$num		val to account statement
+ * @return  array				Array of tabs to shoc
+ */
+function account_statement_prepare_head($object,$num)
+{
+	global $langs, $conf, $user,$db;
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT . '/compta/bank/releve.php?account=' . $object->id.'&num='.$num;
+	$head[$h][1] = $langs->trans("AccountStatements");
+	$head[$h][2] = 'statement';
+	$h++;
+
+	// Attached files
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	$upload_dir = $conf->bank->dir_output . "/" . $object->id.'/'.dol_sanitizeFileName($num);
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+	$nbLinks=Link::count($db, $object->element, $object->id);
+
+	$head[$h][0] = DOL_URL_ROOT . "/compta/bank/account_statement_document.php?account=" . $object->id."&num=".$num;
+	$head[$h][1] = $langs->trans("Documents");
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+	$head[$h][2] = 'document';
+	$h++;
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'account_statement');
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'account_statement', 'remove');
+
+	return $head;
+}
+
 
 /**
  * Prepare array with list of tabs
