@@ -75,7 +75,7 @@ if (!$user->rights->opensurvey->read) accessforbidden();
 
 // Definition of fields for list
 $arrayfields=array();
-foreach($object->fields as $key => $val)
+foreach($arrayfields as $key => $val)
 {
     // If $val['visible']==0, then we never show the field
     if (! empty($val['visible'])) $arrayfields['t.'.$key]=array('label'=>$val['label'], 'checked'=>(($val['visible']<0)?0:1), 'enabled'=>$val['enabled'], 'position'=>$val['position']);
@@ -431,7 +431,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 // If no record found
 if ($num == 0)
 {
-	$colspan=1;
+	$colspan = 8;
 	foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
 	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
