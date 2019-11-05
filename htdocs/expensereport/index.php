@@ -164,7 +164,8 @@ $max=10;
 
 $langs->load("boxes");
 
-$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.statut, u.photo, d.rowid, d.ref, d.date_debut as dated, d.date_fin as datef, d.date_create as dm, d.total_ht, d.total_ttc, d.fk_statut as fk_status";
+$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.statut, u.photo, u.email, u.admin";
+$sql.= ", d.rowid, d.ref, d.date_debut as dated, d.date_fin as datef, d.date_create as dm, d.total_ht, d.total_ttc, d.fk_statut as fk_status";
 $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d, ".MAIN_DB_PREFIX."user as u";
 if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE u.rowid = d.fk_user_author";
@@ -211,6 +212,8 @@ if ($result)
             $expensereportstatic->id=$obj->rowid;
             $expensereportstatic->ref=$obj->ref;
             $userstatic->id=$obj->uid;
+            $userstatic->admin = $obj->admin;
+            $userstatic->email = $obj->email;
             $userstatic->lastname=$obj->lastname;
             $userstatic->firstname=$obj->firstname;
             $userstatic->login=$obj->login;
