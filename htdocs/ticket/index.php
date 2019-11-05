@@ -261,7 +261,7 @@ print '</table>';
 print '</div>';
 
 // Build graphic number of object
-$data = $stats->getNbByMonth($endyear, $startyear);
+$data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
