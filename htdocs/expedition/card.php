@@ -124,7 +124,7 @@ if (empty($reshook))
 
 	// Actions to build doc
 	$upload_dir = $conf->expedition->dir_output.'/sending';
-	$permissioncreate = $user->rights->expedition->creer;
+	$permissiontoadd = $user->rights->expedition->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Reopen

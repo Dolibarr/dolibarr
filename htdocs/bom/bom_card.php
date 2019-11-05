@@ -77,8 +77,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 
 $permissionnote=$user->rights->bom->write;	// Used by the include of actions_setnotes.inc.php
 $permissiondellink=$user->rights->bom->write;	// Used by the include of actions_dellink.inc.php
-$permissionedit=$user->rights->bom->write; // Used by the include of actions_lineupdown.inc.php
-$permissiontoadd=$user->rights->bom->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoadd=$user->rights->bom->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->rights->bom->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 
 

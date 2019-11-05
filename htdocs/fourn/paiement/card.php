@@ -139,7 +139,7 @@ if ($action == 'setdatep' && ! empty($_POST['datepday']))
 // Build document
 $upload_dir = $conf->fournisseur->payment->dir_output;
 // TODO: get the appropriate permisson
-$permissioncreate = true;
+$permissiontoadd = true;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 

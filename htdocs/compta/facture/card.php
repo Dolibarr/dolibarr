@@ -2489,7 +2489,7 @@ if (empty($reshook))
 
 	// Actions to build doc
 	$upload_dir = $conf->facture->multidir_output[$object->entity];
-	$permissioncreate=$usercancreate;
+	$permissiontoadd=$usercancreate;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 

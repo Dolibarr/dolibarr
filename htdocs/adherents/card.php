@@ -818,7 +818,7 @@ if (empty($reshook))
 
 	// Actions to build doc
 	$upload_dir = $conf->adherent->dir_output;
-	$permissioncreate=$user->rights->adherent->creer;
+	$permissiontoadd=$user->rights->adherent->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Actions to send emails

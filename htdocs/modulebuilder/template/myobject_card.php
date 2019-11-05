@@ -105,11 +105,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 //$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
 //$result = restrictedArea($user, 'mymodule', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
+$permissiontoread = $user->rights->mymodule->myobject->read;
+$permissiontoadd = $user->rights->mymodule->myobject->write; 	// Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->rights->mymodule->myobject->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 $permissionnote = $user->rights->mymodule->myobject->write;		// Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->mymodule->myobject->write;	// Used by the include of actions_dellink.inc.php
-$permissionedit = $user->rights->mymodule->myobject->write; 		// Used by the include of actions_lineupdown.inc.php
-$permissiontoadd = $user->rights->mymodule->myobject->write; 		// Used by the include of actions_addupdatedelete.inc.php
-$permissiontodelete = $user->rights->mymodule->myobject->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 
 
 

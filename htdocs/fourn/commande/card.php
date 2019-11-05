@@ -1035,7 +1035,7 @@ if (empty($reshook))
 
 	// Actions to build doc
 	$upload_dir = $conf->fournisseur->commande->dir_output;
-	$permissioncreate = $user->rights->fournisseur->commande->creer;
+	$permissiontoadd = $user->rights->fournisseur->commande->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 

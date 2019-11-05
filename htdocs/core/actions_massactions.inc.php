@@ -824,7 +824,7 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 			// Builddoc
 			$donotredirect = 1;
 			$upload_dir = $conf->facture->dir_output;
-			$permissioncreate=$user->rights->facture->creer;
+			$permissiontoadd=$user->rights->facture->creer;
 
 			// Call action to build doc
 			$savobject = $object;

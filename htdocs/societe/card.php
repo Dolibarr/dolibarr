@@ -871,7 +871,7 @@ if (empty($reshook))
     // Actions to build doc
     $id = $socid;
     $upload_dir = $conf->societe->dir_output;
-    $permissioncreate=$user->rights->societe->creer;
+    $permissiontoadd=$user->rights->societe->creer;
     include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 

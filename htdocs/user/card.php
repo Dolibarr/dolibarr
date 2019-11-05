@@ -665,7 +665,7 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->user->dir_output;
-	$permissioncreate=$user->rights->user->user->creer;
+	$permissiontoadd=$user->rights->user->user->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 

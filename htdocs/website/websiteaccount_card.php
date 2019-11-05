@@ -67,8 +67,7 @@ if (empty($action) && empty($id) && empty($ref)) $action='view';
 
 $permissionnote=$user->rights->websiteaccount->write;	// Used by the include of actions_setnotes.inc.php
 $permissiondellink=$user->rights->websiteaccount->write;	// Used by the include of actions_dellink.inc.php
-$permissionedit=$user->rights->websiteaccount->write; // Used by the include of actions_lineupdown.inc.php
-$permissiontoadd=$user->rights->websiteaccount->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoadd=$user->rights->websiteaccount->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once.

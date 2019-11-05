@@ -110,7 +110,7 @@ $usercancreatepurchaseorder = $user->rights->fournisseur->commande->creer;
 
 $permissionnote = $usercancreate; 		// Used by the include of actions_setnotes.inc.php
 $permissiondellink = $usercancreate; 	// Used by the include of actions_dellink.inc.php
-$permissionedit = $usercancreate; 		// Used by the include of actions_lineupdown.inc.php
+$permissiontoadd = $usercancreate; 		// Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 
 /*
@@ -1411,7 +1411,7 @@ if (empty($reshook))
 
 	// Actions to build doc
 	$upload_dir = $conf->commande->multidir_output[$object->entity];
-	$permissioncreate = $usercancreate;
+	$permissiontoadd = $usercancreate;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Actions to send emails

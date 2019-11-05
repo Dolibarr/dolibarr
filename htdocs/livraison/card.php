@@ -244,7 +244,7 @@ if ($action == 'update_extras_line')
 
 // Actions to build doc
 $upload_dir = $conf->expedition->dir_output.'/receipt';
-$permissioncreate = $user->rights->expedition->creer;
+$permissiontoadd = $user->rights->expedition->creer;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
