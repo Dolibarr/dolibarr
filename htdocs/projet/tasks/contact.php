@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -42,7 +42,7 @@ $project_ref=GETPOST('project_ref', 'alpha');
 
 // Security check
 $socid=0;
-//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 //$result = restrictedArea($user, 'projet', $id, 'projet_task');
 if (! $user->rights->projet->lire) accessforbidden();
 
@@ -356,7 +356,7 @@ if ($id > 0 || ! empty($ref))
 		/*
 		 * Lines of contacts
 		 */
-/*
+		/*
 		// Contacts lines (modules that overwrite templates must declare this into descriptor)
 		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
 		foreach($dirtpls as $reldir)
@@ -364,7 +364,7 @@ if ($id > 0 || ! empty($ref))
 		    $res=@include dol_buildpath($reldir.'/contacts.tpl.php');
 		    if ($res) break;
 		}
-*/
+		*/
 
 		/*
 		 * Add a new contact line

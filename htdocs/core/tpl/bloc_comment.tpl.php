@@ -36,21 +36,25 @@ print '<td width="25%"></td>';
 print '<td width="25%"></td>';
 print "</tr>\n";
 
-print '<tr class="oddeven">';
+if ($action !== 'editcomment')
+{
+    print '<tr class="oddeven">';
 
-// Description
-print '<td colspan="3">';
+    // Description
+    print '<td colspan="3">';
 
-$desc = GETPOST('comment_description');
+    $desc = GETPOST('comment_description');
 
-$doleditor = new DolEditor('comment_description', $desc, '', 80, 'dolibarr_notes', 'In', 0, true, true, ROWS_3, '100%');
-print $doleditor->Create(1);
+    $doleditor = new DolEditor('comment_description', $desc, '', 80, 'dolibarr_notes', 'In', 0, true, true, ROWS_3, '100%');
+    print $doleditor->Create(1);
 
-print '</td>';
+    print '</td>';
 
-print '<td class="center">';
-print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-print '</td></tr>';
+    print '<td class="center">';
+    print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+    print '</td></tr>';
+}
+
 print '</table></form>';
 
 // List of comments
@@ -91,15 +95,52 @@ if (!empty($object->comments))
 
 		print '<div class="comment-cell comment-right">';
 		print '<div class="comment-table width100p">';
-		print '<div class="comment-description comment-cell">';
-		print $comment->description;
+
+        if ($action === 'editcomment' && $comment->id == $idcomment)
+        {
+            print '<form method="POST" action="'.$varpage.'?id='.$object->id.'">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="action" value="updatecomment">';
+            print '<input type="hidden" name="id" value="'.$object->id.'">';
+            print '<input type="hidden" name="idcomment" value="'.$idcomment.'">';
+            print '<input type="hidden" name="withproject" value="'.$withproject.'">';
+        }
+
+        print '<div class="comment-description comment-cell">';
+        if ($action === 'editcomment' && $comment->id == $idcomment)
+        {
+            $doleditor = new DolEditor('comment_description', $comment->description, '', 80, 'dolibarr_notes', 'In', 0, true, true, ROWS_3, '100%');
+            print $doleditor->Create(1);
+        }
+        else
+        {
+            print $comment->description;
+        }
 		print '</div>'; // End comment-description
-		if(($first && $fk_user == $user->id) || $user->admin == 1) {
-			print '<a class="comment-delete comment-cell" href="'.$varpage.'?action=deletecomment&id='.$id.'&withproject=1&idcomment='.$comment->id.'" title="'.$langs->trans('Delete').'">';
-			print img_picto('', 'delete.png');
-			print '</a>';
-		}
-		print '</div>'; // End comment-table
+
+        if ($action === 'editcomment' && $comment->id == $idcomment)
+        {
+            print '<input name="update" type="submit" class="button" value="'.$langs->trans("Update").'">';
+            print '<input name="cancel" type="submit" class="button" value="'.$langs->trans("Cancel").'">';
+
+            print '</form>';
+        }
+        else
+        {
+            if ($fk_user == $user->id || $user->admin == 1)
+            {
+                print '<a class="comment-edit comment-cell" href="'.$varpage.'?action=editcomment&id='.$id.'&withproject=1&idcomment='.$comment->id.'#comment" title="'.$langs->trans('Edit').'">';
+                print img_picto('', 'edit.png');
+                print '</a>';
+            }
+            if(($first && $fk_user == $user->id) || $user->admin == 1) {
+                print '<a class="comment-delete comment-cell" href="'.$varpage.'?action=deletecomment&id='.$id.'&withproject=1&idcomment='.$comment->id.'" title="'.$langs->trans('Delete').'">';
+                print img_picto('', 'delete.png');
+                print '</a>';
+            }
+        }
+
+        print '</div>'; // End comment-table
 		print '</div>'; // End comment-right
 		print '</div>'; // End comment
 

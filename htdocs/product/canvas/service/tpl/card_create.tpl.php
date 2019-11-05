@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
@@ -31,7 +31,7 @@ $statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSe
 <!-- BEGIN PHP TEMPLATE CREATE.TPL -->
 
 <?php
-print load_fiche_titre($langs->trans("NewService"), '', 'title_products.png');
+print load_fiche_titre($langs->trans("NewService"), '', 'products');
 dol_fiche_head('');
 ?>
 
@@ -81,12 +81,11 @@ dol_fiche_head('');
 <br>
 
 <?php if (! $conf->global->PRODUIT_MULTIPRICES) { ?>
-
 <table class="border allwidth">
 
 <tr><td><?php echo $langs->trans("SellingPrice"); ?></td>
 <td><input name="price" size="10" value="<?php echo $object->price; ?>">
-<?php echo $object->price_base_type; ?>
+	<?php echo $object->price_base_type; ?>
 </td></tr>
 
 <tr><td><?php echo $langs->trans("MinPrice"); ?></td>
@@ -94,7 +93,7 @@ dol_fiche_head('');
 </td></tr>
 
 <tr><td width="20%"><?php echo $langs->trans("VATRate"); ?></td><td>
-<?php echo $object->tva_tx; ?>
+	<?php echo $object->tva_tx; ?>
 </td></tr>
 
 </table>

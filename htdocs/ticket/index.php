@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -44,8 +44,8 @@ $msg_id = GETPOST('msg_id', 'int');
 
 $action = GETPOST('action', 'aZ09');
 
-if ($user->societe_id) {
-    $socid = $user->societe_id;
+if ($user->socid) {
+    $socid = $user->socid;
 }
 
 // Security check
@@ -77,7 +77,7 @@ $tickesupstatic = new Ticket($db);
 llxHeader('', $langs->trans('TicketsIndex'), '');
 
 $linkback='';
-print load_fiche_titre($langs->trans('TicketsIndex'), $linkback, 'title_ticket.png');
+print load_fiche_titre($langs->trans('TicketsIndex'), $linkback, 'ticket');
 
 
 $dir = '';
@@ -141,8 +141,8 @@ if (!$user->rights->societe->client->voir && !$socid) {
 }
 
 // External users restriction
-if ($user->societe_id > 0) {
-    $sql .= " AND t.fk_soc='" . $user->societe_id . "'";
+if ($user->socid > 0) {
+    $sql .= " AND t.fk_soc='" . $user->socid . "'";
 } else {
     // For internals users,
     if (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && !$user->rights->ticket->manage) {
@@ -210,6 +210,7 @@ $stringtoshow .= '<input type="image" alt="' . $langs->trans("Refresh") . '" src
 $stringtoshow .= '</form>';
 $stringtoshow .= '</div>';
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><th >' . $langs->trans("Statistics") . ' ' . img_picto('', 'filter.png', 'id="idsubimgDOLUSERCOOKIE_ticket_by_status" class="linkobject"') . '</th></tr>';
 
@@ -257,6 +258,7 @@ if (! empty($dataseries) && count($dataseries) > 1) {
 print '</td></tr>';
 
 print '</table>';
+print '</div>';
 
 // Build graphic number of object
 $data = $stats->getNbByMonth($endyear, $startyear);
@@ -286,8 +288,8 @@ if (!$user->rights->societe->client->voir && !$socid) {
     $sql .= " AND t.fk_soc = sc.fk_soc AND sc.fk_user = " . $user->id;
 }
 
-if ($user->societe_id > 0) {
-    $sql .= " AND t.fk_soc='" . $user->societe_id . "'";
+if ($user->socid > 0) {
+    $sql .= " AND t.fk_soc='" . $user->socid . "'";
 } else {
     // Restricted to assigned user only
     if ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && !$user->rights->ticket->manage) {
@@ -312,7 +314,6 @@ if ($result) {
     print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/ticket/list.php?search_fk_statut[]='.Ticket::STATUS_NOT_READ.'">'.$langs->trans("FullList").'</th>';
     print '</tr>';
     if ($num > 0) {
-
         while ($i < $num) {
             $objp = $db->fetch_object($result);
 

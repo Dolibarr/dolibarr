@@ -22,7 +22,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -825,7 +825,7 @@ class ExtraFields
 	 * 	Load array this->attributes, or old this->attribute_xxx like attribute_label, attribute_type, ...
 	 *
 	 * 	@param	string		$elementtype		Type of element ('adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
-	 * 	@param	boolean		$forceload			Force load of extra fields whatever is option MAIN_EXTRAFIELDS_DISABLED. Deprecated. Should not be required.
+	 * 	@param	boolean		$forceload			Force load of extra fields whatever is status of cache.
 	 * 	@return	array							Array of attributes keys+label for all extra fields.
 	 */
 	public function fetch_name_optionals_label($elementtype, $forceload = false)
@@ -835,14 +835,18 @@ class ExtraFields
 
 		if (empty($elementtype)) return array();
 
-		if ($elementtype == 'thirdparty') $elementtype='societe';
-		if ($elementtype == 'contact') $elementtype='socpeople';
+		if ($elementtype == 'thirdparty')     $elementtype='societe';
+		if ($elementtype == 'contact')        $elementtype='socpeople';
 		if ($elementtype == 'order_supplier') $elementtype='commande_fournisseur';
 
 		$array_name_label=array();
 
 		// To avoid conflicts with external modules. TODO Remove this.
-		if (!$forceload && !empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return $array_name_label;
+		if (empty($forceload) && !empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return $array_name_label;
+
+		// If already loaded
+		// TODO Enable this cache test
+		// if (empty($forceload) && ! empty($this->attributes[$tab->elementtype]['loaded'])) return $array_name_label;
 
 		// Set array of label of entity
 		// TODO Remove completely loading of label. This should be done by presentation.
@@ -959,9 +963,10 @@ class ExtraFields
 	 * @param  string  $morecss        			More css (to defined size of field. Old behaviour: may also be a numeric)
 	 * @param  int     $objectid       			Current object id
 	 * @param  string  $extrafieldsobjectkey	If defined (for example $object->table_element), use the new method to get extrafields data
+	 * @param  string  $mode                    1=Used for search filters
 	 * @return string
 	 */
-	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $objectid = 0, $extrafieldsobjectkey = '')
+	public function showInputField($key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '', $objectid = 0, $extrafieldsobjectkey = '', $mode = 0)
 	{
 		global $conf,$langs,$form;
 
@@ -1024,7 +1029,7 @@ class ExtraFields
 			{
 				$morecss = 'minwidth100imp';
 			}
-			elseif ($type == 'datetime')
+			elseif ($type == 'datetime' || $type == 'link')
 			{
 				$morecss = 'minwidth200imp';
 			}
@@ -1116,13 +1121,20 @@ class ExtraFields
 		}
 		elseif ($type == 'boolean')
 		{
-			$checked='';
-			if (!empty($value)) {
-				$checked=' checked value="1" ';
-			} else {
-				$checked=' value="1" ';
+			if (empty($mode))
+			{
+				$checked='';
+				if (!empty($value)) {
+					$checked=' checked value="1" ';
+				} else {
+					$checked=' value="1" ';
+				}
+				$out='<input type="checkbox" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.$checked.' '.($moreparam?$moreparam:'').'>';
 			}
-			$out='<input type="checkbox" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.$checked.' '.($moreparam?$moreparam:'').'>';
+			else
+			{
+				$out.=$form->selectyesno($keyprefix.$key.$keysuffix, $value, 1, false, 1);
+			}
 		}
 		elseif ($type == 'price')
 		{
@@ -1269,7 +1281,7 @@ class ExtraFields
                             // Several field into label (eq table:code|libelle:rowid)
                             $notrans = false;
                             $fields_label = explode('|', $InfoFieldList[1]);
-                            if (is_array($fields_label)) {
+                            if (is_array($fields_label) && count($fields_label) > 1) {
                                 $notrans = true;
                                 foreach ($fields_label as $field_toshow) {
                                     $labeltoshow .= $obj->$field_toshow . ' ';
@@ -1283,27 +1295,16 @@ class ExtraFields
                             	if (!$notrans) {
 	                                foreach ($fields_label as $field_toshow) {
 	                                    $translabel = $langs->trans($obj->$field_toshow);
-	                                    if ($translabel != $obj->$field_toshow) {
-	                                        $labeltoshow = dol_trunc($translabel, 18) . ' ';
-	                                    } else {
-	                                        $labeltoshow = dol_trunc($obj->$field_toshow, 18) . ' ';
-	                                    }
+	                                    $labeltoshow = dol_trunc($translabel, 18) . ' ';
 	                                }
                             	}
                                 $out .= '<option value="' . $obj->rowid . '" selected>' . $labeltoshow . '</option>';
                             } else {
                                 if (!$notrans) {
                                     $translabel = $langs->trans($obj->{$InfoFieldList[1]});
-                                    if ($translabel != $obj->{$InfoFieldList[1]}) {
-                                        $labeltoshow = dol_trunc($translabel, 18);
-                                    } else {
-                                        $labeltoshow = dol_trunc($obj->{$InfoFieldList[1]}, 18);
-                                    }
+                                    $labeltoshow = dol_trunc($translabel, 18);
                                 }
                                 if (empty($labeltoshow)) $labeltoshow = '(not defined)';
-                                if ($value == $obj->rowid) {
-                                    $out .= '<option value="' . $obj->rowid . '" selected>' . $labeltoshow . '</option>';
-                                }
 
                                 if (!empty($InfoFieldList[3]) && $parentField) {
                                     $parent = $parentName . ':' . $obj->{$parentField};
@@ -1403,7 +1404,6 @@ class ExtraFields
                     $sql = 'SELECT ' . $keyList;
                     $sql .= ' FROM ' . MAIN_DB_PREFIX . $InfoFieldList[0];
                     if (!empty($InfoFieldList[4])) {
-
                         // can use SELECT request
                         if (strpos($InfoFieldList[4], '$SEL$') !== false) {
                             $InfoFieldList[4] = str_replace('$SEL$', 'SELECT', $InfoFieldList[4]);
@@ -1558,7 +1558,7 @@ class ExtraFields
 		{
 			$param_list=array_keys($param['options']);				// $param_list='ObjectName:classPath'
 			$showempty=(($required && $default != '')?0:1);
-			$out=$form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty);
+			$out=$form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss);
 		}
 		elseif ($type == 'password')
 		{
@@ -1573,9 +1573,9 @@ class ExtraFields
 		 if ($type == 'date') $out.=' (YYYY-MM-DD)';
 		 elseif ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
 		 */
-		 if (! empty($help)) {
-			$out .= $form->textwithpicto("", $help);
-		 }
+		if (! empty($help) && $keyprefix != 'search_options_') {
+			$out .= $form->textwithpicto('', $help, 1, 'help', '', 0, 3);
+		}
 		return $out;
 	}
 
@@ -1586,7 +1586,7 @@ class ExtraFields
 	 * @param   string	$key            		Key of attribute
 	 * @param   string	$value          		Value to show
 	 * @param	string	$moreparam				To add more parameters on html input tag (only checkbox use html input for output rendering)
-	 * @param	string	$extrafieldsobjectkey	If defined (for example $object->table_element), use the new method to get extrafields data
+	 * @param	string	$extrafieldsobjectkey	If defined (for example $object->table_element), function uses the new method to get extrafields data
 	 * @return	string							Formated value
 	 */
 	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '')
@@ -1611,6 +1611,7 @@ class ExtraFields
 		}
 		else	// Old usage
 		{
+			//dol_syslog("Warning: parameter 'extrafieldsobjectkey' is missing", LOG_WARNING);
 			$label=$this->attribute_label[$key];
 			$type=$this->attribute_type[$key];
 			$size=$this->attribute_size[$key];
@@ -1812,7 +1813,6 @@ class ExtraFields
 				$value = ''; // value was used, so now we reste it to use it to build final output
 				$toprint=array();
 				while ( $obj = $this->db->fetch_object($resql) ) {
-
 					// Several field into label (eq table:code|libelle:rowid)
 					$fields_label = explode('|', $InfoFieldList[1]);
 					if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
@@ -2010,14 +2010,15 @@ class ExtraFields
 	/**
 	 * Fill array_options property of object by extrafields value (using for data sent by forms)
 	 *
-	 * @param   array	$extralabels    Deprecated $array of extrafields
+	 * @param   array	$extralabels    Deprecated (old $array of extrafields, now set this to null)
 	 * @param   object	$object         Object
-	 * @param	string	$onlykey		Only following key is filled. When we make update of only one extrafield ($action = 'update_extras'), calling page must must set this to avoid to have other extrafields being reset.
+	 * @param	string	$onlykey		Only the following key is filled. When we make update of only one extrafield ($action = 'update_extras'), calling page must set this to avoid to have other extrafields being reset.
 	 * @return	int						1 if array_options set, 0 if no value, -1 if error (field required missing for example)
 	 */
 	public function setOptionalsFromPost($extralabels, &$object, $onlykey = '')
 	{
 		global $_POST, $langs;
+
 		$nofillrequired=0;// For error when required field left blank
 		$error_field_required = array();
 
@@ -2088,6 +2089,7 @@ class ExtraFields
 				else
 				{
 					$value_key=GETPOST("options_".$key);
+					if (in_array($key_type, array('link')) && $value_key == '-1') $value_key = '';
 				}
 
 				$object->array_options["options_".$key]=$value_key;

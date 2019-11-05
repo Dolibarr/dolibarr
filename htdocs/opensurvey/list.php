@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -63,7 +63,7 @@ $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->opensurvey->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('surveylist'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('survey');	// Load $extrafields->attributes['myobject']
+$extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Default sort order (if not yet defined by previous GETPOST)
@@ -85,8 +85,14 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 {
     foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
     {
-        if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
-            $arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+        if (! empty($extrafields->attributes[$object->table_element]['list'][$key])) {
+			$arrayfields["ef.".$key] = array(
+				'label'=>$extrafields->attributes[$object->table_element]['label'][$key],
+				'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1),
+				'position'=>$extrafields->attributes[$object->table_element]['pos'][$key],
+				'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key])
+			);
+		}
     }
 }
 $object->fields = dol_sort_array($object->fields, 'position');
@@ -127,8 +133,8 @@ if (empty($reshook))
     // Mass actions
     $objectclass='Opensurveysondage';
     $objectlabel='Opensurveysondage';
-    $permtoread = $user->rights->opensurvey->read;
-    $permtodelete = $user->rights->opensurvey->write;
+    $permissiontoread = $user->rights->opensurvey->read;
+    $permissiontodelete = $user->rights->opensurvey->write;
     $uploaddir = $conf->opensurvey->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -245,7 +251,7 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 $newcardbutton='';
 $newcardbutton.= dolGetButtonTitle($langs->trans('NewSurvey'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/opensurvey/wizard/index.php', '', $user->rights->opensurvey->write);
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit);
 
 // Add code for pre mass action (confirmation or email presend form)
 $topicmail="SendOpenSurveyRef";

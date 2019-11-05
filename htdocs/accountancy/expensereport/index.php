@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -36,7 +36,7 @@ $langs->loadLangs(array("compta","bills","other","main","accountancy"));
 if (empty($conf->accounting->enabled)) {
 	accessforbidden();
 }
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 	accessforbidden();
 if (! $user->rights->accounting->bind->write)
 	accessforbidden();
@@ -94,7 +94,6 @@ if ($action == 'clean' || $action == 'validatehistory')
 }
 
 if ($action == 'validatehistory') {
-
 	$error = 0;
 	$db->begin();
 
@@ -187,7 +186,6 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	while ( $row = $db->fetch_row($resql)) {
-
 		print '<tr class="oddeven"><td>';
 		if ($row[0] == 'tobind')
 		{
@@ -259,7 +257,6 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	while ( $row = $db->fetch_row($resql)) {
-
 		print '<tr class="oddeven"><td>';
 		if ($row[0] == 'tobind')
 		{

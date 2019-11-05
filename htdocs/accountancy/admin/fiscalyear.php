@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -43,9 +43,9 @@ if (! $sortorder) $sortorder="ASC";
 $langs->loadLangs(array("admin","compta"));
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 	accessforbidden();
-if (! $user->rights->accounting->fiscalyear)              // If we can read accounting records, we should be able to see fiscal year.
+if (! $user->rights->accounting->fiscalyear->write)              // If we can read accounting records, we should be able to see fiscal year.
 	accessforbidden();
 
 $error = 0;
@@ -112,7 +112,7 @@ if ($result)
 	$i = 0;
 
 
-    $addbutton.= dolGetButtonTitle($langs->trans('NewFiscalYear'), '', 'fa fa-plus-circle', 'fiscalyear_card.php?action=create', '', $user->rights->accounting->fiscalyear);
+    $addbutton.= dolGetButtonTitle($langs->trans('NewFiscalYear'), '', 'fa fa-plus-circle', 'fiscalyear_card.php?action=create', '', $user->rights->accounting->fiscalyear->write);
 
 
 	$title = $langs->trans('AccountingPeriods');

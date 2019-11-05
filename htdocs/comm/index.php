@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -51,10 +51,10 @@ $bid=GETPOST('bid', 'int');
 
 // Securite acces client
 $socid=GETPOST('socid', 'int');
-if (isset($user->societe_id) && $user->societe_id > 0)
+if (isset($user->socid) && $user->socid > 0)
 {
 	$action = '';
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 $max=3;
@@ -79,7 +79,7 @@ if (! empty($conf->fournisseur->enabled)) $supplierorderstatic=new CommandeFourn
 
 llxHeader("", $langs->trans("CommercialArea"));
 
-print load_fiche_titre($langs->trans("CommercialArea"), '', 'title_commercial.png');
+print load_fiche_titre($langs->trans("CommercialArea"), '', 'commercial');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -120,6 +120,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
     	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<div class="div-table-responsive-no-min">';
     	print '<table class="noborder nohover centpercent">';
     	$i=0;
     	foreach($listofsearchfields as $key => $value)
@@ -132,6 +133,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     		$i++;
     	}
     	print '</table>';
+        print '</div>';
     	print '</form>';
     	print '<br>';
     }
@@ -208,7 +210,6 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 		}
 		else
 		{
-
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
 		}
 		print "</table></div><br>";
@@ -379,7 +380,6 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 		}
 		else
 		{
-
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoOrder").'</td></tr>';
 		}
 		print "</table>";
@@ -430,7 +430,6 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
 			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
 			while ($i < $nbofloop)
             {
-
                 $obj = $db->fetch_object($resql);
                 print '<tr class="oddeven"><td class="nowrap">';
                 $supplierorderstatic->id=$obj->rowid;
@@ -470,7 +469,6 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
         }
         else
         {
-
             print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoSupplierOrder").'</td></tr>';
         }
         print "</table>";
@@ -563,10 +561,10 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
 	$sql = "SELECT s.nom as name, s.rowid, s.datec as dc, s.canvas, s.tms as dm";
     $sql.= ", s.code_fournisseur";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (! $user->rights->societe->client->voir && ! $user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.fournisseur = 1";
 	$sql.= " AND s.entity IN (".getEntity($companystatic->element).")";
-	if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if (! $user->rights->societe->client->voir && ! $user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid)	$sql.= " AND s.rowid = ".$socid;
 	$sql.= " ORDER BY s.datec DESC";
 	$sql.= $db->plimit($max, 0);

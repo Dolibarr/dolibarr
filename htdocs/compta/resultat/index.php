@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -98,7 +98,7 @@ $nbofyear = ($year_end - $year_start) + 1;
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id > 0) $socid = $user->societe_id;
+if ($user->socid > 0) $socid = $user->socid;
 if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user, 'compta', '', '', 'resultat');
 if (! empty($conf->accounting->enabled)) $result=restrictedArea($user, 'accounting', '', '', 'comptarapport');
 
@@ -480,10 +480,10 @@ if (! empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
 					$obj = $db->fetch_object($result);
 
 					if (! isset($encaiss[$obj->dm])) $encaiss[$obj->dm]=0;
-					$encaiss[$obj->dm] += $obj->amount;
+					$encaiss[$obj->dm] += -$obj->amount;
 
 					if (! isset($encaiss_ttc[$obj->dm])) $encaiss_ttc[$obj->dm]=0;
-					$encaiss_ttc[$obj->dm] += $obj->amount;
+					$encaiss_ttc[$obj->dm] += -$obj->amount;
 
 					$i++;
 				}
@@ -749,17 +749,17 @@ if (! empty($conf->don->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
         $sql.= " AND fk_statut in (1,2)";
 		if (! empty($date_start) && ! empty($date_end))
 			$sql.= " AND p.datedon >= '".$db->idate($date_start)."' AND p.datedon <= '".$db->idate($date_end)."'";
-    }
-     elseif ($modecompta == 'RECETTES-DEPENSES') {
+    } elseif ($modecompta == 'RECETTES-DEPENSES') {
         $sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(pe.datep,'%Y-%m') as dm, sum(p.amount) as amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as p";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_donation as pe ON pe.fk_donation = p.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
 		$sql.= " WHERE p.entity IN (".getEntity('donation').")";
    	    $sql.= " AND fk_statut >= 2";
-		if (! empty($date_start) && ! empty($date_end))
-			$sql.= " AND pe.datep >= '".$db->idate($date_start)."' AND pe.datep <= '".$db->idate($date_end)."'";
-     }
+        if (! empty($date_start) && ! empty($date_end)) {
+            $sql.= " AND pe.datep >= '".$db->idate($date_start)."' AND pe.datep <= '".$db->idate($date_end)."'";
+        }
+    }
 
     $sql.= " GROUP BY p.societe, p.firstname, p.lastname, dm";
 

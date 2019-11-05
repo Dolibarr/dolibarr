@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -91,7 +91,7 @@ if (empty($modetax)) $modetax=0;
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 
@@ -124,8 +124,9 @@ llxHeader('', $title, '', '', 0, 0, '', '', $morequerystring);
 //print load_fiche_titre($langs->trans("VAT"),"");
 
 //$fsearch.='<br>';
-$fsearch.='  <input type="hidden" name="year" value="'.$year.'">';
-$fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
+$fsearch ='<!-- hidden fields for form -->';
+$fsearch.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+$fsearch.='<input type="hidden" name="modetax" value="'.$modetax.'">';
 //$fsearch.='  '.$langs->trans("SalesTurnoverMinimum").': ';
 //$fsearch.='  <input type="text" name="min" value="'.$min.'">';
 
@@ -529,7 +530,7 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 	}
 
 	// Blank line
-	print '<tr><td colspan="'.($span+1).'">&nbsp;</td></tr>';
+	print '<tr><td colspan="'.($span+2).'">&nbsp;</td></tr>';
 
 	// Print table headers for this quadri - expenses now
 	print '<tr class="liste_titre liste_titre_topborder">';

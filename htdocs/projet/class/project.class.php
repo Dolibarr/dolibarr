@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -60,6 +60,9 @@ class Project extends CommonObject
 	 */
     public $ismultientitymanaged = 1;
 
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
     public $picto = 'projectpub';
 
     /**
@@ -401,7 +404,7 @@ class Project extends CommonObject
                     $result = 1;
                 }
                 else
-              {
+				{
                     $this->db->rollback();
                     $result = -1;
                 }
@@ -942,48 +945,27 @@ class Project extends CommonObject
     /**
      *  Renvoi status label for a status
      *
-     *  @param	int		$statut     id statut
-     *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+     *  @param	int		$status     id status
+     *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
      * 	@return string				Label
      */
-    public function LibStatut($statut, $mode = 0)
+    public function LibStatut($status, $mode = 0)
     {
         // phpcs:enable
         global $langs;
 
-        if ($mode == 0) {
-            return $langs->trans($this->statuts_long[$statut]);
-        } elseif ($mode == 1) {
-            return $langs->trans($this->statuts_short[$statut]);
-        } elseif ($mode == 2) {
-            if ($statut == 0)
-                return img_picto($langs->trans($this->statuts_long[$statut]), 'statut0') . ' ' . $langs->trans($this->statuts_short[$statut]);
-            elseif ($statut == 1)
-                return img_picto($langs->trans($this->statuts_long[$statut]), 'statut4') . ' ' . $langs->trans($this->statuts_short[$statut]);
-            elseif ($statut == 2)
-                return img_picto($langs->trans($this->statuts_long[$statut]), 'statut6') . ' ' . $langs->trans($this->statuts_short[$statut]);
-        } elseif ($mode == 3) {
-            if ($statut == 0)
-                return img_picto($langs->trans($this->statuts_long[$statut]), 'statut0');
-            elseif ($statut == 1)
-                return img_picto($langs->trans($this->statuts_long[$statut]), 'statut4');
-            elseif ($statut == 2)
-                return img_picto($langs->trans($this->statuts_long[$statut]), 'statut6');
-        } elseif ($mode == 4) {
-            if ($statut == 0)
-                return img_picto($langs->trans($this->statuts_long[$statut]), 'statut0') . ' ' . $langs->trans($this->statuts_long[$statut]);
-            elseif ($statut == 1)
-                return img_picto($langs->trans($this->statuts_long[$statut]), 'statut4') . ' ' . $langs->trans($this->statuts_long[$statut]);
-            if ($statut == 2)
-                return img_picto($langs->trans($this->statuts_long[$statut]), 'statut6') . ' ' . $langs->trans($this->statuts_long[$statut]);
-        } elseif ($mode == 5) {
-            if ($statut == 0)
-                return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_long[$statut]), 'statut0');
-            elseif ($statut == 1)
-                return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_long[$statut]), 'statut4');
-            elseif ($statut == 2)
-                return $langs->trans($this->statuts_short[$statut]) . ' ' . img_picto($langs->trans($this->statuts_long[$statut]), 'statut6');
+        $statustrans = array(
+            0 => 'status0',
+            1 => 'status4',
+            2 => 'status6',
+        );
+
+        $statusClass = 'status0';
+        if(!empty($statustrans[$status])){
+            $statusClass = $statustrans[$status];
         }
+
+        return dolGetStatus($langs->trans($this->statuts_long[$status]), $langs->trans($this->statuts_short[$status]), '', $statusClass, $mode);
     }
 
     /**
@@ -1243,7 +1225,7 @@ class Project extends CommonObject
             // No filter. Use this if user has permission to see all project
         }
 
-	$sql.= $filter;
+		$sql.= $filter;
         //print $sql;
 
         $resql = $this->db->query($sql);
@@ -1474,7 +1456,7 @@ class Project extends CommonObject
 
 				// Security check
 				$socid=0;
-				if ($user->societe_id > 0) $socid = $user->societe_id;
+				if ($user->socid > 0) $socid = $user->socid;
 
 				$tasksarray=$taskstatic->getTasksArray(0, 0, $fromid, $socid, 0);
 
@@ -1554,7 +1536,7 @@ class Project extends CommonObject
 
 		// Security check
 		$socid=0;
-		if ($user->societe_id > 0) $socid = $user->societe_id;
+		if ($user->socid > 0) $socid = $user->socid;
 
 		$tasksarray=$taskstatic->getTasksArray(0, 0, $this->id, $socid, 0);
 
@@ -1646,9 +1628,11 @@ class Project extends CommonObject
 	 *
 	 *    @param	string	$tableName			Table of the element to update
 	 *    @param	int		$elementSelectId	Key-rowid of the line of the element to update
+	 *    @param	string	$projectfield	    The column name that stores the link with the project
+     *
 	 *    @return	int							1 if OK or < 0 if KO
 	 */
-	public function remove_element($tableName, $elementSelectId)
+	public function remove_element($tableName, $elementSelectId, $projectfield = 'fk_projet')
 	{
         // phpcs:enable
 		$sql="UPDATE ".MAIN_DB_PREFIX.$tableName;
@@ -1657,10 +1641,9 @@ class Project extends CommonObject
 		{
 			$sql.= " SET fk_project=NULL";
 			$sql.= " WHERE id=".$elementSelectId;
-		}
-		else
+		}else
 		{
-			$sql.= " SET fk_projet=NULL";
+			$sql.= " SET ".$projectfield."=NULL";
 			$sql.= " WHERE rowid=".$elementSelectId;
 		}
 
@@ -1691,7 +1674,6 @@ class Project extends CommonObject
 		$langs->load("projects");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'baleine';
 
 			if ($this->modelpdf) {
@@ -1743,23 +1725,23 @@ class Project extends CommonObject
                 $num = $this->db->num_rows($resql);
                 $i = 0;
                 // Loop on each record found, so each couple (project id, task id)
-                while ($i < $num)
+			while ($i < $num)
                 {
-                        $obj=$this->db->fetch_object($resql);
-                        $day=$this->db->jdate($obj->task_date);		// task_date is date without hours
-                        if (empty($daylareadyfound[$day]))
-                        {
-                        	$this->weekWorkLoad[$day] = $obj->task_duration;
-                        	$this->weekWorkLoadPerTask[$day][$obj->fk_task] = $obj->task_duration;
-                        }
-                        else
-                        {
-                        	$this->weekWorkLoad[$day] += $obj->task_duration;
-                        	$this->weekWorkLoadPerTask[$day][$obj->fk_task] += $obj->task_duration;
-                        }
-                        $daylareadyfound[$day]=1;
-                        $i++;
-                }
+					$obj=$this->db->fetch_object($resql);
+					$day=$this->db->jdate($obj->task_date);		// task_date is date without hours
+				if (empty($daylareadyfound[$day]))
+					{
+					$this->weekWorkLoad[$day] = $obj->task_duration;
+					$this->weekWorkLoadPerTask[$day][$obj->fk_task] = $obj->task_duration;
+				}
+				else
+					{
+					$this->weekWorkLoad[$day] += $obj->task_duration;
+					$this->weekWorkLoadPerTask[$day][$obj->fk_task] += $obj->task_duration;
+				}
+					$daylareadyfound[$day]=1;
+					$i++;
+			}
                 $this->db->free($resql);
                 return 1;
         }
@@ -1785,7 +1767,7 @@ class Project extends CommonObject
         global $conf, $langs;
 
         // For external user, no check is done on company because readability is managed by public status of project and assignement.
-        //$socid=$user->societe_id;
+        //$socid=$user->socid;
 
 		$projectsListId = null;
         if (! $user->rights->projet->all->lire) $projectsListId = $this->getProjectsAuthorizedForUser($user, 0, 1);
@@ -1979,10 +1961,7 @@ class Project extends CommonObject
 	 */
 	public function setCategories($categories)
 	{
-		// Decode type
-		$type_id = Categorie::TYPE_PROJECT;
-		$type_text = 'project';
-
+		$type_categ = Categorie::TYPE_PROJECT;
 
 		// Handle single category
 		if (!is_array($categories)) {
@@ -1992,7 +1971,7 @@ class Project extends CommonObject
 		// Get current categories
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 		$c = new Categorie($this->db);
-		$existing = $c->containing($this->id, $type_id, 'id');
+		$existing = $c->containing($this->id, $type_categ, 'id');
 
 		// Diff
 		if (is_array($existing)) {
@@ -2006,7 +1985,7 @@ class Project extends CommonObject
 		// Process
 		foreach ($to_del as $del) {
 			if ($c->fetch($del) > 0) {
-				$result=$c->del_type($this, $type_text);
+				$result=$c->del_type($this, $type_categ);
 				if ($result<0) {
 					$this->errors=$c->errors;
 					$this->error=$c->error;
@@ -2016,7 +1995,7 @@ class Project extends CommonObject
 		}
 		foreach ($to_add as $add) {
 			if ($c->fetch($add) > 0) {
-				$result=$c->add_type($this, $type_text);
+				$result=$c->add_type($this, $type_categ);
 				if ($result<0) {
 					$this->errors=$c->errors;
 					$this->error=$c->error;

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -40,10 +40,10 @@ if (!$user->rights->ecm->setup) accessforbidden();
 $socid = GETPOST("socid", "int");
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
     $action = '';
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -318,7 +318,7 @@ if ($forcedownload) $rellink.='&attachment=1';
 if (! empty($object->entity)) $rellink.='&entity='.$object->entity;
 $rellink.='&file='.urlencode($filepath);
 $fulllink=$urlwithroot.$rellink;
-print img_picto('', 'object_globe.png').' ';
+print img_picto('', 'globe').' ';
 if ($action != 'edit') print '<input type="text" class="quatrevingtpercent" id="downloadinternallink" name="downloadinternellink" value="'.dol_escape_htmltag($fulllink).'">';
 else print $fulllink;
 if ($action != 'edit') print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>';		// No target here.
@@ -343,7 +343,7 @@ if (! empty($object->share))
 		//if (! empty($object->ref))       $fulllink.='&hashn='.$object->ref;		// Hash of file path
 		//elseif (! empty($object->label)) $fulllink.='&hashc='.$object->label;		// Hash of file content
 
-		print img_picto('', 'object_globe.png').' ';
+		print img_picto('', 'globe').' ';
 		if ($action != 'edit') print '<input type="text" class="quatrevingtpercent" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
 		else print $fulllink;
 		if ($action != 'edit') print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>';	// No target here
@@ -401,7 +401,7 @@ if ($action != 'edit')
     {
         print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&section='.urlencode($section).'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Edit').'</a>';
     }
-/*
+    /*
 	if ($user->rights->ecm->setup)
 	{
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_file&section='.$section.'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Delete').'</a>';
@@ -410,7 +410,7 @@ if ($action != 'edit')
 	{
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
 	}
-*/
+    */
 	print '</div>';
 }
 

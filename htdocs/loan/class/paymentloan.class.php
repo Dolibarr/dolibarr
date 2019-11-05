@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -89,6 +89,10 @@ class PaymentLoan extends CommonObject
      * @var int user ID
      */
     public $fk_user_modif;
+
+    public $type_code;
+    public $type_label;
+
 
 	/**
 	 *	Constructor
@@ -208,7 +212,7 @@ class PaymentLoan extends CommonObject
 		$sql.= " t.fk_bank,";
 		$sql.= " t.fk_user_creat,";
 		$sql.= " t.fk_user_modif,";
-		$sql.= " pt.code as type_code, pt.libelle as type_libelle,";
+		$sql.= " pt.code as type_code, pt.libelle as type_label,";
 		$sql.= ' b.fk_account';
 		$sql.= " FROM ".MAIN_DB_PREFIX."payment_loan as t";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id";
@@ -242,7 +246,7 @@ class PaymentLoan extends CommonObject
 				$this->fk_user_modif = $obj->fk_user_modif;
 
 				$this->type_code = $obj->type_code;
-				$this->type_libelle = $obj->type_libelle;
+				$this->type_label = $obj->type_label;
 
 				$this->bank_account = $obj->fk_account;
 				$this->bank_line = $obj->fk_bank;
@@ -544,8 +548,6 @@ class PaymentLoan extends CommonObject
 		global $langs;
 
 		$result='';
-
-		if (empty($this->ref)) $this->ref=$this->lib;
 
 		if (!empty($this->id))
 		{

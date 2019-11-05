@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -105,7 +105,13 @@ class EmailSenderProfile extends CommonObject
     public $label;
 
 	public $email;
+
+	/**
+     * @var integer|string date_creation
+     */
 	public $date_creation;
+
+
 	public $tms;
 	//public $fk_user_creat;
 	//public $fk_user_modif;

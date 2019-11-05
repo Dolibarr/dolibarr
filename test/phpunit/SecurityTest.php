@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -128,6 +128,24 @@ class SecurityTest extends PHPUnit\Framework\TestCase
     protected function tearDown()
     {
     	print __METHOD__."\n";
+    }
+
+    /**
+     * testSetLang
+     *
+     * @return string
+     */
+    public function testSetLang()
+    {
+    	global $conf;
+    	$conf=$this->savconf;
+
+    	$tmplangs = new Translate('', $conf);
+
+    	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = "' malicious text with quote";
+    	$tmplangs->setDefaultLang('auto');
+    	print __METHOD__.' $tmplangs->defaultlang='.$tmplangs->defaultlang."\n";
+    	$this->assertEquals($tmplangs->defaultlang, 'malicioustextwithquote_MALICIOUSTEXTWITHQUOTE');
     }
 
     /**

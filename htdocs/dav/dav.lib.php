@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -24,19 +24,19 @@
 // define CDAV_CONTACT_TAG if not
 if(!defined('CDAV_CONTACT_TAG'))
 {
-	if(isset($conf->global->CDAV_CONTACT_TAG))
+	if (isset($conf->global->CDAV_CONTACT_TAG))
 		define('CDAV_CONTACT_TAG', $conf->global->CDAV_CONTACT_TAG);
-		else
-			define('CDAV_CONTACT_TAG', '');
+	else
+		define('CDAV_CONTACT_TAG', '');
 }
 
 // define CDAV_URI_KEY if not
 if(!defined('CDAV_URI_KEY'))
 {
-	if(isset($conf->global->CDAV_URI_KEY))
+	if (isset($conf->global->CDAV_URI_KEY))
 		define('CDAV_URI_KEY', $conf->global->CDAV_URI_KEY);
-		else
-			define('CDAV_URI_KEY', substr(md5($_SERVER['HTTP_HOST']), 0, 8));
+	else
+		define('CDAV_URI_KEY', substr(md5($_SERVER['HTTP_HOST']), 0, 8));
 }
 
 

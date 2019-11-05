@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -80,7 +80,7 @@ llxHeader('', $title);
 $resultboxes=FormOther::getBoxesArea($user, "0");    // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
 
-print load_fiche_titre($langs->trans("HomeArea"), $resultboxes['selectboxlist'], 'title_home');
+print load_fiche_titre($langs->trans("HomeArea"), $resultboxes['selectboxlist'], 'home');
 
 if (! empty($conf->global->MAIN_MOTD))
 {
@@ -107,27 +107,21 @@ if (! empty($conf->global->MAIN_MOTD))
  * Dashboard Dolibarr states (statistics)
  * Hidden for external users
  */
-$boxstat='';
+
+
+$boxstatItems = array();
+$boxstatFromHook = '';
 
 // Load translation files required by page
 $langs->loadLangs(array('commercial', 'bills', 'orders', 'contracts'));
 
-if (empty($user->societe_id) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
+if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 {
-    $boxstat.='<div class="box">';
-    $boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable boxtablenobottom nohover" width="100%">';
-    $boxstat.='<tr class="liste_titre">';
-    $boxstat.='<th class="liste_titre">';
-    $boxstat.='<div class="inline-block valignmiddle">'.$langs->trans("DolibarrStateBoard").'</div>';
-    $boxstat.='</th>';
-    $boxstat.='</tr>';
-    $boxstat.='<tr class="nobottom nohover"><td class="tdboxstats nohover flexcontainer">';
-
     $object=new stdClass();
     $parameters=array();
     $action='';
     $reshook=$hookmanager->executeHooks('addStatisticLine', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
-    $boxstat.=$hookmanager->resPrint;
+    $boxstatFromHook=$hookmanager->resPrint;
 
     if (empty($reshook))
     {
@@ -218,7 +212,7 @@ if (empty($user->societe_id) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTAT
 	                'askprice',
 	                'projects',
 	                'expensereports',
-                    'holidays',
+                    'holiday',
 					'donations'
 	    );
 	    // Dashboard Icon lines
@@ -289,26 +283,27 @@ if (empty($user->societe_id) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTAT
 			DOL_URL_ROOT.'/don/list.php?leftmenu=donations'
 	    );
 	    // Translation lang files
-	    $langfile=array("users",
-	                    "companies",
-	                    "prospects",
-	                    "suppliers",
-	                    "companies",
-	                    "members",
-	                    "products",
-	                    "products",
-	                    "propal",
-	                    "orders",
-            	        "bills",
-						"contracts",
-						"interventions",
-	                    "bills",
-	                    "bills",
-	                    "supplier_proposal",
-	                    "projects",
-						"trips",
-                        "holidays",
-						"donations"
+	    $langfile=array(
+            "users",
+            "companies",
+            "prospects",
+            "suppliers",
+            "companies",
+            "members",
+            "products",
+            "products",
+            "propal",
+            "orders",
+            "bills",
+			"contracts",
+			"interventions",
+            "bills",
+            "bills",
+            "supplier_proposal",
+	        "projects",
+			"trips",
+            "holiday",
+			"donations",
 	    );
 
 
@@ -318,6 +313,7 @@ if (empty($user->societe_id) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTAT
 	    {
 	        if ($conditions[$key])
 	        {
+                $boxstatItem = '';
 	            $classe=$classes[$key];
 	            // Search in cache if load_state_board is already realized
 	            if (! isset($boardloaded[$classe]) || ! is_object($boardloaded[$classe]))
@@ -336,28 +332,17 @@ if (empty($user->societe_id) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTAT
 
 	            if (!empty($langfile[$key])) $langs->load($langfile[$key]);
 	            $text=$langs->trans($titres[$key]);
-	            $boxstat.='<a href="'.$links[$key].'" class="boxstatsindicator thumbstat nobold nounderline">';
-	            $boxstat.='<div class="boxstats">';
-	            $boxstat.='<span class="boxstatstext" title="'.dol_escape_htmltag($text).'">'.$text.'</span><br>';
-	            $boxstat.='<span class="boxstatsindicator">'.img_object("", $icons[$key], 'class="inline-block"').' '.($board->nb[$val]?$board->nb[$val]:0).'</span>';
-	            $boxstat.='</div>';
-	            $boxstat.='</a>';
+	            $boxstatItem.='<a href="'.$links[$key].'" class="boxstatsindicator thumbstat nobold nounderline">';
+	            $boxstatItem.='<div class="boxstats">';
+	            $boxstatItem.='<span class="boxstatstext" title="'.dol_escape_htmltag($text).'">'.$text.'</span><br>';
+	            $boxstatItem.='<span class="boxstatsindicator">'.img_object("", $icons[$key], 'class="inline-block"').' '.($board->nb[$val]?$board->nb[$val]:0).'</span>';
+	            $boxstatItem.='</div>';
+	            $boxstatItem.='</a>';
+
+                $boxstatItems[$val] = $boxstatItem;
 	        }
 	    }
     }
-
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
-
-    $boxstat.='</td></tr>';
-    $boxstat.='</table>';
-    $boxstat.='</div>';
 }
 
 
@@ -369,34 +354,34 @@ if (empty($user->societe_id) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTAT
 if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
     $showweather = (empty($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_METEO == 2) ? 1 : 0;
 
-//Array that contains all WorkboardResponse classes to process them
+    //Array that contains all WorkboardResponse classes to process them
     $dashboardlines = array();
 
-// Do not include sections without management permission
+    // Do not include sections without management permission
     require_once DOL_DOCUMENT_ROOT . '/core/class/workboardresponse.class.php';
 
-// Number of actions to do (late)
+    // Number of actions to do (late)
     if (!empty($conf->agenda->enabled) && $user->rights->agenda->myactions->read) {
         include_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
         $board = new ActionComm($db);
         $dashboardlines[$board->element] = $board->load_board($user);
     }
 
-// Number of project opened
+    // Number of project opened
     if (!empty($conf->projet->enabled) && $user->rights->projet->lire) {
         include_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
         $board = new Project($db);
         $dashboardlines[$board->element] = $board->load_board($user);
     }
 
-// Number of tasks to do (late)
+    // Number of tasks to do (late)
     if (!empty($conf->projet->enabled) && empty($conf->global->PROJECT_HIDE_TASKS) && $user->rights->projet->lire) {
         include_once DOL_DOCUMENT_ROOT . '/projet/class/task.class.php';
         $board = new Task($db);
         $dashboardlines[$board->element] = $board->load_board($user);
     }
 
-// Number of commercial proposals opened (expired)
+    // Number of commercial proposals opened (expired)
     if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
         include_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
         $board = new Propal($db);
@@ -405,7 +390,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
         $dashboardlines[$board->element . '_signed'] = $board->load_board($user, "signed");
     }
 
-// Number of commercial proposals opened (expired)
+    // Number of commercial proposals opened (expired)
     if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire) {
         include_once DOL_DOCUMENT_ROOT . '/supplier_proposal/class/supplier_proposal.class.php';
         $board = new SupplierProposal($db);
@@ -414,21 +399,22 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
         $dashboardlines[$board->element . '_signed'] = $board->load_board($user, "signed");
     }
 
-// Number of customer orders a deal
+    // Number of customer orders a deal
     if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
         include_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
         $board = new Commande($db);
         $dashboardlines[$board->element] = $board->load_board($user);
     }
 
-// Number of suppliers orders a deal
+    // Number of suppliers orders a deal
     if (!empty($conf->supplier_order->enabled) && $user->rights->fournisseur->commande->lire) {
         include_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
         $board = new CommandeFournisseur($db);
-        $dashboardlines[$board->element] = $board->load_board($user);
+        $dashboardlines[$board->element . '_opened'] = $board->load_board($user, "opened");
+        $dashboardlines[$board->element . '_awaiting'] = $board->load_board($user, 'awaiting');
     }
 
-// Number of services enabled (delayed)
+    // Number of services enabled (delayed)
     if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
         include_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
         $board = new Contrat($db);
@@ -436,22 +422,22 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
         // Number of active services (expired)
         $dashboardlines[$board->element . '_active'] = $board->load_board($user, "active");
     }
-// Number of invoices customers (has paid)
+    // Number of invoices customers (has paid)
     if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
         include_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
         $board = new Facture($db);
         $dashboardlines[$board->element] = $board->load_board($user);
     }
 
-// Number of supplier invoices (has paid)
+    // Number of supplier invoices (has paid)
     if (!empty($conf->supplier_invoice->enabled) && !empty($user->rights->fournisseur->facture->lire)) {
         include_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
         $board = new FactureFournisseur($db);
         $dashboardlines[$board->element] = $board->load_board($user);
     }
 
-// Number of transactions to conciliate
-    if (!empty($conf->banque->enabled) && $user->rights->banque->lire && !$user->societe_id) {
+    // Number of transactions to conciliate
+    if (!empty($conf->banque->enabled) && $user->rights->banque->lire && !$user->socid) {
         include_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
         $board = new Account($db);
         $nb = $board::countAccountToReconcile();    // Get nb of account to reconciliate
@@ -460,35 +446,35 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
         }
     }
 
-// Number of cheque to send
-    if (!empty($conf->banque->enabled) && $user->rights->banque->lire && !$user->societe_id && empty($conf->global->BANK_DISABLE_CHECK_DEPOSIT)) {
+    // Number of cheque to send
+    if (!empty($conf->banque->enabled) && $user->rights->banque->lire && !$user->socid && empty($conf->global->BANK_DISABLE_CHECK_DEPOSIT)) {
         include_once DOL_DOCUMENT_ROOT . '/compta/paiement/cheque/class/remisecheque.class.php';
         $board = new RemiseCheque($db);
         $dashboardlines['RemiseCheque'] = $board->load_board($user);
     }
 
-// Number of foundation members
-    if (!empty($conf->adherent->enabled) && $user->rights->adherent->lire && !$user->societe_id) {
+    // Number of foundation members
+    if (!empty($conf->adherent->enabled) && $user->rights->adherent->lire && !$user->socid) {
         include_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
         $board = new Adherent($db);
         $dashboardlines['Adherent'] = $board->load_board($user);
     }
 
-// Number of expense reports to approve
+    // Number of expense reports to approve
     if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->approve) {
         include_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
         $board = new ExpenseReport($db);
         $dashboardlines['ExpenseReport'] = $board->load_board($user, 'toapprove');
     }
 
-// Number of expense reports to pay
+    // Number of expense reports to pay
     if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->to_paid) {
         include_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
         $board = new ExpenseReport($db);
         $dashboardlines['ExpenseReport'] = $board->load_board($user, 'topay');
     }
 
-// Number of holidays to approve
+    // Number of holidays to approve
     if (!empty($conf->holiday->enabled) && $user->rights->holiday->approve) {
         include_once DOL_DOCUMENT_ROOT . '/holiday/class/holiday.class.php';
         $board = new Holiday($db);
@@ -514,47 +500,55 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
         'project' =>
             array(
                 'groupName' => 'Projects',
+                'globalStatsKey' => 'projects',
                 'stats' => array('project', 'project_task'),
             ),
         'propal' =>
             array(
                 'groupName' => 'Proposals',
+                'globalStatsKey' => 'proposals',
                 'stats' =>
                     array('propal_opened', 'propal_signed'),
             ),
         'commande' =>
             array(
                 'groupName' => 'Orders',
+                'globalStatsKey' => 'orders',
                 'stats' =>
                     array('commande'),
             ),
         'facture' =>
             array(
                 'groupName' => 'Invoices',
+                'globalStatsKey' => 'invoices',
                 'stats' =>
                     array('facture'),
             ),
         'contrat' =>
             array(
                 'groupName' => 'Contracts',
+                'globalStatsKey' => 'Contracts',
                 'stats' =>
                     array('contrat_inactive', 'contrat_active'),
             ),
         'supplier_proposal' =>
             array(
                 'groupName' => 'SupplierProposals',
+                'globalStatsKey' => 'askprice',
                 'stats' =>
                     array('supplier_proposal_opened', 'supplier_proposal_signed'),
             ),
         'order_supplier' =>
             array(
                 'groupName' => 'SuppliersOrders',
+                'globalStatsKey' => 'supplier_orders',
                 'stats' =>
-                    array('order_supplier'),
+                    array('order_supplier_opened', 'order_supplier_awaiting'),
             ),
         'invoice_supplier' =>
             array(
                 'groupName' => 'BillsSuppliers',
+                'globalStatsKey' => 'supplier_invoices',
                 'stats' =>
                     array('invoice_supplier'),
             ),
@@ -567,18 +561,21 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
         'Adherent' =>
             array(
                 'groupName' => 'Members',
+                'globalStatsKey' => 'members',
                 'stats' =>
                     array('Adherent'),
             ),
         'ExpenseReport' =>
             array(
                 'groupName' => 'ExpenseReport',
+                'globalStatsKey' => 'expensereports',
                 'stats' =>
                     array('ExpenseReport'),
             ),
         'Holiday' =>
             array(
                 'groupName' => 'Holidays',
+                'globalStatsKey' => 'holidays',
                 'stats' =>
                     array('Holiday'),
             ),
@@ -595,11 +592,11 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
     }
 
 
-// Calculate total nb of late
+    // Calculate total nb of late
     $totallate = $totaltodo = 0;
 
-//Remove any invalid response
-//load_board can return an integer if failed or WorkboardResponse if OK
+    //Remove any invalid response
+    //load_board can return an integer if failed or WorkboardResponse if OK
     $valid_dashboardlines = array();
     foreach ($dashboardlines as $infoKey => $tmp) {
         if ($tmp instanceof WorkboardResponse) {
@@ -607,7 +604,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
         }
     }
 
-// We calculate $totallate. Must be defined before start of next loop because it is show in first fetch on next loop
+    // We calculate $totallate. Must be defined before start of next loop because it is show in first fetch on next loop
     foreach ($valid_dashboardlines as $board) {
         if ($board->nbtodolate > 0) {
             $totaltodo += $board->nbtodo;
@@ -649,9 +646,9 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
     $boxwork .= '</th>';
     $boxwork .= '</tr>' . "\n";
 
-// Show dashboard
+    // Show dashboard
     $nbworkboardempty = 0;
-    $isIntopOpenedDashBoard = array();
+    $isIntopOpenedDashBoard = $globalStatInTopOpenedDashBoard = array();
     if (!empty($valid_dashboardlines)) {
         $openedDashBoard = '';
 
@@ -660,7 +657,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
         foreach ($dashboardgroup as $groupKey => $groupElement) {
             $boards = array();
 
-            if (!empty($conf->global->MAIN_DISPLAY_NEW_OPENED_DASH_BOARD) || !empty($conf->global->MAIN_FEATURES_LEVEL)) {
+            if (empty($conf->global->MAIN_DISABLE_NEW_OPENED_DASH_BOARD)) {
                 foreach ($groupElement['stats'] as $infoKey) {
                     if (!empty($valid_dashboardlines[$infoKey])) {
                         $boards[] = $valid_dashboardlines[$infoKey];
@@ -672,12 +669,47 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
             if (!empty($boards)) {
                 $groupName = $langs->trans($groupElement['groupName']);
                 $groupKeyLowerCase = strtolower($groupKey);
+                $nbTotalForGroup = 0;
 
-                $openedDashBoard .= '<div class="box-flex-item">' . "\n";
-                $openedDashBoard .= '	<div class="info-box ' . $openedDashBoardSize . '">' . "\n";
-                $openedDashBoard .= '		<span class="info-box-icon bg-infoxbox-' . $groupKeyLowerCase . '"><i class="fa fa-dol-' . $groupKeyLowerCase . '"></i></span>' . "\n";
+                // global stats
+                $globalStatsKey = false;
+                if (!empty($groupElement['globalStatsKey']) && empty($groupElement['globalStats'])){ // can be filled by hook
+                    $globalStatsKey = $groupElement['globalStatsKey'];
+                    $groupElement['globalStats'] = array();
+
+                    if(in_array($globalStatsKey, $keys))
+                    {
+                        // get key index of stats used in $includes, $classes, $keys, $icons, $titres, $links
+                        $keyIndex = array_search($globalStatsKey, $keys);
+
+                        $classe=$classes[$keyIndex];
+                        if (isset($boardloaded[$classe]) && is_object($boardloaded[$classe]))
+                        {
+                            $groupElement['globalStats']['total'] = $boardloaded[$classe]->nb[$globalStatsKey]?$boardloaded[$classe]->nb[$globalStatsKey]:0;
+                            $nbTotal = doubleval($groupElement['globalStats']['total']);
+                            if($nbTotal>=10000){ $nbTotal = round($nbTotal/1000, 2) .'k'; }
+                            $groupElement['globalStats']['text'] = $langs->trans('Total').' : '.$langs->trans($titres[$keyIndex]).' ('.$groupElement['globalStats']['total'].')';
+                            $groupElement['globalStats']['total'] = $nbTotal;
+                            $groupElement['globalStats']['link'] = $links[$keyIndex];
+                        }
+                    }
+                }
+
+
+                $openedDashBoard.= '<div class="box-flex-item">' . "\n";
+                $openedDashBoard.= '	<div class="info-box ' . $openedDashBoardSize . '">' . "\n";
+                $openedDashBoard.= '		<span class="info-box-icon bg-infoxbox-'.$groupKeyLowerCase.'">'."\n";
+                $openedDashBoard.= '		<i class="fa fa-dol-'.$groupKeyLowerCase.'"></i>'."\n";
+
+                if(!empty($groupElement['globalStats'])){
+                    $globalStatInTopOpenedDashBoard[] = $globalStatsKey;
+                    $openedDashBoard.= '		<span class="info-box-icon-text" title="'.$groupElement['globalStats']['text'].'">'.$nbTotal.'</span>'."\n";
+                }
+
+                $openedDashBoard.= '		</span>'."\n";
                 $openedDashBoard .= '		<div class="info-box-content">' . "\n";
-                $openedDashBoard .= '			<span class="info-box-title" title="' . dol_escape_htmltag($groupName) . '">' . $groupName . '</span>' . "\n";
+
+                $openedDashBoard .= '			<span class="info-box-title" title="'.strip_tags($groupName).'">'.$groupName.'</span>' . "\n";
 
                 foreach ($boards as $board) {
                     if (!empty($board->labelShort)) {
@@ -854,6 +886,50 @@ $boxlist.=$resultboxes['boxlista'];
 
 $boxlist.= '</div>';
 
+
+if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
+{
+    // Remove allready present info in new dash board
+    if(!empty($conf->global->MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD) && is_array($boxstatItems) && count($boxstatItems) > 0){
+        foreach ($boxstatItems as $boxstatItemKey => $boxstatItemHtml) {
+            if (in_array($boxstatItemKey, $globalStatInTopOpenedDashBoard)) {
+                unset($boxstatItems[$boxstatItemKey]);
+            }
+        }
+    }
+
+    if(!empty($boxstatFromHook) || !empty($boxstatItems)){
+        $boxstat.='<div class="box">';
+        $boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable boxtablenobottom nohover" width="100%">';
+        $boxstat.='<tr class="liste_titre">';
+        $boxstat.='<th class="liste_titre">';
+        $boxstat.='<div class="inline-block valignmiddle">'.$langs->trans("DolibarrStateBoard").'</div>';
+        $boxstat.='</th>';
+        $boxstat.='</tr>';
+        $boxstat.='<tr class="nobottom nohover"><td class="tdboxstats nohover flexcontainer">';
+
+        $boxstat.=$boxstatFromHook;
+
+        if(is_array($boxstatItems) && count($boxstatItems) > 0)
+        {
+            $boxstat.= implode('', $boxstatItems);
+        }
+
+        $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+        $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+        $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+        $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+        $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+        $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+        $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+        $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+
+        $boxstat.='</td></tr>';
+        $boxstat.='</table>';
+        $boxstat.='</div>';
+    }
+}
+
 $boxlist.= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
 $boxlist.=$boxstat;
@@ -926,7 +1002,7 @@ function showWeather($totallate, $text, $options, $morecss = '')
 {
     global $conf;
 
-	$weather = getWeatherStatus($totallate);
+    $weather = getWeatherStatus($totallate);
     return img_weather($text, $weather->picto, $options, 0, $morecss);
 }
 

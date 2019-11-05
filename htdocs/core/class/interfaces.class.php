@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -343,7 +343,7 @@ class Interfaces
             }
 
             // We set info of modules
-            $triggers[$j]['picto'] = $objMod->picto?img_object('', $objMod->picto):img_object('', 'generic');
+            $triggers[$j]['picto'] = $objMod->picto?img_object('', $objMod->picto, 'class="valignmiddle pictomodule "'):img_object('', 'generic', 'class="valignmiddle pictomodule "');
             $triggers[$j]['file'] = $files[$key];
             $triggers[$j]['fullpath'] = $fullpath[$key];
             $triggers[$j]['relpath'] = $relpath[$key];

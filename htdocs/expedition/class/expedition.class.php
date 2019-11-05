@@ -24,7 +24,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -143,7 +143,12 @@ class Expedition extends CommonObject
 	 */
 	public $date_shipping;
 
+	/**
+     * @var integer|string date_creation
+     */
 	public $date_creation;
+
+
 	public $date_valid;
 
 	public $meths;
@@ -192,13 +197,6 @@ class Expedition extends CommonObject
 		$this->statutshorts[0]  = 'StatusSendingDraftShort';
 		$this->statutshorts[1]  = 'StatusSendingValidatedShort';
 		$this->statutshorts[2]  = 'StatusSendingProcessedShort';
-
-		/* Status "billed" or not is managed by another field than status
-		if (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))
-		{
-			$this->statuts[2]  = 'StatusSendingBilled';
-			$this->statutshorts[2]  = 'StatusSendingBilledShort';
-		}*/
 	}
 
 	/**
@@ -223,7 +221,6 @@ class Expedition extends CommonObject
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 			foreach ($dirmodels as $reldir) {
-
 				$dir = dol_buildpath($reldir."core/modules/expedition/");
 
 				// Load file with numbering class (if found)
@@ -325,8 +322,8 @@ class Expedition extends CommonObject
 		$sql.= ", ".$this->sizeS;	// TODO Should use this->trueDepth
 		$sql.= ", ".$this->sizeW;	// TODO Should use this->trueWidth
 		$sql.= ", ".$this->sizeH;	// TODO Should use this->trueHeight
-		$sql.= ", ".$this->weight_units;
-		$sql.= ", ".$this->size_units;
+		$sql.= ", ".($this->weight_units != '' ? (int) $this->weight_units : 'NULL');
+		$sql.= ", ".($this->size_units != '' ? (int) $this->size_units : 'NULL');
 		$sql.= ", ".(!empty($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql.= ", ".(!empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql.= ", ".(!empty($this->model_pdf)?"'".$this->db->escape($this->model_pdf)."'":"null");
@@ -603,7 +600,7 @@ class Expedition extends CommonObject
 				//Incoterms
 				$this->fk_incoterms         = $obj->fk_incoterms;
 				$this->location_incoterms   = $obj->location_incoterms;
-				$this->label_incoterms    = $obj->label_incoterms;
+				$this->label_incoterms      = $obj->label_incoterms;
 
 				$this->db->free($result);
 
@@ -1384,6 +1381,7 @@ class Expedition extends CommonObject
         // phpcs:enable
 		global $conf, $mysoc;
 		// TODO: recuperer les champs du document associe a part
+		$this->lines=array();
 
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.label as custom_label, cd.description, cd.qty as qty_asked, cd.product_type";
 		$sql.= ", cd.total_ht, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.total_tva";
@@ -1668,45 +1666,23 @@ class Expedition extends CommonObject
 	/**
 	 * Return label of a status
 	 *
-	 * @param      int		$statut		Id statut
-	 * @param      int		$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
-	 * @return     string				Label of status
+	 * @param   int		$status		Id statut
+	 * @param  	int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @return  string				Label of status
 	 */
-	public function LibStatut($statut, $mode)
+	public function LibStatut($status, $mode)
 	{
         // phpcs:enable
-		global $langs;
+        global $langs;
 
-		if ($mode==0)
-		{
-			if ($statut==0) return $langs->trans($this->statuts[$statut]);
-			elseif ($statut==1) return $langs->trans($this->statuts[$statut]);
-			elseif ($statut==2) return $langs->trans($this->statuts[$statut]);
-		}
-		elseif ($mode==1)
-		{
-			if ($statut==0) return $langs->trans($this->statutshorts[$statut]);
-			elseif ($statut==1) return $langs->trans($this->statutshorts[$statut]);
-			elseif ($statut==2) return $langs->trans($this->statutshorts[$statut]);
-		}
-		elseif ($mode == 3)
-		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut0');
-			elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]), 'statut4');
-			elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]), 'statut6');
-		}
-		elseif ($mode == 4)
-		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut0').' '.$langs->trans($this->statuts[$statut]);
-			elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]), 'statut4').' '.$langs->trans($this->statuts[$statut]);
-			elseif ($statut==2) return img_picto($langs->trans($this->statuts[$statut]), 'statut6').' '.$langs->trans($this->statuts[$statut]);
-		}
-		elseif ($mode == 5)
-		{
-			if ($statut==0) return $langs->trans($this->statutshorts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]), 'statut0');
-			elseif ($statut==1) return $langs->trans($this->statutshorts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]), 'statut4');
-			elseif ($statut==2) return $langs->trans($this->statutshorts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]), 'statut6');
-		}
+		$labelStatus = $langs->trans($this->statuts[$status]);
+		$labelStatusShort = $langs->trans($this->statutshorts[$status]);
+
+		$statusType = 'status'.$status;
+		if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
+		if ($status == self::STATUS_CLOSED) $statusType = 'status6';
+
+		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
 	}
 
 	/**
@@ -1777,7 +1753,8 @@ class Expedition extends CommonObject
 		{
 			$line=new ExpeditionLigne($this->db);
 			$line->desc=$langs->trans("Description")." ".$xnbp;
-			$line->libelle=$langs->trans("Description")." ".$xnbp;
+			$line->libelle=$langs->trans("Description")." ".$xnbp;	// deprecated
+			$line->label=$langs->trans("Description")." ".$xnbp;
 			$line->qty=10;
 			$line->qty_asked=5;
 			$line->qty_shipped=4;
@@ -1836,7 +1813,7 @@ class Expedition extends CommonObject
 		global $langs;
 		$this->meths = array();
 
-		$sql = "SELECT em.rowid, em.code, em.libelle";
+		$sql = "SELECT em.rowid, em.code, em.libelle as label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
 		$sql.= " WHERE em.active = 1";
 		$sql.= " ORDER BY em.libelle ASC";
@@ -1847,7 +1824,7 @@ class Expedition extends CommonObject
 			while ($obj = $this->db->fetch_object($resql))
 			{
 				$label=$langs->trans('SendingMethod'.$obj->code);
-				$this->meths[$obj->rowid] = ($label != 'SendingMethod'.$obj->code?$label:$obj->libelle);
+				$this->meths[$obj->rowid] = ($label != 'SendingMethod'.$obj->code?$label:$obj->label);
 			}
 		}
 	}
@@ -1867,7 +1844,7 @@ class Expedition extends CommonObject
 		$this->listmeths = array();
 		$i=0;
 
-		$sql = "SELECT em.rowid, em.code, em.libelle, em.description, em.tracking, em.active";
+		$sql = "SELECT em.rowid, em.code, em.libelle as label, em.description, em.tracking, em.active";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
 		if ($id!='') $sql.= " WHERE em.rowid=".$id;
 
@@ -1879,7 +1856,7 @@ class Expedition extends CommonObject
 				$this->listmeths[$i]['rowid'] = $obj->rowid;
 				$this->listmeths[$i]['code'] = $obj->code;
 				$label=$langs->trans('SendingMethod'.$obj->code);
-				$this->listmeths[$i]['libelle'] = ($label != 'SendingMethod'.$obj->code?$label:$obj->libelle);
+				$this->listmeths[$i]['libelle'] = ($label != 'SendingMethod'.$obj->code?$label:$obj->label);
 				$this->listmeths[$i]['description'] = $obj->description;
 				$this->listmeths[$i]['tracking'] = $obj->tracking;
 				$this->listmeths[$i]['active'] = $obj->active;
@@ -2332,7 +2309,6 @@ class Expedition extends CommonObject
 		$langs->load("sendings");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'rouget';
 
 			if ($this->modelpdf) {

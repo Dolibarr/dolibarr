@@ -468,6 +468,12 @@ UPDATE llx_accounting_bookkeeping set date_creation = tms where date_creation IS
 -- UPDATE llx_facturedet_rec set label = NULL WHERE label IS NOT NULL;
 
 
+-- Note to make all deposit as payed when there is already a discount generated from it.
+--drop table tmp_invoice_deposit_mark_as_available;
+--create table tmp_invoice_deposit_mark_as_available as select * from llx_facture as f where f.type = 3 and f.paye = 0 and f.rowid in (select fk_facture_source from llx_societe_remise_except);
+--update llx_facture set paye = 1, fk_statut = 2 where rowid in (select rowid from tmp_invoice_deposit_mark_as_available);
+
+
 
 -- Note to migrate from old counter aquarium to new one
 -- drop table tmp;

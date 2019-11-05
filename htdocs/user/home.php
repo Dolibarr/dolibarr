@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -45,7 +45,7 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 
 // Security check (for external users)
 $socid=0;
-if ($user->societe_id > 0) $socid = $user->societe_id;
+if ($user->socid > 0) $socid = $user->socid;
 
 $companystatic = new Societe($db);
 $fuserstatic = new User($db);
@@ -144,7 +144,7 @@ if ($resql)
 		$fuserstatic->admin = $obj->admin;
 		$fuserstatic->email = $obj->email;
 		$fuserstatic->skype = $obj->skype;
-		$fuserstatic->societe_id = $obj->fk_soc;
+		$fuserstatic->socid = $obj->fk_soc;
 
 		$companystatic->id=$obj->fk_soc;
 		$companystatic->name=$obj->name;

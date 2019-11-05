@@ -8,7 +8,8 @@
  * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2019      Tim Otte			    <otte@meuser.it>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,6 +34,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_expression.class.php';
@@ -53,6 +55,8 @@ $cost_price=GETPOST('cost_price', 'alpha');
 $backtopage=GETPOST('backtopage', 'alpha');
 $error=0;
 
+$extrafields = new ExtraFields($db);
+
 // If socid provided by ajax company selector
 if (! empty($_REQUEST['search_fourn_id']))
 {
@@ -64,7 +68,7 @@ if (! empty($_REQUEST['search_fourn_id']))
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 if (empty($user->rights->fournisseur->lire)) accessforbidden();
@@ -138,6 +142,7 @@ if (empty($reshook))
 			$action = '';
 			$result=$object->remove_product_fournisseur_price($rowid);
 			if($result > 0){
+				$db->query("DELETE FROM " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields WHERE fk_object = $rowid");
 				setEventMessages($langs->trans("PriceRemoved"), null, 'mesgs');
 			}else{
 				$error++;
@@ -146,7 +151,7 @@ if (empty($reshook))
 		}
 	}
 
-	if ($action == 'updateprice')
+	if ($action == 'save_price')
 	{
 		$id_fourn=GETPOST("id_fourn");
 		if (empty($id_fourn)) $id_fourn=GETPOST("search_id_fourn");
@@ -154,7 +159,7 @@ if (empty($reshook))
 		if (empty($ref_fourn)) $ref_fourn=GETPOST("search_ref_fourn");
 		$ref_fourn_old=GETPOST("ref_fourn_old");
 		if (empty($ref_fourn_old)) $ref_fourn_old = $ref_fourn;
-		$quantity=GETPOST("qty");
+		$quantity=price2num(GETPOST("qty", 'nohtml'), 'MS');
 		$remise_percent=price2num(GETPOST('remise_percent', 'alpha'));
 		$npr = preg_match('/\*/', $_POST['tva_tx']) ? 1 : 0 ;
 		$tva_tx = str_replace('*', '', GETPOST('tva_tx', 'alpha'));
@@ -256,6 +261,35 @@ if (empty($reshook))
 				$result=$supplier->fetch($id_fourn);
 				if (isset($_POST['ref_fourn_price_id']))
 					$object->fetch_product_fournisseur_price($_POST['ref_fourn_price_id']);
+
+				$extralabels=$extrafields->fetch_name_optionals_label("product_fournisseur_price");
+				$extrafield_values = $extrafields->getOptionalsFromPost("product_fournisseur_price");
+
+				$sql = "";
+				$resql = $db->query("SELECT * FROM " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields WHERE fk_object = " . $object->product_fourn_price_id);
+				// Insert a new extrafields row, if none exists
+				if ($db->num_rows($resql) != 1) {
+					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields (fk_object, ";
+					foreach ($extrafield_values as $key => $value) {
+						$sql .= str_replace('options_', '', $key) . ', ';
+					}
+					$sql = substr($sql, 0, strlen($sql)-2) . ") VALUES (" . $object->product_fourn_price_id . ", ";
+					foreach ($extrafield_values as $key => $value) {
+						$sql .= '"' . $value . '", ';
+					}
+					$sql = substr($sql, 0, strlen($sql)-2) . ')';
+				}
+				// else update the existing one
+				else {
+					$sql = "UPDATE " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields SET ";
+					foreach ($extrafield_values as $key => $value) {
+						$sql .= str_replace('options_', '', $key) . ' = "' . $value . '", ';
+					}
+					$sql = substr($sql, 0, strlen($sql)-2) . ' WHERE fk_object = ' . $object->product_fourn_price_id;
+				}
+
+				// Execute the sql command from above
+				$db->query($sql);
 
 				$newprice = price2num(GETPOST("price", "alpha"));
 
@@ -362,7 +396,7 @@ if ($id > 0 || $ref)
 		    $object->next_prev_filter=" fk_product_type = ".$object->type;
 
             $shownav = 1;
-            if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+            if ($user->socid && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
 			dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
@@ -402,7 +436,7 @@ if ($id > 0 || $ref)
 
 
 			// Form to add or update a price
-			if (($action == 'add_price' || $action == 'updateprice' ) && $usercancreate)
+			if (($action == 'add_price' || $action == 'update_price' ) && $usercancreate)
 			{
 				$langs->load("suppliers");
 
@@ -418,7 +452,7 @@ if ($id > 0 || $ref)
 
 				print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-				print '<input type="hidden" name="action" value="updateprice">';
+				print '<input type="hidden" name="action" value="save_price">';
 
 				dol_fiche_head();
 
@@ -481,7 +515,7 @@ if ($id > 0 || $ref)
 				print '<tr>';
 				print '<td class="fieldrequired">'.$langs->trans("QtyMin").'</td>';
 				print '<td>';
-				$quantity = GETPOST('qty') ? GETPOST('qty') : "1";
+				$quantity = GETPOSTISSET('qty') ? price2num(GETPOST('qty', 'nohtml'), 'MS') : "1";
 				if ($rowid)
 				{
 					print '<input type="hidden" name="qty" value="'.$object->fourn_qty.'">';
@@ -491,6 +525,13 @@ if ($id > 0 || $ref)
 				{
 					print '<input class="flat" name="qty" size="5" value="'.$quantity.'">';
 				}
+                // Units
+                if ($conf->global->PRODUCT_USE_UNITS) {
+                    $unit = $object->getLabelOfUnit();
+                    if ($unit !== '') {
+                        print '&nbsp;&nbsp;' . $langs->trans($unit);
+                    }
+                }
 				print '</td></tr>';
 
 				// Vat rate
@@ -723,6 +764,25 @@ SCRIPT;
     				print '</tr>';
 				}
 
+				$extrafields->fetch_name_optionals_label("product_fournisseur_price");
+				$extralabels=$extrafields->attributes["product_fournisseur_price"]['label'];
+				// Extrafields
+				$resql = $db->query("SELECT * FROM " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields WHERE fk_object = " . $rowid);
+				if ($db->num_rows($resql) != 1) {
+					foreach ($extralabels as $key => $value) {
+						if (! empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && ($extrafields->attributes["product_fournisseur_price"]['list'][$key] == 1 || $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 3 || ($action == "update_price" && $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 4))) {
+							print '<tr><td' . ($extrafields->attributes["product_fournisseur_price"]['required'][$key] ? ' class="fieldrequired"' : '') . '>' . $langs->trans($value) . '</td><td>' . $extrafields->showInputField($key, '', '', '', '', '', 0, 'product_fournisseur_price') . '</td></tr>';
+						}
+					}
+				} else {
+					$resql = $db->fetch_object($resql);
+					foreach ($extralabels as $key => $value) {
+						if (! empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && ($extrafields->attributes["product_fournisseur_price"]['list'][$key] == 1 || $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 3 || ($action == "update_price" && $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 4))) {
+							print '<tr><td' . ($extrafields->attributes["product_fournisseur_price"]['required'][$key] ? ' class="fieldrequired"' : '') . '>' . $langs->trans($value) . '</td><td>' . $extrafields->showInputField($key, $resql->{$key}, '', '', '', '', 0, 'product_fournisseur_price') . '</td></tr>';
+						}
+					}
+				}
+
 				if (is_object($hookmanager))
 				{
 					$parameters=array('id_fourn'=>$id_fourn,'prod_id'=>$object->id);
@@ -747,7 +807,7 @@ SCRIPT;
 
 			print "\n<div class=\"tabsAction\">\n";
 
-			if ($action != 'add_price' && $action != 'updateprice')
+			if ($action != 'add_price' && $action != 'update_price')
 			{
 				$parameters=array();
 				$reshook=$hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
@@ -778,11 +838,11 @@ SCRIPT;
 				$num = count($product_fourn_list);
 				if (($num + ($offset * $limit)) < $nbtotalofrecords) $num++;
 
-				print_barre_liste($langs->trans('SupplierPrices'), $page, $_SERVER ['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit, 1);
+				print_barre_liste($langs->trans('SupplierPrices'), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit, 1);
 
 				// Suppliers list title
 				print '<div class="div-table-responsive">';
-				print '<table class="noborder" width="100%">';
+				print '<table class="liste" width="100%">';
 
 				$param="&id=".$object->id;
 
@@ -810,6 +870,17 @@ SCRIPT;
                     print_liste_field_titre("BarcodeType", $_SERVER["PHP_SELF"], "pfp.fk_barcode_type", "", $param, '', $sortfield, $sortorder, 'center ');
                 }
 				print_liste_field_titre("DateModification", $_SERVER["PHP_SELF"], "pfp.tms", "", $param, '', $sortfield, $sortorder, 'right ');
+
+				// fetch optionals attributes and labels
+				$extrafields->fetch_name_optionals_label("product_fournisseur_price");
+				$extralabels=$extrafields->attributes["product_fournisseur_price"]['label'];
+				foreach ($extralabels as $key => $value) {
+					// Show field if not hidden
+					if (! empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
+						print_liste_field_titre($value, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+					}
+				}
+
 				if (is_object($hookmanager))
 				{
 				    $parameters=array('id_fourn'=>$id_fourn, 'prod_id'=>$object->id);
@@ -851,6 +922,13 @@ SCRIPT;
 						// Quantity
 						print '<td class="right">';
 						print $productfourn->fourn_qty;
+                        // Units
+                        if ($conf->global->PRODUCT_USE_UNITS) {
+                            $unit = $object->getLabelOfUnit();
+                            if ($unit !== '') {
+                                print '&nbsp;&nbsp;' . $langs->trans($unit);
+                            }
+                        }
 						print '</td>';
 
 						// VAT rate
@@ -924,6 +1002,23 @@ SCRIPT;
 						print dol_print_date(($productfourn->fourn_date_modification ? $productfourn->fourn_date_modification : $productfourn->date_modification), "dayhour");
 						print '</td>';
 
+						// Extrafields
+						$resql = $db->query("SELECT * FROM " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields WHERE fk_object = " . $productfourn->product_fourn_price_id);
+						if ($db->num_rows($resql) != 1) {
+							foreach ($extralabels as $key => $value) {
+								if (! empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
+									print "<td></td>";
+								}
+							}
+						} else {
+							$resql = $db->fetch_object($resql);
+							foreach ($extralabels as $key => $value) {
+								if (! empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
+									print '<td align="right">' . $extrafields->showOutputField($key, $resql->{$key}) . "</td>";
+								}
+							}
+						}
+
 						if (is_object($hookmanager))
 						{
 							$parameters=array('id_pfp'=>$productfourn->product_fourn_price_id,'id_fourn'=>$id_fourn,'prod_id'=>$object->id);
@@ -934,7 +1029,7 @@ SCRIPT;
 						print '<td class="center nowraponall">';
 						if ($usercancreate)
 						{
-							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=add_price&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_edit()."</a>";
+							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=update_price&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_edit()."</a>";
 							print ' &nbsp; ';
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=ask_remove_pf&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_picto($langs->trans("Remove"), 'delete').'</a>';
 						}

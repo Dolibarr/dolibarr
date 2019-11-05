@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -406,7 +406,7 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the object card (with optionaly the picto)
+	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *	@param	string	$option						On what the link point to ('nolink', ...)
@@ -1309,7 +1309,7 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 * Delete bookkepping by importkey
+	 * Delete bookkeeping by importkey
 	 *
 	 * @param  string		$importkey		Import key
 	 * @return int Result
@@ -1337,7 +1337,7 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 * Delete bookkepping by year
+	 * Delete bookkeeping by year
 	 *
 	 * @param  string $delyear		Year to delete
 	 * @param  string $journal		Journal to delete
@@ -1379,7 +1379,7 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 * Delete bookkepping by piece number
+	 * Delete bookkeeping by piece number
 	 *
 	 * @param 	int 	$piecenum 	Piecenum to delete
 	 * @return 	int 				Result
@@ -1584,9 +1584,7 @@ class BookKeeping extends CommonObject
 		dol_syslog(get_class($this) . "::" . __METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-
 			while ($obj = $this->db->fetch_object($result)) {
-
 				$line = new BookKeepingLine();
 
 				$line->id = $obj->rowid;
@@ -1624,12 +1622,12 @@ class BookKeeping extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Export bookkeping
+	 * Export bookkeeping
 	 *
 	 * @param	string	$model	Model
 	 * @return	int				Result
 	 */
-    public function export_bookkeping($model = 'ebp')
+    public function export_bookkeeping($model = 'ebp')
     {
         // phpcs:enable
 		global $conf;
@@ -1641,7 +1639,7 @@ class BookKeeping extends CommonObject
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE entity IN (" . getEntity('accountancy') . ")";
 
-		dol_syslog(get_class($this) . "::export_bookkeping", LOG_DEBUG);
+		dol_syslog(get_class($this) . "::export_bookkeeping", LOG_DEBUG);
 
 		$resql = $this->db->query($sql);
 
@@ -1679,7 +1677,7 @@ class BookKeeping extends CommonObject
 			return $num;
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::export_bookkeping " . $this->error, LOG_ERR);
+			dol_syslog(get_class($this) . "::export_bookkeeping " . $this->error, LOG_ERR);
 			return - 1;
 		}
 	}
@@ -1966,6 +1964,7 @@ class BookKeepingLine
 	public $credit;
 	public $montant;
 	public $sens;
+    public $lettering_code;
 
 	/**
      * @var int ID
@@ -1976,5 +1975,12 @@ class BookKeepingLine
 	public $code_journal;
 	public $journal_label;
 	public $piece_num;
+
+	/**
+     * @var integer|string date_creation
+     */
 	public $date_creation;
+
+    public $date_modification;
+    public $date_export;
 }

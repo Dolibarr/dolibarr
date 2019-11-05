@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 
@@ -64,7 +64,7 @@ function user_prepare_head($object)
 	if ($canreadperms)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("Rights"). ' <span class="badge">'.($object->nb_rights).'</span>';
+		$head[$h][1] = $langs->trans("Rights"). '<span class="badge marginleftonlyshort">'.($object->nb_rights).'</span>';
 		$head[$h][2] = 'rights';
 		$h++;
 	}
@@ -94,7 +94,7 @@ function user_prepare_head($object)
 		}
 
 		$head[$h][0] = DOL_URL_ROOT.'/user/agenda_extsites.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("ExtSites").($nbagenda ? ' <span class="badge">'.$nbagenda.'</span>' : '');
+		$head[$h][1] = $langs->trans("ExtSites").($nbagenda ? '<span class="badge marginleftonlyshort">'.$nbagenda.'</span>' : '');
 		$head[$h][2] = 'extsites';
 		$h++;
 	}
@@ -108,7 +108,7 @@ function user_prepare_head($object)
 	}
 
 	// Notifications
-	if ($user->societe_id == 0 && ! empty($conf->notification->enabled))
+	if ($user->socid == 0 && ! empty($conf->notification->enabled))
 	{
 		$nbNote = 0;
 		$sql = "SELECT COUNT(n.rowid) as nb";
@@ -132,7 +132,7 @@ function user_prepare_head($object)
 
 		$head[$h][0] = DOL_URL_ROOT.'/user/notify/card.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Notifications");
-		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+		if ($nbNote > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
 		$head[$h][2] = 'notify';
 		$h++;
 	}
@@ -157,14 +157,14 @@ function user_prepare_head($object)
 	}
 
 	// Such info on users is visible only by internal user
-	if (empty($user->societe_id))
+	if (empty($user->socid))
 	{
 		// Notes
 		$nbNote = 0;
 		if(!empty($object->note)) $nbNote++;
 		$head[$h][0] = DOL_URL_ROOT.'/user/note.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Note");
-		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+		if ($nbNote > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
 		$head[$h][2] = 'note';
 		$h++;
 
@@ -176,7 +176,7 @@ function user_prepare_head($object)
 		$nbLinks=Link::count($db, $object->element, $object->id);
 		$head[$h][0] = DOL_URL_ROOT.'/user/document.php?userid='.$object->id;
 		$head[$h][1] = $langs->trans("Documents");
-		if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+		if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
 		$head[$h][2] = 'document';
 		$h++;
 
@@ -228,7 +228,7 @@ function group_prepare_head($object)
 	if ($canreadperms)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/user/group/perms.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("GroupRights"). ' <span class="badge">'.($object->nb_rights).'</span>';
+		$head[$h][1] = $langs->trans("GroupRights"). '<span class="badge marginleftonlyshort">'.($object->nb_rights).'</span>';
 		$head[$h][2] = 'rights';
 		$h++;
 	}
@@ -348,23 +348,21 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	}
 	else
 	{
-		print '<tr class="liste_titre"><th class="titlefield">'.$langs->trans("DefaultSkin").'</th>';
+		$dirthemestring = '';
+		foreach($dirthemes as $dirtheme)
+		{
+			$dirthemestring .= '"'.$dirtheme.'" ';
+		}
+
+		print '<tr class="liste_titre"><th class="titlefield">';
+		print $form->textwithpicto($langs->trans("DefaultSkin"), $langs->trans("ThemeDir").' : '.$dirthemestring);
+		print '</th>';
 		print '<th class="right">';
 		$url='https://www.dolistore.com/4-skins';
 		print '<a href="'.$url.'" target="_blank">';
 		print $langs->trans('DownloadMoreSkins');
 		print '</a>';
 		print '</th></tr>';
-
-		print '<tr>';
-		print '<td>'.$langs->trans("ThemeDir").'</td>';
-		print '<td>';
-		foreach($dirthemes as $dirtheme)
-		{
-			echo '"'.$dirtheme.'" ';
-		}
-		print '</td>';
-		print '</tr>';
 	}
 
 	print '<tr><td colspan="'.$colspan.'">';
@@ -399,7 +397,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 						print '<a href="'.$_SERVER["PHP_SELF"].($edit?'?action=edit&theme=':'?theme=').$subdir.(GETPOST('optioncss', 'alpha', 1)?'&optioncss='.GETPOST('optioncss', 'alpha', 1):'').($fuser?'&id='.$fuser->id:'').'" style="font-weight: normal;" alt="'.$langs->trans("Preview").'">';
 						if ($subdir == $conf->global->MAIN_THEME) $title=$langs->trans("ThemeCurrentlyActive");
 						else $title=$langs->trans("ShowPreview");
-						print '<img src="'.$url.'" border="0" width="80" height="60" alt="'.$title.'" title="'.$title.'" style="margin-bottom: 5px;">';
+						print '<img class="img-skinthumb shadow" src="'.$url.'" alt="'.$title.'" title="'.$title.'" style="border: none; margin-bottom: 5px;">';
 						print '</a><br>';
 						if ($subdir == $selected_theme)
 						{
@@ -421,6 +419,31 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	print '</div></td></tr></table>';
 
 	print '</td></tr>';
+
+	// Show logo
+	if ($foruserprofile)
+	{
+		// Nothing
+	}
+	else
+	{
+		// Show logo
+		print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("EnableShowLogo").'</td><td>';
+		if ($edit)
+		{
+			print $form->selectyesno('MAIN_SHOW_LOGO', $conf->global->MAIN_SHOW_LOGO, 1);
+		}
+		else
+		{
+			print  yn($conf->global->MAIN_SHOW_LOGO);
+		}
+		print '</td>';
+		print '</tr>';
+		/*
+		print '<tr class="oddeven"><td>'.$langs->trans("EnableShowLogo").'</td><td>' . yn($conf->global->MAIN_SHOW_LOGO) . '</td>';
+		print "</tr>";*/
+	}
+
 
 	// TopMenuDisableImages
 	if ($foruserprofile)
@@ -615,8 +638,6 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	// TextTitleColor for title of Pages
 	if ($foruserprofile)
 	{
-
-
 	}
 	else
 	{
@@ -642,8 +663,6 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	// BackgroundTableTitleColor
 	if ($foruserprofile)
 	{
-
-
 	}
 	else
 	{
@@ -669,8 +688,6 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	// TextTitleColor
 	if ($foruserprofile)
 	{
-
-
 	}
 	else
 	{
@@ -696,7 +713,6 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	// BackgroundTableLineOddColor
 	if ($foruserprofile)
 	{
-
 	}
 	else
 	{
@@ -726,7 +742,6 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	// BackgroundTableLineEvenColor
 	if ($foruserprofile)
 	{
-
 	}
 	else
 	{
@@ -982,7 +997,6 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 	}
 	else
 	{
-
 	}
 	print '</table>';
 }

@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -40,7 +40,7 @@ $lttype=GETPOST('localTaxType', 'int');
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 $object = new Localtax($db);
@@ -61,7 +61,6 @@ if ($_POST["cancel"] == $langs->trans("Cancel") && ! $id)
 
 if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
-
     $db->begin();
 
     $datev=dol_mktime(12, 0, 0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
@@ -155,8 +154,6 @@ $form = new Form($db);
 $title=$langs->trans("LT".$object->ltt) . " - " . $langs->trans("Card");
 $help_url='';
 llxHeader("", $title, $helpurl);
-
-
 
 if ($action == 'create')
 {

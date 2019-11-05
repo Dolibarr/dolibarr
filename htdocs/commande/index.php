@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -42,10 +42,10 @@ $langs->loadLangs(array('orders', 'bills'));
 
 // Security check
 $socid=GETPOST('socid', 'int');
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
 	$action = '';
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 
@@ -62,7 +62,8 @@ $help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Ped
 
 llxHeader("", $langs->trans("Orders"), $help_url);
 
-print load_fiche_titre($langs->trans("OrdersArea"));
+
+print load_fiche_titre($langs->trans("OrdersArea"), '', 'commercial');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -91,7 +92,7 @@ $sql.= ", ".MAIN_DB_PREFIX."commande as c";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE c.fk_soc = s.rowid";
 $sql.= " AND c.entity IN (".getEntity('societe').")";
-if ($user->societe_id) $sql.=' AND c.fk_soc = '.$user->societe_id;
+if ($user->socid) $sql.=' AND c.fk_soc = '.$user->socid;
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " GROUP BY c.fk_statut";
 
@@ -200,7 +201,6 @@ if (! empty($conf->commande->enabled))
 			$var = true;
 			while ($i < $num)
 			{
-
 				$obj = $db->fetch_object($resql);
 
                 $commandestatic->id=$obj->rowid;
@@ -224,7 +224,6 @@ if (! empty($conf->commande->enabled))
 		}
 		else
 		{
-
 			print '<tr class="oddeven"><td colspan="3">'.$langs->trans("NoOrder").'</td></tr>';
 		}
 		print "</table><br>";
@@ -271,7 +270,6 @@ if ($resql)
 		$var = true;
 		while ($i < $num)
 		{
-
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
@@ -352,7 +350,6 @@ if (! empty($conf->commande->enabled))
 			$var = true;
 			while ($i < $num)
 			{
-
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
 				print '<td class="nowrap" width="20%">';
@@ -434,7 +431,6 @@ if (! empty($conf->commande->enabled))
 			$var = true;
 			while ($i < $num)
 			{
-
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
 				print '<td width="20%" class="nowrap">';

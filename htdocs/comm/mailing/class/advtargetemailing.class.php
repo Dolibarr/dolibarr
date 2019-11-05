@@ -13,7 +13,7 @@
 * GNU General Public License for more details.
 *
 * You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+* along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 /**
@@ -544,7 +544,7 @@ class AdvanceTargetingMailing extends CommonObject
     public function query_thirdparty($arrayquery)
 	{
         // phpcs:enable
-		global $langs,$conf;
+		global $langs,$conf,$extrafields;
 
 		$sql = "SELECT";
 		$sql.= " t.rowid";
@@ -556,7 +556,6 @@ class AdvanceTargetingMailing extends CommonObject
 		$sqlwhere[]= 't.entity IN ('.getEntity('societe').')';
 
 		if (count($arrayquery)>0) {
-
 			if (array_key_exists('cust_saleman', $arrayquery)) {
 				$sql.= " LEFT OUTER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as saleman ON saleman.fk_soc=t.rowid ";
 			}
@@ -565,7 +564,6 @@ class AdvanceTargetingMailing extends CommonObject
 			}
 
 			if (!empty($arrayquery['cust_name'])) {
-
 				$sqlwhere[]= $this->transformToSQL('t.nom', $arrayquery['cust_name']);
 			}
 			if (!empty($arrayquery['cust_code'])) {
@@ -617,29 +615,27 @@ class AdvanceTargetingMailing extends CommonObject
 
 			//Standard Extrafield feature
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
-				// fetch optionals attributes and labels
-				dol_include_once('/core/class/extrafields.class.php');
-				$extrafields = new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label('societe');
+				$elementtype = Societe::$table_element;
 
-				foreach($extralabels as $key=>$val) {
+				$extrafields->fetch_name_optionals_label($elementtype);
 
-					if (($extrafields->attribute_type[$key] == 'varchar') ||
-						($extrafields->attribute_type[$key] == 'text')) {
+				foreach($extrafields->attributes[$elementtype]['label'] as $key=>$val) {
+					if (($extrafields->attributes[$elementtype]['type'][$key] == 'varchar') ||
+						($extrafields->attributes[$elementtype]['type'][$key] == 'text')) {
 						if (!empty($arrayquery['options_'.$key])) {
 							$sqlwhere[]= " (te.".$key." LIKE '".$arrayquery['options_'.$key]."')";
 						}
-					} elseif (($extrafields->attribute_type[$key] == 'int') ||
-						($extrafields->attribute_type[$key] == 'double')) {
+					} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'int') ||
+						($extrafields->attributes[$elementtype]['type'][$key] == 'double')) {
 						if (!empty($arrayquery['options_'.$key.'_max'])) {
 							$sqlwhere[]= " (te.".$key." >= ".$arrayquery['options_'.$key.'_max']." AND te.".$key." <= ".$arrayquery['options_'.$key.'_min'].")";
 						}
-					} elseif (($extrafields->attribute_type[$key] == 'date') ||
-						($extrafields->attribute_type[$key] == 'datetime')) {
+					} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'date') ||
+						($extrafields->attributes[$elementtype]['type'][$key] == 'datetime')) {
 						if (!empty($arrayquery['options_'.$key.'_end_dt'])){
 							$sqlwhere[]= " (te.".$key." >= '".$this->db->idate($arrayquery['options_'.$key.'_st_dt'])."' AND te.".$key." <= '".$this->db->idate($arrayquery['options_'.$key.'_end_dt'])."')";
 						}
-					} elseif ($extrafields->attribute_type[$key] == 'boolean') {
+					} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'boolean') {
 						if ($arrayquery['options_'.$key]!=''){
 							$sqlwhere[]= " (te.".$key." = ".$arrayquery['options_'.$key].")";
 						}
@@ -713,7 +709,6 @@ class AdvanceTargetingMailing extends CommonObject
 		$sqlwhere[]= 't.entity IN ('.getEntity('socpeople').')';
 
 		if (count($arrayquery)>0) {
-
 			if (array_key_exists('contact_categ', $arrayquery)) {
 				$sql.= " LEFT OUTER JOIN " . MAIN_DB_PREFIX . "categorie_contact as contactcateg ON contactcateg.fk_socpeople=t.rowid ";
 			}
@@ -757,29 +752,32 @@ class AdvanceTargetingMailing extends CommonObject
 
 			//Standard Extrafield feature
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
+				$elementtype = Contact::$table_element;
+
 				// fetch optionals attributes and labels
 				dol_include_once('/core/class/extrafields.class.php');
 				$extrafields = new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label('socpeople');
+				$extrafields->fetch_name_optionals_label($elementtype);
 
-				foreach($extralabels as $key=>$val) {
+				$extrafields->fetch_name_optionals_label($elementtype);
 
-					if (($extrafields->attribute_type[$key] == 'varchar') ||
-					($extrafields->attribute_type[$key] == 'text')) {
+				foreach($extrafields->attributes[$elementtype]['label'] as $key=>$val) {
+					if (($extrafields->attributes[$elementtype]['type'][$key] == 'varchar') ||
+					($extrafields->attributes[$elementtype]['type'][$key] == 'text')) {
 						if (!empty($arrayquery['options_'.$key.'_cnct'])) {
 							$sqlwhere[]= " (te.".$key." LIKE '".$arrayquery['options_'.$key.'_cnct']."')";
 						}
-					} elseif (($extrafields->attribute_type[$key] == 'int') ||
-						($extrafields->attribute_type[$key] == 'double')) {
+					} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'int') ||
+						($extrafields->attributes[$elementtype]['type'][$key] == 'double')) {
 						if (!empty($arrayquery['options_'.$key.'_max'.'_cnct'])) {
 							$sqlwhere[]= " (te.".$key." >= ".$arrayquery['options_'.$key.'_max'.'_cnct']." AND te.".$key." <= ".$arrayquery['options_'.$key.'_min'.'_cnct'].")";
 						}
-					} elseif (($extrafields->attribute_type[$key] == 'date') ||
-					($extrafields->attribute_type[$key] == 'datetime')) {
+					} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'date') ||
+					($extrafields->attributes[$elementtype]['type'][$key] == 'datetime')) {
 						if (!empty($arrayquery['options_'.$key.'_end_dt'.'_cnct'])){
 							$sqlwhere[]= " (te.".$key." >= '".$this->db->idate($arrayquery['options_'.$key.'_st_dt'.'_cnct'])."' AND te.".$key." <= '".$this->db->idate($arrayquery['options_'.$key.'_end_dt'.'_cnct'])."')";
 						}
-					} elseif ($extrafields->attribute_type[$key] == 'boolean') {
+					} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'boolean') {
 						if ($arrayquery['options_'.$key.'_cnct']!=''){
 							if ($arrayquery['options_'.$key.'_cnct']==0) {
 								$sqlwhere[]= " (te.".$key." = ".$arrayquery['options_'.$key.'_cnct']." OR ((te.".$key." IS NULL) AND (te.fk_object IS NOT NULL)))";
@@ -805,7 +803,6 @@ class AdvanceTargetingMailing extends CommonObject
 					}
 
 					if (!empty($arrayquery['cust_name'])) {
-
 						$sqlwhere[]= $this->transformToSQL('ts.nom', $arrayquery['cust_name']);
 					}
 					if (!empty($arrayquery['cust_code'])) {
@@ -857,29 +854,31 @@ class AdvanceTargetingMailing extends CommonObject
 
 					//Standard Extrafield feature
 					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
+						$elementtype = Societe::$table_element;
+
 						// fetch optionals attributes and labels
 						dol_include_once('/core/class/extrafields.class.php');
 						$extrafields = new ExtraFields($this->db);
-						$extralabels=$extrafields->fetch_name_optionals_label('societe');
 
-						foreach($extralabels as $key=>$val) {
+						$extrafields->fetch_name_optionals_label($elementtype);
 
-							if (($extrafields->attribute_type[$key] == 'varchar') ||
-								($extrafields->attribute_type[$key] == 'text')) {
+						foreach($extrafields->attributes[$elementtype]['label'] as $key=>$val) {
+							if (($extrafields->attributes[$elementtype]['type'][$key] == 'varchar') ||
+								($extrafields->attributes[$elementtype]['type'][$key] == 'text')) {
 								if (!empty($arrayquery['options_'.$key])) {
 									$sqlwhere[]= " (tse.".$key." LIKE '".$arrayquery['options_'.$key]."')";
 								}
-							} elseif (($extrafields->attribute_type[$key] == 'int') ||
-								($extrafields->attribute_type[$key] == 'double')) {
+							} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'int') ||
+								($extrafields->attributes[$elementtype]['type'][$key] == 'double')) {
 								if (!empty($arrayquery['options_'.$key.'_max'])) {
 									$sqlwhere[]= " (tse.".$key." >= ".$arrayquery['options_'.$key.'_max']." AND tse.".$key." <= ".$arrayquery['options_'.$key.'_min'].")";
 								}
-							} elseif (($extrafields->attribute_type[$key] == 'date') ||
-								($extrafields->attribute_type[$key] == 'datetime')) {
+							} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'date') ||
+								($extrafields->attributes[$elementtype]['type'][$key] == 'datetime')) {
 								if (!empty($arrayquery['options_'.$key.'_end_dt'])){
 									$sqlwhere[]= " (tse.".$key." >= '".$this->db->idate($arrayquery['options_'.$key.'_st_dt'])."' AND tse.".$key." <= '".$this->db->idate($arrayquery['options_'.$key.'_end_dt'])."')";
 								}
-							} elseif ($extrafields->attribute_type[$key] == 'boolean') {
+							} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'boolean') {
 								if ($arrayquery['options_'.$key]!=''){
 									$sqlwhere[]= " (tse.".$key." = ".$arrayquery['options_'.$key].")";
 								}

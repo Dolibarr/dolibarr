@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -77,7 +77,7 @@ if ((isset($_GET["type"]) && $_GET["type"] == 1) || empty($conf->product->enable
 llxHeader("", $langs->trans("ProductsAndServices"), $helpurl);
 
 $linkback="";
-print load_fiche_titre($transAreaType, $linkback, 'title_products.png');
+print load_fiche_titre($transAreaType, $linkback, 'products');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -95,6 +95,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
     	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<div class="div-table-responsive-no-min">';
     	print '<table class="noborder nohover centpercent">';
     	$i=0;
     	foreach($listofsearchfields as $key => $value)
@@ -107,6 +108,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     		$i++;
     	}
     	print '</table>';
+        print '</div>';
     	print '</form>';
     	print '<br>';
     }
@@ -266,7 +268,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 /*
- * Last modified products
+ * Latest modified products
  */
 $max=15;
 $sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy, p.tobatch, p.fk_price_expression,";
@@ -299,11 +301,11 @@ if ($result)
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 
-		$colnb=4;
+		$colnb=2;
 		if (empty($conf->global->PRODUIT_MULTIPRICES)) $colnb++;
 
 		print '<tr class="liste_titre"><th colspan="'.$colnb.'">'.$transRecordedType.'</th>';
-		print '<th class="right"><a href="'.DOL_URL_ROOT.'/product/list.php?sortfield=p.tms&sortorder=DESC">'.$langs->trans("FullList").'</td>';
+		print '<th class="right" colspan="3"><a href="'.DOL_URL_ROOT.'/product/list.php?sortfield=p.tms&sortorder=DESC">'.$langs->trans("FullList").'</td>';
 		print '</tr>';
 
 		while ($i < $num)
@@ -359,10 +361,10 @@ if ($result)
     			else print price($objp->price).' '.$langs->trans("HT");
     			print '</td>';
 			}
-			print '<td class="right nowrap"><span class="statusrefsell">';
+			print '<td class="right nowrap width25"><span class="statusrefsell">';
 			print $product_static->LibStatut($objp->tosell, 3, 0);
 			print "</span></td>";
-            print '<td class="right nowrap"><span class="statusrefbuy">';
+            print '<td class="right nowrap width25"><span class="statusrefbuy">';
             print $product_static->LibStatut($objp->tobuy, 3, 1);
             print "</span></td>";
 			print "</tr>\n";

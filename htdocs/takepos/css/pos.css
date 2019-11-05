@@ -129,6 +129,14 @@ table.postablelines tr td {
     height: 40px !important;
 }
 
+div.paymentbordline
+{
+	width:50%; 
+	background-color:#888; 
+	border-radius: 8px; 
+	margin-bottom: 4px;
+}
+
 @media only screen and (max-aspect-ratio: 6/4) {
 	div.description{
 	min-height:20%;
@@ -257,6 +265,12 @@ tr.selected, tr.selected td {
 p.description_content{
 	padding:10px;
 	margin:0px;
+}
+div.description_content {
+	display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
 }
 
 @media screen and (min-width: 892px) {

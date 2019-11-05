@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,10 +34,10 @@ $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 $userid=GETPOST('userid', 'int');
 $socid=GETPOST('socid', 'int');
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
     $action = '';
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 
 $nowyear=strftime("%Y", dol_now());
@@ -71,7 +71,7 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
-if (!$user->rights->societe->client->voir || $user->societe_id)
+if (!$user->rights->societe->client->voir || $user->socid)
 {
     $filenamenb = $dir.'/shipmentsnbinyear-'.$user->id.'-'.$year.'.png';
 }
@@ -111,7 +111,7 @@ $data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
-if (!$user->rights->societe->client->voir || $user->societe_id)
+if (!$user->rights->societe->client->voir || $user->socid)
 {
     $filenameamount = $dir.'/shipmentsamountinyear-'.$user->id.'-'.$year.'.png';
 }
@@ -149,7 +149,7 @@ if (! $mesg)
 /*
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (!$user->rights->societe->client->voir || $user->societe_id)
+if (!$user->rights->societe->client->voir || $user->socid)
 {
     $filename_avg = $dir.'/shipmentsaverage-'.$user->id.'-'.$year.'.png';
 }

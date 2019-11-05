@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -120,8 +120,8 @@ if (empty($reshook))
     if ((string) $type == '1') { $objectlabel='Services'; }
     if ((string) $type == '0') { $objectlabel='Products'; }
 
-    $permtoread = $user->rights->produit->lire;
-    $permtodelete = $user->rights->produit->supprimer;
+    $permissiontoread = $user->rights->produit->lire;
+    $permissiontodelete = $user->rights->produit->supprimer;
     $uploaddir = $conf->product->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
     */
@@ -201,7 +201,6 @@ $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-
 	dol_syslog(__FILE__, LOG_DEBUG);
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);

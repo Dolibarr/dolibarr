@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -183,41 +183,41 @@ function _printInputFormPart($confkey, $title = false, $desc = '', $metas = arra
     $var=!$var;
     $inputCount = empty($inputCount)?1:($inputCount+1);
     $form=new Form($db);
-    
+
     $defaultMetas = array(
         'name' => 'value'.$inputCount
     );
-    
+
     if ($type!='textarea') {
         $defaultMetas['type']   = 'text';
         $defaultMetas['value']  = $conf->global->{$confkey};
     }
-    
-    
+
+
     $metas = array_merge($defaultMetas, $metas);
     $metascompil = '';
     foreach ($metas as $key => $values) {
         $metascompil .= ' '.$key.'="'.$values.'" ';
     }
-    
+
     print '<tr '.$bc[$var].'>';
     print '<td>';
-    
+
     if (!empty($help)) {
         print $form->textwithtooltip(($title?$title:$langs->trans($confkey)), $langs->trans($help), 2, 1, img_help(1, ''));
     } else {
         print $title?$title:$langs->trans($confkey);
     }
-    
+
     if (!empty($desc)) {
         print '<br><small>'.$langs->trans($desc).'</small>';
     }
-    
+
     print '</td>';
     print '<td class="center" width="20">&nbsp;</td>';
     print '<td class="right" width="300">';
     print '<input type="hidden" name="param'.$inputCount.'" value="'.$confkey.'">';
-    
+
     print '<input type="hidden" name="action" value="setModuleOptions">';
     if ($type=='textarea') {
         print '<textarea '.$metascompil.'  >'.dol_htmlentities($conf->global->{$confkey}).'</textarea>';

@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
@@ -105,7 +105,6 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	while ( $i < $num ) {
-
 		$row = $db->fetch_row($resql);
 
 		print '<tr class="oddeven"><td width="14%">' . length_accountg($row[0]) . '</td>';

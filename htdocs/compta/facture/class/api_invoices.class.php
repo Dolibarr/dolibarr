@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -316,7 +316,7 @@ class Invoices extends DolibarrApi
      *
      * @url	PUT {id}/lines/{lineid}
      *
-     * @return object
+     * @return array
      *
      * @throws 200
      * @throws 304
@@ -415,7 +415,7 @@ class Invoices extends DolibarrApi
         return $this->_cleanObjectDatas($this->invoice);
     }
 
-   /**
+    /**
 	 * Delete a contact type of given invoice
 	 *
 	 * @param int    $id             Id of invoice to update
@@ -423,7 +423,7 @@ class Invoices extends DolibarrApi
 	 *
 	 * @url	DELETE {id}/contact/{rowid}
 	 *
-	 * @return int
+	 * @return array
      * @throws 401
      * @throws 404
      * @throws 500
@@ -529,10 +529,9 @@ class Invoices extends DolibarrApi
         // update bank account
         if (!empty($this->invoice->fk_account))
         {
-             if($this->invoice->setBankAccount($this->invoice->fk_account) == 0)
-             {
-                 throw new RestException(400, $this->invoice->error);
-             }
+            if ($this->invoice->setBankAccount($this->invoice->fk_account) == 0) {
+                throw new RestException(400, $this->invoice->error);
+            }
         }
 
         if($this->invoice->update(DolibarrApiAccess::$user))
@@ -566,7 +565,7 @@ class Invoices extends DolibarrApi
             throw new RestException(500);
         }
 
-         return array(
+        return array(
             'success' => array(
                 'code' => 200,
                 'message' => 'Invoice deleted'
@@ -909,18 +908,18 @@ class Invoices extends DolibarrApi
 
 
         $result = $this->invoice->fetch($id);
-        if( ! $result ) {
+        if (! $result) {
             throw new RestException(404, 'Invoice not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
+        if (! DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
         return $this->_cleanObjectDatas($this->invoice);
     }
 
-   /**
+    /**
      * Create a discount (credit available) for a credit note or a deposit.
      *
      * @param   int 	$id            Invoice ID

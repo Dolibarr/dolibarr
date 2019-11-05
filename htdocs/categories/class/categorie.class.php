@@ -23,7 +23,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -53,6 +53,7 @@ class Categorie extends CommonObject
 	const TYPE_PROJECT   = 'project';
 	const TYPE_ACCOUNT   = 'bank_account';
     const TYPE_BANK_LINE = 'bank_line';
+    const TYPE_WAREHOUSE = 'warehouse';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -75,6 +76,7 @@ class Categorie extends CommonObject
         'project'      => 6,
 		'user'         => 7,
 		'bank_line'    => 8,
+		'warehouse'    => 9,
 	);
 
     /**
@@ -90,12 +92,13 @@ class Categorie extends CommonObject
 		6 => 'project',
 		7 => 'user',
 		8 => 'bank_line',
+		9 => 'warehouse',
 	);
 
 	/**
 	 * @var array Foreign keys mapping from type string
 	 *
-	 * @note Move to const array when PHP 5.6 will be our minimum target
+	 * @TODO Move to const array when PHP 5.6 will be our minimum target
 	 */
 	protected $MAP_CAT_FK = array(
 		'product'  => 'product',
@@ -104,13 +107,14 @@ class Categorie extends CommonObject
 		'member'   => 'member',
 		'contact'  => 'socpeople',
 		'user'     => 'user',
-        'account'  => 'account',		// old for bank_account
+        'account'  => 'account',		// old key for bank_account
         'bank_account' => 'account',
         'project'  => 'project',
+        'warehouse'=> 'warehouse',
     );
 
     /**
-	 * @var array Category tables mapping from type string
+	 * @var array Category tables mapping from type string (llx_categorie_...)
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
@@ -121,9 +125,10 @@ class Categorie extends CommonObject
 		'member'   => 'member',
 		'contact'  => 'contact',
 		'user'     => 'user',
-        'account'  => 'account',		// old for bank_account
+        'account'  => 'account',		// old key for bank_account
         'bank_account'=> 'account',
         'project'  => 'project',
+        'warehouse'=> 'warehouse',
 	);
 
     /**
@@ -141,10 +146,11 @@ class Categorie extends CommonObject
 		'account'  => 'Account',		// old for bank account
 		'bank_account'  => 'Account',
         'project'  => 'Project',
+        'warehouse'=> 'Entrepot',
 	);
 
     /**
-	 * @var array Object table mapping from type string
+	 * @var array Object table mapping from type string (table llx_...)
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
@@ -157,6 +163,7 @@ class Categorie extends CommonObject
 		'user'     => 'user',
         'account'  => 'bank_account',
         'project'  => 'projet',
+        'warehouse'=> 'entrepot',
 	);
 
 	/**
@@ -197,14 +204,16 @@ class Categorie extends CommonObject
 	/**
 	 * @var string	Category type
 	 *
+	 * @see Categorie::TYPE_ACCOUNT
 	 * @see Categorie::TYPE_PRODUCT
 	 * @see Categorie::TYPE_SUPPLIER
 	 * @see Categorie::TYPE_CUSTOMER
 	 * @see Categorie::TYPE_MEMBER
 	 * @see Categorie::TYPE_CONTACT
 	 * @see Categorie::TYPE_USER
-	 * @see Categorie::TYPE_ACCOUNT
 	 * @see Categorie::TYPE_PROJECT
+	 * @see Categorie::TYPE_BANK_LINE
+     * @see Categorie::TYPE_WAREHOUSE
 	 */
 	public $type;
 
@@ -770,9 +779,9 @@ class Categorie extends CommonObject
 		$sql .= " AND c.fk_categorie = ".$this->id;
 		$sql .= " AND c.fk_" . $this->MAP_CAT_FK[$type] . " = o.rowid";
 		// Protection for external users
-		if (($type == 'customer' || $type == 'supplier') && $user->societe_id > 0)
+		if (($type == 'customer' || $type == 'supplier') && $user->socid > 0)
 		{
-			$sql.= " AND o.rowid = ".$user->societe_id;
+			$sql.= " AND o.rowid = ".$user->socid;
 		}
 		if ($limit > 0 || $offset > 0)  $sql .= $this->db->plimit($limit + 1, $offset);
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -855,11 +864,14 @@ class Categorie extends CommonObject
 		if ($type=="contact") {
 			$subcol_name="fk_socpeople";
 		}
+
+		$idoftype = array_search($type, self::$MAP_ID_TO_CODE);
+
 		$sql = "SELECT s.rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as s";
 		$sql.= " , ".MAIN_DB_PREFIX."categorie_".$sub_type." as sub ";
 		$sql.= ' WHERE s.entity IN ('.getEntity('category').')';
-		$sql.= ' AND s.type='.array_search($type, self::$MAP_ID_TO_CODE);
+		$sql.= ' AND s.type='.$idoftype;
 		$sql.= ' AND s.rowid = sub.fk_categorie';
 		$sql.= ' AND sub.'.$subcol_name.' = '.$id;
 
@@ -878,7 +890,15 @@ class Categorie extends CommonObject
 			}
 		}
 
-		$sql.= $this->db->plimit($limit + 1, $offset);
+		if ($limit) {
+			if ($page < 0)
+			{
+				$page = 0;
+			}
+			$offset = $limit * $page;
+
+			$sql.= $this->db->plimit($limit + 1, $offset);
+		}
 
 		$result = $this->db->query($sql);
 		if ($result)
@@ -998,11 +1018,11 @@ class Categorie extends CommonObject
 	 *                fulllabel = nom avec chemin complet de la categorie
 	 *                fullpath = chemin complet compose des id
 	 *
-	 * @param   string                  $type                   Type of categories ('customer', 'supplier', 'contact', 'product', 'member') or (0, 1, 2, ...).
+	 * @param   string                  $type                   Type of categories ('customer', 'supplier', 'contact', 'product', 'member', ...)
 	 * @param   int|string|array        $markafterid            Keep only or removed all categories including the leaf $markafterid in category tree (exclude) or Keep only of category is inside the leaf starting with this id.
      *                                                          $markafterid can be an :
      *                                                          - int (id of category)
-     *                                                          - string (categories ids seprated by comma)
+     *                                                          - string (categories ids separated by comma)
      *                                                          - array (list of categories ids)
      * @param   int                     $include                [=0] Removed or 1=Keep only
 	 * @return  array|int               Array of categories. this->cats and this->motherof are set, -1 on error
@@ -1617,7 +1637,6 @@ class Categorie extends CommonObject
 			{
 				$nbfile = count($file['name']);
 				for ($i = 0; $i <= $nbfile; $i ++) {
-
 					$originImage = $dir . $file['name'][$i];
 
 					// Cree fichier en taille origine
@@ -1816,13 +1835,13 @@ class Categorie extends CommonObject
 	        }
 	    }
 
-			// Call trigger
-			$result = $this->call_trigger('CATEGORY_SET_MULTILANGS', $user);
-			if ($result < 0) {
-				$this->error = $this->db->lasterror();
-				return -1;
-			}
-			// End call triggers
+		// Call trigger
+		$result = $this->call_trigger('CATEGORY_SET_MULTILANGS', $user);
+		if ($result < 0) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		// End call triggers
 
 	    return 1;
 	}

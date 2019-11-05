@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -125,7 +125,7 @@ $elementtype = 'societe';
 // Retrieve all extrafields for thirdsparty
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label('societe', true);
+$extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_array = array();
@@ -318,7 +318,6 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 			$result=$thirdparty->fetch($id, $ref, $ref_ext);
 			if ($result > 0)
 			{
-
 				$thirdparty_result_fields=array(
 				    	'id' => $thirdparty->id,
 			   			'ref' => $thirdparty->name,
@@ -362,7 +361,7 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 				// Retrieve all extrafields for thirdsparty
 				// fetch optionals attributes and labels
 				$extrafields=new ExtraFields($db);
-				$extralabels=$extrafields->fetch_name_optionals_label('societe', true);
+				$extrafields->fetch_name_optionals_label($elementtype, true);
 				//Get extrafield values
 				$thirdparty->fetch_optionals();
 
@@ -483,7 +482,7 @@ function createThirdParty($authentication, $thirdparty)
         // Retrieve all extrafields for thirdsparty
         // fetch optionals attributes and labels
         $extrafields=new ExtraFields($db);
-        $extralabels=$extrafields->fetch_name_optionals_label('societe', true);
+        $extrafields->fetch_name_optionals_label($elementtype, true);
         if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
         {
         	foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
@@ -570,7 +569,6 @@ function updateThirdParty($authentication, $thirdparty)
 		$result=$object->fetch($thirdparty['id']);
 
 		if (!empty($object->id)) {
-
 			$objectfound=true;
 
 			$object->ref=$thirdparty['ref'];
@@ -619,7 +617,7 @@ function updateThirdParty($authentication, $thirdparty)
 			// Retrieve all extrafields for thirdsparty
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
-			$extralabels=$extrafields->fetch_name_optionals_label('societe', true);
+			$extrafields->fetch_name_optionals_label($elementtype, true);
 			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 			{
 				foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
@@ -714,7 +712,7 @@ function getListOfThirdParties($authentication, $filterthirdparty)
         $elementtype = 'societe';
 
         $extrafields=new ExtraFields($db);
-        $extralabels=$extrafields->fetch_name_optionals_label('societe', true);
+        $extrafields->fetch_name_optionals_label($elementtype, true);
 
 
         $resql=$db->query($sql);

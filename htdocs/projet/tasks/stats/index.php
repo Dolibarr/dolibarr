@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -38,10 +38,10 @@ $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 $userid=GETPOST('userid', 'int');
 $socid=GETPOST('socid', 'int');
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
 	$action = '';
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 $nowyear=strftime("%Y", dol_now());
 $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
@@ -67,7 +67,7 @@ llxHeader('', $langs->trans('Tasks'));
 $title=$langs->trans("TasksStatistics");
 $dir=$conf->projet->dir_output.'/temp';
 
-print load_fiche_titre($title, '', 'title_project.png');
+print load_fiche_titre($title, '', 'project');
 
 dol_mkdir($dir);
 

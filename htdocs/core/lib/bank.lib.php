@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -47,13 +47,13 @@ function bank_prepare_head(Account $object)
     $head[$h][2] = 'journal';
     $h++;
 
-//    if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
-//	{
+    //    if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
+    //    {
     $head[$h][0] = DOL_URL_ROOT . "/compta/bank/treso.php?account=" . $object->id;
     $head[$h][1] = $langs->trans("PlannedTransactions");
     $head[$h][2] = 'cash';
     $h++;
-//	}
+    //    }
 
     $head[$h][0] = DOL_URL_ROOT . "/compta/bank/annuel.php?account=" . $object->id;
     $head[$h][1] = $langs->trans("IOMonthlyReporting");
@@ -84,7 +84,7 @@ function bank_prepare_head(Account $object)
 
     	$head[$h][0] = DOL_URL_ROOT."/compta/bank/releve.php?account=".$object->id;
 	    $head[$h][1] = $langs->trans("AccountStatements");
-	    if (($nbReceipts) > 0) $head[$h][1].= ' <span class="badge">'.($nbReceipts).'</span>';
+	    if (($nbReceipts) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbReceipts).'</span>';
 	    $head[$h][2] = 'statement';
 	    $h++;
 	}
@@ -97,7 +97,7 @@ function bank_prepare_head(Account $object)
     $nbLinks=Link::count($db, $object->element, $object->id);
     $head[$h][0] = DOL_URL_ROOT . "/compta/bank/document.php?account=" . $object->id;
     $head[$h][1] = $langs->trans("Documents");
-    if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+    if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
     $head[$h][2] = 'document';
     $h++;
 
@@ -186,7 +186,7 @@ function various_payment_prepare_head($object)
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/compta/bank/various_payment/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
@@ -276,7 +276,6 @@ function checkBanForAccount($account)
     }
 
     if ($country_code == 'BE') { // Belgium rules
-
     }
 
     if ($country_code == 'ES') { // Spanish rules

@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -56,10 +56,10 @@ $bid=GETPOST('bid', 'int');
 
 // Security check
 $socid='';
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
 	$action = '';
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 $max=3;
@@ -87,7 +87,7 @@ $thirdpartystatic = new Societe($db);
 
 llxHeader("", $langs->trans("AccountancyTreasuryArea"));
 
-print load_fiche_titre($langs->trans("AccountancyTreasuryArea"), '', 'title_accountancy.png');
+print load_fiche_titre($langs->trans("AccountancyTreasuryArea"), '', 'invoicing');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -115,6 +115,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
     	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<div class="div-table-responsive-no-min">';
     	print '<table class="noborder nohover centpercent">';
     	$i=0;
     	foreach($listofsearchfields as $key => $value)
@@ -127,6 +128,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     		$i++;
     	}
     	print '</table>';
+        print '</div>';
     	print '</form>';
     	print '<br>';
     }
@@ -165,6 +167,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
 		$num = $db->num_rows($resql);
 
+        print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("CustomersDraftInvoices").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
@@ -216,7 +219,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 		{
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
-		print "</table><br>";
+		print "</table></div><br>";
 		$db->free($resql);
 	}
 	else
@@ -251,6 +254,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	{
 		$num = $db->num_rows($resql);
 
+        print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("SuppliersDraftInvoices").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
@@ -303,7 +307,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 		{
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
-		print "</table><br>";
+		print "</table></div><br>";
 		$db->free($resql);
 	}
 	else
@@ -620,12 +624,12 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		$chargestatic=new ChargeSociales($db);
 
 		$sql = "SELECT c.rowid, c.amount, c.date_ech, c.paye,";
-		$sql.= " cc.libelle,";
+		$sql.= " cc.libelle as label,";
 		$sql.= " SUM(pc.amount) as sumpaid";
 		$sql.= " FROM (".MAIN_DB_PREFIX."c_chargesociales as cc, ".MAIN_DB_PREFIX."chargesociales as c)";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = c.rowid";
 		$sql.= " WHERE c.fk_type = cc.id";
-		$sql.= " AND c.entity = ".$conf->entity;
+		$sql.= " AND c.entity IN (".getEntity('tax').')';
 		$sql.= " AND c.paye = 0";
 		// Add where from hooks
 		$parameters=array();
@@ -657,8 +661,8 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 					$obj = $db->fetch_object($resql);
 
 					$chargestatic->id=$obj->rowid;
-					$chargestatic->ref=$obj->libelle;
-					$chargestatic->lib=$obj->libelle;
+					$chargestatic->ref=$obj->rowid;
+					$chargestatic->label=$obj->label;
 					$chargestatic->paye=$obj->paye;
 
 					print '<tr class="oddeven">';
@@ -668,6 +672,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 					print '<td class="nowrap right">'.price($obj->sumpaid).'</td>';
 					print '<td align="center">'.$chargestatic->getLibStatut(3).'</td>';
 					print '</tr>';
+
 					$tot_ttc+=$obj->amount;
 					$i++;
 				}
@@ -953,7 +958,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 {
 	$facstatic=new FactureFournisseur($db);
 
-	$sql = "SELECT ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_tva, ff.total_ttc, ff.paye";
+	$sql = "SELECT ff.rowid, ff.ref, ff.fk_statut, ff.libelle as label, ff.total_ht, ff.total_tva, ff.total_ttc, ff.paye";
 	$sql.= ", ff.date_lim_reglement";
 	$sql.= ", s.nom as name";
     $sql.= ", s.rowid as socid, s.email";
@@ -1070,9 +1075,8 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-
 		print '<tr class="oddeven"><td>'.dol_print_date($db->jdate($obj->da), "day").'</td>';
-		print '<td><a href="action/card.php">'.$obj->libelle.' '.$obj->label.'</a></td></tr>';
+		print '<td><a href="action/card.php">'.$obj->label.'</a></td></tr>';
 		$i++;
 	}
 	$db->free($resql);

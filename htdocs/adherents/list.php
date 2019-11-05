@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -39,6 +39,7 @@ $massaction=GETPOST('massaction', 'alpha');
 $show_files=GETPOST('show_files', 'int');
 $confirm=GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'memberslist';   // To manage different context of search
 
 // Security check
 $result=restrictedArea($user, 'adherent');
@@ -88,7 +89,8 @@ $hookmanager->initHooks(array('memberlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('adherent');
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
@@ -230,8 +232,8 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='Adherent';
 	$objectlabel='Members';
-	$permtoread = $user->rights->adherent->lire;
-	$permtodelete = $user->rights->adherent->supprimer;
+	$permissiontoread = $user->rights->adherent->lire;
+	$permissiontodelete = $user->rights->adherent->supprimer;
 	$uploaddir = $conf->adherent->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -292,8 +294,8 @@ if ($search_town)     $sql.= natural_search("d.town", $search_town);
 if ($search_zip)      $sql.= natural_search("d.zip", $search_zip);
 if ($search_state)    $sql.= natural_search("state.nom", $search_state);
 if ($search_country) $sql .= " AND d.country IN (".$search_country.')';
-if ($filter == 'uptodate') $sql.=" AND datefin >= '".$db->idate($now)."'";
-if ($filter == 'outofdate') $sql.=" AND (datefin IS NULL OR datefin < '".$db->idate($now)."')";
+if ($filter == 'uptodate') $sql.=" AND (datefin >= '".$db->idate($now)."' OR t.subscription = 0)";
+if ($filter == 'outofdate') $sql.=" AND ((datefin IS NULL OR datefin < '".$db->idate($now)."') AND t.subscription = 1)";
 
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -418,7 +420,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);
+print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit);
 
 $topicmail="Information";
 $modelmail="member";
@@ -679,6 +681,7 @@ while ($i < min($num, $limit))
 	$memberstatic->datefin= $datefin;
 	$memberstatic->socid = $obj->fk_soc;
 	$memberstatic->photo = $obj->photo;
+	$memberstatic->morphy = $obj->morphy;
 
 	if (! empty($obj->fk_soc)) {
 		$memberstatic->fetch_thirdparty();
@@ -955,7 +958,7 @@ print "</table>\n";
 print "</div>";
 print '</form>';
 
-if ($num > $limit || $page) print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit, 1);
+if ($num > $limit || $page) print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, '', '', $limit, 1);
 
 // End of page
 llxFooter();

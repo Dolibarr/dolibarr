@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -40,9 +40,9 @@ $backtopage=GETPOST('backtopage', 'alpha');
 
 // Security check
 $socid = GETPOST('id', 'int')?GETPOST('id', 'int'):GETPOST('socid', 'int');
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 
@@ -252,7 +252,7 @@ if ($socid > 0)
 
 	dol_fiche_head($head, 'absolutediscount', $langs->trans("ThirdParty"), 0, 'company');
 
-    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+    dol_banner_tab($object, 'socid', '', ($user->socid?0:1), 'rowid', 'nom');
 
     print '<div class="fichecenter">';
 

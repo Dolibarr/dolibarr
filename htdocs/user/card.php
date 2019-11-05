@@ -27,7 +27,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -54,7 +54,6 @@ $id			= GETPOST('id', 'int');
 $action		= GETPOST('action', 'aZ09');
 $mode		= GETPOST('mode', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
-$subaction	= GETPOST('subaction', 'alpha');
 $group		= GETPOST("group", "int", 3);
 $cancel		= GETPOST('cancel', 'alpha');
 $contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'useracard';   // To manage different context of search
@@ -84,7 +83,7 @@ if ($id)
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0) $socid = $user->societe_id;
+if ($user->socid > 0) $socid = $user->socid;
 $feature2='user';
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
@@ -98,23 +97,23 @@ $object = new User($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
+
+$socialnetworks = getArrayOfSocialNetworks();
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager->initHooks(array('usercard','globalcard'));
+$hookmanager->initHooks(array('usercard', 'globalcard'));
 
 
 
 /**
  * Actions
  */
-
 $parameters=array('id' => $id, 'socid' => $socid, 'group' => $group, 'caneditgroup' => $caneditgroup);
 $reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
-
 	if ($action == 'confirm_disable' && $confirm == "yes" && $candisableuser) {
 		if ($id <> $user->id) {
 			$object->fetch($id);
@@ -157,6 +156,7 @@ if (empty($reshook)) {
 
 			$object = new User($db);
 			$object->fetch($id);
+            $object->oldcopy = clone $object;
 
 			$result = $object->delete($user);
 			if ($result < 0) {
@@ -195,14 +195,14 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$object->lastname = GETPOST("lastname", 'alpha');
-			$object->firstname = GETPOST("firstname", 'alpha');
-			$object->login = GETPOST("login", 'alpha');
-			$object->api_key = GETPOST("api_key", 'alpha');
-			$object->gender = GETPOST("gender", 'alpha');
-			$birth = dol_mktime(0, 0, 0, GETPOST('birthmonth'), GETPOST('birthday'), GETPOST('birthyear'));
+			$object->lastname = GETPOST("lastname", 'alphanohtml');
+			$object->firstname = GETPOST("firstname", 'alphanohtml');
+			$object->login = GETPOST("login", 'alphanohtml');
+			$object->api_key = GETPOST("api_key", 'alphanohtml');
+			$object->gender = GETPOST("gender", 'aZ09');
+			$birth = dol_mktime(0, 0, 0, GETPOST('birthmonth', 'int'), GETPOST('birthday', 'int'), GETPOST('birthyear', 'int'));
 			$object->birth = $birth;
-			$object->admin = GETPOST("admin", 'alpha');
+			$object->admin = GETPOST("admin", 'int');
 			$object->address = GETPOST('address', 'alphanohtml');
 			$object->zip = GETPOST('zipcode', 'alphanohtml');
 			$object->town = GETPOST('town', 'alphanohtml');
@@ -212,18 +212,26 @@ if (empty($reshook)) {
 			$object->office_fax = GETPOST("office_fax", 'alphanohtml');
 			$object->user_mobile = GETPOST("user_mobile", 'alphanohtml');
 
-			$object->skype = GETPOST("skype", 'alphanohtml');
-			$object->twitter = GETPOST("twitter", 'alphanohtml');
-			$object->facebook = GETPOST("facebook", 'alphanohtml');
-			$object->linkedin = GETPOST("linkedin", 'alphanohtml');
+			//$object->skype = GETPOST("skype", 'alphanohtml');
+			//$object->twitter = GETPOST("twitter", 'alphanohtml');
+			//$object->facebook = GETPOST("facebook", 'alphanohtml');
+			//$object->linkedin = GETPOST("linkedin", 'alphanohtml');
+			$object->socialnetworks = array();
+			if (! empty($conf->socialnetworks->enabled)) {
+				foreach ($socialnetworks as $key => $value) {
+					$object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
+				}
+			}
 
-			$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
-			$object->job = GETPOST("job", 'alpha');
+			$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alphanohtml'));
+			$object->job = GETPOST("job", 'nohtml');
 			$object->signature = GETPOST("signature", 'none');
 			$object->accountancy_code = GETPOST("accountancy_code", 'alphanohtml');
 			$object->note = GETPOST("note", 'none');
 			$object->ldap_sid = GETPOST("ldap_sid", 'alphanohtml');
 			$object->fk_user = GETPOST("fk_user", 'int') > 0 ? GETPOST("fk_user", 'int') : 0;
+			$object->fk_user_expense_validator = GETPOST("fk_user_expense_validator", 'int') > 0 ? GETPOST("fk_user_expense_validator", 'int') : 0;
+			$object->fk_user_holiday_validator = GETPOST("fk_user_holiday_validator", 'int') > 0 ? GETPOST("fk_user_holiday_validator", 'int') : 0;
 			$object->employee = GETPOST('employee', 'alphanohtml');
 
 			$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
@@ -233,16 +241,16 @@ if (empty($reshook)) {
 			$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
 
 			$object->color = GETPOST("color", 'alphanohtml') != '' ? GETPOST("color", 'alphanohtml') : '';
-			$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth'), GETPOST('dateemploymentday'), GETPOST('dateemploymentyear'));
+			$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth', 'int'), GETPOST('dateemploymentday', 'int'), GETPOST('dateemploymentyear', 'int'));
 			$object->dateemployment = $dateemployment;
 
-			$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth'), GETPOST('dateemploymentendday'), GETPOST('dateemploymentendyear'));
+			$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth', 'int'), GETPOST('dateemploymentendday', 'int'), GETPOST('dateemploymentendyear', 'int'));
 			$object->dateemploymentend = $dateemploymentend;
 
 			$object->fk_warehouse = GETPOST('fk_warehouse', 'int');
 
 			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+			$ret = $extrafields->setOptionalsFromPost(null, $object);
 			if ($ret < 0) {
 				$error ++;
 			}
@@ -348,15 +356,15 @@ if (empty($reshook)) {
 
 				$db->begin();
 
-				$object->lastname = GETPOST("lastname", 'alpha');
-				$object->firstname = GETPOST("firstname", 'alpha');
-				$object->login = GETPOST("login", 'alpha');
-				$object->gender = GETPOST("gender", 'alpha');
-				$birth = dol_mktime(0, 0, 0, GETPOST('birthmonth'), GETPOST('birthday'), GETPOST('birthyear'));
+				$object->lastname = GETPOST("lastname", 'alphanohtml');
+				$object->firstname = GETPOST("firstname", 'alphanohtml');
+				$object->login = GETPOST("login", 'alphanohtml');
+				$object->gender = GETPOST("gender", 'aZ09');
+				$birth = dol_mktime(0, 0, 0, GETPOST('birthmonth', 'int'), GETPOST('birthday', 'int'), GETPOST('birthyear', 'int'));
 				$object->birth = $birth;
 				$object->pass = GETPOST("password", 'none');
-				$object->api_key = (GETPOST("api_key", 'alpha')) ? GETPOST("api_key", 'alpha') : $object->api_key;
-				if (! empty($user->admin)) $object->admin = GETPOST("admin"); 	// admin flag can only be set/unset by an admin user. A test is also done later when forging sql request
+				$object->api_key = (GETPOST("api_key", 'alphanohtml')) ? GETPOST("api_key", 'alphanohtml') : $object->api_key;
+				if (! empty($user->admin)) $object->admin = GETPOST("admin", "int"); 	// admin flag can only be set/unset by an admin user. A test is also done later when forging sql request
 				$object->address = GETPOST('address', 'alphanohtml');
 				$object->zip = GETPOST('zipcode', 'alphanohtml');
 				$object->town = GETPOST('town', 'alphanohtml');
@@ -365,16 +373,24 @@ if (empty($reshook)) {
 				$object->office_phone = GETPOST("office_phone", 'alphanohtml');
 				$object->office_fax = GETPOST("office_fax", 'alphanohtml');
 				$object->user_mobile = GETPOST("user_mobile", 'alphanohtml');
-				$object->skype = GETPOST("skype", 'alpha');
-				$object->twitter = GETPOST("twitter", 'alpha');
-				$object->facebook = GETPOST("facebook", 'alpha');
-				$object->linkedin = GETPOST("linkedin", 'alpha');
-				$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
-				$object->job = GETPOST("job", 'alpha');
+				//$object->skype = GETPOST("skype", 'alphanohtml');
+				//$object->twitter = GETPOST("twitter", 'alphanohtml');
+				//$object->facebook = GETPOST("facebook", 'alphanohtml');
+				//$object->linkedin = GETPOST("linkedin", 'alphanohtml');
+				$object->socialnetworks = array();
+				if (! empty($conf->socialnetworks->enabled)) {
+					foreach ($socialnetworks as $key => $value) {
+						$object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
+					}
+				}
+				$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alphanohtml'));
+				$object->job = GETPOST("job", 'nohtml');
 				$object->signature = GETPOST("signature", 'none');
-				$object->accountancy_code = GETPOST("accountancy_code", 'alpha');
-				$object->openid = GETPOST("openid", 'alpha');
+				$object->accountancy_code = GETPOST("accountancy_code", 'alphanohtml');
+				$object->openid = GETPOST("openid", 'alphanohtml');
 				$object->fk_user = GETPOST("fk_user", 'int') > 0 ? GETPOST("fk_user", 'int') : 0;
+				$object->fk_user_expense_validator = GETPOST("fk_user_expense_validator", 'int') > 0 ? GETPOST("fk_user_expense_validator", 'int') : 0;
+				$object->fk_user_holiday_validator = GETPOST("fk_user_holiday_validator", 'int') > 0 ? GETPOST("fk_user_holiday_validator", 'int') : 0;
 				$object->employee = GETPOST('employee', 'int');
 
 				$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
@@ -383,7 +399,7 @@ if (empty($reshook)) {
 				$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOST("salaryextra", 'alphanohtml') : '';
 				$object->weeklyhours = GETPOST("weeklyhours", 'alphanohtml') != '' ? GETPOST("weeklyhours", 'alphanohtml') : '';
 
-				$object->color = GETPOST("color", 'alpha') != '' ? GETPOST("color", 'alpha') : '';
+				$object->color = GETPOST("color", 'alphanohtml') != '' ? GETPOST("color", 'alphanohtml') : '';
 				$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth', 'int'), GETPOST('dateemploymentday', 'int'), GETPOST('dateemploymentyear', 'int'));
 				$object->dateemployment = $dateemployment;
 				$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth', 'int'), GETPOST('dateemploymentendday', 'int'), GETPOST('dateemploymentendyear', 'int'));
@@ -415,7 +431,7 @@ if (empty($reshook)) {
 				}
 
 				// Fill array 'array_options' with data from add form
-				$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+				$ret = $extrafields->setOptionalsFromPost(null, $object);
 				if ($ret < 0) {
 					$error ++;
 				}
@@ -625,10 +641,10 @@ if (empty($reshook)) {
 					$ldap_phone = $attribute[$conf->global->LDAP_FIELD_PHONE];
 					$ldap_fax = $attribute[$conf->global->LDAP_FIELD_FAX];
 					$ldap_mobile = $attribute[$conf->global->LDAP_FIELD_MOBILE];
-					$ldap_skype = $attribute[$conf->global->LDAP_FIELD_SKYPE];
-					$ldap_twitter = $attribute[$conf->global->LDAP_FIELD_TWITTER];
-					$ldap_facebook = $attribute[$conf->global->LDAP_FIELD_FACEBOOK];
-					$ldap_linkedin = $attribute[$conf->global->LDAP_FIELD_LINKEDIN];
+					$ldap_social['skype'] = $attribute[$conf->global->LDAP_FIELD_SKYPE];
+					$ldap_social['twitter'] = $attribute[$conf->global->LDAP_FIELD_TWITTER];
+					$ldap_social['facebook'] = $attribute[$conf->global->LDAP_FIELD_FACEBOOK];
+					$ldap_social['linkedin'] = $attribute[$conf->global->LDAP_FIELD_LINKEDIN];
 					$ldap_mail = $attribute[$conf->global->LDAP_FIELD_MAIL];
 					$ldap_sid = $attribute[$conf->global->LDAP_FIELD_SID];
 				}
@@ -674,9 +690,9 @@ if ($action == 'create' || $action == 'adduserldap')
 	/*                                                                            */
 	/* ************************************************************************** */
 
-	print load_fiche_titre($langs->trans("NewUser"));
+	print load_fiche_titre($langs->trans("NewUser"), '', 'user');
 
-	print $langs->trans("CreateInternalUserDesc")."<br>\n";
+	print '<span class="opacitymedium">'.$langs->trans("CreateInternalUserDesc")."</span><br>\n";
 	print "<br>";
 
 
@@ -964,6 +980,32 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '</td>';
 	print "</tr>\n";
 
+	// Expense report validator
+	if(!empty($conf->expensereport->enabled))
+	{
+		print '<tr><td class="titlefieldcreate">';
+		$text = $langs->trans("ForceUserExpenseValidator");
+		print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+		print '</td>';
+		print '<td>';
+		print $form->select_dolusers($object->fk_user_expense_validator, 'fk_user_expense_validator', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
+		print '</td>';
+		print "</tr>\n";
+	}
+
+	// Holiday request validator
+	if(!empty($conf->holiday->enabled))
+	{
+		print '<tr><td class="titlefieldcreate">';
+		$text = $langs->trans("ForceUserHolidayValidator");
+		print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+		print '</td>';
+		print '<td>';
+		print $form->select_dolusers($object->fk_user_holiday_validator, 'fk_user_holiday_validator', 1, array($object->id), 0, '', 0, $conf->entity, 0, 0, '', 0, '', 'maxwidth300');
+		print '</td>';
+		print "</tr>\n";
+	}
+
 
 	print '</table><hr><table class="border centpercent">';
 
@@ -999,7 +1041,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	}
 
 	// Tel
-	print '<tr><td>'.$langs->trans("PhonePro").'</td>';
+	print '<tr><td>'.img_picto('', 'object_phoning').' '.$langs->trans("PhonePro").'</td>';
 	print '<td>';
 	if (! empty($ldap_phone))
 	{
@@ -1013,7 +1055,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '</td></tr>';
 
 	// Tel portable
-	print '<tr><td>'.$langs->trans("PhoneMobile").'</td>';
+	print '<tr><td>'.img_picto('', 'object_phoning_mobile').' '.$langs->trans("PhoneMobile").'</td>';
 	print '<td>';
 	if (! empty($ldap_mobile))
 	{
@@ -1027,7 +1069,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '</td></tr>';
 
 	// Fax
-	print '<tr><td>'.$langs->trans("Fax").'</td>';
+	print '<tr><td>'.img_picto('', 'object_phoning_fax').' '.$langs->trans("Fax").'</td>';
 	print '<td>';
 	if (! empty($ldap_fax))
 	{
@@ -1040,76 +1082,8 @@ if ($action == 'create' || $action == 'adduserldap')
 	}
 	print '</td></tr>';
 
-	// Skype
-	if (! empty($conf->socialnetworks->enabled))
-	{
-		print '<tr><td>'.$langs->trans("Skype").'</td>';
-		print '<td>';
-		if (! empty($ldap_skype))
-		{
-			print '<input type="hidden" name="skype" value="'.$ldap_skype.'">';
-			print $ldap_skype;
-		}
-		else
-		{
-			print '<input class="maxwidth200" type="text" name="skype" value="'.GETPOST('skype', 'alpha').'">';
-		}
-		print '</td></tr>';
-	}
-
-	// Twitter
-	if (! empty($conf->socialnetworks->enabled))
-	{
-		print '<tr><td>'.$langs->trans("Twitter").'</td>';
-		print '<td>';
-		if (! empty($ldap_twitter))
-		{
-			print '<input type="hidden" name="twitter" value="'.$ldap_twitter.'">';
-			print $ldap_twitter;
-		}
-		else
-		{
-			print '<input class="maxwidth200" type="text" name="twitter" value="'.GETPOST('twitter', 'alpha').'">';
-		}
-		print '</td></tr>';
-	}
-
-	// Facebook
-	if (! empty($conf->socialnetworks->enabled))
-	{
-		print '<tr><td>'.$langs->trans("Facebook").'</td>';
-		print '<td>';
-		if (! empty($ldap_facebook))
-		{
-			print '<input type="hidden" name="facebook" value="'.$ldap_facebook.'">';
-			print $ldap_facebook;
-		}
-		else
-		{
-			print '<input class="maxwidth200" type="text" name="facebook" value="'.GETPOST('facebook', 'alpha').'">';
-		}
-		print '</td></tr>';
-	}
-
-    // LinkedIn
-    if (! empty($conf->socialnetworks->enabled))
-    {
-        print '<tr><td>'.$langs->trans("LinkedIn").'</td>';
-        print '<td>';
-        if (! empty($ldap_linkedin))
-        {
-            print '<input type="hidden" name="linkedin" value="'.$ldap_linkedin.'">';
-            print $ldap_linkedin;
-        }
-        else
-        {
-            print '<input class="maxwidth200" type="text" name="linkedin" value="'.GETPOST('linkedin', 'alpha').'">';
-        }
-        print '</td></tr>';
-    }
-
 	// EMail
-	print '<tr><td'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.$langs->trans("EMail").'</td>';
+	print '<tr><td'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.img_picto('', 'object_email').' '.$langs->trans("EMail").'</td>';
 	print '<td>';
 	if (! empty($ldap_mail))
 	{
@@ -1121,6 +1095,96 @@ if ($action == 'create' || $action == 'adduserldap')
 		print '<input size="40" type="text" name="email" value="'.GETPOST('email').'">';
 	}
 	print '</td></tr>';
+
+	if (! empty($conf->socialnetworks->enabled)) {
+		foreach ($socialnetworks as $key => $value) {
+			if ($value['active']) {
+				print '<tr><td>'.$langs->trans($value['label']).'</td>';
+				print '<td>';
+				if (! empty($ldap_social[$key])) {
+					print '<input type="hidden" name="'.$key.'" value="'.$ldap_social[$key].'">';
+					print $ldap_social[$key];
+				} else {
+					print '<input class="maxwidth200" type="text" name="'.$key.'" value="'.GETPOST($key, 'alphanohtml').'">';
+				}
+				print '</td></tr>';
+			} else {
+				// if social network is not active but value exist we do not want to loose it
+				if (! empty($ldap_social[$key])) {
+					print '<input type="hidden" name="'.$key.'" value="'.$ldap_social[$key].'">';
+				} else {
+					print '<input type="hidden" name="'.$key.'" value="'.GETPOST($key, 'alphanohtml').'">';
+				}
+			}
+		}
+	}
+	// // Skype
+	// if (! empty($conf->socialnetworks->enabled))
+	// {
+	// 	print '<tr><td>'.$langs->trans("Skype").'</td>';
+	// 	print '<td>';
+	// 	if (! empty($ldap_skype))
+	// 	{
+	// 		print '<input type="hidden" name="skype" value="'.$ldap_skype.'">';
+	// 		print $ldap_skype;
+	// 	}
+	// 	else
+	// 	{
+	// 		print '<input class="maxwidth200" type="text" name="skype" value="'.GETPOST('skype', 'alpha').'">';
+	// 	}
+	// 	print '</td></tr>';
+	// }
+
+	// // Twitter
+	// if (! empty($conf->socialnetworks->enabled))
+	// {
+	// 	print '<tr><td>'.$langs->trans("Twitter").'</td>';
+	// 	print '<td>';
+	// 	if (! empty($ldap_twitter))
+	// 	{
+	// 		print '<input type="hidden" name="twitter" value="'.$ldap_twitter.'">';
+	// 		print $ldap_twitter;
+	// 	}
+	// 	else
+	// 	{
+	// 		print '<input class="maxwidth200" type="text" name="twitter" value="'.GETPOST('twitter', 'alpha').'">';
+	// 	}
+	// 	print '</td></tr>';
+	// }
+
+	// // Facebook
+	// if (! empty($conf->socialnetworks->enabled))
+	// {
+	// 	print '<tr><td>'.$langs->trans("Facebook").'</td>';
+	// 	print '<td>';
+	// 	if (! empty($ldap_facebook))
+	// 	{
+	// 		print '<input type="hidden" name="facebook" value="'.$ldap_facebook.'">';
+	// 		print $ldap_facebook;
+	// 	}
+	// 	else
+	// 	{
+	// 		print '<input class="maxwidth200" type="text" name="facebook" value="'.GETPOST('facebook', 'alpha').'">';
+	// 	}
+	// 	print '</td></tr>';
+	// }
+
+    // // LinkedIn
+    // if (! empty($conf->socialnetworks->enabled))
+    // {
+    //     print '<tr><td>'.$langs->trans("LinkedIn").'</td>';
+    //     print '<td>';
+    //     if (! empty($ldap_linkedin))
+    //     {
+    //         print '<input type="hidden" name="linkedin" value="'.$ldap_linkedin.'">';
+    //         print $ldap_linkedin;
+    //     }
+    //     else
+    //     {
+    //         print '<input class="maxwidth200" type="text" name="linkedin" value="'.GETPOST('linkedin', 'alpha').'">';
+    //     }
+    //     print '</td></tr>';
+    // }
 
 	// Accountancy code
 	if ($conf->accounting->enabled)
@@ -1200,19 +1264,19 @@ if ($action == 'create' || $action == 'adduserldap')
 
 	// TODO Move this into tab RH (HierarchicalResponsible must be on both tab)
 
-	// Position/Job
-	print '<tr><td class="titlefieldcreate">'.$langs->trans("PostOrFunction").'</td>';
-	print '<td>';
-	print '<input class="maxwidth200" type="text" name="job" value="'.GETPOST('job').'">';
-	print '</td></tr>';
-
 	// Default warehouse
-    if (! empty($conf->stock->enabled))
+	if (! empty($conf->stock->enabled) && ! empty($conf->global->USER_DEFAULT_WAREHOUSE))	// TODO What is goal of this. How it is used ?
     {
 		print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 		print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
 		print '</td></tr>';
 	}
+
+	// Position/Job
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("PostOrFunction").'</td>';
+	print '<td>';
+	print '<input class="maxwidth200" type="text" name="job" value="'.GETPOST('job', 'nohtml').'">';
+	print '</td></tr>';
 
 	if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
 		|| (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
@@ -1561,13 +1625,36 @@ else
 			print '</td>';
 			print "</tr>\n";
 
-			// Position/Job
-			print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
-			print '<td>'.$object->job.'</td>';
-			print '</tr>'."\n";
+			// Expense report validator
+			print '<tr><td>';
+			$text = $langs->trans("ForceUserExpenseValidator");
+			print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+			print '</td>';
+			print '<td>';
+			if (! empty($object->fk_user_expense_validator)) {
+				$evuser=new User($db);
+				$evuser->fetch($object->fk_user_expense_validator);
+				print $evuser->getNomUrl(1);
+			}
+			print '</td>';
+			print "</tr>\n";
+
+			// Holiday request validator
+			print '<tr><td>';
+			$text = $langs->trans("ForceUserHolidayValidator");
+			print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+			print '</td>';
+			print '<td>';
+			if (! empty($object->fk_user_holiday_validator)) {
+				$hvuser=new User($db);
+				$hvuser->fetch($object->fk_user_holiday_validator);
+				print $hvuser->getNomUrl(1);
+			}
+			print '</td>';
+			print "</tr>\n";
 
 			// Default warehouse
-            if (! empty($conf->stock->enabled))
+			if (! empty($conf->stock->enabled) && ! empty($conf->global->USER_DEFAULT_WAREHOUSE))	// TODO What is goal of this. How it is used ?
             {
 				require_once DOL_DOCUMENT_ROOT .'/product/stock/class/entrepot.class.php';
 				$warehousestatic=new Entrepot($db);
@@ -1577,7 +1664,12 @@ else
 				print '</td></tr>';
             }
 
-			//$childids = $user->getAllChildIds(1);
+            // Position/Job
+            print '<tr><td>'.$langs->trans("PostOrFunction").'</td>';
+            print '<td>'.$object->job.'</td>';
+            print '</tr>'."\n";
+
+            //$childids = $user->getAllChildIds(1);
 
 			if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
 				|| (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
@@ -2242,6 +2334,46 @@ else
 		   	print '</td>';
 		   	print "</tr>\n";
 
+			// Expense report validator
+			print '<tr><td class="titlefield">';
+			$text = $langs->trans("ForceUserExpenseValidator");
+			print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+			print '</td>';
+			print '<td>';
+			if ($caneditfield)
+			{
+				print $form->select_dolusers($object->fk_user_expense_validator, 'fk_user_expense_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'maxwidth300');
+			}
+			else
+			{
+				print '<input type="hidden" name="fk_user_expense_validator" value="'.$object->fk_user_expense_validator.'">';
+				$evuser=new User($db);
+				$evuser->fetch($object->fk_user_expense_validator);
+				print $evuser->getNomUrl(1);
+			}
+			print '</td>';
+			print "</tr>\n";
+
+			// Holiday request validator
+			print '<tr><td class="titlefield">';
+			$text = $langs->trans("ForceUserHolidayValidator");
+			print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+			print '</td>';
+			print '<td>';
+			if ($caneditfield)
+			{
+				print $form->select_dolusers($object->fk_user_holiday_validator, 'fk_user_holiday_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'maxwidth300');
+			}
+			else
+			{
+				print '<input type="hidden" name="fk_user_holiday_validator" value="'.$object->fk_user_holiday_validator.'">';
+				$hvuser=new User($db);
+				$hvuser->fetch($object->fk_user_holiday_validator);
+				print $hvuser->getNomUrl(1);
+			}
+			print '</td>';
+			print "</tr>\n";
+
 
 		   	print '</table><hr><table class="border centpercent">';
 
@@ -2277,7 +2409,7 @@ else
 			}
 
 			// Tel pro
-			print "<tr>".'<td>'.$langs->trans("PhonePro").'</td>';
+			print "<tr>".'<td>'.img_picto('', 'object_phoning').' '.$langs->trans("PhonePro").'</td>';
 			print '<td>';
 			if ($caneditfield  && empty($object->ldap_sid))
 			{
@@ -2291,7 +2423,7 @@ else
 			print '</td></tr>';
 
 			// Tel mobile
-			print "<tr>".'<td>'.$langs->trans("PhoneMobile").'</td>';
+			print "<tr>".'<td>'.img_picto('', 'object_phoning_mobile').' '.$langs->trans("PhoneMobile").'</td>';
 			print '<td>';
 			if ($caneditfield && empty($object->ldap_sid))
 			{
@@ -2305,7 +2437,7 @@ else
 			print '</td></tr>';
 
 			// Fax
-			print "<tr>".'<td>'.$langs->trans("Fax").'</td>';
+			print "<tr>".'<td>'.img_picto('', 'object_phoning_fax').' '.$langs->trans("Fax").'</td>';
 			print '<td>';
 			if ($caneditfield  && empty($object->ldap_sid))
 			{
@@ -2318,76 +2450,8 @@ else
 			}
 			print '</td></tr>';
 
-			// Skype
-			if (! empty($conf->socialnetworks->enabled))
-			{
-				print '<tr><td>'.$langs->trans("Skype").'</td>';
-				print '<td>';
-				if ($caneditfield  && empty($object->ldap_sid))
-				{
-					print '<input size="40" type="text" name="skype" class="flat" value="'.$object->skype.'">';
-				}
-				else
-				{
-					print '<input type="hidden" name="skype" value="'.$object->skype.'">';
-					print $object->skype;
-				}
-				print '</td></tr>';
-			}
-
-			// Twitter
-			if (! empty($conf->socialnetworks->enabled))
-			{
-				print '<tr><td>'.$langs->trans("Twitter").'</td>';
-				print '<td>';
-				if ($caneditfield  && empty($object->ldap_sid))
-				{
-					print '<input size="40" type="text" name="twitter" class="flat" value="'.$object->twitter.'">';
-				}
-				else
-				{
-					print '<input type="hidden" name="twitter" value="'.$object->twitter.'">';
-					print $object->twitter;
-				}
-				print '</td></tr>';
-			}
-
-			// Facebook
-			if (! empty($conf->socialnetworks->enabled))
-			{
-				print '<tr><td>'.$langs->trans("Facebook").'</td>';
-				print '<td>';
-				if ($caneditfield  && empty($object->ldap_sid))
-				{
-					print '<input size="40" type="text" name="facebook" class="flat" value="'.$object->facebook.'">';
-				}
-				else
-				{
-					print '<input type="hidden" name="facebook" value="'.$object->facebook.'">';
-					print $object->facebook;
-				}
-				print '</td></tr>';
-			}
-
-            // LinkedIn
-            if (! empty($conf->socialnetworks->enabled))
-            {
-                print '<tr><td>'.$langs->trans("LinkedIn").'</td>';
-                print '<td>';
-                if ($caneditfield  && empty($object->ldap_sid))
-                {
-                    print '<input size="40" type="text" name="linkedin" class="flat" value="'.$object->linkedin.'">';
-                }
-                else
-                {
-                    print '<input type="hidden" name="linkedin" value="'.$object->linkedin.'">';
-                    print $object->linkedin;
-                }
-                print '</td></tr>';
-            }
-
 			// EMail
-			print "<tr>".'<td'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.$langs->trans("EMail").'</td>';
+			print "<tr>".'<td'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.img_picto('', 'object_email').' '.$langs->trans("EMail").'</td>';
 			print '<td>';
 			if ($caneditfield  && empty($object->ldap_sid))
 			{
@@ -2399,6 +2463,93 @@ else
 				print $object->email;
 			}
 			print '</td></tr>';
+
+			if (! empty($conf->socialnetworks->enabled)) {
+				foreach ($socialnetworks as $key => $value) {
+					if ($value['active']) {
+						print '<tr><td>'.$langs->trans($value['label']).'</td>';
+						print '<td>';
+						if ($caneditfield  && empty($object->ldap_sid)) {
+							print '<input size="40" type="text" name="'.$key.'" class="flat" value="'.$object->socialnetworks[$key].'">';
+						} else {
+							print '<input type="hidden" name="'.$key.'" value="'.$object->socialnetworks[$key].'">';
+							print $object->socialnetworks[$key];
+						}
+						print '</td></tr>';
+					} else {
+						// if social network is not active but value exist we do not want to loose it
+						print '<input type="hidden" name="'.$key.'" value="'.$object->socialnetworks[$key].'">';
+					}
+				}
+			}
+
+			// // Skype
+			// if (! empty($conf->socialnetworks->enabled))
+			// {
+			// 	print '<tr><td>'.$langs->trans("Skype").'</td>';
+			// 	print '<td>';
+			// 	if ($caneditfield  && empty($object->ldap_sid))
+			// 	{
+			// 		print '<input size="40" type="text" name="skype" class="flat" value="'.$object->skype.'">';
+			// 	}
+			// 	else
+			// 	{
+			// 		print '<input type="hidden" name="skype" value="'.$object->skype.'">';
+			// 		print $object->skype;
+			// 	}
+			// 	print '</td></tr>';
+			// }
+
+			// // Twitter
+			// if (! empty($conf->socialnetworks->enabled))
+			// {
+			// 	print '<tr><td>'.$langs->trans("Twitter").'</td>';
+			// 	print '<td>';
+			// 	if ($caneditfield  && empty($object->ldap_sid))
+			// 	{
+			// 		print '<input size="40" type="text" name="twitter" class="flat" value="'.$object->twitter.'">';
+			// 	}
+			// 	else
+			// 	{
+			// 		print '<input type="hidden" name="twitter" value="'.$object->twitter.'">';
+			// 		print $object->twitter;
+			// 	}
+			// 	print '</td></tr>';
+			// }
+
+			// // Facebook
+			// if (! empty($conf->socialnetworks->enabled))
+			// {
+			// 	print '<tr><td>'.$langs->trans("Facebook").'</td>';
+			// 	print '<td>';
+			// 	if ($caneditfield  && empty($object->ldap_sid))
+			// 	{
+			// 		print '<input size="40" type="text" name="facebook" class="flat" value="'.$object->facebook.'">';
+			// 	}
+			// 	else
+			// 	{
+			// 		print '<input type="hidden" name="facebook" value="'.$object->facebook.'">';
+			// 		print $object->facebook;
+			// 	}
+			// 	print '</td></tr>';
+			// }
+
+            // // LinkedIn
+            // if (! empty($conf->socialnetworks->enabled))
+            // {
+            //     print '<tr><td>'.$langs->trans("LinkedIn").'</td>';
+            //     print '<td>';
+            //     if ($caneditfield  && empty($object->ldap_sid))
+            //     {
+            //         print '<input size="40" type="text" name="linkedin" class="flat" value="'.$object->linkedin.'">';
+            //     }
+            //     else
+            //     {
+            //         print '<input type="hidden" name="linkedin" value="'.$object->linkedin.'">';
+            //         print $object->linkedin;
+            //     }
+            //     print '</td></tr>';
+            // }
 
 			// OpenID url
 			if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER))
@@ -2588,22 +2739,8 @@ else
 
 			// TODO Move this into tab RH (HierarchicalResponsible must be on both tab)
 
-			// Position/Job
-			print '<tr><td class="titlefield">'.$langs->trans("PostOrFunction").'</td>';
-			print '<td>';
-			if ($caneditfield)
-			{
-				print '<input size="30" type="text" name="job" value="'.$object->job.'">';
-			}
-			else
-			{
-				print '<input type="hidden" name="job" value="'.$object->job.'">';
-				print $object->job;
-			}
-			print '</td></tr>';
-
 			// Default warehouse
-            if (! empty($conf->stock->enabled))
+            if (! empty($conf->stock->enabled) && ! empty($conf->global->USER_DEFAULT_WAREHOUSE))	// TODO What is goal of this. How it is used ?
             {
                 print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
                 print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
@@ -2611,7 +2748,21 @@ else
                 print '</td></tr>';
             }
 
-			if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
+            // Position/Job
+            print '<tr><td class="titlefield">'.$langs->trans("PostOrFunction").'</td>';
+            print '<td>';
+            if ($caneditfield)
+            {
+            	print '<input size="30" type="text" name="job" value="'.$object->job.'">';
+            }
+            else
+            {
+            	print '<input type="hidden" name="job" value="'.$object->job.'">';
+            	print $object->job;
+            }
+            print '</td></tr>';
+
+            if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
 				|| (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
 			{
 				$langs->load("salaries");

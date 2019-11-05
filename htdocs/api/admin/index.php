@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -152,7 +152,7 @@ $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain
 $message='';
 $url=$urlwithroot.'/api/index.php/login?login=<strong>auserlogin</strong>&password=<strong>thepassword</strong>[&reset=1]';
 $message.=$langs->trans("UrlToGetKeyToUseAPIs").':<br>';
-$message.=img_picto('', 'object_globe.png').' '.$url;
+$message.=img_picto('', 'globe').' '.$url;
 print $message;
 print '<br>';
 print '<br>';
@@ -162,7 +162,7 @@ print '<u>'.$langs->trans("ApiExporerIs").':</u><br>';
 if (dol_is_dir(DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/explorer'))
 {
     $url=DOL_MAIN_URL_ROOT.'/api/index.php/explorer';
-    print img_picto('', 'object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+    print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 }
 else
 {

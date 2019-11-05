@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -77,7 +77,7 @@ if (! $sortorder) {
 }
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 	accessforbidden();
 if (! $user->rights->accounting->bind->write)
 	accessforbidden();
@@ -112,8 +112,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 // Mass actions
 $objectclass='ExpenseReport';
 $objectlabel='ExpenseReport';
-$permtoread = $user->rights->expensereport->read;
-$permtodelete = $user->rights->expensereport->delete;
+$permissiontoread = $user->rights->expensereport->read;
+$permissiontodelete = $user->rights->expensereport->delete;
 $uploaddir = $conf->expensereport->dir_output;
 include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
@@ -161,8 +161,6 @@ if ($massaction == 'ventil') {
         }
         $msg.='</div>';
         $msg.= '<div>' . $langs->trans("EndProcessing") . '</div>';
-    //} else {
-    //    setEventMessages($langs->trans("NoRecordSelected"), null, 'warnings');
     }
 }
 
@@ -215,20 +213,8 @@ if (strlen(trim($search_account))) {
 if (strlen(trim($search_vat))) {
     $sql .= natural_search("erd.tva_tx", $search_vat, 1);
 }
-if ($search_month > 0)
-{
-	if ($search_year > 0 && empty($search_day))
-		$sql.= " AND erd.date BETWEEN '".$db->idate(dol_get_first_day($search_year, $search_month, false))."' AND '".$db->idate(dol_get_last_day($search_year, $search_month, false))."'";
-		elseif ($search_year > 0 && ! empty($search_day))
-			$sql.= " AND erd.date BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
-			else
-				$sql.= " AND date_format(erd.date, '%m') = '".$db->escape($search_month)."'";
-}
-elseif ($search_year > 0)
-{
-	$sql.= " AND erd.date BETWEEN '".$db->idate(dol_get_first_day($search_year, 1, false))."' AND '".$db->idate(dol_get_last_day($search_year, 12, false))."'";
-}
-$sql .= " AND er.entity IN (" . getEntity('expensereport', 0) . ")";  // We don't share object for accountancy
+$sql.=dolSqlDateFilter('erd.date', $search_day, $search_month, $search_year);
+$sql.= " AND er.entity IN (" . getEntity('expensereport', 0) . ")";  // We don't share object for accountancy
 
 $sql .= $db->order($sortfield, $sortorder);
 

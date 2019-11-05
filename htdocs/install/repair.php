@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -42,7 +42,7 @@ error_reporting(0);
 @set_time_limit(120);
 error_reporting($err);
 
-$setuplang=GETPOST("selectlang", 'az09', 3)?GETPOST("selectlang", 'az09', 3):'auto';
+$setuplang=GETPOST("selectlang", 'aZ09', 3)?GETPOST("selectlang", 'aZ09', 3):'auto';
 $langs->setDefaultLang($setuplang);
 
 $langs->loadLangs(array("admin","install","other"));
@@ -69,6 +69,7 @@ print '<h3>'.$langs->trans("Repair").'</h3>';
 
 print 'Option standard (\'test\' or \'confirmed\') is '.(GETPOST('standard', 'alpha')?GETPOST('standard', 'alpha'):'undefined').'<br>'."\n";
 print 'Option restore_thirdparties_logos (\'test\' or \'confirmed\') is '.(GETPOST('restore_thirdparties_logos', 'alpha')?GETPOST('restore_thirdparties_logos', 'alpha'):'undefined').'<br>'."\n";
+print 'Option restore_user_pictures (\'test\' or \'confirmed\') is '.(GETPOST('restore_user_pictures', 'alpha')?GETPOST('restore_user_pictures', 'alpha'):'undefined').'<br>'."\n";
 print 'Option clean_linked_elements (\'test\' or \'confirmed\') is '.(GETPOST('clean_linked_elements', 'alpha')?GETPOST('clean_linked_elements', 'alpha'):'undefined').'<br>'."\n";
 print 'Option clean_menus (\'test\' or \'confirmed\') is '.(GETPOST('clean_menus', 'alpha')?GETPOST('clean_menus', 'alpha'):'undefined').'<br>'."\n";
 print 'Option clean_orphelin_dir (\'test\' or \'confirmed\') is '.(GETPOST('clean_orphelin_dir', 'alpha')?GETPOST('clean_orphelin_dir', 'alpha'):'undefined').'<br>'."\n";
@@ -492,70 +493,183 @@ if ($ok && GETPOST('restore_thirdparties_logos'))
 	$ext='';
 
 	print '<tr><td colspan="2"><br>*** Restore thirdparties logo<br>';
-	//foreach($exts as $ext)
-	//{
-		$sql="SELECT s.rowid, s.nom as name, s.logo FROM ".MAIN_DB_PREFIX."societe as s ORDER BY s.nom";
-		$resql=$db->query($sql);
-		if ($resql)
+
+	$sql="SELECT s.rowid, s.nom as name, s.logo FROM ".MAIN_DB_PREFIX."societe as s ORDER BY s.nom";
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$num=$db->num_rows($resql);
+		$i=0;
+
+		while($i < $num)
 		{
-			$num=$db->num_rows($resql);
-			$i=0;
+			$obj=$db->fetch_object($resql);
 
-			while($i < $num)
+			/*
+			$name=preg_replace('/é/','',$obj->name);
+			$name=preg_replace('/ /','_',$name);
+			$name=preg_replace('/\'/','',$name);
+			*/
+
+			$tmp=explode('.', $obj->logo);
+			$name=$tmp[0];
+			if (isset($tmp[1])) $ext='.'.$tmp[1];
+
+			if (! empty($name))
 			{
-				$obj=$db->fetch_object($resql);
-
-				/*
-				$name=preg_replace('/é/','',$obj->name);
-				$name=preg_replace('/ /','_',$name);
-				$name=preg_replace('/\'/','',$name);
-				*/
-
-				$tmp=explode('.', $obj->logo);
-				$name=$tmp[0];
-				if (isset($tmp[1])) $ext='.'.$tmp[1];
-
-				if (! empty($name))
+				$filetotest=$dolibarr_main_data_root.'/societe/logos/'.$name.$ext;
+				$filetotestsmall=$dolibarr_main_data_root.'/societe/logos/thumbs/'.$name.'_small'.$ext;
+				$exists=dol_is_file($filetotest);
+				print 'Check thirdparty '.$obj->rowid.' name='.$obj->name.' logo='.$obj->logo.' file '.$filetotest." exists=".$exists."<br>\n";
+				if ($exists)
 				{
-					$filetotest=$dolibarr_main_data_root.'/societe/logos/'.$name.$ext;
-					$filetotestsmall=$dolibarr_main_data_root.'/societe/logos/thumbs/'.$name.$ext;
-					$exists=dol_is_file($filetotest);
-					print 'Check thirdparty '.$obj->rowid.' name='.$obj->name.' logo='.$obj->logo.' file '.$filetotest." exists=".$exists."<br>\n";
-					if ($exists)
+					$filetarget=$dolibarr_main_data_root.'/societe/'.$obj->rowid.'/logos/'.$name.$ext;
+					$filetargetsmall=$dolibarr_main_data_root.'/societe/'.$obj->rowid.'/logos/thumbs/'.$name.'_small'.$ext;
+					$existt=dol_is_file($filetarget);
+					if (! $existt)
 					{
-						$filetarget=$dolibarr_main_data_root.'/societe/'.$obj->rowid.'/logos/'.$name.$ext;
-						$filetargetsmall=$dolibarr_main_data_root.'/societe/'.$obj->rowid.'/logos/thumbs/'.$name.'_small'.$ext;
-						$existt=dol_is_file($filetarget);
-						if (! $existt)
+						if (GETPOST('restore_thirdparties_logos', 'alpha') == 'confirmed')
 						{
 							dol_mkdir($dolibarr_main_data_root.'/societe/'.$obj->rowid.'/logos');
-
-							print "  &nbsp; &nbsp; &nbsp; -> Copy file ".$filetotest." -> ".$filetarget."<br>\n";
-							dol_copy($filetotest, $filetarget, '', 0);
 						}
 
-						$existtt=dol_is_file($filetargetsmall);
-						if (! $existtt)
+						print "  &nbsp; &nbsp; &nbsp; -> Copy file ".$filetotest." -> ".$filetarget."<br>\n";
+						if (GETPOST('restore_thirdparties_logos', 'alpha') == 'confirmed')
+						{
+							dol_copy($filetotest, $filetarget, '', 0);
+						}
+					}
+
+					$existtt=dol_is_file($filetargetsmall);
+					if (! $existtt)
+					{
+						if (GETPOST('restore_thirdparties_logos', 'alpha') == 'confirmed')
 						{
 							dol_mkdir($dolibarr_main_data_root.'/societe/'.$obj->rowid.'/logos/thumbs');
-
-							print "  &nbsp; &nbsp; &nbsp; -> Copy file ".$filetotestsmall." -> ".$filetargetsmall."<br>\n";
+						}
+						print "  &nbsp; &nbsp; &nbsp; -> Copy file ".$filetotestsmall." -> ".$filetargetsmall."<br>\n";
+						if (GETPOST('restore_thirdparties_logos', 'alpha') == 'confirmed')
+						{
 							dol_copy($filetotestsmall, $filetargetsmall, '', 0);
 						}
 					}
 				}
-
-				$i++;
 			}
+
+			$i++;
 		}
-		else
-		{
-			$ok=0;
-			dol_print_error($db);
-		}
+	}
+	else
+	{
+		$ok=0;
+		dol_print_error($db);
+	}
 
 	print '</td></tr>';
-	//}
+}
+
+
+
+// restore_user_pictures: Move pictures to correct new directory.
+if ($ok && GETPOST('restore_user_pictures', 'alpha'))
+{
+	//$exts=array('gif','png','jpg');
+
+	$ext='';
+
+	print '<tr><td colspan="2"><br>*** Restore user pictures<br>';
+
+	$sql="SELECT s.rowid, s.firstname, s.lastname, s.login, s.photo FROM ".MAIN_DB_PREFIX."user as s ORDER BY s.rowid";
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$num=$db->num_rows($resql);
+		$i=0;
+
+		while($i < $num)
+		{
+			$obj=$db->fetch_object($resql);
+
+			/*
+			 $name=preg_replace('/é/','',$obj->name);
+			 $name=preg_replace('/ /','_',$name);
+			 $name=preg_replace('/\'/','',$name);
+			 */
+
+			$tmp=explode('.', $obj->photo);
+			$name=$tmp[0];
+			if (isset($tmp[1])) $ext='.'.$tmp[1];
+
+			if (! empty($name))
+			{
+				$filetotest=$dolibarr_main_data_root.'/users/'.substr(sprintf('%08d', $obj->rowid), -1, 1).'/'.substr(sprintf('%08d', $obj->rowid), -2, 1).'/'.$name.$ext;
+				$filetotestsmall=$dolibarr_main_data_root.'/users/'.substr(sprintf('%08d', $obj->rowid), -1, 1).'/'.substr(sprintf('%08d', $obj->rowid), -2, 1).'/thumbs/'.$name.'_small'.$ext;
+				$filetotestmini=$dolibarr_main_data_root.'/users/'.substr(sprintf('%08d', $obj->rowid), -1, 1).'/'.substr(sprintf('%08d', $obj->rowid), -2, 1).'/thumbs/'.$name.'_mini'.$ext;
+				$exists=dol_is_file($filetotest);
+				print 'Check user '.$obj->rowid.' lastname='.$obj->lastname.' fistname='.$obj->firstname.' photo='.$obj->photo.' file '.$filetotest." exists=".$exists."<br>\n";
+				if ($exists)
+				{
+					$filetarget=$dolibarr_main_data_root.'/users/'.$obj->rowid.'/'.$name.$ext;
+					$filetargetsmall=$dolibarr_main_data_root.'/users/'.$obj->rowid.'/thumbs/'.$name.'_small'.$ext;
+					$filetargetmini=$dolibarr_main_data_root.'/users/'.$obj->rowid.'/thumbs/'.$name.'_mini'.$ext;
+
+					$existt=dol_is_file($filetarget);
+					if (! $existt)
+					{
+						if (GETPOST('restore_user_pictures', 'alpha') == 'confirmed')
+						{
+							dol_mkdir($dolibarr_main_data_root.'/users/'.$obj->rowid);
+						}
+
+						print "  &nbsp; &nbsp; &nbsp; -> Copy file ".$filetotest." -> ".$filetarget."<br>\n";
+						if (GETPOST('restore_user_pictures', 'alpha') == 'confirmed')
+						{
+							dol_copy($filetotest, $filetarget, '', 0);
+						}
+					}
+
+					$existtt=dol_is_file($filetargetsmall);
+					if (! $existtt)
+					{
+						if (GETPOST('restore_user_pictures', 'alpha') == 'confirmed')
+						{
+							dol_mkdir($dolibarr_main_data_root.'/users/'.$obj->rowid.'/thumbs');
+						}
+
+						print "  &nbsp; &nbsp; &nbsp; -> Copy file ".$filetotestsmall." -> ".$filetargetsmall."<br>\n";
+						if (GETPOST('restore_user_pictures', 'alpha') == 'confirmed')
+						{
+							dol_copy($filetotestsmall, $filetargetsmall, '', 0);
+						}
+					}
+
+					$existtt=dol_is_file($filetargetmini);
+					if (! $existtt)
+					{
+						if (GETPOST('restore_user_pictures', 'alpha') == 'confirmed')
+						{
+							dol_mkdir($dolibarr_main_data_root.'/users/'.$obj->rowid.'/thumbs');
+						}
+
+						print "  &nbsp; &nbsp; &nbsp; -> Copy file ".$filetotestmini." -> ".$filetargetmini."<br>\n";
+						if (GETPOST('restore_user_pictures', 'alpha') == 'confirmed')
+						{
+							dol_copy($filetotestmini, $filetargetmini, '', 0);
+						}
+					}
+				}
+			}
+
+			$i++;
+		}
+	}
+	else
+	{
+		$ok=0;
+		dol_print_error($db);
+	}
+
+	print '</td></tr>';
 }
 
 
@@ -1183,7 +1297,7 @@ if ($ok && GETPOST('clean_perm_table', 'alpha'))
 	{
 		$listofmods.=($listofmods?',':'')."'".$val."'";
 	}
-	$sql = 'SELECT id, libelle, module from '.MAIN_DB_PREFIX.'rights_def WHERE module not in ('.$listofmods.') AND id > 100000';
+	$sql = 'SELECT id, libelle as label, module from '.MAIN_DB_PREFIX.'rights_def WHERE module not in ('.$listofmods.') AND id > 100000';
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -1196,7 +1310,7 @@ if ($ok && GETPOST('clean_perm_table', 'alpha'))
 				$obj=$db->fetch_object($resql);
 				if ($obj->id > 0)
 				{
-					print '<tr><td>Found line with id '.$obj->id.', label "'.$obj->libelle.'" of module "'.$obj->module.'" to delete';
+					print '<tr><td>Found line with id '.$obj->id.', label "'.$obj->label.'" of module "'.$obj->module.'" to delete';
 					if (GETPOST('clean_perm_table', 'alpha') == 'confirmed')
 					{
 						$sqldelete = 'DELETE FROM '.MAIN_DB_PREFIX.'rights_def WHERE id = '.$obj->id;

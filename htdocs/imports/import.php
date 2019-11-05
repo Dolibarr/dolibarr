@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -451,7 +451,6 @@ if ($step == 2 && $datatoimport)
 	$liste=$objmodelimport->liste_modeles($db);
 	foreach($liste as $key)
 	{
-
 		print '<tr class="oddeven">';
 		print '<td width="16">'.img_picto_common($key, $objmodelimport->getPictoForKey($key)).'</td>';
     	$text=$objmodelimport->getDriverDescForKey($key);
@@ -1175,7 +1174,6 @@ if ($step == 4 && $datatoimport)
 			$i = 0;
 			while ($i < $num)
 			{
-
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven"><td>';
 				print $obj->label;
@@ -1964,15 +1962,16 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 
 	$height='24px';
 
-    if ($key == 'none') {//stop multiple duplicate ids with no number
+    if ($key == 'none') {
+        //stop multiple duplicate ids with no number
         print "\n\n<!-- Box_no-key start-->\n";
         print '<div class="box boximport" style="padding:0;">' . "\n";
         print '<table summary="boxtable_no-key" width="100%" class="nobordernopadding">' . "\n";
     } else {
-	print "\n\n<!-- Box ".$pos." start -->\n";
+        print "\n\n<!-- Box ".$pos." start -->\n";
         print '<div class="box boximport" style="padding: 0;" id="boxto_' . $pos . '">' . "\n";
 
-	print '<table summary="boxtable'.$pos.'" width="100%" class="nobordernopadding">'."\n";
+        print '<table summary="boxtable'.$pos.'" width="100%" class="nobordernopadding">'."\n";
     }
 
 	if ($pos && $pos > count($fieldssource))	// No fields

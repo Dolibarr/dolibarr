@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -36,7 +36,7 @@ $langs->loadLangs(array('compta', 'bills'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 $search_ref = GETPOST('search_ref', 'int');
@@ -108,17 +108,7 @@ if ($search_ref)	$sql.= natural_search("t.rowid", $search_ref);
 if ($search_label) 	$sql.= natural_search("t.label", $search_label);
 if ($search_amount) $sql.= natural_search("t.amount", price2num(trim($search_amount)), 1);
 if ($search_account > 0) $sql .=" AND b.fk_account=".$search_account;
-if ($month > 0)
-{
-	if ($year > 0)
-	$sql.= " AND t.datev BETWEEN '".$db->idate(dol_get_first_day($year, $month, false))."' AND '".$db->idate(dol_get_last_day($year, $month, false))."'";
-	else
-	$sql.= " AND date_format(t.datev, '%m') = '$month'";
-}
-elseif ($year > 0)
-{
-	$sql.= " AND t.datev BETWEEN '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
-}
+$sql.= dolSqlDateFilter('t.datev', 0, $month, $year);
 if ($filtre) {
     $filtre=str_replace(":", "=", $filtre);
     $sql .= " AND ".$filtre;

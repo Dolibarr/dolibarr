@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -87,33 +87,9 @@ class Events // extends CommonObject
 		array('id'=>'USER_NEW_PASSWORD',      'test'=>1),
 		array('id'=>'USER_ENABLEDISABLE',     'test'=>1),
 		array('id'=>'USER_DELETE',            'test'=>1),
-	/*    array('id'=>'USER_SETINGROUP',        'test'=>1), deprecated. Replace with USER_MODIFY
-	    array('id'=>'USER_REMOVEFROMGROUP',   'test'=>1), deprecated. Replace with USER_MODIFY */
 		array('id'=>'GROUP_CREATE',           'test'=>1),
 		array('id'=>'GROUP_MODIFY',           'test'=>1),
 		array('id'=>'GROUP_DELETE',           'test'=>1),
-	/*	array('id'=>'ACTION_CREATE',          'test'=>$conf->societe->enabled),
-		array('id'=>'COMPANY_CREATE',         'test'=>$conf->societe->enabled),
-		array('id'=>'CONTRACT_VALIDATE',      'test'=>$conf->contrat->enabled),
-		array('id'=>'PROPAL_VALIDATE',        'test'=>$conf->propal->enabled),
-		array('id'=>'PROPAL_CLOSE_SIGNED',    'test'=>$conf->propal->enabled),
-		array('id'=>'PROPAL_CLOSE_REFUSED',   'test'=>$conf->propal->enabled),
-		array('id'=>'PROPAL_SENTBYMAIL',      'test'=>$conf->propal->enabled),
-		array('id'=>'ORDER_VALIDATE',         'test'=>$conf->commande->enabled),
-		array('id'=>'ORDER_SENTBYMAIL',       'test'=>$conf->commande->enabled),
-		array('id'=>'BILL_VALIDATE',          'test'=>$conf->facture->enabled),
-		array('id'=>'BILL_PAYED',             'test'=>$conf->facture->enabled),
-		array('id'=>'BILL_CANCEL',            'test'=>$conf->facture->enabled),
-		array('id'=>'BILL_SENTBYMAIL',        'test'=>$conf->facture->enabled),
-		array('id'=>'PAYMENT_CUSTOMER_CREATE','test'=>$conf->facture->enabled),
-		array('id'=>'PAYMENT_SUPPLIER_CREATE','test'=>$conf->fournisseur->enabled),
-		array('id'=>'MEMBER_CREATE',          'test'=>$conf->adherent->enabled),
-		array('id'=>'MEMBER_VALIDATE',        'test'=>$conf->adherent->enabled),
-		array('id'=>'MEMBER_SUBSCRIPTION',    'test'=>$conf->adherent->enabled),
-		array('id'=>'MEMBER_MODIFY',          'test'=>$conf->adherent->enabled),
-		array('id'=>'MEMBER_RESILIATE',       'test'=>$conf->adherent->enabled),
-		array('id'=>'MEMBER_DELETE',          'test'=>$conf->adherent->enabled),
-	*/
 	);
 
 

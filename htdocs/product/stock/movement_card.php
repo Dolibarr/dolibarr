@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -89,7 +89,8 @@ $extrafields = new ExtraFields($db);
 $formfile = new FormFile($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('movement');
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 $arrayfields=array(
@@ -420,8 +421,8 @@ if (empty($reshook) && $action != 'remove_file')
 {
     $objectclass='MouvementStock';
     $objectlabel='Movements';
-    $permtoread = $user->rights->stock->lire;
-    $permtodelete = $user->rights->stock->supprimer;
+    $permissiontoread = $user->rights->stock->lire;
+    $permissiontodelete = $user->rights->stock->supprimer;
     $uploaddir = $conf->stock->dir_output . "/movement/";
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -443,14 +444,16 @@ $formproduct=new FormProduct($db);
 if (!empty($conf->projet->enabled)) $formproject=new FormProjets($db);
 
 $sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.entity,";
-$sql.= " e.ref as stock, e.rowid as entrepot_id, e.lieu,";
+$sql.= " e.ref as warehouse_ref, e.rowid as entrepot_id, e.lieu,";
 $sql.= " m.rowid as mid, m.value as qty, m.datem, m.fk_user_author, m.label, m.inventorycode, m.fk_origin, m.origintype,";
 $sql.= " m.batch, m.price,";
 $sql.= " m.type_mouvement,";
 $sql.= " pl.rowid as lotid, pl.eatby, pl.sellby,";
 $sql.= " u.login, u.photo, u.lastname, u.firstname";
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -458,7 +461,7 @@ $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
 $sql.= " ".MAIN_DB_PREFIX."product as p,";
 $sql.= " ".MAIN_DB_PREFIX."stock_mouvement as m";
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."movement_extrafields as ef on (m.rowid = ef.fk_object)";
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (m.rowid = ef.fk_object)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON m.fk_user_author = u.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot as pl ON m.batch = pl.batch AND m.fk_product = pl.fk_product";
 $sql.= " WHERE m.fk_product = p.rowid";
@@ -467,17 +470,7 @@ $sql.= " AND m.fk_entrepot = e.rowid";
 $sql.= " AND e.entity IN (".getEntity('stock').")";
 if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql.= " AND p.fk_product_type = 0";
 if ($id > 0) $sql.= " AND e.rowid ='".$id."'";
-if ($month > 0)
-{
-    if ($year > 0)
-    $sql.= " AND m.datem BETWEEN '".$db->idate(dol_get_first_day($year, $month, false))."' AND '".$db->idate(dol_get_last_day($year, $month, false))."'";
-    else
-    $sql.= " AND date_format(m.datem, '%m') = '$month'";
-}
-elseif ($year > 0)
-{
-    $sql.= " AND m.datem BETWEEN '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
-}
+$sql.= dolSqlDateFilter('m.datem', 0, $month, $year);
 if ($idproduct > 0) $sql.= " AND p.rowid = '".$idproduct."'";
 if (! empty($search_ref))			$sql.= natural_search('m.rowid', $search_ref, 1);
 if (! empty($search_movement))      $sql.= natural_search('m.label', $search_movement);
@@ -574,7 +567,7 @@ if ($resql)
         $morehtmlref.='</div>';
 
         $shownav = 1;
-        if ($user->societe_id && ! in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+        if ($user->socid && ! in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
         dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
 
@@ -738,7 +731,7 @@ if ($resql)
     if ($id > 0) print '<input type="hidden" name="id" value="'.$id.'">';
 
     if ($id > 0) print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit);
-    else print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
+    else print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, '', '', $limit);
 
 	if ($sall)
     {
@@ -985,7 +978,8 @@ if ($resql)
         $productlot->sellby= $objp->sellby;
 
         $warehousestatic->id=$objp->entrepot_id;
-        $warehousestatic->libelle=$objp->stock;
+        $warehousestatic->libelle=$objp->warehouse_ref;	// deprecated
+        $warehousestatic->label=$objp->warehouse_ref;
         $warehousestatic->lieu=$objp->lieu;
 
         $arrayofuniqueproduct[$objp->rowid]=$objp->produit;
@@ -1057,7 +1051,7 @@ if ($resql)
         if (! empty($arrayfields['m.inventorycode']['checked']))
         {
 	        // Inventory code
-	        print '<td>'.'<a href="'
+	        print '<td><a href="'
 								.DOL_URL_ROOT.'/product/stock/movement_card.php'
 								.'?id='.$objp->entrepot_id
 								.'&amp;search_inventorycode='.$objp->inventorycode

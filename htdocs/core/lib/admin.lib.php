@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -663,14 +663,52 @@ function security_prepare_head()
 
     $head[$h][0] = DOL_URL_ROOT."/admin/perms.php";
     $head[$h][1] = $langs->trans("DefaultRights");
-    if ($nbPerms > 0) $head[$h][1].= ' <span class="badge">'.$nbPerms.'</span>';
+    if ($nbPerms > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbPerms.'</span>';
     $head[$h][2] = 'default';
     $h++;
 
     return $head;
 }
 
+/**
+ * Prepare array with list of tabs
+ * @param object $object descriptor class
+ * @return  array				Array of tabs to show
+ */
+function modulehelp_prepare_head($object)
+{
+    global $langs, $conf, $user;
+    $h = 0;
+    $head = array();
 
+    // FIX for compatibity habitual tabs
+    $object->id = $object->numero;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$object->id.'&mode=desc';
+	$head[$h][1] = $langs->trans("Description");
+	$head[$h][2] = 'desc';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$object->id.'&mode=feature';
+	$head[$h][1] = $langs->trans("TechnicalServicesProvided");
+	$head[$h][2] = 'feature';
+	$h++;
+
+	if ($object->isCoreOrExternalModule() == 'external')
+	{
+		$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$object->id.'&mode=changelog';
+		$head[$h][1] = $langs->trans("ChangeLog");
+		$head[$h][2] = 'changelog';
+		$h++;
+	}
+
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'modulehelp_admin');
+
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'modulehelp_admin', 'remove');
+
+
+    return $head;
+}
 /**
  * Prepare array with list of tabs
  *
@@ -1732,13 +1770,10 @@ function company_admin_prepare_head()
 	$head[$h][2] = 'company';
 	$h++;
 
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
-	{
-    	$head[$h][0] = DOL_URL_ROOT."/admin/openinghours.php";
-    	$head[$h][1] = $langs->trans("OpeningHours");
-    	$head[$h][2] = 'openinghours';
-    	$h++;
-	}
+   	$head[$h][0] = DOL_URL_ROOT."/admin/openinghours.php";
+   	$head[$h][1] = $langs->trans("OpeningHours");
+   	$head[$h][2] = 'openinghours';
+   	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/accountant.php";
 	$head[$h][1] = $langs->trans("Accountant");

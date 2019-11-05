@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -65,7 +65,7 @@ $object = new AssetType($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('asset_type');
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
@@ -83,7 +83,6 @@ $hookmanager->initHooks(array('assettypecard','globalcard'));
  */
 
 if ($cancel) {
-
 	$action='';
 
 	if (! empty($backtopage))
@@ -102,7 +101,7 @@ if ($action == 'add' && $user->rights->asset->write)
 	$object->note									= trim($comment);
 
 	// Fill array 'array_options' with data from add form
-	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	$ret = $extrafields->setOptionalsFromPost(null, $object);
 	if ($ret < 0) $error++;
 
 	if (empty($object->label)) {
@@ -155,7 +154,7 @@ if ($action == 'update' && $user->rights->asset->write)
 	$object->note									= trim($comment);
 
 	// Fill array 'array_options' with data from add form
-	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	$ret = $extrafields->setOptionalsFromPost(null, $object);
 	if ($ret < 0) $error++;
 
 	$ret=$object->update($user);
@@ -197,6 +196,7 @@ if ($action == 'confirm_delete' && $user->rights->asset->write)
  */
 
 $form=new Form($db);
+
 $helpurl='';
 llxHeader('', $langs->trans("AssetsTypeSetup"), $helpurl);
 
@@ -237,7 +237,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-		print_barre_liste($langs->trans("AssetsTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);
+		print_barre_liste($langs->trans("AssetsTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'accountancy', 0, $newcardbutton, '', $limit);
 
 		$moreforfilter = '';
 
@@ -615,7 +615,7 @@ if ($rowid > 0)
 		if (empty($reshook))
 		{
 			print '<br><br><table class="border" width="100%">';
-			foreach($extrafields->attribute_label as $key=>$label)
+			foreach($extrafields->attributes[$object->element]['label'] as $key=>$label)
 			{
 				if (isset($_POST["options_" . $key])) {
 					if (is_array($_POST["options_" . $key])) {

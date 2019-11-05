@@ -33,6 +33,71 @@ ALTER TABLE llx_account_bookkeeping ADD COLUMN date_export datetime DEFAULT NULL
 ALTER TABLE llx_expensereport ADD COLUMN paid smallint default 0 NOT NULL;
 UPDATE llx_expensereport set paid = 1 WHERE fk_statut = 6 and paid = 0;
 
+UPDATE llx_c_units SET short_label = 'i' WHERE code = 'MI';
+UPDATE llx_c_units SET unit_type = 'weight', short_label = 'kg', scale = 0 WHERE code = 'KG';
+UPDATE llx_c_units SET unit_type = 'weight', short_label = 'g', scale = -3 WHERE code = 'G';
+UPDATE llx_c_units SET unit_type = 'time' WHERE code IN ('S','H','D');
+UPDATE llx_c_units SET unit_type = 'size' WHERE code IN ('M','LM');
+UPDATE llx_c_units SET label = 'SizeUnitm', scale = 0 WHERE code IN ('M');
+UPDATE llx_c_units SET active = 0, scale = 0 WHERE code IN ('LM');
+UPDATE llx_c_units SET unit_type = 'surface', scale = 0 WHERE code IN ('M2');
+UPDATE llx_c_units SET unit_type = 'volume', scale = 0 WHERE code IN ('M3','L');
+UPDATE llx_c_units SET scale = -3, active = 0 WHERE code IN ('L');
+UPDATE llx_c_units SET label = 'VolumeUnitm3' WHERE code IN ('M3');
+UPDATE llx_c_units SET label = 'SurfaceUnitm2' WHERE code IN ('M2');
+
+ALTER TABLE llx_adherent_type ADD UNIQUE INDEX uk_adherent_type_libelle (libelle, entity);
+
+
+-- For v11
+
+ALTER TABLE llx_don ADD COLUMN fk_user_modif integer;
+
+ALTER TABLE llx_expeditiondet ADD INDEX idx_expeditiondet_fk_origin_line (fk_origin_line);
+
+ALTER TABLE llx_rights_def ADD COLUMN module_position INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE llx_rights_def ADD COLUMN family_position INTEGER NOT NULL DEFAULT 0;
+
+UPDATE llx_rights_def SET subperms = 'write' WHERE perms = 'fiscalyear' AND module = 'accounting' AND subperms IS NULL;
+
+ALTER TABLE llx_bom_bom ADD COLUMN duration double(8,4) DEFAULT NULL;
+ALTER TABLE llx_bom_bomline ADD COLUMN position integer NOT NULL DEFAULT 0;
+ALTER TABLE llx_bom_bomline ADD COLUMN qty_frozen smallint DEFAULT 0;
+ALTER TABLE llx_bom_bomline ADD COLUMN disable_stock_change smallint DEFAULT 0;
+
+ALTER TABLE llx_bom_bomline DROP COLUMN rank;
+
+create table llx_categorie_warehouse
+(
+  fk_categorie  integer NOT NULL,
+  fk_warehouse  integer NOT NULL,
+  import_key    varchar(14)
+) ENGINE=innodb;
+
+ALTER TABLE llx_categorie_warehouse ADD PRIMARY KEY pk_categorie_warehouse (fk_categorie, fk_warehouse);
+ALTER TABLE llx_categorie_warehouse ADD INDEX idx_categorie_warehouse_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_warehouse ADD INDEX idx_categorie_warehouse_fk_warehouse (fk_warehouse);
+
+ALTER TABLE llx_categorie_warehouse ADD CONSTRAINT fk_categorie_warehouse_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_warehouse ADD CONSTRAINT fk_categorie_warehouse_fk_warehouse_rowid FOREIGN KEY (fk_warehouse) REFERENCES llx_entrepot (rowid);
+
+
+create table llx_holiday_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_holiday_extrafields ADD INDEX idx_holiday_extrafields (fk_object);
+
+ALTER TABLE llx_societe_rib MODIFY label varchar(200);
+
+ALTER TABLE llx_societe ADD COLUMN logo_squarred varchar(255);
+
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('USER_SENTBYMAIL','Email sent','Executed when an email is sent from user card','user',300);
+
 create table llx_entrepot_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
@@ -43,11 +108,13 @@ create table llx_entrepot_extrafields
 
 ALTER TABLE llx_entrepot_extrafields ADD INDEX idx_entrepot_extrafields (fk_object);
 
+ALTER TABLE llx_extrafields ADD COLUMN printable boolean DEFAULT FALSE;
 
 ALTER TABLE llx_facture ADD COLUMN retained_warranty real DEFAULT NULL after situation_final;
 ALTER TABLE llx_facture ADD COLUMN retained_warranty_date_limit	date DEFAULT NULL after retained_warranty;
 ALTER TABLE llx_facture ADD COLUMN retained_warranty_fk_cond_reglement	integer  DEFAULT NULL after retained_warranty_date_limit;
-
+ALTER TABLE llx_facture ADD COLUMN date_closing datetime DEFAULT NULL after date_valid;
+ALTER TABLE llx_facture ADD COLUMN fk_user_closing integer DEFAULT NULL after fk_user_valid;
 
 ALTER TABLE llx_c_shipment_mode ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 
@@ -79,6 +146,9 @@ ALTER TABLE llx_stock_mouvement ADD COLUMN fk_projet INTEGER NOT NULL DEFAULT 0 
 
 ALTER TABLE llx_oauth_token ADD COLUMN fk_soc integer DEFAULT NULL after token;
 
+
+ALTER TABLE llx_adherent_type ADD COLUMN duration varchar(6) DEFAULT NULL after morphy;
+
 ALTER TABLE llx_mailing ADD COLUMN tms timestamp;
 ALTER TABLE llx_mailing_cibles ADD COLUMN tms timestamp;
 
@@ -89,18 +159,35 @@ ALTER TABLE llx_projet ADD COLUMN usage_organize_event integer DEFAULT 0;
 
 UPDATE llx_projet set usage_opportunity = 1 WHERE fk_opp_status > 0;
 
+create table llx_societe_contacts
+(
+    rowid           integer AUTO_INCREMENT PRIMARY KEY,
+    entity          integer DEFAULT 1 NOT NULL,
+    date_creation           datetime NOT NULL,
+    fk_soc		        integer NOT NULL,
+    fk_c_type_contact	int NOT NULL,
+    fk_socpeople        integer NOT NULL,
+    tms TIMESTAMP,
+    import_key VARCHAR(14)
+)ENGINE=innodb;
+
+ALTER TABLE llx_societe_contacts ADD UNIQUE INDEX idx_societe_contacts_idx1 (entity, fk_soc, fk_c_type_contact, fk_socpeople);
+ALTER TABLE llx_societe_contacts ADD CONSTRAINT fk_societe_contacts_fk_c_type_contact FOREIGN KEY (fk_c_type_contact)  REFERENCES llx_c_type_contact(rowid);
+ALTER TABLE llx_societe_contacts ADD CONSTRAINT fk_societe_contacts_fk_soc FOREIGN KEY (fk_soc)  REFERENCES llx_societe(rowid);
+ALTER TABLE llx_societe_contacts ADD CONSTRAINT fk_societe_contacts_fk_socpeople FOREIGN KEY (fk_socpeople)  REFERENCES llx_socpeople(rowid);
+
 ALTER TABLE llx_accounting_account MODIFY COLUMN rowid bigint AUTO_INCREMENT;
 
 
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN  date_start	datetime   DEFAULT NULL;
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN  date_end	datetime   DEFAULT NULL;
-  
+
 
 create table llx_c_hrm_public_holiday
 (
   id					integer AUTO_INCREMENT PRIMARY KEY,
   entity				integer	DEFAULT 0 NOT NULL,	-- multi company id, 0 = all
-  fk_country			integer,			
+  fk_country			integer,
   code		    		varchar(62),
   dayrule               varchar(64) DEFAULT '', 	-- 'easter', 'eastermonday', ...
   day					integer,
@@ -164,3 +251,233 @@ INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, m
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('IN-GANDI',        0, 117, '', 0, 10,  2, 1);
 
 
+create table llx_c_socialnetworks
+(
+  rowid       integer AUTO_INCREMENT PRIMARY KEY,
+  entity      integer DEFAULT 1 NOT NULL,
+  code        varchar(100),
+  label       varchar(150),
+  url         text,
+  icon        varchar(20),
+  active      tinyint DEFAULT 1 NOT NULL
+)ENGINE=innodb;
+
+ALTER TABLE llx_c_socialnetworks ADD UNIQUE INDEX idx_c_socialnetworks_code (code);
+
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'facebook', 'Facebook', 'https://www.facebook.com/{socialid}', 'fa-facebook', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'skype', 'Skype', 'https://www.skype.com/{socialid}', 'fa-skype', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'twitter', 'Twitter', 'https://www.twitter.com/{socialid}', 'fa-twitter', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'linkedin', 'LinkedIn', 'https://www.linkedin.com/{socialid}', 'fa-linkedin', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'instagram', 'Instagram', 'https://www.instagram.com/{socialid}', 'fa-instagram', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'snapchat', 'Snapchat', '{socialid}', 'fa-snapchat', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'googleplus', 'GooglePlus', 'https://www.googleplus.com/{socialid}', 'fa-google-plus-g', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'youtube', 'Youtube', 'https://www.youtube.com/{socialid}', 'fa-youtube', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'whatsapp', 'Whatsapp', '{socialid}', 'fa-whatsapp', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'tumblr', 'Tumblr', 'https://www.tumblr.com/{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'vero', 'Vero', 'https://vero.co/{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'viadeo', 'Viadeo', 'https://fr.viadeo.com/fr/{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'slack', 'Slack', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'xing', 'Xing', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'meetup', 'Meetup', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'pinterest', 'Pinterest', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'flickr', 'Flickr', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, '500px', '500px', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'giphy', 'Giphy', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'gifycat', 'Gificat', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'dailymotion', 'Dailymotion', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'vimeo', 'Vimeo', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'periscope', 'Periscope', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'twitch', 'Twitch', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'discord', 'Discord', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'wikipedia', 'Wikipedia', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'reddit', 'Reddit', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'quora', 'Quora', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'tripadvisor', 'Tripadvisor', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'mastodon', 'Mastodon', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'diaspora', 'Diaspora', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'viber', 'Viber', '{socialid}', '', 0);
+
+ALTER TABLE llx_adherent ADD COLUMN socialnetworks text DEFAULT NULL AFTER email;
+ALTER TABLE llx_societe ADD COLUMN socialnetworks text DEFAULT NULL AFTER email;
+ALTER TABLE llx_socpeople ADD COLUMN socialnetworks text DEFAULT NULL AFTER email;
+ALTER TABLE llx_user ADD COLUMN socialnetworks text DEFAULT NULL AFTER personal_email;
+
+ALTER TABLE llx_product ADD COLUMN net_measure         float;
+ALTER TABLE llx_product ADD COLUMN net_measure_units     tinyint;
+
+create table llx_adherent_type_lang
+(
+	rowid          integer AUTO_INCREMENT PRIMARY KEY,
+	fk_type        integer      DEFAULT 0 NOT NULL,
+	lang           varchar(5)   DEFAULT 0 NOT NULL,
+	label          varchar(255) NOT NULL,
+	description    text,
+	email          text,
+	import_key varchar(14) DEFAULT NULL
+)ENGINE=innodb;
+
+create table llx_fichinter_rec
+(
+	rowid				integer AUTO_INCREMENT PRIMARY KEY,
+	titre				varchar(50) NOT NULL,
+	entity				integer DEFAULT 1 NOT NULL,	 -- multi company id
+	fk_soc				integer DEFAULT NULL,
+	datec				datetime,  -- date de creation
+	fk_contrat			integer DEFAULT 0,          -- contrat auquel est rattache la fiche
+	fk_user_author		integer,                    -- createur
+	fk_projet			integer,                    -- projet auquel est associe la facture
+	duree				real,                       -- duree totale de l'intervention
+	description			text,
+	modelpdf			varchar(50),
+	note_private		text,
+	note_public			text,
+	frequency			integer,					-- frequency (for example: 3 for every 3 month)
+	unit_frequency		varchar(2) DEFAULT 'm',		-- 'm' for month (date_when must be a day <= 28), 'y' for year, ...
+	date_when			datetime DEFAULT NULL,		-- date for next gen (when an invoice is generated, this field must be updated with next date)
+	date_last_gen		datetime DEFAULT NULL,		-- date for last gen (date with last successfull generation of invoice)
+	nb_gen_done			integer DEFAULT NULL,		-- nb of generation done (when an invoice is generated, this field must incremented)
+	nb_gen_max			integer DEFAULT NULL,		-- maximum number of generation
+	auto_validate		integer NULL DEFAULT NULL	-- statut of the generated intervention
+
+)ENGINE=innodb;
+
+ALTER TABLE llx_fichinter_rec ADD UNIQUE INDEX idx_fichinter_rec_uk_titre (titre, entity);
+ALTER TABLE llx_fichinter_rec ADD INDEX idx_fichinter_rec_fk_soc (fk_soc);
+ALTER TABLE llx_fichinter_rec ADD INDEX idx_fichinter_rec_fk_user_author (fk_user_author);
+ALTER TABLE llx_fichinter_rec ADD INDEX idx_fichinter_rec_fk_projet (fk_projet);
+ALTER TABLE llx_fichinter_rec ADD CONSTRAINT fk_fichinter_rec_fk_user_author    FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);
+ALTER TABLE llx_fichinter_rec ADD CONSTRAINT fk_fichinter_rec_fk_projet         FOREIGN KEY (fk_projet) REFERENCES llx_projet (rowid);
+
+create table llx_fichinterdet_rec
+(
+	rowid				integer AUTO_INCREMENT PRIMARY KEY,
+	fk_fichinter		integer NOT NULL,
+	date				datetime,				-- date de la ligne d'intervention
+	description			text,					-- description de la ligne d'intervention
+	duree				integer,				-- duree de la ligne d'intervention
+	rang				integer DEFAULT 0,		-- ordre affichage sur la fiche
+	total_ht			DOUBLE(24, 8) NULL DEFAULT NULL,
+	subprice			DOUBLE(24, 8) NULL DEFAULT NULL,
+	fk_parent_line		integer NULL DEFAULT NULL,
+	fk_product			integer NULL DEFAULT NULL,
+	label				varchar(255) NULL DEFAULT NULL,
+	tva_tx				DOUBLE(6, 3) NULL DEFAULT NULL,
+	localtax1_tx		DOUBLE(6, 3) NULL DEFAULT 0,
+	localtax1_type		VARCHAR(1) NULL DEFAULT NULL,
+	localtax2_tx		DOUBLE(6, 3) NULL DEFAULT 0,
+	localtax2_type		VARCHAR(1) NULL DEFAULT NULL,
+	qty					double NULL DEFAULT NULL,
+	remise_percent		double NULL DEFAULT 0,
+	remise				double NULL DEFAULT 0,
+	fk_remise_except	integer NULL DEFAULT NULL,
+	price				DOUBLE(24, 8) NULL DEFAULT NULL,
+	total_tva			DOUBLE(24, 8) NULL DEFAULT NULL,
+	total_localtax1		DOUBLE(24, 8) NULL DEFAULT 0,
+	total_localtax2		DOUBLE(24, 8) NULL DEFAULT 0,
+	total_ttc			DOUBLE(24, 8) NULL DEFAULT NULL,
+	product_type		INTEGER NULL DEFAULT 0,
+	date_start			datetime NULL DEFAULT NULL,
+	date_end			datetime NULL DEFAULT NULL,
+	info_bits			INTEGER NULL DEFAULT 0,
+	buy_price_ht		DOUBLE(24, 8) NULL DEFAULT 0,
+	fk_product_fournisseur_price	integer NULL DEFAULT NULL,
+	fk_code_ventilation	integer NOT NULL DEFAULT 0,
+	fk_export_commpta	integer NOT NULL DEFAULT 0,
+	special_code		integer UNSIGNED NULL DEFAULT 0,
+	fk_unit				integer NULL DEFAULT NULL,
+	import_key			varchar(14) NULL DEFAULT NULL
+)ENGINE=innodb;
+
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN date_start datetime DEFAULT NULL AFTER product_type;
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN date_end datetime DEFAULT NULL AFTER date_start;
+
+--List of parcels details related to an expedition
+create table llx_expedition_package
+(
+  rowid             integer AUTO_INCREMENT PRIMARY KEY,
+  fk_expedition     integer NOT NULL,
+  description       varchar(255),    --Description of goods in the package (required by the custom)
+  value             double(24,8)     DEFAULT 0,--Value (Price of the content, for insurance & custom)
+  fk_parcel_type    integer,           -- Type or package, linked to llx_c_shipment_parcel_type (eg: 1=enveloppe, 2=package, 3=palette, 4=other)
+  height            float,	       -- height
+  width             float,	       -- width
+  size              float,	       -- depth
+  size_units        integer,	       -- unit of all sizes (height, width, depth)
+  weight            float,	       -- weight
+  weight_units      integer,	       -- unit of weight
+  dangerous_goods   smallint          DEFAULT 0, -- 0 = no dangerous goods or 1 = Explosives, 2 = Flammable Gases, 3 = Flammable Liquids, 4 = Flammable solids, 5 = Oxidizing, 6 = Toxic & Infectious, 7 = Radioactive, 8 = Corrosives, 9 = Miscellaneous (see https://en.wikipedia.org/wiki/Dangerous_goods). I'm not sure if just register 0 (no) or 1 (yes) is enough.
+  tail_lift         smallint          DEFAULT 0, -- 0 = no tail lift required to load/unload package(s), 1 = a tail lift is required to load/unload package(s). Sometime tail lift load can be different than tail lift delivery so maybe adding a new table line.
+  rang              integer  DEFAULT 0
+)ENGINE=innodb;
+
+--Dictionary of package type
+create table llx_c_shipment_package_type
+(
+    rowid        integer  AUTO_INCREMENT PRIMARY KEY,
+    label        varchar(50) NOT NULL,  -- Short name
+    description	 varchar(255), -- Description
+    active       integer DEFAULT 1 NOT NULL, -- Active or not
+    entity       integer DEFAULT 1 NOT NULL -- Multi company id
+)ENGINE=innodb;
+
+
+CREATE TABLE llx_mrp_mo(
+    -- BEGIN MODULEBUILDER FIELDS
+    rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    ref varchar(128) DEFAULT '(PROV)' NOT NULL,
+    entity integer DEFAULT 1 NOT NULL,
+    label varchar(255),
+    qty real NOT NULL,
+    fk_warehouse integer,
+    fk_soc integer,
+    note_public text,
+    note_private text,
+    date_creation datetime NOT NULL,
+    tms timestamp,
+    fk_user_creat integer NOT NULL,
+    fk_user_modif integer,
+    import_key varchar(14),
+    status integer NOT NULL,
+    fk_product integer NOT NULL,
+    date_start_planned datetime,
+    date_end_planned datetime,
+    fk_bom integer,
+    fk_project integer
+    -- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+
+ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_ref (ref);
+ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_entity (entity);
+ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_fk_soc (fk_soc);
+ALTER TABLE llx_mrp_mo ADD CONSTRAINT fk_mrp_mo_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
+ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_status (status);
+ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_fk_product (fk_product);
+ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_date_start_planned (date_start_planned);
+ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_date_end_planned (date_end_planned);
+ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_fk_bom (fk_bom);
+ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_fk_project (fk_project);
+
+
+create table llx_mrp_mo_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                                 -- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_mrp_mo_extrafields ADD INDEX idx_fk_object(fk_object);
+
+
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_VALIDATE','BOM validated','Executed when a BOM is validated','bom',400);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_UNVALIDATE','BOM unvalidated','Executed when a BOM is unvalidated','bom',401);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_CLOSE','BOM disabled','Executed when a BOM is disabled','bom',402);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_REOPEN','BOM reopen','Executed when a BOM is re-open','bom',403);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_DELETE','BOM deleted','Executed when a BOM deleted','bom',404);
+
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_VALIDATE','MO validated','Executed when a MO is validated','bom',410);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_PRODUCED','MO disabled','Executed when a MO is produced','bom',411);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_DELETE','MO deleted','Executed when a MO is deleted','bom',412);
+
+ALTER TABLE llx_comment ADD COLUMN fk_user_modif  integer DEFAULT NULL;

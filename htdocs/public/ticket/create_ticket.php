@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -49,9 +49,9 @@ $msg_id = GETPOST('msg_id', 'int');
 $action = GETPOST('action', 'alpha');
 
 $object = new Ticket($db);
-
 $extrafields = new ExtraFields($db);
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 
 /*
@@ -78,7 +78,6 @@ if (GETPOST('addfile', 'alpha') && ! GETPOST('add', 'alpha')) {
 
 // Remove file
 if (GETPOST('removedfile', 'alpha') && !GETPOST('add', 'alpha')) {
-
     include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
     // Set tmp directory
@@ -138,9 +137,9 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
         $object->message = GETPOST("message", "none");
         $object->origin_email = $origin_email;
 
-        $object->type_code = GETPOST("type_code", 'az09');
-        $object->category_code = GETPOST("category_code", 'az09');
-        $object->severity_code = GETPOST("severity_code", 'az09');
+        $object->type_code = GETPOST("type_code", 'aZ09');
+        $object->category_code = GETPOST("category_code", 'aZ09');
+        $object->severity_code = GETPOST("severity_code", 'aZ09');
         if (is_array($searched_companies)) {
             $object->fk_soc = $searched_companies[0]->id;
         }
@@ -150,7 +149,7 @@ if ($action == 'create_ticket' && GETPOST('add', 'alpha')) {
             $usertoassign = $contacts[0]->id;
         }
 
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+        $ret = $extrafields->setOptionalsFromPost(null, $object);
 
         // Generate new ref
         $object->ref = $object->getDefaultRef();
@@ -349,7 +348,7 @@ llxHeaderTicket($langs->trans("CreateTicket"), "", 0, 0, $arrayofjs, $arrayofcss
 print '<div style="width:60%; margin: 0 auto;" class="ticketpublicarea">';
 
 if ($action != "infos_success") {
-    $formticket->withfromsocid = isset($socid) ? $socid : $user->societe_id;
+    $formticket->withfromsocid = isset($socid) ? $socid : $user->socid;
     $formticket->withtitletopic = 1;
     $formticket->withcompany = 0;
     $formticket->withusercreate = 1;

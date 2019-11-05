@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -311,17 +311,17 @@ if ($action == 'sethideinactivethirdparty')
 	}
 }
 if($action=='setonsearchandlistgooncustomerorsuppliercard'){
-       $setonsearchandlistgooncustomerorsuppliercard = GETPOST('value', 'int');
-       $res = dolibarr_set_const($db, "SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD", $setonsearchandlistgooncustomerorsuppliercard, 'yesno', 0, '', $conf->entity);
-       if (! $res > 0) $error++;
-       if (! $error)
-       {
-               setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-       }
-       else
-       {
-               setEventMessages($langs->trans("Error"), null, 'errors');
-       }
+    $setonsearchandlistgooncustomerorsuppliercard = GETPOST('value', 'int');
+    $res = dolibarr_set_const($db, "SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD", $setonsearchandlistgooncustomerorsuppliercard, 'yesno', 0, '', $conf->entity);
+    if (! $res > 0) $error++;
+    if (! $error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 
 /*
@@ -477,8 +477,8 @@ foreach ($dirsociete as $dirroot)
     			$arrayofmodules[$file] = $modCodeCompta;
     		}
     	}
+        closedir($handle);
     }
-    closedir($handle);
 }
 
 $arrayofmodules = dol_sort_array($arrayofmodules, 'position');

@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -70,7 +70,8 @@ $hookmanager->initHooks(array('cronjoblist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('cronjob');
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 
@@ -177,12 +178,12 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='CronJob';
 	$objectlabel='CronJob';
-	$permtoread = $user->rights->cron->read;
-	$permtocreate = $user->rights->cron->create?$user->rights->cron->create:$user->rights->cron->write;
-	$permtodelete = $user->rights->cron->delete;
+	$permissiontoread = $user->rights->cron->read;
+	$permissiontoadd = $user->rights->cron->create?$user->rights->cron->create:$user->rights->cron->write;
+	$permissiontodelete = $user->rights->cron->delete;
 	$uploaddir = $conf->cron->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
-	if ($permtocreate)
+	if ($permissiontoadd)
 	{
 		$tmpcron = new Cronjob($db);
 		foreach($toselect as $id)
@@ -560,8 +561,15 @@ if ($num > 0)
 		}
 		if ($user->rights->cron->execute)
 		{
-		    if (!empty($obj->status)) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=execute'.(empty($conf->global->CRON_KEY)?'':'&securitykey='.$conf->global->CRON_KEY).($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param."\" title=\"".dol_escape_htmltag($langs->trans('CronExecute'))."\">".img_picto($langs->trans('CronExecute'), "play").'</a>';
-		    else print '<a href="#" class="cursordefault" title="'.dol_escape_htmltag($langs->trans('JobDisabled')).'">'.img_picto($langs->trans('JobDisabled'), "playdisabled").'</a>';
+			if (!empty($obj->status)) {
+				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=execute';
+				print (empty($conf->global->CRON_KEY)?'':'&securitykey='.$conf->global->CRON_KEY);
+				print ($sortfield?'&sortfield='.$sortfield:'');
+				print ($sortorder?'&sortorder='.$sortorder:'');
+				print $param."\" title=\"".dol_escape_htmltag($langs->trans('CronExecute'))."\">".img_picto($langs->trans('CronExecute'), "play").'</a>';
+			} else {
+				print '<a href="#" class="cursordefault" title="'.dol_escape_htmltag($langs->trans('JobDisabled')).'">'.img_picto($langs->trans('JobDisabled'), "playdisabled").'</a>';
+			}
 		} else {
 			print '<a href="#" class="cursornotallowed" title="'.dol_escape_htmltag($langs->trans('NotEnoughPermissions')).'">'.img_picto($langs->trans('NotEnoughPermissions'), "playdisabled").'</a>';
 		}

@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -53,7 +53,7 @@ $cancel=GETPOST('cancel', 'alpha');
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref :''));
 $fieldtype = (! empty($ref) ? 'ref' :'rowid');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, 'banque', $fieldvalue, 'bank_account', '', '', $fieldtype);
 if (! $user->rights->banque->lire && ! $user->rights->banque->consolidate) accessforbidden();
 
@@ -323,7 +323,7 @@ if ($result)
         print '<td>';
         if (! $objp->rappro && ! $bankline->getVentilExportCompta())
         {
-        	print $form->select_comptes($acct->id, 'accountid', 0, '', 0);
+        	$form->select_comptes($acct->id, 'accountid', 0, '', 0);
         }
         else
         {

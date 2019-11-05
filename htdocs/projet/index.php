@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -45,7 +45,7 @@ if ($search_project_user == $user->id) $mine = 1;
 
 // Security check
 $socid=0;
-//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 if (!$user->rights->projet->lire) accessforbidden();
 
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -54,19 +54,17 @@ $sortorder = GETPOST("sortorder", 'alpha');
 $max=3;
 
 
-
 /*
  * View
  */
 
 $companystatic=new Societe($db);
 $projectstatic=new Project($db);
-$userstatic=new User($db);
 $form=new Form($db);
 $formfile=new FormFile($db);
 
 $projectset = ($mine?$mine:(empty($user->rights->projet->all->lire)?0:2));
-$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $projetset, 1);
+$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $projectset, 1);
 //var_dump($projectsListId);
 
 llxHeader("", $langs->trans("Projects"), "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
@@ -80,16 +78,17 @@ $titleall=$langs->trans("AllAllowedProjects");
 if (! empty($user->rights->projet->all->lire) && ! $socid) $titleall=$langs->trans("AllProjects");
 else $titleall=$langs->trans("AllAllowedProjects").'<br><br>';
 
-
 $morehtml='';
-$morehtml.='<form name="projectform">';
+$morehtml.='<form name="projectform" method="POST">';
+$morehtml.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 $morehtml.='<SELECT name="search_project_user">';
 $morehtml.='<option name="all" value="0"'.($mine?'':' selected').'>'.$titleall.'</option>';
 $morehtml.='<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id)?' selected':'').'>'.$langs->trans("ProjectsImContactFor").'</option>';
 $morehtml.='</SELECT>';
 $morehtml.='<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
+$morehtml.='</form>';
 
-print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'title_project.png', 0, $morehtml);
+print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'project', 0, $morehtml);
 
 // Show description of content
 print '<div class="opacitymedium">';
@@ -140,18 +139,20 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
     	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<div class="div-table-responsive-no-min">';
     	print '<table class="noborder nohover centpercent">';
     	$i=0;
     	foreach($listofsearchfields as $key => $value)
     	{
     		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    		print '<tr '.$bc[false].'>';
+    		print '<tr>';
     		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
     		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
     		print '</tr>';
     		$i++;
     	}
     	print '</table>';
+        print '</div>';
     	print '</form>';
     	print '<br>';
     }
@@ -170,8 +171,7 @@ print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppst
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
-
-// Last modified projects
+// Latest modified projects
 $sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut, p.tms as datem,";
 $sql.= " s.rowid as socid, s.nom as name, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
@@ -197,7 +197,6 @@ if ($resql)
 		$var = true;
 		while ($i < $num)
 		{
-
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
@@ -244,7 +243,7 @@ if ($resql)
 			}
 			print '</td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
-			print '<td class="right">'.$projectstatic->LibStatut($obj->fk_statut, 5).'</td>';
+			print '<td class="right">'.$projectstatic->LibStatut($obj->fk_statut, 3).'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -252,6 +251,9 @@ if ($resql)
 	print "</table></div><br>";
 }
 else dol_print_error($db);
+
+
+$companystatic=new Societe($db);    // We need a clean new object for next loop because current one has some properties set.
 
 
 // Open project per thirdparty

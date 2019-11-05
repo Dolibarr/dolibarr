@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Needs the following variables defined:
  * $object					Proposal, order, invoice (including supplier versions)
@@ -52,7 +52,6 @@ if($isNewObject) print ' ('.$addrelativediscount.')';
 
 // Is there is commercial discount or down payment available ?
 if ($absolute_discount > 0) {
-
 	if ($cannotApplyDiscount || ! $isInvoice || $isNewObject || $object->statut > $objclassname::STATUS_DRAFT || $object->type == $objclassname::TYPE_CREDIT_NOTE || $object->type == $objclassname::TYPE_DEPOSIT) {
 		$translationKey = ! empty($discount_type) ? 'HasAbsoluteDiscountFromSupplier' : 'CompanyHasAbsoluteDiscount';
 		$text = $langs->trans($translationKey, price($absolute_discount), $langs->transnoentities("Currency" . $conf->currency)).'.';
@@ -75,7 +74,6 @@ if ($absolute_discount > 0) {
 
 // Is there credit notes availables ?
 if ($absolute_creditnote > 0) {
-
 	// If validated, we show link "add credit note to payment"
 	if ($cannotApplyDiscount || ! $isInvoice || $isNewObject || $object->statut != $objclassname::STATUS_VALIDATED || $object->type == $objclassname::TYPE_CREDIT_NOTE) {
 		$translationKey = ! empty($discount_type) ? 'HasCreditNoteFromSupplier' : 'CompanyHasCreditNote';

@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -68,7 +68,9 @@ $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
+
+$socialnetworks = getArrayOfSocialNetworks();
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($id);
@@ -302,10 +304,16 @@ if (empty($reshook))
 			$object->phone_perso = trim(GETPOST("phone_perso", 'alpha'));
 			$object->phone_mobile= trim(GETPOST("phone_mobile", 'alpha'));
 			$object->email       = preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
-			$object->skype       = trim(GETPOST("skype", 'alpha'));
-			$object->twitter     = trim(GETPOST("twitter", 'alpha'));
-			$object->facebook    = trim(GETPOST("facebook", 'alpha'));
-			$object->linkedin    = trim(GETPOST("linkedin", 'alpha'));
+			$object->socialnetworks = array();
+			foreach ($socialnetworks as $key => $value) {
+				if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml')!='') {
+					$object->socialnetworks[$key] = trim(GETPOST($key, 'alphanohtml'));
+				}
+			}
+			//$object->skype       = trim(GETPOST("skype", 'alpha'));
+			//$object->twitter     = trim(GETPOST("twitter", 'alpha'));
+			//$object->facebook    = trim(GETPOST("facebook", 'alpha'));
+			//$object->linkedin    = trim(GETPOST("linkedin", 'alpha'));
 			$object->birth       = $birthdate;
 
 			$object->typeid      = GETPOST("typeid", 'int');
@@ -320,7 +328,7 @@ if (empty($reshook))
 			$object->public      = GETPOST("public", 'alpha');
 
 			// Fill array 'array_options' with data from add form
-			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+			$ret = $extrafields->setOptionalsFromPost(null, $object);
 			if ($ret < 0) $error++;
 
 			// Check if we need to also synchronize user information
@@ -448,10 +456,10 @@ if (empty($reshook))
 		$phone=GETPOST("phone", 'alpha');
 		$phone_perso=GETPOST("phone_perso", 'alpha');
 		$phone_mobile=GETPOST("phone_mobile", 'alpha');
-		$skype=GETPOST("member_skype", 'alpha');
-		$twitter=GETPOST("member_twitter", 'alpha');
-		$facebook=GETPOST("member_facebook", 'alpha');
-        $linkedin=GETPOST("member_linkedin", 'alpha');
+		// $skype=GETPOST("member_skype", 'alpha');
+		// $twitter=GETPOST("member_twitter", 'alpha');
+		// $facebook=GETPOST("member_facebook", 'alpha');
+        // $linkedin=GETPOST("member_linkedin", 'alpha');
 		$email=preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
 		$login=GETPOST("member_login", 'alpha');
 		$pass=GETPOST("password", 'alpha');
@@ -478,11 +486,19 @@ if (empty($reshook))
 		$object->phone       = $phone;
 		$object->phone_perso = $phone_perso;
 		$object->phone_mobile= $phone_mobile;
+		$object->socialnetworks = array();
+		if (! empty($conf->socialnetworks->enabled)) {
+			foreach ($socialnetworks as $key => $value) {
+				if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml')!='') {
+					$object->socialnetworks[$key] = GETPOST("member_".$key, 'alphanohtml');
+				}
+			}
+		}
 
-		$object->skype       = $skype;
-		$object->twitter     = $twitter;
-		$object->facebook    = $facebook;
-		$object->linkedin    = $linkedin;
+		// $object->skype       = $skype;
+		// $object->twitter     = $twitter;
+		// $object->facebook    = $facebook;
+		// $object->linkedin    = $linkedin;
 
 		$object->email       = $email;
 		$object->login       = $login;
@@ -497,7 +513,7 @@ if (empty($reshook))
 		$object->public      = $public;
 
 		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) $error++;
 
 		// Check parameters
@@ -638,7 +654,7 @@ if (empty($reshook))
 				// Set output language
 				$outputlangs = new Translate('', $conf);
 				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-				// Load traductions files requiredby by page
+				// Load traductions files required by page
 				$outputlangs->loadLangs(array("main", "members"));
 				// Get email content from template
 				$arraydefaultmessage=null;
@@ -719,7 +735,7 @@ if (empty($reshook))
 					// Set output language
 					$outputlangs = new Translate('', $conf);
 					$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-					// Load traductions files requiredby by page
+					// Load traductions files required by page
 					$outputlangs->loadLangs(array("main", "members"));
 					// Get email content from template
 					$arraydefaultmessage=null;
@@ -867,9 +883,21 @@ else
 			$object->country=$tmparray['label'];
 		}
 
+        if (!empty($socid)) {
+            $object = new Societe($db);
+            if ($socid > 0) $object->fetch($socid);
+
+            if (! ($object->id > 0))
+            {
+                $langs->load("errors");
+                print($langs->trans('ErrorRecordNotFound'));
+                exit;
+            }
+        }
+
 		$adht = new AdherentType($db);
 
-		print load_fiche_titre($langs->trans("NewMember"));
+		print load_fiche_titre($langs->trans("NewMember"), '', 'members');
 
 		if ($conf->use_javascript_ajax)
 		{
@@ -905,6 +933,7 @@ else
 		print '<form name="formsoc" action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
+		print '<input type="hidden" name="socid" value="'.$socid.'">';
 		if ($backtopage) print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]).'">';
 
         dol_fiche_head('');
@@ -970,7 +999,7 @@ else
 		print '</td></tr>';
 
 		// EMail
-		print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED?'<span class="fieldrequired">':'').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'</span>':'').'</td><td><input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(GETPOST('member_email', 'alpha')?GETPOST('member_email', 'alpha'):$object->email).'"></td></tr>';
+		print '<tr><td>'.img_picto('', 'object_email').' '.($conf->global->ADHERENT_MAIL_REQUIRED?'<span class="fieldrequired">':'').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'</span>':'').'</td><td><input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(GETPOST('member_email', 'alpha')?GETPOST('member_email', 'alpha'):$object->email).'"></td></tr>';
 
 		// Address
 		print '<tr><td class="tdtop">'.$langs->trans("Address").'</td><td>';
@@ -1007,40 +1036,23 @@ else
 		}
 
 		// Pro phone
-		print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input type="text" name="phone" size="20" value="'.(GETPOST('phone', 'alpha')?GETPOST('phone', 'alpha'):$object->phone).'"></td></tr>';
+		print '<tr><td>'.img_picto('', 'object_phoning').' '.$langs->trans("PhonePro").'</td><td><input type="text" name="phone" size="20" value="'.(GETPOST('phone', 'alpha')?GETPOST('phone', 'alpha'):$object->phone).'"></td></tr>';
 
 		// Personal phone
-		print '<tr><td>'.$langs->trans("PhonePerso").'</td><td><input type="text" name="phone_perso" size="20" value="'.(GETPOST('phone_perso', 'alpha')?GETPOST('phone_perso', 'alpha'):$object->phone_perso).'"></td></tr>';
+		print '<tr><td>'.img_picto('', 'object_phoning').' '.$langs->trans("PhonePerso").'</td><td><input type="text" name="phone_perso" size="20" value="'.(GETPOST('phone_perso', 'alpha')?GETPOST('phone_perso', 'alpha'):$object->phone_perso).'"></td></tr>';
 
 		// Mobile phone
-		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(GETPOST('phone_mobile', 'alpha')?GETPOST('phone_mobile', 'alpha'):$object->phone_mobile).'"></td></tr>';
+		print '<tr><td>'.img_picto('', 'object_phoning_mobile').' '.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(GETPOST('phone_mobile', 'alpha')?GETPOST('phone_mobile', 'alpha'):$object->phone_mobile).'"></td></tr>';
 
-	    // Skype
-	    if (! empty($conf->socialnetworks->enabled))
-	    {
-			print '<tr><td>'.$langs->trans("Skype").'</td><td><input type="text" name="member_skype" size="40" value="'.(GETPOST('member_skype', 'alpha')?GETPOST('member_skype', 'alpha'):$object->skype).'"></td></tr>';
-	    }
+	    if (! empty($conf->socialnetworks->enabled)) {
+			foreach ($socialnetworks as $key => $value) {
+                if (!$value['active']) break;
+				print '<tr><td>'.$langs->trans($value['label']).'</td><td><input type="text" name="member_'.$key.'" size="40" value="'.(GETPOST('member_'.$key, 'alpha')?GETPOST('member_'.$key, 'alpha'):$object->socialnetworks[$key]).'"></td></tr>';
+			}
+		}
 
-	    // Twitter
-	    if (! empty($conf->socialnetworks->enabled))
-	    {
-	    	print '<tr><td>'.$langs->trans("Twitter").'</td><td><input type="text" name="member_twitter" size="40" value="'.(GETPOST('member_twitter', 'alpha')?GETPOST('member_twitter', 'alpha'):$object->twitter).'"></td></tr>';
-	    }
-
-	    // Facebook
-	    if (! empty($conf->socialnetworks->enabled))
-	    {
-	    	print '<tr><td>'.$langs->trans("Facebook").'</td><td><input type="text" name="member_facebook" size="40" value="'.(GETPOST('member_facebook', 'alpha')?GETPOST('member_facebook', 'alpha'):$object->facebook).'"></td></tr>';
-	    }
-
-        // LinkedIn
-        if (! empty($conf->socialnetworks->enabled))
-        {
-            print '<tr><td>'.$langs->trans("LinkedIn").'</td><td><input type="text" name="member_linkedin" size="40" value="'.(GETPOST('member_linkedin', 'alpha')?GETPOST('member_linkedin', 'alpha'):$object->linkedin).'"></td></tr>';
-        }
-
-	    // Birthday
-		print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
+	    // Birth Date
+		print "<tr><td>".$langs->trans("DateToBirth")."</td><td>\n";
 		print $form->selectDate(($object->birth ? $object->birth : -1), 'birth', '', '', 1, 'formsoc');
 		print "</td></tr>\n";
 
@@ -1246,7 +1258,7 @@ else
 		print '</td></tr>';
 
 		// EMail
-		print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED?'<span class="fieldrequired">':'').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'</span>':'').'</td><td><input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(isset($_POST["member_email"])?GETPOST("member_email", '', 2):$object->email).'"></td></tr>';
+		print '<tr><td>'.img_picto('', 'object_email').' '.($conf->global->ADHERENT_MAIL_REQUIRED?'<span class="fieldrequired">':'').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'</span>':'').'</td><td><input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(isset($_POST["member_email"])?GETPOST("member_email", '', 2):$object->email).'"></td></tr>';
 
 		// Address
 		print '<tr><td>'.$langs->trans("Address").'</td><td>';
@@ -1276,40 +1288,23 @@ else
 		}
 
 		// Pro phone
-		print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input type="text" name="phone" size="20" value="'.(isset($_POST["phone"])?GETPOST("phone"):$object->phone).'"></td></tr>';
+		print '<tr><td>'.img_picto('', 'object_phoning').' '.$langs->trans("PhonePro").'</td><td><input type="text" name="phone" size="20" value="'.(isset($_POST["phone"])?GETPOST("phone"):$object->phone).'"></td></tr>';
 
 		// Personal phone
-		print '<tr><td>'.$langs->trans("PhonePerso").'</td><td><input type="text" name="phone_perso" size="20" value="'.(isset($_POST["phone_perso"])?GETPOST("phone_perso"):$object->phone_perso).'"></td></tr>';
+		print '<tr><td>'.img_picto('', 'object_phoning').' '.$langs->trans("PhonePerso").'</td><td><input type="text" name="phone_perso" size="20" value="'.(isset($_POST["phone_perso"])?GETPOST("phone_perso"):$object->phone_perso).'"></td></tr>';
 
 		// Mobile phone
-		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(isset($_POST["phone_mobile"])?GETPOST("phone_mobile"):$object->phone_mobile).'"></td></tr>';
+		print '<tr><td>'.img_picto('', 'object_phoning_mobile').' '.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(isset($_POST["phone_mobile"])?GETPOST("phone_mobile"):$object->phone_mobile).'"></td></tr>';
 
-	    // Skype
-	    if (! empty($conf->socialnetworks->enabled))
-	    {
-			print '<tr><td>'.$langs->trans("Skype").'</td><td><input type="text" name="skype" class="minwidth100" value="'.(isset($_POST["skype"])?GETPOST("skype"):$object->skype).'"></td></tr>';
-	    }
+        if (! empty($conf->socialnetworks->enabled)) {
+			foreach ($socialnetworks as $key => $value) {
+                if (!$value['active']) break;
+				print '<tr><td>'.$langs->trans($value['label']).'</td><td><input type="text" name="'.$key.'" class="minwidth100" value="'.(isset($_POST[$key])?GETPOST($key):$object->socialnetworks[$key]).'"></td></tr>';
+			}
+		}
 
-	    // Twitter
-	    if (! empty($conf->socialnetworks->enabled))
-	    {
-	    	print '<tr><td>'.$langs->trans("Twitter").'</td><td><input type="text" name="twitter" class="minwidth100" value="'.(isset($_POST["twitter"])?GETPOST("twitter"):$object->twitter).'"></td></tr>';
-	    }
-
-	    // Facebook
-        if (! empty($conf->socialnetworks->enabled))
-        {
-            print '<tr><td>'.$langs->trans("Facebook").'</td><td><input type="text" name="facebook" class="minwidth100" value="'.(isset($_POST["facebook"])?GETPOST("facebook"):$object->facebook).'"></td></tr>';
-        }
-
-        // LinkedIn
-        if (! empty($conf->socialnetworks->enabled))
-        {
-            print '<tr><td>'.$langs->trans("LinkedIn").'</td><td><input type="text" name="linkedin" class="minwidth100" value="'.(isset($_POST["linkedin"])?GETPOST("linkedin"):$object->linkedin).'"></td></tr>';
-        }
-
-	    // Birthday
-		print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
+	    // Birth Date
+		print "<tr><td>".$langs->trans("DateToBirth")."</td><td>\n";
 		print $form->selectDate(($object->birth ? $object->birth : -1), 'birth', '', '', 1, 'formsoc');
 		print "</td></tr>\n";
 
@@ -1362,15 +1357,8 @@ else
 		else print $langs->trans("NoDolibarrAccess");
 		print '</td></tr>';
 
-		// Other attributes
+		// Other attributes. Fields from hook formObjectOptions and Extrafields.
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
-		//Hooks here
-		$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
-		if (empty($reshook))
-		{
-      	    print $object->showOptionals($extrafields, 'edit');
-		}
 
 		print '</table>';
 		dol_fiche_end();
@@ -1483,7 +1471,7 @@ else
 			// Set output language
 			$outputlangs = new Translate('', $conf);
 			$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-			// Load traductions files requiredby by page
+			// Load traductions files required by page
 			$outputlangs->loadLangs(array("main", "members"));
 			// Get email content from template
 			$arraydefaultmessage=null;
@@ -1544,7 +1532,7 @@ else
 			// Set output language
 			$outputlangs = new Translate('', $conf);
 			$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-			// Load traductions files requiredby by page
+			// Load traductions files required by page
 			$outputlangs->loadLangs(array("main", "members"));
 			// Get email content from template
 			$arraydefaultmessage=null;
@@ -1672,7 +1660,11 @@ else
 		}
 		else
 		{
-			if (! $adht->subscription)
+			if ($object->need_subscription == 0)
+            {
+                print $langs->trans("SubscriptionNotNeeded");
+            }
+            elseif (! $adht->subscription)
 			{
 				print $langs->trans("SubscriptionNotRecorded");
 				if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
@@ -1750,8 +1742,8 @@ else
 
         print '<table class="border tableforfield tableforfield" width="100%">';
 
-		// Birthday
-		print '<tr><td class="titlefield">'.$langs->trans("Birthday").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
+		// Birth Date
+		print '<tr><td class="titlefield">'.$langs->trans("DateToBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
 
 		// Public
 		print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
@@ -1875,7 +1867,7 @@ else
 				}
 
 				// Create user
-				if (! $user->societe_id && ! $object->user_id)
+				if (! $user->socid && ! $object->user_id)
 				{
 					if ($user->rights->user->user->creer)
 					{

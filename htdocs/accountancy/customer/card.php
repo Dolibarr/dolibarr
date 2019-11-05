@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -38,7 +38,7 @@ $codeventil = GETPOST('codeventil');
 $id = GETPOST('id');
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 	accessforbidden();
 
 
@@ -112,7 +112,6 @@ if (! empty($id)) {
 		$i = 0;
 
 		if ($num_lines) {
-
 			$objp = $db->fetch_object($result);
 
 			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '" method="post">' . "\n";

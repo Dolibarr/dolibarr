@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -38,10 +38,10 @@ $langs->loadLangs(array('propal', 'companies'));
 
 // Security check
 $socid=GETPOST('socid', 'int');
-if (isset($user->societe_id) && $user->societe_id  > 0)
+if (isset($user->socid) && $user->socid  > 0)
 {
 	$action = '';
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'propal');
 
@@ -58,7 +58,7 @@ $help_url="EN:Module_Commercial_Proposals|FR:Module_Propositions_commerciales|ES
 
 llxHeader("", $langs->trans("ProspectionArea"), $help_url);
 
-print load_fiche_titre($langs->trans("ProspectionArea"));
+print load_fiche_titre($langs->trans("ProspectionArea"), '', 'commercial');
 
 //print '<table width="100%" class="notopnoleftnoright">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';
@@ -87,7 +87,7 @@ $sql.= ", ".MAIN_DB_PREFIX."propal as p";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE p.fk_soc = s.rowid";
 $sql.= " AND p.entity IN (".getEntity('propal').")";
-if ($user->societe_id) $sql.=' AND p.fk_soc = '.$user->societe_id;
+if ($user->socid) $sql.=' AND p.fk_soc = '.$user->socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " AND p.fk_statut IN (0,1,2,3,4)";
 $sql.= " GROUP BY p.fk_statut";
@@ -126,7 +126,6 @@ if ($resql)
     	$dataseries[]=array($propalstatic->LibStatut($status, 1), (isset($vals[$status])?(int) $vals[$status]:0));
         if (! $conf->use_javascript_ajax)
         {
-
             print '<tr class="oddeven">';
             print '<td>'.$propalstatic->LibStatut($status, 0).'</td>';
             print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';

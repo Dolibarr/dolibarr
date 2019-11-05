@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -50,7 +50,7 @@ $mesg	= '';
 $graphfiles=array();
 
 $socid='';
-if (! empty($user->societe_id)) $socid=$user->societe_id;
+if (! empty($user->socid)) $socid=$user->socid;
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : $ref);
@@ -103,7 +103,7 @@ if (! $id && empty($ref))
         $title=$langs->trans("Statistics");
     }
 
-    print load_fiche_titre($title, $mesg, 'title_products.png');
+    print load_fiche_titre($title, $mesg, 'products');
 }
 else
 {
@@ -137,7 +137,7 @@ if ($result && (! empty($id) || ! empty($ref)))
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', '', '', '', 0, '', '', 1);
+    dol_banner_tab($object, 'ref', $linkback, ($user->socid?0:1), 'ref', '', '', '', 0, '', '', 1);
 
     dol_fiche_end();
 }

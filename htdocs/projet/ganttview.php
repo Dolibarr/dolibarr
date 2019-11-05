@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -46,7 +46,7 @@ if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($ob
 
 // Security check
 $socid=0;
-//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
 // Load translation files required by the page
@@ -201,6 +201,14 @@ if (($id > 0 && is_numeric($id)) || ! empty($ref))
     print nl2br($object->description);
     print '</td></tr>';
 
+    // Bill time
+    if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+    {
+    	print '<tr><td>'.$langs->trans("BillTime").'</td><td>';
+    	print yn($object->usage_bill_time);
+    	print '</td></tr>';
+    }
+
     // Categories
     if($conf->categorie->enabled) {
         print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
@@ -234,10 +242,10 @@ if ($user->rights->projet->all->creer || $user->rights->projet->creer) {
 
 $linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', $linktocreatetaskUserRight, $linktocreatetaskParam);
 
-$linktolist = dolGetButtonTitle($langs->trans('GoToListOfTasks'), '', 'fa fa-tasks paddingleft', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id);
+$linktolist = dolGetButtonTitle($langs->trans('GoToListOfTasks'), '', 'fa fa-list-alt paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id, '', 1, array('morecss'=>'reposition'));
 
-//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
-print load_fiche_titre($title, $linktolist.' &nbsp; '.$linktocreatetask, 'title_generic.png');
+//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'generic', 0, '', '', 0, 1);
+print load_fiche_titre($title, $linktolist.' &nbsp; '.$linktocreatetask, 'generic');
 
 
 // Get list of tasks in tasksarray and taskarrayfiltered
@@ -252,7 +260,6 @@ $tasksarray=$task->getTasksArray(0, 0, ($object->id ? $object->id : $id), $socid
 
 if (count($tasksarray)>0)
 {
-
 	// Show Gant diagram from $taskarray using JSGantt
 
 	$dateformat=$langs->trans("FormatDateShortJQuery");			// Used by include ganttchart.inc.php later
@@ -369,6 +376,8 @@ if (count($tasksarray)>0)
 	    $dateformatinput2='standard';
 	    //var_dump($dateformatinput);
   		//var_dump($dateformatinput2);
+
+	    print '<br>';
 
 	    print '<div class="div-table-responsive">';
 

@@ -16,8 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -165,7 +165,7 @@ class pdf_merou extends ModelePdfExpedition
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch"));
 
 		if ($conf->expedition->dir_output)
@@ -174,20 +174,20 @@ class pdf_merou extends ModelePdfExpedition
 
 			$origin = $object->origin;
 
-			//Creation de l expediteur
+			//Create sender
 			$this->expediteur = $mysoc;
 
-			//Creation du destinataire
+			//Create recipient
 			$idcontact = $object->$origin->getIdContact('external', 'SHIPPING');
             $this->destinataire = new Contact($this->db);
 			if (! empty($idcontact[0])) $this->destinataire->fetch($idcontact[0]);
 
-			//Creation du livreur
+			//Create deliverer
 			$idcontact = $object->$origin->getIdContact('internal', 'LIVREUR');
 			$this->livreur = new User($this->db);
 			if (! empty($idcontact[0])) $this->livreur->fetch($idcontact[0]);
 
-			// Definition de $dir et $file
+			// Definition of $dir and $file
 			if ($object->specimen)
 			{
 				$dir = $conf->expedition->dir_output."/sending";
@@ -273,7 +273,7 @@ class pdf_merou extends ModelePdfExpedition
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter;
 				$tab_height_newpage = $this->page_hauteur - $tab_top_newpage - $heightforfooter;
 
-				// Affiche notes
+				// Display notes
 				if (! empty($object->note_public))
 				{
 					$pdf->SetFont('', '', $default_font_size - 1);
@@ -281,7 +281,7 @@ class pdf_merou extends ModelePdfExpedition
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
 
-					// Rect prend une longueur en 3eme param
+					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
 					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
@@ -314,7 +314,7 @@ class pdf_merou extends ModelePdfExpedition
 					$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
 
-					// Description de la ligne produit
+					// Description of product line
 					$libelleproduitservice = pdf_writelinedesc($pdf, $object, $i, $outputlangs, 90, 3, 50, $curY, 0, 1);
 
 					$nexY = $pdf->GetY();
@@ -335,7 +335,7 @@ class pdf_merou extends ModelePdfExpedition
 					$pdf->Rect(10+3, $curY, 3, 3);
 					$pdf->Rect(20+3, $curY, 3, 3);
 
-					//Insertion de la reference du produit
+					//Inserting the product reference
 					$pdf->SetXY(30, $curY);
 					$pdf->SetFont('', 'B', $default_font_size - 3);
 					$pdf->MultiCell(24, 3, $outputlangs->convToOutputCharset($object->lines[$i]->ref), 0, 'L', 0);
@@ -404,7 +404,7 @@ class pdf_merou extends ModelePdfExpedition
 					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
 
-				// Pied de page
+				// Pagefoot
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
 
@@ -579,11 +579,11 @@ class pdf_merou extends ModelePdfExpedition
 		}
 
 		//*********************Entete****************************
-		//Nom du Document
+		//Document name
 		$pdf->SetXY($Xoff, 7);
 		$pdf->SetFont('', 'B', $default_font_size + 2);
 		$pdf->SetTextColor(0, 0, 0);
-		$pdf->MultiCell(0, 3, $outputlangs->transnoentities("SendingSheet"), '', 'L');	// Bordereau expedition
+		$pdf->MultiCell(0, 3, $outputlangs->transnoentities("SendingSheet"), '', 'L');	// Sending sheet
 		//Num Expedition
 		$Yoff = $Yoff+7;
 		$Xoff = 142;
@@ -601,7 +601,7 @@ class pdf_merou extends ModelePdfExpedition
 		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 100, 3, 'R', $default_font_size - 1, $hookmanager);
 
 		//$this->Code39($Xoff+43, $Yoff+1, $object->commande->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
-		//Definition Emplacement du bloc Societe
+		//Definition Location of the Company block
 		$Xoff = 110;
 		$blSocX=90;
 		$blSocY=24;
@@ -632,7 +632,7 @@ class pdf_merou extends ModelePdfExpedition
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
 		}
 
-		// Date Expedition
+		// Date delivery
 		$Yoff = $Yoff+7;
 		$pdf->SetXY($blSocX-80, $blSocY+17);
 
@@ -698,7 +698,7 @@ class pdf_merou extends ModelePdfExpedition
 		}
 
 		// Recipient name
-		// On peut utiliser le nom de la societe du contact
+		// You can use the name of the contact company
 		if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
 			$thirdparty = $object->contact;
 		} else {

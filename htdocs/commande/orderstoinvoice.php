@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -72,8 +72,10 @@ $date_endy = dol_mktime(23, 59, 59, $_REQUEST["date_end_delymonth"], $_REQUEST["
 
 $extrafields = new ExtraFields($db);
 
+$object=new Facture($db);
+
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('facture');
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 if ($action == 'create')
 {
@@ -137,11 +139,10 @@ if (($action == 'create' || $action == 'add') && !$error)
 
 	// Security check
 	$fieldid = GETPOST('ref', 'alpha')?'ref':'rowid';
-	if ($user->societe_id) $socid=$user->societe_id;
+	if ($user->socid) $socid=$user->socid;
 	$result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid);
 
 	$usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
-	$object=new Facture($db);
 
 	// Insert new invoice in database
 	if ($action == 'add' && $user->rights->facture->creer)
@@ -177,7 +178,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 				$object->remise_absolue		= $_POST['remise_absolue'];
 				$object->remise_percent		= $_POST['remise_percent'];
 
-				$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+				$ret = $extrafields->setOptionalsFromPost(null, $object);
 				if ($ret < 0) $error++;
 
 				if ($_POST['origin'] && $_POST['originid'])
@@ -502,7 +503,7 @@ if ($action == 'create' && !$error)
 
 	print '</textarea></td></tr>';
 	// Private note
-	if (empty($user->societe_id))
+	if (empty($user->socid))
 	{
 		print '<tr>';
 		print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';

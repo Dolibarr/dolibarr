@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,7 +34,7 @@ class box_birthdays_members extends ModeleBoxes
 {
     public $boxcode="birthdays_members";
     public $boximg="object_user";
-    public $boxlabel="BoxBirthdaysMembers";
+    public $boxlabel="BoxTitleMemberNextBirthdays";
     public $depends = array("adherent");
 
 	/**
@@ -71,42 +71,44 @@ class box_birthdays_members extends ModeleBoxes
 	 */
 	public function loadBox($max = 20)
 	{
-		global $user, $langs, $db;
+		global $user, $langs;
 		$langs->load("boxes");
 
 		$this->max=$max;
 
-        include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-        $memberstatic=new Adherent($db);
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+        $memberstatic=new Adherent($this->db);
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleMemberNextBirthdays"));
 
 		if ($user->rights->adherent->lire)
 		{
-			$sql = "SELECT u.rowid, u.firstname, u.lastname";
-      $sql.= ", u.birth";
+			$tmparray=dol_getdate(dol_now(), true);
+
+			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth";
 			$sql.= " FROM ".MAIN_DB_PREFIX."adherent as u";
 			$sql.= " WHERE u.entity IN (".getEntity('adherent').")";
-      $sql.= " AND u.statut = 1";
-      $sql.= " AND date_format(u.birth, '%m-%d') >= date_format(curdate(), '%m-%d')";
-			$sql.= " ORDER BY date_format(u.birth, '%m-%d') ASC";
-			$sql.= $db->plimit($max, 0);
+      		$sql.= " AND u.statut = 1";
+      		$sql.= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], $tmparray['year']);
+			$sql.= " ORDER BY u.birth ASC";
+			$sql.= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
-			$result = $db->query($sql);
+			$result = $this->db->query($sql);
 			if ($result)
 			{
-				$num = $db->num_rows($result);
+				$num = $this->db->num_rows($result);
 
 				$line = 0;
 				while ($line < $num)
 				{
-					$objp = $db->fetch_object($result);
+					$objp = $this->db->fetch_object($result);
                     $memberstatic->id = $objp->rowid;
                     $memberstatic->firstname = $objp->firstname;
                     $memberstatic->lastname = $objp->lastname;
                     $memberstatic->email = $objp->email;
-                    $dateb=$db->jdate($objp->birth);
+                    $dateb=$this->db->jdate($objp->birth);
                     $age = date('Y', dol_now()) - date('Y', $dateb);
 
                     $this->info_box_contents[$line][] = array(
@@ -128,15 +130,15 @@ class box_birthdays_members extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedUsers"));
+				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center opacitymedium"','text'=>$langs->trans("None"));
 
-				$db->free($result);
+				$this->db->free($result);
 			}
 			else {
 				$this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql)
+                    'text' => ($this->db->error().' sql='.$sql)
                 );
 			}
 		}

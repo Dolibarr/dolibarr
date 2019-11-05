@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -88,7 +88,7 @@ if (empty($original_file) && empty($hashp)) accessforbidden('Bad link. Missing i
 if ($modulepart == 'fckeditor') $modulepart='medias';   // For backward compatibility
 
 $socid=0;
-if ($user->societe_id > 0) $socid = $user->societe_id;
+if ($user->socid > 0) $socid = $user->socid;
 
 // For some module part, dir may be privates
 if (in_array($modulepart, array('facture_paiement','unpaid')))
@@ -161,6 +161,8 @@ if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
 $type = 'application/octet-stream';
 if (GETPOST('type', 'alpha')) $type=GETPOST('type', 'alpha');
 else $type=dol_mimetype($original_file);
+// Security: Force to octet-stream if file is a dangerous file
+if (preg_match('/\.noexe$/i', $original_file)) $type = 'application/octet-stream';
 
 // Security: Delete string ../ into $original_file
 $original_file = str_replace("../", "/", $original_file);
@@ -185,7 +187,7 @@ if (! empty($hashp))
 else
 {
 	// Basic protection (against external users only)
-	if ($user->societe_id > 0)
+	if ($user->socid > 0)
 	{
 		if ($sqlprotectagainstexternals)
 		{
@@ -197,7 +199,7 @@ else
 				while ($i < $num)
 				{
 					$obj = $db->fetch_object($resql);
-					if ($user->societe_id != $obj->fk_soc)
+					if ($user->socid != $obj->fk_soc)
 					{
 						$accessallowed=0;
 						break;
@@ -217,7 +219,7 @@ if (! $accessallowed)
 }
 
 // Security:
-// On interdit les remontees de repertoire ainsi que les pipe dans les noms de fichiers.
+// We refuse directory transversal change and pipes in file names
 if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $fullpath_original_file))
 {
 	dol_syslog("Refused to deliver file ".$fullpath_original_file);
@@ -229,6 +231,7 @@ if (preg_match('/\.\./', $fullpath_original_file) || preg_match('/[<>|]/', $full
 clearstatcache();
 
 $filename = basename($fullpath_original_file);
+$filename = preg_replace('/\.noexe$/i', '', $filename);
 
 // Output file on browser
 dol_syslog("document.php download $fullpath_original_file filename=$filename content-type=$type");

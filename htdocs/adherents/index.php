@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -52,7 +52,7 @@ $staticmember=new Adherent($db);
 $statictype=new AdherentType($db);
 $subscriptionstatic=new Subscription($db);
 
-print load_fiche_titre($langs->trans("MembersArea"));
+print load_fiche_titre($langs->trans("MembersArea"), '', 'members');
 
 $Adherents=array();
 $AdherentsAValider=array();
@@ -61,7 +61,7 @@ $AdherentsResilies=array();
 
 $AdherentType=array();
 
-// Members list
+// Type of membership
 $sql = "SELECT t.rowid, t.libelle as label, t.subscription,";
 $sql.= " d.statut, count(d.rowid) as somme";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t";
@@ -71,7 +71,7 @@ $sql.= " AND d.entity IN (".getEntity('adherent').")";
 $sql.= " WHERE t.entity IN (".getEntity('member_type').")";
 $sql.= " GROUP BY t.rowid, t.libelle, t.subscription, d.statut";
 
-dol_syslog("index.php::select nb of members by type", LOG_DEBUG);
+dol_syslog("index.php::select nb of members per type", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result)
 {
@@ -104,8 +104,7 @@ $now=dol_now();
 $sql = "SELECT count(*) as somme , d.fk_adherent_type";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 $sql.= " WHERE d.entity IN (".getEntity('adherent').")";
-//$sql.= " AND d.statut = 1 AND ((t.subscription = 0 AND d.datefin IS NULL) OR d.datefin >= '".$db->idate($now)."')";
-$sql.= " AND d.statut = 1 AND d.datefin >= '".$db->idate($now)."'";
+$sql.= " AND d.statut = 1 AND (d.datefin >= '".$db->idate($now)."' OR t.subscription = 0)";
 $sql.= " AND t.rowid = d.fk_adherent_type";
 $sql.= " GROUP BY d.fk_adherent_type";
 
@@ -141,6 +140,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
     	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<div class="div-table-responsive-no-min">';
     	print '<table class="noborder nohover centpercent">';
     	$i=0;
     	foreach($listofsearchfields as $key => $value)
@@ -153,6 +153,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     		$i++;
     	}
     	print '</table>';
+        print '</div>';
     	print '</form>';
     	print '<br>';
     }
@@ -228,10 +229,8 @@ $sql = "SELECT c.subscription, c.dateadh as dateh";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."subscription as c";
 $sql.= " WHERE d.entity IN (".getEntity('adherent').")";
 $sql.= " AND d.rowid = c.fk_adherent";
-if(isset($date_select) && $date_select != '')
-{
-    $sql .= " AND c.dateadh LIKE '".$date_select."%'";
-}
+
+
 $result = $db->query($sql);
 if ($result)
 {
@@ -252,21 +251,33 @@ if ($result)
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<th>'.$langs->trans("Subscriptions").'</th>';
-print '<th class="right">'.$langs->trans("Number").'</th>';
+print '<th>'.$langs->trans("Year").'</th>';
+print '<th class="right">'.$langs->trans("Subscriptions").'</th>';
 print '<th class="right">'.$langs->trans("AmountTotal").'</th>';
 print '<th class="right">'.$langs->trans("AmountAverage").'</th>';
 print "</tr>\n";
 
 krsort($Total);
+$i = 0;
 foreach ($Total as $key=>$value)
 {
-    print '<tr class="oddeven">';
+	if ($i >= 8)
+	{
+		print '<tr class="oddeven">';
+		print "<td>...</td>";
+		print "<td class=\"right\"></td>";
+		print "<td class=\"right\"></td>";
+		print "<td class=\"right\"></td>";
+		print "</tr>\n";
+		break;
+	}
+	print '<tr class="oddeven">';
     print "<td><a href=\"./subscription/list.php?date_select=$key\">$key</a></td>";
     print "<td class=\"right\">".$Number[$key]."</td>";
     print "<td class=\"right\">".price($value)."</td>";
     print "<td class=\"right\">".price(price2num($value/$Number[$key], 'MT'))."</td>";
     print "</tr>\n";
+    $i++;
 }
 
 // Total
@@ -283,7 +294,7 @@ print "<br>\n";
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 /*
- * Last modified members
+ * Latest modified members
  */
 $max=5;
 
@@ -331,7 +342,7 @@ if ($resql)
 			print '<td>'.$staticmember->getNomUrl(1, 32).'</td>';
 			print '<td>'.$statictype->getNomUrl(1, 32).'</td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datem), 'dayhour').'</td>';
-			print '<td class="right">'.$staticmember->LibStatut($obj->statut, ($obj->subscription=='yes'?1:0), $db->jdate($obj->date_end_subscription), 5).'</td>';
+			print '<td class="right">'.$staticmember->LibStatut($obj->statut, ($obj->subscription=='yes'?1:0), $db->jdate($obj->date_end_subscription), 3).'</td>';
 			print '</tr>';
 			$i++;
 		}

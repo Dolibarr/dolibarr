@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -68,7 +68,7 @@ $search_valuebilled=GETPOST('search_valuebilled', 'int');
 
 // Security check
 $socid=0;
-//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 if (!$user->rights->projet->lire) accessforbidden();
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -88,11 +88,9 @@ $hookmanager->initHooks(array('projecttasktime','globalcard'));
 
 $object = new Task($db);
 $projectstatic = new Project($db);
-$extrafields_project = new ExtraFields($db);
-$extrafields_task = new ExtraFields($db);
-
-$extralabels_projet=$extrafields_project->fetch_name_optionals_label($projectstatic->table_element);
-$extralabels_task=$extrafields_task->fetch_name_optionals_label($object->table_element);
+$extrafields = new ExtraFields($db);
+$extrafields->fetch_name_optionals_label($projectstatic->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 
 /*
@@ -761,7 +759,6 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 	    // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 	    $hookmanager->initHooks(array('tasktimelist'));
-	    $extrafields = new ExtraFields($db);
 
 	    // Definition of fields for list
 	    $arrayfields=array();
@@ -777,13 +774,15 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	    $arrayfields['value'] =array('label'=>$langs->trans("Value"), 'checked'=>1, 'enabled'=>(empty($conf->salaries->enabled)?0:1));
 	    $arrayfields['valuebilled'] =array('label'=>$langs->trans("Billed"), 'checked'=>1, 'enabled'=>(((! empty($conf->global->PROJECT_HIDE_TASKS) || empty($conf->global->PROJECT_BILL_TIME_SPENT))?0:1) && $projectstatic->usage_bill_time));
 	    // Extra fields
-	    if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+	    if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 	    {
-	        foreach($extrafields->attribute_label as $key => $val)
-	        {
-				if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
-	        }
+	    	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+	    	{
+	    		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+	    			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+	    	}
 	    }
+	    $arrayfields = dol_sort_array($arrayfields, 'position');
 
 	    $param='';
 	    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
@@ -899,20 +898,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		if ($search_user > 0) $sql .= natural_search('t.fk_user', $search_user);
 		if ($search_valuebilled == '1') $sql .= ' AND t.invoice_id > 0';
 		if ($search_valuebilled == '0') $sql .= ' AND (t.invoice_id = 0 OR t.invoice_id IS NULL)';
-		if ($search_month > 0)
-		{
-			if ($search_year > 0 && empty($search_day))
-			$sql.= " AND t.task_datehour BETWEEN '".$db->idate(dol_get_first_day($search_year, $search_month, false))."' AND '".$db->idate(dol_get_last_day($search_year, $search_month, false))."'";
-			elseif ($search_year > 0 && ! empty($search_day))
-			$sql.= " AND t.task_datehour BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
-			else
-			$sql.= " AND date_format(t.task_datehour, '%m') = '".$db->escape($search_month)."'";
-		}
-		elseif ($search_year > 0)
-		{
-			$sql.= " AND t.task_datehour BETWEEN '".$db->idate(dol_get_first_day($search_year, 1, false))."' AND '".$db->idate(dol_get_last_day($search_year, 12, false))."'";
-		}
-        //$sql .= ' GROUP BY t.rowid, t.fk_task, t.task_date, t.task_datehour, t.task_date_withhour, t.task_duration, t.fk_user, t.note, t.thm, pt.ref, pt.label, u.lastname, u.firstname, u.login, u.photo, u.statut, il.fk_facture';
+		$sql .= dolSqlDateFilter('t.task_datehour', $search_day, $search_month, $search_year);
 		$sql .= $db->order($sortfield, $sortorder);
 
 		// Count total nb of records
@@ -954,7 +940,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 				$title=$langs->trans("ListTaskTimeUserProject");
 
-				print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic', 0, $linktocreatetime, '', $limit);
+				print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, $linktocreatetime, '', $limit);
 			}
 			else
 			{
@@ -962,7 +948,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 			    $title=$langs->trans("ListTaskTimeForTask");
 
-			    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic', 0, $linktocreatetime, '', $limit);
+			    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, $linktocreatetime, '', $limit);
 			}
 
 			$i = 0;

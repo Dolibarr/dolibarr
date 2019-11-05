@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
 $langs->load("members");
 
@@ -61,6 +62,8 @@ $label=GETPOST("label", "alpha");
 $morphy=GETPOST("morphy", "alpha");
 $statut=GETPOST("statut", "int");
 $subscription=GETPOST("subscription", "int");
+$duration_value = GETPOST('duration_value', 'int');
+$duration_unit = GETPOST('duration_unit', 'alpha');
 $vote=GETPOST("vote", "int");
 $comment=GETPOST("comment", 'alphanohtml');
 $mail_valid=GETPOST("mail_valid", 'none');
@@ -73,7 +76,7 @@ $object = new AdherentType($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('adherent_type');
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
@@ -94,7 +97,6 @@ $hookmanager->initHooks(array('membertypecard','globalcard'));
  */
 
 if ($cancel) {
-
 	$action='';
 
 	if (! empty($backtopage)) {
@@ -105,15 +107,17 @@ if ($cancel) {
 
 if ($action == 'add' && $user->rights->adherent->configurer) {
 	$object->label			= trim($label);
-    $object->morphy         = trim($morphy);
+	$object->morphy         = trim($morphy);
 	$object->statut         = (int) $statut;
 	$object->subscription   = (int) $subscription;
+	$object->duration_value     	 = $duration_value;
+	$object->duration_unit      	 = $duration_unit;
 	$object->note			= trim($comment);
 	$object->mail_valid		= trim($mail_valid);
 	$object->vote			= (int) $vote;
 
 	// Fill array 'array_options' with data from add form
-	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	$ret = $extrafields->setOptionalsFromPost(null, $object);
 	if ($ret < 0) $error++;
 
 	if (empty($object->label)) {
@@ -160,15 +164,17 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 	$object->oldcopy = clone $object;
 
 	$object->label			= trim($label);
-    $object->morphy         = trim($morphy);
+	$object->morphy         = trim($morphy);
 	$object->statut = (int) $statut;
 	$object->subscription = (int) $subscription;
+	$object->duration_value     	 = $duration_value;
+	$object->duration_unit      	 = $duration_unit;
 	$object->note			= trim($comment);
 	$object->mail_valid		= trim($mail_valid);
 	$object->vote			= (boolean) trim($vote);
 
 	// Fill array 'array_options' with data from add form
-	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	$ret = $extrafields->setOptionalsFromPost(null, $object);
 	if ($ret < 0) $error++;
 
 	$ret=$object->update($user);
@@ -210,6 +216,7 @@ if ($action == 'confirm_delete' && $user->rights->adherent->configurer)
  */
 
 $form=new Form($db);
+$formproduct = new FormProduct($db);
 
 llxHeader('', $langs->trans("MembersTypeSetup"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
@@ -248,7 +255,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-		print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);
+		print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit);
 
 		$moreforfilter = '';
 
@@ -322,7 +329,7 @@ if ($action == 'create')
 {
 	$object = new AdherentType($db);
 
-	print load_fiche_titre($langs->trans("NewMemberType"));
+	print load_fiche_titre($langs->trans("NewMemberType"), '', 'members');
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -353,6 +360,11 @@ if ($action == 'create')
 
 	print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
 	print $form->selectyesno("vote", 0, 1);
+	print '</td></tr>';
+
+	print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
+	print '<input name="duration_value" size="5" value="'.$_POST["duration_value"].'"> ';
+	print $formproduct->selectMeasuringUnits("duration_unit", "time", $_POST["duration_unit"], 0, 1);
 	print '</td></tr>';
 
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
@@ -440,6 +452,18 @@ if ($rowid > 0)
 		print yn($object->vote);
 		print '</tr>';
 
+		print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td colspan="2">'.$object->duration_value.'&nbsp;';
+		if ($object->duration_value > 1)
+		{
+			$dur=array("i"=>$langs->trans("Minute"),"h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
+		}
+		elseif ($object->duration_value > 0)
+		{
+			$dur=array("i"=>$langs->trans("Minute"),"h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
+		}
+		print (! empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
+		print '</td></tr>';
+
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		print nl2br($object->note)."</td></tr>";
 
@@ -524,14 +548,14 @@ if ($rowid > 0)
 		{
 			$sql.= natural_search("d.email", $search_email);
 		}
-		if ($filter == 'uptodate')
-		{
-		    $sql.=" AND datefin >= '".$db->idate($now)."'";
-		}
-		if ($filter == 'outofdate')
-		{
-		    $sql.=" AND datefin < '".$db->idate($now)."'";
-		}
+        if ($filter == 'uptodate')
+        {
+            $sql.=" AND (datefin >= '".$db->idate($now)."') OR t.subscription = 0)";
+        }
+        if ($filter == 'outofdate')
+        {
+            $sql.=" AND (datefin < '".$db->idate($now)."' AND t.subscription = 1)";
+        }
 
 		$sql.= " ".$db->order($sortfield, $sortorder);
 
@@ -593,6 +617,7 @@ if ($rowid > 0)
 		    }
 
 			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+            print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 			print '<input class="flat" type="hidden" name="rowid" value="'.$object->id.'" size="12"></td>';
 
 			print '<br>';
@@ -713,7 +738,7 @@ if ($rowid > 0)
 		        print '<td class="center">';
 				if ($user->rights->adherent->creer)
 				{
-					print '<a href="card.php?rowid='.$objp->rowid.'&action=edit&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
+					print '<a class="editfielda" href="card.php?rowid='.$objp->rowid.'&action=edit&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
 				}
 				print '&nbsp;';
 				if ($user->rights->adherent->supprimer)
@@ -786,6 +811,11 @@ if ($rowid > 0)
 
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
 		print $form->selectyesno("vote", $object->vote, 1);
+		print '</td></tr>';
+
+		print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
+		print '<input name="duration_value" size="5" value="'.$object->duration_value.'"> ';
+		print $formproduct->selectMeasuringUnits("duration_unit", "time", $object->duration_unit, 0, 1);
 		print '</td></tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';

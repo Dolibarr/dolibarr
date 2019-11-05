@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -217,7 +217,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 	{
 		$featureforlistofmodule=$feature;
 		if ($featureforlistofmodule == 'produit') $featureforlistofmodule='product';
-		if (! empty($user->societe_id) && ! empty($conf->global->MAIN_MODULES_FOR_EXTERNAL) && ! in_array($featureforlistofmodule, $listofmodules))	// If limits on modules for external users, module must be into list of modules for external users
+		if (! empty($user->socid) && ! empty($conf->global->MAIN_MODULES_FOR_EXTERNAL) && ! in_array($featureforlistofmodule, $listofmodules))	// If limits on modules for external users, module must be into list of modules for external users
 		{
 			$readok=0; $nbko++;
 			continue;
@@ -312,17 +312,26 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				foreach($feature2 as $subfeature)
 				{
 					if (empty($user->rights->$feature->$subfeature->creer)
-						&& empty($user->rights->$feature->$subfeature->write)
-						&& empty($user->rights->$feature->$subfeature->create)) { $createok=0; $nbko++; }
-						else { $createok=1; break; } // Break to bypass second test if the first is ok
+					&& empty($user->rights->$feature->$subfeature->write)
+					&& empty($user->rights->$feature->$subfeature->create)) {
+						$createok=0;
+						$nbko++;
+					} else {
+						$createok=1;
+						// Break to bypass second test if the first is ok
+						break;
+					}
 				}
 			}
 			elseif (! empty($feature))														// This is for permissions on 2 levels ('creer' or 'write')
 			{
 				//print '<br>feature='.$feature.' creer='.$user->rights->$feature->creer.' write='.$user->rights->$feature->write;
 				if (empty($user->rights->$feature->creer)
-					&& empty($user->rights->$feature->write)
-					&& empty($user->rights->$feature->create)) { $createok=0; $nbko++; }
+				&& empty($user->rights->$feature->write)
+				&& empty($user->rights->$feature->create)) {
+					$createok=0;
+					$nbko++;
+				}
 			}
 		}
 

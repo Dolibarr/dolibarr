@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -421,7 +421,7 @@ $h++;
 dol_fiche_head($head, 'website', '', -1);
 
 
-print $langs->trans("WebsiteSetupDesc").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("WebsiteSetupDesc").'</span><br>';
 print "<br>\n";
 
 
@@ -572,7 +572,6 @@ if ($id)
             // Lines with values
             while ($i < $num)
             {
-
                 $obj = $db->fetch_object($resql);
                 //print_r($obj);
                 print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';

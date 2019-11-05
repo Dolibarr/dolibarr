@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -64,9 +64,15 @@ class Livraison extends CommonObject
 	public $ref_customer;
 
 	public $date_delivery;    // Date really received
+
+	/**
+   * @var integer|string date_creation
+   */
 	public $date_creation;
+
 	public $date_valid;
 	public $model_pdf;
+
 
 	/**
 	 * Constructor
@@ -823,38 +829,44 @@ class Livraison extends CommonObject
 	/**
 	 *	Renvoi le libelle d'un statut donne
 	 *
-	 *  @param	int			$statut     Id statut
+	 *  @param	int			$status     Id status
 	 *  @param  int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string					Label
 	 */
-    public function LibStatut($statut, $mode)
+    public function LibStatut($status, $mode)
 	{
         // phpcs:enable
 		global $langs;
 
 		if ($mode==0)
 		{
-			if ($statut==-1) return $langs->trans('StatusDeliveryCanceled');
-			elseif ($statut==0)  return $langs->trans('StatusDeliveryDraft');
-			elseif ($statut==1)  return $langs->trans('StatusDeliveryValidated');
+			if ($status==-1) return $langs->trans('StatusDeliveryCanceled');
+			elseif ($status==0)  return $langs->trans('StatusDeliveryDraft');
+			elseif ($status==1)  return $langs->trans('StatusDeliveryValidated');
 		}
 		elseif ($mode==1)
 		{
-			if ($statut==-1) return $langs->trans($this->statuts[$statut]);
-			elseif ($statut==0)  return $langs->trans($this->statuts[$statut]);
-			elseif ($statut==1)  return $langs->trans($this->statuts[$statut]);
+			if ($status==-1) return $langs->trans($this->statuts[$status]);
+			elseif ($status==0)  return $langs->trans($this->statuts[$status]);
+			elseif ($status==1)  return $langs->trans($this->statuts[$status]);
+		}
+		elseif ($mode == 3)
+		{
+			if ($status==-1) return img_picto($langs->trans('StatusDeliveryCanceled'), 'statut5');
+			if ($status==0)  return img_picto($langs->trans('StatusDeliveryDraft'), 'statut0');
+			if ($status==1)  return img_picto($langs->trans('StatusDeliveryValidated'), 'statut4');
 		}
 		elseif ($mode == 4)
 		{
-			if ($statut==-1) return img_picto($langs->trans('StatusDeliveryCanceled'), 'statut5').' '.$langs->trans('StatusDeliveryCanceled');
-			elseif ($statut==0)  return img_picto($langs->trans('StatusDeliveryDraft'), 'statut0').' '.$langs->trans('StatusDeliveryDraft');
-			elseif ($statut==1)  return img_picto($langs->trans('StatusDeliveryValidated'), 'statut4').' '.$langs->trans('StatusDeliveryValidated');
+			if ($status==-1) return img_picto($langs->trans('StatusDeliveryCanceled'), 'statut5').' '.$langs->trans('StatusDeliveryCanceled');
+			elseif ($status==0)  return img_picto($langs->trans('StatusDeliveryDraft'), 'statut0').' '.$langs->trans('StatusDeliveryDraft');
+			elseif ($status==1)  return img_picto($langs->trans('StatusDeliveryValidated'), 'statut4').' '.$langs->trans('StatusDeliveryValidated');
 		}
 		elseif ($mode == 6)
 		{
-			if ($statut==-1) return $langs->trans('StatusDeliveryCanceled').' '.img_picto($langs->trans('StatusDeliveryCanceled'), 'statut5');
-			elseif ($statut==0)  return $langs->trans('StatusDeliveryDraft').' '.img_picto($langs->trans('StatusDeliveryDraft'), 'statut0');
-			elseif ($statut==1)  return $langs->trans('StatusDeliveryValidated').' '.img_picto($langs->trans('StatusDeliveryValidated'), 'statut4');
+			if ($status==-1) return $langs->trans('StatusDeliveryCanceled').' '.img_picto($langs->trans('StatusDeliveryCanceled'), 'statut5');
+			elseif ($status==0)  return $langs->trans('StatusDeliveryDraft').' '.img_picto($langs->trans('StatusDeliveryDraft'), 'statut0');
+			elseif ($status==1)  return $langs->trans('StatusDeliveryValidated').' '.img_picto($langs->trans('StatusDeliveryValidated'), 'statut4');
 		}
 	}
 
@@ -1045,7 +1057,6 @@ class Livraison extends CommonObject
 		$langs->load("deliveries");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'typhon';
 
 			if ($this->modelpdf) {

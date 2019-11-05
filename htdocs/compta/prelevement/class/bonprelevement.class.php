@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -69,7 +69,7 @@ class BonPrelevement extends CommonObject
 	public $total;
 	public $fetched;
 	public $statut;    // 0-Wait, 1-Trans, 2-Done
-	public $labelstatut=array();
+	public $labelStatus=array();
 
 	public $invoice_in_error=array();
 	public $thirdparty_in_error=array();
@@ -441,7 +441,6 @@ class BonPrelevement extends CommonObject
 
 					if ($this->db->query($sql))
 					{
-
 						$langs->load('withdrawals');
 						$subject = $langs->trans("InfoCreditSubject", $this->ref);
 						$message = $langs->trans("InfoCreditMessage", $this->ref, dol_print_date($date, 'dayhour'));
@@ -618,7 +617,6 @@ class BonPrelevement extends CommonObject
 		}
 		else
 		{
-
 			dol_syslog(get_class($this)."::set_infotrans Ouverture transaction SQL impossible", LOG_CRIT);
 			return -2;
 		}
@@ -772,17 +770,18 @@ class BonPrelevement extends CommonObject
 	 *	Create a withdraw
 	 *  TODO delete params banque and agence when not necesary
 	 *
-	 *	@param 	int		$banque		dolibarr mysoc bank
-	 *	@param	int		$agence		dolibarr mysoc bank office (guichet)
+	 *	@param 	int		  $banque		dolibarr mysoc bank
+	 *	@param	int		  $agence		dolibarr mysoc bank office (guichet)
 	 *	@param	string	$mode		real=do action, simu=test only
 	 *  @param	string	$format		FRST, RCUR or ALL
-         * @param       string  $executiondate	Date to execute the transfer
+	 *  @param  string  $executiondate	Date to execute the transfer
+	 *  @param	int	    $notrigger		Disable triggers
 	 *	@return	int					<0 if KO, nbre of invoice withdrawed if OK
 	 */
-	public function Create($banque = 0, $agence = 0, $mode = 'real', $format = 'ALL', $executiondate = '')
+	public function Create($banque = 0, $agence = 0, $mode = 'real', $format = 'ALL', $executiondate = '', $notrigger = 0)
 	{
         // phpcs:enable
-		global $conf,$langs;
+		global $conf, $langs, $user;
 
 		dol_syslog(__METHOD__."::Bank=".$banque." Office=".$agence." mode=".$mode." format=".$format, LOG_DEBUG);
 
@@ -1091,6 +1090,7 @@ class BonPrelevement extends CommonObject
 					}
 
 					$this->factures = $factures_prev_id;
+					$this->context['factures_prev'] = $factures_prev;
 
 					// Generation of SEPA file $this->filename
 					$this->generate($format, $executiondate);
@@ -1113,6 +1113,14 @@ class BonPrelevement extends CommonObject
 				$error++;
 				dol_syslog(__METHOD__."::Error update total: ".$this->db->error(), LOG_ERR);
 			}
+
+            if (! $error && ! $notrigger)
+            {
+                // Call trigger
+                $result=$this->call_trigger('DIRECT_DEBIT_ORDER_CREATE', $user);
+                if ($result < 0) $error++;
+                // End call triggers
+            }
 
 			if (!$error)
 			{
@@ -1149,7 +1157,7 @@ class BonPrelevement extends CommonObject
 		if (! $notrigger)
 		{
 		    // Call trigger
-		    $result=$this->call_trigger('BON_PRELEVEMENT_DELETE', $user);
+		    $result=$this->call_trigger('DIRECT_DEBIT_ORDER_DELETE', $user);
 		    if ($result < 0) $error++;
 		    // End call triggers
 		}
@@ -1678,7 +1686,7 @@ class BonPrelevement extends CommonObject
 		$XML_DEBITOR ='';
 		$XML_DEBITOR .='			<DrctDbtTxInf>'.$CrLf;
 		$XML_DEBITOR .='				<PmtId>'.$CrLf;
-	//	$XML_DEBITOR .='					<EndToEndId>'.('AS-'.dol_trunc($row_ref,20).'-'.$Rowing).'</EndToEndId>'.$CrLf;          // ISO20022 states that EndToEndId has a MaxLength of 35 characters
+	    // $XML_DEBITOR .='					<EndToEndId>'.('AS-'.dol_trunc($row_ref,20).'-'.$Rowing).'</EndToEndId>'.$CrLf;          // ISO20022 states that EndToEndId has a MaxLength of 35 characters
 		$XML_DEBITOR .='					<EndToEndId>'.(($conf->global->PRELEVEMENT_END_TO_END != "" ) ? $conf->global->PRELEVEMENT_END_TO_END : ('AS-'.dol_trunc($row_ref, 20)).'-'.$Rowing).'</EndToEndId>'.$CrLf;          // ISO20022 states that EndToEndId has a MaxLength of 35 characters
 		$XML_DEBITOR .='				</PmtId>'.$CrLf;
 		$XML_DEBITOR .='				<InstdAmt Ccy="EUR">'.round($row_somme, 2).'</InstdAmt>'.$CrLf;
@@ -1710,8 +1718,8 @@ class BonPrelevement extends CommonObject
 		$XML_DEBITOR .='					</Id>'.$CrLf;
 		$XML_DEBITOR .='				</DbtrAcct>'.$CrLf;
 		$XML_DEBITOR .='				<RmtInf>'.$CrLf;
-	//	$XML_DEBITOR .='					<Ustrd>'.($row_ref.'/'.$Rowing.'/'.$Rum).'</Ustrd>'.$CrLf;
-	//	$XML_DEBITOR .='					<Ustrd>'.dol_trunc($row_ref, 135).'</Ustrd>'.$CrLf;        // 140 max
+	    // $XML_DEBITOR .='					<Ustrd>'.($row_ref.'/'.$Rowing.'/'.$Rum).'</Ustrd>'.$CrLf;
+	    // $XML_DEBITOR .='					<Ustrd>'.dol_trunc($row_ref, 135).'</Ustrd>'.$CrLf;        // 140 max
 		$XML_DEBITOR .='					<Ustrd>'.(($conf->global->PRELEVEMENT_USTRD != "" ) ? $conf->global->PRELEVEMENT_USTRD : dol_trunc($row_ref, 135) ).'</Ustrd>'.$CrLf;        // 140 max
 		$XML_DEBITOR .='				</RmtInf>'.$CrLf;
 		$XML_DEBITOR .='			</DrctDbtTxInf>'.$CrLf;
@@ -1879,15 +1887,15 @@ class BonPrelevement extends CommonObject
 			$XML_SEPA_INFO .= '					<BIC>'.$this->emetteur_bic.'</BIC>'.$CrLf;
 			$XML_SEPA_INFO .= '				</FinInstnId>'.$CrLf;
 			$XML_SEPA_INFO .= '			</CdtrAgt>'.$CrLf;
-/*			$XML_SEPA_INFO .= '			<UltmtCdtr>'.$CrLf;
+			/* $XML_SEPA_INFO .= '			<UltmtCdtr>'.$CrLf;
 			$XML_SEPA_INFO .= '				<Nm>'.$this->raison_sociale.'</Nm>'.$CrLf;
 			$XML_SEPA_INFO .= '				<PstlAdr>'.$CrLf;
 			$XML_SEPA_INFO .= '					<Ctry>'.$country[1].'</Ctry>'.$CrLf;
 			$XML_SEPA_INFO .= '					<AdrLine>'.$conf->global->MAIN_INFO_SOCIETE_ADDRESS.'</AdrLine>'.$CrLf;
 			$XML_SEPA_INFO .= '					<AdrLine>'.$conf->global->MAIN_INFO_SOCIETE_ZIP.' '.$conf->global->MAIN_INFO_SOCIETE_TOWN.'</AdrLine>'.$CrLf;
 			$XML_SEPA_INFO .= '				</PstlAdr>'.$CrLf;
-			$XML_SEPA_INFO .= '			</UltmtCdtr>'.$CrLf;
-*/			$XML_SEPA_INFO .= '			<ChrgBr>SLEV</ChrgBr>'.$CrLf;
+			$XML_SEPA_INFO .= '			</UltmtCdtr>'.$CrLf;*/
+			$XML_SEPA_INFO .= '			<ChrgBr>SLEV</ChrgBr>'.$CrLf;
 			$XML_SEPA_INFO .= '			<CdtrSchmeId>'.$CrLf;
 			$XML_SEPA_INFO .= '				<Id>'.$CrLf;
 			$XML_SEPA_INFO .= '					<PrvtId>'.$CrLf;
@@ -1987,55 +1995,55 @@ class BonPrelevement extends CommonObject
 	/**
 	 *  Return status label for a status
 	 *
-	 *  @param	int		$statut     id statut
+	 *  @param	int		$status     Id status
 	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 * 	@return	string  		    Label
 	 */
-	public function LibStatut($statut, $mode = 0)
+	public function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
-		if (empty($this->labelstatut))
+		if (empty($this->labelStatus))
 		{
 			global $langs;
 			$langs->load("withdrawals");
-			$this->labelstatut[0]=$langs->trans("StatusWaiting");
-			$this->labelstatut[1]=$langs->trans("StatusTrans");
-			$this->labelstatut[2]=$langs->trans("StatusCredited");
+			$this->labelStatus[0]=$langs->trans("StatusWaiting");
+			$this->labelStatus[1]=$langs->trans("StatusTrans");
+			$this->labelStatus[2]=$langs->trans("StatusCredited");
 		}
 
 		if ($mode == 0 || $mode == 1)
 		{
-			return $this->labelstatut[$statut];
+			return $this->labelStatus[$status];
 		}
 		elseif ($mode == 2)
 		{
-			if ($statut==0) return img_picto($this->labelstatut[$statut], 'statut1').' '.$this->labelstatut[$statut];
-			elseif ($statut==1) return img_picto($this->labelstatut[$statut], 'statut3').' '.$this->labelstatut[$statut];
-			elseif ($statut==2) return img_picto($this->labelstatut[$statut], 'statut6').' '.$this->labelstatut[$statut];
+			if ($status==0) return img_picto($this->labelStatus[$status], 'statut1').' '.$this->labelStatus[$status];
+			elseif ($status==1) return img_picto($this->labelStatus[$status], 'statut3').' '.$this->labelStatus[$status];
+			elseif ($status==2) return img_picto($this->labelStatus[$status], 'statut6').' '.$this->labelStatus[$status];
 		}
 		elseif ($mode == 3)
 		{
-			if ($statut==0) return img_picto($this->labelstatut[$statut], 'statut1');
-			elseif ($statut==1) return img_picto($this->labelstatut[$statut], 'statut3');
-			elseif ($statut==2) return img_picto($this->labelstatut[$statut], 'statut6');
+			if ($status==0) return img_picto($this->labelStatus[$status], 'statut1');
+			elseif ($status==1) return img_picto($this->labelStatus[$status], 'statut3');
+			elseif ($status==2) return img_picto($this->labelStatus[$status], 'statut6');
 		}
 		elseif ($mode == 4)
 		{
-			if ($statut==0) return img_picto($this->labelstatut[$statut], 'statut1').' '.$this->labelstatut[$statut];
-			elseif ($statut==1) return img_picto($this->labelstatut[$statut], 'statut3').' '.$this->labelstatut[$statut];
-			elseif ($statut==2) return img_picto($this->labelstatut[$statut], 'statut6').' '.$this->labelstatut[$statut];
+			if ($status==0) return img_picto($this->labelStatus[$status], 'statut1').' '.$this->labelStatus[$status];
+			elseif ($status==1) return img_picto($this->labelStatus[$status], 'statut3').' '.$this->labelStatus[$status];
+			elseif ($status==2) return img_picto($this->labelStatus[$status], 'statut6').' '.$this->labelStatus[$status];
 		}
 		elseif ($mode == 5)
 		{
-			if ($statut==0) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut1');
-			elseif ($statut==1) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut3');
-			elseif ($statut==2) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut6');
+			if ($status==0) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut1');
+			elseif ($status==1) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut3');
+			elseif ($status==2) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut6');
 		}
 		elseif ($mode == 6)
 		{
-			if ($statut==0) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut1');
-			elseif ($statut==1) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut3');
-			elseif ($statut==2) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut], 'statut6');
+			if ($status==0) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut1');
+			elseif ($status==1) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut3');
+			elseif ($status==2) return $this->labelStatus[$status].' '.img_picto($this->labelStatus[$status], 'statut6');
 		}
 	}
 }

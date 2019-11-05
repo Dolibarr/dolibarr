@@ -25,7 +25,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -112,7 +112,7 @@ if (! $sortorder) $sortorder='DESC';
 $module='propal';
 $dbtable='';
 $objectid='';
-if (! empty($user->societe_id))	$socid=$user->societe_id;
+if (! empty($user->socid))	$socid=$user->socid;
 if (! empty($socid))
 {
 	$objectid=$socid;
@@ -129,7 +129,8 @@ $hookmanager->initHooks(array('propallist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('propal');
+$extrafields->fetch_name_optionals_label($object->table_element);
+
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
@@ -138,6 +139,7 @@ $fieldstosearchall = array(
 	'p.ref_client'=>'CustomerRef',
 	'pd.description'=>'Description',
 	's.nom'=>"ThirdParty",
+	's.name_alias'=>"AliasNameShort",
 	'p.note_public'=>'NotePublic',
 );
 if (empty($user->socid)) $fieldstosearchall["p.note_private"]="NotePrivate";
@@ -239,9 +241,9 @@ if (empty($reshook))
 {
 	$objectclass='Propal';
 	$objectlabel='Proposals';
-	$permtoread = $user->rights->propal->lire;
-	$permtodelete = $user->rights->propal->supprimer;
-	$permtoclose = $user->rights->propal->cloturer;
+	$permissiontoread = $user->rights->propal->lire;
+	$permissiontodelete = $user->rights->propal->supprimer;
+	$permissiontoclose = $user->rights->propal->cloturer;
 	$uploaddir = $conf->propal->multidir_output[$conf->entity];
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -278,8 +280,9 @@ $sql.= ' u.login';
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user";
 if ($search_categ_cus) $sql .= ", cc.fk_categorie, cc.fk_soc";
 // Add fields from extrafields
-if (! empty($extrafields->attributes[$object->table_element]['label']))
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -461,7 +464,7 @@ if ($resql)
 	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, $newcardbutton, '', $limit);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'commercial', 0, $newcardbutton, '', $limit);
 
 	$topicmail="SendPropalRef";
 	$modelmail="proposal_send";
@@ -692,7 +695,7 @@ if ($resql)
 		print '<td class="liste_titre">';
 		print '</td>';
 	}
-  // Date cloture
+    // Date cloture
 	if (! empty($arrayfields['p.date_cloture']['checked']))
 	{
 		print '<td class="liste_titre">';
@@ -1012,9 +1015,8 @@ if ($resql)
 		// Author
 		if (! empty($arrayfields['u.login']['checked']))
 		{
-			print '<td align="center">';
+			print '<td class="center nowraponall">';
 			if ($userstatic->id) print $userstatic->getLoginUrl(1);
-			else print '&nbsp;';
 			print "</td>\n";
 			if (! $i) $totalarray['nbfield']++;
 		}
@@ -1087,7 +1089,7 @@ if ($resql)
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
-    // Date cloture
+    	// Date cloture
 		if (! empty($arrayfields['p.date_cloture']['checked']))
 		{
 			print '<td align="center" class="nowrap">';

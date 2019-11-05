@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -53,11 +53,6 @@ $confirm=GETPOST('confirm');
 $id=(GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
 $ref = GETPOST('ref', 'alpha');
 
-// Security check - Protection if external user
-//if ($user->societe_id > 0) access_forbidden();
-//if ($user->societe_id > 0) $socid = $user->societe_id;
-//$result = restrictedArea($user, 'mymodule', $id);
-
 // Get parameters
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
@@ -76,13 +71,21 @@ $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('myobjectdocument','globalcard'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('myobject');
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
 //if ($id > 0 || ! empty($ref)) $upload_dir = $conf->mymodule->multidir_output[$object->entity?$object->entity:$conf->entity] . "/myobject/" . dol_sanitizeFileName($object->id);
 if ($id > 0 || ! empty($ref)) $upload_dir = $conf->mymodule->multidir_output[$object->entity?$object->entity:$conf->entity] . "/myobject/" . dol_sanitizeFileName($object->ref);
+
+// Security check - Protection if external user
+//if ($user->socid > 0) access_forbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+//$result = restrictedArea($user, 'mymodule', $object->id);
+
+$permissiontoadd = $user->rights->mymodule->myobject->write; 		// Used by the include of actions_addupdatedelete.inc.php
+
 
 
 /*
@@ -145,9 +148,9 @@ if ($object->id)
 	dol_fiche_end();
 
 	$modulepart = 'mymodule';
-	//$permission = $user->rights->mymodule->create;
+	//$permission = $user->rights->mymodule->myobject->write;
 	$permission = 1;
-	//$permtoedit = $user->rights->mymodule->create;
+	//$permtoedit = $user->rights->mymodule->myobject->write;
 	$permtoedit = 1;
 	$param = '&id=' . $object->id;
 

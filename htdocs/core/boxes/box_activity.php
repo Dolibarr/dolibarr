@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -76,7 +76,7 @@ class box_activity extends ModeleBoxes
      */
     public function loadBox($max = 5)
     {
-        global $conf, $user, $langs, $db;
+        global $conf, $user, $langs;
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
         include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -84,7 +84,7 @@ class box_activity extends ModeleBoxes
         $totalnb = 0;
         $line = 0;
         $cachetime = 3600;
-        $fileid = '-e'.$conf->entity.'-u'.$user->id.'-s'.$user->societe_id.'-r'.($user->rights->societe->client->voir?'1':'0').'.cache';
+        $fileid = '-e'.$conf->entity.'-u'.$user->id.'-s'.$user->socid.'-r'.($user->rights->societe->client->voir?'1':'0').'.cache';
         $now = dol_now();
         $nbofperiod=3;
 
@@ -103,7 +103,7 @@ class box_activity extends ModeleBoxes
         if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
         {
         	include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-        	$propalstatic=new Propal($db);
+        	$propalstatic=new Propal($this->db);
 
         	$cachedir = DOL_DATA_ROOT.'/propale/temp';
         	$filename = '/boxactivity-propal'.$fileid;
@@ -113,33 +113,33 @@ class box_activity extends ModeleBoxes
         	{
         		$sql = "SELECT p.fk_statut, SUM(p.total) as Mnttot, COUNT(*) as nb";
         		$sql.= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
-        		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         		$sql.= ")";
         		$sql.= " WHERE p.entity IN (".getEntity('propal').")";
         		$sql.= " AND p.fk_soc = s.rowid";
-        		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-        		if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
-        		$sql.= " AND p.datep >= '".$db->idate($tmpdate)."'";
+        		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+        		if($user->socid) $sql.= " AND s.rowid = ".$user->socid;
+        		$sql.= " AND p.datep >= '".$this->db->idate($tmpdate)."'";
         		$sql.= " AND p.date_cloture IS NULL"; // just unclosed
         		$sql.= " GROUP BY p.fk_statut";
         		$sql.= " ORDER BY p.fk_statut DESC";
 
-        		$result = $db->query($sql);
+        		$result = $this->db->query($sql);
         		if ($result)
         		{
-        			$num = $db->num_rows($result);
+        			$num = $this->db->num_rows($result);
 
         			$j=0;
         			while ($j < $num) {
-        				$data[$j]=$db->fetch_object($result);
+        				$data[$j]=$this->db->fetch_object($result);
         				$j++;
         			}
         			if (! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
         				dol_filecache($cachedir, $filename, $data);
         			}
-        			$db->free($result);
+        			$this->db->free($result);
         		} else {
-        			dol_print_error($db);
+        			dol_print_error($this->db);
         		}
         	}
         	else
@@ -173,7 +173,7 @@ class box_activity extends ModeleBoxes
         			$totalnb += $data[$j]->nb;
 
         			$this->info_box_contents[$line][3] = array(
-                        'td' => 'class="nowrap right"',
+                        'td' => 'class="nowraponall right"',
                         'text' => price($data[$j]->Mnttot, 1, $langs, 0, 0, -1, $conf->currency),
         			);
         			$this->info_box_contents[$line][4] = array(
@@ -190,7 +190,7 @@ class box_activity extends ModeleBoxes
         // list the summary of the orders
         if (! empty($conf->commande->enabled) && $user->rights->commande->lire) {
             include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-            $commandestatic=new Commande($db);
+            $commandestatic=new Commande($this->db);
 
             $langs->load("orders");
 
@@ -200,33 +200,32 @@ class box_activity extends ModeleBoxes
             $data = array();
 
             if ($refresh) {
-
                 $sql = "SELECT c.fk_statut, sum(c.total_ttc) as Mnttot, count(*) as nb";
                 $sql.= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
-                if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+                if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
                 $sql.= ")";
                 $sql.= " WHERE c.entity = ".$conf->entity;
                 $sql.= " AND c.fk_soc = s.rowid";
-                if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-                if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
-                $sql.= " AND c.date_commande >= '".$db->idate($tmpdate)."'";
+                if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+                if($user->socid) $sql.= " AND s.rowid = ".$user->socid;
+                $sql.= " AND c.date_commande >= '".$this->db->idate($tmpdate)."'";
                 $sql.= " GROUP BY c.fk_statut";
                 $sql.= " ORDER BY c.fk_statut DESC";
 
-                $result = $db->query($sql);
+                $result = $this->db->query($sql);
                 if ($result) {
-                    $num = $db->num_rows($result);
+                    $num = $this->db->num_rows($result);
                     $j=0;
                     while ($j < $num) {
-                        $data[$j]=$db->fetch_object($result);
+                        $data[$j]=$this->db->fetch_object($result);
                         $j++;
                     }
                     if (! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
                         dol_filecache($cachedir, $filename, $data);
                     }
-                    $db->free($result);
+                    $this->db->free($result);
                 } else {
-                    dol_print_error($db);
+                    dol_print_error($this->db);
                 }
             } else {
                 $data = dol_readcachefile($cachedir, $filename);
@@ -256,7 +255,7 @@ class box_activity extends ModeleBoxes
                     $totalnb += $data[$j]->nb;
 
                     $this->info_box_contents[$line][3] = array(
-                        'td' => 'class="nowrap right"',
+                        'td' => 'class="nowraponall right"',
                         'text' => price($data[$j]->Mnttot, 1, $langs, 0, 0, -1, $conf->currency),
                     );
                     $this->info_box_contents[$line][4] = array(
@@ -275,7 +274,7 @@ class box_activity extends ModeleBoxes
         if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
         {
         	include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-        	$facturestatic=new Facture($db);
+        	$facturestatic=new Facture($this->db);
 
         	// part 1
         	$cachedir = DOL_DATA_ROOT.'/facture/temp';
@@ -287,30 +286,30 @@ class box_activity extends ModeleBoxes
         	{
         		$sql = "SELECT f.fk_statut, SUM(f.total_ttc) as Mnttot, COUNT(*) as nb";
         		$sql.= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-        		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         		$sql.= ")";
         		$sql.= " WHERE f.entity IN (".getEntity('invoice').')';
-        		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-        		if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
+        		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+        		if($user->socid) $sql.= " AND s.rowid = ".$user->socid;
         		$sql.= " AND f.fk_soc = s.rowid";
-        		$sql.= " AND f.datef >= '".$db->idate($tmpdate)."' AND f.paye=1";
+        		$sql.= " AND f.datef >= '".$this->db->idate($tmpdate)."' AND f.paye=1";
         		$sql.= " GROUP BY f.fk_statut";
         		$sql.= " ORDER BY f.fk_statut DESC";
 
-        		$result = $db->query($sql);
+        		$result = $this->db->query($sql);
         		if ($result) {
-        			$num = $db->num_rows($result);
+        			$num = $this->db->num_rows($result);
         			$j=0;
         			while ($j < $num) {
-        				$data[$j]=$db->fetch_object($result);
+        				$data[$j]=$this->db->fetch_object($result);
         				$j++;
         			}
         			if (! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
         				dol_filecache($cachedir, $filename, $data);
         			}
-        			$db->free($result);
+        			$this->db->free($result);
         		} else {
-        			dol_print_error($db);
+        			dol_print_error($this->db);
         		}
         	} else {
         		$data = dol_readcachefile($cachedir, $filename);
@@ -340,7 +339,7 @@ class box_activity extends ModeleBoxes
         			);
 
         			$this->info_box_contents[$line][3] = array(
-                        'td' => 'class="nowrap right"',
+                        'td' => 'class="nowraponall right"',
                         'text' => price($data[$j]->Mnttot, 1, $langs, 0, 0, -1, $conf->currency)
         			);
 
@@ -373,24 +372,24 @@ class box_activity extends ModeleBoxes
         		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
         		$sql.= " WHERE f.entity IN (".getEntity('invoice').')';
         		$sql.= " AND f.fk_soc = s.rowid";
-        		$sql.= " AND f.datef >= '".$db->idate($tmpdate)."' AND f.paye=0";
+        		$sql.= " AND f.datef >= '".$this->db->idate($tmpdate)."' AND f.paye=0";
         		$sql.= " GROUP BY f.fk_statut";
         		$sql.= " ORDER BY f.fk_statut DESC";
 
-        		$result = $db->query($sql);
+        		$result = $this->db->query($sql);
         		if ($result) {
-        			$num = $db->num_rows($result);
+        			$num = $this->db->num_rows($result);
         			$j=0;
         			while ($j < $num) {
-        				$data[$j]=$db->fetch_object($result);
+        				$data[$j]=$this->db->fetch_object($result);
         				$j++;
         			}
         			if (! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
         				dol_filecache($cachedir, $filename, $data);
         			}
-        			$db->free($result);
+        			$this->db->free($result);
         		} else {
-        			dol_print_error($db);
+        			dol_print_error($this->db);
         		}
         	} else {
         		$data = dol_readcachefile($cachedir, $filename);
@@ -422,7 +421,7 @@ class box_activity extends ModeleBoxes
         			);
         			$totalnb += $data[$j]->nb;
         			$this->info_box_contents[$line][3] = array(
-                        'td' => 'class="nowrap right"',
+                        'td' => 'class="nowraponall right"',
                         'text' => price($data[$j]->Mnttot, 1, $langs, 0, 0, -1, $conf->currency),
         			);
         			$this->info_box_contents[$line][4] = array(

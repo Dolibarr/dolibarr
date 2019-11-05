@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -40,7 +40,7 @@ llxHeader();
 
 print load_fiche_titre($langs->trans("AvailableModules"), '', 'title_setup');
 
-print $langs->trans("ToActivateModule").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("ToActivateModule").'</span><br>';
 print "<br>\n";
 
 $modules = array();

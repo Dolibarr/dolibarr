@@ -68,7 +68,9 @@
 		<severity>0</severity>
     </rule>
 
-    <rule ref="Generic.CodeAnalysis.UselessOverridingMethod" />
+    <rule ref="Generic.CodeAnalysis.UselessOverridingMethod">
+   		<severity>0</severity>
+    </rule>
 
     <!--
     <rule ref="Generic.Commenting.Todo" />
@@ -120,14 +122,14 @@
     <rule ref="Generic.Functions.CallTimePassByReference" />
 
 	<rule ref="Generic.Functions.FunctionCallArgumentSpacing" />
-	
+
 	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.NoSpaceBeforeEquals">
 		<severity>0</severity>
 	</rule>
 	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.NoSpaceBeforeEquals">
 		<severity>0</severity>
 	</rule>
-	
+
     <!-- Disallow several spaces after comma -->
 	<!-- We want to allow this because we want to be able to align params on several similare functions on different lines -->
 	<rule ref="Generic.Functions.FunctionCallArgumentSpacing.TooMuchSpaceAfterComma">
@@ -184,7 +186,7 @@
 	<!-- Check indent are done with spaces and with correct number -->
 	<!-- Disabled as this does not support tab -->
 	<!-- <rule ref="Generic.WhiteSpace.ScopeIndent" /> -->
- 	<!-- TODO Enable this
+
 	<arg name="tab-width" value="4"/>
 	<rule ref="Generic.WhiteSpace.ScopeIndent">
 	  <properties>
@@ -192,14 +194,14 @@
 	    <property name="tabIndent" value="true"/>
 	  </properties>
 	</rule>
-	-->
-	
+
+
     <rule ref="Squiz.WhiteSpace.ScopeClosingBrace.Indent" />
 
     <!-- There MUST NOT be trailing whitespace at the end of non-blank lines. -->
     <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace">
         <properties>
-            <property name="ignoreBlankLines" value="true"/>
+            <property name="ignoreBlankLines" value="false"/>
         </properties>
     </rule>
     <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.StartFile">
@@ -211,6 +213,8 @@
     <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.EmptyLines">
         <severity>0</severity>
     </rule>
+
+    <rule ref="Squiz.WhiteSpace.ControlStructureSpacing.SpacingAfterOpen" />
     <rule ref="Squiz.WhiteSpace.ControlStructureSpacing.SpacingBeforeClose" />
 
     <rule ref="Squiz.ControlStructures.ForEachLoopDeclaration.SpaceAfterOpen" />
@@ -335,7 +339,7 @@
     <rule ref="PEAR.Commenting.InlineComment" />
 
 	<!-- Check position of { after a control structure like if (), while (), etc... -->
-	<!-- 
+	<!--
 	<rule ref="PEAR.ControlStructures.ControlSignature" />
 	-->
 
@@ -373,7 +377,7 @@
     <rule ref="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket">
         <severity>0</severity>
     </rule>
-   
+
 	<rule ref="PEAR.Functions.FunctionCallSignature.EmptyLine">
 	    <severity>0</severity>
 	</rule>

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -45,14 +45,14 @@ $langs->loadLangs(array("admin", "cashdesk"));
 
 global $db;
 
-$sql = "SELECT code, libelle FROM ".MAIN_DB_PREFIX."c_paiement";
+$sql = "SELECT code, libelle as label FROM ".MAIN_DB_PREFIX."c_paiement";
 $sql.= " WHERE entity IN (".getEntity('c_paiement').")";
 $sql.= " AND active = 1";
 $sql.= " ORDER BY libelle";
 $resql = $db->query($sql);
 $paiements = array();
-if($resql){
-	while ($obj = $db->fetch_object($resql)){
+if ($resql) {
+	while ($obj = $db->fetch_object($resql)) {
 		array_push($paiements, $obj);
 	}
 }
@@ -81,6 +81,9 @@ if (GETPOST('action', 'alpha') == 'set')
     }
     $res = dolibarr_set_const($db, "CASHDESK_ID_WAREHOUSE".$terminaltouse, (GETPOST('CASHDESK_ID_WAREHOUSE'.$terminaltouse, 'alpha') > 0 ? GETPOST('CASHDESK_ID_WAREHOUSE'.$terminaltouse, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
     $res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK".$terminaltouse, GETPOST('CASHDESK_NO_DECREASE_STOCK'.$terminaltouse, 'alpha'), 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "TAKEPOS_PRINTER_TO_USE".$terminaltouse, GETPOST('TAKEPOS_PRINTER_TO_USE'.$terminaltouse, 'alpha'), 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES".$terminaltouse, GETPOST('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminaltouse, 'alpha'), 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS".$terminaltouse, GETPOST('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminaltouse, 'alpha'), 'chaine', 0, '', $conf->entity);
 
 	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
 
@@ -152,7 +155,7 @@ if (! empty($conf->banque->enabled))
 	foreach($paiements as $modep) {
         if (in_array($modep->code, array('LIQ', 'CB', 'CHQ'))) continue;	// Already managed before
         $name="CASHDESK_ID_BANKACCOUNT_".$modep->code.$terminaltouse;
-		print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountFor").' '.$langs->trans($modep->libelle).'</td>';
+		print '<tr class="oddeven"><td>'.$langs->trans("CashDeskBankAccountFor").' '.$langs->trans($modep->label).'</td>';
 		print '<td>';
 		if (! empty($conf->global->$name)) $atleastonefound++;
 		$cour=preg_match('/^LIQ.*/', $modep->code)?2:1;
@@ -163,16 +166,15 @@ if (! empty($conf->banque->enabled))
 
 if (! empty($conf->stock->enabled))
 {
-
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskDoNotDecreaseStock").'</td>';	// Force warehouse (this is not a default value)
 	print '<td>';
 	if (empty($conf->productbatch->enabled)) {
-	   print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK'.$terminal, $conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$terminal}, 1);
+	    print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK'.$terminal, $conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$terminal}, 1);
 	}
 	else
 	{
 	    if (!$conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$terminal}) {
-	       $res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK".$terminal, 1, 'chaine', 0, '', $conf->entity);
+	        $res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK".$terminal, 1, 'chaine', 0, '', $conf->entity);
 	    }
 	    print $langs->trans("Yes").'<br>';
 	    print '<span class="opacitymedium">'.$langs->trans('StockDecreaseForPointOfSaleDisabledbyBatch').'</span>';
@@ -194,6 +196,33 @@ if (! empty($conf->stock->enabled))
 		print '<span class="opacitymedium">'.$langs->trans("StockDecreaseForPointOfSaleDisabled").'</span>';
 	}
 	print '</td></tr>';
+	if ($conf->receiptprinter->enabled) {
+		// Select printer to use with terminal
+		require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
+		$printer = new dolReceiptPrinter($db);
+		$printer->listprinters();
+		$printers = array();
+		foreach ($printer->listprinters as $key => $value) {
+			$printers[$value['rowid']] = $value['name'];
+		}
+		print '<tr class="oddeven"><td>'.$langs->trans("TakeposTerminalPrinterToUse").'</td>';
+		print '<td>';
+		print $form->selectarray('TAKEPOS_PRINTER_TO_USE'.$terminal, $printers, (empty($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$terminal})?'0':$conf->global->{'TAKEPOS_PRINTER_TO_USE'.$terminal}), 1);
+		print '</td></tr>';
+		$printer->listPrintersTemplates();
+		$templates = array();
+		foreach ($printer->listprinterstemplates as $key => $value) {
+			$templates[$value['rowid']] = $value['name'];
+		}
+		print '<tr class="oddeven"><td>'.$langs->trans("TakeposTerminalTemplateToUseForInvoicesTicket").'</td>';
+		print '<td>';
+		print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal, $templates, (empty($conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal})?'0':$conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminal}), 1);
+		print '</td></tr>';
+		print '<tr class="oddeven"><td>'.$langs->trans("TakeposTerminalTemplateToUseForOrdersTicket").'</td>';
+		print '<td>';
+		print $form->selectarray('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal, $templates, (empty($conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal})?'0':$conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminal}), 1);
+		print '</td></tr>';
+	}
 }
 
 print '</table>';

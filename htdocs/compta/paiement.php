@@ -21,7 +21,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -59,9 +59,9 @@ $multicurrency_amounts=array();
 $multicurrency_amountsresttopay=array();
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 
 $object=new Facture($db);
@@ -639,7 +639,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 					print '<tr class="oddeven">';
 
-					print '<td>';
+					print '<td class="nowraponall">';
                     print $invoice->getNomUrl(1, '');
                     if ($objp->socid != $facture->thirdparty->id) print ' - '.$soc->getNomUrl(1).' ';
                     print "</td>\n";
@@ -650,7 +650,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     // Due date
                     if ($objp->dlr > 0 )
                     {
-                        print '<td align="center">';
+                        print '<td class="nowraponall center">';
                         print dol_print_date($db->jdate($objp->dlr), 'day');
 
                         if ($invoice->hasDelay())

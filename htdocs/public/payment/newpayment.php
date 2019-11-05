@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * For Paypal test: https://developer.paypal.com/
  * For Paybox test: ???
@@ -1042,7 +1042,7 @@ if ($source == 'invoice')
 
 	if ($action != 'dopayment') // Do not change amount if we just click on first dopayment
 	{
-		$amount=price2num($invoice->total_ttc - ($invoice->getSommePaiement() + $invoice->getSumCreditNotesUsed()));
+		$amount=price2num($invoice->total_ttc - ($invoice->getSommePaiement() + $invoice->getSumCreditNotesUsed() + $invoice->getSumDepositsUsed()));
 		if (GETPOST("amount", 'int')) $amount=GETPOST("amount", 'int');
 		$amount=price2num($amount);
 	}
@@ -1725,6 +1725,7 @@ if ($action != 'dopayment')
 			{
 				// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of stripe
 				print '<br><div class="button buttonpayment" id="div_dopayment_stripe"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_stripe" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
+				print '<input type="hidden" name="noidempotency" value="'.GETPOST('noidempotency', 'int').'">';
 				print '<br>';
 				print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span>';
 				print '</div>';
@@ -1799,7 +1800,6 @@ print '<br>';
 // Add more content on page for some services
 if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment mode
 {
-
 	// Stripe
 	if (GETPOST('dopayment_stripe', 'alpha'))
 	{
@@ -1834,7 +1834,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 
 		print '<br>';
 
-		print '<!-- STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = '.$conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION.' STRIPE_USE_NEW_CHECKOUT = '.$conf->global->STRIPE_USE_NEW_CHECKOUT.' -->'."\n";
+		print '<!-- Form payment-form STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = '.$conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION.' STRIPE_USE_NEW_CHECKOUT = '.$conf->global->STRIPE_USE_NEW_CHECKOUT.' -->'."\n";
 		print '<form action="'.$_SERVER['REQUEST_URI'].'" method="POST" id="payment-form">'."\n";
 
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
@@ -1859,12 +1859,12 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 
 			$service = 'StripeLive';
 			$servicestatus = 1;
-
 			if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))
 			{
 				$service = 'StripeTest';
 				$servicestatus = 0;
 			}
+
 			$stripe = new Stripe($db);
 			$stripeacc = $stripe->getStripeAccount($service);
 			$stripecu = null;
@@ -1872,49 +1872,47 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 
 			if (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
 			{
-				$paymentintent=$stripe->getPaymentIntent($amount, $currency, $tag, 'Stripe payment: '.$fulltag.(is_object($object)?' ref='.$object->ref:''), $object, $stripecu, $stripeacc, $servicestatus);
+				$noidempotency_key = (GETPOSTISSET('noidempotency') ? GETPOST('noidempotency', 'int') : 0);	// By default noidempotency is unset, so we must use a different tag/ref for each payment. If set, we can pay several times the same tag/ref.
+				$paymentintent=$stripe->getPaymentIntent($amount, $currency, $tag, 'Stripe payment: '.$fulltag.(is_object($object)?' ref='.$object->ref:''), $object, $stripecu, $stripeacc, $servicestatus, 0, 'automatic', false, null, 0, $noidempotency_key);
+				// The paymentintnent has status 'requires_payment_method' (even if paymentintent was already payed)
+				//var_dump($paymentintent);
 				if ($stripe->error) setEventMessages($stripe->error, null, 'errors');
 			}
 		}
 
 		//if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) || ! empty($paymentintent))
 		//{
-    		print '
-            <table id="dolpaymenttable" summary="Payment form" class="center">
-    	    <tbody><tr><td class="textpublicpayment">';
+    	print '
+        <table id="dolpaymenttable" summary="Payment form" class="center">
+        <tbody><tr><td class="textpublicpayment">';
 
-    		if (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
-    		{
-                print '<div id="payment-request-button"><!-- A Stripe Element will be inserted here. --></div>';
-    		}
+    	if (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
+    	{
+            print '<div id="payment-request-button"><!-- A Stripe Element will be inserted here. --></div>';
+    	}
 
-            print '
-            <div class="form-row left">
+        print '<div class="form-row left">';
+    	print '<label for="card-element">'.$langs->trans("CreditOrDebitCard").'</label>';
 
-    	    <label for="card-element">'.$langs->trans("CreditOrDebitCard").'</label>';
+        if (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
+        {
+            print '<br><input id="cardholder-name" class="marginbottomonly" name="cardholder-name" value="" type="text" placeholder="'.$langs->trans("CardOwner").'" autocomplete="off" autofocus required>';
+        }
 
-            if (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
-            {
-                print '<br><input id="cardholder-name" class="marginbottomonly" name="cardholder-name" value="" type="text" placeholder="'.$langs->trans("CardOwner").'" autocomplete="off" autofocus required>';
-            }
+        print '<div id="card-element">
+        <!-- a Stripe Element will be inserted here. -->
+        </div>';
 
-    	    print '<div id="card-element">
-    	    <!-- a Stripe Element will be inserted here. -->
-    	    </div>
+        print '<!-- Used to display form errors -->
+        <div id="card-errors" role="alert"></div>
+        </div>';
 
-    	    <!-- Used to display form errors -->
-    	    <div id="card-errors" role="alert"></div>
+        print '<br>';
+        print '<button class="button buttonpayment" style="text-align: center; padding-left: 0; padding-right: 0;" id="buttontopay" data-secret="'.(is_object($paymentintent) ? $paymentintent->client_secret : '').'">'.$langs->trans("ValidatePayment").'</button>';
+        print '<img id="hourglasstopay" class="hidden" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/working.gif'.'">';
 
-    	    </div>
-
-            <br>';
-
-       	    print '<button class="button buttonpayment" style="text-align: center; padding-left: 0; padding-right: 0;" id="buttontopay" data-secret="'.$paymentintent->client_secret.'">'.$langs->trans("ValidatePayment").'</button>';
-            print '<img id="hourglasstopay" class="hidden" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/working.gif'.'">';
-
-    	    print '
-    	    </td></tr></tbody>
-            </table>';
+        print '</td></tr></tbody>';
+        print '</table>';
 		//}
 
 		if (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
@@ -1943,7 +1941,6 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 		{
 			print '<!-- JS Code for Stripe components -->';
     		print '<script src="https://js.stripe.com/v3/"></script>'."\n";
-    		$urllogofull = 'http://home.destailleur.fr:805/dolibarr_dev/htdocs/viewimage.php?modulepart=mycompany&entity=1&file=logos%2Fthumbs%2Ffbm+logo_small.png';
     		print '<!-- urllogofull = '.$urllogofull.' -->'."\n";
 
     	    // Code to ask the credit card. This use the default "API version". No way to force API version when using JS code.
@@ -2008,7 +2005,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     			{
     				print $e->getMessage();
     			}
-    		?>
+    			?>
    			// Code for payment with option STRIPE_USE_NEW_CHECKOUT set
 
     	    // Create a Stripe client.
@@ -2051,11 +2048,11 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 			});
 
 
-    		<?php
+    			<?php
     		}
     		elseif (! empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
     		{
-            ?>
+            	?>
     		// Code for payment with option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION set
 
     	    // Create a Stripe client.
@@ -2122,13 +2119,13 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
                     	payment_method_data: {
         			        billing_details: {
         			        	name: cardholderName.value
-        			        	<?php if (GETPOST('email', 'alpha') || (is_object($object) && is_object($object->thirdparty) && ! empty($object->thirdparty->email))) { ?>, email: '<?php echo (GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $object->thirdparty->email); ?>'<?php } ?>
-        			        	<?php if (is_object($object) && is_object($object->thirdparty) && ! empty($object->thirdparty->phone)) { ?>, phone: '<?php echo $object->thirdparty->phone; ?>'<?php } ?>
+        			        	<?php if (GETPOST('email', 'alpha') || (is_object($object) && is_object($object->thirdparty) && ! empty($object->thirdparty->email))) { ?>, email: '<?php echo dol_escape_js(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $object->thirdparty->email); ?>'<?php } ?>
+        			        	<?php if (is_object($object) && is_object($object->thirdparty) && ! empty($object->thirdparty->phone)) { ?>, phone: '<?php echo dol_escape_js($object->thirdparty->phone); ?>'<?php } ?>
         			        	<?php if (is_object($object) && is_object($object->thirdparty)) { ?>, address: {
-        			        	    city: '<?php echo $object->thirdparty->town; ?>',
-        			        	    country: '<?php echo $object->thirdparty->country_code; ?>',
-        			        	    line1: '<?php echo $object->thirdparty->address; ?>',
-        			        	    postal_code: '<?php echo $object->thirdparty->zip; ?>'}<?php } ?>
+        			        	    city: '<?php echo dol_escape_js($object->thirdparty->town); ?>',
+        			        	    country: '<?php echo dol_escape_js($object->thirdparty->country_code); ?>',
+        			        	    line1: '<?php echo dol_escape_js(preg_replace('/\s\s+/', ' ', $object->thirdparty->address)); ?>',
+        			        	    postal_code: '<?php echo dol_escape_js($object->thirdparty->zip); ?>'}<?php } ?>
         			        }
               			},
               			save_payment_method: <?php if ($stripecu) { print 'true'; } else { print 'false'; } ?>	/* true when a customer was provided when creating payment intent. true ask to save the card */
@@ -2155,11 +2152,11 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
                 }
             });
 
-    		<?php
+    			<?php
     		}
     		else		// Old method (not SCA ready)
     		{
-    		?>
+    			?>
     		// Old code for payment with option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION off and STRIPE_USE_NEW_CHECKOUT off
 
     	    // Create a Stripe client.
@@ -2211,7 +2208,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     			<?php
     			if (empty($conf->global->STRIPE_USE_3DSECURE))	// Ask credit card directly, no 3DS test
     			{
-    			?>
+    				?>
     				/* Use token */
     				stripe.createToken(card).then(function(result) {
     			        if (result.error) {
@@ -2223,11 +2220,11 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     			          stripeTokenHandler(result.token);
     			        }
     				});
-    			<?php
+    				<?php
     			}
     			else											// Ask credit card with 3DS test
     			{
-    			?>
+    				?>
     				/* Use 3DS source */
     				stripe.createSource(card).then(function(result) {
     				    if (result.error) {
@@ -2239,7 +2236,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     				      stripeSourceHandler(result.source);
     				    }
     				});
-    			<?php
+    				<?php
     			}
     			?>
     	    });
@@ -2249,11 +2246,18 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     	    function stripeTokenHandler(token) {
     	      // Insert the token ID into the form so it gets submitted to the server
     	      var form = document.getElementById('payment-form');
+
     	      var hiddenInput = document.createElement('input');
     	      hiddenInput.setAttribute('type', 'hidden');
     	      hiddenInput.setAttribute('name', 'stripeToken');
     	      hiddenInput.setAttribute('value', token.id);
     	      form.appendChild(hiddenInput);
+
+			  var hiddenInput2 = document.createElement('input');
+			  hiddenInput2.setAttribute('type', 'hidden');
+			  hiddenInput2.setAttribute('name', 'token');
+              hiddenInput2.setAttribute('value', '<?php echo $_SESSION["newtoken"]; ?>');
+			  form.appendChild(hiddenInput2);
 
     	      // Submit the form
     	      jQuery('#buttontopay').hide();
@@ -2266,11 +2270,18 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     		function stripeSourceHandler(source) {
     		  // Insert the source ID into the form so it gets submitted to the server
     		  var form = document.getElementById('payment-form');
+
     		  var hiddenInput = document.createElement('input');
     		  hiddenInput.setAttribute('type', 'hidden');
     		  hiddenInput.setAttribute('name', 'stripeSource');
     		  hiddenInput.setAttribute('value', source.id);
     		  form.appendChild(hiddenInput);
+
+			  var hiddenInput2 = document.createElement('input');
+			  hiddenInput2.setAttribute('type', 'hidden');
+			  hiddenInput2.setAttribute('name', 'token');
+              hiddenInput2.setAttribute('value', '<?php echo $_SESSION["newtoken"]; ?>');
+			  form.appendChild(hiddenInput2);
 
     		  // Submit the form
     	      jQuery('#buttontopay').hide();
@@ -2279,7 +2290,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     		  form.submit();
     		}
 
-    	    <?php
+    	    	<?php
     		}
 
     		print '</script>';

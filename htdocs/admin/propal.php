@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -294,7 +294,6 @@ foreach ($dirmodels as $reldir)
 
 					if ($module->isEnabled())
 					{
-
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
 						print $module->info();
 						print '</td>';
@@ -468,7 +467,7 @@ foreach ($dirmodels as $reldir)
 	                            }
 	                            print '</td>';
 
-	                           // Info
+	                            // Info
 	                            $htmltooltip = $langs->trans("Name").': '.$module->name;
 	                            $htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
 	                            if ($module->type == 'pdf')
@@ -596,7 +595,6 @@ if (empty($conf->facture->enabled))
 		$i = 0;
 		while ($i < $num)
 		{
-
 			$row = $db->fetch_row($resql);
 
 			print '<option value="'.$row[0].'"';

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -188,7 +188,7 @@ $elementtype = 'socpeople';
 //Retreive all extrafield for contact
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label('socpeople', true);
+$extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_array=null;
 if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_array = array();
@@ -359,7 +359,7 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
 						'pass_indatabase_crypted' => $user->pass_indatabase_crypted,
 						'datec' => dol_print_date($user->datec, 'dayhourrfc'),
 						'datem' => dol_print_date($user->datem, 'dayhourrfc'),
-						'fk_thirdparty' => $user->societe_id,
+						'fk_thirdparty' => $user->socid,
 						'fk_contact' => $user->contact_id,
 						'fk_member' => $user->fk_member,
 						'datelastlogin' => dol_print_date($user->datelastlogin, 'dayhourrfc'),
@@ -604,7 +604,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 						//Retreive all extrafield for thirdsparty
 						// fetch optionals attributes and labels
 						$extrafields=new ExtraFields($db);
-						$extralabels=$extrafields->fetch_name_optionals_label('socpeople', true);
+						$extrafields->fetch_name_optionals_label($elementtype, true);
 						if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 						{
 							foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)

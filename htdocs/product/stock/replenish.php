@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -38,8 +38,8 @@ require_once './lib/replenishment.lib.php';
 $langs->loadLangs(array('products', 'stocks', 'orders'));
 
 // Security check
-if ($user->societe_id) {
-    $socid = $user->societe_id;
+if ($user->socid) {
+    $socid = $user->socid;
 }
 $result=restrictedArea($user, 'produit|service');
 
@@ -140,7 +140,6 @@ if ($action == 'order' && isset($_POST['valid']))
                 	if ($qty)
                 	{
 	                    //might need some value checks
-	                    $obj = $db->fetch_object($resql);
 	                    $line = new CommandeFournisseurLigne($db);
 	                    $line->qty = $qty;
 	                    $line->fk_product = $idprod;
@@ -179,7 +178,7 @@ if ($action == 'order' && isset($_POST['valid']))
                     $error=$db->lasterror();
                     dol_print_error($db);
                 }
-                $db->free($resql);
+
                 unset($_POST['fourn' . $i]);
             }
             unset($_POST[$i]);
@@ -438,7 +437,7 @@ $head[1][1] = $langs->trans("ReplenishmentOrders");
 $head[1][2] = 'replenishorders';
 
 
-print load_fiche_titre($langs->trans('Replenishment'), '', 'title_generic.png');
+print load_fiche_titre($langs->trans('Replenishment'), '', 'generic');
 
 dol_fiche_head($head, 'replenish', '', -1, '');
 
@@ -492,7 +491,7 @@ if ($sref || $snom || $sall || $salert || $draftorder || GETPOST('search', 'alph
 	$filters .= '&mode=' . $mode;
 	$filters .= '&fk_supplier=' . $fk_supplier;
 	$filters .= '&fk_entrepot=' . $fk_entrepot;
-print_barre_liste(
+	print_barre_liste(
 		$texte,
 		$page,
 		'replenish.php',
@@ -511,7 +510,7 @@ print_barre_liste(
 	$filters .= '&mode=' . $mode;
 	$filters .= '&fk_supplier=' . $fk_supplier;
 	$filters .= '&fk_entrepot=' . $fk_entrepot;
-print_barre_liste(
+	print_barre_liste(
 		$texte,
 		$page,
 		'replenish.php',

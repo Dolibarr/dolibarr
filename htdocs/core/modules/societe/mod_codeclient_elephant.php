@@ -16,8 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -53,7 +53,10 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
      */
 	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
 
-	public $code_auto;                     // Numerotation automatique
+	/**
+	 * @var int Automatic numbering
+	 */
+	public $code_auto;
 
 	public $searchcode; // String de recherche
 

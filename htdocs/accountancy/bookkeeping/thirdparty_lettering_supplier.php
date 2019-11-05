@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -83,7 +83,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 
 // Security check
 $socid = GETPOST("socid", 'int');
-// if ($user->societe_id) $socid=$user->societe_id;
+// if ($user->socid) $socid=$user->socid;
 
 $lettering = new Lettering($db);
 $object = new Societe($db);
@@ -99,7 +99,6 @@ if ($result<0)
  * Action
  */
 if ($action == 'lettering') {
-
 	$result = $lettering->updateLettering($toselect);
 
 	if ($result < 0) {
@@ -139,7 +138,7 @@ dol_fiche_head($head, 'lettering_supplier', $langs->trans("ThirdParty"), 0, 'com
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom', '', '', 0, '', '', 'arearefnobottom');
+dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom', '', '', 0, '', '', 'arearefnobottom');
 
 dol_fiche_end();
 
@@ -196,6 +195,7 @@ if ($resql) {
 
     $param="&socid=".$socid;
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'?socid=' . $object->id . '" method="POST">';
+    print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 	print '<input type="hidden" name="socid" value="' . $object->id . '">';
 
     $letteringbutton = '<a class="divButAction"><span class="valignmiddle"><input class="butAction" type="submit" value="lettering" name="lettering" id="lettering"></span></a>';
@@ -248,7 +248,6 @@ if ($resql) {
 	$solde = 0;
 	$tmp = '';
 	while ($obj = $db->fetch_object($resql)) {
-
 		if ($tmp != $obj->lettering_code || empty($tmp))						$tmp = $obj->lettering_code;
 		/*if ($tmp != $obj->lettering_code || empty($obj->lettering_code))*/	$solde += ($obj->credit - $obj->debit);
 

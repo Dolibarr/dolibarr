@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -65,14 +65,14 @@ class box_graph_orders_permonth extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs;
 
 		$this->max=$max;
 
 		$refreshaction='refresh_'.$this->boxcode;
 
 		//include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-		//$commandestatic=new Commande($db);
+		//$commandestatic=new Commande($this->db);
 
 		$startmonth = $conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START) : 1;
 		if (empty($conf->global->GRAPH_USE_FISCAL_YEAR)) $startmonth = 1;
@@ -92,7 +92,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 		$dir=''; 	// We don't need a path because image file will not be saved into disk
 		$prefix='';
 		$socid=0;
-		if ($user->societe_id) $socid=$user->societe_id;
+		if ($user->socid) $socid=$user->socid;
 		if (! $user->rights->societe->client->voir || $socid) $prefix.='private-'.$user->id.'-';	// If user has no permission to see all, output dir is specific to user
 
 		if ($user->rights->commande->lire)
@@ -135,7 +135,8 @@ class box_graph_orders_permonth extends ModeleBoxes
 				$data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0), $startmonth);
 
 				$filenamenb = $dir."/".$prefix."ordersnbinyear-".$endyear.".png";
-				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersnbinyear-'.$endyear.'.png';
+                // default value for customer mode
+				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersnbinyear-'.$endyear.'.png';
 				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&amp;file=ordersnbinyear-'.$endyear.'.png';
 
 				$px1 = new DolGraph();
@@ -144,7 +145,8 @@ class box_graph_orders_permonth extends ModeleBoxes
 				{
 					$px1->SetData($data1);
 					unset($data1);
-					$i=$startyear;$legend=array();
+					$i=$startyear;
+                    $legend=array();
 					while ($i <= $endyear)
 					{
 						if ($startmonth != 1)
@@ -178,7 +180,8 @@ class box_graph_orders_permonth extends ModeleBoxes
 				$data2 = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09')==$refreshaction?-1:(3600*24)), ($WIDTH<300?2:0), $startmonth);
 
 				$filenamenb = $dir."/".$prefix."ordersamountinyear-".$endyear.".png";
-				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersamountinyear-'.$endyear.'.png';
+                // default value for customer mode
+				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&amp;file=ordersamountinyear-'.$endyear.'.png';
 				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&amp;file=ordersamountinyear-'.$endyear.'.png';
 
 				$px2 = new DolGraph();

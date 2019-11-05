@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -55,20 +55,41 @@ class ChargeSociales extends CommonObject
     protected $table_ref_field = 'ref';
 
     public $date_ech;
-    public $lib;
+    public $label;
     public $type;
-    public $type_libelle;
+    public $type_label;
     public $amount;
     public $paye;
     public $periode;
+
+    /**
+     * @var integer|string date_creation
+     */
     public $date_creation;
+
+
     public $date_modification;
     public $date_validation;
 
     /**
-     * @var int ID
+     * @deprecated Use label instead
+     */
+    public $lib;
+
+    /**
+     * @var int account ID
      */
     public $fk_account;
+
+	/**
+     * @var int account ID (identical to fk_account)
+     */
+    public $accountid;
+
+    /**
+     * @var int payment type (identical to mode_reglement_id in commonobject class)
+     */
+    public $paiementtype;
 
     /**
      * @var int ID
@@ -96,7 +117,7 @@ class ChargeSociales extends CommonObject
     public function fetch($id, $ref = '')
     {
         $sql = "SELECT cs.rowid, cs.date_ech";
-        $sql.= ", cs.libelle as lib, cs.fk_type, cs.amount, cs.fk_projet as fk_project, cs.paye, cs.periode, cs.import_key";
+        $sql.= ", cs.libelle as label, cs.fk_type, cs.amount, cs.fk_projet as fk_project, cs.paye, cs.periode, cs.import_key";
         $sql.= ", cs.fk_account, cs.fk_mode_reglement";
         $sql.= ", c.libelle";
         $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
@@ -118,9 +139,10 @@ class ChargeSociales extends CommonObject
                 $this->id					= $obj->rowid;
                 $this->ref					= $obj->rowid;
                 $this->date_ech				= $this->db->jdate($obj->date_ech);
-                $this->lib					= $obj->lib;
+                $this->lib					= $obj->label;
+                $this->label				= $obj->label;
                 $this->type					= $obj->fk_type;
-                $this->type_libelle			= $obj->libelle;
+                $this->type_label			= $obj->libelle;
                 $this->fk_account			= $obj->fk_account;
                 $this->mode_reglement_id	= $obj->fk_mode_reglement;
                 $this->mode_reglement_code	= $obj->mode_reglement_code;
@@ -193,7 +215,7 @@ class ChargeSociales extends CommonObject
         $sql.= " VALUES (".$this->type;
         $sql.= ", ".($this->fk_account>0 ? $this->fk_account:'NULL');
         $sql.= ", ".($this->mode_reglement_id>0 ? $this->mode_reglement_id:"NULL");
-        $sql.= ", '".$this->db->escape($this->lib)."'";
+        $sql.= ", '".$this->db->escape($this->label?$this->label:$this->lib)."'";
         $sql.= ", '".$this->db->idate($this->date_ech)."'";
 		$sql.= ", '".$this->db->idate($this->periode)."'";
         $sql.= ", '".price2num($newamount)."'";
@@ -313,7 +335,7 @@ class ChargeSociales extends CommonObject
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales";
-        $sql.= " SET libelle='".$this->db->escape($this->lib)."'";
+        $sql.= " SET libelle='".$this->db->escape($this->label?$this->label:$this->lib)."'";
         $sql.= ", date_ech='".$this->db->idate($this->date_ech)."'";
         $sql.= ", periode='".$this->db->idate($this->periode)."'";
         $sql.= ", amount='".price2num($this->amount, 'MT')."'";
@@ -449,12 +471,12 @@ class ChargeSociales extends CommonObject
     /**
      *  Renvoi le libelle d'un statut donne
      *
-     *  @param	int		$statut        	Id statut
+     *  @param	int		$status        	Id status
      *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
 	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
      *  @return string        			Label
      */
-    public function LibStatut($statut, $mode = 0, $alreadypaid = -1)
+    public function LibStatut($status, $mode = 0, $alreadypaid = -1)
     {
         // phpcs:enable
         global $langs;
@@ -464,38 +486,38 @@ class ChargeSociales extends CommonObject
 
         if ($mode == 0 || $mode == 1)
         {
-            if ($statut ==  0) return $langs->trans("Unpaid");
-            elseif ($statut ==  1) return $langs->trans("Paid");
+            if ($status ==  0) return $langs->trans("Unpaid");
+            elseif ($status ==  1) return $langs->trans("Paid");
         }
         elseif ($mode == 2)
         {
-            if ($statut ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
-            elseif ($statut ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
-            elseif ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
+            if ($status ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
+            elseif ($status ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
+            elseif ($status ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
         }
         elseif ($mode == 3)
         {
-            if ($statut ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1');
-            elseif ($statut ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3');
-            elseif ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6');
+            if ($status ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1');
+            elseif ($status ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3');
+            elseif ($status ==  1) return img_picto($langs->trans("Paid"), 'statut6');
         }
         elseif ($mode == 4)
         {
-            if ($statut ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
-            elseif ($statut ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
-            elseif ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
+            if ($status ==  0 && $alreadypaid <= 0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
+            elseif ($status ==  0 && $alreadypaid > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
+            elseif ($status ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
         }
         elseif ($mode == 5)
         {
-            if ($statut ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
-            elseif ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
-            elseif ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
+            if ($status ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
+            elseif ($status ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
+            elseif ($status ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
         }
         elseif ($mode == 6)
         {
-            if ($statut ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
-            elseif ($statut ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
-            elseif ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
+            if ($status ==  0 && $alreadypaid <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
+            elseif ($status ==  0 && $alreadypaid > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
+            elseif ($status ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
         }
 
         else return "Error, mode/status not found";
@@ -533,15 +555,15 @@ class ChargeSociales extends CommonObject
         }
 
 
-        if (empty($this->ref)) $this->ref=$this->lib;
+        if (empty($this->ref)) $this->ref=$this->label;
 
         $label = '<u>'.$langs->trans("ShowSocialContribution").'</u>';
         if (! empty($this->ref))
         	$label .= '<br><b>'.$langs->trans('Ref') . ':</b> ' . $this->ref;
-        if (! empty($this->lib))
-        	$label .= '<br><b>'.$langs->trans('Label') . ':</b> ' . $this->lib;
-        if (! empty($this->type_libelle))
-        	$label .= '<br><b>'.$langs->trans('Type') . ':</b> ' . $this->type_libelle;
+        if (! empty($this->label))
+        	$label .= '<br><b>'.$langs->trans('Label') . ':</b> ' . $this->label;
+        if (! empty($this->type_label))
+        	$label .= '<br><b>'.$langs->trans('Type') . ':</b> ' . $this->type_label;
 
         $linkclose='';
         if (empty($notooltip) && $user->rights->facture->lire)
@@ -667,12 +689,12 @@ class ChargeSociales extends CommonObject
         $this->ref = 'SPECIMEN';
         $this->specimen=1;
         $this->paye = 0;
-        $this->date = time();
+        $this->date = dol_now();
         $this->date_ech=$this->date+3600*24*30;
         $this->periode=$this->date+3600*24*30;
         $this->amount=100;
-        $this->lib = 0;
+        $this->label = 'Social contribution label';
         $this->type = 1;
-        $this->type_libelle = 'Social contribution label';
+        $this->type_label = 'Type of social contribution';
     }
 }

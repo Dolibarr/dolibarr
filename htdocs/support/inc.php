@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -71,7 +71,6 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) 
 	$result=include_once $conffile;	// Load conf file
 	if ($result)
 	{
-
 		if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
 
 		//Mysql driver support has been removed in favor of mysqli

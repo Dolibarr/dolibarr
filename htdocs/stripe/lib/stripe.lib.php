@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -70,7 +70,7 @@ function showStripePaymentUrl($type, $ref)
 
     $servicename='Stripe';
     $out='<br><br>';
-    $out.=img_picto('', 'object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'<br>';
+    $out.=img_picto('', 'globe').' '.$langs->trans("ToOfferALinkForOnlinePayment", $servicename).'<br>';
     $url=getStripePaymentUrl(0, $type, $ref);
     $out.='<input type="text" id="stripeurl" class="quatrevingtpercent" value="'.$url.'"><br>';
     $out.=ajax_autoselect("stripeurl", 0);

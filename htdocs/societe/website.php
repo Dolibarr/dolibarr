@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -47,7 +47,7 @@ $search_status=GETPOST('search_status');
 
 // Security check
 $id = GETPOST('id', 'int')?GETPOST('id', 'int'):GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -67,9 +67,11 @@ $objectwebsiteaccount=new SocieteAccount($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->website->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('websitethirdpartylist'));     // Note that conf->hooks_modules contains array
+
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('thirdpartyaccount');
-$search_array_options=$extrafields->getOptionalsFromPost('thirdpartyaccount', '', 'search_');
+$extrafields->fetch_name_optionals_label($objectwebsiteaccount->table_element);
+
+$search_array_options=$extrafields->getOptionalsFromPost($objectwebsiteaccount->table_element, '', 'search_');
 
 unset($objectwebsiteaccount->fields['fk_soc']);		// Remove this field, we are already on the thirdparty
 
@@ -154,8 +156,8 @@ if (empty($reshook))
     // Mass actions
     $objectclass='WebsiteAccount';
     $objectlabel='WebsiteAccount';
-    $permtoread = $user->rights->societe->lire;
-    $permtodelete = $user->rights->societe->supprimer;
+    $permissiontoread = $user->rights->societe->lire;
+    $permissiontodelete = $user->rights->societe->supprimer;
     $uploaddir = $conf->societe->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -193,7 +195,7 @@ dol_fiche_head($head, 'website', $langs->trans("ThirdParty"), - 1, 'company');
 
 $linkback = '<a href="' . DOL_URL_ROOT . '/societe/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
-dol_banner_tab($object, 'socid', $linkback, ($user->societe_id ? 0 : 1), 'rowid', 'nom');
+dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
 print '<div class="fichecenter">';
 
@@ -278,18 +280,19 @@ $reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters, $objectw
 $sql.=$hookmanager->resPrint;
 
 /* If a group by is required
- $sql.= " GROUP BY "
- foreach($objectwebsiteaccount->fields as $key => $val)
- {
- $sql.='t.'.$key.', ';
- }
- // Add fields from extrafields
- foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key : '');
- // Add where from hooks
- $parameters=array();
- $reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $objectwebsiteaccount may have been modified by hook
- $sql.=$hookmanager->resPrint;
- */
+$sql.= " GROUP BY "
+foreach($objectwebsiteaccount->fields as $key => $val)
+{
+	$sql.='t.'.$key.', ';
+}
+// Add fields from extrafields
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
+// Add where from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $objectwebsiteaccount may have been modified by hook
+$sql.=$hookmanager->resPrint;
+*/
 
 $sql.=$db->order($sortfield, $sortorder);
 
@@ -423,14 +426,6 @@ $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $objectw
 print $hookmanager->resPrint;
 print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ')."\n";
 print '</tr>'."\n";
-
-
-// Detect if we need a fetch on each output line
-$needToFetchEachLine=0;
-foreach ($extrafields->attribute_computed as $key => $val)
-{
-	if (preg_match('/\$object/', $val)) $needToFetchEachLine++;  // There is at least one compute field that use $object
-}
 
 
 // Detect if we need a fetch on each output line

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -212,7 +212,6 @@ class Productbatch extends CommonObject
 		// TODO Check qty is ok for stock move. Negative may not be allowed.
 		if ($this->qty < 0)
 		{
-
 		}
 
         // Update request
@@ -361,7 +360,6 @@ class Productbatch extends CommonObject
 
 		if (! $error)
 		{
-
 		}
 
 		unset($object->context['createfromclone']);

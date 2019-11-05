@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -82,8 +82,14 @@ if (empty($modetax)) $modetax=0;
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
+
+if (empty($local))
+{
+	accessforbidden('Parameter localTaxType is missing');
+	exit;
+}
 
 
 
@@ -106,11 +112,12 @@ llxHeader('', '', '', '', 0, 0, '', '', $morequerystring);
 
 $name=$langs->transcountry($local==1?"LT1ReportByCustomers":"LT2ReportByCustomers", $mysoc->country_code);
 
-$fsearch.='<br>';
-$fsearch.='  <input type="hidden" name="year" value="'.$year.'">';
-$fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
-$fsearch.='  '.$langs->trans("SalesTurnoverMinimum").': ';
-$fsearch.='  <input type="text" name="min" id="min" value="'.$min.'" size="6">';
+$fsearch ='<!-- hidden fields for form -->';
+$fsearch.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+$fsearch.='<input type="hidden" name="modetax" value="'.$modetax.'">';
+$fsearch.='<input type="hidden" name="localTaxType" value="'.$local.'">';
+$fsearch.=$langs->trans("SalesTurnoverMinimum").': ';
+$fsearch.='<input type="text" name="min" id="min" value="'.$min.'" size="6">';
 
 $calc=$conf->global->MAIN_INFO_LOCALTAX_CALC.$local;
 // Affiche en-tete du rapport
@@ -188,7 +195,6 @@ if($calc ==0 || $calc == 2)
 		{
 			if(($min == 0 || ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) !=0)
 			{
-
 				$intra = str_replace($find, $replace, $coll->tva_intra);
 				if(empty($intra))
 				{
@@ -262,7 +268,6 @@ if($calc ==0 || $calc == 1){
 		{
 			if(($min == 0 || ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) != 0)
 			{
-
 				$intra = str_replace($find, $replace, $coll->tva_intra);
 				if(empty($intra))
 				{

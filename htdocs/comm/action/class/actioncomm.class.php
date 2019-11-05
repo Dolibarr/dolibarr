@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -45,43 +45,67 @@ class ActionComm extends CommonObject
      */
     public $table_element = 'actioncomm';
 
+    /**
+     * @var string Name of id column
+     */
     public $table_rowid = 'id';
 
     /**
-     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     * @var string Name of icon for actioncomm object. Filename of icon is object_action.png
      */
     public $picto = 'action';
 
     /**
-     * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-     * @var int
+     * @var int 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
      */
     public $ismultientitymanaged = 1;
 
     /**
-     * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user, 2=Same than 1 but accept record if fksoc is empty
-     * @var integer
+     * @var integer 0=Default
+     *              1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
+     *              2=Same than 1 but accept record if fksoc is empty
      */
     public $restrictiononfksoc = 2;
 
     /**
-     * Id of the event
-     * @var int
+     * @var int Id of the event
      */
     public $id;
 
     /**
-     * Id of the event. Use $id as possible
-     * @var int
+     * @var int Id of the event. Use $id as possible
      */
     public $ref;
 
-    public $type_id;		// Id into parent table llx_c_actioncomm (used only if option to use type is set)
-    public $type_code;		// Code into parent table llx_c_actioncomm (used only if option to use type is set). With default setup, should be AC_OTH_AUTO or AC_OTH.
+    /**
+     * @var int Id into parent table llx_c_actioncomm (used only if option to use type is set)
+     */
+    public $type_id;
+
+    /**
+     * @var string Code into parent table llx_c_actioncomm (used only if option to use type is set). With default setup, should be AC_OTH_AUTO or AC_OTH.
+     */
+    public $type_code;
+
+    /**
+     * @var string Type label
+     */
     public $type_label;
-    public $type;			// Label into parent table llx_c_actioncomm (used only if option to use type is set)
-    public $type_color;	// Color into parent table llx_c_actioncomm (used only if option to use type is set)
-    public $code;			// Free code to identify action. Ie: Agenda trigger add here AC_TRIGGERNAME ('AC_COMPANY_CREATE', 'AC_PROPAL_VALIDATE', ...)
+
+    /**
+     * @var string Label into parent table llx_c_actioncomm (used only if option to use type is set)
+     */
+    public $type;
+
+    /**
+     * @var string Color into parent table llx_c_actioncomm (used only if option to use type is set)
+     */
+    public $type_color;
+
+    /**
+     * @var string Free code to identify action. Ie: Agenda trigger add here AC_TRIGGERNAME ('AC_COMPANY_CREATE', 'AC_PROPAL_VALIDATE', ...)
+     */
+    public $code;
 
     /**
      * @var string Agenda event label
@@ -89,72 +113,56 @@ class ActionComm extends CommonObject
     public $label;
 
     /**
-     * Date creation record (datec)
-     *
-     * @var integer
+     * @var integer Date creation record (datec)
      */
     public $datec;
 
     /**
-     * Date end record (datef)
-     *
-     * @var integer
+     * @var integer Date end record (datef)
      */
     public $datef;
 
     /**
-     * Duration (duree)
-     *
-     * @var integer
+     * @var integer Duration (duree)
      */
     public $duree;
 
     /**
-     * Date modification record (tms)
-     *
-     * @var integer
+     * @var integer Date modification record (tms)
      */
     public $datem;
 
     /**
-     * Object user that create action
-     * @var User
+     * @var User Object user that create action
      * @deprecated
      * @see $authorid
      */
     public $author;
 
     /**
-     * Object user that modified action
-     * @var User
+     * @var User Object user that modified action
      * @deprecated
      * @see $usermodid
      */
     public $usermod;
 
     /**
-     * Id user that create action
-     * @var int
+     * @var int Id user that create action
      */
     public $authorid;
 
     /**
-     * Id user that modified action
-     * @var int
+     * @var int Id user that modified action
      */
     public $usermodid;
 
     /**
-     * Date action start (datep)
-     *
-     * @var integer
+     * @var integer Date action start (datep)
      */
     public $datep;
 
     /**
-     * Date action end (datep2)
-     *
-     * @var integer
+     * @var integer Date action end (datep2)
      */
     public $datep2;
 
@@ -163,90 +171,178 @@ class ActionComm extends CommonObject
      * @deprecated
      */
     public $durationp = -1;
-    public $fulldayevent = 0;    // 1=Event on full day
 
     /**
-     * Milestone
-     * @var int
+     * @var int 1=Event on full day
+     */
+    public $fulldayevent = 0;
+
+    /**
+     * @var int Milestone
      * @deprecated Milestone is already event with end date = start date
      */
     public $punctual = 1;
-    public $percentage;    // Percentage
-    public $location;      // Location
 
-	public $transparency;	// Transparency (ical standard). Used to say if people assigned to event are busy or not by event. 0=available, 1=busy, 2=busy (refused events)
-    public $priority;      // Small int (0 By default)
+    /**
+     * @var integer Percentage
+     */
+    public $percentage;
 
-	public $userassigned = array();	// Array of user ids
-    public $userownerid;	// Id of user owner = fk_user_action into table
-    public $userdoneid;	// Id of user done (deprecated)
+    /**
+     * @var string Location
+     */
+    public $location;
 
-    public $socpeopleassigned = array(); // Array of contact ids
+    /**
+     * @var int Transparency (ical standard). Used to say if people assigned to event are busy or not by event. 0=available, 1=busy, 2=busy (refused events)
+     */
+    public $transparency;
 
-    public $otherassigned = array(); // Array of other contact emails (not user, not contact)
+    /**
+     * @var int (0 By default)
+     */
+    public $priority;
+
+    /**
+     * @var int[] Array of user ids
+     */
+    public $userassigned = array();
+
+    /**
+     * @var int Id of user owner = fk_user_action into table
+     */
+    public $userownerid;
+
+    /**
+     * @var int Id of user done (deprecated)
+     * @deprecated
+     */
+    public $userdoneid;
+
+    /**
+     * @var int[] Array of contact ids
+     */
+    public $socpeopleassigned = array();
+
+    /**
+     * @var int[] Array of other contact emails (not user, not contact)
+     */
+    public $otherassigned = array();
 
 
-	/**
-     * Object user of owner
-     * @var User
+    /**
+     * @var User Object user of owner
      * @deprecated
      * @see userownerid
      */
     public $usertodo;
 
     /**
-     * Object user that did action
-     * @var User
+     * @var User Object user that did action
      * @deprecated
      * @see userdoneid
      */
     public $userdone;
 
+    /**
+     * @var int thirdparty id linked to action
+     */
     public $socid;
+
+    /**
+     * @var int socpeople id linked to action
+     */
     public $contactid;
 
     /**
-     * Company linked to action (optional)
-     * @var Societe|null
+     * @var Societe|null Company linked to action (optional)
      * @deprecated
      * @see socid
      */
     public $societe;
 
     /**
-     * Contact linked to action (optional)
-     * @var Contact|null
+     * @var Contact|null Contact linked to action (optional)
      * @deprecated
      * @see contactid
      */
     public $contact;
 
     // Properties for links to other objects
+    /**
+     * @var int Id of linked object
+     */
     public $fk_element;    // Id of record
-    public $elementid;    // Id of record alternative for API
-    public $elementtype;   // Type of record. This if property ->element of object linked to.
 
-    // Ical
+    /**
+     * @var int Id of record alternative for API
+     */
+    public $elementid;
+
+    /**
+     * @var string Type of record. This if property ->element of object linked to.
+     */
+    public $elementtype;
+
+    /**
+     * @var string Ical name
+     */
     public $icalname;
+
+    /**
+     * @var string Ical color
+     */
     public $icalcolor;
 
+    /**
+     * @var array Actions
+     */
     public $actions=array();
 
-    // Fields for emails
+    /**
+     * @var string Email msgid
+     */
     public $email_msgid;
+
+    /**
+     * @var string Email from
+     */
     public $email_from;
+
+    /**
+     * @var string Email sender
+     */
     public $email_sender;
+
+    /**
+     * @var string Email to
+     */
     public $email_to;
+
+    /**
+     * @var string Email tocc
+     */
     public $email_tocc;
+    /**
+     * @var string Email tobcc
+     */
     public $email_tobcc;
+
+    /**
+     * @var string Email subject
+     */
     public $email_subject;
+
+    /**
+     * @var string Email errors to
+     */
     public $errors_to;
 
 
     /**
      *      Constructor
      *
-     *      @param		DoliDB		$db      Database handler
+     *      @param      DoliDB		$db      Database handler
      */
     public function __construct(DoliDB $db)
     {
@@ -484,9 +580,9 @@ class ActionComm extends CommonObject
             	return $this->id;
             }
             else
-           {
-	           	$this->db->rollback();
-	           	return -1;
+            {
+                $this->db->rollback();
+                return -1;
             }
         }
         else
@@ -657,7 +753,7 @@ class ActionComm extends CommonObject
 
                 $this->socid				= $obj->fk_soc;			// To have fetch_thirdparty method working
                 $this->contactid			= $obj->fk_contact;		// To have fetch_contact method working
-                $this->fk_project			= $obj->fk_project;		// To have fetch_project method working
+                $this->fk_project			= $obj->fk_project;		// To have fetch_projet method working
 
                 //$this->societe->id			= $obj->fk_soc;			// deprecated
                 //$this->contact->id			= $obj->fk_contact;		// deprecated
@@ -1043,7 +1139,7 @@ class ActionComm extends CommonObject
             return $resarray;
         }
         else
-       {
+        {
             return $db->lasterror();
         }
     }
@@ -1067,13 +1163,13 @@ class ActionComm extends CommonObject
     		$sql = "SELECT count(a.id) as nb";
     	}
     	$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-    	if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
+    	if (! $user->rights->societe->client->voir && ! $user->socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
     	$sql.= " WHERE 1 = 1";
     	if(empty($load_state_board)) $sql.= " AND a.percent >= 0 AND a.percent < 100";
     	$sql.= " AND a.entity IN (".getEntity('agenda').")";
-    	if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
-    	if ($user->societe_id) $sql.=" AND a.fk_soc = ".$user->societe_id;
+    	if (! $user->rights->societe->client->voir && ! $user->socid) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
+    	if ($user->socid) $sql.=" AND a.fk_soc = ".$user->socid;
     	if (! $user->rights->agenda->allactions->read) $sql.= " AND (a.fk_user_author = ".$user->id . " OR a.fk_user_action = ".$user->id . " OR a.fk_user_done = ".$user->id . ")";
 
     	$resql=$this->db->query($sql);
@@ -1344,7 +1440,6 @@ class ActionComm extends CommonObject
 			$linkstart = '';
 			$linkend = '';
 		}
-		//print 'rrr'.$this->libelle.'rrr'.$this->label.'rrr'.$withpicto;
 
         if ($withpicto == 2)
         {
@@ -1461,9 +1556,9 @@ class ActionComm extends CommonObject
             $sql.= " a.fk_contact, a.percent as percentage,";
             $sql.= " a.fk_element, a.elementtype,";
             $sql.= " a.priority, a.fulldayevent, a.location, a.punctual, a.transparency,";
-            $sql.= " u.firstname, u.lastname,";
+            $sql.= " u.firstname, u.lastname, u.email,";
             $sql.= " s.nom as socname,";
-            $sql.= " c.id as type_id, c.code as type_code, c.libelle";
+            $sql.= " c.id as type_id, c.code as type_code, c.libelle as type_label";
             $sql.= " FROM (".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."actioncomm as a)";
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";	// Link to get author of event for export
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
@@ -1543,7 +1638,19 @@ class ActionComm extends CommonObject
                     $event['uid']='dolibarragenda-'.$this->db->database_name.'-'.$obj->id."@".$_SERVER["SERVER_NAME"];
                     $event['type']=$type;
                     $datestart=$this->db->jdate($obj->datep)-(empty($conf->global->AGENDA_EXPORT_FIX_TZ)?0:($conf->global->AGENDA_EXPORT_FIX_TZ*3600));
-                    $dateend=$this->db->jdate($obj->datep2)-(empty($conf->global->AGENDA_EXPORT_FIX_TZ)?0:($conf->global->AGENDA_EXPORT_FIX_TZ*3600));
+
+                    // fix for -> Warning: A non-numeric value encountered
+                    if(is_numeric($this->db->jdate($obj->datep2)))
+                    {
+                        $dateend = $this->db->jdate($obj->datep2)
+                                 - (empty($conf->global->AGENDA_EXPORT_FIX_TZ) ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
+                    }
+                    else
+                    {
+                        // use start date as fall-back to avoid import erros on empty end date
+                        $dateend = $datestart;
+                    }
+
                     $duration=($datestart && $dateend)?($dateend - $datestart):0;
                     $event['summary']=$obj->label.($obj->socname?" (".$obj->socname.")":"");
                     $event['desc']=$obj->note;
@@ -1556,7 +1663,8 @@ class ActionComm extends CommonObject
                     $event['location']=$obj->location;
                     $event['transparency']=(($obj->transparency > 0)?'OPAQUE':'TRANSPARENT');		// OPAQUE (busy) or TRANSPARENT (not busy)
                     $event['punctual']=$obj->punctual;
-                    $event['category']=$obj->libelle;	// libelle type action
+                    $event['category']=$obj->type_label;
+                    $event['email']=$obj->email;
 					// Define $urlwithroot
 					$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 					$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;			// This is to use external domain name found into config file
@@ -1565,6 +1673,22 @@ class ActionComm extends CommonObject
                     $event['url']=$url;
                     $event['created']=$this->db->jdate($obj->datec)-(empty($conf->global->AGENDA_EXPORT_FIX_TZ)?0:($conf->global->AGENDA_EXPORT_FIX_TZ*3600));
                     $event['modified']=$this->db->jdate($obj->datem)-(empty($conf->global->AGENDA_EXPORT_FIX_TZ)?0:($conf->global->AGENDA_EXPORT_FIX_TZ*3600));
+
+                    // TODO: find a way to call "$this->fetch_userassigned();" without override "$this" properties
+                    $this->id = $obj->id;
+                    $this->fetch_userassigned();
+
+                    $assignedUserArray = array();
+
+                    foreach($this->userassigned as $key => $value)
+                    {
+                        $assignedUser = new User($this->db);
+                        $assignedUser->fetch($value['id']);
+
+                        $assignedUserArray[$key]=$assignedUser;
+                    }
+
+                    $event['assignedUsers']=$assignedUserArray;
 
                     if ($qualified && $datestart)
                     {
@@ -1637,7 +1761,7 @@ class ActionComm extends CommonObject
      *  Used to build previews or test instances.
      *  id must be 0 if object instance is a specimen.
      *
-     *  @return	void
+     *  @return	int >0 if ok
      */
     public function initAsSpecimen()
     {
@@ -1669,6 +1793,7 @@ class ActionComm extends CommonObject
 
         $this->userownerid=$user->id;
         $this->userassigned[$user->id]=array('id'=>$user->id, 'transparency'=> 1);
+        return 1;
     }
 
 	/**

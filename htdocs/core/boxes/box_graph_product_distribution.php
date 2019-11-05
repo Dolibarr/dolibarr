@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -72,7 +72,7 @@ class box_graph_product_distribution extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs;
 
 		$this->max=$max;
 
@@ -128,7 +128,7 @@ class box_graph_product_distribution extends ModeleBoxes
 		);
 
 
-		$socid=empty($user->societe_id)?0:$user->societe_id;
+		$socid=empty($user->socid)?0:$user->socid;
 		$userid=0;	// No filter on user creation
 
 		$WIDTH=($nbofgraph >= 2 || ! empty($conf->dol_optimize_smallscreen))?'160':'320';

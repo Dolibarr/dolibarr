@@ -14,7 +14,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 --
@@ -30,6 +30,7 @@ create table llx_adherent_type
   statut           smallint NOT NULL DEFAULT 0,
   libelle          varchar(50) NOT NULL,
   morphy           varchar(3) NOT NULL,
+  duration         varchar(6) NOT NULL DEFAULT NULL,
   subscription     varchar(3) NOT NULL DEFAULT 'yes',
   vote             varchar(3) NOT NULL DEFAULT 'yes',
   note             text,

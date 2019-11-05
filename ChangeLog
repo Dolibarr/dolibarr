@@ -20,8 +20,184 @@ Following changes may create regressions for some external modules, but were nec
 * The deprecated method get_OutstandingBill has been removed. You can use getOutstandingBills() instead.
 * The hook "moreFamily" must return payment into var "totalpayment" and no more "paiement" (english replace french).
 * Removed deprecated method actioncomm->add(), use create() instead
-* If you develop your own emailing target selector and used parent::add_to_target(...), you must now use parent::addToTargets(...)
+* If you have developed your own emailing target selector and used parent::add_to_target(...), you must now use parent::addToTargets(...)
+* Removed function dol_micro_time. Use native PHP microtime instead.
+* The trigger BON_PRELEVEMENT_CREATE has been renamed into DIRECT_DEBIT_ORDER_CREATE.
+* The constant INVOICE_SHOW_POS_IN_EXPORT has been renamed into INVOICE_SHOW_POS.
+* If your logo was visible on the menu bar, you must upload a new logo into 'Home-Setup-Company/Organization' to have it visible agin in menu. 
+* All properties 'libstatut', 'labelstatut', 'labelstatus' were renamed into 'labelStatus'. 
+* All properties 'labelstatusshort' and 'labelstatut_short' were renamed into 'labelStatusShort'. 
+* All properties 'type_libelle' were renamed into 'type_label'.
+* Renamed property of thirdparty "statut_commercial" into "status_prospect_label"
 
+***** ChangeLog for 10.0.3 compared to 10.0.2 *****
+IMPORTANT : This version fixes a serious bug in saving the units of weight, size, surface and volume on product card.
+The unit were not saved correctly in database making calculation on shipments wrong. 
+Update to this version must be done if you use them and have installed version 10.0.0, 10.0.1 or 10.0.2 and set some products after installing or upgrading to one of this version.
+Once update is done you must then edit (manually) the product that has bad unit to set the correct unit to have features restored.
+
+FIX: #11702 
+FIX: #11861 No consistent code to manage measuring units
+FIX: #11942
+FIX: #12026
+FIX: #12040
+FIX: #12041
+FIX: #12054
+FIX: #12083
+FIX: #12088
+FIX: CVE-2019-17578 CVE-2019-17577 CVE-2019-17576
+FIX: Clean the + of categories on the product view only in POS module
+FIX: access to public interface when origin email has an alias.
+FIX: Alias name is not into the email recipient label.
+FIX: allow standalone credit note even if no invoice
+FIX: an admin can not access his own permissions after enabling advanced permissions
+FIX: Attachement of linked files on ticket when sending a message
+FIX: avoid non numeric warning
+FIX: Bad currency var used in stripe for connect
+FIX: Bad list of ticket on public interface for ticket emailcollector
+FIX: Can't modify vendor invoice if transfered into accountancy
+FIX: change product type must be allowed if we activate hidden conf
+FIX: colspan on VAT quadri report
+FIX: CSS
+FIX: Debug feature orderstoinvoice for suppliers
+FIX: do not output return code on screen after a select of bank account
+FIX: Edit of ticket module parameters erased others
+FIX: empty cache when we want to load specific warehouses in select
+FIX: escape email alias
+FIX:  expedition.class.php
+FIX: Export of leave request show the number of open days
+FIX: Filtering the HTTP Header "Accept-Language".
+FIX: Filter on project on ticket list
+FIX: Filter "Open all" of ticket was ko.
+FIX: Force downlaod of file with .noexe as octet-stream mime type
+FIX: form not closed.
+FIX: hidden conf to prevent from changing product_type
+FIX: If product account not suggested during bind, it is not preselected
+FIX: If we share invoice, we need to see discount created from a deposit on each entity
+FIX: Import of product using units
+FIX: label of thirdparty is wrong on open project list
+FIX: Look and feel v10
+FIX: missing begin()
+FIX: missing "$this->id" in "fetch" function
+FIX: navigation on ticket tab of projects
+FIX: new invoice with generic thirdparty in takepos
+FIX: Pb in units of shipments
+FIX: regression with option to hide picto on top menu
+FIX: selection of project i am contact of.
+FIX: Send email from expense report card.
+FIX: shipping card: missing user error messages when classifying closed or billed
+FIX: SQL injection on qty
+FIX: stripe payment when there is a quote into address
+FIX: Substitution of __PROJECT_XXX__ not done
+FIX: TakePOS no invoice validation control and good payment translate
+FIX: the access of the bank account of one user
+FIX: top menu right padding
+FIX: Update of leave request when CSRF with token is on
+FIX: Var not enough sanitized
+FIX: wrong test
+FIX: XSS
+FIX: Payment from POS ware not recorded.
+FIX: Can validate invoice with amount including tax of zero for the case of having a final invoice with
+     VAT that includes a deposit without vat. 
+
+***** ChangeLog for 10.0.2 compared to 10.0.1 *****
+FIX: #10460 compatibility with MariaDB 10.4
+FIX: #11401 Adherent unknown language key
+FIX: #11422 Can't edit his own events with standard rights
+FIX: #11427 require product class (fixes POST /supplierinvoices REST API endpoint)
+FIX: #11570
+FIX: #11591 FIX: #11592
+FIX: #11671 CVE-2019-15062
+FIX: #11672
+FIX: #11685
+FIX: #11702
+FIX: #11711
+FIX: #11720
+FIX: #11746 Unable to modify amount of insurance of a loan
+FIX: #11752
+FIX: #11789 FIX: #11790
+FIX: #11804 list of tickets from a customer card display ALL tickets
+FIX: #11834
+FIX: add char $ and ; in sanitizing of filenames
+FIX: add comment before protected functions
+FIX: add log and type of content in dolWebsiteOutput and
+FIX: add repair.php option 'restore' to restore user picture after v10
+FIX: amount opened on thirdparty card dont care of credit note not converted
+FIX: API of documents work with value 'thirdparty'
+FIX: author in message / ticket API
+FIX: avoid SQL error if fk_project is empty during update
+FIX: avoid Warning: A non-numeric value encountered
+FIX: bad consistency in list of invoice for direct debit order
+FIX: bad error management in zip compress and web site export
+FIX: bad substitution for extrafields type checkbox
+FIX: better help message with multicompany
+FIX: calculation of $products_dispatched
+FIX: Can't add a new chart of account
+FIX: Can't delete a draft leave even if it should
+FIX: Can't save setup of mailman module
+FIX: column jabberid missing
+FIX: Confirmation of deletion
+FIX: Consistency in direct debit order lists
+FIX: Content send before header warning
+FIX: credit note can be split
+FIX: credit note used on list
+FIX: CSS was saved on wrong website
+FIX: delivery extrafields
+FIX: Disabling a website does not put it offline
+FIX: display only stripe sources for customer
+FIX: display payment intent in stripe's charge list
+FIX: document list for products in API
+FIX: dol_thirdparty_id for stripe PI
+FIX: Do not show tooltip if tooltip is empty
+FIX: duplicate css tag, decrease padding-bottom for boxes in eldy theme
+FIX: duration when creating service
+FIX: EDB-ID:47370
+FIX: Enable web site
+FIX: error management when adding a property with type real
+FIX: Fatal situation if payment removed on expense report. Action
+FIX: filepath of generated documents doesn't handle products with special characters
+FIX: for MAIN_MAXTABS_IN_CARD = $i card
+FIX: gzip and bzip2 must use option -f
+FIX: it was possible to create cashfence without entering data
+FIX: javascript error when using dol_use_jmobile=1
+FIX: logout redirect to takepos.php
+FIX: Look and feel v10
+FIX: Make protected all pfd models functions
+FIX: management of extrafields in modulebuilder
+FIX: missing div for buttons in tax, loan, various payment modules
+FIX: missing include (dol_convert_file not found)
+FIX: Missing some replacements in website module
+FIX: missing test on permission on button to delete ledger record
+FIX: Missing the filter fields in export of expense report and leaves
+FIX: Missing ticket icon on md theme
+FIX: Missing transaction
+FIX: Mode smartphone was not triggered when there is too loo menu
+FIX: Must escape shell
+FIX: Must exclude logs and some dirs for compressed backup
+FIX: name and position of hook FIX: #11710
+FIX: Not showing MAIN_INVERT_SENDER_RECIPIENT when edit field
+FIX: Nowrap missing on amount in boxes
+FIX: Option to use ZipArchive instead of PclZip bugged with large files.
+FIX: order or proposals billed if both workflow conf activated
+FIX: permission check on API intervention
+FIX: phpcs
+FIX: placement function
+FIX: qty in invoice list on product's stats
+FIX: remove disabled product type from product list
+FIX: Return code of pdf_einstein.modules.php and proformat
+FIX: round for application fee in stripe
+FIX: Sens of the balance (Debit - Credit in accountancy not contrary)
+FIX: Several pb in export of documents
+FIX: SQL syntax error and CSRF check on VAT reports
+FIX: takepos layout clear or focus search
+FIX: too many record in sql request. When a criteria is a filter, we must
+FIX: Translation of month
+FIX: USEDOLIBARREDITOR not always set
+FIX: VAT number for Monaco (it uses FR)
+FIX: vulnerability in uploading file found by 美创科技安全实验室
+FIX: wrong display (and hidden input) for already dispatched quantity
+FIX: wrong parameters (same error in branch 9, 10, develop)
+FIX: Wrong variable. Must be PROJECT_HIDE_UNSELECTABLES
 
 ***** ChangeLog for 10.0.1 compared to 10.0.0 *****
 FIX: #10930

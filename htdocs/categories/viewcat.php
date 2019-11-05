@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -36,7 +36,7 @@ $langs->load("categories");
 
 $id         = GETPOST('id', 'int');
 $label      = GETPOST('label', 'alpha');
-$type       = GETPOST('type', 'az09');
+$type       = GETPOST('type', 'aZ09');
 $removeelem = GETPOST('removeelem', 'int');
 $elemid     = GETPOST('elemid', 'int');
 
@@ -84,7 +84,7 @@ $type=$object->type;
 if (is_numeric($type)) $type=Categorie::$MAP_ID_TO_CODE[$type];	// For backward compatibility
 
 $extrafields = new ExtraFields($db);
-$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categorycard','globalcard'));
@@ -125,7 +125,6 @@ if ($id > 0 && $removeelem > 0)
 		$elementtype = 'member';
 	}
 	elseif ($type == Categorie::TYPE_CONTACT && $user->rights->societe->creer) {
-
 		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 		$tmpobject = new Contact($db);
 		$result = $tmpobject->fetch($removeelem);
@@ -227,7 +226,7 @@ foreach ($ways as $way)
 }
 $morehtmlref.='</div>';
 
-dol_banner_tab($object, 'label', $linkback, ($user->societe_id?0:1), 'label', 'label', $morehtmlref, '', 0, '', '', 1);
+dol_banner_tab($object, 'label', $linkback, ($user->socid?0:1), 'label', 'label', $morehtmlref, '', 0, '', '', 1);
 
 
 /*
@@ -644,7 +643,6 @@ if ($type == Categorie::TYPE_CONTACT)
 	}
 	else
 	{
-
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';

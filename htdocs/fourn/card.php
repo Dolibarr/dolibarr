@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -52,14 +52,14 @@ $cancelbutton = GETPOST('cancel', 'alpha');
 
 // Security check
 $id = (GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('id', 'int'));
-if ($user->societe_id) $id=$user->societe_id;
+if ($user->socid) $id=$user->socid;
 $result = restrictedArea($user, 'societe&fournisseur', $id, '&societe', '', 'rowid');
 
 $object = new Fournisseur($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('suppliercard','globalcard'));
@@ -85,10 +85,7 @@ if (empty($reshook))
 		$result=$object->fetch($id);
    		$object->code_compta_fournisseur=$_POST["supplieraccountancycode"];
 	    $result=$object->update($object->id, $user, 1, 0, 1);
-	    if ($result < 0)
-	    {
-	        $mesg=join(',', $object->errors);
-	    }
+	    if ($result < 0)	setEventMessages($object->error, $object->errors, 'errors');
 	}
 	// terms of the settlement
 	if ($action == 'setconditions' && $user->rights->societe->creer)
@@ -120,8 +117,7 @@ if (empty($reshook))
         $object->oldcopy = dol_clone($object);
 
         // Fill array 'array_options' with data from update form
-        $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
+        $ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
 
         if ($ret < 0) $error++;
 
@@ -166,7 +162,7 @@ if ($object->id > 0)
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+	dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom');
 
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
@@ -232,7 +228,7 @@ if ($object->id > 0)
 	print '<table width="100%" class="nobordernopadding"><tr><td>';
 	print $langs->trans('PaymentConditions');
 	print '<td>';
-	if (($action != 'editconditions') && $user->rights->societe->creer) print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
+	if (($action != 'editconditions') && $user->rights->societe->creer) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td>';
 	if ($action == 'editconditions')
@@ -251,7 +247,7 @@ if ($object->id > 0)
 	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 	print $langs->trans('PaymentMode');
 	print '<td>';
-	if (($action != 'editmode') && $user->rights->societe->creer) print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
+	if (($action != 'editmode') && $user->rights->societe->creer) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td>';
 	if ($action == 'editmode')
@@ -270,9 +266,9 @@ if ($object->id > 0)
 	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 	print $langs->trans("CustomerRelativeDiscountShort");
 	print '<td><td class="right">';
-	if ($user->rights->societe->creer && !$user->societe_id > 0)
+	if ($user->rights->societe->creer && !$user->socid > 0)
 	{
-		print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+		print '<a class="editfielda" href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.img_edit($langs->trans("Modify")).'</a>';
 	}
 	print '</td></tr></table>';
 	print '</td><td>'.($object->remise_supplier_percent?'<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.$object->remise_supplier_percent.'%</a>':'').'</td>';
@@ -284,9 +280,9 @@ if ($object->id > 0)
 	print '<tr><td class="nowrap">';
 	print $langs->trans("CustomerAbsoluteDiscountShort");
 	print '<td><td class="right">';
-	if ($user->rights->societe->creer && !$user->societe_id > 0)
+	if ($user->rights->societe->creer && !$user->socid > 0)
 	{
-		print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.img_edit($langs->trans("Modify")).'</a>';
+		print '<a class="editfielda" href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.img_edit($langs->trans("Modify")).'</a>';
 	}
 	print '</td></tr></table>';
 	print '</td>';
@@ -605,8 +601,16 @@ if ($object->id > 0)
 		$sql2.= ' WHERE c.fk_soc = s.rowid';
 		$sql2.= " AND c.entity IN (".getEntity('commande_fournisseur').")";
 		$sql2.= ' AND s.rowid = '.$object->id;
-		// Show orders with status validated, shipping started and delivered (well any order we can bill)
-		$sql2.= " AND c.fk_statut IN (5)";
+		// Show orders we can bill
+		if (empty($conf->global->SUPPLIER_ORDER_TO_INVOICE_STATUS))
+		{
+			$sql2.= " AND c.fk_statut IN (".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY.")";	//  Must match filter in htdocs/fourn/orderstoinvoice.php
+		}
+		else
+		{
+			// CommandeFournisseur::STATUS_ORDERSENT.", ".CommandeFournisseur::STATUS_RECEIVED_PARTIALLY.", ".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY
+			$sql2.= " AND c.fk_statut IN (".$db->escape($conf->global->SUPPLIER_ORDER_TO_INVOICE_STATUS).")";
+		}
 		$sql2.= " AND c.billed = 0";
 		// Find order that are not already invoiced
 		// just need to check received status because we have the billed status now
@@ -702,7 +706,7 @@ if ($object->id > 0)
 	if ($user->rights->fournisseur->facture->lire)
 	{
 		// TODO move to DAO class
-		$sql = 'SELECT f.rowid,f.libelle,f.ref,f.ref_supplier,f.fk_statut,f.datef as df, f.total_ht, f.total_tva, f.total_ttc as amount,f.paye,';
+		$sql = 'SELECT f.rowid, f.libelle as label, f.ref, f.ref_supplier, f.fk_statut, f.datef as df, f.total_ht, f.total_tva, f.total_ttc as amount,f.paye,';
 		$sql.= ' SUM(pf.amount) as am';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON f.rowid=pf.fk_facturefourn';
@@ -737,13 +741,14 @@ if ($object->id > 0)
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->ref=($obj->ref?$obj->ref:$obj->rowid);
 				$facturestatic->ref_supplier = $obj->ref_supplier;
-				$facturestatic->libelle = $obj->libelle;
+				$facturestatic->libelle = $obj->label;	// deprecated
+				$facturestatic->label = $obj->label;
 				$facturestatic->total_ht = $obj->total_ht;
                 $facturestatic->total_tva = $obj->total_tva;
                 $facturestatic->total_ttc = $obj->total_ttc;
 				print $facturestatic->getNomUrl(1);
 				print $obj->ref_supplier?' - '.$obj->ref_supplier:'';
-				print ($obj->libelle?' - ':'').dol_trunc($obj->libelle, 14);
+				print ($obj->label?' - ':'').dol_trunc($obj->label, 14);
 				print '</td>';
 				print '<td class="center nowrap">'.dol_print_date($db->jdate($obj->df), 'day').'</td>';
 				print '<td class="right nowrap">'.price($obj->amount).'</td>';
@@ -786,40 +791,31 @@ if ($object->id > 0)
 		if ($conf->supplier_proposal->enabled && $user->rights->supplier_proposal->creer)
 		{
 			$langs->load("supplier_proposal");
-	      if ($object->status == 1)
-	      {
-	        print '<a class="butAction" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddSupplierProposal").'</a>';
-	      }
-	      else
-	      {
-	        print '<a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddSupplierProposal").'</a>';
-	      }
+	        if ($object->status == 1) {
+	            print '<a class="butAction" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddSupplierProposal").'</a>';
+	        } else {
+	            print '<a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddSupplierProposal").'</a>';
+	        }
 		}
 
 	    if ($user->rights->fournisseur->commande->creer)
 		{
 			$langs->load("orders");
-	      if ($object->status == 1)
-	      {
-	        print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddOrder").'</a>';
-	      }
-	      else
-	      {
-	        print '<a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddOrder").'</a>';
-	      }
+	        if ($object->status == 1) {
+	            print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddOrder").'</a>';
+	        } else {
+	            print '<a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddOrder").'</a>';
+	        }
 		}
 
 		if ($user->rights->fournisseur->facture->creer)
 		{
 			$langs->load("bills");
-	      if ($object->status == 1)
-	      {
-	        print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';
-	      }
-	      else
-	      {
-	        print '<a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddBill").'</a>';
-	      }
+	        if ($object->status == 1) {
+	            print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';
+	        } else {
+	            print '<a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyIsClosed")).'" href="#">'.$langs->trans("AddBill").'</a>';
+	        }
 		}
 
 		if ($user->rights->fournisseur->facture->creer)
@@ -828,6 +824,7 @@ if ($object->id > 0)
 			{
 				if ($object->status == 1)
 				{
+					// Company is open
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/orderstoinvoice.php?socid='.$object->id.'">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
 				}
 				else
@@ -835,7 +832,7 @@ if ($object->id > 0)
 					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
 				}
 			}
-			else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
+			else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice").' ('.$langs->trans("WithReceptionFinished").')').'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
 		}
 
     	// Add action

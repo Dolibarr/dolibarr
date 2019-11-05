@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -31,9 +31,9 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/fiscalyear.class.php';
 $langs->loadLangs(array("admin","compta"));
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 	accessforbidden();
-if (empty($user->rights->accounting->fiscalyear))
+if (empty($user->rights->accounting->fiscalyear->write))
 	accessforbidden();
 
 $error = 0;
@@ -300,7 +300,7 @@ if ($action == 'create')
 
 			dol_fiche_end();
 
-			if (! empty($user->rights->accounting->fiscalyear))
+			if (! empty($user->rights->accounting->fiscalyear->write))
 			{
     			/*
     			 * Barre d'actions

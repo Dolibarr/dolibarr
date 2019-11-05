@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -65,14 +65,14 @@ class box_graph_propales_permonth extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $conf, $user, $langs, $db;
+		global $conf, $user, $langs;
 
 		$this->max=$max;
 
 		$refreshaction='refresh_'.$this->boxcode;
 
 		//include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-		//$propalstatic=new Propal($db);
+		//$propalstatic=new Propal($this->db);
 
 		$startmonth = $conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START) : 1;
 		if (empty($conf->global->GRAPH_USE_FISCAL_YEAR)) $startmonth = 1;
@@ -94,7 +94,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 		$dir=''; 	// We don't need a path because image file will not be saved into disk
 		$prefix='';
 		$socid=0;
-		if ($user->societe_id) $socid=$user->societe_id;
+		if ($user->socid) $socid=$user->socid;
 		if (! $user->rights->societe->client->voir || $socid) $prefix.='private-'.$user->id.'-';	// If user has no permission to see all, output dir is specific to user
 
 		if ($user->rights->propale->lire)

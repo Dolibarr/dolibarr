@@ -24,7 +24,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -125,22 +125,31 @@ class Adherent extends CommonObject
 	public $email;
 
     /**
+     * @var array array of socialnetworks
+     */
+    public $socialnetworks;
+
+    /**
      * @var string skype account
+	 * @deprecated
      */
     public $skype;
 
     /**
      * @var string twitter account
+	 * @deprecated
      */
     public $twitter;
 
     /**
      * @var string facebook account
+	 * @deprecated
      */
 	public $facebook;
 
     /**
      * @var string linkedin account
+	 * @deprecated
      */
     public $linkedin;
 
@@ -174,7 +183,7 @@ class Adherent extends CommonObject
 
     // -1:brouillon, 0:resilie, >=1:valide,paye
     // def in common object
-    //public $statut;
+    //public $status;
 
     public $photo;
 
@@ -566,10 +575,7 @@ class Adherent extends CommonObject
 		$sql.= ", country = ".($this->country_id>0?$this->db->escape($this->country_id):"null");
 		$sql.= ", state_id = ".($this->state_id>0?$this->db->escape($this->state_id):"null");
 		$sql.= ", email = '".$this->db->escape($this->email)."'";
-		$sql.= ", skype = '".$this->db->escape($this->skype)."'";
-		$sql.= ", twitter = '".$this->db->escape($this->twitter)."'";
-		$sql.= ", facebook = '".$this->db->escape($this->facebook)."'";
-		$sql.= ", linkedin = '".$this->db->escape($this->linkedin)."'";
+		$sql.= ", socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
 		$sql.= ", phone = ".($this->phone?"'".$this->db->escape($this->phone)."'":"null");
 		$sql.= ", phone_perso = ".($this->phone_perso?"'".$this->db->escape($this->phone_perso)."'":"null");
 		$sql.= ", phone_mobile = ".($this->phone_mobile?"'".$this->db->escape($this->phone_mobile)."'":"null");
@@ -581,6 +587,7 @@ class Adherent extends CommonObject
 		$sql.= ", fk_adherent_type = ".$this->db->escape($this->typeid);
 		$sql.= ", morphy = '".$this->db->escape($this->morphy)."'";
 		$sql.= ", birth = ".($this->birth?"'".$this->db->idate($this->birth)."'":"null");
+		if ($this->socid)   $sql.= ", fk_soc = '".$this->db->escape($this->socid)."'";			// Must be modified only when creating from a third-party
 		if ($this->datefin)   $sql.= ", datefin = '".$this->db->idate($this->datefin)."'";		// Must be modified only when deleting a subscription
 		if ($this->datevalid) $sql.= ", datevalid = '".$this->db->idate($this->datevalid)."'";	// Must be modified only when validating a member
 		$sql.= ", fk_user_mod = ".($user->id>0?$user->id:'null');	// Can be null because member can be create by a guest
@@ -693,10 +700,7 @@ class Adherent extends CommonObject
 						$luser->state_id=$this->state_id;
 
 						$luser->email=$this->email;
-						$luser->skype=$this->skype;
-						$luser->twitter=$this->twitter;
-						$luser->facebook=$this->facebook;
-						$luser->linkedin=$this->linkedin;
+						$luser->socialnetworks=$this->socialnetworks;
 						$luser->office_phone=$this->phone;
 						$luser->user_mobile=$this->phone_mobile;
 
@@ -735,10 +739,7 @@ class Adherent extends CommonObject
 						$lthirdparty->zip=$this->zip;
 						$lthirdparty->town=$this->town;
 						$lthirdparty->email=$this->email;
-						$lthirdparty->skype=$this->skype;
-						$lthirdparty->twitter=$this->twitter;
-						$lthirdparty->facebook=$this->facebook;
-						$lthirdparty->linkedin=$this->linkedin;
+						$lthirdparty->socialnetworks=$this->socialnetworks;
 						$lthirdparty->phone=$this->phone;
 						$lthirdparty->state_id=$this->state_id;
 						$lthirdparty->country_id=$this->country_id;
@@ -1227,7 +1228,7 @@ class Adherent extends CommonObject
 
 		$sql = "SELECT d.rowid, d.ref_ext, d.civility as civility_code, d.gender, d.firstname, d.lastname, d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note_private,";
 		$sql.= " d.note_public,";
-		$sql.= " d.email, d.skype, d.twitter, d.facebook, d.linkedin, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
+		$sql.= " d.email, d.socialnetworks, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
 		$sql.= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
 		$sql.= " d.datec as datec,";
 		$sql.= " d.tms as datem,";
@@ -1281,7 +1282,7 @@ class Adherent extends CommonObject
 				$this->societe			= $obj->company;
 				$this->company			= $obj->company;
 				$this->socid			= $obj->fk_soc;
-				$this->fk_soc			= $obj->fk_soc;     // For backward comaptibility
+				$this->fk_soc			= $obj->fk_soc;     // For backward compatibility
 				$this->address			= $obj->address;
 				$this->zip				= $obj->zip;
 				$this->town				= $obj->town;
@@ -1306,10 +1307,7 @@ class Adherent extends CommonObject
 				$this->phone_mobile		= $obj->phone_mobile;
 				$this->email			= $obj->email;
 
-				$this->skype			= $obj->skype;
-				$this->twitter			= $obj->twitter;
-				$this->facebook			= $obj->facebook;
-				$this->linkedin			= $obj->linkedin;
+				$this->socialnetworks = (array) json_decode($obj->socialnetworks, true);
 
 				$this->photo			= $obj->photo;
 				$this->statut			= $obj->statut;
@@ -2071,10 +2069,8 @@ class Adherent extends CommonObject
 
 		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpictoimg) $withpictoimg=0;
 
-		$notooltip=0;
-
 		$result=''; $label='';
-		$link=''; $linkstart=''; $linkend='';
+		$linkstart=''; $linkend='';
 
 		if (! empty($this->photo))
 		{
@@ -2107,7 +2103,7 @@ class Adherent extends CommonObject
 			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 		}
 
-		$link = '<a href="'.$url.'"';
+		$linkstart.= '<a href="'.$url.'"';
 		$linkclose="";
 		if (empty($notooltip))
 		{
@@ -2121,10 +2117,10 @@ class Adherent extends CommonObject
 			$linkclose.= ' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
 		}
 
-		$link.=$linkclose.'>';
+		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
-		$result.=$link;
+		$result.=$linkstart;
 		if ($withpictoimg) $result.='<div class="inline-block nopadding valignmiddle">';
 		if ($withpictoimg)
 		{
@@ -2133,7 +2129,11 @@ class Adherent extends CommonObject
 			// Only picto
 			if ($withpictoimg > 0) $picto='<span class="nopadding'.($morecss?' userimg'.$morecss:'').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).'</span>';
 			// Picto must be a photo
-			else $picto='<span class="nopadding'.($morecss?' userimg'.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>'.Form::showphoto('memberphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg==-3?'small':''), 'mini', 0, 1).'</span>';
+			else {
+				$picto='<span class="nopadding'.($morecss?' userimg'.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>';
+				$picto.=Form::showphoto('memberphoto', $this, 0, 0, 0, 'userphoto'.($withpictoimg==-3?'small':''), 'mini', 0, 1);
+				$picto.='</span>';
+			}
 			$result.=$picto;
 		}
 		if ($withpictoimg > -2 && $withpictoimg != 2)
@@ -2165,87 +2165,61 @@ class Adherent extends CommonObject
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
-	 *  @param	int			$statut      			Id statut
+	 *  @param	int			$status      			Id status
 	 *	@param	int			$need_subscription		1 if member type need subscription, 0 otherwise
 	 *	@param	int     	$date_end_subscription	Date fin adhesion
 	 *  @param  int		    $mode                   0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string      						Label
 	 */
-	public function LibStatut($statut, $need_subscription, $date_end_subscription, $mode = 0)
+	public function LibStatut($status, $need_subscription, $date_end_subscription, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
 		$langs->load("members");
-		if ($mode == 0)
+
+        $statusType = '';
+        $labelStatus = '';
+        $labelStatusShort = '';
+
+		if ($status == -1)
 		{
-			if ($statut == -1) return $langs->trans("MemberStatusDraft");
-			elseif ($statut >= 1) {
-				if (! $date_end_subscription)            return $langs->trans("MemberStatusActive");
-				elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLate");
-				else                                     return $langs->trans("MemberStatusPaid");
-			}
-			elseif ($statut == 0)  return $langs->trans("MemberStatusResiliated");
+			$statusType = 'status0';
+			$labelStatus = $langs->trans("MemberStatusDraft");
+			$labelStatusShort = $langs->trans("MemberStatusDraftShort");
 		}
-		elseif ($mode == 1)
+		elseif ($status >= 1) {
+			if ($need_subscription == 0)
+			{
+				$statusType = 'status4';
+				$labelStatus = $langs->trans("MemberStatusNoSubscription");
+				$labelStatusShort = $langs->trans("MemberStatusNoSubscriptionShort");
+			}
+			elseif (! $date_end_subscription)
+			{
+				$statusType = 'status1';
+				$labelStatus = $langs->trans("MemberStatusActive");
+				$labelStatusShort = $langs->trans("MemberStatusActiveShort");
+			}
+			elseif ($date_end_subscription < time())
+			{
+				$statusType = 'status3';
+				$labelStatus = $langs->trans("MemberStatusActiveLate");
+				$labelStatusShort = $langs->trans("MemberStatusActiveLateShort");
+			}
+			else {
+				$statusType = 'status4';
+				$labelStatus = $langs->trans("MemberStatusPaid");
+				$labelStatusShort = $langs->trans("MemberStatusPaidShort");
+			}
+		}
+		elseif ($status == 0)
 		{
-			if ($statut == -1) return $langs->trans("MemberStatusDraftShort");
-			elseif ($statut >= 1) {
-				if (! $date_end_subscription)            return $langs->trans("MemberStatusActiveShort");
-				elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLateShort");
-				else                                     return $langs->trans("MemberStatusPaidShort");
-			}
-			elseif ($statut == 0)  return $langs->trans("MemberStatusResiliatedShort");
+			$statusType = 'status6';
+			$labelStatus = $langs->trans("MemberStatusResiliated");
+			$labelStatusShort = $langs->trans("MemberStatusResiliatedShort");
 		}
-		elseif ($mode == 2)
-		{
-			if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'), 'statut0').' '.$langs->trans("MemberStatusDraftShort");
-			elseif ($statut >= 1) {
-				if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'), 'statut1').' '.$langs->trans("MemberStatusActiveShort");
-				elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'), 'statut3').' '.$langs->trans("MemberStatusActiveLateShort");
-				else                                     return img_picto($langs->trans('MemberStatusPaid'), 'statut4').' '.$langs->trans("MemberStatusPaidShort");
-			}
-			elseif ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'), 'statut5').' '.$langs->trans("MemberStatusResiliatedShort");
-		}
-		elseif ($mode == 3)
-		{
-			if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'), 'statut0');
-			elseif ($statut >= 1) {
-				if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'), 'statut1');
-				elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'), 'statut3');
-				else                                     return img_picto($langs->trans('MemberStatusPaid'), 'statut4');
-			}
-			elseif ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'), 'statut5');
-		}
-		elseif ($mode == 4)
-		{
-			if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'), 'statut0').' '.$langs->trans("MemberStatusDraft");
-			elseif ($statut >= 1) {
-				if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'), 'statut1').' '.$langs->trans("MemberStatusActive");
-				elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'), 'statut3').' '.$langs->trans("MemberStatusActiveLate");
-				else                                     return img_picto($langs->trans('MemberStatusPaid'), 'statut4').' '.$langs->trans("MemberStatusPaid");
-			}
-			if ($statut == 0)  return img_picto($langs->trans('MemberStatusResiliated'), 'statut5').' '.$langs->trans("MemberStatusResiliated");
-		}
-		elseif ($mode == 5)
-		{
-		    if ($statut == -1) return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusDraftShort").'</span> '.img_picto($langs->trans('MemberStatusDraft'), 'statut0');
-			elseif ($statut >= 1) {
-				if (! $date_end_subscription)            return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveShort").' </span>'.img_picto($langs->trans('MemberStatusActive'), 'statut1');
-				elseif ($date_end_subscription < time()) return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusActiveLateShort").' </span>'.img_picto($langs->trans('MemberStatusActiveLate'), 'statut3');
-				else                                     return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusPaidShort").' </span>'.img_picto($langs->trans('MemberStatusPaid'), 'statut4');
-			}
-			if ($statut == 0)  return '<span class="hideonsmartphone">'.$langs->trans("MemberStatusResiliated").' </span>'.img_picto($langs->trans('MemberStatusResiliated'), 'statut5');
-		}
-		elseif ($mode == 6)
-		{
-		    if ($statut == -1) return $langs->trans("MemberStatusDraft").' '.img_picto($langs->trans('MemberStatusDraft'), 'statut0');
-			if ($statut >= 1) {
-				if (! $date_end_subscription)            return $langs->trans("MemberStatusActive").' '.img_picto($langs->trans('MemberStatusActive'), 'statut1');
-				elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLate").' '.img_picto($langs->trans('MemberStatusActiveLate'), 'statut3');
-				else                                     return $langs->trans("MemberStatusPaid").' '.img_picto($langs->trans('MemberStatusPaid'), 'statut4');
-			}
-			if ($statut == 0)  return $langs->trans("MemberStatusResiliated").' '.img_picto($langs->trans('MemberStatusResiliated'), 'statut5');
-		}
+
+		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
 	}
 
 
@@ -2303,9 +2277,11 @@ class Adherent extends CommonObject
 
 		$sql = "SELECT a.rowid, a.datefin, a.statut";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
-		$sql.= " WHERE a.statut = 1";
+		$sql.= ", ".MAIN_DB_PREFIX."adherent_type as t";
+		$sql.= " WHERE a.fk_adherent_type = t.rowid";
+		$sql.= " AND a.statut = 1";
 		$sql.= " AND a.entity IN (".getEntity('adherent').")";
-		$sql.= " AND (a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."')";
+		$sql.= " AND ((a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."') AND t.subscription = 1)";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -2362,7 +2338,6 @@ class Adherent extends CommonObject
 		$langs->load("orders");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'standard';
 
 			if ($this->modelpdf) {
@@ -2407,10 +2382,12 @@ class Adherent extends CommonObject
 		$this->country = 'France';
 		$this->morphy = 'mor';
 		$this->email = 'specimen@specimen.com';
-		$this->skype = 'skypepseudo';
-		$this->twitter = 'twitterpseudo';
-		$this->facebook = 'facebookpseudo';
-		$this->linkedin = 'linkedinpseudo';
+		$this->socialnetworks = array(
+			'skype' => 'skypepseudo',
+			'twitter' => 'twitterpseudo',
+			'facebook' => 'facebookpseudo',
+			'linkedin' => 'linkedinpseudo',
+		);
 		$this->phone        = '0999999999';
 		$this->phone_perso  = '0999999998';
 		$this->phone_mobile = '0999999997';
@@ -2464,7 +2441,7 @@ class Adherent extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
-   /**
+    /**
 	 *	Initialise tableau info (tableau des attributs LDAP)
 	 *
 	 *	@return		array		Tableau info des attributs
@@ -2690,12 +2667,12 @@ class Adherent extends CommonObject
 		// Process
 		foreach ($to_del as $del) {
 			if ($c->fetch($del) > 0) {
-				$c->del_type($this, 'member');
+				$c->del_type($this, Categorie::TYPE_MEMBER);
 			}
 		}
 		foreach ($to_add as $add) {
 			if ($c->fetch($add) > 0) {
-				$c->add_type($this, 'member');
+				$c->add_type($this, Categorie::TYPE_MEMBER);
 			}
 		}
 

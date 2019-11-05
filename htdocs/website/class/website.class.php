@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -91,6 +91,17 @@ class Website extends CommonObject
 	 * @var string
 	 */
 	public $virtualhost;
+
+	/**
+	 * List of containers
+	 *
+	 * @var array
+	 */
+	public $lines;
+
+
+	const STATUS_DRAFT = 0;
+	const STATUS_VALIDATED = 1;
 
 
 	/**
@@ -229,10 +240,10 @@ class Website extends CommonObject
 		$sql .= " t.tms as date_modification";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		$sql .= ' WHERE t.entity IN ('.getEntity('website').')';
-		if (null !== $ref) {
+		if (! empty($ref)) {
 			$sql .= " AND t.ref = '" . $this->db->escape($ref) . "'";
 		} else {
-			$sql .= ' AND t.rowid = ' . $id;
+			$sql .= ' AND t.rowid = ' . (int) $id;
 		}
 
 		$resql = $this->db->query($sql);
@@ -334,7 +345,7 @@ class Website extends CommonObject
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-		 $sql .=  ' ' . $this->db->plimit($limit, $offset);
+		    $sql .=  ' ' . $this->db->plimit($limit, $offset);
 		}
 		$this->records = array();
 
@@ -691,8 +702,8 @@ class Website extends CommonObject
         $companylink = '';
 
         $label = '<u>' . $langs->trans("WebSite") . '</u>';
-        $label.= '<div width="100%">';
-        $label.= '<b>' . $langs->trans('Nom') . ':</b> ' . $this->ref;
+        $label.= '<br>';
+        $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
         $linkstart = '<a href="'.DOL_URL_ROOT.'/website/card.php?id='.$this->id.'"';
         $linkstart.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss?' '.$morecss:'').'"');
@@ -734,31 +745,20 @@ class Website extends CommonObject
         // phpcs:enable
 		global $langs;
 
-		if ($mode == 0 || $mode == 1)
+		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
-			if ($status == 1) return $langs->trans('Enabled');
-			elseif ($status == 0) return $langs->trans('Disabled');
+			global $langs;
+			//$langs->load("mymodule");
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Disabled');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Disabled');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Enabled');
 		}
-		elseif ($mode == 2)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-		}
-		elseif ($mode == 3)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
-		}
-		elseif ($mode == 4)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-		}
-		elseif ($mode == 5)
-		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
-			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
-		}
+
+		$statusType = 'status5';
+		if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
+
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 
@@ -1012,8 +1012,8 @@ class Website extends CommonObject
 			return -1;
 		}
 
-		dol_delete_dir_recursive(dirname($pathtofile).'/'.$object->ref);
-		dol_mkdir(dirname($pathtofile).'/'.$object->ref);
+		dol_delete_dir_recursive($conf->website->dir_temp.'/'.$object->ref);
+		dol_mkdir($conf->website->dir_temp.'/'.$object->ref);
 
 		$filename = basename($pathtofile);
 		if (! preg_match('/^website_(.*)-(.*)$/', $filename, $reg))
@@ -1023,6 +1023,7 @@ class Website extends CommonObject
 		}
 
 		$result = dol_uncompress($pathtofile, $conf->website->dir_temp.'/'.$object->ref);
+
 		if (! empty($result['error']))
 		{
 			$this->errors[]='Failed to unzip file '.$pathtofile.'.';
@@ -1203,7 +1204,6 @@ class Website extends CommonObject
 			$pageid = str_replace(array('.tpl.php', 'page'), array('', ''), basename($websitepagefile));
 			if ($pageid > 0)
 			{
-
 				$languagecodeselected=$tmppage->lang;
 				if (! in_array($tmppage->lang, $languagecodes)) $languagecodes[]=$tmppage->lang;	// We add language code of page into combo list
 			}

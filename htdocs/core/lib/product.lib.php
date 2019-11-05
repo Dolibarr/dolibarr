@@ -16,8 +16,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -82,7 +82,7 @@ function product_prepare_head($object)
 		$head[$h][1] = $langs->trans('AssociatedProducts');
 
 		$nbFatherAndChild = $object->hasFatherOrChild();
-		if ($nbFatherAndChild > 0) $head[$h][1].= ' <span class="badge">'.$nbFatherAndChild.'</span>';
+		if ($nbFatherAndChild > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbFatherAndChild.'</span>';
 		$head[$h][2] = 'subproduct';
 		$h++;
 	}
@@ -98,7 +98,6 @@ function product_prepare_head($object)
 	$h++;
 
 	if (!empty($conf->variants->enabled) && ($object->isProduct() || $object->isService())) {
-
 		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
@@ -111,7 +110,7 @@ function product_prepare_head($object)
 			$head[$h][1] = $langs->trans('ProductCombinations');
 			$head[$h][2] = 'combinations';
 			$nbVariant = $prodcomb->countNbOfCombinationForFkProductParent($object->id);
-            if ($nbVariant > 0) $head[$h][1].= ' <span class="badge">'.$nbVariant.'</span>';
+            if ($nbVariant > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbVariant.'</span>';
 		}
 
 		$h++;
@@ -161,7 +160,7 @@ function product_prepare_head($object)
         if(!empty($object->note_public)) $nbNote++;
         $head[$h][0] = DOL_URL_ROOT.'/product/note.php?id='.$object->id;
         $head[$h][1] = $langs->trans('Notes');
-        if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+        if ($nbNote > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
         $head[$h][2] = 'note';
         $h++;
     }
@@ -180,7 +179,7 @@ function product_prepare_head($object)
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
@@ -229,7 +228,7 @@ function productlot_prepare_head($object)
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT."/product/stock/productlot_document.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("Documents");
-	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
     $head[$h][2] = 'documents';
 	$h++;
 
@@ -290,6 +289,11 @@ function product_admin_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$head[$h][2] = 'attributes';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_supplier_extrafields.php';
+	$head[$h][1] = $langs->trans("ProductSupplierExtraFields");
+	$head[$h][2] = 'supplierAttributes';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'product_admin', 'remove');
@@ -481,29 +485,61 @@ function show_stats_for_company($product, $socid)
 }
 
 /**
+ *	Return translation label of a unit key.
+ *  Function kept for backward compatibility.
+ *
+ *  @param	string  $scale				 Scale of unit: '0', '-3', '6', ...
+ *	@param  string	$measuring_style     Style of unit: weight, volume,...
+ *	@param	int		$unit                ID of unit (rowid in llx_c_units table)
+ *  @param	int		$use_short_label	 1=Use short label ('g' instead of 'gram'). Short labels are not translated.
+ *	@return	string	   			         Unit string
+ * 	@see	measuringUnitString() formproduct->selectMeasuringUnits()
+ */
+function measuring_units_string($scale = '', $measuring_style = '', $unit = 0, $use_short_label = 0)
+{
+	return measuringUnitString($unit, $measuring_style, $scale, $use_short_label);
+}
+
+/**
  *	Return translation label of a unit key
  *
  *	@param	int		$unit                ID of unit (rowid in llx_c_units table)
  *	@param  string	$measuring_style     Style of unit: weight, volume,...
+ *  @param	string  $scale				 Scale of unit: '0', '-3', '6', ...
+ *  @param	int		$use_short_label	 1=Use short label ('g' instead of 'gram'). Short labels are not translated.
  *	@return	string	   			         Unit string
- * 	@see	formproduct->selectMeasuringUnits
+ * 	@see	formproduct->selectMeasuringUnits()
  */
-function measuring_units_string($unit, $measuring_style = '')
+function measuringUnitString($unit, $measuring_style = '', $scale = '', $use_short_label = 0)
 {
 	global $langs, $db;
 	require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 	$measuringUnits= new CUnits($db);
-	$result = $measuringUnits->fetchAll('', '', 0, 0, array(
+
+	if ($scale !== '')
+	{
+		$arrayforfilter = array(
+			't.scale' => $scale,
+			't.unit_type' => $measuring_style,
+			't.active' => 1
+		);
+	}
+	else
+	{
+		$arrayforfilter = array(
 			't.rowid' => $unit,
 			't.unit_type' => $measuring_style,
 			't.active' => 1
-	));
+		);
+	}
+	$result = $measuringUnits->fetchAll('', '', 0, 0, $arrayforfilter);
 
 	if ($result<0) {
 		return -1;
 	} else {
 		if (is_array($measuringUnits->records) && count($measuringUnits->records)>0) {
-			return $langs->transnoentitiesnoconv($measuringUnits->records[key($measuringUnits->records)]->label);
+			if ($use_short_label) return $measuringUnits->records[key($measuringUnits->records)]->short_label;
+			else return $langs->transnoentitiesnoconv($measuringUnits->records[key($measuringUnits->records)]->label);
 		} else {
 			return '';
 		}
@@ -511,9 +547,9 @@ function measuring_units_string($unit, $measuring_style = '')
 }
 
 /**
- *	Transform a given unit into the square of that unit, if known
+ *	Transform a given unit scale into the square of that unit, if known.
  *
- *	@param	int		$unit            Unit key (-3,-2,-1,0,98,99...)
+ *	@param	int		$unit            Unit scale key (-3,-2,-1,0,98,99...)
  *	@return	int	   			         Squared unit key (-6,-4,-2,0,98,99...)
  * 	@see	formproduct->selectMeasuringUnits
  */
@@ -531,9 +567,9 @@ function measuring_units_squared($unit)
 
 
 /**
- *	Transform a given unit into the cube of that unit, if known
+ *	Transform a given unit scale into the cube of that unit, if known
  *
- *	@param	int		$unit            Unit key (-3,-2,-1,0,98,99...)
+ *	@param	int		$unit            Unit scale key (-3,-2,-1,0,98,99...)
  *	@return	int	   			         Cubed unit key (-9,-6,-3,0,88,89...)
  * 	@see	formproduct->selectMeasuringUnits
  */

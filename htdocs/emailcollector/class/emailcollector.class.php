@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -151,7 +151,12 @@ class EmailCollector extends CommonObject
      */
     public $status;
 
+    /**
+     * @var integer|string date_creation
+     */
     public $date_creation;
+
+
     public $tms;
 
     /**
@@ -181,6 +186,10 @@ class EmailCollector extends CommonObject
     public $actions;
 
     public $debuginfo;
+
+
+    const STATUS_DISABLED = 0;
+    const STATUS_ENABLED = 1;
 
 
     /**
@@ -263,7 +272,7 @@ class EmailCollector extends CommonObject
         // Clear extrafields that are unique
         if (is_array($object->array_options) && count($object->array_options) > 0)
         {
-            $extrafields->fetch_name_optionals_label($this->element);
+            $extrafields->fetch_name_optionals_label($this->table_element);
             foreach($object->array_options as $key => $option)
             {
                 $shortkey = preg_replace('/options_/', '', $key);
@@ -506,47 +515,20 @@ class EmailCollector extends CommonObject
     public function LibStatut($status, $mode = 0)
     {
         // phpcs:enable
-        if (empty($this->labelstatus))
+    	if (empty($this->labelStatus) || empty($this->labelStatusShort))
         {
             global $langs;
             //$langs->load("mymodule");
-            $this->labelstatus[1] = $langs->trans('Enabled');
-            $this->labelstatus[0] = $langs->trans('Disabled');
+            $this->labelStatus[self::STATUS_ENABLED] = $langs->trans('Enabled');
+            $this->labelStatus[self::STATUS_DISABLED] = $langs->trans('Disabled');
+            $this->labelStatusShort[self::STATUS_ENABLED] = $langs->trans('Enabled');
+            $this->labelStatusShort[self::STATUS_DISABLED] = $langs->trans('Disabled');
         }
 
-        if ($mode == 0)
-        {
-            return $this->labelstatus[$status];
-        }
-        elseif ($mode == 1)
-        {
-            return $this->labelstatus[$status];
-        }
-        elseif ($mode == 2)
-        {
-            if ($status == 1) return img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-            elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-        }
-        elseif ($mode == 3)
-        {
-            if ($status == 1) return img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
-            elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
-        }
-        elseif ($mode == 4)
-        {
-            if ($status == 1) return img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-            elseif ($status == 0) return img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle').' '.$this->labelstatus[$status];
-        }
-        elseif ($mode == 5)
-        {
-            if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
-            elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
-        }
-        elseif ($mode == 6)
-        {
-            if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut4', '', false, 0, 0, '', 'valignmiddle');
-            elseif ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status], 'statut5', '', false, 0, 0, '', 'valignmiddle');
-        }
+        $statusType = 'status5';
+        if ($status == self::STATUS_ENABLED) $statusType = 'status4';
+
+        return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
     }
 
     /**
@@ -1886,12 +1868,13 @@ class EmailCollector extends CommonObject
         // BODY
         $s = imap_fetchstructure($mbox, $mid);
 
-        if (!$s->parts)  // simple
+        if (!$s->parts) {
+            // simple
             $this->getpart($mbox, $mid, $s, 0);  // pass 0 as part-number
-        else {  // multipart: cycle through each part
-            foreach ($s->parts as $partno0=>$p)
-            {
-               $this->getpart($mbox, $mid, $p, $partno0+1);
+        } else {
+            // multipart: cycle through each part
+            foreach ($s->parts as $partno0 => $p) {
+                $this->getpart($mbox, $mid, $p, $partno0+1);
             }
         }
     }
@@ -1949,7 +1932,7 @@ class EmailCollector extends CommonObject
         {
             foreach ($p->dparameters as $x)
             {
-               $params[strtolower($x->attribute)] = $x->value;
+                $params[strtolower($x->attribute)] = $x->value;
             }
         }
 

@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -39,7 +39,7 @@ abstract class Stats
 	 * @param 	int		$endyear		Start year
 	 * @param 	int		$startyear		End year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
-     * @param	int		$format			0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     * @param	int		$format			0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 * @param   int 	$startmonth		month of the fiscal year start min 1 max 12 ; if 1 = january
      * @return 	array					Array of values
 
@@ -137,7 +137,7 @@ abstract class Stats
 	 * @param	int		$endyear		Start year
 	 * @param	int		$startyear		End year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
-     * @param	int		$format			0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     * @param	int		$format			0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 * @param   int 	$startmonth		month of the fiscal year start min 1 max 12 ; if 1 = january
 	 * @return 	array					Array of values
 	 */
@@ -423,7 +423,7 @@ abstract class Stats
 	 *
      *     @param   int		$year       Year
      *     @param   string	$sql        SQL
-     *     @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     *     @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
      *     @return	array				Array of nb each month
      */
     protected function _getNbByMonth($year, $sql, $format = 0)
@@ -483,7 +483,7 @@ abstract class Stats
 	 *
 	 *     @param	int		$year       Year
 	 *     @param   string	$sql		SQL
-     *     @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     *     @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 *     @return	array
 	 */
     protected function _getAmountByMonth($year, $sql, $format = 0)
@@ -540,7 +540,7 @@ abstract class Stats
      *
      *  @param  int     $year       Year
      *  @param  string  $sql        SQL
-     *  @param  int     $format     0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     *  @param  int     $format     0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
      *  @return array
      */
     protected function _getAverageByMonth($year, $sql, $format = 0)

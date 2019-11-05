@@ -20,7 +20,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -265,7 +265,6 @@ class Account extends CommonObject
 		$string = '';
 
 		foreach ($this->getFieldsToShow() as $val) {
-
 			if ($val == 'BankCode') {
 				$string .= $this->code_banque.' ';
 			} elseif ($val == 'BankAccountNumber') {
@@ -493,7 +492,6 @@ class Account extends CommonObject
 		}
 
 		if ($accline->insert() > 0) {
-
 			if ($categorie>0) {
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (";
 				$sql .= "lineid, fk_categ";
@@ -989,12 +987,12 @@ class Account extends CommonObject
 		// Process
 		foreach($to_del as $del) {
 			if ($c->fetch($del) > 0) {
-				$c->del_type($this, 'account');
+				$c->del_type($this, Categorie::TYPE_ACCOUNT);
 			}
 		}
 		foreach ($to_add as $add) {
 			if ($c->fetch($add) > 0) {
-				$c->add_type($this, 'account');
+				$c->add_type($this, Categorie::TYPE_ACCOUNT);
 			}
 		}
 
@@ -1084,38 +1082,27 @@ class Account extends CommonObject
 	/**
 	 *  Return label of given object status
 	 *
-	 *  @param	 int		$statut        	Id statut
+	 *  @param	 int		$status        	Id status
 	 *  @param   int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
 	 *  @return  string        			    Label
 	 */
-    public function LibStatut($statut, $mode = 0)
+    public function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
 		$langs->load('banks');
 
-		if ($statut == self::STATUS_OPEN) {
+		if ($status == self::STATUS_OPEN) {
 			$label = $langs->trans("StatusAccountOpened");
-			$picto = img_picto($label, 'statut4');
+			$labelshort = $langs->trans("StatusAccountOpened");
+			$statusType = 'status4';
 		} else {
 			$label = $langs->trans("StatusAccountClosed");
-			$picto = img_picto($label, 'statut5');
+			$labelshort = $langs->trans("StatusAccountClosed");
+			$statusType = 'status5';
 		}
 
-		if ($mode == 2) {
-			return $picto.' '.$label;
-		} elseif ($mode == 3) {
-			return $picto;
-		} elseif ($mode == 4) {
-			return $picto.' '.$label;
-		} elseif ($mode == 5) {
-			return $label.' '.$picto;
-		} elseif ($mode == 6) {
-			return $label.' '.$picto;
-		}
-
-		//There is no short mode for this label
-		return $label;
+		return dolGetStatus($label, $labelshort, '', $statusType, $mode);
 	}
 
 
@@ -1201,7 +1188,7 @@ class Account extends CommonObject
         // phpcs:enable
 		global $conf, $langs;
 
-		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
+		if ($user->socid) return -1;   // protection pour eviter appel par utilisateur externe
 
 		$sql = "SELECT b.rowid, b.datev as datefin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b,";
@@ -1257,7 +1244,7 @@ class Account extends CommonObject
         // phpcs:enable
 		global $user;
 
-		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
+		if ($user->socid) return -1;   // protection pour eviter appel par utilisateur externe
 
 		$sql = "SELECT count(b.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b,";
@@ -1296,7 +1283,7 @@ class Account extends CommonObject
 		global $db, $conf, $user;
 
 		//Protection against external users
-		if ($user->societe_id) {
+		if ($user->socid) {
 			return 0;
 		}
 
@@ -1373,10 +1360,10 @@ class Account extends CommonObject
 		$linkstart = '<a href="'.$url.$linkclose;
 		$linkend = '</a>';
 
-                if ($option == 'nolink') {
-                    $linkstart = '';
-                    $linkend = '';
-                }
+        if ($option == 'nolink') {
+            $linkstart = '';
+            $linkend = '';
+        }
 
 		$result .= $linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
@@ -1613,8 +1600,8 @@ class Account extends CommonObject
 				//Replace the old AccountNumber key with the new BankAccountNumber key
 				$fieldlists = explode(
 					' ',
-    preg_replace('/ ?[^Bank]AccountNumber ?/', 'BankAccountNumber',
-						$conf->global->BANK_SHOW_ORDER_OPTION)
+                    preg_replace('/ ?[^Bank]AccountNumber ?/', 'BankAccountNumber',
+					$conf->global->BANK_SHOW_ORDER_OPTION)
 				);
 			}
 		}
@@ -2320,11 +2307,11 @@ class AccountLine extends CommonObject
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
-	 *  @param	int		$statut         Id statut
+	 *  @param	int		$status         Id statut
 	 *  @param	int		$mode           0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string          		Libelle du statut
 	 */
-    public function LibStatut($statut, $mode = 0)
+    public function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -2332,33 +2319,33 @@ class AccountLine extends CommonObject
 		/*
         if ($mode == 0)
         {
-            if ($statut==0) return $langs->trans("ActivityCeased");
-            if ($statut==1) return $langs->trans("InActivity");
+            if ($status==0) return $langs->trans("ActivityCeased");
+            if ($status==1) return $langs->trans("InActivity");
         }
         if ($mode == 1)
         {
-            if ($statut==0) return $langs->trans("ActivityCeased");
-            if ($statut==1) return $langs->trans("InActivity");
+            if ($status==0) return $langs->trans("ActivityCeased");
+            if ($status==1) return $langs->trans("InActivity");
         }
         if ($mode == 2)
         {
-            if ($statut==0) return img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"').' '.$langs->trans("ActivityCeased");
-            if ($statut==1) return img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"').' '.$langs->trans("InActivity");
+            if ($status==0) return img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"').' '.$langs->trans("ActivityCeased");
+            if ($status==1) return img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"').' '.$langs->trans("InActivity");
         }
         if ($mode == 3)
         {
-            if ($statut==0) return img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"');
-            if ($statut==1) return img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
+            if ($status==0) return img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"');
+            if ($status==1) return img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
         }
         if ($mode == 4)
         {
-            if ($statut==0) return img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"').' '.$langs->trans("ActivityCeased");
-            if ($statut==1) return img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"').' '.$langs->trans("InActivity");
+            if ($status==0) return img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"').' '.$langs->trans("ActivityCeased");
+            if ($status==1) return img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"').' '.$langs->trans("InActivity");
         }
         if ($mode == 5)
         {
-            if ($statut==0) return $langs->trans("ActivityCeased").' '.img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"');
-            if ($statut==1) return $langs->trans("InActivity").' '.img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
+            if ($status==0) return $langs->trans("ActivityCeased").' '.img_picto($langs->trans("ActivityCeased"),'statut5', 'class="pictostatus"');
+            if ($status==1) return $langs->trans("InActivity").' '.img_picto($langs->trans("InActivity"),'statut4', 'class="pictostatus"');
         }*/
 	}
 

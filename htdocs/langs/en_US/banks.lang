@@ -169,3 +169,7 @@ FindYourSEPAMandate=This is your SEPA mandate to authorize our company to make d
 AutoReportLastAccountStatement=Automatically fill the field 'number of bank statement' with last statement number when making reconciliation
 CashControl=POS cash fence
 NewCashFence=New cash fence
+BankColorizeMovement=Colorize movements
+BankColorizeMovementDesc=If this function is enable, you can choose specific background color for debit or credit movements
+BankColorizeMovementName1=Background color for debit movement
+BankColorizeMovementName2=Background color for credit movement
