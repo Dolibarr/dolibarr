@@ -922,8 +922,8 @@ while ($i < min($num, $limit))
 	{
 		print '<td class="nowrap right">' . ($line->debit ? price($line->debit) : ''). '</td>';
 		if (! $i) $totalarray['nbfield']++;
-		if (! $i) $totalarray['totaldebitfield']=$totalarray['nbfield'];
-		$totalarray['totaldebit'] += $line->debit;
+		if (! $i) $totalarray['pos'][$totalarray['nbfield']]='totaldebit';
+		$totalarray['val']['totaldebit'] += $line->debit;
 	}
 
 	// Amount credit
@@ -931,8 +931,8 @@ while ($i < min($num, $limit))
 	{
 		print '<td class="nowrap right">' . ($line->credit ? price($line->credit) : '') . '</td>';
 		if (! $i) $totalarray['nbfield']++;
-		if (! $i) $totalarray['totalcreditfield']=$totalarray['nbfield'];
-		$totalarray['totalcredit'] += $line->credit;
+		if (! $i) $totalarray['pos'][$totalarray['nbfield']]='totalcredit';
+		$totalarray['val']['totalcredit'] += $line->credit;
 	}
 
 	// Lettering code
@@ -998,29 +998,7 @@ while ($i < min($num, $limit))
 }
 
 // Show total line
-if (isset($totalarray['totaldebitfield']) || isset($totalarray['totalcreditfield']))
-{
-	$i=0;
-	print '<tr class="liste_total">';
-	while ($i < $totalarray['nbfield'])
-	{
-		$i++;
-		if ($i == 1)
-		{
-			if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
-			else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-		}
-		elseif ($totalarray['totaldebitfield'] == $i)  print '<td class="nowrap right">'.price($totalarray['totaldebit']).'</td>';
-		elseif ($totalarray['totalcreditfield'] == $i) print '<td class="nowrap right">'.price($totalarray['totalcredit']).'</td>';
-		else print '<td></td>';
-	}
-	$parameters=array('arrayfields'=>$arrayfields, 'sql'=>$sql);
-	$reshook=$hookmanager->executeHooks('printFieldListFooter', $parameters);    // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
-
-	print '</tr>';
-}
-
+include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 
 print "</table>";

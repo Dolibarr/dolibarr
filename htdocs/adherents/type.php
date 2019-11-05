@@ -828,8 +828,11 @@ if ($rowid > 0)
 		print "</td></tr>";
 
 		// Other attributes
+		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_edit.tpl.php';
+
+		// Other attributes
 		$parameters=array();
-		$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $act, $action);    // Note that $action and $object may have been modified by hook
+		$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
         	print $hookmanager->resPrint;
 		if (empty($reshook))
 		{
@@ -837,33 +840,6 @@ if ($rowid > 0)
 		}
 
 		print '</table>';
-
-		// Extra field
-		if (empty($reshook))
-		{
-			print '<br><br><table class="border" width="100%">';
-			if (is_array($extrafields->attributes['adherent_type']['label']))
-			{
-				foreach($extrafields->attributes['adherent_type']['label'] as $key=>$label)
-				{
-					if (isset($_POST["options_" . $key])) {
-						if (is_array($_POST["options_" . $key])) {
-							// $_POST["options"] is an array but following code expects a comma separated string
-							$value = implode(",", $_POST["options_" . $key]);
-						} else {
-							$value = $_POST["options_" . $key];
-						}
-					} else {
-						$value = $object->array_options["options_" . $key];
-					}
-
-					print '<tr><td width="30%">'.$label.'</td><td>';
-					print $extrafields->showInputField($key, $value);
-					print "</td></tr>\n";
-				}
-			}
-			print '</table><br><br>';
-		}
 
 		dol_fiche_end();
 

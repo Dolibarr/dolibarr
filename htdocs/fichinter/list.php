@@ -602,8 +602,8 @@ if ($resql)
 		{
 		    print '<td class="right">'.convertSecondToTime($obj->duree, 'allhourmin').'</td>';
 		    if (! $i) $totalarray['nbfield']++;
-		    if (! $i) $totalarray['totaldurationfield']=$totalarray['nbfield'];
-		    $totalarray['totalduration']+=$obj->duree;
+		    if (! $i) $totalarray['pos'][$totalarray['nbfield']]='fd.duree';
+		    $totalarray['val']['fd.duree'] += $obj->duree;
 		}
 		// Action column
 		print '<td class="nowrap center">';
@@ -623,23 +623,7 @@ if ($resql)
 	}
 
 	// Show total line
-	if (isset($totalarray['totalduration']))
-	{
-		print '<tr class="liste_total">';
-		$i=0;
-		while ($i < $totalarray['nbfield'])
-		{
-			$i++;
-			if ($i == 1)
-			{
-				if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
-				else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-			}
-			elseif ($totalarray['totaldurationfield'] == $i) print '<td class="right">'.convertSecondToTime($totalarray['totalduration'], 'allhourmin').'</td>';
-			else print '<td></td>';
-		}
-		print '</tr>';
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 	$db->free($resql);
 

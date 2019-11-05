@@ -563,8 +563,8 @@ foreach ($accounts as $key=>$type)
 		print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$objecttmp->id.'">'.price($solde, 0, $langs, 0, -1, -1, $objecttmp->currency_code).'</a>';
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
-		if (! $i) $totalarray['totalbalancefield']=$totalarray['nbfield'];
-	    $totalarray['totalbalance'] += $solde;
+		if (! $i) $totalarray['pos'][$totalarray['nbfield']]='balance';
+		$totalarray['val']['balance'] += $solde;
     }
 
 	// Action column
@@ -594,22 +594,10 @@ if (! $found)
 }
 
 // Show total line
-if (isset($totalarray['totalbalancefield']) && $lastcurrencycode != 'various')	// If there is several currency, $lastcurrencycode is set to 'various' before
+if ($lastcurrencycode != 'various')	// If there is several currency, $lastcurrencycode is set to 'various' before
 {
-    print '<tr class="liste_total">';
-    $i=0;
-    while ($i < $totalarray['nbfield'])
-    {
-        $i++;
-        if ($i == 1)
-        {
-            if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
-            else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-        }
-        elseif ($totalarray['totalbalancefield'] == $i) print '<td class="right">'.price($totalarray['totalbalance'], 0, $langs, 0, -1, -1, $lastcurrencycode).'</td>';
-        else print '<td></td>';
-    }
-    print '</tr>';
+	// Show total line
+	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 }
 
 print '</table>';

@@ -1232,40 +1232,40 @@ if ($resql)
 			{
 				  print '<td class="right nowrap">'.price($obj->total_ht)."</td>\n";
 				  if (! $i) $totalarray['nbfield']++;
-				  if (! $i) $totalarray['totalhtfield']=$totalarray['nbfield'];
-				  $totalarray['totalht'] += $obj->total_ht;
+				  if (! $i) $totalarray['pos'][$totalarray['nbfield']]='f.total_ht';
+				  $totalarray['val']['f.total_ht'] += $obj->total_ht;
 			}
 			// Amount VAT
 			if (! empty($arrayfields['f.total_vat']['checked']))
 			{
 				print '<td class="right nowrap">'.price($obj->total_vat)."</td>\n";
 				if (! $i) $totalarray['nbfield']++;
-				if (! $i) $totalarray['totalvatfield']=$totalarray['nbfield'];
-				$totalarray['totalvat'] += $obj->total_vat;
+				if (! $i) $totalarray['pos'][$totalarray['nbfield']]='f.total_vat';
+				$totalarray['val']['f.total_vat'] += $obj->total_vat;
 			}
 			// Amount LocalTax1
 			if (! empty($arrayfields['f.total_localtax1']['checked']))
 			{
 				print '<td class="right nowrap">'.price($obj->total_localtax1)."</td>\n";
 				if (! $i) $totalarray['nbfield']++;
-				if (! $i) $totalarray['totallocaltax1field']=$totalarray['nbfield'];
-				$totalarray['totallocaltax1'] += $obj->total_localtax1;
+				if (! $i) $totalarray['pos'][$totalarray['nbfield']]='f.total_localtax1';
+				$totalarray['val']['f.total_localtax1'] += $obj->total_localtax1;
 			}
 			// Amount LocalTax2
 			if (! empty($arrayfields['f.total_localtax2']['checked']))
 			{
 				print '<td class="right nowrap">'.price($obj->total_localtax2)."</td>\n";
 				if (! $i) $totalarray['nbfield']++;
-				if (! $i) $totalarray['totallocaltax2field']=$totalarray['nbfield'];
-				$totalarray['totallocaltax2'] += $obj->total_localtax2;
+				if (! $i) $totalarray['pos'][$totalarray['nbfield']]='f.total_localtax2';
+				$totalarray['val']['f.total_localtax2'] += $obj->total_localtax2;
 			}
 			// Amount TTC
 			if (! empty($arrayfields['f.total_ttc']['checked']))
 			{
 				print '<td class="right nowrap">'.price($obj->total_ttc)."</td>\n";
 				if (! $i) $totalarray['nbfield']++;
-				if (! $i) $totalarray['totalttcfield']=$totalarray['nbfield'];
-				$totalarray['totalttc'] += $obj->total_ttc;
+				if (! $i) $totalarray['pos'][$totalarray['nbfield']]='f.total_ttc';
+				$totalarray['val']['f.total_ttc'] += $obj->total_ttc;
 			}
 
 			if(! empty($arrayfields['f.retained_warranty']['checked']))
@@ -1277,16 +1277,16 @@ if ($resql)
 			{
 				print '<td class="right nowrap">'.(! empty($totalpay)?price($totalpay, 0, $langs):'&nbsp;').'</td>'; // TODO Use a denormalized field
 				if (! $i) $totalarray['nbfield']++;
-				if (! $i) $totalarray['totalamfield']=$totalarray['nbfield'];
-				$totalarray['totalam'] += $totalpay;
+				if (! $i) $totalarray['pos'][$totalarray['nbfield']]='totalam';
+				$totalarray['val']['totalam'] += $totalpay;
 			}
 
 			if (! empty($arrayfields['rtp']['checked']))
 			{
 				print '<td class="right nowrap">'.(! empty($remaintopay)?price($remaintopay, 0, $langs):'&nbsp;').'</td>'; // TODO Use a denormalized field
 				if (! $i) $totalarray['nbfield']++;
-				if (! $i) $totalarray['totalrtpfield']=$totalarray['nbfield'];
-				$totalarray['totalrtp'] += $remaintopay;
+				if (! $i) $totalarray['pos'][$totalarray['nbfield']]='rtp';
+				$totalarray['val']['rtp'] += $remaintopay;
 			}
 
 			// Extra fields
@@ -1345,35 +1345,7 @@ if ($resql)
 		}
 
 		// Show total line
-		if (isset($totalarray['totalhtfield'])
-	    || isset($totalarray['totalvatfield'])
-	    || isset($totalarray['totallocaltax1field'])
-	    || isset($totalarray['totallocaltax2field'])
-	    || isset($totalarray['totalttcfield'])
-	    || isset($totalarray['totalamfield'])
-	    || isset($totalarray['totalrtpfield'])
-	    ) {
-			print '<tr class="liste_total">';
-			$i=0;
-			while ($i < $totalarray['nbfield'])
-			{
-			    $i++;
-			    if ($i == 1)
-			    {
-					if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
-					else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-			    }
-			    elseif ($totalarray['totalhtfield'] == $i)  print '<td class="right">'.price($totalarray['totalht']).'</td>';
-			    elseif ($totalarray['totalvatfield'] == $i) print '<td class="right">'.price($totalarray['totalvat']).'</td>';
-			    elseif ($totalarray['totallocaltax1field'] == $i) print '<td class="right">'.price($totalarray['totallocaltax1']).'</td>';
-			    elseif ($totalarray['totallocaltax2field'] == $i) print '<td class="right">'.price($totalarray['totallocaltax2']).'</td>';
-			    elseif ($totalarray['totalttcfield'] == $i) print '<td class="right">'.price($totalarray['totalttc']).'</td>';
-			    elseif ($totalarray['totalamfield'] == $i)  print '<td class="right">'.price($totalarray['totalam']).'</td>';
-			    elseif ($totalarray['totalrtpfield'] == $i)  print '<td class="right">'.price($totalarray['totalrtp']).'</td>';
-			    else print '<td></td>';
-			}
-			print '</tr>';
-		}
+		include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 	}
 
 	$db->free($resql);

@@ -834,11 +834,11 @@ while ($i < min($num, $limit))
 			if (strcmp($obj->opp_amount, ''))
 			{
 				print price($obj->opp_amount, 1, $langs, 1, -1, -1, '');
-				$totalarray['totalopp'] += $obj->opp_amount;
+				$totalarray['val']['p.opp_amount'] += $obj->opp_amount;
 			}
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['totaloppfield']=$totalarray['nbfield'];
+			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='p.opp_amount';
 		}
 		// Opp percent
 		if (! empty($arrayfields['p.opp_percent']['checked']))
@@ -855,11 +855,11 @@ while ($i < min($num, $limit))
 			if ($obj->budget_amount != '')
 			{
 				print price($obj->budget_amount, 1, $langs, 1, -1, -1);
-				$totalarray['totalbudget'] += $obj->budget_amount;
+				$totalarray['val']['p.budget_amount'] += $obj->budget_amount;
 			}
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['totalbudgetfield']=$totalarray['nbfield'];
+			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='p.budget_amount';
 		}
 		// Usage opportunity
 		if (! empty($arrayfields['p.usage_opportunity']['checked']))
@@ -940,24 +940,7 @@ while ($i < min($num, $limit))
 }
 
 // Show total line
-if (isset($totalarray['totaloppfield']) || isset($totalarray['totalbudgetfield']))
-{
-	print '<tr class="liste_total">';
-	$i=0;
-	while ($i < $totalarray['nbfield'])
-	{
-		$i++;
-		if ($i == 1)
-		{
-			if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
-			else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-		}
-		elseif ($totalarray['totaloppfield'] == $i) print '<td class="right">'.price($totalarray['totalopp'], 1, $langs, 1, -1, -1).'</td>';
-		elseif ($totalarray['totalbudgetfield'] == $i) print '<td class="right">'.price($totalarray['totalbudget'], 1, $langs, 1, -1, -1).'</td>';
-		else print '<td></td>';
-	}
-	print '</tr>';
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 $db->free($resql);
 

@@ -256,15 +256,19 @@ if ($result)
 
 		// Ref
 		print "<td>".$variousstatic->getNomUrl(1)."</td>\n";
+		if (! $i) $totalarray['nbfield']++;
 
 		// Label payment
 		print "<td>".dol_trunc($obj->label, 40)."</td>\n";
+		if (! $i) $totalarray['nbfield']++;
 
 		// Date payment
 		print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
+		if (! $i) $totalarray['nbfield']++;
 
 		// Type
 		print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';
+		if (! $i) $totalarray['nbfield']++;
 
 		// Account
 		if (! empty($conf->banque->enabled))
@@ -289,6 +293,7 @@ if ($result)
 			}
 			else print '&nbsp;';
 			print '</td>';
+			if (! $i) $totalarray['nbfield']++;
 		}
 
 		// Accounting account
@@ -297,6 +302,7 @@ if ($result)
 			$accountingaccount->fetch('', $obj->accountancy_code, 1);
 
 			print '<td>'.$accountingaccount->getNomUrl(0, 1, 1, '', 1).'</td>';
+			if (! $i) $totalarray['nbfield']++;
 		}
 
 		// Debit
@@ -304,8 +310,10 @@ if ($result)
 		if ($obj->sens == 0)
 		{
 			print price($obj->amount);
-			$totalarray['totaldeb'] += $obj->amount;
+			$totalarray['val']['total_deb'] += $obj->amount;
 		}
+		if (! $i) $totalarray['nbfield']++;
+		if (! $i) $totalarray['pos'][$totalarray['nbfield']]='total_deb';
 		print "</td>";
 
 		// Credit
@@ -313,8 +321,10 @@ if ($result)
 		if ($obj->sens == 1)
 		{
 			print price($obj->amount);
-			$totalarray['totalcred'] += $obj->amount;
+			$totalarray['val']['total_cred'] += $obj->amount;
 		}
+		if (! $i) $totalarray['nbfield']++;
+		if (! $i) $totalarray['pos'][$totalarray['nbfield']]='total_cred';
 		print "</td>";
 
 		print "<td></td>";
@@ -326,12 +336,8 @@ if ($result)
 	if (! empty($conf->banque->enabled)) $colspan++;
 	if (! empty($conf->accounting->enabled)) $colspan++;
 
-	print '<tr class="liste_total">';
-	print '<td colspan="'.$colspan.'" class="liste_total">'.$langs->trans("Total").'</td>';
-	print '<td class="liste_total right">'.price($totalarray['totaldeb'])."</td>";
-	print '<td class="liste_total right">'.price($totalarray['totalcred'])."</td>";
-	print '<td></td>';
-	print '</tr>';
+	// Show total line
+	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 	print "</table>";
 	print '</div>';

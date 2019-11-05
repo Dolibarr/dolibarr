@@ -733,6 +733,8 @@ while ($i < min($num, $limit))
 			//else print '--:--';
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
+			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='t.planned_workload';
+			$totalarray['val']['t.planned_workload'] += $obj->planned_workload;
 			if (! $i) $totalarray['totalplannedworkloadfield']=$totalarray['nbfield'];
 			$totalarray['totalplannedworkload'] += $obj->planned_workload;
 		}
@@ -749,6 +751,8 @@ while ($i < min($num, $limit))
 			else print '</a>';
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
+			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='t.duration_effective';
+			$totalarray['val']['t.duration_effective'] += $obj->duration_effective;
 			if (! $i) $totalarray['totaldurationeffectivefield']=$totalarray['nbfield'];
 			$totalarray['totaldurationeffective'] += $obj->duration_effective;
 		}
@@ -775,8 +779,10 @@ while ($i < min($num, $limit))
 			}
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
-            if (! $i) $totalarray['totalprogress_declaredfield']=$totalarray['nbfield'];
-            $totalarray['totaldurationdeclared'] += $obj->planned_workload * $obj->progress / 100;
+			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='t.progress';
+			$totalarray['val']['t.progress'] += ($obj->planned_workload * $obj->progress / 100);
+			if (! $i) $totalarray['totalprogress_declaredfield']=$totalarray['nbfield'];
+			$totalarray['totaldurationdeclared'] += $obj->planned_workload * $obj->progress / 100;
 		}
 		// Progress summary
 		if (! empty($arrayfields['t.progress_summary']['checked']))
@@ -787,7 +793,7 @@ while ($i < min($num, $limit))
             }
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
-            if (! $i) $totalarray['totalprogress_summary']=$totalarray['nbfield'];
+			if (! $i) $totalarray['totalprogress_summary']=$totalarray['nbfield'];
 		}
 		// Time not billed
 		if (! empty($arrayfields['t.tobill']['checked']))
@@ -796,6 +802,7 @@ while ($i < min($num, $limit))
 		    if ($obj->usage_bill_time)
 		    {
 		        print convertSecondToTime($obj->tobill, 'allhourmin');
+		        $totalarray['val']['t.tobill'] += $obj->tobill;
 		        $totalarray['totaltobill'] += $obj->tobill;
 		    }
 		    else
@@ -804,6 +811,7 @@ while ($i < min($num, $limit))
 		    }
 		    print '</td>';
 		    if (! $i) $totalarray['nbfield']++;
+		    if (! $i) $totalarray['pos'][$totalarray['nbfield']]='t.tobill';
 		    if (! $i) $totalarray['totaltobillfield']=$totalarray['nbfield'];
 		}
 		// Time billed
@@ -813,6 +821,7 @@ while ($i < min($num, $limit))
 		    if ($obj->usage_bill_time)
 		    {
 		        print convertSecondToTime($obj->billed, 'allhourmin');
+		        $totalarray['val']['t.billed'] += $obj->billed;
 		        $totalarray['totalbilled'] += $obj->billed;
 		    }
 		    else
@@ -821,6 +830,7 @@ while ($i < min($num, $limit))
 		    }
 		    print '</td>';
 		    if (! $i) $totalarray['nbfield']++;
+		    if (! $i) $totalarray['pos'][$totalarray['nbfield']]='t.billed';
 		    if (! $i) $totalarray['totalbilledfield']=$totalarray['nbfield'];
 		}
 		// Extra fields
@@ -870,8 +880,9 @@ while ($i < min($num, $limit))
 	$i++;
 }
 // Show total line
+//include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['totalplannedworkloadfield']) || isset($totalarray['totalprogress_calculatedfield'])
-    || isset($totalarray['totaltobill']) || isset($totalarray['totalbilled']))
+	|| isset($totalarray['totaltobill']) || isset($totalarray['totalbilled']))
 {
 	print '<tr class="liste_total">';
 	$i=0;
@@ -889,7 +900,7 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 		elseif ($totalarray['totalprogress_declaredfield'] == $i) print '<td class="center">'.($totalarray['totalplannedworkload'] > 0 ? round(100 * $totalarray['totaldurationdeclared'] / $totalarray['totalplannedworkload'], 2).' %' : '').'</td>';
 		elseif ($totalarray['totaltobillfield'] == $i) print '<td class="center">'.convertSecondToTime($totalarray['totaltobill'], $plannedworkloadoutputformat).'</td>';
 		elseif ($totalarray['totalbilledfield'] == $i) print '<td class="center">'.convertSecondToTime($totalarray['totalbilled'], $plannedworkloadoutputformat).'</td>';
-        else print '<td></td>';
+		else print '<td></td>';
 	}
 	print '</tr>';
 }
