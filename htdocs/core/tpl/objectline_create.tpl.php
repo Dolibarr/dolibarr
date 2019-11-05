@@ -846,7 +846,7 @@ function setforpredef() {
 		jQuery("#multicurrency_price_ht").val('').hide();
 	<?php } ?>
 	jQuery("#price_ht").val('');
-	jQuery("#price_ttc, #fourn_ref, #tva_tx, #title_vat, #title_up_ht, #title_up_ht_currency, #title_up_ttc, #title_up_ttc_currency").hide();
+	jQuery("#price_ttc, #fourn_ref, #tva_tx, #title_vat, #title_up_ht_currency, #title_up_ttc, #title_up_ttc_currency").hide();
 	jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").hide();
 	jQuery("#buying_price").show();
 	jQuery('#trlinefordates, .divlinefordates').show();
