@@ -7432,7 +7432,7 @@ abstract class CommonObject
 		unset($fieldvalues['rowid']);	// The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
 		if (array_key_exists('ref', $fieldvalues)) $fieldvalues['ref']=dol_string_nospecial($fieldvalues['ref']);					// If field is a ref,we sanitize data
 
-		$keys=array();
+		$keys = array();
 		$values = array();
 		foreach ($fieldvalues as $k => $v) {
 			$keys[$k] = $k;
@@ -7663,7 +7663,7 @@ abstract class CommonObject
 		if (array_key_exists('fk_user_modif', $fieldvalues) && ! ($fieldvalues['fk_user_modif'] > 0)) $fieldvalues['fk_user_modif']=$user->id;
 		unset($fieldvalues['rowid']);	// The field 'rowid' is reserved field name for autoincrement field so we don't need it into update.
 
-		$keys=array();
+		$keys = array();
 		$values = array();
 		foreach ($fieldvalues as $k => $v) {
 			$keys[$k] = $k;
