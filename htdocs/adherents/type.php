@@ -617,6 +617,7 @@ if ($rowid > 0)
 		    }
 
 			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+            print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 			print '<input class="flat" type="hidden" name="rowid" value="'.$object->id.'" size="12"></td>';
 
 			print '<br>';
