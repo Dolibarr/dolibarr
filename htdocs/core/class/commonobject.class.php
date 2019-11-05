@@ -7665,6 +7665,7 @@ abstract class CommonObject
 
 		$keys = array();
 		$values = array();
+		$tmp = array();
 		foreach ($fieldvalues as $k => $v) {
 			$keys[$k] = $k;
 			$value = $this->fields[$k];
