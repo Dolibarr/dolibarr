@@ -1711,7 +1711,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			}
 			print '</tr>';
 		}
-		
+
 		if (! count($tasks))
 		{
 			$totalnboffields = 1;
