@@ -69,13 +69,14 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 {
     // Search ficheinter
     $var=false;
-    print '<table class="noborder nohover" width="100%">';
     print '<form method="post" action="'.DOL_URL_ROOT.'/fichinter/list.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
     print '<tr class="oddeven"><td>';
     print $langs->trans("Intervention").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-    print "</form></table><br>\n";
+    print "</table></div></form><br>\n";
 }
 
 
@@ -121,6 +122,7 @@ if ($resql)
         $i++;
     }
     $db->free($resql);
+    print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Interventions").'</th></tr>'."\n";
     $listofstatus=array(0,1,2);
@@ -167,7 +169,7 @@ if ($resql)
     //if ($totalinprocess != $total)
     //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td class="right">'.$totalinprocess.'</td></tr>';
     print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
-    print "</table><br>";
+    print "</table></div><br>";
 }
 else
 {
@@ -193,6 +195,7 @@ if (! empty($conf->ficheinter->enabled))
 	$resql=$db->query($sql);
 	if ($resql)
 	{
+        print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("DraftFichinter").'</th></tr>';
@@ -211,7 +214,7 @@ if (! empty($conf->ficheinter->enabled))
 				$i++;
 			}
 		}
-		print "</table><br>";
+		print "</table></div><br>";
 	}
 }
 
@@ -241,6 +244,7 @@ $sql.= $db->plimit($max, 0);
 $resql=$db->query($sql);
 if ($resql)
 {
+    print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="4">'.$langs->trans("LastModifiedInterventions", $max).'</th></tr>';
@@ -284,7 +288,7 @@ if ($resql)
 			$i++;
 		}
 	}
-	print "</table><br>";
+	print "</table></div><br>";
 }
 else dol_print_error($db);
 
@@ -311,6 +315,7 @@ if (! empty($conf->ficheinter->enabled))
 	{
 		$num = $db->num_rows($resql);
 
+        print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("FichinterToProcess").' <a href="'.DOL_URL_ROOT.'/fichinter/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></th></tr>';
@@ -354,7 +359,7 @@ if (! empty($conf->ficheinter->enabled))
 			}
 		}
 
-		print "</table><br>";
+		print "</table></div><br>";
 	}
 	else dol_print_error($db);
 }
