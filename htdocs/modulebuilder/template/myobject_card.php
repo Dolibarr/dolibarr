@@ -143,7 +143,10 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
     // Action to move up and down lines of object
-    //include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
+    //include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';
+
+    // Action to build doc
+    include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
     if ($action == 'set_thirdparty' && $permissiontoadd)
     {

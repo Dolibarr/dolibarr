@@ -436,6 +436,7 @@ CREATE TABLE llx_mrp_mo(
     tms timestamp,
     fk_user_creat integer NOT NULL,
     fk_user_modif integer,
+    model_pdf varchar(255),
     import_key varchar(14),
     status integer NOT NULL,
     fk_product integer NOT NULL,
@@ -446,6 +447,8 @@ CREATE TABLE llx_mrp_mo(
     -- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
+ALTER TABLE llx_bom_bom ADD COLUMN model_pdf varchar(255);
+ALTER TABLE llx_mrp_mo ADD COLUMN model_pdf varchar(255);
 
 ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_ref (ref);
 ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_entity (entity);

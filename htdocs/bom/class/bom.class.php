@@ -937,8 +937,7 @@ class BOM extends CommonObject
 
 		$modelpath = "core/modules/bom/doc/";
 
-		//return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
-		return 1;
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 
 	/**
