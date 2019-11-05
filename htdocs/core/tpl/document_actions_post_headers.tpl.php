@@ -120,5 +120,5 @@ $formfile->list_of_documents(
 print "<br>";
 
 //List of links
-$formfile->listOfLinks($object, $permission, $action, GETPOST('linkid', 'int'), $param,$relativepathwithnofile);
+$formfile->listOfLinks($object, $permission, $action, GETPOST('linkid', 'int'), $param, $relativepathwithnofile);
 print "<br>";
