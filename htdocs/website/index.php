@@ -3280,7 +3280,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 			print '<!-- List of search result -->'."\n";
 			print '<div class="rowsearchresult">';
 
-			if ($action == 'replacesiteconfirm')
+			if ($action == 'replacesiteconfirm' && $conf->global->MAIN_FEATURES_LEVEL >= 2)
 			{
 				print '<div class="tagtr">';
 				print '<div class="tagtd paddingrightonly">';
