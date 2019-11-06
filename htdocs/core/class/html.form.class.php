@@ -7432,7 +7432,7 @@ class Form
 					$ret.='<!-- Put link to gravatar -->';
 					//$defaultimg=urlencode(dol_buildpath($nophoto,3));
 					$defaultimg='mm';
-					$ret.='<img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="Gravatar avatar" title="'.$email.' Gravatar avatar" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="https://www.gravatar.com/avatar/'.dol_hash(strtolower(trim($email)), 3).'?s='.$width.'&d='.$defaultimg.'">';	// gravatar need md5 hash
+					$ret.='<img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="Gravatar avatar" title="'.$email.' Gravatar avatar" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="https://www.gravatar.com/avatar/'.md5(strtolower(trim($email))).'?s='.$width.'&d='.$defaultimg.'">';	// gravatar need md5 hash
 				}
 				else
 				{
