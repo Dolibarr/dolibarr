@@ -70,6 +70,8 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
+$socialnetworks = getArrayOfSocialNetworks();
+
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($id);
 $canvas = $object->canvas?$object->canvas:GETPOST("canvas");
@@ -302,10 +304,16 @@ if (empty($reshook))
 			$object->phone_perso = trim(GETPOST("phone_perso", 'alpha'));
 			$object->phone_mobile= trim(GETPOST("phone_mobile", 'alpha'));
 			$object->email       = preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
-			$object->skype       = trim(GETPOST("skype", 'alpha'));
-			$object->twitter     = trim(GETPOST("twitter", 'alpha'));
-			$object->facebook    = trim(GETPOST("facebook", 'alpha'));
-			$object->linkedin    = trim(GETPOST("linkedin", 'alpha'));
+			$object->socialnetworks = array();
+			foreach ($socialnetworks as $key => $value) {
+				if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml')!='') {
+					$object->socialnetworks[$key] = trim(GETPOST($key, 'alphanohtml'));
+				}
+			}
+			//$object->skype       = trim(GETPOST("skype", 'alpha'));
+			//$object->twitter     = trim(GETPOST("twitter", 'alpha'));
+			//$object->facebook    = trim(GETPOST("facebook", 'alpha'));
+			//$object->linkedin    = trim(GETPOST("linkedin", 'alpha'));
 			$object->birth       = $birthdate;
 
 			$object->typeid      = GETPOST("typeid", 'int');
@@ -448,10 +456,10 @@ if (empty($reshook))
 		$phone=GETPOST("phone", 'alpha');
 		$phone_perso=GETPOST("phone_perso", 'alpha');
 		$phone_mobile=GETPOST("phone_mobile", 'alpha');
-		$skype=GETPOST("member_skype", 'alpha');
-		$twitter=GETPOST("member_twitter", 'alpha');
-		$facebook=GETPOST("member_facebook", 'alpha');
-        $linkedin=GETPOST("member_linkedin", 'alpha');
+		// $skype=GETPOST("member_skype", 'alpha');
+		// $twitter=GETPOST("member_twitter", 'alpha');
+		// $facebook=GETPOST("member_facebook", 'alpha');
+        // $linkedin=GETPOST("member_linkedin", 'alpha');
 		$email=preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
 		$login=GETPOST("member_login", 'alpha');
 		$pass=GETPOST("password", 'alpha');
@@ -478,11 +486,19 @@ if (empty($reshook))
 		$object->phone       = $phone;
 		$object->phone_perso = $phone_perso;
 		$object->phone_mobile= $phone_mobile;
+		$object->socialnetworks = array();
+		if (! empty($conf->socialnetworks->enabled)) {
+			foreach ($socialnetworks as $key => $value) {
+				if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml')!='') {
+					$object->socialnetworks[$key] = GETPOST("member_".$key, 'alphanohtml');
+				}
+			}
+		}
 
-		$object->skype       = $skype;
-		$object->twitter     = $twitter;
-		$object->facebook    = $facebook;
-		$object->linkedin    = $linkedin;
+		// $object->skype       = $skype;
+		// $object->twitter     = $twitter;
+		// $object->facebook    = $facebook;
+		// $object->linkedin    = $linkedin;
 
 		$object->email       = $email;
 		$object->login       = $login;
@@ -802,7 +818,7 @@ if (empty($reshook))
 
 	// Actions to build doc
 	$upload_dir = $conf->adherent->dir_output;
-	$permissioncreate=$user->rights->adherent->creer;
+	$permissiontoadd=$user->rights->adherent->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Actions to send emails
@@ -1028,29 +1044,12 @@ else
 		// Mobile phone
 		print '<tr><td>'.img_picto('', 'object_phoning_mobile').' '.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(GETPOST('phone_mobile', 'alpha')?GETPOST('phone_mobile', 'alpha'):$object->phone_mobile).'"></td></tr>';
 
-	    // Skype
-	    if (! empty($conf->socialnetworks->enabled))
-	    {
-			print '<tr><td>'.$langs->trans("Skype").'</td><td><input type="text" name="member_skype" size="40" value="'.(GETPOST('member_skype', 'alpha')?GETPOST('member_skype', 'alpha'):$object->skype).'"></td></tr>';
-	    }
-
-	    // Twitter
-	    if (! empty($conf->socialnetworks->enabled))
-	    {
-	    	print '<tr><td>'.$langs->trans("Twitter").'</td><td><input type="text" name="member_twitter" size="40" value="'.(GETPOST('member_twitter', 'alpha')?GETPOST('member_twitter', 'alpha'):$object->twitter).'"></td></tr>';
-	    }
-
-	    // Facebook
-	    if (! empty($conf->socialnetworks->enabled))
-	    {
-	    	print '<tr><td>'.$langs->trans("Facebook").'</td><td><input type="text" name="member_facebook" size="40" value="'.(GETPOST('member_facebook', 'alpha')?GETPOST('member_facebook', 'alpha'):$object->facebook).'"></td></tr>';
-	    }
-
-        // LinkedIn
-        if (! empty($conf->socialnetworks->enabled))
-        {
-            print '<tr><td>'.$langs->trans("LinkedIn").'</td><td><input type="text" name="member_linkedin" size="40" value="'.(GETPOST('member_linkedin', 'alpha')?GETPOST('member_linkedin', 'alpha'):$object->linkedin).'"></td></tr>';
-        }
+	    if (! empty($conf->socialnetworks->enabled)) {
+			foreach ($socialnetworks as $key => $value) {
+                if (!$value['active']) break;
+				print '<tr><td>'.$langs->trans($value['label']).'</td><td><input type="text" name="member_'.$key.'" size="40" value="'.(GETPOST('member_'.$key, 'alpha')?GETPOST('member_'.$key, 'alpha'):$object->socialnetworks[$key]).'"></td></tr>';
+			}
+		}
 
 	    // Birth Date
 		print "<tr><td>".$langs->trans("DateToBirth")."</td><td>\n";
@@ -1297,29 +1296,12 @@ else
 		// Mobile phone
 		print '<tr><td>'.img_picto('', 'object_phoning_mobile').' '.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(isset($_POST["phone_mobile"])?GETPOST("phone_mobile"):$object->phone_mobile).'"></td></tr>';
 
-	    // Skype
-	    if (! empty($conf->socialnetworks->enabled))
-	    {
-			print '<tr><td>'.$langs->trans("Skype").'</td><td><input type="text" name="skype" class="minwidth100" value="'.(isset($_POST["skype"])?GETPOST("skype"):$object->skype).'"></td></tr>';
-	    }
-
-	    // Twitter
-	    if (! empty($conf->socialnetworks->enabled))
-	    {
-	    	print '<tr><td>'.$langs->trans("Twitter").'</td><td><input type="text" name="twitter" class="minwidth100" value="'.(isset($_POST["twitter"])?GETPOST("twitter"):$object->twitter).'"></td></tr>';
-	    }
-
-	    // Facebook
-        if (! empty($conf->socialnetworks->enabled))
-        {
-            print '<tr><td>'.$langs->trans("Facebook").'</td><td><input type="text" name="facebook" class="minwidth100" value="'.(isset($_POST["facebook"])?GETPOST("facebook"):$object->facebook).'"></td></tr>';
-        }
-
-        // LinkedIn
-        if (! empty($conf->socialnetworks->enabled))
-        {
-            print '<tr><td>'.$langs->trans("LinkedIn").'</td><td><input type="text" name="linkedin" class="minwidth100" value="'.(isset($_POST["linkedin"])?GETPOST("linkedin"):$object->linkedin).'"></td></tr>';
-        }
+        if (! empty($conf->socialnetworks->enabled)) {
+			foreach ($socialnetworks as $key => $value) {
+                if (!$value['active']) break;
+				print '<tr><td>'.$langs->trans($value['label']).'</td><td><input type="text" name="'.$key.'" class="minwidth100" value="'.(isset($_POST[$key])?GETPOST($key):$object->socialnetworks[$key]).'"></td></tr>';
+			}
+		}
 
 	    // Birth Date
 		print "<tr><td>".$langs->trans("DateToBirth")."</td><td>\n";

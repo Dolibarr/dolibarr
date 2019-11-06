@@ -223,7 +223,7 @@ if (empty($reshook))
 
 	// Actions to build doc
 	$upload_dir = $conf->stock->dir_output;
-	$permissioncreate = $user->rights->stock->creer;
+	$permissiontoadd = $user->rights->stock->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 

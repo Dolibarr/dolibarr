@@ -398,7 +398,7 @@ else
 		else print "<br>\n";
 
 		//print $langs->trans("InstallEasy")." ";
-		print '<h3><span class="soustitre">'.$langs->trans("ChooseYourSetupMode").'...</span></h3>';
+		print '<h3><span class="soustitre">'.$langs->trans("ChooseYourSetupMode").'</span></h3>';
 
 		$foundrecommandedchoice=0;
 

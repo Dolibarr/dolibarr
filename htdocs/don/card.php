@@ -248,7 +248,7 @@ elseif ($action == 'classin' && $user->rights->don->creer)
 
 // Actions to build doc
 $upload_dir = $conf->don->dir_output;
-$permissioncreate = $user->rights->don->creer;
+$permissiontoadd = $user->rights->don->creer;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 

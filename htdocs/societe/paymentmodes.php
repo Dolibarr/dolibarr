@@ -489,7 +489,7 @@ if (empty($reshook))
 
 	$id = $socid;
 	$upload_dir = $conf->societe->multidir_output[$object->entity];
-	$permissioncreate=$user->rights->societe->creer;
+	$permissiontoadd=$user->rights->societe->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	$id = $savid;

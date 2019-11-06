@@ -998,7 +998,7 @@ if (empty($reshook))
 
 	// Actions to build doc
 	$upload_dir = $conf->contrat->dir_output;
-	$permissioncreate = $user->rights->contrat->creer;
+	$permissiontoadd = $user->rights->contrat->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Actions to send emails

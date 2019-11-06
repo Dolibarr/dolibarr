@@ -1385,7 +1385,7 @@ class SMTPs
             // Similar code to forge a text from html is also in CMailFile.class.php
             $strContentAltText = preg_replace("/<br\s*[^>]*>/", " ", $strContent);
             $strContentAltText = html_entity_decode(strip_tags($strContentAltText));
-            $strContentAltText = rtrim(wordwrap($strContentAltText, 75, "\r\n"));
+            $strContentAltText = trim(wordwrap($strContentAltText, 75, "\r\n"));
         }
 
         // Make RFC2045 Compliant

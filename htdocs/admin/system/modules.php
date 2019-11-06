@@ -40,7 +40,7 @@ llxHeader();
 
 print load_fiche_titre($langs->trans("AvailableModules"), '', 'title_setup');
 
-print $langs->trans("ToActivateModule").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("ToActivateModule").'</span><br>';
 print "<br>\n";
 
 $modules = array();

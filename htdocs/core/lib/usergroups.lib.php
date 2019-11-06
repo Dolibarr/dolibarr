@@ -64,7 +64,7 @@ function user_prepare_head($object)
 	if ($canreadperms)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("Rights"). ' <span class="badge">'.($object->nb_rights).'</span>';
+		$head[$h][1] = $langs->trans("Rights"). '<span class="badge marginleftonlyshort">'.($object->nb_rights).'</span>';
 		$head[$h][2] = 'rights';
 		$h++;
 	}
@@ -94,7 +94,7 @@ function user_prepare_head($object)
 		}
 
 		$head[$h][0] = DOL_URL_ROOT.'/user/agenda_extsites.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("ExtSites").($nbagenda ? ' <span class="badge">'.$nbagenda.'</span>' : '');
+		$head[$h][1] = $langs->trans("ExtSites").($nbagenda ? '<span class="badge marginleftonlyshort">'.$nbagenda.'</span>' : '');
 		$head[$h][2] = 'extsites';
 		$h++;
 	}
@@ -132,7 +132,7 @@ function user_prepare_head($object)
 
 		$head[$h][0] = DOL_URL_ROOT.'/user/notify/card.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Notifications");
-		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+		if ($nbNote > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
 		$head[$h][2] = 'notify';
 		$h++;
 	}
@@ -164,7 +164,7 @@ function user_prepare_head($object)
 		if(!empty($object->note)) $nbNote++;
 		$head[$h][0] = DOL_URL_ROOT.'/user/note.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Note");
-		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+		if ($nbNote > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
 		$head[$h][2] = 'note';
 		$h++;
 
@@ -176,7 +176,7 @@ function user_prepare_head($object)
 		$nbLinks=Link::count($db, $object->element, $object->id);
 		$head[$h][0] = DOL_URL_ROOT.'/user/document.php?userid='.$object->id;
 		$head[$h][1] = $langs->trans("Documents");
-		if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+		if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
 		$head[$h][2] = 'document';
 		$h++;
 
@@ -228,7 +228,7 @@ function group_prepare_head($object)
 	if ($canreadperms)
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/user/group/perms.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("GroupRights"). ' <span class="badge">'.($object->nb_rights).'</span>';
+		$head[$h][1] = $langs->trans("GroupRights"). '<span class="badge marginleftonlyshort">'.($object->nb_rights).'</span>';
 		$head[$h][2] = 'rights';
 		$h++;
 	}

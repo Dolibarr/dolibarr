@@ -144,7 +144,7 @@ if ($resql)
 		$fuserstatic->admin = $obj->admin;
 		$fuserstatic->email = $obj->email;
 		$fuserstatic->skype = $obj->skype;
-		$fuserstatic->societe_id = $obj->fk_soc;
+		$fuserstatic->socid = $obj->fk_soc;
 
 		$companystatic->id=$obj->fk_soc;
 		$companystatic->name=$obj->name;

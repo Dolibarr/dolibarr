@@ -87,7 +87,7 @@ $hookmanager->initHooks(array('productlotcard','globalcard'));
 
 $permissionnote = $user->rights->stock->creer; 		// Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->stock->creer; 	// Used by the include of actions_dellink.inc.php
-$permissionedit = $user->rights->stock->creer; 		// Used by the include of actions_lineupdown.inc.php
+$permissiontoadd = $user->rights->stock->creer; 	// Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 $usercanread = $user->rights->produit->lire;
 $usercancreate = $user->rights->produit->creer;
@@ -252,7 +252,7 @@ if (empty($reshook))
 
 	// Actions to build doc
     $upload_dir = $conf->productbatch->multidir_output[$conf->entity];
-    $permissioncreate = $usercancreate;
+    $permissiontoadd = $usercancreate;
     include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 

@@ -196,8 +196,8 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='Holiday';
 	$objectlabel='Holiday';
-	$permtoread = $user->rights->holiday->read;
-	$permtodelete = $user->rights->holiday->delete;
+	$permissiontoread = $user->rights->holiday->read;
+	$permissiontodelete = $user->rights->holiday->delete;
 	$uploaddir = $conf->holiday->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }

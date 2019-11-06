@@ -413,7 +413,7 @@ if ($action == "transfert_stock" && ! $cancel)
 // The builddoc action for object of a movement must be on the movement card
 // Actions to build doc
 $upload_dir = $conf->stock->dir_output . "movement/";
-$permissioncreate = $user->rights->stock->creer;
+$permissiontoadd = $user->rights->stock->creer;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
@@ -421,8 +421,8 @@ if (empty($reshook) && $action != 'remove_file')
 {
     $objectclass='MouvementStock';
     $objectlabel='Movements';
-    $permtoread = $user->rights->stock->lire;
-    $permtodelete = $user->rights->stock->supprimer;
+    $permissiontoread = $user->rights->stock->lire;
+    $permissiontodelete = $user->rights->stock->supprimer;
     $uploaddir = $conf->stock->dir_output . "/movement/";
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }

@@ -180,6 +180,7 @@ $head=agenda_prepare_head();
 dol_fiche_head($head, 'reminders', $langs->trans("Agenda"), -1, 'action');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" name="agenda">';
+print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 print '<input type="hidden" name="action" value="set">';
 
 print '<table class="noborder allwidth">'."\n";

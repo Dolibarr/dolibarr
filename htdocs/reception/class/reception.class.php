@@ -120,6 +120,13 @@ class Reception extends CommonObject
 		$this->statuts[0]  = 'StatusReceptionDraft';
 		$this->statuts[1]  = 'StatusReceptionValidated';
 		$this->statuts[2]  = 'StatusReceptionProcessed';
+
+		// List of short language codes for status
+		$this->statutshorts = array();
+		$this->statutshorts[-1] = 'StatusReceptionCanceledShort';
+		$this->statutshorts[0]  = 'StatusReceptionDraftShort';
+		$this->statutshorts[1]  = 'StatusReceptionValidatedShort';
+		$this->statutshorts[2]  = 'StatusReceptionProcessedShort';
 	}
 
 	/**
@@ -1152,39 +1159,17 @@ class Reception extends CommonObject
 	 */
     public function LibStatut($status, $mode)
     {
-		// phpcs:enable
-		global $langs;
+    	// phpcs:enable
+    	global $langs;
 
-		if ($mode==0)
-		{
-			if ($status==0) return $langs->trans($this->statuts[$status]);
-			elseif ($status==1)  return $langs->trans($this->statuts[$status]);
-			elseif ($status==2)  return $langs->trans($this->statuts[$status]);
-		}
-		elseif ($mode==1)
-		{
-			if ($status==0) return $langs->trans('StatusReceptionDraftShort');
-			elseif ($status==1) return $langs->trans('StatusReceptionValidatedShort');
-			elseif ($status==2) return $langs->trans('StatusReceptionProcessedShort');
-		}
-		elseif ($mode == 3)
-		{
-			if ($status==0) return img_picto($langs->trans($this->statuts[$status]), 'statut0');
-			elseif ($status==1) return img_picto($langs->trans($this->statuts[$status]), 'statut4');
-			elseif ($status==2) return img_picto($langs->trans('StatusReceptionProcessed'), 'statut6');
-		}
-		elseif ($mode == 4)
-		{
-			if ($status==0) return img_picto($langs->trans($this->statuts[$status]), 'statut0').' '.$langs->trans($this->statuts[$status]);
-			elseif ($status==1) return img_picto($langs->trans($this->statuts[$status]), 'statut4').' '.$langs->trans($this->statuts[$status]);
-			elseif ($status==2) return img_picto($langs->trans('StatusReceptionProcessed'), 'statut6').' '.$langs->trans('StatusReceptionProcessed');
-		}
-		elseif ($mode == 5)
-		{
-			if ($status==0) return $langs->trans('StatusReceptionDraftShort').' '.img_picto($langs->trans($this->statuts[$status]), 'statut0');
-			elseif ($status==1) return $langs->trans('StatusReceptionValidatedShort').' '.img_picto($langs->trans($this->statuts[$status]), 'statut4');
-			elseif ($status==2) return $langs->trans('StatusReceptionProcessedShort').' '.img_picto($langs->trans('StatusReceptionProcessedShort'), 'statut6');
-		}
+    	$labelStatus = $langs->trans($this->statuts[$status]);
+    	$labelStatusShort = $langs->trans($this->statutshorts[$status]);
+
+    	$statusType = 'status'.$status;
+    	if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
+    	if ($status == self::STATUS_CLOSED) $statusType = 'status6';
+
+    	return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
 	}
 
 	/**

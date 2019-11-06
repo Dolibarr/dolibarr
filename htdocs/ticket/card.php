@@ -588,7 +588,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';        // Must be inc
 
 // Actions to build doc
 $upload_dir = $conf->ticket->dir_output;
-$permissioncreate = $user->rights->ticket->write;
+$permissiontoadd = $user->rights->ticket->write;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 // Actions to send emails

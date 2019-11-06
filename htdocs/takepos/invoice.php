@@ -444,8 +444,13 @@ if ($action=="valid" || $action=="history")
         else $sectionwithinvoicelink.=$langs->trans('BillShortStatusValidated');
     }
     $sectionwithinvoicelink.='</span>';
-    if ($conf->global->TAKEPOSCONNECTOR) $sectionwithinvoicelink.=' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
-    else $sectionwithinvoicelink.=' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+    if ($conf->global->TAKEPOSCONNECTOR) {
+         $sectionwithinvoicelink.=' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+    } elseif ($conf->global->TAKEPOS_DOLIBARR_PRINTER) {
+        $sectionwithinvoicelink.=' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+    } else {
+        $sectionwithinvoicelink.=' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+    }
     if ($conf->global->TAKEPOS_AUTO_PRINT_TICKETS) $sectionwithinvoicelink.='<script language="javascript">$("#buttonprint").click();</script>';
 }
 
@@ -546,6 +551,13 @@ function TakeposPrinting(id){
             url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print',
             data: receipt
         });
+    });
+}
+function DolibarrTakeposPrinting(id) {
+    console.log('Printing invoice ticket ' + id)
+    $.ajax({
+        type: "GET",
+        url: "<?php print dol_buildpath('/takepos/ajax/ajax.php', 1).'?action=printinvoiceticket&term='.$_SESSION["takeposterminal"].'&id='; ?>" + id,
     });
 }
 </script>

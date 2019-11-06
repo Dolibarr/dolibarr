@@ -2194,7 +2194,7 @@ class Holiday extends CommonObject
             $response->warning_delay=$conf->holiday->approve->warning_delay/60/60/24;
             $response->label=$langs->trans("HolidaysToApprove");
             $response->labelShort=$langs->trans("ToApprove");
-            $response->url=DOL_URL_ROOT.'/holiday/list.php?search_statut=2&mainmenu=hrm&leftmenu=holiday';
+            $response->url=DOL_URL_ROOT.'/holiday/list.php?search_statut=2&amp;mainmenu=hrm&amp;leftmenu=holiday';
             $response->img=img_object('', "holiday");
 
             while ($obj=$this->db->fetch_object($resql))

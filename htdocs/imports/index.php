@@ -54,6 +54,7 @@ print '<br>';
 
 // List of import set
 /*
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Module").'</td>';
@@ -84,6 +85,7 @@ else
 	print '<tr><td '.$bc[false].' colspan="2">'.$langs->trans("NoImportableData").'</td></tr>';
 }
 print '</table>';
+print '</div>';
 print '<br>';
 */
 
@@ -107,6 +109,7 @@ print '<br>';
 
 
 // List of available import format
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("AvailableFormats").'</td>';
@@ -130,6 +133,7 @@ foreach($liste as $key)
 }
 
 print '</table>';
+print '</div>';
 
 
 //print '</div></div></div>';

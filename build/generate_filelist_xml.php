@@ -164,7 +164,7 @@ foreach ($files as $filetmp) {
     if (filetype($file)=="file") {
         $md5=md5_file($file);
         $checksumconcat[]=$md5;
-        fputs($fp, '    <md5file name="'.basename($file).'">'.$md5.'</md5file>'."\n");
+        fputs($fp, '    <md5file name="'.basename($file).'" size="'.filesize($file).'">'.$md5.'</md5file>'."\n");
     }
 }
 fputs($fp, '  </dir>'."\n");
@@ -207,7 +207,7 @@ foreach ($files as $filetmp) {
     if (filetype($file)=="file") {
         $md5=md5_file($file);
         $checksumconcat[]=$md5;
-        fputs($fp, '    <md5file name="'.basename($file).'">'.$md5.'</md5file>'."\n");
+        fputs($fp, '    <md5file name="'.basename($file).'" size="'.filesize($file).'">'.$md5.'</md5file>'."\n");
     }
 }
 fputs($fp, '  </dir>'."\n");

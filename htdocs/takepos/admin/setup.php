@@ -68,6 +68,7 @@ if (GETPOST('action', 'alpha') == 'set')
 	$res = dolibarr_set_const($db, "TAKEPOS_ROOT_CATEGORY_ID", GETPOST('TAKEPOS_ROOT_CATEGORY_ID', 'alpha'), 'chaine', 0, '', $conf->entity);
 
 	$res = dolibarr_set_const($db, "TAKEPOSCONNECTOR", GETPOST('TAKEPOSCONNECTOR', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "TAKEPOS_DOLIBARR_PRINTER", GETPOST('TAKEPOS_DOLIBARR_PRINTER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_BAR_RESTAURANT", GETPOST('TAKEPOS_BAR_RESTAURANT', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_TICKET_VAT_GROUPPED", GETPOST('TAKEPOS_TICKET_VAT_GROUPPED', 'alpha'), 'chaine', 0, '', $conf->entity);
     $res = dolibarr_set_const($db, "TAKEPOS_PRINT_SERVER", GETPOST('TAKEPOS_PRINT_SERVER', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -162,6 +163,15 @@ print '<td colspan="2">';
 print $form->select_all_categories(Categorie::TYPE_PRODUCT, $conf->global->TAKEPOS_ROOT_CATEGORY_ID, 'TAKEPOS_ROOT_CATEGORY_ID', 64, 0, 0);
 print ajax_combobox('TAKEPOS_ROOT_CATEGORY_ID');
 print "</td></tr>\n";
+
+if ($conf->receiptprinter->enabled) {
+    // Use Dolibarr printing
+    print '<tr class="oddeven"><td>';
+    print $langs->trans("DolibarrReceiptPrinterModule");
+    print '<td colspan="2">';
+    print $form->selectyesno("TAKEPOS_DOLIBARR_PRINTER", $conf->global->TAKEPOS_DOLIBARR_PRINTER, 1);
+    print "</td></tr>\n";
+}
 
 // Use Takepos printing
 print '<tr class="oddeven"><td>';

@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
 /**
  *	Class to build documents using ODF templates generator
  */
-class doc_generic_mo_odt extends ModelePDFMos
+class doc_generic_mo_odt extends ModelePDFMo
 {
 	/**
 	 * Issuer
@@ -86,7 +86,7 @@ class doc_generic_mo_odt extends ModelePDFMos
 		$this->marge_basse=0;
 
 		$this->option_logo = 1;                    // Affiche logo
-		$this->option_tva = 0;                     // Gere option tva COMMANDE_TVAOPTION
+		$this->option_tva = 0;                     // Gere option tva
 		$this->option_modereg = 0;                 // Affiche mode reglement
 		$this->option_condreg = 0;                 // Affiche conditions reglement
 		$this->option_codeproduitservice = 0;      // Affiche code produit-service
@@ -195,7 +195,7 @@ class doc_generic_mo_odt extends ModelePDFMos
 	/**
 	 *  Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param		Commande	$object				Object source to build document
+	 *	@param		MO			$object				Object source to build document
 	 *	@param		Translate	$outputlangs		Lang output object
 	 * 	@param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int			$hidedetails		Do not show line details
@@ -229,13 +229,13 @@ class doc_generic_mo_odt extends ModelePDFMos
 
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
-		if ($conf->commande->dir_output)
+		if ($conf->mrp->dir_output)
 		{
 			// If $object is id instead of object
 			if (! is_object($object))
 			{
 				$id = $object;
-				$object = new Commande($this->db);
+				$object = new MO($this->db);
 				$result=$object->fetch($id);
 				if ($result < 0)
 				{
@@ -244,7 +244,7 @@ class doc_generic_mo_odt extends ModelePDFMos
 				}
 			}
 
-			$dir = $conf->commande->multidir_output[$object->entity];
+			$dir = $conf->mrp->multidir_output[$object->entity];
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (! preg_match('/specimen/i', $objectref)) $dir.= "/" . $objectref;
 			$file = $dir . "/" . $objectref . ".odt";
@@ -316,11 +316,7 @@ class doc_generic_mo_odt extends ModelePDFMos
 
 				// Make substitution
 				$substitutionarray=array(
-				'__FROM_NAME__' => $this->emetteur->name,
-				'__FROM_EMAIL__' => $this->emetteur->email,
-				'__TOTAL_TTC__' => $object->total_ttc,
-				'__TOTAL_HT__' => $object->total_ht,
-				'__TOTAL_VAT__' => $object->total_vat
+					'__QTY_TO_PRODUCE__' => $object->qty,
 				);
 				complete_substitutions_array($substitutionarray, $langs, $object);
 				// Call the ODTSubstitution hook
@@ -329,7 +325,7 @@ class doc_generic_mo_odt extends ModelePDFMos
 
 				// Line of free text
 				$newfreetext='';
-				$paramfreetext='ORDER_FREE_TEXT';
+				$paramfreetext='MRP_MO_FREE_TEXT';
 				if (! empty($conf->global->$paramfreetext))
 				{
 					$newfreetext=make_substitutions($conf->global->$paramfreetext, $substitutionarray);
@@ -341,7 +337,7 @@ class doc_generic_mo_odt extends ModelePDFMos
                     $odfHandler = new odf(
 						$srctemplatepath,
 						array(
-						'PATH_TO_TMP'	  => $conf->commande->dir_temp,
+						'PATH_TO_TMP'	  => $conf->mrp->dir_temp,
 						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 						'DELIMITER_LEFT'  => '{',
 						'DELIMITER_RIGHT' => '}'

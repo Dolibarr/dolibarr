@@ -692,16 +692,23 @@ abstract class CommonObject
 		$out.='<div style="clear: both;">';
 		if (! empty($conf->socialnetworks->enabled))
 		{
-			if ($this->skype) $out.=dol_print_socialnetworks($this->skype, $this->id, $object->id, 'skype');
-			$outdone++;
-			if ($this->jabberid) $out.=dol_print_socialnetworks($this->jabberid, $this->id, $object->id, 'jabber');
-			$outdone++;
-			if ($this->twitter) $out.=dol_print_socialnetworks($this->twitter, $this->id, $object->id, 'twitter');
-			$outdone++;
-			if ($this->facebook) $out.=dol_print_socialnetworks($this->facebook, $this->id, $object->id, 'facebook');
-			$outdone++;
-			if ($this->linkedin) $out.=dol_print_socialnetworks($this->linkedin, $this->id, $object->id, 'linkedin');
-			$outdone++;
+			if (is_array($this->socialnetworks) && count($this->socialnetworks)>0) {
+				foreach ($this->socialnetworks as $key => $value) {
+					$out.=dol_print_socialnetworks($value, $this->id, $object->id, $key);
+					$outdone++;
+				}
+			} else {
+				if ($this->skype) $out.=dol_print_socialnetworks($this->skype, $this->id, $object->id, 'skype');
+				$outdone++;
+				if ($this->jabberid) $out.=dol_print_socialnetworks($this->jabberid, $this->id, $object->id, 'jabber');
+				$outdone++;
+				if ($this->twitter) $out.=dol_print_socialnetworks($this->twitter, $this->id, $object->id, 'twitter');
+				$outdone++;
+				if ($this->facebook) $out.=dol_print_socialnetworks($this->facebook, $this->id, $object->id, 'facebook');
+				$outdone++;
+				if ($this->linkedin) $out.=dol_print_socialnetworks($this->linkedin, $this->id, $object->id, 'linkedin');
+				$outdone++;
+			}
 		}
 		$out.='</div>';
 
@@ -7425,7 +7432,7 @@ abstract class CommonObject
 		unset($fieldvalues['rowid']);	// The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
 		if (array_key_exists('ref', $fieldvalues)) $fieldvalues['ref']=dol_string_nospecial($fieldvalues['ref']);					// If field is a ref,we sanitize data
 
-		$keys=array();
+		$keys = array();
 		$values = array();
 		foreach ($fieldvalues as $k => $v) {
 			$keys[$k] = $k;
@@ -7656,8 +7663,9 @@ abstract class CommonObject
 		if (array_key_exists('fk_user_modif', $fieldvalues) && ! ($fieldvalues['fk_user_modif'] > 0)) $fieldvalues['fk_user_modif']=$user->id;
 		unset($fieldvalues['rowid']);	// The field 'rowid' is reserved field name for autoincrement field so we don't need it into update.
 
-		$keys=array();
+		$keys = array();
 		$values = array();
+		$tmp = array();
 		foreach ($fieldvalues as $k => $v) {
 			$keys[$k] = $k;
 			$value = $this->fields[$k];
@@ -8027,7 +8035,8 @@ abstract class CommonObject
 
 		if (! $this->db->query($sql))
 		{
-			$this->db->rollback();die($sql);
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
 			return -1;
 		}
 

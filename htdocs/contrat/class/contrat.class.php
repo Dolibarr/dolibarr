@@ -1894,6 +1894,7 @@ class Contrat extends CommonObject
 	public function LibStatut($status, $mode)
 	{
         // phpcs:enable
+		global $langs;
 
 		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
