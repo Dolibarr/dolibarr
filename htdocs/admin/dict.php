@@ -378,7 +378,7 @@ $tabfieldinsert[34]= "code,label";
 $tabfieldinsert[35]= "label";
 $tabfieldinsert[36]= "range_ik,fk_c_exp_tax_cat";
 $tabfieldinsert[37]= "code,label,short_label,unit_type,scale";
-$tabfieldinsert[38]= "entity,code,label,url,icon";
+$tabfieldinsert[38]= "code,label,url,icon,entity";
 
 // Rowid name of field depending if field is autoincrement on or off..
 // Use "" if id field is "rowid" and has autoincrement on
