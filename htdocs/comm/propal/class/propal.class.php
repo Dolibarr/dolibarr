@@ -3626,12 +3626,12 @@ class Propal extends CommonObject
                         $txttoshow .= dol_string_nohtmltag($this->note_public, 1);
                     }
                 } else {
-                    if (!empty($this->note_private)) {
-                        $txttoshow .= dol_string_nohtmltag($this->note_private, 1);
-                    }
                     if (!empty($this->note_public)) {
-                        if (!empty($txttoshow)) $txttoshow .= '<br>';
                         $txttoshow .= dol_string_nohtmltag($this->note_public, 1);
+                    }
+                    if (!empty($this->note_private)) {
+                        if (!empty($txttoshow)) $txttoshow .= '<br><br>';
+                        $txttoshow .= dol_string_nohtmltag($this->note_private, 1);
                     }
                 }
             }
