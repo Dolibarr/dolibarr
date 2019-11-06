@@ -362,7 +362,7 @@ else
 	 */
 
 	// Onglets
-	$head=account_statement_prepare_head($object,$numref);
+	$head=account_statement_prepare_head($object, $numref);
 	dol_fiche_head($head, 'statement', $langs->trans("FinancialAccount"), 0, 'account');
 
 

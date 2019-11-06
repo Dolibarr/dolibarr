@@ -103,7 +103,7 @@ if ($id > 0 || !empty($ref)) {
 		$upload_dir = $conf->bank->dir_output . "/".$id."/statement/" . dol_sanitizeFileName($num);
 
 		// Onglets
-		$head = account_statement_prepare_head($object,$num);
+		$head = account_statement_prepare_head($object, $num);
 		dol_fiche_head($head, 'document', $langs->trans("FinancialAccount"), -1, 'account');
 
 

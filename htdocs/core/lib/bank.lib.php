@@ -165,7 +165,7 @@ function bank_admin_prepare_head($object)
  * @param   Object	$num		val to account statement
  * @return  array				Array of tabs to shoc
  */
-function account_statement_prepare_head($object,$num)
+function account_statement_prepare_head($object, $num)
 {
 	global $langs, $conf, $user,$db;
 	$h = 0;
