@@ -40,6 +40,8 @@ $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $search_ref = GETPOST('search_ref', 'int');
 $search_user = GETPOST('search_user', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
+$search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
+$search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_account = GETPOST('search_account', 'int');
 
@@ -80,7 +82,10 @@ else
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
 {
 	$search_ref="";
+	$search_user="";
 	$search_label="";
+	$search_date_start='';
+	$search_date_end='';
 	$search_amount="";
 	$search_account='';
     $typeid="";
@@ -111,11 +116,13 @@ $sql.= " WHERE u.rowid = s.fk_user";
 $sql.= " AND s.entity = ".$conf->entity;
 
 // Search criteria
-if ($search_ref)	$sql.=" AND s.rowid=".$search_ref;
-if ($search_user)   $sql.=natural_search(array('u.login', 'u.lastname', 'u.firstname', 'u.email'), $search_user);
-if ($search_label) 	$sql.=natural_search(array('s.label'), $search_label);
-if ($search_amount) $sql.=natural_search("s.amount", $search_amount, 1);
-if ($search_account > 0) $sql .=" AND b.fk_account=".$search_account;
+if ($search_ref)			$sql.=" AND s.rowid=".$search_ref;
+if ($search_user)			$sql.=natural_search(array('u.login', 'u.lastname', 'u.firstname', 'u.email'), $search_user);
+if ($search_label)			$sql.=natural_search(array('s.label'), $search_label);
+if ($search_date_start)     $sql.= " AND s.datep >= '" . $db->idate($search_date_start) . "'";
+if ($search_date_end)		$sql.= " AND s.datep <= '" . $db->idate($search_date_end) . "'";
+if ($search_amount)			$sql.=natural_search("s.amount", $search_amount, 1);
+if ($search_account > 0)	$sql .=" AND b.fk_account=".$search_account;
 if ($filtre) {
     $filtre=str_replace(":", "=", $filtre);
     $sql .= " AND ".$filtre;
@@ -171,7 +178,7 @@ if ($result)
 
 	print '<tr class="liste_titre_filter">';
 	// Ref
-	print '<td class="liste_titre" align="left">';
+	print '<td class="liste_titre left">';
 	print '<input class="flat" type="text" size="3" name="search_ref" value="'.$db->escape($search_ref).'">';
 	print '</td>';
 	// Employee
@@ -181,9 +188,18 @@ if ($result)
 	// Label
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="'.$db->escape($search_label).'"></td>';
 	// Date
-	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $langs->trans('From') . ' ';
+	print $form->selectDate($search_date_start?$search_date_start:-1, 'search_date_start', 0, 0, 1);
+	print '</div>';
+	print '<div class="nowrap">';
+	print $langs->trans('to') . ' ';
+	print $form->selectDate($search_date_end?$search_date_end:-1, 'search_date_end', 0, 0, 1);
+	print '</div>';
+	print '</td>';
 	// Type
-	print '<td class="liste_titre" align="left">';
+	print '<td class="liste_titre left">';
 	$form->select_types_paiements($typeid, 'typeid', '', 0, 1, 1, 16);
 	print '</td>';
 	// Account
@@ -239,7 +255,7 @@ if ($result)
 		// Label payment
         print "<td>".dol_trunc($obj->label, 40)."</td>\n";
 		// Date payment
-        print '<td align="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
+        print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
         // Type
         print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';
 		// Account
@@ -269,7 +285,7 @@ if ($result)
 	        print '</td>';
 	    }
         // Amount
-        print '<td class="right">'.price($obj->amount).'</td>';
+        print '<td class="nowrap right">'.price($obj->amount).'</td>';
         print '<td></td>';
         print "</tr>\n";
 
@@ -281,7 +297,7 @@ if ($result)
     $colspan=5;
     if (! empty($conf->banque->enabled)) $colspan++;
     print '<tr class="liste_total"><td colspan="'.$colspan.'" class="liste_total">'.$langs->trans("Total").'</td>';
-    print '<td class="liste_total right">'.price($total)."</td>";
+    print '<td class="liste_total nowrap right">'.price($total)."</td>";
 	print "<td></td></tr>";
 
     print "</table>";
