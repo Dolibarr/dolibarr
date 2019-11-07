@@ -306,7 +306,7 @@ class Ticket extends CommonObject
         }
 
         if (empty($this->ref)) {
-            $this->errors[] = 'ErrorBadRef';
+            $this->errors[] = 'ErrorTicketRefRequired';
             dol_syslog(get_class($this) . "::create error -1 ref null", LOG_ERR);
             $result = -1;
         }
