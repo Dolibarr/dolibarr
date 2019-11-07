@@ -152,7 +152,7 @@ if (empty($reshook))
 					'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'twitter', 'facebook', 'linkedin', 'socialnetworks', 'url', 'barcode',
 					'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
 					'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'remise_supplier_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
-					'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
+					'stcomm_id', 'outstanding_limit', 'id_risk', 'max_payment_days', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
 					'code_client', 'code_fournisseur', 'code_compta', 'code_compta_fournisseur',
 					'model_pdf', 'fk_projet'
 				);
