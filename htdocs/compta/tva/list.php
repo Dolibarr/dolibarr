@@ -186,11 +186,11 @@ if ($result)
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
 	print $langs->trans('From') . ' ';
-	print $form->selectDate($search_datepayment_start?$search_datepayment_start:-1, 'search_date_start', 0, 0, 1);
+	print $form->selectDate($search_datepayment_start?$search_datepayment_start:-1, 'search_datepayment_start', 0, 0, 1);
 	print '</div>';
 	print '<div class="nowrap">';
 	print $langs->trans('to') . ' ';
-	print $form->selectDate($search_datepayment_end?$search_datepayment_end:-1, 'search_date_end', 0, 0, 1);
+	print $form->selectDate($search_datepayment_end?$search_datepayment_end:-1, 'search_datepayment_end', 0, 0, 1);
 	print '</div>';
 	// Type
 	print '<td class="liste_titre left">';
