@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
+* Copyright (C) 2019	Pierre Ardoin	<mapiolca@me.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -157,6 +158,8 @@ if ($socid > 0)
     $sql.= " AND f.entity IN (".getEntity('invoice').")";
     $sql.= " AND d.fk_facture = f.rowid";
     $sql.= " AND f.fk_soc = $socid";
+	//$sql.= " AND d.situation_percent = 100"; (Select only 100% progress line)
+    $sql.= " AND f.situation_final = 1"; // Select only final situation invoice
     $sql.= " AND d.buy_price_ht IS NOT NULL";
     if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1) $sql .= " AND d.buy_price_ht <> 0";
     $sql.= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.ref, f.total, f.datef, f.paye, f.fk_statut, f.type";
@@ -226,8 +229,18 @@ if ($socid > 0)
     			print '<td class="right">'.$invoicestatic->LibStatut($objp->paye, $objp->statut, 5).'</td>';
     			print "</tr>\n";
     			$i++;
-    			$cumul_vente += $objp->selling_price;
-    			$cumul_achat += ($objp->type == 2 ? -1 : 1) * $objp->buying_price;
+				
+				if ($objp->buying_price != 0 ) { //Ne selectionne que les lignes où le prix de revient est renseigné
+    				
+					$cumul_vente += $objp->selling_price;
+					
+				} else{
+					
+					$cumul_vente += 0;
+				}
+ 
+				$cumul_achat += ($objp->type == 2 ? -1 : 1) * $objp->buying_price;
+
     		}
     	}
 
