@@ -233,14 +233,12 @@ if ($socid > 0)
 				if ($objp->buying_price != 0 ) { //Ne selectionne que les lignes où le prix de revient est renseigné
     				
 					$cumul_vente += $objp->selling_price;
-					
 				} else{
 					
 					$cumul_vente += 0;
 				}
  
 				$cumul_achat += ($objp->type == 2 ? -1 : 1) * $objp->buying_price;
-
     		}
     	}
 
