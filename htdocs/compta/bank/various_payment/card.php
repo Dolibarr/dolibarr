@@ -48,12 +48,11 @@ $backtopage	= GETPOST('backtopage', 'alpha');
 $accountid =            GETPOST("accountid") > 0 ? GETPOST("accountid", "int") : 0;
 $label =                GETPOST("label", "alpha");
 $sens =                 GETPOST("sens", "int");
-$amount =               GETPOST("amount", "alpha");
+$amount =               price2num(GETPOST("amount", "alpha"));
 $paymenttype =          GETPOST("paymenttype", "int");
 $accountancy_code =     GETPOST("accountancy_code", "alpha");
 $subledger_account =    GETPOST("subledger_account", "alpha");
 $projectid =            (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
-$category_transaction = GETPOST("category_transaction", 'alpha');
 
 // Security check
 $socid = GETPOST("socid", "int");
