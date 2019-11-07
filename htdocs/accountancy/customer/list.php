@@ -311,6 +311,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql .= $db->plimit($limit + 1, $offset);
 
 dol_syslog("accountancy/customer/list.php", LOG_DEBUG);
+// MAX_JOIN_SIZE can be very low (ex: 300000) on some limited configurations (ex: https://www.online.net/fr/hosting/online-perso)
+// This big SELECT command may exceed the MAX_JOIN_SIZE limit => Therefore we use SQL_BIG_SELECTS=1 to disable the MAX_JOIN_SIZE security
+if ($db->type == 'mysqli') {
+	$db->query("SET SQL_BIG_SELECTS=1");
+}
 $result = $db->query($sql);
 if ($result) {
 	$num_lines = $db->num_rows($result);
@@ -418,7 +423,7 @@ if ($result) {
 	$facture_static = new Facture($db);
 	$product_static = new Product($db);
 
-    $isSellerInEEC = isInEEC($mysoc);
+	$isSellerInEEC = isInEEC($mysoc);
 
     $accountingaccount_codetotid_cache = array();
 
@@ -603,6 +608,9 @@ if ($result) {
 	print '</form>';
 } else {
 	print $db->error();
+}
+if ($db->type == 'mysqli') {
+	$db->query("SET SQL_BIG_SELECTS=0");  // Enable MAX_JOIN_SIZE limitation
 }
 
 // Add code to auto check the box when we select an account
