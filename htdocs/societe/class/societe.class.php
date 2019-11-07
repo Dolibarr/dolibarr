@@ -428,13 +428,13 @@ class Societe extends CommonObject
 	 */
 	public $price_level;
 	public $outstanding_limit;
-	
+
 	/**
 	 * Risk level of outstanding
 	 * @var int
 	 */
 	public $id_risk;
-	
+
 	/**
 	 * Maximum number of payment days
 	 * @var int
