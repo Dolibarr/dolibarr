@@ -398,8 +398,8 @@ class Contact extends CommonObject
 		$sql .= ", address='".$this->db->escape($this->address)."'";
 		$sql .= ", zip='".$this->db->escape($this->zip)."'";
 		$sql .= ", town='".$this->db->escape($this->town)."'";
-		$sql .= ", fk_pays=".($this->country_id>0?$this->country_id:'NULL');
-		$sql .= ", fk_departement=".($this->state_id>0?$this->state_id:'NULL');
+		$sql .= ", fk_country=".($this->country_id>0?$this->country_id:'NULL');
+		$sql .= ", fk_state=".($this->state_id>0?$this->state_id:'NULL');
 		$sql .= ", poste='".$this->db->escape($this->poste)."'";
 		$sql .= ", fax='".$this->db->escape($this->fax)."'";
 		$sql .= ", email='".$this->db->escape($this->email)."'";
@@ -769,8 +769,8 @@ class Contact extends CommonObject
 
 		$sql = "SELECT c.rowid, c.entity, c.fk_soc, c.ref_ext, c.civility as civility_code, c.lastname, c.firstname,";
 		$sql.= " c.address, c.statut, c.zip, c.town,";
-		$sql.= " c.fk_pays as country_id,";
-		$sql.= " c.fk_departement as state_id,";
+		$sql.= " c.fk_country as country_id,";
+		$sql.= " c.fk_state as state_id,";
 		$sql.= " c.birthday,";
 		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email,";
 		$sql.= " c.socialnetworks,";
@@ -783,8 +783,8 @@ class Contact extends CommonObject
 		$sql.= " u.rowid as user_id, u.login as user_login,";
 		$sql.= " s.nom as socname, s.address as socaddress, s.zip as soccp, s.town as soccity, s.default_lang as socdefault_lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON c.fk_pays = co.rowid";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON c.fk_departement = d.rowid";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON c.fk_country = co.rowid";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON c.fk_state = d.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
 		if ($id) $sql.= " WHERE c.rowid = ". $id;
@@ -811,6 +811,7 @@ class Contact extends CommonObject
 				$this->ref				= $obj->rowid;
 				$this->ref_ext			= $obj->ref_ext;
 
+                $this->civility_id      = $obj->civility_code;
 				$this->civility_code    = $obj->civility_code;
 				$this->civility	        = $obj->civility_code?($langs->trans("Civility".$obj->civility_code) != ("Civility".$obj->civility_code) ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code):'';
 

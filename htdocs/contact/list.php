@@ -290,7 +290,7 @@ $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("
 $sql = "SELECT s.rowid as socid, s.nom as name,";
 $sql.= " p.rowid, p.lastname as lastname, p.statut, p.firstname, p.zip, p.town, p.poste, p.email, p.no_email,";
 $sql.= " p.socialnetworks,";
-$sql.= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.datec as date_creation, p.tms as date_update,";
+$sql.= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_country, p.priv, p.datec as date_creation, p.tms as date_update,";
 $sql.= " co.label as country, co.code as country_code";
 // Add fields from extrafields
 if (! empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -302,7 +302,7 @@ $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // 
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (p.rowid = ef.fk_object)";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = p.fk_pays";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = p.fk_country";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 if (! empty($search_categ)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_contact as cc ON p.rowid = cc.fk_socpeople"; // We need this table joined to the select in order to filter by categ
 if (! empty($search_categ_thirdparty)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";       // We need this table joined to the select in order to filter by categ
@@ -345,7 +345,7 @@ if ($search_id > 0)                 $sql.= natural_search("p.rowid", $search_id,
 if ($search_lastname)               $sql.= natural_search('p.lastname', $search_lastname);
 if ($search_firstname)              $sql.= natural_search('p.firstname', $search_firstname);
 if ($search_societe)                $sql.= natural_search('s.nom', $search_societe);
-if ($search_country)                $sql .= " AND p.fk_pays IN (".$search_country.')';
+if ($search_country)                $sql .= " AND p.fk_country IN (".$search_country.')';
 if (strlen($search_poste))          $sql.= natural_search('p.poste', $search_poste);
 if (strlen($search_phone_perso))    $sql.= natural_search('p.phone_perso', $search_phone_perso);
 if (strlen($search_phone_pro))      $sql.= natural_search('p.phone', $search_phone_pro);
@@ -858,7 +858,7 @@ while ($i < min($num, $limit))
 	if (! empty($arrayfields['country.code_iso']['checked']))
 	{
 		print '<td class="center">';
-		$tmparray=getCountry($obj->fk_pays, 'all');
+		$tmparray=getCountry($obj->fk_country, 'all');
 		print $tmparray['label'];
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;

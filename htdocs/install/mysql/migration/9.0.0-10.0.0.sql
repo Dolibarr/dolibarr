@@ -324,6 +324,9 @@ ALTER TABLE llx_inventorydet DROP COLUMN pmp;
 ALTER TABLE llx_inventorydet DROP COLUMN pa; 
 ALTER TABLE llx_inventorydet DROP COLUMN new_pmp;
 
+ALTER TABLE llx_socpeople CHANGE fk_departement fk_state integer NOT NULL;
+ALTER TABLE llx_socpeople CHANGE fk_pays fk_country integer DEFAULT 0;
+
 UPDATE llx_c_shipment_mode SET label = 'https://www.laposte.fr/outils/suivre-vos-envois?code={TRACKID}' WHERE code IN ('COLSUI');
 UPDATE llx_c_shipment_mode SET label = 'https://www.laposte.fr/outils/suivre-vos-envois?code={TRACKID}' WHERE code IN ('LETTREMAX');
 
@@ -403,4 +406,3 @@ ALTER TABLE llx_ticket_extrafields ADD INDEX idx_ticket_extrafields (fk_object);
 -- VMYSQL4.1 UPDATE llx_facturedet AS fd LEFT JOIN llx_facture AS f ON f.rowid = fd.fk_facture SET fd.special_code = 4 WHERE f.module_source = 'takepos' AND fd.special_code = 3;
 
 UPDATE llx_website_page set fk_user_creat = fk_user_modif WHERE fk_user_creat IS NULL and fk_user_modif IS NOT NULL;
-
