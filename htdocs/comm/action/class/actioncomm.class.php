@@ -824,35 +824,55 @@ class ActionComm extends CommonObject
     /**
      *    Initialize this->userassigned array with list of id of user assigned to event
      *
-     *    @return	int				<0 if KO, >0 if OK
+     *    @param    bool    $override   this->userownerid when empty
+     *    @return   int                 <0 if KO, >0 if OK
      */
-    public function fetch_userassigned()
+    public function fetch_userassigned($override = true)
     {
         // phpcs:enable
         $sql ="SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency";
-		$sql.=" FROM ".MAIN_DB_PREFIX."actioncomm_resources";
-		$sql.=" WHERE element_type = 'user' AND fk_actioncomm = ".$this->id;
-		$resql2=$this->db->query($sql);
-		if ($resql2)
-		{
-			$this->userassigned=array();
+        $sql.=" FROM ".MAIN_DB_PREFIX."actioncomm_resources";
+        $sql.=" WHERE element_type = 'user' AND fk_actioncomm = ".$this->id;
 
-			// If owner is known, we must but id first into list
-			if ($this->userownerid > 0) $this->userassigned[$this->userownerid]=array('id'=>$this->userownerid);	// Set first so will be first into list.
+        $resql2=$this->db->query($sql);
+        if ($resql2)
+        {
+            $this->userassigned = array();
+
+            // If owner is known, we must but id first into list
+            if ($this->userownerid > 0)
+            {
+                // Set first so will be first into list.
+                $this->userassigned[$this->userownerid] = array('id'=>$this->userownerid);
+            }
 
             while ($obj = $this->db->fetch_object($resql2))
             {
-            	if ($obj->fk_element > 0) $this->userassigned[$obj->fk_element]=array('id'=>$obj->fk_element, 'mandatory'=>$obj->mandatory, 'answer_status'=>$obj->answer_status, 'transparency'=>$obj->transparency);
-            	if (empty($this->userownerid)) $this->userownerid=$obj->fk_element;	// If not defined (should not happened, we fix this)
+                if ($obj->fk_element > 0)
+                {
+                    $this->userassigned[$obj->fk_element] = array('id'=>$obj->fk_element,
+                                                                  'mandatory'=>$obj->mandatory,
+                                                                  'answer_status'=>$obj->answer_status,
+                                                                  'transparency'=>$obj->transparency);
+                }
+
+                if($override === true)
+                {
+                    // If not defined (should not happened, we fix this)
+                    if (empty($this->userownerid))
+                    {
+                        $this->userownerid = $obj->fk_element;
+                    }
+                }
             }
 
-        	return 1;
-		}
-		else
-		{
-			dol_print_error($this->db);
-			return -1;
-		}
+            return 1;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            return -1;
+        }
     }
 
     /**
@@ -1676,7 +1696,7 @@ class ActionComm extends CommonObject
 
                     // TODO: find a way to call "$this->fetch_userassigned();" without override "$this" properties
                     $this->id = $obj->id;
-                    $this->fetch_userassigned();
+                    $this->fetch_userassigned(false);
 
                     $assignedUserArray = array();
 
