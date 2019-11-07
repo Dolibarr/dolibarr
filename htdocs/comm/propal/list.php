@@ -1,18 +1,19 @@
 <?php
-/* Copyright (C) 2001-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2013 Regis Houssin         <regis.houssin@inodbox.com>
- * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
- * Copyright (C) 2010-2011 Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
- * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
- * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015      Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2016-2018 Ferran Marcet	 <fmarcet@2byte.es>
- * Copyright (C) 2017-2018 Charlene Benke	 <charlie@patas-monkey.com>
- * Copyright (C) 2018	   Nicolas ZABOURI	 <info@inovea-conseil.com>
+/* Copyright (C) 2001-2007 Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016 Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Eric Seigne				<eric.seigne@ryxeo.com>
+ * Copyright (C) 2005      Marc Barilley / Ocebo	<marc@ocebo.com>
+ * Copyright (C) 2005-2013 Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2006      Andre Cianfarani			<acianfa@free.fr>
+ * Copyright (C) 2010-2011 Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2011 Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2012      Christophe Battarel		<christophe.battarel@altairis.fr>
+ * Copyright (C) 2013      Cédric Salvador			<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015      Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2016-2018 Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2017-2018 Charlene Benke			<charlie@patas-monkey.com>
+ * Copyright (C) 2018	   Nicolas ZABOURI			<info@inovea-conseil.com>
+ * Copyright (C) 2019	   Alexandre Spangaro		<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,15 +76,12 @@ $search_zip=GETPOST('search_zip', 'alpha');
 $search_state=trim(GETPOST("search_state"));
 $search_country=GETPOST("search_country", 'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty", 'int');
-$search_day=GETPOST("search_day", "int");
-$search_month=GETPOST("search_month", "int");
-$search_year=GETPOST("search_year", "int");
-$search_dayfin=GETPOST("search_dayfin", "int");
-$search_month_end=GETPOST("search_month_end", "int");
-$search_yearfin=GETPOST("search_yearfin", "int");
-$search_daydelivery=GETPOST("search_daydelivery", "int");
-$search_monthdelivery=GETPOST("search_monthdelivery", "int");
-$search_yeardelivery=GETPOST("search_yeardelivery", "int");
+$search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
+$search_date_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
+$search_dateend_start = dol_mktime(0, 0, 0, GETPOST('search_dateend_startmonth', 'int'), GETPOST('search_dateend_startday', 'int'), GETPOST('search_dateend_startyear', 'int'));
+$search_dateend_end = dol_mktime(23, 59, 59, GETPOST('search_dateend_endmonth', 'int'), GETPOST('search_dateend_endday', 'int'), GETPOST('search_dateend_endyear', 'int'));
+$search_datedelivery_start = dol_mktime(0, 0, 0, GETPOST('search_datedelivery_startmonth', 'int'), GETPOST('search_datedelivery_startday', 'int'), GETPOST('search_datedelivery_startyear', 'int'));
+$search_datedelivery_end = dol_mktime(23, 59, 59, GETPOST('search_datedelivery_endmonth', 'int'), GETPOST('search_datedelivery_endday', 'int'), GETPOST('search_datedelivery_endyear', 'int'));
 $search_availability=GETPOST('search_availability', 'int');
 $search_categ_cus=trim(GETPOST("search_categ_cus", 'int'));
 $search_btn=GETPOST('button_search', 'alpha');
@@ -219,15 +217,12 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_type='';
 	$search_country='';
 	$search_type_thirdparty='';
-	$search_year='';
-	$search_month='';
-	$search_day='';
-	$search_yearfin='';
-	$search_month_end='';
-	$search_dayfin='';
-	$search_yeardelivery='';
-	$search_monthdelivery='';
-	$search_daydelivery='';
+	$search_date_start='';
+	$search_date_end='';
+	$search_dateend_start='';
+	$search_dateend_end='';
+	$search_datedelivery_start='';
+	$search_datedelivery_end='';
 	$search_availability='';
 	$viewstatut='';
 	$object_statut='';
@@ -313,38 +308,41 @@ if (! $user->rights->societe->client->voir && ! $socid) //restriction
 {
 	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
-if ($search_town)  $sql.= natural_search('s.town', $search_town);
-if ($search_zip)   $sql.= natural_search("s.zip", $search_zip);
-if ($search_state) $sql.= natural_search("state.nom", $search_state);
-if ($search_country) $sql .= " AND s.fk_pays IN (".$db->escape($search_country).')';
-if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$db->escape($search_type_thirdparty).')';
-if ($search_ref)         $sql .= natural_search('p.ref', $search_ref);
-if ($search_refcustomer) $sql .= natural_search('p.ref_client', $search_refcustomer);
-if ($search_refproject)  $sql .= natural_search('pr.ref', $search_refproject);
-if ($search_project)     $sql .= natural_search('pr.title', $search_project);
-if ($search_availability) $sql .= " AND p.fk_availability IN (".$db->escape($search_availability).')';
+if ($search_town)					$sql.= natural_search('s.town', $search_town);
+if ($search_zip)					$sql.= natural_search("s.zip", $search_zip);
+if ($search_state)					$sql.= natural_search("state.nom", $search_state);
+if ($search_country)				$sql .= " AND s.fk_pays IN (".$db->escape($search_country).')';
+if ($search_type_thirdparty)		$sql .= " AND s.fk_typent IN (".$db->escape($search_type_thirdparty).')';
+if ($search_ref)					$sql .= natural_search('p.ref', $search_ref);
+if ($search_refcustomer)			$sql .= natural_search('p.ref_client', $search_refcustomer);
+if ($search_refproject)				$sql .= natural_search('pr.ref', $search_refproject);
+if ($search_project)				$sql .= natural_search('pr.title', $search_project);
+if ($search_availability)			$sql .= " AND p.fk_availability IN (".$db->escape($search_availability).')';
 
-if ($search_societe)     $sql .= natural_search('s.nom', $search_societe);
-if ($search_login)       $sql .= natural_search("u.login", $search_login);
-if ($search_montant_ht != '')  $sql.= natural_search("p.total_ht", $search_montant_ht, 1);
-if ($search_montant_vat != '') $sql.= natural_search("p.tva", $search_montant_vat, 1);
-if ($search_montant_ttc != '') $sql.= natural_search("p.total", $search_montant_ttc, 1);
+if ($search_societe)				$sql .= natural_search('s.nom', $search_societe);
+if ($search_login)					$sql .= natural_search("u.login", $search_login);
+if ($search_montant_ht != '')		$sql.= natural_search("p.total_ht", $search_montant_ht, 1);
+if ($search_montant_vat != '')		$sql.= natural_search("p.tva", $search_montant_vat, 1);
+if ($search_montant_ttc != '')		$sql.= natural_search("p.total", $search_montant_ttc, 1);
 if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
-if ($search_categ_cus > 0) $sql.= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
-if ($search_categ_cus == -2)   $sql.= " AND cc.fk_categorie IS NULL";
+if ($search_categ_cus > 0)			$sql.= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
+if ($search_categ_cus == -2)		$sql.= " AND cc.fk_categorie IS NULL";
 
-if ($search_product_category > 0) $sql.=" AND cp.fk_categorie = ".$db->escape($search_product_category);
-if ($socid > 0) $sql.= ' AND s.rowid = '.$socid;
+if ($search_product_category > 0)	$sql.=" AND cp.fk_categorie = ".$db->escape($search_product_category);
+if ($socid > 0)						$sql.= ' AND s.rowid = '.$socid;
 if ($viewstatut != '' && $viewstatut != '-1')
 {
 	$sql.= ' AND p.fk_statut IN ('.$db->escape($viewstatut).')';
 }
-$sql.= dolSqlDateFilter("p.datep", $search_day, $search_month, $search_year);
-$sql.= dolSqlDateFilter("p.fin_validite", $search_dayfin, $search_month_end, $search_yearfin);
-$sql.= dolSqlDateFilter("p.date_livraison", $search_daydelivery, $search_monthdelivery, $search_yeardelivery);
-if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$db->escape($search_sale);
+if ($search_date_start)             $sql.= " AND p.datep >= '" . $db->idate($search_date_start) . "'";
+if ($search_date_end)               $sql.= " AND p.datep <= '" . $db->idate($search_date_end) . "'";
+if ($search_dateend_start)      	$sql.= " AND p.fin_validite >= '" . $db->idate($search_dateend_start) . "'";
+if ($search_dateend_end)            $sql.= " AND p.fin_validite <= '" . $db->idate($search_dateend_end) . "'";
+if ($search_datedelivery_start)     $sql.= " AND p.date_livraison >= '" . $db->idate($search_datedelivery_start) . "'";
+if ($search_datedelivery_end)       $sql.= " AND p.date_livraison <= '" . $db->idate($search_datedelivery_end) . "'";
+if ($search_sale > 0)				$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$db->escape($search_sale);
 if ($search_user > 0)
 {
 	$sql.= " AND c.fk_c_type_contact = tc.rowid AND tc.element='propal' AND tc.source='internal' AND c.element_id = p.rowid AND c.fk_socpeople = ".$db->escape($search_user);
@@ -594,34 +592,43 @@ if ($resql)
 	// Date
 	if (! empty($arrayfields['p.date']['checked']))
 	{
-		print '<td class="liste_titre nowraponall" align="center">';
-		//print $langs->trans('Month').': ';
-		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat width25" type="text" maxlength="2" name="search_day" value="'.dol_escape_htmltag($search_day).'">';
-		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_month" value="'.dol_escape_htmltag($search_month).'">';
-		//print '&nbsp;'.$langs->trans('Year').': ';
-		$formother->select_year($search_year, 'search_year', 1, 20, 5);
+		print '<td class="liste_titre center">';
+		print '<div class="nowrap">';
+		print $langs->trans('From') . ' ';
+		print $form->selectDate($search_date_start?$search_date_start:-1, 'search_date_start', 0, 0, 1);
+		print '</div>';
+		print '<div class="nowrap">';
+		print $langs->trans('to') . ' ';
+		print $form->selectDate($search_date_end?$search_date_end:-1, 'search_date_end', 0, 0, 1);
+		print '</div>';
 		print '</td>';
 	}
 	// Date end
 	if (! empty($arrayfields['p.fin_validite']['checked']))
 	{
-		print '<td class="liste_titre nowraponall" align="center">';
-		//print $langs->trans('Month').': ';
-		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat width25" type="text" maxlength="2" name="search_dayfin" value="'.dol_escape_htmltag($search_dayfin).'">';
-		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_month_end" value="'.dol_escape_htmltag($search_month_end).'">';
-		//print '&nbsp;'.$langs->trans('Year').': ';
-		$formother->select_year($search_yearfin, 'search_yearfin', 1, 20, 5);
+		print '<td class="liste_titre center">';
+		print '<div class="nowrap">';
+		print $langs->trans('From') . ' ';
+		print $form->selectDate($search_dateend_start?$search_dateend_start:-1, 'search_dateend_start', 0, 0, 1);
+		print '</div>';
+		print '<div class="nowrap">';
+		print $langs->trans('to') . ' ';
+		print $form->selectDate($search_dateend_end?$search_dateend_end:-1, 'search_dateend_end', 0, 0, 1);
+		print '</div>';
 		print '</td>';
 	}
 	// Date delivery
 	if (! empty($arrayfields['p.date_livraison']['checked']))
 	{
-		print '<td class="liste_titre nowraponall" align="center">';
-		//print $langs->trans('Month').': ';
-		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat width25" type="text" size="1" maxlength="2" name="search_daydelivery" value="'.dol_escape_htmltag($search_daydelivery).'">';
-		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_monthdelivery" value="'.dol_escape_htmltag($search_monthdelivery).'">';
-		//print '&nbsp;'.$langs->trans('Year').': ';
-		$formother->select_year($search_yeardelivery, 'search_yeardelivery', 1, 20, 5);
+		print '<td class="liste_titre center">';
+		print '<div class="nowrap">';
+		print $langs->trans('From') . ' ';
+		print $form->selectDate($search_datedelivery_start?$search_datedelivery_start:-1, 'search_datedelivery_start', 0, 0, 1);
+		print '</div>';
+		print '<div class="nowrap">';
+		print $langs->trans('to') . ' ';
+		print $form->selectDate($search_datedelivery_end?$search_datedelivery_end:-1, 'search_datedelivery_end', 0, 0, 1);
+		print '</div>';
 		print '</td>';
 	}
 	// Availability
