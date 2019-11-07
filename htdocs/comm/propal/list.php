@@ -112,7 +112,7 @@ if (! $sortorder) $sortorder='DESC';
 $module='propal';
 $dbtable='';
 $objectid='';
-if (! empty($user->societe_id))	$socid=$user->societe_id;
+if (! empty($user->socid))	$socid=$user->socid;
 if (! empty($socid))
 {
 	$objectid=$socid;
@@ -139,6 +139,7 @@ $fieldstosearchall = array(
 	'p.ref_client'=>'CustomerRef',
 	'pd.description'=>'Description',
 	's.nom'=>"ThirdParty",
+	's.name_alias'=>"AliasNameShort",
 	'p.note_public'=>'NotePublic',
 );
 if (empty($user->socid)) $fieldstosearchall["p.note_private"]="NotePrivate";
@@ -240,9 +241,9 @@ if (empty($reshook))
 {
 	$objectclass='Propal';
 	$objectlabel='Proposals';
-	$permtoread = $user->rights->propal->lire;
-	$permtodelete = $user->rights->propal->supprimer;
-	$permtoclose = $user->rights->propal->cloturer;
+	$permissiontoread = $user->rights->propal->lire;
+	$permissiontodelete = $user->rights->propal->supprimer;
+	$permissiontoclose = $user->rights->propal->cloturer;
 	$uploaddir = $conf->propal->multidir_output[$conf->entity];
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -279,8 +280,9 @@ $sql.= ' u.login';
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user";
 if ($search_categ_cus) $sql .= ", cc.fk_categorie, cc.fk_soc";
 // Add fields from extrafields
-if (! empty($extrafields->attributes[$object->table_element]['label']))
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -693,7 +695,7 @@ if ($resql)
 		print '<td class="liste_titre">';
 		print '</td>';
 	}
-  // Date cloture
+    // Date cloture
 	if (! empty($arrayfields['p.date_cloture']['checked']))
 	{
 		print '<td class="liste_titre">';
@@ -945,24 +947,24 @@ if ($resql)
 		{
 			  print '<td class="right">'.price($obj->total_ht)."</td>\n";
 			  if (! $i) $totalarray['nbfield']++;
-			  if (! $i) $totalarray['totalhtfield']=$totalarray['nbfield'];
-			  $totalarray['totalht'] += $obj->total_ht;
+			  if (! $i) $totalarray['pos'][$totalarray['nbfield']]='p.total_ht';
+			  $totalarray['val']['p.total_ht'] += $obj->total_ht;
 		}
 		// Amount VAT
 		if (! empty($arrayfields['p.total_vat']['checked']))
 		{
 			print '<td class="right">'.price($obj->total_vat)."</td>\n";
 			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['totalvatfield']=$totalarray['nbfield'];
-			$totalarray['totalvat'] += $obj->total_vat;
+			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='p.total_vat';
+			$totalarray['val']['p.total_vat'] += $obj->total_vat;
 		}
 		// Amount TTC
 		if (! empty($arrayfields['p.total_ttc']['checked']))
 		{
 			print '<td class="right">'.price($obj->total_ttc)."</td>\n";
 			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['totalttcfield']=$totalarray['nbfield'];
-			$totalarray['totalttc'] += $obj->total_ttc;
+			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='p.total_ttc';
+			$totalarray['val']['p.total_ttc'] += $obj->total_ttc;
 		}
 		// Amount invoiced
         if(! empty($arrayfields['p.total_ht_invoiced']['checked'])) {
@@ -982,8 +984,8 @@ if ($resql)
 
             print '<td class="right">'.price($totalInvoiced)."</td>\n";
             if (! $i) $totalarray['nbfield']++;
-            if (! $i) $totalarray['totalhtinvoicedfield']=$totalarray['nbfield'];
-            $totalarray['totalhtinvoiced'] += $totalInvoiced;
+            if (! $i) $totalarray['pos'][$totalarray['nbfield']]='p.total_ht_invoiced';
+            $totalarray['val']['p.total_ht_invoiced'] += $obj->total_ht_invoiced;
         }
         // Amount invoiced
         if(! empty($arrayfields['p.total_invoiced']['checked'])) {
@@ -1003,8 +1005,8 @@ if ($resql)
 
             print '<td class="right">'.price($totalInvoiced)."</td>\n";
             if (! $i) $totalarray['nbfield']++;
-            if (! $i) $totalarray['totalinvoicedfield']=$totalarray['nbfield'];
-            $totalarray['totalinvoiced'] += $totalInvoiced;
+            if (! $i) $totalarray['pos'][$totalarray['nbfield']]='p.total_invoiced';
+            $totalarray['val']['p.total_invoiced'] += $obj->total_invoiced;
         }
 
 		$userstatic->id=$obj->fk_user_author;
@@ -1118,45 +1120,7 @@ if ($resql)
 	}
 
 	// Show total line
-	if (isset($totalarray['totalhtfield'])
- 	   || isset($totalarray['totalvatfield'])
- 	   || isset($totalarray['totalttcfield'])
- 	   || isset($totalarray['totalamfield'])
- 	   || isset($totalarray['totalrtpfield'])
- 	   || isset($totalarray['totalizable'])
- 	   )
-	{
-		print '<tr class="liste_total">';
-		$i=0;
-		while ($i < $totalarray['nbfield'])
-		{
-		    $i++;
-		    if ($i == 1)
-		    {
-				if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
-				else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-		    }
-		    elseif ($totalarray['totalhtfield'] == $i) print '<td class="right">'.price($totalarray['totalht']).'</td>';
-		    elseif ($totalarray['totalvatfield'] == $i) print '<td class="right">'.price($totalarray['totalvat']).'</td>';
-		    elseif ($totalarray['totalttcfield'] == $i) print '<td class="right">'.price($totalarray['totalttc']).'</td>';
-		    elseif ($totalarray['totalhtinvoicedfield'] == $i) print '<td class="right">'.price($totalarray['totalhtinvoiced']).'</td>';
-		    elseif ($totalarray['totalinvoicedfield'] == $i) print '<td class="right">'.price($totalarray['totalinvoiced']).'</td>';
-		    elseif ($totalarray['totalizable']) {
-                $printed = false;
-                foreach ($totalarray['totalizable'] as $totalizable) {
-                    if ($totalizable['pos']==$i && ! $printed) {
-                        print '<td class="right">'.price($totalizable['total']).'</td>';
-                        $printed = true;
-                    }
-                }
-                if (! $printed) {
-                    print '<td></td>';
-                }
-            }
-		    else print '<td></td>';
-		}
-		print '</tr>';
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 	$db->free($resql);
 

@@ -104,7 +104,7 @@ if (empty($url))
 $langs->loadLangs(array("ecm","companies","other"));
 
 // Security check
-if ($user->societe_id > 0) $socid = $user->societe_id;
+if ($user->socid > 0) $socid = $user->socid;
 
 //print 'xxx'.$upload_dir;
 
@@ -155,8 +155,8 @@ $type='directory';
 // This test if file exists should be useless. We keep it to find bug more easily
 if (! dol_is_dir($upload_dir))
 {
-//	dol_mkdir($upload_dir);
-/*    $langs->load("install");
+    //dol_mkdir($upload_dir);
+    /*$langs->load("install");
     dol_print_error(0,$langs->trans("ErrorDirDoesNotExists",$upload_dir));
     exit;*/
 }

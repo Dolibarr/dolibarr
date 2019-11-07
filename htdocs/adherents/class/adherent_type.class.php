@@ -71,6 +71,18 @@ class AdherentType extends CommonObject
      */
     public $morphy;
 
+    public $duration;
+
+    /*
+    * type expiration
+    */
+    public $duration_value;
+
+    /**
+     * Expiration unit
+     */
+    public $duration_unit;
+
 	/**
 	 * @var int Subsription required (0 or 1)
 	 * @since 5.0
@@ -88,8 +100,8 @@ class AdherentType extends CommonObject
 
 	/** @var array Array of members */
 	public $members=array();
-  
-  public $multilangs=array();
+
+    public $multilangs=array();
 
 
 	/**
@@ -129,9 +141,9 @@ class AdherentType extends CommonObject
                     $this->description    = $obj->description;
                     $this->email        = $obj->email;
                 }
-                $this->multilangs["$obj->lang"]["label"]        = $obj->label;
-                $this->multilangs["$obj->lang"]["description"]    = $obj->description;
-                $this->multilangs["$obj->lang"]["email"]        = $obj->email;
+                $this->multilangs["$obj->lang"]["label"] = $obj->label;
+                $this->multilangs["$obj->lang"]["description"] = $obj->description;
+                $this->multilangs["$obj->lang"]["email"] = $obj->email;
             }
             return 1;
         }
@@ -141,7 +153,7 @@ class AdherentType extends CommonObject
             return -1;
         }
     }
-  
+
     /**
      *    Update or add a translation for a product
      *
@@ -248,7 +260,7 @@ class AdherentType extends CommonObject
 
         return 1;
     }
-  
+
        /**
      *    Delete a language for this product
      *
@@ -361,7 +373,7 @@ class AdherentType extends CommonObject
 	 */
 	public function update($user, $notrigger = 0)
 	{
-    global $langs, $conf, $hookmanager;
+        global $langs, $conf, $hookmanager;
 
 		$error=0;
 
@@ -373,8 +385,9 @@ class AdherentType extends CommonObject
 		$sql.= "SET ";
 		$sql.= "statut = ".$this->statut.",";
 		$sql.= "libelle = '".$this->db->escape($this->label) ."',";
-        $sql.= "morphy = '".$this->db->escape($this->morphy) ."',";
+		$sql.= "morphy = '".$this->db->escape($this->morphy) ."',";
 		$sql.= "subscription = '".$this->db->escape($this->subscription)."',";
+		$sql.= "duration = '" . $this->db->escape($this->duration_value . $this->duration_unit) ."',";
 		$sql.= "note = '".$this->db->escape($this->note)."',";
 		$sql.= "vote = ".(integer) $this->db->escape($this->vote).",";
 		$sql.= "mail_valid = '".$this->db->escape($this->mail_valid)."'";
@@ -383,17 +396,16 @@ class AdherentType extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-    
-                $this->description = $this->db->escape($this->note);
+            $this->description = $this->db->escape($this->note);
 
-                // Multilangs
-                if (! empty($conf->global->MAIN_MULTILANGS)) {
-                    if ($this->setMultiLangs($user) < 0) {
-                           $this->error=$langs->trans("Error")." : ".$this->db->error()." - ".$sql;
-                           return -2;
-                    }
+            // Multilangs
+            if (! empty($conf->global->MAIN_MULTILANGS)) {
+                if ($this->setMultiLangs($user) < 0) {
+                    $this->error=$langs->trans("Error")." : ".$this->db->error()." - ".$sql;
+                    return -2;
                 }
-    
+            }
+
 			$action='update';
 
 			// Actions on extra fields
@@ -475,9 +487,9 @@ class AdherentType extends CommonObject
 	 */
 	public function fetch($rowid)
 	{
-    global $langs, $conf;
-  
-		$sql = "SELECT d.rowid, d.libelle as label, d.morphy, d.statut, d.subscription, d.mail_valid, d.note, d.vote";
+        global $langs, $conf;
+
+		$sql = "SELECT d.rowid, d.libelle as label, d.morphy, d.statut, d.duration, d.subscription, d.mail_valid, d.note, d.vote";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 		$sql .= " WHERE d.rowid = ".(int) $rowid;
 
@@ -495,15 +507,18 @@ class AdherentType extends CommonObject
 				$this->label          = $obj->label;
 				$this->morphy         = $obj->morphy;
 				$this->statut         = $obj->statut;
+				$this->duration       = $obj->duration;
+				$this->duration_value = substr($obj->duration, 0, dol_strlen($obj->duration)-1);
+				$this->duration_unit  = substr($obj->duration, -1);
 				$this->subscription   = $obj->subscription;
 				$this->mail_valid     = $obj->mail_valid;
 				$this->note           = $obj->note;
 				$this->vote           = $obj->vote;
-        
-        // multilangs
-        if (! empty($conf->global->MAIN_MULTILANGS)) {
-        $this->getMultiLangs();
-        }
+
+                // multilangs
+                if (! empty($conf->global->MAIN_MULTILANGS)) {
+                    $this->getMultiLangs();
+                }
 			}
 
 			return 1;

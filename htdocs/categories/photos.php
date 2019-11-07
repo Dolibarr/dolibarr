@@ -69,7 +69,6 @@ if ($id > 0)
 if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
     if ($object->id) {
-
         $file = $_FILES['userfile'];
         if (is_array($file['name']) && count($file['name']) > 0)
         {
@@ -137,7 +136,7 @@ if ($object->id)
 	}
 	$morehtmlref.='</div>';
 
-	dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
+	dol_banner_tab($object, 'ref', $linkback, ($user->socid?0:1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
 	/*
 	 * Confirmation de la suppression de photo
@@ -151,7 +150,7 @@ if ($object->id)
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Description
 	print '<tr><td class="titlefield notopnoleft">';

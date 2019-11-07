@@ -25,15 +25,15 @@
 // $action must be defined
 // $id must be defined
 // $object must be defined and must have a method generateDocument().
-// $permissioncreate must be defined
+// $permissiontoadd must be defined
 // $upload_dir must be defined (example $conf->projet->dir_output . "/";)
 // $hidedetails, $hidedesc, $hideref and $moreparams may have been set or not.
 
+if (!empty($permissioncreate) && empty($permissiontoadd)) $permissiontoadd = $permissioncreate;	// For backward compatibility
 
 // Build doc
-if ($action == 'builddoc' && $permissioncreate)
+if ($action == 'builddoc' && $permissiontoadd)
 {
-
     if (is_numeric(GETPOST('model', 'alpha')))
     {
         $error=$langs->trans("ErrorFieldRequired", $langs->transnoentities("Model"));
@@ -58,12 +58,12 @@ if ($action == 'builddoc' && $permissioncreate)
         // Special case to force bank account
         //if (property_exists($object, 'fk_bank'))
         //{
-            if (GETPOST('fk_bank', 'int')) {
-                // this field may come from an external module
-                $object->fk_bank = GETPOST('fk_bank', 'int');
-            } elseif (! empty($object->fk_account)) {
-                $object->fk_bank = $object->fk_account;
-            }
+        if (GETPOST('fk_bank', 'int')) {
+            // this field may come from an external module
+            $object->fk_bank = GETPOST('fk_bank', 'int');
+        } elseif (! empty($object->fk_account)) {
+            $object->fk_bank = $object->fk_account;
+        }
         //}
 
         $outputlangs = $langs;
@@ -108,7 +108,7 @@ if ($action == 'builddoc' && $permissioncreate)
 }
 
 // Delete file in doc form
-if ($action == 'remove_file' && $permissioncreate)
+if ($action == 'remove_file' && $permissiontoadd)
 {
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 

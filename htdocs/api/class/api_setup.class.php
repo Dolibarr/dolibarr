@@ -46,6 +46,68 @@ class Setup extends DolibarrApi
     }
 
     /**
+     * Get the list of ordering methods.
+     *
+     * @param string    $sortfield  Sort field
+     * @param string    $sortorder  Sort order
+     * @param int       $limit      Number of items per page
+     * @param int       $page       Page number {@min 0}
+     * @param int       $active     Payment type is active or not {@min 0} {@max 1}
+     * @param string    $sqlfilters SQL criteria to filter with. Syntax example "(t.code:=:'CHQ')"
+     *
+     * @url     GET dictionary/ordering_methods
+     *
+     * @return array [List of ordering methods]
+     *
+     * @throws 400 RestException
+     * @throws 200 OK
+     */
+    public function getOrderingMethods($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
+    {
+        $list = array();
+
+        $sql = "SELECT rowid, code, libelle as label, module";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_input_method as t";
+        $sql.= " WHERE t.active = ".$active;
+        // Add sql filters
+        if ($sqlfilters)
+        {
+            if (! DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(400, 'error when validating parameter sqlfilters '.$sqlfilters);
+            }
+            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+        }
+
+
+        $sql.= $this->db->order($sortfield, $sortorder);
+
+        if ($limit) {
+            if ($page < 0) {
+                $page = 0;
+            }
+            $offset = $limit * $page;
+
+            $sql .= $this->db->plimit($limit, $offset);
+        }
+
+        $result = $this->db->query($sql);
+
+        if ($result) {
+            $num = $this->db->num_rows($result);
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            for ($i = 0; $i < $min; $i++) {
+                $list[] = $this->db->fetch_object($result);
+            }
+        } else {
+            throw new RestException(400, $this->db->lasterror());
+        }
+
+        return $list;
+    }
+
+    /**
      * Get the list of payments types.
      *
      * @param string    $sortfield  Sort field
@@ -198,12 +260,63 @@ class Setup extends DolibarrApi
      */
     public function getCountryByID($id, $lang = '')
     {
+        return $this->_fetchCcountry($id, '', '', $lang);
+    }
+
+    /**
+     * Get country by Code.
+     *
+     * @param string    $code      Code of country
+     * @param string    $lang      Code of the language the name of the
+     *                             country must be translated to
+     * @return array 			   Array of cleaned object properties
+     *
+     * @url     GET dictionary/countries/byCode/{code}
+     *
+     * @throws RestException
+     */
+    public function getCountryByCode($code, $lang = '')
+    {
+        return $this->_fetchCcountry('', $code, '', $lang);
+    }
+
+    /**
+     * Get country by Iso.
+     *
+     * @param string    $iso       ISO of country
+     * @param string    $lang      Code of the language the name of the
+     *                             country must be translated to
+     * @return array 			   Array of cleaned object properties
+     *
+     * @url     GET dictionary/countries/byISO/{iso}
+     *
+     * @throws RestException
+     */
+    public function getCountryByISO($iso, $lang = '')
+    {
+        return $this->_fetchCcountry('', '', $iso, $lang);
+    }
+
+    /**
+    * Get country.
+    *
+    * @param int       $id        ID of country
+    * @param string    $code      Code of country
+    * @param string    $iso       ISO of country
+    * @param string    $lang      Code of the language the name of the
+    *                             country must be translated to
+    * @return array 			   Array of cleaned object properties
+    *
+    * @throws RestException
+    */
+    private function _fetchCcountry($id, $code = '', $iso = '', $lang = '')
+    {
         $country = new Ccountry($this->db);
 
-        if ($country->fetch($id) < 0) {
+        $result = $country->fetch($id, $code, $iso);
+        if ($result < 0) {
             throw new RestException(503, 'Error when retrieving country : '.$country->error);
-        }
-        elseif ($country->fetch($id) == 0) {
+        } elseif ($result == 0) {
             throw new RestException(404, 'country not found');
         }
 
@@ -321,6 +434,66 @@ class Setup extends DolibarrApi
     }
 
     /**
+     * Get the list of shipment methods.
+     *
+     * @param string    $sortfield  Sort field
+     * @param string    $sortorder  Sort order
+     * @param int       $limit      Number of items per page
+     * @param int       $page       Page number (starting from zero)
+     * @param int       $active     Payment term is active or not {@min 0} {@max 1}
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
+     *
+     * @return array List of shipment methods
+     *
+     * @url     GET dictionary/shipment_methods
+     *
+     * @throws RestException
+     */
+    public function getListOfShipmentMethods($sortfield = "rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
+    {
+        $list = array();
+        $sql = "SELECT t.rowid, t.code, t.libelle, t.description, t.tracking";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as t";
+        $sql.= " WHERE t.active = ".$active;
+        // Add sql filters
+        if ($sqlfilters)
+        {
+            if (! DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+            $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+        }
+
+
+        $sql.= $this->db->order($sortfield, $sortorder);
+
+        if ($limit) {
+            if ($page < 0) {
+                $page = 0;
+            }
+            $offset = $limit * $page;
+
+            $sql .= $this->db->plimit($limit, $offset);
+        }
+
+        $result = $this->db->query($sql);
+
+        if ($result) {
+            $num = $this->db->num_rows($result);
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            for ($i = 0; $i < $min; $i++) {
+                $list[] = $this->db->fetch_object($result);
+            }
+        } else {
+            throw new RestException(503, 'Error when retrieving list of shipment methods : '.$this->db->lasterror());
+        }
+
+        return $list;
+    }
+
+    /**
      * Get the list of events types.
      *
      * @param string    $sortfield  Sort field
@@ -329,7 +502,7 @@ class Setup extends DolibarrApi
      * @param int       $page       Page number (starting from zero)
      * @param string    $type       To filter on type of event
      * @param string    $module     To filter on module events
-     * @param int       $active     Payment term is active or not {@min 0} {@max 1}
+     * @param int       $active     Event's type is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
      * @return array				List of events types
      *
@@ -385,6 +558,70 @@ class Setup extends DolibarrApi
     }
 
     /**
+     * Get the list of contacts types.
+     *
+     * @param string    $sortfield  Sort field
+     * @param string    $sortorder  Sort order
+     * @param int       $limit      Number of items per page
+     * @param int       $page       Page number (starting from zero)
+     * @param string    $type       To filter on type of contact
+     * @param string    $module     To filter on module contacts
+     * @param int       $active     Contact's type is active or not {@min 0} {@max 1}
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
+     * @return array	  List of Contacts types
+     *
+     * @url     GET dictionary/contact_types
+     *
+     * @throws RestException
+     */
+    public function getListOfContactTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $module = '', $active = 1, $sqlfilters = '')
+    {
+        $list = array();
+
+        $sql = "SELECT rowid, code, element as type, libelle as label, source, module, position";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as t";
+        $sql.= " WHERE t.active = ".$active;
+        if ($type) $sql.=" AND type LIKE '%" . $this->db->escape($type) . "%'";
+        if ($module)    $sql.=" AND t.module LIKE '%" . $this->db->escape($module) . "%'";
+        // Add sql filters
+        if ($sqlfilters)
+        {
+            if (! DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+        }
+
+
+        $sql.= $this->db->order($sortfield, $sortorder);
+
+        if ($limit) {
+            if ($page < 0) {
+                $page = 0;
+            }
+            $offset = $limit * $page;
+
+            $sql .= $this->db->plimit($limit, $offset);
+        }
+
+        $result = $this->db->query($sql);
+
+        if ($result) {
+            $num = $this->db->num_rows($result);
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            for ($i = 0; $i < $min; $i++) {
+                $list[] = $this->db->fetch_object($result);
+            }
+        } else {
+            throw new RestException(503, 'Error when retrieving list of contacts types : '.$this->db->lasterror());
+        }
+
+        return $list;
+    }
+
+    /**
      * Get the list of civilities.
      *
      * @param string    $sortfield  Sort field
@@ -392,9 +629,9 @@ class Setup extends DolibarrApi
      * @param int       $limit      Number of items per page
      * @param int       $page       Page number (starting from zero)
      * @param string    $module     To filter on module events
-     * @param int       $active     Payment term is active or not {@min 0} {@max 1}
+     * @param int       $active     Civility is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
-     * @return array				List of civility types
+     * @return array		List of civility types
      *
      * @url     GET dictionary/civilities
      *
@@ -469,13 +706,15 @@ class Setup extends DolibarrApi
         if (!empty($multicurrency)) $sql.= " , cr.date_sync, cr.rate ";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_currencies as t";
         if (!empty($multicurrency)) {
-        $sql.= " JOIN ".MAIN_DB_PREFIX."multicurrency as m ON m.code=t.code_iso";
-        $sql.= " JOIN ".MAIN_DB_PREFIX."multicurrency_rate as cr ON (m.rowid = cr.fk_multicurrency)";
+            $sql.= " JOIN ".MAIN_DB_PREFIX."multicurrency as m ON m.code=t.code_iso";
+            $sql.= " JOIN ".MAIN_DB_PREFIX."multicurrency_rate as cr ON (m.rowid = cr.fk_multicurrency)";
         }
         $sql.= " WHERE t.active = ".$active;
         if (!empty($multicurrency)) {
-        $sql.= " AND m.entity IN (".getEntity('multicurrency').")";
-        if (!empty($multicurrency) && $multicurrency != 2) $sql.= " AND cr.date_sync = (SELECT MAX(cr2.date_sync) FROM ".MAIN_DB_PREFIX."multicurrency_rate AS cr2 WHERE cr2.fk_multicurrency = m.rowid)";
+            $sql.= " AND m.entity IN (".getEntity('multicurrency').")";
+            if (!empty($multicurrency) && $multicurrency != 2) {
+                $sql.= " AND cr.date_sync = (SELECT MAX(cr2.date_sync) FROM ".MAIN_DB_PREFIX."multicurrency_rate AS cr2 WHERE cr2.fk_multicurrency = m.rowid)";
+            }
         }
 
         // Add sql filters
@@ -786,7 +1025,7 @@ class Setup extends DolibarrApi
      * @param string    $sortorder  Sort order
      * @param int       $limit      Number of items per page
      * @param int       $page       Page number (starting from zero)
-     * @param int       $active     Payment term is active or not {@min 0} {@max 1}
+     * @param int       $active     Measuring unit is active or not {@min 0} {@max 1}
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
      * @return array				List of measuring unit
      *
@@ -839,6 +1078,67 @@ class Setup extends DolibarrApi
         return $list;
     }
 
+    /**
+     * Get the list of social networks.
+     *
+     * @param string    $sortfield  Sort field
+     * @param string    $sortorder  Sort order
+     * @param int       $limit      Number of items per page
+     * @param int       $page       Page number (starting from zero)
+     * @param int       $active     Social network is active or not {@min 0} {@max 1}
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
+     * @return array				List of social networks
+     *
+     * @url     GET dictionary/socialnetworks
+     *
+     * @throws RestException
+     */
+    public function getListOfsocialNetworks($sortfield = "rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
+    {
+        $list = array();
+        //TODO link with multicurrency module
+        $sql = "SELECT t.rowid, t.entity, t.code, t.label, t.url, t.icon, t.active";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_socialnetworks as t";
+        $sql.= " WHERE t.entity IN (".getEntity('c_socialnetworks').")";
+        $sql.= " AND t.active = ".$active;
+        // Add sql filters
+        if ($sqlfilters)
+        {
+            if (! DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+        }
+
+
+        $sql.= $this->db->order($sortfield, $sortorder);
+
+        if ($limit) {
+            if ($page < 0) {
+                $page = 0;
+            }
+            $offset = $limit * $page;
+
+            $sql .= $this->db->plimit($limit, $offset);
+        }
+
+        $result = $this->db->query($sql);
+
+        if ($result) {
+            $num = $this->db->num_rows($result);
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            for ($i = 0; $i < $min; $i++) {
+                $list[] = $this->db->fetch_object($result);
+            }
+        } else {
+            throw new RestException(503, 'Error when retrieving list of social networks: '.$this->db->lasterror());
+        }
+
+        return $list;
+    }
+
      /**
      * Get the list of tickets categories.
      *
@@ -860,7 +1160,7 @@ class Setup extends DolibarrApi
 
     	$sql = "SELECT rowid, code, pos,  label, use_default, description";
     	$sql.= " FROM ".MAIN_DB_PREFIX."c_ticket_category as t";
-      $sql.= " WHERE t.active = ".$active;
+        $sql.= " WHERE t.active = ".$active;
     	// Add sql filters
     	if ($sqlfilters)
     	{

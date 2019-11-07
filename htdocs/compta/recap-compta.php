@@ -35,7 +35,7 @@ if (! empty($conf->facture->enabled)) $langs->load("bills");
 $id = GETPOST('id')?GETPOST('id', 'int'):GETPOST('socid', 'int');
 
 // Security check
-if ($user->societe_id) $id=$user->societe_id;
+if ($user->socid) $id=$user->socid;
 $result = restrictedArea($user, 'societe', $id, '&societe');
 
 $object = new Societe($db);
@@ -96,7 +96,7 @@ if ($id > 0)
     $head = societe_prepare_head($object);
 
 	dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"), 0, 'company');
-	dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom', '', '', 0, '', '', 1);
+	dol_banner_tab($object, 'socid', '', ($user->socid?0:1), 'rowid', 'nom', '', '', 0, '', '', 1);
 	dol_fiche_end();
 
 	if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
@@ -104,7 +104,7 @@ if ($id > 0)
 		// Invoice list
 		print load_fiche_titre($langs->trans("CustomerPreview"));
 
-		print '<table class="noborder tagtable liste" width="100%">';
+		print '<table class="noborder tagtable liste centpercent">';
 		print '<tr class="liste_titre">';
         if (! empty($arrayfields['f.datef']['checked']))  print_liste_field_titre($arrayfields['f.datef']['label'], $_SERVER["PHP_SELF"], "f.datef", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 		print '<td>'.$langs->trans("Element").'</td>';
@@ -226,7 +226,6 @@ if ($id > 0)
 		if(empty($TData)) {
 			print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
 		} else {
-
 			// Sort array by date ASC to calucalte balance
 			$TData = dol_sort_array($TData, 'datefieldforsort', 'ASC');
 
@@ -245,7 +244,6 @@ if ($id > 0)
 
 			// Display array
 			foreach($TData as $data) {
-
 				$html_class = '';
 				if (!empty($data['fk_facture'])) $html_class = 'facid-'.$data['fk_facture'];
 				elseif (!empty($data['fk_paiement'])) $html_class = 'payid-'.$data['fk_paiement'];

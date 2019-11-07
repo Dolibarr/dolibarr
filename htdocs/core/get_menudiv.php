@@ -174,7 +174,7 @@ $(document).ready(function(){
 ';
 
 
-if (empty($user->societe_id))	// If internal user or not defined
+if (empty($user->socid))	// If internal user or not defined
 {
 	$conf->standard_menu=(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?(empty($conf->global->MAIN_MENU_STANDARD)?'eldy_menu.php':$conf->global->MAIN_MENU_STANDARD):$conf->global->MAIN_MENU_STANDARD_FORCED);
 }
@@ -202,7 +202,7 @@ if (! class_exists('MenuManager'))
 		include_once DOL_DOCUMENT_ROOT."/core/menus/standard/".$file_menu;
 	}
 }
-$menumanager = new MenuManager($db, empty($user->societe_id)?0:1);
+$menumanager = new MenuManager($db, empty($user->socid)?0:1);
 $menumanager->loadMenu('all', 'all');	// Load this->tabMenu with sql menu entries
 //var_dump($menumanager);exit;
 $menumanager->showmenu('jmobile');

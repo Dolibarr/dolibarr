@@ -41,7 +41,7 @@ if (! empty($conf->categorie->enabled)) {
 }
 
 // Security check
-if (! $user->rights->mailing->lire || $user->societe_id > 0)
+if (! $user->rights->mailing->lire || $user->socid > 0)
 	accessforbidden();
 
 // Load variable for pagination
@@ -114,7 +114,6 @@ if ($action == 'loadfilter') {
 }
 
 if ($action == 'add') {
-
 	$user_contact_query = false;
 
 	$array_query = array ();
@@ -168,7 +167,6 @@ if ($action == 'add') {
 		}
 
 		if (preg_match("/^contact_/", $key)) {
-
 			$array_query[$key] = GETPOST($key);
 
 			$specials_date_key = array (
@@ -262,7 +260,6 @@ if ($action == 'clear') {
 }
 
 if ($action == 'savefilter' || $action == 'createfilter') {
-
 	$template_name = GETPOST('template_name');
 	$error = 0;
 
@@ -272,7 +269,6 @@ if ($action == 'savefilter' || $action == 'createfilter') {
 	}
 
 	if (empty($error)) {
-
 		$array_query = array ();
 
 		// Get extra fields
@@ -325,7 +321,6 @@ if ($action == 'savefilter' || $action == 'createfilter') {
 			}
 
 			if (preg_match("/^contact_/", $key)) {
-
 				$array_query[$key] = GETPOST($key);
 
 				$specials_date_key = array (
@@ -359,7 +354,6 @@ if ($action == 'savefilter' || $action == 'createfilter') {
 				setEventMessages($advTarget->error, $advTarget->errors, 'errors');
 			}
 		} elseif ($action == 'savefilter') {
-
 			$result = $advTarget->update($user);
 			if ($result < 0) {
 				setEventMessages($advTarget->error, $advTarget->errors, 'errors');
@@ -421,12 +415,11 @@ $formcompany = new FormCompany($db);
 $formother = new FormOther($db);
 
 if ($object->fetch($id) >= 0) {
-
 	$head = emailing_prepare_head($object);
 
 	dol_fiche_head($head, 'advtargets', $langs->trans("Mailing"), 0, 'email');
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	$linkback = '<a href="' . DOL_URL_ROOT . '/comm/mailing/liste.php">' . $langs->trans("BackToList") . '</a>';
 
@@ -465,7 +458,6 @@ if ($object->fetch($id) >= 0) {
 
 	// Show email selectors
 	if ($object->statut == 0 && $user->rights->mailing->creer) {
-
 		include DOL_DOCUMENT_ROOT . '/core/tpl/advtarget.tpl.php';
 	}
 }

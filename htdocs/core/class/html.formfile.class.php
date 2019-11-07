@@ -115,12 +115,14 @@ class FormFile
 			if (empty($title)) $title=$langs->trans("AttachANewFile");
 			if ($title != 'none') $out.=load_fiche_titre($title, null, null);
 
-			if (empty($usewithoutform))
+			if (empty($usewithoutform))		// Try to avoid this and set instead the form by the caller.
 			{
     			$out .= '<form name="'.$htmlname.'" id="'.$htmlname.'" action="'.$url.'" enctype="multipart/form-data" method="POST">';
+    			$out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     			$out .= '<input type="hidden" id="'.$htmlname.'_section_dir" name="section_dir" value="'.$sectiondir.'">';
     			$out .= '<input type="hidden" id="'.$htmlname.'_section_id"  name="section_id" value="'.$sectionid.'">';
-    			$out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    			$out .= '<input type="hidden" name="sortfield" value="'.GETPOST('sortfield', 'alpha').'">';
+    			$out .= '<input type="hidden" name="sortorder" value="'.GETPOST('sortorder', 'aZ09').'">';
 			}
 
 			$out .= '<table width="100%" class="nobordernopadding">';
@@ -229,10 +231,10 @@ class FormFile
 
 				if (empty($usewithoutform))
 				{
-    				$out .= '<form name="'.$htmlname.'_link" id="'.$htmlname.'_link" action="'.$url.'" method="POST">';
-    				$out .= '<input type="hidden" id="'.$htmlname.'_link_section_dir" name="link_section_dir" value="">';
-    				$out .= '<input type="hidden" id="'.$htmlname.'_link_section_id"  name="link_section_id" value="'.$sectionid.'">';
-    				$out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    				$out .= '<form name="'.$htmlname.'_link" id="'.$htmlname.'_link" action="'.$url.'" method="POST">'."\n";
+    				$out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
+    				$out .= '<input type="hidden" id="'.$htmlname.'_link_section_dir" name="link_section_dir" value="">'."\n";
+    				$out .= '<input type="hidden" id="'.$htmlname.'_link_section_id"  name="link_section_id" value="'.$sectionid.'">'."\n";
 				}
 
 				$out .= '<div class="valignmiddle">';
@@ -665,28 +667,34 @@ class FormFile
 			{
 			    $submodulepart = $modulepart;
 
-				// For normalized standard modules
-				$file=dol_buildpath('/core/modules/'.$modulepart.'/modules_'.$modulepart.'.php', 0);
+			    // modulepart = 'nameofmodule' or 'nameofmodule:nameofsubmodule'
+			    $tmp=explode(':', $modulepart);
+			    if (! empty($tmp[1])) {
+			    	$modulepart=$tmp[0];
+			    	$submodulepart=$tmp[1];
+			    }
+
+			    // For normalized standard modules
+				$file=dol_buildpath('/core/modules/'.$modulepart.'/modules_'.$submodulepart.'.php', 0);
 				if (file_exists($file))
 				{
 					$res=include_once $file;
 				}
-				// For normalized external modules. modulepart = 'nameofmodule' or 'nameofmodule:nameofsubmodule'
+				// For normalized external modules.
 				else
 				{
-				    $tmp=explode(':', $modulepart);
-				    if (! empty($tmp[2])) $submodulepart=$tmp[2];
-			        $file=dol_buildpath('/'.$modulepart.'/core/modules/'.$modulepart.'/modules_'.$submodulepart.'.php', 0);
+				    $file=dol_buildpath('/'.$modulepart.'/core/modules/'.$modulepart.'/modules_'.$submodulepart.'.php', 0);
 					$res=include_once $file;
 				}
 				$class='ModelePDF'.ucfirst($submodulepart);
+
 				if (class_exists($class))
 				{
 					$modellist=call_user_func($class.'::liste_modeles', $this->db);
 				}
 				else
 				{
-					dol_print_error($this->db, 'Bad value for modulepart');
+					dol_print_error($this->db, "Bad value for modulepart '".$modulepart."' in showdocuments");
 					return -1;
 				}
 			}
@@ -1076,10 +1084,11 @@ class FormFile
 	 *  @param   string $sortorder          Sort order ('ASC' or 'DESC')
 	 *  @param   int    $disablemove        1=Disable move button, 0=Position move is possible.
 	 *  @param	 int	$addfilterfields	Add line with filters
+	 *  @param	 int	$disablecrop		Disable crop feature on images (-1 = auto, prefer to set it explicitely to 0 or 1)
 	 * 	@return	 int						<0 if KO, nb of files shown if OK
 	 *  @see list_of_autoecmfiles()
 	 */
-	public function list_of_documents($filearray, $object, $modulepart, $param = '', $forcedownload = 0, $relativepath = '', $permonobject = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $title = '', $url = '', $showrelpart = 0, $permtoeditline = -1, $upload_dir = '', $sortfield = '', $sortorder = 'ASC', $disablemove = 1, $addfilterfields = 0)
+	public function list_of_documents($filearray, $object, $modulepart, $param = '', $forcedownload = 0, $relativepath = '', $permonobject = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $title = '', $url = '', $showrelpart = 0, $permtoeditline = -1, $upload_dir = '', $sortfield = '', $sortorder = 'ASC', $disablemove = 1, $addfilterfields = 0, $disablecrop = -1)
 	{
         // phpcs:enable
 		global $user, $conf, $langs, $hookmanager;
@@ -1087,8 +1096,11 @@ class FormFile
 		global $dolibarr_main_url_root;
 		global $form;
 
-		$disablecrop=1;
-		if (in_array($modulepart, array('bom','expensereport','holiday','member','project','product','produit','service','societe','tax','ticket','user'))) $disablecrop=0;
+		if ($disablecrop == -1)
+		{
+			$disablecrop=1;
+			if (in_array($modulepart, array('bank','bom','expensereport','holiday','member','project','product','produit','service','societe','tax','ticket','user'))) $disablecrop=0;
+		}
 
 		// Define relative path used to store the file
 		if (empty($relativepath))
@@ -1166,6 +1178,7 @@ class FormFile
 			if (GETPOST('action', 'aZ09') == 'editfile' && $permtoeditline)
 			{
 				print '<form action="'.$_SERVER["PHP_SELF"].'?'.$param.'" method="POST">';
+				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="renamefile">';
 				print '<input type="hidden" name="id" value="'.$object->id.'">';
 				print '<input type="hidden" name="modulepart" value="'.$modulepart.'">';
@@ -1458,7 +1471,7 @@ class FormFile
 	 *  @param  string	$param              Parameters on sort links
 	 *  @param  int		$forcedownload      Force to open dialog box "Save As" when clicking on file
 	 *  @param  string	$relativepath       Relative path of docs (autodefined if not provided)
-	 *  @param  int		$permtodelete       Permission to delete
+	 *  @param  int		$permissiontodelete       Permission to delete
 	 *  @param  int		$useinecm           Change output for use in ecm module
 	 *  @param  int		$textifempty        Text to show if filearray is empty
 	 *  @param  int		$maxlength          Maximum length of file name shown
@@ -1467,7 +1480,7 @@ class FormFile
 	 *  @return int                 		<0 if KO, nb of files shown if OK
 	 *  @see list_of_documents()
 	 */
-	public function list_of_autoecmfiles($upload_dir, $filearray, $modulepart, $param, $forcedownload = 0, $relativepath = '', $permtodelete = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $url = '', $addfilterfields = 0)
+	public function list_of_autoecmfiles($upload_dir, $filearray, $modulepart, $param, $forcedownload = 0, $relativepath = '', $permissiontodelete = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $url = '', $addfilterfields = 0)
 	{
         // phpcs:enable
 		global $user, $conf, $langs, $form;
@@ -1483,6 +1496,7 @@ class FormFile
 		if (! empty($addfilterfields))
 		{
 			print '<form action="'.$_SERVER['PHP_SELF'].'">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="module" value="'.$modulepart.'">';
 		}
 
@@ -1689,7 +1703,7 @@ class FormFile
 				//if ($forcedownload) print '&attachment=1';
 				//print '&file='.urlencode($relativefile).'">';
 				//print img_view().'</a> &nbsp; ';
-				//if ($permtodelete) print '<a href="'.$url.'?id='.$object->id.'&section='.$_REQUEST["section"].'&action=delete&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
+				//if ($permissiontodelete) print '<a href="'.$url.'?id='.$object->id.'&section='.$_REQUEST["section"].'&action=delete&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
 				//else print '&nbsp;';
 				print "</td></tr>\n";
 			}
@@ -1744,13 +1758,13 @@ class FormFile
 	 * Show array with linked files
 	 *
 	 * @param 	Object		$object			Object
-	 * @param 	int			$permtodelete	Deletion is allowed
+	 * @param 	int			$permissiontodelete	Deletion is allowed
 	 * @param 	string		$action			Action
 	 * @param 	string		$selected		???
 	 * @param	string		$param			More param to add into URL
 	 * @return 	int							Number of links
 	 */
-	public function listOfLinks($object, $permtodelete = 1, $action = null, $selected = null, $param = '')
+	public function listOfLinks($object, $permissiontodelete = 1, $action = null, $selected = null, $param = '')
 	{
 		global $user, $conf, $langs, $user;
 		global $sortfield, $sortorder;
@@ -1770,10 +1784,13 @@ class FormFile
 		$res = $link->fetchAll($links, $object->element, $object->id, $sortfield, $sortorder);
 		$param .= (isset($object->id)?'&id=' . $object->id : '');
 
+		print '<!-- listOfLinks -->'."\n";
+
 		// Show list of associated links
 		print load_fiche_titre($langs->trans("LinkedFiles"));
 
 		print '<form action="' . $_SERVER['PHP_SELF'] . ($param?'?'.$param:'') . '" method="POST">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 		print '<table width="100%" class="liste noborder nobottom">';
 		print '<tr class="liste_titre">';
@@ -1861,7 +1878,7 @@ class FormFile
 				print '<td class="center"></td>';
 				print '<td class="right">';
 				print '<a href="' . $_SERVER['PHP_SELF'] . '?action=update&linkid=' . $link->id . $param . '" class="editfilelink reposition" >' . img_edit() . '</a>';	// id= is included into $param
-				if ($permtodelete) {
+				if ($permissiontodelete) {
 					print ' &nbsp; <a href="'. $_SERVER['PHP_SELF'] .'?action=delete&linkid=' . $link->id . $param . '" class="deletefilelink">' . img_delete() . '</a>';	// id= is included into $param
 				} else {
 					print '&nbsp;';

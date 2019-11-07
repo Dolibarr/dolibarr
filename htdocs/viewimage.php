@@ -198,7 +198,7 @@ if (! empty($hashp))
 else
 {
 	// Basic protection (against external users only)
-	if ($user->societe_id > 0)
+	if ($user->socid > 0)
 	{
 		if ($sqlprotectagainstexternals)
 		{
@@ -210,7 +210,7 @@ else
 				while ($i < $num)
 				{
 					$obj = $db->fetch_object($resql);
-					if ($user->societe_id != $obj->fk_soc)
+					if ($user->socid != $obj->fk_soc)
 					{
 						$accessallowed=0;
 						break;

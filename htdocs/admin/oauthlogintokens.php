@@ -122,7 +122,6 @@ dol_fiche_head($head, 'tokengeneration', '', -1, 'technic');
 
 if ($mode == 'setup' && $user->admin)
 {
-
     print $langs->trans("OAuthSetupForLogin")."<br><br>\n";
 
     foreach($list as $key)
@@ -222,7 +221,7 @@ if ($mode == 'setup' && $user->admin)
         print '<input type="hidden" name="action" value="setconst">';
 
 
-        print '<table class="noborder" width="100%">'."\n";
+        print '<table class="noborder centpercent">'."\n";
 
         print '<tr class="liste_titre">';
         print '<th class="titlefieldcreate">'.$langs->trans($key[0]).'</th>';
@@ -340,7 +339,7 @@ if ($mode == 'test' && $user->admin)
 {
     print $langs->trans('PrintTestDesc'.$driver)."<br><br>\n";
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     if (! empty($driver))
     {
         require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
@@ -367,7 +366,7 @@ if ($mode == 'userconf' && $user->admin)
 {
     print $langs->trans('PrintUserConfDesc'.$driver)."<br><br>\n";
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("User").'</th>';
     print '<th>'.$langs->trans("PrintModule").'</th>';
@@ -381,7 +380,6 @@ if ($mode == 'userconf' && $user->admin)
     $sql = 'SELECT p.rowid, p.printer_name, p.printer_location, p.printer_id, p.copy, p.module, p.driver, p.userid, u.login FROM '.MAIN_DB_PREFIX.'printing as p, '.MAIN_DB_PREFIX.'user as u WHERE p.userid=u.rowid';
     $resql = $db->query($sql);
     while ($row=$db->fetch_array($resql)) {
-
         print '<tr class="oddeven">';
         print '<td>'.$row['login'].'</td>';
         print '<td>'.$row['module'].'</td>';

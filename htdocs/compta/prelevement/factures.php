@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('banks', 'categories', 'companies', 'withdrawals', 'bills'));
 
 // Securite acces client
-if ($user->societe_id > 0) accessforbidden();
+if ($user->socid > 0) accessforbidden();
 
 // Get supervariables
 $prev_id = GETPOST('id', 'int');
@@ -79,7 +79,7 @@ if ($prev_id > 0 || $ref)
 
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
-      	print '<table class="border" width="100%">';
+      	print '<table class="border centpercent">';
 
 		//print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
 		print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
@@ -111,7 +111,7 @@ if ($prev_id > 0 || $ref)
 		print '<br>';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		$acc = new Account($db);
 		$result=$acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);
@@ -201,7 +201,7 @@ if ($result)
 
   	print"\n<!-- debut table -->\n";
 	print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
-  	print '<table class="liste" width="100%">';
+  	print '<table class="liste centpercent">';
   	print '<tr class="liste_titre">';
   	print_liste_field_titre("Bill", $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
   	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);

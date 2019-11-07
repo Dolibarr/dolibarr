@@ -119,7 +119,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 }
 
 
-print '<table class="noborder nohover" width="100%">';
+print '<table class="noborder nohover centpercent">';
 print '<tr class="liste_titre">';
 print '<th colspan="4">'.$langs->trans("Statistics").'</th>';
 print "</tr>\n";
@@ -158,7 +158,6 @@ $total=0;
 $totalnb=0;
 foreach ($listofstatus as $status)
 {
-
     print '<tr class="oddeven">';
     print '<td><a href="list.php?statut='.$status.'">'.$donstatic->LibStatut($status, 4).'</a></td>';
     print '<td class="right">'.(! empty($nb[$status])?$nb[$status]:'&nbsp;').'</td>';
@@ -197,7 +196,7 @@ $sql.= $db->plimit($max, 0);
 $resql=$db->query($sql);
 if ($resql)
 {
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<th colspan="5">'.$langs->trans("LastModifiedDonations", $max).'</th></tr>';
 

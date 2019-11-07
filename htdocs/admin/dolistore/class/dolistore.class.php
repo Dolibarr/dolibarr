@@ -32,8 +32,8 @@ class Dolistore
      * beginning of pagination
      * @var int
      */
+    public $start;
 
-     public $start;
     /**
      * end of pagination
      * @var int
@@ -226,7 +226,6 @@ class Dolistore
 						$html   .= self::get_categories($cat->id);
 						$html   .= "</li>\n";
 			} else {
-
 			}
 		}
 

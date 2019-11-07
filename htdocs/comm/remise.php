@@ -33,9 +33,9 @@ $id=GETPOST("id", 'int');
 
 $socid = GETPOST('id', 'int')?GETPOST('id', 'int'):GETPOST('socid', 'int');
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -116,7 +116,7 @@ if ($socid > 0)
 
 	dol_fiche_head($head, 'relativediscount', $langs->trans("ThirdParty"), -1, 'company');
 
-    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+    dol_banner_tab($object, 'socid', '', ($user->socid?0:1), 'rowid', 'nom');
 
     print '<div class="fichecenter">';
 
@@ -229,7 +229,7 @@ if ($socid > 0)
 		$resql=$db->query($sql);
 		if ($resql)
 		{
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			$tag = !$tag;
 			print '<tr class="liste_titre">';
 			print '<td width="160">'.$langs->trans("Date").'</td>';
@@ -288,7 +288,7 @@ if ($socid > 0)
 		$resql=$db->query($sql);
 		if ($resql)
 		{
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			$tag = !$tag;
 			print '<tr class="liste_titre">';
 			print '<td width="160">'.$langs->trans("Date").'</td>';

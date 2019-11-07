@@ -101,7 +101,7 @@ class pdf_paiement
 		global $conf, $hookmanager, $langs, $user;
 
 		$socid=0;
-		if ($user->societe_id) $socid=$user->societe_id;
+		if ($user->socid) $socid=$user->socid;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO

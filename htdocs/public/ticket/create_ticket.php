@@ -78,7 +78,6 @@ if (GETPOST('addfile', 'alpha') && ! GETPOST('add', 'alpha')) {
 
 // Remove file
 if (GETPOST('removedfile', 'alpha') && !GETPOST('add', 'alpha')) {
-
     include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
     // Set tmp directory
@@ -349,7 +348,7 @@ llxHeaderTicket($langs->trans("CreateTicket"), "", 0, 0, $arrayofjs, $arrayofcss
 print '<div style="width:60%; margin: 0 auto;" class="ticketpublicarea">';
 
 if ($action != "infos_success") {
-    $formticket->withfromsocid = isset($socid) ? $socid : $user->societe_id;
+    $formticket->withfromsocid = isset($socid) ? $socid : $user->socid;
     $formticket->withtitletopic = 1;
     $formticket->withcompany = 0;
     $formticket->withusercreate = 1;

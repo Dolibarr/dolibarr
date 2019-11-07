@@ -25,10 +25,8 @@ if (empty($conf) || ! is_object($conf))
 
 $soc = $GLOBALS['objcanvas']->control->object;
 
-?>
 
-<!-- BEGIN PHP TEMPLATE CARD_VIEW.TPL.PHP COMPANY -->
-<?php
+print "<!-- BEGIN PHP TEMPLATE CARD_VIEW.TPL.PHP COMPANY -->\n";
 
 $head = societe_prepare_head($soc);
 

@@ -42,7 +42,6 @@ $erreur = false;
 // Insert survey
 if (GETPOST('confirmation'))
 {
-
 	// We save hours entered
 	if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true && issetAndNoEmpty('nbrecaseshoraires', $_SESSION) === true)
 	{
@@ -537,8 +536,8 @@ if (issetAndNoEmpty('totalchoixjour', $_SESSION) || $erreur)
 			//si on voit une erreur, le fond de la case est rouge
 			if (isset($errheure[$i][$j]) && $errheure[$i][$j]) {
 				print '<td><input type=text size="10" maxlength="11" name=horaires'.$i.'[] value="'.$_SESSION["horaires$i"][$j].'" style="background-color:#FF6666;"></td>'."\n";
-			} else { //sinon la case est vide normalement
-
+			} else {
+				//sinon la case est vide normalement
 				print '<td><input type=text size="10" maxlength="11" name=horaires'.$i.'[] value="'.$_SESSION["horaires$i"][$j].'"></td>'."\n";
 			}
 		}

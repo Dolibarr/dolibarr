@@ -66,8 +66,7 @@ $search_progressdeclare=GETPOST('search_progressdeclare');
 
 $object = new Project($db);
 $taskstatic = new Task($db);
-$extrafields_project = new ExtraFields($db);
-$extrafields_task = new ExtraFields($db);
+$extrafields = new ExtraFields($db);
 
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
 if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
@@ -75,13 +74,13 @@ if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($ob
 if ($id > 0 || ! empty($ref))
 {
 	// fetch optionals attributes and labels
-	$extrafields_project->fetch_name_optionals_label($object->table_element);
+	$extrafields->fetch_name_optionals_label($object->table_element);
 }
-$extrafields_task->fetch_name_optionals_label($taskstatic->table_element);
+$extrafields->fetch_name_optionals_label($taskstatic->table_element);
 
 // Security check
 $socid=0;
-//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
 $diroutputmassaction=$conf->projet->dir_output . '/tasks/temp/massgeneration/'.$user->id;
@@ -115,14 +114,17 @@ $arrayfields=array(
     't.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
     //'t.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
-// Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+// Extra fields project
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-    foreach($extrafields->attribute_label as $key => $val)
-    {
-        if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
-    }
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+	{
+		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+	}
 }
+$object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 /*
@@ -161,8 +163,8 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='Task';
 	$objectlabel='Tasks';
-	$permtoread = $user->rights->projet->lire;
-	$permtodelete = $user->rights->projet->supprimer;
+	$permissiontoread = $user->rights->projet->lire;
+	$permissiontodelete = $user->rights->projet->supprimer;
 	$uploaddir = $conf->projet->dir_output.'/tasks';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -260,8 +262,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			$task->progress = $progress;
 
 			// Fill array 'array_options' with data from add form
-			$extrafields->fetch_name_optionals_label($task->table_element);
-			$ret = $extrafields_task->setOptionalsFromPost(null, $task);
+			$ret = $extrafields->setOptionalsFromPost(null, $task);
 
 			$taskid = $task->create($user);
 
@@ -604,9 +605,9 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $taskstatic, $action); // Note that $action and $object may have been modified by hook
 	    print $hookmanager->resPrint;
 
-	    if (empty($reshook) && ! empty($extrafields_task->attribute_label))
+	    if (empty($reshook) && ! empty($extrafields[$taskstatic->table_element]['label']))
 		{
-			print $taskstatic->showOptionals($extrafields_task, 'edit');		// Do not use $object here that is object of project
+			print $taskstatic->showOptionals($extrafields, 'edit');		// Do not use $object here that is object of project but use $taskstatic
 		}
 
 		print '</table>';
@@ -635,17 +636,19 @@ elseif ($id > 0 || ! empty($ref))
 	$arrayfields['t.task_date_start']=array('label'=>$langs->trans("DateStart"), 'checked'=>1);
 	$arrayfields['t.task_date_end']=array('label'=>$langs->trans("DateEnd"), 'checked'=>1);
 	// Extra fields
-	if (is_array($extrafields_task->attribute_label) && count($extrafields_task->attribute_label))
+	if (is_array($extrafields->attributes[$taskstatic->table_element]['label']) && count($extrafields->attributes[$taskstatic->table_element]['label']) > 0)
 	{
-		foreach($extrafields_task->attribute_label as $key => $val)
+		foreach($extrafields->attributes[$taskstatic->table_element]['label'] as $key => $val)
 		{
-			if (! empty($extrafields_task->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields_task->attribute_label[$key], 'checked'=>(($extrafields_task->attribute_list[$key]<0)?0:1), 'position'=>$extrafields_task->attribute_pos[$key], 'enabled'=>(abs($extrafields_task->attribute_list[$key])!=3 && $extrafields_task->attribute_perms[$key]));
+			if (! empty($extrafields->attributes[$taskstatic->table_element]['list'][$key]))
+				$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$taskstatic->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$taskstatic->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$taskstatic->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$taskstatic->table_element]['list'][$key])!=3 && $extrafields->attributes[$taskstatic->table_element]['perms'][$key]));
 		}
 	}
+	$arrayfields = dol_sort_array($arrayfields, 'position');
 
 	print '<br>';
 
-// Link to create task
+	// Link to create task
     $linktocreatetaskParam = array();
     $linktocreatetaskUserRight = false;
     if ($user->rights->projet->all->creer || $user->rights->projet->creer) {
@@ -787,8 +790,8 @@ elseif ($id > 0 || ! empty($ref))
 	print_liste_field_titre("TaskProgressSummary", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center ');
 	if ($object->usage_bill_time)
 	{
-	   print_liste_field_titre("TimeToBill", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
-	   print_liste_field_titre("TimeBilled", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre("TimeToBill", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre("TimeBilled", $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'right ');
 	}
 	if (! empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) print_liste_field_titre("TaskRessourceLinks", $_SERVER["PHP_SELF"], '', '', '', $sortfield, $sortorder);
 	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', 'width="80"', $sortfield, $sortorder, 'center maxwidthsearch ');

@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2018 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2016 Regis Houssin	<regis.houssin@inodbox.com>
  * Copyright (C) 2018      Charlene Benke	<charlie@patas-monkey.com>
+ * Copyright (C) 2019		Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 $langs->loadLangs(array('users', 'holiday', 'hrm'));
 
 // Protection if external user
-if ($user->societe_id > 0) accessforbidden();
+if ($user->socid > 0) accessforbidden();
 
 $action     = GETPOST('action', 'aZ09');												// The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha');											// The bulk action (combo box choice into lists)
@@ -58,9 +59,9 @@ $childids = $user->getAllChildIds(1);
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0)	// Protection if external user
+if ($user->socid > 0)	// Protection if external user
 {
-	//$socid = $user->societe_id;
+	//$socid = $user->socid;
 	accessforbidden();
 }
 $result = restrictedArea($user, 'holiday', '', '');
@@ -120,6 +121,7 @@ $search_array_options=$extrafields->getOptionalsFromPost($object->table_element,
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
+	'cp.ref'=>'Ref',
     'cp.description'=>'Description',
     'uu.lastname'=>'EmployeeLastname',
     'uu.firstname'=>'EmployeeFirstname',
@@ -194,8 +196,8 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='Holiday';
 	$objectlabel='Holiday';
-	$permtoread = $user->rights->holiday->read;
-	$permtodelete = $user->rights->holiday->delete;
+	$permissiontoread = $user->rights->holiday->read;
+	$permissiontodelete = $user->rights->holiday->delete;
 	$uploaddir = $conf->holiday->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -263,17 +265,23 @@ $sql.= " cp.detail_refuse,";
 
 $sql.= " uu.lastname as user_lastname,";
 $sql.= " uu.firstname as user_firstname,";
+$sql.= " uu.admin as user_admin,";
+$sql.= " uu.email as user_email,";
 $sql.= " uu.login as user_login,";
 $sql.= " uu.statut as user_statut,";
 $sql.= " uu.photo as user_photo,";
 
 $sql.= " ua.lastname as validator_lastname,";
 $sql.= " ua.firstname as validator_firstname,";
+$sql.= " ua.admin as validator_admin,";
+$sql.= " ua.email as validator_email,";
 $sql.= " ua.login as validator_login,";
 $sql.= " ua.statut as validator_statut,";
 $sql.= " ua.photo as validator_photo";
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -286,10 +294,7 @@ $sql.= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pou
 // Search all
 if (!empty($sall)) $sql.= natural_search(array_keys($fieldstosearchall), $sall);
 // Ref
-if(!empty($search_ref))
-{
-	$sql.= " AND cp.rowid = ".(int) $db->escape($search_ref);
-}
+if (!empty($search_ref)) $sql.= natural_search("cp.ref", $search_ref);
 // Start date
 $sql.= dolSqlDateFilter("cp.date_debut", $search_day_start, $search_month_start, $search_year_start);
 // End date
@@ -662,6 +667,8 @@ if ($resql)
 			$userstatic->id=$obj->fk_user;
 			$userstatic->lastname=$obj->user_lastname;
 			$userstatic->firstname=$obj->user_firstname;
+			$userstatic->admin = $obj->user_admin;
+			$userstatic->email = $obj->user_email;
 			$userstatic->login=$obj->user_login;
 			$userstatic->statut=$obj->user_statut;
 			$userstatic->photo=$obj->user_photo;
@@ -670,6 +677,8 @@ if ($resql)
 			$approbatorstatic->id=$obj->fk_validator;
 			$approbatorstatic->lastname=$obj->validator_lastname;
 			$approbatorstatic->firstname=$obj->validator_firstname;
+			$approbatorstatic->admin = $obj->validator_admin;
+			$approbatorstatic->email = $obj->validator_email;
 			$approbatorstatic->login=$obj->validator_login;
 			$approbatorstatic->statut=$obj->validator_statut;
 			$approbatorstatic->photo=$obj->validator_photo;

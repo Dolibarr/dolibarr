@@ -54,7 +54,6 @@ $object=new Bookmark($db);
 
 if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 {
-
 	if ($action == 'update') {
 		$invertedaction = 'edit';
 	} else {
@@ -157,7 +156,7 @@ if ($action == 'create')
 
 	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"), 0, 'bookmark');
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent tableforfieldcreate">';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("BookmarkTitle").'</td><td><input id="titlebookmark" class="flat minwidth100" name="title" value="'.$title.'"></td><td class="hideonsmartphone">'.$langs->trans("SetHereATitleForLink").'</td></tr>';
 	dol_set_focus('#titlebookmark');
@@ -230,7 +229,7 @@ if ($id > 0 && ! preg_match('/^add/i', $action))
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent tableforfield">';
 
 	print '<tr><td class="titlefield">';
 	if ($action == 'edit') {

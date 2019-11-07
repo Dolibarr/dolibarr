@@ -139,7 +139,7 @@ if ($action == 'set')
 
 if ($action == 'del')
 {
-   $ret = delDocumentModel($value, $type);
+    $ret = delDocumentModel($value, $type);
     if ($ret > 0)
     {
         if ($conf->global->LIVRAISON_ADDON_PDF == "$value") dolibarr_del_const($db, 'LIVRAISON_ADDON_PDF', $conf->entity);
@@ -194,7 +194,7 @@ dol_fiche_head($head, 'receivings', $langs->trans("Receivings"), -1, 'sending');
 
 print load_fiche_titre($langs->trans("DeliveryOrderNumberingModules"), '', '');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="100">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -322,7 +322,7 @@ else
 	dol_print_error($db);
 }
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -356,8 +356,6 @@ foreach ($dirmodels as $reldir)
                 {
                 	if (file_exists($dir.'/'.$file))
                 	{
-
-
 		    			$name = substr($file, 4, dol_strlen($file) -16);
 		    			$classname = substr($file, 0, dol_strlen($file) -12);
 
@@ -442,7 +440,7 @@ print '</table>';
 print "<br>";
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Value").'</td>';

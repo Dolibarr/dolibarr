@@ -944,9 +944,9 @@ class DolGraph
 		if (! empty($this->title)) $this->stringtoshow.='<div class="center dolgraphtitle'.(empty($this->cssprefix)?'':' dolgraphtitle'.$this->cssprefix).'">'.$this->title.'</div>';
 		if (! empty($this->shownographyet))
 		{
-		  $this->stringtoshow.='<div style="width:'.$this->width.'px;height:'.$this->height.'px;" class="nographyet"></div>';
-		  $this->stringtoshow.='<div class="nographyettext">'.$langs->trans("NotEnoughDataYet").'</div>';
-		  return;
+		    $this->stringtoshow.='<div style="width:'.$this->width.'px;height:'.$this->height.'px;" class="nographyet"></div>';
+		    $this->stringtoshow.='<div class="nographyettext">'.$langs->trans("NotEnoughDataYet").'</div>';
+		    return;
 		}
 		$this->stringtoshow.='<div id="placeholder_'.$tag.'" style="width:'.$this->width.'px;height:'.$this->height.'px;" class="dolgraph'.(empty($this->cssprefix)?'':' dolgraph'.$this->cssprefix).' center"></div>'."\n";
 

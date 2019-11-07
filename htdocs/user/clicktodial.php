@@ -33,7 +33,7 @@ $id=GETPOST('id', 'int');
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0) $socid = $user->societe_id;
+if ($user->socid > 0) $socid = $user->socid;
 $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
@@ -110,7 +110,7 @@ if ($id > 0)
     // Edit mode
     if ($action == 'edit')
     {
-       print '<table class="border centpercent">';
+        print '<table class="border centpercent">';
 
         if ($user->admin)
         {
@@ -149,7 +149,6 @@ if ($id > 0)
     }
     else	// View mode
     {
-
         print '<table class="border centpercent tableforfield">';
 
         if (! empty($user->admin))

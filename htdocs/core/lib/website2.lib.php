@@ -369,7 +369,7 @@ function showWebsiteTemplates(Website $website)
 	$colspan=2;
 
 	$thumbsbyrow=6;
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 
 	// Title
 	print '<tr class="liste_titre"><th class="titlefield"></th>';
@@ -433,7 +433,7 @@ function showWebsiteTemplates(Website $website)
 						if (! empty($urladvanced)) $ret.='<a class="'.$urladvanced['css'].'" target="'.$urladvanced['target'].'" mime="'.$urladvanced['mime'].'" href="'.$urladvanced['url'].'">';
 						else $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
 						print $ret;
-						print '<img class="websiteskinthumb shadow" src="'.$url.'" border="0" width="80" height="60" alt="'.$title.'" title="'.$title.'" style="margin-bottom: 5px;">';
+						print '<img class="img-skinthumb shadow" src="'.$url.'" border="0" alt="'.$title.'" title="'.$title.'" style="margin-bottom: 5px;">';
 						print '</a>';
 
 						print '<br>';

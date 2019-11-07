@@ -48,7 +48,7 @@ $action=GETPOST('action', 'alpha');
 
 // Security check
 $socid='';
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, $origin, $origin_id);
 
 $object = new Reception($db);
@@ -97,7 +97,6 @@ $form = new Form($db);
 
 if ($id > 0 || ! empty($ref))
 {
-
 	$head=reception_prepare_head($object);
 	dol_fiche_head($head, 'note', $langs->trans("Reception"), -1, 'sending');
 

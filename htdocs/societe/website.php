@@ -47,7 +47,7 @@ $search_status=GETPOST('search_status');
 
 // Security check
 $id = GETPOST('id', 'int')?GETPOST('id', 'int'):GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -156,8 +156,8 @@ if (empty($reshook))
     // Mass actions
     $objectclass='WebsiteAccount';
     $objectlabel='WebsiteAccount';
-    $permtoread = $user->rights->societe->lire;
-    $permtodelete = $user->rights->societe->supprimer;
+    $permissiontoread = $user->rights->societe->lire;
+    $permissiontodelete = $user->rights->societe->supprimer;
     $uploaddir = $conf->societe->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -195,7 +195,7 @@ dol_fiche_head($head, 'website', $langs->trans("ThirdParty"), - 1, 'company');
 
 $linkback = '<a href="' . DOL_URL_ROOT . '/societe/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
-dol_banner_tab($object, 'socid', $linkback, ($user->societe_id ? 0 : 1), 'rowid', 'nom');
+dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
 print '<div class="fichecenter">';
 
@@ -430,14 +430,6 @@ print '</tr>'."\n";
 
 // Detect if we need a fetch on each output line
 $needToFetchEachLine=0;
-foreach ($extrafields->attribute_computed as $key => $val)
-{
-	if (preg_match('/\$object/', $val)) $needToFetchEachLine++;  // There is at least one compute field that use $object
-}
-
-
-// Detect if we need a fetch on each output line
-$needToFetchEachLine=0;
 if (is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0)
 {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val)
@@ -509,26 +501,8 @@ while ($i < min($num, $limit))
 }
 
 // Show total line
-if (isset($totalarray['pos']))
-{
-	print '<tr class="liste_total">';
-	$i=0;
-	while ($i < $totalarray['nbfield'])
-	{
-		$i++;
-		if (! empty($totalarray['pos'][$i]))  print '<td class="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
-		else
-		{
-			if ($i == 1)
-			{
-				if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
-				else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-			}
-			else print '<td></td>';
-		}
-	}
-	print '</tr>';
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+
 
 // If no record found
 if ($num == 0)

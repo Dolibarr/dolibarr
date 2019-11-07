@@ -819,7 +819,6 @@ class Utils
 		$tabfiles[] = array('name' => $mainlog, 'path' => $mainlogdir);
 
 		foreach($tabfiles as $file) {
-
 			$logname = $file['name'];
 			$logpath = $file['path'];
 
@@ -1005,7 +1004,7 @@ class Utils
 				if (GETPOST("nobin_disable_fk")) fwrite($handle, "ALTER TABLE `".$table."` DISABLE KEYS;\n");
 				else fwrite($handle, "/*!40000 ALTER TABLE `".$table."` DISABLE KEYS */;\n");
 
-				$sql='SELECT * FROM '.$table;
+				$sql='SELECT * FROM '.$table;		// Here SELECT * is allowed because we don't have definition of columns to take
 				$result = $db->query($sql);
 				while($row = $db->fetch_row($result))
 				{

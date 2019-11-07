@@ -40,7 +40,7 @@ $langs->load("trips");
 
 // Security check
 $id = GETPOST('id', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'deplacement', $id, '');
 
 $action = GETPOST('action', 'alpha');
@@ -250,7 +250,7 @@ if ($action == 'create')
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
 
-    print '<table class="border" width="100%">';
+    print '<table class="border centpercent">';
 
     print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
@@ -287,7 +287,7 @@ if ($action == 'create')
     print '</td></tr>';
 
     // Private note
-    if (empty($user->societe_id))
+    if (empty($user->socid))
     {
         print '<tr>';
         print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
@@ -339,7 +339,7 @@ elseif ($id)
             print '<input type="hidden" name="action" value="update">';
             print '<input type="hidden" name="id" value="'.$id.'">';
 
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
 
             // Ref
             print "<tr>";
@@ -385,7 +385,7 @@ elseif ($id)
             print "</td></tr>";
 
             // Private note
-            if (empty($user->societe_id))
+            if (empty($user->socid))
             {
                 print '<tr><td class="tdtop">'.$langs->trans("NotePrivate").'</td>';
                 print '<td>';
@@ -415,9 +415,9 @@ elseif ($id)
         }
         else
         {
-           /*
-            * Confirm delete trip
-            */
+            /*
+             * Confirm delete trip
+             */
             if ($action == 'delete')
             {
                 print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id, $langs->trans("DeleteTrip"), $langs->trans("ConfirmDeleteTrip"), "confirm_delete");
@@ -426,7 +426,7 @@ elseif ($id)
             $soc = new Societe($db);
             if ($object->socid) $soc->fetch($object->socid);
 
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
 
             $linkback = '<a href="'.DOL_URL_ROOT.'/compta/deplacement/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 

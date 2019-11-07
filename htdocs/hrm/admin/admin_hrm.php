@@ -42,15 +42,15 @@ $list = array (
  */
 if ($action == 'update') {
 	$error = 0;
-	
+
 	foreach ($list as $constname) {
 		$constvalue = GETPOST($constname, 'alpha');
-		
+
 		if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
 			$error ++;
 		}
 	}
-	
+
 	if (! $error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -80,20 +80,20 @@ print '<input type="hidden" name="action" value="update">';
 
 dol_fiche_head($head, 'parameters', $langs->trans("HRM"), -1, "user");
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">' . $langs->trans('Journaux') . '</td>';
 print "</tr>\n";
 
 foreach ($list as $key) {
 	$var = ! $var;
-	
+
 	print '<tr ' . $bc[$var] . ' class="value">';
-	
+
 	// Param
 	$label = $langs->trans($key);
 	print '<td width="50%"><label for="' . $key . '">' . $label . '</label></td>';
-	
+
 	// Value
 	print '<td>';
 	print '<input type="text" size="20" id="' . $key . '" name="' . $key . '" value="' . $conf->global->$key . '">';

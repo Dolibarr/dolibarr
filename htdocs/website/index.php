@@ -46,6 +46,7 @@ if (! $user->rights->website->read) accessforbidden();
 $conf->dol_hide_leftmenu = 1;   // Force hide of left menu.
 
 $error=0;
+$websiteid=GETPOST('websiteid', 'int');
 $websitekey=GETPOST('website', 'alpha');
 $page=GETPOST('page', 'alpha');
 $pageid=GETPOST('pageid', 'int');
@@ -101,7 +102,7 @@ $objectpage=new WebsitePage($db);
 $object->fetchAll();    // Init $object->records with list of websites
 
 // If website not defined, we take first found
-if (empty($websitekey))
+if (! ($websiteid > 0) && empty($websitekey))
 {
 	foreach($object->records as $key => $valwebsite)
 	{
@@ -109,10 +110,12 @@ if (empty($websitekey))
 		break;
 	}
 }
-if ($websitekey)
+if ($websiteid > 0 || $websitekey)
 {
-	$res = $object->fetch(0, $websitekey);
+	$res = $object->fetch($websiteid, $websitekey);
+	$websitekey = $object->ref;
 }
+
 $website = $object;
 
 // Check pageid received as aprameter
@@ -418,7 +421,7 @@ if ($action == 'addcontainer')
 	$db->begin();
 
 	$objectpage->fk_website = $object->id;
-	if (GETPOST('fetchexternalurl', 'alpha'))
+	if (GETPOSTISSET('fetchexternalurl'))
 	{
 		$urltograb=GETPOST('externalurl', 'alpha');
 		$grabimages=GETPOST('grabimages', 'alpha');
@@ -426,12 +429,18 @@ if ($action == 'addcontainer')
 		//var_dump($grabimages);exit;
 	}
 
-	if ($urltograb)
+	if (GETPOSTISSET('fetchexternalurl'))
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-		//if (! preg_match('/^http/', $urltograb) && ! preg_match('/^file/', $urltograb))
-		if (! preg_match('/^http/', $urltograb))
+		if (empty($urltograb))
+		{
+			$error++;
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("URL")), null, 'errors');
+			$action = 'createcontainer';
+		}
+		elseif (! preg_match('/^http/', $urltograb))
 		{
 			$error++;
 			$langs->load("errors");
@@ -1236,12 +1245,18 @@ if ($action == 'updatecss')
     			setEventMessages($langs->trans("Saved"), null, 'mesgs');
     		}
 
-    		$action='preview';
-
-    		if ($backtopage)
+    		if (! GETPOSTISSET('updateandstay'))	// If we click on "Save And Stay", we don not make the redirect
     		{
-    			header("Location: ".$backtopage);
-    			exit;
+    			$action='preview';
+    			if ($backtopage)
+	    		{
+	    			header("Location: ".$backtopage);
+	    			exit;
+	    		}
+    		}
+    		else
+    		{
+    			$action = 'editcss';
     		}
 		}
 	}
@@ -1366,6 +1381,8 @@ if ($action == 'updatemeta')
 		$objectpage->keywords = GETPOST('WEBSITE_KEYWORDS', 'alpha');
 		$objectpage->lang = GETPOST('WEBSITE_LANG', 'aZ09');
 		$objectpage->htmlheader = trim(GETPOST('htmlheader', 'none'));
+		$objectpage->fk_page = GETPOST('pageidfortranslation', 'int');
+
 		$newdatecreation=dol_mktime(GETPOST('datecreationhour', 'int'), GETPOST('datecreationmin', 'int'), GETPOST('datecreationsec', 'int'), GETPOST('datecreationmonth', 'int'), GETPOST('datecreationday', 'int'), GETPOST('datecreationyear', 'int'));
 		if ($newdatecreation) $objectpage->date_creation = $newdatecreation;
 
@@ -1836,6 +1853,9 @@ if ($action == 'importsiteconfirm')
 				}
 				else
 				{
+					// Force mode dynamic on
+					dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 1, 'chaine', 0, '', $conf->entity);
+
 					header("Location: ".$_SERVER["PHP_SELF"].'?website='.$object->ref);
 					exit();
 				}
@@ -1997,6 +2017,7 @@ if (! GETPOST('hide_websitemenu'))
 	if ($object->id > 0)
 	{
 		$array=$objectpage->fetchAll($object->id, 'ASC,ASC', 'type_container,pageurl');
+		$object->lines = $array;
 	}
 	if (! is_array($array) && $array < 0) dol_print_error('', $objectpage->error, $objectpage->errors);
 	$atleastonepage=(is_array($array) && count($array) > 0);
@@ -2010,13 +2031,13 @@ if (! GETPOST('hide_websitemenu'))
 
 		print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
 
-		if (! $atleastonepage)
+		if ($atleastonepage)
 		{
-			print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ImportSite")).'" name="importsite">';
+			print '<input type="submit" class="button bordertransp" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("ImportSite")).'" name="importsite">';
 		}
 		else
 		{
-			print '<input type="submit" class="button bordertransp" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("ImportSite")).'" name="importsite">';
+			print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ImportSite")).'" name="importsite">';
 		}
 
 		//print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
@@ -2102,6 +2123,7 @@ if (! GETPOST('hide_websitemenu'))
 
 	if (in_array($action, array('editcss','editmenu','file_manager','replacesite','replacesiteconfirm')))
 	{
+		if ($action == 'editcss' && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') print '<input type="submit" id="savefilean stay" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
 		if (preg_match('/^create/', $action) && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 		if (preg_match('/^edit/', $action) && $action != 'file_manager' && $action != 'replacesite' && $action != 'replacesiteconfirm') print '<input type="submit" id="savefile" class="button buttonforacesave" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
 		if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="cancel">';
@@ -2127,55 +2149,11 @@ if (! GETPOST('hide_websitemenu'))
 		print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'" name="createcontainer">';
 		print '</span>';
 
-		print '<span class="websiteselection">';
+		//print '<span class="websiteselection">';
 
 		if ($action != 'addcontainer')
 		{
-			$out='';
-			if ($atleastonepage && $action != 'editsource')
-			{
-			    $out.='<select name="pageid" id="pageid" class="minwidth200 maxwidth300">';
-			}
-			else
-			{
-			    $out.='<select name="pageidbis" id="pageid" class="minwidth200 maxwidth300" disabled="disabled">';
-			}
-			if ($atleastonepage)
-			{
-				if (empty($pageid) && $action != 'createcontainer')      // Page id is not defined, we try to take one
-				{
-					$firstpageid=0;$homepageid=0;
-					foreach($array as $key => $valpage)
-					{
-						if (empty($firstpageid)) $firstpageid=$valpage->id;
-						if ($object->fk_default_home && $key == $object->fk_default_home) $homepageid=$valpage->id;
-					}
-					$pageid=$homepageid?$homepageid:$firstpageid;   // We choose home page and if not defined yet, we take first page
-				}
-
-				foreach($array as $key => $valpage)
-				{
-					$out.='<option value="'.$key.'"';
-					if ($pageid > 0 && $pageid == $key) $out.=' selected';		// To preselect a value
-					$out.='>';
-					$out.='['.$valpage->type_container.' '.sprintf("%03d", $valpage->id).'] ';
-					$out.=$valpage->pageurl.' - '.$valpage->title;
-					if ($object->fk_default_home && $key == $object->fk_default_home) $out.=' ('.$langs->trans("HomePage").')';
-					$out.='</option>';
-				}
-			}
-			else $out.='<option value="-1">&nbsp;</option>';
-			$out.='</select>';
-			if ($atleastonepage && $action != 'editsource')
-			{
-			    $out.=ajax_combobox('pageid');
-			}
-			else
-			{
-    			$out.='<input type="hidden" name="pageid" value="'.$pageid.'">';
-    			$out.=ajax_combobox('pageid');
-			}
-			print $out;
+			print $formwebsite->selectContainer($website, 'pageid', $pageid, 0, $action);
 		}
 		else
 		{
@@ -2288,7 +2266,7 @@ if (! GETPOST('hide_websitemenu'))
 
 				print '<!-- button EditInLine and ShowSubcontainers -->'."\n";
 				print '<div class="websiteselectionsection inline-block">';
-				print '<div class="inline-block">';
+				print '<div class="inline-block marginrightonly">';
 
 				print '<span id="switchckeditorinline">'."\n";
 				print '<!-- Code to enabled edit inline ckeditor -->'."\n";
@@ -2341,23 +2319,23 @@ if (! GETPOST('hide_websitemenu'))
 				if ($websitepage->grabbed_from)
 				{
 					//print '<input type="submit" class="button bordertransp" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("OnlyEditionOfSourceForGrabbedContent")).'" value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
-					print '<a class="button nobordertransp opacitymedium nohoverborder"'.$disabled.' href="#" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("OnlyEditionOfSourceForGrabbedContent")).'">'.img_picto($langs->trans("OnlyEditionOfSourceForGrabbedContent"), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
+					print '<a class="nobordertransp opacitymedium nohoverborder marginleftonlyshort"'.$disabled.' href="#" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("OnlyEditionOfSourceForGrabbedContent")).'">'.img_picto($langs->trans("OnlyEditionOfSourceForGrabbedContent"), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
 				}
 				else
 				{
 					//print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
 					if (empty($conf->global->WEBSITE_EDITINLINE))
 					{
-						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=seteditinline">'.img_picto($langs->trans("EditInLineOnOff", $langs->transnoentitiesnoconv("Off")), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
+						print '<a class="nobordertransp nohoverborder marginleftonlyshort"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=seteditinline">'.img_picto($langs->trans("EditInLineOnOff", $langs->transnoentitiesnoconv("Off")), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
 					}
 					else
 					{
-						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unseteditinline">'.img_picto($langs->trans("EditInLineOnOff", $langs->transnoentitiesnoconv("On")), 'switch_on', '', false, 0, 0, '', 'nomarginleft').'</a>';
+						print '<a class="nobordertransp nohoverborder marginleftonlyshort"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unseteditinline">'.img_picto($langs->trans("EditInLineOnOff", $langs->transnoentitiesnoconv("On")), 'switch_on', '', false, 0, 0, '', 'nomarginleft').'</a>';
 					}
 				}
 
 				print '</div>';
-				print '<div class="inline-block">';
+				print '<div class="inline-block marginrightonly">';
 				print $langs->trans("ShowSubcontainers");
 				/*if ($websitepage->grabbed_from)
 				{
@@ -2365,14 +2343,14 @@ if (! GETPOST('hide_websitemenu'))
 				}
 				else
 				{*/
-					if (empty($conf->global->WEBSITE_SUBCONTAINERSINLINE))
-					{
-						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=setshowsubcontainers">'.img_picto($langs->trans("ShowSubContainersOnOff", $langs->transnoentitiesnoconv("Off")), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
-					}
-					else
-					{
-						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unsetshowsubcontainers">'.img_picto($langs->trans("ShowSubContainersOnOff", $langs->transnoentitiesnoconv("On")), 'switch_on', '', false, 0, 0, '', 'nomarginleft').'</a>';
-					}
+				if (empty($conf->global->WEBSITE_SUBCONTAINERSINLINE))
+				{
+					print '<a class="nobordertransp nohoverborder marginleftonlyshort"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=setshowsubcontainers">'.img_picto($langs->trans("ShowSubContainersOnOff", $langs->transnoentitiesnoconv("Off")), 'switch_off', '', false, 0, 0, '', 'nomarginleft').'</a>';
+				}
+				else
+				{
+					print '<a class="nobordertransp nohoverborder marginleftonlyshort"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unsetshowsubcontainers">'.img_picto($langs->trans("ShowSubContainersOnOff", $langs->transnoentitiesnoconv("On")), 'switch_on', '', false, 0, 0, '', 'nomarginleft').'</a>';
+				}
 				/*}*/
 				print '</div>';
 				print '</div>';
@@ -2395,7 +2373,7 @@ if (! GETPOST('hide_websitemenu'))
 			}
 		}
 
-		print '</span>';	// end website selection
+		//print '</span>';	// end website selection
 
 		print '<span class="websitetools">';
 
@@ -2641,7 +2619,7 @@ if ($action == 'editcss')
 	dol_fiche_head();
 
 	print '<!-- Edit CSS -->'."\n";
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Website
 	print '<tr><td class="titlefieldcreate">';
@@ -2774,7 +2752,7 @@ if ($action == 'createsite')
 	print '<!-- Add site -->'."\n";
 	//print '<div class="fichecenter">';
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	if (GETPOST('WEBSITE_REF'))         $siteref=GETPOST('WEBSITE_REF', 'alpha');
 	if (GETPOST('WEBSITE_DESCRIPTION')) $sitedesc=GETPOST('WEBSITE_DESCRIPTION', 'alpha');
@@ -2878,12 +2856,24 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '<!-- Edit or create page/container -->'."\n";
 	//print '<div class="fichecenter">';
 
+	$hiddenfromfetchingafterload = ' hideobject';
+	$hiddenmanuallyafterload = ' hideobject';
+	if (GETPOST('radiocreatefrom') == 'checkboxcreatefromfetching') $hiddenfromfetchingafterload = '';
+	if (GETPOST('radiocreatefrom') == 'checkboxcreatemanually') $hiddenmanuallyafterload = '';
+
+	if ($action == 'editmeta' || empty($conf->use_javascript_ajax)) {	// No autohide/show in such case
+		$hiddenfromfetchingafterload='';
+		$hiddenmanuallyafterload='';
+	}
+
 	if ($action == 'createcontainer')
 	{
 		print '<br>';
 
-		print ' * '.$langs->trans("CreateByFetchingExternalPage").'<br><hr>';
-		print '<table class="border" width="100%">';
+		if (! empty($conf->use_javascript_ajax)) print '<input type="radio" name="radiocreatefrom" id="checkboxcreatefromfetching" value="checkboxcreatefromfetching"'.(GETPOST('radiocreatefrom') == 'checkboxcreatefromfetching' ? ' checked' : '').'> ';
+		print '<label for="checkboxcreatefromfetching"><span class="opacitymedium">'.$langs->trans("CreateByFetchingExternalPage").'</span></label><br>';
+		print '<hr class="tablecheckboxcreatefromfetching'.$hiddenfromfetchingafterload.'">';
+		print '<table class="tableforfield centpercent tablecheckboxcreatefromfetching'.$hiddenfromfetchingafterload.'">';
 		print '<tr><td class="titlefield">';
 		print $langs->trans("URL");
 		print '</td><td>';
@@ -2901,10 +2891,12 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 
 		print '<br>';
 
-		print ' * '.$langs->trans("OrEnterPageInfoManually").'<br><hr>';
+		if (! empty($conf->use_javascript_ajax)) print '<input type="radio" name="radiocreatefrom" id="checkboxcreatemanually" value="checkboxcreatemanually"'.(GETPOST('radiocreatefrom') == 'checkboxcreatemanually' ? ' checked' : '').'> ';
+		print '<label for="checkboxcreatemanually"><span class="opacitymedium">'.$langs->trans("OrEnterPageInfoManually").'</span></label><br>';
+		print '<hr class="tablecheckboxcreatemanually'.$hiddenmanuallyafterload.'">';
 	}
 
-	print '<table class="border" width="100%">';
+	print '<table class="border tableforfield nobackground centpercent tablecheckboxcreatemanually'.$hiddenmanuallyafterload.'">';
 
 	if ($action != 'createcontainer')
 	{
@@ -2918,15 +2910,8 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		print $langs->trans('InternalURLOfPage');
 		print '</td><td>';
 		print '/public/website/index.php?website='.urlencode($websitekey).'&pageid='.urlencode($pageid);
+		//if ($objectpage->grabbed_from) print ' - <span class="opacitymedium">'.$langs->trans('InitiallyGrabbedFrom').' '.$objectpage->grabbed_from.'</span>';
 		print '</td></tr>';
-
-		/*
-        print '<tr><td class="titlefield">';
-        print $langs->trans('InitiallyGrabbedFrom');
-        print '</td><td>';
-        print $objectpage->grabbed_from;
-        print '</td></tr>';
-        */
 
 		$type_container=$objectpage->type_container;
 		$pageurl=$objectpage->pageurl;
@@ -2962,7 +2947,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '<tr><td class="fieldrequired">';
 	print $langs->trans('WEBSITE_TITLE');
 	print '</td><td>';
-	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_TITLE" id="WEBSITE_TITLE" value="'.dol_escape_htmltag($pagetitle).'">';
+	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_TITLE" id="WEBSITE_TITLE" value="'.dol_escape_htmltag($pagetitle).'" autofocus>';
 	print '</td></tr>';
 
 	// Alias
@@ -3013,27 +2998,14 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print $formadmin->select_language($pagelang?$pagelang:$langs->defaultlang, 'WEBSITE_LANG', 0, null, '1');
 	print '</td></tr>';
 
+	// Translation of
+	$translationof=0;
+	$translatedby=0;
+	print '<!-- Translation of --><tr><td>';
+	print $langs->trans('TranslationLinks');
+	print '</td><td>';
 	if ($action != 'createcontainer')
 	{
-		// Translation of
-		if ($objectpage->fk_page > 0)
-		{
-			print '<tr><td>';
-			print $langs->trans('ThisPageIsTranslationOf');
-			print '</td><td>';
-			$sourcepage=new WebsitePage($db);
-			$result = $sourcepage->fetch($objectpage->fk_page);
-			if ($result == 0)	// not found, we can reset value
-			{
-
-			}
-			elseif ($result > 0)
-			{
-				print $sourcepage->getNomUrl(1);
-			}
-			print '</td></tr>';
-		}
-
 		// Has translation pages
 		$sql='SELECT rowid, lang from '.MAIN_DB_PREFIX.'website_page where fk_page = '.$objectpage->id;
 		$resql = $db->query($sql);
@@ -3042,23 +3014,37 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 			$num_rows = $db->num_rows($resql);
 			if ($num_rows > 0)
 			{
-				print '<tr><td>';
-				print $langs->trans('ThisPageHasTranslationPages');
-				print '</td><td>';
+				print '<span class="opacitymedium">'.$langs->trans('ThisPageHasTranslationPages').':</span><br>';
 				$i=0;
 				while ($obj = $db->fetch_object($resql))
 				{
 					$tmppage=new WebsitePage($db);
 					$tmppage->fetch($obj->rowid);
 					if ($i > 0) print ' - ';
-					print $tmppage->getNomUrl(1).' ('.$tmppage->lang.')';
+					print $tmppage->getNomUrl(1).' ('.$tmppage->lang.')<br>';
+					$translatedby++;
 					$i++;
 				}
-				print '</td></tr>';
 			}
 		}
 		else dol_print_error($db);
 	}
+	if (empty($translatedby) && ($action == 'editmeta' || $action == 'createcontainer' || $objectpage->fk_page > 0))
+	{
+		$sourcepage=new WebsitePage($db);
+		$result = $sourcepage->fetch($objectpage->fk_page);
+		if ($result == 0)
+		{
+			// not found, we can reset value to clean database
+		}
+		elseif ($result > 0)
+		{
+			$translationof = $sourcepage->id;
+			print '<span class="opacitymedium">'.$langs->trans('ThisPageIsTranslationOf').'</span> ';
+			print $formwebsite->selectContainer($website, 'pageidfortranslation', $sourcepage->id, 1, $action);
+		}
+	}
+	print '</td></tr>';
 
 	print '<tr><td class="titlefieldcreate">';
 	$htmlhelp=$langs->trans("WEBSITE_ALIASALTDesc");
@@ -3118,7 +3104,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '</table>';
 	if ($action == 'createcontainer')
 	{
-		print '<div class="center">';
+		print '<div class="center tablecheckboxcreatemanually'.$hiddenmanuallyafterload.'">';
 
 		print '<input class="button" type="submit" name="addcontainer" value="'.$langs->trans("Create").'">';
 		print '<input class="button" type="submit" name="preview" value="'.$langs->trans("Cancel").'">';
@@ -3145,6 +3131,20 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 				});
 				jQuery("#WEBSITE_PAGENAME").keyup(function() {
 					disableautofillofalias = 1;
+				});
+
+				jQuery("#checkboxcreatefromfetching,#checkboxcreatemanually").change(function() {
+					console.log("we select a method to create a new container"+jQuery("#checkboxcreatefromfetching:checked").val())
+					if (typeof(jQuery("#checkboxcreatefromfetching:checked").val()) != \'undefined\')
+					{
+						jQuery(".tablecheckboxcreatefromfetching").show();
+						jQuery(".tablecheckboxcreatemanually").hide();
+					}
+					if (typeof(jQuery("#checkboxcreatemanually:checked").val()) != \'undefined\')
+					{
+						jQuery(".tablecheckboxcreatefromfetching").hide();
+						jQuery(".tablecheckboxcreatemanually").show();
+					}
 				});
 			});
 			</script>';
@@ -3277,9 +3277,10 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 
 		if ($listofpages['code'] == 'OK')
 		{
+			print '<!-- List of search result -->'."\n";
 			print '<div class="rowsearchresult">';
 
-			if ($action == 'replacesiteconfirm')
+			if ($action == 'replacesiteconfirm' && $conf->global->MAIN_FEATURES_LEVEL >= 2)
 			{
 				print '<div class="tagtr">';
 				print '<div class="tagtd paddingrightonly">';
@@ -3308,7 +3309,8 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 					print '<tr>';
 					print '<td>'.$langs->trans("Container").'</td>';
 					print '<td>';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?website='.$website->ref.'&pageid='.$answerrecord->id.'">'.($answerrecord->title ? $answerrecord->title : $langs->trans("NoTitle")).'</a>';
+					print $answerrecord->getNomUrl(1);
+					print ' <span class="opacitymedium">('.($answerrecord->title ? $answerrecord->title : $langs->trans("NoTitle")).')</span>';
 					print '</td>';
 					print '<td class="tdoverflow100">'.$answerrecord->description;
 					print '</td>';
@@ -3489,12 +3491,12 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 	{
 		if (empty($websitekey) || $websitekey == '-1')
 		{
-			print '<br><br><div class="center">'.$langs->trans("NoWebSiteCreateOneFirst").'</center><br><br><br>';
+			print '<br><br><div class="center previewnotyetavailable"><span class="">'.$langs->trans("NoWebSiteCreateOneFirst").'</span></div><br><br><br>';
 			print '<div class="center"><div class="logo_setup"></div></div>';
 		}
 		else
 		{
-			print '<br><br><div class="center">'.$langs->trans("PreviewOfSiteNotYetAvailable", $object->ref).'</center><br><br><br>';
+			print '<br><br><div class="center previewnotyetavailable"><span class="">'.$langs->trans("PreviewOfSiteNotYetAvailable", $object->ref).'</span></div><br><br><br>';
 			print '<div class="center"><div class="logo_setup"></div></div>';
 		}
 	}

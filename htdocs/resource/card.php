@@ -63,9 +63,9 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 
 
-/*******************************************************************
- * ACTIONS
- ********************************************************************/
+/*
+ * Actions
+ */
 
 $hookmanager->initHooks(array('resource', 'resource_card','globalcard'));
 $parameters=array('resource_id'=>$id);
@@ -211,18 +211,17 @@ if (empty($reshook))
 }
 
 
-/***************************************************
-* VIEW
-*
-* Put here all code to build page
-****************************************************/
+/*
+ * View
+ */
+
 $title = $langs->trans($action == 'create' ? 'AddResource' : 'ResourceSingular');
 llxHeader('', $title, '');
 
 $form = new Form($db);
 $formresource = new FormResource($db);
 
-if ($action == 'create' || $object->fetch($id) > 0)
+if ($action == 'create' || $object->fetch($id, $ref) > 0)
 {
 	if ($action == 'create')
 	{
@@ -245,7 +244,7 @@ if ($action == 'create' || $object->fetch($id) > 0)
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="'.($action == "create"?"add":"update").'">';
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		// Ref
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("ResourceFormLabel_ref").'</td>';

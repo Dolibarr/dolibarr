@@ -315,7 +315,6 @@ else
 		$act = fetchObjectByElement($element_id, $element, $element_ref);
 		if (is_object($act))
 		{
-
 			$head=actions_prepare_head($act);
 
 			dol_fiche_head($head, 'resources', $langs->trans("Action"), -1, 'action');
@@ -358,7 +357,7 @@ else
 			}
 			$morehtmlref.='</div>';
 
-			dol_banner_tab($act, 'element_id', $linkback, ($user->societe_id?0:1), 'id', 'ref', $morehtmlref, '&element='.$element, 0, '', '');
+			dol_banner_tab($act, 'element_id', $linkback, ($user->socid?0:1), 'id', 'ref', $morehtmlref, '&element='.$element, 0, '', '');
 
 			print '<div class="fichecenter">';
 
@@ -446,7 +445,6 @@ else
 	{
 		$socstatic = fetchObjectByElement($element_id, $element, $element_ref);
 		if (is_object($socstatic)) {
-
 			$savobject = $object;
 			$object = $socstatic;
 
@@ -455,12 +453,12 @@ else
 
 			dol_fiche_head($head, 'resources', $langs->trans("ThirdParty"), -1, 'company');
 
-			dol_banner_tab($socstatic, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom', '', '&element='.$element);
+			dol_banner_tab($socstatic, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom', '', '&element='.$element);
 
 			print '<div class="fichecenter">';
 
 			print '<div class="underbanner clearboth"></div>';
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent">';
 
 			// Alias name (commercial, trademark or alias name)
 			print '<tr><td class="titlefield">' . $langs->trans('AliasNames') . '</td><td colspan="3">';
@@ -552,7 +550,6 @@ else
 
 		if (is_object($product))
 		{
-
 			$head = product_prepare_head($product);
 			$titre=$langs->trans("CardProduct".$product->type);
 			$picto=($product->type==Product::TYPE_SERVICE?'service':'product');
@@ -560,7 +557,7 @@ else
 			dol_fiche_head($head, 'resources', $titre, -1, $picto);
 
             $shownav = 1;
-            if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+            if ($user->socid && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 			dol_banner_tab($product, 'ref', '', $shownav, 'ref', 'ref', '', '&element='.$element);
 
 			dol_fiche_end();

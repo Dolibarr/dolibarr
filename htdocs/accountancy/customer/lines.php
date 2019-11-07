@@ -72,7 +72,7 @@ if (! $sortorder) {
 }
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 	accessforbidden();
 if (! $user->rights->accounting->bind->write)
 	accessforbidden();
@@ -358,6 +358,7 @@ if ($result) {
 		// Ref Invoice
 		print '<td class="nowraponall">' . $facture_static->getNomUrl(1) . '</td>';
 
+		// Date invoice
 		print '<td class="center">' . dol_print_date($db->jdate($objp->datef), 'day') . '</td>';
 
 		// Ref Product
@@ -377,7 +378,13 @@ if ($result) {
 
 		print '<td class="right">' . vatrate($objp->tva_tx.($objp->vat_src_code?' ('.$objp->vat_src_code.')':'')) . '</td>';
 
-		print '<td>' . $langs->trans("Country".$objp->country_code) .' ('.$objp->country_code.')</td>';
+		// Country
+		print '<td>';
+		if ($objp->country_code)
+		{
+			print $langs->trans("Country".$objp->country_code) .' ('.$objp->country_code.')';
+		}
+		print '</td>';
 
 		print '<td>' . $objp->tva_intra . '</td>';
 

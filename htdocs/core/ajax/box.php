@@ -73,7 +73,7 @@ if ($boxorder && $zone != '' &&  $userid > 0)
 	    $langs->load("boxes");
 	    if (! GETPOST('closing'))
 	    {
-	       setEventMessages($langs->trans("BoxAdded"), null);
+	        setEventMessages($langs->trans("BoxAdded"), null);
 	    }
 	}
 }

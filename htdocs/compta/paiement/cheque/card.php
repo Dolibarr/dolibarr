@@ -43,7 +43,7 @@ $confirm=GETPOST('confirm', 'alpha');
 
 // Security check
 $fieldname = (! empty($ref)?'ref':'rowid');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'cheque', $id, 'bordereau_cheque', '', 'fk_user_author', $fieldname);
 
 $sortfield=GETPOST('sortfield', 'alpha');
@@ -381,7 +381,7 @@ if ($action == 'new')
 
 	dol_fiche_head();
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 	//print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dol_print_date($now,'day').'</td></tr>';
 	// Filter
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("DateChequeReceived").'</td><td>';
@@ -444,7 +444,6 @@ if ($action == 'new')
 
 	foreach ($accounts as $bid => $account_label)
 	{
-
         print '
         <script language="javascript" type="text/javascript">
         jQuery(document).ready(function()
@@ -569,7 +568,7 @@ else
 	print '<div class="underbanner clearboth"></div>';
 
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	print '<tr><td class="titlefield">';
 
@@ -664,7 +663,7 @@ else
 		$num = $db->num_rows($resql);
 
 	    print '<div class="div-table-responsive">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 
 		$param="&amp;id=".$object->id;
 
@@ -771,12 +770,12 @@ else
 
 print '<div class="tabsAction">';
 
-if ($user->societe_id == 0 && ! empty($object->id) && $object->statut == 0 && $user->rights->banque->cheque)
+if ($user->socid == 0 && ! empty($object->id) && $object->statut == 0 && $user->rights->banque->cheque)
 {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valide&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.$langs->trans('Validate').'</a>';
 }
 
-if ($user->societe_id == 0 && ! empty($object->id) && $user->rights->banque->cheque)
+if ($user->socid == 0 && ! empty($object->id) && $user->rights->banque->cheque)
 {
 	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.$langs->trans('Delete').'</a>';
 }

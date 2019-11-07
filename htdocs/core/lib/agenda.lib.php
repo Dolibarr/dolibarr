@@ -237,7 +237,8 @@ function show_array_actions_to_do($max = 5)
 	{
 	    $num = $db->num_rows($resql);
 
-	    print '<table class="noborder" width="100%">';
+		print '<div class="div-table-responsive-no-min">';
+	    print '<table class="noborder centpercent">';
 	    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastActionsToDo", $max).'</th>';
 		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?status=todo">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
@@ -260,7 +261,7 @@ function show_array_actions_to_do($max = 5)
             $staticaction->id=$obj->id;
             print '<td>'.$staticaction->getNomUrl(1, 34).'</td>';
 
-           // print '<td>'.dol_trunc($obj->label,22).'</td>';
+            // print '<td>'.dol_trunc($obj->label,22).'</td>';
 
             print '<td>';
             if ($obj->rowid > 0)
@@ -292,7 +293,7 @@ function show_array_actions_to_do($max = 5)
 
             $i++;
         }
-	    print "</table><br>";
+	    print "</table></div><br>";
 
 	    $db->free($resql);
 	}
@@ -334,7 +335,8 @@ function show_array_last_actions_done($max = 5)
 	{
 		$num = $db->num_rows($resql);
 
-		print '<table class="noborder" width="100%">';
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastDoneTasks", $max).'</th>';
 		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?status=done">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
@@ -380,7 +382,7 @@ function show_array_last_actions_done($max = 5)
 		}
 		// TODO Ajouter rappel pour "il y a des contrats a mettre en service"
 		// TODO Ajouter rappel pour "il y a des contrats qui arrivent a expiration"
-		print "</table><br>";
+		print "</table></div><br>";
 
 		$db->free($resql);
 	}
@@ -414,10 +416,10 @@ function agenda_prepare_head()
 
 	if ($conf->global->MAIN_FEATURES_LEVEL > 0)
 	{
-	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_reminder.php";
-	$head[$h][1] = $langs->trans("Reminders");
-	$head[$h][2] = 'reminders';
-	$h++;
+	    $head[$h][0] = DOL_URL_ROOT."/admin/agenda_reminder.php";
+	    $head[$h][1] = $langs->trans("Reminders");
+	    $head[$h][2] = 'reminders';
+	    $h++;
 	}
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_xcal.php";
@@ -471,7 +473,7 @@ function actions_prepare_head($object)
         $listofresourcelinked = $resource->getElementResources($object->element, $object->id);
         $nbResources=(is_array($listofresourcelinked)?count($listofresourcelinked):0);
 		$head[$h][1] = $langs->trans("Resources");
-		if ($nbResources > 0) $head[$h][1].= ' <span class="badge">'.($nbResources).'</span>';
+		if ($nbResources > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbResources).'</span>';
 		$head[$h][2] = 'resources';
 		$h++;
 	}

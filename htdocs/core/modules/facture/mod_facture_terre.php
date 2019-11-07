@@ -26,7 +26,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/facture/modules_facture.php';
 
 /**
  *  \class      mod_facture_terre
- *  \brief      Classe du modele de numerotation de reference de facture Terre
+ *  \brief      Class of numbering module Terre for invoices
  */
 class mod_facture_terre extends ModeleNumRefFactures
 {
@@ -189,7 +189,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 		if ($invoice->type == 2) $prefix=$this->prefixcreditnote;
 		elseif ($invoice->type == 3) $prefix=$this->prefixdeposit;
 		else $prefix=$this->prefixinvoice;
-		// D'abord on recupere la valeur max
+		// First we get the max value
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";	// This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture";

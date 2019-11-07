@@ -88,11 +88,11 @@ class box_fournisseurs extends ModeleBoxes
             $sql.= " s.code_fournisseur, s.email as semail,";
             $sql.= " s.logo";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
             $sql.= " WHERE s.fournisseur = 1";
             $sql.= " AND s.entity IN (".getEntity('societe').")";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-            if ($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
+            if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+            if ($user->socid) $sql.= " AND s.rowid = ".$user->socid;
             $sql.= " ORDER BY s.tms DESC ";
             $sql.= $this->db->plimit($max, 0);
 

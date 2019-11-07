@@ -44,7 +44,7 @@ $langs->loadLangs(array("companies","commercial","banks","bills",'paypal','strip
 
 // Security check
 $socid = GETPOST("socid", "int");
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'societe', '', '');
 
 $id=GETPOST("id", "int");
@@ -489,7 +489,7 @@ if (empty($reshook))
 
 	$id = $socid;
 	$upload_dir = $conf->societe->multidir_output[$object->entity];
-	$permissioncreate=$user->rights->societe->creer;
+	$permissiontoadd=$user->rights->societe->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	$id = $savid;
@@ -564,13 +564,13 @@ if (empty($reshook))
 
 			$db->begin();
 
-                if (empty($newcu)) {
-                        $sql  = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE site = 'stripe' AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity;
-                } else {
-			$sql = 'UPDATE '.MAIN_DB_PREFIX."societe_account";
-			$sql.= " SET key_account = '".$db->escape(GETPOST('key_account', 'alpha'))."'";
-			$sql.= " WHERE site = 'stripe' AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity;	// Keep = here for entity. Only 1 record must be modified !
-                }
+            if (empty($newcu)) {
+                $sql  = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE site = 'stripe' AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity;
+            } else {
+                $sql = 'UPDATE '.MAIN_DB_PREFIX."societe_account";
+                $sql.= " SET key_account = '".$db->escape(GETPOST('key_account', 'alpha'))."'";
+                $sql.= " WHERE site = 'stripe' AND fk_soc = ".$object->id." AND status = ".$servicestatus." AND entity = ".$conf->entity;	// Keep = here for entity. Only 1 record must be modified !
+            }
 
 			$resql = $db->query($sql);
 			$num = $db->num_rows($resql);
@@ -609,37 +609,33 @@ if (empty($reshook))
 
 			$db->begin();
 
-                if (empty($newsup)) {
-                        $sql  = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE fk_soc = ".$object->id." AND service = '".$service."' AND entity = ".$conf->entity;
-                } else {
-      try {
-      $stripesup = \Stripe\Account::retrieve($db->escape(GETPOST('key_account_supplier', 'alpha')));
-      $tokenstring['stripe_user_id'] = $stripesup->id;
-      $tokenstring['type'] = $stripesup->type;
-			$sql = "UPDATE ".MAIN_DB_PREFIX."oauth_token";
-			$sql.= " SET tokenstring = '".dol_json_encode($tokenstring)."'";
-			$sql.= " WHERE fk_soc = ".$object->id." AND service = '".$service."' AND entity = ".$conf->entity;	// Keep = here for entity. Only 1 record must be modified !
-	  }
-					catch(Exception $e)
-					{
-						$error++;
-						setEventMessages($e->getMessage(), null, 'errors');
-					}
+            if (empty($newsup)) {
+                $sql  = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE fk_soc = ".$object->id." AND service = '".$service."' AND entity = ".$conf->entity;
+            } else {
+                try {
+                    $stripesup = \Stripe\Account::retrieve($db->escape(GETPOST('key_account_supplier', 'alpha')));
+                    $tokenstring['stripe_user_id'] = $stripesup->id;
+                    $tokenstring['type'] = $stripesup->type;
+                    $sql = "UPDATE ".MAIN_DB_PREFIX."oauth_token";
+                    $sql.= " SET tokenstring = '".dol_json_encode($tokenstring)."'";
+                    $sql.= " WHERE fk_soc = ".$object->id." AND service = '".$service."' AND entity = ".$conf->entity;	// Keep = here for entity. Only 1 record must be modified !
+                } catch(Exception $e) {
+					$error++;
+					setEventMessages($e->getMessage(), null, 'errors');
 				}
+			}
 
 			$resql = $db->query($sql);
 			$num = $db->num_rows($resql);
 			if (empty($num) && !empty($newsup))
 			{
-      try {
-      $stripesup = \Stripe\Account::retrieve($db->escape(GETPOST('key_account_supplier', 'alpha')));
-      $tokenstring['stripe_user_id'] = $stripesup->id;
-      $tokenstring['type'] = $stripesup->type;
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, fk_soc, entity, tokenstring)";
-			$sql .= " VALUES ('".$service."', ".$object->id.", ".$conf->entity.", '".dol_json_encode($tokenstring)."')";
-	  }
-				catch(Exception $e)
-				{
+                try {
+                    $stripesup = \Stripe\Account::retrieve($db->escape(GETPOST('key_account_supplier', 'alpha')));
+                    $tokenstring['stripe_user_id'] = $stripesup->id;
+                    $tokenstring['type'] = $stripesup->type;
+                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, fk_soc, entity, tokenstring)";
+                    $sql .= " VALUES ('".$service."', ".$object->id.", ".$conf->entity.", '".dol_json_encode($tokenstring)."')";
+                } catch(Exception $e) {
 					$error++;
 					setEventMessages($e->getMessage(), null, 'errors');
 				}
@@ -700,23 +696,25 @@ if (empty($reshook))
 		{
 			try {
 				if (preg_match('/pm_/', $source))
-					{
-            		$payment_method = \Stripe\PaymentMethod::retrieve($source, array("stripe_account" => $stripeacc));
-					if ($payment_method)
-				    {
-					  $payment_method->detach();
+				{
+                    $payment_method = \Stripe\PaymentMethod::retrieve($source, array("stripe_account" => $stripeacc));
+                    if ($payment_method)
+			        {
+					    $payment_method->detach();
 				    }
 				}
 				else
 				{
-				$cu=$stripe->customerStripe($object, $stripeacc, $servicestatus);
-				$card=$cu->sources->retrieve("$source");
-				if ($card)
-				{
-					// $card->detach();  Does not work with card_, only with src_
-					if (method_exists($card, 'detach')) $card->detach();
-					else $card->delete();
-				}
+				    $cu = $stripe->customerStripe($object, $stripeacc, $servicestatus);
+				    $card = $cu->sources->retrieve("$source");
+				    if ($card) {
+					    // $card->detach();  Does not work with card_, only with src_
+					    if (method_exists($card, 'detach')) {
+							$card->detach();
+						} else {
+							$card->delete();
+						}
+				    }
 				}
 
 				$url=DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
@@ -806,7 +804,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+	dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom');
 
 
 	if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
@@ -950,7 +948,6 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			try {
 				$customerstripe=$stripe->customerStripe($object, $stripeacc, $servicestatus);
 				if ($customerstripe->id) {
-
 					// When using the Charge API architecture
 					if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
 					{
@@ -995,7 +992,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 		print '<!-- List of stripe payments -->'."\n";
 		print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
-		print '<table class="liste" width="100%">'."\n";
+		print '<table class="liste centpercent">'."\n";
 		print '<tr class="liste_titre">';
 		if (! empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
 		{
@@ -1297,54 +1294,60 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		}
 		print "</table>";
 		print "</div>";
-   	print '<br>';
+        print '<br>';
 	}
 
   	// List of Stripe payment modes
 	if (! empty($conf->stripe->enabled) && ! empty($conf->stripeconnect->enabled) && $object->fournisseur && ! empty($stripesupplieracc))
 	{
-  print load_fiche_titre($langs->trans('StripeBalance').($stripesupplieracc?' (Stripe connection with StripeConnect account '.$stripesupplieracc.')':' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, '');
-  $balance = \Stripe\Balance::retrieve(array("stripe_account" => $stripesupplieracc));
-		print '<table class="liste" width="100%">'."\n";
+        print load_fiche_titre($langs->trans('StripeBalance').($stripesupplieracc?' (Stripe connection with StripeConnect account '.$stripesupplieracc.')':' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, '');
+        $balance = \Stripe\Balance::retrieve(array("stripe_account" => $stripesupplieracc));
+		print '<table class="liste centpercent">'."\n";
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Currency').'</td>';
 		print '<td>'.$langs->trans('Available').'</td>';
 		print '<td>'.$langs->trans('Pending').'</td>';
-    print '<td>'.$langs->trans('Total').'</td>';
-    print '</tr>';
+        print '<td>'.$langs->trans('Total').'</td>';
+        print '</tr>';
 
-    $currencybalance = array();
+        $currencybalance = array();
 		if (is_array($balance->available) && count($balance->available))
 		{
 			foreach ($balance->available as $cpt)
 			{
-		$arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
-		if (! in_array($cpt->currency, $arrayzerounitcurrency)) $currencybalance[$cpt->currency]->available=$cpt->amount / 100;
-		else $currencybalance[$cpt->currency]->available=$cpt->amount;
-    $currencybalance[$cpt->currency]->currency=$cpt->currency;
+		        $arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+		        if (! in_array($cpt->currency, $arrayzerounitcurrency)) {
+					$currencybalance[$cpt->currency]->available=$cpt->amount / 100;
+				} else {
+					$currencybalance[$cpt->currency]->available=$cpt->amount;
+				}
+                $currencybalance[$cpt->currency]->currency=$cpt->currency;
 			}
 		}
 
-    if (is_array($balance->pending) && count($balance->pending))
+        if (is_array($balance->pending) && count($balance->pending))
 		{
 			foreach ($balance->pending as $cpt)
 			{
-		$arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
-		if (! in_array($cpt->currency, $arrayzerounitcurrency))  $currencybalance[$cpt->currency]->pending=$currencybalance[$cpt->currency]->available+$cpt->amount / 100;
-		else $currencybalance[$cpt->currency]->pending=$currencybalance[$cpt->currency]->available+$cpt->amount;
+		        $arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+		        if (! in_array($cpt->currency, $arrayzerounitcurrency)) {
+					$currencybalance[$cpt->currency]->pending=$currencybalance[$cpt->currency]->available+$cpt->amount / 100;
+				} else {
+					$currencybalance[$cpt->currency]->pending=$currencybalance[$cpt->currency]->available+$cpt->amount;
+				}
 			}
-    }
+        }
 
 		if (is_array($currencybalance))
 		{
 			foreach ($currencybalance as $cpt)
 			{
-      print '<tr><td>'.$langs->trans("Currency".strtoupper($cpt->currency)).'</td><td>'.price($cpt->available, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).'</td><td>'.price($cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).'</td><td>'.price($cpt->available+$cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).'</td></tr>';
+                print '<tr><td>'.$langs->trans("Currency".strtoupper($cpt->currency)).'</td><td>'.price($cpt->available, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).'</td><td>'.price($cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).'</td><td>'.price($cpt->available+$cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).'</td></tr>';
 			}
 		}
 
-    print '</table>';
-    print '<br>';
+        print '</table>';
+        print '<br>';
 	}
 
 	// List of bank accounts
@@ -1357,7 +1360,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	if (is_array($rib_list))
 	{
 		print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
-		print '<table class="liste" width="100%">';
+		print '<table class="liste centpercent">';
 
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("LabelRIB");
@@ -1387,7 +1390,6 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print '<td>';
 			$string='';
 			foreach ($rib->getFieldsToShow() as $val) {
-
 				if ($val == 'BankCode') {
 					$string .= $rib->code_banque.' ';
 				} elseif ($val == 'BankAccountNumber') {
@@ -1396,12 +1398,13 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					$string .= $rib->code_guichet.' ';
 				} elseif ($val == 'BankAccountNumberKey') {
 					$string .= $rib->cle_rib.' ';
-				/* Already output after
-                }elseif ($val == 'BIC') {
-                    $string .= $rib->bic.' ';
-                }elseif ($val == 'IBAN') {
-                    $string .= $rib->iban.' ';*/
 				}
+                // Already output after
+                // } elseif ($val == 'BIC') {
+                //     $string .= $rib->bic.' ';
+                // } elseif ($val == 'IBAN') {
+                //     $string .= $rib->iban.' ';*/
+				//}
 			}
 			if (! empty($rib->label) && $rib->number) {
 				if (! checkBanForAccount($rib)) {
@@ -1612,7 +1615,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+	dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom');
 
 	print '<div class="fichecenter">';
 
@@ -1627,7 +1630,6 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 
 	// Show fields of bank account
 	foreach ($companybankaccount->getFieldsToShow(1) as $val) {
-
 		$require=false;
 		if ($val == 'BankCode') {
 			$name = 'code_banque';
@@ -1682,7 +1684,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 	{
 		print '<br>';
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		if (empty($companybankaccount->rum)) $companybankaccount->rum = $prelevement->buildRumNumber($object->code_client, $companybankaccount->datec, $companybankaccount->id);
 
@@ -1719,7 +1721,7 @@ if ($socid && $action == 'editcard' && $user->rights->societe->creer)
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+	dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom');
 
 	print '<div class="fichecenter">';
 
@@ -1767,7 +1769,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+	dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom');
 
 	print '<div class="nofichecenter">';
 
@@ -1782,7 +1784,6 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 
 	// Show fields of bank account
 	foreach ($companybankaccount->getFieldsToShow(1) as $val) {
-
 		$require=false;
 		if ($val == 'BankCode') {
 			$name = 'code_banque';
@@ -1831,7 +1832,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 	{
 		print '<br>';
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		// RUM
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("RUM").'</td>';
@@ -1868,7 +1869,7 @@ if ($socid && $action == 'createcard' && $user->rights->societe->creer)
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+	dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom');
 
 	print '<div class="nofichecenter">';
 

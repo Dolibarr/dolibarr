@@ -74,7 +74,7 @@ $hidedesc 	 = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (! empt
 $hideref 	 = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -728,7 +728,7 @@ if (empty($reshook))
 
 	// Actions to build doc
 	$upload_dir = $conf->ficheinter->dir_output;
-	$permissioncreate = $user->rights->ficheinter->creer;
+	$permissiontoadd = $user->rights->ficheinter->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'update_extras')
@@ -909,7 +909,7 @@ if ($action == 'create')
 
 		dol_fiche_head('');
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		print '<input type="hidden" name="socid" value='.$soc->id.'>';
 		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("ThirdParty").'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
@@ -978,7 +978,7 @@ if ($action == 'create')
         print '</td></tr>';
 
         // Private note
-        if (empty($user->societe_id))
+        if (empty($user->socid))
         {
         	print '<tr>';
         	print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
@@ -1055,7 +1055,7 @@ if ($action == 'create')
 			$title = $langs->trans('Services');
 			print load_fiche_titre($title);
 
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 
 			$objectsrc->printOriginLinesList(empty($conf->global->FICHINTER_PRINT_PRODUCTS)?'services':'');	// Show only service, except if option FICHINTER_PRINT_PRODUCTS is on
 
@@ -1074,7 +1074,7 @@ if ($action == 'create')
 		} elseif ($origin == 'project' && !empty($projectid)) {
 			print '<input type="hidden" name="projectid" value="' . $projectid . '">';
 		}
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 		print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>';
 		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, null, 0, 'minwidth300');
 		print '</td></tr>';
@@ -1196,19 +1196,20 @@ elseif ($id > 0 || ! empty($ref))
 	    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 	    if ($user->rights->ficheinter->creer)
 	    {
-	        if ($action != 'classify')
-	            $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-	            if ($action == 'classify') {
-	                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-	                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-	                $morehtmlref.='<input type="hidden" name="action" value="classin">';
-	                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-	                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-	                $morehtmlref.='</form>';
-	            } else {
-	                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-	            }
+            if ($action != 'classify') {
+                $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+            }
+            if ($action == 'classify') {
+                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+                $morehtmlref.='<input type="hidden" name="action" value="classin">';
+                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+                $morehtmlref.='</form>';
+            } else {
+                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+            }
 	    } else {
 	        if (! empty($object->fk_project)) {
 	            $proj = new Project($db);
@@ -1271,12 +1272,12 @@ elseif ($id > 0 || ! empty($ref))
 		print '<tr>';
 		print '<td>';
 
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('Contract');
 		print '</td>';
 		if ($action != 'contrat')
 		{
-			print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=contrat&amp;id='.$object->id.'">';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=contrat&amp;id='.$object->id.'">';
 			print img_edit($langs->trans('SetContract'), 1);
 			print '</a></td>';
 		}
@@ -1383,7 +1384,7 @@ elseif ($id > 0 || ! empty($ref))
 			if ($num)
 			{
 				print '<br>';
-				print '<table class="noborder" width="100%">';
+				print '<table class="noborder centpercent">';
 
 				print '<tr class="liste_titre">';
 				print '<td class="liste_titre">'.$langs->trans('Description').'</td>';
@@ -1518,7 +1519,7 @@ elseif ($id > 0 || ! empty($ref))
 			{
 				if (! $num)
 				{
-				    print '<br><table class="noborder" width="100%">';
+				    print '<br><table class="noborder centpercent">';
 
     				print '<tr class="liste_titre">';
     				print '<td>';
@@ -1607,7 +1608,7 @@ elseif ($id > 0 || ! empty($ref))
 		                                                                                          // modified by hook
 	if (empty($reshook))
 	{
-		if ($user->societe_id == 0)
+		if ($user->socid == 0)
 		{
             if ($action != 'editdescription' && ($action != 'presend')) {
                 // Validate

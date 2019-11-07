@@ -3,8 +3,9 @@
  * Copyright (C) 2004-2015	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015           Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2019           Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2015       Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2019       Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2019       Frédéric FRANCE      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,7 @@ $langs->loadLangs(array('companies', 'users', 'trips'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'expensereport', '', '');
 
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -114,8 +115,8 @@ print load_fiche_titre($langs->trans("ExpensesArea"));
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-
-print '<table class="noborder nohover" width="100%">';
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder nohover centpercent">';
 print '<tr class="liste_titre">';
 print '<th colspan="4">'.$langs->trans("Statistics").'</th>';
 print "</tr>\n";
@@ -133,6 +134,8 @@ if ($conf->use_javascript_ajax)
     include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
     $dolgraph = new DolGraph();
     $dolgraph->SetData($dataseries);
+    $dolgraph->setHeight(350);
+    $dolgraph->combine = empty($conf->global->MAIN_EXPENSEREPORT_COMBINE_GRAPH_STAT)?0.05:$conf->global->MAIN_EXPENSEREPORT_COMBINE_GRAPH_STAT;
     $dolgraph->setShowLegend(1);
     $dolgraph->setShowPercent(1);
     $dolgraph->SetType(array('pie'));
@@ -149,6 +152,7 @@ print '<td class="right" colspan="3">'.price($totalsum, 1, $langs, 0, 0, 0, $con
 print '</tr>';
 
 print '</table>';
+print '</div>';
 
 
 
@@ -160,9 +164,10 @@ $max=10;
 
 $langs->load("boxes");
 
-$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.statut, u.photo, d.rowid, d.ref, d.date_debut as dated, d.date_fin as datef, d.date_create as dm, d.total_ht, d.total_ttc, d.fk_statut as fk_status";
+$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.statut, u.photo, u.email, u.admin";
+$sql.= ", d.rowid, d.ref, d.date_debut as dated, d.date_fin as datef, d.date_create as dm, d.total_ht, d.total_ttc, d.fk_statut as fk_status";
 $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d, ".MAIN_DB_PREFIX."user as u";
-if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE u.rowid = d.fk_user_author";
 // RESTRICT RIGHTS
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
@@ -173,7 +178,7 @@ if (empty($user->rights->expensereport->readall) && empty($user->rights->expense
     $sql.= " AND d.fk_user_author IN (".join(',', $childids).")\n";
 }
 $sql.= ' AND d.entity IN ('.getEntity('expensereport').')';
-if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND d.fk_user_author = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND d.fk_user_author = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND d.fk_user_author = ".$socid;
 $sql.= $db->order($sortfield, $sortorder);
 $sql.= $db->plimit($max, 0);
@@ -186,7 +191,8 @@ if ($result)
 
     $i = 0;
 
-    print '<table class="noborder" width="100%">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num)).'</th>';
     print '<th class="right">'.$langs->trans("AmountHT").'</th>';
@@ -206,6 +212,8 @@ if ($result)
             $expensereportstatic->id=$obj->rowid;
             $expensereportstatic->ref=$obj->ref;
             $userstatic->id=$obj->uid;
+            $userstatic->admin = $obj->admin;
+            $userstatic->email = $obj->email;
             $userstatic->lastname=$obj->lastname;
             $userstatic->firstname=$obj->firstname;
             $userstatic->login=$obj->login;
@@ -218,7 +226,6 @@ if ($result)
             print '<td class="right">'.price($obj->total_ttc).'</td>';
             print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
             print '<td class="right">';
-            //print $obj->libelle;
 			print $expensereportstatic->LibStatut($obj->fk_status, 3);
             print '</td>';
             print '</tr>';
@@ -230,7 +237,7 @@ if ($result)
     {
         print '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
-    print '</table><br>';
+    print '</table></div><br>';
 }
 else dol_print_error($db);
 

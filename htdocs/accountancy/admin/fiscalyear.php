@@ -43,9 +43,9 @@ if (! $sortorder) $sortorder="ASC";
 $langs->loadLangs(array("admin","compta"));
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 	accessforbidden();
-if (! $user->rights->accounting->fiscalyear)              // If we can read accounting records, we should be able to see fiscal year.
+if (! $user->rights->accounting->fiscalyear->write)              // If we can read accounting records, we should be able to see fiscal year.
 	accessforbidden();
 
 $error = 0;
@@ -112,7 +112,7 @@ if ($result)
 	$i = 0;
 
 
-    $addbutton.= dolGetButtonTitle($langs->trans('NewFiscalYear'), '', 'fa fa-plus-circle', 'fiscalyear_card.php?action=create', '', $user->rights->accounting->fiscalyear);
+    $addbutton.= dolGetButtonTitle($langs->trans('NewFiscalYear'), '', 'fa fa-plus-circle', 'fiscalyear_card.php?action=create', '', $user->rights->accounting->fiscalyear->write);
 
 
 	$title = $langs->trans('AccountingPeriods');
@@ -120,7 +120,7 @@ if ($result)
 
 	// Load attribute_label
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste" width="100%">';
+	print '<table class="tagtable liste centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>' . $langs->trans("Ref") . '</td>';
 	print '<td>' . $langs->trans("Label") . '</td>';

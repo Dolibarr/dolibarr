@@ -33,7 +33,7 @@ $langs->loadLangs(array('compta', 'salaries', 'bills', 'hrm', 'stripe'));
 
 // Security check
 $socid = GETPOST("socid", "int");
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 //$result = restrictedArea($user, 'salaries', '', '', '');
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -78,7 +78,6 @@ $stripeacc = $stripe->getStripeAccount($service);
 }*/
 
 if (! $rowid) {
-
 	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
 	if ($optioncss != '') {
         print '<input type="hidden" name="optioncss" value="' . $optioncss . '">';
@@ -157,7 +156,7 @@ if (! $rowid) {
 		$societestatic->admin = $obj->admin;
 		$societestatic->login = $obj->login;
 		$societestatic->email = $obj->email;
-		$societestatic->societe_id = $obj->fk_soc;
+		$societestatic->socid = $obj->fk_soc;
 
 		print '<tr class="oddeven">';
 

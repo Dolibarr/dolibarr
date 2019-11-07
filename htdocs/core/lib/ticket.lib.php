@@ -86,7 +86,7 @@ function ticket_prepare_head($object)
     	$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
     	$head[$h][0] = DOL_URL_ROOT.'/ticket/contact.php?track_id='.$object->track_id;
     	$head[$h][1] = $langs->trans('ContactsAddresses');
-    	if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
+    	if ($nbContact > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
     	$head[$h][2] = 'contact';
     	$h++;
     }
@@ -100,7 +100,7 @@ function ticket_prepare_head($object)
     $head[$h][0] = dol_buildpath('/ticket/document.php', 1) . '?id=' . $object->id;
     $head[$h][1] = $langs->trans("Documents");
     if ($nbFiles > 0) {
-        $head[$h][1] .= ' <span class="badge">' . $nbFiles . '</span>';
+        $head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbFiles . '</span>';
     }
 
     $head[$h][2] = 'tabTicketDocument';
@@ -151,6 +151,7 @@ function showDirectPublicLink($object)
 
 	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 	$email = CMailFile::getValidAddress($object->origin_email, 2);
+	$url = '';
 	if ($email)
 	{
 		$url = dol_buildpath('/public/ticket/view.php', 3).'?track_id='.$object->track_id.'&email='.$email;
@@ -233,7 +234,7 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
         }
         if (! empty($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC))
         {
-    	   print '<strong>' . ($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC ? $conf->global->TICKET_PUBLIC_INTERFACE_TOPIC : $langs->trans("TicketSystem")) . '</strong>';
+            print '<strong>' . ($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC ? $conf->global->TICKET_PUBLIC_INTERFACE_TOPIC : $langs->trans("TicketSystem")) . '</strong>';
         }
     	print '</center><br>';
     }
@@ -689,10 +690,10 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 				$out.=$actionstatic->getNomUrl(1, -1).' ';
 			}
 
-//			if ($user->rights->agenda->allactions->read || $actionstatic->authorid == $user->id)
-//			{
-//				$out.='<a href="'.$url.'" class="timeline-btn" title="'.$langs->trans('Show').'" ><i class="fa fa-calendar" ></i>'.$langs->trans('Show').'</a>';
-//			}
+            //if ($user->rights->agenda->allactions->read || $actionstatic->authorid == $user->id)
+            //{
+            //	$out.='<a href="'.$url.'" class="timeline-btn" title="'.$langs->trans('Show').'" ><i class="fa fa-calendar" ></i>'.$langs->trans('Show').'</a>';
+            //}
 
 
             if ($user->rights->agenda->allactions->create ||
@@ -722,9 +723,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
             $out.="</span>\n";
 
             // Ref
-
-           $out.='<h3 class="timeline-header">';
-
+            $out.='<h3 class="timeline-header">';
 
             // Author of event
             $out.='<span class="messaging-author">';
@@ -738,10 +737,8 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
             }
             $out.='</span>';
 
-
             // Title
             $out .= ' <span class="messaging-title">';
-
 
 			if($actionstatic->code == 'TICKET_MSG') {
 				$out .= $langs->trans('TicketNewMessage');
@@ -785,7 +782,6 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 
             // Contact for this action
             if (isset($histo[$key]['socpeopleassigned']) && is_array($histo[$key]['socpeopleassigned']) && count($histo[$key]['socpeopleassigned']) > 0) {
-
                 $contactList = '';
                 foreach ($histo[$key]['socpeopleassigned'] as $cid => $Tab) {
                     $contact = new Contact($db);
@@ -823,6 +819,46 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
                 }
             }
 
+			$documents = getTicketActionCommEcmList($actionstatic) ;
+            if(!empty($documents))
+			{
+				$footer.= '<div class="timeline-documents-container">';
+				foreach ($documents as $doc)
+				{
+					$footer.= '<span id="document_'.$doc->id.'" class="timeline-documents" ';
+					$footer.= ' data-id="'.$doc->id.'" ';
+					$footer.= ' data-path="'.$doc->filepath.'"';
+					$footer.= ' data-filename="'.dol_escape_htmltag($doc->filename).'" ';
+					$footer.= '>';
+
+					$filePath = DOL_DATA_ROOT . '/'. $doc->filepath . '/'. $doc->filename;
+					$mime = dol_mimetype($filePath);
+					$file = $actionstatic->id.'/'.$doc->filename;
+					$thumb = $actionstatic->id.'/thumbs/'.substr($doc->filename, 0, strrpos($doc->filename, '.')).'_mini'.substr($doc->filename, strrpos($doc->filename, '.'));
+					$doclink = dol_buildpath('document.php', 1).'?modulepart=actions&attachment=0&file='.urlencode($file).'&entity='.$conf->entity;
+					$viewlink = dol_buildpath('viewimage.php', 1).'?modulepart=actions&file='.urlencode($thumb).'&entity='.$conf->entity;
+
+					$mimeAttr = ' mime="'.$mime.'" ';
+					$class = '';
+					if(in_array($mime, array('image/png', 'image/jpeg', 'application/pdf'))){
+						$class.= ' documentpreview';
+					}
+
+					$footer.= '<a href="'.$doclink.'" class="btn-link '.$class.'" target="_blank"  '.$mimeAttr.' >';
+					$footer.= img_mime($filePath).' '.$doc->filename;
+					$footer.= '</a>';
+
+					$footer.= '</span>';
+				}
+				$footer.= '</div>';
+			}
+
+
+
+
+
+
+
             if(!empty($footer)){
                 $out.='<div class="timeline-footer">'.$footer.'</div>';
             }
@@ -841,4 +877,35 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 
     if ($noprint) return $out;
     else print $out;
+}
+
+
+/**
+ * getTicketActionCommEcmList
+ *
+ * @param	ActionComm		$object			Object ActionComm
+ * @return 	array							Array of documents in index table
+ */
+function getTicketActionCommEcmList($object)
+{
+	global $conf, $db;
+
+	$documents = array();
+
+	$sql = 'SELECT ecm.rowid as id, ecm.src_object_type, ecm.src_object_id, ecm.filepath, ecm.filename';
+	$sql.= ' FROM '.MAIN_DB_PREFIX.'ecm_files ecm';
+	$sql.= ' WHERE ecm.filepath = \'agenda/'.$object->id.'\'';
+	//$sql.= ' ecm.src_object_type = \''.$object->element.'\' AND ecm.src_object_id = '.$object->id; // Actually upload file doesn't add type
+	$sql.= ' ORDER BY ecm.position ASC';
+
+	$resql= $db->query($sql);
+	if ($resql) {
+		if ($db->num_rows($resql)) {
+			while ($obj = $db->fetch_object($resql)) {
+				$documents[$obj->id] = $obj;
+			}
+		}
+	}
+
+	return $documents;
 }

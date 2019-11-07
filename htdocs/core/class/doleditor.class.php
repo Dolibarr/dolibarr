@@ -157,7 +157,7 @@ class DolEditor
     	$fullpage=false;
     	if (isset($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT))
     	{
-    	   $disallowAnyContent=empty($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT);      // Only predefined list of html tags are allowed or all
+            $disallowAnyContent=empty($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT);      // Only predefined list of html tags are allowed or all
     	}
 
     	$found=0;

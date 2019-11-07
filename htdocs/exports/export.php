@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 // Load translation files required by the page
-$langs->loadlangs(array('exports', 'other', 'users', 'companies', 'projects'));
+$langs->loadlangs(array('admin', 'exports', 'other', 'users', 'companies', 'projects', 'suppliers', 'products', 'bank'));
 
 // Everybody should be able to go on this page
 //if (! $user->admin)
@@ -73,7 +73,9 @@ $entitytoicon = array(
     'expensereport_line'=> 'trip',
 	'holiday'      => 'holiday',
     'contract_line' => 'contract',
-    'translation'  => 'generic'
+    'translation'  => 'generic',
+    'bomm'         => 'bom',
+    'bomline'      => 'bom'
 );
 
 // Translation code
@@ -120,7 +122,9 @@ $entitytolang = array(
 	'holiday'      => 'TitreRequestCP',
 	'contract'     => 'Contract',
     'contract_line'=> 'ContractLine',
-    'translation'  => 'Translation'
+    'translation'  => 'Translation',
+    'bom'          => 'BOM',
+    'bomline'      => 'BOMLine'
 );
 
 $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();
@@ -442,7 +446,7 @@ if ($step == 1 || ! $datatoexport)
 
     // Affiche les modules d'exports
     print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Module").'</td>';
     print '<td>'.$langs->trans("ExportableDatas").'</td>';
@@ -548,7 +552,7 @@ if ($step == 2 && $datatoexport)
 
 
     print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Entities").'</td>';
     print '<td>'.$langs->trans("ExportableFields").'</td>';
@@ -747,7 +751,7 @@ if ($step == 3 && $datatoexport)
 
 	print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Entities").'</td>';
 	//print '<td>'.$langs->trans("ExportableFields").'</td>';
@@ -951,7 +955,7 @@ if ($step == 4 && $datatoexport)
     print '<div class="marginbottomonly"><span class="opacitymedium">'.$langs->trans("ChooseFieldsOrdersAndTitle").'</span></div>';
 
     print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Entities").'</td>';
     print '<td>'.$langs->trans("ExportedFields").'</td>';
@@ -1053,7 +1057,7 @@ if ($step == 4 && $datatoexport)
         print '<input type="hidden" name="hexa" value="'.$hexa.'">';
 
         print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
-        print '<table class="noborder" width="100%">';
+        print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("ExportModelName").'</td>';
 		print '<td>&nbsp;</td>';
@@ -1198,7 +1202,7 @@ if ($step == 5 && $datatoexport)
     			}
     		}
     	}
-    	print '<td>'.(! empty($list)?$list:$langs->trans("None")).'</td>';
+    	print '<td>'.(! empty($list)?$list:'<span class="opacitymedium">'.$langs->trans("None").'</span>').'</td>';
     	print '</tr>';
     }
 
@@ -1208,7 +1212,7 @@ if ($step == 5 && $datatoexport)
     print '<br>';
 
     // List of available export formats
-    $htmltabloflibs = '<table class="noborder" width="100%">';
+    $htmltabloflibs = '<table class="noborder centpercent">';
     $htmltabloflibs.= '<tr class="liste_titre">';
     $htmltabloflibs.= '<td>'.$langs->trans("AvailableFormats").'</td>';
     $htmltabloflibs.= '<td>'.$langs->trans("LibraryUsed").'</td>';

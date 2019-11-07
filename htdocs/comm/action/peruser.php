@@ -65,7 +65,7 @@ if (! $sortfield) $sortfield="a.datec";
 
 // Security check
 $socid = GETPOST("search_socid", "int")?GETPOST("search_socid", "int"):GETPOST("socid", "int");
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'agenda', 0, '', 'myactions');
 if ($socid < 0) $socid='';
 
@@ -418,14 +418,14 @@ if (! empty($actioncode))
         elseif ($actioncode == 'AC_ALL_AUTO') $sql.= " AND ca.type = 'systemauto'";
         else
         {
-		if (is_array($actioncode))
-  		{
+            if (is_array($actioncode))
+            {
   	        	$sql.=" AND ca.code IN ('".implode("','", $actioncode)."')";
-  		}
-  		else
-  		{
+            }
+            else
+            {
   	        	$sql.=" AND ca.code IN ('".implode("','", explode(',', $actioncode))."')";
-  		}
+            }
         }
     }
 }
@@ -631,7 +631,6 @@ $currentdaytoshow = $firstdaytoshow;
 echo '<div class="div-table-responsive">';
 
 while($currentdaytoshow<$lastdaytoshow) {
-
 	echo '<table width="100%" class="noborder nocellnopadd cal_month">';
 
 	echo '<tr class="liste_titre">';
@@ -684,16 +683,16 @@ while($currentdaytoshow<$lastdaytoshow) {
 	{
 		foreach ($eventarray as $daykey => $notused)
 		{
-		   // Get all assigned users for each event
-		   foreach ($eventarray[$daykey] as $index => $event)
-		   {
-			   	$event->fetch_userassigned();
+		    // Get all assigned users for each event
+		    foreach ($eventarray[$daykey] as $index => $event)
+		    {
+			    $event->fetch_userassigned();
 				$listofuserid=$event->userassigned;
 				foreach($listofuserid as $userid => $tmp)
 				{
 				   	if (! in_array($userid, $usernamesid)) $usernamesid[$userid] = $userid;
 				}
-		   }
+		    }
 		}
 	}
 	/* Use this list to have for all users */
@@ -753,12 +752,12 @@ while($currentdaytoshow<$lastdaytoshow) {
 	// Load array of colors by type
 	$colorsbytype=array();
 	$labelbytype=array();
-	$sql="SELECT code, color, libelle FROM ".MAIN_DB_PREFIX."c_actioncomm ORDER BY position";
+	$sql="SELECT code, color, libelle as label FROM ".MAIN_DB_PREFIX."c_actioncomm ORDER BY position";
 	$resql=$db->query($sql);
 	while ($obj = $db->fetch_object($resql))
 	{
 		$colorsbytype[$obj->code]=$obj->color;
-		$labelbytype[$obj->code]=$obj->libelle;
+		$labelbytype[$obj->code]=$obj->label;
 	}
 
 	// Loop on each user to show calendar
@@ -779,7 +778,6 @@ while($currentdaytoshow<$lastdaytoshow) {
 		$i = 0;
 		for ($iter_day = 0; $iter_day < 8; $iter_day++)
 		{
-
 			if (($i + 1) < $begin_d || ($i + 1) > $end_d)
 			{
 				$i++;

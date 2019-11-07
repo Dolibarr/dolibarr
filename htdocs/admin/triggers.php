@@ -49,7 +49,7 @@ $form = new Form($db);
 
 print load_fiche_titre($langs->trans("TriggersAvailable"), '', 'title_setup');
 
-print $langs->trans("TriggersDesc")."<br>";
+print '<span class="opacitymedium">'.$langs->trans("TriggersDesc")."</span><br>";
 print "<br>\n";
 
 
@@ -60,8 +60,8 @@ $param = ''; $align = '';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder">';
 print '<tr class="liste_titre">';
-print getTitleFieldOfList($langs->trans("File"), 0, $_SERVER["PHP_SELF"], 'file', "", $param, ($align?'align="'.$align.'"':''), $sortfield, $sortorder, '', 1)."\n";
 print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], 'none', "", $param, '', $sortfield, $sortorder, '', 1)."\n";
+print getTitleFieldOfList($langs->trans("File"), 0, $_SERVER["PHP_SELF"], 'file', "", $param, ($align?'align="'.$align.'"':''), $sortfield, $sortorder, '', 1)."\n";
 print getTitleFieldOfList($langs->trans("Active"), 0, $_SERVER["PHP_SELF"], 'active', "", $param, 'align="center"', $sortfield, $sortorder, '', 1)."\n";
 print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], 'none', "", $param, ($align?'align="'.$align.'"':''), $sortfield, $sortorder, '', 1)."\n";
 print '</tr>';
@@ -69,7 +69,7 @@ print '</tr>';
 foreach ($triggers as $trigger)
 {
 	print '<tr class="oddeven">';
-	print '<td valign="top" width="14" align="center">'.$trigger['picto'].'</td>';
+	print '<td class="tdtop" width="32">'.$trigger['picto'].'</td>';
 	print '<td class="tdtop">'.$trigger['file'].'</td>';
 	print '<td valign="top" align="center">'.$trigger['status'].'</td>';
 	print '<td class="tdtop">';

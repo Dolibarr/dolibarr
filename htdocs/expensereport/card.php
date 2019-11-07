@@ -57,7 +57,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $date_start = dol_mktime(0, 0, 0, GETPOST('date_debutmonth', 'int'), GETPOST('date_debutday', 'int'), GETPOST('date_debutyear', 'int'));
 $date_end = dol_mktime(0, 0, 0, GETPOST('date_finmonth', 'int'), GETPOST('date_finday', 'int'), GETPOST('date_finyear', 'int'));
 $date = dol_mktime(0, 0, 0, GETPOST('datemonth', 'int'), GETPOST('dateday', 'int'), GETPOST('dateyear', 'int'));
-$fk_projet=GETPOST('fk_projet', 'int');
+$fk_project=GETPOST('fk_project', 'int');
 $vatrate=GETPOST('vatrate', 'alpha');
 $ref=GETPOST("ref", 'alpha');
 $comments=GETPOST('comments', 'none');
@@ -68,7 +68,7 @@ $childids = $user->getAllChildIds(1);
 
 // Security check
 $id=GETPOST("id", 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 
 
@@ -107,7 +107,7 @@ $hookmanager->initHooks(array('expensereportcard','globalcard'));
 
 $permissionnote = $user->rights->expensereport->creer; 		// Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->expensereport->creer; 	// Used by the include of actions_dellink.inc.php
-$permissionedit = $user->rights->expensereport->creer; 		// Used by the include of actions_lineupdown.inc.php
+$permissiontoadd = $user->rights->expensereport->creer; 	// Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 
 $upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
@@ -145,7 +145,7 @@ if (empty($reshook))
 		}
 		$action='';
 
-    	$fk_projet='';
+    	$fk_project='';
     	$date_start='';
     	$date_end='';
     	$date='';
@@ -1232,7 +1232,7 @@ if (empty($reshook))
     		$type = 0;	// TODO What if service ? We should take the type product/service from the type of expense report llx_c_type_fees
 
 			// Insert line
-    		$result = $object->addline($qty, $value_unit, $fk_c_type_fees, $vatrate, $date, $comments, $fk_projet, $fk_c_exp_tax_cat, $type, $fk_ecm_files);
+    		$result = $object->addline($qty, $value_unit, $fk_c_type_fees, $vatrate, $date, $comments, $fk_project, $fk_c_exp_tax_cat, $type, $fk_ecm_files);
 			if ($result > 0)
 			{
 				$ret = $object->fetch($object->id); // Reload to get new records
@@ -1257,7 +1257,7 @@ if (empty($reshook))
 				unset($vatrate);
 				unset($comments);
 				unset($fk_c_type_fees);
-				unset($fk_projet);
+				unset($fk_project);
 
 				unset($date);
 			} else {
@@ -1334,7 +1334,7 @@ if (empty($reshook))
     	$rowid = $_POST['rowid'];
     	$type_fees_id = GETPOST('fk_c_type_fees', 'int');
 		$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat', 'int');
-    	$projet_id = $fk_projet;
+    	$projet_id = $fk_project;
     	$comments = GETPOST('comments', 'none');
     	$qty = GETPOST('qty', 'int');
     	$vatrate = GETPOST('vatrate', 'alpha');
@@ -1418,7 +1418,7 @@ if (empty($reshook))
 
     // Actions to build doc
     $upload_dir = $conf->expensereport->dir_output;
-    $permissioncreate = $user->rights->expensereport->creer;
+    $permissiontoadd = $user->rights->expensereport->creer;
     include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
@@ -1450,7 +1450,7 @@ if ($action == 'create')
 
 	dol_fiche_head('');
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 	print '<tbody>';
 
 	// Date start
@@ -1506,7 +1506,7 @@ if ($action == 'create')
 		print '<tr>';
 		print '<td>'.$langs->trans("ModePaiement").'</td>';
 		print '<td>';
-		$form->select_types_paiements(2, 'fk_c_paiement');
+		$form->select_types_paiements('', 'fk_c_paiement');
 		print '</td>';
 		print '</tr>';
 	}
@@ -1521,7 +1521,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Private note
-	if (empty($user->societe_id)) {
+	if (empty($user->socid)) {
 		print '<tr>';
 		print '<td class="tdtop">' . $langs->trans('NotePrivate') . '</td>';
 		print '<td>';
@@ -1832,7 +1832,7 @@ else
 				{
 					print '<tr>';
 					print '<td>'.$langs->trans("ModePaiement").'</td>';
-					print '<td>'.$object->libelle_paiement.'</td>';
+					print '<td>'.$object->fk_c_paiement.'</td>';
 					print '</tr>';
 				}
 
@@ -2108,7 +2108,7 @@ else
 				print '<input type="hidden" name="fk_expensereport" value="'.$object->id.'" />';
 
 				print '<div class="div-table-responsive-no-min">';
-				print '<table id="tablelines" class="noborder" width="100%">';
+				print '<table id="tablelines" class="noborder centpercent">';
 
 				if (!empty($object->lines))
 				{
@@ -2372,7 +2372,7 @@ else
 							if (! empty($conf->projet->enabled))
 							{
 								print '<td>';
-								$formproject->select_projects(-1, $line->fk_project, 'fk_projet', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
+								$formproject->select_projects(-1, $line->fk_project, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 								print '</td>';
 							}
 
@@ -2527,7 +2527,7 @@ else
 					if (! empty($conf->projet->enabled))
 					{
 						print '<td>';
-						$formproject->select_projects(-1, $fk_projet, 'fk_projet', 0, 0, 1, -1, 0, 0, 0, '', 0, 0, 'maxwidth300');
+						$formproject->select_projects(-1, $fk_project, 'fk_project', 0, 0, 1, -1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 						print '</td>';
 					}
 

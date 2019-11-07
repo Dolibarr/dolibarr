@@ -59,10 +59,8 @@ if ($categid) {
 	$bankcateg = new BankCateg($db);
 
 	if ($bankcateg->fetch($categid) > 0) {
-
 		//Update category
 		if (GETPOST('update') && $label) {
-
 			$bankcateg->label = $label;
 			$bankcateg->update($user);
 		}
@@ -95,7 +93,7 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 */
 
 print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Ref").'</td><td colspan="2">'.$langs->trans("Label").'</td>';
 print "</tr>\n";
@@ -103,7 +101,6 @@ print "</tr>\n";
 // Line to add category
 if ($action != 'edit')
 {
-
 	print '<tr class="oddeven">';
 	print '<td>&nbsp;</td><td><input name="label" type="text" size="45"></td>';
 	print '<td class="center"><input type="submit" name="add" class="button" value="'.$langs->trans("Add").'"></td>';

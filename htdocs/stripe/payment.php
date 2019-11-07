@@ -28,7 +28,7 @@
 /**
  *	\file       htdocs/stripe/payment.php
  *	\ingroup    stripe
- *	\brief      Payment page for customers invoices. TODO Seems deprecated and bugged !
+ *	\brief      Payment page for customers invoices. @TODO Seems deprecated and bugged and not used (no link to this page) !
  */
 
 // Load Dolibarr environment
@@ -65,9 +65,9 @@ $multicurrency_amountsresttopay=array();
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 
 $object=new Facture($db);
@@ -186,12 +186,12 @@ if (empty($reshook))
 			}
 	    }
 
-	    // Check parameters
-//	    if (! GETPOST('paiementcode'))
-//	    {
-//	        setEventMessages($langs->transnoentities('ErrorFieldRequired',$langs->transnoentities('PaymentMode')), null, 'errors');
-//	        $error++;
-//	    }
+        // Check parameters
+        /*if (! GETPOST('paiementcode'))
+        {
+            setEventMessages($langs->transnoentities('ErrorFieldRequired',$langs->transnoentities('PaymentMode')), null, 'errors');
+            $error++;
+        }*/
 
 	    if (! empty($conf->banque->enabled))
 	    {
@@ -209,11 +209,11 @@ if (empty($reshook))
 	        $error++;
 	    }
 
-//	    if (empty($datepaye))
-//	    {
-//	        setEventMessages($langs->transnoentities('ErrorFieldRequired',$langs->transnoentities('Date')), null, 'errors');
-//	        $error++;
-//	    }
+        /*if (empty($datepaye))
+        {
+            setEventMessages($langs->transnoentities('ErrorFieldRequired',$langs->transnoentities('Date')), null, 'errors');
+            $error++;
+        }*/
 
 		// Check if payments in both currency
 		if ($totalpayment > 0 && $multicurrency_totalpayment > 0)
@@ -242,7 +242,6 @@ if (empty($reshook))
 	 */
 	if ($action == 'confirm_paiement' && $confirm == 'yes')
 	{
-
 		$error=0;
 
 		$datepaye = dol_now();
@@ -306,7 +305,6 @@ if (empty($reshook))
 		}
 		elseif (preg_match('/src_/i', $source))
 		{
-
 			$customer2 = $customerstripe=$stripe->customerStripe($facture->thirdparty, $stripeacc, $servicestatus);
 			$src = $customer2->sources->retrieve("$source");
 			if ($src->type=='card')
@@ -341,7 +339,6 @@ if (empty($reshook))
 
 		if (! $error)
 		{
-
 			$paiement_id = $paiement->create($user, 0);
 			if ($paiement_id < 0)
 			{
@@ -568,7 +565,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 		dol_fiche_head();
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		// Invoice
 		/*if ($facture->id > 0)
@@ -623,7 +620,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         print '<br>';
         print_barre_liste($langs->trans('StripeSourceList').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
 
-        print '<table class="liste" width="100%">'."\n";
+        print '<table class="liste centpercent">'."\n";
         // Titles with sort buttons
         print '<tr class="liste_titre">';
         print '<td class="left"></td>';
@@ -823,7 +820,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
                 print_barre_liste($langs->trans('StripeInvoiceList').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
 
-                print '<table class="noborder" width="100%">';
+                print '<table class="noborder centpercent">';
                 print '<tr class="liste_titre">';
                 print '<td>'.$arraytitle.'</td>';
                 print '<td class="center">'.$langs->trans('Date').'</td>';
@@ -1110,7 +1107,7 @@ if (! GETPOST('action'))
         $i = 0;
 
         print_barre_liste($langs->trans('Payments'), $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', $num);
-        print '<table class="noborder" width="100%">';
+        print '<table class="noborder centpercent">';
         print '<tr class="liste_titre">';
         print_liste_field_titre('Invoice', $_SERVER["PHP_SELF"], 'ref', '', '', '', $sortfield, $sortorder);
         print_liste_field_titre('Date', $_SERVER["PHP_SELF"], 'dp', '', '', '', $sortfield, $sortorder);

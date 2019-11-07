@@ -40,7 +40,7 @@ $id = GETPOST("facid", 'int')?GETPOST("facid", 'int'):GETPOST("id", 'int');
 $ref = GETPOST("ref", 'alpha');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
 $object = new FactureFournisseur($db);

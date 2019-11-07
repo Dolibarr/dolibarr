@@ -55,6 +55,12 @@ require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 
+$url = $_SERVER['PHP_SELF'];
+// Fix for some NGINX setups (this should not be required even with NGINX, however setup of NGINX are often mysterious and this may help is such cases)
+if (! empty($conf->global->MAIN_NGINX_FIX))
+{
+	$url = (isset($_SERVER['SCRIPT_URI']) && $_SERVER["SCRIPT_URI"] !== null) ? $_SERVER["SCRIPT_URI"] : $_SERVER['PHP_SELF'];
+}
 
 // Enable and test if module Api is enabled
 if (empty($conf->global->MAIN_MODULE_API))
@@ -67,7 +73,7 @@ if (empty($conf->global->MAIN_MODULE_API))
 }
 
 // Test if explorer is not disabled
-if (preg_match('/api\/index\.php\/explorer/', $_SERVER["PHP_SELF"]) && ! empty($conf->global->API_EXPLORER_DISABLED))
+if (preg_match('/api\/index\.php\/explorer/', $url) && ! empty($conf->global->API_EXPLORER_DISABLED))
 {
     $langs->load("admin");
     dol_syslog("Call Dolibarr API interfaces with module REST disabled");
@@ -91,7 +97,7 @@ if (preg_match('/api\/index\.php\/explorer/', $_SERVER["PHP_SELF"]) && ! empty($
 
 
 $reg=array();
-preg_match('/index\.php\/([^\/]+)(.*)$/', $_SERVER["PHP_SELF"], $reg);
+preg_match('/index\.php\/([^\/]+)(.*)$/', $url, $reg);
 // .../index.php/categories?sortfield=t.rowid&sortorder=ASC
 
 

@@ -85,6 +85,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 		else
 		{
 			$value = $object->array_options["options_" . $key];
+			//var_dump($key.' - '.$value);
 		}
 		if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate')
 		{
@@ -170,7 +171,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 				print '<input type="hidden" name="attribute" value="' . $key . '">';
 				print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 				print '<input type="hidden" name="'.$fieldid.'" value="' . $object->id . '">';
-				print $extrafields->showInputField($key, $value, '', '', '', 0, $object->id);
+				print $extrafields->showInputField($key, $value, '', '', '', 0, $object->id, $object->table_element);
 
 				print '<input type="submit" class="button" value="' . dol_escape_htmltag($langs->trans('Modify')) . '">';
 
@@ -178,7 +179,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			}
 			else
 			{
-				//print $key.'-'.$value.'-'.$object->table_element;
+				//var_dump($key.'-'.$value.'-'.$object->table_element);
 				print $extrafields->showOutputField($key, $value, '', $object->table_element);
 			}
 

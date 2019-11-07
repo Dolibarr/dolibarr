@@ -40,10 +40,10 @@ if (!$user->rights->ecm->setup) accessforbidden();
 $socid = GETPOST("socid", "int");
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
     $action = '';
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -274,7 +274,7 @@ dol_banner_tab($object, '', $morehtml, 0, '', '', $s);
 print '<div class="fichecenter">';
 
 print '<div class="underbanner clearboth"></div>';
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 print '<tr><td class="titlefield">'.$langs->trans("ECMCreationDate").'</td><td>';
 print dol_print_date(dol_filemtime($fullpath), 'dayhour');
 print '</td></tr>';
@@ -401,7 +401,7 @@ if ($action != 'edit')
     {
         print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&section='.urlencode($section).'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Edit').'</a>';
     }
-/*
+    /*
 	if ($user->rights->ecm->setup)
 	{
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_file&section='.$section.'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Delete').'</a>';
@@ -410,7 +410,7 @@ if ($action != 'edit')
 	{
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
 	}
-*/
+    */
 	print '</div>';
 }
 

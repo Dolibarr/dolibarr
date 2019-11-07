@@ -224,9 +224,10 @@ class ExtraFields
 	 *  @param  string  		$entity    		 	Entity of extrafields (for multicompany modules)
 	 *  @param  string  		$langfile  		 	Language file
 	 *  @param  string  		$enabled  		 	Condition to have the field enabled or not
+	 *  @param	int				$totalizable		Is a measure. Must show a total on lists
 	 *  @return int      							<=0 if KO, >0 if OK
 	 */
-	public function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1')
+	public function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0)
 	{
 		if (empty($attrname)) return -1;
 		if (empty($label)) return -1;
@@ -243,7 +244,7 @@ class ExtraFields
 		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate')
 		{
 			// Add declaration of field into table
-			$result2=$this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled);
+			$result2=$this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable);
 			$err2=$this->errno;
 			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS'))
 			{
@@ -371,9 +372,10 @@ class ExtraFields
 	 *  @param  string          $entity     	Entity of extrafields
 	 *  @param	string			$langfile		Language file
 	 *  @param  string  		$enabled  		Condition to have the field enabled or not
+	 *  @param	int				$totalizable	Is a measure. Must show a total on lists
 	 *  @return	int								<=0 if KO, >0 if OK
 	 */
-	private function create_label($attrname, $label = '', $type = '', $pos = 0, $size = 0, $elementtype = 'member', $unique = 0, $required = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1')
+	private function create_label($attrname, $label = '', $type = '', $pos = 0, $size = 0, $elementtype = 'member', $unique = 0, $required = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0)
 	{
         // phpcs:enable
 		global $conf,$user;
@@ -424,7 +426,8 @@ class ExtraFields
 			$sql.= " fk_user_modif,";
 			$sql.= " datec,";
 			$sql.= " enabled,";
-			$sql.= " help";
+			$sql.= " help,";
+			$sql.= " totalizable";
 			$sql.= " )";
 			$sql.= " VALUES('".$attrname."',";
 			$sql.= " '".$this->db->escape($label)."',";
@@ -446,7 +449,8 @@ class ExtraFields
 			$sql .= " " . (is_object($user) ? $user->id : 0). ",";
 			$sql .= "'" . $this->db->idate(dol_now()) . "',";
 			$sql.= " ".($enabled?"'".$this->db->escape($enabled)."'":"1").",";
-			$sql.= " ".($help?"'".$this->db->escape($help)."'":"null");
+			$sql.= " ".($help?"'".$this->db->escape($help)."'":"null").",";
+			$sql.= " ".($totalizable?'1':'0');
 			$sql.=')';
 
 			dol_syslog(get_class($this)."::create_label", LOG_DEBUG);
@@ -1029,7 +1033,7 @@ class ExtraFields
 			{
 				$morecss = 'minwidth100imp';
 			}
-			elseif ($type == 'datetime')
+			elseif ($type == 'datetime' || $type == 'link')
 			{
 				$morecss = 'minwidth200imp';
 			}
@@ -1404,7 +1408,6 @@ class ExtraFields
                     $sql = 'SELECT ' . $keyList;
                     $sql .= ' FROM ' . MAIN_DB_PREFIX . $InfoFieldList[0];
                     if (!empty($InfoFieldList[4])) {
-
                         // can use SELECT request
                         if (strpos($InfoFieldList[4], '$SEL$') !== false) {
                             $InfoFieldList[4] = str_replace('$SEL$', 'SELECT', $InfoFieldList[4]);
@@ -1574,9 +1577,9 @@ class ExtraFields
 		 if ($type == 'date') $out.=' (YYYY-MM-DD)';
 		 elseif ($type == 'datetime') $out.=' (YYYY-MM-DD HH:MM:SS)';
 		 */
-		 if (! empty($help)) {
+		if (! empty($help) && $keyprefix != 'search_options_') {
 			$out .= $form->textwithpicto('', $help, 1, 'help', '', 0, 3);
-		 }
+		}
 		return $out;
 	}
 
@@ -1587,7 +1590,7 @@ class ExtraFields
 	 * @param   string	$key            		Key of attribute
 	 * @param   string	$value          		Value to show
 	 * @param	string	$moreparam				To add more parameters on html input tag (only checkbox use html input for output rendering)
-	 * @param	string	$extrafieldsobjectkey	If defined (for example $object->table_element), use the new method to get extrafields data
+	 * @param	string	$extrafieldsobjectkey	If defined (for example $object->table_element), function uses the new method to get extrafields data
 	 * @return	string							Formated value
 	 */
 	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '')
@@ -1612,6 +1615,7 @@ class ExtraFields
 		}
 		else	// Old usage
 		{
+			//dol_syslog("Warning: parameter 'extrafieldsobjectkey' is missing", LOG_WARNING);
 			$label=$this->attribute_label[$key];
 			$type=$this->attribute_type[$key];
 			$size=$this->attribute_size[$key];
@@ -1813,7 +1817,6 @@ class ExtraFields
 				$value = ''; // value was used, so now we reste it to use it to build final output
 				$toprint=array();
 				while ( $obj = $this->db->fetch_object($resql) ) {
-
 					// Several field into label (eq table:code|libelle:rowid)
 					$fields_label = explode('|', $InfoFieldList[1]);
 					if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
@@ -2090,6 +2093,7 @@ class ExtraFields
 				else
 				{
 					$value_key=GETPOST("options_".$key);
+					if (in_array($key_type, array('link')) && $value_key == '-1') $value_key = '';
 				}
 
 				$object->array_options["options_".$key]=$value_key;

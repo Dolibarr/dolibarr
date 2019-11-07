@@ -62,7 +62,7 @@ $search_soc = GETPOST('search_soc');
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
-if ($user->societe_id) $socid = $user->societe_id;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 if ($id > 0 || ! empty($ref))
@@ -203,7 +203,6 @@ if (empty($reshook))
 
 		// Multiprices
 		if (! $error && (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))) {
-
 			$newprice = GETPOST('price', 'array');
 			$newprice_min = GETPOST('price_min', 'array');
 			$newpricebase = GETPOST('multiprices_base_type', 'array');
@@ -336,7 +335,6 @@ if (empty($reshook))
 			$db->begin();
 
 			foreach ($pricestoupdate as $key => $val) {
-
 				$newprice = $val['price'];
 
 				if ($val['price'] < $val['price_min'] && !empty($object->fk_price_expression)) {
@@ -477,10 +475,10 @@ if (empty($reshook))
 	{
 		$priceid = GETPOST('priceid', 'int');
 		if (!empty($rowid)) {
-		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "product_price_by_qty";
-		$sql .= " WHERE fk_product_price = " . $priceid;
+			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "product_price_by_qty";
+			$sql .= " WHERE fk_product_price = " . $priceid;
 
-		$result = $db->query($sql);
+			$result = $db->query($sql);
 		} else {
 			setEventMessages(('delete_price_by_qty'.$langs->transnoentities(MissingIds)), null, 'errors');
 		}
@@ -492,7 +490,6 @@ if (empty($reshook))
 	 * ****************************************************
 	 */
 	if ($action == 'add_customer_price_confirm' && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer)) {
-
 		$maxpricesupplier = $object->min_recommended_price();
 
 		$update_child_soc = GETPOST('updatechildprice', 'int');
@@ -709,7 +706,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_value
 $object->next_prev_filter=" fk_product_type = ".$object->type;
 
 $shownav = 1;
-if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+if ($user->socid && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
 dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
@@ -758,17 +755,17 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUI
 
 		if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
 		{
-    	   // TVA
-	       print '<tr><td>' . $langs->trans("DefaultTaxRate") . '</td><td colspan="2">';
+			// TVA
+			print '<tr><td>' . $langs->trans("DefaultTaxRate") . '</td><td colspan="2">';
 
-	       $positiverates='';
-	       if (price2num($object->multiprices_tva_tx[$soc->price_level])) $positiverates.=($positiverates?'/':'').price2num($object->multiprices_tva_tx[$soc->price_level]);
-	       if (price2num($object->multiprices_localtax1_type[$soc->price_level])) $positiverates.=($positiverates?'/':'').price2num($object->multiprices_localtax1_tx[$soc->price_level]);
-	       if (price2num($object->multiprices_localtax2_type[$soc->price_level])) $positiverates.=($positiverates?'/':'').price2num($object->multiprices_localtax2_tx[$soc->price_level]);
-	       if (empty($positiverates)) $positiverates='0';
-	       echo vatrate($positiverates.($object->default_vat_code?' ('.$object->default_vat_code.')':''), '%', $object->tva_npr);
-	       //print vatrate($object->multiprices_tva_tx[$soc->price_level], true);
-	       print '</td></tr>';
+			$positiverates='';
+			if (price2num($object->multiprices_tva_tx[$soc->price_level])) $positiverates.=($positiverates?'/':'').price2num($object->multiprices_tva_tx[$soc->price_level]);
+			if (price2num($object->multiprices_localtax1_type[$soc->price_level])) $positiverates.=($positiverates?'/':'').price2num($object->multiprices_localtax1_tx[$soc->price_level]);
+			if (price2num($object->multiprices_localtax2_type[$soc->price_level])) $positiverates.=($positiverates?'/':'').price2num($object->multiprices_localtax2_tx[$soc->price_level]);
+			if (empty($positiverates)) $positiverates='0';
+			echo vatrate($positiverates.($object->default_vat_code?' ('.$object->default_vat_code.')':''), '%', $object->tva_npr);
+			//print vatrate($object->multiprices_tva_tx[$soc->price_level], true);
+			print '</td></tr>';
 		}
 		else
 		{
@@ -794,10 +791,10 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUI
 	{
 		if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
 		{
-    	   // We show only vat for level 1
-	       print '<tr><td class="titlefield">' . $langs->trans("DefaultTaxRate") . '</td>';
-	       print '<td colspan="2">' . vatrate($object->multiprices_tva_tx[1], true) . '</td>';
-	       print '</tr>';
+			// We show only vat for level 1
+			print '<tr><td class="titlefield">' . $langs->trans("DefaultTaxRate") . '</td>';
+			print '<td colspan="2">' . vatrate($object->multiprices_tva_tx[1], true) . '</td>';
+			print '</tr>';
 		}
 		else
 		{
@@ -1160,7 +1157,7 @@ if ($action == 'edit_vat' && ($user->rights->produit->creer || $user->rights->se
 
 	dol_fiche_head('');
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// VAT
 	print '<tr><td>' . $langs->trans("DefaultTaxRate") . '</td><td>';
@@ -1194,7 +1191,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 
 		dol_fiche_head('');
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		// VAT
 		print '<tr><td class="titlefield">' . $langs->trans("DefaultTaxRate") . '</td><td>';
@@ -1466,7 +1463,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
     		//else print_barre_liste($langs->trans("PriceByCustomerLog"),'','','','','','', 0, 0, 'title_accountancy.png');
 
     		print '<div class="div-table-responsive">';
-    		print '<table class="noborder" width="100%">';
+    		print '<table class="noborder centpercent">';
 
     		print '<tr class="liste_titre">';
     		print '<td>' . $langs->trans("AppliedPricesFrom") . '</td>';
@@ -1662,7 +1659,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		dol_fiche_head();
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 		print '<tr>';
 		print '<td class="fieldrequired">' . $langs->trans('ThirdParty') . '</td>';
 		print '<td>';
@@ -1749,7 +1746,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		dol_fiche_head();
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 		print '<tr>';
 		print '<td class="titlefield">' . $langs->trans('ThirdParty') . '</td>';
 		$staticsoc = new Societe($db);
@@ -1859,7 +1856,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 			print '<input type="hidden" name="id" value="' . $object->id . '">';
 
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 
 			print '<tr class="liste_titre">';
 			print '<td>' . $langs->trans("ThirdParty") . '</td>';
@@ -1979,7 +1976,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 		print '<input type="hidden" name="id" value="' . $object->id . '">';
 
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 
 		if (count($prodcustprice->lines) > 0 || $search_soc)
 		{

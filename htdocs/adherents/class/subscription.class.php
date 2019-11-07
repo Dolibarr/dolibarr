@@ -431,10 +431,10 @@ class Subscription extends CommonObject
     /**
      *  Renvoi le libelle d'un statut donne
      *
-     *  @param	int			$statut      			Id statut
+     *  @param	int			$status      			Id status
      *  @return string      						Label
      */
-    public function LibStatut($statut)
+    public function LibStatut($status)
     {
         // phpcs:enable
         global $langs;

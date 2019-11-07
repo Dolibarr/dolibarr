@@ -36,9 +36,9 @@ $amounts = array();
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 
@@ -162,27 +162,26 @@ $form=new Form($db);
 // Formulaire de creation d'un paiement de charge
 if ($action == 'create')
 {
-
 	$charge = new ChargeSociales($db);
 	$charge->fetch($chid);
     $charge->accountid=$charge->fk_account?$charge->fk_account:$charge->accountid;
     $charge->paiementtype=$charge->mode_reglement_id?$charge->mode_reglement_id:$charge->paiementtype;
 
 	$total = $charge->amount;
-		if (! empty($conf->use_javascript_ajax))
-		{
-			print "\n".'<script type="text/javascript" language="javascript">';
+	if (! empty($conf->use_javascript_ajax))
+	{
+		print "\n".'<script type="text/javascript" language="javascript">';
 
-			//Add js for AutoFill
-			print ' $(document).ready(function () {';
-			print ' 	$(".AutoFillAmount").on(\'click touchstart\', function(){
-                            var amount = $(this).data("value");
-							document.getElementById($(this).data(\'rowid\')).value = amount ;
-						});';
-			print '	});'."\n";
+		//Add js for AutoFill
+		print ' $(document).ready(function () {';
+		print ' 	$(".AutoFillAmount").on(\'click touchstart\', function(){
+                        var amount = $(this).data("value");
+						document.getElementById($(this).data(\'rowid\')).value = amount ;
+					});';
+		print '	});'."\n";
 
-			print '	</script>'."\n";
-		}
+		print '	</script>'."\n";
+	}
 
 	print load_fiche_titre($langs->trans("DoPayment"));
 	print "<br>\n";
@@ -200,12 +199,12 @@ if ($action == 'create')
 
 	dol_fiche_head('', '');
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td><a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$chid.'">'.$chid.'</a></td></tr>';
-	print '<tr><td>'.$langs->trans("Type")."</td><td>".$charge->type_libelle."</td></tr>\n";
+	print '<tr><td>'.$langs->trans("Type")."</td><td>".$charge->type_label."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Period")."</td><td>".dol_print_date($charge->periode, 'day')."</td></tr>\n";
-	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$charge->lib."</td></tr>\n";
+	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$charge->label."</td></tr>\n";
 	/*print '<tr><td>'.$langs->trans("DateDue")."</td><td>".dol_print_date($charge->date_ech,'day')."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Amount")."</td><td>".price($charge->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';*/
 
@@ -261,7 +260,7 @@ if ($action == 'create')
 	$num = 1;
 	$i = 0;
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	//print '<td>'.$langs->trans("SocialContribution").'</td>';
 	print '<td class="left">'.$langs->trans("DateDue").'</td>';

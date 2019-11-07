@@ -45,7 +45,7 @@ $mode = GETPOST('mode', 'aZ09');		 		// '' or 'tmp'
 $piece_num = GETPOST("piece_num", 'int');	// id of transaction (several lines share the same transaction id)
 
 // Security check
-if ($user->societe_id > 0) {
+if ($user->socid > 0) {
 	accessforbidden();
 }
 
@@ -83,7 +83,6 @@ $object = new BookKeeping($db);
  */
 
 if ($action == "confirm_update") {
-
 	$error = 0;
 
 	if ((floatval($debit) != 0.0) && (floatval($credit) != 0.0)) {
@@ -355,7 +354,7 @@ if ($action == 'create')
 
 	dol_fiche_head();
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	/*print '<tr>';
 	print '<td class="titlefieldcreate fieldrequired">' . $langs->trans("NumPiece") . '</td>';
@@ -585,7 +584,6 @@ if ($action == 'create')
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
-
 			print load_fiche_titre($langs->trans("ListeMvts"), '', '');
 
 			print '<form action="' . $_SERVER["PHP_SELF"] . '?piece_num=' . $object->piece_num . '" method="post">';
@@ -601,7 +599,6 @@ if ($action == 'create')
 
 			print "<table class=\"noborder\" width=\"100%\">";
 			if (count($object->linesmvt) > 0) {
-
 				$total_debit = 0;
 				$total_credit = 0;
 

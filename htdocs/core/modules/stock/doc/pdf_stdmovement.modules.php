@@ -253,16 +253,19 @@ class pdf_stdmovement extends ModelePDFMovement
 		$warehousestatic=new Entrepot($db);
 		$movement=new MouvementStock($db);
 		$userstatic=new User($db);
+		$element = 'movement';
 
 		$sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.entity,";
-		$sql.= " e.ref as stock, e.rowid as entrepot_id, e.lieu,";
+		$sql.= " e.ref as warehouse_ref, e.rowid as entrepot_id, e.lieu,";
 		$sql.= " m.rowid as mid, m.value as qty, m.datem, m.fk_user_author, m.label, m.inventorycode, m.fk_origin, m.origintype,";
 		$sql.= " m.batch, m.price,";
 		$sql.= " m.type_mouvement,";
 		$sql.= " pl.rowid as lotid, pl.eatby, pl.sellby,";
 		$sql.= " u.login, u.photo, u.lastname, u.firstname";
 		// Add fields from extrafields
-		foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+		if (! empty($extrafields->attributes[$element]['label'])) {
+			foreach ($extrafields->attributes[$element]['label'] as $key => $val) $sql.=($extrafields->attributes[$element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		}
 		// Add fields from hooks
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -335,7 +338,6 @@ class pdf_stdmovement extends ModelePDFMovement
 
 		if ($conf->stock->dir_output)
 		{
-
 			if ($resql)
 			{
 				$product = new Product($db);
@@ -441,7 +443,7 @@ class pdf_stdmovement extends ModelePDFMovement
 				$pdf->SetSubject($outputlangs->transnoentities("Stock"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Stock")." ".$outputlangs->convToOutputCharset($object->libelle));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Stock")." ".$outputlangs->convToOutputCharset($object->label));
 				if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
@@ -585,7 +587,7 @@ class pdf_stdmovement extends ModelePDFMovement
 						$productlot->sellby= $objp->sellby;
 
 						$warehousestatic->id=$objp->entrepot_id;
-						$warehousestatic->libelle=$objp->stock;
+						$warehousestatic->label=$objp->warehouse_ref;
 						$warehousestatic->lieu=$objp->lieu;
 
 						$arrayofuniqueproduct[$objp->rowid]=$objp->produit;
@@ -1013,7 +1015,7 @@ class pdf_stdmovement extends ModelePDFMovement
 	    $pdf->SetXY($posx, $posy);
 	    $pdf->SetTextColor(0, 0, 60);
 
-	    $pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : " . $outputlangs->convToOutputCharset($object->libelle), '', 'R');
+	    $pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : " . $outputlangs->convToOutputCharset($object->label), '', 'R');
 
 	    $posy+=5;
 	    $pdf->SetFont('', '', $default_font_size - 1);
@@ -1037,7 +1039,7 @@ class pdf_stdmovement extends ModelePDFMovement
 		$e = new MouvementStock($db);
 		if(!empty($object->fk_parent) && $e->fetch($object->fk_parent) > 0)
 		{
-			$pdf->MultiCell(150, 3, $e->libelle, '', 'R');
+			$pdf->MultiCell(150, 3, $e->label, '', 'R');
 		}
 		else
 		{

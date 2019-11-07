@@ -437,7 +437,6 @@ class RemiseCheque extends CommonObject
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 			foreach ($dirmodels as $reldir) {
-
 				$dir = dol_buildpath($reldir."core/modules/cheque/");
 
 				// Load file with numbering class (if found)
@@ -507,7 +506,7 @@ class RemiseCheque extends CommonObject
         // phpcs:enable
 		global $conf, $langs;
 
-		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
+		if ($user->socid) return -1;   // protection pour eviter appel par utilisateur externe
 
 		$sql = "SELECT b.rowid, b.datev as datefin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -562,7 +561,7 @@ class RemiseCheque extends CommonObject
         // phpcs:enable
 		global $user;
 
-		if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
+		if ($user->socid) return -1;   // protection pour eviter appel par utilisateur externe
 
 		$sql = "SELECT count(b.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -575,7 +574,6 @@ class RemiseCheque extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-
 			while ($obj=$this->db->fetch_object($resql))
 			{
 				$this->nb["cheques"]=$obj->nb;

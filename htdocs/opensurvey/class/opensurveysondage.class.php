@@ -44,6 +44,9 @@ class Opensurveysondage extends CommonObject
      */
     public $table_element='opensurvey_sondage';
 
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
     public $picto = 'opensurvey';
 
     public $id_sondage;
@@ -267,7 +270,7 @@ class Opensurveysondage extends CommonObject
             $this->db->free($resql);
         }
         else
-       {
+        {
               $this->error="Error ".$this->db->lasterror();
             $ret=-1;
         }
@@ -381,7 +384,6 @@ class Opensurveysondage extends CommonObject
 
         if (! $error)
         {
-
             $sql='DELETE FROM '.MAIN_DB_PREFIX."opensurvey_comments WHERE id_sondage = '".$this->db->escape($numsondage)."'";
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql=$this->db->query($sql);

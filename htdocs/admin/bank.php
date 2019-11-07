@@ -233,7 +233,7 @@ dol_fiche_head($head, 'general', $langs->trans("BankSetupModule"), -1, 'account'
 //Show bank account order
 print load_fiche_titre($langs->trans("BankOrderShow"), '', '');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="140">' . $langs->trans("Name") . '</td>';
 print '<td>' . $langs->trans("Description") . '</td>';
@@ -253,7 +253,6 @@ $i = 0;
 
 $nbofbank = count($bankorder);
 while ($i < $nbofbank) {
-
     print '<tr class="oddeven">';
     print '<td>' . $bankorder[$i][0] . "</td><td>\n";
     print $bankorder[$i][1];
@@ -341,7 +340,6 @@ foreach ($dirmodels as $reldir) {
 
                 foreach ($filelist as $file) {
                     if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
-
                         if (file_exists($dir . '/' . $file)) {
                             $name = substr($file, 4, dol_strlen($file) - 16);
                             $classname = substr($file, 0, dol_strlen($file) - 12);
@@ -433,7 +431,7 @@ print '</table>';
 print '<br><br>';
 
 print load_fiche_titre($langs->trans("BankColorizeMovement"), '', '');
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print "<tr class=\"liste_titre\">\n";
 print '<td colspan="4">' . $langs->trans("Name") . '</td>';
 print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";

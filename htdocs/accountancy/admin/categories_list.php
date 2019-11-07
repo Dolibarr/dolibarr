@@ -170,7 +170,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
     }
     if (isset($_POST["code"]))
     {
-    	if ($_POST["code"]=='0')
+        if ($_POST["code"]=='0')
     	{
         	$ok=0;
     		setEventMessages($langs->transnoentities('ErrorCodeCantContainZero'), null, 'errors');
@@ -449,7 +449,7 @@ if ($id)
     print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
 
 	print '<div class="div-table-responsive">';
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
 
     // Form to add a new line
     if ($tabname[$id])
@@ -468,7 +468,7 @@ if ($id)
             $valuetoshow=$langs->trans($valuetoshow);   // try to translate
             $class="left";
             if ($fieldlist[$field]=='type') {
-				if ($tabname[$id] == MAIN_DB_PREFIX."c_paiement") {
+                if ($tabname[$id] == MAIN_DB_PREFIX."c_paiement") {
                     $valuetoshow=$form->textwithtooltip($langs->trans("Type"), $langs->trans("TypePaymentDesc"), 2, 1, img_help(1, ''));
                 } else {
                     $valuetoshow=$langs->trans("Type");
@@ -501,7 +501,7 @@ if ($id)
             if ($fieldlist[$field]=='range_account') {
                 $valuetoshow=$langs->trans("Comment");
             }
-			if ($fieldlist[$field]=='category_type') {
+            if ($fieldlist[$field]=='category_type') {
                 $valuetoshow=$langs->trans("Calculated");
             }
 
@@ -742,7 +742,6 @@ if ($id)
                     {
                         foreach ($fieldlist as $field => $value)
                         {
-
                             $showfield=1;
                         	$class="left";
                             $valuetoshow=$obj->{$fieldlist[$field]};

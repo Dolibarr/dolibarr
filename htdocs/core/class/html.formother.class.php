@@ -463,7 +463,6 @@ class FormOther
         {
             while ($obj_usr = $this->db->fetch_object($resql_usr))
             {
-
                 $out.='<option value="'.$obj_usr->rowid.'"';
 
                 if ($obj_usr->rowid == $selected) $out.=' selected';
@@ -1293,7 +1292,7 @@ class FormOther
 			$resultautomanual .= '<option value="'.$manual.'">'.$langs->trans("Manual").'</option>'."\n";
 		}
 		else
-	   {
+	    {
 	   		$selected=(($useempty && $value != '0' && $value != 'manual')?'':' selected');
 			$resultautomanual .= '<option value="'.$automatic.'">'.$langs->trans("Automatic").'</option>'."\n";
 			$resultautomanual .= '<option value="'.$manual.'"'.$selected.'>'.$langs->trans("Manual").'</option>'."\n";

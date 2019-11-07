@@ -90,7 +90,7 @@ if (empty($modetax)) $modetax=0;
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 
@@ -566,7 +566,6 @@ if (! is_array($x_coll) || ! is_array($x_paye))
         $subtot_paye_vat = 0;
 
         if ($min == 0 || ($min > 0 && $x_both[$thirdparty_id]['paye']['totalht'] > $min)) {
-
             if (is_array($x_both[$thirdparty_id]['paye']['detail'])) {
                 print "<tr>";
                 print '<td class="tax_rate">';
@@ -736,7 +735,7 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 
     // Total to pay
     print '<br><br>';
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     $diff = $x_coll_sum - $x_paye_sum;
     print '<tr class="liste_total">';
     print '<td class="liste_total" colspan="'.$span.'">'.$langs->trans("TotalToPay").($q?', '.$langs->trans("Quadri").' '.$q:'').'</td>';

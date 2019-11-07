@@ -228,7 +228,7 @@ else
 	dol_print_error($db);
 }
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -337,7 +337,7 @@ print '</table><br>';
  */
 print load_fiche_titre($langs->trans("Options"), '', '');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>';
 print '<td width="60" class="center">'.$langs->trans("Value")."</td>\n";
@@ -402,7 +402,7 @@ if (preg_match('/fr/i', $conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 	print '<br>';
 	print load_fiche_titre($langs->trans("FrenchOptions"), '', '');
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 	print '<td class="center">'.$langs->trans("Status").'</td>'."\n";
@@ -411,34 +411,34 @@ if (preg_match('/fr/i', $conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 	print '<tr class="oddeven">';
 	print '<td width="80%">' . $langs->trans("DONATION_ART200") . '</td>';
 	print '<td class="center">';
-if ($conf->use_javascript_ajax) {
-  print ajax_constantonoff('DONATION_ART200');
-} else {
-  $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-  print $form->selectarray("DONATION_ART200", $arrval, $conf->global->DONATION_ART200);
-}
+    if ($conf->use_javascript_ajax) {
+        print ajax_constantonoff('DONATION_ART200');
+    } else {
+        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+        print $form->selectarray("DONATION_ART200", $arrval, $conf->global->DONATION_ART200);
+    }
 	print '</td></tr>';
 
 	print '<tr class="oddeven">';
 	print '<td width="80%">' . $langs->trans("DONATION_ART238") . '</td>';
 	print '<td class="center">';
-if ($conf->use_javascript_ajax) {
-  print ajax_constantonoff('DONATION_ART238');
-} else {
-  $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-  print $form->selectarray("DONATION_ART238", $arrval, $conf->global->DONATION_ART238);
-}
+    if ($conf->use_javascript_ajax) {
+        print ajax_constantonoff('DONATION_ART238');
+    } else {
+        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+        print $form->selectarray("DONATION_ART238", $arrval, $conf->global->DONATION_ART238);
+    }
 	print '</td></tr>';
 
 	print '<tr class="oddeven">';
 	print '<td width="80%">' . $langs->trans("DONATION_ART885") . '</td>';
 	print '<td class="center">';
-if ($conf->use_javascript_ajax) {
-  print ajax_constantonoff('DONATION_ART885');
-} else {
-  $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-  print $form->selectarray("DONATION_ART885", $arrval, $conf->global->DONATION_ART885);
-}
+    if ($conf->use_javascript_ajax) {
+        print ajax_constantonoff('DONATION_ART885');
+    } else {
+        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+        print $form->selectarray("DONATION_ART885", $arrval, $conf->global->DONATION_ART885);
+    }
 	print '</td></tr>';
 	print "</table>\n";
 }

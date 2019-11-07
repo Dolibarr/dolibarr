@@ -73,7 +73,7 @@ $arrayfields=array(
 if (empty($conf->comptabilite->enabled) && empty($conf->accounting->enabled)) {
     accessforbidden();
 }
-if ($user->societe_id > 0) {
+if ($user->socid > 0) {
     accessforbidden();
 }
 
@@ -92,7 +92,6 @@ $entity = GETPOST('entity', 'int')?GETPOST('entity', 'int'):$conf->entity;
 $filesarray=array();
 $result=false;
 if (($action=="searchfiles" || $action=="dl" )) {
-
 	if (empty($date_start))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateStart")), null, 'errors');
@@ -295,7 +294,18 @@ if ($result && $action == "dl" && ! $error)
 
     dol_mkdir($dirfortmpfile);
 
-    $log=$langs->transnoentitiesnoconv("Type").','.$langs->transnoentitiesnoconv("Date").','.$langs->transnoentitiesnoconv("Ref").','.$langs->transnoentitiesnoconv("TotalHT").','.$langs->transnoentitiesnoconv("TotalTTC").','.$langs->transnoentitiesnoconv("TotalVAT").','.$langs->transnoentitiesnoconv("Paid").',filename,item_id,'.$langs->transnoentitiesnoconv("ThirdParty").','.$langs->transnoentitiesnoconv("Code").','.$langs->transnoentitiesnoconv("Country").','.$langs->transnoentitiesnoconv("VATIntra")."\n";
+    $log = $langs->transnoentitiesnoconv("Type");
+    $log .= ',' . $langs->transnoentitiesnoconv("Date");
+    $log .= ',' . $langs->transnoentitiesnoconv("Ref");
+    $log .= ',' . $langs->transnoentitiesnoconv("TotalHT");
+    $log .= ',' . $langs->transnoentitiesnoconv("TotalTTC");
+    $log .= ',' . $langs->transnoentitiesnoconv("TotalVAT");
+    $log .= ',' . $langs->transnoentitiesnoconv("Paid");
+    $log .= ',filename,item_id';
+    $log .= ',' . $langs->transnoentitiesnoconv("ThirdParty");
+    $log .= ',' . $langs->transnoentitiesnoconv("Code");
+    $log .= ',' . $langs->transnoentitiesnoconv("Country");
+    $log .= ',' . $langs->transnoentitiesnoconv("VATIntra")."\n";
     $zipname = $dirfortmpfile.'/'.dol_print_date($date_start, 'dayrfc')."-".dol_print_date($date_stop, 'dayrfc').'_export.zip';
 
     dol_delete_file($zipname);
@@ -306,8 +316,20 @@ if ($result && $action == "dl" && ! $error)
     {
         foreach ($filesarray as $key => $file)
         {
-            if (file_exists($file["fullname"])) $zip->addFile($file["fullname"], $file["relpathnamelang"]); //
-            $log.=$file['item'].','.dol_print_date($file['date'], 'dayrfc').','.$file['ref'].','.$file['amount_ht'].','.$file['amount_ttc'].','.$file['amount_vat'].','.$file['paid'].','.$file["name"].','.$file['fk'].','.$file['thirdparty_name'].','.$file['thirdparty_code'].','.$file['country_code'].',"'.$file['vatnum'].'"'."\n";
+            if (file_exists($file["fullname"])) $zip->addFile($file["fullname"], $file["relpathnamelang"]);
+            $log .= $file['item'];
+            $log .= ',' . dol_print_date($file['date'], 'dayrfc');
+            $log .= ',' . $file['ref'];
+            $log .= ',' . $file['amount_ht'];
+            $log .= ',' . $file['amount_ttc'];
+            $log .= ',' . $file['amount_vat'];
+            $log .= ',' . $file['paid'];
+            $log .= ',' . $file["name"];
+            $log .= ',' . $file['fk'];
+            $log .= ',' . $file['thirdparty_name'];
+            $log .= ',' . $file['thirdparty_code'];
+            $log .= ',' . $file['country_code'];
+            $log .= ',"' . $file['vatnum'].'"'."\n";
         }
         $zip->addFromString('transactions.csv', $log);
         $zip->close();
@@ -401,7 +423,7 @@ if (!empty($date_start) && !empty($date_stop))
     print '<br>';
 
     print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], "type", "", $param, '', $sortfield, $sortorder, 'nowrap ');
     print_liste_field_titre($arrayfields['date']['label'], $_SERVER["PHP_SELF"], "date", "", $param, '', $sortfield, $sortorder, 'center nowrap ');

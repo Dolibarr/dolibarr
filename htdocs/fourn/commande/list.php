@@ -91,7 +91,7 @@ $viewstatut=GETPOST('viewstatut');
 
 // Security check
 $orderid = GETPOST('orderid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'fournisseur', $orderid, '', 'commande');
 
 $diroutputmassaction=$conf->fournisseur->commande->dir_output . '/temp/massgeneration/'.$user->id;
@@ -223,8 +223,8 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='CommandeFournisseur';
 	$objectlabel='SupplierOrders';
-	$permtoread = $user->rights->fournisseur->commande->lire;
-	$permtodelete = $user->rights->fournisseur->commande->supprimer;
+	$permissiontoread = $user->rights->fournisseur->commande->lire;
+	$permissiontodelete = $user->rights->fournisseur->commande->supprimer;
 	$uploaddir = $conf->fournisseur->commande->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
@@ -243,14 +243,12 @@ if (empty($reshook))
 		$db->begin();
 
 		foreach($orders as $id_order) {
-
 			$cmd = new Commande($db);
 			if($cmd->fetch($id_order) <= 0) continue;
 
 			$object = new Facture($db);
 			if(!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) $object = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created order.
 			else {
-
 				$object->socid = $cmd->socid;
 				$object->type = Facture::TYPE_STANDARD;
 				$object->cond_reglement_id	= $cmd->cond_reglement_id;
@@ -349,7 +347,7 @@ if (empty($reshook))
 							{
 								$fk_parent_line = 0;
 							}
-    $result = $object->addline(
+                            $result = $object->addline(
 								$desc,
 								$lines[$i]->subprice,
 								$lines[$i]->qty,
@@ -406,7 +404,6 @@ if (empty($reshook))
 		$toselect = array();
 
 		if (! $error && $validate_invoices) {
-
 			$massaction = $action = 'builddoc';
 
 			foreach($TAllFact as &$object)
@@ -424,7 +421,7 @@ if (empty($reshook))
 				// Fac builddoc
 				$donotredirect = 1;
 				$upload_dir = $conf->facture->dir_output;
-				$permissioncreate=$user->rights->facture->creer;
+				$permissiontoadd=$user->rights->facture->creer;
 				include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 			}
 
@@ -484,15 +481,17 @@ $help_url='';
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
-$sql.= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
+$sql.= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, s.email,';
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
 $sql.= " cf.rowid, cf.ref, cf.ref_supplier, cf.fk_statut, cf.billed, cf.total_ht, cf.tva as total_tva, cf.total_ttc, cf.fk_user_author, cf.date_commande as date_commande, cf.date_livraison as date_delivery,";
 $sql.= ' cf.date_creation as date_creation, cf.tms as date_update,';
 $sql.= " p.rowid as project_id, p.ref as project_ref, p.title as project_title,";
-$sql.= " u.firstname, u.lastname, u.photo, u.login";
+$sql.= " u.firstname, u.lastname, u.photo, u.login, u.email as user_email";
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -946,20 +945,12 @@ if ($resql)
 		{
 			print '<td class="nowrap">';
 
-			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			// Picto + Ref
-			print '<td class="nobordernopadding nowrap">';
 			print $objectstatic->getNomUrl(1);
-			print '</td>';
-			// Warning
-			//print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
-			//print '</td>';
 			// Other picto tool
-			print '<td width="16" class="right nobordernopadding hideonsmartphone">';
 			$filename=dol_sanitizeFileName($obj->ref);
 			$filedir=$conf->fournisseur->commande->dir_output.'/' . dol_sanitizeFileName($obj->ref);
 			print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
-			print '</td></tr></table>';
 
 			print '</td>'."\n";
 			if (! $i) $totalarray['nbfield']++;
@@ -987,20 +978,21 @@ if ($resql)
 		$userstatic->firstname = $obj->firstname;
 		$userstatic->login = $obj->login;
 		$userstatic->photo = $obj->photo;
+		$userstatic->email = $obj->user_email;
 		if (! empty($arrayfields['u.login']['checked']))
 		{
-			print "<td>";
+			print '<td class="tdoverflowmax150">';
 			if ($userstatic->id) print $userstatic->getNomUrl(1);
-			else print "&nbsp;";
 			print "</td>";
 			if (! $i) $totalarray['nbfield']++;
 		}
 		// Thirdparty
 		if (! empty($arrayfields['s.nom']['checked']))
 		{
-			print '<td>';
+			print '<td class="tdoverflowmax150">';
 			$thirdpartytmp->id = $obj->socid;
 			$thirdpartytmp->name = $obj->name;
+			$thirdpartytmp->email = $obj->email;
 			print $thirdpartytmp->getNomUrl(1, 'supplier');
 			print '</td>'."\n";
 			if (! $i) $totalarray['nbfield']++;
@@ -1071,24 +1063,24 @@ if ($resql)
 		{
 			  print '<td class="right">'.price($obj->total_ht)."</td>\n";
 			  if (! $i) $totalarray['nbfield']++;
-			  if (! $i) $totalarray['totalhtfield']=$totalarray['nbfield'];
-			  $totalarray['totalht'] += $obj->total_ht;
+			  if (! $i) $totalarray['pos'][$totalarray['nbfield']]='cf.total_ht';
+			  $totalarray['val']['cf.total_ht'] += $obj->total_ht;
 		}
 		// Amount VAT
 		if (! empty($arrayfields['cf.total_vat']['checked']))
 		{
 			print '<td class="right">'.price($obj->total_tva)."</td>\n";
 			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['totalvatfield']=$totalarray['nbfield'];
-			$totalarray['totalvat'] += $obj->total_tva;
+			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='cf.total_vat';
+			$totalarray['val']['cf.total_vat'] += $obj->total_tva;
 		}
 		// Amount TTC
 		if (! empty($arrayfields['cf.total_ttc']['checked']))
 		{
 			print '<td class="right">'.price($obj->total_ttc)."</td>\n";
 			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['totalttcfield']=$totalarray['nbfield'];
-			$totalarray['totalttc'] += $obj->total_ttc;
+			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='cf.total_ttc';
+			$totalarray['val']['cf.total_ttc'] += $obj->total_ttc;
 		}
 
 		// Extra fields
@@ -1142,27 +1134,8 @@ if ($resql)
 	}
 
 	// Show total line
-	if (isset($totalarray['totalhtfield']))
-	{
-		print '<tr class="liste_total">';
-		$i=0;
-		while ($i < $totalarray['nbfield'])
-		{
-			$i++;
-			if ($i == 1)
-			{
-				if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
-				else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-			}
-			elseif ($totalarray['totalhtfield'] == $i) print '<td class="right">'.price($totalarray['totalht']).'</td>';
-			elseif ($totalarray['totalvatfield'] == $i) print '<td class="right">'.price($totalarray['totalvat']).'</td>';
-			elseif ($totalarray['totalttcfield'] == $i) print '<td class="right">'.price($totalarray['totalttc']).'</td>';
-			else print '<td></td>';
-		}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
-
-		print '</tr>';
-	}
 
     $parameters=array('arrayfields'=>$arrayfields, 'sql'=>$sql);
     $reshook=$hookmanager->executeHooks('printFieldListFooter', $parameters);    // Note that $action and $object may have been modified by hook

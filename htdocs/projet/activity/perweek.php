@@ -56,7 +56,7 @@ $hookmanager->initHooks(array('timesheetperweekcard'));
 // Security check
 $socid=0;
 // For external user, no check is done on company because readability is managed by public status of project and assignement.
-// if ($user->societe_id > 0) $socid=$user->societe_id;
+// if ($user->socid > 0) $socid=$user->socid;
 $result = restrictedArea($user, 'projet', $projectid);
 
 $now=dol_now();
@@ -813,23 +813,23 @@ if (count($tasksarray) > 0)
 				print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
 				print '</td>';
 
-				for ($idw = 0; $idw < 7; $idw++)
+		for ($idw = 0; $idw < 7; $idw++)
 				{
-					$cssweekend='';
-					if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
-					{
-						$cssweekend='weekend';
-					}
+			$cssweekend='';
+			if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+			{
+				$cssweekend='weekend';
+			}
 
-					$tmpday=dol_time_plus_duree($firstdaytoshow, $idw, 'd');
+			$tmpday=dol_time_plus_duree($firstdaytoshow, $idw, 'd');
 
-					$cssonholiday='';
-					if (! $isavailable[$tmpday]['morning'] && ! $isavailable[$tmpday]['afternoon'])   $cssonholiday.='onholidayallday ';
-					elseif (! $isavailable[$tmpday]['morning'])   $cssonholiday.='onholidaymorning ';
-					elseif (! $isavailable[$tmpday]['afternoon']) $cssonholiday.='onholidayafternoon ';
+			$cssonholiday='';
+			if (! $isavailable[$tmpday]['morning'] && ! $isavailable[$tmpday]['afternoon'])   $cssonholiday.='onholidayallday ';
+			elseif (! $isavailable[$tmpday]['morning'])   $cssonholiday.='onholidaymorning ';
+			elseif (! $isavailable[$tmpday]['afternoon']) $cssonholiday.='onholidayafternoon ';
 
-					print '<td class="liste_total hide'.$idw.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'" align="center"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
-				}
+			print '<td class="liste_total hide'.$idw.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'" align="center"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
+		}
                 print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>
     	</tr>';
 	}

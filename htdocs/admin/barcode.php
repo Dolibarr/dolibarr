@@ -96,29 +96,29 @@ elseif ($action == 'updateengine')
     $resql=$db->query($sql);
     if ($resql)
     {
-	   $num = $db->num_rows($resql);
-	   $i = 0;
+	    $num = $db->num_rows($resql);
+	    $i = 0;
 
-	   while ($i <	$num)
-	   {
-	       $obj = $db->fetch_object($resql);
+	    while ($i <	$num)
+	    {
+	        $obj = $db->fetch_object($resql);
 
-	       if (GETPOST('coder'.$obj->rowid, 'alpha'))
-	       {
-	           $coder = GETPOST('coder'.$obj->rowid, 'alpha');
-	           $code_id = $obj->rowid;
+	        if (GETPOST('coder'.$obj->rowid, 'alpha'))
+	        {
+	            $coder = GETPOST('coder'.$obj->rowid, 'alpha');
+	            $code_id = $obj->rowid;
 
-	           $sqlp = "UPDATE ".MAIN_DB_PREFIX."c_barcode_type";
-	           $sqlp.= " SET coder = '" . $coder."'";
-	           $sqlp.= " WHERE rowid = ". $code_id;
-	           $sqlp.= " AND entity = ".$conf->entity;
+	            $sqlp = "UPDATE ".MAIN_DB_PREFIX."c_barcode_type";
+	            $sqlp.= " SET coder = '" . $coder."'";
+	            $sqlp.= " WHERE rowid = ". $code_id;
+	            $sqlp.= " AND entity = ".$conf->entity;
 
-	           $upsql=$db->query($sqlp);
-	           if (! $upsql) dol_print_error($db);
-	       }
+	            $upsql=$db->query($sqlp);
+	            if (! $upsql) dol_print_error($db);
+	        }
 
-	       $i++;
-	   }
+	        $i++;
+	    }
     }
 }
 
@@ -200,7 +200,7 @@ if (empty($conf->use_javascript_ajax))
     print '<input type="hidden" name="action" value="updateengine">';
 }
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -208,7 +208,7 @@ print '<td width="200" class="center">'.$langs->trans("Example").'</td>';
 print '<td class="center" width="60">'.$langs->trans("CodeBarGenerator").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT rowid, code as encoding, libelle, coder, example";
+$sql = "SELECT rowid, code as encoding, libelle as label, coder, example";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
 $sql.= " WHERE entity = ".$conf->entity;
 $sql.= " ORDER BY code";
@@ -225,7 +225,7 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 
 		print '<tr class="oddeven"><td width="100">';
-		print $obj->libelle;
+		print $obj->label;
 		print "</td><td>\n";
 		print $langs->trans('BarcodeDesc'.$obj->encoding);
 		//print "L'EAN se compose de 8 caracteres, 7 chiffres plus une cle de controle.<br>";
@@ -309,7 +309,7 @@ print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td width="60" class="center">'.$langs->trans("Value").'</td>';
@@ -319,7 +319,6 @@ print '</tr>';
 // Chemin du binaire genbarcode sous linux
 if (! isset($_SERVER['WINDIR']))
 {
-
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("GenbarcodeLocation").'</td>';
 	print '<td width="60" class="center">';
@@ -335,7 +334,6 @@ if (! isset($_SERVER['WINDIR']))
 // Module products
 if (! empty($conf->product->enabled))
 {
-
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeProducts").'</td>';
 	print '<td width="60" class="right">';
@@ -346,7 +344,6 @@ if (! empty($conf->product->enabled))
 // Module thirdparty
 if (! empty($conf->societe->enabled))
 {
-
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeThirdParties").'</td>';
 	print '<td width="60" class="right">';
@@ -369,7 +366,7 @@ if ($conf->product->enabled)
 {
 	print load_fiche_titre($langs->trans("BarCodeNumberManager")." (".$langs->trans("Product").")", '', '');
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td width="140">'.$langs->trans("Name").'</td>';
 	print '<td>'.$langs->trans("Description").'</td>';

@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 $langs->loadLangs(array("ecm","companies","other","users","orders","propal","bills","contracts"));
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'ecm', '');
 
 // Load permissions
@@ -125,7 +125,7 @@ $head = ecm_prepare_head_fm($ecmdir, $module, $section);
 //dol_fiche_head($head, 'search_form', '', 1);
 
 
-print '<table class="border" width="100%"><tr><td width="40%" valign="top">';
+print '<table class="border centpercent"><tr><td width="40%" valign="top">';
 
 // Left area
 

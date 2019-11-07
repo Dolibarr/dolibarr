@@ -62,6 +62,9 @@ class Stripe extends CommonObject
 	public $code;
 	public $declinecode;
 
+    /**
+     * @var string Message
+     */
 	public $message;
 
 	/**
@@ -315,9 +318,10 @@ class Stripe extends CommonObject
 	 * @param   boolean $confirmnow                         false=default, true=try to confirm immediatly after create (if conditions are ok)
 	 * @param   string  $payment_method                     'pm_....' (if known)
 	 * @param   string  $off_session                        If we use an already known payment method to pay off line.
+	 * @param	string	$noidempotency_key					Do not use the idempotency_key when creating the PaymentIntent
 	 * @return 	\Stripe\PaymentIntent|null 			        Stripe PaymentIntent or null if not found and failed to create
 	 */
-	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false, $payment_method = null, $off_session = 0)
+	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false, $payment_method = null, $off_session = 0, $noidempotency_key = 0)
 	{
 		global $conf;
 
@@ -338,17 +342,21 @@ class Stripe extends CommonObject
 		} elseif ($fee < $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
 		    $fee = $conf->global->STRIPE_APPLICATION_FEE_MINIMAL;
 		}
-				if (! in_array($currency_code, $arrayzerounitcurrency)) $stripefee = round($fee * 100);
-				else $stripefee = round($fee);
+		if (! in_array($currency_code, $arrayzerounitcurrency)) {
+			$stripefee = round($fee * 100);
+		} else {
+			$stripefee = round($fee);
+		}
 
 		$paymentintent = null;
 
 		if (is_object($object))
 		{
 			// Warning. If a payment was tried and failed, a payment intent was created.
-			// But if we change someting on object to pay (amount or other), reusing same payment intent is not allowed.
-			// Recommanded solution is to recreate a new payment intent each time we need one (old one will be automatically closed after a delay),
-			// that's why i comment the part of code to retreive a payment intent with object id (never mind if we cumulate payment intent with old that will not be used)
+			// But if we change someting on object to pay (amount or other that does not change the idempotency key), reusing same payment intent is not allowed.
+			// Recommanded solution is to recreate a new payment intent each time we need one (old one will be automatically closed after a delay), Stripe will
+			// automatically return the existing payment intent if idempotency is provided when we try to create the new one.
+			// That's why we can comment the part of code to retreive a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
 			/*
 			$sql = "SELECT pi.ext_payment_id, pi.entity, pi.fk_facture, pi.sourcetype, pi.ext_payment_site";
     		$sql.= " FROM " . MAIN_DB_PREFIX . "prelevement_facture_demande as pi";
@@ -439,14 +447,15 @@ class Stripe extends CommonObject
     			global $stripearrayofkeysbyenv;
     			\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
 
-    			// Note: If all data for payment intent are same than a previous on, even if we use 'create', Stripe will return ID of the old existing payment intent.
-    			if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
-    				$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array("idempotency_key" => "$description"));
-    			    //$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array());
-    			} else {
-    				$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array("idempotency_key" => "$description", "stripe_account" => $key));
-    			    //$paymentintent = \Stripe\PaymentIntent::create($dataforintent, array("stripe_account" => $key));
+    			$arrayofoptions = array();
+    			if (empty($noidempotency_key)) {
+    				$arrayofoptions["idempotency_key"] = $description;
     			}
+    			// Note: If all data for payment intent are same than a previous on, even if we use 'create', Stripe will return ID of the old existing payment intent.
+    			if (! empty($key)) {				// If the Stripe connect account not set, we use common API usage
+    				$arrayofoptions["stripe_account"] = $key;
+    			}
+    			$paymentintent = \Stripe\PaymentIntent::create($dataforintent, $arrayofoptions);
 
     			// Store the payment intent
     			if (is_object($object))
@@ -803,7 +812,8 @@ class Stripe extends CommonObject
 	}
 
 	/**
-	 * Create charge with public/payment/newpayment.php, stripe/card.php, cronjobs or REST API
+	 * Create charge.
+	 * This is called by page htdocs/stripe/payment.php and may be deprecated.
 	 *
 	 * @param	int 	$amount									Amount to pay
 	 * @param	string 	$currency								EUR, GPB...
@@ -854,12 +864,12 @@ class Stripe extends CommonObject
 
 		$description = "";
 		$ref = "";
-		if ($origin == order) {
+		if ($origin == 'order') {
 			$order = new Commande($this->db);
 			$order->fetch($item);
 			$ref = $order->ref;
 			$description = "ORD=" . $ref . ".CUS=" . $societe->id.".PM=stripe";
-		} elseif ($origin == invoice) {
+		} elseif ($origin == 'invoice') {
 			$invoice = new Facture($this->db);
 			$invoice->fetch($item);
 			$ref = $invoice->ref;
@@ -881,9 +891,42 @@ class Stripe extends CommonObject
 			global $stripearrayofkeysbyenv;
 			\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
 
-			if (empty($conf->stripeconnect->enabled))
+			if (empty($conf->stripeconnect->enabled))	// With a common Stripe account
 			{
-				if (preg_match('/acct_/i', $source))
+				if (preg_match('/pm_/i', $source))
+				{
+					$stripecard = $source;
+					$amountstripe = $stripeamount;
+					$FULLTAG = 'PFBO';	// Payment From Back Office
+					$stripe = $return;
+					$amounttopay = $amount;
+					$servicestatus = $status;
+
+					dol_syslog("* createPaymentStripe get stripeacc", LOG_DEBUG);
+					$stripeacc = $stripe->getStripeAccount($service);								// Get Stripe OAuth connect account if it exists (no network access here)
+
+					dol_syslog("* createPaymentStripe Create payment on card ".$stripecard->id.", amounttopay=".$amounttopay.", amountstripe=".$amountstripe.", FULLTAG=".$FULLTAG, LOG_DEBUG);
+
+					// Create payment intent and charge payment (confirmnow = true)
+					$paymentintent = $stripe->getPaymentIntent($amounttopay, $currency, $FULLTAG, $description, $invoice, $customer->id, $stripeacc, $servicestatus, 0, 'automatic', true, $stripecard->id, 1);
+
+					$charge = new stdClass();
+					if ($paymentintent->status == 'succeeded')
+					{
+						$charge->status = 'ok';
+					}
+					else
+					{
+						$charge->status = 'failed';
+						$charge->failure_code = $stripe->code;
+						$charge->failure_message = $stripe->error;
+						$charge->failure_declinecode = $stripe->declinecode;
+						$stripefailurecode = $stripe->code;
+						$stripefailuremessage = $stripe->error;
+						$stripefailuredeclinecode = $stripe->declinecode;
+					}
+				}
+				elseif (preg_match('/acct_/i', $source))
 				{
                     $charge = \Stripe\Charge::create(array(
 						"amount" => "$stripeamount",
@@ -914,12 +957,14 @@ class Stripe extends CommonObject
 					$charge = \Stripe\Charge::create($paymentarray, array("idempotency_key" => "$description"));
 				}
 			} else {
-		$fee = $amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE;
-		if ($fee >= $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL && $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL > $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
-		    $fee = $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL;
-		} elseif ($fee < $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
-		    $fee = $conf->global->STRIPE_APPLICATION_FEE_MINIMAL;
-		}
+				// With Stripe Connect
+				$fee = $amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE;
+				if ($fee >= $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL && $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL > $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
+				    $fee = $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL;
+				} elseif ($fee < $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
+				    $fee = $conf->global->STRIPE_APPLICATION_FEE_MINIMAL;
+				}
+
 				if (! in_array($currency, $arrayzerounitcurrency)) $stripefee = round($fee * 100);
 				else $stripefee = round($fee);
 
@@ -942,22 +987,64 @@ class Stripe extends CommonObject
 					$paymentarray["receipt_email"] = $societe->email;
 				}
 
-				$charge = \Stripe\Charge::create($paymentarray, array("idempotency_key" => "$description", "stripe_account" => "$account"));
+				if (preg_match('/pm_/i', $source))
+				{
+					$stripecard = $source;
+					$amountstripe = $stripeamount;
+					$FULLTAG = 'PFBO';	// Payment From Back Office
+					$stripe = $return;
+					$amounttopay = $amount;
+					$servicestatus = $status;
+
+					dol_syslog("* createPaymentStripe get stripeacc", LOG_DEBUG);
+					$stripeacc = $stripe->getStripeAccount($service);								// Get Stripe OAuth connect account if it exists (no network access here)
+
+					dol_syslog("* createPaymentStripe Create payment on card ".$stripecard->id.", amounttopay=".$amounttopay.", amountstripe=".$amountstripe.", FULLTAG=".$FULLTAG, LOG_DEBUG);
+
+					// Create payment intent and charge payment (confirmnow = true)
+					$paymentintent = $stripe->getPaymentIntent($amounttopay, $currency, $FULLTAG, $description, $invoice, $customer->id, $stripeacc, $servicestatus, 0, 'automatic', true, $stripecard->id, 1);
+
+					$charge = new stdClass();
+					if ($paymentintent->status == 'succeeded')
+					{
+						$charge->status = 'ok';
+						$charge->id = $paymentintent->id;
+					}
+					else
+					{
+						$charge->status = 'failed';
+						$charge->failure_code = $stripe->code;
+						$charge->failure_message = $stripe->error;
+						$charge->failure_declinecode = $stripe->declinecode;
+					}
+				}
+				else
+				{
+					$charge = \Stripe\Charge::create($paymentarray, array("idempotency_key" => "$description", "stripe_account" => "$account"));
+				}
 			}
 			if (isset($charge->id)) {}
 
 			$return->statut = 'success';
 			$return->id = $charge->id;
-			if ($charge->source->type == 'card') {
-				$return->message = $charge->source->card->brand . " ...." . $charge->source->card->last4;
-			} elseif ($charge->source->type == 'three_d_secure') {
-				$stripe = new Stripe($this->db);
-				$src = \Stripe\Source::retrieve("" . $charge->source->three_d_secure->card . "", array(
-				"stripe_account" => $stripe->getStripeAccount($service)
-				));
-				$return->message = $src->card->brand . " ...." . $src->card->last4;
-			} else {
-				$return->message = $charge->id;
+
+			if (preg_match('/pm_/i', $source))
+			{
+				$return->message = 'Payment retreived by card status = '.$charge->status;
+			}
+			else
+			{
+				if ($charge->source->type == 'card') {
+					$return->message = $charge->source->card->brand . " ...." . $charge->source->card->last4;
+				} elseif ($charge->source->type == 'three_d_secure') {
+					$stripe = new Stripe($this->db);
+					$src = \Stripe\Source::retrieve("" . $charge->source->three_d_secure->card . "", array(
+					"stripe_account" => $stripe->getStripeAccount($service)
+					));
+					$return->message = $src->card->brand . " ...." . $src->card->last4;
+				} else {
+					$return->message = $charge->id;
+				}
 			}
 		} catch (\Stripe\Error\Card $e) {
 			include DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';

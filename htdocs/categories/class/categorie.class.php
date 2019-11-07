@@ -779,9 +779,9 @@ class Categorie extends CommonObject
 		$sql .= " AND c.fk_categorie = ".$this->id;
 		$sql .= " AND c.fk_" . $this->MAP_CAT_FK[$type] . " = o.rowid";
 		// Protection for external users
-		if (($type == 'customer' || $type == 'supplier') && $user->societe_id > 0)
+		if (($type == 'customer' || $type == 'supplier') && $user->socid > 0)
 		{
-			$sql.= " AND o.rowid = ".$user->societe_id;
+			$sql.= " AND o.rowid = ".$user->socid;
 		}
 		if ($limit > 0 || $offset > 0)  $sql .= $this->db->plimit($limit + 1, $offset);
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -864,11 +864,14 @@ class Categorie extends CommonObject
 		if ($type=="contact") {
 			$subcol_name="fk_socpeople";
 		}
+
+		$idoftype = array_search($type, self::$MAP_ID_TO_CODE);
+
 		$sql = "SELECT s.rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as s";
 		$sql.= " , ".MAIN_DB_PREFIX."categorie_".$sub_type." as sub ";
 		$sql.= ' WHERE s.entity IN ('.getEntity('category').')';
-		$sql.= ' AND s.type='.array_search($type, self::$MAP_ID_TO_CODE);
+		$sql.= ' AND s.type='.$idoftype;
 		$sql.= ' AND s.rowid = sub.fk_categorie';
 		$sql.= ' AND sub.'.$subcol_name.' = '.$id;
 
@@ -887,7 +890,15 @@ class Categorie extends CommonObject
 			}
 		}
 
-		$sql.= $this->db->plimit($limit + 1, $offset);
+		if ($limit) {
+			if ($page < 0)
+			{
+				$page = 0;
+			}
+			$offset = $limit * $page;
+
+			$sql.= $this->db->plimit($limit + 1, $offset);
+		}
 
 		$result = $this->db->query($sql);
 		if ($result)
@@ -1007,11 +1018,11 @@ class Categorie extends CommonObject
 	 *                fulllabel = nom avec chemin complet de la categorie
 	 *                fullpath = chemin complet compose des id
 	 *
-	 * @param   string                  $type                   Type of categories ('customer', 'supplier', 'contact', 'product', 'member') or (0, 1, 2, ...).
+	 * @param   string                  $type                   Type of categories ('customer', 'supplier', 'contact', 'product', 'member', ...)
 	 * @param   int|string|array        $markafterid            Keep only or removed all categories including the leaf $markafterid in category tree (exclude) or Keep only of category is inside the leaf starting with this id.
      *                                                          $markafterid can be an :
      *                                                          - int (id of category)
-     *                                                          - string (categories ids seprated by comma)
+     *                                                          - string (categories ids separated by comma)
      *                                                          - array (list of categories ids)
      * @param   int                     $include                [=0] Removed or 1=Keep only
 	 * @return  array|int               Array of categories. this->cats and this->motherof are set, -1 on error
@@ -1626,7 +1637,6 @@ class Categorie extends CommonObject
 			{
 				$nbfile = count($file['name']);
 				for ($i = 0; $i <= $nbfile; $i ++) {
-
 					$originImage = $dir . $file['name'][$i];
 
 					// Cree fichier en taille origine
@@ -1825,13 +1835,13 @@ class Categorie extends CommonObject
 	        }
 	    }
 
-			// Call trigger
-			$result = $this->call_trigger('CATEGORY_SET_MULTILANGS', $user);
-			if ($result < 0) {
-				$this->error = $this->db->lasterror();
-				return -1;
-			}
-			// End call triggers
+		// Call trigger
+		$result = $this->call_trigger('CATEGORY_SET_MULTILANGS', $user);
+		if ($result < 0) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+		// End call triggers
 
 	    return 1;
 	}

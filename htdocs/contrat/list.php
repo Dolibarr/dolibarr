@@ -84,7 +84,7 @@ if (! $sortorder) $sortorder='DESC';
 
 // Security check
 $id=GETPOST('id', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'contrat', $id);
 
 $diroutputmassaction=$conf->contrat->dir_output . '/temp/massgeneration/'.$user->id;
@@ -188,8 +188,8 @@ if (empty($reshook))
 {
 	$objectclass='Contrat';
 	$objectlabel='Contracts';
-	$permtoread = $user->rights->contrat->lire;
-	$permtodelete = $user->rights->contrat->supprimer;
+	$permissiontoread = $user->rights->contrat->lire;
+	$permissiontodelete = $user->rights->contrat->supprimer;
 	$uploaddir = $conf->contrat->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -218,7 +218,9 @@ $sql.= ' SUM('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND
 $sql.= ' SUM('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND cd.date_fin_validite < '".$db->idate($now - $conf->contrat->services->expires->warning_delay)."')", 1, 0).') as nb_late,';
 $sql.= ' SUM('.$db->ifsql("cd.statut=5", 1, 0).') as nb_closed';
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -267,6 +269,7 @@ $sql.= " state.code_departement, state.nom";
 // Add fields from extrafields
 if (! empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key : '');
+}
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListGroupBy', $parameters);    // Note that $action and $object may have been modified by hook
@@ -588,10 +591,10 @@ if (! empty($arrayfields['lower_planned_end_date']['checked'])) {
     print_liste_field_titre($arrayfields['lower_planned_end_date']['label'], $_SERVER["PHP_SELF"], "lower_planned_end_date", "", $param, '', $sortfield, $sortorder, 'center ');
 }
 if (! empty($arrayfields['status']['checked'])) {
-	print_liste_field_titre($staticcontratligne->LibStatut(0, 3), '', '', '', '', 'width="16"');
-	print_liste_field_titre($staticcontratligne->LibStatut(4, 3, 0), '', '', '', '', 'width="16"');
-	print_liste_field_titre($staticcontratligne->LibStatut(4, 3, 1), '', '', '', '', 'width="16"');
-	print_liste_field_titre($staticcontratligne->LibStatut(5, 3), '', '', '', '', 'width="16"');
+	print_liste_field_titre($staticcontratligne->LibStatut(0, 3, -1, 'class="nochangebackground"'), '', '', '', '', 'width="16"');
+	print_liste_field_titre($staticcontratligne->LibStatut(4, 3,  0, 'class="nochangebackground"'), '', '', '', '', 'width="16"');
+	print_liste_field_titre($staticcontratligne->LibStatut(4, 3,  1, 'class="nochangebackground"'), '', '', '', '', 'width="16"');
+	print_liste_field_titre($staticcontratligne->LibStatut(5, 3, -1, 'class="nochangebackground"'), '', '', '', '', 'width="16"');
 }
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>\n";

@@ -77,7 +77,7 @@ if (! $sortorder) {
 }
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 	accessforbidden();
 if (! $user->rights->accounting->bind->write)
 	accessforbidden();
@@ -112,8 +112,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 // Mass actions
 $objectclass='ExpenseReport';
 $objectlabel='ExpenseReport';
-$permtoread = $user->rights->expensereport->read;
-$permtodelete = $user->rights->expensereport->delete;
+$permissiontoread = $user->rights->expensereport->read;
+$permissiontodelete = $user->rights->expensereport->delete;
 $uploaddir = $conf->expensereport->dir_output;
 include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
@@ -161,8 +161,6 @@ if ($massaction == 'ventil') {
         }
         $msg.='</div>';
         $msg.= '<div>' . $langs->trans("EndProcessing") . '</div>';
-    //} else {
-    //    setEventMessages($langs->trans("NoRecordSelected"), null, 'warnings');
     }
 }
 

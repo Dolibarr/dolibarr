@@ -30,7 +30,7 @@
 // $objectclass and $objectlabel must be defined
 // $parameters, $object, $action must be defined for the hook.
 
-// $permtoread, $permtocreate and $permtodelete may be defined
+// $permissiontoread, $permissiontoadd, $permissiontodelete, $permissiontoclose may be defined
 // $uploaddir may be defined (example to $conf->projet->dir_output."/";)
 // $toselect may be defined
 // $diroutputmassaction may be defined
@@ -42,6 +42,11 @@ if (empty($objectclass) || empty($uploaddir))
 	dol_print_error(null, 'include of actions_massactions.inc.php is done but var $objectclass or $uploaddir was not defined');
 	exit;
 }
+
+// For backward compatibility
+if (! empty($permtoread) && empty($permissiontoread)) $permissiontoread = $permtoread;
+if (! empty($permtocreate) && empty($permissiontoadd)) $permissiontoadd = $permtocreate;
+if (! empty($permtodelete) && empty($permissiontodelete)) $permissiontoread = $permtodelete;
 
 
 // Mass actions. Controls on number of lines checked.
@@ -71,7 +76,9 @@ if (! $error && $massaction == 'confirm_presend')
 
 	$listofobjectid=array();
 	$listofobjectthirdparties=array();
+	$listofobjectcontacts = array();
 	$listofobjectref=array();
+	$contactidtosend=array();
 	$attachedfilesThirdpartyObj=array();
 	$oneemailperrecipient=(GETPOST('oneemailperrecipient')=='on'?1:0);
 
@@ -97,11 +104,21 @@ if (! $error && $massaction == 'confirm_presend')
 				if ($objecttmp->element == 'holiday')       $thirdpartyid=$objecttmp->fk_user;
 				if (empty($thirdpartyid)) $thirdpartyid=0;
 
-				$listofobjectthirdparties[$thirdpartyid]=$thirdpartyid;
-				$listofobjectref[$thirdpartyid][$toselectid]=$objecttmp;
-			}
-		}
-	}
+				if ($objectclass == 'Facture') {
+					$tmparraycontact = array();
+					$tmparraycontact = $objecttmp->liste_contact(-1, 'external', 0, 'BILLING');
+					if (is_array($tmparraycontact) && count($tmparraycontact) > 0) {
+						foreach ($tmparraycontact as $data_email) {
+							$listofobjectcontacts[$toselectid][$data_email['id']] = $data_email['email'];
+						}
+					}
+				}
+
+                $listofobjectthirdparties[$thirdpartyid]=$thirdpartyid;
+                $listofobjectref[$thirdpartyid][$toselectid]=$objecttmp;
+            }
+        }
+    }
 
 	// Check mandatory parameters
 	if (GETPOST('fromtype', 'alpha') === 'user' && empty($user->email))
@@ -247,6 +264,21 @@ if (! $error && $massaction == 'confirm_presend')
 					    $fuser = new User($db);
 					    $fuser->fetch($objectobj->fk_user);
 					    $sendto = $fuser->email;
+					}
+					elseif ($objectobj->element == 'facture' && !empty($listofobjectcontacts[$objectid]))
+					{
+						$emails_to_sends = array();
+						$objectobj->fetch_thirdparty();
+						$contactidtosend=array();
+						foreach ($listofobjectcontacts[$objectid] as $contactemailid => $contactemailemail) {
+							$emails_to_sends[] = $objectobj->thirdparty->contact_get_property($contactemailid, 'email');
+							if (!in_array($contactemailid, $contactidtosend)) {
+								$contactidtosend[] = $contactemailid;
+							}
+						}
+						if (count($emails_to_sends) > 0) {
+							$sendto = implode(',', $emails_to_sends);
+						}
 					}
 					else
 					{
@@ -498,8 +530,8 @@ if (! $error && $massaction == 'confirm_presend')
 								}
 								$actionmsg2='';
 
-								// Initialisation donnees
-                                $objectobj2->sendtoid		= 0;
+                                // Initialisation donnees
+                                $objectobj2->sendtoid		= (empty($contactidtosend)?0:$contactidtosend);
                                 $objectobj2->actionmsg		= $actionmsg;  // Long text
                                 $objectobj2->actionmsg2		= $actionmsg2; // Short text
                                 $objectobj2->fk_element		= $objid2;
@@ -792,7 +824,7 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 			// Builddoc
 			$donotredirect = 1;
 			$upload_dir = $conf->facture->dir_output;
-			$permissioncreate=$user->rights->facture->creer;
+			$permissiontoadd=$user->rights->facture->creer;
 
 			// Call action to build doc
 			$savobject = $object;
@@ -851,7 +883,6 @@ if ($massaction == 'confirm_createbills')   // Create bills from orders
 
 if (!$error && $massaction == 'cancelorders')
 {
-
 	$db->begin();
 
 	$nbok = 0;
@@ -860,7 +891,6 @@ if (!$error && $massaction == 'cancelorders')
 	$orders = GETPOST('toselect', 'array');
 	foreach ($orders as $id_order)
 	{
-
 		$cmd = new Commande($db);
 		if ($cmd->fetch($id_order) <= 0)
 			continue;
@@ -899,7 +929,7 @@ if (!$error && $massaction == 'cancelorders')
 }
 
 
-if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_search'))
+if (! $error && $massaction == "builddoc" && $permissiontoread && ! GETPOST('button_search'))
 {
 	if (empty($diroutputmassaction))
 	{
@@ -1060,7 +1090,7 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 		}
 		else
 		{
-		setEventMessages($langs->trans('NoPDFAvailableForDocGenAmongChecked'), null, 'errors');
+            setEventMessages($langs->trans('NoPDFAvailableForDocGenAmongChecked'), null, 'errors');
 		}
 	}
 }
@@ -1080,7 +1110,7 @@ if ($action == 'remove_file')
 }
 
 // Validate records
-if (! $error && $massaction == 'validate' && $permtocreate)
+if (! $error && $massaction == 'validate' && $permissiontoadd)
 {
 	$objecttmp=new $objectclass($db);
 
@@ -1145,8 +1175,9 @@ if (! $error && $massaction == 'validate' && $permtocreate)
 		//var_dump($listofobjectthirdparties);exit;
 	}
 }
+
 // Closed records
-if (!$error && $massaction == 'closed' && $objectclass == "Propal" && $permtoclose) {
+if (!$error && $massaction == 'closed' && $objectclass == "Propal" && $permissiontoclose) {
     $db->begin();
 
     $objecttmp = new $objectclass($db);
@@ -1181,7 +1212,7 @@ if (!$error && $massaction == 'closed' && $objectclass == "Propal" && $permtoclo
     }
 }
 // Delete record from mass action (massaction = 'delete' for direct delete, action/confirm='delete'/'yes' with a confirmation step before)
-if (! $error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 'yes')) && $permtodelete)
+if (! $error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 'yes')) && $permissiontodelete)
 {
 	$db->begin();
 
@@ -1247,7 +1278,7 @@ if (! $error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 
 
 // Generate document foreach object according to model linked to object
 // @TODO : propose model selection
-if (! $error && $massaction == 'generate_doc' && $permtoread)
+if (! $error && $massaction == 'generate_doc' && $permissiontoread)
 {
     $db->begin();
 

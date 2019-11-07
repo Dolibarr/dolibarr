@@ -44,7 +44,7 @@ $action = GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'resource', $id, 'resource');
 
 
@@ -82,7 +82,7 @@ $form = new Form($db);
 
 llxHeader('', $langs->trans("Resource"));
 
-if ($object->id)
+if ($object->id > 0)
 {
 	$object->fetch_thirdparty();
 
@@ -100,7 +100,7 @@ if ($object->id)
 	}
 
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/resource/list.php' . (! empty($socid) ? '?id=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/resource/list.php' . (! empty($socid) ? '?id=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 
 	$morehtmlref='<div class="refidno">';

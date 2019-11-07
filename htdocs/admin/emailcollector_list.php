@@ -78,9 +78,9 @@ if (! $sortorder) $sortorder="ASC";
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0)	// Protection if external user
+if ($user->socid > 0)	// Protection if external user
 {
-	//$socid = $user->societe_id;
+	//$socid = $user->socid;
 	accessforbidden();
 }
 //$result = restrictedArea($user, 'emailcollector', $id, '');
@@ -156,8 +156,8 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='EmailCollector';
 	$objectlabel='EmailCollector';
-	$permtoread = $user->rights->emailcollector->read;
-	$permtodelete = $user->rights->emailcollector->delete;
+	$permissiontoread = $user->rights->emailcollector->read;
+	$permissiontodelete = $user->rights->emailcollector->delete;
 	$uploaddir = $conf->emailcollector->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -497,26 +497,8 @@ while ($i < min($num, $limit))
 }
 
 // Show total line
-if (isset($totalarray['pos']))
-{
-	print '<tr class="liste_total">';
-	$i=0;
-	while ($i < $totalarray['nbfield'])
-	{
-		$i++;
-		if (! empty($totalarray['pos'][$i]))  print '<td class="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
-		else
-		{
-			if ($i == 1)
-			{
-				if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
-				else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-			}
-			else print '<td></td>';
-		}
-	}
-	print '</tr>';
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+
 
 // If no record found
 if ($num == 0)

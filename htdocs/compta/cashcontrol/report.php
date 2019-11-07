@@ -216,22 +216,22 @@ if ($resql)
     	if ($objp->amount < 0)
     	{
     	    print price($objp->amount * -1);
-    	    $totalarray['totaldeb'] += $objp->amount;
+    	    $totalarray['val']['totaldebfield'] += $objp->amount;
     	}
     	print "</td>\n";
     	if (! $i) $totalarray['nbfield']++;
-    	if (! $i) $totalarray['totaldebfield']=$totalarray['nbfield'];
+    	if (! $i) $totalarray['pos'][$totalarray['nbfield']]='totaldebfield';
 
     	// Credit
     	print '<td class="right">';
     	if ($objp->amount > 0)
     	{
 			print price($objp->amount);
-    	    $totalarray['totalcred'] += $objp->amount;
+    	    $totalarray['val']['totalcredfield'] += $objp->amount;
     	}
     	print "</td>\n";
     	if (! $i) $totalarray['nbfield']++;
-    	if (! $i) $totalarray['totalcredfield']=$totalarray['nbfield'];
+    	if (! $i) $totalarray['pos'][$totalarray['nbfield']]='totalcredfield';
 
 		print "</tr>";
 
@@ -239,24 +239,7 @@ if ($resql)
 	}
 
 	// Show total line
-	if (isset($totalarray['totaldebfield']) || isset($totalarray['totalcredfield']))
-	{
-	    print '<tr class="liste_total">';
-	    $i=0;
-	    while ($i < $totalarray['nbfield'])
-	    {
-	        $i++;
-	        if ($i == 1)
-	        {
-	            if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
-	            else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-	        }
-	        elseif ($totalarray['totaldebfield'] == $i) print '<td class="right">'.price(-1 * $totalarray['totaldeb']).'</td>';
-	        elseif ($totalarray['totalcredfield'] == $i) print '<td class="right">'.price($totalarray['totalcred']).'</td>';
-	        else print '<td></td>';
-	    }
-	    print '</tr>';
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 	print "</table>";
 

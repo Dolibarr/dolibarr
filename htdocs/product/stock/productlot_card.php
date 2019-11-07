@@ -53,7 +53,7 @@ if (empty($action) && empty($id) && empty($ref)) $action='list';
 
 
 // Protection if external user
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
     //accessforbidden();
 }
@@ -87,7 +87,7 @@ $hookmanager->initHooks(array('productlotcard','globalcard'));
 
 $permissionnote = $user->rights->stock->creer; 		// Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->stock->creer; 	// Used by the include of actions_dellink.inc.php
-$permissionedit = $user->rights->stock->creer; 		// Used by the include of actions_lineupdown.inc.php
+$permissiontoadd = $user->rights->stock->creer; 	// Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 $usercanread = $user->rights->produit->lire;
 $usercancreate = $user->rights->produit->creer;
@@ -180,7 +180,7 @@ if (empty($reshook))
 			{
 				// Creation KO
 				if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-				else  setEventMessages($object->error, null, 'errors');
+			else  setEventMessages($object->error, null, 'errors');
 				$action='create';
 			}
 		}
@@ -252,7 +252,7 @@ if (empty($reshook))
 
 	// Actions to build doc
     $upload_dir = $conf->productbatch->multidir_output[$conf->entity];
-    $permissioncreate = $usercancreate;
+    $permissiontoadd = $usercancreate;
     include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
@@ -318,7 +318,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$linkback = '<a href="' . DOL_URL_ROOT . '/product/stock/productlot_list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
     $shownav = 1;
-    if ($user->societe_id && ! in_array('batch', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+    if ($user->socid && ! in_array('batch', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
 	dol_banner_tab($object, 'id', $linkback, $shownav, 'rowid', 'batch');
 
@@ -369,7 +369,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	if (empty($reshook))
 	{
-/*TODO 		if ($user->rights->stock->lire)
+		/*TODO      if ($user->rights->stock->lire)
 		{
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
 		}
@@ -378,7 +378,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		{
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
 		}
-*/
+		*/
 	}
 	print '</div>'."\n";
 

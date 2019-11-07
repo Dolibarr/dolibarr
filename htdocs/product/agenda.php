@@ -50,7 +50,7 @@ $search_agenda_label=GETPOST('search_agenda_label');
 // Security check
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-if ($user->societe_id) $id=$user->societe_id;
+if ($user->socid) $id=$user->socid;
 $result=restrictedArea($user, 'produit|service', $id, 'product&product');
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -132,7 +132,7 @@ if ($id > 0 || $ref)
     $object->next_prev_filter=" fk_product_type = ".$object->type;
 
     $shownav = 1;
-    if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+    if ($user->socid && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
     dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 

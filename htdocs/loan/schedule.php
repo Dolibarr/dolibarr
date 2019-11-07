@@ -45,10 +45,8 @@ $head=loan_prepare_head($object);
 dol_fiche_head($head, 'FinancialCommitment', $langs->trans("Loan"), -1, 'bill');
 
 if ($action == 'createecheancier') {
-
     $i=1;
     while($i <$object->nbterm+1){
-
         $date =  GETPOST('hi_date'.$i, 'int');
         $mens = GETPOST('mens'.$i);
         $int = GETPOST('hi_interets'.$i);
@@ -76,10 +74,8 @@ if ($action == 'createecheancier') {
 }
 
 if ($action == 'updateecheancier') {
-
     $i=1;
     while($i <$object->nbterm+1){
-
         $mens = GETPOST('mens'.$i);
         $int = GETPOST('hi_interets'.$i);
         $id = GETPOST('hi_rowid'.$i);
@@ -150,7 +146,7 @@ if(count($echeance->lines)>0)
 }else{
 	print '<input type="hidden" name="action" value="createecheancier">';
 }
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 print '<tr class="liste_titre">';
 $colspan = 6;
 if (count($echeance->lines)>0) $colspan++;

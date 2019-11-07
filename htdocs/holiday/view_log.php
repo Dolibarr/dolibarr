@@ -60,7 +60,7 @@ $pagenext = $page + 1;
 
 
 // Protection if external user
-if ($user->societe_id > 0) accessforbidden();
+if ($user->socid > 0) accessforbidden();
 
 // Si l'utilisateur n'a pas le droit de lire cette page
 if(!$user->rights->holiday->read_all) accessforbidden();
@@ -110,8 +110,8 @@ if (empty($reshook))
     // Mass actions
     /*$objectclass='MyObject';
     $objectlabel='MyObject';
-    $permtoread = $user->rights->mymodule->read;
-    $permtodelete = $user->rights->mymodule->delete;
+    $permissiontoread = $user->rights->mymodule->read;
+    $permissiontodelete = $user->rights->mymodule->delete;
     $uploaddir = $conf->mymodule->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
     */

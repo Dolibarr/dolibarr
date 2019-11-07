@@ -53,7 +53,7 @@ $cancel=GETPOST('cancel', 'alpha');
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref :''));
 $fieldtype = (! empty($ref) ? 'ref' :'rowid');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, 'banque', $fieldvalue, 'bank_account', '', '', $fieldtype);
 if (! $user->rights->banque->lire && ! $user->rights->banque->consolidate) accessforbidden();
 
@@ -314,7 +314,7 @@ if ($result)
 		print '<div class="fichecenter">';
 
         print '<div class="underbanner clearboth"></div>';
-        print '<table class="border" width="100%">';
+        print '<table class="border centpercent">';
 
         $i++;
 
@@ -639,7 +639,7 @@ if ($result)
 
             print '<div class="fichecenter">';
 
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
 
             print '<tr><td class="titlefield">'.$langs->trans("Conciliation")."</td>";
             if ($user->rights->banque->consolidate)

@@ -56,7 +56,7 @@ $backtopage=GETPOST('backtopage', 'alpha');
 
 // Security check
 $id = GETPOST('id', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, 'expedition', $id, 'livraison', 'livraison');
 
 $object = new Livraison($db);
@@ -244,7 +244,7 @@ if ($action == 'update_extras_line')
 
 // Actions to build doc
 $upload_dir = $conf->expedition->dir_output.'/receipt';
-$permissioncreate = $user->rights->expedition->creer;
+$permissiontoadd = $user->rights->expedition->creer;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
@@ -307,8 +307,6 @@ $formfile = new FormFile($db);
  *********************************************************************/
 if ($action == 'create')    // Seems to no be used
 {
-
-
 }
 else
 /* *************************************************************************** */
@@ -561,7 +559,7 @@ else
 				$entrepot = new Entrepot($db);
 				$entrepot->fetch($object->entrepot_id);
 				print '<tr><td width="20%">'.$langs->trans("Warehouse").'</td>';
-				print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/product/stock/card.php?id='.$entrepot->id.'">'.$entrepot->libelle.'</a></td>';
+				print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/product/stock/card.php?id='.$entrepot->id.'">'.$entrepot->label.'</a></td>';
 				print '</tr>';
 			}
 
@@ -588,7 +586,7 @@ else
 			$num_prod = count($object->lines);
 			$i = 0; $total = 0;
 
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 
 			if ($num_prod)
 			{
@@ -708,7 +706,7 @@ else
 			 *    Boutons actions
 			 */
 
-			if ($user->societe_id == 0)
+			if ($user->socid == 0)
 			{
 				print '<div class="tabsAction">';
 

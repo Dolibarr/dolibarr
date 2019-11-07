@@ -90,7 +90,7 @@ llxHeader();
 print load_fiche_titre($langs->trans("LimitsSetup"), '', 'title_setup');
 
 
-print $langs->trans("LimitsDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("LimitsDesc")."</span><br>\n";
 print "<br>\n";
 
 if ($action == 'edit')
@@ -101,7 +101,7 @@ if ($action == 'edit')
 
     clearstatcache();
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 
@@ -135,7 +135,7 @@ if ($action == 'edit')
 }
 else
 {
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 
@@ -172,7 +172,6 @@ if (empty($mysoc->country_code))
 }
 else
 {
-
 	// Show examples
 	print '<b>'.$langs->trans("ExamplesWithCurrentSetup").":</b><br>\n";
 

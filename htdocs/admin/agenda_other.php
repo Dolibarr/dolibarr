@@ -221,7 +221,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
     print load_fiche_titre($langs->trans("AgendaModelModule"), '', '');
 
-    print '<table class="noborder" width="100%">'."\n";
+    print '<table class="noborder centpercent">'."\n";
     print '<tr class="liste_titre">'."\n";
     print '<td width="100">'.$langs->trans("Name").'</td>'."\n";
     print '<td>'.$langs->trans("Description").'</td>'."\n";
@@ -268,18 +268,17 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
             			// Active
             			if (in_array($name, $def))
             			{
-
-            			print '<td class="center">'."\n";
-            			if ($conf->global->ACTION_EVENT_ADDON_PDF != "$name")
-            			{
-            				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=action">';
-            				print img_picto($langs->trans("Enabled"), 'switch_on');
-            				print '</a>';
-            			}
-            			else
-            			{
-            				print img_picto($langs->trans("Enabled"), 'switch_on');
-            			}
+            			    print '<td class="center">'."\n";
+            			    if ($conf->global->ACTION_EVENT_ADDON_PDF != "$name")
+            			    {
+            				    print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=action">';
+            				    print img_picto($langs->trans("Enabled"), 'switch_on');
+            				    print '</a>';
+            			    }
+            			    else
+            			    {
+            				    print img_picto($langs->trans("Enabled"), 'switch_on');
+            			    }
             				print "</td>";
             			}
             			else
@@ -325,6 +324,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 }
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" name="agenda">';
+print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 print '<input type="hidden" name="action" value="set">';
 
 print '<table class="noborder allwidth">'."\n";
@@ -363,7 +363,6 @@ print '</td></tr>'."\n";
 
 if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 {
-
     print '<!-- AGENDA_USE_EVENT_TYPE_DEFAULT -->';
     print '<tr class="oddeven">'."\n";
     print '<td>'.$langs->trans("AGENDA_USE_EVENT_TYPE_DEFAULT").'</td>'."\n";

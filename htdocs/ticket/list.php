@@ -3,6 +3,7 @@
  * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
  * Copyright (C) 2018		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2019		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2019		Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -175,8 +176,8 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='Ticket';
 	$objectlabel='Ticket';
-	$permtoread = $user->rights->ticket->read;
-	$permtodelete = $user->rights->ticket->delete;
+	$permissiontoread = $user->rights->ticket->read;
+	$permissiontodelete = $user->rights->ticket->delete;
 	$uploaddir = $conf->ticket->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -246,7 +247,7 @@ foreach($search as $key => $val)
 if ($search_all) $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
 if ($search_societe)     $sql .= natural_search('s.nom', $search_societe);
 if ($search_fk_project) $sql.= natural_search('fk_project', $search_fk_project, 2);
-if (! $user->societe_id && ($mode == "mine" || (!$user->admin && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY))) {
+if (! $user->socid && ($mode == "mine" || (!$user->admin && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY))) {
     $sql.= " AND (t.fk_user_assign = ".$user->id;
     if (empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) $sql.=" OR t.fk_user_create = ".$user->id;
     $sql.=")";
@@ -312,7 +313,6 @@ if ($socid && ! $projectid && ! $project_ref && $user->rights->societe->lire) {
     $socstat = new Societe($db);
     $res = $socstat->fetch($socid);
     if ($res > 0) {
-
     	$tmpobject = $object;
     	$object = $socstat;		// $object must be of type Societe when calling societe_prepare_head
         $head = societe_prepare_head($socstat);
@@ -320,7 +320,7 @@ if ($socid && ! $projectid && ! $project_ref && $user->rights->societe->lire) {
 
         dol_fiche_head($head, 'ticket', $langs->trans("ThirdParty"), -1, 'company');
 
-        dol_banner_tab($socstat, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom');
+        dol_banner_tab($socstat, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
 
         print '<div class="fichecenter">';
 
@@ -524,15 +524,15 @@ foreach($object->fields as $key => $val)
 	if (! empty($arrayfields['t.'.$key]['checked'])) {
 		if ($key == 'type_code') {
 			print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
-			$formTicket->selectTypesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 0, 1, 1, 0, ($val['css']?$val['css']:'maxwidth150'));
+			$formTicket->selectTypesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css']?$val['css']:'maxwidth150'));
 			print '</td>';
 		} elseif ($key == 'category_code') {
 			print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
-			$formTicket->selectGroupTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 0, 1, 1, 0, ($val['css']?$val['css']:'maxwidth150'));
+			$formTicket->selectGroupTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css']?$val['css']:'maxwidth150'));
 			print '</td>';
 		} elseif ($key == 'severity_code') {
 			print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
-			$formTicket->selectSeveritiesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 0, 1, 1, 0, ($val['css']?$val['css']:'maxwidth150'));
+			$formTicket->selectSeveritiesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css']?$val['css']:'maxwidth150'));
 			print '</td>';
 		} elseif ($key == 'fk_user_assign') {
 		    print '<td class="liste_titre'.($cssforfield?' '.$cssforfield:'').'">';
@@ -687,26 +687,8 @@ while ($i < min($num, $limit))
 }
 
 // Show total line
-if (isset($totalarray['pos']))
-{
-	print '<tr class="liste_total">';
-	$i=0;
-	while ($i < $totalarray['nbfield'])
-	{
-		$i++;
-		if (! empty($totalarray['pos'][$i]))  print '<td class="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
-		else
-		{
-			if ($i == 1)
-			{
-				if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
-				else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-			}
-			else print '<td></td>';
-		}
-	}
-	print '</tr>';
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+
 
 // If no record found
 if ($num == 0)

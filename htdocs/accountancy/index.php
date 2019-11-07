@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 $langs->loadLangs(array("compta","bills","other","accountancy","loans","banks","admin","dict"));
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 	accessforbidden();
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
@@ -88,7 +88,7 @@ if ($conf->accounting->enabled)
 	}
 
 
-	print load_fiche_titre($langs->trans("AccountancyArea"), $showtutorial . $resultboxes['selectboxlist'], 'accountancy');
+	print load_fiche_titre($langs->trans("AccountancyArea"), $resultboxes['selectboxlist'], 'accountancy', 0, '', '', $showtutorial);
 
     print '<div class="'.($helpisexpanded ? '' : 'hideobject').'" id="idfaq">'; 	// hideobject is to start hidden
     print "<br>\n";

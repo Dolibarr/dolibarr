@@ -88,11 +88,11 @@ if ($action == 'setlistsorttodo') {
     if (! $res > 0)
         $error ++;
 
-        if (! $error) {
-            setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-        } else {
-            setEventMessages($langs->trans("Error"), null, 'mesgs');
-        }
+    if (! $error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'mesgs');
+    }
 }
 
 if ($action == 'setlistsortdone') {
@@ -100,11 +100,11 @@ if ($action == 'setlistsortdone') {
     $res = dolibarr_set_const($db, "ACCOUNTING_LIST_SORT_VENTILATION_DONE", $setlistsortdone, 'yesno', 0, '', $conf->entity);
     if (! $res > 0)
         $error ++;
-        if (! $error) {
-            setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-        } else {
-            setEventMessages($langs->trans("Error"), null, 'mesgs');
-        }
+    if (! $error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'mesgs');
+    }
 }
 
 if ($action == 'setmanagezero') {
@@ -112,11 +112,11 @@ if ($action == 'setmanagezero') {
     $res = dolibarr_set_const($db, "ACCOUNTING_MANAGE_ZERO", $setmanagezero, 'yesno', 0, '', $conf->entity);
     if (! $res > 0)
         $error ++;
-        if (! $error) {
-            setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-        } else {
-            setEventMessages($langs->trans("Error"), null, 'mesgs');
-        }
+    if (! $error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'mesgs');
+    }
 }
 
 if ($action == 'setdisabledirectinput') {
@@ -124,11 +124,11 @@ if ($action == 'setdisabledirectinput') {
 	$res = dolibarr_set_const($db, "BANK_DISABLE_DIRECT_INPUT", $setdisabledirectinput, 'yesno', 0, '', $conf->entity);
 	if (! $res > 0)
 		$error ++;
-		if (! $error) {
-			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-		} else {
-			setEventMessages($langs->trans("Error"), null, 'mesgs');
-		}
+	if (! $error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
 }
 
 if ($action == 'setenabledraftexport') {
@@ -136,11 +136,11 @@ if ($action == 'setenabledraftexport') {
 	$res = dolibarr_set_const($db, "ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL", $setenabledraftexport, 'yesno', 0, '', $conf->entity);
 	if (! $res > 0)
 		$error ++;
-		if (! $error) {
-			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-		} else {
-			setEventMessages($langs->trans("Error"), null, 'mesgs');
-		}
+	if (! $error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
 }
 
 if ($action == 'setenablesubsidiarylist') {
@@ -172,7 +172,7 @@ print '<input type="hidden" name="action" value="update">';
 
 // Default mode for calculating turnover (parameter ACCOUNTING_MODE)
 /*
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>' . $langs->trans('OptionMode') . '</td><td>' . $langs->trans('Description') . '</td>';
@@ -202,7 +202,7 @@ print '<br>';
 
 // Others params
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">' . $langs->trans('OtherOptions') . '</td>';
 print "</tr>\n";

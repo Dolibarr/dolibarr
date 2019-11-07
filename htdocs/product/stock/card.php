@@ -68,8 +68,8 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 if ($id > 0 || ! empty($ref)) {
     $ret = $object->fetch($id, $ref);
-//    if ($ret > 0)
-//        $ret = $object->fetch_thirdparty();
+	//    if ($ret > 0)
+	//        $ret = $object->fetch_thirdparty();
     if ($ret <= 0) {
         setEventMessages($object->error, $object->errors, 'errors');
         $action = '';
@@ -223,7 +223,7 @@ if (empty($reshook))
 
 	// Actions to build doc
 	$upload_dir = $conf->stock->dir_output;
-	$permissioncreate = $user->rights->stock->creer;
+	$permissiontoadd = $user->rights->stock->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
@@ -255,7 +255,7 @@ if ($action == 'create')
 
 	dol_fiche_head();
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Ref
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input name="libelle" size="20" value=""></td></tr>';
@@ -378,7 +378,7 @@ else
         	$morehtmlref.='</div>';
 
             $shownav = 1;
-            if ($user->societe_id && ! in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+            if ($user->socid && ! in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
         	dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
 
@@ -386,12 +386,11 @@ else
         	print '<div class="fichehalfleft">';
         	print '<div class="underbanner clearboth"></div>';
 
-        	print '<table class="border" width="100%">';
+        	print '<table class="border centpercent">';
 
 			// Parent entrepot
 			$e = new Entrepot($db);
 			if(!empty($object->fk_parent) && $e->fetch($object->fk_parent) > 0) {
-
 				print '<tr><td>'.$langs->trans("ParentWarehouse").'</td><td>';
 				print $e->getNomUrl(3);
 				print '</td></tr>';
@@ -429,30 +428,26 @@ else
 			print "</td></tr>";
 
 			// Last movement
-			$sql = "SELECT max(m.datem) as datem";
-			$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
-			$sql .= " WHERE m.fk_entrepot = '".$object->id."'";
-			$resqlbis = $db->query($sql);
-			if ($resqlbis)
-			{
-			    $obj = $db->fetch_object($resqlbis);
-			    $lastmovementdate=$db->jdate($obj->datem);
+			if (!empty($user->rights->stock->mouvement->lire)) {
+				$sql = "SELECT max(m.datem) as datem";
+				$sql .= " FROM " . MAIN_DB_PREFIX . "stock_mouvement as m";
+				$sql .= " WHERE m.fk_entrepot = '" . $object->id . "'";
+				$resqlbis = $db->query($sql);
+				if ($resqlbis) {
+					$obj = $db->fetch_object($resqlbis);
+					$lastmovementdate = $db->jdate($obj->datem);
+				} else {
+					dol_print_error($db);
+				}
+				print '<tr><td>' . $langs->trans("LastMovement") . '</td><td>';
+				if ($lastmovementdate) {
+					print dol_print_date($lastmovementdate, 'dayhour') . ' ';
+					print '(<a href="' . DOL_URL_ROOT . '/product/stock/movement_list.php?id=' . $object->id . '">' . $langs->trans("FullList") . '</a>)';
+				} else {
+					print $langs->trans("None");
+				}
+				print "</td></tr>";
 			}
-			else
-			{
-			    dol_print_error($db);
-			}
-			print '<tr><td>'.$langs->trans("LastMovement").'</td><td>';
-			if ($lastmovementdate)
-			{
-			    print dol_print_date($lastmovementdate, 'dayhour').' ';
-			    print '(<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$object->id.'">'.$langs->trans("FullList").'</a>)';
-			}
-			else
-			{
-			    print $langs->trans("None");
-			}
-			print "</td></tr>";
 
             // Other attributes
             include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
@@ -509,7 +504,7 @@ else
 			/* ************************************************************************** */
 			print '<br>';
 
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print "<tr class=\"liste_titre\">";
 			print_liste_field_titre("Product", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Label", "", "p.label", "&amp;id=".$id, "", "", $sortfield, $sortorder);
@@ -670,7 +665,7 @@ else
 
 			dol_fiche_head($head, 'card', $langs->trans("Warehouse"), 0, 'stock');
 
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent">';
 
 			// Ref
 			print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input name="libelle" size="20" value="'.$object->libelle.'"></td></tr>';

@@ -82,6 +82,9 @@ div.soustitre {
 .minwidth400imp { min-width: 400px !important; }
 .minwidth500imp { min-width: 500px !important; }
 
+tr.trlineforchoice {
+    height: 4em;
+}
 
 /* Force values for small screen 570 */
 @media only screen and (max-width: 570px)

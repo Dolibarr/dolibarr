@@ -167,7 +167,7 @@ print $langs->trans("StripeDesc")."<br>\n";
 
 print '<br>';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("AccountParameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
@@ -177,12 +177,12 @@ print "</tr>\n";
 print '<tr class="oddeven">';
 print '<td class="titlefield">';
 print $langs->trans("StripeLiveEnabled").'</td><td>';
-  if ($conf->use_javascript_ajax) {
+if ($conf->use_javascript_ajax) {
     print ajax_constantonoff('STRIPE_LIVE');
-  } else {
+} else {
     $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
     print $form->selectarray("STRIPE_LIVE", $arrval, $conf->global->STRIPE_LIVE);
-  }
+}
 print '</td><td></td></tr>';
 
 if (empty($conf->stripeconnect->enabled))
@@ -203,7 +203,7 @@ if (empty($conf->stripeconnect->enabled))
 	print '<span class="titlefield">'.$langs->trans("STRIPE_TEST_WEBHOOK_KEY").'</span></td><td>';
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	    print '<input class="minwidth300" type="text" name="STRIPE_TEST_WEBHOOK_ID" value="'.$conf->global->STRIPE_TEST_WEBHOOK_ID.'">';
-      print ' &nbsp; '.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx<br>';
+        print ' &nbsp; '.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx<br>';
 	}
 	print '<input class="minwidth300" type="text" name="STRIPE_TEST_WEBHOOK_KEY" value="'.$conf->global->STRIPE_TEST_WEBHOOK_KEY.'">';
 	print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
@@ -239,7 +239,7 @@ if (empty($conf->stripeconnect->enabled))
             	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=1">';
             	print img_picto($langs->trans("Disabled"), 'switch_off');
             }
-        //print $endpoint;
+            //print $endpoint;
         }
         else
         {
@@ -275,8 +275,8 @@ if (empty($conf->stripeconnect->enabled))
 	print '<tr class="oddeven"><td>';
 	print '<span class="titlefield">'.$langs->trans("STRIPE_LIVE_WEBHOOK_KEY").'</span></td><td>';
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
-      print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_ID" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_ID.'">';
-      print ' &nbsp; '.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx<br>';
+        print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_ID" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_ID.'">';
+        print ' &nbsp; '.$langs->trans("Example").': we_xxxxxxxxxxxxxxxxxxxxxxxx<br>';
 	}
 	print '<input class="minwidth300" type="text" name="STRIPE_LIVE_WEBHOOK_KEY" value="'.$conf->global->STRIPE_LIVE_WEBHOOK_KEY.'">';
 	print ' &nbsp; '.$langs->trans("Example").': whsec_xxxxxxxxxxxxxxxxxxxxxxxx';
@@ -312,7 +312,7 @@ if (empty($conf->stripeconnect->enabled))
                 print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=ipn&webhook='.$endpoint->id.'&status=1">';
                 print img_picto($langs->trans("Disabled"), 'switch_off');
             }
-        //print $endpoint;
+            //print $endpoint;
         }
         else
         {
@@ -333,7 +333,7 @@ print '</table>';
 print '<br>';
 
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td class="titlefield">'.$langs->trans("UsageParameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
@@ -366,14 +366,14 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// What is this for ?
 // Activate Payment Request API
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
 {
-  print '<tr class="oddeven"><td>';
+    print '<tr class="oddeven"><td>';
 	print $langs->trans("STRIPE_PAYMENT_REQUEST_API").'</td><td>';
-  if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('STRIPE_PAYMENT_REQUEST_API');
-  } else {
-    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("STRIPE_PAYMENT_REQUEST_API", $arrval, $conf->global->STRIPE_PAYMENT_REQUEST_API);
-  }
+    if ($conf->use_javascript_ajax) {
+        print ajax_constantonoff('STRIPE_PAYMENT_REQUEST_API');
+    } else {
+        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+        print $form->selectarray("STRIPE_PAYMENT_REQUEST_API", $arrval, $conf->global->STRIPE_PAYMENT_REQUEST_API);
+    }
 	print '</td></tr>';
 }
 
@@ -382,12 +382,12 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
 {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("STRIPE_SEPA_DIRECT_DEBIT").'</td><td>';
-  if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('STRIPE_SEPA_DIRECT_DEBIT');
-  } else {
-    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("STRIPE_SEPA_DIRECT_DEBIT", $arrval, $conf->global->STRIPE_SEPA_DIRECT_DEBIT);
-  }
+    if ($conf->use_javascript_ajax) {
+        print ajax_constantonoff('STRIPE_SEPA_DIRECT_DEBIT');
+    } else {
+        $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+        print $form->selectarray("STRIPE_SEPA_DIRECT_DEBIT", $arrval, $conf->global->STRIPE_SEPA_DIRECT_DEBIT);
+    }
 	print '</td></tr>';
 }
 

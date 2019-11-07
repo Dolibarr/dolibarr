@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2019 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,13 +36,17 @@ $langs->loadLangs(array('compta', 'bills'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 $search_ref = GETPOST('search_ref', 'int');
 $search_label = GETPOST('search_label', 'alpha');
-$search_amount = GETPOST('search_amount', 'alpha');
 $search_account = GETPOST('search_account', 'int');
+$search_dateend_start = dol_mktime(0, 0, 0, GETPOST('search_dateend_startmonth', 'int'), GETPOST('search_dateend_startday', 'int'), GETPOST('search_dateend_startyear', 'int'));
+$search_dateend_end = dol_mktime(23, 59, 59, GETPOST('search_dateend_endmonth', 'int'), GETPOST('search_dateend_endday', 'int'), GETPOST('search_dateend_endyear', 'int'));
+$search_datepayment_start = dol_mktime(0, 0, 0, GETPOST('search_datepayment_startmonth', 'int'), GETPOST('search_datepayment_startday', 'int'), GETPOST('search_datepayment_startyear', 'int'));
+$search_datepayment_end = dol_mktime(23, 59, 59, GETPOST('search_datepayment_endmonth', 'int'), GETPOST('search_datepayment_endday', 'int'), GETPOST('search_datepayment_endyear', 'int'));
+$search_amount = GETPOST('search_amount', 'alpha');
 $month = GETPOST("month", "int");
 $year = GETPOST("year", "int");
 
@@ -78,8 +82,12 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 {
 	$search_ref="";
 	$search_label="";
-	$search_amount="";
+	$search_dateend_start='';
+	$search_dateend_end='';
+	$search_datepayment_start='';
+	$search_datepayment_end='';
 	$search_account='';
+	$search_amount="";
 	$year="";
 	$month="";
     $typeid="";
@@ -104,11 +112,14 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON t.fk_typepayment = pst
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON t.fk_bank = b.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
 $sql.= " WHERE t.entity IN (".getEntity('tax').")";
-if ($search_ref)	$sql.= natural_search("t.rowid", $search_ref);
-if ($search_label) 	$sql.= natural_search("t.label", $search_label);
-if ($search_amount) $sql.= natural_search("t.amount", price2num(trim($search_amount)), 1);
-if ($search_account > 0) $sql .=" AND b.fk_account=".$search_account;
-$sql.= dolSqlDateFilter('t.datev', 0, $month, $year);
+if ($search_ref)				$sql.= natural_search("t.rowid", $search_ref);
+if ($search_label)				$sql.= natural_search("t.label", $search_label);
+if ($search_account > 0)		$sql .=" AND b.fk_account=".$search_account;
+if ($search_amount)				$sql.= natural_search("t.amount", price2num(trim($search_amount)), 1);
+if ($search_dateend_start)		$sql.= " AND t.datev >= '" . $db->idate($search_dateend_start) . "'";
+if ($search_dateend_end)		$sql.= " AND t.datev <= '" . $db->idate($search_dateend_end) . "'";
+if ($search_datepayment_start)  $sql.= " AND t.datep >= '" . $db->idate($search_datepayment_start) . "'";
+if ($search_datepayment_end)	$sql.= " AND t.datep <= '" . $db->idate($search_datepayment_end) . "'";
 if ($filtre) {
     $filtre=str_replace(":", "=", $filtre);
     $sql .= " AND ".$filtre;
@@ -157,16 +168,32 @@ if ($result)
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 	print '<tr class="liste_titre_filter">';
+	// Ref
 	print '<td class="liste_titre"><input type="text" class="flat" size="4" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
+	// Label
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
-	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre" align="center">';
-	print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
-	$syear = $year;
-	$formother->select_year($syear?$syear:-1, 'year', 1, 20, 5);
-	print '</td>';
+	// Date end period
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $langs->trans('From') . ' ';
+	print $form->selectDate($search_dateend_start?$search_dateend_start:-1, 'search_dateend_start', 0, 0, 1);
+	print '</div>';
+	print '<div class="nowrap">';
+	print $langs->trans('to') . ' ';
+	print $form->selectDate($search_dateend_end?$search_dateend_end:-1, 'search_dateend_end', 0, 0, 1);
+	print '</div>';
+	// Date payment
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $langs->trans('From') . ' ';
+	print $form->selectDate($search_datepayment_start?$search_datepayment_start:-1, 'search_datepayment_start', 0, 0, 1);
+	print '</div>';
+	print '<div class="nowrap">';
+	print $langs->trans('to') . ' ';
+	print $form->selectDate($search_datepayment_end?$search_datepayment_end:-1, 'search_datepayment_end', 0, 0, 1);
+	print '</div>';
 	// Type
-	print '<td class="liste_titre" align="left">';
+	print '<td class="liste_titre left">';
 	$form->select_types_paiements($typeid, 'typeid', '', 0, 1, 1, 16);
 	print '</td>';
 	// Account
@@ -176,6 +203,7 @@ if ($result)
 	    $form->select_comptes($search_account, 'search_account', 0, '', 1);
 	    print '</td>';
     }
+	// Amount
 	print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
     print '<td class="liste_titre maxwidthsearch">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
@@ -216,8 +244,10 @@ if ($result)
 		print "<td>".$tva_static->getNomUrl(1)."</td>\n";
         // Label
 		print "<td>".dol_trunc($obj->label, 40)."</td>\n";
-        print '<td align="center">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>\n";
-        print '<td align="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
+		// Date end period
+        print '<td class="center">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>\n";
+        // Date payment
+        print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
         // Type
 		print $type;
 		// Account
@@ -243,7 +273,7 @@ if ($result)
 		}
 		// Amount
         $total = $total + $obj->amount;
-		print "<td align=\"right\">".price($obj->amount)."</td>";
+		print '<td class="nowrap right">'.price($obj->amount)."</td>";
 	    print "<td>&nbsp;</td>";
         print "</tr>\n";
 

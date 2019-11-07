@@ -62,7 +62,10 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public $fk_element = 'fk_commande';
 
-    public $picto='order';
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto='order';
 
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -439,7 +442,7 @@ class CommandeFournisseur extends CommonOrder
 
     			$line->fk_product          = $objp->fk_product;
 
-    			$line->libelle             = $objp->product_label;
+    			$line->libelle             = $objp->product_label;	// deprecated
     			$line->product_label       = $objp->product_label;
     			$line->product_desc        = $objp->product_desc;
 
@@ -684,7 +687,7 @@ class CommandeFournisseur extends CommonOrder
             $billedtext = ' - '.$langs->trans("Billed");
         }
 
-        $statusLong = $langs->trans($this->statuts_long[$status]).$billedtext;
+        $statusLong = $langs->trans($this->statuts[$status]).$billedtext;
         $statusShort = $langs->trans($this->statutshort[$status]);
 
         return dolGetStatus($statusLong, $statusShort, '', $statusClass, $mode);
@@ -776,7 +779,6 @@ class CommandeFournisseur extends CommonOrder
             $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
             foreach ($dirmodels as $reldir) {
-
                 $dir = dol_buildpath($reldir."core/modules/supplier_order/");
 
                 // Load file with numbering class (if found)
@@ -1271,10 +1273,10 @@ class CommandeFournisseur extends CommonOrder
 	            // insert products details into database
 	            for ($i=0;$i<$num;$i++)
 	            {
-
 	                $this->special_code = $this->lines[$i]->special_code; // TODO : remove this in 9.0 and add special_code param to addline()
 
-                $result = $this->addline(              // This include test on qty if option SUPPLIER_ORDER_WITH_NOPRICEDEFINED is not set
+                    // This include test on qty if option SUPPLIER_ORDER_WITH_NOPRICEDEFINED is not set
+                    $result = $this->addline(
 	                    $this->lines[$i]->desc,
 	                    $this->lines[$i]->subprice,
 	                    $this->lines[$i]->qty,
@@ -1391,18 +1393,40 @@ class CommandeFournisseur extends CommonOrder
      *	Load an object from its id and create a new one in database
      *
 	 *  @param	    User	$user		User making the clone
+	 *	@param		int		$socid		Id of thirdparty
      *	@return		int					New id of clone
      */
-    public function createFromClone(User $user)
+    public function createFromClone(User $user, $socid = 0)
     {
-        global $hookmanager;
+    	global $conf, $user,$hookmanager;
 
         $error=0;
 
 		$this->db->begin();
 
+		// get lines so they will be clone
+		foreach($this->lines as $line)
+			$line->fetch_optionals();
+
 		// Load source object
 		$objFrom = clone $this;
+
+		// Change socid if needed
+		if (! empty($socid) && $socid != $this->socid)
+		{
+			$objsoc = new Societe($this->db);
+
+			if ($objsoc->fetch($socid)>0)
+			{
+				$this->socid 				= $objsoc->id;
+				$this->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
+				$this->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
+				$this->fk_project			= 0;
+				$this->fk_delivery_address	= 0;
+			}
+
+			// TODO Change product price if multi-prices
+		}
 
         $this->id=0;
         $this->statut=self::STATUS_DRAFT;
@@ -1540,7 +1564,7 @@ class CommandeFournisseur extends CommonOrder
                 {
                     // Check quantity is enough
                     dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." fk_prod_fourn_price=".$fk_prod_fourn_price." qty=".$qty." ref_supplier=".$ref_supplier);
-                    $prod = new Product($this->db, $fk_product);
+                    $prod = new Product($this->db);
                     if ($prod->fetch($fk_product) > 0)
                     {
                         $product_type = $prod->type;
@@ -2350,17 +2374,17 @@ class CommandeFournisseur extends CommonOrder
         for ($i = 0; $i < $num; $i++)
         {
             $prod = new Product($this->db);
-            $libelle = '';
+            $label = '';
             $ref = '';
             if ($prod->fetch($comclient->lines[$i]->fk_product) > 0)
             {
-                $libelle  = $prod->libelle;
-                $ref      = $prod->ref;
+                $label  = $prod->label;
+                $ref    = $prod->ref;
             }
 
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet";
-            $sql .= " (fk_commande,label,description,fk_product, price, qty, tva_tx, localtax1_tx, localtax2_tx, remise_percent, subprice, remise, ref)";
-            $sql .= " VALUES (".$idc.", '" . $this->db->escape($libelle) . "','" . $this->db->escape($comclient->lines[$i]->desc) . "'";
+            $sql .= " (fk_commande, label, description, fk_product, price, qty, tva_tx, localtax1_tx, localtax2_tx, remise_percent, subprice, remise, ref)";
+            $sql .= " VALUES (".$idc.", '" . $this->db->escape($label) . "','" . $this->db->escape($comclient->lines[$i]->desc) . "'";
             $sql .= ",".$comclient->lines[$i]->fk_product.",'".price2num($comclient->lines[$i]->price)."'";
             $sql .= ", '".$comclient->lines[$i]->qty."', ".$comclient->lines[$i]->tva_tx.", ".$comclient->lines[$i]->localtax1_tx.", ".$comclient->lines[$i]->localtax2_tx.", ".$comclient->lines[$i]->remise_percent;
             $sql .= ", '".price2num($comclient->lines[$i]->subprice)."','0','".$ref."');";
@@ -2750,7 +2774,7 @@ class CommandeFournisseur extends CommonOrder
         $sql = "SELECT count(co.rowid) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as co";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON co.fk_soc = s.rowid";
-        if (!$user->rights->societe->client->voir && !$user->societe_id)
+        if (!$user->rights->societe->client->voir && !$user->socid)
         {
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
             $sql.= " WHERE sc.fk_user = " .$user->id;
@@ -2793,7 +2817,7 @@ class CommandeFournisseur extends CommonOrder
 
         $sql = "SELECT c.rowid, c.date_creation as datec, c.date_commande, c.fk_statut, c.date_livraison as delivery_date";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
-        if (!$user->rights->societe->client->voir && !$user->societe_id)
+        if (!$user->rights->societe->client->voir && !$user->socid)
         {
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc";
             $sql.= " WHERE sc.fk_user = " .$user->id;
@@ -2806,7 +2830,7 @@ class CommandeFournisseur extends CommonOrder
         else{
             $sql.= " AND c.fk_statut IN (".self::STATUS_VALIDATED.", ".self::STATUS_ACCEPTED.")";
         }
-        if ($user->societe_id) $sql.=" AND c.fk_soc = ".$user->societe_id;
+        if ($user->socid) $sql.=" AND c.fk_soc = ".$user->socid;
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -2903,7 +2927,6 @@ class CommandeFournisseur extends CommonOrder
 		$langs->load("suppliers");
 
 		if (! dol_strlen($modele)) {
-
 			$modele = 'muscadet';
 
 			if ($this->modelpdf) {
@@ -3588,7 +3611,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
      *	@param      int     $notrigger  1=Disable call to triggers
      *	@return     int                 <0 if KO, >0 if OK
      */
-    public function delete($notrigger)
+    public function delete($notrigger = 0)
     {
         global $user;
 
@@ -3596,13 +3619,12 @@ class CommandeFournisseurLigne extends CommonOrderLine
 
         $this->db->begin();
 
-        $sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid=".$this->rowid;
+        $sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid=".$this->id;
 
         dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
-
             if (!$notrigger)
             {
                 // Call trigger

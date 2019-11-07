@@ -359,7 +359,7 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
 						'pass_indatabase_crypted' => $user->pass_indatabase_crypted,
 						'datec' => dol_print_date($user->datec, 'dayhourrfc'),
 						'datem' => dol_print_date($user->datem, 'dayhourrfc'),
-						'fk_thirdparty' => $user->societe_id,
+						'fk_thirdparty' => $user->socid,
 						'fk_contact' => $user->contact_id,
 						'fk_member' => $user->fk_member,
 						'datelastlogin' => dol_print_date($user->datelastlogin, 'dayhourrfc'),

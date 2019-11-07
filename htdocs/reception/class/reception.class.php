@@ -48,7 +48,11 @@ class Reception extends CommonObject
 	public $table_element="reception";
 	public $table_element_line="commande_fournisseur_dispatch";
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-    public $picto = 'reception';
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
+	public $picto = 'reception';
 
     public $socid;
     public $ref_supplier;
@@ -80,8 +84,14 @@ class Reception extends CommonObject
 	 * @var int
 	 */
 	public $date_reception;
-    public $date_creation;
-    public $date_valid;
+
+	/**
+	 * @var integer|string date_creation
+	 */
+	public $date_creation;
+
+
+	public $date_valid;
 
     public $meths;
     public $listmeths;			// List of carriers
@@ -110,6 +120,13 @@ class Reception extends CommonObject
 		$this->statuts[0]  = 'StatusReceptionDraft';
 		$this->statuts[1]  = 'StatusReceptionValidated';
 		$this->statuts[2]  = 'StatusReceptionProcessed';
+
+		// List of short language codes for status
+		$this->statutshorts = array();
+		$this->statutshorts[-1] = 'StatusReceptionCanceledShort';
+		$this->statutshorts[0]  = 'StatusReceptionDraftShort';
+		$this->statutshorts[1]  = 'StatusReceptionValidatedShort';
+		$this->statutshorts[2]  = 'StatusReceptionProcessedShort';
 	}
 
 	/**
@@ -134,7 +151,6 @@ class Reception extends CommonObject
 	        $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 	        foreach ($dirmodels as $reldir) {
-
 		        $dir = dol_buildpath($reldir."core/modules/reception/");
 
 		        // Load file with numbering class (if found)
@@ -1137,45 +1153,23 @@ class Reception extends CommonObject
 	/**
 	 * Return label of a status
 	 *
-	 * @param      int		$statut		Id statut
+	 * @param      int		$status		Id status
 	 * @param      int		$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
 	 * @return     string				Label of status
 	 */
-    public function LibStatut($statut, $mode)
+    public function LibStatut($status, $mode)
     {
-		// phpcs:enable
-		global $langs;
+    	// phpcs:enable
+    	global $langs;
 
-		if ($mode==0)
-		{
-			if ($statut==0) return $langs->trans($this->statuts[$statut]);
-			elseif ($statut==1)  return $langs->trans($this->statuts[$statut]);
-			elseif ($statut==2)  return $langs->trans($this->statuts[$statut]);
-		}
-		elseif ($mode==1)
-		{
-			if ($statut==0) return $langs->trans('StatusReceptionDraftShort');
-			elseif ($statut==1) return $langs->trans('StatusReceptionValidatedShort');
-			elseif ($statut==2) return $langs->trans('StatusReceptionProcessedShort');
-		}
-		elseif ($mode == 3)
-		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut0');
-			elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]), 'statut4');
-			elseif ($statut==2) return img_picto($langs->trans('StatusReceptionProcessed'), 'statut6');
-		}
-		elseif ($mode == 4)
-		{
-			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]), 'statut0').' '.$langs->trans($this->statuts[$statut]);
-			elseif ($statut==1) return img_picto($langs->trans($this->statuts[$statut]), 'statut4').' '.$langs->trans($this->statuts[$statut]);
-			elseif ($statut==2) return img_picto($langs->trans('StatusReceptionProcessed'), 'statut6').' '.$langs->trans('StatusReceptionProcessed');
-		}
-		elseif ($mode == 5)
-		{
-			if ($statut==0) return $langs->trans('StatusReceptionDraftShort').' '.img_picto($langs->trans($this->statuts[$statut]), 'statut0');
-			elseif ($statut==1) return $langs->trans('StatusReceptionValidatedShort').' '.img_picto($langs->trans($this->statuts[$statut]), 'statut4');
-			elseif ($statut==2) return $langs->trans('StatusReceptionProcessedShort').' '.img_picto($langs->trans('StatusReceptionProcessedShort'), 'statut6');
-		}
+    	$labelStatus = $langs->trans($this->statuts[$status]);
+    	$labelStatusShort = $langs->trans($this->statutshorts[$status]);
+
+    	$statusType = 'status'.$status;
+    	if ($status == self::STATUS_VALIDATED) $statusType = 'status4';
+    	if ($status == self::STATUS_CLOSED) $statusType = 'status6';
+
+    	return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
 	}
 
 	/**

@@ -71,9 +71,9 @@ if (! $sortorder) $sortorder="ASC";
 
 // Protection if external user
 $socid=0;
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
-	//$socid = $user->societe_id;
+	//$socid = $user->socid;
 	accessforbidden();
 }
 
@@ -148,8 +148,8 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='EmailSenderProfile';
 	$objectlabel='EmailSenderProfile';
-	$permtoread = $user->admin;
-	$permtodelete = $user->admin;
+	$permissiontoread = $user->admin;
+	$permissiontodelete = $user->admin;
 	$uploaddir = $conf->admin->dir_output.'/senderprofiles';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -393,7 +393,7 @@ print '</tr>'."\n";
 
 // Detect if we need a fetch on each output line
 $needToFetchEachLine=0;
-foreach ($extrafields->attribute_computed as $key => $val)
+foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val)
 {
 	if (preg_match('/\$object/', $val)) $needToFetchEachLine++;  // There is at least one compute field that use $object
 }
@@ -461,26 +461,8 @@ while ($i < min($num, $limit))
 }
 
 // Show total line
-if (isset($totalarray['pos']))
-{
-	print '<tr class="liste_total">';
-	$i=0;
-	while ($i < $totalarray['nbfield'])
-	{
-		$i++;
-		if (! empty($totalarray['pos'][$i]))  print '<td class="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
-		else
-		{
-			if ($i == 1)
-			{
-				if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
-				else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-			}
-			else print '<td></td>';
-		}
-	}
-	print '</tr>';
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+
 
 // If no record found
 if ($num == 0)

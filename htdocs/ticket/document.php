@@ -94,14 +94,14 @@ if ($object->id)
         $object->fetch_thirdparty();
         $head = societe_prepare_head($object->thirdparty);
         dol_fiche_head($head, 'ticket', $langs->trans("ThirdParty"), 0, 'company');
-        dol_banner_tab($object->thirdparty, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom');
+        dol_banner_tab($object->thirdparty, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
         dol_fiche_end();
     }
 
-    if (!$user->societe_id && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) {
+    if (!$user->socid && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) {
         $object->next_prev_filter = "te.fk_user_assign = '" . $user->id . "'";
-    } elseif ($user->societe_id > 0) {
-        $object->next_prev_filter = "te.fk_soc = '" . $user->societe_id . "'";
+    } elseif ($user->socid > 0) {
+        $object->next_prev_filter = "te.fk_soc = '" . $user->socid . "'";
     }
 
     $head = ticket_prepare_head($object);
@@ -128,7 +128,7 @@ if ($object->id)
     if (! empty($conf->societe->enabled))
     {
     	$morehtmlref.='<br>'.$langs->trans('ThirdParty');
-    	/*if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->societe_id && $user->rights->ticket->write) {
+    	/*if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->socid && $user->rights->ticket->write) {
     		$morehtmlref.='<a class="editfielda" href="' . $url_page_current . '?action=editcustomer&amp;track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
     	}*/
     	$morehtmlref.=' : ';
@@ -146,20 +146,21 @@ if ($object->id)
     	$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
     	if ($user->rights->ticket->write)
     	{
-    		if ($action != 'classify')
+    		if ($action != 'classify') {
     			//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
-    			$morehtmlref.=' : ';
-    			if ($action == 'classify') {
-    				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-    				$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-    				$morehtmlref.='<input type="hidden" name="action" value="classin">';
-    				$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    				$morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
-    				$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-    				$morehtmlref.='</form>';
-    			} else {
-    				$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-    			}
+				$morehtmlref.=' : ';
+			}
+    		if ($action == 'classify') {
+    			//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+    			$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+    			$morehtmlref.='<input type="hidden" name="action" value="classin">';
+    			$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    			$morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
+    			$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+    			$morehtmlref.='</form>';
+    		} else {
+    			$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+    		}
     	} else {
     		if (! empty($object->fk_project)) {
     			$proj = new Project($db);
@@ -175,7 +176,7 @@ if ($object->id)
 
     $linkback = '<a href="' . dol_buildpath('/ticket/list.php', 1) . '"><strong>' . $langs->trans("BackToList") . '</strong></a> ';
 
-    dol_banner_tab($object, 'ref', $linkback, ($user->societe_id ? 0 : 1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
+    dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
     dol_fiche_end();
 

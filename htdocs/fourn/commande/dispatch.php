@@ -51,8 +51,8 @@ $id = GETPOST("id", 'int');
 $ref = GETPOST('ref');
 $lineid = GETPOST('lineid', 'int');
 $action = GETPOST('action', 'aZ09');
-if ($user->societe_id)
-	$socid = $user->societe_id;
+if ($user->socid)
+	$socid = $user->socid;
 $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 if (empty($conf->stock->enabled)) {
@@ -407,20 +407,21 @@ if ($id > 0 || ! empty($ref)) {
 	    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 	    if ($user->rights->fournisseur->commande->creer)
 	    {
-	        if ($action != 'classify')
-	        	//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-	            $morehtmlref.=' : ';
-	        	if ($action == 'classify') {
-	                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-	                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-	                $morehtmlref.='<input type="hidden" name="action" value="classin">';
-	                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-	                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-	                $morehtmlref.='</form>';
-	            } else {
-	                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-	            }
+	        if ($action != 'classify') {
+	            //$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				$morehtmlref.=' : ';
+            }
+	        if ($action == 'classify') {
+                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+                $morehtmlref.='<input type="hidden" name="action" value="classin">';
+                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+                $morehtmlref.='</form>';
+            } else {
+                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+            }
 	    } else {
 	        if (! empty($object->fk_project)) {
 	            $proj = new Project($db);
@@ -462,8 +463,8 @@ if ($id > 0 || ! empty($ref)) {
 	print '<td>' . $author->getNomUrl(1, '', 0, 0, 0) . '</td>';
 	print '</tr>';
 
-  $parameters=array();
-  $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+    $parameters = array();
+    $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 
 	print "</table>";
 
@@ -495,7 +496,7 @@ if ($id > 0 || ! empty($ref)) {
 		else print '<input type="hidden" name="action" value="create">';
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 
 		// Set $products_dispatched with qty dispatched for each product id
 		$products_dispatched = array();
@@ -733,7 +734,6 @@ if ($id > 0 || ! empty($ref)) {
 							print '</td>';
 							print '<td colspan="3">&nbsp</td>'; // Supplier ref + Qty ordered + qty already dispatched
 						} else {
-
 							$type = 'dispatch';
 							print '<td class="right">';
 							print '</td>';     // Qty to dispatch
@@ -922,7 +922,7 @@ if ($id > 0 || ! empty($ref)) {
 			print load_fiche_titre($langs->trans("ReceivingForSameOrder"));
 
 			print '<div class="div-table-responsive">';
-			print '<table id="dispatch_received_products" class="noborder" width="100%">';
+			print '<table id="dispatch_received_products" class="noborder centpercent">';
 
 			print '<tr class="liste_titre">';
 			if($conf->reception->enabled)print '<td>' . $langs->trans("Reception") . '</td>';
@@ -960,7 +960,6 @@ if ($id > 0 || ! empty($ref)) {
 				if(!empty($conf->reception->enabled) ){
 					print '<td>';
 					if (!empty($objp->fk_reception)){
-
 						$reception = new Reception($db);
 						$reception->fetch($objp->fk_reception);
 						print $reception->getNomUrl(1);

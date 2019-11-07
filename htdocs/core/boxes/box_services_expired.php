@@ -87,12 +87,12 @@ class box_services_expired extends ModeleBoxes
 			$sql.= " s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
 			$sql.= " MIN(cd.date_fin_validite) as date_line, COUNT(cd.rowid) as nb_services";
     		$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe s, ".MAIN_DB_PREFIX."contratdet as cd";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     		$sql.= " WHERE cd.statut = 4 AND cd.date_fin_validite <= '".$this->db->idate($now)."'";
     		$sql.= " AND c.entity = ".$conf->entity;
     		$sql.= " AND c.fk_soc=s.rowid AND cd.fk_contrat=c.rowid AND c.statut > 0";
-            if ($user->societe_id) $sql.=' AND c.fk_soc = '.$user->societe_id;
-            if (!$user->rights->societe->client->voir  && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+            if ($user->socid) $sql.=' AND c.fk_soc = '.$user->socid;
+            if (!$user->rights->societe->client->voir  && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
     		$sql.= " GROUP BY c.rowid, c.ref, c.statut, c.date_contrat, c.ref_customer, c.ref_supplier, s.nom, s.rowid";
     		$sql.= " ORDER BY date_line ASC";
     		$sql.= $this->db->plimit($max, 0);
@@ -133,7 +133,7 @@ class box_services_expired extends ModeleBoxes
 					if (($dateline + $conf->contrat->services->expires->warning_delay) < $now) $late=img_warning($langs->trans("Late"));
 
     				$this->info_box_contents[$i][] = array(
-                        'td' => '',
+                        'td' => 'class="nowraponall"',
                         'text' => $contract->getNomUrl(1),
                         'asis' => 1
     				);
@@ -145,7 +145,7 @@ class box_services_expired extends ModeleBoxes
     				);
 
     				$this->info_box_contents[$i][] = array(
-                        'td' => 'class="center"',
+                        'td' => 'class="center nowraponall"',
                         'text' => dol_print_date($dateline, 'day'),
                         'text2'=> $late,
                     );

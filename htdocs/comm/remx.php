@@ -40,9 +40,9 @@ $backtopage=GETPOST('backtopage', 'alpha');
 
 // Security check
 $socid = GETPOST('id', 'int')?GETPOST('id', 'int'):GETPOST('socid', 'int');
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 
@@ -252,7 +252,7 @@ if ($socid > 0)
 
 	dol_fiche_head($head, 'absolutediscount', $langs->trans("ThirdParty"), 0, 'company');
 
-    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+    dol_banner_tab($object, 'socid', '', ($user->socid?0:1), 'rowid', 'nom');
 
     print '<div class="fichecenter">';
 
@@ -356,7 +356,7 @@ if ($socid > 0)
     		print '<input type="hidden" name="discount_type" value="1" />';
     	}
 
-    	print '<table class="border" width="100%">';
+    	print '<table class="border centpercent">';
 		if($isCustomer && $isSupplier) {
 			print '<tr><td class="titlefield fieldrequired">'.$langs->trans('DiscountType').'</td>';
 			print '<td><input type="radio" name="discount_type" id="discount_type_0" checked="checked" value="0"/> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
@@ -776,7 +776,7 @@ if ($socid > 0)
 		if ($resql2)
 		{
 			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
 			print '<td class="widthdate">'.$langs->trans("Date").'</td>';	// Need 120+ for format with AM/PM
 			print '<td>'.$langs->trans("ReasonDiscount").'</td>';
@@ -946,7 +946,7 @@ if ($socid > 0)
 		if ($resql2)
 		{
 			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
 			print '<td class="widthdate">'.$langs->trans("Date").'</td>';	// Need 120+ for format with AM/PM
 			print '<td>'.$langs->trans("ReasonDiscount").'</td>';

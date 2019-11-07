@@ -46,7 +46,7 @@ $search_pcgtype = GETPOST('search_pcgtype', 'alpha');
 $search_pcgsubtype = GETPOST('search_pcgsubtype', 'alpha');
 
 // Security check
-if ($user->societe_id > 0) accessforbidden();
+if ($user->socid > 0) accessforbidden();
 if (! $user->rights->accounting->chartofaccount) accessforbidden();
 
 // Load variable for pagination
@@ -138,7 +138,7 @@ if (empty($reshook))
 
 				if ($result > 0)
 				{
-					setEventMessages($langs->trans("ChartLoaded"), null);
+					setEventMessages($langs->trans("ChartLoaded"), null, 'mesgs');
 				}
 				else
 				{

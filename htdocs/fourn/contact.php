@@ -35,10 +35,10 @@ $langs->load("companies");
 llxHeader();
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
     $action = '';
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -96,7 +96,7 @@ if ($result)
     $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
     print_barre_liste($title." (".$langs->trans("Suppliers").")", $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
 
-    print '<table class="liste" width="100%">';
+    print '<table class="liste centpercent">';
     print '<tr class="liste_titre">';
     print_liste_field_titre("Lastname", $_SERVER["PHP_SELF"], "p.name", $begin, "", "", $sortfield, $sortorder);
     print_liste_field_titre("Firstname", $_SERVER["PHP_SELF"], "p.firstname", $begin, "", "", $sortfield, $sortorder);

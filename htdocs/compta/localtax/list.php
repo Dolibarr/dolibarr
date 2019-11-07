@@ -29,7 +29,7 @@ $langs->load("compta");
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 $ltt=GETPOST("localTaxType");
 
@@ -62,7 +62,7 @@ if ($result)
     $i = 0;
     $total = 0 ;
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td class="nowrap" align="left">'.$langs->trans("Ref").'</td>';
     print "<td>".$langs->trans("Label")."</td>";

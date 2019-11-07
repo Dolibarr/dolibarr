@@ -46,7 +46,7 @@ $statut=GETPOST('statut')?GETPOST('statut'):1;
 // Security check
 $socid=0;
 $id = GETPOST('id', 'int');
-if (! empty($user->societe_id)) $socid=$user->societe_id;
+if (! empty($user->socid)) $socid=$user->socid;
 $result = restrictedArea($user, 'contrat', $id);
 
 $staticcompany=new Societe($db);
@@ -85,12 +85,14 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/list.php">';
     	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    	print '<table class="noborder nohover" width="100%">';
+
+		print '<div class="div-table-responsive-no-min">';
+    	print '<table class="noborder nohover centpercent">';
     	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
     	print '<tr class="oddeven">';
     	print '<td class="nowrap">'.$langs->trans("Contract").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
     	print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-    	print "</table></form>\n";
+    	print "</table></div></form>\n";
     	print "<br>";
     }
 }
@@ -114,7 +116,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX
 $sql.= " WHERE cd.fk_contrat = c.rowid AND c.fk_soc = s.rowid";
 $sql.= " AND (cd.statut != 4 OR (cd.statut = 4 AND (cd.date_fin_validite is null or cd.date_fin_validite >= '".$db->idate($now)."')))";
 $sql.= " AND c.entity IN (".getEntity('contract', 0).")";
-if ($user->societe_id) $sql.=' AND c.fk_soc = '.$user->societe_id;
+if ($user->socid) $sql.=' AND c.fk_soc = '.$user->socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " GROUP BY cd.statut";
 $resql = $db->query($sql);
@@ -151,7 +153,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX
 $sql.= " WHERE cd.fk_contrat = c.rowid AND c.fk_soc = s.rowid";
 $sql.= " AND (cd.statut = 4 AND cd.date_fin_validite < '".$db->idate($now)."')";
 $sql.= " AND c.entity IN (".getEntity('contract', 0).")";
-if ($user->societe_id) $sql.=' AND c.fk_soc = '.$user->societe_id;
+if ($user->socid) $sql.=' AND c.fk_soc = '.$user->socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " GROUP BY cd.statut";
 $resql = $db->query($sql);
@@ -183,8 +185,8 @@ else
 	dol_print_error($db);
 }
 
-
-print '<table class="noborder nohover" width="100%">';
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder nohover centpercent">';
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Services").'</th></tr>'."\n";
 $listofstatus=array(0,4,4,5); $bool=false;
 foreach($listofstatus as $status)
@@ -192,7 +194,6 @@ foreach($listofstatus as $status)
     $dataseries[]=array($staticcontratligne->LibStatut($status, 1, ($bool?1:0)),(isset($nb[$status.$bool])?(int) $nb[$status.$bool]:0));
     if (empty($conf->use_javascript_ajax))
     {
-
         print '<tr class="oddeven">';
         print '<td>'.$staticcontratligne->LibStatut($status, 0, ($bool?1:0)).'</td>';
         print '<td class="right"><a href="services_list.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status, 3, ($bool?1:0)).'</a></td>';
@@ -233,7 +234,7 @@ foreach($listofstatus as $status)
 //if ($totalinprocess != $total)
 //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("ServicesRunning").')</td><td class="right">'.$totalinprocess.'</td></tr>';
 print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
-print "</table><br>";
+print "</table></div><br>";
 
 
 // Draft contracts
@@ -256,7 +257,8 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 	{
 		$num = $db->num_rows($resql);
 
-		print '<table class="noborder" width="100%">';
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("DraftContracts").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 		if ($num)
@@ -291,7 +293,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 		{
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoContracts").'</td></tr>';
 		}
-		print "</table><br>";
+		print "</table></div><br>";
 		$db->free($resql);
 	}
 	else
@@ -334,7 +336,8 @@ if ($result)
 	$num = $db->num_rows($result);
 	$i = 0;
 
-	print '<table class="noborder" width="100%">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
 
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastContracts", 5).'</th>';
 	print '<th class="center">'.$langs->trans("DateModification").'</th>';
@@ -369,7 +372,7 @@ if ($result)
 	}
 	$db->free($result);
 
-	print "</table>";
+	print "</table></div>";
 }
 else
 {
@@ -401,7 +404,8 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print '<table class="noborder" width="100%">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
 
 	print '<tr class="liste_titre"><th colspan="4">'.$langs->trans("LastModifiedServices", $max).'</th>';
 	print "</tr>\n";
@@ -447,7 +451,7 @@ if ($resql)
 	}
 	$db->free();
 
-	print "</table>";
+	print "</table></div>";
 }
 else
 {
@@ -480,7 +484,8 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print '<table class="noborder" width="100%">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
 
 	print '<tr class="liste_titre"><th colspan="4">'.$langs->trans("NotActivatedServices").' <a href="'.DOL_URL_ROOT.'/contrat/services_list.php?mode=0"><span class="badge">'.$num.'</span></a></th>';
 	print "</tr>\n";
@@ -525,7 +530,7 @@ if ($resql)
 	}
 	$db->free();
 
-	print "</table>";
+	print "</table></div>";
 }
 else
 {
@@ -559,7 +564,8 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print '<table class="noborder" width="100%">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
 
 	print '<tr class="liste_titre"><th colspan="4">'.$langs->trans("ListOfExpiredServices").' <a href="'.DOL_URL_ROOT.'/contrat/services_list.php?mode=4&amp;filter=expired"><span class="badge">'.$num.'</span></a></th>';
 	print "</tr>\n";
@@ -604,7 +610,7 @@ if ($resql)
 	}
 	$db->free();
 
-	print "</table>";
+	print "</table></div>";
 }
 else
 {

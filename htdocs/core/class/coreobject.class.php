@@ -392,10 +392,10 @@ class CoreObject extends CommonObject
      */
     public function setDate($field, $date)
     {
-          if (empty($date))
-          {
-              $this->{$field} = 0;
-          }
+        if (empty($date))
+        {
+            $this->{$field} = 0;
+        }
         else
         {
             require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';

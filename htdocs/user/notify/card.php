@@ -39,7 +39,7 @@ $action = GETPOST('action', 'aZ09');
 $actionid=GETPOST('actionid');
 
 // Security check
-if ($user->societe_id) $id=$user->societe_id;
+if ($user->socid) $id=$user->socid;
 $result = restrictedArea($user, 'societe', '', '');
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -208,7 +208,7 @@ if ($result > 0)
 	print "</tr>\n";
 
 
-//    $listofemails=$object->thirdparty_and_contact_email_array();
+    // $listofemails=$object->thirdparty_and_contact_email_array();
     if ($object->email)
     {
         $actions=array();
@@ -294,13 +294,12 @@ if ($result > 0)
 
     if ($num)
     {
-	   $i = 0;
+        $i = 0;
 
         $userstatic=new user($db);
 
         while ($i < $num)
         {
-
             $obj = $db->fetch_object($resql);
 
             $userstatic->id=$obj->userid;

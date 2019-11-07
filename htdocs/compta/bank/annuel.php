@@ -41,7 +41,7 @@ $ref=GETPOST('ref');
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref :''));
 $fieldtype = (! empty($ref) ? 'ref' :'rowid');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, 'banque', $fieldvalue, 'bank_account&bank_account', '', '', $fieldtype);
 
 $year_start=GETPOST('year_start');
@@ -183,7 +183,7 @@ dol_fiche_end();
 print load_fiche_titre('', $link, '');
 
 print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
@@ -202,7 +202,6 @@ print '</tr>';
 
 for ($mois = 1 ; $mois < 13 ; $mois++)
 {
-
 	print '<tr class="oddeven">';
 	print "<td>".dol_print_date(dol_mktime(1, 1, 1, $mois, 1, 2000), "%B")."</td>";
 	for ($annee = $year_start ; $annee <= $year_end ; $annee++)
@@ -263,7 +262,7 @@ else {
 	dol_print_error($db);
 }
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_total"><td><b>'.$langs->trans("CurrentBalance")."</b></td>";
 print '<td colspan="'.($nbcol).'" class="right">'.price($balance).'</td>';
@@ -307,7 +306,7 @@ else
 	$log="graph.php: min=".$min." max=".$max;
 	dol_syslog($log);
 
-// CRED PART
+	// CRED PART
 	// Chargement du tableau des années
 	$tblyear[0] = array();
 	$tblyear[1] = array();
@@ -394,7 +393,7 @@ else
 	unset($tblyear[1]);
 	unset($tblyear[2]);
 
-// DEDBT PART
+	// DEDBT PART
 	// Chargement du tableau des années
 	$tblyear[0] = array();
 	$tblyear[1] = array();

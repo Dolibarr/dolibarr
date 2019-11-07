@@ -40,7 +40,7 @@ $lttype=GETPOST('localTaxType', 'int');
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 $object = new Localtax($db);
@@ -61,7 +61,6 @@ if ($_POST["cancel"] == $langs->trans("Cancel") && ! $id)
 
 if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
-
     $db->begin();
 
     $datev=dol_mktime(12, 0, 0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
@@ -167,7 +166,7 @@ if ($action == 'create')
 
     dol_fiche_head();
 
-    print '<table class="border" width="100%">';
+    print '<table class="border centpercent">';
 
     print "<tr>";
     print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
@@ -237,7 +236,7 @@ if ($id)
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	print "<tr>";
 	print '<td class="titlefield">'.$langs->trans("Ref").'</td><td>';

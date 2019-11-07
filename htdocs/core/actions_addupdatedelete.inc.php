@@ -18,7 +18,7 @@
 
 /**
  *	\file			htdocs/core/actions_addupdatedelete.inc.php
- *  \brief			Code for common actions cancel / add / update / delete / clone
+ *  \brief			Code for common actions cancel / add / update / update_extras / delete / deleteline / validate / cancel / reopen / clone
  */
 
 
@@ -30,8 +30,12 @@
 // $backtopage may be defined
 // $triggermodname may be defined
 
+if (! empty($permissionedit) && empty($permissiontoadd)) $permissiontoadd = $permissionedit;	// For backward compatibility
+
 if ($cancel)
 {
+	/*var_dump($cancel);
+	var_dump($backtopage);exit;*/
 	if (! empty($backtopage))
 	{
 		header("Location: ".$backtopage);
@@ -54,7 +58,7 @@ if ($action == 'add' && ! empty($permissiontoadd))
 			$value = dol_mktime(12, 0, 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
 		} elseif ($object->fields[$key]['type']=='datetime') {
 			$value = dol_mktime(GETPOST($key.'hour'), GETPOST($key.'min'), 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
-		} elseif ($object->fields[$key]['type']=='price') {
+		} elseif (in_array($object->fields[$key]['type'], array('price', 'real'))) {
 			$value = price2num(GETPOST($key));
 		} else {
 			$value = GETPOST($key, 'alpha');
@@ -80,7 +84,8 @@ if ($action == 'add' && ! empty($permissiontoadd))
 		if ($result > 0)
 		{
 		    // Creation OK
-			$urltogo=$backtopage?str_replace('__ID__', $result, $backtopage):$backurlforlist;
+			$urltogo = $backtopage ? str_replace('__ID__', $result, $backtopage) : $backurlforlist;
+			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', $object->id, $urltogo);		// New method to autoselect project after a New on another form object creation
 			header("Location: ".$urltogo);
 			exit;
 		}
@@ -105,7 +110,6 @@ if ($action == 'update' && ! empty($permissiontoadd))
 	{
 		if (! GETPOSTISSET($key)) continue;		// The field was not submited to be edited
 		if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;	// Ignore special fields
-
 		// Set value to update
 		if (in_array($object->fields[$key]['type'], array('text', 'html'))) {
 			$value = GETPOST($key, 'none');
@@ -113,7 +117,7 @@ if ($action == 'update' && ! empty($permissiontoadd))
 			$value = dol_mktime(12, 0, 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
 		} elseif ($object->fields[$key]['type']=='datetime') {
 			$value = dol_mktime(GETPOST($key.'hour'), GETPOST($key.'min'), 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
-		} elseif ($object->fields[$key]['type']=='price') {
+		} elseif (in_array($object->fields[$key]['type'], array('price', 'real'))) {
 			$value = price2num(GETPOST($key));
 		} else {
 			$value = GETPOST($key, 'alpha');
@@ -231,6 +235,106 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && ! empty($permissiont
 	}
 }
 
+// Action validate object
+if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd)
+{
+	$result = $object->validate($user);
+	if ($result >= 0)
+	{
+		// Define output language
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		{
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+			if (! empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+			$model=$object->modelpdf;
+			$ret = $object->fetch($id); // Reload to get new records
+
+			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
+	}
+	else
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+}
+
+// Action close object
+if ($action == 'confirm_close' && $confirm == 'yes' && $permissiontoadd)
+{
+	$result = $object->cancel($user);
+	if ($result >= 0)
+	{
+		// Define output language
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		{
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+			if (! empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+			$model=$object->modelpdf;
+			$ret = $object->fetch($id); // Reload to get new records
+
+			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
+	}
+	else
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+}
+
+// Action setdraft object
+if ($action == 'confirm_setdraft' && $confirm == 'yes' && $permissiontoadd)
+{
+	$result = $object->setDraft($user);
+	if ($result >= 0)
+	{
+		// Nothing else done
+	}
+	else
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+}
+
+// Action reopen object
+if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd)
+{
+	$result = $object->reopen($user);
+	if ($result >= 0)
+	{
+		// Define output language
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		{
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+			if (! empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+			$model=$object->modelpdf;
+			$ret = $object->fetch($id); // Reload to get new records
+
+			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
+	}
+	else
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+}
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes' && ! empty($permissiontoadd))

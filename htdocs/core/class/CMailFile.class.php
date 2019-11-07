@@ -1125,10 +1125,10 @@ class CMailFile
 		$strContentAltText = '';
 		if ($this->msgishtml)
 		{
-			// Similar code to forge a text from html is also in CMailFile.class.php
+			// Similar code to forge a text from html is also in smtps.class.php
 			$strContentAltText = preg_replace("/<br\s*[^>]*>/", " ", $strContent);
 			$strContentAltText = html_entity_decode(strip_tags($strContentAltText));
-			$strContentAltText = rtrim(wordwrap($strContentAltText, 75, empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA)?"\r\n":"\n"));
+			$strContentAltText = trim(wordwrap($strContentAltText, 75, empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA)?"\r\n":"\n"));
 
 			// Check if html header already in message, if not complete the message
 			$strContent = $this->checkIfHTML($strContent);
@@ -1392,7 +1392,6 @@ class CMailFile
 			$i=0;
 			foreach ($matches[1] as $full)
 			{
-
 				if (preg_match('/file=([A-Za-z0-9_\-\/]+[\.]?[A-Za-z0-9]+)?$/i', $full, $regs))   // If xxx is 'file=aaa'
 				{
 					$img = $regs[1];

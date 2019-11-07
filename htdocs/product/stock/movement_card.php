@@ -413,7 +413,7 @@ if ($action == "transfert_stock" && ! $cancel)
 // The builddoc action for object of a movement must be on the movement card
 // Actions to build doc
 $upload_dir = $conf->stock->dir_output . "movement/";
-$permissioncreate = $user->rights->stock->creer;
+$permissiontoadd = $user->rights->stock->creer;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
@@ -421,8 +421,8 @@ if (empty($reshook) && $action != 'remove_file')
 {
     $objectclass='MouvementStock';
     $objectlabel='Movements';
-    $permtoread = $user->rights->stock->lire;
-    $permtodelete = $user->rights->stock->supprimer;
+    $permissiontoread = $user->rights->stock->lire;
+    $permissiontodelete = $user->rights->stock->supprimer;
     $uploaddir = $conf->stock->dir_output . "/movement/";
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -444,14 +444,16 @@ $formproduct=new FormProduct($db);
 if (!empty($conf->projet->enabled)) $formproject=new FormProjets($db);
 
 $sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.entity,";
-$sql.= " e.ref as stock, e.rowid as entrepot_id, e.lieu,";
+$sql.= " e.ref as warehouse_ref, e.rowid as entrepot_id, e.lieu,";
 $sql.= " m.rowid as mid, m.value as qty, m.datem, m.fk_user_author, m.label, m.inventorycode, m.fk_origin, m.origintype,";
 $sql.= " m.batch, m.price,";
 $sql.= " m.type_mouvement,";
 $sql.= " pl.rowid as lotid, pl.eatby, pl.sellby,";
 $sql.= " u.login, u.photo, u.lastname, u.firstname";
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -565,7 +567,7 @@ if ($resql)
         $morehtmlref.='</div>';
 
         $shownav = 1;
-        if ($user->societe_id && ! in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+        if ($user->socid && ! in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
         dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
 
@@ -574,7 +576,7 @@ if ($resql)
         print '<div class="fichehalfleft">';
         print '<div class="underbanner clearboth"></div>';
 
-        print '<table class="border" width="100%">';
+        print '<table class="border centpercent">';
 
         print '<tr>';
 
@@ -976,7 +978,8 @@ if ($resql)
         $productlot->sellby= $objp->sellby;
 
         $warehousestatic->id=$objp->entrepot_id;
-        $warehousestatic->libelle=$objp->stock;
+        $warehousestatic->libelle=$objp->warehouse_ref;	// deprecated
+        $warehousestatic->label=$objp->warehouse_ref;
         $warehousestatic->lieu=$objp->lieu;
 
         $arrayofuniqueproduct[$objp->rowid]=$objp->produit;
@@ -1048,7 +1051,7 @@ if ($resql)
         if (! empty($arrayfields['m.inventorycode']['checked']))
         {
 	        // Inventory code
-	        print '<td>'.'<a href="'
+	        print '<td><a href="'
 								.DOL_URL_ROOT.'/product/stock/movement_card.php'
 								.'?id='.$objp->entrepot_id
 								.'&amp;search_inventorycode='.$objp->inventorycode

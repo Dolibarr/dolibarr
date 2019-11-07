@@ -141,7 +141,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 
 	$invoice = new Facture($db);
 	$invoice->fetch($placeid);
-	if($invoice->total_ttc<0){
+	if ($invoice->total_ttc < 0) {
 		$invoice->type= $invoice::TYPE_CREDIT_NOTE;
 		$sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE ";
 		$sql.="fk_soc = '".$invoice->socid."' ";
@@ -165,8 +165,12 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
 	if ($invoice->statut != Facture::STATUS_DRAFT)
 	{
-		dol_syslog("Sale already validated");
-		dol_htmloutput_errors($langs->trans("InvoiceIsAlreadyValidated", "TakePos"), null, 1);
+		//If invoice is validated but it is not fully paid is not error and make the payment
+		if ($invoice->getRemainToPay()>0) $res=1;
+		else{
+			dol_syslog("Sale already validated");
+			dol_htmloutput_errors($langs->trans("InvoiceIsAlreadyValidated", "TakePos"), null, 1);
+		}
 	}
 	elseif (count($invoice->lines)==0)
 	{
@@ -189,15 +193,17 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	    $res = $invoice->validate($user);
 	}
 
+	$remaintopay = $invoice->getRemainToPay();
+
 	// Add the payment
-    if ($res > 0) {
+	if ($res >= 0 && $remaintopay > 0) {
 		$payment = new Paiement($db);
 		$payment->datepaye = $now;
 		$payment->fk_account = $bankaccount;
 		$payment->amounts[$invoice->id] = $amountofpayment;
 
 		// If user has not used change control, add total invoice payment
-		if ($amountofpayment == 0) $payment->amounts[$invoice->id] = $invoice->total_ttc;
+		if ($amountofpayment == 0) $payment->amounts[$invoice->id] = $remaintopay;
 
 		$payment->paiementid=$paiementid;
 		$payment->num_payment=$invoice->ref;
@@ -205,9 +211,9 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		$payment->create($user);
 		$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
 
-		$remaintopay = $invoice->getRemainToPay();
+		$remaintopay = $invoice->getRemainToPay();	// Recalculate remain to pay after the payment is recorded
 		if ($remaintopay == 0) {
-			dol_syslog("Invoice is paid, so we set it to pay");
+			dol_syslog("Invoice is paid, so we set it to status Paid");
 			$result = $invoice->set_paid($user);
 			if ($result > 0) $invoice->paye = 1;
 		} else {
@@ -254,6 +260,9 @@ if ($action == "addline")
 	$prod = new Product($db);
     $prod->fetch($idproduct);
 
+	$customer = new Societe($db);
+	$customer->fetch($invoice->socid);
+
     $price = $prod->price;
     $tva_tx = $prod->tva_tx;
     $price_ttc = $prod->price_ttc;
@@ -261,16 +270,13 @@ if ($action == "addline")
 
     if (! empty($conf->global->PRODUIT_MULTIPRICES))
     {
-    	$customer = new Societe($db);
-    	$customer->fetch($invoice->socid);
-
     	$price = $prod->multiprices[$customer->price_level];
     	$tva_tx = $prod->multiprices_tva_tx[$customer->price_level];
     	$price_ttc = $prod->multiprices_ttc[$customer->price_level];
     	$price_base_type = $prod->multiprices_base_type[$customer->price_level];
     }
 
-    $idoflineadded = $invoice->addline($prod->description, $price, 1, $tva_tx, $prod->localtax1_tx, $prod->localtax2_tx, $idproduct, $prod->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', null, 0);
+    $idoflineadded = $invoice->addline($prod->description, $price, 1, $tva_tx, $prod->localtax1_tx, $prod->localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, 0, null, 0, '', 0, 100, '', null, 0);
     $invoice->fetch($placeid);
 }
 
@@ -425,7 +431,6 @@ $sectionwithinvoicelink='';
 if ($action=="valid" || $action=="history")
 {
     $sectionwithinvoicelink.='<!-- Section with invoice link -->'."\n";
-    $sectionwithinvoicelink.='<input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">';
     $sectionwithinvoicelink.='<span style="font-size:120%;" class="center">';
     $sectionwithinvoicelink.=$invoice->getNomUrl(1, '', 0, 0, '', 0, 0, -1, '_backoffice')." - ";
     $remaintopay = $invoice->getRemainToPay();
@@ -439,13 +444,16 @@ if ($action=="valid" || $action=="history")
         else $sectionwithinvoicelink.=$langs->trans('BillShortStatusValidated');
     }
     $sectionwithinvoicelink.='</span>';
-    if ($conf->global->TAKEPOS_AUTO_PRINT_TICKETS) $sectionwithinvoicelink.='<script language="javascript">$("#buttonprint").click();</script>';
-    if ($conf->global->TAKEPOSCONNECTOR) $sectionwithinvoicelink.=' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
-    else $sectionwithinvoicelink.=' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+    if ($conf->global->TAKEPOSCONNECTOR) {
+         $sectionwithinvoicelink.=' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+    } elseif ($conf->global->TAKEPOS_DOLIBARR_PRINTER) {
+        $sectionwithinvoicelink.=' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+    } else {
+        $sectionwithinvoicelink.=' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+    }
     $sectionwithinvoicelink.=' <button id="buttonprintsend" type="button" onclick="PrintSend('.$placeid.');">'.$langs->trans('PrintSendTicket').'</button>';
-    if ($invoice->paye) $sectionwithinvoicelink.='<script language="javascript">$("#buttonprint").click();</script>';
-} else { $sectionwithinvoicelink.=' <button id="buttonprintsend" type="button" onclick="PrintSend('.$placeid.');">'.$langs->trans('PrintSendTicket').'</button>';
-    if ($invoice->paye) $sectionwithinvoicelink.='<script language="javascript">$("#buttonprintsend").click();</script>';
+
+    if ($conf->global->TAKEPOS_AUTO_PRINT_TICKETS) $sectionwithinvoicelink.='<script language="javascript">$("#buttonprint").click();</script>';
 }
 
 /*
@@ -552,6 +560,13 @@ function TakeposPrinting(id){
         });
     });
 }
+function DolibarrTakeposPrinting(id) {
+    console.log('Printing invoice ticket ' + id)
+    $.ajax({
+        type: "GET",
+        url: "<?php print dol_buildpath('/takepos/ajax/ajax.php', 1).'?action=printinvoiceticket&term='.$_SESSION["takeposterminal"].'&id='; ?>" + id,
+    });
+}
 </script>
 
 <?php
@@ -579,13 +594,19 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT)
         $label = $obj->label;
         $floor = $obj->floor;
     }
-    print $langs->trans('Place')." <b>".$label."</b> - ";
-    print $langs->trans('Floor')." <b>".$floor."</b> - ";
+	// In phone version only show when is invoice page
+	if ($mobilepage=="invoice" || $mobilepage=="") {
+		print $langs->trans('Place') . " <b>" . $label . "</b> - ";
+		print $langs->trans('Floor') . " <b>" . $floor . "</b> - ";
+	}
 }
-print $langs->trans('TotalTTC');
-print ' : <b>'.price($invoice->total_ttc, 1, '', 1, - 1, - 1, $conf->currency).'</b></span>';
-print '<br>'.$sectionwithinvoicelink;
-print '</td>';
+// In phone version only show when is invoice page
+if ($mobilepage=="invoice" || $mobilepage=="") {
+	print $langs->trans('TotalTTC');
+	print ' : <b>' . price($invoice->total_ttc, 1, '', 1, -1, -1, $conf->currency) . '</b></span>';
+	print '<br><input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">' . $sectionwithinvoicelink;
+	print '</td>';
+}
 if ($_SESSION["basiclayout"]!=1)
 {
 	print '<td class="linecolqty right">' . $langs->trans('ReductionShort') . '</td>';
@@ -604,16 +625,14 @@ if ($_SESSION["basiclayout"]==1)
 		$htmlforlines = '';
         foreach ($categories as $row){
 			$htmlforlines.= '<tr class="drag drop oddeven posinvoiceline';
-			$htmlforlines.= '" onclick="location.href=\'invoice.php?mobilepage=products&place=' . $place . '&catid=' . $row['id'] . '\'">';
+			$htmlforlines.= '" onclick="LoadProducts(' . $row['id'] . ');">';
 			$htmlforlines.= '<td class="left">';
 			$htmlforlines.= $row['label'];
 			$htmlforlines.= '</td>';
 			$htmlforlines.= '</tr>'."\n";
 		}
 		$htmlforlines.= '</table>';
-		$htmlforlines.= '<div class="tabsAction">';
-		$htmlforlines.= '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?mobilepage=places&place=' . $place. '">'.$langs->trans("Floors").'</a>';
-		$htmlforlines.= '</div>';
+		$htmlforlines.= '</table>';
 		print $htmlforlines;
 	}
 
@@ -627,17 +646,13 @@ if ($_SESSION["basiclayout"]==1)
 		$htmlforlines = '';
 		foreach ($prods as $row) {
 			$htmlforlines.= '<tr class="drag drop oddeven posinvoiceline';
-			$htmlforlines.= '" onclick="location.href=\'invoice.php?mobilepage=invoice&action=addline&place=' . $place . '&idproduct=' . $row->id . '\'">';
+			$htmlforlines.= '" onclick="AddProduct(\'' . $place . '\', ' . $row->id . ')">';
 			$htmlforlines.= '<td class="left">';
 			$htmlforlines.= $row->label;
 			$htmlforlines.= '</td>';
 			$htmlforlines.= '</tr>'."\n";
 		}
 		$htmlforlines.= '</table>';
-		$htmlforlines.= '<div class="tabsAction">';
-		$htmlforlines.= '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?mobilepage=cats&place=' . $place. '">'.$langs->trans("Categories").'</a>';
-		$htmlforlines.= '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?mobilepage=places&place=' . $place. '">'.$langs->trans("Floors").'</a>';
-		$htmlforlines.= '</div>';
 		print $htmlforlines;
 	}
 
@@ -650,24 +665,22 @@ if ($_SESSION["basiclayout"]==1)
 		while($row = $db->fetch_array($resql)){
 			$rows[] = $row;
 			$htmlforlines.= '<tr class="drag drop oddeven posinvoiceline';
-			$htmlforlines.= '" onclick="location.href=\'invoice.php?mobilepage=invoice&place=' . $row['label'] . '\'">';
+			$htmlforlines.= '" onclick="LoadPlace(\'' . $row['label'] . '\')">';
 			$htmlforlines.= '<td class="left">';
 			$htmlforlines.= $row['label'];
 			$htmlforlines.= '</td>';
 			$htmlforlines.= '</tr>'."\n";
 		}
 		$htmlforlines.= '</table>';
-		$htmlforlines.= '<div class="tabsAction">';
-		$htmlforlines.= '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?mobilepage=cats&place=' . $place. '">'.$langs->trans("Categories").'</a>';
-		$htmlforlines.= '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?mobilepage=places&place=' . $place. '">'.$langs->trans("Floors").'</a>';
-		$htmlforlines.= '</div>';
 		print $htmlforlines;
 	}
 }
 
 if ($placeid > 0)
 {
-	if ($_SESSION["basiclayout"]==1 && $mobilepage!="invoice") return;
+	//In Phone basic layout hide some content depends situation
+	if ($_SESSION["basiclayout"]==1 && $mobilepage!="invoice" && $action!="order") return;
+
     if (is_array($invoice->lines) && count($invoice->lines))
     {
         $tmplines = array_reverse($invoice->lines);
@@ -725,20 +738,14 @@ else {      // No invoice generated yet
 
 print '</table>';
 
-if ($_SESSION["basiclayout"]==1 && $mobilepage=="invoice")
-{
-	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?mobilepage=cats&place=' . $place. '">'.$langs->trans("Categories").'</a>';
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?mobilepage=places&place=' . $place. '">'.$langs->trans("Floors").'</a>';
-	print '</div>';
-}
-
 if ($invoice->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]})
 {
-    $soc = new Societe($db);
+	$constforcompanyid='CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
+	$soc = new Societe($db);
     if ($invoice->socid > 0) $soc->fetch($invoice->socid);
-    else $soc->fetch($conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]});
-    print '<!-- Show customer --><p style="font-size:120%;" class="right">';
+    else $soc->fetch($conf->global->$constforcompanyid);
+    print '<!-- Show customer -->';
+    print '<p class="right">';
     print $langs->trans("Customer").': '.$soc->name;
 
 	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
@@ -749,41 +756,39 @@ if ($invoice->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takep
 		$warehouse->fetch($conf->global->$constantforkey);
 		print '<br>'.$langs->trans("Warehouse").': '.$warehouse->ref;
 	}
-    print '</p>';
 
-        // Module Adherent
-        if (! empty($conf->adherent->enabled))
+    // Module Adherent
+    if (! empty($conf->adherent->enabled))
+    {
+    	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+    	$langs->load("members");
+    	print '<br>'.$langs->trans("Member").': ';
+    	$adh=new Adherent($db);
+    	$result=$adh->fetch('', '', $invoice->socid);
+    	if ($result > 0)
 		{
-    require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-    $langs->load("members");
-    print '<p style="font-size:120%;" class="right">';
-    print $langs->trans("Member").': ';
-    $adh=new Adherent($db);
-    $result=$adh->fetch('', '', $invoice->socid);
-            if ($result > 0)
+		    $adh->ref=$adh->getFullName($langs);
+		    print $adh->getFullName($langs);
+		    print '<br>'.$langs->trans("Type").': '.$adh->type;
+			if ($adh->datefin)
 			{
-    $adh->ref=$adh->getFullName($langs);
-    print $adh->getFullName($langs);
-    print '<br>'.$langs->trans("Type").': '.$adh->type;
-		if ($adh->datefin)
-		{
-			print '<br>'.$langs->trans("SubscriptionEndDate").': '.dol_print_date($adh->datefin, 'day');
-			if ($adh->hasDelay()) {
-				print " ".img_warning($langs->trans("Late"));
+				print '<br>'.$langs->trans("SubscriptionEndDate").': '.dol_print_date($adh->datefin, 'day');
+				if ($adh->hasDelay()) {
+					print " ".img_warning($langs->trans("Late"));
+				}
+			}
+			else
+			{
+				print '<br>'.$langs->trans("SubscriptionNotReceived");
+				if ($adh->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
 			}
 		}
 		else
 		{
-				print $langs->trans("SubscriptionNotReceived");
-				if ($adh->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
+   			print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
 		}
-			}
-			else
-			{
-    print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
-			}
-    print '</p>';
-		}
+	}
+	print '</p>';
 }
 
 if ($action == "search")

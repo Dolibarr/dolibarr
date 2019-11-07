@@ -158,7 +158,6 @@ if ($resql) {
 
 	// export csv
 	if (GETPOST('action', 'aZ09') == 'export_csv') {
-
 		header('Content-Type: text/csv');
 		header('Content-Disposition: attachment;filename=export_csv.csv');
 
@@ -183,11 +182,11 @@ if ($resql) {
 
 	print '<br><br>';
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print "</table>\n";
 	print '</td><td valign="top" width="70%" class="notopnoleftnoright"></td>';
 	print '</tr><tr><td colspan=2>';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="left">' . $langs->trans("ThirdParties") . '</td>';
 	print '<td class="left">' . $langs->trans("AccountNumber") . '</td>';
 	print '<td class="left">' . $langs->trans("RaisonSociale") . '</td>';

@@ -83,7 +83,6 @@ if (GETPOST('change_chart', 'alpha'))
     $chartofaccounts = GETPOST('chartofaccounts', 'int');
 
     if (! empty($chartofaccounts)) {
-
         if (! dolibarr_set_const($db, 'CHARTOFACCOUNTS', $chartofaccounts, 'chaine', 0, '', $conf->entity)) {
             $error ++;
         }
@@ -141,10 +140,9 @@ print '<input type="hidden" name="action" value="update">';
 
 // Define main accounts for thirdparty
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 foreach ($list_account_main as $key) {
-
     print '<tr class="oddeven value">';
     // Param
     $label = $langs->trans($key);
@@ -169,10 +167,9 @@ print '<br>';
 
 // Define default accounts
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 foreach ($list_account as $key) {
-
 	print '<tr class="oddeven value">';
 	// Param
 	$label = $langs->trans($key);

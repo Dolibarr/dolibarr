@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2019   Cedric Ancelin          <icedo.anc@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,15 +60,11 @@ class Products extends DolibarrApi
     }
 
     /**
-     * Get properties of a product object (from its ID, Ref, Ref_ext or Barcode)
+     * Get properties of a product object by id
      *
      * Return an array with product information.
-     * TODO implement getting a product by ref or by $ref_ext
      *
      * @param  int    $id               ID of product
-     * @param  string $ref              Ref of element
-     * @param  string $ref_ext          Ref ext of element
-     * @param  string $barcode          Barcode of element
      * @param  int    $includestockdata Load also information about stock (slower)
      * @return array|mixed                 Data without useless information
      *
@@ -75,32 +72,72 @@ class Products extends DolibarrApi
      * @throws 403
      * @throws 404
      */
-    public function get($id, $ref = '', $ref_ext = '', $barcode = '', $includestockdata = 0)
+    public function get($id, $includestockdata = 0)
     {
-        if (empty($id) && empty($ref) && empty($ref_ext) && empty($barcode)) {
-            throw new RestException(400, 'bad value for parameter id, ref, ref_ext or barcode');
-        }
+        return $this->_fetch($id, '', '', '', $includestockdata);
+    }
 
-        $id = (empty($id)?0:$id);
+    /**
+     * Get properties of a product object by ref
+     *
+     * Return an array with product information.
+     *
+     * @param string $ref Ref of element
+     * @param int $includestockdata Load also information about stock (slower)
+     *
+     * @return array|mixed                 Data without useless information
+     *
+     * @url GET byRef/{ref}
+     *
+     * @throws 401
+     * @throws 403
+     * @throws 404
+     */
+    public function getByRef($ref, $includestockdata = 0)
+    {
+        return $this->_fetch('', $ref, '', '', $includestockdata);
+    }
 
-        if(! DolibarrApiAccess::$user->rights->produit->lire) {
-            throw new RestException(403);
-        }
+    /**
+     * Get properties of a product object by ref_ext
+     *
+     * Return an array with product information.
+     *
+     * @param string $ref_ext Ref_ext of element
+     * @param int $includestockdata Load also information about stock (slower)
+     *
+     * @return array|mixed Data without useless information
+     *
+     * @url GET byRefExt/{ref_ext}
+     *
+     * @throws 401
+     * @throws 403
+     * @throws 404
+     */
+    public function getByRefExt($ref_ext, $includestockdata = 0)
+    {
+        return $this->_fetch('', '', $ref_ext, '', $includestockdata);
+    }
 
-        $result = $this->product->fetch($id, $ref, $ref_ext, $barcode);
-        if(! $result ) {
-            throw new RestException(404, 'Product not found');
-        }
-
-        if(! DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
-            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
-
-        if ($includestockdata) {
-               $this->product->load_stock();
-        }
-
-        return $this->_cleanObjectDatas($this->product);
+    /**
+     * Get properties of a product object by barcode
+     *
+     * Return an array with product information.
+     *
+     * @param string $barcode Barcode of element
+     * @param int $includestockdata Load also information about stock (slower)
+     *
+     * @return array|mixed Data without useless information
+     *
+     * @url GET byBarcode/{barcode}
+     *
+     * @throws 401
+     * @throws 403
+     * @throws 404
+     */
+    public function getByBarcode($barcode, $includestockdata = 0)
+    {
+        return $this->_fetch('', '', '', $barcode, $includestockdata);
     }
 
     /**
@@ -247,7 +284,12 @@ class Products extends DolibarrApi
             $this->product->$field = $value;
         }
 
-        $result = $this->product->update($id, DolibarrApiAccess::$user, 1, 'update');
+        $updatetype = false;
+        if ($this->product->type != $oldproduct->type && ($this->product->isProduct() || $this->product->isService())) {
+            $updatetype = true;
+        }
+
+        $result = $this->product->update($id, DolibarrApiAccess::$user, 1, 'update', $updatetype);
 
         // If price mode is 1 price per product
         if ($result > 0 && ! empty($conf->global->PRODUCT_PRICE_UNIQ)) {
@@ -408,12 +450,13 @@ class Products extends DolibarrApi
      * Get prices per customer for a product
      *
      * @param int $id ID of product
+     * @param string   	$thirdparty_id	  Thirdparty id to filter orders of (example '1') {@pattern /^[0-9,]*$/i}
      *
      * @return mixed
      *
      * @url GET {id}/selling_multiprices/per_customer
      */
-    public function getCustomerPricesPerCustomer($id)
+    public function getCustomerPricesPerCustomer($id, $thirdparty_id = '')
     {
         global $conf;
 
@@ -430,12 +473,20 @@ class Products extends DolibarrApi
             throw new RestException(404, 'Product not found');
         }
 
-        if ($result < 0) {
-            throw new RestException(503, 'Error when retrieve prices list : '.array_merge(array($this->product->error), $this->product->errors));
+        if ($result > 0) {
+			require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
+			$prodcustprice = new Productcustomerprice($this->db);
+			$filter = array();
+			$filter['t.fk_product'] .= $id;
+			if ($thirdparty_id) $filter['t.fk_soc'] .= $thirdparty_id;
+			$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
         }
 
-        throw new RestException(501, 'Feature not yet available');
-        //return $result;
+        if ( empty($prodcustprice->lines)) {
+            throw new RestException(404, 'Prices not found');
+        }
+
+        return $prodcustprice->lines;
     }
 
     /**
@@ -531,7 +582,7 @@ class Products extends DolibarrApi
     {
     	global $db, $conf;
     	$obj_ret = array();
-    	$socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
+    	$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
     	$sql = "SELECT t.rowid, t.ref, t.ref_ext";
     	$sql.= " FROM ".MAIN_DB_PREFIX."product as t";
     	if ($category > 0) {
@@ -690,5 +741,49 @@ class Products extends DolibarrApi
             $product[$field] = $data[$field];
         }
         return $product;
+    }
+
+    /**
+     * Get properties of a product object
+     *
+     * Return an array with product information.
+     *
+     * @param  int    $id               ID of product
+     * @param  string $ref              Ref of element
+     * @param  string $ref_ext          Ref ext of element
+     * @param  string $barcode          Barcode of element
+     * @param  int    $includestockdata Load also information about stock (slower)
+     * @return array|mixed                 Data without useless information
+     *
+     * @throws 401
+     * @throws 403
+     * @throws 404
+     */
+    private function _fetch($id, $ref = '', $ref_ext = '', $barcode = '', $includestockdata = 0)
+    {
+        if (empty($id) && empty($ref) && empty($ref_ext) && empty($barcode)) {
+            throw new RestException(400, 'bad value for parameter id, ref, ref_ext or barcode');
+        }
+
+        $id = (empty($id)?0:$id);
+
+        if(! DolibarrApiAccess::$user->rights->produit->lire) {
+            throw new RestException(403);
+        }
+
+        $result = $this->product->fetch($id, $ref, $ref_ext, $barcode);
+        if(! $result ) {
+            throw new RestException(404, 'Product not found');
+        }
+
+        if(! DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        if ($includestockdata) {
+               $this->product->load_stock();
+        }
+
+        return $this->_cleanObjectDatas($this->product);
     }
 }

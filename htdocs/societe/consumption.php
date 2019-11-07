@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 $object = new Societe($db);
 if ($socid > 0) $object->fetch($socid);
@@ -109,7 +109,7 @@ dol_fiche_head($head, 'consumption', $langs->trans("ThirdParty"), -1, 'company')
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom');
 
 print '<div class="fichecenter">';
 
@@ -364,7 +364,7 @@ if ($sql_select)
     print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, '', 0, '', '', $limit);
 
     print '<div class="div-table-responsive-no-min">';
-    print '<table class="liste" width="100%">'."\n";
+    print '<table class="liste centpercent">'."\n";
 
     // Filters
     print '<tr class="liste_titre">';
@@ -531,7 +531,6 @@ if ($sql_select)
 		else
 		{
 			if ($objp->fk_product > 0) {
-
 				echo $form->textwithtooltip($text, $description, 3, '', '', $i, 0, '');
 
 				// Show range
@@ -543,7 +542,6 @@ if ($sql_select)
 					print (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 				}
 			} else {
-
 				if (! empty($objp->label) || ! empty($objp->description))
 				{
 					if ($type==1) $text = img_object($langs->trans('Service'), 'service');
@@ -614,7 +612,7 @@ elseif (empty($type_element) || $type_element == -1)
 {
     print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
 
-    print '<table class="liste" width="100%">'."\n";
+    print '<table class="liste centpercent">'."\n";
     // Titles with sort buttons
     print '<tr class="liste_titre">';
     print_liste_field_titre('Ref', $_SERVER['PHP_SELF'], 'doc_number', '', $param, '', $sortfield, $sortorder, 'left ');
@@ -631,7 +629,7 @@ elseif (empty($type_element) || $type_element == -1)
 else {
     print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
 
-    print '<table class="liste" width="100%">'."\n";
+    print '<table class="liste centpercent">'."\n";
 
 	print '<tr class="oddeven"><td class="opacitymedium" colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
 

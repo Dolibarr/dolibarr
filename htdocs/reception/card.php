@@ -72,7 +72,7 @@ $line_id = GETPOST('lineid', 'int')?GETPOST('lineid', 'int'):'';
 
 // Security check
 $socid='';
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 
 if ($origin == 'reception') $result=restrictedArea($user, $origin, $id);
 else {
@@ -101,7 +101,6 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 $extrafields->fetch_name_optionals_label($object->table_element_line);
-
 
 // Load object. Make an object->fetch
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
@@ -216,7 +215,6 @@ if (empty($reshook))
 	// Create reception
 	if ($action == 'add' && $user->rights->reception->creer)
 	{
-
 		$error = 0;
 		$predef = '';
 
@@ -562,12 +560,12 @@ if (empty($reshook))
 		{
 			if ($lines[$i]->id == $line_id)
 			{
-					// delete single warehouse line
-					$line->id = $line_id;
-					if (! $error && $line->delete($user) < 0)
-					{
-						$error++;
-					}
+				// delete single warehouse line
+				$line->id = $line_id;
+				if (! $error && $line->delete($user) < 0)
+				{
+					$error++;
+				}
 			}
 			unset($_POST["lineid"]);
 		}
@@ -822,7 +820,7 @@ if ($action == 'create')
             print "</td></tr>";
 
             // Note Private
-            if ($object->note_private && ! $user->societe_id)
+            if ($object->note_private && ! $user->socid)
             {
                 print '<tr><td>'.$langs->trans("NotePrivate").'</td>';
                 print '<td colspan="3">';
@@ -835,7 +833,7 @@ if ($action == 'create')
             print '<tr><td>';
             print $langs->trans("Weight");
             print '</td><td colspan="3"><input name="weight" size="4" value="'.GETPOST('weight', 'int').'"> ';
-            $text=$formproduct->selectMeasuringUnits("weight_units", "weight", GETPOST('weight_units', 'int'));
+            $text=$formproduct->selectMeasuringUnits("weight_units", "weight", GETPOST('weight_units', 'int'), 0, 2);
             $htmltext=$langs->trans("KeepEmptyForAutoCalculation");
             print $form->textwithpicto($text, $htmltext);
             print '</td></tr>';
@@ -846,7 +844,7 @@ if ($action == 'create')
             print ' x <input name="sizeH" size="4" value="'.GETPOST('sizeH', 'int').'">';
             print ' x <input name="sizeS" size="4" value="'.GETPOST('sizeS', 'int').'">';
             print ' ';
-            $text=$formproduct->selectMeasuringUnits("size_units", "size");
+            $text=$formproduct->selectMeasuringUnits("size_units", "size", GETPOST('size_units', 'int'), 0, 2);
             $htmltext=$langs->trans("KeepEmptyForAutoCalculation");
             print $form->textwithpicto($text, $htmltext);
             print '</td></tr>';
@@ -870,16 +868,15 @@ if ($action == 'create')
             $reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $recept, $action);    // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
 
-			if (empty($reshook) && ! empty($extrafields->attribute_label)) {
+            // Here $object can be of an object Order
+            $extrafields->fetch_name_optionals_label($object->table_element);
+            if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element]['label'])) {
 				// copy from order
-				$orderExtrafields = new Extrafields($db);
-				$orderExtrafieldLabels = $orderExtrafields->fetch_name_optionals_label($object->table_element);
-				if ($object->fetch_optionals($object->id, $orderExtrafieldLabels) > 0) {
+				if ($object->fetch_optionals() > 0) {
 					$recept->array_options = array_merge($recept->array_options, $object->array_options);
 				}
 				print $object->showOptionals($extrafields, 'edit');
 			}
-
 
             // Incoterms
 			if (!empty($conf->incoterm->enabled))
@@ -952,30 +949,27 @@ if ($action == 'create')
             print '<script type="text/javascript" language="javascript">
             jQuery(document).ready(function() {
 	            jQuery("#autofill").click(function() {';
-    	    	$i=1;
-    	    	while($i <= $numAsked)
-    	    	{
-    	    		print 'jQuery("#qtyl'.$i.'").val(jQuery("#qtyasked'.$i.'").val() - jQuery("#qtydelivered'.$i.'").val());'."\n";
-    	    		$i++;
-    	    	}
-        		print '});
+    	    $i=1;
+    	    while($i <= $numAsked)
+    	    {
+    	    	print 'jQuery("#qtyl'.$i.'").val(jQuery("#qtyasked'.$i.'").val() - jQuery("#qtydelivered'.$i.'").val());'."\n";
+    	    	$i++;
+    	    }
+        	print '});
 	            jQuery("#autoreset").click(function() {';
-    	    	$i=1;
-    	    	while($i <= $numAsked)
-    	    	{
-    	    		print 'jQuery("#qtyl'.$i.'").val(0);'."\n";
-    	    		$i++;
-    	    	}
-        		print '});
+    	    $i=1;
+    	    while($i <= $numAsked)
+    	    {
+    	    	print 'jQuery("#qtyl'.$i.'").val(0);'."\n";
+    	    	$i++;
+    	    }
+        	print '});
         	});
             </script>';
 
-
             print '<br>';
 
-
-            print '<table class="noborder" width="100%">';
-
+            print '<table class="noborder centpercent">';
 
             // Load receptions already done for same order
             $object->loadReceptions();
@@ -1116,59 +1110,57 @@ if ($action == 'create')
 					$stock = + $product->stock_warehouse[$dispatchLines[$indiceAsked]['ent']]->real; // Convert to number
 					$deliverableQty=$dispatchLines[$indiceAsked]['qty'];
 
+					// Quantity to send
+					print '<td class="center">';
+					if ($line->product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+					{
+                        if (GETPOST('qtyl'.$indiceAsked, 'int')) $defaultqty=GETPOST('qtyl'.$indiceAsked, 'int');
+                        print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
+						print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
+					}
+					else print $langs->trans("NA");
+					print '</td>';
 
-
-						// Quantity to send
-						print '<td class="center">';
-						if ($line->product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+					// Stock
+					if (! empty($conf->stock->enabled))
+					{
+						print '<td class="left">';
+						if ($line->product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))   // Type of product need stock change ?
 						{
-                            if (GETPOST('qtyl'.$indiceAsked, 'int')) $defaultqty=GETPOST('qtyl'.$indiceAsked, 'int');
-                            print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-							print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
+							// Show warehouse combo list
+							$ent = "entl".$indiceAsked;
+							$idl = "idl".$indiceAsked;
+							$tmpentrepot_id = is_numeric(GETPOST($ent, 'int'))?GETPOST($ent, 'int'):$warehouse_id;
+							if ($line->fk_product > 0)
+							{
+								print '<!-- Show warehouse selection -->';
+								print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 0, 0, $line->fk_product, '', 1);
+							}
 						}
-						else print $langs->trans("NA");
-						print '</td>';
-
-						// Stock
-						if (! empty($conf->stock->enabled))
+						else
 						{
-							print '<td class="left">';
-							if ($line->product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))   // Type of product need stock change ?
-							{
-								// Show warehouse combo list
-								$ent = "entl".$indiceAsked;
-								$idl = "idl".$indiceAsked;
-								$tmpentrepot_id = is_numeric(GETPOST($ent, 'int'))?GETPOST($ent, 'int'):$warehouse_id;
-								if ($line->fk_product > 0)
-								{
-									print '<!-- Show warehouse selection -->';
-									print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 0, 0, $line->fk_product, '', 1);
-								}
-							}
-							else
-							{
-								print $langs->trans("Service");
-							}
+							print $langs->trans("Service");
+						}
+						print '</td>';
+					}
+
+					if (!empty($conf->productbatch->enabled))
+					{
+						if (!empty($product->status_batch))
+						{
+							print '<td><input name="batch'.$indiceAsked.'" value="'.$dispatchLines[$indiceAsked]['lot'].'"></td>';
+							print '<td>';
+							print $form->selectDate($dispatchLines[$indiceAsked]['DLC'], 'dlc' . $indiceAsked, '', '', 1, "");
+							print '</td>';
+							print '<td>';
+							print $form->selectDate($dispatchLines[$indiceAsked]['DLUO'], 'dluo' . $indiceAsked, '', '', 1, "");
 							print '</td>';
 						}
-
-						if (!empty($conf->productbatch->enabled))
-						{
-							if (!empty($product->status_batch))
-							{
-								print '<td><input name="batch'.$indiceAsked.'" value="'.$dispatchLines[$indiceAsked]['lot'].'"></td>';
-								print '<td>';
-								print $form->selectDate($dispatchLines[$indiceAsked]['DLC'], 'dlc' . $indiceAsked, '', '', 1, "");
-								print '</td>';
-								print '<td>';
-								print $form->selectDate($dispatchLines[$indiceAsked]['DLUO'], 'dluo' . $indiceAsked, '', '', 1, "");
-								print '</td>';
-							}
-							else {
-								print '<td colspan="3"></td>';
-							}
+						else {
+							print '<td colspan="3"></td>';
 						}
-						print "</tr>\n";
+					}
+					print "</tr>\n";
 				}
 
 				//Display lines extrafields
@@ -1374,7 +1366,7 @@ elseif ($id || $ref)
     	print '<div class="fichehalfleft">';
     	print '<div class="underbanner clearboth"></div>';
 
-        print '<table class="border" width="100%">';
+        print '<table class="border centpercent">';
 
 		// Linked documents
 		if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))
@@ -1447,7 +1439,7 @@ elseif ($id || $ref)
 			print '<input name="id" value="'.$object->id.'" type="hidden">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input id="trueWeight" name="trueWeight" value="'.$object->trueWeight.'" type="text">';
-			print $formproduct->selectMeasuringUnits("weight_units", "weight", $object->weight_units);
+			print $formproduct->selectMeasuringUnits("weight_units", "weight", $object->weight_units, 0, 2);
 			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
 			print ' <input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 			print '</form>';
@@ -1455,16 +1447,14 @@ elseif ($id || $ref)
 		else
 		{
 			print $object->trueWeight;
-			print ($object->trueWeight && $object->weight_units!='')?' '.measuring_units_string($object->weight_units, "weight"):'';
+			print ($object->trueWeight && $object->weight_units!='')?' '.measuringUnitString(0, "weight", $object->weight_units):'';
 		}
 
         // Calculated
 		if ($totalWeight > 0)
 		{
 			if (!empty($object->trueWeight)) print ' ('.$langs->trans("SumOfProductWeights").': ';
-			//print $totalWeight.' '.measuring_units_string(0,"weight");
 			print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND)?$conf->global->MAIN_WEIGHT_DEFAULT_ROUND:-1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?$conf->global->MAIN_WEIGHT_DEFAULT_UNIT:'no');
-			//if (empty($object->trueWeight)) print ' ('.$langs->trans("Calculated").')';
 			if (!empty($object->trueWeight)) print ')';
 		}
 		print '</td></tr>';
@@ -1472,19 +1462,19 @@ elseif ($id || $ref)
 		// Width
 		print '<tr><td>'.$form->editfieldkey("Width", 'trueWidth', $object->trueWidth, $object, $user->rights->reception->creer).'</td><td colspan="3">';
 		print $form->editfieldval("Width", 'trueWidth', $object->trueWidth, $object, $user->rights->reception->creer);
-		print ($object->trueWidth && $object->width_units!='')?' '.measuring_units_string($object->width_units, "size"):'';
+		print ($object->trueWidth && $object->width_units!='')?' '.measuringUnitString(0, "size", $object->width_units):'';
 		print '</td></tr>';
 
 		// Height
 		print '<tr><td>'.$form->editfieldkey("Height", 'trueHeight', $object->trueHeight, $object, $user->rights->reception->creer).'</td><td colspan="3">';
-		if($action=='edittrueHeight')
+		if ($action=='edittrueHeight')
 		{
 			print '<form name="settrueHeight" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input name="action" value="settrueHeight" type="hidden">';
 			print '<input name="id" value="'.$object->id.'" type="hidden">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input id="trueHeight" name="trueHeight" value="'.$object->trueHeight.'" type="text">';
-			print $formproduct->selectMeasuringUnits("size_units", "size", $object->size_units);
+			print $formproduct->selectMeasuringUnits("size_units", "size", $object->size_units, 0, 2);
 			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
 			print ' <input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 			print '</form>';
@@ -1492,7 +1482,7 @@ elseif ($id || $ref)
 		else
 		{
 			print $object->trueHeight;
-			print ($object->trueHeight && $object->height_units!='')?' '.measuring_units_string($object->height_units, "size"):'';
+			print ($object->trueHeight && $object->height_units!='')?' '.measuringUnitString(0, "size", $object->height_units):'';
 		}
 
 		print '</td></tr>';
@@ -1500,7 +1490,7 @@ elseif ($id || $ref)
 		// Depth
 		print '<tr><td>'.$form->editfieldkey("Depth", 'trueDepth', $object->trueDepth, $object, $user->rights->reception->creer).'</td><td colspan="3">';
 		print $form->editfieldval("Depth", 'trueDepth', $object->trueDepth, $object, $user->rights->reception->creer);
-		print ($object->trueDepth && $object->depth_units!='')?' '.measuring_units_string($object->depth_units, "size"):'';
+		print ($object->trueDepth && $object->depth_units!='')?' '.measuringUnitString(0, "size", $object->depth_units):'';
 		print '</td></tr>';
 
 		// Volume
@@ -1520,15 +1510,13 @@ elseif ($id || $ref)
 		{
 			if ($volumeUnit < 50)
 			{
-			    //print $calculatedVolume.' '.measuring_units_string($volumeUnit,"volume");
 			    print showDimensionInBestUnit($calculatedVolume, $volumeUnit, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND)?$conf->global->MAIN_VOLUME_DEFAULT_ROUND:-1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT)?$conf->global->MAIN_VOLUME_DEFAULT_UNIT:'no');
 			}
-			else print $calculatedVolume.' '.measuring_units_string($volumeUnit, "volume");
+			else print $calculatedVolume.' '.measuringUnitString(0, "volume", $volumeUnit);
 		}
 		if ($totalVolume > 0)
 		{
 			if ($calculatedVolume) print ' ('.$langs->trans("SumOfProductVolumes").': ';
-			//print $totalVolume.' '.measuring_units_string(0,"volume");
 			print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND)?$conf->global->MAIN_VOLUME_DEFAULT_ROUND:-1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT)?$conf->global->MAIN_VOLUME_DEFAULT_UNIT:'no');
 			//if (empty($calculatedVolume)) print ' ('.$langs->trans("Calculated").')';
 			if ($calculatedVolume) print ')';
@@ -1632,7 +1620,7 @@ elseif ($id || $ref)
 		print '<br>';
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		// #
 		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
@@ -1792,8 +1780,6 @@ elseif ($id || $ref)
 					$label = (! empty($lines[$i]->product->label)?$lines[$i]->product->label:$lines[$i]->product->product_label);
 
 				print '<td>';
-
-
 
 				$text=$lines[$i]->product->getNomUrl(1);
 				$text.= ' - '.$label;
@@ -1960,13 +1946,13 @@ elseif ($id || $ref)
 
 			// Weight
 			print '<td class="center">';
-			if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->product->weight*$lines[$i]->qty.' '.measuring_units_string($lines[$i]->product->weight_units, "weight");
+			if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->product->weight*$lines[$i]->qty.' '.measuringUnitString(0, "weight", $lines[$i]->product->weight_units);
 			else print '&nbsp;';
 			print '</td>';
 
 			// Volume
 			print '<td class="center">';
-			if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->product->volume*$lines[$i]->qty.' '.measuring_units_string($lines[$i]->product->volume_units, "volume");
+			if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) print $lines[$i]->product->volume*$lines[$i]->qty.' '.measuringUnitString(0, "volume", $lines[$i]->product->volume_units);
 			else print '&nbsp;';
 			print '</td>';
 
@@ -2033,7 +2019,7 @@ elseif ($id || $ref)
 	 *    Boutons actions
 	 */
 
-	if (($user->societe_id == 0) && ($action!='presend'))
+	if (($user->socid == 0) && ($action!='presend'))
 	{
 		print '<div class="tabsAction">';
 
@@ -2041,7 +2027,6 @@ elseif ($id || $ref)
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook))
 		{
-
 			if ($object->statut == Reception::STATUS_DRAFT && $num_prod > 0)
 			{
 				if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->reception->creer))

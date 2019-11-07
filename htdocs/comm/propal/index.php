@@ -38,10 +38,10 @@ $langs->loadLangs(array('propal', 'companies'));
 
 // Security check
 $socid=GETPOST('socid', 'int');
-if (isset($user->societe_id) && $user->societe_id  > 0)
+if (isset($user->socid) && $user->socid  > 0)
 {
 	$action = '';
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'propal');
 
@@ -69,7 +69,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 {
     print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal/list.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="noborder nohover" width="100%">';
+    print '<table class="noborder nohover centpercent">';
     print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
     print '<tr class="oddeven"><td>';
     print $langs->trans("Proposal").':</td><td><input type="text" class="flat" name="sall" size=18></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
@@ -87,7 +87,7 @@ $sql.= ", ".MAIN_DB_PREFIX."propal as p";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE p.fk_soc = s.rowid";
 $sql.= " AND p.entity IN (".getEntity('propal').")";
-if ($user->societe_id) $sql.=' AND p.fk_soc = '.$user->societe_id;
+if ($user->socid) $sql.=' AND p.fk_soc = '.$user->socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " AND p.fk_statut IN (0,1,2,3,4)";
 $sql.= " GROUP BY p.fk_statut";
@@ -118,7 +118,7 @@ if ($resql)
     }
     $db->free($resql);
 
-    print '<table class="noborder nohover" width="100%">';
+    print '<table class="noborder nohover centpercent">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Proposals").'</td></tr>'."\n";
     $listofstatus=array(0,1,2,3,4);
     foreach ($listofstatus as $status)
@@ -126,7 +126,6 @@ if ($resql)
     	$dataseries[]=array($propalstatic->LibStatut($status, 1), (isset($vals[$status])?(int) $vals[$status]:0));
         if (! $conf->use_javascript_ajax)
         {
-
             print '<tr class="oddeven">';
             print '<td>'.$propalstatic->LibStatut($status, 0).'</td>';
             print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
@@ -182,7 +181,7 @@ if (! empty($conf->propal->enabled))
 		if ($num)
 		{
 			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
 			$langs->load("propal");
 			print '<td colspan="2">'.$langs->trans("DraftPropals").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=0"><span class="badge">'.$num.'</span></a></td></tr>';
@@ -249,7 +248,7 @@ $resql=$db->query($sql);
 if ($resql)
 {
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="4">'.$langs->trans("LastModifiedProposals", $max).'</td></tr>';
 
@@ -333,7 +332,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 		if ($num > 0)
 		{
 			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("ProposalsOpened").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
 
 			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
@@ -420,7 +419,7 @@ if (! empty($conf->propal->enabled))
 		$num = $db->num_rows($resql);
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("ProposalsToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
 
@@ -493,7 +492,7 @@ if (! empty($conf->propal->enabled))
 		$num = $db->num_rows($resql);
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=2"><span class="badge">'.$num.'</span></a></td></tr>';
 

@@ -50,7 +50,7 @@ $showaccountdetail = GETPOST('showaccountdetail', 'aZ09')?GETPOST('showaccountde
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->societe_id > 0) $socid = $user->societe_id;
+if ($user->socid > 0) $socid = $user->socid;
 if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user, 'compta', '', '', 'resultat');
 if (! empty($conf->accounting->enabled)) $result=restrictedArea($user, 'accounting', '', '', 'comptarapport');
 
@@ -201,7 +201,7 @@ if ($date_endday) $param.='&date_endday='.$date_endday;
 if ($date_endmonth) $param.='&date_endmonth='.$date_endmonth;
 if ($date_endyear) $param.='&date_endyear='.$date_startyear;
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print_liste_field_titre("PredefinedGroups", $_SERVER["PHP_SELF"], 'f.thirdparty_code,f.rowid', '', $param, '', $sortfield, $sortorder, 'width200 ');
 print_liste_field_titre('');
@@ -1132,11 +1132,11 @@ else
 		            while ($i < $num) {
 		                $obj = $db->fetch_object($result);
 
-		                $amount += $obj->amount;
-		                $total_ht += $obj->amount;
-		                $total_ttc += $obj->amount;
-		                $subtotal_ht += $obj->amount;
-		                $subtotal_ttc += $obj->amount;
+		                $amount += -$obj->amount;
+		                $total_ht += -$obj->amount;
+		                $total_ttc += -$obj->amount;
+		                $subtotal_ht += -$obj->amount;
+		                $subtotal_ttc += -$obj->amount;
 
 		                $i++;
 		            }

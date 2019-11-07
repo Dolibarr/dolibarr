@@ -38,7 +38,7 @@ $codeventil = GETPOST('codeventil');
 $id = GETPOST('id');
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 	accessforbidden();
 
 
@@ -112,7 +112,6 @@ if (! empty($id)) {
 		$i = 0;
 
 		if ($num_lines) {
-
 			$objp = $db->fetch_object($result);
 
 			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '" method="post">' . "\n";
@@ -124,7 +123,7 @@ if (! empty($id)) {
 
 			dol_fiche_head();
 
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent">';
 
 			// Ref facture
 			print '<tr><td>' . $langs->trans("Invoice") . '</td>';

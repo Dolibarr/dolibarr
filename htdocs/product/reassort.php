@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 $langs->loadLangs(array('products', 'stocks'));
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, 'produit|service');
 
 
@@ -369,7 +369,6 @@ if ($resql)
 		{
 			if($nb_warehouse>1) {
 				foreach($warehouses_list as &$wh) {
-
 					print '<td class="right">';
 					print empty($product->stock_warehouse[$wh['id']]->real) ? '0' : $product->stock_warehouse[$wh['id']]->real;
 					print '</td>';

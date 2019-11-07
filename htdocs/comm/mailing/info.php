@@ -33,7 +33,7 @@ $id=GETPOST('id');
 $langs->load("mails");
 
 // Security check
-if (! $user->rights->mailing->lire || $user->societe_id > 0)
+if (! $user->rights->mailing->lire || $user->socid > 0)
 accessforbidden();
 
 
@@ -57,12 +57,21 @@ if ($object->fetch($id) >= 0)
 	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlright='';
-	if ($object->statut == 2) $morehtmlright.=' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.') ';
-	
+	$nbtry = $nbok = 0;
+	if ($object->statut == 2 || $object->statut == 3)
+	{
+		$nbtry = $object->countNbOfTargets('alreadysent');
+		$nbko  = $object->countNbOfTargets('alreadysentko');
+
+		$morehtmlright.=' ('.$nbtry.'/'.$object->nbemail;
+		if ($nbko) $morehtmlright.=' - '.$nbko.' '.$langs->trans("Error");
+		$morehtmlright.=') &nbsp; ';
+	}
+
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', $morehtmlright);
-	
+
 	print '<div class="underbanner clearboth"></div><br>';
-	
+
 	//print '<table width="100%"><tr><td>';
 	$object->user_creation=$object->user_creat;
 	$object->date_creation=$object->date_creat;
@@ -70,7 +79,7 @@ if ($object->fetch($id) >= 0)
 	$object->date_validation=$object->date_valid;
 	dol_print_object_info($object, 0);
 	//print '</td></tr></table>';
-	
+
 
 	dol_fiche_end();
 }

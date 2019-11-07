@@ -38,10 +38,10 @@ $langs->loadLangs(array('supplier_proposal', 'companies'));
 
 // Security check
 $socid=GETPOST('socid', 'int');
-if (isset($user->societe_id) && $user->societe_id  > 0)
+if (isset($user->socid) && $user->socid  > 0)
 {
 	$action = '';
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'supplier_proposal');
 
@@ -71,12 +71,13 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 {
     print '<form method="post" action="'.DOL_URL_ROOT.'/supplier_proposal/list.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="noborder nohover" width="100%">';
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="noborder nohover centpercent">';
     print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
     print '<tr class="oddeven"><td>';
     print $langs->trans("SupplierProposal").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
     print '</tr>';
-    print "</table></form><br>\n";
+    print "</table></div></form><br>\n";
 }
 
 
@@ -90,7 +91,7 @@ $sql.= ", ".MAIN_DB_PREFIX."supplier_proposal as p";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE p.fk_soc = s.rowid";
 $sql.= " AND p.entity IN (".getEntity('supplier_proposal').")";
-if ($user->societe_id) $sql.=' AND p.fk_soc = '.$user->societe_id;
+if ($user->socid) $sql.=' AND p.fk_soc = '.$user->socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " AND p.fk_statut IN (0,1,2,3,4)";
 $sql.= " GROUP BY p.fk_statut";
@@ -121,7 +122,8 @@ if ($resql)
     }
     $db->free($resql);
 
-    print '<table class="noborder" width="100%">';
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CommRequests").'</th></tr>'."\n";
     $listofstatus=array(0,1,2,3,4);
     foreach ($listofstatus as $status)
@@ -153,7 +155,7 @@ if ($resql)
     }
 
     print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
-    print "</table><br>";
+    print "</table></div><br>";
 }
 else
 {
@@ -179,7 +181,8 @@ if (! empty($conf->supplier_proposal->enabled))
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-		print '<table class="noborder" width="100%">';
+        print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("DraftRequests").'</th></tr>';
 		$langs->load("supplier_proposal");
@@ -206,7 +209,7 @@ if (! empty($conf->supplier_proposal->enabled))
 				$i++;
 			}
 		}
-		print "</table><br>";
+		print "</table></div><br>";
 	}
 }
 
@@ -235,7 +238,8 @@ $sql.= $db->plimit($max, 0);
 $resql=$db->query($sql);
 if ($resql)
 {
-	print '<table class="noborder" width="100%">';
+    print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="4">'.$langs->trans("LastModifiedRequests", $max).'</th></tr>';
 
@@ -283,7 +287,7 @@ if ($resql)
 			$i++;
 		}
 	}
-	print "</table><br>";
+	print "</table></div><br>";
 }
 else dol_print_error($db);
 
@@ -316,7 +320,8 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 		$i = 0;
 		if ($num > 0)
 		{
-			print '<table class="noborder" width="100%">';
+            print '<div class="div-table-responsive-no-min">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre"><th colspan="5">'.$langs->trans("RequestsOpened").' <a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></th></tr>';
 
 			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
@@ -370,7 +375,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 			{
 				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total").'</td><td class="right">'.price($total)."</td><td>&nbsp;</td></tr>";
 			}
-			print "</table><br>";
+			print "</table></div><br>";
 		}
 	}
 	else

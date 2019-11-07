@@ -2,6 +2,7 @@
 /* Copyright (C)    2013      Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C)    2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C)	2015	  Marcos García		  <marcosgdf@gmail.com>
+ * Copyright (C) 	2019	  Nicolas ZABOURI     <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,7 +83,7 @@ if (empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX))
 
 // Show upload form (document and links)
 $formfile->form_attach_new_file(
-    $_SERVER["PHP_SELF"].'?id='.$object->id.(empty($withproject)?'':'&withproject=1'),
+    $_SERVER["PHP_SELF"].'?id='.$object->id.(empty($withproject)?'':'&withproject=1').(empty($uri)?'':$uri),
     '',
     0,
     0,
@@ -117,6 +118,7 @@ $formfile->list_of_documents(
 );
 
 print "<br>";
+
 //List of links
-$formfile->listOfLinks($object, $permission, $action, GETPOST('linkid', 'int'), $param);
+$formfile->listOfLinks($object, $permission, $action, GETPOST('linkid', 'int'), $param, $relativepathwithnofile);
 print "<br>";

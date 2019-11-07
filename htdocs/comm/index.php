@@ -51,10 +51,10 @@ $bid=GETPOST('bid', 'int');
 
 // Securite acces client
 $socid=GETPOST('socid', 'int');
-if (isset($user->societe_id) && $user->societe_id > 0)
+if (isset($user->socid) && $user->socid > 0)
 {
 	$action = '';
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 $max=3;
@@ -120,6 +120,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
     	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<div class="div-table-responsive-no-min">';
     	print '<table class="noborder nohover centpercent">';
     	$i=0;
     	foreach($listofsearchfields as $key => $value)
@@ -132,6 +133,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     		$i++;
     	}
     	print '</table>';
+        print '</div>';
     	print '</form>';
     	print '<br>';
     }
@@ -163,7 +165,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 		$num = $db->num_rows($resql);
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("ProposalsDraft").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=0"><span class="badge">'.$num.'</span></a></th></tr>';
 
@@ -208,7 +210,6 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 		}
 		else
 		{
-
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
 		}
 		print "</table></div><br>";
@@ -248,7 +249,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
         $num = $db->num_rows($resql);
 
         print '<div class="div-table-responsive-no-min">';
-        print '<table class="noborder" width="100%">';
+        print '<table class="noborder centpercent">';
         print '<tr class="liste_titre">';
         print '<th colspan="3">'.$langs->trans("SupplierProposalsDraft").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 
@@ -330,7 +331,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 		$num = $db->num_rows($resql);
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("DraftOrders").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 
@@ -379,7 +380,6 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 		}
 		else
 		{
-
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoOrder").'</td></tr>';
 		}
 		print "</table>";
@@ -420,7 +420,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
         $num = $db->num_rows($resql);
 
         print '<div class="div-table-responsive-no-min">';
-        print '<table class="noborder" width="100%">';
+        print '<table class="noborder centpercent">';
         print '<tr class="liste_titre">';
         print '<th colspan="3">'.$langs->trans("DraftSuppliersOrders").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 
@@ -430,7 +430,6 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
 			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
 			while ($i < $nbofloop)
             {
-
                 $obj = $db->fetch_object($resql);
                 print '<tr class="oddeven"><td class="nowrap">';
                 $supplierorderstatic->id=$obj->rowid;
@@ -470,7 +469,6 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
         }
         else
         {
-
             print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoSupplierOrder").'</td></tr>';
         }
         print "</table>";
@@ -514,7 +512,7 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 		$i = 0;
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">';
 		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastCustomersOrProspects", $max);
@@ -563,10 +561,10 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
 	$sql = "SELECT s.nom as name, s.rowid, s.datec as dc, s.canvas, s.tms as dm";
     $sql.= ", s.code_fournisseur";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (! $user->rights->societe->client->voir && ! $user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.fournisseur = 1";
 	$sql.= " AND s.entity IN (".getEntity($companystatic->element).")";
-	if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if (! $user->rights->societe->client->voir && ! $user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid)	$sql.= " AND s.rowid = ".$socid;
 	$sql.= " ORDER BY s.datec DESC";
 	$sql.= $db->plimit($max, 0);
@@ -578,7 +576,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
 		$i = 0;
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th>'.$langs->trans("BoxTitleLastModifiedSuppliers", min($max, $num)).'</th>';
 		print '<th class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/societe/list.php?type=f">'.$langs->trans("FullList").'</a></th>';
@@ -659,7 +657,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TO
 		if ($num > 0)
 		{
 			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("LastContracts", 5).'</th></tr>';
 			$i = 0;
 
@@ -719,7 +717,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 		if ($num > 0)
 		{
 			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre"><th colspan="5">'.$langs->trans("ProposalsOpened").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></th></tr>';
 
 			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
@@ -823,7 +821,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 		if ($num > 0)
 		{
 			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre"><th class="liste_titre" colspan="5">'.$langs->trans("OrdersOpened").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1"><span class="badge">'.$num.'</span></th></tr>';
 
 			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));

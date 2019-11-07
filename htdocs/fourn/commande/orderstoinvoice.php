@@ -109,7 +109,6 @@ $hookmanager->initHooks(array('orderstoinvoicesupplier'));
  */
 
 if (($action == 'create' || $action == 'add') && ! $error) {
-
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/fourn.lib.php';
 	if (! empty($conf->projet->enabled))
 		require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
@@ -140,8 +139,8 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 	$search_ref = GETPOST('sf_ref') ? GETPOST('sf_ref') : GETPOST('search_ref');
 
 	// Security check
-	if ($user->societe_id)
-		$socid = $user->societe_id;
+	if ($user->socid)
+		$socid = $user->socid;
 	$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
 	$usehm = $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
@@ -159,17 +158,18 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 			$datefacture = dol_mktime(date("h"), date("M"), 0, date("m"), date("d"), date("Y"));
 		}
 		if (! $error) {
-			$object->ref = GETPOST('ref');
-			$object->ref_supplier = GETPOST('ref_supplier');
+			$object->ref = GETPOST('ref', 'nohtml');
+			$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
 			$object->socid = GETPOST('socid', 'int');
-			$object->libelle = GETPOST('libelle');
+			$object->libelle = (GETPOSTISSET('libelle') ? GETPOST('libelle', 'nohtml') : GETPOST('label', 'nohtml'));
+			$object->label = (GETPOSTISSET('libelle') ? GETPOST('libelle', 'nohtml') : GETPOST('label', 'nohtml'));
 			$object->date = $datefacture;
 			$object->date_echeance = $datedue;
 			$object->note_public = GETPOST('note_public', 'none');
 			$object->note_private = GETPOST('note_private', 'none');
 			$object->cond_reglement_id = GETPOST('cond_reglement_id');
 			$object->mode_reglement_id = GETPOST('mode_reglement_id');
-			$projectid = GETPOST('projectid');
+			$projectid = GETPOST('projectid', 'int');
 			if ($projectid > 0)
 				$object->fk_project = $projectid;
 
@@ -255,7 +255,6 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 
 		// End of object creation, we show it
 		if ($id > 0 && ! $error) {
-
 			foreach($orders_id as $fk_supplier_order) {
 				$supplier_order = new CommandeFournisseur($db);
 				if ($supplier_order->fetch($fk_supplier_order)>0 && $supplier_order->statut == 5)
@@ -299,7 +298,6 @@ $formfile = new FormFile($db);
 
 // Mode creation
 if ($action == 'create' && !$error) {
-
 	llxHeader();
 	print load_fiche_titre($langs->trans('NewBill'));
 
@@ -335,7 +333,7 @@ if ($action == 'create' && !$error) {
 	print '<input type="hidden" name="originid" value="' . GETPOST('originid') . '">';
 	print '<input type="hidden" name="socid" value="' . $soc->id . '">';
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Ref
 	print '<tr><td class="fieldrequired">' . $langs->trans('Ref') . '</td><td colspan="2">' . $langs->trans('Draft') . '</td></tr>';
@@ -400,7 +398,7 @@ if ($action == 'create' && !$error) {
 	print '</textarea></td></tr>';
 
 	// Private note
-	if (empty($user->societe_id)) {
+	if (empty($user->socid)) {
 		print '<tr>';
 		print '<td class="tdtop">' . $langs->trans('NotePrivate') . '</td>';
 		print '<td colspan="2">';
@@ -439,7 +437,7 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		});
 	});
 	</script>
-<?php
+	<?php
 
 	$sql = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_supplier,';
 	$sql .= ' c.date_valid, c.date_commande, c.date_livraison, c.fk_statut';
@@ -519,7 +517,7 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		print '<input type="hidden" name="socid" value="' . $socid . '">';
 
 
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre('Ref', 'orderstoinvoice.php', 'c.ref', '', '&amp;socid=' . $socid, '', $sortfield, $sortorder);
 		print_liste_field_titre('RefSupplier', 'orderstoinvoice.php', 'c.ref_supplier', '', '&amp;socid=' . $socid, '', $sortfield, $sortorder);

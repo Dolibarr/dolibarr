@@ -48,7 +48,7 @@ $title = $langs->trans("Projects");
 
 // Security check
 $socid = (is_numeric($_GET["socid"]) ? $_GET["socid"] : 0 );
-//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 if ($socid > 0)
 {
 	$soc = new Societe($db);
@@ -76,7 +76,6 @@ $search_categ=GETPOST("search_categ", 'alpha');
 $search_ref=GETPOST("search_ref", 'alpha');
 $search_label=GETPOST("search_label", 'alpha');
 $search_societe=GETPOST("search_societe", 'alpha');
-$search_year=GETPOST("search_year", 'int');
 $search_status=GETPOST("search_status", 'int');
 $search_opp_status=GETPOST("search_opp_status", 'alpha');
 $search_opp_percent=GETPOST("search_opp_percent", 'alpha');
@@ -141,13 +140,16 @@ $arrayfields=array(
 	'p.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-   foreach($extrafields->attribute_label as $key => $val)
-   {
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
-   }
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+	{
+		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+	}
 }
+$object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 
@@ -175,7 +177,6 @@ if (empty($reshook))
 		$search_ref="";
 		$search_label="";
 		$search_societe="";
-		$search_year="";
 		$search_status=-1;
 		$search_opp_status=-1;
 		$search_opp_amount='';
@@ -201,8 +202,8 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='Project';
 	$objectlabel='Project';
-	$permtoread = $user->rights->projet->lire;
-	$permtodelete = $user->rights->projet->supprimer;
+	$permissiontoread = $user->rights->projet->lire;
+	$permissiontodelete = $user->rights->projet->supprimer;
 	$uploaddir = $conf->projet->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
@@ -293,8 +294,10 @@ $sql.= ", s.rowid as socid, s.nom as name, s.email";
 $sql.= ", cls.code as opp_status_code";
 // We'll need these fields in order to filter by categ
 if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_project";
-// Add fields for extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+// Add fields from extrafields
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -831,11 +834,11 @@ while ($i < min($num, $limit))
 			if (strcmp($obj->opp_amount, ''))
 			{
 				print price($obj->opp_amount, 1, $langs, 1, -1, -1, '');
-				$totalarray['totalopp'] += $obj->opp_amount;
+				$totalarray['val']['p.opp_amount'] += $obj->opp_amount;
 			}
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['totaloppfield']=$totalarray['nbfield'];
+			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='p.opp_amount';
 		}
 		// Opp percent
 		if (! empty($arrayfields['p.opp_percent']['checked']))
@@ -852,11 +855,11 @@ while ($i < min($num, $limit))
 			if ($obj->budget_amount != '')
 			{
 				print price($obj->budget_amount, 1, $langs, 1, -1, -1);
-				$totalarray['totalbudget'] += $obj->budget_amount;
+				$totalarray['val']['p.budget_amount'] += $obj->budget_amount;
 			}
 			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['totalbudgetfield']=$totalarray['nbfield'];
+			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='p.budget_amount';
 		}
 		// Usage opportunity
 		if (! empty($arrayfields['p.usage_opportunity']['checked']))
@@ -937,24 +940,7 @@ while ($i < min($num, $limit))
 }
 
 // Show total line
-if (isset($totalarray['totaloppfield']) || isset($totalarray['totalbudgetfield']))
-{
-	print '<tr class="liste_total">';
-	$i=0;
-	while ($i < $totalarray['nbfield'])
-	{
-		$i++;
-		if ($i == 1)
-		{
-			if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
-			else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-		}
-		elseif ($totalarray['totaloppfield'] == $i) print '<td class="right">'.price($totalarray['totalopp'], 1, $langs, 1, -1, -1).'</td>';
-		elseif ($totalarray['totalbudgetfield'] == $i) print '<td class="right">'.price($totalarray['totalbudget'], 1, $langs, 1, -1, -1).'</td>';
-		else print '<td></td>';
-	}
-	print '</tr>';
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 $db->free($resql);
 

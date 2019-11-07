@@ -78,9 +78,9 @@ $multicurrency_amounts=array();
 $multicurrency_amountsresttopay=array();
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 
 $object = new PaiementFourn($db);
@@ -467,7 +467,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
             dol_fiche_head(null);
 
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
 
             print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans('Company').'</td><td>';
             $supplierstatic->id=$obj->socid;
@@ -506,7 +506,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				/*
 	             * All unpayed supplier invoices
 	             */
-	            $sql = 'SELECT f.rowid as facid, f.ref, f.ref_supplier, f.type, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef as df, f.date_lim_reglement as dlr,';
+	            $sql = 'SELECT f.rowid as facid, f.ref, f.ref_supplier, f.type, f.total_ht, f.total_ttc,';
+	            $sql.= ' f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc,';
+	            $sql.= ' f.datef as df, f.date_lim_reglement as dlr,';
 	            $sql.= ' SUM(pf.amount) as am, SUM(pf.multicurrency_amount) as multicurrency_am';
 	            $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 	            $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
@@ -755,7 +757,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                $db->free($resql);
 	            }
 	            else
-	           {
+	            {
 	                dol_print_error($db);
 	            }
 			}
@@ -1024,26 +1026,7 @@ if (empty($action) || $action == 'list')
         }
 
         // Show total line
-        if (isset($totalarray['pos']))
-        {
-            print '<tr class="liste_total">';
-            $i=0;
-            while ($i < $totalarray['nbfield'])
-            {
-                $i++;
-                if (! empty($totalarray['pos'][$i]))  print '<td class="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
-                else
-                {
-                    if ($i == 1)
-                    {
-                        if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
-                        else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-                    }
-                    else print '<td></td>';
-                }
-            }
-            print '</tr>';
-        }
+        include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
         print "</table>";
         print "</div>";

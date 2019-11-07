@@ -36,18 +36,16 @@ $langs->loadLangs(array("main","bills","banks"));
 
 		<tr><td class="resume_label"><?php echo $langs->trans("Invoice"); ?></td><td><?php  echo $obj_facturation->numInvoice(); ?></td></tr>
 		<tr><td class="resume_label"><?php echo $langs->trans("TotalHT"); ?></td><td><?php echo price(price2num($obj_facturation->prixTotalHt(), 'MT'), 0, $langs, 0, 0, -1, $conf->currency); ?></td></tr>
-		<?php
-			// Affichage de la tva par taux
-			if ( $obj_facturation->montantTva() ) {
-
-				echo ('<tr><td class="resume_label">'.$langs->trans("VAT").'</td><td>'.price(price2num($obj_facturation->montantTva(), 'MT'), 0, $langs, 0, 0, -1, $conf->currency).'</td></tr>');
-			}
-			else
-			{
-
-				echo ('<tr><td class="resume_label">'.$langs->trans("VAT").'</td><td>'.$langs->trans("NoVAT").'</td></tr>');
-			}
-		?>
+<?php
+// Affichage de la tva par taux
+if ( $obj_facturation->montantTva() ) {
+	echo ('<tr><td class="resume_label">'.$langs->trans("VAT").'</td><td>'.price(price2num($obj_facturation->montantTva(), 'MT'), 0, $langs, 0, 0, -1, $conf->currency).'</td></tr>');
+}
+else
+{
+	echo ('<tr><td class="resume_label">'.$langs->trans("VAT").'</td><td>'.$langs->trans("NoVAT").'</td></tr>');
+}
+?>
 		<tr><td class="resume_label"><?php echo $langs->trans("TotalTTC"); ?> </td><td><?php echo price(price2num($obj_facturation->prixTotalTtc(), 'MT'), 0, $langs, 0, 0, -1, $conf->currency); ?></td></tr>
 		<tr><td class="resume_label"><?php echo $langs->trans("PaymentMode"); ?> </td><td>
 		<?php
@@ -84,23 +82,20 @@ $langs->loadLangs(array("main","bills","banks"));
 		?>
 		</td></tr>
 
-		<?php
-			// Affichage des infos en fonction du mode de paiement
-			if ( $obj_facturation->getsetPaymentMode() == 'DIF' ) {
+<?php
+// Affichage des infos en fonction du mode de paiement
+if ( $obj_facturation->getsetPaymentMode() == 'DIF' ) {
+	echo ('<tr><td class="resume_label">'.$langs->trans("DateDue").'</td><td>'.$obj_facturation->paiementLe().'</td></tr>');
+} else {
+	echo ('<tr><td class="resume_label">'.$langs->trans("Received").'</td><td>'.price(price2num($obj_facturation->montantEncaisse(), 'MT'), 0, $langs, 0, 0, -1, $conf->currency).'</td></tr>');
+}
 
-				echo ('<tr><td class="resume_label">'.$langs->trans("DateDue").'</td><td>'.$obj_facturation->paiementLe().'</td></tr>');
-			} else {
+// Affichage du montant rendu (reglement en especes)
+if ( $obj_facturation->montantRendu() ) {
+	echo ('<tr><td class="resume_label">'.$langs->trans("Change").'</td><td>'.price(price2num($obj_facturation->montantRendu(), 'MT'), 0, $langs, 0, 0, -1, $conf->currency).'</td></tr>');
+}
 
-				echo ('<tr><td class="resume_label">'.$langs->trans("Received").'</td><td>'.price(price2num($obj_facturation->montantEncaisse(), 'MT'), 0, $langs, 0, 0, -1, $conf->currency).'</td></tr>');
-			}
-
-			// Affichage du montant rendu (reglement en especes)
-			if ( $obj_facturation->montantRendu() ) {
-
-				echo ('<tr><td class="resume_label">'.$langs->trans("Change").'</td><td>'.price(price2num($obj_facturation->montantRendu(), 'MT'), 0, $langs, 0, 0, -1, $conf->currency).'</td></tr>');
-			}
-
-		?>
+?>
 
 	</table>
 

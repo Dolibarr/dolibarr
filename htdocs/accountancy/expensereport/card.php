@@ -42,7 +42,7 @@ $codeventil = GETPOST('codeventil');
 $id = GETPOST('id');
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 	accessforbidden();
 
 
@@ -125,7 +125,7 @@ if (! empty($id)) {
 
 			dol_fiche_head();
 
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent">';
 
 			// Ref
 			print '<tr><td class="titlefield">' . $langs->trans("ExpenseReport") . '</td>';

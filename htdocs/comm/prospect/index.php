@@ -30,9 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 $langs->load("propal");
 
 
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 
@@ -57,7 +57,7 @@ if (! empty($conf->propal->enabled))
 	$var=false;
 	print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal/card.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder nohover" width="100%">';
+	print '<table class="noborder nohover centpercent">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAProposal").'</td></tr>';
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("Ref").':</td><td><input type="text" class="flat" name="sf_ref" size="18"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
@@ -89,7 +89,7 @@ if ($resql)
 	$i = 0;
 	if ($num > 0 )
 	{
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="2">'.$langs->trans("ProspectsByStatus").'</td></tr>';
 		while ($i < $num)
@@ -147,7 +147,6 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 				$total += $obj->price;
 			}
 			if ($total>0) {
-
 				print '<tr class="liste_total"><td>'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td></tr>";
 			}
 			print "</table><br>";
@@ -194,7 +193,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 		$i = 0;
 		if ($num > 0)
 		{
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("ProposalsOpened").'</td></tr>';
 
 			while ($i < $num)
@@ -251,7 +250,7 @@ if ($resql)
 	$i = 0;
 	if ($num > 0 )
 	{
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><td>'.$langs->trans("ProspectToContact").'</td></tr>';
 
 		while ($i < $num)

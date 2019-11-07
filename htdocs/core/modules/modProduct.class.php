@@ -86,6 +86,13 @@ class modProduct extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
+		$this->const[$r][0] = "PRODUCT_PRICE_UNIQ";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "1";
+		$this->const[$r][3] = 'pricing rule by default';
+		$this->const[$r][4] = 0;
+		$r++;
+
 		/*$this->const[$r][0] = "PRODUCT_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "standard";
@@ -175,10 +182,13 @@ class modProduct extends DolibarrModules
 			'p.accountancy_code_sell'=>"ProductAccountancySellCode", 'p.accountancy_code_sell_intra'=>"ProductAccountancySellIntraCode",
 			'p.accountancy_code_sell_export'=>"ProductAccountancySellExportCode", 'p.accountancy_code_buy'=>"ProductAccountancyBuyCode",
 			'p.note'=>"NotePrivate",'p.note_public'=>'NotePublic',
-			'p.weight'=>"Weight",'p.length'=>"Length",'p.width'=>"Width",'p.height'=>"Height",'p.surface'=>"Surface",'p.volume'=>"Volume",
-			//'p.duration'=>"Duration",
+			'p.weight'=>"Weight", 'p.weight_units'=>"WeightUnits", 'p.length'=>"Length", 'p.width'=>"Width", 'p.height'=>"Height", 'p.length_units'=>"SizeUnits",
+			'p.surface'=>"Surface", 'p.surface_units'=>"SurfaceUnits", 'p.volume'=>"Volume", 'p.volume_units'=>"VolumeUnits",
+			'p.duration'=>"Duration",
+			'p.finished' => 'Nature',
 			'p.price_base_type'=>"PriceBase",'p.price'=>"UnitPriceHT",'p.price_ttc'=>"UnitPriceTTC",
-			'p.tva_tx'=>'VATRate','p.datec'=>'DateCreation','p.tms'=>'DateModification'
+			'p.tva_tx'=>'VATRate',
+			'p.datec'=>'DateCreation','p.tms'=>'DateModification'
 		);
 		if (is_object($mysoc) && $mysoc->useNPR()) $this->export_fields_array[$r]['p.recuperableonly']='NPR';
 		if (! empty($conf->fournisseur->enabled) || !empty($conf->margin->enabled)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r], array('p.cost_price'=>'CostPrice'));
@@ -191,13 +201,17 @@ class modProduct extends DolibarrModules
 		if (! empty($conf->global->MAIN_MULTILANGS)) $this->export_fields_array[$r]=array_merge($this->export_fields_array[$r], array('l.lang'=>'Language', 'l.label'=>'TranslatedLabel','l.description'=>'TranslatedDescription','l.note'=>'TranslatedNote'));
 		if (! empty($conf->global->PRODUCT_USE_UNITS)) $this->export_fields_array[$r]['p.fk_unit'] = 'Unit';
 		$this->export_TypeFields_array[$r]=array(
-			'p.ref'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.url'=>"Text",'p.accountancy_code_sell'=>"Text",
+			'p.ref'=>"Text",'p.label'=>"Text",
+			'p.fk_product_type'=>'Numeric','p.tosell'=>"Boolean",'p.tobuy'=>"Boolean",
+			'p.description'=>"Text",'p.url'=>"Text",'p.accountancy_code_sell'=>"Text",
             'p.accountancy_code_sell_intra'=>"Text",'p.accountancy_code_sell_export'=>"Text",'p.accountancy_code_buy'=>"Text",
 			'p.note'=>"Text",'p.note_public'=>"Text",
 			'p.weight'=>"Numeric",'p.length'=>"Numeric",'p.width'=>"Numeric",'p.height'=>"Numeric",'p.surface'=>"Numeric",'p.volume'=>"Numeric",
-			'p.customcode'=>'Text','p.price_base_type'=>"Text",'p.price'=>"Numeric",'p.price_ttc'=>"Numeric",'p.tva_tx'=>'Numeric','p.tosell'=>"Boolean",
-			'p.tobuy'=>"Boolean",'p.datec'=>'Date','p.tms'=>'Date'
-			//'p.duration'=>"Duree",
+			'p.customcode'=>'Text',
+			'p.duration'=>"Text",
+			'p.finished' => 'Numeric',
+			'p.price_base_type'=>"Text",'p.price'=>"Numeric",'p.price_ttc'=>"Numeric",'p.tva_tx'=>'Numeric',
+			'p.datec'=>'Date','p.tms'=>'Date'
 		);
 		if (! empty($conf->stock->enabled)) $this->export_TypeFields_array[$r]=array_merge($this->export_TypeFields_array[$r], array('p.stock'=>'Numeric','p.seuil_stock_alerte'=>'Numeric','p.desiredstock'=>'Numeric','p.pmp'=>'Numeric','p.cost_price'=>'Numeric'));
 		if (! empty($conf->barcode->enabled)) $this->export_TypeFields_array[$r]=array_merge($this->export_TypeFields_array[$r], array('p.barcode'=>'Text'));
@@ -377,7 +391,7 @@ class modProduct extends DolibarrModules
             'p.length' => "Length",
 			'p.length_units' => "LengthUnit",
             'p.width' => "Width",
-			'p.width_units' => "VolumeUnits",
+			'p.width_units' => "WidthUnits",
             'p.height' => "Height",
             'p.height_units' => "HeightUnit",
             'p.surface' => "Surface",
@@ -552,6 +566,7 @@ class modProduct extends DolibarrModules
                 )
             );
 
+            if (! is_array($this->import_convertvalue_array[$r])) $this->import_convertvalue_array[$r] = array();
 			$this->import_convertvalue_array[$r] = array_merge($this->import_convertvalue_array[$r], array(
 				'p.fk_unit' => array(
 					'rule' => 'fetchidfromcodeorlabel',

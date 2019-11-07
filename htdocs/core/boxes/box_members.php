@@ -63,7 +63,7 @@ class box_members extends ModeleBoxes
 
 		// disable module for such cases
 		$listofmodulesforexternal=explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
-		if (! in_array('adherent', $listofmodulesforexternal) && ! empty($user->societe_id)) $this->enabled=0;	// disabled for external users
+		if (! in_array('adherent', $listofmodulesforexternal) && ! empty($user->socid)) $this->enabled=0;	// disabled for external users
 
 		$this->hidden = ! ($user->rights->adherent->lire);
 	}
@@ -124,13 +124,13 @@ class box_members extends ModeleBoxes
 					}
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
                         'text' => $memberstatic->getNomUrl(1),
                         'asis' => 1,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
                         'text' => $memberstatic->company,
                         'url' => DOL_URL_ROOT."/adherents/card.php?rowid=".$objp->rowid,
                     );

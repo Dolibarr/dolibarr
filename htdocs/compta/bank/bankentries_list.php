@@ -66,24 +66,24 @@ $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref :''));
 $fieldtype = (! empty($ref) ? 'ref' :'rowid');
 if ($fielvalue)
 {
-	if ($user->societe_id) $socid=$user->societe_id;
+	if ($user->socid) $socid=$user->socid;
 	$result=restrictedArea($user, 'banque', $fieldvalue, 'bank_account&bank_account', '', '', $fieldtype);
 }
 else
 {
-	if ($user->societe_id) $socid=$user->societe_id;
+	if ($user->socid) $socid=$user->socid;
 	$result=restrictedArea($user, 'banque');
 }
 
-$description=GETPOST("description", 'alpha');
 $dateop = dol_mktime(12, 0, 0, GETPOST("opmonth", 'int'), GETPOST("opday", 'int'), GETPOST("opyear", 'int'));
-$debit=GETPOST("debit", 'alpha');
-$credit=GETPOST("credit", 'alpha');
+$search_debit=GETPOST("search_debit", 'alpha');
+$search_credit=GETPOST("search_credit", 'alpha');
 $search_type=GETPOST("search_type", 'alpha');
 $search_account=GETPOST("search_account", 'int')?GETPOST("search_account", 'int'):GETPOST("account", 'int');
 $search_accountancy_code=GETPOST('search_accountancy_code', 'alpha')?GETPOST('search_accountancy_code', 'alpha'):GETPOST('accountancy_code', 'alpha');
 $search_bid=GETPOST("search_bid", "int")?GETPOST("search_bid", "int"):GETPOST("bid", "int");
 $search_ref=GETPOST('search_ref', 'alpha');
+$search_description=GETPOST("search_description", 'alpha');
 $search_dt_start = dol_mktime(0, 0, 0, GETPOST('search_start_dtmonth', 'int'), GETPOST('search_start_dtday', 'int'), GETPOST('search_start_dtyear', 'int'));
 $search_dt_end = dol_mktime(0, 0, 0, GETPOST('search_end_dtmonth', 'int'), GETPOST('search_end_dtday', 'int'), GETPOST('search_end_dtyear', 'int'));
 $search_dv_start = dol_mktime(0, 0, 0, GETPOST('search_start_dvmonth', 'int'), GETPOST('search_start_dvday', 'int'), GETPOST('search_start_dvyear', 'int'));
@@ -142,7 +142,7 @@ $search_array_options=$extrafields->getOptionalsFromPost('banktransaction', '', 
 
 $arrayfields=array(
     'b.rowid'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-    'description'=>array('label'=>$langs->trans("Description"), 'checked'=>1),
+    'b.label'=>array('label'=>$langs->trans("Description"), 'checked'=>1),
     'b.dateo'=>array('label'=>$langs->trans("DateOperationShort"), 'checked'=>1),
     'b.datev'=>array('label'=>$langs->trans("DateValueShort"), 'checked'=>1),
     'type'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
@@ -157,13 +157,16 @@ $arrayfields=array(
     'b.conciliated'=>array('label'=>$langs->trans("Conciliated"), 'enabled'=> $object->rappro, 'checked'=>($action == 'reconcile'?1:0), 'position'=>1020),
 );
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-    foreach($extrafields->attribute_label as $key => $val)
-    {
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
-    }
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+	{
+		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+	}
 }
+$object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 
@@ -186,13 +189,13 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
     $search_dt_end='';
     $search_dv_start='';
     $search_dv_end='';
-    $description="";
 	$search_type="";
-	$debit="";
-	$credit="";
+	$search_debit="";
+	$search_credit="";
 	$search_bid="";
 	$search_ref="";
 	$search_req_nb='';
+	$search_description='';
 	$search_thirdparty='';
 	$search_num_releve='';
 	$search_conciliated='';
@@ -206,8 +209,8 @@ if (empty($reshook))
 {
     $objectclass='Account';
     $objectlabel='BankTransaction';
-    $permtoread = $user->rights->banque->lire;
-    $permtodelete = $user->rights->banque->supprimer;
+    $permissiontoread = $user->rights->banque->lire;
+    $permissiontodelete = $user->rights->banque->supprimer;
     $uploaddir = $conf->bank->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -263,6 +266,7 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 		if ($offset) $param.='&offset='.urlencode($offset);
 		if ($search_thirdparty) $param.='&search_thirdparty='.urlencode($search_thirdparty);
 		if ($search_num_releve) $param.='&search_num_releve='.urlencode($search_num_releve);
+		if ($search_description) $param.='&search_description='.urlencode($search_description);
 		if ($search_start_dt) $param.='&search_start_dt='.urlencode($search_start_dt);
 		if ($search_end_dt) $param.='&search_end_dt='.urlencode($search_end_dt);
 		if ($search_start_dv) $param.='&search_start_dv='.urlencode($search_start_dv);
@@ -393,11 +397,11 @@ if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($lim
 if ($id > 0) $param.='&id='.urlencode($id);
 if (!empty($ref)) $param.='&ref='.urlencode($ref);
 if (!empty($search_ref)) $param.='&search_ref='.urlencode($search_ref);
-if (!empty($description)) $param.='&description='.urlencode($description);
+if (!empty($search_description)) $param.='&search_description='.urlencode($search_description);
 if (!empty($search_type)) $param.='&type='.urlencode($search_type);
 if (!empty($search_thirdparty)) $param.='&search_thirdparty='.urlencode($search_thirdparty);
-if (!empty($debit)) $param.='&debit='.urlencode($debit);
-if (!empty($credit)) $param.='&credit='.urlencode($credit);
+if (!empty($search_debit)) $param.='&search_debit='.urlencode($search_debit);
+if (!empty($search_credit)) $param.='&search_credit='.urlencode($search_credit);
 if (!empty($search_account)) $param.='&search_account='.urlencode($search_account);
 if (!empty($search_num_releve)) $param.='&search_num_releve='.urlencode($search_num_releve);
 if ($search_conciliated != '' && $search_conciliated != '-1')  $param.='&search_conciliated='.urlencode($search_conciliated);
@@ -472,7 +476,9 @@ $sql.= " ba.rowid as bankid, ba.ref as bankref,";
 $sql.= " bu.url_id,";
 $sql.= " s.nom, s.name_alias, s.client, s.fournisseur, s.email, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -498,14 +504,36 @@ if ($search_req_nb) $sql.= natural_search("b.num_chq", $search_req_nb);
 if ($search_num_releve) $sql.= natural_search("b.num_releve", $search_num_releve);
 if ($search_conciliated != '' && $search_conciliated != '-1') $sql.= " AND b.rappro = ".$search_conciliated;
 if ($search_thirdparty) $sql.= natural_search("s.nom", $search_thirdparty);
-if ($description) $sql.= natural_search("b.label", $description);       // Warning some text are just translation keys, not translated strings
+if ($search_description)
+{
+	$search_description_to_use = $search_description;
+	$arrayoffixedlabels=array(
+		'payment_salary',
+		'CustomerInvoicePayment', 'CustomerInvoicePaymentBack',
+		'SupplierInvoicePayment', 'SupplierInvoicePaymentBack',
+		'DonationPayment',
+		'ExpenseReportPayment',
+		'SocialContributionPayment',
+		'SubscriptionPayment',
+		'WithdrawalPayment'
+	);
+	foreach($arrayoffixedlabels as $keyforlabel)
+	{
+		$translatedlabel = $langs->transnoentitiesnoconv($keyforlabel);
+		if (preg_match('/'.$search_description.'/i', $translatedlabel))
+		{
+			$search_description_to_use.="|".$keyforlabel;
+		}
+	}
+	$sql.= natural_search("b.label", $search_description_to_use);       // Warning some text are just translation keys, not translated strings
+}
 if ($search_bid > 0) $sql.= " AND b.rowid=l.lineid AND l.fk_categ=".$search_bid;
 if (! empty($search_type)) $sql.= " AND b.fk_type = '".$db->escape($search_type)."' ";
 // Search criteria amount
-$debit = price2num(str_replace('-', '', $debit));
-$credit = price2num(str_replace('-', '', $credit));
-if ($debit) $sql.= natural_search('- b.amount', $debit, 1);
-if ($credit) $sql.= natural_search('b.amount', $credit, 1);
+$search_debit = price2num(str_replace('-', '', $search_debit));
+$search_credit = price2num(str_replace('-', '', $search_credit));
+if ($search_debit) $sql.= natural_search('- b.amount', $search_debit, 1);
+if ($search_credit) $sql.= natural_search('b.amount', $search_credit, 1);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
@@ -662,7 +690,7 @@ if ($resql)
 	{
 		print load_fiche_titre($langs->trans("AddBankRecordLong"), '', '');
 
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Description").'</td>';
@@ -853,10 +881,10 @@ if ($resql)
     	print '<input type="text" class="flat" name="search_ref" size="2" value="'.dol_escape_htmltag($search_ref).'">';
 	    print '</td>';
 	}
-	if (! empty($arrayfields['description']['checked']))
+	if (! empty($arrayfields['b.label']['checked']))
 	{
 	    print '<td class="liste_titre">';
-    	//print '<input type="text" class="flat" name="description" size="10" value="'.dol_escape_htmltag($description).'">';
+    	print '<input type="text" class="flat maxwidth100" name="search_description" value="'.dol_escape_htmltag($search_description).'">';
     	print '</td>';
 	}
 	if (! empty($arrayfields['b.dateo']['checked']))
@@ -891,13 +919,13 @@ if ($resql)
 	if (! empty($arrayfields['b.debit']['checked']))
 	{
     	print '<td class="liste_titre right">';
-    	print '<input type="text" class="flat" name="debit" size="4" value="'.dol_escape_htmltag($debit).'">';
+    	print '<input type="text" class="flat width50" name="search_debit" value="'.dol_escape_htmltag($search_debit).'">';
     	print '</td>';
 	}
 	if (! empty($arrayfields['b.credit']['checked']))
 	{
     	print '<td class="liste_titre right">';
-    	print '<input type="text" class="flat" name="credit" size="4" value="'.dol_escape_htmltag($credit).'">';
+    	print '<input type="text" class="flat width50" name="search_credit" value="'.dol_escape_htmltag($search_credit).'">';
     	print '</td>';
 	}
 	if (! empty($arrayfields['balancebefore']['checked']))
@@ -937,7 +965,7 @@ if ($resql)
 	// Fields title
 	print '<tr class="liste_titre">';
 	if (! empty($arrayfields['b.rowid']['checked']))            print_liste_field_titre($arrayfields['b.rowid']['label'], $_SERVER['PHP_SELF'], 'b.rowid', '', $param, '', $sortfield, $sortorder);
-	if (! empty($arrayfields['description']['checked']))        print_liste_field_titre($arrayfields['description']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
+	if (! empty($arrayfields['b.label']['checked']))            print_liste_field_titre($arrayfields['b.label']['label'], $_SERVER['PHP_SELF'], 'b.label', '', $param, '', $sortfield, $sortorder);
 	if (! empty($arrayfields['b.dateo']['checked']))            print_liste_field_titre($arrayfields['b.dateo']['label'], $_SERVER['PHP_SELF'], 'b.dateo', '', $param, '', $sortfield, $sortorder, "center ");
 	if (! empty($arrayfields['b.datev']['checked']))            print_liste_field_titre($arrayfields['b.datev']['label'], $_SERVER['PHP_SELF'], 'b.datev,b.dateo,b.rowid', '', $param, 'align="center"', $sortfield, $sortorder);
 	if (! empty($arrayfields['type']['checked']))               print_liste_field_titre($arrayfields['type']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'align="center"', $sortfield, $sortorder);
@@ -1037,9 +1065,10 @@ if ($resql)
            			}
             	}
             	// Extra fields
-            	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+            	$element = 'banktransaction';
+            	if (is_array($extrafields->attributes[$element]['label']) && count($extrafields->attributes[$element]['label']))
             	{
-            		foreach($extrafields->attribute_label as $key => $val)
+            		foreach($extrafields->attributes[$element]['label'] as $key => $val)
             		{
             			if (! empty($arrayfields["ef.".$key]['checked']))
             			{
@@ -1056,6 +1085,7 @@ if ($resql)
             	if ($tmpnbfieldbeforebalance)
             	{
             		print '<td colspan="'.$tmpnbfieldbeforebalance.'">';
+            		print '&nbsp;';
             		print '</td>';
             	}
 
@@ -1081,6 +1111,7 @@ if ($resql)
 						</script>';
 				print '</td>';
 				print '<td colspan="'.($tmpnbfieldafterbalance+2).'">';
+				print '&nbsp;';
 				print '</td>';
             	print '</tr>';
             }
@@ -1142,7 +1173,7 @@ if ($resql)
     	}
 
     	// Description
-    	if (! empty($arrayfields['description']['checked']))
+    	if (! empty($arrayfields['b.label']['checked']))
     	{
     	    print "<td>";
 
@@ -1252,19 +1283,15 @@ if ($resql)
     	        }
     	        elseif ($links[$key]['type']=='company')
     	        {
-
     	        }
     	        elseif ($links[$key]['type']=='user')
     	        {
-
     	        }
     	        elseif ($links[$key]['type']=='member')
     	        {
-
     	        }
     	        elseif ($links[$key]['type']=='sc')
     	        {
-
     	        }
     	        else
     	        {
@@ -1291,33 +1318,33 @@ if ($resql)
         // Date ope
     	if (! empty($arrayfields['b.dateo']['checked']))
     	{
-    	   print '<td align="center" class="nowrap">';
-    	   print '<span id="dateoperation_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->do), "day")."</span>";
-    	   print '&nbsp;';
-    	   print '<span class="inline-block">';
-    	   print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=doprev&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
-    	   print img_edit_remove() . "</a> ";
-    	   print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=donext&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
-    	   print img_edit_add() ."</a>";
-    	   print '</span>';
-    	   print "</td>\n";
+    	    print '<td align="center" class="nowrap">';
+    	    print '<span id="dateoperation_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->do), "day")."</span>";
+    	    print '&nbsp;';
+    	    print '<span class="inline-block">';
+    	    print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=doprev&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
+    	    print img_edit_remove() . "</a> ";
+    	    print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=donext&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
+    	    print img_edit_add() ."</a>";
+    	    print '</span>';
+    	    print "</td>\n";
                 if (! $i) $totalarray['nbfield']++;
     	}
 
         // Date value
     	if (! empty($arrayfields['b.datev']['checked']))
     	{
-    	   print '<td align="center" class="nowrap">';
-    	   print '<span id="datevalue_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->dv), "day")."</span>";
-    	   print '&nbsp;';
-    	   print '<span class="inline-block">';
-    	   print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
-    	   print img_edit_remove() . "</a> ";
-    	   print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
-    	   print img_edit_add() ."</a>";
-    	   print '</span>';
-    	   print "</td>\n";
-           if (! $i) $totalarray['nbfield']++;
+    	    print '<td align="center" class="nowrap">';
+    	    print '<span id="datevalue_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->dv), "day")."</span>";
+    	    print '&nbsp;';
+    	    print '<span class="inline-block">';
+    	    print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
+    	    print img_edit_remove() . "</a> ";
+    	    print '<a class="ajax" href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
+    	    print img_edit_add() ."</a>";
+    	    print '</span>';
+    	    print "</td>\n";
+            if (! $i) $totalarray['nbfield']++;
     	}
 
         // Payment type
@@ -1328,7 +1355,7 @@ if ($resql)
 	        if ($labeltype == 'SOLD') print '&nbsp;'; //$langs->trans("InitialBankBalance");
 	        else print $labeltype;
 	        print "</td>\n";
-                if (! $i) $totalarray['nbfield']++;
+            if (! $i) $totalarray['nbfield']++;
     	}
 
         // Num cheque
@@ -1504,7 +1531,6 @@ if ($resql)
     	            print ' '.img_warning($langs->trans("ReconciliationLate"));
     	        }
     	    }
-    	    print '&nbsp;';
     	    if ($user->rights->banque->modifier)
     	    {
     	        print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;rowid='.$objp->rowid.'&amp;id='.$objp->bankid.'&amp;page='.$page.'">';
@@ -1557,6 +1583,14 @@ if ($resql)
 	    print '</tr>';
 	}
 
+	// If no record found
+	if ($num == 0)
+	{
+		$colspan=1;
+		foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
+		print '<tr><td colspan="'.($colspan+1).'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+	}
+
 	print "</table>";
 	print "</div>";
 
@@ -1566,12 +1600,6 @@ if ($resql)
 else
 {
 	dol_print_error($db);
-}
-
-// If no data to display after a search
-if ($_POST["action"] == "search" && ! $num)
-{
-	print '<div class="opacitymedium">'.$langs->trans("NoRecordFound").'</div>';
 }
 
 // End of page

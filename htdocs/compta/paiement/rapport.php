@@ -34,10 +34,10 @@ if (! $user->rights->facture->lire) accessforbidden();
 $action=GETPOST('action', 'aZ09');
 
 $socid=0;
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
     $action = '';
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 
 $dir = $conf->facture->dir_output.'/payments';
@@ -152,7 +152,6 @@ if ($year)
             {
                 if (preg_match('/^payment/i', $file))
                 {
-
                     $tfile = $dir . '/'.$year.'/'.$file;
                     $relativepath = $year.'/'.$file;
                     print '<tr class="oddeven">'.'<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';

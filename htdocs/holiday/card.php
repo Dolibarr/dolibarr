@@ -48,10 +48,6 @@ $id=GETPOST('id', 'int');
 $ref=GETPOST('ref', 'alpha');
 $fuserid = (GETPOST('fuserid', 'int')?GETPOST('fuserid', 'int'):$user->id);
 
-// Protection if external user
-if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'holiday', $id, 'holiday');
-
 // Load translation files required by the page
 $langs->loadLangs(array("holiday","mails"));
 
@@ -65,14 +61,15 @@ if (! empty($conf->global->HOLIDAY_FOR_NON_SALARIES_TOO)) $morefilter = '';
 $error = 0;
 
 $object = new Holiday($db);
+
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-if ($id > 0)
+if (($id > 0) || $ref)
 {
-    $object->fetch($id);
+    $object->fetch($id, $ref);
 
     // Check current user can read this leave request
     $canread = 0;
@@ -92,6 +89,10 @@ $candelete = 0;
 if (! empty($user->rights->holiday->delete)) $candelete=1;
 if ($object->statut == Holiday::STATUS_DRAFT && $user->rights->holiday->write && in_array($object->fk_user, $childids)) $candelete=1;
 
+// Protection if external user
+if ($user->socid) $socid=$user->socid;
+$result = restrictedArea($user, 'holiday', $object->id, 'holiday');
+
 
 /*
  * Actions
@@ -103,7 +104,6 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-
 	if ($cancel)
 	{
 		if (! empty($backtopage))
@@ -117,7 +117,6 @@ if (empty($reshook))
 	// If create a request
 	if ($action == 'create')
 	{
-
 	    // If no right to create a request
 	    if (! $cancreate)
 	    {
@@ -880,7 +879,7 @@ if (empty($reshook))
 
 	// Actions to build doc
 	$upload_dir = $conf->holiday->dir_output;
-	$permissioncreate = $user->rights->holiday->creer;
+	$permissiontoadd = $user->rights->holiday->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 	*/
 }
@@ -912,7 +911,6 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 
         // Si il y a une erreur
         if (GETPOST('error')) {
-
             switch(GETPOST('error')) {
                 case 'datefin' :
                     $errors[] = $langs->trans('ErrorEndDateCP');
@@ -1009,7 +1007,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 
         //print '<span>'.$langs->trans('DelayToRequestCP',$object->getConfCP('delayForRequest')).'</span><br><br>';
 
-        print '<table class="border" width="100%">';
+        print '<table class="border centpercent">';
         print '<tbody>';
 
         // User for leave request

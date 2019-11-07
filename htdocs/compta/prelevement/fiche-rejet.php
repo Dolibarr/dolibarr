@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array("banks","categories",'withdrawals','bills'));
 
 // Securite acces client
-if ($user->societe_id > 0) accessforbidden();
+if ($user->socid > 0) accessforbidden();
 
 // Get supervariables
 $prev_id = GETPOST('id', 'int');
@@ -112,7 +112,7 @@ if ($prev_id > 0 || $ref)
 		print '<br>';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		$acc = new Account($db);
 		$result=$acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);
@@ -223,7 +223,7 @@ if ($resql)
 	}
 	else
 	{
-	   print '<tr><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+	    print '<tr><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 	}
 
   	if ($num > 0)

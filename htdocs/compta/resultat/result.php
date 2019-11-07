@@ -130,7 +130,7 @@ if (! empty($conf->accounting->enabled)) $modecompta='BOOKKEEPING';
 if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta", 'alpha');
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 	accessforbidden();
 if (! $user->rights->accounting->comptarapport->lire)
 	accessforbidden();
@@ -256,7 +256,6 @@ elseif ($modecompta=="RECETTES-DEPENSES")
 }
 elseif ($modecompta=="BOOKKEEPING")
 {
-
 	// Get array of all report groups that are active
 	$cats = $AccCat->getCats();		// WARNING: Computed groups must be after group they include
 

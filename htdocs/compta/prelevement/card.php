@@ -37,7 +37,7 @@ if (!$user->rights->prelevement->bons->lire)
 accessforbidden();
 
 // Security check
-if ($user->societe_id > 0) accessforbidden();
+if ($user->socid > 0) accessforbidden();
 
 // Get supervariables
 $action = GETPOST('action', 'alpha');
@@ -177,7 +177,7 @@ if ($id > 0 || $ref)
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	//print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
 	print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
@@ -214,7 +214,7 @@ if ($id > 0 || $ref)
 	print '<br>';
 
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	$acc = new Account($db);
 	$result=$acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);
@@ -262,7 +262,7 @@ if ($id > 0 || $ref)
 		print '<form method="post" name="userfile" action="card.php?id='.$object->id.'" enctype="multipart/form-data">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="infotrans">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyTransmision").'</td></tr>';
 		print '<tr class="oddeven"><td>'.$langs->trans("TransData").'</td><td>';
@@ -271,7 +271,7 @@ if ($id > 0 || $ref)
 		print '<tr class="oddeven"><td>'.$langs->trans("TransMetod").'</td><td>';
 		print $form->selectarray("methode", $object->methodes_trans);
 		print '</td></tr>';
-/*			print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
+        /*print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
 		print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 		print '<input class="flat" type="file" name="userfile"><br>';
 		print '</td></tr>';*/
@@ -286,7 +286,7 @@ if ($id > 0 || $ref)
 		print '<form name="infocredit" method="post" action="card.php?id='.$object->id.'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="infocredit">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyCredit").'</td></tr>';
 		print '<tr class="oddeven"><td>'.$langs->trans('CreditDate').'</td><td>';

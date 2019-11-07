@@ -412,7 +412,7 @@ if ($id)
 	print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
 
 	print '<div class="div-table-responsive">';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 
 	// Form to add a new line
 	if ($tabname[$id])
@@ -609,7 +609,6 @@ if ($id)
                         $langs->load("accountancy");
 						foreach ($fieldlist as $field => $value)
 						{
-
 							$showfield=1;
 							$class="left";
 							$valuetoshow=$obj->{$fieldlist[$field]};

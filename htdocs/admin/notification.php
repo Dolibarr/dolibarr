@@ -123,7 +123,7 @@ print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
@@ -146,7 +146,7 @@ $title=$langs->trans("ListOfNotificationsPerUser");
 if (! empty($conf->societe->enabled)) $title=$langs->trans("ListOfNotificationsPerUserOrContact");
 print load_fiche_titre($title, '', '');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Label").'</td>';
 /*print '<td>'.$langs->trans("Code").'</td>';
@@ -164,7 +164,6 @@ print '<td>';
 $i=0;
 foreach($listofnotifiedevents as $notifiedevent)
 {
-
     $label=$langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
     $elementLabel = $langs->trans(ucfirst($notifiedevent['elementtype']));
 
@@ -193,7 +192,7 @@ print '<br><br>';
 
 print load_fiche_titre($langs->trans("ListOfFixedNotifications"), '', '');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Module").'</td>';
 print '<td>'.$langs->trans("Code").'</td>';
@@ -209,7 +208,6 @@ $listofnotifiedevents=$notificationtrigger->getListOfManagedEvents();
 
 foreach($listofnotifiedevents as $notifiedevent)
 {
-
     $label=$langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
 
     $elementLabel = $langs->trans(ucfirst($notifiedevent['elementtype']));
@@ -238,7 +236,7 @@ foreach($listofnotifiedevents as $notifiedevent)
     	$s='<input type="text" size="32" name="NOTIF_'.$notifiedevent['code'].'_old_'.$reg[1].'_key" value="'.dol_escape_htmltag($value).'">';		// Do not use type="email" here, we must be able to enter a list of email with , separator.
 	    $arrayemail=explode(',', $value);
 		$showwarning=0;
-		foreach($arrayemail as $key=>$valuedet)
+		foreach($arrayemail as $keydet => $valuedet)
 		{
 			$valuedet=trim($valuedet);
 			if (! empty($valuedet) && ! isValidEmail($valuedet, 1)) $showwarning++;

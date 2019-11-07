@@ -207,8 +207,7 @@ elseif ($action == 'set_FICHINTER_PRINT_PRODUCTS')
     }
 } elseif ($action == 'set_FICHINTER_USE_SERVICE_DURATION') {
 	$val = GETPOST('FICHINTER_USE_SERVICE_DURATION', 'alpha');
-$res = dolibarr_set_const($db, "FICHINTER_USE_SERVICE_DURATION", ($val == 'on' ? 1 : 0), 'bool', 0, '',
-		$conf->entity);
+    $res = dolibarr_set_const($db, "FICHINTER_USE_SERVICE_DURATION", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
 
 	if (!$res > 0) {
 		$error++;
@@ -220,33 +219,31 @@ $res = dolibarr_set_const($db, "FICHINTER_USE_SERVICE_DURATION", ($val == 'on' ?
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 } elseif ($action == 'set_FICHINTER_WITHOUT_DURATION') {
-        $val = GETPOST('FICHINTER_WITHOUT_DURATION', 'alpha');
-        $res = dolibarr_set_const($db, "FICHINTER_WITHOUT_DURATION", ($val == 'on' ? 1 : 0), 'bool', 0, '',
-                $conf->entity);
+    $val = GETPOST('FICHINTER_WITHOUT_DURATION', 'alpha');
+    $res = dolibarr_set_const($db, "FICHINTER_WITHOUT_DURATION", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
 
-        if (!$res > 0) {
-                $error++;
-        }
+    if (!$res > 0) {
+        $error++;
+    }
 
-        if (!$error) {
-                setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-        } else {
-                setEventMessages($langs->trans("Error"), null, 'errors');
-        }
+    if (!$error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 } elseif ($action == 'set_FICHINTER_DATE_WITHOUT_HOUR') {
-        $val = GETPOST('FICHINTER_DATE_WITHOUT_HOUR', 'alpha');
-        $res = dolibarr_set_const($db, "FICHINTER_DATE_WITHOUT_HOUR", ($val == 'on' ? 1 : 0), 'bool', 0, '',
-                $conf->entity);
+    $val = GETPOST('FICHINTER_DATE_WITHOUT_HOUR', 'alpha');
+    $res = dolibarr_set_const($db, "FICHINTER_DATE_WITHOUT_HOUR", ($val == 'on' ? 1 : 0), 'bool', 0, '', $conf->entity);
 
-        if (!$res > 0) {
-                $error++;
-        }
+    if (!$res > 0) {
+        $error++;
+    }
 
-        if (!$error) {
-                setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-        } else {
-                setEventMessages($langs->trans("Error"), null, 'errors');
-        }
+    if (!$error) {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 
 
@@ -273,7 +270,7 @@ dol_fiche_head($head, 'ficheinter', $langs->trans("Interventions"), -1, 'interve
 
 print load_fiche_titre($langs->trans("FicheinterNumberingModules"), '', '');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="100">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -293,7 +290,6 @@ foreach ($dirmodels as $reldir)
 		$handle = opendir($dir);
 		if (is_resource($handle))
 		{
-
 			while (($file = readdir($handle))!==false)
 			{
 				if (preg_match('/^(mod_.*)\.php$/i', $file, $reg))
@@ -399,7 +395,7 @@ else
 }
 
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -433,8 +429,6 @@ foreach ($dirmodels as $reldir)
 		    	{
 		    		if (file_exists($dir.'/'.$file))
 		    		{
-
-
 		    			$name = substr($file, 4, dol_strlen($file) -16);
 		    			$classname = substr($file, 0, dol_strlen($file) -12);
 
@@ -525,7 +519,7 @@ print "<br>";
  */
 
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Value").'</td>';

@@ -36,7 +36,7 @@ $socid = GETPOST('socid', 'int');
 $TSelectedProducts = GETPOST('products', 'array');
 $TSelectedCats = GETPOST('categories', 'array');
 
-if (! empty($user->societe_id)) $socid=$user->societe_id;
+if (! empty($user->socid)) $socid=$user->socid;
 $result = restrictedArea($user, 'societe', '', '');
 $result = restrictedArea($user, 'margins');
 
@@ -87,11 +87,10 @@ print '<form method="post" name="sel" action="'.$_SERVER['PHP_SELF'].'">';
 
 dol_fiche_head($head, 'customerMargins', $titre, 0, $picto);
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 
 $client = false;
 if ($socid > 0) {
-
 	$soc = new Societe($db);
 	$soc->fetch($socid);
 
@@ -171,7 +170,7 @@ print "</table>";
 
 print '<br>';
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 
 // Total Margin
 print '<tr><td class="titlefield">'.$langs->trans("TotalMargin").'</td><td colspan="4">';
@@ -220,6 +219,7 @@ if ($socid > 0) $sql.= ' AND s.rowid = '.$socid;
 if (!$user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " AND f.fk_statut NOT IN (" . implode(', ', $invoice_status_except_list) . ")";
 $sql.= ' AND s.entity IN ('.getEntity('societe').')';
+$sql.= ' AND f.entity IN ('.getEntity('invoice').')';
 $sql.= " AND d.fk_facture = f.rowid";
 $sql.= " AND (d.product_type = 0 OR d.product_type = 1)";
 if(! empty($TSelectedProducts)) {
@@ -361,7 +361,7 @@ if ($result)
 		print "<td class=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
 	print "</tr>\n";
 
-  print "</table>";
+    print "</table>";
 }
 else
 {

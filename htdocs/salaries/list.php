@@ -33,7 +33,7 @@ $langs->loadLangs(array("compta","salaries","bills","hrm"));
 
 // Security check
 $socid = GETPOST("socid", "int");
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'salaries', '', '', '');
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -226,7 +226,7 @@ if ($result)
         $userstatic->admin=$obj->admin;
         $userstatic->login=$obj->login;
         $userstatic->email=$obj->email;
-        $userstatic->societe_id=$obj->fk_soc;
+        $userstatic->socid=$obj->fk_soc;
         $userstatic->statut=$obj->status;
 
         $salstatic->id=$obj->rowid;

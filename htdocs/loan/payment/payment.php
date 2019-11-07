@@ -38,9 +38,9 @@ $last=GETPOST('last');
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
-	$socid = $user->societe_id;
+	$socid = $user->socid;
 }
 
 $loan = new Loan($db);
@@ -276,7 +276,7 @@ if ($action == 'create')
 
 	dol_fiche_end();
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td class="left">'.$langs->trans("DateDue").'</td>';
 	print '<td class="right">'.$langs->trans("LoanCapital").'</td>';

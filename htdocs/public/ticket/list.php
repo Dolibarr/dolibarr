@@ -96,7 +96,6 @@ if ($action == "view_ticketlist") {
     	$ret = $object->fetch('', '', $track_id);
 
         if ($ret && $object->id > 0) {
-
         	// vérifie si l'adresse email est bien dans les contacts du ticket
             $contacts = $object->liste_contact(-1, 'external');
             foreach ($contacts as $contact) {

@@ -31,9 +31,9 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/fiscalyear.class.php';
 $langs->loadLangs(array("admin","compta"));
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 	accessforbidden();
-if (empty($user->rights->accounting->fiscalyear))
+if (empty($user->rights->accounting->fiscalyear->write))
 	accessforbidden();
 
 $error = 0;
@@ -163,7 +163,7 @@ if ($action == 'create')
 
 	dol_fiche_head();
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Label
 	print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans("Label") . '</td><td><input name="label" size="32" value="' . GETPOST('label', 'alpha') . '"></td></tr>';
@@ -211,7 +211,7 @@ if ($action == 'create')
 			print '<input type="hidden" name="action" value="update">';
 			print '<input type="hidden" name="id" value="' . $id . '">';
 
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent">';
 
 			// Ref
 			print "<tr>";
@@ -261,7 +261,7 @@ if ($action == 'create')
 
 			dol_fiche_head($head, 'card', $langs->trans("Fiscalyear"), 0, 'cron');
 
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent">';
 
 			$linkback = '<a href="' . DOL_URL_ROOT . '/accountancy/admin/fiscalyear.php">' . $langs->trans("BackToList") . '</a>';
 
@@ -300,7 +300,7 @@ if ($action == 'create')
 
 			dol_fiche_end();
 
-			if (! empty($user->rights->accounting->fiscalyear))
+			if (! empty($user->rights->accounting->fiscalyear->write))
 			{
     			/*
     			 * Barre d'actions

@@ -52,7 +52,7 @@ $langs->loadLangs(array("interventions","admin","compta","bills"));
 // Security check
 $id=(GETPOST('fichinterid', 'int')?GETPOST('fichinterid', 'int'):GETPOST('id', 'int'));
 $action=GETPOST('action', 'alpha');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $objecttype = 'fichinter_rec';
 if ($action == "create" || $action == "add") $objecttype = '';
 $result = restrictedArea($user, 'ficheinter', $id, $objecttype);
@@ -158,12 +158,10 @@ if ($action == 'add') {
 	// on récupère les enregistrements
 	$object->fetch($id);
 
-
 	// on transfert les données de l'un vers l'autre
 	if ($object->socid > 0) {
 		$newinter->socid=$object->socid;
-		$newinter->fk_projet=$object->fk_projet;
-		$newinter->fk_project=$object->fk_projet;
+		$newinter->fk_project=$object->fk_project;
 		$newinter->fk_contrat=$object->fk_contrat;
 	} else {
 		$newinter->socid=GETPOST("socid");
@@ -264,7 +262,7 @@ if ($action == 'create') {
 		if (! empty($conf->projet->enabled) && $object->fk_project > 0) $rowspan++;
 		if (! empty($conf->contrat->enabled) && $object->fk_contrat > 0) $rowspan++;
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		$object->fetch_thirdparty();
 
@@ -329,7 +327,7 @@ if ($action == 'create') {
 		$title = $langs->trans("Recurrence");
 		print load_fiche_titre($title, '', 'calendar');
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		// Frequency
 		print '<tr><td class="titlefieldcreate">';
@@ -383,7 +381,7 @@ if ($action == 'create') {
 			$i = 0;
 			$total = 0;
 
-			echo '<table class="noborder" width="100%">';
+			echo '<table class="noborder centpercent">';
 			if ($num) {
 				print '<tr class="liste_titre">';
 				print '<td>'.$langs->trans("Description").'</td>';
@@ -435,7 +433,7 @@ if ($action == 'create') {
 	dol_fiche_head('');
 
 	print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 	print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>';
 	print $form->select_company('', 'socid', '', 1, 1);
 	print '</td></tr>';
@@ -514,7 +512,7 @@ if ($action == 'create') {
 			print '<div class="fichehalfleft">';
 			print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent">';
 
 			print "<tr><td>".$langs->trans("Author").'</td><td colspan="3">'.$author->getFullName($langs)."</td></tr>";
 
@@ -571,7 +569,7 @@ if ($action == 'create') {
 			$title = $langs->trans("Recurrence");
 			print load_fiche_titre($title, '', 'calendar');
 
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent">';
 
 			// if "frequency" is empty or = 0, the reccurence is disabled
 			print '<tr><td style="width: 50%">';
@@ -683,7 +681,7 @@ if ($action == 'create') {
 
 			print load_fiche_titre($title);
 
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Description").'</td>';
 			print '<td class="center">'.$langs->trans("Duration").'</td>';
@@ -692,7 +690,6 @@ if ($action == 'create') {
 			$num = count($object->lines);
 			$i = 0;
 			while ($i < $num) {
-
 				// Show product and description
 				if (isset($object->lines[$i]->product_type))
 					$type=$object->lines[$i]->product_type;
@@ -783,7 +780,7 @@ if ($action == 'create') {
 			print $langs->trans("ToCreateAPredefinedInterventional").'<br><br>';
 
 			$i = 0;
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
             print_liste_field_titre("Ref", $_SERVER['PHP_SELF'], "f.titre", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');
             print_liste_field_titre("Company", $_SERVER['PHP_SELF'], "s.nom", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');

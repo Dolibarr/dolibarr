@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 $langs->load("mails");
 
 // Security check
-if (! $user->rights->mailing->lire || $user->societe_id > 0) accessforbidden();
+if (! $user->rights->mailing->lire || $user->socid > 0) accessforbidden();
 
 
 // Load variable for pagination
@@ -54,16 +54,17 @@ if (! $sortorder) $sortorder="ASC";
 $id=GETPOST('id', 'int');
 $rowid=GETPOST('rowid', 'int');
 $action=GETPOST('action', 'aZ09');
-$search_lastname=GETPOST("search_lastname");
-$search_firstname=GETPOST("search_firstname");
-$search_email=GETPOST("search_email");
-$search_other=GETPOST("search_other");
-$search_dest_status=GETPOST('search_dest_status');
+$search_lastname=GETPOST("search_lastname", 'alphanohtml');
+$search_firstname=GETPOST("search_firstname", 'alphanohtml');
+$search_email=GETPOST("search_email", 'alphanohtml');
+$search_other=GETPOST("search_other", 'alphanohtml');
+$search_dest_status=GETPOST('search_dest_status', 'alphanohtml');
 
 // Search modules dirs
 $modulesdir = dolGetModulesDirs('/mailings');
 
 $object = new Mailing($db);
+$result=$object->fetch($id);
 
 
 /*
@@ -112,7 +113,7 @@ if ($action == 'add')
 	}
 }
 
-if (GETPOST('clearlist'))
+if (GETPOST('clearlist', 'int'))
 {
 	// Loading Class
 	$obj = new MailingTargets($db);
@@ -121,6 +122,50 @@ if (GETPOST('clearlist'))
 	header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 	exit;
 	*/
+}
+
+if (GETPOST('exportcsv', 'int'))
+{
+	$completefilename = 'targets_emailing'.$object->id.'_'.dol_print_date(dol_now(), 'dayhourlog').'.csv';
+	header('Content-Type: text/csv');
+	header('Content-Disposition: attachment;filename=' . $completefilename);
+
+	// List of selected targets
+	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut, mc.date_envoi, mc.tms,";
+	$sql .= " mc.source_url, mc.source_id, mc.source_type, mc.error_text";
+	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
+	$sql .= " WHERE mc.fk_mailing=".$object->id;
+	$sql .= $db->order($sortfield, $sortorder);
+
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$sep = ',';
+
+		while ($obj = $db->fetch_object($resql))
+		{
+			print $obj->rowid . $sep;
+			print $obj->lastname . $sep;
+			print $obj->firstname . $sep;
+			print $obj->email . $sep;
+			print $obj->other . $sep;
+			print $obj->date_envoi . $sep;
+			print $obj->tms . $sep;
+			print $obj->source_url . $sep;
+			print $obj->source_id . $sep;
+			print $obj->source_type . $sep;
+			print $obj->error_text . $sep;
+			print "\n";
+		}
+
+		exit;
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+	exit;
 }
 
 if ($action == 'delete')
@@ -252,7 +297,7 @@ if ($object->fetch($id) >= 0)
 	{
 		print load_fiche_titre($langs->trans("ToAddRecipientsChooseHere"), ($user->admin?info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"), 1):''), 'generic');
 
-		//print '<table class="noborder" width="100%">';
+		//print '<table class="noborder centpercent">';
 		print '<div class="tagtable centpercent liste_titre_bydiv borderbottom" id="tablelines">';
 
 		//print '<tr class="liste_titre">';
@@ -434,13 +479,13 @@ if ($object->fetch($id) >= 0)
 	{
 		$num = $db->num_rows($resql);
 
-		$param = "&amp;id=".$object->id;
+		$param = "&id=".$object->id;
 		//if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 		if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-		if ($search_lastname)  $param.= "&amp;search_lastname=".urlencode($search_lastname);
-		if ($search_firstname) $param.= "&amp;search_firstname=".urlencode($search_firstname);
-		if ($search_email)     $param.= "&amp;search_email=".urlencode($search_email);
-		if ($search_other)     $param.= "&amp;search_other=".urlencode($search_other);
+		if ($search_lastname)  $param.= "&search_lastname=".urlencode($search_lastname);
+		if ($search_firstname) $param.= "&search_firstname=".urlencode($search_firstname);
+		if ($search_email)     $param.= "&search_email=".urlencode($search_email);
+		if ($search_other)     $param.= "&search_other=".urlencode($search_other);
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -449,11 +494,13 @@ if ($object->fetch($id) >= 0)
         print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-		$cleartext='';
+		$morehtmlcenter='';
 		if ($allowaddtarget) {
-		    $cleartext=$langs->trans("ToClearAllRecipientsClickHere").' '.'<a href="'.$_SERVER["PHP_SELF"].'?clearlist=1&id='.$object->id.'" class="button reposition">'.$langs->trans("TargetsReset").'</a>';
+			$morehtmlcenter='<span class="opacitymedium">'.$langs->trans("ToClearAllRecipientsClickHere").'</span> <a href="'.$_SERVER["PHP_SELF"].'?clearlist=1&id='.$object->id.'" class="button reposition">'.$langs->trans("TargetsReset").'</a>';
 		}
-		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $cleartext, $num, $nbtotalofrecords, 'generic', 0, '', '', $limit);
+		$morehtmlcenter.=' <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?exportcsv=1&id='.$object->id.'">'.$langs->trans("Download").'</a>';
+
+		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $morehtmlcenter, $num, $nbtotalofrecords, 'generic', 0, '', '', $limit);
 
 		print '</form>';
 
@@ -465,9 +512,6 @@ if ($object->fetch($id) >= 0)
         print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 		print '<input type="hidden" name="limit" value="'.$limit.'">';
-
-
-		if ($page)	$param.= "&amp;page=".$page;
 
 		print '<div class="div-table-responsive">';
 		print '<table class="noborder centpercent">';
@@ -515,6 +559,8 @@ if ($object->fetch($id) >= 0)
 		print $searchpicto;
 		print '</td>';
 		print '</tr>';
+
+		if ($page) $param.= "&page=".urlencode($page);
 
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "mc.email", $param, "", "", $sortfield, $sortorder);

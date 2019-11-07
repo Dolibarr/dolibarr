@@ -346,7 +346,7 @@ if ($step == 1 || ! $datatoimport)
 
 	// Affiche les modules d'imports
 	print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Module").'</td>';
 	print '<td>'.$langs->trans("ImportableDatas").'</td>';
@@ -451,7 +451,6 @@ if ($step == 2 && $datatoimport)
 	$liste=$objmodelimport->liste_modeles($db);
 	foreach($liste as $key)
 	{
-
 		print '<tr class="oddeven">';
 		print '<td width="16">'.img_picto_common($key, $objmodelimport->getPictoForKey($key)).'</td>';
     	$text=$objmodelimport->getDriverDescForKey($key);
@@ -875,7 +874,7 @@ if ($step == 4 && $datatoimport)
 
 	// Title of array with fields
     print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("FieldsInSourceFile").'</td>';
 	print '<td>'.$langs->trans("FieldsInTargetDatabase").'</td>';
@@ -1152,7 +1151,7 @@ if ($step == 4 && $datatoimport)
     	print '<input type="hidden" value="'.dol_escape_htmltag($separator).'" name="separator">';
     	print '<input type="hidden" value="'.dol_escape_htmltag($enclosure).'" name="enclosure">';
 
-		print '<table summary="selectofimportprofil" class="noborder" width="100%">';
+		print '<table summary="selectofimportprofil" class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("ImportModelName").'</td>';
 		print '<td>&nbsp;</td>';
@@ -1175,7 +1174,6 @@ if ($step == 4 && $datatoimport)
 			$i = 0;
 			while ($i < $num)
 			{
-
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven"><td>';
 				print $obj->label;
@@ -1964,15 +1962,16 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 
 	$height='24px';
 
-    if ($key == 'none') {//stop multiple duplicate ids with no number
+    if ($key == 'none') {
+        //stop multiple duplicate ids with no number
         print "\n\n<!-- Box_no-key start-->\n";
         print '<div class="box boximport" style="padding:0;">' . "\n";
         print '<table summary="boxtable_no-key" width="100%" class="nobordernopadding">' . "\n";
     } else {
-	print "\n\n<!-- Box ".$pos." start -->\n";
+        print "\n\n<!-- Box ".$pos." start -->\n";
         print '<div class="box boximport" style="padding: 0;" id="boxto_' . $pos . '">' . "\n";
 
-	print '<table summary="boxtable'.$pos.'" width="100%" class="nobordernopadding">'."\n";
+        print '<table summary="boxtable'.$pos.'" width="100%" class="nobordernopadding">'."\n";
     }
 
 	if ($pos && $pos > count($fieldssource))	// No fields

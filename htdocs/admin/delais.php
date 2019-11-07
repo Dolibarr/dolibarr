@@ -174,8 +174,8 @@ llxHeader();
 
 print load_fiche_titre($langs->trans("DelaysOfToleranceBeforeWarning"), '', 'title_setup');
 
-print $langs->transnoentities("DelaysOfToleranceDesc", img_warning());
-print " ".$langs->trans("OnlyActiveElementsAreShown", DOL_URL_ROOT.'/admin/modules.php')."<br>\n";
+print '<span class="opacitymedium">'.$langs->transnoentities("DelaysOfToleranceDesc", img_warning());
+print " ".$langs->trans("OnlyActiveElementsAreShown", DOL_URL_ROOT.'/admin/modules.php')."</span><br>\n";
 print "<br>\n";
 
 $countrynotdefined='<font class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</font>';
@@ -186,7 +186,7 @@ if ($action == 'edit')
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
 
     foreach($modules as $module => $delays)
@@ -209,7 +209,7 @@ if ($action == 'edit')
     print '<br>';
 
 	// Show if meteo is enabled
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
 
 	print '<tr class="oddeven">';
@@ -225,7 +225,7 @@ else
      * Show parameters
      */
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
 
     foreach($modules as $module => $delays)
@@ -248,7 +248,7 @@ else
 	print '<br>';
 
 	// Show if meteo is enabled
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
 
 	print '<tr class="oddeven">';
@@ -265,7 +265,6 @@ print '<br>';
 print '<span class="opacitymedium">'.$langs->trans("DescWeather").'</span> ';
 
 if($action == 'edit') {
-
 	$str_mode_std = $langs->trans('MeteoStdModEnabled').' : '.$langs->trans('MeteoUseMod', $langs->transnoentitiesnoconv('MeteoPercentageMod'));
 	$str_mode_percentage = $langs->trans('MeteoPercentageModEnabled').' : '.$langs->trans('MeteoUseMod', $langs->transnoentitiesnoconv('MeteoStdMod'));
 	if(empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $str_mode_enabled = $str_mode_std;
@@ -292,8 +291,6 @@ $text=''; $options='class="valignmiddle" height="60px"';
 
 
 if ($action == 'edit') {
-
-
 	print '<div id="standard" '.(empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? '' : 'style="display:none;"').'>';
 
 	print '<div>';
@@ -364,9 +361,7 @@ if ($action == 'edit') {
 
 	<?php
 } else {
-
 	if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
-
 		print '<div>';
 		print '<div class="inline-block" style="padding-right: 20px">';
 		print img_weather($text, 0, $options);
@@ -386,7 +381,6 @@ if ($action == 'edit') {
 		print '</div>';
 		print '</div>';
 	} else {
-
 		print '<div>';
 		print '<div class="inline-block" style="padding-right: 20px">';
 		print img_weather($text, 0, $options);
@@ -411,11 +405,9 @@ if ($action == 'edit') {
 print '</div>';
 
 if($action == 'edit') {
-
 	print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
 	print '<br></form>';
 } else {
-
 	print '<br><div class="tabsAction">';
 	print '<a class="butAction" href="delais.php?action=edit">'.$langs->trans("Modify").'</a></div>';
 }

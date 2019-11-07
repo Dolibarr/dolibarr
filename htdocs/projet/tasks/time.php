@@ -68,7 +68,7 @@ $search_valuebilled=GETPOST('search_valuebilled', 'int');
 
 // Security check
 $socid=0;
-//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 if (!$user->rights->projet->lire) accessforbidden();
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -88,11 +88,9 @@ $hookmanager->initHooks(array('projecttasktime','globalcard'));
 
 $object = new Task($db);
 $projectstatic = new Project($db);
-$extrafields_project = new ExtraFields($db);
-$extrafields_task = new ExtraFields($db);
-
-$extrafields_project->fetch_name_optionals_label($projectstatic->table_element);
-$extrafields_task->fetch_name_optionals_label($object->table_element);
+$extrafields = new ExtraFields($db);
+$extrafields->fetch_name_optionals_label($projectstatic->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 
 /*
@@ -761,7 +759,6 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 	    // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 	    $hookmanager->initHooks(array('tasktimelist'));
-	    $extrafields = new ExtraFields($db);
 
 	    // Definition of fields for list
 	    $arrayfields=array();
@@ -777,13 +774,15 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	    $arrayfields['value'] =array('label'=>$langs->trans("Value"), 'checked'=>1, 'enabled'=>(empty($conf->salaries->enabled)?0:1));
 	    $arrayfields['valuebilled'] =array('label'=>$langs->trans("Billed"), 'checked'=>1, 'enabled'=>(((! empty($conf->global->PROJECT_HIDE_TASKS) || empty($conf->global->PROJECT_BILL_TIME_SPENT))?0:1) && $projectstatic->usage_bill_time));
 	    // Extra fields
-	    if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+	    if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 	    {
-	        foreach($extrafields->attribute_label as $key => $val)
-	        {
-				if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
-	        }
+	    	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+	    	{
+	    		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+	    			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+	    	}
 	    }
+	    $arrayfields = dol_sort_array($arrayfields, 'position');
 
 	    $param='';
 	    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
@@ -975,7 +974,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
             if (! empty($id)) print '<input type="hidden" name="taskid" value="'.$id.'">';
 
             print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
-			print '<table class="noborder nohover" width="100%">';
+			print '<table class="noborder nohover centpercent">';
 
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Date").'</td>';
@@ -1283,6 +1282,8 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     			}
     			print '</td>';
     			if (! $i) $totalarray['nbfield']++;
+    			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='t.task_duration';
+    			$totalarray['val']['t.task_duration'] += $task_time->task_duration;
     			if (! $i) $totalarray['totaldurationfield']=$totalarray['nbfield'];
     			$totalarray['totalduration'] += $task_time->task_duration;
             }
@@ -1295,11 +1296,13 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 				print price($value, 1, $langs, 1, -1, -1, $conf->currency);
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
-    			if (! $i) $totalarray['totalvaluefield']=$totalarray['nbfield'];
-    			$totalarray['totalvalue'] += $value;
+				if (! $i) $totalarray['pos'][$totalarray['nbfield']]='value';
+				$totalarray['val']['value'] += $value;
+				if (! $i) $totalarray['totalvaluefield']=$totalarray['nbfield'];
+				$totalarray['totalvalue'] += $value;
             }
 
-            // Invoiced - Value billed
+            // Invoiced
             if (! empty($arrayfields['valuebilled']['checked']))
             {
                 print '<td class="center">';    // invoice_id and invoice_line_id
@@ -1688,26 +1691,26 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		}
 
 		// Show total line
+		//include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 		if (isset($totalarray['totaldurationfield']) || isset($totalarray['totalvaluefield']))
 		{
-		    print '<tr class="liste_total">';
-		    $i=0;
-		    while ($i < $totalarray['nbfield'])
-		    {
-		        $i++;
-		        if ($i == 1)
-		        {
-		            if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
-		            else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-		        }
-		        elseif ($totalarray['totaldurationfield'] == $i) print '<td class="right">'.convertSecondToTime($totalarray['totalduration'], 'allhourmin').'</td>';
-		        elseif ($totalarray['totalvaluefield'] == $i) print '<td class="right">'.price($totalarray['totalvalue']).'</td>';
-		        //elseif ($totalarray['totalvaluebilledfield'] == $i) print '<td class="center">'.price($totalarray['totalvaluebilled']).'</td>';
-		        else print '<td></td>';
-		    }
-		    print '</tr>';
+			print '<tr class="liste_total">';
+			$i=0;
+			while ($i < $totalarray['nbfield'])
+			{
+				$i++;
+				if ($i == 1)
+				{
+					if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
+					else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
+				}
+				elseif ($totalarray['totaldurationfield'] == $i) print '<td class="right">'.convertSecondToTime($totalarray['totalduration'], 'allhourmin').'</td>';
+				elseif ($totalarray['totalvaluefield'] == $i) print '<td class="right">'.price($totalarray['totalvalue']).'</td>';
+				//elseif ($totalarray['totalvaluebilledfield'] == $i) print '<td class="center">'.price($totalarray['totalvaluebilled']).'</td>';
+				else print '<td></td>';
+			}
+			print '</tr>';
 		}
-
 
 		if (! count($tasks))
 		{

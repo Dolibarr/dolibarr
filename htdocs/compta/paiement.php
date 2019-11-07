@@ -59,9 +59,9 @@ $multicurrency_amounts=array();
 $multicurrency_amountsresttopay=array();
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 
 $object=new Facture($db);
@@ -470,7 +470,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 		dol_fiche_head();
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
         // Third party
         print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans('Company').'</span></td><td>'.$facture->thirdparty->getNomUrl(4)."</td></tr>\n";
@@ -580,7 +580,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 $i = 0;
                 //print '<tr><td colspan="3">';
                 print '<br>';
-                print '<table class="noborder" width="100%">';
+                print '<table class="noborder centpercent">';
 
                 print '<tr class="liste_titre">';
                 print '<td>'.$arraytitle.'</td>';
@@ -880,7 +880,7 @@ if (! GETPOST('action', 'aZ09'))
         $i = 0;
 
         print_barre_liste($langs->trans('Payments'), $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', $num);
-        print '<table class="noborder" width="100%">';
+        print '<table class="noborder centpercent">';
         print '<tr class="liste_titre">';
         print_liste_field_titre('Invoice', $_SERVER["PHP_SELF"], 'ref', '', '', '', $sortfield, $sortorder);
         print_liste_field_titre('Date', $_SERVER["PHP_SELF"], 'dp', '', '', '', $sortfield, $sortorder);

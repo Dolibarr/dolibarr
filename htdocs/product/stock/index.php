@@ -61,12 +61,13 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 {
     print '<form method="post" action="'.DOL_URL_ROOT.'/product/stock/list.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="noborder nohover" width="100%">';
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="noborder nohover centpercent">';
     print "<tr class=\"liste_titre\">";
     print '<td colspan="3">'.$langs->trans("Search").'</td></tr>';
     print "<tr ".$bc[false]."><td>";
     print $langs->trans("Warehouse").':</td><td><input class="flat" type="text" size="18" name="sall"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-    print "</table></form><br>";
+    print "</table></div></form><br>";
 }
 
 
@@ -85,7 +86,8 @@ if ($result)
 
     $i = 0;
 
-    print '<table class="noborder" width="100%">';
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Warehouses").'</th></tr>';
 
     if ($num)
@@ -105,6 +107,7 @@ if ($result)
         $db->free($result);
     }
     print "</table>";
+    print '</div>';
 }
 else
 {
@@ -137,7 +140,8 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 
-	print '<table class="noborder" width="100%">';
+    print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
 	print "<tr class=\"liste_titre\">";
 	print '<th>'.$langs->trans("LastMovements", min($num, $max)).'</th>';
 	print '<th>'.$langs->trans("Product").'</th>';
@@ -185,6 +189,7 @@ if ($resql)
 	$db->free($resql);
 
 	print "</table>";
+    print '</div>';
 }
 
 //print '</td></tr></table>';

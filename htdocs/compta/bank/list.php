@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2018      Ferran Marcet		<fmarcet@2byte.es>
@@ -50,7 +50,7 @@ $search_status=GETPOST('search_status')?GETPOST('search_status', 'alpha'):'opene
 $optioncss = GETPOST('optioncss', 'alpha');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 if (! empty($user->rights->accounting->chartofaccount)) $allowed=1;    // Dictionary with list of banks accounting account allowed to manager of chart account
 if (! $allowed) $result=restrictedArea($user, 'banque');
 
@@ -73,7 +73,7 @@ $hookmanager->initHooks(array('bankaccountlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extrafields->fetch_name_optionals_label('bank_account');
+$extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
@@ -98,13 +98,16 @@ $arrayfields=array(
     'balance'=>array('label'=>$langs->trans("Balance"), 'checked'=>1, 'position'=>1010),
 );
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-    foreach($extrafields->attribute_label as $key => $val)
-    {
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
-    }
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+	{
+		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+	}
 }
+$object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 /*
@@ -144,7 +147,9 @@ $accounts = array();
 
 $sql = "SELECT b.rowid, b.label, b.courant, b.rappro, b.account_number, b.fk_accountancy_journal, b.currency_code, b.datec as date_creation, b.tms as date_update";
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -454,7 +459,7 @@ foreach ($accounts as $key=>$type)
     if (! empty($arrayfields['b.account_number']['checked']))
     {
     	print '<td>';
-    	if (! empty($conf->accounting->enabled))
+    	if (! empty($conf->accounting->enabled) && ! empty($objecttmp->account_number))
     	{
     		$accountingaccount = new AccountingAccount($db);
     		$accountingaccount->fetch('', $objecttmp->account_number, 1);
@@ -472,7 +477,7 @@ foreach ($accounts as $key=>$type)
     if (! empty($arrayfields['b.fk_accountancy_journal']['checked']))
     {
     	print '<td>';
-    	if (! empty($conf->accounting->enabled))
+    	if (! empty($conf->accounting->enabled) && ! empty($objecttmp->fk_accountancy_journal))
     	{
     		$accountingjournal = new AccountingJournal($db);
     		$accountingjournal->fetch($objecttmp->fk_accountancy_journal);
@@ -505,11 +510,18 @@ foreach ($accounts as $key=>$type)
             if ($result<0) {
                 setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
             } else {
-                print $result->nbtodo;
-                if ($result->nbtodolate) print ' &nbsp; ('.$result->nbtodolate.img_warning($langs->trans("Late")).')';
+                print '<span class="badge badge-info classfortooltip" title="'.dol_htmlentities($langs->trans("TransactionsToConciliate")).'">'.$result->nbtodo.'</span>';
+                if ($result->nbtodolate) {
+                    print '<span title="'.dol_htmlentities($langs->trans("Late")).'" class="classfortooltip badge badge-danger marginleftonlyshort">';
+                    print '<i class="fa fa-exclamation-triangle"></i> '.$result->nbtodolate;
+                    print '</span>';
+                }
             }
 		}
-		else print $langs->trans("FeatureDisabled");
+		else
+		{
+			print '<span class="opacitymedium">'.$langs->trans("FeatureDisabled").'</span>';
+		}
 	    print '</td>';
 	    if (! $i) $totalarray['nbfield']++;
     }
@@ -551,8 +563,8 @@ foreach ($accounts as $key=>$type)
 		print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$objecttmp->id.'">'.price($solde, 0, $langs, 0, -1, -1, $objecttmp->currency_code).'</a>';
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
-		if (! $i) $totalarray['totalbalancefield']=$totalarray['nbfield'];
-	    $totalarray['totalbalance'] += $solde;
+		if (! $i) $totalarray['pos'][$totalarray['nbfield']]='balance';
+		$totalarray['val']['balance'] += $solde;
     }
 
 	// Action column
@@ -582,22 +594,10 @@ if (! $found)
 }
 
 // Show total line
-if (isset($totalarray['totalbalancefield']) && $lastcurrencycode != 'various')	// If there is several currency, $lastcurrencycode is set to 'various' before
+if ($lastcurrencycode != 'various')	// If there is several currency, $lastcurrencycode is set to 'various' before
 {
-    print '<tr class="liste_total">';
-    $i=0;
-    while ($i < $totalarray['nbfield'])
-    {
-        $i++;
-        if ($i == 1)
-        {
-            if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
-            else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-        }
-        elseif ($totalarray['totalbalancefield'] == $i) print '<td class="right">'.price($totalarray['totalbalance'], 0, $langs, 0, -1, -1, $lastcurrencycode).'</td>';
-        else print '<td></td>';
-    }
-    print '</tr>';
+	// Show total line
+	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 }
 
 print '</table>';

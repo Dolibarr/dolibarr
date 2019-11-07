@@ -311,17 +311,17 @@ if ($action == 'sethideinactivethirdparty')
 	}
 }
 if($action=='setonsearchandlistgooncustomerorsuppliercard'){
-       $setonsearchandlistgooncustomerorsuppliercard = GETPOST('value', 'int');
-       $res = dolibarr_set_const($db, "SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD", $setonsearchandlistgooncustomerorsuppliercard, 'yesno', 0, '', $conf->entity);
-       if (! $res > 0) $error++;
-       if (! $error)
-       {
-               setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-       }
-       else
-       {
-               setEventMessages($langs->trans("Error"), null, 'errors');
-       }
+    $setonsearchandlistgooncustomerorsuppliercard = GETPOST('value', 'int');
+    $res = dolibarr_set_const($db, "SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD", $setonsearchandlistgooncustomerorsuppliercard, 'yesno', 0, '', $conf->entity);
+    if (! $res > 0) $error++;
+    if (! $error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
 }
 
 /*
@@ -351,7 +351,7 @@ foreach ($conf->modules_parts['models'] as $mo)		$dirsociete[]=$mo.'core/modules
 print load_fiche_titre($langs->trans("CompanyCodeChecker"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">'."\n";
+print '<table class="noborder centpercent">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '  <td>'.$langs->trans("Name").'</td>';
 print '  <td>'.$langs->trans("Description").'</td>';
@@ -440,7 +440,7 @@ print "<br>";
 print load_fiche_titre($langs->trans("AccountCodeManager"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -544,7 +544,7 @@ else
 }
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -667,7 +667,7 @@ print '<br>';
 print load_fiche_titre($langs->trans("CompanyIdProfChecker"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -768,7 +768,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="updateoptions">';
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameters")."</td>\n";
 print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";

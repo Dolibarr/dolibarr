@@ -69,7 +69,8 @@ function inventoryPrepareHead(&$inventory, $title = 'Inventory', $get = '')
 	global $langs;
 
 	return array(
-		array(dol_buildpath('/product/inventory/card.php?id='.$inventory->id.$get, 1), $langs->trans($title),'inventory')
+		array(dol_buildpath('/product/inventory/card.php?id='.$inventory->id.$get, 1), $langs->trans('Card'), 'card'),
+		array(dol_buildpath('/product/inventory/inventory.php?id='.$inventory->id.$get, 1), $langs->trans('Inventory'), 'inventory')
 	);
 }
 

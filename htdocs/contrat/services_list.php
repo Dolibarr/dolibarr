@@ -90,7 +90,7 @@ $search_array_options=$extrafields->getOptionalsFromPost($object->table_element,
 
 // Security check
 $contratid = GETPOST('id', 'int');
-if (! empty($user->societe_id)) $socid=$user->societe_id;
+if (! empty($user->socid)) $socid=$user->socid;
 $result = restrictedArea($user, 'contrat', $contratid);
 
 if ($search_status != '')
@@ -219,7 +219,9 @@ $sql.= " cd.subprice,";
 //$sql.= " cd.date_c as date_creation,";
 $sql.= " cd.tms as date_update";
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+}
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
@@ -597,24 +599,18 @@ while ($i < min($num, $limit))
 		print '<td class="right">';
 		print price($obj->total_ht);
 		print '</td>';
-		$totalarray['totalht'] += $obj->total_ht;
-        if (! $i) {
-            $totalarray['displaytotalline']++;
-            $totalarray['nbfield']++;
-            $totalarray['totalhtfield']=$totalarray['nbfield'];
-        }
+        if (! $i) $totalarray['nbfield']++;
+        if (! $i) $totalarray['pos'][$totalarray['nbfield']]='cd.total_ht';
+        $totalarray['val']['cd.total_ht'] += $obj->total_ht;
     }
 	if (! empty($arrayfields['cd.total_tva']['checked']))
 	{
 		print '<td class="right">';
 		print price($obj->total_tva);
 		print '</td>';
-        $totalarray['totalvat'] += $obj->total_tva;
-        if (! $i) {
-            $totalarray['nbfield']++;
-            $totalarray['totalvatfield']=$totalarray['nbfield'];
-            $totalarray['displaytotalline']++;
-        }
+        if (! $i) $totalarray['nbfield']++;
+        if (! $i) $totalarray['pos'][$totalarray['nbfield']]='cd.total_tva';
+        $totalarray['val']['cd.total_tva'] += $obj->total_tva;
     }
 	if (! empty($arrayfields['cd.tva_tx']['checked']))
 	{
@@ -703,17 +699,18 @@ while ($i < min($num, $limit))
 	// Status
 	if (! empty($arrayfields['status']['checked']))
 	{
-	   print '<td class="right">';
-	   if ($obj->cstatut == 0)	// If contract is draft, we say line is also draft
-	   {
-		   print $contractstatic->LibStatut(0, 5);
-	   }
-	   else
-	   {
-		   print $staticcontratligne->LibStatut($obj->statut, 5, ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < $now)?1:0);
-	   }
-	   print '</td>';
-       if (! $i) $totalarray['nbfield']++;
+	    print '<td class="right">';
+	    if ($obj->cstatut == 0)
+	    {
+			// If contract is draft, we say line is also draft
+		    print $contractstatic->LibStatut(0, 5);
+	    }
+	    else
+	    {
+		    print $staticcontratligne->LibStatut($obj->statut, 5, ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < $now)?1:0);
+	    }
+	    print '</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
 	// Action column
 	print '<td class="nowrap center">';
@@ -731,22 +728,7 @@ while ($i < min($num, $limit))
 }
 
 // Show total line
-if (isset($totalarray['displaytotalline'])) {
-	print '<tr class="liste_total">';
-	$i=0;
-	while ($i < $totalarray['nbfield']) {
-		$i++;
-		if ($i == 1) {
-			if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
-			else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-		}
-		elseif ($totalarray['totalhtfield'] == $i) print '<td class="right">'.price($totalarray['totalht']).'</td>';
-		elseif ($totalarray['totalvatfield'] == $i) print '<td class="right">'.price($totalarray['totalvat']).'</td>';
-		elseif ($totalarray['totalttcfield'] == $i) print '<td class="right">'.price($totalarray['totalttc']).'</td>';
-		else print '<td></td>';
-	}
-	print '</tr>';
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 $db->free($resql);
 

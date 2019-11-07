@@ -35,8 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 $langs->loadLangs(array('products', 'stocks', 'orders', 'productbatch'));
 
 // Security check
-if ($user->societe_id) {
-    $socid = $user->societe_id;
+if ($user->socid) {
+    $socid = $user->socid;
 }
 $result=restrictedArea($user, 'produit|service');
 
@@ -125,11 +125,9 @@ if ($action == 'addline')
 		// Warning, don't forget lines already added into the $_SESSION['massstockmove']
 		if ($producttmp->hasbatch())
 		{
-
 		}
 		else
 		{
-
 		}
 	}
 
@@ -197,7 +195,7 @@ if ($action == 'createmovements')
 				if (empty($conf->productbatch->enabled) || ! $product->hasbatch())		// If product does not need lot/serial
 				{
 					// Remove stock
-    $result1=$product->correct_stock(
+					$result1=$product->correct_stock(
 		    			$user,
 		    			$id_sw,
 		    			$qty,
@@ -213,7 +211,7 @@ if ($action == 'createmovements')
 					}
 
 					// Add stock
-    $result2=$product->correct_stock(
+					$result2=$product->correct_stock(
 		    			$user,
 		    			$id_tw,
 		    			$qty,
@@ -245,7 +243,7 @@ if ($action == 'createmovements')
 					}
 
 					// Remove stock
-    $result1=$product->correct_stock_batch(
+					$result1=$product->correct_stock_batch(
 		    			$user,
 		    			$id_sw,
 		    			$qty,
@@ -264,7 +262,7 @@ if ($action == 'createmovements')
 					}
 
 					// Add stock
-    $result2=$product->correct_stock_batch(
+					$result2=$product->correct_stock_batch(
 		    			$user,
 		    			$id_tw,
 		    			$qty,
@@ -341,7 +339,7 @@ print '<input type="hidden" name="action" value="addline">';
 
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="liste" width="100%">';
+print '<table class="liste centpercent">';
 //print '<div class="tagtable centpercent">';
 
 $param='';
@@ -441,7 +439,7 @@ print '<input type="hidden" name="action" value="createmovements">';
 $codemove=(isset($_POST["codemove"])?GETPOST("codemove", 'alpha'):dol_print_date(dol_now(), '%Y%m%d%H%M%S'));
 $labelmovement=GETPOST("label")?GETPOST('label'):$langs->trans("StockTransfer").' '.dol_print_date($now, '%Y-%m-%d %H:%M');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 	print '<tr>';
 	print '<td class="titlefield fieldrequired">'.$langs->trans("InventoryCode").'</td>';
 	print '<td>';

@@ -68,7 +68,6 @@ if ($action == 'update')
 
 
     if (in_array($accounting_mode, $accounting_modes)) {
-
         if (!dolibarr_set_const($db, 'ACCOUNTING_MODE', $accounting_mode, 'chaine', 0, '', $conf->entity)) {
             $error++;
         }
@@ -111,7 +110,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 // case of the parameter ACCOUNTING_MODE
 
@@ -139,7 +138,7 @@ print "</table>\n";
 
 print "<br>\n";
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans('OtherOptions').'</td>';
 print "</tr>\n";

@@ -4,7 +4,7 @@
  * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2019  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2017-2018  Frédéric France         <frederic.france@netlogic.fr>
@@ -80,7 +80,7 @@ $now = dol_now();
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-if ($user->societe_id > 0 && empty($id_journal))
+if ($user->socid > 0 && empty($id_journal))
 	accessforbidden();
 
 
@@ -167,7 +167,6 @@ $journal_label = $accountingjournalstatic->label;
 dol_syslog("accountancy/journal/bankjournal.php", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
-
 	$num = $db->num_rows($result);
 	//print $sql;
 
@@ -268,10 +267,8 @@ if ($result) {
 
 		// get_url may return -1 which is not traversable
 		if (is_array($links) && count($links) > 0) {
-
 			// Now loop on each link of record in bank.
 			foreach ($links as $key => $val) {
-
 				if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation', 'member', 'payment_loan', 'payment_salary', 'payment_various')))
 				{
 					// So we excluded 'company' and 'user' here. We want only payment lines
@@ -326,11 +323,11 @@ if ($result) {
 					if (preg_match('/^\((.*)\)$/i', $links[$key]['label'], $reg)) {
 						if ($reg[1] == 'socialcontribution')
 							$reg[1] = 'SocialContribution';
-						$chargestatic->lib = $langs->trans($reg[1]);
+						$chargestatic->label = $langs->trans($reg[1]);
 					} else {
-						$chargestatic->lib = $links[$key]['label'];
+						$chargestatic->label = $links[$key]['label'];
 					}
-					$chargestatic->ref = $chargestatic->lib;
+					$chargestatic->ref = $chargestatic->label;
 					$tabpay[$obj->rowid]["soclib"] = $chargestatic->getNomUrl(1, 30);
 					$tabpay[$obj->rowid]["paymentscid"] = $chargestatic->id;
 
@@ -387,7 +384,9 @@ if ($result) {
 					$tabpay[$obj->rowid]["paymentvariousid"] = $paymentvariousstatic->id;
 					$paymentvariousstatic->fetch($paymentvariousstatic->id);
 					$account_various = (! empty($paymentvariousstatic->accountancy_code) ? $paymentvariousstatic->accountancy_code : 'NotDefined');	// NotDefined is a reserved word
-					$tabtp[$obj->rowid][$account_various] += $obj->amount;
+                    $account_subledger = (! empty($paymentvariousstatic->subledger_account) ? $paymentvariousstatic->subledger_account : '');	// NotDefined is a reserved word
+                    $tabpay[$obj->rowid]["account_various"] = $account_various;
+                    $tabtp[$obj->rowid][$account_subledger] += $obj->amount;
 				} elseif ($links[$key]['type'] == 'payment_loan') {
 					$paymentloanstatic->id = $links[$key]['url_id'];
 					$paymentloanstatic->ref = $links[$key]['url_id'];
@@ -660,11 +659,11 @@ if (! $error && $action == 'writebookkeeping') {
 							$accountingaccount->fetch(null, $k, true);
 							$bookkeeping->label_compte = $accountingaccount->label;
 						} elseif ($tabtype[$key] == 'payment_various') {
-							$bookkeeping->subledger_account = '';
-							$bookkeeping->subledger_label = '';
-							$bookkeeping->numero_compte = $k;
+							$bookkeeping->subledger_account = $k;
+                            $bookkeeping->subledger_label = $tabcompany[$key]['name'];
+							$bookkeeping->numero_compte = $tabpay[$obj->rowid]["account_various"];
 
-							$accountingaccount->fetch(null, $k, true);
+							$accountingaccount->fetch(null, $bookkeeping->numero_compte, true);
 							$bookkeeping->label_compte = $accountingaccount->label;
 						} elseif ($tabtype[$key] == 'banktransfert') {
 							$bookkeeping->subledger_account = '';
@@ -997,7 +996,7 @@ if (empty($action) || $action == 'view') {
 
 	if (($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "") || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1'
 	    || ($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "") || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1') {
-	   print '<input type="button" class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="' . $langs->trans("WriteBookKeeping") . '" />';
+	    print '<input type="button" class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="' . $langs->trans("WriteBookKeeping") . '" />';
 	}
 	else {
 	    if ($in_bookkeeping == 'notyet') print '<input type="button" class="butAction" name="writebookkeeping" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
@@ -1123,6 +1122,7 @@ if (empty($action) || $action == 'view') {
 					if ($tabtype[$key] == 'payment_salary')			$account_ledger = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
 					if ($tabtype[$key] == 'payment_vat')			$account_ledger = $conf->global->ACCOUNTING_VAT_PAY_ACCOUNT;
 					if ($tabtype[$key] == 'member')					$account_ledger = $conf->global->ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT;
+					if ($tabtype[$key] == 'payment_various')	    $account_ledger = $tabpay[$key]["account_various"];
 					$accounttoshow = length_accounta($account_ledger);
 					if (empty($accounttoshow) || $accounttoshow == 'NotDefined')
 					{
@@ -1156,7 +1156,7 @@ if (empty($action) || $action == 'view') {
 					// Subledger account
 					print "<td>";
 
-					if (in_array($tabtype[$key], array('payment', 'payment_supplier', 'payment_expensereport', 'payment_salary')))	// Type of payment with subledger
+					if (in_array($tabtype[$key], array('payment', 'payment_supplier', 'payment_expensereport', 'payment_salary', 'payment_various')))	// Type of payment with subledger
 					{
 						$accounttoshowsubledger = length_accounta($k);
 						if ($accounttoshow != $accounttoshowsubledger)

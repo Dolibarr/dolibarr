@@ -71,7 +71,7 @@ $search_country_id = GETPOST('search_country_id', 'int');
 
 
 // Security check
-if ($user->societe_id > 0) accessforbidden();
+if ($user->socid > 0) accessforbidden();
 if (! $user->rights->accounting->chartofaccount) accessforbidden();
 
 
@@ -456,7 +456,7 @@ if ($id)
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 	print '<div class="div-table-responsive">';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 
 	// Form to add a new line
 	if ($tabname[$id])
@@ -677,7 +677,6 @@ if ($id)
 					{
 						foreach ($fieldlist as $field => $value)
 						{
-
 							$showfield=1;
 							$class="left";
 							$valuetoshow=$obj->{$fieldlist[$field]};

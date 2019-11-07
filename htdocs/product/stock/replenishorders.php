@@ -3,6 +3,7 @@
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2014       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019	    Juanjo Menent           <jmenent@2byte.es>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $langs->loadLangs(array('products', 'stocks', 'orders'));
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, 'produit|service');
 
 $sall = GETPOST('search_all', 'alphanohtml');
@@ -140,7 +141,9 @@ if (GETPOST('statut', 'int')) {
 $sql .= ' GROUP BY cf.rowid, cf.ref, cf.date_creation, cf.fk_statut';
 $sql .= ', cf.total_ttc, cf.fk_user_author, u.login, s.rowid, s.nom';
 $sql .= $db->order($sortfield, $sortorder);
-$sql .= $db->plimit($limit+1, $offset);
+if (! $sproduct) {
+	$sql .= $db->plimit($limit+1, $offset);
+}
 
 $resql = $db->query($sql);
 if ($resql)
@@ -167,7 +170,7 @@ if ($resql)
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
 
     print '<tr class="liste_titre_filter">';
     print '<td class="liste_titre">'.
@@ -257,7 +260,7 @@ if ($resql)
 
     $userstatic = new User($db);
 
-    while ($i < min($num, $conf->liste_limit))
+	while ($i < min($num, $sproduct?$num:$conf->liste_limit))
     {
         $obj = $db->fetch_object($resql);
 
