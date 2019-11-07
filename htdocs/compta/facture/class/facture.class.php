@@ -4645,6 +4645,8 @@ class FactureLigne extends CommonInvoiceLine
 	public $marge_tx;
 	public $marque_tx;
 
+	public $remise_percent;
+
 	public $special_code;	// Liste d'options non cumulabels:
 	// 1: frais de port
 	// 2: ecotaxe
