@@ -152,7 +152,7 @@ if (empty($reshook))
 					'address', 'zip', 'town', 'state_id', 'country_id', 'phone', 'phone_pro', 'fax', 'email', 'skype', 'twitter', 'facebook', 'linkedin', 'socialnetworks', 'url', 'barcode',
 					'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6',
 					'tva_intra', 'effectif_id', 'forme_juridique', 'remise_percent', 'remise_supplier_percent', 'mode_reglement_supplier_id', 'cond_reglement_supplier_id', 'name_bis',
-					'stcomm_id', 'outstanding_limit', 'id_risk', 'max_payment_days', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
+					'stcomm_id', 'outstanding_limit', 'price_level', 'parent', 'default_lang', 'ref', 'ref_ext', 'import_key', 'fk_incoterms', 'fk_multicurrency',
 					'code_client', 'code_fournisseur', 'code_compta', 'code_compta_fournisseur',
 					'model_pdf', 'fk_projet'
 				);
@@ -476,6 +476,12 @@ if (empty($reshook))
 			{
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 			}
+
+			// Maximum number of payment days
+			$object->max_payment_days		= GETPOST('max_payment_days', 'int');
+
+	        // Risk level of outstanding
+			$object->id_risk				= GETPOST('id_risk', 'int');
 
 	        // Fill array 'array_options' with data from add form
 	        $ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -1029,6 +1035,9 @@ else
 
         $object->logo = (isset($_FILES['photo'])?dol_sanitizeFileName($_FILES['photo']['name']):'');
 
+		$object->max_payment_days	= GETPOST('max_payment_days', 'int');
+		$object->id_risk			= GETPOST('id_risk', 'int');
+
         // Gestion du logo de la société
         $dir     = $conf->societe->multidir_output[$conf->entity]."/".$object->id."/logos";
         $file_OK = (isset($_FILES['photo'])?is_uploaded_file($_FILES['photo']['tmp_name']):false);
@@ -1136,7 +1145,7 @@ else
                      });';
             print '</script>'."\n";
 
-            print '<div id="selectthirdpartytype">';
+            print '<div id="selectthirdpartytype">sssssddsd';
             print '<div class="hideonsmartphone float">';
             print $langs->trans("ThirdPartyType").': &nbsp; &nbsp; ';
             print '</div>';
@@ -1554,13 +1563,23 @@ else
 		print $form->multiselectarray('commercial', $userlist, $selected, null, null, null, null, "90%");
 		print '</td></tr>';
 
-        // Ajout du logo
+        // Add logo
         print '<tr class="hideonsmartphone">';
         print '<td>'.$form->editfieldkey('Logo', 'photoinput', '', $object, 0).'</td>';
         print '<td colspan="3">';
         print '<input class="flat" type="file" name="photo" id="photoinput" />';
         print '</td>';
         print '</tr>';
+		
+		// Add Maximum number of payment days
+		print '<tr><td>'.$form->editfieldkey($langs->trans('Maximum number of payment days'), 'max_payment_days', '', $object, 0).'</td>';
+	    print '<td colspan="3"><input type="text" name="max_payment_days" id="max_payment_days" size="10" value="'.$object->max_payment_days.'"> ';
+        print '</td></tr>';
+
+		// Add risk level of outstanding
+		print '<tr><td>'.$form->editfieldkey($langs->trans('Risk rating'), 'id_risk', '', $object, 0).'</td><td colspan="3">';
+		print $form->selectarray('id_risk', array('1'=>$langs->trans('None'),'2'=>$langs->trans('Low'),'3'=>$langs->trans('Medium'),'4'=>$langs->trans('High')), 1);
+        print '</td></tr>';
 
         print '</table>'."\n";
 
@@ -1677,6 +1696,9 @@ else
                 $object->tva_assuj				= GETPOST('assujtva_value', 'int');
                 $object->tva_intra				= GETPOST('tva_intra', 'alpha');
                 $object->status					= GETPOST('status', 'int');
+				
+                $object->max_payment_days		= GETPOST('max_payment_days', 'int');
+                $object->id_risk				= GETPOST('id_risk', 'int');
 
                 // Webservices url/key
                 $object->webservices_url        = GETPOST('webservices_url', 'custom', 0, FILTER_SANITIZE_URL);
@@ -2244,7 +2266,18 @@ else
             print $form->multiselectarray('commercial', $userlist, $arrayselected, null, null, null, null, "90%");
             print '</td></tr>';
 
-            print '</table>';
+            // Maximum number of payment days
+            print '<tr><td>'.$form->editfieldkey($langs->trans('Maximum number of payment days'), 'max_payment_days', '', $object, 0).'</td>';
+	        print '<td colspan="3"><input type="text" name="max_payment_days" id="max_payment_days" size="10" value="';
+	        print $object->max_payment_days != '' ? dol_escape_htmltag($object->max_payment_days) : '';
+	        print '"></td></tr>';
+
+			// Risk rating
+            print '<tr><td>'.$form->editfieldkey($langs->trans('Risk rating'), 'id_risk', '', $object, 0).'</td><td colspan="3">';
+            print $form->selectarray('id_risk',  array('1'=>$langs->trans('None'),'2'=>$langs->trans('Low'),'3'=>$langs->trans('Medium'),'4'=>$langs->trans('High')), $object->id_risk);
+            print '</td></tr>';
+			
+			print '</table>';
             print '</div>';
 
 	          dol_fiche_end();
