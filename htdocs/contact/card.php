@@ -610,7 +610,7 @@ else
 
             dol_fiche_head($head, 'card', '', 0, '');
 
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
 
             // Name
             print '<tr><td class="titlefieldcreate fieldrequired"><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</label></td>';
@@ -831,7 +831,7 @@ else
             // Add personnal information
             print load_fiche_titre('<div class="comboperso">'.$langs->trans("PersonalInformations").'</div>', '', '');
 
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
 
             // Date To Birth
             print '<tr><td width="20%"><label for="birthday">'.$langs->trans("DateToBirth").'</label></td><td width="30%">';
@@ -931,7 +931,7 @@ else
 
             dol_fiche_head($head, 'card', $title, 0, 'contact');
 
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
 
             // Ref/ID
             if (! empty($conf->global->MAIN_SHOW_TECHNICAL_ID))

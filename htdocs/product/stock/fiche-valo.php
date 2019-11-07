@@ -60,7 +60,7 @@ if ($_GET["id"])
 	dol_fiche_head($head, 'value', $langs->trans("Warehouse"), 0, 'stock');
 
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Ref
 	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';

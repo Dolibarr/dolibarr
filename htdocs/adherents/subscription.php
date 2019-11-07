@@ -689,7 +689,7 @@ if ($rowid > 0)
             $num = $db->num_rows($result);
             $i = 0;
 
-            print '<table class="noborder" width="100%">'."\n";
+            print '<table class="noborder centpercent">'."\n";
 
             print '<tr class="liste_titre">';
             print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'c.rowid', '', $param, '', $sortfield, $sortorder);

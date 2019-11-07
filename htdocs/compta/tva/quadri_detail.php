@@ -198,7 +198,7 @@ $vatexpensereport=$langs->trans("VATPaid");
 
 
 // VAT Received and paid
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 $y = $year_current;
 $total = 0;
@@ -715,7 +715,7 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 
 	// Total to pay
 	print '<br><br>';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	$diff = $x_coll_sum - $x_paye_sum;
 	print '<tr class="liste_total">';
 	print '<td class="liste_total" colspan="'.$span.'">'.$langs->trans("TotalToPay").($q?', '.$langs->trans("Quadri").' '.$q:'').'</td>';

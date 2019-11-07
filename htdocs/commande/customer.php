@@ -123,7 +123,7 @@ if ($resql)
 
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 
-	print '<table class="liste" width="100%">';
+	print '<table class="liste centpercent">';
 	print '<tr class="liste_titre">';
 
 	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", "", 'valign="center"', $sortfield, $sortorder);

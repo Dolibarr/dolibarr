@@ -146,7 +146,7 @@ if(count($echeance->lines)>0)
 }else{
 	print '<input type="hidden" name="action" value="createecheancier">';
 }
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 print '<tr class="liste_titre">';
 $colspan = 6;
 if (count($echeance->lines)>0) $colspan++;

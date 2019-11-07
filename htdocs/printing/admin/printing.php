@@ -126,7 +126,7 @@ if ($mode == 'setup' && $user->admin)
 
     print $langs->trans("PrintingDriverDesc".$driver)."<br><br>\n";
 
-    print '<table class="noborder" width="100%">'."\n";
+    print '<table class="noborder centpercent">'."\n";
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("Parameters").'</th>';
     print '<th>'.$langs->trans("Value").'</th>';
@@ -243,7 +243,7 @@ if ($mode == 'config' && $user->admin)
 
     print $langs->trans("PrintingDesc")."<br><br>\n";
 
-    print '<table class="noborder" width="100%">'."\n";
+    print '<table class="noborder centpercent">'."\n";
 
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("Description").'</th>';
@@ -295,7 +295,7 @@ if ($mode == 'test' && $user->admin)
 
     print $langs->trans('PrintTestDesc'.$driver)."<br><br>\n";
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     if (! empty($driver))
     {
         require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
@@ -327,7 +327,7 @@ if ($mode == 'userconf' && $user->admin)
 
     print $langs->trans('PrintUserConfDesc'.$driver)."<br><br>\n";
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("User").'</th>';
     print '<th>'.$langs->trans("PrintModule").'</th>';

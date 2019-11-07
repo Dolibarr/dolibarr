@@ -456,7 +456,7 @@ if ($id > 0 || $ref)
 
 				dol_fiche_head();
 
-				print '<table class="border" width="100%">';
+				print '<table class="border centpercent">';
 
 				// Supplier
 				print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Supplier").'</td><td>';
@@ -842,7 +842,7 @@ SCRIPT;
 
 				// Suppliers list title
 				print '<div class="div-table-responsive">';
-				print '<table class="liste" width="100%">';
+				print '<table class="liste centpercent">';
 
 				$param="&id=".$object->id;
 

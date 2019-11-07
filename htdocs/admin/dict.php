@@ -1060,7 +1060,7 @@ if ($id)
         $fieldlist=explode(',', $tabfield[$id]);
 
 	    print '<div class="div-table-responsive-no-min">';
-        print '<table class="noborder" width="100%">';
+        print '<table class="noborder centpercent">';
 
         // Line for title
         print '<tr class="liste_titre">';
@@ -1242,7 +1242,7 @@ if ($id)
         }
 
 	    print '<div class="div-table-responsive">';
-        print '<table class="noborder" width="100%">';
+        print '<table class="noborder centpercent">';
 
         // Title line with search input fields
         print '<tr class="liste_titre_filter">';
@@ -1724,7 +1724,7 @@ else
     $lastlineisempty=false;
 
 	print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td colspan="2">'.$langs->trans("Dictionary").'</td>';
     print '<td>'.$langs->trans("Table").'</td>';

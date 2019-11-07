@@ -1182,7 +1182,7 @@ else
         {
             // We do no show price array on create when multiprices enabled.
             // We must set them on prices tab.
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
             // VAT
             print '<tr><td class="titlefieldcreate">' . $langs->trans("VATRate") . '</td><td>';
             $defaultva = get_default_tva($mysoc, $mysoc);
@@ -1193,7 +1193,7 @@ else
         }
         else
 		{
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
 
             // Price
             print '<tr><td class="titlefieldcreate">'.$langs->trans("SellingPrice").'</td>';
@@ -1218,7 +1218,7 @@ else
         }
 
         // Accountancy codes
-        print '<table class="border" width="100%">';
+        print '<table class="border centpercent">';
 
 		if (! empty($conf->accounting->enabled))
 		{
@@ -1566,7 +1566,7 @@ else
 
             print '<br>';
 
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
 
 			if (! empty($conf->accounting->enabled))
 			{

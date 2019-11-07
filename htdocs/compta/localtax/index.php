@@ -97,7 +97,7 @@ function pt($db, $sql, $date)
         $num = $db->num_rows($result);
         $i = 0;
         $total = 0;
-        print '<table class="noborder" width="100%">';
+        print '<table class="noborder centpercent">';
 
         print '<tr class="liste_titre">';
         print '<td class="nowrap">'.$date.'</td>';
@@ -262,7 +262,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 print load_fiche_titre($langs->transcountry($LTSummary, $mysoc->country_code), '', '');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="30%">'.$langs->trans("Year")." ".$y."</td>";
 if($CalcLT==0) {

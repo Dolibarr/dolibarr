@@ -233,7 +233,7 @@ dol_fiche_head($head, 'general', $langs->trans("BankSetupModule"), -1, 'account'
 //Show bank account order
 print load_fiche_titre($langs->trans("BankOrderShow"), '', '');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="140">' . $langs->trans("Name") . '</td>';
 print '<td>' . $langs->trans("Description") . '</td>';
@@ -431,7 +431,7 @@ print '</table>';
 print '<br><br>';
 
 print load_fiche_titre($langs->trans("BankColorizeMovement"), '', '');
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print "<tr class=\"liste_titre\">\n";
 print '<td colspan="4">' . $langs->trans("Name") . '</td>';
 print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";

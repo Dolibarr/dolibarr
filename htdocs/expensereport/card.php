@@ -1450,7 +1450,7 @@ if ($action == 'create')
 
 	dol_fiche_head('');
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 	print '<tbody>';
 
 	// Date start
@@ -2108,7 +2108,7 @@ else
 				print '<input type="hidden" name="fk_expensereport" value="'.$object->id.'" />';
 
 				print '<div class="div-table-responsive-no-min">';
-				print '<table id="tablelines" class="noborder" width="100%">';
+				print '<table id="tablelines" class="noborder centpercent">';
 
 				if (!empty($object->lines))
 				{

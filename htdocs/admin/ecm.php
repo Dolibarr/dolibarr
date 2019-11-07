@@ -74,7 +74,7 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values
 print load_fiche_titre($langs->trans("ECMSetup"), $linkback, 'title_setup');
 print '<br>';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td class="center" width="20">&nbsp;</td>';

@@ -313,7 +313,7 @@ if ($action == 'create')
 
     dol_fiche_head();
 
-    print '<table class="border" width="100%">';
+    print '<table class="border centpercent">';
 
     // Id
     $parent_rowid = GETPOST('menuId', 'int');
@@ -436,7 +436,7 @@ elseif ($action == 'edit')
 
     dol_fiche_head();
 
-    print '<table class="border" width="100%">';
+    print '<table class="border centpercent">';
 
     $menu = new Menubase($db);
     $result=$menu->fetch(GETPOST('menuId', 'int'));

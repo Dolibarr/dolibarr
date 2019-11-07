@@ -321,7 +321,7 @@ if ($id > 0 || ! empty($ref))
             print '<div class="ficheaddleft">';
             print '<div class="underbanner clearboth"></div>';
 
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
 
             // Description
             print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
@@ -388,7 +388,7 @@ if ($id > 0 || ! empty($ref))
 
 			dol_fiche_head($head, 'task_task', $langs->trans("Task"), 0, 'projecttask', 0, '', '');
 
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent">';
 
 			// Ref
 			print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Ref").'</td>';
@@ -509,7 +509,7 @@ if ($id > 0 || ! empty($ref))
 			print '<div class="fichehalfleft">';
 
 			print '<div class="underbanner clearboth"></div>';
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent">';
 
 			// Task parent
 			print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
@@ -550,7 +550,7 @@ if ($id > 0 || ! empty($ref))
 			print '<div class="fichehalfright"><div class="ficheaddleft">';
 
 			print '<div class="underbanner clearboth"></div>';
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent">';
 
 			// Progress declared
 			print '<tr><td class="titlefield">'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';

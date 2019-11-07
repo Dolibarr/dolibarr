@@ -361,7 +361,7 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 // Line of filters
 print '<tr class="liste_titre_filter">';

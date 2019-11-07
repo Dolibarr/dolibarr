@@ -242,7 +242,7 @@ if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 
 
 if ($modecompta == 'CREANCES-DETTES') {
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td width="6%" class="right">' . $langs->trans("TurnoverbyVatrate") . '</td>';
 	print '<td class="left">' . $langs->trans("ProductOrService") . '</td>';
 	print '<td class="left">' . $langs->trans("Country") . '</td>';

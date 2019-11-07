@@ -100,7 +100,7 @@ print '<br>';
 //}
 
 // Title rule for stock decrease
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("RuleForStockManagementDecrease")."</td>\n";
 print '<td class="right">'.$langs->trans("Status").'</td>'."\n";
@@ -202,7 +202,7 @@ print '</table>';
 print '<br>';
 
 // Title rule for stock increase
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("RuleForStockManagementIncrease")."</td>\n";
 print '<td class="right">'.$langs->trans("Status").'</td>'."\n";
@@ -314,7 +314,7 @@ print '</table>';
 
 print '<br>';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("RuleForStockAvailability")."</td>\n";
 print '<td class="right">'.$langs->trans("Status").'</td>'."\n";
@@ -392,7 +392,7 @@ if (
 
 if ($virtualdiffersfromphysical)
 {
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
 	print "<td>".$langs->trans("RuleForStockReplenishment")." ".img_help('help', $langs->trans("VirtualDiffersFromPhysical"))."</td>\n";
     print '<td class="right">'.$langs->trans("Status").'</td>'."\n";
@@ -414,7 +414,7 @@ if ($virtualdiffersfromphysical)
 }
 
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Other")."</td>\n";
@@ -464,7 +464,7 @@ print '</table>';
 print '<br>';
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Inventory").'</td>'."\n";
 	print '<td class="right">'.$langs->trans("Status").'</td>'."\n";

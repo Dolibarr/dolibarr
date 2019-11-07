@@ -111,7 +111,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 dol_fiche_head($head, 'ldap', $langs->trans("LDAPSetup"), -1);
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 // Liste de synchro actives
 print '<tr class="liste_titre">';

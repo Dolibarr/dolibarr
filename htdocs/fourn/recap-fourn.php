@@ -70,7 +70,7 @@ if ($socid > 0)
         // Invoice list
         print load_fiche_titre($langs->trans("SupplierPreview"));
 
-        print '<table class="noborder tagtable liste" width="100%">';
+        print '<table class="noborder tagtable liste centpercent">';
 
         $sql = "SELECT s.nom, s.rowid as socid, f.ref_supplier, f.amount, f.datef as df,";
         $sql.= " f.paye as paye, f.fk_statut as statut, f.rowid as facid,";
