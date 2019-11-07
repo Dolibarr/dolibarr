@@ -144,6 +144,8 @@ if ($id > 0 || ! empty($ref))
             if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
             $sql.= " WHERE f.fk_soc = s.rowid";
             $sql.= " AND f.fk_statut > 0";
+			//$sql.= " AND d.situation_percent = 100"; (Select only 100% progress line)
+            $sql.= " AND f.situation_final = 1"; // Select only final situation invoice 
             $sql.= " AND f.entity IN (".getEntity('invoice').")";
             $sql.= " AND d.fk_facture = f.rowid";
             $sql.= " AND d.fk_product =".$object->id;
@@ -217,9 +219,18 @@ if ($id > 0 || ! empty($ref))
 						print '<td class="right">'.$invoicestatic->LibStatut($objp->paye, $objp->statut, 5).'</td>';
                         print "</tr>\n";
                         $i++;
-                        $cumul_achat += $objp->buying_price;
-                        $cumul_vente += $objp->selling_price;
-                        $cumul_qty += $objp->qty;
+                        if ($objp->buying_price != 0 ) { //Ne selectionne que les lignes où le prix de revient est renseigné
+     				
+ 					$cumul_vente += $objp->selling_price;
+ 					$cumul_qty += $objp->qty;
+ 					
+ 				} else{
+ 					
+ 					$cumul_vente += 0;
+ 					$cumul_qty += 0;
+ 				}
+  
+ 				$cumul_achat += ($objp->type == 2 ? -1 : 1) * $objp->buying_price;
                     }
                 }
 
