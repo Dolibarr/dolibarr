@@ -146,8 +146,8 @@ if (empty($reshook))
 	// Mass actions
 	/*$objectclass='MyObject';
     $objectlabel='MyObject';
-    $permtoread = $user->rights->mymodule->read;
-    $permtodelete = $user->rights->mymodule->delete;
+    $permissiontoread = $user->rights->mymodule->read;
+    $permissiontodelete = $user->rights->mymodule->delete;
     $uploaddir = $conf->mymodule->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';*/
 
@@ -999,7 +999,7 @@ if ($action == 'create')
 		if (! empty($conf->projet->enabled)) $rowspan++;
 		if ($object->fk_account > 0) $rowspan++;
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		$object->fetch_thirdparty();
 
@@ -1111,7 +1111,7 @@ if ($action == 'create')
 
 		dol_fiche_head(null, '', '', 0);
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		// Frequency + unit
 		print '<tr><td class="titlefieldcreate">'.$form->textwithpicto($langs->trans("Frequency"), $langs->transnoentitiesnoconv('toolTipFrequency'))."</td><td>";
@@ -1285,7 +1285,7 @@ else
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		print '<tr><td class="titlefield">'.$langs->trans("Author").'</td><td>'.$author->getFullName($langs)."</td></tr>";
 
@@ -1364,41 +1364,43 @@ else
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0);
 			print '</td>';
-			if ($usercancreate && $action != 'editmulticurrencycode' && ! empty($object->brouillon))
+			if ($usercancreate && $action != 'editmulticurrencycode' && ! empty($object->brouillon)) {
 				print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencycode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
+			}
+			print '</tr></table>';
+			print '</td><td>';
+			$htmlname = (($usercancreate && $action == 'editmulticurrencycode')?'multicurrency_code':'none');
+			$form->form_multicurrency_code($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_code, $htmlname);
+			print '</td></tr>';
+
+			// Multicurrency rate
+			if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1)
+			{
+				print '<tr>';
+				print '<td>';
+				print '<table class="nobordernopadding" width="100%"><tr><td>';
+				print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
+				print '</td>';
+				if ($usercancreate && $action != 'editmulticurrencyrate' && ! empty($object->brouillon) && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
+					print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
+                }
 				print '</tr></table>';
 				print '</td><td>';
-				$htmlname = (($usercancreate && $action == 'editmulticurrencycode')?'multicurrency_code':'none');
-				$form->form_multicurrency_code($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_code, $htmlname);
-				print '</td></tr>';
-
-				// Multicurrency rate
-				if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1)
-				{
-					print '<tr>';
-					print '<td>';
-					print '<table class="nobordernopadding" width="100%"><tr><td>';
-					print $form->editfieldkey('CurrencyRate', 'multicurrency_tx', '', $object, 0);
-					print '</td>';
-					if ($usercancreate && $action != 'editmulticurrencyrate' && ! empty($object->brouillon) && $object->multicurrency_code && $object->multicurrency_code != $conf->currency)
-						print '<td class="right"><a class="editfielda" href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
-						print '</tr></table>';
-						print '</td><td>';
-						if ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') {
-							if($action == 'actualizemulticurrencyrate') {
-								list($object->fk_multicurrency, $object->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($object->db, $object->multicurrency_code);
-							}
-							$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, ($usercancreate?'multicurrency_tx':'none'), $object->multicurrency_code);
-						} else {
-							$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
-							if($object->statut == $object::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
-								print '<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
-								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=actualizemulticurrencyrate">'.$langs->trans("ActualizeCurrency").'</a>';
-								print '</div>';
-							}
-						}
-						print '</td></tr>';
+				if ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') {
+					if($action == 'actualizemulticurrencyrate') {
+						list($object->fk_multicurrency, $object->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($object->db, $object->multicurrency_code);
+					}
+					$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, ($usercancreate?'multicurrency_tx':'none'), $object->multicurrency_code);
+				} else {
+					$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
+					if($object->statut == $object::STATUS_DRAFT && $object->multicurrency_code && $object->multicurrency_code != $conf->currency) {
+						print '<div class="inline-block"> &nbsp; &nbsp; &nbsp; &nbsp; ';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=actualizemulticurrencyrate">'.$langs->trans("ActualizeCurrency").'</a>';
+						print '</div>';
+					}
 				}
+				print '</td></tr>';
+			}
 		}
 
 		// Help of substitution key
@@ -1512,7 +1514,7 @@ else
 		$title = $langs->trans("Recurrence");
 		//print load_fiche_titre($title, '', 'calendar');
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		print '<tr><td colspan="2"><span class="fa fa-calendar"></span> '.$title.'</td></tr>';
 

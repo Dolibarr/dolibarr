@@ -104,7 +104,7 @@ if ($id > 0)
 		// Invoice list
 		print load_fiche_titre($langs->trans("CustomerPreview"));
 
-		print '<table class="noborder tagtable liste" width="100%">';
+		print '<table class="noborder tagtable liste centpercent">';
 		print '<tr class="liste_titre">';
         if (! empty($arrayfields['f.datef']['checked']))  print_liste_field_titre($arrayfields['f.datef']['label'], $_SERVER["PHP_SELF"], "f.datef", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 		print '<td>'.$langs->trans("Element").'</td>';

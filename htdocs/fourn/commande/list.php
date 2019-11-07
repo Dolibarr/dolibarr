@@ -223,8 +223,8 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='CommandeFournisseur';
 	$objectlabel='SupplierOrders';
-	$permtoread = $user->rights->fournisseur->commande->lire;
-	$permtodelete = $user->rights->fournisseur->commande->supprimer;
+	$permissiontoread = $user->rights->fournisseur->commande->lire;
+	$permissiontodelete = $user->rights->fournisseur->commande->supprimer;
 	$uploaddir = $conf->fournisseur->commande->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
@@ -421,7 +421,7 @@ if (empty($reshook))
 				// Fac builddoc
 				$donotredirect = 1;
 				$upload_dir = $conf->facture->dir_output;
-				$permissioncreate=$user->rights->facture->creer;
+				$permissiontoadd=$user->rights->facture->creer;
 				include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 			}
 
@@ -1063,24 +1063,24 @@ if ($resql)
 		{
 			  print '<td class="right">'.price($obj->total_ht)."</td>\n";
 			  if (! $i) $totalarray['nbfield']++;
-			  if (! $i) $totalarray['totalhtfield']=$totalarray['nbfield'];
-			  $totalarray['totalht'] += $obj->total_ht;
+			  if (! $i) $totalarray['pos'][$totalarray['nbfield']]='cf.total_ht';
+			  $totalarray['val']['cf.total_ht'] += $obj->total_ht;
 		}
 		// Amount VAT
 		if (! empty($arrayfields['cf.total_vat']['checked']))
 		{
 			print '<td class="right">'.price($obj->total_tva)."</td>\n";
 			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['totalvatfield']=$totalarray['nbfield'];
-			$totalarray['totalvat'] += $obj->total_tva;
+			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='cf.total_vat';
+			$totalarray['val']['cf.total_vat'] += $obj->total_tva;
 		}
 		// Amount TTC
 		if (! empty($arrayfields['cf.total_ttc']['checked']))
 		{
 			print '<td class="right">'.price($obj->total_ttc)."</td>\n";
 			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['totalttcfield']=$totalarray['nbfield'];
-			$totalarray['totalttc'] += $obj->total_ttc;
+			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='cf.total_ttc';
+			$totalarray['val']['cf.total_ttc'] += $obj->total_ttc;
 		}
 
 		// Extra fields
@@ -1134,27 +1134,8 @@ if ($resql)
 	}
 
 	// Show total line
-	if (isset($totalarray['totalhtfield']))
-	{
-		print '<tr class="liste_total">';
-		$i=0;
-		while ($i < $totalarray['nbfield'])
-		{
-			$i++;
-			if ($i == 1)
-			{
-				if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
-				else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-			}
-			elseif ($totalarray['totalhtfield'] == $i) print '<td class="right">'.price($totalarray['totalht']).'</td>';
-			elseif ($totalarray['totalvatfield'] == $i) print '<td class="right">'.price($totalarray['totalvat']).'</td>';
-			elseif ($totalarray['totalttcfield'] == $i) print '<td class="right">'.price($totalarray['totalttc']).'</td>';
-			else print '<td></td>';
-		}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
-
-		print '</tr>';
-	}
 
     $parameters=array('arrayfields'=>$arrayfields, 'sql'=>$sql);
     $reshook=$hookmanager->executeHooks('printFieldListFooter', $parameters);    // Note that $action and $object may have been modified by hook

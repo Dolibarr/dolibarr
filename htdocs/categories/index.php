@@ -87,7 +87,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 
 
-print '<table class="noborder nohover" width="100%">';
+print '<table class="noborder nohover centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Search").'</td>';
 print '</tr>';
@@ -117,7 +117,7 @@ if ($catname || $id > 0)
 {
 	$cats = $categstatic->rechercher($id, $catname, $typetext);
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("FoundCats").'</td></tr>';
 
 	foreach ($cats as $cat)

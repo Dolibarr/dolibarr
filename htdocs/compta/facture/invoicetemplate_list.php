@@ -191,8 +191,8 @@ if (empty($reshook))
 	// Mass actions
 	/*$objectclass='MyObject';
     $objectlabel='MyObject';
-    $permtoread = $user->rights->mymodule->read;
-    $permtodelete = $user->rights->mymodule->delete;
+    $permissiontoread = $user->rights->mymodule->read;
+    $permissiontodelete = $user->rights->mymodule->delete;
     $uploaddir = $conf->mymodule->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';*/
 }
@@ -676,28 +676,9 @@ if ($resql)
 		print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 	}
 
-	//var_dump($totalarray);
 	// Show total line
-	if (isset($totalarray['pos']))
-	{
-		print '<tr class="liste_total">';
-		$i=0;
-		while ($i < $totalarray['nbfield'])
-		{
-			$i++;
-			if (! empty($totalarray['pos'][$i]))  print '<td class="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
-			else
-			{
-				if ($i == 1)
-				{
-					if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
-					else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-				}
-				else print '<td></td>';
-			}
-		}
-		print '</tr>';
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+
 
 	print "</table>";
 	print "</div>";

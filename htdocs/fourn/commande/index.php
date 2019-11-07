@@ -63,11 +63,12 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 {
     print '<form method="post" action="list.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="noborder nohover" width="100%">';
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="noborder nohover centpercent">';
     print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
     print '<tr class="oddeven"><td>';
     print $langs->trans("SupplierOrder").':</td><td><input type="text" class="flat" name="search_all" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-    print "</table></form><br>\n";
+    print "</table></div></form><br>\n";
 }
 
 
@@ -114,7 +115,8 @@ if ($resql)
 	}
 	$db->free($resql);
 
-	print '<table class="noborder nohover" width="100%">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder nohover centpercent">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("SuppliersOrders").'</th></tr>';
 	print "</tr>\n";
 	foreach (array(0,1,2,3,4,5,6) as $status)
@@ -148,7 +150,7 @@ if ($resql)
 	//print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("SuppliersOrdersRunning").')</td><td class="right">'.$totalinprocess.'</td></tr>';
 	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
 
-	print "</table><br>";
+	print "</table></div><br>";
 }
 else
 {
@@ -178,7 +180,8 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print '<table class="liste" width="100%">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="liste centpercent">';
 
 	print '<tr class="liste_titre"><th>'.$langs->trans("Status").'</th>';
 	print '<th class="right">'.$langs->trans("Nb").'</th>';
@@ -195,7 +198,7 @@ if ($resql)
 		print "</tr>\n";
 		$i++;
 	}
-	print "</table><br>";
+	print "</table></div><br>";
 	$db->free($resql);
 }
 else
@@ -223,7 +226,8 @@ if (! empty($conf->fournisseur->enabled))
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-		print '<table class="noborder" width="100%">';
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("DraftOrders").'</th></tr>';
 		$langs->load("orders");
@@ -242,7 +246,7 @@ if (! empty($conf->fournisseur->enabled))
 				$i++;
 			}
 		}
-		print "</table><br>";
+		print "</table></div><br>";
 	}
 }
 
@@ -268,7 +272,8 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print '<table class="liste" width="100%">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="liste centpercent">';
 	print '<tr class="liste_titre"><th>'.$langs->trans("UserWithApproveOrderGrant").'</th>';
 	print "</tr>\n";
 
@@ -287,7 +292,7 @@ if ($resql)
 		print "</tr>\n";
 		$i++;
 	}
-	print "</table><br>";
+	print "</table></div><br>";
 	$db->free($resql);
 }
 else
@@ -319,7 +324,8 @@ $sql.= $db->plimit($max, 0);
 $resql=$db->query($sql);
 if ($resql)
 {
-	print '<table class="noborder" width="100%">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="4">'.$langs->trans("LastModifiedOrders", $max).'</th></tr>';
 
@@ -362,7 +368,7 @@ if ($resql)
 			$i++;
 		}
 	}
-	print "</table><br>";
+	print "</table></div><br>";
 }
 else dol_print_error($db);
 
@@ -387,7 +393,8 @@ if ($resql)
 {
 $num = $db->num_rows($resql);
 
-print '<table class="noborder" width="100%">';
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<th colspan="3">'.$langs->trans("OrdersToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1">('.$num.')</a></th></tr>';
 
@@ -431,7 +438,7 @@ $i++;
 }
 }
 
-print "</table><br>";
+print "</table></div><br>";
 }
 */
 

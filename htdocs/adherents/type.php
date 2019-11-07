@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
 $langs->load("members");
 
@@ -61,6 +62,8 @@ $label=GETPOST("label", "alpha");
 $morphy=GETPOST("morphy", "alpha");
 $statut=GETPOST("statut", "int");
 $subscription=GETPOST("subscription", "int");
+$duration_value = GETPOST('duration_value', 'int');
+$duration_unit = GETPOST('duration_unit', 'alpha');
 $vote=GETPOST("vote", "int");
 $comment=GETPOST("comment", 'alphanohtml');
 $mail_valid=GETPOST("mail_valid", 'none');
@@ -104,9 +107,11 @@ if ($cancel) {
 
 if ($action == 'add' && $user->rights->adherent->configurer) {
 	$object->label			= trim($label);
-    $object->morphy         = trim($morphy);
+	$object->morphy         = trim($morphy);
 	$object->statut         = (int) $statut;
 	$object->subscription   = (int) $subscription;
+	$object->duration_value     	 = $duration_value;
+	$object->duration_unit      	 = $duration_unit;
 	$object->note			= trim($comment);
 	$object->mail_valid		= trim($mail_valid);
 	$object->vote			= (int) $vote;
@@ -159,9 +164,11 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 	$object->oldcopy = clone $object;
 
 	$object->label			= trim($label);
-    $object->morphy         = trim($morphy);
+	$object->morphy         = trim($morphy);
 	$object->statut = (int) $statut;
 	$object->subscription = (int) $subscription;
+	$object->duration_value     	 = $duration_value;
+	$object->duration_unit      	 = $duration_unit;
 	$object->note			= trim($comment);
 	$object->mail_valid		= trim($mail_valid);
 	$object->vote			= (boolean) trim($vote);
@@ -209,6 +216,7 @@ if ($action == 'confirm_delete' && $user->rights->adherent->configurer)
  */
 
 $form=new Form($db);
+$formproduct = new FormProduct($db);
 
 llxHeader('', $langs->trans("MembersTypeSetup"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
@@ -329,7 +337,7 @@ if ($action == 'create')
 
     dol_fiche_head('');
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 	print '<tbody>';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth200" name="label" autofocus="autofocus"></td></tr>';
@@ -352,6 +360,11 @@ if ($action == 'create')
 
 	print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
 	print $form->selectyesno("vote", 0, 1);
+	print '</td></tr>';
+
+	print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
+	print '<input name="duration_value" size="5" value="'.$_POST["duration_value"].'"> ';
+	print $formproduct->selectMeasuringUnits("duration_unit", "time", $_POST["duration_unit"], 0, 1);
 	print '</td></tr>';
 
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
@@ -417,7 +430,7 @@ if ($rowid > 0)
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
    		print '<tr><td class="titlefield">'.$langs->trans("Status").'</td><td>';
         if ( !empty($object->statut) ) {
@@ -438,6 +451,18 @@ if ($rowid > 0)
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
 		print yn($object->vote);
 		print '</tr>';
+
+		print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td colspan="2">'.$object->duration_value.'&nbsp;';
+		if ($object->duration_value > 1)
+		{
+			$dur=array("i"=>$langs->trans("Minute"),"h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
+		}
+		elseif ($object->duration_value > 0)
+		{
+			$dur=array("i"=>$langs->trans("Minute"),"h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
+		}
+		print (! empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
+		print '</td></tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		print nl2br($object->note)."</td></tr>";
@@ -592,6 +617,7 @@ if ($rowid > 0)
 		    }
 
 			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+            print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 			print '<input class="flat" type="hidden" name="rowid" value="'.$object->id.'" size="12"></td>';
 
 			print '<br>';
@@ -761,7 +787,7 @@ if ($rowid > 0)
 
 		dol_fiche_head($head, 'card', $langs->trans("MemberType"), 0, 'group');
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->id.'</td></tr>';
 
@@ -787,6 +813,11 @@ if ($rowid > 0)
 		print $form->selectyesno("vote", $object->vote, 1);
 		print '</td></tr>';
 
+		print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
+		print '<input name="duration_value" size="5" value="'.$object->duration_value.'"> ';
+		print $formproduct->selectMeasuringUnits("duration_unit", "time", $object->duration_unit, 0, 1);
+		print '</td></tr>';
+
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		print '<textarea name="comment" wrap="soft" class="centpercent" rows="3">'.$object->note.'</textarea></td></tr>';
 
@@ -797,8 +828,11 @@ if ($rowid > 0)
 		print "</td></tr>";
 
 		// Other attributes
+		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_edit.tpl.php';
+
+		// Other attributes
 		$parameters=array();
-		$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $act, $action);    // Note that $action and $object may have been modified by hook
+		$reshook=$hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
         	print $hookmanager->resPrint;
 		if (empty($reshook))
 		{
@@ -806,33 +840,6 @@ if ($rowid > 0)
 		}
 
 		print '</table>';
-
-		// Extra field
-		if (empty($reshook))
-		{
-			print '<br><br><table class="border" width="100%">';
-			if (is_array($extrafields->attributes['adherent_type']['label']))
-			{
-				foreach($extrafields->attributes['adherent_type']['label'] as $key=>$label)
-				{
-					if (isset($_POST["options_" . $key])) {
-						if (is_array($_POST["options_" . $key])) {
-							// $_POST["options"] is an array but following code expects a comma separated string
-							$value = implode(",", $_POST["options_" . $key]);
-						} else {
-							$value = $_POST["options_" . $key];
-						}
-					} else {
-						$value = $object->array_options["options_" . $key];
-					}
-
-					print '<tr><td width="30%">'.$label.'</td><td>';
-					print $extrafields->showInputField($key, $value);
-					print "</td></tr>\n";
-				}
-			}
-			print '</table><br><br>';
-		}
 
 		dol_fiche_end();
 

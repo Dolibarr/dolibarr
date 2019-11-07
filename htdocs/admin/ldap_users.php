@@ -129,7 +129,7 @@ print $langs->trans("LDAPDescUsers").'<br>';
 print '<br>';
 
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td colspan="4">'.$langs->trans("LDAPSynchronizeUsers").'</td>';
@@ -158,7 +158,7 @@ print '</tr>';
 
 print '</table>';
 print '<br>';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td width="25%">'.$langs->trans("LDAPDolibarrMapping").'</td>';

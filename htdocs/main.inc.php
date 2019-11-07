@@ -2567,12 +2567,13 @@ if (! function_exists("llxFooter"))
 					print "\n".'<!-- Includes JS for Ping of Dolibarr MAIN_FIRST_PING_OK_DATE = '.$conf->global->MAIN_FIRST_PING_OK_DATE.' MAIN_FIRST_PING_OK_ID = '.$conf->global->MAIN_FIRST_PING_OK_ID.' -->'."\n";
 					print "\n<!-- JS CODE TO ENABLE the anonymous Ontime Ping -->\n";
 					$hash_unique_id = md5('dolibarr'.$conf->file->instance_unique_id);
+					$url_for_ping = "https://ping.dolibarr.org/";
 					?>
 		    			<script>
 		    			jQuery(document).ready(function (tmp) {
 		    				$.ajax({
 		    					  method: "POST",
-		    					  url: "https://ping.dolibarr.org/",
+		    					  url: "<?php echo $url_for_ping ?>",
 		    					  timeout: 500,     // timeout milliseconds
 		    					  cache: false,
 		    					  data: { hash_algo: "md5", hash_unique_id: "<?php echo $hash_unique_id; ?>", action: "dolibarrping", version: "<?php echo (float) DOL_VERSION; ?>", entity: <?php echo (int) $conf->entity; ?> },

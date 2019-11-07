@@ -1151,7 +1151,7 @@ if (empty($reshook))
 		}
 
 		// Standard invoice or Deposit invoice, created from a Predefined template invoice
-		if (($_POST['type'] == Facture::TYPE_STANDARD || $_POST['type'] == Facture::TYPE_DEPOSIT) && GETPOST('fac_rec') > 0)
+		if (($_POST['type'] == Facture::TYPE_STANDARD || $_POST['type'] == Facture::TYPE_DEPOSIT) && GETPOST('fac_rec', 'int') > 0)
 		{
 			$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 			if (empty($dateinvoice))
@@ -1661,6 +1661,7 @@ if (empty($reshook))
 				$object->date_pointoftax = $date_pointoftax;
 				$object->note_public = trim(GETPOST('note_public', 'none'));
 				$object->note = trim(GETPOST('note', 'none'));
+				$object->note_private = trim(GETPOST('note', 'none'));
 				$object->ref_client = GETPOST('ref_client', 'alpha');
 				$object->ref_int = GETPOST('ref_int', 'alpha');
 				$object->modelpdf = GETPOST('model', 'alpha');
@@ -2488,7 +2489,7 @@ if (empty($reshook))
 
 	// Actions to build doc
 	$upload_dir = $conf->facture->multidir_output[$object->entity];
-	$permissioncreate=$usercancreate;
+	$permissiontoadd=$usercancreate;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
@@ -2747,15 +2748,23 @@ if ($action == 'create')
 
 	dol_fiche_head('');
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Ref
 	print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans('Ref') . '</td><td colspan="2">' . $langs->trans('Draft') . '</td></tr>';
 
-	// Thirdparty
-	print '<td class="fieldrequired">' . $langs->trans('Customer') . '</td>';
-	if ($soc->id > 0 && ! GETPOST('fac_rec', 'int'))
+	$exampletemplateinvoice=new FactureRec($db);
+	$invoice_predefined = new FactureRec($db);
+	if (empty($origin) && empty($originid) && GETPOST('fac_rec', 'int') > 0)
 	{
+		$invoice_predefined->fetch(GETPOST('fac_rec', 'int'));
+	}
+
+	// Thirdparty
+	if ($soc->id > 0 && (! GETPOST('fac_rec', 'int') || ! empty($invoice_predefined->frequency)))
+	{
+		// If thirdparty known and not a predefined invoiced without a recurring rule
+		print '<tr><td class="fieldrequired">' . $langs->trans('Customer') . '</td>';
 		print '<td colspan="2">';
 		print $soc->getNomUrl(1);
 		print '<input type="hidden" name="socid" value="' . $soc->id . '">';
@@ -2771,9 +2780,11 @@ if ($action == 'create')
 		}
 		print ')';
 		print '</td>';
+		print '</tr>' . "\n";
 	}
 	else
 	{
+		print '<tr><td class="fieldrequired">' . $langs->trans('Customer') . '</td>';
 		print '<td colspan="2">';
 		print $form->select_company($soc->id, 'socid', '((s.client = 1 OR s.client = 3) AND s.status=1)', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
 		// Option to reload page to retrieve customer informations. Note, this clear other input
@@ -2790,17 +2801,14 @@ if ($action == 'create')
 			});
 			</script>';
 		}
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+		if (!  GETPOST('fac_rec', 'int')) print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 		print '</td>';
+		print '</tr>' . "\n";
 	}
-	print '</tr>' . "\n";
-
-	$exampletemplateinvoice=new FactureRec($db);
 
 	// Overwrite some values if creation of invoice is from a predefined invoice
 	if (empty($origin) && empty($originid) && GETPOST('fac_rec', 'int') > 0)
 	{
-		$invoice_predefined = new FactureRec($db);
 		$invoice_predefined->fetch(GETPOST('fac_rec', 'int'));
 
 		$dateinvoice = $invoice_predefined->date_when;     // To use next gen date by default later
@@ -2827,13 +2835,14 @@ if ($action == 'create')
 			if ($num > 0)
 			{
 				print '<tr><td>' . $langs->trans('CreateFromRepeatableInvoice') . '</td><td>';
-				print '<select class="flat" id="fac_rec" name="fac_rec">';
+				//print '<input type="hidden" name="fac_rec" id="fac_rec" value="'.GETPOST('fac_rec', 'int').'">';
+				print '<select class="flat" id="fac_rec" name="fac_rec">';	// We may want to change the template to use
 				print '<option value="0" selected></option>';
 				while ($i < $num)
 				{
 					$objp = $db->fetch_object($resql);
 					print '<option value="' . $objp->rowid . '"';
-					if (GETPOST('fac_rec') == $objp->rowid)
+					if (GETPOST('fac_rec', 'int') == $objp->rowid)
 					{
 						print ' selected';
 						$exampletemplateinvoice->fetch(GETPOST('fac_rec', 'int'));
@@ -2848,6 +2857,7 @@ if ($action == 'create')
 					print '<script type="text/javascript">
         			$(document).ready(function() {
         				$("#fac_rec").change(function() {
+							console.log("We changed the template invoice");
         					var fac_rec = $(this).val();
         			        var socid = $(\'#socid\').val();
         					// reload page
@@ -2965,7 +2975,7 @@ if ($action == 'create')
 			print '<!-- replacement line -->';
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 			$tmp='<input type="radio" name="type" id="radio_replacement" value="1"' . (GETPOST('type') == 1 ? ' checked' : '');
-			if (! $options) $tmp.=' disabled';
+			if (! $options || $invoice_predefined->id > 0) $tmp.=' disabled';
 			$tmp.='> ';
 			print '<script type="text/javascript" language="javascript">
     		jQuery(document).ready(function() {
@@ -2976,7 +2986,7 @@ if ($action == 'create')
     		</script>';
 			$text = '<label>'.$tmp.$langs->trans("InvoiceReplacementAsk") . '</label>';
 			$text .= '<select class="flat" name="fac_replacement" id="fac_replacement"';
-			if (! $options)
+			if (! $options || $invoice_predefined->id > 0)
 				$text .= ' disabled';
 			$text .= '>';
 			if ($options) {
@@ -3057,7 +3067,7 @@ if ($action == 'create')
 
 				print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 				$tmp='<input type="radio" id="radio_creditnote" name="type" value="2"' . (GETPOST('type') == 2 ? ' checked' : '');
-				if (! $optionsav && empty($conf->global->INVOICE_CREDIT_NOTE_STANDALONE)) $tmp.=' disabled';
+				if ((! $optionsav && empty($conf->global->INVOICE_CREDIT_NOTE_STANDALONE)) || $invoice_predefined->id > 0) $tmp.=' disabled';
 				$tmp.= '> ';
 				// Show credit note options only if we checked credit note
 				print '<script type="text/javascript" language="javascript">
@@ -3077,7 +3087,7 @@ if ($action == 'create')
 				$text = '<label>'.$tmp.$langs->transnoentities("InvoiceAvoirAsk") . '</label> ';
 				// $text.='<input type="text" value="">';
 				$text .= '<select class="flat valignmiddle" name="fac_avoir" id="fac_avoir"';
-				if (! $optionsav)
+				if (! $optionsav || $invoice_predefined->id > 0)
 					$text .= ' disabled';
 				$text .= '>';
 				if ($optionsav) {
@@ -3355,7 +3365,7 @@ if ($action == 'create')
 		print '</td></tr>';
 	}
 
-	// Lines from source
+	// Lines from source (TODO Show them also when creating invoice from tempalte invoice)
 	if (! empty($origin) && ! empty($originid) && is_object($objectsrc))
 	{
 		// TODO for compatibility
@@ -3444,7 +3454,7 @@ if ($action == 'create')
 		$title = $langs->trans('ProductsAndServices');
 		print load_fiche_titre($title);
 
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 
 		$objectsrc->printOriginLinesList();
 

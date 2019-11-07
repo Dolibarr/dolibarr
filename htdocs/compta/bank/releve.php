@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2017      Patrick Delcroix	<pmpdelcroix@gmail.com>
+ * Copyright (C) 2019	  Nicolas ZABOURI       <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -270,7 +271,7 @@ if (empty($numref))
 		print '<input type="hidden" name="account" value="'.$object->id.'">';
 		print '<input type="hidden" name="page" value="'.$page.'">';
 
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Ref").'</td>';
 		print '<td class="right">'.$langs->trans("InitialBankBalance").'</td>';
@@ -360,7 +361,12 @@ else
 	 *   Show list of bank statements
 	 */
 
-    $mesprevnext='';
+	// Onglets
+	$head=account_statement_prepare_head($object, $numref);
+	dol_fiche_head($head, 'statement', $langs->trans("FinancialAccount"), 0, 'account');
+
+
+	$mesprevnext='';
 	$mesprevnext.='<div class="pagination"><ul>';
 	$mesprevnext.='<li class="pagination"><a class="paginationnext" href="'.$_SERVER["PHP_SELF"].'?rel=prev&amp;num='.$numref.'&amp;ve='.$ve.'&amp;account='.$object->id.'"><i class="fa fa-chevron-left" title="'.dol_escape_htmltag($langs->trans("Previous")).'"></i></a></li>';
 	//$mesprevnext.=' &nbsp; ';

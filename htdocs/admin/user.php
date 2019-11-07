@@ -145,7 +145,7 @@ $head=user_admin_prepare_head();
 
 dol_fiche_head($head, 'card', $langs->trans("MenuUsersAndGroups"), -1, 'user');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
@@ -206,7 +206,7 @@ else
 	dol_print_error($db);
 }
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';

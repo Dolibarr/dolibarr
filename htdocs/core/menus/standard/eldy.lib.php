@@ -144,8 +144,8 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	// Products-Services
 	$tmpentry = array(
-		'enabled'=> (! empty($conf->product->enabled) || ! empty($conf->service->enabled)),
-		'perms'=> (! empty($user->rights->produit->lire) || ! empty($user->rights->service->lire)),
+		'enabled'=> (! empty($conf->product->enabled) || ! empty($conf->service->enabled)  || ! empty($conf->expedition->enabled)),
+		'perms'=> (! empty($user->rights->produit->lire) || ! empty($user->rights->service->lire) || ! empty($user->rights->expedition->lire)),
 	    'module'=>'product|service'
 	);
 	$menu_arr[] = array(
@@ -230,7 +230,13 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	        ! empty($conf->contrat->enabled) ||
 	        ! empty($conf->ficheinter->enabled)
 	        )?1:0,
-	    'perms'=>(! empty($user->rights->societe->lire) || ! empty($user->rights->societe->contact->lire)),
+		'perms'=>(! empty($user->rights->propal->lire) ||
+				  ! empty($user->rights->commande->lire) ||
+				  ! empty($user->rights->supplier_order->lire) ||
+				  ! empty($user->rights->supplier_proposal->lire) ||
+				  ! empty($user->rights->contrat->lire) ||
+				  ! empty($user->rights->ficheinter->lire)
+			),
 	    'module'=>'propal|commande|supplier_order|contrat|ficheinter'
 	);
 	$menu_arr[] = array(
@@ -745,7 +751,6 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$newmenu->add('/admin/system/phpinfo.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoPHP'), 1);
 				//if (function_exists('xdebug_is_enabled')) $newmenu->add('/admin/system/xdebug.php', $langs->trans('XDebug'),1);
 				$newmenu->add('/admin/system/database.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('InfoDatabase'), 1);
-				if (function_exists('eaccelerator_info')) $newmenu->add("/admin/tools/eaccelerator.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("EAccelerator"), 1);
 				//$newmenu->add("/admin/system/perf.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("InfoPerf"),1);
 				$newmenu->add("/admin/tools/dolibarr_export.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Backup"), 1);
 				$newmenu->add("/admin/tools/dolibarr_import.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Restore"), 1);

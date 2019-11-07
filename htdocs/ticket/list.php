@@ -3,6 +3,7 @@
  * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
  * Copyright (C) 2018		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2019		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2019		Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -175,8 +176,8 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='Ticket';
 	$objectlabel='Ticket';
-	$permtoread = $user->rights->ticket->read;
-	$permtodelete = $user->rights->ticket->delete;
+	$permissiontoread = $user->rights->ticket->read;
+	$permissiontodelete = $user->rights->ticket->delete;
 	$uploaddir = $conf->ticket->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -686,26 +687,8 @@ while ($i < min($num, $limit))
 }
 
 // Show total line
-if (isset($totalarray['pos']))
-{
-	print '<tr class="liste_total">';
-	$i=0;
-	while ($i < $totalarray['nbfield'])
-	{
-		$i++;
-		if (! empty($totalarray['pos'][$i]))  print '<td class="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
-		else
-		{
-			if ($i == 1)
-			{
-				if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
-				else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-			}
-			else print '<td></td>';
-		}
-	}
-	print '</tr>';
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+
 
 // If no record found
 if ($num == 0)

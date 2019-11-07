@@ -209,8 +209,8 @@ if (empty($reshook))
 {
     $objectclass='Account';
     $objectlabel='BankTransaction';
-    $permtoread = $user->rights->banque->lire;
-    $permtodelete = $user->rights->banque->supprimer;
+    $permissiontoread = $user->rights->banque->lire;
+    $permissiontodelete = $user->rights->banque->supprimer;
     $uploaddir = $conf->bank->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -690,7 +690,7 @@ if ($resql)
 	{
 		print load_fiche_titre($langs->trans("AddBankRecordLong"), '', '');
 
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Description").'</td>';
@@ -919,13 +919,13 @@ if ($resql)
 	if (! empty($arrayfields['b.debit']['checked']))
 	{
     	print '<td class="liste_titre right">';
-    	print '<input type="text" class="flat" name="search_debit" size="4" value="'.dol_escape_htmltag($search_debit).'">';
+    	print '<input type="text" class="flat width50" name="search_debit" value="'.dol_escape_htmltag($search_debit).'">';
     	print '</td>';
 	}
 	if (! empty($arrayfields['b.credit']['checked']))
 	{
     	print '<td class="liste_titre right">';
-    	print '<input type="text" class="flat" name="search_credit" size="4" value="'.dol_escape_htmltag($search_credit).'">';
+    	print '<input type="text" class="flat width50" name="search_credit" value="'.dol_escape_htmltag($search_credit).'">';
     	print '</td>';
 	}
 	if (! empty($arrayfields['balancebefore']['checked']))
@@ -1085,6 +1085,7 @@ if ($resql)
             	if ($tmpnbfieldbeforebalance)
             	{
             		print '<td colspan="'.$tmpnbfieldbeforebalance.'">';
+            		print '&nbsp;';
             		print '</td>';
             	}
 
@@ -1110,6 +1111,7 @@ if ($resql)
 						</script>';
 				print '</td>';
 				print '<td colspan="'.($tmpnbfieldafterbalance+2).'">';
+				print '&nbsp;';
 				print '</td>';
             	print '</tr>';
             }
@@ -1529,7 +1531,6 @@ if ($resql)
     	            print ' '.img_warning($langs->trans("ReconciliationLate"));
     	        }
     	    }
-    	    print '&nbsp;';
     	    if ($user->rights->banque->modifier)
     	    {
     	        print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;rowid='.$objp->rowid.'&amp;id='.$objp->bankid.'&amp;page='.$page.'">';

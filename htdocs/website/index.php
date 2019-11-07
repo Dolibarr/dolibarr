@@ -2619,7 +2619,7 @@ if ($action == 'editcss')
 	dol_fiche_head();
 
 	print '<!-- Edit CSS -->'."\n";
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Website
 	print '<tr><td class="titlefieldcreate">';
@@ -2752,7 +2752,7 @@ if ($action == 'createsite')
 	print '<!-- Add site -->'."\n";
 	//print '<div class="fichecenter">';
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	if (GETPOST('WEBSITE_REF'))         $siteref=GETPOST('WEBSITE_REF', 'alpha');
 	if (GETPOST('WEBSITE_DESCRIPTION')) $sitedesc=GETPOST('WEBSITE_DESCRIPTION', 'alpha');
@@ -3280,7 +3280,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 			print '<!-- List of search result -->'."\n";
 			print '<div class="rowsearchresult">';
 
-			if ($action == 'replacesiteconfirm')
+			if ($action == 'replacesiteconfirm' && $conf->global->MAIN_FEATURES_LEVEL >= 2)
 			{
 				print '<div class="tagtr">';
 				print '<div class="tagtd paddingrightonly">';

@@ -141,7 +141,7 @@ if (! empty($conf->holiday->enabled))
 		$user_id = $user->id;
 
         print '<div class="div-table-responsive-no-min">';
-	    print '<table class="noborder nohover" width="100%">';
+	    print '<table class="noborder nohover centpercent">';
 	    print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("Holidays").'</th></tr>';
 	    print '<tr class="oddeven">';
 	    print '<td colspan="3">';

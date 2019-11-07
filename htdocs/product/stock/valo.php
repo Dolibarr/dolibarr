@@ -83,7 +83,7 @@ if ($result)
 
     print_barre_liste($langs->trans("EnhancedValueOfWarehouses"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num);
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print "<tr class=\"liste_titre\">";
     print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "e.ref", "", "", "", $sortfield, $sortorder);
     print_liste_field_titre("LocationSummary", $_SERVER["PHP_SELF"], "e.lieu", "", "", "", $sortfield, $sortorder);

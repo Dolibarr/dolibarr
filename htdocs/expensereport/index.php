@@ -115,8 +115,8 @@ print load_fiche_titre($langs->trans("ExpensesArea"));
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-
-print '<table class="noborder nohover" width="100%">';
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder nohover centpercent">';
 print '<tr class="liste_titre">';
 print '<th colspan="4">'.$langs->trans("Statistics").'</th>';
 print "</tr>\n";
@@ -152,6 +152,7 @@ print '<td class="right" colspan="3">'.price($totalsum, 1, $langs, 0, 0, 0, $con
 print '</tr>';
 
 print '</table>';
+print '</div>';
 
 
 
@@ -163,7 +164,8 @@ $max=10;
 
 $langs->load("boxes");
 
-$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.statut, u.photo, d.rowid, d.ref, d.date_debut as dated, d.date_fin as datef, d.date_create as dm, d.total_ht, d.total_ttc, d.fk_statut as fk_status";
+$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.statut, u.photo, u.email, u.admin";
+$sql.= ", d.rowid, d.ref, d.date_debut as dated, d.date_fin as datef, d.date_create as dm, d.total_ht, d.total_ttc, d.fk_statut as fk_status";
 $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d, ".MAIN_DB_PREFIX."user as u";
 if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE u.rowid = d.fk_user_author";
@@ -189,7 +191,8 @@ if ($result)
 
     $i = 0;
 
-    print '<table class="noborder" width="100%">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num)).'</th>';
     print '<th class="right">'.$langs->trans("AmountHT").'</th>';
@@ -209,6 +212,8 @@ if ($result)
             $expensereportstatic->id=$obj->rowid;
             $expensereportstatic->ref=$obj->ref;
             $userstatic->id=$obj->uid;
+            $userstatic->admin = $obj->admin;
+            $userstatic->email = $obj->email;
             $userstatic->lastname=$obj->lastname;
             $userstatic->firstname=$obj->firstname;
             $userstatic->login=$obj->login;
@@ -232,7 +237,7 @@ if ($result)
     {
         print '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
-    print '</table><br>';
+    print '</table></div><br>';
 }
 else dol_print_error($db);
 

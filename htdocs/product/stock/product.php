@@ -893,7 +893,7 @@ if (! $variants) {
 						print "\n" . '<tr>';
 						print '<td colspan="9">';
 						print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
-						print '<input type="hidden" name="pdluoid" value="' . $pdluo->id . '"><input type="hidden" name="action" value="updateline"><input type="hidden" name="id" value="' . $id . '"><table class="noborder" width="100%"><tr><td width="10%"></td>';
+						print '<input type="hidden" name="pdluoid" value="' . $pdluo->id . '"><input type="hidden" name="action" value="updateline"><input type="hidden" name="id" value="' . $id . '"><table class="noborder centpercent"><tr><td width="10%"></td>';
 						print '<td class="right" width="10%"><input type="text" name="batch_number" value="' . $pdluo->batch . '"></td>';
 						print '<td class="center" width="10%">';
 						print $form->selectDate($pdluo->eatby, 'eatby', '', '', 1, '', 1, 0);
@@ -963,7 +963,7 @@ if (! $variants) {
 			print '<input type="hidden" name="action" value="addlimitstockwarehouse">';
 			print '<input type="hidden" name="id" value="' . $id . '">';
 		}
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		if (!empty($user->rights->produit->creer)) {
 			print '<tr class="liste_titre"><td width="40%">' . $formproduct->selectWarehouses('', 'fk_entrepot') . '</td>';
 			print '<td class="right"><input name="seuil_stock_alerte" type="text" placeholder="' . $langs->trans("StockLimit") . '" /></td>';

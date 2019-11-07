@@ -318,6 +318,7 @@ if ($action=="create" || $action=="start")
 	print load_fiche_titre($langs->trans("CashControl")." - ".$langs->trans("New"), '', 'cash-register');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
     if ($action == 'start' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '-1')
     {
 	    print '<input type="hidden" name="action" value="add">';
@@ -326,7 +327,7 @@ if ($action=="create" || $action=="start")
     {
     	print '<input type="hidden" name="action" value="start">';
     }
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Module").'</td>';
     print '<td>'.$langs->trans("CashDesk").' ID</td>';
@@ -406,7 +407,7 @@ if ($action=="create" || $action=="start")
 
 		print '<br>';
 
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 
 		print '<tr class="liste_titre">';
 		print '<td></td>';

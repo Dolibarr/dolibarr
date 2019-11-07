@@ -370,7 +370,10 @@ class Facture extends CommonInvoice
 			$nextdatewhen=dol_time_plus_duree($originaldatewhen, $_facrec->frequency, $_facrec->unit_frequency);
 			$previousdaynextdatewhen=dol_time_plus_duree($nextdatewhen, -1, 'd');
 
-			$this->socid 		     = $_facrec->socid;  // Invoice created on same thirdparty than template
+			if (! empty($_facrec->frequency))  // Invoice are created on same thirdparty than template when there is a recurrence, but not necessarly when there is no recurrence.
+			{
+				$this->socid 		     = $_facrec->socid;
+			}
 			$this->entity            = $_facrec->entity; // Invoice created in same entity than template
 
 			// Fields coming from GUI (priority on template). TODO Value of template should be used as default value on GUI so we can use here always value from GUI
@@ -4641,6 +4644,8 @@ class FactureLigne extends CommonInvoiceLine
 	public $pa_ht;
 	public $marge_tx;
 	public $marque_tx;
+
+	public $remise_percent;
 
 	public $special_code;	// Liste d'options non cumulabels:
 	// 1: frais de port

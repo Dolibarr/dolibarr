@@ -62,6 +62,8 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
+$socialnetworks = getArrayOfSocialNetworks();
+
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($id);
 $objcanvas=null;
@@ -186,17 +188,25 @@ if (empty($reshook))
         $object->town			= GETPOST("town", 'alpha');
         $object->country_id		= GETPOST("country_id", 'int');
         $object->state_id		= GETPOST("state_id", 'int');
-        $object->skype			= GETPOST("skype", 'alpha');
-        $object->twitter		= GETPOST("twitter", 'alpha');
-        $object->facebook		= GETPOST("facebook", 'alpha');
-        $object->linkedin		= GETPOST("linkedin", 'alpha');
+        //$object->jabberid		= GETPOST("jabberid", 'alpha');
+        //$object->skype		= GETPOST("skype", 'alpha');
+        //$object->twitter		= GETPOST("twitter", 'alpha');
+        //$object->facebook		= GETPOST("facebook", 'alpha');
+        //$object->linkedin		= GETPOST("linkedin", 'alpha');
+        $object->socialnetworks = array();
+        if (! empty($conf->socialnetworks->enabled)) {
+            foreach ($socialnetworks as $key => $value) {
+                if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml')!='') {
+                    $object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
+                }
+            }
+        }
         $object->email			= GETPOST("email", 'alpha');
         $object->no_email       = GETPOST("no_email", "int");
         $object->phone_pro		= GETPOST("phone_pro", 'alpha');
         $object->phone_perso	= GETPOST("phone_perso", 'alpha');
         $object->phone_mobile	= GETPOST("phone_mobile", 'alpha');
         $object->fax			= GETPOST("fax", 'alpha');
-        $object->jabberid		= GETPOST("jabberid", 'alpha');
         $object->priv			= GETPOST("priv", 'int');
         $object->note_public	= GETPOST("note_public", 'none');
         $object->note_private	= GETPOST("note_private", 'none');
@@ -378,19 +388,26 @@ if (empty($reshook))
 
             $object->email			= GETPOST("email", 'alpha');
             $object->no_email       = GETPOST("no_email", "int");
-            $object->skype			= GETPOST("skype", 'alpha');
-            $object->twitter		= GETPOST("twitter", 'alpha');
-            $object->facebook		= GETPOST("facebook", 'alpha');
-            $object->linkedin		= GETPOST("linkedin", 'alpha');
+            //$object->jabberid		= GETPOST("jabberid", 'alpha');
+            //$object->skype		= GETPOST("skype", 'alpha');
+            //$object->twitter		= GETPOST("twitter", 'alpha');
+            //$object->facebook		= GETPOST("facebook", 'alpha');
+            //$object->linkedin		= GETPOST("linkedin", 'alpha');
+            if (! empty($conf->socialnetworks->enabled)) {
+                foreach ($socialnetworks as $key => $value) {
+                    if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml')!='') {
+                        $object->socialnetworks[$key] = GETPOST($key, 'alphanohtml');
+                    }
+                }
+            }
             $object->phone_pro		= GETPOST("phone_pro", 'alpha');
             $object->phone_perso	= GETPOST("phone_perso", 'alpha');
             $object->phone_mobile	= GETPOST("phone_mobile", 'alpha');
             $object->fax			= GETPOST("fax", 'alpha');
-            $object->jabberid		= GETPOST("jabberid", 'alpha');
             $object->priv			= GETPOST("priv", 'int');
             $object->note_public	= GETPOST("note_public", 'none');
-       		$object->note_private	= GETPOST("note_private", 'none');
-       		$object->roles			= GETPOST("roles", 'array');
+            $object->note_private	= GETPOST("note_private", 'none');
+            $object->roles			= GETPOST("roles", 'array');
 
             // Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -593,7 +610,7 @@ else
 
             dol_fiche_head($head, 'card', '', 0, '');
 
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
 
             // Name
             print '<tr><td class="titlefieldcreate fieldrequired"><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</label></td>';
@@ -727,39 +744,53 @@ else
             }
             print '</tr>';
 
-            if (! empty($conf->socialnetworks->enabled))
-            {
-            	// Jabber
-            	if (! empty($conf->global->SOCIALNETWORKS_JABBER))
-            	{
-            		print '<tr><td><label for="skype">'.$form->editfieldkey('Jabber', 'jabberid', '', $object, 0).'</label></td>';
-            		print '<td colspan="3"><input type="text" name="jabberid" id="jabberid" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("jabberid")?GETPOST("jabberid", 'alpha'):$object->jabberid).'"></td></tr>';
-            	}
-            	// Skype
-            	if (! empty($conf->global->SOCIALNETWORKS_SKYPE))
-            	{
-            		print '<tr><td><label for="skype">'.$form->editfieldkey('Skype', 'skype', '', $object, 0).'</label></td>';
-            		print '<td colspan="3"><input type="text" name="skype" id="skype" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("skype")?GETPOST("skype", 'alpha'):$object->skype).'"></td></tr>';
-            	}
-            	// Twitter
-            	if (! empty($conf->global->SOCIALNETWORKS_TWITTER))
-            	{
-            		print '<tr><td><label for="twitter">'.$form->editfieldkey('Twitter', 'twitter', '', $object, 0).'</label></td>';
-            		print '<td colspan="3"><input type="text" name="twitter" id="twitter" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("twitter")?GETPOST("twitter", 'alpha'):$object->twitter).'"></td></tr>';
-            	}
-            	// Facebook
-            	if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
-            	{
-            		print '<tr><td><label for="facebook">'.$form->editfieldkey('Facebook', 'facebook', '', $object, 0).'</label></td>';
-            		print '<td colspan="3"><input type="text" name="facebook" id="facebook" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("facebook")?GETPOST("facebook", 'alpha'):$object->facebook).'"></td></tr>';
-            	}
-                // LinkedIn
-                if (! empty($conf->global->SOCIALNETWORKS_LINKEDIN))
-                {
-                    print '<tr><td><label for="linkedin">'.$form->editfieldkey('LinkedIn', 'linkedin', '', $object, 0).'</label></td>';
-                    print '<td colspan="3"><input type="text" name="linkedin" id="linkedin" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("linkedin")?GETPOST("linkedin", 'alpha'):$object->linkedin).'"></td></tr>';
+            if (! empty($conf->socialnetworks->enabled)) {
+                foreach ($socialnetworks as $key => $value) {
+                    if ($value['active']) {
+                        print '<tr>';
+                        print '<td><label for="'.$value['label'].'">'.$form->editfieldkey($value['label'], $key, '', $object, 0).'</label></td>';
+                        print '<td colspan="3">';
+                        print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key)?GETPOST($key, 'alphanohtml'):$object->socialnetworks[$key]).'">';
+                        print '</td>';
+                        print '</tr>';
+                    } elseif (!empty($object->socialnetworks[$key])) {
+                        print '<input type="hidden" name="'.$key.'" value="'.$object->socialnetworks[$key].'">';
+                    }
                 }
             }
+            // if (! empty($conf->socialnetworks->enabled))
+            // {
+            // 	// Jabber
+            // 	if (! empty($conf->global->SOCIALNETWORKS_JABBER))
+            // 	{
+            // 		print '<tr><td><label for="skype">'.$form->editfieldkey('Jabber', 'jabberid', '', $object, 0).'</label></td>';
+            // 		print '<td colspan="3"><input type="text" name="jabberid" id="jabberid" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("jabberid")?GETPOST("jabberid", 'alpha'):$object->jabberid).'"></td></tr>';
+            // 	}
+            // 	// Skype
+            // 	if (! empty($conf->global->SOCIALNETWORKS_SKYPE))
+            // 	{
+            // 		print '<tr><td><label for="skype">'.$form->editfieldkey('Skype', 'skype', '', $object, 0).'</label></td>';
+            // 		print '<td colspan="3"><input type="text" name="skype" id="skype" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("skype")?GETPOST("skype", 'alpha'):$object->skype).'"></td></tr>';
+            // 	}
+            // 	// Twitter
+            // 	if (! empty($conf->global->SOCIALNETWORKS_TWITTER))
+            // 	{
+            // 		print '<tr><td><label for="twitter">'.$form->editfieldkey('Twitter', 'twitter', '', $object, 0).'</label></td>';
+            // 		print '<td colspan="3"><input type="text" name="twitter" id="twitter" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("twitter")?GETPOST("twitter", 'alpha'):$object->twitter).'"></td></tr>';
+            // 	}
+            // 	// Facebook
+            // 	if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
+            // 	{
+            // 		print '<tr><td><label for="facebook">'.$form->editfieldkey('Facebook', 'facebook', '', $object, 0).'</label></td>';
+            // 		print '<td colspan="3"><input type="text" name="facebook" id="facebook" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("facebook")?GETPOST("facebook", 'alpha'):$object->facebook).'"></td></tr>';
+            // 	}
+            //     // LinkedIn
+            //     if (! empty($conf->global->SOCIALNETWORKS_LINKEDIN))
+            //     {
+            //         print '<tr><td><label for="linkedin">'.$form->editfieldkey('LinkedIn', 'linkedin', '', $object, 0).'</label></td>';
+            //         print '<td colspan="3"><input type="text" name="linkedin" id="linkedin" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("linkedin")?GETPOST("linkedin", 'alpha'):$object->linkedin).'"></td></tr>';
+            //     }
+            // }
 
             // Visibility
             print '<tr><td><label for="priv">'.$langs->trans("ContactVisibility").'</label></td><td colspan="3">';
@@ -800,7 +831,7 @@ else
             // Add personnal information
             print load_fiche_titre('<div class="comboperso">'.$langs->trans("PersonalInformations").'</div>', '', '');
 
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
 
             // Date To Birth
             print '<tr><td width="20%"><label for="birthday">'.$langs->trans("DateToBirth").'</label></td><td width="30%">';
@@ -900,7 +931,7 @@ else
 
             dol_fiche_head($head, 'card', $title, 0, 'contact');
 
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
 
             // Ref/ID
             if (! empty($conf->global->MAIN_SHOW_TECHNICAL_ID))
@@ -1028,39 +1059,53 @@ else
 			}
             print '</tr>';
 
-            if (! empty($conf->socialnetworks->enabled))
-            {
-            	// Jabber ID
-            	if (! empty($conf->global->SOCIALNETWORKS_JABBER))
-            	{
-            		print '<tr><td><label for="jabberid">'.$form->editfieldkey('Jabber', 'jabberid', '', $object, 0).'</label></td>';
-            		print '<td><input type="text" name="jabberid" id="jabberid" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("jabberid")?GETPOST("jabberid", 'alpha'):$object->jabberid).'"></td></tr>';
-            	}
-            	// Skype
-            	if (! empty($conf->global->SOCIALNETWORKS_SKYPE))
-            	{
-            		print '<tr><td><label for="skype">'.$form->editfieldkey('Skype', 'skype', '', $object, 0).'</label></td>';
-            		print '<td><input type="text" name="skype" id="skype" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("skype")?GETPOST("skype", 'alpha'):$object->skype).'"></td></tr>';
-            	}
-            	// Twitter
-            	if (! empty($conf->global->SOCIALNETWORKS_TWITTER))
-            	{
-            		print '<tr><td><label for="twitter">'.$form->editfieldkey('Twitter', 'twitter', '', $object, 0).'</label></td>';
-            		print '<td><input type="text" name="twitter" id="twitter" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("twitter")?GETPOST("twitter", 'alpha'):$object->twitter).'"></td></tr>';
-            	}
-            	// Facebook
-                if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
-                {
-                    print '<tr><td><label for="facebook">'.$form->editfieldkey('Facebook', 'facebook', '', $object, 0).'</label></td>';
-                    print '<td><input type="text" name="facebook" id="facebook" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOST("facebook")?GETPOST("facebook", 'alpha'):$object->facebook).'"></td></tr>';
-                }
-                // LinkedIn
-                if (! empty($conf->global->SOCIALNETWORKS_LINKEDIN))
-                {
-                    print '<tr><td><label for="linkedin">'.$form->editfieldkey('LinkedIn', 'linkedin', '', $object, 0).'</label></td>';
-                    print '<td><input type="text" name="linkedin" id="linkedin" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOST("linkedin")?GETPOST("linkedin", 'alpha'):$object->linkedin).'"></td></tr>';
+            if (! empty($conf->socialnetworks->enabled)) {
+                foreach ($socialnetworks as $key => $value) {
+                    if ($value['active']) {
+                        print '<tr>';
+                        print '<td><label for="'.$value['label'].'">'.$form->editfieldkey($value['label'], $key, '', $object, 0).'</label></td>';
+                        print '<td colspan="3">';
+                        print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key)?GETPOST($key, 'alphanohtml'):$object->socialnetworks[$key]).'">';
+                        print '</td>';
+                        print '</tr>';
+                    } elseif (!empty($object->socialnetworks[$key])) {
+                        print '<input type="hidden" name="'.$key.'" value="'.$object->socialnetworks[$key].'">';
+                    }
                 }
             }
+            // if (! empty($conf->socialnetworks->enabled))
+            // {
+            // 	// Jabber ID
+            // 	if (! empty($conf->global->SOCIALNETWORKS_JABBER))
+            // 	{
+            // 		print '<tr><td><label for="jabberid">'.$form->editfieldkey('Jabber', 'jabberid', '', $object, 0).'</label></td>';
+            // 		print '<td><input type="text" name="jabberid" id="jabberid" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("jabberid")?GETPOST("jabberid", 'alpha'):$object->jabberid).'"></td></tr>';
+            // 	}
+            // 	// Skype
+            // 	if (! empty($conf->global->SOCIALNETWORKS_SKYPE))
+            // 	{
+            // 		print '<tr><td><label for="skype">'.$form->editfieldkey('Skype', 'skype', '', $object, 0).'</label></td>';
+            // 		print '<td><input type="text" name="skype" id="skype" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("skype")?GETPOST("skype", 'alpha'):$object->skype).'"></td></tr>';
+            // 	}
+            // 	// Twitter
+            // 	if (! empty($conf->global->SOCIALNETWORKS_TWITTER))
+            // 	{
+            // 		print '<tr><td><label for="twitter">'.$form->editfieldkey('Twitter', 'twitter', '', $object, 0).'</label></td>';
+            // 		print '<td><input type="text" name="twitter" id="twitter" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET("twitter")?GETPOST("twitter", 'alpha'):$object->twitter).'"></td></tr>';
+            // 	}
+            // 	// Facebook
+            //     if (! empty($conf->global->SOCIALNETWORKS_FACEBOOK))
+            //     {
+            //         print '<tr><td><label for="facebook">'.$form->editfieldkey('Facebook', 'facebook', '', $object, 0).'</label></td>';
+            //         print '<td><input type="text" name="facebook" id="facebook" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOST("facebook")?GETPOST("facebook", 'alpha'):$object->facebook).'"></td></tr>';
+            //     }
+            //     // LinkedIn
+            //     if (! empty($conf->global->SOCIALNETWORKS_LINKEDIN))
+            //     {
+            //         print '<tr><td><label for="linkedin">'.$form->editfieldkey('LinkedIn', 'linkedin', '', $object, 0).'</label></td>';
+            //         print '<td><input type="text" name="linkedin" id="linkedin" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOST("linkedin")?GETPOST("linkedin", 'alpha'):$object->linkedin).'"></td></tr>';
+            //     }
+            // }
 
             // Visibility
             print '<tr><td><label for="priv">'.$langs->trans("ContactVisibility").'</label></td><td colspan="3">';

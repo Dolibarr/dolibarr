@@ -149,7 +149,6 @@ ALTER TABLE llx_oauth_token ADD COLUMN fk_soc integer DEFAULT NULL after token;
 
 ALTER TABLE llx_adherent_type ADD COLUMN duration varchar(6) DEFAULT NULL after morphy;
 
-
 ALTER TABLE llx_mailing ADD COLUMN tms timestamp;
 ALTER TABLE llx_mailing_cibles ADD COLUMN tms timestamp;
 
@@ -252,18 +251,69 @@ INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, m
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('IN-GANDI',        0, 117, '', 0, 10,  2, 1);
 
 
+create table llx_c_socialnetworks
+(
+  rowid       integer AUTO_INCREMENT PRIMARY KEY,
+  entity      integer DEFAULT 1 NOT NULL,
+  code        varchar(100),
+  label       varchar(150),
+  url         text,
+  icon        varchar(20),
+  active      tinyint DEFAULT 1 NOT NULL
+)ENGINE=innodb;
+
+ALTER TABLE llx_c_socialnetworks ADD UNIQUE INDEX idx_c_socialnetworks_code (code);
+
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'facebook', 'Facebook', 'https://www.facebook.com/{socialid}', 'fa-facebook', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'skype', 'Skype', 'https://www.skype.com/{socialid}', 'fa-skype', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'twitter', 'Twitter', 'https://www.twitter.com/{socialid}', 'fa-twitter', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'linkedin', 'LinkedIn', 'https://www.linkedin.com/{socialid}', 'fa-linkedin', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'instagram', 'Instagram', 'https://www.instagram.com/{socialid}', 'fa-instagram', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'snapchat', 'Snapchat', '{socialid}', 'fa-snapchat', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'googleplus', 'GooglePlus', 'https://www.googleplus.com/{socialid}', 'fa-google-plus-g', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'youtube', 'Youtube', 'https://www.youtube.com/{socialid}', 'fa-youtube', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'whatsapp', 'Whatsapp', '{socialid}', 'fa-whatsapp', 1);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'tumblr', 'Tumblr', 'https://www.tumblr.com/{socialid}', 'fa-tumblr', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'vero', 'Vero', 'https://vero.co/{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'viadeo', 'Viadeo', 'https://fr.viadeo.com/fr/{socialid}', 'fa-viadeo', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'slack', 'Slack', '{socialid}', 'fa-slack', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'xing', 'Xing', '{socialid}', 'fa-xing', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'meetup', 'Meetup', '{socialid}', 'fa-meetup', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'pinterest', 'Pinterest', '{socialid}', 'fa-pinterest', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'flickr', 'Flickr', '{socialid}', 'fa-flickr', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, '500px', '500px', '{socialid}', 'fa-500px', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'giphy', 'Giphy', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'gifycat', 'Gificat', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'dailymotion', 'Dailymotion', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'vimeo', 'Vimeo', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'periscope', 'Periscope', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'twitch', 'Twitch', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'discord', 'Discord', '{socialid}', 'fa-discord', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'wikipedia', 'Wikipedia', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'reddit', 'Reddit', '{socialid}', 'fa-reddit', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'quora', 'Quora', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'tripadvisor', 'Tripadvisor', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'mastodon', 'Mastodon', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'diaspora', 'Diaspora', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES(1, 'viber', 'Viber', '{socialid}', '', 0);
+
+ALTER TABLE llx_adherent ADD COLUMN socialnetworks text DEFAULT NULL AFTER email;
+ALTER TABLE llx_societe ADD COLUMN socialnetworks text DEFAULT NULL AFTER email;
+ALTER TABLE llx_socpeople ADD COLUMN socialnetworks text DEFAULT NULL AFTER email;
+ALTER TABLE llx_user ADD COLUMN socialnetworks text DEFAULT NULL AFTER personal_email;
+
 ALTER TABLE llx_product ADD COLUMN net_measure         float;
 ALTER TABLE llx_product ADD COLUMN net_measure_units     tinyint;
 
 create table llx_adherent_type_lang
 (
-  rowid          integer AUTO_INCREMENT PRIMARY KEY,
-  fk_type        integer      DEFAULT 0 NOT NULL,
-  lang           varchar(5)   DEFAULT 0 NOT NULL,
-  label          varchar(255) NOT NULL,
-  description    text,
-  email          text,
-  import_key varchar(14) DEFAULT NULL
+	rowid          integer AUTO_INCREMENT PRIMARY KEY,
+	fk_type        integer      DEFAULT 0 NOT NULL,
+	lang           varchar(5)   DEFAULT 0 NOT NULL,
+	label          varchar(255) NOT NULL,
+	description    text,
+	email          text,
+	import_key varchar(14) DEFAULT NULL
 )ENGINE=innodb;
 
 create table llx_fichinter_rec
@@ -370,6 +420,14 @@ create table llx_c_shipment_package_type
     entity       integer DEFAULT 1 NOT NULL -- Multi company id
 )ENGINE=innodb;
 
+CREATE TABLE llx_product_fournisseur_price_extrafields (
+	rowid               integer AUTO_INCREMENT PRIMARY KEY,
+	tms                 timestamp,
+	fk_object           integer NOT NULL,
+	import_key          varchar(14) -- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_product_fournisseur_price_extrafields ADD INDEX idx_product_fournisseur_price_extrafields (fk_object);
 
 CREATE TABLE llx_mrp_mo(
     -- BEGIN MODULEBUILDER FIELDS
@@ -386,6 +444,7 @@ CREATE TABLE llx_mrp_mo(
     tms timestamp,
     fk_user_creat integer NOT NULL,
     fk_user_modif integer,
+    model_pdf varchar(255),
     import_key varchar(14),
     status integer NOT NULL,
     fk_product integer NOT NULL,
@@ -396,6 +455,8 @@ CREATE TABLE llx_mrp_mo(
     -- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
+ALTER TABLE llx_bom_bom ADD COLUMN model_pdf varchar(255);
+ALTER TABLE llx_mrp_mo ADD COLUMN model_pdf varchar(255);
 
 ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_ref (ref);
 ALTER TABLE llx_mrp_mo ADD INDEX idx_mrp_mo_entity (entity);

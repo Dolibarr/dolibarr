@@ -125,7 +125,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		print load_fiche_titre($langs->trans("SocialContributionsPayments").($year?' ('.$langs->trans("Year").' '.$year.')':''), '', '');
 	}
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "cs.date_ech", "", $param, 'width="140px"', $sortfield, $sortorder);
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "c.libelle", "", $param, '', $sortfield, $sortorder);
@@ -281,7 +281,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		    $num = $db->num_rows($result);
 		    $i = 0;
 		    $total = 0 ;
-		    print '<table class="noborder" width="100%">';
+		    print '<table class="noborder centpercent">';
 		    print '<tr class="liste_titre">';
 			print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "pv.datev", "", $param, 'width="140px"', $sortfield, $sortorder);
 			print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "pv.label", "", $param, '', $sortfield, $sortorder);
@@ -414,7 +414,7 @@ while($j<$numlt)
 			$num = $db->num_rows($result);
 			$i = 0;
 			$total = 0 ;
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
 			print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "pv.datev", "", $param, 'width="120"', $sortfield, $sortorder);
 			print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "pv.label", "", $param, '', $sortfield, $sortorder);
@@ -495,7 +495,7 @@ if (! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
             $num = $db->num_rows($result);
             $i = 0;
             $total = 0 ;
-            print '<table class="noborder" width="100%">';
+            print '<table class="noborder centpercent">';
             print '<tr class="liste_titre">';
             print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "s.dateep", "", $param, 'width="140px"', $sortfield, $sortorder);
             print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "s.label", "", $param, '', $sortfield, $sortorder);

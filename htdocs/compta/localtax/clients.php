@@ -164,7 +164,7 @@ $vatsup=$langs->transcountry($local==1?"LT1":"LT2", $mysoc->country_code);
 // IRPF that the customer has retained me
 if($calc ==0 || $calc == 2)
 {
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td class="left">'.$langs->trans("Num").'</td>';
 	print '<td class="left">'.$langs->trans("Customer").'</td>';
@@ -244,7 +244,7 @@ if($calc ==0 || $calc == 2)
 
 // IRPF I retained my supplier
 if($calc ==0 || $calc == 1){
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td class="left">'.$langs->trans("Num")."</td>";
 	print '<td class="left">'.$langs->trans("Supplier")."</td>";
@@ -320,7 +320,7 @@ if($calc ==0 || $calc == 1){
 if($calc ==0){
 	// Total to pay
 	print '<br><br>';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	$diff = $x_coll_sum - $x_paye_sum ;
 	print '<tr class="liste_total">';
 	print '<td class="liste_total" colspan="4">'.$langs->trans("TotalToPay").($q?', '.$langs->trans("Quadri").' '.$q:'').'</td>';

@@ -112,8 +112,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 // Mass actions
 $objectclass='ExpenseReport';
 $objectlabel='ExpenseReport';
-$permtoread = $user->rights->expensereport->read;
-$permtodelete = $user->rights->expensereport->delete;
+$permissiontoread = $user->rights->expensereport->read;
+$permissiontodelete = $user->rights->expensereport->delete;
 $uploaddir = $conf->expensereport->dir_output;
 include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 

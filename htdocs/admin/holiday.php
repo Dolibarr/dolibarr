@@ -202,7 +202,7 @@ dol_fiche_head($head, 'holiday', $langs->trans("Holidays"), -1, 'holiday');
 print load_fiche_titre($langs->trans("HolidaysNumberingModules"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="100">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -339,7 +339,7 @@ else
 
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -479,7 +479,7 @@ print '<input type="hidden" name="action" value="set_other">';
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Value").'</td>';

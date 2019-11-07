@@ -138,7 +138,7 @@ if (empty($reshook))
 
 				if ($result > 0)
 				{
-					setEventMessages($langs->trans("ChartLoaded"), null);
+					setEventMessages($langs->trans("ChartLoaded"), null, 'mesgs');
 				}
 				else
 				{

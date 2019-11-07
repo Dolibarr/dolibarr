@@ -415,7 +415,7 @@ if ($action == 'create' && !$error)
 
 	dol_fiche_head();
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Ref
 	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td>'.$langs->trans('Draft').'</td></tr>';
@@ -606,7 +606,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		}
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'c.ref', '', '&amp;socid='.$socid, '', $sortfield, $sortorder);
 		print_liste_field_titre('RefCustomerOrder', $_SERVER["PHP_SELF"], 'c.ref_client', '', '&amp;socid='.$socid, '', $sortfield, $sortorder);

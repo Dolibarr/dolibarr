@@ -403,7 +403,7 @@ print '<form enctype="multipart/form-data" method="POST" action="'.$_SERVER["PHP
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><th class="titlefield wordbreak">'.$langs->trans("CompanyInfo").'</th><th>'.$langs->trans("Value").'</th></tr>'."\n";
 
 // Name
@@ -519,7 +519,7 @@ print '</table>';
 print '<br>';
 
 // IDs of the company (country-specific)
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 $langs->load("companies");
@@ -658,7 +658,7 @@ print '</table>';
 
 // Fiscal year start
 print '<br>';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td class="titlefield">'.$langs->trans("FiscalYearInformation").'</td><td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
@@ -671,7 +671,7 @@ print "</table>";
 
 // Fiscal options
 print '<br>';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("VATManagement").'</td><td>'.$langs->trans("Description").'</td>';
 print '<td class="right">&nbsp;</td>';
@@ -704,7 +704,7 @@ if ($mysoc->useLocalTax(1))
 {
 	// Local Tax 1
 	print '<br>';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td width="140">'.$langs->transcountry("LocalTax1Management", $mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
 	print '<td class="right">&nbsp;</td>';
@@ -747,7 +747,7 @@ if ($mysoc->useLocalTax(2))
 {
 	// Local Tax 2
 	print '<br>';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->transcountry("LocalTax2Management", $mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
 	print '<td class="right">&nbsp;</td>';

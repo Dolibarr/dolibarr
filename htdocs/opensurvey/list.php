@@ -75,7 +75,7 @@ if (!$user->rights->opensurvey->read) accessforbidden();
 
 // Definition of fields for list
 $arrayfields=array();
-foreach($object->fields as $key => $val)
+foreach($arrayfields as $key => $val)
 {
     // If $val['visible']==0, then we never show the field
     if (! empty($val['visible'])) $arrayfields['t.'.$key]=array('label'=>$val['label'], 'checked'=>(($val['visible']<0)?0:1), 'enabled'=>$val['enabled'], 'position'=>$val['position']);
@@ -97,6 +97,10 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 }
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+
+$permissiontoread = $user->rights->opensurvey->read;
+$permissiontoadd = $user->rights->opensurvey->write;
+$permissiontodelete = $user->rights->opensurvey->delete;
 
 
 /*
@@ -133,8 +137,6 @@ if (empty($reshook))
     // Mass actions
     $objectclass='Opensurveysondage';
     $objectlabel='Opensurveysondage';
-    $permtoread = $user->rights->opensurvey->read;
-    $permtodelete = $user->rights->opensurvey->write;
     $uploaddir = $conf->opensurvey->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -213,6 +215,9 @@ if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && 
 }
 
 
+// Output page
+// --------------------------------------------------------------------
+
 llxHeader('', $title, $help_url);
 
 $arrayofselected=is_array($toselect)?$toselect:array();
@@ -231,7 +236,7 @@ $arrayofmassactions =  array(
     //'presend'=>$langs->trans("SendByMail"),
     //'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->opensurvey->write) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+if ($permissiontodelete) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -248,8 +253,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$newcardbutton='';
-$newcardbutton.= dolGetButtonTitle($langs->trans('NewSurvey'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/opensurvey/wizard/index.php', '', $user->rights->opensurvey->write);
+$newcardbutton = dolGetButtonTitle($langs->trans('NewSurvey'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/opensurvey/wizard/index.php', '', $user->rights->opensurvey->write);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit);
 
@@ -310,7 +314,7 @@ $parameters=array('arrayfields'=>$arrayfields);
 $reshook=$hookmanager->executeHooks('printFieldListOption', $parameters, $object);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-print '<td class="liste_titre" class="right">';
+print '<td class="liste_titre maxwidthsearch">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
@@ -333,6 +337,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 $parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $object);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
+// Action column
 print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ')."\n";
 print '</tr>'."\n";
 
@@ -369,17 +374,21 @@ while ($i < min($num, $limit))
 	print '<td>';
 	print $opensurvey_static->getNomUrl(1);
 	print '</td>';
+	if (! $i) $totalarray['nbfield']++;
 
 	// Title
 	print '<td>'.dol_htmlentities($obj->titre).'</td>';
+	if (! $i) $totalarray['nbfield']++;
 
 	// Type
 	print '<td>';
 	$type=($obj->format=='A')?'classic':'date';
 	print img_picto('', dol_buildpath('/opensurvey/img/'.($type == 'classic'?'chart-32.png':'calendar-32.png'), 1), 'width="16"', 1);
 	print ' '.$langs->trans($type=='classic'?"TypeClassic":"TypeDate");
-	print '</td><td>';
+	print '</td>';
+	if (! $i) $totalarray['nbfield']++;
 
+	print '<td>';
 	// Author
 	if ($obj->fk_user_creat) {
 		$userstatic = new User($db);
@@ -392,22 +401,25 @@ while ($i < min($num, $limit))
 	} else {
 		print dol_htmlentities($obj->nom_admin);
 	}
-
 	print '</td>';
+	if (! $i) $totalarray['nbfield']++;
 
 	// Nb of voters
 	print'<td class="right">'.$nbuser.'</td>'."\n";
+	if (! $i) $totalarray['nbfield']++;
 
 	print '<td class="center">'.dol_print_date($db->jdate($obj->date_fin), 'day');
 	if ($db->jdate($obj->date_fin) < $now && $obj->status == Opensurveysondage::STATUS_VALIDATED) { print img_warning($langs->trans("Expired")); }
 	print '</td>';
+	if (! $i) $totalarray['nbfield']++;
 
 	print'<td class="center">'.$opensurvey_static->getLibStatut(5).'</td>'."\n";
+	if (! $i) $totalarray['nbfield']++;
 
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
-	$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+	$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 	$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $object);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column
@@ -419,37 +431,20 @@ while ($i < min($num, $limit))
 	    print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
 	}
 	print '</td>';
+	if (! $i) $totalarray['nbfield']++;
 
 	print '</tr>'."\n";
 	$i++;
 }
 
 // Show total line
-if (isset($totalarray['pos']))
-{
-    print '<tr class="liste_total">';
-    $i=0;
-    while ($i < $totalarray['nbfield'])
-    {
-        $i++;
-        if (! empty($totalarray['pos'][$i]))  print '<td class="right">'.price($totalarray['val'][$totalarray['pos'][$i]]).'</td>';
-        else
-        {
-            if ($i == 1)
-            {
-                if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
-                else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-            }
-            else print '<td></td>';
-        }
-    }
-    print '</tr>';
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+
 
 // If no record found
 if ($num == 0)
 {
-	$colspan=1;
+	$colspan = 8;
 	foreach($arrayfields as $key => $val) { if (! empty($val['checked'])) $colspan++; }
 	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
@@ -479,8 +474,8 @@ if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $n
     $urlsource.=str_replace('&amp;', '&', $param);
 
     $filedir=$diroutputmassaction;
-    $genallowed=$user->rights->mymodule->read;
-    $delallowed=$user->rights->mymodule->create;
+    $genallowed=$permissiontoread;
+    $delallowed=$permissiontoadd;
 
     print $formfile->showdocuments('massfilesarea_mymodule', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }

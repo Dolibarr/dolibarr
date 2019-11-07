@@ -129,8 +129,8 @@ if (empty($reshook))
 
 	// Mass actions
 	$objectclass='AccountingAccount';
-	$permtoread = $user->rights->accounting->read;
-	$permtodelete = $user->rights->accounting->delete;
+	$permissiontoread = $user->rights->accounting->read;
+	$permissiontodelete = $user->rights->accounting->delete;
 	$uploaddir = $conf->accounting->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -406,6 +406,8 @@ if ($result) {
 
     $isSellerInEEC = isInEEC($mysoc);
 
+    $accountingaccount_codetotid_cache = array();
+
 	while ($i < min($num_lines, $limit)) {
 		$objp = $db->fetch_object($result);
 
@@ -474,8 +476,8 @@ if ($result) {
             }
         }
 
-		if (! empty($objp->code_sell)) {
-			//$objp->code_sell_p = $objp->code_sell;       // Code on product
+		if (! empty($objp->code_sell_p)) {
+			// Value was defined previously
 		} else {
 			$code_sell_p_notset = 'color:orange';
 		}
@@ -547,11 +549,26 @@ if ($result) {
 		print '</td>';
 
 		// Suggested accounting account
+		// $objp->code_sell_l = default (it takes the country into consideration), $objp->code_sell_p is value for product (it takes the country into consideration too)
 		print '<td>';
 		$suggestedid = $objp->aarowid_suggest;
-		if (empty($suggestedid) && empty($objp->code_sell_p) && ! empty($objp->code_sell_l) && ! empty($conf->global->ACCOUNTANCY_AUTOFILL_ACCOUNT_WITH_GENERIC))
+		/*var_dump($suggestedid);
+		var_dump($objp->code_sell_p);
+		var_dump($objp->code_sell_l);*/
+		if (empty($suggestedid) && empty($objp->code_sell_p) && ! empty($objp->code_sell_l) && empty($conf->global->ACCOUNTANCY_DO_NOT_AUTOFILL_ACCOUNT_WITH_GENERIC))
 		{
-			//$suggestedid = // id of $objp->code_sell_l
+			if (empty($accountingaccount_codetotid_cache[$objp->code_sell_l]))
+			{
+				$tmpaccount = new AccountingAccount($db);
+				$tmpaccount->fetch(0, $objp->code_sell_l, 1);
+				if ($tmpaccount->id > 0) {
+					$suggestedid = $tmpaccount->id;
+				}
+				$accountingaccount_codetotid_cache[$objp->code_sell_l] = $tmpaccount->id;
+			}
+			else {
+				$suggestedid = $accountingaccount_codetotid_cache[$objp->code_sell_l];
+			}
 		}
 		print $formaccounting->select_account($suggestedid, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'codeventil maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';

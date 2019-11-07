@@ -101,8 +101,7 @@ $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture', 
 
 $permissionnote=$user->rights->fournisseur->facture->creer;	// Used by the include of actions_setnotes.inc.php
 $permissiondellink=$user->rights->fournisseur->facture->creer;	// Used by the include of actions_dellink.inc.php
-$permissionedit=$user->rights->fournisseur->facture->creer; // Used by the include of actions_lineupdown.inc.php
-$permissiontoadd=$user->rights->fournisseur->facture->creer; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoadd=$user->rights->fournisseur->facture->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 
 /*
@@ -1506,7 +1505,7 @@ if (empty($reshook))
 
 	// Actions to build doc
 	$upload_dir = $conf->fournisseur->facture->dir_output;
-	$permissioncreate = $user->rights->fournisseur->facture->creer;
+	$permissiontoadd = $user->rights->fournisseur->facture->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Make calculation according to calculationrule
@@ -1727,7 +1726,7 @@ if ($action == 'create')
 
 	dol_fiche_head();
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Ref
 	print '<tr><td class="titlefieldcreate">'.$langs->trans('Ref').'</td><td>'.$langs->trans('Draft').'</td></tr>';
@@ -1998,17 +1997,17 @@ if ($action == 'create')
 
 	// Payment term
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
-	$form->select_conditions_paiements(isset($_POST['cond_reglement_id'])?$_POST['cond_reglement_id']:$cond_reglement_id, 'cond_reglement_id');
+	$form->select_conditions_paiements(GETPOSTISSET('cond_reglement_id')?GETPOST('cond_reglement_id', 'int'):$cond_reglement_id, 'cond_reglement_id');
 	print '</td></tr>';
 
 	// Payment mode
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
-	$form->select_types_paiements(isset($_POST['mode_reglement_id'])?$_POST['mode_reglement_id']:$mode_reglement_id, 'mode_reglement_id', 'DBIT');
+	$form->select_types_paiements(GETPOSTISSET('mode_reglement_id')?GETPOST('mode_reglement_id', 'int'):$mode_reglement_id, 'mode_reglement_id', 'DBIT');
 	print '</td></tr>';
 
 	// Bank Account
 	print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
-	$form->select_comptes($fk_account, 'fk_account', 0, '', 1);
+	$form->select_comptes((GETPOSTISSET('fk_account')?GETPOST('fk_account', 'alpha'):$fk_account), 'fk_account', 0, '', 1);
 	print '</td></tr>';
 
 	// Multicurrency
@@ -2017,7 +2016,7 @@ if ($action == 'create')
 		print '<tr>';
 		print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 		print '<td class="maxwidthonsmartphone">';
-		print $form->selectMultiCurrency($currency_code, 'multicurrency_code');
+		print $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code')?GETPOST('multicurrency_code', 'alpha'):$currency_code), 'multicurrency_code');
 		print '</td></tr>';
 	}
 
@@ -2038,7 +2037,7 @@ if ($action == 'create')
 		print '<tr>';
 		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $objectsrc->label_incoterms, 1).'</label></td>';
 		print '<td colspan="3" class="maxwidthonsmartphone">';
-		print $form->select_incoterms((!empty($objectsrc->fk_incoterms) ? $objectsrc->fk_incoterms : ''), (!empty($objectsrc->location_incoterms)?$objectsrc->location_incoterms:''));
+		print $form->select_incoterms(GETPOSTISSET('incoterm_id') ? GETPOST('incoterm_id', 'alphanohtml') : (!empty($objectsrc->fk_incoterms) ? $objectsrc->fk_incoterms : ''), GETPOSTISSET('location_incoterms') ? GETPOST('location_incoterms', 'alphanohtml') : (!empty($objectsrc->location_incoterms)?$objectsrc->location_incoterms:''));
 		print '</td></tr>';
 	}
 
@@ -2047,7 +2046,7 @@ if ($action == 'create')
 	print '<td>';
 	$note_public = $object->getDefaultCreateValueFor('note_public');
 	if(empty($note_public))$note_public = $objectsrc->note_public;
-	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_public', (GETPOSTISSET('note_public')?GETPOST('note_public', 'none'):$note_public), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td>';
     // print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
@@ -2059,7 +2058,7 @@ if ($action == 'create')
 	$note_private = $object->getDefaultCreateValueFor('note_private');
 	if(empty($note_private))$note_private = $objectsrc->note_private;
 
-	$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_private', (GETPOSTISSET('note_private')?GETPOST('note_private', 'none'):$note_private), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td>';
 	// print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
@@ -2152,7 +2151,7 @@ if ($action == 'create')
 		$title=$langs->trans('ProductsAndServices');
 		print load_fiche_titre($title);
 
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 
 		$objectsrc->printOriginLinesList();
 

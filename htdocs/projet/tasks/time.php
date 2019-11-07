@@ -974,7 +974,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
             if (! empty($id)) print '<input type="hidden" name="taskid" value="'.$id.'">';
 
             print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
-			print '<table class="noborder nohover" width="100%">';
+			print '<table class="noborder nohover centpercent">';
 
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Date").'</td>';
@@ -1282,6 +1282,8 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     			}
     			print '</td>';
     			if (! $i) $totalarray['nbfield']++;
+    			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='t.task_duration';
+    			$totalarray['val']['t.task_duration'] += $task_time->task_duration;
     			if (! $i) $totalarray['totaldurationfield']=$totalarray['nbfield'];
     			$totalarray['totalduration'] += $task_time->task_duration;
             }
@@ -1294,11 +1296,13 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 				print price($value, 1, $langs, 1, -1, -1, $conf->currency);
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
-    			if (! $i) $totalarray['totalvaluefield']=$totalarray['nbfield'];
-    			$totalarray['totalvalue'] += $value;
+				if (! $i) $totalarray['pos'][$totalarray['nbfield']]='value';
+				$totalarray['val']['value'] += $value;
+				if (! $i) $totalarray['totalvaluefield']=$totalarray['nbfield'];
+				$totalarray['totalvalue'] += $value;
             }
 
-            // Invoiced - Value billed
+            // Invoiced
             if (! empty($arrayfields['valuebilled']['checked']))
             {
                 print '<td class="center">';    // invoice_id and invoice_line_id
@@ -1687,26 +1691,26 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		}
 
 		// Show total line
+		//include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 		if (isset($totalarray['totaldurationfield']) || isset($totalarray['totalvaluefield']))
 		{
-		    print '<tr class="liste_total">';
-		    $i=0;
-		    while ($i < $totalarray['nbfield'])
-		    {
-		        $i++;
-		        if ($i == 1)
-		        {
-		            if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
-		            else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-		        }
-		        elseif ($totalarray['totaldurationfield'] == $i) print '<td class="right">'.convertSecondToTime($totalarray['totalduration'], 'allhourmin').'</td>';
-		        elseif ($totalarray['totalvaluefield'] == $i) print '<td class="right">'.price($totalarray['totalvalue']).'</td>';
-		        //elseif ($totalarray['totalvaluebilledfield'] == $i) print '<td class="center">'.price($totalarray['totalvaluebilled']).'</td>';
-		        else print '<td></td>';
-		    }
-		    print '</tr>';
+			print '<tr class="liste_total">';
+			$i=0;
+			while ($i < $totalarray['nbfield'])
+			{
+				$i++;
+				if ($i == 1)
+				{
+					if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
+					else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
+				}
+				elseif ($totalarray['totaldurationfield'] == $i) print '<td class="right">'.convertSecondToTime($totalarray['totalduration'], 'allhourmin').'</td>';
+				elseif ($totalarray['totalvaluefield'] == $i) print '<td class="right">'.price($totalarray['totalvalue']).'</td>';
+				//elseif ($totalarray['totalvaluebilledfield'] == $i) print '<td class="center">'.price($totalarray['totalvaluebilled']).'</td>';
+				else print '<td></td>';
+			}
+			print '</tr>';
 		}
-
 
 		if (! count($tasks))
 		{

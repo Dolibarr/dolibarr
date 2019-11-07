@@ -292,8 +292,8 @@ if ($resql)
 			// Amount
 			print '<td class="right" width="100">'.price($obj->amount).'</td>';
 			if (! $i) $totalarray['nbfield']++;
-		    if (! $i) $totalarray['totalttcfield']=$totalarray['nbfield'];
-			$totalarray['totalttc'] += $obj->amount;
+			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='totalttcfield';
+			$totalarray['val']['totalttcfield'] += $obj->amount;
 
 			// Due date
 			print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
@@ -307,20 +307,7 @@ if ($resql)
 		}
 
 		// Show total line
-		if (isset($totalarray['totalttcfield']))
-		{
-		    print '<tr class="liste_total">';
-            if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
-            else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-            print '<td></td>';
-            print '<td></td>';
-            print '<td></td>';
-            print '<td class="right">'.price($totalarray['totalttc']).'</td>';
-	        print '<td></td>';
-	        print '<td></td>';
-	        print '<td></td>';
-	        print '</tr>';
-		}
+		include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 		print '</table>';
 		print '</div>';

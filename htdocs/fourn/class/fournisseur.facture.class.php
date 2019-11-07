@@ -2209,7 +2209,7 @@ class FactureFournisseur extends CommonInvoice
 	        $response->label=$langs->trans("SupplierBillsToPay");
 	        $response->labelShort=$langs->trans("StatusToPay");
 
-	        $response->url=DOL_URL_ROOT.'/fourn/facture/list.php?search_status=1&mainmenu=billing&leftmenu=suppliers_bills';
+	        $response->url=DOL_URL_ROOT.'/fourn/facture/list.php?search_status=1&amp;mainmenu=billing&amp;leftmenu=suppliers_bills';
 	        $response->img=img_object($langs->trans("Bills"), "bill");
 
             $facturestatic = new FactureFournisseur($this->db);

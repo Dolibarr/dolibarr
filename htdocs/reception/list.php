@@ -84,7 +84,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
-$search_array_options=$extrafields->getOptionalsFromPost(null, '', 'search_');
+$search_array_options = (array) $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -379,7 +379,7 @@ if (empty($reshook))
     			// Fac builddoc
     			$donotredirect = 1;
     			$upload_dir = $conf->fournisseur->facture->dir_output;
-    		    $permissioncreate=$user->rights->fournisseur->facture->creer;
+    		    $permissiontoadd=$user->rights->fournisseur->facture->creer;
     		    include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
     		}
 

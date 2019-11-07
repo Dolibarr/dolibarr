@@ -317,7 +317,7 @@ if ($action == 'create')
 
 	dol_fiche_head();
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Label
 	print "<tr>";
@@ -441,13 +441,14 @@ if ($id > 0)
 			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneTax', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 		}
 
-		// Confirmation de la suppression de la charge
+
 		if ($action == 'paid')
 		{
 			$text=$langs->trans('ConfirmPaySocialContribution');
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans('PaySocialContribution'), $text, "confirm_paid", '', '', 2);
 		}
 
+		// Confirmation of the removal of the Social Contribution
 		if ($action == 'delete')
 		{
 			$text=$langs->trans('ConfirmDeleteSocialContribution');
@@ -511,7 +512,7 @@ if ($id > 0)
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		// Type
 		print '<tr><td class="titlefield">'.$langs->trans("Type")."</td><td>".$object->type_label."</td>";

@@ -196,8 +196,8 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass='Holiday';
 	$objectlabel='Holiday';
-	$permtoread = $user->rights->holiday->read;
-	$permtodelete = $user->rights->holiday->delete;
+	$permissiontoread = $user->rights->holiday->read;
+	$permissiontodelete = $user->rights->holiday->delete;
 	$uploaddir = $conf->holiday->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -265,12 +265,16 @@ $sql.= " cp.detail_refuse,";
 
 $sql.= " uu.lastname as user_lastname,";
 $sql.= " uu.firstname as user_firstname,";
+$sql.= " uu.admin as user_admin,";
+$sql.= " uu.email as user_email,";
 $sql.= " uu.login as user_login,";
 $sql.= " uu.statut as user_statut,";
 $sql.= " uu.photo as user_photo,";
 
 $sql.= " ua.lastname as validator_lastname,";
 $sql.= " ua.firstname as validator_firstname,";
+$sql.= " ua.admin as validator_admin,";
+$sql.= " ua.email as validator_email,";
 $sql.= " ua.login as validator_login,";
 $sql.= " ua.statut as validator_statut,";
 $sql.= " ua.photo as validator_photo";
@@ -663,6 +667,8 @@ if ($resql)
 			$userstatic->id=$obj->fk_user;
 			$userstatic->lastname=$obj->user_lastname;
 			$userstatic->firstname=$obj->user_firstname;
+			$userstatic->admin = $obj->user_admin;
+			$userstatic->email = $obj->user_email;
 			$userstatic->login=$obj->user_login;
 			$userstatic->statut=$obj->user_statut;
 			$userstatic->photo=$obj->user_photo;
@@ -671,6 +677,8 @@ if ($resql)
 			$approbatorstatic->id=$obj->fk_validator;
 			$approbatorstatic->lastname=$obj->validator_lastname;
 			$approbatorstatic->firstname=$obj->validator_firstname;
+			$approbatorstatic->admin = $obj->validator_admin;
+			$approbatorstatic->email = $obj->validator_email;
 			$approbatorstatic->login=$obj->validator_login;
 			$approbatorstatic->statut=$obj->validator_statut;
 			$approbatorstatic->photo=$obj->validator_photo;

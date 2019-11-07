@@ -30,6 +30,8 @@
 // $backtopage may be defined
 // $triggermodname may be defined
 
+if (! empty($permissionedit) && empty($permissiontoadd)) $permissiontoadd = $permissionedit;	// For backward compatibility
+
 if ($cancel)
 {
 	/*var_dump($cancel);
@@ -234,7 +236,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && ! empty($permissiont
 }
 
 // Action validate object
-if ($action == 'confirm_validate' && $confirm == 'yes' && $permissionedit)
+if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd)
 {
 	$result = $object->validate($user);
 	if ($result >= 0)
@@ -263,7 +265,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $permissionedit)
 }
 
 // Action close object
-if ($action == 'confirm_close' && $confirm == 'yes' && $permissionedit)
+if ($action == 'confirm_close' && $confirm == 'yes' && $permissiontoadd)
 {
 	$result = $object->cancel($user);
 	if ($result >= 0)
@@ -292,7 +294,7 @@ if ($action == 'confirm_close' && $confirm == 'yes' && $permissionedit)
 }
 
 // Action setdraft object
-if ($action == 'confirm_setdraft' && $confirm == 'yes' && $permissionedit)
+if ($action == 'confirm_setdraft' && $confirm == 'yes' && $permissiontoadd)
 {
 	$result = $object->setDraft($user);
 	if ($result >= 0)
@@ -306,7 +308,7 @@ if ($action == 'confirm_setdraft' && $confirm == 'yes' && $permissionedit)
 }
 
 // Action reopen object
-if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissionedit)
+if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd)
 {
 	$result = $object->reopen($user);
 	if ($result >= 0)

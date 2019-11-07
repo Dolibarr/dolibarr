@@ -92,7 +92,7 @@ if ($conf->use_javascript_ajax)
     	$db->free($resql);
 
     	print '<div class="div-table-responsive-no-min">';
-    	print '<table class="noborder nohover" width="100%">';
+    	print '<table class="noborder nohover centpercent">';
     	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>'."\n";
         if ($conf->use_javascript_ajax)
     	{
@@ -143,7 +143,7 @@ $resql=$db->query($sql);
 if ($resql)
 {
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="4">'.$langs->trans("LatestBOMModified", $max).'</th></tr>';
 
@@ -196,7 +196,7 @@ $resql=$db->query($sql);
 if ($resql)
 {
     print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<th colspan="4">'.$langs->trans("LatestMOModified", $max).'</th></tr>';
 

@@ -381,7 +381,7 @@ if ($action == 'new')
 
 	dol_fiche_head();
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 	//print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dol_print_date($now,'day').'</td></tr>';
 	// Filter
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("DateChequeReceived").'</td><td>';
@@ -568,7 +568,7 @@ else
 	print '<div class="underbanner clearboth"></div>';
 
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	print '<tr><td class="titlefield">';
 
@@ -663,7 +663,7 @@ else
 		$num = $db->num_rows($resql);
 
 	    print '<div class="div-table-responsive">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 
 		$param="&amp;id=".$object->id;
 

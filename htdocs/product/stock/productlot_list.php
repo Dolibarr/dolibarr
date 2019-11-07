@@ -158,8 +158,8 @@ if (empty($reshook))
 {
 	$objectclass='ProductLot';
 	$objectlabel='LotSerial';
-	$permtoread = $user->rights->stock->read;
-	$permtodelete = $user->rights->stock->delete;
+	$permissiontoread = $user->rights->stock->read;
+	$permissiontodelete = $user->rights->stock->delete;
 	$uploaddir = $conf->stock->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -217,7 +217,7 @@ $sql.= " p.label as product_label,";
 $sql.= " p.tobatch";
 // Add fields for extrafields
 if (! empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.' as options_'.$key.', ' : '');
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
 }
 // Add fields from hooks
 $parameters=array();
@@ -514,25 +514,7 @@ if ($resql)
 	}
 
 	// Show total line
-	if (isset($totalarray['totalhtfield']))
-	{
-		print '<tr class="liste_total">';
-		$i=0;
-		while ($i < $totalarray['nbfield'])
-		{
-			$i++;
-			if ($i == 1)
-			{
-				if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
-				else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-			}
-			elseif ($totalarray['totalhtfield'] == $i) print '<td class="right">'.price($totalarray['totalht']).'</td>';
-			elseif ($totalarray['totalvatfield'] == $i) print '<td class="right">'.price($totalarray['totalvat']).'</td>';
-			elseif ($totalarray['totalttcfield'] == $i) print '<td class="right">'.price($totalarray['totalttc']).'</td>';
-			else print '<td></td>';
-		}
-		print '</tr>';
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 	$db->free($resql);
 

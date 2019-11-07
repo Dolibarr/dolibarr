@@ -195,8 +195,8 @@ if (empty($reshook))
 	// Mass actions
     $objectclass='ExpenseReport';
     $objectlabel='ExpenseReport';
-    $permtoread = $user->rights->expensereport->lire;
-    $permtodelete = $user->rights->expensereport->supprimer;
+    $permissiontoread = $user->rights->expensereport->lire;
+    $permissiontodelete = $user->rights->expensereport->supprimer;
     $uploaddir = $conf->expensereport->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
@@ -738,24 +738,24 @@ if ($resql)
             {
     		      print '<td class="right">'.price($obj->total_ht)."</td>\n";
     		      if (! $i) $totalarray['nbfield']++;
-    		      if (! $i) $totalarray['totalhtfield']=$totalarray['nbfield'];
-    		      $totalarray['totalht'] += $obj->total_ht;
+    		      if (! $i) $totalarray['pos'][$totalarray['nbfield']]='d.total_ht';
+    		      $totalarray['val']['d.total_ht'] += $obj->total_ht;
             }
             // Amount VAT
             if (! empty($arrayfields['d.total_vat']['checked']))
             {
                 print '<td class="right">'.price($obj->total_tva)."</td>\n";
                 if (! $i) $totalarray['nbfield']++;
-    		    if (! $i) $totalarray['totalvatfield']=$totalarray['nbfield'];
-    		    $totalarray['totalvat'] += $obj->total_tva;
+                if (! $i) $totalarray['pos'][$totalarray['nbfield']]='d.total_tva';
+                $totalarray['val']['d.total_tva'] += $obj->total_tva;
             }
             // Amount TTC
             if (! empty($arrayfields['d.total_ttc']['checked']))
             {
                 print '<td class="right">'.price($obj->total_ttc)."</td>\n";
                 if (! $i) $totalarray['nbfield']++;
-    		    if (! $i) $totalarray['totalttcfield']=$totalarray['nbfield'];
-    		    $totalarray['totalttc'] += $obj->total_ttc;
+                if (! $i) $totalarray['pos'][$totalarray['nbfield']]='d.total_ttc';
+                $totalarray['val']['d.total_ttc'] += $obj->total_ttc;
             }
 
             // Extra fields
@@ -815,25 +815,7 @@ if ($resql)
 	}
 
 	// Show total line
-	if (isset($totalarray['totalhtfield']))
-	{
-	    print '<tr class="liste_total">';
-	    $i=0;
-	    while ($i < $totalarray['nbfield'])
-	    {
-	        $i++;
-	        if ($i == 1)
-	        {
-	            if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
-	            else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-	        }
-	        elseif ($totalarray['totalhtfield'] == $i) print '<td class="right">'.price($totalarray['totalht']).'</td>';
-	        elseif ($totalarray['totalvatfield'] == $i) print '<td class="right">'.price($totalarray['totalvat']).'</td>';
-	        elseif ($totalarray['totalttcfield'] == $i) print '<td class="right">'.price($totalarray['totalttc']).'</td>';
-	        else print '<td></td>';
-	    }
-	    print '</tr>';
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 	$db->free($resql);
 

@@ -663,7 +663,7 @@ function security_prepare_head()
 
     $head[$h][0] = DOL_URL_ROOT."/admin/perms.php";
     $head[$h][1] = $langs->trans("DefaultRights");
-    if ($nbPerms > 0) $head[$h][1].= ' <span class="badge">'.$nbPerms.'</span>';
+    if ($nbPerms > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbPerms.'</span>';
     $head[$h][2] = 'default';
     $h++;
 
@@ -1427,7 +1427,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
         print '<input type="hidden" name="action" value="updateall">';
     }
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td class="titlefield">'.$langs->trans("Description").'</td>';
     print '<td>';

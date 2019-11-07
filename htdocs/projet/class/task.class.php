@@ -1849,6 +1849,8 @@ class Task extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
         // phpcs:enable
+		global $langs;
+
 		// list of Statut of the task
 		$this->statuts[0]='Draft';
 		$this->statuts[1]='ToDo';
@@ -1860,8 +1862,6 @@ class Task extends CommonObject
 		$this->statuts_short[2]='Running';
 		$this->statuts_short[3]='Completed';
 		$this->statuts_short[4]='Transfered';
-
-		global $langs;
 
 		if ($mode == 0)
 		{

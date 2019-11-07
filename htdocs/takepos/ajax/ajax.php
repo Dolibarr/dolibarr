@@ -22,7 +22,7 @@
 
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
-if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
+//if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
 //if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN','1');
 if (! defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
 if (! defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
@@ -36,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 $category = GETPOST('category', 'alpha');
 $action = GETPOST('action', 'alpha');
 $term = GETPOST('term', 'alpha');
+$id = GETPOST('id', 'int');
 
 
 /*
@@ -81,4 +82,24 @@ elseif ($action=="search" && $term != '') {
 	else {
 		echo 'Failed to search product : '.$db->lasterror();
 	}
+} elseif ($action == "opendrawer" && $term != '') {
+    require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
+    $printer = new dolReceiptPrinter($db);
+    // chek printer for terminal
+    if ($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term} > 0) {
+        $printer->initPrinter($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term});
+        // open cashdrawer
+        $printer->pulse();
+        $printer->close();
+    }
+} elseif ($action == "printinvoiceticket" && $term != '' && $id > 0) {
+    require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+    $printer = new dolReceiptPrinter($db);
+    // check printer for terminal
+    if ($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term} > 0 && $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term} > 0) {
+        $object = new Facture($db);
+        $object->fetch($id);
+        $ret = $printer->sendToPrinter($object, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term}, $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term});
+    }
 }
