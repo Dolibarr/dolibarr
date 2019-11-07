@@ -768,17 +768,19 @@ SCRIPT;
 				$extralabels=$extrafields->attributes["product_fournisseur_price"]['label'];
 				// Extrafields
 				$resql = $db->query("SELECT * FROM " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields WHERE fk_object = " . $rowid);
-				if ($db->num_rows($resql) != 1) {
-					foreach ($extralabels as $key => $value) {
-						if (! empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && ($extrafields->attributes["product_fournisseur_price"]['list'][$key] == 1 || $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 3 || ($action == "update_price" && $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 4))) {
-							print '<tr><td' . ($extrafields->attributes["product_fournisseur_price"]['required'][$key] ? ' class="fieldrequired"' : '') . '>' . $langs->trans($value) . '</td><td>' . $extrafields->showInputField($key, '', '', '', '', '', 0, 'product_fournisseur_price') . '</td></tr>';
+				if (!empty($extralabels)) {
+					if ($db->num_rows($resql) != 1) {
+						foreach ($extralabels as $key => $value) {
+							if (! empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && ($extrafields->attributes["product_fournisseur_price"]['list'][$key] == 1 || $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 3 || ($action == "update_price" && $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 4))) {
+								print '<tr><td' . ($extrafields->attributes["product_fournisseur_price"]['required'][$key] ? ' class="fieldrequired"' : '') . '>' . $langs->trans($value) . '</td><td>' . $extrafields->showInputField($key, '', '', '', '', '', 0, 'product_fournisseur_price') . '</td></tr>';
+							}
 						}
-					}
-				} else {
-					$resql = $db->fetch_object($resql);
-					foreach ($extralabels as $key => $value) {
-						if (! empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && ($extrafields->attributes["product_fournisseur_price"]['list'][$key] == 1 || $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 3 || ($action == "update_price" && $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 4))) {
-							print '<tr><td' . ($extrafields->attributes["product_fournisseur_price"]['required'][$key] ? ' class="fieldrequired"' : '') . '>' . $langs->trans($value) . '</td><td>' . $extrafields->showInputField($key, $resql->{$key}, '', '', '', '', 0, 'product_fournisseur_price') . '</td></tr>';
+					} else {
+						$resql = $db->fetch_object($resql);
+						foreach ($extralabels as $key => $value) {
+							if (! empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && ($extrafields->attributes["product_fournisseur_price"]['list'][$key] == 1 || $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 3 || ($action == "update_price" && $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 4))) {
+								print '<tr><td' . ($extrafields->attributes["product_fournisseur_price"]['required'][$key] ? ' class="fieldrequired"' : '') . '>' . $langs->trans($value) . '</td><td>' . $extrafields->showInputField($key, $resql->{$key}, '', '', '', '', 0, 'product_fournisseur_price') . '</td></tr>';
+							}
 						}
 					}
 				}
@@ -874,10 +876,12 @@ SCRIPT;
 				// fetch optionals attributes and labels
 				$extrafields->fetch_name_optionals_label("product_fournisseur_price");
 				$extralabels=$extrafields->attributes["product_fournisseur_price"]['label'];
-				foreach ($extralabels as $key => $value) {
-					// Show field if not hidden
-					if (! empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
-						print_liste_field_titre($value, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+				if (!empty($extralabels)) {
+					foreach ($extralabels as $key => $value) {
+						// Show field if not hidden
+						if (! empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
+							print_liste_field_titre($value, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+						}
 					}
 				}
 
@@ -1004,17 +1008,19 @@ SCRIPT;
 
 						// Extrafields
 						$resql = $db->query("SELECT * FROM " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields WHERE fk_object = " . $productfourn->product_fourn_price_id);
-						if ($db->num_rows($resql) != 1) {
-							foreach ($extralabels as $key => $value) {
-								if (! empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
-									print "<td></td>";
+						if (! empty($extralabels)) {
+							if ($db->num_rows($resql) != 1) {
+								foreach ($extralabels as $key => $value) {
+									if (! empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
+										print "<td></td>";
+									}
 								}
-							}
-						} else {
-							$resql = $db->fetch_object($resql);
-							foreach ($extralabels as $key => $value) {
-								if (! empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
-									print '<td align="right">' . $extrafields->showOutputField($key, $resql->{$key}) . "</td>";
+							} else {
+								$resql = $db->fetch_object($resql);
+								foreach ($extralabels as $key => $value) {
+									if (! empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
+										print '<td align="right">' . $extrafields->showOutputField($key, $resql->{$key}) . "</td>";
+									}
 								}
 							}
 						}
