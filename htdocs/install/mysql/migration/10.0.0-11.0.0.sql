@@ -420,6 +420,14 @@ create table llx_c_shipment_package_type
     entity       integer DEFAULT 1 NOT NULL -- Multi company id
 )ENGINE=innodb;
 
+CREATE TABLE llx_product_fournisseur_price_extrafields (
+	rowid               integer AUTO_INCREMENT PRIMARY KEY,
+	tms                 timestamp,
+	fk_object           integer NOT NULL,
+	import_key          varchar(14) -- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_product_fournisseur_price_extrafields ADD INDEX idx_product_fournisseur_price_extrafields (fk_object);
 
 CREATE TABLE llx_mrp_mo(
     -- BEGIN MODULEBUILDER FIELDS
