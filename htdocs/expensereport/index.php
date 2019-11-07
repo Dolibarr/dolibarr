@@ -116,7 +116,7 @@ print load_fiche_titre($langs->trans("ExpensesArea"));
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder nohover" width="100%">';
+print '<table class="noborder nohover centpercent">';
 print '<tr class="liste_titre">';
 print '<th colspan="4">'.$langs->trans("Statistics").'</th>';
 print "</tr>\n";
@@ -191,7 +191,7 @@ if ($result)
     $i = 0;
 
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses", min($max, $num)).'</th>';
     print '<th class="right">'.$langs->trans("AmountHT").'</th>';

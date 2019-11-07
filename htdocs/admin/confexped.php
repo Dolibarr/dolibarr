@@ -97,7 +97,7 @@ dol_fiche_head($head, 'general', $langs->trans("Sendings"), -1, 'sending');
 
 // Miscellaneous parameters
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Feature").'</td>';
 print '<td width="20">&nbsp;</td>';

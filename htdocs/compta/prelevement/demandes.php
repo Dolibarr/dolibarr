@@ -153,7 +153,7 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 
-print '<table class="liste" width="100%">';
+print '<table class="liste centpercent">';
 
 print '<tr class="liste_titre">';
 print_liste_field_titre("Bill", $_SERVER["PHP_SELF"]);

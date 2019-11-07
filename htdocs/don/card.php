@@ -326,7 +326,7 @@ if ($action == 'create')
 
 	dol_fiche_head('');
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 	print '<tbody>';
 
 	// Ref
@@ -502,7 +502,7 @@ if (! empty($id) && $action == 'edit')
 
 	dol_fiche_head($head, $hselected, $langs->trans("Donation"), 0, 'generic');
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Ref
 	print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="2">';

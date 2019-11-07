@@ -901,7 +901,7 @@ if ($id > 0 || ! empty($ref))
 				print '<input type="hidden" name="origin" value="commande">';
 				print '<input type="hidden" name="origin_id" value="'.$object->id.'">';
 				print '<input type="hidden" name="projectid" value="'.$object->fk_project.'">';
-				//print '<table class="border" width="100%">';
+				//print '<table class="border centpercent">';
 
 				$langs->load("stocks");
 

@@ -523,7 +523,7 @@ if ($sref || $snom || $sall || $salert || $draftorder || GETPOST('search', 'alph
 }
 
 print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
-print '<table class="liste" width="100%">';
+print '<table class="liste centpercent">';
 
 $param = (isset($type)? '&type=' . $type : '');
 $param .= '&fourn_id=' . $fourn_id . '&snom='. $snom . '&salert=' . $salert . '&draftorder='.$draftorder;

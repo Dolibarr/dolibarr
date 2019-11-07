@@ -140,7 +140,7 @@ print '<form name="formulaire" action="" method="POST">'."\n";
 dol_fiche_head();
 
 // Affichage des différents champs textes a remplir
-print '<table class="border" width="100%">'."\n";
+print '<table class="border centpercent">'."\n";
 
 print '<tr><td class="titlefieldcreate fieldrequired">'. $langs->trans("PollTitle") .'</td><td><input type="text" name="titre" size="40" maxlength="80" value="'.$_SESSION["titre"].'"></td>'."\n";
 if (! $_SESSION["titre"] && (GETPOST('creation_sondage_date') || GETPOST('creation_sondage_autre')))

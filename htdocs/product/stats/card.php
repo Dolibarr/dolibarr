@@ -173,7 +173,7 @@ if ($result || empty($id))
     print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="id" value="'.$id.'">';
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 
 	if (empty($id))
@@ -401,7 +401,7 @@ if ($result || empty($id))
 			$linktoregenerate='<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).((string) $type != ''?'&type='.$type:'').'&action=recalcul&mode='.$mode.'&search_year='.$search_year.'&search_categ='.$search_categ.'">'.img_picto($langs->trans("ReCalculate").' ('.$dategenerated.')', 'refresh').'</a>';
 
 			// Show graph
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			// Label
 			print '<tr class="liste_titre"><td>';
 			print $graphfiles[$key]['label'];

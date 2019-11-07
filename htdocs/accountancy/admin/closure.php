@@ -96,7 +96,7 @@ print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">'
 print '<input type="hidden" name="action" value="update">';
 
 // Define main accounts for closure
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 foreach ($list_account_main as $key) {
     print '<tr class="oddeven value">';

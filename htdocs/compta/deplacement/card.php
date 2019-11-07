@@ -250,7 +250,7 @@ if ($action == 'create')
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
 
-    print '<table class="border" width="100%">';
+    print '<table class="border centpercent">';
 
     print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
@@ -339,7 +339,7 @@ elseif ($id)
             print '<input type="hidden" name="action" value="update">';
             print '<input type="hidden" name="id" value="'.$id.'">';
 
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
 
             // Ref
             print "<tr>";
@@ -426,7 +426,7 @@ elseif ($id)
             $soc = new Societe($db);
             if ($object->socid) $soc->fetch($object->socid);
 
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
 
             $linkback = '<a href="'.DOL_URL_ROOT.'/compta/deplacement/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 

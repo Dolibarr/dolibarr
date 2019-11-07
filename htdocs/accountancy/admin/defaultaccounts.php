@@ -140,7 +140,7 @@ print '<input type="hidden" name="action" value="update">';
 
 // Define main accounts for thirdparty
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 foreach ($list_account_main as $key) {
     print '<tr class="oddeven value">';
@@ -167,7 +167,7 @@ print '<br>';
 
 // Define default accounts
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 foreach ($list_account as $key) {
 	print '<tr class="oddeven value">';

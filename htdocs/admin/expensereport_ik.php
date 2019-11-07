@@ -110,7 +110,7 @@ if ($action == 'edit')
 
 echo '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 
-echo '<table class="noborder" width="100%">';
+echo '<table class="noborder centpercent">';
 
 foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 {

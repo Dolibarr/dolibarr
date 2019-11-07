@@ -50,7 +50,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    $ponderated_opp_amount = $ponderated_opp_amount / 100;
 
 		print '<div class="div-table-responsive-no-min">';
-	    print '<table class="noborder nohover" width="100%">';
+	    print '<table class="noborder nohover centpercent">';
 	    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("OpportunitiesStatusForOpenedProjects").'</th></tr>'."\n";
 	    $listofstatus=array_keys($listofoppstatus);
 	    foreach ($listofstatus as $status)

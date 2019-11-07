@@ -690,7 +690,7 @@ if ($resql)
 	{
 		print load_fiche_titre($langs->trans("AddBankRecordLong"), '', '');
 
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Description").'</td>';

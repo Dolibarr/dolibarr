@@ -200,7 +200,7 @@ if (! empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
         print '<input type="hidden" name="action" value="setvarother">';
     }
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td>' . $langs->trans("Parameters") . '</td>';
     print '<td class="left">';
     print '</td>';
@@ -288,7 +288,7 @@ if (! empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE))
     // Admin var of module
     print load_fiche_titre($langs->trans("TicketParamMail"));
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
 
     print '<form method="post" action="' . $_SERVER['PHP_SELF'] . '" enctype="multipart/form-data" >';
     print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';

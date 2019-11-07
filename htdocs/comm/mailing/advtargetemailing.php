@@ -419,7 +419,7 @@ if ($object->fetch($id) >= 0) {
 
 	dol_fiche_head($head, 'advtargets', $langs->trans("Mailing"), 0, 'email');
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	$linkback = '<a href="' . DOL_URL_ROOT . '/comm/mailing/liste.php">' . $langs->trans("BackToList") . '</a>';
 

@@ -133,7 +133,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 
 /* Affichage de la liste des projets d'aujourd'hui */
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="50%">'.$langs->trans('ActivityOnProjectToday').'</td>';
 print '<td width="50%" class="right">'.$langs->trans("Time").'</td>';
@@ -190,7 +190,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 /* Affichage de la liste des projets d'hier */
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans('ActivityOnProjectYesterday').'</td>';
 print '<td class="right">'.$langs->trans("Time").'</td>';
@@ -250,7 +250,7 @@ if ($db->type != 'pgsql')
 
     // Affichage de la liste des projets de la semaine
     print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("ActivityOnProjectThisWeek").'</td>';
     print '<td class="right">'.$langs->trans("Time").'</td>';
@@ -307,7 +307,7 @@ if ($db->type != 'pgsql')
 if (! empty($conf->global->PROJECT_TASK_TIME_MONTH))
 {
     print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("ActivityOnProjectThisMonth").': '.dol_print_date($now, "%B %Y").'</td>';
     print '<td class="right">'.$langs->trans("Time").'</td>';
@@ -358,7 +358,7 @@ if (! empty($conf->global->PROJECT_TASK_TIME_MONTH))
 if (! empty($conf->global->PROJECT_TASK_TIME_YEAR))
 {
     print '<div class="div-table-responsive-no-min">';
-	print '<br><table class="noborder" width="100%">';
+	print '<br><table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("ActivityOnProjectThisYear").': '.strftime("%Y", $now).'</td>';
 	print '<td class="right">'.$langs->trans("Time").'</td>';
@@ -479,7 +479,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 		//print load_fiche_titre($langs->trans("TasksOnOpenedProject"),'','').'<br>';
 
         print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		//print '<th>'.$langs->trans('TaskRessourceLinks').'</th>';
 		print '<th>'.$langs->trans('OpenedProjects').'</th>';

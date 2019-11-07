@@ -214,7 +214,7 @@ print '<br>';
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 
 // Description
 print '<tr><td class="titlefield notopnoleft">';
@@ -273,7 +273,7 @@ if ($action == 'edit')
 		foreach ($object->multilangs as $key => $value)
 		{
 		    print "<br><b><u>".$langs->trans('Language_'.$key)." :</u></b><br>";
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent">';
 
 			// Label
             $libelle = (GETPOST('libelle-'.$key, 'alpha') ? GETPOST('libelle-'.$key, 'alpha') : $object->multilangs[$key]['label']);
@@ -309,7 +309,7 @@ elseif ($action != 'add')
 		foreach ($object->multilangs as $key => $value)
 		{
 		    $s=picto_from_langcode($key);
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent">';
 			print '<tr class="liste_titre"><td colspan="2">'.($s?$s.' ':'')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&langtodelete='.$key.'&type='.$type.'">'.img_delete('', '').'</a></td></tr>';
 			print '<tr><td class="titlefield">'.$langs->trans('Label').'</td><td>'.$object->multilangs[$key]["label"].'</td></tr>';
 			print '<tr><td>'.$langs->trans('Description').'</td><td>'.$object->multilangs[$key]["description"].'</td></tr>';
@@ -340,7 +340,7 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '<input type="hidden" name="id" value="'.$id.'">';
     print '<input type="hidden" name="type" value="' . $type . '">';
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans('Translation').'</td><td>';
     print $formadmin->select_language(GETPOST('forcelangprod', 'alpha'), 'forcelangprod', 0, $object->multilangs);
 	print '</td></tr>';

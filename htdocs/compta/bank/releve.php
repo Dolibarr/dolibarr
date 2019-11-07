@@ -270,7 +270,7 @@ if (empty($numref))
 		print '<input type="hidden" name="account" value="'.$object->id.'">';
 		print '<input type="hidden" name="page" value="'.$page.'">';
 
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Ref").'</td>';
 		print '<td class="right">'.$langs->trans("InitialBankBalance").'</td>';

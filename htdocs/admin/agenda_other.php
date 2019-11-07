@@ -221,7 +221,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
     print load_fiche_titre($langs->trans("AgendaModelModule"), '', '');
 
-    print '<table class="noborder" width="100%">'."\n";
+    print '<table class="noborder centpercent">'."\n";
     print '<tr class="liste_titre">'."\n";
     print '<td width="100">'.$langs->trans("Name").'</td>'."\n";
     print '<td>'.$langs->trans("Description").'</td>'."\n";

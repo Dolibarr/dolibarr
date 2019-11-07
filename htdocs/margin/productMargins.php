@@ -100,7 +100,7 @@ print '<form method="post" name="sel" action="'.$_SERVER['PHP_SELF'].'">';
 
 dol_fiche_head($head, 'productMargins', $titre, 0, $picto);
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 
 if ($id > 0) {
     print '<tr><td class="titlefield">'.$langs->trans('ChooseProduct/Service').'</td>';
@@ -146,7 +146,7 @@ print "</table>";
 
 print '<br>';
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 
 // Total Margin
 print '<tr><td class="titlefield">'.$langs->trans("TotalMargin").'</td><td colspan="4">';
