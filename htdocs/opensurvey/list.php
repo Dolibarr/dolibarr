@@ -375,11 +375,11 @@ while ($i < min($num, $limit))
 	print $opensurvey_static->getNomUrl(1);
 	print '</td>';
 	if (! $i) $totalarray['nbfield']++;
-	
+
 	// Title
 	print '<td>'.dol_htmlentities($obj->titre).'</td>';
 	if (! $i) $totalarray['nbfield']++;
-	
+
 	// Type
 	print '<td>';
 	$type=($obj->format=='A')?'classic':'date';
@@ -387,7 +387,7 @@ while ($i < min($num, $limit))
 	print ' '.$langs->trans($type=='classic'?"TypeClassic":"TypeDate");
 	print '</td>';
 	if (! $i) $totalarray['nbfield']++;
-	
+
 	print '<td>';
 	// Author
 	if ($obj->fk_user_creat) {
@@ -403,19 +403,19 @@ while ($i < min($num, $limit))
 	}
 	print '</td>';
 	if (! $i) $totalarray['nbfield']++;
-	
+
 	// Nb of voters
 	print'<td class="right">'.$nbuser.'</td>'."\n";
 	if (! $i) $totalarray['nbfield']++;
-	
+
 	print '<td class="center">'.dol_print_date($db->jdate($obj->date_fin), 'day');
 	if ($db->jdate($obj->date_fin) < $now && $obj->status == Opensurveysondage::STATUS_VALIDATED) { print img_warning($langs->trans("Expired")); }
 	print '</td>';
 	if (! $i) $totalarray['nbfield']++;
-	
+
 	print'<td class="center">'.$opensurvey_static->getLibStatut(5).'</td>'."\n";
 	if (! $i) $totalarray['nbfield']++;
-	
+
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
@@ -432,7 +432,7 @@ while ($i < min($num, $limit))
 	}
 	print '</td>';
 	if (! $i) $totalarray['nbfield']++;
-	
+
 	print '</tr>'."\n";
 	$i++;
 }
@@ -476,7 +476,7 @@ if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $n
     $filedir=$diroutputmassaction;
     $genallowed=$permissiontoread;
     $delallowed=$permissiontoadd;
-    
+
     print $formfile->showdocuments('massfilesarea_mymodule', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
 
