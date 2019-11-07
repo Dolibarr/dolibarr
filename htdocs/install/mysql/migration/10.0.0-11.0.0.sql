@@ -95,6 +95,8 @@ ALTER TABLE llx_holiday_extrafields ADD INDEX idx_holiday_extrafields (fk_object
 ALTER TABLE llx_societe_rib MODIFY label varchar(200);
 
 ALTER TABLE llx_societe ADD COLUMN logo_squarred varchar(255);
+ALTER TABLE llx_societe ADD COLUMN id_risk  INTEGER NULL;
+ALTER TABLE llx_societe ADD COLUMN max_payment_days  INTEGER NULL;
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('USER_SENTBYMAIL','Email sent','Executed when an email is sent from user card','user',300);
 
