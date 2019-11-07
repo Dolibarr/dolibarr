@@ -1570,7 +1570,7 @@ else
         print '<input class="flat" type="file" name="photo" id="photoinput" />';
         print '</td>';
         print '</tr>';
-		
+
 		// Add Maximum number of payment days
 		print '<tr><td>'.$form->editfieldkey($langs->trans('Maximum number of payment days'), 'max_payment_days', '', $object, 0).'</td>';
 	    print '<td colspan="3"><input type="text" name="max_payment_days" id="max_payment_days" size="10" value="'.$object->max_payment_days.'"> ';
@@ -1696,7 +1696,7 @@ else
                 $object->tva_assuj				= GETPOST('assujtva_value', 'int');
                 $object->tva_intra				= GETPOST('tva_intra', 'alpha');
                 $object->status					= GETPOST('status', 'int');
-				
+
                 $object->max_payment_days		= GETPOST('max_payment_days', 'int');
                 $object->id_risk				= GETPOST('id_risk', 'int');
 
@@ -2276,7 +2276,7 @@ else
             print '<tr><td>'.$form->editfieldkey($langs->trans('Risk rating'), 'id_risk', '', $object, 0).'</td><td colspan="3">';
             print $form->selectarray('id_risk',  array('1'=>$langs->trans('None'),'2'=>$langs->trans('Low'),'3'=>$langs->trans('Medium'),'4'=>$langs->trans('High')), $object->id_risk);
             print '</td></tr>';
-			
+
 			print '</table>';
             print '</div>';
 
