@@ -818,7 +818,7 @@ if (empty($reshook))
 
 	// Actions to build doc
 	$upload_dir = $conf->adherent->dir_output;
-	$permissioncreate=$user->rights->adherent->creer;
+	$permissiontoadd=$user->rights->adherent->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Actions to send emails
@@ -938,7 +938,7 @@ else
 
         dol_fiche_head('');
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 		print '<tbody>';
 
 		// Login
@@ -1182,7 +1182,7 @@ else
 
 		dol_fiche_head($head, 'general', $langs->trans("Member"), 0, 'user');
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		// Ref
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td class="valeur">'.$object->id.'</td></tr>';

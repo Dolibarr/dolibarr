@@ -871,7 +871,7 @@ if (empty($reshook))
     // Actions to build doc
     $id = $socid;
     $upload_dir = $conf->societe->dir_output;
-    $permissioncreate=$user->rights->societe->creer;
+    $permissiontoadd=$user->rights->societe->creer;
     include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
@@ -1172,7 +1172,7 @@ else
 
         dol_fiche_head(null, 'card', '', 0, '');
 
-        print '<table class="border" width="100%">';
+        print '<table class="border centpercent">';
 
         // Name, firstname
 	    print '<tr><td class="titlefieldcreate">';
@@ -1801,7 +1801,7 @@ else
             dol_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
             print '<div class="fichecenter2">';
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
 
             // Ref/ID
 			if (! empty($conf->global->MAIN_SHOW_TECHNICAL_ID))

@@ -467,7 +467,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
             dol_fiche_head(null);
 
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
 
             print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans('Company').'</td><td>';
             $supplierstatic->id=$obj->socid;

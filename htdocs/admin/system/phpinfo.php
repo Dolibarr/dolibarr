@@ -67,7 +67,7 @@ if ($maxphp > 0 && $maxphp2 > 0 && $maxphp > $maxphp2)
 }
 
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 print "\n";
 

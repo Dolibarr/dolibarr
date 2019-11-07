@@ -70,7 +70,7 @@ if ($result) {
 
 $y = $year_current;
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width=150>' . $langs->trans("Label") . '</td>';
 for($i = 1; $i <= 12; $i++)

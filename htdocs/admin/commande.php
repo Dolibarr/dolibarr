@@ -262,7 +262,7 @@ dol_fiche_head($head, 'general', $langs->trans("Orders"), -1, 'order');
 
 print load_fiche_titre($langs->trans("OrdersNumberingModules"), '', '');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -521,7 +521,7 @@ print "<br>";
  */
 
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td class="center" width="60">'.$langs->trans("Value").'</td>';
@@ -659,7 +659,7 @@ print '<br>';
  */
 
 print load_fiche_titre($langs->trans("Notifications"), '', '');
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td class="center" width="60"></td>';

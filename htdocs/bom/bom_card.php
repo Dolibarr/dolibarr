@@ -77,8 +77,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 
 $permissionnote=$user->rights->bom->write;	// Used by the include of actions_setnotes.inc.php
 $permissiondellink=$user->rights->bom->write;	// Used by the include of actions_dellink.inc.php
-$permissionedit=$user->rights->bom->write; // Used by the include of actions_lineupdown.inc.php
-$permissiontoadd=$user->rights->bom->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoadd=$user->rights->bom->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->rights->bom->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 
 
@@ -111,6 +110,12 @@ if (empty($reshook))
 
 	// Actions when printing a doc from card
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+
+	// Action to move up and down lines of object
+	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';
+
+	// Action to build doc
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Actions to send emails
 	$trigger_name='BOM_SENTBYMAIL';
@@ -146,8 +151,8 @@ if (empty($reshook))
     		$bomline->fk_bom = $id;
     		$bomline->fk_product = $idprod;
     		$bomline->qty = $qty;
-    		$bomline->qty_frozen = $qty_frozen;
-    		$bomline->disable_stock_change = $disable_stock_change;
+    		$bomline->qty_frozen = (int) $qty_frozen;
+    		$bomline->disable_stock_change = (int) $disable_stock_change;
     		$bomline->efficiency = $efficiency;
 
     		$result = $bomline->create($user);
@@ -184,8 +189,8 @@ if (empty($reshook))
 		$bomline = new BOMLine($db);
 		$bomline->fetch($lineid);
 		$bomline->qty = $qty;
-		$bomline->qty_frozen = $qty_frozen;
-		$bomline->disable_stock_change = $disable_stock_change;
+		$bomline->qty_frozen = (int) $qty_frozen;
+		$bomline->disable_stock_change = (int) $disable_stock_change;
 		$bomline->efficiency = $efficiency;
 
 		$result = $bomline->update($user);

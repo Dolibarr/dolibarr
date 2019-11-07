@@ -170,7 +170,7 @@ if ($resql)
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
 
     print '<tr class="liste_titre_filter">';
     print '<td class="liste_titre">'.

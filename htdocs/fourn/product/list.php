@@ -238,7 +238,7 @@ if ($resql)
 	$trackid='prod'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
-	print '<table class="liste" width="100%">';
+	print '<table class="liste centpercent">';
 
 	// Fields title search
 	print '<tr class="liste_titre">';

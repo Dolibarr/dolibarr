@@ -317,7 +317,7 @@ if ($action == 'create')
 
 	dol_fiche_head();
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Label
 	print "<tr>";
@@ -512,7 +512,7 @@ if ($id > 0)
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		// Type
 		print '<tr><td class="titlefield">'.$langs->trans("Type")."</td><td>".$object->type_label."</td>";

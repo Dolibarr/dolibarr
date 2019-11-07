@@ -172,7 +172,7 @@ print '<input type="hidden" name="action" value="update">';
 
 // Default mode for calculating turnover (parameter ACCOUNTING_MODE)
 /*
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>' . $langs->trans('OptionMode') . '</td><td>' . $langs->trans('Description') . '</td>';
@@ -202,7 +202,7 @@ print '<br>';
 
 // Others params
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">' . $langs->trans('OtherOptions') . '</td>';
 print "</tr>\n";

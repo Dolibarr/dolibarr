@@ -101,8 +101,7 @@ $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture', 
 
 $permissionnote=$user->rights->fournisseur->facture->creer;	// Used by the include of actions_setnotes.inc.php
 $permissiondellink=$user->rights->fournisseur->facture->creer;	// Used by the include of actions_dellink.inc.php
-$permissionedit=$user->rights->fournisseur->facture->creer; // Used by the include of actions_lineupdown.inc.php
-$permissiontoadd=$user->rights->fournisseur->facture->creer; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoadd=$user->rights->fournisseur->facture->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 
 /*
@@ -1506,7 +1505,7 @@ if (empty($reshook))
 
 	// Actions to build doc
 	$upload_dir = $conf->fournisseur->facture->dir_output;
-	$permissioncreate = $user->rights->fournisseur->facture->creer;
+	$permissiontoadd = $user->rights->fournisseur->facture->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Make calculation according to calculationrule
@@ -1727,7 +1726,7 @@ if ($action == 'create')
 
 	dol_fiche_head();
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Ref
 	print '<tr><td class="titlefieldcreate">'.$langs->trans('Ref').'</td><td>'.$langs->trans('Draft').'</td></tr>';
@@ -2152,7 +2151,7 @@ if ($action == 'create')
 		$title=$langs->trans('ProductsAndServices');
 		print load_fiche_titre($title);
 
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 
 		$objectsrc->printOriginLinesList();
 

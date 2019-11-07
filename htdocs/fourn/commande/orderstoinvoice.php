@@ -333,7 +333,7 @@ if ($action == 'create' && !$error) {
 	print '<input type="hidden" name="originid" value="' . GETPOST('originid') . '">';
 	print '<input type="hidden" name="socid" value="' . $soc->id . '">';
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Ref
 	print '<tr><td class="fieldrequired">' . $langs->trans('Ref') . '</td><td colspan="2">' . $langs->trans('Draft') . '</td></tr>';
@@ -517,7 +517,7 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		print '<input type="hidden" name="socid" value="' . $socid . '">';
 
 
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre('Ref', 'orderstoinvoice.php', 'c.ref', '', '&amp;socid=' . $socid, '', $sortfield, $sortorder);
 		print_liste_field_titre('RefSupplier', 'orderstoinvoice.php', 'c.ref_supplier', '', '&amp;socid=' . $socid, '', $sortfield, $sortorder);

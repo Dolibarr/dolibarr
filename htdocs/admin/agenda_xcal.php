@@ -87,7 +87,7 @@ dol_fiche_head($head, 'xcal', $langs->trans("Agenda"), -1, 'action');
 print '<span class="opacitymedium">'.$langs->trans("AgendaSetupOtherDesc")."</span><br>\n";
 print "<br>\n";
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameter")."</td>";
@@ -121,7 +121,7 @@ print '</table>';
 
 print '<br>';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td width="25%">'.$langs->trans("Parameter")."</td>";

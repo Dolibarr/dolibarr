@@ -421,7 +421,7 @@ if (empty($reshook))
 				// Fac builddoc
 				$donotredirect = 1;
 				$upload_dir = $conf->facture->dir_output;
-				$permissioncreate=$user->rights->facture->creer;
+				$permissiontoadd=$user->rights->facture->creer;
 				include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 			}
 

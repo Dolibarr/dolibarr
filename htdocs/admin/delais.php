@@ -186,7 +186,7 @@ if ($action == 'edit')
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
 
     foreach($modules as $module => $delays)
@@ -209,7 +209,7 @@ if ($action == 'edit')
     print '<br>';
 
 	// Show if meteo is enabled
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
 
 	print '<tr class="oddeven">';
@@ -225,7 +225,7 @@ else
      * Show parameters
      */
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
 
     foreach($modules as $module => $delays)
@@ -248,7 +248,7 @@ else
 	print '<br>';
 
 	// Show if meteo is enabled
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
 
 	print '<tr class="oddeven">';

@@ -80,10 +80,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 //$isdraft = (($object->statut == MyObject::STATUS_DRAFT) ? 1 : 0);
 //$result = restrictedArea($user, 'mymodule', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
-$permissionnote=$user->rights->emailcollector->write;	// Used by the include of actions_setnotes.inc.php
+$permissionnote=$user->rights->emailcollector->write;		// Used by the include of actions_setnotes.inc.php
 $permissiondellink=$user->rights->emailcollector->write;	// Used by the include of actions_dellink.inc.php
-$permissionedit=$user->rights->emailcollector->write; // Used by the include of actions_lineupdown.inc.php
-$permissiontoadd=$user->rights->emailcollector->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoadd=$user->rights->emailcollector->write;		// Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 $debuginfo='';
 

@@ -188,7 +188,7 @@ class doc_generic_bom_odt extends ModelePDFBom
 	/**
 	 *  Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param		Commande	$object				Object source to build document
+	 *	@param		BOM			$object				Object source to build document
 	 *	@param		Translate	$outputlangs		Lang output object
 	 * 	@param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int			$hidedetails		Do not show line details
@@ -222,13 +222,13 @@ class doc_generic_bom_odt extends ModelePDFBom
 
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
-		if ($conf->commande->dir_output)
+		if ($conf->bom->dir_output)
 		{
 			// If $object is id instead of object
 			if (! is_object($object))
 			{
 				$id = $object;
-				$object = new Commande($this->db);
+				$object = new Bom($this->db);
 				$result=$object->fetch($id);
 				if ($result < 0)
 				{
@@ -237,7 +237,7 @@ class doc_generic_bom_odt extends ModelePDFBom
 				}
 			}
 
-			$dir = $conf->commande->multidir_output[$object->entity];
+			$dir = $conf->bom->multidir_output[$object->entity];
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (! preg_match('/specimen/i', $objectref)) $dir.= "/" . $objectref;
 			$file = $dir . "/" . $objectref . ".odt";
@@ -309,11 +309,7 @@ class doc_generic_bom_odt extends ModelePDFBom
 
 				// Make substitution
 				$substitutionarray=array(
-				'__FROM_NAME__' => $this->emetteur->name,
-				'__FROM_EMAIL__' => $this->emetteur->email,
-				'__TOTAL_TTC__' => $object->total_ttc,
-				'__TOTAL_HT__' => $object->total_ht,
-				'__TOTAL_VAT__' => $object->total_vat
+					'__QTY_TO_PRODUCE__' => $object->qty,
 				);
 				complete_substitutions_array($substitutionarray, $langs, $object);
 				// Call the ODTSubstitution hook
@@ -322,7 +318,7 @@ class doc_generic_bom_odt extends ModelePDFBom
 
 				// Line of free text
 				$newfreetext='';
-				$paramfreetext='ORDER_FREE_TEXT';
+				$paramfreetext='BOM_FREE_TEXT';
 				if (! empty($conf->global->$paramfreetext))
 				{
 					$newfreetext=make_substitutions($conf->global->$paramfreetext, $substitutionarray);
@@ -334,7 +330,7 @@ class doc_generic_bom_odt extends ModelePDFBom
                     $odfHandler = new odf(
 						$srctemplatepath,
 						array(
-						'PATH_TO_TMP'	  => $conf->commande->dir_temp,
+						'PATH_TO_TMP'	  => $conf->bom->dir_temp,
 						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 						'DELIMITER_LEFT'  => '{',
 						'DELIMITER_RIGHT' => '}'

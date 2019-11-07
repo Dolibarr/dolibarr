@@ -161,7 +161,7 @@ print '<form method="post" name="sel" action="' . $_SERVER['PHP_SELF'] . '">';
 
 dol_fiche_head($head, $langs->trans('checkMargins'), $title, 0, $picto);
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 
 print '<tr><td class="titlefield">' . $langs->trans('DateStart') . ' (' . $langs->trans("DateValidation") . ')</td>';
 print '<td>';

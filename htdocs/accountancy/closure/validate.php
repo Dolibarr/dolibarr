@@ -106,7 +106,7 @@ $y = $year_current;
 print_barre_liste($langs->trans("SelectMonthAndValidate"), '', '', '', '', '', '', -1, '', '', 0, '', 'class="right"', 0, 1, 1);
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="oddeven">';
 for($i = 1; $i <= 12; $i ++) {
 	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START?$conf->global->SOCIETE_FISCAL_MONTH_START:1) - 1;

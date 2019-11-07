@@ -238,7 +238,7 @@ function show_array_actions_to_do($max = 5)
 	    $num = $db->num_rows($resql);
 
 		print '<div class="div-table-responsive-no-min">';
-	    print '<table class="noborder" width="100%">';
+	    print '<table class="noborder centpercent">';
 	    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastActionsToDo", $max).'</th>';
 		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?status=todo">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';
@@ -336,7 +336,7 @@ function show_array_last_actions_done($max = 5)
 		$num = $db->num_rows($resql);
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("LastDoneTasks", $max).'</th>';
 		print '<th colspan="2" class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/comm/action/list.php?status=done">'.$langs->trans("FullList").'</a></th>';
 		print '</tr>';

@@ -458,7 +458,7 @@ else
 			print '<div class="fichecenter">';
 
 			print '<div class="underbanner clearboth"></div>';
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent">';
 
 			// Alias name (commercial, trademark or alias name)
 			print '<tr><td class="titlefield">' . $langs->trans('AliasNames') . '</td><td colspan="3">';

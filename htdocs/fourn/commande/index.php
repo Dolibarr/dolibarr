@@ -63,7 +63,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 {
     print '<form method="post" action="list.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="noborder nohover" width="100%">';
+    print '<table class="noborder nohover centpercent">';
     print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
     print '<tr class="oddeven"><td>';
     print $langs->trans("SupplierOrder").':</td><td><input type="text" class="flat" name="search_all" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
@@ -114,7 +114,7 @@ if ($resql)
 	}
 	$db->free($resql);
 
-	print '<table class="noborder nohover" width="100%">';
+	print '<table class="noborder nohover centpercent">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("SuppliersOrders").'</th></tr>';
 	print "</tr>\n";
 	foreach (array(0,1,2,3,4,5,6) as $status)
@@ -178,7 +178,7 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print '<table class="liste" width="100%">';
+	print '<table class="liste centpercent">';
 
 	print '<tr class="liste_titre"><th>'.$langs->trans("Status").'</th>';
 	print '<th class="right">'.$langs->trans("Nb").'</th>';
@@ -223,7 +223,7 @@ if (! empty($conf->fournisseur->enabled))
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("DraftOrders").'</th></tr>';
 		$langs->load("orders");
@@ -268,7 +268,7 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print '<table class="liste" width="100%">';
+	print '<table class="liste centpercent">';
 	print '<tr class="liste_titre"><th>'.$langs->trans("UserWithApproveOrderGrant").'</th>';
 	print "</tr>\n";
 
@@ -319,7 +319,7 @@ $sql.= $db->plimit($max, 0);
 $resql=$db->query($sql);
 if ($resql)
 {
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="4">'.$langs->trans("LastModifiedOrders", $max).'</th></tr>';
 
@@ -387,7 +387,7 @@ if ($resql)
 {
 $num = $db->num_rows($resql);
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<th colspan="3">'.$langs->trans("OrdersToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1">('.$num.')</a></th></tr>';
 

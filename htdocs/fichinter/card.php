@@ -728,7 +728,7 @@ if (empty($reshook))
 
 	// Actions to build doc
 	$upload_dir = $conf->ficheinter->dir_output;
-	$permissioncreate = $user->rights->ficheinter->creer;
+	$permissiontoadd = $user->rights->ficheinter->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'update_extras')
@@ -909,7 +909,7 @@ if ($action == 'create')
 
 		dol_fiche_head('');
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		print '<input type="hidden" name="socid" value='.$soc->id.'>';
 		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("ThirdParty").'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
@@ -1055,7 +1055,7 @@ if ($action == 'create')
 			$title = $langs->trans('Services');
 			print load_fiche_titre($title);
 
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 
 			$objectsrc->printOriginLinesList(empty($conf->global->FICHINTER_PRINT_PRODUCTS)?'services':'');	// Show only service, except if option FICHINTER_PRINT_PRODUCTS is on
 
@@ -1074,7 +1074,7 @@ if ($action == 'create')
 		} elseif ($origin == 'project' && !empty($projectid)) {
 			print '<input type="hidden" name="projectid" value="' . $projectid . '">';
 		}
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 		print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>';
 		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, null, 0, 'minwidth300');
 		print '</td></tr>';
@@ -1384,7 +1384,7 @@ elseif ($id > 0 || ! empty($ref))
 			if ($num)
 			{
 				print '<br>';
-				print '<table class="noborder" width="100%">';
+				print '<table class="noborder centpercent">';
 
 				print '<tr class="liste_titre">';
 				print '<td class="liste_titre">'.$langs->trans('Description').'</td>';
@@ -1519,7 +1519,7 @@ elseif ($id > 0 || ! empty($ref))
 			{
 				if (! $num)
 				{
-				    print '<br><table class="noborder" width="100%">';
+				    print '<br><table class="noborder centpercent">';
 
     				print '<tr class="liste_titre">';
     				print '<td>';

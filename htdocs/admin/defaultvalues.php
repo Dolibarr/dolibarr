@@ -245,7 +245,7 @@ print '<input type="hidden" id="action" name="action" value="">';
 print '<input type="hidden" id="mode" name="mode" value="'.dol_escape_htmltag($mode).'">';
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 // Page
 $texthelp=$langs->trans("PageUrlForDefaultValues");

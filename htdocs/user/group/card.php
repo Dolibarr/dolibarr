@@ -248,7 +248,7 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->usergroup->dir_output;
-	$permissioncreate=$user->rights->user->user->creer;
+	$permissiontoadd=$user->rights->user->user->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
@@ -443,7 +443,7 @@ else
 					print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">'."\n";
 					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					print '<input type="hidden" name="action" value="adduser">';
-					print '<table class="noborder" width="100%">'."\n";
+					print '<table class="noborder centpercent">'."\n";
 					print '<tr class="liste_titre"><td class="titlefield liste_titre">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
 					print '<td class="liste_titre">';
 					print $form->select_dolusers('', 'user', 1, $exclude, 0, '', '', $object->entity, 0, 0, '', 0, '', 'maxwidth300');

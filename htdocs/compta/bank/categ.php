@@ -93,7 +93,7 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 */
 
 print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Ref").'</td><td colspan="2">'.$langs->trans("Label").'</td>';
 print "</tr>\n";

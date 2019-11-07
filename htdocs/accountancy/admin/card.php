@@ -220,7 +220,7 @@ if ($action == 'create') {
 
 	dol_fiche_head();
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Chart of account
 	print '<tr><td class="titlefieldcreate"><span class="fieldrequired">' . $langs->trans("Chartofaccounts") . '</span></td>';
@@ -291,7 +291,7 @@ elseif ($id > 0 || $ref) {
 			print '<input type="hidden" name="id" value="' . $id . '">';
 			print '<input type="hidden" name="backtopage" value="' . $backtopage . '">';
 
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent">';
 
 			// Account number
 			print '<tr><td class="titlefieldcreate"><span class="fieldrequired">' . $langs->trans("AccountNumber") . '</span></td>';
@@ -348,7 +348,7 @@ elseif ($id > 0 || $ref) {
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent">';
 
 			// Label
 			print '<tr><td class="titlefield">' . $langs->trans("Label") . '</td>';

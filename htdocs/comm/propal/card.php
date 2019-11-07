@@ -1438,7 +1438,7 @@ if (empty($reshook))
 
 	// Actions to build doc
 	$upload_dir = $conf->propal->multidir_output[$object->entity];
-	$permissioncreate=$usercancreate;
+	$permissiontoadd=$usercancreate;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
@@ -1551,7 +1551,7 @@ if ($action == 'create')
 
 	dol_fiche_head();
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Reference
 	print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans('Ref') . '</td><td>' . $langs->trans("Draft") . '</td></tr>';
@@ -1853,7 +1853,7 @@ if ($action == 'create')
 		$title = $langs->trans('ProductsAndServices');
 		print load_fiche_titre($title);
 
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 
 		$objectsrc->printOriginLinesList();
 

@@ -59,7 +59,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     print '<form method="post" action="list.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder nohover" width="100%">';
+    print '<table class="noborder nohover centpercent">';
     print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
     print '<tr class="oddeven"><td>';
     print $langs->trans("Reception").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
@@ -95,7 +95,7 @@ if ($resql)
 	if ($num)
 	{
         print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("ReceptionsToValidate").'</th></tr>';
 		$i = 0;
@@ -146,7 +146,7 @@ if ($resql)
 
 		$i = 0;
         print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("SuppliersOrdersToProcess").'</th></tr>';
 		while ($i < $num)
@@ -207,7 +207,7 @@ if ( $resql )
 	{
 		$i = 0;
         print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("SuppliersOrdersInProcess").'</th></tr>';
 		while ($i < $num)
@@ -268,7 +268,7 @@ if ($resql)
 	{
 		$i = 0;
         print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("LastReceptions", $num).'</th></tr>';
 		while ($i < $num)

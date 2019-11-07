@@ -259,7 +259,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="add_customer_price_confirm">';
 		print '<input type="hidden" name="socid" value="' . $object->id . '">';
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 		print '<tr>';
 		print '<td>' . $langs->trans('Product') . '</td>';
 		print '<td>';
@@ -337,7 +337,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="update_customer_price_confirm">';
 		print '<input type="hidden" name="lineid" value="' . $prodcustprice->id . '">';
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 		print '<tr>';
 		print '<td>' . $langs->trans('Product') . '</td>';
 		$staticprod = new Product($db);
@@ -428,7 +428,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 			print '<input type="hidden" name="id" value="' . $object->id . '">';
 
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 
 			print '<tr class="liste_titre">';
 			print '<td>' . $langs->trans("Product") . '</td>';
@@ -516,7 +516,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
         print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
         print '<input type="hidden" name="id" value="' . $object->id . '">';
 
-        print '<table class="noborder" width="100%">';
+        print '<table class="noborder centpercent">';
 
         print '<tr class="liste_titre">';
         print '<td>' . $langs->trans("Product") . '</td>';

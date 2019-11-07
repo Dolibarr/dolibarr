@@ -145,7 +145,7 @@ while ($objp = $db->fetch_object($result))
 if ($conf->use_javascript_ajax)
 {
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
 	print '<tr><td class="center" colspan="2">';
 
@@ -196,7 +196,7 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	print '<br>';
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Categories").'</th></tr>';
 	print '<tr '.$bc[0].'><td class="center" colspan="2">';
 	$sql = "SELECT c.label, count(*) as nb";
@@ -299,7 +299,7 @@ if ($result)
 		if (isset($_GET["type"]) && $_GET["type"] == 1) $transRecordedType = $langs->trans("LastRecordedServices", $max);
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 
 		$colnb=2;
 		if (empty($conf->global->PRODUIT_MULTIPRICES)) $colnb++;

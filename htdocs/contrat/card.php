@@ -998,7 +998,7 @@ if (empty($reshook))
 
 	// Actions to build doc
 	$upload_dir = $conf->contrat->dir_output;
-	$permissioncreate = $user->rights->contrat->creer;
+	$permissiontoadd = $user->rights->contrat->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Actions to send emails
@@ -1171,7 +1171,7 @@ if ($action == 'create')
 
 	dol_fiche_head();
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Ref
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Ref').'</td><td>';

@@ -262,7 +262,7 @@ if ($action == 'create') {
 		if (! empty($conf->projet->enabled) && $object->fk_project > 0) $rowspan++;
 		if (! empty($conf->contrat->enabled) && $object->fk_contrat > 0) $rowspan++;
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		$object->fetch_thirdparty();
 
@@ -327,7 +327,7 @@ if ($action == 'create') {
 		$title = $langs->trans("Recurrence");
 		print load_fiche_titre($title, '', 'calendar');
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		// Frequency
 		print '<tr><td class="titlefieldcreate">';
@@ -381,7 +381,7 @@ if ($action == 'create') {
 			$i = 0;
 			$total = 0;
 
-			echo '<table class="noborder" width="100%">';
+			echo '<table class="noborder centpercent">';
 			if ($num) {
 				print '<tr class="liste_titre">';
 				print '<td>'.$langs->trans("Description").'</td>';
@@ -433,7 +433,7 @@ if ($action == 'create') {
 	dol_fiche_head('');
 
 	print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 	print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>';
 	print $form->select_company('', 'socid', '', 1, 1);
 	print '</td></tr>';
@@ -512,7 +512,7 @@ if ($action == 'create') {
 			print '<div class="fichehalfleft">';
 			print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent">';
 
 			print "<tr><td>".$langs->trans("Author").'</td><td colspan="3">'.$author->getFullName($langs)."</td></tr>";
 
@@ -569,7 +569,7 @@ if ($action == 'create') {
 			$title = $langs->trans("Recurrence");
 			print load_fiche_titre($title, '', 'calendar');
 
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent">';
 
 			// if "frequency" is empty or = 0, the reccurence is disabled
 			print '<tr><td style="width: 50%">';
@@ -681,7 +681,7 @@ if ($action == 'create') {
 
 			print load_fiche_titre($title);
 
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Description").'</td>';
 			print '<td class="center">'.$langs->trans("Duration").'</td>';
@@ -780,7 +780,7 @@ if ($action == 'create') {
 			print $langs->trans("ToCreateAPredefinedInterventional").'<br><br>';
 
 			$i = 0;
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
             print_liste_field_titre("Ref", $_SERVER['PHP_SELF'], "f.titre", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');
             print_liste_field_titre("Company", $_SERVER['PHP_SELF'], "s.nom", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');

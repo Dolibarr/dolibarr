@@ -352,8 +352,8 @@ class modMrp extends DolibarrModules
         }
 
         $sql = array(
-        	"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape('standard')."' AND type = 'mo' AND entity = ".$conf->entity,
-        	"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape('standard')."', 'mo', ".$conf->entity.")"
+        	//"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape('standard')."' AND type = 'mo' AND entity = ".$conf->entity,
+        	//"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape('standard')."', 'mo', ".$conf->entity.")"
         );
 
         return $this->_init($sql, $options);

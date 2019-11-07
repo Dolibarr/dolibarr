@@ -25,13 +25,14 @@
 // $action must be defined
 // $id must be defined
 // $object must be defined and must have a method generateDocument().
-// $permissioncreate must be defined
+// $permissiontoadd must be defined
 // $upload_dir must be defined (example $conf->projet->dir_output . "/";)
 // $hidedetails, $hidedesc, $hideref and $moreparams may have been set or not.
 
+if (!empty($permissioncreate) && empty($permissiontoadd)) $permissiontoadd = $permissioncreate;	// For backward compatibility
 
 // Build doc
-if ($action == 'builddoc' && $permissioncreate)
+if ($action == 'builddoc' && $permissiontoadd)
 {
     if (is_numeric(GETPOST('model', 'alpha')))
     {
@@ -107,7 +108,7 @@ if ($action == 'builddoc' && $permissioncreate)
 }
 
 // Delete file in doc form
-if ($action == 'remove_file' && $permissioncreate)
+if ($action == 'remove_file' && $permissiontoadd)
 {
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 

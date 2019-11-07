@@ -63,7 +63,7 @@ print load_fiche_titre($title, '', 'wrench');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("OpenSurveyArea").'</td></tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("NbOfSurveys").'</td><td class="right"><a href="list.php">'.$nbsondages.'</a></td>';

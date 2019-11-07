@@ -665,7 +665,7 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->user->dir_output;
-	$permissioncreate=$user->rights->user->user->creer;
+	$permissiontoadd=$user->rights->user->user->creer;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
@@ -2012,7 +2012,7 @@ else
 						print '<input type="hidden" name="action" value="addgroup" />';
 					}
 
-					print '<table class="noborder" width="100%">'."\n";
+					print '<table class="noborder centpercent">'."\n";
 
 					// Other form for add user to group
 					$parameters=array('caneditgroup' => $caneditgroup, 'groupslist' => $groupslist, 'exclude' => $exclude);

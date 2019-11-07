@@ -66,7 +66,7 @@ if ($pdluoid)
 {
 	print '<input type="hidden" name="pdluoid" value="'.$pdluoid.'">';
 }
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		// Source warehouse or product
 		print '<tr>';

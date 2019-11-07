@@ -55,7 +55,7 @@ print '<br>';
 // List of import set
 /*
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Module").'</td>';
 print '<td>'.$langs->trans("ImportableDatas").'</td>';
@@ -110,7 +110,7 @@ print '<br>';
 
 // List of available import format
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("AvailableFormats").'</td>';
 print '<td>'.$langs->trans("LibraryShort").'</td>';

@@ -106,7 +106,7 @@ $workflowcodes = dol_sort_array($workflowcodes, 'position');
 $nbqualified=0;
 $oldfamily='';
 
-print '<table class="noborder" width="100%">'."\n";
+print '<table class="noborder centpercent">'."\n";
 
 foreach($workflowcodes as $key => $params)
 {
@@ -117,7 +117,7 @@ foreach($workflowcodes as $key => $params)
 	if ($family == 'separator')
 	{
 		print '</table><br>';
-		print '<table class="noborder" width="100%">'."\n";
+		print '<table class="noborder centpercent">'."\n";
 
 		continue;
 	}

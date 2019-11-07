@@ -364,7 +364,7 @@ if ($sql_select)
     print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, '', 0, '', '', $limit);
 
     print '<div class="div-table-responsive-no-min">';
-    print '<table class="liste" width="100%">'."\n";
+    print '<table class="liste centpercent">'."\n";
 
     // Filters
     print '<tr class="liste_titre">';
@@ -612,7 +612,7 @@ elseif (empty($type_element) || $type_element == -1)
 {
     print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
 
-    print '<table class="liste" width="100%">'."\n";
+    print '<table class="liste centpercent">'."\n";
     // Titles with sort buttons
     print '<tr class="liste_titre">';
     print_liste_field_titre('Ref', $_SERVER['PHP_SELF'], 'doc_number', '', $param, '', $sortfield, $sortorder, 'left ');
@@ -629,7 +629,7 @@ elseif (empty($type_element) || $type_element == -1)
 else {
     print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
 
-    print '<table class="liste" width="100%">'."\n";
+    print '<table class="liste centpercent">'."\n";
 
 	print '<tr class="oddeven"><td class="opacitymedium" colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
 
