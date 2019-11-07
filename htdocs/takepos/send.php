@@ -70,7 +70,7 @@ $langs->loadLangs(array("main", "bills", "cashdesk"));
 ?>
 <link rel="stylesheet" href="css/pos.css">
 </head>
-<body>
+<body class="center">
 
 <script>
 <?php
@@ -129,7 +129,7 @@ else print "var received=0;";
 	    	}
     	}
 	}
-  
+
 function Print(id){
     $.colorbox.close();
     $.colorbox({href:"receipt.php?facid="+id, width:"40%", height:"90%", transition:"none", iframe:"true", title:"<?php
@@ -138,17 +138,15 @@ function Print(id){
 
 </script>
 
-<div style="position:absolute; top:2%; left:5%; height:30%; width:91%;">
+<div class="center">
 <center>
 <center><input type="email" id="email" name="email" style="width:60%;font-size: 200%;" value="<?php echo $invoice->thirdparty->email;?>"></center>
 </center>
 </div>
+<br>
+<div class="center">
 
-<div style="position:absolute; top:33%; left:5%; height:60%; width:91%;">
-
-<button type="button" class="calcbutton" onclick="Print('.<?php echo $placeid; ?>.');"><?php print $langs->trans("PrintTicket"); ?></button>
 <button type="button" class="calcbutton" onclick="addreceived();"><?php print $langs->trans("SendInvoice"); ?></button>
-<button type="button" class="calcbutton" onclick="addreceived();"><?php print $langs->trans("SaveSendInvoice"); ?></button>
 
 </div>
 
