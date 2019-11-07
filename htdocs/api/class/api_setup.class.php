@@ -1095,7 +1095,9 @@ class Setup extends DolibarrApi
      */
     public function getListOfsocialNetworks($sortfield = "rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
-        if (empty($conf->global->MAIN_MODULE_SOCIALNETWORKS)) {
+        global $conf;
+
+        if (empty($conf->socialnetworks->enabled)) {
             throw new RestException(400, 'API not available: this dictionary is not enabled by setup');
         }
 
