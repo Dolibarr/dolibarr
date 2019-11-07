@@ -320,12 +320,11 @@ if ($result)
      				
  					$cumul_vente += $objp->selling_price;
  					$cumul_qty += $objp->qty;
- 					
- 				} else{
+            } else{
  					
  					$cumul_vente += 0;
  					$cumul_qty += 0;
- 				}
+            }
   
  				$cumul_achat += ($objp->type == 2 ? -1 : 1) * $objp->buying_price;
 		}
