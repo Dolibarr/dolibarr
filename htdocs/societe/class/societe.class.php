@@ -428,6 +428,18 @@ class Societe extends CommonObject
 	 */
 	public $price_level;
 	public $outstanding_limit;
+	
+	/**
+	 * Risk level of outstanding
+	 * @var int
+	 */
+	public $id_risk;
+	
+	/**
+	 * Maximum number of payment days
+	 * @var int
+	 */
+	public $max_payment_days;
 
 	/**
 	 * Min order amounts
@@ -897,6 +909,8 @@ class Societe extends CommonObject
 		$this->idprof6		= (! empty($this->idprof6)?trim($this->idprof6):'');
 		$this->prefix_comm	= trim($this->prefix_comm);
 		$this->outstanding_limit = price2num($this->outstanding_limit);
+		$this->id_risk = trim($this->id_risk);
+		$this->max_payment_days = trim($this->max_payment_days);
 		$this->order_min_amount = price2num($this->order_min_amount);
 		$this->supplier_order_min_amount = price2num($this->supplier_order_min_amount);
 
@@ -1094,6 +1108,8 @@ class Societe extends CommonObject
 			$sql .= ",logo = ".(! empty($this->logo)?"'".$this->db->escape($this->logo)."'":"null");
 			$sql .= ",logo_squarred = ".(! empty($this->logo_squarred)?"'".$this->db->escape($this->logo_squarred)."'":"null");
 			$sql .= ",outstanding_limit= ".($this->outstanding_limit!=''?$this->outstanding_limit:'null');
+			$sql .= ",id_risk= ".($this->id_risk!=''?$this->id_risk:'null');
+			$sql .= ",max_payment_days= ".($this->max_payment_days!=''?$this->max_payment_days:'null');
 			$sql .= ",order_min_amount= ".($this->order_min_amount!=''?$this->order_min_amount:'null');
 			$sql .= ",supplier_order_min_amount= ".($this->supplier_order_min_amount!=''?$this->supplier_order_min_amount:'null');
 			$sql .= ",fk_prospectlevel='".$this->db->escape($this->fk_prospectlevel)."'";
@@ -1288,7 +1304,7 @@ class Societe extends CommonObject
 		$sql .= ', s.fk_departement as state_id, s.fk_pays as country_id, s.fk_stcomm, s.remise_supplier, s.mode_reglement, s.cond_reglement, s.fk_account, s.tva_assuj';
 		$sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo, s.logo_squarred';
 		$sql .= ', s.fk_shipping_method';
-		$sql .= ', s.outstanding_limit, s.import_key, s.canvas, s.fk_incoterms, s.location_incoterms';
+		$sql .= ', s.outstanding_limit, s.id_risk, s.max_payment_days, s.import_key, s.canvas, s.fk_incoterms, s.location_incoterms';
 		$sql .= ', s.order_min_amount, s.supplier_order_min_amount';
 		$sql .= ', s.fk_multicurrency, s.multicurrency_code';
 		$sql .= ', fj.libelle as forme_juridique';
@@ -1444,6 +1460,8 @@ class Societe extends CommonObject
 				$this->webservices_key = $obj->webservices_key;
 
 				$this->outstanding_limit		= $obj->outstanding_limit;
+				$this->id_risk					= $obj->id_risk;
+				$this->max_payment_days			= $obj->max_payment_days;
 				$this->order_min_amount			= $obj->order_min_amount;
 				$this->supplier_order_min_amount	= $obj->supplier_order_min_amount;
 
