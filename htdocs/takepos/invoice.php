@@ -451,9 +451,10 @@ if ($action=="valid" || $action=="history")
     } else {
         $sectionwithinvoicelink.=' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
     }
+    $sectionwithinvoicelink.=' <button id="buttonprintsend" type="button" onclick="PrintSend('.$placeid.');">'.$langs->trans('PrintSendTicket').'</button>';
+
     if ($conf->global->TAKEPOS_AUTO_PRINT_TICKETS) $sectionwithinvoicelink.='<script language="javascript">$("#buttonprint").click();</script>';
 }
-
 
 /*
  * View
@@ -536,6 +537,12 @@ if ($action == "search") {
 ?>
 
 });
+	
+function PrintSend(id)
+{
+    console.log("Open box to select the Print/Send form");
+    $.colorbox({href:"printsend.php?facid="+id, width:"90%", height:"50%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("PrintSend");?>"});
+}
 
 function Print(id){
     $.colorbox({href:"receipt.php?facid="+id, width:"40%", height:"90%", transition:"none", iframe:"true", title:"<?php
