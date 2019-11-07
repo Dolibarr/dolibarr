@@ -496,7 +496,7 @@ if ($id > 0 || ! empty($ref)) {
 		else print '<input type="hidden" name="action" value="create">';
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 
 		// Set $products_dispatched with qty dispatched for each product id
 		$products_dispatched = array();
@@ -922,7 +922,7 @@ if ($id > 0 || ! empty($ref)) {
 			print load_fiche_titre($langs->trans("ReceivingForSameOrder"));
 
 			print '<div class="div-table-responsive">';
-			print '<table id="dispatch_received_products" class="noborder" width="100%">';
+			print '<table id="dispatch_received_products" class="noborder centpercent">';
 
 			print '<tr class="liste_titre">';
 			if($conf->reception->enabled)print '<td>' . $langs->trans("Reception") . '</td>';

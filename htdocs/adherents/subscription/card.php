@@ -197,7 +197,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
     $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
     print "\n";
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
     // Ref
     print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td>';
@@ -307,7 +307,7 @@ if ($rowid && $action != 'edit')
 
     print '<div class="underbanner clearboth"></div>';
 
-    print '<table class="border" width="100%">';
+    print '<table class="border centpercent">';
 
     // Member
     $adh->ref=$adh->getFullName($langs);

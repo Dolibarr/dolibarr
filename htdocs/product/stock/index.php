@@ -62,7 +62,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     print '<form method="post" action="'.DOL_URL_ROOT.'/product/stock/list.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder nohover" width="100%">';
+    print '<table class="noborder nohover centpercent">';
     print "<tr class=\"liste_titre\">";
     print '<td colspan="3">'.$langs->trans("Search").'</td></tr>';
     print "<tr ".$bc[false]."><td>";
@@ -87,7 +87,7 @@ if ($result)
     $i = 0;
 
     print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Warehouses").'</th></tr>';
 
     if ($num)
@@ -141,7 +141,7 @@ if ($resql)
 	$num = $db->num_rows($resql);
 
     print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print "<tr class=\"liste_titre\">";
 	print '<th>'.$langs->trans("LastMovements", min($num, $max)).'</th>';
 	print '<th>'.$langs->trans("Product").'</th>';

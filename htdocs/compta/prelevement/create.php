@@ -337,7 +337,7 @@ if ($result)
     $i = 0;
 
     print"\n<!-- debut table -->\n";
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td>';
     print '<td align="center">'.$langs->trans("Date").'</td><td class="right">'.$langs->trans("Amount").'</td>';
     print '</tr>';

@@ -447,7 +447,7 @@ if ($id)
 
     print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
 
     // Form to add a new line
     if ($tabname[$id])
@@ -532,7 +532,7 @@ if ($id)
             print '<input type="hidden" name="page" value="'.$page.'">';
             print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 
-            print '<table class="noborder" width="100%">';
+            print '<table class="noborder centpercent">';
 
             // Title of lines
             print '<tr class="liste_titre">';

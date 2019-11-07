@@ -339,7 +339,7 @@ print '<input type="hidden" name="action" value="addline">';
 
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="liste" width="100%">';
+print '<table class="liste centpercent">';
 //print '<div class="tagtable centpercent">';
 
 $param='';
@@ -439,7 +439,7 @@ print '<input type="hidden" name="action" value="createmovements">';
 $codemove=(isset($_POST["codemove"])?GETPOST("codemove", 'alpha'):dol_print_date(dol_now(), '%Y%m%d%H%M%S'));
 $labelmovement=GETPOST("label")?GETPOST('label'):$langs->trans("StockTransfer").' '.dol_print_date($now, '%Y-%m-%d %H:%M');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 	print '<tr>';
 	print '<td class="titlefield fieldrequired">'.$langs->trans("InventoryCode").'</td>';
 	print '<td>';

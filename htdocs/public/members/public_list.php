@@ -125,7 +125,7 @@ if ($result)
 
 	$param="&statut=$statut&sortorder=$sortorder&sortfield=$sortfield";
 	print_barre_liste($langs->trans("ListOfValidatedPublicMembers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, 0, '');
-	print '<table class="public_border" width="100%">';
+	print '<table class="public_border centpercent">';
 
 	print '<tr class="public_liste_titre">';
 	print '<td><a href="'.$_SERVER["PHP_SELF"].'?page='.$page.'&sortorder=ASC&sortfield=firstname">'.dolGetFirstLastname($langs->trans("Firstname"), $langs->trans("Lastname")).'</a></td>';

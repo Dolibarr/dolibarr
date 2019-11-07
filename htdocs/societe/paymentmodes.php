@@ -992,7 +992,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 		print '<!-- List of stripe payments -->'."\n";
 		print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
-		print '<table class="liste" width="100%">'."\n";
+		print '<table class="liste centpercent">'."\n";
 		print '<tr class="liste_titre">';
 		if (! empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
 		{
@@ -1302,7 +1302,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	{
         print load_fiche_titre($langs->trans('StripeBalance').($stripesupplieracc?' (Stripe connection with StripeConnect account '.$stripesupplieracc.')':' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, '');
         $balance = \Stripe\Balance::retrieve(array("stripe_account" => $stripesupplieracc));
-		print '<table class="liste" width="100%">'."\n";
+		print '<table class="liste centpercent">'."\n";
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Currency').'</td>';
 		print '<td>'.$langs->trans('Available').'</td>';
@@ -1360,7 +1360,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	if (is_array($rib_list))
 	{
 		print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
-		print '<table class="liste" width="100%">';
+		print '<table class="liste centpercent">';
 
 		print '<tr class="liste_titre">';
 		print_liste_field_titre("LabelRIB");
@@ -1684,7 +1684,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 	{
 		print '<br>';
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		if (empty($companybankaccount->rum)) $companybankaccount->rum = $prelevement->buildRumNumber($object->code_client, $companybankaccount->datec, $companybankaccount->id);
 
@@ -1832,7 +1832,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 	{
 		print '<br>';
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		// RUM
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("RUM").'</td>';

@@ -588,7 +588,7 @@ if (!empty($conf->stock->enabled)) $langs->load('stocks');
 
 print load_fiche_titre($langs->trans("Profit"), '', 'title_accountancy');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td class="left" width="200">'.$langs->trans("Element").'</td>';
 print '<td class="right" width="100">'.$langs->trans("Number").'</td>';
@@ -815,7 +815,7 @@ foreach ($listofreferent as $key => $value)
 		print load_fiche_titre($langs->trans($title), $addform, '');
 
 		print "\n".'<!-- Table for tablename = '.$tablename.' -->'."\n";
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 
 		print '<tr class="liste_titre">';
 		// Remove link column

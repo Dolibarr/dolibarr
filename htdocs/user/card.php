@@ -2012,7 +2012,7 @@ else
 						print '<input type="hidden" name="action" value="addgroup" />';
 					}
 
-					print '<table class="noborder" width="100%">'."\n";
+					print '<table class="noborder centpercent">'."\n";
 
 					// Other form for add user to group
 					$parameters=array('caneditgroup' => $caneditgroup, 'groupslist' => $groupslist, 'exclude' => $exclude);

@@ -369,7 +369,7 @@ function showWebsiteTemplates(Website $website)
 	$colspan=2;
 
 	$thumbsbyrow=6;
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 
 	// Title
 	print '<tr class="liste_titre"><th class="titlefield"></th>';

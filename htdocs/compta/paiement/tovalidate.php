@@ -103,7 +103,7 @@ if ($resql)
 
     print_barre_liste($langs->trans("ReceivedCustomersPaymentsToValid"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num);
 
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.rowid", "", "", 'width="60"', $sortfield, $sortorder);
     print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "dp", "", "", 'width="80" align="center"', $sortfield, $sortorder);

@@ -969,7 +969,7 @@ if ($action == 'create')
 
             print '<br>';
 
-            print '<table class="noborder" width="100%">';
+            print '<table class="noborder centpercent">';
 
             // Load receptions already done for same order
             $object->loadReceptions();
@@ -1366,7 +1366,7 @@ elseif ($id || $ref)
     	print '<div class="fichehalfleft">';
     	print '<div class="underbanner clearboth"></div>';
 
-        print '<table class="border" width="100%">';
+        print '<table class="border centpercent">';
 
 		// Linked documents
 		if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))
@@ -1620,7 +1620,7 @@ elseif ($id || $ref)
 		print '<br>';
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		// #
 		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))

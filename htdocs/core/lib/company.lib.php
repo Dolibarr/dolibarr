@@ -1561,7 +1561,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
         $out.="\n";
 
         $out.='<div class="div-table-responsive-no-min">';
-        $out.='<table class="noborder" width="100%">';
+        $out.='<table class="noborder centpercent">';
 
         $out.='<tr class="liste_titre">';
         if ($donetodo)
@@ -1800,7 +1800,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
 		$socstatic = new Societe($db);
 
 		print load_fiche_titre($langs->trans("Subsidiaries"), '', '');
-		print "\n".'<table class="noborder" width="100%">'."\n";
+		print "\n".'<table class="noborder centpercent">'."\n";
 
 		print '<tr class="liste_titre"><td>'.$langs->trans("Company").'</td>';
 		print '<td>'.$langs->trans("Address").'</td><td>'.$langs->trans("Zip").'</td>';

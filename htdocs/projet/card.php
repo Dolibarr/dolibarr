@@ -786,7 +786,7 @@ elseif ($object->id > 0)
 	{
 		dol_fiche_head($head, 'project', $langs->trans("Project"), 0, ($object->public?'projectpub':'project'));
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		// Ref
 		$suggestedref=$object->ref;

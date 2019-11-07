@@ -186,7 +186,7 @@ $resql=$db->query($sql);
 if ($resql)
 {
     print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="4">'.$langs->trans("LatestModifiedProjects", $max).'</th></tr>';
 
@@ -258,7 +258,7 @@ $companystatic=new Societe($db);    // We need a clean new object for next loop 
 
 // Open project per thirdparty
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print_liste_field_titre("OpenedProjectsByThirdparties", $_SERVER["PHP_SELF"], "s.nom", "", "", '', $sortfield, $sortorder);
 print_liste_field_titre("NbOfProjects", "", "", "", "", '', $sortfield, $sortorder, 'right ');

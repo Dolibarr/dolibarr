@@ -109,7 +109,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 $form=new Form($db);
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td colspan="4">'.$langs->trans("LDAPSynchronizeGroups").'</td>';
@@ -131,7 +131,7 @@ print '</tr>';
 
 print '</table>';
 print '<br>';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td width="25%">'.$langs->trans("LDAPDolibarrMapping").'</td>';

@@ -5962,7 +5962,7 @@ class Form
 	 * @param	int				$forcecombo			Force to load all values and output a standard combobox (with no beautification)
 	 * @param	int				$outputmode			0=HTML select string, 1=Array
 	 * @param	int				$disabled			1=Html component is disabled
-	 * @return	string								Return HTML string
+	 * @return	string|array						Return HTML string
 	 * @see selectForForms()
 	 */
     public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled = 0)
@@ -5975,8 +5975,7 @@ class Form
 		if ($prefixforautocompletemode == 'societe') $prefixforautocompletemode='company';
 		$confkeyforautocompletemode=strtoupper($prefixforautocompletemode).'_USE_SEARCH_TO_SELECT';	// For example COMPANY_USE_SEARCH_TO_SELECT
 
-		$fieldstoshow='t.ref';
-		if (! empty($objecttmp->fields))	// For object that declare it, it is better to use declared fields ( like societe, contact, ...)
+		if (! empty($objecttmp->fields))	// For object that declare it, it is better to use declared fields (like societe, contact, ...)
 		{
 			$tmpfieldstoshow='';
 			foreach($objecttmp->fields as $key => $val)
@@ -5984,6 +5983,18 @@ class Form
 				if ($val['showoncombobox']) $tmpfieldstoshow.=($tmpfieldstoshow?',':'').'t.'.$key;
 			}
 			if ($tmpfieldstoshow) $fieldstoshow = $tmpfieldstoshow;
+		}
+		if (empty($fieldstoshow))
+		{
+			if (isset($objecttmp->fields['ref'])) {
+				$fieldstoshow='t.ref';
+			}
+			else
+			{
+				$langs->load("errors");
+				$this->error = $langs->trans("ErrorNoFieldWithAttributeShowoncombobox");
+				return $langs->trans('ErrorNoFieldWithAttributeShowoncombobox');
+			}
 		}
 
 		$out='';
@@ -7432,7 +7443,7 @@ class Form
 					$ret.='<!-- Put link to gravatar -->';
 					//$defaultimg=urlencode(dol_buildpath($nophoto,3));
 					$defaultimg='mm';
-					$ret.='<img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="Gravatar avatar" title="'.$email.' Gravatar avatar" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="https://www.gravatar.com/avatar/'.dol_hash(strtolower(trim($email)), 3).'?s='.$width.'&d='.$defaultimg.'">';	// gravatar need md5 hash
+					$ret.='<img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="Gravatar avatar" title="'.$email.' Gravatar avatar" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="https://www.gravatar.com/avatar/'.md5(strtolower(trim($email))).'?s='.$width.'&d='.$defaultimg.'">';	// gravatar need md5 hash
 				}
 				else
 				{

@@ -195,7 +195,7 @@ print '<input type="hidden" name="action" value="update">';
  * Main Options
  */
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">' . $langs->trans('Options') . '</td>';
 print "</tr>\n";
@@ -223,7 +223,7 @@ print "<br>\n";
 /*
  * Export model
  */
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td colspan="2">' . $langs->trans("Modelcsv") . '</td>';
@@ -254,7 +254,7 @@ print "<br>\n";
 
 $num2 = count($model_option);
 if ($num2) {
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="3">' . $langs->trans('OtherOptions') . '</td>';
 	print "</tr>\n";

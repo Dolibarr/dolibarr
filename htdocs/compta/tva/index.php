@@ -97,7 +97,7 @@ function pt($db, $sql, $date)
         $num = $db->num_rows($result);
         $i = 0;
         $total = 0;
-        print '<table class="noborder" width="100%">';
+        print '<table class="noborder centpercent">';
 
         print '<tr class="liste_titre">';
         print '<td class="nowrap">'.$date.'</td>';
@@ -243,7 +243,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 print load_fiche_titre($langs->trans("VATSummary"), '', '');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="30%">'.$langs->trans("Year")." ".$y.'</td>';
 print '<td class="right">'.$langs->trans("VATToPay").'</td>';
@@ -576,7 +576,7 @@ if (! empty($conf->global->MAIN_FEATURES_LEVEL))
     $result = $db->query($sql1);
     if ($result) {
         $obj = $db->fetch_object($result);
-        print '<table class="noborder" width="100%">';
+        print '<table class="noborder centpercent">';
 
         print "<tr>";
         print '<td class="right">' . $langs->trans("VATDue") . '</td>';

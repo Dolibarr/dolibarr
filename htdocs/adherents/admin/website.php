@@ -163,7 +163,7 @@ if (! empty($conf->global->MEMBER_ENABLE_PUBLIC))
 {
 	print '<br>';
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Parameter").'</td>';

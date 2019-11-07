@@ -102,7 +102,7 @@ print '</div>';
 print '<br>';
 
 print '<div class="div-table-responsive">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>' . $langs->trans('Ref') . '</td>';

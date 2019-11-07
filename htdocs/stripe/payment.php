@@ -565,7 +565,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 		dol_fiche_head();
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		// Invoice
 		/*if ($facture->id > 0)
@@ -620,7 +620,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         print '<br>';
         print_barre_liste($langs->trans('StripeSourceList').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
 
-        print '<table class="liste" width="100%">'."\n";
+        print '<table class="liste centpercent">'."\n";
         // Titles with sort buttons
         print '<tr class="liste_titre">';
         print '<td class="left"></td>';
@@ -820,7 +820,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
                 print_barre_liste($langs->trans('StripeInvoiceList').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
 
-                print '<table class="noborder" width="100%">';
+                print '<table class="noborder centpercent">';
                 print '<tr class="liste_titre">';
                 print '<td>'.$arraytitle.'</td>';
                 print '<td class="center">'.$langs->trans('Date').'</td>';
@@ -1107,7 +1107,7 @@ if (! GETPOST('action'))
         $i = 0;
 
         print_barre_liste($langs->trans('Payments'), $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', $num);
-        print '<table class="noborder" width="100%">';
+        print '<table class="noborder centpercent">';
         print '<tr class="liste_titre">';
         print_liste_field_titre('Invoice', $_SERVER["PHP_SELF"], 'ref', '', '', '', $sortfield, $sortorder);
         print_liste_field_titre('Date', $_SERVER["PHP_SELF"], 'dp', '', '', '', $sortfield, $sortorder);

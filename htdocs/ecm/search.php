@@ -125,7 +125,7 @@ $head = ecm_prepare_head_fm($ecmdir, $module, $section);
 //dol_fiche_head($head, 'search_form', '', 1);
 
 
-print '<table class="border" width="100%"><tr><td width="40%" valign="top">';
+print '<table class="border centpercent"><tr><td width="40%" valign="top">';
 
 // Left area
 

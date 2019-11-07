@@ -204,7 +204,7 @@ if($local==1){
 }
 
 // VAT Received and paid
-echo '<table class="noborder" width="100%">';
+echo '<table class="noborder centpercent">';
 
 $y = $year_current;
 $total = 0;
@@ -480,7 +480,7 @@ else
 	print '</table>';
 	$diff=$x_coll_sum;
 
-	echo '<table class="noborder" width="100%">';
+	echo '<table class="noborder centpercent">';
 	//print table headers for this quadri - expenses now
 	print '<tr class="liste_titre">';
 	print '<td class="left">'.$elementsup.'</td>';
@@ -635,7 +635,7 @@ else
 
 	// Total to pay
     print '<br><br>';
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     $diff = $x_coll_sum - $x_paye_sum;
 	print '<tr class="liste_total">';
 	print '<td class="liste_total" colspan="'.$span.'">'.$langs->trans("TotalToPay").($q?', '.$langs->trans("Quadri").' '.$q:'').'</td>';

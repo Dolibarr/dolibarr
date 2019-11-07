@@ -1157,7 +1157,7 @@ if ($action == 'edit_vat' && ($user->rights->produit->creer || $user->rights->se
 
 	dol_fiche_head('');
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// VAT
 	print '<tr><td>' . $langs->trans("DefaultTaxRate") . '</td><td>';
@@ -1191,7 +1191,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 
 		dol_fiche_head('');
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 
 		// VAT
 		print '<tr><td class="titlefield">' . $langs->trans("DefaultTaxRate") . '</td><td>';
@@ -1463,7 +1463,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
     		//else print_barre_liste($langs->trans("PriceByCustomerLog"),'','','','','','', 0, 0, 'title_accountancy.png');
 
     		print '<div class="div-table-responsive">';
-    		print '<table class="noborder" width="100%">';
+    		print '<table class="noborder centpercent">';
 
     		print '<tr class="liste_titre">';
     		print '<td>' . $langs->trans("AppliedPricesFrom") . '</td>';
@@ -1659,7 +1659,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		dol_fiche_head();
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 		print '<tr>';
 		print '<td class="fieldrequired">' . $langs->trans('ThirdParty') . '</td>';
 		print '<td>';
@@ -1746,7 +1746,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		dol_fiche_head();
 
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent">';
 		print '<tr>';
 		print '<td class="titlefield">' . $langs->trans('ThirdParty') . '</td>';
 		$staticsoc = new Societe($db);
@@ -1856,7 +1856,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 			print '<input type="hidden" name="id" value="' . $object->id . '">';
 
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 
 			print '<tr class="liste_titre">';
 			print '<td>' . $langs->trans("ThirdParty") . '</td>';
@@ -1976,7 +1976,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 		print '<input type="hidden" name="id" value="' . $object->id . '">';
 
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 
 		if (count($prodcustprice->lines) > 0 || $search_soc)
 		{
