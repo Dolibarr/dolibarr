@@ -226,7 +226,7 @@ if (! empty($conf->fournisseur->enabled))
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-    print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("DraftOrders").'</th></tr>';
