@@ -1098,7 +1098,7 @@ class Setup extends DolibarrApi
         if (empty($conf->global->MAIN_MODULE_SOCIALNETWORKS)) {
             throw new RestException(400, 'API not available: this dictionary is not enabled by setup');
         }
-		
+
 		$list = array();
         //TODO link with multicurrency module
         $sql = "SELECT t.rowid, t.entity, t.code, t.label, t.url, t.icon, t.active";
