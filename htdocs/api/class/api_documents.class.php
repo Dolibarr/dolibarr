@@ -562,7 +562,7 @@ class Documents extends DolibarrApi
 		// $original_file here is still value of filename without any dir.
 
 		$upload_dir = dol_sanitizePathName($upload_dir);
-		
+
 		if (dol_mkdir($upload_dir) < 0) // needed by products
 		{
 		    throw new RestException(500, 'Error while trying to create directory.');
