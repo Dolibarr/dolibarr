@@ -1095,7 +1095,13 @@ class Setup extends DolibarrApi
      */
     public function getListOfsocialNetworks($sortfield = "rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
     {
-        $list = array();
+        global $conf;
+
+        if (empty($conf->socialnetworks->enabled)) {
+            throw new RestException(400, 'API not available: this dictionary is not enabled by setup');
+        }
+
+		$list = array();
         //TODO link with multicurrency module
         $sql = "SELECT t.rowid, t.entity, t.code, t.label, t.url, t.icon, t.active";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_socialnetworks as t";
