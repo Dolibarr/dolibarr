@@ -1145,7 +1145,7 @@ else
                      });';
             print '</script>'."\n";
 
-            print '<div id="selectthirdpartytype">sssssddsd';
+            print '<div id="selectthirdpartytype">';
             print '<div class="hideonsmartphone float">';
             print $langs->trans("ThirdPartyType").': &nbsp; &nbsp; ';
             print '</div>';
