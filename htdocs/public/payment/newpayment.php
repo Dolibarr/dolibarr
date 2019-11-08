@@ -63,10 +63,10 @@ $action=GETPOST('action', 'aZ09');
 // tag (a free text, required if type is empty)
 // currency (iso code)
 
-$suffix=GETPOST("suffix", 'aZ09');
-$amount=price2num(GETPOST("amount", 'alpha'));
-if (! GETPOST("currency", 'alpha')) $currency=$conf->currency;
-else $currency=GETPOST("currency", 'alpha');
+$suffix = GETPOST("suffix", 'aZ09');
+$amount = price2num(GETPOST("amount", 'alpha'));
+if (! GETPOST("currency", 'alpha')) $currency = $conf->currency;
+else $currency = GETPOST("currency", 'alpha');
 $source = GETPOST("s", 'alpha')?GETPOST("s", 'alpha'):GETPOST("source", 'alpha');
 $download = GETPOST('d', 'int')?GETPOST('d', 'int'):GETPOST('download', 'int');
 
@@ -159,7 +159,7 @@ $urlko=preg_replace('/&$/', '', $urlko);  // Remove last &
 
 
 
-// Find valid payment methods
+// Make special controls
 
 if ((empty($paymentmethod) || $paymentmethod == 'paypal') && ! empty($conf->paypal->enabled))
 {
@@ -186,36 +186,18 @@ if ((empty($paymentmethod) || $paymentmethod == 'paypal') && ! empty($conf->payp
 		dol_print_error('', "Paypal setup param PAYPAL_API_SIGNATURE not defined");
 		return -1;
 	}
-
-	$validpaymentmethod['paypal']='valid';
 }
-
 if ((empty($paymentmethod) || $paymentmethod == 'paybox') && ! empty($conf->paybox->enabled))
 {
-	$langs->load("paybox");
-
-	// TODO Chek setup is complete
-
-	$validpaymentmethod['paybox']='valid';
+	// No specific test for the moment
 }
-
 if ((empty($paymentmethod) || $paymentmethod == 'stripe') && ! empty($conf->stripe->enabled))
 {
-	$langs->load("stripe");
-
-	require_once DOL_DOCUMENT_ROOT.'/stripe/config.php';
-	/* already included into /stripe/config.php
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/stripe/lib/stripe.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php';
-	*/
-
-	$validpaymentmethod['stripe']='valid';
+	require_once DOL_DOCUMENT_ROOT.'/stripe/config.php';	// This include also /stripe/lib/stripe.lib.php, /includes/stripe/init.php, ...
 }
 
-// TODO Replace previous set of $validpaymentmethod with this line:
-//$validpaymentmethod = getValidOnlinePaymentMethods($paymentmethod);
+// Initialize $validpaymentmethod
+$validpaymentmethod = getValidOnlinePaymentMethods($paymentmethod);
 
 
 // Check security token
