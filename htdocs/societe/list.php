@@ -414,7 +414,7 @@ elseif ($search_sale || (!$user->rights->societe->client->voir && !$socid)) $sql
 $sql.= " WHERE s.entity IN (".getEntity('societe').")";
 if (! $user->rights->societe->client->voir && ! $socid)	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)                $sql.= " AND s.rowid = ".$socid;
-if ($search_sale != -2)    $sql.= " AND s.rowid = sc.fk_soc";        // Join for the needed table to filter by sale
+if ($search_sale && $search_sale != -2)    $sql.= " AND s.rowid = sc.fk_soc";        // Join for the needed table to filter by sale
 if (! $user->rights->fournisseur->lire) $sql.=" AND (s.fournisseur <> 1 OR s.client <> 0)";    // client=0, fournisseur=0 must be visible
 if ($search_sale == -2)    $sql.= " AND sc.fk_user IS NULL";
 elseif ($search_sale)          $sql.= " AND sc.fk_user = ".$db->escape($search_sale);
