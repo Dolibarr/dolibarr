@@ -505,6 +505,11 @@ class Documents extends DolibarrApi
 					throw new RestException(500, 'Error while fetching Task '.$ref);
 				}
 			}
+			elseif ($modulepart == 'product' || $modulepart == 'produit' || $modulepart == 'service' || $modulepart == 'produit|service')
+			{
+				require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+				$object = new Product($this->db);
+			}
 			// TODO Implement additional moduleparts
 			else
 			{
@@ -557,6 +562,11 @@ class Documents extends DolibarrApi
 		// $original_file here is still value of filename without any dir.
 
 		$upload_dir = dol_sanitizePathName($upload_dir);
+		
+		if (dol_mkdir($upload_dir) < 0) // needed by products
+		{
+		    throw new RestException(500, 'Error while trying to create directory.');
+		}
 
 		$destfile = $upload_dir . '/' . $original_file;
 		$destfiletmp = DOL_DATA_ROOT.'/admin/temp/' . $original_file;
