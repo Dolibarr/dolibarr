@@ -220,7 +220,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products"));
 
 		$nblines = count($object->lines);
-		
+
 		if ($conf->fournisseur->facture->dir_output)
 		{
 			$object->fetch_thirdparty();
@@ -269,12 +269,12 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				// Set nblines with the new facture lines content after hook
 				$nblines = count($object->lines);
 				$nbpayments = count($object->getListOfPayments());
-				
+
 				// Create pdf instance
                 $pdf=pdf_getInstance($this->format);
                 $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
                 $pdf->SetAutoPageBreak(1, 0);
-                
+
                 $heightforinfotot = 50+(4*$nbpayments);	// Height reserved to output the info and total part and payment part
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
 	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
@@ -368,7 +368,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
-					
+
 					$pdf->SetFont('', '', $default_font_size - 1);
 					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top-1, dol_htmlentitiesbr($object->note_public), 0, 1);
 					$nexY = $pdf->GetY();
@@ -395,13 +395,13 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					// Define size of image if we need it
 					$imglinesize=array();
 					if (! empty($realpatharray[$i])) $imglinesize=pdf_getSizeForImage($realpatharray[$i]);
-					
+
 					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $heightforfooter+$heightforfreetext+$heightforinfotot);	// The only function to edit the bottom margin of current page to set it.
 					$pageposbefore=$pdf->getPage();
 
 					$showpricebeforepagebreak=1;
-					
+
 					// Description of product line
 					$curX = $this->posxdesc-1;
 
@@ -437,7 +437,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 						$pdf->commitTransaction();
 					}
 					$posYAfterDescription=$pdf->GetY();
-					
+
 					$nexY = $pdf->GetY();
                     $pageposafter=$pdf->getPage();
 					$pdf->setPage($pageposbefore);
@@ -484,7 +484,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					    $remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
 						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, $remise_percent, 0, 'R');
 					}
-					
+
 					// Total HT line
 					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
                     $pdf->SetXY($this->postotalht, $curY);
@@ -512,7 +512,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$this->localtax2[$localtax2rate]+=$localtax2ligne;
 
 					if ($posYAfterImage > $posYAfterDescription) $nexY=$posYAfterImage;
-					
+
 					// Add line
 					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
 					{
@@ -644,7 +644,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 		$sign=1;
 		if ($object->type == 2 && ! empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE)) $sign=-1;
-		
+
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
         $tab2_top = $posy;
@@ -675,7 +675,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$pdf->SetFillColor(248, 248, 248);
 
 		$total_ttc = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ttc : $object->total_ttc;
-		
+
 		$this->atleastoneratenotnull=0;
 		foreach($this->tva as $tvakey => $tvaval)
 		{
@@ -812,7 +812,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("Paid"), 0, 'L', 0);
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle + $depositsamount, 0, $outputlangs), 0, 'R', 0);
-			
+
 			// Credit note
 			if ($creditnoteamount)
 			{
@@ -823,21 +823,21 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($creditnoteamount, 0, $outputlangs), 0, 'R', 0);
 			}
-			
+
 			// Escompte
 			if ($object->close_code == Facture::CLOSECODE_DISCOUNTVAT)
 			{
 				$index++;
 				$pdf->SetFillColor(255, 255, 255);
-				
+
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("EscompteOfferedShort"), $useborder, 'L', 1);
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 0, $outputlangs), $useborder, 'R', 1);
-				
+
 				$resteapayer=0;
 			}
-			
+
 			$index++;
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->SetFillColor(224, 224, 224);
