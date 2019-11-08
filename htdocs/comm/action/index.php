@@ -97,7 +97,7 @@ if (GETPOST('search_actioncode', 'array'))
 }
 else
 {
-    $actioncode=GETPOST("search_actioncode", "alpha", 3)?GETPOST("search_actioncode", "alpha", 3):(GETPOST("search_actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+	$actioncode=GETPOST("search_actioncode", "alpha", 3)?GETPOST("search_actioncode", "alpha", 3):(GETPOST("search_actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
 if ($actioncode == '' && empty($actioncodearray)) $actioncode=(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE);
 
@@ -1476,16 +1476,15 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
                     //var_dump($event->userassigned);
                     //var_dump($event->transparency);
-                    print '<table class="centpercent cal_event'.(empty($event->transparency)?' cal_event_notbusy':' cal_event_busy').'" style="'.$h;
-                    if (empty($event->transparency) && empty($conf->global->AGENDA_NO_TRANSPARENT_ON_NOT_BUSY))
-                    {
-                    	print 'border: 2px solid #'.$color.';';
-                    }
-                    else
-                    {
-                    	print 'background: #'.$color.';';
-                    	print 'background: -webkit-gradient(linear, left top, left bottom, from(#'.dol_color_minus($color, -3).'), to(#'.dol_color_minus($color, -1).'));';
-                    }
+                    print '<table class="centpercent cal_event';
+                    print (empty($event->transparency)?' cal_event_notbusy':' cal_event_busy');
+                    if (empty($event->transparency) && empty($conf->global->AGENDA_NO_TRANSPARENT_ON_NOT_BUSY)) print ' opacitymedium';	// Not busy
+                    print '" style="'.$h;
+                    $colortouse = $color;
+                    // If colortouse is similar than background, we force to change it.
+
+                   	print 'background: #'.$colortouse.';';
+                   	print 'background: -webkit-gradient(linear, left top, left bottom, from(#'.dol_color_minus($color, -3).'), to(#'.dol_color_minus($color, -1).'));';
                     //if (! empty($event->transparency)) print 'background: #'.$color.'; background: -webkit-gradient(linear, left top, left bottom, from(#'.$color.'), to(#'.dol_color_minus($color,1).'));';
                     //else print 'background-color: transparent !important; background: none; border: 1px solid #bbb;';
                     //print ' -moz-border-radius:4px;"';
@@ -1653,9 +1652,9 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                 {
                 	print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action='.$action.'&maxprint=0&month='.$monthshown.'&year='.$year;
                     print ($status?'&status='.$status:'').($filter?'&filter='.$filter:'');
-                    print ($filtert?'&filtert='.$filtert:'');
-                    print ($usergroup?'&usergroup='.$usergroup:'');
-                    print ($actioncode!=''?'&actioncode='.$actioncode:'');
+                    print ($filtert?'&search_filtert='.$filtert:'');
+                    print ($usergroup?'&search_usergroup='.$usergroup:'');
+                    print ($actioncode!=''?'&search_actioncode='.$actioncode:'');
                     print '">'.img_picto("all", "1downarrow_selected.png").' ...';
                     print ' +'.(count($eventarray[$daykey])-$maxprint);
                     print '</a>';
