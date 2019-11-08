@@ -920,8 +920,11 @@ else
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 1);
 			$c = new Categorie($db);
 			$cats = $c->containing($object->id, Categorie::TYPE_ACCOUNT);
-			foreach($cats as $cat) {
-				$arrayselected[] = $cat->id;
+			if (is_array($cats))
+			{
+				foreach($cats as $cat) {
+					$arrayselected[] = $cat->id;
+				}
 			}
 			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
 			print "</td></tr>";
