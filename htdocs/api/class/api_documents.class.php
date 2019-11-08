@@ -602,7 +602,7 @@ class Documents extends DolibarrApi
 
 		return dol_basename($destfile);
 	}
-	
+
 	/**
 	 * Delete a document.
 	 *
@@ -620,38 +620,38 @@ class Documents extends DolibarrApi
 	public function delete($modulepart, $original_file = '')
 	{
 	    global $conf, $langs;
-	    
+
 	    if (empty($modulepart)) {
 	        throw new RestException(400, 'bad value for parameter modulepart');
 	    }
 	    if (empty($original_file)) {
 	        throw new RestException(400, 'bad value for parameter original_file');
 	    }
-	    
+
 	    //--- Finds and returns the document
 	    $entity=$conf->entity;
-	    
+
 	    $check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, DolibarrApiAccess::$user, '', 'read');
 	    $accessallowed = $check_access['accessallowed'];
 	    $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 	    $original_file = $check_access['original_file'];
-	    
+
 	    if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file)) {
 	        throw new RestException(401);
 	    }
 	    if (!$accessallowed) {
 	        throw new RestException(401);
 	    }
-	    
+
 	    $filename = basename($original_file);
 	    $original_file_osencoded=dol_osencode($original_file);	// New file name encoded in OS encoding charset
-	    
+
 	    if (! file_exists($original_file_osencoded))
 	    {
 	        dol_syslog("Try to download not found file ".$original_file_osencoded, LOG_WARNING);
 	        throw new RestException(404, 'File not found');
 	    }
-	    
+
 	    if (@unlink($original_file_osencoded)) {
     	    return array(
     	        'success' => array(
@@ -660,7 +660,7 @@ class Documents extends DolibarrApi
     	        )
     	    );
 	    }
-	    
+
 	    throw new RestException(401);
 	}
 
