@@ -1478,13 +1478,21 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     //var_dump($event->transparency);
                     print '<table class="centpercent cal_event';
                     print (empty($event->transparency)?' cal_event_notbusy':' cal_event_busy');
-                    if (empty($event->transparency) && empty($conf->global->AGENDA_NO_TRANSPARENT_ON_NOT_BUSY)) print ' opacitymedium';	// Not busy
+                    //if (empty($event->transparency) && empty($conf->global->AGENDA_NO_TRANSPARENT_ON_NOT_BUSY)) print ' opacitymedium';	// Not busy
                     print '" style="'.$h;
                     $colortouse = $color;
                     // If colortouse is similar than background, we force to change it.
-
-                   	print 'background: #'.$colortouse.';';
-                   	print 'background: -webkit-gradient(linear, left top, left bottom, from(#'.dol_color_minus($color, -3).'), to(#'.dol_color_minus($color, -1).'));';
+                    if (empty($event->transparency) && empty($conf->global->AGENDA_NO_TRANSPARENT_ON_NOT_BUSY))
+                    {
+                    	print 'border: 2px solid #'.$colortouse.';';
+                    }
+                    else
+                    {
+                    	print 'background: #'.$colortouse.';';
+                    	print 'background: -webkit-gradient(linear, left top, left bottom, from(#'.dol_color_minus($colortouse, -3).'), to(#'.dol_color_minus($colortouse, -1).'));';
+                    }
+                   	//print 'background: #'.$colortouse.';';
+                   	//print 'background: -webkit-gradient(linear, left top, left bottom, from(#'.dol_color_minus($color, -3).'), to(#'.dol_color_minus($color, -1).'));';
                     //if (! empty($event->transparency)) print 'background: #'.$color.'; background: -webkit-gradient(linear, left top, left bottom, from(#'.$color.'), to(#'.dol_color_minus($color,1).'));';
                     //else print 'background-color: transparent !important; background: none; border: 1px solid #bbb;';
                     //print ' -moz-border-radius:4px;"';
