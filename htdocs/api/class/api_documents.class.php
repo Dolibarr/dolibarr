@@ -505,6 +505,11 @@ class Documents extends DolibarrApi
 					throw new RestException(500, 'Error while fetching Task '.$ref);
 				}
 			}
+			elseif ($modulepart == 'product' || $modulepart == 'produit' || $modulepart == 'service' || $modulepart == 'produit|service')
+			{
+				require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+				$object = new Product($this->db);
+			}
 			// TODO Implement additional moduleparts
 			else
 			{
@@ -558,6 +563,11 @@ class Documents extends DolibarrApi
 
 		$upload_dir = dol_sanitizePathName($upload_dir);
 
+		if (dol_mkdir($upload_dir) < 0) // needed by products
+		{
+		    throw new RestException(500, 'Error while trying to create directory.');
+		}
+
 		$destfile = $upload_dir . '/' . $original_file;
 		$destfiletmp = DOL_DATA_ROOT.'/admin/temp/' . $original_file;
 		dol_delete_file($destfiletmp);
@@ -591,6 +601,67 @@ class Documents extends DolibarrApi
 		}
 
 		return dol_basename($destfile);
+	}
+
+	/**
+	 * Delete a document.
+	 *
+	 * @param   string  $modulepart     Name of module or area concerned by file download ('product', ...)
+	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: PRODUCT-REF-999/IMAGE-999.jpg)
+	 * @return  array                   List of documents
+	 *
+	 * @throws 400
+	 * @throws 401
+	 * @throws 404
+	 * @throws 200
+	 *
+	 * @url DELETE /
+	 */
+	public function delete($modulepart, $original_file = '')
+	{
+	    global $conf, $langs;
+
+	    if (empty($modulepart)) {
+	        throw new RestException(400, 'bad value for parameter modulepart');
+	    }
+	    if (empty($original_file)) {
+	        throw new RestException(400, 'bad value for parameter original_file');
+	    }
+
+	    //--- Finds and returns the document
+	    $entity=$conf->entity;
+
+	    $check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, DolibarrApiAccess::$user, '', 'read');
+	    $accessallowed = $check_access['accessallowed'];
+	    $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
+	    $original_file = $check_access['original_file'];
+
+	    if (preg_match('/\.\./', $original_file) || preg_match('/[<>|]/', $original_file)) {
+	        throw new RestException(401);
+	    }
+	    if (!$accessallowed) {
+	        throw new RestException(401);
+	    }
+
+	    $filename = basename($original_file);
+	    $original_file_osencoded=dol_osencode($original_file);	// New file name encoded in OS encoding charset
+
+	    if (! file_exists($original_file_osencoded))
+	    {
+	        dol_syslog("Try to download not found file ".$original_file_osencoded, LOG_WARNING);
+	        throw new RestException(404, 'File not found');
+	    }
+
+	    if (@unlink($original_file_osencoded)) {
+    	    return array(
+    	        'success' => array(
+    	            'code' => 200,
+    	            'message' => 'Document deleted'
+    	        )
+    	    );
+	    }
+
+	    throw new RestException(401);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName
