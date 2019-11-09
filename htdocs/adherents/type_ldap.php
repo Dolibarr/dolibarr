@@ -121,7 +121,7 @@ print '</div>';
 dol_fiche_end();
 
 /*
- * Barre d'actions
+ * Action bar
  */
 
 print '<div class="tabsAction">';
@@ -137,7 +137,7 @@ if ($conf->global->LDAP_MEMBER_TYPE_ACTIVE == 1) print "<br>\n";
 
 
 
-// Affichage attributs LDAP
+// Display LDAP attributes
 print load_fiche_titre($langs->trans("LDAPInformationsForThisMemberType"));
 
 print '<table width="100%" class="noborder">';
@@ -147,7 +147,7 @@ print '<td>'.$langs->trans("LDAPAttributes").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '</tr>';
 
-// Lecture LDAP
+// LDAP reading
 $ldap=new Ldap();
 $result=$ldap->connect_bind();
 if ($result > 0)
