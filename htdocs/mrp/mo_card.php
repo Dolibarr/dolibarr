@@ -219,6 +219,8 @@ if ($action == 'create')
 						$('#fk_product').trigger('change'); // Notify any JS components that the value changed
 						$('#note_private').val(data.description);
 						$('#note_private').trigger('change'); // Notify any JS components that the value changed
+						$('#fk_warehouse').val(data.fk_warehouse);
+						$('#fk_warehouse').trigger('change'); // Notify any JS components that the value changed
 						if (typeof CKEDITOR != "undefined") {
 							if (typeof CKEDITOR.instances != "undefined") {
 								if (typeof CKEDITOR.instances.note_private != "undefined") {
