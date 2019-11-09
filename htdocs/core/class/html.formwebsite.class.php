@@ -263,12 +263,15 @@ class FormWebsite
 
 	    	foreach($website->lines as $key => $valpage)
 	    	{
+	    		$valueforoption = '<span class="opacitymedium">['.$valpage->type_container.' '.sprintf("%03d", $valpage->id).']</span> ';
+	    		$valueforoption.= $valpage->pageurl.' - '.$valpage->title;
+	    		if ($website->fk_default_home && $key == $website->fk_default_home) $valueforoption.=' <span class="opacitymedium">('.$langs->trans("HomePage").')</span>';
+
 	    		$out.='<option value="'.$key.'"';
 	    		if ($pageid > 0 && $pageid == $key) $out.=' selected';		// To preselect a value
+	    		$out.=' data-html="'.dol_escape_htmltag($valueforoption).'"';
 	    		$out.='>';
-	    		$out.='['.$valpage->type_container.' '.sprintf("%03d", $valpage->id).'] ';
-	    		$out.=$valpage->pageurl.' - '.$valpage->title;
-	    		if ($website->fk_default_home && $key == $website->fk_default_home) $out.=' ('.$langs->trans("HomePage").')';
+	    		$out.=$valueforoption;
 	    		$out.='</option>';
 	    	}
 	    }
