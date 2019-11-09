@@ -1073,7 +1073,7 @@ class Product extends CommonObject
                         $comb = new ProductCombination($this->db);
 
                         foreach ($comb->fetchAllByFkProductParent($this->id) as $currcomb) {
-                                 $currcomb->updateProperties($this);
+                                 $currcomb->updateProperties($this, $user);
                         }
                     }
 
