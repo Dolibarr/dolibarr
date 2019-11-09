@@ -2583,7 +2583,8 @@ if (! function_exists("llxFooter"))
 			    					  version: "<?php echo (float) DOL_VERSION; ?>",
 			    					  entity: "<?php echo (int) $conf->entity; ?>",
 			    					  dbtype: "<?php echo dol_escape_js($db->type); ?>",
-			    					  country_code: "<?php echo dol_escape_js($mysoc->country_code); ?>"
+			    					  country_code: "<?php echo dol_escape_js($mysoc->country_code); ?>",
+			    					  php_version: "<?php echo phpversion(); ?>"
 			    				  },
 		    					  success: function (data, status, xhr) {   // success callback function (data contains body of response)
 		      					    	console.log("Ping ok");
