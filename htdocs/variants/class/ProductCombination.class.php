@@ -248,7 +248,7 @@ class ProductCombination
 		$parent = new Product($this->db);
 		$parent->fetch($this->fk_product_parent);
 
-		$this->updateProperties($parent);
+		$this->updateProperties($parent, $user);
 
 		return 1;
 	}
@@ -315,11 +315,12 @@ class ProductCombination
 	 * Updates the weight of the child product. The price must be updated using Product::updatePrices
 	 *
 	 * @param Product $parent Parent product
+	 * @param	User	$user		Object user
 	 * @return int >0 OK <0 KO
 	 */
-	public function updateProperties(Product $parent)
+	public function updateProperties(Product $parent, User $user)
 	{
-		global $user, $conf;
+		global $conf;
 
 		$this->db->begin();
 
