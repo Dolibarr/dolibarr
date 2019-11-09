@@ -2567,7 +2567,7 @@ if (! function_exists("llxFooter"))
 					print "\n".'<!-- Includes JS for Ping of Dolibarr MAIN_FIRST_PING_OK_DATE = '.$conf->global->MAIN_FIRST_PING_OK_DATE.' MAIN_FIRST_PING_OK_ID = '.$conf->global->MAIN_FIRST_PING_OK_ID.' -->'."\n";
 					print "\n<!-- JS CODE TO ENABLE the anonymous Ontime Ping -->\n";
 					$hash_unique_id = md5('dolibarr'.$conf->file->instance_unique_id);
-					$url_for_ping = "https://ping.dolibarr.org/";
+					$url_for_ping = (empty($conf->global->MAIN_URL_FOR_PING) ? "https://ping.dolibarr.org/" : $conf->global->MAIN_URL_FOR_PING);
 					?>
 		    			<script>
 		    			jQuery(document).ready(function (tmp) {
@@ -2576,7 +2576,14 @@ if (! function_exists("llxFooter"))
 		    					  url: "<?php echo $url_for_ping ?>",
 		    					  timeout: 500,     // timeout milliseconds
 		    					  cache: false,
-		    					  data: { hash_algo: "md5", hash_unique_id: "<?php echo $hash_unique_id; ?>", action: "dolibarrping", version: "<?php echo (float) DOL_VERSION; ?>", entity: <?php echo (int) $conf->entity; ?> },
+		    					  data: {
+			    					  hash_algo: "md5",
+			    					  hash_unique_id: "<?php echo dol_escape_js($hash_unique_id); ?>",
+			    					  action: "dolibarrping",
+			    					  version: "<?php echo (float) DOL_VERSION; ?>",
+			    					  entity: "<?php echo (int) $conf->entity; ?>",
+			    					  dbtype: "<?php echo dol_escape_js($db->type); ?>"
+			    				  },
 		    					  success: function (data, status, xhr) {   // success callback function (data contains body of response)
 		      					    	console.log("Ping ok");
 		        	    				$.ajax({
@@ -2584,17 +2591,17 @@ if (! function_exists("llxFooter"))
 		      	    					  url: "<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>",
 		      	    					  timeout: 500,     // timeout milliseconds
 		      	    					  cache: false,
-		      	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo $hash_unique_id; ?>", action: "firstpingok" },
+		      	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo dol_escape_js($hash_unique_id); ?>", action: "firstpingok" },	// to update
 		    					  		});
 		    					  },
-		    					  error: function (data,status,xhr) {   // success callback function
+		    					  error: function (data,status,xhr) {   // error callback function
 		        					    console.log("Ping ko: " + data);
 		        	    				$.ajax({
 		        	    					  method: "GET",
 		        	    					  url: "<?php echo DOL_URL_ROOT.'/core/ajax/pingresult.php'; ?>",
 		        	    					  timeout: 500,     // timeout milliseconds
 		        	    					  cache: false,
-		        	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo $hash_unique_id; ?>", action: "firstpingko", version: "<?php echo (float) DOL_VERSION; ?>" },
+		        	        				  data: { hash_algo: "md5", hash_unique_id: "<?php echo dol_escape_js($hash_unique_id); ?>", action: "firstpingko" },
 		      					  		});
 		    					  }
 		    				});
