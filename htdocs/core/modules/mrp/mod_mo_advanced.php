@@ -26,7 +26,7 @@
  * \brief      File containing class for numbering model of MOs advanced
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/modules/mrp/modules_mrp.php';
+require_once DOL_DOCUMENT_ROOT .'/core/modules/mrp/modules_mo.php';
 
 
 /**

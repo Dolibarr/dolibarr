@@ -110,7 +110,7 @@ $permissiontoadd = $user->rights->mymodule->myobject->write; 	// Used by the inc
 $permissiontodelete = $user->rights->mymodule->myobject->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 $permissionnote = $user->rights->mymodule->myobject->write;		// Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->mymodule->myobject->write;	// Used by the include of actions_dellink.inc.php
-
+$upload_dir = $conf->mymodule->multidir_output[isset($object->entity)?$object->entity:1];
 
 
 /*

@@ -79,6 +79,7 @@ $permissionnote=$user->rights->bom->write;	// Used by the include of actions_set
 $permissiondellink=$user->rights->bom->write;	// Used by the include of actions_dellink.inc.php
 $permissiontoadd=$user->rights->bom->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->rights->bom->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$upload_dir = $conf->bom->multidir_output[isset($object->entity)?$object->entity:1];
 
 
 /*

@@ -27,7 +27,7 @@
  *	\brief      File of class to build ODT documents for MOs
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/mrp/modules_mrp.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/mrp/modules_mo.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -244,7 +244,7 @@ class doc_generic_mo_odt extends ModelePDFMo
 				}
 			}
 
-			$dir = $conf->mrp->multidir_output[$object->entity];
+			$dir = $conf->mrp->multidir_output[isset($object->entity)?$object->entity:1];
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (! preg_match('/specimen/i', $objectref)) $dir.= "/" . $objectref;
 			$file = $dir . "/" . $objectref . ".odt";
