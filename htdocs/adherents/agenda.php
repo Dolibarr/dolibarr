@@ -110,7 +110,7 @@ $contactstatic = new Contact($db);
 $form = new Form($db);
 
 /*
- * Fiche categorie de client et/ou fournisseur
+ * Customer and/or supplier category sheet
  */
 if ($object->id > 0)
 {
