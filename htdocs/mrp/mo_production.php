@@ -131,13 +131,13 @@ if (empty($reshook))
 
     // Actions when printing a doc from card
     include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
-    
+
     // Actions to send emails
     $trigger_name = 'MO_SENTBYMAIL';
     $autocopy = 'MAIN_MAIL_AUTOCOPY_MO_TO';
     $trackid = 'mo'.$object->id;
     include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
-    
+
     // Action to move up and down lines of object
     //include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
 
