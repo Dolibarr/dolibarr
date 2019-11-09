@@ -617,7 +617,7 @@ class Documents extends DolibarrApi
 	 *
 	 * @url DELETE /
 	 */
-	public function delete($modulepart, $original_file = '')
+	public function delete($modulepart, $original_file)
 	{
 	    global $conf, $langs;
 

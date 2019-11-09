@@ -346,7 +346,7 @@ class Products extends DolibarrApi
     /**
      * Delete product
      *
-     * @param  int $id Product ID
+     * @param  int 		$id 		Product ID
      * @return array
      */
     public function delete($id)
