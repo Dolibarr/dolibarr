@@ -2428,7 +2428,7 @@ if (! function_exists("llxFooter"))
 	 */
 	function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages = 0)
 	{
-		global $conf, $db, $langs, $user, $object;
+		global $conf, $db, $langs, $user, $mysoc, $object;
 		global $delayedhtmlcontent;
 		global $contextpage, $page, $limit;
 
@@ -2582,7 +2582,8 @@ if (! function_exists("llxFooter"))
 			    					  action: "dolibarrping",
 			    					  version: "<?php echo (float) DOL_VERSION; ?>",
 			    					  entity: "<?php echo (int) $conf->entity; ?>",
-			    					  dbtype: "<?php echo dol_escape_js($db->type); ?>"
+			    					  dbtype: "<?php echo dol_escape_js($db->type); ?>",
+			    					  country_code: "<?php echo dol_escape_js($mysoc->country_code); ?>"
 			    				  },
 		    					  success: function (data, status, xhr) {   // success callback function (data contains body of response)
 		      					    	console.log("Ping ok");
