@@ -412,7 +412,7 @@ if ($rowid > 0)
 		$object->fetch_optionals();
 
 		/*
-		 * Confirmation suppression
+		 * Confirmation deletion
 		 */
 		if ($action == 'delete')
 		{
