@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/adherents/type_translation.php
  *	\ingroup    product
- *	\brief      Page de traduction des produits
+ *	\brief      Member translation page
  */
 
 require '../main.inc.php';
@@ -50,7 +50,7 @@ $result=restrictedArea($user, 'adherent', $id, 'adherent_type');
  * Actions
  */
 
-// retour a l'affichage des traduction si annulation
+// return to translation display if cancellation
 if ($cancel == $langs->trans("Cancel"))
 {
 	$action = '';
@@ -70,7 +70,7 @@ if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->rights->ad
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
 
-	// update de l'objet
+	// update of object
 	if ( $_POST["forcelangprod"] == $current_lang )
 	{
 		$object->label			= $_POST["libelle"];
@@ -84,7 +84,7 @@ if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->rights->ad
 		$object->multilangs[$_POST["forcelangprod"]]["other"]		= dol_htmlcleanlastbr($_POST["other"]);
 	}
 
-	// sauvegarde en base
+	// backup into database
 	if ( $object->setMultiLangs($user) > 0 )
 	{
 		$action = '';
@@ -103,7 +103,7 @@ if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $user->rights->a
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
 
-	foreach ($object->multilangs as $key => $value) // enregistrement des nouvelles valeurs dans l'objet
+	foreach ($object->multilangs as $key => $value) // saving new values in the object
 	{
 		if ( $key == $current_lang )
 		{
