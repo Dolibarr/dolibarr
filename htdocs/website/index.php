@@ -270,9 +270,24 @@ if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x
 }
 if (GETPOST('refreshsite', 'alpha') || GETPOST('refreshsite.x', 'alpha') || GETPOST('refreshsite_x', 'alpha'))		// If we change the site, we reset the pageid and cancel addsite action.
 {
-    $pageid=0;
     if ($action == 'addsite') $action = 'preview';
     if ($action == 'updatesource') $action = 'preview';
+
+    $pageid = $object->fk_default_home;
+    if (empty($pageid))
+    {
+    	$array=$objectpage->fetchAll($object->id, 'ASC,ASC', 'type_container,pageurl');
+    	if (! is_array($array) && $array < 0) dol_print_error('', $objectpage->error, $objectpage->errors);
+    	$atleastonepage=(is_array($array) && count($array) > 0);
+
+    	$firstpageid=0; $homepageid=0;
+    	foreach($array as $key => $valpage)
+    	{
+    		if (empty($firstpageid)) $firstpageid=$valpage->id;
+    		if ($object->fk_default_home && $key == $object->fk_default_home) $homepageid=$valpage->id;
+    	}
+    	$pageid=($homepageid?$homepageid:$firstpageid);   // We choose home page and if not defined yet, we take first page
+    }
 }
 if (GETPOST('refreshpage', 'alpha') && ! in_array($action, array('updatecss'))) $action='preview';
 
@@ -1967,6 +1982,9 @@ if ($action != 'preview' && $action != 'editcontent' && $action != 'editsource')
 
 if (! GETPOST('hide_websitemenu'))
 {
+	$disabled='';
+	if (empty($user->rights->website->write)) $disabled=' disabled="disabled"';
+
 	//var_dump($objectpage);exit;
 	print '<div class="centpercent websitebar">';
 
@@ -1978,7 +1996,8 @@ if (! GETPOST('hide_websitemenu'))
 	print '</span>';
 
 	print '<span class="websiteselection hideonsmartphoneimp">';
-	print ' <input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'" name="createsite">';
+	print '<a href="'.$_SERVER["PHP_SEFL"].'?action=createsite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("AddWebsite")).'"><span class="fa fa-plus-circle valignmiddle btnTitle-icon"><span></a>';
+	//print ' <input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'" name="createsite">';
 	print '</span>';
 
 	// List of website
@@ -2024,9 +2043,6 @@ if (! GETPOST('hide_websitemenu'))
 
 	if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite'))
 	{
-		$disabled='';
-		if (empty($user->rights->website->write)) $disabled=' disabled="disabled"';
-
 		print ' &nbsp; ';
 
 		print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
@@ -2146,14 +2162,15 @@ if (! GETPOST('hide_websitemenu'))
 		print '</span>';
 
 		print '<span class="websiteselection hideonsmartphoneimp">';
-		print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'" name="createcontainer">';
+		//print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'" name="createcontainer">';
+		print '<a href="'.$_SERVER["PHP_SEFL"].'?action=createcontainer&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("AddPage")).'"><span class="fa fa-plus-circle valignmiddle btnTitle-icon"><span></a>';
 		print '</span>';
 
 		//print '<span class="websiteselection">';
 
 		if ($action != 'addcontainer')
 		{
-			print $formwebsite->selectContainer($website, 'pageid', $pageid, 0, $action);
+			print '<span class="websiteselection">'.$formwebsite->selectContainer($website, 'pageid', $pageid, 0, $action).'</span>';
 		}
 		else
 		{

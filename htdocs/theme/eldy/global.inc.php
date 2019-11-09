@@ -3913,7 +3913,7 @@ tr.visible {
 .bordertransp {
     background-color: transparent;
     background-image: none;
-    border: 1px solid #aaa;
+    border: none;
 	font-weight: normal;
 }
 .websitebar {
@@ -4813,7 +4813,7 @@ div.dataTables_length select {
 }
 .select2-dropdown {
 	border: 1px solid #ccc;
-	box-shadow: 5px 5px 15px #ddd;
+	box-shadow: 1px 2px 10px #ddd;
 }
 .select2-dropdown-open {
 	background-color: #fff;
