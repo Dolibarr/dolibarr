@@ -40,7 +40,7 @@ $object->fields = dol_sort_array($object->fields, 'position');
 foreach($object->fields as $key => $val)
 {
 	// Discard if extrafield is a hidden field on form
-    if (abs($val['visible']) != 1 && abs($val['visible']) != 4) continue;
+	if (abs($val['visible']) != 1 && abs($val['visible']) != 3 && abs($val['visible']) != 4) continue;
 
 	if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! verifCond($val['enabled'])) continue;	// We don't want this field
 	if (in_array($key, array('ref','status'))) continue;	// Ref and status are already in dol_banner
@@ -55,7 +55,9 @@ foreach($object->fields as $key => $val)
 	if (! empty($val['help'])) print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
 	else print $langs->trans($val['label']);
 	print '</td>';
-	print '<td>';
+	print '<td class="valuefield fieldname_'.$key;
+	if ($val['type'] == 'text') print ' wordbreak';
+	print '">';
 	print $object->showOutputField($val, $key, $value, '', '', '', 0);
 	//print dol_escape_htmltag($object->$key, 1, 1);
 	print '</td>';
