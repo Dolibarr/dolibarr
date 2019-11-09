@@ -7144,7 +7144,7 @@ abstract class CommonObject
 	 */
 	protected function isArray($info)
 	{
-		if(is_array($info))
+		if (is_array($info))
 		{
 			if(isset($info['type']) && $info['type']=='array') return true;
 			else return false;
@@ -7160,7 +7160,7 @@ abstract class CommonObject
 	 */
 	public function isDate($info)
 	{
-		if(isset($info['type']) && ($info['type']=='date' || $info['type']=='datetime' || $info['type']=='timestamp')) return true;
+		if (isset($info['type']) && ($info['type']=='date' || $info['type']=='datetime' || $info['type']=='timestamp')) return true;
 		return false;
 	}
 
@@ -7174,7 +7174,7 @@ abstract class CommonObject
 	{
 		if(is_array($info))
 		{
-			if(isset($info['type']) && ($info['type']=='int' || preg_match('/^integer/i', $info['type']) ) ) return true;
+			if (isset($info['type']) && ($info['type']=='int' || preg_match('/^integer/i', $info['type']))) return true;
 			else return false;
 		}
 		else return false;
@@ -7188,7 +7188,7 @@ abstract class CommonObject
 	 */
 	public function isFloat($info)
 	{
-		if(is_array($info))
+		if (is_array($info))
 		{
 			if (isset($info['type']) && (preg_match('/^(double|real|price)/i', $info['type']))) return true;
 			else return false;
@@ -7204,7 +7204,7 @@ abstract class CommonObject
 	 */
 	public function isText($info)
 	{
-		if(is_array($info))
+		if (is_array($info))
 		{
 			if(isset($info['type']) && $info['type']=='text') return true;
 			else return false;
@@ -7220,7 +7220,7 @@ abstract class CommonObject
 	 */
 	protected function canBeNull($info)
 	{
-		if(is_array($info))
+		if (is_array($info))
 		{
 			if(isset($info['notnull']) && $info['notnull']!='1') return true;
 			else return false;
@@ -7236,7 +7236,7 @@ abstract class CommonObject
 	 */
 	protected function isForcedToNullIfZero($info)
 	{
-		if(is_array($info))
+		if (is_array($info))
 		{
 			if(isset($info['notnull']) && $info['notnull']=='-1') return true;
 			else return false;
@@ -7252,7 +7252,7 @@ abstract class CommonObject
 	 */
 	protected function isIndex($info)
 	{
-		if(is_array($info))
+		if (is_array($info))
 		{
 			if(isset($info['index']) && $info['index']==true) return true;
 			else return false;
@@ -7260,9 +7260,11 @@ abstract class CommonObject
 		return false;
 	}
 
+
 	/**
-	 * Function to prepare the values to insert.
+	 * Function to prepare a part of the query for insert.
 	 * Note $this->${field} are set by the page that make the createCommon or the updateCommon.
+	 * $this->${field} should be a clean value. The page can run
 	 *
 	 * @return array
 	 */
@@ -7301,13 +7303,13 @@ abstract class CommonObject
 				if ($field == 'entity' && is_null($this->{$field})) $queryarray[$field]=$conf->entity;
 				else
 				{
-					$queryarray[$field] = (int) price2num($this->{$field});
+					$queryarray[$field] = (int) $this->{$field};
 					if (empty($queryarray[$field])) $queryarray[$field]=0;		// May be reset to null later if property 'notnull' is -1 for this field.
 				}
 			}
 			elseif($this->isFloat($info))
 			{
-				$queryarray[$field] = (double) price2num($this->{$field});
+				$queryarray[$field] = (double) $this->{$field};
 				if (empty($queryarray[$field])) $queryarray[$field]=0;
 			}
 			else
