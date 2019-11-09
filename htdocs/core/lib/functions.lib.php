@@ -5954,7 +5954,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_EMAIL__'] = '__THIRDPARTY_EMAIL__';
 				$substitutionarray['__THIRDPARTY_PHONE__'] = '__THIRDPARTY_PHONE__';
 				$substitutionarray['__THIRDPARTY_FAX__'] = '__THIRDPARTY_FAX__';
-				$substitutionarray['__THIRDPARTY_ADRESSE__'] = '__THIRDPARTY_ADRESSE__';
+				$substitutionarray['__THIRDPARTY_ADRESS__'] = '__THIRDPARTY_ADRESS__';
 				$substitutionarray['__THIRDPARTY_ZIP__'] = '__THIRDPARTY_ZIP__';
 				$substitutionarray['__THIRDPARTY_TOWN__'] = '__THIRDPARTY_TOWN__';
 				$substitutionarray['__THIRDPARTY_SIREN__'] = '__THIRDPARTY_SIREN__';
@@ -6065,7 +6065,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object)?$object->email:'');
 				$substitutionarray['__THIRDPARTY_PHONE__'] = (is_object($object)?$object->phone:'');
 				$substitutionarray['__THIRDPARTY_FAX__'] = (is_object($object)?$object->name_fax:'');
-				$substitutionarray['__THIRDPARTY_ADRESSE__'] = (is_object($object)?$object->address:'');
+				$substitutionarray['__THIRDPARTY_ADRESS__'] = (is_object($object)?$object->address:'');
 				$substitutionarray['__THIRDPARTY_ZIP__'] = (is_object($object)?$object->zip:'');
 				$substitutionarray['__THIRDPARTY_TOWN__'] = (is_object($object)?$object->town:'');
 				$substitutionarray['__THIRDPARTY_SIREN__'] = (is_object($object)?$object->idprof1:'');
@@ -6084,7 +6084,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object->thirdparty)?$object->thirdparty->email:'');
 				$substitutionarray['__THIRDPARTY_PHONE__'] = (is_object($object->thirdparty)?$object->phone:'');
 				$substitutionarray['__THIRDPARTY_FAX__'] = (is_object($object->thirdparty)?$object->name_fax:'');
-				$substitutionarray['__THIRDPARTY_ADRESSE__'] = (is_object($object->thirdparty)?$object->address:'');
+				$substitutionarray['__THIRDPARTY_ADRESS__'] = (is_object($object->thirdparty)?$object->address:'');
 				$substitutionarray['__THIRDPARTY_ZIP__'] = (is_object($object->thirdparty)?$object->zip:'');
 				$substitutionarray['__THIRDPARTY_TOWN__'] = (is_object($object->thirdparty)?$object->town:'');
 				$substitutionarray['__THIRDPARTY_SIREN__'] = (is_object($object->thirdparty)?$object->idprof1:'');
