@@ -481,14 +481,15 @@ create table llx_mrp_mo_extrafields
 ALTER TABLE llx_mrp_mo_extrafields ADD INDEX idx_fk_object(fk_object);
 
 
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_VALIDATE','BOM validated','Executed when a BOM is validated','bom',400);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_UNVALIDATE','BOM unvalidated','Executed when a BOM is unvalidated','bom',401);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_CLOSE','BOM disabled','Executed when a BOM is disabled','bom',402);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_REOPEN','BOM reopen','Executed when a BOM is re-open','bom',403);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_DELETE','BOM deleted','Executed when a BOM deleted','bom',404);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_VALIDATE','BOM validated','Executed when a BOM is validated','bom',650);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_UNVALIDATE','BOM unvalidated','Executed when a BOM is unvalidated','bom',651);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_CLOSE','BOM disabled','Executed when a BOM is disabled','bom',652);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_REOPEN','BOM reopen','Executed when a BOM is re-open','bom',653);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BOM_DELETE','BOM deleted','Executed when a BOM deleted','bom',654);
 
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_VALIDATE','MO validated','Executed when a MO is validated','bom',410);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_PRODUCED','MO disabled','Executed when a MO is produced','bom',411);
-insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_DELETE','MO deleted','Executed when a MO is deleted','bom',412);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_VALIDATE','MO validated','Executed when a MO is validated','bom',660);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_PRODUCED','MO disabled','Executed when a MO is produced','bom',661);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_DELETE','MO deleted','Executed when a MO is deleted','bom',662);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MO_CANCEL','MO canceled','Executed when a MO is canceled','bom',663);
 
 ALTER TABLE llx_comment ADD COLUMN fk_user_modif  integer DEFAULT NULL;
