@@ -615,7 +615,7 @@ class Documents extends DolibarrApi
 	 * @throws 404
 	 * @throws 200
 	 *
-	 * @url DELETE /delete
+	 * @url DELETE /
 	 */
 	public function delete($modulepart, $original_file = '')
 	{
