@@ -323,7 +323,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		 }*/
 
 		$formquestion = array();
-		if (!empty($conf->bom->enabled))
+		if (!empty($conf->mrp->enabled))
 		{
 			$langs->load("mrp");
 			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -494,7 +494,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    // Send
             //print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
 
-    		if ($user->rights->bom->write && $object->status == MO::STATUS_VALIDATED)
+    		if ($permissiontoadd && $object->status == $object::STATUS_VALIDATED)
     		{
     			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=setdraft">'.$langs->trans("SetToDraft").'</a>';
     		}
@@ -510,7 +510,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		}
 
     		// Validate
-    		if ($user->rights->mrp->write && $object->status == MO::STATUS_DRAFT)
+    		if ($permissiontoadd && $object->status == $object::STATUS_DRAFT)
     		{
     		    if (is_array($object->lines) && count($object->lines) > 0)
     		    {

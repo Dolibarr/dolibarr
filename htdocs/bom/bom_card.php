@@ -584,13 +584,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    // Send
             //print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
 
-    		if ($user->rights->bom->write && $object->status == BOM::STATUS_VALIDATED)
+    		if ($user->rights->bom->write && $object->status == $object::STATUS_VALIDATED)
     		{
     			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=setdraft">'.$langs->trans("SetToDraft").'</a>';
     		}
 
             // Modify
-    		if ($permissiontoadd)
+    		if ($permissiontoadd && $object->status == $object::STATUS_DRAFT)
     		{
     			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
     		}
@@ -600,7 +600,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		}
 
     		// Validate
-    		if ($user->rights->bom->write && $object->status == BOM::STATUS_DRAFT)
+    		if ($permissiontoadd && $object->status == $object::STATUS_DRAFT)
     		{
     			if (is_array($object->lines) && count($object->lines) > 0)
     			{
@@ -613,13 +613,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		}
 
     		// Close / Cancel
-    		if ($user->rights->bom->write && $object->status == BOM::STATUS_VALIDATED)
+    		if ($permissiontoadd && $object->status == $object::STATUS_VALIDATED)
     		{
     			print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=close">' . $langs->trans("Disable") . '</a>';
     		}
 
     		// Re-open
-    		if ($user->rights->bom->write && $object->status == BOM::STATUS_CANCELED)
+    		if ($permissiontoadd && $object->status == $object::STATUS_CANCELED)
     		{
     			print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=reopen">' . $langs->trans("ReOpen") . '</a>';
     		}

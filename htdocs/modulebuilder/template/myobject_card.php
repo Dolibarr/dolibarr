@@ -454,7 +454,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
             print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
 
             // Back to draft
-            if (! empty($user->rights->mymodule->myobject->write) && $object->status == BOM::STATUS_VALIDATED)
+            if (! empty($user->rights->mymodule->myobject->write) && $object->status == $object::STATUS_VALIDATED)
             {
             	print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=setdraft">' . $langs->trans("SetToDraft") . '</a>';
             }
@@ -467,6 +467,19 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		else
     		{
     			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
+    		}
+
+    		// Validate
+    		if ($permissiontoadd && $object->status == $object::STATUS_DRAFT)
+    		{
+    			if (is_array($object->lines) && count($object->lines) > 0)
+    			{
+    				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
+    			}
+    			else
+    			{
+    				print '<a class="butActionRefused" href="" title="'.$langs->trans("AddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
+    			}
     		}
 
     		// Clone
