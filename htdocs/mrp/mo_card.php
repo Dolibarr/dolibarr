@@ -494,9 +494,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    // Send
             //print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
 
-    		if ($permissiontoadd && $object->status == $object::STATUS_VALIDATED)
+    		// Back to draft
+    		if ($object->status == $object::STATUS_VALIDATED)
     		{
-    			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=setdraft">'.$langs->trans("SetToDraft").'</a>';
+	    		if ($permissiontoadd)
+	    		{
+	    			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=setdraft">'.$langs->trans("SetToDraft").'</a>';
+	    		}
     		}
 
             // Modify
@@ -510,16 +514,19 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		}
 
     		// Validate
-    		if ($permissiontoadd && $object->status == $object::STATUS_DRAFT)
+    		if ($object->status == $object::STATUS_DRAFT)
     		{
-    		    if (is_array($object->lines) && count($object->lines) > 0)
-    		    {
-    		        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
-    		    }
-    		    else
-    		    {
-    		        print '<a class="butActionRefused" href="" title="'.$langs->trans("AddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
-    		    }
+	    		if ($permissiontoadd)
+	    		{
+	    		    if (is_array($object->lines) && count($object->lines) > 0)
+	    		    {
+	    		        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
+	    		    }
+	    		    else
+	    		    {
+	    		        print '<a class="butActionRefused" href="" title="'.$langs->trans("AddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
+	    		    }
+	    		}
     		}
 
     		// Clone
