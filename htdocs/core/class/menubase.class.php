@@ -566,7 +566,6 @@ class Menubase
         global $langs, $user, $conf; // To export to dol_eval function
         global $mainmenu, $leftmenu; // To export to dol_eval function
 
-        $menutopid=0;
         $mainmenu=$mymainmenu;  // To export to dol_eval function
         $leftmenu=$myleftmenu;  // To export to dol_eval function
 
@@ -579,9 +578,7 @@ class Menubase
         $sql.= " ORDER BY m.position, m.rowid";
         //print $sql;
 
-        //$tmp1=microtime(true);
-        //print '>>> 1 0<br>';
-        dol_syslog(get_class($this)."::menuLoad mymainmenu=".$mymainmenu." myleftmenu=".$myleftmenu." type_user=".$type_user." menu_handler=".$menu_handler." tabMenu size=".count($tabMenu)."", LOG_DEBUG);
+        //dol_syslog(get_class($this)."::menuLoad mymainmenu=".$mymainmenu." myleftmenu=".$myleftmenu." type_user=".$type_user." menu_handler=".$menu_handler." tabMenu size=".count($tabMenu)."", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {

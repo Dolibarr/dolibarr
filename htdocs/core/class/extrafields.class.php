@@ -853,7 +853,8 @@ class ExtraFields
 		// if (empty($forceload) && ! empty($this->attributes[$tab->elementtype]['loaded'])) return $array_name_label;
 
 		// Set array of label of entity
-		// TODO Remove completely loading of label. This should be done by presentation.
+		// Remove completely loading of label. This should be done by presentation.
+		/*
 		$labelmulticompany=array();
 		if (!empty($conf->multicompany->enabled))
 		{
@@ -866,11 +867,9 @@ class ExtraFields
 					$labelmulticompany[$obj->rowid]=$obj->label;
 				}
 			}
-		}
+		}*/
 
-		// We should not have several time this log. If we have, there is some optimization to do by calling a simple $object->fetch_optionals() that include cache management.
-		dol_syslog("fetch_name_optionals_label elementtype=".$elementtype);
-
+		// We should not have several time this request. If we have, there is some optimization to do by calling a simple $extrafields->fetch_optionals() in top of code and not into subcode
 		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,langs,list,totalizable,fielddefault,fieldcomputed,entity,enabled,help";
 		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
 		//$sql.= " WHERE entity IN (0,".$conf->entity.")";    // Filter is done later
