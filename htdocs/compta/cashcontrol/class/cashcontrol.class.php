@@ -86,7 +86,7 @@ class CashControl extends CommonObject
 	public $cash;
 	public $cheque;
 	public $card;
-	
+
 	/**
 	 * @var integer|string $date_valid
 	 */
