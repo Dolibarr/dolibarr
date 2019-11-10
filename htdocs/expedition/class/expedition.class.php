@@ -122,7 +122,7 @@ class Expedition extends CommonObject
 	public $depth_units;
 	// A denormalized value
 	public $trueSize;
-    
+
 	/**
 	 * @var integer|string Date delivery planed
 	 */
