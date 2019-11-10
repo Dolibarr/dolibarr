@@ -553,7 +553,7 @@ if (! defined('NOLOGIN'))
 		// Validation of login/pass/entity
 		// If ok, the variable login will be returned
 		// If error, we will put error message in session under the name dol_loginmesg
-		if ($test && $goontestloop)
+		if ($test && $goontestloop && GETPOST('action', 'aZ09') == 'login')
 		{
 			$login = checkLoginPassEntity($usertotest, $passwordtotest, $entitytotest, $authmode);
 			if ($login)
