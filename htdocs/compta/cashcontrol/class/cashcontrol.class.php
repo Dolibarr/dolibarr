@@ -86,6 +86,10 @@ class CashControl extends CommonObject
 	public $cash;
 	public $cheque;
 	public $card;
+	
+	/**
+	 * @var integer|string $date_valid
+	 */
 	public $date_valid;
 
 	/**
@@ -93,7 +97,9 @@ class CashControl extends CommonObject
      */
 	public $date_creation;
 
-
+	/**
+	 * @var integer|string $date_modification
+	 */
 	public $date_modification;
 
 	const STATUS_DRAFT = 0;
