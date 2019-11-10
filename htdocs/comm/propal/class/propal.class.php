@@ -121,10 +121,9 @@ class Propal extends CommonObject
 	 */
 	public $datec;
 
-	/**
-	 * Creation date
-	 * @var int
-	 */
+    /**
+     * @var integer|string $date_creation;
+     */
 	public $date_creation;
 
 	/**
@@ -134,15 +133,13 @@ class Propal extends CommonObject
 	public $datev;
 
 	/**
-	 * Validation date
-	 * @var int
-	 */
+     * @var integer|string $date_validation;
+     */
 	public $date_validation;
 
 	/**
-	 * Date of the quote
-	 * @var
-	 */
+     * @var integer|string date of the quote;
+     */
 	public $date;
 
 	/**
@@ -150,7 +147,13 @@ class Propal extends CommonObject
 	 * @see $date
 	 */
 	public $datep;
+	
+	/**
+	 * @var integer|string $date_livraison;
+	 */
 	public $date_livraison;
+	
+	
 	public $fin_validite;
 
 	public $user_author_id;
