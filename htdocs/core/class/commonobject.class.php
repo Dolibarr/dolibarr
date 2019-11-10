@@ -426,8 +426,14 @@ abstract class CommonObject
      */
 	public $date_creation;
 
-
+	/**
+	 * @var integer|string $date_validation;
+	 */
 	public $date_validation;		// Date validation
+
+	/**
+	 * @var integer|string $date_modification;
+	 */
 	public $date_modification;		// Date last change (tms field)
 
 	public $next_prev_filter;

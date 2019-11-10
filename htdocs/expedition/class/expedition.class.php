@@ -123,7 +123,10 @@ class Expedition extends CommonObject
 	// A denormalized value
 	public $trueSize;
 
-	public $date_delivery;		// Date delivery planed
+	/**
+	 * @var integer|string Date delivery planed
+	 */
+	public $date_delivery;
 
 	/**
 	 * @deprecated
@@ -139,7 +142,7 @@ class Expedition extends CommonObject
 
 	/**
 	 * Effective delivery date
-	 * @var int
+	 * @var integer|string
 	 */
 	public $date_shipping;
 
@@ -148,7 +151,9 @@ class Expedition extends CommonObject
      */
 	public $date_creation;
 
-
+	/**
+	 * @var integer|string date_valid
+	 */
 	public $date_valid;
 
 	public $meths;
