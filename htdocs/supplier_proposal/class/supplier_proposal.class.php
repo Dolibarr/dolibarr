@@ -99,7 +99,15 @@ class SupplierProposal extends CommonObject
     public $ref_fourn;					//Reference saisie lors de l'ajout d'une ligne à la demande
     public $ref_supplier;				//Reference saisie lors de l'ajout d'une ligne à la demande
     public $statut;					// 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (processed/billed)
-    public $date;						// Date of proposal
+    
+    /**
+     * @var integer|string Date of proposal
+     */
+    public $date;
+    
+    /**
+     * @var integer|string date_livraison
+     */
     public $date_livraison;
 
     /**
@@ -109,9 +117,8 @@ class SupplierProposal extends CommonObject
     public $datec;
 
     /**
-     * Creation date
-     * @var int
-     */
+	 * @var integer|string date_creation
+	 */
     public $date_creation;
 
     /**
@@ -121,8 +128,7 @@ class SupplierProposal extends CommonObject
     public $datev;
 
     /**
-     * Validation date
-     * @var int
+     * @var integer|string date_validation
      */
     public $date_validation;
 
