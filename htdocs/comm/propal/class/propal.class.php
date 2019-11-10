@@ -147,13 +147,13 @@ class Propal extends CommonObject
 	 * @see $date
 	 */
 	public $datep;
-	
+
 	/**
 	 * @var integer|string $date_livraison;
 	 */
 	public $date_livraison;
-	
-	
+
+
 	public $fin_validite;
 
 	public $user_author_id;
