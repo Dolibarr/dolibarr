@@ -76,7 +76,7 @@ class Loan extends CommonObject
 	 * @var integer|string date_modification
 	 */
 	public $date_modification;
-	
+
 	/**
 	 * @var integer|string date_validation
 	 */

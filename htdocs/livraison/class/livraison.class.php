@@ -62,23 +62,23 @@ class Livraison extends CommonObject
 	public $brouillon;
 	public $socid;
 	public $ref_customer;
-    
+
 	/**
 	 * @var integer|string Date really received
 	 */
-	public $date_delivery; 
+	public $date_delivery;
 
 	/**
      * @var integer|string date_creation
      */
 	public $date_creation;
-    
+
 	/**
 	 * @var integer|string date_valid
 	 */
 	public $date_valid;
-	
-	
+
+
 	public $model_pdf;
 
 
