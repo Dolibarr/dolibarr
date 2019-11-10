@@ -79,7 +79,7 @@ class Website extends CommonObject
 	 * @var integer|string date_creation
 	 */
 	public $date_creation;
-	
+
 	/**
 	 * @var integer|string date_modification
 	 */
