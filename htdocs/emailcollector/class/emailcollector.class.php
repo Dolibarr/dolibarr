@@ -178,7 +178,13 @@ class EmailCollector extends CommonObject
     public $source_directory;
     public $target_directory;
     public $maxemailpercollect;
+    
+    /**
+     * @var integer|string $datelastresult
+     */
     public $datelastresult;
+    
+    
     public $lastresult;
     // END MODULEBUILDER PROPERTIES
 
