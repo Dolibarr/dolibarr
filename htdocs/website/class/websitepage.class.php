@@ -83,8 +83,15 @@ class WebsitePage extends CommonObject
 	 * @var int Status
 	 */
 	public $status;
-
+    
+	/**
+	 * @var integer|string date_creation
+	 */
 	public $date_creation;
+	
+	/**
+	 * @var integer|string date_modification
+	 */
 	public $date_modification;
 
 
