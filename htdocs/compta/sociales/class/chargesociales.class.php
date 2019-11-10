@@ -53,13 +53,13 @@ class ChargeSociales extends CommonObject
      * {@inheritdoc}
      */
     protected $table_ref_field = 'ref';
-    
+
     /**
      * @var integer|string $date_ech
      */
     public $date_ech;
-    
-    
+
+
     public $label;
     public $type;
     public $type_label;
@@ -76,7 +76,7 @@ class ChargeSociales extends CommonObject
      * @var integer|string $date_modification
      */
     public $date_modification;
-    
+
     /**
      * @var integer|string $date_validation
      */
