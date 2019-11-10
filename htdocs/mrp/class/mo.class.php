@@ -135,8 +135,18 @@ class Mo extends CommonObject
 	public $import_key;
 	public $status;
 	public $fk_product;
+
+	/**
+	 * @var integer|string date_start_planned
+	 */
 	public $date_start_planned;
+
+	/**
+	 * @var integer|string date_end_planned
+	 */
 	public $date_end_planned;
+
+
 	public $fk_bom;
 	public $fk_project;
 	// END MODULEBUILDER PROPERTIES

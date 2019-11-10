@@ -76,9 +76,13 @@ class Website extends CommonObject
 	public $status;
 
 	/**
-	 * @var mixed
+	 * @var integer|string date_creation
 	 */
 	public $date_creation;
+
+	/**
+	 * @var integer|string date_modification
+	 */
 	public $date_modification;
 
 	/**
