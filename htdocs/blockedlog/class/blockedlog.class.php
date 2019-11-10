@@ -105,7 +105,9 @@ class BlockedLog
      */
 	public $date_creation;
 
-
+	/**
+	 * @var integer|string $date_modification;
+	 */
 	public $date_modification;
 
 	public $date_object = 0;
