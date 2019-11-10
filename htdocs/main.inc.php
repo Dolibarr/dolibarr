@@ -612,7 +612,7 @@ if (! defined('NOLOGIN'))
 		if (! $login || (in_array('ldap', $authmode) && empty($passwordtotest)))	// With LDAP we refused empty password because some LDAP are "opened" for anonymous access so connexion is a success.
 		{
 			// No data to test login, so we show the login page
-			dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." action=".GETPOST('action','aZ09').", showing the login form and exit");
+			dol_syslog("--- Access to ".$_SERVER["PHP_SELF"]." - action=".GETPOST('action','aZ09').", showing the login form and exit");
 			if (defined('NOREDIRECTBYMAINTOLOGIN')) return 'ERROR_NOT_LOGGED';
 			else dol_loginfunction($langs, $conf, (! empty($mysoc)?$mysoc:''));
 			exit;
