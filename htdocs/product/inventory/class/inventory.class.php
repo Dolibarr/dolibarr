@@ -130,18 +130,18 @@ class Inventory extends CommonObject
 	 * @var int Status
 	 */
 	public $status;
-    
+
 	/**
 	 * @var integer|string date_creation
 	 */
 	public $date_creation;
-	
+
 	/**
 	 * @var integer|string date_validation
 	 */
 	public $date_validation;
-	
-	
+
+
 	public $tms;
 
 	/**
