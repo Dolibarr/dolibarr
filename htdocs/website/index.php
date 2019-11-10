@@ -3273,7 +3273,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 	print $langs->trans("SearchString");
 	print '</div>';
 	print '<div class="tagtd">';
-	print '<input type="text" name="searchstring" value="'.dol_escape_htmltag($searchkey).'">';
+	print '<input type="text" name="searchstring" value="'.dol_escape_htmltag($searchkey).'" autofocus>';
 	print '</div>';
 	print '</div>';
 
