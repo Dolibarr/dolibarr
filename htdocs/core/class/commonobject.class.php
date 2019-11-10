@@ -430,7 +430,7 @@ abstract class CommonObject
 	 * @var integer|string $date_validation;
 	 */
 	public $date_validation;		// Date validation
-	
+
 	/**
 	 * @var integer|string $date_modification;
 	 */
