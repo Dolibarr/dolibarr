@@ -60,6 +60,8 @@ $search_desc = GETPOST('search_desc', 'alpha');
 $search_current_account = GETPOST('search_current_account', 'alpha');
 $search_current_account_valid = GETPOST('search_current_account_valid', 'alpha');
 if ($search_current_account_valid == '') $search_current_account_valid='withoutvalidaccount';
+$search_onsell = GETPOST('search_onsell', 'alpha');
+$search_onpurchase = GETPOST('search_onpurchase', 'alpha');
 
 $accounting_product_mode = GETPOST('accounting_product_mode', 'alpha');
 $btn_changeaccount = GETPOST('changeaccount', 'alpha');
@@ -100,6 +102,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
     $search_ref = '';
     $search_label = '';
     $search_desc = '';
+    $search_onsell = '';
+    $search_onpurchase = '';
     $search_current_account = '';
     $search_current_account_valid = '-1';
 }
@@ -282,6 +286,9 @@ if (strlen(trim($search_label))) {
 if (strlen(trim($search_desc))) {
 	$sql .= natural_search("p.description", $search_desc);
 }
+if ($search_onsell != '' && $search_onsell != '-1') $sql.= natural_search('p.tosell', $search_onsell, 1);
+if ($search_onpurchase != '' && $search_onpurchase != '-1') $sql.= natural_search('p.tobuy', $search_onpurchase, 1);
+
 $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
@@ -375,9 +382,13 @@ if ($result)
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
 	if (! empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC)) print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
 	// On sell
-	if ($accounting_product_mode == 'ACCOUNTANCY_SELL' || $accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA' || $accounting_product_mode == 'ACCOUNTANCY_SELL_EXPORT') print '<td class="liste_titre"></td>';
+	if ($accounting_product_mode == 'ACCOUNTANCY_SELL' || $accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA' || $accounting_product_mode == 'ACCOUNTANCY_SELL_EXPORT') {
+		print '<td class="liste_titre">'.$form->selectyesno('search_onsell', $search_onsell, 1, false, 1).'</td>';
+	}
 	// On buy
-	if ($accounting_product_mode == 'ACCOUNTANCY_BUY') print '<td class="liste_titre"></td>';
+	elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
+		print '<td class="liste_titre">'.$form->selectyesno('search_onpurchase', $search_onpurchase, 1, false, 1).'</td>';
+	}
 	// Current account
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" size="6" name="search_current_account" id="search_current_account" value="' . dol_escape_htmltag($search_current_account) . '">';
@@ -395,6 +406,7 @@ if ($result)
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
     if (! empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC)) print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "p.description", "", $param, '', $sortfield, $sortorder);
+    // On sell / On purchase
     if ($accounting_product_mode == 'ACCOUNTANCY_SELL') {
         print_liste_field_titre("OnSell", $_SERVER["PHP_SELF"], "p.tosell", "", $param, '', $sortfield, $sortorder, 'center ');
         $fieldtosortaccount="p.accountancy_code_sell";
