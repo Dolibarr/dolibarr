@@ -25,15 +25,15 @@
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB', '1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))		define('NOREQUIRESOC', '1');
 //if (! defined('NOREQUIRETRAN'))		define('NOREQUIRETRAN', '1');
-if (! defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
-if (! defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
-if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
-if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
+if (!defined('NOCSRFCHECK'))		define('NOCSRFCHECK', '1');
+if (!defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL', '1');
+if (!defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
+if (!defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
+if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
-require '../main.inc.php';	// Load $user and permissions
+require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $invoiceid = GETPOST('facid', 'int');
 
@@ -48,16 +48,16 @@ if ($invoiceid > 0)
 }
 else
 {
-    $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
+    $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
     $resql = $db->query($sql);
     $obj = $db->fetch_object($resql);
     if ($obj)
     {
         $invoiceid = $obj->rowid;
     }
-    if (! $invoiceid)
+    if (!$invoiceid)
     {
-        $invoiceid=0; // Invoice does not exist yet
+        $invoiceid = 0; // Invoice does not exist yet
     }
     else
     {
@@ -82,7 +82,7 @@ if ($invoice->id > 0)
 }
 $alreadypayed = (is_object($invoice) ? ($invoice->total_ttc - $remaintopay) : 0);
 
-if ($conf->global->TAKEPOS_NUMPAD==0) print "var received='';";
+if ($conf->global->TAKEPOS_NUMPAD == 0) print "var received='';";
 else print "var received=0;";
 
 ?>
@@ -98,10 +98,10 @@ else print "var received=0;";
     	$('.change1').val(parseFloat(received));
 		alreadypaydplusreceived=price2numjs(alreadypayed + parseFloat(received));
     	//console.log("already+received = "+alreadypaydplusreceived);
-    	//console.log("total_ttc = "+<?php echo $invoice->total_ttc;?>);
-    	if (alreadypaydplusreceived > <?php echo $invoice->total_ttc;?>)
+    	//console.log("total_ttc = "+<?php echo $invoice->total_ttc; ?>);
+    	if (alreadypaydplusreceived > <?php echo $invoice->total_ttc; ?>)
    		{
-			var change=parseFloat(alreadypayed + parseFloat(received) - <?php echo $invoice->total_ttc;?>);
+			var change=parseFloat(alreadypayed + parseFloat(received) - <?php echo $invoice->total_ttc; ?>);
 			$('.change2').html(pricejs(change, 'MT'));
 	    	$('.change2').val(change);
 	    	$('.change1').removeClass('colorred');
@@ -113,7 +113,7 @@ else print "var received=0;";
     	{
 			$('.change2').html(pricejs(0, 'MT'));
 	    	$('.change2').val(0);
-	    	if (alreadypaydplusreceived == <?php echo $invoice->total_ttc;?>)
+	    	if (alreadypaydplusreceived == <?php echo $invoice->total_ttc; ?>)
 	    	{
 		    	$('.change1').removeClass('colorred');
 		    	$('.change1').addClass('colorgreen');
@@ -140,7 +140,7 @@ function Print(id){
 
 <div class="center">
 <center>
-<center><input type="email" id="email" name="email" style="width:60%;font-size: 200%;" value="<?php echo $invoice->thirdparty->email;?>"></center>
+<center><input type="email" id="email" name="email" style="width:60%;font-size: 200%;" value="<?php echo $invoice->thirdparty->email; ?>"></center>
 </center>
 </div>
 <br>
