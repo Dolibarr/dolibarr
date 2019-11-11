@@ -117,7 +117,7 @@ if (empty($reshook))
     $backurlforlist = dol_buildpath('/mrp/mo_list.php', 1);
 
     if (empty($backtopage) || ($cancel && empty($id))) {
-    	if (empty($backtopage)) {
+    	if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 	    	if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) $backtopage = $backurlforlist;
     		else $backtopage = DOL_URL_ROOT.'/mrp/mo_card.php?id='.($id > 0 ? $id : '__ID__');
     	}
