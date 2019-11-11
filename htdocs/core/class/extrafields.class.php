@@ -916,7 +916,6 @@ class ExtraFields
 					$this->attribute_list[$tab->name]=$tab->list;
 					$this->attribute_totalizable[$tab->name]=$tab->totalizable;
 					$this->attribute_entityid[$tab->name]=$tab->entity;
-					$this->attribute_entitylabel[$tab->name]=(empty($labelmulticompany[$tab->entity])?'Entity'.$tab->entity:$labelmulticompany[$tab->entity]);
 
 					// New usage
 					$this->attributes[$tab->elementtype]['type'][$tab->name]=$tab->type;
@@ -935,7 +934,6 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['list'][$tab->name]=$tab->list;
                     $this->attributes[$tab->elementtype]['totalizable'][$tab->name]=$tab->totalizable;
 					$this->attributes[$tab->elementtype]['entityid'][$tab->name]=$tab->entity;
-					$this->attributes[$tab->elementtype]['entitylabel'][$tab->name]=(empty($labelmulticompany[$tab->entity])?'Entity'.$tab->entity:$labelmulticompany[$tab->entity]);
 					$this->attributes[$tab->elementtype]['enabled'][$tab->name]=$tab->enabled;
 					$this->attributes[$tab->elementtype]['help'][$tab->name]=$tab->help;
 
