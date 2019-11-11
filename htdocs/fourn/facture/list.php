@@ -236,6 +236,7 @@ if (empty($reshook))
 		$search_array_options=array();
 		$filter='';
 		$option='';
+		$socid="";
 	}
 
 	// Mass actions
