@@ -634,6 +634,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     			print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=reopen">' . $langs->trans("ReOpen") . '</a>';
     		}
 
+    		// Create MO
+    		if ($object->status == $object::STATUS_VALIDATED && ! empty($user->rights->mrp->write))
+    		{
+    			print '<a class="butAction" href="' . DOL_URL_ROOT.'/mrp/mo_card.php?action=create&fk_bom='.$object->id.'">' . $langs->trans("CreateMO") . '</a>';
+    		}
+
     		// Clone
     		if ($permissiontoadd)
     		{

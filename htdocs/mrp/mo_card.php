@@ -209,31 +209,46 @@ if ($action == 'create')
      	$(document).ready(function () {
 			jQuery('#fk_bom').change(function() {
 				console.log('We change value of BOM with BOM of id '+jQuery('#fk_bom').val());
-
-				$.getJSON('<?php echo DOL_URL_ROOT ?>/mrp/ajax/ajax_bom.php?action=getBoms&idbom='+jQuery('#fk_bom').val(), function(data) {
-					console.log(data);
-					if (typeof data.rowid != "undefined") {
-						console.log("New BOM loaded, we set values in form");
-						$('#qty').val(data.qty);
-						$("#fk_product").val(data.fk_product);
-						$('#fk_product').trigger('change'); // Notify any JS components that the value changed
-						$('#note_private').val(data.description);
-						$('#note_private').trigger('change'); // Notify any JS components that the value changed
-						$('#fk_warehouse').val(data.fk_warehouse);
-						$('#fk_warehouse').trigger('change'); // Notify any JS components that the value changed
-						if (typeof CKEDITOR != "undefined") {
-							if (typeof CKEDITOR.instances != "undefined") {
-								if (typeof CKEDITOR.instances.note_private != "undefined") {
-									console.log(CKEDITOR.instances.note_private);
-									CKEDITOR.instances.note_private.setData(data.description);
+				if (jQuery('#fk_bom').val() > 0)
+				{
+					$.getJSON('<?php echo DOL_URL_ROOT ?>/mrp/ajax/ajax_bom.php?action=getBoms&idbom='+jQuery('#fk_bom').val(), function(data) {
+						console.log(data);
+						if (typeof data.rowid != "undefined") {
+							console.log("New BOM loaded, we set values in form");
+							$('#qty').val(data.qty);
+							$("#fk_product").val(data.fk_product);
+							$('#fk_product').trigger('change'); // Notify any JS components that the value changed
+							$('#note_private').val(data.description);
+							$('#note_private').trigger('change'); // Notify any JS components that the value changed
+							$('#fk_warehouse').val(data.fk_warehouse);
+							$('#fk_warehouse').trigger('change'); // Notify any JS components that the value changed
+							if (typeof CKEDITOR != "undefined") {
+								if (typeof CKEDITOR.instances != "undefined") {
+									if (typeof CKEDITOR.instances.note_private != "undefined") {
+										console.log(CKEDITOR.instances.note_private);
+										CKEDITOR.instances.note_private.setData(data.description);
+									}
 								}
 							}
+						} else {
+							console.log("Failed to get BOM");
 						}
-					} else {
-						console.log("Failed to get BOM");
-					}
-				});
+					});
+				}
+				else {
+					/*
+					$('#qty').val('');
+					$("#fk_product").val('');
+					$('#fk_product').trigger('change'); // Notify any JS components that the value changed
+					$('#note_private').val('');
+					$('#note_private').trigger('change'); // Notify any JS components that the value changed
+					$('#fk_warehouse').val('');
+					$('#fk_warehouse').trigger('change'); // Notify any JS components that the value changed
+					*/
+				}
  	        });
+
+			jQuery('#fk_bom').trigger('change');
 		})
 	</script>
 	<?php
