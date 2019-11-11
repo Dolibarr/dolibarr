@@ -83,7 +83,7 @@ if (empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX))
 
 // Show upload form (document and links)
 $formfile->form_attach_new_file(
-    $_SERVER["PHP_SELF"].'?id='.$object->id.(empty($withproject)?'':'&withproject=1').(empty($uri)?'':$uri),
+    $_SERVER["PHP_SELF"].'?id='.$object->id.(empty($withproject)?'':'&withproject=1'),
     '',
     0,
     0,
