@@ -1175,7 +1175,7 @@ class Facture extends CommonInvoice
 		$this->availability_id      = $object->availability_id;
 		$this->demand_reason_id     = $object->demand_reason_id;
 		$this->date_livraison       = $object->date_livraison;
-		$this->fk_delivery_address  = $object->fk_delivery_address;
+		$this->fk_delivery_address  = $object->fk_delivery_address;		// deprecated
 		$this->contact_id           = $object->contactid;
 		$this->ref_client           = $object->ref_client;
 
@@ -2016,7 +2016,7 @@ class Facture extends CommonInvoice
 			$list_rowid_det = array();
 			foreach ($this->lines as $key => $invoiceline)
 			{
-				$list_rowid_det[] = $invoiceline->rowid;
+				$list_rowid_det[] = $invoiceline->id;
 			}
 
 			// Consumned discounts are freed
@@ -3133,6 +3133,7 @@ class Facture extends CommonInvoice
 				$this->line->rang = $rangmax + 1;
 			}
 
+			$this->line->id					= $rowid;
 			$this->line->rowid				= $rowid;
 			$this->line->label				= $label;
 			$this->line->desc = $desc;

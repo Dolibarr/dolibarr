@@ -399,7 +399,7 @@ if ($action == "order" and $placeid != 0)
         $result = array_intersect($catsprinter1, $existing);
         $count = count($result);
         if ($count > 0) {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where rowid=$line->rowid";
+            $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where rowid=".$line->id;
             $db->query($sql);
             $order_receipt_printer1 .= '<tr>'.$line->product_label.'<td class="right">'.$line->qty;
 			if (!empty($line->array_options['options_order_notes'])) $order_receipt_printer1 .= "<br>(".$line->array_options['options_order_notes'].")";
@@ -416,7 +416,7 @@ if ($action == "order" and $placeid != 0)
         $result = array_intersect($catsprinter2, $existing);
         $count = count($result);
         if ($count > 0) {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where rowid=$line->rowid";
+            $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set special_code='4' where rowid=".$line->id;
             $db->query($sql);
             $order_receipt_printer2 .= '<tr>'.$line->product_label.'<td class="right">'.$line->qty;
 			if (!empty($line->array_options['options_order_notes'])) $order_receipt_printer2 .= "<br>(".$line->array_options['options_order_notes'].")";

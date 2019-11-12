@@ -631,7 +631,7 @@ class Propal extends CommonObject
                 if ($result > 0)
                 {
                     $this->db->commit();
-                    return $this->line->rowid;
+                    return $this->line->id;
                 }
                 else
                 {
@@ -772,7 +772,7 @@ class Propal extends CommonObject
 				$this->line->rang = $rangmax + 1;
 			}
 
-			$this->line->rowid				= $rowid;
+			$this->line->id					= $rowid;
 			$this->line->label				= $label;
 			$this->line->desc = $desc;
 			$this->line->qty = $qty;

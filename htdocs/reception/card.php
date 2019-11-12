@@ -1031,7 +1031,7 @@ if ($action == 'create')
                     //var_dump($product->stock_warehouse[1]);
 
                     print '<td>';
-                    print '<a name="'.$line->rowid.'"></a>'; // ancre pour retourner sur la ligne
+                    print '<a name="'.$line->id.'"></a>'; // ancre pour retourner sur la ligne
 
                     // Show product and description
                     $product_static->type = $line->fk_product_type;
