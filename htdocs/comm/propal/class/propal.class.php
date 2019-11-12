@@ -1301,9 +1301,9 @@ class Propal extends CommonObject
 		if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) $object->ref_client = '';
 		if ($conf->global->MAIN_DONT_KEEP_NOTE_ON_CLONING == 1)
 		{
-				 $object->note_private = '';
-                                 $object->note_public = '';
-        }
+			$object->note_private = '';
+			$object->note_public = '';
+		}
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
 		$result = $object->create($user);
