@@ -662,6 +662,7 @@ class Ticket extends CommonObject
 
                     $line = new TicketsLine();
 
+                    $line->id = $obj->rowid;
                     $line->rowid = $obj->rowid;
                     $line->ref = $obj->ref;
                     $line->track_id = $obj->track_id;
@@ -2783,7 +2784,13 @@ class Ticket extends CommonObject
  */
 class TicketsLine
 {
-    /**
+	/**
+	 * @var int ID
+	 * @deprecated
+	 */
+	public $rowid;
+
+	/**
      * @var int ID
      */
     public $id;

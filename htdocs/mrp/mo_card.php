@@ -47,8 +47,9 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-dol_include_once('/mrp/class/mo.class.php');
-dol_include_once('/mrp/lib/mrp_mo.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
+require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp_mo.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("mrp", "other"));
@@ -65,6 +66,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 // Initialize technical objects
 $object = new Mo($db);
+$objectbom = new BOM($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mrp->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('mocard', 'globalcard')); // Note that conf->hooks_modules contains array
@@ -86,6 +88,16 @@ if (empty($action) && empty($id) && empty($ref)) $action = 'view';
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+
+if (GETPOST('fk_bom', 'int'))
+{
+	$objectbom->fetch(GETPOST('fk_bom', 'int'));
+
+	$_POST['fk_product'] = $objectbom->fk_product;
+	$_POST['qty'] = $objectbom->qty;
+	$_POST['fk_warehouse'] = $objectbom->fk_warehouse;
+	$_POST['note_private'] = $objectbom->note_private;
+}
 
 // Security check - Protection if external user
 //if ($user->socid > 0) access_forbidden();
@@ -212,6 +224,9 @@ if ($action == 'create')
 				console.log('We change value of BOM with BOM of id '+jQuery('#fk_bom').val());
 				if (jQuery('#fk_bom').val() > 0)
 				{
+					// Redirect to page with fk_bom set
+					window.location.href = '<?php echo $_SERVER["PHP_SELF"] ?>?action=create&fk_bom='+jQuery('#fk_bom').val();
+					/*
 					$.getJSON('<?php echo DOL_URL_ROOT ?>/mrp/ajax/ajax_bom.php?action=getBoms&idbom='+jQuery('#fk_bom').val(), function(data) {
 						console.log(data);
 						if (typeof data.rowid != "undefined") {
@@ -234,7 +249,7 @@ if ($action == 'create')
 						} else {
 							console.log("Failed to get BOM");
 						}
-					});
+					});*/
 				}
 				else {
 					/*
@@ -249,7 +264,7 @@ if ($action == 'create')
 				}
  	        });
 
-			jQuery('#fk_bom').trigger('change');
+			//jQuery('#fk_bom').trigger('change');
 		})
 	</script>
 	<?php
@@ -259,6 +274,16 @@ if ($action == 'create')
 	print '&nbsp; ';
 	print '<input type="'.($backtopage ? "submit" : "button").'" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
 	print '</div>';
+
+	print load_fiche_titre($langs->trans("ToConsume"));
+
+	print '<table class="noborder centpercent">';
+
+	$object->lines = $objectbom->lines;
+
+	$object->printOriginLinesList('', array());
+
+	print '</table>';
 
 	print '</form>';
 }

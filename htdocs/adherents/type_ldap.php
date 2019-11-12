@@ -30,27 +30,27 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin","members","ldap"));
+$langs->loadLangs(array("admin", "members", "ldap"));
 
 $id = GETPOST('rowid', 'int');
 $action = GETPOST('action', 'alpha');
 
 // Security check
-$result=restrictedArea($user, 'adherent', $id, 'adherent_type');
+$result = restrictedArea($user, 'adherent', $id, 'adherent_type');
 
 $object = new AdherentType($db);
 $object->fetch($id);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('membertypeldapcard','globalcard'));
+$hookmanager->initHooks(array('membertypeldapcard', 'globalcard'));
 
 /*
  * Actions
  */
 
 
-$parameters=array();
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -66,7 +66,7 @@ if (empty($reshook))
 
 			$info = $object->_load_ldap_info();
 			$dn = $object->_load_ldap_dn($info);
-			$olddn = $dn;    // We can say that old dn = dn as we force synchro
+			$olddn = $dn; // We can say that old dn = dn as we force synchro
 
 			$result = $ldap->update($dn, $info, $user, $olddn);
 		}
@@ -148,12 +148,12 @@ print '<td>'.$langs->trans("Value").'</td>';
 print '</tr>';
 
 // LDAP reading
-$ldap=new Ldap();
-$result=$ldap->connect_bind();
+$ldap = new Ldap();
+$result = $ldap->connect_bind();
 if ($result > 0)
 {
-    $info=$object->_load_ldap_info();
-    $dn=$object->_load_ldap_dn($info, 1);
+    $info = $object->_load_ldap_info();
+    $dn = $object->_load_ldap_dn($info, 1);
     $search = "(".$object->_load_ldap_dn($info, 2).")";
 
     $records = $ldap->getAttribute($dn, $search);
@@ -161,15 +161,15 @@ if ($result > 0)
     //print_r($records);
 
     // Show tree
-    if (((! is_numeric($records)) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
+    if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0))
     {
-        if (! is_array($records))
+        if (!is_array($records))
         {
             print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
         }
         else
         {
-            $result=show_ldap_content($records, 0, $records['count'], true);
+            $result = show_ldap_content($records, 0, $records['count'], true);
         }
     }
     else

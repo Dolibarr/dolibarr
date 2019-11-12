@@ -144,18 +144,6 @@ if ($object->id)
 	print '</div>';
 
 	dol_fiche_end();
-
-	$modulepart = 'mymodule';
-	//$permission = $user->rights->mymodule->create;
-	$permission = 1;
-	//$permtoedit = $user->rights->mymodule->create;
-	$permtoedit = 1;
-	$param = '&id=' . $object->id;
-
-	//$relativepathwithnofile='myobject/' . dol_sanitizeFileName($object->id).'/';
-	$relativepathwithnofile='myobject/' . dol_sanitizeFileName($object->ref).'/';
-
-	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }
 else
 {

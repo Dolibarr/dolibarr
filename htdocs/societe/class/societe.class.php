@@ -4176,10 +4176,9 @@ class Societe extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_commerciaux ';
 		$sql .= ' WHERE fk_soc = '.(int) $origin_id.') ';
 
-		$query = $db->query($sql);
-
-		while ($result = $db->fetch_object($query)) {
-			$db->query('DELETE FROM '.MAIN_DB_PREFIX.'societe_commerciaux WHERE rowid = '.$result->rowid);
+		$resql = $db->query($sql);
+		while ($obj = $db->fetch_object($resql)) {
+			$db->query('DELETE FROM '.MAIN_DB_PREFIX.'societe_commerciaux WHERE rowid = '.$obj->rowid);
 		}
 
 		/**

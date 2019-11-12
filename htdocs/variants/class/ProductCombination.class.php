@@ -104,14 +104,14 @@ class ProductCombination
 			return -1;
 		}
 
-		$result = $this->db->fetch_object($query);
+		$obj = $this->db->fetch_object($query);
 
-		$this->id = $result->rowid;
-		$this->fk_product_parent = $result->fk_product_parent;
-		$this->fk_product_child = $result->fk_product_child;
-		$this->variation_price = $result->variation_price;
-		$this->variation_price_percentage = $result->variation_price_percentage;
-		$this->variation_weight = $result->variation_weight;
+		$this->id = $obj->rowid;
+		$this->fk_product_parent = $obj->fk_product_parent;
+		$this->fk_product_child = $obj->fk_product_child;
+		$this->variation_price = $obj->variation_price;
+		$this->variation_price_percentage = $obj->variation_price_percentage;
+		$this->variation_weight = $obj->variation_weight;
 
 		return 1;
 	}

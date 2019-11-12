@@ -631,7 +631,7 @@ class Propal extends CommonObject
                 if ($result > 0)
                 {
                     $this->db->commit();
-                    return $this->line->rowid;
+                    return $this->line->id;
                 }
                 else
                 {
@@ -772,7 +772,7 @@ class Propal extends CommonObject
 				$this->line->rang = $rangmax + 1;
 			}
 
-			$this->line->rowid				= $rowid;
+			$this->line->id					= $rowid;
 			$this->line->label				= $label;
 			$this->line->desc = $desc;
 			$this->line->qty = $qty;
@@ -1301,9 +1301,9 @@ class Propal extends CommonObject
 		if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) $object->ref_client = '';
 		if ($conf->global->MAIN_DONT_KEEP_NOTE_ON_CLONING == 1)
 		{
-				 $object->note_private = '';
-                                 $object->note_public = '';
-        }
+			$object->note_private = '';
+			$object->note_public = '';
+		}
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
 		$result = $object->create($user);

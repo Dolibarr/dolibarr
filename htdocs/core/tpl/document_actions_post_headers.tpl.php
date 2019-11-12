@@ -20,10 +20,13 @@
  */
 
 // Following var can be set
-// $permission  = permission or not to add a file
-// $permtoedit  = permission or not to edit file name, crop file
+// $permissiontoadd = permission or not to add a file (can use also $permission) and permission or not to edit file name or crop file (can use also $permtoedit)
 // $modulepart  = for download
 // $param       = param to add to download links
+// $upload_dir
+// $object
+// $filearray
+// $savingdocmask = dol_sanitizeFileName($object->ref).'-__file__';
 
 // Protection to avoid direct call of template
 if (empty($langs) || ! is_object($langs))
@@ -35,7 +38,9 @@ if (empty($langs) || ! is_object($langs))
 
 $langs->load("link");
 if (empty($relativepathwithnofile)) $relativepathwithnofile='';
-if (empty($permtoedit)) $permtoedit=-1;
+
+if (! isset($permission)) $permission = $permissiontoadd;
+if (! isset($permtoedit)) $permtoedit = $permissiontoadd;
 
 // Drag and drop for up and down allowed on product, thirdparty, ...
 // The drag and drop call the page core/ajax/row.php
@@ -66,19 +71,40 @@ if ($action == 'delete')
 
 $formfile=new FormFile($db);
 
-// We define var to enable the feature to add prefix of uploaded files
-$savingdocmask='';
-if (empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX))
-{
-	//var_dump($modulepart);
-	if (in_array($modulepart, array('facture_fournisseur','commande_fournisseur','facture','commande','propal','supplier_proposal','ficheinter','contract','expedition','project','project_task','expensereport','tax', 'produit', 'product_batch')))
-	{
-		$savingdocmask=dol_sanitizeFileName($object->ref).'-__file__';
+// We define var to enable the feature to add prefix of uploaded files.
+// Caller of this include can make
+// $savingdocmask=dol_sanitizeFileName($object->ref).'-__file__';
+if (!isset($savingdocmask) || !empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX)) {
+	$savingdocmask='';
+	if (empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX)) {
+		//var_dump($modulepart);
+		if (in_array($modulepart, array(
+			'facture_fournisseur',
+			'commande_fournisseur',
+			'facture',
+			'commande',
+			'propal',
+			'supplier_proposal',
+			'ficheinter',
+			'contract',
+			'expedition',
+			'project',
+			'project_task',
+			'expensereport',
+			'tax',
+			'produit',
+			'product_batch',
+			'bom',
+			'mrp'
+		)))
+		{
+			$savingdocmask=dol_sanitizeFileName($object->ref).'-__file__';
+		}
+		/*if (in_array($modulepart,array('member')))
+		{
+			$savingdocmask=$object->login.'___file__';
+		}*/
 	}
-	/*if (in_array($modulepart,array('member')))
-	{
-		$savingdocmask=$object->login.'___file__';
-	}*/
 }
 
 // Show upload form (document and links)
