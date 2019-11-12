@@ -1317,11 +1317,11 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			{
 		        $arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
 		        if (! in_array($cpt->currency, $arrayzerounitcurrency)) {
-					$currencybalance[$cpt->currency]->available=$cpt->amount / 100;
+					$currencybalance[$cpt->currency]['available']=$cpt->amount / 100;
 				} else {
-					$currencybalance[$cpt->currency]->available=$cpt->amount;
+					$currencybalance[$cpt->currency]['available']=$cpt->amount;
 				}
-                $currencybalance[$cpt->currency]->currency=$cpt->currency;
+                $currencybalance[$cpt->currency]['currency']=$cpt->currency;
 			}
 		}
 
@@ -1331,9 +1331,9 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			{
 		        $arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
 		        if (! in_array($cpt->currency, $arrayzerounitcurrency)) {
-					$currencybalance[$cpt->currency]->pending=$currencybalance[$cpt->currency]->available+$cpt->amount / 100;
+					$currencybalance[$cpt->currency]['pending']=$currencybalance[$cpt->currency]['available']+$cpt->amount / 100;
 				} else {
-					$currencybalance[$cpt->currency]->pending=$currencybalance[$cpt->currency]->available+$cpt->amount;
+					$currencybalance[$cpt->currency]['pending']=$currencybalance[$cpt->currency]['available']+$cpt->amount;
 				}
 			}
         }
@@ -1342,7 +1342,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		{
 			foreach ($currencybalance as $cpt)
 			{
-                print '<tr><td>'.$langs->trans("Currency".strtoupper($cpt->currency)).'</td><td>'.price($cpt->available, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).'</td><td>'.price($cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).'</td><td>'.price($cpt->available+$cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt->currency)).'</td></tr>';
+                print '<tr><td>'.$langs->trans("Currency".strtoupper($cpt['pending'])).'</td><td>'.price($cpt['available'], 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available']+$cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td></tr>';
 			}
 		}
 
