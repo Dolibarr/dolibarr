@@ -4018,7 +4018,7 @@ abstract class CommonObject
 	public function formAddObjectLine($dateSelector, $seller, $buyer, $defaulttpldir = '/core/tpl')
 	{
 		global $conf,$user,$langs,$object,$hookmanager,$extrafields;
-		global $form,$bcnd,$var;
+		global $form;
 
 		// Line extrafield
 		if (! is_object($extrafields))
@@ -4116,7 +4116,6 @@ abstract class CommonObject
 			}
 		}
 
-		$var = true;
 		$i	 = 0;
 
 		print "<tbody>\n";
@@ -4130,18 +4129,18 @@ abstract class CommonObject
 			{
 				if (empty($line->fk_parent_line))
 				{
-					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected, 'table_element_line'=>$line->table_element);
+					$parameters = array('line'=>$line, 'num'=>$num, 'i'=>$i, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer, 'selected'=>$selected, 'table_element_line'=>$line->table_element);
 					$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 				}
 				else
 				{
-					$parameters = array('line'=>$line,'var'=>$var,'num'=>$num,'i'=>$i,'dateSelector'=>$dateSelector,'seller'=>$seller,'buyer'=>$buyer,'selected'=>$selected, 'table_element_line'=>$line->table_element, 'fk_parent_line'=>$line->fk_parent_line);
+					$parameters = array('line'=>$line, 'num'=>$num, 'i'=>$i, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer, 'selected'=>$selected, 'table_element_line'=>$line->table_element, 'fk_parent_line'=>$line->fk_parent_line);
 					$reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 				}
 			}
 			if (empty($reshook))
 			{
-				$this->printObjectLine($action, $line, $var, $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafields, $defaulttpldir);
+				$this->printObjectLine($action, $line, '', $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafields, $defaulttpldir);
 			}
 
 			$i++;
@@ -4153,23 +4152,23 @@ abstract class CommonObject
 	 *	Return HTML content of a detail line
 	 *	TODO Move this into an output class file (htmlline.class.php)
 	 *
-	 *	@param	string      $action				GET/POST action
-	 *	@param  CommonObjectLine $line		       	Selected object line to output
-	 *	@param  string	    $var               	Is it a an odd line (true)
-	 *	@param  int		    $num               	Number of line (0)
-	 *	@param  int		    $i					I
-	 *	@param  int		    $dateSelector      	1=Show also date range input fields
-	 *	@param  string	    $seller            	Object of seller third party
-	 *	@param  string	    $buyer             	Object of buyer third party
-	 *	@param	int			$selected		   	Object line selected
-	 *  @param  Extrafields	$extrafields		Object of extrafields
-	 *  @param	string		$defaulttpldir		Directory where to find the template
+	 *	@param	string      		$action				GET/POST action
+	 *	@param  CommonObjectLine 	$line			    Selected object line to output
+	 *	@param  string	    		$var               	Is it a an odd line (true)
+	 *	@param  int		    		$num               	Number of line (0)
+	 *	@param  int		    		$i					I
+	 *	@param  int		    		$dateSelector      	1=Show also date range input fields
+	 *	@param  string	    		$seller            	Object of seller third party
+	 *	@param  string	    		$buyer             	Object of buyer third party
+	 *	@param	int					$selected		   	Object line selected
+	 *  @param  Extrafields			$extrafields		Object of extrafields
+	 *  @param	string				$defaulttpldir		Directory where to find the template
 	 *	@return	void
 	 */
 	public function printObjectLine($action, $line, $var, $num, $i, $dateSelector, $seller, $buyer, $selected = 0, $extrafields = null, $defaulttpldir = '/core/tpl')
 	{
 		global $conf,$langs,$user,$object,$hookmanager;
-		global $form,$bc,$bcdd;
+		global $form;
 		global $object_rights, $disableedit, $disablemove, $disableremove;   // TODO We should not use global var for this !
 
 		$object_rights = $this->getRights();
@@ -4319,7 +4318,6 @@ abstract class CommonObject
 		print '<td class="right">'.$langs->trans('ReductionShort').'</td>';
         print '<td class="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
         print '</tr>';
-		$var = true;
 		$i	 = 0;
 
 		if (! empty($this->lines))
@@ -4330,14 +4328,14 @@ abstract class CommonObject
 				{
 					if (empty($line->fk_parent_line))
 					{
-						$parameters=array('line'=>$line,'var'=>$var,'i'=>$i);
+						$parameters=array('line'=>$line, 'i'=>$i);
 						$action='';
 						$hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
 					}
 				}
 				else
 				{
-					$this->printOriginLine($line, $var, $restrictlist, '/core/tpl', $selectedLines);
+					$this->printOriginLine($line, '', $restrictlist, '/core/tpl', $selectedLines);
 				}
 
 				$i++;

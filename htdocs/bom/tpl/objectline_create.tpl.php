@@ -128,10 +128,10 @@ $coldisplay++;
 print '<td class="bordertop nobottom linecoldisablestockchange right"><input type="checkbox" name="disable_stock_change" id="disable_stock_change" class="flat right" value="1"'.(GETPOST("disable_stock_change", 'alpha')?' checked="checked"':'').'">';
 print '</td>';
 
-$coldisplay++;
-print '<td class="bordertop nobottom nowrap linecollost right">';
-print '<input type="text" size="1" name="efficiency" id="efficiency" class="flat right" value="'.(GETPOSTISSET("efficiency")?GETPOST("efficiency", 'alpha'):1).'">';
-print '</td>';
+//$coldisplay++;
+//print '<td class="bordertop nobottom nowrap linecollost right">';
+//print '<input type="text" size="1" name="efficiency" id="efficiency" class="flat right" value="'.(GETPOSTISSET("efficiency")?GETPOST("efficiency", 'alpha'):1).'">';
+//print '</td>';
 
 
 $coldisplay += $colspan;

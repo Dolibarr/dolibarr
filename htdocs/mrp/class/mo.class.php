@@ -730,6 +730,96 @@ class Mo extends CommonObject
 
 		return $error;
 	}
+
+	/**
+	 * 	Return HTML table table of source object lines
+	 *  TODO Move this and previous function into output html class file (htmlline.class.php).
+	 *  If lines are into a template, title must also be into a template
+	 *  But for the moment we don't know if it's possible, so we keep the method available on overloaded objects.
+	 *
+	 *	@param	string		$restrictlist		''=All lines, 'services'=Restrict to services only
+	 *  @param  array       $selectedLines      Array of lines id for selected lines
+	 *  @return	void
+	 */
+	public function printOriginLinesList($restrictlist = '', $selectedLines = array())
+	{
+		global $langs, $hookmanager, $conf, $form;
+
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans('Ref').'</td>';
+		print '<td class="right">'.$langs->trans('Qty').'</td>';
+		print '<td class="center">'.$langs->trans('QtyFrozen').'</td>';
+		print '<td class="center">'.$langs->trans('DisableStockChange').'</td>';
+		//print '<td class="right">'.$langs->trans('Efficiency').'</td>';
+		//print '<td class="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
+		print '<td class="center"></td>';
+		print '</tr>';
+		$i	 = 0;
+
+		if (! empty($this->lines))
+		{
+			foreach ($this->lines as $line)
+			{
+				if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
+				{
+					if (empty($line->fk_parent_line))
+					{
+						$parameters=array('line'=>$line, 'i'=>$i);
+						$action='';
+						$hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
+					}
+				}
+				else
+				{
+					$this->printOriginLine($line, '', $restrictlist, '/core/tpl', $selectedLines);
+				}
+
+				$i++;
+			}
+		}
+	}
+
+
+	/**
+	 * 	Return HTML with a line of table array of source object lines
+	 *  TODO Move this and previous function into output html class file (htmlline.class.php).
+	 *  If lines are into a template, title must also be into a template
+	 *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
+	 *
+	 * 	@param	CommonObjectLine	$line				Line
+	 * 	@param	string				$var				Var
+	 *	@param	string				$restrictlist		''=All lines, 'services'=Restrict to services only (strike line if not)
+	 *  @param	string				$defaulttpldir		Directory where to find the template
+	 *  @param  array       		$selectedLines      Array of lines id for selected lines
+	 * 	@return	void
+	 */
+	public function printOriginLine($line, $var, $restrictlist = '', $defaulttpldir = '/core/tpl', $selectedLines = array())
+	{
+		global $langs, $conf;
+
+		$this->tpl['id'] = $line->id;
+
+		$this->tpl['label']='';
+		if (! empty($line->fk_product))
+		{
+			$productstatic = new Product($this->db);
+			$productstatic->fetch($line->fk_product);
+			$this->tpl['label'].= $productstatic->getNomUrl(1);
+			//$this->tpl['label'].= ' - '.$productstatic->label;
+		}
+		else
+		{
+
+		}
+
+		$this->tpl['qty'] = $line->qty;
+		$this->tpl['qty_frozen'] = $line->qty_frozen;
+		$this->tpl['disable_stock_change'] = $line->disable_stock_change;
+		//$this->tpl['efficiency'] = $line->efficiency;
+
+		$tpl = DOL_DOCUMENT_ROOT.'/mrp/tpl/originproductline.tpl.php';
+		$res = include $tpl;
+	}
 }
 
 /**
