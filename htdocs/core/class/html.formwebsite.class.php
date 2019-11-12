@@ -228,9 +228,10 @@ class FormWebsite
      *  @param	int			$pageid			Preselected container ID
      *  @param	int			$showempty		Show empty record
      *  @param	string		$action			Action on page that use this select list
+     *  @param	string		$morecss		More CSS
      * 	@return	string						HTML select component with list of type of containers
      */
-    public function selectContainer($website, $htmlname = 'pageid', $pageid = 0, $showempty = 0, $action = '')
+    public function selectContainer($website, $htmlname = 'pageid', $pageid = 0, $showempty = 0, $action = '', $morecss = 'minwidth200')
     {
     	global $langs;
 
@@ -239,11 +240,11 @@ class FormWebsite
 	    $out='';
 	    if ($atleastonepage && $action != 'editsource')
 	    {
-	    	$out.='<select name="'.$htmlname.'" id="'.$htmlname.'" class="minwidth200 maxwidth300">';
+	    	$out.='<select name="'.$htmlname.'" id="'.$htmlname.'" class="maxwidth300'.($morecss ? ' '.$morecss : '').'">';
 	    }
 	    else
 	    {
-	    	$out.='<select name="pageidbis" id="pageid" class="minwidth200 maxwidth300" disabled="disabled">';
+	    	$out.='<select name="pageidbis" id="pageid" class="maxwidth300'.($morecss ? ' '.$morecss : '').'" disabled="disabled">';
 	    }
 
 	    if ($showempty || ! $atleastonepage) $out.='<option value="-1">&nbsp;</option>';
