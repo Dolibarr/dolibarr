@@ -1,0 +1,7 @@
+# Dolibarr language file - Source file is en_US - bills
+ErrorVATIntraNotConfigured=Número de ISV intracomunitario aún no configurado
+ConfirmClassifyPaidPartiallyReasonDiscountNoVat=El resto a pagar <b>(%s %s)</b> es un descuento acordado después de la factura. Acepto perder el ISV de este descuento
+AmountOfBillsByMonthHT=Importe de las facturas por mes (Sin ISV)
+IntracommunityVATNumber=Número de ISV intracomunitario
+VATIsNotUsedForInvoice=* ISV no aplicable  art-293B del CGI
+PDFCrabeDescription=Modelo de factura completo (ISV,  método de pago a mostrar, logotipo...)

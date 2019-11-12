@@ -138,7 +138,7 @@ if ($id > 0 || !empty($ref)) {
 		$permission = $user->rights->banque->modifier;
 		$permtoedit = $user->rights->banque->modifier;
 		$param = '&id=' . $object->id.'&num='.$num;
-		$uri = '&num='.$num;
+		$uris = '&num='.$num;
 		$relativepathwithnofile = $id."/statement/".$num."/";
 		include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 	}
