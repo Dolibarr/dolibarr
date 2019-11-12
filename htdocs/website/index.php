@@ -3262,9 +3262,9 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 	print $langs->trans("SearchReplaceInto");
 	print '</div>';
 	print '<div class="tagtd">';
-	print '<input type="checkbox" name="optioncontent" value="content"'.((!GETPOSTISSET('buttonreplacesitesearch') || GETPOST('optioncontent', 'aZ09')) ? ' checked' : '').'> '.$langs->trans("Content");
-	print '<input type="checkbox" class="marginleftonly" name="optionmeta" value="meta"'.(GETPOST('optionmeta', 'aZ09') ? ' checked' : '').'> '.$langs->trans("Title").' | '.$langs->trans("Description").' | '.$langs->trans("Keywords");
-	print '<input type="checkbox" class="marginleftonly" name="optionsitefiles" value="sitefiles"'.(GETPOST('optionsitefiles', 'aZ09') ? ' checked' : '').'> '.$langs->trans("GlobalCSSorJS");
+	print '<input type="checkbox" class="marginleftonly" name="optioncontent" value="content"'.((!GETPOSTISSET('buttonreplacesitesearch') || GETPOST('optioncontent', 'aZ09')) ? ' checked' : '').'> '.$langs->trans("Content").'<br>';
+	print '<input type="checkbox" class="marginleftonly" name="optionmeta" value="meta"'.(GETPOST('optionmeta', 'aZ09') ? ' checked' : '').'> '.$langs->trans("Title").' | '.$langs->trans("Description").' | '.$langs->trans("Keywords").'<br>';
+	print '<input type="checkbox" class="marginleftonly" name="optionsitefiles" value="sitefiles"'.(GETPOST('optionsitefiles', 'aZ09') ? ' checked' : '').'> '.$langs->trans("GlobalCSSorJS").'<br>';
 	print '</div>';
 	print '</div>';
 
@@ -3327,7 +3327,9 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 				if (get_class($answerrecord) == 'WebsitePage')
 				{
 					print '<tr>';
-					print '<td>'.$langs->trans("Container").'</td>';
+					print '<td>'.$langs->trans("Container").' - ';
+					print $langs->trans($answerrecord->type_container);	// TODO Use label of container
+					print '</td>';
 					print '<td>';
 					print $answerrecord->getNomUrl(1);
 					print ' <span class="opacitymedium">('.($answerrecord->title ? $answerrecord->title : $langs->trans("NoTitle")).')</span>';
@@ -3339,7 +3341,23 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm')
 				else
 				{
 					print '<tr>';
-					print '<td>'.$answerrecord['type'].'</td>';
+					print '<td>';
+
+					$translateofrecordtype = array(
+						'website_csscontent'=>'WEBSITE_CSS_INLINE',
+						'website_jscontent'=>'WEBSITE_JS_INLINE',
+						'website_robotcontent'=>'WEBSITE_ROBOT',
+						'website_htmlheadercontent'=>'WEBSITE_HTML_HEADER',
+						'website_htaccess'=>'WEBSITE_HTACCESS',
+						'website_readme'=>'WEBSITE_README',
+						'website_manifestjson'=>'WEBSITE_MANIFEST_JSON'
+					);
+					if (! empty($translateofrecordtype[$answerrecord['type']])) {
+						print $langs->trans($translateofrecordtype[$answerrecord['type']]);
+					} else {
+						print $answerrecord['type'];
+					}
+					print '</td>';
 					print '<td>';
 					$backtopageurl = $_SERVER["PHP_SELF"].'?action=replacesiteconfirm&searchstring='.urlencode($searchkey).'&optioncontent='.GETPOST('optioncontent', 'aZ09').'&optionmeta='.GETPOST('optionmeta', 'aZ09').'&optionsitefiles='.GETPOST('optionsitefiles', 'aZ09');
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcss&website='.$website->ref.'&backtopage='.urlencode($backtopageurl).'">'.$langs->trans("EditCss").'</a>';
