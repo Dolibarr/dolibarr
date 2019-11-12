@@ -270,10 +270,10 @@ if (empty($reshook))
 	{
 		$object->fetch($id);
 
-		// On verifie signe facture
+		// We check sign of amount
 		if ($object->type == Facture::TYPE_CREDIT_NOTE) {
-			// Si avoir, le signe doit etre negatif
-			if ($object->total_ht >= 0) {
+			// If credit note, the total amount must be negatif
+			if ($object->total_ttc >= 0) {
 				setEventMessages($langs->trans("ErrorInvoiceAvoirMustBeNegative"), null, 'errors');
 				$action = '';
 			}
