@@ -231,7 +231,25 @@ if ($action == "change")	// Change customer for TakePOS
     $idcustomer = GETPOST('idcustomer', 'int');
     $place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Ba or Restaurant
 
-    // @TODO Check if draft invoice already exists, if not create it or return a warning to ask to enter at least one line to have it created automatically
+    // Check if draft invoice already exists, if not create it
+	$sql = 'SELECT * FROM '.MAIN_DB_PREFIX.'facture
+			where ref=\'(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')\'
+			AND entity IN ('.getEntity('invoice').')';
+	$result = $db->query($sql);
+	$num_lines = $db->num_rows($result);
+	if ($num_lines==0)
+	{
+		require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+		$invoice = new Facture($db);
+		$invoice->socid = $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]};
+		$invoice->date = dol_now();
+		$invoice->module_source = 'takepos';
+		$invoice->pos_source = $_SESSION["takeposterminal"];
+		$placeid =$invoice->create($user);
+		$sql="UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid=".$placeid;
+		$db->query($sql);
+	}
+	
     $sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$idcustomer." where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
     $resql = $db->query($sql);
     ?>
