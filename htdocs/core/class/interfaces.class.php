@@ -164,7 +164,7 @@ class Interfaces
                     }
                 }
 
-		closedir($handle);
+				closedir($handle);
             }
         }
 
