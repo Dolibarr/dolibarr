@@ -48,12 +48,11 @@ $backtopage	= GETPOST('backtopage', 'alpha');
 $accountid =            GETPOST("accountid") > 0 ? GETPOST("accountid", "int") : 0;
 $label =                GETPOST("label", "alpha");
 $sens =                 GETPOST("sens", "int");
-$amount =               GETPOST("amount", "alpha");
+$amount =               price2num(GETPOST("amount", "alpha"));
 $paymenttype =          GETPOST("paymenttype", "int");
 $accountancy_code =     GETPOST("accountancy_code", "alpha");
 $subledger_account =    GETPOST("subledger_account", "alpha");
 $projectid =            (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
-$category_transaction = GETPOST("category_transaction", 'alpha');
 
 // Security check
 $socid = GETPOST("socid", "int");
@@ -267,7 +266,7 @@ if ($action == 'create')
 
 	dol_fiche_head('', '');
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Date payment
 	print '<tr><td class="titlefieldcreate">';
@@ -459,7 +458,7 @@ if ($id)
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Label
 	print '<tr><td class="titlefield">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';

@@ -87,7 +87,7 @@ $head=categoriesadmin_prepare_head();
 dol_fiche_head($head, 'setup', $langs->trans("Categories"), -1, 'category');
 
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';

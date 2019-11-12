@@ -120,7 +120,7 @@ if ($result)
 
 	// Load attribute_label
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste" width="100%">';
+	print '<table class="tagtable liste centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>' . $langs->trans("Ref") . '</td>';
 	print '<td>' . $langs->trans("Label") . '</td>';

@@ -166,7 +166,7 @@ if ($action == 'edit')
 
 	clearstatcache();
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	// Disable
@@ -209,7 +209,7 @@ else
 {
 	if (! count($listofmethods)) print '<div class="warning">'.$langs->trans("NoSmsEngine", '<a target="_blank" href="http://www.dolistore.com/search.php?orderby=position&orderway=desc&search_query=smsmanager">DoliStore</a>').'</div>';
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	// Disable
@@ -309,13 +309,10 @@ else
 		$formsms->withfromreadonly=0;
 		$formsms->withsubstit=0;
 		$formsms->withfrom=1;
-		$formsms->witherrorsto=1;
 		$formsms->withto=(isset($_POST['sendto'])?$_POST['sendto']:$user->user_mobile?$user->user_mobile:1);
-		$formsms->withfile=2;
 		$formsms->withbody=(isset($_POST['message'])?(empty($_POST['message'])?1:$_POST['message']):$langs->trans("ThisIsATestMessage"));
 		$formsms->withbodyreadonly=0;
 		$formsms->withcancel=1;
-		$formsms->withfckeditor=0;
 		// Tableau des substitutions
 		$formsms->substit=$substitutionarrayfortest;
 		// Tableau des parametres complementaires du post

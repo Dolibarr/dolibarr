@@ -314,7 +314,7 @@ if ($result)
 		print '<div class="fichecenter">';
 
         print '<div class="underbanner clearboth"></div>';
-        print '<table class="border" width="100%">';
+        print '<table class="border centpercent">';
 
         $i++;
 
@@ -639,7 +639,7 @@ if ($result)
 
             print '<div class="fichecenter">';
 
-            print '<table class="border" width="100%">';
+            print '<table class="border centpercent">';
 
             print '<tr><td class="titlefield">'.$langs->trans("Conciliation")."</td>";
             if ($user->rights->banque->consolidate)

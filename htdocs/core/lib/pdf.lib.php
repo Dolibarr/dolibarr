@@ -416,6 +416,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
     			if ($sourcecompany->tva_intra) $stringaddress.=($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($sourcecompany->tva_intra);
     		}
     		// Professionnal Ids
+    		$reg = array();
     		if (! empty($conf->global->MAIN_PROFID1_IN_SOURCE_ADDRESS) && ! empty($sourcecompany->idprof1))
     		{
     			$tmp=$outputlangs->transcountrynoentities("ProfId1", $sourcecompany->country_code);
@@ -451,6 +452,9 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
     			$tmp=$outputlangs->transcountrynoentities("ProfId6", $sourcecompany->country_code);
     			if (preg_match('/\((.+)\)/', $tmp, $reg)) $tmp=$reg[1];
     			$stringaddress.=($stringaddress ? "\n" : '' ).$tmp.': '.$outputlangs->convToOutputCharset($sourcecompany->idprof6);
+    		}
+    		if (! empty($conf->global->PDF_ADD_MORE_AFTER_SOURCE_ADDRESS)) {
+    			$stringaddress.=($stringaddress ? "\n" : '' ).$conf->global->PDF_ADD_MORE_AFTER_SOURCE_ADDRESS;
     		}
     	}
 

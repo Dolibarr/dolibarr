@@ -167,7 +167,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 if ($conf->use_javascript_ajax)
 {
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder nohover" width="100%">';
+	print '<table class="noborder nohover centpercent">';
     print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
     print '<tr><td class="center" colspan="2">';
 
@@ -249,7 +249,7 @@ if ($result)
 }
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<th>'.$langs->trans("Year").'</th>';
 print '<th class="right">'.$langs->trans("Subscriptions").'</th>';
@@ -311,7 +311,7 @@ $resql=$db->query($sql);
 if ($resql)
 {
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="4">'.$langs->trans("LastMembersModified", $max).'</th></tr>';
 
@@ -374,7 +374,7 @@ $resql=$db->query($sql);
 if ($resql)
 {
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="5">'.$langs->trans("LastSubscriptionsModified", $max).'</th></tr>';
 
@@ -420,7 +420,7 @@ else
 
 // Summary of members by type
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<th>'.$langs->trans("MembersTypes").'</th>';
 print '<th class=right>'.$langs->trans("MembersStatusToValid").'</th>';

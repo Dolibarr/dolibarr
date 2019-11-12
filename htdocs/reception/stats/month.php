@@ -63,7 +63,7 @@ if (! $mesg)
     $px->draw($filename, $fileurl);
 }
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 print '<tr><td class="center">Nombre d reception par mois</td>';
 print '<td class="center">';
 print $px->show();

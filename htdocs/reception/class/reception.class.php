@@ -80,8 +80,7 @@ class Reception extends CommonObject
 
 
 	/**
-	 * Effective delivery date
-	 * @var int
+	 * @var integer|string Effective delivery date
 	 */
 	public $date_reception;
 
@@ -90,7 +89,9 @@ class Reception extends CommonObject
 	 */
 	public $date_creation;
 
-
+	/**
+	 * @var integer|string date_validation
+	 */
 	public $date_valid;
 
     public $meths;

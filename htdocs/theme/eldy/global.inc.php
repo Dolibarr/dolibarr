@@ -58,7 +58,8 @@ input.select2-input {
 .liste_titre input[name=search_day_create], .liste_titre input[name=search_day_start], .liste_titre input[name=search_day_end],
 .liste_titre input[name=search_day_date_when], .liste_titre input[name=search_month_date_when], .liste_titre input[name=search_year_date_when],
 .liste_titre input[name=search_dtstartday], .liste_titre input[name=search_dtendday], .liste_titre input[name=search_dtstartmonth], .liste_titre input[name=search_dtendmonth],
-select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth
+select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth,
+input[name=duration_value]
 {
 	margin-right: 4px;
 }
@@ -3913,7 +3914,7 @@ tr.visible {
 .bordertransp {
     background-color: transparent;
     background-image: none;
-    border: 1px solid #aaa;
+    border: none;
 	font-weight: normal;
 }
 .websitebar {
@@ -4813,7 +4814,7 @@ div.dataTables_length select {
 }
 .select2-dropdown {
 	border: 1px solid #ccc;
-	box-shadow: 5px 5px 15px #ddd;
+	box-shadow: 1px 2px 10px #ddd;
 }
 .select2-dropdown-open {
 	background-color: #fff;

@@ -227,13 +227,16 @@ class MyObject extends CommonObject
 		}
 
 		// Translate some data of arrayofkeyval
-		foreach($this->fields as $key => $val)
+		if (is_object($langs))
 		{
-			if (is_array($val['arrayofkeyval']))
+			foreach($this->fields as $key => $val)
 			{
-				foreach($val['arrayofkeyval'] as $key2 => $val2)
+				if (is_array($val['arrayofkeyval']))
 				{
-					$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
+					foreach($val['arrayofkeyval'] as $key2 => $val2)
+					{
+						$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
+					}
 				}
 			}
 		}

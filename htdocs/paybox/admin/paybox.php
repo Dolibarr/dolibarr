@@ -121,7 +121,7 @@ dol_fiche_head($head, 'payboxaccount', '', -1);
 print $langs->trans("PayBoxDesc")."<br>\n";
 print '<br>';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("AccountParameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';

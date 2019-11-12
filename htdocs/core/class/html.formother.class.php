@@ -382,15 +382,16 @@ class FormOther
     /**
      *  Return select list for categories (to use in form search selectors)
      *
-     *  @param	string	$selected     	Preselected value
-     *  @param  string	$htmlname      	Name of combo list (example: 'search_sale')
-     *  @param  User	$user           Object user
-     *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
-     *  @param	int		$showempty		1=show also an empty value
-     *  @param	string	$morecss		More CSS
-     *  @return string					Html combo list code
+     *  @param	string	$selected     		Preselected value
+     *  @param  string	$htmlname      		Name of combo list (example: 'search_sale')
+     *  @param  User	$user           	Object user
+     *  @param	int		$showstatus			0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
+     *  @param	int		$showempty			1=show also an empty value
+     *  @param	string	$morecss			More CSS
+     *  @param	int		$norepresentative	Show also an entry "Not categorized"
+     *  @return string						Html combo list code
      */
-    public function select_salesrepresentatives($selected, $htmlname, $user, $showstatus = 0, $showempty = 1, $morecss = '')
+    public function select_salesrepresentatives($selected, $htmlname, $user, $showstatus = 0, $showempty = 1, $morecss = '', $norepresentative = 0)
     {
         // phpcs:enable
         global $conf, $langs;
@@ -498,6 +499,13 @@ class FormOther
         {
             dol_print_error($this->db);
         }
+
+        if ($norepresentative)
+        {
+        	$langs->load("companies");
+        	$out.='<option value="-2"'.($selected == -2 ? ' selected':'').'>- '.$langs->trans("NoSalesRepresentativeAffected").' -</option>';
+        }
+
         $out.='</select>';
 
         return $out;

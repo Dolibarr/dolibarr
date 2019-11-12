@@ -378,7 +378,7 @@ $tabfieldinsert[34]= "code,label";
 $tabfieldinsert[35]= "label";
 $tabfieldinsert[36]= "range_ik,fk_c_exp_tax_cat";
 $tabfieldinsert[37]= "code,label,short_label,unit_type,scale";
-$tabfieldinsert[38]= "entity,code,label,url,icon";
+$tabfieldinsert[38]= "code,label,url,icon,entity";
 
 // Rowid name of field depending if field is autoincrement on or off..
 // Use "" if id field is "rowid" and has autoincrement on
@@ -1060,7 +1060,7 @@ if ($id)
         $fieldlist=explode(',', $tabfield[$id]);
 
 	    print '<div class="div-table-responsive-no-min">';
-        print '<table class="noborder" width="100%">';
+        print '<table class="noborder centpercent">';
 
         // Line for title
         print '<tr class="liste_titre">';
@@ -1242,7 +1242,7 @@ if ($id)
         }
 
 	    print '<div class="div-table-responsive">';
-        print '<table class="noborder" width="100%">';
+        print '<table class="noborder centpercent">';
 
         // Title line with search input fields
         print '<tr class="liste_titre_filter">';
@@ -1724,7 +1724,7 @@ else
     $lastlineisempty=false;
 
 	print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td colspan="2">'.$langs->trans("Dictionary").'</td>';
     print '<td>'.$langs->trans("Table").'</td>';
@@ -2011,9 +2011,9 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			if (in_array($fieldlist[$field], array('libelle', 'label', 'tracking'))) $class='quatrevingtpercent';
 			print '<td class="'.$classtd.'">';
 			$transfound=0;
+            $transkey='';
 			if (in_array($fieldlist[$field], array('label','libelle')))		// For label
 			{
-			    $transkey='';
 			    // Special case for labels
 			    if ($tabname == MAIN_DB_PREFIX.'c_civility') {
 			        $transkey="Civility".strtoupper($obj->code);

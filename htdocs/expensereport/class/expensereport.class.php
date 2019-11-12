@@ -1800,7 +1800,7 @@ class ExpenseReport extends CommonObject
                 if ($result > 0)
                 {
                     $this->db->commit();
-                    return $this->line->rowid;
+                    return $this->line->id;
                 }
                 else
                 {
@@ -2049,7 +2049,6 @@ class ExpenseReport extends CommonObject
 
             $this->line->fk_ecm_files = $fk_ecm_files;
 
-            $this->line->rowid           = $rowid;
             $this->line->id              = $rowid;
 
             // Select des infos sur le type fees
@@ -2660,7 +2659,7 @@ class ExpenseReportLine
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            $this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'expensereport_det');
+            $this->id=$this->db->last_insert_id(MAIN_DB_PREFIX.'expensereport_det');
 
 			if (! $fromaddline)
 			{

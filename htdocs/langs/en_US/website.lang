@@ -119,3 +119,4 @@ ShowSubContainersOnOff=Mode to execute 'dynamic content' is %s
 GlobalCSSorJS=Global CSS/JS/Header file of web site
 BackToHomePage=Back to home page...
 TranslationLinks=Translation links
+YouTryToAccessToAFileThatIsNotAWebsitePage=You try to access to a page that is not a website page

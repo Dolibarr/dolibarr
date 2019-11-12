@@ -369,7 +369,7 @@ if ($type == Categorie::TYPE_PRODUCT)
 			print '<input type="hidden" name="type" value="'.$typeid.'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 			print '<input type="hidden" name="action" value="addintocategory">';
-			print '<table class="noborder" width="100%">';
+			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre"><td>';
 			print $langs->trans("AddProductServiceIntoCategory").' &nbsp;';
 			print $form->select_produits('', 'elemid', '', 0, 0, -1, 2, '', 1);
@@ -455,7 +455,7 @@ if ($type == Categorie::TYPE_SUPPLIER)
 		$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($socs); $nbtotalofrecords = ''; $newcardbutton = '';
 		print_barre_liste($langs->trans("Suppliers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, $newcardbutton, '', $limit);
 
-		print '<table class="noborder" width="100%">'."\n";
+		print '<table class="noborder centpercent">'."\n";
 		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Name")."</td></tr>\n";
 
 		if (count($socs) > 0)
@@ -520,7 +520,7 @@ if($type == Categorie::TYPE_CUSTOMER)
 		$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($socs); $nbtotalofrecords = ''; $newcardbutton = '';
 		print_barre_liste($langs->trans("Customers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, $newcardbutton, '', $limit);
 
-		print '<table class="noborder" width="100%">'."\n";
+		print '<table class="noborder centpercent">'."\n";
 		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Name").'</td></tr>'."\n";
 
 		if (count($socs) > 0)
@@ -654,7 +654,7 @@ if ($type == Categorie::TYPE_CONTACT)
 		$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($contacts); $nbtotalofrecords = ''; $newcardbutton = '';
 		print_barre_liste($langs->trans("Contact"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, $newcardbutton, '', $limit);
 
-		print '<table class="noborder" width="100%">'."\n";
+		print '<table class="noborder centpercent">'."\n";
 		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Ref").'</td></tr>'."\n";
 
 		if (count($contacts) > 0)

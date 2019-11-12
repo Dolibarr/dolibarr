@@ -1773,7 +1773,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	$arrayidtypeofcontact=array();
 
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 
 	$sql= " FROM ".MAIN_DB_PREFIX."projet as p";
 	if ($mytasks)

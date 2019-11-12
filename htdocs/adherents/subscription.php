@@ -24,7 +24,7 @@
 /**
  *       \file       htdocs/adherents/subscription.php
  *       \ingroup    member
- *       \brief      Onglet d'ajout, edition, suppression des adhesions d'un adherent
+ *       \brief      tab for Adding, editing, deleting a member's memberships
  */
 
 require '../main.inc.php';
@@ -86,7 +86,7 @@ if ($rowid)
     // Define variables to know what current user can do on properties of user linked to edited member
     if ($object->user_id)
     {
-        // $user est le user qui edite, $object->user_id est l'id de l'utilisateur lies au membre edite
+        // $user is the user editing, $object->user_id is the user's id linked to the edited member
         $caneditfielduser=( (($user->id == $object->user_id) && $user->rights->user->self->creer)
         || (($user->id != $object->user_id) && $user->rights->user->user->creer) );
         $caneditpassworduser=( (($user->id == $object->user_id) && $user->rights->user->self->password)
@@ -554,12 +554,12 @@ if ($rowid > 0)
 	    if (! $adht->subscription)
 	    {
 	        print $langs->trans("SubscriptionNotRecorded");
-	        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
+	        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Display a delay picto only if it is not a draft and is not canceled
 	    }
 	    else
 	    {
 	        print $langs->trans("SubscriptionNotReceived");
-	        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
+	        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Display a delay picto only if it is not a draft and is not canceled
 	    }
 	}
 	print '</td></tr>';
@@ -689,7 +689,7 @@ if ($rowid > 0)
             $num = $db->num_rows($result);
             $i = 0;
 
-            print '<table class="noborder" width="100%">'."\n";
+            print '<table class="noborder centpercent">'."\n";
 
             print '<tr class="liste_titre">';
             print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'c.rowid', '', $param, '', $sortfield, $sortorder);

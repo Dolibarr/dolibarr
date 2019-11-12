@@ -27,7 +27,7 @@ print '<input type="hidden" name="id" value="'.$object->id.'">';
 print '<input type="hidden" name="comment_element_type" value="'.$object->element.'">';
 print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
-print '<table class="noborder nohover" width="100%">';
+print '<table class="noborder nohover centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td width="25%">'.$langs->trans("Comments").'</td>';

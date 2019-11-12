@@ -134,7 +134,7 @@ clearstatcache();
 print load_fiche_titre($langs->trans("DictionaryPaperFormat"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
-print '<table summary="more" class="noborder" width="100%">';
+print '<table summary="more" class="noborder centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 $selected=$conf->global->MAIN_PDF_FORMAT;
@@ -169,7 +169,7 @@ print '<br>';
 print load_fiche_titre($langs->trans("PDFAddressForging"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
-print '<table summary="more" class="noborder" width="100%">';
+print '<table summary="more" class="noborder centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 // Hide VAT Intra on address
@@ -237,7 +237,7 @@ if ($mysoc->useLocalTax(1) || $mysoc->useLocalTax(2))
 
 print load_fiche_titre($title, '', '');
 
-print '<table summary="more" class="noborder" width="100%">';
+print '<table summary="more" class="noborder centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 // Hide any information on Sale tax / VAT
@@ -257,7 +257,7 @@ print '<br>';
 print load_fiche_titre($langs->trans("Other"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
-print '<table summary="more" class="noborder" width="100%">';
+print '<table summary="more" class="noborder centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
 //Desc
@@ -307,7 +307,7 @@ print '<br>';
 print load_fiche_titre($langs->trans("Library"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">'."\n";
+print '<table class="noborder centpercent">'."\n";
 
 print '<tr class="liste_titre">'."\n";
 print '<td>'.$langs->trans("Name").'</td>'."\n";

@@ -4481,7 +4481,14 @@ function migrate_delete_old_files($db, $langs, $conf)
         '/societe/class/api_contact.class.php',
         '/societe/class/api_thirdparty.class.php',
         '/support/online.php',
-        '/takepos/class/actions_takepos.class.php'
+        '/takepos/class/actions_takepos.class.php',
+
+    	'/install/mysql/tables/llx_c_ticketsup_category.key.sql',
+    	'/install/mysql/tables/llx_c_ticketsup_category.sql',
+    	'/install/mysql/tables/llx_c_ticketsup_severity.key.sql',
+    	'/install/mysql/tables/llx_c_ticketsup_severity.sql',
+    	'/install/mysql/tables/llx_c_ticketsup_type.key.sql',
+    	'/install/mysql/tables/llx_c_ticketsup_type.sql'
     );
 
     foreach ($filetodeletearray as $filetodelete) {

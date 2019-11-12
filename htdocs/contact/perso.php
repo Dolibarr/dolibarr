@@ -149,7 +149,7 @@ if ($action == 'edit')
 
     dol_fiche_head($head, 'perso', $title, 0, 'contact');
 
-    print '<table class="border" width="100%">';
+    print '<table class="border centpercent">';
 
     // Ref
     print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td colspan="3">';

@@ -155,7 +155,7 @@ else
 	print '<form name="ftpconfig" action="ftpclient.php" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="2">'.$langs->trans("NewFTPClient").'</td>';
 	print '<td>'.$langs->trans("Example").'</td>';
@@ -236,7 +236,7 @@ else
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="numero_entry" value="'.$idrss.'">';
 
-			print '<table class="noborder" width="100%">'."\n";
+			print '<table class="noborder centpercent">'."\n";
 
 			print '<tr class="liste_titre">';
 			print '<td class="fieldtitle">'.$langs->trans("FTP")." ".($idrss)."</td>";

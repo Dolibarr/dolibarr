@@ -152,7 +152,7 @@ print_barre_liste($langs->trans("OverviewOfAmountOfLinesNotBound"), '', '', '', 
 //print load_fiche_titre($langs->trans("OverviewOfAmountOfLinesNotBound"), $buttonbind, '');
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td width="200">' . $langs->trans("Account") . '</td>';
 print '<td width="200" class="left">' . $langs->trans("Label") . '</td>';
 for($i = 1; $i <= 12; $i ++) {
@@ -223,7 +223,7 @@ print_barre_liste($langs->trans("OverviewOfAmountOfLinesBound"), '', '', '', '',
 
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td width="200">' . $langs->trans("Account") . '</td>';
 print '<td width="200" class="left">' . $langs->trans("Label") . '</td>';
 for($i = 1; $i <= 12; $i ++) {
@@ -297,7 +297,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
     //print load_fiche_titre($langs->trans("OtherInfo"), '', '');
 
 	print '<div class="div-table-responsive-no-min">';
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td width="400" class="left">' . $langs->trans("Total") . '</td>';
     for($i = 1; $i <= 12; $i ++) {
     	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START?$conf->global->SOCIETE_FISCAL_MONTH_START:1) - 1;

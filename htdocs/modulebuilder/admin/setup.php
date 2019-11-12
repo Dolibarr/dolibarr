@@ -105,7 +105,7 @@ print '<span class="opacitymedium">' . $langs->trans("ModuleBuilderDesc") . "</s
 
 print '<br>';
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td style="width: 30%">' . $langs->trans("Key") . '</td>';

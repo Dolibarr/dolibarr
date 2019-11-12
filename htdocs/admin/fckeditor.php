@@ -149,7 +149,7 @@ if (empty($conf->use_javascript_ajax))
 }
 else
 {
-    print '<table class="noborder" width="100%">';
+    print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td colspan="2">'.$langs->trans("ActivateFCKeditor").'</td>';
     print '<td class="center" width="100">'.$langs->trans("Action").'</td>';

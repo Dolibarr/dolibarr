@@ -238,7 +238,7 @@ if ($result)
 	}
 
 	print '<div class="div-table-responsive">';
-	print '<table class="liste" width="100%">';
+	print '<table class="liste centpercent">';
 
 	// Fields title search
 	print '<tr class="liste_titre">';

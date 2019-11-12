@@ -330,7 +330,9 @@ class Product extends CommonObject
      */
     public $date_creation;
 
-
+    /**
+     * @var integer|string date_modification
+     */
     public $date_modification;
 
     //! Id du fournisseur
@@ -1073,7 +1075,7 @@ class Product extends CommonObject
                         $comb = new ProductCombination($this->db);
 
                         foreach ($comb->fetchAllByFkProductParent($this->id) as $currcomb) {
-                                 $currcomb->updateProperties($this);
+                                 $currcomb->updateProperties($this, $user);
                         }
                     }
 

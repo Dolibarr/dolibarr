@@ -119,7 +119,7 @@ $head = marges_admin_prepare_head();
 dol_fiche_head($head, 'parameters', $langs->trans("Margins"), -1, 'margin');
 
 print load_fiche_titre($langs->trans("MemberMainOptions"), '', '');
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width=300>'.$langs->trans("Description").'</td>';
 print '<td colspan="2" class="center">'.$langs->trans("Value").'</td>'."\n";
