@@ -249,7 +249,7 @@ if ($action == "change")	// Change customer for TakePOS
 		$sql="UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid=".$placeid;
 		$db->query($sql);
 	}
-	
+
     $sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".$idcustomer." where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
     $resql = $db->query($sql);
     ?>
