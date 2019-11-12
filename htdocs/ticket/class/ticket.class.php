@@ -121,7 +121,7 @@ class Ticket extends CommonObject
     public $progress;
 
     /**
-     * @var int Duration for ticket
+     * @var string Duration for ticket
      */
     public $timing;
 
