@@ -34,11 +34,11 @@ if ($user->societe_id > 0)
 
 if ($sortorder == "")
 {
-  $sortorder="ASC";
+	$sortorder="ASC";
 }
 if ($sortfield == "")
 {
-  $sortfield="s.nom";
+	$sortfield="s.nom";
 }
 
 if (empty($page) || $page == -1) { $page = 0 ; }

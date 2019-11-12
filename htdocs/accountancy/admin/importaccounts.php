@@ -64,12 +64,10 @@ if ($_POST["action"] == 'import') {
 
 		$result = $db->query($sql);
 		if ($result && ($db->num_rows($result) > 0)) {
-
 			$obj = $db->fetch_object($result);
 
 			$cpt = 0;
 			foreach ($to_import as $maLigneCochee) {
-
 				$accounting = new AccountingAccount($db);
 
 				$monLabel = (string) GETPOST('label' . $maLigneCochee);

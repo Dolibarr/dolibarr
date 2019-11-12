@@ -30,8 +30,8 @@ require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 $langs->loadlangs(array('users', 'trips'));
 
 if(!$user->rights->expensereport->export_csv) {
-   accessforbidden();
-   exit();
+	accessforbidden();
+	exit();
 }
 
 // Security check
@@ -44,22 +44,21 @@ $result = $db->query($req);
 $num = $db->num_rows($result);
 
 if($num < 1) {
+	$insert = "INSERT INTO ".MAIN_DB_PREFIX."rights_def (";
+	$insert.= "`id` ,";
+	$insert.= "`libelle` ,";
+	$insert.= "`module` ,";
+	$insert.= "`entity` ,";
+	$insert.= "`perms` ,";
+	$insert.= "`subperms` ,";
+	$insert.= "`type` ,";
+	$insert.= "`bydefault`";
+	$insert.= ")";
+	$insert.= "VALUES (";
+	$insert.= "'178', 'Exporter les notes de frais au format CSV', 'expensereport', '1', 'export_csv', NULL , 'r', '0'";
+	$insert.= ")";
 
-   $insert = "INSERT INTO ".MAIN_DB_PREFIX."rights_def (";
-   $insert.= "`id` ,";
-   $insert.= "`libelle` ,";
-   $insert.= "`module` ,";
-   $insert.= "`entity` ,";
-   $insert.= "`perms` ,";
-   $insert.= "`subperms` ,";
-   $insert.= "`type` ,";
-   $insert.= "`bydefault`";
-   $insert.= ")";
-   $insert.= "VALUES (";
-   $insert.= "'178', 'Exporter les notes de frais au format CSV', 'expensereport', '1', 'export_csv', NULL , 'r', '0'";
-   $insert.= ")";
-
-   $req = $db->query($insert);
+	$req = $db->query($insert);
 }
 
 
@@ -83,12 +82,12 @@ $month = date('m', time());
 print '<select name="mois">';
 
 for($i=1;$i<13;$i++) {
-   $mois = str_pad($i, 2, "0", STR_PAD_LEFT);
-   if($month == $mois) {
-     print '<option value="'.$mois.'" selected>'.$mois.'</option>';
-   } else {
-      print '<option value="'.$mois.'">'.$mois.'</option>';
-   }
+	$mois = str_pad($i, 2, "0", STR_PAD_LEFT);
+	if($month == $mois) {
+		print '<option value="'.$mois.'" selected>'.$mois.'</option>';
+	} else {
+		print '<option value="'.$mois.'">'.$mois.'</option>';
+	}
 }
 
 print '</select> ';
@@ -96,11 +95,11 @@ print '</select> ';
 print '<select name="annee">';
 
 for($i=2009;$i<$year+1;$i++) {
-   if($year == $i) {
-     print '<option value="'.$i.'" selected>'.$i.'</option>';
-   } else {
-      print '<option value="'.$i.'">'.$i.'</option>';
-   }
+	if($year == $i) {
+		print '<option value="'.$i.'" selected>'.$i.'</option>';
+	} else {
+		print '<option value="'.$i.'">'.$i.'</option>';
+	}
 }
 
 print '</select> ';
@@ -184,7 +183,6 @@ if (isset($_POST['action']))
 
 			print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=expensereport&file=export%2Fexpensereport-'.$dateselected.'.csv" target="_blank">Télécharger le fichier expensereport-'.$dateselected.'.csv</a>';
 		} else {
-
 			print '<b>'.$langs->trans('NoTripsToExportCSV').'</b>';
 		}
 	}
