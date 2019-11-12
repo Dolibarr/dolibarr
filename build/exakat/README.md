@@ -1,4 +1,5 @@
 
+== Install exakat ==
 mkdir exakat 
 cd exakat 
 curl -o exakat.phar http://dist.exakat.io/index.php?file=latest 
@@ -11,3 +12,18 @@ cd ..
  
 php exakat.phar version
 php exakat.phar doctor
+
+== Init project ==
+php 
+
+
+Edit config.ini file to exclude some dirs:
+ignore_dirs[] = "/htdocs/includes";
+ignore_dirs[] = "/scripts";
+ignore_dirs[] = "/build";
+ignore_dirs[] = "/dev";
+ignore_dirs[] = "/documents";
+
+
+== Analyze project ==
+php
